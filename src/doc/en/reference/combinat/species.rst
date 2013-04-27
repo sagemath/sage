@@ -12,6 +12,7 @@ Power Series
    ../sage/combinat/species/series_order
    ../sage/combinat/species/series
    ../sage/combinat/species/generating_series
+   ../sage/combinat/species/group_cycle_index_series
 
 Basic Species
 -------------
