@@ -320,7 +320,6 @@ from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
 from sage.combinat.integer_vector_weighted import iterator_fast as weighted_iterator_fast
 from sage.combinat.combinat_cython import conjugate
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.graphs.dot2tex_utils import have_dot2tex
@@ -4633,6 +4632,7 @@ class Partition(CombinatorialElement):
             [0 1 0]
             [0 0 1]
         """
+        from sage.combinat.root_system.weyl_group import WeylGroup
         return WeylGroup(['A', k,1 ]).from_reduced_word(self.from_kbounded_to_reduced_word(k))
 
     def to_list(self):

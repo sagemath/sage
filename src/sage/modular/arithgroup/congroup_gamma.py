@@ -298,6 +298,7 @@ class Gamma_class(CongruenceSubgroup):
             [0 1]
             )
         """
+        from sage.groups.matrix_gps.finitely_generated import MatrixGroup
         return MatrixGroup([matrix(Zmod(self.level()), 2, 2, 1)])
 
 

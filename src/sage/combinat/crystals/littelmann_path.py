@@ -36,7 +36,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.loop_crystals import (RegularLoopCrystals,
                                            KirillovReshetikhinCrystals)
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
+from sage.combinat.root_system.all import WeylGroup
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.combinat.root_system.root_system import RootSystem

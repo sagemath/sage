@@ -150,7 +150,8 @@ from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor, standardize_generator
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method
-from sage.groups.class_function import ClassFunction_libgap
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.groups.class_function', 'ClassFunction_libgap')
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP

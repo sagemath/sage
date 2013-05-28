@@ -30,8 +30,6 @@ import sage.arith.all as arith
 import sage.matrix.matrix_space as matrix_space
 from sage.matrix.constructor import matrix
 
-from sage.modular.arithgroup.all import Gamma0  # for Sturm bound
-
 
 def is_AmbientHeckeModule(x) -> bool:
     r"""
@@ -488,6 +486,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             sage: ModularForms(59, 2).free_module()
             Vector space of dimension 6 over Rational Field
         """
+        from sage.modular.arithgroup.all import Gamma0
         try:
             return self.__free_module
         except AttributeError:
@@ -518,6 +517,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             15
         """
         from sage.misc.verbose import verbose
+        from sage.modular.arithgroup.all import Gamma0
+
         try:
             if self.is_cuspidal():
                 return Gamma0(self.level()).sturm_bound(self.weight())
