@@ -155,6 +155,20 @@ class Composition(CombinatorialElement):
             [1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0]
             sage: Composition(code=_)
             [4, 1, 2, 3, 5]
+
+        TESTS:
+
+        Let us check that :trac:`14862` is solved::
+
+            sage: C = Compositions()
+            sage: C([3,-1,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: elements must be nonnegative integers
+            sage: C("strawberry")
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert x (=s) to an integer
         """
         if descents is not None:
             if isinstance(descents, tuple):
@@ -168,7 +182,22 @@ class Composition(CombinatorialElement):
         elif isinstance(co, Composition):
             return co
         else:
-            return Compositions()(list(co))
+            return Compositions()(co)
+
+    def __init__(self, parent, lst):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: C = Composition([3,1,2])
+            sage: TestSuite(C).run()
+        """
+        lst = [Integer(u) for u in lst]
+        if not all(u >= 0 for u in lst):
+            raise ValueError("elements must be nonnegative integers")
+        CombinatorialObject.__init__(self, lst)
+        Element.__init__(self, parent)
 
     def _ascii_art_(self):
         """
@@ -1860,7 +1889,8 @@ class Compositions(UniqueRepresentation, Parent):
                 return self.element_class(self, [n])
 
         if n <= d[-1]:
-            raise ValueError("S (=%s) is not a subset of {1, ..., %s}" % (d, n - 1))
+            raise ValueError("S (=%s) is not a subset of {1, ..., %s}"
+                             % (d, n-1))
         else:
             d.append(n)
 
