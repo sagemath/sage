@@ -270,9 +270,9 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: S4 = SymmetricGroup(4)
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: GCISR = GroupCycleIndexSeriesRing(S4)
-            sage: G = GCISR(SymmetricGroup(4).an_element())*sage.combinat.species.library.SimpleGraphSpecies().cycle_index_series()
-            sage: G.derivative()[SymmetricGroup(4).an_element()].coefficients(4)
-            [p[1], 2*p[1, 1] + 2*p[2], 4*p[1, 1, 1] + 6*p[2, 1] + 2*p[3], 32/3*p[1, 1, 1, 1] + 16*p[2, 1, 1] + 8*p[2, 2] + 16/3*p[3, 1] + 4*p[4]]
+            sage: E = GCISR(species.SetSpecies().cycle_index_series())
+            sage: E.derivative()[S4.an_element()].coefficients(6) == E[S4.an_element()].coefficients(6)
+            True
 
         """
         return self.map_coefficients(lambda x: x.derivative())
