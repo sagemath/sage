@@ -173,6 +173,38 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         .. [AGdiss] Andrew Gainer. "`\Gamma`-species, quotients, and graph enumeration". Ph.D. diss. Brandeis University, 2012.
         """
         return 1/self.parent()._group.cardinality() * sum(self.coefficients())
+    
+    def functorial_composition(self, y):
+        """
+        Return the functorial composition of ``self`` with ``y``.
+
+        Functorial composition of group cycle index series is defined componentwise:
+
+        .. MATH::
+          (F \square G) [\gamma] = (F [\gamma]) \square (G [\gamma])
+
+        This operation on $\Gamma$-cycle indices corresponds to the functorial composition
+        operation on $\Gamma$-species.
+
+        EXAMPLES::
+
+            sage: S4 = SymmetricGroup(4)
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GCISR = GroupCycleIndexSeriesRing(S4)
+            sage: E = species.SetSpecies().cycle_index_series()
+            sage: Eg = GCISR(E)
+            sage: Egplus = GCISR(E-1)
+            sage: test = Eg.functorial_composition(Egplus)
+            sage: test[SymmetricGroup(4).an_element()].coefficients(4)
+            [p[], p[1], 1/2*p[1, 1] + 1/2*p[2], 1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3]]
+        """
+
+        parent = self.parent()
+        group = parent._group
+
+        components_dict = { g: self[g].functorial_composition(y[g]) for g in group }
+        res = parent._from_dict(components_dict)
+        return res
 
     def composition(self, y, test_constant_term_is_zero = True):
         """
