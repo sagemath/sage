@@ -22,7 +22,7 @@ Sage can compute Hamming codes
 
 ::
 
-    sage: C = HammingCode(3,GF(3))
+    sage: C = codes.HammingCode(3,GF(3))
     sage: C
     Linear code of length 13, dimension 10 over Finite Field of size 3
     sage: C.minimum_distance()
@@ -46,7 +46,7 @@ the four Golay codes
 
 ::
 
-    sage: C = ExtendedTernaryGolayCode()
+    sage: C = codes.ExtendedTernaryGolayCode()
     sage: C
     Linear code of length 12, dimension 6 over Finite Field of size 3
     sage: C.minimum_distance()
@@ -74,7 +74,7 @@ a check matrix, and the dual code:
 
 ::
 
-    sage: C = HammingCode(3,GF(2))
+    sage: C = codes.HammingCode(3,GF(2))
     sage: Cperp = C.dual_code()
     sage: C; Cperp
     Linear code of length 7, dimension 4 over Finite Field of size 2
@@ -90,7 +90,7 @@ a check matrix, and the dual code:
       [0 0 0 1 1 1 1]
     sage: C.dual_code()
     Linear code of length 7, dimension 3 over Finite Field of size 2
-    sage: C = HammingCode(3,GF(4,'a'))
+    sage: C = codes.HammingCode(3,GF(4,'a'))
     sage: C.dual_code()
     Linear code of length 21, dimension 3 over Finite Field in a of size 2^2
 
@@ -102,7 +102,7 @@ implemented.
 
 ::
 
-    sage: C = HammingCode(3,GF(2))
+    sage: C = codes.HammingCode(3,GF(2))
     sage: MS = MatrixSpace(GF(2),1,7)
     sage: F = GF(2); a = F.gen()
     sage: v1 = [a,a,F(0),a,a,F(0),a]
@@ -120,7 +120,7 @@ can use the matplotlib package included with Sage:
 
 ::
 
-    sage: C = HammingCode(4,GF(2))
+    sage: C = codes.HammingCode(4,GF(2))
     sage: C
      Linear code of length 15, dimension 11 over Finite Field of size 2
     sage: w = C.weight_distribution(); w

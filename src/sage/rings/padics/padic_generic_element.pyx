@@ -35,8 +35,6 @@ from sage.rings.padics.local_generic_element cimport LocalGenericElement
 from sage.rings.rational cimport Rational
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
-from sage.libs.pari.gen import pari
-from sage.libs.pari.gen import PariError
 import sage.rings.rational_field
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
@@ -1840,9 +1838,11 @@ cdef class pAdicGenericElement(LocalGenericElement):
         # whose square root is a real number....!
         if self.valuation() is infinity:
             return self
+
+        from sage.libs.pari.all import PariError
         try:
             # use pari
-            ans = self.parent()(pari(self).sqrt())
+            ans = self.parent()(self._pari_().sqrt())
             if all:
                 return [ans, -ans]
             else:

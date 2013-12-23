@@ -15,7 +15,6 @@ cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
 from sage.rings.arith import prime_divisors
 from sage.misc.all import walltime, cputime
-from sage.libs.pari.gen import pari
 from sage.all import ntl
 
 from sage.rings.integer cimport Integer
@@ -1247,6 +1246,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
                 p_list_len += 1
     else:
         # Factor more slowly using Pari via Python.
+        from sage.libs.pari.all import pari
         d = Integer(0)
         mpz_set(d.value, d_mpz)
         primes = list(pari(d).factor()[0])

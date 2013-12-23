@@ -15,10 +15,8 @@ from sage.rings.rational cimport Rational
 cimport sage.rings.padics.pow_computer
 from sage.rings.padics.pow_computer cimport PowComputer_class
 
-#import sage.libs.pari.gen
-cimport sage.libs.pari.gen
 from sage.libs.pari.gen cimport gen as pari_gen
-from sage.libs.pari.gen cimport PariInstance
+from sage.libs.pari.pari_instance cimport PariInstance
 
 cdef class pAdicCappedRelativeElement(pAdicBaseGenericElement):
     cdef mpz_t unit    #An exact zero is indicated by unit < 0

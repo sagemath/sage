@@ -2189,6 +2189,33 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         from sage.schemes.toric.morphism import SchemeMorphism_polynomial_toric_variety
         return SchemeMorphism_polynomial_toric_variety(*args, **kwds)
 
+    def _point_homset(self, *args, **kwds):
+        r"""
+        Construct a Hom-set for ``self``.
+
+        INPUT:
+
+        - same as for
+          :class:`~sage.schemes.generic.homset.SchemeHomset_points_toric_field`.
+
+        OUPUT:
+
+        :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
+
+        TESTS::
+
+            sage: P2.<x,y,z> = toric_varieties.P2()
+            sage: quadric = P2.subscheme([x^2 + y^2 + z^2])
+            sage: quadric._point_homset(Spec(QQ), quadric)
+            Set of rational points of Closed subscheme of 2-d CPR-Fano
+            toric variety covered by 3 affine patches defined by:
+              x^2 + y^2 + z^2
+            sage: type(quadric.point_set())
+            <class 'sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field_with_category'>
+        """
+        from sage.schemes.toric.homset import SchemeHomset_points_subscheme_toric_field
+        return SchemeHomset_points_subscheme_toric_field(*args, **kwds)
+
     def fan(self):
         """
         Return the fan of the ambient space.

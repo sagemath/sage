@@ -4,7 +4,7 @@
  * Date:    March 2006
  * License: GPL v2 or later
  *
- * the code to change the base to 2^SHIFT is based on the function
+ * the code to change the base to 2^PyLong_SHIFT is based on the function
  * mpn_get_str from GNU MP, but the new bugs are mine
  *
  * this is free software: if it breaks, you get to keep all the pieces
@@ -12,8 +12,8 @@
 
 #include "mpn_pylong.h"
 
-/* This code assumes that SHIFT < GMP_NUMB_BITS */
-#if SHIFT >= GMP_NUMB_BITS
+/* This code assumes that PyLong_SHIFT < GMP_NUMB_BITS */
+#if PyLong_SHIFT >= GMP_NUMB_BITS
 #error "Python limb larger than GMP limb !!!"
 #endif
 
@@ -61,15 +61,15 @@ pylong_sizebits(digit *digits, py_size_t size) {
   unsigned long cnt;
   digit x;
   if (size==0) return 0;
-  cnt = (size - 1) * SHIFT;
+  cnt = (size - 1) * PyLong_SHIFT;
   x = digits[size - 1];
-#if SHIFT > 32
+#if PyLong_SHIFT > 32
   if ((x >> 32) != 0) { x >>= 32; cnt += 32; }
 #endif
-#if SHIFT > 16
+#if PyLong_SHIFT > 16
   if ((x >> 16) != 0) { x >>= 16; cnt += 16; }
 #endif
-#if SHIFT > 8
+#if PyLong_SHIFT > 8
   if ((x >>  8) != 0) { x >>=  8; cnt += 8; }
 #endif
   return cnt + ((x & 0x80) ? 8 : __sizebits_tab[x]);
@@ -81,7 +81,7 @@ pylong_sizebits(digit *digits, py_size_t size) {
 int
 mpn_pylong_size (mp_ptr up, mp_size_t un)
 {
-  return (mpn_sizebits(up, un) + SHIFT - 1) / SHIFT;
+  return (mpn_sizebits(up, un) + PyLong_SHIFT - 1) / PyLong_SHIFT;
 }
 
 /* this is based from GMP code in mpn/get_str.c */
@@ -106,19 +106,19 @@ mpn_get_pylong (digit *digits, py_size_t size, mp_ptr up, mp_size_t un)
 
   i = un - 1;
   n1 = up[i];
-  bit_pos = size * SHIFT - i * GMP_NUMB_BITS;
+  bit_pos = size * PyLong_SHIFT - i * GMP_NUMB_BITS;
 
   for (;;)
     {
-      bit_pos -= SHIFT;
+      bit_pos -= PyLong_SHIFT;
       while (bit_pos >= 0)
         {
-          *--s = (n1 >> bit_pos) & MASK;
-          bit_pos -= SHIFT;
+          *--s = (n1 >> bit_pos) & PyLong_MASK;
+          bit_pos -= PyLong_SHIFT;
         }
       if (i == 0)
         break;
-      n0 = (n1 << -bit_pos) & MASK;
+      n0 = (n1 << -bit_pos) & PyLong_MASK;
       n1 = up[--i];
       bit_pos += GMP_NUMB_BITS;
       *--s = n0 | (n1 >> bit_pos);
@@ -150,22 +150,22 @@ mpn_set_pylong (mp_ptr up, mp_size_t un, digit *digits, py_size_t size)
 
   i = un - 1;
   n1 = 0;
-  bit_pos = size * SHIFT - i * GMP_NUMB_BITS;
+  bit_pos = size * PyLong_SHIFT - i * GMP_NUMB_BITS;
 
   for (;;)
     {
-      bit_pos -= SHIFT;
+      bit_pos -= PyLong_SHIFT;
       while (bit_pos >= 0)
         {
           d = (mp_limb_t) *--s;
           n1 |= (d << bit_pos) & GMP_NUMB_MASK;
-          bit_pos -= SHIFT;
+          bit_pos -= PyLong_SHIFT;
         }
       if (i == 0)
         break;
       d = (mp_limb_t) *--s;
-      /* add some high bits of d; maybe none if bit_pos=-SHIFT */
-      up[i--] = n1 | (d & MASK) >> -bit_pos;
+      /* add some high bits of d; maybe none if bit_pos=-PyLong_SHIFT */
+      up[i--] = n1 | (d & PyLong_MASK) >> -bit_pos;
       bit_pos += GMP_NUMB_BITS;
       n1 = (d << bit_pos) & GMP_NUMB_MASK;
     }

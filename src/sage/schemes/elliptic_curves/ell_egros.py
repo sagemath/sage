@@ -30,9 +30,9 @@ points (and hence the final output) is not guaranteed to be complete.
 Using the "proof=False" flag suppresses these warnings.
 
 EXAMPLES: We find all elliptic curves with good reduction outside 2,
-listing the label of each:
+listing the label of each::
 
-    sage: [e.label() for e in EllipticCurves_with_good_reduction_outside_S([2])]
+    sage: [e.label() for e in EllipticCurves_with_good_reduction_outside_S([2])]  # long time (5s on sage.math, 2013)
     ['32a1',
     '32a2',
     '32a3',
@@ -217,7 +217,7 @@ def egros_from_j_0(S=[]):
         []
         sage: [e.label() for e in egros_from_j_0([3])]
         ['27a1', '27a3', '243a1', '243a2', '243b1', '243b2']
-        sage: len(egros_from_j_0([2,3,5]))
+        sage: len(egros_from_j_0([2,3,5]))  # long time (8s on sage.math, 2013)
         432
     """
     Elist=[]
@@ -368,9 +368,9 @@ def egros_get_j(S=[], proof=None, verbose=False):
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_get_j
         sage: egros_get_j([])
         [1728]
-        sage: egros_get_j([2])
+        sage: egros_get_j([2])  # long time (3s on sage.math, 2013)
         [128, 432, -864, 1728, 3375/2, -3456, 6912, 8000, 10976, -35937/4, 287496, -784446336, -189613868625/128]
-        sage: egros_get_j([3])
+        sage: egros_get_j([3])  # long time (3s on sage.math, 2013)
         [0, -576, 1536, 1728, -5184, -13824, 21952/9, -41472, 140608/3, -12288000]
         sage: jlist=egros_get_j([2,3]); len(jlist) # long time (30s)
         83

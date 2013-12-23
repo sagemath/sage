@@ -989,14 +989,17 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def factor_padic(self, p, prec=10):
         """
-        Return p-adic factorization of self to given precision.
+        Return `p`-adic factorization of self to given precision.
 
         INPUT:
 
         - ``p`` -- prime
+
         - ``prec`` -- integer; the precision
 
-        OUTPUT: factorization of self reduced modulo p.
+        OUTPUT:
+
+        - factorization of ``self`` over the completion at `p`.
 
         EXAMPLES::
 
@@ -1005,18 +1008,27 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f.factor_padic(5, 4)
             ((1 + O(5^4))*x + (2 + 5 + 2*5^2 + 5^3 + O(5^4))) * ((1 + O(5^4))*x + (3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4)))
 
+        A more difficult example::
+
+            sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
+            sage: f.factor_padic(5, 10)
+            (4 + O(5^10)) * ((5 + O(5^11)))^2 * ((1 + O(5^10))*x + (5 + O(5^10)))^2 * ((5 + O(5^10))*x + (1 + O(5^10)))^2
+
         """
         from sage.rings.padics.factory import Zp
-        p = Integer(p)
-        if not p.is_prime():
-            raise ValueError, "p must be prime"
-        prec = Integer(prec)
-        if prec <= 0:
-            raise ValueError, "prec must be positive"
-        K = Zp(p, prec, type='capped-abs')
-        R = K[self.parent().variable_name()]
-        return R(self).factor()
 
+        p = Integer(p)
+        prec = Integer(prec)
+
+        # Parent field for coefficients and polynomial
+        K = Zp(p, prec, type='capped-rel')
+        R = K[self.parent().variable_name()]
+
+        # Factor the *exact* polynomial using factorpadic()
+        G = self._pari_with_name().factorpadic(p, prec)
+
+        from sage.rings.polynomial.padics.polynomial_padic import _pari_padic_factorization_to_sage
+        return _pari_padic_factorization_to_sage(G, R, self.leading_coefficient())
 
     def list(self):
         """

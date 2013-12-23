@@ -1864,7 +1864,7 @@ class SimplicialComplex(GenericCellComplex):
             {0: 0, 1: 0, 2: Z}
         """
         from sage.modules.all import VectorSpace
-        from sage.homology.chain_complex import HomologyGroup
+        from sage.homology.homology_group import HomologyGroup
 
         base_ring = kwds.get('base_ring', ZZ)
         cohomology = kwds.get('cohomology', False)
@@ -1920,29 +1920,13 @@ class SimplicialComplex(GenericCellComplex):
         if 'subcomplex' in kwds:
             del kwds['subcomplex']
         answer = C.homology(**kwds)
-        if isinstance(answer, dict):
-            if cohomology:
-                too_big = self.dimension() + 1
-                if (not ((isinstance(dim, (list, tuple)) and too_big in dim)
-                        or too_big == dim)
-                    and too_big in answer):
-                    del answer[too_big]
-            if -2 in answer:
-                del answer[-2]
-            if -1 in answer:
-                del answer[-1]
-            if dim is not None:
-                if isinstance(dim, (list, tuple)):
-                    temp = {}
-                    for n in dim:
-                        temp[n] = answer[n]
-                    answer = temp
-                else:  # just a single dimension
-                    if base_ring == ZZ:
-                        answer = answer.get(dim, HomologyGroup(0))
-                    else:
-                        answer = answer.get(dim, VectorSpace(base_ring, 0))
-        return answer
+
+        if dim is None:
+            dim = range(self.dimension()+1)
+        zero = HomologyGroup(0, base_ring)
+        if isinstance(dim, (list, tuple)):
+            return dict([d, answer.get(d, zero)] for d in dim)
+        return answer.get(dim, zero)
 
     def add_face(self, face):
         """

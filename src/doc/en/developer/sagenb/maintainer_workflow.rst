@@ -1,7 +1,7 @@
 .. _maintainer-workflow:
 
 ###################
-Maintainer workflow
+Maintainer Workflow
 ###################
 
 This page is for maintainers |emdash| those of us who merge our own or other
@@ -20,7 +20,7 @@ it's a read-write remote::
     git fetch upstream-rw
 
 *******************
-Integrating changes
+Integrating Changes
 *******************
 
 Let's say you have some changes that need to go into trunk
@@ -37,7 +37,7 @@ looking at someone's changes like this::
 So now you are on the branch with the changes to be incorporated upstream.  The
 rest of this section assumes you are on this branch.
 
-A few commits
+A Few Commits
 =============
 
 If there are only a few commits, consider rebasing to upstream::
@@ -51,7 +51,7 @@ Remember that, if you do a rebase, and push that, you'll have to close any
 github pull requests manually, because github will not be able to detect the
 changes have already been merged.
 
-A long series of commits
+A Long Series of Commits
 ========================
 
 If there are a longer series of related commits, consider a merge instead::
@@ -67,7 +67,7 @@ doing a fast-forward, so that these set of commits branch off trunk then rejoin
 the main history with a merge, rather than appearing to have been made directly
 on top of trunk.
 
-Check the history
+Check the History
 =================
 
 Now, in either case, you should check that the history is sensible and you have

@@ -76,14 +76,17 @@ cdef int _pari_handle_exception(long err) except 0:
         PariError: division by zero
 
     """
-    from sage.libs.pari.gen import pari, PariError
     if err == errpile:
+        # PARI is out of memory.  We double the size of the PARI stack
+        # and retry the computation.
+        from sage.libs.pari.all import pari
         pari.allocatemem(silent=True)
         return 0
 
     if err == user:
         raise RuntimeError("PARI user exception\n%s" % pari_error_string)
     else:
+        from sage.libs.pari.all import PariError
         raise PariError(err, pari_error_string)
 
 cdef void _pari_err_recover(long err):
@@ -97,8 +100,8 @@ cdef void _pari_err_recover(long err):
     Perform a computation that requires doubling the default stack
     several times::
 
-        sage: from sage.libs.pari.gen import init_pari_stack
-        sage: init_pari_stack(2^12)
+        sage: pari.allocatemem(2^12)
+        PARI stack size set to 4096 bytes
         sage: x = pari('2^(2^26)')
         sage: x == 2^(2^26)
         True

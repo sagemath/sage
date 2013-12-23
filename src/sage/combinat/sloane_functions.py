@@ -305,7 +305,6 @@ class SloaneSequence(SageObject):
 import sage.rings.arith as arith
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
-from sage.libs.pari.gen import pari
 from sage.combinat import combinat
 from sage.misc.misc import prod
 import sage.interfaces.gap as gap
@@ -7412,6 +7411,7 @@ class A001694(SloaneSequence):
         if n < 4:
             n = 4
         # Use PARI directly -- much faster.
+        from sage.libs.pari.all import pari
         L = pari('v=listcreate(); for(i=%s,%s,if(vecmin(factor(i)[,2])>1,listput(v,i))); v'%(n,m))
         return [ZZ(x) for x in L]  # not very many, so not much overhead
 

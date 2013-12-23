@@ -4,9 +4,9 @@
 ### Sanity check
 ######################################################################
 
-if [ "$SAGE_LOCAL" = "" ]; then
-    echo "SAGE_LOCAL undefined ... exiting"
-    echo "Maybe run sage -sh?"
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
+    echo >&2 "Maybe run 'sage -sh'?"
     exit 1
 fi
 
@@ -14,16 +14,13 @@ fi
 ### Skip building ATLAS on specific systems
 ######################################################################
 
-if [ `uname` = "CYGWIN" ]; then
+if [ "$UNAME" = "Darwin" -a -z "$SAGE_ATLAS_ARCH" ]; then
+    echo "System-wide accelerate framework is used on Darwin; skipping ATLAS test suite."
     exit 0
 fi
 
-if [ `uname` = "Darwin" ]; then
-    exit 0
-fi
-
-if [ "x$SAGE_ATLAS_LIB" != "x" ]; then
-    echo "SAGE_ATLAS_LIB is set to \"$SAGE_ATLAS_LIB\"; skipping the test suite."
+if [ ! -z "$SAGE_ATLAS_LIB" ]; then
+    echo "SAGE_ATLAS_LIB is set to \"$SAGE_ATLAS_LIB\"; skipping ATLAS test suite."
     exit 0
 fi
 
@@ -35,32 +32,28 @@ fi
 make_check()
 {
     # make sure everything builds correctly
-    cd ATLAS-build
-    make check
-        if [ $? -ne 0 ]; then
-            echo "An error occurred when running the ATLAS self-tests."
-            exit 1
-        else
-            echo "The ATLAS self-tests successfully passed."
-        fi
-    cd ..
+    $MAKE check
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: The ATLAS self-tests failed."
+        exit 1
+    else
+        echo "The ATLAS self-tests successfully passed."
+    fi
 }
 
 
 make_time()
 {
     # collect some timings
-    cd ATLAS-build
-    make time
-        if [ $? -ne 0 ]; then
-            echo "The ATLAS timing data failed to be collected."
-            exit 1
-        else
-            echo "The ATLAS timing data was successfully collected."
-        fi
-    cd ..
+    $MAKE time
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: The ATLAS timing data failed to be collected."
+        exit 1
+    else
+        echo "The ATLAS timing data was successfully collected."
+    fi
 }
 
-
+cd src/ATLAS-build
 make_check
 make_time

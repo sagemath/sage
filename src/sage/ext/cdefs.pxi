@@ -3,7 +3,7 @@
 #
 
 from libc.stdio cimport *
-from libc.string cimport strlen, strcpy, memset, memcpy
+from libc.string cimport strlen, strcpy, memset, memcpy, memcmp
 
 from libc.math cimport sqrt, frexp, ldexp
 

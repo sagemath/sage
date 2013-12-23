@@ -33,9 +33,7 @@ def kSchurFunctions(R, k, t=None):
         doctest:1: DeprecationWarning: Deprecation warning: Please use SymmetricFunctions(QQ).kschur() instead!
         See http://trac.sagemath.org/5457 for details.
         k-Schur Functions at level 3 over Univariate Polynomial Ring in t over Rational Field
-        sage: s = SFASchur(ks3.base_ring()) # Allow 't' coefficients for the Schurs.
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).schur()
-        See http://trac.sagemath.org/5457 for details.
+        sage: s = SymmetricFunctions(ks3.base_ring()).schur() # Allow 't' coefficients for the Schurs.
 
         sage: t = ks3.t # Allow 't' as input
         sage: s(ks3([3,2,1]))
@@ -99,7 +97,7 @@ def kSchurFunctions(R, k, t=None):
 
         sage: ks3 = kSchurFunctions(QQ, 3, 1); ks3
         k-Schur Functions at level 3 with t=1 over Rational Field
-        sage: s = SFASchur(ks3.base_ring())
+        sage: s = SymmetricFunctions(ks3.base_ring()).schur()
         sage: ks3(s([3]))
         ks3[3]
         sage: s(ks3([3,2,1]))
@@ -143,7 +141,7 @@ class kSchurFunctions_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         orig = el
         P = el.parent()
-        zero = self.base_ring()(0)
+        zero = self.base_ring().zero()
         out = {}
         while not el.is_zero():
             l = el.support()
@@ -265,9 +263,7 @@ class kSchurFunctions_t(kSchurFunctions_generic):
             sage: ks3 = kSchurFunctions(QQ, 3)
             doctest:1: DeprecationWarning: Deprecation warning: Please use SymmetricFunctions(QQ).kschur() instead!
             See http://trac.sagemath.org/5457 for details.
-            sage: s = SFASchur(ks3.base_ring())
-            doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).schur()
-            See http://trac.sagemath.org/5457 for details.
+            sage: s = SymmetricFunctions(ks3.base_ring()).schur()
             sage: ks3._s_to_self(s[2, 1, 1] + ks3.t*s[3, 1])
             ks3[2, 1, 1]
             sage: ks3._s_to_self(s[2, 1, 1])
@@ -297,9 +293,7 @@ class kSchurFunctions_t(kSchurFunctions_generic):
             sage: ks3 = kSchurFunctions(QQ, 3)
             doctest:1: DeprecationWarning: Deprecation warning: Please use SymmetricFunctions(QQ).kschur() instead!
             See http://trac.sagemath.org/5457 for details.
-            sage: s = SFASchur(ks3.base_ring())
-            doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).schur()
-            See http://trac.sagemath.org/5457 for details.
+            sage: s = SymmetricFunctions(ks3.base_ring()).schur()
             sage: ks3._self_to_s(ks3[2,1,1])
             s[2, 1, 1] + t*s[3, 1]
 
@@ -319,9 +313,7 @@ class kSchurFunctions_t(kSchurFunctions_generic):
             sage: ks3 = kSchurFunctions(QQ, 3)
             doctest:1: DeprecationWarning: Deprecation warning: Please use SymmetricFunctions(QQ).kschur() instead!
             See http://trac.sagemath.org/5457 for details.
-            sage: s = SFASchur(ks3.base_ring())
-            doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).schur()
-            See http://trac.sagemath.org/5457 for details.
+            sage: s = SymmetricFunctions(ks3.base_ring()).schur()
             sage: ks3([3,3,2,1]) # indirect doctest
             ks3[3, 3, 2, 1]
             sage: ks3([4,3,2,1]) # indirect doctest
@@ -338,9 +330,9 @@ class kSchurFunctions_t(kSchurFunctions_generic):
         pass
         if x in sage.combinat.partition.Partitions():
             if len(x) > 0 and max(x) > self.k:
-                return self(0)
+                return self.zero()
             x = sage.combinat.partition.Partition(x)
-            return self._from_dict({x:self.base_ring()(1)})
+            return self._from_dict({x:self.base_ring().one()})
 
 
     def _s_cache(self, n):
@@ -364,11 +356,11 @@ class kSchurFunctions_t(kSchurFunctions_generic):
         R = self.base_ring()
         t = self.t
         s = self._s
-        zero = s(0)
+        zero = s.zero()
 
         if n == 0:
             p = sage.combinat.partition.Partition([])
-            self._self_to_s_cache[0] = {p: {p:R(1)}}
+            self._self_to_s_cache[0] = {p: {p:R.one()}}
             return
         else:
             self._self_to_s_cache[n] = {}

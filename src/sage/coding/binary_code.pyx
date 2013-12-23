@@ -73,7 +73,6 @@ cdef int *hamming_weights():
         ham_wts[i] = ham_wts[i & 255] + ham_wts[(i>>8) & 255]
     return ham_wts
 
-include 'sage/misc/bitset_pxd.pxi'
 include 'sage/misc/bitset.pxi'
 def weight_dist(M):
     """
@@ -1086,7 +1085,7 @@ cdef class BinaryCode:
 
         EXAMPLE:
             sage: from sage.coding.binary_code import *
-            sage: B = BinaryCode(ExtendedBinaryGolayCode().gen_mat())
+            sage: B = BinaryCode(codes.ExtendedBinaryGolayCode().gen_mat())
             sage: B
             Binary [24,12] linear code, generator matrix
             [100000000000101011100011]
@@ -3820,7 +3819,7 @@ cdef class BinaryCodeClassifier:
         EXAMPLE:
             sage: from sage.coding.binary_code import *
             sage: BC = BinaryCodeClassifier()
-            sage: B = BinaryCode(ExtendedBinaryGolayCode().gen_mat())
+            sage: B = BinaryCode(codes.ExtendedBinaryGolayCode().gen_mat())
             sage: B.apply_permutation(range(24,-1,-1))
             sage: B
             Binary [24,12] linear code, generator matrix

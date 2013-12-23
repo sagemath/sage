@@ -1,15 +1,17 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 for upstream in $SAGE_ROOT/upstream/*.tar*
 do
     tarball=`basename "$upstream"`
     pkg_name=${tarball%-*}
+    pkg_compression=${tarball#*.tar.}   # gz or bz2
     if [ -e "$SAGE_ROOT/build/pkgs/$pkg_name" ]; then
         sage_version=`cat "$SAGE_ROOT/build/pkgs/$pkg_name/package-version.txt" | sed 's/\.p[0-9][0-9]*$//'`
         if [ ${tarball%.tar*} = "$pkg_name-$sage_version" ]; then
             echo $tarball
             checksums="$SAGE_ROOT/build/pkgs/$pkg_name/checksums.ini"
-            echo -n "sha1=" > $checksums
+            echo "tarball=$pkg_name-VERSION.tar.$pkg_compression" > $checksums
+            echo -n "sha1=" >> $checksums
             shasum -a 1 $upstream | sed 's/ .*//' >> $checksums
             echo -n "md5=" >> $checksums
             if command -v md5 > /dev/null; then

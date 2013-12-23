@@ -138,8 +138,9 @@ import sage.misc.weak_dict
 
 import operator
 
-from sage.libs.pari.gen import PariInstance, gen
-from sage.libs.pari.gen cimport PariInstance, gen
+import sage.libs.pari.pari_instance
+from sage.libs.pari.gen cimport gen
+from sage.libs.pari.pari_instance cimport PariInstance
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 
@@ -3042,8 +3043,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             mpz_export(&pari_float[2], NULL, 1, wordsize/8, 0, 0, mantissa)
             mpz_clear(mantissa)
 
-        cdef PariInstance P
-        P = sage.libs.pari.all.pari
+        cdef PariInstance P = sage.libs.pari.pari_instance.pari
         return P.new_gen(pari_float)
 
     def _mpmath_(self, prec=None, rounding=None):

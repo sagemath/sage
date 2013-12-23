@@ -7,6 +7,8 @@
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
+# distutils: libraries = gsl
+
 cdef extern from "pynac_cc.h":
     long double sage_logl(long double)
     long double sage_sqrtl(long double)

@@ -929,20 +929,42 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             p-adic heights
 
-            add heights to integer.pyx and remove special case
         """
-        if self.domain().base_ring() == ZZ:
-            if prec is None:
-                R = RealField()
-            else:
-                R = RealField(prec)
-            H=R(0)
-            return(R(max([self[i].abs() for i in range(self.codomain().ambient_space().dimension_relative()+1)])).log())
         if self.domain().base_ring() in _NumberFields or is_NumberFieldOrder(self.domain().base_ring()):
             return(max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative()+1)]))
         else:
             raise NotImplementedError("Must be over a Numberfield or a Numberfield Order")
 
+
+    def multiplier(self,f,n,check=True):
+        r"""
+        Returns the multiplier of the projective point ``self`` of period `n` by the function `f`.
+        `f` must be an endomorphism of projective space
+
+        INPUT:
+
+        - ``f`` - a endomorphism of ``self.codomain()``
+
+        - ``n`` - a positive integer, the period of ``self``
+
+        - ``check`` -- check if ``P`` is periodic of period ``n``, Default:True
+
+        OUTPUT:
+
+        - a square matrix of size ``self.codomain().dimension_relative()`` in the ``base_ring`` of ``self``
+
+        EXAMPLES::
+
+            sage: P.<x,y,z,w>=ProjectiveSpace(QQ,3)
+            sage: H=Hom(P,P)
+            sage: f=H([x^2,y^2,4*w^2,4*z^2]);
+            sage: Q=P.point([4,4,1,1],False);
+            sage: Q.multiplier(f,1)
+            [ 2  0 -8]
+            [ 0  2 -8]
+            [ 0  0 -2]
+        """
+        return(f.multiplier(self,n,check))
 
 class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring):
     """

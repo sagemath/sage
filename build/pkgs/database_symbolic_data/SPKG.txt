@@ -1,0 +1,45 @@
+= database_symbolic_data =
+
+== Description ==
+
+The SymbolicData project is set out
+
+* to develop concepts and tools for profiling, testing and benchmarking Computer Algebra Software
+   (CAS) and
+* to collect and interlink relevant data and activities from different Computer Algebra Communities.
+
+SymbolicData is an
+
+* inter-community project that has its roots in the activities of different Computer Algebra Communities and
+* aims at interlinking these activities using modern Semantic Web concepts.
+
+Tools and data are designed to be used both
+
+* on a local site for special testing and profiling purposes
+* and to manage a central repository at www.symbolicdata.org.
+
+== License ==
+
+GNU General Public License
+
+== SPKG Maintainers ==
+
+* Martin Albrecht
+
+== Upstream Contact ==
+
+* Andreas Nareike <nareike@informatik.uni-leipzig.de>
+
+== Dependencies ==
+
+== Special Update/Build Instructions ==
+
+List patches that need to be applied and what they do
+
+== Changelog ==
+
+=== database_symbolic_data-20070206 (Martin Albrecht, 8 Oct 2013) ===
+
+ * SPKG.txt added
+ * adapted to new git workflow
+ 

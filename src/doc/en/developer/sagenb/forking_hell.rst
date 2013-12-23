@@ -1,7 +1,7 @@
 .. _forking:
 
 ======================================================
-Making your own copy (fork) of Sage Notebook
+Making Your Own Copy (Fork) of Sage Notebook
 ======================================================
 
 You need to do this only once.  The instructions here are very similar
@@ -9,7 +9,7 @@ to the instructions at http://help.github.com/forking/ |emdash| please see
 that page for more detail.  We're repeating some of it here just to give the
 specifics for the `Sage Notebook`_ project, and to suggest some default names.
 
-Set up and configure a github account
+Set Up and Configure a Github Account
 =====================================
 
 If you don't have a github account, go to the github page, and make one.
@@ -17,7 +17,7 @@ If you don't have a github account, go to the github page, and make one.
 You then need to configure your account to allow write access |emdash| see
 the ``Generating SSH keys`` help on `github help`_.
 
-Create your own forked copy of `Sage Notebook`_
+Create Your Own Forked Copy of `Sage Notebook`_
 ======================================================
 
 #. Log into your github account.

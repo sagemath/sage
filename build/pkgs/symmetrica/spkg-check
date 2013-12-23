@@ -36,7 +36,7 @@ cat <<EOF > spkg-check.expected
  960000.000000.000000.000000.000000
 EOF
 
-if ! diff spkg-check.actual spkg-check.expected; then
+if ! diff -b spkg-check.actual spkg-check.expected; then
     echo >&2 "Error: The Symmetrica check failed."
     exit 1
 fi

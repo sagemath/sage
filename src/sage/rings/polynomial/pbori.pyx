@@ -295,19 +295,13 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
 
     ::
 
-        sage: R = BooleanPolynomialRing(3,'x',order='degrevlex')
+        sage: R = BooleanPolynomialRing(3,'x',order='deglex')
         sage: R.term_order()
-        Degree reverse lexicographic term order
+        Degree lexicographic term order
 
     TESTS::
 
-        sage: P.<x,y> = BooleanPolynomialRing(2,order='degrevlex')
-        sage: x > y
-        True
-
-    ::
-
-        sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4,order='degrevlex(2),degrevlex(2)')
+        sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4,order='deglex(2),deglex(2)')
         sage: x0 > x1
         True
         sage: x2 > x3
@@ -378,9 +372,14 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
             raise ValueError, "Only order keys " + \
                   ', '.join(order_mapping.keys()) + " are supported."
 
+
+        if pb_order_code in (pbdp, pbblock_dp):
+            from sage.misc.superseded import deprecation
+            deprecation(13849, "using 'degrevlex' in Boolean polynomial rings is deprecated. If needed, reverse the order of variables manually and use 'degneglex'")
+
         if order.is_block_order():
             if pb_order_code is pblp:
-                raise ValueError, "Only deglex and degrevlex are supported for block orders."
+                raise ValueError, "Only deglex and degneglex are supported for block orders."
             elif pb_order_code is pbdlex:
                 pb_order_code = pbblock_dlex
             elif pb_order_code is pbdp_asc:
@@ -390,7 +389,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
             for i in range(1, len(order.blocks())):
                 if order[0].name() != order[i].name():
                     raise ValueError, "Each block must have the same order " + \
-                          "type (deglex, degneglex or degrevlex) for block orders."
+                          "type (deglex and degneglex) for block orders."
 
         if pb_order_code is pbdp:
             for i from 0 <= i < n:
@@ -505,7 +504,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
 
         TESTS::
 
-            sage: P.<x,y,z> = BooleanPolynomialRing(3, order='dp')
+            sage: P.<x,y,z> = BooleanPolynomialRing(3, order='deglex')
             sage: P.gen(0)
             x
         """
@@ -535,11 +534,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
             sage: P.gens()
             (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)
 
-        TESTS::
-
-            sage: P.<x,y,z> = BooleanPolynomialRing(3,order='degrevlex')
-            sage: P.gens()
-            (x, y, z)
         """
         return tuple([new_BP_from_PBVar(self,
             self._pbring.variable(self.pbind[i])) \
@@ -759,15 +753,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
             sage: P(x)
             x
 
-        Test conversion between 'degrevlex' and 'lex'::
-
-            sage: B.<a,b,c> = BooleanPolynomialRing(order='lex')
-            sage: P.<a,b,c> = BooleanPolynomialRing(order='degrevlex')
-            sage: B(P('a'))
-            a
-            sage: P(B('a'))
-            a
-
         Test that #10797 is really fixed::
 
             sage: B.<a,b,c,d,e,f> = BooleanPolynomialRing()
@@ -905,13 +890,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
             sage: p = x^3+2*x^2+x+1
             sage: P(p)
             x
-
-        Check that trac ticket #13202 is fixed:
-
-            sage: B.<a,b,c,d> = BooleanPolynomialRing(order='degrevlex')
-            sage: P.<c,d> = BooleanPolynomialRing(order='lex')
-            sage: P(B(c))
-            c
         """
         cdef int i
 
@@ -1594,7 +1572,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
 
         TESTS::
 
-            sage: P.<x,y,z> = BooleanPolynomialRing(3, order='dp')
+            sage: P.<x,y,z> = BooleanPolynomialRing(3, order='deglex')
             sage: P.variable(0)
             x
         """
@@ -1810,13 +1788,6 @@ def get_var_mapping(ring, other):
         [z, x]
         sage: sage.rings.polynomial.pbori.get_var_mapping(P, x^2)
         [None, x]
-
-    Check that ticket #13202 is fixed::
-
-        sage: B.<a,b,c,d> = BooleanPolynomialRing(order='degrevlex')
-        sage: P.<c,d> = BooleanPolynomialRing(order='lex')
-        sage: sage.rings.polynomial.pbori.get_var_mapping(B, P)
-        [c, d]
     """
 
     my_names = list(ring._names) # we need .index(.)
@@ -3205,10 +3176,10 @@ cdef class BooleanPolynomial(MPolynomial):
 
         ::
 
-            sage: P.<x,y,z> = BooleanPolynomialRing(3, order='degrevlex')
+            sage: P.<x,y,z> = BooleanPolynomialRing(3, order='deglex')
             sage: p = x + z + x*y + y*z + x*y*z
             sage: list(iter(p))
-            [z*y*x, y*x, z*y, x, z]
+            [x*y*z, x*y, y*z, x, z]
 
         TESTS::
 
@@ -3868,10 +3839,10 @@ cdef class BooleanPolynomial(MPolynomial):
 
         ::
 
-            sage: P.<a,b,c> = BooleanPolynomialRing(3,order='degrevlex')
+            sage: P.<a,b,c> = BooleanPolynomialRing(3,order='deglex')
             sage: f = a + c*b
             sage: f.monomials()
-            [c*b, a]
+            [b*c, a]
             sage: P.zero().monomials()
             []
         """
@@ -3907,10 +3878,10 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: f.terms()
             [a, b*c]
 
-            sage: P.<a,b,c> = BooleanPolynomialRing(3,order='degrevlex')
+            sage: P.<a,b,c> = BooleanPolynomialRing(3,order='deglex')
             sage: f = a + c*b
             sage: f.terms()
-            [c*b, a]
+            [b*c, a]
         """
         return list(self)
 
@@ -4491,7 +4462,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         EXAMPLE::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing(4,order='degrevlex')
+            sage: B.<a,b,c,d> = BooleanPolynomialRing(4,order='deglex')
             sage: f = (a*b + 1)*(c + 1)
             sage: f.reducible_by(d)
             False
@@ -5109,10 +5080,10 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         EXAMPLES::
 
-            sage: B.<x,y,z> = BooleanPolynomialRing(order='degrevlex')
+            sage: B.<x,y,z> = BooleanPolynomialRing(order='deglex')
             sage: id = B.ideal((x + y)*(y + z), x*y*z)
             sage: id._groebner_basis()
-            [z*x, y*x + z*y + y]
+            [x*z, x*y + y*z + y]
 
             sage: B.<x,y,z> = BooleanPolynomialRing(order='deglex')
             sage: id = B.ideal((x + y)*(y + z), x*y*z)

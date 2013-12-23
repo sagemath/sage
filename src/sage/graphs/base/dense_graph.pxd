@@ -8,7 +8,6 @@
 
 from c_graph cimport CGraph
 include 'sage/ext/stdsage.pxi'
-include 'sage/misc/bitset_pxd.pxi'
 
 cdef class DenseGraph(CGraph):
     # Values inherited from CGraph:

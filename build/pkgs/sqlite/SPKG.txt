@@ -23,6 +23,11 @@ None
 
 == Changelog ==
 
+=== sqlite-3.7.17.p1 (R. Andrew Ohana, 11 November 2013) ===
+ * #15433: don't build sqlite on OS X 10.9, as it can cause issues
+   for the system libraries that link against Apple's custom
+   version of sqlite
+
 === sqlite-3.7.17 (Jeroen Demeyer, 24 May 2013) ===
  * #14629: upgrade to version 3.7.17
  * Use standard template for SPKG.txt and spkg-install, use $MAKE instead of make

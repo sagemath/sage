@@ -399,7 +399,7 @@ class R(Expect):
 
         EXAMPLES::
 
-            sage: r.install_packages('aaMI')       # optional - internet
+            sage: r.install_packages('aaMI')       # not tested
             ...
             R is free software and comes with ABSOLUTELY NO WARRANTY.
             You are welcome to redistribute it under certain conditions.
@@ -410,12 +410,6 @@ class R(Expect):
         cmd = """options(repos="%s"); install.packages("%s")"""%(RRepositoryURL, package_name)
         os.system("time echo '%s' | R --vanilla"%cmd)
         print "Please restart Sage in order to use '%s'."%package_name
-
-        # For now, r.restart() seems to be broken
-        #print "Please restart Sage or restart the R interface (via r.restart()) in order to use '%s'."%package_name
-
-        #s = r.eval('install.packages("%s")'%package_name)
-        #print s
 
     def __repr__(self):
         """
@@ -519,7 +513,7 @@ class R(Expect):
         EXAMPLES::
 
             sage: print r._source("print.anova")
-            function (x, digits = max(getOption("digits") - 2, 3), signif.stars = getOption("show.signif.stars"),
+            function (x, digits = max(getOption("digits") - 2L, 3L), signif.stars = getOption("show.signif.stars"),
             ...
         """
         if s[-2:] == "()":
@@ -539,7 +533,7 @@ class R(Expect):
         EXAMPLES::
 
             sage: print r.source("print.anova")
-            function (x, digits = max(getOption("digits") - 2, 3), signif.stars = getOption("show.signif.stars"),
+            function (x, digits = max(getOption("digits") - 2L, 3L), signif.stars = getOption("show.signif.stars"),
             ...
         """
         return self._source(s)
@@ -552,8 +546,13 @@ class R(Expect):
 
         EXAMPLES::
 
-            sage: r.version()
-            ((2, 15, 2), 'R version 2.15.2 (2012-10-26)')
+            sage: r.version() # not tested
+            ((3, 0, 1), 'R version 3.0.1 (2013-05-16)')
+            sage: rint, rstr = r.version()
+            sage: rint[0] >= 3
+            True
+            sage: rstr.startswith('R version')
+            True
         """
         major_re = re.compile('^major\s*(\d.*?)$', re.M)
         minor_re = re.compile('^minor\s*(\d.*?)$', re.M)
@@ -2046,8 +2045,13 @@ def r_version():
 
     EXAMPLES::
 
-        sage: r_version()
-        ((2, 15, 2), 'R version 2.15.2 (2012-10-26)')
+        sage: r_version() # not tested
+        ((3, 0, 1), 'R version 3.0.1 (2013-05-16)')
+        sage: rint, rstr = r_version()
+        sage: rint[0] >= 3
+        True
+        sage: rstr.startswith('R version')
+        True
     """
     return r.version()
 

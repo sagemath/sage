@@ -144,10 +144,10 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
         equation to bring the result into the standard form::
 
             sage: cubic(f.defining_polynomials())
-            -10886400*x^5*z - 256690425600*x^4*z^2 + 7859980800*x^3*y*z^2
-            + 10886400*x^2*y^2*z^2 + 238085568000000*x^2*y*z^3
+            -10886400*x^5*z - 256690425600*x^4*z^2 - 7859980800*x^3*y*z^2
+            + 10886400*x^2*y^2*z^2 - 238085568000000*x^2*y*z^3
             sage: cubic(f.defining_polynomials()) * f.post_rescaling()
-            -x^3 - 23579*x^2*z + 722*x*y*z + y^2*z + 21870000*y*z^2
+            -x^3 - 23579*x^2*z - 722*x*y*z + y^2*z - 21870000*y*z^2
         """
         return self._post
 

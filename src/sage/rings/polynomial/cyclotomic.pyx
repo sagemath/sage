@@ -36,7 +36,7 @@ from sage.misc.misc import prod, subsets
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.pari.gen cimport gen
-from sage.libs.pari.gen import pari, PariError
+from sage.libs.pari.all import pari
 
 def cyclotomic_coeffs(nn, sparse=None):
     u"""

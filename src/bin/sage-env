@@ -162,8 +162,9 @@ fi
 # - sage-4.7.1: version 1 (#10469)
 # - sage-5.4:   version 2 (#13395)
 # - sage-5.10:  version 3 (#14699)
+# - sage-6.0:   version 4 (#14715)
 #
-SAGE_ENV_VERSION=3
+SAGE_ENV_VERSION=4
 if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0
@@ -245,6 +246,7 @@ fi
 
 # Setting Sage-related location environment variables.
 export SAGE_LOCAL="$SAGE_ROOT/local"
+export SAGE_ETC="$SAGE_LOCAL/etc"
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"

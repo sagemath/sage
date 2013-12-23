@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# NOTE: This script is of little use after the git transition and
+# will be deleted eventually.
+#
 # Create an rsyncable source distribution of Sage in dist/sage-rsync.tar.gz
 # starting from a regular sdist tarball.
 #
@@ -65,7 +69,7 @@ fi
 
 if [ ! -r "dist/sage-$SAGE_VERSION.tar" ]; then
     echo >&2 "The sdist tarball dist/sage-$SAGE_VERSION.tar has not been created yet."
-    echo >&2 "You should call this script after running ./sage --sdist $SAGE_VERSION"
+    echo >&2 "You should call this script after running ./sage --sdist
     exit 1
 fi
 

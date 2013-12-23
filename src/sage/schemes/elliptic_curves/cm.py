@@ -411,7 +411,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     """
     # imports that are needed only for this function
     from sage.structure.proof.proof import get_flag
-    from sage.libs.pari.gen import pari
+    from sage.libs.pari.all import pari
     import math
     from sage.misc.functional import round
 

@@ -78,7 +78,6 @@ TESTS::
 from sage.structure.parent_gens import localvars
 
 import sage.libs.ntl.all as ntl
-import sage.libs.pari.all as pari
 import sage.rings.arith
 
 from sage.categories.map import is_Map
@@ -104,7 +103,7 @@ from sage.rings.number_field.number_field import NumberField, NumberField_generi
 from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.number_field.order import RelativeOrder
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari_gen
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
@@ -1524,6 +1523,7 @@ class NumberField_relative(NumberField_generic):
             sage: c^2 + 3
             0
         """
+        from sage.libs.pari.all import pari
         rnfeqn = self._pari_rnfequation()
         f = (pari('x') - rnfeqn[2]*rnfeqn[1]).lift()
         g = self._element_class(self, f)

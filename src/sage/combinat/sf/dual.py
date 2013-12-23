@@ -138,7 +138,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         self._inverse_transition_matrices = {}
 
         scalar_target = scalar(sage.combinat.partition.Partition([1])).parent()
-        scalar_target = (scalar_target(1)*dual_basis.base_ring()(1)).parent()
+        scalar_target = (scalar_target.one()*dual_basis.base_ring().one()).parent()
 
         self._sym = sage.combinat.sf.sf.SymmetricFunctions(scalar_target)
         self._p = self._sym.power()
@@ -312,13 +312,13 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             [-1  1]
         """
         base_ring = self.base_ring()
-        zero = base_ring(0)
+        zero = base_ring.zero()
 
         # Handle the n == 0 and n == 1 cases separately
         if n == 0 or n == 1:
             part = sage.combinat.partition.Partition([1]*n)
-            self._to_self_cache[ part ] = { part: base_ring(1) }
-            self._from_self_cache[ part ] = { part: base_ring(1) }
+            self._to_self_cache[ part ] = { part: base_ring.one() }
+            self._from_self_cache[ part ] = { part: base_ring.one() }
             self._transition_matrices[n] = matrix(base_ring, [[1]])
             self._inverse_transition_matrices[n] = matrix(base_ring, [[1]])
             return
@@ -566,7 +566,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             parent = A
             base_ring = parent.base_ring()
-            zero = base_ring(0)
+            zero = base_ring.zero()
 
             if dual is None:
                 # We need to compute the dual

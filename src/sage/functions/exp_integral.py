@@ -71,6 +71,7 @@ from sage.rings.all import ZZ, QQ, RR, RDF
 from sage.functions.log import exp, log
 from sage.functions.trig import sin, cos
 from sage.functions.hyperbolic import sinh, cosh
+import math
 
 
 class Function_exp_integral_e(BuiltinFunction):
@@ -1474,42 +1475,75 @@ def exponential_integral_1(x, n=0):
 
     INPUT:
 
-    -  ``x`` - a positive real number
+    - ``x`` -- a positive real number
 
-    -  ``n`` - (default: 0) a nonnegative integer; if
-       nonzero, then return a list of values E_1(x\*m) for m =
-       1,2,3,...,n. This is useful, e.g., when computing derivatives of
-       L-functions.
+    - ``n`` -- (default: 0) a nonnegative integer; if
+      nonzero, then return a list of values ``E_1(x*m)`` for m =
+      1,2,3,...,n. This is useful, e.g., when computing derivatives of
+      L-functions.
 
 
     OUTPUT:
 
-    -  ``float`` - if n is 0 (the default) or
-
-    -  ``list`` - list of floats if n 0
-
+    A real number if n is 0 (the default) or a list of reals if n > 0.
+    The precision is the same as the input, with a default of 53 bits
+    in case the input is exact.
 
     EXAMPLES::
 
         sage: exponential_integral_1(2)
-        0.04890051070806112
-        sage: exponential_integral_1(2,4)    # rel tol 1e-10
-        [0.04890051070806112, 0.0037793524098489067, 0.00036008245216265873, 3.7665622843924751e-05]
+        0.0489005107080611
+        sage: exponential_integral_1(2,4)  # abs tol 1e-18
+        [0.0489005107080611, 0.00377935240984891, 0.000360082452162659, 0.0000376656228439245]
+        sage: exponential_integral_1(40,5)
+        [1.03677326145166e-19, 2.22854325868847e-37, 6.33732515501151e-55, 2.02336191509997e-72, 6.88522610630764e-90]
         sage: exponential_integral_1(0)
         +Infinity
+        sage: r = exponential_integral_1(RealField(150)(1))
+        sage: r
+        0.21938393439552027367716377546012164903104729
+        sage: parent(r)
+        Real Field with 150 bits of precision
+        sage: exponential_integral_1(RealField(150)(100))
+        3.6835977616820321802351926205081189876552201e-46
 
-    IMPLEMENTATION: We use the PARI C-library functions eint1 and
-    veceint1.
+    TESTS:
+
+    The relative error for a single value should be less than 1 ulp::
+
+        sage: for prec in [20..1000]:  # long time (22s on sage.math, 2013)
+        ....:     R = RealField(prec)
+        ....:     S = RealField(prec+64)
+        ....:     for t in range(8):  # Try 8 values for each precision
+        ....:         a = R.random_element(-15,10).exp()
+        ....:         x = exponential_integral_1(a)
+        ....:         y = exponential_integral_1(S(a))
+        ....:         e = float(abs(S(x) - y)/x.ulp())
+        ....:         if e >= 1.0:
+        ....:             print "exponential_integral_1(%s) with precision %s has error of %s ulp"%(a, prec, e)
+
+    The absolute error for a vector should be less than `c 2^{-p}`, where
+    `p` is the precision in bits of `x` and `c = 2 max(1, exponential_integral_1(x))`::
+
+        sage: for prec in [20..128]:  # long time (15s on sage.math, 2013)
+        ....:     R = RealField(prec)
+        ....:     S = RealField(prec+64)
+        ....:     a = R.random_element(-15,10).exp()
+        ....:     n = 2^ZZ.random_element(14)
+        ....:     x = exponential_integral_1(a, n)
+        ....:     y = exponential_integral_1(S(a), n)
+        ....:     c = RDF(2 * max(1.0, y[0]))
+        ....:     for i in range(n):
+        ....:         e = float(abs(S(x[i]) - y[i]) << prec)
+        ....:         if e >= c:
+        ....:             print "exponential_integral_1(%s, %s)[%s] with precision %s has error of %s >= %s"%(a, n, i, prec, e, c)
+
+    ALGORITHM: use the PARI C-library function ``eint1``.
 
     REFERENCE:
 
-    - See page 262, Prop 5.6.12, of Cohen's book "A Course in
+    - See Proposition 5.6.12 of Cohen's book "A Course in
       Computational Algebraic Number Theory".
-
-    REMARKS: When called with the optional argument n, the PARI
-    C-library is fast for values of n up to some bound, then very very
-    slow. For example, if x=5, then the computation takes less than a
-    second for n=800000, and takes "forever" for n=900000.
     """
     if isinstance(x, Expression):
         if x.is_trivial_zero():
@@ -1523,9 +1557,25 @@ def exponential_integral_1(x, n=0):
             from sage.rings.infinity import Infinity
             return Infinity
 
-    # else x is in not an exact 0
+    # else x is not an exact 0
     from sage.libs.pari.all import pari
+    # Figure out output precision
+    try:
+        prec = parent(x).precision()
+    except AttributeError:
+        prec = 53
+
+    R = RealField(prec)
     if n <= 0:
-        return float(pari(x).eint1())
+        # Add extra bits to the input.
+        # (experimentally verified -- Jeroen Demeyer)
+        inprec = prec + math.ceil(math.log(2*prec))
+        x = RealField(inprec)(x)._pari_()
+        return R(x.eint1())
     else:
-        return [float(z) for z in pari(x).eint1(n)]
+        # PARI's algorithm is less precise as n grows larger:
+        # add extra bits.
+        # (experimentally verified -- Jeroen Demeyer)
+        inprec = prec + 1 + math.ceil(1.4427 * math.log(n))
+        x = RealField(inprec)(x)._pari_()
+        return [R(z) for z in x.eint1(n)]

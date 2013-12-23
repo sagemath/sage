@@ -1,6 +1,6 @@
 import sage.libs.ntl.all  as ntl
 
-from sage.libs.pari.all   import pari, pari_gen, allocatemem, PariError
+from sage.libs.pari.all   import pari, pari_gen, PariError
 
 from sage.libs.mwrank.all  import (mwrank_EllipticCurve, mwrank_MordellWeil,
                                    mwrank_initprimes,

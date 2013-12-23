@@ -1080,10 +1080,10 @@ class CubicalComplex(GenericCellComplex):
         # finally, return the chain complex
         if cochain:
             return ChainComplex(data=differentials, base_ring=base_ring,
-                                degree=1, check_products=check_diffs)
+                                degree=1, check=check_diffs)
         else:
             return ChainComplex(data=differentials, base_ring=base_ring,
-                                degree=-1, check_products=check_diffs)
+                                degree=-1, check=check_diffs)
 
     def n_skeleton(self, n):
         r"""

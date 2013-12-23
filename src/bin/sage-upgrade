@@ -1,59 +1,13 @@
 #!/usr/bin/env bash
 
+# This script must be run from $SAGE_ROOT and without having sourced
+# sage-env.
+
 set -e
 
-cd "$SAGE_ROOT"
+# Update sources
+local/bin/sage-update-src "$@"
 
-CMD="${0##*/}"
-
-die () {
-    echo >&2 -e "$@"
-    exit 1
-}
-
-usage () {
-    echo "usage: $CMD [repo] [branch]"
-}
-
-[ "$#" -le 2 ] || die `usage`
-
-if [ "$#" -gt 0 ]; then
-    SAGE_REPO_ANONYMOUS="$1"
-    shift
-fi
-
-if [ "$#" -gt 0 ]; then
-    BRANCH="$1"
-    shift
-else
-    BRANCH=$(git symbolic-ref HEAD) ||
-        BRANCH=$(git describe --exact-match --tags HEAD | \
-                 sed -e 's;^;refs/tags/;')
-    if [ -n "$BRANCH" ]; then
-        case $BRANCH in
-            refs/heads/master) BRANCH=master;;
-            refs/heads/release) BRANCH=release;;
-            refs/heads/beta) BRANCH=beta;;
-            refs/tags/*) BRANCH=release;;
-        esac
-    fi
-fi
-
-if [ -z "$BRANCH" ]; then
-    die "You are not using a one of the following supported branchs/tags for upgrading:\n\n" \
-        " release\n  beta\n  master\n  5.9\n  5.11\n  6.0\n  ..."
-fi
-
-# portable way to create a random 40 character string, that even works with Solaris' gimped head command.
-while [ ${#RAND} -lt 40 ]; do
-    RAND=${RAND}$(< /dev/urandom tr -cd '_A-Z-a-z-0-9\n' | head -1 | tr -d '\n')
-done
-RAND=${RAND:0:40}
-
-git fetch "$SAGE_REPO_ANONYMOUS" "$BRANCH":$RAND || die "There was a failure downloading Sage's sources. Please make sure you are connected to the internet. Aborting..."
-
-git merge $RAND || { git merge --abort || true; git branch -D $RAND; die "There was a failure updating Sage's sources, aborting..."; }
-git branch -d $RAND
-
-hash -r
-sage-real-upgrade
+# Run top-level make with SAGE_UPGRADING set
+export SAGE_UPGRADING=yes
+exec make

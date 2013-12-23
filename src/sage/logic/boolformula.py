@@ -1,18 +1,11 @@
 r"""
 Module that creates boolean formulas as instances of the BooleanFormula class.
 
-Formulas consist of the operators &, |, ~, ^, ->, <->, corresponding
-to and, or, not, xor, if...then, if and only if.  Operators can
-be applied to variables that consist of a leading letter and trailing
-underscores and alphanumerics.  Parentheses may be used to
-explicitly show order of operation.
-
-AUTHORS:
-
-- Chris Gorecki (2006): initial version
-
-- Paul Scurek (2013-08-03): added polish_notation, full_tree,
-  updated docstring formatting
+Formulas consist of the operators ``&``, ``|``, ``~``, ``^``, ``->``, ``<->``,
+corresponding to ``and``, ``or``, ``not``, ``xor``, ``if...then``, ``if and
+only if``.  Operators can be applied to variables that consist of a leading
+letter and trailing underscores and alphanumerics.  Parentheses may be used
+to explicitly show order of operation.
 
 EXAMPLES:
 
@@ -118,6 +111,12 @@ It is also an error to not abide by the naming conventions::
     ...
     NameError: invalid variable name 9b: identifiers must begin with a letter and contain only alphanumerics and underscores
 
+AUTHORS:
+
+- Chris Gorecki (2006): initial version
+
+- Paul Scurek (2013-08-03): added polish_notation, full_tree,
+  updated docstring formatting
 """
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>
@@ -134,7 +133,7 @@ import booleval
 import logictable
 import logicparser
 # import boolopt
-from types import *
+from types import TupleType, ListType
 from sage.misc.flatten import flatten
 
 latex_operators = [('&', '\\wedge '),
@@ -143,6 +142,7 @@ latex_operators = [('&', '\\wedge '),
                    ('^', '\\oplus '),
                    ('<->', '\\leftrightarrow '),
                    ('->', '\\rightarrow ')]
+
 
 class BooleanFormula:
     __expression = ""
@@ -630,7 +630,7 @@ class BooleanFormula:
         """
         return self.equivalent(other)
 
-    def truthtable(self, start = 0, end = -1):
+    def truthtable(self, start=0, end=-1):
         r"""
         Return a truth table for the calling formula.
 
@@ -788,7 +788,7 @@ class BooleanFormula:
         """
         table = self.truthtable().get_table_list()
         for row in table[1:]:
-            if row[-1] == True:
+            if row[-1] is True:
                 return True
         return False
 
@@ -925,7 +925,7 @@ class BooleanFormula:
 
         An instance of :class:`BooleanFormula` in conjunctive normal form
 
-        EXAMPLES::
+        EXAMPLES:
 
         This example illustrates how to convert a formula to cnf.
 
@@ -958,10 +958,10 @@ class BooleanFormula:
         table = t.get_table_list()
         vars = table[0]
         for row in table[1:]:
-            if row[-1] == False:
+            if row[-1] is False:
                 str += '('
                 for i in range(len(row) - 1):
-                    if row[i] == True:
+                    if row[i] is True:
                         str += '~'
                     str += vars[i]
                     str += '|'
@@ -998,7 +998,7 @@ class BooleanFormula:
             sage: s
             (~a|a|c)&(~b|a|c)&(~a|b|c)&(~b|b|c)&(~c|a|b)&(~c|~a|~b)
 
-        .. NOTES::
+        .. NOTE::
 
             This function works by applying a set of rules that are
             guaranteed to convert the formula.  Worst case the converted
@@ -1041,7 +1041,7 @@ class BooleanFormula:
             sage: f.satformat()
             'p cnf 3 0\n1 -2 3 0 1 -2 -3 \n0 -1 2 -3'
 
-        .. NOTES::
+        .. NOTE::
 
             See www.cs.ubc.ca/~hoos/SATLIB/Benchmarks/SAT/satformat.ps for a
             description of satformat.
@@ -1166,11 +1166,12 @@ class BooleanFormula:
 
         OUTPUT:
 
-        A 3-tupple
+        A 3-tuple
 
         EXAMPLES:
 
-        This example illustrates the conersion of a formula into its corresponding tupple.
+        This example illustrates the conversion of a formula into its
+        corresponding tuple.
 
         ::
 
@@ -1180,17 +1181,17 @@ class BooleanFormula:
             sage: logicparser.apply_func(tree, s.convert_opt)
             ('and', ('prop', 'a'), ('or', ('prop', 'b'), ('not', ('prop', 'c'))))
 
-        .. NOTES::
+        .. NOTE::
 
-            This function only works on one branch of the parse tree. to
+            This function only works on one branch of the parse tree. To
             apply the function to every branch of a parse tree, pass the
             function as an argument in :func:`apply_func` in logicparser.py.
         """
-        if type(tree[1]) is not TupleType and tree[1] != None:
+        if type(tree[1]) is not TupleType and not (tree[1] is None):
             lval = ('prop', tree[1])
         else:
             lval = tree[1]
-        if type(tree[2]) is not TupleType and tree[2] != None:
+        if type(tree[2]) is not TupleType and not(tree[2] is None):
             rval = ('prop', tree[2])
         else:
             rval = tree[2]
@@ -1204,7 +1205,7 @@ class BooleanFormula:
 
     def add_statement(self, other, op):
         r"""
-        Combine two formulas with the give operator.
+        Combine two formulas with the given operator.
 
         INPUT:
 
@@ -1295,7 +1296,7 @@ class BooleanFormula:
             sage: s.get_bit(64, -2)
             False
 
-        .. NOTES::
+        .. NOTE::
 
             The 0 bit is the low order bit.  Errors should be handled
             gracefully by a return of false, and negative numbers x
@@ -1343,7 +1344,7 @@ class BooleanFormula:
             sage: logicparser.apply_func(tree, s.reduce_op)
             ['|', ['~', 'a', None], ['&', ['|', 'b', 'c'], ['~', ['&', 'b', 'c'], None]]]
 
-        .. NOTES::
+        .. NOTE::
 
             This function only operates on a single branch of a parse tree.
             To apply the function to an entire parse tree, pass the function
@@ -1351,11 +1352,11 @@ class BooleanFormula:
         """
         if tree[0] == '<->':
             # parse tree for (~tree[1]|tree[2])&(~tree[2]|tree[1])
-            new_tree = ['&', ['|', ['~', tree[1], None], tree[2]], \
+            new_tree = ['&', ['|', ['~', tree[1], None], tree[2]],
                        ['|', ['~', tree[2], None], tree[1]]]
         elif tree[0] == '^':
             # parse tree for (tree[1]|tree[2])&~(tree[1]&tree[2])
-            new_tree = ['&', ['|', tree[1], tree[2]], \
+            new_tree = ['&', ['|', tree[1], tree[2]],
                        ['~', ['&', tree[1], tree[2]], None]]
         elif tree[0] == '->':
             # parse tree for ~tree[1]|tree[2]
@@ -1391,7 +1392,7 @@ class BooleanFormula:
             sage: logicparser.apply_func(tree, s.dist_not) #long time
             ['|', ['~', 'a', None], ['~', 'b', None]]
 
-        .. NOTES::
+        .. NOTE::
 
             This function only operates on a single branch of a parse tree.
             To apply the function to an entire parse tree, pass the function
@@ -1420,7 +1421,7 @@ class BooleanFormula:
 
         - ``self`` -- calling object
 
-        _ ``tree`` -- a list. This represents a branch of
+        - ``tree`` -- a list. This represents a branch of
           a parse tree.
 
         OUTPUT:
@@ -1439,18 +1440,20 @@ class BooleanFormula:
             sage: logicparser.apply_func(tree, s.dist_ors) #long time
             ['&', ['&', ['|', 'a', 'a'], ['|', 'b', 'a']], ['&', ['|', 'a', 'c'], ['|', 'b', 'c']]]
 
-        .. NOTES::
+        .. NOTE::
 
             This function only operates on a single branch of a parse tree.
             To apply the function to an entire parse tree, pass the function
             as an argument to :func:`apply_func` in logicparser.py.
         """
         if tree[0] == '|' and type(tree[2]) is ListType and tree[2][0] == '&':
-            new_tree = ['&', ['|', tree[1], tree[2][1]], ['|', tree[1], tree[2][2]]]
+            new_tree = ['&', ['|', tree[1], tree[2][1]],
+                        ['|', tree[1], tree[2][2]]]
             return logicparser.apply_func(new_tree, self.dist_ors)
         if tree[0] == '|' and type(tree[1]) is ListType and tree[1][0] == '&':
-           new_tree = ['&', ['|', tree[1][1], tree[2]], ['|', tree[1][2], tree[2]]]
-           return logicparser.apply_func(new_tree, self.dist_ors)
+            new_tree = ['&', ['|', tree[1][1], tree[2]],
+                        ['|', tree[1][2], tree[2]]]
+            return logicparser.apply_func(new_tree, self.dist_ors)
         return tree
 
     def to_infix(self, tree):
@@ -1461,7 +1464,7 @@ class BooleanFormula:
 
         - ``self`` -- calling object
 
-        _ ``tree`` -- a list. This represents a branch
+        - ``tree`` -- a list. This represents a branch
           of a parse tree.
 
         OUTPUT:
@@ -1480,7 +1483,7 @@ class BooleanFormula:
             sage: logicparser.apply_func(tree, s.to_infix)
             [['a', '&', 'b'], '|', ['a', '&', 'c']]
 
-        .. NOTES::
+        .. NOTE::
 
             This function only operates on a single branch of a parse tree.
             To apply the function to an entire parse tree, pass the function
@@ -1496,7 +1499,7 @@ class BooleanFormula:
 
         INPUT:
 
-        -- ``self`` -- calling object
+        - ``self`` -- calling object
 
         OUTPUT:
 
@@ -1518,7 +1521,6 @@ class BooleanFormula:
         self.__expression = ''
         str_tree = str(ttree)
         open_flag = False
-        put_flag = False
         i = 0
         for c in str_tree:
             if i < len(str_tree) - 1:
@@ -1534,7 +1536,7 @@ class BooleanFormula:
             if i < len(str_tree) and str_tree[i] not in ' \',[]':
                 self.__expression += str_tree[i]
             i += 1
-        if open_flag == True:
+        if open_flag is True:
             self.__expression += ')'
 
     def get_next_op(self, str):
@@ -1545,7 +1547,7 @@ class BooleanFormula:
 
         - ``self`` -- calling object
 
-        _ ``str`` -- a string. This contains a logical
+        - ``str`` -- a string. This contains a logical
           expression.
 
         OUTPUT:
@@ -1563,7 +1565,7 @@ class BooleanFormula:
             sage: s.get_next_op("abra|cadabra")
             '|'
 
-        .. NOTES::
+        .. NOTE::
 
             The parameter ``str`` is not necessarily the string
             representation of the calling object.

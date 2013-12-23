@@ -1,0 +1,20 @@
+--- src.orig/Cython/Compiler/CmdLine.py	2013-05-11 07:46:55.000000000 +0200
++++ src/Cython/Compiler/CmdLine.py	2013-06-04 19:09:59.000000000 +0200
+@@ -28,6 +28,7 @@ Options:
+   -w, --working <directory>      Sets the working directory for Cython (the directory modules
+                                  are searched from)
+   --gdb                          Output debug information for cygdb
++  --gdb-outdir <directory>       Specify gdb debug information output directory. Implies --gdb.
+ 
+   -D, --no-docstrings            Strip docstrings from the compiled module.
+   -a, --annotate                 Produce a colorized HTML version of the source.
+@@ -138,6 +125,9 @@ def parse_command_line(args):
+             elif option == "--gdb":
+                 options.gdb_debug = True
+                 options.output_dir = os.curdir
++            elif option == "--gdb-outdir":
++                options.gdb_debug = True
++                options.output_dir = pop_arg()
+             elif option == '-2':
+                 options.language_level = 2
+             elif option == '-3':

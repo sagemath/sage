@@ -1740,6 +1740,14 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l):
         sage: E = EllipticCurve(K,[-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356,0])
         sage: isogenies_prime_degree_genus_plus_0_j1728(E,11)
         [Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103 to Elliptic Curve defined by y^2 = x^3 + (9110695/1335852*a^5-1581074935/445284*a^4-5433321685/74214*a^3-3163057249/24738*a^2+1569269691/16492*a+73825125/2356)*x + (-3540460*a^3+30522492*a^2-7043652*a-5031180) over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103, Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103 to Elliptic Curve defined by y^2 = x^3 + (9110695/1335852*a^5-1581074935/445284*a^4-5433321685/74214*a^3-3163057249/24738*a^2+1569269691/16492*a+73825125/2356)*x + (3540460*a^3-30522492*a^2+7043652*a+5031180) over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103]
+        sage: i = QuadraticField(-1,'i').gen()
+        sage: E = EllipticCurve([-1-2*i,0])
+        sage: isogenies_prime_degree_genus_plus_0_j1728(E,17)
+        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + (-82*i-641)*x over Number Field in i with defining polynomial x^2 + 1,
+        Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + (-562*i+319)*x over Number Field in i with defining polynomial x^2 + 1]
+        sage: Emin = E.global_minimal_model()
+        sage: [(p,len(isogenies_prime_degree_genus_plus_0_j1728(Emin,p))) for p in [17, 29, 41]]
+        [(17, 2), (29, 2), (41, 2)]
     """
     if not l in  hyperelliptic_primes:
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
@@ -1767,7 +1775,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l):
     if l % 4 == 1 and  F(-1).is_square():
         i = F(-1).sqrt()
         endo = Fxuv(data['endo'])
-        kernels += [endo(X,i,-27*c4).monic(), endo(X,-i,-27*c4).monic()]
+        kernels += [endo(36*X+3*b2,i,-27*c4).monic(), endo(36*X+3*b2,-i,-27*c4).monic()]
 
     S = []
     for u0 in u_list:

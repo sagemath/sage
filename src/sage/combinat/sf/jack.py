@@ -8,12 +8,15 @@ implementation in sage.
 
 REFERENCES:
 
-    .. [Jack1970] A class of symmetric functions with a parameter, Proc. R
-       Soc. Edinburgh (A), 69, 1-18.
+.. [Jack1970] H. Jack,
+   *A class of symmetric functions with a parameter*,
+   Proc. R. Soc. Edinburgh (A), 69, 1-18.
 
-    .. [Ma1995] I. G. Macdonald, Symmetric functions and Hall polynomials, second ed.,
-       The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-       by A. Zelevinsky, Oxford Science Publications.
+.. [Ma1995] I. G. Macdonald,
+   *Symmetric functions and Hall polynomials*,
+   second ed.,
+   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
+   by A. Zelevinsky, Oxford Science Publications.
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
@@ -168,6 +171,8 @@ class Jack(UniqueRepresentation):
             s[2, 2, 1]
             sage: JP(s([2,2,1]))
             JackP[2, 2, 1]
+            sage: JP([2,1])^2
+            JackP[2, 2, 1, 1] + JackP[2, 2, 2] + JackP[3, 1, 1, 1] + 2*JackP[3, 2, 1] + JackP[3, 3] + JackP[4, 1, 1] + JackP[4, 2]
 
         At `t = 2`, the Jack polynomials in the `P` basis are the zonal
         polynomials.
@@ -301,7 +306,7 @@ class Jack(UniqueRepresentation):
 
         At `t = 1`, the Jack polynomials in the `J` basis are scalar multiples
         of the Schur functions with the scalar given by a Partition's
-        hook_product method at 1::
+        :meth:`~sage.combinat.partition.Partition.hook_product` method at 1::
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: JJ = Sym.jack(t=1).J()
@@ -312,7 +317,7 @@ class Jack(UniqueRepresentation):
 
         At `t = 2`, the Jack polynomials in the `J` basis are scalar multiples
         of the zonal polynomials with the scalar given by a Partition's
-        hook_product method at 1.
+        :meth:`~sage.combinat.partition.Partition.hook_product` method at 2.
 
         ::
 
@@ -373,237 +378,6 @@ class Jack(UniqueRepresentation):
             ((t-1)/(t+1))*JackP[1, 1] + JackP[2]
         """
         return JackPolynomials_qp(self)
-
-#############################
-# to be deprecated
-#############################
-def NoneConvention( R, t ):
-    r"""
-    Helper function to mimic behavior of old conventions.
-
-    INPUT:
-
-    - ``R`` -- ring
-    - ``t`` -- parameter
-
-    EXAMPLES ::
-
-        sage: sage.combinat.sf.jack.NoneConvention(QQ, None)
-        (Fraction Field of Univariate Polynomial Ring in t over Rational Field, t)
-        sage: R = QQ['t']
-        sage: sage.combinat.sf.jack.NoneConvention(R, R.gen())
-        (Univariate Polynomial Ring in t over Rational Field, t)
-    """
-    if t is None:
-        R = R['t'].fraction_field()
-        t = R.gen()
-    elif t not in R:
-        raise ValueError, "t (=%s) must be in R (=%s)"%(t,R)
-    else:
-        t = R(t)
-    return (R, t)
-
-def JackPolynomialsP(R, t=None):
-    r"""
-    Returns the algebra of Jack polynomials in the `P` basis.
-
-    If ``t`` is not specified, then the base ring will be obtained by
-    making the univariate polynomial ring over `R` with the variable ``t``
-    and taking its fraction field.
-
-    This function is deprecated.  Use instead:
-    SymmetricFunctions(R).jack(t=value).P()
-
-    EXAMPLES ::
-
-        sage: JackPolynomialsP(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=t).P()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Jack P basis
-        sage: JackPolynomialsP(QQ,t=-1)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=-1).P()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Rational Field in the Jack P with t=-1 basis
-
-    At `t = 1`, the Jack polynomials on the P basis are the Schur
-    symmetric functions.
-
-    ::
-
-        sage: P = JackPolynomialsP(QQ,t=1); P
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=1).P()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Rational Field in the Jack P with t=1 basis
-        sage: s = SymmetricFunctions(QQ).s()
-        sage: P([2,1])^2
-        JackP[2, 2, 1, 1] + JackP[2, 2, 2] + JackP[3, 1, 1, 1] + 2*JackP[3, 2, 1] + JackP[3, 3] + JackP[4, 1, 1] + JackP[4, 2]
-        sage: s([2,1])^2
-        s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
-
-    At `t = 2`, the Jack polynomials on the `P` basis are the zonal
-    polynomials.
-
-    ::
-
-        sage: P = JackPolynomialsP(QQ,t=2)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=2).P()
-        See http://trac.sagemath.org/5457 for details.
-        sage: Z = ZonalPolynomials(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).zonal()
-        See http://trac.sagemath.org/5457 for details.
-        sage: P([2])^2
-        64/45*JackP[2, 2] + 16/21*JackP[3, 1] + JackP[4]
-        sage: Z([2])^2
-        64/45*Z[2, 2] + 16/21*Z[3, 1] + Z[4]
-        sage: Z(P([2,1]))
-        Z[2, 1]
-        sage: P(Z([2,1]))
-        JackP[2, 1]
-    """
-    (R, t) = NoneConvention(R, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).jack(t=%s).P()"%(t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).jack(t=t).P()
-
-def JackPolynomialsQ(R, t=None):
-    r"""
-    Returns the algebra of Jack polynomials in the `Q` basis.
-
-    If ``t`` is not specified, then the base ring will be obtained by
-    making the univariate polynomial ring over `R` with the variable ``t``
-    and taking its fraction field.
-
-    This function is deprecated.  Use instead:
-    SymmetricFunctions(R).jack(t=value).Q()
-
-    EXAMPLES ::
-
-        sage: JackPolynomialsQ(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=t).Q()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Jack Q basis
-        sage: JackPolynomialsQ(QQ,t=-1)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=-1).Q()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Rational Field in the Jack Q with t=-1 basis
-    """
-    (R, t) = NoneConvention(R, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).jack(t=%s).Q()"%(t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).jack(t=t).Q()
-
-def JackPolynomialsJ(R, t=None):
-    r"""
-    Returns the algebra of Jack polynomials in the `J` basis.
-
-    If ``t`` is not specified, then the base ring will be obtained by
-    making the univariate polynomial ring over `R` with the variable ``t``
-    and taking its fraction field.
-
-    This function is deprecated.  Use instead:
-    SymmetricFunctions(R).jack(t=value).J()
-
-    EXAMPLES ::
-
-        sage: JackPolynomialsJ(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=t).J()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Jack J basis
-        sage: JackPolynomialsJ(QQ,t=-1)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=-1).J()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Rational Field in the Jack J with t=-1 basis
-
-    At `t = 1`, the Jack polynomials in the J basis are scalar multiples
-    of the Schur functions with the scalar given by a Partition's
-    hook_product method at 1::
-
-        sage: J = JackPolynomialsJ(QQ,t=1); J
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=1).J()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Rational Field in the Jack J with t=1 basis
-        sage: s = SymmetricFunctions(QQ).s()
-        sage: p = Partition([3,2,1,1])
-        sage: s(J(p)) == p.hook_product(1)*s(p)  # long time (4s on sage.math, 2012)
-        True
-
-    At `t = 2`, the Jack polynomials on the J basis are scalar multiples
-    of the zonal polynomials with the scalar given by a Partition's
-    hook_product method at 1.
-
-    ::
-
-        sage: t = 2
-        sage: J = JackPolynomialsJ(QQ,t=t)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=2).J()
-        See http://trac.sagemath.org/5457 for details.
-        sage: Z = ZonalPolynomials(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).zonal()
-        See http://trac.sagemath.org/5457 for details.
-        sage: p = Partition([2,2,1])
-        sage: Z(J(p)) == p.hook_product(t)*Z(p)
-        True
-    """
-    (R, t) = NoneConvention(R, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).jack(t=%s).J()"%(t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).jack(t=t).J()
-
-def JackPolynomialsQp(R, t=None):
-    r"""
-    Returns the algebra of Jack polynomials in the `Qp`, which is dual to
-    the `P` basis with respect to the standard scalar product.
-
-    If ``t`` is not specified, then the base ring will be obtained by
-    making the univariate polynomial ring over R with the variable ``t``
-    and taking its fraction field.
-
-    This function is deprecated.  Use instead:
-    SymmetricFunctions(R).jack(t=value).Qp()
-
-    EXAMPLES ::
-
-        sage: P = JackPolynomialsP(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=t).P()
-        See http://trac.sagemath.org/5457 for details.
-        sage: Qp = JackPolynomialsQp(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).jack(t=t).Qp()
-        See http://trac.sagemath.org/5457 for details.
-        sage: a = Qp([2])
-        sage: a.scalar(P([2]))
-        1
-        sage: a.scalar(P([1,1]))
-        0
-        sage: s = P.realization_of().s()
-        sage: P(Qp([2]))                        # todo: missing auto normalization
-        ((t-1)/(t+1))*JackP[1, 1] + JackP[2]
-        sage: P._normalize(P(Qp([2])))
-        ((t-1)/(t+1))*JackP[1, 1] + JackP[2]
-    """
-    (R, t) = NoneConvention(R, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).jack(t=%s).Qp()"%(t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).jack(t=t).Qp()
-
-def ZonalPolynomials(R):
-    r"""
-    Returns the algebra of zonal polynomials.
-
-    This function is deprecated.  Use instead:
-    SymmetricFunctions(R).zonal()
-
-    EXAMPLES ::
-
-        sage: Z = ZonalPolynomials(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).zonal()
-        See http://trac.sagemath.org/5457 for details.
-        sage: a = Z([2])
-        sage: Z([2])^2
-        64/45*Z[2, 2] + 16/21*Z[3, 1] + Z[4]
-    """
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).zonal()")
-    #sage.misc.misc.deprecation("Deprecation warning: In the future use SymmetricFunctions(FractionField(QQ['q','t'])).zonal()"%t, 'Sage Version 5.1')
-    return sage.combinat.sf.sf.SymmetricFunctions(R).zonal()
-
-################################
-# END of deprecated functions
-################################
 
 ###################################################################
 def c1(part, t):

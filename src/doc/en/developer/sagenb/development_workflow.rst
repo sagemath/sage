@@ -1,14 +1,14 @@
 .. _development-workflow:
 
 ####################
-Development workflow
+Development Workflow
 ####################
 
 You already have your own forked copy of the `Sage Notebook`_ repository, by
 following :ref:`forking`. You have :ref:`set-up-fork`. You have configured
-git by following :ref:`configure-git`.  Now you are ready for some real work.
+git by following :ref:`section-git-configuration`.  Now you are ready for some real work.
 
-Workflow summary
+Workflow Summary
 ================
 
 In what follows we'll refer to the upstream Sage Notebook ``master`` branch, as
@@ -33,7 +33,7 @@ what you've done, and why you did it.
 
 See `linux git workflow`_ and `ipython git workflow`_ for some explanation.
 
-Consider deleting your master branch
+Consider Deleting Your Master Branch
 ====================================
 
 It may sound strange, but deleting your own ``master`` branch can help reduce
@@ -42,7 +42,7 @@ details.
 
 .. _update-mirror-trunk:
 
-Update the mirror of trunk
+Update the Mirror of trunk
 ==========================
 
 First make sure you have done :ref:`linking-to-upstream`.
@@ -58,7 +58,7 @@ you last checked, ``upstream/master`` will change after you do the fetch.
 
 .. _make-feature-branch:
 
-Make a new feature branch
+Make a New Feature Branch
 =========================
 
 When you are ready to make some changes to the code, you should start a new
@@ -98,7 +98,7 @@ From now on git will know that ``my-new-feature`` is related to the
 
 .. _edit-flow:
 
-The editing workflow
+The Editing Workflow
 ====================
 
 Overview
@@ -111,7 +111,7 @@ Overview
    git commit -am 'NF - some message'
    git push
 
-In more detail
+In More Detail
 --------------
 
 #. Make some changes
@@ -144,7 +144,7 @@ In more detail
 #. To push the changes up to your forked repo on github, do a ``git
    push`` (see `git push`_).
 
-Ask for your changes to be reviewed or merged
+Ask for Your Changes to be Reviewed or Merged
 =============================================
 
 When you are ready to ask for someone to review your code and consider a merge:
@@ -168,10 +168,10 @@ When you are ready to ask for someone to review your code and consider a merge:
    pull request message.  This is still a good way of getting some preliminary
    code review.
 
-Some other things you might want to do
+Some Other Things You Might Want to Do
 ======================================
 
-Delete a branch on github
+Delete a Branch on Github
 -------------------------
 
 ::
@@ -185,7 +185,7 @@ Delete a branch on github
 (Note the colon ``:`` before ``test-branch``.  See also:
 http://github.com/guides/remove-a-remote-branch
 
-Several people sharing a single repository
+Several People Sharing a Single Repository
 ------------------------------------------
 
 If you want to work on some stuff with other people, where you are all
@@ -215,7 +215,7 @@ usual::
      git commit -am 'ENH - much better code'
      git push origin master # pushes directly into your repo
 
-Explore your repository
+Explore Your Repository
 -----------------------
 
 To see a graphical representation of the repository branches and
@@ -230,8 +230,8 @@ To see a linear list of commits for this branch::
 You can also look at the `network graph visualizer`_ for your github
 repo.
 
-Finally the :ref:`fancy-log` ``lg`` alias will give you a reasonable text-based
-graph of the repository.
+Finally the :ref:`section-fancy-log` ``lg`` alias will give you a
+reasonable text-based graph of the repository.
 
 .. _rebase-on-trunk:
 
@@ -297,7 +297,7 @@ some related help on merging in the git user manual - see `resolving a merge`_.
 
 .. _recovering-from-mess-up:
 
-Recovering from mess-ups
+Recovering From Mess-Ups
 ------------------------
 
 Sometimes, you mess up merges or rebases. Luckily, in git it is
@@ -327,7 +327,7 @@ If you forgot to make a backup branch::
 
 .. _rewriting-commit-history:
 
-Rewriting commit history
+Rewriting Commit History
 ------------------------
 
 .. note::

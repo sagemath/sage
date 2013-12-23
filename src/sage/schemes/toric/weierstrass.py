@@ -12,6 +12,10 @@ hypersurface equation in the short Weierstrass form `y^2 = x^3 + f x +
 g`. This works over any base ring as long as its characteristic `\not=
 2,3`.
 
+For an analogous treatment of elliptic curves defined as complete
+intersection in higher dimensional toric varieties, see
+the module :mod:`~sage.schemes.toric.weierstrass_higher`.
+
 Technically, this module computes the Weierstrass form of the Jacobian
 of the elliptic curve. This is why you will never have to specify the
 origin (or zero section) in the following.
@@ -171,7 +175,7 @@ def Discriminant(polynomial, variables=None):
     INPUT:
 
     See :func:`WeierstrassForm` for how to specify the input
-    polynomial and variables.
+    polynomial(s) and variables.
 
     OUTPUT:
 
@@ -185,6 +189,11 @@ def Discriminant(polynomial, variables=None):
         19683/16
         sage: Discriminant(x*y*z)
         0
+        sage: R.<w,x,y,z> = QQ[]
+        sage: quadratic1 = w^2+x^2+y^2
+        sage: quadratic2 = z^2 + w*x
+        sage: Discriminant([quadratic1, quadratic2])
+        -1/16
     """
     (f, g) = WeierstrassForm(polynomial, variables)
     return 4*f**3+27*g**2
@@ -198,7 +207,7 @@ def j_invariant(polynomial, variables=None):
     INPUT:
 
     See :func:`WeierstrassForm` for how to specify the input
-    polynomial and variables.
+    polynomial(s) and variables.
 
     OUTPUT:
 
@@ -304,7 +313,7 @@ def Newton_polygon_embedded(polynomial, variables):
 
     INPUT:
 
-    Same as :func:`WeierstrassForm`.
+    Same as :func:`WeierstrassForm` with only a single polynomial passed.
 
     OUTPUT:
 
@@ -354,14 +363,19 @@ def Newton_polygon_embedded(polynomial, variables):
 ######################################################################
 def WeierstrassForm(polynomial, variables=None, transformation=False):
     r"""
-    Return the Weierstrass form of an anticanonical hypersurface equation.
+    Return the Weierstrass form of an elliptic curve inside either
+    inside a toric surface or $\mathbb{P}^3$.
 
     INPUT:
 
-    - ``polynomial`` -- a polynomial. The toric hypersurface
-      equation. Can be either a cubic, a biquadric, or the
-      hypersurface in `\mathbb{P}^2[1,1,2]`. The equation need not be
-      in any standard form, only its Newton polyhedron is used.
+    - ``polynomial`` -- either a polynomial or a list of polynomials
+      defining the elliptic curve.
+      A single polynomial can be either a cubic, a biquadric, or the
+      hypersurface in `\mathbb{P}^2[1,1,2]`. In this case the
+      equation need not be in any standard form, only its Newton
+      polyhedron is used.
+      If two polynomials are passed, they must both be quadratics in
+      `\mathbb{P}^3`.
 
     - ``variables`` -- a list of variables of the parent polynomial
       ring or ``None`` (default). In the latter case, all variables
@@ -380,15 +394,16 @@ def WeierstrassForm(polynomial, variables=None, transformation=False):
     x^3 + f x + g` of the hypersurface equation.
 
     If ``transformation=True``, a triple `(X,Y,Z)` of polynomials
-    defining a rational map of the toric hypersurface to its
-    Weierstrass form in `\mathbb{P}^2[2,3,1]` is returned. That is,
-    the triple satisfies
+    defining a rational map of the toric hypersurface or complete
+    intersection in `\mathbb{P}^3` to its Weierstrass form in 
+    `\mathbb{P}^2[2,3,1]` is returned.
+    That is, the triple satisfies
 
     .. math::
 
         Y^2 = X^3 + f X Z^4 + g Z^6
 
-    when restricted to the toric hypersurface.
+    when restricted to the toric hypersurface or complete intersection.
 
     EXAMPLES::
 
@@ -474,6 +489,9 @@ def WeierstrassForm(polynomial, variables=None, transformation=False):
         (-241/48, 3689/864)
         (215/48, -5291/864)
     """
+    if isinstance(polynomial, (list, tuple)):
+        from sage.schemes.toric.weierstrass_higher import WeierstrassForm2
+        return WeierstrassForm2(polynomial, variables=variables, transformation=transformation)
     if transformation:
         from sage.schemes.toric.weierstrass_covering import WeierstrassMap
         return WeierstrassMap(polynomial, variables=variables)

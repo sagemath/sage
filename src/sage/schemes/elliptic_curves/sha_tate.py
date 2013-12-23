@@ -237,7 +237,7 @@ class Sha(SageObject):
         See :trac:`1115`::
 
             sage: sha=EllipticCurve('37a1').sha()
-            sage: [sha.an_numerical(prec) for prec in xrange(40,100,10)]
+            sage: [sha.an_numerical(prec) for prec in xrange(40,100,10)]  # long time (3s on sage.math, 2013)
             [1.0000000000,
             1.0000000000000,
             1.0000000000000000,

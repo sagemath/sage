@@ -124,7 +124,7 @@ Methods
 
 
 include 'sage/ext/stdsage.pxi'
-include 'sage/misc/bitset_pxd.pxi'
+include 'sage/ext/cdefs.pxi'
 include "sage/ext/interrupt.pxi"
 
 cdef list id_to_vertices

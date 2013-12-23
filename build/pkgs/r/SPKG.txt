@@ -11,7 +11,7 @@ much code written for S runs unaltered under R.
 (taken from http://www.r-project.org/)
 
 == License ==
- * GPL 2 (2.15.2 release)
+ * GPL v2 or GPL v3
 
 == SPKG Maintainers ==
 
@@ -29,21 +29,36 @@ much code written for S runs unaltered under R.
  * ATLAS
 
 == Special Update/Build Instructions ==
- * Patches:
-   - configure.patch: Use -### instead of -v to detect linker options.
-     See Sage ticket #12787 and upstream ticket
-     https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14865
-     The corresponding patch to m4/clibs.m4 is not included, as
-     autoconf-2.68 gives errors, even on the clean upstream sources.
-   - R.sh.in: Set R_HOME_DIR to "${SAGE_LOCAL}/lib/R/" when running R.
-   - scripts.Makefile.in.patch: the file src/src/scripts/R.sh.in
-     defines R_SHARE_DIR, R_INCLUDE_DIR, and R_DOC_DIR relative to
-     R_HOME_DIR, but scripts/Makefile.in hardcodes these
-     locations. This patch removes this hardcoding. See Sage trac
-     #9668.
-   - cygwin-logl.patch: disable use of logl on Cygwin, see #14078.
+
+=== Patches ===
+ * configure.patch: Use -### instead of -v to detect linker options.
+   See Sage ticket #12787 and upstream ticket
+   https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14865
+   The corresponding patch to m4/clibs.m4 is not included, as
+   autoconf-2.68 gives errors, even on the clean upstream sources.
+ * R.sh.in: Set R_HOME_DIR to "${SAGE_LOCAL}/lib/R/" when running R.
+ * scripts.Makefile.in.patch: the file src/src/scripts/R.sh.in
+   defines R_SHARE_DIR, R_INCLUDE_DIR, and R_DOC_DIR relative to
+   R_HOME_DIR, but scripts/Makefile.in hardcodes these
+   locations. This patch removes this hardcoding. See Sage trac
+   #9668.
+ * libintl-visibility.patch: fix visibility of symbols for optional
+   libintl library.
 
 == Changelog ==
+
+=== r-3.0.2.p0 (Jean-Pierre Flori, 30 October 2013) ===
+ * #14706: update to 3.0.2.
+ * Remove sqrtl.patch which is now upstream.
+ * Move old install of R on OS X.
+ * Fix visibility of symbols for built-in libintl.
+
+=== r-3.0.1.p1 (Jean-Pierre Flori, 10 June 2013) ===
+ * #14706: Use --disable-long-double on Cygwin rather than patching.
+ * Add sqrtl.patch from upstream to make --disable-long-double work.
+
+=== r-3.0.1.p0 (Emmanuel Charpentier, 8 June 2013) ===
+ * #14706: Drop-in replacement of upstream sources.
 
 === r-2.15.2.p2 (John H. Palmieri, 17 March 2013) ===
  * #9668: fix hardcoding of paths in R by defining R_SHARE_DIR,

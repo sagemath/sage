@@ -925,9 +925,8 @@ cdef class Parent(category_object.CategoryObject):
         The old way to signal atomic string reps.
 
         True if the elements have atomic string representations, in the
-        sense that they print if they print at s, then -s means the
-        negative of s. For example, integers are atomic but polynomials are
-        not.
+        sense that if they print at s, then -s means the negative of s. For
+        example, integers are atomic but polynomials are not.
 
         EXAMPLES::
 

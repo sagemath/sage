@@ -96,7 +96,7 @@ class SageDev(MercurialPatchMixin):
         TESTS::
 
             sage: type(dev._sagedev)
-            <class 'sage.dev.sagedev.SageDev'>
+            <class 'sage.dev.test.sagedev.DoctestSageDev'>
         """
         self.config = config
         if self.config is None:
@@ -1541,8 +1541,6 @@ class SageDev(MercurialPatchMixin):
             "u/bob/ticket/1" and the current value of the branch field "u/alice/ticket/1"
             have diverged.
             <BLANKLINE>
-            #  Use "sage --dev push --force --ticket=1 --remote-branch=u/bob/ticket/1" to overwrite the branch field.
-            <BLANKLINE>
             #  Use "sage --dev pull --ticket=1" to merge the changes introduced by the remote "u/alice/ticket/1" into your local branch.
 
         After merging the changes, this works again::
@@ -1755,9 +1753,6 @@ class SageDev(MercurialPatchMixin):
                 if not force:
                     self._UI.error('Not pushing your changes because they would discard some of'
                                    ' the commits on the remote branch "{0}".', remote_branch)
-                    self._UI.info(['', 'Use "{0}" if you really want to overwrite the remote branch.'],
-                                  self._format_command("push", ticket=ticket,
-                                                       remote_branch=remote_branch, force=True))
                     raise OperationCancelledError("not a fast-forward")
 
             # check whether this is a nop
@@ -1805,11 +1800,9 @@ class SageDev(MercurialPatchMixin):
                         self._UI.error('Not setting the branch field for ticket #{0} to "{1}" because'
                                        ' "{1}" and the current value of the branch field "{2}" have diverged.'
                                        .format(ticket, remote_branch, current_remote_branch))
-                        self._UI.info(['', 'Use "{0}" to overwrite the branch field.', '',
-                                       'Use "{1}" to merge the changes introduced by'
-                                       ' the remote "{2}" into your local branch.'],
-                                      self._format_command("push", ticket=ticket,
-                                                           remote_branch=remote_branch, force=True),
+                        self._UI.info(['',
+                                       'Use "{0}" to merge the changes introduced by'
+                                       ' the remote "{1}" into your local branch.'],
                                       self._format_command("pull", ticket=ticket),
                                       current_remote_branch)
                         raise OperationCancelledError("not a fast-forward")
@@ -4032,7 +4025,8 @@ class SageDev(MercurialPatchMixin):
                 private_key = public_key[:-4]
                 self._UI.show("Generating ssh key.")
                 from subprocess import call
-                success = call(['sage-native-execute', 'ssh-keygen', '-q', '-f', private_key, '-P', ''])
+                success = call(['sage-native-execute', 'ssh-keygen', '-q',
+                                '-f', private_key, '-P', '', '-t', 'rsa'])
                 if success == 0:
                     self._UI.debug("Key generated.")
                 else:

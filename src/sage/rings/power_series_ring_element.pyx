@@ -112,7 +112,6 @@ import rational_field, integer_ring
 from integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.libs.pari.all import pari
-from sage.libs.all import PariError
 from sage.misc.functional import sqrt, log
 from sage.rings.arith import integer_ceil as ceil
 

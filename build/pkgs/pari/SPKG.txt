@@ -44,7 +44,7 @@ Most of the building of a new version of the PARI spkg is automated
 in the script spkg-src.  Normally, the following should work.  In case
 of doubt, have a look at the file spkg-src.
 
-  0) Edit the line "git checkout pari-2.5.2".
+  0) Edit the line "git checkout pari-2.5.5".
 
   1) ./spkg-src
      This will download the git sources to the directory parigit/
@@ -68,6 +68,9 @@ of doubt, have a look at the file spkg-src.
   4) cd ..; sage --spkg pari-version-name
 
 == Changelog ==
+
+=== pari-2.5.5.p1 (Jeroen Demeyer, 12 November 2013) ===
+ * Trac #15402: add patch q_eint1.patch
 
 === pari-2.5.5.p0 (Jeroen Demeyer, 2 October 2013) ===
  * Trac #15250: upgrade to version 2.5.5.

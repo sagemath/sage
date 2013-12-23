@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+cd src
+
+echo "Testing openssl..."
+$MAKE test
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error running self tests."
+    exit 1
+fi

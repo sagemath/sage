@@ -30,6 +30,7 @@ from sage.misc.sage_eval import sage_eval
 from sage.structure.parent import Parent
 from sage.structure.parent_gens import ParentWithGens
 
+NumberField_quadratic = None
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
 AlgebraicNumber = None
@@ -47,6 +48,7 @@ def late_import():
 
         sage: sage.rings.complex_field.late_import()
     """
+    global NumberField_quadratic
     global NumberFieldElement_quadratic
     global AlgebraicNumber_base
     global AlgebraicNumber
@@ -54,7 +56,9 @@ def late_import():
     global AA, QQbar, SR
     global CLF, RLF, CDF
     if NumberFieldElement_quadratic is None:
+        import sage.rings.number_field.number_field
         import sage.rings.number_field.number_field_element_quadratic as nfeq
+        NumberField_quadratic = sage.rings.number_field.number_field.NumberField_quadratic
         NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
         import sage.rings.qqbar
         AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
@@ -354,6 +358,14 @@ class ComplexField_class(field.Field):
 
             sage: CC((1,2)) # indirect doctest
             1.00000000000000 + 2.00000000000000*I
+
+        Check that :trac:`14989` is fixed::
+
+            sage: QQi = NumberField(x^2+1, 'i', embedding=CC(0,1))
+            sage: i = QQi.order(QQi.gen()).gen(1)
+            sage: CC(i)
+            1.00000000000000*I
+
         """
         if not isinstance(x, (real_mpfr.RealNumber, tuple)):
             if isinstance(x, complex_double.ComplexDoubleElement):
@@ -365,9 +377,10 @@ class ComplexField_class(field.Field):
                             sage_eval(x.replace(' ',''), locals={"I":self.gen(),"i":self.gen()}))
 
             late_import()
-            if isinstance(x, NumberFieldElement_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
-                (re, im) = list(x)
-                return complex_number.ComplexNumber(self, re, im)
+            if isinstance(x, NumberFieldElement_quadratic):
+                if isinstance(x.parent(), NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
+                    (re, im) = list(x)
+                    return complex_number.ComplexNumber(self, re, im)
 
             try:
                 return self(x.sage())

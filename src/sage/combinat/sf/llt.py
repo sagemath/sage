@@ -3,16 +3,16 @@ LLT symmetric functions
 
 REFERENCES:
 
-    .. [LLT1997] Alain Lascoux, Bernard Leclerc, Jean-Yves Thibon,
-       Ribbon tableaux, Hall-Littlewood functions, quantum affine algebras, and unipotent varieties,
-       J. Math. Phys. 38 (1997), no. 2, 1041-1068,
-       arXiv:q-alg/9512-31v1 [math.q.alg]
+.. [LLT1997] Alain Lascoux, Bernard Leclerc, Jean-Yves Thibon,
+   Ribbon tableaux, Hall-Littlewood functions, quantum affine algebras, and unipotent varieties,
+   J. Math. Phys. 38 (1997), no. 2, 1041-1068,
+   arXiv:q-alg/9512-31v1 [math.q.alg]
 
-    .. [LT2000] Bernard Leclerc and Jean-Yves Thibon,
-       Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials,
-       in: Combinatorial methods in representation theory (Kyoto)
-       Adv. Stud. Pure Math., vol. 28, Kinokuniya, Tokyo, 2000, pp 155-220
-       arXiv:math/9809122v3 [math.q-alg]
+.. [LT2000] Bernard Leclerc and Jean-Yves Thibon,
+   Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials,
+   in: Combinatorial methods in representation theory (Kyoto)
+   Adv. Stud. Pure Math., vol. 28, Kinokuniya, Tokyo, 2000, pp 155-220
+   arXiv:math/9809122v3 [math.q-alg]
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
@@ -47,130 +47,6 @@ m_to_hsp_cache={}
 # cache for H cospin basis
 hcosp_to_m_cache={}
 m_to_hcosp_cache={}
-
-###########################################
-# Begin of functions to be deprecated
-###########################################
-
-def NoneConvention( R, t ):
-    """
-    Helper function to mimic behavior of old conventions.
-
-    INPUT:
-
-    - ``R`` -- ring
-    - ``t`` -- parameter
-
-    EXAMPLES::
-
-        sage: sage.combinat.sf.llt.NoneConvention(QQ, None)
-        (Fraction Field of Univariate Polynomial Ring in t over Rational Field, t)
-        sage: R = QQ['t']
-        sage: sage.combinat.sf.llt.NoneConvention(R, R.gen())
-        (Univariate Polynomial Ring in t over Rational Field, t)
-    """
-    if t is None:
-        R = R['t'].fraction_field()
-        t = R.gen()
-    elif t not in R:
-        raise ValueError, "t (=%s) must be in R (=%s)"%(t,R)
-    else:
-        t = R(t)
-    return (R, t)
-
-def LLT(R, k, t=None):
-    """
-    Returns a class for working with LLT polynomials.
-
-    INPUT:
-
-    - ``R`` -- ring
-    - ``k`` -- a positive integer
-    - ``t`` -- parameter
-
-    EXAMPLES::
-
-        sage: L3 = LLT(QQ,3); L3
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).llt(3,t=None)
-        See http://trac.sagemath.org/5457 for details.
-        level 3 LLT polynomials over Fraction Field of Univariate Polynomial Ring in t over Rational Field
-        sage: L3.cospin([3,2,1])
-        (t+1)*m[1, 1] + m[2]
-        sage: L3.hcospin()
-        Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the level 3 LLT cospin basis
-    """
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).llt(%s,t=%s)"%(k,t))
-    (R, t) = NoneConvention(R, t)
-    return sage.combinat.sf.sf.SymmetricFunctions(R).llt(k, t=t)
-
-def LLTHSpin(R, level, t=None):
-    """
-    Returns the LLT polynomials in the HSpin basis at level ``level``.
-
-    INPUT:
-
-    - ``R`` -- ring
-    - ``level`` -- a positive integer
-    - ``t`` -- parameter
-
-    EXAMPLES::
-
-        sage: HSp3 = LLTHSpin(QQ,3)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).llt(3,t=None).hspin()
-        See http://trac.sagemath.org/5457 for details.
-        sage: HSp3([1])^2
-        HSp3[1, 1] + (-t+1)*HSp3[2]
-
-        sage: s = SFASchur(HSp3.base_ring())
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).schur()
-        See http://trac.sagemath.org/5457 for details.
-        sage: HSp3(s([2]))
-        HSp3[2]
-        sage: HSp3(s([1,1]))
-        HSp3[1, 1] - t*HSp3[2]
-    """
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).llt(%s,t=%s).hspin()"%(level,t))
-    (R, t) = NoneConvention(R, t)
-    return sage.combinat.sf.sf.SymmetricFunctions(R).llt(level, t=t).hspin()
-
-def LLTHCospin(R, level, t=None):
-    """
-    Returns the LLT polynomials in the HCospin basis at level ``level``.
-
-    INPUT:
-
-    - ``R`` -- ring
-    - ``level`` -- a positive integer
-    - ``t`` -- parameter
-
-    EXAMPLES::
-
-        sage: HCosp3 = LLTHCospin(QQ,3)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).llt(3,t=None).hcospin()
-        See http://trac.sagemath.org/5457 for details.
-        sage: HCosp3([1])^2
-        1/t*HCosp3[1, 1] + ((t-1)/t)*HCosp3[2]
-
-        sage: s = SFASchur(HCosp3.base_ring())
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).schur()
-        See http://trac.sagemath.org/5457 for details.
-        sage: HCosp3(s([2]))
-        HCosp3[2]
-        sage: HCosp3(s([1,1]))
-        1/t*HCosp3[1, 1] - 1/t*HCosp3[2]
-    """
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).llt(%s,t=%s).hcospin()"%(level,t))
-    (R, t) = NoneConvention(R, t)
-    return sage.combinat.sf.sf.SymmetricFunctions(R).llt(level, t=t).hcospin()
-
-#from sage.misc.cache import Cache
-#cache_llt = Cache(LLT_class)
-#cache_llt_cospin = Cache(LLT_cospin)
-#cache_llt_spin = Cache(LLT_spin)
-
-###########################################
-# End of functions to be deprecated
-###########################################
 
 QQt = QQ['t'].fraction_field()
 # This is to become the "abstract algebra" for llt polynomials

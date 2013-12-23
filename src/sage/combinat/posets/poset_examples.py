@@ -486,9 +486,16 @@ class Posets(object):
         return Poset(nodes)
 
     @staticmethod
-    def SymmetricGroupWeakOrderPoset(n,labels="permutations"):
-        """
-        The poset of permutations with respect to weak order.
+    def SymmetricGroupWeakOrderPoset(n, labels="permutations", side="right"):
+        r"""
+        The poset of permutations of `\{ 1, 2, \ldots, n \}` with respect
+        to the weak order (also known as the permutohedron order, cf.
+        :meth:`~sage.combinat.permutation.Permutation.permutohedron_lequal`).
+
+        The optional variable ``labels`` (default: ``"permutations"``)
+        determines the labelling of the elements if `n < 10`. The optional
+        variable ``side`` (default: ``"right"``) determines whether the
+        right or the left permutohedron order is to be used.
 
         EXAMPLES::
 
@@ -499,13 +506,22 @@ class Posets(object):
             element_labels = dict([[s,"".join(map(str,s))] for s in Permutations(n)])
         if n < 10 and labels == "reduced_words":
             element_labels = dict([[s,"".join(map(str,s.reduced_word_lexmin()))] for s in Permutations(n)])
-        def weak_covers(s):
-            r"""
-            Nested function for computing the covers of elements in the
-            poset of weak order for the symmetric group.
-            """
-            return [v for v in s.bruhat_succ() if
-                s.length() + (s.inverse()*v).length() == v.length()]
+        if side == "left":
+            def weak_covers(s):
+                r"""
+                Nested function for computing the covers of elements in the
+                poset of left weak order for the symmetric group.
+                """
+                return [v for v in s.bruhat_succ() if
+                    s.length() + (s.inverse().right_action_product(v)).length() == v.length()]
+        else:
+            def weak_covers(s):
+                r"""
+                Nested function for computing the covers of elements in the
+                poset of right weak order for the symmetric group.
+                """
+                return [v for v in s.bruhat_succ() if
+                    s.length() + (s.inverse().left_action_product(v)).length() == v.length()]
         return Poset(dict([[s,weak_covers(s)] for s in Permutations(n)]),element_labels)
 
 posets = Posets

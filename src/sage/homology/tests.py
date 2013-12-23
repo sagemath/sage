@@ -35,7 +35,7 @@ def random_chain_complex(level=1):
         sage: C = random_chain_complex()
         sage: C
         Chain complex with at most 2 nonzero terms over Integer Ring
-        sage: C._degree # random: either 1 or -1
+        sage: C.degree_of_differential() # random: either 1 or -1
         1
     """
     from sage.misc.prandom import randint

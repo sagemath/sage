@@ -313,6 +313,28 @@ class SetPartition(ClonableArray):
         """
         return self.__eq__(y) or self.__gt__(y)
 
+    def __cmp__(self, y):
+        """
+        Return the result of ``cmp``.
+
+        EXAMPLES::
+
+            sage: P = SetPartitions(4)
+            sage: A = P([[1], [2,3], [4]])
+            sage: B = SetPartition([[1,2,3], [4]])
+            sage: A < B
+            True
+            sage: cmp(A, B)
+            -1
+            sage: cmp(B, A)
+            1
+        """
+        if self < y:
+            return -1
+        if self > y:
+            return 1
+        return 0
+
     def __mul__(self, other):
         r"""
         The product of the set partitions ``self`` and ``other``.
@@ -367,7 +389,7 @@ class SetPartition(ClonableArray):
                 BintC = B.intersection(C)
                 if BintC:
                     new_composition.append(BintC)
-        return self.__class__(self.parent(), new_composition)
+        return SetPartition(new_composition)
 
     inf = __mul__
 
@@ -424,7 +446,7 @@ class SetPartition(ClonableArray):
         for p in t:
             inters = Set(filter(lambda x: x.intersection(p) != Set([]), list(res)))
             res = res.difference(inters).union(_set_union(inters))
-        return self.__class__(self.parent(), res)
+        return SetPartition(res)
 
     def pipe(self, other):
         r"""
@@ -819,8 +841,7 @@ class SetPartition(ClonableArray):
             [{}]
         """
         L = [SetPartitions(part) for part in self]
-        P = self.parent()
-        return [self.__class__(P, sum(map(list, x), [])) for x in CartesianProduct(*L)]
+        return [SetPartition(sum(map(list, x), [])) for x in CartesianProduct(*L)]
 
     def coarsenings(self):
         """
@@ -840,7 +861,6 @@ class SetPartition(ClonableArray):
             [{}]
         """
         SP = SetPartitions(len(self))
-        P = self.parent()
         def union(s):
             # Return the partition obtained by combining, for every
             # part of s, those parts of self which are indexed by
@@ -852,7 +872,7 @@ class SetPartition(ClonableArray):
                     cur = cur.union(self[i-1]) # -1 for indexing
                 ret.append(cur)
             return ret
-        return [self.__class__(P, union(s)) for s in SP]
+        return [SetPartition(union(s)) for s in SP]
 
     def strict_coarsenings(self):
         r"""
@@ -1033,7 +1053,7 @@ class SetPartitions(Parent, UniqueRepresentation):
                 return s
             if isinstance(s.parent(), SetPartitions):
                 return self.element_class(self, list(s))
-            raise ValueError("Cannot convert %s into an element of %s"%(s, self))
+            raise ValueError("cannot convert %s into an element of %s"%(s, self))
         return self.element_class(self, s)
 
     Element = SetPartition

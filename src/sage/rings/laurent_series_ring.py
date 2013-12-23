@@ -24,7 +24,7 @@ import integral_domain
 import field
 
 from sage.structure.parent_gens import ParentWithGens
-from sage.libs.all import pari_gen
+from sage.libs.pari.all import pari_gen
 
 from sage.categories.fields import Fields
 _Fields = Fields()

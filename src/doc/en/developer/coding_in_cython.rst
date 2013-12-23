@@ -4,37 +4,34 @@
 Coding in Cython
 ================
 
-This chapter discusses Cython, which is a
-compiled language based on Python.
-The major advantage it has over Python is that code can be
-much faster (sometimes orders of magnitude).
-
-Cython also allows Sage to interface with C and C++, as well
-as other languages. See the Python documentation at
-http://www.python.org/doc/ for more details. In particular, the
-section "Extending and Embedding the Python Interpreter", available at
-http://docs.python.org/ext/ext.html, describes how to write C or
-C++ modules for use in Python.
-
-Cython is a compiled version of Python. It is based on Pyrex
-(http://www.cosc.canterbury.ac.nz/greg.ewing/python/Pyrex/). To a
-large degree, Cython has changed based on what Sage's developers
-needed; Cython has been developed in concert with Sage. However, it is
-an independent project now, which is used beyond the scope of Sage.
-
-As such, it is a young, but developing language, with young, but
-developing documentation. See its web page,
-http://www.cython.org/, for the most up-to-date information.
+This chapter discusses Cython, which is a compiled language based on
+Python.  The major advantage it has over Python is that code can be
+much faster (sometimes orders of magnitude) and can directly call
+C and C++ code.  As Cython is essentially a superset of the Python
+language, one often doesn’t make a distinction between Cython and 
+Python code in Sage (e.g. one talks of the “Sage Python Library”
+and “Python Coding Conventions”).
 
 Python is an interpreted language and has no declared data types for
 variables. These features make it easy to write and debug, but Python
 code can sometimes be slow. Cython code can look a lot like Python,
 but it gets translated into C code (often very efficient C code) and
 then compiled. Thus it offers a language which is familiar to Python
-developers, but with the potential for much greater speed.
+developers, but with the potential for much greater speed. Cython also
+allows Sage developers to interface with C and C++ much easier than
+using the Python C API directly.
+
+Cython is a compiled version of Python. It was originally based on
+Pyrex but has changed based on what Sage's developers needed; Cython
+has been developed in concert with Sage. However, it is an independent
+project now, which is used beyond the scope of Sage. As such, it is a
+young, but developing language, with young, but developing
+documentation. See its web page, http://www.cython.org/, for the most
+up-to-date information.
 
 
-Writing Cython code in Sage
+
+Writing Cython Code in Sage
 ===========================
 
 There are several ways to create and build Cython code in Sage.
@@ -47,8 +44,8 @@ There are several ways to create and build Cython code in Sage.
    #. Cython is run on it with all the standard Sage libraries
       automatically linked if necessary.
 
-   #. The resulting ``.so`` file is then loaded into your running
-      instance of Sage.
+   #. The resulting shared library file (``.so`` / ``.dll`` /
+      ``.dylib``) is then loaded into your running instance of Sage.
 
    #. The functionality defined in that cell is now available for you
       to use in the notebook. Also, the output cell has a link to the C
@@ -71,24 +68,17 @@ There are several ways to create and build Cython code in Sage.
 
    #. First, add a listing for the Cython extension to the variable
       ``ext_modules`` in the file
-      ``SAGE_ROOT/devel/sage/module_list.py``. See the
+      ``SAGE_ROOT/src/module_list.py``. See the
       ``distutils.extension.Extension`` class for more information on
       creating a new Cython extension.
-
-   #. Then, if you created a new directory for your ``.pyx`` file, add
-      the directory name to the ``packages`` list in the file
-      ``SAGE_ROOT/devel/sage/setup.py``.  (See also the section on
-      "Creating a new directory" in :ref:`chapter-python`.)
 
    #. Run ``sage -b`` to rebuild Sage.
 
    For example, the file
-   ``SAGE_ROOT/devel/sage/sage/graphs/chrompoly.pyx`` has the lines
+   ``SAGE_ROOT/src/sage/graphs/chrompoly.pyx`` has the lines::
 
-   ::
-
-     Extension('sage.graphs.chrompoly',
-               sources = ['sage/graphs/chrompoly.pyx']),
+       Extension('sage.graphs.chrompoly',
+                 sources = ['sage/graphs/chrompoly.pyx']),
 
    in ``module_list.py``. In addition, ``sage.graphs`` is included in
    the ``packages`` list under the Distutils section of ``setup.py``
@@ -96,7 +86,7 @@ There are several ways to create and build Cython code in Sage.
    ``sage/graphs``.
 
 
-Special pragmas
+Special Pragmas
 ===============
 
 If Cython code is either attached or loaded as a ``.spyx`` file or
@@ -125,7 +115,7 @@ For example::
     #cfile foo.c
 
 
-Attaching or loading .spyx files
+Attaching or Loading .spyx Files
 ================================
 
 The easiest way to try out Cython without having to learn anything
@@ -134,9 +124,7 @@ about distutils, etc., is to create a file with the extension
 
 #. Create a file ``power2.spyx``.
 
-#. Put the following in it:
-
-   ::
+#. Put the following in it::
 
        def is2pow(n):
            while n != 0 and n%2 == 0:
@@ -198,10 +186,8 @@ version with a type declaration, by changing ``def is2pow(n):`` to
 
 .. _section_sig_on:
 
-Interrupt and signal handling
-===============================================
-
-(This section was written by Jeroen Demeyer.)
+Interrupt and Signal Handling
+=============================
 
 When writing Cython code for Sage, special care must be taken to ensure
 the code can be interrupted with ``CTRL-C``.
@@ -259,7 +245,8 @@ The following code is *invalid*::
         foo()
         sig_off()
 
-But the following is valid::
+But the following is valid since you cannot call ``foo``
+interactively::
 
     cdef int foo():
         sig_off()
@@ -303,11 +290,12 @@ Python exceptions::
             # (handle interrupt)
 
 Certain C libraries in Sage are written in a way that they will raise
-Python exceptions: NTL and PARI are examples of this.
-NTL can raise ``RuntimeError`` and PARI can raise ``PariError``.
-Since these use the ``sig_on()`` mechanism,
-these exceptions can be caught just like the ``KeyboardInterrupt``
-in the example above.
+Python exceptions:
+libGAP and NTL can raise ``RuntimeError`` and PARI can raise ``PariError``.
+These exceptions behave exactly like the ``KeyboardInterrupt``
+in the example above and can be caught by putting the ``sig_on()``
+inside a ``try``/``except`` block.
+See :ref:`sig-error` to see how this is implmented.
 
 It is possible to stack ``sig_on()`` and ``sig_off()``.
 If you do this, the effect is exactly the same as if only the outer
@@ -323,7 +311,6 @@ of ``sig_on()`` calls equal the number of ``sig_off()`` calls::
         sig_off()
         sig_off()
         sig_off()
-
 
 Extra care must be taken with exceptions raised inside ``sig_on()``.
 The problem is that, if you do not do anything special, the ``sig_off()``
@@ -351,16 +338,41 @@ exceptions raised by subroutines inside the ``try``::
             sig_off()
         return something
 
+Using ``sig_check()``
+---------------------
 
-Other signals
+The function ``sig_check()`` behaves exactly as ``sig_on(); sig_off()``
+(except that ``sig_check()`` is faster since it does not involve a ``setjmp()`` call).
+
+``sig_check()`` can be used to check for pending interrupts.
+If an interrupt happens outside of a ``sig_on()``/``sig_off()`` block,
+it will be caught by the next ``sig_check()`` or ``sig_on()``.
+
+The typical use case for ``sig_check()`` is within tight loops doing
+complicated stuff
+(mixed Python and Cython code, potentially raising exceptions).
+It is safer to use and gives more control, because a
+``KeyboardInterrupt`` can *only* be raised during ``sig_check()``::
+
+    def sig_check_example():
+        for x in foo:
+            # (one loop iteration which does not take a long time)
+            sig_check()
+
+Other Signals
 -------------
 
 Apart from handling interrupts, ``sig_on()`` provides more general
 signal handling.
-Indeed, if the code inside ``sig_on()`` would generate
+It handles :func:`alarm` time-outs by raising an ``AlarmInterrupt``
+(inherited from ``KeyboardInterrupt``) exception.
+
+If the code inside ``sig_on()`` would generate
 a segmentation fault or call the C function ``abort()``
 (or more generally, raise any of SIGSEGV, SIGILL, SIGABRT, SIGFPE, SIGBUS),
-this is caught by the interrupt framework and a ``RuntimeError`` is raised::
+this is caught by the interrupt framework and an exception is raised
+(``RuntimeError`` for SIGABRT, ``FloatingPointError`` for SIGFPE
+and the custom exception ``SignalError``, based on ``BaseException``, otherwise)::
 
     cdef extern from 'stdlib.h':
         void abort()
@@ -378,9 +390,8 @@ this is caught by the interrupt framework and a ``RuntimeError`` is raised::
     RuntimeError: Aborted
 
 This exception can then be caught as explained above.
-This means that ``abort()`` can be used
-as an alternative to exceptions within ``sig_on()``/``sig_off()``.
-A segmentation fault unguarded by ``sig_on()`` would simply terminate Sage.
+A segmentation fault or ``abort()`` unguarded by ``sig_on()`` would
+simply terminate Sage.
 
 Instead of ``sig_on()``, there is also a function ``sig_str(s)``,
 which takes a C string ``s`` as argument.
@@ -410,30 +421,42 @@ With regard to ordinary interrupts (i.e. SIGINT), ``sig_str(s)``
 behaves the same as ``sig_on()``:
 a simple ``KeyboardInterrupt`` is raised.
 
+.. _sig-error:
+
+Error Handling in C Libraries
+-----------------------------
+
+Some C libraries can produce errors and use some sort of callback
+mechanism to report errors: an external error handling function needs
+to be set up which will be called by the C library if an error occurs.
+
+The function ``sig_error()`` can be used to deal with these errors.
+This function should be called within a ``sig_on()`` block (otherwise
+Sage will crash hard) after raising a Python exception. You need to
+use the `Python/C API <http://docs.python.org/2/c-api/exceptions.html>`_
+for this and call ``sig_error()`` after calling some variant of
+:func:`PyErr_SetObject`. Even within Cython, you cannot use the ``raise``
+statement, because then the ``sig_error()`` will never be executed.
+The call to ``sig_error()`` will use the ``sig_on()`` machinery
+such that the exception will be seen by ``sig_on()``.
+
+A typical error handler implemented in Cython would look as follows::
+
+    include "sage/ext/interrupt.pxi"
+    from cpython.exc cimport PyErr_SetString
+
+    cdef void error_handler(char *msg):
+        PyErr_SetString(RuntimeError, msg)
+        sig_error()
+
+In Sage, this mechanism is used for libGAP, NTL and PARI.
+
 .. _advanced-sig:
 
-Advanced functions
+Advanced Functions
 ------------------
 
 There are several more specialized functions for dealing with interrupts.
-The function ``sig_check()`` behaves exactly as ``sig_on(); sig_off()``
-(except that ``sig_check()`` is faster since it does not involve a ``setjmp()`` call).
-
-``sig_check()`` can be used to check for pending interrupts.
-If an interrupt happens outside of a ``sig_on()``/``sig_off()`` block,
-it will be caught by the next ``sig_check()`` or ``sig_on()``.
-
-The typical use case for ``sig_check()`` is within tight loops doing
-complicated stuff
-(mixed Python and Cython code, potentially raising exceptions).
-It gives more control, because a ``KeyboardInterrupt``
-can *only* be raised during ``sig_check()``::
-
-    def sig_check_example():
-        for x in foo:
-            # (one loop iteration which does not take a long time)
-            sig_check()
-
 As mentioned above, ``sig_on()`` makes no attempt to clean anything up
 (restore state or freeing memory) when an interrupt occurs.
 In fact, it would be impossible for ``sig_on()`` to do that.
@@ -466,10 +489,10 @@ which is analogous to ``sig_str(s)``.
 
 .. NOTE::
 
-    See the file :file:`SAGE_ROOT/devel/sage/sage/tests/interrupt.pyx`
+    See the file :file:`SAGE_ROOT/src/sage/tests/interrupt.pyx`
     for more examples of how to use the various ``sig_*()`` functions.
 
-Testing interrupts
+Testing Interrupts
 ------------------
 
 .. highlight:: python
@@ -486,18 +509,36 @@ the function ``factor()`` can be interrupted::
     ...
     AlarmInterrupt
 
-Unpickling cython code
+Releasing the Global Interpreter Lock (GIL)
+-------------------------------------------
+
+All the functions related to interrupt and signal handling are declared
+``nogil``. This means that they can be used in Cython code inside
+``with nogil`` blocks. If ``sig_on()`` needs to raise an exception,
+the GIL is temporarily acquired internally.
+
+If you use C libraries without the GIL and you want to raise an exception
+after :ref:`sig_error() <sig-error>`, remember to acquire the GIL
+while raising the exception. Within Cython, you can use a
+`with gil context <http://docs.cython.org/src/userguide/external_C_code.html#acquiring-the-gil>`_.
+
+.. WARNING::
+
+    The GIL should never be released or acquired inside a ``sig_on()``
+    block. If you want to use a ``with nogil`` block, put both
+    ``sig_on()`` and ``sig_off()`` inside that block. When in doubt,
+    choose to use ``sig_check()`` instead, which is always safe to use.
+
+Unpickling Cython Code
 ======================
 
-Pickling for python classes and extension classes, such as cython, is different.
-This is discussed in the `python pickling documentation`_. For the unpickling of
+Pickling for Python classes and extension classes, such as Cython, is different.
+This is discussed in the `Python pickling documentation`_. For the unpickling of
 extension classes you need to write a :meth:`__reduce__` method which typically
 returns a tuple ``(f, args, ...)`` such that ``f(*args)`` returns (a copy of) the
 original object. As an example, the following code snippet is the
 :meth:`~sage.rings.integer.Integer.__reduce__` method from
-:class:`sage.rings.integer.Integer`.
-
-.. code-block:: python
+:class:`sage.rings.integer.Integer`::
 
     def __reduce__(self):
         '''

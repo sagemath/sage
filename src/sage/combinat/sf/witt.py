@@ -49,7 +49,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
     .. MATH::
 
-        h_n = \sum_{\lambda \vdash n} w_{\lambda}`
+        h_n = \sum_{\lambda \vdash n} w_{\lambda}
 
     for all nonnegative integers `n`, where `\lambda \vdash n` means
     that `\lambda` is a partition of `n`.
@@ -488,15 +488,15 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         """
         # Much of this code is adapted from dual.py
         base_ring = self.base_ring()
-        zero = base_ring(0)
+        zero = base_ring.zero()
 
         from sage.combinat.partition import Partition, Partitions_n
 
         # Handle the n == 0 case separately
         if n == 0:
             part = Partition([])
-            to_self_cache[ part ] = { part: base_ring(1) }
-            from_self_cache[ part ] = { part: base_ring(1) }
+            to_self_cache[ part ] = { part: base_ring.one() }
+            from_self_cache[ part ] = { part: base_ring.one() }
             transition_matrices[n] = matrix(base_ring, [[1]])
             inverse_transition_matrices[n] = matrix(base_ring, [[1]])
             return

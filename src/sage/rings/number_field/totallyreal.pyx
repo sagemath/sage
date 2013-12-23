@@ -116,10 +116,11 @@ include 'sage/libs/pari/decl.pxi'
 
 import math, sys, bisect
 
-import sage.libs.pari.gen
-from sage.libs.pari.gen import pari
-cimport sage.libs.pari.gen
+from sage.libs.pari.pari_instance cimport PariInstance
 from sage.libs.pari.gen cimport gen as pari_gen
+
+import sage.libs.pari.pari_instance
+cdef PariInstance pari = sage.libs.pari.pari_instance.pari
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
@@ -256,7 +257,6 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     cdef bint found, use_t2, phc_flag, verb_int, temp_bint
     cdef Py_ssize_t k0, ind, lenS
     cdef tr_data T
-    cdef sage.libs.pari.gen.PariInstance P = sage.libs.pari.gen.pari
     cdef Integer dB
     cdef double db_odlyzko
 
@@ -275,7 +275,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     lenS = 0
 
     # This is just to quiet valgrind down
-    B_pari = P(0)
+    B_pari = pari(0)
     d = B_pari
     d_poly = B_pari
     keepB = B_pari
@@ -355,7 +355,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         T.incr(f_out,0,0,phc_flag)
 
     while f_out[n]:
-        nf = P.new_t_POL_from_int_star(f_out, n_int+1, 0)
+        nf = pari.new_t_POL_from_int_star(f_out, n_int+1, 0)
         if verb_int:
             print "==>", nf, "["
             for j from 0 <= j < n-1:

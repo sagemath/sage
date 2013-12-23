@@ -87,6 +87,8 @@ __append_to_doc(
      "Balaban11Cage",
      "BidiakisCube",
      "BiggsSmithGraph",
+     "BlanusaFirstSnarkGraph",
+     "BlanusaSecondSnarkGraph",
      "BrinkmannGraph",
      "BrouwerHaemersGraph",
      "BuckyBall",
@@ -118,26 +120,37 @@ __append_to_doc(
      "HoffmanGraph",
      "HoffmanSingletonGraph",
      "HoltGraph",
+     "HortonGraph",
+     "KittellGraph",
      "KrackhardtKiteGraph",
      "LjubljanaGraph",
+     "M22Graph",
+     "MarkstroemGraph",
      "McGeeGraph",
      "McLaughlinGraph",
-     "M22Graph",
+     "MeredithGraph",
      "MoebiusKantorGraph",
      "MoserSpindle",
      "NauruGraph",
      "PappusGraph",
+     "PoussinGraph",
      "PetersenGraph",
      "RobertsonGraph",
      "SchlaefliGraph",
      "ShrikhandeGraph",
      "SimsGewirtzGraph",
+     "SousselierGraph",
      "SylvesterGraph",
+     "SzekeresSnarkGraph",
      "ThomsenGraph",
+     "TietzeGraph",
      "Tutte12Cage",
      "TutteCoxeterGraph",
+     "TutteGraph",
      "WagnerGraph",
-     "WellsGraph"])
+     "WatkinsSnarkGraph",
+     "WellsGraph",
+     "WienerArayaGraph"])
 
 __doc__ += """
 *Platonic solids* (ordered ascending by number of vertices)
@@ -1248,6 +1261,8 @@ class GraphGenerators():
     Balaban11Cage            = staticmethod(sage.graphs.generators.smallgraphs.Balaban11Cage)
     BidiakisCube             = staticmethod(sage.graphs.generators.smallgraphs.BidiakisCube)
     BiggsSmithGraph          = staticmethod(sage.graphs.generators.smallgraphs.BiggsSmithGraph)
+    BlanusaFirstSnarkGraph   = staticmethod(sage.graphs.generators.smallgraphs.BlanusaFirstSnarkGraph)
+    BlanusaSecondSnarkGraph  = staticmethod(sage.graphs.generators.smallgraphs.BlanusaSecondSnarkGraph)
     BrinkmannGraph           = staticmethod(sage.graphs.generators.smallgraphs.BrinkmannGraph)
     BrouwerHaemersGraph      = staticmethod(sage.graphs.generators.smallgraphs.BrouwerHaemersGraph)
     BuckyBall                = staticmethod(sage.graphs.generators.smallgraphs.BuckyBall)
@@ -1280,25 +1295,36 @@ class GraphGenerators():
     HoffmanGraph             = staticmethod(sage.graphs.generators.smallgraphs.HoffmanGraph)
     HoffmanSingletonGraph    = staticmethod(sage.graphs.generators.smallgraphs.HoffmanSingletonGraph)
     HoltGraph                = staticmethod(sage.graphs.generators.smallgraphs.HoltGraph)
+    HortonGraph              = staticmethod(sage.graphs.generators.smallgraphs.HortonGraph)
+    KittellGraph             = staticmethod(sage.graphs.generators.smallgraphs.KittellGraph)
     KrackhardtKiteGraph      = staticmethod(sage.graphs.generators.smallgraphs.KrackhardtKiteGraph)
     LjubljanaGraph           = staticmethod(sage.graphs.generators.smallgraphs.LjubljanaGraph)
+    M22Graph                 = staticmethod(sage.graphs.generators.smallgraphs.M22Graph)
+    MarkstroemGraph          = staticmethod(sage.graphs.generators.smallgraphs.MarkstroemGraph)
     McGeeGraph               = staticmethod(sage.graphs.generators.smallgraphs.McGeeGraph)
     McLaughlinGraph          = staticmethod(sage.graphs.generators.smallgraphs.McLaughlinGraph)
-    M22Graph                 = staticmethod(sage.graphs.generators.smallgraphs.M22Graph)
+    MeredithGraph            = staticmethod(sage.graphs.generators.smallgraphs.MeredithGraph)
     MoebiusKantorGraph       = staticmethod(sage.graphs.generators.smallgraphs.MoebiusKantorGraph)
     MoserSpindle             = staticmethod(sage.graphs.generators.smallgraphs.MoserSpindle)
     NauruGraph               = staticmethod(sage.graphs.generators.smallgraphs.NauruGraph)
     PappusGraph              = staticmethod(sage.graphs.generators.smallgraphs.PappusGraph)
+    PoussinGraph             = staticmethod(sage.graphs.generators.smallgraphs.PoussinGraph)
     PetersenGraph            = staticmethod(sage.graphs.generators.smallgraphs.PetersenGraph)
     RobertsonGraph           = staticmethod(sage.graphs.generators.smallgraphs.RobertsonGraph)
     SchlaefliGraph           = staticmethod(sage.graphs.generators.smallgraphs.SchlaefliGraph)
     ShrikhandeGraph          = staticmethod(sage.graphs.generators.smallgraphs.ShrikhandeGraph)
     SimsGewirtzGraph         = staticmethod(sage.graphs.generators.smallgraphs.SimsGewirtzGraph)
+    SousselierGraph          = staticmethod(sage.graphs.generators.smallgraphs.SousselierGraph)
     SylvesterGraph           = staticmethod(sage.graphs.generators.smallgraphs.SylvesterGraph)
+    SzekeresSnarkGraph       = staticmethod(sage.graphs.generators.smallgraphs.SzekeresSnarkGraph)
     ThomsenGraph             = staticmethod(sage.graphs.generators.smallgraphs.ThomsenGraph)
+    TietzeGraph              = staticmethod(sage.graphs.generators.smallgraphs.TietzeGraph)
     Tutte12Cage              = staticmethod(sage.graphs.generators.smallgraphs.Tutte12Cage)
     TutteCoxeterGraph        = staticmethod(sage.graphs.generators.smallgraphs.TutteCoxeterGraph)
+    TutteGraph               = staticmethod(sage.graphs.generators.smallgraphs.TutteGraph)
     WagnerGraph              = staticmethod(sage.graphs.generators.smallgraphs.WagnerGraph)
+    WatkinsSnarkGraph        = staticmethod(sage.graphs.generators.smallgraphs.WatkinsSnarkGraph)
+    WienerArayaGraph         = staticmethod(sage.graphs.generators.smallgraphs.WienerArayaGraph)
 
 ###########################################################################
 # Platonic Solids

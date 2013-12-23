@@ -3035,6 +3035,65 @@ cdef class RealIntervalFieldElement(sage.structure.element.RingElement):
         else:
             raise ValueError("interval does not have a unique ceil")
 
+    def unique_round(self):
+        """
+        Returns the unique round (nearest integer) of this interval,
+        if it is well defined, otherwise raises a ``ValueError``.
+
+        OUTPUT:
+
+        - an integer.
+
+        EXAMPLES::
+
+            sage: RIF(pi).unique_round()
+            3
+            sage: RIF(1000*pi).unique_round()
+            3142
+            sage: RIF(100, 200).unique_round()
+            Traceback (most recent call last):
+            ...
+            ValueError: interval does not have a unique round (nearest integer)
+            sage: RIF(1.2, 1.7).unique_round()
+            Traceback (most recent call last):
+            ...
+            ValueError: interval does not have a unique round (nearest integer)
+            sage: RIF(0.7, 1.2).unique_round()
+            1
+            sage: RIF(-pi).unique_round()
+            -3
+            sage: (RIF(4.5).unique_round(), RIF(-4.5).unique_round())
+            (5, -5)
+
+       TESTS::
+
+            sage: RIF(-1/2, -1/3).unique_round()
+            Traceback (most recent call last):
+            ...
+            ValueError: interval does not have a unique round (nearest integer)
+            sage: RIF(-1/2, 1/3).unique_round()
+            Traceback (most recent call last):
+            ...
+            ValueError: interval does not have a unique round (nearest integer)
+            sage: RIF(-1/3, 1/3).unique_round()
+            0
+            sage: RIF(-1/2, 0).unique_round()
+            Traceback (most recent call last):
+            ...
+            ValueError: interval does not have a unique round (nearest integer)
+            sage: RIF(1/2).unique_round()
+            1
+            sage: RIF(-1/2).unique_round()
+            -1
+            sage: RIF(0).unique_round()
+            0
+        """
+        a, b = self.lower().round(), self.upper().round()
+        if a == b:
+            return a
+        else:
+            raise ValueError("interval does not have a unique round (nearest integer)")
+
     def unique_integer(self):
         """
         Return the unique integer in this interval, if there is exactly one,

@@ -1,35 +1,33 @@
 .. _chapter-other:
 
-==============================================
-Coding using external libraries and interfaces
-==============================================
+=======================================
+Using External Libraries and Interfaces
+=======================================
 
 When writing code for Sage, use Python for the basic structure and
 interface. For speed, efficiency, or convenience, you can implement
-parts of the code using any of the following languages:
-:ref:`Cython <chapter-cython>`, C/C++,
-Fortran 95, GAP, Common Lisp, Singular, and PARI/GP. You can also use
-all C/C++ libraries included with Sage  [3]_. (And if you are okay
-with your code depending on optional Sage packages, you can use
-Octave, or even Magma, Mathematica, or Maple.)
+parts of the code using any of the following languages: :ref:`Cython
+<chapter-cython>`, C/C++, Fortran 95, GAP, Common Lisp, Singular, and
+PARI/GP. You can also use all C/C++ libraries included with Sage
+[SageComponents]_. And if you are okay with your code depending on
+optional Sage packages, you can use Octave, or even Magma,
+Mathematica, or Maple.
 
-In this chapter, we discuss interfaces between Sage and
-:ref:`PARI <section-pari-library>`, :ref:`section-gap` and :ref:`section-singular`.
+In this chapter, we discuss interfaces between Sage and :ref:`PARI
+<section-pari-library>`, :ref:`section-gap` and
+:ref:`section-singular`.
 
 
 .. _section-pari-library:
 
-The PARI C library interface
+The PARI C Library Interface
 ============================
 
-(This chapter was written by Martin Albrecht.)
-
 Here is a step-by-step guide to adding new PARI functions to Sage. We
-use the Frobenius form of a matrix as an example.
-
-Some heavy lifting for matrices over integers is implemented using
-the PARI library. To compute the Frobenius form in PARI, the
-``matfrobenius`` function is used.
+use the Frobenius form of a matrix as an example. Some heavy lifting
+for matrices over integers is implemented using the PARI library. To
+compute the Frobenius form in PARI, the ``matfrobenius`` function is
+used.
 
 There are two ways to interact with the PARI library from Sage. The
 gp interface uses the gp interpreter. The PARI interface uses
@@ -71,29 +69,26 @@ add the method ``matfrobenius``::
 
 Note the use of the :ref:`sig_on() statement <section_sig_on>`.
 
-The ``matfrobenius`` call is just a call
-to the PARI C library function ``matfrobenius`` with the appropriate
-parameters.
+The ``matfrobenius`` call is just a call to the PARI C library
+function ``matfrobenius`` with the appropriate parameters.
 
-The ``self.new_gen(GEN x)`` call constructs a new Sage ``gen`` object from a
-given PARI ``GEN`` where the PARI ``GEN`` is stored as the
-``.g`` attribute.
-Apart from this, ``self.new_gen()`` calls a closing ``sig_off()`` macro
-and also clears the PARI stack so it is very convenient to use in a
-``return`` statement as illustrated above.
-So after ``self.new_gen()``, all PARI ``GEN``'s which are not converted
-to Sage ``gen``'s are gone.
-There is also ``self.new_gen_noclear(GEN x)`` which does the same as
-``self.new_gen(GEN x)`` except that it does *not* call ``sig_off()`` nor
-clear the PARI stack.
+The ``self.new_gen(GEN x)`` call constructs a new Sage ``gen`` object
+from a given PARI ``GEN`` where the PARI ``GEN`` is stored as the
+``.g`` attribute.  Apart from this, ``self.new_gen()`` calls a closing
+``sig_off()`` macro and also clears the PARI stack so it is very
+convenient to use in a ``return`` statement as illustrated above.  So
+after ``self.new_gen()``, all PARI ``GEN``'s which are not converted
+to Sage ``gen``'s are gone.  There is also ``self.new_gen_noclear(GEN
+x)`` which does the same as ``self.new_gen(GEN x)`` except that it
+does *not* call ``sig_off()`` nor clear the PARI stack.
 
 The information about which function to call and how to call it can be
 retrieved from the PARI user's manual (note: Sage includes the
 development version of PARI, so check that version of the user's
 manual). Looking for ``matfrobenius`` you can find:
 
-    The library syntax is ``GEN matfrobenius(GEN M, long flag, long v = -1)``,
-    where ``v`` is a variable number.
+    The library syntax is ``GEN matfrobenius(GEN M, long flag, long v
+    = -1)``, where ``v`` is a variable number.
 
 In case you are familiar with gp, please note that the PARI C function
 may have a name that is different from the corresponding gp function
@@ -163,8 +158,6 @@ convert output from PARI to Sage objects::
 GAP
 ===
 
-(The first version of this chapter was written by David Joyner.)
-
 Wrapping a GAP function in Sage is a matter of writing a program in
 Python that uses the pexpect interface to pipe various commands to GAP
 and read back the input into Sage. This is sometimes easy, sometimes
@@ -172,9 +165,7 @@ hard.
 
 For example, suppose we want to make a wrapper for the computation of
 the Cartan matrix of a simple Lie algebra. The Cartan matrix of `G_2`
-is available in GAP using the commands
-
-::
+is available in GAP using the commands::
 
     gap> L:= SimpleLieAlgebra( "G", 2, Rationals );
     <Lie algebra of dimension 14 over Rationals>
@@ -182,12 +173,7 @@ is available in GAP using the commands
     <root system of rank 2>
     gap> CartanMatrix( R );
 
-(Incidentally, most of the GAP Lie algebra implementation was written
-by Thomas Breuer, Willem de Graaf and Craig Struble.)
-
-In Sage, one can access these commands by typing
-
-::
+In Sage, one can access these commands by typing::
 
     sage: L = gap.SimpleLieAlgebra('"G"', 2, 'Rationals'); L
     Algebra( Rationals, [ v.1, v.2, v.3, v.4, v.5, v.6, v.7, v.8, v.9, v.10,
@@ -246,9 +232,7 @@ The output ``ans`` is a Python list. The last two lines convert that
 list to an instance of the Sage class ``Matrix``.
 
 Alternatively, one could replace the first line of the above function
-with this:
-
-::
+with this::
 
         L = gap.new('SimpleLieAlgebra("%s", %s, Rationals);'%(type, rank))
 
@@ -289,12 +273,36 @@ A "hard" example is left as an exercise! Here are a few ideas.
   for this.
 
 
+.. _section_libgap:
+
+LibGAP
+======
+
+The disadvantage of using other programs through interfaces is that
+there is a certain unavoidable latency (of the order of 10ms) involved
+in sending input and receiving the result. If you have to call
+functions in a tight loop this can be unacceptably slow. Calling into
+a shared library has much lower latency and furthermore avoids having
+to convert everything into a string in-between. This is why Sage
+includes a shared library version of the GAP kernel, available as
+`libgap` in Sage. The libgap analogue of the first example in
+:ref:`section-gap` is::
+
+    sage: SimpleLieAlgebra = libgap.function_factory('SimpleLieAlgebra')
+    sage: L = SimpleLieAlgebra('G', 2, QQ)
+    sage: R = L.RootSystem();  R
+    <root system of rank 2>
+    sage: R.CartanMatrix()    # output is a GAP matrix
+    [ [ 2, -1 ], [ -3, 2 ] ]
+    sage: matrix(R.CartanMatrix())   # convert to Sage matrix
+    [ 2 -1]
+    [-3  2]
+
+
 .. _section-singular:
 
 Singular
 ========
-
-(The first version of this chapter was written by David Joyner.)
 
 Using Singular functions from Sage is not much different conceptually
 from using GAP functions from Sage. As with GAP, this can range from
@@ -316,9 +324,7 @@ finite field. (The command ``closed_points`` also does this in some
 cases.) This is "easy" since no new Python classes are needed in Sage
 to carry this out.
 
-Here is an example on how to use this command in Singular:
-
-::
+Here is an example on how to use this command in Singular::
 
      A Computer Algebra System for Polynomial Computations   /   version 3-0-0
                                                            0<
@@ -390,9 +396,7 @@ Here is an example on how to use this command in Singular:
           1
 
 Here is another way of doing this same calculation in the Sage
-interface to Singular:
-
-::
+interface to Singular::
 
     sage: singular.LIB("brnoeth.lib")
     sage: singular.ring(5,'(x,y)','lp')
@@ -422,10 +426,6 @@ interface to Singular:
     sage: singular.eval("setring R;")
     'setring R;'
     sage: L = singular.eval("POINTS;")
-
-.. link
-
-::
 
     sage: print L
     [1]:
@@ -567,14 +567,12 @@ One more example (in addition to the one in the docstring):
     ((0, 1, 0), (1, 0, 0), (0, 0, 1))
 
 
-Singular: Another approach
+Singular: Another Approach
 ==========================
 
 There is also a more Python-like interface to Singular. Using this,
 the code is much simpler, as illustrated below. First, we demonstrate
-computing the places on a curve in a particular case.
-
-::
+computing the places on a curve in a particular case::
 
     sage: singular.lib('brnoeth.lib')
     sage: R = singular.ring(5, '(x,y)', 'lp')
@@ -599,9 +597,7 @@ representation:
 
 Next, we implement the general function (for brevity we omit the
 docstring, which is the same as above). Note that the ``point_parser``
-function is not required.
-
-::
+function is not required::
 
     def places_on_curve(f,F):
         p = F.characteristic()
@@ -625,7 +621,7 @@ implemented in the Sage/Singular interface, whereas the code in the
 previous section used only the barest minimum of that interface.
 
 
-Creating a new pseudo-tty interface
+Creating a New Pseudo-TTY Interface
 ===================================
 
 You can create Sage pseudo-tty interfaces that allow Sage to work with
@@ -638,11 +634,9 @@ asynchronous because it derives from the Sage class ``Expect``, which
 handles the communication between Sage and the external process.
 
 For example, here is part of the file
-``SAGE_ROOT/devel/sage/sage/interfaces/octave.py``, which
+``SAGE_ROOT/src/sage/interfaces/octave.py``, which
 defines an interface between Sage and Octave, an open source program
-for doing numerical computations, among other things.
-
-::
+for doing numerical computations, among other things::
 
     import os
     from expect import Expect, ExpectElement
@@ -654,9 +648,7 @@ The first two lines import the library ``os``, which contains
 operating system routines, and also the class ``Expect``, which is the
 basic class for interfaces. The third line defines the class
 ``Octave``; it derives from ``Expect`` as well. After this comes a
-docstring, which we omit here (see the file for details). Next comes:
-
-::
+docstring, which we omit here (see the file for details). Next comes::
 
         def __init__(self, maxread=100, script_subdirectory="", logfile=None,
                      server=None, server_tmpdir=None):
@@ -673,9 +665,7 @@ docstring, which we omit here (see the file for details). Next comes:
                             logfile = logfile,
                             eval_using_file_cutoff=100)
 
-This uses the class ``Expect`` to set up the Octave interface.
-
-::
+This uses the class ``Expect`` to set up the Octave interface::
 
         def set(self, var, value):
             """
@@ -699,9 +689,7 @@ This uses the class ``Expect`` to set up the Octave interface.
 
 These let users type ``octave.set('x', 3)``, after which
 ``octave.get('x')`` returns ``' 3'``. Running ``octave.console()``
-dumps the user into an Octave interactive shell.
-
-::
+dumps the user into an Octave interactive shell::
 
         def solve_linear_system(self, A, b):
             """
@@ -748,8 +736,9 @@ documented.
 
 These are only excerpts from ``octave.py``; check that file for more
 definitions and examples. Look at other files in the directory
-``SAGE_ROOT/devel/sage/sage/interfaces/`` for examples of interfaces
-to other software packages.
+``SAGE_ROOT/src/sage/interfaces/`` for examples of interfaces to other
+software packages.
 
 
-.. [3] See http://www.sagemath.org/links-components.html for a list
+.. [SageComponents] See http://www.sagemath.org/links-components.html
+   for a list

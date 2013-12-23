@@ -100,6 +100,7 @@ import sage.databases.cremona
 import ell_torsion
 from ell_generic import is_EllipticCurve
 
+from sage.libs.pari.all import pari, PariError
 from gp_simon import simon_two_descent
 from constructor import EllipticCurve
 from sage.rings.all import PolynomialRing, ZZ, RealField
@@ -267,16 +268,16 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         A curve with 2-torsion::
 
-            sage: K.<a> = NumberField(x^2 + 7, 'a')
+            sage: K.<a> = NumberField(x^2 + 7)
             sage: E = EllipticCurve(K, '15a')
-            sage: v = E.simon_two_descent(); v  # long time (about 10 seconds), points can vary
+            sage: E.simon_two_descent()  # long time (3s on sage.math, 2013), points can vary
             (1, 3, [...])
 
         A failure in the PARI/GP script ell.gp (VERSION 25/03/2009) is reported::
 
             sage: K = CyclotomicField(43).subfields(3)[0][0]
             sage: E = EllipticCurve(K, '37')
-            sage: E.simon_two_descent()
+            sage: E.simon_two_descent()  # long time (4s on sage.math, 2013)
             Traceback (most recent call last):
             ...
             RuntimeError:
@@ -682,14 +683,6 @@ class EllipticCurve_number_field(EllipticCurve_field):
             t = K(pariK.nfeltdiveuc(-a3 - r*a1, 2))
 
         return self.rst_transform(r, s, t)
-
-    def local_information(self, P=None, proof=None):
-        r"""
-        \code{local_information} has been renamed \code{local_data}
-        and is being deprecated.
-        """
-        raise DeprecationWarning, "local_information is deprecated; use local_data instead"
-        return self.local_data(P,proof)
 
     def local_data(self, P=None, proof = None, algorithm="pari"):
         r"""
@@ -1512,11 +1505,11 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
             sage: E = EllipticCurve('11a1')
             sage: K.<t>=NumberField(x^4 + x^3 + 11*x^2 + 41*x + 101)
-            sage: EK=E.base_extend(K)
-            sage: tor = EK.torsion_subgroup()
-            sage: tor
+            sage: EK = E.base_extend(K)
+            sage: tor = EK.torsion_subgroup()  # long time (3s on sage.math, 2013)
+            sage: tor  # long time
             Torsion Subgroup isomorphic to Z/5 + Z/5 associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in t with defining polynomial x^4 + x^3 + 11*x^2 + 41*x + 101
-            sage: tor.gens()
+            sage: tor.gens()  # long time
             ((16 : 60 : 1), (t : 1/11*t^3 + 6/11*t^2 + 19/11*t + 48/11 : 1))
 
         ::
@@ -1608,7 +1601,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             [(0 : 1 : 0), (5 : -6 : 1), (5 : 5 : 1), (16 : -61 : 1), (16 : 60 : 1)]
             sage: K.<t> = NumberField(x^4 + x^3 + 11*x^2 + 41*x + 101)
             sage: EK = E.base_extend(K)
-            sage: EK.torsion_points()
+            sage: EK.torsion_points()  # long time (3s on sage.math, 2013)
             [(16 : 60 : 1),
              (5 : 5 : 1),
              (5 : -6 : 1),
@@ -2154,8 +2147,129 @@ class EllipticCurve_number_field(EllipticCurve_field):
             degrees.extend(newdegs)
             k = k+1
 
-        raise NotImplementedError, "Not all isogenies implemented over general number fields."
+        raise NotImplementedError("Not all isogenies implemented over general number fields.")
 
+    def lll_reduce(self, points, height_matrix=None, precision=None):
+        """
+        Returns an LLL-reduced basis from a given basis, with transform
+        matrix.
+
+        INPUT:
+
+        - ``points`` - a list of points on this elliptic
+          curve, which should be independent.
+
+        - ``height_matrix`` - the height-pairing matrix of
+          the points, or ``None``. If ``None``, it will be computed.
+
+        - ``precision`` - number of bits of precision of intermediate
+          computations (default: ``None``, for default RealField
+          precision; ignored if ``height_matrix`` is supplied)
+
+        OUTPUT: A tuple (newpoints, U) where U is a unimodular integer
+        matrix, new_points is the transform of points by U, such that
+        new_points has LLL-reduced height pairing matrix
+
+        .. note::
+
+            If the input points are not independent, the output
+            depends on the undocumented behaviour of PARI's
+            ``qflllgram()`` function when applied to a gram matrix which
+            is not positive definite.
+
+        EXAMPLES:
+
+        Some examples over `\QQ`::
+
+            sage: E = EllipticCurve([0, 1, 1, -2, 42])
+            sage: Pi = E.gens(); Pi
+            [(-4 : 1 : 1), (-3 : 5 : 1), (-11/4 : 43/8 : 1), (-2 : 6 : 1)]
+            sage: Qi, U = E.lll_reduce(Pi)
+            sage: all(sum(U[i,j]*Pi[i] for i in range(4)) == Qi[j] for j in range(4))
+            True
+            sage: sorted(Qi)
+            [(-4 : 1 : 1), (-3 : 5 : 1), (-2 : 6 : 1), (0 : 6 : 1)]
+            sage: U.det()
+            1
+            sage: E.regulator_of_points(Pi)
+            4.59088036960573
+            sage: E.regulator_of_points(Qi)
+            4.59088036960574
+
+        ::
+
+            sage: E = EllipticCurve([1,0,1,-120039822036992245303534619191166796374,504224992484910670010801799168082726759443756222911415116])
+            sage: xi = [2005024558054813068,\
+            -4690836759490453344,\
+            4700156326649806635,\
+            6785546256295273860,\
+            6823803569166584943,\
+            7788809602110240789,\
+            27385442304350994620556,\
+            54284682060285253719/4,\
+            -94200235260395075139/25,\
+            -3463661055331841724647/576,\
+            -6684065934033506970637/676,\
+            -956077386192640344198/2209,\
+            -27067471797013364392578/2809,\
+            -25538866857137199063309/3721,\
+            -1026325011760259051894331/108241,\
+            9351361230729481250627334/1366561,\
+            10100878635879432897339615/1423249,\
+            11499655868211022625340735/17522596,\
+            110352253665081002517811734/21353641,\
+            414280096426033094143668538257/285204544,\
+            36101712290699828042930087436/4098432361,\
+            45442463408503524215460183165/5424617104,\
+            983886013344700707678587482584/141566320009,\
+            1124614335716851053281176544216033/152487126016]
+            sage: points = [E.lift_x(x) for x in xi]
+            sage: newpoints, U = E.lll_reduce(points)  # long time (35s on sage.math, 2011)
+            sage: [P[0] for P in newpoints]            # long time
+            [6823803569166584943, 5949539878899294213, 2005024558054813068, 5864879778877955778, 23955263915878682727/4, 5922188321411938518, 5286988283823825378, 175620639884534615751/25, -11451575907286171572, 3502708072571012181, 1500143935183238709184/225, 27180522378120223419/4, -5811874164190604461581/625, 26807786527159569093, 7404442636649562303, 475656155255883588, 265757454726766017891/49, 7272142121019825303, 50628679173833693415/4, 6951643522366348968, 6842515151518070703, 111593750389650846885/16, 2607467890531740394315/9, -1829928525835506297]
+
+        An example to show the explicit use of the height pairing matrix::
+
+            sage: E = EllipticCurve([0, 1, 1, -2, 42])
+            sage: Pi = E.gens()
+            sage: H = E.height_pairing_matrix(Pi,3)
+            sage: E.lll_reduce(Pi,height_matrix=H)
+            (
+                                                                      [1 0 0 1]
+                                                                      [0 1 0 1]
+                                                                      [0 0 0 1]
+            [(-4 : 1 : 1), (-3 : 5 : 1), (-2 : 6 : 1), (1 : -7 : 1)], [0 0 1 1]
+            )
+
+        Some examples over number fields (see :trac:`9411`)::
+
+            sage: K.<a> = QuadraticField(-23, 'a')
+            sage: E = EllipticCurve(K, '37')
+            sage: E.lll_reduce(E.gens())
+            (
+                                                    [1 1]
+            [(-1 : 0 : 1), (-2 : 1/2*a - 1/2 : 1)], [0 1]
+            )
+
+        ::
+
+            sage: K.<a> = QuadraticField(-5)
+            sage: E = EllipticCurve(K,[0,a])
+            sage: points = [E.point([-211/841*a - 6044/841,-209584/24389*a + 53634/24389]),E.point([-17/18*a - 1/9, -109/108*a - 277/108]) ]
+            sage: E.lll_reduce(points)
+            (
+            [(-a + 4 : -3*a + 7 : 1), (-17/18*a - 1/9 : 109/108*a + 277/108 : 1)],
+            [ 1  0]
+            [ 1 -1]
+            )
+        """
+        r = len(points)
+        if height_matrix is None:
+            height_matrix = self.height_pairing_matrix(points, precision)
+        U = pari(height_matrix).lllgram().python()
+        new_points = [sum([U[j, i]*points[j] for j in range(r)])
+                      for i in range(r)]
+        return new_points, U
 
     def galois_representation(self):
         r"""
@@ -2180,10 +2294,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
             sage: rho.is_surjective(3)
             True
-            sage: rho.is_surjective(5)
+            sage: rho.is_surjective(5)  # long time (9s on sage.math, 2013)
             False
             sage: rho.non_surjective()
             [5]
         """
         return gal_reps_number_field.GaloisRepresentation(self)
-

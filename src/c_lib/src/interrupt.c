@@ -214,10 +214,11 @@ void sage_signal_handler(int sig)
 
 
 /* This calls the externally defined function _signals.raise_exception
- * to actually raise the exception. It may only be called synchronously
- * with the Global Interpreter Lock held. */
+ * to actually raise the exception. Since it uses the Python API, the
+ * GIL needs to be acquired first. */
 static void do_raise_exception(int sig)
 {
+    PyGILState_STATE gilstate_save = PyGILState_Ensure();
 #if ENABLE_DEBUG_INTERRUPT
     struct timeval raisetime;
     if (sage_interrupt_debug_level >= 2) {
@@ -235,6 +236,8 @@ static void do_raise_exception(int sig)
         _signals.raise_exception(sig, _signals.s);
         assert(PyErr_Occurred());
     }
+
+    PyGILState_Release(gilstate_save);
 }
 
 
@@ -268,7 +271,12 @@ void _sig_off_warning(const char* file, int line)
 {
     char buf[320];
     snprintf(buf, sizeof(buf), "sig_off() without sig_on() at %s:%i", file, line);
+
+    /* Raise a warning with the Python GIL acquired */
+    PyGILState_STATE gilstate_save = PyGILState_Ensure();
     PyErr_WarnEx(PyExc_RuntimeWarning, buf, 2);
+    PyGILState_Release(gilstate_save);
+
     print_backtrace();
 }
 

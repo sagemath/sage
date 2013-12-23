@@ -1,4 +1,4 @@
-include 'sage/misc/bitset_pxd.pxi'
+from sage.misc.bitset cimport *
 
 DEF BINT_EXCEPT = -2**31 - 1  # def. repeated in .pyx file
 

@@ -336,6 +336,7 @@ from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.toric.homset import SchemeHomset_points_toric_field
 from sage.categories.fields import Fields
+from sage.misc.cachefunc import ClearCacheOnPickle
 _Fields = Fields()
 
 
@@ -383,7 +384,7 @@ def ToricVariety(fan,
                  coordinate_names=None,
                  names=None,
                  coordinate_indices=None,
-                 base_field=QQ):
+                 base_ring=QQ, base_field=None):
     r"""
     Construct a toric variety.
 
@@ -404,7 +405,11 @@ def ToricVariety(fan,
       variables. If not given, the index of each variable will coincide with
       the index of the corresponding ray of the fan;
 
-    - ``base_field`` -- base field of the toric variety (default: `\QQ`).
+    - ``base_ring`` -- base ring of the toric variety (default:
+      `\QQ`). Must be a field.
+
+    - ``base_field`` -- alias for ``base_ring``. Takes precedence if
+      both are specified.
 
     OUTPUT:
 
@@ -462,15 +467,17 @@ def ToricVariety(fan,
         sage: (a^2+b^2) * (c+d)
         a^2*c + b^2*c + a^2*d + b^2*d
     """
+    if base_field is not None:
+        base_ring = base_field
     if names is not None:
         if coordinate_names is not None:
             raise ValueError('You must not specify both coordinate_names and names!')
         coordinate_names = names
-    if base_field not in _Fields:
+    if base_ring not in _Fields:
         raise TypeError("need a field to construct a toric variety!\n Got %s"
-                        % base_field)
+                        % base_ring)
     return ToricVariety_field(fan, coordinate_names, coordinate_indices,
-                             base_field)
+                              base_ring)
 
 
 def AffineToricVariety(cone, *args, **kwds):
@@ -520,7 +527,7 @@ def AffineToricVariety(cone, *args, **kwds):
     return ToricVariety(fan, *args, **kwds)
 
 
-class ToricVariety_field(AmbientSpace):
+class ToricVariety_field(ClearCacheOnPickle, AmbientSpace):
     r"""
     Construct a toric variety associated to a rational polyhedral fan.
 
@@ -1443,6 +1450,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return self.fan().is_smooth()
 
+    @cached_method
     def Kaehler_cone(self):
         r"""
         Return the closure of the Kähler cone of ``self``.
@@ -1474,23 +1482,22 @@ class ToricVariety_field(AmbientSpace):
             Basis lattice of The toric rational divisor class group of a
             2-d CPR-Fano toric variety covered by 4 affine patches
         """
-        if "_Kaehler_cone" not in self.__dict__:
-            fan = self.fan()
-            GT = fan.Gale_transform().columns()
-            from sage.schemes.toric.divisor import \
-                ToricRationalDivisorClassGroup_basis_lattice
-            L = ToricRationalDivisorClassGroup_basis_lattice(
-                                                    self.rational_class_group())
-            n = fan.nrays()
-            K = None
-            for cone in fan:
-                sigma = Cone([GT[i] for i in range(n)
-                                    if i not in cone.ambient_ray_indices()],
-                             lattice=L)
-                K = K.intersection(sigma) if K is not None else sigma
-            self._Kaehler_cone = K
-        return self._Kaehler_cone
+        fan = self.fan()
+        GT = fan.Gale_transform().columns()
+        from sage.schemes.toric.divisor import \
+            ToricRationalDivisorClassGroup_basis_lattice
+        L = ToricRationalDivisorClassGroup_basis_lattice(
+                                                self.rational_class_group())
+        n = fan.nrays()
+        K = None
+        for cone in fan:
+            sigma = Cone([GT[i] for i in range(n)
+                                if i not in cone.ambient_ray_indices()],
+                         lattice=L)
+            K = K.intersection(sigma) if K is not None else sigma
+        return K
 
+    @cached_method
     def Mori_cone(self):
         r"""
         Returns the Mori cone of ``self``.
@@ -1530,13 +1537,11 @@ class ToricVariety_field(AmbientSpace):
             in Ambient free module of rank 7
             over the principal ideal domain Integer Ring
         """
-        if "_Mori_cone" not in self.__dict__:
-            # Ideally, self.Kaehler_cone().dual() should be it, but
-            # so far this is not the case.
-            rays = (ray * self._fan.Gale_transform()
-                    for ray in self.Kaehler_cone().dual().rays())
-            self._Mori_cone = Cone(rays, lattice=ZZ**(self._fan.nrays()+1))
-        return self._Mori_cone
+        # Ideally, self.Kaehler_cone().dual() should be it, but
+        # so far this is not the case.
+        rays = (ray * self._fan.Gale_transform()
+                for ray in self.Kaehler_cone().dual().rays())
+        return Cone(rays, lattice=ZZ**(self._fan.nrays()+1))
 
     def plot(self, **options):
         r"""
@@ -1929,6 +1934,7 @@ class ToricVariety_field(AmbientSpace):
             self._linear_equivalence_ideal = self._fan.linear_equivalence_ideal(R)
         return self._linear_equivalence_ideal
 
+    @cached_method
     def cohomology_ring(self):
         r"""
         Return the cohomology ring of the toric variety.
@@ -1966,14 +1972,25 @@ class ToricVariety_field(AmbientSpace):
             ('x', 'u', 'y', 'v', 'z', 'w')
             sage: X.cohomology_ring().gens()
             ([y + v - w], [-y + z + w], [y], [v], [z], [w])
-        """
-        if "_cohomology_ring" not in self.__dict__:
-            if self.base_ring().characteristic()>0:
-                raise NotImplementedError('Only characteristic 0 base fields '
-                                          'are implemented.')
-            self._cohomology_ring = CohomologyRing(self)
-        return self._cohomology_ring
 
+        TESTS:
+
+        The cohomology ring is a circular reference that is
+        potentially troublesome on unpickling, see :trac:`15050`
+        and :trac:`15149` ::
+
+            sage: variety = toric_varieties.P(1)
+            sage: a = [variety.cohomology_ring(), variety.cohomology_basis(), variety.volume_class()]
+            sage: b = [variety.Todd_class(), variety.Chern_class(), variety.Chern_character(), variety.Kaehler_cone(), variety.Mori_cone()]
+            sage: loads(dumps(variety)) == variety
+            True
+        """
+        if self.base_ring().characteristic()>0:
+            raise NotImplementedError('Only characteristic 0 base fields '
+                                      'are implemented.')
+        return CohomologyRing(self)
+
+    @cached_method
     def cohomology_basis(self, d=None):
         r"""
         Return a basis for the cohomology of the toric variety.
@@ -2003,10 +2020,6 @@ class ToricVariety_field(AmbientSpace):
         if d!=None:
             return self.cohomology_basis()[d]
 
-        try:
-            return self._cohomology_basis
-        except AttributeError:
-            pass
         H = self.cohomology_ring()
         # Make an empty list for each d-piece
         basis = [[] for d in range(self.dimension() + 1)]
@@ -2015,11 +2028,10 @@ class ToricVariety_field(AmbientSpace):
             basis[x.total_degree()].append(x)
         # Convert list of lists of polynomials to
         # tuple of tuples of cohomology classes
-        basis = tuple(tuple(H(x) for x in dbasis)
-                      for dbasis in basis)
-        self._cohomology_basis = basis
-        return self._cohomology_basis
+        return tuple(tuple(H(x) for x in dbasis)
+                     for dbasis in basis)
 
+    @cached_method
     def volume_class(self):
         r"""
         Return the cohomology class of the volume form on the toric
@@ -2090,16 +2102,15 @@ class ToricVariety_field(AmbientSpace):
             Sheldon Katz and Stein Arild Stromme,
             A Maple package for intersection theory and enumerative geometry.
         """
-        if "_volume_class" not in self.__dict__:
-            if not self.is_orbifold():
-                raise NotImplementedError('Cohomology computations are only '
-                                          'implemented for orbifolds.')
-            HH = self.cohomology_ring()
-            dim = self.dimension_relative()
-            self._volume_class = HH(self.fan().generating_cone(0)).part_of_degree(dim)
-        if self._volume_class.is_zero():
+        if not self.is_orbifold():
+            raise NotImplementedError('Cohomology computations are only '
+                                      'implemented for orbifolds.')
+        HH = self.cohomology_ring()
+        dim = self.dimension_relative()
+        dVol = HH(self.fan().generating_cone(0)).part_of_degree(dim)
+        if dVol.is_zero():
             raise ValueError, 'Volume class does not exist.'
-        return self._volume_class
+        return dVol
 
     def integrate(self, cohomology_class):
         """
@@ -2160,6 +2171,7 @@ class ToricVariety_field(AmbientSpace):
         if top_form.is_zero(): return 0
         return top_form.lc() / self.volume_class().lc()
 
+    @cached_method
     def Chern_class(self, deg=None):
         """
         Return Chern classes of the (tangent bundle of the) toric variety.
@@ -2197,17 +2209,13 @@ class ToricVariety_field(AmbientSpace):
             True
         """
         assert self.is_orbifold(), "Requires the toric variety to be an orbifold."
-        try:
-            c = self._chern_class
-        except AttributeError:
-            c = prod([ 1+self.cohomology_ring().gen(i) for i in range(0,self._fan.nrays()) ])
-            self._chern_class = c
-
+        c = prod([ 1+self.cohomology_ring().gen(i) for i in range(0,self._fan.nrays()) ])
         if deg==None:
             return c
         else:
             return c.part_of_degree(deg)
 
+    @cached_method
     def Chern_character(self, deg=None):
         """
         Return the Chern character (of the tangent bundle) of the toric
@@ -2242,19 +2250,15 @@ class ToricVariety_field(AmbientSpace):
             True
         """
         assert self.is_orbifold(), "Requires the toric variety to be an orbifold."
-        try:
-            ch = self._chern_character
-        except AttributeError:
-            n_rels = self._fan.nrays() - self.dimension()
-            ch = sum([ self.cohomology_ring().gen(i).exp()
-                       for i in range(0,self._fan.nrays()) ]) - n_rels
-            self._chern_character = ch
-
+        n_rels = self._fan.nrays() - self.dimension()
+        ch = sum([ self.cohomology_ring().gen(i).exp()
+                   for i in range(0,self._fan.nrays()) ]) - n_rels
         if deg==None:
             return ch
         else:
             return ch.part_of_degree(deg)
 
+    @cached_method
     def Todd_class(self, deg=None):
         """
         Return the Todd class (of the tangent bundle) of the toric variety.
@@ -2286,26 +2290,21 @@ class ToricVariety_field(AmbientSpace):
             sage: dP6.integrate( dP6.Td() )
             1
         """
-        try:
-            Td = self._Todd
-        except AttributeError:
-            Td = QQ(1)
-            if self.dimension() >= 1:
-                c1 = self.Chern_class(1)
-                Td += QQ(1)/2 * c1
-            if self.dimension() >= 2:
-                c2 = self.Chern_class(2)
-                Td += QQ(1)/12 * (c1**2 + c2)
-            if self.dimension() >= 3:
-                Td += QQ(1)/24 * c1*c2
-            if self.dimension() >= 4:
-                c3 = self.Chern_class(3)
-                c4 = self.Chern_class(4)
-                Td += -QQ(1)/720 * (c1**4 -4*c1**2*c2 -3*c2**2 -c1*c3 +c4)
-            if self.dimension() >= 5:
-                raise NotImplemented, 'Todd class is currently only implemented up to degree 4'
-            self._Todd = Td
-
+        Td = QQ(1)
+        if self.dimension() >= 1:
+            c1 = self.Chern_class(1)
+            Td += QQ(1)/2 * c1
+        if self.dimension() >= 2:
+            c2 = self.Chern_class(2)
+            Td += QQ(1)/12 * (c1**2 + c2)
+        if self.dimension() >= 3:
+            Td += QQ(1)/24 * c1*c2
+        if self.dimension() >= 4:
+            c3 = self.Chern_class(3)
+            c4 = self.Chern_class(4)
+            Td += -QQ(1)/720 * (c1**4 -4*c1**2*c2 -3*c2**2 -c1*c3 +c4)
+        if self.dimension() >= 5:
+            raise NotImplementedError('Todd class is currently only implemented up to degree 4')
         if deg==None:
             return Td
         else:
@@ -2751,67 +2750,21 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return the number of points of ``self``.
 
-        Over a finite field only smooth varieties are supported.
-
-        OUTPUT:
-
-        - an integer.
+        This is an alias for ``point_set().cardinality()``, see
+        :meth:`~sage.schemes.toric.homset.SchemeHomset_points_toric_field.cardinality`
+        for details.
 
         EXAMPLES::
 
             sage: o = lattice_polytope.octahedron(3)
             sage: V = ToricVariety(FaceFan(o))
-            sage: V.change_ring(GF(2)).count_points()
+            sage: V2 = V.change_ring(GF(2))
+            sage: V2.point_set().cardinality()
             27
-            sage: V.change_ring(GF(8, "a")).count_points()
-            729
-            sage: V.change_ring(GF(101)).count_points()
-            1061208
-
-        Only smooth varieties over finite fields are currently handled::
-
-            sage: V = ToricVariety(NormalFan(o))
-            sage: V.change_ring(GF(2)).count_points()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: the variety is not smooth
-
-        Over infinite fields the number of points is not very tricky::
-
-            sage: V.count_points()
-            +Infinity
-
-        ALGORITHM:
-
-        Uses the formula in Fulton [F]_, section 4.5.
-
-        REFERENCES:
-
-        ..  [F]
-            Fulton, W., "Introduction to Toric Varieties",
-            Princeton University Press, 1993.
-
-        AUTHORS:
-
-        - Beth Malmskog (2013-07-14)
-
-        - Adriana Salerno (2013-07-14)
-
-        - Yiwei She (2013-07-14)
-
-        - Christelle Vincent (2013-07-14)
-
-        - Ursula Whitcher (2013-07-14)
+            sage: V2.count_points()
+            27
         """
-        if not self.base_ring().is_finite():
-            return Infinity
-        if not self.is_smooth():
-            raise NotImplementedError("the variety is not smooth")
-        q = self.base_ring().order()
-        n = self.dimension()
-        d = map(len, self.fan().cones())
-        return sum(dk * (q-1)**(n-k) for k, dk in enumerate(d))
-
+        return self.point_set().cardinality()
 
     @cached_method
     def Demazure_roots(self):

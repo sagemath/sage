@@ -58,7 +58,7 @@ of a vertex is at most `n-1` -- and the sum of them is at most `n(n-1)`.
 Degree sequences are completely characterized by a result from Erdos and Gallai:
 
 **Erdos and Gallai:** *The sequence of integers* `d_1\geq ... \geq d_n` *is a
-degree sequence if and only if* `\forall i`
+degree sequence if and only if* `\sum_i d_i` is even and `\forall i`
 
 .. MATH::
     \sum_{j\leq i}d_j \leq j(j-1) + \sum_{j>i}\min(d_j,i)
@@ -301,12 +301,21 @@ class DegreeSequences:
 
             sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
             True
+
+        TESTS:
+
+        :trac:`15503`::
+
+            sage: [2,2,2,2,1,1,1] in DegreeSequences(7)
+            False
         """
         cdef int n = self._n
         if len(seq)!=n:
             return False
 
-        cdef int S = sum(seq)
+        # Is the sum even ?
+        if sum(seq)%2 == 1:
+            return False
 
         # Partial represents the left side of Erdos and Gallai's inequality,
         # i.e. the sum of the i first integers.

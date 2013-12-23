@@ -794,7 +794,7 @@ cdef class randstate:
          """
          global _pari_seed_randstate
          if _pari_seed_randstate is not self:
-             from sage.libs.pari.gen import pari
+             from sage.libs.pari.all import pari
 
              if self._pari_saved_seed is not None:
                  seed = self._pari_saved_seed

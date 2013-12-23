@@ -18,6 +18,8 @@ Algebras
 
    sage/algebras/iwahori_hecke_algebra
 
+   sage/algebras/hall_algebra
+
    sage/algebras/shuffle_algebra
 
    sage/algebras/steenrod/steenrod_algebra

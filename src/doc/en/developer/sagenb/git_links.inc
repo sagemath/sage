@@ -9,7 +9,6 @@
    nipy, NIPY, Nipy, etc...
 
 .. git stuff
-.. _git: http://git-scm.com/
 .. _github: http://github.com
 .. _github help: http://help.github.com
 .. _msysgit: http://code.google.com/p/msysgit/downloads/list

@@ -26,6 +26,7 @@ from sage.rings.real_mpfr import RealNumber
 
 from sage.symbolic.expression cimport Expression, new_Expression_from_GEx, new_Expression_from_pyobject, is_Expression
 
+from sage.libs.pari.pari_instance cimport PariInstance
 from sage.misc.latex import latex_variable_name
 from sage.structure.element cimport RingElement, Element
 from sage.structure.parent_base import ParentWithBase
@@ -166,7 +167,6 @@ cdef class SymbolicRing(CommutativeRing):
                                         is_FiniteField)
 
             from sage.interfaces.maxima import Maxima
-            from sage.libs.pari.gen import PariInstance
 
             if ComplexField(mpfr_prec_min()).has_coerce_map_from(R):
                 # Anything with a coercion into any precision of CC

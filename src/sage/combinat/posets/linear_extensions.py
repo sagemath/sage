@@ -478,11 +478,8 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         """
         if not self._is_facade:
             return super(LinearExtensionsOfPoset, self).__contains__(obj)
-        return \
-            isinstance(obj, (list, tuple)) and \
-            len(obj) == len(self.poset())  and \
-            set(obj) == set(self.poset())  and \
-            self.poset().is_linear_extension(obj)
+        return (isinstance(obj, (list, tuple)) and
+                self.poset().is_linear_extension(obj))
 
     def markov_chain_digraph(self, action = 'promotion', labeling = 'identity'):
         r"""

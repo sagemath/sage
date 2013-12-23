@@ -74,6 +74,7 @@ from sage.structure.element cimport Element, RingElement, ModuleElement, MonoidE
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.fraction_field import is_FractionField
+from sage.rings.padics.generic_nodes import is_pAdicRing, is_pAdicField
 
 from sage.rings.integral_domain import is_IntegralDomain
 from sage.structure.parent_gens cimport ParentWithGens
@@ -1665,13 +1666,30 @@ cdef class Polynomial(CommutativeAlgebraElement):
             3*x
             sage: f.parent()
             Univariate Polynomial Ring in x over Ring of integers modulo 5
+
+        TESTS:
+
+        Check that :trac:`12217` is fixed::
+
+            sage: P.<x> = GF(5)[]
+            sage: x/0
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse does not exist.
+
+            sage: P.<x> = GF(25, 'a')[]
+            sage: x/5
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: division by zero in Finite Field in a of size 5^2
+
         """
         try:
             if not isinstance(right, Element) or right.parent() != self.parent():
                 R = self.parent().base_ring()
                 x = R._coerce_(right)
                 return self * ~x
-        except (TypeError, ValueError, ZeroDivisionError):
+        except (TypeError, ValueError):
             pass
         return RingElement.__div__(self, right)
 
@@ -2569,6 +2587,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
             4*t^3*x^3 + 3*t^2*x^2
         """
         return multi_derivative(self, args)
+
+    # add .diff(), .differentiate() as aliases for .derivative()
+    diff = differentiate = derivative
 
     def _derivative(self, var=None):
         r"""
@@ -4636,8 +4657,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
             newself = bigring(self)
             newother = bigring(other)
             return self.parent().base_ring()(newself.resultant(newother,bigring(self.parent().gen())))
-        # Main variable is "x": we can use PARI to compute the resultant
-        res = self._pari_with_name().polresultant(other._pari_with_name(), variable)
+        # Single-variable polynomial or main variable is "x": we can use PARI to compute the resultant
+        res = self._pari_with_name().polresultant(other._pari_with_name())
         return self.parent().base_ring()(res)
 
     def discriminant(self):
@@ -4733,6 +4754,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
             54
             sage: ZZ.quo(9)[x](2*x^3 + x^2 + x).discriminant()
             2
+
+        This was fixed by :trac:`15422`::
+
+            sage: R.<s> = PolynomialRing(Qp(2))
+            sage: (s^2).discriminant()
+            0
         """
         if self.is_zero():
             return self.parent().zero_element()
@@ -5306,12 +5333,33 @@ cdef class Polynomial(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             TypeError: Cannot evaluate symbolic expression to a numeric value.
+
+        We can find roots of polynomials defined over `\ZZ` or `\QQ`
+        over the `p`-adics, see :trac:`15422`::
+
+            sage: R.<x> = ZZ[]
+            sage: pol = (x - 1)^2
+            sage: pol.roots(Qp(3,5))
+            [(1 + O(3^5), 2)]
+
+        This doesn't work if we first change coefficients to `\QQ_p`::
+
+            sage: pol.change_ring(Qp(3,5)).roots()
+            Traceback (most recent call last):
+            ...
+            PrecisionError: p-adic factorization not well-defined since the discriminant is zero up to the requestion p-adic precision
+
+            sage: (pol - 3^6).roots(Qp(3,5))
+            [(1 + 2*3^3 + 2*3^4 + O(3^5), 1), (1 + 3^3 + O(3^5), 1)]
+            sage: r = pol.roots(Zp(3,5), multiplicities=False); r
+            [1 + O(3^5)]
+            sage: parent(r[0])
+            3-adic Ring with capped relative precision 5
         """
         K = self.parent().base_ring()
         if hasattr(K, '_roots_univariate_polynomial'):
             return K._roots_univariate_polynomial(self, ring=ring, multiplicities=multiplicities, algorithm=algorithm)
 
-        seq = []
         L = K if ring is None else ring
 
         late_import()
@@ -5401,7 +5449,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         if L != K or is_AlgebraicField_common(L):
             # So far, the only "special" implementations are for real
-            # and complex root isolation.
+            # and complex root isolation and for p-adic factorization
             if (is_IntegerRing(K) or is_RationalField(K)
                 or is_AlgebraicRealField(K)) and \
                 (is_AlgebraicRealField(L) or is_RealIntervalField(L)):
@@ -5460,8 +5508,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     real_field = RealField(L.prec())
 
                 return self.change_ring(real_field).roots(ring=L, multiplicities=multiplicities, algorithm=algorithm)
-            else:
-                return self.change_ring(L).roots(multiplicities=multiplicities, algorithm=algorithm)
+            elif is_pAdicRing(L) or is_pAdicField(L):
+                p = L.prime()
+                n = L.precision_cap()
+                try:
+                    F = self.factor_padic(p, n)
+                except AttributeError:
+                    pass
+                else:
+                    return self.change_ring(L)._roots_from_factorization(F, multiplicities)
+
+            return self.change_ring(L).roots(multiplicities=multiplicities, algorithm=algorithm)
 
         try:
             if K.is_integral_domain():
@@ -5474,7 +5531,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                         self = self//c
                     except AttributeError:
                         pass
-                rts = self.factor()
+                return self._roots_from_factorization(self.factor(), multiplicities)
             else:
                 raise NotImplementedError
         except NotImplementedError:
@@ -5486,7 +5543,25 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
             raise NotImplementedError("root finding for this polynomial not implemented")
 
-        for fac in rts:
+    def _roots_from_factorization(self, F, multiplicities):
+        """
+        Given a factorization ``F`` of the polynomial ``self``, return
+        the roots of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: pol = 20*x^3 - 50*x^2 + 20*x
+            sage: F = pol.factor(); F
+            2 * 5 * (x - 2) * x * (2*x - 1)
+            sage: pol._roots_from_factorization(F, multiplicities=True)
+            [(2, 1), (0, 1)]
+            sage: pol.change_ring(QQ)._roots_from_factorization(F, multiplicities=False)
+            [2, 0, 1/2]
+        """
+        seq = []
+        K = self.parent().base_ring()
+        for fac in F:
             g = fac[0]
             if g.degree() == 1:
                 rt = -g[0]/g[1]

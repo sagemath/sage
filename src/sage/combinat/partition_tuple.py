@@ -9,7 +9,7 @@ A :class:`PartitionTuple` is a tuple of partitions. That is, an ordered
     n = \lvert \mu \rvert = \lvert \mu^{(1)} \rvert +
     \lvert \mu^{(2)} \rvert + \cdots + \lvert \mu^{(k)} \rvert
 
-then `\mu` is an `k`-partition of `n`.
+then `\mu` is a `k`-partition of `n`.
 
 In representation theory partition tuples arise as the natural indexing
 set for the ordinary irreducible representations of:
@@ -274,7 +274,7 @@ class PartitionTuple(CombinatorialObject,Element):
         n = \lvert \mu \rvert = \lvert \mu^{(1)} \rvert +
         \lvert \mu^{(2)} \rvert + \cdots + \lvert \mu^{(k)} \rvert
 
-    then `\mu` is an `k`-partition of `n`.
+    then `\mu` is a `k`-partition of `n`.
 
     In representation theory PartitionTuples arise as the natural indexing
     set for the ordinary irreducible representations of:
@@ -659,7 +659,7 @@ class PartitionTuple(CombinatorialObject,Element):
 
     def _latex_young_diagram(self):
         """
-        LaTeX output as a young diagram.
+        LaTeX output as a Young diagram.
 
         EXAMPLES::
 
@@ -1160,8 +1160,10 @@ class PartitionTuple(CombinatorialObject,Element):
 
         REFERENCE:
 
-        .. [KMR] A. Kleshchev, A. Mathas, and A. Ram, Universal Specht modules
-           for cyclotomic Hecke algebras, Proc. LMS (to appear).
+        .. [KMR] A. Kleshchev, A. Mathas, and A. Ram, *Universal Specht
+           modules for cyclotomic Hecke algebras*,
+           Proc. London Math. Soc. (2012) 105 (6): 1245-1289.
+           :arxiv:`1102.3519v1`
 
         """
         (comp,row,col)=cell

@@ -756,8 +756,8 @@ cdef class Context:
         workopts.prec = workopts.prec * 2 + 50
         workopts.rounding = ROUND_D
         unknown = global_context.zero
+        sig_on()
         try:  # Way down, there is a ``finally`` with sig_off()
-            sig_on()
             MPF_init(&sre)
             MPF_init(&sim)
             MPF_init(&tre)

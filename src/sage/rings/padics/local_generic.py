@@ -242,7 +242,7 @@ class LocalGeneric(CommutativeRing):
         EXAMPLES::
 
             sage: R = Zp(3, 3, 'fixed-mod'); R.defining_polynomial('foo')
-            (1 + O(3^3))*foo
+            (1 + O(3^3))*foo + (O(3^3))
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         return PolynomialRing(self, var).gen()

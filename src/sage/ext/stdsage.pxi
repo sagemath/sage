@@ -1,24 +1,20 @@
 """
-Standard SAGE Pyrex Helper Code
+Standard C helper code for Cython modules
+
+Standard useful stuff for Sage Cython modules to include:
+See stdsage.h for macros and stdsage.c for C functions.
+
+Each module currently gets its own copy of this, which is why
+we call the initialization code below.
 """
-
-################################################################################
-# stdsage.pxi
-#   Standard useful stuff for SAGE modules to include:
-#   See stdsage.h for macros and stdsage.c for C functions.
-#
-#   Each module currently gets its own copy of this, which is why
-#   we call the initialization code below.
-#
-################################################################################
-
-###############################################################################
-#   SAGE: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
+#
 #  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
 cdef extern from "stdsage.h":
     ctypedef void PyObject
@@ -40,13 +36,13 @@ cdef extern from "stdsage.h":
 
 # Memory management
 cdef extern from "stdsage.h":
-    void  sage_free(void *p)
-    void* sage_realloc(void *p, size_t n)
-    void* sage_malloc(size_t)
-    void* sage_calloc(size_t nmemb, size_t size)
+    void  sage_free(void *p) nogil
+    void* sage_realloc(void *p, size_t n) nogil
+    void* sage_malloc(size_t) nogil
+    void* sage_calloc(size_t nmemb, size_t size) nogil
+    void  init_memory_functions() nogil
     void  init_csage()
     void  init_csage_module()
-    void  init_memory_functions()
 
 
 # Do this for every single module that links in stdsage.

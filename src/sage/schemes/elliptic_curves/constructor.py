@@ -687,7 +687,7 @@ def EllipticCurve_from_cubic(F, P, morphism=True):
         sage: P = [2,2,-1]
         sage: f = EllipticCurve_from_cubic(cubic, P, morphism=True)
         sage: E = f.codomain();  E
-        Elliptic Curve defined by y^2 + 722*x*y + 21870000*y = x^3
+        Elliptic Curve defined by y^2 - 722*x*y - 21870000*y = x^3
         + 23579*x^2 over Rational Field
         sage: E.minimal_model()
         Elliptic Curve defined by y^2 + y = x^3 - 331 over Rational Field
@@ -696,32 +696,39 @@ def EllipticCurve_from_cubic(F, P, morphism=True):
         Scheme morphism:
           From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
                 a^3 + 7*b^3 + 64*c^3
-          To:   Elliptic Curve defined by y^2 + 722*x*y + 21870000*y =
+          To:   Elliptic Curve defined by y^2 - 722*x*y - 21870000*y =
                 x^3 + 23579*x^2 over Rational Field
           Defn: Defined on coordinates by sending (a : b : c) to
                 (-5/112896*a^2 - 17/40320*a*b - 1/1280*b^2 - 29/35280*a*c
                  - 13/5040*b*c - 4/2205*c^2 :
-                 4055/112896*a^2 + 4787/40320*a*b + 91/1280*b^2 + 7769/35280*a*c
-                 + 1993/5040*b*c + 724/2205*c^2 :
+                 -4055/112896*a^2 - 4787/40320*a*b - 91/1280*b^2 - 7769/35280*a*c
+                 - 1993/5040*b*c - 724/2205*c^2 :
                  1/4572288000*a^2 + 1/326592000*a*b + 1/93312000*b^2 + 1/142884000*a*c
                  + 1/20412000*b*c + 1/17860500*c^2)
 
         sage: finv = f.inverse();  finv
         Scheme morphism:
-          From: Elliptic Curve defined by y^2 + 722*x*y + 21870000*y =
+          From: Elliptic Curve defined by y^2 - 722*x*y - 21870000*y =
                 x^3 + 23579*x^2 over Rational Field
           To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
                 a^3 + 7*b^3 + 64*c^3
           Defn: Defined on coordinates by sending (x : y : z) to
-                (2*x^2 + 227700*x*z + 900*y*z :
-                 2*x^2 - 32940*x*z - 540*y*z :
-                 -x^2 - 56520*x*z + 180*y*z)
+                (2*x^2 + 227700*x*z - 900*y*z :
+                 2*x^2 - 32940*x*z + 540*y*z :
+                 -x^2 - 56520*x*z - 180*y*z)
 
         sage: cubic(finv.defining_polynomials()) * finv.post_rescaling()
-        -x^3 - 23579*x^2*z + 722*x*y*z + y^2*z + 21870000*y*z^2
+        -x^3 - 23579*x^2*z - 722*x*y*z + y^2*z - 21870000*y*z^2
 
         sage: E.defining_polynomial()(f.defining_polynomials()) * f.post_rescaling()
         a^3 + 7*b^3 + 64*c^3
+
+    TESTS::
+
+        sage: R.<x,y,z> = QQ[]
+        sage: cubic = x^2*y + 4*x*y^2 + x^2*z + 8*x*y*z + 4*y^2*z + 9*x*z^2 + 9*y*z^2
+        sage: EllipticCurve_from_cubic(cubic, [1,-1,1], morphism=False)
+        Elliptic Curve defined by y^2 - 882*x*y - 2560000*y = x^3 - 127281*x^2 over Rational Field
     """
     import sage.matrix.all as matrix
 
@@ -849,7 +856,7 @@ def chord_and_tangent(F, P):
         sage: F = x^3+7*y^3+64*z^3
         sage: p0 = [2,2,-1]
         sage: p1 = chord_and_tangent(F, p0);  p1
-        [5, -3, 1]
+        [-5, 3, -1]
         sage: p2 = chord_and_tangent(F, p1);  p2
         [1265, -183, -314]
 
@@ -901,21 +908,27 @@ def chord_and_tangent(F, P):
             raise ValueError('%s is singular at %s'%(F, P))
 
     # t will be our choice of parmeter of the tangent plane
-    #     dxP*(x-P[0]) + dyP*(y-P[1]) + dzP*(z-P[2])
+    #     dx*(x-P[0]) + dy*(y-P[1]) + dz*(z-P[2])
     # through the point P
     t = rings.PolynomialRing(K, 't').gen(0)
-    Ft = F(dy*t+P[0], (-dx-dz)*t+P[1], dy*t+P[2])
+    Ft = F(dy*t+P[0], -dx*t+P[1], P[2])
+    if Ft == 0:   # (dy, -dx, 0) is projectively equivalent to P
+        # then (0, -dz, dy) is not projectively equivalent to P
+        g = F.substitute({x:z, z:x})
+        Q = [P[2], P[1], P[0]]
+        R = chord_and_tangent(g, Q)
+        return [R[2], R[1], R[0]]
     # Ft has a double zero at t=0 by construction, which we now remove
     Ft = Ft // t**2
 
     # first case: the third point is at t=infinity
     if Ft.is_constant():
-        return projective_point([dy, -dx-dz, dy])
+        return projective_point([dy, -dx, 0])
     # second case: the third point is at finite t
     else:
         assert Ft.degree() == 1
         t0 = Ft.roots()[0][0]
-        return projective_point([dy*t0+P[0], (-dx-dz)*t0+P[1], dy*t0+P[2]])
+        return projective_point([dy*t0+P[0], -dx*t0+P[1], P[2]])
 
 
 def projective_point(p):
@@ -985,7 +998,7 @@ def EllipticCurve_from_plane_curve(C, P):
         sage: R.<x,y,z> = QQ[]
         sage: C = Curve(x^3+y^3+z^3)
         sage: P = C(1,-1,0)
-        sage: E = EllipticCurve_from_plane_curve(C,P);  E
+        sage: E = EllipticCurve_from_plane_curve(C,P); E  # long time (3s on sage.math, 2013)
         doctest:...: DeprecationWarning: use Jacobian(C) instead
         See http://trac.sagemath.org/3416 for details.
         Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field

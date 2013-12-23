@@ -12,12 +12,10 @@ multiple threads. After compiling a source version of Sage, doctesting
 can be run on the whole Sage library, on all modules under a given
 directory, or on a specified module only. For the purposes of this
 chapter, suppose we have compiled Sage 5.9 from source and the top
-level Sage directory is
+level Sage directory is::
 
-::
-
-    [jdemeyer@sage sage-5.9]$ pwd
-    /scratch/jdemeyer/build/sage-5.9
+    [jdemeyer@sage sage-6.0]$ pwd
+    /scratch/jdemeyer/build/sage-6.0
 
 See the section :ref:`chapter-testing` for information on Sage's
 automated testing process. The general syntax for doctesting is as
@@ -33,7 +31,7 @@ either a Python script (with the file extension ".py") or it can be a
 Cython script, in which case it has the file extension ".pyx".
 
 
-Testing a module
+Testing a Module
 ================
 
 Say we want to run all tests in the sudoku module
@@ -41,10 +39,10 @@ Say we want to run all tests in the sudoku module
 top level Sage directory of our local Sage installation. Now  we can
 start doctesting as demonstrated in the following terminal session::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -t devel/sage-main/sage/games/sudoku.py
+    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-36-49-d82849c6.
     Doctesting 1 file.
-    sage -t devel/sage-main/sage/games/sudoku.py
+    sage -t src/sage/games/sudoku.py
         [103 tests, 3.6 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -59,12 +57,12 @@ same amount of time; the total time required includes some startup
 time for the code that runs the tests. In this case, we only tested
 one module so it is not surprising that the total testing time is
 approximately the same as the time required to test only that one
-module. Notice that the syntax is ::
+module. Notice that the syntax is::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -t devel/sage-main/sage/games/sudoku.py
+    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-39-02-da6accbb.
     Doctesting 1 file.
-    sage -t devel/sage-main/sage/games/sudoku.py
+    sage -t src/sage/games/sudoku.py
         [103 tests, 3.6 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -73,11 +71,9 @@ module. Notice that the syntax is ::
         cpu time: 3.6 seconds
         cumulative wall time: 3.6 seconds
 
-but not
+but not::
 
-::
-
-    [jdemeyer@sage sage-5.9]$ ./sage -t sage/games/sudoku.py
+    [jdemeyer@sage sage-6.0]$ ./sage -t sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-40-53-6cc4f29f.
     No files matching sage/games/sudoku.py
     No files to doctest
@@ -85,7 +81,7 @@ but not
 We can also first ``cd`` to the directory containing the module
 ``sudoku.py`` and doctest that module as follows::
 
-    [jdemeyer@sage sage-5.9]$ cd devel/sage-main/sage/games/
+    [jdemeyer@sage sage-6.0]$ cd src/sage/games/
     [jdemeyer@sage games]$ ls
     __init__.py  hexad.py       sudoku.py           sudoku_backtrack.pyx
     all.py       quantumino.py  sudoku_backtrack.c
@@ -100,7 +96,6 @@ We can also first ``cd`` to the directory containing the module
     Total time for all tests: 5.2 seconds
         cpu time: 3.6 seconds
         cumulative wall time: 3.6 seconds
-
 
 In all of the above terminal sessions, we used a local installation of
 Sage to test its own modules. Even if we have a system-wide Sage
@@ -121,10 +116,10 @@ our system has multiple Sage installations. For example, the following
 syntax is acceptable because we explicitly specify the Sage
 installation in the current ``SAGE_ROOT``::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -t devel/sage-main/sage/games/sudoku.py
+    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-43-24-a3449f54.
     Doctesting 1 file.
-    sage -t devel/sage-main/sage/games/sudoku.py
+    sage -t src/sage/games/sudoku.py
         [103 tests, 3.6 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -132,10 +127,10 @@ installation in the current ``SAGE_ROOT``::
     Total time for all tests: 4.9 seconds
         cpu time: 3.6 seconds
         cumulative wall time: 3.6 seconds
-    [jdemeyer@sage sage-5.9]$ ./sage -t "devel/sage-main/sage/games/sudoku.py"
+    [jdemeyer@sage sage-6.0]$ ./sage -t "src/sage/games/sudoku.py"
     Running doctests with ID 2012-07-03-03-43-54-ac8ca007.
     Doctesting 1 file.
-    sage -t devel/sage-main/sage/games/sudoku.py
+    sage -t src/sage/games/sudoku.py
         [103 tests, 3.6 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -151,10 +146,10 @@ Sage installation (if it exists):
 
 ::
 
-    [jdemeyer@sage sage-5.9]$ sage -t devel/sage-main/sage/games/sudoku.py
-    sage -t  "devel/sage-main/sage/games/sudoku.py"
+    [jdemeyer@sage sage-6.0]$ sage -t src/sage/games/sudoku.py
+    sage -t  "src/sage/games/sudoku.py"
     **********************************************************************
-    File "/home/jdemeyer/sage/sage-5.9/devel/sage-main/sage/games/sudoku.py", line 515:
+    File "/home/jdemeyer/sage/sage-6.0/src/sage/games/sudoku.py", line 515:
         sage: h.solve(algorithm='backtrack').next()
     Exception raised:
         Traceback (most recent call last):
@@ -185,7 +180,7 @@ Sage installation (if it exists):
     The following tests failed:
 
 
-            sage -t  "devel/sage-main/sage/games/sudoku.py"
+            sage -t  "src/sage/games/sudoku.py"
     Total time for all tests: 21.3 seconds
 
 In this case, we received an error because the system-wide Sage
@@ -193,7 +188,7 @@ installation is a different (older) version than the one we are
 using for Sage development.  Make sure you always test the files
 with the correct version of Sage.
 
-Parallel testing many modules
+Parallel Testing Many Modules
 =============================
 
 So far we have used a single thread to doctest a module in the Sage
@@ -210,56 +205,56 @@ and then using four threads. For this example, suppose we want to test
 all the modules under ``sage/crypto/``. We can use a syntax similar to
 that shown above to achieve this::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -t devel/sage-main/sage/crypto
+    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/crypto
     Running doctests with ID 2012-07-03-03-45-40-7f837dcf.
     Doctesting 24 files.
-    sage -t devel/sage-main/sage/crypto/__init__.py
+    sage -t src/sage/crypto/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/all.py
+    sage -t src/sage/crypto/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/boolean_function.pyx
+    sage -t src/sage/crypto/boolean_function.pyx
         [252 tests, 4.4 s]
-    sage -t devel/sage-main/sage/crypto/cipher.py
+    sage -t src/sage/crypto/cipher.py
         [10 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/classical.py
+    sage -t src/sage/crypto/classical.py
         [718 tests, 11.3 s]
-    sage -t devel/sage-main/sage/crypto/classical_cipher.py
+    sage -t src/sage/crypto/classical_cipher.py
         [130 tests, 0.5 s]
-    sage -t devel/sage-main/sage/crypto/cryptosystem.py
+    sage -t src/sage/crypto/cryptosystem.py
         [82 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/lattice.py
+    sage -t src/sage/crypto/lattice.py
         [1 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/lfsr.py
+    sage -t src/sage/crypto/lfsr.py
         [31 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/stream.py
+    sage -t src/sage/crypto/stream.py
         [17 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/stream_cipher.py
+    sage -t src/sage/crypto/stream_cipher.py
         [114 tests, 0.2 s]
-    sage -t devel/sage-main/sage/crypto/util.py
+    sage -t src/sage/crypto/util.py
         [122 tests, 0.2 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/__init__.py
+    sage -t src/sage/crypto/block_cipher/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/all.py
+    sage -t src/sage/crypto/block_cipher/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/miniaes.py
+    sage -t src/sage/crypto/block_cipher/miniaes.py
         [430 tests, 1.3 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/sdes.py
+    sage -t src/sage/crypto/block_cipher/sdes.py
         [290 tests, 0.9 s]
-    sage -t devel/sage-main/sage/crypto/mq/__init__.py
+    sage -t src/sage/crypto/mq/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/mq/mpolynomialsystem.py
+    sage -t src/sage/crypto/mq/mpolynomialsystem.py
         [320 tests, 9.1 s]
-    sage -t devel/sage-main/sage/crypto/mq/mpolynomialsystemgenerator.py
+    sage -t src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/mq/sbox.py
+    sage -t src/sage/crypto/mq/sbox.py
         [124 tests, 0.8 s]
-    sage -t devel/sage-main/sage/crypto/mq/sr.py
+    sage -t src/sage/crypto/mq/sr.py
         [435 tests, 5.5 s]
-    sage -t devel/sage-main/sage/crypto/public_key/__init__.py
+    sage -t src/sage/crypto/public_key/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/public_key/all.py
+    sage -t src/sage/crypto/public_key/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/public_key/blum_goldwasser.py
+    sage -t src/sage/crypto/public_key/blum_goldwasser.py
         [135 tests, 0.2 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -271,56 +266,56 @@ that shown above to achieve this::
 Now we do the same thing, but this time we also use the optional
 argument ``--long``::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -t --long devel/sage-main/sage/crypto/
+    [jdemeyer@sage sage-6.0]$ ./sage -t --long src/sage/crypto/
     Running doctests with ID 2012-07-03-03-48-11-c16721e6.
     Doctesting 24 files.
-    sage -t --long devel/sage-main/sage/crypto/__init__.py
+    sage -t --long src/sage/crypto/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/all.py
+    sage -t --long src/sage/crypto/all.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/boolean_function.pyx
+    sage -t --long src/sage/crypto/boolean_function.pyx
         [252 tests, 4.2 s]
-    sage -t --long devel/sage-main/sage/crypto/cipher.py
+    sage -t --long src/sage/crypto/cipher.py
         [10 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/classical.py
+    sage -t --long src/sage/crypto/classical.py
         [718 tests, 10.3 s]
-    sage -t --long devel/sage-main/sage/crypto/classical_cipher.py
+    sage -t --long src/sage/crypto/classical_cipher.py
         [130 tests, 0.5 s]
-    sage -t --long devel/sage-main/sage/crypto/cryptosystem.py
+    sage -t --long src/sage/crypto/cryptosystem.py
         [82 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/lattice.py
+    sage -t --long src/sage/crypto/lattice.py
         [1 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/lfsr.py
+    sage -t --long src/sage/crypto/lfsr.py
         [31 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/stream.py
+    sage -t --long src/sage/crypto/stream.py
         [17 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/stream_cipher.py
+    sage -t --long src/sage/crypto/stream_cipher.py
         [114 tests, 0.2 s]
-    sage -t --long devel/sage-main/sage/crypto/util.py
+    sage -t --long src/sage/crypto/util.py
         [122 tests, 0.2 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/__init__.py
+    sage -t --long src/sage/crypto/block_cipher/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/all.py
+    sage -t --long src/sage/crypto/block_cipher/all.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/miniaes.py
+    sage -t --long src/sage/crypto/block_cipher/miniaes.py
         [430 tests, 1.1 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/sdes.py
+    sage -t --long src/sage/crypto/block_cipher/sdes.py
         [290 tests, 0.7 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/__init__.py
+    sage -t --long src/sage/crypto/mq/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/mpolynomialsystem.py
+    sage -t --long src/sage/crypto/mq/mpolynomialsystem.py
         [320 tests, 7.5 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/mpolynomialsystemgenerator.py
+    sage -t --long src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/sbox.py
+    sage -t --long src/sage/crypto/mq/sbox.py
         [124 tests, 0.7 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/sr.py
+    sage -t --long src/sage/crypto/mq/sr.py
         [437 tests, 82.4 s]
-    sage -t --long devel/sage-main/sage/crypto/public_key/__init__.py
+    sage -t --long src/sage/crypto/public_key/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/public_key/all.py
+    sage -t --long src/sage/crypto/public_key/all.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/public_key/blum_goldwasser.py
+    sage -t --long src/sage/crypto/public_key/blum_goldwasser.py
         [135 tests, 0.2 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -365,57 +360,57 @@ as taking a long time::
 
 Now we doctest the same directory in parallel using 4 threads::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -tp 4 devel/sage-main/sage/crypto/
+    [jdemeyer@sage sage-6.0]$ ./sage -tp 4 src/sage/crypto/
     Running doctests with ID 2012-07-07-00-11-55-9b17765e.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 24 files using 4 threads.
-    sage -t devel/sage-main/sage/crypto/boolean_function.pyx
+    sage -t src/sage/crypto/boolean_function.pyx
         [252 tests, 3.8 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/miniaes.py
+    sage -t src/sage/crypto/block_cipher/miniaes.py
         [429 tests, 1.1 s]
-    sage -t devel/sage-main/sage/crypto/mq/sr.py
+    sage -t src/sage/crypto/mq/sr.py
         [432 tests, 5.7 s]
-    sage -t devel/sage-main/sage/crypto/mq/sbox.py
+    sage -t src/sage/crypto/mq/sbox.py
         [123 tests, 0.8 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/sdes.py
+    sage -t src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
-    sage -t devel/sage-main/sage/crypto/classical_cipher.py
+    sage -t src/sage/crypto/classical_cipher.py
         [123 tests, 0.4 s]
-    sage -t devel/sage-main/sage/crypto/stream_cipher.py
+    sage -t src/sage/crypto/stream_cipher.py
         [113 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/public_key/blum_goldwasser.py
+    sage -t src/sage/crypto/public_key/blum_goldwasser.py
         [134 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/lfsr.py
+    sage -t src/sage/crypto/lfsr.py
         [30 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/util.py
+    sage -t src/sage/crypto/util.py
         [121 tests, 0.1 s]
-    sage -t devel/sage-main/sage/crypto/cryptosystem.py
+    sage -t src/sage/crypto/cryptosystem.py
         [79 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/stream.py
+    sage -t src/sage/crypto/stream.py
         [12 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/mq/mpolynomialsystemgenerator.py
+    sage -t src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [40 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/cipher.py
+    sage -t src/sage/crypto/cipher.py
         [3 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/lattice.py
+    sage -t src/sage/crypto/lattice.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/__init__.py
+    sage -t src/sage/crypto/block_cipher/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/all.py
+    sage -t src/sage/crypto/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/public_key/__init__.py
+    sage -t src/sage/crypto/public_key/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/__init__.py
+    sage -t src/sage/crypto/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/public_key/all.py
+    sage -t src/sage/crypto/public_key/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/mq/__init__.py
+    sage -t src/sage/crypto/mq/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/block_cipher/all.py
+    sage -t src/sage/crypto/block_cipher/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/crypto/mq/mpolynomialsystem.py
+    sage -t src/sage/crypto/mq/mpolynomialsystem.py
         [318 tests, 8.4 s]
-    sage -t devel/sage-main/sage/crypto/classical.py
+    sage -t src/sage/crypto/classical.py
         [717 tests, 10.4 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -423,57 +418,57 @@ Now we doctest the same directory in parallel using 4 threads::
     Total time for all tests: 12.9 seconds
         cpu time: 30.5 seconds
         cumulative wall time: 31.7 seconds
-    [jdemeyer@sage sage-5.9]$ ./sage -tp 4 --long devel/sage-main/sage/crypto/
+    [jdemeyer@sage sage-6.0]$ ./sage -tp 4 --long src/sage/crypto/
     Running doctests with ID 2012-07-07-00-13-04-d71f3cd4.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 24 files using 4 threads.
-    sage -t --long devel/sage-main/sage/crypto/boolean_function.pyx
+    sage -t --long src/sage/crypto/boolean_function.pyx
         [252 tests, 3.7 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/miniaes.py
+    sage -t --long src/sage/crypto/block_cipher/miniaes.py
         [429 tests, 1.0 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/sbox.py
+    sage -t --long src/sage/crypto/mq/sbox.py
         [123 tests, 0.8 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/sdes.py
+    sage -t --long src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
-    sage -t --long devel/sage-main/sage/crypto/classical_cipher.py
+    sage -t --long src/sage/crypto/classical_cipher.py
         [123 tests, 0.4 s]
-    sage -t --long devel/sage-main/sage/crypto/util.py
+    sage -t --long src/sage/crypto/util.py
         [121 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/stream_cipher.py
+    sage -t --long src/sage/crypto/stream_cipher.py
         [113 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/public_key/blum_goldwasser.py
+    sage -t --long src/sage/crypto/public_key/blum_goldwasser.py
         [134 tests, 0.1 s]
-    sage -t --long devel/sage-main/sage/crypto/lfsr.py
+    sage -t --long src/sage/crypto/lfsr.py
         [30 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/cryptosystem.py
+    sage -t --long src/sage/crypto/cryptosystem.py
         [79 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/stream.py
+    sage -t --long src/sage/crypto/stream.py
         [12 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/mpolynomialsystemgenerator.py
+    sage -t --long src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [40 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/cipher.py
+    sage -t --long src/sage/crypto/cipher.py
         [3 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/lattice.py
+    sage -t --long src/sage/crypto/lattice.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/all.py
+    sage -t --long src/sage/crypto/block_cipher/all.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/public_key/__init__.py
+    sage -t --long src/sage/crypto/public_key/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/__init__.py
+    sage -t --long src/sage/crypto/mq/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/all.py
+    sage -t --long src/sage/crypto/all.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/block_cipher/__init__.py
+    sage -t --long src/sage/crypto/block_cipher/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/__init__.py
+    sage -t --long src/sage/crypto/__init__.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/public_key/all.py
+    sage -t --long src/sage/crypto/public_key/all.py
         [0 tests, 0.0 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/mpolynomialsystem.py
+    sage -t --long src/sage/crypto/mq/mpolynomialsystem.py
         [318 tests, 9.0 s]
-    sage -t --long devel/sage-main/sage/crypto/classical.py
+    sage -t --long src/sage/crypto/classical.py
         [717 tests, 10.5 s]
-    sage -t --long devel/sage-main/sage/crypto/mq/sr.py
+    sage -t --long src/sage/crypto/mq/sr.py
         [434 tests, 88.0 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -483,25 +478,21 @@ Now we doctest the same directory in parallel using 4 threads::
         cumulative wall time: 114.5 seconds
 
 As the number of threads increases, the total testing time
-decreases. To minimize confusion, it is also a good idea to explicitly
-specify the path name of the directory we want to doctest and not a
-symbolic link to that directory. In the above examples, the symbolic
-link ``devel/sage`` points to the directory ``devel/sage-main``, but the
-actual path to the directory has been specified instead of its
-symbolic link.
+decreases.
+
 
 .. _section-parallel-test-whole-library:
 
-Parallel testing the whole Sage library
+Parallel Testing the Whole Sage Library
 =======================================
 
 The main Sage library resides in the directory
-``SAGE_ROOT/devel/sage-main/``. We can use the syntax described above
+``SAGE_ROOT/src/``. We can use the syntax described above
 to doctest the main library using multiple threads. When doing release
 management or patching the main Sage library, a release manager would
 parallel test the library using 10 threads with the following command::
 
-    [jdemeyer@sage sage-5.9]$ ./sage -tp 10 --long devel/sage-main/
+    [jdemeyer@sage sage-6.0]$ ./sage -tp 10 --long src/
 
 Another way is run ``make ptestlong``, which builds Sage (if necessary),
 builds the Sage documentation (if necessary), and then runs parallel
@@ -513,7 +504,7 @@ the number of CPU cores (as determined by the Python function
 
 In any case, this will test the Sage library with multiple threads::
 
-    [jdemeyer@sage sage-5.9]$ make ptestlong
+    [jdemeyer@sage sage-6.0]$ make ptestlong
 
 Any of the following commands would also doctest the Sage library or
 one of its clones::
@@ -524,16 +515,15 @@ one of its clones::
     make ptest
     make ptestlong
 
-In each case, testing is performed on the directory that is pointed to
-by the symbolic link ``devel/sage``.
+The differences are:
 
 * ``make test`` and ``make check`` --- These two commands run the same
   set of tests. First the Sage standard documentation is tested,
   i.e. the documentation that resides in
 
-  * ``SAGE_ROOT/devel/sage/doc/common``
-  * ``SAGE_ROOT/devel/sage/doc/en``
-  * ``SAGE_ROOT/devel/sage/doc/fr``
+  * ``SAGE_ROOT/src/doc/common``
+  * ``SAGE_ROOT/src/doc/en``
+  * ``SAGE_ROOT/src/doc/fr``
 
   Finally, the commands doctest the Sage library. For more details on
   these command, see the file ``SAGE_ROOT/Makefile``.
@@ -541,9 +531,9 @@ by the symbolic link ``devel/sage``.
 * ``make testlong`` --- This command doctests the standard
   documentation:
 
-  * ``SAGE_ROOT/devel/sage/doc/common``
-  * ``SAGE_ROOT/devel/sage/doc/en``
-  * ``SAGE_ROOT/devel/sage/doc/fr``
+  * ``SAGE_ROOT/src/doc/common``
+  * ``SAGE_ROOT/src/doc/en``
+  * ``SAGE_ROOT/src/doc/fr``
 
   and then the Sage library. Doctesting is run with the optional
   argument ``--long``. See the file ``SAGE_ROOT/Makefile`` for further
@@ -557,7 +547,7 @@ by the symbolic link ``devel/sage``.
   using the optional argument ``--long`` for doctesting.
 
 
-Beyond the Sage library
+Beyond the Sage Library
 =======================
 
 Doctesting also works fine for files not in the Sage library.  For
@@ -580,7 +570,7 @@ example, suppose we have a Python script called
 
 Then we can doctest it just as with Sage library files::
 
-    [mvngu@sage sage-5.9]$ ./sage -t my_python_script.py
+    [mvngu@sage sage-6.0]$ ./sage -t my_python_script.py
     Running doctests with ID 2012-07-07-00-17-56-d056f7c0.
     Doctesting 1 file.
     sage -t my_python_script.py
@@ -595,7 +585,7 @@ Then we can doctest it just as with Sage library files::
 Doctesting can also be performed on Sage scripts. Say we have a Sage
 script called ``my_sage_script.sage`` with the following content::
 
-    [mvngu@sage sage-5.9]$ cat my_sage_script.sage
+    [mvngu@sage sage-6.0]$ cat my_sage_script.sage
     def cube(n):
         r"""
         Return the cube of n.
@@ -609,7 +599,7 @@ script called ``my_sage_script.sage`` with the following content::
 
 Then we can doctest it just as for Python files::
 
-    [mvngu@sage build]$ sage-5.9/sage -t my_sage_script.sage
+    [mvngu@sage build]$ sage-6.0/sage -t my_sage_script.sage
     Running doctests with ID 2012-07-07-00-20-06-82ee728c.
     Doctesting 1 file.
     sage -t my_sage_script.sage
@@ -624,7 +614,7 @@ Then we can doctest it just as for Python files::
 Alternatively, we can preparse it to convert it to a Python script,
 and then doctest that::
 
-    [mvngu@sage build]$ sage-5.9/sage --preparse my_sage_script.sage
+    [mvngu@sage build]$ sage-6.0/sage --preparse my_sage_script.sage
     [mvngu@sage build]$ cat my_sage_script.py
     # This file was *autogenerated* from the file my_sage_script.sage.
     from sage.all_cmdline import *   # import sage library
@@ -639,7 +629,7 @@ and then doctest that::
             8
         """
         return n**_sage_const_3
-    [mvngu@sage build]$ sage-5.9/sage -t my_sage_script.py
+    [mvngu@sage build]$ sage-6.0/sage -t my_sage_script.py
     Running doctests with ID 2012-07-07-00-26-46-2bb00911.
     Doctesting 1 file.
     sage -t my_sage_script.py
@@ -651,7 +641,7 @@ and then doctest that::
         cpu time: 0.0 seconds
         cumulative wall time: 0.0 seconds
 
-Doctesting from within Sage
+Doctesting from Within Sage
 ===========================
 
 You can run doctests from within Sage, which can be useful since you
@@ -659,10 +649,10 @@ don't have to wait for Sage to start.  Use the ``run_doctests``
 function in the global namespace, passing it either a string or a module::
 
     sage: run_doctests(sage.coding.sd_codes)
-    Doctesting /Users/roed/sage/sage-5.3/devel/sage/sage/coding/sd_codes.py
+    Doctesting /Users/roed/sage/sage-5.3/src/sage/coding/sd_codes.py
     Running doctests with ID 2012-07-07-04-32-36-81f3853b.
     Doctesting 1 file.
-    sage -t /Users/roed/sage/sage-5.3/devel/sage/sage/coding/sd_codes.py
+    sage -t /Users/roed/sage/sage-5.3/src/sage/coding/sd_codes.py
         [18 tests, 0.3 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -676,7 +666,7 @@ function in the global namespace, passing it either a string or a module::
 Optional Arguments
 ==================
 
-Run long tests
+Run Long Tests
 --------------
 
 Use the ``--long`` flag to run doctests that have been marked with
@@ -687,7 +677,7 @@ No doctest should take longer than a second or so, and longer doctests
 These tests are normally skipped in order to reduce the time spent
 running tests::
 
-    [roed@sage sage-5.9]$ sage -t devel/sage/sage/rings/tests.py
+    [roed@sage sage-6.0]$ sage -t src/sage/rings/tests.py
     Running doctests with ID 2012-06-21-16-00-13-40835825.
     Doctesting 1 file.
     sage -t tests.py
@@ -701,7 +691,7 @@ running tests::
 
 In order to run the long tests as well, do the following::
 
-    [roed@sage sage-5.9]$ sage -t --long devel/sage/sage/rings/tests.py
+    [roed@sage sage-6.0]$ sage -t --long src/sage/rings/tests.py
     Running doctests with ID 2012-06-21-16-02-05-d13a9a24.
     Doctesting 1 file.
     sage -t tests.py
@@ -717,27 +707,27 @@ To find tests that take longer than the allowed time use the
 ``--warn-long`` flag.  Without any options it will cause tests to fail
 if they take longer than 1.0 second::
 
-    [roed@sage sage-5.9]$ sage -t --warn-long devel/sage/sage/rings/factorint.pyx
+    [roed@sage sage-6.0]$ sage -t --warn-long src/sage/rings/factorint.pyx
     Running doctests with ID 2012-07-14-03-27-03-2c952ac1.
     Doctesting 1 file.
-    sage -t --warn-long devel/sage/sage/rings/factorint.pyx
+    sage -t --warn-long src/sage/rings/factorint.pyx
     **********************************************************************
-    File "devel/sage/sage/rings/factorint.pyx", line 125, in sage.rings.factorint.base_exponent
+    File "src/sage/rings/factorint.pyx", line 125, in sage.rings.factorint.base_exponent
     Failed example:
         base_exponent(-4)
     Test ran for 4.09 s
     **********************************************************************
-    File "devel/sage/sage/rings/factorint.pyx", line 153, in sage.rings.factorint.factor_aurifeuillian
+    File "src/sage/rings/factorint.pyx", line 153, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^6+1)
     Test ran for 2.22 s
     **********************************************************************
-    File "devel/sage/sage/rings/factorint.pyx", line 155, in sage.rings.factorint.factor_aurifeuillian
+    File "src/sage/rings/factorint.pyx", line 155, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^58+1)
     Test ran for 2.22 s
     **********************************************************************
-    File "devel/sage/sage/rings/factorint.pyx", line 163, in sage.rings.factorint.factor_aurifeuillian
+    File "src/sage/rings/factorint.pyx", line 163, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^4+1)
     Test ran for 2.25 s
@@ -747,7 +737,7 @@ if they take longer than 1.0 second::
        3 of   8 in sage.rings.factorint.factor_aurifeuillian
         [25 tests, 4 failures, 10.9 s]
     ------------------------------------------------------------------------
-    sage -t --warn-long devel/sage/sage/rings/factorint.pyx # 4 doctests failed
+    sage -t --warn-long src/sage/rings/factorint.pyx # 4 doctests failed
     ------------------------------------------------------------------------
     Total time for all tests: 16.1 seconds
         cpu time: 9.7 seconds
@@ -755,7 +745,7 @@ if they take longer than 1.0 second::
 
 You can also pass in an explicit amount of time::
 
-    [roed@sage sage-5.9]$ sage -t --long --warn-long 2.0 devel/sage/sage/rings/tests.py
+    [roed@sage sage-6.0]$ sage -t --long --warn-long 2.0 src/sage/rings/tests.py
     Running doctests with ID 2012-07-14-03-30-13-c9164c9d.
     Doctesting 1 file.
     sage -t --long --warn-long 2.0 tests.py
@@ -781,7 +771,7 @@ You can also pass in an explicit amount of time::
         cpu time: 24.8 seconds
         cumulative wall time: 26.3 seconds
 
-Run optional tests
+Run Optional Tests
 ------------------
 
 You can run tests that require optional packages by using the
@@ -792,10 +782,10 @@ optional packages.
 
 By default, Sage only runs doctests that are not marked with the ``optional`` tag.  This is equivalent to running ::
 
-    [roed@sage sage-5.9]$ sage -t --optional=sage devel/sage/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=sage src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a368a200.
     Doctesting 1 file.
-    sage -t devel/sage/sage/rings/real_mpfr.pyx
+    sage -t src/sage/rings/real_mpfr.pyx
         [819 tests, 7.0 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -806,10 +796,10 @@ By default, Sage only runs doctests that are not marked with the ``optional`` ta
 
 If you want to also run tests that require magma, you can do the following::
 
-    [roed@sage sage-5.9]$ sage -t --optional=sage,magma devel/sage/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=sage,magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a00a7319
     Doctesting 1 file.
-    sage -t devel/sage/sage/rings/real_mpfr.pyx
+    sage -t src/sage/rings/real_mpfr.pyx
         [823 tests, 8.4 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -820,10 +810,10 @@ If you want to also run tests that require magma, you can do the following::
 
 In order to just run the tests that are marked as requiring magma, omit ``sage``::
 
-    [roed@sage sage-5.9]$ sage -t --optional=magma devel/sage/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-33-a2bc1fdf
     Doctesting 1 file.
-    sage -t devel/sage/sage/rings/real_mpfr.pyx
+    sage -t src/sage/rings/real_mpfr.pyx
         [4 tests, 2.0 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -834,10 +824,10 @@ In order to just run the tests that are marked as requiring magma, omit ``sage``
 
 To run all tests, regardless of whether they are marked optional, pass ``all`` as the ``optional`` tag::
 
-    [roed@sage sage-5.9]$ sage -t --optional=all devel/sage/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=all src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-31-18-8c097f55
     Doctesting 1 file.
-    sage -t devel/sage/sage/rings/real_mpfr.pyx
+    sage -t src/sage/rings/real_mpfr.pyx
         [865 tests, 11.2 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -846,7 +836,7 @@ To run all tests, regardless of whether they are marked optional, pass ``all`` a
         cpu time: 4.7 seconds
         cumulative wall time: 11.2 seconds
 
-Running tests in parallel
+Running Tests in Parallel
 -------------------------
 
 If you're testing many files, you can get big speedups by using more
@@ -854,25 +844,25 @@ than one thread.  To run doctests in parallel use the ``--nthreads``
 flag (``-p`` is a shortened version).  Pass in the number of threads
 you would like to use (by default Sage just uses 1)::
 
-    [roed@sage sage-5.9]$ sage -tp 2 devel/sage/sage/doctest/
+    [roed@sage sage-6.0]$ sage -tp 2 src/sage/doctest/
     Running doctests with ID 2012-06-22-19-09-25-a3afdb8c.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 8 files using 2 threads.
-    sage -t devel/sage/sage/doctest/control.py
+    sage -t src/sage/doctest/control.py
         [114 tests, 4.6 s]
-    sage -t devel/sage/sage/doctest/util.py
+    sage -t src/sage/doctest/util.py
         [114 tests, 0.6 s]
-    sage -t devel/sage/sage/doctest/parsing.py
+    sage -t src/sage/doctest/parsing.py
         [187 tests, 0.5 s]
-    sage -t devel/sage/sage/doctest/sources.py
+    sage -t src/sage/doctest/sources.py
         [128 tests, 0.1 s]
-    sage -t devel/sage/sage/doctest/reporting.py
+    sage -t src/sage/doctest/reporting.py
         [53 tests, 0.1 s]
-    sage -t devel/sage/sage/doctest/all.py
+    sage -t src/sage/doctest/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage/sage/doctest/__init__.py
+    sage -t src/sage/doctest/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage/sage/doctest/forker.py
+    sage -t src/sage/doctest/forker.py
         [322 tests, 15.5 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -881,7 +871,7 @@ you would like to use (by default Sage just uses 1)::
         cpu time: 4.2 seconds
         cumulative wall time: 21.5 seconds
 
-Doctesting all of Sage
+Doctesting All of Sage
 ----------------------
 
 To doctest the whole Sage library use the ``--all`` flag (``-a`` for
@@ -889,18 +879,19 @@ short).  In addition to testing the code in Sage's Python and Cython
 files, this command will run the tests defined in Sage's documentation
 as well as testing the Sage notebook::
 
-    [roed@sage sage-5.9]$ sage -t -a
+    [roed@sage sage-6.0]$ sage -t -a
     Running doctests with ID 2012-06-22-19-10-27-e26fce6d.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2020 files.
-    sage -t /Users/roed/sage/sage-5.3/devel/sage/sage/plot/plot.py
+    sage -t /Users/roed/sage/sage-5.3/src/sage/plot/plot.py
         [304 tests, 69.0 s]
     ...
 
 If you want to just run the notebook tests, use the ``--sagenb`` flag instead.
 
-Debugging tools
+
+Debugging Tools
 ---------------
 
 Sometimes doctests fail (that's why we run them after all).  There are
@@ -911,7 +902,7 @@ short) then you will drop into an interactive Python debugger whenever
 a Python exception occurs.  As an example, I modified
 :mod:`sage.schemes.elliptic_curves.constructor` to produce an error::
 
-    [roed@sage sage-5.9]$ sage -t --debug devel/sage/sage/schemes/elliptic_curves/constructor.py
+    [roed@sage sage-6.0]$ sage -t --debug src/sage/schemes/elliptic_curves/constructor.py
     Running doctests with ID 2012-06-23-12-09-04-b6352629.
     Doctesting 1 file.
     **********************************************************************
@@ -956,10 +947,10 @@ a Python exception occurs.  As an example, I modified
     1 items had failures:
        1 of   1 in sage.schemes.elliptic_curves.constructor
     ***Test Failed*** 1 failures.
-    sage -t devel/sage/sage/schemes/elliptic_curves/constructor.py
+    sage -t src/sage/schemes/elliptic_curves/constructor.py
         [64 tests, 89.2 s]
     ------------------------------------------------------------------------
-    sage -t devel/sage/sage/schemes/elliptic_curves/constructor.py # 1 doctest failed
+    sage -t src/sage/schemes/elliptic_curves/constructor.py # 1 doctest failed
     ------------------------------------------------------------------------
     Total time for all tests: 90.4 seconds
         cpu time: 4.5 seconds
@@ -972,8 +963,8 @@ you know what test caused the problem (if you want this output to
 appear in real time use the ``--verbose`` flag).  To have doctests run
 under the control of gdb, use the ``--gdb`` flag::
 
-    [roed@sage sage-5.9]$ sage -t --gdb devel/sage/sage/schemes/elliptic_curves/constructor.py
-    gdb -x /home/roed/sage-5.9.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-5.9.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional sage --stats_path /home/roed/.sage/timings2.json devel/sage/sage/schemes/elliptic_curves/constructor.py
+    [roed@sage sage-6.0]$ sage -t --gdb src/sage/schemes/elliptic_curves/constructor.py
+    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -985,7 +976,7 @@ under the control of gdb, use the ``--gdb`` flag::
     [New Thread 0x7f10f85566e0 (LWP 6534)]
     Running doctests with ID 2012-07-07-00-43-36-b1b735e7.
     Doctesting 1 file.
-    sage -t devel/sage/sage/schemes/elliptic_curves/constructor.py
+    sage -t src/sage/schemes/elliptic_curves/constructor.py
         [67 tests, 5.8 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1007,16 +998,18 @@ Once you're done fixing whatever problems where revealed by the
 doctests, you can rerun just those files that failed their most recent
 test by using the ``--failed`` flag (``-f`` for short)::
 
-    [roed@sage sage-5.9]$ sage -t -fa
+    [roed@sage sage-6.0]$ sage -t -fa
     Running doctests with ID 2012-07-07-00-45-35-d8b5a408.
     Doctesting entire Sage library.
     Only doctesting files that failed last test.
     No files to doctest
 
-Other options
--------------
 
-There are various other options that change the behavior of Sage's doctesting code.
+Miscellaneous Options
+---------------------
+
+There are various other options that change the behavior of Sage's
+doctesting code.
 
 Show only first failure
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -1033,7 +1026,7 @@ Show skipped optional tests
 To print a summary at the end of each file with the number of optional
 tests skipped, use the ``--show-skipped`` flag::
 
-   [roed@sage sage-5.9]$ sage -t --show-skipped devel/sage-main/sage/rings/finite_rings/integer_mod.pyx
+   [roed@sage sage-6.0]$ sage -t --show-skipped src/sage/rings/finite_rings/integer_mod.pyx
    Running doctests with ID 2013-03-14-15-32-05-8136f5e3.
    Doctesting 1 file.
    sage -t sage/rings/finite_rings/integer_mod.pyx
@@ -1058,14 +1051,14 @@ you to run tests repeatedly in an attempt to search for Heisenbugs.
 The flag ``--global-iterations`` takes an integer and runs the whole
 set of tests that many times serially::
 
-    [roed@sage sage-5.9]$ sage -t --global-iterations 2 devel/sage-main/sage/sandpiles
+    [roed@sage sage-6.0]$ sage -t --global-iterations 2 src/sage/sandpiles
     Running doctests with ID 2012-07-07-00-59-28-e7048ad9.
     Doctesting 3 files (2 global iterations).
-    sage -t devel/sage-main/sage/sandpiles/__init__.py
+    sage -t src/sage/sandpiles/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/sandpiles/all.py
+    sage -t src/sage/sandpiles/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/sandpiles/sandpile.py
+    sage -t src/sage/sandpiles/sandpile.py
         [711 tests, 14.7 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1073,11 +1066,11 @@ set of tests that many times serially::
     Total time for all tests: 17.6 seconds
         cpu time: 13.2 seconds
         cumulative wall time: 14.7 seconds
-    sage -t devel/sage-main/sage/sandpiles/__init__.py
+    sage -t src/sage/sandpiles/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/sandpiles/all.py
+    sage -t src/sage/sandpiles/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/sandpiles/sandpile.py
+    sage -t src/sage/sandpiles/sandpile.py
         [711 tests, 13.8 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1089,14 +1082,14 @@ set of tests that many times serially::
 You can also iterate in a different order: the ``--file-iterations``
 flag runs the tests in each file ``N`` times before proceeding::
 
-    [roed@sage sage-5.9]$ sage -t --file-iterations 2 devel/sage-main/sage/sandpiles
+    [roed@sage sage-6.0]$ sage -t --file-iterations 2 src/sage/sandpiles
     Running doctests with ID 2012-07-07-01-01-43-8f954206.
     Doctesting 3 files (2 file iterations).
-    sage -t devel/sage-main/sage/sandpiles/__init__.py
+    sage -t src/sage/sandpiles/__init__.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/sandpiles/all.py
+    sage -t src/sage/sandpiles/all.py
         [0 tests, 0.0 s]
-    sage -t devel/sage-main/sage/sandpiles/sandpile.py
+    sage -t src/sage/sandpiles/sandpile.py
         [1422 tests, 13.3 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1117,12 +1110,12 @@ On a slow machine the default timeout of 5 minutes may not be enough
 for the slowest files.  Use the ``--timeout`` flag (``-T`` for short)
 to set it to something else::
 
-    [roed@sage sage-5.9]$ sage -tp 2 --all --timeout 1
+    [roed@sage sage-6.0]$ sage -tp 2 --all --timeout 1
     Running doctests with ID 2012-07-07-01-09-37-deb1ab83.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2067 files using 2 threads.
-    sage -t devel/sage-main/sage/schemes/elliptic_curves/ell_rational_field.py
+    sage -t src/sage/schemes/elliptic_curves/ell_rational_field.py
         Timed out!
     ...
 
@@ -1132,10 +1125,10 @@ Using absolute paths
 By default filenames are printed using relative paths.  To use
 absolute paths instead pass in the ``--abspath`` flag::
 
-    [roed@sage sage-5.9]$ sage -t --abspath devel/sage-main/sage/doctest/control.py
+    [roed@sage sage-6.0]$ sage -t --abspath src/sage/doctest/control.py
     Running doctests with ID 2012-07-07-01-13-03-a023e212.
     Doctesting 1 file.
-    sage -t /home/roed/sage-5.9/devel/sage-main/sage/doctest/control.py
+    sage -t /home/roed/sage-6.0/src/sage/doctest/control.py
         [133 tests, 4.7 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1144,19 +1137,20 @@ absolute paths instead pass in the ``--abspath`` flag::
         cpu time: 0.2 seconds
         cumulative wall time: 4.7 seconds
 
+
 Testing changed files
 ^^^^^^^^^^^^^^^^^^^^^
 
-If you're working on some files in the Sage library it can be
+If you are working on some files in the Sage library it can be
 convenient to test only the files that have changed.  To do so use the
 ``--new`` flag, which tests files that have been modified or added
-since the last Mercurial commit (or qrefresh)::
+since the last commit::
 
-    [roed@sage sage-5.9]$ sage -t --new
+    [roed@sage sage-6.0]$ sage -t --new
     Running doctests with ID 2012-07-07-01-15-52-645620ee.
     Doctesting files changed since last HG commit.
     Doctesting 1 file.
-    sage -t devel/sage/sage/doctest/control.py
+    sage -t src/sage/doctest/control.py
         [133 tests, 3.7 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1165,6 +1159,7 @@ since the last Mercurial commit (or qrefresh)::
         cpu time: 0.1 seconds
         cumulative wall time: 3.7 seconds
 
+
 Running tests in a random order
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1172,11 +1167,11 @@ By default, tests are run in the order in which they appear in the
 file.  To run tests in a random order (which can reveal subtle bugs),
 use the ``--randorder`` flag and pass in a random seed::
 
-    [roed@sage sage-5.9]$ sage -t --new --randorder 127
+    [roed@sage sage-6.0]$ sage -t --new --randorder 127
     Running doctests with ID 2012-07-07-01-19-06-97c8484e.
     Doctesting files changed since last HG commit.
     Doctesting 1 file.
-    sage -t devel/sage/sage/doctest/control.py
+    sage -t src/sage/doctest/control.py
         [133 tests, 3.6 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1202,10 +1197,10 @@ Auxilliary files
 To specify a logfile (rather than use the default which is created for
 ``sage -t --all``), use the ``--logfile`` flag::
 
-    [roed@sage sage-5.9]$ sage -t --logfile test1.log devel/sage-main/sage/doctest/control.py
+    [roed@sage sage-6.0]$ sage -t --logfile test1.log src/sage/doctest/control.py
     Running doctests with ID 2012-07-07-01-25-49-e7c0e52d.
     Doctesting 1 file.
-    sage -t devel/sage-main/sage/doctest/control.py
+    sage -t src/sage/doctest/control.py
         [133 tests, 4.3 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1213,10 +1208,10 @@ To specify a logfile (rather than use the default which is created for
     Total time for all tests: 6.7 seconds
         cpu time: 0.1 seconds
         cumulative wall time: 4.3 seconds
-    [roed@sage sage-5.9]$ cat test1.log
+    [roed@sage sage-6.0]$ cat test1.log
     Running doctests with ID 2012-07-07-01-25-49-e7c0e52d.
     Doctesting 1 file.
-    sage -t devel/sage-main/sage/doctest/control.py
+    sage -t src/sage/doctest/control.py
         [133 tests, 4.3 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1231,7 +1226,7 @@ To give a json file storing the timings for each file, use the
 that slower tests are run first (and thus multiple processes are
 utilized most efficiently)::
 
-    [roed@sage sage-5.9]$ sage -tp 2 --stats-path ~/.sage/timings2.json --all
+    [roed@sage sage-6.0]$ sage -tp 2 --stats-path ~/.sage/timings2.json --all
     Running doctests with ID 2012-07-07-01-28-34-2df4251d.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....

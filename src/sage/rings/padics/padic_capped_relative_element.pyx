@@ -55,10 +55,9 @@ from sage.rings.infinity import infinity
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.padics.precision_error import PrecisionError
 
+import sage.libs.pari.pari_instance
+cdef PariInstance P = sage.libs.pari.pari_instance.pari
 from sage.interfaces.gp import GpElement
-
-
-cdef PariInstance P = sage.libs.pari.all.pari
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 # 1073741823 or 4611686018427387903 on 32/64 bit.

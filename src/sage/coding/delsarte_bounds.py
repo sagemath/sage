@@ -103,8 +103,7 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger,  solver, maxc = 0):
         p.add_constraint(sum([A[r] for r in xrange(n+1)]), max=maxc)
     return A, p
 
-def delsarte_bound_hamming_space(n, d, q,
-                    isinteger=False, return_data=False, solver="PPL"):
+def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL"):
     """
     Find the classical Delsarte bound [1]_ on codes in Hamming space
     ``H_q^n`` of minimal distance ``d``
@@ -118,13 +117,9 @@ def delsarte_bound_hamming_space(n, d, q,
 
     - ``q`` -- the size of the alphabet
 
-    - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP), rather
-        that an LP solver. Can be very slow if set to ``True``.
-
     - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``, where ``W`` is
         a weights vector,  and ``LP`` the Delsarte bound LP; both of them are Sage LP
-        data.  ``W`` need not be a weight distribution of a code, or,
-        if ``isinteger==False``, even have integer entries.
+        data.  ``W`` need not be a weight distribution of a code.
 
     - ``solver`` -- the LP/ILP solver to be used. Defaults to ``PPL``. It is arbitrary
         precision, thus there will be no rounding errors. With other solvers
@@ -170,7 +165,7 @@ def delsarte_bound_hamming_space(n, d, q,
 
     """
     from sage.numerical.mip import MIPSolverException
-    A, p = _delsarte_LP_building(n, d, 0, q, isinteger,  solver)
+    A, p = _delsarte_LP_building(n, d, 0, q, False,  solver)
     try:
         bd=p.solve()
     except MIPSolverException, exc:
@@ -185,7 +180,7 @@ def delsarte_bound_hamming_space(n, d, q,
         return bd
 
 def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0,
-                    isinteger=False, return_data=False, solver="PPL"):
+                     return_data=False, solver="PPL", isinteger=False):
    """
    Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive codes in
    Hamming space ``H_q^n`` of minimal distance ``d`` with minimal distance of the dual
@@ -208,9 +203,6 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0,
    - ``q_base`` -- if ``0``, the code is assumed to be nonlinear. Otherwise,
      ``q=q_base^m`` and the code is linear over ``F_{q_base}``.
 
-   - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP), rather
-     that an LP solver. Can be very slow if set to ``True``.
-
    - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``, where ``W`` is
      a weights vector,  and ``LP`` the Delsarte bound LP; both of them are Sage LP
      data.  ``W`` need not be a weight distribution of a code, or,
@@ -219,6 +211,9 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0,
    - ``solver`` -- the LP/ILP solver to be used. Defaults to ``PPL``. It is arbitrary
      precision, thus there will be no rounding errors. With other solvers
      (see :class:`MixedIntegerLinearProgram` for the list), you are on your own!
+
+   - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP), rather
+     that an LP solver. Can be very slow if set to ``True``.
 
    EXAMPLES:
 

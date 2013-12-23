@@ -14,7 +14,7 @@ Miscellaneous arithmetic functions
 import math
 import sys
 import sage.misc.misc as misc
-from sage.libs.pari.gen import pari
+from sage.libs.pari.all import pari
 import sage.libs.flint.arith as flint_arith
 
 from sage.rings.rational_field import QQ

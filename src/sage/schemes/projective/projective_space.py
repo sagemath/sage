@@ -938,6 +938,48 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             raise TypeError("Second argument (= %s) must be a finite field."%F)
         return [ P for P in self.base_extend(F) ]
 
+    def rational_points_dictionary(self):
+        r"""
+        Return dictionary of points.
+
+        OUTPUT:
+
+        - dictionary
+
+        EXAMPLES::
+
+            sage: P1=ProjectiveSpace(GF(7),1,'x')
+            sage: P1.rational_points_dictionary()
+            {(1 : 0): 7, (0 : 1): 0, (1 : 1): 1, (2 : 1): 2, (3 : 1): 3, (4 : 1): 4,
+            (5 : 1): 5, (6 : 1): 6}
+        """
+        n = self.dimension_relative()
+        R = self.base_ring()
+        D={}
+        zero = R(0)
+        i = n
+        index=0
+        while not i < 0:
+            P = [ zero for _ in range(i) ] + [ R(1) ] + [ zero for _ in range(n-i) ]
+            D.update({self(P):index})
+            index+=1
+            iters = [ iter(R) for _ in range(i) ]
+            for x in iters: x.next() # put at zero
+            j = 0
+            while j < i:
+                try:
+                    P[j] = iters[j].next()
+                    D.update({self(P):index})
+                    index+=1
+                    j = 0
+                except StopIteration:
+                    iters[j] = iter(R)  # reset
+                    iters[j].next() # put at zero
+                    P[j] = zero
+                    j += 1
+            i -= 1
+        return(D)
+
 class ProjectiveSpace_rational_field(ProjectiveSpace_field):
     def rational_points(self,bound=0):
         r"""

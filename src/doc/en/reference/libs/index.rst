@@ -32,6 +32,7 @@ to be aware of the modules described in this chapter.
    sage/libs/mwrank/all
    sage/libs/mwrank/mwrank
    sage/libs/mwrank/interface
+   sage/libs/pari/pari_instance
    sage/libs/pari/gen
    sage/libs/ppl
    sage/ext/pselect

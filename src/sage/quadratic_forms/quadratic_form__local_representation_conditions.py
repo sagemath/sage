@@ -436,7 +436,7 @@ class QuadraticFormLocalRepresentationConditions():
 
     def is_universal_at_all_finite_primes(self):
         """
-        Determines if the quadratic form represents `Z_p` for all finite/non-archimedian primes.
+        Determines if the quadratic form represents `Z_p` for all finite/non-archimedean primes.
 
         INPUT:
             none
@@ -475,7 +475,7 @@ class QuadraticFormLocalRepresentationConditions():
     def is_universal_at_all_places(self):
         """
         Determines if the quadratic form represents `Z_p` for all
-        finite/non-archimedian primes, and represents all real numbers.
+        finite/non-archimedean primes, and represents all real numbers.
 
         INPUT:
             none
@@ -823,7 +823,7 @@ def is_locally_universal_at_prime(self, p):
 
 def is_locally_universal_at_all_primes(self):
     """
-    Determines if the quadratic form represents `Z_p` for all finite/non-archimedian primes.
+    Determines if the quadratic form represents `Z_p` for all finite/non-archimedean primes.
 
     INPUT:
         none
@@ -858,7 +858,7 @@ def is_locally_universal_at_all_primes(self):
 def is_locally_universal_at_all_places(self):
     """
     Determines if the quadratic form represents `Z_p` for all
-    finite/non-archimedian primes, and represents all real numbers.
+    finite/non-archimedean primes, and represents all real numbers.
 
     INPUT:
         none

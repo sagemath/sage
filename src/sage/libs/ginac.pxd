@@ -11,6 +11,9 @@
 # we do *not* have to use sig_on() and sig_off(). We do use it a little
 # in the actual pyx code to catch control-c for long running functions.
 
+# distutils: language = c++
+# distutils: libraries = pynac gmp
+
 from cpython cimport PyObject
 
 cdef extern from "ginac_wrap.h":

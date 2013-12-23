@@ -498,7 +498,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field import NumberField, QuadraticField, CyclotomicField
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from sage.rings.arith import factor
-from sage.libs.pari.gen import pari
 from sage.structure.element import generic_power, canonical_coercion
 import infinity
 from sage.misc.functional import cyclotomic_polynomial

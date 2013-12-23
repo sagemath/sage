@@ -1,0 +1,48 @@
+= OpenSSL =
+
+== Description ==
+
+From wikipedia: OpenSSL is an open source implementation of the SSL
+and TLS protocols. The core library (written in the C programming
+language) implements the basic cryptographic functions and provides
+various utility functions. Wrappers allowing the use of the OpenSSL
+library in a variety of computer languages are available.
+
+== License ==
+
+ * Custom GPL-incompatible license
+
+== Maintainers ==
+
+ * William Stein
+
+== Upstream Contact ==
+
+ * None yet
+
+=== Patches ===
+
+ * src/Configure: Sage's gcc doesn't recognize the '-arch' option,
+   while Apple's gcc does, so we remove this flag.
+ * src/config: patched to fix a problem on Solaris.
+
+== Changelog ==
+
+=== openssl-1.0.1c.p0 (John Palmieri, 17 June 2012) ===
+ * Trac #13126: Update source to 1.0.1c
+ * Created hg repository
+ * Cleaned up spkg-install
+ * Created spkg-check
+ * Patch to build on OS X Lion
+ * Patch to build on Solaris
+
+=== openssl-1.0.1a (Mariah Lenox, 23 April 2012) ===
+ * upgraded source
+
+=== openssl-1.0.0.p0 (William Stein, June 3, 2010) ===
+ * Fix issue with openssl libraries getting installed to lib64,
+   as recommended by Mariah (the referee).
+
+=== openssl-1.0.0 (William Stein, April 27, 2010) ===
+ * Initial version in modernized format
+

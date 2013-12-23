@@ -496,28 +496,34 @@ class TracInterface(object):
         Get an XML-RPC proxy object that is authenticated using the users
         username and password.
 
-        .. NOTE::
-
-            To make sure that doctests do not tamper with the live trac server,
-            it is an error to access this property during a doctest.
-
         EXAMPLES::
 
-            sage: dev.trac._authenticated_server_proxy # not tested
+            sage: dev.trac._authenticated_server_proxy  # not tested
             Trac username: username
             Trac password:
             Should I store your password in a configuration file for future sessions? (This configuration file might be readable by privileged users on this system.) [yes/No]
             <ServerProxy for trac.sagemath.org/login/xmlrpc>
 
-        TESTS::
+        TESTS:
 
-            sage: dev.trac._authenticated_server_proxy
+        To make sure that doctests do not tamper with the live trac
+        server, it is an error to access this property during a
+        doctest (The ``dev`` object during doctests is also modified
+        to prevent this)::
+
+            sage: from sage.dev.test.config import DoctestConfig
+            sage: from sage.dev.test.user_interface import DoctestUserInterface
+            sage: from sage.dev.trac_interface import TracInterface
+            sage: config = DoctestConfig()
+            sage: trac = TracInterface(config['trac'], DoctestUserInterface(config['UI']))
+            sage: trac._authenticated_server_proxy
             Traceback (most recent call last):
             ...
             AssertionError: doctest tried to access an authenticated session to trac
         """
         import sage.doctest
-        assert not sage.doctest.DOCTEST_MODE, "doctest tried to access an authenticated session to trac"
+        assert not sage.doctest.DOCTEST_MODE, \
+            "doctest tried to access an authenticated session to trac"
 
         self._check_password_timeout()
 

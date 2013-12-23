@@ -668,7 +668,7 @@ class FileDocTestSource(DocTestSource):
             ....:     dirs.sort(); files.sort()
             ....:     for F in files:
             ....:         _, ext = os.path.splitext(F)
-            ....:         if ext in ('.py', '.pyx', '.sage', '.spyx', '.rst'):
+            ....:         if ext in ('.py', '.pyx', '.pxi', '.sage', '.spyx', '.rst'):
             ....:             filename = os.path.join(path, F)
             ....:             FDS = FileDocTestSource(filename, DocTestDefaults(long=True,optional=True))
             ....:             FDS._test_enough_doctests(verbose=False)
@@ -684,6 +684,7 @@ class FileDocTestSource(DocTestSource):
             There are 3 unexpected tests being run in sage/doctest/parsing.py
             There are 1 unexpected tests being run in sage/doctest/reporting.py
             There are 9 tests in sage/graphs/graph_plot.py that are not being run
+            There are 3 tests in sage/rings/invariant_theory.py that are not being run
             sage: os.chdir(cwd)
         """
         expected = []

@@ -222,6 +222,7 @@ def CPRFanoToricVariety(Delta=None,
                         names=None,
                         coordinate_name_indices=None,
                         make_simplicial=False,
+                        base_ring=None,
                         base_field=None,
                         check=True):
     r"""
@@ -287,8 +288,11 @@ def CPRFanoToricVariety(Delta=None,
     - ``make_simplicial`` -- if ``True``, the underlying fan will be made
       simplicial (default: ``False``);
 
-    - ``base_field`` -- base field of the CPR-Fano toric variety
+    - ``base_ring`` -- base field of the CPR-Fano toric variety
       (default: `\QQ`);
+
+    - ``base_field`` -- alias for ``base_ring``. Takes precedence if
+      both are specified.
 
     - ``check`` -- by default the input data will be checked for correctness
       (e.g. that ``charts`` do form a subdivision of the normal fan of
@@ -633,14 +637,17 @@ def CPRFanoToricVariety(Delta=None,
                   for cone in fan)
     fan = Fan(cones, rays, check=False)
     # Check/normalize base_field
-    if base_field is None:
-        base_field = QQ
-    elif base_field not in _Fields:
+    if base_field is not None:
+        base_ring = base_field
+    if base_ring is None:
+        base_ring = QQ
+    elif base_ring not in _Fields:
         raise TypeError("need a field to construct a Fano toric variety!"
-                        "\n Got %s" % base_field)
+                        "\n Got %s" % base_ring)
     fan._is_complete = True     # At this point it must be for sure
-    return CPRFanoToricVariety_field(Delta_polar, fan, coordinate_points,
-        point_to_ray, coordinate_names, coordinate_name_indices, base_field)
+    return CPRFanoToricVariety_field(
+        Delta_polar, fan, coordinate_points,
+        point_to_ray, coordinate_names, coordinate_name_indices, base_ring)
 
 
 class CPRFanoToricVariety_field(ToricVariety_field):

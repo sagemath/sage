@@ -21,29 +21,25 @@ We test coercion in a particularly complicated situation::
     x^2 + (-z^2 - 1)*x
 """
 
-################################################################################
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-################################################################################
+#*****************************************************************************
 
 from sage.rings.polynomial.polynomial_element import Polynomial, Polynomial_generic_dense
 from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
 
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
 
-
 from sage.libs.pari.all import pari_gen
-from sage.structure.factorization import Factorization
 from sage.structure.element import coerce_binop
 
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-import sage.rings.integer as integer
-
-import sage.rings.polynomial.polynomial_ring
 
 
 class Polynomial_generic_sparse(Polynomial):
@@ -732,130 +728,3 @@ from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_
 register_unpickle_override( \
     'sage.rings.polynomial.polynomial_element_generic', \
     'Polynomial_rational_dense', Polynomial_rational_flint)
-
-class Polynomial_padic_generic_dense(Polynomial_generic_dense, Polynomial_generic_domain):
-    def __init__(self, parent, x=None, check=True, is_gen = False, construct=False, absprec=None):
-        Polynomial_generic_dense.__init__(self, parent, x, check, is_gen, absprec=absprec)
-
-    def _mul_(self, right):
-        return self._mul_generic(right)
-
-    def __pow__(self, right):
-        #computing f^p in this way loses precision
-        return self._pow(right)
-
-    def clear_zeros(self):
-        """
-        This function replaces coefficients of the polynomial that evaluate as equal to 0 with the zero element of the base ring that has the maximum possible precision.
-
-        WARNING: this function mutates the underlying polynomial.
-        """
-        coeffs = self._Polynomial_generic_dense__coeffs
-        for n in range(len(coeffs)):
-            if not coeffs[n]:
-                self._Polynomial_generic_dense__coeffs[n] = self.base_ring()(0)
-
-    def _repr(self, name=None):
-        r"""
-        EXAMPLES::
-
-            sage: R.<w> = PolynomialRing(Zp(5, prec=5, type = 'capped-abs', print_mode = 'val-unit'))
-            sage: f = 24 + R(4/3)*w + w^4
-            sage: f._repr()
-            '(1 + O(5^5))*w^4 + (1043 + O(5^5))*w + (24 + O(5^5))'
-            sage: f._repr(name='z')
-            '(1 + O(5^5))*z^4 + (1043 + O(5^5))*z + (24 + O(5^5))'
-
-        AUTHOR:
-        - David Roe (2007-03-03), based on Polynomial_generic_dense._repr()
-        """
-        s = " "
-        n = m = self.degree()
-        if name is None:
-            name = self.parent().variable_name()
-        coeffs = self.list()
-        for x in reversed(coeffs):
-            if x.valuation() != infinity:
-                if n != m:
-                    s += " + "
-                x = repr(x)
-                x = "(%s)"%x
-                if n > 1:
-                    var = "*%s^%s"%(name,n)
-                elif n==1:
-                    var = "*%s"%name
-                else:
-                    var = ""
-                s += "%s%s"%(x,var)
-            n -= 1
-        if s==" ":
-            return "0"
-        return s[1:]
-
-
-    def factor(self, absprec = None):
-        if self == 0:
-            raise ValueError, "Factorization of 0 not defined"
-        if absprec is None:
-            absprec = min([x.precision_absolute() for x in self.list()])
-        else:
-            absprec = integer.Integer(absprec)
-        if absprec <= 0:
-            raise ValueError, "absprec must be positive"
-        G = self._pari_().factorpadic(self.base_ring().prime(), absprec)
-        pols = G[0]
-        exps = G[1]
-        F = []
-        R = self.parent()
-        for i in xrange(len(pols)):
-            f = R(pols[i], absprec = absprec)
-            e = int(exps[i])
-            F.append((f,e))
-
-        if R.base_ring().is_field():
-            # When the base ring is a field we normalize
-            # the irreducible factors so they have leading
-            # coefficient 1.
-            for i in range(len(F)):
-                cur = F[i][0].leading_coefficient()
-                if cur != 1:
-                    F[i] = (F[i][0].monic(), F[i][1])
-            return Factorization(F, self.leading_coefficient())
-        else:
-            # When the base ring is not a field, we normalize
-            # the irreducible factors so that the leading term
-            # is a power of p.  We also ensure that the gcd of
-            # the coefficients of each term is 1.
-            c = self.leading_coefficient().valuation()
-            u = self.base_ring()(1)
-            for i in range(len(F)):
-                upart = F[i][0].leading_coefficient().unit_part()
-                lval = F[i][0].leading_coefficient().valuation()
-                if upart != 1:
-                    F[i] = (F[i][0] // upart, F[i][1])
-                    u *= upart ** F[i][1]
-                c -= lval
-            if c != 0:
-                F.append((self.parent()(self.base_ring().prime_pow(c)), 1))
-            return Factorization(F, u)
-
-class Polynomial_padic_ring_dense(Polynomial_padic_generic_dense):
-    def content(self):
-        if self == 0:
-            return self.base_ring()(0)
-        else:
-            return self.base_ring()(self.base_ring().prime_pow(min([x.valuation() for x in self.list()])))
-
-class Polynomial_padic_field_dense(Polynomial_padic_generic_dense, Polynomial_generic_dense_field):
-    def content(self):
-        if self != 0:
-            return self.base_ring()(1)
-        else:
-            return self.base_ring()(0)
-
-class Polynomial_padic_ring_lazy_dense(Polynomial_padic_ring_dense):
-    pass
-
-class Polynomial_padic_field_lazy_dense(Polynomial_padic_field_dense):
-    pass
-

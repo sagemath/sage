@@ -524,6 +524,9 @@ cdef class FiniteField(Field):
         """
         raise NotImplementedError
 
+    # cached because constructing the Factorization is slow;
+    # see :trac:`11628`.
+    @cached_method
     def factored_order(self):
         """
         Returns the factored order of this field.  For compatibility with

@@ -5,6 +5,7 @@ AUTHORS:
 
  - Jeroen Demeyer (2010-09-29): initial version (#10030)
 
+ - Jeroen Demeyer (2013-11-04): wrap some tests within nogil (#15352)
 """
 #*****************************************************************************
 #       Copyright (C) 2010 Jeroen Demeyer <jdemeyer@cage.ugent.be>
@@ -19,9 +20,9 @@ AUTHORS:
 import signal
 
 cdef extern from '../tests/c_lib.h':
-    void ms_sleep(long ms)
-    void signal_after_delay(int signum, long ms)
-    void signals_after_delay(int signum, long ms, long interval, int n)
+    void ms_sleep(long ms) nogil
+    void signal_after_delay(int signum, long ms) nogil
+    void signals_after_delay(int signum, long ms, long interval, int n) nogil
 
 cdef extern from *:
     ctypedef int volatile_int "volatile int"
@@ -30,6 +31,7 @@ cdef extern from *:
 include 'sage/ext/signals.pxi'
 include 'sage/ext/interrupt.pxi'
 include 'sage/ext/stdsage.pxi'
+from cpython cimport PyErr_SetString
 
 
 # Default delay in milliseconds before raising signals
@@ -39,11 +41,11 @@ cdef long DEFAULT_DELAY = 200
 ########################################################################
 # C helper functions                                                   #
 ########################################################################
-cdef void infinite_loop():
+cdef void infinite_loop() nogil:
     while True:
         pass
 
-cdef void infinite_malloc_loop():
+cdef void infinite_malloc_loop() nogil:
     cdef size_t s = 1
     while True:
         sage_free(sage_malloc(s))
@@ -53,7 +55,7 @@ cdef void infinite_malloc_loop():
 # Dereference a NULL pointer on purpose. This signals a SIGSEGV on most
 # systems, but on older Mac OS X and possibly other systems, this
 # signals a SIGBUS instead. In any case, this should give some signal.
-cdef void dereference_null_pointer():
+cdef void dereference_null_pointer() nogil:
     cdef long* ptr = <long*>(0)
     ptr[0] += 1
 
@@ -64,17 +66,14 @@ cdef void dereference_null_pointer():
 class return_exception:
     """
     Decorator class which makes a function *return* an exception which
-    is raised, to simplify doctests raising exceptions.  This can be
-    used to work around a bug in the doctesting script where a
-    ``KeyboardInterrupt`` always causes the doctester to stop, even if
-    the expected output of a doctest is a ``KeyboardInterrupt``.
+    is raised, to simplify doctests raising exceptions.
 
     EXAMPLES::
 
         sage: from sage.tests.interrupt import return_exception
         sage: @return_exception
-        ... def raise_interrupt():
-        ...     raise KeyboardInterrupt("just testing")
+        ....: def raise_interrupt():
+        ....:     raise KeyboardInterrupt("just testing")
         sage: raise_interrupt()
         KeyboardInterrupt('just testing',)
     """
@@ -104,10 +103,10 @@ def interrupt_after_delay(ms_delay = 500):
 
         sage: import sage.tests.interrupt
         sage: try:
-        ...     sage.tests.interrupt.interrupt_after_delay()
-        ...     factor(10^1000 + 3)
-        ... except KeyboardInterrupt:
-        ...     print "Caught KeyboardInterrupt"
+        ....:     sage.tests.interrupt.interrupt_after_delay()
+        ....:     factor(10^1000 + 3)
+        ....: except KeyboardInterrupt:
+        ....:     print "Caught KeyboardInterrupt"
         Caught KeyboardInterrupt
     """
     signal_after_delay(SIGINT, ms_delay)
@@ -115,6 +114,8 @@ def interrupt_after_delay(ms_delay = 500):
 
 ########################################################################
 # Test basic macros from c_lib/headers/interrupt.h                     #
+# Since these are supposed to work without the GIL, we do all tests    #
+# (if possible) within a "with nogil" block                            #
 ########################################################################
 def test_sig_off():
     """
@@ -123,8 +124,9 @@ def test_sig_off():
         sage: from sage.tests.interrupt import *
         sage: test_sig_off()
     """
-    sig_on()
-    sig_off()
+    with nogil:
+        sig_on()
+        sig_off()
 
 @return_exception
 def test_sig_on(long delay = DEFAULT_DELAY):
@@ -135,9 +137,10 @@ def test_sig_on(long delay = DEFAULT_DELAY):
         sage: test_sig_on()
         KeyboardInterrupt()
     """
-    signal_after_delay(SIGINT, delay)
-    sig_on()
-    infinite_loop()
+    with nogil:
+        signal_after_delay(SIGINT, delay)
+        sig_on()
+        infinite_loop()
 
 def test_sig_str(long delay = DEFAULT_DELAY):
     """
@@ -149,9 +152,10 @@ def test_sig_str(long delay = DEFAULT_DELAY):
         ...
         RuntimeError: Everything ok!
     """
-    sig_str("Everything ok!")
-    signal_after_delay(SIGABRT, delay)
-    infinite_loop()
+    with nogil:
+        sig_str("Everything ok!")
+        signal_after_delay(SIGABRT, delay)
+        infinite_loop()
 
 cdef c_test_sig_on_cython():
     sig_on()
@@ -169,7 +173,7 @@ def test_sig_on_cython(long delay = DEFAULT_DELAY):
     signal_after_delay(SIGINT, delay)
     c_test_sig_on_cython()
 
-cdef int c_test_sig_on_cython_except() except 42:
+cdef int c_test_sig_on_cython_except() nogil except 42:
     sig_on()
     infinite_loop()
 
@@ -182,10 +186,11 @@ def test_sig_on_cython_except(long delay = DEFAULT_DELAY):
         sage: test_sig_on_cython_except()
         KeyboardInterrupt()
     """
-    signal_after_delay(SIGINT, delay)
-    c_test_sig_on_cython_except()
+    with nogil:
+        signal_after_delay(SIGINT, delay)
+        c_test_sig_on_cython_except()
 
-cdef void c_test_sig_on_cython_except_all() except *:
+cdef void c_test_sig_on_cython_except_all() nogil except *:
     sig_on()
     infinite_loop()
 
@@ -198,8 +203,9 @@ def test_sig_on_cython_except_all(long delay = DEFAULT_DELAY):
         sage: test_sig_on_cython_except_all()
         KeyboardInterrupt()
     """
-    signal_after_delay(SIGINT, delay)
-    c_test_sig_on_cython_except_all()
+    with nogil:
+        signal_after_delay(SIGINT, delay)
+        c_test_sig_on_cython_except_all()
 
 @return_exception
 def test_sig_check(long delay = DEFAULT_DELAY):
@@ -212,7 +218,8 @@ def test_sig_check(long delay = DEFAULT_DELAY):
     """
     signal_after_delay(SIGINT, delay)
     while True:
-        sig_check()
+        with nogil:
+            sig_check()
 
 @return_exception
 def test_sig_check_inside_sig_on(long delay = DEFAULT_DELAY):
@@ -223,11 +230,16 @@ def test_sig_check_inside_sig_on(long delay = DEFAULT_DELAY):
         sage: test_sig_check_inside_sig_on()
         KeyboardInterrupt()
     """
-    signal_after_delay(SIGINT, delay)
-    sig_on()
-    while True:
-        sig_check()
+    with nogil:
+        signal_after_delay(SIGINT, delay)
+        sig_on()
+        while True:
+            sig_check()
 
+
+########################################################################
+# Test sig_retry() and sig_error()                                     #
+########################################################################
 def test_sig_retry():
     """
     TESTS::
@@ -238,11 +250,12 @@ def test_sig_retry():
     """
     cdef volatile_int v = 0
 
-    sig_on()
-    if v < 10:
-        v = v + 1
-        sig_retry()
-    sig_off()
+    with nogil:
+        sig_on()
+        if v < 10:
+            v = v + 1
+            sig_retry()
+        sig_off()
     return v
 
 @return_exception
@@ -256,12 +269,27 @@ def test_sig_retry_and_signal(long delay = DEFAULT_DELAY):
     """
     cdef volatile_int v = 0
 
+    with nogil:
+        sig_on()
+        if v < 10:
+            v = v + 1
+            sig_retry()
+        signal_after_delay(SIGINT, delay)
+        infinite_loop()
+
+@return_exception
+def test_sig_error():
+    """
+    TESTS::
+
+        sage: from sage.tests.interrupt import *
+        sage: test_sig_error()
+        ValueError('some error',)
+    """
     sig_on()
-    if v < 10:
-        v = v + 1
-        sig_retry()
-    signal_after_delay(SIGINT, delay)
-    infinite_loop()
+    PyErr_SetString(ValueError, "some error")
+    sig_error()
+
 
 ########################################################################
 # Test no_except macros                                                #
@@ -325,52 +353,12 @@ def test_sig_check_no_except(long delay = DEFAULT_DELAY):
         sage: test_sig_check_no_except()
         KeyboardInterrupt()
     """
-    signal_after_delay(SIGINT, delay)
-    while True:
-        if not sig_check_no_except():
-            cython_check_exception()
-            return 0 # fail
-
-
-########################################################################
-# Test deprecated macros for backwards compatibility                   #
-########################################################################
-def test_old_sig_off():
-    """
-    TESTS::
-
-        sage: from sage.tests.interrupt import *
-        sage: test_old_sig_off()
-    """
-    _sig_on
-    _sig_off
-
-@return_exception
-def test_old_sig_on(long delay = DEFAULT_DELAY):
-    """
-    TESTS::
-
-        sage: from sage.tests.interrupt import *
-        sage: test_old_sig_on()
-        KeyboardInterrupt()
-    """
-    signal_after_delay(SIGINT, delay)
-    _sig_on
-    infinite_loop()
-
-def test_old_sig_str(long delay = DEFAULT_DELAY):
-    """
-    TESTS::
-
-        sage: from sage.tests.interrupt import *
-        sage: test_old_sig_str()
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Everything ok!
-    """
-    _sig_str("Everything ok!")
-    signal_after_delay(SIGABRT, delay)
-    infinite_loop()
+    with nogil:
+        signal_after_delay(SIGINT, delay)
+        while True:
+            if not sig_check_no_except():
+                cython_check_exception()
+                break # fail
 
 
 ########################################################################
@@ -386,9 +374,10 @@ def test_signal_segv(long delay = DEFAULT_DELAY):
         ...
         SignalError: Segmentation fault
     """
-    sig_on()
-    signal_after_delay(SIGSEGV, delay)
-    infinite_loop()
+    with nogil:
+        sig_on()
+        signal_after_delay(SIGSEGV, delay)
+        infinite_loop()
 
 def test_signal_fpe(long delay = DEFAULT_DELAY):
     """
@@ -400,9 +389,10 @@ def test_signal_fpe(long delay = DEFAULT_DELAY):
         ...
         FloatingPointError: Floating point exception
     """
-    sig_on()
-    signal_after_delay(SIGFPE, delay)
-    infinite_loop()
+    with nogil:
+        sig_on()
+        signal_after_delay(SIGFPE, delay)
+        infinite_loop()
 
 def test_signal_ill(long delay = DEFAULT_DELAY):
     """
@@ -414,9 +404,10 @@ def test_signal_ill(long delay = DEFAULT_DELAY):
         ...
         SignalError: Illegal instruction
     """
-    sig_on()
-    signal_after_delay(SIGILL, delay)
-    infinite_loop()
+    with nogil:
+        sig_on()
+        signal_after_delay(SIGILL, delay)
+        infinite_loop()
 
 def test_signal_abrt(long delay = DEFAULT_DELAY):
     """
@@ -428,9 +419,10 @@ def test_signal_abrt(long delay = DEFAULT_DELAY):
         ...
         RuntimeError: Aborted
     """
-    sig_on()
-    signal_after_delay(SIGABRT, delay)
-    infinite_loop()
+    with nogil:
+        sig_on()
+        signal_after_delay(SIGABRT, delay)
+        infinite_loop()
 
 def test_signal_bus(long delay = DEFAULT_DELAY):
     """
@@ -442,9 +434,10 @@ def test_signal_bus(long delay = DEFAULT_DELAY):
         ...
         SignalError: Bus error
     """
-    sig_on()
-    signal_after_delay(SIGBUS, delay)
-    infinite_loop()
+    with nogil:
+        sig_on()
+        signal_after_delay(SIGBUS, delay)
+        infinite_loop()
 
 def test_signal_quit(long delay = DEFAULT_DELAY):
     """
@@ -459,9 +452,10 @@ def test_signal_quit(long delay = DEFAULT_DELAY):
         ---...---
     """
     # The sig_on() shouldn't make a difference for SIGQUIT
-    sig_on()
-    signal_after_delay(SIGQUIT, delay)
-    infinite_loop()
+    with nogil:
+        sig_on()
+        signal_after_delay(SIGQUIT, delay)
+        infinite_loop()
 
 
 ########################################################################
@@ -480,8 +474,9 @@ def test_dereference_null_pointer():
         ...
         SignalError: ...
     """
-    sig_on()
-    dereference_null_pointer()
+    with nogil:
+        sig_on()
+        dereference_null_pointer()
 
 def unguarded_dereference_null_pointer():
     """
@@ -500,7 +495,8 @@ def unguarded_dereference_null_pointer():
         Sage will now terminate.
         ------------------------------------------------------------------------
     """
-    dereference_null_pointer()
+    with nogil:
+        dereference_null_pointer()
 
 def test_abort():
     """
@@ -512,8 +508,9 @@ def test_abort():
         ...
         RuntimeError: Aborted
     """
-    sig_on()
-    abort()
+    with nogil:
+        sig_on()
+        abort()
 
 def unguarded_abort():
     """
@@ -531,7 +528,8 @@ def unguarded_abort():
         Sage will now terminate.
         ------------------------------------------------------------------------
     """
-    abort()
+    with nogil:
+        abort()
 
 def test_bad_str(long delay = DEFAULT_DELAY):
     """
@@ -550,9 +548,10 @@ def test_bad_str(long delay = DEFAULT_DELAY):
         ------------------------------------------------------------------------
     """
     cdef char* s = <char*>(16)
-    sig_str(s)
-    signal_after_delay(SIGILL, delay)
-    infinite_loop()
+    with nogil:
+        sig_str(s)
+        signal_after_delay(SIGILL, delay)
+        infinite_loop()
 
 
 ########################################################################
@@ -567,10 +566,11 @@ def test_sig_on_cython_after_delay(long delay = DEFAULT_DELAY):
         sage: test_sig_on_cython_after_delay()
         KeyboardInterrupt()
     """
-    signal_after_delay(SIGINT, delay)
-    ms_sleep(delay * 2)  # We get signaled during this sleep
-    sig_on()             # The signal should be detected here
-    abort()              # This should not be reached
+    with nogil:
+        signal_after_delay(SIGINT, delay)
+        ms_sleep(delay * 2)  # We get signaled during this sleep
+        sig_on()             # The signal should be detected here
+        abort()              # This should not be reached
 
 def test_sig_on_inside_try(long delay = DEFAULT_DELAY):
     """
@@ -580,9 +580,10 @@ def test_sig_on_inside_try(long delay = DEFAULT_DELAY):
         sage: test_sig_on_inside_try()
     """
     try:
-        sig_on()
-        signal_after_delay(SIGABRT, delay)
-        infinite_loop()
+        with nogil:
+            sig_on()
+            signal_after_delay(SIGABRT, delay)
+            infinite_loop()
     except RuntimeError:
         pass
 
@@ -610,28 +611,14 @@ def test_interrupt_bomb(int n = 100, int p = 10):
     i = 0
     while True:
         try:
-            sig_on()
-            infinite_loop()
+            with nogil:
+                sig_on()
+                infinite_loop()
         except KeyboardInterrupt:
             i = i + 1
         except RuntimeError:
             break
     print "Received %i/%i interrupts"%(i,n*p)
-
-def test_sig_on_loop():
-    """
-    Test sig_on() and sig_off() in a loop, this is also useful for
-    benchmarking.
-
-    TESTS::
-
-        sage: from sage.tests.interrupt import *
-        sage: test_sig_on_loop()
-    """
-    cdef int i
-    for i in range(10000000):
-        sig_on()
-        sig_off()
 
 # Special thanks to Robert Bradshaw for suggesting the try/finally
 # construction. -- Jeroen Demeyer
@@ -706,13 +693,14 @@ def test_sig_block(long delay = DEFAULT_DELAY):
     cdef volatile_int v = 0
 
     try:
-        sig_on()
-        sig_block()
-        signal_after_delay(SIGINT, delay)
-        ms_sleep(delay * 2)  # We get signaled during this sleep
-        v = 42
-        sig_unblock()        # Here, the interrupt will be handled
-        sig_off()
+        with nogil:
+            sig_on()
+            sig_block()
+            signal_after_delay(SIGINT, delay)
+            ms_sleep(delay * 2)  # We get signaled during this sleep
+            v = 42
+            sig_unblock()        # Here, the interrupt will be handled
+            sig_off()
     except KeyboardInterrupt:
         return v
 
@@ -727,15 +715,14 @@ def test_sig_block_outside_sig_on(long delay = DEFAULT_DELAY):
         sage: test_sig_block_outside_sig_on()
         'Success'
     """
-    signal_after_delay(SIGINT, delay)
-    cdef int v = 0
-    cdef int* p = &v
+    with nogil:
+        signal_after_delay(SIGINT, delay)
 
-    # sig_block()/sig_unblock() shouldn't do anything
-    # since we're outside of sig_on()
-    sig_block()
-    ms_sleep(delay * 2)  # We get signaled during this sleep
-    sig_unblock()
+        # sig_block()/sig_unblock() shouldn't do anything
+        # since we're outside of sig_on()
+        sig_block()
+        ms_sleep(delay * 2)  # We get signaled during this sleep
+        sig_unblock()
 
     try:
         sig_on()  # Interrupt caught here
@@ -755,10 +742,11 @@ def test_signal_during_malloc(long delay = DEFAULT_DELAY):
         sage: for i in range(4):  # Several times to reduce chances of false positive
         ...       test_signal_during_malloc()
     """
-    signal_after_delay(SIGINT, delay)
     try:
-        sig_on()
-        infinite_malloc_loop()
+        with nogil:
+            signal_after_delay(SIGINT, delay)
+            sig_on()
+            infinite_malloc_loop()
     except KeyboardInterrupt:
         pass
 
@@ -776,9 +764,10 @@ def sig_on_bench():
         sage: sig_on_bench()
     """
     cdef int i
-    for i in range(1000000):
-        sig_on()
-        sig_off()
+    with nogil:
+        for i in range(1000000):
+            sig_on()
+            sig_off()
 
 def sig_check_bench():
     """
@@ -790,8 +779,9 @@ def sig_check_bench():
         sage: sig_check_bench()
     """
     cdef int i
-    for i in range(1000000):
-        sig_check()
+    with nogil:
+        for i in range(1000000):
+            sig_check()
 
 
 ########################################################################
@@ -809,9 +799,10 @@ def test_sighup(long delay = DEFAULT_DELAY):
         sage: test_sighup()
         SystemExit()
     """
-    signal_after_delay(SIGHUP, delay)
-    while True:
-        sig_check()
+    with nogil:
+        signal_after_delay(SIGHUP, delay)
+        while True:
+            sig_check()
 
 @return_exception
 def test_sigterm_and_sigint(long delay = DEFAULT_DELAY):
@@ -825,16 +816,17 @@ def test_sigterm_and_sigint(long delay = DEFAULT_DELAY):
         sage: test_sigterm_and_sigint()
         SystemExit()
     """
-    sig_on()
-    sig_block()
-    signal_after_delay(SIGHUP, delay)
-    signal_after_delay(SIGINT, delay)
-    # 3 sleeps to ensure both signals arrive
-    ms_sleep(delay)
-    ms_sleep(delay)
-    ms_sleep(delay)
-    sig_unblock()
-    sig_off()
+    with nogil:
+        sig_on()
+        sig_block()
+        signal_after_delay(SIGHUP, delay)
+        signal_after_delay(SIGINT, delay)
+        # 3 sleeps to ensure both signals arrive
+        ms_sleep(delay)
+        ms_sleep(delay)
+        ms_sleep(delay)
+        sig_unblock()
+        sig_off()
 
 def test_graceful_exit():
     r"""

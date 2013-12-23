@@ -1,6 +1,8 @@
+from cpython cimport PyObject
+from libc.stdint cimport uint32_t
+from sage.misc.bitset cimport *
 ctypedef unsigned short ushort
-
-include "sage/misc/bitset_pxd.pxi"
+ctypedef unsigned int uint
 
 cdef extern from "stdlib.h":
     ctypedef void const_void "const void"
@@ -11,11 +13,11 @@ cdef extern from "stdlib.h":
                   size_t size, int(*compar)(const_void *, const_void *)) nogil
 
 ctypedef struct short_digraph_s:
-   ushort * edges
-   ushort ** neighbors
+   uint32_t *  edges
+   uint32_t ** neighbors
    PyObject * edge_labels
-   unsigned int m
-   ushort n
+   int m
+   int n
 
 ctypedef short_digraph_s short_digraph[1]
 
@@ -23,5 +25,5 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled = ?) except -1
 cdef void free_short_digraph(short_digraph g)
 cdef int init_reverse(short_digraph dst, short_digraph src) except -1
 cdef int out_degree(short_digraph g, int u)
-cdef inline ushort * has_edge(short_digraph g, ushort u, ushort v)
-cdef inline object edge_label(short_digraph g, ushort * edge)
+cdef inline uint32_t * has_edge(short_digraph g, int u, int v)
+cdef inline object edge_label(short_digraph g, uint32_t * edge)

@@ -1550,41 +1550,78 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def factor_padic(self, p, prec=10):
         """
-        Returns the ``p``-adic factorization of this polynomial to the given
+        Return the `p`-adic factorization of this polynomial to the given
         precision.
 
         INPUT:
 
         -  ``p`` - Prime number
+
         -  ``prec`` - Integer; the precision
 
         OUTPUT:
 
-        -  Factorization of ``self`` viewed as a ``p``-adic polynomial
+        - factorization of ``self`` viewed as a `p`-adic polynomial
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
-            (1 + O(2^10))*x^3 + (O(2^10))*x^2 + (O(2^10))*x + (2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + O(2^10))
+            (1 + O(2^10))*x^3 + (2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + O(2^10))
             sage: f.factor_padic(3)
-            (1 + O(3^10))*x^3 + (O(3^10))*x^2 + (O(3^10))*x + (1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10))
+            (1 + O(3^10))*x^3 + (1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10))
             sage: f.factor_padic(5)
             ((1 + O(5^10))*x + (2 + 4*5 + 2*5^2 + 2*5^3 + 5^4 + 3*5^5 + 4*5^7 + 2*5^8 + 5^9 + O(5^10))) * ((1 + O(5^10))*x^2 + (3 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + O(5^10))*x + (4 + 5 + 2*5^2 + 4*5^3 + 4*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 4*5^9 + O(5^10)))
+
+        The input polynomial is considered to have "infinite" precision,
+        therefore the `p`-adic factorization of the polynomial is not
+        the same as first coercing to `Q_p` and then factoring
+        (see also :trac:`15422`)::
+
+            sage: f = x^2 - 3^6
+            sage: f.factor_padic(3,5)
+            ((1 + O(3^5))*x + (3^3 + O(3^5))) * ((1 + O(3^5))*x + (2*3^3 + 2*3^4 + O(3^5)))
+            sage: f.change_ring(Qp(3,5)).factor()
+            Traceback (most recent call last):
+            ...
+            PrecisionError: p-adic factorization not well-defined since the discriminant is zero up to the requestion p-adic precision
+
+        A more difficult example::
+
+            sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
+            sage: f.factor_padic(5, 10)
+            (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + (5^-1 + O(5^9)))^2 * ((1 + O(5^10))*x + (5 + O(5^10)))^2
+
+        Try some bogus inputs::
+
+            sage: f.factor_padic(3,-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: prec_cap must be non-negative.
+            sage: f.factor_padic(6,10)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be prime
+            sage: f.factor_padic('hello', 'world')
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert x (=hello) to an integer
         """
         from sage.rings.padics.factory import Qp
 
         p = Integer(p)
-        if not p.is_prime():
-            raise ValueError, "p must be prime"
         prec = Integer(prec)
-        if prec <= 0:
-            raise ValueError, "prec must be positive"
 
+        # Parent field for coefficients and polynomial
         K = Qp(p, prec, type='capped-rel')
         R = K[self.parent().variable_name()]
-        return R(self).factor()  # absprec = prec
+
+        # Factor the *exact* polynomial using factorpadic()
+        G = self._pari_with_name().factorpadic(p, prec)
+
+        from sage.rings.polynomial.padics.polynomial_padic import _pari_padic_factorization_to_sage
+        return _pari_padic_factorization_to_sage(G, R, self.leading_coefficient())
 
     def hensel_lift(self, p, e):
         r"""

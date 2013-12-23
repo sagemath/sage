@@ -36,7 +36,6 @@ from sage.rings.finite_rings.constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 
-include "sage/misc/bitset_pxd.pxi"
 include "sage/misc/bitset.pxi"
 from cpython.string cimport *
 

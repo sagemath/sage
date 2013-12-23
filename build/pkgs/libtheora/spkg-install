@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+unset RM
+
+cd src
+
+./configure \
+    --prefix="$SAGE_LOCAL" \
+    --libdir="$SAGE_LOCAL/lib" \
+    --with-ogg="$SAGE_LOCAL"
+if [ $? -ne 0 ]; then
+    echo "Error configuring libtheora"
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo "Error building libtheora"
+    exit 1
+fi
+
+$MAKE -j1 install
+if [ $? -ne 0 ]; then
+    echo "Error installing libtheora"
+    exit 1
+fi
+
+cp examples/.libs/png2theora $SAGE_LOCAL/bin

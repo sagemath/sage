@@ -5,8 +5,26 @@ import inspect
 import sys
 from textwrap import dedent
 
-if __name__ == '__main__':
-    from sage.dev.sagedev_wrapper import dev as DEV
+DISABLED_MESSAGE = """
+Developer interface disabled.
+
+To develop for Sage you must compile Sage from its git
+repository. This just amounts to running
+
+    git clone git://github.com/sagemath/sage.git
+    cd sage
+    make
+
+See http://trac.sagemath.org/wiki/QuickStartSageGit for slightly more
+information.
+"""
+
+try:
+    from sage.all import dev as DEV
+except ImportError:
+    print(DISABLED_MESSAGE.strip())
+    sys.exit(0)
+
 
 class SageHelpFormatter(argparse.HelpFormatter):
     """

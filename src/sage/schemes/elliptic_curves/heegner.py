@@ -4244,7 +4244,7 @@ class KolyvaginPoint(HeegnerPoint):
         rank 1), and we reduce it modulo several primes.::
 
             sage: E = EllipticCurve('11a1'); P = E.kolyvagin_point(-7)
-            sage: P.mod(3,70)
+            sage: P.mod(3,70)  # long time (4s on sage.math, 2013)
             (1 : 2 : 1)
             sage: P.mod(5,70)
             (1 : 4 : 1)
@@ -5386,10 +5386,10 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 389; D = -7; ell = 5; c = 17; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: k = H.rational_kolyvagin_divisor(D, c); k
+            sage: k = H.rational_kolyvagin_divisor(D, c); k  # long time (5s on sage.math, 2013)
             (14, 16, 0, 0, ... 0, 0, 0)
             sage: V = H.modp_dual_elliptic_curve_factor(EllipticCurve('389a'), q, 2)
-            sage: [b.dot_product(k.element().change_ring(GF(q))) for b in V.basis()]
+            sage: [b.dot_product(k.element().change_ring(GF(q))) for b in V.basis()]  # long time
             [0, 0]
             sage: k = H.rational_kolyvagin_divisor(D, 59)
             sage: [b.dot_product(k.element().change_ring(GF(q))) for b in V.basis()]

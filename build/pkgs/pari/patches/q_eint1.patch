@@ -1,0 +1,417 @@
+diff -ru a/src/basemath/trans3.c b/src/basemath/trans3.c
+--- a/src/basemath/trans3.c	2013-11-12 13:32:22.000000000 +0100
++++ b/src/basemath/trans3.c	2013-11-13 21:36:18.729173647 +0100
+@@ -621,13 +621,14 @@
+     z = divsr(-n, addsr(n<<1,x));
+     for (i=n-1; i >= 1; i--)
+       z = divsr(-i, addrr(addsr(i<<1,x), mulur(i,z))); /* -1 / (2 + z + x/i) */
+-    return divrr(addrr(real_1(l),z), mulrr(expx, x));
++    return divrr(addrr(real_1(l),z), mulrr(expx? expx: mpexp(x), x));
+   }
+   else
+   {
+-    GEN S, t, H, run = real_1(l+1);
+-    n = -bit_accuracy(l)-1;
+-    x = rtor(x, l+1);
++    long prec = l + 1;
++    GEN S, t, H, run = real_1(prec);
++    n = -bit_accuracy(prec);
++    x = rtor(x, prec);
+     S = z = t = H = run;
+     for (i = 2; expo(t) - expo(S) >= n; i++)
+     {
+@@ -635,7 +636,8 @@
+       z = divru(mulrr(x,z), i);   /* z = x^(i-1)/i! */
+       t = mulrr(z, H); S = addrr(S, t);
+     }
+-    return subrr(mulrr(x, divrr(S,expx)), addrr(mplog(x), mpeuler(l)));
++    return subrr(mulrr(x, divrr(S,expx? expx: mpexp(x))),
++                 addrr(mplog(x), mpeuler(prec)));
+   }
+ }
+ 
+@@ -773,7 +775,7 @@
+     x = gtofp(x, prec);
+     if (typ(x) != t_REAL) pari_err(impl,"non-real argument in eint1");
+   }
+-  if (signe(x) >= 0) return gerepileuptoleaf(av, incgam2_0(x, mpexp(x)));
++  if (signe(x) >= 0) return gerepileuptoleaf(av, incgam2_0(x, NULL));
+   /* rewritten from code contributed by Manfred Radimersky */
+   l  = lg(x);
+   n  = bit_accuracy(l);
+@@ -809,84 +811,121 @@
+   return mpveceint1(C, NULL, itos(nmax));
+ }
+ 
+-/* C > 0 a t_REAL */
+-GEN
+-mpveceint1(GEN C, GEN eC, long n)
++/* j > 0, a t_REAL. Return sum_{m >= 0} a^m / j(j+1)...(j+m)).
++ * Stop when expo(summand) < E */
++static GEN
++mp_sum_j(GEN a, long j, long E, long prec)
+ {
+-  long i, nstop, nmin, G, chkpoint, prec = lg(C);
+-  pari_sp av, av1;
+-  GEN y, e1, e2, F0, unr;
+-
+-  if (n <= 0) return cgetg(1,t_VEC);
+-  y = cgetg(n+1,t_VEC);
+-  for(i=1; i<=n; i++) gel(y,i) = cgetr(prec);
+-  av = avma; G = expo(C);
+-  if (G >= 0) nstop = n;
++  pari_sp av = avma;
++  GEN q = divru(real_1(prec), j), s = q;
++  long m;
++  for (m = 0;; m++)
++  {
++    if (expo(q) < E) break;
++    q = mulrr(q, divru(a, m+j));
++    s = addrr(s, q);
++  }
++  return gerepileuptoleaf(av, s);
++}
++
++/* j > 0, a complex. Return s_a(j) = sum_{m >= 0} a^m / j(j+1)...(j+m)).
++ * Stop when expo(summand) < E
++ * Note that s(j-1) = (a s(j) + 1) / (j-1). */
++static GEN
++sum_j(GEN a, long j, long E, long prec)
++{
++  pari_sp av = avma;
++  GEN q = divru(real_1(prec), j), s = q;
++  long m;
++  for (m = 0;; m++)
++  {
++    if (gexpo(q) < E) break;
++    q = gmul(q, gdivgs(a, m+j));
++    s = gadd(s, q);
++  }
++  return gerepileupto(av, s);
++}
++
++/* Return the s_a(j), j <= J */
++static GEN
++sum_jall(GEN a, long J, long prec)
++{
++  GEN s = cgetg(J+1, t_VEC);
++  long j, E = -bit_accuracy(prec) - 5;
++  if (typ(a) == t_REAL)
++  {
++    gel(s, J) = mp_sum_j(a, J, E, prec);
++    for (j = J-1; j; j--)
++      gel(s,j) = divru(addrs(mulrr(a, gel(s,j+1)), 1), j);
++  }
+   else
+   {
+-    nstop = itos(ceilr(divur(4,C))); /* >= 4 ~ 4 / C */
+-    if (nstop > n) nstop = n;
++    gel(s, J) = sum_j(a, J, E, prec);
++    for (j = J-1; j; j--)
++      gel(s, j) = gdivgs(gaddgs(gmul(a, gel(s,j+1)), 1), j);
+   }
+-  /* 1 <= nstop <= n */
++  return s;
++}
+ 
++/* T a dense t_POL with t_REAL coeffs. Return T(n) [faster than poleval] */
++static GEN
++rX_s_eval(GEN T, long n)
++{
++  long i = lg(T)-1;
++  GEN c = gel(T,i);
++  for (i--; i>=2; i--) c = gadd(mulrs(c,n),gel(T,i));
++  return c;
++}
++
++/* C>0 t_REAL, eC = exp(C). Return eint1(n*C) for 1<=n<=N. Absolute accuracy */
++GEN
++mpveceint1(GEN C, GEN eC, long N)
++{
++  const long prec = lg(C);
++  long Nmin = 15; /* >= 1. E.g. between 10 and 30, but little effect */
++  GEN en, v, w = cgetg(N+1, t_VEC);
++  pari_sp av0;
++  double DL;
++  long n, j, jmax, jmin;
++  if (!N) return w;
++  for (n = 1; n <= N; n++) gel(w,n) = cgetr(prec);
++  av0 = avma;
++  if (N < Nmin) Nmin = N;
+   if (!eC) eC = mpexp(C);
+-  if (DEBUGLEVEL>1) err_printf("veceint1: (n, nstop) = (%ld, %ld)\n",n, nstop);
+-  e1 = rcopy(eC); av1 = avma;
+-  affrr(incgam2_0(C, e1), gel(y,1));
+-  for(i=2; i <= nstop; i++, avma = av1)
+-  {
+-    affrr(mulrr(e1, eC), e1); /* e1 = exp(iC) */
+-    affrr(incgam2_0(mulur(i,C), e1), gel(y,i));
+-  }
+-  if (nstop == n) { avma = av; return y; }
+-
+-  e1 = powrs(eC, -n);
+-  e2 = powru(eC, 10);
+-  unr = real_1(prec);
+-  av1 = avma;
+-  G = -bit_accuracy(prec);
+-  F0 = gel(y,n); chkpoint = n;
+-  affrr(eint1(mulur(n,C),prec), F0);
+-  nmin = n;
+-  for(;;)
++  en = eC; affrr(incgam2_0(C, en), gel(w,1));
++  for (n = 2; n <= Nmin; n++)
+   {
+-    GEN minvn = divrs(unr,-n), My = subrr(minvn,C);
+-    GEN mcn   = divrs(C,  -n), Mx = mcn;
+-    GEN t = divrs(e1,-n), D = mkvec2( t, mulrr(My,t) );
+-    long a, k, cD = 2; /* cD = #D */
+-
+-    /* D = [ e1/-n, (-1/n-C) * (e1/-n) ] */
+-    nmin -= 10; if (nmin < nstop) nmin = nstop;
+-    My = addrr(My, minvn);
+-    if (DEBUGLEVEL>1 && n < chkpoint)
+-      { err_printf("%ld ",n) ; chkpoint -= nstop/20; }
+-    for (a=1,n--; n>=nmin; n--,a++)
+-    {
+-      GEN F = F0, den = stor(-a, prec);
+-      for (k=1;;)
+-      {
+-        GEN add;
+-        if (k > cD)
+-        {
+-          GEN z = addrr(mulrr(My, gel(D,cD)), mulrr(Mx,gel(D,cD-1)));
+-          Mx = addrr(Mx,mcn);
+-          My = addrr(My,minvn);
+-          D = shallowconcat(D, z); cD = k;
+-          /* My = -C - k/n,  Mx = -C k/n */
+-        }
+-        add = mulrr(den, gel(D,k));
+-        if (expo(add) < G) { affrr(F,gel(y,n)); break; }
+-        F = addrr(F,add); k++;
+-        den = mulrs(divru(den, k), -a);
+-        /* den = prod(i=1,k, -a/i)*/
+-      }
++    pari_sp av2;
++    en = mulrr(en,eC); /* exp(n C) */
++    av2 = avma;
++    affrr(incgam2_0(mulru(C,n), en), gel(w,n));
++    avma = av2;
++  }
++  if (Nmin == N) { avma = av0; return w; }
++
++  DL = bit_accuracy_mul(prec, LOG2) + 5;
++  jmin = ceil(DL/log(N)) + 1;
++  jmax = ceil(DL/log(Nmin)) + 1;
++  v = sum_jall(C, jmax, prec);
++  en = powrs(eC, -N); /* exp(-N C) */
++  affrr(incgam2_0(mulru(C,N), invr(en)), gel(w,N));
++  for (j = jmin, n = N-1; j <= jmax; j++)
++  {
++    long limN = maxss((long)ceil(exp(DL/j)), Nmin);
++    GEN polsh;
++    setlg(v, j+1);
++    polsh = RgV_to_RgX(vecreverse(v), 0);
++    for (; n >= limN; n--)
++    {
++      pari_sp av2 = avma;
++      GEN S = divri(mulrr(en, rX_s_eval(polsh, -n)), powuu(n,j));
++      /* w[n+1] - exp(-n C) * polsh(-n) / (-n)^j */
++      GEN c = odd(j)? addrr(gel(w,n+1), S) : subrr(gel(w,n+1), S);
++      affrr(c, gel(w,n)); avma = av2;
++      en = mulrr(en,eC); /* exp(-n C) */
+     }
+-    avma = av1; F0 = gel(y, ++n);
+-    if (n <= nstop) break;
+-    affrr(mulrr(e1,e2), e1);
+   }
+-  if (DEBUGLEVEL>1) err_printf("\n");
+-  avma = av; return y;
++  avma = av0; return w;
+ }
+ 
+ /* e t_REAL, vector of e^i, 1 <= i <= n */
+diff -ru a/src/test/32/compat b/src/test/32/compat
+--- a/src/test/32/compat	2013-11-13 21:36:00.729173748 +0100
++++ b/src/test/32/compat	2013-11-13 21:36:25.229171741 +0100
+@@ -719,7 +719,7 @@
+ [1 1 1]
+ 
+ ? eint1(2)
+-0.048900510708061119567239835228049522312
++0.048900510708061119567239835228049522315
+ ? erfc(2)
+ 0.0046777349810472658379307436327470713891
+ ? eta(q)
+@@ -900,7 +900,7 @@
+ ? gcd(12345678,87654321)
+ 9
+ ? getheap()
+-[208, 45584]
++[208, 45586]
+ ? getrand()
+ Vecsmall([1220248512, -582244995, 485580680, -1643185972, -2103930341, -9694
+ 07356, 336208700, 1439513079, -1910826353, -2042699820, 222745475, 183991374
+@@ -1754,7 +1754,7 @@
+ ? l=lseriesell(ccurve,2,-37,1)
+ 0.3815754082607112104
+ ? lseriesell(ccurve,2,-37,1.2)-l
+--2.276824562 E-18
++-1.192622390 E-18
+ ? sbnf=smallbuchinit(x^3-x^2-14*x-1)
+ [x^3 - x^2 - 14*x - 1, 3, 10889, [1, x, x^2 - x - 9], [-3.233732695981516673
+ , -0.07182350902743636345, 4.305556205008953036], 0, mat(2), mat([1, 1, 0, 1
+@@ -2655,6 +2655,6 @@
+ ? getstack()
+ 104
+ ? getheap()
+-[600, 110626]
++[600, 110627]
+ ? print("Total time spent: ",gettime);
+ Total time spent: 144
+diff -ru a/src/test/32/ell b/src/test/32/ell
+--- a/src/test/32/ell	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/32/ell	2013-11-13 21:36:18.729173647 +0100
+@@ -63,7 +63,7 @@
+ 494
+ [4, [2, 2], [[2147484185, 0], [0, 0]]]
+ [0, 0.25384186085591068433775892335090946106]
+-[1, 0.30599977383405230182048368332167647431]
++[1, 0.30599977383405230182048368332167647430]
+ [2, 1.5186330005768535404603852157894440351]
+ [3, 10.391099400715804138751850510360916947]
+ [5, 9997.0334671722554999496820788093287993]
+diff -ru a/src/test/32/elliptic b/src/test/32/elliptic
+--- a/src/test/32/elliptic	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/32/elliptic	2013-11-13 21:36:25.229171741 +0100
+@@ -107,9 +107,9 @@
+ 7539931, 1.3270305788796764757190502098362372906*I, 7.3381327407895767390707
+ 210033323055880]
+ ? l=elllseries(ccurve,2)
+-0.38157540826071121129371040958008663664
++0.38157540826071121129371040958008663665
+ ? elllseries(ccurve,2,1.2)-l
+-2.292213984 E-37
++1.263656427 E-37
+ ? tcurve=ellinit([1,0,1,-19,26]);
+ ? ellorder(tcurve,[1,2])
+ 6
+@@ -155,6 +155,6 @@
+ ? precision(cmcurve)
+ 38
+ ? getheap
+-[57, 4700]
++[57, 4703]
+ ? print("Total time spent: ",gettime);
+ Total time spent: 16
+diff -ru a/src/test/32/number b/src/test/32/number
+--- a/src/test/32/number	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/32/number	2013-11-13 21:36:25.229171741 +0100
+@@ -268,6 +268,6 @@
+ [768, [12, 4, 4, 2, 2], [Mod(2641, 3120), Mod(2341, 3120), Mod(2497, 3120), 
+ Mod(391, 3120), Mod(2081, 3120)]]
+ ? getheap
+-[87, 2719]
++[87, 2722]
+ ? print("Total time spent: ",gettime);
+-Total time spent: 28
++Total time spent: 24
+diff -ru a/src/test/32/trans b/src/test/32/trans
+--- a/src/test/32/trans	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/32/trans	2013-11-13 21:36:25.229171741 +0100
+@@ -427,6 +427,6 @@
+ 5.2043097453468479398562848599360610966 E-9 - 3.2690639869786982176409251733
+ 763732423 E-8*I
+ ? getheap
+-[60, 6760]
++[60, 6761]
+ ? print("Total time spent: ",gettime);
+-Total time spent: 60
++Total time spent: 36
+diff -ru a/src/test/64/compat b/src/test/64/compat
+--- a/src/test/64/compat	2013-11-13 21:36:00.729173748 +0100
++++ b/src/test/64/compat	2013-11-13 21:36:18.729173647 +0100
+@@ -721,7 +721,7 @@
+ [1 1 1]
+ 
+ ? eint1(2)
+-0.048900510708061119567239835228049522312
++0.048900510708061119567239835228049522315
+ ? erfc(2)
+ 0.0046777349810472658379307436327470713891
+ ? eta(q)
+@@ -902,7 +902,7 @@
+ ? gcd(12345678,87654321)
+ 9
+ ? getheap()
+-[208, 44308]
++[208, 44310]
+ ? getrand()
+ Vecsmall([-696235626332558091, -7363039021536514678, -3123062006620239999, -
+ 2510915082749224356, -5278885121447018503, 8033304491650294704, 333461878925
+@@ -1752,9 +1752,9 @@
+ 2.451389381986790061*I, 0.9426385559136229515, 1.327030578879676476*I, 7.338
+ 132740789576739]
+ ? l=lseriesell(ccurve,2,-37,1)
+-0.3815754082607112087
++0.3815754082607112075
+ ? lseriesell(ccurve,2,-37,1.2)-l
+-2.466559942404522587 E-18
++3.577867169202164632 E-18
+ ? sbnf=smallbuchinit(x^3-x^2-14*x-1)
+ [x^3 - x^2 - 14*x - 1, 3, 10889, [1, x, x^2 - x - 9], [-3.233732695981516673
+ , -0.07182350902743636345, 4.305556205008953036], 0, mat(2), mat([1, 1, 0, 1
+@@ -2654,6 +2654,6 @@
+ ? getstack()
+ 200
+ ? getheap()
+-[600, 99697]
++[600, 99698]
+ ? print("Total time spent: ",gettime);
+ Total time spent: 190
+diff -ru a/src/test/64/elliptic b/src/test/64/elliptic
+--- a/src/test/64/elliptic	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/64/elliptic	2013-11-13 21:36:18.729173647 +0100
+@@ -107,9 +107,9 @@
+ 7539931, 1.3270305788796764757190502098362372906*I, 7.3381327407895767390707
+ 210033323055880]
+ ? l=elllseries(ccurve,2)
+-0.38157540826071121129371040958008663664
++0.38157540826071121129371040958008663665
+ ? elllseries(ccurve,2,1.2)-l
+-2.292213984103460641 E-37
++1.2636564271339590711 E-37
+ ? tcurve=ellinit([1,0,1,-19,26]);
+ ? ellorder(tcurve,[1,2])
+ 6
+@@ -155,6 +155,6 @@
+ ? precision(cmcurve)
+ 38
+ ? getheap
+-[57, 4395]
++[57, 4398]
+ ? print("Total time spent: ",gettime);
+-Total time spent: 12
++Total time spent: 0
+diff -ru a/src/test/64/number b/src/test/64/number
+--- a/src/test/64/number	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/64/number	2013-11-13 21:36:18.729173647 +0100
+@@ -268,6 +268,6 @@
+ [768, [12, 4, 4, 2, 2], [Mod(2641, 3120), Mod(2341, 3120), Mod(2497, 3120), 
+ Mod(391, 3120), Mod(2081, 3120)]]
+ ? getheap
+-[87, 2686]
++[87, 2689]
+ ? print("Total time spent: ",gettime);
+ Total time spent: 20
+diff -ru a/src/test/64/trans b/src/test/64/trans
+--- a/src/test/64/trans	2013-11-12 13:32:23.000000000 +0100
++++ b/src/test/64/trans	2013-11-13 21:36:18.729173647 +0100
+@@ -427,6 +427,6 @@
+ 5.2043097453468479398562848599360610966 E-9 - 3.2690639869786982176409251733
+ 763732423 E-8*I
+ ? getheap
+-[60, 3954]
++[60, 3955]
+ ? print("Total time spent: ",gettime);
+-Total time spent: 32
++Total time spent: 10

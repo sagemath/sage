@@ -977,11 +977,11 @@ def is_GpElement(x):
     """
     return isinstance(x, GpElement)
 
-from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.env import DOT_SAGE, SAGE_ETC
 import os
 
-# Set GPRC environment variable to $SAGE_LOCAL/etc/gprc.expect
-os.environ["GPRC"] = os.path.join(SAGE_LOCAL, 'etc', 'gprc.expect')
+# Set GPRC environment variable to $SAGE_ETC/gprc.expect
+os.environ["GPRC"] = os.path.join(SAGE_ETC, 'gprc.expect')
 
 # An instance
 gp = Gp(logfile=os.path.join(DOT_SAGE,'gp-expect.log')) # useful for debugging!

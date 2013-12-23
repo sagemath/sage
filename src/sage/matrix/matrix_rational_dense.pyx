@@ -78,8 +78,11 @@ from sage.misc.misc import verbose, get_verbose, prod
 
 #########################################################
 # PARI C library
-from sage.libs.pari.gen cimport gen, PariInstance
-from sage.libs.pari.gen import pari, PariError
+from sage.libs.pari.gen cimport gen
+from sage.libs.pari.pari_instance cimport PariInstance
+
+import sage.libs.pari.pari_instance
+cdef PariInstance pari = sage.libs.pari.pari_instance.pari
 
 include "sage/libs/pari/decl.pxi"
 include "sage/libs/pari/pari_err.pxi"
@@ -743,6 +746,7 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
             else:
                 algorithm = "iml"
         if algorithm == "pari":
+            from sage.libs.pari.all import PariError
             try:
                 return self._invert_pari()
             except PariError:
@@ -2569,13 +2573,12 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
-        cdef PariInstance P = pari
         pari_catch_sig_on()
         cdef GEN d = det0(pari_GEN(self), flag)
         # now convert d to a Sage rational
         cdef Rational e = Rational()
         t_FRAC_to_QQ(e.value, d)
-        P.clear_stack()
+        pari.clear_stack()
         return e
 
     def _rank_pari(self):
@@ -2587,10 +2590,9 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
             sage: matrix(QQ,3,[1..9])._rank_pari()
             2
         """
-        cdef PariInstance P = pari
         pari_catch_sig_on()
         cdef long r = rank(pari_GEN(self))
-        P.clear_stack()
+        pari.clear_stack()
         return r
 
     def _multiply_pari(self, Matrix_rational_dense right):
@@ -2617,11 +2619,10 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
             # pari doesn't work in case of 0 rows or columns
             # This case is easy, since the answer must be the 0 matrix.
             return self.matrix_space(self._nrows, right._ncols).zero_matrix().__copy__()
-        cdef PariInstance P = pari
         pari_catch_sig_on()
         cdef GEN M = gmul(pari_GEN(self), pari_GEN(right))
         A = new_matrix_from_pari_GEN(self.matrix_space(self._nrows, right._ncols), M)
-        P.clear_stack()
+        pari.clear_stack()
         return A
 
     def _invert_pari(self):
@@ -2640,7 +2641,6 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
-        cdef PariInstance P = pari
         cdef GEN M, d
 
         pari_catch_sig_on()
@@ -2649,7 +2649,7 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
 
         # Convert matrix back to Sage.
         A = new_matrix_from_pari_GEN(self._parent, d)
-        P.clear_stack()
+        pari.clear_stack()
         return A
 
     def _pari_(self):
@@ -2661,8 +2661,7 @@ cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
             sage: matrix(QQ,2,[1/5,-2/3,3/4,4/9])._pari_()
             [1/5, -2/3; 3/4, 4/9]
         """
-        cdef PariInstance P = pari
-        return P.rational_matrix(self._matrix, self._nrows, self._ncols)
+        return pari.rational_matrix(self._matrix, self._nrows, self._ncols)
 
     def row(self, Py_ssize_t i, from_list=False):
         """
@@ -2759,8 +2758,5 @@ cdef inline GEN pari_GEN(Matrix_rational_dense B):
     For internal use only; this directly uses the PARI stack.
     One should call ``sig_on()`` before and ``sig_off()`` after.
     """
-    cdef PariInstance P = pari
-    cdef GEN A
-    A = P._new_GEN_from_mpq_t_matrix(B._matrix, B._nrows, B._ncols)
+    cdef GEN A = pari._new_GEN_from_mpq_t_matrix(B._matrix, B._nrows, B._ncols)
     return A
-

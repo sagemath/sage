@@ -25,6 +25,14 @@ done
 [ -n "$INSTALL" ] || die 'No install program found'
 echo "Using install program $INSTALL"
 
+# Gettext is a soft build dependency (i18n)
+command -v msgfmt >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    gettext='NO_GETTEXT=YesPlease'
+else
+    gettext=''
+fi
+
 
 cd src
 # Apply patches.
@@ -48,17 +56,30 @@ $MAKE GIT-VERSION-FILE
 # Configure without Tcl/Tk (otherwise git *requires* Tcl/Tk).
 # We keep SANE_TOOL_PATH empty, otherwise git messes with the PATH on
 # some systems, leading for example to a different "make" being used.
+echo "Configuring git..."
 ./configure --prefix="$SAGE_LOCAL" \
             --with-python="$SAGE_LOCAL"/bin/python \
             --without-tcltk \
-            --with-sane-tool-path= \
-            || die 'Error configuring git.'
-
-if [ "$SAGE_CHECK" = yes ]; then
-    $MAKE test || die "Error running git's combined build/test suite."
-else
-    $MAKE || die 'Error building git.'
+            --with-sane-tool-path=
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring git."
+    exit 1
 fi
 
-# Force path to "install" program
-$MAKE INSTALL="$INSTALL" install || die 'Error installing git.'
+
+echo "Building git..."
+$MAKE $gettext
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building git."
+    exit 1
+fi
+
+
+echo "Installing git..."
+$MAKE -j1 INSTALL="$INSTALL" install $gettext
+if [ $? -ne 0 ]; then
+    echo >&2 'Error installing git.'
+    exit 1
+fi
+
+

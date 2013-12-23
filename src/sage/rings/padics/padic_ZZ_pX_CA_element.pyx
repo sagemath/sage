@@ -70,7 +70,7 @@ An eisenstein extension::
     sage: S.<x> = ZZ[]
     sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
     sage: W.<w> = R.ext(f); W
-    Eisenstein Extension of 5-adic Ring with capped absolute precision 5 in w defined by (1 + O(5^5))*x^5 + (3*5^2 + O(5^5))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x^2 + (5^3 + O(5^5))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))
+    Eisenstein Extension of 5-adic Ring with capped absolute precision 5 in w defined by (1 + O(5^5))*x^5 + (O(5^5))*x^4 + (3*5^2 + O(5^5))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x^2 + (5^3 + O(5^5))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))
     sage: z = (1+w)^5; z
     1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24 + O(w^25)
     sage: y = z >> 1; y
@@ -170,7 +170,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.padics.padic_base_generic_element cimport pAdicBaseGenericElement
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
-from sage.libs.pari.gen import gen as pari_gen
+from sage.libs.pari.all import pari_gen
 from sage.interfaces.gp import GpElement
 from sage.rings.finite_rings.integer_mod import is_IntegerMod
 from sage.rings.all import IntegerModRing

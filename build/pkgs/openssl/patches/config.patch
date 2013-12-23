@@ -1,0 +1,28 @@
+diff -ru src/config b/config
+--- src/config	2011-11-14 22:12:53.000000000 +0100
++++ b/config	2012-06-20 21:19:42.753359418 +0200
+@@ -411,8 +411,10 @@
+ # this is where the translation occurs into SSLeay terms
+ # ---------------------------------------------------------------------------
+ 
+-# Only set CC if not supplied already
+-if [ -z "$CROSS_COMPILE$CC" ]; then
++# Save given CC
++userCC="$CC"
++
++if true; then
+   GCCVER=`sh -c "gcc -dumpversion" 2>/dev/null`
+   if [ "$GCCVER" != "" ]; then
+     # then strip off whatever prefix egcs prepends the number with...
+@@ -486,6 +488,11 @@
+ 
+ CCVER=${CCVER:-0}
+ 
++# Restore given $CC
++if [ -n "$userCC" ]; then
++    CC="$userCC"
++fi
++
+ # read the output of the embedded GuessOS 
+ read GUESSOS
+ 

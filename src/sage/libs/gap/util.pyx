@@ -321,24 +321,22 @@ cdef void hold_reference(libGAP_Obj obj):
 ### Error handler ##########################################################
 ############################################################################
 
-cdef extern from 'stdlib.h':
-    void abort()
-
 include 'sage/ext/interrupt.pxi'
+from cpython.exc cimport PyErr_SetObject
 
 cdef void error_handler(char* msg):
     """
     The libgap error handler
 
-    We call ``abort()`` which causes us to jump back to the Sage
+    We call ``sig_error()`` which causes us to jump back to the Sage
     signal handler. Since we wrap libGAP C calls in ``sig_on`` /
-    ``sig_off`` blocks, this then jumps back to the ``sig_on`` and
-    raises a Python ``RuntimeError``.
+    ``sig_off`` blocks, this then jumps back to the ``sig_on`` where
+    the ``RuntimeError`` we raise here will be seen.
     """
     msg_py = msg
     msg_py = msg_py.replace('For debugging hints type ?Recovery from NoMethodFound\n', '')
-    set_sage_signal_handler_message(msg_py)
-    abort()
+    PyErr_SetObject(RuntimeError, msg_py)
+    sig_error()
 
 
 ############################################################################
@@ -388,6 +386,8 @@ cpdef error_enter_libgap_block_twice():
     """
     from sage.libs.gap.libgap import libgap
     try:
+        # The exception will be seen by this sig_on() after being
+        # raised by the second libgap_enter().
         sig_on()
         libgap_enter()
         libgap_enter()

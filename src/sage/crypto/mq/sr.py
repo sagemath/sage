@@ -43,7 +43,7 @@ By default variables are ordered reverse to as they appear, e.g.::
     Polynomial Ring
       Base Ring : Finite Field in a of size 2^4
            Size : 20 Variables
-       Block  0 : Ordering : degrevlex
+       Block  0 : Ordering : deglex
                   Names    : k100, k101, k102, k103, x100, x101, x102, x103, w100, w101, w102, w103, s000, s001, s002, s003, k000, k001, k002, k003
 
 However, this can be prevented by passing in ``reverse_variables=False`` to the constructor.
@@ -346,9 +346,9 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
     - ``gf2`` - generate polynomial systems over `\GF{2}` rather than
       over `\GF{2^e}` (default: ``False``)
     - ``polybori`` - use the ``BooleanPolynomialRing`` as polynomial
-      representation (default: ``False``, `\GF{2}` only)
+      representation (default: ``True``, `\GF{2}` only)
     - ``order`` - a string to specify the term ordering of the
-      variables
+      variables (default: ``deglex``)
     - ``postfix`` - a string which is appended after the variable name
       (default: '')
     - ``allow_zero_inversions`` - a boolean to control whether zero
@@ -458,7 +458,7 @@ class SR_generic(MPolynomialSystemGenerator):
         self._base = self.base_ring()
 
         self._postfix = kwargs.get("postfix", "")
-        self._order = kwargs.get("order", "degrevlex")
+        self._order = kwargs.get("order", "deglex")
         self._aes_mode = kwargs.get("aes_mode", True)
         self._gf2 = kwargs.get("gf2", False)
         self._allow_zero_inversions = bool(kwargs.get("allow_zero_inversions", False))
@@ -469,7 +469,7 @@ class SR_generic(MPolynomialSystemGenerator):
         self._sub_byte_lookup = sub_byte_lookup
 
         if self._gf2:
-            self._polybori = kwargs.get("polybori",False)
+            self._polybori = kwargs.get("polybori", True)
 
     def new_generator(self, **kwds):
         r"""
@@ -1671,9 +1671,9 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(2, 1, 1, 4)
             sage: sr.block_order()
             Block term order with blocks:
-            (Degree reverse lexicographic term order of length 16,
-             Degree reverse lexicographic term order of length 16,
-             Degree reverse lexicographic term order of length 4)
+            (Degree lexicographic term order of length 16,
+             Degree lexicographic term order of length 16,
+             Degree lexicographic term order of length 4)
 
         ::
 
@@ -1682,11 +1682,11 @@ class SR_generic(MPolynomialSystemGenerator):
             Polynomial Ring
               Base Ring : Finite Field in a of size 2^4
                    Size : 36 Variables
-               Block  0 : Ordering : degrevlex
+               Block  0 : Ordering : deglex
                           Names    : k200, k201, k202, k203, x200, x201, x202, x203, w200, w201, w202, w203, s100, s101, s102, s103
-               Block  1 : Ordering : degrevlex
+               Block  1 : Ordering : deglex
                           Names    : k100, k101, k102, k103, x100, x101, x102, x103, w100, w101, w102, w103, s000, s001, s002, s003
-               Block  2 : Ordering : degrevlex
+               Block  2 : Ordering : deglex
                           Names    : k000, k001, k002, k003
         """
         r = self.r
@@ -1696,9 +1696,9 @@ class SR_generic(MPolynomialSystemGenerator):
 
         T = None
         for _n in range(n):
-            T = TermOrder('degrevlex', r*e + 3*r*c*e ) + T
+            T = TermOrder('deglex', r*e + 3*r*c*e ) + T
 
-        T += TermOrder('degrevlex', r*c*e)
+        T += TermOrder('deglex', r*c*e)
 
         return T
 
@@ -1738,11 +1738,11 @@ class SR_generic(MPolynomialSystemGenerator):
             Polynomial Ring
               Base Ring : Finite Field in a of size 2^4
                    Size : 36 Variables
-               Block  0 : Ordering : degrevlex
+               Block  0 : Ordering : deglex
                           Names    : k200, k201, k202, k203, x200, x201, x202, x203, w200, w201, w202, w203, s100, s101, s102, s103
-               Block  1 : Ordering : degrevlex
+               Block  1 : Ordering : deglex
                           Names    : k100, k101, k102, k103, x100, x101, x102, x103, w100, w101, w102, w103, s000, s001, s002, s003
-               Block  2 : Ordering : degrevlex
+               Block  2 : Ordering : deglex
                           Names    : k000, k001, k002, k003
         """
         r = self.r
@@ -1873,20 +1873,16 @@ class SR_generic(MPolynomialSystemGenerator):
 
         EXAMPLE::
 
-            sage: sr = mq.SR(1, 1, 1, 4, gf2=True)
+            sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=False)
 
         The 0-th subkey is the user provided key, so only conjugacy
-        relations are added.
-
-        ::
+        relations or field polynomials are added.::
 
             sage: sr.key_schedule_polynomials(0)
             (k000^2 + k000, k001^2 + k001, k002^2 + k002, k003^2 + k003)
 
         The 1-th subkey is derived from the user provided key according to
-        the key schedule which is non-linear.
-
-        ::
+        the key schedule which is non-linear.::
 
             sage: sr.key_schedule_polynomials(1)
             (k100 + s000 + s002 + s003,
@@ -1895,18 +1891,18 @@ class SR_generic(MPolynomialSystemGenerator):
              k103 + s001 + s002 + s003 + 1,
              k100^2 + k100, k101^2 + k101, k102^2 + k102, k103^2 + k103,
              s000^2 + s000, s001^2 + s001, s002^2 + s002, s003^2 + s003,
-             s000*k000 + s003*k000 + s002*k001 + s001*k002 + s000*k003,
-             s000*k000 + s001*k000 + s000*k001 + s003*k001 + s002*k002 + s001*k003,
-             s001*k000 + s002*k000 + s000*k001 + s001*k001 + s000*k002 + s003*k002 + s002*k003,
-             s000*k000 + s002*k000 + s003*k000 + s000*k001 + s001*k001 + s002*k002 + s000*k003 + k000,
-             s001*k000 + s003*k000 + s001*k001 + s002*k001 + s000*k002 + s003*k002 + s001*k003 + k001,
-             s000*k000 + s002*k000 + s000*k001 + s002*k001 + s003*k001 + s000*k002 + s001*k002 + s002*k003 + k002,
-             s001*k000 + s002*k000 + s000*k001 + s003*k001 + s001*k002 + s003*k003 + k003,
-             s000*k000 + s001*k000 + s003*k000 + s001*k001 + s000*k002 + s002*k002 + s000*k003 + s000,
-             s002*k000 + s000*k001 + s001*k001 + s003*k001 + s001*k002 + s000*k003 + s002*k003 + s001,
-             s000*k000 + s001*k000 + s002*k000 + s002*k001 + s000*k002 + s001*k002 + s003*k002 + s001*k003 + s002,
-             s001*k000 + s000*k001 + s002*k001 + s000*k002 + s001*k003 + s003*k003 + s003,
-             s002*k000 + s001*k001 + s000*k002 + s003*k003 + 1)
+             s000*k000 + s000*k003 + s001*k002 + s002*k001 + s003*k000,
+             s000*k000 + s000*k001 + s001*k000 + s001*k003 + s002*k002 + s003*k001,
+             s000*k001 + s000*k002 + s001*k000 + s001*k001 + s002*k000 + s002*k003 + s003*k002,
+             s000*k000 + s000*k001 + s000*k003 + s001*k001 + s002*k000 + s002*k002 + s003*k000 + k000,
+             s000*k002 + s001*k000 + s001*k001 + s001*k003 + s002*k001 + s003*k000 + s003*k002 + k001,
+             s000*k000 + s000*k001 + s000*k002 + s001*k002 + s002*k000 + s002*k001 + s002*k003 + s003*k001 + k002,
+             s000*k001 + s001*k000 + s001*k002 + s002*k000 + s003*k001 + s003*k003 + k003,
+             s000*k000 + s000*k002 + s000*k003 + s001*k000 + s001*k001 + s002*k002 + s003*k000 + s000,
+             s000*k001 + s000*k003 + s001*k001 + s001*k002 + s002*k000 + s002*k003 + s003*k001 + s001,
+             s000*k000 + s000*k002 + s001*k000 + s001*k002 + s001*k003 + s002*k000 + s002*k001 + s003*k002 + s002,
+             s000*k001 + s000*k002 + s001*k000 + s001*k003 + s002*k001 + s003*k003 + s003,
+             s000*k002 + s001*k001 + s002*k000 + s003*k003 + 1)
         """
         R = self.R
         r = self.r
@@ -3137,18 +3133,9 @@ class SR_gf2(SR_generic):
             sage: xi = sr.vars('x', 1)
             sage: wi = sr.vars('w', 1)
             sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]
-            [x100*w100 + x102*w100 + x103*w100 + x107*w100 + x101*w101
-            + x102*w101 + x106*w101 + x100*w102 + x101*w102 +
-            x105*w102 + x100*w103 + x104*w103 + x103*w104 + x102*w105
-            + x101*w106 + x100*w107, x101*w100 + x103*w100 + x104*w100
-            + x100*w101 + x102*w101 + x103*w101 + x107*w101 +
-            x101*w102 + x102*w102 + x106*w102 + x100*w103 + x101*w103
-            + x105*w103 + x100*w104 + x104*w104 + x103*w105 +
-            x102*w106 + x101*w107, x102*w100 + x104*w100 + x105*w100 +
-            x101*w101 + x103*w101 + x104*w101 + x100*w102 + x102*w102
-            + x103*w102 + x107*w102 + x101*w103 + x102*w103 +
-            x106*w103 + x100*w104 + x101*w104 + x105*w104 + x100*w105
-            + x104*w105 + x103*w106 + x102*w107]
+            [x100*w100 + x100*w102 + x100*w103 + x100*w107 + x101*w101 + x101*w102 + x101*w106 + x102*w100 + x102*w101 + x102*w105 + x103*w100 + x103*w104 + x104*w103 + x105*w102 + x106*w101 + x107*w100,
+             x100*w101 + x100*w103 + x100*w104 + x101*w100 + x101*w102 + x101*w103 + x101*w107 + x102*w101 + x102*w102 + x102*w106 + x103*w100 + x103*w101 + x103*w105 + x104*w100 + x104*w104 + x105*w103 + x106*w102 + x107*w101,
+             x100*w102 + x100*w104 + x100*w105 + x101*w101 + x101*w103 + x101*w104 + x102*w100 + x102*w102 + x102*w103 + x102*w107 + x103*w101 + x103*w102 + x103*w106 + x104*w100 + x104*w101 + x104*w105 + x105*w100 + x105*w104 + x106*w103 + x107*w102]
         """
         if is_Matrix(xi):
             xi = xi.list()
@@ -3174,7 +3161,7 @@ class SR_gf2(SR_generic):
 
         EXAMPLE::
 
-            sage: sr = mq.SR(3, 1, 1, 8, gf2=True)
+            sage: sr = mq.SR(3, 1, 1, 8, gf2=True, polybori=False)
             sage: sr.field_polynomials('x', 2)
             [x200^2 + x200, x201^2 + x201,
              x202^2 + x202, x203^2 + x203,
@@ -3366,7 +3353,7 @@ def test_consistency(max_n=2, **kwargs):
                             try:
                                 F, s = sr.polynomial_system()
                                 F = F.subs(s)
-                                consistent &= (F.groebner_basis('libsingular:slimgb')[0] != 1)
+                                consistent &= (F.groebner_basis()[0] != 1)
                                 if not consistent:
                                     print sr, " is not consistent"
                                 zero_division = False

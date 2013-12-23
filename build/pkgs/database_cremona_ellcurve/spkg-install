@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+###########################################
+## database_cremona_ellcurve
+###########################################
+
+if [ "x${SAGE_LOCAL}" = x ]; then
+   echo "SAGE_LOCAL undefined ... exiting"
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+SAGE_VERSION=`sed -n "s/,.*//;/Version/s/.*Version //p" "${SAGE_LOCAL}/bin/sage-banner"`
+SAGE_MAJOR=`echo "${SAGE_VERSION}" | cut -d'.' -f1`
+
+if [ "${SAGE_MAJOR}" -lt "4" -o \( "${SAGE_MAJOR}" -eq "4" -a `echo "${SAGE_VERSION}" | cut -d'.' -f2` -lt "8" \) ]; then
+   echo "Your copy of Sage cannot use the latest"
+   echo "version of the database.  Please update"
+   echo "Sage to version 4.8 or later if you"
+   echo "would like to use more recent versions"
+   echo "of the Cremona database."
+   sage -i database_cremona_ellcurve-20071019.p0
+   exit $?
+fi
+
+if [ "x${SAGE_LOCAL}" = x ]; then
+   echo "SAGE_LOCAL undefined ... exiting"
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+TARGET="${SAGE_LOCAL}/share/cremona"
+if [ ! -d "${TARGET}" ]; then
+   mkdir "${TARGET}"
+fi
+
+cd src
+
+cp * "${TARGET}/"
+if [ $? -ne 0 ]; then
+   echo "Error installing cremona database"
+   exit 1
+fi

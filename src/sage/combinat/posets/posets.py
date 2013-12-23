@@ -1324,9 +1324,23 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. note:: this is used and systematically tested in :class:`~sage.combinat.posets.linear_extensions.LinearExtensionsOfPosets`
 
+        TESTS:
+
+        Check that :trac:`15313` is fixed::
+
+            sage: P = Poset((divisors(12), attrcall("divides")), facade=True, linear_extension=True)
+            sage: P.is_linear_extension([1,2,4,3,6,12,1337])
+            False
+            sage: P.is_linear_extension([1,2,4,3,6,666,12,1337])
+            False
+            sage: P = Poset(DiGraph(5))
+            sage: P.is_linear_extension(['David', 'McNeil', 'La', 'Lamentable', 'Aventure', 'de', 'Simon', 'Wiesenthal'])
+            False
         """
         index = { x:i for (i,x) in enumerate(l) }
-        return all(index[i] < index[j] for (i,j) in self.cover_relations())
+        return (len(l) == self.cardinality() and
+                all(x in index for x in self) and
+                all(index[i] < index[j] for (i,j) in self.cover_relations()))
 
     def list(self):
         """

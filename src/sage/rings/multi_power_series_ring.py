@@ -177,7 +177,7 @@ Coercion from symbolic ring::
 AUTHORS:
 
 - Niles Johnson (2010-07): initial code
-- Simon King (2012-08, 2013-02): Use category and coercion framework, :trac:`13412` and :trac: `14084`
+- Simon King (2012-08, 2013-02): Use category and coercion framework, :trac:`13412` and :trac:`14084`
 
 """
 

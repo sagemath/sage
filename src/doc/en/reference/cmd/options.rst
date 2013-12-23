@@ -257,8 +257,7 @@ __ http://wiki.sagemath.org/combinat
 - ``--merge`` -- run Sage's automatic merge and test script
 - ``--bdist VER`` -- build a binary distribution of Sage, with
   version ``VER``
-- ``--sdist VER`` -- build a source distribution of Sage, with
-  version ``VER``
+- ``--sdist`` -- build a source distribution of Sage
 - ``--crap sage-ver.tar`` -- detect suspicious garbage in the Sage
   source tarball
 

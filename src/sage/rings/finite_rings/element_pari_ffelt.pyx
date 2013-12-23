@@ -27,7 +27,8 @@ from integer_mod import IntegerMod_abstract
 import sage.libs.pari
 import sage.rings.integer
 from sage.interfaces.gap import is_GapElement
-from sage.libs.pari.gen cimport gen as pari_gen, PariInstance
+from sage.libs.pari.gen cimport gen as pari_gen
+from sage.libs.pari.pari_instance cimport PariInstance
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -37,7 +38,7 @@ from sage.structure.element cimport Element, ModuleElement, RingElement
 
 cdef long mpz_t_offset = sage.rings.integer.mpz_t_offset_python
 
-cdef PariInstance pari = sage.libs.pari.gen.pari
+cdef PariInstance pari = sage.libs.pari.pari_instance.pari
 
 cdef extern from "sage/libs/pari/misc.h":
     int gcmp_sage(GEN x, GEN y)
@@ -326,7 +327,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             c^4 + 2*c^3
         """
         pari_catch_sig_on()
-        return pari.new_gen_to_string(self.val)
+        return str(pari.new_gen(self.val))
 
     def __hash__(FiniteFieldElement_pari_ffelt self):
         """

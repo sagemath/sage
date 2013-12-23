@@ -39,7 +39,6 @@ from sage.rings.padics.padic_printing cimport pAdicPrinter_class
 #import sage.rings.padics.padic_field_generic_element
 #import sage.rings.padics.padic_lazy_element
 import sage.rings.finite_rings.integer_mod
-import sage.libs.pari.gen
 import sage.rings.integer
 import sage.rings.rational
 
@@ -49,10 +48,9 @@ from sage.rings.padics.precision_error import PrecisionError
 
 #pAdicLazyElement = sage.rings.padics.padic_lazy_element.pAdicLazyElement
 #pAdicGenericElement = sage.rings.padics.padic_generic_element.pAdicGenericElement
-pari = sage.libs.pari.gen.pari
-pari_gen = sage.libs.pari.gen.gen
+
+from sage.libs.pari.gen cimport gen as pari_gen
 from sage.interfaces.gp import GpElement
-PariError = sage.libs.pari.gen.PariError
 
 cdef class pAdicFixedModElement(pAdicBaseGenericElement):
     def __init__(pAdicFixedModElement self, parent, x, absprec = None, relprec = None, empty = False):

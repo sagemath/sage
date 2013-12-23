@@ -1,0 +1,96 @@
+bin_PROGRAMS = \
+bench \
+B_A \
+B_A_center \
+B_D \
+chiro2allfinetriangs \
+chiro2alltriangs \
+chiro2circuits \
+chiro2cocircuits \
+chiro2dual \
+chiro2finetriang \
+chiro2finetriangs \
+chiro2mintriang \
+chiro2nallfinetriangs \
+chiro2nalltriangs \
+chiro2nfinetriangs \
+chiro2ntriangs \
+chiro2placingtriang \
+chiro2triangs \
+cocircuits2facets \
+cross \
+cube \
+cyclic \
+hypersimplex \
+lattice \
+points2allfinetriangs \
+points2alltriangs \
+points2chiro \
+points2facets \
+points2finetriang \
+points2finetriangs \
+points2flips \
+points2nallfinetriangs \
+points2nalltriangs \
+points2nfinetriangs \
+points2nflips \
+points2ntriangs \
+points2placingtriang \
+points2triangs \
+points2volume \
+santos_triang \
+santos_dim4_triang \
+santos_22_triang
+
+bench_SOURCES                      = bench.cc
+B_A_SOURCES                        = B_A.cc
+B_A_center_SOURCES                 = B_A_center.cc
+B_D_SOURCES                        = B_D.cc
+chiro2allfinetriangs_SOURCES       = chiro2allfinetriangs.cc
+chiro2alltriangs_SOURCES           = chiro2alltriangs.cc
+chiro2circuits_SOURCES             = chiro2circuits.cc
+chiro2cocircuits_SOURCES           = chiro2cocircuits.cc
+chiro2dual_SOURCES                 = chiro2dual.cc
+chiro2finetriang_SOURCES           = chiro2finetriang.cc
+chiro2finetriangs_SOURCES          = chiro2finetriangs.cc
+chiro2mintriang_SOURCES            = chiro2mintriang.cc
+chiro2nallfinetriangs_SOURCES      = chiro2nallfinetriangs.cc
+chiro2nalltriangs_SOURCES          = chiro2nalltriangs.cc
+chiro2nfinetriangs_SOURCES         = chiro2nfinetriangs.cc
+chiro2ntriangs_SOURCES             = chiro2ntriangs.cc
+chiro2placingtriang_SOURCES        = chiro2placingtriang.cc
+chiro2triangs_SOURCES              = chiro2triangs.cc
+cocircuits2facets_SOURCES          = cocircuits2facets.cc
+cross_SOURCES                      = cross.cc
+cube_SOURCES                       = cube.cc
+cyclic_SOURCES                     = cyclic.cc
+hypersimplex_SOURCES               = hypersimplex.cc
+lattice_SOURCES	                   = lattice.cc
+points2allfinetriangs_SOURCES      = points2allfinetriangs.cc
+points2alltriangs_SOURCES          = points2alltriangs.cc
+points2chiro_SOURCES               = points2chiro.cc
+points2facets_SOURCES              = points2facets.cc
+points2finetriang_SOURCES          = points2finetriang.cc
+points2finetriangs_SOURCES         = points2finetriangs.cc
+points2flips_SOURCES               = points2flips.cc
+points2nallfinetriangs_SOURCES     = points2nallfinetriangs.cc
+points2nalltriangs_SOURCES         = points2nalltriangs.cc
+points2nfinetriangs_SOURCES        = points2nfinetriangs.cc
+points2nflips_SOURCES              = points2nflips.cc
+points2ntriangs_SOURCES            = points2ntriangs.cc
+points2placingtriang_SOURCES       = points2placingtriang.cc
+points2triangs_SOURCES             = points2triangs.cc
+points2volume_SOURCES              = points2volume.cc
+santos_triang_SOURCES              = santos_triang.cc
+santos_dim4_triang_SOURCES         = santos_dim4_triang.cc
+santos_22_triang_SOURCES           = santos_22_triang.cc
+
+LDADD           = ../lib-src/libTOPCOM.la \
+                  ../lib-src-reg/libCHECKREG.la 
+
+AM_CPPFLAGS     = $(GMP_CFLAGS) $(CDD_CFLAGS)
+AM_CPPFLAGS    += -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
+AM_CPPFLAGS    += -I../wrap-gmp-gmpxx
+AM_CPPFLAGS    += -I../lib-src
+AM_CPPFLAGS    += -I../lib-src-reg
+AM_LDFLAGS      = $(CDD_LIBS) $(GMP_LIBS)

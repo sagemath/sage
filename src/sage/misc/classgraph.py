@@ -34,11 +34,11 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
 
         sage: from sage.rings.polynomial.padics import polynomial_padic_capped_relative_dense, polynomial_padic_flat
         sage: G = class_graph(sage.rings.polynomial.padics); G
-        Digraph on 4 vertices
+        Digraph on 6 vertices
         sage: G.vertices()
-        ['Polynomial_generic_dense', 'Polynomial_generic_domain', 'Polynomial_padic_capped_relative_dense', 'Polynomial_padic_flat']
+        ['Polynomial', 'Polynomial_generic_dense', 'Polynomial_generic_domain', 'Polynomial_padic', 'Polynomial_padic_capped_relative_dense', 'Polynomial_padic_flat']
         sage: G.edges(labels=False)
-        [('Polynomial_padic_capped_relative_dense', 'Polynomial_generic_domain'), ('Polynomial_padic_flat', 'Polynomial_generic_dense')]
+        [('Polynomial_padic', 'Polynomial'), ('Polynomial_padic_capped_relative_dense', 'Polynomial_generic_domain'), ('Polynomial_padic_capped_relative_dense', 'Polynomial_padic'), ('Polynomial_padic_flat', 'Polynomial_generic_dense'), ('Polynomial_padic_flat', 'Polynomial_padic')]
 
     We construct the inheritance graph of a given class::
 
@@ -55,9 +55,9 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
        can be emulated by setting the option ``as_graph`` to ``False``::
 
         sage: class_graph(sage.rings.polynomial.padics, depth=2, as_graph=False)
-        {'Polynomial_padic_capped_relative_dense': ['Polynomial_generic_domain'],
-        'Polynomial_padic_flat': ['Polynomial_generic_dense']}
-
+        {'Polynomial_padic': ['Polynomial'],
+        'Polynomial_padic_capped_relative_dense': ['Polynomial_generic_domain', 'Polynomial_padic'],
+        'Polynomial_padic_flat': ['Polynomial_generic_dense', 'Polynomial_padic']}
 
     .. note:: the ``classes`` and ``as_graph`` options are mostly
        intended for internal recursive use.
@@ -67,7 +67,7 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
     TESTS::
 
         sage: G = class_graph(sage.rings.polynomial.padics, depth=2); G
-        Digraph on 4 vertices
+        Digraph on 6 vertices
     """
     # This function descends recursively down the submodules of the
     # top module (if ``top`` is a module) and then down the hierarchy

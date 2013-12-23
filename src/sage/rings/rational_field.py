@@ -126,7 +126,7 @@ class RationalField(_uniq, number_field_base.NumberField):
 
         sage: E = EllipticCurve('11a')
         sage: L = E.lseries().at1(300)[0]; L
-        0.253841860855911
+        0.2538418608559106843377589233...
         sage: O = E.period_lattice().omega(); O
         1.26920930427955
         sage: t = L/O; t

@@ -1001,8 +1001,8 @@ class kMonomial(KBoundedQuotientBasis):
             return self([])
         if la[0] <= self.k:
             return self(la)
-        if self.t==1:
-            return self(0)
+        if self.t == 1:
+            return self.zero()
         else:
             kHLP = self._kBoundedRing.kHallLittlewoodP()
             return self(kHLP._m_to_kHLP_on_basis(la))
@@ -1115,11 +1115,11 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
             sage: kHLP(mk([2,1])^2)
             4*HLP3[2, 2, 1, 1] + 6*HLP3[2, 2, 2] + 2*HLP3[3, 2, 1] + 2*HLP3[3, 3]
         """
-        if self.t==1:
+        if self.t == 1:
             if la in self._kbounded_partitions:
                 return self(la)
             else:
-                return self(0)
+                return self.zero()
         else:
             HLP = self._kBoundedRing._quotient_basis
             m = self._kBoundedRing._sym.m()
@@ -1159,7 +1159,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         """
         mk = self._kBoundedRing.km()
         if la not in self._kbounded_partitions:
-            return mk(0)
+            return mk.zero()
         if self.t==1:
             return mk(la)
         else:

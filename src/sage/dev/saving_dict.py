@@ -232,7 +232,7 @@ class SavingDict(collections.MutableMapping):
         if DOCTEST_MODE:
             from sage.misc.misc import SAGE_TMP
             SAGE_TMP = str(SAGE_TMP)
-            error = "write attempt to a saving_dict in a doctest"
+            error = "write attempt to a saving_dict in a doctest: "+self._filename
             assert os.path.abspath(self._filename).startswith(SAGE_TMP), error
 
         import tempfile

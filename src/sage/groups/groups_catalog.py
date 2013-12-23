@@ -30,9 +30,9 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 
 - Matrix Groups (``groups.matrix.<tab>``)
 
-  - :func:`groups.matrix.QuaternionGF3 <sage.groups.misc_gps.misc_groups.QuaternionMatrixGroupGF3>`
-  - :func:`groups.matrix.GL <sage.groups.matrix_gps.general_linear.GL>`
-  - :func:`groups.matrix.SL <sage.groups.matrix_gps.special_linear.SL>`
+  - :func:`groups.matrix.QuaternionGF3 <sage.groups.matrix_gps.finitely_generated.QuaternionMatrixGroupGF3>`
+  - :func:`groups.matrix.GL <sage.groups.matrix_gps.linear.GL>`
+  - :func:`groups.matrix.SL <sage.groups.matrix_gps.linear.SL>`
   - :func:`groups.matrix.Sp <sage.groups.matrix_gps.symplectic.Sp>`
   - :func:`groups.matrix.GU <sage.groups.matrix_gps.unitary.GU>`
   - :func:`groups.matrix.SU <sage.groups.matrix_gps.unitary.SU>`
@@ -50,7 +50,18 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
   - :func:`groups.presentation.Quaternion <sage.groups.finitely_presented_named.QuaternionPresentation>`
   - :func:`groups.presentation.Symmetric <sage.groups.finitely_presented_named.SymmetricPresentation>`
 
+- Affine Groups (``groups.affine.<tab>``)
+
+  - :func:`groups.affine.Affine <sage.groups.affine_gps.affine_group.AffineGroup>`
+  - :func:`groups.affine.Euclidean <sage.groups.affine_gps.euclidean_group.EuclideanGroup>`
+
 - Miscellaneous Groups (``groups.misc.<tab>``)
+
+  - :func:`groups.misc.AdditiveAbelian <sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup>`
+  - :func:`groups.misc.Braid <sage.groups.braid.BraidGroup>`
+  - :func:`groups.misc.Free <sage.groups.free_group.FreeGroup>`
+  - :func:`groups.misc.SemimonomialTransformation <sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup>`
+
 """
 
 # Implementation notes:
@@ -75,4 +86,5 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 from sage.groups.matrix_gps import catalog as matrix
 from sage.groups.perm_gps import permutation_groups_catalog as permutation
 from sage.groups.misc_gps import misc_groups_catalog as misc
+from sage.groups.affine_gps import catalog as affine
 from sage.groups import finitely_presented_catalog as presentation

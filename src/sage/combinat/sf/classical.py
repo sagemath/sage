@@ -130,7 +130,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         # Partitions #
         ##############
         if x in sage.combinat.partition.Partitions():
-            return eclass(self, {sage.combinat.partition.Partition(filter(lambda x: x!=0, x)):R(1)})
+            return eclass(self, {sage.combinat.partition.Partition(filter(lambda x: x!=0, x)): R.one()})
 
         # Todo: discard all of this which is taken care by Sage's coercion
         # (up to changes of base ring)
@@ -187,9 +187,9 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
                 if xm:
                     return self._from_dict(t(xm)._monomial_coefficients, coerce=True)
                 else:
-                    return self(0)
+                    return self.zero()
             else:
-                f = lambda part: self._from_dict(t( {part:Integer(1)} )._monomial_coefficients)
+                f = lambda part: self._from_dict(t( {part: ZZ.one()} )._monomial_coefficients)
                 return self._apply_module_endomorphism(x, f)
 
 
@@ -224,7 +224,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         elif isinstance(x, llt.LLT_generic.Element):
             P = x.parent()
             BR = self.base_ring()
-            zero = BR(0)
+            zero = BR.zero()
             PBR = P.base_ring()
             if not BR.has_coerce_map_from(PBR):
                 raise TypeError, "no coerce map from x's parent's base ring (= %s) to self's base ring (= %s)"%(PBR, self.base_ring())

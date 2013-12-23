@@ -166,8 +166,11 @@ Alternatively, if you have already installed
 `Xcode <http://developer.apple.com/xcode/>`_
 (which at the time of writing is freely available in the Mac App Store,
 or through http://developer.apple.com/downloads/ provided you registered for an
-Apple Developer account),
-you can open Xcode's "Downloads" preference pane and install the command line
+Apple Developer account), you can install the command line tools from
+there: with OS X Mavericks, run the command ``xcode-select --install``
+from a Terminal window and click "Install" in the pop-up dialog
+box. Using OS X Mountain Lion or earlier, run Xcode, open its "Downloads"
+preference pane and install the command line
 tools from there.
 On pre-Lion OS X systems, the command line tools are not available as a
 separate download and you have to install the full-blown Xcode supporting your

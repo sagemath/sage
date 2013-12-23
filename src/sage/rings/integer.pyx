@@ -172,11 +172,14 @@ cdef extern from "mpz_longlong.h":
 cdef extern from "convert.h":
     cdef void t_INT_to_ZZ( mpz_t value, long *g )
 
-from sage.libs.pari.gen cimport gen as pari_gen, PariInstance
+from sage.libs.pari.gen cimport gen as pari_gen
+from sage.libs.pari.pari_instance cimport PariInstance
 from sage.libs.flint.ulong_extras cimport *
 
 import sage.rings.infinity
-import sage.libs.pari.all
+
+import sage.libs.pari.pari_instance
+cdef PariInstance pari = sage.libs.pari.pari_instance.pari
 
 from sage.structure.element import canonical_coercion
 from sage.misc.superseded import deprecated_function_alias
@@ -618,7 +621,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef unsigned int ibase
 
         cdef Element lift
-        cdef PariInstance pari
 
         if x is None:
             if mpz_sgn(self.value) != 0:
@@ -675,7 +677,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     elif paritype == t_FFELT:
                         # x = (f modulo defining polynomial of finite field);
                         # we extract f.
-                        pari = sage.libs.pari.gen.pari
                         sig_on()
                         x = pari.new_gen(FF_to_FpXQ_i((<pari_gen>x).g))
                     else:
@@ -4948,9 +4949,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         return self._pari_c()
 
     cdef _pari_c(self):
-        cdef PariInstance P
-        P = sage.libs.pari.gen.pari
-        return P.new_gen_from_mpz_t(self.value)
+        return pari.new_gen_from_mpz_t(self.value)
 
     def _interface_init_(self, I=None):
         """

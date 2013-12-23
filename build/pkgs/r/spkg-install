@@ -11,8 +11,12 @@ unset GREP_OPTIONS
 
 # Make sure CPPFLAGS and LDFLAGS are set to something (even the empty
 # string) to prevent R from overriding them.
+#
+# We need to explicitly add $SAGE_LOCAL/lib to LDFLAGS for R to find readline.
+# The --with-readline configure option only understands yes/no
+# and cannot be used to pass this path.
 CPPFLAGS="$CPPFLAGS"
-LDFLAGS="$LDFLAGS"
+LDFLAGS="-L$SAGE_LOCAL/lib/ $LDFLAGS"
 
 # Optimization flags
 if [ "$SAGE_DEBUG" = yes ]; then
@@ -72,6 +76,12 @@ if [ "$UNAME" = "Darwin" ]; then
     R_CONFIGURE="--enable-R-framework=no $R_CONFIGURE"
 fi
 
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Cygwin libm does not provide "long double" functions
+    # and we do not install Cephes on Cygwin at the moment
+    R_CONFIGURE="--disable-long-double $R_CONFIGURE"
+fi
+
 if [ "$SAGE_FAT_BINARY" = yes ]; then
     echo "Disabling ICU for a binary build"
     R_CONFIGURE="--without-ICU $R_CONFIGURE"
@@ -93,6 +103,7 @@ cd src
 # Apply patches.  See SPKG.txt for information about what each patch
 # does.
 for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue
     patch -p1 <"$patch"
     if [ $? -ne 0 ]; then
         echo >&2 "Error applying '$patch'"
@@ -108,11 +119,11 @@ export SAGE_BUILDING_R=yes
 if [ "$UNAME" = "Darwin" ]; then
     echo "Configuring R without ATLAS for OS X"
     ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $R_CONFIGURE \
-        --with-readline="$SAGE_LOCAL"
+        --with-readline=yes
 else
     echo "Configuring R with ATLAS"
     ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $R_CONFIGURE \
-        --with-readline="$SAGE_LOCAL" \
+        --with-readline=yes \
         --with-blas="-L$SAGE_LOCAL/lib -lf77blas -latlas" \
         --with-lapack="-L$SAGE_LOCAL/lib -llapack -lcblas"
 fi
@@ -121,30 +132,58 @@ if [ $? -ne 0 ]; then
     echo "Configuring R with fallback options"
     R_CONFIGURE=`echo "$R_CONFIGURE" | sed 's/--with-x=yes/--with-x=no/' `
     ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $R_CONFIGURE \
-        --with-readline="$SAGE_LOCAL"
+        --with-readline=yes
 fi
 
 if [ $? -ne 0 ]; then
-    echo "Error configuring R."
+    echo >&2 "Error configuring R."
     exit 1
 fi
 
+if [ "$UNAME" = "Darwin" ]; then
+    # We have to move old installs of R when upgrading R in Sage on OS X.
+    # Indeed Sage modifies DYLD_LIBRARY_PATH whereas R build process
+    # modifies DYLD_LIBRARY_PATH, so that it is Sage's R and not the freshly
+    # built one which will get loaded during the build process and if they are
+    # different versions then the build process might fail.
+    # On systems using LD_LIBRARY_PATH, both Sage and R modify it and R wins,
+    # so no problem should occur.
+    if [ -d "$SAGE_LOCAL"/lib/R ]; then
+        RINSTALL_MOVED = yes
+        mv "$SAGE_LOCAL"/lib/R "$SAGE_LOCAL"/lib/R.old
+    fi
+fi
+
+# Build R
 $MAKE R
 if [ $? -ne 0 ]; then
-    echo "Error building R."
+    echo >&2 "Error building R."
+    if [ "$RINSTALL_MOVED" = yes ]; then
+        mv "$SAGE_LOCAL"/lib/R.old "$SAGE_LOCAL"/lib/R
+    fi
+    exit 1
+fi
+
+# needed for help system
+$MAKE vignettes
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building vignettes."
+    if [ "$RINSTALL_MOVED" = yes ]; then
+        mv "$SAGE_LOCAL"/lib/R.old "$SAGE_LOCAL"/lib/R
+    fi
     exit 1
 fi
 
 # Remove old install
 rm -rf "$SAGE_LOCAL"/lib/r
 rm -rf "$SAGE_LOCAL"/lib/R
+rm -rf "$SAGE_LOCAL"/lib/R.old
 rm -rf "$SAGE_LOCAL"/lib/libRblas.* "$SAGE_LOCAL"/lib/libRlapack.* "$SAGE_LOCAL"/lib/libR.*
 
-
-$MAKE vignettes   # needed for help system
+# Install new version
 $MAKE install
 if [ $? -ne 0 ]; then
-    echo "Error installing R."
+    echo >&2 "Error installing R."
     exit 1
 fi
 

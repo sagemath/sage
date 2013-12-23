@@ -1,6 +1,3 @@
-import sage.libs.pari.gen as gen
-from sage.misc.sage_eval import sage_eval
-
 from sage.rings.all import *
 
 def pari(x):
@@ -29,32 +26,47 @@ def pari(x):
         sage: a = pari(1/2); a, a.type()
         (1/2, 't_FRAC')
 
-    Conversion from reals uses the real's own precision, here 53 bits (the default)::
+    Conversion from reals uses the real's own precision::
 
         sage: a = pari(1.2); a, a.type(), a.precision()
         (1.20000000000000, 't_REAL', 4) # 32-bit
         (1.20000000000000, 't_REAL', 3) # 64-bit
 
-    Conversion from strings uses the current pari real precision.  By
-    default this is 4 words, 38 digits, 128 bits on 64-bit machines
-    and 5 words, 19 digits, 64 bits on 32-bit machines. ::
+    Conversion from strings uses the current PARI real precision.
+    By default, this is 96 bits on 32-bit systems and 128 bits on
+    64-bit systems::
 
         sage: a = pari('1.2'); a, a.type(), a.precision()
         (1.20000000000000, 't_REAL', 5) # 32-bit
         (1.20000000000000, 't_REAL', 4) # 64-bit
 
-    Conversion from matrices is supported, but not from vectors; use
-    lists instead::
+    But we can change this precision::
+
+        sage: pari.set_real_precision(35)  # precision in decimal digits
+        15
+        sage: a = pari('1.2'); a, a.type(), a.precision()
+        (1.2000000000000000000000000000000000, 't_REAL', 6)  # 32-bit
+        (1.2000000000000000000000000000000000, 't_REAL', 4)  # 64-bit
+
+    Set the precision to 15 digits for the remaining tests::
+
+        sage: pari.set_real_precision(15)
+        35
+
+    Conversion from matrices is supported, but not from vectors;
+    use lists or tuples instead::
 
         sage: a = pari(matrix(2,3,[1,2,3,4,5,6])); a, a.type()
         ([1, 2, 3; 4, 5, 6], 't_MAT')
 
         sage: v = vector([1.2,3.4,5.6])
-        sage: v.pari()
+        sage: pari(v)
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.modules.free_module_element.FreeModuleElement_generic_dense' object has no attribute 'pari'
+        PariError: syntax error, unexpected ')', expecting )-> or ','
         sage: b = pari(list(v)); b,b.type()
+        ([1.20000000000000, 3.40000000000000, 5.60000000000000], 't_VEC')
+        sage: b = pari(tuple(v)); b, b.type()
         ([1.20000000000000, 3.40000000000000, 5.60000000000000], 't_VEC')
 
     Some more exotic examples::
@@ -88,11 +100,12 @@ def pari(x):
         sage: type(pari("dummy = 0; kill(dummy)"))
         <type 'NoneType'>
     """
-    return gen.pari(x)
+    from sage.libs.pari.all import pari
+    return pari(x)
 
 def python(z, locals=None):
     """
-    Return the closest python/Sage equivalent of the given pari object.
+    Return the closest Python/Sage equivalent of the given pari object.
 
     INPUT:
 
@@ -129,11 +142,9 @@ def python(z, locals=None):
         Rational Field
 
         sage: a = pari('1.234').python(); a
-        1.234000000000000000000000000           # 32-bit
-        1.2340000000000000000000000000000000000 # 64-bit
+        1.23400000000000000
         sage: a.parent()
-        Real Field with 96 bits of precision    # 32-bit
-        Real Field with 128 bits of precision   # 64-bit
+        Real Field with 64 bits of precision
 
         sage: a = pari('(3+I)/2').python(); a
         1/2*i + 3/2
@@ -142,17 +153,15 @@ def python(z, locals=None):
 
     Conversion of complex numbers: the next example is converting from
     an element of the Symbolic Ring, which goes via the string
-    representation and hence the precision is architecture-dependent::
+    representation::
 
         sage: I = SR(I)
         sage: a = pari(1.0+2.0*I).python(); a
-        1.000000000000000000000000000 + 2.000000000000000000000000000*I  # 32-bit
-        1.0000000000000000000000000000000000000 + 2.0000000000000000000000000000000000000*I # 64-bit
+        1.00000000000000000 + 2.00000000000000000*I
         sage: type(a)
         <type 'sage.rings.complex_number.ComplexNumber'>
         sage: a.parent()
-        Complex Field with 96 bits of precision # 32-bit
-        Complex Field with 128 bits of precision # 64-bit
+        Complex Field with 64 bits of precision
 
     For architecture-independent complex numbers, start from a
     suitable ComplexField::
@@ -215,9 +224,11 @@ def python(z, locals=None):
         sage: pari(K(11^-5)).sage()
         11^-5 + O(11^0)
     """
+    from sage.libs.pari.pari_instance import prec_words_to_bits
+
     t = z.type()
     if t == "t_REAL":
-        return RealField(gen.prec_words_to_bits(z.precision()))(z)
+        return RealField(prec_words_to_bits(z.precision()))(z)
     elif t == "t_FRAC":
          Q = RationalField()
          return Q(z)
@@ -233,11 +244,11 @@ def python(z, locals=None):
             xprec = z.real().precision() # will be 0 if exact
             yprec = z.imag().precision() # will be 0 if exact
             if xprec == 0:
-                prec = gen.prec_words_to_bits(yprec)
+                prec = prec_words_to_bits(yprec)
             elif yprec == 0:
-                prec = gen.prec_words_to_bits(xprec)
+                prec = prec_words_to_bits(xprec)
             else:
-                prec = max(gen.prec_words_to_bits(xprec),gen.prec_words_to_bits(yprec))
+                prec = max(prec_words_to_bits(xprec), prec_words_to_bits(yprec))
             R = RealField(prec)
             C = ComplexField(prec)
             return C(R(z.real()), R(z.imag()))
@@ -261,4 +272,5 @@ def python(z, locals=None):
         K = Qp(Z(p), rprec)
         return K(z.lift())
     else:
+        from sage.misc.sage_eval import sage_eval
         return sage_eval(str(z), locals=locals)

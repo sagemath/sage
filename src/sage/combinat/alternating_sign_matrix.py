@@ -135,6 +135,70 @@ class AlternatingSignMatrix(Element):
         """
         return not self.__eq__(other)
 
+    def __le__(self, other):
+        """
+        Check less than or equal to. This is needed, see :trac:`15372`.
+
+        EXAMPLES::
+
+            sage: A = AlternatingSignMatrices(3)
+            sage: M = A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            sage: M <= A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            True
+            sage: M <= A([[1, 0, 0],[0, 0, 1],[0, 1, 0]])
+            False
+        """
+        if isinstance(other, AlternatingSignMatrix):
+            return self._matrix <= other._matrix
+        return False #return False if other is not an ASM
+
+    def __lt__(self, other):
+        """
+        Check less than. This is needed, see :trac:`15372`.
+
+        EXAMPLES::
+
+            sage: A = AlternatingSignMatrices(3)
+            sage: M = A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            sage: M < A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            False
+        """
+        if isinstance(other, AlternatingSignMatrix):
+            return self._matrix < other._matrix
+        return False #return False if other is not an ASM
+
+    def __ge__(self, other):
+        """
+        Check greater than or equal to. This is needed, see :trac:`15372`.
+
+        EXAMPLES::
+
+            sage: A = AlternatingSignMatrices(3)
+            sage: M = A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            sage: M >= A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            True
+            sage: M >= A([[1, 0, 0],[0, 0, 1],[0, 1, 0]])
+            True
+        """
+        if isinstance(other, AlternatingSignMatrix):
+            return self._matrix >= other._matrix
+        return False #return False if other is not an ASM
+
+    def __gt__(self, other):
+        """
+        Check greater than. This is needed, see :trac:`15372`.
+
+        EXAMPLES::
+
+            sage: A = AlternatingSignMatrices(3)
+            sage: M = A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            sage: M > A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
+            False
+        """
+        if isinstance(other, AlternatingSignMatrix):
+            return self._matrix > other._matrix
+        return False #return False if other is not an ASM
+
     def _latex_(self):
         r"""
         Return a `\LaTeX` representation of ``self``.
@@ -861,7 +925,8 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
             sage: P = M.lattice()
             sage: P
             Finite lattice containing 7 elements
-
+            sage: P.plot()
+            
         """
         return LatticePoset(self._lattice_initializer(), cover_relations=True)
 

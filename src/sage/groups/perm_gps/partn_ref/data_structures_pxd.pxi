@@ -7,10 +7,8 @@
 
 include 'sage/ext/cdefs.pxi'
 include 'sage/ext/stdsage.pxi'
-include 'sage/misc/bitset_pxd.pxi'
-
-cdef extern from "stdlib.h":
-    int rand()
+from sage.misc.bitset cimport *
+from libc.stdlib cimport rand
 
 cdef extern from "flint/ulong_extras.h":
     int n_is_prime(unsigned long n)

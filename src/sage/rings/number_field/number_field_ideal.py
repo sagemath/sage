@@ -51,7 +51,6 @@ from sage.rings.finite_rings.constructor import FiniteField
 
 import number_field
 
-from sage.libs.all import pari_gen, PariError
 from sage.rings.ideal import (Ideal_generic, Ideal_fractional)
 from sage.misc.misc import prod
 from sage.misc.mrange import xmrange_iter
@@ -173,6 +172,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
             gens = gens[0]
+        from sage.libs.pari.all import pari_gen
         if len(gens) == 1 and isinstance(gens[0], pari_gen):
             # Init from PARI
             gens = gens[0]
@@ -2448,6 +2448,7 @@ class NumberFieldFractionalIdeal(NumberFieldIdeal):
             sage: bid.getattr('clgp')
             [2, [2]]
         """
+        from sage.libs.pari.all import PariError
         try:
             bid = self._bid
             if flag==2:

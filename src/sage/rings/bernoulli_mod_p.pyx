@@ -28,7 +28,6 @@ import sage.rings.arith
 
 from sage.libs.ntl import all as ntl
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-import sage.libs.pari.gen
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.bernmm import bernmm_bern_modp
 
@@ -122,7 +121,7 @@ def bernoulli_mod_p(int p):
     if p <= 2:
         raise ValueError, "p (=%s) must be a prime >= 3"%p
 
-    if not sage.libs.pari.gen.pari(p).isprime():
+    if not sage.rings.arith.is_prime(p):
         raise ValueError, "p (=%s) must be a prime"%p
 
     cdef int g, gSqr, gInv, gInvSqr, isOdd
@@ -287,7 +286,7 @@ def bernoulli_mod_p_single(long p, long k):
     if p <= 2:
         raise ValueError, "p (=%s) must be a prime >= 3"%p
 
-    if not sage.libs.pari.gen.pari(p).isprime():
+    if not sage.rings.arith.is_prime(p):
         raise ValueError, "p (=%s) must be a prime"%p
 
     R = Integers(p)

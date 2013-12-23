@@ -86,7 +86,6 @@ from sage.structure.parent_gens import localvars
 from sage.misc.cachefunc import cached_method
 
 import sage.libs.ntl.all as ntl
-import sage.libs.pari.all as pari
 import sage.interfaces.gap
 import sage.rings.arith
 
@@ -200,7 +199,7 @@ from sage.structure.parent_gens import ParentWithGens
 import number_field_element
 import number_field_element_quadratic
 from number_field_ideal import is_NumberFieldIdeal, NumberFieldFractionalIdeal
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari, pari_gen
 
 QQ = rational_field.RationalField()
 ZZ = integer_ring.IntegerRing()
@@ -7730,9 +7729,7 @@ class NumberField_absolute(NumberField_generic):
         a = self(a)
         b = self(b)
         if P is None:
-            # We MUST convert a and b to pari before calling the function
-            # to work around Trac #11868 -- Jeroen Demeyer
-            return pari(self).nfhilbert(pari(a), pari(b))
+            return pari(self).nfhilbert(a, b)
 
         from sage.rings.morphism import is_RingHomomorphism
         if is_RingHomomorphism(P):
@@ -7759,9 +7756,7 @@ class NumberField_absolute(NumberField_generic):
             raise ValueError, "P (=%s) should be an ideal of self (=%s) in hilbert_symbol, not of %s" % (P, self, P.number_field())
         if not P.is_prime():
             raise ValueError, "Non-prime ideal P (=%s) in hilbert_symbol" % P
-        # We MUST convert a and b to pari before calling the function
-        # to work around Trac #11868 -- Jeroen Demeyer
-        return pari(self).nfhilbert(pari(a), pari(b), P.pari_prime())
+        return pari(self).nfhilbert(a, b, P.pari_prime())
 
     def hilbert_conductor(self,a,b):
         """

@@ -493,6 +493,71 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 codomain = on_basis(self.one_basis()).parent()
                 return self.module_morphism(on_basis=on_basis, codomain=codomain)
 
+            def to_ncsym_on_basis(self, I):
+                r"""
+                The image of the basis element indexed by ``I`` under the
+                map `\kappa` to the symmetric functions in non-commuting
+                variables such that for the natural maps `\chi : NCSym \to Sym`
+                and `\rho : NSym \to Sym`, we have `\chi \circ \kappa = \rho`.
+
+                This default implementation does a change of basis and
+                computes the image in the complete basis.
+
+                INPUT:
+
+                - ``I`` -- a composition
+
+                EXAMPLES::
+
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S.to_ncsym(S[2,1])
+                    1/2*m{{1}, {2}, {3}} + 1/2*m{{1}, {2, 3}} + m{{1, 2}, {3}}
+                     + m{{1, 2, 3}} + 1/2*m{{1, 3}, {2}}
+                    sage: R = NonCommutativeSymmetricFunctions(QQ).R()
+                    sage: R.to_ncsym_on_basis(Composition([2,1]))
+                    1/3*m{{1}, {2}, {3}} + 1/6*m{{1}, {2, 3}} + 2/3*m{{1, 2}, {3}} + 1/6*m{{1, 3}, {2}}
+                """
+                S = self.realization_of().complete()
+                return S.to_ncsym(S(self[I]))
+
+            @lazy_attribute
+            def to_ncsym(self):
+                r"""
+                Morphism `\kappa` of ``self`` to the algebra of symmetric
+                functions in non-commuting variables that for the natural
+                maps `\chi : NCSym \to Sym` and `\rho : NSym \to Sym`, we
+                have `\chi \circ \kappa = \rho`.
+
+                This is constructed by extending the method
+                :meth:`to_ncsym_on_basis` linearly.
+
+                EXAMPLES::
+
+                    sage: N = NonCommutativeSymmetricFunctions(QQ)
+                    sage: R = N.ribbon()
+                    sage: x = R.an_element(); x
+                    2*R[] + 2*R[1] + 3*R[1, 1]
+                    sage: R.to_ncsym(x)
+                    2*m{} + 2*m{{1}} + 3/2*m{{1}, {2}}
+                    sage: S = N.complete()
+                    sage: S.to_ncsym(S[1,2])
+                    1/2*m{{1}, {2}, {3}} + m{{1}, {2, 3}} + 1/2*m{{1, 2}, {3}}
+                     + m{{1, 2, 3}} + 1/2*m{{1, 3}, {2}}
+                    sage: Phi = N.Phi()
+                    sage: Phi.to_ncsym(Phi[1,3])
+                    -1/4*m{{1}, {2}, {3, 4}} - 1/4*m{{1}, {2, 3}, {4}} + m{{1}, {2, 3, 4}}
+                     + 1/2*m{{1}, {2, 4}, {3}} - 1/4*m{{1, 2}, {3, 4}} - 1/4*m{{1, 2, 3}, {4}}
+                     + m{{1, 2, 3, 4}} + 1/2*m{{1, 2, 4}, {3}} + 1/2*m{{1, 3}, {2, 4}}
+                     - 1/4*m{{1, 3, 4}, {2}} - 1/4*m{{1, 4}, {2, 3}}
+                    sage: R.to_ncsym
+                    Generic morphism:
+                      From: Non-Commutative Symmetric Functions over the Rational Field in the Ribbon basis
+                      To:   Symmetric functions in non-commuting variables over the Rational Field in the monomial basis
+                """
+                from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
+                codomain = SymmetricFunctionsNonCommutingVariables(self.base_ring()).monomial()
+                return self.module_morphism(self.to_ncsym_on_basis, codomain=codomain)
+
         class ElementMethods:
 
             def verschiebung(self, n):
@@ -728,6 +793,26 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 return self.parent().to_symmetric_function(self)
 
             chi = to_symmetric_function
+
+            def to_ncsym(self):
+                r"""
+                Return the image of ``self`` in the symmetric functions in
+                non-commuting variables under the map that fixes the usual
+                symmetric functions.
+
+                EXAMPLES::
+
+                    sage: N = NonCommutativeSymmetricFunctions(QQ)
+                    sage: R = N.ribbon()
+                    sage: x = R.an_element(); x
+                    2*R[] + 2*R[1] + 3*R[1, 1]
+                    sage: x.to_ncsym()
+                    2*m{} + 2*m{{1}} + 3/2*m{{1}, {2}}
+                    sage: y = N.Phi()[1,2]
+                    sage: y.to_ncsym()
+                    m{{1}, {2, 3}} + m{{1, 2, 3}}
+                """
+                return self.parent().to_ncsym(self)
 
     class MultiplicativeBases(Category_realization_of_parent):
         """
@@ -1353,7 +1438,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 sage: S = NonCommutativeSymmetricFunctions(QQ).complete()
                 sage: TestSuite(S).run()
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='S', bracket=False,
@@ -1496,6 +1580,66 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 for p in Permutations(descents=(K,n)):
                     x += sga(p)
             return x
+
+        def to_ncsym_on_basis(self, I):
+            r"""
+            Return the image of the complete non-commutative symmetric function
+            in the symmetric functions in non-commuting variables under the
+            embedding `\mathcal{I}` which fixes the symmetric functions.
+
+            This map is defined by
+
+            .. MATH::
+
+                S_n \mapsto \sum_{A \vdash [n]}
+                \frac{\lambda(A)! \lambda(A)^!}{n!} \mathbf{m}_A
+
+            and extended as an algebra homomorphism.
+
+            EXAMPLES::
+
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
+                sage: S.to_ncsym_on_basis(Composition([2]))
+                1/2*m{{1}, {2}} + m{{1, 2}}
+                sage: S.to_ncsym_on_basis(Composition([1,2,1]))
+                1/2*m{{1}, {2}, {3}, {4}} + 1/2*m{{1}, {2}, {3, 4}} + m{{1}, {2, 3}, {4}}
+                 + m{{1}, {2, 3, 4}} + 1/2*m{{1}, {2, 4}, {3}} + 1/2*m{{1, 2}, {3}, {4}}
+                 + 1/2*m{{1, 2}, {3, 4}} + m{{1, 2, 3}, {4}} + m{{1, 2, 3, 4}}
+                 + 1/2*m{{1, 2, 4}, {3}} + 1/2*m{{1, 3}, {2}, {4}} + 1/2*m{{1, 3}, {2, 4}}
+                 + 1/2*m{{1, 3, 4}, {2}} + 1/2*m{{1, 4}, {2}, {3}} + m{{1, 4}, {2, 3}}
+                sage: S.to_ncsym_on_basis(Composition([]))
+                m{}
+
+            TESTS:
+
+            Check that the image under `\mathcal{I}` fixes the
+            symmetric functions::
+
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
+                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).monomial()
+                sage: mon = SymmetricFunctions(QQ).monomial()
+                sage: all(S[c].to_ncsym().to_symmetric_function() == S[c].to_symmetric_function()
+                ....:     for i in range(5) for c in Compositions(i))
+                True
+
+            We also check that the `NCSym` monomials agree on the homogeneous
+            and complete basis::
+
+                sage: h = SymmetricFunctions(QQ).h()
+                sage: all(m.from_symmetric_function(h[i]) == S[i].to_ncsym() for i in range(6))
+                True
+            """
+            from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
+            m = SymmetricFunctionsNonCommutingVariables(self.base_ring()).m()
+            if I == []:
+                return m.one()
+
+            from sage.combinat.set_partition import SetPartitions
+            R = self.base_ring()
+            P = SetPartitions()
+            c_num = lambda A: prod([factorial(i) for i in A.shape()], R.one())
+            return prod(m.sum_of_terms([(P(A), R(c_num(A) / factorial(n))) for A in SetPartitions(n)], distinct=True)
+                        for n in I)
 
     S = complete = Complete
 

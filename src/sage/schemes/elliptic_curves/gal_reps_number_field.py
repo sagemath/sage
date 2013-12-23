@@ -8,19 +8,19 @@ the is_surjective and non_surjective methods in ell_number_field.py.
 
 EXAMPLES::
 
-sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
-sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
-sage: rho = E.galois_representation()
-sage: rho.is_surjective(29) # Cyclotomic character not surjective.
-False
-sage: rho.is_surjective(31) # See Section 5.10 of [Serre72].
-True
-sage: rho.non_surjective()
-[3, 5, 29]
+    sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
+    sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
+    sage: rho = E.galois_representation()
+    sage: rho.is_surjective(29) # Cyclotomic character not surjective.
+    False
+    sage: rho.is_surjective(31) # See Section 5.10 of [Serre72].
+    True
+    sage: rho.non_surjective()  # long time (8s on sage.math, 2013)
+    [3, 5, 29]
 
-sage: E = EllipticCurve_from_j(1728).change_ring(K) # CM
-sage: E.galois_representation().non_surjective()
-[0]
+    sage: E = EllipticCurve_from_j(1728).change_ring(K) # CM
+    sage: E.galois_representation().non_surjective()
+    [0]
 
 AUTHORS:
 
@@ -174,7 +174,7 @@ class GaloisRepresentation(SageObject):
             sage: K = NumberField(x**2 + 3, 'a'); a = K.gen()
             sage: E = EllipticCurve([0, -1, 1, -10, -20]).change_ring(K) # X_0(11)
             sage: rho = E.galois_representation()
-            sage: rho.non_surjective()
+            sage: rho.non_surjective()  # long time (8s on sage.math, 2013)
             [3, 5]
             sage: K = NumberField(x**2 + 1, 'a'); a = K.gen()
             sage: E = EllipticCurve_from_j(1728).change_ring(K) # CM

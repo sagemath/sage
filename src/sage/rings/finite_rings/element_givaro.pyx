@@ -1288,9 +1288,24 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             a + 2
             sage: ~a*a
             1
+
+        TEST:
+
+        Check that trying to invert zero raises an error
+        (see :trac:`12217`)::
+
+            sage: F = GF(25, 'a')
+            sage: z = F(0)
+            sage: ~z
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: division by zero in Finite Field in a of size 5^2
+
         """
         cdef int r
-
+        if (<FiniteField_givaroElement>self).element == 0:
+            raise ZeroDivisionError('division by zero in %s'
+                                    % self.parent())
         self._cache.objectptr.inv(r, self.element)
         return make_FiniteField_givaroElement(self._cache,r)
 
@@ -1813,6 +1828,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         #copied from element_ext_pari.py
         cdef Cache_givaro cache = self._cache
+        if self == 0:
+            return '0*Z(%s)'%cache.order_c()
         F = self.parent()
         if F.degree() == 1:
             # Find the root of unity used by Gap.  See _gap_init_ in sage.rings.finite_rings.integer_mod
@@ -1825,8 +1842,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             raise NotImplementedError, "conversion of (Givaro) finite field element to GAP not implemented except for fields defined by Conway polynomials."
         if cache.order_c() > 65536:
             raise TypeError, "order (=%s) must be at most 65536."%F.order_c()
-        if self == 0:
-            return '0*Z(%s)'%cache.order_c()
         g = F.multiplicative_generator()
         n = self.log(g)
         return 'Z(%s)^%s'%(cache.order_c(), n)

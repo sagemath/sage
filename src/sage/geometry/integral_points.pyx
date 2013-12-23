@@ -280,10 +280,15 @@ def simplex_points(vertices):
         sage: v = [(4,-1,-1,-1), (-1,4,-1,-1), (-1,-1,4,-1), (-1,-1,-1,4), (-1,-1,-1,-1)]
         sage: P4mirror = Polyhedron(v); P4mirror
         A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
-        sage: len( simplex_points(P4mirror.Vrepresentation()) )
+        sage: len(simplex_points(P4mirror.Vrepresentation()))
         126
+
+        sage: vertices = map(vector, [(1,2,3), (2,3,7), (-2,-3,-11)])
+        sage: for v in vertices: v.set_immutable()
+        sage: simplex_points(vertices)
+        ((-2, -3, -11), (0, 0, -2), (1, 2, 3), (2, 3, 7))
     """
-    rays = [ vector(ZZ, v) for v in vertices ]
+    rays = [vector(ZZ, list(v)) for v in vertices]
     if len(rays)==0:
         return tuple()
     origin = rays.pop()

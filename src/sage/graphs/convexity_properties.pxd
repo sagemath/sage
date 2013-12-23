@@ -1,4 +1,4 @@
-include "sage/misc/bitset_pxd.pxi"
+from sage.misc.bitset cimport bitset_t
 
 cdef class ConvexityProperties:
     cdef int _n

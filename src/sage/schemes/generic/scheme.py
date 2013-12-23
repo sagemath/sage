@@ -297,7 +297,7 @@ class Scheme(Parent):
         return self.point(args)
 
     @cached_method
-    def point_homset(self, S = None):
+    def point_homset(self, S=None):
         """
         Return the set of S-valued points of this scheme.
 
@@ -738,10 +738,10 @@ class Scheme(Parent):
 
         INPUT:
 
-        -  ``n`` - the number of terms of the power series to
+        -  ``n`` -- the number of terms of the power series to
            compute
 
-        -  ``t`` - the variable which the series should be
+        -  ``t`` -- the variable which the series should be
            returned
 
 
@@ -770,8 +770,11 @@ class Scheme(Parent):
 
         F = self.base_ring()
         if not F.is_finite():
-            raise TypeError, "Zeta functions only defined for schemes over finite fields"
-        a = self.count_points(n)
+            raise TypeError('zeta functions only defined for schemes over finite fields')
+        try:
+            a = self.count_points(n)
+        except AttributeError:
+            raise NotImplementedError('count_points() required but not implemented')
         R = PowerSeriesRing(Rationals(), 'u')
         u = R.gen()
         temp = sum(a[i-1]*(u.O(n+1))**i/i for i in range(1,n+1))
@@ -853,3 +856,4 @@ class AffineScheme(Scheme):
                 import spec
                 Y = spec.Spec(x.domain())
         return Scheme.hom(self, x, Y)
+

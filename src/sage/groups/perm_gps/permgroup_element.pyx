@@ -218,10 +218,9 @@ def standardize_generator(g, convert_dict=None):
     """
     from sage.interfaces.gap import GapElement
     from sage.combinat.permutation import Permutation
-    from sage.libs.pari.gen import gen
-    from sage.combinat.permutation import Permutation
+    from sage.libs.pari.all import pari_gen
 
-    if isinstance(g, gen):
+    if isinstance(g, pari_gen):
         g = list(g)
 
     needs_conversion = True

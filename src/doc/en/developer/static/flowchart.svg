@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="17cm" height="24cm" viewBox="-29 3 332 478" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="118.25" y="4" width="51.5" height="23.7"/>
+    <path style="fill: #ffffff" d="M 118.25,4 A 10,10 0 0 0 108.25,14 L 118.25,14 z"/>
+    <path style="fill: #ffffff" d="M 179.75,14 A 10,10 0 0 0 169.75,4 L 169.75,14 z"/>
+    <rect style="fill: #ffffff" x="108.25" y="14" width="71.5" height="3.7"/>
+    <path style="fill: #ffffff" d="M 108.25,17.7 A 10,10 0 0 0 118.25,27.7 L 118.25,17.7 z"/>
+    <path style="fill: #ffffff" d="M 169.75,27.7 A 10,10 0 0 0 179.75,17.7 L 169.75,17.7 z"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="118.25" y1="4" x2="169.75" y2="4"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="118.25" y1="27.7" x2="169.75" y2="27.7"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 118.25,4 A 10,10 0 0 0 108.25,14"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 179.75,14 A 10,10 0 0 0 169.75,4"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="108.25" y1="14" x2="108.25" y2="17.7"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="179.75" y1="14" x2="179.75" y2="17.7"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 108.25,17.7 A 10,10 0 0 0 118.25,27.7"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 169.75,27.7 A 10,10 0 0 0 179.75,17.7"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="144" y="18.9">
+      <tspan x="144" y="18.9">Open Ticket</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="102.35" y="48" width="83.3" height="36.4"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="102.35" y="48" width="83.3" height="36.4"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="144" y="62.9">
+      <tspan x="144" y="62.9">Create branch</tspan>
+      <tspan x="144" y="75.6">on trac</tspan>
+    </text>
+  </g>
+  <g>
+    <polygon style="fill: #ff7b7b" points="144,132 182,165.877 144,199.753 106,165.877 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="144,132 182,165.877 144,199.753 106,165.877 "/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="144" y="168.927">
+      <tspan x="144" y="168.927">Review</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="144" y1="29.7" x2="144" y2="37.382"/>
+    <polygon style="fill: #000000" points="144,44.882 139,34.882 144,37.382 149,34.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="144,44.882 139,34.882 144,37.382 149,34.882 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="144" y1="86.4" x2="144" y2="121.382"/>
+    <polygon style="fill: #000000" points="144,128.882 139,118.882 144,121.382 149,118.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="144,128.882 139,118.882 144,121.382 149,118.882 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="215" y="147.677" width="79.95" height="36.4"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="215" y="147.677" width="79.95" height="36.4"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="254.975" y="162.577">
+      <tspan x="254.975" y="162.577">Fill in Author</tspan>
+      <tspan x="254.975" y="175.277">and Reviewer</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="184" y1="165.877" x2="204.164" y2="165.877"/>
+    <polygon style="fill: #000000" points="211.664,165.877 201.664,170.877 204.164,165.877 201.664,160.877 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="211.664,165.877 201.664,170.877 204.164,165.877 201.664,160.877 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="218" y="212" width="73.95" height="28"/>
+    <path style="fill: #ffffff" d="M 218,212 A 10,10 0 0 0 208,222 L 218,222 z"/>
+    <path style="fill: #ffffff" d="M 301.95,222 A 10,10 0 0 0 291.95,212 L 291.95,222 z"/>
+    <rect style="fill: #ffffff" x="208" y="222" width="93.95" height="8"/>
+    <path style="fill: #ffffff" d="M 208,230 A 10,10 0 0 0 218,240 L 218,230 z"/>
+    <path style="fill: #ffffff" d="M 291.95,240 A 10,10 0 0 0 301.95,230 L 291.95,230 z"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="218" y1="212" x2="291.95" y2="212"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="218" y1="240" x2="291.95" y2="240"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 218,212 A 10,10 0 0 0 208,222"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 301.95,222 A 10,10 0 0 0 291.95,212"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="208" y1="222" x2="208" y2="230"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="301.95" y1="222" x2="301.95" y2="230"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 208,230 A 10,10 0 0 0 218,240"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" d="M 291.95,240 A 10,10 0 0 0 301.95,230"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="254.975" y="229.05">
+      <tspan x="254.975" y="229.05">Merge into Sage</tspan>
+    </text>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="144,224 200,280 144,336 88,280 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="144,224 200,280 144,336 88,280 "/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="144" y="276.7">
+      <tspan x="144" y="276.7">Who makes</tspan>
+      <tspan x="144" y="289.4">corrections?</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ff7b7b" x="8" y="308" width="64" height="24"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="8" y="308" width="64" height="24"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="40" y="323.05">
+      <tspan x="40" y="323.05">Comment</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ff7b7b" x="216.55" y="308" width="54.9" height="24"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="216.55" y="308" width="54.9" height="24"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="244" y="323.05">
+      <tspan x="244" y="323.05">Commit</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ff7b7b" x="220" y="352" width="48" height="23.7"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="220" y="352" width="48" height="23.7"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="244" y="366.9">
+      <tspan x="244" y="366.9">Upload</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ff7b7b" x="192" y="400" width="104" height="24"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="192" y="400" width="104" height="24"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="244" y="415.05">
+      <tspan x="244" y="415.05">Change "Branch"</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #76a9fc" x="-10.15" y="352" width="100.3" height="23.7"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="-10.15" y="352" width="100.3" height="23.7"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="40" y="366.9">
+      <tspan x="40" y="366.9">Commit response</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #76a9fc" x="16" y="396" width="48" height="23.7"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="16" y="396" width="48" height="23.7"/>
+    <text font-size="10.16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="40" y="410.9">
+      <tspan x="40" y="410.9">Upload</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="254.975" y1="186.077" x2="254.975" y2="201.382"/>
+    <polygon style="fill: #000000" points="254.975,208.882 249.975,198.882 254.975,201.382 259.975,198.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="254.975,208.882 249.975,198.882 254.975,201.382 259.975,198.882 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="144" y1="201.753" x2="144" y2="213.382"/>
+    <polygon style="fill: #000000" points="144,220.882 139,210.882 144,213.382 149,210.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="144,220.882 139,210.882 144,213.382 149,210.882 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="40" y1="334" x2="40" y2="340.876"/>
+    <polygon style="fill: #000000" points="40,348.376 35,338.376 40,340.876 45,338.376 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="40,348.376 35,338.376 40,340.876 45,338.376 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="40" y1="378.193" x2="40" y2="384.889"/>
+    <polygon style="fill: #000000" points="40,392.389 35,382.389 40,384.889 45,382.389 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="40,392.389 35,382.389 40,384.889 45,382.389 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="244" y1="334" x2="244" y2="340.876"/>
+    <polygon style="fill: #000000" points="244,348.376 239,338.376 244,340.876 249,338.376 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="244,348.376 239,338.376 244,340.876 249,338.376 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="244" y1="377.7" x2="244" y2="389.382"/>
+    <polygon style="fill: #000000" points="244,396.882 239,386.882 244,389.382 249,386.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="244,396.882 239,386.882 244,389.382 249,386.882 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="40,419.7 40,460 -28,460 -28.054,108.394 135.382,108.21 "/>
+    <polygon style="fill: #000000" points="142.882,108.201 132.888,113.213 135.382,108.21 132.876,103.213 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="142.882,108.201 132.888,113.213 135.382,108.21 132.876,103.213 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="244,424 244,460 208.618,460 "/>
+    <polygon style="fill: #000000" points="201.118,460 211.118,455 208.618,460 211.118,465 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="201.118,460 211.118,455 208.618,460 211.118,465 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="88,280 40,280 40,299.382 "/>
+    <polygon style="fill: #000000" points="40,306.882 35,296.882 40,299.382 45,296.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="40,306.882 35,296.882 40,299.382 45,296.882 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="200,280 244,280 244,299.382 "/>
+    <polygon style="fill: #000000" points="244,306.882 239,296.882 244,299.382 249,296.882 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="244,306.882 239,296.882 244,299.382 249,296.882 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="100" y="440" width="100" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="100" y="440" width="100" height="40"/>
+    <text font-size="10.1598" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="150" y="456.7">
+      <tspan x="150" y="456.7">Author/Reviewer</tspan>
+      <tspan x="150" y="469.4">switch roles</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="98" y1="460" x2="50.618" y2="460"/>
+    <polygon style="fill: #000000" points="43.118,460 53.118,455 50.618,460 53.118,465 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="43.118,460 53.118,455 50.618,460 53.118,465 "/>
+  </g>
+  <text font-size="5.64444" style="fill: #0000ff;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="88.4881" y="374.182">
+    <tspan x="88.4881" y="374.182">Author</tspan>
+  </text>
+  <text font-size="11.2889" style="fill: #76a9fc;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="40" y="276">
+    <tspan x="40" y="276">Author</tspan>
+  </text>
+  <text font-size="11.2889" style="fill: #ff7b7b;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="244" y="276">
+    <tspan x="244" y="276">Reviewer</tspan>
+  </text>
+  <text font-size="5.64436" style="fill: #0000ff;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="62.3256" y="418.182">
+    <tspan x="62.3256" y="418.182">Author</tspan>
+  </text>
+  <text font-size="5.64436" style="fill: #ff0000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="70.0554" y="330.181">
+    <tspan x="70.0554" y="330.181">Reviewer</tspan>
+  </text>
+  <text font-size="5.64436" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="258.544" y="238.018">
+    <tspan x="258.544" y="238.018">Release Manager</tspan>
+  </text>
+  <text font-size="5.64436" style="fill: #ff0000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="269.739" y="330.02">
+    <tspan x="269.739" y="330.02">Reviewer</tspan>
+  </text>
+  <text font-size="5.64436" style="fill: #ff0000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="267.42" y="373.961">
+    <tspan x="267.42" y="373.961">Reviewer</tspan>
+  </text>
+  <text font-size="5.64436" style="fill: #ff0000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="294.236" y="422.065">
+    <tspan x="294.236" y="422.065">Reviewer</tspan>
+  </text>
+</svg>

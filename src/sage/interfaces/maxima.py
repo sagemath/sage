@@ -543,7 +543,7 @@ class Maxima(MaximaAbstract, Expect):
         MaximaAbstract.__init__(self,"maxima")
         Expect.__init__(self,
                         name = 'maxima',
-                        prompt = '\(\%i[0-9]+\)',
+                        prompt = '\(\%i[0-9]+\) ',
                         command = 'maxima --userdir="%s" -p "%s"'%(SAGE_MAXIMA_DIR,STARTUP),
                         maxread = 10000,
                         script_subdirectory = script_subdirectory,
@@ -552,8 +552,10 @@ class Maxima(MaximaAbstract, Expect):
                         init_code = init_code,
                         logfile = logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
-        self._display_prompt = '<sage-display>'  # must match what is in the file local/bin/sage-maxima.lisp!!
-        self._output_prompt_re = re.compile('\(\%o[0-9]+\)')
+        # Must match what is in the file local/bin/sage-maxima.lisp
+        self._display_prompt = '<sage-display>'
+        # See #15440 for the importance of the trailing space
+        self._output_prompt_re = re.compile('\(\%o[0-9]+\) ')
         self._ask = ['zero or nonzero?', 'an integer?', 'positive, negative, or zero?',
                      'positive or negative?', 'positive or zero?']
         self._prompt_wait = [self._prompt] + [re.compile(x) for x in self._ask] + \
@@ -756,51 +758,20 @@ class Maxima(MaximaAbstract, Expect):
             return
         assert line_echo.strip() == line.strip(), 'mismatch:\n' + line_echo + line
 
-        # This broke in maxima-5.22.1 as discussed in
-        # http://trac.sagemath.org/sage_trac/ticket/10187
-        #self._expect_expr(self._display_prompt)
-        #pre_out = self._before()
-        #self._expect_expr()
-        #out = self._before()
-        #
-        # if error_check:
-        #     self._error_check(line, pre_out)
-        #     self._error_check(line, out)
-        #
-        # if not reformat:
-        #     return out
-        #
-        # r = self._output_prompt_re
-        # m = r.search(out)
-        # if m is None:
-        #     o = out[:-2]
-        # else:
-        #     o = out[m.end()+1:-2]
-        # o = ''.join([x.strip() for x in o.split()])
-        # return o
-        #
-        # i = o.rfind('(%o')
-        # return o[:i]
-
         self._expect_expr(self._display_prompt)
         out = self._before()        # input echo + output prompt + output
         if error_check:
             self._error_check(line, out)
-
         if not reformat:
             return out
 
         self._expect_expr()
         assert len(self._before())==0, 'Maxima expect interface is confused!'
-
         r = self._output_prompt_re
         m = r.search(out)
-        if m is None:
-            o = out[:-2]
-        else:
-            o = out[m.end()+1:-2]
-        o = ''.join([x.strip() for x in o.split()])
-        return o
+        if m is not None:
+            out = out[m.end():]
+        return re.sub('\s+', '', out)
 
     def _synchronize(self):
         """

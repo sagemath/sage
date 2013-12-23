@@ -257,7 +257,7 @@ def code2leon(C):
 
     EXAMPLES::
 
-        sage: C = HammingCode(3,GF(2)); C
+        sage: C = codes.HammingCode(3,GF(2)); C
         Linear code of length 7, dimension 4 over Finite Field of size 2
         sage: file_loc = sage.coding.linear_code.code2leon(C)
         sage: f = open(file_loc); print f.read()
@@ -813,7 +813,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: G = C.automorphism_group_binary_code(); G
             doctest:...: DeprecationWarning: This function is deprecated...
             Permutation Group with generators [(4,5)(6,7), (4,6)(5,7), (2,3)(6,7), (2,4)(3,5), (1,2)(5,6)]
@@ -836,7 +836,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: [list(c) for c in C if c.hamming_weight() < 4]
             [[0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1, 1],
              [0, 1, 0, 0, 1, 0, 1], [0, 0, 1, 0, 1, 1, 0],
@@ -853,7 +853,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.ambient_space()
             Vector space of dimension 7 over Finite Field of size 2
         """
@@ -920,7 +920,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = ExtendedBinaryGolayCode()             #  example 1
+            sage: C = codes.ExtendedBinaryGolayCode()             #  example 1
             sage: C.assmus_mattson_designs(5)
             ['weights from C: ',
             [8, 12, 16, 24],
@@ -982,7 +982,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3, GF(2))
+            sage: C = codes.HammingCode(3, GF(2))
             sage: C.basis()
             [(1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1), (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1)]
         """
@@ -1007,7 +1007,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.binomial_moment(2)
             0
             sage: C.binomial_moment(4)    # long time
@@ -1052,7 +1052,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: vector((1, 0, 0, 0, 0, 1, 1)) in C   # indirect doctest
             True
             sage: vector((1, 0, 0, 0, 2, 1, 1)) in C   # indirect doctest
@@ -1070,7 +1070,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.characteristic()
             2
         """
@@ -1083,7 +1083,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = ExtendedBinaryGolayCode()
+            sage: C = codes.ExtendedBinaryGolayCode()
             sage: C.characteristic_polynomial()
             -4/3*x^3 + 64*x^2 - 2816/3*x + 4096
 
@@ -1108,10 +1108,10 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.chinen_polynomial()       # long time
             1/5*(2*sqrt(2)*t^3 + 2*sqrt(2)*t^2 + 2*t^2 + sqrt(2)*t + 2*t + 1)/(sqrt(2) + 1)
-            sage: C = TernaryGolayCode()
+            sage: C = codes.TernaryGolayCode()
             sage: C.chinen_polynomial()       # long time
             1/7*(3*sqrt(3)*t^3 + 3*sqrt(3)*t^2 + 3*t^2 + sqrt(3)*t + 3*t + 1)/(sqrt(3) + 1)
 
@@ -1172,7 +1172,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: MS = MatrixSpace(GF(2),4,7)
             sage: G = MS([1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1])
             sage: G
@@ -1199,7 +1199,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: Cperp = C.dual_code()
             sage: C; Cperp
             Linear code of length 7, dimension 4 over Finite Field of size 2
@@ -1243,7 +1243,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(5,GF(2))
+            sage: C = codes.HammingCode(5,GF(2))
             sage: C.covering_radius()  # optional - gap_packages (Guava package)
             1
         """
@@ -1279,7 +1279,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: MS = MatrixSpace(GF(2),1,7)
             sage: F = GF(2); a = F.gen()
             sage: v1 = [a,a,F(0),a,a,F(0),a]
@@ -1297,12 +1297,12 @@ class LinearCode(module.Module_old):
             (1, 1, 0, 1, 0, 0, 1)
             sage: c in C
             True
-            sage: C = HammingCode(2,GF(5))
+            sage: C = codes.HammingCode(2,GF(5))
             sage: v = vector(GF(5),[1,0,0,2,1,0])
             sage: C.decode(v)
             (1, 0, 0, 2, 2, 0)
             sage: F.<a> = GF(4)
-            sage: C = HammingCode(2,F)
+            sage: C = codes.HammingCode(2,F)
             sage: v = vector(F, [1,0,0,a,1])
             sage: C.decode(v)
             (a + 1, 0, 0, a, 1)
@@ -1337,10 +1337,10 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = ExtendedBinaryGolayCode()
+            sage: C = codes.ExtendedBinaryGolayCode()
             sage: C.divisor()   # Type II self-dual
             4
-            sage: C = QuadraticResidueCodeEvenPair(17,GF(2))[0]
+            sage: C = codes.QuadraticResidueCodeEvenPair(17,GF(2))[0]
             sage: C.divisor()
             2
         """
@@ -1366,10 +1366,10 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.dual_code()
             Linear code of length 7, dimension 3 over Finite Field of size 2
-            sage: C = HammingCode(3,GF(4,'a'))
+            sage: C = codes.HammingCode(3,GF(4,'a'))
             sage: C.dual_code()
             Linear code of length 21, dimension 3 over Finite Field in a of size 2^2
         """
@@ -1408,7 +1408,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2))
+            sage: C1 = codes.HammingCode(3,GF(2))
             sage: C2 = C1.direct_sum(C1); C2
             Linear code of length 14, dimension 8 over Finite Field of size 2
             sage: C3 = C1.direct_sum(C2); C3
@@ -1437,8 +1437,8 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2))
-            sage: C2 = HammingCode(3,GF(2))
+            sage: C1 = codes.HammingCode(3,GF(2))
+            sage: C2 = codes.HammingCode(3,GF(2))
             sage: C1 == C2
             True
             sage: C2 = C1.extended_code()
@@ -1480,7 +1480,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(4,'a'))
+            sage: C = codes.HammingCode(3,GF(4,'a'))
             sage: C
             Linear code of length 21, dimension 18 over Finite Field in a of size 2^2
             sage: Cx = C.extended_code()
@@ -1504,7 +1504,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(4,'a'))
+            sage: C = codes.HammingCode(3,GF(4,'a'))
             sage: Cc = C.galois_closure(GF(2))
             sage: C; Cc
             Linear code of length 21, dimension 18 over Finite Field in a of size 2^2
@@ -1578,7 +1578,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: RS = ReedSolomonCode(7, 3, GF(8, 'a'))
+            sage: RS = codes.ReedSolomonCode(7, 3, GF(8, 'a'))
             sage: RS[24]
             (0, a^2 + a, a^2 + a + 1, a^2 + 1, 1, a, a^2)
             sage: RS[24] == RS.list()[24]
@@ -1638,13 +1638,13 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2))
+            sage: C1 = codes.HammingCode(3,GF(2))
             sage: C1.gen_mat()
             [1 0 0 0 0 1 1]
             [0 1 0 0 1 0 1]
             [0 0 1 0 1 1 0]
             [0 0 0 1 1 1 1]
-            sage: C2 = HammingCode(2,GF(4,"a"))
+            sage: C2 = codes.HammingCode(2,GF(4,"a"))
             sage: C2.gen_mat()
             [    1     0     0 a + 1     a]
             [    0     1     0     1     1]
@@ -1678,7 +1678,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.gens()
              [(1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1), (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1)]
         """
@@ -1690,11 +1690,11 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2)); C1
+            sage: C1 = codes.HammingCode(3,GF(2)); C1
             Linear code of length 7, dimension 4 over Finite Field of size 2
             sage: C1.genus()
             1
-            sage: C2 = HammingCode(2,GF(4,"a")); C2
+            sage: C2 = codes.HammingCode(2,GF(4,"a")); C2
             Linear code of length 5, dimension 3 over Finite Field in a of size 2^2
             sage: C2.genus()
             0
@@ -1739,7 +1739,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(3))
+            sage: C = codes.HammingCode(3,GF(3))
             sage: g = SymmetricGroup(13).random_element()
             sage: C.is_permutation_automorphism(g)
             0
@@ -1779,16 +1779,16 @@ class LinearCode(module.Module_old):
 
             sage: P.<x> = PolynomialRing(GF(2),"x")
             sage: g = x^3+x+1
-            sage: C1 = CyclicCodeFromGeneratingPolynomial(7,g); C1
+            sage: C1 = codes.CyclicCodeFromGeneratingPolynomial(7,g); C1
             Linear code of length 7, dimension 4 over Finite Field of size 2
-            sage: C2 = HammingCode(3,GF(2)); C2
+            sage: C2 = codes.HammingCode(3,GF(2)); C2
             Linear code of length 7, dimension 4 over Finite Field of size 2
             sage: C1.is_permutation_equivalent(C2)
             True
             sage: C1.is_permutation_equivalent(C2,algorithm="verbose")
             (True, (3,4)(5,7,6))
-            sage: C1 = RandomLinearCode(10,5,GF(2))
-            sage: C2 = RandomLinearCode(10,5,GF(3))
+            sage: C1 = codes.RandomLinearCode(10,5,GF(2))
+            sage: C2 = codes.RandomLinearCode(10,5,GF(3))
             sage: C1.is_permutation_equivalent(C2)
             False
         """
@@ -1822,10 +1822,10 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = ExtendedBinaryGolayCode()
+            sage: C = codes.ExtendedBinaryGolayCode()
             sage: C.is_self_dual()
             True
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.is_self_dual()
             False
         """
@@ -1841,10 +1841,10 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = ExtendedBinaryGolayCode()
+            sage: C = codes.ExtendedBinaryGolayCode()
             sage: C.is_self_orthogonal()
             True
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.is_self_orthogonal()
             False
             sage: C = QuasiQuadraticResidueCode(11)  # optional - gap_packages (Guava package)
@@ -1859,7 +1859,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(4,"a"))
+            sage: C = codes.HammingCode(3,GF(4,"a"))
             sage: C.is_galois_closed()
             False
         """
@@ -1873,7 +1873,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2))
+            sage: C1 = codes.HammingCode(3,GF(2))
             sage: G1 = C1.gen_mat()
             sage: G2 = G1.matrix_from_rows([0,1,2])
             sage: C2 = LinearCode(G2)
@@ -1890,7 +1890,7 @@ class LinearCode(module.Module_old):
             sage: C5 = C1.shortened([1])
             sage: C5.is_subcode(C1)
             False
-            sage: C1 = HammingCode(3,GF(9,"z"))
+            sage: C1 = codes.HammingCode(3,GF(9,"z"))
             sage: G1 = C1.gen_mat()
             sage: G2 = G1.matrix_from_rows([0,1,2])
             sage: C2 = LinearCode(G2)
@@ -1909,7 +1909,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3, GF(2))
+            sage: C = codes.HammingCode(3, GF(2))
             sage: len(C)
             16
         """
@@ -1921,7 +1921,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.length()
             7
         """
@@ -1933,7 +1933,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: Clist = C.list()
             sage: Clist[5]; Clist[5] in C
             (1, 0, 1, 0, 1, 0, 1)
@@ -1947,7 +1947,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: Cm = magma(C)                 # optional - magma, indirect doctest
             sage: Cm.MinimumWeight()            # optional - magma
             3
@@ -2010,14 +2010,14 @@ class LinearCode(module.Module_old):
 
         Another example.::
 
-            sage: C = HammingCode(2,GF(4,"a")); C
+            sage: C = codes.HammingCode(2,GF(4,"a")); C
             Linear code of length 5, dimension 3 over Finite Field in a of size 2^2
             sage: C.minimum_distance()
             3
 
         TESTS::
 
-            sage: C = HammingCode(2,GF(4,"a"))
+            sage: C = codes.HammingCode(2,GF(4,"a"))
             sage: C.minimum_distance(algorithm='something')
             Traceback (most recent call last):
             ...
@@ -2136,7 +2136,7 @@ class LinearCode(module.Module_old):
 
         ::
 
-            sage: C = ExtendedTernaryGolayCode()
+            sage: C = codes.ExtendedTernaryGolayCode()
             sage: M11 = MathieuGroup(11)
             sage: M11.order()
             7920
@@ -2146,24 +2146,24 @@ class LinearCode(module.Module_old):
 
         Other examples::
 
-            sage: C = ExtendedBinaryGolayCode()
+            sage: C = codes.ExtendedBinaryGolayCode()
             sage: G = C.permutation_automorphism_group()
             sage: G.order()
             244823040
-            sage: C = HammingCode(5, GF(2))
+            sage: C = codes.HammingCode(5, GF(2))
             sage: G = C.permutation_automorphism_group()
             sage: G.order()
             9999360
-            sage: C = HammingCode(2,GF(3)); C
+            sage: C = codes.HammingCode(2,GF(3)); C
             Linear code of length 4, dimension 2 over Finite Field of size 3
             sage: C.permutation_automorphism_group(algorithm="partition")
             Permutation Group with generators [(1,3,4)]
-            sage: C = HammingCode(2,GF(4,"z")); C
+            sage: C = codes.HammingCode(2,GF(4,"z")); C
             Linear code of length 5, dimension 3 over Finite Field in z of size 2^2
             sage: C.permutation_automorphism_group(algorithm="partition")
             Permutation Group with generators [(1,3)(4,5), (1,4)(3,5)]
             sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_packages (Guava package)
-            sage: C = TernaryGolayCode()
+            sage: C = codes.TernaryGolayCode()
             sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_packages (Guava package)
             Permutation Group with generators [(3,4)(5,7)(6,9)(8,11), (3,5,8)(4,11,7)(6,9,10), (2,3)(4,6)(5,8)(7,10), (1,2)(4,11)(5,8)(9,10)]
 
@@ -2259,7 +2259,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: G = C.permutation_automorphism_group(); G
             Permutation Group with generators [(4,5)(6,7), (4,6)(5,7), (2,3)(6,7), (2,4)(3,5), (1,2)(5,6)]
             sage: g = G("(2,3)(6,7)")
@@ -2304,7 +2304,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.punctured([1,2])
             Linear code of length 5, dimension 4 over Finite Field of size 2
         """
@@ -2327,7 +2327,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(4,'a'))
+            sage: C = codes.HammingCode(3,GF(4,'a'))
             sage: C.random_element() # random test
             (1, 0, 0, a + 1, 1, a, a, a + 1, a + 1, 1, 1, 0, a + 1, a, 0, a, a, 0, a, a, 1)
 
@@ -2354,7 +2354,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.gen_mat()
              [1 0 0 0 0 1 1]
              [0 1 0 0 1 0 1]
@@ -2370,7 +2370,7 @@ class LinearCode(module.Module_old):
              [0 1 0 0 1 0 1]
              [0 0 1 0 1 1 0]
              [0 0 0 1 1 1 1]
-            sage: C = HammingCode(2,GF(3))
+            sage: C = codes.HammingCode(2,GF(3))
             sage: C.gen_mat()
             [1 0 1 1]
             [0 1 1 2]
@@ -2452,7 +2452,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2))
+            sage: C1 = codes.HammingCode(3,GF(2))
             sage: C2 = C1.extended_code(); C2
             Linear code of length 8, dimension 4 over Finite Field of size 2
             sage: C2.is_self_dual()
@@ -2519,7 +2519,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C1 = HammingCode(3,GF(2))
+            sage: C1 = codes.HammingCode(3,GF(2))
             sage: C2 = C1.extended_code(); C2
             Linear code of length 8, dimension 4 over Finite Field of size 2
             sage: C2.is_self_dual()
@@ -2582,7 +2582,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.shortened([1,2])
             Linear code of length 5, dimension 2 over Finite Field of size 2
         """
@@ -2621,11 +2621,11 @@ class LinearCode(module.Module_old):
             sage: C.spectrum()
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: F.<z> = GF(2^2,"z")
-            sage: C = HammingCode(2, F); C
+            sage: C = codes.HammingCode(2, F); C
             Linear code of length 5, dimension 3 over Finite Field in z of size 2^2
             sage: C.spectrum()
             [1, 0, 0, 30, 15, 18]
-            sage: C = HammingCode(3,GF(2)); C
+            sage: C = codes.HammingCode(3,GF(2)); C
             Linear code of length 7, dimension 4 over Finite Field of size 2
             sage: C.spectrum(algorithm="leon")   # optional - gap_packages (Guava package)
             [1, 0, 0, 7, 7, 0, 0, 1]
@@ -2633,15 +2633,15 @@ class LinearCode(module.Module_old):
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C.spectrum(algorithm="binary")
             [1, 0, 0, 7, 7, 0, 0, 1]
-            sage: C = HammingCode(3,GF(3)); C
+            sage: C = codes.HammingCode(3,GF(3)); C
             Linear code of length 13, dimension 10 over Finite Field of size 3
             sage: C.spectrum() == C.spectrum(algorithm="leon")   # optional - gap_packages (Guava package)
             True
-            sage: C = HammingCode(2,GF(5)); C
+            sage: C = codes.HammingCode(2,GF(5)); C
             Linear code of length 6, dimension 4 over Finite Field of size 5
             sage: C.spectrum() == C.spectrum(algorithm="leon")   # optional - gap_packages (Guava package)
             True
-            sage: C = HammingCode(2,GF(7)); C
+            sage: C = codes.HammingCode(2,GF(7)); C
             Linear code of length 8, dimension 6 over Finite Field of size 7
             sage: C.spectrum() == C.spectrum(algorithm="leon")   # optional - gap_packages (Guava package)
             True
@@ -2706,7 +2706,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.gen_mat()
             [1 0 0 0 0 1 1]
             [0 1 0 0 1 0 1]
@@ -2759,7 +2759,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.spectrum()
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C.support()
@@ -2790,7 +2790,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.weight_enumerator()
             x^7 + 7*x^4*y^3 + 7*x^3*y^4 + y^7
             sage: C.weight_enumerator(names="st")
@@ -2831,7 +2831,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.zeta_polynomial()
             2/5*T^2 + 2/5*T + 1/5
             sage: C = best_known_linear_code(6,3,GF(2))  # optional - gap_packages (Guava package)
@@ -2839,7 +2839,7 @@ class LinearCode(module.Module_old):
             3
             sage: C.zeta_polynomial()                    # optional - gap_packages (Guava package)
             2/5*T^2 + 2/5*T + 1/5
-            sage: C = HammingCode(4,GF(2))
+            sage: C = codes.HammingCode(4,GF(2))
             sage: C.zeta_polynomial()
             16/429*T^6 + 16/143*T^5 + 80/429*T^4 + 32/143*T^3 + 30/143*T^2 + 2/13*T + 1/13
             sage: F.<z> = GF(4,"z")
@@ -2897,7 +2897,7 @@ class LinearCode(module.Module_old):
 
         EXAMPLES::
 
-            sage: C = HammingCode(3,GF(2))
+            sage: C = codes.HammingCode(3,GF(2))
             sage: C.zeta_function()
             (2/5*T^2 + 2/5*T + 1/5)/(2*T^2 - 3*T + 1)
         """

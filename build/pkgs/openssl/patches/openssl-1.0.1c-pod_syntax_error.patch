@@ -1,0 +1,36 @@
+diff -uNr openssl-1.0.1c-orig/crypto/des/des.pod openssl-1.0.1c-new/crypto/des/des.pod
+--- openssl-1.0.1c-orig/crypto/des/des.pod	2013-01-23 11:17:32.000000000 +0100
++++ openssl-1.0.1c-new/crypto/des/des.pod	2013-01-23 11:17:36.000000000 +0100
+@@ -181,6 +181,8 @@
+ output.  If there is no name specified after the B<-u>, the name text.des
+ will be embedded in the header.
+ 
++=back
++
+ =head1 SEE ALSO
+ 
+ ps(1),
+diff -uNr openssl-1.0.1c-orig/doc/crypto/X509_STORE_CTX_get_error.pod openssl-1.0.1c-new/doc/crypto/X509_STORE_CTX_get_error.pod
+--- openssl-1.0.1c-orig/doc/crypto/X509_STORE_CTX_get_error.pod	2013-01-23 11:17:41.000000000 +0100
++++ openssl-1.0.1c-new/doc/crypto/X509_STORE_CTX_get_error.pod	2013-01-23 11:17:45.000000000 +0100
+@@ -278,6 +278,8 @@
+ an application specific error. This will never be returned unless explicitly
+ set by an application.
+ 
++=back
++
+ =head1 NOTES
+ 
+ The above functions should be used instead of directly referencing the fields
+diff -uNr openssl-1.0.1c-orig/doc/ssl/SSL_CTX_set_client_CA_list.pod openssl-1.0.1c-new/doc/ssl/SSL_CTX_set_client_CA_list.pod
+--- openssl-1.0.1c-orig/doc/ssl/SSL_CTX_set_client_CA_list.pod	2001-04-12 18:02:34.000000000 +0200
++++ openssl-1.0.1c-new/doc/ssl/SSL_CTX_set_client_CA_list.pod	2013-01-23 11:44:24.000000000 +0100
+@@ -70,7 +70,7 @@
+ 
+ The operation succeeded.
+ 
+-=item 0
++=item 2
+ 
+ A failure while manipulating the STACK_OF(X509_NAME) object occurred or
+ the X509_NAME could not be extracted from B<cacert>. Check the error stack

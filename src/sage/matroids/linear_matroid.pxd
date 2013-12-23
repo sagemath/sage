@@ -1,4 +1,4 @@
-include 'sage/misc/bitset_pxd.pxi'
+from sage.misc.bitset cimport bitset_t
 
 from matroid cimport Matroid
 from basis_exchange_matroid cimport BasisExchangeMatroid

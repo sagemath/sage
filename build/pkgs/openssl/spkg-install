@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+cd src
+
+# Apply patches
+echo "Patching openssl..."
+for p in ../patches/*.patch; do
+    patch -p1 <"$p"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+echo
+
+# Building on OS X Lion 64-bit seems to fail unless we build a 64-bit library.
+echo "Configuring openssl..."
+if [ "$UNAME" = "Darwin" ]; then
+    # This check for 64-bit is taken from src/config.
+    ISA64=`(sysctl -n hw.optional.x86_64) 2>/dev/null`
+    if [ "$ISA64" = "1" ]; then
+	# 64-bit
+	./Configure darwin64-x86_64-cc --libdir=lib --prefix="$SAGE_LOCAL" --openssldir="$SAGE_LOCAL"/openssl shared
+    else
+	./config --libdir=lib --prefix="$SAGE_LOCAL" --openssldir="$SAGE_LOCAL"/openssl shared
+    fi
+else
+    ./config --libdir=lib --prefix="$SAGE_LOCAL" --openssldir="$SAGE_LOCAL"/openssl shared
+fi
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring openssl."
+    exit 1
+fi
+echo
+
+# Do not build in parallel.
+MAKE="$MAKE -j1"
+echo "Building openssl..."
+$MAKE
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building openssl."
+    exit 1
+fi
+echo
+
+
+
+echo "Installing openssl..."
+# installing the docs fails often, skip
+$MAKE install_sw
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing openssl."
+    exit 1
+fi

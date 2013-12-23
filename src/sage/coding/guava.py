@@ -3,16 +3,23 @@ Guava error-correcting code constructions.
 
 This module only contains Guava wrappers (Guava is an optional GAP package).
 
-AUTHOR:
-    -- David Joyner (2005-11-22, 2006-12-03): initial version
-    -- Nick Alexander (2006-12-10): factor GUAVA code to guava.py
-    -- David Joyner (2007-05): removed Golay codes, toric and trivial
-                               codes and placed them in code_constructions;
-                               renamed RandomLinearCode->RandomLinearCodeGuava
-    -- David Joyner (2008-03): removed QR, XQR, cyclic and ReedSolomon codes
-    --  " (2009-05): added "optional package" comments, fixed some docstrings to
-                     to be sphinx compatible
+AUTHORS:
 
+- David Joyner (2005-11-22, 2006-12-03): initial version
+
+- Nick Alexander (2006-12-10): factor GUAVA code to guava.py
+
+- David Joyner (2007-05): removed Golay codes, toric and trivial codes and
+  placed them in code_constructions; renamed RandomLinearCode to
+  RandomLinearCodeGuava
+
+- David Joyner (2008-03): removed QR, XQR, cyclic and ReedSolomon codes
+
+- David Joyner (2009-05): added "optional package" comments, fixed some
+  docstrings to to be sphinx compatible
+
+Functions
+---------
 """
 
 #*****************************************************************************
@@ -44,13 +51,16 @@ def BinaryReedMullerCode(r,k):
     in `m` variables.
 
     INPUT:
-        r, k -- positive integers with `2^k>r`.
+
+    - ``r, k`` -- positive integers with `2^k>r`.
 
     OUTPUT:
-        Returns the binary 'Reed-Muller code' with dimension k and order r.
+
+    Returns the binary 'Reed-Muller code' with dimension `k` and order `r`.
 
     EXAMPLE::
-        sage: C = BinaryReedMullerCode(2,4); C  # optional - gap_packages (Guava package)
+
+        sage: C = codes.BinaryReedMullerCode(2,4); C  # optional - gap_packages (Guava package)
         Linear code of length 16, dimension 11 over Finite Field of size 2
         sage: C.minimum_distance()              # optional - gap_packages (Guava package)
         4
@@ -88,20 +98,25 @@ def QuasiQuadraticResidueCode(p):
     matrix whose top row is `(0,y_1,...,y_{p-1})`, where `x_i+y_i=1` for all `i`.
 
     INPUT:
-        p -- a prime >2.
+
+    - ``p`` -- a prime `>2`.
 
     OUTPUT:
-        Returns a QQR code of length 2p.
+
+    Returns a QQR code of length `2p`.
 
     EXAMPLES::
-        sage: C = QuasiQuadraticResidueCode(11); C   # optional - gap_packages (Guava package)
+
+        sage: C = codes.QuasiQuadraticResidueCode(11); C   # optional - gap_packages (Guava package)
         Linear code of length 22, dimension 11 over Finite Field of size 2
 
     REFERENCES:
-    ..[BM] Bazzi and Mitter, {\it Some constructions of codes from group actions}, (preprint
-             March 2003, available on Mitter's MIT website).
-    ..[J]  D. Joyner, {\it On quadratic residue codes and hyperelliptic curves},
-             (preprint 2006)
+
+    .. [BM] Bazzi and Mitter, {\it Some constructions of codes from group actions}, (preprint
+      March 2003, available on Mitter's MIT website).
+
+    .. [Jresidue] D. Joyner, {\it On quadratic residue codes and hyperelliptic curves},
+      (preprint 2006)
 
     These are self-orthogonal in general and self-dual when $p \\equiv 3 \\pmod 4$.
 
@@ -116,8 +131,6 @@ def QuasiQuadraticResidueCode(p):
     MS = MatrixSpace(F,k,n)
     return LinearCode(MS(G))
 
-
-
 def RandomLinearCodeGuava(n,k,F):
     r"""
     The method used is to first construct a `k \times n` matrix of the block
@@ -127,15 +140,18 @@ def RandomLinearCodeGuava(n,k,F):
     group `S_n`.
 
     INPUT:
-        Integers `n,k`, with `n>k>1`.
+
+    - ``n,k`` -- integers with `n>k>1`.
 
     OUTPUT:
-        Returns a "random" linear code with length n, dimension k over field F.
+
+    Returns a "random" linear code with length `n`, dimension `k` over field `F`.
 
     EXAMPLES::
-        sage: C = RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_packages (Guava package)
+
+        sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_packages (Guava package)
         Linear code of length 30, dimension 15 over Finite Field of size 2
-        sage: C = RandomLinearCodeGuava(10,5,GF(4,'a')); C      # optional - gap_packages (Guava package)
+        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C      # optional - gap_packages (Guava package)
         Linear code of length 10, dimension 5 over Finite Field in a of size 2^2
 
     AUTHOR: David Joyner (11-2005)
@@ -150,5 +166,3 @@ def RandomLinearCodeGuava(n,k,F):
     G = [[gfq_gap_to_sage(gap.eval("G[%s][%s]" % (i,j)),F) for j in range(1,n+1)] for i in range(1,k+1)]
     MS = MatrixSpace(F,k,n)
     return LinearCode(MS(G))
-
-

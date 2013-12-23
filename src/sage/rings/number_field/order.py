@@ -155,10 +155,19 @@ class Order(IntegralDomain):
             sage: k = CyclotomicField(5)
             sage: k.maximal_order()
             Maximal Order in Cyclotomic Field of order 5 and degree 4
+
+        TESTS::
+
+            sage: k.<alg> = NumberField(x^7+3*x+1, embedding=CC(0,1))
+            sage: O = k.order(alg)
+            sage: ordelt = O(alg)
+            sage: CC(ordelt)
+            0.0535229072603327 + 1.20934552493846*I
         """
         self._K = K
         self._is_maximal = is_maximal
         IntegralDomain.__init__(self, ZZ, names = K.variable_names(), normalize = False)
+        self._populate_coercion_lists_(embedding=self.number_field())
 
     def fractional_ideal(self, *args, **kwds):
         """

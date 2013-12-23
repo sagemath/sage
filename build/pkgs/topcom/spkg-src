@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+SPKG_ROOT=`pwd`
+PATCHES="$SPKG_ROOT/patches"
+
+set -e
+shopt -s extglob
+
+# Remove old sources and download new
+rm -rf src
+tar xzf <( curl http://www.rambau.wm.uni-bayreuth.de/Software/TOPCOM-0.17.4.tar.gz )
+mv TOPCOM-0.17.4 src
+
+
+# Make everything writable
+chmod -R u+w src
+cd src
+
+# Delete some unneeded stuff:
+# * remove external/
+rm -rf external
+
+# * Delete everything under examples/, but keep directory
+rm -rf examples/*
+
+
+# libtool-ized automake sources
+rm configure.in
+cp -p "$PATCHES"/configure.ac                .
+cp -p "$PATCHES"/Makefile.am                 Makefile.am
+cp -p "$PATCHES"/src-Makefile.am             src/Makefile.am
+cp -p "$PATCHES"/src-reg-Makefile.am         src-reg/Makefile.am
+cp -p "$PATCHES"/lib-src-Makefile.am         lib-src/Makefile.am
+cp -p "$PATCHES"/lib-src-reg-Makefile.am     lib-src-reg/Makefile.am
+cp -p "$PATCHES"/wrap-gmp-gmpxx-Makefile.am  wrap-gmp-gmpxx/Makefile.am
+
+# Makefile.am with all examples deleted to save disk space
+cp -p "$PATCHES"/examples-Makefile.am     examples/Makefile.am
+
+# regenerate auto-generated files
+autoreconf -fiv
+rm -rf autom4te.cache
+
+# pack it up
+cd "$SPKG_ROOT"
+tar cjf topcom-0.17.4.tar.bz2 src

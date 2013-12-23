@@ -50,6 +50,12 @@ EOF
     export LD=ld
 fi
 
+# On OS X 10.9, g++ and the cdefs.h header are currently incompatible
+# Temporary workaround posted at http://trac.macports.org/ticket/41033
+if { uname -sr | grep 'Darwin 13\.' ;} &>/dev/null; then
+    mkdir -p "$SAGE_LOCAL/include/sys"
+    sed 's+defined(__GNUC_STDC_INLINE__)+& \&\& !defined(__cplusplus)+' /usr/include/sys/cdefs.h > "$SAGE_LOCAL/include/sys/cdefs.h"
+fi
 
 if [ "$SAGE_CHECK" = yes ]; then
     # Enable internal checks in GCC.  These checks do not affect the

@@ -15,5 +15,5 @@ of groups implemented as permutation groups.
 # docstring of groups/groups_catalog.py
 
 from all import GL, SL, Sp, SU, GU, SO, GO
-from sage.groups.misc_gps.misc_groups import QuaternionMatrixGroupGF3 as QuaternionGF3
+from all import QuaternionMatrixGroupGF3 as QuaternionGF3
 

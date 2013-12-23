@@ -34,7 +34,6 @@ from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 
 import sage.rings.padics.padic_generic_element
 import sage.rings.finite_rings.integer_mod
-import sage.libs.pari.gen
 import sage.rings.integer
 import sage.rings.rational
 
@@ -42,10 +41,8 @@ from sage.rings.infinity import infinity
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.padics.precision_error import PrecisionError
 
-pari = sage.libs.pari.gen.pari
-pari_gen = sage.libs.pari.gen.gen
+from sage.libs.pari.gen cimport gen as pari_gen
 gp_element = sage.interfaces.gp.GpElement
-PariError = sage.libs.pari.gen.PariError
 
 cdef class pAdicCappedAbsoluteElement(pAdicBaseGenericElement):
     def __init__(pAdicCappedAbsoluteElement self, parent, x, absprec=infinity, relprec = infinity, empty=False):

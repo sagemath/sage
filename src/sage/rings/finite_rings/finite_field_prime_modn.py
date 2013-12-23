@@ -78,7 +78,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         if check and not arith.is_prime(p):
             raise ArithmeticError, "p must be prime"
         self.__char = p
-        self._IntegerModRing_generic__factored_order = factorization.Factorization([(p,1)], integer.Integer(1))
         self._kwargs = {}
         # FiniteField_generic does nothing more than IntegerModRing_generic, and
         # it saves a non trivial overhead

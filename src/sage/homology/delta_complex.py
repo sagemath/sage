@@ -590,7 +590,7 @@ class DeltaComplex(GenericCellComplex):
             Z
             sage: T = T = delta_complexes.Torus()
             sage: T.chain_complex(subcomplex=T)
-            Chain complex with at most 0 nonzero terms over Integer Ring
+            Trivial chain complex over Integer Ring
             sage: T.homology(subcomplex=T)
             {0: 0, 1: 0, 2: 0}
             sage: A = T.subcomplex({2: [1]})  # one of the two triangles forming T

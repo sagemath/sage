@@ -1,0 +1,13 @@
+diff -druN src.orig/src/extra/intl/dngettext.c src/src/extra/intl/dngettext.c
+--- src.orig/src/extra/intl/dngettext.c	2010-03-17 15:43:05.000000000 +0100
++++ src/src/extra/intl/dngettext.c	2013-11-12 14:07:19.134450433 +0100
+@@ -46,6 +46,9 @@
+ 
+ /* Look up MSGID in the DOMAINNAME message catalog of the current
+    LC_MESSAGES locale and skip message according to the plural form.  */
++#ifdef HAVE_VISIBILITY_ATTRIBUTE
++__attribute__ ((visibility ("default")))
++#endif
+ char *
+ DNGETTEXT (const char *domainname,
+ 	   const char *msgid1, const char *msgid2, unsigned long int n)

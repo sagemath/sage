@@ -30,6 +30,10 @@ http://gcc.gnu.org/
 
 == Changelog ==
 
+=== gcc-4.7.3.p1 (R. Andrew Ohana, 26 November 2013) ===
+ * Trac #15433: work around for incompatiblity between g++ and
+   an OS X 10.9 header
+
 === gcc-4.7.3.p0 (Jeroen Demeyer, 11 April 2013) ===
  * Trac #14441: upgrade to version 4.7.3.
 

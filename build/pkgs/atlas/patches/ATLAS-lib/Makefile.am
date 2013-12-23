@@ -5,9 +5,9 @@ SO_VERSION=3:0
 
 # You shouldn't have to customize anything from here on
 
-ATLAS_SERIAL_LIBS=libatlas.la libcblas.la libf77blas.la liblapack.la
+ATLAS_SERIAL_LIBS=atlas cblas f77blas lapack
 
-ATLAS_PARALLEL_LIBS=libptcblas.la libptf77blas.la libptlapack.la
+ATLAS_PARALLEL_LIBS=ptcblas ptf77blas ptlapack
 
 all: all_parallel
 
@@ -16,105 +16,103 @@ all_serial: $(ATLAS_SERIAL_LIBS)
 all_parallel: all_serial $(ATLAS_PARALLEL_LIBS)
 
 clean:
-	$(RM) -r -f .libs *.la *-obj
+	$(RM) -r -f .libs *.la *.dll *.dll.a *-obj
 
 install: install_parallel
 
 install_serial: $(ATLAS_SERIAL_LIBS)
 	$(MKDIR_P) @libdir@
-	@LIBTOOL@ --mode=install $(INSTALL) -c libatlas.la @libdir@/libatlas.la
-	@LIBTOOL@ --mode=install $(INSTALL) -c libcblas.la @libdir@/libcblas.la
-	@LIBTOOL@ --mode=install $(INSTALL) -c libf77blas.la @libdir@/libf77blas.la
-	@LIBTOOL@ --mode=install $(INSTALL) -c liblapack.la @libdir@/liblapack.la
+	$(MKDIR_P) @bindir@
+	for module in $(ATLAS_SERIAL_LIBS); do \
+		@LTINSTALL@; \
+	done;
 	@LIBTOOL@ --finish @libdir@
+	@LIBTOOL@ --finish @bindir@
 
 install_parallel: install_serial $(ATLAS_PARALLEL_LIBS)
 	$(MKDIR_P) @libdir@
-	@LIBTOOL@ --mode=install $(INSTALL) -c libptcblas.la @libdir@/libptcblas.la
-	@LIBTOOL@ --mode=install $(INSTALL) -c libptf77blas.la @libdir@/libptf77blas.la
-	@LIBTOOL@ --mode=install $(INSTALL) -c libptlapack.la @libdir@/libptlapack.la
+	$(MKDIR_P) @bindir@
+	for module in $(ATLAS_PARALLEL_LIBS); do \
+		@LTINSTALL@; \
+	done;
 	@LIBTOOL@ --finish @libdir@
-
+	@LIBTOOL@ --finish @bindir@
 
 # In presence of multiple definitions of thread related functions, use the ones from *_mut.o
 # Works with all nm output formats (BSD/POSIX/System V)
-libatlas.la: libatlas.a
+atlas: libatlas.a
 	-$(RM) -r -f libatlas-obj
 	$(MKDIR) libatlas-obj
-	cd libatlas-obj && $(AR) x ../$<
+	cd libatlas-obj && $(AR) x ../$< && cd ..
 	if [ `$(NM) -g $< | $(EGREP) -w 'ATL_(Set|Reset|Free|Dec)AtomicCount' | $(GREP) -w T | wc -l` -gt 4 ]; then \
 	  $(RM) `ls -1 libatlas-obj/ATL_{Set,Reset,Free,Dec}AtomicCount_*.o | $(GREP) -v '_mut.o$$'`; \
 	fi
-	@LIBTOOL@ --tag=CC --mode=link $(CC) @LIBTOOL_TYPE@ \
-	    -o $@ libatlas-obj/*.o \
+	@LTCLINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libatlas-obj/*.o \
 	    @PTHREAD_LIB@ -lm \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	    @LTLINKFLAGS@
 
-
-libcblas.la: libcblas.a libatlas.la
+cblas: libcblas.a @LTPREFIX@atlas@LTSUFFIX@
 	-$(RM) -r -f libcblas-obj
 	$(MKDIR) libcblas-obj
-	cd libcblas-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=CC --mode=link $(CC) @LIBTOOL_TYPE@ \
-	    -o $@ libcblas-obj/*.o \
+	cd libcblas-obj && $(AR) x ../$< && cd ..
+	@LTCLINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libcblas-obj/*.o \
 	    -latlas \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	    @LTLINKFLAGS@
 
-
-libptcblas.la: libptcblas.a libatlas.la
+ptcblas: libptcblas.a @LTPREFIX@atlas@LTSUFFIX@
 	-$(RM) -r -f libptcblas-obj
 	$(MKDIR) libptcblas-obj
-	cd libptcblas-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=CC --mode=link $(CC) @LIBTOOL_TYPE@ \
-	    -o $@ libptcblas-obj/*.o \
+	cd libptcblas-obj && $(AR) x ../$< && cd ..
+	@LTCLINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libptcblas-obj/*.o \
 	    @PTHREAD_LIB@ -latlas \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	    @LTLINKFLAGS@
 
-
-libf77blas.la: libf77blas.a libatlas.la
+f77blas: libf77blas.a @LTPREFIX@atlas@LTSUFFIX@
 	-$(RM) -r -f libf77blas-obj
 	$(MKDIR) libf77blas-obj
-	cd libf77blas-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=F77 --mode=link $(F77) @LIBTOOL_TYPE@ \
-	    -o $@ libf77blas-obj/*.o \
+	cd libf77blas-obj && $(AR) x ../$< && cd ..
+	@LTF77LINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libf77blas-obj/*.o \
 	    -latlas \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	    @LTLINKFLAGS@
 
-libptf77blas.la: libptf77blas.a libatlas.la
+ptf77blas: libptf77blas.a @LTPREFIX@atlas@LTSUFFIX@
 	-$(RM) -r -f libptf77blas-obj
 	$(MKDIR) libptf77blas-obj
-	cd libptf77blas-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=F77 --mode=link $(F77) @LIBTOOL_TYPE@ \
-	    -o $@ libptf77blas-obj/*.o \
+	cd libptf77blas-obj && $(AR) x ../$< && cd ..
+	@LTF77LINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libptf77blas-obj/*.o \
 	    @PTHREAD_LIB@ -latlas \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	    @LTLINKFLAGS@
 
-libf77refblas.la: libf77refblas.a
+f77refblas: libf77refblas.a
 	-$(RM) -r -f libf77refblas-obj
 	$(MKDIR) libf77refblas-obj
-	cd libf77refblas-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=F77 --mode=link $(F77) @LIBTOOL_TYPE@ \
-	    -o $@ libf77refblas-obj/*.o \
+	cd libf77refblas-obj && $(AR) x ../$< && cd ..
+	@LTF77LINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libf77refblas-obj/*.o \
 	    -latlas \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	    @LTLINKFLAGS@
 
-liblapack.la: liblapack.a libatlas.la libcblas.la libf77blas.la
+lapack: liblapack.a @LTPREFIX@atlas@LTSUFFIX@ @LTPREFIX@cblas@LTSUFFIX@ @LTPREFIX@f77blas@LTSUFFIX@
 	-$(RM) -r -f liblapack-obj
 	$(MKDIR) liblapack-obj
-	cd liblapack-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=F77 --mode=link $(F77) @LIBTOOL_TYPE@ \
-	    -o $@ liblapack-obj/*.o \
-	    -latlas -lcblas -lf77blas -lm \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	cd liblapack-obj && $(AR) x ../$< && cd ..
+	@LTF77LINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ liblapack-obj/*.o \
+	    -lcblas -lf77blas -latlas -lm \
+	    @LTLINKFLAGS@
 
-libptlapack.la: libptlapack.a libatlas.la libptcblas.la libptf77blas.la
+ptlapack: libptlapack.a @LTPREFIX@atlas@LTSUFFIX@ @LTPREFIX@ptcblas@LTSUFFIX@ @LTPREFIX@ptf77blas@LTSUFFIX@
 	-$(RM) -r -f libptlapack-obj
 	$(MKDIR) libptlapack-obj
-	cd libptlapack-obj && $(AR) x ../$<
-	@LIBTOOL@ --tag=F77 --mode=link $(F77) @LIBTOOL_TYPE@ \
-	    -o $@ libptlapack-obj/*.o \
-	    @PTHREAD_LIB@ -latlas -lptcblas -lptf77blas -lm \
-	    -rpath @libdir@ -version-info $(SO_VERSION)
+	cd libptlapack-obj && $(AR) x ../$< && cd ..
+	@LTF77LINK@ \
+	    -o @LTPREFIX@$@@LTSUFFIX@ libptlapack-obj/*.o \
+	    @PTHREAD_LIB@ -lptcblas -lptf77blas -latlas -lm \
+	    @LTLINKFLAGS@
 
-
-.PHONY: all all_serial all_parallel build install install_serial install_parallel clean
+.PHONY: all all_serial all_parallel build install install_serial install_parallel clean $(ATLAS_SERIAL_LIBS) $(ATLAS_PARALLEL_LIBS)

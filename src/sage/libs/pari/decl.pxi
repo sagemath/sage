@@ -49,11 +49,11 @@ cdef extern from 'pari/pari.h':
 
     # parierr.h
 
-    int talker2, bugparier, alarmer, openfiler, talker, flagerr, impl, \
-        archer, notfuncer, precer, typeer, consister, user, errpile, \
-        overflower, matinv1, mattype1, arither1, primer1, invmoder, \
-        constpoler, notpoler, redpoler, zeropoler, operi, operf, gdiver, \
-        memer, negexper, sqrter5, noer
+    int syntaxer, bugparier, alarmer, openfiler, talker, flagerr, \
+        impl, archer, notfuncer, precer, typeer, consister, user, \
+        errpile, overflower, matinv1, mattype1, arither1, primer1, \
+        invmoder, constpoler, notpoler, redpoler, zeropoler, operi, \
+        operf, gdiver, memer, negexper, sqrter5, noer
 
     int warner, warnprec, warnfile, warnmem
 
@@ -1114,6 +1114,10 @@ cdef extern from 'pari/pari.h':
     void    write1(char *s, GEN g)
     void    writetex(char *s, GEN g)
 
+    # eval.c
+
+    GEN     closure_callgenvec(GEN C, GEN args)
+
     # FF.c
 
     GEN     FF_1(GEN a)
@@ -1928,6 +1932,8 @@ cdef extern from *:   # paristio.h
 
 
 cdef extern from 'pari/paripriv.h':
+    int gpd_QUIET, gpd_TEST, gpd_EMACS, gpd_TEXMACS
+
     struct pariout_t:
         char format  # e,f,g
         long fieldw  # 0 (ignored) or field width
@@ -1937,6 +1943,7 @@ cdef extern from 'pari/paripriv.h':
         int TeXstyle
 
     struct gp_data:
-        jmp_buf env
         pariout_t *fmt
+        unsigned long flags
+    
     extern gp_data* GP_DATA

@@ -9,7 +9,7 @@ AUTHORS:
   methods to instances).
 - Tom Boothby (added DiskCachedFunction).
 - Simon King (improved performance, more doctests, cython version,
-  added CachedMethodCallerNoArgs. Weak cached function).
+  CachedMethodCallerNoArgs, weak cached function, cached special methods).
 
 EXAMPLES:
 
@@ -424,6 +424,21 @@ from sage.misc.sageinspect import sage_getfile, sage_getsourcelines, sage_getarg
 
 import sage.misc.weak_dict
 from sage.misc.weak_dict import WeakValueDictionary
+
+cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
+            '__and__', '__call__', '__cmp__', '__coerce__', '__complex__', '__contains__', '__del__',
+            '__delattr__', '__delete__', '__delitem__', '__delslice__', '__dir__', '__div__',
+            '__eq__', '__float__', '__floordiv__', '__format__', '__ge__', '__get__', '__getattr__',
+            '__getattribute__', '__getitem__', '__getslice__', '__gt__', '__hash__', '__hex__',
+            '__iadd__', '__iand__', '__idiv__', '__ifloordiv__', '__ilshift__', '__imod__', '__imul__',
+            '__index__', '__init__', '__instancecheck__', '__int__', '__invert__', '__ior__', '__ipow__',
+            '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__',
+            '__length_hint__', '__long__', '__lshift__', '__lt__', '__missing__', '__mod__', '__mul__',
+            '__ne__', '__neg__', '__new__', '__nonzero__', '__oct__', '__or__', '__pos__', '__pow__',
+            '__radd__', '__rand__', '__rdiv__', '__repr__', '__reversed__', '__rfloordiv__', '__rlshift__',
+            '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
+            '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
+            '__str__', '__sub__', '__subclasscheck__', '__truediv__', '__unicode__', '__xor__', 'next'])
 
 def _cached_function_unpickle(module,name):
     """
@@ -1616,7 +1631,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         # This is for Parents or Elements that do not allow attribute assignment
         try:
-            return (<dict>inst.__cached_methods).__getitem__(self._cachedmethod._cachedfunc.__name__)
+            return (<dict>inst.__cached_methods)[self._cachedmethod._cachedfunc.__name__]
         except (AttributeError,TypeError,KeyError):
             pass
         Caller = CachedMethodCaller(self._cachedmethod, inst, cache=self._cachedmethod._get_instance_cache(inst), inst_in_key=self._inst_in_key, name=self._cachedmethod._cachedfunc.__name__)
@@ -1629,7 +1644,7 @@ cdef class CachedMethodCaller(CachedFunction):
             if inst.__cached_methods is None:
                 inst.__cached_methods = {self._cachedmethod._cachedfunc.__name__ : Caller}
             else:
-                (<dict>inst.__cached_methods).__setitem__(self._cachedmethod._cachedfunc.__name__, Caller)
+                (<dict>inst.__cached_methods)[self._cachedmethod._cachedfunc.__name__] = Caller
         except AttributeError,msg:
             pass
         return Caller
@@ -1925,7 +1940,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
         """
         # This is for Parents or Elements that do not allow attribute assignment
         try:
-            return (<dict>inst.__cached_methods).__getitem__(self.__name__)
+            return (<dict>inst.__cached_methods)[self.__name__]
         except (AttributeError,TypeError,KeyError),msg:
             pass
         Caller = CachedMethodCallerNoArgs(inst, self.f, name=self.__name__)
@@ -1938,7 +1953,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             if inst.__cached_methods is None:
                 inst.__cached_methods = {self.__name__ : Caller}
             else:
-                (<dict>inst.__cached_methods).__setitem__(self.__name__, Caller)
+                (<dict>inst.__cached_methods)[self.__name__] = Caller
         except AttributeError,msg:
             pass
         return Caller
@@ -2119,7 +2134,7 @@ cdef class CachedMethod(object):
         except AttributeError:
             return {}
 
-    def __get__(self, inst, cls): #cls=None):
+    def __get__(self, object inst, cls): #cls=None):
         """
         Get a CachedMethodCaller bound to this specific instance of
         the class of the cached method.
@@ -2153,12 +2168,13 @@ cdef class CachedMethod(object):
 
         """
         # This is for Parents or Elements that do not allow attribute assignment:
+        cdef str name
         try:
             name = self._cachedfunc.__name__
         except AttributeError:
             name = self.__name__
         try:
-            return (<dict>inst.__cached_methods).__getitem__(name)
+            return (<dict>inst.__cached_methods)[name]
         except (AttributeError,TypeError,KeyError),msg:
             pass
         # Apparently we need to construct the caller.
@@ -2182,7 +2198,7 @@ cdef class CachedMethod(object):
                                         cache=self._get_instance_cache(inst),
                                         name=name)
         try:
-            setattr(inst,name, Caller)
+            setattr(inst, name, Caller)
             return Caller
         except AttributeError:
             pass
@@ -2190,7 +2206,7 @@ cdef class CachedMethod(object):
             if inst.__cached_methods is None:
                 inst.__cached_methods = {name : Caller}
             else:
-                (<dict>inst.__cached_methods).__setitem__(name, Caller)
+                (<dict>inst.__cached_methods)[name] = Caller
         except AttributeError:
             pass
         return Caller
@@ -2202,8 +2218,173 @@ cdef class CachedMethod(object):
         # The disadvantage to this is that it does not provide
         # is_in_cache(), set_cache(), clear_cache(), ... methods.
 
+cdef class CachedSpecialMethod(CachedMethod):
+    """
+    Cached version of *special* python methods.
 
-cached_method = CachedMethod
+    IMPLEMENTATION:
+
+    For new style classes ``C``, it is not possible to override a special
+    method, such as ``__hash__``, in the ``__dict__`` of an instance ``c`` of
+    ``C``, because Python will for efficiency reasons always use what is
+    provided by the class, not by the instance.
+
+    By consequence, if ``__hash__`` would be wrapped by using
+    :class:`CachedMethod`, then ``hash(c)`` will access `C.__hash__` and bind
+    it to ``c``, which means that the ``__get__`` method of
+    :class:`CachedMethod` will be called. But there, we assume that Python has
+    already inspected ``__dict__``, and thus a :class:`CachedMethodCaller`
+    will be created over and over again.
+
+    Here, the `__get__` method will explicitly access the `__dict__`, so that
+    ``hash(c)`` will rely on a single :class:`CachedMethodCaller` stored in
+    the ``__dict__``.
+
+    EXAMPLES::
+
+        sage: class C:
+        ....:     @cached_method
+        ....:     def __hash__(self):
+        ....:         print "compute hash"
+        ....:         return int(5)
+        ....:
+        sage: c = C()
+        sage: type(C.__hash__)
+        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+
+    The hash is computed only once, subsequent calls will use the value from
+    the cache. This was implemented in :trac:`12601`.
+
+        sage: hash(c)       # indirect doctest
+        compute hash
+        5
+        sage: hash(c)
+        5
+
+    """
+    def __get__(self, object inst, cls):
+        """
+        Bind a :class:`CachedMethodCaller` to a specific instance, using `__dict__`.
+
+        EXAMPLES::
+
+            sage: class C:
+            ....:     @cached_method
+            ....:     def __hash__(self):
+            ....:         print "compute hash"
+            ....:         return int(5)
+            ....:
+            sage: c = C()
+            sage: type(C.__hash__)
+            <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+            sage: hash(c)       # indirect doctest
+            compute hash
+            5
+            sage: hash(c)
+            5
+        """
+        # This is for Parents or Elements that do not allow attribute assignment:
+        cdef str name
+        try:
+            name = self._cachedfunc.__name__
+        except AttributeError:
+            name = self.__name__
+        cdef dict D = None
+        if inst is not None:
+            try:
+                D = inst.__dict__
+            except (TypeError, AttributeError):
+                try:
+                    D = inst.__cached_methods
+                except (TypeError, AttributeError):
+                    raise TypeError("For a cached special method, either attribute assignment or a public '__cached_methods' attribute of type <dict> is needed")
+            if D is None:
+                # This can only happen in the case of __cached_methods
+                D = inst.__cached_methods = {}
+            else:
+                try:
+                    return D[name]
+                except KeyError:
+                    pass
+        # Apparently we need to construct the caller.
+        # Since we have an optimized version for functions that do not accept arguments,
+        # we need to analyse the argspec
+        f = (<CachedFunction>self._cachedfunc).f
+        if self.nargs==0:
+            args, varargs, keywords, defaults = sage_getargspec(f)
+            if varargs is None and keywords is None and len(args)<=1:
+                self.nargs = 1
+                Caller = CachedMethodCallerNoArgs(inst, f, name=name)
+            else:
+                self.nargs = 2 # don't need the exact number
+                Caller = CachedMethodCaller(self, inst,
+                                            cache=self._get_instance_cache(inst),
+                                            name=name)
+        elif self.nargs==1:
+            Caller = CachedMethodCallerNoArgs(inst, f, name=name)
+        else:
+            Caller = CachedMethodCaller(self, inst,
+                                        cache=self._get_instance_cache(inst),
+                                        name=name)
+        if inst is not None:
+            try:
+                setattr(inst,name, Caller)
+                return Caller
+            except AttributeError:
+                pass
+            D[name] = Caller
+        return Caller
+
+def cached_method(f, name=None):
+    """
+    
+    EXAMPLES:
+
+    In the following examples, one can see how a cached method works in applicationy.
+    Below, we demonstrate what is done behind the scenes::
+
+        sage: class C:
+        ....:     @cached_method
+        ....:     def __hash__(self):
+        ....:         print "compute hash"
+        ....:         return int(5)
+        ....:     @cached_method
+        ....:     def f(self, x):
+        ....:         print "computing cached method"
+        ....:         return x*2
+        sage: c = C()
+        sage: type(C.__hash__)
+        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        sage: hash(c)
+        compute hash
+        5
+
+    When calling a cached method for the second time with the same arguments,
+    the value is gotten from the cache, so that a new computation is not
+    needed::
+
+        sage: hash(c)
+        5
+        sage: c.f(4)
+        computing cached method
+        8
+        sage: c.f(4) is c.f(4)
+        True
+
+    Using cached methods for the hash and other special methods was
+    implemented in :trac:`12601`, by means of :class:`CachedSpecialMethod`. We
+    show that it is used behind the scenes::
+
+        sage: cached_method(c.__hash__)
+        <sage.misc.cachefunc.CachedSpecialMethod object at ...>
+        sage: cached_method(c.f)
+        <sage.misc.cachefunc.CachedMethod object at ...>
+
+    """
+    cdef str fname = name or f.__name__
+    if fname in special_method_names:
+        return CachedSpecialMethod(f, name)
+    return CachedMethod(f, name)
 
 cdef class CachedInParentMethod(CachedMethod):
     r"""

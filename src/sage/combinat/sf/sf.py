@@ -179,6 +179,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: s = Sym.schur()
 
     These can be defined all at once with the single command
+    ::
 
         sage: Sym.inject_shorthands()
         doctest:...: RuntimeWarning: redefining global value `h`
@@ -336,6 +337,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     The *plethysm* of symmetric functions is the operation corresponding to
     composition of representations of the general linear group.  See [STA]_
     Chapter 7, Appendix 2 for details.
+    ::
 
         sage: s[2].plethysm(s[2])
         s[2, 2] + s[4]
@@ -1143,7 +1145,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             2*d_p[2, 1]
 
         The map is supposed to implement the canonical isomorphism
-        between the two basis. Otherwise, the results will be
+        between the two bases. Otherwise, the results will be
         mathematically wrong, as above. Use with care!
         """
         if only_conversion:

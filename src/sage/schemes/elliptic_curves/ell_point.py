@@ -130,8 +130,7 @@ from sage.rings.real_mpfr import is_RealField
 from sage.rings.all import ZZ
 from sage.groups.all import AbelianGroup
 import sage.groups.generic as generic
-from sage.libs.pari.all import pari, PariError
-from sage.libs.pari.gen import prec_words_to_bits
+from sage.libs.pari.pari_instance import pari, prec_words_to_bits
 from sage.structure.sequence import Sequence
 
 from sage.schemes.plane_curves.projective_curve import Hasse_bounds
@@ -140,6 +139,7 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from constructor import EllipticCurve
+from sage.misc.superseded import deprecated_function_alias
 
 oo = rings.infinity       # infinity
 
@@ -431,9 +431,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P._pari_()
             [Mod(1, 11), Mod(2, 11)]
 
-        We need to explicitly call ``pari()`` because of :trac:`11868`::
+        We no longer need to explicitly call ``pari(O)`` and ``pari(P)``
+        after :trac:`11868`::
 
-            sage: pari(E).elladd(pari(O), pari(P))
+            sage: pari(E).elladd(O, P)
             [Mod(1, 11), Mod(2, 11)]
         """
         if self[2]:
@@ -2073,6 +2074,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         E = self.curve()
 
         # Special code for curves over Q, calling PARI
+        from sage.libs.pari.all import PariError
         try:
             n = int(E.pari_curve().ellorder(self))
             if n == 0:
@@ -2395,37 +2397,51 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         E = P.curve()
         return E.reduction(p)(P)
 
-    def height(self, precision=None):
+    def height(self, precision=None, normalised=True, algorithm='pari'):
         """
-        The Neron-Tate canonical height of the point.
+        Return the Néron-Tate canonical height of the point.
 
         INPUT:
 
-        - ``self`` -- a point on a curve over a number field
+        - ``self`` -- a point on an elliptic curve over a number field
+          `K`.
 
-        - ``precision`` -- (int or ``None`` (default)): the precision in
-          bits of the result (default real precision if ``None``)
+        - ``precision`` -- positive integer, or None (default). The
+          precision in bits of the result. If None, the default real
+          precision is used.
+
+        - ``normalised`` -- boolean. If True (default), the height is
+          normalised to be invariant under extension of `K`. If False,
+          return this normalised height multiplied by the degree of
+          `K`.
+
+        - ``algorithm`` -- string: either 'pari' (default) or 'sage'.
+          If 'pari' and the base field is `\QQ`, use the PARI library
+          function; otherwise use the Sage implementation.
 
         OUTPUT:
 
-        The rational number 0, or a nonzero real field element.
+        The rational number 0, or a non-negative real number.
 
-        The returned height is normalized to be independant of the base field.
-        Fixing this, there are two normalizations used in the literature,
-        one of which is double the other. We use the larger of the two,
-        which is the one appropriate for the BSD conjecture. This is consistent
-        with [Cre]_ and double that of [Sil]_.
+        There are two normalisations used in the literature, one of
+        which is double the other. We use the larger of the two, which
+        is the one appropriate for the BSD conjecture. This is
+        consistent with [Cre]_ and double that of [SilBook]_.
 
         See :wikipedia:`Néron-Tate height`
 
         REFERENCES:
 
-        .. [Cre] John Cremona, Algorithms for modular elliptic curves,
+        .. [Cre] John Cremona, Algorithms for Modular Elliptic Curves.
            Cambridge University Press, 1997.
 
-        .. [Sil] Silverman, Joseph H. The arithmetic of elliptic
-           curves.  Second edition. Graduate Texts in Mathematics,
-           106. Springer, 2009.
+        .. [Sil1988] Joseph H. Silverman, Computing heights on
+           elliptic curves. Mathematics of Computation, Vol. 51,
+           No. 183 (Jul., 1988), pp. 339-358.
+
+        .. [SilBook] Joseph H. Silverman, The Arithmetic of Elliptic
+           Curves. Second edition. Graduate Texts in Mathematics, 106.
+           Springer, 2009.
 
         EXAMPLES::
 
@@ -2511,6 +2527,22 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: (100*P).height() / P.height()
             10000.0000000000
 
+        Setting normalised=False multiplies the height by the degree of `K`::
+
+            sage: E = EllipticCurve('37a')
+            sage: P = E([0,0])
+            sage: P.height()
+            0.0511114082399688
+            sage: P.height(normalised=False)
+            0.0511114082399688
+            sage: K.<z> = CyclotomicField(5)
+            sage: EK = E.change_ring(K)
+            sage: PK = EK([0,0])
+            sage: PK.height()
+            0.0511114082399688
+            sage: PK.height(normalised=False)
+            0.204445632959875
+
         Some consistency checks::
 
             sage: E = EllipticCurve('5077a1')
@@ -2558,6 +2590,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.height(precision=500)
             25.8603170675461907438688407407351103230988729038444162155771710417835725129551130570889813281792157278507639909972112856019190236125362914195452321720
 
+            sage: P.height(precision=100) == P.non_archimedean_local_height(prec=100)+P.archimedean_local_height(prec=100)
+            True
+
         An example to show that the bug at :trac:`8319` is fixed (correct height when the curve is not minimal)::
 
             sage: E = EllipticCurve([-5580472329446114952805505804593498080000,-157339733785368110382973689903536054787700497223306368000000])
@@ -2587,83 +2622,115 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: (2*P).height(precision=1000)/P.height(precision=1000)
             4.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
+        This shows that the bug reported at :trac:`13951` has been fixed::
+
+            sage: E = EllipticCurve([0,17])
+            sage: P1 = E(2,5)
+            sage: P1.height()
+            1.06248137652528
+            sage: F = E.change_ring(QuadraticField(-3,'a'))
+            sage: P2 = F([2,5])
+            sage: P2.height()
+            1.06248137652528
         """
         if self.has_finite_order():
             return rings.QQ(0)
 
+        E = self.curve()
+        K = E.base_ring()
+
         if precision is None:
             precision = rings.RealField().precision()
 
+        known_prec = -1
         try:
             height = self.__height
-            if height.prec() == precision:
-                return height
-            if height.prec() > precision:
-                return rings.RealField(precision)(height)
+            known_prec = height.prec()
+            if known_prec > precision:
+                height = rings.RealField(precision)(height)
         except AttributeError:
             pass
 
-        if self.curve().base_ring() is rings.QQ:
-            E = self.curve()
-            Emin = E.minimal_model()
-            iso = E.isomorphism_to(Emin)
-            P = iso(self)
-            h = Emin.pari_curve(prec=precision).ellheight(P, precision=precision)
-            height = rings.RealField(precision)(h)
-        else:
-            height = (self.nonarchimedian_local_height(prec=precision)
-                      + self.archimedian_local_height(prec=precision))
+        if known_prec < precision:
+            if algorithm == 'pari' and K is rings.QQ:
+                Emin = E.minimal_model()
+                iso = E.isomorphism_to(Emin)
+                P = iso(self)
+                h = Emin.pari_curve(prec=precision).ellheight(P, precision=precision)
+                height = rings.RealField(precision)(h)
+            else:
+                height = (self.non_archimedean_local_height(prec=precision)
+                            + self.archimedean_local_height(prec=precision))
 
+        # The cached height is the one that is independent of the base field.
         self.__height = height
+        if not normalised:
+            height *= K.degree()
         return height
 
-    def archimedian_local_height(self, v=None, prec=None):
+    def archimedean_local_height(self, v=None, prec=None, weighted=False):
         """
-        Computes the local height of self at the archimedian place `v`.
-
-        If `v` is ``None``, returns the (weighted) sum of all archimedian
-        contributions to the height.
-
-        The normalization is taken to be independant of the base field,
-        but twice that in the paper. Note also that this local height depends
-        on the model of the curve.
+        Compute the local height of self at the archimedean place `v`.
 
         INPUT:
 
-        - ``v`` -- a real or complex embedding, or ``None``
+        - ``self`` -- a point on an elliptic curve over a number field
+          `K`.
 
-        - ``prec`` -- the precision of the computation. If ``None``, the precision
-          is deduced from v.
+        - ``v`` -- a real or complex embedding of K, or None (default).
+          If `v` is a real or complex embedding, return the local
+          height of self at `v`. If `v` is None, return the total
+          archimedean contribution to the global height.
+
+        - ``prec`` -- integer, or None (default). The precision of the
+          computation. If None, the precision is deduced from v.
+
+        - ``weighted`` -- boolean. If False (default), the height is
+          normalised to be invariant under extension of `K`. If True,
+          return this normalised height multiplied by the local degree
+          if `v` is a single place, or by the degree of `K` if `v` is
+          None.
+
+        OUTPUT:
+
+        A real number. The normalisation is twice that in Silverman's
+        paper [Sil1988]_. Note that this local height depends on the
+        model of the curve.
 
         ALGORITHM:
 
-        See section 4 of Silverman, J. Computing Heights on Elliptic Curves.
-        Mathematics of Computation, Vol. 51, No. 183 (Jul., 1988), pp. 339-358
-
+        See [Sil1988]_, Section 4.
 
         EXAMPLES:
 
-        Examples 1, 2, and 3 from the above paper::
+        Examples 1, 2, and 3 from [Sil1988]_::
 
             sage: K.<a> = QuadraticField(-2)
             sage: E = EllipticCurve(K, [0,-1,1,0,0]); E
             Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field in a with defining polynomial x^2 + 2
             sage: P = E.lift_x(2+a); P
             (a + 2 : 2*a + 1 : 1)
-            sage: P.archimedian_local_height(K.places(prec=170)[0]) / 2
+            sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2
             0.45754773287523276736211210741423654346576029814695
 
             sage: K.<i> = NumberField(x^2+1)
             sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x over Number Field in i with defining polynomial x^2 + 1
             sage: P = E((0,0))
-            sage: P.archimedian_local_height(K.places()[0]) / 2
+            sage: P.archimedean_local_height(K.places()[0]) / 2
             0.510184995162373
 
             sage: Q = E.lift_x(-9/4); Q
             (-9/4 : -27/8*i : 1)
-            sage: Q.archimedian_local_height(K.places()[0]) / 2
+            sage: Q.archimedean_local_height(K.places()[0]) / 2
             0.654445619529600
+
+        An example over the rational numbers::
+
+            sage: E = EllipticCurve([0, 0, 0, -36, 0])
+            sage: P = E([-3, 9])
+            sage: P.archimedean_local_height()
+            1.98723816350773
 
         Local heights of torsion points can be non-zero (unlike the
         global height)::
@@ -2671,7 +2738,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0, 0, 0, K(1), 0])
             sage: P = E(i, 0)
-            sage: P.archimedian_local_height()
+            sage: P.archimedean_local_height()
             0.346573590279973
 
         TESTS:
@@ -2683,25 +2750,36 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]
             sage: E = EllipticCurve(v)
             sage: P = E([72*a - 509/5,  -682/25*a - 434/25])
-            sage: P.archimedian_local_height()
+            sage: P.archimedean_local_height()
             -0.2206607955468278492183362746930
 
         """
-        if v is None:
-            K = self.curve().base_ring()
+        E = self.curve()
+        K = E.base_ring()
 
-            def local_degree(v):
-                """
-                Computes [ K_v : Q_v ]
-                """
-                return 2 - int(v.im_gens()[0] in rings.RR)
-            return sum(local_degree(v) * self.archimedian_local_height(v, prec) for v in K.places()) / K.degree()
+        if v is None:
+            if K is rings.QQ:
+                v = K.embeddings(rings.RR)[0]
+                h = self.archimedean_local_height(v, prec)
+            else:
+                r1, r2 = K.signature()
+                pl = K.places()
+                h = (sum(self.archimedean_local_height(pl[i], prec, weighted=False)
+                         for i in range(r1))
+                     + 2 * sum(self.archimedean_local_height(pl[i], prec, weighted=False)
+                               for i in range(r1, r1 + r2)))
+                if not weighted:
+                    h /= K.degree()
+            return h
 
         from sage.rings.number_field.number_field import refine_embedding
+        prec_v = v.codomain().prec()
         if prec is None:
-            prec = v.codomain().prec()
-        vv = refine_embedding(v, 2*prec)  # prec(vv) = max(2*prec, prec(v))
-        E = self.curve()
+            prec = prec_v
+        if K is rings.QQ:
+            vv = K.embeddings(rings.RealField(max(2*prec, prec_v)))[0]
+        else:
+            vv = refine_embedding(v, 2*prec)  # vv.prec() = max(2*prec, prec_v)
         b2, b4, b6, b8 = [vv(b) for b in E.b_invariants()]
         H = max(4, abs(b2), 2*abs(b4), 2*abs(b6), abs(b8))
         # The following comes from Silverman Theorem 4.2.  Silverman
@@ -2753,59 +2831,79 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                     t = w/(z-w)
                     beta = not beta
             four_to_n >>= 2
-        return rings.RealField(prec)(lam + mu/4)
+        h = rings.RealField(prec)(lam + mu/4)
+        if weighted and not v.im_gens()[0] in rings.RR:
+            h *= 2
+        return h
 
-    def nonarchimedian_local_height(self, v=None, prec=None,
-                                    weighted=False, is_minimal=None):
+    archimedian_local_height = deprecated_function_alias(13951, archimedean_local_height)
+
+    def non_archimedean_local_height(self, v=None, prec=None,
+                                     weighted=False, is_minimal=None):
         """
-        Computes the local height of self at the non-archimedian place `v`.
-
-        If `v` is ``None``, returns the (weighted) sum of all non-archimedian
-        contributions to the height.
-
-        The normalization is taken to be independant of the base field,
-        but twice that in the paper. Note also that this local height depends
-        on the model of the curve.
+        Compute the local height of self at the non-archimedean place `v`.
 
         INPUT:
 
-        - ``v`` -- a non-archimedean place of the base field of the curve,
-          or ``None``, in which case the total nonarchimedian contribution
-          is returned
+        - ``self`` -- a point on an elliptic curve over a number field
+          `K`.
 
-        - ``prec`` -- working precision, or ``None`` in which case the height
-          is returned symbolically
+        - ``v`` -- a non-archimedean place of `K`, or None (default).
+          If `v` is a non-archimedean place, return the local height
+          of self at `v`. If `v` is None, return the total
+          non-archimedean contribution to the global height.
+
+        - ``prec`` -- integer, or None (default). The precision of the
+          computation. If None, the height is returned symbolically.
+
+        - ``weighted`` -- boolean. If False (default), the height is
+          normalised to be invariant under extension of `K`. If True,
+          return this normalised height multiplied by the local degree
+          if `v` is a single place, or by the degree of `K` if `v` is
+          None.
+
+        OUTPUT:
+
+        A real number. The normalisation is twice that in Silverman's
+        paper [Sil1988]_. Note that this local height depends on the
+        model of the curve.
 
         ALGORITHM:
 
-        See section 5 of Silverman, J. Computing Heights on Elliptic Curves.
-        Mathematics of Computation, Vol. 51, No. 183 (Jul., 1988), pp. 339-358
+        See [Sil1988]_, Section 5.
 
         EXAMPLES:
 
-        Examples 2 and 3 from the above paper::
+        Examples 2 and 3 from [Sil1988]_::
 
             sage: K.<i> = NumberField(x^2+1)
             sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x over Number Field in i with defining polynomial x^2 + 1
             sage: P = E((0,0))
-            sage: P.nonarchimedian_local_height(K.ideal(i+1))
+            sage: P.non_archimedean_local_height(K.ideal(i+1))
             -1/2*log(2)
-            sage: P.nonarchimedian_local_height(K.ideal(3))
+            sage: P.non_archimedean_local_height(K.ideal(3))
             0
-            sage: P.nonarchimedian_local_height(K.ideal(1-2*i))
+            sage: P.non_archimedean_local_height(K.ideal(1-2*i))
             0
 
             sage: Q = E.lift_x(-9/4); Q
             (-9/4 : -27/8*i : 1)
-            sage: Q.nonarchimedian_local_height(K.ideal(1+i))
+            sage: Q.non_archimedean_local_height(K.ideal(1+i))
             2*log(2)
-            sage: Q.nonarchimedian_local_height(K.ideal(3))
+            sage: Q.non_archimedean_local_height(K.ideal(3))
             0
-            sage: Q.nonarchimedian_local_height(K.ideal(1-2*i))
+            sage: Q.non_archimedean_local_height(K.ideal(1-2*i))
             0
-            sage: Q.nonarchimedian_local_height()
+            sage: Q.non_archimedean_local_height()
             1/2*log(16)
+
+        An example over the rational numbers::
+
+            sage: E = EllipticCurve([0, 0, 0, -36, 0])
+            sage: P = E([-3, 9])
+            sage: P.non_archimedean_local_height()
+            -log(3)
 
         Local heights of torsion points can be non-zero (unlike the
         global height)::
@@ -2813,14 +2911,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0, 0, 0, K(1), 0])
             sage: P = E(i, 0)
-            sage: P.nonarchimedian_local_height()
+            sage: P.non_archimedean_local_height()
             -1/2*log(2)
 
         TESTS::
 
-            sage: Q.nonarchimedian_local_height(prec=100)
+            sage: Q.non_archimedean_local_height(prec=100)
             1.3862943611198906188344642429
-            sage: (3*Q).nonarchimedian_local_height()
+            sage: (3*Q).non_archimedean_local_height()
             1/2*log(75923153929839865104)
 
             sage: F.<a> = NumberField(x^4 + 2*x^3 + 19*x^2 + 18*x + 288)
@@ -2833,8 +2931,15 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             (-1/6*a^2 - 1/6*a - 1 : a : 1)
             sage: P[0].is_integral()
             True
-            sage: P.nonarchimedian_local_height()
+            sage: P.non_archimedean_local_height()
             0
+
+        This shows that the bug reported at :trac:`13951` has been fixed::
+
+            sage: E = EllipticCurve([0,17])
+            sage: P = E(2,5)
+            sage: P.non_archimedean_local_height(2)
+            -2/3*log(2)
         """
         if prec:
             log = lambda x: rings.RealField(prec)(x).log()
@@ -2844,17 +2949,37 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         if v is None:
             D = self.curve().discriminant()
             K = self.curve().base_ring()
-            factorD = K.factor(D)
-            if self[0] == 0:
-                c = K.ideal(1)
+            if K is rings.QQ:
+                factorD = D.factor()
+                if self[0] == 0:
+                    c = 1
+                else:
+                    c = self[0].denominator()
+                # The last sum is for bad primes that divide c where
+                # the model is not minimal.
+                h = (log(c)
+                     + sum(self.non_archimedean_local_height(p, prec, weighted=True, is_minimal=(e < 12))
+                           for p,e in factorD if not p.divides(c))
+                     + sum(self.non_archimedean_local_height(p, prec, weighted=True)
+                           - c.valuation(p) * log(p)
+                           for p,e in factorD if e >= 12 and p.divides(c)))
             else:
-                c = K.ideal(self[0]).denominator()
-            # The last sum is for bad primes that divide c where the
-            # model is not minimal.
-            return (log(c.norm())
-                    + sum(self.nonarchimedian_local_height(v, prec, True, e < 12) for v, e in factorD if not v.divides(c))
-                    + sum(self.nonarchimedian_local_height(v, prec, True) - c.valuation(v) * log(v.norm()) for v, e in factorD if e >= 12 and v.divides(c))
-                    ) / K.degree()
+                factorD = K.factor(D)
+                if self[0] == 0:
+                    c = K.ideal(1)
+                else:
+                    c = K.ideal(self[0]).denominator()
+                # The last sum is for bad primes that divide c where
+                # the model is not minimal.
+                h = (log(c.norm())
+                     + sum(self.non_archimedean_local_height(v, prec, weighted=True, is_minimal=(e < 12))
+                           for v,e in factorD if not v.divides(c))
+                     + sum(self.non_archimedean_local_height(v, prec, weighted=True)
+                           - c.valuation(v) * log(v.norm())
+                           for v,e in factorD if e >= 12 and v.divides(c)))
+                if not weighted:
+                    h /= K.degree()
+            return h
 
         if is_minimal:
             E = self.curve()
@@ -2881,7 +3006,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         elif c4.valuation(v) == 0:
             n = min(B, N/2)
             r = -n*(N-n)/N
-        elif C > 3*B:
+        elif C >= 3*B:
             r = -2*B/3
         else:
             r = -C/4
@@ -2896,6 +3021,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 if not weighted:
                     r /= v.ramification_index() * v.residue_class_degree()
             return r * log(Nv)
+
+    nonarchimedian_local_height = deprecated_function_alias(13951, non_archimedean_local_height)
 
     def elliptic_logarithm(self, embedding=None, precision=100,
                            algorithm='pari'):

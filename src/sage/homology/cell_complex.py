@@ -20,18 +20,19 @@ by developers producing new classes, not casual users.
     the :meth:`~GenericCellComplex.homology` method get passed on to
     the :meth:`~GenericCellComplex.chain_complex` method and also to
     the constructor for chain complexes in
-    :class:`~sage.homology.chain_complex.ChainComplex`, as well its
-    associated
-    :meth:`~sage.homology.chain_complex.ChainComplex.homology` method.
+    :class:`sage.homology.chain_complex.ChainComplex_class <ChainComplex>`,
+    as well as its associated
+    :meth:`~sage.homology.chain_complex.ChainComplex_class.homology` method.
     This means that those keywords should have consistent meaning in
     all of those situations.  It also means that it is easy to
     implement new keywords: for example, if you implement a new
     keyword for the
-    :meth:`sage.homology.chain_complex.ChainComplex.homology` method,
+    :meth:`sage.homology.chain_complex.ChainComplex_class.homology` method,
     then it will be automatically accessible through the
     :meth:`~GenericCellComplex.homology` method for cell complexes --
     just make sure it gets documented.
 """
+
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
@@ -349,21 +350,21 @@ class GenericCellComplex(SageObject):
 
         Some keywords to possibly implement in a derived class:
 
-        - ``subcomplex`` - a subcomplex: compute the relative chain complex
-        - ``augmented`` - a bool: whether to return the augmented complex
-        - ``verbose`` - a bool: whether to print informational messages as
+        - ``subcomplex`` -- a subcomplex: compute the relative chain complex
+        - ``augmented`` -- a bool: whether to return the augmented complex
+        - ``verbose`` -- a bool: whether to print informational messages as
           the chain complex is being computed
-        - ``check_diffs`` - a bool: whether to check that the each
+        - ``check_diffs`` -- a bool: whether to check that the each
           composite of two consecutive differentials is zero
-        -  ``dimensions`` - if None, compute the chain complex in all
+        -  ``dimensions`` -- if ``None``, compute the chain complex in all
            dimensions.  If a list or tuple of integers, compute the
            chain complex in those dimensions, setting the chain groups
            in all other dimensions to zero.
 
         Definitely implement the following:
 
-        -  ``base_ring`` - commutative ring (optional, default ZZ)
-        -  ``cochain`` - a bool: whether to return the cochain complex
+        -  ``base_ring`` -- commutative ring (optional, default ZZ)
+        -  ``cochain`` -- a bool: whether to return the cochain complex
 
         EXAMPLES::
 
@@ -438,7 +439,7 @@ class GenericCellComplex(SageObject):
         method, which calls the Pari package.  For any large matrix,
         reduce it using the Dumas, Heckenbach, Saunders, and Welker
         elimination algorithm: see
-        :func:`sage.homology.chain_complex.dhsw_snf` for details.
+        :func:`sage.homology.matrix_utils.dhsw_snf` for details.
 
         Finally, ``algorithm`` may also be 'pari' or 'dhsw', which
         forces the named algorithm to be used regardless of the size
@@ -485,11 +486,11 @@ class GenericCellComplex(SageObject):
         from sage.homology.cubical_complex import CubicalComplex
         from sage.homology.simplicial_complex import SimplicialComplex
         from sage.modules.all import VectorSpace
-        from sage.homology.chain_complex import HomologyGroup
+        from sage.homology.homology_group import HomologyGroup
 
         base_ring = kwds.get('base_ring', ZZ)
         cohomology = kwds.get('cohomology', False)
-        subcomplex = kwds.get('subcomplex', None)
+        subcomplex = kwds.pop('subcomplex', None)
         verbose = kwds.get('verbose', False)
         algorithm = kwds.get('algorithm', 'auto')
 
@@ -513,77 +514,37 @@ class GenericCellComplex(SageObject):
             H = None
             if isinstance(self, CubicalComplex):
                 if have_chomp('homcubes'):
-                    if 'subcomplex' in kwds:
-                        del kwds['subcomplex']
                     H = homcubes(self, subcomplex, **kwds)
             elif isinstance(self, SimplicialComplex):
                 if have_chomp('homsimpl'):
-                    if 'subcomplex' in kwds:
-                        del kwds['subcomplex']
                     H = homsimpl(self, subcomplex, **kwds)
+
             # now pick off the requested dimensions
             if H:
                 answer = {}
                 if not dims:
-                    for d in range(self.dimension() + 1):
-                        if base_ring == ZZ:
-                            answer[d] = H.get(d, HomologyGroup(0))
-                        else:
-                            answer[d] = H.get(d, VectorSpace(base_ring, 0))
-                else:
-                    for d in dims:
-                        if base_ring == ZZ:
-                            answer[d] = H.get(d, HomologyGroup(0))
-                        else:
-                            answer[d] = H.get(d, VectorSpace(base_ring, 0))
+                    dims =range(self.dimension() + 1)
+                for d in dims:
+                    answer[d] = H.get(d, HomologyGroup(0, base_ring))
                 if dim is not None:
                     if not isinstance(dim, (list, tuple)):
-                        if base_ring == ZZ:
-                            answer = answer.get(dim, HomologyGroup(0))
-                        else:
-                            answer = answer.get(dim, VectorSpace(base_ring, 0))
+                        answer = answer.get(dim, HomologyGroup(0, base_ring))
                 return answer
 
         # Derived classes can implement specialized algorithms using a
         # _homology_ method.  See SimplicialComplex for one example.
         if hasattr(self, '_homology_'):
-            return self._homology_(dim, **kwds)
+            return self._homology_(dim, subcomplex=subcomplex, **kwds)
 
         C = self.chain_complex(cochain=cohomology, augmented=True,
-                               dimensions=dims, **kwds)
-        if 'subcomplex' in kwds:
-            del kwds['subcomplex']
+                               dimensions=dims, subcomplex=subcomplex, **kwds)
         answer = C.homology(**kwds)
-        if isinstance(answer, dict):
-            if cohomology:
-                too_big = self.dimension() + 1
-                if (not ((isinstance(dim, (list, tuple)) and too_big in dim)
-                        or too_big == dim)
-                    and too_big in answer):
-                    del answer[too_big]
-            if -2 in answer:
-                del answer[-2]
-            if -1 in answer:
-                del answer[-1]
-            for d in range(self.dimension() + 1):
-                if d not in answer:
-                    if base_ring == ZZ:
-                        answer[d] = HomologyGroup(0)
-                    else:
-                        answer[d] = VectorSpace(base_ring, 0)
-
-            if dim is not None:
-                if isinstance(dim, (list, tuple)):
-                    temp = {}
-                    for n in dim:
-                        temp[n] = answer[n]
-                    answer = temp
-                else:  # just a single dimension
-                    if base_ring == ZZ:
-                        answer = answer.get(dim, HomologyGroup(0))
-                    else:
-                        answer = answer.get(dim, VectorSpace(base_ring, 0))
-        return answer
+        if dim is None:
+            dim = range(self.dimension()+1)
+        zero = HomologyGroup(0, base_ring)
+        if isinstance(dim, (list, tuple)):
+            return dict([d, answer.get(d, zero)] for d in dim)
+        return answer.get(dim, zero)
 
     def cohomology(self, dim=None, **kwds):
         r"""

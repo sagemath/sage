@@ -1,7 +1,7 @@
 # Declare system calls related to signal handling
 
 cdef extern from "<stdlib.h>":
-    void abort()
+    void abort() nogil
 
 cdef extern from "<signal.h>":
     ctypedef void *sigset_t

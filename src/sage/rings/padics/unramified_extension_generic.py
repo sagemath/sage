@@ -57,7 +57,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: R.<a> = Zq(125); R #indirect doctest
-            Unramified Extension of 5-adic Ring with capped absolute precision 20 in a defined by (1 + O(5^20))*x^3 + (3 + O(5^20))*x + (3 + O(5^20))
+            Unramified Extension of 5-adic Ring with capped absolute precision 20 in a defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
             sage: latex(R) #indirect doctest
             \mathbf{Z}_{5^{3}}
         """

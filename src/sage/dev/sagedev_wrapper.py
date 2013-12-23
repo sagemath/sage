@@ -92,7 +92,7 @@ class SageDevWrapper(object):
         TESTS::
 
             sage: type(dev._get_object())
-            <class 'sage.dev.sagedev_wrapper.SageDevWrapper'>
+            <class 'sage.dev.test.sagedev.DoctestSageDevWrapper'>
         """
         self._sagedev = sagedev
 
@@ -137,7 +137,7 @@ class SageDevWrapper(object):
             sage: dev.obsolete
             Traceback (most recent call last):
             ...
-            AttributeError: 'SageDevWrapper' object has no attribute 'obsolete'
+            AttributeError: 'DoctestSageDevWrapper' object has no attribute 'obsolete'
             sage: dev._obsolete("obsolete", "not_obsolete")
             sage: dev.obsolete
             <function wrapped at 0x...>
@@ -162,7 +162,7 @@ class SageDevWrapper(object):
             sage: dev._local_branch_for_ticket
             Traceback (most recent call last):
             ...
-            AttributeError: 'SageDevWrapper' object has no attribute '_local_branch_for_ticket'
+            AttributeError: 'DoctestSageDevWrapper' object has no attribute '_local_branch_for_ticket'
             sage: dev._wrap("_local_branch_for_ticket")
             sage: dev._local_branch_for_ticket
             <function wrapped at 0x...>
@@ -245,6 +245,3 @@ class SageDevWrapper(object):
         """
         return repr(self._sagedev)
 
-
-from sagedev import SageDev
-dev = SageDevWrapper(SageDev())

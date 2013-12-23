@@ -39,9 +39,13 @@ for patch in ../patches/*.patch; do
 done
 
 
+# Note that maxima configure checks for git and, if it finds it, uses
+# versions information from the repo. See #15529. We disable this with
+# git_found=false
+
 echo
 echo "Now configuring Maxima..."
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --enable-ecl
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --enable-ecl git_found=false
 check_error "Failed to configure Maxima."
 
 

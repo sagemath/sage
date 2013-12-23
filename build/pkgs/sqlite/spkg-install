@@ -6,6 +6,19 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
+# OS X already has sqlite3 which includes some non-standard
+# modules to support their frameworks -- our own copy would
+# create issues since we set *_LIBRARY_PATH
+if { uname -sr | grep 'Darwin 1[3-9][.]' ;} &>/dev/null; then
+    ln -s /usr/bin/sqlite3 "$SAGE_LOCAL/bin"
+
+    # only exit if we actually linked it, otherwise we might
+    # break an upgrade
+    if [ -h "$SAGE_LOCAL/bin/sqlite3" ]; then
+        exit 0
+    fi
+fi
+
 cd src
 
 # Apply patches.  See SPKG.txt for information about what each patch

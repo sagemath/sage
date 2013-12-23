@@ -285,7 +285,7 @@ cpdef factor_using_pari(n, int_=False, debug_level=0, proof=None):
         sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest
         -1 * 83 * 131 * 294971519 * 1472414939
     """
-    from sage.libs.pari.gen import pari
+    from sage.libs.pari.all import pari
 
     if proof is None:
         from sage.structure.proof.proof import get_flag

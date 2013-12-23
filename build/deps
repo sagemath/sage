@@ -6,6 +6,7 @@
 # Let e.g. SAGE_ROOT/build/install pass options to sage-spkg, i.e. currently
 # "-f", to force rebuilding dependent packages during an upgrade (#9896).
 
+# Do not put an explicit path for sage-spkg here, it will be found in $PATH.
 SAGE_SPKG = sage-spkg $${SAGE_SPKG_OPTS}
 PIPE = $(SAGE_ROOT)/build/pipestatus
 
@@ -147,12 +148,8 @@ base: $(INST)/$(PREREQ) $(INST)/$(BZIP2) $(INST)/$(PATCH)
 $(INST)/$(PREREQ):
 	$(PIPE) "base/$(PREREQ)-install 2>&1" "tee -a $(SAGE_LOGS)/$(PREREQ).log"
 
-# If we are upgrading from a version 4.x of Sage, don't build bzip2.
-# This is because the old sage-spkg script cannot install the new bzip2
-# spkg (which is gzip compressed).  We continue using the old bzip2
-# installation (which is version 1.0.5 since sage-3.3), which is fine.
 $(INST)/$(BZIP2): $(INST)/$(PREREQ)
-	$(PIPE) "$(SAGE_SPKG) $(BZIP2) 2>&1" "tee -a $(SAGE_LOGS)/$(BZIP2).log"; \
+	+$(PIPE) "$(SAGE_SPKG) $(BZIP2) 2>&1" "tee -a $(SAGE_LOGS)/$(BZIP2).log"
 
 $(INST)/$(PATCH): $(INST)/$(BZIP2)
 	+$(PIPE) "$(SAGE_SPKG) $(PATCH) 2>&1" "tee -a $(SAGE_LOGS)/$(PATCH).log"
@@ -199,12 +196,7 @@ $(INST)/$(GRAPHS):
 $(INST)/$(GLPK): $(INST)/$(MPIR) $(INST)/$(ZLIB)
 	+$(PIPE) "$(SAGE_SPKG) $(GLPK) 2>&1" "tee -a $(SAGE_LOGS)/$(GLPK).log"
 
-# Python links against -lbz2.  Technically speaking, we should add
-# BZIP2 as dependency here.  But we don't do that to avoid needless
-# recompiles of Python when upgrading.  Since bzip2 is part of the
-# "base" target, we are guaranteed anyway that some version of bzip2
-# is present.
-$(INST)/$(PYTHON): $(INST)/$(ZLIB) \
+$(INST)/$(PYTHON): $(INST)/$(ZLIB) $(INST)/$(BZIP2) \
 		   $(INST)/$(READLINE) $(INST)/$(SQLITE) $(INST)/$(LIBPNG)
 	+$(PIPE) "$(SAGE_SPKG) $(PYTHON) 2>&1" "tee -a $(SAGE_LOGS)/$(PYTHON).log"
 
@@ -416,8 +408,7 @@ $(INST)/$(SPHINX): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(DOCUTILS) \
                    $(INST)/$(JINJA2) $(INST)/$(PYGMENTS)
 	+$(PIPE) "$(SAGE_SPKG) $(SPHINX) 2>&1" "tee -a $(SAGE_LOGS)/$(SPHINX).log"
 
-$(INST)/$(JINJA2): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(DOCUTILS) \
-
+$(INST)/$(JINJA2): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(DOCUTILS)
 	+$(PIPE) "$(SAGE_SPKG) $(JINJA2) 2>&1" "tee -a $(SAGE_LOGS)/$(JINJA2).log"
 
 $(INST)/$(PYGMENTS): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS)
@@ -466,7 +457,7 @@ sage: \
 		 $(INST)/$(SYMMETRICA) \
 		 $(INST)/$(ZNPOLY) \
 		 csage
-	+$(PIPE) "{ if [ -z $(SAGE_INSTALL_FETCH_ONLY) ]; then  cd $(SAGE_SRC) && . ./bin/sage-env && time python setup.py install; fi; } 2>&1" "tee -a $(SAGE_LOGS)/sage-$(SAGE_VERSION).log"
+	$(PIPE) '{ if [ -z "$(SAGE_INSTALL_FETCH_ONLY)" ]; then cd $(SAGE_SRC) && . ./bin/sage-env && time python setup.py install; fi; } 2>&1' 'tee -a $(SAGE_LOGS)/sage-$(SAGE_VERSION).log'
 
 scripts: $(SCRIPT_TARGETS)
 
@@ -479,7 +470,7 @@ csage: $(INST)/$(SCONS) \
        $(INST)/$(POLYBORI) \
        $(INST)/$(PYNAC) \
        $(INST)/$(PYTHON)
-	+$(PIPE) "{ if [ -z $(SAGE_INSTALL_FETCH_ONLY) ]; then cd $(SAGE_SRC)/c_lib && . ../bin/sage-env && time scons -Q install; fi; } 2>&1" "tee -a $(SAGE_LOGS)/csage-$(SAGE_VERSION).log"
+	$(PIPE) '{ if [ -z "$(SAGE_INSTALL_FETCH_ONLY)" ]; then cd $(SAGE_SRC)/c_lib && . ../bin/sage-env && time scons -Q install; fi; } 2>&1' 'tee -a $(SAGE_LOGS)/csage-$(SAGE_VERSION).log'
 
 $(INST)/ccache: $(BASE) $(INST)/$(ZLIB)
 	+$(PIPE) "$(SAGE_SPKG) ccache 2>&1" "tee -a $(SAGE_LOGS)/ccache.log"

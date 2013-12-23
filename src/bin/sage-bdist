@@ -17,21 +17,30 @@ die () {
 }
 
 usage () {
-    echo "usage: $CMD <SAGE_VERSION> [TMP_DIR]"
+    echo "usage: $CMD [TMP_DIR]"
 }
 
-[ $# -ge 1 -a $# -le 2 ] || die `usage`
+if [ $# -gt 1 ]; then
+    usage
+    die
+fi
 
-[ -n "$SAGE_ROOT" ] || die "must be run from within a Sage enviroment, or with SAGE_ROOT provided"
+if [ -z "$SAGE_ROOT" ]; then
+    die "must be run from within a Sage enviroment, or with SAGE_ROOT provided"
+fi
 
-if [ "$#" -gt 1 ]; then
-    TMP_DIR="$2"
+if [ -z "$SAGE_SRC" ]; then
+    die "must be run from within a Sage enviroment, or with SAGE_SRC provided"
+fi
+
+if [ "$#" -gt 0 ]; then
+    TMP_DIR="$1"
 else
     TMP_DIR="$SAGE_ROOT/tmp"
 fi
 
-# If $1 starts with "sage-", remove this prefix
-export SAGE_VERSION=`echo "$1" | sed 's/^sage-//'`
+source "$SAGE_SRC/bin/sage-version.sh"
+echo "Sage version $SAGE_VERSION, release date $SAGE_RELEASE_DATE"
 
 TARGET=sage-"$SAGE_VERSION"-`uname -m`-`uname`
 TARGET=`echo $TARGET | sed 's/ //g'`   # Remove spaces

@@ -87,7 +87,7 @@ cdef class Matrix(matrix0.Matrix):
             sage: b[0][0].precision()    # in words
             3
         """
-        from sage.libs.pari.gen import pari
+        from sage.libs.pari.all import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
 
     def _gap_init_(self):

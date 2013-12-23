@@ -63,3 +63,9 @@ C files:
   - a3596c56f9439144a0dbed4c47bd6ff9485e3fc8
   - 1a00ca416de4daebccaab2be1a4b8a061a9f2fde
   - ad550d9bbfee8113087407c3262bffc27a020c98
+* q_eint1.patch (Jeroen Demeyer): Fix precision of eint1(), backported
+  from upstream commits
+  - b894e0171112493bb4945a6a0e4af039b54a1d1f
+  - 54eb37055167dbd8d4856b1bd698cf7018db561b
+  and completely backport new algorithm for mpveceint1(). The prefix
+  q_ in the patch filename is to ensure it comes after polred.patch.

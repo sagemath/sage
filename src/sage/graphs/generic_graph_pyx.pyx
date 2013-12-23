@@ -25,8 +25,6 @@ from sage.misc.prandom import random
 # import from third-party library
 from sage.graphs.base.sparse_graph cimport SparseGraph
 
-cdef extern from *:
-    double sqrt(double)
 
 cdef class GenericGraph_pyx(SageObject):
     pass

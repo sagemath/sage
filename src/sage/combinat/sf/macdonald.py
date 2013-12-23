@@ -14,20 +14,20 @@ the graded Frobenius image of the Garsia-Haiman modules [GH1993]_.
 
 REFERENCES:
 
-    .. [Macdonald1995] I. G. Macdonald, Symmetric functions and Hall polynomials, second ed.,
-       The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-       by A. Zelevinsky, Oxford Science Publications.
+.. [Macdonald1995] I. G. Macdonald, Symmetric functions and Hall polynomials, second ed.,
+   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
+   by A. Zelevinsky, Oxford Science Publications.
 
-    .. [GH1993] A. Garsia, M. Haiman, A graded representation module for Macdonald's
-       polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
+.. [GH1993] A. Garsia, M. Haiman, A graded representation module for Macdonald's
+   polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
 
-    .. [BGHT1999] F. Bergeron, A. M. Garsia, M. Haiman, and G. Tesler, Identities and
-       positivity conjectures for some remarkable operators in the theory of symmetric
-       functions, Methods Appl. Anal. 6 (1999), no. 3, 363--420.
+.. [BGHT1999] F. Bergeron, A. M. Garsia, M. Haiman, and G. Tesler, Identities and
+   positivity conjectures for some remarkable operators in the theory of symmetric
+   functions, Methods Appl. Anal. 6 (1999), no. 3, 363--420.
 
-    .. [LLM1998] L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
-       Macdonald Polynomials, IRMN no. 18 (1998).
-       :arXiv:`math/9808050`.
+.. [LLM1998] L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
+   Macdonald Polynomials, IRMN no. 18 (1998).
+   :arXiv:`math/9808050`.
 """
 
 #*****************************************************************************
@@ -76,8 +76,6 @@ _S_to_s_cache = {}
 _s_to_S_cache = {}
 
 _qt_kostka_cache = {}
-
-QQqt = FractionField(QQ['q','t'])
 
 class Macdonald(UniqueRepresentation):
 
@@ -343,7 +341,7 @@ class Macdonald(UniqueRepresentation):
             sage: Q(P(Q([2])))
             McdQ[2]
 
-        By transitivity, one get coercions from the classical bases::
+        By transitivity, one gets coercions from the classical bases::
 
             sage: Q(s([2]))
             ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdQ[1, 1] + ((q^3-q^2-q+1)/(q*t^2-q*t-t+1))*McdQ[2]
@@ -547,395 +545,7 @@ class Macdonald(UniqueRepresentation):
         """
         return MacdonaldPolynomials_s(self)
 
-################################################################
-# Warning most of the functions below this point are deprecated
-################################################################
 QQqt = QQ['q,t'].fraction_field()
-
-def NoneConvention( R, q, t ):
-    r"""
-    Helper function to mimic behavior of old conventions.
-
-    INPUT:
-
-    - ``R`` -- ring
-    - ``q``, ``t`` -- parameters
-
-    EXAMPLES::
-
-        sage: sage.combinat.sf.macdonald.NoneConvention(QQ, 0, None)
-        (Fraction Field of Univariate Polynomial Ring in t over Rational Field, 0, t)
-        sage: R = QQ['t']
-        sage: sage.combinat.sf.macdonald.NoneConvention(R, None, R.gen())
-        (Fraction Field of Univariate Polynomial Ring in q over Univariate Polynomial Ring in t over Rational Field, q, t)
-        sage: R = QQ['q','t']
-        sage: sage.combinat.sf.macdonald.NoneConvention(R, 0, None)
-        (Fraction Field of Univariate Polynomial Ring in t over Multivariate Polynomial Ring in q, t over Rational Field, 0, t)
-    """
-    if t is None and q is None:
-        R = R['q,t'].fraction_field()
-        (q,t) = R.gens()
-    elif t is not None and q is None:
-        if t not in R:
-            raise ValueError, "t (=%s) must be in R (=%s)"%(t,R)
-        t = R(t)
-
-        R = R['q'].fraction_field()
-        q = R.gen()
-
-    elif t is None and q is not None:
-        if q not in R:
-            raise ValueError, "q (=%s) must be in R (=%s)"%(q,R)
-        q = R(q)
-
-        R = R['t'].fraction_field()
-        t = R.gen()
-    else:
-        if t not in R or q not in R:
-            raise ValueError
-        q = R(q)
-        t = R(t)
-    return (R, q, t)
-
-def MacdonaldPolynomialsP(R, q=None, t=None):
-    """
-    Returns the Macdonald polynomials on the `P` basis. These are upper
-    triangularly related to the monomial symmetric functions and are
-    orthogonal with respect to the `qt`-Hall scalar product.
-
-    This function is deprecated.  Use instead:
-    SymmetricFunctions(R).macdonald(q=value,t=value).P()
-
-    EXAMPLES::
-
-        sage: P = MacdonaldPolynomialsP(QQ); P
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).P()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
-        sage: m = P.realization_of().monomial()
-        sage: P.transition_matrix(m,2)
-        [                          1 (q*t - q + t - 1)/(q*t - 1)]
-        [                          0                           1]
-        sage: P([1,1]).scalar_qt(P([2]))
-        0
-        sage: P([2]).scalar_qt(P([2]))
-        (-q^3 + q^2 + q - 1)/(-q*t^2 + q*t + t - 1)
-        sage: P([1,1]).scalar_qt(P([1,1]))
-        (-q^2*t + q*t + q - 1)/(-t^3 + t^2 + t - 1)
-
-    When `q = 0`, the Macdonald polynomials on the `P` basis are the same
-    as the Hall-Littlewood polynomials on the `P` basis.
-
-    ::
-
-        sage: R = FractionField(QQ['q','t'])
-        sage: P = MacdonaldPolynomialsP(R,q=0)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=0,t=t).P()
-        See http://trac.sagemath.org/5457 for details.
-        sage: P([2])^2
-        (t+1)*McdP[2, 2] + (-t+1)*McdP[3, 1] + McdP[4]
-        sage: (q,t) = R.gens()
-        sage: (q*P([2]))^2
-        (q^2*t+q^2)*McdP[2, 2] + (-q^2*t+q^2)*McdP[3, 1] + q^2*McdP[4]
-        sage: HLP = P.realization_of().hall_littlewood().P()
-        sage: HLP([2])^2
-        (t+1)*HLP[2, 2] + (-t+1)*HLP[3, 1] + HLP[4]
-
-    Coercions from the `Q` and `J` basis (proportional) are
-    implemented::
-
-        sage: P = MacdonaldPolynomialsP(QQ)
-        sage: Q = MacdonaldPolynomialsQ(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).Q()
-        See http://trac.sagemath.org/5457 for details.
-        sage: J = MacdonaldPolynomialsJ(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).J()
-        See http://trac.sagemath.org/5457 for details.
-        sage: s = P.realization_of().s()
-
-    ::
-
-        sage: P(Q([2]))
-        ((q*t^2-q*t-t+1)/(q^3-q^2-q+1))*McdP[2]
-        sage: P(Q([2,1]))
-        ((-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1)/(-q^4*t+2*q^3*t-q^2*t+q^2-2*q+1))*McdP[2, 1]
-
-    ::
-
-        sage: P(J([2]))
-        (q*t^2-q*t-t+1)*McdP[2]
-        sage: P(J([2,1]))
-        (-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1)*McdP[2, 1]
-
-    By transitivity, one get coercions from the classical bases::
-
-        sage: P(s([2]))
-        ((q-t)/(q*t-1))*McdP[1, 1] + McdP[2]
-        sage: P(s([2,1]))
-        ((q*t-t^2+q-t)/(q*t^2-1))*McdP[1, 1, 1] + McdP[2, 1]
-    """
-    (R, q, t) = NoneConvention(R, q, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=%s,t=%s).P()"%(q,t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).macdonald(q=q,t=t).P()
-
-def MacdonaldPolynomialsQ(R, q=None, t=None):
-    """
-    Returns the Macdonald polynomials on the `Q` basis. These are dual to
-    the Macdonald polynomials on the `P` basis with respect to the
-    `qt`-Hall scalar product.
-
-    This function will is deprecated.  Use instead:
-    SymmetricFunctions(R).macdonald(q=value,t=value).Q()
-
-    EXAMPLES::
-
-        sage: Q = MacdonaldPolynomialsQ(QQ); Q
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).Q()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Q basis
-        sage: P = MacdonaldPolynomialsP(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).P()
-        See http://trac.sagemath.org/5457 for details.
-        sage: Q([2]).scalar_qt(P([2]))
-        1
-        sage: Q([2]).scalar_qt(P([1,1]))
-        0
-        sage: Q([1,1]).scalar_qt(P([2]))
-        0
-        sage: Q([1,1]).scalar_qt(P([1,1]))
-        1
-        sage: Q(P([2]))
-        ((q^3-q^2-q+1)/(q*t^2-q*t-t+1))*McdQ[2]
-        sage: Q(P([1,1]))
-        ((q^2*t-q*t-q+1)/(t^3-t^2-t+1))*McdQ[1, 1]
-
-
-    Coercions from the `P` and `J` basis (proportional) are implemented::
-
-        sage: P = MacdonaldPolynomialsP(QQ)
-        sage: Q = MacdonaldPolynomialsQ(QQ)
-        sage: J = MacdonaldPolynomialsJ(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).J()
-        See http://trac.sagemath.org/5457 for details.
-        sage: s = P.realization_of().s()
-
-    ::
-
-        sage: Q(J([2]))
-        (q^3-q^2-q+1)*McdQ[2]
-
-    ::
-
-        sage: Q(P([2]))
-        ((q^3-q^2-q+1)/(q*t^2-q*t-t+1))*McdQ[2]
-        sage: P(Q(P([2])))
-        McdP[2]
-        sage: Q(P(Q([2])))
-        McdQ[2]
-
-    By transitivity, one get coercions from the classical bases::
-
-        sage: Q(s([2]))
-        ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdQ[1, 1] + ((q^3-q^2-q+1)/(q*t^2-q*t-t+1))*McdQ[2]
-    """
-    (R, q, t) = NoneConvention(R, q, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=%s,t=%s).Q()"%(q,t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).macdonald(q=q,t=t).Q()
-
-def MacdonaldPolynomialsJ(R, q=None, t=None):
-    """
-    Returns the Macdonald polynomials on the `J` basis also known as the
-    integral form of the Macdonald polynomials. These are scalar
-    multiples of both the `P` and `Q` bases. When expressed in the `P` or `Q`
-    basis, the scaling coefficients are polynomials in `q` and `t` rather
-    than rational functions.
-
-    This function will is deprecated.  Use instead:
-    SymmetricFunctions(R).macdonald(q=value,t=value).J()
-
-    EXAMPLES::
-
-        sage: J = MacdonaldPolynomialsJ(QQ); J
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).J()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald J basis
-        sage: P = MacdonaldPolynomialsP(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).P()
-        See http://trac.sagemath.org/5457 for details.
-        sage: Q = MacdonaldPolynomialsQ(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).Q()
-        See http://trac.sagemath.org/5457 for details.
-        sage: P(J([2]))
-        (q*t^2-q*t-t+1)*McdP[2]
-        sage: P(J([1,1]))
-        (t^3-t^2-t+1)*McdP[1, 1]
-        sage: Q(J([2]))
-        (q^3-q^2-q+1)*McdQ[2]
-        sage: Q(J([1,1]))
-        (q^2*t-q*t-q+1)*McdQ[1, 1]
-
-    Coercions from the `Q` and `J` basis (proportional) and to/from
-    the Schur basis are implemented::
-
-        sage: P = MacdonaldPolynomialsP(QQ)
-        sage: Q = MacdonaldPolynomialsQ(QQ)
-        sage: J = MacdonaldPolynomialsJ(QQ)
-        sage: s = P.realization_of().s()
-
-    ::
-
-        sage: J(P([2]))
-        (1/(q*t^2-q*t-t+1))*McdJ[2]
-
-    ::
-
-        sage: J(Q([2]))
-        (1/(q^3-q^2-q+1))*McdJ[2]
-
-    ::
-
-        sage: s(J([2]))
-        (-q*t+t^2+q-t)*s[1, 1] + (q*t^2-q*t-t+1)*s[2]
-        sage: J(s([2]))
-        ((q-t)/(q*t^4-q*t^3-q*t^2-t^3+q*t+t^2+t-1))*McdJ[1, 1] + (1/(q*t^2-q*t-t+1))*McdJ[2]
-    """
-    (R, q, t) = NoneConvention(R, q, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=%s,t=%s).J()"%(q,t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).macdonald(q=q,t=t).J()
-
-def MacdonaldPolynomialsH(R, q=None, t=None):
-    """
-    Returns the Macdonald polynomials on the `H` basis. When the `H` basis
-    is expanded on the Schur basis, the coefficients are the `qt`-Kostka
-    numbers.
-
-    This function will is deprecated.  Use instead:
-    SymmetricFunctions(R).macdonald(q=value,t=value).H()
-
-    EXAMPLES::
-
-        sage: H = MacdonaldPolynomialsH(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).H()
-        See http://trac.sagemath.org/5457 for details.
-        sage: s = H.realization_of().s()
-        sage: s(H([2]))
-        q*s[1, 1] + s[2]
-        sage: s(H([1,1]))
-        s[1, 1] + t*s[2]
-
-    Coercions to/from the Schur basis are implemented::
-
-        sage: H = MacdonaldPolynomialsH(QQ)
-        sage: s = H.realization_of().s()
-        sage: H(s([2]))
-        ((-q)/(-q*t+1))*McdH[1, 1] + (1/(-q*t+1))*McdH[2]
-    """
-    (R, q, t) = NoneConvention(R, q, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=%s,t=%s).H()"%(q,t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).macdonald(q=q,t=t).H()
-
-
-def MacdonaldPolynomialsHt(R, q=None, t=None):
-    """
-    Returns the Macdonald polynomials on the `Ht` basis. The elements of
-    the `Ht` basis are eigenvectors of the nabla operator. When expanded
-    on the Schur basis, the coefficients are the modified `qt`-Kostka
-    numbers.
-
-    This function will is deprecated.  Use instead:
-    SymmetricFunctions(R).macdonald(q=value,t=value).Ht()
-
-    EXAMPLES::
-
-        sage: Ht = MacdonaldPolynomialsHt(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).Ht()
-        See http://trac.sagemath.org/5457 for details.
-        sage: [Ht(p).nabla() for p in Partitions(3)]
-        [q^3*McdHt[3], q*t*McdHt[2, 1], t^3*McdHt[1, 1, 1]]
-
-    ::
-
-        sage: s = Ht.realization_of().s()
-        sage: from sage.combinat.sf.macdonald import qt_kostka
-        sage: q,t = Ht.base_ring().gens()
-        sage: s(Ht([2,1]))
-        q*t*s[1, 1, 1] + (q+t)*s[2, 1] + s[3]
-        sage: qt_kostka([1,1,1],[2,1]).subs(t=1/t)*t^Partition([2,1]).weighted_size()
-        q*t
-        sage: qt_kostka([2,1],[2,1]).subs(t=1/t)*t^Partition([2,1]).weighted_size()
-        q + t
-        sage: qt_kostka([3],[2,1]).subs(t=1/t)*t^Partition([2,1]).weighted_size()
-        1
-
-    Coercions to/from the Schur basis are implemented::
-
-        sage: Ht = MacdonaldPolynomialsHt(QQ)
-        sage: s = Ht.realization_of().s()
-        sage: Ht(s([2,1]))
-        ((-q)/(-q*t^2+t^3+q^2-q*t))*McdHt[1, 1, 1] + ((q^2+q*t+t^2)/(-q^2*t^2+q^3+t^3-q*t))*McdHt[2, 1] + ((-t)/(q^3-q^2*t-q*t+t^2))*McdHt[3]
-        sage: Ht(s([2]))
-        ((-q)/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
-    """
-    (R, q, t) = NoneConvention(R, q, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=%s,t=%s).Ht()"%(q,t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).macdonald(q=q,t=t).Ht()
-
-def MacdonaldPolynomialsS(R, q=None, t=None):
-    """
-    This function has been deprecated.  Previous implementations
-    do not provide expected behavior.  Use instead:
-    SymmetricFunctions(R).macdonald(q=value,t=value).S()
-
-    TESTS::
-
-        sage: MacdonaldPolynomialsS(QQ)
-        doctest:1: DeprecationWarning: Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=q,t=t).S()
-        See http://trac.sagemath.org/5457 for details.
-        Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald S basis
-    """
-    (R, q, t) = NoneConvention(R, q, t)
-    sage.misc.superseded.deprecation(5457, "Deprecation warning: In the future use SymmetricFunctions(R).macdonald(q=%s,t=%s).S()"%(q,t))
-    return sage.combinat.sf.sf.SymmetricFunctions(R).macdonald(q=q,t=t).S()
-
-#############
-#   Cache   #
-#############
-#from sage.misc.cache import Cache
-#cache_p = Cache(MacdonaldPolynomials_p)
-#cache_j = Cache(MacdonaldPolynomials_j)
-#cache_q = Cache(MacdonaldPolynomials_q)
-#cache_h = Cache(MacdonaldPolynomials_h)
-#cache_ht = Cache(MacdonaldPolynomials_ht)
-#cache_s = Cache(MacdonaldPolynomials_s)
-
-######################
-# _set_cache to be deprecated
-######################
-def _set_cache(c, self):
-    """
-    Since the Macdonald polynomials could be called many ways, this is
-    a utility routine that adds those other ways to the cache.
-
-    EXAMPLES::
-
-        sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
-        sage: S = Sym.macdonald().S()
-        sage: Sym2 = SymmetricFunctions(QQ['q,t'].fraction_field())
-        sage: S2 = Sym2.macdonald().S()
-        sage: S2 is S #indirect doctest
-        True
-    """
-    br = self.base_ring()
-    q,t = self.q, self.t
-    c[c.key(br, q=q, t=t)] = self
-    c[c.key(br, q, t)] = self
-    c[c.key(br, q, t)] = self
-    c[c.key(br, q, t=t)] = self
-
-########################################################################
-# End of deprecation
-########################################################################
-
 
 ##############################################
 
@@ -1390,7 +1000,6 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
         self._self_to_s_cache = _j_to_s_cache
         self._s_to_self_cache = _s_to_j_cache
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        #_set_cache(cache_j, self)
 
     def _s_cache(self, n):
         r"""

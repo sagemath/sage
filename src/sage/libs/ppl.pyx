@@ -763,11 +763,9 @@ cdef class MIP_Problem(_mutable_or_immutable):
         cdef PPL_Coefficient sup_n
         cdef PPL_Coefficient sup_d
 
+        sig_on()
         try:
-            sig_on()
             self.thisptr.optimal_value(sup_n, sup_d)
-        except ValueError, msg:
-            raise ValueError, msg
         finally:
             sig_off()
 
@@ -891,11 +889,9 @@ cdef class MIP_Problem(_mutable_or_immutable):
             c.space_dimension() == 3 exceeds this->space_dimension == 2.
         """
         self.assert_mutable("The MIP_Problem is not mutable!");
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_constraint(c.thisptr[0])
-        except ValueError, msg:
-            raise ValueError, msg
         finally:
             sig_off()
 
@@ -929,11 +925,9 @@ cdef class MIP_Problem(_mutable_or_immutable):
             cs.space_dimension() == 10 exceeds this->space_dimension() == 2.
         """
         self.assert_mutable("The MIP_Problem is not mutable!");
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_constraints(cs.thisptr[0])
-        except ValueError, msg:
-            raise ValueError, msg
         finally:
             sig_off()
 
@@ -1046,11 +1040,9 @@ cdef class MIP_Problem(_mutable_or_immutable):
         cdef PPL_Coefficient sup_n
         cdef PPL_Coefficient sup_d
 
+        sig_on()
         try:
-            sig_on()
             self.thisptr.evaluate_objective_function(evaluating_point.thisptr[0], sup_n, sup_d)
-        except ValueError, msg:
-            raise ValueError, msg
         finally:
             sig_off()
 
@@ -1079,11 +1071,9 @@ cdef class MIP_Problem(_mutable_or_immutable):
             sage: m.solve()
             {'status': 'optimized'}
         """
+        sig_on()
         try:
-            sig_on()
             tmp = self.thisptr.solve()
-        except ValueError, msg:
-            raise ValueError, msg
         finally:
             sig_off()
         if tmp == UNFEASIBLE_MIP_PROBLEM:
@@ -1112,11 +1102,9 @@ cdef class MIP_Problem(_mutable_or_immutable):
             point(10/3, 0/3)
         """
         cdef PPL_Generator *g
+        sig_on()
         try:
-            sig_on()
             g = new_MIP_optimizing_point(self.thisptr[0])
-        except ValueError, msg:
-            raise ValueError, msg
         finally:
             sig_off()
         return _wrap_Generator(g[0])
@@ -1439,13 +1427,14 @@ cdef class Polyhedron(_mutable_or_immutable):
         rel = Poly_Gen_Relation(True)
         try:
             sig_on()
-            rel.thisptr = new_relation_with(self.thisptr[0], g.thisptr[0])
-        except ValueError, msg:
-            # we must initialize rel.thisptr to something
+            try:
+                rel.thisptr = new_relation_with(self.thisptr[0], g.thisptr[0])
+            finally:
+                sig_off()
+        except BaseException:
+            # rel.thisptr must be set to something valid or rel.__dealloc__() will segfault
             rel.thisptr = new PPL_Poly_Gen_Relation(PPL_Poly_Gen_Relation_nothing())
-            raise ValueError, msg
-        finally:
-            sig_off()
+            raise
         return rel
 
 
@@ -1456,13 +1445,14 @@ cdef class Polyhedron(_mutable_or_immutable):
         rel = Poly_Con_Relation(True)
         try:
             sig_on()
-            rel.thisptr = new_relation_with(self.thisptr[0], c.thisptr[0])
-        except ValueError, msg:
-            # we must initialize rel.thisptr to something
+            try:
+                rel.thisptr = new_relation_with(self.thisptr[0], c.thisptr[0])
+            finally:
+                sig_off()
+        except BaseException:
+            # rel.thisptr must be set to something valid or rel.__dealloc__() will segfault
             rel.thisptr = new PPL_Poly_Con_Relation(PPL_Poly_Con_Relation_nothing())
-            raise ValueError, msg
-        finally:
-            sig_off()
+            raise
         return rel
 
 
@@ -1654,8 +1644,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             True
         """
         cdef bint result
+        sig_on()
         try:
-            sig_on()
             result = self.thisptr.is_disjoint_from(y.thisptr[0])
         finally:
             sig_off()
@@ -1774,8 +1764,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             this->space_dimension() == 1, v.space_dimension() == 2.
         """
         cdef bint result
+        sig_on()
         try:
-            sig_on()
             result = self.thisptr.constrains(var.thisptr[0])
         finally:
             sig_off()
@@ -1815,8 +1805,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             this->space_dimension() == 1, e.space_dimension() == 2.
         """
         cdef bint result
+        sig_on()
         try:
-            sig_on()
             result = self.thisptr.bounds_from_above(expr.thisptr[0])
         finally:
             sig_off()
@@ -1856,8 +1846,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             this->space_dimension() == 1, e.space_dimension() == 2.
         """
         cdef bint result
+        sig_on()
         try:
-            sig_on()
             result = self.thisptr.bounds_from_below(expr.thisptr[0])
         finally:
             sig_off()
@@ -2047,8 +2037,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             y is a NNC_Polyhedron.
         """
         cdef bint result
+        sig_on()
         try:
-            sig_on()
             result = self.thisptr.contains(y.thisptr[0])
         finally:
             sig_off()
@@ -2097,8 +2087,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             y is a NNC_Polyhedron.
         """
         cdef bint result
+        sig_on()
         try:
-            sig_on()
             result = self.thisptr.strictly_contains(y.thisptr[0])
         finally:
             sig_off()
@@ -2156,8 +2146,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             c is a strict inequality.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_constraint(c.thisptr[0])
         finally:
             sig_off()
@@ -2224,8 +2214,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             *this is an empty polyhedron and g is not a point.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_generator(g.thisptr[0])
         finally:
             sig_off()
@@ -2285,8 +2275,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             cs contains strict inequalities.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_constraints(cs.thisptr[0])
         finally:
             sig_off()
@@ -2349,8 +2339,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             gs contains closure points.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_generators(gs.thisptr[0])
         finally:
             sig_off()
@@ -2390,8 +2380,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             ValueError: PPL::C_Polyhedron::unconstrain(var):
             this->space_dimension() == 2, required space dimension == 3.
         """
+        sig_on()
         try:
-            sig_on()
             self.thisptr.unconstrain(var.thisptr[0])
         finally:
             sig_off()
@@ -2435,8 +2425,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             y is a NNC_Polyhedron.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.intersection_assign(y.thisptr[0])
         finally:
             sig_off()
@@ -2489,8 +2479,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             y is a NNC_Polyhedron.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.poly_hull_assign(y.thisptr[0])
         finally:
             sig_off()
@@ -2562,8 +2552,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             y is a NNC_Polyhedron.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.poly_difference_assign(y.thisptr[0])
         finally:
             sig_off()
@@ -2686,8 +2676,8 @@ cdef class Polyhedron(_mutable_or_immutable):
         """
         self.assert_mutable('The Polyhedron is not mutable!')
         m = int(m)
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_space_dimensions_and_embed(m)
         finally:
             sig_off()
@@ -2742,8 +2732,8 @@ cdef class Polyhedron(_mutable_or_immutable):
         """
         self.assert_mutable('The Polyhedron is not mutable!')
         m = int(m)
+        sig_on()
         try:
-            sig_on()
             self.thisptr.add_space_dimensions_and_project(m)
         finally:
             sig_off()
@@ -2817,8 +2807,8 @@ cdef class Polyhedron(_mutable_or_immutable):
             concatenation exceeds the maximum allowed space dimension.
         """
         self.assert_mutable('The Polyhedron is not mutable!')
+        sig_on()
         try:
-            sig_on()
             self.thisptr.concatenate_assign(y.thisptr[0])
         finally:
             sig_off()
@@ -2853,8 +2843,8 @@ cdef class Polyhedron(_mutable_or_immutable):
         """
         self.assert_mutable('The Polyhedron is not mutable!')
         new_dimension = int(new_dimension)
+        sig_on()
         try:
-            sig_on()
             self.thisptr.remove_higher_space_dimensions(new_dimension)
         finally:
             sig_off()
@@ -4318,10 +4308,10 @@ cdef class Generator(object):
         cdef Generator g = Generator(True)
         try:
             g.thisptr = new_line(e.thisptr[0])
-        except ValueError, msg:
+        except BaseException:
             # g.thisptr must be set to something valid or g.__dealloc__() will segfault
             g.thisptr = new_point(e.thisptr[0],PPL_Coefficient(1))
-            raise ValueError, msg
+            raise
         return g
 
 
@@ -4363,10 +4353,10 @@ cdef class Generator(object):
         cdef Generator g = Generator(True)
         try:
             g.thisptr = new_ray(e.thisptr[0])
-        except ValueError, msg:
+        except BaseException:
             # g.thisptr must be set to something valid or g.__dealloc__() will segfault
             g.thisptr = new_point(e.thisptr[0],PPL_Coefficient(1))
-            raise ValueError, msg
+            raise
         return g
 
 
@@ -4412,10 +4402,10 @@ cdef class Generator(object):
         cdef Generator g = Generator(True)
         try:
             g.thisptr = new_point(e.thisptr[0], PPL_Coefficient(d.value))
-        except ValueError, msg:
+        except BaseException:
             # g.thisptr must be set to something valid or g.__dealloc__() will segfault
             g.thisptr = new_point(e.thisptr[0],PPL_Coefficient(1))
-            raise ValueError, msg
+            raise
         return g
 
 
@@ -4464,10 +4454,10 @@ cdef class Generator(object):
         cdef Generator g = Generator(True)
         try:
             g.thisptr = new_closure_point(e.thisptr[0], PPL_Coefficient(d.value))
-        except ValueError, msg:
+        except BaseException:
             # g.thisptr must be set to something valid or g.__dealloc__() will segfault
             g.thisptr = new_point(e.thisptr[0],PPL_Coefficient(1))
-            raise ValueError, msg
+            raise
         return g
 
 

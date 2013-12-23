@@ -1,4 +1,4 @@
-include 'sage/misc/bitset_pxd.pxi'
+from sage.misc.bitset cimport bitset_t
 
 cdef class LeanMatrix:
     cdef long _nrows

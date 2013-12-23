@@ -1,7 +1,7 @@
 .. _following-latest:
 
 =============================
- Following the latest source
+ Following the Latest Source
 =============================
 
 These are the instructions if you just want to follow the latest
@@ -9,11 +9,11 @@ These are the instructions if you just want to follow the latest
 
 The steps are:
 
-* :ref:`install-git`
+* :ref:`section-git-install`
 * get local copy of the `Sage Notebook github`_ git repository
 * update local copy from time to time
 
-Get the local copy of the code
+Get the Local Copy of the Code
 ==============================
 
 From the command line::
@@ -22,7 +22,7 @@ From the command line::
 
 You now have a copy of the code tree in the new ``sagenb`` directory.
 
-Updating the code
+Updating the Code
 =================
 
 From time to time you may want to pull down the latest code.  Do this with::

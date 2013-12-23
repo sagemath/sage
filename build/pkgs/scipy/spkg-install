@@ -17,6 +17,7 @@ if [ "$UNAME" = "Darwin" ]; then
     unset BLAS
     unset LAPACK
     export LDFLAGS="-bundle -undefined dynamic_lookup $LDFLAGS"
+    export CPPFLAGS="-D__ACCELERATE__ $CPPFLAGS"
 else
     export ATLAS="$SAGE_LOCAL"
     export BLAS="$SAGE_LOCAL"

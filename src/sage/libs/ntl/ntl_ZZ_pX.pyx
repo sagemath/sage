@@ -65,7 +65,8 @@ cdef class ntl_ZZ_pX:
     # See ntl_ZZ_pX.pxd for definition of data members
     def __init__(self, v = None, modulus = None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(ntl.ZZ(20))
             sage: f = ntl.ZZ_pX([1,2,5,-9], c)
             sage: f
@@ -141,7 +142,8 @@ cdef class ntl_ZZ_pX:
 
     def __reduce__(self):
         """
-        TEST:
+        TESTS::
+
             sage: f = ntl.ZZ_pX([1,2,3,7], 5); f
             [1 2 3 2]
             sage: loads(dumps(f)) == f
@@ -153,7 +155,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the string representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.ZZ_pX([1,0,8],5)
             sage: x
             [1 0 3]
@@ -171,7 +174,8 @@ cdef class ntl_ZZ_pX:
         """
         Return a copy of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.ZZ_pX([0,5,-3],11)
             sage: y = copy(x)
             sage: x == y
@@ -190,7 +194,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the modulus for self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.ZZ_pX([0,5,3],17)
             sage: c = x.get_modulus_context()
             sage: y = ntl.ZZ_pX([5],c)
@@ -227,11 +232,13 @@ cdef class ntl_ZZ_pX:
         r"""
         This method exists solely for automated testing of setitem_from_int().
 
-        sage: c = ntl.ZZ_pContext(20)
-        sage: x = ntl.ZZ_pX([2, 3, 4], c)
-        sage: x._setitem_from_int_doctest(5, 42)
-        sage: x
-         [2 3 4 0 0 2]
+        TESTS::
+
+            sage: c = ntl.ZZ_pContext(20)
+            sage: x = ntl.ZZ_pX([2, 3, 4], c)
+            sage: x._setitem_from_int_doctest(5, 42)
+            sage: x
+            [2 3 4 0 0 2]
         """
         self.c.restore_c()
         self.setitem_from_int(i, value)
@@ -240,10 +247,12 @@ cdef class ntl_ZZ_pX:
         r"""
         Returns the ith entry of self.
 
-        sage: c = ntl.ZZ_pContext(20)
-        sage: x = ntl.ZZ_pX([2, 3, 4], c)
-        sage: x[1]
-        3
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pContext(20)
+            sage: x = ntl.ZZ_pX([2, 3, 4], c)
+            sage: x[1]
+            3
         """
         cdef ntl_ZZ_p r
         r = PY_NEW(ntl_ZZ_p)
@@ -277,15 +286,17 @@ cdef class ntl_ZZ_pX:
         r"""
         This method exists solely for automated testing of getitem_as_int().
 
-        sage: c = ntl.ZZ_pContext(20)
-        sage: x = ntl.ZZ_pX([2, 3, 5, -7, 11], c)
-        sage: i = x._getitem_as_int_doctest(3)
-        sage: print i
-         13
-        sage: print type(i)
-         <type 'int'>
-        sage: print x._getitem_as_int_doctest(15)
-         0
+        TESTS::
+
+            sage: c = ntl.ZZ_pContext(20)
+            sage: x = ntl.ZZ_pX([2, 3, 5, -7, 11], c)
+            sage: i = x._getitem_as_int_doctest(3)
+            sage: print i
+            13
+            sage: print type(i)
+            <type 'int'>
+            sage: print x._getitem_as_int_doctest(15)
+            0
         """
         # self.c.restore_c() # restored in getitem_as_int()
         return self.getitem_as_int(i)
@@ -294,7 +305,8 @@ cdef class ntl_ZZ_pX:
         """
         Return list of entries as a list of ntl_ZZ_p.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.ZZ_pX([1,3,5],11)
             sage: x.list()
             [1, 3, 5]
@@ -308,7 +320,8 @@ cdef class ntl_ZZ_pX:
 
     def __add__(ntl_ZZ_pX self, ntl_ZZ_pX other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: ntl.ZZ_pX(range(5),c) + ntl.ZZ_pX(range(6),c)
             [0 2 4 6 8 5]
@@ -324,7 +337,8 @@ cdef class ntl_ZZ_pX:
 
     def __sub__(ntl_ZZ_pX self, ntl_ZZ_pX other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: ntl.ZZ_pX(range(5),c) - ntl.ZZ_pX(range(6),c)
             [0 0 0 0 0 15]
@@ -340,7 +354,8 @@ cdef class ntl_ZZ_pX:
 
     def __mul__(ntl_ZZ_pX self, ntl_ZZ_pX other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c1 = ntl.ZZ_pContext(20)
             sage: alpha = ntl.ZZ_pX(range(5), c1)
             sage: beta = ntl.ZZ_pX(range(6), c1)
@@ -367,7 +382,8 @@ cdef class ntl_ZZ_pX:
         Compute quotient self / other, if the quotient is a polynomial.
         Otherwise an Exception is raised.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,3], c) * ntl.ZZ_pX([4,5], c)**2
             sage: g = ntl.ZZ_pX([4,5], c)
@@ -403,15 +419,23 @@ cdef class ntl_ZZ_pX:
         If p is not prime this function may raise a RuntimeError due to division by a noninvertible
         element of ZZ_p.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(ntl.ZZ(17))
             sage: f = ntl.ZZ_pX([2,4,6], c); g = ntl.ZZ_pX([2], c)
             sage: f % g   # 0
             []
-
             sage: f = ntl.ZZ_pX(range(10), c); g = ntl.ZZ_pX([-1,0,1], c)
             sage: f % g
             [3 8]
+
+            sage: c = ntl.ZZ_pContext(ntl.ZZ(16))
+            sage: f = ntl.ZZ_pX([2,4,6], c); g = ntl.ZZ_pX([2], c)
+            sage: f % g
+            Traceback (most recent call last):
+            ...
+            RuntimeError: ZZ_p: division by non-invertible element
+
         """
         if self.c is not other.c:
             raise ValueError, "You can not perform arithmetic with elements of different moduli."
@@ -427,7 +451,8 @@ cdef class ntl_ZZ_pX:
         Returns the unique integral q and r such that self = q*other +
         r, if they exist.  Otherwise raises an Exception.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX(range(10), c); g = ntl.ZZ_pX([-1,0,1], c)
             sage: q, r = f.quo_rem(g)
@@ -450,7 +475,8 @@ cdef class ntl_ZZ_pX:
         """
         Return f*f.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([-1,0,1], c)
             sage: f*f
@@ -467,7 +493,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the n-th nonnegative power of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: g = ntl.ZZ_pX([-1,0,1],c)
             sage: g**10
@@ -486,7 +513,8 @@ cdef class ntl_ZZ_pX:
         """
         Decide whether or not self and other are equal.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,3],c)
             sage: g = ntl.ZZ_pX([1,2,3,0],c)
@@ -505,7 +533,8 @@ cdef class ntl_ZZ_pX:
         """
         Return True exactly if this polynomial is 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([0,0,0,20],c)
             sage: f.is_zero()
@@ -523,7 +552,8 @@ cdef class ntl_ZZ_pX:
         """
         Return True exactly if this polynomial is 1.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,1],c)
             sage: f.is_one()
@@ -539,7 +569,8 @@ cdef class ntl_ZZ_pX:
         """
         Return True exactly if this polynomial is monic.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([2,0,0,1],c)
             sage: f.is_monic()
@@ -561,7 +592,9 @@ cdef class ntl_ZZ_pX:
     def __neg__(self):
         """
         Return the negative of self.
-        EXAMPLES:
+
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([2,0,0,1],c)
             sage: -f
@@ -577,7 +610,8 @@ cdef class ntl_ZZ_pX:
         Return the polynomial obtained by shifting all coefficients of
         this polynomial to the left n positions.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([2,0,0,1],c)
             sage: f
@@ -603,7 +637,8 @@ cdef class ntl_ZZ_pX:
         Return the polynomial obtained by shifting all coefficients of
         this polynomial to the right n positions.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([2,0,0,1],c)
             sage: f
@@ -653,7 +688,8 @@ cdef class ntl_ZZ_pX:
         Return the gcd d = gcd(a, b), where by convention the leading coefficient
         of d is >= 0.  We uses a multi-modular algorithm.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,3],c) * ntl.ZZ_pX([4,5],c)**2
             sage: g = ntl.ZZ_pX([1,1,1],c)**3 * ntl.ZZ_pX([1,2,3],c)
@@ -677,14 +713,17 @@ cdef class ntl_ZZ_pX:
         function computes s and t such that: a*s + b*t = r; otherwise
         s and t are both 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,3],c) * ntl.ZZ_pX([4,5],c)**2
             sage: g = ntl.ZZ_pX([1,1,1],c)**3 * ntl.ZZ_pX([1,2,3],c)
             sage: f.xgcd(g)   # nothing since they are not coprime
             ([6 12 1], [15 13 6 8 7 9], [4 13])
 
-        In this example the input quadratic polynomials have a common root modulo 13.
+        In this example the input quadratic polynomials have a common
+        root modulo 13::
+
             sage: f = ntl.ZZ_pX([5,0,1],c)
             sage: g = ntl.ZZ_pX([18,0,1],c)
             sage: f.xgcd(g)
@@ -707,7 +746,8 @@ cdef class ntl_ZZ_pX:
         Return the degree of this polynomial.  The degree of the 0
         polynomial is -1.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([5,0,1],c)
             sage: f.degree()
@@ -729,7 +769,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the leading coefficient of this polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([3,6,9],c)
             sage: f.leading_coefficient()
@@ -748,7 +789,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the constant coefficient of this polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([3,6,9],c)
             sage: f.constant_term()
@@ -765,7 +807,8 @@ cdef class ntl_ZZ_pX:
         """
         Set this polynomial to the monomial "x".
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([],c)
             sage: f.set_x()
@@ -775,7 +818,8 @@ cdef class ntl_ZZ_pX:
             sage: f == g
             True
 
-        Though f and g are equal, they are not the same objects in memory:
+        Though f and g are equal, they are not the same objects in memory::
+
             sage: f is g
             False
         """
@@ -788,7 +832,8 @@ cdef class ntl_ZZ_pX:
         """
         True if this is the polynomial "x".
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([],c)
             sage: f.set_x()
@@ -811,21 +856,22 @@ cdef class ntl_ZZ_pX:
         (in which case self is reduced modulo c.p) or self.c.p should divide c.p
         (in which case self is lifted to something modulo c.p congruent to self modulo self.c.p)
 
-        EXAMPLES:
-        sage: a = ntl.ZZ_pX([412,181,991],5^4)
-        sage: a
-        [412 181 366]
-        sage: b = ntl.ZZ_pX([198,333,91],5^4)
-        sage: ap = a.convert_to_modulus(ntl.ZZ_pContext(5^2))
-        sage: bp = b.convert_to_modulus(ntl.ZZ_pContext(5^2))
-        sage: ap
-        [12 6 16]
-        sage: bp
-        [23 8 16]
-        sage: ap*bp
-        [1 9 8 24 6]
-        sage: (a*b).convert_to_modulus(ntl.ZZ_pContext(5^2))
-        [1 9 8 24 6]
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_pX([412,181,991],5^4)
+            sage: a
+            [412 181 366]
+            sage: b = ntl.ZZ_pX([198,333,91],5^4)
+            sage: ap = a.convert_to_modulus(ntl.ZZ_pContext(5^2))
+            sage: bp = b.convert_to_modulus(ntl.ZZ_pContext(5^2))
+            sage: ap
+            [12 6 16]
+            sage: bp
+            [23 8 16]
+            sage: ap*bp
+            [1 9 8 24 6]
+            sage: (a*b).convert_to_modulus(ntl.ZZ_pContext(5^2))
+            [1 9 8 24 6]
         """
         c.restore_c()
         cdef ntl_ZZ_pX ans = PY_NEW(ntl_ZZ_pX)
@@ -839,7 +885,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the derivative of this polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,7,0,13],c)
             sage: f.derivative()
@@ -859,8 +906,10 @@ cdef class ntl_ZZ_pX:
         NOTE: The roots are returned in a random order.
 
         EXAMPLES:
+
         These computations use pseudo-random numbers, so we set the
-        seed for reproducible testing.
+        seed for reproducible testing. ::
+
             sage: set_random_seed(0)
             sage: ntl.ZZ_pX([-1,0,0,0,0,1],5).factor()
             [([4 1], 5)]
@@ -910,7 +959,8 @@ cdef class ntl_ZZ_pX:
         also that the result is not deterministic, i.e. the
         order of the roots returned is random.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.ZZ_pX([-1,0,0,0,0,1],5).linear_roots()
             [1, 1, 1, 1, 1]
             sage: roots = ntl.ZZ_pX([-1,0,0,0,1],5).linear_roots()
@@ -950,7 +1000,8 @@ cdef class ntl_ZZ_pX:
         of this polynomial.  If hi is set then this function behaves
         as if this polynomial has degree hi.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,3,4,5],c)
             sage: f.reverse()
@@ -974,7 +1025,8 @@ cdef class ntl_ZZ_pX:
         Return the truncation of this polynomial obtained by
         removing all terms of degree >= m.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,3,4,5],c)
             sage: f.truncate(3)
@@ -1002,7 +1054,8 @@ cdef class ntl_ZZ_pX:
         """
         Return self*other but with terms of degree >= m removed.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,3,4,5],c)
             sage: g = ntl.ZZ_pX([10],c)
@@ -1023,7 +1076,8 @@ cdef class ntl_ZZ_pX:
         """
         Return self*self but with terms of degree >= m removed.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,3,4,5],c)
             sage: f.square_and_truncate(4)
@@ -1044,7 +1098,8 @@ cdef class ntl_ZZ_pX:
         Compute and return the inverse of self modulo $x^m$.
         The constant term of self must be a unit.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,3,4,5,6,7],c)
             sage: f.invert_and_truncate(20)
@@ -1121,7 +1176,8 @@ cdef class ntl_ZZ_pX:
         Return self*other % modulus.  The modulus must be monic with
         deg(modulus) > 0, and self and other must have smaller degree.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(ntl.ZZ(20))
             sage: modulus = ntl.ZZ_pX([1,2,0,1],c)    # must be monic
             sage: g = ntl.ZZ_pX([-1,0,1],c)
@@ -1141,7 +1197,8 @@ cdef class ntl_ZZ_pX:
         The modulus must be monic, and of positive degree degree bigger
         than the degree of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,0,3],c)
             sage: mod = ntl.ZZ_pX([5,3,-1,1,1],c)
@@ -1162,13 +1219,15 @@ cdef class ntl_ZZ_pX:
         monomial x modulo this polynomial for i = 0, ..., deg(f)-1.
         This polynomial must be monic.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,0,3,0,1],c)
             sage: f.trace_list()
             [5, 0, 14, 0, 10]
 
-        The input polynomial must be monic or a ValueError is raised:
+        The input polynomial must be monic or a ValueError is raised::
+
             sage: c=ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,0,3,0,2],c)
             sage: f.trace_list()
@@ -1189,7 +1248,8 @@ cdef class ntl_ZZ_pX:
         """
         Return the resultant of self and other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([17,0,1,1],c)
             sage: g = ntl.ZZ_pX([34,-17,18,2],c)
@@ -1210,14 +1270,16 @@ cdef class ntl_ZZ_pX:
         modulus must be monic, and of positive degree strictly greater
         than the degree of self.
 
-        EXAMPLE:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,0,3],c)
             sage: mod = ntl.ZZ_pX([-5,2,0,0,1],c)
             sage: f.norm_mod(mod)
             11
 
-        The norm is the constant term of the characteristic polynomial.
+        The norm is the constant term of the characteristic polynomial::
+
             sage: f.charpoly_mod(mod)
             [11 1 8 14 1]
         """
@@ -1237,7 +1299,8 @@ cdef class ntl_ZZ_pX:
         $$
         where m = deg(a), and lc(a) is the leading coefficient of a.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(ntl.ZZ(17))
             sage: f = ntl.ZZ_pX([1,2,0,3],c)
             sage: f.discriminant()
@@ -1258,7 +1321,8 @@ cdef class ntl_ZZ_pX:
         the modulus.  The modulus must be monic of degree bigger than
         self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,0,3],c)
             sage: mod = ntl.ZZ_pX([-5,2,0,0,1],c)
@@ -1277,15 +1341,17 @@ cdef class ntl_ZZ_pX:
         modulus.  The modulus must be monic of degree bigger than
         self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([0,0,1],c)
             sage: g = f*f
             sage: f.charpoly_mod(g)
             [0 0 0 0 1]
 
-        However, since $f^2 = 0$ modulo $g$, its minimal polynomial
-        is of degree $2$.
+        However, since `f^2 = 0` modulo `g`, its minimal polynomial
+        is of degree `2`::
+
             sage: f.minpoly_mod(g)
             [0 0 1]
         """
@@ -1299,7 +1365,8 @@ cdef class ntl_ZZ_pX:
         """
         Reset this polynomial to 0.  Changes this polynomial in place.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,3],c)
             sage: f
@@ -1319,7 +1386,8 @@ cdef class ntl_ZZ_pX:
         the polynomial grows.  (You might save a millisecond with this
         function.)
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(17)
             sage: f = ntl.ZZ_pX([1,2,3],c)
             sage: f.preallocate_space(20)

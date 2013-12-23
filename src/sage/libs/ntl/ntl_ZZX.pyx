@@ -392,8 +392,8 @@ cdef class ntl_ZZX:
            True
         """
         cdef ZZX_c *r, *q
+        sig_on()
         try:
-            sig_on()
             ZZX_quo_rem(&self.x, &other.x, &r, &q)
             return (make_ZZX(q), make_ZZX(r))
         finally:
@@ -606,8 +606,8 @@ cdef class ntl_ZZX:
             ([-1 3], [2])
         """
         cdef ZZX_c *r, *q
+        sig_on()
         try:
-            sig_on()
             ZZX_pseudo_quo_rem(&self.x, &other.x, &r, &q)
             return (make_ZZX(q), make_ZZX(r))
         finally:
@@ -677,8 +677,8 @@ cdef class ntl_ZZX:
 
         cdef ZZX_c *s, *t
         cdef ZZ_c *r
+        sig_on()
         try:
-            sig_on()
             ZZX_xgcd(&self.x, &other.x, &r, &s, &t, proof)
             return (make_ZZ(r), make_ZZX(s), make_ZZX(t))
         finally:

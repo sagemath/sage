@@ -307,13 +307,6 @@ static inline void _sig_off_(const char* file, int line)
 #define sig_str(message)   _sig_on_(message)
 #define sig_off()          _sig_off_(__FILE__, __LINE__)
 
-/* These deprecated macros provide backwards compatibility with
- * sage-4.6 and earlier */
-#define _sig_on        {if (!_sig_on_(NULL)) return 0;}
-#define _sig_str(s)    {if (!_sig_on_(s)) return 0;}
-#define _sig_off       {_sig_off_(__FILE__, __LINE__);}
-
-
 /* sig_check() should be functionally equivalent to sig_on(); sig_off();
  * but much faster.  Essentially, it checks whether we missed any
  * interrupts.

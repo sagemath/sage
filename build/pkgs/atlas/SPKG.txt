@@ -95,6 +95,13 @@ The package can be configured via three environment variables:
 
 == ChangeLog ==
 
+=== atlas-3.10.1.p7, lapack-3.4.2 (Jean-Pierre Flori, 25 November 2013) ===
+ * Trac #14410: Let ATLAS build and install shared libraries on Cygwin.
+ * Bunch of modifications to the autotools project generating shared libraries
+   so that it does not invoke libtool on Cygwin.
+ * Fix a bug in spkg-install.
+ * Cleanup spkg-check.
+
 === atlas-3.10.1.p6, lapack-3.4.2 (Volker Braun, 11 October 2013) ===
  * Trac #15270: Do not give up if the upstream shared library build
    fails

@@ -33,6 +33,9 @@ BSD terms. See http://www.scipy.org/License_Compatibility
 
 == Changelog ==
 
+=== scipy-0.12.0.p1 (R. Andrew Ohana, 26 November 2013) ===
+ * #15433: define __ACCELERATE__ on OSX
+
 === scipy-0.12.0.p0 (Jean-Pierre Flori, 20 May 2013) ===
  * #14617: update to version 0.12.0.
  * Removed default_dir.patch which is now upstream.

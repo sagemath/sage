@@ -61,7 +61,7 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
         sage: Words(5, 3)
         Words of length 3 over {1, 2, 3, 4, 5}
         sage: Words(5, infinite=False)
-        Words over {1, 2, 3, 4, 5}
+        Finite Words over {1, 2, 3, 4, 5}
         sage: Words(5, finite=False)
         Infinite Words over {1, 2, 3, 4, 5}
         sage: Words('ab')
@@ -69,7 +69,7 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
         sage: Words('ab', 2)
         Words of length 2 over {'a', 'b'}
         sage: Words('ab', infinite=False)
-        Words over {'a', 'b'}
+        Finite Words over {'a', 'b'}
         sage: Words('ab', finite=False)
         Infinite Words over {'a', 'b'}
         sage: Words('positive integers', finite=False)
@@ -131,6 +131,13 @@ class Words_all(InfiniteAbstractCombinatorialClass):
 
         sage: Words() is Words()   # todo: not implemented
         True
+
+    .. WARNING::
+
+       The design of these classes is not particularly robust so extra care must
+       be taken when extending this class in order to prevent unintended
+       side-effects. This is particularly evident in the equality test
+       :meth:`__eq__` for words.
     """
     @lazy_attribute
     def _element_classes(self):
@@ -615,11 +622,52 @@ class Words_all(InfiniteAbstractCombinatorialClass):
             False
             sage: WordPaths('bacd') == WordPaths('abcd')
             False
+
+        TESTS:
+
+        :trac:`15480`::
+
+            sage: Words(3, 10) == Words(3,900)
+            False
+            sage: Words(2, finite=False) == Words(2)
+            False
+            sage: Words(2) == Words(2,30)
+            False
+            sage: Words(10,0) == Words(20,0)
+            True
+            sage: WordPaths('abcd') == Words("abcd",3)
+            False
+            sage: Words(3) == Words(3,finite=False)
+            False
+            sage: Words(3) == Words(3,infinite=False)
+            False
         """
-        if isinstance(other, Words_all):
+
+        from paths import WordPaths_all
+        # Specific case of Words_over_Alphabet and WordPath. See #15480
+        # i.e. when self,other in Words_over_Alphabet, WordPath and one of them at least is a wordpath
+        if ((isinstance(self,WordPaths_all) and isinstance(other,WordPaths_all)) or
+            (type(self) is Words_over_OrderedAlphabet and isinstance(other,WordPaths_all)) or
+            (type(other) is Words_over_OrderedAlphabet and isinstance(self,WordPaths_all))):
             return self.alphabet() == other.alphabet()
-        else:
-            return NotImplemented
+
+        if not (type(self) is type(other)):
+            return False
+
+        cardinality = self.cardinality()
+
+        if cardinality != other.cardinality():
+            return False
+        if cardinality == 1:
+            return True
+        if self.alphabet() != other.alphabet():
+            return False
+
+        # This method's code cannot be trusted. It's the only way I see to fix
+        # the wrong results reported in #15480. But really, this kind of
+        # code should not be trusted. It is likely to return wrong results if
+        # whenever new classes extending Words_all are added.
+        return True
 
     def __ne__(self, other):
         r"""
@@ -1266,8 +1314,8 @@ class InfiniteWords_over_OrderedAlphabet(Words_over_OrderedAlphabet):
 
         EXAMPLES::
 
-            sage: Words('ab', infinite=False)._repr_()
-            "Words over {'a', 'b'}"
+            sage: Words('ab', finite=False)._repr_()
+            "Infinite Words over {'a', 'b'}"
         """
         return "Infinite Words over %s" % self.alphabet()
 
@@ -1292,9 +1340,9 @@ class FiniteWords_over_OrderedAlphabet(Words_over_OrderedAlphabet):
         EXAMPLES::
 
             sage: Words('ab', infinite=False)._repr_()
-            "Words over {'a', 'b'}"
+            "Finite Words over {'a', 'b'}"
         """
-        return "Words over %s" % self.alphabet()
+        return "Finite Words over %s" % self.alphabet()
 
 class FiniteWords_length_k_over_OrderedAlphabet(FiniteWords_over_OrderedAlphabet):
     def __init__(self, alphabet, length):

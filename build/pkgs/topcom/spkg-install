@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+cd src
+./configure \
+    --prefix="$SAGE_LOCAL" \
+    --libdir="$SAGE_LOCAL/lib" \
+    --with-gmp="$SAGE_LOCAL" \
+    --with-cdd="$SAGE_LOCAL"
+if [ $? -ne 0 ]; then
+   echo "Error configuring TOPCOM."
+   exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+   echo "Error building TOPCOM."
+   exit 1
+fi
+
+$MAKE install-strip
+if [ $? -ne 0 ]; then
+   echo "Error installing TOPCOM."
+   exit 1
+fi

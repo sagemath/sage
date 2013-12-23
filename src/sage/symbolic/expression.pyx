@@ -3329,8 +3329,8 @@ cdef class Expression(CommutativeRingElement):
         if not is_a_symbol(symbol._gobj):
             raise TypeError, "argument symb must be a symbol"
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = self._gobj.diff(ex_to_symbol(symbol._gobj), deg)
         finally:
             sig_off()
@@ -3460,8 +3460,8 @@ cdef class Expression(CommutativeRingElement):
         """
         cdef Expression symbol0 = self.coerce_in(symbol)
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = self._gobj.series(symbol0._gobj, order, 0)
         finally:
             sig_off()
@@ -3637,8 +3637,8 @@ cdef class Expression(CommutativeRingElement):
                 raise ValueError, "side must be 'left', 'right', or None"
 
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = self._gobj.expand(0)
         finally:
             sig_off()
@@ -5499,8 +5499,8 @@ cdef class Expression(CommutativeRingElement):
         """
         cdef Expression r = self.coerce_in(b)
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_gcd(self._gobj, r._gobj)
         finally:
             sig_off()
@@ -5648,8 +5648,8 @@ cdef class Expression(CommutativeRingElement):
         """
         cdef Expression s0 = self.coerce_in(s)
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = self._gobj.collect(s0._gobj, False)
         finally:
             sig_off()
@@ -5665,8 +5665,8 @@ cdef class Expression(CommutativeRingElement):
             1/(x + 1)
         """
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_collect_common_factors(self._gobj)
         finally:
             sig_off()
@@ -6996,8 +6996,8 @@ cdef class Expression(CommutativeRingElement):
             Infinity
         """
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_hold_wrapper(g_zeta, self._gobj, hold)
         finally:
             sig_off()
@@ -7041,8 +7041,8 @@ cdef class Expression(CommutativeRingElement):
             120
         """
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_hold_wrapper(g_factorial, self._gobj, hold)
         finally:
             sig_off()
@@ -7099,8 +7099,8 @@ cdef class Expression(CommutativeRingElement):
         """
         cdef Expression nexp = self.coerce_in(k)
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_hold2_wrapper(g_binomial, self._gobj, nexp._gobj, hold)
         finally:
             sig_off()
@@ -7179,8 +7179,8 @@ cdef class Expression(CommutativeRingElement):
             sqrt(pi)
         """
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_hold_wrapper(g_tgamma, self._gobj, hold)
         finally:
             sig_off()
@@ -7240,8 +7240,8 @@ cdef class Expression(CommutativeRingElement):
             3.17805383034795
         """
         cdef GEx x
+        sig_on()
         try:
-            sig_on()
             x = g_hold_wrapper(g_lgamma, self._gobj, hold)
         finally:
             sig_off()
@@ -7808,6 +7808,15 @@ cdef class Expression(CommutativeRingElement):
             sage: f = sqrt((x + 1)^2)
             sage: f.simplify_full()
             sqrt(x^2 + 2*x + 1)
+
+        The imaginary part of an expression should not change under
+        simplification; :trac:`11934`::
+
+            sage: f = sqrt(-8*(4*sqrt(2) - 7)*x^4 + 16*(3*sqrt(2) - 5)*x^3)
+            sage: original = f.imag_part()
+            sage: simplified = f.full_simplify().imag_part()
+            sage: original - simplified
+            0
 
         """
         x = self

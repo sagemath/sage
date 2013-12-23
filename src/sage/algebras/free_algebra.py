@@ -586,6 +586,12 @@ class FreeAlgebra_generic(Algebra):
             sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')
             sage: F.1+(z+1)*L.2
             b + (z+1)*c
+
+        Check that :trac:`15169` is fixed::
+
+            sage: A.<x> = FreeAlgebra(CC)
+            sage: A(2)
+            2.00000000000000
         """
         if isinstance(x, FreeAlgebraElement):
             P = x.parent()
@@ -621,8 +627,7 @@ class FreeAlgebra_generic(Algebra):
         x = R(x)
         if x == 0:
             return self.element_class(self,{})
-        else:
-            return self.element_class(self,{F(1):x})
+        return self.element_class(self,{self._basis_keys.one():x})
 
     def _coerce_impl(self, x):
         """

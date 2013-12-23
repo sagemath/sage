@@ -29,14 +29,14 @@ Data structure
 The data structure is actually pretty simple and compact. ``short_digraph`` has
 five fields
 
-    * ``n`` (``unsigned short``) -- the number of vertices in the graph.
+    * ``n`` (``int``) -- the number of vertices in the graph.
 
-    * ``m`` (``unsigned int``) -- the number of edges in the graph.
+    * ``m`` (``int``) -- the number of edges in the graph.
 
-    * ``edges`` (``unsigned short *``) -- array whose length is the number of
-      edges of the graph.
+    * ``edges`` (``uint32_t *``) -- array whose length is the number of edges of
+      the graph.
 
-    * ``neighbors`` (``unsigned short **``) -- this array has size `n+1`, and
+    * ``neighbors`` (``uint32_t **``) -- this array has size `n+1`, and
       describes how the data of ``edges`` should be read : the neighbors of
       vertex `i` are the elements of ``edges`` addressed by
       ``neighbors[i]...neighbors[i+1]-1``. The element ``neighbors[n]``, which
@@ -82,10 +82,6 @@ Technical details
     * When creating a ``fast_digraph`` from a ``Graph`` or ``DiGraph`` named
       ``G``, the `i^{\text{th}}` vertex corresponds to ``G.vertices()[i]``
 
-    * In its current implementation (with ``unsigned short`` variables), the
-      data structure can handle graphs with at most 65535 vertices. If
-      necessary, changing it to ``int`` is totally straightforward.
-
     * Some methods return ``bitset_t`` objets when lists could be
       expected. There is a very useful ``bitset_list`` function for this kind of
       problems :-)
@@ -93,7 +89,7 @@ Technical details
     * When the edges are labelled, most of the space taken by this graph is
       taken by edge labels. If no edge is labelled then this space is not
       allocated, but if *any* edge has a label then a (possibly empty) label is
-      stored for each edge, which can represent a lot of memory.
+      stored for each edge, which can double the memory needs.
 
     * The data structure stores the number of edges, even though it appears that
       this number can be reconstructed with
@@ -119,8 +115,8 @@ Cython functions
     ``init_short_digraph(short_digraph g, G)`` | Initializes ``short_digraph g`` from a Sage (Di)Graph.
     ``int n_edges(short_digraph g)`` | Returns the number of edges in ``g``
     ``int out_degree(short_digraph g, int i)`` | Returns the out-degree of vertex `i` in ``g``
-    ``has_edge(short_digraph g, ushort u, ushort v)`` | Tests the existence of an edge.
-    ``edge_label(short_digraph g, ushort * edge)`` | Returns the label associated with a given edge
+    ``has_edge(short_digraph g, int u, int v)`` | Tests the existence of an edge.
+    ``edge_label(short_digraph g, int * edge)`` | Returns the label associated with a given edge
     ``init_empty_copy(short_digraph dst, short_digraph src)`` | Allocates ``dst`` so that it can contain as many vertices and edges as ``src``.
     ``init_reverse(short_digraph dst, short_digraph src)`` | Initializes ``dst`` to a copy of ``src`` with all edges in the opposite direction.
     ``free_short_digraph(short_digraph g)`` | Free the ressources used by ``g``
@@ -139,7 +135,6 @@ Cython functions
     ``scc`` so that it represents the vertices of the strongly connected
     component containing ``v`` in ``g``. The variable ``g_reversed`` is assumed
     to represent the reverse of ``g``.
-
 
 What is this module used for ?
 ------------------------------
@@ -164,6 +159,7 @@ cimport cpython
 ##############################################################################
 
 from sage.graphs.base.c_graph cimport CGraph
+from libc.stdint cimport INT32_MAX
 
 cdef int init_short_digraph(short_digraph g, G, edge_labelled = False) except -1:
     r"""
@@ -172,12 +168,10 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled = False) except -1
     If ``G`` is a ``Graph`` objet (and not a ``DiGraph``), an edge between two
     vertices `u` and `v` is replaced by two arcs in both directions.
     """
-    # g.n is unsigned short, so -1 is actually the maximum value possible.
-    g.n = -1
     g.edge_labels = NULL
 
-    if G.order() > g.n:
-        raise ValueError("This structure can handle at most "+str(<int> g.n)+" vertices !")
+    if G.order() >= INT32_MAX:
+        raise ValueError("This structure can handle at most "+str(INT32_MAX)+" vertices !")
     else:
         g.n = G.order()
 
@@ -204,11 +198,11 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled = False) except -1
     for i, v in enumerate(vertices):
         v_to_id[v] = i
 
-    g.edges = <ushort *> sage_malloc(n_edges*sizeof(ushort))
+    g.edges = <uint32_t *> sage_malloc(n_edges*sizeof(uint32_t))
     if g.edges == NULL:
         raise ValueError("Problem while allocating memory (edges)")
 
-    g.neighbors = <ushort **> sage_malloc((1+<int>g.n)*sizeof(ushort *))
+    g.neighbors = <uint32_t **> sage_malloc((1+<int>g.n)*sizeof(uint32_t *))
     if g.neighbors == NULL:
         raise ValueError("Problem while allocating memory (neighbors)")
 
@@ -250,7 +244,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled = False) except -1
 
         # Sorting the neighbors
         for i in range(g.n):
-            qsort(g.neighbors[i],g.neighbors[i+1]-g.neighbors[i],sizeof(ushort),compare_ushort_p)
+            qsort(g.neighbors[i],g.neighbors[i+1]-g.neighbors[i],sizeof(int),compare_uint32_p)
 
     else:
         edge_labels = [None]*n_edges
@@ -264,7 +258,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled = False) except -1
                 g.neighbors[v_id][i] = j
                 edge_labels[(g.neighbors[v_id]+i)-g.edges] = label
 
-        g.edge_labels = <void *> edge_labels
+        g.edge_labels = <PyObject *> <void *> edge_labels
         cpython.Py_XINCREF(g.edge_labels)
 
 cdef inline int n_edges(short_digraph g):
@@ -281,17 +275,17 @@ cdef int init_empty_copy(short_digraph dst, short_digraph src) except -1:
     dst.edge_labels = NULL
     cdef list edge_labels
 
-    dst.edges = <ushort *> sage_malloc(n_edges(src)*sizeof(ushort))
+    dst.edges = <uint32_t *> sage_malloc(n_edges(src)*sizeof(uint32_t))
     if dst.edges == NULL:
         raise ValueError("Problem while allocating memory (edges)")
 
-    dst.neighbors = <ushort **> sage_malloc((src.n+1)*sizeof(ushort *))
+    dst.neighbors = <uint32_t **> sage_malloc((src.n+1)*sizeof(uint32_t *))
     if dst.neighbors == NULL:
         raise ValueError("Problem while allocating memory (neighbors)")
 
     if src.edge_labels != NULL:
         edge_labels = [None]*n_edges(src)
-        dst.edge_labels = <void *> edge_labels
+        dst.edge_labels = <PyObject *> <void *> edge_labels
         cpython.Py_XINCREF(dst.edge_labels)
 
 cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
@@ -350,18 +344,18 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
 
     return 0
 
-cdef int compare_ushort_p(const_void *a, const_void *b):
-    return (<ushort *> a)[0] - (<ushort *> b)[0]
+cdef int compare_uint32_p(const_void *a, const_void *b):
+    return (<uint32_t *> a)[0] - (<uint32_t *> b)[0]
 
-cdef inline ushort * has_edge(short_digraph g, ushort u, ushort v):
+cdef inline uint32_t * has_edge(short_digraph g, int u, int v):
     r"""
     Tests the existence of an edge.
 
     Assumes that the neighbors of each vertex are sorted.
     """
-    return <ushort *> bsearch(&v, g.neighbors[u], g.neighbors[u+1]-g.neighbors[u], sizeof(ushort), compare_ushort_p)
+    return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u+1]-g.neighbors[u], sizeof(uint32_t), compare_uint32_p)
 
-cdef inline object edge_label(short_digraph g, ushort * edge):
+cdef inline object edge_label(short_digraph g, uint32_t * edge):
     r"""
     Returns the label associated with a given edge
     """
@@ -380,7 +374,7 @@ cdef int can_be_reached_from(short_digraph g, int src, bitset_t reached) except 
 
     # We will be doing a Depth-First Search. We allocate the stack we need for
     # that, and put "src" on top of it.
-    cdef ushort * stack = <ushort *> sage_malloc(g.n*sizeof(ushort))
+    cdef int * stack = <int *> sage_malloc(g.n*sizeof(int))
     if stack == NULL:
         raise ValueError("Problem while allocating memory (stack)")
 
@@ -389,8 +383,8 @@ cdef int can_be_reached_from(short_digraph g, int src, bitset_t reached) except 
 
     # What we need to iterate over the edges
     cdef int i
-    cdef ushort * v
-    cdef ushort * end
+    cdef uint32_t * v
+    cdef uint32_t * end
 
     # Plain old DFS ...
     #
