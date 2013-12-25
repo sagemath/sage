@@ -30,7 +30,7 @@ def LinearOrderWithReversalGroupCycleIndex():
         sage: L[e].coefficients(6) == species.LinearOrderSpecies().cycle_index_series().coefficients(6)
         True
         sage: L[t].coefficients(6)
-        [0, 0, p[2], p[2, 1], p[2, 2], p[2, 2, 1]]
+        [p[], p[1], p[2], p[2, 1], p[2, 2], p[2, 2, 1]]
     """
     from sage.combinat.species.linear_order_species import LinearOrderSpecies
     
@@ -48,8 +48,8 @@ def LinearOrderWithReversalGroupCycleIndex():
 
     def Ltgen():
         p = SymmetricFunctions(QQ).power()
-        yield 0
-        yield 0
+        yield p[0]
+        yield p[1]
         for n in _integers_from(1):
             yield p([2]*n)
             yield p([2]*n+[1])
@@ -73,12 +73,13 @@ def CyclicOrderWithReversalGroupCycleIndex():
         sage: C[e].coefficients(6) == species.CycleSpecies().cycle_index_series().coefficients(6)
         True
         sage: C[t].coefficients(6)
-        [0, 0, 0, p[2, 1], 0, p[2, 2, 1]]
+        [0, p[1], 1/2*p[1, 1] + 1/2*p[2], p[2, 1], 1/2*p[2, 1, 1] + 1/2*p[2, 2], p[2, 2, 1]]
     """
     from sage.combinat.species.cycle_species import CycleSpecies
     
     QQ = RationalField()
     CISR = CycleIndexSeriesRing(QQ)
+    p = SymmetricFunctions(QQ).power()
 
     S2 = SymmetricGroup(2)
     GCISR = GroupCycleIndexSeriesRing(S2)
@@ -90,13 +91,12 @@ def CyclicOrderWithReversalGroupCycleIndex():
     Ce = CycleSpecies().cycle_index_series()
     
     def Ctgen():
-        p = SymmetricFunctions(QQ).power()
         yield 0
-        yield 0
+        yield p[1]
         for n in _integers_from(1):
-            yield 1/2*p([2]*n)+1/2*p([2]*(n-1)+[1]*2)
+            yield QQ(1)/QQ(2) * (p([2]*n) + p([2]*(n-1) + [1]*2))
             yield p([2]*n+[1])
-
+    
     Ct = CISR(Ctgen())
 
     C = ge*Ce + gt*Ct
