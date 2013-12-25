@@ -298,6 +298,26 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         """
         return self.map_coefficients(lambda x: x.derivative())
 
+    def restricted(self, min=None, max=None):
+        """
+        Return the restriction of ``self`` with coefficients starting at degree
+        ``min`` and going up to, but not including, degree ``max``.
+        If ``min`` is not specified, it is assumed to be zero. If ``max`` is not
+        specified, it assumed to be infinity.
+
+        This method simply calls `sage.combinat.species.series.restricted` on eaach term
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: L = gci.LinearOrderWithReversalGroupCycleIndex()
+            sage: e,t = L.parent().basis().keys()
+            sage: L.restricted(min=2,max=4)[t].coefficients(5)
+            [0, 0, p[2], p[2, 1], 0]
+
+        """
+        return self.map_coefficients(lambda x: x.restricted(min=min, max=max))
+
     def define(self, x):
         """
         Set ``self`` equal to ``x``, possibly recursively.
