@@ -320,7 +320,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         If ``min`` is not specified, it is assumed to be zero. If ``max`` is not
         specified, it assumed to be infinity.
 
-        This method simply calls `sage.combinat.species.series.restricted` on each term
+        This method simply calls :meth:`~sage.combinat.species.series.LazyPowerSeries.restricted` on each term
         of ``self``.
 
         EXAMPLES::
