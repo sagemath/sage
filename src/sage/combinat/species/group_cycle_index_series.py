@@ -85,7 +85,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         
         Multiplication of `\Gamma`-cycle indices is defined componentwise.
         That is, if `F` and `G` are two `\Gamma`-cycle indices, then `(F \cdot G) [\gamma] = F [\gamma] \cdot G [\gamma]`,
-        where the multiplication the right-hand side is ordinary multiplication of cycle indices.
+        where the multiplication on the right-hand side is ordinary multiplication of cycle indices.
 
         This is handled in Sage by defining multiplication on the basis of monomials induced
         by elements of `\Gamma`.
@@ -305,7 +305,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         If ``min`` is not specified, it is assumed to be zero. If ``max`` is not
         specified, it assumed to be infinity.
 
-        This method simply calls `sage.combinat.species.series.restricted` on eaach term
+        This method simply calls `sage.combinat.species.series.restricted` on each term
         of ``self``.
 
         EXAMPLES::
