@@ -218,17 +218,25 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         EXAMPLES::
 
             sage: S2 = SymmetricGroup(2)
-            sage: Eplus = sage.combinat.species.set_species.SetSpecies(min=1).cycle_index_series()
-            sage: E = sage.combinat.species.set_species.SetSpecies().cycle_index_series()
             sage: GCISR = gci.GroupCycleIndexSeriesRing(S2)
-            sage: e = S2.identity()
-            sage: t = S2.gen()
-            sage: GCIS = GCISR(e)*Eplus*E + GCISR(t)*Eplus
-            sage: example = GCIS(GCIS)
-            sage: example[e].coefficients(4)
-            [0, p[1], 3*p[1, 1] + p[2], 41/6*p[1, 1, 1] + 9/2*p[2, 1] + 2/3*p[3]]
-            sage: example[t].coefficients(4)
-            [0, p[1], p[1, 1] + p[2], 5/6*p[1, 1, 1] + 3/2*p[2, 1] + 2/3*p[3]]
+            sage: E = sage.combinat.species.set_species.SetSpecies().cycle_index_series()
+            sage: C = gci.CyclicOrderWithReversalGroupCycleIndex()
+            sage: example = (E*GCISR.one())(C)
+            sage: example.quotient().generating_series().counts(8)
+            [1, 1, 2, 5, 17, 73, 398, 2636]
+            0: A007868: Number of inverse pairs of elements in symmetric group S_n, or pairs of total orders on n nodes (average of A000085 and A000142).
+            sage: example[S2.identity()].coefficients(4)
+            [p[], p[1], p[1, 1] + p[2], p[1, 1, 1] + p[2, 1] + p[3]]
+            sage: example[S2.gen()].coefficients(4)
+            [p[], p[1], p[1, 1] + p[2], 2/3*p[1, 1, 1] + 2*p[2, 1] + 1/3*p[3]]
+
+            sage: example[S2.gen()].generating_series().counts(8)
+            [1, 1, 2, 4, 10, 26, 76, 232]
+            sage: x = oeis("A000085")
+            sage: x.first_terms(8)
+            [1, 1, 2, 4, 10, 26, 76, 232]
+            sage: x.name()
+            'Number of self-inverse permutations on n letters, also known as involutions; number of Young tableaux with n cells.'
 
         REFERENCES:
 

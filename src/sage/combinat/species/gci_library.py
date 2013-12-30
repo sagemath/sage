@@ -23,6 +23,8 @@ def LinearOrderWithReversalGroupCycleIndex():
     of linearly-ordered sets with the order-reversing action of
     $\mathfrak{S}_{2}$.
 
+    The quotient $L / \mathfrak{S}_{2}$ is exactly the species of chains, as in [BLL, Table 4.1].
+
     EXAMPLES::
 
         sage: L = gci.LinearOrderWithReversalGroupCycleIndex()
@@ -31,6 +33,13 @@ def LinearOrderWithReversalGroupCycleIndex():
         True
         sage: L[t].coefficients(6)
         [p[], p[1], p[2], p[2, 1], p[2, 2], p[2, 2, 1]]
+        sage: L.quotient().coefficients(6)
+        [p[],
+         p[1],
+         1/2*p[1, 1] + 1/2*p[2],
+         1/2*p[1, 1, 1] + 1/2*p[2, 1],
+         1/2*p[1, 1, 1, 1] + 1/2*p[2, 2],
+         1/2*p[1, 1, 1, 1, 1] + 1/2*p[2, 2, 1]]
     """
     from sage.combinat.species.linear_order_species import LinearOrderSpecies
     
@@ -62,9 +71,11 @@ def LinearOrderWithReversalGroupCycleIndex():
 @cached_function
 def CyclicOrderWithReversalGroupCycleIndex():
     """
-    Returns the $\mathfrak{S}_{2}$-cycle index of the species $L$
-    of linearly-ordered sets with the order-reversing action of
+    Returns the $\mathfrak{S}_{2}$-cycle index of the species $C$
+    of cyclically-ordered sets with the order-reversing action of
     $\mathfrak{S}_{2}$.
+
+    The quotient $C / \mathfrak{S}_{2}$ is exactly the species of polygons, as in [BLL, Sec. 2.6 ex. 9].
 
     EXAMPLES::
 
@@ -74,6 +85,14 @@ def CyclicOrderWithReversalGroupCycleIndex():
         True
         sage: C[t].coefficients(6)
         [0, p[1], 1/2*p[1, 1] + 1/2*p[2], p[2, 1], 1/2*p[2, 1, 1] + 1/2*p[2, 2], p[2, 2, 1]]
+        sage: C.quotient().generating_series().counts(9)
+        [0, 1, 1, 1, 3, 12, 60, 360, 2520]
+        sage: C.quotient().coefficients(5)
+        [0,
+         p[1],
+         1/2*p[1, 1] + 1/2*p[2],
+         1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3],
+         1/8*p[1, 1, 1, 1] + 1/4*p[2, 1, 1] + 3/8*p[2, 2] + 1/4*p[4]]
     """
     from sage.combinat.species.cycle_species import CycleSpecies
     
