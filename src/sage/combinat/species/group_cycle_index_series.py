@@ -1,24 +1,40 @@
 # -*- coding: utf-8 -*-
-"""
-Group Cycle Indices
+"""Group Cycle Indices
 
 This file implements the group cycle indices of Henderson and Gainer-Dewar.
 
-For a group `\Gamma` and a ring `R`, a `\Gamma`-cycle index over `R`
+For a group `\\Gamma` and a ring `R`, a `\\Gamma`-cycle index over `R`
 is an element of the free module over the ring of cycle index series
-over `R` with basis `\Gamma`.
+over `R` with basis `\\Gamma`.
 
-In other words, a `\Gamma`-cycle index series over `R` is a formal sum
+In other words, a `\\Gamma`-cycle index series over `R` is a formal sum
 
 .. MATH::
 
     F = \\sum_{\gamma \\in \Gamma} F[\gamma] \cdot \gamma,
 
-where each coefficient `F[\gamma]` is a cycle index series over `R`.
+where each coefficient `F[\\gamma]` is a cycle index series over `R`.
 
-These objects are of interest because they can be used to enumerate `\Gamma`-species;
+These objects are of interest because they can be used to enumerate `\\Gamma`-species;
 they serve the same role in that theory as ordinary cycle indices do for classical
 species.
+
+Just like classical species, `\\Gamma`-species may be combined in ways
+which correspond naturally to algebraic operations on their
+`\\Gamma`-cycle indices.  Many standard operations on
+`\\Gamma`-species are available, including addition, multiplication,
+and differentiation.  The associated operations `+`, `\\cdot`, and
+`\\prime` on `\\Gamma`-cycle indices are defined componentwise and are
+implemented by this class.
+
+Additionally, there is a natural way to compose `\\Gamma`-species,
+corresponding to the construction of
+:class:`~sage.combinat.species.composition_species.CompositionSpecies`.
+The `\\Gamma`-cycle index of such a composition can be computed using
+a variant of plethysm, but this depends on having access to all the
+terms of both component `\\Gamma`-cycle indices; it cannot be computed
+componentwise.  More details of this operation are available in the
+documentation for :meth:`.composition`, which implements it in Sage.
 
 AUTHORS:
 
@@ -205,8 +221,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         return res
 
     def composition(self, y, test_constant_term_is_zero = True):
-        """
-        Return the group-cycle-index plethysm of ``self`` with ``y``.
+        """Return the group-cycle-index plethysm of ``self`` with ``y``.
         
         Plethysm of group cycle index series is defined by a sort of 'mixing' operation in [Hend]_:
 
@@ -215,8 +230,11 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             F [\gamma] \left( G [\gamma] (p_{1}, p_{2}, p_{3}, \dots),
             G [\gamma^{2}] (p_{2}, p_{4}, p_{6}, \dots), \dots \\right).
 
-        It is shown in [Hend]_ that this operation on $\Gamma$-cycle indices corresponds to the
-        'composition' operation on $\Gamma$-species.
+        It is shown in [Hend]_ that this operation on $\Gamma$-cycle
+        indices corresponds to the 'composition' operation on
+        $\Gamma$-species, a natural analogue of the
+        :class:`~sage.combinat.species.composition_species.CompositionSpecies`
+        operation on ordinary species.
 
         It is required that each of the components of `y` has zero constant term.
         However, testing this may not be possible if `y` is of an exotic class.
@@ -248,6 +266,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         REFERENCES:
 
         .. [Hend] Anthony Henderson. "Species over a finite field". J. Algebraic Combin., 21(2):147-161, 2005.
+
         """
         from sage.combinat.species.stream import Stream,_integers_from
         from sage.misc.misc_c import prod
