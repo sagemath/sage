@@ -13,6 +13,7 @@ Power Series
    ../sage/combinat/species/series
    ../sage/combinat/species/generating_series
    ../sage/combinat/species/group_cycle_index_series
+   ../sage/combinat/species/gci_library
 
 Basic Species
 -------------
@@ -52,4 +53,3 @@ Miscellaneous
    ../sage/combinat/species/structure
    ../sage/combinat/species/misc
    ../sage/combinat/species/combinatorial_logarithm
-
