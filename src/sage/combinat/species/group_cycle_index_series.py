@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Group Cycle Indices
 
@@ -150,6 +151,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         By [AGdiss]_, if `F` is the `\Gamma`-cycle index of a `\Gamma`-species, `F / \Gamma` is the ordinary
         cycle index of orbits of structures under the action of `\Gamma`.
+        This corresponds to the notion of quotient species introduced in [Bousquet]_.
 
         EXAMPLES::
 
@@ -163,7 +165,10 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         REFERENCES:
 
         .. [AGdiss] Andrew Gainer. "`\Gamma`-species, quotients, and graph enumeration". Ph.D. diss. Brandeis University, 2012.
+        .. [Bousquet] Michel Bousquet. "Espèces de structures et applications du dénombrement de cartes et de cactus planaires". Ph.D. diss. Université du Québec à Montréal, 1999.
+           http://lacim.uqam.ca/publications_pdf/24.pdf
         """
+
         return 1/self.parent()._group.cardinality() * sum(self.coefficients())
     
     def functorial_composition(self, y):
