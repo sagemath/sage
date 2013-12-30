@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Group Cycle Indices
+"""
+Group Cycle Indices
 
 This file implements the group cycle indices of Henderson and Gainer-Dewar.
 
