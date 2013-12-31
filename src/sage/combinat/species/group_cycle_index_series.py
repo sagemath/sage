@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Group Cycle Indices
+"""Group Cycle Indices
 
 This file implements the group cycle indices of Henderson and Gainer-Dewar.
 
@@ -15,6 +14,8 @@ In other words, a `\\Gamma`-cycle index series over `R` is a formal sum
     F = \\sum_{\gamma \\in \Gamma} F[\gamma] \cdot \gamma,
 
 where each coefficient `F[\\gamma]` is a cycle index series over `R`.
+(By functoriality, if `F` is the `\\Gamma`-cycle index of a
+`\\Gamma`-species, it must be a class function of `\\Gamma`.)
 
 These objects are of interest because they can be used to enumerate `\\Gamma`-species;
 they serve the same role in that theory as ordinary cycle indices do for classical
@@ -47,6 +48,11 @@ EXAMPLES::
     sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
     sage: loads(dumps(GCISR))
     Ring of (Symmetric group of order 4! as a permutation group)-Cycle Index Series over Rational Field
+
+.. TODO::
+
+    Implement (optional?) optimizations using assumption that a
+    `\\Gamma`-cycle index is a class function of `\\Gamma`.
 
 """
 #*****************************************************************************
