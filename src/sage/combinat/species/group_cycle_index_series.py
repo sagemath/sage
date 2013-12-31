@@ -221,8 +221,8 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         EXAMPLES::
 
-            sage: S2 = SymmetricGroup(2)
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: E = sage.combinat.species.set_species.SetSpecies().cycle_index_series()
             sage: C = CyclicOrderWithReversalGroupCycleIndex()
@@ -359,27 +359,15 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         To enumerate this species using Sage, we first need to set up an environment::
         
-            sage: from sage.combinat.species.generating_series import CycleIndexSeriesRing
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
-            sage: from sage.combinat.species.stream import _integers_from
             sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
-            sage: CISR = CycleIndexSeriesRing(QQ)
             sage: e,t = GCISR.basis().keys()
-
-        Next, we define the `\mathfrak{S}_{2}`-species `X` and `\mathcal{L}`.
-        `X` is straightforward, since the `\mathfrak{S}_{2}`-action is trivial,
-        but `\mathcal{L}` requires some work. ::
-        
+            sage: from sage.combinat.species.gci_library import LinearOrderWithReversalGroupCycleIndex
+            sage: L = LinearOrderWithReversalGroupCycleIndex()
             sage: X = GCISR(species.SingletonSpecies().cycle_index_series())
-            sage: def Ltgen():
-            ....:     p = SymmetricFunctions(QQ).power()
-            ....:     for n in _integers_from(0):
-            ....:         yield p([2]*n)
-            ....:         yield p([2]*n+[1])
-            sage: L = GCISR(e)*species.LinearOrderSpecies().cycle_index_series() + GCISR(t)*CISR(Ltgen())
 
-        Finally, we can use ``define`` to set up `\mathcal{A}`::
+        We can then use ``define`` to set up `\mathcal{A}`::
         
             sage: A = GCISR(e)*0 + GCISR(t)*0
             sage: A.define(X*L(A))
