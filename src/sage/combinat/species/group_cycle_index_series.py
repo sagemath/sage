@@ -222,6 +222,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         EXAMPLES::
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: from sage.combinat.species.gci_library import CyclicOrderWithReversalGroupCycleIndex
             sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: E = sage.combinat.species.set_species.SetSpecies().cycle_index_series()
@@ -243,7 +244,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             [1, 1, 2, 4, 10, 26, 76, 232]
             sage: x = oeis("A000085")
             sage: x.first_terms(8)
-            [1, 1, 2, 4, 10, 26, 76, 232]
+            (1, 1, 2, 4, 10, 26, 76, 232)
             sage: x.name()
             'Number of self-inverse permutations on n letters, also known as involutions; number of Young tableaux with n cells.'
 
