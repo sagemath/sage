@@ -43,7 +43,8 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: GCISR = gci.GroupCycleIndexSeriesRing(SymmetricGroup(4))
+    sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+    sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
     sage: loads(dumps(GCISR))
     Ring of (Symmetric group of order 4! as a permutation group)-Cycle Index Series over Rational Field
 
@@ -67,12 +68,14 @@ def GroupCycleIndexSeriesRing(G, R = RationalField()):
 
     EXAMPLES::
 
-        sage: GCISR = gci.GroupCycleIndexSeriesRing(SymmetricGroup(4)); GCISR
+        sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+        sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4)); GCISR
         Ring of (Symmetric group of order 4! as a permutation group)-Cycle Index Series over Rational Field
 
     TESTS: We test to make sure that caching works. ::
 
-        sage: GCISR is gci.GroupCycleIndexSeriesRing(SymmetricGroup(4))
+        sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+        sage: GCISR is GroupCycleIndexSeriesRing(SymmetricGroup(4))
         True
     """
     return GroupCycleIndexSeriesRing_class(G, R)
@@ -82,7 +85,8 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(SymmetricGroup(4)); GCISR
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4)); GCISR
             Ring of (Symmetric group of order 4! as a permutation group)-Cycle Index Series over Rational Field
             sage: GCISR == loads(dumps(GCISR))
             True
@@ -110,7 +114,8 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(SymmetricGroup(4))
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
             sage: e = SymmetricGroup(4).identity()
             sage: t = SymmetricGroup(4)([4,3,2,1])
             sage: GCISR.product_on_basis(t,t) == GCISR(t)
@@ -128,7 +133,8 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(SymmetricGroup(2))
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(2))
             sage: GCISR.one()
             p[]*G[()] + p[]*G[(1,2)]
 
@@ -140,7 +146,8 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: gci.GroupCycleIndexSeriesRing(SymmetricGroup(4))
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GroupCycleIndexSeriesRing(SymmetricGroup(4))
             Ring of (Symmetric group of order 4! as a permutation group)-Cycle Index Series over Rational Field
         """
         return "Ring of (%s)-Cycle Index Series over %s" %(self._group, self._coeff_ring)
@@ -150,7 +157,8 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
     
     EXAMPLES::
 
-        sage: GCISR = gci.GroupCycleIndexSeriesRing(SymmetricGroup(4))
+        sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+        sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
         sage: GCISR.an_element()
         p[]*G[()] + 2*p[]*G[(3,4)] + 3*p[]*G[(2,3)] + p[]*G[(1,2,3,4)]
     
@@ -173,8 +181,9 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         EXAMPLES::
 
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: S4 = SymmetricGroup(4)
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(S4)
+            sage: GCISR = GroupCycleIndexSeriesRing(S4)
             sage: GCISR.an_element()
             p[]*G[()] + 2*p[]*G[(3,4)] + 3*p[]*G[(2,3)] + p[]*G[(1,2,3,4)]
             sage: GCISR.an_element().quotient().coefficients(4)
@@ -213,9 +222,10 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         EXAMPLES::
 
             sage: S2 = SymmetricGroup(2)
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(S2)
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: E = sage.combinat.species.set_species.SetSpecies().cycle_index_series()
-            sage: C = gci.CyclicOrderWithReversalGroupCycleIndex()
+            sage: C = CyclicOrderWithReversalGroupCycleIndex()
             sage: example = (E*GCISR.one())(C)
             sage: example.quotient().generating_series().counts(8)
             [1, 1, 2, 5, 17, 73, 398, 2636]
@@ -297,8 +307,9 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         EXAMPLES::
 
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: S4 = SymmetricGroup(4)
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(S4)
+            sage: GCISR = GroupCycleIndexSeriesRing(S4)
             sage: E = GCISR(species.SetSpecies().cycle_index_series())
             sage: E.derivative()[S4.an_element()].coefficients(6) == E[S4.an_element()].coefficients(6)
             True
@@ -318,7 +329,8 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         EXAMPLES::
 
-            sage: L = gci.LinearOrderWithReversalGroupCycleIndex()
+            sage: from sage.combinat.species.gci_library import LinearOrderWithReversalGroupCycleIndex
+            sage: L = LinearOrderWithReversalGroupCycleIndex()
             sage: e,t = L.parent().basis().keys()
             sage: L.restricted(min=2,max=4)[t].coefficients(5)
             [0, 0, p[2], p[2, 1], 0]
@@ -348,9 +360,10 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         To enumerate this species using Sage, we first need to set up an environment::
         
             sage: from sage.combinat.species.generating_series import CycleIndexSeriesRing
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: from sage.combinat.species.stream import _integers_from
             sage: S2 = SymmetricGroup(2)
-            sage: GCISR = gci.GroupCycleIndexSeriesRing(S2)
+            sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: CISR = CycleIndexSeriesRing(QQ)
             sage: e,t = GCISR.basis().keys()
 

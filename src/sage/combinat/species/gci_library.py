@@ -27,7 +27,8 @@ def LinearOrderWithReversalGroupCycleIndex():
 
     EXAMPLES::
 
-        sage: L = gci.LinearOrderWithReversalGroupCycleIndex()
+        sage: from sage.combinat.species.gci_library import LinearOrderWithReversalGroupCycleIndex
+        sage: L = LinearOrderWithReversalGroupCycleIndex()
         sage: e,t = L.parent().basis().keys()
         sage: L[e].coefficients(6) == species.LinearOrderSpecies().cycle_index_series().coefficients(6)
         True
@@ -79,7 +80,8 @@ def CyclicOrderWithReversalGroupCycleIndex():
 
     EXAMPLES::
 
-        sage: C = gci.CyclicOrderWithReversalGroupCycleIndex()
+        sage: from sage.combinat.species.gci_library import CyclicOrderWithReversalGroupCycleIndex
+        sage: C = CyclicOrderWithReversalGroupCycleIndex()
         sage: e,t = C.parent().basis().keys()
         sage: C[e].coefficients(6) == species.CycleSpecies().cycle_index_series().coefficients(6)
         True
