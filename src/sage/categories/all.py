@@ -89,6 +89,10 @@ from .bialgebras import Bialgebras
 from .hopf_algebras import HopfAlgebras
 from .lie_algebras import LieAlgebras
 
+# operads
+from .set_operads import SetOperads
+from .operads import Operads
+
 # specific algebras
 from .monoid_algebras import MonoidAlgebras
 from .group_algebras import GroupAlgebras
@@ -114,7 +118,8 @@ from .algebras_with_basis      import AlgebrasWithBasis
 from .coalgebras_with_basis    import CoalgebrasWithBasis
 from .bialgebras_with_basis    import BialgebrasWithBasis
 from .hopf_algebras_with_basis import HopfAlgebrasWithBasis
-
+from .operads_with_basis       import OperadsWithBasis
+ 
 # finite dimensional * with basis
 from .finite_dimensional_modules_with_basis       import FiniteDimensionalModulesWithBasis
 from .finite_dimensional_algebras_with_basis      import FiniteDimensionalAlgebrasWithBasis

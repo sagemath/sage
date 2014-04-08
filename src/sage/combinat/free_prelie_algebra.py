@@ -38,6 +38,7 @@ from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.structure.coerce_exceptions import CoercionException
 from sage.rings.infinity import Infinity
+from sage.operads.prelie_operad import PreLieOperad
 
 
 class FreePreLieAlgebra(CombinatorialFreeModule):
@@ -227,6 +228,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
                                          latex_prefix="",
                                          sorting_key=key,
                                          category=cat)
+        self._operad = PreLieOperad(self.base_ring())
 
     def variable_names(self):
         r"""
@@ -529,6 +531,8 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
                                                            position=0,
                                                            codomain=self),
                                      position=1)
+
+    # after this line : coercion
 
     def _element_constructor_(self, x):
         r"""
