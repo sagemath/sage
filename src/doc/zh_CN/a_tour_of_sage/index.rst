@@ -239,6 +239,7 @@ Sage 的三维绘图功能也非常强大，而且提供众多控件。
     (x, y)
     sage: plot3d(sin(x^2 + y^2)/(x^2 + y^2), (x,-3,3), (y,-3,3),
     ....:        plot_points=150, color='green')
+    Graphics3d Object
 
 .. image:: plot_3d.*
 
@@ -369,4 +370,3 @@ Sage 仅用不到 5 秒的时间就能计算出一千万分割成多个整数之
 
 .. [3]
    http://creativecommons.org/licenses/by-sa/3.0/
-
