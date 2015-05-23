@@ -164,15 +164,16 @@ class Composition(CombinatorialElement):
             sage: C([3,-1,1])
             Traceback (most recent call last):
             ...
-            ValueError: elements must be nonnegative integers
+            ValueError: not a composition
             sage: C("strawberry")
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert x (=s) to an integer
+            ValueError: not a composition
         """
         if descents is not None:
             if isinstance(descents, tuple):
-                return Compositions().from_descents(descents[0], nps=descents[1])
+                return Compositions().from_descents(descents[0],
+                                                    nps=descents[1])
             else:
                 return Compositions().from_descents(descents)
         elif code is not None:
@@ -181,8 +182,8 @@ class Composition(CombinatorialElement):
             return Compositions().from_subset(*from_subset)
         elif isinstance(co, Composition):
             return co
-        else:
-            return Compositions()(co)
+
+        return Compositions()(co)
 
     def __init__(self, parent, lst):
         """
@@ -1784,8 +1785,10 @@ class Compositions(UniqueRepresentation, Parent):
             sage: P(Partition([5,2,1]))
             [5, 2, 1]
         """
-        if isinstance(lst, (Composition, Partition)):
-            lst = list(lst)
+        # input can be an iterator, and one has to use it twice
+        lst = list(lst)
+        if any(not isinstance(x, (int, Integer)) or x < 0 for x in lst):
+            raise ValueError('not a composition')
         elt = self.element_class(self, lst)
         if elt not in self:
             raise ValueError("%s not in %s" % (elt, self))
