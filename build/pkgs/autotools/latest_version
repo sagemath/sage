@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+#
+# Read a whitespace-separated list of version numbers on stdin
+# and output the latest version.
+#
+# A version number is a list of numbers separated by dots, followed
+# by an optional alphanumeric string (there may or may not be a dot
+# before this string).  The numbers must not have leading zeros.
+# Typical examples: "5.4.3a" or "1.10.rc0"
+#
+# Any word in the input which does not start with a digit, is ignored.
+# Any word which does start with a digit, but is not of the required
+# form, is an error.  Trailing alphanumeric strings are chopped off and
+# ignored; they don't appear in the output.
+#
+# AUTHOR: Jeroen Demeyer (2012-10-01)
+#
+
+# Make this script compatible with Python 3.
+from __future__ import print_function
+
+
+def version_to_tuple(v):
+    """
+    Convert a version number like "5.4.3a" to a tuple (5,4,3).
+    """
+    n = ""  # Current number as string
+    t = []  # List of numbers
+    for c in v:
+        if c.isdigit():
+            n += c
+        elif c == ".":
+            if len(n) == 0:
+                raise ValueError("Empty number in version string '{}'".format(v))
+            if n[0] == '0' and len(n) >= 2:
+                raise ValueError("Leading zeros not allowed in version string '{}'".format(v))
+            t.append(int(n))
+            n = ""
+        elif c.isalpha():
+            break
+        else:
+            raise ValueError("Illegal character '{}' in version string '{}'".format(c,v))
+    if len(n) > 0:
+        t.append(int(n))
+    return tuple(t)
+
+def tuple_to_version(t):
+    """
+    Convert a tuple like (5,4,3) to a version number "5.4.3"
+    """
+    return str.join(".", [str(x) for x in t])
+
+
+import sys
+L = sys.stdin.read().split()
+
+debug = ' '.join(L)
+
+L = [version_to_tuple(s) for s in L if len(s) > 0 and s[0].isdigit()]
+if len(L) == 0:
+    sys.exit(0)
+
+L = sorted(L, reverse=True)
+ver = tuple_to_version(L[0])
+debug = debug + ' => '  + ver
+
+print(ver)
+print(debug, file=sys.stderr)

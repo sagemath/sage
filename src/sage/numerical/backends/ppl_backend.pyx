@@ -4,10 +4,14 @@ PPL Backend
 AUTHORS:
 
 - Risan (2012-02): initial implementation
+
+- Jeroen Demeyer (2014-08-04) allow rational coefficients for
+  constraints and objective function (:trac:`16755`)
 """
 
 #*****************************************************************************
 #       Copyright (C) 2010 Risan <ptrrsn.1@gmail.com>
+#       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -17,6 +21,8 @@ AUTHORS:
 
 from sage.numerical.mip import MIPSolverException
 from sage.libs.ppl import MIP_Problem, Variable, Linear_Expression, Constraint, Generator
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
 
 cdef class PPLBackend(GenericBackend):
     cdef object mip
@@ -30,6 +36,8 @@ cdef class PPLBackend(GenericBackend):
     cdef list col_name_var
     cdef int is_maximize
     cdef str name
+    # Common denominator for objective function in self.mip (not for the constant term)
+    cdef Integer obj_denominator
 
     def __cinit__(self, maximization = True):
         """
@@ -45,11 +53,12 @@ cdef class PPLBackend(GenericBackend):
         self.row_upper_bound = []
         self.col_lower_bound = []
         self.col_upper_bound = []
-        self.objective_function   = []
+        self.objective_function = []
         self.row_name_var = []
         self.col_name_var = []
         self.name = ''
-        self.obj_constant_term = 0;
+        self.obj_constant_term = Rational(0)
+        self.obj_denominator = Integer(1)
 
         if maximization:
             self.set_sense(+1)
@@ -70,38 +79,54 @@ cdef class PPLBackend(GenericBackend):
         EXAMPLE::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "PPL")
+            sage: p = get_solver(solver="PPL")
             sage: p.base_ring()
             Rational Field
             sage: type(p.zero())
             <type 'sage.rings.rational.Rational'>
             sage: p.init_mip()
-
         """
 
         self.mip = MIP_Problem()
-        mip_obj = Linear_Expression(0)
+
+        # Common denominator (for objective function and every constraint)
+        cdef Integer denom, newdenom
 
         self.mip.add_space_dimensions_and_embed(len(self.objective_function))
+
+        # Objective function
+        mip_obj = Linear_Expression(0)
+        denom = Integer(1)
         for i in range(len(self.objective_function)):
-            mip_obj = mip_obj + Linear_Expression(self.objective_function[i] * Variable(i))
+            coeff = self.objective_function[i] * denom
+            newdenom = coeff.denominator()
+            if newdenom != 1:
+                assert newdenom >= 2
+                denom *= newdenom
+                mip_obj *= newdenom
+                coeff *= newdenom
+            mip_obj = mip_obj + Linear_Expression(coeff * Variable(i))
         self.mip.set_objective_function(mip_obj)
+        self.obj_denominator = denom
+        
+        # Constraints
         for i in range(len(self.Matrix)):
             l = Linear_Expression(0)
+            denom = Integer(1)
             for j in range(len(self.Matrix[i])):
-                l = l + Linear_Expression(self.Matrix[i][j] * Variable(j))
-            if self.row_lower_bound[i] is not None:
-                self.mip.add_constraint(l >= self.row_lower_bound[i])
-            if self.row_upper_bound[i] is not None:
-                self.mip.add_constraint(l <= self.row_upper_bound[i])
+                coeff = self.Matrix[i][j] * denom
+                newdenom = coeff.denominator()
+                if newdenom != 1:
+                    assert newdenom >= 2
+                    denom *= newdenom
+                    l *= newdenom
+                    coeff *= newdenom
+                l = l + Linear_Expression(coeff * Variable(j))
+            self.mip._add_rational_constraint(l, denom, self.row_lower_bound[i], self.row_upper_bound[i])
 
+        assert len(self.col_lower_bound) == len(self.col_upper_bound)
         for i in range(len(self.col_lower_bound)):
-            if self.col_lower_bound[i] is not None:
-                self.mip.add_constraint(Variable(i) >= self.col_lower_bound[i])
-
-        for i in range(len(self.col_upper_bound)):
-            if self.col_upper_bound[i] is not None:
-                self.mip.add_constraint(Variable(i) <= self.col_upper_bound[i])
+            self.mip._add_rational_constraint(Variable(i), 1, self.col_lower_bound[i], self.col_upper_bound[i])
 
         if self.is_maximize == 1:
             self.mip.set_optimization_mode('maximization')
@@ -214,7 +239,7 @@ cdef class PPLBackend(GenericBackend):
                 self.col_name_var.append(names[k])
             else:
                 self.col_name_var.append(None)
-        return len(self.objective_function) - 1;
+        return len(self.objective_function) - 1
 
     cpdef  set_variable_type(self, int variable, int vtype):
         """
@@ -285,11 +310,11 @@ cdef class PPLBackend(GenericBackend):
             2
         """
         if coeff is not None:
-            self.objective_function[variable] = coeff;
+            self.objective_function[variable] = coeff
         else:
             return self.objective_function[variable]
 
-    cpdef  set_objective(self, list coeff, d = 0):
+    cpdef set_objective(self, list coeff, d=0):
         """
         Set the objective function.
 
@@ -298,7 +323,26 @@ cdef class PPLBackend(GenericBackend):
         - ``coeff`` -- a list of real values, whose ith element is the
           coefficient of the ith variable in the objective function.
 
-        EXAMPLE::
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(x[0]*5 + x[1]/11 <= 6)
+            sage: p.set_objective(x[0])
+            sage: p.solve()
+            6/5
+            sage: p.set_objective(x[0]/2 + 1)
+            sage: p.show()
+            Maximization:
+              1/2 x_0 + 1
+            <BLANKLINE>
+            Constraints:
+              constraint_0: 5 x_0 + 1/11 x_1 <= 6
+            Variables:
+              x_0 is a continuous variable (min=0, max=+oo)
+              x_1 is a continuous variable (min=0, max=+oo)
+            sage: p.solve()
+            8/5
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "PPL")
@@ -309,8 +353,8 @@ cdef class PPLBackend(GenericBackend):
             [1, 1, 2, 1, 3]
         """
         for i in range(len(coeff)):
-            self.objective_function[i] = coeff[i];
-        obj_constant_term = d;
+            self.objective_function[i] = coeff[i]
+        self.obj_constant_term = Rational(d)
 
     cpdef set_verbosity(self, int level):
         """
@@ -340,6 +384,20 @@ cdef class PPLBackend(GenericBackend):
         - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLE::
+
+            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(x[0]/2 + x[1]/3 <= 2/5)
+            sage: p.set_objective(x[1])
+            sage: p.solve()
+            6/5
+            sage: p.add_constraint(x[0] - x[1] >= 1/10)
+            sage: p.solve()
+            21/50
+            sage: p.set_max(x[0], 1/2)
+            sage: p.set_min(x[1], 3/8)
+            sage: p.solve()
+            2/5
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "PPL")
@@ -491,7 +549,14 @@ cdef class PPLBackend(GenericBackend):
 
            Behaviour is undefined unless ``solve`` has been called before.
 
-        EXAMPLE::
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(5/13*x[0] + x[1]/2 == 8/7)
+            sage: p.set_objective(5/13*x[0] + x[1]/2)
+            sage: p.solve()
+            8/7
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "PPL")
@@ -510,7 +575,7 @@ cdef class PPLBackend(GenericBackend):
         """
         self.init_mip()
         ans = self.mip.optimal_value()
-        return ans + self.obj_constant_term
+        return ans / self.obj_denominator + self.obj_constant_term
 
     cpdef get_variable_value(self, int variable):
         """

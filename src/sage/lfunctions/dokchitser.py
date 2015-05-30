@@ -108,7 +108,7 @@ class Dokchitser(SageObject):
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
         sage: L.check_functional_equation()
-        6.11218974800000e-18                            # 32-bit
+        6.11218974700000e-18                            # 32-bit
         6.04442711160669e-18                            # 64-bit
 
     RANK 2 ELLIPTIC CURVE:
@@ -125,8 +125,8 @@ class Dokchitser(SageObject):
         sage: L.derivative(1,E.rank())
         1.51863300057685
         sage: L.taylor_series(1,4)
-        2.90759778535572e-20 + (-1.64772676916085e-20)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)      # 32-bit
-        -3.11623283109075e-21 + (1.76595961125962e-21)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)      # 64-bit
+        -1.27685190980159e-23 + (7.23588070754027e-24)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)  # 32-bit
+        -2.72911738151096e-23 + (1.54658247036311e-23)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)  # 64-bit
 
     RAMANUJAN DELTA L-FUNCTION:
 
@@ -187,7 +187,7 @@ class Dokchitser(SageObject):
 
     def __reduce__(self):
         D = copy.copy(self.__dict__)
-        if D.has_key('_Dokchitser__gp'):
+        if '_Dokchitser__gp' in D:
             del D['_Dokchitser__gp']
         return reduce_load_dokchitser, (D, )
 
@@ -218,7 +218,9 @@ class Dokchitser(SageObject):
         except AttributeError:
             logfile = None
             # For debugging
-            #logfile = os.path.join(DOT_SAGE, 'dokchitser.log')
+            import os
+            from sage.env import DOT_SAGE
+            logfile = os.path.join(DOT_SAGE, 'dokchitser.log')
             g = sage.interfaces.gp.Gp(script_subdirectory='dokchitser', logfile=logfile)
             g.read('computel.gp')
             self.__gp = g
@@ -236,14 +238,14 @@ class Dokchitser(SageObject):
         try:
             t = self.gp().eval(s)
         except (RuntimeError, TypeError):
-            raise RuntimeError, "Unable to create L-series, due to precision or other limits in PARI."
+            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
         if '***' in t:
-            raise RuntimeError, "Unable to create L-series, due to precision or other limits in PARI."
+            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
         return t
 
     def __check_init(self):
         if not self.__init:
-            raise ValueError, "you must call init_coeffs on the L-function first"
+            raise ValueError("you must call init_coeffs on the L-function first")
 
     def num_coeffs(self, T=1):
         """
@@ -347,7 +349,7 @@ class Dokchitser(SageObject):
             self._gp_eval('initLdata("%s",%s,"%s")'%(v,cutoff,w))
             return
         if not isinstance(v, (list, tuple)):
-            raise TypeError, "v (=%s) must be a list, tuple, or string"%v
+            raise TypeError("v (=%s) must be a list, tuple, or string"%v)
         CC = self.__CC
         v = ','.join([CC(a)._pari_init_() for a in v])
         self._gp_eval('Avec = [%s]'%v)
@@ -434,7 +436,7 @@ class Dokchitser(SageObject):
         k = Integer(k)
         z = self.gp().eval('L(%s,,%s)'%(s,k))
         if 'pole' in z:
-            raise ArithmeticError, z
+            raise ArithmeticError(z)
         elif 'Warning' in z:
             i = z.rfind('\n')
             msg = z[:i].replace('digits','decimal digits')
@@ -484,18 +486,18 @@ class Dokchitser(SageObject):
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(200)
             sage: L.taylor_series(1,3)
-            6.2240188634103774348273446965620801288836328651973234573133e-73 + (-3.527132447498646306292650465494647003849868770...e-73)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+            -9.094...e-82 + (5.1538...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
         """
         self.__check_init()
         a = self.__CC(a)
         k = Integer(k)
         try:
             z = self.gp()('Vec(Lseries(%s,,%s))'%(a,k-1))
-        except TypeError, msg:
-            raise RuntimeError, "%s\nUnable to compute Taylor expansion (try lowering the number of terms)"%msg
+        except TypeError as msg:
+            raise RuntimeError("%s\nUnable to compute Taylor expansion (try lowering the number of terms)"%msg)
         r = repr(z)
         if 'pole' in r:
-            raise ArithmeticError, r
+            raise ArithmeticError(r)
         elif 'Warning' in r:
             i = r.rfind('\n')
             msg = r[:i].replace('digits','decimal digits')
@@ -584,7 +586,7 @@ class Dokchitser(SageObject):
             0.0374412812685155
         """
         if not isinstance(coefgrow, str):
-            raise TypeError, "coefgrow must be a string"
+            raise TypeError("coefgrow must be a string")
         g = self.gp()
         g.eval('coefgrow(n) = %s'%(coefgrow.replace('\n',' ')))
 

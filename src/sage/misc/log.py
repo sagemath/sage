@@ -61,7 +61,7 @@ AUTHORS:
 import os
 import time
 
-import interpreter
+import sage.repl.interpreter as interpreter
 import latex
 import misc
 
@@ -254,7 +254,7 @@ class log_html(Log):
         x = self._output[n]
         try:
             L = latex.latex(x)
-        except StandardError:
+        except Exception:
             L = "\\mbox{error TeXing object}"
         single_png = os.path.join(self._images, '%s.png' % n)
         try:
@@ -265,7 +265,7 @@ class log_html(Log):
         open(oi,'w').write('<pre>OUTPUT:\n%s\n\n\nLATEX:\n%s</pre><img src="%s">'%(
             x, L, single_png))
         extra_img_opts = ''
-        #if sage.plot.all.is_Graphics(x):
+        #if sage.plot.graphics.is_Graphics(x):
         #    extra_img_opts = 'width=300'
         return """<center> <table border=0 cellpadding=20 cellspacing=2
                 bgcolor=lightgrey>

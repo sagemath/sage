@@ -17,7 +17,9 @@ TOP=`pwd`
 #######################################################################
 cd src
 for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
+    # Use --no-backup-if-mismatch to prevent .orig files (these confuse
+    # PARI's Perl script which creates pari.desc).
+    patch --no-backup-if-mismatch -p1 <"$patch"
     if [ $? -ne 0 ]; then
         echo >&2 "Error applying '$patch'"
         exit 1
@@ -33,8 +35,6 @@ set_environment()
 
     # This is needed or there are weird locale problems involving rpath
     # with building Sage:
-    LC_ALL=C
-    export LC_ALL
     LANG=C
     export LANG
 
@@ -158,6 +158,7 @@ build()
     # Note that "--graphic=none" is (usually) added to PARI_CONFIGURE:
     bash ./Configure --prefix="$SAGE_LOCAL" \
         --with-readline="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL" \
+        --with-runtime-perl="/usr/bin/env perl" \
         --kernel=gmp $PARI_CONFIGURE
 
     if [ $? -ne 0 ]; then
@@ -189,33 +190,14 @@ install()
         exit 1
     fi
 
-    cd "$CUR"
-
-    if [ "$UNAME" = "Darwin" ]; then
-        # The following is a hack to get the library installed correctly
-        # on Mac OS X:
-        echo "Applying Mac OS X hack -- deleting and reinstalling libpari.a ..."
-        rm -f Odarwin-ppc/*lib*
-        $MAKE install-lib-sta
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error reinstalling PARI's static libraries (OS X trick)"
-            exit 1
-        fi
-
-        cd "`config/objdir`" && cp -f libpari* "$SAGE_LOCAL/lib"
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error copying PARI's libraries (OS X trick)"
-            exit 1
-        fi
-        cd "$CUR"
-    fi
-
-    # Copy gprc.expect to $SAGE_LOCAL/etc
-    cp -f "$TOP/gprc.expect" "$SAGE_LOCAL/etc"
+    # Copy anal.h
+    cp -f "src/language/anal.h" "$SAGE_LOCAL/include/pari/anal.h"
     if [ $? -ne 0 ]; then
-        echo >&2 "Error installing gprc.expect"
+        echo >&2 "Error copying anal.h"
         exit 1
     fi
+
+    cd "$CUR"
 }
 
 

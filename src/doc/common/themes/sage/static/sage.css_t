@@ -224,6 +224,11 @@ div.warning {
     border: 1px solid #f66;
 }
 
+div.hint {
+    background-color: #D8F6CE;
+    border: 1px solid #31B404;
+}
+
 p.admonition-title {
     display: inline;
 }

@@ -79,7 +79,7 @@ def sudoku(m):
 
     if not(isinstance(m, Matrix)):
         raise ValueError('sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class')
-    solution = Sudoku(m).solve(algorithm='dlx').next()
+    solution = next(Sudoku(m).solve(algorithm='dlx'))
     return (solution.to_matrix() if solution else None)
 
 
@@ -116,7 +116,7 @@ class Sudoku(SageObject):
         |  3  |    2|     |
         |4 9  |  5  |    3|
         +-----+-----+-----+
-        sage: print a.solve().next()
+        sage: print next(a.solve())
         +-----+-----+-----+
         |5 1 3|6 8 7|2 4 9|
         |8 4 9|5 2 1|6 3 7|
@@ -256,7 +256,7 @@ class Sudoku(SageObject):
 
     def _latex_(self):
         r"""nodetex
-        Returns a `\mbox{\rm\LaTeX}` representation of a Sudoku puzzle as an array environment.
+        Returns a `\LaTeX` representation of a Sudoku puzzle as an array environment.
 
         EXAMPLE::
 
@@ -426,7 +426,7 @@ class Sudoku(SageObject):
 
     def to_latex(self):
         r"""
-        Creates a string of `\mbox{\rm\LaTeX}` code representing a Sudoku puzzle or solution.
+        Creates a string of `\LaTeX` code representing a Sudoku puzzle or solution.
 
         EXAMPLE::
 
@@ -452,7 +452,7 @@ class Sudoku(SageObject):
         gen = (x for x in self.puzzle)
         for row in range(nsquare):
             for col in range(nsquare):
-                entry = gen.next()
+                entry = next(gen)
                 array.append((str(entry) if entry else ' '))
                 array.append(('' if col == nsquare - 1 else '&'))
             array.append(('\\\\\n' if (row+1) % n else '\\\\\\hline\n'))
@@ -512,7 +512,7 @@ class Sudoku(SageObject):
             |5    |  8  |  3 6|
             |    3|     |     |
             +-----+-----+-----+
-            sage: h.solve(algorithm='backtrack').next()
+            sage: next(h.solve(algorithm='backtrack'))
             +-----+-----+-----+
             |8 1 4|6 3 7|9 2 5|
             |3 2 5|1 4 9|6 8 7|
@@ -526,7 +526,7 @@ class Sudoku(SageObject):
             |5 7 9|4 8 1|2 3 6|
             |1 8 3|5 6 2|7 4 9|
             +-----+-----+-----+
-            sage: h.solve(algorithm='dlx').next()
+            sage: next(h.solve(algorithm='dlx'))
             +-----+-----+-----+
             |8 1 4|6 3 7|9 2 5|
             |3 2 5|1 4 9|6 8 7|
@@ -548,7 +548,7 @@ class Sudoku(SageObject):
         in his database.  We solve it twice. ::
 
             sage: b = Sudoku('8..6..9.5.............2.31...7318.6.24.....73...........279.1..5...8..36..3......')
-            sage: b.solve(algorithm='dlx').next() == b.solve(algorithm='backtrack').next()
+            sage: next(b.solve(algorithm='dlx')) == next(b.solve(algorithm='backtrack'))
             True
 
 
@@ -567,7 +567,7 @@ class Sudoku(SageObject):
                         '6.2.5.........4.3..........43...8....1....2........7..5..27...........81...6.....',\
                         '.923.........8.1...........1.7.4...........658.........6.5.2...4.....7.....9.....']
             sage: p = [Sudoku(top[i]) for i in range(10)]
-            sage: verify = [p[i].solve(algorithm='dlx').next() == p[i].solve(algorithm='backtrack').next() for i in range(10)]
+            sage: verify = [next(p[i].solve(algorithm='dlx')) == next(p[i].solve(algorithm='backtrack')) for i in range(10)]
             sage: verify == [True]*10
             True
 
@@ -576,14 +576,14 @@ class Sudoku(SageObject):
         A `25\times 25` puzzle that the backtrack algorithm is not equipped to handle.  Since ``solve`` returns a generator this test will not go boom until we ask for a solution with ``next``. ::
 
             sage: too_big = Sudoku([0]*625)
-            sage: too_big.solve(algorithm='backtrack').next()
+            sage: next(too_big.solve(algorithm='backtrack'))
             Traceback (most recent call last):
             ...
             ValueError: The Sudoku backtrack algorithm is limited to puzzles of size 16 or smaller.
 
         An attempt to use a non-existent algorithm. ::
 
-            sage: Sudoku([0]).solve(algorithm='bogus').next()
+            sage: next(Sudoku([0]).solve(algorithm='bogus'))
             Traceback (most recent call last):
             ...
             NotImplementedError: bogus is not an algorithm for Sudoku puzzles
@@ -661,7 +661,7 @@ class Sudoku(SageObject):
             |  4  |     |    7|
             |    7|     |3    |
             +-----+-----+-----+
-            sage: print g.solve(algorithm='backtrack').next()
+            sage: print next(g.solve(algorithm='backtrack'))
             +-----+-----+-----+
             |1 6 2|8 5 7|4 9 3|
             |5 3 4|1 2 9|6 7 8|
@@ -696,7 +696,7 @@ class Sudoku(SageObject):
             |    2|  1  |     |
             |     |  4  |    9|
             +-----+-----+-----+
-            sage: print c.solve(algorithm='backtrack').next()
+            sage: print next(c.solve(algorithm='backtrack'))
             +-----+-----+-----+
             |9 8 7|6 5 4|3 2 1|
             |2 4 6|1 7 3|9 8 5|
@@ -765,7 +765,7 @@ class Sudoku(SageObject):
         solution and then check to see if there are more or not. ::
 
             sage: e = Sudoku('4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......')
-            sage: print e.dlx().next()
+            sage: print next(e.dlx())
             [4, 1, 7, 3, 6, 9, 8, 2, 5, 6, 3, 2, 1, 5, 8, 9, 4, 7, 9, 5, 8, 7, 2, 4, 3, 1, 6, 8, 2, 5, 4, 3, 7, 1, 6, 9, 7, 9, 1, 5, 8, 6, 4, 3, 2, 3, 4, 6, 9, 1, 2, 7, 5, 8, 2, 8, 9, 6, 4, 3, 5, 7, 1, 5, 7, 3, 2, 9, 1, 6, 8, 4, 1, 6, 4, 8, 7, 5, 2, 9, 3]
             sage: len(list(e.dlx()))
             1
@@ -782,7 +782,7 @@ class Sudoku(SageObject):
         A larger puzzle, with multiple solutions, but we just get one. ::
 
             sage: j = Sudoku('....a..69.3....1d.2...8....e.4....b....5..c.......7.......g...f....1.e..2.b.8..3.......4.d.....6.........f..7.g..9.a..c...5.....8..f.....1..e.79.c....b.....2...6.....g.7......84....3.d..a.5....5...7..e...ca.....3.1.......b......f....4...d..e..g.92.6..8....')
-            sage: print j.dlx().next()
+            sage: print next(j.dlx())
             [5, 15, 16, 14, 10, 13, 7, 6, 9, 2, 3, 4, 11, 8, 12, 1, 13, 3, 2, 12, 11, 16, 8, 15, 1, 6, 7, 14, 10, 4, 9, 5, 1, 10, 11, 6, 9, 4, 3, 5, 15, 8, 12, 13, 16, 7, 14, 2, 9, 8, 7, 4, 12, 2, 1, 14, 10, 5, 16, 11, 6, 3, 15, 13, 12, 16, 4, 1, 13, 14, 9, 10, 2, 7, 11, 6, 8, 15, 5, 3, 3, 14, 5, 7, 16, 11, 15, 4, 12, 13, 8, 9, 1, 2, 10, 6, 2, 6, 13, 11, 1, 8, 5, 3, 4, 15, 14, 10, 7, 9, 16, 12, 15, 9, 8, 10, 2, 6, 12, 7, 3, 16, 5, 1, 4, 14, 13, 11, 8, 11, 3, 15, 5, 10, 4, 2, 13, 1, 6, 12, 14, 16, 7, 9, 16, 12, 14, 13, 7, 15, 11, 1, 8, 9, 4, 5, 2, 6, 3, 10, 6, 2, 10, 5, 14, 12, 16, 9, 7, 11, 15, 3, 13, 1, 4, 8, 4, 7, 1, 9, 8, 3, 6, 13, 16, 14, 10, 2, 5, 12, 11, 15, 11, 5, 9, 8, 6, 7, 13, 16, 14, 3, 1, 15, 12, 10, 2, 4, 7, 13, 15, 3, 4, 1, 10, 8, 5, 12, 2, 16, 9, 11, 6, 14, 10, 1, 6, 2, 15, 5, 14, 12, 11, 4, 9, 7, 3, 13, 8, 16, 14, 4, 12, 16, 3, 9, 2, 11, 6, 10, 13, 8, 15, 5, 1, 7]
 
         The puzzle ``h`` from above, but purposely made unsolvable with addition in second entry. ::
@@ -790,7 +790,7 @@ class Sudoku(SageObject):
             sage: hbad = Sudoku('82.6..9.5.............2.31...7318.6.24.....73...........279.1..5...8..36..3......')
             sage: len(list(hbad.dlx()))
             0
-            sage: hbad.dlx().next()
+            sage: next(hbad.dlx())
             Traceback (most recent call last):
             ...
             StopIteration
@@ -798,7 +798,7 @@ class Sudoku(SageObject):
         A stupidly small puzzle to test the lower limits of arbitrary sized input. ::
 
             sage: s = Sudoku('.')
-            sage: print s.solve(algorithm='dlx').next()
+            sage: print next(s.solve(algorithm='dlx'))
             +-+
             |1|
             +-+
@@ -867,7 +867,7 @@ class Sudoku(SageObject):
         gen = (entry for entry in self.puzzle)
         for row in range(nsquare):
             for col in range(nsquare):
-                puzz = gen.next()
+                puzz = next(gen)
                 # All (zero-based) entries are possible, or only one is possible
                 entries = ([puzz-1] if puzz else range(nsquare))
                 for entry in entries:

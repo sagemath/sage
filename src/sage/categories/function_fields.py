@@ -65,7 +65,7 @@ class FunctionFields(Category):
         try:
             return x.function_field()
         except AttributeError:
-            raise  TypeError, "unable to canonically associate a function field to %s"%x
+            raise  TypeError("unable to canonically associate a function field to %s"%x)
 
     class ParentMethods:
         pass

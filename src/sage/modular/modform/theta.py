@@ -2,7 +2,8 @@
 q-expansions of Theta Series
 
 AUTHOR:
-    -- William Stein
+
+William Stein
 """
 
 from sage.rings.all  import Integer, ZZ, PowerSeriesRing
@@ -11,20 +12,21 @@ from math import sqrt
 
 def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
     r"""
-    Return the $q$-expansion of the series
-      $$
-        \theta_2 = \sum_{n odd} q^{n^2}.
-      $$
+    Return the `q`-expansion of the series
+    ` \theta_2 = \sum_{n odd} q^{n^2}. `
 
     INPUT:
-        prec -- integer; the absolute precision of the output
-        var -- (default: 'q') variable name
-        K -- (default: ZZ) base ring of answer
+
+    - prec -- integer; the absolute precision of the output
+    - var -- (default: 'q') variable name
+    - K -- (default: ZZ) base ring of answer
 
     OUTPUT:
-        a power series over K
 
-    EXAMPLES:
+    a power series over K
+
+    EXAMPLES::
+
         sage: theta2_qexp(18)
         q + q^9 + O(q^18)
         sage: theta2_qexp(49)
@@ -44,7 +46,7 @@ def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
     """
     prec = Integer(prec)
     if prec <= 0:
-        raise ValueError, "prec must be positive"
+        raise ValueError("prec must be positive")
     if sparse:
         v = {}
     else:
@@ -60,20 +62,21 @@ def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
 
 def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
     r"""
-    Return the $q$-expansion of the standard $\theta$ series
-    $$
-      \theta = 1 + 2\sum_{n=1}{^\infty} q^{n^2}.
-    $$
+    Return the `q`-expansion of the standard `\theta` series
+    ` \theta = 1 + 2\sum_{n=1}{^\infty} q^{n^2}. `
 
     INPUT:
-        prec -- integer; the absolute precision of the output
-        var -- (default: 'q') variable name
-        K -- (default: ZZ) base ring of answer
+
+    - prec -- integer; the absolute precision of the output
+    - var -- (default: 'q') variable name
+    - K -- (default: ZZ) base ring of answer
 
     OUTPUT:
-        a power series over K
 
-    EXAMPLES:
+    a power series over K
+
+    EXAMPLES::
+
         sage: theta_qexp(25)
         1 + 2*q + 2*q^4 + 2*q^9 + 2*q^16 + O(q^25)
         sage: theta_qexp(10)
@@ -92,7 +95,7 @@ def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
     """
     prec = Integer(prec)
     if prec <= 0:
-        raise ValueError, "prec must be positive"
+        raise ValueError("prec must be positive")
     if sparse:
         v = {}
     else:

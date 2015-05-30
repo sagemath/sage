@@ -196,21 +196,18 @@ REFERENCES:
    Adv. Math., 222 (2009), 1883-1942"
 
 """
+
 #*****************************************************************************
 #       Copyright (C) 2012 Andrew Mathas <andrew dot mathas at sydney dot edu dot au>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.combinat.combinat import CombinatorialObject
+
+from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -229,7 +226,6 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.all import NN
 from sage.sets.positive_integers import PositiveIntegers
-from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -238,7 +234,7 @@ import permutation
 #--------------------------------------------------
 # Tableau tuple - element class
 #--------------------------------------------------
-class TableauTuple(CombinatorialObject,Element):
+class TableauTuple(CombinatorialElement):
     """
     A class to model a tuple of tableaux.
 
@@ -340,13 +336,12 @@ class TableauTuple(CombinatorialObject,Element):
         sage: TableauTuple([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of lists.
+        ValueError: A tableau must be a list of iterables.
 
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [[1,2],[3,4]] ]) ).run()
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [], [[1,2],[3,4]] ]) ).run()
         sage: TestSuite( TableauTuple([[[1,1],[1]],[[1,1,1]],[[1],[1],[1]],[[1]]]) ).run()
     """
-    __metaclass__ = ClasscallMetaclass
     Element = Tableau
 
     @staticmethod
@@ -412,11 +407,10 @@ class TableauTuple(CombinatorialObject,Element):
             sage: s is t # identical tableaux are distinct objects
             False
         """
-        Element.__init__(self, parent)
         # By calling Tableau we implicitly check that the shape is a PartitionTuple
-        t=[Tableau(s) for s in t]
-        CombinatorialObject.__init__(self, t)
-        self._level=len(self._list)
+        t = [Tableau(s) for s in t]
+        CombinatorialElement.__init__(self, parent, t)
+        self._level = len(self._list)
 
     def _repr_(self):
         """
@@ -635,7 +629,7 @@ class TableauTuple(CombinatorialObject,Element):
         try:
             return self[k][r][c]
         except IndexError:
-            raise IndexError, "The cell (%s, %s, %s) is not contained in the tableau"% (k,r,c)
+            raise IndexError("The cell (%s, %s, %s) is not contained in the tableau"% (k,r,c))
 
     def level(self):
         """
@@ -783,7 +777,7 @@ class TableauTuple(CombinatorialObject,Element):
             sage: TableauTuple([[[1,2],[3,4]],[[9,10],[11],[12]],[[5,6,7],[8]]]).entries()
             [1, 2, 3, 4, 9, 10, 11, 12, 5, 6, 7, 8]
         """
-        return sum((s.entries() for s in self), [])
+        return list(sum((s.entries() for s in self), ()))
 
     def entry(self, l, r, c):
         """
@@ -800,7 +794,7 @@ class TableauTuple(CombinatorialObject,Element):
             sage: t.entry(1, 1, 1)
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
         """
         return self[l][r][c]
 
@@ -872,8 +866,7 @@ class TableauTuple(CombinatorialObject,Element):
             sage: TableauTuple([[[1,2],[6,7]],[[4,8], [6, 9]],[]]).is_standard()
             False
         """
-        entries=self.entries()
-        entries.sort()
+        entries=sorted(self.entries())
         return entries==range(1,self.size()+1) and self.is_row_strict() and self.is_column_strict()
 
     def cells_containing(self, m):
@@ -921,7 +914,7 @@ class TableauTuple(CombinatorialObject,Element):
 
         addable_cells = self.shape().addable_cells()
 
-        if n == None:
+        if n is None:
             n = self.size()
 
         # Go through and add n+1 to the end of each of the rows
@@ -1063,7 +1056,7 @@ class TableauTuple(CombinatorialObject,Element):
 
                 tab[k][r].append(m)
             else:
-                raise IndexError, '%s is not an addable cell of the tableau' % ( (k,r,c),)
+                raise IndexError('%s is not an addable cell of the tableau' % ( (k,r,c),))
 
         # finally, try and return a tableau belonging to the same category
         try:
@@ -1357,8 +1350,7 @@ class StandardTableauTuple(TableauTuple):
             raise ValueError( 'tableaux must be column strict' )
 
         # Finally, the more costly check that the entries are {1,2...n}
-        entries=sum((s.entries() for s in t), [])
-        entries.sort()
+        entries=sorted(sum((s.entries() for s in t), ()))
         if not entries==range(1,len(entries)+1):
             raise ValueError( 'entries must be in bijection with {1,2,...,n}' )
 
@@ -1670,10 +1662,10 @@ class TableauTuples(UniqueRepresentation, Parent):
             Tableau tuples of level 4 and size 3
         """
         # sanity testing
-        if not (level==None or level in PositiveIntegers()):
+        if not (level is None or level in PositiveIntegers()):
             raise ValueError( 'the level must be a positive integer' )
 
-        if not (size==None or size in NN):
+        if not (size is None or size in NN):
             raise ValueError( 'the size must be a non-negative integer' )
 
         # now that the inputs appear to make sense, return the appropriate class
@@ -1851,7 +1843,7 @@ class TableauTuples(UniqueRepresentation, Parent):
         if self.is_finite():
             return [y for y in self]
         else:
-            raise NotImplementedError, 'this is an infinite set of tableaux'
+            raise NotImplementedError('this is an infinite set of tableaux')
 
 
 class TableauTuples_all(TableauTuples):
@@ -2312,14 +2304,14 @@ class StandardTableauTuples(TableauTuples):
             else:
                 size=args[1]
         elif len(args)>2:
-            raise ValueError,'too man arguments!'
+            raise ValueError('too man arguments!')
 
         # now check that the arguments are consistent
         if level is not None and (not isinstance(level, (int,Integer)) or level<1):
-            raise ValueError,'the level must be a positive integer'
+            raise ValueError('the level must be a positive integer')
 
         if size is not None and (not isinstance(size, (int,Integer)) or size<0):
-            raise ValueError,'the size must be a non-negative integer'
+            raise ValueError('the size must be a non-negative integer')
 
         if shape is not None:
             try:
@@ -2330,11 +2322,11 @@ class StandardTableauTuples(TableauTuples):
             if level is None:
                 level=shape.level()
             elif level!=shape.level():
-                raise ValueError,'the shape and level must agree'
+                raise ValueError('the shape and level must agree')
             if size is None:
                 size=shape.size()
             elif size!=shape.size():
-                raise ValueError,'the shape and size must agree'
+                raise ValueError('the shape and size must agree')
 
         # now that the inputs appear to make sense, return the appropriate class
         if level is not None and level<=1:

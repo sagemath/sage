@@ -16,15 +16,11 @@ Congruence Subgroup `\Gamma_1(N)`
 
 from sage.misc.cachefunc import cached_method
 
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
 from sage.rings.all import ZZ, euler_phi as phi, moebius, divisors
 from sage.modular.dirichlet import DirichletGroup
 
-# Just for now until we make an SL_2 group type.
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.matrix.matrix_space import MatrixSpace
-Mat2Z = MatrixSpace(IntegerModRing(0),2)
 
 def is_Gamma1(x):
     """
@@ -228,12 +224,12 @@ class Gamma1_class(GammaH_class):
             return self.farey_symbol().generators()
         elif algorithm=="todd-coxeter":
             from sage.modular.modsym.g1list import G1list
-            from congroup_pyx import generators_helper
+            from congroup import generators_helper
             level = self.level()
-            gen_list = generators_helper(G1list(level), level, Mat2Z)
+            gen_list = generators_helper(G1list(level), level)
             return [self(g, check=False) for g in gen_list]
         else:
-            raise ValueError, "Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm
+            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def _contains_sl2(self, a,b,c,d):
         r"""
@@ -443,7 +439,7 @@ class Gamma1_class(GammaH_class):
                 if n == 0:
                     return ZZ(0)
                 else: # never happens at present
-                    raise NotImplementedError, "Computations of dimensions of spaces of weight 1 cusp forms not implemented at present"
+                    raise NotImplementedError("Computations of dimensions of spaces of weight 1 cusp forms not implemented at present")
             except NotImplementedError:
                 raise
 
@@ -464,7 +460,7 @@ class Gamma1_class(GammaH_class):
             return ZZ( K(Gamma0(N).index() * (k-1)/ZZ(12)) + CohenOesterle(eps,k) )
 
         else: #algorithm not in ["CohenOesterle", "Quer"]:
-            raise ValueError, "Unrecognised algorithm in dimension_cusp_forms"
+            raise ValueError("Unrecognised algorithm in dimension_cusp_forms")
 
 
     def dimension_eis(self, k=2, eps=None, algorithm="CohenOesterle"):
@@ -551,7 +547,7 @@ class Gamma1_class(GammaH_class):
                 return alpha - self.dimension_cusp_forms(k, eps)
 
         else: #algorithm not in ["CohenOesterle", "Quer"]:
-            raise ValueError, "Unrecognised algorithm in dimension_eis"
+            raise ValueError("Unrecognised algorithm in dimension_eis")
 
     def dimension_new_cusp_forms(self, k=2, eps=None, p=0, algorithm="CohenOesterle"):
         r"""
@@ -609,7 +605,7 @@ class Gamma1_class(GammaH_class):
 
         """
 
-        if eps == None:
+        if eps is None:
             return GammaH_class.dimension_new_cusp_forms(self, k, p)
 
         N = self.level()

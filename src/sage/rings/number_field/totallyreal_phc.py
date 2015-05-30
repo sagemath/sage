@@ -2,6 +2,7 @@
 Enumeration of Totally Real Fields: PHC interface
 
 AUTHORS:
+
     -- John Voight (2007-10-10):
         * Zeroth attempt.
 """
@@ -30,19 +31,24 @@ def coefficients_to_power_sums(n, m, a):
     of the roots of f up to (m-1)th powers.
 
     INPUT:
-    n -- integer, the degree
-    a -- list of integers, the coefficients
+
+    - n -- integer, the degree
+    - a -- list of integers, the coefficients
 
     OUTPUT:
+
     list of integers.
 
     NOTES:
+
     Uses Newton's relations, which are classical.
 
     AUTHORS:
+
     - John Voight (2007-09-19)
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: sage.rings.number_field.totallyreal_phc.coefficients_to_power_sums(3,2,[1,5,7])
         [3, -7, 39]
         sage: sage.rings.number_field.totallyreal_phc.coefficients_to_power_sums(5,4,[1,5,7,9,8])
@@ -65,25 +71,31 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     further information.
 
     INPUT:
-    k -- integer, the index of the next coefficient
-    a -- list of integers, the coefficients
+
+    - k -- integer, the index of the next coefficient
+    - a -- list of integers, the coefficients
 
     OUTPUT:
+
     the lower and upper bounds as real numbers.
 
     NOTES:
-    See Cohen [C] for the general idea and unpublished work of the
+
+    See Cohen [Cohen2000]_ for the general idea and unpublished work of the
     author for more detail.
 
-        REFERENCES:
-            [C] Henri Cohen, Advanced topics in computational number
-                theory, Graduate Texts in Mathematics, vol. 193,
-                Springer-Verlag, New York, 2000.
+    REFERENCES:
+
+    .. [Cohen2000] Henri Cohen, Advanced topics in computational number theory,
+       Graduate Texts in Mathematics, vol. 193, Springer-Verlag, New York,
+       2000.
 
     AUTHORS:
+
     - John Voight (2007-09-19)
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
         sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1]) # optional
         []
@@ -105,7 +117,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     fi.close()
     fo.close()
     if find_phc == []:
-        raise RuntimeError, "PHCpack not installed."
+        raise RuntimeError("PHCpack not installed.")
 
     # Initialization.
     if tmpfile is None:
@@ -138,7 +150,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
         f_str = f.read()
         pos = f_str.find('= real ')
         crits = []
-        while pos <> -1:
+        while pos != -1:
             posl = f_str.rfind('xn', 0, pos)
             f_str_split = f_str[posl:pos].split()
             crits += [float(f_str_split[2])]

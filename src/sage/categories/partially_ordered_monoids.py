@@ -8,10 +8,8 @@ Partially ordered monoids
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.basic import Posets, Monoids
-from sage.misc.cachefunc import cached_method
 
 class PartiallyOrderedMonoids(Category_singleton):
     """

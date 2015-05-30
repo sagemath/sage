@@ -1,0 +1,20 @@
+= fricas =
+
+== Description ==
+
+This package install the software fricas.
+
+== License ==
+
+Modified BSD license.
+
+== Upstream Contact ==
+
+http://fricas.sourceforge.net/
+
+== Dependencies ==
+
+Put a bulleted list of dependencies here:
+
+* ecl
+

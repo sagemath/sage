@@ -60,26 +60,51 @@ and testing to make sure nothing funny is going on).
 .. toctree::
    :maxdepth: 2
 
+   sage/interfaces/interface
    sage/interfaces/expect
+
    sage/interfaces/axiom
+   sage/interfaces/ecm
    sage/interfaces/four_ti_2
+   sage/interfaces/fricas
+   sage/interfaces/frobby
    sage/interfaces/gap
    sage/interfaces/gap3
-   sage/interfaces/gp
+   sage/interfaces/gfan
+   sage/interfaces/giac
    sage/interfaces/gnuplot
+   sage/interfaces/gp
+   sage/interfaces/jmoldata
    sage/interfaces/kash
+   sage/interfaces/lie
+   sage/interfaces/lisp
+   sage/interfaces/macaulay2
    sage/interfaces/magma
+   sage/interfaces/magma_free
    sage/interfaces/maple
+   sage/interfaces/mathematica
    sage/interfaces/matlab
    sage/interfaces/maxima
+   sage/interfaces/maxima_abstract
    sage/interfaces/maxima_lib
-   sage/interfaces/mathematica
+   sage/interfaces/mupad
    sage/interfaces/mwrank
    sage/interfaces/octave
+   sage/interfaces/phc
+   sage/interfaces/povray
+   sage/interfaces/psage
+   sage/interfaces/qepcad
+   sage/interfaces/qsieve
    sage/interfaces/r
+   sage/interfaces/rubik
    sage/interfaces/sage0
+   sage/interfaces/scilab
    sage/interfaces/singular
    sage/interfaces/tachyon
-   sage/interfaces/jmoldata
+   sage/interfaces/tides
+
+   sage/interfaces/cleaner
+   sage/interfaces/quit
+   sage/interfaces/read_data
 
 .. include:: ../footer.txt

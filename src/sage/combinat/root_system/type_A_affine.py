@@ -111,7 +111,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             g.add_edge(0, n)
         return g
 
-    def _latex_dynkin_diagram(self, label = lambda x: x, node_dist=2):
+    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -121,23 +121,22 @@ class CartanType(CartanType_standard_untwisted_affine):
             \draw (0 cm,0) -- (6 cm,0);
             \draw (0 cm,0) -- (3.0 cm, 1.2 cm);
             \draw (3.0 cm, 1.2 cm) -- (6 cm, 0);
-            \draw[fill=white] (0 cm, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};
-            \draw[fill=white] (4 cm, 0) circle (.25cm) node[below=4pt]{$3$};
-            \draw[fill=white] (6 cm, 0) circle (.25cm) node[below=4pt]{$4$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
+            \draw[fill=white] (4 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
+            \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             \draw[fill=white] (3.0 cm, 1.2 cm) circle (.25cm) node[anchor=south east]{$0$};
+            <BLANKLINE>
         """
-        if self.global_options('mark_special_node') in ['latex', 'both']:
-            special_fill = 'black'
-        else:
-            special_fill = 'white'
+        if node is None:
+            node = self._latex_draw_node
         if self.n == 1:
             ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
             ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n"%node_dist
             ret += self._latex_draw_arrow_tip(0.33*node_dist-0.2, 0, 180)
             ret += self._latex_draw_arrow_tip(0.66*node_dist+0.2, 0, 0)
-            ret += "\\draw[fill=%s] (0,0) circle (.25cm) node[below=4pt]{$%s$};\n"%(special_fill, label(0))
-            ret += "\\draw[fill=white] (%s cm,0) circle (.25cm) node[below=4pt]{$%s$};"%(node_dist, label(1))
+            ret += node(0, 0, label(0))
+            ret += node(node_dist, 0, label(1))
             return ret
         rt_most = (self.n-1)*node_dist
         mid = 0.5 * rt_most
@@ -145,13 +144,13 @@ class CartanType(CartanType_standard_untwisted_affine):
         ret += "\\draw (0 cm,0) -- (%s cm, 1.2 cm);\n"%mid
         ret += "\\draw (%s cm, 1.2 cm) -- (%s cm, 0);\n"%(mid, rt_most)
         for i in range(self.n):
-            ret += "\\draw[fill=white] (%s cm, 0) circle (.25cm) node[below=4pt]{$%s$};\n"%(i*node_dist, label(i+1))
-        ret += "\\draw[fill=%s] (%s cm, 1.2 cm) circle (.25cm) node[anchor=south east]{$%s$};"%(special_fill, mid, label(0))
+            ret += node(i*node_dist, 0, label(i+1))
+        ret += node(mid, 1.2, label(0), 'anchor=south east')
         return ret
 
-    def ascii_art(self, label = lambda x: x):
+    def ascii_art(self, label=lambda i: i, node=None):
         """
-        Returns a ascii art representation of the extended Dynkin diagram
+        Return an ascii art representation of the extended Dynkin diagram.
 
         EXAMPLES::
 
@@ -179,16 +178,17 @@ class CartanType(CartanType_standard_untwisted_affine):
             O<=>O
             2   3
         """
+        if node is None:
+            node = self._ascii_art_node
         n = self.n
-        if self.global_options('mark_special_node') in ['printing', 'both']:
-            special_str = self.global_options('special_node_str')
-        else:
-            special_str = 'O'
         if n == 1:
-            return "%s<=>O\n%s   %s"%(special_str, label(0), label(1))
-        ret  = "%s\n%s"%(label(0),special_str)+(n-2)*"----"+"---+\n|"+(n-2)*"    "+"   |\n|"+(n-2)*"    "+"   |\n"
-        ret += "---".join("O"           for i in range(1,n+1)) + "\n"
-        ret += "   ".join("%s"%label(i) for i in range(1,n+1))
+            l0 = label(0)
+            l1 = label(1)
+            return "{}<=>{}\n{!s:4}{}".format(node(l0), node(l1), l0, l1)
+        ret  = "{}\n{}".format(label(0), node(label(0)))
+        ret += "----"*(n-2) + "---+\n|" + "    "*(n-2) + "   |\n|" + "    "*(n-2) + "   |\n"
+        ret += "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
+        ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
 
     def dual(self):
@@ -201,4 +201,23 @@ class CartanType(CartanType_standard_untwisted_affine):
             ['A', 1, 1]
         """
         return self
+
+    def _default_folded_cartan_type(self):
+        """
+        Return the default folded Cartan type.
+
+        In general, this just returns ``self`` in ``self`` with `\sigma` as
+        the identity map.
+
+        EXAMPLES::
+
+            sage: CartanType(['A',1,1])._default_folded_cartan_type()
+            ['A', 1, 1] as a folding of ['A', 3, 1]
+            sage: CartanType(['A',3,1])._default_folded_cartan_type()
+            ['A', 3, 1] as a folding of ['A', 3, 1]
+        """
+        from sage.combinat.root_system.type_folded import CartanTypeFolded
+        if self.n == 1:
+            return CartanTypeFolded(self, ['A', 3, 1], [[0,2], [1,3]])
+        return CartanTypeFolded(self, self, [[i] for i in self.index_set()])
 

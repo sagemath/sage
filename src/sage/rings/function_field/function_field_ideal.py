@@ -199,7 +199,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal):
         if not isinstance(other, FunctionFieldIdeal_module):
             other = self.ring().ideal(other)
         if self.ring() != other.ring():
-            raise ValueError, "rings must be the same"
+            raise ValueError("rings must be the same")
         return FunctionFieldIdeal_module(self.ring(), self.module().intersection(other.module()))
 
     def __cmp__(self, other):
@@ -224,7 +224,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal):
         if not isinstance(other, FunctionFieldIdeal_module):
             other = self.ring().ideal(other)
         if self.ring() != other.ring():
-            raise ValueError, "rings must be the same"
+            raise ValueError("rings must be the same")
         return cmp(self.module(), other.module())
 
     def __invert__(self):

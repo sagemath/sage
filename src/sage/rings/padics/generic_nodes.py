@@ -10,6 +10,17 @@ AUTHORS:
 - David Roe
 """
 
+#*****************************************************************************
+#       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
+#                               William Stein <wstein@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from sage.rings.padics.local_generic import LocalGeneric
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.ring import EuclideanDomain, Field
@@ -293,7 +304,7 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
             else:
                 return self(ZZ.random_element(self.prime_pow.pow_Integer_Integer(self.precision_cap())))
         else:
-            raise NotImplementedError, "Don't know %s algorithm"%algorithm
+            raise NotImplementedError("Don't know %s algorithm"%algorithm)
 
     #def unit_group(self):
     #    raise NotImplementedError
@@ -328,7 +339,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
         #should be overridden for extension fields
         if (subfield1 is self) and (subfield2 is self):
             return self
-        raise ValueError, "Arguments must be subfields of self."
+        raise ValueError("Arguments must be subfields of self.")
 
     def subfields_of_degree(self, n):
         r"""
@@ -374,7 +385,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
         """
         for x in list:
             if not self.__contains__(x):
-                raise TypeError, "Members of the list of generators must be elements of self."
+                raise TypeError("Members of the list of generators must be elements of self.")
         return self
 
     def construction(self):

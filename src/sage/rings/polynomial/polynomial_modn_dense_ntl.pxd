@@ -11,13 +11,9 @@ from sage.libs.ntl.ntl_lzz_pContext cimport ntl_zz_pContext_class
 
 from sage.rings.integer cimport Integer
 
-from sage.libs.ntl.ntl_ZZ_pX_decl cimport *, ZZ_pX_c, ZZ_pX_Modulus_c
-from sage.libs.ntl.ntl_lzz_pX_decl cimport *, zz_pX_c, zz_pX_Modulus_c
+from sage.libs.ntl.ntl_ZZ_pX_decl cimport *
+from sage.libs.ntl.ntl_lzz_pX_decl cimport *
 
-#include "sage/libs/ntl/decl.pxi"
-
-#cdef extern from "ntl_wrap.h":
-#    struct zz_pX
 
 cdef class Polynomial_dense_mod_n(Polynomial):
     cdef object __poly

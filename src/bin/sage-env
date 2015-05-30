@@ -253,6 +253,11 @@ export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 export SAGE_SRC="$SAGE_ROOT/src"
 export SAGE_DOC="$SAGE_SRC/doc"
+
+if [ -z "${SAGE_ORIG_PATH_SET}" ]; then 
+    SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH 
+    SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET 
+fi 
 export PATH="$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 # We offer a toolchain option, so if $SAGE_LOCAL/toolchain/toolchain-env exists source it.
@@ -268,6 +273,11 @@ if [ `uname` = "Darwin" ]; then
     # #7095 for an example.
     MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
     MACOSX_DEPLOYMENT_TARGET=10.$[$MACOSX_VERSION-4]
+    if [ $MACOSX_DEPLOYMENT_TARGET = '10.10' ]; then
+        # Workaround for the libtool version detection bug
+        # See http://trac.sagemath.org/ticket/17204
+        MACOSX_DEPLOYMENT_TARGET=10.9
+    fi
     export MACOSX_DEPLOYMENT_TARGET
 fi
 
@@ -294,28 +304,14 @@ GP_DATA_DIR="$SAGE_LOCAL/share/pari" && export GP_DATA_DIR
 GPHELP="$SAGE_LOCAL/bin/gphelp" && export GPHELP
 GPDOCDIR="$SAGE_LOCAL/share/pari/doc" && export GPDOCDIR
 
-# Make Mercurial always use utf-8 for usernames,...
-# See Trac Ticket #11830
-HGENCODING="utf8" && export HGENCODING
-
-# Make Mercurial not use any user defaults (like enabling the pager extension)
-# This is needed in order to use mercurial in scripts.  When running hg
-# directly through "sage -hg", we will disable HGPLAIN in src/bin/sage.
-# See Trac Ticket #12058
-HGPLAIN="yes" && export HGPLAIN
+# Allow git to work without warning messages after relocating Sage.
+# See trac #15901.
+GIT_TEMPLATE_DIR="$SAGE_LOCAL"/share/git-core/templates && export GIT_TEMPLATE_DIR
+GIT_EXEC_PATH="$SAGE_LOCAL"/libexec/git-core && export GIT_EXEC_PATH
 
 SINGULARPATH="$SAGE_LOCAL/share/singular" && export SINGULARPATH
 SINGULAR_EXECUTABLE="$SAGE_LOCAL/bin/Singular" && export SINGULAR_EXECUTABLE
 
-if [ "$SAGE_SERVER" = "" ]; then
-    SAGE_SERVER="http://www.sagemath.org/"
-    export SAGE_SERVER
-fi
-
-if [ "$SAGE_UPSTREAM" = "" ]; then
-    SAGE_UPSTREAM="http://www.sagemath.org/packages/upstream/"
-    export SAGE_UPSTREAM
-fi
 if [ -z "$SAGE_REPO_ANONYMOUS" ]; then
     SAGE_REPO_ANONYMOUS="git://trac.sagemath.org/sage.git"
     export SAGE_REPO_ANONYMOUS
@@ -353,13 +349,20 @@ if [ "$DOT_SAGE" = "" ]; then
     export DOT_SAGE
 fi
 
-
 if [ "$SAGE_STARTUP_FILE" = "" ]; then
     SAGE_STARTUP_FILE="$DOT_SAGE/init.sage"
     export SAGE_STARTUP_FILE
 fi
 
-export IPYTHONDIR="$DOT_SAGE/ipython-0.12"
+IPYTHONDIR=`find "$SAGE_SPKG_INST" -name "ipython*"`
+if [ -n "$IPYTHONDIR" ]; then
+    export IPYTHONDIR="$DOT_SAGE/${IPYTHONDIR##*/}"
+fi
+
+if [ "$PYTHON_EGG_CACHE" = "" ]; then
+    PYTHON_EGG_CACHE="$DOT_SAGE/.python-eggs"
+    export PYTHON_EGG_CACHE
+fi
 
 if [ -d "$SAGE_ROOT/local/lib/python" ]; then
     PYTHONPATH="$SAGE_ROOT/local/lib/python"
@@ -374,29 +377,6 @@ fi
 if [ -z "${SAGE_ORIG_LD_LIBRARY_PATH_SET}" ]; then
     SAGE_ORIG_LD_LIBRARY_PATH=$LD_LIBRARY_PATH && export SAGE_ORIG_LD_LIBRARY_PATH
     SAGE_ORIG_LD_LIBRARY_PATH_SET=True && export SAGE_ORIG_LD_LIBRARY_PATH_SET
-fi
-
-# Use a matplotlib config directory specific to Sage and specific to
-# the version number of matplotlib, by setting the environment
-# variable MPLCONFIGDIR.  See
-# http://trac.sagemath.org/sage_trac/ticket/6235 and
-# http://trac.sagemath.org/sage_trac/ticket/9221.  Find the version
-# number for matplotlib by reading the file
-# SAGE_LOCAL/lib/python/site-packages/matplotlib/__init__.py, and use
-# the version number in the name of the directory.  If that file
-# doesn't exist, matplotlib hasn't been installed yet, so don't set
-# MPLCONFIGDIR.
-MPLINITFILE="$SAGE_LOCAL/lib/python/site-packages/matplotlib/__init__.py"
-if [ -f "$MPLINITFILE" ]; then
-    MPLVERSION=`sed -n "/^__version__[ ]*=/s/[^']*'\([^']*\)'.*$/\1/p" "$MPLINITFILE"`
-    if [ "$MPLVERSION" != "" ]; then
-        MPLCONFIGDIR="$DOT_SAGE/matplotlib-$MPLVERSION"
-    else
-        # MPLVERSION is empty, so no version found.
-        MPLCONFIGDIR="$DOT_SAGE/matplotlib"
-    fi
-    export MPLCONFIGDIR
-    # The directory is created when Sage starts (see sage.misc.misc).
 fi
 
 # Add some directories to $LD_LIBRARY_PATH:
@@ -423,22 +403,24 @@ if [ `uname` = "Darwin" ]; then
     DYLD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DYLD_LIBRARY_PATH:$SAGE_LOCAL/lib/R/lib" && export DYLD_LIBRARY_PATH
 fi
 
+# Use a matplotlib config directory specific to Sage and specific to
+# the version number of matplotlib, by setting the environment
+# variable MPLCONFIGDIR. Note that we can't find the version number by
+# importing matplotlib, because that could create matplotlib's standard
+# config directory. So we use pkg_resources.
+"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; pkg_resources.get_distribution("matplotlib").version' 2>/dev/null
+if [ $? -eq 0 ]; then
+    MPLVERSION=`"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; print pkg_resources.get_distribution("matplotlib").version'`
+    MPLCONFIGDIR="$DOT_SAGE/matplotlib-$MPLVERSION"
+    export MPLCONFIGDIR
+    # The directory is created when Sage starts (see sage.misc.misc).
+fi
+
 # Unset these variables which interfere with R
 unset R_HOME
 unset R_PROFILE
 
 MAXIMA_PREFIX="$SAGE_ROOT/local" && export MAXIMA_PREFIX
-
-# PKG_CONFIG_PATH is used by 'pkg-config' on Solaris and Linux,
-# but at least some versions of OS X do not have the pkg-config
-# command, so relying on this is not wise on OS X.
-
-if [ -z "$PKG_CONFIG_PATH" ]; then
-    PKG_CONFIG_PATH="$SAGE_LOCAL/lib/pkgconfig"
-else
-    PKG_CONFIG_PATH="$SAGE_LOCAL/lib/pkgconfig:$PKG_CONFIG_PATH"
-fi
-export PKG_CONFIG_PATH
 
 ############ architecture flags
 
@@ -470,6 +452,7 @@ if [ -z "$CC" ]; then
     # See http://trac.sagemath.org/sage_trac/ticket/12820
     if [ "$SAGE_BUILD_TOOLCHAIN" = yes ] && [ "$UNAME" = Darwin ] && [ `uname -r | cut -d. -f1` -ge 11 ]; then
         CC=`which clang 2>/dev/null`
+        CXX=`which clang++ 2>/dev/null`
     fi
 fi
 if [ -z "$CC" ]; then
@@ -479,10 +462,7 @@ if [ -z "$CXX" ]; then
     CXX=g++
 fi
 if [ -z "$FC" ]; then
-    if [ -n "$SAGE_FORTRAN" ]; then
-        # Deprecated, see #13349.
-        FC="$SAGE_FORTRAN"
-    elif command -v gfortran >/dev/null 2>/dev/null; then
+    if command -v gfortran >/dev/null 2>/dev/null; then
         FC=gfortran
     elif command -v g95 >/dev/null 2>/dev/null; then
         FC=g95
@@ -564,7 +544,15 @@ if [ "$LDFLAGS" = "" ]; then
     LDFLAGS=""          && export LDFLAGS
 fi
 
-if [ "$CXXFLAGS" = "" ]; then
+if [ -z "$CFLAGS" ]; then
+    unset CFLAGS
+fi
+
+if [ -z "$CXXFLAGS" ]; then
+    unset CXXFLAGS
+fi
+
+if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
 fi
 

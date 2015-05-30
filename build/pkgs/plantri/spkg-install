@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+cd src
+
+$MAKE plantri
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building plantri."
+    exit 1
+fi
+
+echo >&2 "Copying plantri..."
+cp plantri $SAGE_LOCAL/bin/plantri
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing plantri."
+    exit 1
+fi
+

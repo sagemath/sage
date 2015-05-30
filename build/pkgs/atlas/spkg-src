@@ -5,7 +5,6 @@ if [ $# -ne 0 ]; then
     echo "Using tarballs from $UPSTREAM_SOURCE_DIRECTORY instead of downloading"
 fi
 
-
 SPKG_ROOT=`pwd`
 
 set -e
@@ -43,6 +42,15 @@ else
 fi
 gunzip $LAPACK
 
+### Our archdefs ###
+
+if [ -z "$SAGE_ATLAS_ARCHDEFS_DIR" ]; then
+    echo "SAGE_ATLAS_ARCHDEFS_DIR should point to a directory containing the archedef tarballs."
+    exit 1
+fi
+
+mkdir ARCHS
+cp -p "$SAGE_ATLAS_ARCHDEFS_DIR"/*.tar.bz2 ARCHS/
 
 ### Our shared library hack ###
 

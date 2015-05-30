@@ -16,6 +16,7 @@ Finite Enumerated Sets
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -288,8 +289,82 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         return self._elements[i]
 
+    def __call__(self, el):
+        """
+        Coerce or convert ``el`` into an element of ``self``.
+
+        INPUT:
+
+        - ``el`` -- some object
+
+        As :meth:`Parent.__call__`, this tries to convert or coerce
+        ``el`` into an element of ``self`` depending on the parent of
+        ``el``. If no such conversion or coercion is available, this
+        calls :meth:`_element_constructor_`.
+
+        :meth:`Parent.__call__` enforces that
+        :meth:`_element_constructor_` return an :class:`Element` (more
+        precisely, it calls :meth:`_element_constructor_` through a
+        :class:`sage.structure.coerce_maps.DefaultConvertMap`, and any
+        :class:`sage.categories.map.Map` requires its results to be
+        instances of :class:`Element`).
+
+        Since :class:`FiniteEnumeratedSets` is often a facade over
+        plain Python objects, :trac:`16280` introduced this method
+        which works around this limitation by calling directly
+        :meth:`_element_constructor_` whenever ``el`` is not an
+        :class:`Element`. Otherwise :meth:`Parent.__call__` is called
+        as usual.
+
+        .. WARNING::
+
+            This workaround prevents conversions or coercions from
+            facade parents over plain Python objects into ``self``.
+
+        EXAMPLES::
+
+            sage: F = FiniteEnumeratedSet([1, 2, 'a', 'b'])
+            sage: F(1)
+            1
+            sage: F('a')
+            'a'
+
+        We check that conversions are properly honored for usual
+        parents; this is not the case for facade parents over plain
+        Python objects::
+
+            sage: F = FiniteEnumeratedSet([1, 2, 3, 'a', 'aa'])
+            sage: phi = Hom(ZZ, F, Sets())(lambda i: i+i)
+            sage: phi(1)
+            2
+            sage: phi.register_as_conversion()
+
+            sage: from sage.structure.parent import Set_PythonType_class
+            sage: psi = Hom(Set_PythonType_class(str), F, Sets())(lambda s: ZZ(len(s)))
+            sage: psi.register_as_conversion()
+            sage: psi('a')
+            1
+            sage: F(1)
+            2
+            sage: F('a')
+            'a'
+        """
+        if not isinstance(el, Element):
+            return self._element_constructor_(el)
+        else:
+            return Parent.__call__(self, el)
+
     def _element_constructor_(self, el):
         """
+        Return ``el``.
+
+        INPUT:
+
+        - ``el`` -- an element of ``self``
+
+        If ``el`` is not an element of ``self``, a :class:`ValueError`
+        is raised.
+
         TESTS::
 
             sage: S = FiniteEnumeratedSet([1,2,3])

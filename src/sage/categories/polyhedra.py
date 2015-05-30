@@ -8,23 +8,19 @@ Polyhedral subsets of free ZZ, QQ or RR-modules.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.category_types import Category_over_base_ring
 from sage.misc.cachefunc import cached_method
-from sage.categories.category import HomCategory
-
-
+from sage.categories.category_types import Category_over_base_ring
 
 class PolyhedralSets(Category_over_base_ring):
     r"""
-    The category of Polyhedra over a ring.
+    The category of polyhedra over a ring.
 
     EXAMPLES:
 
     We create the category of polyhedra over `\QQ`::
 
         sage: PolyhedralSets(QQ)
-        Category of Polyhedra over Rational Field
+        Category of polyhedral sets over Rational Field
 
     TESTS::
 
@@ -32,13 +28,17 @@ class PolyhedralSets(Category_over_base_ring):
 
         sage: P = Polyhedron()
         sage: P.parent().category().element_class
-        <class 'sage.categories.category.PolyhedralSets.element_class'>
+        <class 'sage.categories.polyhedra.PolyhedralSets.element_class'>
         sage: P.parent().category().element_class.mro()
-        [<class 'sage.categories.category.PolyhedralSets.element_class'>,
+        [<class 'sage.categories.polyhedra.PolyhedralSets.element_class'>,
+         <class 'sage.categories.magmas.Magmas.Commutative.element_class'>,
          <class 'sage.categories.magmas.Magmas.element_class'>,
+         <class 'sage.categories.additive_monoids.AdditiveMonoids.element_class'>,
+         <class 'sage.categories.additive_magmas.AdditiveMagmas.AdditiveUnital.element_class'>,
+         <class 'sage.categories.additive_semigroups.AdditiveSemigroups.element_class'>,
          <class 'sage.categories.additive_magmas.AdditiveMagmas.element_class'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>,
-         <class 'sage.categories.category.SetsWithPartialMaps.element_class'>,
+         <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.element_class'>,
          <class 'sage.categories.objects.Objects.element_class'>,
          <type 'object'>]
         sage: isinstance(P, P.parent().category().element_class)
@@ -49,15 +49,10 @@ class PolyhedralSets(Category_over_base_ring):
         """
         TESTS::
 
-            sage: PolyhedralSets((1,2,3))
-            Traceback (most recent call last):
-            ...
-            TypeError: base ring R (=(1, 2, 3)) must be ZZ, QQ, or RDF.
+            sage: PolyhedralSets(AA)
+            Category of polyhedral sets over Algebraic Real Field
         """
-        from sage.rings.all import ZZ, QQ, RDF
-        if R not in [ZZ, QQ, RDF]:
-            raise TypeError, 'base ring R (='+str(R)+') must be ZZ, QQ, or RDF.'
-        Category_over_base_ring.__init__(self, R, 'Polyhedra')
+        Category_over_base_ring.__init__(self, R)
 
     @cached_method
     def super_categories(self):
@@ -65,10 +60,11 @@ class PolyhedralSets(Category_over_base_ring):
         EXAMPLES::
 
             sage: PolyhedralSets(QQ).super_categories()
-            [Category of magmas, Category of additive magmas]
+            [Category of commutative magmas, Category of additive monoids]
         """
-        from sage.categories.all import Magmas, AdditiveMagmas
-        return [Magmas(), AdditiveMagmas()]
+        from sage.categories.magmas import Magmas
+        from sage.categories.additive_monoids import AdditiveMonoids
+        return [Magmas().Commutative(), AdditiveMonoids()]
 
 
 

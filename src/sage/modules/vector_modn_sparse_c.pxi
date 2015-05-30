@@ -5,6 +5,8 @@
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
+include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
 include 'vector_modn_sparse_h.pxi'
 
 cdef int allocate_c_vector_modint(c_vector_modint* v, Py_ssize_t num_nonzero) except -1:
@@ -106,8 +108,7 @@ cdef int get_entry(c_vector_modint* v, Py_ssize_t n) except -1:
     would be v[n] in Python syntax.
     """
     if n >= v.degree or n < 0:
-        raise IndexError, "Index must be between 0 and the degree minus 1."
-        return -1
+        raise IndexError("Index must be between 0 and the degree minus 1.")
     cdef Py_ssize_t m
     m = binary_search0_modn(v.positions, v.num_nonzero, n)
     if m == -1:
@@ -132,8 +133,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int x) except -1:
     This would be v[n] = x in Python syntax.
     """
     if n < 0 or n >= v.degree:
-        raise IndexError, "Index (=%s) must be between 0 and %s."%(n, v.degree-1)
-        return -1
+        raise IndexError("Index (=%s) must be between 0 and %s."%(n, v.degree-1))
     cdef Py_ssize_t i, m, ins
     cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
@@ -197,11 +197,9 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
     Set sum = v + multiple*w.
     """
     if v.p != w.p:
-        raise ArithmeticError, "The vectors must be modulo the same prime."
-        return -1
+        raise ArithmeticError("The vectors must be modulo the same prime.")
     if v.degree != w.degree:
-        raise ArithmeticError, "The vectors must have the same degree."
-        return -1
+        raise ArithmeticError("The vectors must have the same degree.")
 
     cdef int s
     cdef Py_ssize_t nz, i, j, k

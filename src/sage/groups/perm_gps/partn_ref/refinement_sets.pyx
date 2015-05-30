@@ -452,7 +452,7 @@ cdef int refine_set(PartitionStack *PS, void *S, int *cells_to_refine_by, int ct
     start = 0
     while start < n:
         i = 0
-        while 1:
+        while True:
             scratch[i] = bitset_in(&subset1.bits, PS.entries[start+i])
             if PS.levels[start+i] <= PS.depth:
                 break
@@ -533,7 +533,7 @@ cdef void *subset_generator_next(void *data, int *degree, bint *mem_err):
     Returns the next element to consider adding to the set.
     """
     cdef subset_generator_data *sgd = <subset_generator_data *> data
-    while 1:
+    while True:
         sgd.cur_point += 1
         if sgd.cur_point == sgd.orbits.degree:
             break
@@ -570,7 +570,8 @@ cdef void *apply_subset_aug(void *parent, void *aug, void *child, int *degree, b
     Adds the element represented by ``aug`` to ``parent``, storing the result to
     ``child``.
     """
-    cdef subset *set1 = <subset *> child, *par_set = <subset *> parent
+    cdef subset *set1 = <subset *> child
+    cdef subset *par_set = <subset *> parent
     cdef bitset_s parbits = par_set.bits
     cdef int add_pt = (<int *> aug)[0], n = parbits.size
     bitset_copy(&set1.bits, &parbits)

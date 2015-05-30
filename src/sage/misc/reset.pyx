@@ -1,3 +1,5 @@
+"Interpreter reset"
+
 import sys
 
 # Exclude these from the reset command.
@@ -68,7 +70,7 @@ def reset(vars=None, attached=False):
     G = globals()  # this is the reason the code must be in Cython.
     T = type(sys)
     for k in G.keys():
-        if k[0] != '_' and type(k) != T and k not in EXCLUDE:
+        if k[0] != '_' and not isinstance(k, T) and k not in EXCLUDE:
             try:
                 del G[k]
             except KeyError:
@@ -77,8 +79,8 @@ def reset(vars=None, attached=False):
     forget()
     reset_interfaces()
     if attached:
-        import sage.misc.attached_files
-        sage.misc.attached_files.reset()
+        import sage.repl.attach
+        sage.repl.attach.reset()
 
 def restore(vars=None):
     """
@@ -119,7 +121,7 @@ def restore(vars=None):
         NameError: name 'ww' is not defined
     """
     G = globals()  # this is the reason the code must be in Cython.
-    if not G.has_key('sage_mode'):
+    if 'sage_mode' not in G:
         import sage.all
         D = sage.all.__dict__
     else:
@@ -148,7 +150,7 @@ def _restore(G, D, vars):
             else:
                 vars = vars.split()
         for k in vars:
-            if D.has_key(k):
+            if k in D:
                 G[k] = D[k]
             else:
                 try:

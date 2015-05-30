@@ -1,6 +1,3 @@
-*.c
-*.cpp
-/libs/pari/gen.h
-/modular/arithgroup/farey_symbol.h
-/rings/real_mpfi.h
-/symbolic/pynac.h
+/ext/interpreters
+/libs/pari/auto_gen.pxi
+/libs/pari/auto_instance.pxi

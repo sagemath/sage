@@ -132,7 +132,7 @@ Sage example in ./programmation.tex, line 635::
 Sage example in ./programmation.tex, line 807::
 
   sage: u = 6 ; n = 0
-  sage: while u != 1:    # test "différent de" <> aussi possible
+  sage: while u != 1:    # test "différent de"
   ....:   if u % 2 == 0: # l'opérateur % donne le reste euclidien
   ....:     u = u//2     # // : quotient de la division euclidienne
   ....:   else:

@@ -1,34 +1,37 @@
 r"""
-Module that creates truth tables of boolean formulas.
+Logic Tables
 
 A logic table is essentially a 2-D array that is created by the statement class
 and stored in the private global variable table, along with a list containing
 the variable names to be used, in order.
 
-The order in which the table is listed essentially amounts to counting in binary.
-For instance, with the variables A, B, and C the truth table looks like:
+The order in which the table is listed essentially amounts to counting in
+binary. For instance, with the variables `A`, `B`, and `C` the truth table
+looks like::
 
-A      B      C      value
-False  False  False    ?
-False  False  True     ?
-False  True   False    ?
-False  True   True     ?
-True   False  False    ?
-True   False  True     ?
-True   True   False    ?
-True   True   True     ?
+    A      B      C      value
+    False  False  False    ?
+    False  False  True     ?
+    False  True   False    ?
+    False  True   True     ?
+    True   False  False    ?
+    True   False  True     ?
+    True   True   False    ?
+    True   True   True     ?
 
 This is equivalent to counting in binary, where a table would appear thus;
 
-2^2 2^1 2^0 value
-0   0   0     0
-0   0   1     1
-0   1   0     2
-0   1   1     3
-1   0   0     4
-1   0   1     5
-1   1   0     6
-1   1   1     7
+::
+
+    2^2 2^1 2^0 value
+    0   0   0     0
+    0   0   1     1
+    0   1   0     2
+    0   1   1     3
+    1   0   0     4
+    1   0   1     5
+    1   1   0     6
+    1   1   1     7
 
 Given that a table can be created corresponding to any range of acceptable
 values for a given statement, it is easy to find the value of a statement
@@ -100,8 +103,8 @@ If the second argument is negative, truthtable defaults to the end::
 
 .. NOTE::
 
-    For statements that contain a variable list that when printed is longer than
-    the \latex page, the columns of the table will run off the screen.
+    For statements that contain a variable list that when printed is longer
+    than the latex page, the columns of the table will run off the screen.
 """
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -119,23 +122,19 @@ __table = []
 __vars_order = []
 
 class Truthtable:
+    """
+    A truth table.
 
+    INPUT:
+
+    - ``t`` -- a 2-D array containing the table values
+
+    - ``vo`` -- a list of the variables in the expression in order,
+      with each variable occurring only once
+    """
     def __init__(self, t, vo):
         r"""
-        Initialize the data fields
-
-        INPUT:
-
-        - ``self'' -- calling object
-
-        - ``t`` -- a 2-D array containing the table values
-
-        - ``vo`` -- a list of the variables in the expression in order,
-          with each variable occurring only once
-
-        OUTPUT:
-
-        None
+        Initialize the data fields.
 
         EXAMPLES:
 
@@ -163,33 +162,26 @@ class Truthtable:
         r"""
         Return a latex representation of the calling table object.
 
-        INPUT:
-
-        - ``self`` -- calling object
-
         OUTPUT:
 
-        The latex representation of the table
+        The latex representation of the table.
 
         EXAMPLES:
 
-        This example illustrates how to get the latex represenation of the table
-
-        ::
+        This example illustrates how to get the latex representation of
+        the table::
 
             sage: import sage.logic.propcalc as propcalc
             sage: s = propcalc.formula("man->monkey&human")
             sage: latex(s.truthtable())
             \\\begin{tabular}{llll}human & monkey & man & value \\\hline False & False & False & True \\False & False & True & True \\False & True & False & True \\False & True & True & True \\True & False & False & False \\True & False & True & False \\True & True & False & False \\True & True & True & True\end{tabular}
 
-        Now, we show that strange parameters can lead to a table header with no body.
-
-        ::
+        Now, we show that strange parameters can lead to a table header
+        with no body::
 
             sage: latex(s.truthtable(2, 1))
             \\\begin{tabular}{llll}human & monkey & man & value \\\hli\end{tabular}
         """
-        vars_len = []
         rt = s = ""
         self.__vars_order.reverse()
         s = r'\\\begin{tabular}{'
@@ -210,19 +202,14 @@ class Truthtable:
         r"""
         Return a string representation of the calling table object.
 
-        INPUT:
-
-        - ``self`` -- the calling object
-
         OUTPUT:
 
-        The talbe as a 2-D array
+        The table as a 2-D string array.
 
         EXAMPLES:
 
-        This example illustrates how to display the truth table of a boolean formula.
-
-        ::
+        This example illustrates how to display the truth table of a
+        boolean formula::
 
             sage: import sage.logic.propcalc as propcalc
             sage: s = propcalc.formula("man->monkey&human")
@@ -237,9 +224,8 @@ class Truthtable:
             True   True    False  False
             True   True    True   True
 
-        We now show that strange parameters can lead to the table header with no body.
-
-        ::
+        We now show that strange parameters can lead to the table
+        header with no body::
 
             sage: s.truthtable(2, 1)
             man    monkey  human  value
@@ -276,19 +262,13 @@ class Truthtable:
         r"""
         Return a list representation of the calling table object.
 
-        INPUT:
-
-        - ``self`` -- calling object
-
         OUTPUT:
 
-        A list representation of the table
+        A list representation of the table.
 
         EXAMPLES:
 
-        This example illustrates how to show the table as a list.
-
-        ::
+        This example illustrates how to show the table as a list::
 
             sage: import sage.logic.propcalc as propcalc
             sage: s = propcalc.formula("man->monkey&human")

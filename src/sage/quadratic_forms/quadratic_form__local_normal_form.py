@@ -25,10 +25,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.arith import GCD, valuation, is_prime
 
 
-#from sage.misc.functional import ideal          ## TODO: This can probably be removed!
-
-
-
 def find_entry_with_minimal_scale_at_prime(self, p):
     """
     Finds the entry of the quadratic form with minimal scale at the
@@ -123,9 +119,9 @@ def local_normal_form(self, p):
     """
     ## Sanity Checks
     if (self.base_ring() != IntegerRing()):
-        raise NotImplementedError, "Oops!  This currently only works for quadratic forms defined over IntegerRing(). =("
+        raise NotImplementedError("Oops!  This currently only works for quadratic forms defined over IntegerRing(). =(")
     if not ((p>=2) and is_prime(p)):
-        raise TypeError, "Oops!  p is not a positive prime number. =("
+        raise TypeError("Oops!  p is not a positive prime number. =(")
 
     ## Some useful local variables
     Q = copy.deepcopy(self)
@@ -149,7 +145,7 @@ def local_normal_form(self, p):
 
         ## Error if we still haven't seen non-zero coefficients!
         if (min_val == Infinity):
-            raise RuntimeError, "Oops!  The original matrix is degenerate. =("
+            raise RuntimeError("Oops!  The original matrix is degenerate. =(")
 
 
         ## Step 2: Arrange for the upper leftmost entry to have minimal valuation
@@ -208,7 +204,7 @@ def local_normal_form(self, p):
 
                 ## Sanity Check:  a/g is a p-unit
                 if valuation (g, p) != valuation(a, p):
-                    raise RuntimeError, "Oops!  We have a problem with our rescaling not preserving p-integrality!"
+                    raise RuntimeError("Oops!  We have a problem with our rescaling not preserving p-integrality!")
 
                 Q.multiply_variable(ZZ(a/g), j, in_place = True)   ## Ensures that the new b entry is divisible by a
                 Q.add_symmetric(ZZ(-b/g), j, 0, in_place = True)  ## Performs the cancellation
@@ -260,14 +256,14 @@ def local_normal_form(self, p):
                 Q[1, 1] = min_scale
                 Q[0, 1] = min_scale
             else:
-                raise RuntimeError, "Error in LocalNormal: Impossible behavior for a 2x2 block! \n"
+                raise RuntimeError("Error in LocalNormal: Impossible behavior for a 2x2 block! \n")
 
 
         ## Check that the cancellation worked, extract the upper-left block, and trim Q to handle the next block.
         for i in range(block_size):
             for j in range(block_size, n):
                 if Q[i,j] != 0:
-                    raise RuntimeError, "Oops!  The cancellation didn't work properly at entry (" + str(i) + ", " + str(j) + ")."
+                    raise RuntimeError("Oops!  The cancellation didn't work properly at entry (" + str(i) + ", " + str(j) + ").")
         Q_Jordan = Q_Jordan + Q.extract_variables(range(block_size))
         Q = Q.extract_variables(range(block_size, n))
 
@@ -341,7 +337,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
             return copy.deepcopy(self.__jordan_blocks_by_scale_and_unimodular_dict[p])
         else:
             return self.__jordan_blocks_by_scale_and_unimodular_dict[p]
-    except StandardError:
+    except Exception:
         ## Initialize the global dictionary if it doesn't exist
         if not hasattr(self, '__jordan_blocks_by_scale_and_unimodular_dict'):
             self.__jordan_blocks_by_scale_and_unimodular_dict = {}
@@ -442,7 +438,7 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
     """
     ## Sanity Check
     if self.base_ring() != ZZ:
-        raise TypeError, "Oops!  This method only makes sense for integer-valued quadratic forms (i.e. defined over ZZ)."
+        raise TypeError("Oops!  This method only makes sense for integer-valued quadratic forms (i.e. defined over ZZ).")
 
     ## Deal with zero dim'l forms
     if self.dim() == 0:
@@ -453,8 +449,8 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
     scale_list =  [P[0] for P in list_of_jordan_pairs]
     s_max = max(scale_list)
     if min(scale_list) < 0:
-        raise TypeError, "Oops!  The given quadratic form has a Jordan component with a negative scale exponent!\n" \
-        + "This routine requires an integer-matrix quadratic form for the output indexing to work properly!"
+        raise TypeError("Oops!  The given quadratic form has a Jordan component with a negative scale exponent!\n" \
+        + "This routine requires an integer-matrix quadratic form for the output indexing to work properly!")
 
     ## Make the new list of unimodular Jordan components
     zero_form = copy.deepcopy(self)

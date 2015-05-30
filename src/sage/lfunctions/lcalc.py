@@ -31,6 +31,7 @@ import os
 from sage.structure.sage_object import SageObject
 from sage.misc.all import pager
 import sage.rings.all
+import sage.schemes.elliptic_curves.ell_generic
 
 prec = 32
 
@@ -71,11 +72,11 @@ class LCalc(SageObject):
                 return '--tau'
             return L
         import sage.schemes.all
-        if sage.schemes.all.is_EllipticCurve(L):
+        if sage.schemes.elliptic_curves.ell_generic.is_EllipticCurve(L):
             if L.base_ring() == sage.rings.all.RationalField():
                 L = L.minimal_model()
                 return '-e --a1 %s --a2 %s --a3 %s --a4 %s --a6 %s'%tuple(L.a_invariants())
-        raise TypeError, "$L$-function of %s not known"%L
+        raise TypeError("$L$-function of %s not known"%L)
 
     def help(self):
         try:
@@ -119,7 +120,6 @@ class LCalc(SageObject):
             sage: lcalc.zeros(5, L='--tau')                # long time
             [9.22237940, 13.9075499, 17.4427770, 19.6565131, 22.3361036]
             sage: lcalc.zeros(3, EllipticCurve('37a'))     # long time
-              ***   Warning:...new stack size = ...
             [0.000000000, 5.00317001, 6.87039122]
         """
         L = self._compute_L(L)
@@ -229,7 +229,6 @@ class LCalc(SageObject):
 
             sage: E = EllipticCurve('389a')
             sage: E.lseries().values_along_line(0.5, 3, 5)
-              ***   Warning:...new stack size = ...
             [(0.000000000, 0.209951303),
              (0.500000000, -...e-16),
              (1.00000000, 0.133768433),
@@ -345,7 +344,7 @@ class LCalc(SageObject):
             d, x = a.split()
             x = RR(x)
             d = Z(d)
-            if w.has_key(d):
+            if d in w:
                 w[d].append(x)
             else:
                 w[d] = [x]
@@ -375,7 +374,6 @@ class LCalc(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: lcalc.analytic_rank(E)
-              ***   Warning:...new stack size = ...
             1
         """
         L = self._compute_L(L)

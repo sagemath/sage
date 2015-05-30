@@ -2,8 +2,9 @@
 Plane quartic curves over a general ring. These are generic genus 3 curves,
 as distinct from hyperelliptic curves of genus 3.
 
-EXAMPLE:
-    sage: PP, (X,Y,Z) = ProjectiveSpace(2,QQ,'X,Y,Z').objgens()
+EXAMPLE::
+
+    sage: PP.<X,Y,Z> = ProjectiveSpace(2, QQ)
     sage: f = X^4 + Y^4 + Z^4 - 3*X*Y*Z*(X+Y+Z)
     sage: C = QuarticCurve(f); C
     Quartic Curve over Rational Field defined by X^4 + Y^4 - 3*X^2*Y*Z - 3*X*Y^2*Z - 3*X*Y*Z^2 + Z^4

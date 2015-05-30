@@ -76,8 +76,9 @@ Here is another approach using GAP:
     sage: I = R.IndeterminatesOfPolynomialRing(); I
     [ x_1, x_2, x_3, x_4 ]
     sage: vars = (I.name(), I.name(), I.name(), I.name())
-    sage: _ = gap.eval("x_0 := %s[1];; x_1 := %s[2];; x_2 := %s[3];;\
-    ...   x_3 := %s[4];;"%vars)
+    sage: _ = gap.eval(
+    ....:     "x_0 := %s[1];; x_1 := %s[2];; x_2 := %s[3];;x_3 := %s[4];;"
+    ....:     % vars)
     sage: f = gap.new("x_1*x_2+x_3"); f
     x_2*x_3+x_4
     sage: f.Value(I,[1,1,1,1])

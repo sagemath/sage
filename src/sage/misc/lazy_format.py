@@ -27,7 +27,7 @@ class LazyFormat(str):
 
         sage: class IDontLikeBeingPrinted(object):
         ...    def __repr__(self):
-        ...        raise ValueError, "Don't ever try to print me !"
+        ...        raise ValueError("Don't ever try to print me !")
 
     There is no error when binding a lazy format with the broken object::
 
@@ -36,9 +36,7 @@ class LazyFormat(str):
     The error only occurs upon printing::
 
         sage: lf
-        Traceback (most recent call last):
-        ...
-        ValueError: Don't ever try to print me !
+        <repr(<sage.misc.lazy_format.LazyFormat at 0x...>) failed: ValueError: Don't ever try to print me !>
 
     .. rubric:: Common use case:
 

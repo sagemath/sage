@@ -135,6 +135,7 @@ class ToricPlotter(SageObject):
 
         sage: fan = toric_varieties.dP6().fan()
         sage: fan.plot()
+        Graphics object consisting of 31 graphics primitives
         sage: print fan.plot()
         Graphics object consisting of 31 graphics primitives
 
@@ -478,7 +479,6 @@ class ToricPlotter(SageObject):
             # Plot the origin anyway, otherwise rays/generators may look ugly.
             return self.plot_points([self.origin])
         d = self.dimension
-        extra_options = self.extra_options
         if d == 1:
             points = ((x, 0)
                       for x in range(ceil(self.xmin), floor(self.xmax) + 1))
@@ -604,6 +604,13 @@ class ToricPlotter(SageObject):
             sage: tp = ToricPlotter(dict(), 2, quadrant.rays())
             sage: print tp.plot_walls([quadrant])
             Graphics object consisting of 2 graphics primitives
+            
+        Let's also check that the truncating polyhedron is functioning
+        correctly::
+        
+            sage: tp = ToricPlotter({"mode": "box"}, 2, quadrant.rays())
+            sage: print tp.plot_walls([quadrant])
+            Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
         if not walls or not self.show_walls:
@@ -622,7 +629,7 @@ class ToricPlotter(SageObject):
                 ieqs = [(self.xmax, -1, 0, 0), (- self.xmin, 1, 0, 0),
                         (self.ymax, 0, -1, 0), (- self.ymin, 0, 1, 0),
                         (self.zmax, 0, 0, -1), (- self.zmin, 0, 0, 1)]
-            box = Polyhedron(ieqs=ieqs, field=RDF)
+            box = Polyhedron(ieqs=ieqs, base_ring=RDF)
             for wall, color in zip(walls, colors):
                 result += box.intersection(wall.polyhedron()).render_solid(
                     alpha=alpha, color=color, zorder=zorder, **extra_options)
@@ -631,7 +638,7 @@ class ToricPlotter(SageObject):
             for wall, color in zip(walls, colors):
                 vertices = [rays[i] for i in wall.ambient_ray_indices()]
                 vertices.append(origin)
-                result += Polyhedron(vertices=vertices, field=RDF).render_solid(
+                result += Polyhedron(vertices=vertices, base_ring=RDF).render_solid(
                     alpha=alpha, color=color, zorder=zorder, **extra_options)
         label_sectors = []
         round = mode == "round"

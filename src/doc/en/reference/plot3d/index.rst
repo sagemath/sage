@@ -17,5 +17,15 @@
    sage/plot/plot3d/base
    sage/plot/plot3d/tachyon
    sage/plot/plot3d/texture
+   sage/plot/plot3d/index_face_set
+
+   sage/plot/plot3d/implicit_surface
+   sage/plot/plot3d/shapes
+   sage/plot/plot3d/transform
+   sage/plot/plot3d/tri_plot
+
+.. broken, see #16647
+..   sage/plot/plot3d/help
+..   sage/plot/java3d
 
 .. include:: ../footer.txt

@@ -8,77 +8,57 @@ Commutative additive groups
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import AbelianCategory
-from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
-from sage.structure.sage_object import have_same_parent
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.algebra_functor import AlgebrasCategory
+from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.additive_groups import AdditiveGroups
 
-class CommutativeAdditiveGroups(AbelianCategory):
+class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
     """
     The category of abelian groups, i.e. additive abelian monoids
     where each element has an inverse.
 
     EXAMPLES::
 
-        sage: CommutativeAdditiveGroups()
+        sage: C = CommutativeAdditiveGroups(); C
         Category of commutative additive groups
-        sage: CommutativeAdditiveGroups().super_categories()
-        [Category of commutative additive monoids]
-        sage: CommutativeAdditiveGroups().all_super_categories()
-        [Category of commutative additive groups, Category of commutative additive monoids, Category of commutative additive semigroups, Category of additive magmas, Category of sets, Category of sets with partial maps, Category of objects]
+        sage: C.super_categories()
+        [Category of additive groups, Category of commutative additive monoids]
+        sage: sorted(C.axioms())
+        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse', 'AdditiveUnital']
+        sage: C is CommutativeAdditiveMonoids().AdditiveInverse()
+        True
+        sage: from sage.categories.additive_groups import AdditiveGroups
+        sage: C is AdditiveGroups().AdditiveCommutative()
+        True
+
+    .. NOTE::
+
+        This category is currently empty. It's left there for backward
+        compatibility and because it is likely to grow in the future.
 
     TESTS::
 
         sage: TestSuite(CommutativeAdditiveGroups()).run()
+        sage: sorted(CommutativeAdditiveGroups().CartesianProducts().axioms())
+        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse', 'AdditiveUnital']
+
+    The empty covariant functorial construction category classes
+    ``CartesianProducts`` and ``Algebras`` are left here for the sake
+    of nicer output since this is a commonly used category::
+
+        sage: CommutativeAdditiveGroups().CartesianProducts()
+        Category of Cartesian products of commutative additive groups
+        sage: CommutativeAdditiveGroups().Algebras(QQ)
+        Category of commutative additive group algebras over Rational Field
+
+    Also, it's likely that some code will end up there at some point.
     """
+    _base_category_class_and_axiom = (AdditiveGroups, "AdditiveCommutative")
 
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: CommutativeAdditiveGroups().super_categories()
-            [Category of commutative additive monoids]
-        """
-        return [CommutativeAdditiveMonoids()]
-
-    class ParentMethods:
+    class CartesianProducts(CartesianProductsCategory):
         pass
 
-    class ElementMethods:
-        ##def -x, -(x,y):
-        def __sub__(left, right):
-            """
-            Top-level subtraction operator
-            See extensive documentation at the top of element.pyx.
-
-            EXAMPLES::
-
-                sage: F = CombinatorialFreeModule(QQ, ['a','b'])
-                sage: a,b = F.basis()
-                sage: a - b
-                B['a'] - B['b']
-            """
-            if have_same_parent(left, right) and hasattr(left, "_sub_"):
-                return left._sub_(right)
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(left, right, operator.sub)
-
-        ##################################################
-        # Negation
-        ##################################################
-
-        def __neg__(self):
-            """
-            Top-level negation operator for elements of abelian
-            monoids, which may choose to implement _neg_ rather than
-            __neg__ for consistancy.
-
-            EXAMPLES::
-
-                sage: F = CombinatorialFreeModule(QQ, ['a','b'])
-                sage: a,b = F.basis()
-                sage: - b
-                -B['b']
-            """
-            return self._neg_()
+    class Algebras(AlgebrasCategory):
+        pass

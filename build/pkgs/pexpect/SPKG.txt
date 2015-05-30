@@ -37,6 +37,9 @@ Patches:
 
 == Changelog ==
 
+=== pexpect-2.0.p6 (Bradly Schlenker, 10 May 2014) ===
+ * Trac #15178: Fixed pexpect.py-isdir_bug_fix.patch. (mislabeled variable)
+
 === pexpect-2.0.p5 (Jeroen Demeyer, 13 January 2012) ===
  * Trac #12221: add env.patch to add env parameter to spawn.__init__()
  * Restore upstream sources, use patch for patching

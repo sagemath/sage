@@ -255,7 +255,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         n = self.group().ngens()
         if i < 0 or i >= n:
-            raise IndexError, "Argument i (= %s) must be between 0 and %s."%(i, n-1)
+            raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
         x = [0]*n
         if self.gens_orders()[i] != 1:
             x[i] = 1
@@ -381,7 +381,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (1, B, B^2, A, A*B, A*B^2)
         """
         if not(self.is_finite()):
-           raise NotImplementedError, "Group must be finite"
+           raise NotImplementedError("Group must be finite")
         invs = self.gens_orders()
         T = mrange(invs)
         n = self.order()

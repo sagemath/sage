@@ -19,12 +19,12 @@ cdef extern from 'gmpxx.h':
         mpz_class(int i)
         mpz_class(mpz_t z)
         mpz_class(mpz_class)
-        mpz_t* get_mpz_t()
+        mpz_t get_mpz_t()
         mpz_class operator%(mpz_class, mpz_class)
     cdef cppclass mpq_class:
         mpq_class()
-        mpz_t* get_num_mpz_t()
-        mpz_t* get_den_mpz_t()
+        mpz_t get_num_mpz_t()
+        mpz_t get_den_mpz_t()
 
 cdef extern from 'sl2z.hpp':
     cppclass cpp_SL2Z "SL2Z":
@@ -57,7 +57,12 @@ cdef extern from 'farey.hpp':
         size_t level()
         size_t nu2()
         size_t nu3()
+        object is_element(mpz_t, mpz_t, mpz_t, mpz_t)
+        object word_problem(mpz_t, mpz_t, mpz_t, mpz_t)
+        size_t get_cusp_class(mpz_t, mpz_t)
         object get_cusps()
+        object get_cusp_widths()
+        object get_transformation_to_cusp(mpz_t, mpz_t)
         object get_fractions()
         object get_coset()
         object get_generators()

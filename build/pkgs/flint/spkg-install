@@ -21,11 +21,7 @@ if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building a debug version of FLINT."
     CFLAGS="-O0 -g $CFLAGS"; export CFLAGS
     FLINT_TUNE=" $FLINT_TUNE"; export FLINT_TUNE
-fi
-
-if [ "$UNAME" = "CYGWIN" ]; then
-    echo "Only building a shared version of FLINT on Cygwin."
-    FLINT_CONFIGURE="--disable-static $FLINT_CONFIGURE"
+    FLINT_CONFIGURE="--enable-assert $FLINT_CONFIGURE"
 fi
 
 cd src
@@ -41,8 +37,13 @@ for patch in ../patches/*.patch; do
 done
 
 echo "Configuring FLINT."
-./configure --prefix="$SAGE_LOCAL" --with-mpir="$SAGE_LOCAL" \
-    --with-mpfr="$SAGE_LOCAL" --with-ntl="$SAGE_LOCAL" $FLINT_CONFIGURE
+./configure \
+    --disable-static \
+    --prefix="$SAGE_LOCAL" \
+    --with-gmp="$SAGE_LOCAL" \
+    --with-mpfr="$SAGE_LOCAL" \
+    --with-ntl="$SAGE_LOCAL" \
+    $FLINT_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error: Failed to configure FLINT."
     exit 1

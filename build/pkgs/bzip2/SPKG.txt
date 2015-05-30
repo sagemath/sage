@@ -28,11 +28,9 @@ None
 == Special Update/Build Instructions ==
 
 This package must not be bzip2 compressed, so create it using
-
 tar c bzip2-1.0.6 | gzip --best >bzip2-1.0.6.spkg
 
-== Changelog ==
+The build system has been autotoolized based on a patch by the Suse folk at
+http://ftp.uni-kl.de/pub/linux/suse/people/sbrabec/bzip2/for_downstream/bzip2-1.0.6-autoconfiscated.patch
 
-=== bzip2-1.0.6 (Jeroen Demeyer, 5 March 2012) ===
- * Trac #12102: initial version as "standard" package.  Adapted
-   spkg-install from the old spkg/base/bzip2-1.0.5-install.
+See patches/autotools and spkg-src for details.

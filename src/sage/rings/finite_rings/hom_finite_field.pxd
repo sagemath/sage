@@ -20,5 +20,3 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
     cdef long _order
 
     cpdef Element _call_(self, x)
-
-    cdef int _cmp_c_impl(self, Element other) except -2

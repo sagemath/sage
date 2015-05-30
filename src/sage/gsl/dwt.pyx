@@ -150,9 +150,9 @@ cdef class DiscreteWaveletTransform(gsl_array.GSLDoubleArray):
         cdef double x
         v = []
         point = sage.plot.all.point
-        if xmin == None:
+        if xmin is None:
             x_min = 0
-        if xmax == None:
+        if xmax is None:
             x_max=self.n
         for i from x_min <=i < x_max:
             x = self.data[i]

@@ -118,6 +118,214 @@ class Polyhedron_ZZ(Polyhedron_base):
         """
         return True
 
+    def ehrhart_polynomial(self, verbose=False, dual=None,
+            irrational_primal=None, irrational_all_primal=None, maxdet=None,
+            no_decomposition=None, compute_vertex_cones=None, smith_form=None,
+            dualization=None, triangulation=None, triangulation_max_height=None,
+            **kwds):
+        r"""
+        Return the Ehrhart polynomial of this polyhedron.
+
+        Let `P` be a lattice polytope in `\RR^d` and define `L(P,t) = \# (tP
+        \cap \ZZ^d)`. Then E. Ehrhart proved in 1962 that `L` coincides with a
+        rational polynomial of degree `d` for integer `t`. `L` is called the
+        *Ehrhart polynomial* of `P`. For more information see the
+        :wikipedia:`Ehrhart_polynomial`.
+
+        INPUT:
+
+        - ``verbose`` - (boolean, default to ``False``) if ``True``, print the
+          whole output of the LattE command.
+
+        The following options are passed to the LattE command, for details you
+        should consult `the LattE documentation
+        <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
+
+        - ``dual`` - (boolean) triangulate and signed-decompose in the dual
+          space
+
+        - ``irrational_primal`` - (boolean) triangulate in the dual space,
+          signed-decompose in the primal space using irrationalization.
+
+        - ``irrational_all_primal`` - (boolean) Triangulate and signed-decompose
+          in the primal space using irrationalization.
+
+        - ``maxdet`` -- (integer) decompose down to an index (determinant) of
+          ``maxdet`` instead of index 1 (unimodular cones).
+
+        - ``no_decomposition`` -- (boolean) do not signed-decompose simplicial cones.
+
+        - ``compute_vertex_cones`` -- (string) either 'cdd' or 'lrs' or '4ti2'
+
+        - ``smith_form`` -- (string) either 'ilio' or 'lidia'
+
+        - ``dualization`` -- (string) either 'cdd' or '4ti2'
+
+        - ``triangulation`` - (string) 'cddlib', '4ti2' or 'topcom'
+
+        - ``triangulation_max_height`` - (integer) use a uniform distribution of
+          height from 1 to this number
+
+        .. NOTE::
+
+            Any additional argument is forwarded to LattE's executable
+            ``count``. All occurrences of '_' will be replaced with a '-'.
+
+        ALGORITHM:
+
+        This method calls the program ``count`` from LattE integrale, a program
+        for lattice point enumeration (see
+        https://www.math.ucdavis.edu/~latte/).
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
+            sage: p = P.ehrhart_polynomial()    # optional - latte_int
+            sage: p                             # optional - latte_int
+            7/2*t^3 + 2*t^2 - 1/2*t + 1
+            sage: p(1)                          # optional - latte_int
+            6
+            sage: len(P.integral_points())
+            6
+            sage: p(2)                          # optional - latte_int
+            36
+            sage: len((2*P).integral_points())
+            36
+
+        The unit hypercubes::
+
+            sage: from itertools import product
+            sage: def hypercube(d):
+            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)))
+            sage: hypercube(3).ehrhart_polynomial()   # optional - latte_int
+            t^3 + 3*t^2 + 3*t + 1
+            sage: hypercube(4).ehrhart_polynomial()   # optional - latte_int
+            t^4 + 4*t^3 + 6*t^2 + 4*t + 1
+            sage: hypercube(5).ehrhart_polynomial()   # optional - latte_int
+            t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
+            sage: hypercube(6).ehrhart_polynomial()   # optional - latte_int
+            t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
+
+        An empty polyhedron::
+
+            sage: P = Polyhedron(ambient_dim=3, vertices=[])
+            sage: P.ehrhart_polynomial()    # optional - latte_int
+            0
+            sage: parent(_)                 # optional - latte_int
+            Univariate Polynomial Ring in t over Rational Field
+
+        TESTS:
+
+        Test options::
+
+            sage: P = Polyhedron(ieqs=[[1,-1,1,0], [-1,2,-1,0], [1,1,-2,0]], eqns=[[-1,2,-1,-3]], base_ring=ZZ)
+
+            sage: p = P.ehrhart_polynomial(maxdet=5, verbose=True)  # optional - latte_int
+            This is LattE integrale 1.7.2
+            ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' '--maxdet=5' --cdd ...
+            ...
+            sage: p    # optional - latte_int
+            1/2*t^2 + 3/2*t + 1
+
+            sage: p = P.ehrhart_polynomial(dual=True, verbose=True)  # optional - latte_int
+            This is LattE integrale 1.7.2
+            ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --dual --cdd ...
+            ...
+            sage: p   # optional - latte_int
+            1/2*t^2 + 3/2*t + 1
+
+            sage: p = P.ehrhart_polynomial(irrational_primal=True, verbose=True)   # optional - latte_int
+            This is LattE integrale 1.7.2
+            ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-primal --cdd ...
+            ...
+            sage: p   # optional - latte_int
+            1/2*t^2 + 3/2*t + 1
+
+            sage: p = P.ehrhart_polynomial(irrational_all_primal=True, verbose=True)  # optional - latte_int
+            This is LattE integrale 1.7.2
+            ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-all-primal --cdd ...
+            sage: p   # optional - latte_int
+            1/2*t^2 + 3/2*t + 1
+
+        Test bad options::
+
+            sage: P.ehrhart_polynomial(bim_bam_boum=19)   # optional - latte_int
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Something went wrong (see output above) when running:
+            count --ehrhart-polynomial --redundancy-check=none --bim-bam-boum=19 --cdd ...
+
+        """
+        if not self.is_lattice_polytope():
+            raise ValueError("this must be a lattice polytope")
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(QQ, 't')
+        if self.is_empty():
+            return R.zero()
+
+        from sage.misc.temporary_file import tmp_filename
+        from sage.misc.misc import SAGE_TMP
+        from subprocess import Popen, PIPE
+
+        in_str = self.cdd_Hrepresentation()
+        in_filename = tmp_filename() + '.ine'
+        in_file = open(in_filename, 'w')
+        in_file.write(self.cdd_Hrepresentation())
+        in_file.close()
+
+        args = ['count', '--ehrhart-polynomial']
+        if 'redundancy_check' not in kwds:
+            args.append('--redundancy-check=none')
+
+        # note: the options below are explicitely written in the function
+        # declaration in order to keep tab completion (see #18211).
+        kwds.update({
+            'dual'                    : dual,
+            'irrational_primal'       : irrational_primal,
+            'irrational_all_primal'   : irrational_all_primal,
+            'maxdet'                  : maxdet,
+            'no_decomposition'        : no_decomposition,
+            'compute_vertex_cones'    : compute_vertex_cones,
+            'smith_form'              : smith_form,
+            'dualization'             : dualization,
+            'triangulation'           : triangulation,
+            'triangulation_max_height': triangulation_max_height})
+
+        for key,value in kwds.items():
+            if value is None or value is False:
+                continue
+
+            key = key.replace('_','-')
+            if value is True:
+                args.append('--{}'.format(key))
+            else:
+                args.append('--{}={}'.format(key, value))
+        args.append('--cdd')
+        args.append(in_filename)
+
+        try:
+            latte_proc = Popen(args, stdin=PIPE, stdout=PIPE, stderr=(None if verbose else PIPE), cwd=str(SAGE_TMP))
+        except OSError:
+            raise ValueError("The package latte_int must be installed (type "
+                    "'sage -i latte_int') in a console or "
+                    "'install_package('latte_int') at a Sage prompt)!\n")
+
+        ans, err = latte_proc.communicate()
+
+        try:
+            p = ans.splitlines()[-2]
+        except IndexError:
+            if not verbose:
+                print err
+            raise RuntimeError("Something went wrong (see output above) when running:\n{}".format(' '.join(args)))
+
+        return R(p)
+
     @cached_method
     def polar(self):
         """
@@ -267,7 +475,7 @@ class Polyhedron_ZZ(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: X = polytopes.n_cube(3)
+            sage: X = polytopes.cube()
             sage: X.find_translation(X + vector([2,3,5]))
             (2, 3, 5)
             sage: X.find_translation(2*X)

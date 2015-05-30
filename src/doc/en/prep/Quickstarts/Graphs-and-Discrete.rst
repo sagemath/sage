@@ -34,6 +34,7 @@ Visualizing a graph is similar to plotting functions.
 
     sage: G = graphs.HeawoodGraph()
     sage: plot(G)
+    Graphics object consisting of 36 graphics primitives
 
 Defining your own graph is easy.  One way is the following.
 
@@ -48,6 +49,7 @@ Defining your own graph is easy.  One way is the following.
 
     sage: H=Graph({0:[1,2,3], 4:[0,2], 6:[1,2,3,4,5]})
     sage: plot(H)
+    Graphics object consisting of 18 graphics primitives
 
 Adjacency matrices, other graphs, and similar inputs are also recognized.
 
@@ -71,6 +73,7 @@ Pre\-defined graphs often come with "nice" layouts.
 
     sage: H.set_pos(H.layout_circular())
     sage: plot(H)
+    Graphics object consisting of 18 graphics primitives
 
 Vertices can be lots of things, for example the codewords of an
 error\-correcting code.
@@ -98,10 +101,11 @@ Edges can be labeled.
 
     sage: L=graphs.CycleGraph(5)
     sage: for edge in L.edges():
-    ...       u = edge[0]
-    ...       v = edge[1]
-    ...       L.set_edge_label(u, v, u*v)
+    ....:     u = edge[0]
+    ....:     v = edge[1]
+    ....:     L.set_edge_label(u, v, u*v)
     sage: plot(L, edge_labels=True)
+    Graphics object consisting of 16 graphics primitives
 
 There are natural connections to other areas of mathematics.  Here we
 compute the automorphism group and eigenvalues of the skeleton of a
@@ -111,13 +115,14 @@ cube.
 
     sage: C = graphs.CubeGraph(3)
     sage: plot(C)
+    Graphics object consisting of 21 graphics primitives
 
 ::
 
     sage: Aut=C.automorphism_group()
     sage: print "Order of automorphism group: ", Aut.order()
     Order of automorphism group:  48
-    sage: print "Group: \n", Aut
+    sage: print "Group: \n", Aut # random
     Group:
     Permutation Group with generators [('010','100')('011','101'), ('001','010')('101','110'), ('000','001')('010','011')('100','101')('110','111')]
 
@@ -164,7 +169,7 @@ permutations.
 ::
 
     sage: for pair in Combinations(pets, 2):
-    ...       print "The " + pair[0] + " chases the " + pair[1] + "."
+    ....:     print "The " + pair[0] + " chases the " + pair[1] + "."
     The dog chases the cat.
     The dog chases the snake.
     The dog chases the spider.
@@ -175,7 +180,7 @@ permutations.
 ::
 
     sage: for pair in Permutations(pets, 2):
-    ...       print pair
+    ....:     print pair
     ['dog', 'cat']
     ['dog', 'snake']
     ['dog', 'spider']

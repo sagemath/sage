@@ -149,7 +149,8 @@ Or you can create a homomorphism from one lattice to any other::
 from sage.geometry.toric_lattice_element import (ToricLatticeElement,
                                                  is_ToricLatticeElement)
 from sage.geometry.toric_plotter import ToricPlotter
-from sage.misc.all import latex, parent
+from sage.misc.all import latex
+from sage.structure.all import parent
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.free_module import (FreeModule_ambient_pid,
@@ -382,12 +383,10 @@ class ToricLattice_generic(FreeModule_generic_pid):
     Abstract base class for toric lattices.
     """
 
-    # This is how other free modules work now, but it seems that things
-    # should be a bit different in the new coersion model
-    _element_class = ToricLatticeElement
+    Element = ToricLatticeElement
 
     # It is not recommended to override __call__ in Parent-derived objects
-    # since it may interfere with the coersion model. We do it here to allow
+    # since it may interfere with the coercion model. We do it here to allow
     # N(1,2,3) to be interpreted as N([1,2,3]). We also prohibit N(m) where
     # m is an element of another lattice. Otherwise morphisms will care only
     # about dimension of lattices.
@@ -417,14 +416,6 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
             sage: N(1,2,3)
             N(1, 2, 3)
-
-        And to prohibit conversion between different lattices::
-
-            sage: M = N.dual()
-            sage: M(N(1,2,3))
-            Traceback (most recent call last):
-            ...
-            TypeError: N(1, 2, 3) cannot be converted to 3-d lattice M!
 
         We also test that the special treatment of zero still works::
 
@@ -465,6 +456,27 @@ class ToricLattice_generic(FreeModule_generic_pid):
             return supercall(*args, **kwds)
         # Coordinates were given without packing them into a list or a tuple
         return supercall(coordinates, **kwds)
+
+    def _coerce_map_from_(self, other):
+        """
+        Return a coercion map from ``other`` to ``self``, or None.
+
+        This prevents the construction of coercion maps between
+        lattices with different ambient modules, so :meth:`__call__`
+        is invoked instead, which prohibits conversion::
+
+            sage: N = ToricLattice(3)
+            sage: M = N.dual()
+            sage: M(N(1,2,3))
+            Traceback (most recent call last):
+            ...
+            TypeError: N(1, 2, 3) cannot be converted to 3-d lattice M!
+
+        """
+        if (is_ToricLattice(other) and
+            other.ambient_module() is not self.ambient_module()):
+            return None
+        return super(ToricLattice_generic, self)._convert_map_from_(other)
 
     def __contains__(self, point):
         r"""
@@ -698,7 +710,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         S = super(ToricLattice_generic, self).saturation()
         return S if is_ToricLattice(S) else self.ambient_module().submodule(S)
 
-    def span(self, *args, **kwds):
+    def span(self, gens, base_ring=ZZ, *args, **kwds):
         """
         Return the span of the given generators.
 
@@ -706,6 +718,8 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         - ``gens`` -- list of elements of the ambient vector space of
           ``self``.
+          
+        - ``base_ring`` -- (default: `\ZZ`) base ring for the generated module.
 
         OUTPUT:
 
@@ -734,19 +748,14 @@ class ToricLattice_generic(FreeModule_generic_pid):
             ArithmeticError: Argument gens (= [N(0, 1, 0)])
             does not generate a submodule of self.
         """
-        if len(args) > 1:
-            base_ring = args[1]
-        elif "base_ring" in kwds:
-            base_ring = kwds["base_ring"]
+        A = self.ambient_module()
+        if base_ring is ZZ and all(g in A for g in gens):
+            return ToricLattice_sublattice(A, gens)
         else:
-            base_ring = None
-        if base_ring is None or base_ring is ZZ:
-            return ToricLattice_sublattice(self.ambient_module(),
-                                           *args, **kwds)
-        else:
-            return super(ToricLattice_generic, self).span(*args, **kwds)
+            return super(ToricLattice_generic, self).span(gens, base_ring,
+                                                          *args, **kwds)
 
-    def span_of_basis(self, *args, **kwds):
+    def span_of_basis(self, basis, base_ring=ZZ, *args, **kwds):
         r"""
         Return the submodule with the given ``basis``.
 
@@ -754,7 +763,9 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         - ``basis`` -- list of elements of the ambient vector space of
           ``self``.
-
+          
+        - ``base_ring`` -- (default: `\ZZ`) base ring for the generated module.
+        
         OUTPUT:
 
         - submodule spanned by ``basis``.
@@ -777,7 +788,10 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: Ns.span_of_basis([(2,4,0)])
             Sublattice <N(2, 4, 0)>
             sage: Ns.span_of_basis([(1/5,2/5,0), (1/7,1/7,0)])
-            Sublattice <(1/5, 2/5, 0), (1/7, 1/7, 0)>
+            Free module of degree 3 and rank 2 over Integer Ring
+            User basis matrix:
+            [1/5 2/5   0]
+            [1/7 1/7   0]
 
         Of course the input basis vectors must be linearly independent::
 
@@ -786,18 +800,12 @@ class ToricLattice_generic(FreeModule_generic_pid):
             ...
             ValueError: The given basis vectors must be linearly independent.
         """
-        if len(args) > 1:
-            base_ring = args[1]
-        elif "base_ring" in kwds:
-            base_ring = kwds["base_ring"]
+        A = self.ambient_module()
+        if base_ring is ZZ and all(g in A for g in basis):
+            return ToricLattice_sublattice_with_basis(A, basis)
         else:
-            base_ring = None
-        if base_ring is None or base_ring is ZZ:
-            return ToricLattice_sublattice_with_basis(self.ambient_module(),
-                    *args, **kwds)
-        else:
-            return super(ToricLattice_generic, self).span_with_basis(*args,
-                                                                     **kwds)
+            return super(ToricLattice_generic, self).span_of_basis(
+                                            basis, base_ring, *args, **kwds)
 
 
 class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
@@ -820,6 +828,8 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         3-d lattice N
         sage: TestSuite(N).run()
     """
+
+    Element = ToricLatticeElement
 
     def __init__(self, rank, name, dual_name, latex_name, latex_dual_name):
         r"""
@@ -982,6 +992,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
 
             sage: N = ToricLattice(3)
             sage: N.plot()
+            Graphics3d Object
         """
         if "show_lattice" not in options:
             # Unless user made an explicit decision, we assume that lattice
@@ -1128,10 +1139,12 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
             sage: N = ToricLattice(3)
             sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
             sage: sublattice.plot()
+            Graphics3d Object
 
         Now we plot both the ambient lattice and its sublattice::
 
             sage: N.plot() + sublattice.plot(point_color="red")
+            Graphics3d Object
         """
         if "show_lattice" not in options:
             # Unless user made an explicit decision, we assume that lattice
@@ -1385,19 +1398,19 @@ class ToricLattice_quotient(FGP_Module_class):
             'You may only specify a positive direction in the codimension one case.'
         quotient_generator = self.gen(0)
         lattice = self.V().ambient_module()
-        if (positive_point!=None) and (positive_dual_point==None):
+        if (positive_point is not None) and (positive_dual_point is None):
             assert positive_point in lattice, 'positive_point must be a lattice point.'
             point_quotient = self(positive_point)
             scalar_product = quotient_generator.vector()[0] * point_quotient.vector()[0]
             if scalar_product==0:
-                raise ValueError, str(positive_point)+' is zero in the quotient.'
-        elif (positive_point==None) and (positive_dual_point!=None):
+                raise ValueError(str(positive_point)+' is zero in the quotient.')
+        elif (positive_point is None) and (positive_dual_point is not None):
             assert positive_dual_point in lattice.dual(), 'positive_dual_point must be a dual lattice point.'
             scalar_product = quotient_generator.lift() * positive_dual_point
             if scalar_product==0:
-                raise ValueError, str(positive_dual_point)+' is zero on the lift of the quotient generator.'
+                raise ValueError(str(positive_dual_point)+' is zero on the lift of the quotient generator.')
         else:
-            raise ValueError, 'You may not specify both positive_point and positive_dual_point.'
+            raise ValueError('You may not specify both positive_point and positive_dual_point.')
         self._flip_sign_of_generator = (scalar_product<0)
 
     def gens(self):

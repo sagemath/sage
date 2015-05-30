@@ -24,9 +24,27 @@ fi
 source "$SAGE_LOCAL/gap/latest/sysinfo.gap"
 echo "GAP was configured with $GAParch_system"
 
-echo "Configuring libGAP..."
+# location of the corresponding gap installation
+# only used for the testsuite
+CPPFLAGS="$CPPFLAGS"' -DSYS_DEFAULT_PATHS=\"'"$SAGE_LOCAL/gap/latest"'\"'
+
 cd src
-./configure --disable-static CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
+
+# Apply fixes to upstream source
+echo "Applying patches..."
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+echo "Configuring libGAP..."
+./configure --disable-static \
+    CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" CPPFLAGS="$CPPFLAGS" \
+    --libdir="$SAGE_LOCAL/lib" \
     --with-gap_system_arch="$GAParch_system" \
     --with-sage="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL" --prefix="$SAGE_LOCAL"
 if [ $? -ne 0 ]; then

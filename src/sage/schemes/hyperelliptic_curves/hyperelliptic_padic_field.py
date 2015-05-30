@@ -97,7 +97,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         """
         prec = self.base_ring().precision_cap()
         if self.is_same_disc(P,Q) == False:
-            raise ValueError, "%s and %s are not in the same residue disc"%(P,Q)
+            raise ValueError("%s and %s are not in the same residue disc"%(P,Q))
         disc = self.residue_disc(P)
         t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
         if disc == self.change_ring(self.base_ring().residue_field())(0,1,0):
@@ -235,7 +235,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Jennifer Balakrishnan
         """
         if self.is_in_weierstrass_disc(Q) == False:
-            raise ValueError, "%s is not in a Weierstrass disc"%Q
+            raise ValueError("%s is not in a Weierstrass disc"%Q)
         points = self.weierstrass_points()
         for P in points:
             if self.is_same_disc(P,Q):
@@ -537,7 +537,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Robert Bradshaw (2007-03): non-Weierstrass points
         - Jennifer Balakrishnan and Robert Bradshaw (2010-02): Weierstrass points
         """
-        import sage.schemes.elliptic_curves.monsky_washnitzer as monsky_washnitzer
+        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         from sage.misc.profiler import Profiler
         prof = Profiler()
         prof("setup")
@@ -574,15 +574,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             TQ = self.frobenius(Q)
             PP, QQ = P, Q
         prof("tiny integrals")
-        if TP == None:
+        if TP is None:
             P_to_TP = V(0)
         else:
-            if TP!=None:
+            if TP is not None:
                 TPv = (TP[0]**g/TP[1]).valuation()
                 xTPv = TP[0].valuation()
             else:
                 xTPv = TPv = +Infinity
-            if TQ!=None:
+            if TQ is not None:
                 TQv = (TQ[0]**g/TQ[1]).valuation()
                 xTQv = TQ[0].valuation()
             else:
@@ -609,7 +609,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                 TQ = self.frobenius(Q)
                 V = VectorSpace(K,dim)
             P_to_TP = V(self.tiny_integrals_on_basis(P, TP))
-        if TQ == None:
+        if TQ is None:
             TQ_to_Q = V(0)
         else:
             TQ_to_Q = V(self.tiny_integrals_on_basis(TQ, Q))
@@ -680,7 +680,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 #            (((1+O(11^6)))*1) dx/2y
 #
 #        """
-#        import sage.schemes.elliptic_curves.monsky_washnitzer as monsky_washnitzer
+#        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
 #        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
 #        MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(S)
 #        return MW.invariant_differential()
@@ -758,7 +758,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             sage: H = HyperellipticCurve(x*(x-1)*(x+9))
             sage: K = Qp(7,10)
             sage: HK = H.change_ring(K)
-            sage: import sage.schemes.elliptic_curves.monsky_washnitzer as mw
+            sage: import sage.schemes.hyperelliptic_curves.monsky_washnitzer as mw
             sage: M_frob, forms = mw.matrix_of_frobenius_hyperelliptic(HK)
             sage: w = HK.invariant_differential()
             sage: x,y = HK.monsky_washnitzer_gens()
@@ -826,7 +826,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         """
         # TODO: implement Jacobians and show the relationship directly
-        import sage.schemes.elliptic_curves.monsky_washnitzer as monsky_washnitzer
+        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         K = self.base_ring()
         prec = K.precision_cap()
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self, K)
@@ -844,7 +844,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             elif w._coeff(x,-y)*x.derivative()/(-2*y)+w._coeff(x,y)*x.derivative()/(2*y) == 0:
                 return self.coleman_integral(w,self(Q[0],-Q[1]), self(Q[0],Q[1]), algorithm)/2
             else:
-                raise ValueError, "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+                raise ValueError("The differential is not odd: use coleman_integral_from_weierstrass_via_boundary")
 
         elif self.is_weierstrass(Q):
             if f == 0:
@@ -852,7 +852,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             elif w._coeff(x,-y)*x.derivative()/(-2*y)+w._coeff(x,y)*x.derivative()/(2*y) == 0:
                 return -self.coleman_integral(w,self(P[0],-P[1]), self(P[0],P[1]), algorithm)/2
             else:
-                raise ValueError, "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+                raise ValueError("The differential is not odd: use coleman_integral_from_weierstrass_via_boundary")
         else:
             return f(Q[0], Q[1]) - f(P[0], P[1]) + sum([vec[i] * basis_values[i] for i in range(dim)]) # this is just a dot product...
 
@@ -909,7 +909,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
             f, f2 = self.hyperelliptic_polynomials()
             if f2 != 0:
-                raise NotImplementedError, "Curve must be in weierstrass normal form."
+                raise NotImplementedError("Curve must be in weierstrass normal form.")
             h = (f(x**p) - f**p)
 
             def _frob(P):
@@ -1211,7 +1211,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         FS = self.frobenius(S)
         FS = (FS[0],FS[1])
         FQ = self.frobenius(Q)
-        import sage.schemes.elliptic_curves.monsky_washnitzer as monsky_washnitzer
+        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         try:
             M_frob, forms = self._frob_calc
         except AttributeError:
@@ -1293,7 +1293,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Jennifer Balakrishnan
 
         """
-        import sage.schemes.elliptic_curves.monsky_washnitzer as monsky_washnitzer
+        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         K = self.base_ring()
         R = monsky_washnitzer.SpecialHyperellipticQuotientRing(self, K)
         MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(R)

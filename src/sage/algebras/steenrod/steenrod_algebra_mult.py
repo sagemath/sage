@@ -238,9 +238,9 @@ def milnor_multiplication(r,s):
         sage: milnor_multiplication((2,), (1,))
         {(0, 1): 1, (3,): 1}
         sage: milnor_multiplication((4,), (2,1))
-        {(6, 1): 1, (0, 3): 1, (2, 0, 1): 1}
+        {(0, 3): 1, (2, 0, 1): 1, (6, 1): 1}
         sage: milnor_multiplication((2,4), (0,1))
-        {(2, 5): 1, (2, 0, 0, 1): 1}
+        {(2, 0, 0, 1): 1, (2, 5): 1}
 
     These examples correspond to the following product computations:
 
@@ -410,7 +410,7 @@ def milnor_multiplication_odd(m1,m2,p):
         sage: milnor_multiplication_odd(((0,2,4),()), ((1,5),()), 7)
         {((0, 1, 2, 4, 5), ()): 1}
         sage: milnor_multiplication_odd(((),(6,)), ((),(2,)), 3)
-        {((), (4, 1)): 1, ((), (8,)): 1, ((), (0, 2)): 1}
+        {((), (0, 2)): 1, ((), (4, 1)): 1, ((), (8,)): 1}
 
     These examples correspond to the following product computations:
 
@@ -640,7 +640,7 @@ def multinomial_odd(list,p):
         index += 1
     return answer
 
-# adem relations, serre-cartan basis, admissible sequences
+# Adem relations, Serre-Cartan basis, admissible sequences
 
 def binomial_mod2(n,k):
     r"""
@@ -699,7 +699,7 @@ def binomial_modp(n,k,p):
     return multinomial_odd([n-k, k], p)
 
 @cached_function
-def adem(a, b, c=0, p=2):
+def adem(a, b, c=0, p=2, generic=None):
     r"""
     The mod `p` Adem relations
 
@@ -708,6 +708,7 @@ def adem(a, b, c=0, p=2):
     - `a`, `b`, `c` (optional) - nonnegative integers, corresponding
       to either `P^a P^b` or (if `c` present) to `P^a \beta^b P^c`
     - `p` - positive prime number (optional, default 2)
+    - `generic` - whether to use the generic Steenrod algebra, (default: depends on prime)
 
     OUTPUT:
 
@@ -775,16 +776,18 @@ def adem(a, b, c=0, p=2):
         sage: adem(1,0,1, p=7)
         {(0, 2, 0): 2}
         sage: adem(1,1,1, p=5)
-        {(1, 2, 0): 1, (0, 2, 1): 1}
+        {(0, 2, 1): 1, (1, 2, 0): 1}
         sage: adem(1,1,2, p=5)
-        {(1, 3, 0): 2, (0, 3, 1): 1}
+        {(0, 3, 1): 1, (1, 3, 0): 2}
     """
-    if p == 2:
+    if generic is None:
+        generic = False if p==2 else True
+    if not generic:
         if b == 0: return {(a,): 1}
         elif a == 0: return {(b,): 1}
         elif a >= 2*b: return {(a,b): 1}
         result = {}
-        for c in range(1+a/2):
+        for c in range(1 + a//2):
             if binomial_mod2(b-c-1, a-2*c) == 1:
                 if c == 0:
                     result[(a+b,)] = 1
@@ -810,7 +813,7 @@ def adem(a, b, c=0, p=2):
         if A >= p*B: # admissible
             return {(0,A,0,B,0): 1}
         result = {}
-        for j in range(1 + int(a/p)):
+        for j in range(1 + a//p):
             coeff = (-1)**(A+j) * binomial_modp((B-j) * (p-1) - 1, A - p*j, p)
             if coeff % p != 0:
                 if j == 0:
@@ -821,14 +824,14 @@ def adem(a, b, c=0, p=2):
         if A >= p*B + 1: # admissible
             return {(0,A,1,B,0): 1}
         result = {}
-        for j in range(1 + int(a/p)):
+        for j in range(1 + a//p):
             coeff = (-1)**(A+j) * binomial_modp((B-j) * (p-1), A - p*j, p)
             if coeff % p != 0:
                 if j == 0:
                     result[(1,A+B,0)] = coeff
                 else:
                     result[(1,A+B-j,0,j,0)] = coeff
-        for j in range(1 + int((a-1)/p)):
+        for j in range(1 + (a-1)//p):
             coeff = (-1)**(A+j-1) * binomial_modp((B-j) * (p-1) - 1, A - p*j - 1, p)
             if coeff % p != 0:
                 if j == 0:
@@ -838,7 +841,7 @@ def adem(a, b, c=0, p=2):
     return result
 
 @cached_function
-def make_mono_admissible(mono, p=2):
+def make_mono_admissible(mono, p=2, generic=None):
     r"""
     Given a tuple ``mono``, view it as a product of Steenrod
     operations, and return a dictionary giving data equivalent to
@@ -856,6 +859,7 @@ def make_mono_admissible(mono, p=2):
 
     - ``mono`` - a tuple of non-negative integers
     - `p` - prime number, optional (default 2)
+    - `generic` - whether to use the generic Steenrod algebra, (default: depends on prime)
 
     OUTPUT:
 
@@ -907,12 +911,14 @@ def make_mono_admissible(mono, p=2):
         Sq^10 Sq^4 Sq^1 + Sq^10 Sq^5 + Sq^12 Sq^3 + Sq^13 Sq^2
     """
     from sage.rings.all import GF
+    if generic is None:
+        generic = False if p==2 else True
     F = GF(p)
     if len(mono) == 1:
         return {mono: 1}
-    if p==2 and len(mono) == 2:
-        return adem(*mono, p=p)
-    if p == 2:
+    if not generic and len(mono) == 2:
+        return adem(*mono, p=p, generic=generic)
+    if not generic:
         # check to see if admissible:
         admissible = True
         for j in range(len(mono)-1):
@@ -946,7 +952,7 @@ def make_mono_admissible(mono, p=2):
         return {mono: 1}
     # else j is the first index where admissibility fails
     ans = {}
-    y = adem(*mono[j:j+3], p=p)
+    y = adem(*mono[j:j+3], p=p, generic=True)
     for x in y:
         new_x = list(x)
         new_x[0] = mono[j-1] + x[0]
@@ -954,7 +960,7 @@ def make_mono_admissible(mono, p=2):
             new_x[-1] = mono[j+3] + x[-1]
         if new_x[0] <= 1 and new_x[-1] <= 1:
             new = mono[:j-1] + tuple(new_x) + mono[j+4:]
-            new = make_mono_admissible(new, p)
+            new = make_mono_admissible(new, p, generic=True)
             for m in new:
                 if m in ans:
                     ans[m] = ans[m] + y[x] * new[m]

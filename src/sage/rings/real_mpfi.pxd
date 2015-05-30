@@ -1,7 +1,6 @@
-include 'mpfi.pxi'
+from sage.libs.mpfi cimport *
 
 cimport sage.rings.ring
-import  sage.rings.ring
 
 cimport sage.structure.element
 from sage.structure.element cimport RingElement

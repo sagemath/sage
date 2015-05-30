@@ -20,7 +20,7 @@ if [ $SAGE64 = yes ]; then
 fi
 
 DEBUG_CONFIGURE_FLAG=''
-if [ $SAGE_DEBUG = yes ]; then
+if [ "$SAGE_DEBUG" = yes ]; then
     CFLAGS="-O0 -g $CFLAGS"
     DEBUG_CONFIGURE_FLAG='--with-debug'
 else
@@ -71,6 +71,8 @@ echo "Configuring ncurses (narrow)..."
     --without-ada \
     --disable-rpath-hack \
     --enable-overwrite \
+    --with-pkg-config-libdir="$SAGE_LOCAL/lib/pkgconfig" \
+    --enable-pc-files \
     "$DEBUG_CONFIGURE_FLAG"
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring ncurses (narrow)."
@@ -109,6 +111,8 @@ echo "Configuring ncurses (wide)..."
     --without-ada \
     --disable-rpath-hack \
     --enable-overwrite \
+    --with-pkg-config-libdir="$SAGE_LOCAL/lib/pkgconfig" \
+    --enable-pc-files \
     "$DEBUG_CONFIGURE_FLAG"
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring ncurses (wide)."

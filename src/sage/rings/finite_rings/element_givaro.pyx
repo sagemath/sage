@@ -6,13 +6,12 @@ arithmetic in finite fields.
 
 .. NOTE::
 
-    The arithmetic is performed by the Givaro C++ library which uses Zech
-    logs internally to represent finite field elements. This
-    implementation is the default finite extension field implementation in
-    Sage for the cardinality less than `2^{16}`, as it is vastly faster than
-    the PARI implementation which uses polynomials to represent finite field
-    elements. Some functionality in this class however is implemented
-    using the PARI implementation.
+    The arithmetic is performed by the Givaro C++ library which uses
+    Zech logs internally to represent finite field elements. This
+    implementation is the default finite extension field implementation
+    in Sage for the cardinality less than `2^{16}`, as it is a lot
+    faster than the PARI implementation. Some functionality in this
+    class however is implemented using PARI.
 
 EXAMPLES::
 
@@ -41,51 +40,44 @@ AUTHORS:
 
 """
 
-
 #*****************************************************************************
-#
-#   Sage: System for Algebra and Geometry Experimentation
-#
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/libs/ntl/decl.pxi"
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
+include "sage/libs/ntl/decl.pxi"
+include "sage/libs/pari/decl.pxi"
+include "sage/libs/pari/pari_err.pxi"
 
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 from sage.rings.ring cimport Ring
-from sage.rings.finite_rings.element_ext_pari import FiniteField_ext_pariElement
+from element_ext_pari import FiniteField_ext_pariElement
+from element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from sage.structure.sage_object cimport SageObject
 import operator
 import sage.rings.arith
 import constructor as finite_field
-import finite_field_ext_pari
 
 import sage.interfaces.gap
 from sage.libs.pari.all import pari
-from sage.libs.pari.gen import gen
+from sage.libs.pari.gen cimport gen
 
-from sage.structure.parent  cimport Parent
+from sage.structure.parent cimport Parent
 from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.parent_gens cimport ParentWithGens
+
+from sage.misc.superseded import deprecated_function_alias
 
 cdef object is_IntegerMod
 cdef object Integer
 cdef object Rational
-cdef object is_Polynomial
 cdef object ConwayPolynomials
 cdef object conway_polynomial
 cdef object MPolynomial
@@ -99,7 +91,6 @@ cdef void late_import():
     global is_IntegerMod, \
            Integer, \
            Rational, \
-           is_Polynomial, \
            ConwayPolynomials, \
            conway_polynomial, \
            MPolynomial, \
@@ -118,9 +109,6 @@ cdef void late_import():
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
 
-    import sage.rings.polynomial.polynomial_element
-    is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
-
     import sage.databases.conway
     ConwayPolynomials = sage.databases.conway.ConwayPolynomials
 
@@ -137,7 +125,7 @@ cdef void late_import():
     FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
 cdef class Cache_givaro(SageObject):
-    def __init__(self, parent, p, k, modulus=None, repr="poly", cache=False):
+    def __init__(self, parent, unsigned int p, unsigned int k, modulus, repr="poly", cache=False):
         """
         Finite Field.
 
@@ -151,21 +139,7 @@ cdef class Cache_givaro(SageObject):
 
         - ``name`` -- variable used for poly_repr (default: ``'a'``)
 
-        - ``modulus`` -- you may provide a polynomial to use for reduction or
-          one of the following strings:
-
-          - ``'conway'`` -- force the use of a Conway polynomial, will
-            raise a ``RuntimeError`` if none is found in the database
-          - ``'random'`` -- use a random irreducible polynomial
-          - ``'default'`` -- a Conway polynomial is used if found. Otherwise
-            a random polynomial is used
-
-          Furthermore, for binary fields we allow two more options:
-
-          - ``'minimal_weight'`` -- use a minimal weight polynomial, should
-            result in faster arithmetic;
-          - ``'first_lexicographic'`` -- use the first irreducible polynomial
-            in lexicographic order.
+        - ``modulus`` -- a polynomial to use as modulus.
 
         - ``repr``  -- (default: 'poly') controls the way elements are printed
           to the user:
@@ -210,28 +184,17 @@ cdef class Cache_givaro(SageObject):
             sage: k.modulus() # random polynomial
             x^5 + 2*x^4 + 2*x^3 + x^2 + 2
 
-        For binary fields, you may ask for a  minimal weight polynomial::
+        For binary fields, you may ask for a minimal weight polynomial::
 
             sage: k = GF(2**10, 'a', modulus='minimal_weight')
             sage: k.modulus()
             x^10 + x^3 + 1
-
-        Three different representations are possible::
-
-            sage: sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro(9,repr='poly').gen()
-            a
-            sage: sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro(9,repr='int').gen()
-            3
-            sage: sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro(9,repr='log').gen()
-            1
         """
         # we are calling late_import here because this constructor is
         # called at least once before any arithmetic is performed.
         late_import()
 
         cdef intvec cPoly
-        cdef GF2X_c ntl_m, ntl_tmp
-        cdef GF2_c c
 
         self.parent = <Parent?> parent
 
@@ -244,42 +207,18 @@ cdef class Cache_givaro(SageObject):
         else:
             raise RuntimeError
 
-        if isinstance(modulus,str) and p == 2:
-            if modulus == "minimal_weight":
-                GF2X_BuildSparseIrred(ntl_m, k)
-            elif modulus == "first_lexicographic":
-                GF2X_BuildIrred(ntl_m, k)
-            elif modulus == "random":
-                current_randstate().set_seed_ntl(False)
-                GF2X_BuildSparseIrred(ntl_tmp, k)
-                GF2X_BuildRandomIrred(ntl_m, ntl_tmp)
-            else:
-                raise ValueError, "Cannot understand modulus"
-
-            modulus = []
-            for i in range(k+1):
-                c = GF2X_coeff(ntl_m, i)
-                if not GF2_IsZero(c):
-                    modulus.append(1)
-                else:
-                    modulus.append(0)
-
-        if is_Polynomial(modulus):
-            modulus = modulus.list()
-
-        if PY_TYPE_CHECK(modulus, list) or PY_TYPE_CHECK(modulus, tuple):
-            for i in modulus:
-                cPoly.push_back(int( i % p ))
+        if k == 1:
+            sig_on()
+            self.objectptr = gfq_factorypk(p, k)
+        else:
+            # Givaro does not support this when k == 1
+            for coeff in modulus:
+                cPoly.push_back(<int>coeff)
             sig_on()
             self.objectptr = gfq_factorypkp(p, k, cPoly)
-        elif modulus == "random":
-            sig_on()
-            self.objectptr = gfq_factorypk(p,k)
-        else:
-            raise ValueError, "Cannot understand modulus"
 
-        self._zero_element = make_FiniteField_givaroElement(self,self.objectptr.zero)
-        self._one_element = make_FiniteField_givaroElement(self,self.objectptr.one)
+        self._zero_element = make_FiniteField_givaroElement(self, self.objectptr.zero)
+        self._one_element = make_FiniteField_givaroElement(self, self.objectptr.one)
         sig_off()
 
         parent._zero_element = self._zero_element
@@ -384,11 +323,34 @@ cdef class Cache_givaro(SageObject):
 
         EXAMPLES::
 
-            sage: k = GF(2**8, 'a')
+            sage: k = GF(3^8, 'a')
+            sage: type(k)
+            <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
             sage: e = k.vector_space().gen(1); e
             (0, 1, 0, 0, 0, 0, 0, 0)
             sage: k(e) #indirect doctest
             a
+
+        TESTS:
+
+        Check coercion of large integers::
+
+            sage: k(-5^13)
+            1
+            sage: k(2^31)
+            2
+            sage: k(int(10^19))
+            1
+            sage: k(2^63)
+            2
+            sage: k(2^100)
+            1
+            sage: k(int(2^100))
+            1
+            sage: k(long(2^100))
+            1
+            sage: k(-2^100)
+            2
 
         For more examples, see
         ``finite_field_givaro.FiniteField_givaro._element_constructor_``
@@ -401,7 +363,7 @@ cdef class Cache_givaro(SageObject):
         cdef FiniteField_givaroElement to_add
         ########
 
-        if PY_TYPE_CHECK(e, FiniteField_givaroElement):
+        if isinstance(e, FiniteField_givaroElement):
             if e.parent() is self.parent:
                 return e
             if e.parent() == self.parent:
@@ -411,31 +373,26 @@ cdef class Cache_givaro(SageObject):
             else:
                 raise TypeError, "unable to coerce from a finite field other than the prime subfield"
 
-        elif PY_TYPE_CHECK(e, int) or \
-             PY_TYPE_CHECK(e, Integer) or \
-             PY_TYPE_CHECK(e, long) or is_IntegerMod(e):
+        elif isinstance(e, int) or \
+             isinstance(e, Integer) or \
+             isinstance(e, long) or is_IntegerMod(e):
             try:
                 e_int = e
-                if e != e_int:       # overflow in Pyrex is often not detected correctly... but this is bullet proof.
-                                     # sometimes it is detected correctly, so we do have to use exceptions though.
-                                     # todo -- be more eloquent here!!
-                    raise OverflowError
-                res = self.objectptr.initi(res,e_int)
             except OverflowError:
-                e = e % self.characteristic()
-                res = self.objectptr.initi(res,int(e))
+                e_int = e % self.characteristic()
+            res = self.objectptr.initi(res, e_int)
 
         elif e is None:
             e_int = 0
             res = self.objectptr.initi(res,e_int)
 
-        elif PY_TYPE_CHECK(e, float):
+        elif isinstance(e, float):
             res = self.objectptr.initd(res,e)
 
-        elif PY_TYPE_CHECK(e, str):
+        elif isinstance(e, str):
             return self.parent(eval(e.replace("^","**"),self.parent.gens_dict()))
 
-        elif PY_TYPE_CHECK(e, FreeModuleElement):
+        elif isinstance(e, FreeModuleElement):
             if self.parent.vector_space() != e.parent():
                 raise TypeError, "e.parent must match self.vector_space"
             ret = self._zero_element
@@ -446,28 +403,28 @@ cdef class Cache_givaro(SageObject):
                 ret = ret + to_add*self.parent.gen()**i
             return ret
 
-        elif PY_TYPE_CHECK(e, MPolynomial):
+        elif isinstance(e, MPolynomial):
             if e.is_constant():
                 return self.parent(e.constant_coefficient())
             else:
                 raise TypeError, "no coercion defined"
 
-        elif PY_TYPE_CHECK(e, Polynomial):
+        elif isinstance(e, Polynomial):
             if e.is_constant():
                 return self.parent(e.constant_coefficient())
             else:
                 return e.change_ring(self.parent)(self.parent.gen())
 
-        elif PY_TYPE_CHECK(e, Rational):
+        elif isinstance(e, Rational):
             num = e.numer()
             den = e.denom()
             return self.parent(num)/self.parent(den)
 
-        elif PY_TYPE_CHECK(e, gen):
+        elif isinstance(e, gen):
             pass # handle this in next if clause
 
-        elif PY_TYPE_CHECK(e,FiniteField_ext_pariElement):
-            # reduce FiniteField_ext_pariElements to pari
+        elif isinstance(e, FiniteFieldElement_pari_ffelt) or isinstance(e, FiniteField_ext_pariElement):
+            # Reduce to pari
             e = e._pari_()
 
         elif sage.interfaces.gap.is_GapElement(e):
@@ -487,21 +444,34 @@ cdef class Cache_givaro(SageObject):
             return ret
 
         else:
-            raise TypeError, "unable to coerce"
+            raise TypeError("unable to coerce %r" % type(e))
 
-        if PY_TYPE_CHECK(e, gen):
-            e = e.lift().lift()
-            try:
-                res = self.int_to_log(e[0])
-            except TypeError:
-                res = self.int_to_log(e)
+        cdef GEN t
+        cdef long c
+        if isinstance(e, gen):
+            pari_catch_sig_on()
+            t = (<gen>e).g
+            if typ(t) == t_FFELT:
+                t = FF_to_FpXQ(t)
+            else:
+                t = liftall_shallow(t)
 
-            g = self.objectptr.sage_generator()
-            x = self.objectptr.one
+            if typ(t) == t_INT:
+                res = self.int_to_log(itos(t))
+                pari_catch_sig_off()
+            elif typ(t) == t_POL:
+                res = self._zero_element
 
-            for i from 0 < i <= e.poldegree():
-                x = self.objectptr.mul(x,x,g)
-                res = self.objectptr.axpyin( res, self.int_to_log(e[i]) , x)
+                g = self.objectptr.indeterminate()
+                x = self.objectptr.one
+
+                for i from 0 <= i <= degpol(t):
+                    c = gtolong(gel(t, i+2))
+                    res = self.objectptr.axpyin(res, self.int_to_log(c), x)
+                    x = self.objectptr.mul(x,x,g)
+                pari_catch_sig_off()
+            else:
+                raise TypeError("bad PARI type %r" % e.type())
 
         return make_FiniteField_givaroElement(self,res)
 
@@ -515,9 +485,14 @@ cdef class Cache_givaro(SageObject):
             sage: K._cache.gen()
             a
         """
-        return make_FiniteField_givaroElement(self, self.objectptr.sage_generator())
+        cdef int g
+        if self.objectptr.exponent() == 1:
+            self.objectptr.initi(g, -self.parent.modulus()[0])
+        else:
+            g = self.objectptr.indeterminate()
+        return make_FiniteField_givaroElement(self, g)
 
-    def log_to_int(self, int n):
+    cpdef int log_to_int(self, int n) except -1:
         r"""
         Given an integer `n` this method returns `i` where `i`
         satisfies `g^n = i` where `g` is the generator of ``self``; the
@@ -539,18 +514,18 @@ cdef class Cache_givaro(SageObject):
             sage: k._cache.log_to_int(20)
             180
         """
-        cdef int ret
+        if n < 0:
+            raise IndexError("Cannot serve negative exponent %d"%n)
+        elif n >= self.order_c():
+            raise IndexError("n=%d must be < self.order()"%n)
 
-        if n<0:
-            raise ArithmeticError, "Cannot serve negative exponent %d"%n
-        elif n>=self.order_c():
-            raise IndexError, "n=%d must be < self.order()"%n
+        cdef int r
         sig_on()
-        ret = int(self.objectptr.convert(ret, n))
+        self.objectptr.convert(r, n)
         sig_off()
-        return ret
+        return r
 
-    def int_to_log(self, int n):
+    cpdef int int_to_log(self, int n) except -1:
         r"""
         Given an integer `n` this method returns `i` where `i` satisfies
         `g^i = n \mod p` where `g` is the generator and `p` is the
@@ -576,9 +551,9 @@ cdef class Cache_givaro(SageObject):
         """
         cdef int r
         sig_on()
-        ret =  int(self.objectptr.initi(r,n))
+        self.objectptr.initi(r,n)
         sig_off()
-        return ret
+        return r
 
     def fetch_int(self, int n):
         r"""
@@ -598,7 +573,7 @@ cdef class Cache_givaro(SageObject):
         """
         cdef GivaroGfq *k = self.objectptr
         cdef int ret = k.zero
-        cdef int a = k.sage_generator()
+        cdef int a = k.indeterminate()
         cdef int at = k.one
         cdef unsigned int ch = k.characteristic()
         cdef int _n, t, i
@@ -626,12 +601,12 @@ cdef class Cache_givaro(SageObject):
             sage: k._cache._element_repr(a^20)
             '2*a^3 + 2*a^2 + 2'
 
-            sage: k = sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro(3^4,'a', repr='int')
+            sage: k = FiniteField(3^4,'a', impl='givaro', repr='int')
             sage: a = k.gen()
             sage: k._cache._element_repr(a^20)
             '74'
 
-            sage: k = sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro(3^4,'a', repr='log')
+            sage: k = FiniteField(3^4,'a', impl='givaro', repr='log')
             sage: a = k.gen()
             sage: k._cache._element_repr(a^20)
             '20'
@@ -1408,7 +1383,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return (<Element>left)._richcmp(right, op)
 
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         Comparison of finite field elements is correct or equality
         tests and somewhat random for ``<`` and ``>`` type of
@@ -1465,12 +1440,14 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
     def integer_representation(FiniteField_givaroElement self):
         """
         Return the integer representation of ``self``.  When ``self`` is in the
-        prime subfield, the integer returned is equal to ``self`` and not
-        to ``log_repr``.
+        prime subfield, the integer returned is equal to ``self``.
 
-        Elements of this field are represented as ints in as follows:
-        for `e \in \GF{p}[x]` with `e = a_0 + a_1x + a_2x^2 + \cdots`, `e` is
-        represented as: `n= a_0 + a_1  p + a_2  p^2 + \cdots`.
+        Elements of this field are represented as integers as follows:
+        given the element `e \in \GF{p}[x]` with
+        `e = a_0 + a_1 x + a_2 x^2 + \cdots`, the integer representation
+        is `a_0 + a_1 p + a_2 p^2 + \cdots`.
+
+        OUTPUT: A Python ``int``.
 
         EXAMPLES::
 
@@ -1505,27 +1482,29 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             return Integer(a)
         raise TypeError, "not in prime subfield"
 
-    def log_to_int(FiniteField_givaroElement self):
+    def _log_to_int(FiniteField_givaroElement self):
         r"""
-        Returns the int representation of ``self``, as a Sage integer.   Use
-        ``int(self)`` to directly get a Python int.
+        Return the int representation of ``self``, as a Sage integer.
 
-        Elements of this field are represented as ints in as follows:
-        for `e \in \GF{p}[x]` with `e = a_0 + a_1x + a_2x^2 + \cdots`, `e` is
-        represented as: `n = a_0 + a_1  p + a_2  p^2 + \cdots`.
+        Elements of this field are represented as ints as follows:
+        given the element `e \in \GF{p}[x]` with
+        `e = a_0 + a_1x + a_2x^2 + \cdots`, the int representation is
+        `a_0 + a_1 p + a_2 p^2 + \cdots`.
 
         EXAMPLES::
 
             sage: k.<b> = GF(5^2); k
             Finite Field in b of size 5^2
-            sage: k(4).log_to_int()
+            sage: k(4)._log_to_int()
             4
-            sage: b.log_to_int()
+            sage: b._log_to_int()
             5
-            sage: type(b.log_to_int())
+            sage: type(b._log_to_int())
             <type 'sage.rings.integer.Integer'>
         """
         return Integer(self._cache.log_to_int(self.element))
+
+    log_to_int = deprecated_function_alias(11295, _log_to_int)
 
     def log(FiniteField_givaroElement self, base):
         """
@@ -1549,7 +1528,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         b = self.parent()(base)
         return sage.groups.generic.discrete_log(self, b)
 
-    def int_repr(FiniteField_givaroElement self):
+    def _int_repr(FiniteField_givaroElement self):
         r"""
         Return the string representation of ``self`` as an int (as returned
         by :meth:`log_to_int`).
@@ -1558,12 +1537,14 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
             sage: k.<b> = GF(5^2); k
             Finite Field in b of size 5^2
-            sage: (b+1).int_repr()
+            sage: (b+1)._int_repr()
             '6'
         """
         return self._cache._element_int_repr(self)
 
-    def log_repr(FiniteField_givaroElement self):
+    int_repr = deprecated_function_alias(11295, _int_repr)
+
+    def _log_repr(FiniteField_givaroElement self):
         r"""
         Return the log representation of ``self`` as a string.  See the
         documentation of the ``_element_log_repr`` function of the
@@ -1573,12 +1554,14 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
             sage: k.<b> = GF(5^2); k
             Finite Field in b of size 5^2
-            sage: (b+2).log_repr()
+            sage: (b+2)._log_repr()
             '15'
         """
         return self._cache._element_log_repr(self)
 
-    def poly_repr(FiniteField_givaroElement self):
+    log_repr = deprecated_function_alias(11295, _log_repr)
+
+    def _poly_repr(FiniteField_givaroElement self):
         r"""
         Return representation of this finite field element as a polynomial
         in the generator.
@@ -1587,10 +1570,12 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
             sage: k.<b> = GF(5^2); k
             Finite Field in b of size 5^2
-            sage: (b+2).poly_repr()
+            sage: (b+2)._poly_repr()
             'b + 2'
         """
         return self._cache._element_poly_repr(self)
+
+    poly_repr = deprecated_function_alias(11295, _poly_repr)
 
     def polynomial(FiniteField_givaroElement self, name=None):
         """
@@ -1622,95 +1607,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             return PolynomialRing(K.prime_subfield(), name)(ret)
         else:
             return K.polynomial_ring()(ret)
-
-    def _finite_field_ext_pari_element(FiniteField_givaroElement self, k=None):
-        """
-        Return an element of ``k`` supposed to match this element.
-
-        .. WARNING::
-
-            No checks if ``k == self.parent()`` are performed.
-
-        INPUT:
-
-        - ``k`` -- (optional) :class:`FiniteField_ext_pari`
-
-        OUTPUT:
-
-        ``k.gen()^(self.log_repr())``
-
-        EXAMPLES::
-
-            sage: S.<b> = GF(5^2); S
-            Finite Field in b of size 5^2
-            sage: b.charpoly('x')
-            x^2 + 4*x + 2
-            sage: P = S._finite_field_ext_pari_(); type(P)
-            <class 'sage.rings.finite_rings.finite_field_ext_pari.FiniteField_ext_pari_with_category'>
-            sage: c = b._finite_field_ext_pari_element(P); c
-            b
-            sage: type(c)
-            <class 'sage.rings.finite_rings.element_ext_pari.FiniteField_ext_pariElement_with_category'>
-            sage: c.charpoly('x')
-            x^2 + 4*x + 2
-
-        The PARI field is automatically determined if it is not given::
-
-            sage: d = b._finite_field_ext_pari_element(); d
-            b
-            sage: type(d)
-            <class 'sage.rings.finite_rings.element_ext_pari.FiniteField_ext_pariElement_with_category'>
-        """
-        if k is None:
-            k = self.parent()._finite_field_ext_pari_()
-        elif not isinstance(k, finite_field_ext_pari.FiniteField_ext_pari):
-            raise TypeError, "k must be a pari finite field."
-
-        variable = k.gen()._pari_()
-
-        quo = self.integer_representation()
-        b   = int(self._cache.characteristic())
-
-        ret = k._pari_one() - k._pari_one()    # TODO -- weird
-        i = 0
-        while quo!=0:
-            coeff = quo%b
-            if coeff != 0:
-                ret = coeff * variable ** i + ret
-            quo = quo/b
-            i = i+1
-        return k(ret)
-
-    def _pari_(FiniteField_givaroElement self, var=None):
-        r"""
-        Return PARI representation of this finite field element.
-
-        INPUT:
-
-        - ``var`` -- (default: ``None``) optional variable string
-
-        EXAMPLES::
-
-            sage: k.<a> = GF(5^3)
-            sage: a._pari_()
-            Mod(Mod(1, 5)*a, Mod(1, 5)*a^3 + Mod(3, 5)*a + Mod(3, 5))
-
-            sage: a._pari_('b')
-            Mod(Mod(1, 5)*b, Mod(1, 5)*b^3 + Mod(3, 5)*b + Mod(3, 5))
-
-            sage: t = 3*a^2 + 2*a + 4
-            sage: t_string = t._pari_init_('y')
-            sage: t_string
-            'Mod(Mod(3, 5)*y^2 + Mod(2, 5)*y + Mod(4, 5), Mod(1, 5)*y^3 + Mod(3, 5)*y + Mod(3, 5))'
-            sage: type(t_string)
-            <type 'str'>
-            sage: t_element = t._pari_('b')
-            sage: t_element
-            Mod(Mod(3, 5)*b^2 + Mod(2, 5)*b + Mod(4, 5), Mod(1, 5)*b^3 + Mod(3, 5)*b + Mod(3, 5))
-            sage: t_element.parent()
-            Interface to the PARI C library
-        """
-        return pari(self._pari_init_(var))
 
     def _magma_init_(self, magma):
         """
@@ -1858,7 +1754,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: hash(a)
             5
         """
-        return hash(self.log_to_int())
+        return hash(self.integer_representation())
 
     def _vector_(FiniteField_givaroElement self, reverse=False):
         """
@@ -1894,7 +1790,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             (0, 2, 0, 1)
         """
         #vector(foo) might pass in ZZ
-        if PY_TYPE_CHECK(reverse, Parent):
+        if isinstance(reverse, Parent):
             raise TypeError, "Base field is fixed to prime subfield."
         cdef Cache_givaro cache = self._cache
         k = self.parent()
@@ -1942,7 +1838,7 @@ cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givar
     if cache._has_array:
         return <FiniteField_givaroElement>cache._array[x]
     else:
-        y = PY_NEW(FiniteField_givaroElement)
+        y = FiniteField_givaroElement.__new__(FiniteField_givaroElement)
         y._parent = <Parent> cache.parent
         y._cache = cache
         y.element = x

@@ -27,7 +27,7 @@ def have_dot2tex():
         import dot2tex
         # Test for this required feature from dot2tex 2.8.7
         return dot2tex.dot2tex("graph {}", format = "positions") == {}
-    except StandardError:
+    except Exception:
         return False
     return True
 
@@ -48,18 +48,20 @@ and check the installation of graphviz and the dot2tex spkg.
 
 For support, please contact <sage-combinat-devel at googlegroups.com>.
 """
-    missing_error_string = """
-dot2tex not available.
+    import_error_string = """
+An error occured when importing dot2tex.
 
 Please see :meth:`sage.graphs.generic_graph.GenericGraph.layout_graphviz`
 for installation instructions.
 """
     try:
         import dot2tex
+    except ImportError as e:
+        print import_error_string
+        raise # re-raise current exception
+    else:
         if dot2tex.dot2tex("graph {}", format = "positions") != {}:
             raise RuntimeError(check_error_string)
-    except ImportError:
-        raise RuntimeError(missing_error_string)
 
 def quoted_latex(x):
     """
@@ -90,33 +92,3 @@ def quoted_str(x):
     """
     return re.sub("\n",r"\\n\\"+"\n", re.sub("\"|\r|}|{","", str(x)))
 
-def key(x):
-    r"""
-    Strips the string representation of ``x`` of quotes and newlines
-    to get a key suitable for naming vertices in a dot2tex string.
-
-    EXAMPLES::
-
-        sage: sage.graphs.dot2tex_utils.key(matrix([[1,1],[0,1],[0,0]]))
-        '110100'
-        sage: sage.graphs.dot2tex_utils.key("blah{bleh}\nblih{")
-        'blahblehblih'
-    """
-    return re.sub("[\\\'\"\[\]() \t\r\n{}]","", str(x))
-
-def key_with_hash(x):
-    """
-    Same as :function:`key`, except that the hash of the object is
-    prepended to better ensure uniqueness. This requires the object to
-    be hashable, but this is anyway necessary to use it as a vertex of
-    a graph.
-
-    EXAMPLES::
-
-        sage: sage.graphs.dot2tex_utils.key_with_hash(3)
-        '3_3'
-        sage: sage.graphs.dot2tex_utils.key_with_hash((1,2,3))
-        '1,2,3_...'
-
-    """
-    return key(x)+"_"+str(hash(x))

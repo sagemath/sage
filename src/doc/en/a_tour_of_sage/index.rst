@@ -59,6 +59,11 @@ The result is a list of equalities.
 
     sage: S[0].rhs()
     -1/2*sqrt(4*a + 1) - 1/2
+
+Naturally, Sage can plot various useful functions.
+
+::
+
     sage: show(plot(sin(x) + sin(1.6*x), 0, 40))
 
 .. image:: sin_plot.*

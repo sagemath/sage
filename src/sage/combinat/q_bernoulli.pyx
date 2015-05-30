@@ -65,7 +65,7 @@ def q_bernoulli(m,p=None):
     q = PolynomialRing(ZZ,'q').gen()
     result = (q-1)**(1-m)*sum((-1)**(m-i)*m.binomial(i)*(i+1)/(q**(i+1)-1)
                               for i in range(m+1))
-    if p == None:
+    if p is None:
         return result
     else:
         return result(q=p)

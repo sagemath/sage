@@ -15,8 +15,7 @@ tube, and render the result using Tachyon.
 
 One can also directly control Tachyon, which gives a huge amount of
 flexibility. For example, here we directly use Tachyon to draw 3
-spheres on the coordinate axes. Notice that the result is
-gorgeous::
+spheres on the coordinate axes::
 
     sage: t = Tachyon(xres=500,yres=500, camera_center=(2,0,0))
     sage: t.light((4,3,2), 0.2, (1,1,1))
@@ -28,6 +27,93 @@ gorgeous::
     sage: t.sphere((0,0,0.5), 0.2, 't4')
     sage: t.show()
 
+For scenes with many reflections it is helpful to increase the raydepth option, and turn on antialiasing.  The following scene is an extreme case with many reflections between four cotangent spheres::
+
+    sage: t = Tachyon(camera_center=(0,-4,1), xres = 800, yres = 600, raydepth = 12, aspectratio=.75, antialiasing = 4)
+    sage: t.light((0.02,0.012,0.001), 0.01, (1,0,0))
+    sage: t.light((0,0,10), 0.01, (0,0,1))
+    sage: t.texture('s', color = (.8,1,1), opacity = .9, specular = .95, diffuse = .3, ambient = 0.05)
+    sage: t.texture('p', color = (0,0,1), opacity = 1, specular = .2)
+    sage: t.sphere((-1,-.57735,-0.7071),1,'s')
+    sage: t.sphere((1,-.57735,-0.7071),1,'s')
+    sage: t.sphere((0,1.15465,-0.7071),1,'s')
+    sage: t.sphere((0,0,0.9259),1,'s')
+    sage: t.plane((0,0,-1.9259),(0,0,1),'p')
+    sage: t.show() # long time
+
+Different projection options are available. The following examples all
+use a sphere and cube::
+
+    sage: cedges = [[[1, 1, 1], [-1, 1, 1]], [[1, 1, 1], [1, -1, 1]],
+    ....: [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]], [[-1, 1, 1],
+    ....: [-1, 1, -1]], [[1, -1, 1], [-1, -1, 1]], [[1, -1, 1], [1, -1, -1]],
+    ....: [[-1, -1, 1], [-1, -1, -1]], [[1, 1, -1], [-1, 1, -1]],
+    ....: [[1, 1, -1], [1, -1, -1]], [[-1, 1, -1], [-1, -1, -1]],
+    ....: [[1, -1, -1], [-1, -1, -1]]]
+
+The default projection is ``'perspective'``::
+
+    sage: t = Tachyon(xres=800, yres=600, camera_center=(-1.5,0.0,0.0), zoom=.2)
+    sage: t.texture('t1', color=(0,0,1))
+    sage: for ed in cedges:
+    ....:     t.fcylinder(ed[0], ed[1], .05, 't1')
+    sage: t.light((-4,-4,4), .1, (1,1,1))
+    sage: t.show()
+
+Another option is ``projection='fisheye'``, which requires frustrum
+information. The frustrum data is (bottom angle, top angle, left
+angle, right angle)::
+
+    sage: t = Tachyon(xres=800, yres=600, camera_center=(-1.5,0.0,0.0),
+    ....: projection='fisheye', frustum=(-1.2, 1.2, -1.2, 1.2))
+    sage: t.texture('t1', color=(0,0,1))
+    sage: for ed in cedges:
+    ....:     t.fcylinder(ed[0], ed[1], .05, 't1')
+    sage: t.light((-4,-4,4), .1, (1,1,1))
+    sage: t.show()
+
+Finally there is the ``projection='perspective_dof'`` option. ::
+
+    sage: T = Tachyon(xres=800, antialiasing=4, raydepth=10,
+    ....: projection='perspective_dof', focallength='1.0', aperture='.0025')
+    sage: T.light((0,5,7), 1.0, (1,1,1))
+    sage: T.texture('t1', opacity=1, specular=.3)
+    sage: T.texture('t2', opacity=1, specular=.3, color=(0,0,1))
+    sage: T.texture('t3', opacity=1, specular=1, color=(1,.8,1), diffuse=0.2)
+    sage: T.plane((0,0,-1), (0,0,1), 't3')
+    sage: ttlist = ['t1', 't2']
+    sage: tt = 't1'
+    sage: T.cylinder((0,0,.1), (1,1/3,0), .05, 't3')
+    sage: for q in srange(-3, 100, .15):
+    ....:     if tt == 't1':
+    ....:         tt = 't2'
+    ....:     else:
+    ....:         tt = 't1'
+    ....:     T.sphere((q, q/3+.3*sin(3*q), .1+.3*cos(3*q)), .1, tt)
+    sage: T.show()
+
+Image files in the ``ppm`` format can be used to tile planes or cover
+cylinders or spheres. In this example an image is created and then
+used to tile the plane::
+
+    sage: T = Tachyon(xres=800, yres=600, camera_center=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+    sage: T.texture('t1',color=(0,0,1))
+    sage: for ed in cedges:
+    ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
+    sage: T.light((-4,-4,4),.1,(1,1,1))
+    sage: fname_png = tmp_filename(ext='.png')
+    sage: fname_ppm = tmp_filename(ext='.ppm')
+    sage: T.save(fname_png)
+    sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)  # optional -- ImageMagick
+
+    sage: T = Tachyon(xres=800, yres=600, camera_center=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))  # optional -- ImageMagick
+    sage: T.texture('t1', color=(1,0,0), specular=.9)  # optional -- ImageMagick
+    sage: T.texture('p1', color=(1,1,1), opacity=.1, imagefile=fname_ppm, texfunc=9)  # optional -- ImageMagick
+    sage: T.sphere((0,0,0), .5, 't1')  # optional -- ImageMagick
+    sage: T.plane((0,0,-1), (0,0,1), 'p1')  # optional -- ImageMagick
+    sage: T.light((-4,-4,4), .1, (1,1,1))  # optional -- ImageMagick
+    sage: T.show()  # optional -- ImageMagick
+
 AUTHOR:
 
 - John E. Stone (johns@megapixel.com): wrote tachyon ray tracer
@@ -38,30 +124,34 @@ AUTHOR:
 
 - Tom Boothby: 3d function plotting n'stuff
 
-- Leif Hille: key idea for bugfix for texfunc issue (trac #799)
+- Leif Hille: key idea for bugfix for texfunc issue (:trac:`799`)
 
 - Marshall Hampton: improved doctests, rings, axis-aligned boxes.
 
-TODO:
+- Paul Graham: Respect global verbosity settings (:trac:`16228`)
 
-- clean up trianglefactory stuff
+.. TODO:
+
+    - clean up trianglefactory stuff
 """
 
 from tri_plot import Triangle, SmoothTriangle, TriangleFactory, TrianglePlot
-
 
 from sage.interfaces.tachyon import tachyon_rt
 
 from sage.structure.sage_object import SageObject
 
 from sage.misc.misc import SAGE_TMP
-from sage.misc.temporary_file import tmp_filename, graphics_filename
+from sage.misc.misc import get_verbose
+from sage.misc.viewer import png_viewer
+from sage.misc.temporary_file import tmp_filename
 
 #from sage.ext import fast_tachyon_routines
 
 import os
 
 from math import sqrt
+
 
 class Tachyon(SageObject):
     r"""
@@ -72,14 +162,21 @@ class Tachyon(SageObject):
     - ``xres`` - (default 350)
     - ``yres`` - (default 350)
     - ``zoom`` - (default 1.0)
-    - ``antialiasing`` - (default False)
+    - ``antialiasing`` - (default ``False``)
     - ``aspectratio``  - (default 1.0)
     - ``raydepth`` - (default 5)
     - ``camera_center`` - (default (-3, 0, 0))
     - ``updir`` - (default (0, 0, 1))
     - ``look_at`` - (default (0,0,0))
-    - ``viewdir`` - (default None)
-    - ``projection`` - (default 'PERSPECTIVE')
+    - ``viewdir`` - (default ``None``), otherwise list of three numbers
+    - ``projection`` - ``'PERSPECTIVE'`` (default), ``'perspective_dof'``
+      or ``'fisheye'``.
+    - ``frustum`` - (default ''), otherwise list of four numbers. Only
+      used with projection='fisheye'.
+    - ``focallength`` - (default ''), otherwise a number. Only used
+      with projection='perspective_dof'.
+    - ``aperture`` - (default ''), otherwise a number.  Only used
+      with projection='perspective_dof'.
 
     OUTPUT: A Tachyon 3d scene.
 
@@ -98,9 +195,8 @@ class Tachyon(SageObject):
         sage: t.texture('t2', ambient=0.2,diffuse=0.7, specular=0.5, opacity=0.7, color=(0,0,1.0))
         sage: k=0
         sage: for i in srange(-1,1,0.05):
-        ...    k += 1
-        ...    t.sphere((i,i^2-0.5,i^3), 0.1, 't%s'%(k%3))
-        ...
+        ....:    k += 1
+        ....:    t.sphere((i,i^2-0.5,i^3), 0.1, 't%s'%(k%3))
         sage: t.show()
 
     Another twisted cubic, but with a white background, got by putting
@@ -122,10 +218,9 @@ class Tachyon(SageObject):
 
         sage: k=0
         sage: for i in srange(-1,1,0.05):
-        ...    k += 1
-        ...    t.sphere((i,i^2 - 0.5,i^3), 0.1, 't%s'%(k%3))
-        ...    t.cylinder((0,0,0), (0,0,1), 0.05,'t1')
-        ...
+        ....:    k += 1
+        ....:    t.sphere((i,i^2 - 0.5,i^3), 0.1, 't%s'%(k%3))
+        ....:    t.cylinder((0,0,0), (0,0,1), 0.05,'t1')
         sage: t.show()
 
     Many random spheres::
@@ -137,9 +232,8 @@ class Tachyon(SageObject):
         sage: t.texture('t2', ambient=0.2, diffuse=0.7, specular=0.5, opacity=0.7, color=(0,0,1.0))
         sage: k=0
         sage: for i in range(100):
-        ...    k += 1
-        ...    t.sphere((random(),random(), random()), random()/10, 't%s'%(k%3))
-        ...
+        ....:    k += 1
+        ....:    t.sphere((random(),random(), random()), random()/10, 't%s'%(k%3))
         sage: t.show()
 
     Points on an elliptic curve, their height indicated by their height
@@ -155,9 +249,8 @@ class Tachyon(SageObject):
         sage: Q = P
         sage: n = 100
         sage: for i in range(n):   # increase 20 for a better plot
-        ...    Q = Q + P
-        ...    t.sphere((Q[1], Q[0], ZZ(i)/n), 0.1, 't%s'%(i%3))
-        ...
+        ....:    Q = Q + P
+        ....:    t.sphere((Q[1], Q[0], ZZ(i)/n), 0.1, 't%s'%(i%3))
         sage: t.show()
 
     A beautiful picture of rational points on a rank 1 elliptic curve.
@@ -178,12 +271,10 @@ class Tachyon(SageObject):
         sage: Q = P
         sage: n = 100
         sage: for i in range(n):
-        ...    Q = Q + P
-        ...    c = i/n + .1
-        ...    t.texture('r%s'%i,color=(float(i/n),0,0))
-        ...    t.sphere((Q[0], -Q[1], .01), .04, 'r%s'%i)
-        ...
-        ...
+        ....:    Q = Q + P
+        ....:    c = i/n + .1
+        ....:    t.texture('r%s'%i,color=(float(i/n),0,0))
+        ....:    t.sphere((Q[0], -Q[1], .01), .04, 'r%s'%i)
         sage: t.show()    # long time, e.g., 10-20 seconds
 
     A beautiful spiral.
@@ -194,25 +285,72 @@ class Tachyon(SageObject):
         sage: t.light((0,0,100), 1, (1,1,1))
         sage: t.texture('r', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: for i in srange(0,50,0.1):
-        ...    t.sphere((i/10,sin(i),cos(i)), 0.05, 'r')
-        ...
+        ....:    t.sphere((i/10,sin(i),cos(i)), 0.05, 'r')
         sage: t.texture('white', color=(1,1,1), opacity=1, specular=1, diffuse=1)
         sage: t.plane((0,0,-100), (0,0,-100), 'white')
         sage: t.show()
+
+    If the optional parameter ``viewdir`` is not set, the camera
+    center should not coincide with the point which
+    is looked at (see :trac:`7232`)::
+
+        sage: t = Tachyon(xres=80,yres=80, camera_center=(2,5,2), look_at=(2,5,2))
+        Traceback (most recent call last):
+        ...
+        ValueError: camera_center and look_at coincide
+
+    Use of a fisheye lens perspective. ::
+
+        sage: T = Tachyon(xres=800, yres=600, camera_center=(-1.5,-1.5,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+        sage: T.texture('t1', color=(0,0,1))
+        sage: cedges = [[[1, 1, 1], [-1, 1, 1]], [[1, 1, 1], [1, -1, 1]],
+        ....: [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]], [[-1, 1, 1],
+        ....: [-1, 1, -1]], [[1, -1, 1], [-1, -1, 1]], [[1, -1, 1],
+        ....: [1, -1, -1]],
+        ....: [[-1, -1, 1], [-1, -1, -1]], [[1, 1, -1], [-1, 1, -1]],
+        ....: [[1, 1, -1], [1, -1, -1]], [[-1, 1, -1], [-1, -1, -1]],
+        ....: [[1, -1, -1], [-1, -1, -1]]]
+        sage: for ed in cedges:
+        ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
+        sage: T.light((-4,-4,4), .1, (1,1,1))
+        sage: T.show()
+
+    Use of the ``projection='perspective_dof'`` option.  This may not be
+    implemented correctly. ::
+
+        sage: T = Tachyon(xres=800,antialiasing=4, raydepth=10, projection='perspective_dof', focallength='1.0', aperture='.0025')
+        sage: T.light((0,5,7), 1.0, (1,1,1))
+        sage: T.texture('t1', opacity=1, specular=.3)
+        sage: T.texture('t2', opacity=1, specular=.3, color=(0,0,1))
+        sage: T.texture('t3', opacity=1, specular=1, color=(1,.8,1), diffuse=0.2)
+        sage: T.plane((0,0,-1), (0,0,1), 't3')
+        sage: ttlist = ['t1', 't2']
+        sage: tt = 't1'
+        sage: T.cylinder((0,0,.1), (1,1/3,0), .05, 't3')
+        sage: for q in srange(-3, 100, .15):
+        ....:     if tt == 't1':
+        ....:         tt = 't2'
+        ....:     else:
+        ....:         tt = 't1'
+        ....:     T.sphere((q, q/3+.3*sin(3*q), .1+.3*cos(3*q)), .1, tt)
+        sage: T.show()
     """
     def __init__(self,
                  xres=350, yres=350,
-                 zoom = 1.0,
-                 antialiasing = False,
-                 aspectratio = 1.0,
-                 raydepth = 8,
-                 camera_center = (-3, 0, 0),
-                 updir = (0, 0, 1),
-                 look_at = (0,0,0),
-                 viewdir = None,
-                 projection = 'PERSPECTIVE'):
+                 zoom=1.0,
+                 antialiasing=False,
+                 aspectratio=1.0,
+                 raydepth=8,
+                 camera_center=(-3, 0, 0),
+                 updir=(0, 0, 1),
+                 look_at=(0, 0, 0),
+                 viewdir=None,
+                 projection='PERSPECTIVE',
+                 focallength='',
+                 aperture='',
+                 frustum=''):
         r"""
-        Creates an instance of the Tachyon class.
+        Create an instance of the Tachyon class.
 
         EXAMPLES::
 
@@ -229,34 +367,68 @@ class Tachyon(SageObject):
         self._camera_center = camera_center
         self._updir = updir
         self._projection = projection
+        self._focallength = focallength
+        self._aperture = aperture
+        self._frustum = frustum
         self._objects = []
         if viewdir is None:
-            self._viewdir = [look_at[i] - camera_center[i] for i in range(3)]
+            if look_at != camera_center:
+                self._viewdir = [look_at[i] - camera_center[i]
+                                 for i in range(3)]
+            else:
+                raise ValueError('camera_center and look_at coincide')
         else:
             self._viewdir = viewdir
 
-
-
-    def __repr__(self):
+    def save_image(self, filename=None, *args, **kwds):
         r"""
-        Returns the string representation of the Tachyon object,
-        which is just the scene string input to tachyon.
+        Save an image representation of ``self``.
+
+        The image type is
+        determined by the extension of the filename.  For example,
+        this could be ``.png``, ``.jpg``, ``.gif``, ``.pdf``,
+        ``.svg``.  Currently this is implemented by calling the
+        :meth:`save` method of self, passing along all arguments and
+        keywords.
+
+        .. NOTE::
+
+            Not all image types are necessarily implemented for all
+            graphics types.  See :meth:`save` for more details.
 
         EXAMPLES::
 
             sage: q = Tachyon()
-            sage: q.light((1,1,1), 1,(1,1,1))
+            sage: q.light((1,1,11), 1,(1,1,1))
             sage: q.texture('s')
-            sage: q.sphere((0,0,0),1,'s')
-            sage: q.__repr__()[-20:]
-            '  \n        end_scene'
+            sage: q.sphere((0,-1,1),1,'s')
+            sage: tempname = tmp_filename()
+            sage: q.save_image(tempname)
+
+        TESTS:
+
+        :meth:`save_image` is used for generating animations::
+
+            sage: def tw_cubic(t):
+            ....:     q = Tachyon()
+            ....:     q.light((1,1,11), 1,(1,1,1))
+            ....:     q.texture('s')
+            ....:     for i in srange(-1,t,0.05):
+            ....:         q.sphere((i,i^2-0.5,i^3), 0.1, 's')
+            ....:     return q
+
+            sage: a = animate([tw_cubic(t) for t in srange(-1,1,.3)])
+            sage: a        # optional -- ImageMagick
+            Animation with 7 frames
+            sage: a.show() # optional -- ImageMagick
         """
-        return self.str()
+        self.save(filename, *args, **kwds)
 
-    def save(self, filename='sage.png', verbose=0, block=True, extra_opts=''):
+    def save(self, filename='sage.png', verbose=None, extra_opts=''):
         r"""
-        INPUT:
+        Save rendering of the tachyon scene
 
+        INPUT:
 
         -  ``filename`` - (default: 'sage.png') output
            filename; the extension of the filename determines the type.
@@ -272,16 +444,15 @@ class Tachyon(SageObject):
 
         -  ``png`` - 24-bit PNG (compressed, lossless)
 
-        -  ``verbose`` - integer; (default: 0)
+        -  ``verbose`` - integer (default: None); if no verbosity setting 
+           is supplied, the verbosity level set by 
+           sage.misc.misc.set_verbose is used.
 
         -  ``0`` - silent
 
         -  ``1`` - some output
 
         -  ``2`` - very verbose output
-
-        -  ``block`` - bool (default: True); if False, run the
-           rendering command in the background.
 
         -  ``extra_opts`` - passed directly to tachyon command
            line. Use tachyon_rt.usage() to see some of the possibilities.
@@ -294,35 +465,112 @@ class Tachyon(SageObject):
             sage: q.sphere((0,0,0),1,'s')
             sage: tempname = tmp_filename()
             sage: q.save(tempname)
-            sage: os.system('rm ' + tempname)
-            0
         """
-        tachyon_rt(self.str(), filename, verbose, block, extra_opts)
+        if verbose is None:
+            verbose = get_verbose()
+        tachyon_rt(self.str(), filename, verbose, extra_opts)
 
-    def show(self, verbose=0, extra_opts=''):
-        r"""
-        Creates a PNG file of the scene.
+    def _rich_repr_(self, display_manager, **kwds):
+        """
+        Rich Output Magic Method
+
+        See :mod:`sage.repl.rich_output` for details.
 
         EXAMPLES::
 
             sage: q = Tachyon()
-            sage: q.light((-1,-1,10), 1,(1,1,1))
+            sage: q.light((1,1,11), 1,(1,1,1))
             sage: q.texture('s')
             sage: q.sphere((0,0,0),1,'s')
-            sage: q.show(verbose = False)
+            sage: from sage.repl.rich_output import get_display_manager
+            sage: dm = get_display_manager()
+            sage: q._rich_repr_(dm)
+            OutputImagePng container
         """
-        import sage.plot.plot
-        if sage.doctest.DOCTEST_MODE:
-            filename = graphics_filename()
-            self.save(os.path.join(SAGE_TMP, 'test.png'), verbose=verbose, extra_opts=extra_opts)
-            return
-        if sage.plot.plot.EMBEDDED_MODE:
-            filename = graphics_filename()
-            self.save(filename, verbose=verbose, extra_opts=extra_opts)
+        OutputImagePng = display_manager.types.OutputImagePng
+        if OutputImagePng not in display_manager.supported_output():
             return
         filename = tmp_filename(ext='.png')
-        self.save(filename, verbose=verbose, extra_opts=extra_opts)
-        os.system('%s %s 2>/dev/null 1>/dev/null &'%(sage.misc.viewer.png_viewer(), filename))
+        self.save(filename, **kwds)
+        from sage.repl.rich_output.buffer import OutputBuffer
+        buf = OutputBuffer.from_file(filename)
+        return OutputImagePng(buf)
+        
+    def show(self, **kwds):
+        r"""
+        Create a PNG file of the scene.
+
+        This method attempts to display the graphics immediately,
+        without waiting for the currently running code (if any) to
+        return to the command line. Be careful, calling it from within
+        a loop will potentially launch a large number of external
+        viewer programs.
+
+        OUTPUT:
+
+        This method does not return anything. Use :meth:`save` if you
+        want to save the figure as an image.
+
+        EXAMPLES:
+        
+        This example demonstrates how the global Sage verbosity setting 
+        is used if none is supplied. Firstly, using a global verbosity 
+        setting of 0 means no extra technical information is displayed, 
+        and we are simply shown the plot.
+        
+        ::
+            
+            sage: h = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
+            sage: def f(x,y): return float(sin(x*y))
+            sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
+            sage: h.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: set_verbose(0)
+            sage: h.show() 
+            
+        This second example, using a "medium" global verbosity
+        setting of 1, displays some extra technical information then
+        displays our graph.
+        
+        ::
+            
+            sage: s = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
+            sage: def f(x,y): return float(sin(x*y))
+            sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
+            sage: s.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: set_verbose(1)
+            sage: s.show()
+            tachyon ...
+            Scene contains 2713 objects.
+            ...
+            
+        The last example shows how you can override the global Sage
+        verbosity setting, my supplying a setting level as an argument.
+        In this case we chose the highest verbosity setting level, 2,
+        so much more extra technical information is shown, along with
+        the plot.
+        
+        ::
+            
+            sage: set_verbose(0)
+            sage: d = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
+            sage: def f(x,y): return float(sin(x*y))
+            sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
+            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: get_verbose()
+            0
+            sage: d.show(verbose=2)
+            tachyon ...
+            Scene contains 2713 objects.
+            ...
+            Scene contains 1 non-gridded objects
+            ...
+        """
+        from sage.repl.rich_output import get_display_manager
+        dm = get_display_manager()
+        dm.display_immediately(self, **kwds)
 
     def _res(self):
         r"""
@@ -346,28 +594,41 @@ class Tachyon(SageObject):
 
             sage: t = Tachyon(raydepth = 16, zoom = 2, antialiasing = True)
             sage: t._camera().split()[3:10]
-            ['aspectratio', '1.0', 'antialiasing', '1', 'raydepth', '16', 'center']
+            ['zoom', '2.0', 'aspectratio', '1.0', 'antialiasing', '1', 'raydepth']
         """
-        return r"""
+        camera_out =  r"""
            camera
+              projection %s"""%(tostr(self._projection))
+        if self._focallength != '':
+            camera_out = camera_out + r"""
+              focallength %s"""%(float(self._focallength))
+        if self._aperture != '':
+            camera_out = camera_out + r"""
+              aperture %s"""%(float(self._aperture))
+        camera_out = camera_out + r"""
               zoom %s
               aspectratio %s
               antialiasing %s
               raydepth %s
               center %s
               viewdir %s
-              updir %s
-           end_camera
-        """%(float(self._zoom), float(self._aspectratio),
+              updir %s"""%(float(self._zoom), 
+             float(self._aspectratio),
              int(self._antialiasing),
              int(self._raydepth),
              tostr(self._camera_center),
              tostr(self._viewdir),
              tostr(self._updir))
+        if self._frustum != '':
+            camera_out = camera_out + r"""
+              frustum %s"""%(tostr(self._frustum))
+        camera_out = camera_out + r"""
+           end_camera"""
+        return camera_out
 
     def str(self):
         r"""
-        Returns the complete tachyon scene file as a string.
+        Return the complete tachyon scene file as a string.
 
         EXAMPLES::
 
@@ -379,8 +640,8 @@ class Tachyon(SageObject):
             sage: t.sphere((0,0.5,0), 0.2, 't2')
             sage: t.sphere((0.5,0,0), 0.2, 't3')
             sage: t.sphere((0,0,0.5), 0.2, 't4')
-            sage: t.str().find('PLASTIC')
-            567
+            sage: 'PLASTIC' in t.str()
+            True
         """
         return r"""
         begin_scene
@@ -395,7 +656,7 @@ class Tachyon(SageObject):
 
     def light(self, center, radius, color):
         r"""
-        Creates a light source of the given center, radius, and color.
+        Create a light source of the given center, radius, and color.
 
         EXAMPLES::
 
@@ -406,7 +667,8 @@ class Tachyon(SageObject):
         """
         self._objects.append(Light(center, radius, color))
 
-    def texfunc(self, type=0, center=(0,0,0), rotate=(0,0,0), scale=(1,1,1)):
+    def texfunc(self, type=0, center=(0,0,0), rotate=(0,0,0), scale=(1,1,1),
+                imagefile=''):
         r"""
         INPUT:
 
@@ -420,12 +682,9 @@ class Tachyon(SageObject):
            5. 3D gradient noise function (can't remember what it looks
               like)
            6. Don't remember
-           7. Cylindrical Image Map, requires ppm filename (don't know
-              how to specify name in sage?!)
-           8. Spherical Image Map, requires ppm filename (don't know
-              how to specify name in sage?!)
-           9. Planar Image Map, requires ppm filename (don't know how
-              to specify name in sage?!)
+           7. Cylindrical Image Map, requires ppm filename (with path) 
+           8. Spherical Image Map, requires ppm filename (with path)
+           9. Planar Image Map, requires ppm filename (with path)
 
         -  ``center`` - (default: (0,0,0))
         -  ``rotate`` - (default: (0,0,0))
@@ -441,12 +700,13 @@ class Tachyon(SageObject):
         """
         type = int(type)
         if type < 0 or type > 9:
-            raise ValueError, "type must be an integer between 0 and 9"
-        return Texfunc(type,center,rotate,scale).str()
+            raise ValueError("type must be an integer between 0 and 9")
+        return Texfunc(type,center,rotate,scale,imagefile=imagefile).str()
 
     def texture(self, name, ambient=0.2, diffuse=0.8,
                 specular=0.0, opacity=1.0,
-                color=(1.0,0.0, 0.5), texfunc=0, phong=0, phongsize=.5, phongtype="PLASTIC"):
+                color=(1.0,0.0, 0.5), texfunc=0, phong=0, phongsize=.5,
+                phongtype="PLASTIC", imagefile=''):
         r"""
         INPUT:
 
@@ -491,14 +751,15 @@ class Tachyon(SageObject):
             sage: show(t)  # known bug (:trac:`7232`)
         """
         if texfunc and not isinstance(texfunc, Texfunc):
-            texfunc = self.texfunc(int(texfunc))
+            texfunc = self.texfunc(int(texfunc), imagefile=imagefile)
         self._objects.append(Texture(name, ambient, diffuse,
                                      specular, opacity, color, texfunc,
-                                     phong,phongsize,phongtype))
+                                     phong, phongsize, phongtype,
+                                     imagefile=imagefile))
 
     def texture_recolor(self, name, colors):
         r"""
-        Recolors default textures.
+        Recolor default textures.
 
         EXAMPLES::
 
@@ -506,7 +767,7 @@ class Tachyon(SageObject):
             sage: t.texture('s')
             sage: q = t.texture_recolor('s',[(0,0,1)])
             sage: t._objects[1]._color
-            (0, 0, 1)
+            (0.0, 0.0, 1.0)
         """
         base_tex = None
         names = []
@@ -528,7 +789,7 @@ class Tachyon(SageObject):
 
     def sphere(self, center, radius, texture):
         r"""
-        Creates the scene information for a sphere with the given
+        Create the scene information for a sphere with the given
         center, radius, and texture.
 
         EXAMPLES::
@@ -550,7 +811,7 @@ class Tachyon(SageObject):
             sage: t = Tachyon()
             sage: t.ring([0,0,0], [0,0,1], 1.0, 2.0, 's')
             sage: t._objects[0]._center
-            [0, 0, 0]
+            (0.0, 0.0, 0.0)
         """
         self._objects.append(Ring(center, normal, inner, outer, texture))
 
@@ -571,11 +832,12 @@ class Tachyon(SageObject):
         r"""
         Creates an infinite plane with the given center and normal.
 
-        EXAMPLES::
+        TESTS::
 
             sage: t = Tachyon()
             sage: t.plane((0,0,0),(1,1,1),'s')
-            sage: t.str()[338:380]
+            sage: plane_pos = t.str().index('plane')
+            sage: t.str()[plane_pos:plane_pos+42]
             'plane center  0.0 0.0 0.0  normal  1.0 1.0'
         """
         self._objects.append(Plane(center, normal, texture))
@@ -607,7 +869,7 @@ class Tachyon(SageObject):
             sage: t = Tachyon()
             sage: t.fcylinder((1,1,1),(1,2,3),.01,'s')
             sage: len(t.str())
-            423
+            451
         """
         self._objects.append(FCylinder(base, apex, radius, texture))
 
@@ -620,8 +882,8 @@ class Tachyon(SageObject):
             sage: t = Tachyon()
             sage: t.texture('s')
             sage: t.triangle([1,2,3],[4,5,6],[7,8,10],'s')
-            sage: t._objects[1]
-            [1, 2, 3] [4, 5, 6] [7, 8, 10] s
+            sage: t._objects[1].get_vertices()
+            ([1, 2, 3], [4, 5, 6], [7, 8, 10])
 
         """
         self._objects.append(TachyonTriangle(vertex_1,vertex_2,vertex_3,texture))
@@ -636,8 +898,10 @@ class Tachyon(SageObject):
             sage: t.light((1,1,1),.1,(1,1,1))
             sage: t.texture('s')
             sage: t.smooth_triangle([0,0,0],[0,0,1],[0,1,0],[0,1,1],[-1,1,2],[3,0,0],'s')
-            sage: t._objects[2]
-            [0, 0, 0] [0, 0, 1] [0, 1, 0] s [0, 1, 1] [-1, 1, 2] [3, 0, 0]
+            sage: t._objects[2].get_vertices()
+            ([0, 0, 0], [0, 0, 1], [0, 1, 0])
+            sage: t._objects[2].get_normals()
+            ([0, 1, 1], [-1, 1, 2], [3, 0, 0])
         """
         self._objects.append(TachyonSmoothTriangle(vertex_1, vertex_2, vertex_3, normal_1, normal_2, normal_3, texture))
 
@@ -655,8 +919,8 @@ class Tachyon(SageObject):
         """
         self._objects.append(FractalLandscape(res, scale, center, texture))
 
-    def plot(self,f,(xmin,xmax),(ymin,ymax),texture,grad_f=None,
-                  max_bend=.7,max_depth=5,initial_depth=3, num_colors=None):
+    def plot(self, f, xmin_xmax, ymin_ymax, texture, grad_f=None,
+             max_bend=.7, max_depth=5, initial_depth=3, num_colors=None):
         r"""
         INPUT:
 
@@ -701,7 +965,10 @@ class Tachyon(SageObject):
             sage: def f(x,y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
-            sage: t.show()
+            sage: t.show(verbose=1)
+            tachyon ...
+            Scene contains 2713 objects.
+            ...
 
         Plotting with Smooth Triangles (requires explicit gradient
         function)::
@@ -712,7 +979,10 @@ class Tachyon(SageObject):
             sage: def g(x,y): return ( float(y*cos(x*y)), float(x*cos(x*y)), 1 )
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, grad_f = g)  # increase min_depth for better picture
-            sage: t.show()
+            sage: t.show(verbose=1)
+            tachyon ...
+            Scene contains 2713 objects.
+            ...
 
         Preconditions: f is a scalar function of two variables, grad_f is
         None or a triple-valued function of two variables, min_x !=
@@ -727,6 +997,8 @@ class Tachyon(SageObject):
             ...
             ValueError: Plot rectangle is really a line.  Make sure min_x != max_x and min_y != max_y.
         """
+        (xmin, xmax) = xmin_xmax 
+        (ymin, ymax) = ymin_ymax
         factory = TachyonTriangleFactory(self,texture)
         plot = TrianglePlot(factory, f, (xmin, xmax), (ymin, ymax), g = grad_f,
                              min_depth=initial_depth, max_depth=max_depth, max_bend=max_bend, num_colors = num_colors)
@@ -743,33 +1015,30 @@ class Tachyon(SageObject):
             sage: t.texture('t')
             sage: t.light((-20,-20,40), 0.2, (1,1,1))
             sage: t.parametric_plot(f,-5,5,'t',min_depth=6)
+            sage: t.show(verbose=1)
+            tachyon ...
+            Scene contains 514 objects.
+            ...
         """
+        self._objects.append(
+            ParametricPlot(
+                f, t_0, t_f, tex, r=r, cylinders=cylinders,
+                min_depth=min_depth, max_depth=max_depth,
+                e_rel=.01,e_abs=.01
+            )
+        )
 
-        self._objects.append(ParametricPlot(f, t_0, t_f, tex, r=r, cylinders=cylinders,min_depth=min_depth,max_depth=max_depth,e_rel=.01,e_abs=.01))
 
-#Doesn't seem to be used:
-#    def collect(self, objects):
-#        """
-#        Add a set of objects to the scene from a collection.
-#
-#        EXAMPLES::
-#
-#            sage: t = Tachyon()
-#            sage: t.texture('s')
-#            sage: for i in range(10): t.sphere((0,0,i),i,'s')
-#        """
-#        self._objects.extend(objects)
-
-class Light:
+class Light(object):
     r"""
     Represents lighting objects.
 
     EXAMPLES::
 
         sage: from sage.plot.plot3d.tachyon import Light
-        sage: q = Light((1,1,1),1,(1,1,1))
+        sage: q = Light((1,1,1), 1, (1,1,1))
         sage: q._center
-        (1, 1, 1)
+        (1.0, 1.0, 1.0)
     """
     def __init__(self, center, radius, color):
         r"""
@@ -778,13 +1047,15 @@ class Light:
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import Light
-            sage: q = Light((1,1,1),1,(1,1,1))
+            sage: q = Light((1,1,1), 1, (1,1,1))
             sage: q._color
-            (1, 1, 1)
+            (1.0, 1.0, 1.0)
         """
-        self._center = center
-        self._radius = radius
-        self._color = color
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
+        self._radius = float(radius)
+        r, g, b = color
+        self._color = (float(r), float(g), float(b))
 
     def str(self):
         r"""
@@ -793,19 +1064,21 @@ class Light:
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import Light
-            sage: q = Light((1,1,1),1,(1,1,1))
+            sage: q = Light((1,1,1), 1, (1,1,1))
             sage: q._radius
-            1
+            1.0
         """
         return r"""
         light center %s
               rad %s
               color %s
-        """%(tostr(self._center), float(self._radius),
+        """%(tostr(self._center), self._radius,
              tostr(self._color))
 
-class Texfunc:
-    def __init__(self, type=0,center=(0,0,0), rotate=(0,0,0), scale=(1,1,1)):
+    
+class Texfunc(object):
+
+    def __init__(self, ttype=0, center=(0,0,0), rotate=(0,0,0), scale=(1,1,1), imagefile=''):
         r"""
         Creates a texture function.
 
@@ -813,13 +1086,17 @@ class Texfunc:
 
             sage: from sage.plot.plot3d.tachyon import Texfunc
             sage: t = Texfunc()
-            sage: t._type
+            sage: t._ttype
             0
         """
-        self._type = type
-        self._center = center
-        self._rotate = rotate
-        self._scale = scale
+        self._ttype = ttype
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
+        x, y, z = rotate
+        self._rotate = (float(x), float(y), float(z))
+        x, y, z = scale
+        self._scale = (float(x), float(y), float(z))
+        self._imagefile = imagefile
 
     def str(self):
         r"""
@@ -830,19 +1107,42 @@ class Texfunc:
             sage: from sage.plot.plot3d.tachyon import Texfunc
             sage: t = Texfunc()
             sage: t.str()
-            '0 center  0.0 0.0 0.0  rotate  0.0 0.0 0.0  scale  1.0 1.0 1.0 '
+            '0'
         """
-        if type == 0:
+        if self._ttype == 0:
             return "0"
-        return r"""%d center %s rotate %s scale %s"""%(self._type,
-                                                      tostr(self._center),
-                                                      tostr(self._rotate),
-                                                      tostr(self._scale))
+        elif self._ttype < 7 and self._ttype > 0:
+            return r"""%d center %s rotate %s scale %s"""%(
+                self._ttype,
+                tostr(self._center),
+                tostr(self._rotate),
+                tostr(self._scale))
+        elif self._ttype < 9:
+            return r"""%d %s center %s rotate %s scale %s"""%(
+                self._ttype,
+                self._imagefile,
+                tostr(self._center),
+                tostr(self._rotate),
+                tostr(self._scale))
+        elif self._ttype == 9:
+            return r"""%d %s center %s rotate %s scale %s
+            uaxis 1.0 0.0 0.0 
+            vaxis 0.0 1.0 0.0"""%(
+                self._ttype,
+                self._imagefile,
+                tostr(self._center),
+                tostr(self._rotate),
+                tostr(self._scale))
+        else:
+            raise ValueError
 
-class Texture:
+
+class Texture(object):
+    
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
-                 color=(1.0,0.0, 0.5), texfunc=0, phong=0, phongsize=0, phongtype="PLASTIC"):
+                 color=(1.0,0.0, 0.5), texfunc=0,
+                 phong=0, phongsize=0, phongtype="PLASTIC", imagefile=''):
         r"""
         Stores texture information.
 
@@ -853,16 +1153,18 @@ class Texture:
             sage: t.str().split()[2:6]
             ['ambient', '0.2', 'diffuse', '0.8']
         """
-        self._name = name
-        self._ambient = ambient
-        self._diffuse = diffuse
-        self._specular = specular
-        self._opacity = opacity
-        self._color = color
+        self._name = str(name)
+        self._ambient = float(ambient)
+        self._diffuse = float(diffuse)
+        self._specular = float(specular)
+        self._opacity = float(opacity)
+        r, g, b = color
+        self._color = (float(r), float(g), float(b))
         self._texfunc = texfunc
-        self._phong = phong
-        self._phongsize = phongsize
-        self._phongtype = phongtype
+        self._phong = float(phong)
+        self._phongsize = float(phongsize)
+        self._phongtype = str(phongtype)
+        self._imagefile = str(imagefile)
 
     def recolor(self, name, color):
         r"""
@@ -879,7 +1181,7 @@ class Texture:
             'color  0.1 0.2 0.3  '
         """
         return Texture(name, self._ambient, self._diffuse, self._specular, self._opacity,
-                             color, self._texfunc, self._phong, self._phongsize, self._phongtype)
+                             color, self._texfunc, self._phong, self._phongsize, self._phongtype, self._imagefile)
 
     def str(self):
         r"""
@@ -891,7 +1193,6 @@ class Texture:
             sage: t = Texture('w')
             sage: t.str().split()[2:6]
             ['ambient', '0.2', 'diffuse', '0.8']
-
         """
         return r"""
         texdef %s ambient %s diffuse %s specular %s opacity %s
@@ -908,7 +1209,8 @@ class Texture:
              tostr(self._color),
              self._texfunc)
 
-class Sphere:
+    
+class Sphere(object):
     r"""
     A class for creating spheres in tachyon.
     """
@@ -920,13 +1222,14 @@ class Sphere:
 
             sage: t = Tachyon()
             sage: from sage.plot.plot3d.tachyon import Sphere
-            sage: t.texture('r', color=(.8,0,0), ambient = .1)
-            sage: s = Sphere((1,1,1),1,'r')
+            sage: t.texture('r', color=(.8,0,0), ambient=.1)
+            sage: s = Sphere((1,1,1), 1, 'r')
             sage: s._radius
-            1
+            1.0
         """
-        self._center = center
-        self._radius = radius
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
+        self._radius = float(radius)
         self._texture = texture
 
     def str(self):
@@ -938,15 +1241,16 @@ class Sphere:
             sage: t = Tachyon()
             sage: from sage.plot.plot3d.tachyon import Sphere
             sage: t.texture('r', color=(.8,0,0), ambient = .1)
-            sage: s = Sphere((1,1,1),1,'r')
+            sage: s = Sphere((1,1,1), 1, 'r')
             sage: s.str()
             '\n        sphere center  1.0 1.0 1.0  rad 1.0 r\n        '
         """
         return r"""
         sphere center %s rad %s %s
-        """%(tostr(self._center), float(self._radius), self._texture)
+        """%(tostr(self._center), self._radius, self._texture)
 
-class Ring:
+    
+class Ring(object):
     r"""
     An annulus of zero thickness.
     """
@@ -960,12 +1264,14 @@ class Ring:
             sage: from sage.plot.plot3d.tachyon import Ring
             sage: r = Ring((1,1,1), (1,1,0), 1.0, 2.0, 's')
             sage: r._center
-            (1, 1, 1)
+            (1.0, 1.0, 1.0)
         """
-        self._center = center
-        self._normal = normal
-        self._inner = inner
-        self._outer = outer
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
+        x, y, z = normal
+        self._normal = (float(x), float(y), float(z))
+        self._inner = float(inner)
+        self._outer = float(outer)
         self._texture = texture
 
     def str(self):
@@ -981,9 +1287,11 @@ class Ring:
         """
         return r"""
         ring center %s normal %s inner %s outer %s %s
-        """%(tostr(self._center), tostr(self._normal), float(self._inner), float(self._outer), self._texture)
+        """%(tostr(self._center), tostr(self._normal),
+             self._inner, self._outer, self._texture)
 
-class FractalLandscape:
+
+class FractalLandscape(object):
     r"""
     Axis-aligned fractal landscape.
     Does not seem very useful at the moment, but perhaps will be improved in the future.
@@ -997,11 +1305,14 @@ class FractalLandscape:
             sage: from sage.plot.plot3d.tachyon import FractalLandscape
             sage: fl = FractalLandscape([20,20],[30,30],[1,2,3],'s')
             sage: fl._center
-            [1, 2, 3]
+            (1.0, 2.0, 3.0)
         """
-        self._res = res
-        self._scale = scale
-        self._center = center
+        x, y = res
+        self._res = (int(x), int(y))
+        x, y = scale
+        self._scale = (int(x), int(y))
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
         self._texture = texture
 
     def str(self):
@@ -1019,7 +1330,8 @@ class FractalLandscape:
         scape res %s scale %s center %s %s
         """%(tostr(self._res, 2, int), tostr(self._scale, 2, int), tostr(self._center), self._texture)
 
-class Cylinder:
+    
+class Cylinder(object):
     r"""
     An infinite cylinder.
     """
@@ -1035,9 +1347,11 @@ class Cylinder:
             sage: c.str()
             '\n        cylinder center  0.0 0.0 0.0  axis  1.0 1.0 1.0  rad 0.1 s\n        '
         """
-        self._center = center
-        self._axis = axis
-        self._radius = radius
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
+        x, y, z = axis
+        self._axis = (float(x), float(y), float(z))
+        self._radius = float(radius)
         self._texture = texture
 
     def str(self):
@@ -1054,9 +1368,10 @@ class Cylinder:
             """
         return r"""
         cylinder center %s axis %s rad %s %s
-        """%(tostr(self._center), tostr(self._axis), float(self._radius), self._texture)
+        """%(tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
-class Plane:
+
+class Plane(object):
     r"""
     An infinite plane.
     """
@@ -1067,12 +1382,14 @@ class Plane:
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import Plane
-            sage: p = Plane((1,2,3),(1,2,4),'s')
+            sage: p = Plane((1,2,3), (1,2,4), 's')
             sage: p.str()
             '\n        plane center  1.0 2.0 3.0  normal  1.0 2.0 4.0  s\n        '
         """
-        self._center = center
-        self._normal = normal
+        x, y, z = center
+        self._center = (float(x), float(y), float(z))
+        x, y, z = normal
+        self._normal = (float(x), float(y), float(z))
         self._texture = texture
 
     def str(self):
@@ -1090,7 +1407,8 @@ class Plane:
         plane center %s normal %s %s
         """%(tostr(self._center), tostr(self._normal), self._texture)
 
-class FCylinder:
+    
+class FCylinder(object):
     r"""
     A finite cylinder.
     """
@@ -1105,9 +1423,11 @@ class FCylinder:
             sage: fc.str()
             '\n        fcylinder base  0.0 0.0 0.0  apex  1.0 1.0 1.0  rad 0.1 s\n        '
         """
-        self._center = base
-        self._axis = apex
-        self._radius = radius
+        x, y, z = base
+        self._center = (float(x), float(y), float(z))
+        x, y, z = apex
+        self._axis = (float(x), float(y), float(z))
+        self._radius = float(radius)
         self._texture = texture
 
     def str(self):
@@ -1123,9 +1443,10 @@ class FCylinder:
         """
         return r"""
         fcylinder base %s apex %s rad %s %s
-        """%(tostr(self._center), tostr(self._axis), float(self._radius), self._texture)
+        """%(tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
-class Axis_aligned_box():
+
+class Axis_aligned_box(object):
     r"""
     Box with axis-aligned edges with the given min and max coordinates.
     """
@@ -1140,8 +1461,10 @@ class Axis_aligned_box():
             sage: aab.str()
             '\n        box min  0.0 0.0 0.0  max  1.0 1.0 1.0  s\n        '
         """
-        self._min_p = min_p
-        self._max_p = max_p
+        x, y, z = min_p
+        self._min_p = (float(x), float(y), float(z))
+        x, y, z = max_p
+        self._max_p =  (float(x), float(y), float(z))
         self._texture = texture
 
     def str(self):
@@ -1158,6 +1481,7 @@ class Axis_aligned_box():
         return r"""
         box min %s max %s %s
         """%(tostr(self._min_p), tostr(self._max_p), self._texture)
+
 
 class TachyonTriangle(Triangle):
     r"""
@@ -1177,7 +1501,8 @@ class TachyonTriangle(Triangle):
         return r"""
         TRI V0 %s  V1 %s   V2 %s
             %s
-        """%(tostr(self._a), tostr(self._b),tostr(self._c), self._color)
+        """%(tostr(self._a), tostr(self._b), tostr(self._c), self._color)
+
 
 class TachyonSmoothTriangle(SmoothTriangle):
     r"""
@@ -1185,7 +1510,7 @@ class TachyonSmoothTriangle(SmoothTriangle):
     """
     def str(self):
         r"""
-        Returns the scene string for a smoothed triangle.
+        Return the scene string for a smoothed triangle.
 
         EXAMPLES::
 
@@ -1200,7 +1525,6 @@ class TachyonSmoothTriangle(SmoothTriangle):
              %s
         """%(tostr(self._a),  tostr(self._b),  tostr(self._c),
              tostr(self._da), tostr(self._db), tostr(self._dc), self._color)
-
 
 
 class TachyonTriangleFactory(TriangleFactory):
@@ -1271,254 +1595,13 @@ class TachyonTriangleFactory(TriangleFactory):
             sage: t = Tachyon()
             sage: t.texture('s')
             sage: ttf = TachyonTriangleFactory(t, 's')
-            sage: ttf.get_colors([1])
+            sage: ttf.get_colors([(1,1,1)])
             ['SAGETEX1_0']
         """
         return self._tachyon.texture_recolor(self._texture, list)
 
-# following classes TachyonPlot and PlotBlock seems broken and not used anywhere, so commented out.  Please write to the sage-devel google-group if you are the author of these classes to comment.
 
-#class TachyonPlot:
-    #Recursively plots a function of two variables by building squares of 4 triangles, checking at
-    # every stage whether or not each square should be split into four more squares.  This way,
-    # more planar areas get fewer triangles, and areas with higher curvature get more triangles
-
-#    def str(self):
-#        return "".join([o.str() for o in self._objects])
-
-#    def __init__(self, tachyon, f, (min_x, max_x), (min_y, max_y), tex, g = None,
-#                              min_depth=4, max_depth=8, e_rel = .01, e_abs = .01, num_colors = None):
-#        self._tachyon = tachyon
-#        self._f = f
-#        self._g = g
-#        self._tex = tex
-#        self._min_depth = min_depth
-#        self._max_depth = max_depth
-#        self._e_rel = e_rel
-#        self._e_abs = e_abs
-#        self._objects = []
-#        self._eps = min(max_x - min_x, max_y - min_y)/(2**max_depth)
-#        if self._eps == 0:
-#            raise ValueError, 'Plot rectangle is really a line.  Make sure min_x != #max_x and min_y != max_y.'
-#        self._num_colors = num_colors
-#        if g is None:
-#            def fcn(x,y):
-#                return [self._f(x,y)]
-#        else:
-#            def fcn(x,y):
-#                return [self._f(x,y), self._g(x,y)]
-
-#        self._fcn = fcn
-
-
-#        # generate the necessary data to kick-start the recursion
-#        mid_x = (min_x + max_x)/2
-#        mid_y = (min_y + max_y)/2
-#        sw_z = fcn(min_x,min_y)
-#        nw_z = fcn(min_x,max_y)
-#        se_z = fcn(max_x,min_y)
-#        ne_z = fcn(max_x,max_y)
-#        mid_z = fcn(mid_x,mid_y)
-
-#        self._min = min(sw_z[0], nw_z[0], se_z[0], ne_z[0], mid_z[0])
-#        self._max = max(sw_z[0], nw_z[0], se_z[0], ne_z[0], mid_z[0])
-
-#        # jump in and start building blocks
-#        outer = self.plot_block(min_x, mid_x, max_x, min_y, mid_y, max_y, sw_z, nw_z, se_z, ne_z, mid_z, 0)
-#
-#        # build the boundary triangles
-#        self.triangulate(outer.left, outer.left_c)
-#        self.triangulate(outer.top, outer.top_c)
-#        self.triangulate(outer.right, outer.right_c)
-#        self.triangulate(outer.bottom, outer.bottom_c)
-
-#        zrange = self._max - self._min
-#        if num_colors is not None and zrange != 0:
-#            colors = tachyon.texture_recolor(tex, [hue(float(i/num_colors)) for i in range(num_colors)])
-
-#            for o in self._objects:
-#                avg_z = (o._vertex_1[2] + o._vertex_2[2] + o._vertex_3[2])/3
-#                o._texture = colors[int(num_colors * (avg_z - self._min) / zrange)]
-
-#    def plot_block(self, min_x, mid_x, max_x, min_y, mid_y, max_y, sw_z, nw_z, se_z, ne_z, mid_z, depth):
-
-#        if depth < self._max_depth:
-#            # recursion is still an option -- step in one last level if we're within tolerance
-#            # and just keep going if we're not.
-#            # assumption: it's cheap to build triangles, so we might as well use all the data
-#            # we calculate
-
-#            # big square boundary midpoints
-#            mid_w_z = self._fcn(min_x, mid_y)
-#            mid_n_z = self._fcn(mid_x, max_y)
-#            mid_e_z = self._fcn(max_x, mid_y)
-#            mid_s_z = self._fcn(mid_x, min_y)
-
-#            # midpoints locations of sub_squares
-#            qtr1_x = (min_x + mid_x)/2
-#            qtr1_y = (min_y + mid_y)/2
-#            qtr3_x = (mid_x + max_x)/2
-#           qtr3_y = (mid_y + max_y)/2
-
-#            # function evaluated at these midpoints
-#            mid_sw_z = self._fcn(qtr1_x,qtr1_y)
-#            mid_nw_z = self._fcn(qtr1_x,qtr3_y)
-#            mid_se_z = self._fcn(qtr3_x,qtr1_y)
-#            mid_ne_z = self._fcn(qtr3_x,qtr3_y)
-
-#            # linearization estimates of midpoints
-#            est_sw_z = (mid_z[0] + sw_z[0])/2
-#            est_nw_z = (mid_z[0] + nw_z[0])/2
-#            est_se_z = (mid_z[0] + se_z[0])/2
-#           est_ne_z = (mid_z[0] + ne_z[0])/2
-
-#            self.extrema([mid_w_z[0], mid_n_z[0], mid_e_z[0], mid_s_z[0], mid_sw_z[0], mid_se_z[0], mid_nw_z[0], mid_sw_z[0]])
-
-#            tol_check = [(est_sw_z, mid_sw_z[0]), (est_nw_z, mid_nw_z[0]), (est_se_z, mid_se_z[0]), (est_ne_z, mid_ne_z[0])]
-
-#            if depth < self._min_depth or not self.tol_list(tol_check):
-#                next_depth = depth + 1
-#            else:
-#                #lie about the depth to halt recursion
-#                next_depth = self._max_depth
-
-#            # recurse into the sub-squares
-#            sw = self.plot_block(min_x, qtr1_x, mid_x, min_y, qtr1_y, mid_y, sw_z, mid_w_z, mid_s_z, mid_z, mid_sw_z, next_depth)
-#            nw = self.plot_block(min_x, qtr1_x, mid_x, mid_y, qtr3_y, max_y, mid_w_z, nw_z, mid_z, mid_n_z, mid_nw_z, next_depth)
-#            se = self.plot_block(mid_x, qtr3_x, max_x, min_y, qtr1_y, mid_y, mid_s_z, mid_z, se_z, mid_e_z, mid_se_z, next_depth)
-#            ne = self.plot_block(mid_x, qtr3_x, max_x, mid_y, qtr3_y, max_y, mid_z, mid_n_z, mid_e_z, ne_z, mid_ne_z, next_depth)
-
-#            # join the sub-squares
-#            self.interface(1, sw.right, sw.right_c, se.left, se.left_c)
-#            self.interface(1, nw.right, nw.right_c, ne.left, ne.left_c)
-#            self.interface(0, sw.top, sw.top_c, nw.bottom, nw.bottom_c)
-#            self.interface(0, se.top, se.top_c, ne.bottom, ne.bottom_c)
-
-#            #get the boundary information about the subsquares
-#            left     = sw.left     + nw.left[1:]
-#            left_c   = sw.left_c   + nw.left_c
-#            right    = se.right    + ne.right[1:]
-#            right_c  = se.right_c  + ne.right_c
-#            top      = nw.top      + ne.top[1:]
-#            top_c    = nw.top_c    + ne.top_c
-#            bottom   = sw.bottom   + se.bottom[1:]
-#            bottom_c = sw.bottom_c + se.bottom_c
-
-#        else:
-#            # just build the square we're in
-#            if self._g is None:
-#                sw = [(min_x,min_y,sw_z[0])]
-#                nw = [(min_x,max_y,nw_z[0])]
-#                se = [(max_x,min_y,se_z[0])]
-#                ne = [(max_x,max_y,ne_z[0])]
-#                c  = [[(mid_x,mid_y,mid_z[0])]]
-#            else:
-#                sw = [(min_x,min_y,sw_z[0]),sw_z[1]]
-#                nw = [(min_x,max_y,nw_z[0]),nw_z[1]]
-#               se = [(max_x,min_y,se_z[0]),se_z[1]]
-#               ne = [(max_x,max_y,ne_z[0]),ne_z[1]]
-#               c  = [[(mid_x,mid_y,mid_z[0]),mid_z[1]]]
-
-
-#            left = [sw,nw]
-#            left_c = c
-#            top = [nw,ne]
-#            top_c = c
-#            right = [se,ne]
-#            right_c = c
-#           bottom = [sw,se]
-#            bottom_c = c
-
-#        return PlotBlock(left, left_c, top, top_c, right, right_c, bottom, bottom_c)
-
-#    def tol(self, (est, val)):
-#        # Check relative, then absolute tolerance.  If both fail, return False
-#        # This is a zero-safe error checker
-
-#        if abs(est - val) < self._e_rel*abs(val):
-#            return True
-#        if abs(est - val) < self._e_abs:
-#            return True
-#        return False
-
-#    def tol_list(self, l):
-#        # Pass in a list of pairs of numbers, (est, val) to be passed to self.tol
-#        # returns False if any pair does not fall within tolerance level
-
-#        for p in l:
-#            if not self.tol(p):
-#                return False
-#        return True
-
-#    def interface(self, n, p, p_c, q, q_c):
-#        # Takes a pair of lists of points, and compares the (n)th coordinate, and
-#        # "zips" the lists together into one.  The "centers", supplied in p_c and
-#        # q_c are matched up such that the lists describe triangles whose sides
-#       # are "perfectly" aligned.  This algorithm assumes that p and q start and
-#        # end at the same point, and are sorted smallest to largest.
-
-#        m   = [p[0]] # a sorted union of p and q
-#        mpc = [p_c[0]] # centers from p_c corresponding to m
-#        mqc = [q_c[0]] # centers from q_c corresponding to m
-
-#        i = 1
-#        j = 1
-
-#        while i < len(p_c) or j < len(q_c):
-#            if abs(p[i][0][n] - q[j][0][n]) < self._eps:
-#                m.append(p[i])
-#                mpc.append(p_c[i])
-#                mqc.append(q_c[j])
-#               i += 1
-#               j += 1
-#            elif p[i][0][n] < q[j][0][n]:
-#                m.append(p[i])
-#                mpc.append(p_c[i])
-#                mqc.append(mqc[-1])
-#                i += 1
-#            else:
-#                m.append(q[j])
-#               mpc.append(mpc[-1])
-#                mqc.append(q_c[j])
-#                j += 1
-
-#        m.append(p[-1])
-
-#        self.triangulate(m, mpc)
-#        self.triangulate(m, mqc)
-
-
-#    def triangulate(self, p, c):
-#        # Pass in a list of edge points (p) and center points (c).
-#        # Triangles will be rendered between consecutive edge points and the
-#        # center point with the same index number as the earlier edge point.
-
-#        if self._g is None:
-#            for i in range(0,len(p)-1):
-#                self._objects.append(Triangle(p[i][0], p[i+1][0], c[i][0], self._tex))
-#        else:
-#            for i in range(0,len(p)-1):
-#                self._objects.append(SmoothTriangle(p[i][0], p[i+1][0], c[i][0],p[i][1], p[i+1][1], c[i][1], self._tex))
-
-
-#    def extrema(self, list):
-#        if self._num_colors is not None:
-#            self._min = min(list+[self._min])
-#            self._max = max(list+[self._max])
-
-
-#class PlotBlock:
-#   def __init__(self, left, left_c, top, top_c, right, right_c, bottom, bottom_c):
-#       self.left = left
-#       self.left_c = left_c
-#       self.top = top
-#      self.top_c = top_c
-#       self.right = right
-#       self.right_c = right_c
-#       self.bottom = bottom
-#       self.bottom_c = bottom_c
-
-class ParametricPlot:
+class ParametricPlot(object):
     r"""
     Parametric plotting routines.
     """
@@ -1622,7 +1705,8 @@ class ParametricPlot:
 
         return False
 
-def tostr(s, length = 3, out_type = float):
+
+def tostr(s, length=3, out_type=float):
     r"""
     Converts vector information to a space-separated string.
 

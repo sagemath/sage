@@ -1,7 +1,5 @@
 from sage.misc.lazy_import import lazy_import
 
-from ag_code import ag_code
-
 from code_constructions import (permutation_action,
                    walsh_matrix,cyclotomic_cosets)
 
@@ -65,7 +63,6 @@ from code_bounds import (codesize_upper_bound,
                          mrrw1_bound_asymp)
 
 from linear_code import (LinearCode, LinearCodeFromVectorSpace,
-                         hamming_weight,
                          best_known_linear_code,
                          best_known_linear_code_www,
                          bounds_minimum_distance,
@@ -77,3 +74,6 @@ lazy_import("sage.coding.delsarte_bounds",
     ["Krawtchouk", "delsarte_bound_hamming_space", "delsarte_bound_additive_hamming_space"])
 
 lazy_import('sage.coding', 'codes_catalog', 'codes')
+lazy_import('sage.coding', 'channels_catalog', 'channels')
+
+import sage.coding.channel_constructions

@@ -40,8 +40,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         except AttributeError:
             pass
         if not self.is_odd_degree():
-            raise TypeError, \
-                  "Kummer embedding not determined for even degree model curves."
+            raise TypeError("Kummer embedding not determined for even degree model curves.")
         J = self.jacobian()
         K = J.kummer_surface()
         return self._kummer_morphism

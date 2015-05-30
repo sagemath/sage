@@ -55,9 +55,9 @@ def random_quadraticform(R, n, rand_arg_list=[]):
     """
     ## Sanity Checks: We have a ring and there are at most 3 parameters for randomness!
     if len(rand_arg_list) > 3:
-        raise TypeError, "Oops!  The list of randomness arguments can have at most 3 elements."
+        raise TypeError("Oops!  The list of randomness arguments can have at most 3 elements.")
     if not is_Ring(R):
-        raise TypeError, "Oops!  The first argument must be a ring."
+        raise TypeError("Oops!  The first argument must be a ring.")
 
     ## Create a list of upper-triangular entries for the quadratic form
     L = len(rand_arg_list)
@@ -109,7 +109,7 @@ def random_quadraticform_with_conditions(R, n, condition_list=[], rand_arg_list=
             ## Check if condition c is satisfied
             try:
                 bool_ans = Q.c()
-            except StandardError:
+            except Exception:
                 bool_ans = c(Q)
 
             ## Create a new quadratic form if a condition fails
@@ -204,7 +204,7 @@ def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=[]):
             ## Check if condition c is satisfied
             try:
                 bool_ans = Q.c()
-            except StandardError:
+            except Exception:
                 bool_ans = c(Q)
 
             ## Create a new quadratic form if a condition fails

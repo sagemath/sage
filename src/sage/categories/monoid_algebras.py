@@ -10,31 +10,27 @@ Monoid algebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_over_base_ring
-from sage.misc.cachefunc import cached_method
-
-class MonoidAlgebras(Category_over_base_ring):
+def MonoidAlgebras(base_ring):
     """
-    The category of all monoid algebras over a given base ring.
+    The category of monoid algebras over ``base_ring``
 
     EXAMPLES::
 
-        sage: MonoidAlgebras(GF(2))
-        Category of monoid algebras over Finite Field of size 2
+        sage: C = MonoidAlgebras(QQ); C
+        Category of monoid algebras over Rational Field
+        sage: sorted(C.super_categories(), key=str)
+        [Category of algebras with basis over Rational Field,
+         Category of semigroup algebras over Rational Field,
+         Category of unital magma algebras over Rational Field]
+
+    This is just an alias for::
+
+        sage: C is Monoids().Algebras(QQ)
+        True
 
     TESTS::
 
         sage: TestSuite(MonoidAlgebras(ZZ)).run()
     """
-
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: MonoidAlgebras(QQ).super_categories()
-            [Category of algebras with basis over Rational Field]
-        """
-        from sage.categories.algebras_with_basis import AlgebrasWithBasis
-        R = self.base_ring()
-        return [AlgebrasWithBasis(R)]
+    from sage.categories.all import Monoids
+    return Monoids().Algebras(base_ring)

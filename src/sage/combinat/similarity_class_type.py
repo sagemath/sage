@@ -177,20 +177,21 @@ AUTHOR:
 
 from operator import mul
 from itertools import chain
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from sage.functions.all import factorial
 from sage.rings.arith import moebius
-from sage.structure.parent import Parent
 from sage.structure.element import Element
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.combinat import CombinatorialObject
+from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.partition import Partitions, Partition
 from sage.rings.all import ZZ, QQ, FractionField, divisors
 from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.combinat.cartesian_product import CartesianProduct
 from sage.combinat.misc import IterableFunctionCall
+from functools import reduce
 
 @cached_function
 def fq(n, q = None):
@@ -215,7 +216,7 @@ def fq(n, q = None):
         sage: fq(3)
         (q^6 - q^5 - q^4 + q^2 + q - 1)/q^6
     """
-    if q == None:
+    if q is None:
         q = ZZ['q'].gen()
     return reduce(mul, [1-q**(-i-1) for i in range(n)], 1)
 
@@ -511,7 +512,7 @@ class PrimarySimilarityClassType(Element):
             sage: PT.centralizer_group_card()
             q^8 - q^6 - q^4 + q^2
         """
-        if q == None:
+        if q is None:
             R = FractionField(ZZ['q'])
             q = R.gen()
         return self.statistic(centralizer_group_cardinality, q = q)
@@ -628,7 +629,7 @@ class PrimarySimilarityClassTypes(Parent, UniqueRepresentation):
         if self._min[0].divides(n):
             for par in Partitions(ZZ(n/self._min[0]), starting = self._min[1]):
                 yield self.element_class(self, self._min[0], par)
-        for d in filter(lambda d: d > self._min[0], divisors(n)):
+        for d in (d for d in divisors(n) if d > self._min[0]):
             for par in Partitions(ZZ(n/d)):
                 yield self.element_class(self, d, par)
 
@@ -651,7 +652,7 @@ class PrimarySimilarityClassTypes(Parent, UniqueRepresentation):
 
 ###############################################################################
 
-class SimilarityClassType(CombinatorialObject, Element):
+class SimilarityClassType(CombinatorialElement):
     r"""
     A similarity class type.
 
@@ -666,8 +667,6 @@ class SimilarityClassType(CombinatorialObject, Element):
         sage: tau1 = SimilarityClassType([[3, [3, 2, 1]], [2, [2, 1]]]); tau1
         [[2, [2, 1]], [3, [3, 2, 1]]]
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, tau):
         """
@@ -711,8 +710,8 @@ class SimilarityClassType(CombinatorialObject, Element):
             sage: elt =  SimilarityClassType([[3, [3, 2, 1]], [2, [2, 1]]])
             sage: TestSuite(elt).run()
         """
-        CombinatorialObject.__init__(self, sorted(tau, key=lambda PT: (PT.degree(), PT.partition())))
-        Element.__init__(self, parent)
+        tau = sorted(tau, key=lambda PT: (PT.degree(), PT.partition()))
+        CombinatorialElement.__init__(self, parent, tau)
 
     def size(self):
         """
@@ -1176,8 +1175,8 @@ def dictionary_from_generator(gen):
         high.
     """
     L = list(gen)
-    setofkeys = list(set([item[0] for item in L]))
-    return dict([(key, sum([entry[1] for entry in filter(lambda pair: pair[0] == key, L)])) for key in setofkeys])
+    setofkeys = list(set(item[0] for item in L))
+    return dict((key, sum(entry[1] for entry in (pair for pair in L if pair[0] == key))) for key in setofkeys)
 
 def matrix_similarity_classes(n, q = None, invertible = False):
     r"""
@@ -1557,7 +1556,7 @@ def matrix_centralizer_cardinalities_length_two(n, q = None, selftranspose = Fal
         (q^4 - q^2, 1/2*q^4 - 1/2*q^3)]
         sage: from sage.combinat.similarity_class_type import dictionary_from_generator
         sage: dictionary_from_generator(matrix_centralizer_cardinalities_length_two(2, q = 2))
-        {96: 4, 32: 4, 4: 4, 16: 2, 8: 8, 12: 4, 48: 2}
+        {4: 4, 8: 8, 12: 4, 16: 2, 32: 4, 48: 2, 96: 4}
     """
     if q is None:
         q = FractionField(QQ['q']).gen()

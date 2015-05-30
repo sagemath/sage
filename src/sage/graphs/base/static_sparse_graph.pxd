@@ -1,6 +1,6 @@
 from cpython cimport PyObject
-from libc.stdint cimport uint32_t
-from sage.misc.bitset cimport *
+from libc.stdint cimport uint32_t, uint64_t
+from sage.data_structures.bitset cimport *
 ctypedef unsigned short ushort
 ctypedef unsigned int uint
 

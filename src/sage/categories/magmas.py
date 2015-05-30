@@ -9,19 +9,22 @@ Magmas
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 from sage.misc.abstract_method import abstract_method
-from sage.categories.category import Category
-from sage.categories.category_singleton import Category_singleton
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.algebra_functor import AlgebrasCategory
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.category_singleton import Category_singleton
 from sage.categories.sets_cat import Sets
 from sage.categories.realizations import RealizationsCategory
-from sage.structure.sage_object import have_same_parent
+from sage.structure.element import have_same_parent
 
 class Magmas(Category_singleton):
     """
-    The category of (multiplicative) magmas, i.e. sets with a binary
-    operation ``*``.
+    The category of (multiplicative) magmas.
+
+    A magma is a set with a binary operation `*`.
 
     EXAMPLES::
 
@@ -30,7 +33,25 @@ class Magmas(Category_singleton):
         sage: Magmas().super_categories()
         [Category of sets]
         sage: Magmas().all_super_categories()
-        [Category of magmas, Category of sets, Category of sets with partial maps, Category of objects]
+        [Category of magmas, Category of sets,
+         Category of sets with partial maps, Category of objects]
+
+    The following axioms are defined by this category::
+
+        sage: Magmas().Associative()
+        Category of semigroups
+        sage: Magmas().Unital()
+        Category of unital magmas
+        sage: Magmas().Commutative()
+        Category of commutative magmas
+        sage: Magmas().Unital().Inverse()
+        Category of inverse unital magmas
+        sage: Magmas().Associative()
+        Category of semigroups
+        sage: Magmas().Associative().Unital()
+        Category of monoids
+        sage: Magmas().Associative().Unital().Inverse()
+        Category of groups
 
     TESTS::
 
@@ -46,19 +67,587 @@ class Magmas(Category_singleton):
         """
         return [Sets()]
 
+    class SubcategoryMethods:
+
+        @cached_method
+        def Associative(self):
+            """
+            Return the full subcategory of the associative objects
+            of ``self``.
+
+            A (multiplicative) :class:`magma Magmas` `M` is
+            *associative* if, for all `x,y,z\in M`,
+
+            .. MATH:: x * (y * z) = (x * y) * z
+
+            .. SEEALSO:: :wikipedia:`Associative_property`
+
+            EXAMPLES::
+
+                sage: Magmas().Associative()
+                Category of semigroups
+
+            TESTS::
+
+                sage: TestSuite(Magmas().Associative()).run()
+                sage: Rings().Associative.__module__
+                'sage.categories.magmas'
+            """
+            return self._with_axiom('Associative')
+
+        @cached_method
+        def Commutative(self):
+            """
+            Return the full subcategory of the commutative objects
+            of ``self``.
+
+            A (multiplicative) :class:`magma Magmas` `M` is
+            *commutative* if, for all `x,y\in M`,
+
+            .. MATH:: x * y = y * x
+
+            .. SEEALSO:: :wikipedia:`Commutative_property`
+
+            EXAMPLES::
+
+                sage: Magmas().Commutative()
+                Category of commutative magmas
+                sage: Monoids().Commutative()
+                Category of commutative monoids
+
+            TESTS::
+
+                sage: TestSuite(Magmas().Commutative()).run()
+                sage: Rings().Commutative.__module__
+                'sage.categories.magmas'
+            """
+            return self._with_axiom('Commutative')
+
+        @cached_method
+        def Unital(self):
+            r"""
+            Return the subcategory of the unital objects of ``self``.
+
+            A (multiplicative) :class:`magma Magmas` `M` is *unital*
+            if it admits an element `1`, called *unit*, such that for
+            all `x\in M`,
+
+            .. MATH:: 1 * x = x * 1 = x
+
+            This element is necessarily unique, and should be provided
+            as ``M.one()``.
+
+            .. SEEALSO:: :wikipedia:`Unital_magma#unital`
+
+            EXAMPLES::
+
+                sage: Magmas().Unital()
+                Category of unital magmas
+                sage: Semigroups().Unital()
+                Category of monoids
+                sage: Monoids().Unital()
+                Category of monoids
+                sage: from sage.categories.associative_algebras import AssociativeAlgebras
+                sage: AssociativeAlgebras(QQ).Unital()
+                Category of algebras over Rational Field
+
+            TESTS::
+
+                sage: TestSuite(Magmas().Unital()).run()
+                sage: Semigroups().Unital.__module__
+                'sage.categories.magmas'
+            """
+            return self._with_axiom("Unital")
+
+        @cached_method
+        def FinitelyGeneratedAsMagma(self):
+            r"""
+            Return the subcategory of the objects of ``self`` that are
+            endowed with a distinguished finite set of
+            (multiplicative) magma generators.
+
+            A set `S` of elements of a multiplicative magma form a
+            *set of generators* if any element of the magma can be
+            expressed recursively from elements of `S` and products
+            thereof.
+
+            It is not imposed that morphisms shall preserve the
+            distinguished set of generators; hence this is a full
+            subcategory.
+
+            .. SEEALSO:: :wikipedia:`Unital_magma#unital`
+
+            EXAMPLES::
+
+                sage: Magmas().FinitelyGeneratedAsMagma()
+                Category of finitely generated magmas
+
+            Being finitely generated does depend on the structure: for
+            a ring, being finitely generated as a magma, as an
+            additive magma, or as a ring are different concepts. Hence
+            the name of this axiom is explicit::
+
+                sage: Rings().FinitelyGeneratedAsMagma()
+                Category of finitely generated as magma rings
+
+            On the other hand, it does not depend on the
+            multiplicative structure: for example a group is finitely
+            generated if and only if it is finitely generated as a
+            magma. A short hand is provided when there is no
+            ambiguity, and the output tries to reflect that::
+
+                sage: Semigroups().FinitelyGenerated()
+                Category of finitely generated semigroups
+                sage: Groups().FinitelyGenerated()
+                Category of finitely generated groups
+
+                sage: Semigroups().FinitelyGenerated().axioms()
+                frozenset({'Associative', 'FinitelyGeneratedAsMagma'})
+
+            Note that the set of generators may depend on the actual
+            category; for example, in a group, one can often use less
+            generators since it is allowed to take inverses.
+
+            TESTS::
+
+                sage: TestSuite(Magmas().FinitelyGeneratedAsMagma()).run()
+                sage: Semigroups().FinitelyGeneratedAsMagma.__module__
+                'sage.categories.magmas'
+            """
+            return self._with_axiom("FinitelyGeneratedAsMagma")
+
+        @cached_method
+        def FinitelyGenerated(self):
+            r"""
+            Return the subcategory of the objects of ``self`` that are
+            endowed with a distinguished finite set of
+            (multiplicative) magma generators.
+
+            EXAMPLES:
+
+            This is a shorthand for :meth:`FinitelyGeneratedAsMagma`,
+            which see::
+
+                sage: Magmas().FinitelyGenerated()
+                Category of finitely generated magmas
+                sage: Semigroups().FinitelyGenerated()
+                Category of finitely generated semigroups
+                sage: Groups().FinitelyGenerated()
+                Category of finitely generated groups
+
+            An error is raised if this is ambiguous::
+
+                sage: (Magmas() & AdditiveMagmas()).FinitelyGenerated()
+                Traceback (most recent call last):
+                ...
+                ValueError: FinitelyGenerated is ambiguous for
+                Join of Category of magmas and Category of additive magmas.
+                Please use explicitly one of the FinitelyGeneratedAsXXX methods
+
+            .. NOTE::
+
+                Checking that there is no ambiguity currently assumes
+                that all the other "finitely generated" axioms involve
+                an additive structure. As of Sage 6.4, this is
+                correct.
+
+                The use of this shorthand should be reserved for casual
+                interactive use or when there is no risk of ambiguity.
+                """
+            from sage.categories.additive_magmas import AdditiveMagmas
+            if self.is_subcategory(AdditiveMagmas()):
+                raise ValueError("FinitelyGenerated is ambiguous for {}.\nPlease use explicitly one of the FinitelyGeneratedAsXXX methods".format(self))
+            return self.FinitelyGeneratedAsMagma()
+
+        @cached_method
+        def Distributive(self):
+            """
+            Return the full subcategory of the objects of ``self``
+            where `*` is distributive on `+`.
+
+            INPUT:
+
+            - ``self`` -- a subcategory of :class:`Magmas`
+              and :class:`AdditiveMagmas`
+
+            Given that Sage does not yet know that the category
+            :class:`MagmasAndAdditiveMagmas` is the intersection of
+            the categories :class:`Magmas` and
+            :class:`AdditiveMagmas`, the method
+            :meth:`MagmasAndAdditiveMagmas.SubcategoryMethods.Distributive`
+            is not available, as would be desirable, for this intersection.
+
+            This method is a workaround. It checks that ``self`` is a
+            subcategory of both :class:`Magmas` and
+            :class:`AdditiveMagmas` and upgrades it to a subcategory
+            of :class:`MagmasAndAdditiveMagmas` before applying the
+            axiom. It complains overwise, since the ``Distributive``
+            axiom does not make sense for a plain magma.
+
+            EXAMPLES::
+
+                sage: (Magmas() & AdditiveMagmas()).Distributive()
+                Category of distributive magmas and additive magmas
+                sage: (Monoids() & CommutativeAdditiveGroups()).Distributive()
+                Category of rings
+
+                sage: Magmas().Distributive()
+                Traceback (most recent call last):
+                ...
+                ValueError: The distributive axiom only makes sense on a magma which is simultaneously an additive magma
+                sage: Semigroups().Distributive()
+                Traceback (most recent call last):
+                ...
+                ValueError: The distributive axiom only makes sense on a magma which is simultaneously an additive magma
+
+            TESTS::
+
+                sage: Semigroups().Distributive.__module__
+                'sage.categories.magmas'
+                sage: Rings().Distributive.__module__
+                'sage.categories.magmas_and_additive_magmas'
+            """
+            from additive_magmas import AdditiveMagmas
+            if not self.is_subcategory(AdditiveMagmas()):
+                raise ValueError("The distributive axiom only makes sense on a magma which is simultaneously an additive magma")
+            from magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+            return (self & MagmasAndAdditiveMagmas()).Distributive()
+
+    Associative = LazyImport('sage.categories.semigroups', 'Semigroups', at_startup=True)
+    FinitelyGeneratedAsMagma = LazyImport('sage.categories.finitely_generated_magmas', 'FinitelyGeneratedMagmas')
+
+    class Algebras(AlgebrasCategory):
+
+        def extra_super_categories(self):
+            """
+            EXAMPLES:
+
+                sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
+                [Category of commutative magmas]
+
+            This implements the fact that the algebra of a commutative
+            magma is commutative::
+
+                sage: Magmas().Commutative().Algebras(QQ).super_categories()
+                [Category of magma algebras over Rational Field, Category of commutative magmas]
+
+            In particular, commutative monoid algebras are
+            commutative algebras::
+
+                sage: Monoids().Commutative().Algebras(QQ).is_subcategory(Algebras(QQ).Commutative())
+                True
+            """
+            from sage.categories.magmatic_algebras import MagmaticAlgebras
+            return [MagmaticAlgebras(self.base_ring())]
+
+    class Commutative(CategoryWithAxiom):
+
+        class ParentMethods:
+            def is_commutative(self):
+                """
+                Return ``True``, since commutative magmas are commutative.
+
+                EXAMPLES::
+
+                    sage: Parent(QQ,category=CommutativeRings()).is_commutative()
+                    True
+                """
+                return True
+
+        class Algebras(AlgebrasCategory):
+
+            def extra_super_categories(self):
+                """
+                EXAMPLES:
+
+                    sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
+                    [Category of commutative magmas]
+
+                This implements the fact that the algebra of a commutative
+                magma is commutative::
+
+                    sage: Magmas().Commutative().Algebras(QQ).super_categories()
+                    [Category of magma algebras over Rational Field,
+                     Category of commutative magmas]
+
+                In particular, commutative monoid algebras are
+                commutative algebras::
+
+                    sage: Monoids().Commutative().Algebras(QQ).is_subcategory(Algebras(QQ).Commutative())
+                    True
+                """
+                return [Magmas().Commutative()]
+
+    class Unital(CategoryWithAxiom):
+
+        def additional_structure(self):
+            r"""
+            Return ``self``.
+
+            Indeed, the category of unital magmas defines an
+            additional structure, namely the unit of the magma which
+            shall be preserved by morphisms.
+
+            .. SEEALSO:: :meth:`Category.additional_structure`
+
+            EXAMPLES::
+
+                sage: Magmas().Unital().additional_structure()
+                Category of unital magmas
+            """
+            return self
+
+        class ParentMethods:
+            @cached_method
+            def one(self):
+                r"""
+                Return the unit of the monoid, that is the unique neutral
+                element for `*`.
+
+                .. NOTE::
+
+                   The default implementation is to coerce `1` into ``self``.
+                   It is recommended to override this method because the
+                   coercion from the integers:
+
+                    - is not always meaningful (except for `1`);
+                    - often uses ``self.one()``.
+
+                EXAMPLES::
+
+                    sage: M = Monoids().example(); M
+                    An example of a monoid: the free monoid generated by ('a', 'b', 'c', 'd')
+                    sage: M.one()
+                    ''
+                """
+                return self(1)
+
+            def _test_one(self, **options):
+                r"""
+                Test that ``self.one()`` is an element of ``self`` and is
+                neutral for the operation ``*``.
+
+                INPUT:
+
+                - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+                EXAMPLES:
+
+                By default, this method tests only the elements returned by
+                ``self.some_elements()``::
+
+                    sage: S = Monoids().example()
+                    sage: S._test_one()
+
+                However, the elements tested can be customized with the
+                ``elements`` keyword argument::
+
+                    sage: S._test_one(elements = (S('a'), S('b')))
+
+                See the documentation for :class:`TestSuite` for more information.
+                """
+                tester = self._tester(**options)
+                one = self.one()
+                tester.assert_(self.is_parent_of(one))
+                for x in tester.some_elements():
+                    tester.assert_(x * one == x)
+                    tester.assert_(one * x == x)
+                # Check that one is immutable by asking its hash;
+                tester.assertEqual(type(one.__hash__()), int)
+                tester.assertEqual(one.__hash__(), one.__hash__())
+
+            def is_empty(self):
+                r"""
+                Return whether ``self`` is empty.
+
+                Since this set is a unital magma it is not empty and this method
+                always return ``False``.
+
+                EXAMPLES::
+
+                    sage: S = SymmetricGroup(2)
+                    sage: S.is_empty()
+                    False
+
+                    sage: M = Monoids().example()
+                    sage: M.is_empty()
+                    False
+
+                TESTS::
+
+                    sage: S.is_empty.__module__
+                    'sage.categories.magmas'
+                    sage: M.is_empty.__module__
+                    'sage.categories.magmas'
+                """
+                return False
+
+        class SubcategoryMethods:
+
+            @cached_method
+            def Inverse(self):
+                r"""
+                Return the full subcategory of the inverse objects of ``self``.
+
+                An inverse :class:` (multiplicative) magma <Magmas>`
+                is a :class:`unital magma <Magmas.Unital>` such that
+                every element admits both an inverse on the left and
+                on the right. Such a magma is also called a *loop*.
+
+                .. SEEALSO::
+
+                    :wikipedia:`Inverse_element`, :wikipedia:`Quasigroup`
+
+                EXAMPLES::
+
+                    sage: Magmas().Unital().Inverse()
+                    Category of inverse unital magmas
+                    sage: Monoids().Inverse()
+                    Category of groups
+
+                TESTS::
+
+                    sage: TestSuite(Magmas().Unital().Inverse()).run()
+                    sage: Algebras(QQ).Inverse.__module__
+                    'sage.categories.magmas'
+                """
+                return self._with_axiom("Inverse")
+
+        class Inverse(CategoryWithAxiom):
+            class CartesianProducts(CartesianProductsCategory):
+                def extra_super_categories(self):
+                    """
+                    Implement the fact that a cartesian product of magmas with
+                    inverses is a magma with inverse.
+
+                    EXAMPLES::
+
+                        sage: C = Magmas().Unital().Inverse().CartesianProducts()
+                        sage: C.extra_super_categories();
+                        [Category of inverse unital magmas]
+                        sage: sorted(C.axioms())
+                        ['Inverse', 'Unital']
+                    """
+                    return [Magmas().Unital().Inverse()]
+
+        class CartesianProducts(CartesianProductsCategory):
+            def extra_super_categories(self):
+                """
+                Implement the fact that a cartesian product of unital magmas is
+                a unital magma
+
+                EXAMPLES::
+
+                    sage: C = Magmas().Unital().CartesianProducts()
+                    sage: C.extra_super_categories();
+                    [Category of unital magmas]
+                    sage: C.axioms()
+                    frozenset({'Unital'})
+
+                    sage: Monoids().CartesianProducts().is_subcategory(Monoids())
+                    True
+                """
+                return [Magmas().Unital()]
+
+            class ParentMethods:
+
+                @cached_method
+                def one(self):
+                    """
+                    Return the unit of this cartesian product.
+
+                    It is built from the units for the cartesian factors of ``self``.
+
+                    EXAMPLES::
+
+                        sage: cartesian_product([QQ, ZZ, RR]).one()
+                        (1, 1, 1.00000000000000)
+                    """
+                    return self._cartesian_product_of_elements(
+                        _.one() for _ in self.cartesian_factors())
+
+            class ElementMethods:
+                def __invert__(self):
+                    r"""
+                    Return the inverse of ``self``, if it exists.
+
+                    The inverse is computed by inverting each
+                    cartesian factor and attempting to convert the
+                    result back to the original parent.
+
+                    For example, if one of the cartesian factor is an
+                    element ``x`` of `\ZZ`, the result of ``~x`` is in
+                    `\QQ`. So we need to convert it back to `\ZZ`. As
+                    a side effect, this checks that ``x`` is indeed
+                    invertible in `\ZZ`.
+
+                    If needed an optimized version without this
+                    conversion could be implemented in
+                    :class:`Magmas.Unital.Inverse.ElementMethods`.
+
+                    EXAMPLES::
+
+                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])
+                        sage: c = C([2,-1,2,2]); c
+                        (2, -1, 2.00000000000000, 2)
+                        sage: ~c
+                        (1/2, -1, 0.500000000000000, 3)
+
+                    This fails as soon as one of the entries is not
+                    invertible::
+
+                        sage: ~C([0,2,2,2])
+                        Traceback (most recent call last):
+                        ...
+                        ZeroDivisionError: rational division by zero
+
+                        sage: ~C([2,2,2,2])
+                        Traceback (most recent call last):
+                        ...
+                        TypeError: no conversion of this rational to integer
+                    """
+                    # variant without coercion:
+                    # return self.parent()._cartesian_product_of_elements(
+                    return self.parent()(
+                        ~x for x in self.cartesian_factors())
+
+        class Algebras(AlgebrasCategory):
+
+            def extra_super_categories(self):
+                """
+                EXAMPLES:
+
+                    sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
+                    [Category of commutative magmas]
+
+                This implements the fact that the algebra of a
+                commutative magma is commutative::
+
+                    sage: Magmas().Commutative().Algebras(QQ).super_categories()
+                    [Category of magma algebras over Rational Field,
+                     Category of commutative magmas]
+
+                In particular, commutative monoid algebras are
+                commutative algebras::
+
+                    sage: Monoids().Commutative().Algebras(QQ).is_subcategory(Algebras(QQ).Commutative())
+                    True
+                """
+                return [Magmas().Unital()]
+
     class ParentMethods:
 
         def product(self, x, y):
             """
-            The binary multiplication of the magma
+            The binary multiplication of the magma.
 
             INPUT:
 
-             - ``x``, ``y``: elements of this magma
+            - ``x``, ``y`` -- elements of this magma
 
             OUTPUT:
 
-             - an element of the magma (the product of ``x`` and ``y``)
+            - an element of the magma (the product of ``x`` and ``y``)
 
             EXAMPLES::
 
@@ -392,6 +981,9 @@ class Magmas(Category_singleton):
 
         def extra_super_categories(self):
             """
+            This implements the fact that a subquotient (and therefore
+            a quotient or subobject) of a finite set is finite.
+
             EXAMPLES::
 
                 sage: Semigroups().CartesianProducts().extra_super_categories()
@@ -403,14 +995,17 @@ class Magmas(Category_singleton):
 
         def example(self):
             """
-            Returns an example of cartesian product of magmas
+            Return an example of cartesian product of magmas.
 
             EXAMPLES::
 
                 sage: C = Magmas().CartesianProducts().example(); C
                 The cartesian product of (Rational Field, Integer Ring, Integer Ring)
                 sage: C.category()
-                Category of Cartesian products of monoids
+                Join of Category of rings ...
+                sage: sorted(C.category().axioms())
+                ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse', 'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+
                 sage: TestSuite(C).run()
             """
             from cartesian_product import cartesian_product
@@ -439,26 +1034,22 @@ class Magmas(Category_singleton):
                     sage: x*y
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                 """
-                return self._cartesian_product_of_elements([(a*b) for (a,b) in zip(left.summand_split(), right.summand_split())])
+                return self._cartesian_product_of_elements([(a*b) for (a,b) in zip(left.cartesian_factors(), right.cartesian_factors())])
 
     class Subquotients(SubquotientsCategory):
         r"""
-        The category of sub/quotient magmas.
+        The category of subquotient magmas.
 
-        Let `G` and `S` be two magmas and `l: S \mapsto G` and
-        `r: G \mapsto S` be two maps such that:
+        See :meth:`Sets.SubcategoryMethods.Subquotients` for the
+        general setup for subquotients. In the case of a subquotient
+        magma `S` of a magma `G`, the condition that `r` be a
+        morphism in ``As`` can be rewritten as follows:
 
-         - `r \circ l` is the identity of `G`.
+         - for any two `a,b \in S` the identity
+           `a \times_S b = r(l(a) \times_G l(b))` holds.
 
-         - for any two `a,b\in S` the identity `a \times_S b = r(l(a) \times_G l(b))` holds.
-
-        The category Subquotient implements the product `\times_S` from `l` and `r`
-        and the product of `G`.
-
-        `S` is supposed to belongs the category
-        ``Magmas().Subquotients()`` and to specify `G` under the name
-        ``S.ambient()`` and to implement `x\to l(x)` and `y \to r(y)`
-        under the names ``S.lift(x)`` and ``S.retract(y)``.
+        This is used by this category to implement the product
+        `\times_S` of `S` from `l` and `r` and the product of `G`.
 
         EXAMPLES::
 
@@ -474,17 +1065,28 @@ class Magmas(Category_singleton):
 
             def product(self, x, y):
                 """
-                Returns the product of two elements of self.
+                Return the product of two elements of ``self``.
 
                 EXAMPLES::
 
                     sage: S = Semigroups().Subquotients().example()
+                    sage: S
+                    An example of a (sub)quotient semigroup:
+                    a quotient of the left zero semigroup
                     sage: S.product(S(19), S(3))
                     19
+
+                Here is a more elaborate example involving a sub algebra::
+
+                    sage: Z = SymmetricGroup(5).algebra(QQ).center()
+                    sage: B = Z.basis()
+                    sage: B[3] * B[2]
+                    4*B[2] + 6*B[3] + 5*B[6]
                 """
                 assert(x in self)
                 assert(y in self)
                 return self.retract(self.lift(x) * self.lift(y))
+
     class Realizations(RealizationsCategory):
 
         class ParentMethods:

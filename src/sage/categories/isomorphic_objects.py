@@ -15,50 +15,6 @@ AUTHORS:
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
-# This is Category.IsomorphicObjects
-def IsomorphicObjects(self):
-    """
-    INPUT:
-     - ``self`` -- a concrete category
-
-    Given a concrete category ``As()`` (i.e. a subcategory of
-    ``Sets()``), ``As().IsomorphicObjects()`` returns the category of
-    objects of ``As()`` endowed with a distinguished description as
-    the image of some other object of ``As()`` by an isomorphism.
-
-    See :func:`~sage.categories.subquotients.Subquotients` for background.
-
-    EXAMPLES::
-
-        sage: C = Sets().IsomorphicObjects(); C
-        Category of isomorphic objects of sets
-
-        sage: C.super_categories()
-        [Category of subobjects of sets, Category of quotients of sets]
-
-        sage: C.all_super_categories()
-        [Category of isomorphic objects of sets,
-         Category of subobjects of sets,
-         Category of quotients of sets,
-         Category of subquotients of sets,
-         Category of sets,
-         Category of sets with partial maps,
-         Category of objects]
-
-    Unless something specific about isomorphic objects is implemented
-    for this category, one actually get an optimized super category::
-
-        sage: C = Semigroups().IsomorphicObjects(); C
-        Join of Category of quotients of semigroups and Category of isomorphic objects of sets
-
-    TESTS::
-
-        sage: TestSuite(Sets().IsomorphicObjects()).run()
-    """
-    return IsomorphicObjectsCategory.category_of(self)
-
-Category.IsomorphicObjects = IsomorphicObjects
-
 class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "IsomorphicObjects"

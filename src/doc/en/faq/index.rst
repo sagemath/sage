@@ -6,11 +6,9 @@
 Welcome to the Sage FAQ!
 ========================
 
-This FAQ was compiled and is maintained by Minh Van Nguyen
-<nguyenminh2@gmail.com>.
-
 This work is licensed under a `Creative Commons Attribution-Share Alike
-3.0 License`__.
+3.0 License`__.  With grateful thanks, we acknowledge it as being
+originally compiled by Minh Van Nguyen.
 
 __ http://creativecommons.org/licenses/by-sa/3.0/
 

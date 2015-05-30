@@ -1,8 +1,5 @@
-
-include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi'
-include 'sage/ext/interrupt.pxi'
 from sage.rings.integer cimport Integer
+from sage.libs.gmp.mpz cimport *
 
 cdef extern from "ratpoints.h":
     long RATPOINTS_MAX_DEGREE

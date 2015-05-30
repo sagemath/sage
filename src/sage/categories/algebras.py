@@ -3,49 +3,60 @@ Algebras
 
 AUTHORS:
 
- - David Kohel & William Stein (2005): initial revision
- - Nicolas M. Thiery (2008): rewrote for new category framework
+- David Kohel & William Stein (2005): initial revision
+- Nicolas M. Thiery (2008-2011): rewrote for the category framework
 """
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
-#                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_over_base_ring
-from sage.categories.homset import Hom
-from sage.categories.cartesian_product import CartesianProductsCategory, cartesian_product
-from sage.categories.dual import DualObjectsCategory
-from sage.categories.tensor import TensorProductsCategory, tensor
-from sage.categories.morphism import SetMorphism
-from sage.categories.modules import Modules
-from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
-from sage.structure.sage_object import have_same_parent
+from sage.misc.lazy_import import LazyImport
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.quotients import QuotientsCategory
+from sage.categories.dual import DualObjectsCategory
+from sage.categories.tensor import TensorProductsCategory
+from sage.categories.subobjects import SubobjectsCategory
+from sage.categories.associative_algebras import AssociativeAlgebras
 
-class Algebras(Category_over_base_ring):
-    """
-    The category of algebras over a given base ring.
+class Algebras(CategoryWithAxiom_over_base_ring):
+    r"""
+    The category of associative and unital algebras over a given base ring.
 
-    An algebra over a ring `R` is a module over `R` which is itself a ring.
+    An associative and unital algebra over a ring `R` is a module over
+    `R` which is itself a ring.
 
-    TODO: should `R` be a commutative ring?
+    .. WARNING::
+
+        :class:`Algebras` will be eventually be replaced by
+        :class:`.magmatic_algebras.MagmaticAlgebras`
+        for consistency with e.g. :wikipedia:`Algebras` which assumes
+        neither associativity nor the existence of a unit (see
+        :trac:`15043`).
+
+    .. TODO:: Should `R` be a commutative ring?
 
     EXAMPLES::
 
         sage: Algebras(ZZ)
         Category of algebras over Integer Ring
-        sage: Algebras(ZZ).super_categories()
-        [Category of rings, Category of modules over Integer Ring]
+        sage: sorted(Algebras(ZZ).super_categories(), key=str)
+        [Category of associative algebras over Integer Ring,
+         Category of rings,
+         Category of unital algebras over Integer Ring]
 
     TESTS::
 
         sage: TestSuite(Algebras(ZZ)).run()
     """
+    _base_category_class_and_axiom = (AssociativeAlgebras, 'Unital')
 
     # For backward compatibility?
     def __contains__(self, x):
@@ -54,12 +65,12 @@ class Algebras(Category_over_base_ring):
 
         EXAMPLES::
 
-            sage: QQ[x] in Algebras(QQ)
+            sage: QQ['x'] in Algebras(QQ)
             True
 
             sage: QQ^3 in Algebras(QQ)
             False
-            sage: QQ[x] in Algebras(CDF)
+            sage: QQ['x'] in Algebras(CDF)
             False
         """
         if super(Algebras, self).__contains__(x):
@@ -67,147 +78,44 @@ class Algebras(Category_over_base_ring):
         from sage.rings.ring import Algebra
         return isinstance(x, Algebra) and x.base_ring() == self.base_ring()
 
-    def super_categories(self):
-        """
-        EXAMPLES::
+    # def extra_super_categories(self):
+    #     """
+    #     EXAMPLES::
 
-            sage: Algebras(ZZ).super_categories()
-            [Category of rings, Category of modules over Integer Ring]
-        """
-        R = self.base_ring()
-        return [Rings(), Modules(R)]
+    #         sage: Algebras(ZZ).super_categories()
+    #         [Category of associative algebras over Integer Ring, Category of rings]
+    #     """
+    #     R = self.base_ring()
+    #     return [Rings()] # TODO: won't be needed when Rings() will be Rngs().Unital()
 
-    class ParentMethods: # (Algebra):  # Eventually, the content of Algebra should be moved here
-        def from_base_ring(self, r):
+    class SubcategoryMethods:
+        def Semisimple(self):
             """
-            Canonical embedding from base ring
+            Return the subcategory of semisimple objects of ``self``.
 
-            INPUT:
+            .. NOTE::
 
-             - ``r`` -- an element of ``self.base_ring()``
-
-            Returns the canonical embedding of `r` into self.
+                This mimics the syntax of axioms for a smooth
+                transition if ``Semisimple`` becomes one.
 
             EXAMPLES::
 
-                sage: A = AlgebrasWithBasis(QQ).example(); A
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                sage: A.from_base_ring(1)
-                B[word: ]
+                sage: Algebras(QQ).Semisimple()
+                Category of semisimple algebras over Rational Field
+                sage: Algebras(QQ).WithBasis().FiniteDimensional().Semisimple()
+                Category of finite dimensional semisimple algebras with basis over Rational Field
             """
-            return self.one()._lmul_(r)
+            from sage.categories.semisimple_algebras import SemisimpleAlgebras
+            return self & SemisimpleAlgebras(self.base_ring())
 
-        def __init_extra__(self):
-            """
-            Declares the canonical coercion from ``self.base_ring()`` to ``self``,
-            if there has been none before.
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example(); A
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                sage: coercion_model = sage.structure.element.get_coercion_model()
-                sage: coercion_model.discover_coercion(QQ, A)
-                (Generic morphism:
-                  From: Rational Field
-                  To:   An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field, None)
-                sage: A(1)          # indirect doctest
-                B[word: ]
-
-            """
-            # If self has an attribute _no_generic_basering_coercion
-            # set to True, then this declaration is skipped.
-            # This trick, introduced in #11900, is used in
-            # sage.matrix.matrix_space.py and
-            # sage.rings.polynomial.polynomial_ring.
-            # It will hopefully be refactored into something more
-            # conceptual later on.
-            if getattr(self,'_no_generic_basering_coercion',False):
-                return
-
-            base_ring = self.base_ring()
-            if base_ring is self:
-                # There are rings that are their own base rings. No need to register that.
-                return
-            if self.is_coercion_cached(base_ring):
-                # We will not use any generic stuff, since a (presumably) better conversion
-                # has already been registered.
-                return
-            mor = None
-            # This could be a morphism of Algebras(self.base_ring()); however, e.g., QQ is not in Algebras(QQ)
-            H = Hom(base_ring, self, Rings())
-
-            # Idea: There is a generic method "from_base_ring", that just does multiplication with
-            # the multiplicative unit. However, the unit is constructed repeatedly, which is slow.
-            # Hence, if the unit is available *now*, then we store it.
-            #
-            # However, if there is a specialised from_base_ring method, then it should be used!
-            try:
-                has_custom_conversion = self.category().parent_class.from_base_ring.__func__ is not self.from_base_ring.__func__
-            except AttributeError:
-                # Sometimes from_base_ring is a lazy attribute
-                has_custom_conversion = True
-            if has_custom_conversion:
-                mor = SetMorphism(function = self.from_base_ring, parent = H)
-                try:
-                    self.register_coercion(mor)
-                except AssertionError:
-                    pass
-                return
-
-            try:
-                one = self.one()
-            except (NotImplementedError, AttributeError, TypeError):
-                # The unit is not available, yet. But there are cases
-                # in which it will be available later. Hence:
-                mor = SetMorphism(function = self.from_base_ring, parent = H)
-            # try sanity of one._lmul_
-            if mor is None:
-                try:
-                    if one._lmul_(base_ring.an_element()) is None:
-                        # There are cases in which lmul returns None, believe it or not.
-                        # One example: Hecke algebras.
-                        # In that case, the generic implementation of from_base_ring would
-                        # fail as well. Hence, unless it is overruled, we will not use it.
-                        #mor = SetMorphism(function = self.from_base_ring, parent = H)
-                        return
-                except (NotImplementedError, AttributeError, TypeError):
-                    # it is possible that an_element or lmul are not implemented.
-                    return
-                    #mor = SetMorphism(function = self.from_base_ring, parent = H)
-                mor = SetMorphism(function = one._lmul_, parent = H)
-            try:
-                self.register_coercion(mor)
-            except AssertionError:
-                pass
+    Commutative = LazyImport('sage.categories.commutative_algebras', 'CommutativeAlgebras', at_startup=True)
+    Graded      = LazyImport('sage.categories.graded_algebras',      'GradedAlgebras')
+    WithBasis   = LazyImport('sage.categories.algebras_with_basis',  'AlgebrasWithBasis')
+    #if/when Semisimple becomes an axiom
+    Semisimple  = LazyImport('sage.categories.semisimple_algebras',  'SemisimpleAlgebras')
 
     class ElementMethods:
-        # TODO: move the content of AlgebraElement here
-
-        # Workaround: this sets back Semigroups.Element.__mul__, which is currently overriden by Modules.Element.__mul__
-        # What does this mean in terms of inheritance order?
-        # Could we do a variant like __mul__ = Semigroups.Element.__mul__
-        def __mul__(self, right):
-            """
-            EXAMPLES::
-
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: a = s([2])
-                sage: a._mul_(a) #indirect doctest
-                s[2, 2] + s[3, 1] + s[4]
-
-            Todo: use AlgebrasWithBasis(QQ).example()
-            """
-            if have_same_parent(self, right) and hasattr(self, "_mul_"):
-                return self._mul_(right)
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(self, right, operator.mul)
-
-#        __imul__ = __mul__
-
-        # Parents in this category should implement _lmul_ and _rmul_
-
+        # TODO: move the content of AlgebraElement here or higher in the category hierarchy
         def _div_(self, y):
             """
             Division by invertible elements
@@ -231,6 +139,31 @@ class Algebras(Category_over_base_ring):
             """
             return self.parent().product(self, ~y)
 
+    class Quotients(QuotientsCategory):
+
+        class ParentMethods:
+
+            def algebra_generators(self):
+                r"""
+                Return algebra generators for ``self``.
+
+                This implementation retracts the algebra generators
+                from the ambient algebra.
+
+                EXAMPLES::
+
+                    sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example(); A
+                    An example of a finite dimensional algebra with basis:
+                    the path algebra of the Kronecker quiver
+                    (containing the arrows a:x->y and b:x->y) over Rational Field
+                    sage: S = A.semisimple_quotient()
+                    sage: S.algebra_generators()
+                    Finite family {'y': B['y'], 'x': B['x'], 'b': 0, 'a': 0}
+
+                .. TODO:: this could possibly remove the elements that retract to zero.
+                """
+                return self.ambient().algebra_generators().map(self.retract)
+
     class CartesianProducts(CartesianProductsCategory):
         """
         The category of algebras constructed as cartesian products of algebras
@@ -248,10 +181,14 @@ class Algebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: Algebras(QQ).CartesianProducts().extra_super_categories()
+                sage: C = Algebras(QQ).CartesianProducts()
+                sage: C.extra_super_categories()
                 [Category of algebras over Rational Field]
-                sage: Algebras(QQ).CartesianProducts().super_categories()
-                [Category of algebras over Rational Field, Category of Cartesian products of monoids]
+                sage: sorted(C.super_categories(), key=str)
+                [Category of Cartesian products of distributive magmas and additive magmas,
+                 Category of Cartesian products of monoids,
+                 Category of Cartesian products of vector spaces over Rational Field,
+                 Category of algebras over Rational Field]
             """
             return [self.base_category()]
 
@@ -265,7 +202,8 @@ class Algebras(Category_over_base_ring):
                 sage: Algebras(QQ).TensorProducts().extra_super_categories()
                 [Category of algebras over Rational Field]
                 sage: Algebras(QQ).TensorProducts().super_categories()
-                [Category of algebras over Rational Field]
+                [Category of algebras over Rational Field,
+                 Category of tensor products of vector spaces over Rational Field]
 
             Meaning: a tensor product of algebras is an algebra
             """
@@ -296,6 +234,11 @@ class Algebras(Category_over_base_ring):
                 Category of duals of algebras over Rational Field
                 sage: C.dual().extra_super_categories()
                 [Category of coalgebras over Rational Field]
+
+            .. WARNING::
+
+                This is only correct in certain cases (finite dimension, ...).
+                See :trac:`15647`.
             """
             from sage.categories.coalgebras import Coalgebras
             return [Coalgebras(self.base_category().base_ring())]

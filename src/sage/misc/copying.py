@@ -1,4 +1,7 @@
-import os, pager
+"License"
+
+import os
+import pager
 
 from sage.env import SAGE_ROOT
 

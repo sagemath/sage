@@ -121,13 +121,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         commutative_ring_element.CommutativeRingElement.__init__(self, parent)
         if check:
             if not isinstance(parent, PolynomialQuotientRing_generic):
-                raise TypeError, "parent must be a polynomial quotient ring"
+                raise TypeError("parent must be a polynomial quotient ring")
 
             if not isinstance(polynomial, Polynomial):
-                raise TypeError, "polynomial must be a polynomial"
+                raise TypeError("polynomial must be a polynomial")
 
             if not polynomial in parent.polynomial_ring():
-                raise TypeError, "polynomial must be in the polynomial ring of the parent"
+                raise TypeError("polynomial must be in the polynomial ring of the parent")
 
         f = parent.modulus()
         if polynomial.degree() >= f.degree() and polynomial.degree() >= 0:
@@ -200,7 +200,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: I = R.ideal(x^10)
             sage: S.<xb> = R.quo(I)
             sage: pari(xb)^10
-            0
+            Mod(0, x^10)
         """
         return self._polynomial._pari_().Mod(self.parent().modulus()._pari_())
 
@@ -377,8 +377,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
         """
         if self._polynomial.is_zero():
-            raise ZeroDivisionError, \
-               "element %s of quotient polynomial ring not invertible"%self
+            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         if self._polynomial.is_one():
             return self
         parent = self.parent()
@@ -387,8 +386,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             raise NotImplementedError("The base ring (=%s) is not a field" % base)
         g, _, a = parent.modulus().xgcd(self._polynomial)
         if g.degree() != 0:
-            raise ZeroDivisionError, \
-               "element %s of quotient polynomial ring not invertible"%self
+            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
 

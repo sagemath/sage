@@ -97,7 +97,7 @@ class InventoryBuilder(StandaloneHTMLBuilder):
         This is just for making sure that some writer methods are indeed
         deactivated.
         """
-        raise RuntimeError, "This function shouldn't be called in \"%s\" builder"%(self.name)
+        raise RuntimeError("This function shouldn't be called in \"%s\" builder"%(self.name))
 
     copy_image_files = removed_method_error
     copy_download_files = removed_method_error

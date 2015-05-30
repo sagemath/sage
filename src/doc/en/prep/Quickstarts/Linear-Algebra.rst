@@ -57,7 +57,7 @@ over the rationals.
 ::
 
     sage: D = matrix(CC, 20, range(400)); D
-    20 x 20 dense matrix over Complex Field with 53 bits of precision (type 'print D.str()' to see all of the entries)
+    20 x 20 dense matrix over Complex Field with 53 bits of precision (use the '.str()' method to see the entries)
 
 Don't forget that when viewing this in the notebook, you can click to
 the left of the matrix in order to cycle between "wrapped",
@@ -188,7 +188,7 @@ for our purposes.
 ::
 
     sage: print type( ring_vec )
-    <class 'sage.modules.vector_symbolic_dense.Vector_symbolic_dense'>
+    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
     sage: print type( field_vec )
     <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
 

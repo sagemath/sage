@@ -2,7 +2,7 @@
 Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT.
 
 This module gives a fast implementation of `(\ZZ/n\ZZ)[x]` whenever `n` is at
-most ``sys.maxint``. We use it by default in preference to NTL when the modulus
+most ``sys.maxsize``. We use it by default in preference to NTL when the modulus
 is small, falling back to NTL if the modulus is too large, as in the example
 below.
 
@@ -61,7 +61,7 @@ cdef extern from "zn_poly/zn_poly.h":
     cdef void zn_mod_clear(zn_mod_struct *mod)
     cdef void zn_array_mul(unsigned long* res, unsigned long* op1, size_t n1, unsigned long* op2, size_t n2, zn_mod_struct *mod)
 
-include "sage/libs/flint/fmpz_poly.pxi"
+from sage.libs.flint.fmpz_poly cimport *
 
 cdef class Polynomial_zmod_flint(Polynomial_template):
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
@@ -73,7 +73,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef long nlen
 
-        if PY_TYPE_CHECK(x, list) or PY_TYPE_CHECK(x, tuple):
+        if isinstance(x, list) or isinstance(x, tuple):
             k = parent._base
             if check:
                 lst = [k(i) for i in x]
@@ -87,12 +87,12 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Polynomial_template.__init__(self, parent, 0, check, is_gen, construct)
             self._set_list(lst)
             return
-        elif PY_TYPE_CHECK(x, Polynomial_integer_dense_flint):
+        elif isinstance(x, Polynomial_integer_dense_flint):
             Polynomial_template.__init__(self, parent, 0, check, is_gen, construct)
             self._set_fmpz_poly((<Polynomial_integer_dense_flint>x).__poly)
             return
         else:
-            if PY_TYPE_CHECK(x, ntl_zz_pX):
+            if isinstance(x, ntl_zz_pX):
                 x = x.list()
             try:
                 if x.parent() is parent.base_ring() or x.parent() == parent.base_ring():
@@ -109,7 +109,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: (2*x+1).monic() #indirect doctest
             x + 3
         """
-        cdef Polynomial_template e = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type t = type(self)
+        cdef Polynomial_template e = <Polynomial_template>t.__new__(t)
         nmod_poly_init(&e.x, self._parent.modulus())
         e._parent = self._parent
         e._cparent = self._cparent
@@ -139,7 +140,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ValueError: invalid literal for int() with base 10: '4.1'
 
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type t = type(self)
+        cdef Polynomial_template r = <Polynomial_template>t.__new__(t)
         r._parent = P
         r._cparent = get_cparent(P)
         nmod_poly_init(&r.x, nmod_poly_modulus(&self.x))
@@ -235,6 +237,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: f[-5:50] == f
             True
         """
+        cdef type t
         cdef unsigned long c = 0
         cdef Polynomial_template r
         if isinstance(i, slice):
@@ -246,7 +249,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             x = (<Polynomial_template>self)._parent.gen()
             v = [self[t] for t from start <= t < stop]
 
-            r = <Polynomial_template>PY_NEW(self.__class__)
+            t = self.__class__
+            r = <Polynomial_template>t.__new__(t)
             Polynomial_template.__init__(r, (<Polynomial_template>self)._parent, v)
             return r << start
         else:
@@ -438,7 +442,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef Polynomial_zmod_flint _other = <Polynomial_zmod_flint>self._parent._coerce_(other)
 
-        cdef Polynomial_zmod_flint r = <Polynomial_zmod_flint>PY_NEW(self.__class__)
+        cdef type t = type(self)
+        cdef Polynomial_zmod_flint r = <Polynomial_zmod_flint>t.__new__(t)
         r._parent = (<Polynomial_zmod_flint>self)._parent
         r._cparent = (<Polynomial_zmod_flint>self)._cparent
 
@@ -546,7 +551,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         P = self._parent
 
         cdef Polynomial_zmod_flint s0 = self._new()
-        cdef Polynomial_zmod_flint t0 = P.one_element()
+        cdef Polynomial_zmod_flint t0 = P.one()
         cdef Polynomial_zmod_flint s1 = m
         cdef Polynomial_zmod_flint t1 = self%m
 
@@ -616,9 +621,12 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         if not self.base_ring().is_field():
             raise NotImplementedError("checking irreducibility of polynomials over rings with composite characteristic is not implemented")
 
+        sig_on()
         if 1 == nmod_poly_is_irreducible(&self.x):
+            sig_off()
             return True
         else:
+            sig_off()
             return False
 
     def squarefree_decomposition(self):
@@ -766,4 +774,48 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             nmod_poly_reverse(&res.x, &self.x, d+1) # FLINT expects length
         else:
             nmod_poly_reverse(&res.x, &self.x, nmod_poly_length(&self.x))
+        return res
+
+    def revert_series(self, n):
+        r"""
+        Return a polynomial `f` such that `f(self(x)) = self(f(x)) = x mod x^n`.
+
+        EXAMPLES::
+
+            sage: R.<t> =  GF(5)[]
+            sage: f = t + 2*t^2 - t^3 - 3*t^4
+            sage: f.revert_series(5)
+            3*t^4 + 4*t^3 + 3*t^2 + t
+
+            sage: f.revert_series(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: argument n must be a non-negative integer, got -1
+
+            sage: g = - t^3 + t^5
+            sage: g.revert_series(6)
+            Traceback (most recent call last):
+            ...
+            ValueError: self must have constant coefficient 0 and a unit for coefficient t^1
+
+            sage: g = t + 2*t^2 - t^3 -3*t^4 + t^5
+            sage: g.revert_series(6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the integers 1 up to n=5 are required to be invertible over the base field
+        """
+        cdef Polynomial_zmod_flint res = self._new()
+        cdef unsigned long m
+        if n < 0:
+            raise ValueError("argument n must be a non-negative integer, got {}".format(n))
+        m = n
+        if not self[0].is_zero() or not self[1].is_unit():
+            raise ValueError("self must have constant coefficient 0 and a unit for coefficient {}^1".format(self.parent().gen()))
+        if not all((self.base_ring())(i) != 0 for i in range(1,n)):
+            raise ValueError("the integers 1 up to n={} are required to be invertible over the base field".format(n-1))
+
+        sig_on()
+        nmod_poly_revert_series(&res.x, &self.x, m)
+        sig_off()
+
         return res

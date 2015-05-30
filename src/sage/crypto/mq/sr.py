@@ -438,19 +438,19 @@ class SR_generic(MPolynomialSystemGenerator):
              1 8 3 3
         """
         if n-1 not in range(10):
-            raise TypeError, "n must be between 1 and 10 (inclusive)"
+            raise TypeError("n must be between 1 and 10 (inclusive)")
         self._n = n
 
         if r not in (1, 2, 4):
-            raise TypeError, "r must be in (1, 2, 4)"
+            raise TypeError("r must be in (1, 2, 4)")
         self._r = r
 
         if c not in (1, 2, 4):
-            raise TypeError, "c must be in (1, 2, 4)"
+            raise TypeError("c must be in (1, 2, 4)")
         self._c = c
 
         if e not in (4, 8):
-            raise TypeError, "e must be either 4 or 8"
+            raise TypeError("e must be either 4 or 8")
         self._e = e
 
         self._star = bool(star)
@@ -586,7 +586,7 @@ class SR_generic(MPolynomialSystemGenerator):
             self.Mstar = self.ShiftRows * self.Lin
             return self.Mstar
 
-        raise AttributeError, "%s has no attribute %s"%(type(self), attr)
+        raise AttributeError("%s has no attribute %s"%(type(self), attr))
 
     def _repr_(self):
         """
@@ -711,7 +711,7 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         if not b:
             if not self._allow_zero_inversions:
-                raise ZeroDivisionError,  "A zero inversion occurred during an encryption or key schedule."
+                raise ZeroDivisionError("A zero inversion occurred during an encryption or key schedule.")
             else:
                 return self.sbox_constant()
         try:
@@ -770,7 +770,7 @@ class SR_generic(MPolynomialSystemGenerator):
         elif self.e == 8:
             return k.fetch_int(99)
         else:
-            raise TypeError, "sbox constant only defined for e in (4, 8)"
+            raise TypeError("sbox constant only defined for e in (4, 8)")
 
     def sbox(self, inversion_only=False):
         r"""
@@ -1129,7 +1129,7 @@ class SR_generic(MPolynomialSystemGenerator):
         elif elem_type == "state_array":
             return self.random_state_array(*args, **kwds)
         else:
-            raise TypeError, "parameter type not understood"
+            raise TypeError("parameter type not understood")
 
     def key_schedule(self, kj, i):
         """
@@ -1149,7 +1149,7 @@ class SR_generic(MPolynomialSystemGenerator):
             CB 11 CF 8E
         """
         if i < 0:
-            raise TypeError, "i must be >= i"
+            raise TypeError("i must be >= i")
 
         if i == 0:
             return kj
@@ -1318,9 +1318,9 @@ class SR_generic(MPolynomialSystemGenerator):
             elif len(P) == len(K) == r*c*e:
                 _type = self.vector
             else:
-                raise TypeError, "length %d or %d doesn't match either %d or %d"%(len(P),len(K),r*c,r*c*e)
+                raise TypeError("length %d or %d doesn't match either %d or %d"%(len(P),len(K),r*c,r*c*e))
         else:
-            raise TypeError, "plaintext or key parameter not understood"
+            raise TypeError("plaintext or key parameter not understood")
 
         P = self.state_array(P)
         K = self.state_array(K)
@@ -1409,7 +1409,7 @@ class SR_generic(MPolynomialSystemGenerator):
         elif typ == "vector":
             return self.hex_str_vector(M)
         else:
-            raise TypeError, "parameter type must either be 'matrix' or 'vector'"
+            raise TypeError("parameter type must either be 'matrix' or 'vector'")
 
     def hex_str_matrix(self, M):
         r"""
@@ -1436,9 +1436,9 @@ class SR_generic(MPolynomialSystemGenerator):
         for x in range(M.nrows()):
             for y in range(M.ncols()):
                 if e == 8:
-                    st.append("%02X"%(int(str(M[x, y].int_repr()))))
+                    st.append("%02X" % M[x, y].integer_representation())
                 else:
-                    st.append("%X"%(int(str(M[x, y].int_repr()))))
+                    st.append("%X" % M[x, y].integer_representation())
             st.append("\n")
         return " ".join(st)
 
@@ -1467,9 +1467,9 @@ class SR_generic(MPolynomialSystemGenerator):
         for y in range(M.ncols()):
             for x in range(M.nrows()):
                 if e == 8:
-                    st.append("%02X"%(int(str(M[x, y].int_repr()))))
+                    st.append("%02X" % M[x, y].integer_representation())
                 else:
-                    st.append("%X"%(int(str(M[x, y].int_repr()))))
+                    st.append("%X" % M[x, y].integer_representation())
             #st.append("\n")
         return "".join(st)
 
@@ -1634,19 +1634,49 @@ class SR_generic(MPolynomialSystemGenerator):
 
             sage: sr = mq.SR(1,1,1,4)
             sage: sr.variable_dict()
-            {'x101': x101, 'x100': x100, 'x103': x103, 'x102': x102,
-             's002': s002, 'w100': w100, 'w101': w101, 'w102': w102,
-             'w103': w103, 'k100': k100, 'k101': k101, 'k102': k102,
-             'k103': k103, 's003': s003, 's001': s001, 'k002': k002,
-             'k001': k001, 'k000': k000, 'k003': k003, 's000': s000}
+            {'k000': k000,
+             'k001': k001,
+             'k002': k002,
+             'k003': k003,
+             'k100': k100,
+             'k101': k101,
+             'k102': k102,
+             'k103': k103,
+             's000': s000,
+             's001': s001,
+             's002': s002,
+             's003': s003,
+             'w100': w100,
+             'w101': w101,
+             'w102': w102,
+             'w103': w103,
+             'x100': x100,
+             'x101': x101,
+             'x102': x102,
+             'x103': x103}
 
             sage: sr = mq.SR(1,1,1,4,gf2=True)
             sage: sr.variable_dict()
-            {'x101': x101, 'x100': x100, 'x103': x103, 'x102': x102,
-             's002': s002, 'w100': w100, 'w101': w101, 'w102': w102,
-             'w103': w103, 'k100': k100, 'k101': k101, 'k102': k102,
-             'k103': k103, 's003': s003, 's001': s001, 'k002': k002,
-             'k001': k001, 'k000': k000, 'k003': k003, 's000': s000}
+            {'k000': k000,
+             'k001': k001,
+             'k002': k002,
+             'k003': k003,
+             'k100': k100,
+             'k101': k101,
+             'k102': k102,
+             'k103': k103,
+             's000': s000,
+             's001': s001,
+             's002': s002,
+             's003': s003,
+             'w100': w100,
+             'w101': w101,
+             'w102': w102,
+             'w103': w103,
+             'x100': x100,
+             'x101': x101,
+             'x102': x102,
+             'x103': x103}
 
         """
         try:
@@ -1912,7 +1942,7 @@ class SR_generic(MPolynomialSystemGenerator):
         a = k.gen()
 
         if i < 0:
-            raise TypeError, "i must by >= 0"
+            raise TypeError("i must by >= 0")
 
         if i == 0:
             return tuple(self.field_polynomials("k", i, r*c))
@@ -2079,19 +2109,19 @@ class SR_generic(MPolynomialSystemGenerator):
         plaintext, key, ciphertext = data
 
         if plaintext is False:
-            raise TypeError, "type %s of P not understood"%(type(plaintext))
+            raise TypeError("type %s of P not understood"%(type(plaintext)))
         elif plaintext is None:
             plaintext = self.random_element("vector")
 
         if key is None:
             key = self.random_element("vector")
         elif key is False and ciphertext is False:
-            raise TypeError, "type %s of K not understood"%(type(key))
+            raise TypeError("type %s of K not understood"%(type(key)))
 
         if ciphertext is None:
             ciphertext = self(plaintext, key)
         elif ciphertext is False:
-            raise TypeError, "type %s of C not understood"%(type(ciphertext))
+            raise TypeError("type %s of C not understood"%(type(ciphertext)))
 
         for i in range(n+1):
             system.append( self.round_polynomials(i, plaintext, ciphertext) )
@@ -2903,7 +2933,7 @@ class SR_gf2(SR_generic):
             elif is_Matrix(x):
                 P = x.base_ring()
             else:
-                raise TypeError, "x not understood"
+                raise TypeError("x not understood")
 
             if is_Matrix(x):
                 x = x.column(0).list()
@@ -3078,7 +3108,7 @@ class SR_gf2(SR_generic):
             elif is_Matrix(x):
                 P = x.base_ring()
             else:
-                raise TypeError, "x not understood"
+                raise TypeError("x not understood")
 
             if isinstance(x, (tuple, list)):
                 x = Matrix(P, e, 1, x)

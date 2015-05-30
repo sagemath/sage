@@ -151,8 +151,13 @@ def get_js_index(app, curdoc):
     """
     from sphinx.search import IndexBuilder, languages
     # FIXME: find the correct lang
-    indexer = IndexBuilder(app.env, 'en',
-                           app.config.html_search_options)
+    sphinx_version=__import__("sphinx").__version__
+    if (sphinx_version < '1.2'):
+        indexer = IndexBuilder(app.env, 'en',
+                               app.config.html_search_options)
+    else:
+        indexer = IndexBuilder(app.env, 'en',
+                               app.config.html_search_options, scoring=None)
     indexfile = os.path.join(app.outdir, curdoc, 'searchindex.js')
     try:
         f = open(indexfile, 'rb')
@@ -198,23 +203,12 @@ def citation_dir(app):
 def write_citations(app, citations):
     """
     Pickle the citation in a file.
-
-    Atomic except on Windows, where you need to upgrade to a real filesystem.
     """
-    import cPickle
+    from sage.misc.temporary_file import atomic_write
     outdir = citation_dir(app)
-    fd, tmp = tempfile.mkstemp(dir=outdir)
-    os.close(fd)
-    with open(tmp, 'wb') as file:
-        cPickle.dump(citations, file)
-    citation  = os.path.join(outdir, CITE_FILENAME)
-    try:
-        os.rename(tmp, citation)
-    except OSError:  # your OS sucks and cannot do atomic file replacement
-        os.unlink(citation)
-        os.rename(tmp, citation)
+    with atomic_write(os.path.join(outdir, CITE_FILENAME)) as f:
+        cPickle.dump(citations, f)
     app.info("Saved pickle file: %s"%CITE_FILENAME)
-
 
 def fetch_citation(app, env):
     """
@@ -223,12 +217,10 @@ def fetch_citation(app, env):
     """
     app.builder.info(bold('loading cross citations... '), nonl=1)
     filename = os.path.join(citation_dir(app), '..', CITE_FILENAME)
-    if not os.path.exists(filename):
+    if not os.path.isfile(filename):
         return
-    import cPickle
-    file = open(filename, 'rb')
-    cache = cPickle.load(file)
-    file.close()
+    with open(filename, 'rb') as f:
+        cache = cPickle.load(f)
     app.builder.info("done (%s citations)."%len(cache))
     cite = env.citations
     for ind, (path, tag) in cache.iteritems():

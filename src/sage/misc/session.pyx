@@ -152,11 +152,11 @@ def _is_new_var(x, v, hidden):
         return False
     # If a variable names was not there at init time then it is
     # definitely new.
-    if not state_at_init.has_key(x):
+    if x not in state_at_init:
         return True
     # A variable could also be new even if it was there at init, say if
     # its value changed.
-    return not (state_at_init.has_key(x) and state_at_init[x] is v)
+    return x not in state_at_init or state_at_init[x] is not v
 
 def show_identifiers(hidden=False):
     r"""
@@ -297,7 +297,7 @@ def save_session(name='sage_session', verbose=False):
         try:
             x = state[k]
             if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, types.TypeType, types.ClassType)):
-                raise TypeError, '%s is a function, method, class or type'%k
+                raise TypeError('{} is a function, method, class or type'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to
             # make *certain* that we can pickled D at the end below.
@@ -310,14 +310,22 @@ def save_session(name='sage_session', verbose=False):
             if verbose:
                 print "Saving %s"%k
             D[k] = x
-        except Exception, msg:
+        except Exception as msg:
             if verbose:
-                print "Not saving %s: %s"%(k, msg)
+                print("Not saving {}: {}".format(k, msg))
             pass
     save(D, name)
     if embedded():
         # Also save D to the data directory if we're using the notebook.
-        save(D, '../../data/' + name)
+        # This is broken for now. Simply print some information to the user
+        # if the user does not save it in the DATA directory.
+        # save(D, '../../data/' + name)
+        if name.find('.sagenb/') <= 0 or name.find('/data/') <= 0:
+            print ( "To store the session in a common directory that the "
+                    "entire worksheet can access, save it using the command:\n"
+                    "save_session(DATA + '{0}')\n"
+                    "You can later load it by running in any cell:\n"
+                    "load_session(DATA + '{0}')".format(name.rsplit('/', 1)[-1]))
 
 def load_session(name='sage_session', verbose=False):
     r"""

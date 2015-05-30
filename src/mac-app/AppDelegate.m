@@ -35,7 +35,7 @@
         if( returnCode != 0 ) {
             // According to http://www.cocoadev.com/index.pl?TransformProcessType
             // TransformProcessType is available since 10.3, but doen't work for our case until 10.5
-            NSLog(@"Could not show Sage.app in the dock. Error %ld", returnCode);
+            NSLog(@"Could not show Sage.app in the dock. Error %d", (int)returnCode);
             // It's forbidden to showInDock since it doesn't work
             [defaults setBool:NO forKey:@"myShowInDock"];
             [defaults synchronize];

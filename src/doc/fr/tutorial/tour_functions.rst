@@ -9,7 +9,7 @@ confusions. Le but de cette section est de clarifier quelques points à
 l'origine de ces confusions.
 
 Il y a plusieurs façons de définir un objet que l'on peut légitimement
-appeler « fonction ».
+appeler « fonction ».
 
 1. Définir une fonction Python, comme expliqué dans la section :ref:`section-functions`. Les fonctions Python peuvent être utilisées
 pour tracer des courbes, mais pas dérivées ou intégrées symboliquement::
@@ -20,14 +20,15 @@ pour tracer des courbes, mais pas dérivées ou intégrées symboliquement::
     sage: f(3)
     9
     sage: plot(f, 0, 2)
+    Graphics object consisting of 1 graphics primitive
 
 Remarquez la syntaxe de la dernière ligne. Écrire plutôt ``plot(f(z), 0, 2)``
-provoquerait une erreur : en effet, le ``z`` qui apparaît dans
+provoquerait une erreur : en effet, le ``z`` qui apparaît dans
 la définition de ``f`` est une variable muette qui n'a pas de sens
 en-dehors de la définition. Un simple ``f(z)`` déclenche la même erreur.
 En l'occurrence, faire de ``z`` une variable symbolique comme dans
 l'exemple ci-dessous fonctionne, mais cette façon de faire soulève
-d'autres problèmes (voir le point 4 ci-dessous), et il vaut mieux
+d'autres problèmes (voir le point 4 ci-dessous), et il vaut mieux
 s'abstenir de l'utiliser
 
 .. link
@@ -39,11 +40,12 @@ s'abstenir de l'utiliser
     sage: f(z)
     z^2
     sage: plot(f(z), 0, 2)
+    Graphics object consisting of 1 graphics primitive
 
 L'appel de fonction ``f(z)`` renvoie ici l'expression symbolique
 ``z^2``, qui est alors utilisée par la fonction ``plot``.
 
-2. Définir une expression symbolique fonctionnelle (« appelable »). Une
+2. Définir une expression symbolique fonctionnelle (« appelable »). Une
 telle expression représente une fonction dont on peut tracer le graphe,
 et que l'on peut aussi dériver ou intégrer symboliquement ::
 
@@ -59,6 +61,7 @@ et que l'on peut aussi dériver ou intégrer symboliquement ::
     sage: type(g)
     <type 'sage.symbolic.expression.Expression'>
     sage: plot(g, 0, 2)
+    Graphics object consisting of 1 graphics primitive
 
 Notez que, si ``g`` est une expression symbolique fonctionnelle
 (``x |--> x^2``), l'objet ``g(x)`` (``x^2``) est d'une nature un
@@ -77,6 +80,7 @@ illustrées dans le point 5 ci-dessous.
     sage: g(x).derivative()
     2*x
     sage: plot(g(x), 0, 2)
+    Graphics object consisting of 1 graphics primitive
 
 3. Utiliser une fonction usuelle prédéfinie de Sage. Celles-ci peuvent
 servir à tracer des courbes, et, indirectement, être dérivées ou intégrées ::
@@ -84,9 +88,11 @@ servir à tracer des courbes, et, indirectement, être dérivées ou intégrées
     sage: type(sin)
     <class 'sage.functions.trig.Function_sin'>
     sage: plot(sin, 0, 2)
+    Graphics object consisting of 1 graphics primitive
     sage: type(sin(x))
     <type 'sage.symbolic.expression.Expression'>
     sage: plot(sin(x), 0, 2)
+    Graphics object consisting of 1 graphics primitive
 
 Il n'est pas possible de dériver la fonction ``sin`` tout court pour
 obtenir ``cos`` ::
@@ -110,13 +116,13 @@ Examinons maintenant quelques problèmes fréquents.
 \4. Évaluation accidentelle ::
 
     sage: def h(x):
-    ...       if x < 2:
-    ...           return 0
-    ...       else:
-    ...           return x-2
+    ....:     if x < 2:
+    ....:         return 0
+    ....:     else:
+    ....:         return x-2
 
-Problème : ``plot(h(x), 0, 4)`` trace la droite `y = x - 2`, et non pas la
-fonction affine par morceaux définie par ``h``. Pourquoi ? Lors de l'exécution,
+Problème : ``plot(h(x), 0, 4)`` trace la droite `y = x - 2`, et non pas la
+fonction affine par morceaux définie par ``h``. Pourquoi ? Lors de l'exécution,
 ``plot(h(x), 0, 4)`` évalue d'abord ``h(x)`` : la fonction
 Python ``h`` est appelée avec le paramètre ``x``, et la condition ``x < 2``
 est donc évaluée.
@@ -132,18 +138,19 @@ Or, l'évaluation d'une inégalité symbolique renvoie False quand la
 condition n'est pas clairement vraie. Ainsi, ``h(x)`` s'évalue en
 ``x - 2``, et c'est cette expression-là qui est finalement tracée.
 
-Solution : Il ne faut pas utiliser ``plot(h(x), 0, 4)``, mais plutôt
+Solution : Il ne faut pas utiliser ``plot(h(x), 0, 4)``, mais plutôt
 
 .. link
 
 ::
 
     sage: def h(x):
-    ...       if x < 2:
-    ...           return 0
-    ...       else:
-    ...           return x-2
+    ....:     if x < 2:
+    ....:         return 0
+    ....:     else:
+    ....:         return x-2
     sage: plot(h, 0, 4)
+    Graphics object consisting of 1 graphics primitive
 
 \5. Constante plutôt que fonction ::
 
@@ -152,8 +159,8 @@ Solution : Il ne faut pas utiliser ``plot(h(x), 0, 4)``, mais plutôt
     sage: g
     1
 
-Problème : ``g(3)`` déclenche une erreur avec le message « ValueError:
-the number of arguments must be less than or equal to 0 ».
+Problème : ``g(3)`` déclenche une erreur avec le message « ValueError:
+the number of arguments must be less than or equal to 0 ».
 
 .. link
 
@@ -167,7 +174,7 @@ the number of arguments must be less than or equal to 0 ».
 En effet, ``g`` n'est pas une fonction, mais une constante, sans
 variable en laquelle on peut l'évaluer.
 
-Solution : il y a plusieurs possibilités.
+Solution : il y a plusieurs possibilités.
 
 - Définir ``f`` comme une expression symbolique fonctionnelle ::
 

@@ -147,7 +147,7 @@ Langfristige Ziele von Sage
    Quellcode lesen. Falls Sie Sage verwenden, um Berechnungen für ein
    Paper durchzuführen, welches Sie veröffentlichen, können Sie
    sicher sein, dass Ihre Leser immer freien Zugang zu Sage und
-   seinem Quellcode haben und Sie dürfen sogar Ihre Sage Version
+   seinem Quellcode haben und Sie dürfen sogar Ihre SageMath Version
    archivieren und weiterverteilen.
 
 -  **einfach zu kompilieren:** Sage sollte für GNU/Linux, Mac OS X und

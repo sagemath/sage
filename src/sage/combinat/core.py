@@ -27,17 +27,15 @@ Authors:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.structure.element import Element
 from sage.combinat.partition import Partitions, Partition
-from sage.combinat.combinat import CombinatorialObject
+from sage.combinat.combinat import CombinatorialElement
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.functions.other import floor
 from sage.combinat.combinatorial_map import combinatorial_map
 
-class Core(CombinatorialObject, Element):
+class Core(CombinatorialElement):
     r"""
     A `k`-core is an integer partition from which no rim hook of size `k`
     can be removed.
@@ -51,9 +49,6 @@ class Core(CombinatorialObject, Element):
         ...
         ValueError: [3, 1] is not a 4-core
     """
-
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, part, k):
         r"""
@@ -105,8 +100,53 @@ class Core(CombinatorialObject, Element):
         part = Partition(core)
         if not part.is_core(k):
             raise ValueError("%s is not a %s-core"%(part, k))
-        CombinatorialObject.__init__(self, core)
-        Element.__init__(self, parent)
+        CombinatorialElement.__init__(self, parent, core)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: c = Core([4,2,1,1],5)
+            sage: d = Core([4,2,1,1],5)
+            sage: e = Core([4,2,1,1],6)
+            sage: c == [4,2,1,1]
+            False
+            sage: c == d
+            True
+            sage: c == e
+            False
+        """
+        if isinstance(other, Core):
+            return self._list.__eq__(other._list) and self.parent().k == other.parent().k
+        else:
+            return False
+
+    def __hash__(self):
+        """
+        Computes the hash of ``self`` by computing the hash of the
+        underlying list and of the additional parameter.
+        The hash is cached and stored in ``self._hash``.
+
+        EXAMPLES::
+
+            sage: c = Core([4,2,1,1],3)
+            sage: c._hash is None
+            True
+            sage: hash(c) #random
+            1335416675971793195
+            sage: c._hash #random
+            1335416675971793195
+
+        TESTS::
+
+            sage: c = Core([4,2,1,1],5)
+            sage: d = Core([4,2,1,1],6)
+            sage: hash(c) == hash(d)
+            False
+        """
+        if self._hash is None:
+            self._hash = hash(tuple(self._list)) + hash(self.parent().k)
+        return self._hash
 
     def _latex_(self):
         """
@@ -381,7 +421,7 @@ class Core(CombinatorialObject, Element):
             ...
             ValueError: The two cores do not have the same k
         """
-        if type(self) == type(other):
+        if isinstance(self, type(other)):
             if self.k() != other.k():
                 raise ValueError("The two cores do not have the same k")
         else:
@@ -436,7 +476,7 @@ class Core(CombinatorialObject, Element):
             ...
             ValueError: The two cores do not have the same k
         """
-        if type(self) == type(other):
+        if isinstance(self, type(other)):
             if self.k()!=other.k():
                 raise ValueError("The two cores do not have the same k")
         else:
@@ -650,8 +690,7 @@ class Cores_size(UniqueRepresentation, Parent):
             sage: C.list()
             [[3, 1], [2, 1, 1]]
         """
-        k_cores = filter(lambda x: x.is_core(self.k), Partitions(self.n))
-        return [ Core(x, self.k) for x in k_cores ]
+        return [ Core(x, self.k) for x in Partitions(self.n) if x.is_core(self.k) ]
 
     def from_partition(self, part):
         r"""

@@ -1,7 +1,7 @@
 Algèbre de base et calcul infinitésimal
 =======================================
 
-Sage peut accomplir divers calculs d'algèbre et d'analyse de base : par
+Sage peut accomplir divers calculs d'algèbre et d'analyse de base : par
 exemple, trouver les solutions d'équations, dériver, intégrer, calculer
 des transformées de Laplace. Voir la documentation
 `Sage Constructions <http://www.sagemath.org/doc/constructions/>`_
@@ -63,7 +63,7 @@ Pour une résolution numérique, on peut utiliser à la place :
     [[1.0000000, 8.0000000, -4.8830369, -0.13962039],
      [1.0000000, 8.0000000, 3.5497035, -1.1937129]]
 
-(La fonction ``n`` affiche une approximation numérique ; son argument
+(La fonction ``n`` affiche une approximation numérique ; son argument
 indique le nombre de bits de précision.)
 
 Dérivation, intégration, etc.
@@ -133,15 +133,15 @@ ordinaires. Pour résoudre l'équation :math:`x'+x-1=0` :
     x(t)
     sage: DE = lambda y: diff(y,t) + y - 1
     sage: desolve(DE(x(t)), [x(t),t])
-    (c + e^t)*e^(-t)
+    (_C + e^t)*e^(-t)
 
 Ceci utilise l'interface de Sage vers Maxima [Max]_, aussi il se peut
 que la sortie diffère un peu des sorties habituelles de Sage. Dans notre
 cas, le résultat indique que la solution générale à l'équation
-différentielle est :math:`x(t) = e^{-t}(e^{t}+c)`.
+différentielle est :math:`x(t) = e^{-t}(e^{t}+C)`.
 
 Il est aussi possible de calculer des transformées de Laplace. La
-transformée de Laplace de :math:`t^2e^t -\sin(t)` s'obtient comme suit :
+transformée de Laplace de :math:`t^2e^t -\sin(t)` s'obtient comme suit :
 
 ::
 
@@ -171,19 +171,19 @@ où :math:`m_{i}` est la masse de l'objet *i*, :math:`x_{i}` est
 l'élongation à partir du point d'équilibre de la masse  *i*, et
 :math:`k_{i}` est la constante de raideur du ressort *i*.
 
-**Exemple :** Utiliser Sage pour résoudre le problème ci-dessus
+**Exemple :** Utiliser Sage pour résoudre le problème ci-dessus
 avec :math:`m_{1}=2`, :math:`m_{2}=1`, :math:`k_{1}=4`, :math:`k_{2}=2`,
 :math:`x_{1}(0)=3`, :math:`x_{1}'(0)=0`, :math:`x_{2}(0)=3`,
 :math:`x_{2}'(0)=0`.
 
-Solution : Considérons la transformée de Laplace de la première équation
+Solution : Considérons la transformée de Laplace de la première équation
 (avec les notations :math:`x=x_{1}`, :math:`y=x_{2}`):
 
 ::
 
     sage: de1 = maxima("2*diff(x(t),t, 2) + 6*x(t) - 2*y(t)")
     sage: lde1 = de1.laplace("t","s"); lde1
-    2*(-?%at('diff(x(t),t,1),t=0)+s^2*'laplace(x(t),t,s)-x(0)*s)-2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
+    2*(-%at('diff(x(t),t,1),t=0)+s^2*'laplace(x(t),t,s)-x(0)*s)-2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
 
 La réponse n'est pas très lisible, mais elle signifie que
 
@@ -198,7 +198,7 @@ la seconde équation :
 
     sage: de2 = maxima("diff(y(t),t, 2) + 2*y(t) - 2*x(t)")
     sage: lde2 = de2.laplace("t","s"); lde2
-    -?%at('diff(y(t),t,1),t=0)+s^2*'laplace(y(t),t,s)+2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s)-y(0)*s
+    -%at('diff(y(t),t,1),t=0)+s^2*'laplace(y(t),t,s)+2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s)-y(0)*s
 
 Ceci signifie
 
@@ -239,8 +239,8 @@ On peut en tracer le graphe paramétrique en utilisant
 ::
 
     sage: t = var('t')
-    sage: P = parametric_plot((cos(2*t) + 2*cos(t), 4*cos(t) - cos(2*t) ),\
-    ...   (t, 0, 2*pi), rgbcolor=hue(0.9))
+    sage: P = parametric_plot((cos(2*t) + 2*cos(t), 4*cos(t) - cos(2*t) ),
+    ....:     (t, 0, 2*pi), rgbcolor=hue(0.9))
     sage: show(P)
 
 Les coordonnées individuelles peuvent être tracées en utilisant
@@ -285,9 +285,9 @@ différentielle, donne
 .. math::   y(x+h) \approx y(x) + h\cdot f(x,y(x)).
 
 
-Si nous notons :math:`h\cdot f(x,y(x))` le « terme de correction » (faute
+Si nous notons :math:`h\cdot f(x,y(x))` le « terme de correction » (faute
 d'un terme plus approprié), et si nous appelons :math:`y(x)`
-« l'ancienne valeur de `y` » et :math:`y(x+h)` la « nouvelle valeur de
+« l'ancienne valeur de `y` » et :math:`y(x+h)` la « nouvelle valeur de
 `y` », cette approximation se réécrit
 
 .. math::   y_{nouveau} \approx y_{ancien} + h\cdot f(x,y_{ancien}).
@@ -309,7 +309,7 @@ informations utilisées dans la méthode.
 
 
 Le but est est de remplir tous les trous du tableau, ligne après ligne,
-jusqu'à atteindre le coefficient « ??? », qui est l'approximation de
+jusqu'à atteindre le coefficient « ??? », qui est l'approximation de
 :math:`y(b)` au sens de la méthode d'Euler.
 
 L'idée est la même pour les systèmes d'équations différentielles.
@@ -333,12 +333,12 @@ Il nous faut réduire l'équation différentielle d'ordre 2 à un système de de
         3/4             0.82                 -0.16            -0.66          -0.081
           1             0.65                 -0.18            -0.74           0.022
 
-On en déduit :math:`z(1)\approx 0.75`.
+On en déduit :math:`z(1)\approx 0.65`.
 
 On peut également tracer le graphe des points :math:`(x,y)` pour obtenir
 une image approchée de la courbe. La fonction ``eulers_method_2x2_plot``
-réalise cela ; pour l'utiliser, il faut définir les fonctions  `f` et
-`g` qui prennent un argument à trois coordonnées : (`t`, `x`, `y`).
+réalise cela ; pour l'utiliser, il faut définir les fonctions  `f` et
+`g` qui prennent un argument à trois coordonnées : (`t`, `x`, `y`).
 
 ::
 
@@ -346,7 +346,7 @@ réalise cela ; pour l'utiliser, il faut définir les fonctions  `f` et
     sage: g = lambda z: -sin(z[1])  # g(t,x,y) = -sin(x)
     sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)
 
-Arrivé à ce point, ``P`` conserve en mémoire deux graphiques : ``P[0]``,
+Arrivé à ce point, ``P`` conserve en mémoire deux graphiques : ``P[0]``,
 le graphe de  `x` en fonction de `t`, et ``P[1]``, le graphique de `y`
 par rapport à `t`. On peut tracer les deux graphiques simultanément par
 :

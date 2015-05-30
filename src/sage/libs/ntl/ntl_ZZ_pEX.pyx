@@ -78,10 +78,10 @@ cdef class ntl_ZZ_pEX:
 
         if v is None:
             return
-        elif PY_TYPE_CHECK(v, list) or PY_TYPE_CHECK(v, tuple):
+        elif isinstance(v, list) or isinstance(v, tuple):
             for i from 0 <= i < len(v):
                 x = v[i]
-                if not PY_TYPE_CHECK(x, ntl_ZZ_pE):
+                if not isinstance(x, ntl_ZZ_pE):
                     cc = ntl_ZZ_pE(x,self.c)
                 else:
                     if self.c is not (<ntl_ZZ_pE>x).c:
@@ -90,10 +90,6 @@ cdef class ntl_ZZ_pEX:
                 ZZ_pEX_SetCoeff(self.x, i, cc.x)
         else:
             raise NotImplementedError
-            s = str(v).replace(',',' ').replace('L','')
-            #sig_on()
-            #ZZ_pEX_from_str(&self.x, s)
-            #sig_off()
 
     def __cinit__(self, v=None, modulus=None):
         #################### WARNING ###################
@@ -102,7 +98,7 @@ cdef class ntl_ZZ_pEX:
         ## the error checking in __init__ will prevent##
         ## you from constructing an ntl_ZZ_pEX        ##
         ## inappropriately.  However, from Cython, you##
-        ## could do r = PY_NEW(ntl_ZZ_pEX) without    ##
+        ## could do r = ntl_ZZ_pEX.__new__(ntl_ZZ_pEX) without
         ## first restoring a ZZ_pEContext, which could##
         ## have unfortunate consequences.  See _new  ##
         ## defined below for an example of the right  ##
@@ -112,16 +108,16 @@ cdef class ntl_ZZ_pEX:
         if modulus is None and v is None: # we also check for v is None so that a user can specify the modulus by v.
             ZZ_pEX_construct(&self.x)
             return
-        if PY_TYPE_CHECK( modulus, ntl_ZZ_pEContext_class ):
+        if isinstance(modulus, ntl_ZZ_pEContext_class):
             self.c = <ntl_ZZ_pEContext_class>modulus
-        elif PY_TYPE_CHECK(v, ntl_ZZ_pEX):
+        elif isinstance(v, ntl_ZZ_pEX):
             self.c = (<ntl_ZZ_pEX>v).c
-        elif PY_TYPE_CHECK(v, ntl_ZZ_pE):
+        elif isinstance(v, ntl_ZZ_pE):
             self.c = (<ntl_ZZ_pE>v).c
-        elif (PY_TYPE_CHECK(v, list) or PY_TYPE_CHECK(v, tuple)) and len(v) > 0:
-            if PY_TYPE_CHECK(v[0], ntl_ZZ_pEX):
+        elif (isinstance(v, list) or isinstance(v, tuple)) and len(v) > 0:
+            if isinstance(v[0], ntl_ZZ_pEX):
                 self.c = (<ntl_ZZ_pEX>v[0]).c
-            elif PY_TYPE_CHECK(v[0], ntl_ZZ_pE):
+            elif isinstance(v[0], ntl_ZZ_pE):
                 self.c = (<ntl_ZZ_pEX>v[0]).c
             else:
                 self.c = <ntl_ZZ_pEContext_class>ntl_ZZ_pEContext(modulus)
@@ -138,7 +134,7 @@ cdef class ntl_ZZ_pEX:
     cdef ntl_ZZ_pEX _new(self):
         cdef ntl_ZZ_pEX r
         self.c.restore_c()
-        r = PY_NEW(ntl_ZZ_pEX)
+        r = ntl_ZZ_pEX.__new__(ntl_ZZ_pEX)
         r.c = self.c
         return r
 
@@ -223,7 +219,7 @@ cdef class ntl_ZZ_pEX:
         if i < 0:
             raise IndexError, "index (i=%s) must be >= 0"%i
         cdef ntl_ZZ_pE _a
-        if PY_TYPE_CHECK(a, ntl_ZZ_pE):
+        if isinstance(a, ntl_ZZ_pE):
             _a = <ntl_ZZ_pE> a
         else:
             _a = ntl_ZZ_pE(a,self.c)
@@ -249,7 +245,7 @@ cdef class ntl_ZZ_pEX:
         cdef ntl_ZZ_pE r
         sig_on()
         self.c.restore_c()
-        r = PY_NEW(ntl_ZZ_pE)
+        r = ntl_ZZ_pE.__new__(ntl_ZZ_pE)
         r.c = self.c
         r.x = ZZ_pEX_coeff( self.x, i)
         sig_off()
@@ -596,7 +592,7 @@ cdef class ntl_ZZ_pEX:
         """
         cdef ntl_ZZ_pEContext_class cE = ntl_ZZ_pEContext(self.c.f.convert_to_modulus(c))
         cE.restore_c()
-        cdef ntl_ZZ_pEX ans = PY_NEW(ntl_ZZ_pEX)
+        cdef ntl_ZZ_pEX ans = ntl_ZZ_pEX.__new__(ntl_ZZ_pEX)
         sig_on()
         ZZ_pEX_conv_modulus(ans.x, self.x, c.x)
         sig_off()

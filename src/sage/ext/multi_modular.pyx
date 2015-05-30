@@ -1,5 +1,5 @@
 """
-Utility classes for multi-modular algorithms.
+Utility classes for multi-modular algorithms
 """
 
 ######################################################################
@@ -14,7 +14,6 @@ Utility classes for multi-modular algorithms.
 
 include "sage/ext/interrupt.pxi"
 include "sage/ext/stdsage.pxi"
-include "sage/ext/gmp.pxi"
 
 
 from sage.rings.integer_ring import ZZ
@@ -285,7 +284,7 @@ cdef class MultiModularBasis_base:
             sage: mm == 1
             False
         """
-        if not PY_TYPE_CHECK(other, MultiModularBasis_base):
+        if not isinstance(other, MultiModularBasis_base):
             return cmp(type(other), MultiModularBasis_base)
         return cmp((self.list(), self._u_bound, self._l_bound),
                 (other.list(), (<MultiModularBasis_base>other)._u_bound,

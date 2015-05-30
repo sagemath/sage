@@ -11,23 +11,25 @@ Finite Coxeter Groups
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.category import Category
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.categories.finite_groups import FiniteGroups
 
-class FiniteCoxeterGroups(Category):
+class FiniteCoxeterGroups(CategoryWithAxiom):
     r"""
     The category of finite Coxeter groups.
 
     EXAMPLES::
 
-        sage: FiniteSemigroups()
-        Category of finite semigroups
-        sage: FiniteSemigroups().super_categories()
-        [Category of semigroups, Category of finite enumerated sets]
+        sage: FiniteCoxeterGroups()
+        Category of finite coxeter groups
+        sage: FiniteCoxeterGroups().super_categories()
+        [Category of coxeter groups,
+         Category of finite groups,
+         Category of finite finitely generated semigroups]
 
         sage: G = FiniteCoxeterGroups().example()
         sage: G.cayley_graph(side = "right").plot()
+        Graphics object consisting of 40 graphics primitives
 
     Here are some further examples::
 
@@ -44,16 +46,6 @@ class FiniteCoxeterGroups(Category):
         sage: DihedralGroup(5)
         Dihedral group of order 10 as a permutation group
     """
-
-    @cached_method
-    def super_categories(self):
-        r"""
-        EXAMPLES::
-
-            sage: FiniteCoxeterGroups().super_categories()
-            [Category of coxeter groups, Category of finite groups]
-        """
-        return [CoxeterGroups(), FiniteGroups()]
 
     class ParentMethods:
 
@@ -84,7 +76,7 @@ class FiniteCoxeterGroups(Category):
         @lazy_attribute
         def w0(self):
             r"""
-            Return the longest element of self.
+            Return the longest element of ``self``.
 
             This attribute is deprecated.
 
@@ -105,10 +97,10 @@ class FiniteCoxeterGroups(Category):
             INPUT:
 
             - ``index_set`` - a subset (as a list or iterable) of the
-              nodes of the dynkin diagram; (default: all of them)
+              nodes of the Dynkin diagram; (default: all of them)
 
             Returns the longest element of ``self``, or of the
-            parabolic subgroup corresponding to the given index_set.
+            parabolic subgroup corresponding to the given ``index_set``.
 
             Should this method be called maximal_element? longest_element?
 
@@ -142,7 +134,7 @@ class FiniteCoxeterGroups(Category):
         @cached_method
         def bruhat_poset(self, facade = False):
             """
-            Returns the Bruhat poset of ``self``
+            Returns the Bruhat poset of ``self``.
 
             EXAMPLES::
 
@@ -202,7 +194,7 @@ class FiniteCoxeterGroups(Category):
             INPUT:
 
             - ``side`` -- "left", "right", or "twosided" (default: "right")
-            - ``facade`` -- a boolean (default: False)
+            - ``facade`` -- a boolean (default: ``False``)
 
             Returns the left (resp. right) poset for weak order.  In
             this poset, `u` is smaller than `v` if some reduced word
@@ -316,9 +308,9 @@ class FiniteCoxeterGroups(Category):
                 [5, 6, 5, 1]]
 
             Recursive algorithm: write `w` for ``self``. If `i` is a
-            non-descent of `w``, then the covers of `w` are exactly
-            `\{ws_i, u_1s_i, u_2s_i,..., u_js_i\}', where the 'u_k'
-            are those covers of 'ws_i' that have a descent at `i`.
+            non-descent of `w`, then the covers of `w` are exactly
+            `\{ws_i, u_1s_i, u_2s_i,..., u_js_i\}`, where the `u_k`
+            are those covers of `ws_i` that have a descent at `i`.
             """
 
             i = self.first_descent(positive=True)
@@ -327,3 +319,107 @@ class FiniteCoxeterGroups(Category):
                 return [u.apply_simple_reflection(i) for u in wsi.bruhat_upper_covers() if u.has_descent(i)] + [wsi]
             else:
                 return []
+
+        def coxeter_knuth_neighbor(self, w):
+            r"""
+            Return the Coxeter-Knuth (oriented) neighbors of the reduced word `w` of ``self``.
+
+            INPUT:
+
+            - ``w`` -- reduced word of ``self``
+
+            The Coxeter-Knuth relations are given by `a a+1 a \sim a+1 a a+1`, `abc \sim acb`
+            if `b<a<c` and `abc \sim bac` if `a<c<b`. This method returns all neighbors of
+            ``w`` under the Coxeter-Knuth relations oriented from left to right.
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(['A',4], prefix='s')
+                sage: word = [1,2,1,3,2]
+                sage: w = W.from_reduced_word(word)
+                sage: w.coxeter_knuth_neighbor(word)
+                {(1, 2, 3, 1, 2), (2, 1, 2, 3, 2)}
+
+                sage: word = [1,2,1,3,2,4,3]
+                sage: w = W.from_reduced_word(word)
+                sage: w.coxeter_knuth_neighbor(word)
+                {(1, 2, 1, 3, 4, 2, 3), (1, 2, 3, 1, 2, 4, 3), (2, 1, 2, 3, 2, 4, 3)}
+
+            TESTS::
+
+                sage: W = WeylGroup(['B',4], prefix='s')
+                sage: word = [1,2]
+                sage: w = W.from_reduced_word(word)
+                sage: w.coxeter_knuth_neighbor(word)
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: This has only been implemented in finite type A so far!
+            """
+            C = self.parent().cartan_type()
+            if not C[0] == 'A':
+                raise NotImplementedError("This has only been implemented in finite type A so far!")
+            d = []
+            for i in range(2,len(w)):
+                v = [j for j in w]
+                if w[i-2] == w[i]:
+                    if w[i] == w[i-1] - 1:
+                        v[i-2] = w[i-1]
+                        v[i] = w[i-1]
+                        v[i-1] = w[i]
+                        d += [tuple(v)]
+                elif w[i-1]<w[i-2] and w[i-2]<w[i]:
+                    v[i] = w[i-1]
+                    v[i-1] = w[i]
+                    d += [tuple(v)]
+                elif w[i-2]<w[i] and w[i]<w[i-1]:
+                    v[i-2] = w[i-1]
+                    v[i-1] = w[i-2]
+                    d += [tuple(v)]
+            return set(d)
+
+        def coxeter_knuth_graph(self):
+            r"""
+            Return the Coxeter-Knuth graph of type `A`.
+
+            The Coxeter-Knuth graph of type `A` is generated by the Coxeter-Knuth relations which are
+            given by `a a+1 a \sim a+1 a a+1`, `abc \sim acb` if `b<a<c` and `abc \sim bac` if `a<c<b`.
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(['A',4], prefix='s')
+                sage: w = W.from_reduced_word([1,2,1,3,2])
+                sage: D = w.coxeter_knuth_graph()
+                sage: D.vertices()
+                [(1, 2, 1, 3, 2),
+                (1, 2, 3, 1, 2),
+                (2, 1, 2, 3, 2),
+                (2, 1, 3, 2, 3),
+                (2, 3, 1, 2, 3)]
+                sage: D.edges()
+                [((1, 2, 1, 3, 2), (1, 2, 3, 1, 2), None),
+                ((1, 2, 1, 3, 2), (2, 1, 2, 3, 2), None),
+                ((2, 1, 2, 3, 2), (2, 1, 3, 2, 3), None),
+                ((2, 1, 3, 2, 3), (2, 3, 1, 2, 3), None)]
+
+                sage: w = W.from_reduced_word([1,3])
+                sage: D = w.coxeter_knuth_graph()
+                sage: D.vertices()
+                [(1, 3), (3, 1)]
+                sage: D.edges()
+                []
+
+            TESTS::
+
+                sage: W = WeylGroup(['B',4], prefix='s')
+                sage: w = W.from_reduced_word([1,2])
+                sage: w.coxeter_knuth_graph()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: This has only been implemented in finite type A so far!
+            """
+            from sage.graphs.all import Graph
+            R = [tuple(v) for v in self.reduced_words()]
+            G = Graph()
+            G.add_vertices(R)
+            G.add_edges([v,vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
+            return G

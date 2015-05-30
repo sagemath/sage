@@ -275,7 +275,7 @@ class LocalComponentBase(SageObject):
         else:
             return SmoothCharacterGroupQp(self.prime(), self.coefficient_field()).character(chip.conductor().valuation(self.prime()), list((~chip).values_on_gens()) + [chi(a) * self.prime()**self.twist_factor()])
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
         Comparison function.
 
@@ -293,10 +293,31 @@ class LocalComponentBase(SageObject):
             sage: Pi == loads(dumps(Pi))
             True
         """
-        return (cmp(type(self), type(other))
-            or cmp(self.prime(), other.prime())
-            or cmp(self.newform(), other.newform())
-            or cmp(self.twist_factor(), other.twist_factor()))
+        return (isinstance(other, LocalComponentBase)
+                and self.prime() == other.prime()
+                and self.newform() == other.newform()
+                and self.twist_factor() == other.twist_factor())
+
+    def __ne__(self, other):
+        """
+        Return True if ``self != other``.
+
+        EXAMPLE::
+
+            sage: Pi = LocalComponent(Newform("50a"), 5)
+            sage: Pi != LocalComponent(Newform("50a"), 3)
+            True
+            sage: Pi != LocalComponent(Newform("50b"), 5)
+            True
+            sage: Pi != QQ
+            True
+            sage: Pi != None
+            True
+            sage: Pi != loads(dumps(Pi))
+            False
+        """
+        return not (self == other)
+
 
 class PrincipalSeries(LocalComponentBase):
     r"""

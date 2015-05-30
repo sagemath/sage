@@ -338,7 +338,7 @@ class LetterplaceIdeal(Ideal_nc):
         P = self.ring()
         if not isinstance(G,(list,tuple)):
             if G==P:
-                return P.ideal([P.zero_element()])
+                return P.ideal([P.zero()])
             if G in P:
                 return G.normal_form(self)
             G = G.gens()

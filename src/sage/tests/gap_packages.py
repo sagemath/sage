@@ -5,10 +5,18 @@ TESTS::
 
     sage: from sage.tests.gap_packages import all_installed_packages, test_packages
     sage: pkgs = all_installed_packages(ignore_dot_gap=True)
-    sage: test_packages(pkgs, only_failures=True)    # optional: gap_packages
+    sage: test_packages(pkgs, only_failures=True)    # optional - gap_packages
       Status    Package    GAP Output
     +---------+----------+------------+
       Failure   HAPcryst   fail
+
+These are packages in the ``database_gap`` package::
+
+    sage: test_packages(['atlasrep', 'tomlib'])    # optional - database_gap
+      Status   Package    GAP Output
+    +--------+----------+------------+
+               atlasrep   true
+               tomlib     true
 """
 
 import os
@@ -53,7 +61,6 @@ def test_packages(packages, only_failures=False):
           Failure   HAPcryst     fail
                     Hap          true
                     autpgrp      true
-                    braid        true
                     crime        true
                     ctbllib      true
                     design       true

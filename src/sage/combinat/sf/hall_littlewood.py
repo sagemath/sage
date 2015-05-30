@@ -25,7 +25,6 @@ REFERENCES:
 #*****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.calculus.var import var
 from sage.libs.symmetrica.all import hall_littlewood
 import sfa
 import sage.combinat.partition
@@ -90,8 +89,6 @@ class HallLittlewood(UniqueRepresentation):
             sage: TestSuite(HL).run()
         """
         self._sym = Sym
-        if not (t in Sym.base_ring() or var(t) in Sym.base_ring()):
-            raise ValueError, "parameter t must be in the base ring"
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
         if str(t) !='t':

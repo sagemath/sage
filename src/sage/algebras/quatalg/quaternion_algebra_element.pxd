@@ -1,6 +1,5 @@
-include "sage/ext/cdefs.pxi"
-include "sage/libs/flint/fmpz.pxi"
-include "sage/libs/flint/fmpz_poly.pxi"
+from sage.libs.gmp.types cimport mpz_t
+from sage.libs.flint.types cimport fmpz_poly_t
 
 import sage.structure.element
 cimport sage.structure.element

@@ -6,7 +6,7 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.matrix.constructor import Matrix
 from sage.misc.misc_c import prod as mul
 from sage.modules.free_module_element import vector
-from sage.rings.finite_rings.element_ext_pari import is_FiniteFieldElement
+from sage.rings.finite_rings.element_base import is_FiniteFieldElement
 from sage.rings.finite_rings.constructor import FiniteField as GF
 from sage.rings.ideal import FieldIdeal, Ideal
 from sage.rings.integer_ring import ZZ
@@ -334,9 +334,9 @@ class SBox(SageObject):
             pass
 
         if len(str(X)) > 50:
-            raise TypeError, "Cannot apply SBox to provided element."
+            raise TypeError("Cannot apply SBox to provided element.")
         else:
-            raise TypeError, "Cannot apply SBox to %s."%(X,)
+            raise TypeError("Cannot apply SBox to %s."%(X,))
 
     def __getitem__(self, X):
         """
@@ -779,7 +779,7 @@ class SBox(SageObject):
             (a^2 + 1, 5)
         """
         if self.m != self.n:
-            raise TypeError, "Lagrange interpolation only supported if self.m == self.n."
+            raise TypeError("Lagrange interpolation only supported if self.m == self.n.")
 
         if k is None:
             k = GF(2**self.m,'a')

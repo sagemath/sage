@@ -14,7 +14,6 @@
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
@@ -45,9 +44,9 @@ cdef class ntl_GF2:
             sage: ntl.GF2('1')
             1
         """
-        if PY_TYPE_CHECK(v, ntl_GF2):
+        if isinstance(v, ntl_GF2):
             self.x = (<ntl_GF2>v).x
-        elif PyInt_Check(v) or PyLong_Check(v) or PY_TYPE_CHECK(v, Integer):
+        elif PyInt_Check(v) or PyLong_Check(v) or isinstance(v, Integer):
             GF2_conv_long(self.x, int(v) % 2)
         elif v is not None:
             v = str(v)
@@ -95,10 +94,10 @@ cdef class ntl_GF2:
         if op != 2 and op != 3:
             raise TypeError, "elements in GF(2) are not ordered."
 
-        if not PY_TYPE_CHECK(other, ntl_GF2):
+        if not isinstance(other, ntl_GF2):
             other = ntl_GF2(other)
 
-        if not PY_TYPE_CHECK(self, ntl_GF2):
+        if not isinstance(self, ntl_GF2):
             self = ntl_GF2(self)
 
         cdef int t
@@ -121,10 +120,10 @@ cdef class ntl_GF2:
             sage: z*z
             0
         """
-        cdef ntl_GF2 r = PY_NEW(ntl_GF2)
-        if not PY_TYPE_CHECK(self, ntl_GF2):
+        cdef ntl_GF2 r = ntl_GF2.__new__(ntl_GF2)
+        if not isinstance(self, ntl_GF2):
             self = ntl_GF2(self)
-        if not PY_TYPE_CHECK(other, ntl_GF2):
+        if not isinstance(other, ntl_GF2):
             other = ntl_GF2(other)
         GF2_mul(r.x, (<ntl_GF2>self).x, (<ntl_GF2>other).x)
         return r
@@ -141,13 +140,13 @@ cdef class ntl_GF2:
             ZeroDivisionError
         """
         cdef ntl_GF2 r
-        if not PY_TYPE_CHECK(self, ntl_GF2):
+        if not isinstance(self, ntl_GF2):
             self = ntl_GF2(self)
-        if not PY_TYPE_CHECK(other, ntl_GF2):
+        if not isinstance(other, ntl_GF2):
             other = ntl_GF2(other)
         if GF2_IsZero((<ntl_GF2>other).x):
             raise ZeroDivisionError
-        r = PY_NEW(ntl_GF2)
+        r = ntl_GF2.__new__(ntl_GF2)
         GF2_div(r.x, (<ntl_GF2>self).x, (<ntl_GF2>other).x)
         return r
 
@@ -164,10 +163,10 @@ cdef class ntl_GF2:
             sage: z-z
             0
         """
-        cdef ntl_GF2 r = PY_NEW(ntl_GF2)
-        if not PY_TYPE_CHECK(self, ntl_GF2):
+        cdef ntl_GF2 r = ntl_GF2.__new__(ntl_GF2)
+        if not isinstance(self, ntl_GF2):
             self = ntl_GF2(self)
-        if not PY_TYPE_CHECK(other, ntl_GF2):
+        if not isinstance(other, ntl_GF2):
             other = ntl_GF2(other)
         GF2_sub(r.x, (<ntl_GF2>self).x, (<ntl_GF2>other).x)
         return r
@@ -185,10 +184,10 @@ cdef class ntl_GF2:
             sage: z+z
             0
         """
-        cdef ntl_GF2 r = PY_NEW(ntl_GF2)
-        if not PY_TYPE_CHECK(self, ntl_GF2):
+        cdef ntl_GF2 r = ntl_GF2.__new__(ntl_GF2)
+        if not isinstance(self, ntl_GF2):
             self = ntl_GF2(self)
-        if not PY_TYPE_CHECK(other, ntl_GF2):
+        if not isinstance(other, ntl_GF2):
             other = ntl_GF2(other)
         GF2_add(r.x, (<ntl_GF2>self).x, (<ntl_GF2>other).x)
         return r
@@ -202,7 +201,7 @@ cdef class ntl_GF2:
             sage: -o
             1
         """
-        cdef ntl_GF2 r = PY_NEW(ntl_GF2)
+        cdef ntl_GF2 r = ntl_GF2.__new__(ntl_GF2)
         GF2_negate(r.x, self.x)
         return r
 

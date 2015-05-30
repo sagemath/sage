@@ -105,12 +105,12 @@ def EquationOrder(f, names):
             try:
                 R(g)
             except TypeError:
-                raise ValueError, 'each generator must be integral'
+                raise ValueError('each generator must be integral')
     else:
         try:
             R(f)
         except TypeError:
-            raise ValueError, 'each generator must be integral'
+            raise ValueError('each generator must be integral')
 
     K = NumberField(f, names=names)
     return K.order(K.gens())
@@ -216,10 +216,10 @@ class Order(IntegralDomain):
             Ideal (0) of Number Field in a with defining polynomial x^2 + 2
         """
         if not self.is_maximal():
-            raise NotImplementedError, "ideals of non-maximal orders not yet supported."
+            raise NotImplementedError("ideals of non-maximal orders not yet supported.")
         I = self.number_field().ideal(*args, **kwds)
         if not I.is_integral():
-            raise ValueError, "ideal must be integral; use fractional_ideal to create a non-integral ideal."
+            raise ValueError("ideal must be integral; use fractional_ideal to create a non-integral ideal.")
         return I
 
     def _coerce_map_from_(self, R):
@@ -245,7 +245,7 @@ class Order(IntegralDomain):
 
             sage: k.<a> = NumberField(x^2 + 5077); G = k.class_group(); G
             Class group of order 22 with structure C22 of Number Field in a with defining polynomial x^2 + 5077
-            sage: G.0
+            sage: G.0 ^ -9
             Fractional ideal class (11, a + 7)
             sage: Ok = k.maximal_order(); Ok
             Maximal Order in Number Field in a with defining polynomial x^2 + 5077
@@ -418,7 +418,7 @@ class Order(IntegralDomain):
         """
         b = self.basis()
         if i < 0 or i >= len(b):
-            raise IndexError, "no %sth generator"%i
+            raise IndexError("no %sth generator"%i)
         return self.basis()[i]
 
     def gens(self):
@@ -624,7 +624,7 @@ class Order(IntegralDomain):
 
             sage: F.<alpha> = NumberField(x**2+3)
             sage: F.ring_of_integers().zeta(6)
-            -1/2*alpha + 1/2
+            1/2*alpha + 1/2
             sage: O = F.order([3*alpha])
             sage: O.zeta(3)
             Traceback (most recent call last):
@@ -637,7 +637,7 @@ class Order(IntegralDomain):
             if all:
                 return []
             else:
-                raise ArithmeticError, "There are no %s roots of unity in self."%n.ordinal_str()
+                raise ArithmeticError("There are no %s roots of unity in self."%n.ordinal_str())
         if all:
             return roots_in_self
         else:
@@ -683,14 +683,14 @@ class Order(IntegralDomain):
         """
         return self._K
 
-    def residue_field(self, prime, name = None, check = False):
+    def residue_field(self, prime, names=None, check=False):
         """
         Return the residue field of this order at a given prime, ie `O/pO`.
 
         INPUT:
 
         - ``prime`` -- a prime ideal of the maximal order in this number field.
-        - ``name`` -- the name of the variable in the residue field
+        - ``names`` -- the name of the variable in the residue field
         - ``check`` -- whether or not to check the primality of prime.
 
         OUTPUT:
@@ -705,11 +705,15 @@ class Order(IntegralDomain):
             sage: OK = K.maximal_order()
             sage: OK.residue_field(P)
             Residue field in abar of Fractional ideal (61, a^2 + 30)
+            sage: Fp.<b> = OK.residue_field(P)
+            sage: Fp
+            Residue field in b of Fractional ideal (61, a^2 + 30)
         """
         if self.is_maximal():
-            return self.number_field().residue_field(prime, name, check)
-        else:
-            raise NotImplementedError, "Residue fields of non-maximal orders are not yet supported."
+            return self.number_field().residue_field(prime, names, check)
+
+        raise NotImplementedError("Residue fields of non-maximal orders "
+                                  "are not yet supported.")
 
     def fraction_field(self):
         """
@@ -779,7 +783,7 @@ class Order(IntegralDomain):
             NotImplementedError: computation of class numbers of non-maximal orders is not implemented
         """
         if not self.is_maximal():
-            raise NotImplementedError, "computation of class numbers of non-maximal orders is not implemented"
+            raise NotImplementedError("computation of class numbers of non-maximal orders is not implemented")
         return self.number_field().class_number(proof=proof)
 
     def class_group(self, proof=None, names='c'):
@@ -1041,11 +1045,11 @@ class AbsoluteOrder(Order):
         V, from_v, to_v = self._K.vector_space()
         if check:
             if not K.is_absolute():
-                raise ValueError, "AbsoluteOrder must be called with an absolute number field."
+                raise ValueError("AbsoluteOrder must be called with an absolute number field.")
             if to_v(1) not in module_rep:
-                raise ValueError, "1 is not in the span of the module, hence not an order."
+                raise ValueError("1 is not in the span of the module, hence not an order.")
             if module_rep.rank() != self._K.degree():
-                raise ValueError, "the module must have full rank."
+                raise ValueError("the module must have full rank.")
 
     def _element_constructor_(self, x):
         r"""
@@ -1067,7 +1071,7 @@ class AbsoluteOrder(Order):
             x = self._K(x)
         V, _, embedding = self._K.vector_space()
         if not embedding(x) in self._module_rep:
-            raise TypeError, "Not an element of the order."
+            raise TypeError("Not an element of the order.")
         return self._element_type(self, x)
 
     def __reduce__(self):
@@ -1109,7 +1113,7 @@ class AbsoluteOrder(Order):
         if not isinstance(left, AbsoluteOrder) or not isinstance(right, AbsoluteOrder):
             raise NotImplementedError
         if left.number_field() != right.number_field():
-            raise TypeError, "Number fields don't match."
+            raise TypeError("Number fields don't match.")
         if left._is_maximal:
             return left
         elif right._is_maximal:
@@ -1134,7 +1138,7 @@ class AbsoluteOrder(Order):
         if not isinstance(left, AbsoluteOrder) or not isinstance(right, AbsoluteOrder):
             raise NotImplementedError
         if left.number_field() != right.number_field():
-            raise TypeError, "Number fields don't match."
+            raise TypeError("Number fields don't match.")
         return AbsoluteOrder(left._K, left._module_rep.intersection(right._module_rep), False)
 
     def _magma_init_(self, magma):
@@ -1254,9 +1258,9 @@ class AbsoluteOrder(Order):
             1/16
         """
         if not isinstance(other, AbsoluteOrder):
-            raise TypeError, "other must be an absolute order."
+            raise TypeError("other must be an absolute order.")
         if other.ambient() != self.ambient():
-            raise ValueError, "other must have the same ambient number field as self."
+            raise ValueError("other must have the same ambient number field as self.")
         return self._module_rep.index_in(other._module_rep)
 
     def module(self):
@@ -1566,7 +1570,7 @@ class RelativeOrder(Order):
             return left._absolute_order + right
         elif isinstance(left, RelativeOrder) and isinstance(right, RelativeOrder):
             if left._K != right._K:
-                raise TypeError, "Number fields don't match."
+                raise TypeError("Number fields don't match.")
             return RelativeOrder(left._K, left._absolute_order + right._absolute_order,
                                  check=False)
         else:
@@ -1593,7 +1597,7 @@ class RelativeOrder(Order):
             return left._absolute_order & right
         elif isinstance(left, RelativeOrder) and isinstance(right, RelativeOrder):
             if left._K != right._K:
-                raise TypeError, "Number fields don't match."
+                raise TypeError("Number fields don't match.")
             return RelativeOrder(left._K, left._absolute_order & right._absolute_order,
                                   check=False)
         else:
@@ -1667,7 +1671,7 @@ class RelativeOrder(Order):
             8/729
         """
         if not isinstance(other, Order):
-            raise TypeError, "other must be an absolute order."
+            raise TypeError("other must be an absolute order.")
         return self.absolute_order().index_in(other.absolute_order())
 
 
@@ -1748,7 +1752,7 @@ def absolute_order_from_ring_generators(gens, check_is_integral=True,
         Order in Number Field in a with defining polynomial x^4 - 5
     """
     if check_is_integral and not each_is_integral(gens):
-        raise ValueError, "each generator must be integral"
+        raise ValueError("each generator must be integral")
     gens = Sequence(gens)
     K = gens.universe()
     n = [x.absolute_minpoly().degree() for x in gens]
@@ -1851,10 +1855,10 @@ def absolute_order_from_module_generators(gens,
         Order in Number Field in alpha with defining polynomial x^4 + 3
     """
     if len(gens) == 0:
-        raise ValueError, "gens must span an order over ZZ"
+        raise ValueError("gens must span an order over ZZ")
     gens = Sequence(gens)
     if check_integral and not each_is_integral(gens):
-        raise ValueError, "each generator must be integral"
+        raise ValueError("each generator must be integral")
 
     K = gens.universe()
     if is_NumberFieldOrder(K):
@@ -1884,13 +1888,13 @@ def absolute_order_from_module_generators(gens,
 
     elif check_rank:
         if W.rank() != K.degree():
-            raise ValueError, "the rank of the span of gens is wrong"
+            raise ValueError("the rank of the span of gens is wrong")
 
     if check_is_ring:
         # Is there a faster way?
         alg = [to_V(x) for x in monomials(gens, [f.absolute_minpoly().degree() for f in gens])]
         if ambient.span(alg) != W:
-            raise ValueError, "the module span of the gens is not closed under multiplication."
+            raise ValueError("the module span of the gens is not closed under multiplication.")
 
     return AbsoluteOrder(K, W, check=False, is_maximal=is_maximal)  # we have already checked everything
 
@@ -1931,7 +1935,7 @@ def relative_order_from_ring_generators(gens,
         [1, 7*i - 2*a, -a*i + 8, 25*i - 7*a]
     """
     if check_is_integral and not each_is_integral(gens):
-        raise ValueError, "each generator must be integral"
+        raise ValueError("each generator must be integral")
     gens = Sequence(gens)
 
     # The top number field that contains the order.

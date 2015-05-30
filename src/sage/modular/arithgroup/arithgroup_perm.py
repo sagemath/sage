@@ -45,6 +45,14 @@ REFERENCES:
    noncongruence subgroups", Proc. Symp. Pure Math., Combinatorics (T. S. Motzkin,
    ed.), vol. 19, AMS, Providence 1971
 
+.. [Go09] Alexey G. Gorinov, "Combinatorics of double cosets and fundamental
+   domains for the subgroups of the modular group", preprint
+   :arxiv:`0901.1340`
+
+.. [HL14] Thomas Hamilton and David Loeffler, "Congruence testing for odd
+   modular subgroups", LMS J. Comput. Math. 17 (2014), no. 1, 206-208,
+   :doi:`10.1112/S1461157013000338`. 
+
 .. [Hsu96] Tim Hsu, "Identifying congruence subgroups of the modular group",
    Proc. AMS 124, no. 5, 1351-1359 (1996)
 
@@ -53,44 +61,42 @@ REFERENCES:
    d'Enfants, Mapping Class Groups and Moduli, volume 243 of LMS Lect. Notes,
    67-77, Cambridge Univ. Press (1997)
 
-.. [Go09] Alexey G. Gorinov, "Combinatorics of double cosets and fundamental
-   domains for the subgroups of the modular group", preprint
-   :arxiv:`0901.1340`
-
 .. [KSV11] Ian Kiming, Matthias Schuett and Helena Verrill, "Lifts of
    projective congruence groups", J. London Math. Soc. (2011) 83 (1): 96-120,
-   http://dx.doi.org/10.1112/jlms/jdq062. Arxiv version:
-   :arxiv:`0905.4798`.
+   :doi:`10.1112/jlms/jdq062`. Arxiv version: :arxiv:`0905.4798`.
 
-.. [Kul91] Ravi Kulkarni "An arithmetic geometric method in the study of the
+.. [Kul91] Ravi Kulkarni, "An arithmetic geometric method in the study of the
    subgroups of the modular group", American Journal of Mathematics 113 (1991),
    no 6, 1053-1133
 
-.. [Kur08] Chris Kurth, "K Farey package for Sage"
-
+.. [Kur08] Chris Kurth, "K Farey package for Sage",
+   http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html
+    
 .. [KuLo] Chris Kurth and Ling Long, "Computations with finite index subgroups
-   of `{\rm PSL}_2(\ZZ)` using Farey symbols", :arxiv:`0710.1835`
+   of `{\rm PSL}_2(\ZZ)` using Farey symbols", Advances in algebra and
+   combinatorics, 225--242, World Sci. Publ., Hackensack, NJ, 2008. Preprint
+   version: :arxiv:`0710.1835`
 
 .. [Ve] Helena Verrill, "Fundamental domain drawer", Java program,
    http://www.math.lsu.edu/~verrill/
 
-TODO:
+.. TODO::
 
-- modular Farey symbols
+    - modular Farey symbols
 
-- computation of generators of a modular subgroup with a standard surface
-  group presentation. In other words, compute a presentation of the form
+    - computation of generators of a modular subgroup with a standard surface
+      group presentation. In other words, compute a presentation of the form
 
-  .. MATH::
+      .. MATH::
 
-      \langle x_i,y_i,c_j |\ \prod_i [x_i,y_i] \prod_j c_j^{\nu_j} = 1\rangle
+        \langle x_i,y_i,c_j |\ \prod_i [x_i,y_i] \prod_j c_j^{\nu_j} = 1\rangle
 
-  where the elements `x_i` and `y_i` are hyperbolic and `c_j` are parabolic
-  (`\nu_j=\infty`) or elliptic elements (`\nu_j < \infty`).
+      where the elements `x_i` and `y_i` are hyperbolic and `c_j` are parabolic
+      (`\nu_j=\infty`) or elliptic elements (`\nu_j < \infty`).
 
-- computation of centralizer.
+    - computation of centralizer.
 
-- generation of modular (even) subgroups of fixed index.
+    - generation of modular (even) subgroups of fixed index.
 
 AUTHORS:
 
@@ -103,6 +109,9 @@ AUTHORS:
 
 - David Loeffler (2011): congruence testing for odd subgroups, enumeration of
   liftings of projective subgroups
+
+- David Loeffler & Thomas Hamilton (2012): generalised Hsu congruence test for
+  odd subgroups
 """
 
 ################################################################################
@@ -119,8 +128,9 @@ AUTHORS:
 
 from all import SL2Z
 from arithgroup_generic import ArithmeticSubgroup
-from sage.rings.all import Zmod
+from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc import verbose
 import sage.rings.arith as arith
 
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -388,11 +398,11 @@ def ArithmeticSubgroup_Permutation(
          L=(1,2)(3,5,4)
          R=(1,2)(3,4,5)
     """
-    gens = filter(lambda x: x is not None, [S2,S3,L,R])
+    gens = [x for x in [S2,S3,L,R] if x is not None]
     if len(gens) == 0:
         S2 = S3 = L = R = ''
     elif len(gens) < 2:
-        raise ValueError, "Need at least two generators"
+        raise ValueError("Need at least two generators")
 
     if S2 is not None:
         S2 = PermutationGroupElement(S2,check=check)
@@ -437,15 +447,15 @@ def ArithmeticSubgroup_Permutation(
             R = S3 * S2
 
     if check and (L != ~S3 * ~S2 or R != S3 * S2):
-        raise ValueError, "Wrong relations between generators"
+        raise ValueError("Wrong relations between generators")
 
     inv = S2*S2
 
     if check:
         if inv != S3*S3*S3:
-            raise ValueError, "S2^2 does not equal to S3^3"
+            raise ValueError("S2^2 does not equal to S3^3")
         elif not (inv*inv).is_one():
-            raise ValueError, "S2^2 = S3^3 must have order 1 or 2"
+            raise ValueError("S2^2 = S3^3 must have order 1 or 2")
 
         # Check transitivity. This is the most expensive check, so we do it
         # last.
@@ -453,7 +463,7 @@ def ArithmeticSubgroup_Permutation(
 
         G = PermutationGroup(gens)
         if not G.is_transitive():
-            raise ValueError, "Permutations do not generate a transitive group"
+            raise ValueError("Permutations do not generate a transitive group")
 
     s2 = [i-1 for i in S2.domain()]
     s3 = [i-1 for i in S3.domain()]
@@ -1292,6 +1302,11 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         Schuett). So we compute the image of self modulo `n` and return the
         preimage of that.
 
+        .. note::
+
+            If you just want to know if the subgroup is congruence or not, it
+            is *much* faster to use :meth:`~is_congruence`.
+
         EXAMPLE::
 
             sage: Gamma1(3).as_permutation_group().congruence_closure()
@@ -1311,7 +1326,220 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         from congroup_generic import CongruenceSubgroup_constructor as CS
         return CS(N, [x.matrix() for x in self.gens()])
 
+    def is_congruence(self):
+        r"""
+        Return ``True`` if this is a congruence subgroup, and ``False``
+        otherwise.
+        
+        ALGORITHM:
+        
+        Uses Hsu's algorithm [Hsu96]_. Adapted from Chris Kurth's
+        implementation in KFarey [Kur08]_.
+
+        For *odd* subgroups, Hsu's algorithm still works with minor
+        modifications, using the extension of Wohlfarht's theorem due to
+        Kiming, Schuett and Verrill [KSV11]_. See [HL14]_ for details.
+
+        The algorithm is as follows. Let `G` be a finite-index subgroup of
+        `{\rm SL}(2, \ZZ)`, and let `L` and `R` be the permutations of the
+        cosets of `G` given by the elements `\begin{pmatrix} 1 & 1 \\ 0 & 1
+        \end{pmatrix}` and `\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}`. Let
+        `N` be the generalized level of `G` (if `G` is even) or twice the
+        generalized level (if `G` is odd). Then:
+
+        - if `N` is odd, `G` is congruence if and only if the relation
+        
+          .. math::
+        
+            (L R^{-1} L)^2 = (R^2 L^{1/2})^3
+
+          holds, where `1/2` is understood as the multiplicative inverse of 2
+          modulo N.
+
+        - if `N` is a power of 2, then `G` is congruence if and only
+          if the relations
+
+          .. math::
+
+            \begin{array}{cc}
+             (L R^{-1} L)^{-1} S (L R^{-1} L) S = 1 & (A1)\\
+             S^{-1} R S = R^{25} & (A2)\\
+             (L R^{-1} L)^2 = (S R^5 L R^{-1} L)^3 & (A3) \\
+            \end{array}
+
+          hold, where `S = L^{20} R^{1/5} L^{-4} R^{-1}`, `1/5` being the inverse
+          of 5 modulo N.
+
+        - if `N` is neither odd nor a power of 2, seven relations (B1-7) hold,
+          for which see [HL14]_, or the source code of this function.
+
+        If the Sage verbosity flag is set (using ``set_verbose()``), then extra
+        output will be produced indicating which of the relations (A1-3) or
+        (B1-7) is not satisfied.
+
+        EXAMPLES:
+    
+        Test if `{\rm SL}_2(\ZZ)` is congruence::
+
+            sage: a = ArithmeticSubgroup_Permutation(L='',R='')
+            sage: a.index()
+            1
+            sage: a.is_congruence()
+            True
+
+        This example is congruence -- it is `\Gamma_0(3)` in disguise: ::
+
+            sage: S2 = SymmetricGroup(4)
+            sage: l = S2((2,3,4))
+            sage: r = S2((1,3,4))
+            sage: G = ArithmeticSubgroup_Permutation(L=l,R=r)
+            sage: print G
+            Arithmetic subgroup with permutations of right cosets
+            S2=(1,2)(3,4)
+            S3=(1,4,2)
+            L=(2,3,4)
+            R=(1,3,4)
+            sage: G.is_congruence()
+            True
+
+        This one is noncongruence::
+
+            sage: import sage.modular.arithgroup.arithgroup_perm as ap
+            sage: ap.HsuExample10().is_congruence()
+            False
+
+        The following example (taken from [KSV11]_) shows that a lifting of a
+        congruence subgroup of `{\rm PSL}(2,\ZZ)` to a subgroup of `{\rm SL}(2,
+        \ZZ)` need not necessarily be congruence::
+
+            sage: S2 = "(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23)"
+            sage: S3 = "(1,14,15,13,2,3)(4,5,6,16,17,18)(7,8,9,19,20,21)(10,11,12,22,23,24)"
+            sage: G = ArithmeticSubgroup_Permutation(S2=S2,S3=S3)
+            sage: G.is_congruence()
+            False
+            sage: G.to_even_subgroup().is_congruence()
+            True
+
+        In fact `G` is a lifting to `{\rm SL}(2,\ZZ)` of the group
+        `\bar{\Gamma}_0(6)`::
+
+            sage: G.to_even_subgroup() == Gamma0(6)
+            True
+        """
+        if self.index() == 1: # the group is SL2Z (trivial case)
+            return True
+
+        L = self.L() # action of L
+        R = self.R() # action of R
+
+        if self.is_even():
+            N = L.order() # generalised level of the group
+        else:
+            N = 2 * L.order()
+
+        # write N as N = em where e = 2^k and m odd
+        m = N.odd_part()
+        e = N // m
+
+        if e == 1:
+            # N is odd
+            # this only gets called if self is even
+            onehalf = ZZ(2).inverse_mod(N) # i.e. 2^(-1) mod N
+            rel = (R*R*L**(-onehalf))**3
+            return rel.is_one()
+
+        elif m == 1:
+            # N is a power of 2
+            onefifth = ZZ(5).inverse_mod(N) # i.e. 5^(-1) mod N
+            S = L**20*R**onefifth*L**(-4)*~R
+    
+            # congruence if the three below permutations are trivial
+            rel = (~L*R*~L) * S * (L*~R*L) * S
+            if not rel.is_one():
+                verbose("Failed relation A1")
+                return False
+
+            rel = ~S*R*S*R**(-25)
+            if not rel.is_one():
+                verbose("Failed relation A2")
+                return False
+
+            rel = (S*R**5*L*~R*L)**3 * ~(L * ~R * L)**2
+            if not rel.is_one():
+                verbose("Failed relation A3")
+                return False
+
+            return True
+        
+        else:
+            # e>1, m>1
+            onehalf = ZZ(2).inverse_mod(m) # i.e. 2^(-1) mod m
+            onefifth = ZZ(5).inverse_mod(e) # i.e. 5^(-1) mod e
+            c,d = arith.CRT_basis([m, e])
+            # c=0 mod e, c=1 mod m; d=1 mod e, d=0 mod m
+            a = L**c
+            b = R**c
+            l = L**d
+            r = R**d
+            s = l**20 * r**onefifth * l**(-4) * ~r
+
+            #Congruence if the seven permutations below are trivial:
+            rel =~a*~r*a*r
+            if not rel.is_one():
+                verbose("Failed relation B1")
+                return False
+
+            rel = (a*~b*a)**4
+            if not rel.is_one():
+                verbose("Failed relation B2")
+                return False
+
+            rel = (a*~b*a)**2*(~a*b)**3
+            if not rel.is_one():
+                verbose("Failed relation B3")
+                return False
+
+            rel = (a*~b*a)**2*(b*b*a**(-onehalf))**(-3)
+            if not rel.is_one():
+                verbose("Failed relation B4")
+                return False
+
+            rel = (~l*r*~l)*s*(l*~r*l)*s
+            if not rel.is_one():
+                verbose("Failed relation B5")
+                return False
+
+            rel = ~s*r*s*r**(-25)
+            if not rel.is_one():
+                verbose("Failed relation B6")
+                return False
+            
+            rel = (l*~r*l)**2*(s*r**5*l*~r*l)**(-3)
+            if not rel.is_one():
+                verbose("Failed relation B7")
+                return False
+
+            return True
+
 class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
+    r"""
+    An arithmetic subgroup of `{\rm SL}(2, \ZZ)` not containing `-1`,
+    represented in terms of the right action of `{\rm SL}(2, \ZZ)` on its
+    cosets.
+
+    EXAMPLES::
+
+        sage: G = ArithmeticSubgroup_Permutation(S2="(1,2,3,4)",S3="(1,3)(2,4)")
+        sage: G
+        Arithmetic subgroup with permutations of right cosets
+        S2=(1,2,3,4)
+        S3=(1,3)(2,4)
+        L=(1,2,3,4)
+        R=(1,4,3,2)
+        sage: type(G)
+        <class 'sage.modular.arithgroup.arithgroup_perm.OddArithmeticSubgroup_Permutation_with_category'>
+        """
+
     def __init__(self, S2, S3, L, R, canonical_labels=False):
         r"""
         TESTS::
@@ -1417,10 +1645,10 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 e.append((i,j))
 
         # build the quotient permutations
-        ss2 = [None]*(N/2)
-        ss3 = [None]*(N/2)
-        ll = [None]*(N/2)
-        rr = [None]*(N/2)
+        ss2 = [None]*(N//2)
+        ss3 = [None]*(N//2)
+        ll = [None]*(N//2)
+        rr = [None]*(N//2)
 
         s3 = self._S3
         l = self._L
@@ -1584,67 +1812,10 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 m += 1
         return n + m//2
 
-    def is_congruence(self):
-        r"""
-        Test whether self is a congruence group, i.e.~whether or not it
-        contains the subgroup `\Gamma(n)` for some `n`.
-
-        For odd groups, we first test whether the group generated by `G` and
-        `-1` is congruence, and then use a theorem of Kiming, Schuett and
-        Verrill [KSV11]_, which shows that an odd subgroup is congruence if and
-        only if it contains `\Gamma(N)` where `N` is twice its generalised
-        level (the least common multiple of its cusp widths). We can therefore
-        proceed by calculating the index of the subgroup of `{\rm SL}(2, \ZZ /
-        N\ZZ)` generated by the gens of self, and checking whether or not it
-        has the same index as self.
-
-        EXAMPLES::
-
-            sage: GammaH(11,[4]).as_permutation_group().is_congruence()
-            True
-
-        The following example (taken from [KSV11]_) shows that it may be the
-        case that G is not congruence, even if its image in `{\rm PSL}(2,\ZZ)`
-        is congruence::
-
-            sage: S2 = "(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23)"
-            sage: S3 = "(1,14,15,13,2,3)(4,5,6,16,17,18)(7,8,9,19,20,21)(10,11,12,22,23,24)"
-            sage: G = ArithmeticSubgroup_Permutation(S2=S2,S3=S3)
-            sage: G.is_congruence()
-            False
-            sage: G.to_even_subgroup().is_congruence()
-            True
-
-        In fact G is a lifting to `{\rm SL}(2,\ZZ)` of the group
-        `\bar{\Gamma}_0(6)`::
-
-            sage: G.to_even_subgroup() == Gamma0(6)
-            True
-        """
-        Gev = self.to_even_subgroup()
-        if not Gev.is_congruence():
-            return False
-        else:
-            N = 2*self.generalised_level()
-            from sage.groups.matrix_gps.all import MatrixGroup
-            H = MatrixGroup([x.matrix().change_ring(Zmod(N)) for x in self.gens()])
-            from congroup_gamma import Gamma_constructor as Gamma
-            return Gamma(N).index() == self.index() * H.order()
-
 class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
     r"""
-    An arithmetic subgroup `\Gamma` defined by two permutations, giving the
-    action of four standard generators
-
-    .. MATH::
-
-        s_2 = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix},\quad
-        s_3 = \begin{pmatrix} 0 & 1 \\ -1 & 1 \end{pmatrix},\quad
-        l = \begin{pmatrix} 1 & 1 \\ 0 & 1\end{pmatrix},\quad
-        r = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}.
-
-    by right multiplication on the coset representatives `\Gamma \backslash {\rm SL}_2(\ZZ)`.
-
+    An arithmetic subgroup of `{\rm SL}(2, \ZZ)` containing `-1`, represented
+    in terms of the right action of `{\rm SL}(2, \ZZ)` on its cosets.
 
     EXAMPLES:
 
@@ -2087,7 +2258,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             elif e[2] == 's3':
                 gens.append(self(reps[e[0]] * S3m * ~reps[e[1]]))
             else:
-                raise ValueError, "this should not happen"
+                raise ValueError("this should not happen")
 
         return reps, gens, self._S2[:], self._S3[:]
 
@@ -2134,7 +2305,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             elif e[2] == 's':
                 gens.append(self(reps[e[0]] * S2m * ~reps[e[1]]))
             else:
-                raise ValueError, "this should not happen"
+                raise ValueError("this should not happen")
 
         return reps, gens, self._L[:], self._S2[:]
 
@@ -2226,127 +2397,6 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         else:
             return self
 
-    def is_congruence(self):
-        r"""
-        Return True if this is a congruence subgroup.
-
-        ALGORITHM:
-
-        Uses Hsu's algorithm [Hsu96]_. Adapted from Chris Kurth's
-        implementation in KFarey [Kur08]_.
-
-        EXAMPLES:
-
-        Test if `{\rm SL}_2(\ZZ)` is congruence::
-
-            sage: a = ArithmeticSubgroup_Permutation(L='',R='')
-            sage: a.index()
-            1
-            sage: a.is_congruence()
-            True
-
-        This example is congruence -- it's Gamma0(3) in disguise: ::
-
-            sage: S2 = SymmetricGroup(4)
-            sage: l = S2((2,3,4))
-            sage: r = S2((1,3,4))
-            sage: G = ArithmeticSubgroup_Permutation(L=l,R=r)
-            sage: print G
-            Arithmetic subgroup with permutations of right cosets
-             S2=(1,2)(3,4)
-             S3=(1,4,2)
-             L=(2,3,4)
-             R=(1,3,4)
-            sage: G.is_congruence()
-            True
-
-        This one is noncongruence: ::
-
-            sage: import sage.modular.arithgroup.arithgroup_perm as ap
-            sage: ap.HsuExample10().is_congruence()
-            False
-        """
-        if self.index() == 1:  # the group is SL2Z (trivial case)
-            return True
-
-        L = self.L()              # action of L
-        R = self.R()              # action of R
-
-        N = L.order() # generalised level of the group
-
-        # write N as N = em where e = 2^k and m odd
-        e = 1
-        m = N
-        while m%2 == 0:
-            m //= 2
-            e *= 2
-
-        if e==1:     # N is odd
-            onehalf = int(~Zmod(N)(2))   #i.e. 2^(-1) mod N
-            rel = (R*R*L**(-onehalf))**3
-            return rel.is_one()
-
-        elif m==1:     # N is a power of 2
-            onefifth=int(~Zmod(N)(5))   #i.e. 5^(-1) mod N
-            S=L**20*R**onefifth*L**(-4)*~R
-
-            # congruence if the three below permutations are trivial
-            rel=(~L*R*~L) * S * (L*~R*L) * S
-            if not rel.is_one():
-                return False
-
-            rel=~S*R*S*R**(-25)
-            if not rel.is_one():
-                return False
-
-            rel=(S*R**5*L*~R*L)**3
-            if not rel.is_one():
-                return False
-
-            return True
-
-        else:         # e>1, m>1
-            onehalf=int(~Zmod(m)(2))    #i.e. 2^(-1)  mod m
-            onefifth=int(~Zmod(e)(5))   #i.e. 5^(-1)  mod e
-            c=int(~Zmod(m)(e))*e        #i.e. e^(-1)e mod m
-            d=int(~Zmod(e)(m))*m        #i.e. m^(-1)m mod e
-            a=L**c
-            b=R**c
-            l=L**d
-            r=R**d
-            s=l**20*r**onefifth*l**(-4)*~r
-
-            #Congruence if the seven permutations below are trivial:
-            rel=~a*~r*a*r
-            if not rel.is_one():
-                return False
-
-            rel=(a*~b*a)**4
-            if not rel.is_one():
-                return False
-
-            rel=(a*~b*a)**2*(~a*b)**3
-            if not rel.is_one():
-                return False
-
-            rel=(a*~b*a)**2*(b*b*a**(-onehalf))**(-3)
-            if not rel.is_one():
-                return False
-
-            rel=(~l*r*~l)*s*(l*~r*l)*s
-            if not rel.is_one():
-                return False
-
-            rel=~s*r*s*r**(-25)
-            if not rel.is_one():
-                return False
-
-            rel=(l*~r*l)**2*(s*r**5*l*~r*l)**(-3)
-            if not rel.is_one():
-                return False
-
-            return True
-
     def one_odd_subgroup(self,random=False):
         r"""
         Return an odd subgroup of index 2 in `\Gamma`, where `\Gamma` is this
@@ -2401,7 +2451,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             True
         """
         if self.nu2() != 0:
-            raise ValueError, "Group contains an element of order 4, hence no index 2 odd subgroups"
+            raise ValueError("Group contains an element of order 4, hence no index 2 odd subgroups")
         n = self.index()
         s2old, s3old = self.S2(), self.S3()
         s2cycs = s2old.cycle_tuples() # no singletons can exist
@@ -2425,7 +2475,8 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         r"""
         Return a list of the odd subgroups of index 2 in `\Gamma`, where
         `\Gamma` is this subgroup. (Equivalently, return the liftings of
-        `\bar{\Gamma} \le {\rm PSL}(2, \ZZ)` to `{\rm SL}(2, \ZZ)`.)
+        `\bar{\Gamma} \le {\rm PSL}(2, \ZZ)` to `{\rm SL}(2, \ZZ)`.) This can
+        take rather a long time if the index of this subgroup is large.
 
         .. seealso:: :meth:`one_odd_subgroup`, which returns just one of the
            odd subgroups (which is much quicker than enumerating them all).
@@ -2483,11 +2534,6 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             ]
             sage: [u.is_congruence() for u in X]
             [True, False, False, True, True, False, False, True]
-
-        Subgroups of large index may take a very long time::
-
-            sage: len(GammaH(11,[-1]).as_permutation_group().odd_subgroups())  # long time (up to 51s on sage.math, 2012)
-            2048
         """
         if self.nu2() != 0:
             return []

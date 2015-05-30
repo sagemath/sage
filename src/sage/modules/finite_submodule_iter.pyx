@@ -65,7 +65,6 @@ will result in improved running times::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
 
 cdef class FiniteZZsubmodule_iterator:
     r"""
@@ -85,9 +84,13 @@ cdef class FiniteZZsubmodule_iterator:
     INPUT:
 
         - ``basis``  - the elements `(g_0, \ldots, g_n)`
-        - ``orders`` (optional) - the additive_orders `m_i` of `g_i`.
+        - ``order`` (optional) - the additive_orders `m_i` of `g_i`.
         - ``coset_rep`` (optional) -- an element of g,
           if one aims to compute a coset of the `\ZZ`-submodule `M`.
+        - ``immutable`` (optional; default: ``False``)  -- set it to
+          ``True`` to return immutable elements. Setting this to
+          ``True`` makes sense if the elements are vectors. See
+          :class:`FiniteFieldsubspace_iterator` for examples.
 
     EXAMPLES::
 
@@ -101,7 +104,7 @@ cdef class FiniteZZsubmodule_iterator:
         [z, x + z, 2*x + z, y + z, x + y + z, 2*x + y + z, 2*y + z, x + 2*y + z, 2*x + 2*y + z]
     """
 
-    def __init__(self, basis, order=None, coset_rep=None):
+    def __init__(self, basis, order=None, coset_rep=None, immutable=False):
         """
         see :class:`FiniteZZsubmodule_iterator`
 
@@ -125,6 +128,7 @@ cdef class FiniteZZsubmodule_iterator:
         self._basis_all = basis
         self._basis_length = len(basis)
         self._count = 0
+        self._immutable = immutable
 
         if coset_rep is None:
             self._coset_rep = self._basis.parent().zero()
@@ -159,7 +163,10 @@ cdef class FiniteZZsubmodule_iterator:
             x
         """
         self._iteration()
-        return self._cw
+        v = self._cw
+        if self._immutable:
+            v.set_immutable()
+        return v
 
     def __repr__(self):
         """
@@ -229,6 +236,9 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
         - ``coset_rep`` (optional) -- a vector in the same ambient space,
           if one aims to compute a coset of the vector space given by ``basis``.
 
+        - ``immutable`` (optional; default: ``False``)  -- set it to
+          ``True`` to return immutable vectors.
+
     EXAMPLES::
 
         sage: from sage.modules.finite_submodule_iter import FiniteFieldsubspace_iterator
@@ -241,9 +251,19 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
         sage: t = list(FiniteFieldsubspace_iterator(X.basis()))  # takes 0.31s
         sage: sorted(t) == sorted(s)  # long time
         True
+
+    TESTS:
+
+    We test whether we get immutable vectors if immutable=True::
+
+        sage: iter = FiniteFieldsubspace_iterator(A, immutable=True)
+        sage: c = iter.next()
+        sage: c.is_immutable()
+        True
+
     """
 
-    def __init__(self, basis, coset_rep=None):
+    def __init__(self, basis, coset_rep=None, immutable=False):
         """
         see :class:`FiniteFieldsubspace_iterator`
 
@@ -276,7 +296,8 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
         basis = [_p * x for x in basis for _p in pows]  # a ZZ_p-basis for the vectorspace
         order = [p] * (len(basis))
 
-        FiniteZZsubmodule_iterator.__init__(self, basis, order, coset_rep)
+        FiniteZZsubmodule_iterator.__init__(self, basis, order, coset_rep,
+                                            immutable=immutable)
 
 cdef class FiniteFieldsubspace_projPoint_iterator:
     """
@@ -296,9 +317,12 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
           vectors is provided, then the linear independence of the vectors
           is not checked.
 
-        - ``normalize`` (optional) -- boolean which indicates if the
-          returned vectors should be normalized, i.e. the first nonzero coordinate
-          is equal to 1. Default: False
+        - ``normalize`` (optional; default: ``False``) -- boolean which
+          indicates if the returned vectors should be normalized, i.e. the
+          first nonzero coordinate is equal to 1.
+
+        - ``immutable`` (optional; default: ``False``)  -- set it to
+          ``True`` to return immutable vectors.
 
     EXAMPLES::
 
@@ -324,9 +348,12 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
         1
         sage: len(list(FiniteFieldsubspace_projPoint_iterator(A[:2]))) #indirect doctest
         8
+        sage: iter = FiniteFieldsubspace_projPoint_iterator(A[:2], immutable=True)
+        sage: iter.next().is_immutable()
+        True
     """
 
-    def __init__(self, basis, normalize=False):
+    def __init__(self, basis, normalize=False, immutable=False):
         """
         see :class:`FiniteFieldsubspace_projPoint_iterator`
 
@@ -342,6 +369,10 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
         cdef i
         self._basis = list(basis)
         self._basis_length = len(self._basis)
+        self._immutable = immutable
+        if immutable:
+            for b in self._basis:
+                b.set_immutable()
         if normalize:
             B = matrix(self._basis)
             B.echelonize()
@@ -372,10 +403,13 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
         if self._one_dimensional_case > 0:
             if self._one_dimensional_case == 1:
                 self._one_dimensional_case = 2
+                # this returns immutable vectors if immutable is True
                 return self._basis[0]
             else:
                 if self._basis_length > 1:
-                    self._it = FiniteFieldsubspace_iterator(self._basis[:1], self._basis[1])
+                    self._it = FiniteFieldsubspace_iterator(self._basis[:1],
+                                                            self._basis[1],
+                                                            immutable=self._immutable)
                     self._normalized_pos = 1
                     self._one_dimensional_case = 0
                 else:
@@ -387,7 +421,9 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
             if self._normalized_pos == self._basis_length:
                 raise StopIteration
             else:
-                self._it = FiniteFieldsubspace_iterator(self._basis[:self._normalized_pos], self._basis[self._normalized_pos])
+                self._it = FiniteFieldsubspace_iterator(self._basis[:self._normalized_pos],
+                                                        self._basis[self._normalized_pos],
+                                                        immutable=self._immutable)
                 return self._it.next()
 
     def __repr__(self):

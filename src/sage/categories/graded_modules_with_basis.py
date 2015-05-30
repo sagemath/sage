@@ -2,44 +2,33 @@ r"""
 Graded modules with basis
 """
 #*****************************************************************************
-#  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_over_base_ring
-from sage.categories.all import GradedModules, ModulesWithBasis
-from sage.misc.cachefunc import cached_method
+from sage.categories.graded_modules import GradedModulesCategory
 
-
-class GradedModulesWithBasis(Category_over_base_ring):
+class GradedModulesWithBasis(GradedModulesCategory):
     """
-    The category of graded modules with a distinguished basis
+    The category of graded modules with a distinguished basis.
 
     EXAMPLES::
 
-        sage: GradedModulesWithBasis(ZZ)
+        sage: C = GradedModulesWithBasis(ZZ); C
         Category of graded modules with basis over Integer Ring
-        sage: GradedModulesWithBasis(ZZ).super_categories()
-        [Category of graded modules over Integer Ring, Category of modules with basis over Integer Ring]
+        sage: sorted(C.super_categories(), key=str)
+        [Category of graded modules over Integer Ring,
+         Category of modules with basis over Integer Ring]
+        sage: C is ModulesWithBasis(ZZ).Graded()
+        True
 
     TESTS::
 
-        sage: TestSuite(GradedModulesWithBasis(ZZ)).run()
+        sage: TestSuite(C).run()
     """
-
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: GradedModulesWithBasis(QQ).super_categories()
-            [Category of graded modules over Rational Field, Category of modules with basis over Rational Field]
-        """
-        R = self.base_ring()
-        return [GradedModules(R), ModulesWithBasis(R)]
-
     class ParentMethods:
 
         # TODO: which syntax do we prefer?
@@ -76,9 +65,9 @@ class GradedModulesWithBasis(Category_over_base_ring):
             """
             from sage.sets.family import Family
             if d is None:
-                return Family(self._basis_keys, self.monomial)
+                return Family(self._indices, self.monomial)
             else:
-                return Family(self._basis_keys.subset(size=d), self.monomial)
+                return Family(self._indices.subset(size=d), self.monomial)
 
     class ElementMethods:
 

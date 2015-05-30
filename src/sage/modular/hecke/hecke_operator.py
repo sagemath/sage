@@ -73,7 +73,7 @@ class HeckeAlgebraElement(sage.algebras.algebra_element.AlgebraElement):
             Generic element of a structure
         """
         if not algebra.is_HeckeAlgebra(parent):
-            raise TypeError, "parent (=%s) must be a Hecke algebra"%parent
+            raise TypeError("parent (=%s) must be a Hecke algebra"%parent)
         sage.algebras.algebra_element.AlgebraElement.__init__(self, parent)
 
     def domain(self):
@@ -247,7 +247,7 @@ class HeckeAlgebraElement(sage.algebras.algebra_element.AlgebraElement):
             24*(1,0) - 5*(1,9)
         """
         if x not in self.domain():
-            raise TypeError, "x (=%s) must be in %s"%(x, self.domain())
+            raise TypeError("x (=%s) must be in %s"%(x, self.domain()))
         # Generic implementation which doesn't actually do anything
         # special regarding sparseness.  Override this for speed.
         T = self.hecke_module_morphism()
@@ -441,9 +441,9 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
         if not is_Matrix(A):
             raise TypeError("A must be a matrix")
         if not A.base_ring() == self.parent().base_ring():
-            raise TypeError, "base ring of matrix (%s) does not match base ring of space (%s)" % (A.base_ring(), self.parent().base_ring())
+            raise TypeError("base ring of matrix (%s) does not match base ring of space (%s)" % (A.base_ring(), self.parent().base_ring()))
         if not A.nrows() == A.ncols() == self.parent().module().rank():
-            raise TypeError, "A must be a square matrix of rank %s" % self.parent().module().rank()
+            raise TypeError("A must be a square matrix of rank %s" % self.parent().module().rank())
         self.__matrix = A
 
     def __cmp__(self, other):
@@ -466,7 +466,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
             if isinstance(other, HeckeOperator):
                 return cmp(self, other.matrix_form())
             else:
-                raise RuntimeError, "Bug in coercion code" # can't get here.
+                raise RuntimeError("Bug in coercion code") # can't get here.
         return cmp(self.__matrix, other.__matrix)
 
     def _repr_(self):
@@ -604,7 +604,7 @@ class HeckeOperator(HeckeAlgebraElement):
         """
         HeckeAlgebraElement.__init__(self, parent)
         if not isinstance(n, (int,long,Integer)):
-            raise TypeError, "n must be an int"
+            raise TypeError("n must be an int")
         self.__n = int(n)
 
     def __cmp__(self, other):
@@ -638,7 +638,7 @@ class HeckeOperator(HeckeAlgebraElement):
             if isinstance(other, HeckeAlgebraElement_matrix):
                 return cmp(self.matrix_form(), other)
             else:
-                raise RuntimeError, "Bug in coercion code" # can't get here
+                raise RuntimeError("Bug in coercion code") # can't get here
 
         if self.__n == other.__n:
             return 0

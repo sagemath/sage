@@ -348,7 +348,7 @@ def Matroid(*args, **kwds):
         :meth:`G.edge_iterator() <sage.graphs.generic_graph.GenericGraph.edge_iterator>`
         provides::
 
-            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)])
+            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)],multiedges=True)
             sage: M = Matroid('abcd', G)
             sage: M.rank(['b', 'c'])
             1
@@ -369,7 +369,7 @@ def Matroid(*args, **kwds):
             sage: sorted(M.groundset())
             [(0, 1), (0, 2), (1, 2)]
 
-            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)])
+            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)],multiedges=True)
             sage: M = Matroid(G)
             sage: sorted(M.groundset())
             [0, 1, 2, 3]

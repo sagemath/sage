@@ -66,18 +66,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
-from cpython.bool cimport *
+from sage.misc.cachefunc import cached_method
 
-import re
-from types import GeneratorType
-
-from sage.misc.lazy_attribute import lazy_class_attribute
-from sage.misc.superseded import deprecation
+from sage.structure.element import get_coercion_model
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.structure.parent cimport Parent
 from sage.structure.category_object import check_default_category
-from sage.misc.prandom import randint, randrange
+from sage.misc.prandom import randint
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
@@ -121,12 +116,16 @@ cdef class Ring(ParentWithGens):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_euclidean_degree() . . . pass
+        running ._test_gcd_vs_xgcd() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
         running ._test_prod() . . . pass
+        running ._test_quo_rem() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
+        running ._test_zero_divisors() . . . pass
         sage: TestSuite(QQ['x','y']).run()
         sage: TestSuite(ZZ['x','y']).run()
         sage: TestSuite(ZZ['x','y']['t']).run()
@@ -134,13 +133,13 @@ cdef class Ring(ParentWithGens):
     Test agaings another bug fixed in :trac:`9944`::
 
         sage: QQ['x'].category()
-        Join of Category of euclidean domains and Category of commutative algebras over Rational Field
+        Join of Category of euclidean domains and Category of commutative algebras over quotient fields
         sage: QQ['x','y'].category()
-        Join of Category of unique factorization domains and Category of commutative algebras over Rational Field
+        Join of Category of unique factorization domains and Category of commutative algebras over quotient fields
         sage: PolynomialRing(MatrixSpace(QQ,2),'x').category()
-        Category of algebras over Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+        Category of algebras over algebras over quotient fields
         sage: PolynomialRing(SteenrodAlgebra(2),'x').category()
-        Category of algebras over mod 2 Steenrod algebra, milnor basis
+        Category of algebras over graded hopf algebras with basis over Finite Field of size 2
 
      TESTS::
 
@@ -209,155 +208,6 @@ cdef class Ring(ParentWithGens):
             return self.cardinality()
         raise TypeError, 'len() of unsized object'
 
-    def __getitem__(self, x):
-        """
-        Create a polynomial or power series ring over ``self`` and inject
-        the variables into the global module scope.
-
-        If ``x`` is an algebraic element, this will return an extension of
-        ``self`` that contains ``x``.
-
-        EXAMPLES:
-
-        We create several polynomial rings::
-
-            sage: ZZ['x']
-            Univariate Polynomial Ring in x over Integer Ring
-            sage: QQ['x']
-            Univariate Polynomial Ring in x over Rational Field
-            sage: GF(17)['abc']
-            Univariate Polynomial Ring in abc over Finite Field of size 17
-            sage: GF(17)['a,b,c']
-            Multivariate Polynomial Ring in a, b, c over Finite Field of size 17
-
-        We can also create power series rings by using double brackets::
-
-            sage: QQ[['t']]
-            Power Series Ring in t over Rational Field
-            sage: ZZ[['W']]
-            Power Series Ring in W over Integer Ring
-
-            sage: ZZ[['x,y,z']]
-            Multivariate Power Series Ring in x, y, z over Integer Ring
-            sage: ZZ[['x','T']]
-            Multivariate Power Series Ring in x, T over Integer Ring
-
-        Use ``Frac`` (for fraction field) to obtain a Laurent series ring::
-
-            sage: Frac(QQ[['t']])
-            Laurent Series Ring in t over Rational Field
-
-        This can be used to create number fields too::
-
-            sage: QQ[I]
-            Number Field in I with defining polynomial x^2 + 1
-            sage: QQ[sqrt(2)]
-            Number Field in sqrt2 with defining polynomial x^2 - 2
-            sage: QQ[sqrt(2),sqrt(3)]
-            Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
-
-        and orders in number fields::
-
-            sage: ZZ[I]
-            Order in Number Field in I with defining polynomial x^2 + 1
-            sage: ZZ[sqrt(5)]
-            Order in Number Field in sqrt5 with defining polynomial x^2 - 5
-            sage: ZZ[sqrt(2)+sqrt(3)]
-            Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1
-        """
-
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if is_Polynomial(x):
-            x = str(x)
-
-        if not isinstance(x, str):
-            if isinstance(x, tuple):
-                v = x
-            else:
-                v = (x,)
-
-            minpolys = None
-            try:
-                minpolys = [a.minpoly() for a in v]
-            except (AttributeError, NotImplementedError, ValueError, TypeError), err:
-                pass
-
-            if minpolys:
-                R = self
-                # how to pass in names?
-                # TODO: set up embeddings
-                name_chr = 97 # a
-
-                if len(minpolys) > 1:
-                    w = []
-                    names = []
-                    for poly, var in zip(minpolys, v):
-                        w.append(poly)
-                        n, name_chr = gen_name(repr(var), name_chr)
-                        names.append(n)
-                else:
-                    w = minpolys
-                    name, name_chr = gen_name(repr(v[0]), name_chr)
-                    names = [name]
-
-                names = tuple(names)
-                if len(w) > 1:
-                    try:
-                        # Doing the extension all at once is best, if possible.
-                        return R.extension(w, names)
-                    except (TypeError, ValueError):
-                        pass
-                for poly, var in zip(w, names):
-                    R = R.extension(poly, var)
-                return R
-
-        if not isinstance(x, list):
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            P = PolynomialRing(self, x)
-            return P
-
-        P = None
-        if isinstance(x, list):
-            if len(x) == 1:
-                if isinstance(x[0], str):
-                    x = x[0].split(',')
-            x = tuple([str(j) for j in x])
-
-            from sage.rings.power_series_ring import PowerSeriesRing
-            P = PowerSeriesRing
-
-
-        # TODO: is this code ever used? Should it be?
-
-        elif isinstance(x, (tuple, str)):
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            P = PolynomialRing
-            if isinstance(x, tuple):
-                y = []
-                for w in x:
-                    y.append(str(w))
-                x = tuple(y)
-
-        else:
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            P = PolynomialRing
-            x = (str(x),)
-
-        if P is None:
-            raise NotImplementedError
-
-        if isinstance(x, tuple):
-            v = x
-        else:
-            v = x.split(',')
-
-        if len(v) > 1:
-            R = P(self, len(v), names=v)
-        else:
-            R = P(self, x)
-
-        return R
-
     def __xor__(self, n):
         r"""
         Trap the operation ``^``. It's next to impossible to test this since
@@ -412,10 +262,10 @@ cdef class Ring(ParentWithGens):
             sage: I.base_ring() is I
             True
             sage: I.category()
-            Join of Category of commutative rings and Category of subquotients
-            of monoids and Category of quotients of semigroups and Category of
-            finite enumerated sets
-
+            Join of Category of finite commutative rings
+                and Category of subquotients of monoids
+                and Category of quotients of semigroups
+                and Category of finite enumerated sets
         """
         # Defining a category method is deprecated for parents.
         # For rings, however, it is strictly needed that self.category()
@@ -500,13 +350,14 @@ cdef class Ring(ParentWithGens):
             sage: R.ideal()
             Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
         """
-        if kwds.has_key('coerce'):
+        if 'coerce' in kwds:
             coerce = kwds['coerce']
             del kwds['coerce']
         else:
             coerce = True
 
         from sage.rings.ideal import Ideal_generic
+        from sage.structure.parent import is_Parent
         gens = args
         while isinstance(gens, (list, tuple)) and len(gens) == 1:
             first = gens[0]
@@ -525,13 +376,13 @@ cdef class Ring(ParentWithGens):
                 break
             elif isinstance(first, (list, tuple)):
                 gens = first
-            elif self.has_coerce_map_from(first):
+            elif is_Parent(first) and self.has_coerce_map_from(first):
                 gens = first.gens() # we have a ring as argument
             else:
                 break
 
         if len(gens) == 0:
-            gens = [self.zero_element()]
+            gens = [self.zero()]
 
         if coerce:
             #print [type(g) for g in gens]
@@ -548,7 +399,7 @@ cdef class Ring(ParentWithGens):
                 for h in gens[1:]:
                     g = g.gcd(h)
             gens = [g]
-        if kwds.has_key('ideal_class'):
+        if 'ideal_class' in kwds:
             C = kwds['ideal_class']
             del kwds['ideal_class']
         else:
@@ -710,9 +561,20 @@ cdef class Ring(ParentWithGens):
 
             sage: ZZ.zero_ideal() is ZZ.zero_ideal()
             True
+
+        TESTS:
+
+        Make sure that :trac:`13644` is fixed::
+
+            sage: K = Qp(3)
+            sage: R.<a> = K[]
+            sage: L.<a> = K.extension(a^2-3)
+            sage: L.ideal(a)
+            Principal ideal (1 + O(a^40)) of Eisenstein Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*a^2 + (O(3^21))*a + (2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + 2*3^20 + O(3^21))
+
         """
         if self._zero_ideal is None:
-            I = Ring.ideal(self, [self.zero_element()], coerce=False)
+            I = Ring.ideal(self, [self.zero()], coerce=False)
             self._zero_ideal = I
             return I
         return self._zero_ideal
@@ -818,22 +680,22 @@ cdef class Ring(ParentWithGens):
         """
         return self.quotient(I, names)
 
-    def zero_element(self):
+    def zero(self):
         """
         Return the zero element of this ring (cached).
 
         EXAMPLES::
 
-            sage: ZZ.zero_element()
+            sage: ZZ.zero()
             0
-            sage: QQ.zero_element()
+            sage: QQ.zero()
             0
-            sage: QQ['x'].zero_element()
+            sage: QQ['x'].zero()
             0
 
         The result is cached::
 
-            sage: ZZ.zero_element() is ZZ.zero_element()
+            sage: ZZ.zero() is ZZ.zero()
             True
         """
         if self._zero_element is None:
@@ -842,24 +704,22 @@ cdef class Ring(ParentWithGens):
             return x
         return self._zero_element
 
-    zero = zero_element # transitional
-
-    def one_element(self):
+    def one(self):
         """
         Return the one element of this ring (cached), if it exists.
 
         EXAMPLES::
 
-            sage: ZZ.one_element()
+            sage: ZZ.one()
             1
-            sage: QQ.one_element()
+            sage: QQ.one()
             1
-            sage: QQ['x'].one_element()
+            sage: QQ['x'].one()
             1
 
         The result is cached::
 
-            sage: ZZ.one_element() is ZZ.one_element()
+            sage: ZZ.one() is ZZ.one()
             True
         """
         if self._one_element is None:
@@ -867,31 +727,6 @@ cdef class Ring(ParentWithGens):
             self._one_element = x
             return x
         return self._one_element
-
-    one = one_element # Transitional
-
-    def is_zero(self):
-        """
-        Return ``True`` if this is the zero ring.
-
-        EXAMPLES::
-
-            sage: Integers(1).is_zero()
-            True
-            sage: Integers(2).is_zero()
-            False
-            sage: QQ.is_zero()
-            False
-            sage: R.<x> = ZZ[]
-            sage: R.quo(1).is_zero()
-            True
-            sage: R.<x> = GF(101)[]
-            sage: R.quo(77).is_zero()
-            True
-            sage: R.quo(x^2+1).is_zero()
-            False
-        """
-        return self.one_element() == self.zero_element()
 
     def is_commutative(self):
         """
@@ -1335,6 +1170,60 @@ cdef class Ring(ParentWithGens):
             self.__ideal_monoid = M
             return M
 
+    @cached_method
+    def epsilon(self):
+        """
+        Return the precision error of elements in this ring.
+
+        EXAMPLES::
+
+            sage: RDF.epsilon()
+            2.220446049250313e-16
+            sage: ComplexField(53).epsilon()
+            2.22044604925031e-16
+            sage: RealField(10).epsilon()
+            0.0020
+
+        For exact rings, zero is returned::
+
+            sage: ZZ.epsilon()
+            0
+
+        This also works over derived rings::
+
+            sage: RR['x'].epsilon()
+            2.22044604925031e-16
+            sage: QQ['x'].epsilon()
+            0
+
+        For the symbolic ring, there is no reasonable answer::
+
+            sage: SR.epsilon()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        one = self.one()
+        try:
+            return one.ulp()
+        except AttributeError:
+            pass
+
+        try:
+            eps = one.real().ulp()
+        except AttributeError:
+            pass
+        else:
+            return self(eps)
+
+        B = self._base
+        if B is not None and B is not self:
+            eps = self.base_ring().epsilon()
+            return self(eps)
+        if self.is_exact():
+            return self.zero()
+        raise NotImplementedError
+
 cdef class CommutativeRing(Ring):
     """
     Generic commutative ring.
@@ -1413,7 +1302,10 @@ cdef class CommutativeRing(Ring):
             ...
             TypeError: self must be an integral domain.
         """
-        return self.fraction_field()
+        try:
+            return self.fraction_field()
+        except (NotImplementedError,TypeError):
+            return get_coercion_model().division_parent(self)
 
     def __pow__(self, n, _):
         """
@@ -1677,9 +1569,11 @@ cdef class IntegralDomain(CommutativeRing):
 
         EXAMPLES::
 
-            sage: ZZ.is_integral_domain(); QQ.is_integral_domain(); ZZ[x].is_integral_domain()
+            sage: ZZ.is_integral_domain()
             True
+            sage: QQ.is_integral_domain()
             True
+            sage: ZZ['x'].is_integral_domain()
             True
             sage: R = ZZ.quotient(ZZ.ideal(10)); R.is_integral_domain()
             False
@@ -2102,30 +1996,6 @@ cpdef bint _is_Field(x) except -2:
         x._refine_category_(_Fields)
     return result
 
-def is_Field(x):
-    """
-    Deprecated test of an object being a field.
-
-    NOTE:
-
-    For testing whether ``R`` is a field, use ``R in Fields()``,
-    not ``is_Field(R)``. See :trac:`13370`.
-
-    TESTS::
-
-        sage: from sage.rings.ring import is_Field
-        sage: is_Field(ZZ)
-        doctest:...: DeprecationWarning: use 'R in Fields()', not 'is_Field(R)'
-        See http://trac.sagemath.org/13370 for details.
-        False
-        sage: is_Field(ZZ.quotient(5))
-        True
-
-    """
-    deprecation(13370, "use 'R in Fields()', not 'is_Field(R)'")
-    return _is_Field(x)
-
-# This imports is_Field, so must be executed after is_Field is defined.
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
@@ -2374,36 +2244,41 @@ cdef class Algebra(Ring):
             sage: L.has_standard_involution()
             Traceback (most recent call last):
             ...
-            AttributeError: Basis is not yet implemented for this algebra.
+            NotImplementedError: has_standard_involution is not implemented for this algebra
             """
         field = self.base_ring()
         try:
             basis = self.basis()
         except AttributeError:
-            raise AttributeError, "Basis is not yet implemented for this algebra."
-        #step 1
-        for i in range(1,4):
-            ei = basis[i]
-            a = ei**2
-            coef = a.coefficient_tuple()
-            ti = coef[i]
-            ni = a - ti*ei
-            if ni not in field:
-                return False
-        #step 2
-        for i in range(1,4):
-            for j in range(2,4):
+            raise AttributeError("Basis is not yet implemented for this algebra.")
+        try:
+            # TODO: The following code is specific to the quaterion algebra
+            #   and should belong there
+            #step 1
+            for i in range(1,4):
                 ei = basis[i]
-                ej = basis[j]
                 a = ei**2
                 coef = a.coefficient_tuple()
                 ti = coef[i]
-                b = ej**2
-                coef = b.coefficient_tuple()
-                tj = coef[j]
-                nij = (ei + ej)**2 - (ti + tj)*(ei + ej)
-                if nij not in field:
+                ni = a - ti*ei
+                if ni not in field:
                     return False
+            #step 2
+            for i in range(1,4):
+                for j in range(2,4):
+                    ei = basis[i]
+                    ej = basis[j]
+                    a = ei**2
+                    coef = a.coefficient_tuple()
+                    ti = coef[i]
+                    b = ej**2
+                    coef = b.coefficient_tuple()
+                    tj = coef[j]
+                    nij = (ei + ej)**2 - (ti + tj)*(ei + ej)
+                    if nij not in field:
+                        return False
+        except AttributeError:
+            raise NotImplementedError("has_standard_involution is not implemented for this algebra")
         return True
 
 cdef class CommutativeAlgebra(CommutativeRing):
@@ -2474,37 +2349,3 @@ def is_Ring(x):
     # TODO: use the idiom `x in _Rings` as soon as all rings will be
     # in the category Rings()
     return isinstance(x, Ring) or x in _Rings
-
-from sage.structure.parent_gens import _certify_names
-
-def gen_name(x, name_chr):
-    r"""
-    Used to find a name for a generator when rings are created using the
-    ``__getitem__`` syntax, e.g. ``ZZ['x']``. If ``x`` is a symbolic variable,
-    return the name of ``x``; if ``x`` is the symbolic square root of a
-    positive integer `d`, return "sqrtd"; else, return a letter of the
-    alphabet and increment a counter to avoid that letter being used again.
-
-    EXAMPLES::
-
-        sage: from sage.rings.ring import gen_name
-        sage: gen_name(sqrt(5), 1)
-        ('sqrt5', 1)
-        sage: gen_name(sqrt(-17), 88)
-        ('X', 89)
-        sage: gen_name(x, 1)
-        ('x', 1)
-    """
-    from sage.symbolic.ring import is_SymbolicVariable
-    if is_SymbolicVariable(x):
-        return repr(x), name_chr
-    name = str(x)
-    m = re.match('^sqrt\((\d+)\)$', name)
-    if m:
-        name = "sqrt%s" % m.groups()[0]
-    try:
-        _certify_names([name])
-    except ValueError, msg:
-        name = chr(name_chr)
-        name_chr += 1
-    return name, name_chr

@@ -1,5 +1,5 @@
 """
-Schnyder's Algorithm for straight-line planar embeddings.
+Schnyder's Algorithm for straight-line planar embeddings
 
 A module for computing the (x,y) coordinates for a straight-line planar
 embedding of any connected planar graph with at least three vertices.  Uses
@@ -84,7 +84,7 @@ def _triangulate(g, comb_emb):
     # At this point we know that the graph is connected, has at least 3 vertices, and
     # that it is not the graph o--o--o. This is where the real work starts.
 
-    faces = g.trace_faces(comb_emb)        # We start by finding all of the faces of this embedding.
+    faces = g.faces(comb_emb)        # We start by finding all of the faces of this embedding.
 
     edges_added = []                        # The list of edges that we add to the graph.
                                             # This will be returned at the end.
@@ -153,7 +153,7 @@ def _normal_label(g, comb_emb, external_face):
         sage: g = Graph(graphs.CycleGraph(7))
         sage: g.is_planar(set_embedding=True)
         True
-        sage: faces = g.trace_faces(g._embedding)
+        sage: faces = g.faces(g._embedding)
         sage: _triangulate(g, g._embedding)
         [(2, 0), (4, 2), (6, 4), (5, 0), (3, 5), (1, 3), (4, 0), (3, 0)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
@@ -167,8 +167,7 @@ def _normal_label(g, comb_emb, external_face):
 
     labels = {}
 
-    external_vertices = [external_face[0][0], external_face[1][0], external_face[2][0]]
-    external_vertices.sort()
+    external_vertices = sorted([external_face[0][0], external_face[1][0], external_face[2][0]])
     v1,v2,v3 = external_vertices
     v1_neighbors = Set(g.neighbors(v1))
 
@@ -190,7 +189,7 @@ def _normal_label(g, comb_emb, external_face):
     while g.order() > 3:
         try:
             v = contractible.pop()
-        except StandardError:
+        except Exception:
             raise RuntimeError('Contractible list is empty but graph still has %d vertices.  (Expected 3.)'%g.order())
 
             break
@@ -351,7 +350,7 @@ def _realizer(g, x, example=False):
         sage: g = Graph(graphs.CycleGraph(7))
         sage: g.is_planar(set_embedding=True)
         True
-        sage: faces = g.trace_faces(g._embedding)
+        sage: faces = g.faces(g._embedding)
         sage: _triangulate(g, g._embedding)
         [(2, 0), (4, 2), (6, 4), (5, 0), (3, 5), (1, 3), (4, 0), (3, 0)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
@@ -432,7 +431,7 @@ def _compute_coordinates(g, x):
         sage: g = Graph(graphs.CycleGraph(7))
         sage: g.is_planar(set_embedding=True)
         True
-        sage: faces = g.trace_faces(g._embedding)
+        sage: faces = g.faces(g._embedding)
         sage: _triangulate(g, g._embedding)
         [(2, 0), (4, 2), (6, 4), (5, 0), (3, 5), (1, 3), (4, 0), (3, 0)]
         sage: tn = _normal_label(g, g._embedding, faces[0])

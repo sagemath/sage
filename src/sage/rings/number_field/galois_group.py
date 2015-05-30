@@ -190,7 +190,9 @@ class GaloisGroup_v2(PermutationGroup_generic):
         g = self._pari_gc.galoisinit()
         self._pari_data = g
 
-        PermutationGroup_generic.__init__(self, sorted(g[6]))
+        # Sort the vector of permutations using cmp() to avoid errors
+        # from using comparison operators on non-scalar PARI objects.
+        PermutationGroup_generic.__init__(self, sorted(g[6], cmp=cmp))
 
         # PARI computes all the elements of self anyway, so we might as well store them
         self._elts = sorted([self(x, check=False) for x in g[5]])
@@ -313,7 +315,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
 
             sage: K = NumberField(x^3 - x + 1, 'a')
             sage: K.galois_group(names='b').splitting_field()
-            Number Field in b with defining polynomial x^6 - 14*x^4 - 20*x^3 + 49*x^2 + 140*x + 307
+            Number Field in b with defining polynomial x^6 - 6*x^4 + 9*x^2 + 23
             sage: L = QuadraticField(-23, 'c'); L.galois_group().splitting_field() is L
             True
         """
@@ -336,9 +338,9 @@ class GaloisGroup_v2(PermutationGroup_generic):
 
         EXAMPLE::
 
-            sage: G = NumberField(x^3 - x - 1,'a').galois_closure('b').galois_group()
-            sage: G.subgroup([ G(1), G([(1,5,2),(3,4,6)]), G([(1,2,5),(3,6,4)])])
-            Subgroup [(), (1,5,2)(3,4,6), (1,2,5)(3,6,4)] of Galois group of Number Field in b with defining polynomial x^6 - 14*x^4 + 20*x^3 + 49*x^2 - 140*x + 307
+            sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
+            sage: G.subgroup([ G(1), G([(1,2,3),(4,5,6)]), G([(1,3,2),(4,6,5)]) ])
+            Subgroup [(), (1,2,3)(4,5,6), (1,3,2)(4,6,5)] of Galois group of Number Field in b with defining polynomial x^6 - 6*x^4 + 9*x^2 + 23
         """
         if len(elts) == self.order():
             return self
@@ -383,7 +385,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
             2
         """
         if not self.is_galois():
-            raise TypeError, "Decomposition groups only defined for Galois extensions"
+            raise TypeError("Decomposition groups only defined for Galois extensions")
 
         if isinstance(P, NumberFieldHomomorphism_im_gens):
             if self.number_field().is_totally_real():
@@ -393,7 +395,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         else:
             P = self.number_field().ideal_monoid()(P)
             if not P.is_prime():
-                raise ValueError, "%s is not prime" % P
+                raise ValueError("%s is not prime" % P)
             return self.subgroup([s for s in self if s(P) == P])
 
     def complex_conjugation(self, P=None):
@@ -404,10 +406,12 @@ class GaloisGroup_v2(PermutationGroup_generic):
 
         EXAMPLE::
 
-            sage: L = CyclotomicField(7)
+            sage: L.<z> = CyclotomicField(7)
             sage: G = L.galois_group()
-            sage: G.complex_conjugation()
-            (1,6)(2,3)(4,5)
+            sage: conj = G.complex_conjugation(); conj
+            (1,4)(2,5)(3,6)
+            sage: conj(z)
+            -z^5 - z^4 - z^3 - z^2 - z - 1
 
         An example where the field is not CM, so complex conjugation really
         depends on the choice of embedding::
@@ -420,20 +424,20 @@ class GaloisGroup_v2(PermutationGroup_generic):
         if P is None:
             Q = self.number_field().specified_complex_embedding()
             if Q is None:
-                raise ValueError, "No default complex embedding specified"
+                raise ValueError("No default complex embedding specified")
             P = Q
 
         P = refine_embedding(P, infinity)
 
         if not self.number_field().is_galois():
-            raise TypeError, "Extension is not Galois"
+            raise TypeError("Extension is not Galois")
         if self.number_field().is_totally_real():
-            raise TypeError, "No complex conjugation (field is real)"
+            raise TypeError("No complex conjugation (field is real)")
 
         g = self.number_field().gen()
         gconj = P(g).conjugate()
         elts = [s for s in self if P(s(g)) == gconj]
-        if len(elts) != 1: raise ArithmeticError, "Something has gone very wrong here"
+        if len(elts) != 1: raise ArithmeticError("Something has gone very wrong here")
         return elts[0]
 
     def ramification_group(self, P, v):
@@ -448,15 +452,15 @@ class GaloisGroup_v2(PermutationGroup_generic):
             sage: G=K.galois_group()
             sage: P = K.primes_above(3)[0]
             sage: G.ramification_group(P, 3)
-            Subgroup [(), (1,3,6)(2,4,5), (1,6,3)(2,5,4)] of Galois group of Number Field in b with defining polynomial x^6 + 60*x^3 + 3087
+            Subgroup [(), (1,2,4)(3,5,6), (1,4,2)(3,6,5)] of Galois group of Number Field in b with defining polynomial x^6 + 243
             sage: G.ramification_group(P, 5)
-            Subgroup [()] of Galois group of Number Field in b with defining polynomial x^6 + 60*x^3 + 3087
+            Subgroup [()] of Galois group of Number Field in b with defining polynomial x^6 + 243
         """
         if not self.is_galois():
-            raise TypeError, "Ramification groups only defined for Galois extensions"
+            raise TypeError("Ramification groups only defined for Galois extensions")
         P = self.number_field().ideal_monoid()(P)
         if not P.is_prime():
-            raise ValueError, "%s is not prime"
+            raise ValueError("%s is not prime")
         return self.subgroup([g for g in self if g(P) == P and g.ramification_degree(P) >= v + 1])
 
     def inertia_group(self, P):
@@ -474,7 +478,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
             Subgroup [()] of Galois group of Number Field in b with defining polynomial x^2 - 3
         """
         if not self.is_galois():
-            raise TypeError, "Inertia groups only defined for Galois extensions"
+            raise TypeError("Inertia groups only defined for Galois extensions")
         return self.ramification_group(P, 0)
 
     def ramification_breaks(self, P):
@@ -494,7 +498,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
             2
         """
         if not self.is_galois():
-            raise TypeError, "Ramification breaks only defined for Galois extensions"
+            raise TypeError("Ramification breaks only defined for Galois extensions")
         from sage.rings.infinity import infinity
         from sage.sets.set import Set
         i = [g.ramification_degree(P) - 1 for g in self.decomposition_group(P)]
@@ -527,11 +531,11 @@ class GaloisGroup_v2(PermutationGroup_generic):
             ValueError: Fractional ideal (...) is ramified
         """
         if not self.is_galois():
-            raise TypeError, "Artin symbols only defined for Galois extensions"
+            raise TypeError("Artin symbols only defined for Galois extensions")
 
         P = self.number_field().ideal_monoid()(P)
         if not P.is_prime():
-            raise ValueError, "%s is not prime" % P
+            raise ValueError("%s is not prime" % P)
         p = P.smallest_integer()
         t = []
         gens = self.number_field().ring_of_integers().ring_generators()
@@ -539,7 +543,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
             w = [ (s(g) - g**p).valuation(P) for g in gens]
             if min(w) >= 1:
                 t.append(s)
-        if len(t) > 1: raise ValueError, "%s is ramified" % P
+        if len(t) > 1: raise ValueError("%s is ramified" % P)
         return t[0]
 
 class GaloisGroup_subgroup(GaloisGroup_v2):
@@ -555,12 +559,26 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
         EXAMPLE::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_subgroup
-            sage: G = NumberField(x^3 - x - 1,'a').galois_closure('b').galois_group()
-            sage: GaloisGroup_subgroup( G, [ G(1), G([(1,5,2),(3,4,6)]), G([(1,2,5),(3,6,4)])])
-            Subgroup [(), (1,5,2)(3,4,6), (1,2,5)(3,6,4)] of Galois group of Number Field in b with defining polynomial x^6 - 14*x^4 + 20*x^3 + 49*x^2 - 140*x + 307
+            sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
+            sage: GaloisGroup_subgroup( G, [ G(1), G([(1,2,3),(4,5,6)]), G([(1,3,2),(4,6,5)])])
+            Subgroup [(), (1,2,3)(4,5,6), (1,3,2)(4,6,5)] of Galois group of Number Field in b with defining polynomial x^6 - 6*x^4 + 9*x^2 + 23
+
+        TESTS:
+
+        Check that :trac:`17664` is fixed::
+
+            sage: L.<c> = QuadraticField(-1)
+            sage: P = L.primes_above(5)[0]
+            sage: G = L.galois_group()
+            sage: H = G.decomposition_group(P)
+            sage: H.domain()
+            {1, 2}
+            sage: G.artin_symbol(P)
+            ()
         """
         #XXX: This should be fixed so that this can use GaloisGroup_v2.__init__
-        PermutationGroup_generic.__init__(self, elts, canonicalize = True)
+        PermutationGroup_generic.__init__(self, elts, canonicalize=True,
+                                          domain=ambient.domain())
         self._ambient = ambient
         self._number_field = ambient.number_field()
         self._galois_closure = ambient._galois_closure
@@ -600,10 +618,10 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
 
         EXAMPLE::
 
-            sage: G = NumberField(x^3 - x - 1,'a').galois_closure('b').galois_group()
-            sage: H = G.subgroup([ G(1), G([(1,5,2),(3,4,6)]), G([(1,2,5),(3,6,4)])])
+            sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
+            sage: H = G.subgroup([ G(1), G([(1,2,3),(4,5,6)]), G([(1,3,2),(4,6,5)])])
             sage: H._repr_()
-            'Subgroup [(), (1,5,2)(3,4,6), (1,2,5)(3,6,4)] of Galois group of Number Field in b with defining polynomial x^6 - 14*x^4 + 20*x^3 + 49*x^2 - 140*x + 307'
+            'Subgroup [(), (1,2,3)(4,5,6), (1,3,2)(4,6,5)] of Galois group of Number Field in b with defining polynomial x^6 - 6*x^4 + 9*x^2 + 23'
         """
         return "Subgroup %s of %s" % (self._elts, self._ambient)
 
@@ -622,14 +640,15 @@ class GaloisGroupElement(PermutationGroupElement):
         -w + 2
 
         sage: L.<v> = NumberField(x^3 - 2); G = L.galois_group(names='y')
-        sage: G[1]
-        (1,2)(3,4)(5,6)
-        sage: G[1](v)
-        1/84*y^4 + 13/42*y
-        sage: G[1]( G[1](v) )
-        -1/252*y^4 - 55/126*y
+        sage: G[4]
+        (1,5)(2,4)(3,6)
+        sage: G[4](v)
+        1/18*y^4
+        sage: G[4](G[4](v))
+        -1/36*y^4 - 1/2*y
+        sage: G[4](G[4](G[4](v)))
+        1/18*y^4
     """
-
     @cached_method
     def as_hom(self):
         r"""
@@ -671,33 +690,18 @@ class GaloisGroupElement(PermutationGroupElement):
 
         EXAMPLE::
 
-            sage: K.<b> = NumberField(x^3 - 3,'a').galois_closure()
-            sage: G=K.galois_group()
+            sage: K.<b> = NumberField(x^3 - 3, 'a').galois_closure()
+            sage: G = K.galois_group()
             sage: P = K.primes_above(3)[0]
-            sage: s = hom(K, K, 1/54*b^4 + 1/18*b)
+            sage: s = hom(K, K, 1/18*b^4 - 1/2*b)
             sage: G(s).ramification_degree(P)
             4
         """
         if not self.parent().is_galois():
-            raise TypeError, "Ramification degree only defined for Galois extensions"
+            raise TypeError("Ramification degree only defined for Galois extensions")
         gens = self.parent().number_field().ring_of_integers().ring_generators()
         w = [ (self(g) - g).valuation(P) for g in gens]
         return min(w)
-
-    def __cmp__(self, other):
-        r"""
-        Compare self to other. For some bizarre reason, if you just let it
-        inherit the cmp routine from PermutationGroupElement, cmp(x, y) works
-        but sorting lists doesn't.
-
-        TEST::
-
-            sage: K.<a> = NumberField(x^6 + 40*x^3 + 1372);G = K.galois_group()
-            sage: sorted([G.artin_symbol(Q) for Q in K.primes_above(5)])
-            [(1,3)(2,6)(4,5), (1,2)(3,4)(5,6), (1,5)(2,4)(3,6)]
-        """
-        return PermutationGroupElement.__cmp__(self, other)
-
 
 
 # For unpickling purposes we rebind GaloisGroup as GaloisGroup_v1.

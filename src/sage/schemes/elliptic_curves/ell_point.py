@@ -70,7 +70,7 @@ Arithmetic with a point over an extension of a finite field::
     sage: E = EllipticCurve(F,[1,0]);
     sage: P = E([2,1])
     sage: import sys
-    sage: n = sys.maxint
+    sage: n = sys.maxsize
     sage: P*(n+1)-P*n == P
     True
 
@@ -127,7 +127,7 @@ from sage.rings.padics.precision_error import PrecisionError
 
 import sage.rings.all as rings
 from sage.rings.real_mpfr import is_RealField
-from sage.rings.all import ZZ
+from sage.rings.integer import Integer
 from sage.groups.all import AbelianGroup
 import sage.groups.generic as generic
 from sage.libs.pari.pari_instance import pari, prec_words_to_bits
@@ -169,7 +169,7 @@ class EllipticCurvePoint(SchemeMorphism_point_projective_ring):
             sage: Q+Q == 4*P
             True
         """
-        assert isinstance(other, (int, long, rings.Integer)) and other == 0
+        assert isinstance(other, (int, long, Integer)) and other == 0
         if self.is_zero():
             return 0
         else:
@@ -240,6 +240,23 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
     Test pickling an elliptic curve that has known points on it::
 
         sage: e = EllipticCurve([0, 0, 1, -1, 0]); g = e.gens(); loads(dumps(e)) == e
+        True
+
+    Test that the refactoring from :trac:`14711` did preserve the behaviour
+    of domain and codomain::
+
+
+        sage: E=EllipticCurve(QQ,[1,1])
+        sage: P=E(0,1)
+        sage: P.domain()
+        Spectrum of Rational Field
+        sage: K.<a>=NumberField(x^2-3,'a')
+        sage: P=E.base_extend(K)(1,a)
+        sage: P.domain()
+        Spectrum of Number Field in a with defining polynomial x^2 - 3
+        sage: P.codomain()
+        Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
+        sage: P.codomain() == P.curve()
         True
     """
     def __init__(self, curve, v, check=True):
@@ -473,44 +490,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         return self.codomain()
 
-    def domain(self):
-        """
-        Return the domain of this point, which is `Spec(F)` where `F` is
-        the field of definition.
-
-        EXAMPLES::
-
-            sage: E=EllipticCurve(QQ,[1,1])
-            sage: P=E(0,1)
-            sage: P.domain()
-            Spectrum of Rational Field
-            sage: K.<a>=NumberField(x^2-3,'a')
-            sage: P=E.base_extend(K)(1,a)
-            sage: P.domain()
-            Spectrum of Number Field in a with defining polynomial x^2 - 3
-       """
-        return self.parent().domain()
-
-    def codomain(self):
-        """
-        Return the codomain of this point, which is the curve it is
-        on. Synonymous with :meth:`curve` which is perhaps more intuitive.
-
-        EXAMPLES::
-
-            sage: E=EllipticCurve(QQ,[1,1])
-            sage: P=E(0,1)
-            sage: P.domain()
-            Spectrum of Rational Field
-            sage: K.<a>=NumberField(x^2-3,'a')
-            sage: P=E.base_extend(K)(1,a)
-            sage: P.codomain()
-            Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
-            sage: P.codomain() == P.curve()
-            True
-       """
-        return self.parent().codomain()
-
     def order(self):
         r"""
         Return the order of this point on the elliptic curve.
@@ -537,10 +516,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             1
             sage: E(0).order() == 1
             True
-
         """
         if self.is_zero():
-            return rings.Integer(1)
+            return Integer(1)
         raise NotImplementedError("Computation of order of a point "
                                   "not implemented over general fields.")
 
@@ -646,6 +624,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: E = EllipticCurve('389a')
             sage: P = E([-1,1])
             sage: P.plot(pointsize=30, rgbcolor=(1,0,0))
+            Graphics object consisting of 1 graphics primitive
         """
         if self.is_zero():
             return plot.text("$\\infty$", (-3, 3), **args)
@@ -672,6 +651,26 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             [<type 'sage.rings.rational.Rational'>,
             <type 'sage.rings.rational.Rational'>,
             <type 'sage.rings.rational.Rational'>]
+
+        Checks that :trac:`15964` is fixed::
+
+            sage: N = 1715761513
+            sage: E = EllipticCurve(Integers(N),[3,-13])
+            sage: P = E(2,1)
+            sage: LCM([2..60])*P
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 1520944668 does not exist
+            (characteristic = 1715761513 = 26927*63719)
+
+            sage: N = 35
+            sage: E = EllipticCurve(Integers(N),[5,1])
+            sage: P = E(0,1)
+            sage: LCM([2..6])*P
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 28 does not exist
+            (characteristic = 35 = 7*5)
         """
         # Use Prop 7.1.7 of Cohen "A Course in Computational Algebraic
         # Number Theory"
@@ -693,7 +692,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 R = E.base_ring()
                 if R.is_finite():
                     N = R.characteristic()
-                    N1 = N.gcd(ZZ(2*y1 + a1*x1 + a3))
+                    N1 = N.gcd(Integer(2*y1 + a1*x1 + a3))
                     N2 = N//N1
                     raise ZeroDivisionError("Inverse of %s does not exist (characteristic = %s = %s*%s)" % (2*y1 + a1*x1 + a3, N, N1, N2))
                 else:
@@ -705,8 +704,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 R = E.base_ring()
                 if R.is_finite():
                     N = R.characteristic()
-                    from sage.rings.all import ZZ
-                    N1 = N.gcd(ZZ(x1-x2))
+                    N1 = N.gcd(Integer(x1-x2))
                     N2 = N//N1
                     raise ZeroDivisionError("Inverse of %s does not exist (characteristic = %s = %s*%s)" % (x1-x2, N, N1, N2))
                 else:
@@ -855,11 +853,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             {(0 : 1 : 0), (1 : 0 : 1)}
             sage: Set([2*T for T in tor])
             {(0 : 1 : 0), (1 : 0 : 1)}
-
-
         """
         # Coerce the input m to an integer
-        m = rings.Integer(m)
+        m = Integer(m)
 
         # Check for trivial cases of m = 1, -1 and 0.
         if m == 1 or m == -1:
@@ -999,7 +995,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         """
         # Coerce the input m to an integer
-        m = rings.Integer(m)
+        m = Integer(m)
         # Check for trivial cases of m = 1, -1 and 0.
         if m == 1 or m == -1:
             return [self]
@@ -1116,7 +1112,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ValueError: p (=12) should be prime.
         """
-        p = rings.Integer(p)
+        p = Integer(p)
         if not p.is_prime():
             raise ValueError("p (=%s) should be prime." % p)
 
@@ -1298,7 +1294,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         if self.is_zero() or R.is_zero():
             if self == R:
-                return self.curve().base_field().one_element()
+                return self.curve().base_field().one()
             if self.is_zero():
                 return Q[0] - R[0]
             if R.is_zero():
@@ -1471,7 +1467,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             n = n.abs()
             n_is_negative = True
 
-        one = self.curve().base_field().one_element()
+        one = self.curve().base_field().one()
         t = one
         V = self
         S = 2*V
@@ -1582,7 +1578,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         if not ((n*P).is_zero() and (n*Q).is_zero()):
             raise ValueError("points must both be n-torsion")
 
-        one = E.base_field().one_element()
+        one = E.base_field().one()
 
         # Case where P = Q
         if P == Q:
@@ -1768,7 +1764,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # random point.
         try:
             ret = self._miller_(Q, n)
-            e = rings.Integer((q**k - 1)/n)
+            e = Integer((q**k - 1)/n)
             ret = ret**e
         except (ZeroDivisionError, ValueError):
             R = E.random_point()
@@ -1976,7 +1972,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         T = t-1
         ret = Q._miller_(P, T)
-        e = rings.Integer((q**k - 1)/n)
+        e = Integer((q**k - 1)/n)
         ret = ret**e
         return ret
 
@@ -2068,7 +2064,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             pass
 
         if self.is_zero():
-            self._order = rings.Integer(1)
+            self._order = Integer(1)
             return self._order
 
         E = self.curve()
@@ -2271,7 +2267,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E.discriminant().support()
             [Fractional ideal (i + 1),
             Fractional ideal (-i - 2),
-            Fractional ideal (i - 2),
+            Fractional ideal (2*i + 1),
             Fractional ideal (3)]
             sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]
             [1, 4, 4, 4]
@@ -2656,7 +2652,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 Emin = E.minimal_model()
                 iso = E.isomorphism_to(Emin)
                 P = iso(self)
-                h = Emin.pari_curve(prec=precision).ellheight(P, precision=precision)
+                h = Emin.pari_curve().ellheight(P, precision=precision)
                 height = rings.RealField(precision)(h)
             else:
                 height = (self.non_archimedean_local_height(prec=precision)
@@ -3015,7 +3011,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             return rings.QQ(0)
         else:
             if E.base_ring() is rings.QQ:
-                Nv = rings.ZZ(v)
+                Nv = Integer(v)
             else:
                 Nv = v.norm()
                 if not weighted:
@@ -3197,7 +3193,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             E_work = EllipticCurve(ai)  # defined over RR
             pt_pari = pari([emb(x), emb(y)])
         working_prec = precision
-        E_pari = E_work.pari_curve(prec=working_prec)
+        E_pari = E_work.pari_curve()
         log_pari = E_pari.ellpointtoz(pt_pari, precision=working_prec)
 
         while prec_words_to_bits(log_pari.precision()) < precision:
@@ -3211,7 +3207,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 ai = [emb(a) for a in E.a_invariants()]
                 E_work = EllipticCurve(ai)  # defined over RR
                 pt_pari = pari([emb(x), emb(y)])
-            E_pari = E_work.pari_curve(prec=working_prec)
+            E_pari = E_work.pari_curve()
             log_pari = E_pari.ellpointtoz(pt_pari, precision=working_prec)
 
         # normalization step
@@ -3422,7 +3418,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             ord = self.order()
         try:
             return generic.discrete_log(Q, self, ord, operation='+')
-        except StandardError:
+        except Exception:
             raise ValueError("ECDLog problem has no solution")
 
     def order(self):
@@ -3440,7 +3436,11 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         We do not cause the group order to be calculated when not
         known, since this function is used in determining the group
         order via computation of several random points and their
-        orders.
+        orders.  The exceptions to this are (1) when the base field is
+        a prime field and efficient SEA-based methods are available
+        for the cardinality, and (2) when finding the group order is
+        possible quickly, currently only implemented for curves with
+        `j=0` or `j=1728` (see :trac:`15567`).
 
         .. NOTE::
 
@@ -3474,13 +3474,41 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             1427247692705959881058262545272474300628281448
             sage: P.order()==E.cardinality()
             True
+
+        In the next example, the cardinality of E will be computed and
+        cached since `j(E)=0`::
+
+            sage: p = 33554501
+            sage: F.<u> = GF(p^2)
+            sage: E = EllipticCurve(F,[0,1])
+            sage: E.j_invariant()
+            0
+            sage: P = E.random_point()
+            sage: P = E.random_point()
+            sage: P.order() # random
+            16777251
+            sage: E._order  # as cached
+            1125904604468004
+
+        Similarly when `j(E)=1728`::
+
+            sage: p = 33554473
+            sage: F.<u> = GF(p^2)
+            sage: E = EllipticCurve(F,[1,0])
+            sage: E.j_invariant()
+            1728
+            sage: P = E.random_point()
+            sage: P.order() # random
+            46912611635760
+            sage: E._order  # as cached
+            1125902679258240
         """
         try:
             return self._order
         except AttributeError:
             pass
         if self.is_zero():
-            return rings.Integer(1)
+            return Integer(1)
         E = self.curve()
         K = E.base_ring()
         from sage.schemes.plane_curves.projective_curve import Hasse_bounds
@@ -3494,8 +3522,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                 plist = M.prime_divisors()
                 E._prime_factors_of_order = plist
             N = generic.order_from_multiple(self, M, plist, operation='+')
-        except StandardError:
-            if K.is_prime_field():
+        except AttributeError:
+            j = E.j_invariant()
+            if K.is_prime_field() or j.is_zero() or j==K(1728):
                 M = E.cardinality()  # computed and cached
                 plist = M.prime_divisors()
                 E._prime_factors_of_order = plist

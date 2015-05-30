@@ -1,0 +1,24 @@
+--- src/pngconf.h	2009-02-14 22:59:26.000000000 +0100
++++ src.new/pngconf.h	2013-12-21 13:59:30.898443798 +0100
+@@ -311,6 +311,12 @@
+ #  define PNG_SETJMP_SUPPORTED
+ #endif
+ 
++
++#if !(defined(PNG_SKIP_SETJMP_CHECK) && PNG_SKIP_SETJMP_CHECK)
++
++/* This is an attempt to get libfreetype 2.5.2 compiled (in sage) with
++ *this* version of libpng */
++
+ #ifdef PNG_SETJMP_SUPPORTED
+ /* This is an attempt to force a single setjmp behaviour on Linux.  If
+  * the X config stuff didn't define _BSD_SOURCE we wouldn't need this.
+@@ -343,6 +349,8 @@
+ #  endif /* __linux__ */
+ #endif /* PNG_SETJMP_SUPPORTED */
+ 
++#endif /* !(defined(PNG_SKIP_SETJMP_CHECK) && PNG_SKIP_SETJMP_CHECK) */
++
+ #ifdef BSD
+ #  include <strings.h>
+ #else

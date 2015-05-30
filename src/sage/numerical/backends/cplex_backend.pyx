@@ -14,6 +14,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
+include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
 
 from sage.numerical.mip import MIPSolverException
 
@@ -824,7 +826,6 @@ cdef class CPLEXBackend(GenericBackend):
         sage_free(c_indices)
         sage_free(c_col)
 
-
     cpdef int solve(self) except -1:
         r"""
         Solves the problem.
@@ -1198,21 +1199,29 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p.variable_upper_bound(0, 5)                         # optional - CPLEX
             sage: p.col_bounds(0)                              # optional - CPLEX
             (0.0, 5.0)
+
+        TESTS:
+
+        :trac:`14581`::
+
+            sage: P = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+            sage: x = P["x"]                                    # optional - CPLEX
+            sage: P.set_max(x, 0)                               # optional - CPLEX
+            sage: P.get_max(x)                                  # optional - CPLEX
+            0.0
         """
         cdef int status
         cdef double ub
         cdef char x
         cdef double c_value
 
-        if value == False:
-
+        if value is False:
             status = CPXgetub(self.env, self.lp, &ub, index, index)
             check(status)
 
             return ub if ub < int(CPX_INFBOUND) else None
 
         else:
-
             x = 'U'
             c_value = value if value is not None else +CPX_INFBOUND
             status = CPXchgbds(self.env, self.lp, 1, &index, &x, &c_value)
@@ -1241,13 +1250,24 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p.variable_lower_bound(0, 5)                         # optional - CPLEX
             sage: p.col_bounds(0)                              # optional - CPLEX
             (5.0, None)
+
+        TESTS:
+
+        :trac:`14581`::
+
+            sage: P = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+            sage: x = P["x"]                                    # optional - CPLEX
+            sage: P.set_min(x, 5)                               # optional - CPLEX
+            sage: P.set_min(x, 0)                               # optional - CPLEX
+            sage: P.get_min(x)                                  # optional - CPLEX
+            0.0
         """
         cdef int status
         cdef double lb
         cdef char x
         cdef double c_value
 
-        if value == False:
+        if value is False:
             status = CPXgetlb(self.env, self.lp, &lb, index, index)
             check(status)
             return None if lb <= int(-CPX_INFBOUND) else lb

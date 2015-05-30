@@ -5,11 +5,11 @@ EXAMPLES::
 
     sage: from sage.geometry.polyhedron.palp_database import PALPreader
     sage: for lp in PALPreader(2):
-    ...       cone = Cone([(1,r[0],r[1]) for r in lp.vertices()])
-    ...       fan = Fan([cone])
-    ...       X = ToricVariety(fan)
-    ...       ideal = X.affine_algebraic_patch(cone).defining_ideal()
-    ...       print lp.n_vertices(), ideal.hilbert_series()
+    ....:     cone = Cone([(1,r[0],r[1]) for r in lp.vertices()])
+    ....:     fan = Fan([cone])
+    ....:     X = ToricVariety(fan)
+    ....:     ideal = X.affine_algebraic_patch(cone).defining_ideal()
+    ....:     print lp.n_vertices(), ideal.hilbert_series()
     3 (-t^2 - 7*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
     3 (-t^2 - t - 1)/(t^3 - 3*t^2 + 3*t - 1)
     3 (t^2 + 6*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
@@ -66,22 +66,22 @@ class PALPreader(SageObject):
         [(3, 4), (3, 10), (3, 5), (3, 9), (3, 7), (4, 6), (4, 8), (4, 9),
          (4, 5), (4, 5), (4, 9), (4, 7), (5, 8), (5, 6), (5, 7), (6, 7)]
 
-        sage: iter(PALPreader(2, output='list')).next()
+        sage: next(iter(PALPreader(2, output='list')))
         [[1, 0], [0, 1], [-1, -1]]
         sage: type(_)
         <type 'list'>
 
-        sage: iter(PALPreader(2, output='Polyhedron')).next()
+        sage: next(iter(PALPreader(2, output='Polyhedron')))
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         sage: type(_)
         <class 'sage.geometry.polyhedron.backend_ppl.Polyhedra_ZZ_ppl_with_category.element_class'>
 
-        sage: iter(PALPreader(2, output='PPL')).next()
+        sage: next(iter(PALPreader(2, output='PPL')))
         A 2-dimensional lattice polytope in ZZ^2 with 3 vertices
         sage: type(_)
         <class 'sage.geometry.polyhedron.ppl_lattice_polygon.LatticePolygon_PPL_class'>
 
-        sage: iter(PALPreader(2, output='PointCollection')).next()
+        sage: next(iter(PALPreader(2, output='PointCollection')))
         [ 1,  0],
         [ 0,  1],
         [-1, -1]
@@ -198,7 +198,7 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: iter = polygons._iterate_list(0,4,2)
-            sage: iter.next()
+            sage: next(iter)
             [[1, 0], [0, 1], [-1, -1]]
         """
         if start is None:
@@ -257,7 +257,7 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: iter = polygons._iterate_Polyhedron(0,4,2)
-            sage: iter.next()
+            sage: next(iter)
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         """
         parent = self._polyhedron_parent
@@ -283,7 +283,7 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: iter = polygons._iterate_PPL(0,4,2)
-            sage: iter.next()
+            sage: next(iter)
             A 2-dimensional lattice polytope in ZZ^2 with 3 vertices
         """
         for vertices in self._iterate_list(start, stop, step):
@@ -307,7 +307,7 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: iter = polygons._iterate_PointCollection(0,4,2)
-            sage: iter.next()
+            sage: next(iter)
             [ 1,  0],
             [ 0,  1],
             [-1, -1]
@@ -339,7 +339,7 @@ class PALPreader(SageObject):
             sage: func
             <bound method PALPreader._iterate_list of <class 'sage.geometry.polyhedron.palp_database.PALPreader'>>
             sage: iter = func(0,1,1)
-            sage: iter.next()
+            sage: next(iter)
             [[1, 0], [0, 1], [-1, -1]]
         """
         if output is None:
@@ -390,7 +390,7 @@ class PALPreader(SageObject):
             return iterator(item.start, item.stop, item.step)
         else:
             try:
-                return iterator(item, item+1, 1).next()
+                return next(iterator(item, item+1, 1))
             except StopIteration:
                 raise IndexError('Index out of range.')
 
@@ -412,11 +412,11 @@ class Reflexive4dHodge(PALPreader):
     Any additional keyword arguments are passed to
     :class:`PALPreader`.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
         sage: ref = Reflexive4dHodge(1,101)             # optional - polytopes_db_4d
-        sage: iter(ref).next().Vrepresentation()        # optional - polytopes_db_4d
+        sage: next(iter(ref)).Vrepresentation()         # optional - polytopes_db_4d
         (A vertex at (-1, -1, -1, -1), A vertex at (0, 0, 0, 1),
          A vertex at (0, 0, 1, 0), A vertex at (0, 1, 0, 0), A vertex at (1, 0, 0, 0))
     """

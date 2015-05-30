@@ -30,6 +30,8 @@ include doc/fr/a_tour_of_sage/eigen_plot.png
 include doc/fr/a_tour_of_sage/sin_plot.png
 include doc/tr/a_tour_of_sage/eigen_plot.png
 include doc/tr/a_tour_of_sage/sin_plot.png
+include doc/pt/a_tour_of_sage/eigen_plot.png
+include doc/pt/a_tour_of_sage/sin_plot.png
 graft   doc/en/reference/*/media
 graft   doc/en/thematic_tutorials/media
 graft   doc/en/prep/media

@@ -169,17 +169,37 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             r"""
             Return the image of ``self`` under the omega automorphism.
 
-            The omega automorphism is defined to be the unique algebra
+            The *omega automorphism* is defined to be the unique algebra
             endomorphism `\omega` of the ring of symmetric functions that
             satisfies `\omega(e_k) = h_k` for all positive integers `k`
             (where `e_k` stands for the `k`-th elementary symmetric
             function, and `h_k` stands for the `k`-th complete homogeneous
             symmetric function). It furthermore is a Hopf algebra
-            endomorphism, and sends the power-sum symmetric function `p_k`
-            to `(-1)^{k-1} p_k` for every positive integer `k`.
+            endomorphism and an involution, and it is also known as the
+            *omega involution*. It sends the power-sum symmetric function
+            `p_k` to `(-1)^{k-1} p_k` for every positive integer `k`.
 
-            The default implementation converts to the Schurs, then
-            performs the automorphism and changes back.
+            The images of some bases under the omega automorphism are given by
+
+            .. MATH::
+
+                \omega(e_{\lambda}) = h_{\lambda}, \qquad
+                \omega(h_{\lambda}) = e_{\lambda}, \qquad
+                \omega(p_{\lambda}) = (-1)^{|\lambda| - \ell(\lambda)}
+                p_{\lambda}, \qquad
+                \omega(s_{\lambda}) = s_{\lambda^{\prime}},
+
+            where `\lambda` is any partition, where `\ell(\lambda)` denotes
+            the length (:meth:`~sage.combinat.partition.Partition.length`)
+            of the partition `\lambda`, where `\lambda^{\prime}` denotes the
+            conjugate partition
+            (:meth:`~sage.combinat.partition.Partition.conjugate`) of
+            `\lambda`, and where the usual notations for bases are used
+            (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
+            `s` = Schur).
+
+            :meth:`omega_involution()` is a synonym for the :meth:`omega()`
+            method.
 
             OUTPUT:
 
@@ -202,6 +222,8 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             """
             f = lambda part, coeff: (part, (-1)**(sum(part)-len(part)) * coeff)
             return self.map_item(f)
+
+        omega_involution = omega
 
         def scalar(self, x, zee=None):
             r"""
@@ -532,17 +554,19 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
         def expand(self, n, alphabet='x'):
             """
-            Expand the symmetric function as a symmetric polynomial
-            in `n` variables.
+            Expand the symmetric function ``self`` as a symmetric polynomial
+            in ``n`` variables.
 
             INPUT:
 
-            - ``n`` -- a positive integer
-            - ``alphabet`` -- (default: `x`) a variable for the expansion
+            - ``n`` -- a nonnegative integer
+
+            - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
             OUTPUT:
 
-            - a polynomial expansion of an instance of ``self`` in `n` variables
+            A monomial expansion of ``self`` in the `n` variables
+            labelled by ``alphabet``.
 
             EXAMPLES::
 
@@ -566,7 +590,13 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 0
                 sage: (p([]) + 2*p([1])).expand(3)
                 2*x0 + 2*x1 + 2*x2 + 1
+                sage: p([1]).expand(0)
+                0
+                sage: (3*p([])).expand(0)
+                3
             """
+            if n == 0:   # Symmetrica crashes otherwise...
+                return self.counit()
             condition = lambda part: False
             return self._expand(condition, n, alphabet)
 

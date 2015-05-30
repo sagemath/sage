@@ -234,17 +234,23 @@ Sage example in ./polynomes.tex, line 907::
   sage: print poly
   x^4 - x^2 + 6
   sage: for part in parts: print part.factor()
-  (17/32) * (x - 1)^-2 * (x - 15/17)
-  (-17/32) * (x + 1)^-2 * (x + 15/17)
+  (17/32) * (x - 1)^-1
+  (1/16) * (x - 1)^-2
+  (-17/32) * (x + 1)^-1
+  (1/16) * (x + 1)^-2
   (-243/16) * (x^2 + 3)^-1
 
 Sage example in ./polynomes.tex, line 931::
 
   sage: C = ComplexField(15)
   sage: Frac(C['x'])(r).partial_fraction_decomposition()
-  (x^4 - x^2 + 6.000, [(0.5312*x - 0.4688)/(x^2 - 2.000*x + 1.000),
-  4.384*I/(x - 1.732*I), (-4.384*I)/(x + 1.732*I),
-  (-0.5312*x - 0.4688)/(x^2 + 2.000*x + 1.000)])
+  (x^4 - x^2 + 6.000,
+  [0.5312/(x - 1.000),
+   0.06250/(x^2 - 2.000*x + 1.000),
+    4.385*I/(x - 1.732*I),
+    (-4.385*I)/(x + 1.732*I),
+    (-0.5312)/(x + 1.000),
+    0.06250/(x^2 + 2.000*x + 1.000)])
 
 Sage example in ./polynomes.tex, line 966::
 

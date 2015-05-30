@@ -1,0 +1,23 @@
+diff -druN R-3.1.1/src/library/parallel/src/fork.c R-3.1.1.patched/src/library/parallel/src/fork.c
+--- R-3.1.1/src/library/parallel/src/fork.c	2014-05-27 15:15:04.000000000 -0700
++++ R-3.1.1.patched/src/library/parallel/src/fork.c	2014-11-14 07:37:12.567530830 -0800
+@@ -227,15 +227,15 @@
+ #else
+ /* sigaction is not viable, so use the "dumb" way
+    to clean up anything that comes our way */
+-static void setup_sig_handler() {
+-    signal(SIGCHLD, parent_sig_handler);
+-}
+-
+ static void parent_sig_handler(int sig) {
+     /* clean up when a child terminates */
+     if (sig == SIGCHLD)
+ 	clean_zombies();
+ }
++
++static void setup_sig_handler() {
++    signal(SIGCHLD, parent_sig_handler);
++}
+ #endif
+ 
+ /* from Defn.h */

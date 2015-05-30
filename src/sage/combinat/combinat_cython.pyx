@@ -104,7 +104,7 @@ cdef mpz_stirling_s2(mpz_t s, unsigned long n, unsigned long k):
             mpz_set_ui(u, j)
             mpz_pow_ui(u, u, n)
             # Process each 2^p * j, where j is odd
-            while 1:
+            while True:
                 if j > max_bc:
                     mpz_addmul_alt(s, bc[k-j], u, k+j)
                 else:

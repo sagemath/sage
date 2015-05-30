@@ -1,23 +1,18 @@
 from c_graph cimport CGraph
 from static_sparse_graph cimport short_digraph, ushort
-from c_graph import CGraphBackend
-
-include 'sage/ext/stdsage.pxi'
+from c_graph cimport CGraphBackend
 
 cdef class StaticSparseCGraph(CGraph):
     cdef short_digraph g
     cdef short_digraph g_rev
-    cdef bint directed
+    cdef bint _directed
+    cdef int * number_of_loops
 
-    cpdef bint has_vertex(self, int n)
-    cdef int add_vertex_unsafe(self, int k)
-    cdef int del_vertex_unsafe(self, int v)
-    cpdef list verts(self)
-    cdef int has_arc_unsafe(self, int u, int v)
-    cpdef bint has_arc(self, int u, int v)
-    cdef int out_neighbors_unsafe(self, int u, int *neighbors, int size) except? -2
-    cpdef list out_neighbors(self, int u)
-    cpdef int out_degree(self, int u)
-    cdef int in_neighbors_unsafe(self, int u, int *neighbors, int size) except? -2
-    cpdef list in_neighbors(self, int u)
-    cpdef int in_degree(self, int u)
+    cpdef int out_degree(self, int u) except -1
+    cpdef int in_degree(self, int u) except -1
+
+cdef class StaticSparseBackend(CGraphBackend):
+    cdef int _order
+    cdef bint _multiedges
+    cdef list _vertex_to_labels
+    cdef dict _vertex_to_int

@@ -137,12 +137,22 @@ def all(t = None):
 
     EXAMPLES:
     sage: proof.all()
-    {'polynomial': True, 'other': True, 'elliptic_curve': True, 'number_field': True, 'linear_algebra': True, 'arithmetic': True}
+    {'arithmetic': True,
+     'elliptic_curve': True,
+     'linear_algebra': True,
+     'number_field': True,
+     'other': True,
+     'polynomial': True}
     sage: proof.number_field(False)
     sage: proof.number_field()
     False
     sage: proof.all()
-    {'polynomial': True, 'other': True, 'elliptic_curve': True, 'number_field': False, 'linear_algebra': True, 'arithmetic': True}
+    {'arithmetic': True,
+     'elliptic_curve': True,
+     'linear_algebra': True,
+     'number_field': False,
+     'other': True,
+     'polynomial': True}
     sage: proof.number_field(True)
     sage: proof.number_field()
     True

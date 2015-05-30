@@ -1,7 +1,7 @@
-/*** EXAMPLE: L-function of a genus 2 curve over Q                ***/
-/*** v1.0, July 2002, questions to tim.dokchitser@durham.ac.uk    ***/
-/***                                                              ***/
-/*** type \rex-gen2 or read("ex-gen2") at pari prompt to run this ***/
+/*** EXAMPLE: L-function of a genus 2 curve over Q                  ***/
+/*** v1.3, December 2013, questions to tim.dokchitser@bristol.ac.uk ***/
+/***                                                                ***/
+/*** type \rex-gen2 or read("ex-gen2") at pari prompt to run this   ***/
 
 
 read("computel");                 \\ read the ComputeL package
@@ -25,10 +25,10 @@ coef = [1,-3,-2,4,0,6,0,-3,3,0,0,-8,-5,0,0,3,3,-9,-6,0,0,0,6,6,7,15,-10,0,\
 conductor = cond;             \\ exponential factor
 gammaV    = [0,0,1,1];        \\ list of gamma-factors
 weight    = 2;                \\ L(s)=sgn*L(weight-s)
-initLdata("coef[k]");         \\ initialize the L-series data
+initLdata("coef[k]",-146);    \\ initialize the L-series data
 
 print("EXAMPLE: L-function of a genus 2 curve over Q");
-print("         with ",default(realprecision)," digits precision");
+print("         with 14 digits precision");
 print("C: y^2+(x^3+x+1)y=x^5+x^4 (hyperelliptic)");
 print("Conductor      = ", conductor);
 print("Functional eq. = ", errprint(checkfeq()));

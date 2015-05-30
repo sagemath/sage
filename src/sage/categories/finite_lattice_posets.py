@@ -8,12 +8,9 @@ Finite lattice posets
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.finite_posets import FinitePosets
-from sage.categories.lattice_posets import LatticePosets
+from sage.categories.category_with_axiom import CategoryWithAxiom
 
-class FiniteLatticePosets(Category):
+class FiniteLatticePosets(CategoryWithAxiom):
     r"""
     The category of finite lattices, i.e. finite partially ordered
     sets which are also lattices.
@@ -23,31 +20,21 @@ class FiniteLatticePosets(Category):
         sage: FiniteLatticePosets()
         Category of finite lattice posets
         sage: FiniteLatticePosets().super_categories()
-        [Category of finite posets, Category of lattice posets]
+        [Category of lattice posets, Category of finite posets]
         sage: FiniteLatticePosets().example()
         NotImplemented
 
-    .. seealso:: :class:`FinitePosets`, :class:`Lattices`,
+    .. seealso:: :class:`FinitePosets`, :class:`LatticePosets`,
        :class:`LatticePoset`
 
     TESTS::
 
         sage: C = FiniteLatticePosets()
+        sage: C is FiniteLatticePosets().Finite()
+        True
         sage: TestSuite(C).run()
 
     """
-    @cached_method
-    def super_categories(self):
-        r"""
-        Returns a list of the (immediate) super categories of
-        ``self``, as per :meth:`Category.super_categories`.
-
-        EXAMPLES::
-
-            sage: FiniteLatticePosets().super_categories()
-            [Category of finite posets, Category of lattice posets]
-        """
-        return [FinitePosets(), LatticePosets()]
 
     class ParentMethods:
 
@@ -61,11 +48,11 @@ class FiniteLatticePosets(Category):
 
             EXAMPLES::
 
-                sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})
+                sage: L = LatticePoset({0:[1,2],1:[3],2:[3,4],3:[5],4:[5]})
                 sage: L.join_irreducibles()
-                [1, 2, 3]
+                [1, 2, 4]
 
-            .. seealso:: :meth:`join_irreducibles_poset`
+            .. seealso:: :meth:`meet_irreducibles`, :meth:`join_irreducibles_poset`
             """
             return [x for x in self if len(self.lower_covers(x)) == 1]
 
@@ -86,6 +73,43 @@ class FiniteLatticePosets(Category):
             .. seealso:: :meth:`join_irreducibles`
             """
             return self.subposet(self.join_irreducibles())
+
+        def meet_irreducibles(self):
+            r"""
+            Returns the meet-irreducible elements of this finite lattice.
+
+            A *meet-irreducible element* of ``self`` is an element
+            `x` that is not maximal and that can not be written as
+            the meet of two elements different from `x`.
+
+            EXAMPLES::
+
+                sage: L = LatticePoset({0:[1,2],1:[3],2:[3,4],3:[5],4:[5]})
+                sage: L.meet_irreducibles()
+                [1, 3, 4]
+
+            .. seealso:: :meth:`join_irreducibles`, :meth:`meet_irreducibles_poset`
+            """
+            return [x for x in self if len(self.upper_covers(x)) == 1]
+
+        def meet_irreducibles_poset(self):
+            r"""
+            Returns the poset of join-irreducible elements of this finite lattice.
+
+            A *meet-irreducible element* of ``self`` is an element `x`
+            that is not maximal and can not be written as the meet of two
+            elements different from `x`.
+
+            EXAMPLES::
+
+                sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})
+                sage: L.join_irreducibles_poset()
+                Finite poset containing 3 elements
+
+            .. seealso:: :meth:`meet_irreducibles`
+            """
+            return self.subposet(self.meet_irreducibles())
+
 
         ##########################################################################
         # Lattice morphisms

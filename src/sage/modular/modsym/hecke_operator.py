@@ -33,7 +33,7 @@ class HeckeOperator(sage.modular.hecke.hecke_operator.HeckeOperator):
             TypeError: x (=[X^2,(0,1)]) must be in Modular Symbols space of dimension 4 for Gamma_0(17) of weight 4 with sign -1 over Rational Field
         """
         if x not in self.domain():
-            raise TypeError, "x (=%s) must be in %s"%(x, self.domain())
+            raise TypeError("x (=%s) must be in %s"%(x, self.domain()))
 
         # old version just to check for correctness
         #return self.hecke_module_morphism()(x)

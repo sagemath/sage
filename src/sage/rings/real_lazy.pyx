@@ -26,9 +26,9 @@ from operator import add, sub, mul, div, pow, neg, inv
 
 cdef canonical_coercion
 from sage.structure.element import canonical_coercion
+from sage.structure.all import parent
 
-include "sage/ext/stdsage.pxi"
-
+import sage.categories.map
 from sage.categories.morphism cimport Morphism
 from sage.rings.ring cimport Field
 import sage.rings.infinity
@@ -102,7 +102,7 @@ cdef class LazyField(Field):
             sage: a = CLF.pi() * CLF.I(); a
             3.141592653589794?*I
             sage: CDF(a)
-            3.14159265359*I
+            3.141592653589793*I
         """
         if name in named_constants:
             return LazyConstant(self, name)
@@ -114,8 +114,20 @@ cdef class LazyField(Field):
     cpdef _coerce_map_from_(self, R):
         r"""
         The only things that coerce into this ring are exact rings that
-        embed into `\RR` or `\CC` (depending on whether or not this field
-        is real or complex).
+        embed into `\RR` or `\CC` (depending on whether this field
+        is real or complex), that is, exact rings that coerce into all
+        rings into which this ring coerces.
+
+        .. NOTE::
+
+            The rings into which this ring coerces are currently the
+            corresponding floating-point fields (RealField(p) or
+            ComplexField(p)), machine-precision floating-point fields (RDF,
+            CDF), and interval fields (RealIntervalField(p),
+            ComplexIntervalField(p)). This method should be updated if a new
+            parent is added that declares a coercion from RLF/CLF but not from
+            one of these, otherwise coercions of elements of type LazyWrapper
+            into the new ring might fail.
 
         EXAMPLES::
 
@@ -143,8 +155,18 @@ cdef class LazyField(Field):
             if R in [int, long]:
                 from sage.structure.parent import Set_PythonType
                 return LazyWrapperMorphism(Set_PythonType(R), self)
-        elif self.interval_field().has_coerce_map_from(R) and R.is_exact():
-            return LazyWrapperMorphism(R, self)
+        elif R.is_exact():
+            ivf = self.interval_field()
+            mor = ivf.coerce_map_from(R)
+            # Indirect coercions might lead to loops both in the coercion
+            # discovery algorithm and when trying to convert LazyWrappers,
+            # so we only consider direct coercions.
+            if mor is not None and not isinstance(mor, sage.categories.map.FormalCompositeMap):
+                mor = ivf._middle_field().coerce_map_from(R)
+                if mor is not None and not isinstance(mor, sage.categories.map.FormalCompositeMap):
+                    return LazyWrapperMorphism(R, self)
+            # We can skip the test for a coercion to RDF/CDF since RR/CC
+            # already coerce into it.
 
     def algebraic_closure(self):
         """
@@ -179,7 +201,7 @@ class RealLazyField_class(LazyField):
     For the most part it simply wraps exact elements and defers evaluation
     until a specified precision is requested.
 
-    It's primary use is to connect the exact rings (such as number fields) to
+    Its primary use is to connect the exact rings (such as number fields) to
     fixed precision real numbers. For example, to specify an embedding of a
     number field `K` into `\RR` one can map into this field and the
     coercion will then be able to carry the mapping to real fields of any
@@ -279,7 +301,7 @@ class RealLazyField_class(LazyField):
         else:
             raise ValueError, "RLF has only one generator."
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return a string representation of ``self``.
 
@@ -333,7 +355,7 @@ def RealLazyField():
 
 class ComplexLazyField_class(LazyField):
     """
-    This class represents the set of real numbers to unspecified precision.
+    This class represents the set of complex numbers to unspecified precision.
     For the most part it simply wraps exact elements and defers evaluation
     until a specified precision is requested.
 
@@ -451,7 +473,7 @@ class ComplexLazyField_class(LazyField):
         """
         return "\\Bold{C}"
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return a string representation of ``self``.
 
@@ -530,7 +552,7 @@ cdef class LazyFieldElement(FieldElement):
             sage: RLF(5) + RLF(1/2) # indirect doctest
             5.5000000000000000?
         """
-        if PY_TYPE_CHECK(left, LazyWrapper) and PY_TYPE_CHECK(right, LazyWrapper):
+        if isinstance(left, LazyWrapper) and isinstance(right, LazyWrapper):
             try:
                 return left._new_wrapper((<LazyWrapper?>left)._value + (<LazyWrapper?>right)._value)
             except TypeError:
@@ -546,7 +568,7 @@ cdef class LazyFieldElement(FieldElement):
             sage: CLF(5) - 2 # indirect doctest
             3
         """
-        if PY_TYPE_CHECK(left, LazyWrapper) and PY_TYPE_CHECK(right, LazyWrapper):
+        if isinstance(left, LazyWrapper) and isinstance(right, LazyWrapper):
             try:
                 return left._new_wrapper((<LazyWrapper?>left)._value - (<LazyWrapper?>right)._value)
             except TypeError:
@@ -562,7 +584,7 @@ cdef class LazyFieldElement(FieldElement):
             sage: CLF(10) * RLF(5) # indirect doctest
             50
         """
-        if PY_TYPE_CHECK(left, LazyWrapper) and PY_TYPE_CHECK(right, LazyWrapper):
+        if isinstance(left, LazyWrapper) and isinstance(right, LazyWrapper):
             try:
                 return left._new_wrapper((<LazyWrapper?>left)._value * (<LazyWrapper?>right)._value)
             except TypeError:
@@ -580,7 +602,7 @@ cdef class LazyFieldElement(FieldElement):
             sage: Reals(300)(a)
             0.166666666666666666666666666666666666666666666666666666666666666666666666666666666666666667
         """
-        if PY_TYPE_CHECK(left, LazyWrapper) and PY_TYPE_CHECK(right, LazyWrapper):
+        if isinstance(left, LazyWrapper) and isinstance(right, LazyWrapper):
             try:
                 return left._new_wrapper((<LazyWrapper?>left)._value / (<LazyWrapper?>right)._value)
             except TypeError:
@@ -598,14 +620,14 @@ cdef class LazyFieldElement(FieldElement):
             sage: Reals(300)(a)
             1.41421356237309504880168872420969807856967187537694807317667973799073247846210703885038753
         """
-        if PY_TYPE_CHECK(left, LazyWrapper) and PY_TYPE_CHECK(right, LazyWrapper):
+        if isinstance(left, LazyWrapper) and isinstance(right, LazyWrapper):
             try:
                 return left._new_wrapper((<LazyWrapper>left)._value ** (<LazyWrapper>right)._value)
             except TypeError:
                 pass
-        if not PY_TYPE_CHECK(left, LazyFieldElement):
+        if not isinstance(left, LazyFieldElement):
             left = (<LazyFieldElement>right)._new_wrapper(left)
-        elif not PY_TYPE_CHECK(right, LazyFieldElement):
+        elif not isinstance(right, LazyFieldElement):
             right = (<LazyFieldElement>left)._new_wrapper(right)
         return (<LazyFieldElement>left)._new_binop(left, right, pow)
 
@@ -633,7 +655,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         return self._new_unop(self, inv)
 
-    cdef int _cmp_c_impl(self, Element other) except -2:
+    cpdef int _cmp_(self, Element other) except -2:
         """
         If things are being wrapped, tries to compare values. That failing, it
         tries to compare intervals, which may return a false negative.
@@ -647,7 +669,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         left = self
         try:
-            if PY_TYPE_CHECK(self, LazyWrapper) and PY_TYPE_CHECK(other, LazyWrapper):
+            if isinstance(self, LazyWrapper) and isinstance(other, LazyWrapper):
                 left, right = canonical_coercion((<LazyWrapper>self)._value, (<LazyWrapper>other)._value)
                 return cmp(left, right)
         except TypeError:
@@ -679,13 +701,13 @@ cdef class LazyFieldElement(FieldElement):
         return hash(complex(self))
 
     cdef LazyFieldElement _new_wrapper(self, value):
-        cdef LazyWrapper e = <LazyWrapper>PY_NEW(LazyWrapper)
+        cdef LazyWrapper e = <LazyWrapper>LazyWrapper.__new__(LazyWrapper)
         e._parent = self._parent
         e._value = value
         return e
 
     cdef LazyFieldElement _new_binop(self, LazyFieldElement left, LazyFieldElement right, op):
-        cdef LazyBinop e = <LazyBinop>PY_NEW(LazyBinop)
+        cdef LazyBinop e = <LazyBinop>LazyBinop.__new__(LazyBinop)
         e._parent = self._parent
         e._left = left
         e._right = right
@@ -693,7 +715,7 @@ cdef class LazyFieldElement(FieldElement):
         return e
 
     cdef LazyFieldElement _new_unop(self, LazyFieldElement arg, op):
-        cdef LazyUnop e = <LazyUnop>PY_NEW(LazyUnop)
+        cdef LazyUnop e = <LazyUnop>LazyUnop.__new__(LazyUnop)
         e._parent = self._parent
         e._op = op
         e._arg = arg
@@ -760,7 +782,7 @@ cdef class LazyFieldElement(FieldElement):
             5.0
             sage: a = CLF(-1)^(1/4)
             sage: CDF(a)
-            0.707106781187 + 0.707106781187*I
+            0.7071067811865476 + 0.7071067811865475*I
         """
         return self.eval(R)
 
@@ -791,7 +813,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         try:
             return self.eval(complex)
-        except StandardError:
+        except Exception:
             from complex_field import ComplexField
             return complex(self.eval(ComplexField(53)))
 
@@ -857,6 +879,22 @@ cdef class LazyFieldElement(FieldElement):
             return LazyNamedUnop(self._parent, self, name)
         else:
             return FieldElement.__getattribute__(self, name)
+
+    def continued_fraction(self):
+        r"""
+        Return the continued fraction of self.
+
+        EXAMPLES::
+
+            sage: a = RLF(sqrt(2)) + RLF(sqrt(3))
+            sage: cf = a.continued_fraction()
+            sage: cf
+            [3; 6, 1, 5, 7, 1, 1, 4, 1, 38, 43, 1, 3, 2, 1, 1, 1, 1, 2, 4, ...]
+            sage: cf.convergent(100)
+            444927297812646558239761867973501208151173610180916865469/141414466649174973335183571854340329919207428365474086063
+        """
+        from sage.rings.continued_fraction import ContinuedFraction_real
+        return ContinuedFraction_real(self)
 
 
 def make_element(parent, *args):
@@ -990,7 +1028,14 @@ cdef class LazyWrapper(LazyFieldElement):
             sage: a.eval(ZZ).parent()
             Integer Ring
         """
-        return R(self._value)
+        try:
+            mor = R.convert_map_from(parent(self._value))
+        except AttributeError:
+            return R(self._value)
+        if mor is not None and self.parent() not in mor.domains():
+            return mor(self._value)
+        else:
+            raise TypeError("unable to convert {} to an element of {}".format(self._value, R))
 
     def __reduce__(self):
         """
@@ -1004,6 +1049,20 @@ cdef class LazyWrapper(LazyFieldElement):
         """
         return make_element, (self._parent, self._value)
 
+    def continued_fraction(self):
+        r"""
+        Return the continued fraction of self.
+
+        EXAMPLES::
+
+            sage: a = RLF(sqrt(2))
+            sage: a.continued_fraction()
+            [1; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...]
+        """
+        from sage.rings.continued_fraction import ContinuedFraction_real, ContinuedFraction_infinite
+        if isinstance(self._value, (ContinuedFraction_infinite, ContinuedFraction_real)):
+            return self._value
+        return ContinuedFraction_real(self)
 
 
 cdef class LazyBinop(LazyFieldElement):
@@ -1023,9 +1082,9 @@ cdef class LazyBinop(LazyFieldElement):
             2.3333333333333333333333333333333333333333333333333333333333
         """
         FieldElement.__init__(self, parent)
-        if not PY_TYPE_CHECK(left, LazyFieldElement):
+        if not isinstance(left, LazyFieldElement):
             left = self._new_wrapper(left)
-        if not PY_TYPE_CHECK(right, LazyFieldElement):
+        if not isinstance(right, LazyFieldElement):
             right = self._new_wrapper(right)
         self._left = left
         self._right = right
@@ -1174,7 +1233,7 @@ cdef class LazyUnop(LazyFieldElement):
             3.0000000000000000000000000000
         """
         FieldElement.__init__(self, parent)
-        if not PY_TYPE_CHECK(arg, LazyFieldElement):
+        if not isinstance(arg, LazyFieldElement):
             arg = self._new_wrapper(arg)
         self._op = op
         self._arg = arg
@@ -1287,7 +1346,7 @@ cdef class LazyNamedUnop(LazyUnop):
             2.00000000000000
         """
         LazyUnop.__init__(self, parent, arg, op)
-        if extra_args is not None and not PY_TYPE_CHECK(extra_args, tuple):
+        if extra_args is not None and not isinstance(extra_args, tuple):
             raise TypeError, "extra args must be a tuple"
         self._extra_args = extra_args
 
@@ -1318,7 +1377,7 @@ cdef class LazyNamedUnop(LazyUnop):
         """
         arg = self._arg.eval(R)
         cdef bint has_extra_args = self._extra_args is not None and len(self._extra_args) > 0
-        if PY_TYPE_CHECK_EXACT(R, type):
+        if type(R) is type:
             f = getattr(math, self._op)
             if has_extra_args:
                 return f(arg, *self._extra_args)
@@ -1456,7 +1515,7 @@ cdef class LazyConstant(LazyFieldElement):
             sage: from sage.rings.real_lazy import LazyConstant
             sage: a = LazyConstant(RLF, 'e')
             sage: RDF(a) # indirect doctest
-            2.71828182846
+            2.718281828459045
             sage: a = LazyConstant(CLF, 'I')
             sage: CC(a)
             1.00000000000000*I
@@ -1595,10 +1654,10 @@ cdef class LazyAlgebraic(LazyFieldElement):
             sage: RR(a)^2
             7.00000000000000
         """
-        if PY_TYPE_CHECK(R, type):
+        if isinstance(R, type):
             if self._prec < 53:
                 self.eval(self.parent().interval_field(64)) # up the prec
-        elif self._prec < R.prec():
+        elif R.is_exact() or self._prec < R.prec():
             # Carl Witty said:
             # Quadratic equation faster and more accurate than roots(),
             # but the current code doesn't do the right thing with interval
@@ -1704,9 +1763,9 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: f(x)._value
             20
         """
-        cdef LazyWrapper e = <LazyWrapper>PY_NEW(LazyWrapper)
+        cdef LazyWrapper e = <LazyWrapper>LazyWrapper.__new__(LazyWrapper)
         e._parent = self._codomain
-        if PY_TYPE_CHECK_EXACT(x, LazyWrapper):
+        if type(x) is LazyWrapper:
             e._value = (<LazyWrapper>x)._value
         else:
             e._value = x

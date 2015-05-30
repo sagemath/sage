@@ -89,12 +89,15 @@ class FiniteFieldHomset(RingHomset_generic):
         if isinstance(im_gens, FiniteFieldHomomorphism_generic):
             return self._coerce_impl(im_gens)
         try:
+            if self.domain().degree() == 1:
+                from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
+                return FiniteFieldHomomorphism_prime(self, im_gens, check=check)
             return FiniteFieldHomomorphism_generic(self, im_gens, check=check)
-        except (NotImplementedError, ValueError), err:
+        except (NotImplementedError, ValueError) as err:
             try:
                 return self._coerce_impl(im_gens)
             except TypeError:
-                raise TypeError, "images do not define a valid homomorphism"
+                raise TypeError("images do not define a valid homomorphism")
 
     def _coerce_impl(self, x):
         """
@@ -106,10 +109,8 @@ class FiniteFieldHomset(RingHomset_generic):
             sage: l.<b> = GF(625)
             sage: H = Hom(k, l)
             sage: G = loads(dumps(H))
-            sage: H == G
+            sage: H is G
             True
-            sage: H is G # this should change eventually
-            False
             sage: G.coerce(list(H)[0]) # indirect doctest
             Ring morphism:
               From: Finite Field in a of size 5^2
@@ -199,11 +200,44 @@ class FiniteFieldHomset(RingHomset_generic):
             sage: L.<z> = GF(7^6)
             sage: [g for g in End(L) if (g^3)(z) == z]
             [Ring endomorphism of Finite Field in z of size 7^6
+              Defn: z |--> z,
+             Ring endomorphism of Finite Field in z of size 7^6
               Defn: z |--> 5*z^4 + 5*z^3 + 4*z^2 + 3*z + 1,
              Ring endomorphism of Finite Field in z of size 7^6
-              Defn: z |--> 3*z^5 + 5*z^4 + 5*z^2 + 2*z + 3,
-             Ring endomorphism of Finite Field in z of size 7^6
-              Defn: z |--> z]
+              Defn: z |--> 3*z^5 + 5*z^4 + 5*z^2 + 2*z + 3]
+
+        Between isomorphic fields with different moduli::
+
+            sage: k1 = GF(1009)
+            sage: k2 = GF(1009, modulus="primitive")
+            sage: Hom(k1, k2).list()
+            [
+            Ring morphism:
+              From: Finite Field of size 1009
+              To:   Finite Field of size 1009
+              Defn: 1 |--> 1
+            ]
+            sage: Hom(k2, k1).list()
+            [
+            Ring morphism:
+              From: Finite Field of size 1009
+              To:   Finite Field of size 1009
+              Defn: 11 |--> 11
+            ]
+
+            sage: k1.<a> = GF(1009^2, modulus="first_lexicographic")
+            sage: k2.<b> = GF(1009^2, modulus="conway")
+            sage: Hom(k1, k2).list()
+            [
+            Ring morphism:
+              From: Finite Field in a of size 1009^2
+              To:   Finite Field in b of size 1009^2
+              Defn: a |--> 290*b + 864,
+            Ring morphism:
+              From: Finite Field in a of size 1009^2
+              To:   Finite Field in b of size 1009^2
+              Defn: a |--> 719*b + 145
+            ]
 
         TESTS:
 
@@ -269,6 +303,37 @@ class FiniteFieldHomset(RingHomset_generic):
             True
         """
         return self.list().index(item)
+
+    def _an_element_(self):
+        """
+        Return an element of ``self``.
+
+        TESTS::
+
+            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()
+            Ring morphism:
+              From: Finite Field in a of size 3^3
+              To:   Finite Field in b of size 3^6
+              Defn: a |--> 2*b^5 + 2*b^4
+
+            sage: Hom(GF(3^3, 'a'), GF(3^2, 'c')).an_element()
+            Traceback (most recent call last):
+            ...
+            EmptySetError: no homomorphisms from Finite Field in a of size 3^3 to Finite Field in c of size 3^2
+
+        .. TODO::
+
+            Use a more sophisticated algorithm; see also :trac:`8751`.
+
+        """
+        K = self.domain()
+        L = self.codomain()
+        if K.degree() == 1:
+            return L.coerce_map_from(K)
+        elif not K.degree().divides(L.degree()):
+            from sage.categories.sets_cat import EmptySetError
+            raise EmptySetError('no homomorphisms from %s to %s' % (K, L))
+        return K.hom([K.modulus().any_root(L)])
 
 
 from sage.structure.sage_object import register_unpickle_override

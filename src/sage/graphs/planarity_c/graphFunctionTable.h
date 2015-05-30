@@ -59,44 +59,44 @@ typedef struct
         // These function pointers allow extension modules to overload some of
         // the behaviors of protected functions.  Only advanced applications
         // will overload these functions
-        int  (*fpCreateFwdArcLists)();
-        void (*fpCreateDFSTreeEmbedding)();
-        void (*fpEmbedBackEdgeToDescendant)();
-        void (*fpWalkUp)();
-        int  (*fpWalkDown)();
-        int  (*fpMergeBicomps)();
-        int  (*fpHandleInactiveVertex)();
-        int  (*fpHandleBlockedDescendantBicomp)();
-        int  (*fpHandleBlockedEmbedIteration)();
-        int  (*fpEmbedPostprocess)();
-        int  (*fpMarkDFSPath)();
+        int  (*fpCreateFwdArcLists)(void *theGraph);
+        void (*fpCreateDFSTreeEmbedding)(void *theGraph);
+        void (*fpEmbedBackEdgeToDescendant)(void *theGraph, int rootSide, int rootVertex, int W, int WPrevLink);
+        void (*fpWalkUp)(void *theGraph, int I, int J);
+        int  (*fpWalkDown)(void *theGraph, int I, int rootVertex);
+        int  (*fpMergeBicomps)(void *theGraph, int I, int rootVertex, int W, int WPrevLink);
+        int  (*fpHandleInactiveVertex)(void *theGraph, int bicompRoot, int* pW, int *pWPrevLink);
+        int  (*fpHandleBlockedDescendantBicomp)(void *theGraph, int I, int rootVertex, int R, int *pRout, int *pW, int *pWPrevLink);
+        int  (*fpHandleBlockedEmbedIteration)(void *theGraph, int I);
+        int  (*fpEmbedPostprocess)(void *theGraph, int I, int edgeEmbeddingResult);
+        int  (*fpMarkDFSPath)(void *theGraph, int ancestor, int descendant);
 
-        int  (*fpCheckEmbeddingIntegrity)();
-        int  (*fpCheckObstructionIntegrity)();
+        int  (*fpCheckEmbeddingIntegrity)(void *theGraph, void *origGraph);
+        int  (*fpCheckObstructionIntegrity)(void *theGraph, void *origGraph);
 
         // These function pointers allow extension modules to overload
         // vertex and graphnode initialization. These are not part of the
         // public API, but many extensions are expected to overload them
         // if they equip vertices or edges with additional parameters
-        void (*fpInitGraphNode)();
-        void (*fpInitVertexRec)();
+        void (*fpInitGraphNode)(void *theGraph, int I);
+        void (*fpInitVertexRec)(void *theGraph, int I);
 
         // These function pointers allow extension modules to overload some
         // of the behaviors of gp_* function in the public API
-        int  (*fpInitGraph)();
-        void (*fpReinitializeGraph)();
-        int  (*fpEnsureArcCapacity)();
-        int  (*fpSortVertices)();
+        int  (*fpInitGraph)(void *theGraph, int size);
+        void (*fpReinitializeGraph)(void *theGraph);
+        int  (*fpEnsureArcCapacity)(void *theGraph, int requiredArcCapacity);
+        int  (*fpSortVertices)(void *theGraph);
 
-        int  (*fpReadPostprocess)();
-        int  (*fpWritePostprocess)();
+        int  (*fpReadPostprocess)(void *theGraph, void *extraData, long extraDataSize);
+        int  (*fpWritePostprocess)(void *theGraph, void **pExtraData, long *pExtraDataSize);
 
-        int  (*fpHideVertex)();
-        void (*fpHideEdge)();
-        void (*fpRestoreEdge)();
-        int  (*fpContractEdge)();
-        int  (*fpIdentifyVertices)();
-        int  (*fpRestoreVertex)();
+        int  (*fpHideVertex)(void *theGraph, int vertex);
+        void (*fpHideEdge)(void *theGraph, int e);
+        void (*fpRestoreEdge)(void *theGraph, int arcPos);
+        int  (*fpContractEdge)(void *theGraph, int e);
+        int  (*fpIdentifyVertices)(void *theGraph, int u, int v, int eBefore);
+        int  (*fpRestoreVertex)(void *theGraph);
 
 } graphFunctionTable;
 

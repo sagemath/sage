@@ -37,30 +37,5 @@ None
 In the event patches ever need to be made to this package, the method of
 applying the patches should not rely on the 'patch' existing on the system.
 
-Versions 2.6 and 2.6.1 seem to be broken on OS X 10.4 (and supposedly also
-Solaris too). So do NOT update the package to those versions.
-
-Version 2.6.1 had some self-tests, so assuming the OS X & Solaris bugs get
-fixed at some point, a spkg-check file should be added.
-
-== Changelog ==
-
-=== patch-2.5.9.p3 (Jean-Pierre Flori, 5 January 2013) ===
- * #13844: Install manifest file on Cygwin for Windows 7.
-
-=== patch-2.5.9.p2 (Jeroen Demeyer, 16 August 2011) ===
- * #11232: Make all files in src/ owner-writable.
-
-=== patch-2.5.9.p1 (Dima Pasechnik, 21nd March 2011)  ===
- * #11232 We should not build patch on Cygwin, and rely on Cygwin-supplied
-   one.
-
-=== patch-2.5.9.p0 (David Kirkby, 22nd March 2011)  ===
- * #10979 Disable debugging information on AIX, by adding -g0
-  to CFLAGS otherwise there are link errors with GNU patch and
-  many other programs. See these threads.
-  http://www.ibm.com/developerworks/forums/thread.jspa?threadID=348558
-  http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46072
-
-=== patch-2.5.9 (David Kirkby, Jeroen Demeyer, 16th november 2010)  ===
- * Initial version.
+Since bzip2 may (actually, does) depend on patch indirectly the patch
+tarball must be in gzip format.

@@ -47,12 +47,14 @@ def DynkinDiagram(*args, **kwds):
     - a Cartan matrix
     - a Cartan matrix and an indexing set
 
-    Also one can input an index_set by
+    One can also input an indexing set by passing a tuple using the optional
+    argument ``index_set``.
 
-    The edge multiplicities are encoded as edge labels. This uses the
-    convention in Hong and Kang, Kac, Fulton Harris, and crystals. This is the
-    **opposite** convention in Bourbaki and Wikipedia's Dynkin diagram
-    (:wikipedia:`Dynkin_diagram`). That is for `i \neq j`::
+    The edge multiplicities are encoded as edge labels. For the corresponding
+    Cartan matrices, this uses the convention in Hong and Kang, Kac,
+    Fulton and Harris, and crystals. This is the **opposite** convention
+    in Bourbaki and Wikipedia's Dynkin diagram (:wikipedia:`Dynkin_diagram`).
+    That is for `i \neq j`::
 
        i <--k-- j <==> a_ij = -k
                   <==> -scalar(coroot[i], root[j]) = k
@@ -286,11 +288,34 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             return result+"Dynkin diagram of rank %s"%self.rank()
         else:
             return result+"%s"%ct._repr_(compact=True)
-            #return result+"Dynkin diagram of type %s"%self.cartan_type()._repr_(compact = True)
+
+    def _rich_repr_(self, display_manager, **kwds):
+        """
+        Rich Output Magic Method
+
+        Override rich output because :meth:`_repr_` outputs ascii
+        art. The proper fix will be in :trac:`18328`.
+
+        See :mod:`sage.repl.rich_output` for details.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output import get_display_manager
+            sage: dm = get_display_manager()
+            sage: E8 = WeylCharacterRing('E8')
+            sage: E8.dynkin_diagram()._rich_repr_(dm)
+            OutputAsciiArt container
+        """
+        OutputAsciiArt = display_manager.types.OutputAsciiArt
+        OutputPlainText = display_manager.types.OutputPlainText
+        if OutputAsciiArt in display_manager.supported_output():
+            return OutputAsciiArt(self._repr_())
+        else:
+            return OutputPlainText(self._repr_())
 
     def _latex_(self, scale=0.5):
         r"""
-        Return a latex representation of this dynkin diagram
+        Return a latex representation of this Dynkin diagram
 
         EXAMPLES::
 
@@ -300,18 +325,22 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             \draw (0 cm,0) -- (4 cm,0);
             \draw (0 cm,0) -- (2.0 cm, 1.2 cm);
             \draw (2.0 cm, 1.2 cm) -- (4 cm, 0);
-            \draw[fill=white] (0 cm, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};
-            \draw[fill=white] (4 cm, 0) circle (.25cm) node[below=4pt]{$3$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
+            \draw[fill=white] (4 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
             \draw[fill=white] (2.0 cm, 1.2 cm) circle (.25cm) node[anchor=south east]{$0$};
             \end{tikzpicture}
         """
         if self.cartan_type() is None:
-            return "Dynkin diagram of rank %s"%self.rank()
-        ret = "\\begin{tikzpicture}[scale=%s]\n"%scale
-        ret += "\\draw (-1,0) node[anchor=east] {$%s$};\n"%self.cartan_type()._latex_()
+            return "Dynkin diagram of rank {}".format(self.rank())
+
+        from sage.graphs.graph_latex import setup_latex_preamble
+        setup_latex_preamble()
+
+        ret = "\\begin{{tikzpicture}}[scale={}]\n".format(scale)
+        ret += "\\draw (-1,0) node[anchor=east] {{${}$}};\n".format(self.cartan_type()._latex_())
         ret += self.cartan_type()._latex_dynkin_diagram()
-        ret += "\n\\end{tikzpicture}"
+        ret += "\\end{tikzpicture}"
         return ret
 
     def _matrix_(self):
@@ -493,6 +522,34 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         result._cartan_type = self._cartan_type.dual() if not self._cartan_type is None else None
         return result
 
+    def relabel(self, relabelling, inplace=False, **kwds):
+        """
+        Return the relabelling Dynkin diagram of ``self``.
+
+        EXAMPLES::
+
+            sage: D = DynkinDiagram(['C',3])
+            sage: D.relabel({1:0, 2:4, 3:1})
+            O---O=<=O
+            0   4   1
+            C3 relabelled by {1: 0, 2: 4, 3: 1}
+            sage: D
+            O---O=<=O
+            1   2   3
+            C3
+        """
+        if inplace:
+            DiGraph.relabel(self, relabelling, inplace, **kwds)
+            G = self
+        else:
+            # We must make a copy of ourselves first because of DiGraph's
+            #   relabel default behavior is to do so in place, and if not
+            #   then it recurses on itself with no argument for inplace
+            G = self.copy().relabel(relabelling, inplace=True, **kwds)
+        if self._cartan_type is not None:
+            G._cartan_type = self._cartan_type.relabel(relabelling)
+        return G
+
     def is_finite(self):
         """
         Check if ``self`` corresponds to a finite root system.
@@ -558,6 +615,36 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     is_crystalographic = deprecated_function_alias(14673, is_crystallographic)
 
+    def symmetrizer(self):
+        """
+        Return the symmetrizer of the corresponding Cartan matrix.
+
+        EXAMPLES::
+
+            sage: d = DynkinDiagram()
+            sage: d.add_edge(1,2,3)
+            sage: d.add_edge(2,3)
+            sage: d.add_edge(3,4,3)
+            sage: d.symmetrizer()
+            Finite family {1: 9, 2: 3, 3: 3, 4: 1}
+
+        TESTS:
+
+        We check that :trac:`15740` is fixed::
+
+            sage: d = DynkinDiagram()
+            sage: d.add_edge(1,2,3)
+            sage: d.add_edge(2,3)
+            sage: d.add_edge(3,4,3)
+            sage: L = d.root_system().root_lattice()
+            sage: al = L.simple_roots()
+            sage: al[1].associated_coroot()
+            alphacheck[1]
+            sage: al[1].reflection(al[2])
+            alpha[1] + 3*alpha[2]
+        """
+        return self.cartan_matrix().symmetrizer()
+
     def __getitem__(self, i):
         r"""
         With a tuple (i,j) as argument, returns the scalar product
@@ -566,7 +653,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
         Otherwise, behaves as the usual DiGraph.__getitem__
 
-        EXAMPLES: We use the `C_4` dynkin diagram as a cartan
+        EXAMPLES: We use the `C_4` Dynkin diagram as a cartan
         matrix::
 
             sage: g = DynkinDiagram(['C',4])
@@ -648,23 +735,23 @@ def precheck(t, letter=None, length=None, affine=None, n_ge=None, n=None):
     """
     if letter is not None:
         if t[0] != letter:
-            raise ValueError, "t[0] must be = '%s'"%letter
+            raise ValueError("t[0] must be = '%s'"%letter)
 
     if length is not None:
         if len(t) != length:
-            raise ValueError, "len(t) must be = %s"%length
+            raise ValueError("len(t) must be = %s"%length)
 
     if affine is not None:
         try:
             if t[2] != affine:
-                raise ValueError, "t[2] must be = %s"%affine
+                raise ValueError("t[2] must be = %s"%affine)
         except IndexError:
-            raise ValueError, "t[2] must be = %s"%affine
+            raise ValueError("t[2] must be = %s"%affine)
 
     if n_ge is not None:
         if t[1] < n_ge:
-            raise ValueError, "t[1] must be >= %s"%n_ge
+            raise ValueError("t[1] must be >= %s"%n_ge)
 
     if n is not None:
         if t[1] != n:
-            raise ValueError, "t[1] must be = %s"%n
+            raise ValueError("t[1] must be = %s"%n)

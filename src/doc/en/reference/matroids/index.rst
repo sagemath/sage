@@ -50,4 +50,15 @@ Advanced functionality
    sage/matroids/utilities
    sage/matroids/extension
 
+Internals
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/lean_matrix
+   sage/matroids/matroids_plot_helpers
+   sage/matroids/set_system
+   sage/matroids/unpickling
+
 .. include:: ../footer.txt

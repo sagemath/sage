@@ -102,8 +102,8 @@ try:
     with open(input, 'r') as f:
         rst = f.read()
 except IOError as e:
-    print "IOError: %s" % e
-    print "Unable to open source file for reading ('%s').  Exiting." % input
+    print("IOError: {}".format(e))
+    print("Unable to open source file for reading ('{}').  Exiting.".format(input))
     sys.exit(1)
 
 # docutils loses the single backslashes, so we precede them with escapes
@@ -129,8 +129,9 @@ worksheet_txt = translator.process_doc_html(html)
 
 # create a Notebook object
 from sagenb.notebook.notebook import Notebook
-from sage.misc.misc import tmp_dir
+from sage.misc.all import tmp_dir
 nb = Notebook(tmp_dir()+'.sagenb')
+nb.user_manager().create_default_users('password')
 
 # create a worksheet
 W = nb.create_new_worksheet(title, 'admin')

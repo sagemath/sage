@@ -1,4 +1,4 @@
-include 'sage/ext/stdsage.pxi'
+from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.gmp.mpz cimport *
 
@@ -312,7 +312,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
 
     cdef _new_c(self, Integer _mantissa, Integer _diameter):
         cdef RealIntervalAbsoluteElement x
-        x = <RealIntervalAbsoluteElement>PY_NEW(RealIntervalAbsoluteElement)
+        x = <RealIntervalAbsoluteElement>RealIntervalAbsoluteElement.__new__(RealIntervalAbsoluteElement)
         x._parent = self._parent
         x._mantissa = _mantissa
         x._diameter = _diameter

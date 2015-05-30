@@ -31,12 +31,12 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
     EXAMPLE::
 
         sage: AdditiveAbelianGroup([0, 2, 4])
-        Additive abelian group isomorphic to Z/2 + Z/4 + Z
+        Additive abelian group isomorphic to Z + Z/2 + Z/4
 
     An example of the ``remember_generators`` switch::
 
         sage: G = AdditiveAbelianGroup([0, 2, 3]); G
-        Additive abelian group isomorphic to Z/6 + Z
+        Additive abelian group isomorphic to Z + Z/2 + Z/3
         sage: G.gens()
         ((1, 0, 0), (0, 1, 0), (0, 0, 1))
 
@@ -66,7 +66,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
 
         sage: H.smith_form_gens()
         ((2, 1, 0), (0, 0, 1))
-        sage: q=H([5,6]); q
+        sage: q=H.linear_combination_of_smith_form_gens([5,6]); q
         (1, 1, 6)
         sage: p==q
         True
@@ -93,7 +93,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
 
         sage: H.smith_form_gens()
         ((2, 1, 0), (0, 0, 1))
-        sage: q=G([5,6]); q
+        sage: q=G.linear_combination_of_smith_form_gens([5,6]); q
         (1, 1, 6)
         sage: p==q
         True
@@ -108,7 +108,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
         True
     """
     invs = [ZZ(x) for x in invs]
-    if not all( [x >= 0 for x in invs] ): raise ValueError, "Invariants must be nonnegative"
+    if not all( [x >= 0 for x in invs] ): raise ValueError("Invariants must be nonnegative")
     A, B = cover_and_relations_from_invariants(invs)
     if remember_generators:
         G = AdditiveAbelianGroup_fixed_gens(A, B, A.gens())
@@ -231,7 +231,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         EXAMPLES::
 
             sage: AdditiveAbelianGroup([0, 2, 3])._repr_()
-            'Additive abelian group isomorphic to Z/6 + Z'
+            'Additive abelian group isomorphic to Z + Z/2 + Z/3'
         """
         if self.V().rank() == 0:
             return "Trivial group"
@@ -274,17 +274,15 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         EXAMPLE::
 
             sage: AdditiveAbelianGroup([0, 2,4]).short_name()
-            'Z/2 + Z/4 + Z'
+            'Z + Z/2 + Z/4'
             sage: AdditiveAbelianGroup([0, 2, 3]).short_name()
-            'Z/6 + Z'
+            'Z + Z/2 + Z/3'
         """
-        invs = self.invariants()
-        if not invs: return "Trivial group"
-        s = ""
-        for j in invs:
-            if j == 0: s += "Z + "
-            else: s += "Z/%s + " % j
-        return s[:-3] # drop the final " + "
+        from sage.rings.infinity import Infinity as oo
+        invs = [j.additive_order() for j in self.gens()]
+        if not invs:
+            return "Trivial group"
+        return " + ".join("Z" if j == +oo else "Z/%s"%j for j in invs)
 
     def _module_constructor(self, cover, relations):
         r"""
@@ -299,7 +297,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         EXAMPLE::
 
             sage: G = AdditiveAbelianGroup([0, 4, 2]); G
-            Additive abelian group isomorphic to Z/2 + Z/4 + Z
+            Additive abelian group isomorphic to Z + Z/4 + Z/2
             sage: H = G.submodule([G.1]); H
             Additive abelian group isomorphic to Z/4
             sage: G/H    # indirect test

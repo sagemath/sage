@@ -3,20 +3,20 @@ Hopf algebras with basis
 """
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
-#  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#  Copyright (C) 2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category_types import Category_over_base_ring
-from sage.categories.all import HopfAlgebras, BialgebrasWithBasis
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import TensorProductsCategory
 from sage.misc.abstract_method import abstract_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import LazyImport
 
-class HopfAlgebrasWithBasis(Category_over_base_ring):
+class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
     The category of Hopf algebras with a distinguished basis
 
@@ -26,7 +26,9 @@ class HopfAlgebrasWithBasis(Category_over_base_ring):
         sage: C
         Category of hopf algebras with basis over Rational Field
         sage: C.super_categories()
-        [Category of bialgebras with basis over Rational Field, Category of hopf algebras over Rational Field]
+        [Category of hopf algebras over Rational Field,
+         Category of algebras with basis over Rational Field,
+         Category of coalgebras with basis over Rational Field]
 
     We now show how to use a simple Hopf algebra, namely the group algebra of the dihedral group
     (see also AlgebrasWithBasis)::
@@ -35,7 +37,7 @@ class HopfAlgebrasWithBasis(Category_over_base_ring):
         An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
         sage: A.__custom_name = "A"
         sage: A.category()
-        Category of hopf algebras with basis over Rational Field
+        Category of finite dimensional hopf algebras with basis over Rational Field
 
         sage: A.one_basis()
         ()
@@ -109,22 +111,11 @@ class HopfAlgebrasWithBasis(Category_over_base_ring):
         sage: TestSuite(C).run()
     """
 
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: HopfAlgebrasWithBasis(QQ).super_categories()
-            [Category of bialgebras with basis over Rational Field, Category of hopf algebras over Rational Field]
-        """
-        R = self.base_ring()
-        return [BialgebrasWithBasis(R), HopfAlgebras(R)]
-
     def example(self, G = None):
         """
         Returns an example of algebra with basis::
 
-            sage: HopfAlgebrasWithBasis(QQ[x]).example()
+            sage: HopfAlgebrasWithBasis(QQ['x']).example()
             An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Univariate Polynomial Ring in x over Rational Field
 
         An other group can be specified as optional argument::
@@ -152,6 +143,9 @@ class HopfAlgebrasWithBasis(Category_over_base_ring):
 #             Category of hopf algebras with basis over Rational Field
 #         """
 #         return self
+
+    FiniteDimensional = LazyImport('sage.categories.finite_dimensional_hopf_algebras_with_basis', 'FiniteDimensionalHopfAlgebrasWithBasis')
+    Graded = LazyImport('sage.categories.graded_hopf_algebras_with_basis', 'GradedHopfAlgebrasWithBasis')
 
     class ParentMethods:
 
@@ -278,10 +272,13 @@ class HopfAlgebrasWithBasis(Category_over_base_ring):
             """
             EXAMPLES::
 
-                sage: HopfAlgebrasWithBasis(QQ).TensorProducts().extra_super_categories()
+                sage: C = HopfAlgebrasWithBasis(QQ).TensorProducts()
+                sage: C.extra_super_categories()
                 [Category of hopf algebras with basis over Rational Field]
-                sage: HopfAlgebrasWithBasis(QQ).TensorProducts().super_categories()
-                [Category of hopf algebras with basis over Rational Field, Category of tensor products of algebras with basis over Rational Field, Category of tensor products of hopf algebras over Rational Field]
+                sage: sorted(C.super_categories(), key=str)
+                [Category of hopf algebras with basis over Rational Field,
+                 Category of tensor products of algebras with basis over Rational Field,
+                 Category of tensor products of hopf algebras over Rational Field]
             """
             return [self.base_category()]
 

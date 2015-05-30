@@ -6,12 +6,6 @@ Schemes
 
    sage/schemes/readme
 
-   sage/schemes/affine/affine_space
-   sage/schemes/affine/affine_point
-   sage/schemes/affine/affine_morphism
-   sage/schemes/affine/affine_rational_point
-   sage/schemes/affine/affine_homset
-
    sage/schemes/generic/scheme
    sage/schemes/generic/spec
    sage/schemes/generic/glue
@@ -25,11 +19,45 @@ Schemes
    sage/schemes/generic/morphism
    sage/schemes/generic/divisor
 
+Affine Schemes
+--------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/schemes/affine/affine_space
+   sage/schemes/affine/affine_point
+   sage/schemes/affine/affine_morphism
+   sage/schemes/affine/affine_rational_point
+   sage/schemes/affine/affine_homset
+
+Projective Schemes
+------------------
+
+.. toctree::
+   :maxdepth: 2
+
    sage/schemes/projective/projective_space
    sage/schemes/projective/projective_point
    sage/schemes/projective/projective_morphism
    sage/schemes/projective/projective_rational_point
    sage/schemes/projective/projective_homset
+
+Products of Projective Spaces
+-----------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/schemes/product_projective/space
+   sage/schemes/product_projective/homset
+   sage/schemes/product_projective/morphism
+   sage/schemes/product_projective/point
+
+Toric Varieties
+---------------
+.. toctree::
+   :maxdepth: 2
 
    sage/schemes/toric/variety
    sage/schemes/toric/fano_variety

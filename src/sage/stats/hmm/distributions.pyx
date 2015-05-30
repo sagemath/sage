@@ -18,7 +18,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-include "sage/ext/stdsage.pxi"
 
 cdef extern from "math.h":
     double exp(double)
@@ -134,6 +133,7 @@ cdef class Distribution:
 
             sage: P = hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)])
             sage: P.plot(-10,30)
+            Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.all import plot
         return plot(self.prob, *args, **kwds)
@@ -522,7 +522,7 @@ def unpickle_gaussian_mixture_distribution_v1(TimeSeries c0, TimeSeries c1,
         sage: loads(dumps(P)) == P          # indirect doctest
         True
     """
-    cdef GaussianMixtureDistribution G = PY_NEW(GaussianMixtureDistribution)
+    cdef GaussianMixtureDistribution G = GaussianMixtureDistribution.__new__(GaussianMixtureDistribution)
     G.c0 = c0
     G.c1 = c1
     G.param = param

@@ -354,5 +354,5 @@ cdef bitset_to_vertex_set(subset_t s):
     """
     from sage.rings.integer import Integer
     from sage.sets.set import Set
-    from sage.misc.bitset import FrozenBitset
+    from sage.data_structures.bitset import FrozenBitset
     return Set(list(FrozenBitset((Integer(<unsigned int> s).binary())[::-1])))

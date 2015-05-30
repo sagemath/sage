@@ -110,7 +110,7 @@ class Homology_abvar(Homology):
             True
         """
         if not is_CommutativeRing(base):
-            raise TypeError, "base ring must be a commutative ring"
+            raise TypeError("base ring must be a commutative ring")
         HeckeModule_free_module.__init__(
             self, base, abvar.level(), weight=2)
         self.__abvar = abvar
@@ -148,7 +148,7 @@ class Homology_abvar(Homology):
             ...
             NotImplementedError: please override this in the derived class
         """
-        raise NotImplementedError, "please override this in the derived class"
+        raise NotImplementedError("please override this in the derived class")
 
     def gens(self):
         """
@@ -164,7 +164,7 @@ class Homology_abvar(Homology):
             ...
             NotImplementedError: homology classes not yet implemented
         """
-        raise NotImplementedError, "homology classes not yet implemented"
+        raise NotImplementedError("homology classes not yet implemented")
 
     def gen(self, n):
         """
@@ -180,7 +180,7 @@ class Homology_abvar(Homology):
             ...
             NotImplementedError: homology classes not yet implemented
         """
-        raise NotImplementedError, "homology classes not yet implemented"
+        raise NotImplementedError("homology classes not yet implemented")
 
     def abelian_variety(self):
         """
@@ -583,7 +583,7 @@ class Homology_submodule(Homology):
             True
         """
         if not isinstance(ambient, Homology_abvar):
-            raise TypeError, "ambient must be the homology of a modular abelian variety"
+            raise TypeError("ambient must be the homology of a modular abelian variety")
         self.__ambient = ambient
         #try:
         #    if not submodule.is_submodule(ambient):

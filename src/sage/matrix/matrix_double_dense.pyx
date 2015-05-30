@@ -84,11 +84,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         sage: m**2
         [ 7.0 10.0]
         [15.0 22.0]
-        sage: n= m^(-1); n
-        [-2.0  1.0]
-        [ 1.5 -0.5]
+        sage: m^(-1)        # rel tol 1e-15
+        [-1.9999999999999996  0.9999999999999998]
+        [ 1.4999999999999998 -0.4999999999999999]
     """
-
 
     ########################################################################
     # LEVEL 1 functionality
@@ -387,7 +386,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         return M
 
 
-    #   * cdef _cmp_c_impl
+    #   * cpdef _cmp_
     # x * __copy__
     #   * _list -- list of underlying elements (need not be a copy)
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
@@ -425,7 +424,6 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         M._matrix_numpy = numpy.dot(_left._matrix_numpy, _right._matrix_numpy)
         return M
 
-    # cdef int _cmp_c_impl(self, Matrix right) except -2:
     def __invert__(self):
         """
         Invert this matrix.
@@ -436,14 +434,14 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: (~A).det()
             0.001
 
-            sage: A = matrix(RDF,3,[2,3,5,7,8,9,11,13,17]);A
+            sage: A = matrix(RDF,3,[2,3,5,7,8,9,11,13,17]); A
             [ 2.0  3.0  5.0]
             [ 7.0  8.0  9.0]
             [11.0 13.0 17.0]
-            sage: ~A
-            [ -2.71428571429            -2.0   1.85714285714]
-            [  2.85714285714             3.0  -2.42857142857]
-            [-0.428571428571            -1.0  0.714285714286]
+            sage: ~A  # tol 1e-14
+            [-2.7142857142857184  -2.000000000000004  1.8571428571428603]
+            [  2.857142857142863   3.000000000000006 -2.4285714285714333]
+            [-0.4285714285714305  -1.000000000000002  0.7142857142857159]
 
         Note that if this matrix is (nearly) singular, finding
         its inverse will not help much and will give slightly different
@@ -627,14 +625,14 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             9923.88955...
             sage: A.condition(p='frob')
             9923.88955...
-            sage: A.condition(p=Infinity)
-            22738.5
-            sage: A.condition(p=-Infinity)
-            17.5
+            sage: A.condition(p=Infinity)  # tol 2e-14
+            22738.50000000045
+            sage: A.condition(p=-Infinity)  # tol 2e-14
+            17.50000000000028
             sage: A.condition(p=1)
             12139.21...
-            sage: A.condition(p=-1)
-            550.0
+            sage: A.condition(p=-1)  # tol 2e-14
+            550.0000000000093
             sage: A.condition(p=2)
             9897.8088...
             sage: A.condition(p=-2)
@@ -667,8 +665,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         an identity matrix can hit the minimum with the right norm.  ::
 
             sage: A = matrix(RDF, 10, [1/(i+j+1) for i in range(10) for j in range(10)])
-            sage: A.condition()
-            1.633...e+13
+            sage: A.condition()  # tol 3e-5
+            16332197709146.014
             sage: id = identity_matrix(CDF, 10)
             sage: id.condition(p=1)
             1.0
@@ -756,17 +754,16 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         else:
             return sage.rings.real_double.RDF(c)
 
-    def norm(self, p=None):
+    def norm(self, p=2):
         r"""
         Returns the norm of the matrix.
 
         INPUT:
 
-        - ``p`` - default: 'frob' - controls which norm is computed,
+        - ``p`` - default: 2 - controls which norm is computed,
           allowable values are 'frob' (for the Frobenius norm),
           integers -2, -1, 1, 2, positive and negative infinity.  See
-          output discussion for specifics.  The default (``p='frob'``)
-          is deprecated and will change to a default of ``p=2`` soon.
+          output discussion for specifics.
 
         OUTPUT:
 
@@ -805,9 +802,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [ 0.0  1.0  2.0]
             [ 3.0  4.0  5.0]
             sage: A.norm()
-            doctest:...: DeprecationWarning: The default norm will be changing from p='frob' to p=2.  Use p='frob' explicitly to continue calculating the Frobenius norm.
-            See http://trac.sagemath.org/13643 for details.
-            8.30662386...
+            7.99575670...
             sage: A.norm(p='frob')
             8.30662386...
             sage: A.norm(p=Infinity)
@@ -829,7 +824,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [1.0 + 1.0*I 2.0 + 3.0*I]
             [3.0 + 4.0*I       3.0*I]
             sage: B.norm()
-            7.0
+            6.66189877...
             sage: B.norm(p='frob')
             7.0
             sage: B.norm(p=Infinity)
@@ -876,13 +871,6 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         global numpy
         if numpy is None:
             import numpy
-
-        if p is None:
-            from sage.misc.superseded import deprecation
-            msg = "The default norm will be changing from p='frob' to p=2.  Use p='frob' explicitly to continue calculating the Frobenius norm."
-            deprecation(13643, msg)
-            # change to default of p=2 when deprecation period has elapsed
-            p='frob'
 
         import sage.rings.infinity
         import sage.rings.integer
@@ -961,28 +949,27 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         must also be one.  ::
 
             sage: A = matrix(QQ, [[ 1,  0,  0,  0,  0,  1,  3],
-            ...                   [-2,  1,  1, -2,  0, -4,  0],
-            ...                   [ 1,  0,  1, -4, -6, -3,  7],
-            ...                   [-2,  2,  1,  1,  7,  1, -1],
-            ...                   [-1,  0, -1,  5,  8,  4, -6],
-            ...                   [ 4, -2, -2,  1, -3,  0,  8],
-            ...                   [-2,  1,  0,  2,  7,  3, -4]])
+            ....:                 [-2,  1,  1, -2,  0, -4,  0],
+            ....:                 [ 1,  0,  1, -4, -6, -3,  7],
+            ....:                 [-2,  2,  1,  1,  7,  1, -1],
+            ....:                 [-1,  0, -1,  5,  8,  4, -6],
+            ....:                 [ 4, -2, -2,  1, -3,  0,  8],
+            ....:                 [-2,  1,  0,  2,  7,  3, -4]])
             sage: A.determinant()
             1
             sage: B = A.change_ring(RDF)
-            sage: sv = B.singular_values(); sv
-            [20.5239806589, 8.48683702854, 5.86168134845, 2.44291658993,
-              0.583197014472, 0.269332872866, 0.00255244880761]
-            sage: prod(sv)
-            1.0
+            sage: sv = B.singular_values(); sv  # tol 1e-12
+            [20.523980658874265, 8.486837028536643, 5.86168134845073, 2.4429165899286978, 0.5831970144724045, 0.26933287286576313, 0.0025524488076110402]
+            sage: prod(sv)  # tol 1e-12
+            0.9999999999999525
 
         An exact matrix that is obviously not of full rank, and then
         a computation of the singular values after conversion
         to an approximate matrix. ::
 
             sage: A = matrix(QQ, [[1/3, 2/3, 11/3],
-            ...                   [2/3, 1/3,  7/3],
-            ...                   [2/3, 5/3, 27/3]])
+            ....:                 [2/3, 1/3,  7/3],
+            ....:                 [2/3, 5/3, 27/3]])
             sage: A.rank()
             2
             sage: B = A.change_ring(CDF)
@@ -995,16 +982,16 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A matrix of rank 3 over the complex numbers.  ::
 
             sage: A = matrix(CDF, [[46*I - 28, -47*I - 50, 21*I + 51, -62*I - 782, 13*I + 22],
-            ...                    [35*I - 20, -32*I - 46, 18*I + 43, -57*I - 670, 7*I + 3],
-            ...                    [22*I - 13, -23*I - 23, 9*I + 24, -26*I - 347, 7*I + 13],
-            ...                    [-44*I + 23, 41*I + 57, -19*I - 54, 60*I + 757, -11*I - 9],
-            ...                    [30*I - 18, -30*I - 34, 14*I + 34, -42*I - 522, 8*I + 12]])
+            ....:                  [35*I - 20, -32*I - 46, 18*I + 43, -57*I - 670, 7*I + 3],
+            ....:                  [22*I - 13, -23*I - 23, 9*I + 24, -26*I - 347, 7*I + 13],
+            ....:                  [-44*I + 23, 41*I + 57, -19*I - 54, 60*I + 757, -11*I - 9],
+            ....:                  [30*I - 18, -30*I - 34, 14*I + 34, -42*I - 522, 8*I + 12]])
             sage: sv = A.singular_values()
-            sage: sv[0:3]
-            [1440.733666, 18.4044034134, 6.83970779714]
-            sage: (10^-15 < sv[3]) and (sv[3] < 10^-13)
+            sage: sv[0:3]  # tol 1e-14
+            [1440.7336659952966, 18.404403413369227, 6.839707797136151]
+            sage: (sv[3] < 10^-13) or sv[3]
             True
-            sage: (10^-16 < sv[4]) and (sv[4] < 10^-14)
+            sage: (sv[4] < 10^-14) or sv[4]
             True
 
         A full-rank matrix that is ill-conditioned.  We use this to
@@ -1022,14 +1009,12 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: A.condition() > 1.6e16 or A.condition()
             True
 
-            sage: A.singular_values(eps=None)  # abs tol 1e-16
-            [1.79537205956, 0.380275245955, 0.0447385487522, 0.00372231223789, 0.000233089089022, 1.11633574832e-05, 4.08237611034e-07, 1.12286106622e-08, 2.25196451406e-10, 3.11134627616e-12, 2.65006299814e-14, 1.00050293715e-16]
-
-            sage: A.singular_values(eps='auto')  # abs tol 1e-16
-            [1.79537205956, 0.380275245955, 0.0447385487522, 0.00372231223789, 0.000233089089022, 1.11633574832e-05, 4.08237611034e-07, 1.12286106622e-08, 2.25196451406e-10, 3.11134627616e-12, 2.65006299814e-14, 0.0]
-
-            sage: A.singular_values(eps=1e-4)
-            [1.79537205956, 0.380275245955, 0.0447385487522, 0.00372231223789, 0.000233089089022, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            sage: A.singular_values(eps=None)  # abs tol 7e-16
+            [1.7953720595619975, 0.38027524595503703, 0.04473854875218107, 0.0037223122378911614, 0.0002330890890217751, 1.116335748323284e-05, 4.082376110397296e-07, 1.1228610675717613e-08, 2.2519645713496478e-10, 3.1113486853814003e-12, 2.6500422260778388e-14, 9.87312834948426e-17]
+            sage: A.singular_values(eps='auto')  # abs tol 7e-16
+            [1.7953720595619975, 0.38027524595503703, 0.04473854875218107, 0.0037223122378911614, 0.0002330890890217751, 1.116335748323284e-05, 4.082376110397296e-07, 1.1228610675717613e-08, 2.2519645713496478e-10, 3.1113486853814003e-12, 2.6500422260778388e-14, 0.0]
+            sage: A.singular_values(eps=1e-4)  # abs tol 7e-16
+            [1.7953720595619975, 0.38027524595503703, 0.04473854875218107, 0.0037223122378911614, 0.0002330890890217751, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         With Sage's "verbose" facility, you can compactly see the cutoff
         at work.  In any application of this routine, or those that build upon
@@ -1043,7 +1028,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             verbose 1 (<module>) singular values,
             smallest-non-zero:cutoff:largest-zero,
             2.2766...:6.2421...e-14:...
-            [35.139963659, 2.27661020871, 0.0, 0.0]
+            [35.13996365902..., 2.27661020871472..., 0.0, 0.0]
             sage: set_verbose(0)
 
             sage: all([s in RDF for s in sv])
@@ -1150,7 +1135,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [ 0.0  1.0  2.0  3.0]
             [ 8.0  9.0 10.0 11.0]
             [ 4.0  5.0  6.0  7.0]
-            sage: L*U
+            sage: L*U # rel tol 2e-16 
             [12.0 13.0 14.0 15.0]
             [ 0.0  1.0  2.0  3.0]
             [ 8.0  9.0 10.0 11.0]
@@ -1267,186 +1252,6 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         self.cache('PLU_factors', PLU)
         return PLU
 
-    def eigenspaces_left(self, var='a', algebraic_multiplicity=False):
-        r"""
-        Computes the left eigenspaces of a matrix of double precision
-        real or complex numbers (i.e. RDF or CDF).
-
-        .. warning::
-
-            This method returns eigenspaces that are all of
-            dimension one, since it is impossible to ascertain
-            if the numerical results belong to the same eigenspace.
-            So this is deprecated in favor of the eigenmatrix routines,
-            such as :meth:`sage.matrix.matrix2.Matrix.eigenmatrix_right`.
-
-        INPUT:
-
-        - ``var`` - ignored for numerical matrices
-        - ``algebraic_multiplicity`` - must be set to ``False``
-          for numerical matrices, and will raise an error otherwise.
-
-        OUTPUT:
-
-        Return a list of pairs ``(e, V)`` where ``e`` is a (complex)
-        eigenvalue and ``V`` is the associated left eigenspace as a
-        vector space.
-
-        No attempt is made to determine if an eigenvalue has multiplicity
-        greater than one, so all the eigenspaces returned have dimension one.
-
-        The SciPy routines used for these computations produce eigenvectors
-        normalized to have length 1, but on different hardware they may vary
-        by a sign. So for doctests we have normalized output by creating an
-        eigenspace with a canonical basis.
-
-        EXAMPLES:
-
-        This first test simply raises the deprecation warning.  ::
-
-            sage: A = identity_matrix(RDF, 2)
-            sage: es = A.eigenspaces_left()
-            doctest:...: DeprecationWarning: Eigenspaces of RDF/CDF matrices are
-            deprecated as of Sage version 5.0,
-            please use "eigenmatrix_left" instead
-            See http://trac.sagemath.org/11603 for details.
-
-        ::
-
-            sage: m = matrix(RDF, [[-5, 3, 2, 8],[10, 2, 4, -2],[-1, -10, -10, -17],[-2, 7, 6, 13]])
-            sage: spectrum = m.eigenspaces_left()
-            sage: spectrum[0][0]
-            2.0
-            sage: (RDF^4).subspace(spectrum[0][1].basis())
-            Vector space of degree 4 and dimension 1 over Real Double Field
-            Basis matrix:
-            [1.0 1.0 1.0 1.0]
-
-            sage: e, V = spectrum[2]
-            sage: v = V.basis()[0]
-            sage: diff = (v*m).change_ring(CDF) - e*v
-            sage: abs(abs(diff)) < 1e-14
-            True
-
-        TESTS::
-
-            sage: m.eigenspaces_left(algebraic_multiplicity=True)
-            Traceback (most recent call last):
-            ...
-            ValueError: algebraic_multiplicity must be set to False for double precision matrices
-        """
-        from sage.misc.superseded import deprecation
-        msg = ('Eigenspaces of RDF/CDF matrices are deprecated as of ',
-               'Sage version 5.0',
-               ', please use "eigenmatrix_left" instead')
-        deprecation(11603, ''.join(msg))
-        # For numerical values we leave decisions about
-        # multiplicity to the calling routine
-        if algebraic_multiplicity:
-            raise ValueError("algebraic_multiplicity must be set to False for double precision matrices")
-        spectrum = self.left_eigenvectors()
-        pairs = []
-        for evalue,evectors,_ in spectrum:
-            evector = evectors[0]
-            espace = evector.parent().span_of_basis([evector],check=False)
-            pairs.append((evalue, espace))
-        return pairs
-
-    left_eigenspaces = eigenspaces_left
-
-    def eigenspaces_right(self, var='a', algebraic_multiplicity=False):
-        r"""
-        Computes the right eigenspaces of a matrix of double precision
-        real or complex numbers (i.e. RDF or CDF).
-
-        .. warning::
-
-            This method returns eigenspaces that are all of
-            dimension one, since it is impossible to ascertain
-            if the numerical results belong to the same eigenspace.
-            So this is deprecated in favor of the eigenmatrix routines,
-            such as :meth:`sage.matrix.matrix2.Matrix.eigenmatrix_right`.
-
-        INPUT:
-
-        - ``var`` - ignored for numerical matrices
-        - ``algebraic_multiplicity`` - must be set to ``False``
-          for numerical matrices, and will raise an error otherwise.
-
-        OUTPUT:
-
-        Return a list of pairs ``(e, V)`` where ``e`` is a (complex)
-        eigenvalue and ``V`` is the associated right eigenspace as a
-        vector space.
-
-        No attempt is made to determine if an eigenvalue has multiplicity
-        greater than one, so all the eigenspaces returned have dimension one.
-
-        The SciPy routines used for these computations produce eigenvectors
-        normalized to have length 1, but on different hardware they may vary
-        by a sign. So for doctests we have normalized output by creating an
-        eigenspace with a canonical basis.
-
-
-        EXAMPLES:
-
-        This first test simply raises the deprecation warning.  ::
-
-            sage: A = identity_matrix(RDF, 2)
-            sage: es = A.eigenspaces_right()
-            doctest:...: DeprecationWarning: Eigenspaces of RDF/CDF matrices are
-            deprecated as of Sage version 5.0,
-            please use "eigenmatrix_right" instead
-            See http://trac.sagemath.org/11603 for details.
-
-        ::
-
-            sage: m = matrix(RDF, [[-9, -14, 19, -74],[-1, 2, 4, -11],[-4, -12, 6, -32],[0, -2, -1, 1]])
-            sage: m
-            [ -9.0 -14.0  19.0 -74.0]
-            [ -1.0   2.0   4.0 -11.0]
-            [ -4.0 -12.0   6.0 -32.0]
-            [  0.0  -2.0  -1.0   1.0]
-            sage: spectrum = m.eigenspaces_right()
-            sage: spectrum[0][0]
-            2.0
-            sage: (RDF^4).subspace(spectrum[0][1].basis())
-            Vector space of degree 4 and dimension 1 over Real Double Field
-            Basis matrix:
-            [ 1.0 -2.0  3.0  1.0]
-
-            sage: e, V = spectrum[2]
-            sage: v = V.basis()[0]
-            sage: diff = (m*v).change_ring(CDF) - e*v
-            sage: abs(abs(diff)) < 3e-14
-            True
-
-        TESTS::
-
-            sage: m.eigenspaces_right(algebraic_multiplicity=True)
-            Traceback (most recent call last):
-            ...
-            ValueError: algebraic_multiplicity must be set to False for double precision matrices
-        """
-        from sage.misc.superseded import deprecation
-        msg = ('Eigenspaces of RDF/CDF matrices are deprecated as of ',
-               'Sage version 5.0',
-               ', please use "eigenmatrix_right" instead')
-        deprecation(11603, ''.join(msg))
-        # For numerical values we leave decisions about
-        # multiplicity to the calling routine
-        if algebraic_multiplicity:
-            raise ValueError("algebraic_multiplicity must be set to False for double precision matrices")
-        spectrum = self.right_eigenvectors()
-        pairs = []
-        for evalue,evectors,_ in spectrum:
-            evector = evectors[0]
-            espace = evector.parent().span_of_basis([evector],check=False)
-            pairs.append((evalue, espace))
-        return pairs
-
-    right_eigenspaces = eigenspaces_right
-
     def eigenvalues(self, algorithm='default', tol=None):
         r"""
         Returns a list of eigenvalues.
@@ -1536,8 +1341,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
             sage: A = graphs.PetersenGraph().adjacency_matrix()
             sage: A = A.change_ring(RDF)
-            sage: ev = A.eigenvalues(algorithm='symmetric'); ev
-            [-2.0, -2.0, -2.0, -2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 3.0]
+            sage: ev = A.eigenvalues(algorithm='symmetric'); ev  # tol 1e-14
+            [-2.0000000000000004, -1.9999999999999998, -1.9999999999999998, -1.9999999999999993, 0.9999999999999994, 0.9999999999999997, 1.0, 1.0000000000000002, 1.0000000000000004, 2.9999999999999996]
             sage: ev[0].parent()
             Real Double Field
 
@@ -1547,9 +1352,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         eigenvalues of a positive-definite matrix will be positive.  ::
 
             sage: A = matrix([[ 4*I + 5,  8*I + 1,  7*I + 5, 3*I + 5],
-            ...               [ 7*I - 2, -4*I + 7, -2*I + 4, 8*I + 8],
-            ...               [-2*I + 1,  6*I + 6,  5*I + 5,  -I - 4],
-            ...               [ 5*I + 1,  6*I + 2,    I - 4, -I + 3]])
+            ....:             [ 7*I - 2, -4*I + 7, -2*I + 4, 8*I + 8],
+            ....:             [-2*I + 1,  6*I + 6,  5*I + 5,  -I - 4],
+            ....:             [ 5*I + 1,  6*I + 2,    I - 4, -I + 3]])
             sage: B = (A*A.conjugate_transpose()).change_ring(CDF)
             sage: ev = B.eigenvalues(algorithm='hermitian'); ev
             [2.68144025..., 49.5167998..., 274.086188..., 390.71557...]
@@ -1566,18 +1371,18 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [3, 1, 1, 1, 1, 1, -2, -2, -2, -2]
 
             sage: A = G.adjacency_matrix().change_ring(RDF)
-            sage: A.eigenvalues(algorithm='symmetric', tol=1.0e-5)
-            [(-2.0, 4), (1.0, 5), (3.0, 1)]
+            sage: A.eigenvalues(algorithm='symmetric', tol=1.0e-5)  # tol 1e-15
+            [(-1.9999999999999998, 4), (1.0, 5), (2.9999999999999996, 1)]
 
-            sage: A.eigenvalues(algorithm='symmetric', tol=2.5)
-            [(-2.0, 4), (1.33333333333, 6)]
+            sage: A.eigenvalues(algorithm='symmetric', tol=2.5)  # tol 1e-15
+            [(-1.9999999999999998, 4), (1.3333333333333333, 6)]
 
         An (extreme) example of properly grouping similar eigenvalues.  ::
 
             sage: G = graphs.HigmanSimsGraph()
             sage: A = G.adjacency_matrix().change_ring(RDF)
-            sage: A.eigenvalues(algorithm='symmetric', tol=1.0e-5)
-            [(-8.0, 22), (2.0, 77), (22.0, 1)]
+            sage: A.eigenvalues(algorithm='symmetric', tol=1.0e-5)  # tol 2e-15
+            [(-8.0, 22), (1.9999999999999984, 77), (21.999999999999996, 1)]
 
         TESTS:
 
@@ -1728,15 +1533,15 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [ -2.0   7.0   6.0  13.0]
             sage: spectrum = m.left_eigenvectors()
             sage: for i in range(len(spectrum)):
-            ...     spectrum[i][1][0]=matrix(RDF, spectrum[i][1]).echelon_form()[0]
-            sage: spectrum[0]
-            (2.0, [(1.0, 1.0, 1.0, 1.0)], 1)
-            sage: spectrum[1]
-            (1.0, [(1.0, 0.8, 0.8, 0.6)], 1)
-            sage: spectrum[2]
-            (-2.0, [(1.0, 0.4, 0.6, 0.2)], 1)
-            sage: spectrum[3]
-            (-1.0, [(1.0, 1.0, 2.0, 2.0)], 1)
+            ....:   spectrum[i][1][0]=matrix(RDF, spectrum[i][1]).echelon_form()[0]
+            sage: spectrum[0]  # tol 1e-13
+            (2.0000000000000675, [(1.0, 1.0000000000000138, 1.0000000000000147, 1.0000000000000309)], 1)
+            sage: spectrum[1]  # tol 1e-13
+            (0.9999999999999164, [(0.9999999999999999, 0.7999999999999833, 0.7999999999999836, 0.5999999999999696)], 1)
+            sage: spectrum[2]  # tol 1e-13
+            (-1.9999999999999782, [(1.0, 0.40000000000000335, 0.6000000000000039, 0.2000000000000051)], 1)
+            sage: spectrum[3]  # tol 1e-13
+            (-1.0000000000000018, [(1.0, 0.9999999999999568, 1.9999999999998794, 1.9999999999998472)], 1)
         """
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
@@ -1789,15 +1594,15 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [  0.0  -2.0  -1.0   1.0]
             sage: spectrum = m.right_eigenvectors()
             sage: for i in range(len(spectrum)):
-            ...     spectrum[i][1][0]=matrix(RDF, spectrum[i][1]).echelon_form()[0]
-            sage: spectrum[0]
-            (2.0, [(1.0, -2.0, 3.0, 1.0)], 1)
-            sage: spectrum[1]
-            (1.0, [(1.0, -0.666666666667, 1.33333333333, 0.333333333333)], 1)
-            sage: spectrum[2]
-            (-2.0, [(1.0, -0.2, 1.0, 0.2)], 1)
-            sage: spectrum[3]
-            (-1.0, [(1.0, -0.5, 2.0, 0.5)], 1)
+            ....:   spectrum[i][1][0]=matrix(RDF, spectrum[i][1]).echelon_form()[0]
+            sage: spectrum[0]  # tol 1e-13
+            (2.000000000000048, [(1.0, -2.0000000000001523, 3.000000000000181, 1.0000000000000746)], 1)
+            sage: spectrum[1]  # tol 1e-13
+            (0.999999999999941, [(1.0, -0.666666666666633, 1.333333333333286, 0.33333333333331555)], 1)
+            sage: spectrum[2]  # tol 1e-13
+            (-1.9999999999999483, [(1.0, -0.2000000000000063, 1.0000000000000173, 0.20000000000000498)], 1)
+            sage: spectrum[3]  # tol 1e-13
+            (-1.0000000000000406, [(1.0, -0.49999999999996264, 1.9999999999998617, 0.499999999999958)], 1)
         """
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
@@ -1813,70 +1618,6 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         return [(sage.rings.complex_double.CDF(v[i]), [eig[i]], 1) for i in range(len(v))]
 
     eigenvectors_right = right_eigenvectors
-
-    def solve_left_LU(self, b):
-        """
-        Solve the equation `A x = b` using LU decomposition.
-
-        .. WARNING::
-
-            This function is broken. See trac 4932.
-
-        INPUT:
-
-        - self -- an invertible matrix
-        - b -- a vector
-
-        .. NOTE::
-
-            This method precomputes and stores the LU decomposition
-            before solving. If many equations of the form Ax=b need to be
-            solved for a singe matrix A, then this method should be used
-            instead of solve. The first time this method is called it will
-            compute the LU decomposition.  If the matrix has not changed
-            then subsequent calls will be very fast as the precomputed LU
-            decomposition will be reused.
-
-        EXAMPLES::
-
-            sage: A = matrix(RDF, 3,3, [1,2,5,7.6,2.3,1,1,2,-1]); A
-            [ 1.0  2.0  5.0]
-            [ 7.6  2.3  1.0]
-            [ 1.0  2.0 -1.0]
-            sage: b = vector(RDF,[1,2,3])
-            sage: x = A.solve_left_LU(b); x
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: this function is not finished (see trac 4932)
-
-
-        TESTS:
-
-        We test two degenerate cases::
-
-            sage: A = matrix(RDF, 0, 3, [])
-            sage: A.solve_left_LU(vector(RDF,[]))
-            (0.0, 0.0, 0.0)
-            sage: A = matrix(RDF, 3, 0, [])
-            sage: A.solve_left_LU(vector(RDF,3, [1,2,3]))
-            ()
-
-        """
-        if self._nrows != b.degree():
-            raise ValueError("number of rows of self must equal degree of b")
-        if self._nrows == 0 or self._ncols == 0:
-            return self._row_ambient_module().zero_vector()
-
-        raise NotImplementedError("this function is not finished (see trac 4932)")
-        self._c_compute_LU()  # so self._L_M and self._U_M are defined below.
-        cdef Matrix_double_dense M = self._new()
-        lu = self._L_M*self._U_M
-        global scipy
-        if scipy is None:
-            import scipy
-        import scipy.linalg
-        M._matrix_numpy = scipy.linalg.lu_solve((lu, self._P_M), b)
-        return M
 
     def solve_right(self, b):
         r"""
@@ -1908,19 +1649,19 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [ 7.6  2.3  1.0]
             [ 1.0  2.0 -1.0]
             sage: b = vector(RDF,[1,2,3])
-            sage: x = A.solve_right(b); x
-            (-0.113695090439, 1.39018087855, -0.333333333333)
+            sage: x = A.solve_right(b); x  # tol 1e-14
+            (-0.1136950904392765, 1.3901808785529717, -0.33333333333333337)
             sage: x.parent()
             Vector space of dimension 3 over Real Double Field
-            sage: A*x
-            (1.0, 2.0, 3.0)
+            sage: A*x  # tol 1e-14
+            (1.0, 1.9999999999999996, 3.0000000000000004)
 
         Over the complex numbers.  ::
 
             sage: A = matrix(CDF, [[      0, -1 + 2*I,  1 - 3*I,        I],
-            ...                    [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
-            ...                    [  2 + I,    1 - I,       -1,        5],
-            ...                    [    3*I,   -1 - I,   -1 + I,   -3 + I]])
+            ....:                  [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
+            ....:                  [  2 + I,    1 - I,       -1,        5],
+            ....:                  [    3*I,   -1 - I,   -1 + I,   -3 + I]])
             sage: b = vector(CDF, [2 -3*I, 3, -2 + 3*I, 8])
             sage: x = A.solve_right(b); x
             (1.96841637... - 1.07606761...*I, -0.614323843... + 1.68416370...*I, 0.0733985765... + 1.73487544...*I, -1.6018683... + 0.524021352...*I)
@@ -1934,7 +1675,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         over the same base ring as the coefficient matrix.  ::
 
             sage: A=matrix(CDF, 5, [1/(i+j+1) for i in range(5) for j in range(5)])
-            sage: A.solve_right([1]*5)  # rel tol 1e-11
+            sage: A.solve_right([1]*5)  # tol 1e-11
             (5.0, -120.0, 630.0, -1120.0, 630.0)
 
         TESTS:
@@ -2052,15 +1793,15 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             (0.666666666..., 0.0, 0.333333333...)
             sage: x.parent()
             Vector space of dimension 3 over Real Double Field
-            sage: x*A
-            (1.0, 2.0, 3.0)
+            sage: x*A  # tol 1e-14
+            (0.9999999999999999, 1.9999999999999998, 3.0)
 
         Over the complex numbers.  ::
 
             sage: A = matrix(CDF, [[      0, -1 + 2*I,  1 - 3*I,        I],
-            ...                    [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
-            ...                    [  2 + I,    1 - I,       -1,        5],
-            ...                    [    3*I,   -1 - I,   -1 + I,   -3 + I]])
+            ....:                  [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
+            ....:                  [  2 + I,    1 - I,       -1,        5],
+            ....:                  [    3*I,   -1 - I,   -1 + I,   -3 + I]])
             sage: b = vector(CDF, [2 -3*I, 3, -2 + 3*I, 8])
             sage: x = A.solve_left(b); x
             (-1.55765124... - 0.644483985...*I, 0.183274021... + 0.286476868...*I, 0.270818505... + 0.246619217...*I, -1.69003558... - 0.828113879...*I)
@@ -2074,7 +1815,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         over the same base ring as the coefficient matrix.  ::
 
             sage: A=matrix(CDF, 5, [1/(i+j+1) for i in range(5) for j in range(5)])
-            sage: A.solve_left([1]*5)  # rel tol 1e-11
+            sage: A.solve_left([1]*5)  # tol 1e-11
             (5.0, -120.0, 630.0, -1120.0, 630.0)
 
         TESTS:
@@ -2204,9 +1945,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [0.0 1.0]
             [2.0 3.0]
             sage: RDF(log(abs(m.determinant())))
-            0.69314718056
+            0.6931471805599453
             sage: m.log_determinant()
-            0.69314718056
+            0.6931471805599453
             sage: m = matrix(RDF,0,0,[]); m
             []
             sage: m.log_determinant()
@@ -2215,9 +1956,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [0.0 1.0]
             [2.0 3.0]
             sage: RDF(log(abs(m.determinant())))
-            0.69314718056
+            0.6931471805599453
             sage: m.log_determinant()
-            0.69314718056
+            0.6931471805599453
             sage: m = matrix(CDF,0,0,[]); m
             []
             sage: m.log_determinant()
@@ -2281,7 +2022,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             trans.subdivide(col_divs, row_divs)
         return trans
 
-    def SVD(self, *args, **kwds):
+    def SVD(self):
         r"""
         Return the singular value decomposition of this matrix.
 
@@ -2312,11 +2053,11 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
             sage: m = matrix(RDF,4,range(1,17))
             sage: U,S,V = m.SVD()
-            sage: U*S*V.transpose()
-            [ 1.0  2.0  3.0  4.0]
-            [ 5.0  6.0  7.0  8.0]
-            [ 9.0 10.0 11.0 12.0]
-            [13.0 14.0 15.0 16.0]
+            sage: U*S*V.transpose()  # tol 1e-14
+            [0.9999999999999993 1.9999999999999987  3.000000000000001  4.000000000000002]
+            [ 4.999999999999998  5.999999999999998  6.999999999999998                8.0]
+            [ 8.999999999999998  9.999999999999996 10.999999999999998               12.0]
+            [12.999999999999998               14.0               15.0               16.0]
 
         A non-square example::
 
@@ -2324,9 +2065,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [1.0 2.0 3.0]
             [4.0 5.0 6.0]
             sage: U, S, V = m.SVD()
-            sage: U*S*V.transpose()
-            [1.0 2.0 3.0]
-            [4.0 5.0 6.0]
+            sage: U*S*V.transpose()  # tol 1e-14
+            [0.9999999999999994 1.9999999999999998  2.999999999999999]
+            [ 4.000000000000001  5.000000000000002  6.000000000000001]
 
         S contains the singular values::
 
@@ -2343,17 +2084,17 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [-0.922365780077  0.386317703119]
             [-0.274721127897 -0.961523947641]
             [-0.961523947641  0.274721127897]
-            sage: (U*U.transpose()).zero_at(1e-15)
-            [1.0 0.0]
-            [0.0 1.0]
+            sage: (U*U.transpose())  # tol 1e-15
+            [               1.0                0.0]
+            [               0.0 1.0000000000000004]
             sage: V # random, SVD is not unique
             [-0.428667133549  0.805963908589  0.408248290464]
             [-0.566306918848  0.112382414097 -0.816496580928]
             [-0.703946704147 -0.581199080396  0.408248290464]
-            sage: (V*V.transpose()).zero_at(1e-15)
-            [1.0 0.0 0.0]
-            [0.0 1.0 0.0]
-            [0.0 0.0 1.0]
+            sage: (V*V.transpose())  # tol 1e-15
+            [0.9999999999999999                0.0                0.0]
+            [               0.0                1.0                0.0]
+            [               0.0                0.0 0.9999999999999999]
 
         TESTS::
 
@@ -2362,10 +2103,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [3.0 4.0]
             [5.0 6.0]
             sage: U,S,V = m.SVD()
-            sage: U*S*V.transpose()
-            [1.0 2.0]
-            [3.0 4.0]
-            [5.0 6.0]
+            sage: U*S*V.transpose()  # tol 1e-15
+            [0.9999999999999996 1.9999999999999998]
+            [               3.0 3.9999999999999996]
+            [ 4.999999999999999  6.000000000000001]
 
             sage: m = matrix(RDF, 3, 0, []); m
             []
@@ -2387,10 +2128,6 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         global scipy, numpy
         cdef Py_ssize_t i
         cdef Matrix_double_dense U, S, V
-
-        if len(args)>0 or len(kwds)>0:
-            from sage.misc.superseded import deprecation
-            deprecation(7852, "Arguments passed to SVD, but SVD no longer supports different methods (it only uses numpy now).")
 
         if self._nrows == 0 or self._ncols == 0:
             U_t = self.new_matrix(self._nrows, self._ncols)
@@ -2468,10 +2205,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         case, we say ``Q`` is orthogonal. ::
 
             sage: A = matrix(RDF, [[-2, 0, -4, -1, -1],
-            ...                    [-2, 1, -6, -3, -1],
-            ...                    [1, 1, 7, 4, 5],
-            ...                    [3, 0, 8, 3, 3],
-            ...                    [-1, 1, -6, -6, 5]])
+            ....:                  [-2, 1, -6, -3, -1],
+            ....:                  [1, 1, 7, 4, 5],
+            ....:                  [3, 0, 8, 3, 3],
+            ....:                  [-1, 1, -6, -6, 5]])
             sage: Q, R = A.QR()
 
         At this point, ``Q`` is only well-defined up to the
@@ -2492,12 +2229,12 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [      0.0       0.0  5.444402  5.468661 -0.682716]
             [      0.0       0.0       0.0  1.027626   -3.6193]
             [      0.0       0.0       0.0       0.0  0.024551]
-            sage: (Q*Q.transpose()).zero_at(10^-14)
-            [1.0 0.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0 0.0]
-            [0.0 0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 0.0 1.0]
+            sage: (Q*Q.transpose())  # tol 1e-14
+            [0.9999999999999994                0.0                0.0                0.0                0.0]
+            [               0.0                1.0                0.0                0.0                0.0]
+            [               0.0                0.0 0.9999999999999999                0.0                0.0]
+            [               0.0                0.0                0.0 0.9999999999999998                0.0]
+            [               0.0                0.0                0.0                0.0 1.0000000000000002]
             sage: (Q*R - A).zero_at(10^-14)
             [0.0 0.0 0.0 0.0 0.0]
             [0.0 0.0 0.0 0.0 0.0]
@@ -2510,25 +2247,25 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         a unitary matrix (its inverse is the conjugate-transpose).  ::
 
             sage: A = matrix(CDF, [[-8, 4*I + 1, -I + 2, 2*I + 1],
-            ...                    [1, -2*I - 1, -I + 3, -I + 1],
-            ...                    [I + 7, 2*I + 1, -2*I + 7, -I + 1],
-            ...                    [I + 2, 0, I + 12, -1]])
+            ....:                  [1, -2*I - 1, -I + 3, -I + 1],
+            ....:                  [I + 7, 2*I + 1, -2*I + 7, -I + 1],
+            ....:                  [I + 2, 0, I + 12, -1]])
             sage: Q, R = A.QR()
-            sage: Q._normalize_columns().round(6).zero_at(10^-6)
-            [              0.730297  0.207057 + 0.538347*I  0.246305 - 0.076446*I   0.238162 - 0.10366*I]
-            [             -0.091287 -0.207057 - 0.377878*I  0.378656 - 0.195222*I  0.701244 - 0.364371*I]
-            [ -0.63901 - 0.091287*I  0.170822 + 0.667758*I -0.034115 + 0.040902*I  0.314017 - 0.082519*I]
-            [-0.182574 - 0.091287*I  -0.036235 + 0.07247*I  0.863228 + 0.063228*I -0.449969 - 0.011612*I]
-            sage: R._normalize_rows().round(6).zero_at(10^-6)
-            [             10.954451            -1.917029*I   5.385938 - 2.19089*I  -0.273861 - 2.19089*I]
-            [                   0.0               4.829596 -0.869638 - 5.864879*I  0.993872 - 0.305409*I]
-            [                   0.0                    0.0              12.001608 -0.270953 + 0.442063*I]
-            [                   0.0                    0.0                    0.0               1.942964]
-            sage: (Q.conjugate().transpose()*Q).zero_at(10^-15)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: Q._normalize_columns()  # tol 1e-6
+            [                           0.7302967433402214    0.20705664550556482 + 0.5383472783144685*I   0.24630498099986423 - 0.07644563587232917*I   0.23816176831943323 - 0.10365960327796941*I]
+            [                         -0.09128709291752768  -0.20705664550556482 - 0.37787837804765584*I   0.37865595338630315 - 0.19522214955246678*I    0.7012444502144682 - 0.36437116509865947*I]
+            [  -0.6390096504226938 - 0.09128709291752768*I    0.17082173254209104 + 0.6677576817554466*I -0.03411475806452064 + 0.040901987417671426*I   0.31401710855067644 - 0.08251917187054114*I]
+            [ -0.18257418583505536 - 0.09128709291752768*I  -0.03623491296347384 + 0.07246982592694771*I    0.8632284069415112 + 0.06322839976356195*I  -0.44996948676115206 - 0.01161191812089182*I]
+            sage: R._normalize_rows().zero_at(1e-15)  # tol 1e-6
+            [                        10.954451150103322                      -1.9170289512680814*I   5.385938482134133 - 2.1908902300206643*I -0.2738612787525829 - 2.1908902300206643*I]
+            [                                       0.0                            4.8295962564173  -0.8696379111233719 - 5.864879483945123*I  0.993871898426711 - 0.30540855212070794*I]
+            [                                       0.0                                        0.0                          12.00160760935814 -0.2709533402297273 + 0.4420629644486325*I]
+            [                                       0.0                                        0.0                                        0.0                         1.9429639442589917]
+            sage: (Q.conjugate().transpose()*Q).zero_at(1e-15)  # tol 1e-15
+            [               1.0                0.0                0.0                0.0]
+            [               0.0 0.9999999999999994                0.0                0.0]
+            [               0.0                0.0 1.0000000000000002                0.0]
+            [               0.0                0.0                0.0 1.0000000000000004]
             sage: (Q*R - A).zero_at(10^-14)
             [0.0 0.0 0.0 0.0]
             [0.0 0.0 0.0 0.0]
@@ -2544,23 +2281,23 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         left kernel, so we do not exhibit the actual matrix.  ::
 
             sage: Arat = matrix(QQ, [[2, -3, 3],
-            ...                      [-1, 1, -1],
-            ...                      [-1, 3, -3],
-            ...                      [-5, 1, -1]])
+            ....:                    [-1, 1, -1],
+            ....:                    [-1, 3, -3],
+            ....:                    [-5, 1, -1]])
             sage: Arat.rank()
             2
             sage: A = Arat.change_ring(CDF)
             sage: Q, R = A.QR()
-            sage: R._normalize_rows().round(6).zero_at(10^-6)
-            [ 5.567764  -2.69408   2.69408]
-            [      0.0  3.569585 -3.569585]
-            [      0.0       0.0       0.0]
-            [      0.0       0.0       0.0]
-            sage: (Q.conjugate_transpose()*Q).zero_at(10^-14)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: R._normalize_rows()  # abs tol 1e-14
+            [     5.567764362830022    -2.6940795304016243     2.6940795304016243]
+            [                   0.0     3.5695847775155825    -3.5695847775155825]
+            [                   0.0                    0.0 2.4444034681064287e-16]
+            [                   0.0                    0.0                    0.0]
+            sage: (Q.conjugate_transpose()*Q)  # abs tol 1e-14
+            [     1.0000000000000002  -5.185196889911925e-17 -4.1457180570414476e-17  -2.909388767229071e-17]
+            [ -5.185196889911925e-17      1.0000000000000002  -9.286869233696149e-17 -1.1035822863186828e-16]
+            [-4.1457180570414476e-17  -9.286869233696149e-17                     1.0  4.4159215672155694e-17]
+            [ -2.909388767229071e-17 -1.1035822863186828e-16  4.4159215672155694e-17                     1.0]
 
         Results are cached, meaning they are immutable matrices.
         Make a copy if you need to manipulate a result. ::
@@ -2734,9 +2471,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         SVD decomposition will create two unitary matrices, U and V. ::
 
             sage: A = matrix(CDF, [[   1 - I,   -3*I,  -2 + I,        1, -2 + 3*I],
-            ...                    [   1 - I, -2 + I, 1 + 4*I,        0,    2 + I],
-            ...                    [      -1, -5 + I,  -2 + I,    1 + I, -5 - 4*I],
-            ...                    [-2 + 4*I,  2 - I, 8 - 4*I,  1 - 8*I,  3 - 2*I]])
+            ....:                  [   1 - I, -2 + I, 1 + 4*I,        0,    2 + I],
+            ....:                  [      -1, -5 + I,  -2 + I,    1 + I, -5 - 4*I],
+            ....:                  [-2 + 4*I,  2 - I, 8 - 4*I,  1 - 8*I,  3 - 2*I]])
             sage: Q, R = A.QR()
             sage: Q.is_unitary()
             True
@@ -2807,7 +2544,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         global numpy
         try:
             tol = float(tol)
-        except StandardError:
+        except Exception:
             raise TypeError('tolerance must be a real number, not {0}'.format(tol))
         if tol <= 0:
             raise ValueError('tolerance must be positive, not {0}'.format(tol))
@@ -2869,8 +2606,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         EXAMPLES::
 
             sage: A = matrix(RDF, [[ 2.0, 0.0,  0.0],
-            ...                    [ 1.0, 3.0,  0.0],
-            ...                    [-4.0, 2.0, -1.0]])
+            ....:                  [ 1.0, 3.0,  0.0],
+            ....:                  [-4.0, 2.0, -1.0]])
             sage: A._is_lower_triangular(1.0e-17)
             True
             sage: A[1,2] = 10^-13
@@ -2934,8 +2671,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         EXAMPLES::
 
             sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
-            ...                    [-3 - I,     -4*I,     -2],
-            ...                    [-1 + I, -2 - 8*I,  2 + I]])
+            ....:                  [-3 - I,     -4*I,     -2],
+            ....:                  [-1 + I, -2 - 8*I,  2 + I]])
             sage: A.is_hermitian(algorithm='orthonormal')
             False
             sage: A.is_hermitian(algorithm='naive')
@@ -2950,8 +2687,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         diagonal entry. ::
 
             sage: A = matrix(CDF, [[    2,   2-I, 1+4*I],
-            ...                    [  2+I,   3+I, 2-6*I],
-            ...                    [1-4*I, 2+6*I,     5]])
+            ....:                  [  2+I,   3+I, 2-6*I],
+            ....:                  [1-4*I, 2+6*I,     5]])
             sage: A.is_hermitian(algorithm='orthonormal')
             False
             sage: A[1,1] = 132
@@ -2967,8 +2704,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         the system)::
 
             sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
-            ...                    [-3 - I,     -4*I,     -2],
-            ...                    [-1 + I, -2 - 8*I,  2 + I]])
+            ....:                  [-3 - I,     -4*I,     -2],
+            ....:                  [-1 + I, -2 - 8*I,  2 + I]])
             sage: U, _, _ = A.SVD()
             sage: B=U*U.conjugate_transpose()
             sage: B.is_hermitian(algorithm='naive')
@@ -3106,8 +2843,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         First over the complexes.  ``B`` is Hermitian, hence normal.  ::
 
             sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
-            ...                    [-3 - I,     -4*I,     -2],
-            ...                    [-1 + I, -2 - 8*I,  2 + I]])
+            ....:                  [-3 - I,     -4*I,     -2],
+            ....:                  [-1 + I, -2 - 8*I,  2 + I]])
             sage: B = A*A.conjugate_transpose()
             sage: B.is_hermitian()
             True
@@ -3140,8 +2877,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         Skew-Hermitian matrices are normal.  ::
 
             sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
-            ...                    [-3 - I,     -4*I,     -2],
-            ...                    [-1 + I, -2 - 8*I,  2 + I]])
+            ....:                  [-3 - I,     -4*I,     -2],
+            ....:                  [-1 + I, -2 - 8*I,  2 + I]])
             sage: B = A - A.conjugate_transpose()
             sage: B.is_hermitian()
             False
@@ -3154,7 +2891,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         of normal matrices.  ::
 
             sage: A = matrix(RDF, [[1, -1],
-            ...                    [1,  1]])
+            ....:                  [1,  1]])
             sage: A.is_normal()
             True
             sage: not A.is_hermitian() and not A.is_skew_symmetric()
@@ -3165,8 +2902,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
             sage: F.<b> = QuadraticField(-7)
             sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],
-            ...                  [-2*b - 3, -3*b + 2,   -2*b],
-            ...                  [   b + 1,        0,     -2]])
+            ....:                [-2*b - 3, -3*b + 2,   -2*b],
+            ....:                [   b + 1,        0,     -2]])
             sage: C = C*C.conjugate_transpose()
             sage: C.is_normal()
             True
@@ -3300,11 +3037,11 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
             sage: A = matrix(CDF, 4, 4, range(16)) + matrix(CDF, 4, 4, [x^3*I for x in range(0, 16)])
             sage: Q, T = A.schur()
-            sage: (Q*Q.conjugate().transpose()).zero_at(1.0e-12)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: (Q*Q.conjugate().transpose()).zero_at(1e-12)  # tol 1e-12
+            [ 0.999999999999999                0.0                0.0                0.0]
+            [               0.0 0.9999999999999996                0.0                0.0]
+            [               0.0                0.0 0.9999999999999992                0.0]
+            [               0.0                0.0                0.0 0.9999999999999999]
             sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i)])
             True
             sage: (Q*T*Q.conjugate().transpose()-A).zero_at(1.0e-11)
@@ -3325,11 +3062,11 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
             sage: A = matrix(RDF, 4, 4, [x^3 for x in range(16)])
             sage: Q, T = A.schur(base_ring=CDF)
-            sage: (Q*Q.conjugate().transpose()).zero_at(1.0e-12)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: (Q*Q.conjugate().transpose()).zero_at(1e-12)  # tol 1e-12
+            [0.9999999999999987                0.0                0.0                0.0]
+            [               0.0 0.9999999999999999                0.0                0.0]
+            [               0.0                0.0 1.0000000000000013                0.0]
+            [               0.0                0.0                0.0 1.0000000000000007]
             sage: T.parent()
             Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
             sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i)])
@@ -3348,15 +3085,15 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         has a pair of these of the blocks. ::
 
             sage: A = matrix(RDF, 4, 4, [[1, 0, -3, -1],
-            ...                          [4, -16, -7, 0],
-            ...                          [1, 21, 1, -2],
-            ...                          [26, -1, -2, 1]])
+            ....:                        [4, -16, -7, 0],
+            ....:                        [1, 21, 1, -2],
+            ....:                        [26, -1, -2, 1]])
             sage: Q, T = A.schur()
-            sage: (Q*Q.conjugate().transpose()).zero_at(1.0e-12)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: (Q*Q.conjugate().transpose())  # tol 1e-12
+            [0.9999999999999994                0.0                0.0                0.0]
+            [               0.0 1.0000000000000013                0.0                0.0]
+            [               0.0                0.0 1.0000000000000004                0.0]
+            [               0.0                0.0                0.0 1.0000000000000016]
             sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i)])
             False
             sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i-1)])
@@ -3413,9 +3150,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         columns of the unitary matrix.  ::
 
             sage: A = matrix(CDF, [[        52,   -9*I - 8,    6*I - 187,  -188*I + 2],
-            ...                    [   9*I - 8,         12,   -58*I + 59,   30*I + 42],
-            ...                    [-6*I - 187,  58*I + 59,         2677, 2264*I + 65],
-            ...                    [ 188*I + 2, -30*I + 42, -2264*I + 65,       2080]])
+            ....:                  [   9*I - 8,         12,   -58*I + 59,   30*I + 42],
+            ....:                  [-6*I - 187,  58*I + 59,         2677, 2264*I + 65],
+            ....:                  [ 188*I + 2, -30*I + 42, -2264*I + 65,       2080]])
             sage: Q, T = A.schur()
             sage: T = T.zero_at(1.0e-12).change_ring(RDF)
             sage: T.round(6)
@@ -3423,11 +3160,11 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [       0.0 102.715967        0.0        0.0]
             [       0.0        0.0  35.039344        0.0]
             [       0.0        0.0        0.0    3.11168]
-            sage: (Q*Q.conjugate().transpose()).zero_at(1.0e-12)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: (Q*Q.conjugate().transpose()).zero_at(1e-12)  # tol 1e-12
+            [1.0000000000000004                0.0                0.0                0.0]
+            [               0.0 0.9999999999999989                0.0                0.0]
+            [               0.0                0.0 1.0000000000000002                0.0]
+            [               0.0                0.0                0.0 0.9999999999999992]
             sage: (Q*T*Q.conjugate().transpose()-A).zero_at(1.0e-11)
             [0.0 0.0 0.0 0.0]
             [0.0 0.0 0.0 0.0]
@@ -3439,9 +3176,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         the matrix.  ::
 
             sage: A = matrix(RDF, [[ 1, -2, 5, -3],
-            ...                    [-2,  9, 1,  5],
-            ...                    [ 5,  1, 3 , 7],
-            ...                    [-3,  5, 7, -8]])
+            ....:                  [-2,  9, 1,  5],
+            ....:                  [ 5,  1, 3 , 7],
+            ....:                  [-3,  5, 7, -8]])
             sage: Q, T = A.schur()
             sage: Q.round(4)
             [-0.3027  -0.751   0.576 -0.1121]
@@ -3451,11 +3188,11 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: T = T.zero_at(10^-12)
             sage: all(abs(e) < 10^-4 for e in (T - diagonal_matrix(RDF, [-13.5698, -0.8508, 7.7664, 11.6542])).list())
             True
-            sage: (Q*Q.transpose()).zero_at(1.0e-12)
-            [1.0 0.0 0.0 0.0]
-            [0.0 1.0 0.0 0.0]
-            [0.0 0.0 1.0 0.0]
-            [0.0 0.0 0.0 1.0]
+            sage: (Q*Q.transpose())  # tol 1e-12
+            [0.9999999999999998                0.0                0.0                0.0]
+            [               0.0                1.0                0.0                0.0]
+            [               0.0                0.0 0.9999999999999998                0.0]
+            [               0.0                0.0                0.0 0.9999999999999996]
             sage: (Q*T*Q.transpose()-A).zero_at(1.0e-11)
             [0.0 0.0 0.0 0.0]
             [0.0 0.0 0.0 0.0]
@@ -3504,7 +3241,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
         if not self.is_square():
             raise ValueError('Schur decomposition requires a square matrix, not a {0} x {1} matrix'.format(self.nrows(), self.ncols()))
-        if base_ring == None:
+        if base_ring is None:
             base_ring = self.base_ring()
         if not base_ring in [RDF, CDF]:
             raise ValueError('base ring of Schur decomposition matrices must be RDF or CDF, not {0}'.format(base_ring))
@@ -3577,10 +3314,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A real matrix that is symmetric and positive definite.  ::
 
             sage: M = matrix(RDF,[[ 1,  1,    1,     1,     1],
-            ...                   [ 1,  5,   31,   121,   341],
-            ...                   [ 1, 31,  341,  1555,  4681],
-            ...                   [ 1,121, 1555,  7381, 22621],
-            ...                   [ 1,341, 4681, 22621, 69905]])
+            ....:                 [ 1,  5,   31,   121,   341],
+            ....:                 [ 1, 31,  341,  1555,  4681],
+            ....:                 [ 1,121, 1555,  7381, 22621],
+            ....:                 [ 1,341, 4681, 22621, 69905]])
             sage: M.is_symmetric()
             True
             sage: L = M.cholesky()
@@ -3600,9 +3337,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A complex matrix that is Hermitian and positive definite.  ::
 
             sage: A = matrix(CDF, [[        23,  17*I + 3,  24*I + 25,     21*I],
-            ...                    [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
-            ...                    [-24*I + 25, 69*I + 89,        976, 24*I + 6],
-            ...                    [     -21*I, -7*I + 15,  -24*I + 6,       28]])
+            ....:                  [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
+            ....:                  [-24*I + 25, 69*I + 89,        976, 24*I + 6],
+            ....:                  [     -21*I, -7*I + 15,  -24*I + 6,       28]])
             sage: A.is_hermitian()
             True
             sage: L = A.cholesky()
@@ -3624,10 +3361,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         imaginary parts).  ::
 
             sage: A = matrix(RDF, [[ 3,  -6,   9,   6,  -9],
-            ...                    [-6,  11, -16, -11,  17],
-            ...                    [ 9, -16,  28,  16, -40],
-            ...                    [ 6, -11,  16,   9, -19],
-            ...                    [-9,  17, -40, -19,  68]])
+            ....:                  [-6,  11, -16, -11,  17],
+            ....:                  [ 9, -16,  28,  16, -40],
+            ....:                  [ 6, -11,  16,   9, -19],
+            ....:                  [-9,  17, -40, -19,  68]])
             sage: A.is_symmetric()
             True
             sage: A.eigenvalues()
@@ -3638,8 +3375,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             ValueError: matrix is not positive definite
 
             sage: B = matrix(CDF, [[      2, 4 - 2*I, 2 + 2*I],
-            ...                    [4 + 2*I,       8,    10*I],
-            ...                    [2 - 2*I,   -10*I,      -3]])
+            ....:                  [4 + 2*I,       8,    10*I],
+            ....:                  [2 - 2*I,   -10*I,      -3]])
             sage: B.is_hermitian()
             True
             sage: [ev.real() for ev in B.eigenvalues()]
@@ -3743,10 +3480,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A matrix over ``RDF`` that is positive definite.  ::
 
             sage: M = matrix(RDF,[[ 1,  1,    1,     1,     1],
-            ...                   [ 1,  5,   31,   121,   341],
-            ...                   [ 1, 31,  341,  1555,  4681],
-            ...                   [ 1,121, 1555,  7381, 22621],
-            ...                   [ 1,341, 4681, 22621, 69905]])
+            ....:                 [ 1,  5,   31,   121,   341],
+            ....:                 [ 1, 31,  341,  1555,  4681],
+            ....:                 [ 1,121, 1555,  7381, 22621],
+            ....:                 [ 1,341, 4681, 22621, 69905]])
             sage: M.is_symmetric()
             True
             sage: M.eigenvalues()
@@ -3759,9 +3496,9 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A matrix over ``CDF`` that is positive definite.  ::
 
             sage: C = matrix(CDF, [[        23,  17*I + 3,  24*I + 25,     21*I],
-            ...                    [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
-            ...                    [-24*I + 25, 69*I + 89,        976, 24*I + 6],
-            ...                    [     -21*I, -7*I + 15,  -24*I + 6,       28]])
+            ....:                  [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
+            ....:                  [-24*I + 25, 69*I + 89,        976, 24*I + 6],
+            ....:                  [     -21*I, -7*I + 15,  -24*I + 6,       28]])
             sage: C.is_hermitian()
             True
             sage: [x.real() for x in C.eigenvalues()]
@@ -3774,10 +3511,10 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A matrix over ``RDF`` that is not positive definite.  ::
 
             sage: A = matrix(RDF, [[ 3,  -6,   9,   6,  -9],
-            ...                    [-6,  11, -16, -11,  17],
-            ...                    [ 9, -16,  28,  16, -40],
-            ...                    [ 6, -11,  16,   9, -19],
-            ...                    [-9,  17, -40, -19,  68]])
+            ....:                  [-6,  11, -16, -11,  17],
+            ....:                  [ 9, -16,  28,  16, -40],
+            ....:                  [ 6, -11,  16,   9, -19],
+            ....:                  [-9,  17, -40, -19,  68]])
             sage: A.is_symmetric()
             True
             sage: A.eigenvalues()
@@ -3790,8 +3527,8 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         A matrix over ``CDF`` that is not positive definite.  ::
 
             sage: B = matrix(CDF, [[      2, 4 - 2*I, 2 + 2*I],
-            ...                    [4 + 2*I,       8,    10*I],
-            ...                    [2 - 2*I,   -10*I,      -3]])
+            ....:                  [4 + 2*I,       8,    10*I],
+            ....:                  [2 - 2*I,   -10*I,      -3]])
             sage: B.is_hermitian()
             True
             sage: [ev.real() for ev in B.eigenvalues()]
@@ -3997,8 +3734,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         d /= 2
         return int(math.ceil(d / math.log(10)))
 
-    @rename_keyword(deprecation=6094, method="algorithm")
-    def exp(self, algorithm='pade', order=None):
+    def exp(self, algorithm=None, order=None):
         r"""
         Calculate the exponential of this matrix X, which is the matrix
 
@@ -4008,68 +3744,54 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - algorithm -- 'pade', 'eig', or 'taylor'; the algorithm used to
-          compute the exponential.
+        - algorithm -- deprecated
 
-        - order -- for the Taylor series algorithm, this specifies the
-          order of the Taylor series used. This is ignored for the
-          other algorithms. The current default (from scipy) is 20.
+        - order -- deprecated
 
         EXAMPLES::
 
             sage: A=matrix(RDF, 2, [1,2,3,4]); A
             [1.0 2.0]
             [3.0 4.0]
-            sage: A.exp()
-            [51.9689561987  74.736564567]
-            [112.104846851 164.073803049]
-            sage: A.exp(algorithm='eig')
-            [51.9689561987  74.736564567]
-            [112.104846851 164.073803049]
-            sage: A.exp(algorithm='taylor', order=5)
-            [19.9583333333 28.0833333333]
-            [       42.125 62.0833333333]
-            sage: A.exp(algorithm='taylor')
-            [51.9689035511 74.7364878369]
-            [112.104731755 164.073635306]
-
+            sage: A.exp()  # tol 1e-15
+            [51.968956198705044  74.73656456700327]
+            [112.10484685050491 164.07380304920997]
             sage: A=matrix(CDF, 2, [1,2+I,3*I,4]); A
             [        1.0 2.0 + 1.0*I]
             [      3.0*I         4.0]
-            sage: A.exp()
-            [-19.6146029538 + 12.5177438468*I  3.79496364496 + 28.8837993066*I]
-            [-32.3835809809 + 21.8842359579*I  2.26963300409 + 44.9013248277*I]
-            sage: A.exp(algorithm='eig')
-            [-19.6146029538 + 12.5177438468*I  3.79496364496 + 28.8837993066*I]
-            [-32.3835809809 + 21.8842359579*I  2.26963300409 + 44.9013248277*I]
-            sage: A.exp(algorithm='taylor', order=5)
-            [       -6.29166666667 + 14.25*I 14.0833333333 + 15.7916666667*I]
-            [               -10.5 + 26.375*I         20.0833333333 + 24.75*I]
-            sage: A.exp(algorithm='taylor')
-            [-19.6146006163 + 12.5177432169*I  3.79496442472 + 28.8837964828*I]
-            [-32.3835771246 + 21.8842351994*I  2.26963458304 + 44.9013203415*I]
-        """
-        if algorithm not in ('pade', 'eig', 'taylor'):
-            raise ValueError("algorithm must be 'pade', 'eig', or 'taylor'")
+            sage: A.exp()  # tol 1e-14
+            [-19.614602953804912 + 12.517743846762578*I   3.7949636449582176 + 28.88379930658099*I]
+            [ -32.383580980922254 + 21.88423595789845*I   2.269633004093535 + 44.901324827684824*I]
 
+        TESTS::
+
+            sage: A = matrix(RDF, 2, [1,2,3,4])
+            sage: E = A.exp(algorithm='eig')
+            doctest:...: DeprecationWarning: The algorithm and order arguments are deprecated.
+            See http://trac.sagemath.org/17140 for details.
+            sage: E  # tol 1e-15
+            [51.968956198705044  74.73656456700327]
+            [112.10484685050491 164.07380304920997]
+            sage: A.exp(algorithm='taylor')   # tol 1e-15
+            [51.968956198705044  74.73656456700327]
+            [112.10484685050491 164.07380304920997]
+            sage: A = matrix(CDF, 2, [1,2+I,3*I,4])
+            sage: A.exp(algorithm='eig')  # tol 3e-14
+            [-19.614602953804923 + 12.51774384676257*I 3.7949636449582016 + 28.883799306580997*I]
+            [-32.38358098092227 + 21.884235957898433*I  2.2696330040935084 + 44.90132482768484*I]
+        """
         global scipy
         if scipy is None:
             import scipy
         import scipy.linalg
 
+        if algorithm is not None or order is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(17140,'The algorithm and order arguments are deprecated.')
+
         cdef Matrix_double_dense M
         M = self._new()
-
-        if algorithm=='pade':
-            M._matrix_numpy = scipy.linalg.expm(self._matrix_numpy)
-        elif algorithm=='eig':
-            M._matrix_numpy = scipy.linalg.expm2(self._matrix_numpy)
-        elif algorithm=='taylor':
-            if order is None:
-                M._matrix_numpy = scipy.linalg.expm3(self._matrix_numpy)
-            else:
-                M._matrix_numpy = scipy.linalg.expm3(self._matrix_numpy, q=order)
-
+        M._matrix_numpy = scipy.linalg.expm(self._matrix_numpy)
         return M
 
     def zero_at(self, eps):
@@ -4092,7 +3814,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: a=matrix([[1, 1e-4r, 1+1e-100jr], [1e-8+3j, 0, 1e-58r]])
+            sage: a = matrix(CDF, [[1, 1e-4r, 1+1e-100jr], [1e-8+3j, 0, 1e-58r]])
             sage: a
             [           1.0         0.0001 1.0 + 1e-100*I]
             [ 1e-08 + 3.0*I            0.0          1e-58]
@@ -4102,9 +3824,6 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: a.zero_at(1e-4)
             [  1.0   0.0   1.0]
             [3.0*I   0.0   0.0]
-
-
-
         """
         global numpy
         cdef Matrix_double_dense M
@@ -4136,13 +3855,13 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: M=matrix(CDF, [[10.234r + 34.2343jr, 34e10r]])
+            sage: M = matrix(CDF, [[10.234r + 34.2343jr, 34e10r]])
             sage: M
-            [10.234 + 34.2343*I     3.4e+11]
+            [10.234 + 34.2343*I     340000000000.0]
             sage: M.round(2)
-            [10.23 + 34.23*I        3.4e+11]
+            [10.23 + 34.23*I  340000000000.0]
             sage: M.round()
-            [10.0 + 34.0*I       3.4e+11]
+            [ 10.0 + 34.0*I 340000000000.0]
         """
         global numpy
         cdef Matrix_double_dense M
@@ -4176,7 +3895,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             [         2.0          2.0         -2.0          2.0]
             [        -3.0         -3.0         -3.0         -2.0]
             sage: a._normalize_columns()
-            [        1.0 2.0 - 1.0*I        -0.0      -3.0*I]
+            [        1.0 2.0 - 1.0*I         0.0      -3.0*I]
             [        2.0        -2.0         2.0         2.0]
             [       -3.0         3.0         3.0        -2.0]
         """
@@ -4217,7 +3936,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: a._normalize_rows()
             [        1.0         2.0        -3.0]
             [2.0 - 1.0*I        -2.0         3.0]
-            [       -0.0         2.0         3.0]
+            [        0.0         2.0         3.0]
             [     -3.0*I         2.0        -2.0]
         """
         return self.transpose()._normalize_columns().transpose()

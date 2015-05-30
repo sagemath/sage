@@ -1,0 +1,19 @@
+commit 81c820b73dc0208f107629d7658f4f0642ca64e8
+Author: Jean-Pierre Flori <jean-pierre.flori@ssi.gouv.fr>
+Date:   Mon Feb 3 15:02:22 2014 +0100
+
+    Fix test for empty string in install target.
+
+diff --git a/Makefile.in b/Makefile.in
+index 0fa717b..19caed2 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -178,7 +178,7 @@ install: library
+ 		cp libflint.a $(DESTDIR)$(PREFIX)/lib; \
+ 	fi
+ 	cp $(HEADERS) $(DESTDIR)$(PREFIX)/include/flint
+-	$(AT)if [ ! -z $(EXT_HEADERS) ]; then \
++	$(AT)if [ ! -z "$(EXT_HEADERS)" ]; then \
+ 		cp $(EXT_HEADERS) $(DESTDIR)$(PREFIX)/include/flint; \
+ 	fi
+ 	mkdir -p $(DESTDIR)$(FLINT_CPIMPORT_DIR)

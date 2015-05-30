@@ -49,7 +49,7 @@ def is_ParentWithBase(x):
     """
     Return True if x is a parent object with base.
     """
-    return bool(PY_TYPE_CHECK(x, ParentWithBase))
+    return isinstance(x, ParentWithBase)
 
 cdef class ParentWithBase(parent_old.Parent):
     """
@@ -62,11 +62,6 @@ cdef class ParentWithBase(parent_old.Parent):
 #            coerce_from.append(base)
         parent_old.Parent.__init__(self, coerce_from=coerce_from, actions=actions, embeddings=embeddings, category=category)
         self._base = base
-
-    def _richcmp(left, right, int op):
-        check_old_coerce(left)
-        return (<parent_old.Parent>left)._richcmp(right, op) # the cdef method
-
 
     cdef _coerce_c_impl(self,x):
        check_old_coerce(self)

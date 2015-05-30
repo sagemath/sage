@@ -1,9 +1,0 @@
-#!/usr/bin/env python
-# EASY-INSTALL-ENTRY-SCRIPT: 'Sphinx==1.1.2','console_scripts','sphinx-build'
-__requires__ = 'Sphinx==1.1.2'
-import sys
-from pkg_resources import load_entry_point
-import sage.all
-sys.exit(
-   load_entry_point('Sphinx==1.1.2', 'console_scripts', 'sphinx-build')()
-)

@@ -1,5 +1,5 @@
 """
-Defaults
+Default Settings
 
 AUTHORS: William Stein and David Kohel
 """
@@ -48,3 +48,34 @@ def set_default_variable_name(name, separator=''):
     global var_name, var_sep
     var_name = str(name)
     var_sep = str(separator)
+
+
+# default series precision
+series_prec = 20
+
+def series_precision():
+    """
+    Return the Sage-wide precision for series (symbolic,
+    power series, Laurent series).
+
+    EXAMPLES::
+
+        sage: series_precision()
+        20
+    """
+    return series_prec
+
+def set_series_precision(prec):
+    """
+    Change the Sage-wide precision for series (symbolic,
+    power series, Laurent series).
+
+    EXAMPLES::
+
+        sage: set_series_precision(5)
+        sage: series_precision()
+        5
+        sage: set_series_precision(20)
+    """
+    global series_prec
+    series_prec = prec

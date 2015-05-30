@@ -147,16 +147,14 @@ class Polyhedron_cdd(Polyhedron_base):
             2
 
             sage: point_list = [[0.132, -1.028, 0.028],[0.5, 0.5, -1.5],
-            ...    [-0.5, 1.5, -0.5],[0.5, 0.5, 0.5],[1.5, -0.5, -0.5],
-            ...    [-0.332, -0.332, -0.668],[-1.332, 0.668, 0.332],
-            ...    [-0.932, 0.068, 0.932],[-0.38, -0.38, 1.38],
-            ...    [-0.744, -0.12, 1.12],[-0.7781818182, -0.12, 0.9490909091],
-            ...    [0.62, -1.38, 0.38],[0.144, -1.04, 0.04],
-            ...    [0.1309090909, -1.0290909091, 0.04]]
+            ....:    [-0.5, 1.5, -0.5],[0.5, 0.5, 0.5],[1.5, -0.5, -0.5],
+            ....:    [-0.332, -0.332, -0.668],[-1.332, 0.668, 0.332],
+            ....:    [-0.932, 0.068, 0.932],[-0.38, -0.38, 1.38],
+            ....:    [-0.744, -0.12, 1.12],[-0.7781818182, -0.12, 0.9490909091],
+            ....:    [0.62, -1.38, 0.38],[0.144, -1.04, 0.04],
+            ....:    [0.1309090909, -1.0290909091, 0.04]]
             sage: Polyhedron(point_list)
-            Traceback (most recent call last):
-            ...
-            ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
+            A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 14 vertices
             sage: Polyhedron(point_list, base_ring=QQ)
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 14 vertices
         """
@@ -202,8 +200,8 @@ class Polyhedron_cdd(Polyhedron_base):
         def expect_in_cddout(expected_string):
             l = cddout.pop(0).strip()
             if l!=expected_string:
-                raise ValueError, ('Error while parsing cdd output: expected "'
-                                   +expected_string+'" but got "'+l+'".\n' )
+                raise ValueError('Error while parsing cdd output: expected "'
+                                   +expected_string+'" but got "'+l+'".\n')
         # nested function
         def cdd_linearities():
             l = cddout[0].split()

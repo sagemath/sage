@@ -56,6 +56,9 @@ cimport free_module_element
 
 from free_module_element import vector
 
+from sage.libs.gmp.mpz cimport *
+
+
 cdef inline _Integer_from_mpz(mpz_t e):
     cdef Integer z = PY_NEW(Integer)
     mpz_set(z.value, e)
@@ -64,7 +67,7 @@ cdef inline _Integer_from_mpz(mpz_t e):
 cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
         cdef Vector_integer_dense y
-        y = PY_NEW(Vector_integer_dense)
+        y = Vector_integer_dense.__new__(Vector_integer_dense)
         y._init(self._degree, self._parent)
         return y
 
@@ -118,7 +121,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
                 mpz_clear(self._entries[i])
             sage_free(self._entries)
 
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         EXAMPLES::
 
@@ -168,45 +171,8 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         """
         return free_module_element.FreeModuleElement.__hash__(self)
 
-    def __len__(self):
-        return self._degree
-
-    def __setitem__(self, i, value):
+    cdef get_unsafe(self, Py_ssize_t i):
         """
-        EXAMPLES::
-
-            sage: v = vector([1,2,3]); v
-            (1, 2, 3)
-            sage: v[0] = 2
-            sage: v[1:3] = [1, 4]; v
-            (2, 1, 4)
-        """
-        if not self._is_mutable:
-            raise ValueError("vector is immutable; please change a copy instead (use copy())")
-        cdef Integer z
-        cdef Py_ssize_t k, d, n
-        if isinstance(i, slice):
-            start, stop = i.start, i.stop
-            d = self.degree()
-            R = self.base_ring()
-            n = 0
-            for k from start <= k < stop:
-                if k >= d:
-                    return
-                if k >= 0:
-                    self[k] = R(value[n])
-                    n = n + 1
-        else:
-            if i < 0 or i >= self._degree:
-                raise IndexError
-            else:
-                z = Integer(value)
-                mpz_set(self._entries[i], z.value)
-
-    def __getitem__(self, i):
-        """
-        Returns `i`-th entry or slice of self.
-
         EXAMPLES::
 
             sage: v = vector([1,2,3]); v
@@ -217,27 +183,24 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             2
             sage: v[0:2]
             (1, 2)
-            sage: v[5]
-            Traceback (most recent call last):
-            ...
-            IndexError: index out of range
-            sage: v[-5]
-            Traceback (most recent call last):
-            ...
-            IndexError: index out of range
+            sage: v[::-1]
+            (3, 2, 1)
         """
         cdef Integer z = PY_NEW(Integer)
-        if isinstance(i, slice):
-            start, stop, step = i.indices(len(self))
-            return vector(self.base_ring(), self.list()[start:stop])
-        else:
-            if i < 0:
-                i += self._degree
-            if i < 0 or i >= self._degree:
-                raise IndexError('index out of range')
-            else:
-                mpz_set(z.value, self._entries[i])
-                return z
+        mpz_set(z.value, self._entries[i])
+        return z
+
+    cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
+        """
+        EXAMPLES::
+
+            sage: v = vector([1,2,3]); v
+            (1, 2, 3)
+            sage: v[0] = 2
+            sage: v[1:3] = [1, 4]; v
+            (2, 1, 4)
+        """
+        mpz_set(self._entries[i], (<Integer>value).value)
 
     def list(self,copy=True):
         """
@@ -393,7 +356,7 @@ def unpickle_v0(parent, entries, degree):
     #    make_FreeModuleElement_generic_dense_v1
     # and changed the reduce method below.
     cdef Vector_integer_dense v
-    v = PY_NEW(Vector_integer_dense)
+    v = Vector_integer_dense.__new__(Vector_integer_dense)
     v._init(degree, parent)
     cdef Integer z
     for i from 0 <= i < degree:
@@ -403,7 +366,7 @@ def unpickle_v0(parent, entries, degree):
 
 def unpickle_v1(parent, entries, degree, is_mutable):
     cdef Vector_integer_dense v
-    v = PY_NEW(Vector_integer_dense)
+    v = Vector_integer_dense.__new__(Vector_integer_dense)
     v._init(degree, parent)
     cdef Integer z
     for i from 0 <= i < degree:

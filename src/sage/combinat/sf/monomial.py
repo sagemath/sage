@@ -173,8 +173,8 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         out = self.sum_of_terms((Partition(e), c)
                                 for (e,c) in f.dict().iteritems()
                                 if tuple(sorted(e)) == tuple(reversed(e)))
-        if check and out.expand(f.parent().ngens(),f.parent().gens()) <> f:
-            raise ValueError, "%s is not a symmetric polynomial"%f
+        if check and out.expand(f.parent().ngens(),f.parent().gens()) != f:
+            raise ValueError("%s is not a symmetric polynomial"%f)
         return out
 
     def from_polynomial_exp(self, p):
@@ -266,15 +266,19 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def expand(self, n, alphabet='x'):
             """
-            Expands the symmetric function as a symmetric polynomial in `n` variables.
+            Expand the symmetric function ``self`` as a symmetric polynomial
+            in ``n`` variables.
 
             INPUT:
 
-            - ``self`` -- an element of the monomial symmetric function basis
-            - ``n`` -- a positive integer
-            - ``alphabet`` -- a variable for the expansion (default: `x`)
+            - ``n`` -- a nonnegative integer
 
-            OUTPUT: a monomial expansion of an instance of ``self`` in `n` variables
+            - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
+
+            OUTPUT:
+
+            A monomial expansion of ``self`` in the `n` variables
+            labelled by ``alphabet``.
 
             EXAMPLES::
 
@@ -287,6 +291,10 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 z0^2*z1 + z0*z1^2 + z0^2*z2 + z1^2*z2 + z0*z2^2 + z1*z2^2
                 sage: m([2,1]).expand(3,alphabet='x,y,z')
                 x^2*y + x*y^2 + x^2*z + y^2*z + x*z^2 + y*z^2
+                sage: m([1]).expand(0)
+                0
+                sage: (3*m([])).expand(0)
+                3
             """
             condition = lambda part: len(part) > n
             return self._expand(condition, n, alphabet)

@@ -1,27 +1,32 @@
-diff -ur src/Makefile src.patched/Makefile
---- src/Makefile	2010-02-16 05:26:57.000000000 +0100
-+++ src.patched/Makefile	2011-04-26 09:46:41.000000000 +0200
-@@ -1,14 +1,17 @@
- 
- ##### Configurable options:
- 
-+# Don't need to set any of these compiler variables. They have already been
-+# set when running SAGE_ROOT/local/bin/sage-env as part of installing a
-+# package.
- ## Compiler:
+diff -ru src/Makefile b/Makefile
+--- src/Makefile	2010-01-22 08:53:21.000000000 +0100
++++ b/Makefile	2014-01-16 14:55:51.977047191 +0100
+@@ -1,24 +1,3 @@
+-
+-##### Configurable options:
+-
+-## Compiler:
 -CC=gcc
-+#CC=gcc
- #CC=cc
- 
- ## Compiler flags:
- 
- # GCC:  (also -march=pentium etc, for machine-dependent optimizing)
+-#CC=cc
+-
+-## Compiler flags:
+-
+-# GCC:  (also -march=pentium etc, for machine-dependent optimizing)
 -CFLAGS=-Wall -O3 -fomit-frame-pointer -funroll-loops
-+#CFLAGS=-Wall -O3 -fomit-frame-pointer -funroll-loops
+-
+-# GCC w/ debugging:
+-#CFLAGS=-Wall -g -DINLINE=
+-
+-# Compaq C / Digital C:
+-#CFLAGS=-arch=host -fast
+-
+-# SunOS:
+-#CFLAGS=-fast
+-
+ ## Program options:
  
- # GCC w/ debugging:
- #CFLAGS=-Wall -g -DINLINE=
-@@ -29,14 +32,14 @@
+ # Enable long options for cl (eg. "cl --help"), comment out to disable.
+@@ -29,14 +8,14 @@
  ##### End of configurable options
  
  

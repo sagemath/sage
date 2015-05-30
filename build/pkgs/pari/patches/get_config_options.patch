@@ -8,7 +8,7 @@
 +  -graphic|--graphic)
 +      shift; which_graphic_lib="$1"
 +      case "$which_graphic_lib" in
-+        auto|none|X11|qt|Qt|fltk|win32) ;;
++        auto|none|X11|qt|Qt|fltk|ps|win32) ;;
 +        *) echo "*** Unrecognized graphic lib \"$which_graphic_lib.\"" >&2
 +           error=true;;
 +      esac;;
@@ -16,19 +16,19 @@
 -	       which_graphic_lib=`echo "$1" | sed -e 's/[-a-z]*=//'`;;
 +      which_graphic_lib=`echo "$1" | sed -e 's/[-a-z]*=//'`
 +      case "$which_graphic_lib" in
-+        auto|none|X11|qt|Qt|fltk|win32) ;;
++        auto|none|X11|qt|Qt|fltk|ps|win32) ;;
 +        *) echo "*** Unrecognized graphic lib \"$which_graphic_lib.\"" >&2
 +           error=true;;
 +      esac;;
- 
+   --with-runtime-perl=*)
+       runtime_perl=`echo "$1" | sed -e 's/[-a-z]*=//'` ;;
    --without-readline|--with-readline=no) without_readline=yes ;;
-   --with-readline) with_readline=yes ;;
-@@ -126,7 +137,7 @@
+@@ -139,7 +139,7 @@
  Build Options:
    --host=<arch-osname>  target achitecture
    --kernel=<kern>       kernel used
--  --graphic=<gr>        graphic library used (none X11 Qt fltk win32)
-+  --graphic=<gr>        graphic library used (none X11 qt Qt fltk win32 auto)
-   --time=<fun>          timing function to use (getrusage times ftime)
+-  --graphic=<gr>        graphic library used (none, X11, Qt, fltk, ps, win32)
++  --graphic=<gr>        graphic library used (none, X11, Qt, fltk, ps, win32, auto)
+   --time=<fun>          timing function to use (getrusage, clock_gettime,
+                           times, ftime)
    --builddir=<dir>      directory where the object files will be created
-   --tune                tune the binary for compiling host (slow)

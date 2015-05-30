@@ -7,7 +7,7 @@ def var(*args, **kwds):
 
     INPUT:
 
-    - ``args`` - A single string ``var('x y')``, a list of strings
+    - ``args`` -- A single string ``var('x y')``, a list of strings
       ``var(['x','y'])``, or multiple strings ``var('x', 'y')``. A
       single string can be either a single variable name, or a space
       or comma separated list of variable names. In a list or tuple of
@@ -15,14 +15,15 @@ def var(*args, **kwds):
       specified, each argument is taken to be one variable. Spaces
       before or after variable names are ignored.
 
-    - ``kwds`` - keyword arguments can be given to specify domain and
+    - ``kwds`` -- keyword arguments can be given to specify domain and
       custom latex_name for variables. See EXAMPLES for usage.
 
     .. note::
 
        The new variable is both returned and automatically injected
-       into the global namespace. If you need symbolic variable in
-       library code, it is better to use either SR.var() or SR.symbol().
+       into the global namespace. If you need a symbolic variable in
+       library code, you must use either ``SR.var()``
+       or ``SR.symbol()``.
 
     OUTPUT:
 
@@ -71,12 +72,12 @@ def var(*args, **kwds):
     Custom latex expression can be assigned to variable::
 
         sage: x = var('sui', latex_name="s_{u,i}"); x._latex_()
-        's_{u,i}'
+        '{s_{u,i}}'
 
     In notebook, we can also colorize latex expression::
 
         sage: x = var('sui', latex_name="\\color{red}{s_{u,i}}"); x._latex_()
-        '\\color{red}{s_{u,i}}'
+        '{\\color{red}{s_{u,i}}}'
 
     We can substitute a new variable name for n::
 
@@ -175,7 +176,7 @@ def function(s, *args, **kwds):
        code, it is better to use sage.symbolic.function_factory.function,
        since it won't touch the global namespace.
 
-    EXAMPLES::
+    EXAMPLES:
 
     We create a formal function called supersin::
 
@@ -199,16 +200,14 @@ def function(s, *args, **kwds):
         sage: k = g.diff(x); k
         (x, y) |--> 2*supersin(x)*D[0](supersin)(x)
 
-    Custom typesetting of symbolic functions in LaTeX::
-
-    (1) Either using latex_name keyword::
+    Custom typesetting of symbolic functions in LaTeX, either using latex_name
+    keyword::
 
         sage: riemann(x) = function('riemann', x, latex_name="\\mathcal{R}")
         sage: latex(riemann(x))
         \mathcal{R}\left(x\right)
 
-    (2) Or passing a custom callable function that returns a
-        latex expression::
+    or passing a custom callable function that returns a latex expression::
 
         sage: mu,nu = var('mu,nu')
         sage: def my_latex_print(self, *args): return "\\psi_{%s}"%(', '.join(map(latex, args)))

@@ -18,8 +18,8 @@ EXAMPLES:
 Let's consider the face and normal fans of the "diamond" and the projection
 to the `x`-axis::
 
-    sage: diamond = lattice_polytope.octahedron(2)
-    sage: face = FaceFan(diamond)
+    sage: diamond = lattice_polytope.cross_polytope(2)
+    sage: face = FaceFan(diamond, lattice=ToricLattice(2))
     sage: normal = NormalFan(diamond)
     sage: N = face.lattice()
     sage: H = End(N)
@@ -88,6 +88,7 @@ from sage.modules.free_module_morphism import (FreeModuleMorphism,
                                                is_FreeModuleMorphism)
 from sage.rings.all import Infinity, ZZ
 from sage.rings.infinity import is_Infinite
+from functools import reduce
 
 class FanMorphism(FreeModuleMorphism):
     r"""
@@ -147,8 +148,8 @@ class FanMorphism(FreeModuleMorphism):
     Here we consider the face and normal fans of the "diamond" and the
     projection to the `x`-axis::
 
-        sage: diamond = lattice_polytope.octahedron(2)
-        sage: face = FaceFan(diamond)
+        sage: diamond = lattice_polytope.cross_polytope(2)
+        sage: face = FaceFan(diamond, lattice=ToricLattice(2))
         sage: normal = NormalFan(diamond)
         sage: N = face.lattice()
         sage: H = End(N)
@@ -350,17 +351,21 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: diamond = lattice_polytope.octahedron(2)
+            sage: diamond = lattice_polytope.cross_polytope(2)
             sage: face = FaceFan(diamond)
             sage: normal = NormalFan(diamond)
             sage: N = face.lattice()
             sage: fm = FanMorphism(identity_matrix(2),
             ...           normal, face, subdivide=True)
             sage: fm._RISGIS()
-            (frozenset([3]), frozenset([2]),
-             frozenset([1]), frozenset([0]),
-             frozenset([1, 3]), frozenset([0, 1]),
-             frozenset([0, 2]), frozenset([2, 3]))
+            (frozenset({3}),
+             frozenset({2}),
+             frozenset({1}),
+             frozenset({0}),
+             frozenset({1, 3}),
+             frozenset({0, 1}),
+             frozenset({0, 2}),
+             frozenset({2, 3}))
         """
         if "_RISGIS_" not in self.__dict__:
             try:
@@ -393,7 +398,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: F = NormalFan(lattice_polytope.octahedron(2))
+            sage: F = NormalFan(lattice_polytope.cross_polytope(2))
             sage: N = F.lattice()
             sage: H = End(N)
             sage: phi = H([N.0, 0])
@@ -642,7 +647,7 @@ class FanMorphism(FreeModuleMorphism):
         We check that Trac #10943 is fixed::
 
             sage: Sigma = Fan(rays=[(1,1,0), (1,-1,0)], cones=[(0,1)])
-            sage: Sigma_prime = FaceFan(lattice_polytope.octahedron(3))
+            sage: Sigma_prime = FaceFan(lattice_polytope.cross_polytope(3))
             sage: fm = FanMorphism(identity_matrix(3),
             ...                    Sigma, Sigma_prime, subdivide=True)
             sage: fm.domain_fan().rays()
@@ -678,8 +683,8 @@ class FanMorphism(FreeModuleMorphism):
         chambers = None # preimages of codomain cones, computed if necessary
         new_cones = []
         for cone_index, domain_cone in enumerate(domain_fan):
-            if reduce(operator.and_, (RISGIS[i]
-                                for i in domain_cone.ambient_ray_indices())):
+            if reduce(operator.and_,
+                      (RISGIS[i] for i in domain_cone.ambient_ray_indices())):
                 # There is a codomain cone containing all rays of this domain
                 # cone, no need to subdivide it.
                 new_cones.append(domain_cone)
@@ -849,6 +854,18 @@ class FanMorphism(FreeModuleMorphism):
             Rational polyhedral fan in 3-d lattice N3
             into the support of
             Rational polyhedral fan in 2-d lattice N2!
+
+
+        TESTS::
+
+            sage: trivialfan2 = Fan([],[],lattice=ToricLattice(2))
+            sage: trivialfan3 = Fan([],[],lattice=ToricLattice(3))
+            sage: FanMorphism(zero_matrix(2,3), trivialfan2, trivialfan3)
+            Fan morphism defined by the matrix
+            [0 0 0]
+            [0 0 0]
+            Domain fan: Rational polyhedral fan in 2-d lattice N
+            Codomain fan: Rational polyhedral fan in 3-d lattice N
         """
         domain_fan = self._domain_fan
         if domain_fan.lattice() is not self.domain():
@@ -860,8 +877,9 @@ class FanMorphism(FreeModuleMorphism):
                              % (codomain_fan, self.codomain()))
         RISGIS = self._RISGIS()
         for n, domain_cone in enumerate(domain_fan):
-            if not reduce(operator.and_,
-                (RISGIS[i] for i in domain_cone.ambient_ray_indices())):
+            if not domain_cone.is_trivial() and \
+                    not reduce(operator.and_,
+                               (RISGIS[i] for i in domain_cone.ambient_ray_indices())):
                 raise ValueError("the image of generating cone #%d of the "
                                  "domain fan is not contained in a single "
                                  "cone of the codomain fan!" % n)
@@ -957,8 +975,8 @@ class FanMorphism(FreeModuleMorphism):
         We check that complete codomain fans are handled correctly, since a
         different algorithm is used in this case::
 
-            sage: diamond = lattice_polytope.octahedron(2)
-            sage: face = FaceFan(diamond)
+            sage: diamond = lattice_polytope.cross_polytope(2)
+            sage: face = FaceFan(diamond, lattice=ToricLattice(2))
             sage: normal = NormalFan(diamond)
             sage: N = face.lattice()
             sage: fm = FanMorphism(identity_matrix(2),
@@ -1232,11 +1250,13 @@ class FanMorphism(FreeModuleMorphism):
 
         - ``True`` if ``self`` is a fibration, ``False`` otherwise.
 
-        A fan morphism `\phi: \Sigma \to \Sigma'` is a **fibration** if for any
-        cone `\sigma' \in \Sigma'` and any primitive preimage cone `\sigma \in
-        \Sigma` corresponding to `\sigma'` the linear map of vector spaces
-        `\phi_\RR` induces a bijection between `\sigma` and `\sigma'`, and, in
-        addition, `\phi_\RR: N_\RR \to N'_\RR$ is surjective.
+        A fan morphism `\phi: \Sigma \to \Sigma'` is a **fibration**
+        if for any cone `\sigma' \in \Sigma'` and any primitive
+        preimage cone `\sigma \in \Sigma` corresponding to `\sigma'`
+        the linear map of vector spaces `\phi_\RR` induces a bijection
+        between `\sigma` and `\sigma'`, and, in addition, `phi` is
+        :meth:`dominant <is_dominant>` (that is, `\phi_\RR: N_\RR \to
+        N'_\RR$ is surjective).
 
         If a fan morphism `\phi: \Sigma \to \Sigma'` is a fibration, then the
         associated morphism between toric varieties `\tilde{\phi}: X_\Sigma \to
@@ -1336,7 +1356,7 @@ class FanMorphism(FreeModuleMorphism):
         associated morphism between toric varieties `\tilde{\phi}: X_\Sigma \to
         X_{\Sigma'}` is injective.
 
-        .. seealso:: :meth:`restrict_to_image`.
+        .. seealso:: :meth:`factor`.
 
         EXAMPLES:
 
@@ -1410,7 +1430,7 @@ class FanMorphism(FreeModuleMorphism):
         X_{\Sigma'}` is surjective.
 
         .. seealso:: :meth:`is_bundle`, :meth:`is_fibration`,
-            :meth:`preimage_cones`.
+            :meth:`preimage_cones`, :meth:`is_complete`.
 
         EXAMPLES:
 
@@ -1437,7 +1457,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example on Trac 11200 works as expected::
+        We check that reviewer's example on :trac:`11200` works as expected::
 
             sage: P1 = toric_varieties.P1()
             sage: A1 = toric_varieties.A1()
@@ -1452,6 +1472,40 @@ class FanMorphism(FreeModuleMorphism):
                 if not self.preimage_cones(sigma_p):
                     return False
         return True
+
+    @cached_method
+    def is_dominant(self):
+        r"""
+        Return whether the fan morphism is dominant.
+
+        A fan morphism $\phi$ is dominant if it is surjective as a map
+        of vector spaces. That is, $\phi_\RR: N_\RR \to N'_\RR$ is
+        surjective.
+
+        If the domain fan is :meth:`complete
+        <sage.geometry.fan.RationalPolyhedralFan.is_complete>`, then
+        this implies that the fan morphism is :meth:`surjective
+        <is_surjective>`.
+
+        If the fan morphism is dominant, then the associated morphism
+        of toric varieties is dominant in the algebraic-geometric
+        sense (that is, surjective onto a dense subset).
+        
+        OUTPUT:
+
+        Boolean.
+
+        EXAMPLES::
+
+            sage: P1 = toric_varieties.P1()
+            sage: A1 = toric_varieties.A1()
+            sage: phi = FanMorphism(matrix([[1]]), A1.fan(), P1.fan())
+            sage: phi.is_dominant()
+            True
+            sage: phi.is_surjective()
+            False
+        """
+        return self.matrix().rank() == self.codomain_fan().dim()
 
     @cached_method
     def kernel_fan(self):
@@ -1815,6 +1869,12 @@ class FanMorphism(FreeModuleMorphism):
             True
             sage: phi_i.codomain_fan() is phi.codomain_fan()
             True
+
+            sage: trivialfan2 = Fan([],[],lattice=ToricLattice(2))
+            sage: trivialfan3 = Fan([],[],lattice=ToricLattice(3))
+            sage: f = FanMorphism(zero_matrix(2,3), trivialfan2, trivialfan3)
+            sage: [phi.matrix().dimensions() for phi in f.factor()]
+            [(0, 3), (0, 0), (2, 0)]
         """
         L = self.image().saturation()
         d = L.dimension()
@@ -1822,10 +1882,40 @@ class FanMorphism(FreeModuleMorphism):
         m = matrix(ZZ, m.nrows(), d, (L.coordinates(c) for c in m.rows()))
         phi_s = FanMorphism(m, self.domain_fan(), L, check=False)
         Sigma_prime = self.codomain_fan()
-        L_cone = Cone(sum(([g, -g] for g in L.gens()), []))
+        L_cone = Cone(sum(([g, -g] for g in L.gens()), []), lattice=L)
         Sigma_i = Fan(cones=(L_cone.intersection(cone) for cone in Sigma_prime),
                       lattice=L, discard_faces=True, check=False)
         phi_b = FanMorphism(identity_matrix(d), phi_s.codomain_fan(), Sigma_i,
                             check=False)
         phi_i = FanMorphism(L.basis_matrix(), Sigma_i, Sigma_prime, check=False)
         return (phi_i, phi_b, phi_s)
+
+    def relative_star_generators(self, domain_cone):
+        """
+        Return the relative star generators of ``domain_cone``.
+        
+        INPUT:
+        
+        - ``domain_cone`` -- a cone of the :meth:`domain_fan` of ``self``.
+        
+        OUTPUT:
+        
+        - :meth:`~RationalPolyhedralFan.star_generators` of ``domain_cone``
+          viewed as a cone of :meth:`preimage_fan` of :meth:`image_cone` of
+          ``domain_cone``.
+
+        EXAMPLES::
+
+            sage: A2 = toric_varieties.A(2).fan()
+            sage: Bl = A2.subdivide([(1,1)])
+            sage: f = FanMorphism(identity_matrix(2), Bl, A2)
+            sage: for c1 in Bl(1):
+            ...       print f.relative_star_generators(c1)
+            (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+            (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+            (2-d cone of Rational polyhedral fan in 2-d lattice N,
+             2-d cone of Rational polyhedral fan in 2-d lattice N)
+        """
+        base_cone = self.image_cone(domain_cone)
+        preimg_fan = self.preimage_fan(base_cone)
+        return preimg_fan.embed(domain_cone).star_generators()

@@ -87,6 +87,6 @@ cdef extern from "ntl_wrap.h":
     ZZX_c* ZZX_minpoly_mod(ZZX_c* x, ZZX_c* y)
     void ZZX_clear(ZZX_c* x)
     void ZZX_preallocate_space(ZZX_c* x, long n)
-    void ZZX_getitem_as_mpz(mpz_t* output, ZZX_c* x, long i)
+    void ZZX_getitem_as_mpz(mpz_t output, ZZX_c* x, long i)
     cdef void ZZX_setitem_from_int(ZZX_c* x, long i, int value)
     cdef int ZZX_getitem_as_int(ZZX_c* x, long i)

@@ -111,15 +111,14 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: def is_even(n):
-    ...       return n%2 == 0
-    ...
+    ....:     return n%2 == 0
     sage: is_even(2)
     True
     sage: is_even(3)
     False
 
 Заметка: В зависимости от версии учебного пособия на второй строке
-этого примера можно увидеть ``...``. Не печатайте их, так как они служат
+этого примера можно увидеть ``....:``. Не печатайте их, так как они служат
 лишь для того, чтобы показать отступы в коде.
 
 Не определяйте типов аргументов. Можно определить несколько видов ввода,
@@ -129,7 +128,7 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: def is_divisible_by(number, divisor=2):
-    ...       return number%divisor == 0
+    ....:     return number%divisor == 0
     sage: is_divisible_by(6,2)
     True
     sage: is_divisible_by(6)
@@ -159,11 +158,11 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...      return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:    return v
     Syntax Error:
            return v
 
@@ -172,11 +171,11 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...       return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:     return v
     sage: even(10)
     [4, 6, 8]
 
@@ -193,7 +192,7 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: 2 + \
-    ...      3
+    ....:    3
     5
 
 В Sage счетчики производят итерации по интервалу целых чисел. Например,
@@ -203,7 +202,7 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: for i in range(3):
-    ...       print i
+    ....:     print i
     0
     1
     2
@@ -213,7 +212,7 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: for i in range(2,5):
-    ...       print i
+    ....:     print i
     2
     3
     4
@@ -223,7 +222,7 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: for i in range(1,6,2):
-    ...       print i
+    ....:     print i
     1
     3
     5
@@ -235,7 +234,7 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: for i in range(5):
-    ...       print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
          0      0      0
          1      1      1
          2      4      8
@@ -307,11 +306,11 @@ tanh, taylor``. Данная функция является хорошим сп
 ::
 
     sage: class Evens(list):
-    ...       def __init__(self, n):
-    ...           self.n = n
-    ...           list.__init__(self, range(2, n+1, 2))
-    ...       def __repr__(self):
-    ...           return "Even positive numbers up to n."
+    ....:     def __init__(self, n):
+    ....:         self.n = n
+    ....:         list.__init__(self, range(2, n+1, 2))
+    ....:     def __repr__(self):
+    ....:         return "Even positive numbers up to n."
 
 Метод ``__init__`` вызывается для инициализации объекта при его
 создании; метод ``__repr__`` выведет все объекты. Конструктор списка

@@ -47,7 +47,7 @@ would completely avoid having to create the matrix space)::
 We next change the top-right entry of `A`. Note that matrix
 indexing is `0`-based in Sage, so the top right entry is
 `(0,2)`, which should be thought of as "row number
-`0`, column number 2".
+`0`, column number `2`".
 
 ::
 
@@ -73,8 +73,7 @@ Indexing
 Sage has quite flexible ways of extracting elements or submatrices
 from a matrix::
 
-
-    sage: m=[(1, -2, -1, -1,9), (1, 8, 6, 2,2), (1, 1, -1, 1,4), (-1, 2, -2, -1,4)];M= matrix(m)
+    sage: m=[(1, -2, -1, -1,9), (1, 8, 6, 2,2), (1, 1, -1, 1,4), (-1, 2, -2, -1,4)] ; M = matrix(m)
     sage: M
     [ 1 -2 -1 -1  9]
     [ 1  8  6  2  2]
@@ -341,7 +340,6 @@ Class Diagram (an x means that class is currently supported)::
     x  Matrix_dense
     x     Matrix_generic_dense
     x     Matrix_integer_dense
-          Matrix_integer_2x2_dense
     x     Matrix_rational_dense
           Matrix_cyclo_dense    -- idea: restrict scalars to QQ, compute charpoly there, then factor
     x     Matrix_modn_dense
@@ -356,9 +354,6 @@ are named
 ::
 
               [matrix] [base ring] [dense or sparse].
-
-See the files ``matrix_template.pxd`` and
-``matrix_template.pyx``.
 
 ::
 
@@ -398,7 +393,7 @@ See the files ``matrix_template.pxd`` and
        * cdef _add_ -- add two matrices with identical parents
        * _matrix_times_matrix_c_impl -- multiply two matrices with compatible dimensions and
                                         identical base rings (both sparse or both dense)
-       * cdef _cmp_c_impl -- compare two matrices with identical parents
+       * cpdef _cmp_ -- compare two matrices with identical parents
        * cdef _lmul_c_impl -- multiply this matrix on the right by a scalar, i.e., self * scalar
        * cdef _rmul_c_impl -- multiply this matrix on the left by a scalar, i.e., scalar * self
        * __copy__

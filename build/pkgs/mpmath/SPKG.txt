@@ -18,24 +18,3 @@ Mpmath is a pure-Python library for multiprecision floating-point arithmetic. It
 == Dependencies ==
 
  * Python
-
-== Changelog ==
-
-=== mpmath-0.17 (Fredrik Johansson, Feb 1, 2011) ===
- * Updated to mpmath-0.17.
-
-=== mpmath-0.16 (Fredrik Johansson, Oct 30, 2010) ===
- * Updated to mpmath-0.16.
-
-=== mpmath-0.15 (Fredrik Johansson, Jun 6th, 2010) ===
- * Updated to mpmath-0.15.
-
-=== mpmath-0.14 (Harald Schilly, Feb 20th, 2010) ===
- * #8159: updated to mpmath-0.14.
-
-=== mpmath-0.13 (Fredrik Johansson, August 14th, 2009) ===
- * Updated to mpmath-0.13.
-
-=== mpmath-0.12 (Mike Hansen, June 19th, 2009) ===
- * Initial spkg.
-

@@ -232,6 +232,7 @@ def codesize_upper_bound(n,d,q,algorithm=None):
 
     """
     if algorithm=="gap":
+        gap.load_package('guava')
         return int(gap.eval("UpperBound(%s,%s,%s)"%( n, d, q )))
     if algorithm=="LP":
         return int(delsarte_bound_hamming_space(n,d,q))
@@ -265,7 +266,7 @@ def dimension_upper_bound(n,d,q,algorithm=None):
     if algorithm=="LP":
         return delsarte_bound_additive_hamming_space(n,d,q)
 
-    else:       # algorithm==None or algorithm="gap":
+    else:       # algorithm==None or algorithm=="gap":
         return int(log(codesize_upper_bound(n,d,q,algorithm=algorithm),q))
 
 
@@ -391,7 +392,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
         for i in range(1,int(r*n)+1):
             if i**2-2*r*n*i+r*n*d>0:
                 I.append(i)
-            return I
+        return I
     I = get_list(n,d,q)
     bnd = min([ff(n,d,w,q) for w in I])
     return int(bnd)
@@ -464,13 +465,13 @@ def gv_info_rate(n,delta,q):
     EXAMPLES::
 
         sage: RDF(gv_info_rate(100,1/4,3))
-        0.367049926083
+        0.36704992608261894
     """
     q = ZZ(q)
     ans=log(gilbert_lower_bound(n,q,int(n*delta)),q)/n
     return ans
 
-def entropy(x,q):
+def entropy(x, q=2):
     """
     Computes the entropy at `x` on the `q`-ary symmetric channel.
 
@@ -478,7 +479,8 @@ def entropy(x,q):
 
     - ``x`` - real number in the interval `[0, 1]`.
 
-    - ``q`` - integer greater than 1. This is the base of the logarithm.
+    - ``q`` - (default: 2) integer greater than 1. This is the base of the
+      logarithm.
 
     EXAMPLES::
 
@@ -513,6 +515,56 @@ def entropy(x,q):
     H = x*log(q-1,q)-x*log(x,q)-(1-x)*log(1-x,q)
     return H
 
+def entropy_inverse(x, q=2):
+    """
+    Find the inverse of the ``q``-ary entropy function at the point ``x``.
+
+    INPUT:
+
+    - ``x`` -- real number in the interval `[0, 1]`.
+
+    - ``q`` - (default: 2) integer greater than 1. This is the base of the
+      logarithm.
+
+    OUTPUT:
+
+    Real number in the interval `[0, 1-1/q]`. The function has multiple
+    values if we include the entire interval `[0, 1]`; hence only the
+    values in the above interval is returned.
+
+    EXAMPLES::
+
+        sage: from sage.coding.code_bounds import entropy_inverse
+        sage: entropy_inverse(0.1)
+        0.012986862055848683
+        sage: entropy_inverse(1)
+        1/2
+        sage: entropy_inverse(0, 3)
+        0
+        sage: entropy_inverse(1, 3)
+        2/3
+
+    """
+    # No nice way to compute the inverse. We resort to root finding.
+    if x < 0 or x > 1:
+        raise ValueError("The inverse entropy function is defined only for "
+                         "x in the interval [0, 1]")
+    q = ZZ(q)   # This will error out if q is not an integer
+    if q < 2:   # Here we check that q is actually at least 2
+        raise ValueError("The value q must be an integer greater than 1")
+
+    eps  = 4.5e-16 # find_root has about this as the default xtol
+    ymax = 1 - 1/q
+    if x <= eps:
+        return 0
+    if x >= 1-eps:
+        return ymax
+
+    # find_root will error out if the root can not be found
+    from sage.numerical.optimize import find_root
+    f = lambda y: entropy(y, q) - x
+    return find_root(f, 0, ymax)
+
 def gv_bound_asymp(delta,q):
     """
     Computes the asymptotic GV bound for the information rate, R.
@@ -520,9 +572,10 @@ def gv_bound_asymp(delta,q):
     EXAMPLES::
 
         sage: RDF(gv_bound_asymp(1/4,2))
-        0.188721875541
+        0.18872187554086...
         sage: f = lambda x: gv_bound_asymp(x,2)
         sage: plot(f,0,1)
+        Graphics object consisting of 1 graphics primitive
     """
     return (1-entropy(delta,q))
 
@@ -534,9 +587,10 @@ def hamming_bound_asymp(delta,q):
     EXAMPLES::
 
         sage: RDF(hamming_bound_asymp(1/4,2))
-        0.4564355568
+        0.456435556800...
         sage: f = lambda x: hamming_bound_asymp(x,2)
         sage: plot(f,0,1)
+        Graphics object consisting of 1 graphics primitive
     """
     return (1-entropy(delta/2,q))
 
@@ -550,6 +604,7 @@ def singleton_bound_asymp(delta,q):
         3/4
         sage: f = lambda x: singleton_bound_asymp(x,2)
         sage: plot(f,0,1)
+        Graphics object consisting of 1 graphics primitive
     """
     return (1-delta)
 
@@ -587,6 +642,6 @@ def mrrw1_bound_asymp(delta,q):
     EXAMPLES::
 
         sage: mrrw1_bound_asymp(1/4,2)
-        0.354578902665
+        0.3545789026652697
     """
     return RDF(entropy((q-1-delta*(q-2)-2*sqrt((q-1)*delta*(1-delta)))/q,q))

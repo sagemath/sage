@@ -255,7 +255,7 @@ Sage example in ./domaines.tex, line 613::
 Sage example in ./domaines.tex, line 623::
 
     sage: z = 3 * exp(I*pi/4)
-    sage: z.real(), z.imag(), z.abs().simplify_exp()
+    sage: z.real(), z.imag(), z.abs().canonicalize_radical()
     (3/2*sqrt(2), 3/2*sqrt(2), 3)
 
 Sage example in ./domaines.tex, line 679::

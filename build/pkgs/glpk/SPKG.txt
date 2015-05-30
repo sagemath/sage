@@ -1,4 +1,4 @@
-= GLPK 4.42 =
+= GLPK =
 
 == Description ==
 
@@ -23,72 +23,41 @@ The GLPK package includes the following main components:
 
 The GLPK package is GPL version 3.
 
-== SPKG Maintainers ==
-
-Nathann Cohen (nathann.cohen@gmail.com)
-
 == Upstream Contact ==
 
-GLPK is currently being maintained by mao@gnu.org, mao@mai2.rcnet.ru
+GLPK is currently being maintained by:
+
+ * Andrew Makhorin (mao@gnu.org, mao@mai2.rcnet.ru)
+
 http://www.gnu.org/software/glpk/#maintainer
 
 == Dependencies ==
 
+ * GMP/MPIR
  * zlib
- * mpir (as an gmp substitute)
- * python
- * possibly others.
 
-== Changelog ==
+== Special Update/Build Instructions == 
 
-=== glpk-4.44.p0 (Simon King, 10th December 2011) ==
- * #12131: Use --libdir, to make the package work on openSUSE.
+ * It should be sufficient to pass `--with-<package>="$SAGE_LOCAL"` 
+   (where <package>={gmp,zlib}) instead of adding Sage's directories 
+   to `CPPFLAGS` and `LDFLAGS`; see comment in `spkg-install`. 
+   Turns out that (as of version 4.55) 
+   1) GLPK unconditionally uses its own copy of zlib (see above), 
+      and the `configure` option `--with-zlib` is no longer valid; 
+   2) `configure` doesn't support specifying the location of the GMP 
+      library to use; only `--with-gmp[=yes]` or `--with-gmp=no` 
+      are valid options.  (So we *have to* add Sage's include and 
+      library directories to `CPPFLAGS` and `LDFLAGS`, respectively.) 
+ * Do we need the `--disable-static`?  The stand-alone solver presumably 
+   runs faster when built with a static library; also other (stand-alone) 
+   programs using it would. 
+   (Instead, we should perhaps use `--enable-static --enable-shared` to 
+   go safe.)
 
-== glpk-4.44 (Nathann Cohen, 5th July 2010) ==
+=== Patches ===
 
- * Removed the patch/ directory which was only useful for backward
-   compatibility (and had been for some time already), and updated
-   consequently several files
+ * cygwin_sharedlib.patch: Let a shared library be built on Cygwin by
+   passing the -no-undefined flag to libtool.
+ * zlib.patch: don't build the included zlib library.
+ * build_system/: contains patches prior to re-autotoolification.
 
-=== glpk-4.44 (David Kirkby, 23rd June 2010) ===
- * Updated to the latest upstream code, version 4.44.
- * Added code to allow a 64-bit build on any platform.
-   If SAGE64 is set to "yes", the compiler flag -m64 is added
-   by default. That flag works with GCC and SunStudio, but not
-   all compilers - IBM's compiler for AIX and HP's for HP-UX
-   both use different flags to create a 64-bit build.
-   If the compiler does not use -m64 for 64-bit builds, then
-   the environment variable CFLAG64 can be set to indicate what
-   flag gets added.
- * Added a file spkg-check so the self-test code is built.
-   This includes code which will add the appropriate flag
-   for 64-bit builds if the test procedures need code to be
-   compiled. (Sometimes running 'make test' actually needs
-   the compiler flags set properly, so I do it just in case.
-   It appears to be unnecessary with this version of GLPK,
-   but might with later releases.
- * Added the configure option --with-gmp which will speed up
-   processing of large integers (see src/INSTALL)
- * Added the configure option --disable-static since there is
-   no need to build static libraries. (see src/INSTALL)
- * Added the configure option --with-zlib. Adding this allows
-   GLPK API routines and the stand-alone solver to read and
-   write compressed data files performing compression and
-   decompression "on the fly" (see src/INSTALL)
- * Removed linking of the 'ld' library in spkg-install, as the
-   reason for it being added was not clear.
- * Corrected SPKG.txt to indicate this code is GPL 3.
-   (see src/COPYING)
- * Added the ChangeLog section to the SPKG.txt file
- * Added zlib, python and mpir as dependencies in SPKG.txt
- * Checked that the configure script actually does configure
-   properly, if not exits.
- * Checked that 'make' does build the code properly, if not exits.
- * Checked that 'make install' does actually install the library
- * Checked that running 'python setup.py install' does actually work.
-   If this is not done, code can appear to install properly as it
-   passes 'configure', 'make' and 'make install'. So unusually there
-   are 4 cases where spkg-install can fail.
- * The 'patch' directory is left - I think this should be removed
-   but I'll leave it to those that know the software better
-   than me to mess with this.

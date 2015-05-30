@@ -74,7 +74,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         g.add_edge(0,1,2)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -90,12 +90,13 @@ class CartanType(CartanType_standard_untwisted_affine):
             \draw (4 cm, 0.1 cm) -- +(2 cm,0);
             \draw (4 cm, -0.1 cm) -- +(2 cm,0);
             \draw[shift={(4.8, 0)}, rotate=180] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);
-            \draw[fill=white] (0 cm, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};
-            \draw[fill=white] (4 cm, 0) circle (.25cm) node[below=4pt]{$3$};
-            \draw[fill=white] (6 cm, 0) circle (.25cm) node[below=4pt]{$4$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
+            \draw[fill=white] (4 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
+            \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             }
-            \draw[fill=white] (0, 0) circle (.25cm) node[below=4pt]{$0$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
+
             sage: print CartanType(['C',4,1]).dual()._latex_dynkin_diagram()
             \draw (0, 0.1 cm) -- +(2 cm,0);
             \draw (0, -0.1 cm) -- +(2 cm,0);
@@ -106,20 +107,20 @@ class CartanType(CartanType_standard_untwisted_affine):
             \draw (4 cm, 0.1 cm) -- +(2 cm,0);
             \draw (4 cm, -0.1 cm) -- +(2 cm,0);
             \draw[shift={(5.2, 0)}, rotate=0] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);
-            \draw[fill=white] (0 cm, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};
-            \draw[fill=white] (4 cm, 0) circle (.25cm) node[below=4pt]{$3$};
-            \draw[fill=white] (6 cm, 0) circle (.25cm) node[below=4pt]{$4$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
+            \draw[fill=white] (4 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
+            \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             }
-            \draw[fill=white] (0, 0) circle (.25cm) node[below=4pt]{$0$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
+            <BLANKLINE>
         """
+        if node is None:
+            node = self._latex_draw_node
         if self.n == 1:
             import cartan_type
-            return cartan_type.CartanType(["A",1,1])._latex_dynkin_diagram(label, node_dist)
-        if self.global_options('mark_special_node') in ['latex', 'both']:
-            special_fill = 'black'
-        else:
-            special_fill = 'white'
+            return cartan_type.CartanType(["A",1,1])._latex_dynkin_diagram(label, node, node_dist)
+
         ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
         ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n"%node_dist
         if dual:
@@ -127,13 +128,13 @@ class CartanType(CartanType_standard_untwisted_affine):
         else:
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
         ret += "{\n\\pgftransformxshift{%s cm}\n"%node_dist
-        ret += self.classical()._latex_dynkin_diagram(label, node_dist, dual)
-        ret += "\n}\n\\draw[fill=%s] (0, 0) circle (.25cm) node[below=4pt]{$%s$};"%(special_fill, label(0))
+        ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual)
+        ret += "}\n" + node(0, 0, label(0))
         return ret
 
-    def ascii_art(self, label = lambda x: x):
+    def ascii_art(self, label=lambda i: i, node=None):
         """
-        Returns a ascii art representation of the extended Dynkin diagram
+        Return a ascii art representation of the extended Dynkin diagram.
 
         EXAMPLES::
 
@@ -153,16 +154,15 @@ class CartanType(CartanType_standard_untwisted_affine):
             O<=>O
             0   1
         """
+        if node is None:
+            node = self._ascii_art_node
         n = self.n
         from cartan_type import CartanType
         if n == 1:
-            return CartanType(["A",1,1]).ascii_art(label)
-        if self.global_options('mark_special_node') in ['printing', 'both']:
-            special_str = self.global_options('special_node_str')
-        else:
-            special_str = 'O'
-        ret = "%s=>=O"%special_str + (n-2)*"---O"+"=<=O\n%s   "%label(0)
-        ret += "   ".join("%s"%label(i) for i in range(1,n+1))
+            return CartanType(["A",1,1]).ascii_art(label, node)
+        ret = node(label(0)) + "=>=" + "---".join(node(label(i)) for i in range(1,n))
+        ret += "=<=" + node(label(n)) + '\n'
+        ret += "".join("{!s:4}".format(label(i)) for i in range(n+1))
         return ret
 
     def _default_folded_cartan_type(self):

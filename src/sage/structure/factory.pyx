@@ -37,13 +37,15 @@ easier to use than a factory.
 
 AUTHORS:
 
-- Robert Bradshaw (2008), initial version.
-- Simon King (2013), extended documentation.
+- Robert Bradshaw (2008): initial version.
+- Simon King (2013): extended documentation.
+- Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
 
 """
 
 #*****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
+#                2014 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -383,23 +385,37 @@ cdef class UniqueFactory(SageObject):
             sage: test_factory.get_object(3.0, 'a', {}) is test_factory.get_object(3.0, 'b', {})
             Making object b
             False
+
+        TESTS:
+
+        Check that :trac:`16317` has been fixed, i.e., caching works for
+        unhashable objects::
+
+            sage: K.<u> = Qq(4)
+            sage: test_factory.get_object(3.0, (K(1), 'c'), {})  is test_factory.get_object(3.0, (K(1), 'c'), {})
+            Making object (1 + O(2^20), 'c')
+            True
+
         """
+        cache_key = key
         try:
-            return self._cache[version, key]
+            try:
+                return self._cache[version, cache_key]
+            except TypeError: # key is unhashable
+                from sage.misc.cachefunc import _cache_key
+                cache_key = _cache_key(cache_key)
+                return self._cache[version, cache_key]
         except KeyError:
             pass
         obj = self.create_object(version, key, **extra_args)
-        self._cache[version, key] = obj
+        self._cache[version, cache_key] = obj
         try:
-            other_keys = self.other_keys(key, obj)
-            for key in other_keys:
+            for key in self.other_keys(key, obj):
                 try:
-                    obj = self._cache[version, key]
-                    break
-                except KeyError:
-                    pass
-            for key in other_keys:
-                self._cache[version, key] = obj
+                    self._cache[version, key] = obj
+                except TypeError: # key is unhashable
+                    from sage.misc.cachefunc import _cache_key
+                    self._cache[version, _cache_key(key)] = obj
             obj._factory_data = self, version, key, extra_args
             if obj.__class__.__reduce__.__objclass__ is object:
                 # replace the generic object __reduce__ to use this one
@@ -443,7 +459,7 @@ cdef class UniqueFactory(SageObject):
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
             sage: GF.create_key_and_extra_args(3, foo='value')
-            ((3, None, None, None, "{'foo': 'value'}", 3, 1, True), {'foo': 'value'})
+            ((3, ('x',), None, 'modn', "{'foo': 'value'}", 3, 1, True), {'foo': 'value'})
         """
         return self.create_key(*args, **kwds), {}
 
@@ -489,16 +505,15 @@ cdef class UniqueFactory(SageObject):
 
         EXAMPLES:
 
-        We use the ``GF`` factory to build the finite field with `27`
-        elements and generator `k`::
+        The ``GF`` factory used to have a custom :meth:`other_keys`
+        method, but this was removed in :trac:`16934`::
 
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
-            (27, ('k',), x^3 + 2*x + 1, None, '{}', 3, 3, True)
+            (27, ('k',), x^3 + 2*x + 1, 'givaro', '{}', 3, 3, True)
             sage: K = GF.create_object(0, key); K
             Finite Field in k of size 3^3
             sage: GF.other_keys(key, K)
-            [(27, ('k',), x^3 + 2*x + 1, None, '{}', 3, 3, True),
-             (27, ('k',), x^3 + 2*x + 1, 'givaro', '{}', 3, 3, True)]
+            []
 
             sage: K = GF(7^40, 'a')
             sage: loads(dumps(K)) is K
@@ -537,8 +552,72 @@ cdef class UniqueFactory(SageObject):
         """
         return generic_factory_unpickle, obj._factory_data
 
+# This is used to handle old UniqueFactory pickles
+factory_unpickles = {}
 
-def generic_factory_unpickle(UniqueFactory factory, *args):
+def register_factory_unpickle(name, callable):
+    """
+    Register a callable to handle the unpickling from an old
+    :class:`UniqueFactory` object.
+
+    :class:`UniqueFactory` pickles use a global name through
+    :func:`generic_factory_unpickle()`, so the usual
+    :func:`~sage.structure.sage_object.register_unpickle_override()`
+    cannot be used here.
+
+    .. SEEALSO::
+
+        :func:`generic_factory_unpickle()`
+
+    TESTS:
+
+    This is similar to the example given in
+    :func:`generic_factory_unpickle()`, but here we will use a function to
+    explicitly return a polynomial ring.
+
+    First, we create the factory. In a doctest, it is needed to explicitly put
+    it into ``__main__``, so that it can be located when pickling. Also, it is
+    needed that we work with a new-style class::
+
+        sage: from sage.structure.factory import UniqueFactory, register_factory_unpickle
+        sage: import __main__
+        sage: class OldStuff(object):
+        ....:     def __init__(self, n, **extras):
+        ....:         self.n = n
+        ....:     def __repr__(self):
+        ....:         return "Rotten old thing of level {}".format(self.n)
+        sage: __main__.OldStuff = OldStuff
+        sage: class MyFactory(UniqueFactory):
+        ....:     def create_object(self, version, key, **extras):
+        ....:         return OldStuff(key[0])
+        ....:     def create_key(self, *args):
+        ....:         return args
+        sage: G = MyFactory('__main__.G')
+        sage: __main__.G = G
+        sage: a = G(3); a
+        Rotten old thing of level 3
+        sage: loads(dumps(a)) is a
+        True
+
+    Now, we create a pickle (the string returned by ``dumps(a)``)::
+
+        sage: s = dumps(a)
+
+    We create the function which will handle the unpickling::
+
+        sage: def foo(n, **kwds):
+        ....:     return PolynomialRing(QQ, n, 'x')
+        sage: register_factory_unpickle('__main__.G', foo)
+
+    The old pickle correctly unpickles as an explicit polynomial ring::
+
+        sage: loads(s)
+        Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
+    """
+    #global factory_unpickles
+    factory_unpickles[name] = callable
+
+def generic_factory_unpickle(factory, *args):
     """
     Method used for unpickling the object.
 
@@ -554,8 +633,84 @@ def generic_factory_unpickle(UniqueFactory factory, *args):
         True
         sage: sage.structure.factory.generic_factory_unpickle(*data) is V
         True
+
+    TESTS:
+
+    The following was enabled in :trac:`16349`. Suppose we have defined
+    (somewhere in the library of an old Sage version) a unique factory; in our
+    example below, it returns polynomial rings. Now suppose that we want to
+    replace the factory by something else, say, a class that provides the
+    unique parent behaviour using
+    :class:`~sage.structure.unique_representation.UniqueRepresentation`. We
+    show here how to make it possible to unpickle a pickle created with the
+    factory, automatically turning it into an instance of the new class.
+
+    First, we create the factory. In a doctest, it is needed to explicitly put
+    it into ``__main__``, so that it can be located when pickling. Also, it is
+    needed that we work with a new-style class::
+
+        sage: from sage.structure.factory import UniqueFactory
+        sage: import __main__
+        sage: class OldStuff(object):
+        ....:     def __init__(self, n, **extras):
+        ....:         self.n = n
+        ....:     def __repr__(self):
+        ....:         return "Rotten old thing of level {}".format(self.n)
+        sage: __main__.OldStuff = OldStuff
+        sage: class MyFactory(UniqueFactory):
+        ....:     def create_object(self, version, key, **extras):
+        ....:         return OldStuff(key[0])
+        ....:     def create_key(self, *args):
+        ....:         return args
+        sage: F = MyFactory('__main__.F')
+        sage: __main__.F = F
+        sage: a = F(3); a
+        Rotten old thing of level 3
+        sage: loads(dumps(a)) is a
+        True
+
+    Now, we create a pickle (the string returned by ``dumps(a)``)::
+
+        sage: s = dumps(a)
+
+    We create a new class, derived from
+    :class:`~sage.structure.unique_representation.UniqueRepresentation`, that
+    shall replace the old factory. In particular, the class has to have the
+    same name as the old factory, and has to be put into the same module
+    (here: ``__main__``). We turn it into a sub-class of the old class, but
+    this is just to save the effort of writing a new init method::
+
+        sage: from sage.structure.unique_representation import UniqueRepresentation
+        sage: class F(UniqueRepresentation, OldStuff):
+        ....:     def __repr__(self):
+        ....:         return "Shiny new thing of level {}".format(self.n)
+        sage: __main__.F = F
+
+    The old pickle correctly unpickles as an instance of the new class, which
+    is of course different from the instance of the old class, but exhibits
+    unique object behaviour as well::
+
+        sage: b = loads(s); b
+        Shiny new thing of level 3
+        sage: a is b
+        False
+        sage: loads(dumps(b)) is b
+        True
+
     """
-    return factory.get_object(*args)
+    cdef UniqueFactory F
+    if factory is not None:
+        try:
+            F = factory
+            return F.get_object(*args)
+        except TypeError:
+            pass
+    # See trac #16349: When replacing a UniqueFactory by something else (e.g.,
+    # a UniqueRepresentation), then we get the object by calling.
+    #
+    # The first argument of a UniqueFactory pickle is a version number. We
+    # strip this.
+    return factory(*args[1], **args[2])
 
 def generic_factory_reduce(self, proto):
     """
@@ -584,6 +739,11 @@ def lookup_global(name):
         sage: lookup_global('sage.rings.all.ZZ')
         Integer Ring
     """
+    try:
+        return factory_unpickles[name]
+    except KeyError:
+        pass
+
     if '.' in name:
         module, name = name.rsplit('.', 1)
         all = __import__(module, fromlist=[name])

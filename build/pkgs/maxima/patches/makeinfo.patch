@@ -1,0 +1,25 @@
+Use $(MAKEINFO) instead of hardcoded makeinfo to build maxima.info.
+Introduced in Trac #17514 (Upgrade Maxima to 5.35.1).
+
+--- a/doc/info/Makefile.am
++++ b/doc/info/Makefile.am
+@@ -211,7 +211,7 @@
+ all-local: maxima.info maxima-index.lisp $(MAXIMA_CHM)
+ 
+ maxima.info : maxima.texi
+-	makeinfo --split-size=1000000 maxima.texi
++	$(MAKEINFO) --split-size=1000000 maxima.texi
+ 
+ html: maxima.html contents.hhc
+ 
+--- a/doc/info/Makefile.in
++++ b/doc/info/Makefile.in
+@@ -1064,7 +1064,7 @@
+ all-local: maxima.info maxima-index.lisp $(MAXIMA_CHM)
+ 
+ maxima.info : maxima.texi
+-	makeinfo --split-size=1000000 maxima.texi
++	$(MAKEINFO) --split-size=1000000 maxima.texi
+ 
+ html: maxima.html contents.hhc
+ 

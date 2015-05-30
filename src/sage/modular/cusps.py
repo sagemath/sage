@@ -36,6 +36,7 @@ from sage.structure.element import Element, is_InfinityElement
 from sage.modular.modsym.p1list import lift_to_sl2z_llong
 from sage.matrix.matrix import is_Matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 
 class Cusps_class(ParentWithBase):
     """
@@ -152,7 +153,7 @@ class Cusps_class(ParentWithBase):
             return self._coerce_try(x, QQ)
 
     @cached_method
-    def zero_element(self):
+    def zero(self):
         """
         Return the zero cusp.
 
@@ -163,11 +164,13 @@ class Cusps_class(ParentWithBase):
 
         EXAMPLE::
 
-            sage: Cusps.zero_element()
+            sage: Cusps.zero()
             0
 
         """
         return Cusp(0, parent=self)
+
+    zero_element = deprecated_function_alias(17694, zero)
 
 Cusps = Cusps_class()
 
@@ -304,7 +307,7 @@ class Cusp(Element):
                 self.__b = ZZ(1)
             elif isinstance(a, (tuple, list)):
                 if len(a) != 2:
-                    raise TypeError, "Unable to convert %s to a Cusp"%a
+                    raise TypeError("Unable to convert %s to a Cusp"%a)
                 if ZZ(a[1]) == 0:
                     self.__a = ZZ(1)
                     self.__b = ZZ(0)
@@ -314,25 +317,25 @@ class Cusp(Element):
                     self.__a = r.numer()
                     self.__b = r.denom()
                 except (ValueError, TypeError):
-                    raise TypeError, "Unable to convert %s to a Cusp"%a
+                    raise TypeError("Unable to convert %s to a Cusp"%a)
             else:
                 try:
                     r = QQ(a)
                     self.__a = r.numer()
                     self.__b = r.denom()
                 except (ValueError, TypeError):
-                    raise TypeError, "Unable to convert %s to a Cusp"%a
+                    raise TypeError("Unable to convert %s to a Cusp"%a)
             return
 
         if is_InfinityElement(b):
             if is_InfinityElement(a) or (isinstance(a, Cusp) and a.is_infinity()):
-                raise TypeError, "Unable to convert (%s, %s) to a Cusp"%(a, b)
+                raise TypeError("Unable to convert (%s, %s) to a Cusp"%(a, b))
             self.__a = ZZ(0)
             self.__b = ZZ(1)
             return
         elif not b:
             if not a:
-                raise TypeError, "Unable to convert (%s, %s) to a Cusp"%(a, b)
+                raise TypeError("Unable to convert (%s, %s) to a Cusp"%(a, b))
             self.__a = ZZ(1)
             self.__b = ZZ(0)
             return
@@ -354,13 +357,13 @@ class Cusp(Element):
             r = ZZ(a) / b
         elif isinstance(a, (tuple, list)):
             if len(a) != 2:
-                raise TypeError, "Unable to convert (%s, %s) to a Cusp"%(a, b)
+                raise TypeError("Unable to convert (%s, %s) to a Cusp"%(a, b))
             r = ZZ(a[0]) / (ZZ(a[1]) * b)
         else:
             try:
                 r = QQ(a) / b
             except (ValueError, TypeError):
-                raise TypeError, "Unable to convert (%s, %s) to a Cusp"%(a, b)
+                raise TypeError("Unable to convert (%s, %s) to a Cusp"%(a, b))
 
         self.__a = r.numer()
         self.__b = r.denom()
@@ -530,7 +533,7 @@ class Cusp(Element):
             pass
 
         if not self.__b:
-            raise TypeError, "cusp %s is not a rational number"%self
+            raise TypeError("cusp %s is not a rational number"%self)
         self.__rational = self.__a / self.__b
         return self.__rational
 
@@ -557,7 +560,7 @@ class Cusp(Element):
             TypeError: cusp -3/7 is not an integer
         """
         if self.__b != 1:
-            raise TypeError, "cusp %s is not an integer"%self
+            raise TypeError("cusp %s is not an integer"%self)
         return self.__a
 
     def _repr_(self):
@@ -668,7 +671,7 @@ class Cusp(Element):
         Modular Elliptic Curves', or Prop 2.27 of Stein's Ph.D. thesis.
         """
         if transformation not in [False,True,"matrix",None,"corner"]:
-            raise ValueError, "Value %s of the optional argument transformation is not valid."
+            raise ValueError("Value %s of the optional argument transformation is not valid.")
 
         if not isinstance(other, Cusp):
             other = Cusp(other)
@@ -678,8 +681,8 @@ class Cusp(Element):
         u2 = other.__a
         v2 = other.__b
 
-        zero = ZZ.zero_element()
-        one = ZZ.one_element()
+        zero = ZZ.zero()
+        one = ZZ.one()
 
         if transformation == "matrix":
             from sage.matrix.constructor import matrix
@@ -928,7 +931,7 @@ class Cusp(Element):
         if not isinstance(other, Cusp):
             other = Cusp(other)
         if not is_GammaH(G):
-            raise TypeError, "G must be a group GammaH(N)."
+            raise TypeError("G must be a group GammaH(N).")
 
         H = G._list_of_elements_in_H()
         N = ZZ(G.level())
@@ -1009,7 +1012,7 @@ class Cusp(Element):
         where `[\alpha]` is the equivalence class of `\alpha` modulo `G`.
 
         This code only needs as input the level and not the group since the
-        action of galois for a congruence group `G` of level `N` is compatible
+        action of Galois for a congruence group `G` of level `N` is compatible
         with the action of the full congruence group `\Gamma(N)`.
 
 
@@ -1032,14 +1035,14 @@ class Cusp(Element):
         .. NOTE::
 
             Modular curves can have multiple non-isomorphic models over `\QQ`.
-            The action of galois depends on such a model. The model over `\QQ`
+            The action of Galois depends on such a model. The model over `\QQ`
             of `X(G)` used here is the model where the function field
             `\QQ(X(G))` is given by the functions whose fourier expansion at
             `\infty` have their coefficients in `\QQ`. For `X(N):=X(\Gamma(N))`
             the corresponding moduli interpretation over `\ZZ[1/N]` is that
             `X(N)` parametrizes pairs `(E,a)` where `E` is a (generalized)
             elliptic curve and `a: \ZZ / N\ZZ \times \mu_N \to E` is a closed
-            immersion such that the weil pairing of `a(1,1)` and `a(0,\zeta_N)`
+            immersion such that the Weil pairing of `a(1,1)` and `a(0,\zeta_N)`
             is `\zeta_N`. In this parameterisation the point `z \in H`
             corresponds to the pair `(E_z,a_z)` with `E_z=\CC/(z \ZZ+\ZZ)` and
             `a_z: \ZZ / N\ZZ \times \mu_N \to E` given by `a_z(1,1) = z/N` and
@@ -1072,7 +1075,7 @@ class Cusp(Element):
 
         TESTS:
 
-        Here we check that the galois action is indeed a permutation on the
+        Here we check that the Galois action is indeed a permutation on the
         cusps of Gamma1(48) and check that :trac:`13253` is fixed. ::
 
             sage: G=Gamma1(48)

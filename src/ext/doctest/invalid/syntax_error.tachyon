@@ -1,0 +1,91 @@
+# This is NOT a valid tachyon input file
+#
+# We use it to test that tachyon errors are diagnosed in the Sage
+# interface to tachyon.
+
+
+begin_scene
+resolution 400 400
+
+         camera
+            zoom 1.0
+            aspectratio 1.0
+            antialiasing 8
+            raydepth 8
+            center  2.3 2.4 2.0
+            viewdir  -2.3 -2.4 -2.0
+            updir  0.0 0.0 1.0
+         end_camera
+
+
+      light center  4.0 3.0 2.0
+            rad 0.2
+            color  1.0 1.0 1.0
+
+      plane
+        center -2000 -1000 -500
+        normal 2.3 2.4 2.0
+        TEXTURE
+            AMBIENT 1.0 DIFFUSE 1.0 SPECULAR 1.0 OPACITY 1.0
+            COLOR 1.0 1.0 1.0
+            TEXFUNC 0
+
+    Texdef texture239
+  Ambient 0.333333333333 Diffuse 0.666666666667 Specular 0.0 Opacity 1
+   Color 0.0 0.0 0.0
+   TexFunc 0
+Texdef texture240
+  Ambient 0.333333333333 Diffuse 0.666666666667 Specular 0.0 Opacity 1/2
+   Color 0.0 0.0 0.0
+   TexFunc 0
+
+    TRI V0 0.5 -0.5 0.5 V1 -0.5 -0.5 0.5 V2 -0.5 0.5 0.5
+texture239
+TRI V0 0.5 -0.5 0.5 V1 -0.5 0.5 0.5 V2 0.5 0.5 0.5
+texture239
+TRI V0 0.5 -0.5 0.5 V1 0.5 -0.5 -0.5 V2 -0.5 -0.5 -0.5
+texture239
+TRI V0 0.5 -0.5 0.5 V1 -0.5 -0.5 -0.5 V2 -0.5 -0.5 0.5
+texture239
+TRI V0 0.5 -0.5 0.5 V1 0.5 0.5 0.5 V2 0.5 0.5 -0.5
+texture239
+TRI V0 0.5 -0.5 0.5 V1 0.5 0.5 -0.5 V2 0.5 -0.5 -0.5
+texture239
+TRI V0 -0.5 -0.5 -0.5 V1 0.5 -0.5 -0.5 V2 0.5 0.5 -0.5
+texture239
+TRI V0 -0.5 -0.5 -0.5 V1 0.5 0.5 -0.5 V2 -0.5 0.5 -0.5
+texture239
+TRI V0 0.5 0.5 -0.5 V1 0.5 0.5 0.5 V2 -0.5 0.5 0.5
+texture239
+TRI V0 0.5 0.5 -0.5 V1 -0.5 0.5 0.5 V2 -0.5 0.5 -0.5
+texture239
+TRI V0 -0.5 0.5 0.5 V1 -0.5 -0.5 0.5 V2 -0.5 -0.5 -0.5
+texture239
+TRI V0 -0.5 0.5 0.5 V1 -0.5 -0.5 -0.5 V2 -0.5 0.5 -0.5
+texture239
+TRI V0 3 -0.5 0.5 V1 2 -0.5 0.5 V2 2 0.5 0.5
+texture240
+TRI V0 3 -0.5 0.5 V1 2 0.5 0.5 V2 3 0.5 0.5
+texture240
+TRI V0 3 -0.5 0.5 V1 3 -0.5 -0.5 V2 2 -0.5 -0.5
+texture240
+TRI V0 3 -0.5 0.5 V1 2 -0.5 -0.5 V2 2 -0.5 0.5
+texture240
+TRI V0 3 -0.5 0.5 V1 3 0.5 0.5 V2 3 0.5 -0.5
+texture240
+TRI V0 3 -0.5 0.5 V1 3 0.5 -0.5 V2 3 -0.5 -0.5
+texture240
+TRI V0 2 -0.5 -0.5 V1 3 -0.5 -0.5 V2 3 0.5 -0.5
+texture240
+TRI V0 2 -0.5 -0.5 V1 3 0.5 -0.5 V2 2 0.5 -0.5
+texture240
+TRI V0 3 0.5 -0.5 V1 3 0.5 0.5 V2 2 0.5 0.5
+texture240
+TRI V0 3 0.5 -0.5 V1 2 0.5 0.5 V2 2 0.5 -0.5
+texture240
+TRI V0 2 0.5 0.5 V1 2 -0.5 0.5 V2 2 -0.5 -0.5
+texture240
+TRI V0 2 0.5 0.5 V1 2 -0.5 -0.5 V2 2 0.5 -0.5
+texture240
+
+end_scene

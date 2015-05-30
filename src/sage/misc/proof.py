@@ -1,5 +1,5 @@
 """
-Whether or not computations are provably correct by default.
+Whether or not computations are provably correct by default
 """
 
 #proof = False

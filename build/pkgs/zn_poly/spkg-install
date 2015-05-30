@@ -80,6 +80,11 @@ for patch in ../patches/*.patch; do
 done &&
 echo
 
+# use 2to3 if we are running on python3
+if python -c 'import sys; sys.exit(sys.version_info.major != 3)'; then
+    2to3 -n -w --no-diffs makemakefile.py
+fi
+
 ###############################################################################
 # Configure, tune, build and test zn_poly:
 ###############################################################################

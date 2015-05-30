@@ -11,9 +11,7 @@ Number fields
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-from sage.misc.cachefunc import cached_method
 from sage.categories.basic import Fields
 
 class NumberFields(Category_singleton):
@@ -84,8 +82,8 @@ class NumberFields(Category_singleton):
             sage: ZZ in NumberFields()
             False
         """
-        import sage.rings.all
-        return sage.rings.all.is_NumberField(x)
+        import sage.rings.number_field.number_field_base
+        return sage.rings.number_field.number_field_base.is_NumberField(x)
 
     def _call_(self, x):
         r"""
@@ -113,7 +111,7 @@ class NumberFields(Category_singleton):
         try:
             return x.number_field()
         except AttributeError:
-            raise  TypeError, "unable to canonically associate a number field to %s"%x
+            raise  TypeError("unable to canonically associate a number field to %s"%x)
 
 
     class ParentMethods:

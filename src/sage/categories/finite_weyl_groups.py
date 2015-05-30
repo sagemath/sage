@@ -8,12 +8,9 @@ Finite Weyl Groups
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
-from sage.categories.weyl_groups import WeylGroups
+from sage.categories.category_with_axiom import CategoryWithAxiom
 
-class FiniteWeylGroups(Category):
+class FiniteWeylGroups(CategoryWithAxiom):
     """
     The category of finite Weyl groups.
 
@@ -23,7 +20,7 @@ class FiniteWeylGroups(Category):
         sage: C
         Category of finite weyl groups
         sage: C.super_categories()
-        [Category of weyl groups, Category of finite coxeter groups]
+        [Category of finite coxeter groups, Category of weyl groups]
         sage: C.example()
         The symmetric group on {0, ..., 3}
 
@@ -59,16 +56,6 @@ class FiniteWeylGroups(Category):
         running ._test_simple_projections() . . . pass
         running ._test_some_elements() . . . pass
     """
-
-    @cached_method
-    def super_categories(self):
-        r"""
-        EXAMPLES::
-
-            sage: FiniteWeylGroups().super_categories()
-            [Category of weyl groups, Category of finite coxeter groups]
-        """
-        return [WeylGroups(), FiniteCoxeterGroups()]
 
     class ParentMethods:
         pass

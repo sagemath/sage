@@ -83,6 +83,7 @@ plot a histogram with 10 bins.
     sage: my_data2 = [dist.get_random_element()+2 for _ in range(1000)]
     sage: T = stats.TimeSeries(my_data)
     sage: T.plot_histogram(normalize=False,bins=10)
+    Graphics object consisting of 10 graphics primitives
 
 To access discrete distributions, we access another part of Sage which
 has statistics built in: `Scipy <http://www.scipy.org>`_.
@@ -101,6 +102,7 @@ has statistics built in: `Scipy <http://www.scipy.org>`_.
     sage: import scipy.stats
     sage: binom_dist = scipy.stats.binom(20,.05)
     sage: bar_chart([binom_dist.pmf(x) for x in range(21)])
+    Graphics object consisting of 1 graphics primitive
 
 The ``bar_chart`` function performs some of the duties of histograms.
 
@@ -175,13 +177,13 @@ Notice that R also uses the ``#`` symbol to indicate comments.
 ::
 
     sage: %r
-    ...   x = c(18,23,25,35,65,54,34,56,72,19,23,42,18,39,37) # ages of individuals
-    ...   y = c(202,186,187,180,156,169,174,172,153,199,193,174,198,183,178) # maximum heart rate of each one
-    ...   png() # turn on plotting
-    ...   plot(x,y) # make a plot
-    ...   lm(y ~ x) # do the linear regression
-    ...   abline(lm(y ~ x)) # plot the regression line
-    ...   dev.off()     # turn off the device so it plots
+    ....: x = c(18,23,25,35,65,54,34,56,72,19,23,42,18,39,37) # ages of individuals
+    ....: y = c(202,186,187,180,156,169,174,172,153,199,193,174,198,183,178) # maximum heart rate of each one
+    ....: png() # turn on plotting
+    ....: plot(x,y) # make a plot
+    ....: lm(y ~ x) # do the linear regression
+    ....: abline(lm(y ~ x)) # plot the regression line
+    ....: dev.off()     # turn off the device so it plots
     Call:
     lm(formula = y ~ x)
 

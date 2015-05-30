@@ -9,17 +9,18 @@
 
 PIPE = build/pipestatus
 
+
 all: start doc  # indirectly depends on build
 
 logs:
 	mkdir -p $@
 
-build: logs
-	cd build && \
+build: logs configure
+	+cd build && \
 	"../$(PIPE)" \
 		"env SAGE_PARALLEL_SPKG_BUILD='$(SAGE_PARALLEL_SPKG_BUILD)' ./install all 2>&1" \
 		"tee -a ../logs/install.log"
-	./sage -b
+	+./sage -b
 
 # Preemptively download all standard upstream source tarballs.
 download:
@@ -58,6 +59,13 @@ doc: doc-html
 doc-html: build
 	$(PIPE) "./sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
 
+# 'doc-html-no-plot': build docs without building the graphics coming
+# from the '.. plot' directive, in case you want to save a few
+# megabytes of disk space. 'doc-clean' is a prerequisite because the
+# presence of graphics is cached in src/doc/output.
+doc-html-no-plot: build doc-clean
+	$(PIPE) "./sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+
 doc-html-mathjax: build
 	$(PIPE) "./sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
 
@@ -82,12 +90,23 @@ bdist-clean: clean
 	rm -rf logs
 	rm -rf dist
 	rm -rf tmp
-	rm -f build/Makefile
+	rm -f aclocal.m4 config.log config.status confcache
+	rm -rf autom4te.cache
+	rm -f build/Makefile build/Makefile-auto
 	rm -f .BUILDSTART
 
 distclean: clean doc-clean lib-clean bdist-clean
 	@echo "Deleting all remaining output from build system ..."
 	rm -rf local
+
+# Delete all auto-generated files which are distributed as part of the
+# source tarball
+bootstrap-clean:
+	rm -rf config configure build/Makefile-auto.in
+
+# Remove absolutely everything which isn't part of the git repo
+maintainer-clean: distclean bootstrap-clean
+	rm -rf upstream
 
 micro_release: bdist-clean lib-clean
 	@echo "Stripping binaries ..."
@@ -140,6 +159,9 @@ ptestoptional: ptestall # just an alias
 
 ptestoptionallong: ptestalllong # just an alias
 
+configure: configure.ac src/bin/sage-version.sh \
+        m4/ax_c_check_flag.m4 m4/ax_gcc_option.m4 m4/ax_gcc_version.m4 m4/ax_gxx_option.m4 m4/ax_gxx_version.m4 m4/ax_prog_perl_version.m4
+	./bootstrap -d
 
 install:
 	echo "Experimental use only!"
@@ -160,8 +182,8 @@ install:
 	"$(DESTDIR)"/bin/sage -c # Run sage-location
 
 
-.PHONY: all build build-serial start install \
+.PHONY: all build build-serial start install micro_release \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
-	doc-clean clean lib-clean bdist-clean distclean micro_release \
+	doc-clean clean lib-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong

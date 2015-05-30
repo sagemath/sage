@@ -173,25 +173,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
     TESTS::
 
-        sage: TestSuite(S).run(verbose = True)
-        running ._test_an_element() . . . pass
-        running ._test_associativity() . . . pass
-        running ._test_category() . . . pass
-        running ._test_elements() . . .
-          Running the test suite of self.an_element()
-          running ._test_category() . . . pass
-          running ._test_eq() . . . pass
-          running ._test_not_implemented_methods() . . . pass
-          running ._test_pickling() . . . pass
-          pass
-        running ._test_elements_eq_reflexive() . . . pass
-        running ._test_elements_eq_symmetric() . . . pass
-        running ._test_elements_eq_transitive() . . . pass
-        running ._test_elements_neq() . . . pass
-        running ._test_eq() . . . pass
-        running ._test_not_implemented_methods() . . . pass
-        running ._test_pickling() . . . pass
-        running ._test_some_elements() . . . pass
+        sage: TestSuite(S).run()
     """
     def __init__(self, alphabet=('a','b','c','d')):
         r"""
@@ -214,7 +196,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = Semigroups())
+        Parent.__init__(self, category = Semigroups().FinitelyGenerated())
 
     def _repr_(self):
         r"""

@@ -1,5 +1,5 @@
 r"""
-Semirings
+Semirngs
 """
 #*****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
@@ -8,13 +8,10 @@ Semirings
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category
-from sage.categories.category_singleton import Category_singleton
-from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
-from sage.categories.monoids import Monoids
-from sage.misc.cachefunc import cached_method
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from magmas_and_additive_magmas import MagmasAndAdditiveMagmas
 
-class Semirings(Category_singleton):
+class Semirings(CategoryWithAxiom):
     """
     The category of semirings.
 
@@ -24,61 +21,29 @@ class Semirings(Category_singleton):
     `(S,+)` and a multiplicative monoid `(S,*)`, where `*` distributes
     over `+`.
 
-    See: http://en.wikipedia.org/wiki/Semiring
+    .. SEEALSO: :wikipedia:`Semiring`
 
     EXAMPLES::
 
         sage: Semirings()
         Category of semirings
         sage: Semirings().super_categories()
-        [Category of commutative additive monoids, Category of monoids]
+        [Category of associative additive commutative additive associative additive unital distributive magmas and additive magmas,
+         Category of monoids]
+
+        sage: sorted(Semirings().axioms())
+        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+
+        sage: Semirings() is (CommutativeAdditiveMonoids() & Monoids()).Distributive()
+        True
+
+        sage: Semirings().AdditiveInverse()
+        Category of rings
+
 
     TESTS::
 
         sage: TestSuite(Semirings()).run()
     """
+    _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "Unital")
 
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: Semirings().super_categories()
-            [Category of commutative additive monoids, Category of monoids]
-        """
-        return [CommutativeAdditiveMonoids(), Monoids()]
-
-    class ParentMethods:
-
-        def _test_distributivity(self, **options):
-            r"""
-            Test the distributivity of `*` on `+` on (not necessarily
-            all) elements of this semiring.
-
-            INPUT::
-
-             - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
-
-            EXAMPLES:
-
-            By default, this method runs the tests only on the
-            elements returned by ``self.some_elements()``::
-
-                sage: NN.some_elements()
-                [0, 1, 3, 42]
-                sage: NN._test_distributivity()
-
-            However, the elements tested can be customized with the
-            ``elements`` keyword argument::
-
-                sage: CC._test_distributivity(elements=[CC(0),CC(1),CC(3),CC(I)])
-
-            See the documentation for :class:`TestSuite` for more information.
-            """
-            tester = self._tester(**options)
-            S = tester.some_elements()
-            from sage.combinat.cartesian_product import CartesianProduct
-            for x,y,z in tester.some_elements(CartesianProduct(S,S,S)):
-                # left distributivity
-                tester.assert_(x * (y + z) == (x * y) + (x * z))
-                # right distributivity
-                tester.assert_((x + y) * z == (x * z) + (y * z))

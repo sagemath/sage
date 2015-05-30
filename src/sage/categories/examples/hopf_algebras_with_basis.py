@@ -28,7 +28,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: from sage.categories.examples.hopf_algebras_with_basis import MyGroupAlgebra
             sage: A = MyGroupAlgebra(QQ, DihedralGroup(6))
             sage: A.category()
-            Category of hopf algebras with basis over Rational Field
+            Category of finite dimensional hopf algebras with basis over Rational Field
             sage: TestSuite(A).run()
         """
         self._group = G
@@ -61,7 +61,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
 
     def product_on_basis(self, g1, g2):
         r"""
-        Product, on basis elements, as per :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        Product, on basis elements, as per
+        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
 
         The product of two basis elements is induced by the product of
         the corresponding elements of the group.
@@ -80,7 +81,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     @cached_method
     def algebra_generators(self):
         r"""
-        The generators of this algebra, as per :meth:`Algebras.ParentMethods.algebra_generators`.
+        Return the generators of this algebra, as per :meth:`~.magmatic_algebras.MagmaticAlgebras.ParentMethods.algebra_generators`.
 
         They correspond to the generators of the group.
 
@@ -89,7 +90,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: A = HopfAlgebrasWithBasis(QQ).example(); A
             An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
             sage: A.algebra_generators()
-            Finite family {(1,2,3): B[(1,2,3)], (1,3): B[(1,3)]}
+            Finite family {(1,3): B[(1,3)], (1,2,3): B[(1,2,3)]}
         """
         return Family(self._group.gens(), self.monomial)
 

@@ -1,7 +1,7 @@
 /*** EXAMPLE: Modular form Delta                                    ***/
 /*** (illustration of unusual coefficient growth)                   ***/
 /***                                                                ***/
-/*** v1.0, July 2002, questions to tim.dokchitser@durham.ac.uk      ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk     ***/
 /*** type \rex-delta or read("ex-delta") at pari prompt to run this ***/
 
 read("computel");                 \\ read the ComputeL package

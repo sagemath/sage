@@ -9,16 +9,17 @@ nature.  It focuses on the representation theory of complex
 semisimple (reductive) Lie groups and algebras, and on the
 structure of their Weyl groups and root systems.
 
-Type \code{lie.[tab]} for a list of all the functions available
-from your LiE install.  Type \code{lie.[tab]?} for LiE's
-help about a given function.  Type \code{lie(...)} to create
-a new LiE object, and \code{lie.eval(...)} to run a string
+Type ``lie.[tab]`` for a list of all the functions available
+from your LiE install.  Type ``lie.[tab]?`` for LiE's
+help about a given function.  Type ``lie(...)`` to create
+a new LiE object, and ``lie.eval(...)`` to run a string
 using LiE (and get the result back as a string).
 
 To access the LiE interpreter directly, run lie_console().
 
 
-EXAMPLES:
+EXAMPLES::
+
     sage: a4 = lie('A4')  # optional - lie
     sage: lie.diagram('A4')          # optional - lie
     O---O---O---O
@@ -45,11 +46,12 @@ EXAMPLES:
     1X[5,3]
 
 
-\subsection{Tutorial}
+Tutorial
+--------
 
 The following examples are taken from Section 2.1 of the LiE manual.
 
-You can perform basic arithmetic operations in LiE.
+You can perform basic arithmetic operations in LiE. ::
 
     sage: lie.eval('19+68') # optional - lie
     '87'
@@ -66,7 +68,7 @@ You can perform basic arithmetic operations in LiE.
 
 Vectors in LiE are created using square brackets.  Notice that
 the indexing in LiE is 1-based, unlike Python/Sage which is
-0-based.
+0-based. ::
 
     sage: v = lie('[3,2,6873,-38]') # optional - lie
     sage: v # optional - lie
@@ -84,7 +86,7 @@ the indexing in LiE is 1-based, unlike Python/Sage which is
     sage: v^v # optional - lie
     [3,2,6873,-38,3,2,6873,-38]
 
-You can also work with matrices in LiE.
+You can also work with matrices in LiE. ::
 
     sage: m = lie('[[1,0,3,3],[12,4,-4,7],[-1,9,8,0],[3,-5,-2,9]]') # optional - lie
     sage: m # optional - lie
@@ -127,7 +129,7 @@ You can also work with matrices in LiE.
          ]
 
 
-LiE handles multivariate (Laurent) polynomials.
+LiE handles multivariate (Laurent) polynomials. ::
 
     sage: lie('X[1,2]') # optional - lie
     1X[1,2]
@@ -143,7 +145,7 @@ LiE handles multivariate (Laurent) polynomials.
     0X[0,0]
 
 
-You can call LiE's built-in functions using lie.functionname .
+You can call LiE's built-in functions using ``lie.functionname``. ::
 
     sage: lie.partitions(6) # optional - lie
          [[6,0,0,0,0,0]
@@ -169,7 +171,7 @@ You can call LiE's built-in functions using lie.functionname .
 
 You can define your own functions in LiE using lie.eval .  Once you've defined
 a function (say f), you can call it using lie.f ; however, user-defined functions
-do not show up when using tab-completion.
+do not show up when using tab-completion. ::
 
     sage: lie.eval('f(int x) = 2*x') # optional - lie
     ''
@@ -185,7 +187,7 @@ do not show up when using tab-completion.
 
 
 LiE's help can be accessed through lie.help('functionname') where
-functionname is the function you want to receive help for.
+functionname is the function you want to receive help for. ::
 
    sage: print lie.help('diagram') # optional - lie
    diagram(g).   Prints the Dynkin diagram of g, also indicating
@@ -202,7 +204,7 @@ This can also be accessed with lie.functionname? .
 With the exception of groups, all LiE data types can be converted into
 native Sage data types by calling the .sage() method.
 
-Integers:
+Integers::
 
     sage: a = lie('1234') # optional - lie
     sage: b = a.sage(); b # optional - lie
@@ -210,7 +212,7 @@ Integers:
     sage: type(b) # optional - lie
     <type 'sage.rings.integer.Integer'>
 
-Vectors:
+Vectors::
 
     sage: a = lie('[1,2,3]') # optional - lie
     sage: b = a.sage(); b # optional - lie
@@ -218,7 +220,7 @@ Vectors:
     sage: type(b) # optional - lie
     <type 'list'>
 
-Matrices:
+Matrices::
 
     sage: a = lie('[[1,2],[3,4]]') # optional - lie
     sage: b = a.sage(); b # optional - lie
@@ -227,8 +229,7 @@ Matrices:
     sage: type(b) # optional - lie
     <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
-
-Polynomials:
+Polynomials::
 
     sage: a = lie('X[1,2] - 2*X[2,1]') # optional - lie
     sage: b = a.sage(); b              # optional - lie
@@ -236,7 +237,7 @@ Polynomials:
     sage: type(b)                      # optional - lie
     <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
 
-Text:
+Text::
 
     sage: a = lie('"text"') # optional - lie
     sage: b = a.sage(); b # optional - lie
@@ -248,7 +249,7 @@ Text:
 LiE can be programmed using the Sage interface as well. Section 5.1.5
 of the manual gives an example of a function written in LiE's language
 which evaluates a polynomial at a point.  Below is a (roughly) direct
-translation of that program into Python / Sage.
+translation of that program into Python / Sage. ::
 
     sage: def eval_pol(p, pt): # optional - lie
     ...       s = 0
@@ -269,8 +270,9 @@ translation of that program into Python / Sage.
 
 
 AUTHORS:
-    -- Mike Hansen 2007-08-27
-    -- William Stein (template)
+
+- Mike Hansen 2007-08-27
+- William Stein (template)
 """
 
 ##########################################################################
@@ -285,7 +287,8 @@ AUTHORS:
 ##########################################################################
 
 from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, AsciiArtString
-from sage.misc.misc import verbose, DOT_SAGE, SAGE_LOCAL
+from sage.misc.all import verbose, prod
+from sage.env import DOT_SAGE, SAGE_LOCAL
 
 
 COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj'%DOT_SAGE
@@ -295,10 +298,10 @@ class LiE(Expect):
     r"""
     Interface to the LiE interpreter.
 
-    Type \code{lie.[tab]} for a list of all the functions available
-    from your LiE install.  Type \code{lie.[tab]?} for LiE's
-    help about a given function.  Type \code{lie(...)} to create
-    a new LiE object, and \code{lie.eval(...)} to run a string
+    Type ``lie.[tab]`` for a list of all the functions available
+    from your LiE install.  Type ``lie.[tab]?`` for LiE's
+    help about a given function.  Type ``lie(...)`` to create
+    a new LiE object, and ``lie.eval(...)`` to run a string
     using LiE (and get the result back as a string).
 
     """
@@ -307,7 +310,8 @@ class LiE(Expect):
                  logfile=None,
                  server=None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie == loads(dumps(lie))
             True
         """
@@ -351,7 +355,8 @@ class LiE(Expect):
 
     def _read_info_files(self, use_disk_cache=True):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.interfaces.lie import LiE
             sage: lie = LiE()
             sage: lie._trait_names_list is None
@@ -456,7 +461,8 @@ class LiE(Expect):
 
     def _repr_(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie
             LiE Interpreter
         """
@@ -464,7 +470,8 @@ class LiE(Expect):
 
     def __reduce__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.__reduce__()
             (<function reduce_load_lie at 0x...>, ())
 
@@ -473,7 +480,8 @@ class LiE(Expect):
 
     def _function_class(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._function_class()
             <class 'sage.interfaces.lie.LiEFunction'>
         """
@@ -481,7 +489,8 @@ class LiE(Expect):
 
     def _quit_string(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._quit_string()
             'quit'
         """
@@ -489,7 +498,8 @@ class LiE(Expect):
 
     def _read_in_file_command(self, filename):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._read_in_file_command('testfile')
             Traceback (most recent call last):
             ...
@@ -500,7 +510,8 @@ class LiE(Expect):
 
     def trait_names(self, type=None, verbose=False, use_disk_cache=True):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.trait_names() # optional - lie
             ['Cartan_type',
              'cent_roots',
@@ -517,15 +528,17 @@ class LiE(Expect):
 
     def _an_element_impl(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._an_element_impl() # optional - lie
             0
         """
         return self(0)
 
     def read(self, filename):
-        """
-        EXAMPLES:
+        r"""
+        EXAMPLES::
+
             sage: filename = tmp_filename()
             sage: f = open(filename, 'w')
             sage: f.write('x = 2\n')
@@ -542,7 +555,8 @@ class LiE(Expect):
         """
         Spawn a new LiE command-line session.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.console()                    # not tested
             LiE version 2.2.2 created on Sep 26 2007 at 18:13:19
             Authors: Arjeh M. Cohen, Marc van Leeuwen, Bert Lisser.
@@ -554,7 +568,8 @@ class LiE(Expect):
 
     def version(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.version() # optional - lie
             '2.1'
         """
@@ -562,7 +577,8 @@ class LiE(Expect):
 
     def _object_class(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._object_class()
             <class 'sage.interfaces.lie.LiEElement'>
 
@@ -571,7 +587,8 @@ class LiE(Expect):
 
     def _true_symbol(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._true_symbol()
             '1'
         """
@@ -579,7 +596,8 @@ class LiE(Expect):
 
     def _false_symbol(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._false_symbol()
             '0'
         """
@@ -587,7 +605,8 @@ class LiE(Expect):
 
     def _equality_symbol(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._equality_symbol()
             '=='
         """
@@ -597,7 +616,8 @@ class LiE(Expect):
         """
         Returns a string of the LiE help for command.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.help('diagram') # optional - lie
             'diagram(g)...'
         """
@@ -611,7 +631,8 @@ class LiE(Expect):
 
     def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True, restart_if_needed=False):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._eval_line('2+2') # optional - lie
             '     4'
             sage: lie._eval_line('diagram(2)') # optional - lie
@@ -626,13 +647,14 @@ class LiE(Expect):
         #Check to see if an error has occurred
         err = max( out.find("\n(in"), out.find('not defined'), out.find('Argument types')  )
         if err != -1:
-            raise RuntimeError, "An error occurred running a LiE command:\n%s"%(out.replace('\r\n','\n'))
+            raise RuntimeError("An error occurred running a LiE command:\n%s"%(out.replace('\r\n','\n')))
         return out
 
 
     def eval(self, code, strip=True, **kwds):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.eval('2+2')  # optional - lie
             '4'
         """
@@ -647,7 +669,8 @@ class LiE(Expect):
         """
         Set the variable var to the given value.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.set('x', '2')  # optional - lie
             sage: lie.get('x')       # optional - lie
             '2'
@@ -656,13 +679,14 @@ class LiE(Expect):
         out = self.eval(cmd)
         i = min( out.find('not defined'), out.find('\(in'), out.find('Argument types') )
         if i != -1:
-            raise RuntimeError, out
+            raise RuntimeError(out)
 
     def get(self, var):
         """
         Get the value of the variable var.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.set('x', '2')  # optional - lie
             sage: lie.get('x')       # optional - lie
             '2'
@@ -673,7 +697,8 @@ class LiE(Expect):
 
     def get_using_file(self, var):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.get_using_file('x')
             Traceback (most recent call last):
             ...
@@ -683,7 +708,8 @@ class LiE(Expect):
 
     def function_call(self, function, args=None, kwds=None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.function_call("diagram", args=['A4']) # optional - lie
             O---O---O---O
             1   2   3   4
@@ -701,7 +727,8 @@ class LiE(Expect):
 
     def _function_element_class(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie._function_element_class()
             <class 'sage.interfaces.lie.LiEFunctionElement'>
         """
@@ -712,7 +739,8 @@ class LiEElement(ExpectElement):
         """
         Returns the possible tab completions for self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: a4 = lie('A4')   # optional - lie
             sage: a4.trait_names() # optional - lie
             ['center',
@@ -725,7 +753,8 @@ class LiEElement(ExpectElement):
 
     def type(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: m = lie('[[1,0,3,3],[12,4,-4,7],[-1,9,8,0],[3,-5,-2,9]]') # optional - lie
             sage: m.type() # optional - lie
             'mat'
@@ -736,7 +765,8 @@ class LiEElement(ExpectElement):
 
     def _matrix_(self, R=None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: m = lie('[[1,0,3,3],[12,4,-4,7],[-1,9,8,0],[3,-5,-2,9]]') # optional - lie
             sage: matrix(m)  # optional - lie
             [ 1  0  3  3]
@@ -756,12 +786,13 @@ class LiEElement(ExpectElement):
                 m = m.change_ring(R)
             return m
         else:
-            raise ValueError, "not a matrix"
+            raise ValueError("not a matrix")
 
 
     def _sage_(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: m = lie('[[1,0,3,3],[12,4,-4,7],[-1,9,8,0],[3,-5,-2,9]]') # optional - lie
             sage: m.sage()  # optional - lie
             [ 1  0  3  3]
@@ -772,12 +803,11 @@ class LiEElement(ExpectElement):
         """
         t = self.type()
         if t == 'grp':
-            raise ValueError, "cannot convert Lie groups to native Sage objects"
+            raise ValueError("cannot convert Lie groups to native Sage objects")
         elif t == 'mat':
             import sage.matrix.constructor
             return  sage.matrix.constructor.matrix( eval( str(self).replace('\n','').strip())  )
         elif t == 'pol':
-            import sage.misc.misc
             from sage.rings.all import PolynomialRing, QQ
 
             #Figure out the number of variables
@@ -808,7 +838,7 @@ class LiEElement(ExpectElement):
                 xpos = term.find('X')
                 coef = eval(term[:xpos].strip())
                 exps = eval(term[xpos+1:].strip())
-                monomial = sage.misc.misc.prod(map(lambda i: x[i]**exps[i] , range(nvars)))
+                monomial = prod(map(lambda i: x[i]**exps[i] , range(nvars)))
                 pol += coef * monomial
 
             return pol
@@ -823,7 +853,8 @@ class LiEElement(ExpectElement):
 class LiEFunctionElement(FunctionElement):
     def _sage_doc_(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: a4 = lie('A4')  # optional - lie
             sage: a4.diagram._sage_doc_() # optional - lie
             'diagram(g)...'
@@ -837,7 +868,8 @@ class LiEFunction(ExpectFunction):
         """
         Returns the help for self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: lie.diagram._sage_doc_() # optional - lie
             'diagram(g)...'
         """
@@ -848,7 +880,8 @@ class LiEFunction(ExpectFunction):
 
 def is_LiEElement(x):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.lie import is_LiEElement
         sage: l = lie(2) # optional - lie
         sage: is_LiEElement(l) # optional - lie
@@ -863,7 +896,8 @@ lie = LiE()
 
 def reduce_load_lie():
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.lie import reduce_load_lie
         sage: reduce_load_lie()
         LiE Interpreter
@@ -875,7 +909,8 @@ def lie_console():
     """
     Spawn a new LiE command-line session.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.lie import lie_console
         sage: lie_console()                    # not tested
         LiE version 2.2.2 created on Sep 26 2007 at 18:13:19
@@ -889,7 +924,8 @@ def lie_console():
 
 def lie_version():
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.lie import lie_version
         sage: lie_version() # optional - lie
         '2.1'

@@ -175,8 +175,8 @@ def _dg_canonical_form( dg, n, m ):
     for v in iso.keys():
         if v >= n+m:
             del iso[v]
-            v1,v2,label1 = dg._backend.iterator_in_edges([v],True).next()
-            w1,w2,label2 = dg._backend.iterator_out_edges([v],True).next()
+            v1,v2,label1 = next(dg._backend.iterator_in_edges([v],True))
+            w1,w2,label2 = next(dg._backend.iterator_out_edges([v],True))
             dg._backend.del_edge(v1,v2,label1,True)
             dg._backend.del_edge(w1,w2,label2,True)
             dg._backend.del_vertex(v)
@@ -210,9 +210,9 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',[1,2],1]).digraph()
         sage: itt = _mutation_class_iter(dg, 3,0)
-        sage: itt.next()[0].edges()
+        sage: next(itt)[0].edges()
         [(0, 1, (1, -1)), (0, 2, (1, -1)), (1, 2, (1, -1))]
-        sage: itt.next()[0].edges()
+        sage: next(itt)[0].edges()
         [(0, 2, (1, -1)), (1, 0, (2, -2)), (2, 1, (1, -1))]
     """
     timer = time.time()
@@ -337,7 +337,7 @@ def _dig6_to_digraph( dig6 ):
     """
     dig6, edges = dig6
     dg = DiGraph( dig6 )
-    if not type(edges) == dict:
+    if not isinstance(edges, dict):
         edges = dict( edges )
     for edge in dg._backend.iterator_in_edges(dg,False):
         if edge in edges:
@@ -464,7 +464,7 @@ def _is_valid_digraph_edge_set( edges, frozen=0 ):
         sage: _is_valid_digraph_edge_set( [[0,1,'a'],[2,3,(1,-1)]] )
         The given digraph has edge labels which are not integral or integral 2-tuples.
         False
-        sage: _is_valid_digraph_edge_set( [[0,1],[2,3,(1,-1)]] )
+        sage: _is_valid_digraph_edge_set( [[0,1,None],[2,3,(1,-1)]] )
         True
         sage: _is_valid_digraph_edge_set( [[0,1,'a'],[2,3,(1,-1)],[3,2,(1,-1)]] )
         The given digraph or edge list contains oriented 2-cycles.
@@ -486,14 +486,14 @@ def _is_valid_digraph_edge_set( edges, frozen=0 ):
             return False
 
         # checks if all edge labels are 'None', positive integers or tuples of positive integers
-        if not all( i == None or ( i in ZZ and i > 0 ) or ( type(i) == tuple and len(i) == 2 and i[0] in ZZ and i[1] in ZZ ) for i in dg.edge_labels() ):
+        if not all( i is None or ( i in ZZ and i > 0 ) or ( isinstance(i, tuple) and len(i) == 2 and i[0] in ZZ and i[1] in ZZ ) for i in dg.edge_labels() ):
             print "The given digraph has edge labels which are not integral or integral 2-tuples."
             return False
 
         # checks if all edge labels for multiple edges are 'None' or positive integers
         if dg.has_multiple_edges():
             for e in set( dg.multiple_edges(labels=False) ):
-                if not all( i == None or ( i in ZZ and i > 0 ) for i in dg.edge_label( e[0], e[1] ) ):
+                if not all( i is None or ( i in ZZ and i > 0 ) for i in dg.edge_label( e[0], e[1] ) ):
                     print "The given digraph or edge list contains multiple edges with non-integral labels."
                     return False
 
@@ -507,6 +507,6 @@ def _is_valid_digraph_edge_set( edges, frozen=0 ):
             return False
 
         return True
-    except StandardError:
+    except Exception:
         print "Could not even build a digraph from the input data."
         return False

@@ -108,6 +108,7 @@ class BarChart(GraphicPrimitive):
         is executed::
 
             sage: bar_chart([1,2,10])
+            Graphics object consisting of 1 graphics primitive
         """
         options = self.options()
         color = options['rgbcolor']
@@ -131,22 +132,27 @@ def bar_chart(datalist, **options):
     A bar_chart with blue bars::
 
         sage: bar_chart([1,2,3,4])
+        Graphics object consisting of 1 graphics primitive
 
     A bar_chart with thinner bars::
 
         sage: bar_chart([x^2 for x in range(1,20)], width=0.2)
+        Graphics object consisting of 1 graphics primitive
 
     A bar_chart with negative values and red bars::
 
         sage: bar_chart([-3,5,-6,11], rgbcolor=(1,0,0))
+        Graphics object consisting of 1 graphics primitive
 
     A bar chart with a legend (it's possible, not necessarily useful)::
 
         sage: bar_chart([-1,1,-1,1], legend_label='wave')
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0), axes=False)
+        Graphics object consisting of 1 graphics primitive
         sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent
     """
     dl = len(datalist)

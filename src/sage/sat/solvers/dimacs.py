@@ -29,7 +29,7 @@ Classes and Methods
 import os, sys, subprocess, shlex
 
 from sage.sat.solvers.satsolver import SatSolver
-from sage.misc.misc import tmp_filename, get_verbose
+from sage.misc.all import tmp_filename, get_verbose
 from time import sleep
 
 class DIMACS(SatSolver):

@@ -5,14 +5,14 @@ EXAMPLES::
 
     sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)])
     sage: v
-    (1.0 - 1.0*I, 2.0 + 3.14159265359*I, 3.0 + 5.0*I)
+    (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)
     <type 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Complex Double Field
     sage: v[0] = 5
     sage: v
-    (5.0, 2.0 + 3.14159265359*I, 3.0 + 5.0*I)
+    (5.0, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: loads(dumps(v)) == v
     True
 
@@ -30,17 +30,20 @@ AUTHORS:
        Vector_double_dense class
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2008 Jason Grout <jason-sage@creativetrax.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
+
 from sage.rings.complex_double import CDF
 
-cimport numpy as cnumpy
+cimport numpy
 
-numpy=None
 
 cdef class Vector_complex_double_dense(vector_double_dense.Vector_double_dense):
     """
@@ -52,17 +55,14 @@ cdef class Vector_complex_double_dense(vector_double_dense.Vector_double_dense):
     EXAMPLES:
         sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)])
         sage: v
-        (1.0 - 1.0*I, 2.0 + 3.14159265359*I, 3.0 + 5.0*I)
-        sage: v*v
-        -21.8696044011 + 40.5663706144*I
+        (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
+        sage: v*v  # rel tol 1e-15
+        -21.86960440108936 + 40.56637061435917*I
     """
     def __cinit__(self, parent, entries, coerce=True, copy=True):
-        global numpy
-        if numpy is None:
-            import numpy
         self._numpy_dtype = numpy.dtype('complex128')
         self._python_dtype = complex
-        self._numpy_dtypeint = cnumpy.NPY_CDOUBLE
+        self._numpy_dtypeint = numpy.NPY_CDOUBLE
         # TODO: Make ComplexDoubleElement instead of CDF for speed
         self._sage_dtype = CDF
         self.__create_vector__()

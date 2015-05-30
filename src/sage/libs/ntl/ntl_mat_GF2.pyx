@@ -27,7 +27,6 @@ AUTHORS:
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -102,12 +101,12 @@ cdef class ntl_mat_GF2:
         _ncols = ncols
         self.x.SetDims(_nrows, _ncols)
 
-        if v != None:
+        if v is not None:
             sig_on()
             for i from 0 <= i < _nrows:
                 for j from 0 <= j < _ncols:
                     elem = v[i*_ncols+j]
-                    if not PY_TYPE_CHECK(elem, ntl_GF2):
+                    if not isinstance(elem, ntl_GF2):
                         elem = ntl_GF2(elem)
                     mat_GF2_setitem(&self.x, i, j, &(<ntl_GF2>elem).x)
             sig_off()
@@ -117,17 +116,20 @@ cdef class ntl_mat_GF2:
 
     cdef ntl_GF2 _new_element(self):
         cdef ntl_GF2 r
-        r = PY_NEW(ntl_GF2)
+        r = ntl_GF2.__new__(ntl_GF2)
         return r
 
     cdef ntl_mat_GF2 _new(self):
         cdef ntl_mat_GF2 r
-        r = PY_NEW(ntl_mat_GF2)
+        r = ntl_mat_GF2.__new__(ntl_mat_GF2)
         r.x.SetDims(self.x.NumRows(),self.x.NumCols())
         return r
 
     def __dealloc__(self):
-        mat_GF2_destruct(&self.x)
+        # With NTL 6.0.0, mat_GF2 is a proper C++ class.
+        # Therefore Cython automagically calls the class destructor.
+        #mat_GF2_destruct(&self.x)
+        pass
 
     def __reduce__(self):
         """
@@ -174,7 +176,7 @@ cdef class ntl_mat_GF2:
             [1 1 0 0]
         """
         cdef ntl_mat_GF2 r = self._new()
-        if not PY_TYPE_CHECK(other, ntl_mat_GF2):
+        if not isinstance(other, ntl_mat_GF2):
             other = ntl_mat_GF2(other)
         sig_on()
         mat_GF2_mul(r.x, self.x, (<ntl_mat_GF2>other).x)
@@ -201,7 +203,7 @@ cdef class ntl_mat_GF2:
             [0 1 1 1]
         """
         cdef ntl_mat_GF2 r = self._new()
-        if not PY_TYPE_CHECK(other, ntl_mat_GF2):
+        if not isinstance(other, ntl_mat_GF2):
             other = ntl_mat_GF2(other,)
         sig_on()
         mat_GF2_sub(r.x, self.x, (<ntl_mat_GF2>other).x)
@@ -229,7 +231,7 @@ cdef class ntl_mat_GF2:
 
         """
         cdef ntl_mat_GF2 r = self._new()
-        if not PY_TYPE_CHECK(other, ntl_mat_GF2):
+        if not isinstance(other, ntl_mat_GF2):
             other = ntl_mat_GF2(other)
         sig_on()
         mat_GF2_add(r.x, self.x, (<ntl_mat_GF2>other).x)
@@ -310,7 +312,7 @@ cdef class ntl_mat_GF2:
             sage: A1 == A2
             False
         """
-        if not PY_TYPE_CHECK(other, ntl_mat_GF2):
+        if not isinstance(other, ntl_mat_GF2):
             other = ntl_mat_GF2(other)
 
         if op != 2 and op != 3:
@@ -363,15 +365,15 @@ cdef class ntl_mat_GF2:
             ]
         """
         cdef int i, j
-        if not PY_TYPE_CHECK(x, ntl_GF2):
+        if not isinstance(x, ntl_GF2):
             x = ntl_GF2(x)
 
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols()==1 and (PY_TYPE_CHECK(ij, Integer) or PY_TYPE_CHECK(ij,int)):
+        elif self.x.NumCols()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
             i = ij
             j = 0
-        elif self.x.NumRows()==1 and (PY_TYPE_CHECK(ij, Integer) or PY_TYPE_CHECK(ij,int)):
+        elif self.x.NumRows()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
             i = 0
             j = ij
         else:
@@ -395,10 +397,10 @@ cdef class ntl_mat_GF2:
         cdef int i, j
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols() == 1 and (PY_TYPE_CHECK(ij, Integer) or PY_TYPE_CHECK(ij,int)):
+        elif self.x.NumCols() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
             i = ij
             j = 0
-        elif self.x.NumRows() == 1 and (PY_TYPE_CHECK(ij, Integer) or PY_TYPE_CHECK(ij,int)):
+        elif self.x.NumRows() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
             i = 0
             j = ij
         else:

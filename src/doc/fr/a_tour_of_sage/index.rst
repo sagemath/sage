@@ -2,7 +2,7 @@
 Sage en quelques mots
 =====================
 
-Cette présentation de Sage reprend le "Tour of Mathematica" proposé
+Cette courte présentation de Sage reprend le "Tour of Mathematica" proposé
 au début du "Mathematica Book".
 
 
@@ -12,7 +12,7 @@ La calculatrice Sage
 La ligne de commande Sage débute par ``sage:``. Il ne vous est pas
 nécessaire de l'écrire à chaque ligne. Si vous utilisez le Notebook
 de Sage, vous n'avez qu'à recopier ce qui suit ``sage:`` dans une
-celulle, et à appuyer simultanément sur Maj + Enter pour calculer
+cellule, et à appuyer simultanément sur Maj + Entrée pour calculer
 le résultat.
 
 ::
@@ -37,7 +37,7 @@ matrice :math:`2 \times 2` avec Sage.
     [  -2    1]
     [ 3/2 -1/2]
 
-Intégrer une fonction simple.
+Voici comment intégrer une fonction simple.
 
 ::
 
@@ -45,7 +45,7 @@ Intégrer une fonction simple.
     sage: integrate(sqrt(x)*sqrt(1+x), x)
     1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1) - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
 
-Ceci permet de demander à Sage de résoudre une équation
+Les commandes suivantes permettent de demander à Sage de résoudre une équation
 quadratique. Le symbole ``==`` représente l'égalité sous Sage.
 
 ::
@@ -68,9 +68,9 @@ Le résultat est une liste d'inégalités.
 
 
 Calcul numérique sous Sage
-==============================
+==========================
 
-Tout d'abord, créeons une matrices aléatoire de taille
+Tout d'abord, créons une matrice aléatoire de taille
 :math:`500 \times 500`.
 
 ::
@@ -84,7 +84,7 @@ propres de la matrice et en faire un graphique.
 
 ::
 
-    sage: e = m.eigenvalues()  #about 2 seconds
+    sage: e = m.eigenvalues()  # environ 2 secondes
     sage: w = [(i, abs(e[i])) for i in range(len(e))]
     sage: show(points(w))
 
@@ -99,7 +99,7 @@ des millions ou des milliards de chiffres.
 
     sage: factorial(100)
     93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
-    sage: n = factorial(1000000)  #about 2.5 seconds
+    sage: n = factorial(1000000)  # environ 2.5 secondes
 
 Voici comment afficher les 100 première décimales de :math:`\pi`.
 
@@ -108,7 +108,7 @@ Voici comment afficher les 100 première décimales de :math:`\pi`.
     sage: N(pi, digits=100)
     3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117068
 
-Voici comment Sage factorise un polynome en deux variables.
+Voici comment Sage factorise un polynôme en deux variables.
 
 ::
 
@@ -132,7 +132,7 @@ de partitionner mille millions (:math:`10^8`) comme une somme d'entiers positifs
 
 ::
 
-    sage: z = Partitions(10^8).cardinality() #environ 4.5 secondes
+    sage: z = Partitions(10^8).cardinality()  # environ 4.5 secondes
     sage: str(z)[:40]
     '1760517045946249141360373894679135204009'
 

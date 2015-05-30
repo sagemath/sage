@@ -13,23 +13,14 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 
-cdef extern from "math.h":
-    double log(double)
-    double sqrt(double)
-    double exp(double)
-    int isnormal(double)
-    int isfinite(double)
-
-import math
+from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
+cdef double sqrt2pi = sqrt(2*M_PI)
 
 from sage.misc.flatten  import flatten
 from sage.matrix.matrix import is_Matrix
-
-cdef double sqrt2pi = sqrt(2*math.pi)
 
 from sage.finance.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
@@ -135,13 +126,13 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
     Notice that running Baum-Welch changed our model::
 
-        sage: m
+        sage: m  # rel tol 3e-14
         Gaussian Hidden Markov Model with 2 States
         Transition matrix:
-        [   0.415498136619    0.584501863381]
-        [   0.999999317425 6.82574625899e-07]
+        [   0.4154981366185841     0.584501863381416]
+        [   0.9999993174253741 6.825746258991804e-07]
         Emission parameters:
-        [(0.417888242712, 0.517310966436), (-1.50252086313, 0.508551283606)]
+        [(0.4178882427119503, 0.5173109664360919), (-1.5025208631331122, 0.5085512836055119)]
         Initial probabilities: [0.0000, 1.0000]
     """
     cdef TimeSeries B, prob
@@ -187,11 +178,11 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         We input a model in which both A and pi have to be
         renormalized to define valid probability distributions::
 
-            sage: hmm.GaussianHiddenMarkovModel([[-1,.7],[.3,.4]], [(1,1), (-1,1)], [-1,.3])
+            sage: hmm.GaussianHiddenMarkovModel([[-1,.7],[.3,.4]], [(1,1), (-1,1)], [-1,.3])  # rel tol 3e-14
             Gaussian Hidden Markov Model with 2 States
             Transition matrix:
-            [           0.0            1.0]
-            [0.428571428571 0.571428571429]
+            [                0.0                 1.0]
+            [0.42857142857142855  0.5714285714285714]
             Emission parameters:
             [(1.0, 1.0), (-1.0, 1.0)]
             Initial probabilities: [0.0000, 1.0000]
@@ -865,13 +856,13 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             (4.534646052182..., 7)
             sage: m.log_likelihood([-2,-1,.1,0.1])
             4.534646052182...
-            sage: m
+            sage: m  # rel tol 3e-14
             Gaussian Hidden Markov Model with 2 States
             Transition matrix:
-            [   0.999999999243 7.56983939444e-10]
-            [   0.499984627912    0.500015372088]
+            [   0.9999999992430161 7.569839394440382e-10]
+            [  0.49998462791192644    0.5000153720880736]
             Emission parameters:
-            [(0.1, 0.01), (-1.49995081476, 0.50007105049)]
+            [(0.09999999999999999, 0.01), (-1.4999508147591902, 0.5000710504895474)]
             Initial probabilities: [0.0000, 1.0000]
 
         We illustrate bounding the standard deviation below.  Note that above we had
@@ -901,8 +892,8 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]], [(1,2),(-1,.5)], [.3,.7])
             sage: m.baum_welch(v)
             (-162.854370397998..., 49)
-            sage: m.emission_parameters()
-            [(1.27224191726, 2.37136875176), (-0.948617467518, 0.576236038512)]
+            sage: m.emission_parameters()  # rel tol 3e-14
+            [(1.2722419172602375, 2.371368751761901), (-0.9486174675179113, 0.5762360385123765)]
         """
         if not isinstance(obs, TimeSeries):
             obs = TimeSeries(obs)
@@ -1337,11 +1328,11 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             (2.18905068682..., 15)
             sage: m.log_likelihood(v)
             2.18905068682...
-            sage: m
+            sage: m  # rel tol 6e-14
             Gaussian Mixture Hidden Markov Model with 2 States
             Transition matrix:
-            [   0.874636333977    0.125363666023]
-            [              1.0 1.45168520229e-40]
+            [   0.8746363339773399   0.12536366602266016]
+            [                  1.0 1.451685202290174e-40]
             Emission parameters:
             [0.500161629343*N(-0.812298726239,0.173329026744) + 0.499838370657*N(0.982433690378,0.029719932009), 1.0*N(0.503260056832,0.145881515324)]
             Initial probabilities: [0.0000, 1.0000]
@@ -1518,7 +1509,7 @@ def unpickle_gaussian_hmm_v1(A, B, pi, prob, n_out):
         sage: loads(dumps(m)) == m   # indirect test
         True
     """
-    cdef GaussianHiddenMarkovModel m = PY_NEW(GaussianHiddenMarkovModel)
+    cdef GaussianHiddenMarkovModel m = GaussianHiddenMarkovModel.__new__(GaussianHiddenMarkovModel)
     m.A = A
     m.B = B
     m.pi = pi
@@ -1534,7 +1525,7 @@ def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
         sage: loads(dumps(m)) == m   # indirect test
         True
     """
-    cdef GaussianMixtureHiddenMarkovModel m = PY_NEW(GaussianMixtureHiddenMarkovModel)
+    cdef GaussianMixtureHiddenMarkovModel m = GaussianMixtureHiddenMarkovModel.__new__(GaussianMixtureHiddenMarkovModel)
     m.A = A
     m.B = B
     m.pi = pi

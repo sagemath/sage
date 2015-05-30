@@ -9,10 +9,12 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2008 David Roe <roed@math.harvard.edu>
+#       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
@@ -169,7 +171,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     #def galois_group(self):
     #    r"""
-    #    Returns the galois group of self's fraction field over Qp.
+    #    Returns the Galois group of self's fraction field over Qp.
     #    """
     #    ##
     #    ## If K is a number field, then K.galois_group() can return
@@ -197,7 +199,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             t + O(t^21)
         """
         if n != 0:
-            raise IndexError, "only one generator"
+            raise IndexError("only one generator")
         return self([0,1])
 
     def uniformizer_pow(self, n):

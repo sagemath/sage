@@ -317,14 +317,17 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     1 if S1 and S2 are isomorphic, otherwise 0.
 
     """
-    cdef PartitionStack *current_ps, *first_ps, *left_ps
+    cdef PartitionStack *current_ps
+    cdef PartitionStack *first_ps
+    cdef PartitionStack *left_ps
     cdef int first_meets_current = -1
     cdef int current_kids_are_same = 1
     cdef int first_kids_are_same
 
     cdef int *indicators
 
-    cdef OrbitPartition *orbits_of_subgroup, *orbits_of_supergroup
+    cdef OrbitPartition *orbits_of_subgroup
+    cdef OrbitPartition *orbits_of_supergroup
     cdef int subgroup_primary_orbit_size = 0
     cdef int minimal_in_primary_orbit
 
@@ -335,10 +338,14 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
 
     cdef bitset_t *vertices_to_split
     cdef bitset_t *vertices_have_been_reduced
-    cdef int *permutation, *id_perm, *cells_to_refine_by
+    cdef int *permutation
+    cdef int *id_perm
+    cdef int *cells_to_refine_by
     cdef int *vertices_determining_current_stack
     cdef int *perm_stack
-    cdef StabilizerChain *group, *old_group, *tmp_gp
+    cdef StabilizerChain *group
+    cdef StabilizerChain *old_group
+    cdef StabilizerChain *tmp_gp
 
     cdef int i, j, k, ell, b
     cdef bint discrete, automorphism, update_label
@@ -555,7 +562,7 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                     if bitset_check(vertices_to_split[current_ps.depth], i):
                         minimal_in_primary_orbit = i
                         break
-            while 1:
+            while True:
                 i = vertices_determining_current_stack[current_ps.depth]
                 # This was the last point to be split here.
                 # If it is in the same orbit as minimal_in_primary_orbit,
@@ -597,9 +604,9 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
         # II. Refine down to a discrete partition, or until
         # we leave the part of the tree we are interested in
         discrete = 0
-        while 1:
+        while True:
             i = current_ps.depth
-            while 1:
+            while True:
                 if input_group is not NULL:
                     k = split_point_and_refine_by_orbits(current_ps,
                         vertices_determining_current_stack[i], S2,

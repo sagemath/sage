@@ -1,8 +1,9 @@
-diff -ru src/setup.py b/setup.py
---- src/setup.py	2013-04-22 08:44:28.000000000 +0200
-+++ b/setup.py	2013-05-15 10:43:21.332392968 +0200
-@@ -2,26 +2,38 @@
- from glob import glob
+diff --git a/setup.py b/setup.py
+index 20670f7..62e82c5 100644
+--- a/setup.py
++++ b/setup.py
+@@ -7,26 +7,38 @@ from glob import glob
+ import os
  
  # Modifiy this if BLAS and LAPACK libraries are not in /usr/lib.
 -BLAS_LIB_DIR = '/usr/lib'
@@ -45,7 +46,7 @@ diff -ru src/setup.py b/setup.py
  
  # Set to 1 if you are installing the fftw module.
  BUILD_FFTW = 0 
-@@ -33,13 +45,13 @@
+@@ -38,13 +50,13 @@ FFTW_LIB_DIR = '/usr/lib'
  FFTW_INC_DIR = '/usr/include'
  
  # Set to 1 if you are installing the glpk module.
@@ -62,7 +63,7 @@ diff -ru src/setup.py b/setup.py
  
  # Set to 1 if you are installing the DSDP module.
  BUILD_DSDP = 0
-@@ -77,7 +89,7 @@
+@@ -103,7 +115,7 @@ if BUILD_FFTW:
      extmods += [fftw];
  
  if BUILD_GLPK:

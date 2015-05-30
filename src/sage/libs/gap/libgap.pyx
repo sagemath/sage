@@ -109,7 +109,7 @@ Or get them as results of computations::
     sage: rec['Sym3']
     Sym( [ 1 .. 3 ] )
     sage: dict(rec)
-    {'a': 123, 'Sym3': Sym( [ 1 .. 3 ] ), 'b': 456}
+    {'Sym3': Sym( [ 1 .. 3 ] ), 'a': 123, 'b': 456}
 
 The output is a Sage dictionary whose keys are Sage strings and whose
 Values are instances of :meth:`~sage.libs.gap.element.GapElement`. So,
@@ -118,8 +118,8 @@ convert the entries into Sage objects, you should use the
 :meth:`~sage.libs.gap.element.GapElement.sage` method::
 
     sage: rec.sage()
-    {'a': 123,
-     'Sym3': NotImplementedError('cannot construct equivalent Sage object',),
+    {'Sym3': NotImplementedError('cannot construct equivalent Sage object',),
+     'a': 123,
      'b': 456}
 
 Now ``rec['a']`` is a Sage integer. We have not implemented the
@@ -249,6 +249,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.element cimport ModuleElement, RingElement
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 from sage.libs.gap.element cimport *
 
 
@@ -318,7 +319,8 @@ class Gap(Parent):
             sage: libgap.has_coerce_map_from(CyclotomicField(5))
             True
         """
-        from sage.rings.all import ZZ, QQ, is_CyclotomicField
+        from sage.rings.all import ZZ, QQ
+        from sage.rings.number_field.number_field import is_CyclotomicField
         if S in (ZZ, QQ) or is_CyclotomicField(S):
             return True
 
@@ -363,7 +365,6 @@ class Gap(Parent):
                 pass
             x = str(x._gap_init_())
             return make_any_gap_element(self, gap_eval(x))
-        raise ValueError('cannot represent '+str(x)+' as a GAP object')
 
     def _construct_matrix(self, M):
         """
@@ -386,6 +387,16 @@ class Gap(Parent):
             [ [ 1, 0 ], [ 0, 1 ] ]
             sage: libgap(matrix(GF(3),2,2,[4,5,6,7]))
             [ [ Z(3)^0, Z(3) ], [ 0*Z(3), Z(3)^0 ] ]
+
+        TESTS:
+
+        We gracefully handle the case that the conversion fails (:trac:`18039`)::
+
+            sage: F.<a> = GF(9, modulus="first_lexicographic")
+            sage: libgap(Matrix(F, [[a]]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: conversion of (Givaro) finite field element to GAP not implemented except for fields defined by Conway polynomials.
         """
         ring = M.base_ring()
         try:
@@ -566,7 +577,7 @@ class Gap(Parent):
         """
         return self(0)
 
-    def zero_element(self):
+    def zero(self):
         """
         Return (integer) zero in GAP.
 
@@ -576,11 +587,32 @@ class Gap(Parent):
 
         EXAMPLES::
 
+            sage: libgap.zero()
+            0
+
+        TESTS::
+
             sage: libgap.zero_element()
+            doctest:...: DeprecationWarning: zero_element is deprecated. Please use zero instead.
+            See http://trac.sagemath.org/17694 for details.
             0
         """
         return self(0)
 
+    zero_element = deprecated_function_alias(17694, zero)
+
+    def one(self):
+        r"""
+        Return (integer) one in GAP.
+
+        EXAMPLES::
+
+            sage: libgap.one()
+            1
+            sage: parent(_)
+            C library interface to GAP
+        """
+        return self(1)
 
     def __init__(self):
         r"""
@@ -773,4 +805,3 @@ class Gap(Parent):
 
 
 libgap = Gap()
-

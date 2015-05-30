@@ -8,10 +8,6 @@ The GNU Compiler Collection, including the C, C++ and Fortran compiler.
 
 GPL version 2 or version 3
 
-== SPKG Maintainers ==
-
- * Jeroen Demeyer
-
 == Upstream Contact ==
 
 http://gcc.gnu.org/
@@ -25,33 +21,6 @@ http://gcc.gnu.org/
 
 == Special Update/Build Instructions ==
 
-* Lots of stuff can be removed, run ./spkg-src to do this automatically
-  (after downloading the sources).
+=== Patches ===
 
-== Changelog ==
-
-=== gcc-4.7.3.p1 (R. Andrew Ohana, 26 November 2013) ===
- * Trac #15433: work around for incompatiblity between g++ and
-   an OS X 10.9 header
-
-=== gcc-4.7.3.p0 (Jeroen Demeyer, 11 April 2013) ===
- * Trac #14441: upgrade to version 4.7.3.
-
-=== gcc-4.7.2.p1 (Jeroen Demeyer, 4 April 2013) ===
- * Trac #14378: Use $SAGE_SPKG_INST variable.
- * Disable bootstrap-debug on all systems.
- * Remove libitm which is broken on OS X 10.4 PPC.
-
-=== gcc-4.7.2.p0 (Jeroen Demeyer, 8 January 2013) ===
- * Trac #13913: add spkg-src script to remove lots of unneeded things
-   from the sources and run it.
- * Rename $CONFIGURE_FLAGS to $GCC_CONFIGURE to be consistent with
-   other packages.
- * Disable Native Language Support and remove the corresponding source
-   files.
-
-=== gcc-4.7.2 (Jeroen Demeyer, 30 September 2012) ===
- * #13150: Upgrade to version 4.7.2 of GCC (as optional package).
-
-=== gcc-4.6.3 (Jeroen Demeyer, 7 March 2012) ===
- * #12369: Initial release.
+ * bug-63740.patch: let GCC build on ARM.

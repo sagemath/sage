@@ -1,7 +1,16 @@
 MAINTAINER:
    * William Stein
 
+== License ==
+ * FreeType License
+
 == Releases ==
+
+=== freetype-2.5.2.p0 (Emmanuel Charpentier, December 21st 2013) ===
+ * #15561: mindless drop-in-place of the current upstream source.
+ * Added the license information in the present file.
+ * Minor patch to libpng in order to work around a double setjmp setup.
+ * buil/deps : freetype depends on libpng to work around a buildbot race condition.
 
 === freetype-2.3.5.p4 (Simon King, December 11th 2011) ===
  * #12131: Use --libdir, to make the package work on openSUSE

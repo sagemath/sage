@@ -1,7 +1,7 @@
-/*** EXAMPLE: Birch-Swinnerton-Dyer for an elliptic curve over Q ***/
-/*** v1.1, March 2003, questions to tim.dokchitser@durham.ac.uk  ***/
-/***                                                             ***/
-/*** type \rex-bsw or read("ex-bsw") at pari prompt to run this  ***/
+/*** EXAMPLE: Birch-Swinnerton-Dyer for an elliptic curve over Q  ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk   ***/
+/***                                                              ***/
+/*** type \rex-bsw or read("ex-bsw") at pari prompt to run this   ***/
 
 elleq  = [0,0,1,-7,6];            \\ L-function of this elliptic curve over Q
 points = [[1,-1],[2,-1],[0,-3]];  \\ basis of Mordell-Weil modulo torsion

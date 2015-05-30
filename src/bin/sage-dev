@@ -306,9 +306,7 @@ def parser_from_object(obj, *args, **kwds):
             del parsed[argspec.varargs]
 
         if argspec.keywords:
-            kwds = map(lambda k: k.split('=')[0],
-                       filter(lambda k: k.startswith('--'),
-                              parsed[argspec.keywords]))
+            kwds = [k.split('=')[0] for k in parsed[argspec.keywords] if k.startswith('--')]
             kwdparser = argparse.ArgumentParser(formatter_class=SageHelpFormatter)
             for kwdarg in kwds:
                 kwdparser.add_argument(kwdarg, type=str_to_value)

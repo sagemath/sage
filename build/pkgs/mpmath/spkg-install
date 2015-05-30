@@ -9,12 +9,8 @@ fi
 # We need to delete the old path, so that there are no leftovers from the
 # previous installation, otherwise mpmath could get broken (for example by
 # importing some local files instead of the standard library ones...)
-if [ "$SAGE_ROOT" = "" ]; then
-    echo "Please set the SAGE_ROOT variable"
-    exit 1
-fi
-echo "Deleting $SAGE_ROOT/local/lib/python/site-packages/mpmath*"
-rm -rf $SAGE_ROOT/local/lib/python/site-packages/mpmath*
+echo "Deleting $SAGE_LOCAL/lib/python/site-packages/mpmath*"
+rm -rf "$SAGE_LOCAL"/lib/python/site-packages/mpmath*
 
 cd src/
 

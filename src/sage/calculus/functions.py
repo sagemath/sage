@@ -18,7 +18,7 @@ def wronskian(*args):
     derivatives taken with respect to x.
 
     wronskian(f1,...,fn) returns the Wronskian of f1,...,fn where
-    k'th derivatives are computed by doing `.derivative(k)' on each
+    k'th derivatives are computed by doing ``.derivative(k)`` on each
     function.
 
     The Wronskian of a list of functions is a determinant of derivatives.

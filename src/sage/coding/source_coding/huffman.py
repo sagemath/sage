@@ -150,7 +150,19 @@ class Huffman(SageObject):
     following table of frequency::
 
         sage: ft = frequency_table("There once was a french fry"); ft
-        {'a': 2, ' ': 5, 'c': 2, 'e': 4, 'f': 2, 'h': 2, 'o': 1, 'n': 2, 's': 1, 'r': 3, 'T': 1, 'w': 1, 'y': 1}
+        {' ': 5,
+         'T': 1,
+         'a': 2,
+         'c': 2,
+         'e': 4,
+         'f': 2,
+         'h': 2,
+         'n': 2,
+         'o': 1,
+         'r': 3,
+         's': 1,
+         'w': 1,
+         'y': 1}
         sage: h2 = Huffman(ft)
 
     Once ``h1`` has been trained, and hence possesses an encoding table,

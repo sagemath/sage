@@ -5,7 +5,7 @@ Obtenir de l'aide
 
 Sage est doté d'une importante documentation intégrée, accessible en
 tapant (par exemple) le nom d'une fonction ou d'une constante suivi d'un
-point d'interrogation :
+point d'interrogation :
 
 .. skip
 
@@ -109,19 +109,19 @@ Fonctions, indentation et itération
 
 Les définitions de fonctions en Sage sont introduites par la commande
 ``def``, et la liste des noms des paramètres est suivie de deux points,
-comme dans :
+comme dans :
 
 ::
 
     sage: def is_even(n):
-    ...       return n%2 == 0
+    ....:     return n%2 == 0
     sage: is_even(2)
     True
     sage: is_even(3)
     False
 
-Remarque : suivant la version du *notebook* que vous utilisez, il est
-possible que vous voyez trois points ``...`` au début de la deuxième
+Remarque : suivant la version du *notebook* que vous utilisez, il est
+possible que vous voyez trois points ``....:`` au début de la deuxième
 ligne de l'exemple. Ne les entrez pas, ils servent uniquement à signaler
 que le code est indenté.
 
@@ -134,7 +134,7 @@ la valeur par défaut ``divisor=2`` est utilisée.
 ::
 
     sage: def is_divisible_by(number, divisor=2):
-    ...       return number%divisor == 0
+    ....:     return number%divisor == 0
     sage: is_divisible_by(6,2)
     True
     sage: is_divisible_by(6)
@@ -143,8 +143,8 @@ la valeur par défaut ``divisor=2`` est utilisée.
     False
 
 Il est possible de spécifier un ou plusieurs des paramètres par leur nom
-lors de l'appel de la fonction ; dans ce cas, les paramètres nommés
-peuvent apparaître dans n'importe quel ordre :
+lors de l'appel de la fonction ; dans ce cas, les paramètres nommés
+peuvent apparaître dans n'importe quel ordre :
 
 .. link
 
@@ -168,31 +168,31 @@ précédentes.
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...      return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:    return v
     Syntax Error:
            return v
 
-Une fois l'indentation corrigée, l'exemple fonctionne :
+Une fois l'indentation corrigée, l'exemple fonctionne :
 
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...       return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:     return v
     sage: even(10)
     [4, 6, 8]
 
-Il n'y a pas besoin de placer des points-virgules en fin de ligne ; une
+Il n'y a pas besoin de placer des points-virgules en fin de ligne ; une
 instruction est en général terminée par un passage à la ligne. En
 revanche, il est possible de placer plusieurs instructions sur la même
-ligne en les séparant par des points-virgules :
+ligne en les séparant par des points-virgules :
 
 ::
 
@@ -200,23 +200,23 @@ ligne en les séparant par des points-virgules :
     64
 
 Pour continuer une instruction sur la ligne suivante, placez une barre
-oblique inverse en fin de ligne :
+oblique inverse en fin de ligne :
 
 ::
 
     sage: 2 + \
-    ...      3
+    ....:    3
     5
 
 Pour compter en Sage, utilisez une boucle dont la variable d'itération
 parcourt une séquence d'entiers. Par exemple, la première ligne
 ci-dessous a exactement le même effet que ``for(i=0; i<3; i++)`` en C++
-ou en Java :
+ou en Java :
 
 ::
 
     sage: for i in range(3):
-    ...       print i
+    ....:     print i
     0
     1
     2
@@ -226,7 +226,7 @@ La première ligne ci-dessous correspond à ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ...       print i
+    ....:     print i
     2
     3
     4
@@ -237,7 +237,7 @@ suit est équivalent à ``for(i=1;i<6;i+=2)``.
 ::
 
     sage: for i in range(1,6,2):
-    ...       print i
+    ....:     print i
     1
     3
     5
@@ -250,7 +250,7 @@ et des cubes en trois colonnes, chacune d'une largeur de six caractères.
 ::
 
     sage: for i in range(5):
-    ...       print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
          0      0      0
          1      1      1
          2      4      8
@@ -260,14 +260,14 @@ et des cubes en trois colonnes, chacune d'une largeur de six caractères.
 La structure de données de base de Sage est la liste, qui est — comme
 son nom l'indique — une liste d'objets arbitraires. Par exemple, la
 commande ``range`` que nous avons utilisée plus haut crée en fait une
-liste :
+liste :
 
 ::
 
     sage: range(2,10)
     [2, 3, 4, 5, 6, 7, 8, 9]
 
-Voici un exemple plus compliqué de liste :
+Voici un exemple plus compliqué de liste :
 
 ::
 
@@ -287,7 +287,7 @@ indexées à partir de 0.
     sage: v[3]
     sin(x^3)
 
-La fonction ``len(v)`` donne la longueur de ``v`` ; ``v.append(obj)``
+La fonction ``len(v)`` donne la longueur de ``v``....:``v.append(obj)``
 ajoute un nouvel objet à la fin de ``v`` ; et ``del v[i]`` supprime
 l'élément d'indice ``i`` de ``v``.
 
@@ -327,17 +327,17 @@ qui représente la liste des entiers impairs strictement positifs jusqu'à
 ::
 
     sage: class Evens(list):
-    ...       def __init__(self, n):
-    ...           self.n = n
-    ...           list.__init__(self, range(2, n+1, 2))
-    ...       def __repr__(self):
-    ...           return "Even positive numbers up to n."
+    ....:     def __init__(self, n):
+    ....:         self.n = n
+    ....:         list.__init__(self, range(2, n+1, 2))
+    ....:     def __repr__(self):
+    ....:         return "Even positive numbers up to n."
 
 La méthode ``__init__`` est appelée à la création de l'objet pour
-l'initialiser ; la méthode ``__repr__`` affiche l'objet. À la seconde
+l'initialiser ; la méthode ``__repr__`` affiche l'objet. À la seconde
 ligne de la méthode ``__init__``, nous appelons le constructeur de la
 classe ``list``. Pour créer un objet de classe ``Evens``, nous procédons
-ensuite comme suit :
+ensuite comme suit :
 
 .. link
 

@@ -89,16 +89,16 @@ a device which runs through a bunch of objects, returning one at each
 call to the ``next`` method. Iterators are built using parentheses::
 
     sage: it = (binomial(8, i) for i in range(9))
-    sage: it.next()
+    sage: next(it)
     1
 
 ::
 
-    sage: it.next()
+    sage: next(it)
     8
-    sage: it.next()
+    sage: next(it)
     28
-    sage: it.next()
+    sage: next(it)
     56
 
 You can get the list of the results that are not yet *consumed*::
@@ -108,7 +108,7 @@ You can get the list of the results that are not yet *consumed*::
 
 Asking for more elements triggers a ``StopIteration`` exception::
 
-    sage: it.next()
+    sage: next(it)
     Traceback (most recent call last):
     ...
     StopIteration
@@ -189,7 +189,7 @@ should hold::
 An alternative way to achieve this is::
 
     sage: counter_examples = (p for p in range(1000) if is_prime(p) and not is_prime(mersenne(p)))
-    sage: counter_examples.next()
+    sage: next(counter_examples)
     11
 
 .. TOPIC:: Exercises
@@ -250,20 +250,20 @@ One can very easily write new iterators using the keyword
 demonstrating the use of ``yield``::
 
     sage: def f(n):
-    ...     for i in range(n):
-    ...         yield i
+    ....:   for i in range(n):
+    ....:       yield i
     sage: [ u for u in f(5) ]
     [0, 1, 2, 3, 4]
 
 Iterators can be recursive::
 
     sage: def words(alphabet,l):
-    ...      if l == 0:
-    ...          yield []
-    ...      else:
-    ...          for word in words(alphabet, l-1):
-    ...              for a in alphabet:
-    ...                  yield word + [a]
+    ....:    if l == 0:
+    ....:        yield []
+    ....:    else:
+    ....:        for word in words(alphabet, l-1):
+    ....:            for a in alphabet:
+    ....:                yield word + [a]
 
     sage: [ w for w in words(['a','b','c'], 3) ]
     [['a', 'a', 'a'], ['a', 'a', 'b'], ['a', 'a', 'c'], ['a', 'b', 'a'], ['a', 'b', 'b'], ['a', 'b', 'c'], ['a', 'c', 'a'], ['a', 'c', 'b'], ['a', 'c', 'c'], ['b', 'a', 'a'], ['b', 'a', 'b'], ['b', 'a', 'c'], ['b', 'b', 'a'], ['b', 'b', 'b'], ['b', 'b', 'c'], ['b', 'c', 'a'], ['b', 'c', 'b'], ['b', 'c', 'c'], ['c', 'a', 'a'], ['c', 'a', 'b'], ['c', 'a', 'c'], ['c', 'b', 'a'], ['c', 'b', 'b'], ['c', 'b', 'c'], ['c', 'c', 'a'], ['c', 'c', 'b'], ['c', 'c', 'c']]
@@ -273,13 +273,13 @@ Iterators can be recursive::
 Here is another recursive iterator::
 
     sage: def dyck_words(l):
-    ...       if l==0:
-    ...           yield ''
-    ...       else:
-    ...           for k in range(l):
-    ...               for w1 in dyck_words(k):
-    ...                   for w2 in dyck_words(l-k-1):
-    ...                       yield '('+w1+')'+w2
+    ....:     if l==0:
+    ....:         yield ''
+    ....:     else:
+    ....:         for k in range(l):
+    ....:             for w1 in dyck_words(k):
+    ....:                 for w2 in dyck_words(l-k-1):
+    ....:                     yield '('+w1+')'+w2
 
     sage: list(dyck_words(4))
     ['()()()()',
@@ -329,16 +329,13 @@ one may iterate through their elements::
     True
 
     sage: for p in GL(2, 2): print p; print
+    [1 0]
+    [0 1]
+    <BLANKLINE>
     [0 1]
     [1 0]
     <BLANKLINE>
     [0 1]
-    [1 1]
-    <BLANKLINE>
-    [1 0]
-    [0 1]
-    <BLANKLINE>
-    [1 0]
     [1 1]
     <BLANKLINE>
     [1 1]
@@ -346,6 +343,9 @@ one may iterate through their elements::
     <BLANKLINE>
     [1 1]
     [1 0]
+    <BLANKLINE>
+    [1 0]
+    [1 1]
     <BLANKLINE>
 
     sage: for p in Partitions(3): print p
@@ -373,5 +373,5 @@ Infinite loops can nevertheless be very useful::
 
 
     sage: counter_examples = (p for p in Primes() if not is_prime(mersenne(p)))
-    sage: counter_examples.next()
+    sage: next(counter_examples)
     11

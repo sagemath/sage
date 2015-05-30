@@ -790,7 +790,7 @@ class AbelianStratum(SageObject):
 
         self._zeroes = list(l)
 
-        if not self._marked_separatrix is 'no':
+        if not self._marked_separatrix == 'no':
             self._zeroes[1:] = sorted(self._zeroes[1:], reverse=True)
         else:
             self._zeroes.sort(reverse=True)
@@ -799,8 +799,7 @@ class AbelianStratum(SageObject):
 
         self._genus = Integer(self._genus)
 
-        zeroes = filter(lambda x: x > 0, self._zeroes)
-        zeroes.sort()
+        zeroes = sorted(x for x in self._zeroes if x > 0)
 
         if self._genus == 1:
             self._cc = (HypCCA,)
@@ -826,7 +825,7 @@ class AbelianStratum(SageObject):
             else:
                 self._cc = (HypCCA, OddCCA, EvenCCA)
 
-        elif len(filter(lambda x: x % 2, zeroes)) == 0:
+        elif len([x for x in zeroes if x % 2]) == 0:
             # even zeroes [2 l_1, 2 l_2, ..., 2 l_n]
             self._cc = (OddCCA, EvenCCA)
 
@@ -889,7 +888,7 @@ class AbelianStratum(SageObject):
             ...
             TypeError: the right member must be a stratum
         """
-        if type(self) != type(other):
+        if not isinstance(self, type(other)):
             raise TypeError("the right member must be a stratum")
 
         return (self._marked_separatrix == other._marked_separatrix and
@@ -922,7 +921,7 @@ class AbelianStratum(SageObject):
             ...
             TypeError: the right member must be a stratum
         """
-        if type(self) != type(other):
+        if not isinstance(self, type(other)):
             raise TypeError("the right member must be a stratum")
 
         return (self._marked_separatrix != other._marked_separatrix or
@@ -946,7 +945,7 @@ class AbelianStratum(SageObject):
             sage: a3_out == a3_in
             False
         """
-        if (type(self) != type(other) or
+        if (not isinstance(self, type(other)) or
             self._marked_separatrix != other._marked_separatrix):
             raise TypeError("the other must be a stratum with same marking")
 
@@ -1270,7 +1269,7 @@ class ConnectedComponentOfAbelianStratum(SageObject):
             H_c(1, 1, 1, 1)
         """
         g = self._parent._genus
-        zeroes = filter(lambda x: x > 0, self._parent._zeroes)
+        zeroes = [x for x in self._parent._zeroes if x > 0]
         n = self._parent._zeroes.count(0)
 
         l0 = range(0, 4*g-3)
@@ -1413,7 +1412,7 @@ class ConnectedComponentOfAbelianStratum(SageObject):
         if not isinstance(other, CCA):
             raise TypeError("other must be a connected component")
 
-        if type(self) == type(other):
+        if isinstance(self, type(other)):
             if self._parent._zeroes > other._parent._zeroes:
                 return 1
             elif self._parent._zeroes < other._parent._zeroes:
@@ -1611,7 +1610,7 @@ class EvenConnectedComponentOfAbelianStratum(CCA):
             sage: p.connected_component()
             H_even(4, 4)
         """
-        zeroes = filter(lambda x: x > 0, self._parent._zeroes)
+        zeroes = [x for x in self._parent._zeroes if x > 0]
         n = self._parent._zeroes.count(0)
         g = self._parent._genus
 
@@ -1689,8 +1688,7 @@ class OddConnectedComponentOfAbelianStratum(CCA):
             0 1 2 3 4 5 6 7 8 9 10
             3 2 5 4 6 8 7 10 9 1 0
         """
-        zeroes = filter(lambda x: x > 0, self._parent._zeroes)
-        zeroes = map(lambda x: x/2, zeroes)
+        zeroes = [x//2 for x in self._parent._zeroes if x > 0]
 
         n = self._parent._zeroes.count(0)
         g = self._parent._genus

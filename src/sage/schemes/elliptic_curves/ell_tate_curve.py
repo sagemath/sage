@@ -96,9 +96,9 @@ class TateCurve(SageObject):
             2-adic Tate curve associated to the Elliptic Curve defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
         """
         if not p.is_prime():
-            raise ValueError, "p (=%s) must be a prime"%p
+            raise ValueError("p (=%s) must be a prime"%p)
         if E.j_invariant().valuation(p) >= 0:
-            raise ValueError, "The elliptic curve must have multiplicative reduction at %s"%p
+            raise ValueError("The elliptic curve must have multiplicative reduction at %s"%p)
         self._p = ZZ(p)
         self._E = E
         self._q = self.parameter()
@@ -191,7 +191,7 @@ class TateCurve(SageObject):
         Delta = CuspForms(weight=12).basis()[0]
         j = (E4.q_expansion(prec+3))**3/Delta.q_expansion(prec+3)
         jinv = (1/j).power_series()
-        q_in_terms_of_jinv = jinv.reversion()
+        q_in_terms_of_jinv = jinv.reverse()
         R = Qp(self._p,prec=prec)
         qE = q_in_terms_of_jinv(R(1/self._E.j_invariant()))
         self._q = qE
@@ -382,7 +382,7 @@ class TateCurve(SageObject):
         """
 
         if not self.is_split():
-               raise RuntimeError, "The curve must have split multiplicative reduction"
+               raise RuntimeError("The curve must have split multiplicative reduction")
         qE = self.parameter(prec=prec)
         n = qE.valuation()
         u = qE/self._p**n  # the p-adic logarithm of Iwasawa normalised by log(p) = 0
@@ -412,7 +412,7 @@ class TateCurve(SageObject):
         """
 
         if not self.is_split():
-            raise RuntimeError, "The curve must have split multiplicative reduction"
+            raise RuntimeError("The curve must have split multiplicative reduction")
 
         Csq = self._Csquare(prec=prec+4)
         C = Csq.sqrt()
@@ -445,7 +445,7 @@ class TateCurve(SageObject):
             1 + 5 + 4*5^3 + 2*5^4 + O(5^5), 5 + 2*5^2 + 3*5^4 + O(5^5)]
         """
         if not self.is_split():
-            raise RuntimeError, "The curve must have split multiplicative reduction"
+            raise RuntimeError("The curve must have split multiplicative reduction")
         vec = self._isomorphism(prec=prec)
         return [1/vec[0],-vec[1]/vec[0]**2,-vec[2]/vec[0],(vec[1]*vec[2]-vec[3])/vec[0]**3]
 
@@ -480,13 +480,13 @@ class TateCurve(SageObject):
         p = self._p
         R = Qp(self._p,prec)
         if not self._E == P.curve():
-            raise ValueError , "The point must lie on the original curve."
+            raise ValueError("The point must lie on the original curve.")
         if not self.is_split():
-            raise ValueError, "The curve must have split multiplicative reduction."
+            raise ValueError("The curve must have split multiplicative reduction.")
         if P.is_zero():
             return R(1)
         if P[0].valuation(p) >= 0:
-            raise  ValueError , "The point must lie in the formal group."
+            raise  ValueError("The point must lie in the formal group.")
 
         Eq = self.curve(prec=prec)
         isom = self._isomorphism(prec=prec)
@@ -498,8 +498,8 @@ class TateCurve(SageObject):
         yy = t + s * C**2 * P[0] + C**3 * P[1]
         try:
             Pq = Eq([xx,yy])
-        except StandardError:
-            raise RuntimeError, "Bug : Point %s does not lie on the curve "%[xx,yy]
+        except Exception:
+            raise RuntimeError("Bug : Point %s does not lie on the curve "%[xx,yy])
 
         tt = -xx/yy
         eqhat = Eq.formal()
@@ -541,7 +541,7 @@ class TateCurve(SageObject):
             (0 : 1 + O(5^20) : 0)
         """
         if not self.is_split():
-            raise ValueError, "The curve must have split multiplicative reduction."
+            raise ValueError("The curve must have split multiplicative reduction.")
         P = self.parametrisation_onto_tate_curve(u,prec=20)
         isom = self._inverse_isomorphism(prec=prec)
         C = isom[0]
@@ -589,7 +589,7 @@ class TateCurve(SageObject):
         """
 
         if not self.is_split():
-            raise NotImplementedError, "The curve must have split multiplicative reduction"
+            raise NotImplementedError("The curve must have split multiplicative reduction")
 
         p = self._p
 
@@ -650,7 +650,7 @@ class TateCurve(SageObject):
             return K(1)
 
         if not self.is_split():
-            raise NotImplementedError, "The p-adic regulator is not implemented for non-split multiplicative reduction."
+            raise NotImplementedError("The p-adic regulator is not implemented for non-split multiplicative reduction.")
 
 
         basis = self._E.gens()

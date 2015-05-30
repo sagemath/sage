@@ -1,8 +1,4 @@
-include "sage/ext/cdefs.pxi"
-include "sage/libs/flint/fmpz.pxi"
-include "sage/libs/flint/fmpz_poly.pxi"
-
-from sage.libs.flint.ntl_interface cimport *
+from sage.libs.flint.fmpz_poly cimport *
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.integer cimport Integer

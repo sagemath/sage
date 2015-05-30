@@ -47,24 +47,24 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines):
     num, ambient_dim = _common_length_of(vertices, rays, lines)
 
     # cdd implicitly assumes that the origin is a vertex if none is given
-    if vertices==None:
+    if vertices is None:
         vertices = [[0]*ambient_dim]
         num += 1
 
     s = 'V-representation\n'
-    if lines!=None:
+    if lines is not None:
         n = len(lines)
         s += "linearity " + repr(n) + ' '
         s += _to_space_separated_string(range(1,n+1)) + '\n'
     s += 'begin\n'
     s += ' ' + repr(num) + ' ' + repr(ambient_dim+1) + ' ' + cdd_type + '\n'
-    if lines!=None:
+    if lines is not None:
         for l in lines:
             s += ' 0 ' + _to_space_separated_string(l) + '\n'
-    if rays!=None:
+    if rays is not None:
         for r in rays:
             s += ' 0 ' + _to_space_separated_string(r) + '\n'
-    if vertices!=None:
+    if vertices is not None:
         for v in vertices:
             s += ' 1 ' + _to_space_separated_string(v) + '\n'
     s += 'end\n'
@@ -88,17 +88,17 @@ def cdd_Hrepresentation(cdd_type, ieqs, eqns):
     ambient_dim -= 1
 
     s = 'H-representation\n'
-    if eqns!=None:
+    if eqns is not None:
         assert len(eqns)>0
         n = len(eqns)
         s += "linearity " + repr(n) + ' '
         s += _to_space_separated_string(range(1,n+1)) + '\n'
     s += 'begin\n'
     s += ' ' + repr(num) + ' ' + repr(ambient_dim+1) + ' ' + cdd_type + '\n'
-    if eqns!=None:
+    if eqns is not None:
         for e in eqns:
             s += ' ' + _to_space_separated_string(e) + '\n'
-    if ieqs!=None:
+    if ieqs is not None:
         for i in ieqs:
             s += ' ' + _to_space_separated_string(i) + '\n'
     s += 'end\n'

@@ -25,37 +25,30 @@ AUTHORS:
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import Element
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from sage.misc.prandom import random, randint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.all import ZZ, QQ
 from sage.rings.integer import Integer
-from sage.combinat.combinat import CombinatorialObject
+from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.permutation import Permutation, Permutations
 
-class Derangement(CombinatorialObject, Element):
+
+class Derangement(CombinatorialElement):
     r"""
     A derangement.
 
     A derangement on a set `S` is a permutation `\sigma` such that `\sigma(x)
     \neq x` for all `x \in S`, i.e. `\sigma` is a permutation of `S` with no
     fixed points.
+
+    EXAMPLES::
+
+        sage: D = Derangements(4)
+        sage: elt = D([4,3,2,1])
+        sage: TestSuite(elt).run()
     """
-    def __init__(self, parent, lst):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: D = Derangements(4)
-            sage: elt = D([4,3,2,1])
-            sage: TestSuite(elt).run()
-        """
-        CombinatorialObject.__init__(self, lst)
-        Element.__init__(self, parent)
-
     def to_permutation(self):
         """
         Return the permutation corresponding to ``self``.

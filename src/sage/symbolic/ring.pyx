@@ -10,7 +10,6 @@ The symbolic ring
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
 
 #################################################################
@@ -19,19 +18,20 @@ include "sage/ext/cdefs.pxi"
 
 #initialize_ginac()
 
-from sage.libs.ginac cimport *
+from ginac cimport *
 
 from sage.rings.integer cimport Integer
-from sage.rings.real_mpfr import RealNumber
+from sage.rings.real_mpfr cimport RealNumber
 
 from sage.symbolic.expression cimport Expression, new_Expression_from_GEx, new_Expression_from_pyobject, is_Expression
 
 from sage.libs.pari.pari_instance cimport PariInstance
 from sage.misc.latex import latex_variable_name
-from sage.structure.element cimport RingElement, Element
+from sage.structure.element cimport RingElement, Element, Matrix
 from sage.structure.parent_base import ParentWithBase
 from sage.rings.ring cimport CommutativeRing
 from sage.categories.morphism cimport Morphism
+from sage.structure.coerce cimport is_numpy_type
 
 from sage.rings.all import RR, CC
 
@@ -120,7 +120,7 @@ cdef class SymbolicRing(CommutativeRing):
 
         TESTS:
 
-        Check if arithmetic with bools work #9560::
+        Check if arithmetic with bools works (see :trac:`9560`)::
 
             sage: SR.has_coerce_map_from(bool)
             True
@@ -137,14 +137,14 @@ cdef class SymbolicRing(CommutativeRing):
             if R in [int, float, long, complex, bool]:
                 return True
 
-            if 'numpy' in R.__module__:
+            if is_numpy_type(R):
                 import numpy
-                basic_types = [numpy.float, numpy.float32, numpy.float64,
-                               numpy.complex, numpy.complex64, numpy.complex128]
-                if hasattr(numpy, 'float128'):
-                    basic_types += [numpy.float128, numpy.complex256]
-                if R in basic_types:
-                    return NumpyToSRMorphism(R, self)
+                if (issubclass(R, numpy.integer) or
+                    issubclass(R, numpy.floating) or
+                    issubclass(R, numpy.complexfloating)):
+                    return NumpyToSRMorphism(R)
+                else:
+                    return None
 
             if 'sympy' in R.__module__:
                 from sympy.core.basic import Basic
@@ -163,8 +163,8 @@ cdef class SymbolicRing(CommutativeRing):
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 
             from sage.rings.all import (ComplexField,
-                                        RLF, CLF, AA, QQbar, InfinityRing,
-                                        is_FiniteField)
+                                        RLF, CLF, AA, QQbar, InfinityRing)
+            from sage.rings.finite_rings.finite_field_base import is_FiniteField
 
             from sage.interfaces.maxima import Maxima
 
@@ -266,7 +266,7 @@ cdef class SymbolicRing(CommutativeRing):
             try:
                 from sage.calculus.calculus import symbolic_expression_from_string
                 return self(symbolic_expression_from_string(x))
-            except SyntaxError, err:
+            except SyntaxError as err:
                 msg, s, pos = err.args
                 raise TypeError, "%s: %s !!! %s" % (msg, s[:pos], s[pos:])
 
@@ -283,27 +283,97 @@ cdef class SymbolicRing(CommutativeRing):
             return new_Expression_from_GEx(self, g_mInfinity)
         elif x is unsigned_infinity:
             return new_Expression_from_GEx(self, g_UnsignedInfinity)
-        elif isinstance(x, RingElement):
+        elif isinstance(x, (RingElement, Matrix)):
             GEx_construct_pyobject(exp, x)
         else:
             raise TypeError
 
         return new_Expression_from_GEx(self, exp)
 
-    def _force_pyobject(self, x):
+    def _force_pyobject(self, x, bint force=False, bint recursive=True):
         """
         Wrap the given Python object in a symbolic expression even if it
         cannot be coerced to the Symbolic Ring.
 
+        INPUT:
+
+        - ``x`` - a Python object.
+
+        - ``force`` - bool, default ``False``, if True, the Python object
+          is taken as is without attempting coercion or list traversal.
+
+        - ``recursive`` - bool, default ``True``, disables recursive
+          traversal of lists.
+
         EXAMPLES::
 
-            sage: t = SR._force_pyobject([3,4,5]); t
-            [3, 4, 5]
+            sage: t = SR._force_pyobject(QQ); t
+            Rational Field
             sage: type(t)
             <type 'sage.symbolic.expression.Expression'>
+
+        Testing tuples::
+
+            sage: t = SR._force_pyobject((1, 2, x, x+1, x+2)); t
+            (1, 2, x, x + 1, x + 2)
+            sage: t.subs(x = 2*x^2)
+            (1, 2, 2*x^2, 2*x^2 + 1, 2*x^2 + 2)
+            sage: t.op[0]
+            1
+            sage: t.op[2]
+            x
+
+        It also works if the argument is a ``list``::
+
+            sage: t = SR._force_pyobject([1, 2, x, x+1, x+2]); t
+            (1, 2, x, x + 1, x + 2)
+            sage: t.subs(x = 2*x^2)
+            (1, 2, 2*x^2, 2*x^2 + 1, 2*x^2 + 2)
+            sage: SR._force_pyobject((QQ, RR, CC))
+            (Rational Field, Real Field with 53 bits of precision, Complex Field with 53 bits of precision)
+            sage: t = SR._force_pyobject((QQ, (x, x + 1, x + 2), CC)); t
+            (Rational Field, (x, x + 1, x + 2), Complex Field with 53 bits of precision)
+            sage: t.subs(x=x^2)
+            (Rational Field, (x^2, x^2 + 1, x^2 + 2), Complex Field with 53 bits of precision)
+
+        If ``recursive`` is ``False`` the inner tuple is taken as a Python
+        object. This prevents substitution as above::
+
+            sage: t = SR._force_pyobject((QQ, (x, x + 1, x + 2), CC), recursive=False)
+            sage: t
+            (Rational Field, (x, x + 1, x + 2), Complex Field with 53 bits
+            of precision)
+            sage: t.subs(x=x^2)
+            (Rational Field, (x, x + 1, x + 2), Complex Field with 53 bits
+            of precision)
         """
         cdef GEx exp
-        GEx_construct_pyobject(exp, x)
+        cdef GExprSeq ex_seq
+        cdef GExVector ex_v
+        if force:
+            GEx_construct_pyobject(exp, x)
+
+        else:
+            # first check if we can do it the nice way
+            if isinstance(x, Expression):
+                return x
+            try:
+                return self._coerce_(x)
+            except TypeError:
+                pass
+
+            # tuples can be packed into exprseq
+            if isinstance(x, (tuple, list)):
+                for e in x:
+                    obj = SR._force_pyobject(e, force=(not recursive))
+                    ex_v.push_back( (<Expression>obj)._gobj )
+
+                GExprSeq_construct_exvector(&ex_seq, ex_v)
+
+                GEx_construct_exprseq(&exp, ex_seq)
+            else:
+                GEx_construct_pyobject(exp, x)
+
         return new_Expression_from_GEx(self, exp)
 
     def wild(self, unsigned int n=0):
@@ -330,6 +400,13 @@ cdef class SymbolicRing(CommutativeRing):
             True
             sage: f.subs(pattern == x^2)
             arctan(x^2)
+
+        TESTS:
+
+        Check that :trac:`15047` is fixed::
+
+            sage: latex(SR.wild(0))
+            \$0
         """
         return new_Expression_from_GEx(self, g_wild(n))
 
@@ -423,6 +500,17 @@ cdef class SymbolicRing(CommutativeRing):
         """
         return True
 
+    def is_finite(self):
+        """
+        Return False, since the Symbolic Ring is infinite.
+
+        EXAMPLES::
+
+            sage: SR.is_finite()
+            False
+        """
+        return False
+
     cpdef bint is_exact(self) except -2:
         """
         Return False, because there are approximate elements in the
@@ -502,7 +590,7 @@ cdef class SymbolicRing(CommutativeRing):
 
         else: # initialize a new symbol
             # Construct expression
-            e = <Expression>PY_NEW(Expression)
+            e = <Expression>Expression.__new__(Expression)
             e._parent = SR
 
             if name is None: # Check if we need a temporary anonymous new symbol
@@ -553,6 +641,11 @@ cdef class SymbolicRing(CommutativeRing):
             Traceback (most recent call last):
             ...
             ValueError: The name "x,y" is not a valid Python identifier.
+
+        Check that :trac:`17206` is fixed::
+
+            sage: var1 = var('var1', latex_name=r'\sigma^2_1'); latex(var1)
+            {\sigma^2_1}
         """
         if is_Expression(name):
             return name
@@ -575,7 +668,10 @@ cdef class SymbolicRing(CommutativeRing):
         if len(names_list) == 0:
             raise ValueError('You need to specify the name of the new variable.')
         if len(names_list) == 1:
-            return self.symbol(name, latex_name=latex_name, domain=domain)
+            formatted_latex_name = None
+            if latex_name is not None:
+                formatted_latex_name = '{{{0}}}'.format(latex_name)
+            return self.symbol(name, latex_name=formatted_latex_name, domain=domain)
         if len(names_list) > 1:
             if latex_name:
                 raise ValueError, "cannot specify latex_name for multiple symbol names"
@@ -675,9 +771,11 @@ cdef class SymbolicRing(CommutativeRing):
         elif len(args) == 1 and isinstance(args[0], dict):
             d = args[0]
         else:
-            from sage.misc.superseded import deprecation
-            vars = _the_element.operands()
-            deprecation(5930, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
+            import inspect
+            if not hasattr(_the_element,'_fast_callable_') or not inspect.ismethod(_the_element._fast_callable_):
+                # only warn if _the_element is not dynamic
+                from sage.misc.superseded import deprecation
+                deprecation(5930, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
             d = {}
 
             vars = _the_element.variables()
@@ -693,34 +791,83 @@ SR = SymbolicRing()
 
 cdef unsigned sage_domain_to_ginac(object domain) except +:
         # convert the domain argument to something easy to parse
-        if domain is RR or domain is 'real':
+        if domain is RR or domain == 'real':
             return domain_real
-        elif domain is 'positive':
+        elif domain == 'positive':
             return domain_positive
-        elif domain is CC or domain is 'complex':
+        elif domain is CC or domain == 'complex':
             return domain_complex
         else:
-            raise ValueError, "domain must be one of 'complex', 'real' or 'positive'"
+            raise ValueError("domain must be one of 'complex', 'real' or 'positive'")
 
 cdef class NumpyToSRMorphism(Morphism):
-    def __init__(self, numpy_type, R):
+    r"""
+    A morphism from numpy types to the symbolic ring.
+
+    TESTS:
+
+    We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
+
+        sage: import numpy
+        sage: f(x) = x^2
+        sage: f(numpy.int8('2'))
+        4
+        sage: f(numpy.int32('3'))
+        9
+
+    Note that the answer is a Sage integer and not a numpy type::
+
+        sage: a = f(numpy.int8('2')).pyobject()
+        sage: type(a)
+        <type 'sage.rings.integer.Integer'>
+
+    This behavior also applies to standard functions::
+
+        sage: cos(numpy.int('2'))
+        cos(2)
+        sage: numpy.cos(numpy.int('2'))
+        -0.41614683654714241
+    """
+    cdef _intermediate_ring
+
+    def __init__(self, numpy_type):
         """
         A Morphism which constructs Expressions from NumPy floats and
         complexes by converting them to elements of either RDF or CDF.
+
+        INPUT:
+
+        - ``numpy_type`` - a numpy number type
 
         EXAMPLES::
 
             sage: import numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
-            sage: f = NumpyToSRMorphism(numpy.float64, SR)
+            sage: f = NumpyToSRMorphism(numpy.float64)
             sage: f(numpy.float64('2.0'))
             2.0
             sage: _.parent()
             Symbolic Ring
+
+            sage: NumpyToSRMorphism(str)
+            Traceback (most recent call last):
+            ...
+            TypeError: <type 'str'> is not a numpy number type
         """
-        import sage.categories.homset
-        from sage.structure.parent import Set_PythonType
-        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(numpy_type), R))
+        Morphism.__init__(self, numpy_type, SR)
+
+        import numpy
+        if issubclass(numpy_type, numpy.integer):
+            from sage.rings.all import ZZ
+            self._intermediate_ring = ZZ
+        elif issubclass(numpy_type, numpy.floating):
+            from sage.rings.all import RDF
+            self._intermediate_ring = RDF
+        elif issubclass(numpy_type, numpy.complexfloating):
+            from sage.rings.all import CDF
+            self._intermediate_ring = CDF
+        else:
+            raise TypeError("{} is not a numpy number type".format(numpy_type))
 
     cpdef Element _call_(self, a):
         """
@@ -730,17 +877,20 @@ cdef class NumpyToSRMorphism(Morphism):
         float or complex to the Symbolic Ring::
 
             sage: import numpy
+            sage: SR(numpy.int32('1')).pyobject().parent()
+            Integer Ring
+            sage: SR(numpy.int64('-2')).pyobject().parent()
+            Integer Ring
+
+            sage: SR(numpy.float16('1')).pyobject().parent()
+            Real Double Field
             sage: SR(numpy.float64('2.0')).pyobject().parent()
             Real Double Field
-        """
-        from sage.rings.all import RDF, CDF
-        numpy_type = self._domain.object()
-        if 'complex' in numpy_type.__name__:
-            res = CDF(a)
-        else:
-            res = RDF(a)
 
-        return new_Expression_from_pyobject(self._codomain, res)
+            sage: SR(numpy.complex64(1jr)).pyobject().parent()
+            Complex Double Field
+        """
+        return new_Expression_from_pyobject(self.codomain(), self._intermediate_ring(a))
 
 cdef class UnderscoreSageMorphism(Morphism):
     def __init__(self, t, R):
@@ -775,7 +925,7 @@ cdef class UnderscoreSageMorphism(Morphism):
             sage: bool(SR(b) == SR(b._sage_()))
             True
         """
-        return self._codomain(a._sage_())
+        return self.codomain()(a._sage_())
 
 
 def the_SymbolicRing():
@@ -853,7 +1003,7 @@ def is_SymbolicVariable(x):
 
     TESTS::
 
-        sage: ZZ[x]
+        sage: ZZ['x']
         Univariate Polynomial Ring in x over Integer Ring
     """
     return is_Expression(x) and is_a_symbol((<Expression>x)._gobj)

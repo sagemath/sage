@@ -94,9 +94,7 @@ Or you can create a homomorphism from one lattice to any other::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi' # Needed for PY_NEW
+from sage.libs.gmp.mpz cimport *
 
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
@@ -174,7 +172,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # without any further documentation as well...
     cdef _new_c(self):
         cdef ToricLatticeElement y
-        y = PY_NEW(ToricLatticeElement)
+        y = ToricLatticeElement.__new__(ToricLatticeElement)
         y._init(self._degree, self._parent)
         return y
 
@@ -217,7 +215,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         except AttributeError:
             return cmp(PL, PR)
         # Now use the real comparison of vectors
-        return self._cmp_c_impl(right)
+        return self._cmp_(right)
 
     # For some reason, vectors work just fine without redefining this function
     # from the base class, but if it is not here, we get "unhashable type"...
@@ -414,6 +412,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: N = ToricLattice(3)
             sage: n = N(1,2,3)
             sage: n.plot()
+            Graphics3d Object
         """
         tp = ToricPlotter(options, self.parent().degree())
         tp.adjust_options()
@@ -449,7 +448,7 @@ def unpickle_v1(parent, entries, degree, is_mutable):
         lattice(1, 2, 3)
     """
     cdef ToricLatticeElement v
-    v = PY_NEW(ToricLatticeElement)
+    v = ToricLatticeElement.__new__(ToricLatticeElement)
     v._init(degree, parent)
     cdef Integer z
     for i from 0 <= i < degree:

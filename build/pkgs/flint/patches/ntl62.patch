@@ -1,0 +1,13 @@
+diff -druN flint-2.5.orig/interfaces/NTL-interface.cpp flint-2.5/interfaces/NTL-interface.cpp
+--- flint-2.5.orig/interfaces/NTL-interface.cpp	2014-07-16 07:50:40.000000000 -0700
++++ flint-2.5/interfaces/NTL-interface.cpp	2014-08-26 07:51:55.585884615 -0700
+@@ -32,9 +32,7 @@
+ #include <NTL/ZZ.h>
+ #include <NTL/ZZX.h>
+ #include <NTL/mat_ZZ.h>
+-#include <NTL/lip.h>
+ #include <NTL/ctools.h>
+-#include <NTL/g_lip.h>
+ #include <gmp.h>
+ 
+ #include "flint.h"

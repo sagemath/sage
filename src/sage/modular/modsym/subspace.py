@@ -307,8 +307,8 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         r = self.dimension()
         s = sum([A.rank()*mult for A, mult in D])
         if r != s:
-            raise NotImplementedError, "modular symbols factorization not fully implemented yet --  self has dimension %s, but sum of dimensions of factors is %s"%(
-            r, s)
+            raise NotImplementedError("modular symbols factorization not fully implemented yet --  self has dimension %s, but sum of dimensions of factors is %s"%(
+            r, s))
         self._factorization = sage.structure.factorization.Factorization(D, cr=True)
         return self._factorization
 

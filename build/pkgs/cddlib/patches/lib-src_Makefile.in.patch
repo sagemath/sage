@@ -1,0 +1,31 @@
+diff --git a/src.bak/lib-src/Makefile.in b/src/lib-src/Makefile.in
+index bd3c2b5..ccf4a6c 100644
+--- a/src.bak/lib-src/Makefile.in
++++ b/src/lib-src/Makefile.in
+@@ -53,7 +53,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
+ LTLIBRARIES = $(lib_LTLIBRARIES)
+ libcdd_la_LIBADD =
+ am_libcdd_la_OBJECTS = cddcore.lo cddlp.lo cddmp.lo cddio.lo cddlib.lo \
+-	cddproj.lo setoper.lo
++	cddproj.lo setoper.lo random.lo
+ libcdd_la_OBJECTS = $(am_libcdd_la_OBJECTS)
+ DEFAULT_INCLUDES = -I.@am__isrc@
+ depcomp = $(SHELL) $(top_srcdir)/depcomp
+@@ -192,7 +192,8 @@ cddmp.c \
+ cddio.c \
+ cddlib.c \
+ cddproj.c \
+-setoper.c
++setoper.c \
++random.c
+ 
+ include_HEADERS = \
+ cdd.h \
+@@ -277,6 +278,7 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cddlp.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cddmp.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cddproj.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/random.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setoper.Plo@am__quote@
+ 
+ .c.o:

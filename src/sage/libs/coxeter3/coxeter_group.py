@@ -151,7 +151,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def rank(self):
         """
-        Return the rank of this coxeter group, that is, the number of generators.
+        Return the rank of this Coxeter group, that is, the number of generators.
 
         EXAMPLES::
 
@@ -382,7 +382,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         u = self(u)
         v = self(v)
         if any(d in J for d in u.descents()) or any(d in J for d in v.descents()):
-            raise ValueError, "u and v have to be minimal coset representatives"
+            raise ValueError("u and v have to be minimal coset representatives")
         P = ZZ['q']
         q = P.gen()
         subgroup = [ z for z in self.weak_order_ideal(lambda x: set(x.descents()).issubset(set(J))) if (u*z).bruhat_le(v) ]
@@ -457,7 +457,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: v.__cmp__(w)                                            # optional - coxeter3
                 1
             """
-            if type(self) is not type(other):
+            if not isinstance(self, type(other)):
                 return cmp(type(self), type(other))
             return cmp(list(self), list(other))
 
@@ -668,7 +668,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             n = W.rank()
 
             if Q.ngens() != n:
-                raise ValueError, "the number of generators for the polynomial ring must be the same as the rank of the root system"
+                raise ValueError("the number of generators for the polynomial ring must be the same as the rank of the root system")
 
             basis_elements = [alpha[i] for i in W.index_set()]
             basis_to_order = dict([(s, i) for i, s in enumerate(W.index_set())])

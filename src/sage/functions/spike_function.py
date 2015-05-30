@@ -73,8 +73,7 @@ class SpikeFunction:
         """
         if len(v) == 0:
            v = [(0,0)]
-        v = [(float(x[0]), float(x[1])) for x in v]
-        v.sort() # makes sure spike locations are in ascending order so we don't need an absolute value to catch overlaps
+        v = sorted([(float(x[0]), float(x[1])) for x in v])
         notify = False
 
         for i in reversed(range(len(v)-1)):
@@ -162,7 +161,7 @@ class SpikeFunction:
         w = self.vector(samples = samples, xmin=xmin, xmax=xmax)
         xmin, xmax = self._ranges(xmin, xmax)
         z = w.fft()
-        k = vector(RDF, [abs(z[i]) for i in range(int(len(z)/2))])
+        k = vector(RDF, [abs(z[i]) for i in range(len(z)//2)])
         return k.plot(xmin=0, xmax=1, **kwds)
 
     def plot_fft_arg(self, samples=2**12, xmin=None, xmax=None,  **kwds):
@@ -181,7 +180,7 @@ class SpikeFunction:
         w = self.vector(samples = samples, xmin=xmin, xmax=xmax)
         xmin, xmax = self._ranges(xmin, xmax)
         z = w.fft()
-        k = vector(RDF, [(z[i]).arg() for i in range(int(len(z)/2))])
+        k = vector(RDF, [(z[i]).arg() for i in range(len(z)//2)])
         return k.plot(xmin=0, xmax=1, **kwds)
 
     def vector(self, samples=2**16, xmin=None, xmax=None):

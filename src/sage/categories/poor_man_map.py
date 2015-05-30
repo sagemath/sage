@@ -13,7 +13,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
     """
     A class for maps between sets which are not (yet) modeled by parents
 
-    Could possibly disapear when all combinatorial classes / enumerated sets will be parents
+    Could possibly disappear when all combinatorial classes / enumerated sets will be parents
     """
     def __init__(self, function, domain = None, codomain = None, name = None):
         """

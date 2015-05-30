@@ -31,20 +31,12 @@ if [ "$SAGE64" = "yes" ]; then
     CFLAGS="-m64 $CFLAGS"
 fi
 
-if [ -d "$SAGE_LOCAL/include/atlas" ]; then
-    # We actually installed ATLAS
-    echo "Using ATLAS headers installed by Sage"
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-        --enable-shared --with-default="$SAGE_LOCAL"
-else
-    # We symlinked from a system-wide installation, so let's use GSL's header
-    # Note that setting --with-atlas-lib to /usr/lib does not really make sense
-    echo "Using system-wide ATLAS, using headers copied from GSL"
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-        --enable-shared --with-default="$SAGE_LOCAL" \
-        --with-atlas-include="`pwd`" --with-atlas-lib=/usr/lib
+if [ $UNAME = "Darwin" ]; then
+    IML_CONFIGURE="--with-cblas=-lcblas $IML_CONFIGURE"
 fi
 
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+    --enable-shared --with-default="$SAGE_LOCAL" "$IML_CONFIGURE" 
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring IML."
     exit 1

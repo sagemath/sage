@@ -102,11 +102,12 @@ edit terminal session arguments before they are run.
 You may also set default parameters for terminal sessions.  For
 example to send -b to gap (to inhibit the initial banner), type gap as
 the session (lowercase as you see it in the menus--use "sage" (without
-quotes) for sage sessions), -b as the argument and hit Apply.
-Unfortunately, due to a bug in the Cocoa framework, choosing the
-session with the mouse does not correctly update the Default Arguments
-field.  Instead please select a previous session with the keyboard.
-The same applies to the Terminal Emulator selection.
+quotes) for sage sessions, and "notebook" for starting the notebook
+server), -b as the argument and hit Apply.  Unfortunately, due to a
+bug in the Cocoa framework, choosing the session with the mouse does
+not correctly update the Default Arguments field.  Instead please
+select a previous session with the keyboard.  The same applies to the
+Terminal Emulator selection.
 
 You may select a method of running terminal sessions.  If you do not
 see your favorite terminal emulator here, please let know what it is,

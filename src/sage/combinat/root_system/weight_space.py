@@ -167,12 +167,14 @@ class WeightSpace(CombinatorialFreeModule):
             sage: WeightSpace(R, QQ, extended = True)
             Traceback (most recent call last):
             ...
-            AssertionError: extended weight lattices are only implemented for affine root systems
+            ValueError: extended weight lattices are only implemented for affine root systems
         """
         basis_keys = root_system.index_set()
         self._extended = extended
         if extended:
-            assert root_system.cartan_type().is_affine(), "extended weight lattices are only implemented for affine root systems"
+            if not root_system.cartan_type().is_affine():
+                raise ValueError("extended weight lattices are only"
+                                 " implemented for affine root systems")
             basis_keys = tuple(basis_keys) + ("delta",)
 
         self.root_system = root_system
@@ -260,13 +262,15 @@ class WeightSpace(CombinatorialFreeModule):
             delta
         """
         if i == "delta":
-            assert self.cartan_type().is_affine()
+            if not self.cartan_type().is_affine():
+                raise ValueError("delta is only defined for affine weight spaces")
             if self.is_extended():
                 return self.monomial(i)
             else:
                 return self.zero()
         else:
-            assert i in self.index_set()
+            if i not in self.index_set():
+                raise ValueError("{} is not in the index set".format(i))
             return self.monomial(i)
 
     @cached_method
@@ -347,8 +351,10 @@ class WeightSpace(CombinatorialFreeModule):
             - :meth:`~sage.combinat.root_system.type_affine.AmbientSpace.simple_root`
             - :meth:`CartanType.col_annihilator`
         """
-        assert(j in self.index_set())
-        result = self.sum_of_terms(self.root_system.dynkin_diagram().column(j))
+        if j not in self.index_set():
+            raise ValueError("{} is not in the index set".format(j))
+        K = self.base_ring()
+        result = self.sum_of_terms((i,K(c)) for i,c in self.root_system.dynkin_diagram().column(j))
         if self._extended and j == self.cartan_type().special_node():
             result = result + self.monomial("delta")
         return result
@@ -442,7 +448,7 @@ class WeightSpaceElement(CombinatorialFreeModuleElement):
             sage: Lambda[1].scalar(alphacheck[2])
             0
 
-        The fundamental weights and the simple coroots are dual bases:
+        The fundamental weights and the simple coroots are dual bases::
 
             sage: matrix([ [ Lambda[i].scalar(alphacheck[j])
             ...              for i in L.index_set() ]
@@ -462,12 +468,12 @@ class WeightSpaceElement(CombinatorialFreeModuleElement):
             sage: alphacheck = R.coweight_space().roots()
             sage: alpha[1].scalar(alphacheck[1])
             Traceback (most recent call last):
-              ...
-              assert lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()
-            AssertionError
+            ...
+            ValueError: -Lambdacheck[1] + 2*Lambdacheck[2] - Lambdacheck[3] is not in the coroot space
         """
         # TODO: Find some better test
-        assert lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()
+        if lambdacheck not in self.parent().coroot_lattice() and lambdacheck not in self.parent().coroot_space():
+            raise ValueError("{} is not in the coroot space".format(lambdacheck))
         zero = self.parent().base_ring().zero()
         if len(self) < len(lambdacheck):
             return sum( (lambdacheck[i]*c for (i,c) in self), zero)
@@ -481,15 +487,27 @@ class WeightSpaceElement(CombinatorialFreeModuleElement):
 
         EXAMPLES::
 
-            sage: W=RootSystem(['A',3]).weight_space()
-            sage: Lambda=W.basis()
-            sage: w=Lambda[1]+Lambda[3]
+            sage: W = RootSystem(['A',3]).weight_space()
+            sage: Lambda = W.basis()
+            sage: w = Lambda[1]+Lambda[3]
             sage: w.is_dominant()
             True
-            sage: w=Lambda[1]-Lambda[2]
+            sage: w = Lambda[1]-Lambda[2]
             sage: w.is_dominant()
             False
+
+        In the extended affine weight lattice, 'delta' is orthogonal to
+        the positive coroots, so adding or subtracting it should not
+        effect dominance ::
+
+            sage: P = RootSystem(['A',2,1]).weight_lattice(extended=true)
+            sage: Lambda = P.fundamental_weights()
+            sage: delta = P.null_root()
+            sage: w = Lambda[1]-delta
+            sage: w.is_dominant()
+            True
+
         """
-        return all(c >= 0 for c in self.coefficients())
+        return all(self.coefficient(i) >= 0 for i in self.parent().index_set())
 
 WeightSpace.Element = WeightSpaceElement

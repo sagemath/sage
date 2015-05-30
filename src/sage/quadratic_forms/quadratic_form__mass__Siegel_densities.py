@@ -12,7 +12,7 @@ Local Masses and Siegel Densities
 
 import copy
 
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from sage.misc.mrange import mrange
 from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ
@@ -63,7 +63,7 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     """
     ## Setup
     n = self.dim()
-    s = floor((n-1)/2)
+    s = (n-1) // 2
     if n % 2 != 0:
         char_d = squarefree_part(2*self.det())   ## Accounts for the det as a QF
     else:
@@ -108,12 +108,12 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
             elif even_algorithm == "Watson":
                 p_adjustment = p_adjustment / self.Watson_mass_at_2()
             else:
-                raise TypeError, "There is a problem -- your even_algorithm argument is invalid.  Try again. =("
+                raise TypeError("There is a problem -- your even_algorithm argument is invalid.  Try again. =(")
         else:
             if odd_algorithm == "Pall":
                 p_adjustment = p_adjustment / self.Pall_mass_density_at_odd_prime(p)
             else:
-                raise TypeError, "There is a problem -- your optional arguments are invalid.  Try again. =("
+                raise TypeError("There is a problem -- your optional arguments are invalid.  Try again. =(")
 
         #print "p_adjustment for p =", p, "is", p_adjustment
 
@@ -160,7 +160,7 @@ def Pall_mass_density_at_odd_prime(self, p):
     """
     ## Check that p is a positive prime -- unnecessary since it's done implicitly in the next step. =)
     if p<=2:
-        raise TypeError, "Oops!  We need p to be a prime > 2."
+        raise TypeError("Oops!  We need p to be a prime > 2.")
 
     ## Step 1: Obtain a p-adic (diagonal) local normal form, and
     ## compute the invariants for each Jordan block.
@@ -173,7 +173,7 @@ def Pall_mass_density_at_odd_prime(self, p):
     ## Step 2: Compute the list of local masses for each Jordan block
     jordan_mass_list = []
     for (s,n,d) in modified_jordan_list:
-        generic_factor = prod([1 - p**(-2*j)  for j in range(1, floor((n-1)/2)+1)])
+        generic_factor = prod([1 - p**(-2*j)  for j in range(1, (n-1)//2+1)])
         #print "generic factor: ", generic_factor
         if (n % 2 == 0):
             m = n/2
@@ -364,7 +364,7 @@ def Kitaoka_mass_at_2(self):
     ## Compute P = product of the P_j
     P = QQ(1)
     for j in range(s_min, s_max + 1):
-        tmp_m = dim2_dict[j].dim() / 2
+        tmp_m = dim2_dict[j].dim() // 2
         P *= prod([QQ(1) - QQ(4**(-k))  for j in range(1, tmp_m + 1)])
 
     ## Compute the product E := prod_j (1 / E_j)
@@ -374,7 +374,7 @@ def Kitaoka_mass_at_2(self):
            ((diag_dict[j].dim() != 2) or (((diag_dict[j][0,0] - diag_dict[j][1,1]) % 4) != 0)):
 
             ## Deal with the complicated case:
-            tmp_m = dim2_dict[j].dim() / 2
+            tmp_m = dim2_dict[j].dim() // 2
             if dim2_dict[j].is_hyperbolic(2):
                 E *= 2 / (1 + 2**(-tmp_m))
             else:

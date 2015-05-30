@@ -1,62 +1,13 @@
-include "sage/ext/interrupt.pxi"  # ctrl-c interrupt block support
-include "sage/ext/stdsage.pxi"
-include "sage/ext/python.pxi"
-from cpython.list cimport *
-from cpython.number cimport *
-from cpython.int cimport *
-include "sage/ext/python_rich_object.pxi"
+from cpython.ref cimport Py_INCREF
 
-#def time_alloc_list(n):
-    #"""
-    #Allocate n a list of n Sage integers using PY_NEW.
-    #(Used for timing purposes.)
-
-    #EXAMPLES:
-       #sage: from sage.rings.integer import time_alloc_list
-       #sage: v = time_alloc_list(100)
-    #"""
-    #cdef int i
-    #l = []
-    #for i from 0 <= i < n:
-        #l.append(PY_NEW(Integer))
-
-    #return l
-
-#def time_alloc(n):
-    #"""
-    #Time allocating n integers using PY_NEW.
-    #Used for timing purposes.
-
-    #EXAMPLES:
-       #sage: from sage.rings.integer import time_alloc
-       #sage: time_alloc(100)
-    #"""
-    #cdef int i
-    #for i from 0 <= i < n:
-        #z = PY_NEW(Integer)
-
-#def pool_stats():
-    #"""
-    #Returns information about the Integer object pool.
-
-    #EXAMPLES:
-        #sage: from sage.rings.integer import pool_stats
-        #sage: pool_stats()            # random-ish output
-        #Used pool 0 / 0 times
-        #Pool contains 3 / 100 items
-    #"""
-    #return ["Used pool %s / %s times" % (use_pool, total_alloc),
-            #"Pool contains %s / %s items" % (integer_pool_count, integer_pool_size)]
-
-cdef hook_tp_functions(object global_dummy, allocfunc tp_alloc, newfunc tp_new, freefunc tp_free, destructor tp_dealloc, bint useGC):
+cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_dealloc, bint useGC):
     """
     Initialize the fast integer creation functions.
     """
-
     cdef long flag
 
     cdef PyObject* o = <PyObject*>global_dummy
-    cdef RichPyTypeObject* t = <RichPyTypeObject*>o.ob_type
+    cdef PyTypeObject* t = Py_TYPE(global_dummy)
 
     # Make sure this never, ever gets collected.
     # This is not necessary for cdef'ed variables as the global

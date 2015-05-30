@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
-# Script to prepare a ECL spkg for Sage.  This script is only for the
+# Script to prepare a ECL tarball for Sage.  This script is only for the
 # package maintainer, not for building ECL during a Sage install.
 # WARNING: This script will delete/overwrite files in this directory
 # and its subdirectories!
 #
-# HOW TO MAKE THE SPKG:
-# 1) cp [pathto]/ecl-$ECLVERSION.tar.gz ../
+# HOW TO MAKE THE TARBALL:
+# 1) copy upstream ecl-$ECLVERSION.tgz to this directory
 # 2) ./spkg-src
-# 3) cd ..; sage -pkg ecl-[version]
+# 3) compress ecl-$ECLVERSION into a .tar.bz2 file
 #
 # AUTHOR: Jeroen Demeyer (November 2011)
 
@@ -21,23 +21,12 @@ fi
 # Exit on failure
 set -e
 
-# Clean an existing src/ and ecl/ directory
-rm -rf src ecl*
-
 # Untar ECL tarball
-ECLVERSION=12.12.1
-tar xf ../ecl-"$ECLVERSION".tgz
-mv ecl-"$ECLVERSION" src
+ECLVERSION=13.5.1
+tar xf ecl-"$ECLVERSION".tgz
+cd ecl-"$ECLVERSION"
 
 # Remove unneeded files to save space
+rm -rf msvc
 cd src
-rm -rf msvc contrib/encodings contrib/unicode
-cd src
-rm -rf gc-unstable libffi
-
-# Remove almost everything from gmp directory
-mv gmp gmp-remove
-# Save a few files
-mkdir gmp
-cp -p gmp-remove/config.* gmp-remove/configfsf.* gmp-remove/install*sh gmp
-rm -rf gmp-remove
+rm -rf gc-unstable gmp libffi

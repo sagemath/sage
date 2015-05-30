@@ -12,13 +12,13 @@ necessary to install any special Sage packages.
 
 EXAMPLES::
 
-    sage: matlab.eval('2+2')                 # optional
+    sage: matlab.eval('2+2')                 # optional - matlab
     '\nans =\n\n     4\n'
 
 ::
 
-    sage: a = matlab(10)                     # optional
-    sage: a**10                              # optional
+    sage: a = matlab(10)                     # optional - matlab
+    sage: a**10                              # optional - matlab
        1.0000e+10
 
 AUTHORS:
@@ -30,61 +30,60 @@ Tutorial
 
 EXAMPLES::
 
-    sage: matlab('4+10')                     # optional
+    sage: matlab('4+10')                    # optional - matlab
     14
-    sage: matlab('date')                    # optional; random output
+    sage: matlab('date')                    # optional - matlab; random output
     18-Oct-2006
-    sage: matlab('5*10 + 6')                 # optional
+    sage: matlab('5*10 + 6')                # optional - matlab
     56
-    sage: matlab('(6+6)/3')                  # optional
+    sage: matlab('(6+6)/3')                 # optional - matlab
     4
-    sage: matlab('9')^2                      # optional
+    sage: matlab('9')^2                     # optional - matlab
     81
-    sage: a = matlab(10); b = matlab(20); c = matlab(30)    # optional
-    sage: avg = (a+b+c)/3                    # optional
-    sage: avg                                # optional
+    sage: a = matlab(10); b = matlab(20); c = matlab(30)    # optional - matlab
+    sage: avg = (a+b+c)/3 ; avg             # optional - matlab
     20
-    sage: parent(avg)                        # optional
+    sage: parent(avg)                       # optional - matlab
     Matlab
 
 ::
 
-    sage: my_scalar = matlab('3.1415')       # optional
-    sage: my_scalar                          # optional
+    sage: my_scalar = matlab('3.1415')       # optional - matlab
+    sage: my_scalar                          # optional - matlab
     3.1415
-    sage: my_vector1 = matlab('[1,5,7]')     # optional
-    sage: my_vector1                         # optional
+    sage: my_vector1 = matlab('[1,5,7]')     # optional - matlab
+    sage: my_vector1                         # optional - matlab
     1     5     7
-    sage: my_vector2 = matlab('[1;5;7]')     # optional
-    sage: my_vector2                         # optional
+    sage: my_vector2 = matlab('[1;5;7]')     # optional - matlab
+    sage: my_vector2                         # optional - matlab
     1
     5
     7
-    sage: my_vector1 * my_vector2            # optional
+    sage: my_vector1 * my_vector2            # optional - matlab
     75
 
 ::
 
-    sage: row_vector1 = matlab('[1 2 3]')             # optional
-    sage: row_vector2 = matlab('[3 2 1]')             # optional
-    sage: matrix_from_row_vec = matlab('[%s; %s]'%(row_vector1.name(), row_vector2.name()))     # optional
-    sage: matrix_from_row_vec                            # optional
+    sage: row_vector1 = matlab('[1 2 3]')             # optional - matlab
+    sage: row_vector2 = matlab('[3 2 1]')             # optional - matlab
+    sage: matrix_from_row_vec = matlab('[%s; %s]'%(row_vector1.name(), row_vector2.name()))     # optional - matlab
+    sage: matrix_from_row_vec                            # optional - matlab
     1     2     3
     3     2     1
 
 ::
 
-    sage: column_vector1 = matlab('[1;3]')               # optional
-    sage: column_vector2 = matlab('[2;8]')               # optional
-    sage: matrix_from_col_vec = matlab('[%s %s]'%(column_vector1.name(), column_vector2.name()))                                    # optional
-    sage: matrix_from_col_vec                            # optional
+    sage: column_vector1 = matlab('[1;3]')               # optional - matlab
+    sage: column_vector2 = matlab('[2;8]')               # optional - matlab
+    sage: matrix_from_col_vec = matlab('[%s %s]'%(column_vector1.name(), column_vector2.name()))                                    # optional - matlab
+    sage: matrix_from_col_vec                            # optional - matlab
     1     2
     3     8
 
 ::
 
-    sage: my_matrix = matlab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')    # optional
-    sage: my_matrix                                      # optional
+    sage: my_matrix = matlab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')    # optional - matlab
+    sage: my_matrix                                      # optional - matlab
          8    12    19
          7     3     2
         12     4    23
@@ -92,8 +91,8 @@ EXAMPLES::
 
 ::
 
-    sage: combined_matrix = matlab('[%s, %s]'%(my_matrix.name(), my_matrix.name()))                                        # optional
-    sage: combined_matrix                               # optional
+    sage: combined_matrix = matlab('[%s, %s]'%(my_matrix.name(), my_matrix.name()))                                        # optional - matlab
+    sage: combined_matrix                               # optional - matlab
      8    12    19     8    12    19
      7     3     2     7     3     2
     12     4    23    12     4    23
@@ -101,32 +100,32 @@ EXAMPLES::
 
 ::
 
-    sage: tm = matlab('0.5:2:10')                       # optional
-    sage: tm                                            # optional
+    sage: tm = matlab('0.5:2:10')                       # optional - matlab
+    sage: tm                                            # optional - matlab
     0.5000    2.5000    4.5000    6.5000    8.5000
 
 ::
 
-    sage: my_vector1 = matlab('[1,5,7]')                # optional
-    sage: my_vector1(1)                                 # optional
+    sage: my_vector1 = matlab('[1,5,7]')                # optional - matlab
+    sage: my_vector1(1)                                 # optional - matlab
     1
-    sage: my_vector1(2)                                 # optional
+    sage: my_vector1(2)                                 # optional - matlab
     5
-    sage: my_vector1(3)                                 # optional
+    sage: my_vector1(3)                                 # optional - matlab
     7
 
 Matrix indexing works as follows::
 
-    sage: my_matrix = matlab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')     # optional
-    sage: my_matrix(3,2)                                # optional
+    sage: my_matrix = matlab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')     # optional - matlab
+    sage: my_matrix(3,2)                                # optional - matlab
     4
 
 Setting using parenthesis cannot work (because of how the Python
 language works). Use square brackets or the set function::
 
-    sage: my_matrix = matlab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')    # optional
-    sage: my_matrix.set(2,3, 1999)                          # optional
-    sage: my_matrix                                         # optional
+    sage: my_matrix = matlab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')    # optional - matlab
+    sage: my_matrix.set(2,3, 1999)                          # optional - matlab
+    sage: my_matrix                                         # optional - matlab
                8          12          19
                7           3        1999
               12           4          23
@@ -161,15 +160,15 @@ class Matlab(Expect):
 
     EXAMPLES::
 
-        sage: a = matlab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional
-        sage: b = matlab('[ 1; 3; 13]')                         # optional
-        sage: c = a * b                                         # optional
-        sage: print c                                           # optional
+        sage: a = matlab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional - matlab
+        sage: b = matlab('[ 1; 3; 13]')                         # optional - matlab
+        sage: c = a * b                                         # optional - matlab
+        sage: print c                                           # optional - matlab
             30
            122
            505
     """
-    def __init__(self, maxread=100, script_subdirectory="",
+    def __init__(self, maxread=100, script_subdirectory=None,
                  logfile=None, server=None,server_tmpdir=None):
         Expect.__init__(self,
                         name = 'matlab',
@@ -201,9 +200,9 @@ class Matlab(Expect):
 
             sage: m = identity_matrix(ZZ, 10)
             sage: sm = matlab.sage2matlab_matrix_string(m)
-            sage: m = matlab(sm)  #optional - matlab
+            sage: m = matlab(sm)  # optional - matlab
         """
-        return "eval(fileread('%s'));"%filename
+        return "eval(fileread('{0}'));".format(filename)
 
     def _quit_string(self):
         return 'quit;'
@@ -245,10 +244,10 @@ for hints on how to do that).
         """
         Set the variable var to the given value.
         """
-        cmd = '%s=%s;'%(var,value)
+        cmd = '{0}={1};'.format(var, value)
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError, "Error executing code in Matlab\nCODE:\n\t%s\nMatlab ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Matlab\nCODE:\n\t{0}\nMatlab ERROR:\n\t{1}".format(cmd, out))
 
     def get(self, var):
         """
@@ -257,10 +256,10 @@ for hints on how to do that).
         EXAMPLES::
 
             sage: s = matlab.eval('a = 2') # optional - matlab
-            sage: matlab.get('a')               #optional
+            sage: matlab.get('a')               # optional - matlab
             '     2'
         """
-        s = self.eval('%s'%var)
+        s = self.eval('{0}'.format(var))
         return self.strip_answer(s)
 
     def strip_answer(self, s):
@@ -294,7 +293,7 @@ for hints on how to do that).
             /
 
         """
-        self.eval("cd('%s')"%directory)
+        self.eval("cd('{0}')".format(directory))
 
     def sage2matlab_matrix_string(self, A):
         """
@@ -323,7 +322,7 @@ for hints on how to do that).
 
 class MatlabElement(ExpectElement):
     def __getitem__(self, n):
-        raise RuntimeError, "Use parenthesis for MATLAB matrices instead."
+        raise RuntimeError("Use parenthesis for MATLAB matrices instead.")
 
     def _matrix_(self, R):
         r"""
@@ -332,11 +331,11 @@ class MatlabElement(ExpectElement):
         EXAMPLES::
 
             sage: A = matlab('[1,2;3,4]')       # optional - matlab
-            sage: matrix(ZZ, A)                 # optional
+            sage: matrix(ZZ, A)                 # optional - matlab
             [1 2]
             [3 4]
             sage: A = matlab('[1,2;3,4.5]')     # optional - matlab
-            sage: matrix(RR, A)                 # optional
+            sage: matrix(RR, A)                 # optional - matlab
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
 
@@ -347,7 +346,7 @@ class MatlabElement(ExpectElement):
         """
         from sage.matrix.all import matrix
         matlab = self.parent()
-        entries = matlab.strip_answer(matlab.eval("mat2str(%s)"%self.name()))
+        entries = matlab.strip_answer(matlab.eval("mat2str({0})".format(self.name())))
         entries = entries.strip()[1:-1].replace(';', ' ')
         entries = map(R, entries.split(' '))
         nrows, ncols = map(int, str(self.size()).strip().split())
@@ -357,10 +356,10 @@ class MatlabElement(ExpectElement):
     def set(self, i, j, x):
         P = self._check_valid()
         z = P(x)
-        P.eval('%s(%s,%s) = %s'%(self.name(), i, j, z.name()))
+        P.eval('{0}({1},{2}) = {3}'.format(self.name(), i, j, z.name()))
 
 # An instance
-matlab = Matlab(script_subdirectory='user')
+matlab = Matlab()
 
 def reduce_load_Matlab():
     return matlab
@@ -374,7 +373,7 @@ def matlab_console():
 
     EXAMPLES::
 
-        sage: matlab_console()                               # optional; not tested
+        sage: matlab_console()                # optional - matlab; not tested
                                        < M A T L A B >
                            Copyright 1984-2006 The MathWorks, Inc.
         ...
@@ -403,4 +402,3 @@ def matlab_version():
         '7.2.0.283 (R2006a)'
     """
     return str(matlab('version')).strip()
-

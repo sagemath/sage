@@ -1,3 +1,5 @@
+"Polynomial multiplication by Kronecker substitution"
+
 ################################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
@@ -77,8 +79,8 @@ def _mul_fateman_mul(f,g):
 
     div = 1/(fgcd.denominator()*ggcd.denominator())
 
-    z_poly_f_list = z_poly_f.coeffs()
-    z_poly_g_list = z_poly_g.coeffs()
+    z_poly_f_list = z_poly_f.coefficients(sparse=False)
+    z_poly_g_list = z_poly_g.coefficients(sparse=False)
     padding = _mul_fateman_to_int2(z_poly_f_list,z_poly_g_list)
 
     n_f = z_poly_f(1<<padding)

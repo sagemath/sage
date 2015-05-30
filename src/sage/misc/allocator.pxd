@@ -1,2 +1,3 @@
-include "sage/ext/python_rich_object.pxi"
-cdef hook_tp_functions(object global_dummy, allocfunc tp_alloc, newfunc tp_new, freefunc tp_free, destructor tp_dealloc, bint useGC)
+from cpython.object cimport *
+
+cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_dealloc, bint useGC)

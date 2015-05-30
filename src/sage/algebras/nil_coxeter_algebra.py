@@ -10,7 +10,6 @@ Nil-Coxeter Algebra
 #*****************************************************************************
 from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.combinat.sf.kschur import kSchurFunctions
 from sage.misc.misc_c import prod
 from sage.rings.rational_field import QQ
 from sage.combinat.partition import Partitions

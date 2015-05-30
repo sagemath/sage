@@ -43,7 +43,7 @@ polynomial or matrix, will have our new method. So you can do
 ``PariError`` in this case.
 
 The ``gen`` class is defined in
-:file:`SAGE_ROOT/devel/sage/sage/libs/pari/gen.pyx`, and this is where we
+:file:`SAGE_ROOT/src/sage/libs/pari/gen.pyx`, and this is where we
 add the method ``matfrobenius``::
 
     def matfrobenius(self, flag=0):
@@ -188,7 +188,7 @@ Note the ``'"G"'`` which is evaluated in GAP as the string ``"G"``.
 The purpose of this section is to use this example to show how one
 might write a Python/Sage program whose input is, say, ``('G',2)`` and
 whose output is the matrix above (but as a Sage Matrix---see the code
-in the directory :file:`SAGE_ROOT/devel/sage/sage/matrix/` and the
+in the directory :file:`SAGE_ROOT/src/sage/matrix/` and the
 corresponding parts of the Sage reference manual).
 
 First, the input must be converted into strings consisting of legal
@@ -422,9 +422,9 @@ interface to Singular::
     Total number of rational places : 6
     <BLANKLINE>
     sage: singular.eval("def R=X3[1][5];")
-    'def R=X3[1][5];'
+    ''
     sage: singular.eval("setring R;")
-    'setring R;'
+    ''
     sage: L = singular.eval("POINTS;")
 
     sage: print L
@@ -437,11 +437,9 @@ interface to Singular::
           0
     [2]:
        [1]:
-          2    # 32-bit
-          -2   # 64-bit
+          -2
        [2]:
-          2    # 32-bit
-          1    # 64-bit
+          -1
        [3]:
           1
     ...

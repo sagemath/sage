@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Use spkg-install file of database_stein_watkins
+. "$SAGE_ROOT/build/pkgs/database_stein_watkins/spkg-install"

@@ -18,7 +18,7 @@ def _integers_from(n):
 
         sage: from sage.combinat.species.stream import _integers_from
         sage: g = _integers_from(5)
-        sage: [g.next() for i in range(5)]
+        sage: [next(g) for i in range(5)]
         [5, 6, 7, 8, 9]
     """
     while True:
@@ -38,13 +38,13 @@ def _apply_function(func, list):
         ...
         sage: l = [2]
         sage: g = _apply_function(square, l)
-        sage: [g.next() for i in range(5)]
+        sage: [next(g) for i in range(5)]
         [4, 16, 256, 65536, 4294967296]
     """
     while True:
         try:
             yield func(list)
-        except StandardError:
+        except Exception:
             break
 
 def Stream(x=None, const=None):
@@ -158,7 +158,7 @@ class Stream_class(SageObject):
 
         if func is not None:
             if gen is not None:
-                raise ValueError, "you cannot specify both a function and a generator"
+                raise ValueError("you cannot specify both a function and a generator")
             gen = _apply_function(func, self._list)
 
         #Constant stream
@@ -326,11 +326,11 @@ class Stream_class(SageObject):
             if self._constant is not False:
                 return self._constant
             else:
-                raise IndexError, "out of position"
+                raise IndexError("out of position")
         else:
             while self._last_index < i:
                 try:
-                    self._list.append(self._gen.next())
+                    self._list.append(next(self._gen))
                     self._last_index += 1
                 except StopIteration:
                     self.end_reached = True
@@ -347,7 +347,7 @@ class Stream_class(SageObject):
             sage: from sage.combinat.species.stream import Stream
             sage: s = Stream([1,2,3])
             sage: g = iter(s)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [1, 2, 3, 3, 3]
         """
         i = 0
@@ -491,7 +491,7 @@ class Stream_class(SageObject):
             sage: from sage.combinat.species.stream import Stream
             sage: s = Stream(range(1, 10))
             sage: g = s._stretch_gen(2)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [1, 0, 2, 0, 3, 0, 4, 0, 5, 0]
         """
         yield self[0]

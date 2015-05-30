@@ -23,15 +23,15 @@ def coverage_all(directory):
 
         s.append(y)
 
-    print ''.join(s)
+    print(''.join(s))
 
     # Trac #5859: Don't crash if there isn't anything to test.
     score = 100.0
     if total != 0:
         score = (float(scr) / total)
 
-    print "Overall weighted coverage score:  %.1f%%"%score
-    print "Total number of functions: ", total
+    print("Overall weighted coverage score: {:.1f}%".format(score))
+    print("Total number of functions: {}".format(total))
 
     # Print up to 3 doctest coverage goals.
     i = 0
@@ -40,7 +40,8 @@ def coverage_all(directory):
             i += 1
             if i > 3: break
             need = int((goal*total - scr)/100.0)
-            print "We need %4s more function%s to get to %s%% coverage."%(need, "" if (need == 1) else "s", goal)
+            print("We need {:>4} more function{} to get to {}% coverage."
+                  .format(need, "" if (need == 1) else "s", goal))
 
 if len(sys.argv) == 1:
     coverage_all(os.path.join(os.environ["SAGE_SRC"], 'sage'))

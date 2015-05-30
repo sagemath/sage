@@ -3,6 +3,7 @@ Real Interpolation using GSL
 """
 
 include 'sage/ext/stdsage.pxi'
+include 'sage/ext/interrupt.pxi'
 
 cdef class Spline:
     """

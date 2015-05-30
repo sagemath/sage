@@ -1,0 +1,22 @@
+diff --git a/src.bak/src/Makefile.am b/src/src/Makefile.am
+index 17f8625..ad50af2 100644
+--- a/src.bak/src/Makefile.am
++++ b/src/src/Makefile.am
+@@ -11,7 +11,8 @@ testshoot \
+ testcdd2 \
+ testlp1 \
+ testlp2 \
+-testlp3
++testlp3 \
++cdd_both_reps
+ #cddmathlink
+ 
+ scdd_SOURCES                   = simplecdd.c
+@@ -27,6 +28,7 @@ testcdd2_SOURCES               = testcdd2.c
+ testlp1_SOURCES                = testlp1.c
+ testlp2_SOURCES                = testlp2.c
+ testlp3_SOURCES                = testlp3.c
++cdd_both_reps_SOURCES          = cdd_both_reps.c
+ # cddmathlink_SOURCES                = cddmathlink.c cddmlio.h cddmlio.c
+ 
+ LDADD        = ../lib-src/libcdd.la

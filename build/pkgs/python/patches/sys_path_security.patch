@@ -1,3 +1,10 @@
+This patch is needed to fix http://trac.sagemath.org/ticket/13579
+It has been reported upstream as a security issue but fear of breaking
+third-party software prevents its inclusion ; see:
+http://bugs.python.org/issue16202
+and
+https://github.com/ipython/ipython/issues/7044
+
 diff -ru src/Python/sysmodule.c b/Python/sysmodule.c
 --- src/Python/sysmodule.c	2012-04-10 01:07:35.000000000 +0200
 +++ b/Python/sysmodule.c	2012-10-29 22:18:46.337514322 +0100

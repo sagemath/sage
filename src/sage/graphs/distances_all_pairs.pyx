@@ -106,6 +106,7 @@ Breadth First Search per vertex of the (di)graph.
 AUTHOR:
 
 - Nathann Cohen (2011)
+- David Coudert (2014) -- 2sweep, multi-sweep and iFUB for diameter computation
 
 REFERENCE:
 
@@ -115,6 +116,21 @@ REFERENCE:
 .. [GYLL93c] I. Gutman, Y.-N. Yeh, S.-L. Lee, and Y.-L. Luo. Some recent
   results in the theory of the Wiener number. *Indian Journal of
   Chemistry*, 32A:651--661, 1993.
+
+.. [CGH+13] P. Crescenzi, R. Grossi, M. Habib, L. Lanzi, A. Marino. On computing
+  the diameter of real-world undirected graphs. *Theor. Comput. Sci.* 514: 84-95
+  (2013) http://dx.doi.org/10.1016/j.tcs.2012.09.018
+
+.. [CGI+10] P. Crescenzi, R. Grossi, C. Imbrenda, L. Lanzi, and A. Marino.
+  Finding the Diameter in Real-World Graphs: Experimentally Turning a Lower
+  Bound into an Upper Bound. Proceedings of *18th Annual European Symposium on
+  Algorithms*. Lecture Notes in Computer Science, vol. 6346, 302-313. Springer
+  (2010).
+
+.. [MLH08] C. Magnien, M. Latapy, and M. Habib. Fast computation of empirically
+  tight bounds for the diameter of massive graphs. *ACM Journal of Experimental
+  Algorithms* 13 (2008) http://dx.doi.org/10.1145/1412228.1455266
+
 
 Functions
 ---------
@@ -127,11 +143,10 @@ Functions
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-include "sage/misc/bitset.pxi"
-from libc.stdint cimport uint64_t, uint32_t, INT32_MAX
+include "sage/data_structures/binary_matrix.pxi"
+from libc.stdint cimport uint64_t, uint32_t, INT32_MAX, UINT32_MAX
+from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
-from sage.graphs.base.c_graph cimport vertex_label
-from sage.graphs.base.c_graph cimport get_vertex
 
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 
@@ -145,8 +160,6 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     """
 
     from sage.rings.infinity import Infinity
-
-    cdef CGraph cg = <CGraph> gg._backend._cg
 
     cdef list int_to_vertex = gg.vertices()
     cdef int i
@@ -346,13 +359,13 @@ def shortest_path_all_pairs(G):
     cdef dict d = {}
     cdef dict d_tmp
 
-    cdef CGraph cg = <CGraph> G._backend._cg
+    cdef CGraphBackend cg = <CGraphBackend> G._backend
 
     cdef list int_to_vertex = G.vertices()
     cdef int i, j
 
     for i, l in enumerate(int_to_vertex):
-        int_to_vertex[i] = get_vertex(l, G._backend.vertex_ints, G._backend.vertex_labels, cg)
+        int_to_vertex[i] = cg.get_vertex(l)
 
     for j in range(n):
         d_tmp = {}
@@ -449,25 +462,31 @@ def is_distance_regular(G, parameters = False):
     r"""
     Tests if the graph is distance-regular
 
-    A graph `G` is distance-regular if there exist integers `d_1,...,d_n` such
-    that for every vertex `v\in G` we have `d_i=\#\{u:d_G(u,v) =i\}`. Thus a
-    strongly-regular graph is also distance-regular, and a distance-regular
-    graph is necessarily regular too.
+    A graph `G` is distance-regular if for any integers `j,k` the value
+    of `|\{x:d_G(x,u)=j,x\in V(G)\} \cap \{y:d_G(y,v)=j,y\in V(G)\}|` is constant
+    for any two vertices `u,v\in V(G)` at distance `i` from each other.
+    In particular `G` is regular, of degree `b_0` (see below), as one can take `u=v`.
 
-    For more information on distance-regular graphs, see its associated
-    :wikipedia:`wikipedia page <Distance-regular_graph>`.
+    Equivalently a graph is distance-regular if there exist integers `b_i,c_i`
+    such that for any two vertices `u,v` at distance `i` we have
+
+    * `b_i = |\{x:d_G(x,u)=i+1,x\in V(G)\}\cap N_G(v)\}|, \ 0\leq i\leq d-1`
+    * `c_i = |\{x:d_G(x,u)=i-1,x\in V(G)\}\cap N_G(v)\}|, \ 1\leq i\leq d,`
+
+    where `d` is the diameter of the graph.  For more information on
+    distance-regular graphs, see its associated :wikipedia:`wikipedia
+    page <Distance-regular_graph>`.
 
     INPUT:
 
-    - ``parameters`` (boolean) -- whether to replace ``True`` answers with a
-      dictionary associating `d_i` to an integer `i>0` if `d_i>0` (one can then
-      obtain `d_i` by doing ``dictionary.get(i,0)``). Set to ``False`` by
-      default.
+    - ``parameters`` (boolean) -- if set to ``True``, the function returns the
+      pair ``(b,c)`` of lists of integers instead of ``True`` (see the definition
+      above). Set to ``False`` by default.
 
     .. SEEALSO::
 
-        * :meth:`Graph.is_regular`
-        * :meth:`Graph.is_strongly_regular`
+        * :meth:`~sage.graphs.generic_graph.GenericGraph.is_regular`
+        * :meth:`~Graph.is_strongly_regular`
 
     EXAMPLES::
 
@@ -475,76 +494,110 @@ def is_distance_regular(G, parameters = False):
         sage: g.is_distance_regular()
         True
         sage: g.is_distance_regular(parameters = True)
-        {1: 3, 2: 6}
+        ([3, 2, None], [None, 1, 1])
 
     Cube graphs, which are not strongly regular, are a bit more interesting::
 
-        sage: graphs.CubeGraph(4).is_distance_regular(parameters = True)
-        {1: 4, 2: 6, 3: 4, 4: 1}
+        sage: graphs.CubeGraph(4).is_distance_regular()
+        True
+        sage: graphs.OddGraph(5).is_distance_regular()
+        True
+
+    Disconnected graph::
+
+        sage: (2*graphs.CubeGraph(4)).is_distance_regular()
+        True
 
     TESTS::
 
         sage: graphs.PathGraph(2).is_distance_regular(parameters = True)
-        {1: 1}
+        ([1, None], [None, 1])
+        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)
+        ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
 
     """
-    cdef int i,l
+    cdef int i,l,u,v,d,b,c,k
     cdef int n = G.order()
+    cdef int infinity = <unsigned short> -1
 
     if n <= 1:
-        return {} if parameters else True
+        return ([],[]) if parameters else True
 
     if not G.is_regular():
         return False
+    k = G.degree(G.vertex_iterator().next())
 
+    # Matrix of distances
     cdef unsigned short * distance_matrix = c_distances_all_pairs(G)
 
-    # - d_array is the vector of d_i corresponding to the first vertex
-    #
-    # - d_tmp is a vector that we use to check that d_array is the same for
-    #   every vertex v
-    cdef unsigned short * d_array = <unsigned short *> sage_calloc(2*n, sizeof(unsigned short))
-    cdef unsigned short * d_tmp   = d_array + n
+    # The diameter, i.e. the longest *finite* distance between two vertices
+    cdef int diameter = 0
+    for i in range(n*n):
+        if distance_matrix[i] > diameter and distance_matrix[i] != infinity:
+            diameter = distance_matrix[i]
 
-    if d_array == NULL:
+    cdef bitset_t b_tmp
+    bitset_init(b_tmp, n)
+            
+    # b_distance_matrix[d*n+v] is the set of vertices at distance d from v.
+    cdef binary_matrix_t b_distance_matrix
+    try:
+        binary_matrix_init(b_distance_matrix,n*(diameter+2),n)
+    except MemoryError:
         sage_free(distance_matrix)
-        raise MemoryError()
+        bitset_free(b_tmp)
+        raise
 
-    # Filling d_array
-    cdef unsigned short * pointer = distance_matrix
-    for i in range(n):
-        if pointer[i] < n:
-            d_array[pointer[i]] += 1
-    pointer += n
+    # Fills b_distance_matrix
+    for u in range(n):
+        for v in range(u,n):
+            d = distance_matrix[u*n+v]
+            if d != infinity:
+                binary_matrix_set1(b_distance_matrix, d*n+u, v)
+                binary_matrix_set1(b_distance_matrix, d*n+v, u)
 
-    # For each of the n-1 other vertices
-    for l in range(1,n):
+    cdef list bi = [-1 for i in range(diameter +1)]
+    cdef list ci = [-1 for i in range(diameter +1)]
 
-        # We set d_tmp and fill it with the data from the l^th row
-        memset(d_tmp, 0, n*sizeof(unsigned short))
-        for i in range(n):
-            if pointer[i] < n:
-                d_tmp[pointer[i]] += 1
+    # Applying the definition with b_i,c_i
+    for u in range(n):
+        for v in range(n):
+            if u == v:
+               continue
 
-        # If d_tmp != d_array, we are done
-        if memcmp(d_array, d_tmp, n*sizeof(unsigned short)) != 0:
-            sage_free(distance_matrix)
-            sage_free(d_array)
-            return False
+            d = distance_matrix[u*n+v]
+            if d == infinity:
+                continue
 
-        pointer += n
+            # Computations of b_d and c_d for u,v. We intersect sets stored in
+            # b_distance_matrix.
+            bitset_and(b_tmp, b_distance_matrix.rows[(d+1)*n+u], b_distance_matrix.rows[n+v])
+            b = bitset_len(b_tmp)
+            bitset_and(b_tmp, b_distance_matrix.rows[(d-1)*n+u], b_distance_matrix.rows[n+v])
+            c = bitset_len(b_tmp)
 
-    cdef dict dict_parameters
-    if parameters:
-        dict_parameters = {i:d_array[i] for i in range(n) if i and d_array[i] > 0}
+            # Consistency of b_d and c_d
+            if bi[d] == -1:
+                bi[d] = b
+                ci[d] = c
+
+            elif bi[d] != b or ci[d] != c:
+                sage_free(distance_matrix)
+                binary_matrix_free(b_distance_matrix)
+                bitset_free(b_tmp)
+                return False
 
     sage_free(distance_matrix)
-    sage_free(d_array)
+    binary_matrix_free(b_distance_matrix)
+    bitset_free(b_tmp)
 
     if parameters:
-        return dict_parameters
+        bi[0] = k
+        bi[diameter] = None
+        ci[0] = None
+        return bi, ci
     else:
-        return True
+        return  True
 
 ###################################
 # Both distances and predecessors #
@@ -703,18 +756,510 @@ def eccentricity(G):
 
     return l_ecc
 
-def diameter(G):
+
+############
+# Diameter #
+############
+
+cdef inline uint32_t simple_BFS(uint32_t n,
+                                uint32_t ** p_vertices,
+                                uint32_t source,
+                                uint32_t *distances,
+                                uint32_t *predecessors,
+                                uint32_t *waiting_list,
+                                bitset_t seen):
+    """
+    Perform a breadth first search (BFS) using the same method as in
+    sage.graphs.distances_all_pairs.all_pairs_shortest_path_BFS
+
+    Furthermore, the method returns the the eccentricity of the source which is
+    either the last computed distance when all vertices are seen, or a very
+    large number (UINT32_MAX) when the graph is not connected.
+
+    INPUTS:
+
+    - ``n`` -- number of vertices of the graph.
+
+    - ``p_vertices`` -- The outneighbors of vertex i are enumerated from
+      p_vertices[i] to p_vertices[i+1] - 1. If p_vertices[i] is equal to
+      p_vertices[i+1], then i has no outneighbours.  This data structure is well
+      documented in the module sage.graphs.base.static_sparse_graph
+
+    - ``source`` -- Starting node of the BFS.
+
+    - ``distances`` -- array of size ``n`` to store BFS distances from
+      ``source``. This method assumes that this array has already been
+      allocated. However, there is no need to initialize it.
+
+    - ``predecessors`` -- array of size ``n`` to store the first predecessor of
+      each vertex during the BFS search from ``source``. The predecessor of the
+      ``source`` is itself. This method assumes that this array has already
+      been allocated. However, it is possible to pass a ``NULL`` pointer in
+      which case the predecessors are not recorded. 
+
+    - ``waiting_list`` -- array of size ``n`` to store the order in which the
+      vertices are visited during the BFS search from ``source``. This method
+      assumes that this array has already been allocated. However, there is no
+      need to initialize it.
+
+    - ``seen`` -- bitset of size ``n`` that must be initialized before calling
+      this method (i.e., bitset_init(seen, n)). However, there is no need to
+      clear it.
+
+    """
+    cdef uint32_t v, u
+    cdef uint32_t waiting_beginning = 0
+    cdef uint32_t waiting_end = 0
+    cdef uint32_t * p_tmp
+    cdef uint32_t * end
+
+    # the source is seen
+    bitset_clear(seen)
+    bitset_add(seen, source)
+    distances[source] = 0
+    if predecessors!=NULL:
+        predecessors[source] = source
+
+    # and added to the queue
+    waiting_list[0] = source
+    waiting_beginning = 0
+    waiting_end = 0
+
+    # For as long as there are vertices left to explore
+    while waiting_beginning <= waiting_end:
+
+        # We pick the first one
+        v = waiting_list[waiting_beginning]
+        p_tmp = p_vertices[v]
+        end = p_vertices[v+1]
+
+        # and we iterate over all the outneighbors u of v
+        while p_tmp < end:
+            u = p_tmp[0]
+
+            # If we notice one of these neighbors is not seen yet, we set its
+            # parameters and add it to the queue to be explored later.
+            if not bitset_in(seen, u):
+                distances[u] = distances[v]+1
+                bitset_add(seen, u)
+                waiting_end += 1
+                waiting_list[waiting_end] = u
+                if predecessors!=NULL:
+                    predecessors[u] = v
+
+            p_tmp += 1
+
+        waiting_beginning += 1
+
+    # We return the eccentricity of the source
+    return distances[waiting_list[waiting_end]] if waiting_end==n-1 else UINT32_MAX
+
+
+cdef uint32_t diameter_lower_bound_2sweep(uint32_t n,
+                                          uint32_t ** p_vertices,
+                                          uint32_t source,
+                                          uint32_t * distances,
+                                          uint32_t * predecessors,
+                                          uint32_t * waiting_list,
+                                          bitset_t seen):
+    """
+    Compute a lower bound on the diameter using the 2-sweep algorithm.
+
+    This method computes a lower bound on the diameter of an unweighted
+    undirected graph using 2 BFS, as proposed in [MLH08]_.  It first selects a
+    vertex `v` that is at largest distance from an initial vertex `source` using
+    BFS. Then it performs a second BFS from `v`. The largest distance from `v`
+    is returned as a lower bound on the diameter of `G`.  The time complexity of
+    this method is linear in the size of the graph.
+
+
+    INPUTS:
+
+    - ``n`` -- number of vertices of the graph.
+
+    - ``p_vertices`` -- The outneighbors of vertex i are enumerated from
+      p_vertices[i] to p_vertices[i+1] - 1. If p_vertices[i] is equal to
+      p_vertices[i+1], then i has no outneighbours.  This data structure is well
+      documented in the module sage.graphs.base.static_sparse_graph
+
+    - ``source`` -- Starting node of the BFS.
+
+    - ``distances`` -- array of size ``n`` to store BFS distances from `v`, the
+      vertex at largest distance from ``source`` from which we start the second
+      BFS. This method assumes that this array has already been allocated.
+      However, there is no need to initialize it.
+
+    - ``predecessors`` -- array of size ``n`` to store the first predecessor of
+      each vertex during the BFS search from `v`. The predecessor of `v` is
+      itself. This method assumes that this array has already been allocated.
+      However, it is possible to pass a ``NULL`` pointer in which case the
+      predecessors are not recorded. 
+
+    - ``waiting_list`` -- array of size ``n`` to store the order in which the
+      vertices are visited during the BFS search from `v`. This method assumes
+      that this array has already been allocated. However, there is no need to
+      initialize it.
+
+    - ``seen`` -- bitset of size ``n`` that must be initialized before calling
+      this method (i.e., bitset_init(seen, n)). However, there is no need to
+      clear it.
+
+    """
+    cdef uint32_t LB, i, k, tmp
+
+    # We do a first BFS from source and get the eccentricity of source
+    LB = simple_BFS(n, p_vertices, source, distances, NULL, waiting_list, seen)
+
+    # If the eccentricity of the source is infinite (very large number), the
+    # graph is not connected and so its diameter is infinite.
+    if LB==UINT32_MAX:
+        return UINT32_MAX
+
+    # Then we perform a second BFS from the last visited vertex
+    source = waiting_list[n-1]
+    LB = simple_BFS(n, p_vertices, source, distances, predecessors, waiting_list, seen)
+
+    # We return the computed lower bound
+    return LB
+
+
+cdef tuple diameter_lower_bound_multi_sweep(uint32_t n,
+                                            uint32_t ** p_vertices,
+                                            uint32_t source):
+    """
+    Lower bound on the diameter using multi-sweep.
+
+    This method computes a lower bound on the diameter of an unweighted
+    undirected graph using several iterations of the 2-sweep algorithms
+    [CGH+13]_. Roughly, it first uses 2-sweep to identify two vertices `s` and
+    `d` that are far apart. Then it selects a vertex `m` that is at same
+    distance from `s` and `d`.  This vertex `m` will serve as the new source for
+    another iteration of the 2-sweep algorithm that may improve the current
+    lower bound on the diameter.  This process is repeated as long as the lower
+    bound on the diameter is improved.
+
+    The method returns a 4-tuple (LB, s, m, d), where LB is the best found lower
+    bound on the diameter, s is a vertex of eccentricity LB, d is a vertex at
+    distance LB from s, and m is a vertex at distance LB/2 from both s and d.
+
+    INPUTS:
+
+    - ``n`` -- number of vertices of the graph.
+
+    - ``p_vertices`` -- The outneighbors of vertex i are enumerated from
+      p_vertices[i] to p_vertices[i+1] - 1. If p_vertices[i] is equal to
+      p_vertices[i+1], then i has no outneighbours.  This data structure is well
+      documented in the module sage.graphs.base.static_sparse_graph
+
+    - ``source`` -- Starting node of the BFS.
+
+    """
+    cdef uint32_t LB, tmp, s, m, d, i, j, k
+
+    # Allocate some arrays and a bitset
+    cdef bitset_t seen
+    bitset_init(seen, n)
+    cdef uint32_t * distances = <uint32_t *>sage_malloc(3 * n * sizeof(uint32_t))
+    if distances==NULL:
+        bitset_free(seen)
+        raise MemoryError()
+    cdef uint32_t * predecessors = distances + n
+    cdef uint32_t * waiting_list = distances + 2 * n
+
+
+    # We perform a first 2sweep call from source. If the returned value is a
+    # very large number, the graph is not connected and so the diameter is
+    # infinite.
+    tmp = diameter_lower_bound_2sweep(n, p_vertices, source, distances, predecessors, waiting_list, seen)
+    if tmp==UINT32_MAX:
+        sage_free(distances)
+        bitset_free(seen)
+        return (UINT32_MAX, 0, 0, 0)
+
+    # We perform new 2sweep calls for as long as we are able to improve the
+    # lower bound.
+    LB = 0
+    m = source
+    while tmp>LB:
+
+        LB = tmp
+
+        # We store the vertices s, m, d of the last BFS call. For vertex m, we
+        # search for a vertex of eccentricity LB/2. This vertex will serve as
+        # the source for the next 2sweep call.
+        s = waiting_list[0]
+        d = waiting_list[n-1]
+        LB_2 = LB/2
+        m = d
+        while distances[m]>LB_2:
+            m = predecessors[m]
+
+        # We perform a new 2sweep call from m
+        tmp = diameter_lower_bound_2sweep(n, p_vertices, m, distances, predecessors, waiting_list, seen)
+
+    sage_free(distances)
+    bitset_free(seen)
+
+    return (LB, s, m, d)
+
+
+cdef uint32_t diameter_iFUB(uint32_t n,
+                            uint32_t ** p_vertices,
+                            uint32_t source):
+    """
+    Computes the diameter of the input Graph using the iFUB algorithm.
+
+    The iFUB (iterative Fringe Upper Bound) algorithm calculates the exact value
+    of the diameter of a unweighted undirected graph [CGI+10]_. This algorithms
+    starts with a vertex found through a multi-sweep call (a refinement of the
+    4sweep method). The worst case time complexity of the iFUB algorithm is
+    `O(nm)`, but it can be very fast in practice. See the code's documentation
+    and [CGH+13]_ for more details.
+
+    INPUTS:
+
+    - ``n`` -- number of vertices of the graph.
+
+    - ``p_vertices`` -- The outneighbors of vertex i are enumerated from
+      p_vertices[i] to p_vertices[i+1] - 1. If p_vertices[i] is equal to
+      p_vertices[i+1], then i has no outneighbours.  This data structure is well
+      documented in the module sage.graphs.base.static_sparse_graph
+
+    - ``source`` -- Starting node of the first BFS.
+
+    """
+    cdef uint32_t i, LB, s, m, d
+
+    # We select a vertex m with low eccentricity using multi-sweep
+    LB, s, m, d = diameter_lower_bound_multi_sweep(n, p_vertices, source)
+
+    # If the lower bound is a very large number, it means that the graph is not
+    # connected and so the diameter is infinite.
+    if LB==UINT32_MAX:
+        return LB
+
+
+    # We allocate some arrays and a bitset
+    cdef bitset_t seen
+    bitset_init(seen, n)    
+    cdef uint32_t * distances = <uint32_t *>sage_malloc(4 * n * sizeof(uint32_t))
+    if distances==NULL:
+        bitset_free(seen)
+        raise MemoryError()
+    cdef uint32_t * waiting_list = distances + n
+    cdef uint32_t * layer        = distances + 2 * n
+    cdef uint32_t * order        = distances + 3 * n
+
+
+    # We order the vertices by decreasing layers. This is the inverse order of a
+    # BFS from m, and so the inverse order of array waiting_list. Distances are
+    # stored in array layer.
+    LB = simple_BFS(n, p_vertices, m, layer, NULL, waiting_list, seen)
+    for i from 0 <= i < n:
+        order[i] = waiting_list[n-i-1]
+
+    # The algorithm:
+    #
+    # The diameter of the graph is equal to the maximum eccentricity of a
+    # vertex. Let m be any vertex, and let V be partitionned into A u B where:
+    #
+    #    d(m,a)<=i for all a \in A
+    #    d(m,b)>=i for all b \in B
+    #
+    # As all vertices from A are at distance <=2i from each other, a vertex a
+    # from A with eccentricity ecc(a)>2i is at distance ecc(a) from some vertex
+    # b\in B.
+    #
+    # Consequently, if we have already computed the eccentricity of all
+    # vertices in B and know that the diameter is >2i, then we do not have to
+    # compute the eccentricity of vertices in A.
+    #
+    # Now, we compute the maximum eccentricity of all vertices, ordered
+    # decreasingly according to their distance to m. We stop when we know that
+    # the eccentricity of the unexplored vertices is smaller than the max
+    # eccentricity already found.
+    i = 0
+    while (2*layer[order[i]])>LB and i<n:
+        tmp = simple_BFS(n, p_vertices, order[i], distances, NULL, waiting_list, seen)
+        i += 1
+
+        # We update the lower bound
+        if tmp>LB:
+            LB = tmp
+
+
+    sage_free(distances)
+    bitset_free(seen)
+
+    # We finally return the computed diameter
+    return LB
+
+
+def diameter(G, method='iFUB', source=None):
     r"""
     Returns the diameter of `G`.
 
-    EXAMPLE::
+    This method returns Infinity if the (di)graph is not connected. It can also
+    quickly return a lower bound on the diameter using the ``2sweep`` and
+    ``multi-sweep`` schemes.
 
-        sage: from sage.graphs.distances_all_pairs import diameter
-        sage: g = graphs.PetersenGraph()
-        sage: diameter(g)
+    INPUTS:
+
+    - ``method`` -- (default: 'iFUB') specifies the algorithm to use among:
+
+        - ``'standard'`` -- Computes the diameter of the input (di)graph as the
+          largest eccentricity of its vertices. This is the classical method
+          with time complexity in `O(nm)`.
+
+        - ``'2sweep'`` -- Computes a lower bound on the diameter of an
+          unweighted undirected graph using 2 BFS, as proposed in [MLH08]_.  It
+          first selects a vertex `v` that is at largest distance from an initial
+          vertex source using BFS. Then it performs a second BFS from `v`. The
+          largest distance from `v` is returned as a lower bound on the diameter
+          of `G`.  The time complexity of this method is linear in the size of
+          `G`.
+
+        - ``'multi-sweep'`` -- Computes a lower bound on the diameter of an
+          unweighted undirected graph using several iterations of the ``2sweep``
+          algorithms [CGH+13]_. Roughly, it first uses ``2sweep`` to identify
+          two vertices `u` and `v` that are far apart. Then it selects a vertex
+          `w` that is at same distance from `u` and `v`.  This vertex `w` will
+          serve as the new source for another iteration of the ``2sweep``
+          algorithm that may improve the current lower bound on the diameter.
+          This process is repeated as long as the lower bound on the diameter
+          is improved.
+
+        - ``'iFUB'`` -- The iFUB (iterative Fringe Upper Bound) algorithm,
+          proposed in [CGI+10]_, computes the exact value of the diameter of an
+          unweighted undirected graph. It is based on the following observation:
+
+              The diameter of the graph is equal to the maximum eccentricity of
+              a vertex. Let `v` be any vertex, and let `V` be partitionned into
+              `A\cup B` where:
+
+              .. MATH::
+
+                  d(v,a)<=i, \forall a \in A\\
+                  d(v,b)>=i, \forall b \in B
+
+              As all vertices from `A` are at distance `\leq 2i` from each
+              other, a vertex `a\in A` with eccentricity `ecc(a)>2i` is at
+              distance `ecc(a)` from some vertex `b\in B`.
+
+              Consequently, if we have already computed the maximum eccentricity
+              `m` of all vertices in `B` and if `m>2i`, then we do not need to
+              compute the eccentricity of the vertices in `A`.
+
+          Starting from a vertex `v` obtained through a multi-sweep computation
+          (which refines the 4sweep algorithm used in [CGH+13]_), we compute the
+          diameter by computing the eccentricity of all vertices sorted
+          decreasingly according to their distance to `v`, and stop as allowed
+          by the remark above. The worst case time complexity of the iFUB
+          algorithm is `O(nm)`, but it can be very fast in practice.
+
+    - ``source`` -- (default: None) vertex from which to start the first BFS. If
+      ``source==None``, an arbitrary vertex of the graph is chosen. Raise an
+      error if the initial vertex is not in `G`.  This parameter is not used
+      when ``method=='standard'``.
+
+    EXAMPLES::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.diameter(method='iFUB')
         2
+        sage: G = Graph( { 0 : [], 1 : [], 2 : [1] } )
+        sage: G.diameter(method='iFUB')
+        +Infinity
+
+
+    Although max( ) is usually defined as -Infinity, since the diameter will
+    never be negative, we define it to be zero::
+
+        sage: G = graphs.EmptyGraph()
+        sage: G.diameter(method='iFUB')
+        0
+
+    Comparison of exact methods::
+
+        sage: G = graphs.RandomBarabasiAlbert(100, 2)
+        sage: d1 = G.diameter(method='standard')
+        sage: d2 = G.diameter(method='iFUB')
+        sage: d3 = G.diameter(method='iFUB', source=G.random_vertex())
+        sage: if d1!=d2 or d1!=d3: print "Something goes wrong!"
+
+    Comparison of lower bound methods::
+
+        sage: lb2 = G.diameter(method='2sweep')
+        sage: lbm = G.diameter(method='multi-sweep')
+        sage: if not (lb2<=lbm and lbm<=d3): print "Something goes wrong!"
+
+    TEST:
+
+    This was causing a segfault. Fixed in :trac:`17873` ::
+
+        sage: G = graphs.PathGraph(1)
+        sage: G.diameter(method='iFUB')
+        0
     """
-    return max(eccentricity(G))
+    cdef int n = G.order()
+    if n==0:
+        return 0
+
+    if method=='standard' or G.is_directed():
+        return max(G.eccentricity())
+    elif method is None:
+        method = 'iFUB'
+    elif not method in ['2sweep', 'multi-sweep', 'iFUB']:
+        raise ValueError("Unknown method for computing the diameter.")
+
+    if source is None:
+        source = G.vertex_iterator().next()
+    elif not G.has_vertex(source):
+        raise ValueError("The specified source is not a vertex of the input Graph.")
+
+
+    # Copying the whole graph to obtain the list of neighbors quicker than by
+    # calling out_neighbors. This data structure is well documented in the
+    # module sage.graphs.base.static_sparse_graph
+    cdef short_digraph sd
+    init_short_digraph(sd, G)
+
+    # and we map the source to an int in [0,n-1] 
+    cdef uint32_t isource = 0 if source is None else G.vertices().index(source)
+
+    cdef bitset_t seen
+    cdef uint32_t * tab
+    cdef int LB
+
+    if method=='2sweep':
+        # We need to allocate arrays and bitset
+        bitset_init(seen, n)
+        tab = <uint32_t *> sage_malloc(2* n * sizeof(uint32_t))
+        if tab == NULL:
+            free_short_digraph(sd)
+            bitset_free(seen)
+            raise MemoryError()
+        
+        LB = diameter_lower_bound_2sweep(n, sd.neighbors, isource, tab, NULL, tab+n, seen)
+
+        bitset_free(seen)
+        sage_free(tab)
+
+    elif method=='multi-sweep':
+        LB = diameter_lower_bound_multi_sweep(n, sd.neighbors, isource)[0]
+
+    else: # method=='iFUB'
+        LB = diameter_iFUB(n, sd.neighbors, isource)
+
+
+    free_short_digraph(sd)
+
+    if LB<0 or LB>G.order():
+        from sage.rings.infinity import Infinity
+        return +Infinity
+    else:
+        return int(LB)
+
 
 
 ################
@@ -927,7 +1472,7 @@ def floyd_warshall(gg, paths = True, distances = False):
 
         sage: u,v = g.random_vertex(), g.random_vertex()
         sage: p = [v]
-        sage: while p[0] != None:
+        sage: while p[0] is not None:
         ...     p.insert(0,path[u][p[0]])
         sage: len(p) == dist[u][v] + 2
         True
@@ -953,7 +1498,7 @@ def floyd_warshall(gg, paths = True, distances = False):
     """
 
     from sage.rings.infinity import Infinity
-    cdef CGraph g = <CGraph> gg._backend._cg
+    cdef CGraph g = <CGraph> gg._backend.c_graph()[0]
 
     cdef list gverts = g.verts()
 
@@ -1021,7 +1566,8 @@ def floyd_warshall(gg, paths = True, distances = False):
                 prec[v_int][u_int] = v_int
 
     # The algorithm itself.
-    cdef unsigned short *dv, *dw
+    cdef unsigned short *dv
+    cdef unsigned short *dw
     cdef int dvw
     cdef int val
 
@@ -1044,21 +1590,20 @@ def floyd_warshall(gg, paths = True, distances = False):
     cdef dict tmp_prec
     cdef dict tmp_dist
 
-    cdef dict ggbvi = gg._backend.vertex_ints
-    cdef dict ggbvl = gg._backend.vertex_labels
+    cdef CGraphBackend cgb = <CGraphBackend> gg._backend
 
     if paths: d_prec = {}
     if distances: d_dist = {}
     for v_int in gverts:
         if paths: tmp_prec = {}
         if distances: tmp_dist = {}
-        v = vertex_label(v_int, ggbvi, ggbvl, g)
+        v = cgb.vertex_label(v_int)
         dv = dist[v_int]
         for u_int in gverts:
-            u = vertex_label(u_int, ggbvi, ggbvl, g)
+            u = cgb.vertex_label(u_int)
             if paths:
                 tmp_prec[u] = (None if v == u
-                               else vertex_label(prec[v_int][u_int], ggbvi, ggbvl, g))
+                               else cgb.vertex_label(prec[v_int][u_int]))
             if distances:
                 tmp_dist[u] = (dv[u_int] if (dv[u_int] != <unsigned short> -1)
                                else Infinity)

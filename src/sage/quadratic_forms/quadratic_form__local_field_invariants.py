@@ -300,20 +300,28 @@ def hasse_invariant(self, p):
         sage: [Q.hasse_invariant(p) for p in prime_range(20)]
         [1, 1, 1, 1, 1, 1, 1, 1]
         sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
-        [1, 1, 1, 1, 1, 1, 1, 1]
+        [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
-        sage: Q = DiagonalQuadraticForm(ZZ, [1,-1, -1])
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,-1,5])
         sage: [Q.hasse_invariant(p) for p in prime_range(20)]
-        [-1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
         [1, 1, 1, 1, 1, 1, 1, 1]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        [-1, 1, 1, 1, 1, 1, 1, 1]
+
+    ::
+
+        sage: K.<a>=NumberField(x^2-23)
+        sage: Q=DiagonalQuadraticForm(K,[-a,a+2])
+        sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]
+        [-1, 1]
 
     """
     ## TO DO: Need to deal with the case n=1 separately somewhere!
 
     Diag = self.rational_diagonal_form()
+    R = Diag.base_ring()
 
     ## DIAGNOSTIC
     #print "\n Q = " + str(self)
@@ -322,9 +330,15 @@ def hasse_invariant(self, p):
     hasse_temp = 1
     n = Diag.dim()
 
-    for j in range(n-1):
-        for k in range(j+1, n):
-            hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+    if R == QQ:
+        for j in range(n-1):
+            for k in range(j+1, n):
+                hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+
+    else:
+        for j in range(n-1):
+            for k in range(j+1, n):
+                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j,j], Diag[k,k], p)
 
     return hasse_temp
 
@@ -370,20 +384,28 @@ def hasse_invariant__OMeara(self, p):
         sage: [Q.hasse_invariant(p) for p in prime_range(20)]
         [1, 1, 1, 1, 1, 1, 1, 1]
         sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
-        [1, 1, 1, 1, 1, 1, 1, 1]
+        [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
-        sage: Q = DiagonalQuadraticForm(ZZ, [1,-1, -1])
+        sage: Q=DiagonalQuadraticForm(ZZ,[1,-1,-1])
         sage: [Q.hasse_invariant(p) for p in prime_range(20)]
         [-1, 1, 1, 1, 1, 1, 1, 1]
         sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
-        [1, 1, 1, 1, 1, 1, 1, 1]
+        [-1, 1, 1, 1, 1, 1, 1, 1]
+
+    ::
+
+        sage: K.<a>=NumberField(x^2-23)
+        sage: Q=DiagonalQuadraticForm(K,[-a,a+2])
+        sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]
+        [1, 1]
 
     """
     ## TO DO: Need to deal with the case n=1 separately somewhere!
 
     Diag = self.rational_diagonal_form()
+    R = Diag.base_ring()
 
     ## DIAGNOSTIC
     #print "\n Q = " + str(self)
@@ -391,10 +413,15 @@ def hasse_invariant__OMeara(self, p):
 
     hasse_temp = 1
     n = Diag.dim()
+    if R == QQ:
+        for j in range(n):
+            for k in range(j, n):
+                hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
 
-    for j in range(n-1):
-        for k in range(j, n):
-            hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+    else:
+        for j in range(n):
+            for k in range(j, n):
+                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j,j], Diag[k,k], p)
 
     return hasse_temp
 
@@ -445,7 +472,7 @@ def is_hyperbolic(self, p):
     ## Compare local invariants
     ## (Note: since the dimension is even, the extra powers of 2 in
     ##        self.det() := Det(2*Q) don't affect the answer!)
-    m = ZZ(self.dim() / 2)
+    m = ZZ(self.dim() // 2)
     if p == "infinity":
         return (self.signature() == 0)
 
@@ -518,7 +545,7 @@ def is_anisotropic(self, p):
     if (n == 1):
         return (self[0,0] != 0)
 
-    raise NotImplementedError, "Oops!  We haven't established a convention for 0-dim'l quadratic forms... =("
+    raise NotImplementedError("Oops!  We haven't established a convention for 0-dim'l quadratic forms... =(")
 
 
 def is_isotropic(self, p):
@@ -677,7 +704,7 @@ def compute_definiteness(self):
     """
     ## Sanity Check
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
-        raise NotImplementedError, "Oops!  We can only check definiteness over ZZ, QQ, and RR for now."
+        raise NotImplementedError("Oops!  We can only check definiteness over ZZ, QQ, and RR for now.")
 
     ## Some useful variables
     n = self.dim()
@@ -752,7 +779,7 @@ def compute_definiteness_string_by_determinants(self):
     """
     ## Sanity Check
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
-        raise NotImplementedError, "Oops!  We can only check definiteness over ZZ, QQ, and RR for now."
+        raise NotImplementedError("Oops!  We can only check definiteness over ZZ, QQ, and RR for now.")
 
     ## Some useful variables
     n = self.dim()

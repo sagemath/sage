@@ -30,6 +30,7 @@
     NSUserDefaults *defaults;
 
     NSTask *theTask;
+    NSTask *launchTask;
     NSPipe *taskPipe;
 
     int port;
@@ -60,6 +61,7 @@
 
 -(IBAction)showPreferences:(id)sender;
 
+-(void)ensureReadWrite;
 -(void)setupPaths;
 
 // Quit

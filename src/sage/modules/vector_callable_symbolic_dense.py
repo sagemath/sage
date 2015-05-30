@@ -69,7 +69,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
             sage: r
             t |--> (cos(t), sin(t))
         """
-        ring=self.base_ring()
+        ring = self.coordinate_ring()
         args = ring.arguments()
         repr_x=self.change_ring(SR)._repr_()
         if len(args) == 1:
@@ -96,7 +96,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
             t \ {\mapsto}\ \left(\cos\left(t\right),\,\sin\left(t\right)\right)
         """
         from sage.misc.latex import latex
-        ring=self.base_ring()
+        ring = self.coordinate_ring()
         args = ring.arguments()
         args = [latex(arg) for arg in args]
         latex_x = self.change_ring(SR)._latex_()

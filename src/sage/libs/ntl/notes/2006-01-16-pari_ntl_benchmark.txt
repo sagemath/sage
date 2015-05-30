@@ -10,7 +10,7 @@ make matrices over finite fields in PARI and computer their kernel.
 
 First a small example so what is going on is clearer:
 
-sage: k,a = GF(2^8).objgen()
+sage: k.<a> = GF(2^8)
 sage: A = MatrixSpace(k,3,5)([k.random_element() for _ in range(3*5)])
 sage: A
 [                a^5 + a^3 + a^2             a^7 + a^6 + a^2 + 1           a^7 + a^6 + a^4 + a^2                   a^3 + a^2 + a                         a^6 + 1]
@@ -40,7 +40,7 @@ Basis matrix:
 
 OK, now here's an example to get a sense of speed:
 
-sage: k,a = GF(2^8).objgen()
+sage: k.<a> = GF(2^8)
 sage: A = MatrixSpace(k,50,50)([k.random_element() for _ in range(50*50)])
 sage: B = pari(A)
 sage: time v= B.matker()

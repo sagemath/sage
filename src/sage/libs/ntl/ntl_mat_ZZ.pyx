@@ -14,7 +14,6 @@
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -93,7 +92,7 @@ cdef class ntl_mat_ZZ:
         mat_ZZ_SetDims(&self.x, nrows, ncols)
         self.__nrows = nrows
         self.__ncols = ncols
-        if v != None:
+        if v is not None:
             for i from 0 <= i < nrows:
                 for j from 0 <= j < ncols:
                     tmp = ntl_ZZ(v[i*ncols+j])
@@ -124,7 +123,10 @@ cdef class ntl_mat_ZZ:
         mat_ZZ_construct(&self.x)
 
     def __dealloc__(self):
-        mat_ZZ_destruct(&self.x)
+        # With NTL 6.0.0, mat_ZZ is a proper C++ class.
+        # Therefore Cython automagically calls the class destructor.
+        #mat_ZZ_destruct(&self.x)
+        pass
 
     def __repr__(self):
         """
@@ -148,10 +150,10 @@ cdef class ntl_mat_ZZ:
             [1 22]
             ]
         """
-        cdef ntl_mat_ZZ r = PY_NEW(ntl_mat_ZZ)
-        if not PY_TYPE_CHECK(self, ntl_mat_ZZ):
+        cdef ntl_mat_ZZ r = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+        if not isinstance(self, ntl_mat_ZZ):
             self = ntl_mat_ZZ(self)
-        if not PY_TYPE_CHECK(other, ntl_mat_ZZ):
+        if not isinstance(other, ntl_mat_ZZ):
             other = ntl_mat_ZZ(other)
         sig_on()
         mat_ZZ_mul(r.x, (<ntl_mat_ZZ>self).x, (<ntl_mat_ZZ>other).x)
@@ -170,10 +172,10 @@ cdef class ntl_mat_ZZ:
             [9 9]
             ]
         """
-        cdef ntl_mat_ZZ r = PY_NEW(ntl_mat_ZZ)
-        if not PY_TYPE_CHECK(self, ntl_mat_ZZ):
+        cdef ntl_mat_ZZ r = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+        if not isinstance(self, ntl_mat_ZZ):
             self = ntl_mat_ZZ(self)
-        if not PY_TYPE_CHECK(other, ntl_mat_ZZ):
+        if not isinstance(other, ntl_mat_ZZ):
             other = ntl_mat_ZZ(other)
         sig_on()
         mat_ZZ_sub(r.x, (<ntl_mat_ZZ>self).x, (<ntl_mat_ZZ>other).x)
@@ -192,10 +194,10 @@ cdef class ntl_mat_ZZ:
             [11 13]
             ]
         """
-        cdef ntl_mat_ZZ r = PY_NEW(ntl_mat_ZZ)
-        if not PY_TYPE_CHECK(self, ntl_mat_ZZ):
+        cdef ntl_mat_ZZ r = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+        if not isinstance(self, ntl_mat_ZZ):
             self = ntl_mat_ZZ(self)
-        if not PY_TYPE_CHECK(other, ntl_mat_ZZ):
+        if not isinstance(other, ntl_mat_ZZ):
             other = ntl_mat_ZZ(other)
         sig_on()
         mat_ZZ_add(r.x, (<ntl_mat_ZZ>self).x, (<ntl_mat_ZZ>other).x)
@@ -243,7 +245,7 @@ cdef class ntl_mat_ZZ:
             raise TypeError, "cannot take powers of non-square matrices."
         if e < 0:
             raise ValueError, "cannot take negative powers of matrices."
-        cdef ntl_mat_ZZ r = PY_NEW(ntl_mat_ZZ)
+        cdef ntl_mat_ZZ r = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
         sig_on()
         mat_ZZ_power(r.x, (<ntl_mat_ZZ>self).x, e)
         sig_off()
@@ -410,7 +412,7 @@ cdef class ntl_mat_ZZ:
             ]
         """
         cdef ntl_ZZ _D
-        if D == None:
+        if D is None:
             _D = self.determinant()
         else:
             _D = ntl_ZZ(D)
@@ -498,7 +500,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_BKZ_FP(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_BKZ_FP_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -567,7 +569,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_BKZ_QP(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_BKZ_QP_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -636,7 +638,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_BKZ_QP1(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_BKZ_QP1_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -705,7 +707,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_BKZ_XD(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_BKZ_XD_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -774,7 +776,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_BKZ_RR(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_BKZ_RR_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -843,7 +845,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_G_BKZ_FP(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_G_BKZ_FP_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -912,7 +914,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_G_BKZ_QP(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_G_BKZ_QP_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -981,7 +983,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_G_BKZ_QP1(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_G_BKZ_QP1_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -1050,7 +1052,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_G_BKZ_XD(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_G_BKZ_XD_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -1119,7 +1121,7 @@ cdef class ntl_mat_ZZ:
             rank = mat_ZZ_G_BKZ_RR(self.x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
             return rank
-        elif PY_TYPE_CHECK(U, ntl_mat_ZZ):
+        elif isinstance(U, ntl_mat_ZZ):
             sig_on()
             rank = mat_ZZ_G_BKZ_RR_U(self.x, (<ntl_mat_ZZ>U).x, float(delta), int(BlockSize), int(prune), 0, int(verbose));
             sig_off()
@@ -1212,7 +1214,7 @@ cdef class ntl_mat_ZZ:
         cdef ZZ_c *det2
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_LLL_U(&det2, &self.x, &U.x, int(a), int(b), int(verbose)))
             return rank, make_ZZ_sig_off(det2), U
@@ -1296,7 +1298,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_LLL_FP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1319,7 +1321,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_LLL_QP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1343,7 +1345,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_LLL_XD_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1367,7 +1369,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_LLL_RR_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1397,7 +1399,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_G_LLL_FP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1415,7 +1417,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_G_LLL_QP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1434,7 +1436,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_G_LLL_XD_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1453,7 +1455,7 @@ cdef class ntl_mat_ZZ:
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = PY_NEW(ntl_mat_ZZ)
+            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
             sig_on()
             rank = int(mat_ZZ_G_LLL_RR_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()

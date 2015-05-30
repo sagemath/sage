@@ -346,7 +346,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
                 return AffineCipher(self, key=(a,b))
             else:
                 raise ValueError
-        except StandardError:
+        except Exception:
             raise ValueError("(a, b) = (%s, %s) is outside the range of acceptable values for a key of this affine cryptosystem." % (a, b))
 
     def _repr_(self):
@@ -1150,7 +1150,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
             return D(strip_encoding(S))
         try:
             return D.encoding(S)
-        except StandardError:
+        except Exception:
             raise TypeError("Argument S = %s does not encode in the cipher domain" % S)
 
     def inverse_key(self, a, b):
@@ -1242,7 +1242,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
             aInv = inverse_mod(a, n)
             bInv = Mod(-b * aInv, n).lift()
             return (aInv, bInv)
-        except StandardError:
+        except Exception:
             raise ValueError("(a, b) = (%s, %s) is outside the range of acceptable values for a key of this affine cipher." % (a, b))
 
     def random_key(self):
@@ -1393,7 +1393,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         if isinstance(A, list):
             try:
                 A = M(A)
-            except StandardError:
+            except Exception:
                 raise TypeError("A (= %s) must specify a square matrix of degree %s." % (A, m))
         return HillCipher(self, A)
 
@@ -1538,7 +1538,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
             return S(strip_encoding(M))
         try:
             return S.encoding(M)
-        except StandardError:
+        except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
     def deciphering(self, A, C):
@@ -2846,7 +2846,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             return D(strip_encoding(S))
         try:
             return D.encoding(S)
-        except StandardError:
+        except Exception:
             raise TypeError("Argument S = %s does not encode in the cipher domain" % S)
 
     def inverse_key(self, K):
@@ -3204,7 +3204,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
             return S(strip_encoding(M))
         try:
             return S.encoding(M)
-        except StandardError:
+        except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
     def deciphering(self, K, C):
@@ -3337,7 +3337,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         if isinstance(K, list):
             try:
                 K = G(K)
-            except StandardError:
+            except Exception:
                 raise TypeError("K (= %s) must specify a permutation." % K)
         if not isinstance(K, PermutationGroupElement) and K.parent() == G:
             raise TypeError("K (= %s) must be a permutation or list specifying a permutation." % K)
@@ -3448,7 +3448,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
             return S(strip_encoding(M))
         try:
             return S.encoding(M)
-        except StandardError:
+        except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
     def deciphering(self, K, C):
@@ -3584,7 +3584,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         if isinstance(K, list):
             try:
                 K = S(K)
-            except StandardError:
+            except Exception:
                 raise TypeError("K (= %s) must specify a string of length %s." % (K, m))
         if not len(K) == m:
             raise TypeError("K (= %s) must specify a string of length %s." % (K, m))
@@ -3691,7 +3691,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
             return S(strip_encoding(M))
         try:
             return S.encoding(M)
-        except StandardError:
+        except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
     def deciphering(self, K, C):

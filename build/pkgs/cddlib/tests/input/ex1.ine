@@ -1,5 +1,5 @@
 * file name: ex1.ine
-*   2 dimensional polyhedron with three vertices (0,3), (-1, 4) and (-1,10) and
+*   2 dimensional polyhedron with three vertices (0,3), (-1, 4) and (-1,10) and 
 *   two extremal rays (2,1) and (1,2).
 H-representation
 begin
@@ -7,5 +7,5 @@ begin
  12   2  -1
  -6  -1   2
  -3   1   1
-  1   1   0
+  1   1   0 
 end

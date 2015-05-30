@@ -8,25 +8,41 @@ FAQ: Using Sage
 How do I get started?
 """""""""""""""""""""
 
-You can try out Sage without downloading anything. Go to
-http://www.sagenb.org and set up a free account. If you log in, you
-will be working on a free Sage notebook server that will work
-identically to the one you get with Sage. To download a pre-built
-binary Sage distribution, visit the page
-http://www.sagemath.org/download.html and click on the link for the
-binary for your operating system. The source code of Sage is also
-available for you to download and use. Go to
-http://www.sagemath.org/download-source.html to download the tar
-archive for any release of Sage. Previous releases of Sage are
-available at http://www.sagemath.org/src-old.
+You can try out Sage without downloading anything:
 
-The Sage notebook runs within a web browser. You can run Sage in a
-browser that is not the system default. To do so, issue the following
-command ::
+* **SageMathCloud™:** Go to http://cloud.sagemath.org and set up a free
+  account.
 
-    env SAGE_BROWSER=opera /usr/bin/sage -notebook
+  If you log in, you will access to the latest version of Sage and to
+  many other software.
 
-either from the command prompt or as a menu command for Sage.
+* **Sage cell:** A "once-off" version of Sage, available for doing one
+  computation at a time. http://sagecell.sagemath.org/
+
+* **Sagenb:** some public Sage notebook server allow you to create a free
+  account.
+
+  If you log in, you will be working on a free Sage notebook server that will
+  work identically to the one you get within Sage. The server http://sagenb.org
+  is one such, though it runs an older version of Sage and is scheduled to be
+  retired in the future in favor of the SageMathCloud.
+
+To download a **pre-built binary** Sage distribution, visit
+http://sagemath.org/download.html and click on the link for the binary for your
+operating system.
+
+The **source code** of Sage is also available for you to download and use. Go to
+http://www.sagemath.org/download-source.html to download the tar archive for any
+release of Sage.
+
+The Sage notebook runs within a web browser. To start the notebook,
+issue the following command in a terminal, if ``sage`` is in your ``PATH`` ::
+
+    sage -notebook
+
+You can also run it from the command line of sage::
+
+    sage: notebook() # not tested
 
 
 What are Sage's prerequisites?
@@ -125,7 +141,7 @@ You can load a Python script in a Sage session with the command **load**. For ex
 
     load("simple.py")
 
-and repeat this command every time that we change the fiel simple.py. However, if we type::
+and repeat this command every time that we change the file simple.py. However, if we type::
 
     attach("simple.py")
 
@@ -232,7 +248,7 @@ by a web search.
 
 * `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
   by Steven F. Lott
-* `Dive into Python <http://www.diveintopython.org>`_ by Mark Pilgrim
+* `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
 * `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
 * `Official Python Tutorial <http://docs.python.org/tutorial>`_
@@ -368,34 +384,6 @@ and to reload it, you would just do ::
     my_stuff = load(DATA + "my_stuff")
 
 
-I get an error from jsMath or the math symbols don't look right when displaying in the notebook.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-If you see the error ::
-
-    It looks like jsMath failed to set up properly (error code -7). I will try to keep going, but it could get ugly.
-
-you have not installed the TeX fonts which help jsMath render
-beautiful typeset mathematics. To get the nice TeX display with
-jsMath, please download a set of fonts from here from
-http://www.math.union.edu/~dpvc/jsMath/download/jsMath-fonts.html.
-If you are on Linux/Unix, ignore the instructions on the page and just
-unzip the fonts into your ``~/.fonts`` directory. You can also install
-the ``jsmath-fonts`` package.
-
-
-I created the file SAGE_ROOT/devel/sage/sage/calculus/stokes.py, and have changed my mind and want to completely delete it from Sage, but it keeps coming back (i.e. it is still importable) when I type "sage -br". What do I do?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Delete both of the file ::
-
-    SAGE_ROOT/devel/sage/build/sage/calculus/stokes.py
-
-**and** the file ::
-
-    SAGE_ROOT/devel/sage/build/lib.*/sage/calculus/stokes.py
-
-
 Does Sage contain a function similar to Mathematica's ToCharacterCode[]?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -491,7 +479,7 @@ When I run doctests on Mac OS X I see the messages with "malloc", but in the end
 The "malloc" messages you refer to might be something such as the
 following::
 
-    sage -t  devel/sage-main/sage/libs/pari/gen.pyx
+    sage -t  src/sage/libs/pari/gen.pyx
     python(4563) malloc: *** vm_allocate(size=4096000000) failed (error code=3)
     python(4563) malloc: *** error: can't allocate region
     python(4563) malloc: *** set a breakpoint in szone_error to debug
@@ -545,10 +533,11 @@ The problem can be fixed by running the following command::
 Upgrading Sage went fine, but now the banner still shows the old version. How can I fix this?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Try doing ``hg_scripts.merge()``, followed by
-``hg_scripts.commit()``. Run both of these commands from the Sage
-command line. As an alternative, you can simply try
-``hg_scripts.pull()``.
+The banner is stored and not computed at every new start of Sage. If
+it has not been updated, this should not prevent Sage to run
+correctly. Type ``banner()`` in a Sage session to check the real
+version. If you want the correct banner, you need to build Sage again
+by typing ``make build`` in a terminal.
 
 
 How do I run sage in daemon mode, i.e. as a service?
@@ -561,40 +550,34 @@ tracking the issue at
 so stay tuned.
 
 
-I am using Mac OS X. Where do I put the jsMath "font" directory to eliminate the red box?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-See http://www.math.union.edu/~dpvc/jsMath/download/jsMath-fonts.html
-where it says::
-
-    For Mac OS X users: download and unpack the archive, then drag
-    the fonts to your Library/Fonts folder (or to the FontBook, or
-    just double-click them and press the "install" button).
-
-
 The show command for plotting 3-D objects does not work.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Since Sage 2.9.2, we have switched to using
-`Jmol <http://jmol.sourceforge.net>`_,
-a Java applet, for 3-D plotting. There are several possibilities for
-the cause of the malfunction. You do not have Java installed at all or
-the Java installed is an older GNU based alternative Java
-implementation, which causes some yet to determine problem. A solution
-to both issues is to either install Sun's Java SDK or to update the
-GNU based Java implementation. As of January 2008 Debian's Java in
-testing works, but stable does have problems.
+The default live 3-D plotting for Sage 6.4+ uses
+`Jmol/JSmol <http://jmol.sourceforge.net>`_
+for viewing. From the command line the Jmol Java application is used,
+and for in browser viewing either pure javascript or a Java applet
+is used.  By default in browsers pure javascript is used to avoid
+the problems with some browsers that do not support java applet
+plugins (namely Chrome).  On each browser worksheet there is a
+checkbox which must be checked before a 3-D plot is generated if
+the user wants to use the Java applet (the applet is a little faster
+with complex plots).
 
-If you are running a brand new (as of April 2008) Ubuntu 8.04, they
-ship the Java Plugin by IcedTea. This is basically a good idea, but a
-bit too early since it is broken. Either wait for an update or
-uninstall the IcedTea Plugin and install the "SUN Java 6
-Plugin". Later, switch back to IcedTea, since it is based on OpenJDK 7
-(or SUNs Java 7) which is the next Java version. You can check for the
-used plugin in Firefox 3 by typing "about:plugins" into the URL
-bar. Read more about this issue at
-`launchpad <https://bugs.launchpad.net/ubuntu/+source/icedtea-java7/>`_.
+The most likely reason for a malfunction is that you do not have
+a Java Run Time Environment (JRE) installed or you have one older than
+version 1.7.  If things work from the command line another possibility
+is that your browser does not have the proper plugin to support Java
+applets (at present, 2014, plugins do not work with most versions of
+Chrome).  Make sure you have installed either the IcedTea browser
+plugin (for linux see your package manager), see:
+`IcedTea <http://icedtea.classpath.org/wiki/IcedTea-Web>`_,
+or the Oracle Java plugin see:
+`Java <https://java.com/en/download/help/index_installing.xml>`_.
 
+If you are using a Sage server over the web and even javascript rendering 
+does not work, you may have a problem with your browser's javascript
+engine or have it turned off.
 
 May I use Sage tools in a commercial environment?
 """""""""""""""""""""""""""""""""""""""""""""""""
@@ -640,7 +623,7 @@ libraries. Here is a small example::
     # Show that x behaves like a finite field element:
     for i in range(1, x.multiplicative_order() + 1):
         print i, x**i
-    assert x*(1/x) == K.one_element()
+    assert x*(1/x) == K.one()
 
 To find out more, type ::
 
@@ -649,7 +632,7 @@ To find out more, type ::
 at the Sage prompt and hit tab, then use ``??`` to get more
 information on each function. For example::
 
-    sage.rings.finite_field_givaro.FiniteField_givaro.one_element??
+    sage.rings.finite_field_givaro.FiniteField_givaro.one??
 
 tells you more about the multiplicative unit element in the finite
 field.
@@ -672,6 +655,21 @@ then reboot. See
 `this page <http://www.macosxhints.com/article.php?story=20050709233920660>`_
 for more details.
 
+How do I plot the cube root (or other odd roots) for negative input?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+This is one of the most frequently asked questions.  There are several
+methods mentioned in the plot documentation, but this one is easiest::
+
+    sage: plot(sign(x)*abs(x)^(1/3),-1,1)
+    Graphics object consisting of 1 graphics primitive
+
+The *reason* this is necessary is that Sage returns complex numbers
+for odd roots of negative numbers when numerically approximated, which
+is a `standard convention <http://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_.
+
+    sage: N((-1)^(1/3))
+    0.500000000000000 + 0.866025403784439*I
 
 How do I use the bitwise XOR operator in Sage?
 """"""""""""""""""""""""""""""""""""""""""""""
@@ -708,8 +706,7 @@ Another option, which sneaks around the Sage
 preparser, is ::
 
     sage: def xor(a, b):
-    ...       return eval("%s^%s" % (a, b))
-    ...
+    ....:     return eval("%s^%s" % (a, b))
     sage: xor(3, 8)
     11
 
@@ -742,3 +739,18 @@ It is because of how functions are defined in Sage with the
 make this mistake inside of an ``if`` statement, you will get a
 ``SyntaxError`` before anything else goes wrong. So in this case,
 there is no problem.
+
+
+How do I use a different browser with the Sage notebook?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+You will need to do this from the command line.  Just run a command like this.
+
+* Linux (assuming you have Sage in ``/usr/bin``)::
+
+    env SAGE_BROWSER=opera /usr/bin/sage -notebook
+
+* Mac (assuming you are in the directory of your downloaded Sage)::
+
+    SAGE_BROWSER='open -a Firefox' ./sage -notebook
+    SAGE_BROWSER='open -a Google\ Chrome' ./sage -notebook

@@ -118,10 +118,10 @@ cdef class ntl_ZZX:
 
         if v is None:
             return
-        elif PY_TYPE_CHECK(v, list) or PY_TYPE_CHECK(v, tuple):
+        elif isinstance(v, list) or isinstance(v, tuple):
             for i from 0 <= i < len(v):
                 x = v[i]
-                if not PY_TYPE_CHECK(x, ntl_ZZ):
+                if not isinstance(x, ntl_ZZ):
                     cc = ntl_ZZ(x)
                 else:
                     cc = x
@@ -185,7 +185,7 @@ cdef class ntl_ZZX:
         if i < 0:
             raise IndexError, "index (i=%s) must be >= 0"%i
         cdef ntl_ZZ cc
-        if PY_TYPE_CHECK(a, ntl_ZZ):
+        if isinstance(a, ntl_ZZ):
             cc = a
         else:
             cc = ntl_ZZ(a)
@@ -283,10 +283,10 @@ cdef class ntl_ZZX:
             sage: ntl.ZZX(range(5)) + ntl.ZZX(range(6))
             [0 2 4 6 8 5]
         """
-        cdef ntl_ZZX r = PY_NEW(ntl_ZZX)
-        if not PY_TYPE_CHECK(self, ntl_ZZX):
+        cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
+        if not isinstance(self, ntl_ZZX):
             self = ntl_ZZX(self)
-        if not PY_TYPE_CHECK(other, ntl_ZZX):
+        if not isinstance(other, ntl_ZZX):
             other = ntl_ZZX(other)
         ZZX_add(r.x, (<ntl_ZZX>self).x, (<ntl_ZZX>other).x)
         return r
@@ -297,10 +297,10 @@ cdef class ntl_ZZX:
             sage: ntl.ZZX(range(5)) - ntl.ZZX(range(6))
             [0 0 0 0 0 -5]
         """
-        cdef ntl_ZZX r = PY_NEW(ntl_ZZX)
-        if not PY_TYPE_CHECK(self, ntl_ZZX):
+        cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
+        if not isinstance(self, ntl_ZZX):
             self = ntl_ZZX(self)
-        if not PY_TYPE_CHECK(other, ntl_ZZX):
+        if not isinstance(other, ntl_ZZX):
             other = ntl_ZZX(other)
         ZZX_sub(r.x, (<ntl_ZZX>self).x, (<ntl_ZZX>other).x)
         return r
@@ -311,10 +311,10 @@ cdef class ntl_ZZX:
             sage: ntl.ZZX(range(5)) * ntl.ZZX(range(6))
             [0 0 1 4 10 20 30 34 31 20]
         """
-        cdef ntl_ZZX r = PY_NEW(ntl_ZZX)
-        if not PY_TYPE_CHECK(self, ntl_ZZX):
+        cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
+        if not isinstance(self, ntl_ZZX):
             self = ntl_ZZX(self)
-        if not PY_TYPE_CHECK(other, ntl_ZZX):
+        if not isinstance(other, ntl_ZZX):
             other = ntl_ZZX(other)
         sig_on()
         ZZX_mul(r.x, (<ntl_ZZX>self).x, (<ntl_ZZX>other).x)
@@ -367,16 +367,15 @@ cdef class ntl_ZZX:
             sage: f % g
             [20 25]
         """
-        cdef ntl_ZZX r = PY_NEW(ntl_ZZX)
-        if not PY_TYPE_CHECK(self, ntl_ZZX):
+        cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
+        if not isinstance(self, ntl_ZZX):
             self = ntl_ZZX(self)
-        if not PY_TYPE_CHECK(other, ntl_ZZX):
+        if not isinstance(other, ntl_ZZX):
             other = ntl_ZZX(other)
         sig_on()
         ZZX_rem(r.x, (<ntl_ZZX>self).x, (<ntl_ZZX>other).x)
         sig_off()
         return r
-        sig_on()
 
     def quo_rem(self, ntl_ZZX other):
         """
@@ -391,7 +390,8 @@ cdef class ntl_ZZX:
            sage: q*g + r == f
            True
         """
-        cdef ZZX_c *r, *q
+        cdef ZZX_c *r
+        cdef ZZX_c *q
         sig_on()
         try:
             ZZX_quo_rem(&self.x, &other.x, &r, &q)
@@ -563,7 +563,7 @@ cdef class ntl_ZZX:
             sage: f.content()
             0
         """
-        cdef ntl_ZZ r = PY_NEW(ntl_ZZ)
+        cdef ntl_ZZ r = ntl_ZZ.__new__(ntl_ZZ)
         ZZX_content(r.x, self.x)
         return r
 
@@ -605,7 +605,8 @@ cdef class ntl_ZZX:
             sage: g.pseudo_quo_rem(f)
             ([-1 3], [2])
         """
-        cdef ZZX_c *r, *q
+        cdef ZZX_c *r
+        cdef ZZX_c *q
         sig_on()
         try:
             ZZX_pseudo_quo_rem(&self.x, &other.x, &r, &q)
@@ -675,7 +676,8 @@ cdef class ntl_ZZX:
         """
         proof = proof_flag(proof)
 
-        cdef ZZX_c *s, *t
+        cdef ZZX_c *s
+        cdef ZZX_c *t
         cdef ZZ_c *r
         sig_on()
         try:
@@ -717,7 +719,7 @@ cdef class ntl_ZZX:
             sage: f.leading_coefficient()
             0
         """
-        cdef ntl_ZZ r = PY_NEW(ntl_ZZ)
+        cdef ntl_ZZ r = ntl_ZZ.__new__(ntl_ZZ)
         r.x = ZZX_LeadCoeff(self.x)
         return r
 
@@ -733,7 +735,7 @@ cdef class ntl_ZZX:
             sage: f.constant_term()
             0
         """
-        cdef ntl_ZZ r = PY_NEW(ntl_ZZ)
+        cdef ntl_ZZ r = ntl_ZZ.__new__(ntl_ZZ)
         r.x = ZZX_ConstTerm(self.x)
         return r
 

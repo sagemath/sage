@@ -18,7 +18,15 @@ import sage.rings.padics.misc
 class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False, absprec=None):
         """
-        Initialization function for the class Polynomial_padic_flat.
+        TESTS:
+
+        Check that :trac:`13620` has been fixed::
+
+            sage: K = ZpFM(3)
+            sage: R.<t> = K[]
+            sage: R(R.zero())
+            0
+
         """
         if x is None:
             Polynomial_generic_dense.__init__(self, parent, x, check, is_gen, construct)
@@ -26,7 +34,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
         R = parent.base_ring()
         if sage.rings.fraction_field_element.is_FractionFieldElement(x):
             if x.denominator() != 1:
-                raise TypeError, "denominator must be 1"
+                raise TypeError("denominator must be 1")
             else:
                 x = x.numerator()
         if isinstance(x, Polynomial):
@@ -41,7 +49,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
             if check:
                 m = infinity
                 zero = R(0)
-                n = max(x.keys())
+                n = max(x.keys()) if x else 0
                 v = [zero for _ in xrange(n+1)]
                 for i, z in x.iteritems():
                     v[i] = R(z)

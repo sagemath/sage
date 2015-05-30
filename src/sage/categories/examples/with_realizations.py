@@ -134,13 +134,13 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             The subset algebra of {1, 2, 3} over Rational Field
             sage: F, In, Out = A.realizations()
             sage: type(F.coerce_map_from(In))
-            <class 'sage.categories.modules_with_basis.TriangularModuleMorphism'>
+            <class 'sage.modules.with_basis.morphism.TriangularModuleMorphismByLinearity_with_category'>
             sage: type(In.coerce_map_from(F))
-            <class 'sage.categories.modules_with_basis.TriangularModuleMorphism'>
+            <class 'sage.modules.with_basis.morphism.TriangularModuleMorphismByLinearity_with_category'>
             sage: type(F.coerce_map_from(Out))
-            <class 'sage.categories.modules_with_basis.TriangularModuleMorphism'>
+            <class 'sage.modules.with_basis.morphism.TriangularModuleMorphismByLinearity_with_category'>
             sage: type(Out.coerce_map_from(F))
-            <class 'sage.categories.modules_with_basis.TriangularModuleMorphism'>
+            <class 'sage.modules.with_basis.morphism.TriangularModuleMorphismByLinearity_with_category'>
             sage: In.coerce_map_from(Out)
             Composite map:
               From: The subset algebra of {1, 2, 3} over Rational Field in the Out basis

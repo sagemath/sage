@@ -26,11 +26,11 @@ if [ $# -gt 1 ]; then
 fi
 
 if [ -z "$SAGE_ROOT" ]; then
-    die "must be run from within a Sage enviroment, or with SAGE_ROOT provided"
+    die "must be run from within a Sage environment, or with SAGE_ROOT provided"
 fi
 
 if [ -z "$SAGE_SRC" ]; then
-    die "must be run from within a Sage enviroment, or with SAGE_SRC provided"
+    die "must be run from within a Sage environment, or with SAGE_SRC provided"
 fi
 
 if [ "$#" -gt 0 ]; then
@@ -42,18 +42,22 @@ fi
 source "$SAGE_SRC/bin/sage-version.sh"
 echo "Sage version $SAGE_VERSION, release date $SAGE_RELEASE_DATE"
 
-TARGET=sage-"$SAGE_VERSION"-`uname -m`-`uname`
+if [ -z ${SAGE_APP_TARGET_ARCH+x} ]; then 
+	TARGET_ARCH=`uname -m`
+else
+	TARGET_ARCH="$SAGE_APP_TARGET_ARCH"
+fi
+
+TARGET=sage-"$SAGE_VERSION"-"$TARGET_ARCH"-"$UNAME"
 TARGET=`echo $TARGET | sed 's/ //g'`   # Remove spaces
 
-rm -rf "$TMP_DIR/$TARGET"
-mkdir -p "$TMP_DIR/$TARGET"
+if [ "$SAGE_APP_BUNDLE" = "yes" ]; then
+	TARGET_PRODUCT="$TARGET"-app
+else
+	TARGET_PRODUCT="$TARGET"
+fi
 
-# Clone Sage repository
-echo "Cloning Sage repository..."
-git clone "$SAGE_ROOT" "$TMP_DIR/$TARGET"
-( cd "$TMP_DIR/$TARGET" && git remote set-url origin "$SAGE_REPO_ANONYMOUS" )
-
-echo "Done cloning Sage repository."
+sage-clone-source "$SAGE_ROOT" "$TMP_DIR/$TARGET"
 
 echo "Copying files over to tmp directory"
 # We use "tar" to copy files for portability,
@@ -89,7 +93,7 @@ if [ "$UNAME" = "Darwin" ]; then
         (cd "$SAGE_SRC/mac-app/" && \
             unset CC LD && \
             xcodebuild -target 'Sage' -configuration "$CONFIGURATION" \
-            ARCHES="$(uname -m)" \
+            ARCHS="$TARGET_ARCH" ONLY_ACTIVE_ARCH=NO \
             $SET_SDKROOT) || 
                 die "Failed to build Sage.app.\nIf you don't wish to build Sage.app set SAGE_APP_BUNDLE=no"
 
@@ -113,19 +117,22 @@ if [ "$UNAME" = "Darwin" ]; then
     # Go back to the right directory for later copying
     cd "$TMP_DIR"
     if [ "$SAGE_APP_DMG" != "no" ]; then
-        echo "Creating $TARGET.dmg"
+        echo "Creating $TARGET_PRODUCT.dmg"
         echo "(If you don't wish to create a disk image please set SAGE_APP_DMG=no)"
         DYLD_LIBRARY_PATH="$SAGE_ORIG_DYLD_LIBRARY_PATH"; export DYLD_LIBRARY_PATH
-        hdiutil create -srcfolder "$TARGET" -format UDBZ "$TARGET".dmg
-    else
+        hdiutil create -srcfolder "$TARGET" -format UDBZ "$TARGET_PRODUCT".dmg
+#    else
+	elif [ "$SAGE_APP_GZ" != "no" ]; then
         echo 'If you wish to create a disk image please set'
         echo 'SAGE_APP_DMG=yes'
         echo '(or unset SAGE_APP_DMG since SAGE_APP_DMG=yes is the default)'
-        echo "Creating $TARGET.tar.gz ..."
-        tar zcf "$TARGET".tar.gz "$TARGET"
+        echo "Creating $TARGET_PRODUCT.tar.gz ..."
+        chmod -R go=rX "$TARGET"
+        tar zcf "$TARGET_PRODUCT".tar.gz "$TARGET"
     fi
 else
     echo "Creating $TARGET.tar.gz ..."
+    chmod -R go=rX "$TARGET"
     tar zcf "$TARGET".tar.gz "$TARGET"
 fi
 
@@ -136,4 +143,4 @@ rm -rf "$SAGE_ROOT/dist/$TARGET"
 echo "Moving final distribution file to $SAGE_ROOT/dist"
 
 mv "$TARGET" "$SAGE_ROOT"/dist/
-mv "$TARGET".* "$SAGE_ROOT"/dist/
+mv "$TARGET_PRODUCT".* "$SAGE_ROOT"/dist/

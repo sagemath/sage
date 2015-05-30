@@ -25,4 +25,10 @@ TESTS::
 
     sage: a = Zp(5)(-3); loads(dumps(a)) == a
     True
+
+    sage: M = MatrixSpace(pAdicField(3,100),2)
+    sage: (M([1,0,0,90]) - (1+O(3^100)) * M(1)).left_kernel()
+    Vector space of degree 2 and dimension 1 over 3-adic Field with capped relative precision 100
+    Basis matrix:
+    [1 + O(3^100)            0]
 """

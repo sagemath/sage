@@ -81,7 +81,7 @@ if [ "$UNAME" = "Linux" ]; then
             $MAKE linux-64-thr;;
 	ppc|powerpc|ppc64|powerpc64)
             $MAKE linux-ppc;;
-        armv7l)
+        armv6l|armv7l)
             sed "s/-m32//g" ../../patches/Make-arch > Make-arch
             $MAKE linux-thr;;
 	*) # e.g. SPARC

@@ -28,8 +28,7 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-include 'sage/ext/stdsage.pxi'
-include 'sage/misc/bitset.pxi'
+include 'sage/data_structures/bitset.pxi'
 from basis_matroid cimport BasisMatroid
 from sage.rings.arith import binomial
 

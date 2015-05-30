@@ -1,56 +1,110 @@
 #!/usr/bin/env python
-import os, sys, urllib, urllib2, urlparse
+# script to list the Sage packages
+#  called with one argument which meight be either "installed" or "standard" or
+#  "optional" or "experimental".
 
-if not os.environ.has_key("SAGE_ROOT"):
-     raise RuntimeError, "The environment variable SAGE_ROOT must be set"
+from __future__ import print_function
+
+import os, sys
+
+if "SAGE_ROOT" not in os.environ:
+    raise RuntimeError("The environment variable SAGE_ROOT must be set.")
 SAGE_SPKG_INST=os.environ.get("SAGE_SPKG_INST",
         os.path.join(os.environ["SAGE_ROOT"],'spkg','installed'))
 
+if "SAGE_SERVER" not in os.environ:
+    os.environ['SAGE_SERVER'] = "http://www.sagemath.org/"
 
-if not os.environ.has_key("SAGE_SERVER"):
-     print "The environment variable SAGE_SERVER must be set"
-     sys.exit(1)
+def get_remote_package_list(category):
+    r"""
+    Return the list of packages
 
-PKG_SERVER = urlparse.urljoin(os.environ['SAGE_SERVER'],'packages')
-print "Using SAGE Server %s"%PKG_SERVER
+    INPUT:
 
-url_path = os.path.join('packages', sys.argv[1], 'list')
-url = urlparse.urljoin(PKG_SERVER, urllib.pathname2url(url_path))
+    - ``category`` -- can be either "standard", "optional" or "experimental".
+    """
+    try:
+        from urllib.parse import urljoin
+        from urllib.request import pathname2url, urlopen
+    except ImportError:
+        from urlparse import urljoin
+        from urllib import pathname2url
+        from urllib2 import urlopen
+
+    PKG_SERVER = urljoin(os.environ['SAGE_SERVER'], 'spkg')
+    print("Using Sage Server {}".format(PKG_SERVER))
+
+    url_path = os.path.join('spkg', category, 'list')
+    url = urljoin(PKG_SERVER, pathname2url(url_path))
+
+    try:
+        pkg_list_file = urlopen(url)
+    except (OSError, IOError) as msg:
+        print(msg)
+        print("\n\n")
+        print("*"*80)
+        print("\n\n")
+        print("Error contacting {}. Try using an alternative server.".format(url))
+        print("For example, from the bash prompt try typing")
+        print()
+        print("   export SAGE_SERVER=http://sage.scipy.org/sage/")
+        print()
+        print("then try again.")
+        print("\n\n")
+        print("*"*80)
+        print("\n\n")
+        sys.exit(1)
+
+    result = [line.strip() for line in pkg_list_file.readlines()]
+    pkg_list_file.close()
+    return result
 
 try:
-     installed = set(os.listdir(SAGE_SPKG_INST))
-except OSError:
-     installed = set([])
-
-try:
-    pkg_list_file = urllib2.urlopen(url)
-except (OSError, IOError), msg:
-    print msg
-    print "\n\n"
-    print "*"*80
-    print "\n\n"
-    print "Error contacting %s. Try using an alternative server."%url
-    print "For example, from the bash prompt try typing\n"
-    print "   export SAGE_SERVER=http://sage.scipy.org/sage/\n"
-    print "then try again."
-    print "\n\n"
-    print "*"*80
-    print "\n\n"
+    category = sys.argv[1]
+except IndexError:
+    sys.stderr.write("Usage: %s <package category>.\n" % sys.argv[0])
     sys.exit(1)
+    
+try:
+    installed = set(os.listdir(SAGE_SPKG_INST))
+except OSError:
+    installed = set([])
 
-do_have = []
-dont_have = []
-for pkg_name in pkg_list_file.readlines():
-    pkg_name = pkg_name.rstrip()  # get rid of \n
-    if pkg_name in installed:
-        do_have.append(pkg_name)
-    else:
-        dont_have.append(pkg_name)
-print " ***********************************"
-print "    ***  %s Packages   ***"%sys.argv[1]
-print " ***********************************\n"
-print "INSTALLED:\n" + '\n'.join(do_have)
-print "\nNOT INSTALLED:\n" + '\n'.join(dont_have)
-print "\nType 'sage -i package_name' to download and install a package."
+if category == 'installed':
+    print(*installed, sep='\n')
+    sys.exit(0)
 
-pkg_list_file.close()
+def split_pkgname(name):
+    try:
+        basename, version = name.split('-', 1)
+    except ValueError:
+        # Some packages such as currently "csage" aren't versioned, or
+        # have non-standard versioning, e.g. "database_stein_watkins_mini.p0".
+        basename = name
+        version = ""
+    return basename, version
+
+installed_version = dict([ split_pkgname(pkg) for pkg in installed ])
+
+available_version = dict([ split_pkgname(pkg) for pkg in get_remote_package_list(category)])
+
+print()
+print("{} packages:".format(category[0].upper() + category[1:]))
+print()
+
+for pkg_name in sorted(available_version.keys()):
+
+    have = installed_version.get(pkg_name)
+    may = available_version[pkg_name]
+    status = "already installed" if may == have else \
+             "installed version: %s" % have if have else \
+             "not installed"
+
+    # Some packages don't have a (proper) version at all:
+    fullname = pkg_name + ('-' + may if len(may) else "")
+
+    print("{:.<40} {}".format(fullname + " ", status))
+
+print()
+print("Type 'sage -i package_name' to download and install a package.")
+

@@ -33,16 +33,42 @@ if [ $SAGE64 = "yes" ]; then
     export CXXFLAGS="$CXXFLAGS $CFLAG64"
     export LDFLAGS="$LDFLAGS $CFLAG64"
 fi
-
 # End boilerplate
 
+# delete old sagenb install, if any
+rm -rf "${SAGE_LOCAL}/lib/python/site-packages"/sagenb*
 
+
+# TODO: clean up this crap
+# * dependencies should not be part of the sagenb tarball at all
+# * get rid of easy_install
+# * note that pip currently depends on ssl
 
 # Install dependencies
 for PKG in $(cat src/install_order); do
-    easy_install -H None "src/$PKG" || die "Error installing $PKG !"
+    easy_install -Z -H None "src/$PKG"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: Installing $PKG failed."
+        exit 1
+    fi
 done
-PKG=$(ls -1 src | GREP_OPTIONS= grep sagenb-)
+
 
 # Install sagenb into site-packages
-easy_install -H None "src/$PKG" || die "Error installing sagenb !"
+PKG=$(ls -1 src | GREP_OPTIONS= grep sagenb-)
+easy_install -Z -H None "src/$PKG"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: Installing SageNB failed."
+    exit 1
+fi
+
+
+# let sagenb use mathjax spkg
+cd "${SAGE_LOCAL}/lib/python/site-packages"/sagenb-*.egg/sagenb/data
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: Cannot find SageNB data directory."
+    exit 1
+fi
+# the following line can be removed once sagenb does not ship mathjax anymore.
+rm -rf mathjax
+ln -s ../../../../../../share/mathjax/ mathjax

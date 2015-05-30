@@ -1,0 +1,30 @@
+read("computel");              /* for Steve Finch */
+default(realprecision,40);
+
+coefgrow(n) = 2*n^20;
+tau(n)      = (5*sigma(n,3)+7*sigma(n,5))*n/12\
+              -35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5));
+tau2(n)      = tau(n)^2;
+
+conductor = 1;
+gammaV    = [0,1,-10];
+weight    = 23;
+Lpoles    = [];
+Lresidues = automatic;
+
+len=cflength();
+v1=vector(len,n,tau2(n));
+v2=vector(len,n,n^11);
+v3=vector(len,n,if(issquare(n),n^11,0));
+cfs=concat(dirdiv(dirmul(v1,v3),v2),vector(1000,k,0));
+
+initLdata("cfs[k]");
+
+{
+forstep(s0=12.5,22.0,0.5,
+  s0=round(2*s0)/2;
+  print("  L       = ",lval = L(s0));
+  print("  (check) = ",lval2 = L(s0,1.1),"  (err=",errprint(lval-lval2),")");
+  print("f(",s0,") = ",lval/zeta(2*s0-22)*zeta(s0-11));
+);
+}

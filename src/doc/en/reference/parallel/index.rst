@@ -10,4 +10,8 @@ Parallel Computing
    sage/parallel/multiprocessing_sage
    sage/parallel/ncpus
 
+.. SEEALSO::
+
+    - :ref:`sage.interfaces.psage`
+
 .. include:: ../footer.txt

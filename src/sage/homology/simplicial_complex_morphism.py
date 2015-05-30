@@ -229,7 +229,7 @@ class SimplicialComplexMorphism(SageObject):
         """
         dim = self._domain.dimension()
         if not isinstance(x,simplicial_complex.Simplex) or x.dimension() > dim or not x in self._domain.faces()[x.dimension()]:
-            raise ValueError, "x must be a simplex of the source of f"
+            raise ValueError("x must be a simplex of the source of f")
         tup=x.tuple()
         fx=[]
         for j in tup:

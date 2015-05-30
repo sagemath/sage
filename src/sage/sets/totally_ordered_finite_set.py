@@ -231,14 +231,13 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
     This behavior of comparison is the same as the one of
     :class:`~sage.structure.element.Element`.
 
-    When you build a totally ordered set whose elements do not inherit from
-    :class:`sage.structure.element.Element`, the following happens::
+    Since :trac:`16280`, totally ordered sets support elements that do
+    not inherit from :class:`sage.structure.element.Element`, whether
+    they are facade or not::
 
         sage: S = TotallyOrderedFiniteSet(['a','b'])
         sage: S('a')
-        Traceback (most recent call last):
-        ...
-        TypeError: Cannot convert str to sage.structure.element.Element
+        'a'
         sage: S = TotallyOrderedFiniteSet(['a','b'], facade = False)
         sage: S('a')
         'a'
@@ -345,6 +344,6 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         """
         try:
             return self._elements.index(x) <= self._elements.index(y)
-        except StandardError:
+        except Exception:
             raise ValueError("arguments must be elements of the set")
 

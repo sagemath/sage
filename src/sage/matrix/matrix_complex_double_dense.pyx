@@ -58,14 +58,12 @@ cdef class Matrix_complex_double_dense(matrix_double_dense.Matrix_double_dense):
         sage: m**2
         [-1.0 + 6.0*I       10.0*I]
         [15.0 + 5.0*I 14.0 + 6.0*I]
-        sage: n= m^(-1); n
-        [  0.333333333333 + 0.333333333333*I   0.166666666667 - 0.166666666667*I]
-        [ -0.166666666667 - 0.333333333333*I 0.0833333333333 + 0.0833333333333*I]
+        sage: n= m^(-1); n  # abs tol 1e-15
+        [  0.3333333333333333 + 0.3333333333333333*I 0.16666666666666669 - 0.16666666666666666*I]
+        [-0.16666666666666666 - 0.3333333333333333*I 0.08333333333333331 + 0.08333333333333333*I]
 
-    To compute eigenvalues the use the functions left_eigenvectors or
-    right_eigenvectors
-
-    ::
+    To compute eigenvalues the use the functions ``left_eigenvectors`` or
+    ``right_eigenvectors``::
 
         sage: p,e = m.right_eigenvectors()
 
@@ -79,8 +77,8 @@ cdef class Matrix_complex_double_dense(matrix_double_dense.Matrix_double_dense):
     ::
 
         sage: b = vector(CDF,[5,6])
-        sage: m.solve_right(b)
-        (2.66666666667 + 0.666666666667*I, -0.333333333333 - 1.16666666667*I)
+        sage: m.solve_right(b)  # abs tol 1e-14
+        (2.6666666666666665 + 0.6666666666666669*I, -0.3333333333333333 - 1.1666666666666667*I)
 
     See the commands qr, lu, and svd for QR, LU, and singular value
     decomposition.

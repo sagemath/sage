@@ -80,7 +80,7 @@ class Parallel:
         elif p_iter == 'reference':
             self.p_iter = p_iter_reference
         elif isinstance(p_iter, str):
-            raise ValueError, "unknown iterator '%s'" % p_iter
+            raise ValueError("unknown iterator '%s'" % p_iter)
         else:
             if self.p_iter is None:
                 self.p_iter = p_iter

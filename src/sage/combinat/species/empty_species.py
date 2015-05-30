@@ -110,7 +110,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F.generating_series().count(4)
             0
         """
-        return series_ring.zero_element()
+        return series_ring.zero()
 
     _itgs = _gs
     _cis  = _gs

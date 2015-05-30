@@ -1,5 +1,4 @@
-from sage.libs.flint.nmod_poly cimport nmod_poly_t, nmod_poly_struct
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_t
+from sage.libs.flint.types cimport nmod_poly_t, nmod_poly_struct, fmpz_poly_t
 from sage.structure.parent cimport Parent
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 

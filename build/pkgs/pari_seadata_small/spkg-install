@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p "$SAGE_SHARE/pari"
+cd data && cp -R * "$SAGE_SHARE/pari"

@@ -1,3 +1,6 @@
+from sage.misc.lazy_import import lazy_import
+
+
 from cone import Cone
 
 from fan import Fan, FaceFan, NormalFan, Fan2d
@@ -15,7 +18,10 @@ import lattice_polytope
 
 from toric_lattice import ToricLattice
 
-import sage.geometry.pseudolines
-
-
 import toric_plotter
+
+
+from hyperbolic_space.all import *
+
+lazy_import('sage.geometry.hyperplane_arrangement.arrangement', 'HyperplaneArrangements')
+lazy_import('sage.geometry.hyperplane_arrangement.library', 'hyperplane_arrangements')

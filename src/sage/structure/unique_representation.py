@@ -157,7 +157,7 @@ result in the cache. This has the following implications:
 
 .. WARNING::
 
-    If there is preprocessing, then the preprocessed arguments passed to
+    If there is preprocessing, then the preprocessed arguments
     passed to :meth:`CachedRepresentation.__classcall__` must be invariant
     under the preprocessing. That is to say, preprocessing the input
     arguments twice must have the same effect as preprocessing the input

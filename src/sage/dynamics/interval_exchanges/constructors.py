@@ -792,11 +792,11 @@ def RauzyDiagram(*args, **kargs):
         sage: w2[:20] == w1
         True
     """
-    if not kargs.has_key('reduced'):
+    if 'reduced' not in kargs:
         kargs['reduced'] = False
-    if not kargs.has_key('flips'):
+    if 'flips' not in kargs:
         kargs['flips'] = []
-    if not kargs.has_key('alphabet'):
+    if 'alphabet' not in kargs:
         kargs['alphabet'] = None
 
     p = GeneralizedPermutation(
@@ -805,15 +805,15 @@ def RauzyDiagram(*args, **kargs):
         flips = kargs['flips'],
         alphabet = kargs['alphabet'])
 
-    if not kargs.has_key('right_induction'):
+    if 'right_induction' not in kargs:
         kargs['right_induction'] = True
-    if not kargs.has_key('left_induction'):
+    if 'left_induction' not in kargs:
         kargs['left_induction'] = False
-    if not kargs.has_key('left_right_inversion'):
+    if 'left_right_inversion' not in kargs:
         kargs['left_right_inversion'] = False
-    if not kargs.has_key('top_bottom_inversion'):
+    if 'top_bottom_inversion' not in kargs:
         kargs['top_bottom_inversion'] = False
-    if not kargs.has_key('symmetric'):
+    if 'symmetric' not in kargs:
         kargs['symmetric'] = False
 
     return p.rauzy_diagram(

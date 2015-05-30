@@ -43,13 +43,14 @@ REFERENCES:
 - [BP] Dominique Bernardi and Bernadette Perrin-Riou,
   Variante `p`-adique de la conjecture de Birch et
   Swinnerton-Dyer (le cas supersingulier), C. R. Acad. Sci. Paris,
-  Ser I. Math, 317 (1993), no 3, 227-232.
+  Sér I. Math., 317 (1993), no. 3, 227-232.
 
-- [Po] Robert Pollack, On the `p`-adic L-function of a modular form
-  at supersingular prime, Duke Math. J. 118 (2003), no 3, 523-558.
+- [Po] Robert Pollack, On the `p`-adic `L`-function of a modular form
+  at a supersingular prime, Duke Math. J. 118 (2003), no. 3, 523-558.
 
-- [SW] William Stein and Christian Wuthrich, Computations About Tate-Shafarevich Groups
-  using Iwasawa theory, preprint 2009.
+- [SW] William Stein and Christian Wuthrich, Algorithms
+  for the Arithmetic of Elliptic Curves using Iwasawa Theory,
+  Mathematics of Computation 82 (2013), 1757-1792.
 
 AUTHORS:
 
@@ -95,7 +96,7 @@ import sage.rings.arith as arith
 
 from sage.modules.free_module_element import vector
 import sage.matrix.all as matrix
-import monsky_washnitzer
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 # from sage.interfaces.all import gp
 from sage.misc.functional import log
 
@@ -158,7 +159,7 @@ class pAdicLseries(SageObject):
         sage: lp == loads(dumps(lp))
         True
     """
-    def __init__(self, E, p, use_eclib=False, normalize='L_ratio'):
+    def __init__(self, E, p, use_eclib=True, normalize='L_ratio'):
         r"""
         INPUT:
 
@@ -184,9 +185,9 @@ class pAdicLseries(SageObject):
         self._normalize = normalize
         self._use_eclib = use_eclib
         if not self._p.is_prime():
-            raise ValueError, "p (=%s) must be a prime"%p
+            raise ValueError("p (=%s) must be a prime"%p)
         if E.conductor() % (self._p)**2 == 0:
-            raise NotImplementedError, "p (=%s) must be a prime of semi-stable reduction"%p
+            raise NotImplementedError("p (=%s) must be a prime of semi-stable reduction"%p)
 
         try :
             crla = E.label()
@@ -337,7 +338,7 @@ class pAdicLseries(SageObject):
         else :
             D = quadratic_twist
             if sign == -1:
-                raise NotImplementedError, "Quadratic twists for negative modular symbols are not yet implemented."
+                raise NotImplementedError("Quadratic twists for negative modular symbols are not yet implemented.")
             if D > 0:
                 m = self._modular_symbol
                 s = +1
@@ -416,9 +417,9 @@ class pAdicLseries(SageObject):
         """
         s = ZZ(sign)
         if s not in [1, -1]:
-            raise ValueError, "Sign must be +- 1"
+            raise ValueError("Sign must be +- 1")
         if quadratic_twist != 1 and s != 1:
-            raise NotImplementedError, "Quadratic twists not implemented for sign -1"
+            raise NotImplementedError("Quadratic twists not implemented for sign -1")
 
         if quadratic_twist < 0:
             s = -1
@@ -516,7 +517,7 @@ class pAdicLseries(SageObject):
                 if a.valuation() < 1:
                     self._alpha[prec] = K(a)
                     return K(a)
-            raise ValueError, "bug in p-adic L-function alpha"
+            raise RunTimeError("bug in p-adic L-function alpha")
         else: # supersingular case
             f = f.change_ring(Qp(p, prec, print_mode='series'))
             a = f.root_field('alpha', check_irreducible=False).gen()
@@ -578,14 +579,14 @@ class pAdicLseries(SageObject):
             raise NotImplementedError
         E = self.elliptic_curve()
         if not E.is_good(self.prime()):
-            raise ValueError, "prime must be of good reduction"
+            raise ValueError("prime must be of good reduction")
         r = E.rank()
         n = 1
         while True:
             f = self.series(n)
             v = f.valuation()
             if v < n and v < r:
-                raise RuntimeError, "while computing p-adic order of vanishing, got a contradiction: the curve is %s, the curve has rank %s, but the p-adic L-series vanishes to order <= %s"%(E, r, v)
+                raise RuntimeError("while computing p-adic order of vanishing, got a contradiction: the curve is %s, the curve has rank %s, but the p-adic L-series vanishes to order <= %s"%(E, r, v))
             if v == r:
                 self.__ord = v
                 return v
@@ -663,6 +664,7 @@ class pAdicLseries(SageObject):
 
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
+            sage: Lp._pAdicLseries__series = {}  # clear cached series
             sage: Lp._get_series_from_cache(3,5,1,0)
             sage: Lp.series(3,prec=5)
             5 + 4*5^2 + 4*5^3 + O(5^4) + O(5)*T + O(5)*T^2 + O(5)*T^3 + O(5)*T^4 + O(T^5)
@@ -825,7 +827,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: L.series(3)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + (1 + O(3))*T^4 + O(T^5)
 
-        Checks if the precision can be changed (trac 5846)::
+        Checks if the precision can be changed (:trac: `5846`)::
 
             sage: L.series(3,prec=4)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + O(T^4)
@@ -855,35 +857,58 @@ class pAdicLseriesOrdinary(pAdicLseries):
         """
         n = ZZ(n)
         if n < 1:
-            raise ValueError, "n (=%s) must be a positive integer"%n
-        eta = ZZ(eta) % (self._p - 1)
+            raise ValueError("n (=%s) must be a positive integer"%n)
+        if prec < 1:
+            raise ValueError("Insufficient precision (%s)"%prec)
 
         # check if the conditions on quadratic_twist are satisfied
+        eta = ZZ(eta) % (self._p - 1)
         D = ZZ(quadratic_twist)
         if D != 1:
-            if eta != 0: raise NotImplementedError, "quadratic twists only implemented for the 0th Teichmueller component"
+            if eta != 0: raise NotImplementedError("quadratic twists only implemented for the 0th Teichmueller component")
             if D % 4 == 0:
                 d = D//4
                 if not d.is_squarefree() or d % 4 == 1:
-                    raise ValueError, "quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D)
             else:
                 if not D.is_squarefree() or D % 4 != 1:
-                    raise ValueError, "quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D)
             if gcd(D,self._p) != 1:
-                raise ValueError, "quadratic twist (=%s) must be coprime to p (=%s) "%(D,self._p)
+                raise ValueError("quadratic twist (=%s) must be coprime to p (=%s) "%(D,self._p))
             if gcd(D,self._E.conductor())!= 1:
                 for ell in prime_divisors(D):
                     if valuation(self._E.conductor(),ell) > valuation(D,ell) :
-                        raise ValueError, "can not twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D)
-
-
+                        raise ValueError("can not twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D))
         p = self._p
+
         if p == 2 and self._normalize :
             print 'Warning : For p=2 the normalization might not be correct !'
         #verbose("computing L-series for p=%s, n=%s, and prec=%s"%(p,n,prec))
 
-        bounds = self._prec_bounds(n,prec)
-        padic_prec = max(bounds[1:]) + 5
+        if prec == 1:
+            if eta == 0:
+                # trac 15737: if we only ask for the leading term we don't
+                # need to do any sum as L_p(E,0) = (1-1/alpha)^2 * m(0) (good case)
+                # set prec arbitrary to 20.
+                K = Qp(p, 20, print_mode='series')
+                R = PowerSeriesRing(K,'T',1)
+                L = self.modular_symbol(0, sign=+1, quadratic_twist= D)
+                chip = kronecker_symbol(D,p)
+                if self._E.conductor() % p == 0:
+                    L *= 1 - chip/self.alpha()
+                else:
+                    L *= (1-chip/self.alpha())**2
+                L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
+                L = R(L, 1)
+                return L
+            else:
+                # here we need some sums anyway
+                bounds = self._prec_bounds(n,prec)
+                padic_prec = 20
+        else:
+            bounds = self._prec_bounds(n,prec)
+            padic_prec = max(bounds[1:]) + 5
+
         verbose("using p-adic precision of %s"%padic_prec)
 
         res_series_prec = min(p**(n-1), prec)
@@ -1072,35 +1097,70 @@ class pAdicLseriesSupersingular(pAdicLseries):
             sage: L.alpha(2).parent()
             Univariate Quotient Polynomial Ring in alpha over 3-adic Field with capped
             relative precision 2 with modulus (1 + O(3^2))*x^2 + (3 + O(3^3))*x + (3 + O(3^3))
+
+        An example where we only compute the leading term (:trac: `15737`)::
+
+            sage: E = EllipticCurve("17a1")
+            sage: L = E.padic_lseries(3)
+            sage: L.series(4,prec=1)
+            (O(3^18))*alpha^2 + (2*3^-1 + 1 + 3 + 3^2 + 3^3 + ... + 3^18 + O(3^19))*alpha + (2*3^-1 + 1 + 3 + 3^2 + 3^3 + 3^4 + ... + 3^18 + O(3^19)) + O(T)
+
         """
         n = ZZ(n)
         if n < 1:
-            raise ValueError, "n (=%s) must be a positive integer"%n
+            raise ValueError("n (=%s) must be a positive integer"%n)
+        if prec < 1:
+            raise ValueError("Insufficient precision (%s)"%prec)
 
         # check if the conditions on quadratic_twist are satisfied
         D = ZZ(quadratic_twist)
         if D != 1:
-            if eta != 0: raise NotImplementedError, "quadratic twists only implemented for the 0th Teichmueller component"
+            if eta != 0: raise NotImplementedError("quadratic twists only implemented for the 0th Teichmueller component")
             if D % 4 == 0:
                 d = D//4
                 if not d.is_squarefree() or d % 4 == 1:
-                    raise ValueError, "quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D)
             else:
                 if not D.is_squarefree() or D % 4 != 1:
-                    raise ValueError, "quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D)
             if gcd(D,self._E.conductor())!= 1:
                 for ell in prime_divisors(D):
                     if valuation(self._E.conductor(),ell) > valuation(D,ell) :
-                        raise ValueError, "can not twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D)
+                        raise ValueError("can not twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D))
 
         p = self._p
+        eta = ZZ(eta) % (p-1)
         if p == 2 and self._normalize :
             print 'Warning : for p == 2 the normalization might not be correct !'
-        eta = ZZ(eta) % (p-1)
 
-        prec = min(p**(n-1), prec)
-        bounds = self._prec_bounds(n,prec)
-        padic_prec = max(sum(bounds[1:],[])) + 5
+        if prec == 1:
+            if eta == 0:
+                # trac 15737: if we only ask for the leading term we don't
+                # need to do any sum as L_p(E,0) = (1-1/alpha)^2 * m(0) (good case)
+                # set prec arbitrary to 20.
+                alpha = self.alpha(prec=20)
+                K = alpha.parent()
+                R = PowerSeriesRing(K,'T',1)
+                L = self.modular_symbol(0, sign=+1, quadratic_twist= D)
+                if self._E.has_nonsplit_multiplicative_reduction(p):
+                    L *= 2
+                if self._E.has_split_multiplicative_reduction(p):
+                    L *= 0
+                else:
+                    chip = kronecker_symbol(D,p)
+                    L *= (1-chip/self.alpha())**2
+                L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
+                L = R(L, 1)
+                return L
+            else:
+                # here we need some sums anyway
+                bounds = self._prec_bounds(n,prec)
+                padic_prec = 20
+        else:
+            prec = min(p**(n-1), prec)
+            bounds = self._prec_bounds(n,prec)
+            padic_prec = max(sum(bounds[1:],[])) + 5
+
         verbose("using p-adic precision of %s"%padic_prec)
         ans = self._get_series_from_cache(n, prec, quadratic_twist,eta)
         if not ans is None:
@@ -1280,25 +1340,25 @@ class pAdicLseriesSupersingular(pAdicLseries):
         E = self._E
         p = self._p
         if algorithm != "mw" and algorithm !="approx":
-            raise ValueError, "Unknown algorithm %s."%algorithm
+            raise ValueError("Unknown algorithm %s."%algorithm)
         if algorithm == "approx":
             return self.__phi_bpr(prec=prec)
         if p < 4 and algorithm == "mw":
             print "Warning: If this fails try again using algorithm=\"approx\""
         Ew = E.integral_short_weierstrass_model()
-        adjusted_prec = monsky_washnitzer.adjusted_prec(p, prec)
+        adjusted_prec = sage.schemes.hyperelliptic_curves.monsky_washnitzer.adjusted_prec(p, prec)
         modprecring = Integers(p**adjusted_prec)
         output_ring = Qp(p, prec)
         R, x = PolynomialRing(modprecring, 'x').objgen()
         Q = x**3 + modprecring(Ew.a4()) * x + modprecring(Ew.a6())
         trace = Ew.ap(p)
-        fr = monsky_washnitzer.matrix_of_frobenius(Q, p, adjusted_prec, trace)
+        fr = sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius(Q, p, adjusted_prec, trace)
         fr = matrix.matrix(output_ring,2,2,fr)
 
         # return a vector for PARI's ellchangecurve to pass from e1 to e2
         def isom(e1,e2):
             if not e1.is_isomorphic(e2):
-                raise ValueError, "Curves must be isomorphic."
+                raise ValueError("Curves must be isomorphic.")
             usq = (e1.discriminant()/e2.discriminant()).nth_root(6)
             u = usq.sqrt()
             s = (u   *  e2.a1() - e1.a1() )/ZZ(2)
@@ -1394,7 +1454,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
                     gamma = gamma % p**dga
                     verbose("gamma_prec increased to %s\n gamma is now %s"%(dga,gamma))
                 else:
-                    raise RuntimeError,  "Bug: no delta or gamma can exist"
+                    raise RuntimeError("Bug: no delta or gamma can exist")
 
         # end of approximation of delta and gamma
         R = Qp(p,max(dpr,dga)+1)
@@ -1426,7 +1486,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         Eh = E.formal()
         lo = Eh.log(prec + 5)
-        F = lo.reversion()
+        F = lo.reverse()
 
         S = LaurentSeriesRing(QQ,'z')
         z = S.gen()

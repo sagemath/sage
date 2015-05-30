@@ -1,5 +1,5 @@
 """
-Searching a sorted list.
+Searching a sorted list
 
 This is like the bisect library module, but also returns whether
 or not the element is in the list, which saves having to do an

@@ -6,6 +6,10 @@ John Cremona's programs for enumerating and computing with elliptic
 curves defined over the rational numbers. This is the culmination of
 over 25 years of hard work.
 
+== License ==
+
+eclib is licensed GPL v2+.
+
 == Maintainers ==
 
  * William Stein
@@ -15,180 +19,13 @@ over 25 years of hard work.
 
  * Author: John Cremona
  * Email: john.cremona@gmail.com
- * Website: https://code.google.com/p/eclib/
+ * Website: https://github.com/JohnCremona/eclib
 
 == Dependencies ==
 
- * GMP / MPIR
  * PARI
  * NTL
+ * FLINT
 
-== Changelog ==
-
-=== eclib-20120830 (Jean-Pierre Flori, 5 September 2012) ===
- * #13325: Source code updated to version 2012-08-30.
- * Now builds correctly on Cygwin.
-
-=== eclib-20120428 (John Cremona, 28 April 2012) ===
- * Source code update to revision 7fcd812213df  (as at 25 April 2012), from
-   http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-25.tar.gz
-
-=== eclib-20120421 (John Cremona, 21 April 2012) ===
- * Source code update to revision 0db48db1d463 (as at 21 April 2012), from
-   http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-21.tar.gz
-
-=== eclib-20120419 (John Cremona, 19 April 2012) ===
- * Source code update to revision 91afac16a596 (as at 19 April 2012), from
-   http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-19.tar.gz
-
-=== eclib-20120417.p2 (John Cremona, 18 April 2012) ===
- * Minor source code update to revision ed71f2904c55 (as at 18 April 2012), as at
-   http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-18.tar.gz
-
-=== eclib-20120417.p1 (John Cremona, 18 April 2012) ===
- * Minor source code update to revision cf6aae3592bf (as at 17 April 2012), as at
-   http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-17.tar.gz
-
-=== eclib-20120417.p0 (Leif Leonhardy, 17 April 2012) ===
- * #10993: Clean up `spkg-check` and `spkg-install`.
- * Use `$MAKE` in `spkg-check` as well, add sanity check.
- * Exit if `configure` failed.
- * Support `SAGE64` and `SAGE_DEBUG`, enable optimization and debug symbols
-   by default.
- * Redirect all warnings and error messages to `stderr`.
-
-=== eclib-20120417 (John Cremona, 17 April 2012) ===
- * Complete rewrite of build system using autotools and libtool
- * Update source code to revision 042c47ea0bc4 (as at 17 April 2012),
-   unpacked from http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-16.tar.gz
-
-=== eclib-20120115.p2 (John Cremona, 24 February 2012) ===
- * Small changes to top-level Makefile (remove "--as-needed" flag, see trac #10993)
- * Update source code to revision 3e54531b1c27 (as at 24 February 2012)
-
-=== eclib-20120115.p1 (John Cremona, 1 February 2012) ===
- * Small changes to all Makefiles (see trac #10993)
- * Update source code to revision c2266b8c6029 (as at 1 February 2012)
-
-=== eclib-20120115.p0 (John Cremona, 18 January 2012) ===
- * Small patch to spkg-install (adding PATH extension before calling
-   ldconfig) as suggested on review at trac #10993
-
-=== eclib-20120115 (John Cremona, 15 January 2012) ===
- * Source code now at http://code.google.com/p/eclib/
- * Update source code to revision 2b04700f06ba (as at 15 January 2012)
- * Add a line in spkg-install to run ldconfig
-
-=== eclib-20100711.p0 (Mariah Lenox and Leif Leonhardy, September 28th 2011) ===
- * #11354: Deleted the obsolete (Debian) dist/ directory. (May 2011)
- * Comment by Leif:
-   Since (as release manager) I had to add this changelog entry, which was
-   missing, and fix the files' permissions anyway, I also did little "off-ticket"
-   clean-up (kind of "reviewer patch"):
-   - Use `cp -p` in all copy commands, since the current umask might break
-     permissions again.
-   - Check exit codes of `cp` (and `strip`) and all other important commands.
-   - Minor cosmetic clean-up, such as replacing `uname` by "$UNAME" and  else-if
-     ladders by `elif`.
-
-=== eclib-20100711 (John Cremona, 11 July 2010) ===
- * Four changesets applied to source code, including
- * Implementation of support for "minus space" modular symbols spaces
- * Some improvements to sparse linear algebra (nothing dramatic)
-
-=== eclib-20080310.p10 (Mitesh Patel, 2nd March 2010) ===
- * Suppress writing 'PRIMES' on exit.  See line 327 in
-   src/procs/marith.cc.
- * Delete a file named '1' after 'make check'.
- * To enable parallel builds, tweak Makefiles and remove #4228's work
-   around.
- * Simplify g0n/Makefile to fix 'make check' on Solaris 10.
-
-=== eclib-20080310.p9 (John Cremona, 2nd February 2010) ===
- * Fix bug in second descent (R-solubility not tested)
- * Enhance descent interface by providing separate rank_bound and
-   selmer_rank functions
-
-=== eclib-20080310.p8 (David Kirkby, 2nd January 2010) ===
- * Allow SAGE64 to work on all platforms, not just OS X.
-
-=== eclib-20080310.p7 (Michael Abshoff, October 12th, 2008) ===
- * Work around parallel make issue (#4228)
-
-=== eclib-20080310.p6 (John Cremona, September 24th, 2008) ===
- * Apply Arnaud Bergeron's patch to use ${MAKE} instead of make.
- * Include ecnf in PROGS in src/g0n/Makefile
-
-=== eclib-20080310.p5 (John Cremona, July 6th, 2008) ===
- * Delete src/procs/ressol.c which was not used (and was labelled as having been borrowed from LiDIA)
-
-=== eclib-20080310.p4 (John Cremona, July 4th, 2008) ===
- * Delete some code that was never compiled but which was labelled as having been borrowed from LiDIA
-
-=== eclib-20080310.p3 (John Cremona) ===
- * minor bugfixes for gcc 4.2.3
-
-=== eclib-20080310.p2 (Michael Abshoff) ===
- * add 64 bit OSX build support
-
-=== eclib-20080310.p1 (Michael Abshoff, April 1st, 2008) ===
- * minor eclib build system improvements (Tim Abbott, #2735)
- * Fix Debian Sections (Tim Abbott, #2643)
- * Copyright files for Debian packages (Tim Abbott, #2199)
-
-=== eclib-20080310.p0 (Michael Abshoff, March 19th, 2008) ===
- * fix directory name
- * update SPKG.txt
- * fix permissions
-
-=== eclib-20080310 (Tom Boothby, March 10th, 2008) ===
- * Applied patch from John Cremona to compute modular symbols of elliptic curves.
-
-=== eclib-20080127 (William Stein and John Cremona) ===
- * Fix osx build and check issues
-
-=== eclib-20071231.p0 (Michael Abshoff) ===
-
- * added Cygwin support
- * add spkg-check
- * install headers into $SAGE_LOCAL/eclib
- * delete $SAGE_LOCAL/include/cremona
- * chown $SAGE_LOCAL/include/eclib and files underneath
-
-=== eclib-20071231 (John Cremona) ===
-
- * renamed to eclib
- * allows elliptic curves as input with rational (as opposed to just integer) coefficients.
-
-=== cremona-20071219.p1 (Michael Abshoff) ===
-
- * patch to fix "Internal error: can't free this _ntl_gbigint" (John Cremona)
-
-=== cremona-20071219.p0 (John Cremona) ===
-
- * fix main Makefile mismerge (Michael Abshoff)
- * add missing export to g0n/Makefile (John Cremona)
- * fix permission issue (Michael Abshoff)
-
-=== cremona-20071219 (John Cremona) ===
-
- * update to latest source
- * fix mwrank error on non-minimal curves (#1233)
-
-=== cremona-20071124.p4 (Michael Abshoff) ===
-
- * apply John Cremoan's second patch for #1403
- * delete $SAGE_LOCAL/include/mwrank (#1410)
- * strip the mwrank binaries and link dynamically (#1410)
- * delete $SAGE_LOCAL/lib/libmwrank.[so|dylib] (#1410)
-
-=== cremona-20071124.p3 (Michael Abshoff) ===
-
- * apply John Cremoan's patch for #1403
- * fix #1256, i.e. remove the now obsolete mwrank.spkg
-
-=== previous versions ===
-
- * lost to history
 
 

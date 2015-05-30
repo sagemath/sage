@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# OSX Git with FSF GCC is broken, disable completely for now. See #17091
+export NO_APPLE_COMMON_CRYPTO=1
+
+# Disable network tests
+export GIT_TEST_HTTPD=false
+
 cd src
 
 echo "Testing git..."

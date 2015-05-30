@@ -109,11 +109,11 @@ def canonical_parameters(group, weight, sign, base_ring):
     """
     sign = rings.Integer(sign)
     if not (sign in [-1,0,1]):
-        raise ValueError, "sign must be -1, 0, or 1"
+        raise ValueError("sign must be -1, 0, or 1")
 
     weight = rings.Integer(weight)
     if weight <= 1:
-        raise ValueError, "the weight must be at least 2"
+        raise ValueError("the weight must be at least 2")
 
     if isinstance(group, (int, rings.Integer)):
         group = arithgroup.Gamma0(group)
@@ -134,10 +134,10 @@ def canonical_parameters(group, weight, sign, base_ring):
     if base_ring is None: base_ring = rational_field.RationalField()
 
     if not is_CommutativeRing(base_ring):
-        raise TypeError, "base_ring (=%s) must be a commutative ring"%base_ring
+        raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)
 
     if not base_ring.is_field():
-        raise TypeError, "(currently) base_ring (=%s) must be a field"%base_ring
+        raise TypeError("(currently) base_ring (=%s) must be a field"%base_ring)
 
     return group, weight, sign, base_ring
 
@@ -336,7 +336,7 @@ def ModularSymbols(group  = 1,
     """
     key = canonical_parameters(group, weight, sign, base_ring)
 
-    if use_cache and _cache.has_key(key):
+    if use_cache and key in _cache:
          M = _cache[key]()
          if not (M is None): return M
 
@@ -367,7 +367,7 @@ def ModularSymbols(group  = 1,
                             weight, sign, base_ring, custom_init=custom_init)
 
     if M is None:
-        raise NotImplementedError, "computation of requested space of modular symbols not defined or implemented"
+        raise NotImplementedError("computation of requested space of modular symbols not defined or implemented")
 
     if use_cache:
         _cache[key] = weakref.ref(M)

@@ -200,14 +200,22 @@ Methods
 -------
 """
 
-################################################################################
-#      Copyright (C) 2012 Nathann Cohen <nathann.cohen@gail.com>               #
-#                                                                              #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL) #
-#                         http://www.gnu.org/licenses/                         #
-################################################################################
+#*****************************************************************************
+#       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-include 'sage/ext/stdsage.pxi'
+
+include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
+
+from copy import copy
+
 #####################
 # Greedy Algorithms #
 #####################
@@ -370,7 +378,7 @@ def greedy_is_comparability_with_certificate(g, certificate = False):
     elif not certificate:
         return True
 
-    gg = g.copy()
+    gg = copy(g)
     from sage.graphs.digraph import DiGraph
     h = DiGraph()
     h.add_vertices(gg.vertices())
@@ -528,6 +536,7 @@ def is_comparability(g, algorithm = "greedy", certificate = False, check = True)
         sage: [len([g for g in graphs(i) if is_comparability(g, certificate = True)[0]]) for i in range(7)]
         [1, 1, 2, 4, 11, 33, 144]
     """
+    g._scream_if_not_simple()
     if g.size() == 0:
         if certificate:
             from sage.graphs.digraph import DiGraph

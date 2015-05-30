@@ -34,18 +34,16 @@ good place to start is the
 and other documents in the
 `Python standard documentation <http://docs.python.org>`_.
 Another good place to take a look at is
-`Dive Into Python <http://www.diveintopython.org>`_
+`Dive Into Python <http://www.diveintopython.net>`_
 by Mark Pilgrim, which may be pretty helpful on some specific topics
 like test-driven development. The book
 `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
 by Steven F. Lott is suitable for anyone who is already comfortable
-with programming. In the meantime, you can grab your copy of the Sage
+with programming.
+
+In the meantime, you can grab your copy of the Sage
 source and familiarize yourself with the
-`Mercurial <http://mercurial.selenic.com>`_
-source control management system. The book
-`Mercurial: The Definitive Guide <http://hgbook.red-bean.com>`_
-by Bryan O'Sullivan is recommended for those who want to start using
-Mercurial. Once you are comfortable with Python itself, which is
+`git <http://git-scm.com>`_ version control system. Once you are comfortable with Python itself, which is
 pretty fast for basics, you can start using Sage. If you want, you can
 try to learn Python by using Sage, but that is not recommended because
 it is helpful to know what is pure Python and when Sage is doing its
@@ -131,8 +129,8 @@ resources can be found by a web search.
   by Steven F. Lott
 * `Cython Tutorial <http://conference.scipy.org/proceedings/SciPy2009/paper_1/>`_
   by Stefan Behnel, Robert W. Bradshaw, and Dag Sverre Seljebotn
-* `Dive into Python <http://www.diveintopython.org>`_ by Mark Pilgrim
-* `Dive Into Python 3 <http://www.diveintopython3.org>`_ by Mark Pilgrim
+* `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
+* `Dive Into Python 3 <http://www.diveintopython3.net>`_ by Mark Pilgrim
 * `Fast Numerical Computations with Cython <http://conference.scipy.org/proceedings/SciPy2009/paper_2/>`_
   by Dag Sverre Seljebotn
 * `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_

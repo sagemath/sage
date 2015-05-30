@@ -1,10 +1,9 @@
-cimport free_module_element
-import  free_module_element
+from free_module_element cimport FreeModuleElement
 
 from sage.libs.m4ri cimport mzd_t
 
-cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
-    cdef mzd_t *_entries
+cdef class Vector_mod2_dense(FreeModuleElement):
+    cdef mzd_t* _entries
     cdef object _base_ring
 
     cdef _new_c(self)

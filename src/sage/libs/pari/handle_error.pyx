@@ -3,57 +3,141 @@ Functions for handling PARI errors
 
 AUTHORS:
 
-- Peter Bruin (September 2013): initial version (#9640)
+- Peter Bruin (September 2013): initial version (:trac:`9640`)
+
+- Jeroen Demeyer (January 2015): use ``cb_pari_err_handle`` (:trac:`14894`)
 
 """
-include "sage/ext/stdsage.pxi"
+
+#*****************************************************************************
+#       Copyright (C) 2013 Peter Bruin
+#       Copyright (C) 2015 Jeroen Demeyer
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 include "sage/ext/interrupt.pxi"
 include "decl.pxi"
 
 from cpython cimport PyErr_Occurred
+from pari_instance cimport pari_instance
 
 
-# Global variable to record error string
-cdef str pari_error_string
+# We derive PariError from RuntimeError, for backward compatibility with
+# code that catches the latter.
+class PariError(RuntimeError):
+    """
+    Error raised by PARI
+    """
+    def errnum(self):
+        r"""
+        Return the PARI error number corresponding to this exception.
+
+        EXAMPLES::
+
+            sage: try:
+            ....:     pari('1/0')
+            ....: except PariError as err:
+            ....:     print err.errnum()
+            31
+        """
+        return self.args[0]
+
+    def errtext(self):
+        """
+        Return the message output by PARI when this error occurred.
+
+        EXAMPLE::
+
+            sage: try:
+            ....:     pari('pi()')
+            ....: except PariError as e:
+            ....:     print e.errtext()
+            not a function in function call
+
+        """
+        return self.args[1]
+
+    def errdata(self):
+        """
+        Return the error data (a ``t_ERROR`` gen) corresponding to this
+        error.
+
+        EXAMPLES::
+
+            sage: try:
+            ....:     pari(Mod(2,6))^-1
+            ....: except PariError as e:
+            ....:     E = e.errdata()
+            sage: E
+            error("impossible inverse in Fp_inv: Mod(2, 6).")
+            sage: E.component(2)
+            Mod(2, 6)
+        """
+        return self.args[2]
+
+    def __repr__(self):
+        r"""
+        TESTS::
+
+            sage: PariError(11)
+            PariError(11)
+        """
+        return "PariError(%d)"%self.errnum()
+
+    def __str__(self):
+        r"""
+        Return a suitable message for displaying this exception.
+
+        This is simply the error text with certain trailing characters
+        stripped.
+
+        EXAMPLES::
+
+            sage: try:
+            ....:     pari('1/0')
+            ....: except PariError as err:
+            ....:     print err
+            _/_: impossible inverse in gdiv: 0
+
+        A syntax error::
+
+            sage: pari('!@#$%^&*()')
+            Traceback (most recent call last):
+            ...
+            PariError: syntax error, unexpected $undefined
+        """
+        return self.errtext().rstrip(" .:")
+
 
 cdef void _pari_init_error_handling():
     """
     Set up our code for handling PARI errors.
 
-    TEST::
+    TESTS::
 
         sage: try:
         ....:     p = pari.polcyclo(-1)
         ....: except PariError as e:
         ....:     print e.errtext()
-        ....:
-          ***   argument must be positive in polcyclo.
+        domain error in polcyclo: index <= 0
 
-    """
-    global pari_error_string
-    global cb_pari_err_recover
-    global cb_pari_handle_exception
-    pari_error_string = ""
-    cb_pari_err_recover = _pari_err_recover
-    cb_pari_handle_exception = _pari_handle_exception
-
-cdef void _pari_check_warning():
-    """
-    Print pending PARI library warning messages to stderr.
-
-    TEST::
+    Warnings still work just like in GP::
 
         sage: pari('warning("test")')
           ***   user warning: test
-
     """
-    global pari_error_string
-    if pari_error_string != "":
-        import sys
-        sys.stderr.write(pari_error_string)
-        pari_error_string = ""
+    global cb_pari_err_handle
+    global cb_pari_err_recover
+    cb_pari_err_handle = _pari_err_handle
+    cb_pari_err_recover = _pari_err_recover
 
-cdef int _pari_handle_exception(long err) except 0:
+
+cdef int _pari_err_handle(GEN E) except 0:
     """
     Convert a PARI error into a Sage exception, unless the error was
     a stack overflow, in which case we enlarge the stack.
@@ -65,31 +149,38 @@ cdef int _pari_handle_exception(long err) except 0:
         sage: pari('error("test")')
         Traceback (most recent call last):
         ...
-        RuntimeError: PARI user exception
-          ***   at top-level: error("test")
-          ***                 ^-------------
-          ***   user error: test
-
+        PariError: error: user error: test
         sage: pari(1)/pari(0)
         Traceback (most recent call last):
         ...
-        PariError: division by zero
+        PariError: impossible inverse in gdiv: 0
 
     """
-    if err == errpile:
+    cdef long errnum = E[1]
+    if errnum == e_STACK:
         # PARI is out of memory.  We double the size of the PARI stack
         # and retry the computation.
-        from sage.libs.pari.all import pari
-        pari.allocatemem(silent=True)
+        pari_instance.allocatemem(silent=True)
         return 0
 
-    if err == user:
-        raise RuntimeError("PARI user exception\n%s" % pari_error_string)
-    else:
-        from sage.libs.pari.all import PariError
-        raise PariError(err, pari_error_string)
+    sig_block()
+    cdef char* errstr
+    cdef char* s
+    try:
+        errstr = pari_err2str(E)
+        pari_error_string = errstr.decode('ascii')
 
-cdef void _pari_err_recover(long err):
+        s = closure_func_err()
+        if s is not NULL:
+            pari_error_string = s.decode('ascii') + ": " + pari_error_string
+
+        raise PariError(errnum, pari_error_string, pari_instance.new_gen_noclear(E))
+    finally:
+        pari_free(errstr)
+        sig_unblock()
+
+
+cdef void _pari_err_recover(long errnum):
     """
     Reset the error string and jump back to ``sig_on()``, either to
     retry the code (in case of no error) or to make the already-raised
@@ -107,8 +198,6 @@ cdef void _pari_err_recover(long err):
         True
 
     """
-    global pari_error_string
-    pari_error_string = ""
     if not PyErr_Occurred():
         # No exception was raised => retry the computation starting
         # from sig_on(). This can happen if we successfully enlarged the

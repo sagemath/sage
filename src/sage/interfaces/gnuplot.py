@@ -36,7 +36,7 @@ class Gnuplot(SageObject):
                 self._gnuplot = GP.Gnuplot()
                 return self._gnuplot
             except ImportError:
-                raise RuntimeError, "Install the gnuplotpy Python module."
+                raise RuntimeError("Install the gnuplotpy Python module.")
 
     def __call__(self, line):
         return self.gnuplot()(line)
@@ -79,7 +79,7 @@ class Gnuplot(SageObject):
         self('set terminal x11')
         cmd = cmd.replace('^','**')
         self(cmd)
-        if file != None:
+        if file is not None:
             if file[-4:] == '.png':
                 self('set terminal png medium')
             else:

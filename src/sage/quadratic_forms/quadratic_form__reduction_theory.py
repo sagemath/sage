@@ -28,7 +28,7 @@ def reduced_binary_form1(self):
         )
     """
     if self.dim() != 2:
-        raise TypeError, "This must be a binary form for now..."
+        raise TypeError("This must be a binary form for now...")
 
     R = self.base_ring()
     interior_reduced_flag = False
@@ -74,7 +74,7 @@ def reduced_ternary_form__Dickson(self):
         NotImplementedError: TO DO
 
     """
-    raise NotImplementedError, "TO DO"
+    raise NotImplementedError("TO DO")
 
 
 
@@ -294,8 +294,8 @@ def minkowski_reduction_for_4vars__SP(self):
 
     ## Only allow 4-variable forms
     if n != 4:
-        raise TypeError, "Oops!  The given quadratic form has " + str(n) +  \
-                " != 4 variables. =|"
+        raise TypeError("Oops!  The given quadratic form has " + str(n) +  \
+                " != 4 variables. =|")
 
 
     ## Step 1: Begin the reduction

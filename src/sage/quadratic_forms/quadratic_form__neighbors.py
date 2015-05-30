@@ -97,7 +97,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     """
     ## Initialize
     n = self.dim()
-    if v == None:
+    if v is None:
         w = vector([ZZ(0) for i in range(n-1)] + [ZZ(1)])
     else:
         w = deepcopy(v)
@@ -105,7 +105,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
 
     ## Handle n = 1 separately.
     if n <= 1:
-        raise RuntimeError, "Sorry -- Not implemented yet!"
+        raise RuntimeError("Sorry -- Not implemented yet!")
 
 
     ## Look for the last non-zero entry (which must be 1)
@@ -189,7 +189,7 @@ def find_p_neighbor_from_vec(self, p, v):
     while ((y_ind < n) and (v_dual[y_ind] % p) == 0):   ## Check the dot product for the std basis vectors!
         y_ind += 1
     if y_ind == n:
-        raise RuntimeError, "Oops!  One of the standard basis vectors should have worked."
+        raise RuntimeError("Oops!  One of the standard basis vectors should have worked.")
     w = vector([R(i == y_ind)  for i in range(n)])
     vw_prod = (v * self.matrix()).dot_product(w)
 

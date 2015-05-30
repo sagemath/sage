@@ -47,7 +47,6 @@ Sage:
 
  * Python
  * setuptools
- * SQLAlchemy
  * pexpect
  * jinja2
  * sphinx

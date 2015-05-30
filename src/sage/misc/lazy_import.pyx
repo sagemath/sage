@@ -155,8 +155,9 @@ cdef class LazyImport(object):
     cdef _as_name
     cdef _namespace
     cdef _at_startup
+    cdef _deprecation
 
-    def __init__(self, module, name, as_name=None, namespace=None, at_startup=False):
+    def __init__(self, module, name, as_name=None, namespace=None, at_startup=False, deprecation=None):
         """
         EXAMPLES::
 
@@ -173,6 +174,7 @@ cdef class LazyImport(object):
         self._as_name = as_name
         self._namespace = namespace
         self._at_startup = at_startup
+        self._deprecation = deprecation
 
     # Due to a bug in Cython-0.19, this must not be a cpdef method.
     # See http://trac.sagemath.org/sage_trac/ticket/14452
@@ -247,6 +249,18 @@ cdef class LazyImport(object):
                 print 'Option ``at_startup=True`` for lazy import {0} not needed anymore'.format(self._name)
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
             alias = self._as_name or self._name
+            if self._deprecation is not None:
+                from sage.misc.superseded import deprecation
+                try:
+                    trac_number, message = self._deprecation
+                except TypeError:
+                    trac_number = self._deprecation
+                    message = None
+                if message is None:
+                    message = ('\nImporting {name} from here is deprecated. ' + 
+                        'If you need to use it, please import it directly from' + 
+                        ' {module_name}').format(name=alias, module_name=self._module)
+                deprecation(trac_number, message)
             if owner is None:
                 if self._namespace and self._namespace[alias] is self:
                     self._namespace[alias] = self._object
@@ -257,6 +271,31 @@ cdef class LazyImport(object):
                         setattr(cls, alias, self._object)
                         break
         return self._object
+
+    def _get_deprecation_ticket(self):
+        """
+        Return the ticket number of the deprecation, or 0 if this lazy
+        import is not deprecated.
+
+        EXAMPLES::
+
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: H = LazyImport('sage.categories.homsets', 'Homsets')
+            sage: H._get_deprecation_ticket()
+            0
+            sage: H = LazyImport('sage.categories.homsets', 'Homsets', deprecation=10668)
+            sage: H._get_deprecation_ticket()
+            10668
+            sage: H = LazyImport('sage.categories.homsets', 'Homsets', deprecation=(10668, "this is deprecated"))
+            sage: H._get_deprecation_ticket()
+            10668
+        """
+        if self._deprecation is None:
+            return 0
+        try:
+            return self._deprecation[0]
+        except TypeError:
+            return self._deprecation
 
     def _sage_doc_(self):
         """
@@ -905,7 +944,7 @@ cdef class LazyImport(object):
         return self._get_object()
 
 
-def lazy_import(module, names, _as=None, namespace=None, bint overwrite=True, at_startup=False):
+def lazy_import(module, names, _as=None, namespace=None, bint overwrite=True, at_startup=False, deprecation=None):
     """
     Create a lazy import object and inject it into the caller's global
     namespace. For the purposes of introspection and calling, this is
@@ -914,17 +953,27 @@ def lazy_import(module, names, _as=None, namespace=None, bint overwrite=True, at
 
     INPUT:
 
-    - module: a string representing the module to import.
-    - names: a string or list of strings representing the names to import from
-      module.
-    - _as: (optional) a string or list of strings representing the aliases of the names
-      imported.
-    - namespace: The namespace where importing the names. By default, import
-      the names to current namespace.
-    - overwrite: (default: True) If set to True and a name is already in the
-      namespace, overwrite it with the lazy_import-ed name.
-    - ``at_startup``: a boolean (default: False)
-      whether the lazy import is supposed to be resolved at startup time.
+    - ``module`` -- a string representing the module to import
+
+    - ``names`` -- a string or list of strings representing the names to
+      import from module
+
+    - ``_as`` -- (optional) a string or list of strings representing the
+      aliases of the names imported
+
+    - ``namespace`` -- the namespace where importing the names; by default,
+      import the names to current namespace
+
+    - ``overwrite`` -- (default: ``True``) if set to ``True`` and a name is
+      already in the namespace, overwrite it with the lazy_import-ed name
+
+    - ``at_startup`` -- a boolean (default: ``False``);
+      whether the lazy import is supposed to be resolved at startup time
+
+    - ``deprecation`` -- (optional) if not ``None``, a deprecation warning
+      will be issued when the object is actually imported;
+      ``deprecation`` should be either a trac number (integer) or a
+      pair ``(trac_number, message)``
 
     .. SEEALSO:: :mod:`sage.misc.lazy_import`, :class:`LazyImport`
 
@@ -971,6 +1020,23 @@ def lazy_import(module, names, _as=None, namespace=None, bint overwrite=True, at
         True
         sage: type(Foo.__dict__['plot'])
         <type 'function'>
+
+    If deprecated then a deprecation warning is issued::
+
+        sage: lazy_import('sage.all', 'Qp', 'my_Qp', deprecation=14275)
+        sage: my_Qp(5)
+        doctest:...: DeprecationWarning:
+        Importing my_Qp from here is deprecated. If you need to use it, please import it directly from sage.all
+        See http://trac.sagemath.org/14275 for details.
+        5-adic Field with capped relative precision 20
+
+    An example of deprecation with a message::
+
+        sage: lazy_import('sage.all', 'Qp', 'my_Qp_msg', deprecation=(14275, "This is an example."))
+        sage: my_Qp_msg(5)
+        doctest:...: DeprecationWarning: This is an example.
+        See http://trac.sagemath.org/14275 for details.
+        5-adic Field with capped relative precision 20
     """
     if _as is None:
         _as = names
@@ -986,7 +1052,7 @@ def lazy_import(module, names, _as=None, namespace=None, bint overwrite=True, at
     for name, alias in zip(names, _as):
         if not overwrite and (alias or name) in namespace:
             continue
-        namespace[alias or name] = LazyImport(module, name, alias, namespace, at_startup)
+        namespace[alias or name] = LazyImport(module, name, alias, namespace, at_startup, deprecation)
 
 
 star_imports = None

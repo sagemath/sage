@@ -3,7 +3,7 @@
  * this rather ugly workaround to call get_sorted_learnts
  */
 
-#include "memory.h"
+static CYTHON_INLINE void *sage_malloc(size_t);
 
 uint32_t ** get_sorted_learnts_helper(CMSat::Solver* solver, uint32_t *num) {
   const CMSat::vec<CMSat::Clause *>& learnt = solver->get_sorted_learnts();

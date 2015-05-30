@@ -207,8 +207,7 @@ def intervals_disjoint(intvs):
     # This may be quadratic in perverse cases, but will take only
     # n log(n) time in typical cases.
 
-    intvs = copy(intvs)
-    intvs.sort()
+    intvs = sorted(copy(intvs))
 
     column = []
     prev_real = None

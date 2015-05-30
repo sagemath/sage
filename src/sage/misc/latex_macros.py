@@ -141,9 +141,6 @@ def convert_latex_macro_to_mathjax(macro):
     else:
         return name + ': ["' + defn + '",' + str(num_args) + ']'
 
-from superseded import deprecated_function_alias
-convert_latex_macro_to_jsmath = deprecated_function_alias(13508, convert_latex_macro_to_mathjax)
-
 # To add a new macro for use in the Sage documentation, add a list or
 # tuple to the following list.  Each list (or tuple) should have the
 # form [name, arguments], which will be passed to the function

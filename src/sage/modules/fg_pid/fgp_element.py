@@ -115,6 +115,10 @@ class FGP_Element(ModuleElement):
             sage: A = (ZZ^1)/span([[100]], ZZ); A
             Finitely generated module V/W over Integer Ring with invariants (100)
             sage: x = A([5]); x
+            doctest:...: DeprecationWarning: The default behaviour changed!
+             If you *really* want a linear combination of smith generators,
+             use .linear_combination_of_smith_form_gens.
+            See http://trac.sagemath.org/16261 for details.
             (5)
             sage: v = x.lift(); v
             (5)
@@ -341,6 +345,34 @@ class FGP_Element(ModuleElement):
             self.__vector = self.parent().coordinate_vector(self, reduce=True)
             return self.__vector
 
+    def _vector_(self, base_ring=None):
+        """
+        Support for conversion to vectors.
+
+        INPUT:
+
+        - ``base_ring`` -- the desired base ring of the vector.
+
+        OUTPUT:
+        
+        A vector over the base ring.
+
+        EXAMPLES::
+
+            sage: V = span([[1/2,0,0],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
+            sage: Q = V/W; Q
+            Finitely generated module V/W over Integer Ring with invariants (4, 12)
+            sage: x = Q.0 + 3*Q.1
+            sage: vector(x)
+            (1, 3)
+            sage: vector(CDF, x)
+            (1.0, 3.0)
+        """
+        v = self.vector()
+        if base_ring is None or v.base_ring() is base_ring:
+            return v
+        else:
+            return v.change_ring(base_ring)
 
     def __cmp__(self, right):
         """

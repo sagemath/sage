@@ -70,7 +70,6 @@ export LDFLAGS
 # Building ECL in parallel doesn't work, so use only 1 thread
 MAKE="$MAKE -j1"
 
-
 if [ "`uname -sm`" = "SunOS i86pc" ] && [ "x$SAGE64" = xyes ]; then
     # Need to add --with-dffi=no to disable assembly code on OpenSolaris x64.
     # and Solaris 10 on x64.
@@ -83,7 +82,7 @@ fi
 
 ./configure --prefix="$SAGE_LOCAL" --with-gmp-prefix=$SAGE_LOCAL \
     --libdir="$SAGE_LOCAL/lib" --disable-threads \
-    --enable-unicode=no $ECL_CONFIGURE
+    --enable-unicode=yes $ECL_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error - Failed to configure ECL ... exiting"
     exit 1

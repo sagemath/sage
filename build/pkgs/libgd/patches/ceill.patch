@@ -1,0 +1,18 @@
+Do not use (sometimes unavailable) ceill function.
+
+This makes the build fail on systems where libm does not provide
+long long versions of such function.
+And this precision doesn't seem needed anyway, see:
+* https://bitbucket.org/libgd/gd-libgd/issue/98/gd_bmpc-use-of-both-ceil-and-ceill
+diff -druN gd-2.1.0.old/src/gd_bmp.c gd-2.1.0.new/src/gd_bmp.c
+--- gd-2.1.0.old/src/gd_bmp.c	2013-06-25 02:58:23.000000000 -0700
++++ gd-2.1.0.new/src/gd_bmp.c	2014-11-24 08:00:22.913537073 -0800
+@@ -792,7 +792,7 @@
+ 	}
+ 
+ 	/* The line must be divisible by 4, else its padded with NULLs */
+-	padding = ((int)ceill(0.1 * info->width)) % 4;
++	padding = ((int)ceil(0.1 * info->width)) % 4;
+ 	if (padding) {
+ 		padding = 4 - padding;
+ 	}

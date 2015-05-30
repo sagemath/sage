@@ -161,10 +161,11 @@ def is_line_graph(g, certificate = False):
 
         This method sequentially tests each of the forbidden subgraphs in order
         to know whether the graph is a line graph, which is a very slow
-        method. It could eventually be replaced by :meth:`root_graph` when this
-        method will not require an exponential time to run on general graphs
-        anymore (see its documentation for more information on this problem)...
-        and if it can be improved to return negative certificates !
+        method. It could eventually be replaced by
+        :func:`~sage.graphs.line_graph.root_graph` when this method will not
+        require an exponential time to run on general graphs anymore (see its
+        documentation for more information on this problem)...  and if it can be
+        improved to return negative certificates !
 
     .. NOTE::
 
@@ -189,7 +190,7 @@ def is_line_graph(g, certificate = False):
         True
 
     The Petersen Graph not being claw-free, it is not a line
-    graph:
+    graph::
 
         sage: graphs.PetersenGraph().is_line_graph()
         False
@@ -225,6 +226,7 @@ def is_line_graph(g, certificate = False):
         sage: g.line_graph().is_isomorphic(gl)
         True
     """
+    g._scream_if_not_simple()
     from sage.graphs.graph_generators import graphs
 
     for fg in graphs.line_graph_forbidden_subgraphs():
@@ -340,6 +342,7 @@ def line_graph(self, labels=True):
         sage: C.line_graph().is_isomorphic(g.line_graph())
         True
     """
+    self._scream_if_not_simple()
     if self._directed:
         from sage.graphs.digraph import DiGraph
         G=DiGraph()

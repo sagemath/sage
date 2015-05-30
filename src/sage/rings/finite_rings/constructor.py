@@ -25,7 +25,7 @@ characteristic of such a field is 2 then NTL is used internally to
 represent the field
 (``sage.rings.finite_rings.finite_field_ntl_gf2e.FiniteField_ntl_gf2e``).
 In all other case the PARI C library is used
-(``sage.rings.finite_rings.finite_field_ext_pari.FiniteField_ext_pari``).
+(``sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt``).
 
 However, this distinction is internal only and the user usually
 does not have to worry about it because consistency across all
@@ -156,11 +156,11 @@ import random
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.structure.parent_gens import normalize_names
 
-import sage.rings.arith as arith
-import sage.rings.integer as integer
+from sage.rings.integer import Integer
 
 import sage.rings.polynomial.polynomial_element as polynomial_element
 import sage.rings.polynomial.multi_polynomial_element as multi_polynomial_element
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 # We don't late import this because this means trouble with the Givaro library
 # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
@@ -188,7 +188,25 @@ class FiniteFieldFactory(UniqueFactory):
       such a polynomial.  If ``modulus`` is a string, it is passed to
       :meth:`~sage.rings.polynomial.irreducible_element()` as the
       parameter ``algorithm``; see there for the permissible values of
-      this parameter.
+      this parameter. In particular, you can specify
+      ``modulus="primitive"`` to get a primitive polynomial.
+
+    - ``impl`` -- (optional) a string specifying the implementation of
+      the finite field. Possible values are:
+
+      - ``'modn'`` -- ring of integers modulo `p` (only for prime
+        fields).
+
+      - ``'givaro'`` -- Givaro, which uses Zech logs (only for fields
+        of at most 65521 elements).
+
+      - ``'ntl'`` -- NTL using GF2X (only in characteristic 2).
+
+      - ``'pari_ffelt'`` -- PARI's ``FFELT`` type (only for extension
+        fields).
+
+      - ``'pari_mod'`` -- Older PARI implementation using ``POLMOD``s
+        (slower than ``'pari_ffelt'``, only for extension fields).
 
     - ``elem_cache`` -- cache all elements to avoid creation time
       (default: order < 500)
@@ -223,7 +241,7 @@ class FiniteFieldFactory(UniqueFactory):
     .. NOTE::
 
         Magma only supports ``proof=False`` for making finite fields,
-        so falsely appears to be faster than Sage -- see :trac:10975.
+        so falsely appears to be faster than Sage -- see :trac:`10975`.
 
     ::
 
@@ -239,56 +257,85 @@ class FiniteFieldFactory(UniqueFactory):
         sage: type(f)
          <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
+    By default, the given generator is not guaranteed to be primitive
+    (a generator of the multiplicative group), use
+    ``modulus="primitive"`` if you need this::
+
+        sage: K.<a> = GF(5^40)
+        sage: a.multiplicative_order()
+        4547473508864641189575195312
+        sage: a.is_square()
+        True
+        sage: K.<b> = GF(5^40, modulus="primitive")
+        sage: b.multiplicative_order()
+        9094947017729282379150390624
+
     The modulus must be irreducible::
 
         sage: K.<a> = GF(5**5, name='a', modulus=x^5 - x)
         Traceback (most recent call last):
         ...
-        ValueError: finite field modulus must be irreducible but it is not.
+        ValueError: finite field modulus must be irreducible but it is not
 
     You can't accidentally fool the constructor into thinking the
     modulus is irreducible when it is not, since it actually tests
     irreducibility modulo `p`.  Also, the modulus has to be of the
-    right degree::
+    right degree (this is always checked)::
 
         sage: F.<x> = QQ[]
         sage: factor(x^5 + 2)
         x^5 + 2
-        sage: K.<a> = GF(5**5, name='a', modulus=x^5 + 2)
+        sage: K.<a> = GF(5^5, modulus=x^5 + 2)
         Traceback (most recent call last):
         ...
-        ValueError: finite field modulus must be irreducible but it is not.
-        sage: K.<a> = GF(5**5, name='a', modulus=x^3 + 3*x + 3)
+        ValueError: finite field modulus must be irreducible but it is not
+        sage: K.<a> = GF(5^5, modulus=x^3 + 3*x + 3, check_irreducible=False)
         Traceback (most recent call last):
         ...
-        ValueError: The degree of the modulus does not correspond to the
-        cardinality of the field.
+        ValueError: the degree of the modulus does not equal the degree of the field
+
+    Any type which can be converted to the polynomial ring `GF(p)[x]`
+    is accepted as modulus::
+
+        sage: K.<a> = GF(13^3, modulus=[1,0,0,2])
+        sage: K.<a> = GF(13^10, modulus=pari("ffinit(13,10)"))
+        sage: var('x')
+        x
+        sage: K.<a> = GF(13^2, modulus=x^2 - 2)
+        sage: K.<a> = GF(13^2, modulus=sin(x))
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert sin(x) to an integer
 
     If you wish to live dangerously, you can tell the constructor not
     to test irreducibility using ``check_irreducible=False``, but this
     can easily lead to crashes and hangs -- so do not do it unless you
-    know that the modulus really is irreducible and has the correct
-    degree!
+    know that the modulus really is irreducible!
 
     ::
 
-        sage: F.<x> = GF(5)[]
         sage: K.<a> = GF(5**2, name='a', modulus=x^2 + 2, check_irreducible=False)
 
-        sage: L = GF(3**2, name='a', modulus=QQ[x](x - 1), check_irreducible=False)
-        sage: L.list()  # random
-        [0, a, 1, 2, 1, 2, 1, 2, 1]
+    Even for prime fields, you can specify a modulus. This will not
+    change how Sage computes in this field, but it will change the
+    result of the :meth:`modulus` and :meth:`gen` methods::
+
+        sage: k.<a> = GF(5, modulus="primitive")
+        sage: k.modulus()
+        x + 3
+        sage: a
+        2
 
     The order of a finite field must be a prime power::
 
         sage: GF(1)
         Traceback (most recent call last):
         ...
-        ValueError: the order of a finite field must be > 1.
+        ValueError: the order of a finite field must be at least 2
         sage: GF(100)
         Traceback (most recent call last):
         ...
-        ValueError: the order of a finite field must be a prime power.
+        ValueError: the order of a finite field must be a prime power
 
     Finite fields with explicit random modulus are not cached::
 
@@ -304,7 +351,9 @@ class FiniteFieldFactory(UniqueFactory):
 
         sage: K = GF(7, 'a')
         sage: L = GF(7, 'b')
-        sage: K is L
+        sage: K is L           # name is ignored for prime fields
+        True
+        sage: K is GF(7, modulus=K.modulus())
         True
         sage: K = GF(4,'a'); K.modulus()
         x^2 + x + 1
@@ -351,34 +400,50 @@ class FiniteFieldFactory(UniqueFactory):
         sage: l = GF(3**20, conway=True, prefix='z')
         sage: l(k.gen()**10) == l(k.gen())**10
         True
+
+    Check that :trac:`16934` has been fixed::
+
+        sage: k1.<a> = GF(17^14, impl="pari_ffelt")
+        sage: _ = a/2
+        sage: k2.<a> = GF(17^14, impl="pari_ffelt")
+        sage: k1 is k2
+        True
+
     """
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
-                                  impl=None, proof=None, **kwds):
+                                  impl=None, proof=None, check_irreducible=True, **kwds):
         """
         EXAMPLES::
 
             sage: GF.create_key_and_extra_args(9, 'a')
-            ((9, ('a',), x^2 + 2*x + 2, None, '{}', 3, 2, True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', '{}', 3, 2, True), {})
             sage: GF.create_key_and_extra_args(9, 'a', foo='value')
-            ((9, ('a',), x^2 + 2*x + 2, None, "{'foo': 'value'}", 3, 2, True), {'foo': 'value'})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', "{'foo': 'value'}", 3, 2, True), {'foo': 'value'})
         """
+        import sage.rings.arith
         from sage.structure.proof.all import WithProof, arithmetic
-        if proof is None: proof = arithmetic()
+        if proof is None:
+            proof = arithmetic()
         with WithProof('arithmetic', proof):
-            order = int(order)
+            order = Integer(order)
             if order <= 1:
-                raise ValueError("the order of a finite field must be > 1.")
+                raise ValueError("the order of a finite field must be at least 2")
 
-            if arith.is_prime(order):
-                name = None
-                modulus = None
-                p = integer.Integer(order)
-                n = integer.Integer(1)
-            elif arith.is_prime_power(order):
+            if order.is_prime():
+                p = order
+                n = Integer(1)
+                if impl is None:
+                    impl = 'modn'
+                name = ('x',)  # Ignore name
+                # Every polynomial of degree 1 is irreducible
+                check_irreducible = False
+            # This check should be replaced by order.is_prime_power()
+            # if Trac #16878 is fixed.
+            elif sage.rings.arith.is_prime_power(order):
                 if not names is None: name = names
                 name = normalize_names(1,name)
 
-                p, n = arith.factor(order)[0]
+                p, n = order.factor()[0]
 
                 # The following is a temporary solution that allows us
                 # to construct compatible systems of finite fields
@@ -410,44 +475,107 @@ class FiniteFieldFactory(UniqueFactory):
                 # is no good place to store a specific choice of
                 # pseudo-Conway polynomials.
                 if name is None:
-                    if not (kwds.has_key('conway') and kwds['conway']):
+                    if not ('conway' in kwds and kwds['conway']):
                         raise ValueError("parameter 'conway' is required if no name given")
-                    if not kwds.has_key('prefix'):
+                    if 'prefix' not in kwds:
                         raise ValueError("parameter 'prefix' is required if no name given")
                     name = kwds['prefix'] + str(n)
 
-                if kwds.has_key('conway') and kwds['conway']:
+                if 'conway' in kwds and kwds['conway']:
                     from conway_polynomials import conway_polynomial
-                    if not kwds.has_key('prefix'):
+                    if 'prefix' not in kwds:
                         raise ValueError("a prefix must be specified if conway=True")
                     if modulus is not None:
                         raise ValueError("no modulus may be specified if conway=True")
                     # The following raises a RuntimeError if no polynomial is found.
                     modulus = conway_polynomial(p, n)
 
-                if modulus is None or isinstance(modulus, str):
-                    # A string specifies an algorithm to find a suitable modulus.
-                    if modulus == "default":    # for backward compatibility
-                        modulus = None
-                    modulus = GF(p)['x'].irreducible_element(n, algorithm=modulus)
-                elif isinstance(modulus, (list, tuple)):
-                    modulus = GF(p)['x'](modulus)
-                elif sage.rings.polynomial.polynomial_element.is_Polynomial(modulus):
-                    modulus = modulus.change_variable_name('x')
-                else:
-                    raise TypeError("wrong type for modulus parameter")
+                if impl is None:
+                    if order < zech_log_bound:
+                        impl = 'givaro'
+                    elif p == 2:
+                        impl = 'ntl'
+                    else:
+                        impl = 'pari_ffelt'
             else:
-                raise ValueError("the order of a finite field must be a prime power.")
+                raise ValueError("the order of a finite field must be a prime power")
+
+            # Determine modulus.
+            # For the 'modn' implementation, we use the following
+            # optimization which we also need to avoid an infinite loop:
+            # a modulus of None is a shorthand for x-1.
+            if modulus is not None or impl != 'modn':
+                R = PolynomialRing(FiniteField(p), 'x')
+                if modulus is None:
+                    modulus = R.irreducible_element(n)
+                if isinstance(modulus, str):
+                    # A string specifies an algorithm to find a suitable modulus.
+                    if modulus == "default":
+                        from sage.misc.superseded import deprecation
+                        deprecation(16983, "the modulus 'default' is deprecated, use modulus=None instead (which is the default)")
+                        modulus = None
+                    modulus = R.irreducible_element(n, algorithm=modulus)
+                else:
+                    if sage.rings.polynomial.polynomial_element.is_Polynomial(modulus):
+                        modulus = modulus.change_variable_name('x')
+                    modulus = R(modulus).monic()
+
+                    if modulus.degree() != n:
+                        raise ValueError("the degree of the modulus does not equal the degree of the field")
+                    if check_irreducible and not modulus.is_irreducible():
+                        raise ValueError("finite field modulus must be irreducible but it is not")
+                # If modulus is x - 1 for impl="modn", set it to None
+                if impl == 'modn' and modulus[0] == -1:
+                    modulus = None
 
             return (order, name, modulus, impl, str(kwds), p, n, proof), kwds
 
-    def create_object(self, version, key, check_irreducible=True, elem_cache=None,
-                      names=None, **kwds):
+    def create_object(self, version, key, **kwds):
         """
         EXAMPLES::
 
             sage: K = GF(19) # indirect doctest
             sage: TestSuite(K).run()
+
+        We try to create finite fields with various implementations::
+
+            sage: k = GF(2, impl='modn')
+            sage: k = GF(2, impl='givaro')
+            sage: k = GF(2, impl='ntl')
+            sage: k = GF(2, impl='pari_ffelt')
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be at least 2
+            sage: k = GF(2, impl='pari_mod')
+            Traceback (most recent call last):
+            ...
+            ValueError: The size of the finite field must not be prime.
+            sage: k = GF(2, impl='supercalifragilisticexpialidocious')
+            Traceback (most recent call last):
+            ...
+            ValueError: no such finite field implementation: 'supercalifragilisticexpialidocious'
+            sage: k.<a> = GF(2^15, impl='modn')
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'modn' implementation requires a prime order
+            sage: k.<a> = GF(2^15, impl='givaro')
+            sage: k.<a> = GF(2^15, impl='ntl')
+            sage: k.<a> = GF(2^15, impl='pari_ffelt')
+            sage: k.<a> = GF(2^15, impl='pari_mod')
+            sage: k.<a> = GF(3^60, impl='modn')
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'modn' implementation requires a prime order
+            sage: k.<a> = GF(3^60, impl='givaro')
+            Traceback (most recent call last):
+            ...
+            ValueError: q must be < 2^16
+            sage: k.<a> = GF(3^60, impl='ntl')
+            Traceback (most recent call last):
+            ...
+            ValueError: q must be a 2-power
+            sage: k.<a> = GF(3^60, impl='pari_ffelt')
+            sage: k.<a> = GF(3^60, impl='pari_mod')
         """
         # IMPORTANT!  If you add a new class to the list of classes
         # that get cached by this factor object, then you *must* add
@@ -464,52 +592,30 @@ class FiniteFieldFactory(UniqueFactory):
         if len(key) == 5:
             # for backward compatibility of pickles (see trac 10975).
             order, name, modulus, impl, _ = key
-            p, n = arith.factor(order)[0]
+            p, n = Integer(order).factor()[0]
             proof = True
         else:
             order, name, modulus, impl, _, p, n, proof = key
 
-        if elem_cache is None:
-            elem_cache = order < 500
-
-        if n == 1 and (impl is None or impl == 'modn'):
+        if impl == 'modn':
+            if n != 1:
+                raise ValueError("the 'modn' implementation requires a prime order")
             from finite_field_prime_modn import FiniteField_prime_modn
             # Using a check option here is probably a worthwhile
             # compromise since this constructor is simple and used a
             # huge amount.
-            K = FiniteField_prime_modn(order, check=False)
+            K = FiniteField_prime_modn(order, check=False, modulus=modulus)
         else:
             # We have to do this with block so that the finite field
             # constructors below will use the proof flag that was
             # passed in when checking for primality, factoring, etc.
             # Otherwise, we would have to complicate all of their
-            # constructors with check options (like above).
+            # constructors with check options.
             from sage.structure.proof.all import WithProof
             with WithProof('arithmetic', proof):
-                if check_irreducible and polynomial_element.is_Polynomial(modulus):
-                    if modulus.parent().base_ring().characteristic() == 0:
-                        modulus = modulus.change_ring(FiniteField(p))
-                    if not modulus.is_irreducible():
-                        raise ValueError("finite field modulus must be irreducible but it is not.")
-                    if modulus.degree() != n:
-                        raise ValueError("The degree of the modulus does not correspond to the cardinality of the field.")
-                if name is None:
-                    raise TypeError("you must specify the generator name.")
-                if impl is None:
-                    if order < zech_log_bound:
-                        # DO *NOT* use for prime subfield, since that would lead to
-                        # a circular reference in the call to ParentWithGens in the
-                        # __init__ method.
-                        impl = 'givaro'
-                    elif order % 2 == 0:
-                        impl = 'ntl'
-                    else:
-                        impl = 'pari_ffelt'
                 if impl == 'givaro':
-                    if kwds.has_key('repr'):
-                        repr = kwds['repr']
-                    else:
-                        repr = 'poly'
+                    repr = kwds.get('repr', 'poly')
+                    elem_cache = kwds.get('elem_cache', order < 500)
                     K = FiniteField_givaro(order, name, modulus, repr=repr, cache=elem_cache)
                 elif impl == 'ntl':
                     from finite_field_ntl_gf2e import FiniteField_ntl_gf2e
@@ -519,58 +625,19 @@ class FiniteFieldFactory(UniqueFactory):
                     K = FiniteField_pari_ffelt(p, modulus, name)
                 elif (impl == 'pari_mod'
                       or impl == 'pari'):    # for unpickling old pickles
+                    # This implementation is deprecated, a warning will
+                    # be given when this field is created.
+                    # See http://trac.sagemath.org/ticket/17297
                     from finite_field_ext_pari import FiniteField_ext_pari
                     K = FiniteField_ext_pari(order, name, modulus)
                 else:
-                    raise ValueError("no such finite field implementation: %s" % impl)
+                    raise ValueError("no such finite field implementation: %r" % impl)
 
             # Temporary; see create_key_and_extra_args() above.
-            if kwds.has_key('prefix'):
+            if 'prefix' in kwds:
                 K._prefix = kwds['prefix']
 
         return K
-
-    def other_keys(self, key, K):
-        """
-        EXAMPLES::
-
-            sage: key, extra = GF.create_key_and_extra_args(9, 'a'); key
-            (9, ('a',), x^2 + 2*x + 2, None, '{}', 3, 2, True)
-            sage: K = GF.create_object(0, key); K
-            Finite Field in a of size 3^2
-            sage: GF.other_keys(key, K)
-            [(9, ('a',), x^2 + 2*x + 2, None, '{}', 3, 2, True),
-             (9, ('a',), x^2 + 2*x + 2, 'givaro', '{}', 3, 2, True)]
-        """
-        if len(key) == 5: # backward compat
-            order, name, modulus, impl, _ = key
-            p, n = arith.factor(order)[0]
-            proof = True
-        else:
-            order, name, modulus, impl, _, p, n, proof = key
-
-        from sage.structure.proof.all import WithProof
-        with WithProof('arithmetic', proof):
-            if K.degree() > 1:
-                modulus = K.modulus().change_variable_name('x')
-            new_keys = [(order, name, modulus, impl, _, p, n, proof)]
-            from finite_field_prime_modn import FiniteField_prime_modn
-            if isinstance(K, FiniteField_prime_modn):
-                impl = 'modn'
-            elif isinstance(K, FiniteField_givaro):
-                impl = 'givaro'
-            else:
-                from finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-                from finite_field_ext_pari import FiniteField_ext_pari
-                from finite_field_pari_ffelt import FiniteField_pari_ffelt
-                if isinstance(K, FiniteField_ntl_gf2e):
-                    impl = 'ntl'
-                elif isinstance(K, FiniteField_ext_pari):
-                    impl = 'pari_mod'
-                elif isinstance(K, FiniteField_pari_ffelt):
-                    impl = 'pari_ffelt'
-            new_keys.append( (order, name, modulus, impl, _, p, n, proof) )
-            return new_keys
 
 
 GF = FiniteField = FiniteFieldFactory("FiniteField")

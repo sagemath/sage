@@ -86,7 +86,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
   must be hashable::
 
       sage: set([2,2,1,4,5])
-      set([1, 2, 4, 5])
+      {1, 2, 4, 5}
 
       sage: set([ [1], [2] ])
       Traceback (most recent call last):
@@ -102,7 +102,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
   For example::
 
       sage: age = {'toto' : 8, 'mom' : 27}; age
-      {'toto': 8, 'mom': 27}
+      {'mom': 27, 'toto': 8}
 
 * Quotes (simple ``' '`` or double ``" "``) enclose *character
   strings*. One can concatenate them using ``+``.
@@ -575,10 +575,10 @@ some of the list operations above. What does the function do?
 ::
 
     sage: def f(number_of_iterations):
-    ...       L = [1]
-    ...       for n in range(2, number_of_iterations):
-    ...           L = [sum(L[:i]) for i in range(n-1, -1, -1)]
-    ...       return numerical_approx(2*L[0]*len(L)/sum(L), digits=50)
+    ....:     L = [1]
+    ....:     for n in range(2, number_of_iterations):
+    ....:         L = [sum(L[:i]) for i in range(n-1, -1, -1)]
+    ....:     return numerical_approx(2*L[0]*len(L)/sum(L), digits=50)
 
 .. ::
 
@@ -703,9 +703,9 @@ There are several ways to define dictionaries. One method is to use
 braces, ``{}``, with comma-separated entries given in the form
 *key:value*::
 
-    sage: d = {3:17, "key":[4,1,5,2,3], (3,1,2):"goo", 3/2 : 17}
+    sage: d = {3:17, 0.5:[4,1,5,2,3], 0:"goo", 3/2 : 17}
     sage: d
-    {3/2: 17, 3: 17, (3, 1, 2): 'goo', 'key': [4, 1, 5, 2, 3]}
+    {0: 'goo', 0.500000000000000: [4, 1, 5, 2, 3], 3/2: 17, 3: 17}
 
 A second method is to use the constructor :class:`dict` which admits a
 list (or actually any iterable) of 2-tuples *(key, value)*::
@@ -732,7 +732,7 @@ Dictionaries behave as lists and tuples for several important operations.
 
     sage: d[10]='a'
     sage: d
-    {3/2: 17, 10: 'a', 3: 17, (3, 1, 2): 'goo', 'key': [4, 1, 5, 2, 3]}
+    {0: 'goo', 0.500000000000000: [4, 1, 5, 2, 3], 3/2: 17, 3: 17, 10: 'a'}
 
 A dictionary can have the same value multiple times, but each key must only
 appear once and must be immutable::
@@ -763,33 +763,49 @@ updates the dictionary from another dictionary::
 
 ::
 
-    sage: d.update( {10 : 'newvalue', 20: 'newervalue', 3: 14, 'a':[1,2,3]} )
+    sage: d.update({10 : 'newvalue', 20: 'newervalue', 3: 14, 0.5:[1,2,3]})
     sage: d
-    {'a': [1, 2, 3], 10: 'newvalue', 3: 14, 20: 'newervalue'}
+    {0.500000000000000: [1, 2, 3], 3: 14, 10: 'newvalue', 20: 'newervalue'}
 
-We can iterate through the *keys*, or *values*, or both, of a dictionary::
 
-    sage: d = {10 : 'newvalue', 20: 'newervalue', 3: 14, 'a':[1,2,3]}
+We can iterate through the *keys*, or *values*, or both, of a
+dictionary. Note that, internally, there is no sorting of keys
+done. In general, the order of keys/values will depend on memory
+locations can and will differ between different computers and / or
+repeated runs on the same computer. However, Sage sort the dictionary
+entries by key when printing the dictionary specifically to make the
+docstrings more reproducible. However, the Python methods ``keys()``
+and ``values()`` do not sort for you. If you want your output to be
+reproducable, then you have to sort it first just like in the examples
+below::
 
-::
-
-    sage: [key for key in d]
-    ['a', 10, 3, 20]
-
-::
-
-    sage: [key for key in d.iterkeys()]
-    ['a', 10, 3, 20]
-
-::
-
-    sage: [value for value in d.itervalues()]
-    [[1, 2, 3], 'newvalue', 14, 'newervalue']
+    sage: d = {10 : 'newvalue', 20: 'newervalue', 3: 14, 0.5:(1,2,3)}
 
 ::
 
-    sage: [(key, value) for key, value in d.iteritems()]
-    [('a', [1, 2, 3]), (10, 'newvalue'), (3, 14), (20, 'newervalue')]
+    sage: sorted([key for key in d])
+    [0.500000000000000, 3, 10, 20]
+
+::
+
+    sage: d.keys()   # random order
+    [0.500000000000000, 10, 3, 20]
+    sage: sorted(d.keys())
+    [0.500000000000000, 3, 10, 20]
+
+::
+
+    sage: d.values()   # random order
+    [(1, 2, 3), 'newvalue', 14, 'newervalue']
+    sage: set(d.values()) == set([14, (1, 2, 3), 'newvalue', 'newervalue'])
+    True
+
+::
+
+    sage: d.items()    # random order
+    [(0.500000000000000, (1, 2, 3)), (10, 'newvalue'), (3, 14), (20, 'newervalue')]
+    sage: sorted([(key, value) for key, value in d.items()])
+    [(0.500000000000000, (1, 2, 3)), (3, 14), (10, 'newvalue'), (20, 'newervalue')]
 
 **Exercise:** Consider the following directed graph.
 
@@ -907,8 +923,8 @@ http://docs.python.org/tutorial/controlflow.html
 
     sage: i = 0
     sage: while i < 10:
-    ...       print i
-    ...       i += 1
+    ....:     print i
+    ....:     i += 1
     0
     1
     2
@@ -924,11 +940,11 @@ http://docs.python.org/tutorial/controlflow.html
 
     sage: i = 0
     sage: while i < 10:
-    ...       if i % 2 == 1:
-    ...           i += 1
-    ...           continue
-    ...       print i
-    ...       i += 1
+    ....:     if i % 2 == 1:
+    ....:         i += 1
+    ....:         continue
+    ....:     print i
+    ....:     i += 1
     0
     2
     4
@@ -962,8 +978,8 @@ is evaluated using :class:`bool`::
 
     sage: i = 4
     sage: while i:
-    ...       print i
-    ...       i -= 1
+    ....:     print i
+    ....:     i -= 1
     4
     3
     2
@@ -976,7 +992,7 @@ Here is a basic *for* loop iterating over all of the elements in the list ``l``:
 
     sage: l = ['a', 'b', 'c']
     sage: for letter in l:
-    ...       print letter
+    ....:     print letter
     a
     b
     c
@@ -1014,7 +1030,7 @@ included:
 ::
 
     sage: for i in range(4):
-    ...       print i, i*i
+    ....:     print i, i*i
     0 0
     1 1
     2 4
@@ -1024,9 +1040,9 @@ You can use the *continue* keyword to immediately go to the next item
 in the loop::
 
     sage: for i in range(10):
-    ...       if i % 2 == 0:
-    ...           continue
-    ...       print i
+    ....:     if i % 2 == 0:
+    ....:         continue
+    ....:     print i
     1
     3
     5
@@ -1036,11 +1052,11 @@ in the loop::
 If you want to break out of the loop, use the *break* keyword::
 
     sage: for i in range(10):
-    ...       if i % 2 == 0:
-    ...           continue
-    ...       if i == 7:
-    ...           break
-    ...       print i
+    ....:     if i % 2 == 0:
+    ....:         continue
+    ....:     if i == 7:
+    ....:         break
+    ....:     print i
     1
     3
     5
@@ -1049,15 +1065,21 @@ If you need to keep track of both the position in the list and its
 value, one (not so elegant) way would be to do the following::
 
     sage: l = ['a', 'b', 'c']
-    ...   for i in range(len(l)):
-    ...       print i, l[i]
+    sage: for i in range(len(l)):
+    ....:     print i, l[i]
+    0 a
+    1 b
+    2 c
 
 It's cleaner to use :func:`enumerate` which provides the index as well
 as the value::
 
     sage: l = ['a', 'b', 'c']
-    ...   for i, letter in enumerate(l):
-    ...       print i, letter
+    sage: for i, letter in enumerate(l):
+    ....:     print i, letter
+    0 a
+    1 b
+    2 c
 
 You could get a similar result to the result of the :func:`enumerate`
 function by using :func:`zip` to zip two lists together:
@@ -1065,14 +1087,17 @@ function by using :func:`zip` to zip two lists together:
 ::
 
     sage: l = ['a', 'b', 'c']
-    ...   for i, letter in zip(range(len(l)), l):
-    ...       print i, letter
+    sage: for i, letter in zip(range(len(l)), l):
+    ....:     print i, letter
+    0 a
+    1 b
+    2 c
 
 *For* loops work using Python's iterator protocol. This allows all
 sorts of different objects to be looped over. For example::
 
     sage: for i in GF(5):
-    ...       print i, i*i
+    ....:     print i, i*i
     0 0
     1 1
     2 4
@@ -1086,22 +1111,22 @@ How does this work?
     sage: it = iter(GF(5)); it
     <generator object __iter__ at 0x...>
 
-    sage: it.next()
+    sage: next(it)
     0
 
-    sage: it.next()
+    sage: next(it)
     1
 
-    sage: it.next()
+    sage: next(it)
     2
 
-    sage: it.next()
+    sage: next(it)
     3
 
-    sage: it.next()
+    sage: next(it)
     4
 
-    sage: it.next()
+    sage: next(it)
     Traceback (most recent call last):
     ...
     StopIteration
@@ -1111,7 +1136,7 @@ How does this work?
 ::
 
     sage: R = GF(5)
-    ...   R.__iter__??
+    sage: R.__iter__??
 
 The command *yield* provides a very convenient way to produce
 iterators.  We'll see more about it in a bit.
@@ -1156,7 +1181,7 @@ Functions are defined using the *def* statement, and values are
 returned using the *return* keyword::
 
     sage: def f(x):
-    ...       return x*x
+    ....:     return x*x
 
 ::
 
@@ -1166,10 +1191,10 @@ returned using the *return* keyword::
 Functions can be recursive::
 
     sage: def fib(n):
-    ...       if n <= 1:
-    ...           return 1
-    ...       else:
-    ...           return fib(n-1) + fib(n-2)
+    ....:     if n <= 1:
+    ....:         return 1
+    ....:     else:
+    ....:         return fib(n-1) + fib(n-2)
 
 ::
 
@@ -1186,9 +1211,9 @@ can be passed in as arguments to other functions::
 ::
 
     sage: def compose(f, x, n):   # computes f(f(...f(x)))
-    ...       for i in range(n):
-    ...           x = f(x)        # this change is local to this function call!
-    ...       return x
+    ....:     for i in range(n):
+    ....:         x = f(x)        # this change is local to this function call!
+    ....:     return x
 
 ::
 
@@ -1198,7 +1223,7 @@ can be passed in as arguments to other functions::
 ::
 
     sage: def add_one(x):
-    ...       return x + 1
+    ....:     return x + 1
 
 ::
 
@@ -1208,7 +1233,7 @@ can be passed in as arguments to other functions::
 You can give default values for arguments in functions::
 
     sage: def add_n(x, n=1):
-    ...       return x + n
+    ....:     return x + n
 
 ::
 
@@ -1228,7 +1253,7 @@ You can give default values for arguments in functions::
 You can return multiple values from a function::
 
     sage: def g(x):
-    ...       return x, x*x
+    ....:     return x, x*x
 
 ::
 
@@ -1258,8 +1283,8 @@ You can also take a variable number of arguments and keyword arguments
 in a function::
 
     sage: def h(*args, **kwds):
-    ...       print type(args), args
-    ...       print type(kwds), kwds
+    ....:     print type(args), args
+    ....:     print type(kwds), kwds
 
 ::
 
@@ -1271,18 +1296,18 @@ Let's use the *yield* instruction to make a generator for the
 Fibonacci numbers up to `n`::
 
     sage: def fib_gen(n):
-    ...       if n < 1:
-    ...           return
-    ...       a = b = 1
-    ...       yield b
-    ...       while b < n:
-    ...           yield b
-    ...           a, b = b, b+a
+    ....:     if n < 1:
+    ....:         return
+    ....:     a = b = 1
+    ....:     yield b
+    ....:     while b < n:
+    ....:         yield b
+    ....:         a, b = b, b+a
 
 ::
 
     sage: for i in fib_gen(50):
-    ...       print i
+    ....:     print i
     1
     1
     2

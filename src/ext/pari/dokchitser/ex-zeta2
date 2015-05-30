@@ -1,7 +1,7 @@
 /*** EXAMPLE: Riemann's zeta-function for large imaginary s         ***/
 /*** (illustration of precision issues when Im(s) is large)         ***/
 /***                                                                ***/
-/*** v1.0, July 2002, (c) Tim Dokchitser                            ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk     ***/
 /*** type \rex-zeta2 or read("ex-zeta2") at pari prompt to run this ***/
 
 read("computel");                 \\ read the ComputeL package

@@ -25,7 +25,7 @@ from sage.interfaces.gap import *
 from sage.categories.morphism import *
 from sage.categories.homset import *
 
-from sage.misc.misc import prod
+from sage.misc.all import prod
 
 def is_AbelianGroupMorphism(f):
     return isinstance(f, AbelianGroupMorphism);
@@ -103,16 +103,16 @@ class AbelianGroupMorphism(Morphism):
         from sage.categories.homset import Hom
         Morphism.__init__(self, Hom(G, H))
         if len(genss) != len(imgss):
-            raise TypeError, "Sorry, the lengths of %s, %s must be equal."%(genss,imgss)
+            raise TypeError("Sorry, the lengths of %s, %s must be equal."%(genss,imgss))
         self._domain = G
         self._codomain = H
         if not(G.is_abelian()):
-            raise TypeError, "Sorry, the groups must be abelian groups."
+            raise TypeError("Sorry, the groups must be abelian groups.")
         if not(H.is_abelian()):
-            raise TypeError, "Sorry, the groups must be abelian groups."
+            raise TypeError("Sorry, the groups must be abelian groups.")
         G_domain = G.subgroup(genss)
         if G_domain.order() != G.order():
-            raise TypeError, "Sorry, the list %s must generate G."%genss
+            raise TypeError("Sorry, the list %s must generate G."%genss)
         # self.domain_invs = G.gens_orders()
         # self.codomaininvs = H.gens_orders()
         self.domaingens = genss
@@ -120,7 +120,7 @@ class AbelianGroupMorphism(Morphism):
         #print genss, imgss
         for i in range(len(self.domaingens)):
             if (self.domaingens[i]).order() != (self.codomaingens[i]).order():
-                raise TypeError, "Sorry, the orders of the corresponding elements in %s, %s must be equal."%(genss,imgss)
+                raise TypeError("Sorry, the orders of the corresponding elements in %s, %s must be equal."%(genss,imgss))
 
     def _gap_init_(self):
         """

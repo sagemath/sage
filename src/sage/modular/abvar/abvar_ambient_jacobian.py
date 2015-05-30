@@ -286,9 +286,9 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         """
         if check:
             if (level % self.level()) and (self.level() % level):
-                raise ValueError, "level must be divisible by level of self"
+                raise ValueError("level must be divisible by level of self")
             if (max(level,self.level()) // min(self.level(),level)) % t:
-                raise ValueError, "t must divide the quotient of the two levels"
+                raise ValueError("t must divide the quotient of the two levels")
 
         Mself = self.modular_symbols()
         #Jdest = Mself.ambient_module().modular_symbols_of_level(level).cuspidal_subspace().abelian_variety()

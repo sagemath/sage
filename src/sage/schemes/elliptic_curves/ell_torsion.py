@@ -44,7 +44,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         sage: G.order()
         4
         sage: G.gen(0)
-        (2 : 0 : 1)
+        (-2 : 0 : 1)
         sage: G.gen(1)
         (0 : 0 : 1)
         sage: G.ngens()
@@ -81,7 +81,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         sage: E = EllipticCurve([0,0,0,-49,0])
         sage: T = E.torsion_subgroup()
         sage: [E(t) for t in T]
-        [(0 : 1 : 0), (7 : 0 : 1), (0 : 0 : 1), (-7 : 0 : 1)]
+        [(0 : 1 : 0), (-7 : 0 : 1), (0 : 0 : 1), (7 : 0 : 1)]
 
     An example where the torsion subgroup is trivial::
 
@@ -166,23 +166,15 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         if self.__K is RationalField() and algorithm in pari_torsion_algorithms:
             flag = pari_torsion_algorithms.index(algorithm)
 
-            G = None
-            loop = 0
-            while G is None and loop < 3:
-                loop += 1
-                try:
-                    G = self.__E.pari_curve(prec = 400).elltors(flag) # pari_curve will return the curve of maximum known precision
-                except RuntimeError:
-                    self.__E.pari_curve(factor = 2) # caches a curve of twice the precision
-            if G is not None:
-                order = G[0].python()
-                structure = G[1].python()
-                gens = G[2].python()
+            G = self.__E.pari_curve().elltors(flag)
+            order = G[0].python()
+            structure = G[1].python()
+            gens = G[2].python()
 
-                self.__torsion_gens = [ self.__E(P) for P in gens ]
-                from sage.groups.additive_abelian.additive_abelian_group import cover_and_relations_from_invariants
-                groups.AdditiveAbelianGroupWrapper.__init__(self, self.__E(0).parent(), self.__torsion_gens, structure)
-                return
+            self.__torsion_gens = [ self.__E(P) for P in gens ]
+            from sage.groups.additive_abelian.additive_abelian_group import cover_and_relations_from_invariants
+            groups.AdditiveAbelianGroupWrapper.__init__(self, self.__E(0).parent(), self.__torsion_gens, structure)
+            return
 
         T1 = E(0) # these will be the two generators
         T2 = E(0)

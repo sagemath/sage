@@ -1,3 +1,5 @@
+.. _section-linalg:
+
 Algèbre linéaire
 ================
 
@@ -21,8 +23,8 @@ faciles et naturelles :
     Echelon basis matrix:
     [ 1  1 -4]
 
-Notez bien qu'avec Sage, le noyau d'une matrice  :math:`A` est le « noyau
-à gauche », c'est-à-dire l'espace des vecteurs :math:`w` tels que
+Notez bien qu'avec Sage, le noyau d'une matrice  :math:`A` est le « noyau
+à gauche », c'est-à-dire l'espace des vecteurs :math:`w` tels que
 :math:`wA=0`.
 
 La résolution d'équations matricielles est facile et se fait avec la
@@ -37,7 +39,7 @@ une matrice (ou un vecteur)  :math:`X` tel que :math:`AX=Y`:
     sage: X = A.solve_right(Y)
     sage: X
     (-2, 1, 0)
-    sage: A * X   #vérifions la réponse...
+    sage: A * X   # vérifions la réponse...
     (0, -4, -1)
 
 Un antislash (contre-oblique) ``\`` peut être employé à la place de
@@ -64,6 +66,61 @@ S'il n'y a aucune solution, Sage renvoie une erreur :
 
 De même, il faut utiliser ``A.solve_left(Y)`` pour résoudre en :math:`X`
 l'équation :math:`XA=Y`.
+
+Sage sait aussi calculer les valeurs propres et vecteurs propres::
+
+    sage: A = matrix([[0, 4], [-1, 0]])
+    sage: A.eigenvalues ()
+    [-2*I, 2*I]
+    sage: B = matrix([[1, 3], [3, 1]])
+    sage: B.eigenvectors_left()
+    [(4, [
+    (1, 1)
+    ], 1), (-2, [
+    (1, -1)
+    ], 1)]
+
+(La sortie de ``eigenvectors_left`` est une liste de triplets (valeur propre,
+vecteur propre, multiplicité).) Sur ``QQ`` et ``RR``, on peut aussi utiliser
+Maxima (voir la section :ref:`section-maxima` ci-dessous).
+
+Comme signalé en :ref:`section-rings`, l'anneau sur lequel une matrice est
+définie a une influence sur les propriétés de la matrice. Dans l'exemple
+suivant, le premier argument de la commande ``matrix`` indique à Sage s'il faut
+traiter la matrice comme une matrice d'entier (``ZZ``), de rationnels (``QQ``)
+ou de réels (``RR``)::
+
+    sage: AZ = matrix(ZZ, [[2,0], [0,1]])
+    sage: AQ = matrix(QQ, [[2,0], [0,1]])
+    sage: AR = matrix(RR, [[2,0], [0,1]])
+    sage: AZ.echelon_form()
+    [2 0]
+    [0 1]
+    sage: AQ.echelon_form()
+    [1 0]
+    [0 1]
+    sage: AR.echelon_form()
+    [ 1.00000000000000 0.000000000000000]
+    [0.000000000000000  1.00000000000000]
+
+Pour le calcul de valeurs propres et vecteurs propres sur les nombres à virgule
+flottante réels ou complexes, la matrice doit être respectivement à
+coefficients dans ``RDF`` (*Real Double Field*, nombres réels à précision
+machine) ou ``CDF`` (*Complex Double Field*). Lorsque l'on définit une matrice
+avec des coefficients flottants sans spécifier explicitement l'anneau de base,
+ce ne sont pas ``RDF`` ou ``CDF`` qui sont utilisés par défaut, mais ``RR`` et
+``CC``, sur lesquels ces calculs ne sont pas implémentés dans tous les cas::
+
+    sage: ARDF = matrix(RDF, [[1.2, 2], [2, 3]])
+    sage: ARDF.eigenvalues() # rel tol 8e-16
+    [-0.09317121994613098, 4.293171219946131]
+    sage: ACDF = matrix(CDF, [[1.2, I], [2, 3]])
+    sage: ACDF.eigenvectors_right()  # rel tol 3e-15
+    [(0.8818456983293743 - 0.8209140653434135*I, [(0.7505608183809549, -0.616145932704589 + 0.2387941530333261*I)], 1),
+    (3.3181543016706256 + 0.8209140653434133*I, [(0.14559469829270957 + 0.3756690858502104*I, 0.9152458258662108)], 1)]
+
+Espaces de matrices
+-------------------
 
 Créons l'espace :math:`\text{Mat}_{3\times 3}(\QQ)`:
 
@@ -124,7 +181,7 @@ des corps finis :
 
     sage: M = MatrixSpace(GF(2),4,8)
     sage: A = M([1,1,0,0, 1,1,1,1, 0,1,0,0, 1,0,1,1,
-    ...          0,0,1,0, 1,1,0,1, 0,0,1,1, 1,1,1,0])
+    ....:        0,0,1,0, 1,1,0,1, 0,0,1,1, 1,1,1,0])
     sage: A
     [1 1 0 0 1 1 1 1]
     [0 1 0 0 1 0 1 1]
@@ -138,7 +195,7 @@ des corps finis :
     [(1, 1, 0, 0, 1, 1, 1, 1), (0, 1, 0, 0, 1, 0, 1, 1),
      (0, 0, 1, 0, 1, 1, 0, 1), (0, 0, 1, 1, 1, 1, 1, 0)]
 
-Nous créons le sous-espace engendré sur :math:`\GF{2}` par les
+Nous créons le sous-espace engendré sur `\GF{2}` par les
 vecteurs lignes ci-dessus.
 
 .. link
@@ -160,8 +217,8 @@ vecteurs lignes ci-dessus.
     [0 0 1 0 1 1 0 1]
     [0 0 0 1 0 0 1 1]
 
-La base de :math:`S` utilisée par Sage est obtenue à partir des lignes
-non-nulles de la matrice des générateurs de :math:`S` réduite sous forme
+La base de `S` utilisée par Sage est obtenue à partir des lignes
+non nulles de la matrice des générateurs de `S` réduite sous forme
 échelonnée en lignes.
 
 Algèbre linéaire creuse
@@ -196,23 +253,3 @@ Notez que Python distingue les majuscules des minuscules :
     Traceback (most recent call last):
     ...
     TypeError: __classcall__() got an unexpected keyword argument 'Sparse'
-
-Sage peut calculer des valeurs propres et des vecteurs propres :
-
-::
-
-
-    sage: g = matrix(GF(7), [[5, 1], [4, 1]])
-    sage: g.eigenvalues()
-    [4, 2]
-    sage: g.eigenvectors_right() # renvoie (valeurs propres, [vecteurs propres], multiplicités algébriques)
-    [(4, [
-    (1, 6)
-    ], 1), (2, [
-    (1, 4)
-    ], 1)]
-
-
-
-Les valeurs propres et vecteurs propres peuvent aussi être calculés avec
-Maxima (voir :ref:`section-maxima` ci-dessous).

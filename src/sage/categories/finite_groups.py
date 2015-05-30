@@ -2,63 +2,37 @@ r"""
 FiniteGroups
 """
 #*****************************************************************************
-#  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
+#  Copyright (C) 2010-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.finite_monoids import FiniteMonoids
-from sage.categories.groups import Groups
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.algebra_functor import AlgebrasCategory
+from sage.categories.cartesian_product import CartesianProductsCategory
 
-class FiniteGroups(Category):
+class FiniteGroups(CategoryWithAxiom):
     r"""
-    The category of (multiplicative) finite groups.
+    The category of finite (multiplicative) groups.
 
     EXAMPLES::
 
-        sage: FiniteGroups()
+        sage: C = FiniteGroups(); C
         Category of finite groups
-        sage: FiniteGroups().super_categories()
-        [Category of groups, Category of finite monoids]
-        sage: FiniteGroups().example()
+        sage: C.super_categories()
+        [Category of finite monoids, Category of groups]
+        sage: C.example()
         General Linear Group of degree 2 over Finite Field of size 3
 
     TESTS::
 
-        sage: C = FiniteGroups()
-        sage: TestSuite(C).run(verbose = True)
-        running ._test_category() . . . pass
-        running ._test_category_graph() . . . pass
-        running ._test_not_implemented_methods() . . . pass
-        running ._test_pickling() . . . pass
-
-        sage: G = FiniteGroups().example()
-        sage: G.category()
-        Category of finite groups
-        sage: TestSuite(G).run(skip = "_test_enumerated_set_iter_list")
-
-    TODO: define an iterator compatible with GAP's list method
-    Does GAP provide such an iterator?
+        sage: TestSuite(C).run()
     """
-    @cached_method
-    def super_categories(self):
-        r"""
-        Returns a list of the (immediate) super categories of ``self``.
-
-        EXAMPLES::
-
-            sage: FiniteGroups().super_categories()
-            [Category of groups, Category of finite monoids]
-
-        """
-        return [Groups(), FiniteMonoids()]
 
     def example(self):
         """
-        Returns an example of finite group, as per
+        Return an example of finite group, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -83,6 +57,22 @@ class FiniteGroups(Category):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.semigroup_generators()
+                Family ((2,3,4), (1,2,3))
+            """
+            return self.group_generators()
+
+        def monoid_generators(self):
+            """
+            Return monoid generators for ``self``.
+
+            For finite groups, the group generators are also monoid
+            generators. Hence, this default implementation calls
+            :meth:`~sage.categories.groups.Groups.ParentMethods.group_generators`.
+
+            EXAMPLES::
+
+                sage: A = AlternatingGroup(4)
+                sage: A.monoid_generators()
                 Family ((2,3,4), (1,2,3))
             """
             return self.group_generators()
@@ -144,11 +134,9 @@ class FiniteGroups(Category):
             if connecting_set is None:
                 connecting_set = self.gens()
             else:
-                try:
-                    for g in connecting_set:
-                        assert g in self
-                except AssertionError:
-                    raise RuntimeError("Each element of the connecting set must be in the group!")
+                for g in connecting_set:
+                    if not g in self:
+                        raise RuntimeError("Each element of the connecting set must be in the group!")
                 connecting_set = [self(g) for g in connecting_set]
             from sage.graphs.all import DiGraph
             arrows = {}
@@ -160,22 +148,6 @@ class FiniteGroups(Category):
                         arrows[x][xg] = g
 
             return DiGraph(arrows, implementation='networkx')
-
-        def conjugacy_class(self, g):
-            r"""
-            Return the conjugacy class of the element ``g``.
-
-            This is a fall-back method for groups not defined over GAP.
-
-            EXAMPLES::
-
-                sage: W = WeylGroup(['C',6])
-                sage: c = W.conjugacy_class(W.an_element())
-                sage: type(c)
-                <class 'sage.groups.conjugacy_classes.ConjugacyClass_with_category'>
-            """
-            from sage.groups.conjugacy_classes import ConjugacyClass
-            return ConjugacyClass(self, g)
 
         def conjugacy_classes(self):
             r"""
@@ -211,20 +183,31 @@ class FiniteGroups(Category):
             return [C.representative() for C in self.conjugacy_classes()]
 
     class ElementMethods:
-        def conjugacy_class(self):
+        pass
+
+    class Algebras(AlgebrasCategory):
+
+        def extra_super_categories(self):
             r"""
-            Return the conjugacy class of ``self``.
+            Implement Maschke's theorem.
+
+            In characteristic 0 all finite group algebras are semisimple.
 
             EXAMPLES::
 
-                sage: H = MatrixGroup([matrix(GF(5),2,[1,2, -1, 1]), matrix(GF(5),2, [1,1, 0,1])])
-                sage: h = H(matrix(GF(5),2,[1,2, -1, 1]))
-                sage: h.conjugacy_class()
-                Conjugacy class of [1 2]
-                [4 1] in Matrix group over Finite Field of size 5 with 2 generators (
-                [1 2]  [1 1]
-                [4 1], [0 1]
-                )
+                sage: FiniteGroups().Algebras(QQ).is_subcategory(Algebras(QQ).Semisimple())
+                True
+                sage: FiniteGroups().Algebras(FiniteField(7)).is_subcategory(Algebras(QQ).Semisimple())
+                False
+                sage: FiniteGroups().Algebras(ZZ).is_subcategory(Algebras(ZZ).Semisimple())
+                False
+                sage: FiniteGroups().Algebras(Fields()).is_subcategory(Algebras(Fields()).Semisimple())
+                False
             """
-            return self.parent().conjugacy_class(self)
-
+            from sage.categories.fields import Fields
+            K = self.base_ring()
+            if (K in Fields) and K.characteristic() == 0:
+                from sage.categories.algebras import Algebras
+                return [Algebras(self.base_ring()).Semisimple()]
+            else:
+                return []

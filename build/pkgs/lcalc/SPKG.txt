@@ -71,6 +71,7 @@ http://code.google.com/p/l-calc/
      used as far as I can see.)
    - $(INSTALL_DIR) can now be overridden by simply setting the environment
      variable of the same name.
+
  * Lcommon.h.patch:
    Uncomment the definition of lcalc_to_double(const long double& x).
    (Necessary for GCC >= 4.6.0, cf. #10892.)
@@ -80,163 +81,15 @@ http://code.google.com/p/l-calc/
      But somebody who is familiar with the codebase should really rewrite lcalc
      to not redefine the double() cast, thats just fragile and will sooner or
      later again fail inside some system headers.
- * pari-2.4.4.patch:
-   (Patches src/src/Lcommandline.cc and src/src/Lcommandline_elliptic.cc)
-   Use allocatemem() instead of allocatemoremem() which the new PARI no
-   longer supports. Also replace lgeti() by (long)cgeti().
+
+ * pari-2.7.patch:
+   Various changes to port to newer versions of PARI.
+
  * time.h.patch:
    (Patches src/include/Lcommandline_numbertheory.h)
    Include also <time.h> in Lcommandline_numbertheory.h (at least required
    on Cygwin, cf. #9845).
    This should get reported upstream.
 
-== Changelog ==
-
-=== lcalc-1.23.p11 (Jean-Pierre Flori, 8 August 2012) ===
- * #13351: modify Makefile to define binaries and libraries extension
-           according to host system. As a side effect, this let
-           sage.libs.lcalc.lcal_Lfunction be imported on Cygwin.
-
-=== lcalc-1.23.p10 (Leif Leonhardy, March 17th 2012) ===
- * #12681: Fix hard-coded 'g++'.
-   The (patched) Makefile now uses $(CXX) (which *defaults* to 'g++')
-   for compiling and linking C++, $(CC) (which *defaults* to 'gcc') for
-   compiling C, although the latter is [currently] hardly used.
-   See also "Special Update/Build Instructions" above. (We could now also
-   set `INSTALL_DIR` and use 'make install'...)
-
-=== lcalc-1.23.p9 (Jeroen Demeyer, Leif Leonhardy, 6 October 2011) ===
- * Trac #11321: Add a patch for PARI-2.4.4 (use allocatemem() instead of
-   allocatemoremem())
- * Remove unused patch Lcommandline_elliptic.cc.cygwin.diff
- * Use `patch` for patching instead of `cp`.
- * Restore upstream sources (src/src/Makefile was edited) but remove
-   garbage files mentioned above.
- * Remove date from spkg version string
- * Various clean-up in spkg-install
-
-=== lcalc-20100428-1.23.p6 (Volker Braun, March 8, 2011) ===
- * upstream commented out lcalc_to_double(long double), but this is
-   now required with gcc-4.6. Comment back in!
-
-=== lcalc-20100428-1.23.p5 (Jeroen Demeyer, September 19, 2010) ===
- * Remove dist directory
- * Put back SAGE_LOCAL sanity check in spkg-install
- * Change "make" to "$MAKE"
-
-=== lcalc-20100428-1.23.p4 (Mike Hansen, William Stein, September 2, 2010) ===
- * Add time.h include to Lcommandline_numbertheory.h (this should get upstreamed)
-
-=== lcalc-20100428-1.23.p3 (Mike Hansen, August 21, 2010) ===
- * Update to work on Cygwin.
- * #9775: lcalc should make a .dll file on Cygwin instead of .so file
-
-=== lcalc-20100428-1.23.p2 (John Cremona, August 13 2010 following Jeroen Demeyer, July 24, 2010)  ===
- * Upgrade to PARI/GP 2.4.3 (#9343 and #9592).
- * Removed some code from spkg-install made redundant when upgrading to 1.23
-   in March 2010.
-
-=== lcalc-20100428-1.23.p1 (Rishikesh, 2nd Aug 2010)  ===
- * Detect OS X 10.4 and copy to libLfunction.dylib instead of libLfunction.so
-
-=== lcalc-20100428-1.23.p0 (David Kirkby, 27th May 2010)  ===
- * See: #9043 - lcalc failing to build on OpenSolaris x64.
- * Force 64-bit build if SAGE64 is set to "yes" and not "yes"
-   and "1" as before, since an early part of Sage ensures SAGE64
-   can only be "yes" or "no", so it is pointless to check for "1" too.
- * Added a variable CXXFLAG64 to spkg-install, which defaults to
-   -m64, but can be set as an environment variable to whatever flag
-   is needed by the C++ compiler.
- * Export CXXFLAG64 if SAGE64 is set to "yes".
- * Added {$CXXFLAG64} to patches/Makefile.sage, so that the right flag
-   is added for a 64-bit build at the link phase.
- * It should be noted the Makefile makes extensive use of $(FOOBAR),
-   but such variables only work internally to the Makefile. If they need
-   to be inported, then it needs to be ${FOOBAR}, and not $(FOOBAR).
- * Removed these 4 files from the source, since they serve no useful
-   purpose (see note in Special Build Instructions).
-   ./src/src/.Makefile.old.swp
-   ./src/src/.Lcommandline.ggo.swp
-   ./src/include/.Lvalue.h.swp
-   ./src/include/.Lexplicit_formula.h.swp
-
-=== lcalc-20100428-1.23 (Rishikesh, 24th March 2010)  ===
- * changed spkg-install to change location of header files (#4793)
- * changed compile flags so that lcalc compiles on OSX (#4793)
-
-=== lcalc-20100428-1.23 (Rishikesh, 9th March 2010)  ===
- * Changed makefile to compile on solaris (#5396)
- * For lcalc wrapper, changed so that the library is copied(#5396)
- * Replace the hard coded path to pari makefile to the $SAGE_LOCAL(#5396)
-
-=== lcalc-20080205.p3 (David kirkby, 15th September, 2009) ===
- * A general tidy-up/improvement in many ways, including:
- * Force an exit on errors with 'set -e'
- * Check for SAGE_LOCAL in a better way
- * Build with debug flags as default, but allow them to be removed
- * Add flags to generate all warnings messages on both Sun and GNU compilers.
-   This causes tons of warning messages from lcacl.
- * Check that the C, C++ and Fortran compilers are not a mix of Sun and GNU
- * Remove the flags which were sent directly to the assembler to
-   suppress warnings. The -W flag, which works on the GNU assembler,
-   is not portable and fails with Sun's assembler.
- * All tests performed in what I believe is the safest and most
-   portable way, such as using || instead of -o in tests.
- * Changed the Makefile to use CXXFLAGS rather than CFLAGS, as the
-   source is C++ not C, and the compiler used is the C++ compiler,
-   which will ignore CFLAGS.
- * Added appropiate options to FCFLAGS. Not needed for 'lcalc', but I
-   hope to use this as a template for more widespread use in Sage. It
-   may however need more work, particularly in handling Fortran (There
-   may be specific issues when the Fortran compiler is f90.)
- * Print variable names, to aid debugging.
- * Allow debug information to be removed from file, if
-   SAGE_DEBUG is set to 'no', 'false' or '0'
-   By default, debugging information will be supplied.
-
-=== lcalc-20080205.p2 (Michael Abshoff, July 15th, 2008) ===
- * remove "-static-libgcc" from CFLAGS (fixes #3647)
-
-=== lcalc-20080205.p1 (Michael Abshoff, May 18th, 2008) ===
- * add 64 bit OSX build support
-
-=== lcalc-20080205.p0 (Michael Abshoff, April 19th, 2008) ===
- * Apply Tim Abbott's Debian build fix (#2967)
-
-=== lcalc-20080205 (Michael Abshoff, April 13th, 2008) ===
- * update to lcalc 1.11 (2008-Feb-05)
- * Apply all three patches from patches directory
- * fix gcc 4.3 build issues
- * fix Solaris build
- * do not strip the lcalc binary
-
-=== lcalc-20070105 ===
- * modified Lcommandline_elliptic.cc to work with Cygwin
-  by defining a certain macro.   *** carry this change over when
-  updating the package *** and of course backport it upstream.
-
-* New version from Mike R. on 2006-12-05.
-
-* I replaced the included Makefile with my own, since I'm only interested
-  in building lcalc and not the library.  Also, since I'm not doing
-  development on lcalc, the dependencies aren't needed in order
-  to minimize build time.
-
-
-* 2006-09-15: Fix to spkg-install suggested by Kate Minola:
-In lcalc-2006.03.05/spkg-install there is
-: CFLAGS="$CFLAGS -O2 -g -Wa,-W -fno-exceptions -Wno-deprecated"
-:
-: cd src
-:
-: echo "Building Rubinstein's lcalc program using $CXX..."
-:
-: make lcalc
-but since the environment variable CFLAGS is never exported, the subshell
-entered with 'make lcalc' does not pick up the new CFLAGS.  You need to
-add
-  export CFLAGS
-after the new definition of CLAGS.
-
-* Kate Minola:
-  Added -static-libgcc
+ * lcalc-1.23_default_parameters_1.patch: Make Lcalc (1.23) build with
+   GCC 4.9

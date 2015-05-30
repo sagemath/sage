@@ -1,5 +1,40 @@
 r"""
-A collection of posets and lattices.
+A catalog of posets and lattices.
+
+Some common posets can be accessed through the ``posets.<tab>`` object::
+
+    sage: posets.PentagonPoset()
+    Finite lattice containing 5 elements
+
+Moreover, the set of all posets of order `n` is represented by ``Posets(n)``::
+
+    sage: Posets(5)
+    Posets containing 5 vertices
+
+**Catalog of common posets:**
+
+.. csv-table::
+    :class: contentstable
+    :widths: 30, 70
+    :delim: |
+
+    :meth:`~Posets.AntichainPoset` | Return an antichain on `n` elements.
+    :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
+    :meth:`~Posets.ChainPoset` | Return a chain on `n` elements.
+    :meth:`~Posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
+    :meth:`~Posets.IntegerCompositions` | Return the poset of integer compositions of `n`.
+    :meth:`~Posets.IntegerPartitions` | Return the poset of integer partitions of ``n``.
+    :meth:`~Posets.PentagonPoset` | Return the Pentagon poset.
+    :meth:`~Posets.RandomPoset` | Return a random poset on `n` vertices according to a probability `p`.
+    :meth:`~Posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
+    :meth:`~Posets.SSTPoset` | Return the poset on semistandard tableaux of shape `s` and largest entry `f` that is ordered by componentwise comparison.
+    :meth:`~Posets.SymmetricGroupBruhatIntervalPoset` | The poset of permutations with respect to Bruhat order.
+    :meth:`~Posets.SymmetricGroupBruhatOrderPoset` | The poset of permutations with respect to Bruhat order.
+    :meth:`~Posets.SymmetricGroupWeakOrderPoset` | The poset of permutations of `\{ 1, 2, \ldots, n \}` with respect to the weak order.
+    :meth:`~Posets.TamariLattice` | Return the Tamari lattice.
+
+Constructions
+-------------
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Peter Jipsen <jipsen@chapman.edu>,
@@ -17,7 +52,6 @@ A collection of posets and lattices.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import random
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation
@@ -75,6 +109,12 @@ class Posets(object):
         """
         if n is None:
             return sage.categories.posets.Posets()
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {0}".format(n))
+        if n < 0:
+            raise ValueError("number of elements must be non-negative, not {0}".format(n))
         return FinitePosets_n(n)
 
     @staticmethod
@@ -87,6 +127,16 @@ class Posets(object):
             sage: Posets.BooleanLattice(5)
             Finite lattice containing 32 elements
         """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {0}".format(n))
+        if n < 0:
+            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        if n==0:
+            return LatticePoset( ([0], []) )
+        if n==1:
+            return LatticePoset( ([0,1], [[0,1]]) )
         return LatticePoset([[Integer(x|(1<<y)) for y in range(0,n) if x&(1<<y)==0] for
             x in range(0,2**n)])
 
@@ -108,7 +158,7 @@ class Posets(object):
 
         TESTS:
 
-        Check that #8422 is solved::
+        Check that :trac:`8422` is solved::
 
             sage: Posets.ChainPoset(0)
             Finite lattice containing 0 elements
@@ -121,6 +171,12 @@ class Posets(object):
             sage: C.cover_relations()
             [[0, 1]]
         """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {0}".format(n))
+        if n < 0:
+            raise ValueError("number of elements must be non-negative, not {0}".format(n))
         return LatticePoset((range(n), [[x,x+1] for x in range(n-1)]))
 
     @staticmethod
@@ -140,7 +196,7 @@ class Posets(object):
 
         TESTS:
 
-        Check that #8422 is solved::
+        Check that :trac:`8422` is solved::
 
             sage: Posets.AntichainPoset(0)
             Finite poset containing 0 elements
@@ -153,12 +209,25 @@ class Posets(object):
             sage: C.cover_relations()
             []
         """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {0}".format(n))
+        if n < 0:
+            raise ValueError("number of elements must be non-negative, not {0}".format(n))
         return Poset((range(n), []))
 
     @staticmethod
-    def PentagonPoset(facade = False):
+    def PentagonPoset(facade = None):
         """
-        Returns the "pentagon poset".
+        Returns the Pentagon poset.
+
+        INPUT:
+
+        - ``facade`` (boolean) -- whether to make the returned poset a
+          facade poset (see :mod:`sage.categories.facade_sets`). The
+          default behaviour is the same as the default behaviour of
+          the :func:`~sage.combinat.posets.posets.Poset` constructor).
 
         EXAMPLES::
 
@@ -167,8 +236,13 @@ class Posets(object):
             sage: P.cover_relations()
             [[0, 1], [0, 2], [1, 4], [2, 3], [3, 4]]
 
-        This lattice and the diamond poset on 5 elements are the two
-        smallest lattices which are not distributive::
+        This is smallest lattice that is not modular::
+
+            sage: P.is_modular()
+            False
+
+        This poset and the :meth:`DiamondPoset` are the two smallest
+        lattices which are not distributive::
 
             sage: P.is_distributive()
             False
@@ -180,22 +254,34 @@ class Posets(object):
         return p
 
     @staticmethod
-    def DiamondPoset(n, facade = False):
+    def DiamondPoset(n, facade = None):
         """
-        Returns the lattice of rank two containing ``n`` elements.
+        Return the lattice of rank two containing ``n`` elements.
+
+        INPUT:
+
+        - ``n`` - number of vertices, an integer at least 3.
+
+        - ``facade`` (boolean) -- whether to make the returned poset a
+          facade poset (see :mod:`sage.categories.facade_sets`). The
+          default behaviour is the same as the default behaviour of
+          the :func:`~sage.combinat.posets.posets.Poset` constructor).
 
         EXAMPLES::
 
             sage: Posets.DiamondPoset(7)
             Finite lattice containing 7 elements
         """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {0}".format(n))
+        if n <= 2:
+            raise ValueError("n must be an integer at least 3")
         c = [[n-1] for x in range(n)]
         c[0] = [x for x in range(1,n-1)]
         c[n-1] = []
-        if n > 2:
-            return LatticePoset(c, facade = facade)
-        else:
-            return Poset(c, facade = facade)
+        return LatticePoset(c, facade = facade)
 
     @staticmethod
     def IntegerCompositions(n):
@@ -347,6 +433,7 @@ class Posets(object):
             ...
             ValueError: probability must be between 0 and 1, not -0.5
         """
+        from sage.misc.prandom import random
         try:
             n = Integer(n)
         except TypeError:
@@ -355,7 +442,7 @@ class Posets(object):
             raise ValueError("number of elements must be non-negative, not {0}".format(n))
         try:
             p = float(p)
-        except StandardError:
+        except Exception:
             raise TypeError("probability must be a real number, not {0}".format(p))
         if p < 0 or p> 1:
             raise ValueError("probability must be between 0 and 1, not {0}".format(p))
@@ -364,7 +451,7 @@ class Posets(object):
         D.add_vertices(range(n))
         for i in range(n):
             for j in range(n):
-                if random.random() < p:
+                if random() < p:
                     D.add_edge(i,j)
                     if not D.is_directed_acyclic():
                         D.delete_edge(i,j)
@@ -373,15 +460,20 @@ class Posets(object):
     @staticmethod
     def SSTPoset(s,f=None):
         """
-        The poset on semistandard tableaux of shape s and largest entry f that is ordered by componentwise comparison of the entries.
+        The poset on semistandard tableaux of shape ``s`` and largest
+        entry ``f`` that is ordered by componentwise comparison of the
+        entries.
 
         INPUT:
 
         - ``s`` - shape of the tableaux
 
-        - ``f`` - maximum fill number.  This is an optional argument.  If no maximal number is given, it will use the number of cells in the shape.
+        - ``f`` - maximum fill number.  This is an optional
+          argument.  If no maximal number is given, it will use
+          the number of cells in the shape.
 
-        NOTE: This is basic implementation and most certainly not the most efficient.
+        NOTE: This is a basic implementation and most certainly
+        not the most efficient.
 
         EXAMPLES::
 
@@ -404,24 +496,20 @@ class Posets(object):
         def tableaux_is_less_than(a,b):
             atstring = []
             btstring = []
-            c=0
-            for i in range(len(a)):
-                atstring=atstring+a[i]
-            for i in range(len(b)):
-                btstring=btstring+b[i]
+            for i in a:
+                atstring += i
+            for i in b:
+                btstring += i
             for i in range(len(atstring)):
                 if atstring[i] > btstring[i]:
-                    c = c+1
-            if c == 0:
-                return True
-            else:
-                return False
+                    return False
+            return True
         if f is None:
             f=0
-            for i in range(len(s)):
-                f = f+s[i]
-        E = SemistandardTableaux(s,max_entry=f)
-        return Poset((E, tableaux_is_less_than ))
+            for i in s:
+                f += i
+        E = SemistandardTableaux(s, max_entry=f)
+        return Poset((E, tableaux_is_less_than))
 
     @staticmethod
     def SymmetricGroupBruhatOrderPoset(n):
@@ -481,7 +569,7 @@ class Posets(object):
             nodes[perm] = [succ_perm for succ_perm in perm.bruhat_succ()
                                 if succ_perm.bruhat_lequal(end)]
             for succ_perm in nodes[perm]:
-                if not nodes.has_key(succ_perm):
+                if succ_perm not in nodes:
                     unseen.append(succ_perm)
         return Poset(nodes)
 
@@ -523,5 +611,10 @@ class Posets(object):
                 return [v for v in s.bruhat_succ() if
                     s.length() + (s.inverse().left_action_product(v)).length() == v.length()]
         return Poset(dict([[s,weak_covers(s)] for s in Permutations(n)]),element_labels)
+
+    # Tamari lattices
+    import sage.combinat.tamari_lattices
+    TamariLattice = staticmethod(sage.combinat.tamari_lattices.TamariLattice)
+
 
 posets = Posets

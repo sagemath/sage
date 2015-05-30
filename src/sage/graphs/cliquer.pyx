@@ -1,5 +1,5 @@
 r"""
-Cliquer: routines for finding cliques in graphs
+Interface with Cliquer (clique-related problems)
 
 This module defines functions based on Cliquer, an exact
 branch-and-bound algorithm developed by Patric R. J. Ostergard and

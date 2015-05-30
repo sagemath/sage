@@ -14,9 +14,7 @@ Permutation groups
 
 A permutation group is a subgroup of some symmetric group
 :math:`S_n`. Sage has a Python class ``PermutationGroup``, so you
-can work with such groups directly:
-
-::
+can work with such groups directly::
 
     sage: G = PermutationGroup(['(1,2,3)(4,5)'])
     sage: G
@@ -57,10 +55,8 @@ use the GAP-Sage interface as follows.
 
 Another way you can choose to do this:
 
-
--  Create a file ``cubegroup.py`` containing the lines
-
-   ::
+-  Create a file ``cubegroup.py`` containing the
+   lines::
 
        cube = "cubegp := Group(
        ( 1, 3, 8, 6)( 2, 5, 7, 4)( 9,33,25,17)(10,34,26,18)(11,35,27,19),
@@ -70,15 +66,13 @@ Another way you can choose to do this:
        (33,35,40,38)(34,37,39,36)( 3, 9,46,32)( 2,12,47,29)( 1,14,48,27),
        (41,43,48,46)(42,45,47,44)(14,22,30,38)(15,23,31,39)(16,24,32,40) )"
 
--  Place the file in the subdirectory
+   Then place the file in the subdirectory
    ``$SAGE_ROOT/local/lib/python2.4/site-packages/sage`` of your Sage home
-   directory.
-
--  Read (i.e.,``{import``) it into Sage:
+   directory. Last, read (i.e., ``import``) it into Sage:
 
    .. skip
 
-::
+   ::
 
        sage: import sage.cubegroup
        sage: sage.cubegroup.cube
@@ -97,9 +91,7 @@ Another way you can choose to do this:
    (You will have line wrap instead of the above carriage returns in
    your Sage output.)
 
--  Use the ``CubeGroup`` class
-
-   ::
+-  Use the ``CubeGroup`` class::
 
        sage: rubik = CubeGroup()
        sage: rubik
@@ -107,13 +99,11 @@ Another way you can choose to do this:
        sage: rubik.order()
        43252003274489856000
 
+   (1) has implemented classical groups (such as :math:`GU(3,\GF{5})`)
+   and matrix groups over a finite field with user-defined generators.
 
-    (1) has implemented classical groups (such as
-    :math:`GU(3,GF(5))`) and matrix groups over a finite field with
-    user-defined generators.
-
-    (2) also has implemented finite and infinite (but finitely
-    generated) abelian groups.
+   (2) also has implemented finite and infinite (but finitely
+   generated) abelian groups.
 
 .. index::
    pair: group; conjugacy classes
@@ -123,50 +113,42 @@ Another way you can choose to do this:
 Conjugacy classes
 =================
 
-You can compute conjugacy classes of a finite group using
-"natively":
-
-::
+You can compute conjugacy classes of a finite group using "natively"::
 
     sage: G = PermutationGroup(['(1,2,3)', '(1,2)(3,4)', '(1,7)'])
     sage: CG = G.conjugacy_classes_representatives()
     sage: gamma = CG[2]
     sage: CG; gamma
-    [(), (1,2), (1,2)(3,4), (1,2,3), (1,2,3)(4,7), (1,2,3,4), (1,2,3,4,7)]
-    (1,2)(3,4)
+    [(), (4,7), (3,4,7), (2,3)(4,7), (2,3,4,7), (1,2)(3,4,7), (1,2,3,4,7)]
+    (3,4,7)
 
-You can use the Sage-GAP interface.
-
-::
+You can use the Sage-GAP interface::
 
     sage: gap.eval("G := Group((1,2)(3,4),(1,2,3))")
     'Group([ (1,2)(3,4), (1,2,3) ])'
     sage: gap.eval("CG := ConjugacyClasses(G)")
-    '[ ()^G, (1,2)(3,4)^G, (1,2,3)^G, (1,2,4)^G ]'
+    '[ ()^G, (2,3,4)^G, (2,4,3)^G, (1,2)(3,4)^G ]'
     sage: gap.eval("gamma := CG[3]")
-    '(1,2,3)^G'
+    '(2,4,3)^G'
     sage: gap.eval("g := Representative(gamma)")
-    '(1,2,3)'
+    '(2,4,3)'
 
-Or, here's another (more "pythonic") way to do this type of
-computation:
-
-::
+Or, here's another (more "pythonic") way to do this type of computation::
 
     sage: G = gap.Group('[(1,2,3), (1,2)(3,4), (1,7)]')
     sage: CG = G.ConjugacyClasses()
     sage: gamma = CG[2]
     sage: g = gamma.Representative()
     sage: CG; gamma; g
-    [ ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), () ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2)(3,4) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2,3) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2,3)(4,7) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2,3,4) ),
+    [ ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), () ), 
+      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (4,7) ), 
+      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (3,4,7) ), 
+      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (2,3)(4,7) ), 
+      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (2,3,4,7) ), 
+      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2)(3,4,7) ), 
       ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2,3,4,7) ) ]
-    ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2) )
-    (1,2)
+    ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (4,7) )
+    (4,7)
 
 .. index::
    pair: group; normal subgroups
@@ -177,9 +159,7 @@ Normal subgroups
 ================
 
 If you want to find all the normal subgroups of a permutation group
-:math:`G` (up to conjugacy), you can use 's interface to GAP:
-
-::
+:math:`G` (up to conjugacy), you can use Sage's interface to GAP::
 
     sage: G = AlternatingGroup( 5 )
     sage: gap(G).NormalSubgroups()
@@ -193,9 +173,7 @@ or
     sage: G.NormalSubgroups()
     [ Group( () ), AlternatingGroup( [ 1 .. 5 ] ) ]
 
-Here's another way, working more directly with GAP:
-
-::
+Here's another way, working more directly with GAP::
 
     sage: print gap.eval("G := AlternatingGroup( 5 )")
     Alt( [ 1 .. 5 ] )
@@ -207,8 +185,8 @@ Here's another way, working more directly with GAP:
     sage: print gap.eval("G := SymmetricGroup( 4 )")
     Sym( [ 1 .. 4 ] )
     sage: print gap.eval("normal := NormalSubgroups( G );")
-    [ Group(()), Group([ (1,4)(2,3), (1,3)(2,4) ]),
-      Group([ (2,4,3), (1,4)(2,3), (1,3)(2,4) ]), Sym( [ 1 .. 4 ] ) ]
+    [ Group(()), Group([ (1,4)(2,3), (1,3)(2,4) ]), Group([ (2,4,3), (1,4)
+      (2,3), (1,3)(2,4) ]), Sym( [ 1 .. 4 ] ) ]
 
 .. index::
    pair: groups; center
@@ -223,17 +201,13 @@ How do you compute the center of a group in Sage?
 Although Sage calls GAP to do the computation of the group center,
 ``center`` is "wrapped" (i.e., Sage has a class PermutationGroup with
 associated class method "center"), so the user does not need to use
-the ``gap`` command. Here's an example:
-
-::
+the ``gap`` command. Here's an example::
 
     sage: G = PermutationGroup(['(1,2,3)(4,5)', '(3,4)'])
     sage: G.center()
     Subgroup of (Permutation Group with generators [(3,4), (1,2,3)(4,5)]) generated by [()]
 
-A similar syntax for matrix groups also works:
-
-::
+A similar syntax for matrix groups also works::
 
     sage: G = SL(2, GF(5) )
     sage: G.center()
@@ -245,7 +219,7 @@ A similar syntax for matrix groups also works:
     sage: G.center()
     Subgroup of (The projective special linear group of degree 2 over Finite Field of size 5) generated by [()]
 
-Note: ``center`` can be spelled either way in GAP, not so in Sage.
+.. NOTE:: ``center`` can be spelled either way in GAP, not so in Sage.
 
 The group id database
 =====================
@@ -277,27 +251,69 @@ Another example of using the small groups database: ``group_id``
     "(((C3 x C3) : Q8) : C3) : C2"
 
 Construction instructions for every group of order less than 32
-================================================================
+===============================================================
 
-Every group of order less than 32 is implemented in Sage as a permutation group. They can all be created easily. We will first show how to build direct products and semidirect products, then give the commands necessary to build all of these small groups.
+AUTHORS:
 
-Let ``G1``, ``G2``, ..., ``Gn`` be permutation groups already initialized in Sage. The following command can be used to take their direct product (where, of course, the ellipses are simply being used here as a notation, and you actually must enter every factor in your desired product explicitly).
+* Davis Shurbert
 
+Every group of order less than 32 is implemented in Sage as a permutation
+group. They can all be created easily. We will first show how to build direct
+products and semidirect products, then give the commands necessary to build
+all of these small groups. 
 
-       ``sage: G = direct_product_permgroups([G1,G2,...,Gn])``
+Let ``G1``, ``G2``, ..., ``Gn`` be permutation groups already initialized in
+Sage. The following command can be used to take their direct product (where,
+of course, the ellipses are simply being used here as a notation, and you
+actually must enter every factor in your desired product explicitly).
 
+.. skip
 
-The semidirect product operation can be thought of as a generalization of the direct product operation. Given two groups, `H` and `K`, their semidirect product, `H \ltimes_{\phi} K`, (where `\phi : H \rightarrow Aut(K)` is a homomorphism) is a group whose underlying set is the cartersian product of `H` and `K`, but with the operation `(h_1, k_1) (h_2, k_2) = (h_1 h_2, k_1^{\phi(h_2)} k_2)`. The output is not the group explicity described in the definition of the operation, but rather an isomorphic group of permutations. In the routine below, assume ``H`` and ``K`` already have been defined and initialized in Sage. Also, ``phi`` is a list containing two sublists that define the underlying homomorphism by giving the images of a set of generators of ``H``. For each semidirect product in the table below we will show you how to build ``phi``, then assume you have read this passage and understand how to go from there.
+::
 
-        ``sage: G = H.semidirect_product(K, phi)``
+    sage: G = direct_product_permgroups([G1, G2, ..., Gn])
 
-To avoid unnecessary repitition, we will now give commands that one can use to create the cyclic group of order n, `C_n`, and the dihedral group on n letters, `D_n`. We will present one more example of each to ensure that the reader understands the command, then it will be withheld.
+The semidirect product operation can be thought of as a generalization of the
+direct product operation. Given two groups, `H` and `K`, their semidirect
+product, `H \ltimes_{\phi} K`, (where `\phi : H \rightarrow Aut(K)` is a
+homomorphism) is a group whose underlying set is the cartersian product of
+`H` and `K`, but with the operation:
 
-        ``sage: G = CyclicPermutationGroup(n)``
+.. MATH::
 
-        ``sage: G = DihedralGroup(n)``
+    (h_1, k_1) (h_2, k_2) = (h_1 h_2, k_1^{\phi(h_2)} k_2).
 
-Note that exponential notation will be used for the direct product operation. For example, `{C_2}^2 = C_2 \times C_2`. This table was crafted with the help of `Group` `Tables`, by AD Thomas and GV Wood (1980, Shiva Publishing).
+The output is not the group explicity described in the definition of the
+operation, but rather an isomorphic group of permutations. In the routine
+below, assume ``H`` and ``K`` already have been defined and initialized in
+Sage. Also, ``phi`` is a list containing two sublists that define the
+underlying homomorphism by giving the images of a set of generators of ``H``.
+For each semidirect product in the table below we will show you how to build
+``phi``, then assume you have read this passage and understand how to go
+from there.
+
+.. skip
+
+::
+
+    sage: G = H.semidirect_product(K, phi)
+
+To avoid unnecessary repitition, we will now give commands that one can use to
+create the cyclic group of order `n`, `C_n`, and the dihedral group on `n`
+letters, `D_n`. We will present one more example of each to ensure that the
+reader understands the command, then it will be withheld.
+
+.. skip
+
+::
+
+    sage: G = CyclicPermutationGroup(n)
+
+    sage: G = DihedralGroup(n)
+
+Note that exponential notation will be used for the direct product operation.
+For example, `{C_2}^2 = C_2 \times C_2`. This table was crafted with the help
+of *Group Tables*, by AD Thomas and GV Wood (1980, Shiva Publishing).
 
 
 ===== =============================================== =============================================================================================== ===========================
@@ -467,4 +483,149 @@ Order Group Description                                Command(s)               
 31    `C_{31}`                                                                                                                                        [31,1]
 ===== =============================================== =============================================================================================== ===========================
 
+
 Table By Kevin Halasz
+
+Construction instructions for every finitely presented group of order 15 or less
+================================================================================
+
+Sage has the capability to easily construct every group of order 15 or less
+as a finitely presented group. We will begin with some discussion on creating
+finitely generated abelian groups, as well as direct and semidirect products
+of finitely presented groups.
+
+All finitely generated abelian groups can be created using the
+``groups.presentation.FGAbelian(ls)`` command, where ``ls`` is a list of
+non-negative integers which gets reduced to invariants defining the group
+to be returned. For example, to construct
+`C_4 \times C_2 \times C_2 \times C_2` we can simply use::
+
+    sage: A = groups.presentation.FGAbelian([4,2,2,2])
+
+The output for a given group is the same regardless of the input list of
+integers.  The following example yeilds identical presentations for the
+cyclic group of order 30.
+::
+
+    sage: A = groups.presentation.FGAbelian([2,3,5])
+    sage: B = groups.presentation.FGAbelian([30])
+
+If ``G`` and ``H`` are finitely presented groups, we can use the following
+code to create the direct product of ``G`` and ``H``, `G \times H`.
+
+.. skip
+
+::
+
+    sage: D = G.direct_product(H)
+
+Suppose there exists a homomorphism `\phi` from a group `G` to the
+automorphism group of a group `H`. Define the semidirect product of `G`
+with `H` via `\phi`, as the Cartesian product of `G` and `H`, with the
+operation `(g_1, h_1)(g_2, h_2) = (g_1 g_2, \phi_{h_1}(g_2) h_2)` where
+`\phi_h = \phi(h)`. To construct this product in Sage for two finitely
+presented groups, we must define `\phi` manually using a pair of lists. The
+first list consists of generators of the group `G`, while the second list
+consists of images of the corresponding generators in the first list. These
+automorphisms are similarly defined as a pair of lists, generators in one
+and images in the other. As an example, we construct the dihedral group of
+order 16 as a semidirect product of cyclic groups.
+::
+
+    sage: C2 = groups.presentation.Cyclic(2)
+    sage: C8 = groups.presentation.Cyclic(8)
+    sage: hom = (C2.gens(), [ ([C8([1])], [C8([-1])]) ])
+    sage: D = C2.semidirect_product(C8, hom)
+
+The following table shows the groups of order 15 or less, and how to construct
+them in Sage. Repeated commands have been omitted but instead are described
+by the following exmples.
+
+The cyclic group of order `n` can be crated with a single command:
+
+.. skip
+
+::
+
+    sage: C = groups.presentation.Cyclic(n)
+
+Similarly for the dihedral group of order `2n`:
+
+.. skip
+
+::
+
+    sage: D = groups.presentation.Dihedral(n)
+ 
+This table was modeled after the preceding table created by Kevin Halasz. 
+
+
+===== =============================================== =============================================================================================== =========================== 
+Order Group Description                                Command(s)                                                                                     GAP ID 
+===== =============================================== =============================================================================================== =========================== 
+1     The Trivial Group                               ::                                                                                              [1,1] 
+
+                                                        sage: G = groups.presentation.Symmetric(1) 
+
+2     `C_2`                                           ::                                                                                              [2,1] 
+
+                                                        sage: G = groups.presentation.Symmetric(2)
+
+3     `C_3`                                           ::                                                                                              [3,1] 
+
+                                                        sage: G = groups.presentation.Cyclic(3) 
+
+4     `C_4`                                                                                                                                           [4,1] 
+
+4     `C_2 \times C_2`                                ::                                                                                              [4,2] 
+
+                                                        sage: G = groups.presentation.Klein() 
+
+5     `C_5`                                                                                                                                           [5,1] 
+6     `C_6`                                                                                                                                           [6,2] 
+
+6     `S_3` (Symmetric Group on 3 letters)            ::                                                                                              [6,1] 
+
+                                                        sage: G = groups.presentation.Symmetric(3) 
+
+7     `C_7`                                                                                                                                           [7,1] 
+8     `C_8`                                                                                                                                           [8,1] 
+
+8     `C_4 \times C_2`                                ::                                                                                              [8,2]
+
+                                                        sage: G = groups.presentation.FGAbelian([4,2])
+
+8     `C_2\times C_2\times C_2`                       ::                                                                                              [8,5] 
+
+                                                        sage: G = groups.presentation.FGAbelian([2,2,2])
+
+8     `D_4`                                           ::                                                                                              [8,3] 
+
+                                                        sage: G = groups.presentation.Dihedral(4)
+ 
+8     The Quaternion Group (Q)                        ::                                                                                              [8,4] 
+
+                                                        sage: G = groups.presentation.Quaternion() 
+
+9     `C_9`                                                                                                                                           [9,1] 
+9     `C_3 \times C_3`                                                                                                                                [9,2] 
+10    `C_{10}`                                                                                                                                        [10,2] 
+10    `D_5`                                                                                                                                           [10,1] 
+11    `C_{11}`                                                                                                                                        [11,1] 
+12    `C_{12}`                                                                                                                                        [12,2] 
+12    `C_6 \times C_2`                                                                                                                                [12,5] 
+12    `D_6`                                                                                                                                           [12,4] 
+12    `A_4` (Alternating Group on 4 letters)          ::                                                                                              [12,3] 
+
+                                                        sage: G = groups.presentation.Alternating(4) 
+
+12    `Q_6` (DiCyclic group of order 12)              ::                                                                                              [12,1] 
+       
+                                                        sage: G = groups.presentation.DiCyclic(3)
+ 
+13    `C_{13}`                                                                                                                                        [13,1] 
+14    `C_{14}`                                                                                                                                        [14,2] 
+14    `D_{7}`                                                                                                                                         [14,1] 
+15    `C_{15}`                                                                                                                                        [15,1]  
+===== =============================================== =============================================================================================== ===========================
+

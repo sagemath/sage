@@ -176,7 +176,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             [(9, 3), (81, 9), (729, 27), (6561, 81), (59049, 243)]
         """
         Q=copy(self)
-        if type(N)==list or type(N)==tuple:
+        if isinstance(N, list) or isinstance(N, tuple):
             Bounds=list(N)
         else:
             Bounds=[0,N]
@@ -241,8 +241,109 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         else:
             raise NotImplementedError("Must be over a Numberfield or a Numberfield Order")
 
+    def homogenize(self,n):
+        r"""
+        Return the homogenization of ``self`` at the ``nth`` coordinate.
+
+        INPUT:
+
+        - ``n`` -- integer between 0 and dimension of self, inclusive.
+
+        OUTPUT:
+
+        - A point in the projectivization of the codomain of ``self``
+        
+        EXAMPLES::
+        
+            sage: A.<x,y> = AffineSpace(ZZ,2)
+            sage: Q = A(2,3)
+            sage: Q.homogenize(2).dehomogenize(2) == Q
+            True
+    
+            ::
+    
+            sage: A.<x,y> = AffineSpace(QQ,2)
+            sage: Q = A(2,3)
+            sage: P = A(0,1)
+            sage: Q.homogenize(2).codomain() == P.homogenize(2).codomain()
+            True
+        """
+        phi=self.codomain().projective_embedding(n)
+        return(phi(self))
+
 class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
-    pass
+
+    def weil_restriction(self):
+        r"""
+        Compute the Weil restriction of this point over some extension
+        field. If the field is a finite field, then this computes
+        the Weil restriction to the prime subfield.
+
+        A Weil restriction of scalars - denoted `Res_{L/k}` - is a
+        functor which, for any finite extension of fields `L/k` and
+        any algebraic variety `X` over `L`, produces another
+        corresponding variety `Res_{L/k}(X)`, defined over `k`. It is
+        useful for reducing questions about varieties over large
+        fields to questions about more complicated varieties over
+        smaller fields. This functor applied to a point gives
+        the equivalent point on the Weil restriction of its
+        codomain.
+
+        OUTPUT: Scheme point on the Weil restriction of the codomain of ``self``.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = AffineSpace(GF(5^3,'t'),3)
+            sage: X = A.subscheme([y^2-x*z, z^2+y])
+            sage: Y = X.weil_restriction()
+            sage: P = X([1,-1,1])
+            sage: Q = P.weil_restriction();Q
+            (1, 0, 0, 4, 0, 0, 1, 0, 0)
+            sage: Q.codomain() == Y
+            True
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<w> = NumberField(x^5-2)
+            sage: R.<x> = K[]
+            sage: L.<v> = K.extension(x^2+w)
+            sage: A.<x,y> = AffineSpace(L,2)
+            sage: P = A([w^3-v,1+w+w*v])
+            sage: P.weil_restriction()
+            (w^3, -1, w + 1, w)
+        """
+        L = self.codomain().base_ring()
+        WR = self.codomain().weil_restriction()
+        if L.is_finite():
+            d = L.degree()
+            if d == 1:
+                return(self)
+            newP = []
+            for t in self:
+                c = t.polynomial().coefficients(sparse=False)
+                c = c + (d-len(c))*[0]
+                newP += c
+        else:
+            d = L.relative_degree()
+            if d == 1:
+                return(self)
+            #create a CoordinateFunction that gets the relative coordinates in terms of powers
+            from sage.rings.number_field.number_field_element import CoordinateFunction
+            v = L.gen()
+            V, from_V, to_V = L.relative_vector_space()
+            h = L(1)
+            B = [to_V(h)]
+            f = v.minpoly()
+            for i in range(f.degree()-1):
+                h *= v
+                B.append(to_V(h))
+            W = V.span_of_basis(B)
+            p = CoordinateFunction(v, W, to_V)
+            newP = []
+            for t in self:
+                newP += p(t)
+        return(WR(newP))
 
 class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field):
 
@@ -285,12 +386,12 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
 
     def orbit_structure(self,f):
         r"""
-        Every points is preperiodic over a finite field. This funtion returns the pair `[m,n]` where `m` is the
-        preperiod and `n` the period of the point ``self`` by ``f``.
+        Every point is preperiodic over a finite field. This function returns the pair `[m,n]` where `m` is the
+        preperiod and `n` is the period of the point ``self`` by ``f``.
 
         INPUT:
 
-        - ``P`` -- a point in ``self.domain()``
+        - ``f`` -- a :class:`ScemeMorphism_polynomial` with ``self`` in ``f.domain()``
 
         OUTPUT:
 
@@ -298,26 +399,26 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
 
         EXAMPLES::
 
-            sage: P.<x,y,z>=AffineSpace(GF(5),3)
-            sage: H=Hom(P,P)
-            sage: f=H([x^2+y^2,y^2,z^2+y*z])
+            sage: P.<x,y,z> = AffineSpace(GF(5),3)
+            sage: H = Hom(P,P)
+            sage: f = H([x^2 + y^2,y^2,z^2 + y * z])
             sage: P(1,1,1).orbit_structure(f)
             [0, 6]
 
         ::
 
-            sage: P.<x,y,z>=AffineSpace(GF(7),3)
-            sage: X=P.subscheme(x^2-y^2)
-            sage: H=Hom(X,X)
-            sage: f=H([x^2,y^2,z^2])
+            sage: P.<x,y,z> = AffineSpace(GF(7),3)
+            sage: X = P.subscheme(x^2 - y^2)
+            sage: H = Hom(X,X)
+            sage: f = H([x^2,y^2,z^2])
             sage: X(1,1,2).orbit_structure(f)
             [0, 2]
 
         ::
 
-            sage: P.<x,y>=AffineSpace(GF(13),2)
-            sage: H=Hom(P,P)
-            sage: f=H([x^2-y^2,y^2])
+            sage: P.<x,y> = AffineSpace(GF(13),2)
+            sage: H = Hom(P,P)
+            sage: f = H([x^2 - y^2,y^2])
             sage: P(3,4).orbit_structure(f)
             [2, 6]
         """

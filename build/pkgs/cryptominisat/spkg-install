@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting"
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+unset RM
+
+INCLUDES="-I$SAGE_LOCAL/include"
+LIBDIRS="-L$SAGE_LOCAL/lib"
+
+CXXFLAGS="$CXXFLAGS $INCLUDES $LIBDIRS -g"
+
+COMPILER=`testcc.sh $CC`
+
+if [ "x$COMPILER"  = "xGNU" ] ; then
+   CXXFLAGS="$CXXFLAGS -fPIC -Wall -pedantic"
+elif [ "x$COMPILER" = "xSun_on_Solaris" ] ; then
+   CXXFLAGS="$CXXFLAGS -Kpic"
+elif [ "x$COMPILER" = "xHP_on_HPUX" ] ; then
+   CXXFLAGS="$CXXFLAGS + z"
+fi
+
+CPPFLAGS="$INCLUDES"
+
+if [ "x$SAGE_DEBUG" = "xyes" ]; then
+   CXXFLAGS="$CXXFLAGS -O0"
+   ENABLE_DEBUG="--enable-debug"
+else
+   CXXFLAGS="$CXXFLAGS -O2"
+   ENABLE_DEBUG=""
+fi
+
+if [ "x$SAGE64" = "xyes" ]; then
+    CXXFLAGS="$CXXFLAGS -m64"
+    CPPFLAGS="$CPPFLAGS -m64"
+    # FIXME: Do we need LDFLAGS here, too?
+    #        But looks as if all linking is performed by libtool/
+    #        gcc, so we do not really need it here.
+fi
+
+export CXXFLAGS
+export CPPFLAGS
+
+
+#build CryptoMiniSat
+
+cd src
+
+$MAKE clean
+
+./configure --prefix=$SAGE_LOCAL $ENABLE_DEBUG
+
+if [ $? -ne 0 ]; then
+    echo "Error configuring cryptominisat"
+    exit 1
+fi
+
+$MAKE
+
+if [ $? -ne 0 ]; then
+    echo "Error building cryptominisat"
+    exit 1
+fi
+
+$MAKE install
+
+if [ $? -ne 0 ]; then
+    echo "Error installing cryptominisat"
+    exit 1
+fi
+
+cd ..
+

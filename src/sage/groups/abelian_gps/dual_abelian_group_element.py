@@ -56,10 +56,10 @@ import operator
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.rings.arith import *
-from sage.misc.misc import prod
-from sage.misc.functional import exp
+from sage.misc.all import prod
 from sage.rings.complex_field import is_ComplexField
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
+from functools import reduce
 
 def add_strings(x, z=0):
     """
@@ -91,7 +91,7 @@ def add_strings(x, z=0):
         return z
     if not isinstance(x, list):
         m = x.__iter__()
-        y = m.next()
+        y = next(m)
         return reduce(operator.add, m, y)
     else:
         return reduce(operator.add, x[1:], x[0])
@@ -161,7 +161,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             from sage.symbolic.constants import pi
             I = F.gen()
             PI = F(pi)
-            ans = prod([exp(2*PI*I*expsX[i]*expsg[i]/order[i]) for i in range(len(expsX))])
+            ans = prod([(2*PI*I*expsX[i]*expsg[i]/order[i]).exp() for i in range(len(expsX))])
             return ans
         ans = F(1)  ## assumes F is the cyclotomic field
         zeta = F.gen()

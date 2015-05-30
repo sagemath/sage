@@ -1,4 +1,4 @@
-cimport sage.structure.parent_gens
+from sage.structure.parent cimport Parent
 
-cdef class Module_old(sage.structure.parent_gens.ParentWithAdditiveAbelianGens):
+cdef class Module(Parent):
     pass

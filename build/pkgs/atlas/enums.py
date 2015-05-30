@@ -6,28 +6,30 @@ TESTS::
     sage: check_enums(sample_print_enums_output)
 """
 
+from __future__ import print_function
+
 # constants from src/ATLAS/CONFIG/include/atlconf.h
 # Note: must be lists, not tuples, for Python-2.4 support
 
 ATLAS_OSTYPE = (  # static char *osnam
-    'UNKNOWN', 'Linux', 'SunOS', 'SunOS4', 'OSF1',
-    'IRIX', 'AIX', 'Win9x', 'WinNT', 'Win64',
-    'HPUX', 'FreeBSD', 'OSX')
+    'UNKNOWN', 'Linux', 'SunOS', 'SunOS4', 'OSF1', 'IRIX', 'AIX',
+    'Win9x', 'WinNT', 'Win64', 'HPUX', 'FreeBSD', 'OSX')
 
 ATLAS_MACHTYPE = (  # static char *machnam
     'UNKNOWN', 'POWER3', 'POWER4', 'POWER5', 'PPCG4', 'PPCG5',
-    'POWER6', 'POWER7', 'IBMz9', 'IBMz10', 'IBMz196',
+    'POWER6', 'POWER7', 'POWERe6500', 'IBMz9', 'IBMz10', 'IBMz196',
     'x86x87', 'x86SSE1', 'x86SSE2', 'x86SSE3',
     'P5', 'P5MMX', 'PPRO', 'PII', 'PIII', 'PM', 'CoreSolo',
-    'CoreDuo', 'Core2Solo', 'Core2', 'Corei1', 'Corei2', 'Atom', 'P4', 'P4E',
-    'Efficeon', 'K7', 'HAMMER', 'AMD64K10h', 'AMDDOZER', 'UNKNOWNx86',
-    'IA64Itan', 'IA64Itan2',
-    'USI', 'USII', 'USIII', 'USIV', 'UST2', 'UnknownUS',
-    'MIPSR1xK', 'MIPSICE9', 'ARMv7')
+    'CoreDuo', 'Core2Solo', 'Core2', 'Corei1', 'Corei2', 'Corei3',
+    'Atom', 'P4', 'P4E',
+    'Efficeon', 'K7', 'HAMMER', 'AMD64K10h', 'AMDLLANO', 'AMDDOZER','AMDDRIVER',
+    'UNKNOWNx86', 'IA64Itan', 'IA64Itan2',
+    'USI', 'USII', 'USIII', 'USIV', 'UST1', 'UST2', 'UnknownUS',
+    'MIPSR1xK', 'MIPSICE9', 'ARMv6', 'ARMv7')
 
 ATLAS_ISAEXT = (  # static char *ISAXNAM
     'None', 'VSX', 'AltiVec', 'AVXMAC', 'AVXFMA4', 'AVX', 'SSE3', 'SSE2', 'SSE1',
-    '3DNow', 'NEON' )
+    '3DNow', 'NEON')
 
 
 
@@ -43,45 +45,51 @@ Architectural enums (Config's enum MACHTYPE):
      5 = 'PPCG5'
      6 = 'POWER6'
      7 = 'POWER7'
-     8 = 'IBMz9'
-     9 = 'IBMz10'
-    10 = 'IBMz196'
-    11 = 'x86x87'
-    12 = 'x86SSE1'
-    13 = 'x86SSE2'
-    14 = 'x86SSE3'
-    15 = 'P5'
-    16 = 'P5MMX'
-    17 = 'PPRO'
-    18 = 'PII'
-    19 = 'PIII'
-    20 = 'PM'
-    21 = 'CoreSolo'
-    22 = 'CoreDuo'
-    23 = 'Core2Solo'
-    24 = 'Core2'
-    25 = 'Corei1'
-    26 = 'Corei2'
-    27 = 'Atom'
-    28 = 'P4'
-    29 = 'P4E'
-    30 = 'Efficeon'
-    31 = 'K7'
-    32 = 'HAMMER'
-    33 = 'AMD64K10h'
-    34 = 'AMDDOZER'
-    35 = 'UNKNOWNx86'
-    36 = 'IA64Itan'
-    37 = 'IA64Itan2'
-    38 = 'USI'
-    39 = 'USII'
-    40 = 'USIII'
-    41 = 'USIV'
-    42 = 'UST2'
-    43 = 'UnknownUS'
-    44 = 'MIPSR1xK'
-    45 = 'MIPSICE9'
-    46 = 'ARMv7'
+     8 = 'POWERe6500'
+     9 = 'IBMz9'
+    10 = 'IBMz10'
+    11 = 'IBMz196'
+    12 = 'x86x87'
+    13 = 'x86SSE1'
+    14 = 'x86SSE2'
+    15 = 'x86SSE3'
+    16 = 'P5'
+    17 = 'P5MMX'
+    18 = 'PPRO'
+    19 = 'PII'
+    20 = 'PIII'
+    21 = 'PM'
+    22 = 'CoreSolo'
+    23 = 'CoreDuo'
+    24 = 'Core2Solo'
+    25 = 'Core2'
+    26 = 'Corei1'
+    27 = 'Corei2'
+    28 = 'Corei3'
+    29 = 'Atom'
+    30 = 'P4'
+    31 = 'P4E'
+    32 = 'Efficeon'
+    33 = 'K7'
+    34 = 'HAMMER'
+    35 = 'AMD64K10h'
+    36 = 'AMDLLANO'
+    37 = 'AMDDOZER'
+    38 = 'AMDDRIVER'
+    39 = 'UNKNOWNx86'
+    40 = 'IA64Itan'
+    41 = 'IA64Itan2'
+    42 = 'USI'
+    43 = 'USII'
+    44 = 'USIII'
+    45 = 'USIV'
+    46 = 'UST1'
+    47 = 'UST2'
+    48 = 'UnknownUS'
+    49 = 'MIPSR1xK'
+    50 = 'MIPSICE9'
+    51 = 'ARMv6'
+    52 = 'ARMv7'
 
 Operating System enums (Config's enum OSTYPE):
      0 = 'UNKNOWN'
@@ -189,6 +197,6 @@ def make_check_enums():
     """
     from subprocess import check_output
     output = check_output('make xprint_enums ; ./xprint_enums', shell=True)
-    print output
+    print(output)
     check_enums(output)
 

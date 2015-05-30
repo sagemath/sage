@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 0 ]; then
+    UPSTREAM_SOURCE_DIRECTORY=$1
+    echo "Using tarballs from $UPSTREAM_SOURCE_DIRECTORY instead of downloading"
+fi
+
+SPKG_ROOT=`pwd`
+
+set -e
+shopt -s extglob
+
+# Remove old sources and download new
+rm -rf src cddlib*
+
+CDDLIBVERSION=094g
+CDDLIBDIR=cddlib-$CDDLIBVERSION
+CDDLIBTAR=$CDDLIBDIR.tar.gz
+
+if [ -z "$UPSTREAM_SOURCE_DIRECTORY" ]; then
+    tar xzf <( curl -L "ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd/$CDDLIBTAR" )
+else
+    tar xzf "$UPSTREAM_SOURCE_DIRECTORY/$CDDLIBTAR"
+fi
+if [ ! -d "$CDDLIBDIR" ]; then
+    echo 'Aborting'
+    exit 1
+fi
+mv $CDDLIBDIR src
+
+# Remove unneeded files to save space
+cd src
+rm -rf doc examples* autom4te.cache

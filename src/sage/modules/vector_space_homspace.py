@@ -355,7 +355,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             sage: V = GF(3)^0
             sage: W = GF(3)^1
             sage: H = V.Hom(W)
-            sage: H.zero_element().is_zero()
+            sage: H.zero().is_zero()
             True
 
         Previously the above code resulted in a TypeError because the
@@ -372,12 +372,12 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         elif inspect.isfunction(A):
             try:
                 images = [A(g) for g in D.basis()]
-            except (ValueError, TypeError, IndexError), e:
+            except (ValueError, TypeError, IndexError) as e:
                 msg = 'function cannot be applied properly to some basis element because\n' + e.args[0]
                 raise ValueError(msg)
             try:
                 A = matrix.matrix(D.dimension(), C.dimension(), [C.coordinates(C(a)) for a in images])
-            except (ArithmeticError, TypeError), e:
+            except (ArithmeticError, TypeError) as e:
                 msg = 'some image of the function is not in the codomain, because\n' + e.args[0]
                 raise ArithmeticError(msg)
         elif isinstance(A, (list, tuple)):
@@ -387,7 +387,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             try:
                 v = [C(a) for a in A]
                 A = matrix.matrix(D.dimension(), C.dimension(), [C.coordinates(a) for a in v])
-            except (ArithmeticError, TypeError), e:
+            except (ArithmeticError, TypeError) as e:
                 msg = 'some proposed image is not in the codomain, because\n' + e.args[0]
                 raise ArithmeticError(msg)
         else:

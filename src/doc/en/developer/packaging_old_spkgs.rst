@@ -124,11 +124,11 @@ More precisely, the directory should contain the following:
 - ``patches/``: this directory contains patches to source files in
   ``src/``.  See :ref:`section-old-spkg-patching-overview`.  Patches
   to files in ``src/`` should be applied in ``spkg-install``, and all
-  patches must be documented in ``SPKG.txt``, i.e. what they do, if
-  they are platform specific, if they should be pushed upstream,
-  etc. To ensure that all patched versions of upstream source files
-  under ``src/`` are under revision control, the whole directory
-  ``patches/`` must be under revision control.
+  patches must be self-documenting, i.e. the header must contain what
+  they do, if they are platform specific, if they should be pushed
+  upstream, etc. To ensure that all patched versions of upstream
+  source files under ``src/`` are under revision control, the whole
+  directory ``patches/`` must be under revision control.
 
 **Never** apply patches to upstream source files under ``src/`` and
 then package up an spkg. Such a mixture of upstream source with Sage

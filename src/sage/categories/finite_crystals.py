@@ -9,11 +9,11 @@ Finite Crystals
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.crystals import Crystals
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.tensor import TensorProductsCategory
 
-class FiniteCrystals(Category):
+class FiniteCrystals(CategoryWithAxiom):
     """
     The category of finite crystals.
 
@@ -58,14 +58,14 @@ class FiniteCrystals(Category):
     """
 
     @cached_method
-    def super_categories(self):
+    def extra_super_categories(self):
         r"""
         EXAMPLES::
 
-            sage: FiniteCrystals().super_categories()
-            [Category of crystals, Category of finite enumerated sets]
+            sage: FiniteCrystals().extra_super_categories()
+            [Category of finite enumerated sets]
         """
-        return [Crystals(), FiniteEnumeratedSets()]
+        return [FiniteEnumeratedSets()]
 
     def example(self, n = 3):
         """
@@ -79,4 +79,19 @@ class FiniteCrystals(Category):
         """
         from sage.categories.crystals import Crystals
         return Crystals().example(n)
+
+    class TensorProducts(TensorProductsCategory):
+        """
+        The category of finite crystals constructed by tensor
+        product of finite crystals.
+        """
+        @cached_method
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: FiniteCrystals().TensorProducts().extra_super_categories()
+                [Category of finite crystals]
+            """
+            return [self.base_category()]
 

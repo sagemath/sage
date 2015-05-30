@@ -14,7 +14,9 @@ cdef class P1List:
     cdef int __N
     cdef object __list, __end_hash
 
-    cdef int *g, *s, *t   # xgcd with N table.
+    cdef int *g
+    cdef int *s
+    cdef int *t   # xgcd with N table.
 
     # Here we use a pointer to a function, so the if logic
     # for normalizing an element does not need to be used

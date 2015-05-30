@@ -79,7 +79,7 @@ __all__ = ['modify_for_nested_pickle', 'nested_pickle',
            #, 'SubClass', 'CopiedClass', 'A1'
            ]
 
-cpdef modify_for_nested_pickle(cls, str name_prefix, module):
+cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     r"""
     Modify the subclasses of the given class to be picklable, by
     giving them a mangled name and putting the mangled name in the
@@ -88,10 +88,15 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module):
     INPUTS:
 
     - ``cls`` - The class to modify.
-
     - ``name_prefix`` - The prefix to prepend to the class name.
-
     - ``module`` - The module object to modify with the mangled name.
+    - ``first_run`` - optional bool (default True): Whether or not
+      this function is run for the first time on ``cls``.
+
+    NOTE:
+
+    This function would usually not be directly called. It is internally used
+    in :class:`NestedClassMetaclass`.
 
     EXAMPLES::
 
@@ -111,17 +116,85 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module):
         sage: getattr(module, 'A.B', 'Not found')
         <class '__main__.A.B'>
 
+    Here we demonstrate the effect of the ``first_run`` argument::
+
+        sage: modify_for_nested_pickle(A, 'X', sys.modules['__main__'])
+        sage: A.B.__name__ # nothing changed
+        'A.B'
+        sage: modify_for_nested_pickle(A, 'X', sys.modules['__main__'], first_run=False)
+        sage: A.B.__name__
+        'X.A.B'
+
+    Note that the class is now found in the module under both its old and
+    its new name::
+
+        sage: getattr(module, 'A.B', 'Not found')
+        <class '__main__.X.A.B'>
+        sage: getattr(module, 'X.A.B', 'Not found')
+        <class '__main__.X.A.B'>
+
+
+    TESTS:
+
+    The following is a real life example, that was enabled by the internal
+    use of the``first_run`` in :trac:`9107`::
+
+        sage: cython_code = [
+        ....:  "from sage.structure.unique_representation import UniqueRepresentation",
+        ....:  "class A1(UniqueRepresentation):",
+        ....:  "    class B1(UniqueRepresentation):",
+        ....:  "        class C1: pass",
+        ....:  "    class B2:",
+        ....:  "        class C2: pass"]
+        sage: import os
+        sage: cython(os.linesep.join(cython_code))
+
+    Before :trac:`9107`, the name of ``A1.B1.C1`` would have been wrong::
+
+        sage: A1.B1.C1.__name__
+        'A1.B1.C1'
+        sage: A1.B2.C2.__name__
+        'A1.B2.C2'
+        sage: A_module = sys.modules[A1.__module__]
+        sage: getattr(A_module, 'A1.B1.C1', 'Not found').__name__
+        'A1.B1.C1'
+        sage: getattr(A_module, 'A1.B2.C2', 'Not found').__name__
+        'A1.B2.C2'
+
     """
     cdef str name, dotted_name
     cdef str mod_name = module.__name__
-    for (name, v) in cls.__dict__.iteritems():
-        if isinstance(v, (type, ClassType)):
-            if v.__name__ == name and v.__module__ == mod_name and getattr(module, name, None) is not v:
-                # OK, probably this is a nested class.
-                dotted_name = name_prefix + '.' + name
-                v.__name__ = dotted_name
-                setattr(module, dotted_name, v)
-                modify_for_nested_pickle(v, dotted_name, module)
+    cdef str cls_name = cls.__name__+'.'
+    cdef str v_name
+    if first_run:
+        for (name, v) in cls.__dict__.iteritems():
+            if isinstance(v, NestedClassMetaclass):
+                v_name = v.__name__
+                if v_name==name and v.__module__ == mod_name and getattr(module, v_name, None) is not v:
+                    # OK, probably this is a nested class.
+                    dotted_name = name_prefix + '.' + v_name
+                    setattr(module, dotted_name, v)
+                    modify_for_nested_pickle(v, name_prefix, module, False)
+                    v.__name__ = dotted_name
+            elif isinstance(v, (type, ClassType)):
+                v_name = v.__name__
+                if v_name==name and v.__module__ == mod_name and getattr(module, v_name, None) is not v:
+                    # OK, probably this is a nested class.
+                    dotted_name = name_prefix + '.' + v_name
+                    setattr(module, dotted_name, v)
+                    modify_for_nested_pickle(v, dotted_name, module)
+                    v.__name__ = dotted_name
+    else:
+        for (name, v) in cls.__dict__.iteritems():
+            if isinstance(v, (type, ClassType, NestedClassMetaclass)):
+                v_name = v.__name__
+                if v_name==cls_name+name and v.__module__ == mod_name:
+                    # OK, probably this is a nested class.
+                    dotted_name = name_prefix + '.' + v_name
+                    setattr(module, dotted_name, v)
+                    modify_for_nested_pickle(v, name_prefix, module, False)
+                    v.__name__ = dotted_name
+        
 
 def nested_pickle(cls):
     r"""
@@ -238,7 +311,24 @@ class MainClass(object):
                 sage: MainClass.NestedClass.NestedSubClass.__name__
                 'MainClass.NestedClass.NestedSubClass'
             """
-            pass
+            def dummy(self, x, *args, r=(1,2,3.4), **kwds):
+                """
+                A dummy method to demonstrate the embedding of
+                method signature for nested classes.
+
+                TESTS::
+
+                    sage: from sage.misc.nested_class import MainClass
+                    sage: print MainClass.NestedClass.NestedSubClass.dummy.__doc__
+                    NestedSubClass.dummy(self, x, *args, r=(1, 2, 3.4), **kwds)
+                    File: sage/misc/nested_class.pyx (starting at line 314)
+                    <BLANKLINE>
+                                    A dummy method to demonstrate the embedding of
+                                    method signature for nested classes.
+                    ...
+
+                """
+                pass
 
 class SubClass(MainClass):
     r"""

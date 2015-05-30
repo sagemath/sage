@@ -64,6 +64,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
     ::
 
         sage: n = 5; list_plot3d(matrix(RDF,n,[(i+j)%n for i in [1..n] for j in [1..n]]))
+        Graphics3d Object
 
     We plot a matrix of values of sin.
 
@@ -72,6 +73,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
         sage: pi = float(pi)
         sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
         sage: list_plot3d(m, texture='yellow', frame_aspect_ratio=[1,1,1/3])
+        Graphics3d Object
 
     Though it doesn't change the shape of the graph, increasing
     num_points can increase the clarity of the graph.
@@ -79,24 +81,28 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
     ::
 
         sage: list_plot3d(m, texture='yellow', frame_aspect_ratio=[1,1,1/3],num_points=40)
+        Graphics3d Object
 
     We can change the interpolation type.
 
     ::
 
         sage: list_plot3d(m, texture='yellow', interpolation_type='nn',frame_aspect_ratio=[1,1,1/3])
+        Graphics3d Object
 
     We can make this look better by increasing the number of samples.
 
     ::
 
         sage: list_plot3d(m, texture='yellow', interpolation_type='nn',frame_aspect_ratio=[1,1,1/3],num_points=40)
+        Graphics3d Object
 
     Let's try a spline.
 
     ::
 
         sage: list_plot3d(m, texture='yellow', interpolation_type='spline',frame_aspect_ratio=[1,1,1/3])
+        Graphics3d Object
 
     That spline doesn't capture the oscillation very well; let's try a
     higher degree spline.
@@ -104,6 +110,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
     ::
 
         sage: list_plot3d(m, texture='yellow', interpolation_type='spline', degree=5, frame_aspect_ratio=[1,1,1/3])
+        Graphics3d Object
 
     We plot a list of lists::
 
@@ -120,6 +127,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
         ...      for j in range(6):
         ...         l.append((float(i*pi/5),float(j*pi/5),m[i,j]))
         sage: list_plot3d(l,texture='yellow')
+        Graphics3d Object
 
     Note that the points do not have to be regularly sampled. For example::
 
@@ -128,20 +136,24 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
         ...    for j in range(-5,5):
         ...      l.append((normalvariate(0,1),normalvariate(0,1),normalvariate(0,1)))
         sage: list_plot3d(l,interpolation_type='nn',texture='yellow',num_points=100)
+        Graphics3d Object
 
     TESTS:
 
     We plot 0, 1, and 2 points::
 
         sage: list_plot3d([])
+        Graphics3d Object
 
     ::
 
         sage: list_plot3d([(2,3,4)])
+        Graphics3d Object
 
     ::
 
         sage: list_plot3d([(0,0,1), (2,3,4)])
+        Graphics3d Object
 
     However, if two points are given with the same x,y coordinates but
     different z coordinates, an exception will be raised::
@@ -164,7 +176,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
     if texture == "automatic":
         texture = "lightblue"
     if is_Matrix(v):
-        if interpolation_type=='default' or interpolation_type=='linear' and not kwds.has_key('num_points'):
+        if interpolation_type=='default' or interpolation_type=='linear' and 'num_points' not in kwds:
             return list_plot3d_matrix(v, texture=texture,  **kwds)
         else:
             l=[]
@@ -173,7 +185,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
                     l.append((i,j,v[i,j]))
             return list_plot3d_tuples(l,interpolation_type,texture,**kwds)
 
-    if type(v)==numpy.ndarray:
+    if isinstance(v, numpy.ndarray):
         return list_plot3d(matrix(v),interpolation_type,texture,**kwds)
 
     if isinstance(v, list):
@@ -193,7 +205,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
             return list_plot3d_tuples(v,interpolation_type,texture=texture, **kwds)
         else:
             return list_plot3d_array_of_arrays(v, interpolation_type,texture, **kwds)
-    raise TypeError, "v must be a matrix or list"
+    raise TypeError("v must be a matrix or list")
 
 def list_plot3d_matrix(m, texture, **kwds):
     """
@@ -218,6 +230,7 @@ def list_plot3d_matrix(m, texture, **kwds):
     We plot a matrix that illustrates summation modulo `n`::
 
         sage: n = 5; list_plot3d(matrix(RDF,n,[(i+j)%n for i in [1..n] for j in [1..n]])) # indirect doctest
+        Graphics3d Object
 
     The interpolation type for matrices is 'linear'; for other types
     use other :func:`list_plot3d` input types.
@@ -227,7 +240,9 @@ def list_plot3d_matrix(m, texture, **kwds):
         sage: pi = float(pi)
         sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
         sage: list_plot3d(m, texture='yellow', frame_aspect_ratio=[1,1,1/3]) # indirect doctest
+        Graphics3d Object
         sage: list_plot3d(m, texture='yellow', interpolation_type='linear') # indirect doctest
+        Graphics3d Object
     """
     from parametric_surface import ParametricSurface
     f = lambda i,j: (i,j,float(m[int(i),int(j)]))
@@ -336,10 +351,12 @@ def list_plot3d_tuples(v,interpolation_type, texture, **kwds):
         sage: pi = float(pi)
         sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
         sage: list_plot3d(m, texture='yellow', interpolation_type='linear', num_points=5) # indirect doctest
+        Graphics3d Object
 
     ::
 
         sage: list_plot3d(m, texture='yellow', interpolation_type='spline',frame_aspect_ratio=[1,1,1/3])
+        Graphics3d Object
 
     ::
 
@@ -348,6 +365,7 @@ def list_plot3d_tuples(v,interpolation_type, texture, **kwds):
     ::
 
         sage: list_plot3d([(1,2,3),(0,1,3),(2,1,4),(1,0,-2)], texture='yellow', num_points=50)
+        Graphics3d Object
     """
     from matplotlib import delaunay
     import numpy
@@ -357,7 +375,7 @@ def list_plot3d_tuples(v,interpolation_type, texture, **kwds):
     from plot3d import plot3d
 
     if len(v)<3:
-        raise ValueError, "We need at least 3 points to perform the interpolation"
+        raise ValueError("We need at least 3 points to perform the interpolation")
 
     x=[float(p[0]) for p in v]
     y=[float(p[1]) for p in v]
@@ -386,7 +404,7 @@ def list_plot3d_tuples(v,interpolation_type, texture, **kwds):
         for j in range(i+1,len(x)):
             if x[i]==x[j] and y[i]==y[j]:
                 if z[i]!=z[j]:
-                    raise ValueError, "Two points with same x,y coordinates and different z coordinates were given. Interpolation cannot handle this."
+                    raise ValueError("Two points with same x,y coordinates and different z coordinates were given. Interpolation cannot handle this.")
                 elif z[i]==z[j]:
                     drop_list.append(j)
 
@@ -399,7 +417,7 @@ def list_plot3d_tuples(v,interpolation_type, texture, **kwds):
     ymin=float(min(y))
     ymax=float(max(y))
 
-    num_points= kwds['num_points'] if kwds.has_key('num_points') else int(4*numpy.sqrt(len(x)))
+    num_points= kwds['num_points'] if 'num_points' in kwds else int(4*numpy.sqrt(len(x)))
                                           #arbitrary choice - assuming more or less a nxn grid of points
                                           # x should have n^2 entries. We sample 4 times that many points.
 
@@ -446,13 +464,13 @@ def list_plot3d_tuples(v,interpolation_type, texture, **kwds):
 
     if interpolation_type =='spline':
         from plot3d import plot3d
-        kx=kwds['kx'] if kwds.has_key('kx') else 3
-        ky=kwds['ky'] if kwds.has_key('ky') else 3
-        if kwds.has_key('degree'):
+        kx=kwds['kx'] if 'kx' in kwds else 3
+        ky=kwds['ky'] if 'ky' in kwds else 3
+        if 'degree' in kwds:
             kx=kwds['degree']
             ky=kwds['degree']
 
-        s=kwds['smoothing'] if kwds.has_key('smoothing') else len(x)-numpy.sqrt(2*len(x))
+        s=kwds['smoothing'] if 'smoothing' in kwds else len(x)-numpy.sqrt(2*len(x))
         s=interpolate.bisplrep(x,y,z,[int(1)]*len(x),xmin,xmax,ymin,ymax,kx=kx,ky=ky,s=s)
         f=lambda x,y: interpolate.bisplev(x,y,s)
         return plot3d(f,(xmin,xmax),(ymin,ymax),texture=texture,plot_points=[num_points,num_points],**kwds)

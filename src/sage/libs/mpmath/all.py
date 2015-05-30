@@ -2,8 +2,6 @@ import mpmath
 
 # Patch mpmath to use Cythonized functions
 import utils as _utils
-#mpmath.libmp.normalize = mpmath.libmp.normalize1 = normalize = _utils.normalize
-#mpmath.libmp.from_man_exp = from_man_exp = _utils.from_man_exp
 
 # Also import internal functions
 from mpmath.libmp import *

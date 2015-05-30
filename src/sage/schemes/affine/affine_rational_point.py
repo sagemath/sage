@@ -101,8 +101,15 @@ def enum_affine_rational_field(X,B):
 
     - Charlie Turner (06-2010): small adjustments.
     """
-    if is_Scheme(X):
+    from sage.schemes.affine.affine_space import is_AffineSpace
+    if(is_Scheme(X)):
+        if (not is_AffineSpace(X.ambient_space())):
+            raise TypeError("Ambient space must be affine space over the rational field")
         X = X(X.base_ring())
+    else:
+        if (not is_AffineSpace(X.codomain().ambient_space())):
+            raise TypeError("Codomain must be affine space over the rational field")
+
     n = X.codomain().ambient_space().ngens()
     if X.value_ring() is ZZ:
         Q = [ 1 ]
@@ -118,14 +125,14 @@ def enum_affine_rational_field(X,B):
         pass
     iters = [ iter(R) for _ in range(n) ]
     for it in iters:
-        it.next()
+        next(it)
     i = 0
     while i < n:
         try:
-            a = ZZ(iters[i].next())
+            a = ZZ(next(iters[i]))
         except StopIteration:
             iters[i] = iter(R) # reset
-            P[i] = iters[i].next() # reset P[i] to 0 and increment
+            P[i] = next(iters[i]) # reset P[i] to 0 and increment
             i += 1
             continue
         m = m.gcd(a)
@@ -141,6 +148,65 @@ def enum_affine_rational_field(X,B):
     pts.sort()
     return pts
 
+
+def enum_affine_number_field(X,B):
+    """
+    Enumerates affine points on scheme ``X`` defined over a number field. Simply checks all of the
+    points of absolute height up to ``B`` and adds those that are on the scheme to the list.
+
+    INPUT:
+
+    - ``X`` - a scheme defined over a number field
+
+    - ``B`` - a real number
+
+    OUTPUT:
+
+     - a list containing the affine points of ``X`` of absolute height up to ``B``,
+       sorted.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
+        sage: u = QQ['u'].0
+        sage: K = NumberField(u^2 + 2,'v')
+        sage: A.<x,y,z> = AffineSpace(K, 3)
+        sage: X = A.subscheme([y^2 - x])
+        sage: enum_affine_number_field(X(K),4)
+        [(0, 0, -1), (0, 0, -v), (0, 0, -1/2*v), (0, 0, 0), (0, 0, 1/2*v), (0, 0, v), (0, 0, 1),
+        (1, -1, -1), (1, -1, -v), (1, -1, -1/2*v), (1, -1, 0), (1, -1, 1/2*v), (1, -1, v), (1, -1, 1),
+        (1, 1, -1), (1, 1, -v), (1, 1, -1/2*v), (1, 1, 0), (1, 1, 1/2*v), (1, 1, v), (1, 1, 1)]
+
+    ::
+
+        sage: u = QQ['u'].0
+        sage: K = NumberField(u^2 + 3,'v')
+        sage: A.<x,y> = AffineSpace(K,2)
+        sage: X=A.subscheme(x-y)
+        sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
+        sage: enum_affine_number_field(X,3)
+        [(-1, -1), (-1/2*v - 1/2, -1/2*v - 1/2), (1/2*v - 1/2, 1/2*v - 1/2), (0, 0), (-1/2*v + 1/2, -1/2*v + 1/2),
+        (1/2*v + 1/2, 1/2*v + 1/2), (1, 1)]
+    """
+    from sage.schemes.affine.affine_space import is_AffineSpace
+    if(is_Scheme(X)):
+        if (not is_AffineSpace(X.ambient_space())):
+            raise TypeError("Ambient space must be affine space over a number field")
+        X = X(X.base_ring())
+    else:
+        if (not is_AffineSpace(X.codomain().ambient_space())):
+            raise TypeError("Codomain must be affine space over a number field")
+
+    R = X.codomain().ambient_space()
+
+    pts = []
+    for P in R.points_of_bounded_height(B):
+        try:
+            pts.append(X(P))
+        except TypeError:
+            pass
+    pts.sort()
+    return pts
 
 
 def enum_affine_finite_field(X):
@@ -197,15 +263,22 @@ def enum_affine_finite_field(X):
 
     - John Cremona and Charlie Turner (06-2010)
     """
-    if is_Scheme(X):
+    from sage.schemes.affine.affine_space import is_AffineSpace
+    if(is_Scheme(X)):
+        if (not is_AffineSpace(X.ambient_space())):
+            raise TypeError("Ambient space must be affine space over a finite field")
         X = X(X.base_ring())
+    else:
+        if (not is_AffineSpace(X.codomain().ambient_space())):
+            raise TypeError("Codomain must be affine space over a finite field")
+
     n = X.codomain().ambient_space().ngens()
     F = X.value_ring()
     pts = []
     for c in cartesian_product_iterator([F]*n):
         try:
             pts.append(X(c))
-        except StandardError:
+        except Exception:
             pass
     pts.sort()
     return pts

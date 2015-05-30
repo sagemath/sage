@@ -135,7 +135,7 @@ Dinge mit ihr berechnen.
     sage: e.elltors()
     [1, [], []]
     sage: e.ellglobalred()
-    [10351, [1, -1, 0, -1], 1]
+    [10351, [1, -1, 0, -1], 1, [11, 1; 941, 1], [[1, 5, 0, 1], [1, 5, 0, 1]]]
     sage: f = e.ellchangecurve([1,-1,0,-1])
     sage: f[:5]
     [1, -1, 0, 4, 3]
@@ -196,7 +196,7 @@ Singular bietet eine sehr gute, ausgereifte Bibliothek für Gröbnerbasen,
 größte gemeinsame Teiler von mehrdimensionalen Polynomen, Basen von
 Riemann-Roch Räumen einer planaren Kurve und Faktorisierungen unter anderem.
 Wir zeigen hier die Faktorisierung mehrdimensionaler Polynome mit
-Sages Singular-Schnittstelle (ohne die ``...``):
+Sages Singular-Schnittstelle (ohne die ``....:``):
 
 ::
 
@@ -207,9 +207,9 @@ Sages Singular-Schnittstelle (ohne die ``...``):
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C
-    sage: f = singular('9*y^8 - 9*x^2*y^7 - 18*x^3*y^6 - 18*x^5*y^6 + \
-    ....: 9*x^6*y^4 + 18*x^7*y^5 + 36*x^8*y^4 + 9*x^10*y^4 - 18*x^11*y^2 - \
-    ....: 9*x^12*y^3 - 18*x^13*y^2 + 9*x^16')
+    sage: f = singular('9*y^8 - 9*x^2*y^7 - 18*x^3*y^6 - 18*x^5*y^6 +'
+    ....:     '9*x^6*y^4 + 18*x^7*y^5 + 36*x^8*y^4 + 9*x^10*y^4 - 18*x^11*y^2 -'
+    ....:     '9*x^12*y^3 - 18*x^13*y^2 + 9*x^16')
 
 Wir haben also das Polynom :math:`f` definiert, nun geben wir es aus und faktorisieren es.
 
@@ -234,14 +234,14 @@ Wir haben also das Polynom :math:`f` definiert, nun geben wir es aus und faktori
 Genau wie im GAP Beispiel in :ref:`section-gap`, können wir diese Faktorisierung
 berechnen ohne explizit die Singular-Schnittstelle zu nutzen.
 (Dennoch nutzt Sage im Hintergrund die Singular-Schnittstelle für die Berechnung.)
-Bitte geben Sie ein ohne ``...``:
+Bitte geben Sie ein ohne ``....:``:
 
 ::
 
     sage: x, y = QQ['x, y'].gens()
-    sage: f = 9*y^8 - 9*x^2*y^7 - 18*x^3*y^6 - 18*x^5*y^6 + 9*x^6*y^4 \
-    ....: + 18*x^7*y^5 + 36*x^8*y^4 + 9*x^10*y^4 - 18*x^11*y^2 - 9*x^12*y^3 \
-    ....: - 18*x^13*y^2 + 9*x^16
+    sage: f = (9*y^8 - 9*x^2*y^7 - 18*x^3*y^6 - 18*x^5*y^6 + 9*x^6*y^4
+    ....:     + 18*x^7*y^5 + 36*x^8*y^4 + 9*x^10*y^4 - 18*x^11*y^2 - 9*x^12*y^3
+    ....:     - 18*x^13*y^2 + 9*x^16)
     sage: factor(f)
     (9) * (-x^5 + y^2)^2 * (x^6 - 2*x^3*y^2 - x^2*y^3 + y^4)
 
@@ -308,29 +308,29 @@ Zuletzt noch ein Beispiel wie man Sage zum Plotten mittels
 ``openmath`` nutzt. Einige von ihnen wurden (verändert) aus dem Maxima
 Benutzerhandbuch entnommen.
 
-Ein 2D-Plot verschiedener Funktionen (ohne ``...`` eingeben):
+Ein 2D-Plot verschiedener Funktionen (ohne ``....:`` eingeben):
 
 ::
 
     sage: maxima.plot2d('[cos(7*x),cos(23*x)^4,sin(13*x)^3]','[x,0,1]', # not tested
-    ....: '[plot_format,openmath]')
+    ....:     '[plot_format,openmath]')
 
 Ein "live" 3D-Plot, den man mit der Maus bewegen kann:
 
 ::
 
     sage: maxima.plot3d ("2^(-u^2 + v^2)", "[u, -3, 3]", "[v, -2, 2]", # not tested
-    ....: '[plot_format, openmath]')
+    ....:     '[plot_format, openmath]')
     sage: maxima.plot3d("atan(-x^2 + y^3/4)", "[x, -4, 4]", "[y, -4, 4]", # not tested
-    ....: "[grid, 50, 50]",'[plot_format, openmath]')
+    ....:     "[grid, 50, 50]",'[plot_format, openmath]')
 
 Der nächste Plot ist das berühmte Möbiusband:
 
 ::
 
     sage: maxima.plot3d("[cos(x)*(3 + y*cos(x/2)), sin(x)*(3 + y*cos(x/2)), y*sin(x/2)]", # not tested
-    ....: "[x, -4, 4]", "[y, -4, 4]",
-    ....: '[plot_format, openmath]')
+    ....:     "[x, -4, 4]", "[y, -4, 4]",
+    ....:     '[plot_format, openmath]')
 
 Und der letzte ist die berühmte Kleinsche Flasche:
 
@@ -343,6 +343,6 @@ Und der letzte ist die berühmte Kleinsche Flasche:
     sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
     sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]", # not tested
-    ....: "[y, -%pi, %pi]", "['grid, 40, 40]",
-    ....: '[plot_format, openmath]')
+    ....:     "[y, -%pi, %pi]", "['grid, 40, 40]",
+    ....:     '[plot_format, openmath]')
 

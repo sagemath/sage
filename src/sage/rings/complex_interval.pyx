@@ -40,6 +40,8 @@ heavily modified:
 import math
 import operator
 
+include "sage/ext/interrupt.pxi"
+
 from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
 from complex_number cimport ComplexNumber
 
@@ -52,7 +54,6 @@ import real_mpfi
 import real_mpfr
 cimport real_mpfr
 
-include "sage/ext/stdsage.pxi"
 
 cdef double LOG_TEN_TWO_PLUS_EPSILON = 3.321928094887363 # a small overestimate of log(10,2)
 
@@ -86,7 +87,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         same parent as ``self``.
         """
         cdef ComplexIntervalFieldElement x
-        x = PY_NEW(ComplexIntervalFieldElement)
+        x = ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)
         x._parent = self._parent
         x._prec = self._prec
         mpfi_init2(x.__re, self._prec)
@@ -113,9 +114,9 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         mpfi_init2(self.__im, self._prec)
 
         if imag is None:
-            if PY_TYPE_CHECK(real, ComplexNumber):
+            if isinstance(real, ComplexNumber):
                 real, imag = (<ComplexNumber>real).real(), (<ComplexNumber>real).imag()
-            elif PY_TYPE_CHECK(real, ComplexIntervalFieldElement):
+            elif isinstance(real, ComplexIntervalFieldElement):
                 real, imag = (<ComplexIntervalFieldElement>real).real(), (<ComplexIntervalFieldElement>real).imag()
             elif isinstance(real, sage.libs.pari.all.pari_gen):
                 real, imag = real.real(), real.imag()
@@ -254,10 +255,12 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: sum(plot(CIF(RIF(1/k, 1/k), RIF(-k, k))) for k in [1..10])
+            Graphics object consisting of 20 graphics primitives
 
         Exact and nearly exact points are still visible::
 
             sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
+            Graphics object consisting of 6 graphics primitives
 
         A demonstration that `z \mapsto z^2` acts chaotically on `|z|=1`::
 
@@ -268,6 +271,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             ...       g += z.plot(color=(1./(40-i), 0, 1))
             ...
             sage: g
+            Graphics object consisting of 80 graphics primitives
         """
         from sage.plot.polygon import polygon2d
         x, y = self.real(), self.imag()
@@ -433,7 +437,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
 
         cdef ComplexIntervalFieldElement x = self._new()
         cdef ComplexIntervalFieldElement other_intv
-        if PY_TYPE_CHECK(other, ComplexIntervalFieldElement):
+        if isinstance(other, ComplexIntervalFieldElement):
             other_intv = other
         else:
             # Let type errors from _coerce_ propagate...
@@ -459,7 +463,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         """
         cdef ComplexIntervalFieldElement x = self._new()
         cdef ComplexIntervalFieldElement other_intv
-        if PY_TYPE_CHECK(other, ComplexIntervalFieldElement):
+        if isinstance(other, ComplexIntervalFieldElement):
             other_intv = other
         else:
             # Let type errors from _coerce_ propagate...
@@ -972,6 +976,27 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         """
         raise TypeError, "can't convert complex interval to complex"
 
+    def __nonzero__(self):
+        """
+        Return ``True`` if ``self`` is not known to be exactly zero.
+
+        EXAMPLES::
+
+            sage: CIF(RIF(0, 0), RIF(0, 0)).__nonzero__()
+            False
+            sage: bool(CIF(RIF(0, 0), RIF(0, 0)))
+            False
+            sage: CIF(RIF(1), RIF(0)).__nonzero__()
+            True
+            sage: CIF(RIF(0), RIF(1)).__nonzero__()
+            True
+            sage: CIF(RIF(1, 2), RIF(0)).__nonzero__()
+            True
+            sage: CIF(RIF(-1, 1), RIF(-1, 1)).__nonzero__()
+            True
+        """
+        return self.real().__nonzero__() or self.imag().__nonzero__()
+
     def __richcmp__(left, right, int op):
         r"""
         As with the real interval fields this never returns false positives.
@@ -1011,7 +1036,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         """
         return (<Element>left)._richcmp(right, op)
 
-    cdef _richcmp_c_impl(left, Element right, int op):
+    cpdef _richcmp_(left, Element right, int op):
         cdef ComplexIntervalFieldElement lt, rt
         lt = left
         rt = right
@@ -1069,7 +1094,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         return (<Element>left)._cmp(right)
 
 
-    cdef int _cmp_c_impl(left, sage.structure.element.Element right) except -2:
+    cpdef int _cmp_(left, sage.structure.element.Element right) except -2:
         """
         Intervals are compared lexicographically on the 4-tuple:
         ``(x.real().lower(), x.real().upper(),
@@ -1344,7 +1369,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             return RIF(0).log()
         theta = self.argument()
         rho = abs(self)
-        if base is None or base is 'e':
+        if base is None or base == 'e':
             return ComplexIntervalFieldElement(self._parent, rho.log(), theta)
         else:
             from real_mpfr import RealNumber, RealField
@@ -1444,6 +1469,192 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
 
 #     def algebraic_dependancy( self, n ):
 #         return self.algdep( n )
+
+    def cos(self):
+        r"""
+        Compute the cosine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1,1).cos()
+            0.833730025131149? - 0.988897705762865?*I
+            sage: CIF(3).cos()
+            -0.9899924966004455?
+            sage: CIF(0,2).cos()
+            3.762195691083632?
+
+        Check that :trac:`17285` is fixed::
+
+            sage: CIF(cos(2/3))
+            0.7858872607769480?
+
+        ALGORITHM:
+
+        The implementation uses the following trigonometric identity
+
+        .. MATH::
+
+            \cos(x + iy) = \cos(x) \cosh(y) - i \sin(x) \sinh(y)
+        """
+        cdef ComplexIntervalFieldElement res = self._new()
+        cdef mpfi_t tmp
+        mpfi_init2(tmp, self._parent.prec())
+        sig_on()
+        mpfi_cos(res.__re, self.__re)
+        mpfi_cosh(tmp, self.__im)
+        mpfi_mul(res.__re, res.__re, tmp)
+
+        mpfi_sin(res.__im, self.__re)
+        mpfi_sinh(tmp, self.__im)
+        mpfi_mul(res.__im, res.__im, tmp)
+        mpfi_neg(res.__im, res.__im)
+        sig_off()
+        mpfi_clear(tmp)
+        return res
+
+    def sin(self):
+        r"""
+        Compute the sine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1,1).sin()
+            1.298457581415978? + 0.634963914784736?*I
+            sage: CIF(2).sin()
+            0.909297426825682?
+            sage: CIF(0,2).sin()
+            3.626860407847019?*I
+
+        Check that :trac:`17825` is fixed::
+
+            sage: CIF(sin(2/3))
+            0.618369803069737?
+
+        ALGORITHM:
+
+        The implementation uses the following trigonometric identity
+
+        .. MATH::
+
+            \sin(x + iy) = \sin(x) \cosh(y) + i \cos (x) \sinh(y)
+        """
+        cdef ComplexIntervalFieldElement res = self._new()
+        cdef mpfi_t tmp
+        mpfi_init2(tmp, self._parent.prec())
+        sig_on()
+        mpfi_sin(res.__re, self.__re)
+        mpfi_cosh(tmp, self.__im)
+        mpfi_mul(res.__re, res.__re, tmp)
+
+        mpfi_cos(res.__im, self.__re)
+        mpfi_sinh(tmp, self.__im)
+        mpfi_mul(res.__im, res.__im, tmp)
+        sig_off()
+        mpfi_clear(tmp)
+        return res
+
+    def tan(self):
+        r"""
+        Return the tangent of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1,1).tan()
+            0.27175258531952? + 1.08392332733870?*I
+            sage: CIF(2).tan()
+            -2.18503986326152?
+            sage: CIF(0,2).tan()
+            0.964027580075817?*I
+        """
+        return self.sin() / self.cos()
+
+    def cosh(self):
+        r"""
+        Return the hyperbolic cosine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1,1).cosh()
+            0.833730025131149? + 0.988897705762865?*I
+            sage: CIF(2).cosh()
+            3.762195691083632?
+            sage: CIF(0,2).cosh()
+            -0.4161468365471424?
+
+        ALGORITHM:
+
+        The implementation uses the following trigonometric identity
+
+        .. MATH::
+
+            \cosh(x+iy) = \cos(y) \cosh(x) + i \sin(y) \sinh(x)
+        """
+        cdef ComplexIntervalFieldElement res = self._new()
+        cdef mpfi_t tmp
+        mpfi_init2(tmp, self._parent.prec())
+        sig_on()
+        mpfi_cos(res.__re, self.__im)
+        mpfi_cosh(tmp, self.__re)
+        mpfi_mul(res.__re, res.__re, tmp)
+
+        mpfi_sin(res.__im, self.__im)
+        mpfi_sinh(tmp, self.__re)
+        mpfi_mul(res.__im, res.__im, tmp)
+        sig_off()
+        mpfi_clear(tmp)
+        return res
+
+    def sinh(self):
+        r"""
+        Return the hyperbolic sine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1,1).sinh()
+            0.634963914784736? + 1.298457581415978?*I
+            sage: CIF(2).sinh()
+            3.626860407847019?
+            sage: CIF(0,2).sinh()
+            0.909297426825682?*I
+
+        ALGORITHM:
+
+        The implementation uses the following trigonometric identity
+
+        .. MATH::
+
+            \sinh(x+iy) = \cos(y) \sinh(x) + i \sin(y) \cosh(x)
+        """
+        cdef ComplexIntervalFieldElement res = self._new()
+        cdef mpfi_t tmp
+        mpfi_init2(tmp, self._parent.prec())
+        sig_on()
+        mpfi_cos(res.__re, self.__im)
+        mpfi_sinh(tmp, self.__re)
+        mpfi_mul(res.__re, res.__re, tmp)
+
+        mpfi_sin(res.__im, self.__im)
+        mpfi_cosh(tmp, self.__re)
+        mpfi_mul(res.__im, res.__im, tmp)
+        sig_off()
+        mpfi_clear(tmp)
+        return res
+
+    def tanh(self):
+        r"""
+        Return the hyperbolic tangent of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1,1).tanh()
+            1.08392332733870? + 0.27175258531952?*I
+            sage: CIF(2).tanh()
+            0.964027580075817?
+            sage: CIF(0,2).tanh()
+            -2.18503986326152?*I
+        """
+        return self.sinh() / self.cosh()
+
 
 def make_ComplexIntervalFieldElement0( fld, re, im ):
     """

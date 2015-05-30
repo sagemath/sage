@@ -1,22 +1,3 @@
 #!/usr/bin/env bash
 
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-cd src/src
-
-echo
-echo "Running NTL's test suite..."
-
-$MAKE check
-
-echo
-if [ $? -ne 0 ]; then
-    echo >&2 "Error running NTL's test suite."
-    exit 1
-else
-    echo "NTL's test suite passed."
-fi
+cd src/ntl/src && $MAKE check

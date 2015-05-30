@@ -1,7 +1,7 @@
 """
 Polytopes
 
-This module provides access to polymake, which 'has been developed
+This module provides access to **polymake**, which 'has been developed
 since 1997 in the Discrete Geometry group at the Institute of
 Mathematics of Technische Universitat Berlin. Since 2004 the
 development is shared with Fachbereich Mathematik, Technische
@@ -53,6 +53,7 @@ if os.path.exists(path):
 
 tmp_file = os.path.join(SAGE_TMP, 'tmp.poly')
 
+
 class Polytope(SageObject):
     """
     Create a polytope.
@@ -90,7 +91,7 @@ class Polytope(SageObject):
 
     def __add__(self, other):
         if not isinstance(other, Polytope):
-            raise TypeError, "other (=%s) must be a polytope"%other
+            raise TypeError("other (=%s) must be a polytope"%other)
         output_file = tmp_filename()
         infile1 = tmp_filename()
         open(infile1,'w').write(self.__data)
@@ -102,7 +103,7 @@ class Polytope(SageObject):
         stdin.close()
         err = stderr.read()
         if len(err) > 0:
-            raise RuntimeError, err
+            raise RuntimeError(err)
         print stdout.read(), err
         S = polymake.from_data(open(output_file).read())
         os.unlink(infile1)
@@ -138,16 +139,18 @@ class Polytope(SageObject):
         polymake_processes = Popen([polymake_command, F, cmd],stdout=PIPE,stderr=PIPE)
         ans, err = polymake_processes.communicate()
         if len(err) > 0:
-            raise RuntimeError, err
+            raise RuntimeError(err)
         if len(ans) == 0:
-            raise ValueError, "%s\nError executing polymake command %s"%(
-                err,cmd)
+            raise ValueError("%s\nError executing polymake command %s"%(
+                err,cmd))
         self.__data = open(F).read()
         return ans
 
 
     def facets(self):
         """
+        Return the facets.
+
         EXAMPLES::
 
             sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])   # optional - polymake
@@ -171,6 +174,8 @@ class Polytope(SageObject):
 
     def vertices(self):
         """
+        Return the vertices.
+
         EXAMPLES::
 
             sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])     # optional - polymake
@@ -208,7 +213,7 @@ class Polytope(SageObject):
 
     def is_simple(self):
         r"""
-        Return True if this polytope is simple.
+        Return ``True`` if this polytope is simple.
 
         A polytope is *simple* if the degree of each vertex equals the
         dimension of the polytope.
@@ -260,7 +265,7 @@ class Polymake:
         try:
             d = open(tmp_file).read()
         except IOError:
-            raise RuntimeError, "You may need to install the polymake package"
+            raise RuntimeError("You may need to install the polymake package")
         return Polytope(d, name)
 
     def reconfigure(self):
@@ -273,16 +278,32 @@ class Polymake:
         os.system("polymake --reconfigure")
 
     def associahedron(self, dimension):
+        """
+        Return the Associahedron.
+
+        INPUT:
+
+        - ``dimension`` -- an integer
+        """
         return self.__make('associahedron %s %s'%(tmp_file, dimension),
                            '%s-dimensional associahedron'%dimension)
 
     def birkhoff(self, n):
+        """
+        Return the Birkhoff polytope.
+
+        INPUT:
+
+        - ``n`` -- an integer
+        """
         return self.__make('birkhoff %s %s'%(tmp_file, n),
                            'Birkhoff %s'%n)
 
 
     def cell24(self):
         """
+        Return the 24-cell.
+
         EXAMPLES::
 
             sage: polymake.cell24()            # optional - polymake

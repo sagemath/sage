@@ -215,13 +215,14 @@ class DLXMatrix:
             ...           bad|= DLX._nodes[DLX._nodes[d][LEFT]][RIGHT] != d
             ...           bad|= DLX._nodes[DLX._nodes[d][RIGHT]][LEFT] != d
             ...           if bad:
-            ...               raise RuntimeError, "Linked list inconsistent."
+            ...               raise RuntimeError("Linked list inconsistent.")
             ...           d = DLX._nodes[d][DOWN]
             ...       c = DLX._nodes[c][RIGHT]
             sage: print fullcount
             6
         """
-        if initialsolution is None: initialsolution = []
+        if initialsolution is None:
+            initialsolution = []
         self._cursolution = []
         # LEFT, RIGHT, UP, DOWN, COLUMN, INDEX/COUNT
         self._nodes = [[ROOTNODE, ROOTNODE, None, None, None, None]]
@@ -404,7 +405,7 @@ class DLXMatrix:
             sage: M = DLXMatrix([[1,[1,2]],[2,[2,3]],[3,[1,3]]])
             sage: while 1:
             ...     try:
-            ...         C = M.next()
+            ...         C = next(M)
             ...     except StopIteration:
             ...         print "StopIteration"
             ...         break

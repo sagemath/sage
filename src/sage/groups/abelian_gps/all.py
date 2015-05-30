@@ -21,7 +21,7 @@ all.py -- export of abelian groups to Sage
 #*****************************************************************************
 
 #from dual_abelian_group import DualAbelianGroup
-from abelian_group import AbelianGroup, is_AbelianGroup, word_problem
+from abelian_group import AbelianGroup, word_problem
 from values import AbelianGroupWithValues
 
 # TODO:

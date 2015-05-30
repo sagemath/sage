@@ -1,5 +1,5 @@
 r"""
-Fast Numerical Evaluation.
+Fast Numerical Evaluation
 
 For many applications such as numerical integration, differential
 equation approximation, plotting a 3d surface, optimization problems,
@@ -19,27 +19,29 @@ what it can in C, and will call out to Python if necessary.
 Essential to the understanding of this class is the distinction
 between symbolic expressions and callable symbolic expressions (where
 the latter binds argument names to argument positions). The
-\code{*vars} parameter passed around encapsulates this information.
+``*vars`` parameter passed around encapsulates this information.
 
-See the function \code{fast_float(f, *vars)} to create a fast-callable
+See the function ``fast_float(f, *vars)`` to create a fast-callable
 version of f.
 
-NOTE: Sage temporarily has two implementations of this functionality;
-one in this file, which will probably be deprecated soon, and one in
-fast_callable.pyx.  The following instructions are for the old
-implementation; you probably want to be looking at fast_callable.pyx
-instead.
+.. NOTE::
 
-To provide this interface for a class, implement
-\code{_fast_float_(self, *vars)}.  The basic building blocks are
-provided by the functions \code{fast_float_constant} (returns a
-constant function), \code{fast_float_arg} (selects the $n$-th value
-when called with $\ge n$ arguments), and \code{fast_float_func} which
+    Sage temporarily has two implementations of this functionality ;
+    one in this file, which will probably be deprecated soon, and one in
+    fast_callable.pyx.  The following instructions are for the old
+    implementation; you probably want to be looking at fast_callable.pyx
+    instead.
+
+To provide this interface for a class, implement ``fast_float_(self, *vars)``.  The basic building blocks are
+provided by the functions ``fast_float_constant`` (returns a
+constant function), ``fast_float_arg`` (selects the ``n``-th value
+when called with ``\ge_n`` arguments), and ``fast_float_func`` which
 wraps a callable Python function. These may be combined with the
 standard Python arithmetic operators, and support many of the basic
-math functions such sqrt, exp, and trig functions.
+math functions such ``sqrt``, ``exp``, and trig functions.
 
-EXAMPLES:
+EXAMPLES::
+
     sage: from sage.ext.fast_eval import fast_float
     sage: f = fast_float(sqrt(x^7+1), 'x', old=True)
     sage: f(1)
@@ -47,58 +49,55 @@ EXAMPLES:
     sage: f.op_list()
     ['load 0', 'push 7.0', 'pow', 'push 1.0', 'add', 'call sqrt(1)']
 
-    To interpret that last line, we load argument 0 ('x' in this case) onto
-    the stack, push the constant 2.0 onto the stack, call the pow function
-    (which takes 2 arguments from the stack), push the constant 1.0, add the
-    top two arguments of the stack, and then call sqrt.
+To interpret that last line, we load argument 0 (``x`` in this case) onto
+the stack, push the constant 2.0 onto the stack, call the pow function
+(which takes 2 arguments from the stack), push the constant 1.0, add the
+top two arguments of the stack, and then call sqrt.
 
-Here we take sin of the first argument and add it to f:
+Here we take ``sin`` of the first argument and add it to ``f``::
+
     sage: from sage.ext.fast_eval import fast_float_arg
     sage: g = fast_float_arg(0).sin()
     sage: (f+g).op_list()
     ['load 0', 'push 7.0', 'pow', 'push 1.0', 'add', 'call sqrt(1)', 'load 0', 'call sin(1)', 'add']
 
 TESTS:
+
 This used to segfault because of an assumption that assigning None to a
-variable would raise a TypeError:
+variable would raise a TypeError::
+
     sage: from sage.ext.fast_eval import fast_float_arg, fast_float
     sage: fast_float_arg(0)+None
     Traceback (most recent call last):
     ...
     TypeError
 
-AUTHOR:
-    -- Robert Bradshaw (2008-10): Initial version
-"""
+AUTHORS:
 
+- Robert Bradshaw (2008-10): Initial version
+"""
 
 #*****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 
 from sage.ext.fast_callable import fast_callable, Wrapper
 
 include "stdsage.pxi"
 
-cdef extern from "Python.h":
-    int PyInt_AS_LONG(PyObject*)
-    PyObject* PyTuple_New(Py_ssize_t size)
-    PyObject* PyTuple_GET_ITEM(PyObject* t, Py_ssize_t index)
-    void PyTuple_SET_ITEM(PyObject* t, Py_ssize_t index, PyObject* item)
-    object PyObject_CallObject(PyObject* func, PyObject* args)
-    PyObject* PyFloat_FromDouble(double d)
-    void Py_DECREF(PyObject *)
+cimport cython
+from cpython.ref cimport Py_INCREF
+from cpython.object cimport PyObject_CallObject
+from cpython.int cimport PyInt_AS_LONG
+from cpython.tuple cimport PyTuple_New, PyTuple_SET_ITEM
+
 
 cdef extern from "math.h":
     double sqrt(double)
@@ -275,7 +274,8 @@ cdef op_to_tuple(fast_double_op op):
         try:
             param = param_count, cfunc_names[<size_t>op.params.func]
         except KeyError:
-            raise ValueError, "Unknown C function: 0x%x" % <size_t>op.params.func
+            raise ValueError("Unknown C function: 0x%x"
+                             % <size_t>op.params.func)
     elif op.type == PY_FUNC:
         param = <object>(op.params.func)
     else:
@@ -286,7 +286,7 @@ cdef op_to_tuple(fast_double_op op):
         return s, param
 
 def _unpickle_FastDoubleFunc(nargs, max_height, op_list):
-    cdef FastDoubleFunc self = PY_NEW(FastDoubleFunc)
+    cdef FastDoubleFunc self = FastDoubleFunc.__new__(FastDoubleFunc)
     self.nops = len(op_list)
     self.nargs = nargs
     self.max_height = max_height
@@ -305,33 +305,24 @@ def _unpickle_FastDoubleFunc(nargs, max_height, op_list):
         elif type in [ONE_ARG_FUNC, TWO_ARG_FUNC]:
             param_count, cfunc = op[1]
             address = cfunc_addresses[cfunc]
-            self.ops[i].params.func = <void *>address
+            self.ops[i].params.func = <PyObject*>address
             self.ops[i].type = ['', ONE_ARG_FUNC, TWO_ARG_FUNC][param_count]
         elif type == PY_FUNC:
             if self.py_funcs is None:
                 self.py_funcs = op[1]
             else:
                 self.py_funcs = self.py_funcs + (op[1],)
-            self.ops[i].params.func = <void *>op[1]
+            self.ops[i].params.func = <PyObject*>op[1]
         i += 1
     return self
 
 
-# This is where we wish we had case statements...
-# It looks like gcc might be smart enough to figure it out.
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef inline int process_op(fast_double_op op, double* stack, double* argv, int top) except -2:
-
-#    print [stack[i] for i from 0 <= i <= top], ':', op.type
-
     cdef int i, n
-    cdef PyObject* py_args
-
-    # We have to do some trickery because Pyrex disallows function pointer casts
-    # This will be removed in a future version of Cython.
-    cdef double (*f)(double)
-    cdef void** fp = <void **>&f
-    cdef double (*ff)(double, double)
-    cdef void** ffp = <void **>&ff
+    cdef object arg
+    cdef tuple py_args
 
     if op.type == LOAD_ARG:
         stack[top+1] = argv[op.params.n]
@@ -382,7 +373,7 @@ cdef inline int process_op(fast_double_op op, double* stack, double* argv, int t
 
     elif op.type == POW:
         if stack[top-1] < 0 and stack[top] != floor(stack[top]):
-            raise ValueError, "negative number to a fractional power not real"
+            raise ValueError("negative number to a fractional power not real")
         stack[top-1] = pow(stack[top-1], stack[top])
         return top-1
 
@@ -411,29 +402,27 @@ cdef inline int process_op(fast_double_op op, double* stack, double* argv, int t
         return top-1
 
     elif op.type == ONE_ARG_FUNC:
-        fp[0] = op.params.func
-        stack[top] = f(stack[top])
+        stack[top] = (op.params.f)(stack[top])
         return top
 
     elif op.type == TWO_ARG_FUNC:
-        ffp[0] = op.params.func
-        stack[top-1] = ff(stack[top-1], stack[top])
+        stack[top-1] = (op.params.ff)(stack[top-1], stack[top])
         return top-1
 
     elif op.type == PY_FUNC:
-        # Even though it's python, optimize this because it'll be used often...
-        # We also want to avoid cluttering the header and footer
-        # of this function Python variables bring.
-        n = PyInt_AS_LONG(PyTuple_GET_ITEM(op.params.func, 0))
+        # We use a few direct C/API calls here because Cython itself
+        # doesn't generate optimal code for this.
+        n = PyInt_AS_LONG((<tuple>op.params.func)[0])
         top = top - n + 1
         py_args = PyTuple_New(n)
-        for i from 0 <= i < n:
-            PyTuple_SET_ITEM(py_args, i, PyFloat_FromDouble(stack[top+i]))
-        stack[top] = PyObject_CallObject(PyTuple_GET_ITEM(op.params.func, 1), py_args)
-        Py_DECREF(py_args)
+        for i in range(n):
+            arg = stack[top+i]
+            Py_INCREF(arg)  # PyTuple_SET_ITEM() steals a reference
+            PyTuple_SET_ITEM(py_args, i, arg)
+        stack[top] = PyObject_CallObject((<tuple>op.params.func)[1], py_args)
         return top
 
-    raise RuntimeError, "Bad op code %s" % op.type
+    raise RuntimeError("Bad op code %s" % op.type)
 
 
 cdef class FastDoubleFunc:
@@ -442,7 +431,8 @@ cdef class FastDoubleFunc:
     the real numbers (e.g. for plotting). It represents an expression
     as a stack-based series of operations.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_eval import FastDoubleFunc
         sage: f = FastDoubleFunc('const', 1.5) # the constant function
         sage: f()
@@ -461,16 +451,18 @@ cdef class FastDoubleFunc:
         sage: list(h)
         ['push 1.5', 'load 0', 'add', 'call sin(1)']
 
-    We can wrap Python functions too:
+    We can wrap Python functions too::
+
         sage: h = FastDoubleFunc('callable', lambda x,y: x*x*x - y, g, f)
         sage: h(10)
         998.5
         sage: h.is_pure_c()
         False
-        sage: list(h)        # random address
-        ['load 0', 'push 1.5', 'py_call <function <lambda> at 0x9fedf70>(2)']
+        sage: list(h)
+        ['load 0', 'push 1.5', 'py_call <function <lambda> at 0x...>(2)']
 
-    Here's a more complicated expression:
+    Here's a more complicated expression::
+
         sage: from sage.ext.fast_eval import fast_float_constant, fast_float_arg
         sage: a = fast_float_constant(1.5)
         sage: b = fast_float_constant(3.14)
@@ -487,9 +479,9 @@ cdef class FastDoubleFunc:
         sage: list(f)
         ['push 1.5', 'load 0', 'dup', 'mul', 'mul', 'push 3.14', 'load 0', 'mul', 'add', 'push 7.0', 'add', 'load 1', 'load 1', 'call sin(1)', 'dup', 'mul', 'push 1.5', 'add', 'call sqrt(1)', 'div', 'sub']
 
+    AUTHORS:
 
-    AUTHOR:
-        -- Robert Bradshaw
+    - Robert Bradshaw
     """
     def __init__(self, type, param, *args):
 
@@ -536,13 +528,12 @@ cdef class FastDoubleFunc:
                 memcpy(self.ops + i, arg.ops, sizeof(fast_double_op) * arg.nops)
                 i += arg.nops
             self.ops[self.nops-1].type = PY_FUNC
-            self.ops[self.nops-1].params.func = <void *>py_func
+            self.ops[self.nops-1].params.func = <PyObject*>py_func
 
         else:
-            raise ValueError, "Unknown operation: %s" % type
+            raise ValueError("Unknown operation: %s" % type)
 
         self.allocate_stack()
-
 
     cdef int allocate_stack(FastDoubleFunc self) except -1:
         self.argv = <double*>sage_malloc(sizeof(double) * self.nargs)
@@ -562,7 +553,8 @@ cdef class FastDoubleFunc:
 
     def __reduce__(self):
         """
-        TESTS:
+        TESTS::
+
             sage: from sage.ext.fast_eval import fast_float_arg, fast_float_func
             sage: f = fast_float_arg(0).sin() * 10 + fast_float_func(hash, fast_float_arg(1))
             sage: loads(dumps(f)) == f
@@ -576,7 +568,8 @@ cdef class FastDoubleFunc:
         Two functions are considered equal if they represent the same
         exact sequence of operations.
 
-        TESTS:
+        TESTS::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: fast_float_arg(0) == fast_float_arg(0)
             True
@@ -606,7 +599,8 @@ cdef class FastDoubleFunc:
 
     def __call__(FastDoubleFunc self, *args):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(2)
             sage: f(0,1,2,3)
@@ -621,7 +615,7 @@ cdef class FastDoubleFunc:
             TypeError: a float is required
         """
         if len(args) < self.nargs:
-            raise TypeError, "Wrong number of arguments (need at least %s, got %s)" % (self.nargs, len(args))
+            raise TypeError("Wrong number of arguments (need at least %s, got %s)" % (self.nargs, len(args)))
         cdef int i = 0
         for i from 0 <= i < self.nargs:
             self.argv[i] = args[i]
@@ -639,9 +633,10 @@ cdef class FastDoubleFunc:
 
     def _fast_float_(self, *vars):
         r"""
-        Returns \code{self} if there are enough arguments, otherwise raises a TypeError.
+        Returns ``self`` if there are enough arguments, otherwise raises a ``TypeError``.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(1)
             sage: f._fast_float_('x','y') is f
@@ -652,7 +647,7 @@ cdef class FastDoubleFunc:
             TypeError: Needs at least 2 arguments (1 provided)
         """
         if self.nargs > len(vars):
-            raise TypeError, "Needs at least %s arguments (%s provided)" % (self.nargs, len(vars))
+            raise TypeError("Needs at least %s arguments (%s provided)" % (self.nargs, len(vars)))
         return self
 
     def op_list(self):
@@ -660,9 +655,11 @@ cdef class FastDoubleFunc:
         Returns a list of string representations of the
         operations that make up this expression.
 
-        Python and C function calls may be only available by function pointer addresses.
+        Python and C function calls may be only available by function
+        pointer addresses.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_constant, fast_float_arg
             sage: a = fast_float_constant(17)
             sage: x = fast_float_arg(0)
@@ -680,9 +677,10 @@ cdef class FastDoubleFunc:
 
     def __iter__(self):
         """
-        Returns the list of operations of self.
+        Returns the list of operations of ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0)*2 + 3
             sage: list(f)
@@ -692,10 +690,11 @@ cdef class FastDoubleFunc:
 
     cpdef bint is_pure_c(self):
         """
-        Returns True if this function can be evaluated without
+        Returns ``True`` if this function can be evaluated without
         any python calls (at any level).
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_constant, fast_float_arg, fast_float_func
             sage: fast_float_constant(2).is_pure_c()
             True
@@ -714,7 +713,8 @@ cdef class FastDoubleFunc:
         """
         Returns a list of all python calls used by function.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_func, fast_float_arg
             sage: x = fast_float_arg(0)
             sage: f = fast_float_func(hash, sqrt(x))
@@ -736,7 +736,8 @@ cdef class FastDoubleFunc:
 
     def __add__(left, right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0) + fast_float_arg(1)
             sage: f(3,4)
@@ -746,7 +747,8 @@ cdef class FastDoubleFunc:
 
     def __sub__(left, right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0) - fast_float_arg(2)
             sage: f(3,4,5)
@@ -756,7 +758,8 @@ cdef class FastDoubleFunc:
 
     def __mul__(left, right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0) * 2
             sage: f(17)
@@ -766,7 +769,8 @@ cdef class FastDoubleFunc:
 
     def __div__(left, right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0) / 7
             sage: f(14)
@@ -776,7 +780,8 @@ cdef class FastDoubleFunc:
 
     def __pow__(FastDoubleFunc left, right, dummy):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import FastDoubleFunc
             sage: f = FastDoubleFunc('arg', 0)^2
             sage: f(2)
@@ -791,7 +796,8 @@ cdef class FastDoubleFunc:
             sage: f(5,3)
             125.0
 
-        TESTS:
+        TESTS::
+
             sage: var('a,b')
             (a, b)
             sage: ff = (a^b)._fast_float_(a,b)
@@ -824,7 +830,8 @@ cdef class FastDoubleFunc:
 
     def __neg__(FastDoubleFunc self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = -fast_float_arg(0)
             sage: f(3.5)
@@ -834,7 +841,8 @@ cdef class FastDoubleFunc:
 
     def __abs__(FastDoubleFunc self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = abs(fast_float_arg(0))
             sage: f(-3)
@@ -844,7 +852,8 @@ cdef class FastDoubleFunc:
 
     def __float__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_constant, fast_float_arg
             sage: ff = fast_float_constant(17)
             sage: float(ff)
@@ -861,11 +870,12 @@ cdef class FastDoubleFunc:
         if self.nargs == 0:
             return self._call_c(NULL)
         else:
-            raise TypeError, "Not a constant."
+            raise TypeError("Not a constant.")
 
     def abs(FastDoubleFunc self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).abs()
             sage: f(3)
@@ -875,7 +885,8 @@ cdef class FastDoubleFunc:
 
     def __invert__(FastDoubleFunc self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = ~fast_float_arg(0)
             sage: f(4)
@@ -885,7 +896,8 @@ cdef class FastDoubleFunc:
 
     def sqrt(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).sqrt()
             sage: f(4)
@@ -900,7 +912,9 @@ cdef class FastDoubleFunc:
     def _richcmp_(left, right, op):
         """
         Compare left and right.
-        EXAMPLES:
+
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: import operator
             sage: f = fast_float_arg(0)._richcmp_(2, operator.lt)
@@ -943,7 +957,8 @@ cdef class FastDoubleFunc:
 
     def log(self, base=None):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).log()
             sage: f(2)
@@ -964,13 +979,14 @@ cdef class FastDoubleFunc:
         else:
             try:
                 base = fast_float_constant(log(float(base)))
-            except TypeError, e:
+            except TypeError as e:
                 base = fast_float(base.log())
             return binop(self.cfunc(&log), base, DIV)
 
     def exp(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).exp()
             sage: f(1)
@@ -986,7 +1002,8 @@ cdef class FastDoubleFunc:
 
     def ceil(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).ceil()
             sage: f(1.5)
@@ -998,7 +1015,8 @@ cdef class FastDoubleFunc:
 
     def floor(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).floor()
             sage: f(11.5)
@@ -1014,7 +1032,8 @@ cdef class FastDoubleFunc:
 
     def sin(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).sin()
             sage: f(pi/2)
@@ -1024,7 +1043,8 @@ cdef class FastDoubleFunc:
 
     def cos(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).cos()
             sage: f(0)
@@ -1034,7 +1054,8 @@ cdef class FastDoubleFunc:
 
     def tan(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).tan()
             sage: f(pi/3)
@@ -1044,7 +1065,8 @@ cdef class FastDoubleFunc:
 
     def csc(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).csc()
             sage: f(pi/2)
@@ -1054,7 +1076,8 @@ cdef class FastDoubleFunc:
 
     def sec(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).sec()
             sage: f(pi)
@@ -1064,7 +1087,8 @@ cdef class FastDoubleFunc:
 
     def cot(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).cot()
             sage: f(pi/4)
@@ -1074,7 +1098,8 @@ cdef class FastDoubleFunc:
 
     def arcsin(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).arcsin()
             sage: f(0.5)
@@ -1084,7 +1109,8 @@ cdef class FastDoubleFunc:
 
     def arccos(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).arccos()
             sage: f(sqrt(3)/2)
@@ -1094,7 +1120,8 @@ cdef class FastDoubleFunc:
 
     def arctan(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).arctan()
             sage: f(1)
@@ -1108,7 +1135,8 @@ cdef class FastDoubleFunc:
 
     def sinh(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).sinh()
             sage: f(log(2))
@@ -1118,7 +1146,8 @@ cdef class FastDoubleFunc:
 
     def cosh(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).cosh()
             sage: f(log(2))
@@ -1128,7 +1157,8 @@ cdef class FastDoubleFunc:
 
     def tanh(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).tanh()
             sage: f(0)
@@ -1138,7 +1168,8 @@ cdef class FastDoubleFunc:
 
     def arcsinh(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).arcsinh()
             sage: f(sinh(5))
@@ -1148,7 +1179,8 @@ cdef class FastDoubleFunc:
 
     def arccosh(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).arccosh()
             sage: f(cosh(5))
@@ -1158,7 +1190,8 @@ cdef class FastDoubleFunc:
 
     def arctanh(self):
         """
-        EXAMPLE:
+        EXAMPLES::
+
             sage: from sage.ext.fast_eval import fast_float_arg
             sage: f = fast_float_arg(0).arctanh()
             sage: abs(f(tanh(0.5)) - 0.5) < 0.0000001
@@ -1168,7 +1201,7 @@ cdef class FastDoubleFunc:
 
     cdef FastDoubleFunc cfunc(FastDoubleFunc self, void* func):
         cdef FastDoubleFunc feval = self.unop(ONE_ARG_FUNC)
-        feval.ops[feval.nops - 1].params.func = func
+        feval.ops[feval.nops - 1].params.func = <PyObject*>func
         feval.allocate_stack()
         return feval
 
@@ -1177,7 +1210,7 @@ cdef class FastDoubleFunc:
     ###################################################################
 
     cdef FastDoubleFunc unop(FastDoubleFunc self, char type):
-        cdef FastDoubleFunc feval = PY_NEW(FastDoubleFunc)
+        cdef FastDoubleFunc feval = FastDoubleFunc.__new__(FastDoubleFunc)
         feval.nargs = self.nargs
         feval.nops = self.nops + 1
         feval.max_height = self.max_height
@@ -1193,9 +1226,10 @@ cdef class FastDoubleFunc:
 cdef FastDoubleFunc binop(_left, _right, char type):
     r"""
     Returns a function that calculates left and right on the stack, leaving
-    their results on the top, and then calls operation \code{type}.
+    their results on the top, and then calls operation ``type``.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_eval import fast_float_arg
         sage: f = fast_float_arg(1)
         sage: g = fast_float_arg(2) * 11
@@ -1206,7 +1240,8 @@ cdef FastDoubleFunc binop(_left, _right, char type):
         sage: (f+g).op_list()
         ['load 1', 'load 2', 'push 11.0', 'mul', 'add']
 
-    Correctly calculates the maximum stack heights and number of arguments:
+    Correctly calculates the maximum stack heights and number of arguments::
+
         sage: f.max_height
         1
         sage: g.max_height
@@ -1237,7 +1272,7 @@ cdef FastDoubleFunc binop(_left, _right, char type):
     if left is None or right is None:
         raise TypeError
 
-    cdef FastDoubleFunc feval = PY_NEW(FastDoubleFunc)
+    cdef FastDoubleFunc feval = FastDoubleFunc.__new__(FastDoubleFunc)
     feval.nargs = max(left.nargs, right.nargs)
     feval.nops = left.nops + right.nops + 1
     feval.max_height = max(left.max_height, right.max_height+1)
@@ -1259,13 +1294,15 @@ def fast_float_constant(x):
     """
     Return a fast-to-evaluate constant function.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_eval import fast_float_constant
         sage: f = fast_float_constant(-2.75)
         sage: f()
         -2.75
 
-    This is all that goes on under the hood:
+    This is all that goes on under the hood::
+
         sage: fast_float_constant(pi).op_list()
         ['push 3.14159265359']
     """
@@ -1276,9 +1313,11 @@ def fast_float_arg(n):
     Return a fast-to-evaluate argument selector.
 
     INPUT:
-        n -- the (zero-indexed) argument to select
 
-    EXAMPLES:
+    - ``n`` -- the (zero-indexed) argument to select
+
+    EXAMPLES::
+
         sage: from sage.ext.fast_eval import fast_float_arg
         sage: f = fast_float_arg(0)
         sage: f(1,2)
@@ -1287,7 +1326,8 @@ def fast_float_arg(n):
         sage: f(1,2)
         2.0
 
-    This is all that goes on under the hood:
+    This is all that goes on under the hood::
+
         sage: fast_float_arg(10).op_list()
         ['load 10']
     """
@@ -1298,10 +1338,12 @@ def fast_float_func(f, *args):
     Returns a wrapper around a python function.
 
     INPUT:
-        f -- a callable python object
-        args -- a list of FastDoubleFunc inputs
 
-    EXAMPLES:
+    - ``f`` -- a callable python object
+    - ``args`` -- a list of FastDoubleFunc inputs
+
+    EXAMPLES::
+
         sage: from sage.ext.fast_eval import fast_float_func, fast_float_arg
         sage: f = fast_float_arg(0)
         sage: g = fast_float_arg(1)
@@ -1309,9 +1351,10 @@ def fast_float_func(f, *args):
         sage: h(5, 10)
         -5.0
 
-    This is all that goes on under the hood:
-        sage: h.op_list() # random memory address
-        ['load 0', 'load 1', 'py_call <function <lambda> at 0xb62b230>(2)']
+    This is all that goes on under the hood::
+
+        sage: h.op_list()
+        ['load 0', 'load 1', 'py_call <function <lambda> at 0x...>(2)']
     """
     return FastDoubleFunc('callable', f, *args)
 
@@ -1328,13 +1371,15 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
     On failure, returns the input unchanged.
 
     INPUT:
-        f    -- an expression
-        vars -- the names of the arguments
-        old  -- use the original algorithm for fast_float
-        expect_one_var -- don't give deprecation warning if vars is
-                          omitted, as long as expression has only one var
 
-    EXAMPLES:
+    - ``f``    -- an expression
+    - ``vars`` -- the names of the arguments
+    - ``old``  -- use the original algorithm for fast_float
+    - ``expect_one_var`` -- don't give deprecation warning if ``vars`` is
+      omitted, as long as expression has only one var
+
+    EXAMPLES::
+
         sage: from sage.ext.fast_eval import fast_float
         sage: x,y = var('x,y')
         sage: f = fast_float(sqrt(x^2+y^2), 'x', 'y')
@@ -1342,7 +1387,8 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
         5.0
 
     Specifying the argument names is essential, as fast_float objects
-    only distinguish between arguments by order.
+    only distinguish between arguments by order. ::
+
         sage: f = fast_float(x-y, 'x','y')
         sage: f(1,2)
         -1.0
@@ -1358,7 +1404,7 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
 
     cdef int i
     for i from 0 <= i < len(vars):
-        if not PY_TYPE_CHECK(vars[i], str):
+        if not isinstance(vars[i], str):
             v = str(vars[i])
             # inexact generators display as 1.00..0*x
             if '*' in v:
@@ -1385,10 +1431,10 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
         pass
 
     if f is None:
-        raise TypeError, "no way to make fast_float from None"
+        raise TypeError("no way to make fast_float from None")
 
     return f
 
-def is_fast_float(x):
-    return PY_TYPE_CHECK(x, FastDoubleFunc) or PY_TYPE_CHECK(x, Wrapper)
 
+def is_fast_float(x):
+    return isinstance(x, FastDoubleFunc) or isinstance(x, Wrapper)

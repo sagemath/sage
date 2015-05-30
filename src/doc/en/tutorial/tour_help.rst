@@ -113,15 +113,14 @@ after the list of variable names. For example:
 ::
 
     sage: def is_even(n):
-    ...       return n%2 == 0
-    ...
+    ....:     return n%2 == 0
     sage: is_even(2)
     True
     sage: is_even(3)
     False
 
 Note: Depending on which version of the tutorial you are viewing, you
-may see three dots ``...`` on the second line of this example.  Do
+may see three dots ``....:`` on the second line of this example.  Do
 not type them; they are just to emphasize that the code is indented.
 Whenever this is the case, press [Return/Enter] once at the end of the block to
 insert a blank line and conclude the function definition.
@@ -134,7 +133,7 @@ value. For example, the function below defaults to ``divisor=2`` if
 ::
 
     sage: def is_divisible_by(number, divisor=2):
-    ...       return number%divisor == 0
+    ....:     return number%divisor == 0
     sage: is_divisible_by(6,2)
     True
     sage: is_divisible_by(6)
@@ -167,11 +166,11 @@ it.
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...      return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:    return v
     Syntax Error:
            return v
 
@@ -180,11 +179,11 @@ If you fix the indentation, the function works:
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...       return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:     return v
     sage: even(10)
     [4, 6, 8]
 
@@ -203,7 +202,7 @@ a terminating backslash:
 ::
 
     sage: 2 + \
-    ...      3
+    ....:    3
     5
 
 In Sage, you count by iterating over a range of integers. For example,
@@ -213,7 +212,7 @@ Java:
 ::
 
     sage: for i in range(3):
-    ...       print i
+    ....:     print i
     0
     1
     2
@@ -223,7 +222,7 @@ The first line below is like ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ...       print i
+    ....:     print i
     2
     3
     4
@@ -234,7 +233,7 @@ The third argument controls the step, so the following is like
 ::
 
     sage: for i in range(1,6,2):
-    ...       print i
+    ....:     print i
     1
     3
     5
@@ -247,7 +246,7 @@ and make a table of squares and cubes.
 ::
 
     sage: for i in range(5):
-    ...       print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
          0      0      0
          1      1      1
          2      4      8
@@ -320,11 +319,11 @@ it derives from the builtin type ``list``.
 ::
 
     sage: class Evens(list):
-    ...       def __init__(self, n):
-    ...           self.n = n
-    ...           list.__init__(self, range(2, n+1, 2))
-    ...       def __repr__(self):
-    ...           return "Even positive numbers up to n."
+    ....:     def __init__(self, n):
+    ....:         self.n = n
+    ....:         list.__init__(self, range(2, n+1, 2))
+    ....:     def __repr__(self):
+    ....:         return "Even positive numbers up to n."
 
 The ``__init__`` method is called to initialize the object when
 it is created; the ``__repr__`` method prints the object out. We

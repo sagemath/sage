@@ -248,7 +248,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: g = P._cis_gen(QQ, 2)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [p[], 0, p[2], 0, p[2, 2], 0, p[2, 2, 2], 0, p[2, 2, 2, 2], 0]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

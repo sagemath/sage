@@ -53,7 +53,7 @@ explicit calls to Maxima or other systems.
     sage: # (YES) Continued fraction of 3.1415926535
     sage: a = 3.1415926535
     sage: continued_fraction(a)
-    [3, 7, 15, 1, 292, 1, 1, 6, 2, 13, 4]
+    [3; 7, 15, 1, 292, 1, 1, 6, 2, 13, 4]
 
 ::
 
@@ -93,7 +93,7 @@ explicit calls to Maxima or other systems.
     sage: # (YES) Standard deviation of the sample (1, 2, 3, 4, 5).
     sage: v = vector(RDF, 5, [1,2,3,4,5])
     sage: v.standard_deviation()
-    1.58113883008
+    1.5811388300841898
 
 ::
 
@@ -120,7 +120,7 @@ explicit calls to Maxima or other systems.
     (e^x - 1)/(e^(1/2*x) + 1)
     sage: g
     e^(1/2*x) - 1
-    sage: f.simplify_radical()
+    sage: f.canonicalize_radical()
     e^(1/2*x) - 1
     sage: g
     e^(1/2*x) - 1
@@ -582,7 +582,7 @@ explicit calls to Maxima or other systems.
     sage: f = sin(y) + cos(y)
     sage: g = f.taylor(y, 0, 10)
     sage: h = g.power_series(QQ)
-    sage: k = (h - 1).reversion()
+    sage: k = (h - 1).reverse()
     sage: print k
     y + 1/2*y^2 + 2/3*y^3 + y^4 + 17/10*y^5 + 37/12*y^6 + 41/7*y^7 + 23/2*y^8 + 1667/72*y^9 + 3803/80*y^10 + O(y^11)
 

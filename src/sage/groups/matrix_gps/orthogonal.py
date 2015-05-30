@@ -76,7 +76,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, is_FiniteField
+from sage.rings.all import ZZ
+from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
 from sage.groups.matrix_gps.named_group import (
@@ -167,7 +168,7 @@ def GO(n, R, e=0, var='a'):
     The general orthogonal group of given degree, base ring, and
     choice of invariant form.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: GO( 3, GF(7))
         General Orthogonal Group of degree 3 over Finite Field of size 7

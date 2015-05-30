@@ -33,10 +33,7 @@ Home Page: http://sphinx.pocoo.org,
 
 == Special Update/Build Instructions ==
 
- * Make sure to update the Sphinx version number in the file
-   patches/sphinx-build.
-
- * Here is a description of patches on top of Sphinx 1.1.2:
+ * Here is a description of patches on top of upstream Sphinx:
 
    - patches/autodoc.patch: This patches
      src/sphinx/ext/autodoc.py. This adds an option to Sphinx to
@@ -51,6 +48,9 @@ Home Page: http://sphinx.pocoo.org,
      recognize the Sage prompt "sage:" the same way it recognizes the
      ">>>" from Python.
 
+   - patches/inline-latex.patch: see Trac #16396 and
+     https://bitbucket.org/birkenfeld/sphinx/issue/1480/latex-math-output-is-broken-for-inline
+
    - patches/pngmath.patch: This replaces \usepackage[utf8x]{inputenc}
      by \usepackage[utf8]{inputenc} in the LaTeX preamble for building
      images in the HTML documentation.  This change is done because
@@ -59,11 +59,15 @@ Home Page: http://sphinx.pocoo.org,
      needed to typeset the mathematics in the Sage documentation).
 
    - patches/Makefile.patch: This patches the file
-     src/sphinx/texinputs/Makefile to increase the save size stack to
-     50,000 and increase the pool size stack to 4,000,000. These
-     increased stack sizes should be sufficient for LaTeX to handle
-     the huge index of the Sage reference manual when building the PDF
-     version of that manual.
+     src/sphinx/texinputs/Makefile to increase the memory sizes for
+     LaTeX. These increased stack sizes should be sufficient for LaTeX
+     to handle the huge index of the Sage reference manual when
+     building the PDF version of that manual.
+
+   - patches/nested.patch (submitted upstream: pull request #250, issue #777):
+     This changes the sphinx's customized Verbatim environment to use
+     \trivlist instead of \list. This fixes the pdf docbuild for
+     deeply nested classes/methods revealed in #9107.
 
  * The script create_grammar_pickle.py creates the file
    Grammar2.7.pickle in site-packages/Sphinx-.../sphinx/pycode/.  This
@@ -82,156 +86,3 @@ Home Page: http://sphinx.pocoo.org,
    devel/sage/doc/common/conf.py: 'extensions' would use
    'sphinx.ext.sage_autodoc' instead of 'sage_autodoc'.
 
-== Changelog ==
-
-=== sphinx-1.1.2.p2 (John Palmieri, 13 February 2013) ===
- * #6495: create the grammar pickle upon installation, by running the
-   script create_grammar_pickle.py. This helps to avoid race
-   conditions when building the documentation in parallel.
-
-=== sphinx-1.1.2.p1 (Jeroen Demeyer, 28 February 2012) ===
- * #12572: add extra_mem_top=2000000 to the environment when running
-   latex.  This increases the amount of main memory available.
-
-=== sphinx-1.1.2.p0 (John Palmieri, November 5th 2011) ===
- * #10620: Upgrade to Sphinx 1.1.2.  Also minor editing of SPKG.txt.
-
-=== sphinx-1.0.8.p0 (John Palmieri, September 23rd 2011) ===
- * #10620: Upgrade to Sphinx 1.0.8.
-
-=== sphinx-1.0.4.p8 (Leif Leonhardy, August 17th 2011) ===
- * #11665: Don't delete previously built Sage documentation (in
-   $SAGE_ROOT/devel/sage-*/doc/output/) until Sphinx has been successfully
-   reinstalled.
- * Also, don't delete a previous Sphinx installation until Sphinx has been
-   successfully (re)built. To achieve this, we now first run 'python
-   setup.py build', then delete any previously installed version, and after
-   that run 'python setup.py install'.
- * Quote the filename of patches.
- * Some clean-up, add some messages (and blank lines to separate the output).
- * Added some more of Sphinx' dependencies, corrected minimal version numbers
-   required.
-
-=== sphinx-1.0.4.p7 (Jeroen Demeyer, 2011-08-08) ===
- * Ticket #11659: Increase LaTeX SAVE_SIZE from 20000 to 50000
-
-=== sphinx-1.0.4.p6 (Jeroen Demeyer, 2011-01-31) ===
- * Ticket #10721: Double LaTeX POOL_SIZE to 40000000
-
-=== sphinx-1.0.4.p5 (Jeroen Demeyer, 2010-12-05) ===
-
- * Ticket #10350: Fix some remaining issues with sphinx-1.0.4.p3.spkg
-
- * Redirect standard input of (pdf)latex from /dev/null, to avoid
-   latex hanging with messages like
-
-       ! LaTeX Error: File `titlesec.sty' not found.
-
-       Type X to quit or <RETURN> to proceed,
-       or enter new name. (Default extension: sty)
-
- * Create and apply patches according to #9419.
-
- * Fix some typos.
-
-=== sphinx-1.0.4.p3 (Jeroen Demeyer, 2010-11-18) ===
-
- * Use env instead of export for environment variables in Makefile.
-
- * More error checking in spkg-install.
-
- * Use patch instead of cp for patching files.
-
- * Move the patch src/sphinx/writers/latex.py to doc/common/conf.py
-   in the Sage library.
-
- * Simplified highlighting.patch by moving the highlighting of the
-   "sage:" prompt to the Pygments spkg (#10290).  Now the
-   highlighting.patch is only needed to recognize the Sage prompt.
-
- * Add patch for sphinx/ext/pngmath.py to use the utf8 encoding instead
-   of utf8x.
-
-=== sphinx-1.0.4.p0 (Minh Van Nguyen, 2010-11-05) ===
-
- * Ticket #10118: upgrade to upstream Sphinx version 1.0.4.
-
- * Describe all patches on top of Sphinx 1.0.4.
-
- * Change patches/sphinx-build to require Sphinx 1.0.4 since we are now
-   using Sphinx 1.0.4.
-
- * Legacy patch -- Patch the file src/sphinx/environment.py, which is
-   part of Sphinx 1.0.4. Patching it should prevent Sphinx from
-   rebuilding documentation that is already built. This patch is a
-   carry over from the previous sphinx-0.6.3.p4 package.
-
- * Legacy patch -- Patch the file src/sphinx/highlighting.py. The
-   patch should allow Sphinx 1.0.4 to perform special highlighting of
-   the Sage prompt "sage:". That is, treat the Sage prompt "sage:"
-   like the way Sphinx treats the Python prompt ">>>". This patch is a
-   carry over from the previous sphinx-0.6.3.p4 package.
-
- * Legacy patch -- Patch src/sphinx/ext/autodoc.py. This adds an
-   option to Sphinx to provide a function to get the argspecs of
-   built-in functions.
-
- * New patch -- Patch src/sphinx/writers/latex.py to prevent Sphinx
-   from by default inserting the following LaTeX declaration into the
-   preamble of a .tex file:
-
-   \DeclareUnicodeCharacter{00A0}{\nobreakspace}
-
-   This declaration is known to result in a failure to build the PDF
-   version of a document in the Sage standard documentation. See
-   ticket #8183 for further information on this issue.
-
- * New patch -- Patch the file src/sphinx/texinputs/Makefile to
-   increase the save size stack to 20,000 and increase the pool size
-   stack to 2,000,000. These increased stack sizes should be
-   sufficient for LaTeX to handle the huge index of the Sage reference
-   manual when building the PDF version of that manual.
-
- * In spkg-install, put all the patching commands into the new function
-   apply_patch().
-
-=== 0.6.3.p4 (Minh Van Nguyen, 2009-12-31) ===
-
- * Patch src/sphinx/environment.py to prevent Sphinx from rebuilding
-   a document again. Once a document is built and we make changes to
-   it, Sphinx should not rebuild the full document, but only
-   portion(s) of the document that have changed. The patch for
-   src/sphinx/environment.py was suggested by Mitesh Patel.
-
-=== 0.6.3.p3 (Mike Hansen, 2009-12-15) ===
-
- * Add an option to Sphinx to provide a function to get the argspecs
-   of built-in functions.
-
-=== 0.6.3.p2 (Tim Dumol, 2009-10-25) ===
-
- * Modify spkg-install to delete `doc/output` folders, to fix #7286.
-
-=== 0.6.3.p1 (John Palmieri, 2009-09-04) ===
-
- * Modify spkg-install, in line with the ideas at
-   http://trac.sagemath.org/sage_trac/ticket/6598 and
-   http://wiki.sagemath.org/DavidKirkby
-
-=== 0.6.3 (John Palmieri, 2009-09-03) ===
-
- * Updated to version 0.6.3
-
-=== 0.5.1 (Mike Hansen, December 16th, 2008) ===
-
- * Updated to version 0.5.1
-
- * Made sure that sphinx-build.py imported sage.all at the beginning
-
-=== 0.5 (Mike Hansen, December 1st, 2008) ===
-
- * Updated to version 0.5
-
-=== svn 66476 (Mike Hansen, September 15th, 2008) ===
-
- * Initial version.

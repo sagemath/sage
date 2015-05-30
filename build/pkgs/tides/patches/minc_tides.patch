@@ -1,0 +1,25 @@
+--- libTIDES/minc_tides.c	2014-07-04 14:37:20.861839294 +0200
++++ b/libTIDES/minc_tides.c	2014-07-04 14:33:03.891862654 +0200
+@@ -40,7 +40,7 @@
+ int       dense_output = -1, coef_output = 0;
+ int       accepted_steps = 0, rejected_steps = 0;
+ int       ipos = 1;
+-char      ofname[20]="", cfname[20]="";
++char      ofname[500]="", cfname[500]="";
+ FILE      *fd, *fc;
+ 
+ 
+@@ -347,11 +347,11 @@
+ 		exit(EXIT_FAILURE); 
+ 	} 
+ 	if(k == 0) 
+-		ww = 1.e0; 
++		ww = p; 
+ 	else  
+ 		for(j = 0; j < k; j++) ww -= (u[k-j] *w[j]);
+ 	ww /= u[0]; 
+-	return ww*p; 
++	return ww; 
+ } 
+ 
+ double exp_mc(double* u, double* v, int k) 

@@ -16,6 +16,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
+include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
 
 from sage.numerical.mip import MIPSolverException
 from copy import copy
@@ -53,6 +55,7 @@ cdef class CoinBackend(GenericBackend):
         Destructor function
         """
         del self.si
+        del self.model
 
     cpdef int add_variable(self, lower_bound=0.0, upper_bound=None, binary=False, continuous=False, integer=False, obj=0.0, name=None) except -1:
         r"""
@@ -209,7 +212,7 @@ cdef class CoinBackend(GenericBackend):
             if obj:
                 self.si.setObjCoeff(n + i, obj)
 
-        if names != None:
+        if names is not None:
             for name in names:
                 self.col_names.append(name)
         else:
@@ -328,7 +331,8 @@ cdef class CoinBackend(GenericBackend):
         Constants in the objective function are respected::
 
             sage: p = MixedIntegerLinearProgram(solver='Coin')  # optional - Coin
-            sage: x,y = p[0], p[1]                              # optional - Coin
+            sage: v = p.new_variable(nonnegative=True)          # optional - Coin
+            sage: x,y = v[0], v[1]                              # optional - Coin
             sage: p.add_constraint(2*x + 3*y, max = 6)          # optional - Coin
             sage: p.add_constraint(3*x + 2*y, max = 6)          # optional - Coin
             sage: p.set_objective(x + y + 7)                    # optional - Coin
@@ -359,7 +363,6 @@ cdef class CoinBackend(GenericBackend):
             sage: p.set_verbosity(2)                                # optional - Coin
 
         """
-
         self.model.setLogLevel(level)
 
     cpdef remove_constraint(self, int i):
@@ -373,7 +376,8 @@ cdef class CoinBackend(GenericBackend):
         EXAMPLE::
 
             sage: p = MixedIntegerLinearProgram(solver='Coin') # optional - Coin
-            sage: x,y = p[0], p[1]                             # optional - Coin
+            sage: v = p.new_variable(nonnegative=True)         # optional - Coin
+            sage: x,y = v[0], v[1]                             # optional - Coin
             sage: p.add_constraint(2*x + 3*y, max = 6)         # optional - Coin
             sage: p.add_constraint(3*x + 2*y, max = 6)         # optional - Coin
             sage: p.set_objective(x + y + 7)                   # optional - Coin
@@ -413,7 +417,8 @@ cdef class CoinBackend(GenericBackend):
         EXAMPLE::
 
             sage: p = MixedIntegerLinearProgram(solver='Coin') # optional - Coin
-            sage: x,y = p[0], p[1]                             # optional - Coin
+            sage: v = p.new_variable(nonnegative=True)         # optional - Coin
+            sage: x,y = v[0], v[1]                             # optional - Coin
             sage: p.add_constraint(2*x + 3*y, max = 6)         # optional - Coin
             sage: p.add_constraint(3*x + 2*y, max = 6)         # optional - Coin
             sage: p.set_objective(x + y + 7)                   # optional - Coin
@@ -535,9 +540,9 @@ cdef class CoinBackend(GenericBackend):
             row.insert(i, c)
 
         self.si.addRow (row[0],
-                        lower_bound if lower_bound != None else -self.si.getInfinity(),
-                        upper_bound if upper_bound != None else +self.si.getInfinity())
-        if name != None:
+                        lower_bound if lower_bound is not None else -self.si.getInfinity(),
+                        upper_bound if upper_bound is not None else +self.si.getInfinity())
+        if name is not None:
             self.row_names.append(name)
         else:
             self.row_names.append("")
@@ -744,8 +749,16 @@ cdef class CoinBackend(GenericBackend):
         cdef OsiSolverInterface * si = self.si
 
         cdef CbcModel * model
+        cdef int old_logLevel = self.model.logLevel()
+
         model = new CbcModel(si[0])
-        model.setLogLevel(self.model.logLevel())
+        del self.model
+        self.model = model
+        
+        #we immediately commit to the new model so that the user has access
+        #to it even when something goes wrong.
+
+        model.setLogLevel(old_logLevel)
 
         # multithreading
         import multiprocessing
@@ -768,8 +781,7 @@ cdef class CoinBackend(GenericBackend):
         elif not model.solver().isProvenOptimal():
             raise MIPSolverException("CBC : Unknown error")
 
-        del self.model
-        self.model = model
+        return 0
 
     cpdef get_objective_value(self):
         r"""
@@ -822,11 +834,24 @@ cdef class CoinBackend(GenericBackend):
             0.0
             sage: p.get_variable_value(1)                         # optional - Coin
             1.5
+            sage: p = MixedIntegerLinearProgram("Coin")  # optional - Coin
+            sage: x = p.new_variable(nonnegative=True)   # optional - Coin
+            sage: p.set_min(x[0], 0.0)            # optional - Coin
+            sage: p.get_values(x)                 # optional - Coin
+            {0: 0.0}
         """
 
         cdef double * solution
+        cdef double v
         solution = <double*> self.model.solver().getColSolution()
-        return solution[variable]
+        if solution == NULL:
+            v = 0.0
+        else:
+            v = solution[variable]
+        if self.is_variable_continuous(variable):
+            return v
+        else:
+            return round(v)
 
     cpdef int ncols(self):
         r"""
@@ -979,10 +1004,22 @@ cdef class CoinBackend(GenericBackend):
             sage: p.variable_upper_bound(0, 5)                         # optional - Coin
             sage: p.col_bounds(0)                              # optional - Coin
             (0.0, 5.0)
+
+        TESTS:
+
+        :trac:`14581`::
+
+            sage: P = MixedIntegerLinearProgram(solver="Coin") # optional - Coin
+            sage: v = P.new_variable(nonnegative=True)         # optional - Coin
+            sage: x = v["x"]                                   # optional - Coin
+            sage: P.set_max(x, 0)                              # optional - Coin
+            sage: P.get_max(x)                                 # optional - Coin
+            0.0
+
         """
         cdef double * ub
 
-        if value == False:
+        if value is False:
             ub = <double*> self.si.getColUpper()
             return ub[index] if ub[index] != + self.si.getInfinity() else None
         else:
@@ -1011,10 +1048,22 @@ cdef class CoinBackend(GenericBackend):
             sage: p.variable_lower_bound(0, 5)                         # optional - Coin
             sage: p.col_bounds(0)                              # optional - Coin
             (5.0, None)
+
+        TESTS:
+
+        :trac:`14581`::
+
+            sage: P = MixedIntegerLinearProgram(solver="Coin") # optional - Coin
+            sage: v = P.new_variable(nonnegative=True)         # optional - Coin
+            sage: x = v["x"]                                   # optional - Coin
+            sage: P.set_min(x, 5)                              # optional - Coin
+            sage: P.set_min(x, 0)                              # optional - Coin
+            sage: P.get_min(x)                                 # optional - Coin
+            0.0
         """
         cdef double * lb
 
-        if value == False:
+        if value is False:
             lb = <double*> self.si.getColLower()
             return lb[index] if lb[index] != - self.si.getInfinity() else None
         else:
@@ -1082,7 +1131,7 @@ cdef class CoinBackend(GenericBackend):
             There once was a french fry
         """
         if name == NULL:
-            if self.prob_name != None:
+            if self.prob_name is not None:
                 return self.prob_name
             else:
                 return ""
@@ -1106,7 +1155,7 @@ cdef class CoinBackend(GenericBackend):
             sage: print p.row_name(0)                                                 # optional - Coin
             Empty constraint 1
         """
-        if self.row_names != None:
+        if self.row_names is not None:
             return self.row_names[index]
         else:
             return ""
@@ -1128,7 +1177,7 @@ cdef class CoinBackend(GenericBackend):
             sage: print p.col_name(0)                      # optional - Coin
             I am a variable
         """
-        if self.col_names != None:
+        if self.col_names is not None:
             return self.col_names[index]
         else:
             return ""
@@ -1141,7 +1190,7 @@ cdef class CoinBackend(GenericBackend):
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = MixedIntegerLinearProgram(solver = "Coin")        # optional - Coin
-            sage: b = p.new_variable()                         # optional - Coin
+            sage: b = p.new_variable(nonnegative=True)                  # optional - Coin
             sage: p.add_constraint(b[1] + b[2] <= 6)           # optional - Coin
             sage: p.set_objective(b[1] + b[2])                 # optional - Coin
             sage: copy(p).solve()                              # optional - Coin

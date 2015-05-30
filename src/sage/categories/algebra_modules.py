@@ -10,7 +10,6 @@ Algebra modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from category_types import Category_module
 from modules import Modules
 
@@ -53,7 +52,7 @@ class AlgebraModules(Category_module):
         """
         from sage.categories.commutative_algebras import CommutativeAlgebras
         if not hasattr(A, "base_ring") or not A in CommutativeAlgebras(A.base_ring()):
-            raise TypeError, "A (=%s) must be a commutative algebra"%A
+            raise TypeError("A (=%s) must be a commutative algebra"%A)
         Category_module.__init__(self, A)
 
     @classmethod
@@ -73,7 +72,7 @@ class AlgebraModules(Category_module):
         """
         EXAMPLES::
 
-            sage: AlgebraModules(QQ[x]).algebra()
+            sage: AlgebraModules(QQ['x']).algebra()
             Univariate Polynomial Ring in x over Rational Field
         """
         return self.base_ring()
@@ -82,7 +81,7 @@ class AlgebraModules(Category_module):
         """
         EXAMPLES::
 
-            sage: AlgebraModules(QQ[x]).super_categories()
+            sage: AlgebraModules(QQ['x']).super_categories()
             [Category of modules over Univariate Polynomial Ring in x over Rational Field]
         """
         R = self.algebra()

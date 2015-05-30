@@ -66,10 +66,12 @@ def Associahedron(cartan_type):
         sage: Asso = Associahedron(['A',3]); Asso
         Generalized associahedron of type ['A', 3] with 14 vertices
         sage: Asso.plot()
+        Graphics3d Object
 
         sage: Asso = Associahedron(['B',3]); Asso
         Generalized associahedron of type ['B', 3] with 20 vertices
         sage: Asso.plot()
+        Graphics3d Object
 
     TESTS::
 
@@ -117,7 +119,7 @@ class Associahedron_class(Polyhedron_QQ_ppl):
     The Python class of an associahedron
 
     You should use the :func:`Associahedron` convenience function to
-    construct associahedra from the cartan type.
+    construct associahedra from the Cartan type.
 
     TESTS::
 
@@ -215,7 +217,8 @@ class Associahedra(Polyhedra_QQ_ppl):
             Generalized associahedron of type ['A', 2] with 5 vertices
         """
         cartan_type = CartanType( cartan_type )
-        assert cartan_type.is_finite()
+        if not cartan_type.is_finite():
+            raise ValueError("the Cartan type must be finite")
         root_space = cartan_type.root_system().root_space()
         # TODO: generalize this as a method of root lattice realization
         rhocheck = sum( beta.associated_coroot() for beta in root_space.positive_roots() )/2

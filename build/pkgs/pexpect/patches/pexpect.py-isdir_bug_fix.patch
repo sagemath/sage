@@ -5,7 +5,7 @@
      # Special case where filename already contains a path.
      if os.path.dirname(filename) != '':
 -        if os.access (filename, os.X_OK):
-+        if os.access (filename, os.X_OK) and not os.path.isdir(f):
++        if os.access (filename, os.X_OK) and not os.path.isdir(filename):
              return filename
  
      if not os.environ.has_key('PATH') or os.environ['PATH'] == '':

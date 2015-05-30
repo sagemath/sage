@@ -11,5 +11,6 @@ Sage's Doctesting Framework
    sage/doctest/reporting
    sage/doctest/test
    sage/doctest/util
+   sage/doctest/fixtures
 
 .. include:: ../footer.txt

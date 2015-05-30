@@ -1,7 +1,7 @@
 /*** EXAMPLE: L-function of a genus 3 curve over Q                   ***/
 /*** (illustration of precision issues when not enough coefficients) ***/
 /***                                                                 ***/
-/*** v1.0, July 2002, questions to tim.dokchitser@durham.ac.uk       ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk      ***/
 /*** type \rex-gen3 or read("ex-gen3") at pari prompt to run this    ***/
 
 

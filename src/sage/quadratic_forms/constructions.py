@@ -47,9 +47,9 @@ def BezoutianQuadraticForm(f, g):
     """
     ## Check that f and g are polynomials with a common base ring
     if not is_Polynomial(f) or not is_Polynomial(g):
-        raise TypeError, "Oops!  One of your inputs is not a polynomial. =("
+        raise TypeError("Oops!  One of your inputs is not a polynomial. =(")
     if f.base_ring() != g.base_ring():                   ## TO DO:  Change this to allow coercion!
-        raise TypeError, "Oops!  These polynomials are not defined over the same coefficient ring."
+        raise TypeError("Oops!  These polynomials are not defined over the same coefficient ring.")
 
     ## Initialize the quadratic form
     R = f.base_ring()
@@ -91,7 +91,7 @@ def HyperbolicPlane_quadratic_form(R, r=1):
     r = ZZ(r)
     ## Check that the multiplicity is a natural number
     if r < 1:
-        raise TypeError, "The multiplicity r must be a natural number."
+        raise TypeError("The multiplicity r must be a natural number.")
 
     H = QuadraticForm(R, 2, [0, 1, 0])
     return sum([H  for i in range(r-1)], H)

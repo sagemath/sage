@@ -8,6 +8,5 @@ set -e
 # Update sources
 local/bin/sage-update-src "$@"
 
-# Run top-level make with SAGE_UPGRADING set
-export SAGE_UPGRADING=yes
+# Run top-level make
 exec make

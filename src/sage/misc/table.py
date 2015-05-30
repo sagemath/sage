@@ -693,23 +693,23 @@ class table(SageObject):
         if len(rows) > 0:
             # If the table has < 100 rows, don't truncate the output in the notebook
             if len(rows) <= 100:
-                print "<html>\n<div class=\"notruncate\">\n<table %s class=\"table_form\">\n<tbody>" % frame
+                print("<html>\n<div class=\"notruncate\">\n<table {} class=\"table_form\">\n<tbody>".format(frame))
             else:
-                print "<html>\n<div class=\"truncate\">\n<table %s class=\"table_form\">\n<tbody>" % frame
+                print("<html>\n<div class=\"truncate\">\n<table {} class=\"table_form\">\n<tbody>".format(frame))
 
             # First row:
             if header_row:
-                print "<tr>"
+                print("<tr>")
                 self._html_table_row(rows[0], header=header_row)
-                print "</tr>"
+                print("</tr>")
                 rows = rows[1:]
 
             # Other rows:
             for row_class, row in zip(cycle(["row-a", "row-b"]), rows):
-                print "<tr class =\"%s\">" % row_class
+                print("<tr class =\"{}\">".format(row_class))
                 self._html_table_row(row, header=False)
-                print "</tr>"
-            print "</tbody>\n</table>\n</div>\n</html>"
+                print("</tr>")
+            print("</tbody>\n</table>\n</div>\n</html>")
 
     def _html_table_row(self, row, header=False):
         r"""
@@ -756,17 +756,17 @@ class table(SageObject):
         # First entry of row:
         entry = row[0]
         if isinstance(entry, Graphics):
-            print first_column_tag % entry.show(linkmode = True)
+            print(first_column_tag % entry.show(linkmode = True))
         elif isinstance(entry, str):
-            print first_column_tag % math_parse(entry)
+            print(first_column_tag % math_parse(entry))
         else:
-            print first_column_tag % ('<script type="math/tex">%s</script>' % latex(entry))
+            print(first_column_tag % ('<script type="math/tex">%s</script>' % latex(entry)))
 
         # Other entries:
         for column in xrange(1,len(row)):
             if isinstance(row[column], Graphics):
-                print column_tag % row[column].show(linkmode = True)
+                print(column_tag % row[column].show(linkmode = True))
             elif isinstance(row[column], str):
-                print column_tag % math_parse(row[column])
+                print(column_tag % math_parse(row[column]))
             else:
-                print column_tag % ('<script type="math/tex">%s</script>' % latex(row[column]))
+                print(column_tag % ('<script type="math/tex">%s</script>' % latex(row[column])))

@@ -1,20 +1,10 @@
 include "sage/ext/cdefs.pxi"
 
-from sage.rings.padics.padic_base_generic_element cimport pAdicBaseGenericElement
-from sage.structure.element cimport CommutativeRingElement, RingElement, ModuleElement, Element
-from sage.rings.padics.pow_computer cimport PowComputer_class
-from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
+ctypedef mpz_t celement
+from sage.libs.pari.gen cimport gen as pari_gen
 
-cdef class pAdicCappedAbsoluteElement(pAdicBaseGenericElement):
-    cdef mpz_t value
-    cdef unsigned long absprec
+include "CA_template_header.pxi"
 
-    cdef pAdicCappedAbsoluteElement _new_c(self)
-    cpdef RingElement _invert_c_impl(self)
-    cpdef ModuleElement _neg_(self)
-    cdef pAdicCappedAbsoluteElement _lshift_c(pAdicCappedAbsoluteElement self, long shift)
-    cdef pAdicCappedAbsoluteElement _rshift_c(pAdicCappedAbsoluteElement self, long shift)
-    cdef object teichmuller_list(pAdicCappedAbsoluteElement self)
-    cpdef pAdicCappedAbsoluteElement unit_part(self)
-    cpdef Integer lift(self)
+cdef class pAdicCappedAbsoluteElement(CAElement):
+    cdef lift_c(self)
+    cdef pari_gen _to_gen(self)

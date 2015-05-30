@@ -2,37 +2,43 @@
 r"""
 Tate-Shafarevich group
 
-If `E` is an elliptic curve over a global field `K`, the Tate-Shafarevich group
-is the subgroup of elements in `H^1(K,E)` which map to zero under every global-to-local
-restriction map `H^1(K,E) \to H^1(K_v,E)`, one for each place `v`
-of `K`.
+If `E` is an elliptic curve over a global field `K`, the Tate-Shafarevich
+group is the subgroup of elements in `H^1(K,E)` which map to zero under every
+global-to-local restriction map `H^1(K,E) \to H^1(K_v,E)`, one for each place
+`v` of `K`.
 
-The group is usually denoted by the Russian letter Sha (Ш), in this document it will be denoted by `Sha`.
+The group is usually denoted by the Russian letter Sha (Ш), in this document
+it will be denoted by `Sha`.
 
-`Sha` is known to be an abelian torsion group. It is conjectured that the Tate-Shafarevich group is finite for any elliptic curve over a global field. But it is not known in general.
+`Sha` is known to be an abelian torsion group. It is conjectured that the
+Tate-Shafarevich group is finite for any elliptic curve over a global field.
+But it is not known in general.
 
-A theorem of Kolyvagin and Gross-Zagier using Heegner points shows that if the L-series of an elliptic curve `E/\QQ` does not
-vanish at 1 or has a simple zero there, then `Sha` is finite.
+A theorem of Kolyvagin and Gross-Zagier using Heegner points shows that if the
+L-series of an elliptic curve `E/\QQ` does not vanish at 1 or has a simple
+zero there, then `Sha` is finite.
 
-A theorem of Kato, together with theorems from Iwasawa theory, allow for certain primes `p` to show that the `p`-primary part of `Sha` is finite and gives an effective upper bound for it.
+A theorem of Kato, together with theorems from Iwasawa theory, allows for
+certain primes `p` to show that the `p`-primary part of `Sha` is finite and
+gives an effective upper bound for it.
 
-The (`p`-adic) conjecture of Birch and Swinnerton-Dyer predicts the order of `Sha` from the leading term of the (`p`-adic) L-series of the elliptic curve.
+The (`p`-adic) conjecture of Birch and Swinnerton-Dyer predicts the order of
+`Sha` from the leading term of the (`p`-adic) L-series of the elliptic curve.
 
 Sage can compute a few things about `Sha`. The commands ``an``,
-``an_numerical`` and ``an_padic`` compute the conjectural order of `Sha`
-as a real or `p`-adic number. With ``p_primary_bound`` one can find an
-upper bound of the size of the `p`-primary part of `Sha`. Finally, if
-the analytic rank is at most 1, then ``bound_kato`` and
-``bound_kolyvagin`` find all primes for which the theorems of Kato
-and Kolyvagin respectively do not prove the triviality the `p`-primary
-part of `Sha`.
+``an_numerical`` and ``an_padic`` compute the conjectural order of `Sha` as a
+real or `p`-adic number. With ``p_primary_bound`` one can find an upper bound
+of the size of the `p`-primary part of `Sha`. Finally, if the analytic rank is
+at most 1, then ``bound_kato`` and ``bound_kolyvagin`` find all primes for
+which the theorems of Kato and Kolyvagin respectively do not prove the
+triviality the `p`-primary part of `Sha`.
 
 EXAMPLES::
 
     sage: E = EllipticCurve('11a1')
     sage: S = E.sha()
     sage: S.bound_kato()
-    [2, 3, 5]
+    [2]
     sage: S.bound_kolyvagin()
     ([2, 5], 1)
     sage: S.an_padic(7,3)
@@ -92,18 +98,18 @@ class Sha(SageObject):
     r"""
     The Tate-Shafarevich group associated to an elliptic curve.
 
-    If `E` is an elliptic curve over a global field `K`, the Tate-Shafarevich group
-    is the subgroup of elements in `H^1(K,E)` which map to zero under every global-to-local
-    restriction map `H^1(K,E) \to H^1(K_v,E)`, one for each place `v`
-    of `K`.
+    If `E` is an elliptic curve over a global field `K`, the Tate-Shafarevich
+    group is the subgroup of elements in `H^1(K,E)` which map to zero under
+    every global-to-local restriction map `H^1(K,E) \to H^1(K_v,E)`, one for
+    each place `v` of `K`.
 
     EXAMPLES::
 
         sage: E = EllipticCurve('571a1')
-        sage: E._set_gens([])
+        sage: E._set_gens([])   # curve has rank 0, but non-trivial Sha[2]
         sage: S = E.sha()
         sage: S.bound_kato()
-        [2, 3]
+        [2]
         sage: S.bound_kolyvagin()
         ([2], 1)
         sage: S.an_padic(7,3)
@@ -120,9 +126,9 @@ class Sha(SageObject):
         1.00000000000000
         sage: S.p_primary_bound(5)  # long time
         0
-        sage: S.an_padic(5)  # long time
+        sage: S.an_padic(5)         # long time
         1 + O(5)
-        sage: S.an_padic(5,prec=4)  # long time
+        sage: S.an_padic(5,prec=4)  # very long time
         1 + O(5^3)
     """
     def __init__(self, E):
@@ -279,9 +285,10 @@ class Sha(SageObject):
 
         INPUT:
 
-            - ``use_database`` -- bool (default: ``False``); if ``True``, try to use any
-              databases installed to lookup the analytic order of `Sha`, if
-              possible.  The order of `Sha` is computed if it cannot be looked up.
+            - ``use_database`` -- bool (default: ``False``); if ``True``, try
+              to use any databases installed to lookup the analytic order of
+              `Sha`, if possible.  The order of `Sha` is computed if it cannot
+              be looked up.
 
             - ``descent_second_limit`` -- int (default: 12); limit to use on
               point searching for the quartic twist in the hard case
@@ -352,8 +359,8 @@ class Sha(SageObject):
             sage: E.sha().an()
             1.00000000000000
 
-        The following are examples that require computation of the Mordell-Weil
-        group and regulator::
+        The following are examples that require computation of the Mordell-
+        Weil group and regulator::
 
             sage: E = EllipticCurve([0, 0, 1, -1, 0])                     # 37A  (rank 1)
             sage: E.sha().an()
@@ -363,8 +370,8 @@ class Sha(SageObject):
             sage: E.sha().an()
             4
 
-        In this case the input curve is not minimal, and if this function did not
-        transform it to be minimal, it would give nonsense::
+        In this case the input curve is not minimal, and if this function did
+        not transform it to be minimal, it would give nonsense::
 
             sage: E = EllipticCurve([0,-432*6^2])
             sage: E.sha().an()
@@ -444,21 +451,18 @@ class Sha(SageObject):
         .. [BP] Dominique Bernardi and Bernadette Perrin-Riou,
            Variante `p`-adique de la conjecture de Birch et
            Swinnerton-Dyer (le cas supersingulier),
-           C. R. Acad. Sci. Paris, Ser I. Math, 317 (1993), no 3,
+           C. R. Acad. Sci. Paris, Sér I. Math., 317 (1993), no. 3,
            227-232.
-
-        .. [SW] William Stein and Christian Wuthrich, Computations
-           About Tate-Shafarevich Groups using Iwasawa theory,
-           preprint 2009.
 
         INPUT:
 
         - ``p`` - a prime > 3
 
-        - ``prec`` (optional) - the precision used in the computation of the `p`-adic L-Series
+        - ``prec`` (optional) - the precision used in the computation of the
+          `p`-adic L-Series
 
-        - ``use_twists`` (default = ``True``) - If ``True`` the algorithm may change
-          to a quadratic twist with minimal conductor to do the modular
+        - ``use_twists`` (default = ``True``) - If ``True`` the algorithm may
+          change to a quadratic twist with minimal conductor to do the modular
           symbol computations rather than using the modular symbols of the
           curve itself. If ``False`` it forces the computation using the
           modular symbols of the curve itself.
@@ -474,29 +478,29 @@ class Sha(SageObject):
         Good ordinary examples::
 
             sage: EllipticCurve('11a1').sha().an_padic(5)    # rank 0
-            1 + O(5^2)
+            1 + O(5^22)
             sage: EllipticCurve('43a1').sha().an_padic(5)    # rank 1
             1 + O(5)
             sage: EllipticCurve('389a1').sha().an_padic(5,4) # rank 2, long time (2s on sage.math, 2011)
             1 + O(5^3)
             sage: EllipticCurve('858k2').sha().an_padic(7)   # rank 0, non trivial sha, long time (10s on sage.math, 2011)
-            7^2 + O(7^6)
+            7^2 + O(7^24)
             sage: EllipticCurve('300b2').sha().an_padic(3)   # 9 elements in sha, long time (2s on sage.math, 2011)
-            3^2 + O(3^6)
+            3^2 + O(3^24)
             sage: EllipticCurve('300b2').sha().an_padic(7, prec=6)  # long time
             2 + 7 + O(7^8)
 
         Exceptional cases::
 
             sage: EllipticCurve('11a1').sha().an_padic(11) # rank 0
-            1 + O(11^2)
+            1 + O(11^22)
             sage: EllipticCurve('130a1').sha().an_padic(5) # rank 1
             1 + O(5)
 
         Non-split, but rank 0 case (:trac:`7331`)::
 
             sage: EllipticCurve('270b1').sha().an_padic(5) # rank 0, long time (2s on sage.math, 2011)
-            1 + O(5^2)
+            1 + O(5^22)
 
         The output has the correct sign::
 
@@ -506,7 +510,7 @@ class Sha(SageObject):
         Supersingular cases::
 
             sage: EllipticCurve('34a1').sha().an_padic(5) # rank 0
-            1 + O(5^2)
+            1 + O(5^22)
             sage: EllipticCurve('53a1').sha().an_padic(5) # rank 1, long time (11s on sage.math, 2011)
             1 + O(5)
 
@@ -518,8 +522,15 @@ class Sha(SageObject):
             4 + O(5)
             sage: EllipticCurve('448c5').sha().an_padic(7,prec=4, use_twists=False)  # long time (2s on sage.math, 2011)
             2 + 7 + O(7^6)
-            sage: EllipticCurve([-19,34]).sha().an_padic(5)  # see trac 6455, long time (4s on sage.math, 2011)
+            sage: EllipticCurve([-19,34]).sha().an_padic(5)  # see :trac: `6455`, long time (4s on sage.math, 2011)
             1 + O(5)
+
+        Test for :trac: `15737`::
+
+            sage: E = EllipticCurve([-100,0])
+            sage: s = E.sha()
+            sage: s.an_padic(13)
+            1 + O(13^20)
         """
         try:
             return self.__an_padic[(p,prec)]
@@ -532,7 +543,6 @@ class Sha(SageObject):
         tam = E.tamagawa_product()
         tors = E.torsion_order()**2
         reg = E.padic_regulator(p)
-        # todo : here we should cache the rank computation
         r = E.rank()
 
 
@@ -575,7 +585,8 @@ class Sha(SageObject):
             lstar = ms(0)/E.real_components()
             bsd = tam/tors
             if prec == 0:
-                prec = valuation(lstar/bsd, p)
+                #prec = valuation(lstar/bsd, p)
+                prec = 20
             shan = Qp(p,prec=prec+2)(lstar/bsd)
 
 
@@ -602,10 +613,10 @@ class Sha(SageObject):
 
             v = bsdp.valuation()
             if v > 0:
-                verbose("the prime is irregular.")
+                verbose("the prime is irregular for this curve.")
 
-            # determine how much prec we need to prove at least the triviality of
-            # the p-primary part of Sha
+            # determine how much prec we need to prove at least the
+            # triviality of the p-primary part of Sha
 
             if prec == 0:
                 n = max(v,2)
@@ -691,32 +702,51 @@ class Sha(SageObject):
 
     def p_primary_bound(self, p):
         r"""
-        Returns a provable upper bound for the order of `Sha(E)(p)`. In particular,
-        if this algorithm does not fail, then it proves that the `p`-primary
-        part of `Sha` is finite.
+        Returns a provable upper bound for the order of the
+        `p`-primary part `Sha(E)(p)` of the Tate-Shafarevich group.
 
-        INPUT: ``p`` -- a prime > 2
+        INPUT:
 
-        OUTPUT:  integer -- power of `p` that bounds the order of `Sha(E)(p)` from above
+        - ``p`` -- a prime > 2
 
-        The result is a proven upper bound on the order of `Sha(E)(p)`.
-        So in particular it proves it finiteness even if the rank of
-        the curve is larger than 1. Note also that this bound is sharp
-        if one assumes the main conjecture of Iwasawa theory of
-        elliptic curves (and this is known in certain cases).
+        OUTPUT:
 
-        Currently the algorithm is only implemented when certain conditions are verified.
+        - ``e`` -- a non-negative integer such that `p^e` is an upper
+          bound for the order of `Sha(E)(p)`
 
-        - The mod `p` Galois representation must be surjective.
+        In particular, if this algorithm does not fail, then it proves
+        that the `p`-primary part of `Sha` is finite. This works also
+        for curves of rank > 1.
+
+        Note also that this bound is sharp if one assumes the main conjecture
+        of Iwasawa theory of elliptic curves (and this is known in certain cases).
+
+        Currently the algorithm is only implemented when the following
+        conditions are verified:
+
+        - The `p`-adic Galois representation must be surjective or
+          must have its image contained in a Borel subgroup.
+
         - The reduction at `p` is not allowed to be additive.
-        - If the reduction at `p` is non-split multiplicative, then the rank has to be 0.
-        - If `p=3` then the reduction at 3 must be good ordinary or split multiplicative and the rank must be 0.
 
+        - If the reduction at `p` is non-split multiplicative, then
+          the rank must be 0.
+
+        - If `p = 3`, then the reduction at 3 must be good ordinary or
+          split multiplicative, and the rank must be 0.
+
+        ALGORITHM:
+
+        The algorithm is described in [SW]_. The results for the
+        reducible case can be found in [Wu]_. The main ingredient is
+        Kato's result on the main conjecture in Iwasawa theory.
 
         EXAMPLES::
 
             sage: e = EllipticCurve('11a3')
             sage: e.sha().p_primary_bound(3)
+            0
+            sage: e.sha().p_primary_bound(5)
             0
             sage: e.sha().p_primary_bound(7)
             0
@@ -739,29 +769,45 @@ class Sha(SageObject):
             sage: e.sha().p_primary_bound(3)  # long time (10s on sage.math, 2011)
             0
 
-        Some checks for :trac:`6406`::
+        Some checks for :trac:`6406` and :trac:`16959`::
 
-            sage: e.sha().p_primary_bound(7)
+            sage: e.sha().p_primary_bound(7)  # long time
+            2
+
+            sage: E = EllipticCurve('608b1')
+            sage: E.sha().p_primary_bound(5)
             Traceback (most recent call last):
             ...
-            ValueError: The mod-p Galois representation is not surjective. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.
-            sage: e.sha().an_padic(7)  # long time (depends on "e.sha().p_primary_bound(3)" above)
-            7^2 + O(7^6)
+            ValueError: The p-adic Galois representation is not surjective or reducible. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.
 
-            sage: e = EllipticCurve('11a3')
-            sage: e.sha().p_primary_bound(5)
-            Traceback (most recent call last):
-            ...
-            ValueError: The mod-p Galois representation is not surjective. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.
-            sage: e.sha().an_padic(5)
-            1 + O(5^2)
+            sage: E.sha().an_padic(5)           # long time
+            1 + O(5^22)
+
+            sage: E = EllipticCurve("5040bi1")
+            sage: E.sha().p_primary_bound(5)    # long time
+            0
+
+        REFERENCES:
+
+        .. [SW] William Stein and Christian Wuthrich, Algorithms
+           for the Arithmetic of Elliptic Curves using Iwasawa Theory
+           Mathematics of Computation 82 (2013), 1757-1792.
+
+        .. [Wu] Christian Wuthrich, On the integrality of modular
+           symbols and Kato's Euler system for elliptic curves.
+           Doc. Math. 19 (2014), 381-402.
+
         """
         p = Integer(p)
+        if p == 2:
+            raise ValueError("The prime p must be odd.")
         E = self.Emin
         if E.is_ordinary(p) or E.is_good(p):
-            su = E.galois_representation().is_surjective(p)
-            if not su :
-                raise ValueError("The mod-p Galois representation is not surjective. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.")
+            rho = E.galois_representation()
+            su = rho.is_surjective(p)
+            re = rho.is_reducible(p)
+            if not su and not re :
+                raise ValueError("The p-adic Galois representation is not surjective or reducible. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.")
             shan = self.an_padic(p,prec = 0,use_twists=True)
             if shan == 0:
                 raise RuntimeError("There is a bug in an_padic.")
@@ -816,8 +862,8 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``D`` - (optional) a fundamental discriminant < -4 that satisfies the
-          Heegner hypothesis for `E`; if not given, use the first such `D`
+        - ``D`` - (optional) a fundamental discriminant < -4 that satisfies
+          the Heegner hypothesis for `E`; if not given, use the first such `D`
         - ``regulator`` -- (optional) regulator of `E(K)`; if not given, will
           be computed (which could take a long time)
         - ``ignore_nonsurj_hypothesis`` (optional: default ``False``) --
@@ -914,7 +960,7 @@ class Sha(SageObject):
                 LE1, err_E = E.lseries().at1(k_E)
                 err_F = max(err_F, MIN_ERR)
                 err_E = max(err_E, MIN_ERR)
-                if regulator != None:
+                if regulator is not None:
                     hZ = regulator/2
                 else:
                     hZ = F.regulator(use_database=True)/2
@@ -924,7 +970,7 @@ class Sha(SageObject):
 
             else:          # E has odd rank
 
-                if regulator != None:
+                if regulator is not None:
                     hZ = regulator/2
                 else:
                     hZ = E.regulator(use_database=True)/2
@@ -961,45 +1007,49 @@ class Sha(SageObject):
         if not ignore_nonsurj_hypothesis:
             for p in E.galois_representation().non_surjective():
                 B.append(p)
-        B = list(set([int(x) for x in B]))
-        B.sort()
+        B = sorted(set([int(x) for x in B]))
         return B, n
 
 
     def bound_kato(self):
         r"""
-        Returns a list `p` of primes such that the theorems of Kato's [Ka]_
-        and others (e.g., as explained in a paper/thesis of Grigor
-        Grigorov [Gri]_) imply that if `p` divides  the order of `Sha(E/\QQ)` then `p` is in
+        Returns a list of primes `p` such that the theorems of Kato's [Ka]_
+        and others (e.g., as explained in a thesis of Grigor Grigorov [Gri]_)
+        imply that if `p` divides  the order of `Sha(E/\QQ)` then `p` is in
         the list.
 
         If `L(E,1) = 0`, then this function gives no information, so
         it returns ``False``.
 
-        THEOREM (Kato): Suppose `L(E,1) \neq 0` and `p \neq 2, 3` is a prime such that
+        THEOREM: Suppose `L(E,1) \neq 0` and `p \neq 2` is a prime such
+        that
 
             - `E` does not have additive reduction at `p`,
-            - the mod-`p` representation is surjective.
+            - either the `p`-adic representation is surjective or has its
+              image contained in a Borel subgroup.
 
-        Then `{ord}_p(\#Sha(E))` divides `{ord}_p(L(E,1)\cdot\#E(\QQ)_{tor}^2/(\Omega_E \cdot \prod c_q))`.
+        Then `{ord}_p(\#Sha(E))` is bounded from above by the `p`-adic valuation of  `L(E,1)\cdot\#E(\QQ)_{tor}^2 / (\Omega_E \cdot \prod c_v)`.
+
+        If the L-series vanishes, the method ``p_primary_bound`` can be used instead.
 
         EXAMPLES::
 
             sage: E = EllipticCurve([0, -1, 1, -10, -20])   # 11A  = X_0(11)
             sage: E.sha().bound_kato()
-            [2, 3, 5]
+            [2]
             sage: E = EllipticCurve([0, -1, 1, 0, 0])       # X_1(11)
             sage: E.sha().bound_kato()
-            [2, 3, 5]
+            [2]
             sage: E = EllipticCurve([1,1,1,-352,-2689])     # 66B3
             sage: E.sha().bound_kato()
-            [2, 3]
+            [2]
 
-        For the following curve one really has that 25 divides the order of `Sha` (by Grigorov-Stein paper [GS]_)::
+        For the following curve one really has that 25 divides the
+        order of `Sha` (by [GJPST]_)::
 
             sage: E = EllipticCurve([1, -1, 0, -332311, -73733731])   # 1058D1
             sage: E.sha().bound_kato()                 # long time (about 1 second)
-            [2, 3, 5, 23]
+            [2, 5, 23]
             sage: E.galois_representation().non_surjective()                # long time (about 1 second)
             []
 
@@ -1007,7 +1057,7 @@ class Sha(SageObject):
 
             sage: E = EllipticCurve([0, 0, 0, -4062871, -3152083138])   # 3364C1
             sage: E.sha().bound_kato()                 # long time (< 10 seconds)
-            [2, 3, 7, 29]
+            [2, 7, 29]
 
         No information about curves of rank > 0::
 
@@ -1022,18 +1072,24 @@ class Sha(SageObject):
            applications arithmétiques III, Astérisque vol 295, SMF,
            Paris, 2004.
 
-        .. [Gri]
+        .. [Gri] G. Grigorov, Kato's Euler System and the Main Conjecture,
+           Harvard Ph.D. Thesis (2005).
 
-        .. [GS]
+        .. [GJPST] G. Grigorov, A. Jorza, S. Patrikis, W. A. Stein,
+           and C. Tarniţǎ, Computational verification of the Birch and
+           Swinnerton-Dyer conjecture for individual elliptic curves,
+           Math. Comp. 78 (2009), 2397-2425.
+
         """
         E = self.Emin
         if E.has_cm():
             return False
         if E.lseries().L1_vanishes():
             return False
-        B = [2, 3]
-        for p in E.galois_representation().non_surjective():
-            if p > 3:
+        B = [2]
+        rho = E.galois_representation()
+        for p in rho.non_surjective():
+            if p > 2 and p not in rho.reducible_primes():
                 B.append(p)
         for p in E.conductor().prime_divisors():
             if E.has_additive_reduction(p) and p not in B:
@@ -1047,15 +1103,15 @@ class Sha(SageObject):
         for p, n in factor(self.an()):
             if n >= 2:    # use parity of Sha
                 B.append(int(p))
-        B = list(set(B))
-        B.sort()
+        B = sorted(set(B))
         return B
 
     def bound(self):
         r"""
         Compute a provably correct bound on the order of the Tate-Shafarevich
-        group of this curve. The bound is either ``False`` (no bound) or a list
-        ``B`` of primes such that any divisor of `Sha` is in this list.
+        group of this curve. The bound is either ``False`` (no bound) or a
+        list ``B`` of primes such that any prime divisor of the order of `Sha`
+        is in this list.
 
         EXAMPLES::
 

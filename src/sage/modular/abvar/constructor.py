@@ -46,11 +46,11 @@ def _get(key):
         ...
         ValueError: element not in cache
     """
-    if _cache.has_key(key):
+    if key in _cache:
         z = _cache[key]()
         if z is not None:
             return z
-    raise ValueError, "element not in cache"
+    raise ValueError("element not in cache")
 
 def _saved(key, J):
     """
@@ -188,4 +188,4 @@ def AbelianVariety(X):
     if isinstance(X, (tuple,list)) and all([is_CongruenceSubgroup(G) for G in X]):
         return abvar.ModularAbelianVariety(X)
 
-    raise TypeError, "X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups"
+    raise TypeError("X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups")

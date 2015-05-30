@@ -56,6 +56,7 @@ from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.combinat.species.misc import accept_size
 from sage.combinat.species.structure import StructuresWrapper, IsotypesWrapper
+from functools import reduce
 
 class GenericCombinatorialSpecies(SageObject):
     def __init__(self, min=None, max=None, weight=None):
@@ -260,7 +261,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         from sum_species import SumSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
-            raise TypeError, "g must be a combinatorial species"
+            raise TypeError("g must be a combinatorial species")
         return SumSpecies(self, g)
 
     sum = __add__
@@ -277,7 +278,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         from product_species import ProductSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
-            raise TypeError, "g must be a combinatorial species"
+            raise TypeError("g must be a combinatorial species")
         return ProductSpecies(self, g)
 
     product = __mul__
@@ -292,7 +293,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         from composition_species import CompositionSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
-            raise TypeError, "g must be a combinatorial species"
+            raise TypeError("g must be a combinatorial species")
         return CompositionSpecies(self, g)
 
     composition = __call__
@@ -313,7 +314,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         from functorial_composition_species import FunctorialCompositionSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
-            raise TypeError, "g must be a combinatorial species"
+            raise TypeError("g must be a combinatorial species")
         return FunctorialCompositionSpecies(self, g)
 
 
@@ -394,31 +395,61 @@ class GenericCombinatorialSpecies(SageObject):
             return False
 
     def __pow__(self, n):
-        """
-        Returns this species to the power n. This uses a binary
-        exponentiation algorithm to perform the powering.
+        r"""
+        Returns this species to the power `n`.
+
+        This uses a binary exponentiation algorithm to perform the
+        powering.
 
         EXAMPLES::
 
+            sage: One = species.EmptySetSpecies()
             sage: X = species.SingletonSpecies()
+            sage: X^2
+            Product of (Singleton species) and (Singleton species)
+            sage: X^5
+            Product of (Singleton species) and (Product of (Product of
+            (Singleton species) and (Singleton species)) and (Product
+            of (Singleton species) and (Singleton species)))
+
             sage: (X^2).generating_series().coefficients(4)
             [0, 0, 1, 0]
+            sage: (X^3).generating_series().coefficients(4)
+            [0, 0, 0, 1]
+            sage: ((One+X)^3).generating_series().coefficients(4)
+            [1, 3, 3, 1]
+            sage: ((One+X)^7).generating_series().coefficients(8)
+            [1, 7, 21, 35, 35, 21, 7, 1]
+
+            sage: x = QQ[['x']].gen()
+            sage: coeffs = ((1+x+x+x**2)**25+O(x**10)).padded_list()
+            sage: T = ((One+X+X+X^2)^25)
+            sage: T.generating_series().coefficients(10) == coeffs
+            True
             sage: X^1 is X
             True
             sage: A = X^32
             sage: A.digraph()
             Multi-digraph on 6 vertices
+
+        TESTS::
+
+            sage: X**(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: only positive exponents are currently supported
         """
         from sage.rings.all import Integer
         import operator
         n = Integer(n)
         if n <= 0:
-            raise ValueError, "only positive exponents are currently supported"
+            raise ValueError("only positive exponents are currently supported")
         digits = n.digits(2)
         squares = [self]
-        for i in range(len(digits)-1):
-            squares.append(squares[-1]*squares[-1])
-        return reduce(operator.add, (s for i,s in zip(digits, squares) if i != 0))
+        for i in range(len(digits) - 1):
+            squares.append(squares[-1] * squares[-1])
+        return reduce(operator.mul, (s for i, s in zip(digits, squares)
+                                     if i != 0))
 
     def _get_series(self, series_ring_class, prefix, base_ring=None):
         """
@@ -486,9 +517,9 @@ class GenericCombinatorialSpecies(SageObject):
             #The specified base ring must have maps from both
             #the rational numbers and the weight ring
             if not base_ring.has_coerce_map_from(QQ):
-                raise ValueError, "specified base ring does not contain the rationals"
+                raise ValueError("specified base ring does not contain the rationals")
             if not base_ring.has_coerce_map_from(self.weight_ring()):
-                raise ValueError, "specified base ring is incompatible with the weight ring of self"
+                raise ValueError("specified base ring is incompatible with the weight ring of self")
 
         series_ring = series_ring_class(base_ring)
 
@@ -646,7 +677,7 @@ class GenericCombinatorialSpecies(SageObject):
         for p in parents[1:]:
             common = cm.explain(common, p, verbosity=0)
             if common is None:
-                raise ValueError, "unable to find a common parent"
+                raise ValueError("unable to find a common parent")
         return common
 
     def digraph(self):

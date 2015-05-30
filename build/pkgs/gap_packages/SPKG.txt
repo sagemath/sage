@@ -1,0 +1,98 @@
+= gap_packages =
+
+== Description ==
+
+Several "official" and "undeposited" GAP packages available from
+http://www.gap-system.org/Packages/packages.html
+
+== SPKG Maintainers ==
+
+ * William Stein
+ * Robert Miller
+ * David Joyner
+ * Dmitrii Pasechnik
+
+== Upstream Contact ==
+
+ * Dmitrii Pasechnik, dimpase@gmail.com
+ * David Joyner, wdjoyner@gmail.com (on the GAP team)
+ * Steve Linton, sal@dcs.st-and.ac.uk (basically the GAP lead developer)
+
+== Dependencies ==
+
+ * GAP (a standard spkg)
+
+== TODO ==
+
+The crystallographic group packages are untested/untestable. They rely
+on polymake and the dependency "cryst" is missing. This needs to be
+cleaned up.
+
+== Notes ==
+
+A brief description of each package follows:
+
+braid is a GAP package for computing with braids, covering curves,
+and Hurwitz spaces.
+(Authors: K. Magaard, S. Shpectorov and H. Voelklein)
+
+crime - package to compute the cohomology ring of finite
+p-groups, induced maps, and Massey products.
+(Author: Marcus Bishop)
+
+cryst - Computing with crystallographic groups
+(Authors: Bettina Eick, Franz Gähler, Werner Nickel)
+
+CTblLib - The GAP Character Table Library
+(Author: Thomas Breuer)
+
+DESIGN is a package for classifying, partitioning and studying block designs.
+(Author: Leonard H. Soicher)
+
+FactInt is a package providing routines for factoring integers, in particular:
+    * Pollard's p-1
+    * Williams' p+1
+    * Elliptic Curves Method (ECM)
+    * Continued Fraction Algorithm (CFRAC)
+    * Multiple Polynomial Quadratic Sieve (MPQS)
+(Author: Stefan Kohl)
+
+GAPDoc is a package containing a definition of a structure for
+GAP documentation, based on XML. It also contains conversion
+programs for producing text-, DVI-, PDF- or HTML-versions of such
+documents, with hyperlinks if possible.
+(Authors: Frank Luebeck, Max Neunhoeffer)
+
+GRAPE is a package for computing with graphs and groups, and is primarily
+designed for constructing and analysing graphs related to groups,
+finite geometries, and designs.
+(Author: Leonard H. Soicher)
+
+GUAVA is included here, and with Sage standard.
+
+HAP (Homological Algebra Programming) is a GAP package
+providing some functions for group cohomology computation.
+(Author: Graham Ellis)
+
+HAPcryst - an extension package for HAP, which allows for
+group cohomology computation for a wider class of groups.
+(Author: Marc Roeder)
+
+LAGUNA - this package provides functionality for calculation of the
+normalized unit group of the modular group algebra of the finite
+p-group and for investigation of Lie algebra associated with group
+algebras and other associative algebras.
+(Authors :Victor Bovdi, Alexander Konovalov, Richard Rossmanith,
+Csaba Schneider)
+
+polymake - an interface with the (standalone) polymake program
+used by HAPcryst.
+(Author: Marc Roeder)
+
+SONATA ("System Of Nearrings And Their Applications") is a package
+which constructs finite nearrings and related objects.
+(Authors: Erhard Aichinger, Franz Binder, Jürgen Ecker, Peter Mayr,
+Christof Noebauer)
+
+TORIC is a GAP package for computing with toric varieties.
+(Author: David Joyner)

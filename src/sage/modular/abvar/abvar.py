@@ -36,7 +36,7 @@ from cuspidal_subgroup          import CuspidalSubgroup, RationalCuspidalSubgrou
 from sage.rings.all             import (ZZ, QQ, QQbar, LCM,
                                         divisors, Integer, prime_range)
 from sage.rings.ring import is_Ring
-from sage.modules.all           import is_FreeModule
+from sage.modules.free_module   import is_FreeModule
 from sage.modular.arithgroup.all import is_CongruenceSubgroup, is_Gamma0, is_Gamma1, is_GammaH
 from sage.modular.modsym.all    import ModularSymbols
 from sage.modular.modsym.space  import ModularSymbolsSpace
@@ -44,7 +44,7 @@ from sage.matrix.all            import matrix, block_diagonal_matrix, identity_m
 from sage.modules.all           import vector
 from sage.groups.all            import AbelianGroup
 from sage.databases.cremona     import cremona_letter_code
-from sage.misc.misc             import prod
+from sage.misc.all              import prod
 
 from copy import copy
 
@@ -120,9 +120,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         All hell breaks loose if you try to do anything with `A`::
 
             sage: A
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: BUG -- lattice method must be defined in derived class
+            <repr(<sage.modular.abvar.abvar.ModularAbelianVariety_abstract_with_category at 0x...>) failed: NotImplementedError: BUG -- lattice method must be defined in derived class>
 
 
         All instances of this class are in the category of modular
@@ -135,10 +133,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         """
         if check:
             if not isinstance(groups, tuple):
-                raise TypeError, "groups must be a tuple"
+                raise TypeError("groups must be a tuple")
             for G in groups:
                 if not is_CongruenceSubgroup(G):
-                    raise TypeError, "each element of groups must be a congruence subgroup"
+                    raise TypeError("each element of groups must be a congruence subgroup")
         self.__groups = groups
         if is_simple is not None:
             self.__is_simple = is_simple
@@ -149,7 +147,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         if isogeny_number is not None:
             self.__isogeny_number = isogeny_number
         if check and not is_Ring(base_field) and base_field.is_field():
-            raise TypeError, "base_field must be a field"
+            raise TypeError("base_field must be a field")
         ParentWithBase.__init__(self, base_field, category = ModularAbelianVarieties(base_field))
 
     def groups(self):
@@ -186,11 +184,9 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
             sage: A = sage.modular.abvar.abvar.ModularAbelianVariety_abstract((Gamma0(37),), QQ)
             sage: A
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: BUG -- lattice method must be defined in derived class
+            <repr(<sage.modular.abvar.abvar.ModularAbelianVariety_abstract_with_category at 0x...>) failed: NotImplementedError: BUG -- lattice method must be defined in derived class>
         """
-        raise NotImplementedError, "BUG -- lattice method must be defined in derived class"
+        raise NotImplementedError("BUG -- lattice method must be defined in derived class")
     #############################################################################
 
     def free_module(self):
@@ -501,7 +497,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             pass
 
         if not self.is_simple():
-            raise ValueError, "self is not simple"
+            raise ValueError("self is not simple")
 
         ls = []
 
@@ -556,23 +552,23 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             NotImplementedError: _simple_isogeny only implemented when both abelian variety have the same ambient product Jacobian
         """
         if not is_ModularAbelianVariety(other):
-            raise TypeError, "other must be a modular abelian variety"
+            raise TypeError("other must be a modular abelian variety")
 
         if not self.is_simple():
-            raise ValueError, "self is not simple"
+            raise ValueError("self is not simple")
 
         if not other.is_simple():
-            raise ValueError, "other is not simple"
+            raise ValueError("other is not simple")
 
         if self.groups() != other.groups():
             # The issue here is that the stuff below probably won't make any sense at all if we don't know
             # that the two newform abelian varieties $A_f$ are identical.
-            raise NotImplementedError, "_simple_isogeny only implemented when both abelian variety have the same ambient product Jacobian"
+            raise NotImplementedError("_simple_isogeny only implemented when both abelian variety have the same ambient product Jacobian")
 
 
         if (self.newform_level() != other.newform_level()) or \
            (self.isogeny_number() != other.isogeny_number()):
-            raise ValueError, "self and other do not correspond to the same newform"
+            raise ValueError("self and other do not correspond to the same newform")
 
         return other._isogeny_to_newform_abelian_variety().complementary_isogeny() * \
                self._isogeny_to_newform_abelian_variety()
@@ -602,10 +598,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 F = QQbar
             else:
                 # TODO -- improve this
-                raise ValueError, "please specify a category"
+                raise ValueError("please specify a category")
             cat = ModularAbelianVarieties(F)
         if self is B:
-            return self.endomorphism_ring()
+            return self.endomorphism_ring(cat)
         else:
             return homspace.Homspace(self, B, cat)
 
@@ -735,7 +731,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         # at least that the ambient Jacobian product is the same for
         # them.
         if not self.in_same_ambient_variety(other):
-            raise TypeError, "other must be an abelian variety in the same ambient space"
+            raise TypeError("other must be an abelian variety in the same ambient space")
 
         # 1. Compute the abelian variety (connected) part of the intersection
         V = self.vector_space().intersection(other.vector_space())
@@ -847,9 +843,9 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         if not is_ModularAbelianVariety(other):
             if other == 0:
                 return self
-            raise TypeError, "other must be a modular abelian variety"
+            raise TypeError("other must be a modular abelian variety")
         if self.groups() != other.groups():
-            raise ValueError, "incompatible ambient Jacobians"
+            raise ValueError("incompatible ambient Jacobians")
         L = self.vector_space() + other.vector_space()
         M = L.intersection(self._ambient_lattice())
         return ModularAbelianVariety(self.groups(), M, self.base_field(), check=False)
@@ -906,7 +902,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         """
         n = ZZ(n)
         if n < 0:
-            raise ValueError, "n must be nonnegative"
+            raise ValueError("n must be nonnegative")
         if n == 0:
             return self.zero_subvariety()
         if n == 1:
@@ -934,9 +930,9 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             Abelian subvariety of dimension 4 of J0(65) x J0(65) x J0(11)
         """
         if not is_ModularAbelianVariety(other):
-            raise TypeError, "other must be a modular abelian variety"
+            raise TypeError("other must be a modular abelian variety")
         if other.base_ring() != self.base_ring():
-            raise TypeError, "self and other must have the same base ring"
+            raise TypeError("self and other must have the same base ring")
         groups = tuple(list(self.groups()) + list(other.groups()))
         lattice = self.lattice().direct_sum(other.lattice())
         base_field = self.base_ring()
@@ -1039,7 +1035,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         elif isinstance(other, ModularAbelianVariety_abstract) and other.is_subvariety(self):
             return self._quotient_by_abelian_subvariety(other)
         else:
-            raise TypeError, "other must be a subgroup or abelian subvariety"
+            raise TypeError("other must be a subgroup or abelian subvariety")
 
     def degeneracy_map(self, M_ls, t_ls):
         """
@@ -1107,16 +1103,16 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         groups = self.groups()
         length = len(M_ls)
         if length != len(t_ls):
-            raise ValueError, "must have same number of Ms and ts"
+            raise ValueError("must have same number of Ms and ts")
         if length != len(groups):
-            raise ValueError, "must have same number of Ms and groups in ambient variety"
+            raise ValueError("must have same number of Ms and groups in ambient variety")
 
         for i in range(length):
             N = groups[i].level()
             if (M_ls[i]%N) and (N%M_ls[i]):
-                raise ValueError, "one level must divide the other in %s-th component"%i
+                raise ValueError("one level must divide the other in %s-th component"%i)
             if (( max(M_ls[i],N) // min(M_ls[i],N) ) % t_ls[i]):
-                raise ValueError, "each t must divide the quotient of the levels"
+                raise ValueError("each t must divide the quotient of the levels")
 
         ls = [ self.groups()[i].modular_abelian_variety().degeneracy_map(M_ls[i], t_ls[i]).matrix() for i in range(length) ]
 
@@ -1319,7 +1315,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             [0 0]
         """
         if check and not A.is_subvariety(self):
-            raise ValueError, "A must be an abelian subvariety of self"
+            raise ValueError("A must be an abelian subvariety of self")
 
         W = A.complement(self)
         mat = A.lattice().basis_matrix().stack(W.lattice().basis_matrix())
@@ -1368,9 +1364,9 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             [0 1]
         """
         if not self.is_ambient():
-            raise ValueError, "self is not ambient"
+            raise ValueError("self is not ambient")
         if n >= len(self.groups()):
-            raise IndexError, "index (=%s) too large (max = %s)"%(n, len(self.groups()))
+            raise IndexError("index (=%s) too large (max = %s)"%(n, len(self.groups())))
 
         G = self.groups()[n]
         A = G.modular_abelian_variety()
@@ -1565,7 +1561,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         """
         return self._ambient_dimension()
 
-    def endomorphism_ring(self):
+    def endomorphism_ring(self, category=None):
         """
         Return the endomorphism ring of self.
 
@@ -1590,7 +1586,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         except AttributeError:
             pass
 
-        self.__endomorphism_ring = homspace.EndomorphismSubring(self)
+        self.__endomorphism_ring = homspace.EndomorphismSubring(self, category=category)
         return self.__endomorphism_ring
 
     def sturm_bound(self):
@@ -1772,8 +1768,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 return None
             N = [A.newform_level() for A in self.decomposition()]
             level = LCM([z[0] for z in N])
-            groups = list(set([z[1] for z in N]))
-            groups.sort()
+            groups = sorted(set([z[1] for z in N]))
             if len(groups) == 1:
                 groups = groups[0]
             self.__newform_level = level, groups
@@ -2229,7 +2224,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         """
         n = Integer(n)
         if n <= 0:
-            raise ValueError, "n must be a positive integer"
+            raise ValueError("n must be a positive integer")
         key = (n,var)
         try:
             return self.__hecke_polynomial[key]
@@ -2390,7 +2385,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             return self._cuspidal_subgroup
         except AttributeError:
             if not self.is_subvariety_of_ambient_jacobian():
-                raise ValueError, "self must be a subvariety of the ambient variety"
+                raise ValueError("self must be a subvariety of the ambient variety")
             if self.is_ambient():
                 T = self._ambient_cuspidal_subgroup(rational_only=False)
             else:
@@ -2520,7 +2515,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             return self._rational_cusp_subgroup
         except AttributeError:
             if not self.is_subvariety_of_ambient_jacobian():
-                raise ValueError, "self must be a subvariety of the ambient variety"
+                raise ValueError("self must be a subvariety of the ambient variety")
             if self.is_ambient():
                 T = self._ambient_cuspidal_subgroup(rational_only=True)
             else:
@@ -2581,7 +2576,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             return self._rational_cuspidal_subgroup
         except AttributeError:
             if not self.is_subvariety_of_ambient_jacobian():
-                raise ValueError, "self must be a subvariety of the ambient variety"
+                raise ValueError("self must be a subvariety of the ambient variety")
             if self.is_ambient():
                 T = self._ambient_cuspidal_subgroup(rational_subgroup=True)
             else:
@@ -2650,14 +2645,14 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 field_of_definition = X.field_of_definition()
             A = X.abelian_variety()
             if A.groups() != self.groups():
-                raise ValueError, "ambient product Jacobians must be equal"
+                raise ValueError("ambient product Jacobians must be equal")
             if A == self:
                 X = X.lattice()
             else:
                 if X.is_subgroup(self):
                     X = (X.lattice() + self.lattice()).intersection(self.vector_space())
                 else:
-                    raise ValueError, "X must be a subgroup of self."
+                    raise ValueError("X must be a subgroup of self.")
 
 
         if field_of_definition is None:
@@ -2762,7 +2757,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             elif self.dimension() > 0 and self.is_simple():
                 self.__degen_t = self.decomposition()[0].degen_t()
                 return self.__degen_t
-            raise ValueError, "self must be simple"
+            raise ValueError("self must be simple")
 
     def isogeny_number(self, none_if_not_known=False):
         """
@@ -2816,7 +2811,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 self.__isogeny_number = self.decomposition()[0].isogeny_number()
                 return self.__isogeny_number
             else:
-                raise ValueError, "self must be simple"
+                raise ValueError("self must be simple")
 
 
     def is_simple(self, none_if_not_known=False):
@@ -3253,7 +3248,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 C = A
         elif A is not None and self.dimension() == A.dimension():
             if not self.is_subvariety(A):
-                raise ValueError, "self must be a subvariety of A"
+                raise ValueError("self must be a subvariety of A")
             C = self.zero_subvariety()
         else:
             _, factors, X = self._classify_ambient_factors()
@@ -3335,9 +3330,9 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             return self.__dual
         except AttributeError:
             if not self.is_subvariety_of_ambient_jacobian():
-                raise NotImplementedError, "dual not implemented unless abelian variety is a subvariety of the ambient Jacobian product"
+                raise NotImplementedError("dual not implemented unless abelian variety is a subvariety of the ambient Jacobian product")
             if not self._complement_shares_no_factors_with_same_label():
-                raise NotImplementedError, "dual not implemented unless complement shares no simple factors with self."
+                raise NotImplementedError("dual not implemented unless complement shares no simple factors with self.")
             C = self.complement()
             Q, phi = self.ambient_variety().quotient(C)
             psi = self.ambient_morphism()
@@ -3397,7 +3392,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             '11aG1'
         """
         if not isinstance(other, ModularAbelianVariety_abstract):
-            raise TypeError, "other must be an abelian variety"
+            raise TypeError("other must be an abelian variety")
         D = self.decomposition()
         C = set([A.newform_label() for A in other.decomposition()])
         Z = []
@@ -3539,13 +3534,13 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
         if check:
             n = self._ambient_dimension()
             if not is_FreeModule(lattice):
-                raise TypeError, "lattice must be a free module"
+                raise TypeError("lattice must be a free module")
             if lattice.base_ring() != ZZ:
-                raise TypeError, "lattice must be over ZZ"
+                raise TypeError("lattice must be over ZZ")
             if lattice.degree() != 2*n:
-                raise ValueError, "lattice must have degree 2*n (=%s)"%(2*n)
+                raise ValueError("lattice must have degree 2*n (=%s)"%(2*n))
             if not lattice.saturation().is_submodule(lattice):  # potentially expensive
-                raise ValueError, "lattice must be full"
+                raise ValueError("lattice must be full")
         self.__lattice = lattice
 
 
@@ -3600,7 +3595,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             sage: A._modular_symbols()
             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
         """
-        raise NotImplementedError, "bug -- must define this"
+        raise NotImplementedError("bug -- must define this")
 
     def __add__(self, other):
         """
@@ -3632,11 +3627,11 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         if not is_ModularAbelianVariety(other):
             if other == 0:
                 return self
-            raise TypeError, "sum not defined"
+            raise TypeError("sum not defined")
         if not isinstance(other, ModularAbelianVariety_modsym_abstract):
             return ModularAbelianVariety_abstract.__add__(self, other)
         if self.groups() != other.groups():
-            raise TypeError, "sum not defined since ambient spaces different"
+            raise TypeError("sum not defined since ambient spaces different")
         M = self.modular_symbols() + other.modular_symbols()
         return ModularAbelianVariety_modsym(M)
 
@@ -3660,11 +3655,11 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
 
     def lattice(self):
         r"""
-        Return the lattice the defines this modular symbols modular abelian
-        variety.
+        Return the lattice defining this modular abelian variety.
 
-        OUTPUT: a free `\ZZ`-module embedded in an ambient
-        `\QQ`-vector space
+        OUTPUT:
+
+        A free `\ZZ`-module embedded in an ambient `\QQ`-vector space.
 
         EXAMPLES::
 
@@ -3766,7 +3761,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         """
         M = self._modular_symbols().modular_symbols_of_sign(sign)
         if (sign != 0 and M.dimension() != self.dimension()) or (sign == 0 and M.dimension() != 2*self.dimension()):
-            raise RuntimeError, "unable to determine sign (=%s) space of modular symbols"%sign
+            raise RuntimeError("unable to determine sign (=%s) space of modular symbols"%sign)
         return M
 
     def _compute_hecke_polynomial(self, n, var='x'):
@@ -4138,11 +4133,11 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         """
         if check:
             if not isinstance(modsym, ModularSymbolsSpace):
-                raise TypeError, "modsym must be a modular symbols space"
+                raise TypeError("modsym must be a modular symbols space")
             if modsym.sign() != 0:
-                raise TypeError, "modular symbols space must have sign 0"
+                raise TypeError("modular symbols space must have sign 0")
             if not modsym.is_cuspidal():
-                raise ValueError, "modsym must be cuspidal"
+                raise ValueError("modsym must be cuspidal")
 
         ModularAbelianVariety_abstract.__init__(self, (modsym.group(), ), modsym.base_ring(),
                              newform_level=newform_level, is_simple=is_simple,
@@ -4204,9 +4199,9 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             11
         """
         if not self.is_simple():
-            raise ValueError, "self must be simple"
+            raise ValueError("self must be simple")
         p = Integer(p)
-        if not p.is_prime(): raise ValueError, "p must be a prime integer"
+        if not p.is_prime(): raise ValueError("p must be a prime integer")
         try: return self.__component_group[p][0]
         except AttributeError:
             self.__component_group = {}
@@ -4218,9 +4213,9 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             return one
         # Cases that we don't know how to handle yet.
         if not is_Gamma0(self.group()):
-            raise NotImplementedError, "computation of component group not implemented when group isn't Gamma0"
+            raise NotImplementedError("computation of component group not implemented when group isn't Gamma0")
         if self.level() % (p*p) == 0:
-            raise NotImplementedError, "computation of component group not implemented when p^2 divides the level"
+            raise NotImplementedError("computation of component group not implemented when p^2 divides the level")
 
         # Now we're on Gamma0(p*M) with gcd(p,M) = 1.
         # 1. Compute factor of Brandt module space, and put integral structure on it.
@@ -4337,16 +4332,16 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         except AttributeError: self.__tamagawa_number = {}
         except KeyError: pass
         if not self.is_simple():
-            raise ValueError, "self must be simple"
+            raise ValueError("self must be simple")
         try:
             g = self.component_group_order(p)
         except NotImplementedError:
-            raise NotImplementedError, "Tamagawa number can't be determined using known algorithms, so consider using the tamagawa_number_bounds function instead"
+            raise NotImplementedError("Tamagawa number can't be determined using known algorithms, so consider using the tamagawa_number_bounds function instead")
         div, mul, mul_primes = self.tamagawa_number_bounds(p)
         if div == mul:
             cp = div
         else:
-            raise NotImplementedError, "the Tamagawa number at %s is a power of 2, but the exact power can't be determined using known algorithms.  Consider using the tamagawa_number_bounds function instead."%p
+            raise NotImplementedError("the Tamagawa number at %s is a power of 2, but the exact power can't be determined using known algorithms.  Consider using the tamagawa_number_bounds function instead."%p)
         self.__tamagawa_number[p] = cp
         return cp
 
@@ -4378,7 +4373,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         except AttributeError: self.__tamagawa_number_bounds = {}
         except KeyError: pass
         if not self.is_simple():
-            raise ValueError, "self must be simple"
+            raise ValueError("self must be simple")
         N = self.level()
         div = 1; mul = 0; mul_primes = []
         if N % p != 0:
@@ -4403,7 +4398,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                         div = 2**m
                     mul = 2**n
                 else:
-                    raise NotImplementedError, "Atkin-Lehner at p must act as a scalar"
+                    raise NotImplementedError("Atkin-Lehner at p must act as a scalar")
         else:
             mul_primes = list(sorted(set([p] + [q for q in prime_range(2,2*self.dimension()+2)])))
         div = Integer(div)
@@ -4444,10 +4439,10 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         except KeyError: pass
         p = Integer(p)
         if not is_Gamma0(self.group()):
-            raise NotImplementedError, "Brandt module only defined on Gamma0"
-        if not p.is_prime(): raise ValueError, "p must be a prime integer"
+            raise NotImplementedError("Brandt module only defined on Gamma0")
+        if not p.is_prime(): raise ValueError("p must be a prime integer")
         if self.level().valuation(p) != 1:
-            raise ValueError, "p must exactly divide the level"
+            raise ValueError("p must exactly divide the level")
         M = self.level() / p
         from sage.modular.all import BrandtModule
         V = BrandtModule(p, M)
@@ -4461,7 +4456,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 V = f(V.hecke_operator(q)).kernel()
                 q = next_prime(q)
             if V.dimension() > self.dimension():
-                raise RuntimeError, "unable to cut out Brandt module (got dimension %s instead of %s)"%(V.dimension(), self.dimension())
+                raise RuntimeError("unable to cut out Brandt module (got dimension %s instead of %s)"%(V.dimension(), self.dimension()))
         else:
             D = V.decomposition()
             D = [A for A in D if A.dimension() == self.dimension()]
@@ -4472,7 +4467,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 D = [A for A in D if A.hecke_polynomial(q) == f]
                 q = next_prime(q)
             if len(D) != 1:
-                raise RuntimeError, "unable to locate Brandt module (got %s candidates instead of 1)"%(len(D))
+                raise RuntimeError("unable to locate Brandt module (got %s candidates instead of 1)"%(len(D)))
             V = D[0]
         self.__brandt_module[p] = V
         return V
@@ -4506,11 +4501,11 @@ def sqrt_poly(f):
         ValueError: f must be monic
     """
     if not f.is_monic():
-        raise ValueError, "f must be monic"
+        raise ValueError("f must be monic")
     try:
         return prod([g**Integer(e/Integer(2)) for g,e in f.factor()])
     except TypeError:
-        raise ValueError, "f must be a perfect square"
+        raise ValueError("f must be a perfect square")
 
 
 ####################################################################################################
@@ -4586,7 +4581,7 @@ def factor_new_space(M):
         if cube_free:
             return t.decomposition()
         t, p = random_hecke_operator(M, t, p)
-    raise RuntimeError, "unable to factor new space -- this should not happen" # should never happen
+    raise RuntimeError("unable to factor new space -- this should not happen") # should never happen
 
 def factor_modsym_space_new_factors(M):
     """

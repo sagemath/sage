@@ -44,7 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "planarity.h"
 
-void ProjectTitle()
+void ProjectTitle(void)
 {
     Message("\n=================================================="
             "\nPlanarity version 2.2"
@@ -168,7 +168,7 @@ int helpMessage(char *param)
  MENU-DRIVEN PROGRAM
  ****************************************************************************/
 
-int menu()
+int menu(void)
 {
 char Choice;
 

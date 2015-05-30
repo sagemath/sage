@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+
+# Test taken from Simon King's p-group cohomology spkg:
+SMALL_GROUPS=`echo "SmallGroup(13,1); quit;" | $SAGE_ROOT/sage -gap -b -T | grep "13"`
+if [ "$SMALL_GROUPS" = "" ]; then
+    echo >&2 "Error, the testsuite for the database_gap spkg failed!"
+    exit 1
+fi
+echo "The testsuite for the database_gap spkg succeeded!"

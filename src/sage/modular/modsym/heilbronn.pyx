@@ -21,11 +21,12 @@ import sage.rings.arith
 
 import sage.misc.misc
 
-include 'sage/ext/cdefs.pxi'
 include 'sage/ext/interrupt.pxi'
 include 'sage/ext/stdsage.pxi'
-from sage.libs.flint.flint cimport *
-include "sage/libs/flint/fmpz_poly.pxi"
+
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
+from sage.libs.flint.fmpz_poly cimport *
 
 cdef extern from "<math.h>":
     float roundf(float x)
@@ -57,7 +58,8 @@ cdef struct list:
     int n   # how much memory has been allocated
 
 cdef int* expand(int *v, int n, int new_length) except NULL:
-    cdef int *w, i
+    cdef int *w
+    cdef int i
     w = <int*>  sage_malloc(new_length*sizeof(int))
     if w == <int*> 0:
         return NULL
@@ -259,7 +261,7 @@ cdef class Heilbronn:
                 b = u*self.list.v[4*i+1] + v*self.list.v[4*i+3]
                 export.c_p1_normalize_int(N, a, b, &c, &d, &s, 0)
                 X = (c,d)
-                if M.has_key(X):
+                if X in M:
                     M[X] = M[X] + 1
                 else:
                     M[X] = 1
@@ -269,7 +271,7 @@ cdef class Heilbronn:
                 b = (u * self.list.v[4*i+1])%N + (v * self.list.v[4*i+3])%N
                 export.c_p1_normalize_int(N, a, b, &c, &d, &s, 0)
                 X = (c,d)
-                if M.has_key(X):
+                if X in M:
                     M[X] = M[X] + 1
                 else:
                     M[X] = 1
@@ -279,7 +281,7 @@ cdef class Heilbronn:
                 b = llong_prod_mod(u,self.list.v[4*i+1],N) + llong_prod_mod(v,self.list.v[4*i+3], N)
                 export.c_p1_normalize_llong(N, a, b, &c, &d, &s, 0)
                 X = (c,d)
-                if M.has_key(X):
+                if X in M:
                     M[X] = M[X] + 1
                 else:
                     M[X] = 1
@@ -458,7 +460,8 @@ cdef class HeilbronnMerel(Heilbronn):
             [5, 3, 0, 1],
             [5, 4, 0, 1]]
         """
-        cdef int a, q, d, b, c, bc, n
+        cdef int a, q, d, b, c, n
+        cdef llong bc
         cdef list *L
         list_init(&self.list)
         L = &self.list
@@ -476,7 +479,7 @@ cdef class HeilbronnMerel(Heilbronn):
                 for c in range(1, d):
                     list_append4(L, a,0,c,d)
             for d in range(q+1, n+1):
-                bc = a*d-n
+                bc = (<llong>a) * (<llong>d) - (<llong>n)
                 ## Divisor c of bc must satisfy Floor(bc/c) lt a and c lt d.
                 ## c ge (bc div a + 1)  <=>  Floor(bc/c) lt a  (for integers)
                 ## c le d - 1           <=>  c lt d
@@ -546,7 +549,9 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
         R = R.change_ring(QQ)
 
     cdef Py_ssize_t i, j
-    cdef int *a, *b, k
+    cdef int *a
+    cdef int *b
+    cdef int k
 
     cdef Heilbronn H
 
@@ -673,7 +678,9 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     T = matrix(K, len(indices), len(P1), sparse=False)
 
     cdef Py_ssize_t i, j
-    cdef int *a, *b, k, scalar
+    cdef int *a
+    cdef int *b
+    cdef int k, scalar
 
     cdef Heilbronn H
 
@@ -767,7 +774,9 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
         R = R.change_ring(QQ)
 
     cdef Py_ssize_t i, j
-    cdef int *a, *b, k, scalar
+    cdef int *a
+    cdef int *b
+    cdef int k, scalar
     cdef Heilbronn H
 
     t = sage.misc.misc.verbose("computing non-reduced images of symbol under Hecke operators",
@@ -859,7 +868,8 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
         R = R.change_ring(QQ)
 
     cdef Py_ssize_t j, m, z, w, n, p
-    cdef int *a, *b
+    cdef int *a
+    cdef int *b
 
     n = len(P1)
 

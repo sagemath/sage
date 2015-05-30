@@ -1,6 +1,6 @@
 --- src/src/scripts/Makefile.in	2012-03-01 15:02:25.000000000 -0800
 +++ src/src/scripts/Makefile.in	2013-03-17 08:48:56.000000000 -0700
-@@ -86,10 +86,7 @@
+@@ -90,10 +90,7 @@
  install: installdirs install-cmds
  	@rm -f $(DESTDIR)$(bindir)/R
  	@(d=`$(ECHO) '$(rhome)' | sed 's,/,\\\/,g';`; \

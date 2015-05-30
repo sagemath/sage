@@ -28,7 +28,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 
@@ -136,6 +135,7 @@ cdef class HiddenMarkovModel:
             sage: G.edges()
             [(0, 0, 0.3), (0, 2, 0.7), (1, 2, 1.0), (2, 0, 0.5), (2, 1, 0.5)]
             sage: G.plot()
+            Graphics object consisting of 11 graphics primitives
         """
         cdef int i, j
         m = self.transition_matrix()
@@ -279,18 +279,19 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         ([1, 1, 1, 1, 1, 1], -5.378832842208748)
         sage: m.baum_welch([0,1,0,1,0,1])
         (0.0, 22)
-        sage: m
+        sage: m  # rel tol 1e-10
         Discrete Hidden Markov Model with 2 States and 2 Emissions
         Transition matrix:
-        [1.0134345614...e-70               1.0]
-        [              1.0 3.997435271...e-19]
+        [1.0134345614745788e-70                    1.0]
+        [                   1.0 3.9974352713558623e-19]
         Emission matrix:
-        [7.3802215662...e-54               1.0]
-        [              1.0  3.99743526...e-19]
+        [ 7.380221566254936e-54                    1.0]
+        [                   1.0 3.9974352626002193e-19]
         Initial probabilities: [0.0000, 1.0000]
         sage: m.sample(10)
         [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
         sage: m.graph().plot()
+        Graphics object consisting of 6 graphics primitives
 
     A 3-state model that happens to always outputs 'b'::
 
@@ -321,8 +322,9 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             [0.5 0.5]
             [0.1 0.9]
             sage: hmm.DiscreteHiddenMarkovModel([1,2,.1,1.2], [[1],[1]],[.5,.5]).transition_matrix()
-            [ 0.333333333333  0.666666666667]
-            [0.0769230769231  0.923076923077]
+            [ 0.3333333333333333  0.6666666666666666]
+            [0.07692307692307693   0.923076923076923]
+
         """
         self.pi = util.initial_probs_to_TimeSeries(pi, normalize)
         self.N = len(self.pi)
@@ -791,7 +793,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
             - a nonnegative int
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: m = hmm.DiscreteHiddenMarkovModel([[0.4,0.6],[0.1,0.9]], [[0.1,0.9],[0.9,0.1]], [.2,.8])
             sage: set_random_seed(0)
@@ -1195,14 +1197,14 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             sage: m = hmm.DiscreteHiddenMarkovModel([[0.1,0.9],[0.9,0.1]], [[.5,.5],[0,1]], [.2,.8])
             sage: m.baum_welch([1,0]*20, log_likelihood_cutoff=0)
             (0.0, 4)
-            sage: m
+            sage: m  # rel tol 1e-14
             Discrete Hidden Markov Model with 2 States and 2 Emissions
             Transition matrix:
-            [1.35152697077e-51               1.0]
-            [              1.0               0.0]
+            [1.3515269707707603e-51                    1.0]
+            [                   1.0                    0.0]
             Emission matrix:
-            [              1.0 6.46253713885e-52]
-            [              0.0               1.0]
+            [                  1.0 6.462537138850569e-52]
+            [                  0.0                   1.0]
             Initial probabilities: [0.0000, 1.0000]
 
         The following illustrates how Baum-Welch is only a local
@@ -1233,10 +1235,10 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             [0.2 0.8]
             sage: m = hmm.DiscreteHiddenMarkovModel([[0.1,0.9],[0.9,0.1]], [[.5,.5],[.2,.8]], [.2,.8])
             sage: m.baum_welch(v)
-            (-66.7823606592935..., 100)
-            sage: m.emission_matrix()
-            [0.530308574863 0.469691425137]
-            [0.290977555017 0.709022444983]
+            (-66.782360659293..., 100)
+            sage: m.emission_matrix()  # rel tol 1e-14
+            [ 0.5303085748626447 0.46969142513735535]
+            [ 0.2909775550173978  0.7090224449826023]
         """
         if self._emission_symbols is not None:
             obs = self._emission_symbols_to_IntList(obs)
@@ -1326,7 +1328,7 @@ def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols
         sage: loads(dumps(m)) == m   # indirect test
         True
     """
-    cdef DiscreteHiddenMarkovModel m = PY_NEW(DiscreteHiddenMarkovModel)
+    cdef DiscreteHiddenMarkovModel m = DiscreteHiddenMarkovModel.__new__(DiscreteHiddenMarkovModel)
     m.A = A
     m.B = B
     m.pi = pi

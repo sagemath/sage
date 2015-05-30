@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -e
+
+[ -n "${SAGE_ROOT}" ] || SAGE_ROOT="$(pwd)/../../../"
+
+
+# prepare a clean directory.
+[ -d "work" ] && rm -rf "work"
+mkdir "work"
+cd "work"
+
+
+# determine latest version.
+wget 'https://raw.githubusercontent.com/mbostock/d3/master/package.json'
+GIT_VERSION="$(grep '"version":' 'package.json' | sed 's/.*: "\(.*\)",/\1/g')"
+
+
+# fetch source and check version.
+wget "https://github.com/mbostock/d3/releases/download/v${GIT_VERSION}/d3.zip"
+unzip 'd3.zip'
+ZIP_VERSION="$(grep 'version:' 'd3.js' | sed 's/.*: "\(.*\)"/\1/g')"
+if [ ! "${GIT_VERSION}" = "${ZIP_VERSION}" ] ; then
+    echo "Version mismatch: ${GIT_VERSION} vs ${ZIP_VERSION}."
+    exit 1
+fi
+
+
+# build and move tarball
+mkdir "d3js-${ZIP_VERSION}"
+mv 'd3.min.js' 'LICENSE' "d3js-${ZIP_VERSION}"
+tar czvf "d3js-${ZIP_VERSION}.tar.gz" "d3js-${ZIP_VERSION}"
+mv "d3js-${ZIP_VERSION}.tar.gz" "${SAGE_ROOT}/upstream/"
+
+
+# update package info
+cd ..
+echo "${ZIP_VERSION}" > 'package-version.txt'
+sage -sh 'sage-fix-pkg-checksums'
+
+

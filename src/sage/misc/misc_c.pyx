@@ -1,5 +1,5 @@
 """
-Miscellaneous functions
+Miscellaneous functions (Cython)
 
 This file contains support for products, running totals, balanced sums, and
 bitset tests.
@@ -28,11 +28,10 @@ AUTHORS:
 #*****************************************************************************
 import sys
 
-include "sage/ext/stdsage.pxi"
 from cpython.sequence cimport *
 from cpython.list cimport *
 from cpython.tuple cimport *
-include "sage/ext/python_slice.pxi"
+from cpython.slice cimport PySlice_Check
 from cpython.number cimport *
 
 cdef extern from *:
@@ -434,7 +433,7 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
 #################################################################
 # 32/64-bit computer?
 #################################################################
-is_64_bit = sys.maxint >= 9223372036854775807
+is_64_bit = sys.maxsize >= 9223372036854775807
 is_32_bit = not is_64_bit
 
 

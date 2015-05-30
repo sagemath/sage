@@ -1,71 +1,46 @@
 """
-qfsolve: Programme de resolution des equations quadratiques.
+Solving quadratic equations.
 
-Interface to the GP quadratic forms code of Denis Simon.
+Interface to the PARI/GP quadratic forms code of Denis Simon.
 
 AUTHORS:
 
- * Denis Simon (GP code)
+- Denis Simon (GP code)
 
- * Nick Alexander (Sage interface)
+- Nick Alexander (Sage interface)
+
+- Jeroen Demeyer (2014-09-23): use PARI instead of GP scripts,
+  return vectors instead of tuples (:trac:`16997`).
 """
 
 #*****************************************************************************
 #       Copyright (C) 2008 Nick Alexander
+#       Copyright (C) 2014 Jeroen Demeyer
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.interfaces.gp import Gp
 from sage.rings.all import ZZ, QQ
+from sage.modules.free_module_element import vector
 
-_gp_for_simon_interpreter = None    # Global GP interpreter for Denis Simon's code
-def _gp_for_simon():
-    r"""
-    Start a GP interpreter for the use of Denis Simon's Qfsolve and Qfparam
-    if it is not started already.
-
-    EXAMPLE ::
-
-        sage: from sage.quadratic_forms.qfsolve import _gp_for_simon
-        sage: _gp_for_simon()
-        PARI/GP interpreter
-    """
-    global _gp_for_simon_interpreter
-    if _gp_for_simon_interpreter is None:
-        _gp_for_simon_interpreter = Gp(script_subdirectory='simon')
-        _gp_for_simon_interpreter.read("qfsolve.gp")
-    return _gp_for_simon_interpreter
-
-# \\ - Qfsolve(G,factD): pour resoudre l'equation quadratique X^t*G*X = 0
-# \\ G doit etre une matrice symetrique n*n, a coefficients dans Z.
-# \\ S'il n'existe pas de solution, la reponse est un entier
-# \\ indiquant un corps local dans lequel aucune solution n'existe
-# \\ (-1 pour les reels, p pour Q_p).
-# \\ Si on connait la factorisation de -abs(2*matdet(G)),
-# \\ on peut la passer par le parametre factD pour gagner du temps.
-# \\
-# \\ - Qfparam(G,sol,fl): pour parametrer les solutions de la forme
-# \\ quadratique ternaire G, en utilisant la solution particuliere sol.
-# \\ si fl>0, la 'fl'eme forme quadratique est reduite.
-
-def qfsolve(G, factD=None):
+def qfsolve(G):
     r"""
     Find a solution `x = (x_0,...,x_n)` to `x G x^t = 0` for an
     `n \times n`-matrix ``G`` over `\QQ`.
 
-    If a solution exists, returns a tuple of rational numbers `x`.
-    Otherwise, returns `-1` if no solutions exists over the reals or a
+    OUTPUT:
+
+    If a solution exists, return a vector of rational numbers `x`.
+    Otherwise, returns `-1` if no solution exists over the reals or a
     prime `p` if no solution exists over the `p`-adic field `\QQ_p`.
+
+    ALGORITHM:
+
+    Uses PARI/GP function ``qfsolve``.
 
     EXAMPLES::
 
@@ -76,14 +51,14 @@ def qfsolve(G, factD=None):
         [-12   0  -1]
         sage: sol = qfsolve(M); sol
         (1, 0, 0)
-        sage: sol[0].parent() is QQ
-        True
+        sage: sol.parent()
+        Vector space of dimension 3 over Rational Field
 
         sage: M = Matrix(QQ, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         sage: ret = qfsolve(M); ret
         -1
-        sage: ret.parent() is ZZ
-        True
+        sage: ret.parent()
+        Integer Ring
 
         sage: M = Matrix(QQ, [[1, 0, 0], [0, 1, 0], [0, 0, -7]])
         sage: qfsolve(M)
@@ -91,14 +66,11 @@ def qfsolve(G, factD=None):
 
         sage: M = Matrix(QQ, [[3, 0, 0, 0], [0, 5, 0, 0], [0, 0, -7, 0], [0, 0, 0, -11]])
         sage: qfsolve(M)
-        (-3, 4, 3, 2)
+        (3, -4, -3, -2)
     """
-    gp = _gp_for_simon()
-    if factD is not None:
-        raise NotImplementedError, "qfsolve not implemented with parameter factD"
-    ret = gp('Qfsolve(%s)' % G._pari_init_())
-    if str(ret.type()) == 't_COL':  # Need explicit str(), see #15522
-        return tuple(QQ(r) for r in ret)
+    ret = G._pari_().qfsolve()
+    if ret.type() == 't_COL':
+        return vector(QQ, ret)
     return ZZ(ret)
 
 def qfparam(G, sol):
@@ -119,7 +91,7 @@ def qfparam(G, sol):
 
     ALGORITHM:
 
-    Uses Denis Simon's pari script Qfparam.
+    Uses PARI/GP function ``qfparam``.
 
     EXAMPLES::
 
@@ -128,15 +100,14 @@ def qfparam(G, sol):
         [  0   0 -12]
         [  0 -12   0]
         [-12   0  -1]
-        sage: sol = qfsolve(M);
+        sage: sol = qfsolve(M)
         sage: ret = qfparam(M, sol); ret
-        (-t^2 - 12, 24*t, 24*t^2)
-        sage: ret[0].parent() is QQ['t']
-        True
+        (-12*t^2 - 1, 24*t, 24)
+        sage: ret.parent()
+        Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
     """
-    gp = _gp_for_simon()
     R = QQ['t']
     t = R.gen()
-    s = 'Qfparam((%s), (%s)~)*[t^2,t,1]~' % (G._pari_init_(), list(sol))
-    ret = gp(s)
-    return tuple(R(str(r)) for r in ret)
+    mat = G._pari_().qfparam(sol)
+    # Interpret the rows of mat as coefficients of polynomials
+    return vector(R, mat.Col())

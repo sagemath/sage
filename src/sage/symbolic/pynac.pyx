@@ -1,3 +1,7 @@
+# distutils: libraries = gsl
+
+"Pynac interface"
+
 ###############################################################################
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
@@ -7,8 +11,6 @@
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-# distutils: libraries = gsl
-
 cdef extern from "pynac_cc.h":
     long double sage_logl(long double)
     long double sage_sqrtl(long double)
@@ -16,10 +18,10 @@ cdef extern from "pynac_cc.h":
     long double sage_lgammal(long double)
 
 include "sage/ext/cdefs.pxi"
-include "sage/ext/stdsage.pxi"
+from sage.ext.stdsage cimport PY_NEW
 include "sage/ext/python.pxi"
 
-from sage.libs.ginac cimport *
+from ginac cimport *
 
 # for complex log and log gamma
 include "sage/gsl/gsl_complex.pxi"
@@ -27,7 +29,7 @@ include "sage/gsl/gsl_sf_result.pxi"
 include "sage/gsl/gsl_gamma.pxi"
 
 
-from sage.structure.element import Element
+from sage.structure.element cimport Element, parent_c
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -36,8 +38,9 @@ from sage.rings.complex_field import ComplexField
 from sage.rings.all import CC
 
 from sage.symbolic.expression cimport Expression, new_Expression_from_GEx
+from sage.symbolic.substitution_map cimport SubstitutionMap, new_SubstitutionMap_from_GExMap
 from sage.symbolic.function import get_sfunction_from_serial
-from sage.symbolic.function cimport Function, parent_c
+from sage.symbolic.function cimport Function
 from sage.symbolic.constants_c cimport PynacConstant
 
 import ring
@@ -59,10 +62,68 @@ cdef public object ex_to_pyExpression(GEx juice):
     Used to pass parameters to custom power and series functions.
     """
     cdef Expression nex
-    nex = <Expression>PY_NEW(Expression)
+    nex = <Expression>Expression.__new__(Expression)
     GEx_construct_ex(&nex._gobj, juice)
     nex._parent = ring.SR
     return nex
+
+cdef public object exprseq_to_PyTuple(GEx seq):
+    """
+    Convert an exprseq to a Python tuple.
+
+    Used while converting arguments of symbolic functions to Python objects.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.function import BuiltinFunction
+        sage: class TFunc(BuiltinFunction):
+        ....:     def __init__(self):
+        ....:         BuiltinFunction.__init__(self, 'tfunc', nargs=0)
+        ....:
+        ....:     def _eval_(self, *args):
+        ....:         print "len(args): %s, types: %s"%(len(args), str(map(type, args)))
+        ....:         for i, a in enumerate(args):
+        ....:             if isinstance(a, tuple):
+        ....:                 print "argument %s is a tuple, with types %s"%(str(i), str(map(type, a)))
+        ....:
+        sage: tfunc = TFunc()
+        sage: u = SR._force_pyobject((1, x+1, 2))
+        sage: tfunc(u, x, SR._force_pyobject((3.0, 2^x)))
+        len(args): 3, types: [<type 'tuple'>, <type 'sage.symbolic.expression.Expression'>, <type 'tuple'>]
+        argument 0 is a tuple, with types [<type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.rings.integer.Integer'>]
+        argument 2 is a tuple, with types [<type 'sage.rings.real_mpfr.RealLiteral'>, <type 'sage.symbolic.expression.Expression'>]
+        tfunc((1, x + 1, 2), x, (3.00000000000000, 2^x))
+    """
+    from sage.symbolic.ring import SR
+    res = []
+    for i in range(seq.nops()):
+        if is_a_numeric(seq.op(i)):
+            res.append(py_object_from_numeric(seq.op(i)))
+        elif is_exactly_a_exprseq(seq.op(i)):
+            res.append(exprseq_to_PyTuple(seq.op(i)))
+        else:
+            res.append(new_Expression_from_GEx(SR, seq.op(i)))
+    return tuple(res)
+
+def unpack_operands(Expression ex):
+    """
+    EXAMPLES::
+
+        sage: from sage.symbolic.pynac import unpack_operands
+        sage: t = SR._force_pyobject((1, 2, x, x+1, x+2))
+        sage: unpack_operands(t)
+        (1, 2, x, x + 1, x + 2)
+        sage: type(unpack_operands(t))
+        <type 'tuple'>
+        sage: map(type, unpack_operands(t))
+        [<type 'sage.rings.integer.Integer'>, <type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>]
+        sage: u = SR._force_pyobject((t, x^2))
+        sage: unpack_operands(u)
+        ((1, 2, x, x + 1, x + 2), x^2)
+        sage: type(unpack_operands(u)[0])
+        <type 'tuple'>
+    """
+    return exprseq_to_PyTuple(ex._gobj)
 
 cdef public object exvector_to_PyTuple(GExVector seq):
     """
@@ -73,12 +134,39 @@ cdef public object exvector_to_PyTuple(GExVector seq):
 
     We convert Python objects wrapped in symbolic expressions back to regular
     Python objects.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.function import BuiltinFunction
+        sage: class TFunc(BuiltinFunction):
+        ....:     def __init__(self):
+        ....:         BuiltinFunction.__init__(self, 'tfunc', nargs=0)
+        ....:
+        ....:     def _eval_(self, *args):
+        ....:         print "len(args): %s, types: %s"%(len(args), str(map(type, args)))
+        sage: tfunc = TFunc()
+        sage: u = SR._force_pyobject((1, x+1, 2))
+        sage: tfunc(u, x, 3.0, 5.0r, 1r)
+        len(args): 5, types: [<type 'tuple'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.rings.real_mpfr.RealLiteral'>, <type 'float'>, <type 'int'>]
+        tfunc((1, x + 1, 2), x, 3.00000000000000, 5.0, 1)
+
+    TESTS:
+
+    Check if symbolic functions in the arguments are preserved::
+
+        sage: tfunc(sin(x), tfunc(1, x^2))
+        len(args): 2, types: [<type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>]
+        len(args): 2, types: [<type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>]
+        tfunc(sin(x), tfunc(1, x^2))
+
     """
     from sage.symbolic.ring import SR
     res = []
     for i in range(seq.size()):
         if is_a_numeric(seq.at(i)):
             res.append(py_object_from_numeric(seq.at(i)))
+        elif is_exactly_a_exprseq(seq.at(i)):
+            res.append(exprseq_to_PyTuple(seq.at(i)))
         else:
             res.append(new_Expression_from_GEx(SR, seq.at(i)))
     return tuple(res)
@@ -94,7 +182,7 @@ cdef public GEx pyExpression_to_ex(object res) except *:
         raise TypeError, "function returned None, expected return value of type sage.symbolic.expression.Expression"
     try:
         t = ring.SR.coerce(res)
-    except TypeError, err:
+    except TypeError as err:
         raise TypeError, "function did not return a symbolic expression or an element that can be coerced into a symbolic expression"
     return (<Expression>t)._gobj
 
@@ -120,7 +208,8 @@ def paramset_from_Expression(Expression e):
         sage: from sage.symbolic.pynac import paramset_from_Expression
         sage: f = function('f')
         sage: paramset_from_Expression(f(x).diff(x))
-        [0L]
+        [0L] # 32-bit
+        [0]  # 64-bit
     """
     return paramset_to_PyTuple(ex_to_fderivative(e._gobj).get_parameter_set())
 
@@ -159,6 +248,34 @@ def get_ginac_serial():
         True
     """
     return py_get_ginac_serial()
+
+cdef public object subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& seq):
+    """
+    Convert arguments from ``GiNaC::subs()`` to a PyTuple. 
+    
+    EXAMPLES::
+
+        sage: from sage.symbolic.function import BuiltinFunction
+        sage: class TFunc(BuiltinFunction):
+        ....:     def __init__(self):
+        ....:         BuiltinFunction.__init__(self, 'tfunc', nargs=0)
+        ....:
+        ....:     def _subs_(self, *args):
+        ....:         print "len(args): %s, types: %s"%(len(args), str(map(type, args)))
+        ....:         return args[-1]
+        sage: tfunc = TFunc()
+        sage: tfunc(x).subs(x=1)
+        len(args): 3, types: [<type 'sage.symbolic.substitution_map.SubstitutionMap'>, 
+          <type 'int'>,        # 64-bit
+          <type 'long'>,       # 32-bit
+          <type 'sage.symbolic.expression.Expression'>]
+        x
+    """
+    from sage.symbolic.ring import SR
+    res = []
+    res.append(new_SubstitutionMap_from_GExMap(map))
+    res.append(options)
+    return tuple(res) + exvector_to_PyTuple(seq)
 
 #################################################################
 # Printing helpers
@@ -202,7 +319,7 @@ cdef public stdstring* py_repr(object o, int level) except +:
             t = s
         # Python complexes are always printed with parentheses
         # we try to avoid double parantheses
-        if not PY_TYPE_CHECK_EXACT(o, complex) and \
+        if type(o) is not complex and \
                 (' ' in t or '/' in t or '+' in t or '-' in t or '*' in t \
                 or '^' in t):
             s = '(%s)'%s
@@ -250,7 +367,7 @@ cdef public stdstring* py_latex_variable(char* var_name) except +:
         sage: py_latex_variable('a')
         a
         sage: py_latex_variable('abc')
-        \mbox{abc}
+        \mathit{abc}
         sage: py_latex_variable('a_00')
         a_{00}
         sage: py_latex_variable('sigma_k')
@@ -288,10 +405,10 @@ def py_print_function_pystring(id, args, fname_paren=False):
 
     INPUT:
 
-        id --   serial number of the corresponding symbolic function
-        params -- Set of parameter numbers with respect to which to take
-                    the derivative.
-        args -- arguments of the function.
+    - id --   serial number of the corresponding symbolic function
+    - params -- Set of parameter numbers with respect to which to take the
+      derivative.
+    - args -- arguments of the function.
 
     EXAMPLES::
 
@@ -349,7 +466,7 @@ cdef public stdstring* py_print_function(unsigned id, object args) except +:
     return string_from_pystr(py_print_function_pystring(id, args))
 
 def py_latex_function_pystring(id, args, fname_paren=False):
-    """
+    r"""
     Return a string with the latex representation of the symbolic function
     specified by the given id applied to args.
 
@@ -446,12 +563,10 @@ cdef public stdstring* py_print_fderivative(unsigned id, object params,
 
     INPUT:
 
-        id --   serial number of the corresponding symbolic function
-        params -- Set of parameter numbers with respect to which to take
-                    the derivative.
-        args -- arguments of the function.
-
-
+    - id --   serial number of the corresponding symbolic function
+    - params -- Set of parameter numbers with respect to which to take the
+      derivative.
+    - args -- arguments of the function.
     """
     ostr = ''.join(['D[', ', '.join([repr(int(x)) for x in params]), ']'])
     fstr = py_print_function_pystring(id, args, True)
@@ -510,7 +625,7 @@ cdef public stdstring* py_latex_fderivative(unsigned id, object params,
     return string_from_pystr(py_res)
 
 def py_latex_fderivative_for_doctests(id, params, args):
-    """
+    r"""
     Used internally for writing doctests for certain cdef'd functions.
 
     EXAMPLES::
@@ -613,8 +728,6 @@ cdef public unsigned py_get_serial_for_new_sfunction(stdstring &s,
 # Modular helpers
 #################################################################
 
-from sage.structure.element cimport Element
-
 cdef public int py_get_parent_char(object o) except -1:
     if isinstance(o, Element):
         return (<Element>o)._parent.characteristic()
@@ -628,9 +741,9 @@ cdef public int py_get_parent_char(object o) except -1:
 
 from sage.rings.rational cimport rational_power_parts
 cdef public object py_rational_power_parts(object base, object exp) except +:
-    if not PY_TYPE_CHECK_EXACT(base, Rational):
+    if type(base) is not Rational:
         base = Rational(base)
-    if not PY_TYPE_CHECK_EXACT(exp, Rational):
+    if type(exp) is not Rational:
         exp = Rational(exp)
     res= rational_power_parts(base, exp)
     return res + (bool(res[0] == 1),)
@@ -683,9 +796,11 @@ def test_binomial(n, k):
     binomial(n,k) == (-1)^k*binomial(k-n-1,k) is used to compute the result.
 
     INPUT:
-        n, k -- integers, with k >= 0.
+
+    - n, k -- integers, with k >= 0.
 
     OUTPUT:
+
         integer
 
     EXAMPLES::
@@ -705,14 +820,14 @@ def test_binomial(n, k):
 #################################################################
 import sage.rings.arith
 cdef public object py_gcd(object n, object k) except +:
-    if PY_TYPE_CHECK(n, Integer) and PY_TYPE_CHECK(k, Integer):
+    if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value,1) == 0:
             return n
         elif mpz_cmp_si((<Integer>k).value,1) == 0:
             return k
         return n.gcd(k)
 
-    if PY_TYPE_CHECK_EXACT(n, Rational) and PY_TYPE_CHECK_EXACT(k, Rational):
+    if type(n) is Rational and type(k) is Rational:
         return n.content(k)
     try:
         return sage.rings.arith.gcd(n,k)
@@ -725,7 +840,7 @@ cdef public object py_gcd(object n, object k) except +:
 # LCM
 #################################################################
 cdef public object py_lcm(object n, object k) except +:
-    if PY_TYPE_CHECK(n, Integer) and PY_TYPE_CHECK(k, Integer):
+    if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value,1) == 0:
             return k
         elif mpz_cmp_si((<Integer>k).value,1) == 0:
@@ -768,10 +883,10 @@ cdef public object py_real(object x) except +:
         sage: py_real(complex(2,2))
         2.0
     """
-    if PY_TYPE_CHECK_EXACT(x, float) or PY_TYPE_CHECK_EXACT(x, int) or \
-            PY_TYPE_CHECK_EXACT(x, long):
+    if type(x) is float or type(x) is int or \
+            type(x) is long:
         return x
-    elif PY_TYPE_CHECK_EXACT(x, complex):
+    elif type(x) is complex:
         return x.real
 
     try:
@@ -825,9 +940,9 @@ cdef public object py_imag(object x) except +:
         sage: py_imag(complex(2,2))
         2.0
     """
-    if PY_TYPE_CHECK_EXACT(x, float):
+    if type(x) is float:
         return float(0)
-    if PY_TYPE_CHECK_EXACT(x, complex):
+    if type(x) is complex:
         return x.imag
     try:
         return x.imag()
@@ -864,9 +979,9 @@ cdef public object py_conjugate(object x) except +:
         return x # assume is real since it doesn't have an imag attribute.
 
 cdef public bint py_is_rational(object x) except +:
-    return PY_TYPE_CHECK_EXACT(x, Rational) or \
-           PY_TYPE_CHECK_EXACT(x, Integer) or\
-           IS_INSTANCE(x, int) or IS_INSTANCE(x, long)
+    return type(x) is Rational or \
+           type(x) is Integer or\
+           isinstance(x, int) or isinstance(x, long)
 
 cdef public bint py_is_equal(object x, object y) except +:
     """
@@ -900,8 +1015,8 @@ cdef public bint py_is_integer(object x) except +:
         sage: py_is_integer(3.0r)
         False
     """
-    return IS_INSTANCE(x, int) or IS_INSTANCE(x, long) or PY_TYPE_CHECK(x, Integer) or \
-           (IS_INSTANCE(x, Element) and
+    return isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer) or \
+           (isinstance(x, Element) and
             ((<Element>x)._parent.is_exact() or (<Element>x)._parent == ring.SR) and
             (x in ZZ))
 
@@ -923,10 +1038,10 @@ def py_is_integer_for_doctests(x):
 cdef public bint py_is_even(object x) except +:
     try:
         return not(x%2)
-    except StandardError:
+    except Exception:
         try:
             return not(ZZ(x)%2)
-        except StandardError:
+        except Exception:
             pass
     return 0
 
@@ -960,8 +1075,8 @@ def py_is_crational_for_doctest(x):
     return py_is_crational(x)
 
 cdef public bint py_is_real(object a) except +:
-    if PyInt_CheckExact(a) or PY_TYPE_CHECK(a, Integer) or\
-            PyLong_CheckExact(a) or PY_TYPE_CHECK_EXACT(a, float):
+    if PyInt_CheckExact(a) or isinstance(a, Integer) or\
+            PyLong_CheckExact(a) or type(a) is float:
         return True
     return py_imag(a) == 0
 
@@ -969,11 +1084,11 @@ import sage.rings.arith
 cdef public bint py_is_prime(object n) except +:
     try:
         return n.is_prime()
-    except StandardError:  # yes, I'm doing this on purpose.
+    except Exception:  # yes, I'm doing this on purpose.
         pass
     try:
         return sage.rings.arith.is_prime(n)
-    except StandardError:
+    except Exception:
         pass
     return False
 
@@ -1083,45 +1198,45 @@ def py_is_cinteger_for_doctest(x):
     """
     return py_is_cinteger(x)
 
-cdef public object py_float(object n, PyObject* parent) except +:
+cdef public object py_float(object n, PyObject* kwds) except +:
     """
     Evaluate pynac numeric objects numerically.
 
     TESTS::
 
         sage: from sage.symbolic.pynac import py_float_for_doctests as py_float
-        sage: py_float(I, ComplexField(10))
+        sage: py_float(I, {'parent':ComplexField(10)})
         1.0*I
-        sage: py_float(pi, RealField(100))
+        sage: py_float(pi, {'parent':RealField(100)})
         3.1415926535897932384626433833
-        sage: py_float(10, CDF)
+        sage: py_float(10, {'parent':CDF})
         10.0
-        sage: type(py_float(10, CDF))
+        sage: type(py_float(10, {'parent':CDF}))
         <type 'sage.rings.complex_double.ComplexDoubleElement'>
-        sage: py_float(1/2, CC)
+        sage: py_float(1/2, {'parent':CC})
         0.500000000000000
-        sage: type(py_float(1/2, CC))
+        sage: type(py_float(1/2, {'parent':CC}))
         <type 'sage.rings.complex_number.ComplexNumber'>
     """
-    if parent is not NULL:
-        return (<object>parent)(n)
+    if kwds is not NULL:
+        return (<object>kwds)['parent'](n)
     else:
         try:
             return RR(n)
         except TypeError:
             return CC(n)
 
-def py_float_for_doctests(n, prec):
+def py_float_for_doctests(n, kwds):
     """
     This function is for testing py_float.
 
     EXAMPLES::
 
         sage: from sage.symbolic.pynac import py_float_for_doctests
-        sage: py_float_for_doctests(pi, RealField(80))
+        sage: py_float_for_doctests(pi, {'parent':RealField(80)})
         3.1415926535897932384626
     """
-    return py_float(n, <PyObject*>prec)
+    return py_float(n, <PyObject*>kwds)
 
 # TODO: Optimize this
 from sage.rings.real_double import RDF
@@ -1143,9 +1258,9 @@ cdef public object py_tgamma(object x) except +:
         sage: py_tgamma(1/2)
         1.77245385090552
     """
-    if PY_TYPE_CHECK_EXACT(x, int) or PY_TYPE_CHECK_EXACT(x, long):
+    if type(x) is int or type(x) is long:
         x = float(x)
-    if PY_TYPE_CHECK_EXACT(x, float):
+    if type(x) is float:
         return sage_tgammal(x)
 
     # try / except blocks are faster than
@@ -1228,10 +1343,12 @@ cdef public object py_doublefactorial(object x) except +:
 def doublefactorial(n):
     """
     The double factorial combinatorial function:
+
         n!! == n * (n-2) * (n-4) * ... * ({1|2}) with 0!! == (-1)!! == 1.
 
     INPUT:
-        n -- an integer > = 1
+
+    - n -- an integer > = 1
 
     EXAMPLES::
 
@@ -1327,7 +1444,7 @@ cdef public object py_zeta(object x) except +:
         sage: py_zeta(CC.0)
         0.00330022368532410 - 0.418155449141322*I
         sage: py_zeta(CDF(5))
-        1.03692775514
+        1.03692775514337
         sage: py_zeta(RealField(100)(5))
         1.0369277551433699263313654865
     """
@@ -1373,7 +1490,7 @@ cdef public object py_exp(object x) except +:
         sage: py_exp(QQbar(I))
         0.540302305868140 + 0.841470984807897*I
     """
-    if PY_TYPE_CHECK_EXACT(x, float):
+    if type(x) is float:
         return math.exp(x)
     try:
         return x.exp()
@@ -1430,9 +1547,9 @@ cdef public object py_log(object x) except +:
     """
     cdef gsl_complex res
     cdef double real, imag
-    if PY_TYPE_CHECK_EXACT(x, int) or PY_TYPE_CHECK_EXACT(x, long):
+    if type(x) is int or type(x) is long:
         x = float(x)
-    if PY_TYPE_CHECK_EXACT(x, float):
+    if type(x) is float:
         if (<float>x) > 0:
             return sage_logl(x)
         elif x < 0:
@@ -1440,7 +1557,7 @@ cdef public object py_log(object x) except +:
             return PyComplex_FromDoubles(res.dat[0], res.dat[1])
         else:
             return float('-inf')
-    elif PY_TYPE_CHECK_EXACT(x, complex):
+    elif type(x) is complex:
         real = PyComplex_RealAsDouble(x)
         imag = PyComplex_ImagAsDouble(x)
         if real == 0 and imag == 0:
@@ -1563,7 +1680,7 @@ cdef public object py_sinh(object x) except +:
 
 
 cdef public object py_cosh(object x) except +:
-    if PY_TYPE_CHECK_EXACT(x, float):
+    if type(x) is float:
         return math.cosh(x)
     try:
         return x.cosh()
@@ -1622,11 +1739,11 @@ cdef public object py_lgamma(object x) except +:
     """
     cdef gsl_sf_result lnr, arg
     cdef gsl_complex res
-    if PY_TYPE_CHECK_EXACT(x, int) or PY_TYPE_CHECK_EXACT(x, long):
+    if type(x) is int or type(x) is long:
         x = float(x)
-    if PY_TYPE_CHECK_EXACT(x, float):
+    if type(x) is float:
          return sage_lgammal(x)
-    elif PY_TYPE_CHECK_EXACT(x, complex):
+    elif type(x) is complex:
         gsl_sf_lngamma_complex_e(PyComplex_RealAsDouble(x),PyComplex_ImagAsDouble(x), &lnr, &arg)
         res = gsl_complex_polar(lnr.val, arg.val)
         return PyComplex_FromDoubles(res.dat[0], res.dat[1])
@@ -1666,7 +1783,7 @@ cdef public object py_sqrt(object x) except +:
     try:
         # WORRY: What if Integer's sqrt calls symbolic one and we go in circle?
         return x.sqrt()
-    except AttributeError, msg:
+    except AttributeError as msg:
         return sage_sqrtl(float(x))
 
 cdef public object py_abs(object x) except +:
@@ -1801,7 +1918,7 @@ cdef public object py_psi(object x) except +:
         0.577215664901533
     """
     import mpmath
-    if PY_TYPE_CHECK(x, Element) and hasattr((<Element>x)._parent, 'prec'):
+    if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
@@ -1829,7 +1946,7 @@ cdef public object py_psi2(object n, object x) except +:
         -2.40411380631919
     """
     import mpmath
-    if PY_TYPE_CHECK(x, Element) and hasattr((<Element>x)._parent, 'prec'):
+    if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
@@ -1857,7 +1974,7 @@ cdef public object py_li2(object x) except +:
         -0.890838090262283
     """
     import mpmath
-    if PY_TYPE_CHECK(x, Element) and hasattr((<Element>x)._parent, 'prec'):
+    if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
@@ -1896,10 +2013,10 @@ cdef public GConstant py_get_constant(const_char_ptr name) except +:
         pc = c._pynac
         return pc.object
 
-cdef public object py_eval_constant(unsigned serial, object parent) except +:
+cdef public object py_eval_constant(unsigned serial, object kwds) except +:
     from sage.symbolic.constants import constants_table
     constant = constants_table[serial]
-    return parent(constant)
+    return kwds['parent'](constant)
 
 cdef public object py_eval_unsigned_infinity() except +:
     """
@@ -2136,6 +2253,7 @@ def init_function_table():
     py_funcs.exvector_to_PyTuple = &exvector_to_PyTuple
     py_funcs.pyExpression_to_ex = &pyExpression_to_ex
     py_funcs.ex_to_pyExpression = &ex_to_pyExpression
+    py_funcs.subs_args_to_PyTuple = &subs_args_to_PyTuple
     py_funcs.py_print_function = &py_print_function
     py_funcs.py_latex_function = &py_latex_function
     py_funcs.py_get_ginac_serial = &py_get_ginac_serial

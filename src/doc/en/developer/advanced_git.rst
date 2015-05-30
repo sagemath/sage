@@ -8,7 +8,7 @@ This chapter covers some advanced uses of git that go beyond what is
 required to work with branches. These features can be used in Sage
 development, but are not really necessary to contribute to Sage. If
 you are just getting started with Sage development, you should read
-:ref:`chapter-walk-through` instead. If you are new to git, please see
+:ref:`chapter-walkthrough` instead. If you are new to git, please see
 :ref:`chapter-manual-git`.
 
 

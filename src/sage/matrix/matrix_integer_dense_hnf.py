@@ -2,7 +2,8 @@
 Modular algorithm to compute Hermite normal forms of integer matrices.
 
 AUTHORS:
-    -- Clement Pernet and William Stein (2008-02-07): initial version
+
+- Clement Pernet and William Stein (2008-02-07): initial version
 """
 
 from copy import copy
@@ -45,19 +46,22 @@ def det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far=ZZ(1), N_so_far=Z
     quickly (with the hybrid p-adic / multimodular algorithm).
 
     INPUT:
-        A -- a square matrix
-        d -- a divisor of the determinant of A
-        p -- a prime
-        z_mod -- values of det/d (mod ...)
-        moduli -- the moduli so far
-        z_so_far -- for a modulus p in the list moduli,
-            (z_so_far mod p) is the determinant of A modulo p.
-        N_so_far -- N_so_far is the product over the primes in the list moduli.
+
+    - A -- a square matrix
+    - d -- a divisor of the determinant of A
+    - p -- a prime
+    - z_mod -- values of det/d (mod ...)
+    - moduli -- the moduli so far
+    - z_so_far -- for a modulus p in the list moduli,
+      (z_so_far mod p) is the determinant of A modulo p.
+    - N_so_far -- N_so_far is the product over the primes in the list moduli.
 
     OUTPUT:
-        A triple (det bound, new z_so_far, new N_so_far).
 
-    EXAMPLES:
+    - A triple (det bound, new z_so_far, new N_so_far).
+
+    EXAMPLES::
+
         sage: a = matrix(ZZ, 3, [6, 1, 2, -56, -2, -1, -11, 2, -3])
         sage: factor(a.det())
         -1 * 13 * 29
@@ -86,7 +90,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
     Given a divisor d of the determinant of A, compute the
     determinant of A.
 
-    INPUT::
+    INPUT:
 
     - ``A`` -- a square integer matrix
     - ``d`` -- a nonzero integer that is assumed to divide the determinant of A
@@ -222,16 +226,19 @@ def double_det (A, b, c, proof):
     A.stack(b) and A.stack(c).
 
     INPUT:
-        A -- an (n-1) x n matrix
-        b -- an 1 x n matrix
-        c -- an 1 x n matrix
-        proof -- whether or not to compute the det modulo enough times
-                 to provably compute the determinant.
+
+    - A -- an (n-1) x n matrix
+    - b -- an 1 x n matrix
+    - c -- an 1 x n matrix
+    - proof -- whether or not to compute the det modulo enough times to
+      provably compute the determinant.
 
     OUTPUT:
-        a pair of two integers.
 
-    EXAMPLES:
+    - a pair of two integers.
+
+    EXAMPLES::
+
         sage: from sage.matrix.matrix_integer_dense_hnf import double_det
         sage: A = matrix(ZZ, 2, 3, [1,2,3, 4,-2,5])
         sage: b = matrix(ZZ, 1, 3, [1,-2,5])
@@ -276,14 +283,17 @@ def add_column_fallback(B, a, proof):
     fails (e.g., B is singular).
 
     INPUT:
+
         B -- a square matrix (may be singular)
         a -- an n x 1 matrix, where B has n rows
         proof -- bool; whether to prove result correct
 
     OUTPUT:
+
         x   -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a).
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: B = matrix(ZZ,3, [-1, -1, 1, -3, 8, -2, -1, -1, -1])
         sage: a = matrix(ZZ,3,1, [1,2,3])
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
@@ -316,12 +326,16 @@ def solve_system_with_difficult_last_row(B, a):
     $p$-adically.
 
     INPUT:
-        B -- a square n x n nonsingular matrix with painful big bottom row.
-        a -- an n x 1 column matrix
-    OUTPUT:
-        the unique solution to B*x = a.
 
-    EXAMPLES:
+    - B -- a square n x n nonsingular matrix with painful big bottom row.
+    - a -- an n x 1 column matrix
+
+    OUTPUT:
+
+    - the unique solution to B*x = a.
+
+    EXAMPLES::
+
         sage: from sage.matrix.matrix_integer_dense_hnf import solve_system_with_difficult_last_row
         sage: B = matrix(ZZ, 3, [1,2,4, 3,-4,7, 939082,2930982,132902384098234])
         sage: a = matrix(ZZ,3,1, [1,2,5])
@@ -394,15 +408,18 @@ def add_column(B, H_B, a, proof):
     The add column procedure.
 
     INPUT:
-        B   -- a square matrix (may be singular)
-        H_B -- the Hermite normal form of B
-        a -- an n x 1 matrix, where B has n rows
-        proof -- bool; whether to prove result correct, in case we use fallback method.
+
+    - B   -- a square matrix (may be singular)
+    - H_B -- the Hermite normal form of B
+    - a -- an n x 1 matrix, where B has n rows
+    - proof -- bool; whether to prove result correct, in case we use fallback method.
 
     OUTPUT:
-        x   -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a).
 
-    EXAMPLES:
+    - x   -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a).
+
+    EXAMPLES::
+
         sage: B = matrix(ZZ, 3, 3, [1,2,5, 0,-5,3, 1,1,2])
         sage: H_B = B.echelon_form()
         sage: a = matrix(ZZ, 3, 1, [1,8,-2])
@@ -440,15 +457,18 @@ def add_row(A, b, pivots, include_zero_rows):
     The add row procedure.
 
     INPUT:
-        A -- a matrix in Hermite normal form with n column
-        b -- an n x 1 row matrix
-        pivots -- sorted list of integers; the pivot positions of A.
+
+    - A -- a matrix in Hermite normal form with n column
+    - b -- an n x 1 row matrix
+    - pivots -- sorted list of integers; the pivot positions of A.
 
     OUTPUT:
-        H -- the Hermite normal form of A.stack(b).
-        new_pivots -- the pivot columns of H.
 
-    EXAMPLES:
+    - H -- the Hermite normal form of A.stack(b).
+    - new_pivots -- the pivot columns of H.
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as hnf
         sage: A = matrix(ZZ, 2, 3, [-21, -7, 5, 1,20,-7])
         sage: b = matrix(ZZ, 1,3, [-1,1,-1])
@@ -476,12 +496,15 @@ def pivots_of_hnf_matrix(H):
     Return the pivot columns of a matrix H assumed to be in HNF.
 
     INPUT:
-        H -- a matrix that must be HNF
+
+    - H -- a matrix that must be HNF
 
     OUTPUT:
-        list -- list of pivots
 
-    EXAMPLES:
+    - list -- list of pivots
+
+    EXAMPLES::
+
         sage: H = matrix(ZZ, 3, 5, [1, 0, 0, 45, -36, 0, 1, 0, 131, -107, 0, 0, 0, 178, -145]); H
         [   1    0    0   45  -36]
         [   0    1    0  131 -107]
@@ -506,11 +529,15 @@ def pivots_of_hnf_matrix(H):
 def hnf_square(A, proof):
     """
     INPUT:
-        a nonsingular n x n matrix A over the integers.
-    OUTPUT:
-        the Hermite normal form of A.
 
-    EXAMPLES:
+    - a nonsingular n x n matrix A over the integers.
+
+    OUTPUT:
+
+    - the Hermite normal form of A.
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as hnf
         sage: A = matrix(ZZ, 3, [-21, -7, 5, 1,20,-7, -1,1,-1])
         sage: hnf.hnf_square(A, False)
@@ -545,7 +572,7 @@ def hnf_square(A, proof):
 
     try:
         (d1,d2) = double_det (B,c,d, proof=proof)
-    except (ValueError, ZeroDivisionError), msg:
+    except (ValueError, ZeroDivisionError) as msg:
         d1 = B.stack(c).det(proof=proof)
         d2 = B.stack(d).det(proof=proof)
 
@@ -553,7 +580,7 @@ def hnf_square(A, proof):
 
     W = B.stack (k*c + l*d)
     verbose("submatrix det: g=%s"%g)
-    CUTOFF = 2**30
+    CUTOFF = 2147483647  # 2^31-1
     if g == 0:
         # Big trouble -- matrix isn't invertible
         # Since we have no good conditioning code at present,
@@ -596,14 +623,18 @@ def hnf_square(A, proof):
 def interleave_matrices(A, B, cols1, cols2):
     """
     INPUT:
-        A, B -- matrices with the same number of rows
-        cols1, cols2 -- disjoint lists of integers
-    OUTPUT:
-        construct a new matrix C by sticking the columns
-        of A at the positions specified by cols1 and the
-        columns of B at the positions specified by cols2.
 
-    EXAMPLES:
+    - A, B -- matrices with the same number of rows
+    - cols1, cols2 -- disjoint lists of integers
+
+    OUTPUT:
+
+    construct a new matrix C by sticking the columns
+    of A at the positions specified by cols1 and the
+    columns of B at the positions specified by cols2.
+
+    EXAMPLES::
+
         sage: A = matrix(ZZ, 2, [1,2,3,4]); B = matrix(ZZ, 2, [-1,5,2,3])
         sage: A
         [1 2]
@@ -628,11 +659,15 @@ def probable_pivot_rows(A):
     This really finds the pivots of A modulo a random prime.
 
     INPUT:
-        A -- a matrix
-    OUTPUT:
-        a tuple of integers
 
-    EXAMPLES:
+    - A -- a matrix
+
+    OUTPUT:
+
+    a tuple of integers
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: a = matrix(ZZ,3,[0, -1, -1, 0, -20, 1, 0, 1, 2])
         sage: a
@@ -647,11 +682,15 @@ def probable_pivot_rows(A):
 def probable_pivot_columns(A):
     """
     INPUT:
-        A -- a matrix
-    OUTPUT:
-        a tuple of integers
 
-    EXAMPLES:
+    - A -- a matrix
+
+    OUTPUT:
+
+    a tuple of integers
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: a = matrix(ZZ,3,[0, -1, -1, 0, -20, 1, 0, 1, 2])
         sage: a
@@ -673,13 +712,16 @@ def ones(H, pivots):
     the leading bottom entry is 1.
 
     INPUT:
-        H -- matrix in Hermite form
-        pivots -- list of integers (all pivot positions of H).
+
+    - H -- matrix in Hermite form
+    - pivots -- list of integers (all pivot positions of H).
 
     OUTPUT:
-        4-tuple of integer lists: onecol, onerow, non_oneol, non_onerow
 
-    EXAMPLES:
+    4-tuple of integer lists: onecol, onerow, non_oneol, non_onerow
+
+    EXAMPLES::
+
         sage: H = matrix(ZZ, 3, 5, [1, 0, 0, 45, -36, 0, 1, 0, 131, -107, 0, 0, 0, 178, -145]); H
         [   1    0    0   45  -36]
         [   0    1    0  131 -107]
@@ -709,20 +751,25 @@ def extract_ones_data(H, pivots):
     used to optimized the add_row function.
 
     INPUT:
-        H -- a matrix in HNF
-        pivots -- list of all pivot column positions of H
+
+    - H -- a matrix in HNF
+    - pivots -- list of all pivot column positions of H
 
     OUTPUT:
-        C, D, E, onecol, onerow, non_onecol, non_onerow
-        where onecol, onerow, non_onecol, non_onerow are as for
-        the ones function, and C, D, E are matrices:
-            C -- submatrix of all non-onecol columns and onecol rows
-            D -- all non-onecol columns and other rows
-            E -- inverse of D
-        If D isn't invertible or there are 0 or more than 2 non onecols,
-        then C, D, and E are set to None.
 
-    EXAMPLES:
+    C, D, E, onecol, onerow, non_onecol, non_onerow
+    where onecol, onerow, non_onecol, non_onerow are as for
+    the ones function, and C, D, E are matrices:
+
+    - C -- submatrix of all non-onecol columns and onecol rows
+    - D -- all non-onecol columns and other rows
+    - E -- inverse of D
+
+    If D isn't invertible or there are 0 or more than 2 non onecols,
+    then C, D, and E are set to None.
+
+    EXAMPLES::
+
         sage: H = matrix(ZZ, 3, 4, [1, 0, 0, 7, 0, 1, 5, 2, 0, 0, 6, 6])
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: matrix_integer_dense_hnf.extract_ones_data(H, [0,1,2])
@@ -763,13 +810,16 @@ def is_in_hnf_form(H, pivots):
     with given pivot columns.
 
     INPUT:
+
         H -- matrix
         pivots -- sorted list of integers
 
     OUTPUT:
+
         bool -- True or False
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: a = matrix(ZZ,3,5,[-2, -6, -3, -17, -1, 2, -1, -1, -2, -1, -2, -2, -6, 9, 2])
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: matrix_integer_dense_hnf.is_in_hnf_form(a,range(3))
@@ -808,15 +858,18 @@ def probable_hnf(A, include_zero_rows, proof):
     working, at least if proof=True.
 
     INPUT:
-        A -- a matrix
-        include_zero_rows -- bool
-        proof -- bool
+
+    - A -- a matrix
+    - include_zero_rows -- bool
+    - proof -- bool
 
     OUTPUT:
-        the Hermite normal form of A.
-        cols -- pivot columns
 
-    EXAMPLES:
+    the Hermite normal form of A.
+    cols -- pivot columns
+
+    EXAMPLES::
+
         sage: a = matrix(ZZ,4,3,[-1, -1, -1, -20, 4, 1, -1, 1, 2,1,2,3])
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: matrix_integer_dense_hnf.probable_hnf(a, True, True)
@@ -851,7 +904,7 @@ def probable_hnf(A, include_zero_rows, proof):
         H = hnf_square(C, proof=proof)
     except NotImplementedError:
         # raise
-        # this signals that we must fallback to pari
+        # this signals that we must fallback to PARI
         verbose("generic random modular HNF algorithm failed -- we fall back to PARI")
         H = A.hermite_form(algorithm='pari', include_zero_rows=include_zero_rows, proof=proof)
         return H, H.pivots()
@@ -931,13 +984,16 @@ def pad_zeros(A, nrows):
     resulting matrix has nrows.
 
     INPUT:
-        A -- a matrix
-        nrows -- an integer that is at least as big as the number of rows of A.
+
+    - A -- a matrix
+    - nrows -- an integer that is at least as big as the number of rows of A.
 
     OUTPUT:
-        a matrix with nrows rows.
 
-    EXAMPLES:
+    a matrix with nrows rows.
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: a = matrix(ZZ, 2, 4, [1, 0, 0, 7, 0, 1, 5, 2])
         sage: matrix_integer_dense_hnf.pad_zeros(a, 4)
@@ -963,16 +1019,19 @@ def hnf(A, include_zero_rows=True, proof=True):
     along with the pivot columns.
 
     INPUT:
-        A -- an n x m matrix A over the integers.
-        include_zero_rows -- bool (default: True) whether or not to
-                             include zero rows in the output matrix
-        proof -- whether or not to prove the result correct.
+
+    - A -- an n x m matrix A over the integers.
+    - include_zero_rows -- bool (default: True) whether or not to include zero
+      rows in the output matrix
+    - proof -- whether or not to prove the result correct.
 
     OUTPUT:
-        matrix -- the Hermite normal form of A
-        pivots -- the pivot column positions of A
 
-    EXAMPLES:
+    - matrix -- the Hermite normal form of A
+    - pivots -- the pivot column positions of A
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: a = matrix(ZZ,3,5,[-2, -6, -3, -17, -1, 2, -1, -1, -2, -1, -2, -2, -6, 9, 2])
         sage: matrix_integer_dense_hnf.hnf(a)
@@ -1009,24 +1068,18 @@ def hnf(A, include_zero_rows=True, proof=True):
             pivots = [j]
         return A, pivots
 
-    if proof == False:
+    if not proof:
         H, pivots = probable_hnf(A, include_zero_rows = include_zero_rows, proof=False)
         if not include_zero_rows and len(pivots) > H.nrows():
             return H.matrix_from_rows(range(len(pivots))), pivots
 
     while True:
-        try:
-            H, pivots = probable_hnf(A, include_zero_rows = include_zero_rows, proof=True)
-        except (AssertionError, ZeroDivisionError, TypeError):
-            raise
-            #verbose("Assertion occurred when computing HNF; guessed pivot columns likely wrong.")
-            #continue
-        else:
-            if is_in_hnf_form(H, pivots):
-                if not include_zero_rows and len(pivots) > H.nrows():
-                    H = H.matrix_from_rows(range(len(pivots)))
-                return H, pivots
-            verbose("After attempt the return matrix is not in HNF form since pivots must have been wrong.  We try again.")
+        H, pivots = probable_hnf(A, include_zero_rows = include_zero_rows, proof=True)
+        if is_in_hnf_form(H, pivots):
+            if not include_zero_rows and len(pivots) > H.nrows():
+                H = H.matrix_from_rows(range(len(pivots)))
+            return H, pivots
+        verbose("After attempt the return matrix is not in HNF form since pivots must have been wrong.  We try again.")
 
 def hnf_with_transformation(A, proof=True):
     """
@@ -1034,15 +1087,18 @@ def hnf_with_transformation(A, proof=True):
     such that U*A = H.  Also return the pivots of H.
 
     INPUT:
-        A -- an n x m matrix A over the integers.
-        proof -- whether or not to prove the result correct.
+
+    - A -- an n x m matrix A over the integers.
+    - proof -- whether or not to prove the result correct.
 
     OUTPUT:
-        matrix -- the Hermite normal form H of A
-        U -- a unimodular matrix such that U * A = H
-        pivots -- the pivot column positions of A
 
-    EXAMPLES:
+    - matrix -- the Hermite normal form H of A
+    - U -- a unimodular matrix such that U * A = H
+    - pivots -- the pivot column positions of A
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: A = matrix(ZZ, 2, [1, -5, -10, 1, 3, 197]); A
         [  1  -5 -10]
@@ -1070,7 +1126,8 @@ def hnf_with_transformation_tests(n=10, m=5, trials=10):
     Use this to randomly test that hnf with transformation matrix
     is working.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.matrix.matrix_integer_dense_hnf import hnf_with_transformation_tests
         sage: hnf_with_transformation_tests(n=15,m=10, trials=10)
         0 1 2 3 4 5 6 7 8 9
@@ -1093,7 +1150,8 @@ def benchmark_hnf(nrange, bits=4):
     """
     Run benchmark program.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as hnf
         sage: hnf.benchmark_hnf([50,100],32)
         ('sage', 50, 32, ...),
@@ -1109,7 +1167,8 @@ def benchmark_hnf(nrange, bits=4):
 
 def benchmark_magma_hnf(nrange, bits=4):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as hnf
         sage: hnf.benchmark_magma_hnf([50,100],32)     # optional - magma
         ('magma', 50, 32, ...),
@@ -1132,19 +1191,19 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2, check_using_magma
     both dense and sparse.
 
     INPUT:
-        times -- number of times to randomly try matrices with each shape
-        n -- number of rows
-        m -- number of columns
-        proof -- test with proof true
-        stabilize -- parameter to pass to hnf algorithm when proof is False
-        check_using_magma -- if True use Magma instead of PARI to
-                             check correctness of computed HNF's.
-                             Since PARI's HNF is buggy and slow (as of
-                             2008-02-16 non-pivot entries sometimes
-                             aren't normalized to be nonnegative) the
-                             default is Magma.
 
-    EXAMPLES:
+    - times -- number of times to randomly try matrices with each shape
+    - n -- number of rows
+    - m -- number of columns
+    - proof -- test with proof true
+    - stabilize -- parameter to pass to hnf algorithm when proof is False
+    - check_using_magma -- if True use Magma instead of PARI to check
+      correctness of computed HNF's. Since PARI's HNF is buggy and slow (as of
+      2008-02-16 non-pivot entries sometimes aren't normalized to be
+      nonnegative) the default is Magma.
+
+    EXAMPLES::
+
         sage: import sage.matrix.matrix_integer_dense_hnf as matrix_integer_dense_hnf
         sage: matrix_integer_dense_hnf.sanity_checks(times=5, check_using_magma=False)
         small 8 x 5
@@ -1180,7 +1239,7 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2, check_using_magma
                     print 'a = matrix(ZZ, %s, %s, %s)'%(a.nrows(), a.ncols(), a.list())
                     return
             else:
-                if hnf(a)[0] != a.echelon_form('pari'):
+                if hnf(a)[0] != a.echelon_form(algorithm = 'pari'):
                     print "bug computing hnf of a matrix"
                     print 'a = matrix(ZZ, %s, %s, %s)'%(a.nrows(), a.ncols(), a.list())
                     return

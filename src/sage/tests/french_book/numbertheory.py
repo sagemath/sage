@@ -54,7 +54,7 @@ sage: rational_reconstruction(411,1000)
 sage: rational_reconstruction(409,1000)
 Traceback (most recent call last):
 ...
-ValueError: Rational reconstruction of 409 (mod 1000) does not exist.
+ArithmeticError: rational reconstruction of 409 (mod 1000) does not exist
 sage: def harmonic(n):
 ...    return sum([1/x for x in range(1,n+1)])
 sage: def harmonic_mod(n,m):

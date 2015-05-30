@@ -18,7 +18,8 @@ Signed Compositions
 
 from composition import Compositions_n, Composition
 import cartesian_product
-from sage.rings.all import binomial, Integer
+from sage.rings.all import Integer
+from sage.rings.arith import binomial
 import __builtin__
 
 class SignedCompositions(Compositions_n):
@@ -37,7 +38,7 @@ class SignedCompositions(Compositions_n):
         [1, 1, 1]
         sage: SC3.last()
         [-3]
-        sage: SC3.random_element()
+        sage: SC3.random_element() # random
         [1, -1, 1]
         sage: SC3.list()
         [[1, 1, 1],

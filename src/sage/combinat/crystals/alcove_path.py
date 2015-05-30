@@ -29,27 +29,19 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.graphs.all import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
 from sage.all import vector
 from sage.rings.integer import Integer
-from sage.rings.all import ZZ
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.misc.misc_c import prod
 from sage.categories.sets_cat import Sets
-from sage.combinat.crystals.littelmann_path import CrystalOfLSPaths
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from copy import copy
 from sage.misc.latex import latex
-
-# necessary for tests
-from sage.combinat.partition import Partitions
-from sage.combinat.crystals.all import CrystalOfTableaux
-
 
 class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
     r"""
@@ -61,8 +53,8 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
     - ``cartan_type`` -- Cartan type of a finite or affine untwisted root
       system.
 
-    - ``weight`` -- dominant weight as a list of (integral) coefficients of the
-      fundamental weights.
+    - ``weight`` -- Dominant weight as a list of (integral) coefficients of
+      the fundamental weights.
 
     - ``highest_weight_crystal`` -- (Default: ``True``) If ``True``
       returns the highest weight crystal.  If ``False`` returns an
@@ -72,8 +64,8 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
       edges.  We'll call the included edges pseudo-Demazure.  They are
       all non-zero edges and the 0-edges not at the end of a 0-string
       of edges, i.e.  not those with `f_{0}(b) = b'` with
-      `\phi_0(b) =1`.  (Whereas Demazure 0-edges are those that
-      are not at the beginning of a zero string) In this case the
+      `\varphi_0(b) =1`.  (Whereas Demazure 0-edges are those that
+      are not at the beginning of a zero string.) In this case the
       weight `[c_1, c_2, \ldots, c_k]` represents
       `\sum_{i=1}^k c_i \omega_i`.
 
@@ -91,23 +83,23 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
     The following example appears in Figure 2 of [LP2008]_::
 
-        sage: C = CrystalOfAlcovePaths(['G',2],[0,1])
+        sage: C = crystals.AlcovePaths(['G',2],[0,1])
         sage: G = C.digraph()
         sage: GG = DiGraph({
-        ...       ()        : {(0)         : 2 },
-        ...       (0)       : {(0,8)       : 1 },
-        ...       (0,1)     : {(0,1,7)     : 2 },
-        ...       (0,1,2)   : {(0,1,2,9)   : 1 },
-        ...       (0,1,2,3) : {(0,1,2,3,4) : 2 },
-        ...       (0,1,2,6) : {(0,1,2,3)   : 1 },
-        ...       (0,1,2,9) : {(0,1,2,6)   : 1 },
-        ...       (0,1,7)   : {(0,1,2)     : 2 },
-        ...       (0,1,7,9) : {(0,1,2,9)   : 2 },
-        ...       (0,5)     : {(0,1)       : 1, (0,5,7) : 2 },
-        ...       (0,5,7)   : {(0,5,7,9)   : 1 },
-        ...       (0,5,7,9) : {(0,1,7,9)   : 1 },
-        ...       (0,8)     : {(0,5)       : 1 },
-        ...       })
+        ....:     ()        : {(0)         : 2 },
+        ....:     (0)       : {(0,8)       : 1 },
+        ....:     (0,1)     : {(0,1,7)     : 2 },
+        ....:     (0,1,2)   : {(0,1,2,9)   : 1 },
+        ....:     (0,1,2,3) : {(0,1,2,3,4) : 2 },
+        ....:     (0,1,2,6) : {(0,1,2,3)   : 1 },
+        ....:     (0,1,2,9) : {(0,1,2,6)   : 1 },
+        ....:     (0,1,7)   : {(0,1,2)     : 2 },
+        ....:     (0,1,7,9) : {(0,1,2,9)   : 2 },
+        ....:     (0,5)     : {(0,1)       : 1, (0,5,7) : 2 },
+        ....:     (0,5,7)   : {(0,5,7,9)   : 1 },
+        ....:     (0,5,7,9) : {(0,1,7,9)   : 1 },
+        ....:     (0,8)     : {(0,5)       : 1 },
+        ....:     })
         sage: G.is_isomorphic(GG)
         True
         sage: for (u,v,i) in G.edges(): print (u.integer_sequence() , v.integer_sequence(), i)
@@ -130,9 +122,9 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
     We verify that the alcove path crystal is isomorphic to the LS
     path crystal::
 
-        sage: C1 = CrystalOfAlcovePaths(['C',3],[2,1,0])
+        sage: C1 = crystals.AlcovePaths(['C',3],[2,1,0])
         sage: g1 = C1.digraph() #long time
-        sage: C2 = CrystalOfLSPaths(['C',3],[2,1,0])
+        sage: C2 = crystals.LSPaths(['C',3],[2,1,0])
         sage: g2 = C2.digraph() #long time
         sage: g1.is_isomorphic(g2, edge_labels=True) #long time
         True
@@ -143,14 +135,14 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: R = RootSystem(['C',3])
         sage: P = R.weight_lattice()
         sage: La = P.fundamental_weights()
-        sage: C = CrystalOfAlcovePaths(2*La[1]+La[2]); C
+        sage: C = crystals.AlcovePaths(2*La[1]+La[2]); C
         Highest weight crystal of alcove paths of type ['C', 3] and weight 2*Lambda[1] + Lambda[2]
         sage: C1==C
         True
 
     We now explain the data structure::
 
-        sage: C = CrystalOfAlcovePaths(['A',2],[2,0]) ; C
+        sage: C = crystals.AlcovePaths(['A',2],[2,0]) ; C
         Highest weight crystal of alcove paths of type ['A', 2] and weight 2*Lambda[1]
         sage: C._R.lambda_chain()
         [(alpha[1], 0), (alpha[1] + alpha[2], 0), (alpha[1], 1), (alpha[1] + alpha[2], 1)]
@@ -184,7 +176,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
     Alcove path crystals now works in affine type (:trac:`14143`)::
 
-        sage: C = CrystalOfAlcovePaths(['A',2,1],[1,0,0]) ; C
+        sage: C = crystals.AlcovePaths(['A',2,1],[1,0,0]) ; C
         Highest weight crystal of alcove paths of type ['A', 2, 1] and weight Lambda[0]
         sage: x=C(  () )
         sage: x.f(0)
@@ -198,14 +190,14 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
     minus non-pseudo-Demazure arrows is in bijection with alcove path
     construction::
 
-        sage: K = KirillovReshetikhinCrystal(['B',3,1],2,1)
-        sage: T = TensorProductOfCrystals(K,K)
+        sage: K = crystals.KirillovReshetikhin(['B',3,1],2,1)
+        sage: T = crystals.TensorProduct(K,K)
         sage: g = T.digraph() #long time
         sage: for e in g.edges(): #long time
         ....:     if e[0].phi(0) == 1 and e[2] == 0: #long time
         ....:         g.delete_edge(e)  #long time
 
-        sage: C = CrystalOfAlcovePaths(['B',3,1],[0,2,0], highest_weight_crystal=False)
+        sage: C = crystals.AlcovePaths(['B',3,1],[0,2,0], highest_weight_crystal=False)
         sage: g2 = C.digraph_fast() #long time
         sage: g.is_isomorphic(g2, edge_labels = True) #long time
         True
@@ -221,7 +213,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: R = RootSystem(['B',3])
         sage: P = R.weight_lattice()
         sage: La = P.fundamental_weights()
-        sage: D = CrystalOfAlcovePaths(2*La[2], highest_weight_crystal=False)
+        sage: D = crystals.AlcovePaths(2*La[2], highest_weight_crystal=False)
         sage: C == D
         True
 
@@ -235,27 +227,29 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
     """
 
     @staticmethod
-    def __classcall_private__(cls, starting_weight, cartan_type = None,
-            highest_weight_crystal=None):
+    def __classcall_private__(cls, starting_weight, cartan_type=None,
+                              highest_weight_crystal=None):
         """
         Classcall to mend the input.
 
-        Internally, the CrystalOfAlcovePaths code works with a ``starting_weight`` that
-        is in the ``weight_space`` associated to the crystal. The user can, however,
-        also input a ``cartan_type`` and the coefficients of the fundamental weights
-        as ``starting_weight``. This code transforms the input into the right
-        format (also necessary for UniqueRepresentation).
+        Internally, the
+        :class:`~sage.combinat.crystals.alcove_path.CrystalOfAlcovePaths`
+        code works with a ``starting_weight`` that is in the weight space
+        associated to the crystal. The user can, however, also input a
+        ``cartan_type`` and the coefficients of the fundamental weights as
+        ``starting_weight``. This code transforms the input into the right
+        format (also necessary for :class:`UniqueRepresentation`).
 
         TESTS::
 
-            sage: C = CrystalOfAlcovePaths(['A',2,1], [1,0,0])
-            sage: C2 = CrystalOfAlcovePaths(CartanType(['A',2,1]), (1,0,0))
+            sage: C = crystals.AlcovePaths(['A',2,1], [1,0,0])
+            sage: C2 = crystals.AlcovePaths(CartanType(['A',2,1]), (1,0,0))
             sage: C is C2
             True
             sage: R = RootSystem(['B',2,1])
             sage: La = R.weight_space().basis()
-            sage: B1 = CrystalOfAlcovePaths(['B',2,1],[0,0,1])
-            sage: B2 = CrystalOfAlcovePaths(La[2])
+            sage: B1 = crystals.AlcovePaths(['B',2,1],[0,0,1])
+            sage: B2 = crystals.AlcovePaths(La[2])
             sage: B1 is B2
             True
         """
@@ -276,7 +270,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
 
         #set defaults
-        if highest_weight_crystal == None:
+        if highest_weight_crystal is None:
             highest_weight_crystal = True
 
         if not starting_weight.is_dominant():
@@ -293,13 +287,13 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: C = CrystalOfAlcovePaths(['G',2],[0,1])
+            sage: C = crystals.AlcovePaths(['G',2],[0,1])
             sage: TestSuite(C).run()
 
-            sage: C = CrystalOfAlcovePaths(['A',2,1],[1,0,0])
+            sage: C = crystals.AlcovePaths(['A',2,1],[1,0,0])
             sage: TestSuite(C).run() #long time
 
-            sage: C = CrystalOfAlcovePaths(['A',2,1],[1,0],False)
+            sage: C = crystals.AlcovePaths(['A',2,1],[1,0],False)
             sage: TestSuite(C).run(skip="_test_stembridge_local_axioms") #long time
         """
         ##########################################################################
@@ -309,7 +303,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         # to get the crystal we set self._finite_cartan_type is true
         #
         # We want the indexing set to include 0 so use the affine type notation
-        # for the cartan type.
+        # for the Cartan type.
         ##########################################################################
         cartan_type = starting_weight.parent().cartan_type()
 
@@ -342,10 +336,10 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2,1], [1,0,0])
+            sage: C = crystals.AlcovePaths(['A',2,1], [1,0,0])
             sage: C
             Highest weight crystal of alcove paths of type ['A', 2, 1] and weight Lambda[0]
-            sage: C = CrystalOfAlcovePaths(['A',2,1], [1,0], False)
+            sage: C = crystals.AlcovePaths(['A',2,1], [1,0], False)
             sage: C
             Crystal of alcove paths of type ['A', 2, 1] and weight Lambda[1]
         """
@@ -359,7 +353,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[3,2])
+            sage: C = crystals.AlcovePaths(['A',2],[3,2])
             sage: C([8,9])
             ((alpha[1], 2), (alpha[1] + alpha[2], 4))
         """
@@ -393,10 +387,10 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['C',2],[1,0])
+            sage: C = crystals.AlcovePaths(['C',2],[1,0])
             sage: C.vertices()
             [[], [0], [0, 1], [0, 1, 2]]
-            sage: C = CrystalOfAlcovePaths(['C',2,1],[2,1],False)
+            sage: C = crystals.AlcovePaths(['C',2,1],[2,1],False)
             sage: len(C.vertices())
             80
 
@@ -454,7 +448,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: CrystalOfAlcovePaths(['A',2], [1,1]).digraph_fast(depth=3)
+            sage: crystals.AlcovePaths(['A',2], [1,1]).digraph_fast(depth=3)
             Digraph on 7 vertices
 
         TESTS:
@@ -465,7 +459,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             sage: cartan_type = ['A',2,1] #long time
             sage: weight = [1,1,0] #long time
             sage: depth = 5 #long time
-            sage: C = CrystalOfAlcovePaths(cartan_type, weight) #long time
+            sage: C = crystals.AlcovePaths(cartan_type, weight) #long time
             sage: %timeit C.digraph_fast(depth) # not tested
             10 loops, best of 3: 171 ms per loop
             sage: %timeit C.digraph(subset=C.subcrystal(max_depth=depth, direction='lower')) #not tested
@@ -493,7 +487,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
                 G.setdefault(x, {}) # does nothing if there's a default
                 for i in I:
                     xfi = x.f(i)
-                    if xfi != None:
+                    if xfi is not None:
                         G[x][xfi] = i
                         recently_visited.add(xfi)
             if len(recently_visited) == 0: # No new nodes, nothing more to do
@@ -515,7 +509,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
     EXAMPLES::
 
-        sage: C = CrystalOfAlcovePaths(['A',2],[3,2])
+        sage: C = crystals.AlcovePaths(['A',2],[3,2])
         sage: x = C ( () )
         sage: x.f(1).f(2)
         ((alpha[1], 2), (alpha[1] + alpha[2], 4))
@@ -530,7 +524,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[1,0])
+            sage: C = crystals.AlcovePaths(['A',2],[1,0])
             sage: lst = list(C)
             sage: for i in lst[2]: i
             (alpha[1], 0)
@@ -562,7 +556,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[1,1]); C
+            sage: C = crystals.AlcovePaths(['A',2],[1,1]); C
             Highest weight crystal of alcove paths of type ['A', 2] and weight Lambda[1] + Lambda[2]
             sage: roots = sorted(list(C._R._root_lattice.positive_roots())); roots
             [alpha[1], alpha[1] + alpha[2], alpha[2]]
@@ -579,10 +573,10 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             ((alpha[1] + alpha[2], 1),)
             sage: x.is_admissible()
             False
-            sage: C = CrystalOfAlcovePaths(['C',2,1],[2,1],False)
+            sage: C = crystals.AlcovePaths(['C',2,1],[2,1],False)
             sage: C([7,8]).is_admissible()
             True
-            sage: C = CrystalOfAlcovePaths(['A',2],[3,2])
+            sage: C = crystals.AlcovePaths(['A',2],[3,2])
             sage: C([2,3]).is_admissible()
             True
 
@@ -598,7 +592,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             successors = 'quantum_bruhat_successors'
 
         #start at the identity
-        w = W.unit()
+        w = W.one()
         for i in self:
             t = prod( [ s[j] for j in  i.root.associated_reflection() ] )
             successor = w * t
@@ -613,7 +607,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[1,1])
+            sage: C = crystals.AlcovePaths(['A',2],[1,1])
             sage: C([1,2])._latex_()
             [(\alpha_{1} + \alpha_{2}, 0), (\alpha_{1}, 0)]
         """
@@ -635,7 +629,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[3,2])
+            sage: C = crystals.AlcovePaths(['A',2],[3,2])
             sage: x = C( () )
             sage: x.f(1).f(2).integer_sequence()
             [8, 9]
@@ -652,11 +646,11 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[1,1])
+            sage: C = crystals.AlcovePaths(['A',2],[1,1])
             sage: [c.phi(1) for c in C]
-            [1, 2, 0, 1, 0, 0, 1, 0]
-            sage: [c.phi(2) for c in C]
             [1, 0, 2, 0, 1, 1, 0, 0]
+            sage: [c.phi(2) for c in C]
+            [1, 2, 0, 1, 0, 0, 1, 0]
         """
         highest_weight_crystal = self.parent()._highest_weight_crystal
         positions, gi = self._gi(i)
@@ -676,17 +670,17 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[1,1])
+            sage: C = crystals.AlcovePaths(['A',2],[1,1])
             sage: [c.epsilon(1) for c in C]
-            [0, 0, 1, 1, 0, 2, 0, 1]
-            sage: [c.epsilon(2) for c in C]
             [0, 1, 0, 0, 1, 0, 2, 1]
+            sage: [c.epsilon(2) for c in C]
+            [0, 0, 1, 1, 0, 2, 0, 1]
         """
         #crude but functional
         j = 0
         temp = self
         temp = temp.e(i)
-        while temp != None:
+        while temp is not None:
             j+=1
             temp = temp.e(i)
 
@@ -698,7 +692,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[2,0])
+            sage: C = crystals.AlcovePaths(['A',2],[2,0])
             sage: for i in C: i.weight()
             2*Lambda[1]
             Lambda[2]
@@ -730,7 +724,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[2,0])
+            sage: C = crystals.AlcovePaths(['A',2],[2,0])
             sage: x = C( () ).f(1).f(2)
             sage: x.plot() # Not tested - creates a pdf
         """
@@ -749,7 +743,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C=CrystalOfAlcovePaths(['B',2],[1,0])
+            sage: C=crystals.AlcovePaths(['B',2],[1,0])
             sage: lst=list(C)
             sage: lst[2] == lst[2]
             True
@@ -768,7 +762,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[2,0])
+            sage: C = crystals.AlcovePaths(['A',2],[2,0])
             sage: x = C( () )
             sage: x.__lt__(x.f(1))
             True
@@ -785,7 +779,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[2,0])
+            sage: C = crystals.AlcovePaths(['A',2],[2,0])
             sage: x = C( () )
             sage: x.__gt__(x.f(1))
             False
@@ -818,10 +812,14 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         ::
 
-            sage: C=CrystalOfAlcovePaths(['A',2],[1,1])
-            sage: x=C( () ).f(1)
-            sage: x._folding_data(2)
-            {(alpha[1] + alpha[2], 1): 1, 'infinity': 1, (alpha[2], 0): 1}
+            sage: C = crystals.AlcovePaths(['A',2],[1,1])
+            sage: x = C( () ).f(1)
+            sage: fd = x._folding_data(2);   fd    # # random output
+            {(alpha[2], 0): 1, (alpha[1] + alpha[2], 1): 1, 'infinity': 1}
+            sage: fd['infinity']
+            1
+            sage: fd.values()
+            [1, 1, 1]
         """
         Parent = self.parent()
 
@@ -836,7 +834,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         signs = {}
 
-        # 0 arrows in the case of finite cartan type
+        # 0 arrows in the case of finite Cartan type
         # always allow 0 arrows
         if finite_cartan_type and i == 0:
             Beta = R._root_lattice.highest_root()
@@ -905,7 +903,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['A',2],[2,0]); C
+            sage: C = crystals.AlcovePaths(['A',2],[2,0]); C
             Highest weight crystal of alcove paths of type ['A', 2] and weight 2*Lambda[1]
             sage: x = C( () )
             sage: x.e(1)
@@ -997,7 +995,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C=CrystalOfAlcovePaths(['A',2],[1,1])
+            sage: C=crystals.AlcovePaths(['A',2],[1,1])
             sage: x=C( () ).f(1)
             sage: x._gi(2)
             ([(alpha[2], 0), (alpha[1] + alpha[2], 1)], [1, 3, 5])
@@ -1028,7 +1026,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C=CrystalOfAlcovePaths(['B',2],[1,1])
+            sage: C=crystals.AlcovePaths(['B',2],[1,1])
             sage: x=C(  () )
             sage: x.f(1)
             ((alpha[1], 0),)
@@ -1115,7 +1113,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         EXAMPLES::
 
-            sage: C = CrystalOfAlcovePaths(['C',2],[3,2])
+            sage: C = crystals.AlcovePaths(['C',2],[3,2])
             sage: x = C( () ).f(1).f(2); x
             ((alpha[1], 2), (2*alpha[1] + alpha[2], 4))
             sage: x._eps(x.value[0])
@@ -1133,9 +1131,6 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             return 1
 
 CrystalOfAlcovePaths.Element = CrystalOfAlcovePathsElement
-#deprecate the old name
-from sage.misc.superseded import deprecated_function_alias
-ClassicalCrystalOfAlcovePaths = deprecated_function_alias(14143, CrystalOfAlcovePaths)
 
 class RootsWithHeight(UniqueRepresentation, Parent):
     r"""
@@ -1155,7 +1150,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
 
         sage: from sage.combinat.crystals.alcove_path import RootsWithHeight
         sage: R = RootsWithHeight(['A',2],[1,1]); R
-        Roots with height of cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
+        Roots with height of Cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
 
         sage: r1 = R._root_lattice.from_vector(vector([1,0])); r1
         alpha[1]
@@ -1235,9 +1230,9 @@ class RootsWithHeight(UniqueRepresentation, Parent):
 
             sage: from sage.combinat.crystals.alcove_path import RootsWithHeight
             sage: RootsWithHeight(['A',2],[3,2])
-            Roots with height of cartan type ['A', 2] and dominant weight 3*Lambda[1] + 2*Lambda[2]
+            Roots with height of Cartan type ['A', 2] and dominant weight 3*Lambda[1] + 2*Lambda[2]
         """
-        return "Roots with height of cartan type %s and dominant weight %s"%(
+        return "Roots with height of Cartan type %s and dominant weight %s"%(
             self._root_system.cartan_type(), self.weight)
 
     def _max_height(self, root):
@@ -1278,7 +1273,6 @@ class RootsWithHeight(UniqueRepresentation, Parent):
         cartan_type = self._root_system.cartan_type()
         if not cartan_type.is_finite():
             raise NotImplementedError
-        simple_roots = self._root_lattice.simple_roots().list()
         lambda_chain = [ x.root for x in self.lambda_chain() ]
 
         coroot_lattice = RootSystem(cartan_type).coroot_lattice()
@@ -1313,12 +1307,12 @@ class RootsWithHeight(UniqueRepresentation, Parent):
 
             sage: from sage.combinat.crystals.alcove_path import RootsWithHeight
             sage: R = RootsWithHeight(['A',2],[1,1]); R
-            Roots with height of cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
+            Roots with height of Cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
             sage: R.lambda_chain()
             [(alpha[2], 0), (alpha[1] + alpha[2], 0), (alpha[1], 0), (alpha[1] + alpha[2], 1)]
         """
         if not self._root_lattice.cartan_type().is_finite():
-            raise ValueError("cartan type {0} is not finite".format(self._root_lattice.cartan_type()))
+            raise ValueError("Cartan type {0} is not finite".format(self._root_lattice.cartan_type()))
 
         l=[]
         for i in self._root_lattice.positive_roots():
@@ -1338,7 +1332,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
             sage: x = rl.from_vector(vector([1,1])); x
             alpha[1] + alpha[2]
             sage: R = RootsWithHeight(['A',2],[1,1]); R
-            Roots with height of cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
+            Roots with height of Cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
             sage: y = R(x,1); y
             (alpha[1] + alpha[2], 1)
         """
@@ -1374,7 +1368,7 @@ class RootsWithHeightElement(Element):
         sage: x = rl.from_vector(vector([1,1])); x
         alpha[1] + alpha[2]
         sage: R = RootsWithHeight(['A',2],[1,1]); R
-        Roots with height of cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
+        Roots with height of Cartan type ['A', 2] and dominant weight Lambda[1] + Lambda[2]
         sage: y = R(x, 1); y
         (alpha[1] + alpha[2], 1)
     """
@@ -1504,7 +1498,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
     EXAMPLES::
 
         sage: from sage.combinat.crystals.alcove_path import _test_some_specific_examples
-        sage: _test_some_specific_examples(CrystalOfAlcovePaths)
+        sage: _test_some_specific_examples(crystals.AlcovePaths)
         G2 example passed.
         C3 example passed.
         B3 example 1 passed.
@@ -1653,8 +1647,8 @@ def compare_graphs(g1, g2, node1, node2):
     EXAMPLES::
 
         sage: from sage.combinat.crystals.alcove_path import compare_graphs
-        sage: G1 = sage.combinat.crystals.all.CrystalOfTableaux(['A',3], shape=[1,1]).digraph()
-        sage: C = CrystalOfAlcovePaths(['A',3],[0,1,0])
+        sage: G1 = crystals.Tableaux(['A',3], shape=[1,1]).digraph()
+        sage: C = crystals.AlcovePaths(['A',3],[0,1,0])
         sage: G2 = C.digraph()
         sage: compare_graphs(G1, G2, C( () ), G2.vertices()[0])
         True
@@ -1677,8 +1671,9 @@ def compare_graphs(g1, g2, node1, node2):
 
 def _test_against_tableaux(R, N, k, clss=CrystalOfAlcovePaths):
     r"""
-    Tests :class:`CrystalOfAlcovePaths` against all of the tableaux crystals
-    of type `R` in rank `N` with highest weight given by a partition of `k`.
+    Test :class:`~sage.combinat.crystals.alcove_path.CrystalOfAlcovePaths`
+    against all of the tableaux crystals of type `R` in rank `N` with
+    highest weight given by a partition of `k`.
 
     EXAMPLES::
 
@@ -1695,6 +1690,8 @@ def _test_against_tableaux(R, N, k, clss=CrystalOfAlcovePaths):
           C has  6  nodes.
           Compare graphs:  True
     """
+    from sage.combinat.partition import Partitions
+    from sage.combinat.crystals.tensor_product import CrystalOfTableaux
     shapes = Partitions(k).list()
     for shape in shapes:
         print "** Shape ", shape
@@ -1721,16 +1718,16 @@ def _test_against_tableaux(R, N, k, clss=CrystalOfAlcovePaths):
 def _test_with_lspaths_crystal(cartan_type, weight, depth=10):
     r"""
     Test if the digraphs generated are isomorphic to the ones generated by
-    lspath model.
+    LS-path model.
 
     INPUT:
 
     - ``cartan_type`` -- Cartan type of a finite or affine untwisted root
-      system.
+      system
     - ``weight`` -- dominant weight as a list of (integral) coefficients of the
-      fundamental weights.
+      fundamental weights
     - ``depth`` -- starting at the module generator how deep do you want to
-      generate the crystal, useful for affine types.
+      generate the crystal, useful for affine types
 
     EXAMPLES::
 
@@ -1740,6 +1737,7 @@ def _test_with_lspaths_crystal(cartan_type, weight, depth=10):
         sage: _test_with_lspaths_crystal(['G',2,1],[1,0,0,0,0],10) #long time
         True
     """
+    from sage.combinat.crystals.littelmann_path import CrystalOfLSPaths
     G1 = CrystalOfAlcovePaths(cartan_type, weight).digraph_fast(depth)
     C = CrystalOfLSPaths(cartan_type, weight)
     G2 = C.digraph(subset=C.subcrystal(max_depth=depth, direction='lower'))

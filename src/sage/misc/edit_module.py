@@ -143,7 +143,7 @@ def template_fields(template):
    while not(dummy):
       try:
          dummy=template.substitute(dict)
-      except KeyError, inst:
+      except KeyError as inst:
          dict[inst.args[0]]=None
    return dict.keys()
 
@@ -170,7 +170,7 @@ def set_edit_template(template_string):
       sage: from sage.misc.edit_module import set_edit_template
       sage: set_edit_template("echo EDIT ${file}:${line}")
       sage: edit(sage)      # not tested
-      EDIT /usr/local/sage/default/devel/sage/sage/__init__.py:1
+      EDIT /usr/local/sage/src/sage/__init__.py:1
    """
    global edit_template
 
@@ -178,7 +178,7 @@ def set_edit_template(template_string):
       template_string = Template(template_string)
    fields = set(template_fields(template_string))
    if not(fields <= set(['file','line']) and ('file' in fields)):
-     raise ValueError, "Only ${file} and ${line} are allowed as template variables, and ${file} must occur."
+     raise ValueError("Only ${file} and ${line} are allowed as template variables, and ${file} must occur.")
    edit_template = template_string
 
 ## The routine set_editor is for convenience and hence is allowed to apply magic. Given an editor name
@@ -206,10 +206,10 @@ def set_editor(editor_name,opts=''):
       'vi -c ${line} ${file}'
    """
 
-   if sage.misc.edit_module.template_defaults.has_key(editor_name):
+   if editor_name in sage.misc.edit_module.template_defaults:
       set_edit_template(Template(template_defaults[editor_name].safe_substitute(opts=opts)))
    else:
-      raise ValueError, "editor_name not known. Try set_edit_template(<template_string>) instead."
+      raise ValueError("editor_name not known. Try set_edit_template(<template_string>) instead.")
 
 def edit(obj, editor=None, bg=None):
    r"""nodetex
@@ -265,10 +265,10 @@ def edit(obj, editor=None, bg=None):
          opts = ' '.join(EDITOR[1:])   #for future use
          set_editor(base,opts=opts)
       except (ValueError, KeyError, IndexError):
-         raise ValueError, "Use set_edit_template(<template_string>) to set a default"
+         raise ValueError("Use set_edit_template(<template_string>) to set a default")
 
    if not(edit_template):
-      raise ValueError, "Use set_edit_template(<template_string>) to set a default"
+      raise ValueError("Use set_edit_template(<template_string>) to set a default")
 
    filename, lineno = file_and_line(obj)
    cmd = edit_template.substitute(line = lineno, file = filename)
@@ -288,8 +288,8 @@ def edit_devel(self, filename, linenum):
 
     This hook calls the default implementation, but changes the filename for
     files that appear to be from the sage library: if the filename begins with
-    SAGE_ROOT/local/lib/python.../site-packages/ it replaces this by
-    SAGE_ROOT/devel/sage
+    'SAGE_ROOT/local/lib/python.../site-packages', it replaces this by
+    'SAGE_ROOT/src'.
 
     EXAMPLES::
 
@@ -301,9 +301,8 @@ def edit_devel(self, filename, linenum):
     editor supports it, also at the line in wich gcd is defined.
     """
     import IPython.core.hooks
-    sageroot = sage.misc.sageinspect.SAGE_ROOT+'/'
-    runpathpattern = '^'+sageroot+'local/lib/python[^/]*/site-packages'
-    develbranch = sageroot+'devel/sage'
+    runpathpattern = '^'+sage.env.SAGE_LIB
+    develbranch = sage.env.SAGE_SRC
     filename=re.sub(runpathpattern,develbranch,filename)
     IPython.core.hooks.editor(self, filename, linenum)
 

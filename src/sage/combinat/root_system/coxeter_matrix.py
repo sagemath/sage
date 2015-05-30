@@ -21,7 +21,7 @@ from sage.rings.all import ZZ
 
 def coxeter_matrix_as_function(t):
     """
-    Returns the coxeter matrix, as a function
+    Returns the Coxeter matrix, as a function
 
     INPUT:
 

@@ -9,10 +9,20 @@ AUTHORS:
 - William Stein (2007-08-24): first version
 """
 
+#*****************************************************************************
+#       Copyright (C) 2007 William Stein
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-from sage.rings.all              import Integer, QQ, ZZ, PowerSeriesRing
-from sage.misc.misc              import prod, verbose
-from sage.misc.cachefunc         import cached_method
+
+from sage.rings.all import Integer, QQ, ZZ, PowerSeriesRing
+from sage.misc.all import prod, verbose
+from sage.misc.cachefunc import cached_method
 from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
 from constructor                 import ModularForms
 from sage.structure.sage_object  import SageObject
@@ -646,7 +656,7 @@ class ModularFormsRing(SageObject):
 
         gen_weight = min(6, weight)
 
-        while 1:
+        while True:
             verbose("Trying to generate the %s-dimensional space at weight %s using generators of weight up to %s" % (d, weight, gen_weight))
             G = self.generators(maxweight=gen_weight, prec=working_prec)
             V = _span_of_forms_in_weight(G, weight, prec=working_prec, use_random=use_random, stop_dim=d)
@@ -783,7 +793,7 @@ class ModularFormsRing(SageObject):
 
         gen_weight = min(6, weight)
 
-        while 1:
+        while True:
             verbose("Trying to generate the %s-dimensional cuspidal submodule at weight %s using generators of weight up to %s" % (d, weight, gen_weight))
             G = self.cuspidal_ideal_generators(maxweight=gen_weight, prec=working_prec)
 

@@ -53,7 +53,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Set of rational points of Hyperelliptic Curve over Rational Field defined by v^2 + u*v = u^5 - u + 1
         sage: K.<t> = NumberField(x^2-2)
         sage: C(K)
-               Set of rational points of Closed subscheme of Projective Space of dimension 2 over Number Field in t with defining polynomial x^2 - 2 defined by: -x0^5 + x0*x1*x2^3 + x1^2*x2^3 + x0*x2^4 - x2^5
+        Set of rational points of Hyperelliptic Curve over Number Field in t with defining polynomial x^2 - 2 defined by v^2 + u*v = u^5 - u + 1
         sage: P = C(QQ)(0,1,1); P
         (0 : 1 : 1)
         sage: P == C(0,1,1)
@@ -127,7 +127,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         try:
             return self(self.base_ring())(mumford)
         except AttributeError:
-            raise ValueError, "Arguments must determine a valid Mumford divisor."
+            raise ValueError("Arguments must determine a valid Mumford divisor.")
 
     def _point_homset(self, *args, **kwds):
         return jacobian_homset.JacobianHomset_divisor_classes(*args, **kwds)

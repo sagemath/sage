@@ -120,7 +120,7 @@ class Profiler:
 
         self._last_cputime = [fn() for fn in self._cputime_functions ]
         if self._verbose:
-            print self.print_last()
+            print(self.print_last())
             sys.stdout.flush()
 
     def __repr__(self):

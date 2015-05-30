@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import os, sys
 from subprocess import Popen, PIPE, check_call, CalledProcessError
 
@@ -24,7 +26,7 @@ def tar_file(dir, no_compress=False):
         try:
             check_call(cmd, shell=True)
         except CalledProcessError:
-            print "Package creation failed."
+            print("Package creation failed.")
             sys.exit(1)
     else:
         import tarfile
@@ -37,7 +39,7 @@ def tar_file(dir, no_compress=False):
             tar.add(dir, exclude=lambda f: f == ".DS_Store")
             tar.close()
         except tarfile.TarError:
-            print "Package creation failed."
+            print("Package creation failed.")
             sys.exit(1)
 
 def main():
@@ -49,11 +51,11 @@ def main():
                       help="don't compress the spkg file")
     (options, args) = parser.parse_args()
     for path in args:
-        print "Creating {1}Sage package from {0}".format(path,
-                "uncompressed " if options.no_compress else "")
+        print("Creating {1}Sage package from {0}".format(path,
+                "uncompressed " if options.no_compress else ""))
 
         if not os.path.isdir(path):
-            print "No directory %s" % path
+            print("No directory {}".format(path))
             sys.exit(1)
         dir = os.path.basename(path.rstrip("/"))
         file = dir + ".spkg"
@@ -66,65 +68,57 @@ def main():
             version = ""
 
         if len(version) == 0:
-            print "Warning: no version number detected"
+            print("Warning: no version number detected")
         else:
             m = re.match(r"[0-9]+[-.0-9a-zA-Z]*(\.p[0-9]+)?$", version)
             if not m:
-                print "Warning: version number (%s) not of the expected form." % version
-                print """The version number should start with a number and contain only numbers,
+                print("Warning: version number ({}) not of the expected form."
+                      .format(version))
+                print("""The version number should start with a number and contain only numbers,
 letters, periods, and hyphens.  It may optionally end with a string of
 the form 'pNUM' where NUM is a non-negative integer.
 
-Proceeding anyway..."""
+Proceeding anyway...""")
 
         tar_file(dir, no_compress = options.no_compress)
 
         size = os.path.getsize(file)
         if size < 1024 * 1024:
-            size = "%sK" % (size / 1024)
+            size = "{}K".format(size / 1024)
         else:
-            size = "%0.1fM" % (size / (1024 * 1024.0))
+            size = "{:.1f}M".format(size / (1024 * 1024.0))
 
         if os.path.exists(os.path.join(dir, "SPKG.txt")):
             spkg_txt = "Good"
         else:
             spkg_txt = "File is missing"
 
-        p = Popen("cd '%s' && hg diff" % dir, shell=True, stdout=PIPE, stderr=PIPE)
-        std_out, std_err = p.communicate()
-        if len(std_err) != 0:
-            hgrepo_txt = "Error reading repository"
-        elif len(std_out) != 0:
-            hgrepo_txt = "Unchecked in changes"
-        else:
-            hgrepo_txt = "Good"
+        print("""
+Created package {file}.
 
-        print """
-Created package %(file)s.
-
-    NAME: %(name)s
- VERSION: %(version)s
-    SIZE: %(size)s
- HG REPO: %(hgrepo)s
-SPKG.txt: %(spkg)s
+    NAME: {name}
+ VERSION: {version}
+    SIZE: {size}
+SPKG.txt: {spkg}
 
 Please test this package using
 
-   sage -f %(file)s
+   sage -f {file}
 
-immediately.""" % {'file': file, 'name': name, 'version': version, 'size': size,
-           'hgrepo': hgrepo_txt, 'spkg': spkg_txt},
+immediately.""".format(file=file, name=name,  version=version, size=size,
+                       spkg=spkg_txt), end=' ')
+
         if options.no_compress:
-            print ""
-            print ""
+            print()
+            print()
         else:
-            print """ Also, note that you can use
+            print(""" Also, note that you can use
 
-   sage -pkg_nc %(dir)s
+   sage -pkg_nc {}
 
 to make an uncompressed version of the package (useful if the
 package is full of compressed data).
-""" % {'dir': dir}
+""".format(dir))
 
 if __name__ == "__main__":
     main()

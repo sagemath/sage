@@ -11,7 +11,6 @@ Groupoid
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
-from sage.misc.cachefunc import cached_method
 from sets_cat import Sets
 
 class Groupoid(CategoryWithParameters):

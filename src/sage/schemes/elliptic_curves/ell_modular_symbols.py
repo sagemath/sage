@@ -96,9 +96,9 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
     """
     _sign = int(sign)
     if _sign != sign:
-        raise TypeError, 'sign must be an integer'
+        raise TypeError('sign must be an integer')
     if not (_sign in [-1,0,1]):
-        raise TypeError, 'sign must -1, 0, or 1'
+        raise TypeError('sign must -1, 0, or 1')
     N = E.conductor()
     M = ModularSymbols(N, sign=sign, base_ring=base_ring)
     if bound is None:
@@ -465,9 +465,9 @@ class ModularSymbolECLIB(ModularSymbol):
             8
 
             sage: E = EllipticCurve('15a1')
-            sage: [C.modular_symbol(use_eclib=True,normalize='L_ratio')(0) for C in E.isogeny_class(use_tuple=False)]
+            sage: [C.modular_symbol(use_eclib=True,normalize='L_ratio')(0) for C in E.isogeny_class()]
             [1/4, 1/8, 1/4, 1/2, 1/8, 1/16, 1/2, 1]
-            sage: [C.modular_symbol(use_eclib=True,normalize='none')(0) for C in E.isogeny_class(use_tuple=False)]
+            sage: [C.modular_symbol(use_eclib=True,normalize='none')(0) for C in E.isogeny_class()]
             [1/4, 1/4, 1/4, 1/4, 1/4, 1/4, 1/4, 1/4]
 
         Currently, the interface for negative modular symbols in eclib is not yet written::
@@ -488,11 +488,11 @@ class ModularSymbolECLIB(ModularSymbol):
         """
         self._sign = ZZ(sign)
         if self._sign != sign:
-            raise TypeError, 'sign must be an integer'
+            raise TypeError('sign must be an integer')
         if self._sign != -1 and self._sign != 1:
-            raise TypeError, 'sign must -1 or 1'
+            raise TypeError('sign must -1 or 1')
         if self._sign == -1:
-            raise NotImplementedError, "Despite that eclib has now -1 modular symbols the interface to them is not yet written."
+            raise NotImplementedError("Despite that eclib has now -1 modular symbols the interface to them is not yet written.")
         self._E = E
         self._use_eclib = True
         self._base_ring = QQ
@@ -509,7 +509,7 @@ class ModularSymbolECLIB(ModularSymbol):
         elif normalize == "none":
             self._scaling = ZZ(1)
         else :
-            raise ValueError, "no normalization '%s' known for modular symbols using John Cremona's eclib"%normalize
+            raise ValueError("no normalization '%s' known for modular symbols using John Cremona's eclib"%normalize)
 
 
     def _call_with_caching(self, r):
@@ -544,6 +544,10 @@ class ModularSymbolECLIB(ModularSymbol):
 
         """
         # this computes {0,oo} - {0,r} = {r,oo}
+        from sage.rings.rational import Rational
+        if r != oo:
+            r = Rational(r)
+            r = r.numer() % r.denom() / r.denom()
         return (self._atzero - self._modsym(r))*self._scaling
 
 
@@ -605,19 +609,19 @@ class ModularSymbolSage(ModularSymbol):
             1
 
             sage: E = EllipticCurve('15a1')
-            sage: [C.modular_symbol(use_eclib=False, normalize='L_ratio')(0) for C in E.isogeny_class(use_tuple=False)]
+            sage: [C.modular_symbol(use_eclib=False, normalize='L_ratio')(0) for C in E.isogeny_class()]
             [1/4, 1/8, 1/4, 1/2, 1/8, 1/16, 1/2, 1]
-            sage: [C.modular_symbol(use_eclib=False, normalize='period')(0) for C in E.isogeny_class(use_tuple=False)]
+            sage: [C.modular_symbol(use_eclib=False, normalize='period')(0) for C in E.isogeny_class()]
             [1/8, 1/16, 1/8, 1/4, 1/16, 1/32, 1/4, 1/2]
-            sage: [C.modular_symbol(use_eclib=False, normalize='none')(0) for C in E.isogeny_class(use_tuple=False)]
+            sage: [C.modular_symbol(use_eclib=False, normalize='none')(0) for C in E.isogeny_class()]
             [1, 1, 1, 1, 1, 1, 1, 1]
 
         """
         self._sign = ZZ(sign)
         if self._sign != sign:
-            raise TypeError, 'sign must be an integer'
+            raise TypeError('sign must be an integer')
         if self._sign != -1 and self._sign != 1:
-            raise TypeError, 'sign must -1 or 1'
+            raise TypeError('sign must -1 or 1')
         self._E = E
         self._use_eclib = False
         self._normalize = normalize
@@ -638,7 +642,7 @@ class ModularSymbolSage(ModularSymbol):
             self._scaling = 1
             self._e = self._modsym.dual_eigenvector()
         else :
-            raise ValueError, "no normalization %s known for modular symbols"%normalize
+            raise ValueError("no normalization %s known for modular symbols"%normalize)
 
 
     def _find_scaling_period(self):

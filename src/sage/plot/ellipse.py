@@ -63,7 +63,7 @@ class Ellipse(GraphicPrimitive):
         self.r1 = float(r1)
         self.r2 = float(r2)
         if self.r1 <= 0 or self.r2 <= 0:
-            raise ValueError, "both radii must be positive"
+            raise ValueError("both radii must be positive")
         self.angle = fmod(angle,2*pi)
         if self.angle < 0: self.angle += 2*pi
         GraphicPrimitive.__init__(self, options)
@@ -176,10 +176,12 @@ class Ellipse(GraphicPrimitive):
         TESTS::
 
             sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3)
+            Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: ellipse((3,2),1,2)
+            Graphics object consisting of 1 graphics primitive
         """
         import matplotlib.patches as patches
         from sage.plot.misc import get_matplotlib_linestyle
@@ -265,20 +267,25 @@ def ellipse(center, r1, r2, angle=0, **options):
     Note that the default color is blue::
 
         sage: ellipse((0,0),2,1)
+        Graphics object consisting of 1 graphics primitive
 
     More complicated examples with tilted axes and drawing options::
 
         sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="dashed")
+        Graphics object consisting of 1 graphics primitive
         sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="--")
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: ellipse((0,0),3,1,pi/6,fill=True,edgecolor='black',facecolor='red')
+        Graphics object consisting of 1 graphics primitive
 
     We see that ``rgbcolor`` overrides these other options, as this plot
     is green::
 
         sage: ellipse((0,0),3,1,pi/6,fill=True,edgecolor='black',facecolor='red',rgbcolor='green')
+        Graphics object consisting of 1 graphics primitive
 
     The default aspect ratio for ellipses is 1.0::
 
@@ -295,6 +302,7 @@ def ellipse(center, r1, r2, angle=0, **options):
     We can also give ellipses a legend::
 
         sage: ellipse((0,0),2,1,legend_label="My ellipse", legend_color='green')
+        Graphics object consisting of 1 graphics primitive
     """
     from sage.plot.all import Graphics
     g = Graphics()
@@ -315,4 +323,4 @@ def ellipse(center, r1, r2, angle=0, **options):
     if len(center)==2:
         return g
     elif len(center)==3:
-        raise NotImplementedError, "plotting ellipse in 3D is not implemented"
+        raise NotImplementedError("plotting ellipse in 3D is not implemented")

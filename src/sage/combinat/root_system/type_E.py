@@ -66,7 +66,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
                          self.root(4,5,p1=1),
                          self.root(5,6,p1=1)]
         else:
-            raise NotImplementedError, "Type \'E\' root systems only come in flavors 6, 7, 8.  Please make another choice"
+            raise NotImplementedError("Type \'E\' root systems only come in flavors 6, 7, 8.  Please make another choice")
 
     def dimension(self):
         """
@@ -121,19 +121,19 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (0, 0, 0, 0, 0, 1, 0, 1),
              (0, 0, 0, 0, 0, 0, 1, 1)]
         """
-        if i1 == i2 or i2 == None:
+        if i1 == i2 or i2 is None:
             return (-1)**p1*self.monomial(i1)
-        if i3 == None:
+        if i3 is None:
             return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)
-        if i4 == None:
+        if i4 is None:
             return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)+(-1)**p3*self.monomial(i3)
-        if i5 == None:
+        if i5 is None:
             return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)+(-1)**p3*self.monomial(i3)+(-1)**p4*self.monomial(i4)
-        if i6 == None:
+        if i6 is None:
             return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)+(-1)**p3*self.monomial(i3)+(-1)**p4*self.monomial(i4)+(-1)**p5*self.monomial(i5)
-        if i7 == None:
+        if i7 is None:
             return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)+(-1)**p3*self.monomial(i3)+(-1)**p4*self.monomial(i4)+(-1)**p5*self.monomial(i5)+(-1)**p6*self.monomial(i6)
-        if i8 == None:
+        if i8 is None:
             return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)+(-1)**p3*self.monomial(i3)+(-1)**p4*self.monomial(i4)+(-1)**p5*self.monomial(i5)+(-1)**p6*self.monomial(i6)+(-1)**p7*self.monomial(i7)
         return (-1)**p1*self.monomial(i1) + (-1)**p2*self.monomial(i2)+(-1)**p3*self.monomial(i3)+(-1)**p4*self.monomial(i4)+(-1)**p5*self.monomial(i5)+(-1)**p6*self.monomial(i6)+(-1)**p7*self.monomial(i7)+(-1)**p8*self.monomial(i8)
 
@@ -148,7 +148,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: LE6.simple_roots()
             Finite family {1: (1/2, -1/2, -1/2, -1/2, -1/2, -1/2, -1/2, 1/2), 2: (1, 1, 0, 0, 0, 0, 0, 0), 3: (-1, 1, 0, 0, 0, 0, 0, 0), 4: (0, -1, 1, 0, 0, 0, 0, 0), 5: (0, 0, -1, 1, 0, 0, 0, 0), 6: (0, 0, 0, -1, 1, 0, 0, 0)}
         """
-        assert(i in self.index_set())
+        if i not in self.index_set():
+            raise ValueError("{} is not in the index set".format(i))
         return self.Base[i-1]
 
     def negative_roots(self):
@@ -479,6 +480,46 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     AmbientSpace = AmbientSpace
 
+    def coxeter_number(self):
+        """
+        Return the Coxeter number associated with ``self``.
+
+        EXAMPLES::
+
+            sage: CartanType(['E',6]).coxeter_number()
+            12
+            sage: CartanType(['E',7]).coxeter_number()
+            18
+            sage: CartanType(['E',8]).coxeter_number()
+            30
+        """
+        if self.n == 6:
+            return 12
+        if self.n == 7:
+            return 18
+        # n == 8
+        return 30
+
+    def dual_coxeter_number(self):
+        """
+        Return the dual Coxeter number associated with ``self``.
+
+        EXAMPLES::
+
+            sage: CartanType(['E',6]).dual_coxeter_number()
+            12
+            sage: CartanType(['E',7]).dual_coxeter_number()
+            18
+            sage: CartanType(['E',8]).dual_coxeter_number()
+            30
+        """
+        if self.n == 6:
+            return 12
+        if self.n == 7:
+            return 18
+        # n == 8
+        return 30
+
     def dynkin_diagram(self):
         """
         Returns a Dynkin diagram for type E.
@@ -529,7 +570,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             g.add_edge(i, i+1)
         return g
 
-    def _latex_dynkin_diagram(self, label = lambda x: x, node_dist=2):
+    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -538,25 +579,28 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             sage: print CartanType(['E',7])._latex_dynkin_diagram()
             \draw (0 cm,0) -- (10 cm,0);
             \draw (4 cm, 0 cm) -- +(0,2 cm);
-            \draw[fill=white] (0, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$3$};
-            \draw[fill=white] (4 cm, 0) circle (.25cm) node[below=4pt]{$4$};
-            \draw[fill=white] (6 cm, 0) circle (.25cm) node[below=4pt]{$5$};
-            \draw[fill=white] (8 cm, 0) circle (.25cm) node[below=4pt]{$6$};
-            \draw[fill=white] (10 cm, 0) circle (.25cm) node[below=4pt]{$7$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
+            \draw[fill=white] (4 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
+            \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$5$};
+            \draw[fill=white] (8 cm, 0 cm) circle (.25cm) node[below=4pt]{$6$};
+            \draw[fill=white] (10 cm, 0 cm) circle (.25cm) node[below=4pt]{$7$};
             \draw[fill=white] (4 cm, 2 cm) circle (.25cm) node[right=3pt]{$2$};
+            <BLANKLINE>
         """
+        if node is None:
+            node = self._latex_draw_node
         ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%((self.n-2)*node_dist)
         ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n"%(2*node_dist, node_dist)
-        ret += "\\draw[fill=white] (0, 0) circle (.25cm) node[below=4pt]{$%s$};\n"%label(1)
+        ret += node(0, 0, label(1))
         for i in range(1, self.n-1):
-            ret += "\\draw[fill=white] (%s cm, 0) circle (.25cm) node[below=4pt]{$%s$};\n"%(i*node_dist, label(i+2))
-        ret += "\\draw[fill=white] (%s cm, %s cm) circle (.25cm) node[right=3pt]{$%s$};"%(2*node_dist, node_dist, label(2))
+            ret += node(i*node_dist, 0, label(i+2))
+        ret += node(2*node_dist, node_dist, label(2), 'right=3pt')
         return ret
 
-    def ascii_art(self, label = lambda x: x):
+    def ascii_art(self, label=lambda i: i, node=None):
         """
-        Returns a ascii art representation of the extended Dynkin diagram
+        Return a ascii art representation of the extended Dynkin diagram.
 
         EXAMPLES::
 
@@ -579,16 +623,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             O---O---O---O---O---O---O
             2   4   5   6   7   8   9
         """
-        n = self.n
-        if n == 6:
-            return "        O %s\n        |\n        |\nO---O---O---O---O\n%s   %s   %s   %s   %s"\
-                %tuple(label(i) for i in (2,1,3,4,5,6))
-        elif n == 7:
-            return "        O %s\n        |\n        |\nO---O---O---O---O---O\n%s   %s   %s   %s   %s   %s"\
-                %tuple(label(i) for i in (2,1,3,4,5,6,7))
-        elif n == 8:
-            return "        O %s\n        |\n        |\nO---O---O---O---O---O---O\n%s   %s   %s   %s   %s   %s   %s"\
-                %tuple(label(i) for i in (2,1,3,4,5,6,7,8))
+        if node is None:
+            node = self._ascii_art_node
+        labels = map(label, [1,3,4,5,6] + range(7, self.n+1)) # We exclude 2 because of the special case
+        ret = "        {} {}\n        |\n        |\n".format(node(label(2)), label(2))
+        return ret + '---'.join(node(i) for i in labels) + '\n' + "".join("{!s:4}".format(i) for i in labels)
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.structure.sage_object import register_unpickle_override

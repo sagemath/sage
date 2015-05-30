@@ -25,7 +25,7 @@ import sage.libs.pari.all as pari
 import sage.rings.ring as ring
 import ring_element
 
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.fast_methods import Singleton
 
 class Pari(ring_element.RingElement):
     """
@@ -157,7 +157,7 @@ class Pari(ring_element.RingElement):
         return int(self.__x)
 
 
-class PariRing(UniqueRepresentation, ring.Ring):
+class PariRing(Singleton, ring.Ring):
     """
     EXAMPLES:
         sage: R = PariRing(); R
@@ -166,6 +166,7 @@ class PariRing(UniqueRepresentation, ring.Ring):
         True
     """
     Element = Pari
+
     def __init__(self):
         ring.Ring.__init__(self, self)
     def __repr__(self):
@@ -180,7 +181,7 @@ class PariRing(UniqueRepresentation, ring.Ring):
         return False
 
     def characteristic(self):
-        raise RuntimeError, "Not defined."
+        raise RuntimeError("Not defined.")
         #return 0
 
     def random_element(self, x=None, y=None, distribution=None):
@@ -214,12 +215,6 @@ class PariRing(UniqueRepresentation, ring.Ring):
         """
         from sage.all import ZZ
         return self(ZZ.random_element(x,y,distribution))
-
-    def random(self, bound=0):
-        """
-        Deprecated.  Use self.random_element() instead.
-        """
-        raise NotImplementedError, "Deprecated: use random_element() instead"
 
     def zeta(self):
         """

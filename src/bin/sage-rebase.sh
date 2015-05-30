@@ -11,6 +11,6 @@
 # Invoke this script from a shell after going to the SAGE_ROOT directory.
 
 echo "Getting list of dlls. This may take a while..."
-/bin/find -name "*.dll" -o -name "*.so" > /tmp/sage-dlls.lst
+/bin/find local -name "*.dll" -o -name "*.so" > /tmp/sage-dlls.lst
 echo "Now rebasing..."
 /bin/rebase -O -T /tmp/sage-dlls.lst

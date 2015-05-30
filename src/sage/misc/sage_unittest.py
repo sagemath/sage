@@ -261,7 +261,7 @@ class TestSuite(object):
         In conjonction with ``%pdb on``, this allows for the debbuger
         to jump directly to the first failure location.
         """
-        if type(skip) == str:
+        if isinstance(skip, str):
             skip = [skip]
         else:
             skip = tuple(skip)
@@ -288,17 +288,17 @@ class TestSuite(object):
                         # which has already reported the details of
                         # that failure
                         if not tester._verbose:
-                            print tester._prefix+"Failure in %s"%method_name
+                            print(tester._prefix+"Failure in {}".format(method_name))
                     else:
                         if tester._verbose:
                             tester.info(" fail")
                         else:
-                            print tester._prefix+"Failure in %s:"%method_name
+                            print(tester._prefix+"Failure in {}:".format(method_name))
                         s = traceback.format_exc()
-                        print tester._prefix + s.strip().replace("\n", "\n"+tester._prefix)
-                        print tester._prefix + "-" * 60
+                        print(tester._prefix + s.strip().replace("\n", "\n"+tester._prefix))
+                        print(tester._prefix + "-" * 60)
         if len(failed) > 0:
-            print tester._prefix+"The following tests failed: %s"%(", ".join(failed))
+            print(tester._prefix+"The following tests failed: {}".format(", ".join(failed)))
             if raise_on_failure:
                 raise TestSuiteFailure
 
@@ -472,38 +472,74 @@ class InstanceTester(unittest.TestCase):
             sage: list(tester.some_elements())
             [1, 2, 3, 4, 5]
 
-            sage: tester = InstanceTester(ZZ, elements = [1,3,5])
+            sage: tester = InstanceTester(MyParent(), max_runs=3)
+            sage: list(tester.some_elements())
+            [1, 2, 3]
+
+            sage: tester = InstanceTester(MyParent(), max_runs=7)
+            sage: list(tester.some_elements())
+            [1, 2, 3, 4, 5]
+
+            sage: tester = InstanceTester(MyParent(), elements=[1,3,5])
             sage: list(tester.some_elements())
             [1, 3, 5]
 
-            sage: tester = InstanceTester(ZZ, elements = srange(100), max_runs=20)
-            sage: S = tester.some_elements()
-            sage: len(S)
-            20
-            sage: C = CartesianProduct(S, S, S, S)
+            sage: tester = InstanceTester(MyParent(), elements=[1,3,5], max_runs=2)
+            sage: list(tester.some_elements())
+            [1, 3]
+
+            sage: tester = InstanceTester(FiniteEnumeratedSet(['a','b','c','d']), max_runs=3)
+            sage: tester.some_elements()
+            ['a', 'b', 'c']
+
+            sage: tester = InstanceTester(FiniteEnumeratedSet([]))
+            sage: list(tester.some_elements())
+            []
+
+            sage: tester = InstanceTester(ZZ)
+            sage: ZZ.some_elements()             # yikes, shamelessly trivial ...
+            <generator object _some_elements_from_iterator at 0x...>
+            sage: list(tester.some_elements())
+            [0, 1, -1, 2, -2, ..., 49, -49, 50]
+
+            sage: tester = InstanceTester(ZZ, elements = ZZ, max_runs=5)
+            sage: list(tester.some_elements())
+            [0, 1, -1, 2, -2]
+
+            sage: tester = InstanceTester(ZZ, elements = srange(100), max_runs=5)
+            sage: list(tester.some_elements())
+            [0, 1, 2, 3, 4]
+
+            sage: tester = InstanceTester(ZZ, elements = srange(3), max_runs=5)
+            sage: list(tester.some_elements())
+            [0, 1, 2]
+
+
+        Test for :trac:`15919`, :trac:`16244`::
+
+            sage: Z = IntegerModRing(25) # random.sample, which was used pre #16244, has a threshold at 21!
+            sage: Z[1]                   # since #8389, indexed access is used for ring extensions
+            Traceback (most recent call last):
+            ...
+            ValueError: first letter of variable name must be a letter
+            sage: tester = InstanceTester(Z, elements=Z, max_runs=5)
+            sage: list(tester.some_elements())
+            [0, 1, 2, 3, 4]
+
+            sage: C = CartesianProduct(Z, Z, Z, Z)
             sage: len(C)
-            160000
-            sage: S = tester.some_elements(C)
-            sage: len(S)
-            20
+            390625
+            sage: tester = InstanceTester(C, elements = C, max_runs=4)
+            sage: list(tester.some_elements())
+            [[0, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 2], [0, 0, 0, 3]]
         """
         if S is None:
             if self._elements is None:
                 S = self._instance.some_elements()
             else:
                 S = self._elements
-        from sage.misc.mrange import _len
-        try:
-            n = _len(S)
-            if n > self._max_runs:
-                from random import sample
-                S = sample(S, self._max_runs)
-        except (TypeError, AttributeError):
-            # We already can't tell what the length of n is, so
-            # there's no harm in obscuring it further.
-            import itertools
-            return itertools.islice(S,0,self._max_runs)
-        return S
+        import itertools
+        return list(itertools.islice(S,0,self._max_runs))
 
 class PythonObjectWithTests(object):
     """

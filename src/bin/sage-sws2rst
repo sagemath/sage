@@ -4,7 +4,8 @@ r"""
 sage-sws2rst
 ============
 
-Translate a Sage worksheet file (.sws) into an rst file.
+Translate a Sage worksheet file (.sws) into an rst file. The result is
+saved in the current working directory.
 
 Usage::
 
@@ -18,21 +19,26 @@ EXAMPLES::
 
     sage --sws2rst file.sws
 
-The sws file should be in the current directory; using an
-absolute path will result in an error.
+AUTHORS:
 
-AUTHOR:
-
-    - Pablo Angulo (January 2011): Initial version
-    - Karl-Dieter Crisman (June 2012): Documentation
-      and minor refinements
+- Pablo Angulo (January 2011): Initial version
+- Karl-Dieter Crisman (June 2012): Documentation
+  and minor refinements
+- Karl-Dieter Crisman (November 2014): Correct use of temporary files,
+  see :trac:`17308`.
 """
-#############################################################################
+
+#*****************************************************************************
 #       Copyright (C) 2011 Pablo Angulo
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#       Copyright (C) 2012-2014 Karl-Dieter Crisman
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#############################################################################
+#*****************************************************************************
+
 import sys
 import tarfile
 import os
@@ -44,75 +50,88 @@ from sagenb.misc.worksheet2rst import worksheet2rst
 from optparse import OptionParser
 
 
-# function where everything happens
-def process_sws(file_name):
+def process_sws(sws_file):
+    """
+    Process the ``.sws`` file ``sws_file`` and create an ``.rst`` file
+    (and possible media files) in the current working directory.
+    """
+    base_name = os.path.basename(os.path.splitext(sws_file)[0])
+    base_name = base_name.replace(' ','_')
 
-    sws_file = tarfile.open(file_name, mode='r:bz2')
-    #TODO: python complains about using tempnam, but I don't
-    #know hot to fix it or see any danger
-#    tempname = os.tempnam('.')
-    tempname = os.path.join(tempfile.gettempdir(), file_name)
-    sws_file.extractall(tempname)
-    base_name = os.path.split(os.path.splitext(file_name)[0])[1]
-    base_name_clean = base_name.replace(' ','_')
+    tempdir = tempfile.mkdtemp()
+    try:
+        with tarfile.open(sws_file, mode='r:bz2') as sws_file:
+            sws_file.extractall(tempdir)
+        worksheet_dir = os.path.join(tempdir, 'sage_worksheet')
+        if not os.path.isdir(worksheet_dir):
+            raise RuntimeError("Worksheeet file %r does not contain a 'sage_worksheet' directory" % sws_file)
+        process_worksheet(worksheet_dir, base_name)
+    finally:
+        shutil.rmtree(tempdir)
 
+def process_worksheet(worksheet_dir, base_name):
+    """
+    Process the extracted worksheet directory ``worksheet_dir`` and
+    create the ``.rst`` and media files with base name ``base_name``.
+
+    Files are moved from ``worksheet_dir``, so make sure these are
+    temporary files!
+    """
     #Images
-    images_dir = base_name_clean + '_media'
-    if not os.path.exists(images_dir):
+    images_dir = base_name + '_media'
+    try:
         os.mkdir(images_dir)
+    except OSError:
+        if not os.path.isdir(images_dir):
+            raise
 
     #"data" dir
-    data_path = os.path.join(tempname,'sage_worksheet','data')
-    if os.path.exists(data_path):
+    data_path = os.path.join(worksheet_dir, 'data')
+    if os.path.isdir(data_path):
         for image in os.listdir(data_path):
-            try:
-                shutil.move(os.path.join(data_path, image), os.path.join(images_dir, image.replace(' ','_')))
-            except shutil.Error:
-                pass
+            shutil.move(os.path.join(data_path, image), os.path.join(images_dir, image.replace(' ','_')))
 
     #cells
-    cells_path = os.path.join(tempname,'sage_worksheet','cells')
-    if os.path.exists(cells_path):
+    cells_path = os.path.join(worksheet_dir, 'cells')
+    if os.path.isdir(cells_path):
         for cell in os.listdir(cells_path):
             cell_path = os.path.join(cells_path, cell)
             for image in os.listdir(cell_path):
                 if os.path.isfile(os.path.join(cell_path, image)):
-                    shutil.copy2(os.path.join(cell_path, image),
+                    shutil.move(os.path.join(cell_path, image),
                                  os.path.join(images_dir, 'cell_%s_%s'%(cell,image)))
                 # could be Jmol image directory - code for future
                 #elif os.path.isdir(os.path.join(cell_path, image)):
                 #    if image == '.jmol_images':
                 #        for jmolimg in os.listdir(os.path.join(cell_path, image)):
-                #            shutil.copy2(os.path.join(cell_path, image, jmolimg),
+                #            shutil.move(os.path.join(cell_path, image, jmolimg),
                 #                     os.path.join(images_dir, 'cell_%s_%s'%(cell,jmolimg)))
 
     #read html file, parse it, write rst file
-    file = codecs.open(os.path.join('.',tempname,'sage_worksheet','worksheet.html'),
-                          mode='r',
-                          encoding='utf-8')
-    html_text = file.read()
-    file.close()
-    rst_text = worksheet2rst(html_text, images_dir = images_dir)
-    rst_file = base_name_clean + '.rst'
-    out_file = codecs.open(rst_file, mode='w',
-                  encoding='utf-8')
-    out_file.write(rst_text)
-    out_file.close()
-    print "File at "+rst_file
-    print "Image directory at "+images_dir
+    html_file = os.path.join(worksheet_dir, 'worksheet.html')
+    with codecs.open(html_file, mode='r', encoding='utf-8') as f:
+        html_text = f.read()
 
-    shutil.rmtree(tempname)
+    rst_text = worksheet2rst(html_text, images_dir=images_dir)
+    rst_file = base_name + '.rst'
+
+    with codecs.open(rst_file, mode='w', encoding='utf-8') as out_file:
+        out_file.write(rst_text)
+
+    print("File at", rst_file)
+    print("Image directory at", images_dir)
 
 
 # Set the parser
 usage = r"""
 
-    sage -sws2rst [options]  <source sws file> ...
+    sage --sws2rst [options]  <source sws file> ...
 
 Translate a Sage worksheet file (.sws) into an reStructuredText
 (.rst) file.  At least one sws file argument is required; all sws
 files will be parsed and translated.  Spaces in the names of the
-worksheet will be converted to underscores.
+worksheet will be converted to underscores. The resulting files will
+be stored in the current working directory.
 
 Examples:
 
@@ -121,11 +140,7 @@ Examples:
     sage --sws2rst -h # this help message prints
     sage --sws2rst --sphinxify # information about how to use
                                # Sphinx to compile your rst file
-
-Remark:
-
-    The sws file(s) should be in the current directory; using an
-    absolute path will result in an error."""
+"""
 
 sphinxify_text = r"""
 
@@ -133,7 +148,7 @@ Once you have made your rst file, what can you do with it?
 
 If this is a file which is likely to become part of the Sage
 standard documentation, you will want to edit the appropriate
-file in $SAGE_ROOT/devel/sage/doc to include your file, or
+file in $SAGE_ROOT/src/doc to include your file, or
 simply include your file as appropriate.
 
 However, you may simply want to make great-looking documentation
@@ -170,7 +185,7 @@ parser.add_option("--sphinxify",
 
 # Parse option
 if options.sphinxify:
-    print sphinxify_text
+    print(sphinxify_text)
     sys.exit(0)
 
 # Parse arguments
@@ -179,11 +194,5 @@ if len(args) < 1:
     sys.exit(1)
 
 for file_name in args:
-    print "Processing "+file_name
-    try:
-        process_sws(file_name)
-    except Exception as e:
-        print "Unable to process file ('%s')" % file_name
-        print "Error message: %s" % e
-        print "Exiting."
-        sys.exit(1)
+    print("Processing", file_name)
+    process_sws(file_name)

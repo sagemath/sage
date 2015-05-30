@@ -55,9 +55,6 @@ def BinaryStrings():
         True
     """
     # Here we cache the binary strings to make them unique
-    # if _cache.has_key(2):
-    # The method .has_key() has been deprecated since Python 2.2. Use
-    # "k in Dict" instead of "Dict.has_key(k)".
     if 2 in _cache:
         S = _cache[2]()
         if not S is None:
@@ -87,9 +84,6 @@ def OctalStrings():
         033355556
     """
     # Here we cache the octal strings to make them unique
-    # if _cache.has_key(8):
-    # The method .has_key() has been deprecated since Python 2.2. Use
-    # "k in Dict" instead of "Dict.has_key(k)".
     if 8 in _cache:
         S = _cache[8]()
         if not S is None:
@@ -120,9 +114,6 @@ def HexadecimalStrings():
         0aaaf
     """
     # Here we cache the hexadecimal strings to make them unique
-    # if _cache.has_key(16):
-    # The method .has_key() has been deprecated since Python 2.2. Use
-    # "k in Dict" instead of "Dict.has_key(k)".
     if 16 in _cache:
         S = _cache[16]()
         if not S is None:
@@ -158,9 +149,6 @@ def Radix64Strings():
         /
     """
     # Here we cache the radix-64 strings to make them unique
-    # if _cache.has_key(64):
-    # The method .has_key() has been deprecated since Python 2.2. Use
-    # "k in Dict" instead of "Dict.has_key(k)".
     if 64 in _cache:
         S = _cache[64]()
         if not S is None:
@@ -189,9 +177,6 @@ def AlphabeticStrings():
         Z
     """
     # Here we cache the alphabetic strings to make them unique
-    # if _cache.has_key(26):
-    # The method .has_key() has been deprecated since Python 2.2. Use
-    # "k in Dict" instead of "Dict.has_key(k)".
     if 26 in _cache:
         S = _cache[26]()
         if not S is None:
@@ -364,10 +349,9 @@ class BinaryStringMonoid(StringMonoid_class):
             sage: S.encoding(' ',padic=True)
             00000100
         """
-        from Crypto.Util.number import bytes_to_long
         bit_string = []
         for i in range(len(S)):
-            n = int(bytes_to_long(S[i]))
+            n = ord(S[i])
             bits = []
             for i in range(8):
                 bits.append(n%2)
@@ -543,10 +527,9 @@ class HexadecimalStringMonoid(StringMonoid_class):
             sage: S.encoding(' ',padic=True)
             02
         """
-        from Crypto.Util.number import bytes_to_long
         hex_string = []
         for i in range(len(S)):
-            n = int(bytes_to_long(S[i]))
+            n = ord(S[i])
             n0 = n % 16
             n1 = n // 16
             if not padic:

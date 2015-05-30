@@ -1,5 +1,5 @@
 """
-Abstract SAT Solver.
+Abstract SAT Solver
 
 All SAT solvers must inherit from this class.
 

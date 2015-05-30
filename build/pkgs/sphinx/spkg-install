@@ -45,21 +45,7 @@ success 'Error installing Sphinx'
 echo
 
 cd "$CUR"
-cp patches/sphinx-build "$SAGE_LOCAL/bin/"
-success "Error copying sphinx-build to $SAGE_LOCAL/bin/"
-echo
-
 echo "Creating grammar pickle..."
 python create_grammar_pickle.py
 success 'Error creating the grammar pickle'
-echo
-
-echo "Deleting old Sage documentation output..."
-for docdir in "$SAGE_ROOT"/devel/sage-*/doc/output; do
-    if [ -d "$docdir" ]; then
-        echo "Removing \"$docdir\"..."
-        rm -rf "$docdir"
-    fi
-done
-success 'Error deleting old documentation output'
 echo

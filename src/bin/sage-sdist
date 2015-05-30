@@ -31,8 +31,8 @@ if [ -z "$SAGE_SRC" ]; then
     die "must be run from within a Sage enviroment, or with SAGE_SRC provided"
 fi
 
-if [ "$#" -gt 1 ]; then
-    TMP_DIR="$2"
+if [ "$#" -gt 0 ]; then
+    TMP_DIR="$1"
 else
     TMP_DIR="$SAGE_ROOT/tmp"
 fi
@@ -41,71 +41,19 @@ source "$SAGE_SRC/bin/sage-version.sh"
 echo "Sage version $SAGE_VERSION, release date $SAGE_RELEASE_DATE"
 
 TARGET="sage-$SAGE_VERSION"
+sage-clone-source "$SAGE_ROOT" "$TMP_DIR/$TARGET"
 
-rm -rf "$TMP_DIR/$TARGET"
-mkdir -p "$TMP_DIR/$TARGET"
+# Download and copy all upstream tarballs (the -B option to make forces
+# all targets to be built unconditionally)
+cd "$SAGE_ROOT/build"
+SAGE_INSTALL_GCC=yes SAGE_SPKG_COPY_UPSTREAM="$TMP_DIR/$TARGET/upstream" \
+SAGE_INSTALL_FETCH_ONLY=yes \
+./install -B all
 
-git clone "$SAGE_ROOT" "$TMP_DIR/$TARGET"
-cd "$TMP_DIR/$TARGET"
-git remote set-url origin "$SAGE_REPO_ANONYMOUS"
-
-# Copy all the upstream packages
-mkdir -p upstream
-export SAGE_CURRENT_UPSTREAM="$SAGE_ROOT/upstream"
-export SAGE_INSTALL_FETCH_ONLY=yes
-
-# create fake sage-spkg that only downloads files if necessary
-echo '
-. "${0%spkg}env"
-set -e
-echo "sage -spkg $@"
-mkdir -p "$SAGE_SPKG_INST"
-PKG_NAME="$1"
-PKG_BASE=`echo "$PKG_NAME" | sed "s/-[0-9].*//"`
-PKG_VER="${PKG_NAME#${PKG_BASE}}"
-PKG_VER="${PKG_VER#-}"
-PKG_NAME_UPSTREAM="${PKG_BASE}-`echo $PKG_VER | sed "s/\\.p[0-9][0-9]*\$//"`"
-for tarball in `ls -1t ${SAGE_CURRENT_UPSTREAM}/${PKG_NAME_UPSTREAM}.tar* 2>/dev/null`; do
-    if [ -f "$tarball" ]; then
-        cp "$tarball" $SAGE_ROOT/upstream
-        touch "$SAGE_SPKG_INST/$PKG_NAME"
-        exit 0
-    fi
-done
-cd "$SAGE_ROOT/upstream"
-PKG_URL="$SAGE_UPSTREAM/$PKG_BASE/$PKG_NAME_UPSTREAM"
-PKG_TMP="${PKG_URL##*/}.tmp"
-for EXT in .tar.bz2 .tar.gz .tar; do
-    REAL_PKG_URL="$PKG_URL$EXT"
-    sage-download-file "$REAL_PKG_URL" >"$PKG_TMP" &&
-        { DOWNLOAD_SUCCESS=yes; break; }
-done
-[ -n "$DOWNLOAD_SUCCESS" ]
-mv "$PKG_TMP" "${PKG_URL##*/}$EXT"
-touch "$SAGE_SPKG_INST/$PKG_NAME"
-' > src/bin/sage-spkg
-chmod +x src/bin/sage-spkg
-
-# use install to get all needed packages
-(
-    unset SAGE_ENV_SOURCED
-    unset SAGE_ROOT
-    cd build
-    SAGE_INSTALL_GCC=yes ./install all
-)
-
-# remove any artifacts from running install
-make distclean
-
-# revert changes to sage-spkg
-git checkout HEAD src/bin/sage-spkg
-
-# save space
-git prune
-
+# Create source .tar.gz
 cd "$TMP_DIR"
-
-echo "Creating $TARGET.tar.gz ..."
+echo "Creating dist/$TARGET.tar.gz ..."
+chmod -R go=rX "$TARGET"
 tar zcf "$TARGET".tar.gz "$TARGET"
 
 mkdir -p "$SAGE_ROOT"/dist

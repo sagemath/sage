@@ -1,6 +1,5 @@
 from sage.misc.binary_tree import BinaryTree
 from sage.misc.binary_tree cimport BinaryTree
-include "sage/ext/interrupt.pxi"
 
 
 cdef class generic_pd

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import os, sys, re
 
 SAGE_ROOT     = os.path.realpath(os.environ['SAGE_ROOT'])
@@ -88,39 +90,31 @@ def check_processor_flags():
     # We check that the processor flags of the original build are a
     # subset of the new machine.  If not, we print a massive warning.
     X = set(open(flags_file).read().split()).intersection(FLAGS)
-    Y = set(get_flags_info().split())
-    if not X.issubset(Y):
-        print ""
-        print "*"*70
-        print "WARNING!  This Sage install was built on a machine that supports"
-        print "instructions that are not available on this computer.  Sage will"
-        print "likely fail with ILLEGAL INSTRUCTION errors! The following processor"
-        print "flags were on the build machine but are not on this computer:\n"
-        for a in X:
-            if a not in Y:
-                print a,
-        print ""
-        print ""
-        print "Email http://groups.google.com/group/sage-support for help."
-        print "To remove this warning and make Sage start, just delete"
-        print "     %s"%flags_file
-        print "*"*70
+    X.difference_update(get_flags_info().split())
+    if X:
+        print("")
+        print("*"*70)
+        print("WARNING!  This Sage install was built on a machine that supports")
+        print("instructions that are not available on this computer.  Sage will")
+        print("likely fail with ILLEGAL INSTRUCTION errors! The following processor")
+        print("flags were on the build machine but are not on this computer:\n")
+        print(*X)
+        print("")
+        print("Email http://groups.google.com/group/sage-support for help.")
+        print("To remove this warning and make Sage start, just delete")
+        print("     %s"%flags_file)
+        print("*"*70)
         sys.exit(1)
 
 
 def update_library_files():
     """
-    Run ``ranlib`` on all static libraries (``*.a``) in the library
-    directory, and manually change the paths in all ``.la`` libtool
-    archives.
+    Manually change the paths in all ``.la`` libtool archives.
     """
     for libdir in ["lib", "lib32", "lib64"]:
         LIB = os.path.join(SAGE_LOCAL, libdir)
         if not os.path.isdir(LIB):
             continue
-
-        # The .a files should be re-ranlib'd:
-        os.system('cd "%s"; ranlib *.a 1>/dev/null 2>/dev/null' % LIB)
 
         # The .la files hardcode path info, so we manually fix the path info:
         for F in os.listdir(LIB):
@@ -194,7 +188,7 @@ def make_scripts_relative():
             continue
 
         try:
-            with open(filename, 'r+') as f:
+            with open(filename, 'rb+') as f:
                 # Read at most 512 bytes, this should be more than enough.
                 # If we don't find '\n' in the first 512 bytes, we most likely
                 # have a binary file.
@@ -253,8 +247,8 @@ def remove_files(path, remove_extensions):
             if os.path.splitext(filename)[1] in remove_extensions:
                 try:
                     os.unlink(filename)
-                except OSError, msg:
-                    print msg
+                except OSError as msg:
+                    print(msg)
 
 
 def sage_relocate():
@@ -297,18 +291,18 @@ if __name__ == '__main__':
 
     if OLD_SAGE_ROOT != SAGE_ROOT or force_relocate:
         if OLD_SAGE_ROOT is None:
-            print "This looks like the first time you are running Sage."
+            print("This looks like the first time you are running Sage.")
         elif force_relocate:
-            print "Forcing sage-location, probably because a new package was installed."
+            print("Forcing sage-location, probably because a new package was installed.")
         else:
-            print "The Sage installation tree has moved"
-            print "from %s" % OLD_SAGE_ROOT
-            print "  to %s" % SAGE_ROOT
-        print "Updating various hardcoded paths..."
-        print "(Please wait at most a few minutes.)"
-        print "DO NOT INTERRUPT THIS."
+            print("The Sage installation tree has moved")
+            print("from %s" % OLD_SAGE_ROOT)
+            print("  to %s" % SAGE_ROOT)
+        print("Updating various hardcoded paths...")
+        print("(Please wait at most a few minutes.)")
+        print("DO NOT INTERRUPT THIS.")
         sys.stdout.flush() # One never knows...
 
         sage_relocate()
 
-        print "Done updating paths."
+        print("Done updating paths.")

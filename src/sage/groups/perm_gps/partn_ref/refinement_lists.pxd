@@ -9,7 +9,6 @@
 
 
 include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi'
 include 'data_structures_pxd.pxi' # includes bitsets
 
 

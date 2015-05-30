@@ -1,7 +1,6 @@
-diff -ur src/sphinx/ext/pngmath.py src.patched/sphinx/ext/pngmath.py
---- src/sphinx/ext/pngmath.py	2010-07-24 12:07:36.000000000 +0200
-+++ src.patched/sphinx/ext/pngmath.py	2010-11-28 12:00:17.938636725 +0100
-@@ -35,7 +35,7 @@
+--- Sphinx-1.2.2/sphinx/ext/pngmath.py.orig	2014-03-02 20:38:09.000000000 +1300
++++ Sphinx-1.2.2/sphinx/ext/pngmath.py	2014-10-19 23:35:17.000000000 +1300
+@@ -42,7 +42,7 @@
  
  DOC_HEAD = r'''
  \documentclass[12pt]{article}

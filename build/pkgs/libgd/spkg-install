@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+   echo >&2 "SAGE_LOCAL undefined ... exiting"
+   echo >&2 "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+# Critical to get rid of old versions, since they will break the install, since
+# at some point one of the libraries accidently links against what's in SAGE_LOCAL,
+# instead of what is in the build directory!
+rm "$SAGE_LOCAL"/lib/libgd.*
+
+cd src
+
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+# Needed to correctly pickup libiconv on FreeBSD
+if [ "$UNAME" = "FreeBSD" ] ; then
+   LDFLAGS="-L/usr/local/lib $LDFLAGS"
+fi
+
+if [ "$SAGE64" = "yes" ]; then
+   CFLAGS=" -m64 -g $CFLAGS"
+   LDFLAGS="-m64 $LDFLAGS"
+else
+   CFLAGS="-g $CFLAGS"
+fi
+
+export CFLAGS LDFLAGS
+
+# We explicitly disable X and fontconfig support, since (1) X is not a SAGE dependency,
+# and (2) the gd build fails on a lot of OS X PPC machines when X is enabled.
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+  --without-jpeg --without-xpm --without-x --without-fontconfig \
+  --with-zlib="$SAGE_LOCAL" --with-freetype="$SAGE_LOCAL" \
+  $LIBGD_CONFIGURE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring gd."
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building gd."
+    exit 1
+fi
+
+$MAKE install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing gd."
+    exit 1
+fi

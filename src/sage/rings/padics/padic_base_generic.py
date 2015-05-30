@@ -8,9 +8,22 @@ AUTHORS:
 - David Roe
 """
 
+#*****************************************************************************
+#       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
+#                               William Stein <wstein@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from padic_generic import pAdicGeneric
 from sage.rings.padics.pow_computer import PowComputer
-from sage.rings.padics.padic_base_coercion import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR, pAdicConvert_QQ_CR, pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA, pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
+from sage.rings.padics.padic_capped_relative_element import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR, pAdicConvert_QQ_CR
+from sage.rings.padics.padic_capped_absolute_element import pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA
+from sage.rings.padics.padic_fixed_mod_element import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
 
 class pAdicBaseGeneric(pAdicGeneric):
     def __init__(self, p, prec, print_mode, names, element_class):
@@ -124,7 +137,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             5 + O(5^21)
         """
         if n != 0:
-            raise IndexError, "only one generator"
+            raise IndexError("only one generator")
         return self(self.prime())
 
     def absolute_discriminant(self):
@@ -161,7 +174,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         if (K is None or K is self):
             return 1
         else:
-            raise ValueError, "Ground Ring must be a subring of self"
+            raise ValueError("Ground Ring must be a subring of self")
 
     def is_abelian(self):
         """
@@ -295,7 +308,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             if n == 1:
                 return self(1)
             else:
-                raise ValueError, "No, %sth root of unity in self"%n
+                raise ValueError("No, %sth root of unity in self"%n)
         else:
             from sage.rings.finite_rings.constructor import GF
             return self.teichmuller(GF(self.prime()).zeta(n).lift())
@@ -340,10 +353,13 @@ class pAdicBaseGeneric(pAdicGeneric):
         EXAMPLES::
 
             sage: Zp(3).plot()
+            Graphics object consisting of 1 graphics primitive
             sage: Zp(5).plot(max_points=625)
+            Graphics object consisting of 1 graphics primitive
             sage: Zp(23).plot(rgbcolor=(1,0,0))
+            Graphics object consisting of 1 graphics primitive
         """
-        if not args.has_key('pointsize'):
+        if 'pointsize' not in args:
             args['pointsize'] = 1
         from sage.misc.mrange import cartesian_product_iterator
         from sage.rings.real_double import RDF

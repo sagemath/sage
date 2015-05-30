@@ -257,15 +257,17 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
             assert x.codomain() is self.domain().coordinate_ring()
             return SchemeMorphism_polynomial_toric_variety(self, x.im_gens(), check=check)
 
-        from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety
-        if isinstance(x, FanMorphism):
-            return SchemeMorphism_fan_toric_variety(self, x, check=check)
-
         if is_Matrix(x):
-            fm = FanMorphism(x, self.domain().fan(), self.codomain().fan())
-            return SchemeMorphism_fan_toric_variety(self, fm, check=check)
+            x = FanMorphism(x, self.domain().fan(), self.codomain().fan())
+        if isinstance(x, FanMorphism):
+            if x.is_dominant():
+                from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety_dominant
+                return SchemeMorphism_fan_toric_variety_dominant(self, x, check=check)
+            else:
+                from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety
+                return SchemeMorphism_fan_toric_variety(self, x, check=check)
 
-        raise TypeError, "x must be a fan morphism or a list/tuple of polynomials"
+        raise TypeError("x must be a fan morphism or a list/tuple of polynomials")
 
 
     def _an_element_(self):
@@ -355,9 +357,9 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
 
             sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
             sage: point_set = P123.point_set()
-            sage: iter(point_set._naive_enumerator()).next()
+            sage: next(iter(point_set._naive_enumerator()))
             (0, 0, 1)
-            sage: iter(point_set).next()
+            sage: next(iter(point_set))
             [0 : 0 : 1]
         """
         from sage.schemes.toric.points import \
@@ -416,7 +418,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
          [1 : 3 : 6]]
 
     As for a non-compact example, the blow-up of the plane is the line
-    bundle $O_{\mathbbb{P}^1}(-1)$. Its point set is the cartesian
+    bundle $O_{\mathbf{P}^1}(-1)$. Its point set is the cartesian
     product of the points on the base $\mathbf{P}^1$ with the points
     on the fiber::
 
@@ -453,7 +455,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
-            sage: o = lattice_polytope.octahedron(3)
+            sage: o = lattice_polytope.cross_polytope(3)
             sage: V = ToricVariety(FaceFan(o))
             sage: V.change_ring(GF(2)).point_set().cardinality()
             27
@@ -534,9 +536,9 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
             sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
             sage: point_set = P123.point_set()
-            sage: iter(point_set.__iter__()).next()
+            sage: next(iter(point_set.__iter__()))
             [0 : 0 : 1]
-            sage: iter(point_set).next()  # syntactic sugar
+            sage: next(iter(point_set))  # syntactic sugar
             [0 : 0 : 1]
         """
         for pt in self._naive_enumerator():

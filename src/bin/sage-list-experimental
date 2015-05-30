@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
-sage-list-packages experimental
-
+echo "DEPRECATION WARNING: this script is deprecated" >&2
+echo "do:"                                            >&2
+echo "    $ sage-list-packages experimental"          >&2
+exec sage-list-packages experimental

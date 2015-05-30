@@ -25,6 +25,9 @@ Functions and classes
 ---------------------
 """
 
+from sage.structure.sage_object import SageObject
+
+
 VIEWERS = ['browser', 'dvi_viewer', 'pdf_viewer', 'png_viewer']
 
 def default_viewer(viewer=None):
@@ -133,15 +136,13 @@ def default_viewer(viewer=None):
     elif viewer.startswith('pdf'):
         return PDF_VIEWER
     else:
-        raise ValueError, 'Unknown type of viewer: %s.' % viewer
+        raise ValueError('Unknown type of viewer: {}.'.format(viewer))
 
-
-from sage.structure.sage_object import SageObject
 
 # _viewer_prefs: a dictionary holding global preferences for viewers.
 _viewer_prefs = {}
 
-class Viewer:
+class Viewer(SageObject):
     """
     Set defaults for various viewing applications: a web browser, a
     dvi viewer, a pdf viewer, and a png viewer.
@@ -177,7 +178,7 @@ class Viewer:
         """
         TYPE = TYPE.lower()
         if TYPE not in VIEWERS:
-            raise ValueError, 'Unrecognized type of viewer: %s' % TYPE
+            raise ValueError('Unrecognized type of viewer: {}'.format(TYPE))
         if app is None:
             try:
                 return _viewer_prefs[TYPE]

@@ -39,6 +39,7 @@ class BezierPath(GraphicPrimitive_xydata):
     We use :func:`bezier_path` to actually plot Bezier curves::
 
         sage: bezier_path([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],linestyle="dashed")
+        Graphics object consisting of 1 graphics primitive
     """
     def __init__(self, path, options):
         """
@@ -104,7 +105,7 @@ class BezierPath(GraphicPrimitive_xydata):
             sage: B._plot3d_options()
             {'thickness': 2}
         """
-        if options == None:
+        if options is None:
             options = dict(self.options())
         options_3d = {}
         if 'thickness' in options:
@@ -112,7 +113,7 @@ class BezierPath(GraphicPrimitive_xydata):
             del options['thickness']
         if 'fill' in options:
             if options['fill']:
-                raise NotImplementedError, "Invalid 3d fill style.  Must set fill to False."
+                raise NotImplementedError("Invalid 3d fill style.  Must set fill to False.")
             del options['fill']
         if 'linestyle' in options:
             if options['linestyle'] not in ('solid', '-'):
@@ -137,10 +138,12 @@ class BezierPath(GraphicPrimitive_xydata):
             sage: A = b.plot3d()
             sage: B = b.plot3d(z=2)
             sage: A+B
+            Graphics3d Object
 
         ::
 
             sage: bezier3d([[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]])
+            Graphics3d Object
         """
         from sage.plot.plot3d.shapes2 import bezier3d
         options = self._plot3d_options()
@@ -169,10 +172,12 @@ class BezierPath(GraphicPrimitive_xydata):
         TESTS::
 
             sage: bezier_path([[(0,1),(.5,0),(1,1)]])
+            Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: bezier_path([[(0,1),(.5,0),(1,1),(-3,5)]])
+            Graphics object consisting of 1 graphics primitive
         """
         from matplotlib.patches import PathPatch
         from matplotlib.path import Path
@@ -269,16 +274,19 @@ def bezier_path(path, **options):
         sage: path = [[(0,0),(.5,.1),(.75,3),(1,0)],[(.5,1),(.5,0)],[(.2,.5)]]
         sage: b = bezier_path(path, linestyle='dashed', rgbcolor='green')
         sage: b
+        Graphics object consisting of 1 graphics primitive
 
     To construct a simple curve, create a list containing a single list::
 
         sage: path = [[(0,0),(.5,1),(1,0)]]
         sage: curve = bezier_path(path, linestyle='dashed', rgbcolor='green')
         sage: curve
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to :meth:`~Graphics.show`, as long as they are valid::
 
         sage: bezier_path([[(0,1),(.5,0),(1,1)]], fontsize=50)
+        Graphics object consisting of 1 graphics primitive
         sage: bezier_path([[(0,1),(.5,0),(1,1)]]).show(fontsize=50) # These are equivalent
 
     TESTS:

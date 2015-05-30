@@ -1,5 +1,5 @@
 """
-Test of the :mod:`~sage.structure.factory` module.
+Test of the :mod:`~sage.structure.factory` module
 """
 
 #*****************************************************************************

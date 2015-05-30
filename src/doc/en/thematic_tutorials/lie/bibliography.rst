@@ -2,6 +2,9 @@
 Bibliography
 ============
 
+.. [Bourbaki46] Nicolas Bourbaki. *Lie Groups and Lie Algebras: Chapters 4-6*.
+   Springer, reprint edition, 1998.
+
 .. [BumpNakasuji2010] D. Bump and M. Nakasuji. Casselman's basis of
    Iwahori vectors and the Bruhat order. arXiv:1002.2996,
    http://arxiv.org/abs/1002.2996.
@@ -17,6 +20,10 @@ Bibliography
 
 .. [Dyer1993] M. J. Dyer. The nil Hecke ring and Deodhar's conjecture
    on Bruhat intervals. Inventiones Mathematicae, 111(1):571--574, 1993.
+
+.. [Dynkin1952] E. B. Dynkin,
+   Semisimple subalgebras of semisimple Lie algebras. (Russian) 
+   Mat. Sbornik N.S. 30(72):349–462, 1952.
 
 .. [FauserEtAl2006] B. Fauser, P. D. Jarvis, R. C. King, and
    B. G. Wybourne. New branching rules induced by plethysm. *Journal of
@@ -39,7 +46,7 @@ Bibliography
    pp. 205--272.
 
 .. [HainesEtAl2009] T. J. Haines, R. E. Kottwitz, and
-   A. Parsad. Iwahori-Hecke Algebras. arXiv:math/0309168,
+   A. Prasad. Iwahori-Hecke Algebras. arXiv:math/0309168,
    http://arxiv.org/abs/math/0309168.
 
 .. [HongKang2002] J. Hong and S.-J. Kang. *Introduction to Quantum
@@ -61,6 +68,9 @@ Bibliography
 .. [JonesEtAl2010] B. Jones, A. Schilling.
    Affine structures and a tableau model for E_6 crystals
    *J. Algebra*, 324:2512-2542, 2010
+
+.. [Kac] Victor G. Kac. *Infinite Dimensional Lie algebras*
+   Cambridge University Press, third edition, 1994.
 
 .. [Kashiwara1995] M. Kashiwara. On crystal bases. Representations of
    groups (Banff, AB, 1994), 155--197, CMS Conference Proceedings, 16,
@@ -86,13 +96,36 @@ Bibliography
    Affine crystals and vertex models.
    *Int. J. Mod. Phys.* A 7 (suppl. 1A): 449--484, 1992.
 
+.. [LNSSS14I] C. Lenart, S. Naito, D. Sagaki, A. Schilling, and M. Shimozono.
+   A uniform model for for Kirillov-Reshetikhin crystals I: Lifting the
+   parabolic quantum Bruhat graph. (2014) :arxiv:`1211.2042`
+
+.. [LNSSS14II] C. Lenart, S. Naito, D. Sagaki, A. Schilling, and M. Shimozono.
+   A uniform model for for Kirillov-Reshetikhin crystals II: Alcove model,
+   path model, and `P = X`. (2014) :arxiv:`1402.2203`
+
+.. [L1995] P. Littelmann. *Paths and root operators in representation theory*.
+   Ann. of Math. (2) 142 (1995), no. 3, 499-525.
+
 .. [McKayPatera1981] W. G. McKay and J. Patera. *Tables of Dimensions,
    Indices and Branching Rules for Representations of Simple Lie
    Algebras*. Marcel Dekker, 1981.
 
+.. [KKS2007] S.-J. Kang, J.-A. Kim, and D.-U. Shin.
+   *Modified Nakajima monomials and the crystal* `B(\infty)`.
+   J. Algebra, **308** (2007), 524-535.
+
 .. [OkadoSchilling2008] M. Okado, A.Schilling. Existence of crystal bases for
    Kirillov--Reshetikhin crystals for nonexceptional types.
    *Representation Theory* 12:186--207, 2008.
+
+.. [Seitz1991] G. Seitz,
+   Maximal subgroups of exceptional algebraic groups. 
+   Mem. Amer. Math. Soc. 90 (1991), no. 441.
+
+.. [Rubenthaler2008] H. Rubenthaler, 
+   The (A2,G2) duality in E6, octonions and the triality principle.
+   Trans. Amer. Math. Soc. 360 (2008), no. 1, 347–367 
 
 .. [SchillingTingley2011] A. Schilling, P. Tingley.
    Demazure crystals, Kirillov-Reshetikhin crystals, and the energy function.
@@ -101,3 +134,9 @@ Bibliography
 .. [Stanley1999] R. P. Stanley. *Enumerative Combinatorics, Volume
    2*. Cambridge University Press, 1999.
 
+.. [Testerman1989] Testerman, Donna M.
+   A construction of certain maximal subgroups of the algebraic groups E6 and F4. 
+   J. Algebra 122 (1989), no. 2, 299–322. 
+
+.. [Testerman1992] Testerman, Donna M. The construction of the maximal A1's in
+   the exceptional algebraic groups. Proc. Amer. Math. Soc. 116 (1992), no. 3, 635–644.

@@ -1,5 +1,5 @@
 """
-all_cmdline.py
+All imports for the Sage (IPython) command line
 
 This is all.py (load all sage functions) plus set-up for the Sage commandline.
 """
@@ -13,23 +13,8 @@ This is all.py (load all sage functions) plus set-up for the Sage commandline.
 
 sage_mode = 'cmdline'
 
-try:
-
-    from sage.all import *
-    from sage.calculus.predefined import x
-
-except ValueError as msg:
-    import traceback
-    t = traceback.format_exc()
-    print t
-    if 'type object' in str(msg):
-        msg = str(msg) + """
-
-** In Sage, the easiest fix for this problem is to type "sage -ba"
-   to rebuild all the Cython code (this takes several minutes).
-   Alternatively, touch the last .pyx file in the traceback above. **
-"""
-    raise ValueError(msg)
+from sage.all import *
+from sage.calculus.predefined import x
 
 sage.misc.session.init()
 

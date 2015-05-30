@@ -335,7 +335,7 @@ class InfinitePolynomial_sparse(RingElement):
         try:
             from sage.misc.sage_eval import sage_eval
             return sage_eval(repr(res), self.parent()._gens_dict)
-        except StandardError:
+        except Exception:
             return res
 
     def _getAttributeNames(self):
@@ -407,7 +407,7 @@ class InfinitePolynomial_sparse(RingElement):
         try:
             return getattr(self._p,s)
         except AttributeError:
-            raise AttributeError, '%s has no attribute %s'%(self.__class__, s)
+            raise AttributeError('%s has no attribute %s'%(self.__class__, s))
 
     def ring(self):
         """
@@ -510,7 +510,7 @@ class InfinitePolynomial_sparse(RingElement):
         # One may need a new parent for  self._p and x._p
         try:
             return InfinitePolynomial_sparse(self.parent(),self._p+x._p)
-        except StandardError:
+        except Exception:
             pass
         ## We can now assume that self._p and x._p actually are polynomials,
         ## hence, their parent is not simply the underlying ring.
@@ -534,7 +534,7 @@ class InfinitePolynomial_sparse(RingElement):
         """
         try:
             return InfinitePolynomial_sparse(self.parent(),self._p*x._p)
-        except StandardError:
+        except Exception:
             pass
         ## We can now assume that self._p and x._p actually are polynomials,
         ## hence, their parent is not just the underlying ring.
@@ -629,7 +629,7 @@ class InfinitePolynomial_sparse(RingElement):
         """
         if not x.variables():
             p = self.base_ring()(x._p)
-            divisor = self.base_ring().one_element()/p  # use induction
+            divisor = self.base_ring().one()/p  # use induction
             OUTP = self.parent().tensor_with_ring(divisor.base_ring())
             return OUTP(self)*OUTP(divisor)
         else:
@@ -649,7 +649,7 @@ class InfinitePolynomial_sparse(RingElement):
         """
         try:
             return InfinitePolynomial_sparse(self.parent(),self._p-x._p)
-        except StandardError:
+        except Exception:
             pass
         ## We can now assume that self._p and x._p actually are polynomials,
         ## hence, their parent is not just the underlying ring.
@@ -892,8 +892,7 @@ class InfinitePolynomial_sparse(RingElement):
 
         """
         Indices = set([0]+[Integer(str(Y).split('_')[1]) for Y in self.variables()])
-        Indices = list(Indices)
-        Indices.sort()
+        Indices = sorted(Indices)
         P = lambda n: Indices.index(n) if Indices.__contains__(n) else n
         return self**P
 
@@ -952,7 +951,7 @@ class InfinitePolynomial_sparse(RingElement):
             for t in L:
                 n = t[0][0]       # the variable *n*ame
                 s = int(t[0][1])  # the variable *s*hift
-                if not self._footprint.has_key(s):
+                if s not in self._footprint:
                     self._footprint[s] = [0]*l
                 self._footprint[s][self.parent()._name_dict[n]] = t[1]   # the exponent
             self._has_footprint = True
@@ -1028,14 +1027,13 @@ class InfinitePolynomial_sparse(RingElement):
             return (rawcmp, 1, ltbig/ltsmall)
         # "not Fbig" is now impossible, because we only consider *global* monomial orderings.
         # These are the occurring shifts:
-        Lsmall = Fsmall.keys()
-        Lsmall.sort()
+        Lsmall = sorted(Fsmall.keys())
         Lbig   = Fbig.keys()
         Lbig.sort()
         P = range(Lbig[-1]+1)
         gens = xrange(PARENT.ngens())
         if Lsmall[0]==0:
-            if not Fbig.has_key(0):
+            if 0 not in Fbig:
                 return (None,1,1)
             Lsmall.pop(0)
             Lbig.pop(0)
@@ -1141,13 +1139,13 @@ class InfinitePolynomial_sparse(RingElement):
         elif isinstance(monomial, dict):
             if monomial:
                 I = monomial.iterkeys()
-                K = I.next()
+                K = next(I)
                 monomial.__delitem__(K)
                 res = self.coefficient(K).coefficient(monomial)
             else:
                 return self
         else:
-            raise TypeError, "Objects of type %s have no coefficients in InfinitePolynomials"%(type(monomial))
+            raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials"%(type(monomial)))
         return self.parent()(res)
 
     ## Essentials for Buchberger
@@ -1363,11 +1361,11 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
         # But, to be on the safe side...
         try:
             self._p = self.parent()._P(self._p)
-        except StandardError:
+        except Exception:
             pass
         try:
             x._p = x.parent()._P(x._p)
-        except StandardError:
+        except Exception:
             pass
         return cmp(self._p,x._p)
 
@@ -1484,7 +1482,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             PPgens = PP.gens()
 
             newVars = []
-            sh = PP.ngens()/P.ngens() - 1
+            sh = PP.ngens()//P.ngens() - 1
             blocklength = sh
             nM = sh+1
             for i in range(P.ngens()):

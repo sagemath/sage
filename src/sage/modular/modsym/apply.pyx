@@ -8,18 +8,9 @@
 #
 ##########################################################################
 
+from sage.ext.stdsage cimport PY_NEW
 
 from sage.rings.integer cimport Integer
-
-## from sage.rings.all import QQ
-## R = QQ['X']
-## def apply_to_monomial_0(int i, int j, int a, int b, int c, int d):
-##     f = R([b,a])
-##     g = R([d,c])
-##     if i < 0 or j-i < 0:
-##         raise ValueError, "i (=%s) and j-i (=%s) must both be nonnegative."%(i,j-i)
-##     h = (f**i)*(g**(j-i))
-##     return [int(z) for z in h.padded_list(j+1)]
 
 cdef class Apply:
     def __cinit__(self):
@@ -87,7 +78,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
 
     We compute that `(X+Y)^2(X-Y) = X^3 + X^2Y - XY^2 - Y^3`::
 
-        sage: from sage.modular.modsym.manin_symbols import apply_to_monomial
+        sage: from sage.modular.modsym.apply import apply_to_monomial
         sage: apply_to_monomial(2, 3, 1,1,1,-1)
         [-1, -1, 1, 1]
         sage: apply_to_monomial(5, 8, 1,2,3,4)

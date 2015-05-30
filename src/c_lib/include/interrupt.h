@@ -18,8 +18,8 @@ redirects stdin from /dev/null, to cause interactive sessions to exit.
 These are critical because they cannot be ignored.  If they happen
 outside of sig_on(), we can only exit Sage with the dreaded
 "unhandled SIG..." message.  Inside of sig_on(), they can be handled
-and raise various exceptions (see sage/ext/c_lib.pyx).  SIGQUIT will
-never be handled and always causes Sage to exit.
+and raise various exceptions (see sage/ext/interrupt.pyx).  SIGQUIT
+will never be handled and always causes Sage to exit.
 
 
 AUTHORS:
@@ -108,9 +108,6 @@ void sage_signal_handler(int sig);
 
 /*
  * Setup the signal handlers. It is safe to call this more than once.
- *
- * We do not handle SIGALRM since there is code to deal with
- * alarms in sage/misc/misc.py
  */
 void setup_sage_signal_handler(void);
 
@@ -313,7 +310,7 @@ static inline void _sig_off_(const char* file, int line)
  *
  * OUTPUT: zero if an interrupt occured, non-zero otherwise.
  */
-static inline int sig_check()
+static inline int sig_check(void)
 {
     if (unlikely(_signals.interrupt_received) && _signals.sig_on_count == 0)
     {
@@ -347,7 +344,7 @@ static inline int sig_check()
  * - For efficiency reasons, currently these may NOT be nested.
  *   Nesting could be implemented like src/headers/pariinl.h in PARI.
  */
-static inline void sig_block()
+static inline void sig_block(void)
 {
 #if ENABLE_DEBUG_INTERRUPT
     if (_signals.block_sigint != 0)
@@ -359,7 +356,7 @@ static inline void sig_block()
     _signals.block_sigint = 1;
 }
 
-static inline void sig_unblock()
+static inline void sig_unblock(void)
 {
 #if ENABLE_DEBUG_INTERRUPT
     if (_signals.block_sigint != 1)
@@ -388,7 +385,7 @@ void set_sage_signal_handler_message(const char* s);
  * for PARI: if PARI complains that it doesn't have enough memory, we
  * allocate a larger stack and retry the computation.
  */
-static inline void sig_retry()
+static inline void sig_retry(void)
 {
     /* If we're outside of sig_on(), we can't jump, so we can only bail
      * out */
@@ -403,7 +400,7 @@ static inline void sig_retry()
 /* Used in error callbacks from C code (in particular NTL and PARI).
  * This should be used after an exception has been raised to jump back
  * to sig_on() where the exception will be seen. */
-static inline void sig_error()
+static inline void sig_error(void)
 {
     if (unlikely(_signals.sig_on_count <= 0))
     {
@@ -420,7 +417,7 @@ static inline void sig_error()
  * To Cython, it will look like cython_check_exception() actually
  * raised the exception.
  */
-static inline void cython_check_exception() {return;}
+static inline void cython_check_exception(void) {return;}
 
 
 #ifdef __cplusplus

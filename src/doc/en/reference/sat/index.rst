@@ -56,7 +56,7 @@ DIMACS-base solvers can also be used to write DIMACS files::
     sage: solver.add_clause( ( 1,  2, -3) )
     sage: _ = solver.write()
     sage: for line in open(fn).readlines():
-    ...      print line,
+    ....:    print line,
     p cnf 3 2
     1 2 3 0
     1 2 -3 0
@@ -70,7 +70,7 @@ Alternatively, there is :meth:`sage.sat.solvers.dimacs.DIMACS.clauses`::
     sage: solver.add_clause( ( 1,  2, -3) )
     sage: solver.clauses(fn)
     sage: for line in open(fn).readlines():
-    ...      print line,
+    ....:    print line,
     p cnf 3 2
     1 2 3 0
     1 2 -3 0
@@ -91,7 +91,11 @@ Details on Specific Solvers
 .. toctree::
    :maxdepth: 1
 
+   sage/sat/solvers/satsolver
    sage/sat/solvers/dimacs
+.. optional - cryptominisat
+.. sage/sat/solvers/cryptominisat/cryptominisat
+.. sage/sat/solvers/cryptominisat/solverconf
 
 Converters
 ----------

@@ -1,0 +1,33 @@
+= database_gap =
+
+== Description ==
+
+The databases of GAP: finite groups and tables of marks
+
+== SPKG Maintainers ==
+
+ * William Stein
+ * Robert Miller
+ * David Joyner
+ * Dmitrii Pasechnik
+
+== Upstream Contact ==
+
+Dmitrii Pasechnik, dimpase@gmail.com
+David Joyner, wdjoyner@gmail.com (on the GAP team, but
+Steve Linton, sal@dcs.st-and.ac.uk, is basically the lead developer)
+
+== Dependencies ==
+
+needs GAP (a standard spkg)
+
+== Special Update/Build Instructions ==
+
+Copy the following databases out the gap source tarball:
+ * small -- small groups database
+ * pkg/tomlib -- just contains the "Table of Marks"
+ * pkg/atlasrep -- dependency for tomlib
+ * prim
+ * trans
+See also the spkg-src script.
+

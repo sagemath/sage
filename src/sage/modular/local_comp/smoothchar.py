@@ -42,7 +42,7 @@ Characters are themselves group elements, and basic arithmetic on them works::
 """
 
 import operator
-from sage.structure.element     import MultiplicativeGroupElement
+from sage.structure.element import MultiplicativeGroupElement, parent
 from sage.structure.parent_base import ParentWithBase
 from sage.structure.sequence    import Sequence
 from sage.rings.all             import QQ, ZZ, Zmod, NumberField
@@ -54,7 +54,6 @@ from sage.categories.groups     import Groups
 from sage.functions.other       import ceil
 from sage.misc.mrange           import xmrange
 
-from sage.structure.element import FieldElement
 
 class SmoothCharacterGeneric(MultiplicativeGroupElement):
     r"""
@@ -364,9 +363,9 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
         """
         if x == 1:
             return self.character(0, [1])
-        if hasattr(x, 'parent') \
-          and isinstance(x.parent(), SmoothCharacterGroupGeneric) \
-          and x.parent().number_field().has_coerce_map_from(self.number_field()):
+        P = parent(x)
+        if (isinstance(P, SmoothCharacterGroupGeneric)
+                and P.number_field().has_coerce_map_from(self.number_field())):
             return self.character(x.level(), [x(v) for v in self.unit_gens(x.level())])
         else:
             raise TypeError
@@ -1286,7 +1285,7 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupGeneric):
         """
         chi = chi.base_extend(self.base_ring())
         if chi.level() > level:
-            raise ValueError, "Level of extended character cannot be smaller than level of character of Qp"
+            raise ValueError("Level of extended character cannot be smaller than level of character of Qp")
 
         # check it makes sense
         e = (self.prime() + 1) * (self.prime()**(level - 1))
@@ -1572,7 +1571,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
             True
         """
         x = self.number_field().coerce(x)
-        if x == 0: raise ValueError, "cannot evaluate at zero"
+        if x == 0: raise ValueError("cannot evaluate at zero")
         n1 = x.valuation(self.ideal(1))
         x1 = x / self.number_field().gen()**n1
         if level == 0:

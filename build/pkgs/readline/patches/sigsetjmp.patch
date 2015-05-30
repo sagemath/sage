@@ -1,0 +1,25 @@
+--- readline-6.3/posixjmp.h	2012-12-23 21:20:50.000000000 -0600
++++ readline-6.3/posixjmp.h	2014-03-13 02:53:44.793652900 -0500
+@@ -27,7 +27,7 @@
+ 
+ #if defined (HAVE_POSIX_SIGSETJMP)
+ #  define procenv_t	sigjmp_buf
+-#  if !defined (__OPENNT)
++#  if !defined (__OPENNT) && !defined(__CYGWIN__)
+ #    undef setjmp
+ #    define setjmp(x)	sigsetjmp((x), 1)
+ #    define setjmp_nosigs(x)	sigsetjmp((x), 0)
+--- readline-6.3/rltty.c	2013-08-25 15:57:05.000000000 -0500
++++ readline-6.3/rltty.c	2014-03-13 03:28:49.575426200 -0500
+@@ -37,9 +37,9 @@
+ 
+ #include "rldefs.h"
+ 
+-#if defined (GWINSZ_IN_SYS_IOCTL)
++#if defined (GWINSZ_IN_SYS_IOCTL) || defined(STRUCT_WINSIZE_IN_SYS_IOCTL)
+ #  include <sys/ioctl.h>
+-#endif /* GWINSZ_IN_SYS_IOCTL */
++#endif /* GWINSZ_IN_SYS_IOCTL || STRUCT_WINSIZE_IN_SYS_IOCTL */
+ 
+ #include "rltty.h"
+ #include "readline.h"

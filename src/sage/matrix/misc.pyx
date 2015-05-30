@@ -12,10 +12,10 @@ relevant classes and this file deleted.
 
 include "sage/ext/interrupt.pxi"
 include "sage/ext/cdefs.pxi"
-include 'sage/ext/stdsage.pxi'
 
 from sage.ext.mod_int cimport *
 from sage.libs.mpfr cimport *
+from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
 
 include 'sage/modules/binary_search.pxi'
 include 'sage/modules/vector_integer_sparse_h.pxi'
@@ -51,10 +51,12 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     large common factor dividing the denominators.
 
     INPUT:
+
         A -- matrix
         N -- an integer
 
     EXAMPLES:
+
         sage: B = ((matrix(ZZ, 3,4, [1,2,3,-4,7,2,18,3,4,3,4,5])/3)%500).change_ring(ZZ)
         sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(B, 500)
         [ 1/3  2/3    1 -4/3]
@@ -77,7 +79,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     R = Matrix_rational_dense.__new__(Matrix_rational_dense,
                                       A.parent().change_ring(QQ), 0,0,0)
 
-    cdef mpz_t a, bnd, other_bnd, one, denom
+    cdef mpz_t a, bnd, other_bnd, one, denom, tmp
     cdef Integer _bnd
     cdef Py_ssize_t i, j
     cdef int do_it
@@ -87,6 +89,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     try:
         mpz_init_set_si(denom, 1)
         mpz_init(a)
+        mpz_init(tmp)
         mpz_init_set_si(one, 1)
         mpz_init(other_bnd)
 
@@ -96,7 +99,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
 
         for i from 0 <= i < A._nrows:
             for j from 0 <= j < A._ncols:
-                mpz_set(a, A._matrix[i][j])
+                A.get_unsafe_mpz(i,j,a)
                 if mpz_cmp(denom, one) != 0:
                     mpz_mul(a, a, denom)
                 mpz_fdiv_r(a, a, N.value)
@@ -115,11 +118,13 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
                         mpz_set_si(mpq_denref(R._matrix[i][j]), 1)
                 else:
                     # Otherwise have to do it the hard way
-                    mpq_rational_reconstruction(R._matrix[i][j], A._matrix[i][j], N.value)
+                    A.get_unsafe_mpz(i,j,tmp)
+                    mpq_rational_reconstruction(R._matrix[i][j], tmp, N.value)
                     mpz_lcm(denom, denom, mpq_denref(R._matrix[i][j]))
 
         mpz_clear(denom)
         mpz_clear(a)
+        mpz_clear(tmp)
         mpz_clear(one)
         mpz_clear(other_bnd)
         mpz_clear(bnd)
@@ -134,6 +139,7 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
     numbers mod N.
 
     EXAMPLES:
+
         sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 500)
         [1/3   2   3  -4]
@@ -230,12 +236,13 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     REFERENCE: Chapter 7 of Stein's "Explicitly Computing Modular Forms".
 
     INPUT:
-        height_guess -- integer or None
-        proof -- boolean or None (default: None, see proof.linear_algebra or
-                               sage.structure.proof).
-                        Note that the global Sage default is proof=True
+
+    - height_guess -- integer or None
+    - proof -- boolean or None (default: None, see proof.linear_algebra or
+      sage.structure.proof). Note that the global Sage default is proof=True
 
     ALGORITHM:
+
     The following is a modular algorithm for computing the echelon
     form.  Define the height of a matrix to be the max of the
     absolute values of the entries.
@@ -273,6 +280,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         a few more primes.
 
     EXAMPLES:
+
         sage: A = matrix(QQ, 3, 7, [1..21])
         sage: sage.matrix.misc.matrix_rational_echelon_form_multimodular(A)
         [ 1  0 -1 -2 -3 -4 -5]
@@ -370,7 +378,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         for i in range(len(X)):
             if cmp_pivots(best_pivots, list(X[i].pivots())) <= 0:
                 p = X[i].base_ring().order()
-                if not lifts.has_key(p):
+                if p not in lifts:
                     t0 = verbose("Lifting a good matrix", level=2, caller_name = "multimod echelon")
                     lift = X[i].lift()
                     lifts[p] = (lift, p)
@@ -396,7 +404,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             E = L.rational_reconstruction(prod)
             L = 0  # free memory
             verbose('rational reconstruction completed', t, level=2, caller_name="multimod echelon")
-        except ValueError, msg:
+        except ValueError as msg:
             verbose(msg, level=2)
             verbose("Not enough primes to do CRT lift; redoing with several more primes.", level=2, caller_name="multimod echelon")
             M = prod * p*p*p
@@ -433,10 +441,13 @@ def cmp_pivots(x,y):
     one being strictly less.
 
     INPUT:
-        x, y -- list of integers
+
+    - x, y -- list of integers
 
     EXAMPLES:
-    We illustrate each of the above comparisons.
+
+    We illustrate each of the above comparisons. ::
+
         sage: sage.matrix.misc.cmp_pivots([1,2,3], [4,5,6,7])
         -1
         sage: sage.matrix.misc.cmp_pivots([1,2,3,5], [4,5,6])
@@ -472,16 +483,20 @@ def hadamard_row_bound_mpfr(Matrix A):
     Hadamard bound on the determinant.
 
     INPUT:
+
         A -- a matrix over RR
 
     OUTPUT:
+
         integer -- an integer n such that the absolute value of the
                    determinant of this matrix is at most $10^n$.
 
     EXAMPLES:
+
     We create a very large matrix, compute the row Hadamard bound,
     and also compute the row Hadamard bound of the transpose, which
-    happens to be sharp.
+    happens to be sharp. ::
+
         sage: a = matrix(ZZ, 2, [2^10000,3^10000,2^50,3^19292])
         sage: import sage.matrix.misc
         sage: sage.matrix.misc.hadamard_row_bound_mpfr(a.change_ring(RR))
@@ -491,7 +506,8 @@ def hadamard_row_bound_mpfr(Matrix A):
         sage: sage.matrix.misc.hadamard_row_bound_mpfr(a.transpose().change_ring(RR))
         12215
 
-    Note that in the above example using RDF would overflow:
+    Note that in the above example using RDF would overflow::
+
         sage: b = a.change_ring(RDF)
         sage: b._hadamard_row_bound()
         Traceback (most recent call last):

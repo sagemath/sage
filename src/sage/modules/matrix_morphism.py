@@ -54,7 +54,7 @@ AUTHOR:
 import sage.categories.morphism
 import sage.categories.homset
 import sage.matrix.all as matrix
-from   sage.structure.all import Sequence
+from sage.structure.all import Sequence, parent
 
 def is_MatrixMorphism(x):
     """
@@ -92,10 +92,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             True
         """
         if not sage.categories.homset.is_Homset(parent):
-            raise TypeError, "parent must be a Hom space"
+            raise TypeError("parent must be a Hom space")
         sage.categories.morphism.Morphism.__init__(self, parent)
 
-    def __cmp__(self, other):
+    def _cmp_(self, other):
         """
         Compare two matrix morphisms.
 
@@ -109,10 +109,16 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return cmp(self.matrix(), other.matrix())
 
-    def __call__(self, x):
+    __cmp__ = _cmp_
+
+    def _call_(self, x):
         """
-        Evaluate this matrix morphism at an element that can be coerced
-        into the domain.
+        Evaluate this matrix morphism at an element of the domain.
+
+        .. NOTE::
+
+            Coercion is done in the generic :meth:`__call__` method,
+            which calls this method.
 
         EXAMPLES::
 
@@ -130,37 +136,88 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Codomain: Vector space of dimension 2 over Rational Field
             sage: phi(V.0)
             (0, 1)
-            sage: phi([1,2,3])
+            sage: phi(V([1, 2, 3]))
             (16, 22)
-            sage: phi(5)
-            Traceback (most recent call last):
-            ...
-            TypeError: 5 must be coercible into Vector space of dimension 3 over Rational Field
-            sage: phi([1,1])
-            Traceback (most recent call last):
-            ...
-            TypeError: [1, 1] must be coercible into Vector space of dimension 3 over Rational Field
+
+        Last, we have a situation where coercion occurs::
+
+            sage: U = V.span([[3,2,1]])
+            sage: U.0
+            (1, 2/3, 1/3)
+            sage: phi(2*U.0)
+            (16/3, 28/3)
+
+        TESTS::
+
+            sage: V = QQ^3; W = span([[1,2,3],[-1,2,5/3]], QQ)
+            sage: phi = V.hom(matrix(QQ,3,[1..9]))
+
+        We compute the image of some elements::
+
+            sage: phi(V.0)    #indirect doctest
+            (1, 2, 3)
+            sage: phi(V.1)
+            (4, 5, 6)
+            sage: phi(V.0  - 1/4*V.1)
+            (0, 3/4, 3/2)
+
+        We restrict ``phi`` to ``W`` and compute the image of an element::
+
+            sage: psi = phi.restrict_domain(W)
+            sage: psi(W.0) == phi(W.0)
+            True
+            sage: psi(W.1) == phi(W.1)
+            True
         """
         try:
-            if not hasattr(x, 'parent') or x.parent() != self.domain():
+            if parent(x) is not self.domain():
                 x = self.domain()(x)
         except TypeError:
-            raise TypeError, "%s must be coercible into %s"%(x,self.domain())
+            raise TypeError("%s must be coercible into %s"%(x,self.domain()))
         if self.domain().is_ambient():
             x = x.element()
         else:
             x = self.domain().coordinate_vector(x)
-        v = x*self.matrix()
         C = self.codomain()
-        if C.is_ambient():
-            return C(v)
-        return C(C.linear_combination_of_basis(v), check=False)
+        v = x.change_ring(C.base_ring()) * self.matrix()
+        if not C.is_ambient():
+            v = C.linear_combination_of_basis(v)
+        # The call method of parents uses (coercion) morphisms.
+        # Hence, in order to avoid recursion, we call the element
+        # constructor directly; after all, we already know the
+        # coordinates.
+        return C._element_constructor_(v)
 
-    def _call_(self, x):
+    def _call_with_args(self, x, args=(), kwds={}):
         """
-        Alternative for compatibility with sage.categories.map.FormalCompositeMap._call_
+        Like :meth:`_call_`, but takes optional and keyword arguments.
+
+        EXAMPLES::
+
+            sage: V = RR^2
+            sage: f = V.hom(V.gens())
+            sage: f._matrix *= I         # f is now invalid
+            sage: f((1, 0))
+            Traceback (most recent call last):
+            ...
+            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0]) to coefficients in Real Field with 53 bits of precision
+            sage: f((1, 0), coerce=False)
+            (1.00000000000000*I, 0)
+
         """
-        return self.__call__(x)
+        if self.domain().is_ambient():
+            x = x.element()
+        else:
+            x = self.domain().coordinate_vector(x)
+        C = self.codomain()
+        v = x.change_ring(C.base_ring()) * self.matrix()
+        if not C.is_ambient():
+            v = C.linear_combination_of_basis(v)
+        # The call method of parents uses (coercion) morphisms.
+        # Hence, in order to avoid recursion, we call the element
+        # constructor directly; after all, we already know the
+        # coordinates.
+        return C._element_constructor_(v, *args, **kwds)
 
     def __invert__(self):
         """
@@ -187,11 +244,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         try:
             B = ~(self.matrix())
         except ZeroDivisionError:
-            raise ZeroDivisionError, "matrix morphism not invertible"
+            raise ZeroDivisionError("matrix morphism not invertible")
         try:
             return self.parent().reversed()(B)
         except TypeError:
-            raise ZeroDivisionError, "matrix morphism not invertible"
+            raise ZeroDivisionError("matrix morphism not invertible")
 
     def inverse(self):
         r"""
@@ -425,7 +482,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             R = self.base_ring()
             return self.parent()(self.matrix() * R(right))
         if self.domain() != right.codomain():
-            raise TypeError, "Incompatible composition of morphisms: domain of left morphism must be codomain of right."
+            raise TypeError("Incompatible composition of morphisms: domain of left morphism must be codomain of right.")
         M = right.matrix() * self.matrix()
         return right.domain().Hom(self.codomain())(M)
 
@@ -541,8 +598,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             T^2 - 3*T + 2
         """
         if not self.is_endomorphism():
-            raise ArithmeticError, "charpoly only defined for endomorphisms " +\
-                    "(i.e., domain = range)"
+            raise ArithmeticError("charpoly only defined for endomorphisms " +\
+                    "(i.e., domain = range)")
         return self.matrix().charpoly(var)
 
     charpoly = characteristic_polynomial
@@ -570,7 +627,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ]
         """
         if not self.is_endomorphism():
-            raise ArithmeticError, "Matrix morphism must be an endomorphism."
+            raise ArithmeticError("Matrix morphism must be an endomorphism.")
         D = self.domain()
         E = self.matrix().decomposition(*args,**kwds)
         if D.is_ambient():
@@ -606,7 +663,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             2
         """
         if not self.is_endomorphism():
-            raise ArithmeticError, "Matrix morphism must be an endomorphism."
+            raise ArithmeticError("Matrix morphism must be an endomorphism.")
         return self.matrix().determinant()
 
     def fcp(self, var='x'):
@@ -714,7 +771,40 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ...
             NotImplementedError: this method must be overridden in the extension class
         """
-        raise NotImplementedError, "this method must be overridden in the extension class"
+        raise NotImplementedError("this method must be overridden in the extension class")
+
+    def _matrix_(self):
+        """
+        EXAMPLES:
+
+        Check that this works with the :func:`matrix` function
+        (:trac:`16844`)::
+
+            sage: H = Hom(ZZ^2, ZZ^3)
+            sage: x = H.an_element()
+            sage: matrix(x)
+            [0 0 0]
+            [0 0 0]
+
+        TESTS:
+
+        ``matrix(x)`` is immutable::
+
+            sage: H = Hom(QQ^3, QQ^2)
+            sage: phi = H(matrix(QQ, 3, 2, list(reversed(range(6))))); phi
+            Vector space morphism represented by the matrix:
+            [5 4]
+            [3 2]
+            [1 0]
+            Domain: Vector space of dimension 3 over Rational Field
+            Codomain: Vector space of dimension 2 over Rational Field
+            sage: A = phi.matrix()
+            sage: A[1, 1] = 19
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+        """
+        return self.matrix()
 
     def rank(self):
         r"""
@@ -1144,7 +1234,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             True
         """
         if not self.is_endomorphism():
-            raise ArithmeticError, "matrix morphism must be an endomorphism"
+            raise ArithmeticError("matrix morphism must be an endomorphism")
         D = self.domain()
         C = self.codomain()
         if D is not C and (D.basis() != C.basis()):
@@ -1164,16 +1254,20 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 class MatrixMorphism(MatrixMorphism_abstract):
     """
     A morphism defined by a matrix.
+
+    INPUT:
+
+    -  ``parent`` -- a homspace
+
+    -  ``A`` -- matrix or a :class:`MatrixMorphism_abstract` instance
+
+    -  ``copy_matrix`` -- (default: ``True``) make an immutable copy of
+       the matrix ``A`` if it is mutable; if ``False``, then this makes
+       ``A`` immutable
     """
-    def __init__(self, parent, A):
+    def __init__(self, parent, A, copy_matrix=True):
         """
-        INPUT:
-
-
-        -  ``parent`` - a homspace
-
-        -  ``A`` - matrix
-
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -1185,11 +1279,20 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: loads(A.dumps()) == A
             True
         """
+        if parent is None:
+            raise ValueError("no parent given when creating this matrix morphism")
+        if isinstance(A, MatrixMorphism_abstract):
+            A = A.matrix()
         R = A.base_ring()
         if A.nrows() != parent.domain().rank():
-            raise ArithmeticError, "number of rows of matrix (=%s) must equal rank of domain (=%s)"%(A.nrows(), parent.domain().rank())
+            raise ArithmeticError("number of rows of matrix (={}) must equal rank of domain (={})".format(A.nrows(), parent.domain().rank()))
         if A.ncols() != parent.codomain().rank():
-                raise ArithmeticError, "number of columns of matrix (=%s) must equal rank of codomain (=%s)"%(A.ncols(), parent.codomain().rank())
+                raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
+        if A.is_mutable():
+            if copy_matrix:
+                from copy import copy
+                A = copy(A)
+            A.set_immutable()
         self._matrix = A
         MatrixMorphism_abstract.__init__(self, parent)
 
@@ -1199,8 +1302,8 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         INPUT:
 
-        - ``side`` - default:``'left'`` - the side of the matrix
-          where a vector is placed to effect the morphism (function).
+        - ``side`` -- (default: ``'left'``) the side of the matrix
+          where a vector is placed to effect the morphism (function)
 
         OUTPUT:
 

@@ -33,10 +33,10 @@ TESTS::
 #*****************************************************************************
 
 import sage.modular.cusps as cusps
-import sage.modular.modsym.manin_symbols
+from sage.modular.modsym.apply import apply_to_monomial
+from sage.modular.modsym.manin_symbol import ManinSymbol
 from sage.structure.sage_object import SageObject
 import sage.structure.formal_sum as formal_sum
-import sage.rings.arith as arith
 from sage.rings.integer_ring import ZZ
 from sage.misc.latex import latex
 
@@ -304,7 +304,7 @@ class ModularSymbol(SageObject):
         i = self.__i
         k = space.weight()
         a,b,c,d = tuple(g)
-        coeffs = sage.modular.modsym.manin_symbols.apply_to_monomial(i, k-2, d, -b, -c, a)
+        coeffs = apply_to_monomial(i, k-2, d, -b, -c, a)
         g_alpha = self.__alpha.apply(g)
         g_beta = self.__beta.apply(g)
         return formal_sum.FormalSum([(coeffs[j], ModularSymbol(space, j, g_alpha, g_beta)) \
@@ -333,17 +333,17 @@ class ModularSymbol(SageObject):
         k = space.weight()
         v = [(0,1), (1,0)]
         if not alpha.is_infinity():
-            v += [(x.numerator(), x.denominator()) for x in arith.convergents(alpha._rational_())]
+            cf = alpha._rational_().continued_fraction()
+            v.extend((cf.p(k),cf.q(k)) for k in xrange(len(cf)))
         sign = 1
-        apply = sage.modular.modsym.manin_symbols.apply_to_monomial
-        mansym = sage.modular.modsym.manin_symbols.ManinSymbol
         z = formal_sum.FormalSum(0)
         for j in range(1,len(v)):
             c = sign*v[j][1]
             d = v[j-1][1]
-            coeffs = apply(i, k-2, sign*v[j][0], v[j-1][0], sign*v[j][1], v[j-1][1])
-            w = [(coeffs[j], mansym(space, (j, c, d))) \
-                       for j in range(k-1) if coeffs[j] != 0]
+            coeffs = apply_to_monomial(i, k-2, sign*v[j][0], v[j-1][0],
+                                       sign*v[j][1], v[j-1][1])
+            w = [(coeffs[j], ManinSymbol(space, (j, c, d)))
+                 for j in range(k-1) if coeffs[j] != 0]
             z += formal_sum.FormalSum(w)
             sign *= -1
         return z

@@ -8,6 +8,9 @@ fi
 
 cd src
 
+# See upstream bug at http://savannah.gnu.org/bugs/?42960
+export MAKE="$MAKE -j1"
+
 echo "Running GSL testsuite..."
 $MAKE check
 if [ $? -ne 0 ]; then

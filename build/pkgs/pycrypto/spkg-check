@@ -1,41 +1,16 @@
 #!/usr/bin/env bash
 
-if [ -z $SAGE_LOCAL ]; then
-    echo "SAGE_LOCAL undefined... exiting"
-    echo "Maybe run 'sage -sh'?"
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
     exit 1
-fi
-
-# Let the user set an environment variable CFLAG64 to indicate the flag
-# for the C compiler to build 64-bit code. If not set, assume it is -m64
-# as that is what is used by both GCC and SunStudio, but -m64 is not used
-# by IBM's compiler on AIX or HP's compiler on HP-UX.
-
-if [ -z $CFLAG64 ]; then
-    # -m64 is used by gcc and SunStudio
-    CFLAG64=-m64
-fi
-
-# Likewise to build C++ code.
-if [ -z $CXXFLAG64 ]; then
-    # -m64 is used by gcc and SunStudio
-    CXXFLAG64=-m64
-fi
-
-if [ "x$SAGE64" = xyes ]; then
-    CFLAGS="$CFLAGS $CFLAG64" && export CFLAGS
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64" && export CXXFLAGS
-    LDFLAGS="$LDFLAGS $CFLAG64" && export LDFLAGS
-    # Very rare is CPPFLAGS needed, but sometimes it is.
-    CPPFLAGS="$CPPFLAGS $CFLAG64" && export CPPFLAGS
 fi
 
 cd src
 
 echo "PyCrypto will now be tested"
 python setup.py test
-
 if [ $? -ne 0 ]; then
-    echo "An error occurred while testing PyCrypto... exiting"
+    echo >&2 "Error: PyCrypto failed to pass its test suite."
     exit 1
 fi

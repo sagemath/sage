@@ -1,5 +1,9 @@
+from cpython.object cimport PyObject
+
 cdef union double_op_params:
-    void* func
+    PyObject* func
+    double (*f)(double)
+    double (*ff)(double, double)
     double c
     int n
 

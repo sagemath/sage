@@ -223,7 +223,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             sage: k.<a> = NumberField(x^2 + 20072); G = k.class_group(); G
             Class group of order 76 with structure C38 x C2
             of Number Field in a with defining polynomial x^2 + 20072
-            sage: I = (G.0)^35; I
+            sage: I = (G.0)^11; I
             Fractional ideal class (41, 1/2*a + 5)
             sage: J = G(I.ideal()^5); J
             Fractional ideal class (115856201, 1/2*a + 40407883)
@@ -364,7 +364,7 @@ class ClassGroup(AbelianGroupWithValues_class):
         sage: G = K.class_group(); G
         Class group of order 3 with structure C3 of Number Field in a with defining polynomial x^2 + 23
         sage: G.category()
-        Category of groups
+        Category of finite commutative groups
 
     Note the distinction between abstract generators, their ideal, and
     exponents::
@@ -471,7 +471,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             Class group of order 68 with structure C34 x C2 of Number Field
             in a with defining polynomial x^2 + x + 23899
             sage: C.gens()
-            (Fractional ideal class (23, a + 14), Fractional ideal class (5, a + 3))
+            (Fractional ideal class (7, a + 5), Fractional ideal class (5, a + 3))
             sage: C.ngens()
             2
         """

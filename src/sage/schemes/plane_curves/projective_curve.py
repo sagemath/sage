@@ -36,16 +36,16 @@ class ProjectiveSpaceCurve_generic(Curve_generic_projective):
 
     def __init__(self, A, X):
         if not is_ProjectiveSpace(A):
-            raise TypeError, "A (=%s) must be a projective space"%A
+            raise TypeError("A (=%s) must be a projective space"%A)
         Curve_generic_projective.__init__(self, A, X)
         d = self.dimension()
         if d != 1:
-            raise ValueError, "defining equations (=%s) define a scheme of dimension %s != 1"%(X,d)
+            raise ValueError("defining equations (=%s) define a scheme of dimension %s != 1"%(X,d))
 
 class ProjectiveCurve_generic(Curve_generic_projective):
     def __init__(self, A, f):
         if not (is_ProjectiveSpace(A) and A.dimension != 2):
-            raise TypeError, "Argument A (= %s) must be a projective plane."%A
+            raise TypeError("Argument A (= %s) must be a projective plane."%A)
         Curve_generic_projective.__init__(self, A, [f])
 
     def _repr_type(self):
@@ -225,19 +225,25 @@ class ProjectiveCurve_generic(Curve_generic_projective):
             sage: R.<x, y, z> = QQ[]
             sage: C = Curve(x^3 - y^2*z)
             sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
 
         The other affine patches of the same curve::
 
             sage: C.plot(patch=0)
+            Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
+            Graphics object consisting of 1 graphics primitive
 
         An elliptic curve::
 
             sage: E = EllipticCurve('101a')
             sage: C = Curve(E)
             sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=0)
+            Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
+            Graphics object consisting of 1 graphics primitive
 
         A hyperelliptic curve::
 
@@ -245,8 +251,11 @@ class ProjectiveCurve_generic(Curve_generic_projective):
             sage: f = 4*x^5 - 30*x^3 + 45*x - 22
             sage: C = HyperellipticCurve(f)
             sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=0)
+            Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
+            Graphics object consisting of 1 graphics primitive
         """
         # if user hasn't specified a favourite affine patch, take the
         # one avoiding "infinity", i.e. the one corresponding to the
@@ -339,19 +348,19 @@ class ProjectiveCurve_finite_field(ProjectiveCurve_generic):
             sage: P2.<X,Y,Z> = ProjectiveSpace(F,2)
             sage: C = Curve(X*Y*Z)
             sage: a = C.rational_points_iterator()
-            sage: a.next()
+            sage: next(a)
             (1 : 0 : 0)
-            sage: a.next()
+            sage: next(a)
             (0 : 1 : 0)
-            sage: a.next()
+            sage: next(a)
             (1 : 1 : 0)
-            sage: a.next()
+            sage: next(a)
             (0 : 0 : 1)
-            sage: a.next()
+            sage: next(a)
             (1 : 0 : 1)
-            sage: a.next()
+            sage: next(a)
             (0 : 1 : 1)
-            sage: a.next()
+            sage: next(a)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -362,27 +371,27 @@ class ProjectiveCurve_finite_field(ProjectiveCurve_generic):
             sage: P2.<X,Y,Z> = ProjectiveSpace(F,2)
             sage: C = Curve(X^3+5*Y^2*Z-33*X*Y*X)
             sage: b = C.rational_points_iterator()
-            sage: b.next()
+            sage: next(b)
             (0 : 1 : 0)
-            sage: b.next()
+            sage: next(b)
             (0 : 0 : 1)
-            sage: b.next()
+            sage: next(b)
             (2*a + 2 : a : 1)
-            sage: b.next()
+            sage: next(b)
             (2 : a + 1 : 1)
-            sage: b.next()
+            sage: next(b)
             (a + 1 : 2*a + 1 : 1)
-            sage: b.next()
+            sage: next(b)
             (1 : 2 : 1)
-            sage: b.next()
+            sage: next(b)
             (2*a + 2 : 2*a : 1)
-            sage: b.next()
+            sage: next(b)
             (2 : 2*a + 2 : 1)
-            sage: b.next()
+            sage: next(b)
             (a + 1 : a + 2 : 1)
-            sage: b.next()
+            sage: next(b)
             (1 : 1 : 1)
-            sage: b.next()
+            sage: next(b)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -393,8 +402,8 @@ class ProjectiveCurve_finite_field(ProjectiveCurve_generic):
         from sage.rings.polynomial.all import PolynomialRing
         R = PolynomialRing(K,'X')
         X = R.gen()
-        one = K.one_element()
-        zero = K.zero_element()
+        one = K.one()
+        zero = K.zero()
 
         # the point with  Z = 0 = Y
         try:
@@ -525,10 +534,10 @@ class ProjectiveCurve_prime_finite_field(ProjectiveCurve_finite_field):
         singular.lib('brnoeth')
         try:
             X1 = f.Adj_div()
-        except (TypeError, RuntimeError), s:
-            raise RuntimeError, str(s) + "\n\n ** Unable to use the\
+        except (TypeError, RuntimeError) as s:
+            raise RuntimeError(str(s) + "\n\n ** Unable to use the\
                                           Brill-Noether Singular package to\
-                                          compute all points (see above)."
+                                          compute all points (see above).")
 
         X2 = singular.NSplaces(1, X1)
         R = X2[5][1][1]
@@ -541,7 +550,7 @@ class ProjectiveCurve_prime_finite_field(ProjectiveCurve_finite_field):
         # faster (and more robust).
         v = singular('POINTS').sage_flattened_str_list()
         pnts = [self(int(v[3*i]), int(v[3*i+1]), int(v[3*i+2]))
-                for i in range(len(v)/3)]
+                for i in range(len(v)//3)]
         # singular always dehomogenizes with respect to the last variable
         # so if this variable divides the curve equation, we need to add
         # points at infinity
@@ -598,8 +607,8 @@ class ProjectiveCurve_prime_finite_field(ProjectiveCurve_finite_field):
         singular.lib('brnoeth')
         try:
             X1 = f.Adj_div()
-        except (TypeError, RuntimeError), s:
-            raise RuntimeError, str(s) + "\n\n ** Unable to use the Brill-Noether Singular package to compute all points (see above)."
+        except (TypeError, RuntimeError) as s:
+            raise RuntimeError(str(s) + "\n\n ** Unable to use the Brill-Noether Singular package to compute all points (see above).")
         X2 = singular.NSplaces(1, X1)
         # retrieve list of all computed closed points (possibly of degree >1)
         v = X2[3].sage_flattened_str_list()    # We use sage_flattened_str_list since iterating through
@@ -613,7 +622,7 @@ class ProjectiveCurve_prime_finite_field(ProjectiveCurve_finite_field):
         R = X2[5][1][1]
         singular.set_ring(R)
         v = singular('POINTS').sage_flattened_str_list()
-        coords = [self(int(v[3*i]), int(v[3*i+1]), int(v[3*i+2])) for i in range(len(v)/3)]
+        coords = [self(int(v[3*i]), int(v[3*i+1]), int(v[3*i+2])) for i in range(len(v)//3)]
         # build correct representation of D for singular
         Dsupport = D.support()
         Dcoeffs = []
@@ -687,14 +696,14 @@ class ProjectiveCurve_prime_finite_field(ProjectiveCurve_finite_field):
             S_enum = self.rational_points(algorithm = "enum")
             S_bn = self.rational_points(algorithm = "bn")
             if S_enum != S_bn:
-                raise RuntimeError, "Bug in rational_points -- different\
+                raise RuntimeError("Bug in rational_points -- different\
                                      algorithms give different answers for\
-                                     curve %s!"%self
+                                     curve %s!"%self)
             return S_enum
 
         else:
 
-            raise ValueError, "No algorithm '%s' known"%algorithm
+            raise ValueError("No algorithm '%s' known"%algorithm)
 
 def Hasse_bounds(q, genus=1):
     r"""

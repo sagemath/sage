@@ -131,6 +131,9 @@ Methods
 #                         http://www.gnu.org/licenses/                        *
 #******************************************************************************
 
+from copy import copy
+
+
 def is_cartesian_product(g, certificate = False, relabeling = False):
     r"""
     Tests whether the graph is a cartesian product.
@@ -210,6 +213,7 @@ def is_cartesian_product(g, certificate = False, relabeling = False):
         sage: g.is_cartesian_product()
         False
     """
+    g._scream_if_not_simple()
     if relabeling:
         certificate = True
 
@@ -226,7 +230,7 @@ def is_cartesian_product(g, certificate = False, relabeling = False):
 
     # As we need the vertices of g to be linearly ordered, we copy the graph and
     # relabel it
-    g = g.copy()
+    g = copy(g)
     trev = g.relabel(return_map = True)
     t = dict([(x,y) for y,x in trev.iteritems()])
 

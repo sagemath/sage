@@ -275,9 +275,16 @@ def Newton_polytope_vars_coeffs(polynomial, variables):
         sage: p = (a30*x^3 + a21*x^2*y + a12*x*y^2 + a03*y^3 + a20*x^2*z +
         ....:      a11*x*y*z + a02*y^2*z + a10*x*z^2 + a01*y*z^2 + a00*z^3)
         sage: p_data = Newton_polytope_vars_coeffs(p, [x,y,z]);  p_data
-        {(2, 1, 0): a21, (0, 3, 0): a03, (1, 0, 2): a10, (0, 2, 1): a02,
-         (0, 1, 2): a01, (3, 0, 0): a30, (2, 0, 1): a20, (1, 2, 0): a12,
-         (1, 1, 1): a11, (0, 0, 3): a00}
+        {(0, 0, 3): a00,
+         (0, 1, 2): a01,
+         (0, 2, 1): a02,
+         (0, 3, 0): a03,
+         (1, 0, 2): a10,
+         (1, 1, 1): a11,
+         (1, 2, 0): a12,
+         (2, 0, 1): a20,
+         (2, 1, 0): a21,
+         (3, 0, 0): a30}
 
         sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
         sage: polytope = LatticePolytope_PPL(p_data.keys());  polytope
@@ -796,7 +803,7 @@ def _check_polynomial_P1xP1(biquadric, variables):
     polynomial ring. A ``ValueError`` is raised if the polynomial is
     not homogeneous.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.toric.weierstrass import _check_polynomial_P1xP1
         sage: R.<x0,x1,y0,y1> = QQ[]

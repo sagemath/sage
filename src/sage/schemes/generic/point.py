@@ -20,12 +20,13 @@ class SchemePoint(Element):
     Base class for points on a scheme, either topological or defined
     by a morphism.
     """
-    def __init__(self, S):
+    def __init__(self, S, parent=None):
         """
         INPUT:
 
+        - ``S`` -- a scheme
 
-        -  ``S`` - a scheme
+        - ``parent`` -- the parent in which to construct this point
 
         TESTS::
 
@@ -34,7 +35,7 @@ class SchemePoint(Element):
             sage: P = SchemePoint(S); P
             Point on Spectrum of Integer Ring
         """
-        Element.__init__(self, S.Hom(S))
+        Element.__init__(self, parent)
         self.__S = S
 
     def scheme(self):
@@ -74,19 +75,40 @@ def is_SchemeTopologicalPoint(x):
     return isinstance(x, SchemeTopologicalPoint)
 
 class SchemeTopologicalPoint(SchemePoint):
-    pass
+    """
+    Base class for topological points on schemes.
+    """
+    def __init__(self, S):
+        """
+        INPUT:
+
+        - ``S`` -- a scheme
+
+        TESTS:
+
+        The parent of a topological point is the scheme on which it
+        lies (see :trac:`7946`)::
+
+            sage: R = Zmod(8)
+            sage: S = Spec(R)
+            sage: x = S(R.ideal(2))
+            sage: isinstance(x, sage.schemes.generic.point.SchemeTopologicalPoint)
+            True
+            sage: x.parent() is S
+            True
+        """
+        SchemePoint.__init__(self, S, parent=S)
 
 class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
     def __init__(self, u, x):
         """
         INPUT:
 
+        - ``u`` -- morphism with domain an affine scheme `U`
 
-        -  ``u`` - morphism with domain U an affine scheme
-
-        -  ``x`` - point on U
+        - ``x`` -- topological point on `U`
         """
-        SchemePoint.__init__(self, u.codomain())
+        SchemeTopologicalPoint.__init__(self, u.codomain())
         self.__u = u
         self.__x = x
 
@@ -120,10 +142,10 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         INPUT:
 
+        - ``S`` -- an affine scheme
 
-        -  ``S`` - an affine scheme
-
-        -  ``P`` - a prime ideal of the coordinate ring of S
+        - ``P`` -- a prime ideal of the coordinate ring of `S`, or
+          anything that can be converted into such an ideal
 
         TESTS::
 
@@ -146,13 +168,16 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         R = S.coordinate_ring()
-        from sage.rings.ideal import Ideal
-        P = Ideal(R, P)
+        from sage.rings.ideal import is_Ideal
+        if not is_Ideal(P):
+            P = R.ideal(P)
+        elif P.ring() is not R:
+            P = R.ideal(P.gens())
         # ideally we would have check=True by default, but
         # unfortunately is_prime() is only implemented in a small
         # number of cases
         if check and not P.is_prime():
-            raise ValueError, "The argument %s must be a prime ideal of %s"%(P, R)
+            raise ValueError("The argument %s must be a prime ideal of %s"%(P, R))
         SchemeTopologicalPoint.__init__(self, S)
         self.__P = P
 
@@ -185,6 +210,20 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return self.__P
 
+    def __cmp__(self, other):
+        """
+        Compare ``self`` to ``other``.
+
+        TESTS::
+
+            sage: S = Spec(ZZ)
+            sage: x = S(ZZ.ideal(5))
+            sage: y = S(ZZ.ideal(7))
+            sage: x == y
+            False
+        """
+        return cmp(self.__P, other.__P)
+
 ########################################################
 # Points on a scheme defined by a morphism
 ########################################################
@@ -200,7 +239,7 @@ class SchemeRationalPoint(SchemePoint):
 
         -  ``f`` - a morphism of schemes
         """
-        SchemePoint.__init__(self, f.codomain())
+        SchemePoint.__init__(self, f.codomain(), parent=f.parent())
         self.__f = f
 
     def _repr_(self):

@@ -21,7 +21,7 @@ AUTHORS:
 
 import complex_number
 import complex_double
-import field
+import ring
 import integer
 import real_mpfr
 import weakref
@@ -106,7 +106,7 @@ def ComplexField(prec=53, names=None):
         -1.0000000000000000000000000000000000000000000000000000000000
     """
     global cache
-    if cache.has_key(prec):
+    if prec in cache:
         X = cache[prec]
         C = X()
         if not C is None:
@@ -116,7 +116,7 @@ def ComplexField(prec=53, names=None):
     return C
 
 
-class ComplexField_class(field.Field):
+class ComplexField_class(ring.Field):
     """
     An approximation to the field of complex numbers using floating
     point numbers with any specified precision. Answers derived from
@@ -344,7 +344,7 @@ class ComplexField_class(field.Field):
             Complex Field with 53 bits of precision
         """
         if x is None:
-            return self.zero_element()
+            return self.zero()
         # we leave this here to handle the imaginary parameter
         if im is not None:
             x = x, im
@@ -413,14 +413,31 @@ class ComplexField_class(field.Field):
             True
             sage: ComplexField(200).has_coerce_map_from(CDF)
             False
+            sage: ComplexField(53).has_coerce_map_from(complex)
+            True
+            sage: ComplexField(200).has_coerce_map_from(complex)
+            False
         """
         RR = self._real_field()
         if RR.has_coerce_map_from(S):
-            return complex_number.RRtoCC(RR, self) * RR.coerce_map_from(S)
-        if is_ComplexField(S) and S._prec >= self._prec:
-            return self._generic_convert_map(S)
+            return complex_number.RRtoCC(RR, self) * RR._internal_coerce_map_from(S)
+        if is_ComplexField(S):
+            if self._prec <= S._prec:
+                return self._generic_convert_map(S)
+            else:
+                return None
+        if S is complex:
+            if self._prec <= 53:
+                return self._generic_convert_map(S)
+            else:
+                return None
         late_import()
-        if S in [AA, QQbar, CLF, RLF] or (S == CDF and self._prec <= 53):
+        if S is CDF:
+            if self._prec <= 53:
+                return self._generic_convert_map(S)
+            else:
+                return None
+        if S in [AA, QQbar, CLF, RLF]:
             return self._generic_convert_map(S)
         return self._coerce_map_via([CLF], S)
 
@@ -504,7 +521,7 @@ class ComplexField_class(field.Field):
             1.00000000000000*I
         """
         if n != 0:
-            raise IndexError, "n must be 0"
+            raise IndexError("n must be 0")
         return complex_number.ComplexNumber(self, 0, 1)
 
     def is_field(self, proof = True):
@@ -677,3 +694,53 @@ class ComplexField_class(field.Field):
         """
         return self
 
+    def _factor_univariate_polynomial(self, f):
+        """
+        Factor the univariate polynomial ``f``.
+
+        INPUT:
+
+        - ``f`` -- a univariate polynomial defined over the complex numbers
+
+        OUTPUT:
+
+        - A factorization of ``f`` over the complex numbers into a unit and
+          monic irreducible factors
+
+        .. NOTE::
+
+            This is a helper method for
+            :meth:`sage.rings.polynomial.polynomial_element.Polynomial.factor`.
+
+            This method calls PARI to compute the factorization.
+
+        TESTS::
+
+            sage: k = ComplexField(100)
+            sage: R.<x> = k[]
+            sage: k._factor_univariate_polynomial( x )
+            x
+            sage: k._factor_univariate_polynomial( 2*x )
+            (2.0000000000000000000000000000) * x
+            sage: k._factor_univariate_polynomial( x^2 )
+            x^2
+            sage: k._factor_univariate_polynomial( x^2 + 3 )
+            (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)
+            sage: k._factor_univariate_polynomial( x^2 + 1 )
+            (x - I) * (x + I)
+            sage: k._factor_univariate_polynomial( k(I) * (x^2 + 1) )
+            (1.0000000000000000000000000000*I) * (x - I) * (x + I)
+
+        """
+        R = f.parent()
+
+        # if the polynomial does not have complex coefficients, PARI will
+        # factor it over the reals. To make sure it has complex coefficients we
+        # multiply with I.
+        I = R.base_ring().gen()
+        g = f*I if f.leading_coefficient()!=I else f
+
+        F = list(g._pari_with_name().factor())
+
+        from sage.structure.factorization import Factorization
+        return Factorization([(R(g).monic(),e) for g,e in zip(*F)], f.leading_coefficient())

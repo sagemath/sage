@@ -1,5 +1,5 @@
 #*****************************************************************************
-#       Copyright (C) 2008 David Roe <roed@math.harvard.edu>
+#       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)

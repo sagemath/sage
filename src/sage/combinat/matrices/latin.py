@@ -14,7 +14,7 @@ A latin square `L` is a
 A *latin bitrade* `(T_1,\, T_2)` is a pair of partial
 latin squares such that:
 
-#. `\{ (i,\,j) \mid (i,\,j,\,k) \in T_1 \mbox{ for some symbol $k$} \} = \{ (i,\,j) \mid (i,\,j,\,k') \in T_2 \mbox{ for some symbol $k'$} \};`
+#. `\{ (i,\,j) \mid (i,\,j,\,k) \in T_1 \text{ for some symbol }k \} = \{ (i,\,j) \mid (i,\,j,\,k') \in T_2 \text{ for some symbol }k' \};`
 
 #. for each `(i,\,j,\,k) \in T_1` and `(i,\,j,\,k') \in T_2`,
    `k \neq k'`;
@@ -148,6 +148,7 @@ from sage.misc.flatten import flatten
 #load "dancing_links.sage"
 
 from dlxcpp import DLXCPP
+from functools import reduce
 
 class LatinSquare:
     def __init__(self, *args):
@@ -180,13 +181,13 @@ class LatinSquare:
             [2 3]
         """
 
-        if len(args) == 1 and (type(args[0]) == Integer or type(args[0]) == int):
+        if len(args) == 1 and (isinstance(args[0], Integer) or isinstance(args[0], int)):
             self.square = matrix(ZZ, args[0], args[0])
             self.clear_cells()
-        elif len(args) == 2 and (type(args[0]) == Integer or type(args[0]) == int) and (type(args[1]) == Integer or type(args[1]) == int):
+        elif len(args) == 2 and (isinstance(args[0], Integer) or isinstance(args[0], int)) and (isinstance(args[1], Integer) or isinstance(args[1], int)):
             self.square = matrix(ZZ, args[0], args[1])
             self.clear_cells()
-        elif len(args) == 1 and type(args[0]) == Matrix_integer_dense:
+        elif len(args) == 1 and isinstance(args[0], Matrix_integer_dense):
             self.square = args[0]
         else:
             raise NotImplemented
@@ -517,7 +518,7 @@ class LatinSquare:
         """
 
         symbols = uniq(flatten(map(lambda x: list(x), list(self.square))))
-        symbols = filter(lambda x: x >= 0, symbols)
+        symbols = [x for x in symbols if x >= 0]
 
         return len(symbols)
 
@@ -584,7 +585,30 @@ class LatinSquare:
             sage: (a, b, c, G) = alternating_group_bitrade_generators(1)
             sage: (T1, T2) = bitrade_from_group(a, b, c, G)
             sage: T1.filled_cells_map()
-            {1: (0, 0), 2: (0, 2), 3: (0, 3), 4: (1, 1), 5: (1, 2), 6: (1, 3), 7: (2, 0), 8: (2, 1), 9: (2, 2), 10: (3, 0), 11: (3, 1), 12: (3, 3), (2, 1): 8, (1, 3): 6, (0, 3): 3, (1, 2): 5, (3, 3): 12, (3, 0): 10, (2, 2): 9, (1, 1): 4, (0, 0): 1, (3, 1): 11, (2, 0): 7, (0, 2): 2}
+            {1: (0, 0),
+             2: (0, 2),
+             3: (0, 3),
+             4: (1, 1),
+             5: (1, 2),
+             6: (1, 3),
+             7: (2, 0),
+             8: (2, 1),
+             9: (2, 2),
+             10: (3, 0),
+             11: (3, 1),
+             12: (3, 3),
+             (0, 0): 1,
+             (0, 2): 2,
+             (0, 3): 3,
+             (1, 1): 4,
+             (1, 2): 5,
+             (1, 3): 6,
+             (2, 0): 7,
+             (2, 1): 8,
+             (2, 2): 9,
+             (3, 0): 10,
+             (3, 1): 11,
+             (3, 3): 12}
         """
 
         cells_map = {}
@@ -663,7 +687,7 @@ class LatinSquare:
                 if e >= n: return False
 
                 # Entry has already appeared in this row:
-                if vals_in_row.has_key(e): return False
+                if e in vals_in_row: return False
 
                 vals_in_row[e] = True
 
@@ -679,7 +703,7 @@ class LatinSquare:
                 if e >= n: return False
 
                 # Entry has already appeared in this column:
-                if vals_in_col.has_key(e): return False
+                if e in vals_in_col: return False
 
                 vals_in_col[e] = True
 
@@ -708,7 +732,7 @@ class LatinSquare:
             return False
 
         # Every cell must be filled:
-        if len(filter(lambda x: x >= 0, self.list())) != self.nrows()*self.ncols():
+        if len([x for x in self.list() if x >= 0]) != self.nrows()*self.ncols():
             return False
 
         # By necessity self must be a partial latin square:
@@ -1018,7 +1042,134 @@ class LatinSquare:
             sage: from sage.combinat.matrices.latin import *
             sage: B = back_circulant(4)
             sage: B.disjoint_mate_dlxcpp_rows_and_map(allow_subtrade = True)
-            ([[0, 16, 32], [1, 17, 32], [2, 18, 32], [3, 19, 32], [4, 16, 33], [5, 17, 33], [6, 18, 33], [7, 19, 33], [8, 16, 34], [9, 17, 34], [10, 18, 34], [11, 19, 34], [12, 16, 35], [13, 17, 35], [14, 18, 35], [15, 19, 35], [0, 20, 36], [1, 21, 36], [2, 22, 36], [3, 23, 36], [4, 20, 37], [5, 21, 37], [6, 22, 37], [7, 23, 37], [8, 20, 38], [9, 21, 38], [10, 22, 38], [11, 23, 38], [12, 20, 39], [13, 21, 39], [14, 22, 39], [15, 23, 39], [0, 24, 40], [1, 25, 40], [2, 26, 40], [3, 27, 40], [4, 24, 41], [5, 25, 41], [6, 26, 41], [7, 27, 41], [8, 24, 42], [9, 25, 42], [10, 26, 42], [11, 27, 42], [12, 24, 43], [13, 25, 43], [14, 26, 43], [15, 27, 43], [0, 28, 44], [1, 29, 44], [2, 30, 44], [3, 31, 44], [4, 28, 45], [5, 29, 45], [6, 30, 45], [7, 31, 45], [8, 28, 46], [9, 29, 46], [10, 30, 46], [11, 31, 46], [12, 28, 47], [13, 29, 47], [14, 30, 47], [15, 31, 47]], {(9, 29, 46): (3, 2, 1), (13, 17, 35): (0, 3, 1), (7, 19, 33): (0, 1, 3), (14, 26, 43): (2, 3, 2), (0, 28, 44): (3, 0, 0), (5, 25, 41): (2, 1, 1), (11, 31, 46): (3, 2, 3), (14, 18, 35): (0, 3, 2), (11, 23, 38): (1, 2, 3), (5, 29, 45): (3, 1, 1), (13, 21, 39): (1, 3, 1), (1, 29, 44): (3, 0, 1), (0, 20, 36): (1, 0, 0), (12, 24, 43): (2, 3, 0), (8, 28, 46): (3, 2, 0), (12, 20, 39): (1, 3, 0), (11, 27, 42): (2, 2, 3), (6, 22, 37): (1, 1, 2), (1, 17, 32): (0, 0, 1), (10, 18, 34): (0, 2, 2), (12, 28, 47): (3, 3, 0), (1, 25, 40): (2, 0, 1), (10, 22, 38): (1, 2, 2), (5, 17, 33): (0, 1, 1), (3, 23, 36): (1, 0, 3), (6, 26, 41): (2, 1, 2), (9, 25, 42): (2, 2, 1), (7, 31, 45): (3, 1, 3), (15, 27, 43): (2, 3, 3), (3, 31, 44): (3, 0, 3), (8, 20, 38): (1, 2, 0), (2, 22, 36): (1, 0, 2), (3, 19, 32): (0, 0, 3), (9, 17, 34): (0, 2, 1), (15, 31, 47): (3, 3, 3), (8, 16, 34): (0, 2, 0), (14, 22, 39): (1, 3, 2), (4, 16, 33): (0, 1, 0), (14, 30, 47): (3, 3, 2), (2, 30, 44): (3, 0, 2), (4, 20, 37): (1, 1, 0), (6, 30, 45): (3, 1, 2), (12, 16, 35): (0, 3, 0), (15, 19, 35): (0, 3, 3), (5, 21, 37): (1, 1, 1), (4, 24, 41): (2, 1, 0), (13, 25, 43): (2, 3, 1), (0, 16, 32): (0, 0, 0), (15, 23, 39): (1, 3, 3), (7, 23, 37): (1, 1, 3), (6, 18, 33): (0, 1, 2), (10, 30, 46): (3, 2, 2), (13, 29, 47): (3, 3, 1), (11, 19, 34): (0, 2, 3), (1, 21, 36): (1, 0, 1), (7, 27, 41): (2, 1, 3), (0, 24, 40): (2, 0, 0), (10, 26, 42): (2, 2, 2), (3, 27, 40): (2, 0, 3), (2, 26, 40): (2, 0, 2), (9, 21, 38): (1, 2, 1), (8, 24, 42): (2, 2, 0), (4, 28, 45): (3, 1, 0), (2, 18, 32): (0, 0, 2)})
+            ([[0, 16, 32],
+              [1, 17, 32],
+              [2, 18, 32],
+              [3, 19, 32],
+              [4, 16, 33],
+              [5, 17, 33],
+              [6, 18, 33],
+              [7, 19, 33],
+              [8, 16, 34],
+              [9, 17, 34],
+              [10, 18, 34],
+              [11, 19, 34],
+              [12, 16, 35],
+              [13, 17, 35],
+              [14, 18, 35],
+              [15, 19, 35],
+              [0, 20, 36],
+              [1, 21, 36],
+              [2, 22, 36],
+              [3, 23, 36],
+              [4, 20, 37],
+              [5, 21, 37],
+              [6, 22, 37],
+              [7, 23, 37],
+              [8, 20, 38],
+              [9, 21, 38],
+              [10, 22, 38],
+              [11, 23, 38],
+              [12, 20, 39],
+              [13, 21, 39],
+              [14, 22, 39],
+              [15, 23, 39],
+              [0, 24, 40],
+              [1, 25, 40],
+              [2, 26, 40],
+              [3, 27, 40],
+              [4, 24, 41],
+              [5, 25, 41],
+              [6, 26, 41],
+              [7, 27, 41],
+              [8, 24, 42],
+              [9, 25, 42],
+              [10, 26, 42],
+              [11, 27, 42],
+              [12, 24, 43],
+              [13, 25, 43],
+              [14, 26, 43],
+              [15, 27, 43],
+              [0, 28, 44],
+              [1, 29, 44],
+              [2, 30, 44],
+              [3, 31, 44],
+              [4, 28, 45],
+              [5, 29, 45],
+              [6, 30, 45],
+              [7, 31, 45],
+              [8, 28, 46],
+              [9, 29, 46],
+              [10, 30, 46],
+              [11, 31, 46],
+              [12, 28, 47],
+              [13, 29, 47],
+              [14, 30, 47],
+              [15, 31, 47]],
+             {(0, 16, 32): (0, 0, 0),
+              (0, 20, 36): (1, 0, 0),
+              (0, 24, 40): (2, 0, 0),
+              (0, 28, 44): (3, 0, 0),
+              (1, 17, 32): (0, 0, 1),
+              (1, 21, 36): (1, 0, 1),
+              (1, 25, 40): (2, 0, 1),
+              (1, 29, 44): (3, 0, 1),
+              (2, 18, 32): (0, 0, 2),
+              (2, 22, 36): (1, 0, 2),
+              (2, 26, 40): (2, 0, 2),
+              (2, 30, 44): (3, 0, 2),
+              (3, 19, 32): (0, 0, 3),
+              (3, 23, 36): (1, 0, 3),
+              (3, 27, 40): (2, 0, 3),
+              (3, 31, 44): (3, 0, 3),
+              (4, 16, 33): (0, 1, 0),
+              (4, 20, 37): (1, 1, 0),
+              (4, 24, 41): (2, 1, 0),
+              (4, 28, 45): (3, 1, 0),
+              (5, 17, 33): (0, 1, 1),
+              (5, 21, 37): (1, 1, 1),
+              (5, 25, 41): (2, 1, 1),
+              (5, 29, 45): (3, 1, 1),
+              (6, 18, 33): (0, 1, 2),
+              (6, 22, 37): (1, 1, 2),
+              (6, 26, 41): (2, 1, 2),
+              (6, 30, 45): (3, 1, 2),
+              (7, 19, 33): (0, 1, 3),
+              (7, 23, 37): (1, 1, 3),
+              (7, 27, 41): (2, 1, 3),
+              (7, 31, 45): (3, 1, 3),
+              (8, 16, 34): (0, 2, 0),
+              (8, 20, 38): (1, 2, 0),
+              (8, 24, 42): (2, 2, 0),
+              (8, 28, 46): (3, 2, 0),
+              (9, 17, 34): (0, 2, 1),
+              (9, 21, 38): (1, 2, 1),
+              (9, 25, 42): (2, 2, 1),
+              (9, 29, 46): (3, 2, 1),
+              (10, 18, 34): (0, 2, 2),
+              (10, 22, 38): (1, 2, 2),
+              (10, 26, 42): (2, 2, 2),
+              (10, 30, 46): (3, 2, 2),
+              (11, 19, 34): (0, 2, 3),
+              (11, 23, 38): (1, 2, 3),
+              (11, 27, 42): (2, 2, 3),
+              (11, 31, 46): (3, 2, 3),
+              (12, 16, 35): (0, 3, 0),
+              (12, 20, 39): (1, 3, 0),
+              (12, 24, 43): (2, 3, 0),
+              (12, 28, 47): (3, 3, 0),
+              (13, 17, 35): (0, 3, 1),
+              (13, 21, 39): (1, 3, 1),
+              (13, 25, 43): (2, 3, 1),
+              (13, 29, 47): (3, 3, 1),
+              (14, 18, 35): (0, 3, 2),
+              (14, 22, 39): (1, 3, 2),
+              (14, 26, 43): (2, 3, 2),
+              (14, 30, 47): (3, 3, 2),
+              (15, 19, 35): (0, 3, 3),
+              (15, 23, 39): (1, 3, 3),
+              (15, 27, 43): (2, 3, 3),
+              (15, 31, 47): (3, 3, 3)})
         """
 
         assert self.nrows() == self.ncols()
@@ -1057,8 +1208,8 @@ class LatinSquare:
                     if (not allow_subtrade) and self[r, c] == e: continue
 
                     # The permissible symbols must come from this row/column.
-                    if not(valsrow.has_key(e)): continue
-                    if not(valscol.has_key(e)): continue
+                    if e not in valsrow: continue
+                    if e not in valscol: continue
 
                     dlx_rows.append([c_OFFSET, r_OFFSET, xy_OFFSET])
 
@@ -1089,7 +1240,7 @@ class LatinSquare:
             sage: from sage.combinat.matrices.latin import *
             sage: B = back_circulant(4)
             sage: g = B.find_disjoint_mates(allow_subtrade = True)
-            sage: B1 = g.next()
+            sage: B1 = next(g)
             sage: B0, B1 = bitrade(B, B1)
             sage: assert is_bitrade(B0, B1)
             sage: print B0, "\n,\n", B1
@@ -1173,7 +1324,7 @@ def genus(T1, T2):
     """
 
     cells_map, t1, t2, t3 = tau123(T1, T2)
-    return (len(t1.to_cycles()) + len(t2.to_cycles()) + len(t3.to_cycles()) - T1.nr_filled_cells() - 2)/(-2)
+    return (len(t1.to_cycles()) + len(t2.to_cycles()) + len(t3.to_cycles()) - T1.nr_filled_cells() - 2) // (-2)
 
 def tau123(T1, T2):
     """
@@ -1210,7 +1361,48 @@ def tau123(T1, T2):
         [ 0  2  6 -1 -1 -1 -1]
         sage: (cells_map, t1, t2, t3) = tau123(T1, T2)
         sage: cells_map
-        {1: (0, 0), 2: (0, 1), 3: (0, 2), 4: (1, 0), 5: (1, 1), 6: (1, 2), 7: (2, 0), 8: (2, 1), 9: (2, 2), 10: (3, 0), 11: (3, 1), 12: (3, 2), 13: (4, 0), (2, 1): 8, 15: (4, 2), 16: (5, 0), 17: (5, 1), 18: (5, 2), 19: (6, 0), 20: (6, 1), 21: (6, 2), (5, 1): 17, (4, 0): 13, (1, 2): 6, (3, 0): 10, (5, 0): 16, (2, 2): 9, (4, 1): 14, (1, 1): 5, (3, 2): 12, (0, 0): 1, (6, 0): 19, 14: (4, 1), (4, 2): 15, (1, 0): 4, (0, 1): 2, (6, 1): 20, (3, 1): 11, (2, 0): 7, (6, 2): 21, (5, 2): 18, (0, 2): 3}
+        {1: (0, 0),
+         2: (0, 1),
+         3: (0, 2),
+         4: (1, 0),
+         5: (1, 1),
+         6: (1, 2),
+         7: (2, 0),
+         8: (2, 1),
+         9: (2, 2),
+         10: (3, 0),
+         11: (3, 1),
+         12: (3, 2),
+         13: (4, 0),
+         14: (4, 1),
+         15: (4, 2),
+         16: (5, 0),
+         17: (5, 1),
+         18: (5, 2),
+         19: (6, 0),
+         20: (6, 1),
+         21: (6, 2),
+         (0, 0): 1,
+         (0, 1): 2,
+         (0, 2): 3,
+         (1, 0): 4,
+         (1, 1): 5,
+         (1, 2): 6,
+         (2, 0): 7,
+         (2, 1): 8,
+         (2, 2): 9,
+         (3, 0): 10,
+         (3, 1): 11,
+         (3, 2): 12,
+         (4, 0): 13,
+         (4, 1): 14,
+         (4, 2): 15,
+         (5, 0): 16,
+         (5, 1): 17,
+         (5, 2): 18,
+         (6, 0): 19,
+         (6, 1): 20,
+         (6, 2): 21}
         sage: cells_map_as_square(cells_map, max(T1.nrows(), T1.ncols()))
         [ 1  2  3 -1 -1 -1 -1]
         [ 4  5  6 -1 -1 -1 -1]
@@ -1251,14 +1443,36 @@ def tau123(T1, T2):
 
     return (cells_map, t1, t2, t3)
 
-
 def isotopism(p):
     """
-    Returns a Permutation object that represents an isotopism (for
-    rows, columns or symbols of a partial latin square). Since matrices
-    in Sage are indexed from 0, this function translates +1 to agree
-    with the Permutation class. We also handle
-    PermutationGroupElements.
+    Return a Permutation object that represents an isotopism (for rows,
+    columns or symbols of a partial latin square).
+
+    Technically, all this function does is take as input a
+    representation of a permutation of `0,...,n-1` and return a
+    :class:`Permutation` object defined on `1,...,n`.
+
+    For a definition of isotopism, see the :wikipedia:`wikipedia section on
+    isotopism <Latin_square#Equivalence_classes_of_Latin_squares>`.
+
+    INPUT:
+
+    According to the type of input (see examples below) :
+
+    - an integer `n` -- the function returns the identity on `1,...,n`.
+
+    - a string representing a permutation in disjoint cycles notation,
+      e.g. `(0,1,2)(3,4,5)` -- the corresponding permutation is returned,
+      shifted by 1 to act on `1,...,n`.
+
+    - list/tuple of tuples -- assumes disjoint cycle notation, see previous
+      entry.
+
+    - a list of integers -- the function adds `1` to each member of the
+      list, and returns the corresponding permutation.
+
+    - a :class:`PermutationGroupElement` ``p`` -- returns a permutation
+      describing ``p`` **without** any shift.
 
     EXAMPLES::
 
@@ -1293,29 +1507,29 @@ def isotopism(p):
     """
 
     # Identity isotopism on p points:
-    if type(p) == Integer or type(p) == int:
+    if isinstance(p, Integer) or isinstance(p, int):
         return Permutation(range(1, p+1))
 
-    if type(p) == PermutationGroupElement:
+    if isinstance(p, PermutationGroupElement):
         # fixme Ask the Sage mailing list about the tuple/list issue!
         return Permutation(list(p.tuple()))
 
-    if type(p) == list:
+    if isinstance(p, list):
         # We expect a list like [0,3,2,1] which means
         # that 0 goes to 0, 1 goes to 3, etc.
         return Permutation(map(lambda x: x+1, p))
 
-    if type(p) == tuple:
+    if isinstance(p, tuple):
         # We have a single cycle:
-        if type(p[0]) == Integer:
+        if isinstance(p[0], Integer):
             return Permutation(tuple(map(lambda x: x+1, p)))
 
         # We have a tuple of cycles:
-        if type(p[0]) == tuple:
+        if isinstance(p[0], tuple):
             x = isotopism(p[0])
 
             for i in range(1, len(p)):
-                x = x * isotopism(p[i])
+                x = x._left_to_right_multiply_on_left(isotopism(p[i]))
 
             return x
 
@@ -1793,7 +2007,7 @@ def elementary_abelian_2group(s):
         L_prev = elementary_abelian_2group(s-1)
         L = LatinSquare(2**s, 2**s)
 
-        offset = L.nrows()/2
+        offset = L.nrows() // 2
 
         for r in range(L_prev.nrows()):
             for c in range(L_prev.ncols()):
@@ -1958,7 +2172,7 @@ def LatinSquare_generator(L_start, check_assertions = False):
 
         sage: from sage.combinat.matrices.latin import *
         sage: g = LatinSquare_generator(back_circulant(4))
-        sage: g.next().is_latin_square()
+        sage: next(g).is_latin_square()
         True
 
     REFERENCE::
@@ -2194,7 +2408,7 @@ def pq_group_bitrade_generators(p, q):
     P = []
     seenValues = {}
     for i in range(2, q):
-        if seenValues.has_key(i):
+        if i in seenValues:
             continue
 
         cycle = []
@@ -2511,14 +2725,14 @@ def is_row_and_col_balanced(T1, T2):
     """
 
     for r in range(T1.nrows()):
-        val1 = set(filter(lambda x: x >= 0, T1.row(r)))
-        val2 = set(filter(lambda x: x >= 0, T2.row(r)))
+        val1 = set(x for x in T1.row(r) if x >= 0)
+        val2 = set(x for x in T2.row(r) if x >= 0)
 
         if val1 != val2: return False
 
     for c in range(T1.ncols()):
-        val1 = set(filter(lambda x: x >= 0, T1.column(c)))
-        val2 = set(filter(lambda x: x >= 0, T2.column(c)))
+        val1 = set(x for x in T1.column(c) if x >= 0)
+        val2 = set(x for x in T2.column(c) if x >= 0)
 
         if val1 != val2: return False
 
@@ -2535,7 +2749,22 @@ def dlxcpp_rows_and_map(P):
 
         sage: from sage.combinat.matrices.latin import *
         sage: dlxcpp_rows_and_map(LatinSquare(2))
-        ([[0, 4, 8], [1, 5, 8], [2, 4, 9], [3, 5, 9], [0, 6, 10], [1, 7, 10], [2, 6, 11], [3, 7, 11]], {(2, 4, 9): (0, 1, 0), (1, 5, 8): (0, 0, 1), (1, 7, 10): (1, 0, 1), (0, 6, 10): (1, 0, 0), (3, 7, 11): (1, 1, 1), (2, 6, 11): (1, 1, 0), (0, 4, 8): (0, 0, 0), (3, 5, 9): (0, 1, 1)})
+        ([[0, 4, 8],
+          [1, 5, 8],
+          [2, 4, 9],
+          [3, 5, 9],
+          [0, 6, 10],
+          [1, 7, 10],
+          [2, 6, 11],
+          [3, 7, 11]],
+         {(0, 4, 8): (0, 0, 0),
+          (0, 6, 10): (1, 0, 0),
+          (1, 5, 8): (0, 0, 1),
+          (1, 7, 10): (1, 0, 1),
+          (2, 4, 9): (0, 1, 0),
+          (2, 6, 11): (1, 1, 0),
+          (3, 5, 9): (0, 1, 1),
+          (3, 7, 11): (1, 1, 1)})
     """
 
     assert P.nrows() == P.ncols()
@@ -2572,8 +2801,8 @@ def dlxcpp_rows_and_map(P):
                 # We only want the correct value to pop in here
                 if P[r, c] >= 0 and P[r, c] != e: continue
 
-                if P[r, c] < 0 and valsrow.has_key(e): continue
-                if P[r, c] < 0 and valscol.has_key(e): continue
+                if P[r, c] < 0 and e in valsrow: continue
+                if P[r, c] < 0 and e in valscol: continue
 
                 dlx_rows.append([c_OFFSET, r_OFFSET, xy_OFFSET])
 

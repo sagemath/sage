@@ -111,7 +111,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
             True
         """
         if not isinstance(name, str):
-            raise TypeError, "name must be a string"
+            raise TypeError("name must be a string")
         self.__name = name
         MatrixMorphism.__init__(self, parent, A)
 

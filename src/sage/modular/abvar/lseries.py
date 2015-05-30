@@ -168,7 +168,7 @@ class Lseries_padic(Lseries):
         Lseries.__init__(self, abvar)
         p = Integer(p)
         if not p.is_prime():
-            raise ValueError, "p (=%s) must be prime"%p
+            raise ValueError("p (=%s) must be prime"%p)
         self.__p = p
 
     def __cmp__(self, other):

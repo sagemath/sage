@@ -185,7 +185,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: S = species.SetSpecies()
             sage: g = S._cis_gen(QQ)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [0, p[1], 1/2*p[2], 1/3*p[3], 1/4*p[4]]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

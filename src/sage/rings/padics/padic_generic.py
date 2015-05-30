@@ -8,26 +8,34 @@ AUTHORS:
 - David Roe
 - Genya Zaytman: documentation
 - David Harvey: doctests
+- Julian Rueth (2013-03-16): test methods for basic arithmetic
+
 """
 
 #*****************************************************************************
-#       Copyright (C) 2007 David Roe <roed@math.harvard.edu>
-#                          William Stein <wstein@gmail.com>
+#       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
+#                               William Stein <wstein@gmail.com>
+#                               Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.fields import Fields
 from sage.rings.infinity import infinity
 from local_generic import LocalGeneric
 from sage.rings.ring import PrincipalIdealDomain
 from sage.rings.integer import Integer
 from sage.rings.padics.padic_printing import pAdicPrinter
+from sage.rings.padics.precision_error import PrecisionError
 from sage.misc.cachefunc import cached_method
 
 class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
-    def __init__(self, base, p, prec, print_mode, names, element_class):
+    def __init__(self, base, p, prec, print_mode, names, element_class, category=None):
         """
         Initialization.
 
@@ -43,8 +51,27 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = Zp(17) #indirect doctest
         """
-        LocalGeneric.__init__(self, base, prec, names, element_class)
+        if category is None:
+            if self.is_field():
+                category = Fields()
+            else:
+                category = PrincipalIdealDomains()
+        LocalGeneric.__init__(self, base, prec, names, element_class, category)
         self._printer = pAdicPrinter(self, print_mode)
+
+    def some_elements(self):
+        r"""
+        Returns a list of elements in this ring.
+
+        This is typically used for running generic tests (see :class:`TestSuite`).
+
+        EXAMPLES::
+
+            sage: Zp(2).some_elements()
+            [0, 1 + O(2^20), 2 + O(2^21)]
+
+        """
+        return [self.zero(), self.one(), self(self.prime())]
 
     def _modified_print_mode(self, print_mode):
         """
@@ -67,7 +94,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         elif isinstance(print_mode, str):
             print_mode = {'mode': print_mode}
         for option in ['mode', 'pos', 'ram_name', 'unram_name', 'var_name', 'max_ram_terms', 'max_unram_terms', 'max_terse_terms', 'sep', 'alphabet']:
-            if not print_mode.has_key(option):
+            if option not in print_mode:
                 print_mode[option] = self._printer.dict()[option]
         return print_mode
 
@@ -155,11 +182,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         r"""
         Returns the current print mode as a string.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic field
 
-        OUTPUT::
+        OUTPUT:
 
             string -- self's print mode
 
@@ -178,11 +205,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         r"""
         Returns the characteristic of self, which is always 0.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic parent
 
-        OUTPUT::
+        OUTPUT:
 
             integer -- self's characteristic, i.e., 0
 
@@ -197,11 +224,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         Returns the prime, ie the characteristic of the residue field.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic parent
 
-        OUTPUT::
+        OUTPUT:
 
             integer -- the characteristic of the residue field
 
@@ -245,11 +272,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         Returns the prime, i.e., the characteristic of the residue field.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic ring
 
-        OUTPUT::
+        OUTPUT:
 
             integer -- the characteristic of the residue field
 
@@ -265,11 +292,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         Returns the residue class field.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic ring
 
-        OUTPUT::
+        OUTPUT:
 
             the residue field
 
@@ -287,11 +314,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         Returns the residue class field.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic ring
 
-        OUTPUT::
+        OUTPUT:
 
             the residue field
 
@@ -308,11 +335,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         Returns a list of elements representing all the residue classes.
 
-        INPUT::
+        INPUT:
 
             self -- a p-adic ring
 
-        OUTPUT::
+        OUTPUT:
 
             list of elements -- a list of elements representing all the residue classes
 
@@ -328,12 +355,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         r"""
         Returns the teichmuller representative of x.
 
-        INPUT::
+        INPUT:
 
             - self -- a p-adic ring
             - x -- something that can be cast into self
 
-        OUTPUT::
+        OUTPUT:
 
             - element -- the teichmuller lift of x
 
@@ -376,12 +403,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         else:
             prec = min(Integer(prec), self.precision_cap())
         ans = self(x, prec)
-        ans._teichmuller_set()
+        ans._teichmuller_set_unsafe()
         return ans
 
     def teichmuller_system(self):
         r"""
-        Returns a set of teichmuller representatives for the invertible elements of $\ZZ / p\ZZ$.
+        Returns a set of teichmuller representatives for the invertible elements of `\ZZ / p\ZZ`.
 
         INPUT:
 
@@ -389,7 +416,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         OUTPUT:
 
-        - list of elements -- a list of teichmuller representatives for the invertible elements of $\ZZ / p\ZZ$
+        - list of elements -- a list of teichmuller representatives for the invertible elements of `\ZZ / p\ZZ`
 
         EXAMPLES::
 
@@ -408,19 +435,19 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
 #     def automorphisms(self):
 #         r"""
-#         Returns the group of automorphisms of $\Z_p$, i.e. the trivial group.
+#         Returns the group of automorphisms of `\ZZ_p`, i.e. the trivial group.
 #         """
 #         raise NotImplementedError
 
 #     def galois_group(self):
 #         r"""
-#         Returns the Galois group of $\Z_p$, i.e. the trivial group.
+#         Returns the Galois group of `\ZZ_p`, i.e. the trivial group.
 #         """
 #         raise NotImplementedError
 
 #     def hasGNB(self):
 #         r"""
-#         Returns whether or not $\Z_p$ has a Gauss Normal Basis.
+#         Returns whether or not `\ZZ_p` has a Gauss Normal Basis.
 #         """
 #         raise NotImplementedError
 
@@ -449,21 +476,232 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             if not isinstance(print_mode, dict):
                 print_mode = dict(print_mode)
             for option in ['mode', 'pos', 'max_ram_terms', 'max_unram_terms', 'max_terse_terms', 'sep', 'alphabet']:
-                if print_mode.has_key(option):
+                if option in print_mode:
                     print_mode["print_" + option] = print_mode[option]
                     del print_mode[option]
-                elif not print_mode.has_key("print_" + option):
-                    if kwds.has_key("print_" + option):
+                elif "print_" + option not in print_mode:
+                    if "print_" + option in kwds:
                         print_mode["print_" + option] = kwds["print_" + option]
                     else:
                         print_mode["print_" + option] = self._printer.dict()[option]
             for option in ['ram_name', 'unram_name', 'var_name']:
-                if not print_mode.has_key(option):
-                    if kwds.has_key(option):
+                if option not in print_mode:
+                    if option in kwds:
                         print_mode[option] = kwds[option]
                     else:
                         print_mode[option] = self._printer.dict()[option]
         return ExtensionFactory(base=self, premodulus=modulus, prec=prec, halt=halt, names=names, check = True, **print_mode)
+
+    def _test_add(self, **options):
+        """
+        Test addition of elements of this ring.
+
+        INPUT:
+
+         - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+
+        EXAMPLES::
+
+            sage: Zp(3)._test_add()
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+
+        """
+        tester = self._tester(**options)
+        elements = tester.some_elements()
+
+        for x in elements:
+            y = x + self.zero()
+            tester.assertEqual(y,x)
+            tester.assertEqual(y.precision_absolute(),x.precision_absolute())
+            tester.assertEqual(y.precision_relative(),x.precision_relative())
+
+        from sage.combinat.cartesian_product import CartesianProduct
+        elements = CartesianProduct(elements, elements)
+        if len(elements) > tester._max_runs:
+            from random import sample
+            elements = sample(elements, tester._max_runs)
+        for x,y in elements:
+            z = x + y
+            tester.assertIs(z.parent(), self)
+            tester.assertEqual(z.precision_absolute(), min(x.precision_absolute(), y.precision_absolute()))
+            tester.assertGreaterEqual(z.valuation(), min(x.valuation(),y.valuation()))
+            if x.valuation() != y.valuation():
+                tester.assertEqual(z.valuation(), min(x.valuation(),y.valuation()))
+            tester.assertEqual(z - x, y)
+            tester.assertEqual(z - y, x)
+
+    def _test_sub(self, **options):
+        """
+        Test subtraction on elements of this ring.
+
+        INPUT:
+
+         - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+
+        EXAMPLES::
+
+            sage: Zp(3)._test_sub()
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+
+        """
+        tester = self._tester(**options)
+
+        elements = tester.some_elements()
+        for x in elements:
+            y = x - self.zero()
+            tester.assertEqual(y, x)
+            tester.assertEqual(y.precision_absolute(), x.precision_absolute())
+            tester.assertEqual(y.precision_relative(), x.precision_relative())
+
+        from sage.combinat.cartesian_product import CartesianProduct
+        elements = CartesianProduct(elements, elements)
+        if len(elements) > tester._max_runs:
+            from random import sample
+            elements = sample(elements, tester._max_runs)
+        for x,y in elements:
+            z = x - y
+            tester.assertIs(z.parent(), self)
+            tester.assertEqual(z.precision_absolute(), min(x.precision_absolute(), y.precision_absolute()))
+            tester.assertGreaterEqual(z.valuation(), min(x.valuation(),y.valuation()))
+            if x.valuation() != y.valuation():
+                tester.assertEqual(z.valuation(), min(x.valuation(),y.valuation()))
+            tester.assertEqual(z - x, -y)
+            tester.assertEqual(z + y, x)
+
+    def _test_invert(self, **options):
+        """
+        Test multiplicative inversion of elements of this ring.
+
+        INPUT:
+
+         - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+
+        EXAMPLES::
+
+            sage: Zp(3)._test_invert()
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+
+        """
+        tester = self._tester(**options)
+
+        elements = tester.some_elements()
+        for x in elements:
+            try:
+                y = ~x
+            except (ZeroDivisionError, PrecisionError, ValueError):
+                tester.assertFalse(x.is_unit())
+                if not self.is_fixed_mod(): tester.assertTrue(x.is_zero())
+            else:
+                e = y * x
+
+                tester.assertFalse(x.is_zero())
+                tester.assertIs(y.parent(), self if self.is_fixed_mod() else self.fraction_field())
+                tester.assertTrue(e.is_one())
+                tester.assertEqual(e.precision_relative(), x.precision_relative())
+                tester.assertEqual(y.valuation(), -x.valuation())
+
+    def _test_mul(self, **options):
+        """
+        Test multiplication of elements of this ring.
+
+        INPUT:
+
+         - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+
+        EXAMPLES::
+
+            sage: Zp(3)._test_mul()
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+
+        """
+        tester = self._tester(**options)
+
+        from sage.combinat.cartesian_product import CartesianProduct
+        elements = CartesianProduct(tester.some_elements(), tester.some_elements())
+        if len(elements) > tester._max_runs:
+            from random import sample
+            elements = sample(elements, tester._max_runs)
+        for x,y in elements:
+            z = x * y
+            tester.assertIs(z.parent(), self)
+            tester.assertLessEqual(z.precision_relative(), min(x.precision_relative(), y.precision_relative()))
+            if not z.is_zero():
+                tester.assertEqual(z.valuation(), x.valuation() + y.valuation())
+
+    def _test_div(self, **options):
+        """
+        Test division of elements of this ring.
+
+        INPUT:
+
+         - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+
+        EXAMPLES::
+
+            sage: Zp(3)._test_div()
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+
+        """
+        tester = self._tester(**options)
+
+        from sage.combinat.cartesian_product import CartesianProduct
+        elements = CartesianProduct(tester.some_elements(), tester.some_elements())
+        if len(elements) > tester._max_runs:
+            from random import sample
+            elements = sample(elements, tester._max_runs)
+        for x,y in elements:
+            try:
+                z = x / y
+            except (ZeroDivisionError, PrecisionError, ValueError):
+                if self.is_fixed_mod(): tester.assertFalse(y.is_unit())
+                else: tester.assertTrue(y.is_zero())
+            else:
+                tester.assertFalse(y.is_zero())
+                tester.assertIs(z.parent(), self if self.is_fixed_mod() else self.fraction_field())
+                tester.assertEqual(z.precision_relative(), min(x.precision_relative(), y.precision_relative()))
+                tester.assertEqual(z.valuation(), x.valuation() - y.valuation())
+
+    def _test_neg(self, **options):
+        """
+        Test the negation operator on elements of this ring.
+
+        INPUT:
+
+         - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+
+        EXAMPLES::
+
+            sage: Zp(3)._test_neg()
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+        """
+        tester = self._tester(**options)
+        for x in tester.some_elements():
+            y = -x
+            tester.assertIs(y.parent(), self)
+            tester.assertTrue((x+y).is_zero())
+            tester.assertEqual(y.valuation(),x.valuation())
+            tester.assertEqual(x.precision_absolute(),y.precision_absolute())
+            tester.assertEqual(x.precision_relative(),y.precision_relative())
+            tester.assertEqual(x.is_zero(),y.is_zero())
+            tester.assertEqual(x.is_unit(),y.is_unit())
 
     @cached_method
     def _log_unit_part_p(self):
@@ -530,6 +768,64 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             p = 4
         return self(p)._exp(self.precision_cap())
 
+    def frobenius_endomorphism(self, n=1):
+        """
+        INPUT:
+                     
+        -  ``n`` -- an integer (default: 1)
+
+        OUTPUT:
+
+        The `n`-th power of the absolute arithmetic Frobenius
+        endomorphism on this field.
+
+        EXAMPLES::
+
+            sage: K.<a> = Qq(3^5)
+            sage: Frob = K.frobenius_endomorphism(); Frob
+            Frobenius endomorphism on Unramified Extension of 3-adic Field ... lifting a |--> a^3 on the residue field
+            sage: Frob(a) == a.frobenius()
+            True
+
+        We can specify a power:: 
+
+            sage: K.frobenius_endomorphism(2)
+            Frobenius endomorphism on Unramified Extension of 3-adic Field ... lifting a |--> a^(3^2) on the residue field
+
+        The result is simplified if possible::
+
+            sage: K.frobenius_endomorphism(6)
+            Frobenius endomorphism on Unramified Extension of 3-adic Field ... lifting a |--> a^3 on the residue field
+            sage: K.frobenius_endomorphism(5)
+            Identity endomorphism of Unramified Extension of 3-adic Field ...
+
+        Comparisons work::
+
+            sage: K.frobenius_endomorphism(6) == Frob
+            True
+        """
+        from morphism import FrobeniusEndomorphism_padics
+        return FrobeniusEndomorphism_padics(self, n)
+
+    def _test_elements_eq_transitive(self, **options):
+        """
+        The operator ``==`` is not transitive for `p`-adic numbers. We disable
+        the check of the category framework by overriding this method.
+
+        EXAMPLES:
+
+            sage: R = Zp(3)
+            sage: R(3) == R(0,1)
+            True
+            sage: R(0,1) == R(6)
+            True
+            sage: R(3) == R(6)
+            False
+            sage: R._test_elements_eq_transitive()
+
+        """
+        pass
+
 def local_print_mode(obj, print_options, pos = None, ram_name = None):
     r"""
     Context manager for safely temporarily changing the print_mode
@@ -552,12 +848,12 @@ def local_print_mode(obj, print_options, pos = None, ram_name = None):
     if isinstance(print_options, str):
         print_options = {'mode': print_options}
     elif not isinstance(print_options, dict):
-        raise TypeError, "print_options must be a dictionary or a string"
+        raise TypeError("print_options must be a dictionary or a string")
     if pos is not None:
         print_options['pos'] = pos
     if ram_name is not None:
         print_options['ram_name'] = ram_name
     for option in ['mode', 'pos', 'ram_name', 'unram_name', 'var_name', 'max_ram_terms', 'max_unram_terms', 'max_terse_terms', 'sep', 'alphabet']:
-        if not print_options.has_key(option):
+        if option not in print_options:
             print_options[option] = obj._printer.dict()[option]
     return pAdicPrinter(obj, print_options)

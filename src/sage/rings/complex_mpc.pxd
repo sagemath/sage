@@ -1,7 +1,6 @@
-include 'mpc.pxi'
+from sage.libs.mpc cimport *
 
 cimport sage.rings.ring
-import sage.rings.ring
 
 cdef class MPComplexNumber(sage.structure.element.FieldElement):
     cdef mpc_t value

@@ -57,7 +57,7 @@ AUTHORS:
 # show(...) had a prepass where they went through their rendering
 # trees, found ImplicitSurface objects with the same function,
 # bounding box, and plot_points (other parameters, such as contours,
-# hole, jmol_color, vertex_color, would be allowed to be different),
+# hole, color, would be allowed to be different),
 # and arranged to have them all plotted simultaneously.  These
 # prepasses have not been written yet.  Combining multiple
 # ImplicitSurface plots would be particularly advantageous for animate(...),
@@ -66,7 +66,7 @@ AUTHORS:
 # If you have a reasonably simple surface (not a space-filling fractal),
 # then if n is your resolution, we have n^3 evaluations of the main
 # function, about n^2 evaluations of auxiliary functions (hole, gradient,
-# vertex_color/jmol_color), and output of size about n^2.
+# color), and output of size about n^2.
 
 # With this in mind, we pay particular attention to optimizing the n^3
 # function evaluations.  (But keep in mind that n may be as small as 20
@@ -83,7 +83,7 @@ from cStringIO import StringIO
 cimport numpy as np
 import numpy as np
 
-from sage.plot.plot3d.transform cimport point_c, face_c, Transformation
+from sage.plot.plot3d.transform cimport point_c, face_c, color_c, Transformation
 from sage.plot.plot3d.base cimport PrimitiveObject
 from sage.plot.plot3d.base import RenderParams, default_texture
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet
@@ -91,7 +91,6 @@ from sage.rings.all import RDF
 from sage.plot.misc import setup_for_eval_on_grid
 
 include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi'
 include 'sage/gsl/gsl.pxi'
 from cpython.string cimport *
 
@@ -127,6 +126,7 @@ cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs):
     result[0].y = inputs[0].y + frac*(inputs[1].y - inputs[0].y)
     result[0].z = inputs[0].z + frac*(inputs[1].z - inputs[0].z)
 
+
 cdef class VertexInfo:
     # The point in "integer space"
     cdef point_c pt
@@ -134,8 +134,8 @@ cdef class VertexInfo:
     # The gradient at this point in "evaluation space"
     cdef point_c gradient
 
-    # (R,G,B), so not really a point at all
-    cdef point_c color
+    # (R,G,B) color ; a color triple
+    cdef color_c color
 
     # This point in "evaluation space"
     cdef point_c eval_pt
@@ -157,11 +157,12 @@ cdef class VertexInfo:
             sage: VertexInfo()
             <0.0, 0.0, 0.0>
         """
-        return '<%s, %s, %s>' % (self.pt.x, self.pt.y, self.pt.z)
+        return '<{}, {}, {}>'.format(self.pt.x, self.pt.y, self.pt.z)
+
 
 cdef mk_VertexInfo(double x, double y, double z, point_c *eval_min, point_c *eval_scale):
     cdef VertexInfo v
-    v = PY_NEW(VertexInfo)
+    v = VertexInfo.__new__(VertexInfo)
     v.pt.x = x
     v.pt.y = y
     v.pt.z = z
@@ -170,6 +171,7 @@ cdef mk_VertexInfo(double x, double y, double z, point_c *eval_min, point_c *eva
 
     return v
 
+
 cdef class MarchingCubes:
     r"""
     Handles marching cube rendering.
@@ -177,11 +179,13 @@ cdef class MarchingCubes:
     Protocol:
 
     1. Create the class.
-    2. Call process_slice once for each X slice, from self.nx > x >= 0.
-    3. Call finish(), which returns a list of strings.
+    2. Call ``process_slice`` once for each X slice, from self.nx > x >= 0.
+    3. Call ``finish()``, which returns a list of strings.
 
-    Note: Actually, only 4 slices ever exist; the caller will re-use old
-    storage.
+    .. NOTE::
+
+        Actually, only 4 slices ever exist; the caller will re-use old
+        storage.
     """
 
     cdef readonly object xrange
@@ -195,7 +199,8 @@ cdef class MarchingCubes:
     cdef readonly object region
     cdef readonly object gradient
     cdef readonly bint smooth
-    cdef readonly object vertex_color
+    cdef readonly object color_function
+    cdef readonly object colormap
     cdef readonly object results
 
     # We deal with three coordinate systems.  We do most of our work
@@ -219,7 +224,8 @@ cdef class MarchingCubes:
     cdef point_c out_origin, out_plus_x, out_plus_y, out_plus_z
 
     def __init__(self, xrange, yrange, zrange, contour, plot_points,
-                 transform=None, region=None, gradient=None, smooth=True, vertex_color=None):
+                 transform=None, region=None, gradient=None, smooth=True,
+                 color_function=None, colormap=None):
         """
         TESTS:
 
@@ -228,7 +234,6 @@ cdef class MarchingCubes:
             sage: from sage.plot.plot3d.implicit_surface import MarchingCubes
             sage: cube_marcher = MarchingCubes((0, 1), (0, 1), (0, 1), 1, (10, 10, 10))
         """
-
         self.xrange = xrange
         self.yrange = yrange
         self.zrange = zrange
@@ -240,7 +245,9 @@ cdef class MarchingCubes:
         self.region = region
         self.gradient = gradient
         self.smooth = smooth
-        self.vertex_color = vertex_color
+
+        self.color_function = color_function
+        self.colormap = colormap
 
         self.eval_min.x = xrange[0]
         self.eval_scale.x = (xrange[1] - xrange[0]) / (self.nx - 1)
@@ -273,8 +280,10 @@ cdef class MarchingCubes:
 
     def finish(self):
         """
-        Returns the results of the marching cubes algorithm as a list. The format
-        is specific to the subclass implementing this method.
+        Return the results of the marching cubes algorithm as a list.
+
+        The format is specific to the subclass implementing this
+        method.
 
         TESTS:
 
@@ -287,10 +296,13 @@ cdef class MarchingCubes:
         """
         return self.results
 
+
 cdef class MarchingCubesTriangles(MarchingCubes):
     """
     A subclass of MarchingCubes that returns its results as a list of triangles,
-    including their vertices and normals (if smooth=True).
+    including their vertices and normals (if ``smooth=True``).
+
+    And also their vertex colors if a vertex coloring function is given.
     """
 
     cdef readonly np.ndarray x_vertices
@@ -325,7 +337,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
 
     def process_slice(self, unsigned int x, np.ndarray slice):
         """
-        Process a single slice of function evaluations at the specified x coordinate.
+        Process a single slice of function evaluations at the specified `x`
+        coordinate.
 
         EXAMPLES::
 
@@ -335,18 +348,19 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: f = lambda x, y, z: x^2 + y^2 + z^2
             sage: slices = np.zeros((10, 10, 10), dtype=np.double)
             sage: for x in reversed(xrange(0, 10)):
-            ...       for y in xrange(0, 10):
-            ...           for z in xrange(0, 10):
-            ...               slices[x, y, z] = f(*[a * (4 / 9) -2 for a in (x, y, z)])
-            ...       cube_marcher.process_slice(x, slices[x, :, :])
+            ....:     for y in xrange(0, 10):
+            ....:         for z in xrange(0, 10):
+            ....:             slices[x, y, z] = f(*[a * (4 / 9) -2 for a in (x, y, z)])
+            ....:     cube_marcher.process_slice(x, slices[x, :, :])
             sage: faces = cube_marcher.finish()
             sage: faces[0][0]
-            {'y': -1.1..., 'x': 1.5..., 'z': -0.5...}
+            {'x': 1.555555555555..., 'y': -1.111111111111..., 'z': -0.555555555555...}
 
         We render the isosurface using IndexFaceSet::
 
             sage: from sage.plot.plot3d.index_face_set import IndexFaceSet
             sage: IndexFaceSet([tuple((p['x'], p['y'], p['z']) for p in face) for face in faces])
+            Graphics3d Object
         """
         # We go to a lot of effort to avoid repeating computations.
         # (I hope that the related bookkeeping is actually faster
@@ -507,8 +521,9 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                                                    cur[y+i,z-1] if z>0 else 0,
                                                    cur[y+i,z+1] if z<nz-1 else 0)
                             interpolate_point_c(&v.gradient, frac, gradients)
-                    if self.vertex_color:
-                        self.apply_point_func(&v.color, self.vertex_color, v)
+                    if not(self.color_function is None):
+                        self.apply_color_func(&v.color, self.color_function,
+                                              self.colormap, v)
                     y_vertices[y,z] = v
                 else:
                     y_vertices[y,z] = None
@@ -540,8 +555,9 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                                                    cur[y,z+i-1] if z+i>0 else 0,
                                                    cur[y,z+i+1] if z+i<nz-1 else 0)
                             interpolate_point_c(&v.gradient, frac, gradients)
-                    if self.vertex_color:
-                        self.apply_point_func(&v.color, self.vertex_color, v)
+                    if not(self.color_function is None):
+                        self.apply_color_func(&v.color, self.color_function,
+                                              self.colormap, v)
                     z_vertices[y,z] = v
                 else:
                     z_vertices[y,z] = None
@@ -614,8 +630,9 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                                                right[y,z-1] if z>0 else 0,
                                                right[y,z+1] if z<nz-1 else 0)
                             interpolate_point_c(&v.gradient, frac, gradients)
-                    if self.vertex_color:
-                        self.apply_point_func(&v.color, self.vertex_color, v)
+                    if not(self.color_function is None):
+                        self.apply_color_func(&v.color, self.color_function,
+                                              self.colormap, v)
                     x_vertices[y,z] = v
                 else:
                     x_vertices[y,z] = None
@@ -633,6 +650,10 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             pt[0].x = t[0]
             pt[0].y = t[1]
             pt[0].z = t[2]
+
+    cdef apply_color_func(self, color_c *pt, fn, cm, VertexInfo v):
+        t = fn(v.eval_pt.x, v.eval_pt.y, v.eval_pt.z)
+        pt[0].r, pt[0].g, pt[0].b, _ = cm(t)
 
     cdef get_gradient(self,
                       point_c *g,
@@ -675,7 +696,9 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher._update_x_vertices(0, None, slices[0], slices[1], slices[2])
             sage: cube_marcher.process_cubes(slices[0], slices[1])
             sage: cube_marcher.finish()
-            [({'y': 1.0, 'x': 0.0, 'z': 0.5}, {'y': 1.0, 'x': 0.25, 'z': 1.0}, {'y': 0.5, 'x': 0.0, 'z': 1.0})]
+            [({'x': 0.0, 'y': 1.0, 'z': 0.5},
+              {'x': 0.25, 'y': 1.0, 'z': 1.0},
+              {'x': 0.0, 'y': 0.5, 'z': 1.0})]
         """
         cdef np.ndarray[double, ndim=2] left = _left
         cdef np.ndarray[double, ndim=2] right = _right
@@ -774,16 +797,19 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher = MarchingCubesTriangles((0, 1), (0, 1), (0, 1), 0, (10,)*3, smooth=False)
             sage: cube_marcher.add_triangle(VertexInfo(), VertexInfo(), VertexInfo())
             sage: cube_marcher.finish()
-            [({'y': 0.0, 'x': 0.0, 'z': 0.0}, {'y': 0.0, 'x': 0.0, 'z': 0.0}, {'y': 0.0, 'x': 0.0, 'z': 0.0})]
+            [({'x': 0.0, 'y': 0.0, 'z': 0.0},
+              {'x': 0.0, 'y': 0.0, 'z': 0.0},
+              {'x': 0.0, 'y': 0.0, 'z': 0.0})]
         """
-
         if v1 is None or v2 is None or v3 is None:
-            # This happens if there is a NaN nearby, or if a hole was specified here.
+            # This happens if there is a NaN nearby, or if a hole was
+            # specified here.
             return
 
         cdef:
             point_c v1_ev_pt, v2_ev_pt, v3_ev_pt
             point_c n1_ev_vec, n2_ev_vec, n3_ev_vec
+            color_c v1_col, v2_col, v3_col
 
         if self.transform is not None:
             self.transform.transform_point_c(&v1_ev_pt, v1.eval_pt)
@@ -793,7 +819,14 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             v1_ev_pt = v1.eval_pt
             v2_ev_pt = v2.eval_pt
             v3_ev_pt = v3.eval_pt
+
         face = (v1_ev_pt, v2_ev_pt, v3_ev_pt)
+
+        if not(self.color_function is None):
+            v1_col = v1.color
+            v2_col = v2.color
+            v3_col = v3.color
+            face += (v1_col, v2_col, v3_col)
 
         if self.smooth:
             # XXX I believe this is wrong for non-uniform transforms
@@ -808,6 +841,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             face += (n1_ev_vec, n2_ev_vec, n3_ev_vec)
 
         self.results.append(face)
+
 
 cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
     """
@@ -826,21 +860,20 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
 
     -  ``cube_marchers`` - a list of cube marchers, one for each contour.
 
-
     OUTPUT:
 
-    A representation of the isosurface, in the format specified by the individual
-    cube marchers.
+    A representation of the isosurface, in the format specified by the
+    individual cube marchers.
 
     TESTS::
 
         sage: from sage.plot.plot3d.implicit_surface import render_implicit, MarchingCubesTriangles
         sage: plot_points, f = (40,)*3, lambda x, y, z: x + y + z
         sage: cube_marcher = MarchingCubesTriangles((0, 1), (0, 1), (0, 1), 1, (10,)*3)
-        sage: results = render_implicit(lambda x, y, z: x + y + z, \
-        ...                             (0, 1), (0, 1), (0, 1), (10,)*3, [cube_marcher])
+        sage: results = render_implicit(lambda x, y, z: x + y + z,
+        ....:                           (0, 1), (0, 1), (0, 1), (10,)*3, [cube_marcher])
         sage: results[0][0]
-        {'y': 0.0, 'x': 1.0, 'z': 0.0}
+        {'x': 1.0, 'y': 0.0, 'z': 0.0}
     """
 
     cdef int nx = plot_points[0]
@@ -894,6 +927,7 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
 
     return results
 
+
 cdef class ImplicitSurface(IndexFaceSet):
     cdef readonly object f
     cdef readonly object vars
@@ -904,12 +938,13 @@ cdef class ImplicitSurface(IndexFaceSet):
     cdef readonly object region
     cdef readonly bint smooth
     cdef readonly object gradient
-    cdef readonly object vertex_color
+    cdef readonly object color_function
+    cdef readonly object colormap
     cdef readonly tuple plot_points
 
     def __init__(self, f, xrange, yrange, zrange,
                  contour=0, plot_points="automatic",
-                 region=None, smooth=True, gradient=None, vertex_color=None,
+                 region=None, smooth=True, gradient=None,
                  **kwds):
         """
         TESTS::
@@ -919,8 +954,31 @@ cdef class ImplicitSurface(IndexFaceSet):
             (x, y, z)
             sage: G = ImplicitSurface(x^2 + y^2 + z^2, (x,-2, 2), (y,-2, 2), (z,-2, 2), contour=4)
             sage: show(G)
+
+        A colored case::
+
+            sage: t = (1-sin(2*x*y+3*z)**2).function(x,y,z)
+            sage: cm = colormaps.autumn
+            sage: G = ImplicitSurface(x^2 + y^2 + z^2, (x,-2, 2), (y,-2, 2), (z,-2, 2), contour=4, color=(t,cm))
+            sage: G.show(viewer='tachyon')
         """
-        IndexFaceSet.__init__(self, [], [], **kwds)
+        color_data = None
+        if 'color' in kwds:
+            try:
+                if len(kwds['color']) == 2 and callable(kwds['color'][0]):
+                    color_data = kwds['color']
+                    kwds.pop('color')
+            except TypeError, AttributeError:
+                pass
+        if color_data is None:
+            # case of a global color
+            self.color_function = None
+            IndexFaceSet.__init__(self, [], [], **kwds)
+        else:
+            # case of a color depending on parameters
+            self.color_function = color_data[0]
+            self.colormap = color_data[1]
+            IndexFaceSet.__init__(self, [], [], texture_list=[], **kwds)
         from sage.ext.fast_eval import fast_float
 
         orig_f = f
@@ -956,22 +1014,21 @@ cdef class ImplicitSurface(IndexFaceSet):
         # the passed-in smooth parameter.
         smooth=False
 
-
         self.smooth = smooth
         if smooth and gradient is None:
             try:
                 gradient = (orig_f.diff(self.vars[0]),
                             orig_f.diff(self.vars[1]),
                             orig_f.diff(self.vars[2]))
-            except StandardError:
+            except Exception:
                 # Would be nice to have more nuanced error handling here.
 
                 # If anything goes wrong, we'll just use central differencing.
                 pass
         if gradient is not None:
             self.gradient = fast_float(gradient, *self.vars)
-        if vertex_color is not None:
-            self.vertex_color = fast_float(vertex_color, *self.vars)
+        if self.color_function is not None:
+            self.color_function = fast_float(self.color_function, *self.vars)
         if plot_points == "automatic":
             plot_points = DEFAULT_PLOT_POINTS
         my_plot_points = []
@@ -1006,7 +1063,7 @@ cdef class ImplicitSurface(IndexFaceSet):
         """
         Return a representation of this object in the .obj format.
 
-        TESTS::
+        TESTS:
 
         We graph a simple plane::
 
@@ -1029,11 +1086,11 @@ cdef class ImplicitSurface(IndexFaceSet):
         sake of speed)::
 
             sage: def points_equal(a, b, epsilon=(1e-5)):
-            ...       return all(abs(x0-x1) < epsilon for x0, x1 in zip(a, b))
+            ....:     return all(abs(x0-x1) < epsilon for x0, x1 in zip(a, b))
             sage: list = []
             sage: assert len(vertices) >= 20 # I should hope so, we're rendering at the default resolution!
             sage: for vertex, surf_vertex in zip(vertices, G.vertex_list())[0:20]:
-            ...       list.append(points_equal(map(float, vertex.split(' ')[1:]), surf_vertex))
+            ....:     list.append(points_equal(map(float, vertex.split(' ')[1:]), surf_vertex))
             sage: all(list)
             True
         """
@@ -1068,7 +1125,7 @@ cdef class ImplicitSurface(IndexFaceSet):
             sage: var('x,y,z')
             (x, y, z)
             sage: G = ImplicitSurface(x + y + z, (x,-1, 1), (y,-1, 1), (z,-1, 1))
-            sage: show(G, viewer='jmol')
+            sage: show(G, viewer='jmol')   # indirect doctest
         """
         self.triangulate()
         return IndexFaceSet.jmol_repr(self, render_params)
@@ -1091,11 +1148,13 @@ cdef class ImplicitSurface(IndexFaceSet):
 
     def triangulate(self, force=False):
         """
-        The IndexFaceSet will be empty until you call this method, which generates
-        the faces and vertices according to the parameters specified in the
-        constructor for ImplicitSurface. Note that if you call this method more
-        than once, subsequent invocations will have no effect (this is an
-        optimization to avoid repeated work) unless you specify force=True in the
+        The IndexFaceSet will be empty until you call this method,
+        which generates the faces and vertices according to the
+        parameters specified in the constructor for ImplicitSurface.
+
+        Note that if you call this method more than once, subsequent
+        invocations will have no effect (this is an optimization to
+        avoid repeated work) unless you specify ``force=True`` in the
         keywords.
 
         EXAMPLES::
@@ -1110,6 +1169,7 @@ cdef class ImplicitSurface(IndexFaceSet):
             sage: len(G.vertex_list()) > 0, len(G.face_list()) > 0
             (True, True)
             sage: G.show() # This should be fast, since the mesh is already triangulated.
+
         """
         if self.fcount != 0 and not force:
             # The mesh is already triangulated
@@ -1118,7 +1178,8 @@ cdef class ImplicitSurface(IndexFaceSet):
         options = dict(xrange=self.xrange, yrange=self.yrange, zrange=self.zrange,
                        region=self.region, smooth=self.smooth,
                        gradient=self.gradient,
-                       vertex_color=self.vertex_color,
+                       color_function=self.color_function,
+                       colormap=self.colormap,
                        plot_points=self.plot_points)
         cube_marchers = [MarchingCubesTriangles(contour=x, **options) for x in self.contours]
         results = render_implicit(self.f, self.xrange, self.yrange, self.zrange,
@@ -1135,6 +1196,15 @@ cdef class ImplicitSurface(IndexFaceSet):
 
             dest_face.n = 3
             dest_face.vertices = &self.face_indices[3 * i]
+
+            if self.color_function is not None:
+                clist = [(src_face[j]['r'],
+                          src_face[j]['g'],
+                          src_face[j]['b'])
+                         for j in range(3, 6)]
+                ct = (sum(clist[j][i] for j in range(3)) / 3 for i in range(3))
+                # ct is the mean of the colors of vertices
+                dest_face.color.r, dest_face.color.g, dest_face.color.b = ct
 
             for j from 0 <= j < 3:
                 dest_face.vertices[j] = (3 * i) + j

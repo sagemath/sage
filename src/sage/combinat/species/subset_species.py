@@ -75,8 +75,7 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: a.transport(p)
             {'a', 'c'}
         """
-        l = [perm(i) for i in self._list]
-        l.sort()
+        l = sorted([perm(i) for i in self._list])
         return SubsetSpeciesStructure(self.parent(), self._labels, l)
 
     def automorphism_group(self):
@@ -235,7 +234,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: S = species.SubsetSpecies()
             sage: g = S._cis_gen(QQ)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [0, 2*p[1], p[2], 2/3*p[3], 1/2*p[4]]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

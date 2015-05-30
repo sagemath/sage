@@ -46,6 +46,8 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef _coerce_element(self, x)
 
     # Row and column operations
+    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2)
+    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2)
     cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2)
     cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2)
     cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2)

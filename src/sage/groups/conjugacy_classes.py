@@ -25,7 +25,7 @@ Conjugacy classes for groups of permutations::
     sage: G = SymmetricGroup(4)
     sage: g = G((1,2,3,4))
     sage: G.conjugacy_class(g)
-    Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a permutation group
+    Conjugacy class of cycle type [4] in Symmetric group of order 4! as a permutation group
 
 Conjugacy classes for groups of matrices::
 
@@ -59,15 +59,6 @@ from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
-# TODO
-#
-# Don't derive from Parent if there are no elements
-#
-# @cached_method must not return mutable containers (lists), use
-# tuples instead.
-
-
 
 class ConjugacyClass(Parent):
     r"""
@@ -110,7 +101,7 @@ class ConjugacyClass(Parent):
         else: # If the group is not finite, then we do not know if we are finite or not
             Parent.__init__(self, category=EnumeratedSets())
 
-    def __repr__(self):
+    def _repr_(self):
         r"""
         EXAMPLES::
 
@@ -161,17 +152,63 @@ class ConjugacyClass(Parent):
         """
         return element in self.set()
 
-    @cached_method
-    def set(self):
+    def __iter__(self):
         r"""
-        Naive algorithm to give a set with all the elements of the conjugacy
-        class.
+        Naive algorithm to give the elements of the conjugacy class.
 
         .. TODO::
 
             Implement a non-naive algorithm, cf. for instance
             G. Butler: "An Inductive Schema for Computing Conjugacy Classes
             in Permutation Groups", Math. of Comp. Vol. 62, No. 205 (1994)
+
+        EXAMPLES:
+
+        Groups of permutations::
+
+            sage: G = SymmetricGroup(3)
+            sage: g = G((1,2))
+            sage: C = ConjugacyClass(G,g)
+            sage: sorted(C)
+            [(2,3), (1,2), (1,3)]
+
+        It works for infinite groups::
+
+            sage: a = matrix(ZZ,2,[1,1,0,1])
+            sage: b = matrix(ZZ,2,[1,0,1,1])
+            sage: G = MatrixGroup([a,b])        # takes 1s
+            sage: a = G(a)
+            sage: C = ConjugacyClass(G, a)
+            sage: it = iter(C)
+            sage: [next(it) for _ in range(5)]
+            [
+            [1 1]  [ 2  1]  [ 0  1]  [ 3  1]  [ 3  4]
+            [0 1], [-1  0], [-1  2], [-4 -1], [-1 -1]
+            ]
+
+        We check that two matrices are in C::
+
+            sage: b = G(b)
+            sage: m1 = b * a * ~b
+            sage: m2 = ~b * a * b
+            sage: any(x == m1 for x in C)
+            True
+            sage: any(x == m2 for x in C)
+            True
+
+        """
+        from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+        g = self._representative
+        gens = self._parent.monoid_generators()
+        R = RecursivelyEnumeratedSet([g],
+                                     lambda y: [c*y*c**-1 for c in gens],
+                                     structure=None)
+        return R.breadth_first_search_iterator()
+
+    @cached_method
+    def set(self):
+        r"""
+        Return the set of elements of the conjugacy class.
 
         EXAMPLES:
 
@@ -200,18 +237,28 @@ class ConjugacyClass(Parent):
                   [[2, 2], [1, 0]], [[3, 1], [4, 4]]]
             sage: C.set() == Set(H(x) for x in S)
             True
-        """
-        from sage.sets.set import Set
-        from sage.combinat.backtrack import TransitiveIdeal
-        if self._parent.is_finite():
-            g = self._representative
-            G = self._parent
-            gens = G.gens()
-            return Set(x for x in TransitiveIdeal(lambda y: [c*y*c**-1 for c in gens], [g]))
-        else:
-            raise NotImplementedError("Listing the elements of conjugacy classes is not implemented for infinite groups!")
 
-    @cached_method
+        It is not implemented for infinite groups::
+
+            sage: a = matrix(ZZ,2,[1,1,0,1])
+            sage: b = matrix(ZZ,2,[1,0,1,1])
+            sage: G = MatrixGroup([a,b])        # takes 1s
+            sage: g = G(a)
+            sage: C = ConjugacyClass(G, g)
+            sage: C.set()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Listing the elements of conjugacy classes is not implemented for infinite groups! Use the iter function instead.
+        """
+        if self._parent.is_finite():
+            from sage.sets.set import Set
+            return Set(iter(self))
+            # return Set(self) creates an infinite loop in __contains__
+        else:
+            raise NotImplementedError("Listing the elements of conjugacy "
+                    "classes is not implemented for infinite groups! Use the "
+                    "iter function instead.")
+
     def list(self):
         r"""
         Return a list with all the elements of ``self``.
@@ -227,7 +274,14 @@ class ConjugacyClass(Parent):
             sage: Set(L) == Set([G((1,3,2)), G((1,2,3))])
             True
         """
-        return list(self.set())
+        if self._parent.is_finite():
+            return list(iter(self))
+            # return list(self) creates an infinite loop because list calls
+            # __len__ which calls list...
+        else:
+            raise NotImplementedError("Listing the elements of conjugacy "
+                    "classes is not implemented for infinite groups! Use the "
+                    "iter function instead.")
 
     def is_real(self):
         """
@@ -273,6 +327,7 @@ class ConjugacyClass(Parent):
         """
         return self._representative
 
+    an_element = representative
 
 class ConjugacyClassGAP(ConjugacyClass):
     r"""
@@ -348,6 +403,73 @@ class ConjugacyClassGAP(ConjugacyClass):
             ConjugacyClass( SymmetricGroup( [ 1 .. 3 ] ), (1,2,3) )
         """
         return self._gap_conjugacy_class
+
+    def cardinality(self):
+        r"""
+        Return the size of this conjugacy class.
+
+        EXAMPLES::
+
+            sage: W = WeylGroup(['C',6])
+            sage: cc = W.conjugacy_class(W.an_element())
+            sage: cc.cardinality()
+            3840
+            sage: type(cc.cardinality())
+            <type 'sage.rings.integer.Integer'>
+        """
+        return self._gap_().Size().sage()
+
+    def __contains__(self, g):
+        r"""
+        Containment test.
+
+        Wraps ``IsConjugate`` from GAP.
+
+        TESTS::
+
+            sage: W = WeylGroup(['C',6])
+            sage: g0,g1,g2,g3,g4,g5 = W.gens()
+            sage: cc = W.conjugacy_class(g0)
+            sage: g0 in cc
+            True
+            sage: g1 in cc
+            True
+            sage: g2 in cc
+            True
+            sage: g3 in cc
+            True
+            sage: g4 in cc
+            True
+            sage: g5 in cc
+            False
+
+        Only trivial cases are implemented for infinite groups::
+
+            sage: G = SL(2,ZZ)
+            sage: m1 = G([[1,1],[0,1]])
+            sage: m2 = G([[1,0],[1,1]])
+            sage: m1 in G.conjugacy_class(m1) and m2 in G.conjugacy_class(m2)
+            True
+            sage: m2 in G.conjugacy_class(m1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
+        """
+        g = self._parent(g)
+        g0 = self._representative
+        if g == g0:
+            return True
+
+        G = self._parent
+        try:
+            finite = G.is_finite()
+        except (AttributeError, NotImplementedError):
+            finite = False
+
+        if not finite:
+            raise NotImplementedError("only implemented for finite groups")
+
+        return G._gap_().IsConjugate(g0._gap_(), g._gap_()).sage()
 
     @cached_method
     def set(self):

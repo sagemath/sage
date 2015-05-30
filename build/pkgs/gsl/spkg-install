@@ -24,9 +24,9 @@ if [ "$SAGE64" = "yes" ]; then
 fi
 
 if [ "$SAGE_DEBUG" = "yes" ] ; then
-  CFLAGS="$CFLAGS -g -O0" # No optimisation, aids debugging.
+  CFLAGS="-g -O0 $CFLAGS" # No optimisation, aids debugging.
 else
-  CFLAGS="$CFLAGS -g -O2" # Normal optimisation.
+  CFLAGS="-g -O2 $CFLAGS" # Normal optimisation.
 fi
 
 export CFLAGS

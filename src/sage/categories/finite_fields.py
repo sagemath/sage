@@ -11,21 +11,28 @@ Finite Fields
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.fields import Fields
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-_Fields = Fields()
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.enumerated_sets import EnumeratedSets
 
-class FiniteFields(Category):
+class FiniteFields(CategoryWithAxiom):
     """
-    The category of finite fields
+    The category of finite fields.
 
     EXAMPLES::
 
-        sage: K = FiniteFields()
-        sage: K
+        sage: K = FiniteFields(); K
         Category of finite fields
+
+    A finite field is a finite monoid with the structure of a field;
+    it is currently assumed to be enumerated::
+
+        sage: K.super_categories()
+        [Category of fields,
+         Category of finite commutative rings,
+         Category of finite enumerated sets]
+
+    Some examples of membership testing and coercion::
+
         sage: FiniteField(17) in K
         True
         sage: RationalField() in K
@@ -37,18 +44,23 @@ class FiniteFields(Category):
 
     TESTS::
 
-        sage: TestSuite(FiniteFields()).run()
+        sage: K is Fields().Finite()
+        True
+        sage: TestSuite(K).run()
     """
 
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
+    def extra_super_categories(self):
+        r"""
+        Any finite field is assumed to be endowed with an enumeration.
 
-            sage: FiniteFields().super_categories()
-            [Category of fields, Category of finite enumerated sets]
+        TESTS::
+
+            sage: Fields().Finite().extra_super_categories()
+            [Category of finite enumerated sets]
+            sage: FiniteFields().is_subcategory(FiniteEnumeratedSets())
+            True
         """
-        return [Fields(), FiniteEnumeratedSets()]
+        return [EnumeratedSets().Finite()]
 
     def __contains__(self, x):
         """
@@ -61,7 +73,8 @@ class FiniteFields(Category):
             sage: IntegerModRing(4) in FiniteFields()
             False
         """
-        return x in _Fields and x.is_finite()
+        from sage.categories.fields import Fields
+        return x in Fields() and x.is_finite()
 
     # As is, this does no more than the usual __call__ of Category, but for the error message
     def _call_(self, x):
@@ -75,7 +88,7 @@ class FiniteFields(Category):
             ...
             TypeError: unable to canonically associate a finite field to Rational Field
         """
-        raise TypeError, "unable to canonically associate a finite field to %s"%x
+        raise TypeError("unable to canonically associate a finite field to %s"%x)
         # TODO: local dvr ring?
 
     #@lazy_attribute

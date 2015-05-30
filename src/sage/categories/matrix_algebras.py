@@ -11,7 +11,6 @@ Matrix algebras
 #******************************************************************************
 
 from category_types import Category_over_base_ring
-from sage.misc.cachefunc import cached_method
 from algebras import Algebras
 
 class MatrixAlgebras(Category_over_base_ring):

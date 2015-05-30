@@ -1,7 +1,7 @@
-/*** Dedekind zeta-function of a number field F/Q              ***/
-/*** v1.0, July 2002, questions to tim.dokchitser@durham.ac.uk ***/
-/***                                                           ***/
-/*** type \rex-nf or read("ex-nf") at pari prompt to run this  ***/
+/*** Dedekind zeta-function of a number field F/Q                   ***/
+/*** v1.3, December 2013, questions to tim.dokchitser@bristol.ac.uk ***/
+/***                                                                ***/
+/*** type \rex-nf or read("ex-nf") at pari prompt to run this       ***/
 
 fpol = x^4-x^2-1;                 \\ polynomial which defines F/Q
                                   \\ may change this to any other polynomial
@@ -44,5 +44,5 @@ print(" (automatically determined) = ",Lresidues[1]);
 
 \\ Determine the residue at s=1 using the class number formula
 bnf       = bnfinit(fpol);
-residue   = - 2^(r1+r2) * Pi^(r2/2) * bnf.reg * bnf.clgp.no / bnf.tu.no;
+residue   = - 2^(r1+r2) * Pi^(r2/2) * bnf.reg * bnf.clgp.no / bnf.tu[1];
 print(" (class number formula)     = ",residue);

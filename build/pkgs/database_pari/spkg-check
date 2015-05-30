@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_SRC" ]; then
+    echo >&2 "SAGE_SRC undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+sage -tp --long --optional=database_pari,sage "$SAGE_SRC/sage/tests/parigp.py" "$SAGE_SRC/sage/libs/pari"

@@ -22,7 +22,7 @@ EXAMPLES::
     1
     sage: K.<a> = QuadraticField(-8)
     sage: K.factor(3)
-    (Fractional ideal (1/2*a + 1)) * (Fractional ideal (1/2*a - 1))
+    (Fractional ideal (1/2*a + 1)) * (Fractional ideal (-1/2*a + 1))
 
 Next try an inert prime::
 
@@ -103,6 +103,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.structure.sage_object import SageObject
 
+import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
 import sage.rings.arith as arith
 import sage.rings.all as rings
@@ -269,15 +270,16 @@ class RingClassField(SageObject):
         """
         Used for computing hash of ``self``.
 
+        .. NOTE::
+
+            The hash is equal to the hash of the pair
+            ``(discriminant, conductor)``.
+
         EXAMPLES::
 
             sage: E = EllipticCurve('389a'); K5 = E.heegner_point(-7,5).ring_class_field()
-            sage: hash(K5)
-            -3713088127102618519     # 64-bit
-            1817441385               # 32-bit
-            sage: hash((-7,5))
-            -3713088127102618519     # 64-bit
-            1817441385               # 32-bit
+            sage: hash(K5) == hash((-7,5))
+            True
         """
         return hash((self.__D, self.__c))
 
@@ -408,13 +410,21 @@ class RingClassField(SageObject):
             7
             sage: heegner_point(37,-7,7^2).ring_class_field().degree_over_H()
             49
+
+        Check that :trac:`15218` is solved::
+
+            sage: E = EllipticCurve("19a");
+            sage: s = E.heegner_point(-3,2).ring_class_field().galois_group().complex_conjugation()
+            sage: H = s.domain(); H.absolute_degree()
+            2
         """
         c = self.__c
         if c == 1:
             return ZZ(1)
 
         # Let K_c be the ring class field.  We have by class field theory that
-        #           Gal(K_c / H) = (O_K/c*O_K)^* / (Z/cZ)^*.
+        #           Gal(K_c / H) = (O_K / c O_K)^* / ((Z/cZ)^* M),
+        # where M is the image of the roots of unity of K in (O_K / c O_K)^*.
         #
         # To compute the cardinality of the above Galois group, we
         # first reduce to the case that c = p^e is a prime power
@@ -454,7 +464,7 @@ class RingClassField(SageObject):
                 else:
                     # inert case
                     n *= p**e + p**(e-1)
-        return n
+        return (n * ZZ(2)) // K.number_of_roots_of_unity()
 
     @cached_method
     def absolute_degree(self):
@@ -631,12 +641,9 @@ class GaloisGroup(SageObject):
         EXAMPLES::
 
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
-            sage: hash(G)
-            -6198252699510613726            # 64-bit
-            1905285410                      # 32-bit
-            sage: hash((G.field(), G.base_field()))
-            -6198252699510613726            # 64-bit
-            1905285410                      # 32-bit
+            sage: hash(G) == hash((G.field(), G.base_field()))
+            True
+
         """
         return hash((self.__field, self.__base))
 
@@ -1277,12 +1284,15 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
 
     def __hash__(self):
         """
+        The hash value is the same as the hash value of the
+        pair ``(self.parent(), 1)``.
+
         EXAMPLES::
 
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
-            sage: conj = G.complex_conjugation(); hash(conj)
-            1347197483068745902      # 64-bit
-            480045230                # 32-bit
+            sage: conj = G.complex_conjugation()
+            sage: hash(conj) == hash((conj.parent(), 1))
+            True
         """
         return hash((self.parent(), 1))
 
@@ -1477,12 +1487,15 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 
     def __hash__(self):
         """
+        The hash value is the hash of the pair formed by the parent
+        and the quadratic form read as tuple.
+
         EXAMPLES::
 
-            sage: H = heegner_points(389,-20,3); s = H.ring_class_field().galois_group(H.quadratic_field())[0]
-            sage: hash(s)
-            4262582128197601113     # 64-bit
-            -1994029223             # 32-bit
+            sage: H = heegner_points(389,-20,3)
+            sage: s = H.ring_class_field().galois_group(H.quadratic_field())[0]
+            sage: hash(s) == hash((s.parent(), tuple(s.quadratic_form())))
+            True
         """
         return hash((self.parent(), tuple(self.__quadratic_form)))
 
@@ -1717,13 +1730,14 @@ class HeegnerPoint(SageObject):
 
     def __hash__(self):
         """
+        The hash value is obtained from level, discriminant, and conductor.
+
         EXAMPLES::
 
             sage: H = sage.schemes.elliptic_curves.heegner.HeegnerPoint(389,-7,5); type(H)
             <class 'sage.schemes.elliptic_curves.heegner.HeegnerPoint'>
-            sage: hash(H)
-            6187687223143458874     # 64-bit
-            -458201030              # 32-bit
+            sage: hash(H)  == hash((H.level(), H.discriminant(), H.conductor()))
+            True
         """
         return hash((self.__N, self.__D, self.__c))
 
@@ -2511,7 +2525,9 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         EXAMPLES::
 
             sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')
+            Graphics object consisting of 12 graphics primitives
             sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')
+            Graphics object consisting of 48 graphics primitives
         """
         return sum(z.plot(*args, **kwds) for z in self)
 
@@ -2585,7 +2601,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
                 elif isinstance(f, BinaryQF):
                     # convert from BinaryQF
                     f = tuple(f)
-                elif rings.is_NumberFieldElement(f):
+                elif sage.rings.number_field.number_field_element.is_NumberFieldElement(f):
                     # tau = number field element
                     g = f.minpoly()
                     if g.degree() != 2:
@@ -2609,12 +2625,15 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
     def __hash__(self):
         """
+        The hash is obtained from the hash provided by :class:`HeegnerPoint`,
+        together with the reduced quadratic form.
+
         EXAMPLES::
 
-            sage: y = EllipticCurve('389a').heegner_point(-7,5)
-            sage: hash(y)
-            -756867903203770682        # 64-bit
-            -274399546                 # 32-bit
+            sage: x = heegner_point(37,-7,5)
+            sage: from sage.schemes.elliptic_curves.heegner import HeegnerPoint
+            sage: hash(x) == hash( (HeegnerPoint.__hash__(x), x.reduced_quadratic_form()) )
+            True
         """
         return hash((HeegnerPoint.__hash__(self), self.reduced_quadratic_form()))
 
@@ -2843,6 +2862,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
         EXAMPLES::
 
             sage: heegner_point(389,-7,1).plot(pointsize=50)
+            Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.all import point
         return point(CDF(self.tau()), **kwds)
@@ -2915,11 +2935,14 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
     def __hash__(self):
         """
+        The hash value is obtained from the elliptic curve and the Heegner
+        point on `X_0(N)`.
+
         EXAMPLES::
 
-            sage: hash(EllipticCurve('389a').heegner_point(-7,5))
-            -756867903203770682              # 64-bit
-            -274399546                       # 32-bit
+            sage: x = EllipticCurve('389a').heegner_point(-7,5)
+            sage: hash(x) == hash( (x.curve(), x.heegner_point_on_X0N()) )
+            True
         """
         return hash((self.__E, self.__x))
 
@@ -3124,7 +3147,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         return self.__x.quadratic_form()
 
     @cached_method
-    def numerical_approx(self, prec=53):
+    def numerical_approx(self, prec=53, algorithm=None):
         """
         Return a numerical approximation to this Heegner point
         computed using a working precision of prec bits.
@@ -3152,7 +3175,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40); P
             Heegner point of discriminant -40 on elliptic curve of conductor 37
             sage: P.numerical_approx()
-            (-6.68...e-16 + 1.41421356237310*I : 1.00000000000000 - 1.41421356237309*I : 1.00000000000000)
+            (-6.6...e-16 + 1.41421356237310*I : 1.00000000000000 - 1.41421356237309*I : 1.00000000000000)
 
         A rank 2 curve, where all Heegner points of conductor 1 are 0::
 
@@ -3476,7 +3499,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             [(-1.89564392373896 - 0.444771808762067*I : -1.50000000000000 + 2.13102976222246*I : 1.00000000000000), ...]
             sage: y._numerical_approx_conjugates_over_QQ(prec=10)
             [(-1.9 - 0.44*I : -1.5 + 2.1*I : 1.0), ...
-             (-1.9 - 0.44*I : -1.5 + 2.1*I : 1.0)]
+             (1.4 + 0.0024*I : -1.7 - 0.0046*I : 1.0)]
         """
         v = []
         for z in self.conjugates_over_K():
@@ -3506,8 +3529,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: E = EllipticCurve('37a')
             sage: y = E.heegner_point(-7,3); y
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37
-            sage: y._numerical_approx_xy_poly()
-            (X^8 + 6.00000000000000*X^7 + 8.99999999999998*X^6 - 12.0000000000000*X^5 - 42.0000000000000*X^4 - 17.999999999999...*X^3 + 36.0000000000001*X^2 + 35.9999999999999*X + 8.999999999999..., X^8 + 12.0000000000000*X^7 + 72.0000000000000*X^6 + 270.000000000000*X^5 + 678.000000000001*X^4 + 1152.00000000000*X^3 + 1269.00000000000*X^2 + 810.00000000000...*X + 225.000000000001)
+            sage: y._numerical_approx_xy_poly()  # rel tol 1e-14
+            (X^8 + 6.00000000000000*X^7 + 8.99999999999998*X^6 - 12.0000000000000*X^5 - 42.0000000000000*X^4 - 17.9999999999999*X^3 + 36.0000000000001*X^2 + 35.9999999999999*X + 8.99999999999995, X^8 + 12.0000000000000*X^7 + 72.0000000000000*X^6 + 270.000000000000*X^5 + 678.000000000001*X^4 + 1152.00000000000*X^3 + 1269.00000000000*X^2 + 810.000000000002*X + 225.000000000001)
         """
         v = self._numerical_approx_conjugates_over_QQ(prec)
         R = ComplexField(prec)['X']
@@ -4098,6 +4121,7 @@ class KolyvaginPoint(HeegnerPoint):
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-11).kolyvagin_point()
             sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()
+            Graphics object consisting of 3 graphics primitives
         """
         if self.conductor() != 1:
             raise NotImplementedError
@@ -6951,7 +6975,7 @@ def heegner_sha_an(self, D, prec=53):
     #    You can think this through or just type something like
     #      f = function('f',x); g = function('g',x); diff(f*g,6)
     #    into Sage to be convinced.
-    L = rings.binomial(rE + rF, rE) * (L_E * L_F / (rings.factorial(rE+rF)) )
+    L = arith.binomial(rE + rF, rE) * (L_E * L_F / (arith.factorial(rE+rF)) )
 
     #  - ||omega||^2 -- the period.  It is twice the volume of the
     #    period lattice.  See the following paper for a derivation:

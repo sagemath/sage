@@ -1,10 +1,10 @@
 diff -ru src/config/get_cc b/config/get_cc
---- src/config/get_cc	2012-09-25 23:10:46.000000000 +0200
-+++ b/config/get_cc	2013-01-07 16:02:46.607514084 +0100
-@@ -122,7 +122,11 @@
-   case "$__gnuc__" in
-     2.95.[3-9]*|[3-9].*) OPTFLAGS="$OPTFLAGS -fno-strict-aliasing";;
-   esac
+--- src/config/get_cc	2014-02-01 21:41:54.534348273 +0100
++++ b/config/get_cc	2014-02-01 21:42:50.850930971 +0100
+@@ -94,7 +94,11 @@
+     OPTFLAGS="$OPTFLAGS -fno-strict-aliasing"
+   fi
+   rm -f $exe $exe$exe_suff
 -  KERNELCFLAGS=-funroll-loops
 +  if [ "$SAGE_DEBUG" = yes ]; then
 +    KERNELCFLAGS=-O1

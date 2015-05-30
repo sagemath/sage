@@ -6,55 +6,55 @@ Semigroups
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2009 Florent Hivert <florent.hivert at univ-rouen.fr>
-#                2008-2010 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category
-from sage.categories.category_singleton import Category_singleton
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
+from sage.misc.misc_c import prod
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.quotients import QuotientsCategory
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
 from sage.categories.magmas import Magmas
 from sage.structure.element import generic_power
 
-class Semigroups(Category_singleton):
+class Semigroups(CategoryWithAxiom):
     """
-    The category of (multiplicative) semigroups, i.e. sets with an associative
-    operation ``*``.
+    The category of (multiplicative) semigroups.
+
+    A *semigroup* is an associative :class:`magma <Magmas>`, that is a
+    set endowed with a multiplicative binary operation `*` which is
+    associative (see :wikipedia:`Semigroup`).
+
+    The operation `*` is not required to have a neutral element. A
+    semigroup for which such an element exists is a :class:`monoid
+    <sage.categories.monoids.Monoids>`.
 
     EXAMPLES::
 
-        sage: Semigroups()
+        sage: C = Semigroups(); C
         Category of semigroups
-        sage: Semigroups().super_categories()
+        sage: C.super_categories()
         [Category of magmas]
-        sage: Semigroups().all_super_categories()
-        [Category of semigroups, Category of magmas, Category of sets, Category of sets with partial maps, Category of objects]
+        sage: C.all_super_categories()
+        [Category of semigroups, Category of magmas,
+         Category of sets, Category of sets with partial maps, Category of objects]
+        sage: C.axioms()
+        frozenset({'Associative'})
+        sage: C.example()
+        An example of a semigroup: the left zero semigroup
 
     TESTS::
 
-        sage: C = Semigroups()
-        sage: TestSuite(C).run(verbose=True)
-        running ._test_category() . . . pass
-        running ._test_category_graph() . . . pass
-        running ._test_not_implemented_methods() . . . pass
-        running ._test_pickling() . . . pass
-
+        sage: TestSuite(C).run()
     """
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: Semigroups().super_categories()
-            [Category of magmas]
-        """
-        return [Magmas()]
+    _base_category_class_and_axiom = (Magmas, "Associative")
 
     def example(self, choice="leftzero", **kwds):
         r"""
@@ -62,12 +62,12 @@ class Semigroups(Category_singleton):
         :meth:`Category.example()
         <sage.categories.category.Category.example>`.
 
-        INPUT::
+        INPUT:
 
-         - ``choice`` -- str [default: 'leftzero']. Can be either 'leftzero'
-           for the left zero semigroup, or 'free' for the free semigroup.
-         - ``**kwds`` -- keyword arguments passed onto the constructor for the
-           chosen semigroup.
+        - ``choice`` -- str (default: 'leftzero'). Can be either 'leftzero'
+          for the left zero semigroup, or 'free' for the free semigroup.
+        - ``**kwds`` -- keyword arguments passed onto the constructor for the
+          chosen semigroup.
 
         EXAMPLES::
 
@@ -94,7 +94,7 @@ class Semigroups(Category_singleton):
 
             INPUT::
 
-             - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             EXAMPLES:
 
@@ -118,9 +118,42 @@ class Semigroups(Category_singleton):
             for x,y,z in tester.some_elements(CartesianProduct(S,S,S)):
                 tester.assert_((x * y) * z == x * (y * z))
 
+        @abstract_method(optional=True)
+        def semigroup_generators(self):
+            """
+            Return distinguished semigroup generators for ``self``.
+
+            OUTPUT: a family
+
+            This method is optional.
+
+            EXAMPLES::
+
+                sage: S = Semigroups().example("free"); S
+                An example of a semigroup: the free semigroup generated by ('a', 'b', 'c', 'd')
+                sage: S.semigroup_generators()
+                Family ('a', 'b', 'c', 'd')
+            """
+
+        def magma_generators(self):
+            """
+            An alias for :meth:`semigroup_generators`.
+
+            EXAMPLES::
+
+                sage: S = Semigroups().example("free"); S
+                An example of a semigroup: the free semigroup generated by ('a', 'b', 'c', 'd')
+                sage: S.magma_generators()
+                Family ('a', 'b', 'c', 'd')
+                sage: S.semigroup_generators()
+                Family ('a', 'b', 'c', 'd')
+            """
+            return self.semigroup_generators()
+
         def prod(self, args):
             r"""
-            Returns the product of the list of elements ``args`` inside ``self``.
+            Return the product of the list of elements ``args``
+            inside ``self``.
 
             EXAMPLES::
 
@@ -137,24 +170,23 @@ class Semigroups(Category_singleton):
 
         def cayley_graph(self, side="right", simple=False, elements = None, generators = None, connecting_set = None):
             r"""
+            Return the Cayley graph for this finite semigroup.
 
-            Returns the Cayley graph for this finite semigroup.
+            INPUT:
 
-            INPUT::
+            - ``side`` -- "left", "right", or "twosided":
+              the side on which the generators act (default:"right")
+            - ``simple`` -- boolean (default:False):
+              if True, returns a simple graph (no loops, no labels,
+              no multiple edges)
+            - ``generators`` -- a list, tuple, or family of elements
+              of ``self`` (default: ``self.semigroup_generators()``)
+            - ``connecting_set`` -- alias for ``generators``; deprecated
+            - ``elements`` -- a list (or iterable) of elements of ``self``
 
-             - ``side`` -- "left", "right", or "twosided":
-               the side on which the generators act (default:"right")
-             - ``simple`` -- boolean (default:False):
-               if True, returns a simple graph (no loops, no labels,
-               no multiple edges)
-             - ``generators`` -- a list, tuple, or family of elements of ``self``
-               (default: ``self.semigroup_generators()``)
-             - ``connecting_set`` -- alias for ``generators``; deprecated
-             - ``elements`` -- a list (or iterable) of elements of ``self``
+            OUTPUT:
 
-            OUTPUT::
-
-             - :class:`DiGraph`
+            - :class:`DiGraph`
 
             EXAMPLES:
 
@@ -199,7 +231,8 @@ class Semigroups(Category_singleton):
                 (85, 84)
                 sage: G.show3d(color_by_label=True, edge_size=0.001, vertex_size=0.01)
 
-            We now illustrate the ``side`` and ``simple`` options on a semigroup::
+            We now illustrate the ``side`` and ``simple`` options on
+            a semigroup::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b'))
                 sage: g = S.cayley_graph(simple=True)
@@ -246,33 +279,35 @@ class Semigroups(Category_singleton):
                 ...
                 ValueError: option 'side' must be 'left', 'right' or 'twosided'
 
-            TODO:
+            .. TODO::
 
-             - Add more options for constructing subgraphs of the
-               Cayley graph, handling the standard use cases when
-               exploring large/infinite semigroups (a predicate,
-               generators of an ideal, a maximal length in term of the
-               generators)
+                - Add more options for constructing subgraphs of the
+                  Cayley graph, handling the standard use cases when
+                  exploring large/infinite semigroups (a predicate,
+                  generators of an ideal, a maximal length in term of the
+                  generators)
 
-             - Specify good default layout/plot/latex options in the graph
+                - Specify good default layout/plot/latex options in the graph
 
-             - Generalize to combinatorial modules with module generators / operators
+                - Generalize to combinatorial modules with module generators / operators
 
             AUTHORS:
 
-             - Bobby Moretti (2007-08-10)
-             - Robert Miller (2008-05-01): editing
-             - Nicolas M. Thiery (2008-12): extension to semigroups,
-               ``side``, ``simple``, and ``elements`` options, ...
+            - Bobby Moretti (2007-08-10)
+            - Robert Miller (2008-05-01): editing
+            - Nicolas M. Thiery (2008-12): extension to semigroups,
+              ``side``, ``simple``, and ``elements`` options, ...
             """
             from sage.graphs.digraph import DiGraph
+            from monoids import Monoids
             from groups import Groups
             if not side in ["left", "right", "twosided"]:
-                raise ValueError, "option 'side' must be 'left', 'right' or 'twosided'"
+                raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
             if elements is None:
                 assert self.is_finite(), "elements should be specified for infinite semigroups"
-                elements = list(self)
-            elements_set = set(elements)
+                elements = self
+            else:
+                elements = set(elements)
             if simple or self in Groups():
                 result = DiGraph()
             else:
@@ -282,7 +317,10 @@ class Semigroups(Category_singleton):
             if connecting_set is not None:
                 generators = connecting_set
             if generators is None:
-                generators = self.semigroup_generators()
+                if self in Monoids and hasattr(self, "monoid_generators"):
+                    generators = self.monoid_generators()
+                else:
+                    generators = self.semigroup_generators()
             if isinstance(generators, (list, tuple)):
                 generators = dict((self(g), self(g)) for g in generators)
             left  = (side == "left"  or side == "twosided")
@@ -292,7 +330,9 @@ class Semigroups(Category_singleton):
                 Skips edges whose targets are not in elements
                 Return an appropriate edge given the options
                 """
-                if target not in elements_set: return
+                if (elements is not self and
+                    target not in elements):
+                    return
                 if simple:
                     result.add_edge([source, target])
                 elif side == "twosided":
@@ -307,15 +347,101 @@ class Semigroups(Category_singleton):
                         add_edge(x, x*generators[i], i, "right")
             return result
 
+        def subsemigroup(self, generators, one=None, category=None):
+            r"""
+            Return the multiplicative subsemigroup generated by ``generators``.
+
+            INPUT:
+
+            - ``generators`` -- a finite family of elements of
+              ``self``, or a list, iterable, ... that can be converted
+              into one (see :class:`Family`).
+
+            - ``one`` -- a unit for the subsemigroup, or ``None``.
+
+            - ``category`` -- a category
+
+            This implementation lazily constructs all the elements of
+            the semigroup, and the right Cayley graph relations
+            between them, and uses the latter as an automaton.
+
+            See :class:`sage.sets.monoids.AutomaticSemigroup` for details.
+
+            EXAMPLES::
+
+                sage: R = IntegerModRing(15)
+                sage: M = R.subsemigroup([R(3),R(5)]); M
+                A subsemigroup of (Ring of integers modulo 15) with 2 generators
+                sage: M.list()
+                [3, 5, 9, 0, 10, 12, 6]
+
+            By default, `M` is just in the category of subsemigroups::
+
+                sage: M in Semigroups().Subobjects()
+                True
+
+            In the following example, we specify that `M` is a
+            submonoid of the finite monoid `R` (it shares the same
+            unit), and a group by itself::
+
+                sage: M = R.subsemigroup([R(-1)],
+                ....:     category=Monoids().Finite().Subobjects() & Groups()); M
+                A submonoid of (Ring of integers modulo 15) with 1 generators
+                sage: M.list()
+                [1, 14]
+                sage: M.one()
+                1
+
+            In the following example `M` is a group; however its unit
+            does not coincide with that of `R`, so `M` is only a
+            subsemigroup, and we need to specify its unit explictly::
+
+                sage: M = R.subsemigroup([R(5)],
+                ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
+                Traceback (most recent call last):
+                ...
+                ValueError: For a monoid which is just a subsemigroup, the unit should be specified
+
+                sage: M = R.subsemigroup([R(5)], one=R(10),
+                ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
+                A subsemigroup of (Ring of integers modulo 15) with 1 generators
+                sage: M in Groups()
+                True
+                sage: M.list()
+                [10, 5]
+                sage: M.one()
+                10
+
+            TESTS::
+
+                sage: TestSuite(M).run()
+                Failure in _test_inverse:
+                Traceback (most recent call last):
+                ...
+                The following tests failed: _test_inverse
+
+            .. TODO::
+
+                - Fix the above failure by providing a default
+                  implementation of ``__invert__`` for finite groups
+                  (or even finite monoids).
+                - Provide a default implementation of ``one`` for a
+                  finite monoid, so that we would not need to specify
+                  it explicitly?
+            """
+            from sage.monoids.automatic_semigroup import AutomaticSemigroup
+            return AutomaticSemigroup(generators, ambient=self, one=one,
+                                      category=category)
+
     class ElementMethods:
 
         def _pow_(self, n):
             """
-            Returns self to the $n^{th}$ power.
+            Return ``self`` to the `n^{th}` power.
 
-            INPUT::
+            INPUT:
 
-             - ``n`` -- a positive integer
+            - ``n`` -- a positive integer
 
             EXAMPLES::
 
@@ -339,10 +465,15 @@ class Semigroups(Category_singleton):
 
         __pow__ = _pow_
 
+
+    Finite = LazyImport('sage.categories.finite_semigroups', 'FiniteSemigroups', at_startup=True)
+    FinitelyGeneratedAsMagma = LazyImport('sage.categories.finitely_generated_semigroups', 'FinitelyGeneratedSemigroups')
+    Unital = LazyImport('sage.categories.monoids', 'Monoids', at_startup=True)
+
     #######################################
     class Subquotients(SubquotientsCategory):
         r"""
-        The category of sub/quotient semi-groups.
+        The category of subquotient semi-groups.
 
         EXAMPLES::
 
@@ -368,7 +499,7 @@ class Semigroups(Category_singleton):
 
         def example(self):
             """
-            Returns an example of sub quotient of a semigroup, as per
+            Returns an example of subquotient of a semigroup, as per
             :meth:`Category.example()
             <sage.categories.category.Category.example>`.
 
@@ -384,7 +515,7 @@ class Semigroups(Category_singleton):
 
         def example(self):
             r"""
-            Returns an example of quotient of a semigroup, as per
+            Return an example of quotient of a semigroup, as per
             :meth:`Category.example()
             <sage.categories.category.Category.example>`.
 
@@ -400,7 +531,7 @@ class Semigroups(Category_singleton):
 
             def semigroup_generators(self):
                 r"""
-                Returns semigroup generators for ``self`` by
+                Return semigroup generators for ``self`` by
                 retracting the semigroup generators of the ambient
                 semigroup.
 
@@ -414,6 +545,9 @@ class Semigroups(Category_singleton):
 
         def extra_super_categories(self):
             """
+            Implement the fact that a cartesian product of semigroups is a
+            semigroup.
+
             EXAMPLES::
 
                 sage: Semigroups().CartesianProducts().extra_super_categories()
@@ -424,26 +558,27 @@ class Semigroups(Category_singleton):
             return [Semigroups()]
 
     class Algebras(AlgebrasCategory):
+        """
+        TESTS::
+
+            sage: TestSuite(Semigroups().Algebras(QQ)).run()
+            sage: TestSuite(Semigroups().Finite().Algebras(QQ)).run()
+        """
 
         def extra_super_categories(self):
             """
+            Implement the fact that the algebra of a semigroup is indeed
+            a (not necessarily unital) algebra.
+
             EXAMPLES::
 
                 sage: Semigroups().Algebras(QQ).extra_super_categories()
-                [Category of algebras with basis over Rational Field]
+                [Category of semigroups]
                 sage: Semigroups().Algebras(QQ).super_categories()
-                [Category of algebras with basis over Rational Field, Category of set algebras over Rational Field]
-
-                sage: Semigroups().example().algebra(ZZ).categories()
-                [Category of semigroup algebras over Integer Ring,
-                 Category of algebras with basis over Integer Ring,
-                 ...
-                 Category of objects]
-
-            FIXME: that should be non unital algebras!
+                [Category of associative algebras over Rational Field,
+                 Category of magma algebras over Rational Field]
             """
-            from sage.categories.algebras_with_basis import AlgebrasWithBasis
-            return [AlgebrasWithBasis(self.base_ring())]
+            return [Semigroups()]
 
         class ParentMethods:
 
@@ -451,34 +586,39 @@ class Semigroups(Category_singleton):
             def algebra_generators(self):
                 r"""
                 The generators of this algebra, as per
-                :meth:`Algebras.ParentMethods.algebra_generators()
-                <sage.categories.algebras.Algebras.ParentMethods.algebra_generators>`.
+                :meth:`MagmaticAlgebras.ParentMethods.algebra_generators()
+                <.magmatic_algebras.MagmaticAlgebras.ParentMethods.algebra_generators>`.
 
-                They correspond to the generators of the group.
+                They correspond to the generators of the semigroup.
 
                 EXAMPLES::
 
-                    sage: A = FiniteSemigroups().example().algebra(ZZ)
-                    sage: A.algebra_generators()
+                    sage: M = FiniteSemigroups().example(); M
+                    An example of a finite semigroup:
+                    the left regular band generated by ('a', 'b', 'c', 'd')
+                    sage: M.semigroup_generators()
+                    Family ('a', 'b', 'c', 'd')
+                    sage: M.algebra(ZZ).algebra_generators()
                     Finite family {0: B['a'], 1: B['b'], 2: B['c'], 3: B['d']}
                 """
-                from sage.sets.family import Family
                 return self.basis().keys().semigroup_generators().map(self.monomial)
 
             def product_on_basis(self, g1, g2):
                 r"""
                 Product, on basis elements, as per
-                :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis()
-                <sage.categories.algebra_with_basis.AlgebrasWithBasis.ParentMethods.product_on_basis>`.
+                :meth:`MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis()
+                <.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis>`.
 
-                The product of two basis elements is induced by the product of
-                the corresponding elements of the group.
+                The product of two basis elements is induced by the
+                product of the corresponding elements of the group.
 
                 EXAMPLES::
 
-                    sage: A = FiniteSemigroups().example().algebra(QQ)
+                    sage: S = FiniteSemigroups().example(); S
+                    An example of a finite semigroup: the left regular band generated by ('a', 'b', 'c', 'd')
+                    sage: A = S.algebra(QQ)
                     sage: a,b,c,d = A.algebra_generators()
-                    sage: a * b + b*d*c
+                    sage: a * b + b * d * c * d
                     B['ab'] + B['bdc']
                 """
                 return self.monomial(g1 * g2)

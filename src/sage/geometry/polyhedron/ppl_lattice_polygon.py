@@ -303,8 +303,8 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
             return self._find_isomorphism_degenerate(polytope)
 
         polytope_origin = polytope_vertices[0]
-        origin_P = C_Polyhedron(Generator_System_iterator(
-            polytope.minimized_generators()).next())
+        origin_P = C_Polyhedron(next(Generator_System_iterator(
+            polytope.minimized_generators())))
 
         neighbors = []
         for c in polytope.minimized_constraints():
@@ -399,7 +399,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
     def plot(self):
         """
-        Plot the lattice polygon
+        Plot the lattice polygon.
 
         OUTPUT:
 
@@ -409,9 +409,12 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: P = LatticePolytope_PPL((1,0), (0,1), (0,0), (2,2))
-            sage: P.plot()    # not tested
+            sage: P.plot()
+            Graphics object consisting of 6 graphics primitives
             sage: LatticePolytope_PPL([0], [1]).plot()
+            Graphics object consisting of 3 graphics primitives
             sage: LatticePolytope_PPL([0]).plot()
+            Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
         from sage.plot.polygon import polygon2d
@@ -420,7 +423,8 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
         if self.space_dimension() == 1:
             vertices = [vector(ZZ, (v[0], 0)) for v in vertices]
             points = [vector(ZZ, (p[0], 0)) for p in points]
-        point_plot = sum(point2d(p, pointsize=100, color='red') for p in points)
+        point_plot = sum(point2d(p, pointsize=100, color='red')
+                         for p in points)
         polygon_plot = polygon2d(vertices, alpha=0.2, color='green',
                                  zorder=-1, thickness=2)
         return polygon_plot + point_plot
@@ -450,7 +454,7 @@ def polar_P2_polytope():
 
 @cached_function
 def polar_P1xP1_polytope():
-    """
+    r"""
     The polar of the `P^1 \times P^1` polytope
 
     EXAMPLES::
@@ -518,7 +522,7 @@ def subpolygons_of_polar_P2_112():
 
 @cached_function
 def subpolygons_of_polar_P1xP1():
-    """
+    r"""
     The lattice sub-polygons of the polar `P^1 \times P^1` polytope
 
     OUTPUT:

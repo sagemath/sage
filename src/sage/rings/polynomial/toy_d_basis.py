@@ -212,13 +212,13 @@ def d_basis(F, strat=True):
     K = R.base_ring()
 
     G = set(inter_reduction(F.gens()))
-    B = set(filter(lambda (x,y): x!=y, [(f1,f2) for f1 in G for f2 in G]))
+    B = set((f1, f2) for f1 in G for f2 in G if f1 != f2)
     D = set()
     C = set(B)
 
     LCM = R.monomial_lcm
     divides = R.monomial_divides
-    divides_ZZ = lambda x,y: ZZ(x).divides(ZZ(y))
+    divides_ZZ = lambda x, y: ZZ(x).divides(ZZ(y))
 
     while B!=set():
         while C!=set():
@@ -316,8 +316,10 @@ def update(G,B,h):
         sage: B = set([])
         sage: h = x^2*y - x^2 + y - 3
         sage: update(G,B,h)
-        (set([3*x^2 + 7, 2*y + 1, x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1]),
-         set([(x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1),  (x^2*y - x^2 + y - 3, 3*x^2 + 7), (x^2*y - x^2 + y - 3, 2*y + 1)]))
+        ({2*y + 1, 3*x^2 + 7, x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1},
+         {(x^2*y - x^2 + y - 3, 2*y + 1),
+          (x^2*y - x^2 + y - 3, 3*x^2 + 7),
+          (x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1)})
     """
     R = h.parent()
     LCM = R.monomial_lcm

@@ -92,7 +92,8 @@ case "$UNAME" in
     OpenBSD)
 	# Untested. (David Kirkby, 11th November 2010)
         # Extension changed from 6.1 to 6.2; still untested. (October 2011)
-	DYLIB_NAME=libreadline.so.6.2;;
+        # Extension changed from 6.2 to 6.3; still untested. (June 2014)
+	DYLIB_NAME=libreadline.so.6.3;;
     FreeBSD)
 	DYLIB_NAME=libreadline.so.6;;
     HP-UX)

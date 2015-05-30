@@ -143,7 +143,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         self._alphabet = names
         self.__ngens = self._alphabet.cardinality()
-        CombinatorialFreeModule.__init__(self, R, Words(names),
+        CombinatorialFreeModule.__init__(self, R, Words(names, infinite=False),
             latex_prefix="",
             category=(AlgebrasWithBasis(R), CommutativeAlgebras(R), CoalgebrasWithBasis(R)))
 
@@ -301,9 +301,9 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
             sage: F = ShuffleAlgebra(QQ,'ab')
             sage: S = F.an_element(); S
-            B[word: ] + 2*B[word: a] + 3*B[word: b]
+            2*B[word: ] + 2*B[word: a] + 3*B[word: b]
             sage: F.coproduct(S)
-            B[word: ] # B[word: ] + 2*B[word: ] # B[word: a] + 3*B[word: ] # B[word: b]
+            2*B[word: ] # B[word: ] + 2*B[word: ] # B[word: a] + 3*B[word: ] # B[word: b]
              + 2*B[word: a] # B[word: ] + 3*B[word: b] # B[word: ]
             sage: F.coproduct(F.one())
             B[word: ] # B[word: ]
@@ -319,9 +319,9 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
             sage: F = ShuffleAlgebra(QQ,'ab')
             sage: S = F.an_element(); S
-            B[word: ] + 2*B[word: a] + 3*B[word: b]
+            2*B[word: ] + 2*B[word: a] + 3*B[word: b]
             sage: F.counit(S)
-            1
+            2
         """
         return S.monomial_coefficients().get(Word(), 0)
 
@@ -336,9 +336,13 @@ class ShuffleAlgebra(CombinatorialFreeModule):
             Shuffle Algebra on 3 generators ['f', 'g', 'h'] over Integer Ring
             sage: A.algebra_generators()
             Family (B[word: f], B[word: g], B[word: h])
+
+            sage: A = ShuffleAlgebra(QQ, ['x1','x2'])
+            sage: A.algebra_generators()
+            Family (B[word: x1], B[word: x2])
         """
         Words = self.basis().keys()
-        return Family( [self.monomial(Words(a)) for a in self._alphabet] )
+        return Family( [self.monomial(Words([a])) for a in self._alphabet] )
         # FIXME: use this once the keys argument of FiniteFamily will be honoured
         # for the specifying the order of the elements in the family
         #return Family(self._alphabet, lambda a: self.term(self.basis().keys()(a)))

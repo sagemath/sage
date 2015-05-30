@@ -1,5 +1,5 @@
 """nodoctest
-all.py -- export of projective_space to Sage
+all.py -- export of projective schemes to Sage
 """
 
 #*****************************************************************************
@@ -21,6 +21,4 @@ all.py -- export of projective_space to Sage
 #*****************************************************************************
 
 from projective_space import ProjectiveSpace, is_ProjectiveSpace
-
-
 

@@ -68,7 +68,7 @@ def bCheck(c,v,p,b):
     """
     val = (v+1).floor()
     deg = c.degree()
-    coeffs = c.coeffs()
+    coeffs = c.coefficients(sparse=False)
     lcoeff = coeffs[deg]; coeffs.remove(lcoeff)
     check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i) for i in range(0,len(coeffs)) if coeffs[i] != 0]
     check2 = (val - lcoeff.valuation(p))/deg
@@ -368,8 +368,8 @@ def Min(Fun,p,ubRes,conj):
             A = (p**k)*z + b
             Ft = Q(F(A) - b*G(A))
             Gt = Q((p**k)*G(A))
-            Fcoeffs = Ft.coeffs()
-            Gcoeffs = Gt.coeffs()
+            Fcoeffs = Ft.coefficients(sparse=False)
+            Gcoeffs = Gt.coefficients(sparse=False)
             coeffs = Fcoeffs + Gcoeffs
             RHS = (d + 1)*k/2
             #If there is some b such that Res(phi^A) < Res(phi), we must have ord_p(c) >

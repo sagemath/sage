@@ -5,21 +5,20 @@ Rings
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
-#                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.rngs import Rngs
-from sage.categories.semirings import Semirings
-from sage.categories.category import Category
-from sage.categories.category_singleton import Category_singleton
-from category import HomCategory
 from sage.misc.cachefunc import cached_method
-import sage
+from sage.misc.lazy_import import LazyImport
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.rngs import Rngs
+from sage.structure.element import Element
+from functools import reduce
 
-class Rings(Category_singleton):
+class Rings(CategoryWithAxiom):
     """
     The category of rings
 
@@ -27,31 +26,99 @@ class Rings(Category_singleton):
 
     EXAMPLES::
 
-      sage: Rings()
-      Category of rings
-      sage: Rings().super_categories()
-      [Category of rngs, Category of semirings]
+        sage: Rings()
+        Category of rings
+        sage: sorted(Rings().super_categories(), key=str)
+        [Category of rngs, Category of semirings]
+
+        sage: sorted(Rings().axioms())
+        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
+         'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+
+        sage: Rings() is (CommutativeAdditiveGroups() & Monoids()).Distributive()
+        True
+        sage: Rings() is Rngs().Unital()
+        True
+        sage: Rings() is Semirings().AdditiveInverse()
+        True
 
     TESTS::
 
         sage: TestSuite(Rings()).run()
 
-    TODO (see: http://trac.sagemath.org/sage_trac/wiki/CategoriesRoadMap)
+    .. TODO::
 
-     - Make Rings() into a subcategory or alias of Algebras(ZZ);
+        (see: http://trac.sagemath.org/sage_trac/wiki/CategoriesRoadMap)
 
-     - A parent P in the category ``Rings()`` should automatically be
-       in the category ``Algebras(P)``.
+        - Make Rings() into a subcategory or alias of Algebras(ZZ);
+
+        - A parent P in the category ``Rings()`` should automatically be
+          in the category ``Algebras(P)``.
     """
 
-    def super_categories(self):
-        """
-        EXAMPLES::
+    _base_category_class_and_axiom = (Rngs, "Unital")
 
-            sage: Rings().super_categories()
-            [Category of rngs, Category of semirings]
-        """
-        return [Rngs(), Semirings()]
+    class SubcategoryMethods:
+
+        def NoZeroDivisors(self):
+            """
+            Return the full subcategory of the objects of ``self`` having
+            no nonzero zero divisors.
+
+            A *zero divisor* in a ring `R` is an element `x \in R` such
+            that there exists a nonzero element `y \in R` such that
+            `x \cdot y = 0` or `y \cdot x = 0`
+            (see :wikipedia:`Zero_divisor`).
+
+            EXAMPLES::
+
+                sage: Rings().NoZeroDivisors()
+                Category of domains
+
+            .. NOTE::
+
+                This could be generalized to
+                :class:`MagmasAndAdditiveMagmas.Distributive.AdditiveUnital`.
+
+            TESTS::
+
+                sage: TestSuite(Rings().NoZeroDivisors()).run()
+                sage: Algebras(QQ).NoZeroDivisors.__module__
+                'sage.categories.rings'
+            """
+            return self._with_axiom('NoZeroDivisors')
+
+        def Division(self):
+            """
+            Return the full subcategory of the division objects of ``self``.
+
+            A ring satisfies the *division axiom* if all non-zero
+            elements have multiplicative inverses.
+
+            .. NOTE::
+
+                This could be generalized to
+                :class:`MagmasAndAdditiveMagmas.Distributive.AdditiveUnital`.
+
+            EXAMPLES::
+
+                sage: Rings().Division()
+                Category of division rings
+                sage: Rings().Commutative().Division()
+                Category of fields
+
+            TESTS::
+
+                sage: TestSuite(Rings().Division()).run()
+                sage: Algebras(QQ).Division.__module__
+                'sage.categories.rings'
+            """
+            return self._with_axiom('Division')
+
+
+    NoZeroDivisors = LazyImport('sage.categories.domains', 'Domains', at_startup=True)
+    Division       = LazyImport('sage.categories.division_rings', 'DivisionRings', at_startup=True)
+    Commutative    = LazyImport('sage.categories.commutative_rings', 'CommutativeRings', at_startup=True)
 
     class ParentMethods:
         def is_ring(self):
@@ -65,6 +132,29 @@ class Rings(Category_singleton):
 
             """
             return True
+
+        def is_zero(self):
+            """
+            Return ``True`` if this is the zero ring.
+
+            EXAMPLES::
+
+                sage: Integers(1).is_zero()
+                True
+                sage: Integers(2).is_zero()
+                False
+                sage: QQ.is_zero()
+                False
+                sage: R.<x> = ZZ[]
+                sage: R.quo(1).is_zero()
+                True
+                sage: R.<x> = GF(101)[]
+                sage: R.quo(77).is_zero()
+                True
+                sage: R.quo(x^2+1).is_zero()
+                False
+            """
+            return self.one() == self.zero()
 
         def bracket(self, x, y):
             """
@@ -128,9 +218,9 @@ class Rings(Category_singleton):
 
             """
             if category is not None and not category.is_subcategory(Rings()):
-                raise TypeError, "%s is not a subcategory of Rings()"%category
+                raise TypeError("%s is not a subcategory of Rings()"%category)
             if Y not in Rings():
-                raise TypeError, "%s is not a ring"%Y
+                raise TypeError("%s is not a ring"%Y)
             from sage.rings.homset import RingHomset
             return RingHomset(self, Y, category = category)
 
@@ -220,7 +310,7 @@ class Rings(Category_singleton):
                 elif side=='right':
                     return self.ideal(x,side='twosided')
             # duck typing failed
-            raise TypeError, "Don't know how to transform %s into an ideal of %s"%(x,self)
+            raise TypeError("Don't know how to transform %s into an ideal of %s"%(x,self))
 
         @cached_method
         def ideal_monoid(self):
@@ -297,7 +387,8 @@ class Rings(Category_singleton):
                 return
 
             # test that #12988 is fixed
-            tester.assertEqual(type(characteristic),sage.rings.integer.Integer)
+            from sage.rings.integer import Integer
+            tester.assertIsInstance(characteristic, Integer)
 
         def ideal(self, *args, **kwds):
             """
@@ -347,7 +438,7 @@ class Rings(Category_singleton):
                  of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
             """
-            if kwds.has_key('coerce'):
+            if 'coerce' in kwds:
                 coerce = kwds['coerce']
                 del kwds['coerce']
             else:
@@ -380,10 +471,10 @@ class Rings(Category_singleton):
                         try:
                             if self.has_coerce_map_from(first):
                                 gens = first.gens() # we have a ring as argument
-                            elif hasattr(first,'parent'):
+                            elif isinstance(first, Element):
                                 gens = [first]
                             else:
-                                raise ArithmeticError, "There is no coercion from %s to %s"%(first,self)
+                                raise ArithmeticError("There is no coercion from %s to %s"%(first,self))
                         except TypeError: # first may be a ring element
                             pass
                         break
@@ -402,7 +493,7 @@ class Rings(Category_singleton):
                     for h in gens[1:]:
                         g = g.gcd(h)
                 gens = [g]
-            if kwds.has_key('ideal_class'):
+            if 'ideal_class' in kwds:
                 C = kwds['ideal_class']
                 del kwds['ideal_class']
             else:
@@ -492,11 +583,10 @@ class Rings(Category_singleton):
                 sage: class PowerIdeal(Ideal_nc):
                 ...    def __init__(self, R, n):
                 ...        self._power = n
-                ...        self._power = n
                 ...        Ideal_nc.__init__(self,R,[R.prod(m) for m in CartesianProduct(*[R.gens()]*n)])
                 ...    def reduce(self,x):
                 ...        R = self.ring()
-                ...        return add([c*R(m) for c,m in x if len(m)<self._power],R(0))
+                ...        return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
                 ...
                 sage: I = PowerIdeal(F,3)
                 sage: Q = Rings().parent_class.quotient(F,I); Q
@@ -511,29 +601,28 @@ class Rings(Category_singleton):
                 xbar*ybar
                 sage: Q.0*Q.1*Q.0
                 0
-
             """
             from sage.rings.quotient_ring import QuotientRing
             return QuotientRing(self, I, names=names)
+
         def quo(self, I, names=None):
             """
             Quotient of a ring by a two-sided ideal.
 
             NOTE:
 
-            This is a synonyme for :meth:`quotient`.
+            This is a synonym for :meth:`quotient`.
 
             EXAMPLE::
 
                 sage: MS = MatrixSpace(QQ,2)
-                sage: MS.full_category_initialisation()
                 sage: I = MS*MS.gens()*MS
 
             ``MS`` is not an instance of :class:`~sage.rings.ring.Ring`.
-            But since its category was fully initalised (which is not
-            by default, by :trac:`11900`), it is an instance of
-            the parent class of the category of rings. The quotient
-            method is inherited from there::
+
+            However it is an instance of the parent class of the
+            category of rings. The quotient method is inherited from
+            there::
 
                 sage: isinstance(MS,sage.rings.ring.Ring)
                 False
@@ -613,11 +702,236 @@ class Rings(Category_singleton):
                 ...
                 TypeError: Use self.quo(I) or self.quotient(I) to construct the quotient ring.
             """
-            raise TypeError, "Use self.quo(I) or self.quotient(I) to construct the quotient ring."
+            raise TypeError("Use self.quo(I) or self.quotient(I) to construct the quotient ring.")
+
+        def __getitem__(self, arg):
+            """
+            Extend this ring by one or several elements to create a polynomial
+            ring, a power series ring, or an algebraic extension.
+
+            This is a convenience method intended primarily for interactive
+            use.
+
+            .. SEEALSO::
+
+                :func:`~sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing`,
+                :func:`~sage.rings.power_series_ring.PowerSeriesRing`,
+                :meth:`~sage.rings.ring.Ring.extension`,
+                :meth:`sage.rings.integer_ring.IntegerRing_class.__getitem__`,
+                :meth:`sage.rings.matrix_space.MatrixSpace.__getitem__`,
+                :meth:`sage.structure.parent.Parent.__getitem__`
+
+            EXAMPLES:
+
+            We create several polynomial rings::
+
+                sage: ZZ['x']
+                Univariate Polynomial Ring in x over Integer Ring
+                sage: QQ['x']
+                Univariate Polynomial Ring in x over Rational Field
+                sage: GF(17)['abc']
+                Univariate Polynomial Ring in abc over Finite Field of size 17
+                sage: GF(17)['a,b,c']
+                Multivariate Polynomial Ring in a, b, c over Finite Field of size 17
+                sage: GF(17)['a']['b']
+                Univariate Polynomial Ring in b over Univariate Polynomial Ring in a over Finite Field of size 17
+
+            We can also create power series rings by using double brackets::
+
+                sage: QQ[['t']]
+                Power Series Ring in t over Rational Field
+                sage: ZZ[['W']]
+                Power Series Ring in W over Integer Ring
+
+                sage: ZZ[['x,y,z']]
+                Multivariate Power Series Ring in x, y, z over Integer Ring
+                sage: ZZ[['x','T']]
+                Multivariate Power Series Ring in x, T over Integer Ring
+
+            Use :func:`~sage.rings.fraction_field.Frac` or
+            :meth:`~sage.rings.ring.CommutativeRing.fraction_field` to obtain
+            the fields of rational functions and Laurent series::
+
+                sage: Frac(QQ['t'])
+                Fraction Field of Univariate Polynomial Ring in t over Rational Field
+                sage: Frac(QQ[['t']])
+                Laurent Series Ring in t over Rational Field
+                sage: QQ[['t']].fraction_field()
+                Laurent Series Ring in t over Rational Field
+
+            Note that the same syntax can be used to create number fields::
+
+                sage: QQ[I]
+                Number Field in I with defining polynomial x^2 + 1
+                sage: QQ[sqrt(2)]
+                Number Field in sqrt2 with defining polynomial x^2 - 2
+                sage: QQ[sqrt(2),sqrt(3)]
+                Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
+
+            and orders in number fields::
+
+                sage: ZZ[I]
+                Order in Number Field in I with defining polynomial x^2 + 1
+                sage: ZZ[sqrt(5)]
+                Order in Number Field in sqrt5 with defining polynomial x^2 - 5
+                sage: ZZ[sqrt(2)+sqrt(3)]
+                Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1
+
+            TESTS:
+
+            A few corner cases::
+
+                sage: QQ[()]
+                Multivariate Polynomial Ring in no variables over Rational Field
+
+                sage: QQ[[]]
+                Traceback (most recent call last):
+                ...
+                TypeError: power series rings must have at least one variable
+
+            Some flexibility is allowed when specifying variables::
+
+                sage: QQ["x", SR.var('y'), polygen(CC, 'z')]
+                Multivariate Polynomial Ring in x, y, z over Rational Field
+                sage: QQ[["x", SR.var('y'), polygen(CC, 'z')]]
+                Multivariate Power Series Ring in x, y, z over Rational Field
+
+            but more baroque expressions do not work::
+
+                sage: QQ['a,b','c']
+                Traceback (most recent call last):
+                ...
+                ValueError: variable names must be alphanumeric, but one is 'a,b' which is not.
+                sage: QQ[['a,b','c']]
+                Traceback (most recent call last):
+                ...
+                ValueError: variable names must be alphanumeric, but one is 'a,b' which is not.
+
+                sage: QQ[[['x']]]
+                Traceback (most recent call last):
+                ...
+                TypeError: expected R[...] or R[[...]], not R[[[...]]]
+
+            Extension towers are built as follows and use distinct generator names::
+
+                sage: K = QQ[2^(1/3), 2^(1/2), 3^(1/3)]
+                sage: K
+                Number Field in a with defining polynomial x^3 - 2 over its base field
+                sage: K.base_field()
+                Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
+                sage: K.base_field().base_field()
+                Number Field in b with defining polynomial x^3 - 3
+
+            """
+            def normalize_arg(arg):
+                if isinstance(arg, (tuple, list)):
+                    # Allowing arbitrary iterables would create confusion, but we
+                    # may want to support a few more.
+                    return tuple(arg)
+                elif isinstance(arg, str):
+                    return tuple(arg.split(','))
+                else:
+                    return (arg,)
+
+            # 1. If arg is a list, try to return a power series ring.
+
+            if isinstance(arg, list):
+                if arg == []:
+                    raise TypeError("power series rings must have at least one variable")
+                elif len(arg) == 1:
+                    # R[["a,b"]], R[[(a,b)]]...
+                    if isinstance(arg[0], list):
+                        raise TypeError("expected R[...] or R[[...]], not R[[[...]]]")
+                    elts = normalize_arg(arg[0])
+                else:
+                    elts = normalize_arg(arg)
+                from sage.rings.power_series_ring import PowerSeriesRing
+                return PowerSeriesRing(self, elts)
+
+            # 2. Otherwise, if all specified elements are algebraic, try to
+            #    return an algebraic extension
+
+            elts = normalize_arg(arg)
+
+            try:
+                minpolys = [a.minpoly() for a in elts]
+            except (AttributeError, NotImplementedError, ValueError, TypeError):
+                minpolys = None
+
+            if minpolys:
+                # how to pass in names?
+                # TODO: set up embeddings
+                names = tuple(_gen_names(elts))
+                try:
+                    # Doing the extension all at once is best, if possible...
+                    return self.extension(minpolys, names)
+                except (TypeError, ValueError):
+                    # ...but we can also construct it iteratively
+                    return reduce(lambda R, ext: R.extension(*ext), zip(minpolys, names), self)
+
+            # 2. Otherwise, try to return a polynomial ring
+
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            return PolynomialRing(self, elts)
 
     class ElementMethods:
-        pass
+        def is_unit(self):
+            r"""
+            Return whether this element is a unit in the ring.
 
+            .. NOTE::
 
-    class HomCategory(HomCategory):
-        pass
+                This is a generic implementation for (non-commutative) rings
+                which only works for the one element, its additive inverse, and
+                the zero element.  Most rings should provide a more specialized
+                implementation.
+
+            EXAMPLES::
+
+                sage: MS = MatrixSpace(ZZ, 2)
+                sage: MS.one().is_unit()
+                True
+                sage: MS.zero().is_unit()
+                False
+                sage: MS([1,2,3,4]).is_unit()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+
+            """
+            if self == 1 or self == -1:
+                return True
+            if self == 0: # now 0 != 1
+                return False
+            raise NotImplementedError
+
+def _gen_names(elts):
+    r"""
+    Used to find a name for a generator when rings are created using the
+    ``__getitem__`` syntax, e.g. ``ZZ['x']``, ``ZZ[sqrt(2)]``.
+
+    EXAMPLES::
+
+        sage: from sage.categories.rings import _gen_names
+        sage: list(_gen_names([sqrt(5)]))
+        ['sqrt5']
+        sage: list(_gen_names([sqrt(-17), 2^(1/3)]))
+        ['a', 'b']
+        sage: list(_gen_names((1..27)))[-1]
+        'aa'
+    """
+    import re
+    from sage.structure.parent_gens import _certify_names
+    from sage.combinat.words.words import Words
+    it = iter(Words("abcdefghijklmnopqrstuvwxyz", infinite=False))
+    next(it) # skip empty word
+    for x in elts:
+        name = str(x)
+        m = re.match('^sqrt\((\d+)\)$', name)
+        if m:
+            name = "sqrt%s" % m.groups()[0]
+        try:
+            _certify_names([name])
+        except ValueError:
+            name = next(it).string_rep()
+        yield name

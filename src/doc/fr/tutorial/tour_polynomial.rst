@@ -73,7 +73,7 @@ peut servir pour une très large classe d'objets.)
     True
 
 Quelle que soit la méthode utilisée pour définir l'anneau de polynômes, on
-récupère l'indéterminée comme le :math:`0`-ième générateur :
+récupère l'indéterminée comme le :math:`0`-ième générateur :
 
 ::
 
@@ -83,8 +83,8 @@ récupère l'indéterminée comme le :math:`0`-ième générateur :
     True
 
 Notez que les nombres complexes peuvent être construits de façon
-similaire : les nombres complexes peuvent être vus comme engendrés sur
-les réels par le symbole ``i``. Aussi, on dispose de :
+similaire : les nombres complexes peuvent être vus comme engendrés sur
+les réels par le symbole ``i``. Aussi, on dispose de :
 
 ::
 
@@ -231,7 +231,7 @@ manières suivantes.
     Multivariate Polynomial Ring in z0, z1, z2 over Finite Field of size 5
 
 De même que pour les polynômes à une seule variable, les variantes
-suivantes sont autorisées :
+suivantes sont autorisées :
 
 ::
 
@@ -241,7 +241,7 @@ suivantes sont autorisées :
     Multivariate Polynomial Ring in z0, z1, z2 over Finite Field of size 5
 
 Si l'on désire de simples lettres comme noms de variables, on
-peut utiliser les raccourcis suivants :
+peut utiliser les raccourcis suivants :
 
 ::
 
@@ -273,7 +273,7 @@ un anneau de polynômes.
     (Univariate Polynomial Ring in x over Rational Field, (x,))
 
 Sous Sage, les polynômes multivariés sont implémentés en représentation
-« distributive » (par opposition à récursive), à l'aide de dictionnaires
+« distributive » (par opposition à récursive), à l'aide de dictionnaires
 Python. Sage a souvent recours à Singular [Si]_, par exemple, pour le
 calcul de pgcd ou de bases de Gröbner d'idéaux.
 
@@ -311,9 +311,6 @@ base de Gröbner).
 
 ::
 
-    sage: B.parent()
-    Category of sequences in Multivariate Polynomial Ring in x, y over Rational
-    Field
     sage: B.universe()
     Multivariate Polynomial Ring in x, y over Rational Field
     sage: B[1] = x
@@ -321,7 +318,7 @@ base de Gröbner).
     ...
     ValueError: object is immutable; please change a copy instead.
 
-Un peu (comprenez : pas assez à notre goût) d'algèbre commutative est
+Un peu (comprenez : pas assez à notre goût) d'algèbre commutative est
 disponible en Sage. Ces routines font appel à Singular. Par exemple, il
 est possible de calculer la décomposition en facteurs premiers et les
 idéaux premiers associés de :math:`I`:

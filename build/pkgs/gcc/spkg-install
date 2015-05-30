@@ -6,12 +6,25 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
+# Apply fixes to upstream source
+echo "Applying patches..."
+cd src
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    echo "Using $patch"
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
 
 # Exit on error
 set -e
 
 # Build in a separate directory, not in src/ (a.k.a. a VPATH build).
 # This is the recommended way to build GCC.
+cd ..
 mkdir gcc-build
 cd gcc-build
 
@@ -57,21 +70,44 @@ if { uname -sr | grep 'Darwin 13\.' ;} &>/dev/null; then
     sed 's+defined(__GNUC_STDC_INLINE__)+& \&\& !defined(__cplusplus)+' /usr/include/sys/cdefs.h > "$SAGE_LOCAL/include/sys/cdefs.h"
 fi
 
+# On OS X 10.10 there is random ObjC stuff in a C header
+if { uname -sr | grep 'Darwin 14\.' ;} &>/dev/null; then
+    if [ -f /usr/include/dispatch/object.h ]; then
+        mkdir -p "$SAGE_LOCAL/include/dispatch"
+        sed 's+typedef void (\^dispatch_block_t)(void)+typedef void* dispatch_block_t+' \
+            /usr/include/dispatch/object.h > "$SAGE_LOCAL/include/dispatch/object.h"
+    else
+        echo "Warning: header /usr/include/dispatch/object.h not found, not applying fix."
+    fi
+fi
+
+# On OSX:
+if [ "$UNAME" = "Darwin" ]; then
+    # isl/cloog libraries are almost certainly from Homebrew and won't work
+    GCC_CONFIGURE="--without-isl --without-cloog $GCC_CONFIGURE"
+
+    # Use 'bootstrap-debug' build configuration to force stripping of object
+    # files prior to comparison during bootstrap (broken by Xcode 6.3).
+    # See #18156
+    GCC_CONFIGURE="--with-build-config=bootstrap-debug $GCC_CONFIGURE"
+fi
+
+# Let GCC build on Raspberry Pi using hard floats.
+if [ `uname -m` = "armv6l" ]; then
+    GCC_CONFIGURE="--with-arch=armv6 --with-fpu=vfp --with-float=hard $GCC_CONFIGURE"
+fi
+
+# Let GCC build on more recent ARM boards using hard floats.
+if [ `uname -m` = "armv7l" ]; then
+    GCC_CONFIGURE="--with-arch=armv7-a --with-fpu=vfpv3-d16 --with-float=hard $GCC_CONFIGURE"
+fi
+
 if [ "$SAGE_CHECK" = yes ]; then
     # Enable internal checks in GCC.  These checks do not affect the
     # binaries produced by GCC, but they do increase the compile time
     # of everything compiled with GCC.
     GCC_CONFIGURE="$GCC_CONFIGURE --enable-checking=yes"
 fi
-
-# Use conservative CFLAGS for stage 1 and for the "build" executables
-# (these are simple programs needed only internally for the build process).
-MAKE="$MAKE CFLAGS_FOR_BUILD=-O0 STAGE1_CFLAGS=-O0"
-
-# Disable bootstrap-debug, since it doesn't work on an OS X 10.4 PPC
-# machine, nor on some Solaris machine. bootstrap-debug only does
-# additional checks during the build, so it is safe not to use it.
-MAKE="$MAKE BUILD_CONFIG="
 
 # Use the assembler/linker specified by $AS/$LD if they differ from the
 # default.
@@ -82,7 +118,6 @@ if [ -n "$LD" -a "$LD" != "ld" ]; then
     CONFIGURE_LD="--with-ld=$LD"
 fi
 
-
 ../src/configure \
     --prefix="$SAGE_LOCAL" \
     --with-local-prefix="$SAGE_LOCAL" \
@@ -90,6 +125,8 @@ fi
     --with-system-zlib \
     --disable-multilib \
     --disable-nls \
+    --enable-languages=c,c++,fortran \
+    --disable-libitm \
     $GCC_CONFIGURE "$CONFIGURE_AS" "$CONFIGURE_LD"
 
 $MAKE

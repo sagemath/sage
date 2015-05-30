@@ -1,17 +1,16 @@
 """
-These are the actions used by the coercion model for matrix and vector
-multiplications.
+Actions used by the coercion model for matrix and vector multiplications
 
 .. WARNING::
 
     The class :class:`MatrixMulAction` and its descendants extends the class
-    :class:`Action`. As a cosnequence objects from these classes only keep weak
+    :class:`Action`. As a consequence objects from these classes only keep weak
     references to the underlying sets which are acted upon. This decision was
     made in :trac:`715` in order to allow garbage collection within the coercion
     framework, where actions are mainly used, and avoid memory leaks.
 
     To ensure that the underlying set of such an object does not get garbage
-    collected, it is sufficient to explicitely create a strong reference to it
+    collected, it is sufficient to explicitly create a strong reference to it
     before creating the action.
 
     ::
@@ -33,6 +32,18 @@ multiplications.
     collected, even if it is not strongly ref'ed. Nonetheless, there is no
     guarantee that the set that is acted upon will always be cached in such a
     way, so that following the above example is good practice.
+
+EXAMPLES:
+
+An action requires a common parent for the base rings, so the following
+doesn't work (see :trac:`17859`)::
+
+    sage: vector(QQ, [1]) * matrix(Zmod(2), [[1]])
+    Traceback (most recent call last):
+    ...
+    TypeError: unsupported operand parent(s) for '*': 'Vector space of
+    dimension 1 over Rational Field' and 'Full MatrixSpace of 1 by 1
+    dense matrices over Ring of integers modulo 2'
 
 AUTHOR:
 
@@ -59,8 +70,8 @@ cdef class MatrixMulAction(Action):
         if not is_MatrixSpace(G):
             raise TypeError, "Not a matrix space: %s" % G
         if G.base_ring() is not S.base_ring():
-            from sage.categories.pushout import pushout
-            base = pushout(G.base_ring(), S.base_ring())
+            from sage.structure.element import get_coercion_model
+            base = get_coercion_model().common_parent(G.base_ring(), S.base_ring())
         else:
             base = G.base_ring()
         Action.__init__(self, G, S, is_left, operator.mul)
@@ -169,7 +180,8 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
         """
         if self.G.ncols() != self.underlying_set().nrows():
-            raise TypeError, "incompatible dimensions %s, %s" % (self.G.ncols(),  self.underlying_set().nrows())
+            raise TypeError("incompatible dimensions %s, %s" %
+                    (self.G.ncols(),  self.underlying_set().nrows()))
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
                            sparse = self.G.is_sparse() and self.underlying_set().is_sparse())
 
@@ -267,7 +279,9 @@ cdef class MatrixVectorAction(MatrixMulAction):
         EXAMPLES::
 
             sage: from sage.matrix.action import MatrixVectorAction
-            sage: A = MatrixVectorAction(MatrixSpace(QQ, 5, 3), VectorSpace(CDF, 3)); A
+            sage: M = MatrixSpace(QQ, 5, 3)
+            sage: V = VectorSpace(CDF, 3)    # strong reference prevents garbage collection
+            sage: A = MatrixVectorAction(M, V); A
             Left action by Full MatrixSpace of 5 by 3 dense matrices over Rational Field on Vector space of dimension 3 over Complex Double Field
             sage: A.codomain()
             Vector space of dimension 5 over Complex Double Field

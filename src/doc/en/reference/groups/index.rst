@@ -6,12 +6,18 @@ Groups
 
    sage/groups/groups_catalog
    sage/groups/group
+   sage/groups/group_homset
    sage/groups/libgap_wrapper
+   sage/groups/libgap_group
+   sage/groups/libgap_mixin
+   sage/groups/pari_group
    sage/groups/generic
    sage/groups/free_group
    sage/groups/finitely_presented
    sage/groups/finitely_presented_named
    sage/groups/braid
+   sage/groups/indexed_free_group
+   sage/groups/raag
    sage/groups/abelian_gps/abelian_group
    sage/groups/abelian_gps/values
    sage/groups/abelian_gps/dual_abelian_group
@@ -21,11 +27,14 @@ Groups
    sage/groups/abelian_gps/abelian_group_morphism
    sage/groups/additive_abelian/additive_abelian_group
    sage/groups/additive_abelian/additive_abelian_wrapper
+   sage/groups/perm_gps/permutation_groups_catalog
    sage/groups/perm_gps/permgroup
    sage/groups/perm_gps/permgroup_named
    sage/groups/perm_gps/permgroup_element
    sage/groups/perm_gps/permgroup_morphism
    sage/groups/perm_gps/cubegroup
+   sage/groups/perm_gps/symgp_conjugacy_class
+   sage/groups/matrix_gps/catalog
    sage/groups/matrix_gps/matrix_group
    sage/groups/matrix_gps/group_element
    sage/groups/matrix_gps/finitely_generated
@@ -42,7 +51,18 @@ Groups
    sage/groups/misc_gps/misc_groups
    sage/groups/semimonomial_transformations/semimonomial_transformation_group
    sage/groups/semimonomial_transformations/semimonomial_transformation
-
+   sage/groups/class_function
    sage/groups/conjugacy_classes
+   sage/groups/perm_gps/partn_ref
+   sage/groups/perm_gps/partn_ref2
+
+
+Internals
+---------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/groups/matrix_gps/named_group
 
 .. include:: ../footer.txt

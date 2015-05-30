@@ -331,7 +331,7 @@ def integer_matrices_generator(row_sums, column_sums):
     elif len(row_sums) == 1:
         yield [column_sums]
     else:
-        for comp in IntegerListsLex(row_sums[0], len(column_sums), ceiling=column_sums):
+        for comp in IntegerListsLex(n=row_sums[0], length=len(column_sums), ceiling=column_sums):
             t = [column_sums[i]-ci for (i, ci) in enumerate(comp)]
             for mat in integer_matrices_generator(row_sums[1:], t):
                 yield [list(comp)] + mat

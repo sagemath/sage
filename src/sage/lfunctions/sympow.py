@@ -139,16 +139,16 @@ class Sympow(SageObject):
             1.05759924459096
         """
         if n % 2 == 1:
-            raise ValueError, "n (=%s) must be even"%n
+            raise ValueError("n (=%s) must be even"%n)
         if prec > 64:
-            raise ValueError, "prec (=%s) must be at most 64"%prec
+            raise ValueError("prec (=%s) must be at most 64"%prec)
         if prec < 1:
-            raise ValueError, "prec (=%s) must be at least 1"%prec
+            raise ValueError("prec (=%s) must be at least 1"%prec)
         v = self('-sp %sp%s %s'%(n, prec, self._curve_str(E)))
         i = v.rfind(': ')
         if i == -1:
             print self._fix_err(v)
-            raise RuntimeError, "failed to compute symmetric power"
+            raise RuntimeError("failed to compute symmetric power")
         x = v[i+2:]
         return x
 
@@ -193,9 +193,9 @@ class Sympow(SageObject):
              1w2: 3.414818600982502E-02
         """
         if prec > 64:
-            raise ValueError, "prec (=%s) must be at most 64"%prec
+            raise ValueError("prec (=%s) must be at most 64"%prec)
         if prec < 1:
-            raise ValueError, "prec (=%s) must be at least 1"%prec
+            raise ValueError("prec (=%s) must be at least 1"%prec)
         v = self('-sp %sp%sd%s %s'%(n, prec, d, self._curve_str(E)))
         return self._fix_err(v)
 
@@ -235,7 +235,7 @@ class Sympow(SageObject):
         i = v.find(s)
         if i == -1:
             print self._fix_err(v)
-            raise RuntimeError, "failed to compute modular degree"
+            raise RuntimeError("failed to compute modular degree")
         return sage.rings.all.Integer(v[i+len(s):])
 
     def analytic_rank(self, E):
@@ -293,7 +293,7 @@ class Sympow(SageObject):
         i = v.rfind(s)
         if i == -1:
             print self._fix_err(v)
-            raise RuntimeError, "failed to compute analytic rank"
+            raise RuntimeError("failed to compute analytic rank")
         j = v.rfind(':')
         r = sage.rings.all.Integer(v[i+len(s):j])
         i = v.rfind(' ')

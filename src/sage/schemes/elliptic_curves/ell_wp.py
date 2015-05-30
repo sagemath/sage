@@ -1,17 +1,23 @@
+# -*- coding: utf-8 -*-
 r"""
-Weierstrass `\wp` function for elliptic curves
+Weierstrass `\wp`-function for elliptic curves
 
-The Weierstrass `\wp` function associated to an elliptic curve over a field `k` is a Laurent series
-of the form
+The Weierstrass `\wp` function associated to an elliptic curve over a
+field `k` is a Laurent series of the form
 
 .. math::
 
     \wp(z) = \frac{1}{z^2} +  c_2 \cdot z^2 + c_4 \cdot z^4 + \cdots.
 
-If the field is contained in `\mathbb{C}`, then
-this is the series expansion of the map from `\mathbb{C}` to `E(\mathbb{C})` whose kernel is the period lattice of `E`.
+If the field is contained in `\mathbb{C}`, then this is the series
+expansion of the map from `\mathbb{C}` to `E(\mathbb{C})` whose kernel
+is the period lattice of `E`.
 
-Over other fields, like finite fields, this still makes sense as a formal power series with coefficients in `k` - at least its first `p-2` coefficients where `p` is the characteristic of `k`. It can be defined via the formal group as `x+c` in the variable `z=\log_E(t)` for a constant `c` such that the constant term `c_0` in `\wp(z)` is zero.
+Over other fields, like finite fields, this still makes sense as a
+formal power series with coefficients in `k` - at least its first `p-2`
+coefficients where `p` is the characteristic of `k`. It can be defined
+via the formal group as `x+c` in the variable `z=\log_E(t)` for a
+constant `c` such that the constant term `c_0` in `\wp(z)` is zero.
 
 EXAMPLE::
 
@@ -25,25 +31,27 @@ REFERENCES:
 
 AUTHORS:
 
-- Dan Shumov 04/09 - original implementation
-- Chris Wuthrich 11/09 - major restructuring
+- Dan Shumov 04/09: original implementation
+
+- Chris Wuthrich 11/09: major restructuring
+
+- Jeroen Demeyer (2014-03-06): code clean up, fix characteristic bound
+  for quadratic algorithm (see :trac:`15855`)
 
 """
 
 #*****************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-#from sage.structure.sage_object import SageObject
-#from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.power_series_ring import PowerSeriesRing
-
-#from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
 
 def weierstrass_p(E, prec=20, algorithm=None):
     r"""
@@ -51,13 +59,19 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     INPUT:
 
-    - ``E`` - an elliptic curve
-    - ``prec`` - precision
-    - ``algorithm`` - string (default:``None``) an algorithm identifier indicating using the ``pari``, ``fast`` or ``quadratic`` algorithm. If the algorithm is ``None``, then this function determines the best algorithm to use.
+    - ``E`` -- an elliptic curve
+
+    - ``prec`` -- precision
+
+    - ``algorithm`` -- string (default:``None``) an algorithm identifier
+      indicating the ``pari``, ``fast`` or ``quadratic`` algorithm.
+      If the algorithm is ``None``, then this function determines the
+      best algorithm to use.
 
     OUTPUT:
 
-    a Laurent series in one variable `z` with coefficients in the base field `k` of `E`.
+    a Laurent series in one variable `z` with coefficients in the base
+    field `k` of `E`.
 
     EXAMPLES::
 
@@ -82,87 +96,85 @@ def weierstrass_p(E, prec=20, algorithm=None):
         sage: E.weierstrass_p(prec=7, algorithm='fast')
         Traceback (most recent call last):
         ...
-        ValueError: For computing the Weierstrass p-function via the fast algorithm, the characteristic (11) of the underlying field must be greater than prec + 4 = 11.
-        sage: E.weierstrass_p(prec=8 ,algorithm='pari')
+        ValueError: for computing the Weierstrass p-function via the fast algorithm, the characteristic (11) of the underlying field must be greater than prec + 4 = 11
+        sage: E.weierstrass_p(prec=8)
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
+        sage: E.weierstrass_p(prec=8, algorithm='quadratic')
+        z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
+        sage: E.weierstrass_p(prec=8, algorithm='pari')
+        z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
+        sage: E.weierstrass_p(prec=9)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: currently no algorithms for computing the Weierstrass p-function for that characteristic / precision pair is implemented. Lower the precision below char(k) - 2
+        sage: E.weierstrass_p(prec=9, algorithm="quadratic")
+        Traceback (most recent call last):
+        ...
+        ValueError: for computing the Weierstrass p-function via the quadratic algorithm, the characteristic (11) of the underlying field must be greater than prec + 2 = 11
         sage: E.weierstrass_p(prec=9, algorithm='pari')
         Traceback (most recent call last):
         ...
-        ValueError: For computing the Weierstrass p-function via pari, the characteristic (11) of the underlying field must be greater than prec + 2 = 11.
+        ValueError: for computing the Weierstrass p-function via pari, the characteristic (11) of the underlying field must be greater than prec + 2 = 11
 
+    TESTS::
+
+        sage: E.weierstrass_p(prec=4, algorithm='foo')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown algorithm for computing the Weierstrass p-function
     """
-    Esh = E.short_weierstrass_model()
-    u = E.isomorphism_to(Esh).u
-
     k = E.base_ring()
     p = k.characteristic()
 
     # if the algorithm is not set, try to determine algorithm from input
-    if (None == algorithm):
-        if (0 == p) or (p > prec+4):
+    if algorithm is None:
+        if p == 0 or p > prec + 4:
             algorithm = "fast"
         elif p > prec + 2:
             algorithm = "pari"
         else:
-            raise NotImplementedError, "Currently no algorithms for computing the Weierstrass p-function for that characteristic / precision pair is implemented. Lower the precision below char(k)-2"
+            raise NotImplementedError("currently no algorithms for computing the Weierstrass p-function for that characteristic / precision pair is implemented. Lower the precision below char(k) - 2")
+
+    if algorithm == "pari":
+        if 0 < p <= prec + 2:
+            raise ValueError("for computing the Weierstrass p-function via pari, the characteristic (%s) of the underlying field must be greater than prec + 2 = %s"%(p,prec+2))
+        return compute_wp_pari(E, prec)
+
+    # quadratic and fast algorithms require short Weierstrass model
+    Esh = E.short_weierstrass_model()
 
     A = Esh.a4()
     B = Esh.a6()
 
-
-    if ("quadratic"==algorithm):
-
-        if (0 < p) and (p < 2*prec + 3):
-            raise ValueError, "For computing the Weierstrass p-function via the quadratic algorithm, the characteristic (%s) of the underlying field must be greater than 2*prec + 3 = %s."%(p,2*prec+4)
-
+    if algorithm == "quadratic":
+        if 0 < p <= prec + 2:
+            raise ValueError("for computing the Weierstrass p-function via the quadratic algorithm, the characteristic (%s) of the underlying field must be greater than prec + 2 = %s"%(p,prec+2))
         wp = compute_wp_quadratic(k, A, B, prec)
-        R = wp.parent()
-        z = R.gen()
-        wp = wp(z*u) * u**2
-        wp = wp.add_bigoh(prec)
-
-    elif ("fast"==algorithm):
-
-        if (0 < p) and (p < prec + 5):
-            raise ValueError, "For computing the Weierstrass p-function via the fast algorithm, the characteristic (%s) of the underlying field must be greater than prec + 4 = %s."%(p,prec+4)
-
+    elif algorithm == "fast":
+        if 0 < p <= prec + 4:
+            raise ValueError("for computing the Weierstrass p-function via the fast algorithm, the characteristic (%s) of the underlying field must be greater than prec + 4 = %s"%(p,prec+4))
         wp = compute_wp_fast(k, A, B, prec)
-        R = wp.parent()
-        z = R.gen()
-        wp = wp(z*u) * u**2
-        wp = wp.add_bigoh(prec)
-
-
-    elif ("pari"==algorithm):
-
-        if (0 < p) and (p < prec + 3):
-            raise ValueError, "For computing the Weierstrass p-function via pari, the characteristic  (%s) of the underlying field must be greater than prec + 2 = %s."%(p,prec+2)
-
-        wp = compute_wp_pari(E, prec)
-
     else:
-        raise ValueError, "Unknown algorithm for computing the Weierstrass p-function."
+        raise ValueError("unknown algorithm for computing the Weierstrass p-function")
 
-    return wp
+    R = wp.parent()
+    z = R.gen()
+    u = E.isomorphism_to(Esh).u
+    return wp(z*u) * u**2
 
 def compute_wp_pari(E,prec):
     r"""
-    Computes the Weierstrass `\wp`-function via calling the corresponding function in pari.
+    Computes the Weierstrass `\wp`-function with the ``ellwp`` function
+    from PARI.
 
     EXAMPLES::
 
         sage: E = EllipticCurve([0,1])
-        sage: E.weierstrass_p(algorithm='pari')
-        z^-2 - 1/7*z^4 + 1/637*z^10 - 1/84721*z^16 + O(z^20)
-
-        sage: E = EllipticCurve(GF(101),[5,4])
-        sage: E.weierstrass_p(prec=30, algorithm='pari')
-        z^-2 + 100*z^2 + 86*z^4 + 34*z^6 + 50*z^8 + 82*z^10 + 45*z^12 + 70*z^14 + 33*z^16 + 87*z^18 + 33*z^20 + 36*z^22 + 45*z^24 + 40*z^26 + 12*z^28 + O(z^30)
-
         sage: from sage.schemes.elliptic_curves.ell_wp import compute_wp_pari
-        sage: compute_wp_pari(E, prec= 20)
-        z^-2 + 100*z^2 + 86*z^4 + 34*z^6 + 50*z^8 + 82*z^10 + 45*z^12 + 70*z^14 + 33*z^16 + 87*z^18 + O(z^20)
-
+        sage: compute_wp_pari(E, prec=20)
+        z^-2 - 1/7*z^4 + 1/637*z^10 - 1/84721*z^16 + O(z^20)
+        sage: compute_wp_pari(E, prec=30)
+        z^-2 - 1/7*z^4 + 1/637*z^10 - 1/84721*z^16 + 3/38548055*z^22 - 4/8364927935*z^28 + O(z^30)
     """
     ep = E._pari_()
     wpp = ep.ellwp(n=prec)
@@ -178,9 +190,12 @@ def compute_wp_pari(E,prec):
 
 def compute_wp_quadratic(k, A, B, prec):
     r"""
-    Computes the truncated Weierstrass function of an elliptic curve defined by short Weierstrass model: `y^2 = x^3 + Ax + B`. Uses an algorithm that is of complexity `O(prec^2)`.
+    Computes the truncated Weierstrass function of an elliptic curve
+    defined by short Weierstrass model: `y^2 = x^3 + Ax + B`. Uses an
+    algorithm that is of complexity `O(prec^2)`.
 
-    Let p be the characteristic of the underlying field: Then we must have either p=0, or p >  ``prec`` + 3.
+    Let p be the characteristic of the underlying field. Then we must
+    have either p = 0, or p > prec + 2.
 
     INPUT:
 
@@ -213,13 +228,13 @@ def compute_wp_quadratic(k, A, B, prec):
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + O(z^10)
 
     """
-    m = prec//2 +1
+    m = (prec + 1)//2
     c = [0 for j in xrange(m)]
     c[0] = -A/5
     c[1] = -B/7
 
     # first Z represent z^2
-    R = LaurentSeriesRing(k,'z') #,default_prec = prec+5)
+    R = LaurentSeriesRing(k,'z')
     Z = R.gen()
     pe = Z**-1 + c[0]*Z + c[1]*Z**2
 

@@ -23,20 +23,20 @@ Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
 
 Check that :trac:`2235` has been fixed::
 
-    sage: subprocess.call(["sage", "-t", "longtime.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "longtime.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t longtime.rst
+    sage -t --warn-long 0.0 longtime.rst
     [0 tests, ...s]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
     ...
     0
-    sage: subprocess.call(["sage", "-t", "-l", "longtime.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "-l", "longtime.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t --long longtime.rst
+    sage -t --long --warn-long 0.0 longtime.rst
     [1 test, ...s]
     ----------------------------------------------------------------------
     All tests passed!
@@ -44,12 +44,72 @@ Check that :trac:`2235` has been fixed::
     ...
     0
 
-Test the ``--initial`` option::
+Check handling of tolerances::
 
-    sage: subprocess.call(["sage", "-t", "-i", "initial.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "tolerance.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t initial.rst
+    sage -t --warn-long 0.0 tolerance.rst
+    **********************************************************************
+    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    Failed example:
+        print ":-("    # abs tol 0.1
+    Expected:
+        :-)
+    Got:
+        :-(
+    **********************************************************************
+    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    Failed example:
+        print "1.0 2.0 3.0"  # abs tol 0.1
+    Expected:
+        4.0 5.0
+    Got:
+        1.0 2.0 3.0
+    **********************************************************************
+    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    Failed example:
+        print "Hello"  # abs tol 0.1
+    Expected:
+        1.0
+    Got:
+        Hello
+    **********************************************************************
+    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    Failed example:
+        print "1.0"  # abs tol 0.1
+    Expected:
+        Hello
+    Got:
+        1.0
+    **********************************************************************
+    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    Failed example:
+        print "Hello 1.1"  # abs tol 0.1
+    Expected:
+        Goodbye 1.0
+    Got:
+        Hello 1.1
+    **********************************************************************
+    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    Failed example:
+        print "Hello 1.0"  # rel tol 1e-6
+    Expected:
+        Goodbye 0.999999
+    Got:
+        Hello 1.0
+    Tolerance exceeded:
+        0.999999 vs 1.0, tolerance 1e-06 > 1e-06
+    **********************************************************************
+    ...
+    1
+
+Test the ``--initial`` option::
+
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "-i", "initial.rst"], **kwds)  # long time
+    Running doctests...
+    Doctesting 1 file.
+    sage -t --warn-long 0.0 initial.rst
     **********************************************************************
     File "initial.rst", line 4, in sage.doctest.tests.initial
     Failed example:
@@ -69,7 +129,7 @@ Test the ``--initial`` option::
     **********************************************************************
     ...
     ----------------------------------------------------------------------
-    sage -t initial.rst  # 5 doctests failed
+    sage -t  --warn-long 0.0 initial.rst  # 5 doctests failed
     ----------------------------------------------------------------------
     ...
     1
@@ -79,26 +139,26 @@ Test a timeout using the ``SAGE_TIMEOUT`` environment variable::
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
     sage: kwds2['env']['SAGE_TIMEOUT'] = "3"
-    sage: subprocess.call(["sage", "-t", "99seconds.rst"], **kwds2)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "99seconds.rst"], **kwds2)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t 99seconds.rst
+    sage -t --warn-long 0.0 99seconds.rst
         Timed out
     **********************************************************************
     Tests run before process (pid=...) timed out:
     ...
     ----------------------------------------------------------------------
-    sage -t 99seconds.rst  # Timed out
+    sage -t --warn-long 0.0 99seconds.rst  # Timed out
     ----------------------------------------------------------------------
     ...
     4
 
 Test handling of ``KeyboardInterrupt`` in doctests::
 
-    sage: subprocess.call(["sage", "-t", "keyboardinterrupt.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "keyboardinterrupt.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t keyboardinterrupt.rst
+    sage -t --warn-long 0.0 keyboardinterrupt.rst
     **********************************************************************
     File "keyboardinterrupt.rst", line 11, in sage.doctest.tests.keyboardinterrupt
     Failed example:
@@ -110,17 +170,17 @@ Test handling of ``KeyboardInterrupt`` in doctests::
     **********************************************************************
     ...
     ----------------------------------------------------------------------
-    sage -t keyboardinterrupt.rst  # 1 doctest failed
+    sage -t --warn-long 0.0 keyboardinterrupt.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
 
 Interrupt the doctester::
 
-    sage: subprocess.call(["sage", "-t", "interrupt.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "interrupt.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t interrupt.rst
+    sage -t --warn-long 0.0 interrupt.rst
     Killing test interrupt.rst
     ----------------------------------------------------------------------
     Doctests interrupted: 0/1 files tested
@@ -137,7 +197,7 @@ doesn't hurt::
     sage: kwds2 = deepcopy(kwds)
     sage: kwds2['env']['DOCTEST_TEST_PID_FILE'] = F  # Doctester will write its PID in this file
     sage: subprocess.call(["sage", "-tp", "1000000", "--timeout=120",  # long time
-    ....:     "99seconds.rst", "interrupt_diehard.rst"], **kwds2)
+    ....:      "--warn-long", "0", "99seconds.rst", "interrupt_diehard.rst"], **kwds2)
     Running doctests...
     Doctesting 2 files using 1000000 threads.
     Killing test 99seconds.rst
@@ -163,10 +223,10 @@ in max(20, 120 * 0.05) = 20 seconds::
 
 Test a doctest failing with ``abort()``::
 
-    sage: subprocess.call(["sage", "-t", "abort.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "abort.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t abort.rst
+    sage -t --warn-long 0.0 abort.rst
         Killed due to abort
     **********************************************************************
     Tests run before process (pid=...) failed:
@@ -179,17 +239,17 @@ Test a doctest failing with ``abort()``::
     ------------------------------------------------------------------------
     ...
     ----------------------------------------------------------------------
-    sage -t abort.rst  # Killed due to abort
+    sage -t --warn-long 0.0 abort.rst  # Killed due to abort
     ----------------------------------------------------------------------
     ...
     16
 
 A different kind of crash::
 
-    sage: subprocess.call(["sage", "-t", "fail_and_die.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "fail_and_die.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t fail_and_die.rst
+    sage -t --warn-long 0.0 fail_and_die.rst
     **********************************************************************
     File "fail_and_die.rst", line 5, in sage.doctest.tests.fail_and_die
     Failed example:
@@ -203,17 +263,17 @@ A different kind of crash::
     Tests run before process (pid=...) failed:
     ...
     ----------------------------------------------------------------------
-    sage -t fail_and_die.rst  # Killed due to kill signal
+    sage -t --warn-long 0.0 fail_and_die.rst  # Killed due to kill signal
     ----------------------------------------------------------------------
     ...
     16
 
 Test that ``sig_on_count`` is checked correctly::
 
-    sage: subprocess.call(["sage", "-t", "sig_on.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "sig_on.rst"], **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t sig_on.rst
+    sage -t --warn-long 0.0 sig_on.rst
     **********************************************************************
     File "sig_on.rst", line 5, in sage.doctest.tests.sig_on
     Failed example:
@@ -227,17 +287,17 @@ Test that ``sig_on_count`` is checked correctly::
        1 of   4 in sage.doctest.tests.sig_on
         [2 tests, 1 failure, ...]
     ----------------------------------------------------------------------
-    sage -t sig_on.rst  # 1 doctest failed
+    sage -t --warn-long 0.0 sig_on.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
 
 Test the ``--debug`` option::
 
-    sage: subprocess.call(["sage", "-t", "--debug", "simple_failure.rst"], stdin=open(os.devnull), **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--debug", "simple_failure.rst"], stdin=open(os.devnull), **kwds)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t simple_failure.rst
+    sage -t --warn-long 0.0 simple_failure.rst
     **********************************************************************
     File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
     Failed example:
@@ -260,25 +320,25 @@ Test the ``--debug`` option::
        1 of   5 in sage.doctest.tests.simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
-    sage -t simple_failure.rst  # 1 doctest failed
+    sage -t --warn-long 0.0 simple_failure.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
 
 Test running under gdb, without and with a timeout::
 
-    sage: subprocess.call(["sage", "-t", "--gdb", "1second.rst"], stdin=open(os.devnull), **kwds)  # long time, optional: gdb
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--gdb", "1second.rst"], stdin=open(os.devnull), **kwds)  # long time, optional: gdb
     exec gdb ...
     Running doctests...
     Doctesting 1 file.
-    sage -t 1second.rst
+    sage -t --warn-long 0.0 1second.rst
         [2 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
     ...
     0
-    sage: subprocess.call(["sage", "-t", "--gdb", "-T" "5", "99seconds.rst"], stdin=open(os.devnull), **kwds)  # long time, optional: gdb
+    sage: subprocess.call(["sage", "-t", "--gdb",  "--warn-long", "0", "-T" "5", "99seconds.rst"], stdin=open(os.devnull), **kwds)  # long time, optional: gdb
     exec gdb ...
     Running doctests...
         Timed out
@@ -286,10 +346,10 @@ Test running under gdb, without and with a timeout::
 
 Test the ``--show-skipped`` option::
 
-    sage: subprocess.call(["sage", "-t", "--show-skipped", "show_skipped.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--show-skipped", "show_skipped.rst"], **kwds)  # long time
     Running doctests ...
     Doctesting 1 file.
-    sage -t show_skipped.rst
+    sage -t --warn-long 0.0 show_skipped.rst
         1 unlabeled test not run
         2 tests not run due to known bugs
         1 gap test not run
@@ -304,10 +364,10 @@ Test the ``--show-skipped`` option::
 
 Optional tests are run correctly::
 
-    sage: subprocess.call(["sage", "-t", "--long", "--show-skipped", "--optional=sage,gap", "show_skipped.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--long", "--show-skipped", "--optional=sage,gap", "show_skipped.rst"], **kwds)  # long time
     Running doctests ...
     Doctesting 1 file.
-    sage -t --long show_skipped.rst
+    sage -t --long --warn-long 0.0 show_skipped.rst
         1 unlabeled test not run
         2 tests not run due to known bugs
         1 other test skipped
@@ -318,10 +378,10 @@ Optional tests are run correctly::
     ...
     0
 
-    sage: subprocess.call(["sage", "-t", "--long", "--show-skipped", "--optional=gAp", "show_skipped.rst"], **kwds)  # long time
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--long", "--show-skipped", "--optional=gAp", "show_skipped.rst"], **kwds)  # long time
     Running doctests ...
     Doctesting 1 file.
-    sage -t --long show_skipped.rst
+    sage -t --long --warn-long 0.0 show_skipped.rst
         1 unlabeled test not run
         2 tests not run due to known bugs
         1 sage test not run
@@ -335,7 +395,7 @@ Optional tests are run correctly::
 
 Test an invalid value for ``--optional``::
 
-    sage: subprocess.call(["sage", "-t", "--optional=bad-option", "show_skipped.rst"], **kwds)
+    sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--optional=bad-option", "show_skipped.rst"], **kwds)
     Traceback (most recent call last):
     ...
     ValueError: invalid optional tag 'bad-option'
@@ -349,10 +409,10 @@ Test ``atexit`` support in the doctesting framework::
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
     sage: kwds2['env']['DOCTEST_DELETE_FILE'] = F
-    sage: subprocess.call(["sage", "-t", "atexit.rst"], **kwds2)  # long time
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "atexit.rst"], **kwds2)  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t atexit.rst
+    sage -t --warn-long 0.0 atexit.rst
         [3 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!

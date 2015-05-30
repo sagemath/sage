@@ -14,7 +14,6 @@ from sage.structure.element cimport AlgebraElement, ModuleElement, RingElement, 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular
 from sage.algebras.letterplace.free_algebra_element_letterplace cimport FreeAlgebraElement_letterplace
 
-include "sage/ext/stdsage.pxi"
 
 cdef class FreeAlgebra_letterplace(Algebra):
     cdef MPolynomialRing_libsingular _commutative_ring

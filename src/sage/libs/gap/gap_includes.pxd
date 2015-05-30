@@ -9,8 +9,10 @@
 ###############################################################################
 
 
-include "sage/ext/stdsage.pxi"
-include "sage/ext/interrupt.pxi"  # ctrl-c interrupt block support
+cdef extern from "gap/system.h":
+    ctypedef char libGAP_Char
+    ctypedef int libGAP_Int
+    ctypedef unsigned char libGAP_UChar
 
 cdef extern from "gap/libgap.h":
     void libgap_initialize(int argc, char** argv)
@@ -27,10 +29,6 @@ cdef extern from "gap/libgap.h":
     void libgap_mark_stack_bottom()
     void libgap_enter()
     void libgap_exit()
-
-cdef extern from "gap/system.h":
-    ctypedef char libGAP_Char
-    ctypedef unsigned char libGAP_UChar
 
 cdef extern from "gap/code.h":
     ctypedef unsigned int libGAP_Stat
@@ -58,8 +56,8 @@ cdef extern from "gap/objects.h":
     ctypedef void* libGAP_Obj
     libGAP_Obj libGAP_SHALLOW_COPY_OBJ(libGAP_Obj obj)
     bint libGAP_IS_INTOBJ(libGAP_Obj obj)
-    libGAP_Obj libGAP_INTOBJ_INT(int)
-    int libGAP_INT_INTOBJ(libGAP_Obj)
+    libGAP_Obj libGAP_INTOBJ_INT(libGAP_Int)
+    libGAP_Int libGAP_INT_INTOBJ(libGAP_Obj)
     libGAP_UInt libGAP_TNUM_OBJ(libGAP_Obj obj)
     char* libGAP_TNAM_OBJ(libGAP_Obj obj)
     cdef int libGAP_FIRST_REAL_TNUM
@@ -223,6 +221,8 @@ cdef extern from "gap/string.h":
     char* libGAP_CSTR_STRING(libGAP_Obj list)
     int libGAP_GET_LEN_STRING(libGAP_Obj list)
     bint libGAP_IS_STRING(libGAP_Obj obj)
+    bint libGAP_IsStringConv(libGAP_Obj obj)
+    bint libGAP_ConvString(libGAP_Obj obj)
     void libGAP_C_NEW_STRING(libGAP_Obj new_gap_string, int length, char* c_string)
 
 cdef extern from "gap/gasman.h":

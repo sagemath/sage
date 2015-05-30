@@ -500,7 +500,7 @@ class MercurialPatchMixin(object):
                                         older = "%s%s" % (base2, ext)
                                     if older in patches:
                                         patches.remove(older)
-                            except:
+                            except Exception:
                                 pass
                         if rebased_regex.search(attachment):
                             older = rebased_regex.sub('', attachment)
@@ -799,14 +799,14 @@ class MercurialPatchMixin(object):
 
         def hg_path_to_git_path(path):
             if any([path.startswith(p) for p in
-                    "module_list.py", "setup.py", "c_lib/", "sage/", "doc/"]):
+                    ("module_list.py", "setup.py", "c_lib/", "sage/", "doc/")]):
                 return "src/%s"%path
             else:
                 raise NotImplementedError('mapping hg path "%s"'%path)
 
         def git_path_to_hg_path(path):
             if any([path.startswith(p) for p in
-                    "src/module_list.py", "src/setup.py", "src/c_lib/", "src/sage/", "src/doc/"]):
+                    ("src/module_list.py", "src/setup.py", "src/c_lib/", "src/sage/", "src/doc/")]):
                 return path[4:]
             else:
                 raise NotImplementedError('mapping git path "%s"'%path)

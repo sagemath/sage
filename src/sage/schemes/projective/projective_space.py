@@ -1,8 +1,9 @@
 r"""
 Projective `n` space over a ring
 
-EXAMPLES: We construct projective space over various rings of
-various dimensions.
+EXAMPLES:
+
+We construct projective space over various rings of various dimensions.
 
 The simplest projective space::
 
@@ -26,17 +27,28 @@ base rings.
     sage: X/CC
     Projective Space of dimension 5 over Complex Field with 53 bits of precision
 
-The third argument specifies the printing names of the generators
-of the homogenous coordinate ring. Using objgens() you can obtain
-both the space and the generators as ready to use variables.
+The third argument specifies the printing names of the generators of the
+homogenous coordinate ring. Using the method `.objgens()` you can obtain both
+the space and the generators as ready to use variables. ::
+
+    sage: P2, vars = ProjectiveSpace(10, QQ, 't').objgens()
+    sage: vars
+    (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10)
+
+You can alternatively use the special syntax with ``<`` and ``>``.
 
 ::
 
-    sage: P2, (x,y,z) = ProjectiveSpace(2, QQ, 'xyz').objgens()
+    sage: P2.<x,y,z> = ProjectiveSpace(2, QQ)
     sage: P2
     Projective Space of dimension 2 over Rational Field
-    sage: x.parent()
+    sage: P2.coordinate_ring()
     Multivariate Polynomial Ring in x, y, z over Rational Field
+
+The first of the three lines above is just equivalent to the two lines::
+
+    sage: P2 = ProjectiveSpace(2, QQ, 'xyz')
+    sage: x,y,z = P2.gens()
 
 For example, we use `x,y,z` to define the intersection of
 two lines.
@@ -53,6 +65,8 @@ two lines.
 AUTHORS:
 
 - Ben Hutz: (June 2012): support for rings
+
+- Ben Hutz (9/2014): added support for cartesian products
 """
 
 #*****************************************************************************
@@ -76,6 +90,9 @@ from sage.rings.commutative_ring import is_CommutativeRing
 from sage.categories.fields import Fields
 _Fields = Fields()
 
+from sage.categories.homset import Hom
+from sage.categories.number_fields import NumberFields
+
 from sage.misc.all import (latex,
                            prod)
 from sage.structure.parent_gens import normalize_names
@@ -95,7 +112,6 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from sage.schemes.projective.projective_morphism import  (SchemeMorphism_polynomial_projective_space,
                                                           SchemeMorphism_polynomial_projective_space_field,
                                                           SchemeMorphism_polynomial_projective_space_finite_field)
-
 
 def is_ProjectiveSpace(x):
     r"""
@@ -514,7 +530,7 @@ class ProjectiveSpace_ring(AmbientSpace):
             raise TypeError('Unable to find a common ring for all elements')
         try:
             i = pt.index(1)
-        except StandardError:
+        except Exception:
             raise TypeError('At least one component of pt=%s must be equal '
                             'to 1'%pt)
         pt = pt[:i] + pt[i+1:]
@@ -534,8 +550,8 @@ class ProjectiveSpace_ring(AmbientSpace):
             for col in range(M.ncols()):
                 f = monoms[col][:i] + monoms[col][i+1:]
                 if min([f[j]-e[j] for j in range(n)]) >= 0:
-                    M[row,col] = prod([binomial(f[j],e[j])*pt[j]**(f[j]-e[j]) \
-                               for j in filter(lambda k: f[k]>e[k], range(n))])
+                    M[row,col] = prod([ binomial(f[j],e[j]) * pt[j]**(f[j]-e[j])
+                                        for j in (k for k in range(n) if f[k] > e[k]) ])
         return M
 
     def _morphism(self, *args, **kwds):
@@ -721,7 +737,7 @@ class ProjectiveSpace_ring(AmbientSpace):
         from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme_projective
         return AlgebraicScheme_subscheme_projective(self, X)
 
-    def affine_patch(self, i):
+    def affine_patch(self, i, AA = None):
         r"""
         Return the `i^{th}` affine patch of this projective space.
         This is an ambient affine space `\mathbb{A}^n_R,` where
@@ -731,6 +747,9 @@ class ProjectiveSpace_ring(AmbientSpace):
         INPUT:
 
         - ``i`` -- integer between 0 and dimension of self, inclusive.
+
+        - ``AA`` -- (default: None) ambient affine space, this is constructed
+                if it is not given.
 
         OUTPUT:
 
@@ -754,23 +773,115 @@ class ProjectiveSpace_ring(AmbientSpace):
               To:   Projective Space of dimension 5 over Rational Field
               Defn: Defined on coordinates by sending (x0, x1, x2, x3, x4) to
                     (1 : x0 : x1 : x2 : x3 : x4)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.affine_patch(0).projective_embedding(0).codomain() == P
+            True
         """
         i = int(i)   # implicit type checking
         n = self.dimension_relative()
         if i < 0 or i > n:
             raise ValueError("Argument i (= %s) must be between 0 and %s."%(i, n))
         try:
-            return self.__affine_patches[i]
+            A = self.__affine_patches[i]
+            #assume that if you've passed in a new affine space you want to override
+            #the existing patch
+            if AA is None or A == AA:
+                return(A)
         except AttributeError:
             self.__affine_patches = {}
         except KeyError:
             pass
-        from sage.schemes.affine.affine_space import AffineSpace
-        AA = AffineSpace(n, self.base_ring(), names='x')
+        #if no ith patch exists, we may still be here with AA==None
+        if AA == None:
+            from sage.schemes.affine.affine_space import AffineSpace
+            AA = AffineSpace(n, self.base_ring(), names = 'x')
+        elif AA.dimension_relative() != n:
+                raise ValueError("Affine Space must be of the dimension %s"%(n))
         AA._default_embedding_index = i
         phi = AA.projective_embedding(i, self)
         self.__affine_patches[i] = AA
         return AA
+
+    def _an_element_(self):
+        r"""
+        Returns a (preferably typical) element of ``self``.
+
+        This is used both for illustration and testing purposes.
+
+        OUTPUT: a point in the projective space ``self``.
+
+        EXAMPLES::
+
+            sage: ProjectiveSpace(ZZ,3,'x').an_element()
+            (7 : 6 : 5 : 1)
+
+            sage: ProjectiveSpace(PolynomialRing(ZZ,'y'),3,'x').an_element()
+            (7*y : 6*y : 5*y : 1)
+        """
+        n = self.dimension_relative()
+        R = self.base_ring()
+        return self([(7 - i) * R.an_element() for i in range(n)] + [R.one()])
+
+    def Lattes_map(self, E, m):
+        r"""
+        Given an elliptic curve `E` and an integer `m` return the Lattes map associated to multiplication by `m`.
+        In other words, the rational map on the quotient `E/\{\pm 1\} \cong \mathbb{P}^1` associated to `[m]:E \to E`.
+
+        INPUT:
+
+        - ``E`` -- an elliptic curve
+        - ``m`` -- an integer
+
+        OUTPUT: an endomorphism of ``self``.
+
+        Examples::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: E = EllipticCurve(QQ,[-1, 0])
+            sage: P.Lattes_map(E,2)
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^4 + 2*x^2*y^2 + y^4 : 4*x^3*y - 4*x*y^3)
+        """
+        if self.dimension_relative() != 1:
+            raise TypeError("Must be dimension 1")
+
+        L = E.multiplication_by_m(m, x_only = True)
+        F = [L.numerator(), L.denominator()]
+        R = self.coordinate_ring()
+        x, y = R.gens()
+        phi = F[0].parent().hom([x],R)
+        F = [phi(F[0]).homogenize(y), phi(F[1]).homogenize(y)*y]
+        H = Hom(self,self)
+        return(H(F))
+
+    def cartesian_product(self, other):
+        r"""
+        Return the cartesian product of the projective spaces ``self`` and
+        ``other``.
+
+        INPUT:
+
+        - ``other`` - A projective space with the same base ring as ``self``
+
+        OUTPUT:
+
+        - A cartesian product of projective spaces
+
+        EXAMPLES::
+
+            sage: P1 = ProjectiveSpace(QQ,1,'x')
+            sage: P2 = ProjectiveSpace(QQ,2,'y')
+            sage: PP = P1.cartesian_product(P2); PP
+            Product of projective spaces P^1 x P^2 over Rational Field
+            sage: PP.gens()
+            (x0, x1, y0, y1, y2)
+        """
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces
+        return ProductProjectiveSpaces([self, other])
 
 
 class ProjectiveSpace_field(ProjectiveSpace_ring):
@@ -818,6 +929,82 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
                     (x : y : z)
         """
         return SchemeMorphism_polynomial_projective_space_field(*args, **kwds)
+
+    def points_of_bounded_height(self,bound, prec=53):
+        r"""
+        Returns an iterator of the points in self of absolute height of at most the given bound. Bound check
+        is strict for the rational field. Requires self to be projective space over a number field. Uses the
+        Doyle-Krumm algorithm for computing algebraic numbers up to a given height [Doyle-Krumm].
+
+        INPUT:
+
+        - ``bound`` - a real number
+
+        - ``prec`` - the precision to use to compute the elements of bounded height for number fields
+
+        OUTPUT:
+
+        - an iterator of points in self
+
+        .. WARNING::
+
+           In the current implementation, the output of the [Doyle-Krumm] algorithm
+           cannot be guaranteed to be correct due to the necessity of floating point
+           computations. In some cases, the default 53-bit precision is
+           considerably lower than would be required for the algorithm to
+           generate correct output.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: list(P.points_of_bounded_height(5))
+            [(0 : 1), (1 : 1), (-1 : 1), (1/2 : 1), (-1/2 : 1), (2 : 1), (-2 : 1), (1/3 : 1),
+            (-1/3 : 1), (3 : 1), (-3 : 1), (2/3 : 1), (-2/3 : 1), (3/2 : 1), (-3/2 : 1), (1/4 : 1),
+            (-1/4 : 1), (4 : 1), (-4 : 1), (3/4 : 1), (-3/4 : 1), (4/3 : 1), (-4/3 : 1), (1 : 0)]
+
+        ::
+
+            sage: u = QQ['u'].0
+            sage: P.<x,y,z> = ProjectiveSpace(NumberField(u^2 - 2,'v'), 2)
+            sage: len(list(P.points_of_bounded_height(1.5)))
+            57
+        """
+        if (is_RationalField(self.base_ring())):
+            ftype = False # stores whether the field is a number field or the rational field
+        elif (self.base_ring() in NumberFields()): # true for rational field as well, so check is_RationalField first
+            ftype = True
+        else:
+            raise NotImplementedError("self must be projective space over a number field.")
+
+        bound = bound**(self.base_ring().absolute_degree()) # convert to relative height
+
+        n = self.dimension_relative()
+        R = self.base_ring()
+        zero = R(0)
+        i = n
+        while not i < 0:
+            P = [ zero for _ in range(i) ] + [ R(1) ] + [ zero for _ in range(n-i) ]
+            yield self(P)
+            if (ftype == False): # if rational field
+                iters = [ R.range_by_height(bound) for _ in range(i) ]
+            else: # if number field
+                iters = [ R.elements_of_bounded_height(bound, precision=prec) for _ in range(i) ]
+            for x in iters: x.next() # put at zero
+            j = 0
+            while j < i:
+                try:
+                    P[j] = iters[j].next()
+                    yield self(P)
+                    j = 0
+                except StopIteration:
+                    if (ftype == False): # if rational field
+                        iters[j] = R.range_by_height(bound) # reset
+                    else: # if number field
+                        iters[j] = R.elements_of_bounded_height(bound, precision=prec) # reset
+                    iters[j].next() # put at zero
+                    P[j] = zero
+                    j += 1
+            i -= 1
 
 class ProjectiveSpace_finite_field(ProjectiveSpace_field):
     def _point(self, *args, **kwds):
@@ -905,16 +1092,16 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             P = [ zero for _ in range(i) ] + [ R(1) ] + [ zero for _ in range(n-i) ]
             yield self(P)
             iters = [ iter(R) for _ in range(i) ]
-            for x in iters: x.next() # put at zero
+            for x in iters: next(x) # put at zero
             j = 0
             while j < i:
                 try:
-                    P[j] = iters[j].next()
+                    P[j] = next(iters[j])
                     yield self(P)
                     j = 0
                 except StopIteration:
                     iters[j] = iter(R)  # reset
-                    iters[j].next() # put at zero
+                    next(iters[j]) # put at zero
                     P[j] = zero
                     j += 1
             i -= 1
@@ -932,7 +1119,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             sage: P.rational_points(GF(3^2, 'b'))
             [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1), (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
         """
-        if F == None:
+        if F is None:
             return [ P for P in self ]
         elif not is_FiniteField(F):
             raise TypeError("Second argument (= %s) must be a finite field."%F)
@@ -950,8 +1137,14 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 
             sage: P1=ProjectiveSpace(GF(7),1,'x')
             sage: P1.rational_points_dictionary()
-            {(1 : 0): 7, (0 : 1): 0, (1 : 1): 1, (2 : 1): 2, (3 : 1): 3, (4 : 1): 4,
-            (5 : 1): 5, (6 : 1): 6}
+            {(0 : 1): 0,
+             (1 : 0): 7,
+             (1 : 1): 1,
+             (2 : 1): 2,
+             (3 : 1): 3,
+             (4 : 1): 4,
+             (5 : 1): 5,
+             (6 : 1): 6}
         """
         n = self.dimension_relative()
         R = self.base_ring()
@@ -964,17 +1157,17 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             D.update({self(P):index})
             index+=1
             iters = [ iter(R) for _ in range(i) ]
-            for x in iters: x.next() # put at zero
+            for x in iters: next(x) # put at zero
             j = 0
             while j < i:
                 try:
-                    P[j] = iters[j].next()
+                    P[j] = next(iters[j])
                     D.update({self(P):index})
                     index+=1
                     j = 0
                 except StopIteration:
                     iters[j] = iter(R)  # reset
-                    iters[j].next() # put at zero
+                    next(iters[j]) # put at zero
                     P[j] = zero
                     j += 1
             i -= 1

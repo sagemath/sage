@@ -15,7 +15,6 @@
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include "sage/ext/random.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
@@ -56,7 +55,7 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
 
     cdef ntl_GF2E r
     ctx.restore_c()
-    r = PY_NEW(ntl_GF2E)
+    r = ntl_GF2E.__new__(ntl_GF2E)
     r.c = ctx
     r.x = GF2E_random()
     return r
@@ -106,16 +105,16 @@ cdef class ntl_GF2E:
 
         cdef ntl_GF2X _x
 
-        if PY_TYPE_CHECK(x, ntl_GF2X):
+        if isinstance(x, ntl_GF2X):
             GF2E_conv_GF2X(self.x, (<ntl_GF2X>x).x)
 
-        elif PY_TYPE_CHECK(x, int):
+        elif isinstance(x, int):
             GF2E_conv_long(self.x, x)
 
-        elif PY_TYPE_CHECK(x, ntl_ZZ):
+        elif isinstance(x, ntl_ZZ):
             GF2E_conv_ZZ(self.x, (<ntl_ZZ>x).x)
 
-        elif PY_TYPE_CHECK(x, ntl_GF2):
+        elif isinstance(x, ntl_GF2):
             GF2E_conv_GF2(self.x, (<ntl_GF2>x).x)
         else:
             _x = ntl_GF2X(x)
@@ -128,7 +127,7 @@ cdef class ntl_GF2E:
         ## the error checking in __init__ will prevent##
         ## you from constructing an ntl_GF2E          ##
         ## inappropriately.  However, from Cython, you##
-        ## could do r = PY_NEW(ntl_GF2E) without      ##
+        ## could do r = ntl_GF2E.__new__(ntl_GF2E) without
         ## first restoring a GF2EContext, which could ##
         ## have unfortunate consequences.  See _new   ##
         ## defined below for an example of the right  ##
@@ -137,7 +136,7 @@ cdef class ntl_GF2E:
         ################################################
         if modulus is None:
             return
-        if PY_TYPE_CHECK( modulus, ntl_GF2EContext_class ):
+        if isinstance(modulus, ntl_GF2EContext_class):
             self.c = <ntl_GF2EContext_class>modulus
             self.c.restore_c()
             GF2E_construct(&self.x)
@@ -152,7 +151,7 @@ cdef class ntl_GF2E:
     cdef ntl_GF2E _new(self):
         cdef ntl_GF2E r
         self.c.restore_c()
-        r = PY_NEW(ntl_GF2E)
+        r = ntl_GF2E.__new__(ntl_GF2E)
         r.c = self.c
         return r
 
@@ -216,7 +215,7 @@ cdef class ntl_GF2E:
             [0 0 1 1 1 0 1 1]
         """
         cdef ntl_GF2E r
-        if not PY_TYPE_CHECK(other, ntl_GF2E):
+        if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError, "You can not perform arithmetic with elements in different fields."
@@ -233,7 +232,7 @@ cdef class ntl_GF2E:
             [0 1 1 1]
         """
         cdef ntl_GF2E r
-        if not PY_TYPE_CHECK(other, ntl_GF2E):
+        if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError, "You can not perform arithmetic with elements in different fields."
@@ -250,7 +249,7 @@ cdef class ntl_GF2E:
             [0 1 1 1]
         """
         cdef ntl_GF2E r
-        if not PY_TYPE_CHECK(other, ntl_GF2E):
+        if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError, "You can not perform arithmetic with elements in different fields."
@@ -267,7 +266,7 @@ cdef class ntl_GF2E:
             [1 0 1 0 0 1 0 1]
         """
         cdef ntl_GF2E r
-        if not PY_TYPE_CHECK(other, ntl_GF2E):
+        if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError, "You can not perform arithmetic with elements in different fields."
@@ -316,7 +315,7 @@ cdef class ntl_GF2E:
         """
         self.c.restore_c()
 
-        if not PY_TYPE_CHECK(other, ntl_GF2E):
+        if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
 
         if op != 2 and op != 3:
@@ -369,7 +368,7 @@ cdef class ntl_GF2E:
             sage: y.trace()
             1
         """
-        cdef ntl_GF2 x = PY_NEW(ntl_GF2)
+        cdef ntl_GF2 x = ntl_GF2.__new__(ntl_GF2)
         x.x = GF2E_trace(self.x)
         return x
 
@@ -385,7 +384,7 @@ cdef class ntl_GF2E:
             sage: type(a.rep())
             <type 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
         """
-        cdef ntl_GF2X x = PY_NEW(ntl_GF2X)
+        cdef ntl_GF2X x = ntl_GF2X.__new__(ntl_GF2X)
         x.x = GF2E_rep(self.x)
         return x
 
@@ -412,7 +411,7 @@ cdef class ntl_GF2E:
         l = []
 
         for i from 0 <= i <= GF2X_deg(x):
-            b = PY_NEW(ntl_GF2)
+            b = ntl_GF2.__new__(ntl_GF2)
             b.x = GF2X_coeff(x,i)
             l.append(b)
         return l

@@ -80,7 +80,7 @@ class GraphicPrimitive(SageObject):
             ...
             NotImplementedError: 3D plotting not implemented for Graphics primitive
         """
-        raise NotImplementedError, "3D plotting not implemented for %s" % self._repr_()
+        raise NotImplementedError("3D plotting not implemented for %s" % self._repr_())
 
     def _plot3d_options(self, options=None):
         """
@@ -95,9 +95,9 @@ class GraphicPrimitive(SageObject):
             sage: q.thickness
             4
             sage: q.texture.opacity
-            0.500000000000000
+            0.5
         """
-        if options == None:
+        if options is None:
             options = self.options()
         options_3d = {}
         if 'rgbcolor' in options:
@@ -129,9 +129,11 @@ class GraphicPrimitive(SageObject):
             2
             sage: Q = line([(-2,-4), (3,5)], thickness=4,zorder=1,hue=.5)
             sage: P+Q # blue line on top
+            Graphics object consisting of 2 graphics primitives
             sage: q=Q[0]
             sage: q.set_zorder(3)
             sage: P+Q # teal line on top
+            Graphics object consisting of 2 graphics primitives
             sage: q.options()['zorder']
             3
         """
@@ -180,7 +182,7 @@ class GraphicPrimitive(SageObject):
                 s = "\nThe allowed options for %s are:\n"%self
                 K.sort()
                 for k in K:
-                    if A.has_key(k):
+                    if k in A:
                         s += "    %-15s%-60s\n"%(k,A[k])
                 verbose(s, level=0)
 

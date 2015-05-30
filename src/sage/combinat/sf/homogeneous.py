@@ -1,5 +1,8 @@
 """
 Homogeneous symmetric functions
+
+By this we mean the basis formed of the complete homogeneous
+symmetric functions `h_\lambda`, not an arbitrary graded basis.
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
@@ -28,7 +31,8 @@ from sage.combinat.partition import Partition
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
         """
-        A class of methods specific to the homogeneous basis of symmetric functions
+        A class of methods specific to the homogeneous basis of
+        symmetric functions.
 
         INPUT:
 
@@ -52,18 +56,22 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         INPUT:
 
         - ``self`` -- a homogeneous basis of symmetric functions
-        - ``scalar`` -- optional input which specifies a function ``zee`` on partitions. The function
-                        ``zee`` determines the scalar product on the power sum basis
-                        with normalization `\langle p_\mu, p_\mu \rangle = \mathrm{zee}(mu)`.
-                        (default: uses standard ``zee`` function)
-        - ``scalar_name`` -- specifies the name of the scalar function (optional)
-        - ``prefix`` -- optional input, specifies the prefix to be used to display the basis.
+        - ``scalar`` -- optional input which specifies a function ``zee``
+          on partitions. The function ``zee`` determines the scalar
+          product on the power sum basis with normalization
+          `\langle p_\mu, p_\mu \rangle = \mathrm{zee}(mu)`.
+          (default: uses standard ``zee`` function)
+        - ``scalar_name`` -- specifies the name of the scalar function
+          (optional)
+        - ``prefix`` -- optional input, specifies the prefix to be
+          used to display the basis.
 
         OUTPUT:
 
-        - This method returns the dual basis of the homogeneous basis with respect to the
-          standard scalar product (the monomial basis).  If a function ``zee`` is specified,
-          the dual basis is with respect to the modified scalar product.
+        The dual basis of the homogeneous basis with respect to the
+        standard scalar product (the monomial basis).  If a function
+        ``zee`` is specified, the dual basis is with respect to the
+        modified scalar product.
 
         EXAMPLES::
 
@@ -119,17 +127,37 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             r"""
             Return the image of ``self`` under the omega automorphism.
 
-            The omega automorphism is defined to be the unique algebra
+            The *omega automorphism* is defined to be the unique algebra
             endomorphism `\omega` of the ring of symmetric functions that
             satisfies `\omega(e_k) = h_k` for all positive integers `k`
             (where `e_k` stands for the `k`-th elementary symmetric
             function, and `h_k` stands for the `k`-th complete homogeneous
             symmetric function). It furthermore is a Hopf algebra
-            endomorphism, and sends the power-sum symmetric function `p_k`
-            to `(-1)^{k-1} p_k` for every positive integer `k`.
+            endomorphism and an involution, and it is also known as the
+            *omega involution*. It sends the power-sum symmetric function
+            `p_k` to `(-1)^{k-1} p_k` for every positive integer `k`.
 
-            The default implementation converts to the Schurs, then
-            performs the automorphism and changes back.
+            The images of some bases under the omega automorphism are given by
+
+            .. MATH::
+
+                \omega(e_{\lambda}) = h_{\lambda}, \qquad
+                \omega(h_{\lambda}) = e_{\lambda}, \qquad
+                \omega(p_{\lambda}) = (-1)^{|\lambda| - \ell(\lambda)}
+                p_{\lambda}, \qquad
+                \omega(s_{\lambda}) = s_{\lambda^{\prime}},
+
+            where `\lambda` is any partition, where `\ell(\lambda)` denotes
+            the length (:meth:`~sage.combinat.partition.Partition.length`)
+            of the partition `\lambda`, where `\lambda^{\prime}` denotes the
+            conjugate partition
+            (:meth:`~sage.combinat.partition.Partition.conjugate`) of
+            `\lambda`, and where the usual notations for bases are used
+            (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
+            `s` = Schur).
+
+            :meth:`omega_involution()` is a synonym for the :meth:`omega()`
+            method.
 
             OUTPUT:
 
@@ -149,17 +177,23 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             e = self.parent().realization_of().e()
             return self.parent()(e._from_element(self))
 
+        omega_involution = omega
+
         def expand(self, n, alphabet='x'):
             """
-            Expands the symmetric function as a symmetric polynomial in `n` variables.
+            Expand the symmetric function ``self`` as a symmetric polynomial
+            in ``n`` variables.
 
             INPUT:
 
-            - ``self`` -- an element of the homogeneous basis of symmetric functions
-            - ``n`` -- a positive integer
-            - ``alphabet`` -- a variable for the expansion (default: `x`)
+            - ``n`` -- a nonnegative integer
 
-            OUTPUT: a monomial expansion of an instance of ``self`` in `n` variables
+            - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
+
+            OUTPUT:
+
+            A monomial expansion of ``self`` in the `n` variables
+            labelled by ``alphabet``.
 
             EXAMPLES::
 
@@ -178,7 +212,13 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 x^3 + x^2*y + x*y^2 + y^3 + x^2*z + x*y*z + y^2*z + x*z^2 + y*z^2 + z^3
                 sage: (h([]) + 2*h([1])).expand(3)
                 2*x0 + 2*x1 + 2*x2 + 1
+                sage: h([1]).expand(0)
+                0
+                sage: (3*h([])).expand(0)
+                3
             """
+            if n == 0:   # Symmetrica crashes otherwise...
+                return self.counit()
             condition = lambda part: False
             return self._expand(condition, n, alphabet)
 

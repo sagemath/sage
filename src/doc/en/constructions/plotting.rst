@@ -40,17 +40,18 @@ You can plot piecewise-defined functions:
     sage: f4 = lambda x:sin(2*x)
     sage: f = Piecewise([[(0,1),f1],[(1,2),f2],[(2,3),f3],[(3,10),f4]])
     sage: f.plot()
+    Graphics object consisting of 4 graphics primitives
 
 Other function plots can be produced as well:
 
 A red plot of the Jacobi elliptic function
 :math:`\text{sn}(x,2)`, :math:`-3<x<3` (do not type the
-``...``:
+``....:``:
 
 ::
 
-    sage: L = [(i/100.0, maxima.eval('jacobi_sn (%s/100.0,2.0)'%i))\
-    ...   for i in range(-300,300)]
+    sage: L = [(i/100.0, maxima.eval('jacobi_sn (%s/100.0,2.0)'%i))
+    ....:     for i in range(-300,300)]
     sage: show(line(L, rgbcolor=(3/4,1/4,1/8)))
 
 A red plot of :math:`J`-Bessel function :math:`J_2(x)`,
@@ -90,43 +91,48 @@ A blue conchoid of Nicomedes:
 
 ::
 
-    sage: L = [[1+5*cos(pi/2+pi*i/100), tan(pi/2+pi*i/100)*\
-    ...   (1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
+    sage: L = [[1+5*cos(pi/2+pi*i/100), tan(pi/2+pi*i/100)*
+    ....:     (1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
     sage: line(L, rgbcolor=(1/4,1/8,3/4))
+    Graphics object consisting of 1 graphics primitive
 
 A blue hypotrochoid (3 leaves):
 
 ::
 
     sage: n = 4; h = 3; b = 2
-    sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),\
-    ...   n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+    sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),
+    ....:     n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
     sage: line(L, rgbcolor=(1/4,1/4,3/4))
+    Graphics object consisting of 1 graphics primitive
 
 A blue hypotrochoid (4 leaves):
 
 ::
 
     sage: n = 6; h = 5; b = 2
-    sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),\
-    ...   n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+    sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),
+    ....:     n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
     sage: line(L, rgbcolor=(1/4,1/4,3/4))
+    Graphics object consisting of 1 graphics primitive
 
 A red limaçon of Pascal:
 
 ::
 
-    sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))]\
-    ...   for i in range(-100,101)]
+    sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))]
+    ....:     for i in range(-100,101)]
     sage: line(L, rgbcolor=(1,1/4,1/2))
+    Graphics object consisting of 1 graphics primitive
 
 A light green trisectrix of Maclaurin:
 
 ::
 
-    sage: L = [[2*(1-4*cos(-pi/2+pi*i/100)^2),10*tan(-pi/2+pi*i/100)*\
-    ...   (1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
+    sage: L = [[2*(1-4*cos(-pi/2+pi*i/100)^2),10*tan(-pi/2+pi*i/100)*
+    ....:     (1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
     sage: line(L, rgbcolor=(1/4,1,1/8))
+    Graphics object consisting of 1 graphics primitive
 
 
 A green lemniscate of Bernoulli (we omit i==100 since that would give a 0 division error):
@@ -136,6 +142,7 @@ A green lemniscate of Bernoulli (we omit i==100 since that would give a 0 divisi
     sage: v = [(1/cos(-pi/2+pi*i/100), tan(-pi/2+pi*i/100)) for i in range(1,200) if i!=100 ]
     sage: L = [(a/(a^2+b^2), b/(a^2+b^2)) for a,b in v]
     sage: line(L, rgbcolor=(1/4,3/4,1/8))
+    Graphics object consisting of 1 graphics primitive
 
 
 .. index:: plot;curve using surf
@@ -198,7 +205,7 @@ The following command plots the function
 ::
 
     sage: maxima.plot2d('cos(2*x) + 2*exp(-x)','[x,0,1]',  # not tested (pops up a window)
-    ....: '[plot_format,openmath]')
+    ....:     '[plot_format,openmath]')
 
 (Mac OS X users: Note that these ``openmath`` commands were run in a
 session of started in an xterm shell, not using the standard Mac
@@ -227,7 +234,7 @@ with your mouse:
 ::
 
     sage: maxima.plot3d ("sin(x^2 + y^2)", "[x, -3, 3]", "[y, -3, 3]", # optional
-    ....: '[plot_format, openmath]')
+    ....:     '[plot_format, openmath]')
 
 By rotating this suitably, you can view the contour plot.
 
@@ -286,8 +293,8 @@ Here is an example of a plot of a parametric curve in the plane:
 ::
 
     sage: maxima.plot2d_parametric(["sin(t)","cos(t)"], "t",[-3.1,3.1])
-    sage: opts = '[gnuplot_preamble, "set nokey"], [gnuplot_term, ps],\
-    ...   [gnuplot_out_file, "circle-plot.eps"]'
+    sage: opts = '[gnuplot_preamble, "set nokey"], [gnuplot_term, ps],
+    ....:     [gnuplot_out_file, "circle-plot.eps"]'
     sage: maxima.plot2d_parametric(["sin(t)","cos(t)"], "t", [-3.1,3.1], options=opts)
 
 Here is an example of a plot of a parametric surface in 3-space:
@@ -297,11 +304,11 @@ Here is an example of a plot of a parametric surface in 3-space:
 
 ::
 
-    sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],\
-    ...   [-3.2,3.2],[0,3])      # optional -- pops up a window.
+    sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],
+    ....:     [-3.2,3.2],[0,3])      # optional -- pops up a window.
     sage: opts = '[gnuplot_term, ps], [gnuplot_out_file, "sin-cos-plot.eps"]'
-    sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],\
-    ...   [-3.2,3.2],[0,3],opts)     # optional -- pops up a window.
+    sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],
+    ....:     [-3.2,3.2],[0,3],opts)     # optional -- pops up a window.
 
 To illustrate how to pass gnuplot options in , here is an example
 of a plot of a set of points involving the Riemann zeta function
@@ -312,13 +319,13 @@ and Gnuplot): {plot!points} {Riemann zeta function}
 
 ::
 
-    sage: zeta_ptsx = [ (pari(1/2 + i*I/10).zeta().real()).precision(1)\
-    ...   for i in range (70,150)]
-    sage: zeta_ptsy = [ (pari(1/2 + i*I/10).zeta().imag()).precision(1)\
-    ...   for i in range (70,150)]
+    sage: zeta_ptsx = [ (pari(1/2 + i*I/10).zeta().real()).precision(1)
+    ....:     for i in range (70,150)]
+    sage: zeta_ptsy = [ (pari(1/2 + i*I/10).zeta().imag()).precision(1)
+    ....:     for i in range (70,150)]
     sage: maxima.plot_list(zeta_ptsx, zeta_ptsy)  # optional -- pops up a window.
-    sage: opts='[gnuplot_preamble, "set nokey"], [gnuplot_term, ps],\
-    ...   [gnuplot_out_file, "zeta.eps"]'
+    sage: opts='[gnuplot_preamble, "set nokey"], [gnuplot_term, ps],
+    ....:     [gnuplot_out_file, "zeta.eps"]'
     sage: maxima.plot_list(zeta_ptsx, zeta_ptsy, opts) # optional -- pops up a window.
 
 .. _section-surface:

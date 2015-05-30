@@ -137,12 +137,27 @@ class FunctionFieldPolymodFactory(UniqueFactory):
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y>=K[]
             sage: L.<w> = K.extension(x-y^2) # indirect doctest
+
+        TESTS:
+
+        Verify that :trac:`16530` has been resolved::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2-x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z-1)
+            sage: R.<z> = K[]
+            sage: N.<z> = K.extension(z-1)
+            sage: M is N
+            False
+
         """
         if names is None:
             names=polynomial.variable_name()
         if not isinstance(names,tuple):
             names=(names,)
-        return (polynomial,names)
+        return (polynomial,names,polynomial.base_ring())
 
     def create_object(self,version,key,**extra_args):
         """

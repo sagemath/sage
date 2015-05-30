@@ -120,7 +120,9 @@ def tmp_filename(name="tmp_", ext=""):
 
     - ``name`` -- (default: ``"tmp_"``) A prefix for the file name.
 
-    - ``ext`` -- (default: ``""``) A suffix for the file name.
+    - ``ext`` -- (default: ``""``) A suffix for the file name. If you
+      want a filename extension in the usual sense, this should start
+      with a dot.
 
     OUTPUT:
 
@@ -145,16 +147,70 @@ def tmp_filename(name="tmp_", ext=""):
     return name
 
 
-def graphics_filename(ext='png'):
+def graphics_filename(ext='.png'):
     """
-    Return the next available canonical filename for a plot/graphics
-    file.
+    Deprecated SageNB graphics filename
+    
+    You should just use :meth:`tmp_filename`.
+
+    When run from the Sage notebook, return the next available canonical
+    filename for a plot/graphics file in the current working directory.
+    Otherwise, return a temporary file inside ``SAGE_TMP``.
+
+    INPUT:
+
+    - ``ext`` -- (default: ``".png"``) A file extension (including the dot)
+      for the filename.
+
+    OUTPUT:
+
+    The path of the temporary file created. In the notebook, this is
+    a filename without path in the current directory. Otherwise, this
+    an absolute path.
+
+    EXAMPLES::
+
+        sage: from sage.misc.temporary_file import graphics_filename
+        sage: print graphics_filename()  # random, typical filename for sagenb
+        sage0.png
+
+    TESTS:
+
+    When doctesting, this returns instead a random temporary file.
+    We check that it's a file inside ``SAGE_TMP`` and that the extension
+    is correct::
+
+        sage: fn = graphics_filename(ext=".jpeg")
+        sage: fn.startswith(str(SAGE_TMP))
+        True
+        sage: fn.endswith('.jpeg')
+        True
+
+    Historically, it was also possible to omit the dot. This has been
+    changed in :trac:`16640` but it will still work for now::
+
+        sage: fn = graphics_filename("jpeg")
+        doctest:...: DeprecationWarning: extension must now include the dot
+        See http://trac.sagemath.org/16640 for details.
+        sage: fn.endswith('.jpeg')
+        True
     """
-    i = 0
-    while os.path.exists('sage%d.%s'%(i,ext)):
-        i += 1
-    filename = 'sage%d.%s'%(i,ext)
-    return filename
+    import sage.plot.plot
+    from sage.misc.superseded import deprecation
+    if ext[0] not in '.-':
+        deprecation(16640, "extension must now include the dot")
+        ext = '.' + ext
+    if sage.plot.plot.EMBEDDED_MODE:
+        # Don't use this unsafe function except in the notebook, #15515
+        i = 0
+        while os.path.exists('sage%d%s'%(i,ext)):
+            i += 1
+        filename = 'sage%d%s'%(i,ext)
+        return filename
+    else:
+        deprecation(17234,'use tmp_filename instead')
+        return tmp_filename(ext=ext)
+
 
 #################################################################
 # write to a temporary file and move it in place
@@ -182,6 +238,11 @@ class atomic_write:
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is
       initially empty.
+
+    - ``mode`` -- (default: ``0o666``) mode bits for the file. The
+      temporary file is created with mode ``mode & ~umask`` and the
+      resulting file will also have these permissions (unless the
+      mode bits of the file were changed manually).
 
     EXAMPLES::
 
@@ -247,6 +308,21 @@ class atomic_write:
         sage: open(target_file, "r").read()
         'Newest contents'
 
+    We check the permission bits of the new file. Note that the old
+    permissions do not matter::
+
+        sage: os.chmod(target_file, 0o600)
+        sage: _ = os.umask(0o022)
+        sage: with atomic_write(target_file) as f:
+        ....:     pass
+        sage: oct(os.stat(target_file).st_mode & 0o777)
+        '644'
+        sage: _ = os.umask(0o077)
+        sage: with atomic_write(target_file, mode=0o777) as f:
+        ....:     pass
+        sage: oct(os.stat(target_file).st_mode & 0o777)
+        '700'
+
     Test writing twice to the same target file. The outermost ``with``
     "wins"::
 
@@ -258,22 +334,25 @@ class atomic_write:
         sage: open(target_file, "r").read()
         '>>> AAA'
     """
-    def __init__(self, target_filename, append=False):
+    def __init__(self, target_filename, append=False, mode=0o666):
         """
         TESTS::
 
             sage: from sage.misc.temporary_file import atomic_write
             sage: link_to_target = os.path.join(tmp_dir(), "templink")
             sage: os.symlink("/foobar", link_to_target)
-            sage: wvt = atomic_write(link_to_target)
-            sage: print wvt.target
+            sage: aw = atomic_write(link_to_target)
+            sage: print aw.target
             /foobar
-            sage: print wvt.tmpdir
+            sage: print aw.tmpdir
             /
         """
         self.target = os.path.realpath(target_filename)
         self.tmpdir = os.path.dirname(self.target)
         self.append = append
+        # Remove umask bits from mode
+        umask = os.umask(0); os.umask(umask)
+        self.mode = mode & (~umask)
 
     def __enter__(self):
         """
@@ -288,13 +367,14 @@ class atomic_write:
         TESTS::
 
             sage: from sage.misc.temporary_file import atomic_write
-            sage: wvt = atomic_write(tmp_filename())
-            sage: with wvt as f:
-            ....:     os.path.dirname(wvt.target) == os.path.dirname(f.name)
+            sage: aw = atomic_write(tmp_filename())
+            sage: with aw as f:
+            ....:     os.path.dirname(aw.target) == os.path.dirname(f.name)
             True
         """
         self.tempfile = tempfile.NamedTemporaryFile(dir=self.tmpdir, delete=False)
         self.tempname = self.tempfile.name
+        os.chmod(self.tempname, self.mode)
         if self.append:
             try:
                 r = open(self.target).read()
@@ -324,9 +404,12 @@ class atomic_write:
             sage: os.path.exists(tempname)
             False
         """
-        # Close the file (Python allows closing a closed file, so it's
-        # okay if the user already closed it).
-        self.tempfile.close()
+        # Flush the file contents to disk (to be safe even if the
+        # system crashes) and close the file.
+        if not self.tempfile.closed:
+            self.tempfile.flush()
+            os.fsync(self.tempfile.fileno())
+            self.tempfile.close()
 
         if exc_type is None:
             # Success: move temporary file to target file

@@ -58,6 +58,6 @@ if [ "x$SAGE_SPKG_INSTALL_DOCS" = xyes ] ; then
       rm -rf $SAGE_LOCAL/share/doc/cvxopt/html
    fi
    mkdir -p $SAGE_LOCAL/share/doc/cvxopt/html
-   cp -r build/html/* $SAGE_LOCAL/share/doc/cvxopt/html/
+   cp -r html/* $SAGE_LOCAL/share/doc/cvxopt/html/
 fi
 

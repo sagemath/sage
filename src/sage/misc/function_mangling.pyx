@@ -108,7 +108,7 @@ cdef class ArgumentFixer:
         sage: class one:
         ...      def __init__(self, x = 1):
         ...         self.x = x
-        sage: af = ArgumentFixer(one.__init__.im_func, classmethod=True)
+        sage: af = ArgumentFixer(one.__init__.__func__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
 
@@ -121,13 +121,27 @@ cdef class ArgumentFixer:
     cdef dict _defaults
     cdef public tuple _default_tuple
     def __init__(self, f, classmethod = False):
-        arg_names, varargs, varkw, defaults = sage_getargspec(f)
+        try:
+            arg_names, varargs, varkw, defaults = sage_getargspec(f)
+        except AttributeError:
+            # This error occurs if f is defined in a Cython file and the
+            # source file has gone.
+            if classmethod:
+                arg_names = ['self']
+                varargs = 'args'
+                varkws = 'kwds'
+                defaults = None
+            else:
+                arg_names = []
+                varargs = 'args'
+                varkws = 'kwds'
+                defaults = None
         if defaults is None:
             self._default_tuple = defaults = ()
         else:
             self._default_tuple = tuple(defaults)
 
-        #code = f.func_code
+        #code = f.__code__
 
         self.f = f
         self._ndefault = len(defaults)

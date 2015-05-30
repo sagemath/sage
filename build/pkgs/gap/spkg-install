@@ -11,7 +11,7 @@ if [ -z "$SAGE_LOCAL" ]; then
 fi
 
 # Read gap-version, which was written by spkg-src
-VERSION=`cat gap-version`
+VERSION=`cat src/gap-version`
 GAP_DIR="gap-$VERSION"
 INSTALL_DIR="$SAGE_LOCAL/gap/$GAP_DIR"
 

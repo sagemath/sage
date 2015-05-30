@@ -1,3 +1,5 @@
+"Exceptions raised by the coercion model"
+
 ###############################################################################
 #   SAGE: System for Algebra and Geometry Experimentation
 #       Copyright (C) 2009 Robert Bradshaw <robertwb@math.washington.edu>

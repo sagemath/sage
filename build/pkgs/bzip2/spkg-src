@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+BZIP2=bzip2-1.0.6
+
+set -e
+shopt -s extglob
+
+# Remove old sources and download new
+rm -rf src
+mkdir src
+cd src
+
+tar xzf <( curl -L "http://www.bzip.org/1.0.6/$BZIP2.tar.gz" )
+
+if [ ! -d "$BZIP2" ]; then
+    echo "$BZIP2 directory not in tarball, aborting"
+    exit 1
+fi
+mv "$BZIP2" src
+
+# Autotoolify
+cp -a ../patches/autotools ./
+cd autotools
+mkdir m4
+touch NEWS README AUTHORS ChangeLog
+autoreconf -fiv
+rm -rf autom4te.cache

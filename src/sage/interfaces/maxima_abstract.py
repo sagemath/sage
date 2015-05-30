@@ -50,7 +50,7 @@ and library interfaces to Maxima.
 
 import os, re, sys, subprocess
 
-from sage.misc.misc import DOT_SAGE
+from sage.env import DOT_SAGE
 COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj'%DOT_SAGE
 
 from sage.misc.multireplace import multiple_replace
@@ -165,10 +165,7 @@ class MaximaAbstract(Interface):
             p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             res = p.stdout.read()
-            # ecl-10.2 : 3 lines
-            # ecl-10.4 : 5 lines
-            # ecl-11.1 : 4 lines fancy a tango?
-            # We now get 4 lines of commented verbosity
+            # We get 4 lines of commented verbosity
             # every time Maxima starts, so we need to get rid of them
             for _ in range(4):
                 res = res[res.find('\n')+1:]
@@ -244,11 +241,12 @@ class MaximaAbstract(Interface):
 
         EXAMPLES::
 
-            sage: maxima.demo('array') # not tested
-            batching /opt/sage/local/share/maxima/5.16.3/demo/array.dem
+            sage: maxima.demo('cf') # not tested
+            read and interpret file: .../local/share/maxima/5.34.1/demo/cf.dem
 
-        At the _ prompt, type ';' followed by enter to get next demo
-        subscrmap : true _
+            At the '_' prompt, type ';' and <enter> to get next demonstration.
+            frac1:cf([1,2,3,4])
+            ...
         """
         # Should this be implemented without launching a new Maxima session
         # i.e. using eval_line ?
@@ -270,7 +268,7 @@ class MaximaAbstract(Interface):
         EXAMPLES::
 
             sage: sorted(maxima.completions('gc', verbose=False))
-            ['gcd', 'gcdex', 'gcfactor', 'gcprint', 'gctime']
+            ['gcd', 'gcdex', 'gcfactor', 'gctime']
         """
         if verbose:
             print s,
@@ -368,8 +366,8 @@ class MaximaAbstract(Interface):
         EXAMPLES::
 
             sage: maxima.console()             # not tested (since we can't)
-            Maxima 5.13.0 http://maxima.sourceforge.net
-            Using Lisp CLISP 2.41 (2006-10-13)
+            Maxima 5.34.1 http://maxima.sourceforge.net
+            Using Lisp ECL 13.5.1
             Distributed under the GNU Public License. See the file COPYING.
             Dedicated to the memory of William Schelter.
             This is a development version of Maxima. The function bug_report()
@@ -420,7 +418,7 @@ class MaximaAbstract(Interface):
         EXAMPLES::
 
             sage: maxima.version()
-            '5.29.1'
+            '5.35.1'
         """
         return maxima_version()
 
@@ -496,7 +494,7 @@ class MaximaAbstract(Interface):
              sage: var('x y')
              (x, y)
              sage: maxima(x == y)
-             x=y
+             _SAGE_VAR_x=_SAGE_VAR_y
         """
         return '='
 
@@ -513,7 +511,7 @@ class MaximaAbstract(Interface):
              sage: maxima._inequality_symbol()
              '#'
              sage: maxima((x != 1))
-             x#1
+             _SAGE_VAR_x#1
         """
         return '#'
 
@@ -601,11 +599,11 @@ class MaximaAbstract(Interface):
         EXAMPLES::
 
             sage: f = maxima.function('x', 'sin(x)')
-            sage: f(3.2)
-            -.058374143427580...
+            sage: f(3.2)  # abs tol 2e-16
+            -0.058374143427579909
             sage: f = maxima.function('x,y', 'sin(x)+cos(y)')
-            sage: f(2,3.5)
-            sin(2)-.9364566872907963
+            sage: f(2, 3.5)  # abs tol 2e-16
+            sin(2)-0.9364566872907963
             sage: f
             sin(x)+cos(y)
 
@@ -850,7 +848,7 @@ class MaximaAbstract(Interface):
         self.eval('depends(%s)'%str_vars)
         m = self(de)
         a = 'ode2(%s, %s)'%(m.name(), str_vars)
-        if ics != None:
+        if ics is not None:
             if len(ics) == 3:
                 cmd = "ic2("+a+",%s=%s,%s=%s,diff(%s,%s)=%s);"%(vars[0],ics[0], vars[1],ics[1], vars[1], vars[0], ics[2])
                 return self(cmd)
@@ -970,7 +968,7 @@ class MaximaAbstract(Interface):
         # n is not squarefree.)
         n = Integer(n).squarefree_part()
         if n < 1:
-            raise ValueError, "n (=%s) must be >= 1"%n
+            raise ValueError("n (=%s) must be >= 1"%n)
         s = repr(self('qunit(%s)'%n)).lower()
         r = re.compile('sqrt\(.*\)')
         s = r.sub('a', s)
@@ -1320,7 +1318,7 @@ class MaximaAbstractElement(InterfaceElement):
         EXAMPLES::
 
             sage: CDF(maxima('sqrt(2)+1'))
-            2.41421356237
+            2.414213562373095
         """
         return C(self._sage_())
 
@@ -1337,7 +1335,7 @@ class MaximaAbstractElement(InterfaceElement):
         EXAMPLES::
 
             sage: RDF(maxima('sqrt(2)+1'))
-            2.41421356237
+            2.414213562373095
         """
         return R(self._sage_())
 
@@ -1513,7 +1511,7 @@ class MaximaAbstractElement(InterfaceElement):
         EXAMPLES::
 
             sage: maxima('exp(-sqrt(x))').nintegral('x',0,1)
-            (.5284822353142306, 4.16331413788384...e-11, 231, 0)
+            (0.5284822353142306, 4.16331413788384...e-11, 231, 0)
 
         Note that GP also does numerical integration, and can do so to very
         high precision very quickly::
@@ -1575,7 +1573,7 @@ class MaximaAbstractElement(InterfaceElement):
             return I(var)
         else:
             if max is None:
-                raise ValueError, "neither or both of min/max must be specified."
+                raise ValueError("neither or both of min/max must be specified.")
             return I(var, min, max)
 
     integrate = integral
@@ -1600,7 +1598,7 @@ class MaximaAbstractElement(InterfaceElement):
         try:
             return float(repr(self.numer()))
         except ValueError:
-            raise TypeError, "unable to coerce '%s' to float"%repr(self)
+            raise TypeError("unable to coerce '%s' to float"%repr(self))
 
     def __len__(self):
         """
@@ -1670,7 +1668,7 @@ class MaximaAbstractElement(InterfaceElement):
         """
         n = int(n)
         if n < 0 or n >= len(self):
-            raise IndexError, "n = (%s) must be between %s and %s"%(n, 0, len(self)-1)
+            raise IndexError("n = (%s) must be between %s and %s"%(n, 0, len(self)-1))
         # If you change the n+1 to n below, better change __iter__ as well.
         return InterfaceElement.__getitem__(self, n+1)
 
@@ -1753,17 +1751,17 @@ class MaximaAbstractElement(InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,{\it t_0}}}\,f  \left({\it t_0}\right)\right|_{\left[ {\it t_0}=x\,y \right] }  \right)\,y
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t_0}}}\,f\left({\it t_0}\right)  \right|_{\left[ {\it t_0}={\it x}\,  {\it y} \right] }\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
-            {{{\it \partial}^4}\over{{\it \partial}\,d\,{\it \partial}\,x^2\,  {\it \partial}\,y}}\,f\left(x , y , d\right)
+            {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
             sage: latex(maxima(d/(d-2)))
-            {{d}\over{d-2}}
+            {{{\it d}}\over{{\it d}-2}}
         """
         self._check_valid()
         P = self.parent()
         s = P._eval_line('tex(%s);'%self.name(), reformat=False)
         if not '$$' in s:
-            raise RuntimeError, "Error texing Maxima object."
+            raise RuntimeError("Error texing Maxima object.")
         i = s.find('$$')
         j = s.rfind('$$')
         s = s[i+2:j]
@@ -1771,7 +1769,8 @@ class MaximaAbstractElement(InterfaceElement):
                               '\\%':'',
                               '\\arcsin ':'\\sin^{-1} ',
                               '\\arccos ':'\\cos^{-1} ',
-                              '\\arctan ':'\\tan^{-1} '}, s)
+                              '\\arctan ':'\\tan^{-1} ',
+                              '\\_SAGE\\_VAR\\_':''}, s)
 
         # Fix a maxima bug, which gives a latex representation of multiplying
         # two numbers as a single space. This was really bad when 2*17^(1/3)
@@ -1898,7 +1897,7 @@ class MaximaAbstractElement(InterfaceElement):
 
             sage: f = maxima.cos(x)
             sage: f._operation("+", f)
-            2*cos(x)
+            2*cos(_SAGE_VAR_x)
         """
         P = self._check_valid()
 
@@ -1908,8 +1907,8 @@ class MaximaAbstractElement(InterfaceElement):
 
         try:
             return P.new('%s %s %s'%(self._name, operation, right._name))
-        except Exception, msg:
-            raise TypeError, msg
+        except Exception as msg:
+            raise TypeError(msg)
 
 
 class MaximaAbstractFunctionElement(InterfaceFunctionElement):
@@ -2183,25 +2182,20 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             sage: f+3
             sin(x)+3
 
-        ::
+        The Maxima variable ``x`` is different from the Sage symbolic variable::
 
+            sage: (f+maxima.cos(x))
+            cos(_SAGE_VAR_x)+sin(x)
+            sage: (f+maxima.cos(y))
+            cos(_SAGE_VAR_y)+sin(x)
+            
+        Note that you may get unexpected results when calling symbolic expressions
+        and not explicitly giving the variables::
+            
             sage: (f+maxima.cos(x))(2)
-            sin(2)+cos(2)
-            sage: (f+maxima.cos(y)) # This is a function with only ONE argument!
-            cos(y)+sin(x)
+            cos(_SAGE_VAR_x)+sin(2)
             sage: (f+maxima.cos(y))(2)
-            cos(y)+sin(2)
-
-        ::
-
-            sage: f = maxima.function('x','sin(x)')
-            sage: g = -maxima.cos(x)
-            sage: g+f
-            sin(x)-cos(x)
-            sage: (g+f)(2) # The sum IS a function
-            sin(2)-cos(2)
-            sage: 2+f
-            sin(x)+2
+            cos(_SAGE_VAR_y)+sin(2)
         """
         return self._operation("+", f)
 
@@ -2213,20 +2207,21 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
             sage: x,y = var('x,y')
             sage: f = maxima.function('x','sin(x)')
-            sage: g = -maxima.cos(x) # not a function
-            sage: f-g
-            sin(x)+cos(x)
-            sage: (f-g)(2)
-            sin(2)+cos(2)
-            sage: (f-maxima.cos(y)) # This function only has the argument x!
-            sin(x)-cos(y)
-            sage: _(2)
-            sin(2)-cos(y)
+            
+        The Maxima variable ``x`` is different from the Sage symbolic variable::
 
-        ::
-
-            sage: g-f
-            -sin(x)-cos(x)
+            sage: (f-maxima.cos(x))
+            sin(x)-cos(_SAGE_VAR_x)
+            sage: (f-maxima.cos(y))
+            sin(x)-cos(_SAGE_VAR_y)
+            
+        Note that you may get unexpected results when calling symbolic expressions
+        and not explicitly giving the variables::
+            
+            sage: (f-maxima.cos(x))(2)
+            sin(2)-cos(_SAGE_VAR_x)
+            sage: (f-maxima.cos(y))(2)
+            sin(2)-cos(_SAGE_VAR_y)
         """
         return self._operation("-", f)
 
@@ -2352,7 +2347,7 @@ def maxima_version():
 
         sage: from sage.interfaces.maxima_abstract import maxima_version
         sage: maxima_version()
-        '5.29.1'
+        '5.35.1'
     """
     return os.popen('maxima --version').read().split()[-1]
 
@@ -2364,7 +2359,7 @@ def maxima_console():
 
         sage: from sage.interfaces.maxima_abstract import maxima_console
         sage: maxima_console()                    # not tested
-        Maxima 5.29.1 http://maxima.sourceforge.net
+        Maxima 5.34.1 http://maxima.sourceforge.net
         ...
     """
     os.system('maxima')

@@ -196,6 +196,7 @@ Finally, we plot everything together in the last line by adding
     sage: L(x)=fprime(c)*(x-c)+f(c)
     sage: Q=plot(L,(x,-1,1), color="red", linestyle="--")
     sage: P+Q
+    Graphics object consisting of 2 graphics primitives
 
 You may want to experiment by
 
@@ -227,11 +228,11 @@ In this one, dragging a slider will show the tangent line moving.
     sage: f(x)=x^3+1
     sage: @interact
     sage: def _(c=(1/3,(-1,1))):
-    ...       P=plot(f,(x,-1,1))
-    ...       fprime=derivative(f,x)
-    ...       L(x)=fprime(c)*(x-c)+f(c)
-    ...       Q=plot(L,(x,-1,1),color="red", linestyle="--")
-    ...       show(P+Q+point((c,f(c)), pointsize=40, color='red'),ymin=0,ymax=2)
+    ....:     P=plot(f,(x,-1,1))
+    ....:     fprime=derivative(f,x)
+    ....:     L(x)=fprime(c)*(x-c)+f(c)
+    ....:     Q=plot(L,(x,-1,1),color="red", linestyle="--")
+    ....:     show(P+Q+point((c,f(c)), pointsize=40, color='red'),ymin=0,ymax=2)
 
 A very sharp\-eyed reader will also have noticed that the previous cell
 had ``%auto`` at the very top, and that it was not necessary to evaluate
@@ -373,6 +374,7 @@ the plotting options from the plotting tutorial.
 ::
 
     sage: plot(cos(x),(x,0,pi/2),fill=True,ticks=[[0,pi/4,pi/2],None],tick_formatter=pi)
+    Graphics object consisting of 2 graphics primitives
 
 It is possible to be completely symbolic in doing integration.  If you
 do this, you'll have to make sure you define anything that's a symbolic
@@ -515,6 +517,7 @@ Notice how close the approximation is to the function on this interval!
 ::
 
     sage: plot(g,(x,0,2))+plot(log(x),(x,0,2),color='red')
+    Graphics object consisting of 2 graphics primitives
 
 .. _Calc3:
 
@@ -600,6 +603,7 @@ cell below is the unit vector in the direction :math:`(1,2)`.
     sage: u=vector([1,2])
     sage: Q=plot(u/u.norm())
     sage: P+Q
+    Graphics object consisting of 2 graphics primitives
 
 Rather than actually figure out the unit vector in that direction, it's
 easier to let Sage compute it by dividing the vector by its norm.
@@ -621,7 +625,8 @@ options with features of the graphic.
 
     sage: y = var('y')
     sage: contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi),\
-    ...    contours=[-8,-4,0,4,8], colorbar=True, labels=True, label_colors='red')
+    ....:    contours=[-8,-4,0,4,8], colorbar=True, labels=True, label_colors='red')
+    Graphics object consisting of 1 graphics primitive
 
 In this one, we have used options to:
 
@@ -658,6 +663,7 @@ mentioned in the symbolics and plotting tutorial.
 ::
 
     sage: plot3d(f,(x,0,pi),(y,0,pi),color='red')+plot3d(0,(x,0,pi),(y,0,pi))
+    Graphics3d Object
 
 In addition to multivariate calculus, Calculus 3 often covers parametric
 calculus of a single variable.  Sage can do arbitrary parametric plots,
@@ -675,6 +681,7 @@ the beginning of this tutorial.
     sage: my_prime=my_curve.diff(t)
     sage: L=my_prime(1)*t+my_curve(1) # tangent line at t=1
     sage: parametric_plot(L, (t,-2,2))+PP
+    Graphics object consisting of 2 graphics primitives
 
 .. tip::
   - After a while, you'll find that giving things names other than ``f``

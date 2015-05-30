@@ -13,7 +13,7 @@ from sage.sets.family import Family
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import FiniteMonoids
+from sage.categories.all import Monoids
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
@@ -29,7 +29,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         An example of a finite multiplicative monoid: the integers modulo 12
 
         sage: S.category()
-        Category of finite monoids
+        Category of finitely generated finite monoids
 
     We conclude by running systematic tests on this monoid::
 
@@ -72,7 +72,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
 
         """
         self.n = n
-        Parent.__init__(self, category = FiniteMonoids())
+        Parent.__init__(self, category=Monoids().Finite().FinitelyGenerated())
 
     def _repr_(self):
         r"""
@@ -103,7 +103,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
     @cached_method
     def one(self):
         r"""
-        Returns the one of the monoid, as per :meth:`Monoids.ParentMethods.one`.
+        Return the one of the monoid, as per :meth:`Monoids.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -112,11 +112,12 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
             1
 
         """
-        return self(ZZ(1))
+        return self(ZZ.one())
 
     def product(self, x, y):
         r"""
-        Returns the one of the monoid, as per :meth:`Semigroups.ParentMethods.product`.
+        Return the product of two elements `x` and `y` of the monoid, as
+        per :meth:`Semigroups.ParentMethods.product`.
 
         EXAMPLES::
 

@@ -37,9 +37,9 @@ On peut obtenir la table des caractères (au format LaTeX) à partir de Sage :
     sage: latex(G.character_table())
     \left(\begin{array}{rrrr}
     1 & 1 & 1 & 1 \\
-    1 & 1 & -\zeta_{3} - 1 & \zeta_{3} \\
-    1 & 1 & \zeta_{3} & -\zeta_{3} - 1 \\
-    3 & -1 & 0 & 0
+    1 & -\zeta_{3} - 1 & \zeta_{3} & 1 \\
+    1 & \zeta_{3} & -\zeta_{3} - 1 & 1 \\
+    3 & 0 & 0 & -1
     \end{array}\right)
 
 Sage inclut aussi les groupes classiques ou matriciels définis sur des
@@ -52,11 +52,11 @@ corps finis :
     sage: G = MatrixGroup(gens)
     sage: G.conjugacy_class_representatives()
     (
-    [1 0]  [0 1]  [0 1]  [0 1]  [0 1]  [0 1]  [0 1]  [0 3]  [0 3]  [0 1]
-    [0 1], [6 1], [6 3], [6 2], [6 6], [6 4], [6 5], [2 2], [2 5], [6 0],
+    [1 0]  [0 6]  [0 4]  [6 0]  [0 6]  [0 4]  [0 6]  [0 6]  [0 6]  [4 0]
+    [0 1], [1 5], [5 5], [0 6], [1 2], [5 2], [1 0], [1 4], [1 3], [0 2],
     <BLANKLINE>
-    [6 0]
-    [0 6]
+    [5 0]
+    [0 3]
     )
     sage: G = Sp(4,GF(7))
     sage: G

@@ -1,8 +1,0 @@
-How to create a SymPy spkg package:
-
-$ ./get-orig-sources
-
-Then rename the sympy-spkg directory to sympy-0.5.13 (choose the correct
-version) and execute from the parent directory:
-
-$ sage -pkg sympy-0.5.13

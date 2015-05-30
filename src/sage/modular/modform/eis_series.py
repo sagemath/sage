@@ -20,8 +20,9 @@ from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.rings.all import Integer
 
 from sage.rings.all import (bernoulli, CyclotomicField,
-                            is_FiniteField, ZZ, QQ, Integer, divisors,
+                            ZZ, QQ, Integer, divisors,
                             LCM, is_squarefree)
+from sage.rings.finite_rings.constructor import is_FiniteField
 from sage.rings.power_series_ring import PowerSeriesRing
 from eis_series_cython import eisenstein_series_poly, Ek_ZZ
 
@@ -126,7 +127,7 @@ def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
     """
     ## we use this to prevent computation if it would fail anyway.
     if k <= 0 or k % 2 == 1 :
-        raise ValueError, "k must be positive and even"
+        raise ValueError("k must be positive and even")
 
     a0 = - bernoulli(k) / (2*k)
 
@@ -135,17 +136,17 @@ def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
         try:
             a0fac = K(1/a0den)
         except ZeroDivisionError:
-            raise ValueError, "The denominator of -B_k/(2*k) (=%s) must be invertible in the ring %s"%(a0den, K)
+            raise ValueError("The denominator of -B_k/(2*k) (=%s) must be invertible in the ring %s"%(a0den, K))
     elif normalization == 'constant':
         a0num = a0.numerator()
         try:
             a0fac = K(1/a0num)
         except ZeroDivisionError:
-            raise ValueError, "The numerator of -B_k/(2*k) (=%s) must be invertible in the ring %s"%(a0num, K)
+            raise ValueError("The numerator of -B_k/(2*k) (=%s) must be invertible in the ring %s"%(a0num, K))
     elif normalization == 'integral':
         a0fac = None
     else:
-        raise ValueError, "Normalization (=%s) must be one of 'linear', 'constant', 'integral'" % normalization
+        raise ValueError("Normalization (=%s) must be one of 'linear', 'constant', 'integral'" % normalization)
 
     R = PowerSeriesRing(K, var)
     if K == QQ and normalization == 'linear':
@@ -175,8 +176,8 @@ def __common_minimal_basering(chi, psi):
 
     EXAMPLES::
 
-        sage: sage.modular.modform.eis_series.__common_minimal_basering(DirichletGroup(1).0, DirichletGroup(1).0)
-        (Dirichlet character modulo 1 of conductor 1 mapping 0 |--> 1, Dirichlet character modulo 1 of conductor 1 mapping 0 |--> 1)
+        sage: sage.modular.modform.eis_series.__common_minimal_basering(DirichletGroup(1)[0], DirichletGroup(1)[0])
+        (Dirichlet character modulo 1 of conductor 1, Dirichlet character modulo 1 of conductor 1)
 
         sage: sage.modular.modform.eis_series.__common_minimal_basering(DirichletGroup(3).0, DirichletGroup(5).0)
         (Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1, Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4)
@@ -265,7 +266,7 @@ def __find_eisen_chars(character, k):
 
     for e in G:
         m = Integer(e.conductor())
-        if C.has_key(m):
+        if m in C:
             C[m].append(e)
         else:
             C[m] = [e]
@@ -275,11 +276,11 @@ def __find_eisen_chars(character, k):
     params = []
     for L in divisors(N):
         misc.verbose("divisor %s"%L)
-        if not C.has_key(L):
+        if L not in C:
             continue
         GL = C[L]
         for R in divisors(N/L):
-            if not C.has_key(R):
+            if R not in C:
                 continue
             GR = C[R]
             for chi in GL:

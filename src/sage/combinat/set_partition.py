@@ -46,6 +46,8 @@ from sage.combinat.partition import Partition, Partitions
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
 from sage.combinat.combinat import bell_number, stirling_number2
 from sage.combinat.permutation import Permutation
+from functools import reduce
+
 
 class SetPartition(ClonableArray):
     """
@@ -313,7 +315,7 @@ class SetPartition(ClonableArray):
         """
         return self.__eq__(y) or self.__gt__(y)
 
-    def __cmp__(self, y):
+    def _cmp_(self, y):
         """
         Return the result of ``cmp``.
 
@@ -334,6 +336,8 @@ class SetPartition(ClonableArray):
         if self > y:
             return 1
         return 0
+
+    __cmp__ = _cmp_
 
     def __mul__(self, other):
         r"""
@@ -444,7 +448,7 @@ class SetPartition(ClonableArray):
         """
         res = Set(list(self))
         for p in t:
-            inters = Set(filter(lambda x: x.intersection(p) != Set([]), list(res)))
+            inters = Set([x for x in list(res) if x.intersection(p) != Set([])])
             res = res.difference(inters).union(_set_union(inters))
         return SetPartition(res)
 
@@ -901,7 +905,7 @@ class SetPartition(ClonableArray):
         todo = [self]
         visited = set([self])
         ret = [self]
-        while len(todo) != 0:
+        while todo:
             A = todo.pop()
             for i, part in enumerate(A):
                 for j, other in enumerate(A[i+1:]):
@@ -915,6 +919,30 @@ class SetPartition(ClonableArray):
                             visited.add(next)
                             ret.append(next)
         return ret
+
+    def arcs(self):
+        r"""
+        Return ``self`` as a list of arcs.
+
+        Consider a set partition `X = \{X_1, X_2, \ldots, X_n\}`,
+        then the arcs are the pairs `i - j` such that `i,j \in X_k`
+        for some `k`.
+
+        EXAMPLES::
+
+            sage: A = SetPartition([[1],[2,3],[4]])
+            sage: A.arcs()
+            [(2, 3)]
+            sage: B = SetPartition([[1,3,6,7],[2,5],[4]])
+            sage: B.arcs()
+            [(1, 3), (3, 6), (6, 7), (2, 5)]
+        """
+        arcs = []
+        for p in self:
+            p = sorted(p)
+            for i in range(len(p)-1):
+                arcs.append((p[i], p[i+1]))
+        return arcs
 
 class SetPartitions(Parent, UniqueRepresentation):
     r"""
@@ -1071,7 +1099,7 @@ class SetPartitions(Parent, UniqueRepresentation):
 
             sage: S = SetPartitions(3)
             sage: it = S._iterator_part(Partition([1,1,1]))
-            sage: list(sorted(map(list, it.next())))
+            sage: list(sorted(map(list, next(it))))
             [[1], [2], [3]]
             sage: S21 = SetPartitions(3,Partition([2,1]))
             sage: len(list(S._iterator_part(Partition([2,1])))) == S21.cardinality()
@@ -1131,8 +1159,7 @@ class SetPartitions(Parent, UniqueRepresentation):
             return False
 
         for p in s:
-            f = lambda z: z.intersection(p) != Set([])
-            if len(filter(f, list(t)) ) != 1:
+            if len([ z for z in list(t) if z.intersection(p) != Set([]) ]) != 1:
                 return False
         return True
 
@@ -1182,7 +1209,7 @@ class SetPartitions(Parent, UniqueRepresentation):
             return False
 
         for p in t:
-            L = filter(lambda x: x.issubset(p), list(s))
+            L = [x for x in list(s) if x.issubset(p)]
             if sum(len(x) for x in L) != len(p) \
                     or any(max(L[i]) > min(L[i+1]) for i in range(len(L)-1)):
                 return False
@@ -1221,7 +1248,7 @@ class SetPartitions_all(SetPartitions):
         EXAMPLES::
 
             sage: it = SetPartitions().__iter__()
-            sage: [it.next() for x in range(10)]
+            sage: [next(it) for x in range(10)]
             [{}, {{1}}, {{1, 2}}, {{1}, {2}}, {{1, 2, 3}}, {{1}, {2, 3}},
              {{1, 3}, {2}}, {{1, 2}, {3}}, {{1}, {2}, {3}}, {{1, 2, 3, 4}}]
         """
@@ -1399,15 +1426,50 @@ class SetPartitions_setparts(SetPartitions_set):
         return "Set partitions of %s with sizes in %s"%(Set(self._set), self.parts)
 
     def cardinality(self):
-        """
+        r"""
         Return the cardinality of ``self``.
+
+        This algorithm counts for each block of the partition the
+        number of ways to fill it using values from the set.  Then,
+        for each distinct value `v` of block size, we divide the result by
+        the number of ways to arrange the blocks of size `v` in the
+        set partition.
+
+        For example, if we want to count the number of set partitions
+        of size 13 having [3,3,3,2,2] as underlying partition we
+        compute the number of ways to fill each block of the
+        partition, which is `\binom{13}{3} \binom{10}{3} \binom{7}{3}
+        \binom{4}{2}\binom{2}{2}` and as we have three blocks of size
+        `3` and two blocks of size `2`, we divide the result by
+        `3!2!` which gives us `600600`.
 
         EXAMPLES::
 
             sage: SetPartitions(3, [2,1]).cardinality()
             3
+            sage: SetPartitions(13, Partition([3,3,3,2,2])).cardinality()
+            600600
+
+        TESTS::
+
+            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality() for size in range(8) for part in Partitions(size)))
+            True
+            sage: sum((SetPartitions(13, p).cardinality() for p in Partitions(13))) == SetPartitions(13).cardinality()
+            True
         """
-        return Integer(len(self.list()))
+        from sage.misc.misc_c import prod
+
+        remaining_subset_size = Integer(len(self._set))
+        cardinal = Integer(1)
+        for subset_size in self.parts:
+            cardinal *= remaining_subset_size.binomial(subset_size)
+            remaining_subset_size -= subset_size
+
+        repetitions = (Integer(rep).factorial()
+                       for rep in self.parts.to_exp_dict().values()
+                       if rep != 1)
+        cardinal /= prod(repetitions)
+        return Integer(cardinal)
 
     def __iter__(self):
         """
@@ -1546,8 +1608,7 @@ def _listbloc(n, nbrepets, listint=None):
         yield Set([listint])
         return
 
-    l = list(listint)
-    l.sort()
+    l = sorted(listint)
     smallest = Set(l[:1])
     new_listint = Set(l[1:])
 
@@ -1593,14 +1654,14 @@ def inf(s,t):
         sage: sp2 = Set([Set([1,3]), Set([2,4])])
         sage: s = Set([ Set([2,4]), Set([3]), Set([1])]) #{{2, 4}, {3}, {1}}
         sage: sage.combinat.set_partition.inf(sp1, sp2) == s
-        doctest:1: DeprecationWarning: inf(s, t) is deprecated. Use s.inf(t) instead.
+        doctest:...: DeprecationWarning: inf(s, t) is deprecated. Use s.inf(t) instead.
         See http://trac.sagemath.org/14140 for details.
         True
     """
     from sage.misc.superseded import deprecation
     deprecation(14140, 'inf(s, t) is deprecated. Use s.inf(t) instead.')
     temp = [ss.intersection(ts) for ss in s for ts in t]
-    temp = filter(lambda x: x != Set([]), temp)
+    temp = [x for x in temp if x != Set([])]
     return Set(temp)
 
 def sup(s,t):
@@ -1613,7 +1674,7 @@ def sup(s,t):
         sage: sp2 = Set([Set([1,3]), Set([2,4])])
         sage: s = Set([ Set([1,2,3,4]) ])
         sage: sage.combinat.set_partition.sup(sp1, sp2) == s
-        doctest:1: DeprecationWarning: sup(s, t) is deprecated. Use s.sup(t) instead.
+        doctest:...: DeprecationWarning: sup(s, t) is deprecated. Use s.sup(t) instead.
         See http://trac.sagemath.org/14140 for details.
         True
     """
@@ -1621,7 +1682,7 @@ def sup(s,t):
     deprecation(14140, 'sup(s, t) is deprecated. Use s.sup(t) instead.')
     res = s
     for p in t:
-        inters = Set(filter(lambda x: x.intersection(p) != Set([]), list(res)))
+        inters = Set([x for x in list(res) if x.intersection(p) != Set([])])
         res = res.difference(inters).union(_set_union(inters))
     return res
 
@@ -1633,7 +1694,7 @@ def standard_form(sp):
     EXAMPLES::
 
         sage: map(sage.combinat.set_partition.standard_form, SetPartitions(4, [2,2]))
-        doctest:1: DeprecationWarning: standard_form(sp) is deprecated. Use sp.standard_form() instead.
+        doctest:...: DeprecationWarning: standard_form(sp) is deprecated. Use sp.standard_form() instead.
         See http://trac.sagemath.org/14140 for details.
         [[[1, 2], [3, 4]], [[1, 3], [2, 4]], [[1, 4], [2, 3]]]
     """
@@ -1650,7 +1711,7 @@ def less(s, t):
 
         sage: z = SetPartitions(3).list()
         sage: sage.combinat.set_partition.less(z[0], z[1])
-        doctest:1: DeprecationWarning: less(s, t) is deprecated. Use SetPartitions.is_less_tan(s, t) instead.
+        doctest:...: DeprecationWarning: less(s, t) is deprecated. Use SetPartitions.is_less_tan(s, t) instead.
         See http://trac.sagemath.org/14140 for details.
         False
     """
@@ -1661,8 +1722,7 @@ def less(s, t):
     if s == t:
         return False
     for p in s:
-        f = lambda z: z.intersection(p) != Set([])
-        if len(filter(f, list(t)) ) != 1:
+        if len([ z for z in list(t) if z.intersection(p) != Set([]) ]) != 1:
             return False
     return True
 
@@ -1729,6 +1789,3 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
         for right in cyclic_permutations_of_set_partition_iterator(set_part[1:]):
             for perm in CyclicPermutations(set_part[0]):
                 yield [perm] + right
-
-
-

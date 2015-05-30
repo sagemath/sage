@@ -1,7 +1,7 @@
 /* cdd_both_reps.c: compute reduced H and V representation of polytope
    by Volker Braun <vbraun@stp.dias.ie>
-
-   The input is taken from stdin and can be either a
+   
+   The input is taken from stdin and can be either a 
    H or V representation, not necessarily reduced.
 
    based on testcdd1.c, redcheck.c, and of course the cdd library
@@ -42,10 +42,10 @@ void compute_adjacency(dd_MatrixPtr Rep, dd_ErrorType* err_ptr)
   if (*err_ptr != dd_NoError) return;
 
   switch (Rep->representation) {
-  case dd_Inequality:
+  case dd_Inequality: 
     printf("Facet graph\n");
     break;
-  case dd_Generator:
+  case dd_Generator: 
     printf("Vertex graph\n");
     break;
   case dd_Unspecified:
@@ -73,8 +73,8 @@ void compute_adjacency(dd_MatrixPtr Rep, dd_ErrorType* err_ptr)
 }
 
 
-void minimal_Vrep_Hrep(dd_MatrixPtr M,
-		       dd_MatrixPtr* Vrep_ptr, dd_MatrixPtr* Hrep_ptr,
+void minimal_Vrep_Hrep(dd_MatrixPtr M, 
+		       dd_MatrixPtr* Vrep_ptr, dd_MatrixPtr* Hrep_ptr, 
 		       dd_ErrorType* err_ptr)
 {
   dd_PolyhedraPtr poly;
@@ -177,7 +177,7 @@ void usage(char *name)
 	 "    depending on the input.\n"
 	 "\n"
 	 "The input data is a H- or V-representation in cdd's ine/ext format and\n"
-	 "is in each case read from stdin.\n",
+	 "is in each case read from stdin.\n", 
 	 name);
 }
 
@@ -213,9 +213,9 @@ int main(int argc, char *argv[])
   if (argc!=2 || parse_arguments(argv[1],&option)) {
     usage(argv[0]);
     return 0;
-  }
+  } 
 
-  dd_set_global_constants();
+  dd_set_global_constants(); 
 
   /* Read data from stdin */
   M = dd_PolyFile2Matrix(stdin, &err);
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
     printf("unreachable option %d\n", option);
     exit(3); /* unreachable */
   }
-
+  
   /* cleanup */
   dd_FreeMatrix(M);
   if (err != dd_NoError) {

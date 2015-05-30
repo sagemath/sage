@@ -73,7 +73,7 @@ def trace(code, preparse=True):
     """
     from sage.plot.plot import EMBEDDED_MODE
     if EMBEDDED_MODE:
-        raise NotImplementedError, "the trace command is not implemented in the Sage notebook; you must use the command line."
+        raise NotImplementedError("the trace command is not implemented in the Sage notebook; you must use the command line.")
 
     from IPython.core.debugger import Pdb
     pdb = Pdb()
@@ -83,8 +83,8 @@ def trace(code, preparse=True):
     except NameError:
         raise NotImplementedError("the trace command can only be run from the Sage command-line")
 
-    import preparser
-    code = preparser.preparse(code)
+    from sage.repl.preparse import preparse
+    code = preparse(code)
     return pdb.run(code, ipython.user_ns)
 
     # this could also be useful; it drops

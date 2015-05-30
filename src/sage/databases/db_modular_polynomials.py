@@ -18,12 +18,12 @@ Database of Modular Polynomials
 
 
 import bz2, os
-import sage.misc.misc
+from sage.env import SAGE_SHARE
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-dblocation = os.path.join(sage.misc.misc.SAGE_SHARE,'kohel')
+dblocation = os.path.join(SAGE_SHARE, 'kohel')
 
 def _dbz_to_integer_list(name):
     file = os.path.join(dblocation, name)
@@ -141,7 +141,7 @@ class DedekindEtaModularPolynomialDatabase(ModularPolynomialDatabase):
 class DedekindEtaModularCorrespondenceDatabase(ModularCorrespondenceDatabase):
     """
     The database of modular correspondences in $X_0(p) \times X_0(p)$, where
-    the model of the curves $X_0(p) = \PP^1$ are specified by quotients of
+    the model of the curves $X_0(p) = \Bold{P}^1$ are specified by quotients of
     Dedekind's eta function.
     """
     def __init__(self):

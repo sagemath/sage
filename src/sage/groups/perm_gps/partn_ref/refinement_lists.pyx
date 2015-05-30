@@ -30,7 +30,8 @@ def is_isomorphic(self, other):
     """
     cdef int i, n = len(self)
     cdef PartitionStack *part
-    cdef int *output, *ordering
+    cdef int *output
+    cdef int *ordering
     part = PS_new(n, 1)
     ordering = <int *> sage_malloc((len(self)) * sizeof(int))
     output = <int *> sage_malloc((len(self)) * sizeof(int))

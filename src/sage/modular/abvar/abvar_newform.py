@@ -45,7 +45,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             Newform abelian subvariety 37a of dimension 1 of J0(37)
         """
         if not isinstance(f, Newform):
-            raise TypeError, "f must be a newform"
+            raise TypeError("f must be a newform")
         self.__f = f
         self._is_hecke_stable = True
         K = f.qexp().base_ring()

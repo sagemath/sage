@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [ -z "$GP_DATA_DIR" ]; then
+    echo >&2 "GP_DATA_DIR undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+cd src
+cp -pR elldata galpol nftables seadata "$GP_DATA_DIR"

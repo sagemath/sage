@@ -16,7 +16,8 @@ def kostka_number_symmetrica(shape, content):
     SKEWPARTITION object, then we compute the number of
     skewtableaux of the given shape.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.kostka_number([2,1],[1,1,1])
         2
         sage: symmetrica.kostka_number([1,1,1],[1,1,1])
@@ -61,7 +62,8 @@ def kostka_tab_symmetrica(shape, content):
     LIST object whose entries are the computed TABLEAUX
     object.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.kostka_tab([3],[1,1,1])
         [[[1, 2, 3]]]
         sage: symmetrica.kostka_tab([2,1],[1,1,1])
@@ -115,34 +117,35 @@ def kostka_tafel_symmetrica(n):
     """
     Returns the table of Kostka numbers of weight n.
 
-    EXAMPLES:
-    sage: symmetrica.kostka_tafel(1)
-    [1]
+    EXAMPLES::
 
-    sage: symmetrica.kostka_tafel(2)
-    [1 0]
-    [1 1]
+        sage: symmetrica.kostka_tafel(1)
+        [1]
 
-    sage: symmetrica.kostka_tafel(3)
-    [1 0 0]
-    [1 1 0]
-    [1 2 1]
+        sage: symmetrica.kostka_tafel(2)
+        [1 0]
+        [1 1]
 
-    sage: symmetrica.kostka_tafel(4)
-    [1 0 0 0 0]
-    [1 1 0 0 0]
-    [1 1 1 0 0]
-    [1 2 1 1 0]
-    [1 3 2 3 1]
+        sage: symmetrica.kostka_tafel(3)
+        [1 0 0]
+        [1 1 0]
+        [1 2 1]
 
-    sage: symmetrica.kostka_tafel(5)
-    [1 0 0 0 0 0 0]
-    [1 1 0 0 0 0 0]
-    [1 1 1 0 0 0 0]
-    [1 2 1 1 0 0 0]
-    [1 2 2 1 1 0 0]
-    [1 3 3 3 2 1 0]
-    [1 4 5 6 5 4 1]
+        sage: symmetrica.kostka_tafel(4)
+        [1 0 0 0 0]
+        [1 1 0 0 0]
+        [1 1 1 0 0]
+        [1 2 1 1 0]
+        [1 3 2 3 1]
+
+        sage: symmetrica.kostka_tafel(5)
+        [1 0 0 0 0 0 0]
+        [1 1 0 0 0 0 0]
+        [1 1 1 0 0 0 0]
+        [1 2 1 1 0 0 0]
+        [1 2 2 1 1 0 0]
+        [1 3 3 3 2 1 0]
+        [1 4 5 6 5 4 1]
     """
 
     cdef OP cn = callocobject(), cresult = callocobject()

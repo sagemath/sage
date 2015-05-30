@@ -257,7 +257,7 @@ def bin_to_ascii(B):
     b = map(lambda x: int(str(x)), list(B))
     A = []
     # the number of 8-bit blocks
-    k = n / 8
+    k = n // 8
     for i in xrange(k):
         # Convert from 8-bit string to ASCII integer. Then convert the
         # ASCII integer to the corresponding ASCII character.

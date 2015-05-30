@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-Complex Elliptic Curve L-series
+L-series for elliptic curves
 
 AUTHORS:
 
@@ -27,11 +28,11 @@ import sage.misc.all as misc
 
 class Lseries_ell(SageObject):
     """
-    An elliptic curve $L$-series.
+    An elliptic curve `L`-series.
     """
     def __init__(self, E):
-        """
-        Create an elliptic curve $L$-series.
+        r"""
+        Create an elliptic curve `L`-series.
 
         EXAMPLES::
 
@@ -41,8 +42,8 @@ class Lseries_ell(SageObject):
         self.__E = E
 
     def elliptic_curve(self):
-        """
-        Return the elliptic curve that this L-series is attached to.
+        r"""
+        Return the elliptic curve that this `L`-series is attached to.
 
         EXAMPLES::
 
@@ -54,21 +55,28 @@ class Lseries_ell(SageObject):
         return self.__E
 
     def taylor_series(self, a=1, prec=53, series_prec=6, var='z'):
-        """
-        Return the Taylor series of this $L$-series about $a$ to
+        r"""
+        Return the Taylor series of this `L`-series about `a` to
         the given precision (in bits) and the number of terms.
 
-        The output is a series in var, where you should view var as
-        equal to s-a.  Thus this function returns the formal power
-        series whose coefficients are L^{(n)}(a)/n!.
+        The output is a series in ``var``, where you should view ``var`` as
+        equal to `s-a`.  Thus this function returns the formal power
+        series whose coefficients are `L^{(n)}(a)/n!`.
+
+        INPUT:
+
+        - ``a`` -- complex number
+        - ``prec`` -- integer, precision in bits (default 53)
+        - ``series_pres`` -- integer (default 6)
+        - ``var`` -- variable (default 'z')
 
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries()
             sage: L.taylor_series(series_prec=3)
-            -1.28158145675273e-23 + (7.26268290541182e-24)*z + 0.759316500288427*z^2 + O(z^3)  # 32-bit
-            -2.69129566562797e-23 + (1.52514901968783e-23)*z + 0.759316500288427*z^2 + O(z^3)  # 64-bit
+            -1.27685190980159e-23 + (7.23588070754027e-24)*z + 0.759316500288427*z^2 + O(z^3)  # 32-bit
+            -2.72911738151096e-23 + (1.54658247036311e-23)*z + 0.759316500288427*z^2 + O(z^3)  # 64-bit
             sage: L.taylor_series(series_prec=3)[2:]
             0.000000000000000 + 0.000000000000000*z + 0.759316500288427*z^2 + O(z^3)
         """
@@ -76,8 +84,8 @@ class Lseries_ell(SageObject):
         return D.taylor_series(a, series_prec, var)
 
     def _repr_(self):
-        """
-        Return string representation of this L-series.
+        r"""
+        Return string representation of this `L`-series.
 
         EXAMPLES::
 
@@ -94,19 +102,25 @@ class Lseries_ell(SageObject):
                    algorithm='gp'):
         r"""
         Return interface to Tim Dokchitser's program for computing
-        with the L-series of this elliptic curve; this provides a way
+        with the `L`-series of this elliptic curve; this provides a way
         to compute Taylor expansions and higher derivatives of
-        $L$-series.
+        `L`-series.
 
         INPUT:
-            prec -- integer (bits precision)
-            max_imaginary_part -- real number
-            max_asymp_coeffs -- integer
-            algorithm -- string: 'gp' or 'magma'
 
-        \note{If algorithm='magma', then the precision is in digits rather
-        than bits and the object returned is a Magma L-series, which has
-        different functionality from the Sage L-series.}
+        - ``prec`` -- integer (bits precision)
+
+        - ``max_imaginary_part`` -- real number
+
+        - ``max_asymp_coeffs`` -- integer
+
+        - ``algorithm`` -- string: 'gp' or 'magma'
+
+        .. note::
+
+           If algorithm='magma', then the precision is in digits rather
+           than bits and the object returned is a Magma L-series, which has
+           different functionality from the Sage L-series.
 
         EXAMPLES::
 
@@ -119,8 +133,8 @@ class Lseries_ell(SageObject):
             0.38157540826071121129371040958008663667709753398892116
 
         If the curve has too large a conductor, it isn't possible to
-        compute with the L-series using this command.  Instead a
-        RuntimeError is raised::
+        compute with the `L`-series using this command.  Instead a
+        ``RuntimeError`` is raised::
 
             sage: e = EllipticCurve([1,1,0,-63900,-1964465932632])
             sage: L = e.lseries().dokchitser(15)
@@ -158,20 +172,25 @@ class Lseries_ell(SageObject):
 
     def sympow(self, n, prec):
         r"""
-        Return $L(\Sym^{(n)}(E, \text{edge}))$ to prec digits
+        Return `L( Sym^{(n)}(E, \text{edge}))` to ``prec`` digits
         of precision.
 
         INPUT:
-            n -- integer
-            prec -- integer
+
+        - ``n`` -- integer
+
+        - ``prec`` -- integer
 
         OUTPUT:
-            string -- real number to prec digits of precision as a string.
 
-        \note{Before using this function for the first time for
-        a given $n$, you may have to type \code{sympow('-new_data <n>')},
-        where \code{<n>} is replaced by your value of $n$.  This
-        command takes a long time to run.}
+        -   string -- real number to prec digits of precision as a string.
+
+        .. note::
+
+            Before using this function for the first time for
+            a given ``n``, you may have to type ``sympow('-new_data <n>')``,
+            where ``<n>`` is replaced by your value of ``n``.  This
+            command takes a long time to run.
 
         EXAMPLES::
 
@@ -187,21 +206,27 @@ class Lseries_ell(SageObject):
 
     def sympow_derivs(self, n, prec, d):
         r"""
-        Return $0$th to $d$th derivatives of $L(\Sym^{(n)}(E,
-        \text{edge}))$ to prec digits of precision.
+        Return 0-th to `d`-th derivatives of `L( Sym^{(n)}(E,
+        \text{edge}))` to ``prec`` digits of precision.
 
         INPUT:
-            n -- integer
-            prec -- integer
-            d -- integer
+
+        -   n -- integer
+
+        -   prec -- integer
+
+        -   d -- integer
 
         OUTPUT:
-            a string, exactly as output by sympow
 
-        \note{To use this function you may have to run a few commands
-        like \code{sympow('-new_data 1d2')}, each which takes a few
-        minutes.  If this function fails it will indicate what
-        commands have to be run.}
+        - a string, exactly as output by sympow
+
+        .. note ::
+
+            To use this function you may have to run a few commands
+            like ``sympow('-new_data 1d2')``, each which takes a few
+            minutes.  If this function fails it will indicate what
+            commands have to be run.
 
         EXAMPLES::
 
@@ -232,21 +257,20 @@ class Lseries_ell(SageObject):
         return sympow.Lderivs(self.__E, n, prec, d)
 
     def zeros(self, n):
-        """
-        Return the imaginary parts of the first $n$ nontrivial zeros
-        on the critical line of the L-function in the upper half
+        r"""
+        Return the imaginary parts of the first `n` nontrivial zeros
+        on the critical line of the `L`-function in the upper half
         plane, as 32-bit reals.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
             sage: E.lseries().zeros(2)
-              ***   Warning:...new stack size = ...
             [0.000000000, 5.00317001]
 
             sage: a = E.lseries().zeros(20)             # long time
-              ***   Warning:...new stack size = ...
             sage: point([(1,x) for x in a])             # graph  (long time)
+            Graphics object consisting of 1 graphics primitive
 
         AUTHOR:
             -- Uses Rubinstein's L-functions calculator.
@@ -257,17 +281,21 @@ class Lseries_ell(SageObject):
     def zeros_in_interval(self, x, y, stepsize):
         r"""
         Return the imaginary parts of (most of) the nontrivial zeros
-        on the critical line $\Re(s)=1$ with positive imaginary part
-        between $x$ and $y$, along with a technical quantity for each.
+        on the critical line `\Re(s)=1` with positive imaginary part
+        between ``x`` and ``y``, along with a technical quantity for each.
 
         INPUT:
-            x, y, stepsize -- positive floating point numbers
+
+        - ``x``-- positive floating point number
+        - ``y``-- positive floating point number
+        - ``stepsize`` -- positive floating point number
 
         OUTPUT:
-            list of pairs (zero, S(T)).
+
+        -   list of pairs ``(zero, S(T))``.
 
         Rubinstein writes: The first column outputs the imaginary part
-        of the zero, the second column a quantity related to S(T) (it
+        of the zero, the second column a quantity related to ``S(T)`` (it
         increases roughly by 2 whenever a sign change, i.e. pair of
         zeros, is missed). Higher up the critical strip you should use
         a smaller stepsize so as not to miss zeros.
@@ -276,35 +304,37 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: E.lseries().zeros_in_interval(6, 10, 0.1)      # long time
-              ***   Warning:...new stack size = ...
             [(6.87039122, 0.248922780), (8.01433081, -0.140168533), (9.93309835, -0.129943029)]
         """
         from sage.lfunctions.lcalc import lcalc
         return lcalc.zeros_in_interval(x, y, stepsize, L=self.__E)
 
     def values_along_line(self, s0, s1, number_samples):
-        """
-        Return values of $L(E, s)$ at \code{number_samples}
-        equally-spaced sample points along the line from $s_0$ to
-        $s_1$ in the complex plane.
+        r"""
+        Return values of `L(E, s)` at ``number_samples``
+        equally-spaced sample points along the line from `s_0` to
+        `s_1` in the complex plane.
 
-        \note{The L-series is normalized so that the center of the
-        critical strip is 1.}
+        .. note::
+
+            The `L`-series is normalized so that the center of the
+            critical strip is 1.
 
         INPUT:
-            s0, s1 -- complex numbers
-            number_samples -- integer
+
+        - ``s0``, ``s1`` -- complex numbers
+        - ``number_samples`` -- integer
 
         OUTPUT:
-            list -- list of pairs (s, zeta(s)), where the s are
-                    equally spaced sampled points on the line from
-                    s0 to s1.
+
+        list -- list of pairs (`s`, `L(E,s)`), where the `s` are
+                equally spaced sampled points on the line from
+                ``s0`` to ``s1``.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
             sage: E.lseries().values_along_line(1, 0.5 + 20*I, 5)
-              ***   Warning:...new stack size = ...
             [(0.500000000, ...),
              (0.400000000 + 4.00000000*I, 3.31920245 - 2.60028054*I),
              (0.300000000 + 8.00000000*I, -0.886341185 - 0.422640337*I),
@@ -319,27 +349,30 @@ class Lseries_ell(SageObject):
 
     def twist_values(self, s, dmin, dmax):
         r"""
-        Return values of $L(E, s, \chi_d)$ for each quadratic
-        character $\chi_d$ for $d_{\min} \leq d \leq d_{\max}$.
+        Return values of `L(E, s, \chi_d)` for each quadratic
+        character `\chi_d` for `d_{\min} \leq d \leq d_{\max}`.
 
-        \note{The L-series is normalized so that the center of the
-        critical strip is 1.}
+        .. note::
+
+            The L-series is normalized so that the center of the
+            critical strip is 1.
 
         INPUT:
 
         - ``s`` -- complex numbers
+
         - ``dmin`` -- integer
+
         - ``dmax`` -- integer
 
         OUTPUT:
 
-        list of pairs (d, L(E, s,chi_d))
+        - list of pairs `(d, L(E, s, \chi_d))`
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
-              ***   Warning:...new stack size = ...
             sage: vals  # abs tol 1e-17
             [(-11, 1.47824342), (-8, 8.9590946e-18), (-7, 1.85307619), (-4, 2.45138938)]
             sage: F = E.quadratic_twist(-8)
@@ -354,27 +387,32 @@ class Lseries_ell(SageObject):
 
     def twist_zeros(self, n, dmin, dmax):
         r"""
-        Return first $n$ real parts of nontrivial zeros of
-        $L(E,s,\chi_d)$ for each quadratic character $\chi_d$ with
-        $d_{\min} \leq d \leq d_{\max}$.
+        Return first `n` real parts of nontrivial zeros of
+        `L(E,s,\chi_d)` for each quadratic character `\chi_d` with
+        `d_{\min} \leq d \leq d_{\max}`.
 
-        \note{The L-series is normalized so that the center of the
-        critical strip is 1.}
+        .. note::
+
+            The L-series is normalized so that the center of the
+            critical strip is 1.
 
         INPUT:
-            n -- integer
-            dmin -- integer
-            dmax -- integer
+
+        - ``n`` -- integer
+
+        - ``dmin`` -- integer
+
+        - ``dmax`` -- integer
 
         OUTPUT:
-            dict -- keys are the discriminants $d$, and
+
+        -   dict -- keys are the discriminants `d`, and
                     values are list of corresponding zeros.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
             sage: E.lseries().twist_zeros(3, -4, -3)         # long time
-              ***   Warning:...new stack size = ...
             {-4: [1.60813783, 2.96144840, 3.89751747], -3: [2.06170900, 3.48216881, 4.45853219]}
         """
         from sage.lfunctions.lcalc import lcalc
@@ -383,15 +421,15 @@ class Lseries_ell(SageObject):
     def at1(self, k=None, prec=None):
         r"""
         Compute `L(E,1)` using `k` terms of the series for `L(E,1)` as
-        explained in Section 7.5.3 of Henri Cohen's book "A Course in
-        Computational Algebraic Number Theory".  If the argument `k`
-        is not specified, then it defaults to `\sqrt(N)`, where `N` is
+        explained in Section 7.5.3 of Henri Cohen's book *A Course in
+        Computational Algebraic Number Theory*.  If the argument `k`
+        is not specified, then it defaults to `\sqrt{N}`, where `N` is
         the conductor.
 
         INPUT:
 
         - ``k`` -- number of terms of the series. If zero or ``None``,
-          use `k = \sqrt(N)`, where `N` is the conductor.
+          use `k = \sqrt{N}`, where `N` is the conductor.
 
         - ``prec`` -- numerical precision in bits. If zero or ``None``,
           use a reasonable automatic default.
@@ -418,7 +456,7 @@ class Lseries_ell(SageObject):
 
           .. MATH::
 
-              2 * sum_{n=1}^{k} (a_n / n) * exp(-2*pi*n/Sqrt(N)),
+              2 \cdot \sum_{n=1}^{k} \frac{a_n}{n} \cdot \exp(-2*pi*n/\sqrt{N}),
 
           where `N` is the conductor of `E`.
 
@@ -426,7 +464,7 @@ class Lseries_ell(SageObject):
 
           .. MATH::
 
-                 2 e^{-2 \pi (k+1) / \sqrt{N}} / (1 - e^{-2 \pi/\sqrt{N}}).
+                2 e^{-2 \pi (k+1) / \sqrt{N}} / (1 - e^{-2 \pi/\sqrt{N}}).
 
           For a proof see [Grigov-Jorza-Patrascu-Patrikis-Stein].
 
@@ -532,12 +570,12 @@ class Lseries_ell(SageObject):
         under the assumption that `L(E,1) = 0`.
 
         The algorithm used is from Section 7.5.3 of Henri Cohen's book
-        ``A Course in Computational Algebraic Number Theory.''
+        *A Course in Computational Algebraic Number Theory*.
 
         INPUT:
 
         - ``k`` -- number of terms of the series. If zero or ``None``,
-          use `k = \sqrt(N)`, where `N` is the conductor.
+          use `k = \sqrt{N}`, where `N` is the conductor.
 
         - ``prec`` -- numerical precision in bits. If zero or ``None``,
           use a reasonable automatic default.
@@ -564,7 +602,7 @@ class Lseries_ell(SageObject):
 
           .. MATH::
 
-                 2 * \sum_{n=1}^{k} (a_n / n) * E_1(2 \pi n/\sqrt{N}),
+                 2 \cdot \sum_{n=1}^{k} (a_n / n) \cdot E_1(2 \pi n/\sqrt{N}),
 
           where `N` is the conductor of `E`, and `E_1` is the
           exponential integral function.
@@ -608,7 +646,7 @@ class Lseries_ell(SageObject):
             sage: E.lseries().deriv_at1()
             (-0.00010911444, 0.142428)
             sage: E.lseries().deriv_at1(4000)
-            (6.9902290...e-50, 1.31318e-43)
+            (6.990...e-50, 1.31318e-43)
         """
         sqrtN = sqrt(self.__E.conductor())
         if k:
@@ -694,7 +732,7 @@ class Lseries_ell(SageObject):
         return self.dokchitser()(s)
 
     def L1_vanishes(self):
-        """
+        r"""
         Returns whether or not `L(E,1) = 0`. The result is provably
         correct if the Manin constant of the associated optimal
         quotient is <= 2.  This hypothesis on the Manin constant
@@ -731,11 +769,11 @@ class Lseries_ell(SageObject):
     def L_ratio(self):
         r"""
         Returns the ratio `L(E,1)/\Omega` as an exact rational
-        number. The result is \emph{provably} correct if the Manin
+        number. The result is *provably* correct if the Manin
         constant of the associated optimal quotient is `\leq 2`.  This
         hypothesis on the Manin constant is true for all semistable
         curves (i.e., squarefree conductor), by a theorem of Mazur
-        from his \emph{Rational Isogenies of Prime Degree} paper.
+        from his *Rational Isogenies of Prime Degree* paper.
 
         EXAMPLES::
 
@@ -768,11 +806,11 @@ class Lseries_ell(SageObject):
             sage: EllipticCurve([1, 0, 1, -131, 558]).sha().an()  # long time
             1.00000000000000
 
-        ALGORITHM: Compute the root number.  If it is -1 then L(E,s)
+        ALGORITHM: Compute the root number.  If it is -1 then `L(E,s)`
         vanishes to odd order at 1, hence vanishes.  If it is +1, use
-        a result about modular symbols and Mazur's "Rational Isogenies"
+        a result about modular symbols and Mazur's *Rational Isogenies*
         paper to determine a provably correct bound (assuming Manin
-        constant is <= 2) so that we can determine whether L(E,1) = 0.
+        constant is <= 2) so that we can determine whether `L(E,1) = 0`.
 
         AUTHOR: William Stein, 2005-04-20.
         """

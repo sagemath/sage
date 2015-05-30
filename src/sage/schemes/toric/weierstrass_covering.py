@@ -224,23 +224,7 @@ def WeierstrassMap(polynomial, variables=None):
         ....:     p = sum( (-S.K()).sections_monomials() )
         ....:     f, g = WeierstrassForm(p)
         ....:     X,Y,Z = WeierstrassForm(p, transformation=True)
-        ....:     print P, p.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
-        Reflexive polytope    0: 2-dimensional, 3 vertices. True
-        Reflexive polytope    1: 2-dimensional, 3 vertices. True
-        Reflexive polytope    2: 2-dimensional, 4 vertices. True
-        Reflexive polytope    3: 2-dimensional, 4 vertices. True
-        Reflexive polytope    4: 2-dimensional, 4 vertices. True
-        Reflexive polytope    5: 2-dimensional, 5 vertices. True
-        Reflexive polytope    6: 2-dimensional, 3 vertices. True
-        Reflexive polytope    7: 2-dimensional, 4 vertices. True
-        Reflexive polytope    8: 2-dimensional, 5 vertices. True
-        Reflexive polytope    9: 2-dimensional, 6 vertices. True
-        Reflexive polytope   10: 2-dimensional, 4 vertices. True
-        Reflexive polytope   11: 2-dimensional, 5 vertices. True
-        Reflexive polytope   12: 2-dimensional, 3 vertices. True
-        Reflexive polytope   13: 2-dimensional, 4 vertices. True
-        Reflexive polytope   14: 2-dimensional, 4 vertices. True
-        Reflexive polytope   15: 2-dimensional, 3 vertices. True
+        ....:     assert p.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
     """
     if variables is None:
         variables = polynomial.variables()

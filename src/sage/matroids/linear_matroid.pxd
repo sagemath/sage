@@ -1,8 +1,7 @@
-from sage.misc.bitset cimport bitset_t
+from sage.data_structures.bitset cimport bitset_t
 
 from matroid cimport Matroid
 from basis_exchange_matroid cimport BasisExchangeMatroid
-from sage.matrix.matrix2 cimport Matrix
 from lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix
 
 cdef inline gauss_jordan_reduce(LeanMatrix A, columns)
@@ -18,9 +17,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef characteristic(self)
 
     cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation)
-    cdef  bint __is_exchange_pair(self, long x, long y)
-    cdef  bint __exchange(self, long x, long y)
-    cdef  __exchange_value(self, long x, long y)
+    cdef __exchange_value(self, long x, long y)
 
     cpdef representation(self, B=*, reduced=*, labels=*, order=*)
     cpdef _current_rows_cols(self, B=*)
@@ -72,10 +69,6 @@ cdef class BinaryMatroid(LinearMatroid):
     cpdef base_ring(self)
     cpdef characteristic(self)
 
-    cdef  bint __is_exchange_pair(self, long x, long y)
-    cdef  bint __exchange(self, long x, long y)
-    cdef  __exchange_value(self, long x, long y)
-
     cpdef _current_rows_cols(self, B=*)
     cpdef LeanMatrix _basic_representation(self, B=*)
     cpdef LeanMatrix _reduced_representation(self, B=*)
@@ -107,10 +100,6 @@ cdef class TernaryMatroid(LinearMatroid):
     cpdef base_ring(self)
     cpdef characteristic(self)
 
-    cdef  bint __is_exchange_pair(self, long x, long y)
-    cdef  bint __exchange(self, long x, long y)
-    cdef  __exchange_value(self, long x, long y)
-
     cpdef _current_rows_cols(self, B=*)
     cpdef LeanMatrix _basic_representation(self, B=*)
     cpdef LeanMatrix _reduced_representation(self, B=*)
@@ -139,10 +128,6 @@ cdef class QuaternaryMatroid(LinearMatroid):
     cpdef base_ring(self)
     cpdef characteristic(self)
 
-    cdef  bint __is_exchange_pair(self, long x, long y)
-    cdef  bint __exchange(self, long x, long y)
-    cdef  __exchange_value(self, long x, long y)
-
     cpdef _current_rows_cols(self, B=*)
     cpdef LeanMatrix _basic_representation(self, B=*)
     cpdef LeanMatrix _reduced_representation(self, B=*)
@@ -168,10 +153,6 @@ cdef class RegularMatroid(LinearMatroid):
 
     cpdef base_ring(self)
     cpdef characteristic(self)
-
-    cdef  bint __is_exchange_pair(self, long x, long y)
-    cdef  bint __exchange(self, long x, long y)
-    cdef  __exchange_value(self, long x, long y)
 
     cpdef _is_isomorphic(self, other)
 

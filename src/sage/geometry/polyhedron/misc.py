@@ -119,7 +119,7 @@ def _common_length_of(l1, l2=None, l3=None):
             num += 1
             length_i = len(i)
             if length is not None and length_i != length:
-                raise ValueError, "Argument lengths differ!"
+                raise ValueError("Argument lengths differ!")
             length = length_i
 
     return num, length

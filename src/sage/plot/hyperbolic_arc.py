@@ -128,15 +128,19 @@ def hyperbolic_arc(a, b, **options):
     Show a hyperbolic arc from 0 to 1::
 
          sage: hyperbolic_arc(0, 1)
+         Graphics object consisting of 1 graphics primitive
 
     Show a hyperbolic arc from 1/2 to `i` with a red thick line::
 
          sage: hyperbolic_arc(1/2, I, color='red', thickness=2)
+         Graphics object consisting of 1 graphics primitive
 
     Show a hyperbolic arc form `i` to `2 i` with dashed line::
 
          sage: hyperbolic_arc(I, 2*I, linestyle='dashed')
+         Graphics object consisting of 1 graphics primitive
          sage: hyperbolic_arc(I, 2*I, linestyle='--')
+         Graphics object consisting of 1 graphics primitive
     """
     from sage.plot.all import Graphics
     g = Graphics()

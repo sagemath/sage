@@ -12,7 +12,8 @@ Modular Symbols
 
    sage/modular/modsym/element
    sage/modular/modsym/modular_symbols
-   sage/modular/modsym/manin_symbols
+   sage/modular/modsym/manin_symbol
+   sage/modular/modsym/manin_symbol_list
 
    sage/modular/modsym/boundary
 
@@ -26,5 +27,8 @@ Modular Symbols
 
    sage/modular/modsym/p1list_nf
 
+   sage/modular/modsym/apply
+   sage/modular/modsym/hecke_operator
+   sage/modular/modsym/relation_matrix_pyx
 
 .. include:: ../footer.txt

@@ -432,18 +432,24 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     pointer to a aut_gp_and_can_lab struct
 
     """
-    cdef PartitionStack *current_ps, *first_ps, *label_ps
+    cdef PartitionStack *current_ps
+    cdef PartitionStack *first_ps
+    cdef PartitionStack *label_ps
     cdef int first_meets_current = -1
     cdef int label_meets_current
     cdef int current_kids_are_same = 1
     cdef int first_kids_are_same
 
-    cdef int *current_indicators, *first_indicators, *label_indicators
+    cdef int *current_indicators
+    cdef int *first_indicators
+    cdef int *label_indicators
     cdef int first_and_current_indicator_same
     cdef int label_and_current_indicator_same = -1
     cdef int compared_current_and_label_indicators
 
-    cdef OrbitPartition *orbits_of_subgroup, *orbits_of_permutation, *orbits_of_supergroup
+    cdef OrbitPartition *orbits_of_subgroup
+    cdef OrbitPartition *orbits_of_permutation
+    cdef OrbitPartition *orbits_of_supergroup
     cdef int subgroup_primary_orbit_size = 0
     cdef int minimal_in_primary_orbit
 
@@ -453,10 +459,15 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
 
     cdef bitset_t *vertices_to_split
     cdef bitset_t *vertices_have_been_reduced
-    cdef int *permutation, *label_perm, *id_perm, *cells_to_refine_by
+    cdef int *permutation
+    cdef int *label_perm
+    cdef int *id_perm
+    cdef int *cells_to_refine_by
     cdef int *vertices_determining_current_stack
     cdef int *perm_stack
-    cdef StabilizerChain *group = NULL, *old_group, *tmp_gp
+    cdef StabilizerChain *group = NULL
+    cdef StabilizerChain *old_group
+    cdef StabilizerChain *tmp_gp
 
     cdef int i, j, k, ell, b
     cdef bint discrete, automorphism, update_label
@@ -647,7 +658,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
                 # larger subgroup in the stabilizer chain).
                 first_meets_current = current_ps.depth
                 minimal_in_primary_orbit = output.group.base_orbits[current_ps.depth][0]
-            while 1:
+            while True:
                 i = vertices_determining_current_stack[current_ps.depth]
                 # This was the last point to be split here.
                 # If it has been added to the primary orbit, update size info.
@@ -693,7 +704,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         # we leave the part of the tree we are interested in
         discrete = 0
         backtrack = 0
-        while 1:
+        while True:
             i = current_ps.depth
             if input_group is not NULL:
                 current_indicators[i] = split_point_and_refine_by_orbits(current_ps,

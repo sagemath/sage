@@ -37,7 +37,7 @@ class PositiveIntegers(IntegerRangeInfinite):
         ...
         NotImplementedError: infinite list
         sage: it = iter(PP)
-        sage: (it.next(), it.next(), it.next(), it.next(), it.next())
+        sage: (next(it), next(it), next(it), next(it), next(it))
         (1, 2, 3, 4, 5)
         sage: PP.first()
         1

@@ -6,11 +6,11 @@ AUTHORS:
 - Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:trac:`12113`)
 
 """
-from sage.symbolic.function import GinacFunction, BuiltinFunction, is_inexact
+from sage.symbolic.function import GinacFunction, BuiltinFunction
 from sage.symbolic.constants import e as const_e
 
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.structure.coerce import parent as sage_structure_coerce_parent
+from sage.structure.all import parent as s_parent
 from sage.symbolic.expression import Expression
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
@@ -38,7 +38,7 @@ class Function_exp(GinacFunction):
             sage: exp(float(2.5))
             12.182493960703473
             sage: exp(RDF('2.5'))
-            12.1824939607
+            12.182493960703473
 
         To prevent automatic evaluation, use the ``hold`` parameter::
 
@@ -63,6 +63,17 @@ class Function_exp(GinacFunction):
             1
             sage: exp(7*pi*I/2)
             -I
+
+        The precision for the result is deduced from the precision of
+        the input. Convert the input to a higher precision explicitly
+        if a result with higher precision is desired::
+
+            sage: t = exp(RealField(100)(2)); t
+            7.3890560989306502272304274606
+            sage: t.prec()
+            100
+            sage: exp(2).n(100)
+            7.3890560989306502272304274606
 
         TEST::
 
@@ -110,35 +121,6 @@ class Function_exp(GinacFunction):
         GinacFunction.__init__(self, "exp", latex_name=r"\exp",
                                    conversions=dict(maxima='exp'))
 
-    def __call__(self, x, coerce=True, hold=False, prec=None,
-            dont_call_method_on_arg=False):
-        """
-        Note that the ``prec`` argument is deprecated. The precision for
-        the result is deduced from the precision of the input. Convert
-        the input to a higher precision explicitly if a result with higher
-        precision is desired.::
-
-            sage: t = exp(RealField(100)(2)); t
-            7.3890560989306502272304274606
-            sage: t.prec()
-            100
-
-        TESTS::
-
-            sage: exp(2,prec=100)
-            doctest:...: DeprecationWarning: The prec keyword argument is deprecated. Explicitly set the precision of the input, for example exp(RealField(300)(1)), or use the prec argument to .n() for exact inputs, e.g., exp(1).n(300), instead.
-            See http://trac.sagemath.org/7490 for details.
-            7.3890560989306502272304274606
-        """
-        if prec is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(7490, "The prec keyword argument is deprecated. Explicitly set the precision of the input, for example exp(RealField(300)(1)), or use the prec argument to .n() for exact inputs, e.g., exp(1).n(300), instead.")
-            x = GinacFunction.__call__(self, x, coerce=coerce, hold=hold,
-                    dont_call_method_on_arg=dont_call_method_on_arg)
-            return x.n(prec)
-        return GinacFunction.__call__(self, x, coerce=coerce, hold=hold,
-                dont_call_method_on_arg=dont_call_method_on_arg)
-
 exp = Function_exp()
 
 class Function_log(GinacFunction):
@@ -159,7 +141,7 @@ class Function_log(GinacFunction):
         ::
 
             sage: ln(RDF(10))
-            2.30258509299
+            2.302585092994046
             sage: ln(2.718)
             0.999896315728952
             sage: ln(2.0)
@@ -169,16 +151,12 @@ class Function_log(GinacFunction):
             sage: ln(complex(-1))
             3.141592653589793j
 
-        We do not currently support a ``hold`` parameter in functional
-        notation::
+        The ``hold`` parameter can be used to prevent automatic evaluation::
 
-            sage: log(SR(-1),hold=True)
-            Traceback (most recent call last):
-            ...
-            TypeError: log() got an unexpected keyword argument 'hold'
-
-        This is possible with method notation::
-
+            sage: log(-1,hold=True)
+            log(-1)
+            sage: log(-1)
+            I*pi
             sage: I.log(hold=True)
             log(I)
             sage: I.log(hold=True).simplify()
@@ -222,106 +200,132 @@ class Function_log(GinacFunction):
             3.141592653589793j
         """
         GinacFunction.__init__(self, 'log', latex_name=r'\log',
-                                   conversions=dict(maxima='log'))
+                               conversions=dict(maxima='log'))
 
-ln = function_log = Function_log()
+    def __call__(self, *args, **kwds):
+        """
+        Return the logarithm of x to the given base.
 
-def log(x, base=None):
-    """
-    Return the logarithm of x to the given base.
+        Calls the ``log`` method of the object x when computing
+        the logarithm, thus allowing use of logarithm on any object
+        containing a ``log`` method. In other words, log works
+        on more than just real numbers.
 
-    Calls the ``log`` method of the object x when computing
-    the logarithm, thus allowing use of logarithm on any object
-    containing a ``log`` method. In other words, log works
-    on more than just real numbers.
+        EXAMPLES::
 
-    EXAMPLES::
+            sage: log(e^2)
+            2
 
-        sage: log(e^2)
-        2
+        To change the base of the logarithm, add a second parameter::
 
-    To change the base of the logarithm, add a second parameter::
+            sage: log(1000,10)
+            3
 
-        sage: log(1000,10)
-        3
+        You can use
+        :class:`RDF<sage.rings.real_double.RealDoubleField_class>`,
+        :class:`~sage.rings.real_mpfr.RealField` or ``n`` to get a
+        numerical real approximation::
 
-    You can use :class:`RDF<sage.rings.real_double.RealDoubleField_class>`,
-    :class:`~sage.rings.real_mpfr.RealField` or ``n`` to get a numerical real
-    approximation::
+            sage: log(1024, 2)
+            10
+            sage: RDF(log(1024, 2))
+            10.0
+            sage: log(10, 4)
+            log(10)/log(4)
+            sage: RDF(log(10, 4))
+            1.6609640474436813
+            sage: log(10, 2)
+            log(10)/log(2)
+            sage: n(log(10, 2))
+            3.32192809488736
+            sage: log(10, e)
+            log(10)
+            sage: n(log(10, e))
+            2.30258509299405
 
-        sage: log(1024, 2)
-        10
-        sage: RDF(log(1024, 2))
-        10.0
-        sage: log(10, 4)
-        log(10)/log(4)
-        sage: RDF(log(10, 4))
-        1.66096404744
-        sage: log(10, 2)
-        log(10)/log(2)
-        sage: n(log(10, 2))
-        3.32192809488736
-        sage: log(10, e)
-        log(10)
-        sage: n(log(10, e))
-        2.30258509299405
+        The log function works for negative numbers, complex
+        numbers, and symbolic numbers too, picking the branch
+        with angle between `-pi` and `pi`::
 
-    The log function works for negative numbers, complex
-    numbers, and symbolic numbers too, picking the branch
-    with angle between `-pi` and `pi`::
+            sage: log(-1+0*I)
+            I*pi
+            sage: log(CC(-1))
+            3.14159265358979*I
+            sage: log(-1.0)
+            3.14159265358979*I
 
-        sage: log(-1+0*I)
-        I*pi
-        sage: log(CC(-1))
-        3.14159265358979*I
-        sage: log(-1.0)
-        3.14159265358979*I
+        For input zero, the following behavior occurs::
 
-    For input zero, the following behavior occurs::
+            sage: log(0)
+            -Infinity
+            sage: log(CC(0))
+            -infinity
+            sage: log(0.0)
+            -infinity
 
-        sage: log(0)
-        -Infinity
-        sage: log(CC(0))
-        -infinity
-        sage: log(0.0)
-        -infinity
+        The log function also works in finite fields as long as the
+        argument lies in the multiplicative group generated by the base::
 
-    The log function also works in finite fields as long as the argument lies
-    in the multiplicative group generated by the base::
+            sage: F = GF(13); g = F.multiplicative_generator(); g
+            2
+            sage: a = F(8)
+            sage: log(a,g); g^log(a,g)
+            3
+            8
+            sage: log(a,3)
+            Traceback (most recent call last):
+            ...
+            ValueError: No discrete log of 8 found to base 3
+            sage: log(F(9), 3)
+            2
 
-        sage: F = GF(13); g = F.multiplicative_generator(); g
-        2
-        sage: a = F(8)
-        sage: log(a,g); g^log(a,g)
-        3
-        8
-        sage: log(a,3)
-        Traceback (most recent call last):
-        ...
-        ValueError: No discrete log of 8 found to base 3
-        sage: log(F(9), 3)
-        2
+        The log function also works for p-adics (see documentation for
+        p-adics for more information)::
 
-    The log function also works for p-adics (see documentation for
-    p-adics for more information)::
+            sage: R = Zp(5); R
+            5-adic Ring with capped relative precision 20
+            sage: a = R(16); a
+            1 + 3*5 + O(5^20)
+            sage: log(a)
+            3*5 + 3*5^2 + 3*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 2*5^8 + 5^9 +
+            5^11 + 2*5^12 + 5^13 + 3*5^15 + 2*5^16 + 4*5^17 + 3*5^18 +
+            3*5^19 + O(5^20)
 
-        sage: R = Zp(5); R
-        5-adic Ring with capped relative precision 20
-        sage: a = R(16); a
-        1 + 3*5 + O(5^20)
-        sage: log(a)
-        3*5 + 3*5^2 + 3*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 2*5^8 + 5^9 + 5^11 + 2*5^12 + 5^13 + 3*5^15 + 2*5^16 + 4*5^17 + 3*5^18 + 3*5^19 + O(5^20)
-    """
-    if base is None:
+
+        TESTS:
+
+        Check if :trac:`10136` is fixed::
+
+            sage: log(x).operator() is log
+            True
+            sage: log(x).operator() is ln
+            True
+
+            sage: log(1000, 10, base=5)
+            Traceback (most recent call last):
+            ...
+            TypeError: Symbolic function log must be called as log(x),
+            log(x, base=b) or log(x, b)
+        """
+        base = kwds.pop('base', None)
+        if base is None:
+            if len(args) == 1:
+                return GinacFunction.__call__(self, *args, **kwds)
+            # second argument is base
+            base = args[1]
+            args = args[:1]
+
+        if len(args) != 1:
+            raise TypeError("Symbolic function log must be called as "
+                    "log(x), log(x, base=b) or log(x, b)")
+
         try:
-            return x.log()
-        except AttributeError:
-            return ln(x)
-    else:
-        try:
-            return x.log(base)
+            return args[0].log(base)
         except (AttributeError, TypeError):
-            return log(x) / log(base)
+            return GinacFunction.__call__(self, *args, **kwds) / \
+                GinacFunction.__call__(self, base, **kwds)
+
+ln = log = function_log = Function_log()
 
 
 class Function_polylog(GinacFunction):
@@ -388,11 +392,20 @@ class Function_polylog(GinacFunction):
         These are indirect doctests for this function.::
 
             sage: polylog(2, x)._maxima_()
-            li[2](x)
+            li[2](_SAGE_VAR_x)
             sage: polylog(4, x)._maxima_()
-            polylog(4,x)
+            polylog(4,_SAGE_VAR_x)
         """
-        n, x = args
+        args_maxima = []
+        for a in args:
+            if isinstance(a, str):
+                args_maxima.append(a)
+            elif hasattr(a, '_maxima_init_'):
+                args_maxima.append(a._maxima_init_())
+            else:
+                args_maxima.append(str(a))
+
+        n, x = args_maxima
         if int(n) in [1,2,3]:
             return 'li[%s](%s)'%(n, x)
         else:
@@ -532,7 +545,7 @@ class Function_lambert_w(BuiltinFunction):
         sage: integrate(lambert_w(x), x, 0, 1)
         (lambert_w(1)^2 - lambert_w(1) + 1)/lambert_w(1) - 1
         sage: integrate(lambert_w(x), x, 0, 1.0)
-        0.330366124762
+        0.3303661247616807
 
     Warning: The integral of a non-principal branch is not implemented,
     neither is numerical integration using GSL. The :meth:`numerical_integral`
@@ -613,23 +626,20 @@ class Function_lambert_w(BuiltinFunction):
             sage: parent(lambert_w(Integer(0)))
             Integer Ring
             sage: parent(lambert_w(e))
-            Integer Ring
+            Symbolic Ring
         """
         if not isinstance(z, Expression):
-            if is_inexact(z):
-                return self._evalf_(n, z, parent=sage_structure_coerce_parent(z))
-            elif n == 0 and z == 0:
-                return sage_structure_coerce_parent(z)(Integer(0))
+            if n == 0 and z == 0:
+                return s_parent(z)(0)
         elif n == 0:
             if z.is_trivial_zero():
-                return sage_structure_coerce_parent(z)(Integer(0))
+                return s_parent(z)(Integer(0))
             elif (z-const_e).is_trivial_zero():
-                return sage_structure_coerce_parent(z)(Integer(1))
+                return s_parent(z)(Integer(1))
             elif (z+1/const_e).is_trivial_zero():
-                return sage_structure_coerce_parent(z)(Integer(-1))
-        return None
+                return s_parent(z)(Integer(-1))
 
-    def _evalf_(self, n, z, parent=None):
+    def _evalf_(self, n, z, parent=None, algorithm=None):
         """
         EXAMPLES::
 
@@ -641,12 +651,32 @@ class Function_lambert_w(BuiltinFunction):
         SciPy is used to evaluate for float, RDF, and CDF inputs::
 
             sage: lambert_w(RDF(1))
-            0.56714329041
+            0.5671432904097838
+            sage: lambert_w(float(1))
+            0.5671432904097838
+            sage: lambert_w(CDF(1))
+            0.5671432904097838
+            sage: lambert_w(complex(1))
+            (0.5671432904097838+0j)
+            sage: lambert_w(RDF(-1))  # abs tol 2e-16
+            -0.31813150520476413 + 1.3372357014306895*I
+            sage: lambert_w(float(-1))  # abs tol 2e-16
+            (-0.31813150520476413+1.3372357014306895j)
         """
-        R = parent or sage_structure_coerce_parent(z)
-        if R is float or R is complex or R is RDF or R is CDF:
-            import scipy.special
-            return scipy.special.lambertw(z, n)
+        R = parent or s_parent(z)
+        if R is float or R is RDF:
+            from scipy.special import lambertw
+            res = lambertw(z, n)
+            # SciPy always returns a complex value, make it real if possible
+            if not res.imag:
+                return R(res.real)
+            elif R is float:
+                return complex(res)
+            else:
+                return CDF(res)
+        elif R is complex or R is CDF:
+            from scipy.special import lambertw
+            return R(lambertw(z, n))
         else:
             import mpmath
             return mpmath_utils.call(mpmath.lambertw, z, n, parent=R)
@@ -686,14 +716,20 @@ class Function_lambert_w(BuiltinFunction):
         These are indirect doctests for this function.::
 
             sage: lambert_w(0, x)._maxima_()
-            lambert_w(x)
+            lambert_w(_SAGE_VAR_x)
             sage: lambert_w(1, x)._maxima_()
             Traceback (most recent call last):
             ...
             NotImplementedError: Non-principal branch lambert_w[1](x) is not implemented in Maxima
         """
         if n == 0:
-            return "lambert_w(%s)" % z
+            if isinstance(z,str):
+                maxima_z=z
+            elif hasattr(z,'_maxima_init_'):
+                maxima_z=z._maxima_init_()
+            else:
+                maxima_z=str(z)
+            return "lambert_w(%s)" % maxima_z
         else:
             raise NotImplementedError("Non-principal branch lambert_w[%s](%s) is not implemented in Maxima" % (n, z))
 

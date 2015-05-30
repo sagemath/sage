@@ -1,8 +1,0 @@
-#! /bin/sh
-#execute this script from the same directory, where spkg-install is.
-#it will remove the src dir (!) and create a new one instead
-ver=0.7.3
-wget https://github.com/sympy/sympy/releases/download/sympy-$ver/sympy-$ver.tar.gz
-tar xzf sympy-$ver.tar.gz
-rm -rf src sympy-$ver.tar.gz
-mv sympy-$ver src

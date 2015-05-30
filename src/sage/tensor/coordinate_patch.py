@@ -99,14 +99,14 @@ class CoordinatePatch(Parent):
         from sage.symbolic.ring import is_SymbolicVariable
 
         if not all(is_SymbolicVariable(c) for c in coordinates):
-            raise TypeError, "%s is not a valid vector of coordinates." % \
-                coordinates
+            raise TypeError("%s is not a valid vector of coordinates." % \
+                coordinates)
 
         self._coordinates = tuple(coordinates)
         dim = len(self._coordinates)
 
         if metric is not None:
-            raise NotImplementedError, "Metric geometry not supported yet."
+            raise NotImplementedError("Metric geometry not supported yet.")
 
 
 

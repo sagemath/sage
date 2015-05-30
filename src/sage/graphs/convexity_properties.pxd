@@ -1,4 +1,4 @@
-from sage.misc.bitset cimport bitset_t
+from sage.data_structures.bitset cimport bitset_t
 
 cdef class ConvexityProperties:
     cdef int _n

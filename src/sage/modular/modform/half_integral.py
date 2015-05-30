@@ -115,13 +115,13 @@ def half_integral_weight_modform_basis(chi, k, prec):
     """
 
     if chi.modulus() % 16:
-        raise ValueError, "the character must have modulus divisible by 16"
+        raise ValueError("the character must have modulus divisible by 16")
 
     if not k%2:
-        raise ValueError, "k (=%s) must be odd"%k
+        raise ValueError("k (=%s) must be odd"%k)
 
     if k < 3:
-        raise ValueError, "k (=%s) must be at least 3"%k
+        raise ValueError("k (=%s) must be at least 3"%k)
 
     chi = chi.minimize_base_ring()
     psi = chi.parent()(DirichletGroup(4, chi.base_ring()).gen())

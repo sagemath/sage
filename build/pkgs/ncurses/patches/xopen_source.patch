@@ -1,0 +1,313 @@
+diff -druN ncurses-5.9.20131221.orig/aclocal.m4 ncurses-5.9.20131221/aclocal.m4
+--- ncurses-5.9.20131221.orig/aclocal.m4	2013-11-23 10:20:50.000000000 -0800
++++ ncurses-5.9.20131221/aclocal.m4	2014-02-07 06:00:43.277597929 -0800
+@@ -7198,32 +7198,3 @@
+ 	CF_ADD_CFLAGS($cf_xopen_source)
+ fi
+ 
+-dnl In anything but the default case, we may have system-specific setting
+-dnl which is still not guaranteed to provide all of the entrypoints that
+-dnl _XOPEN_SOURCE would yield.
+-if test -n "$cf_XOPEN_SOURCE" && test -z "$cf_cv_xopen_source" ; then
+-	AC_MSG_CHECKING(if _XOPEN_SOURCE really is set)
+-	AC_TRY_COMPILE([#include <stdlib.h>],[
+-#ifndef _XOPEN_SOURCE
+-make an error
+-#endif],
+-	[cf_XOPEN_SOURCE_set=yes],
+-	[cf_XOPEN_SOURCE_set=no])
+-	AC_MSG_RESULT($cf_XOPEN_SOURCE_set)
+-	if test $cf_XOPEN_SOURCE_set = yes
+-	then
+-		AC_TRY_COMPILE([#include <stdlib.h>],[
+-#if (_XOPEN_SOURCE - 0) < $cf_XOPEN_SOURCE
+-make an error
+-#endif],
+-		[cf_XOPEN_SOURCE_set_ok=yes],
+-		[cf_XOPEN_SOURCE_set_ok=no])
+-		if test $cf_XOPEN_SOURCE_set_ok = no
+-		then
+-			AC_MSG_WARN(_XOPEN_SOURCE is lower than requested)
+-		fi
+-	else
+-		CF_TRY_XOPEN_SOURCE
+-	fi
+-fi
+-])
+diff -druN ncurses-5.9.20131221.orig/configure ncurses-5.9.20131221/configure
+--- ncurses-5.9.20131221.orig/configure	2013-12-14 16:44:11.000000000 -0800
++++ ncurses-5.9.20131221/configure	2014-02-07 06:01:25.747602176 -0800
+@@ -8119,273 +8119,6 @@
+ 
+ fi
+ 
+-if test -n "$cf_XOPEN_SOURCE" && test -z "$cf_cv_xopen_source" ; then
+-	echo "$as_me:8123: checking if _XOPEN_SOURCE really is set" >&5
+-echo $ECHO_N "checking if _XOPEN_SOURCE really is set... $ECHO_C" >&6
+-	cat >conftest.$ac_ext <<_ACEOF
+-#line 8126 "configure"
+-#include "confdefs.h"
+-#include <stdlib.h>
+-int
+-main ()
+-{
+-
+-#ifndef _XOPEN_SOURCE
+-make an error
+-#endif
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-rm -f conftest.$ac_objext
+-if { (eval echo "$as_me:8141: \"$ac_compile\"") >&5
+-  (eval $ac_compile) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8144: \$? = $ac_status" >&5
+-  (exit $ac_status); } &&
+-         { ac_try='test -s conftest.$ac_objext'
+-  { (eval echo "$as_me:8147: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8150: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+-  cf_XOPEN_SOURCE_set=yes
+-else
+-  echo "$as_me: failed program was:" >&5
+-cat conftest.$ac_ext >&5
+-cf_XOPEN_SOURCE_set=no
+-fi
+-rm -f conftest.$ac_objext conftest.$ac_ext
+-	echo "$as_me:8159: result: $cf_XOPEN_SOURCE_set" >&5
+-echo "${ECHO_T}$cf_XOPEN_SOURCE_set" >&6
+-	if test $cf_XOPEN_SOURCE_set = yes
+-	then
+-		cat >conftest.$ac_ext <<_ACEOF
+-#line 8164 "configure"
+-#include "confdefs.h"
+-#include <stdlib.h>
+-int
+-main ()
+-{
+-
+-#if (_XOPEN_SOURCE - 0) < $cf_XOPEN_SOURCE
+-make an error
+-#endif
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-rm -f conftest.$ac_objext
+-if { (eval echo "$as_me:8179: \"$ac_compile\"") >&5
+-  (eval $ac_compile) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8182: \$? = $ac_status" >&5
+-  (exit $ac_status); } &&
+-         { ac_try='test -s conftest.$ac_objext'
+-  { (eval echo "$as_me:8185: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8188: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+-  cf_XOPEN_SOURCE_set_ok=yes
+-else
+-  echo "$as_me: failed program was:" >&5
+-cat conftest.$ac_ext >&5
+-cf_XOPEN_SOURCE_set_ok=no
+-fi
+-rm -f conftest.$ac_objext conftest.$ac_ext
+-		if test $cf_XOPEN_SOURCE_set_ok = no
+-		then
+-			{ echo "$as_me:8199: WARNING: _XOPEN_SOURCE is lower than requested" >&5
+-echo "$as_me: WARNING: _XOPEN_SOURCE is lower than requested" >&2;}
+-		fi
+-	else
+-
+-echo "$as_me:8204: checking if we should define _XOPEN_SOURCE" >&5
+-echo $ECHO_N "checking if we should define _XOPEN_SOURCE... $ECHO_C" >&6
+-if test "${cf_cv_xopen_source+set}" = set; then
+-  echo $ECHO_N "(cached) $ECHO_C" >&6
+-else
+-
+-	cat >conftest.$ac_ext <<_ACEOF
+-#line 8211 "configure"
+-#include "confdefs.h"
+-
+-#include <stdlib.h>
+-#include <string.h>
+-#include <sys/types.h>
+-
+-int
+-main ()
+-{
+-
+-#ifndef _XOPEN_SOURCE
+-make an error
+-#endif
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-rm -f conftest.$ac_objext
+-if { (eval echo "$as_me:8230: \"$ac_compile\"") >&5
+-  (eval $ac_compile) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8233: \$? = $ac_status" >&5
+-  (exit $ac_status); } &&
+-         { ac_try='test -s conftest.$ac_objext'
+-  { (eval echo "$as_me:8236: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8239: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+-  cf_cv_xopen_source=no
+-else
+-  echo "$as_me: failed program was:" >&5
+-cat conftest.$ac_ext >&5
+-cf_save="$CPPFLAGS"
+-	 CPPFLAGS="$CPPFLAGS -D_XOPEN_SOURCE=$cf_XOPEN_SOURCE"
+-	 cat >conftest.$ac_ext <<_ACEOF
+-#line 8248 "configure"
+-#include "confdefs.h"
+-
+-#include <stdlib.h>
+-#include <string.h>
+-#include <sys/types.h>
+-
+-int
+-main ()
+-{
+-
+-#ifdef _XOPEN_SOURCE
+-make an error
+-#endif
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-rm -f conftest.$ac_objext
+-if { (eval echo "$as_me:8267: \"$ac_compile\"") >&5
+-  (eval $ac_compile) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8270: \$? = $ac_status" >&5
+-  (exit $ac_status); } &&
+-         { ac_try='test -s conftest.$ac_objext'
+-  { (eval echo "$as_me:8273: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:8276: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+-  cf_cv_xopen_source=no
+-else
+-  echo "$as_me: failed program was:" >&5
+-cat conftest.$ac_ext >&5
+-cf_cv_xopen_source=$cf_XOPEN_SOURCE
+-fi
+-rm -f conftest.$ac_objext conftest.$ac_ext
+-	CPPFLAGS="$cf_save"
+-
+-fi
+-rm -f conftest.$ac_objext conftest.$ac_ext
+-
+-fi
+-echo "$as_me:8291: result: $cf_cv_xopen_source" >&5
+-echo "${ECHO_T}$cf_cv_xopen_source" >&6
+-
+-if test "$cf_cv_xopen_source" != no ; then
+-
+-CFLAGS=`echo "$CFLAGS" | \
+-	sed	-e 's/-[UD]'"_XOPEN_SOURCE"'\(=[^ 	]*\)\?[ 	]/ /g' \
+-		-e 's/-[UD]'"_XOPEN_SOURCE"'\(=[^ 	]*\)\?$//g'`
+-
+-CPPFLAGS=`echo "$CPPFLAGS" | \
+-	sed	-e 's/-[UD]'"_XOPEN_SOURCE"'\(=[^ 	]*\)\?[ 	]/ /g' \
+-		-e 's/-[UD]'"_XOPEN_SOURCE"'\(=[^ 	]*\)\?$//g'`
+-
+-	cf_temp_xopen_source="-D_XOPEN_SOURCE=$cf_cv_xopen_source"
+-
+-cf_fix_cppflags=no
+-cf_new_cflags=
+-cf_new_cppflags=
+-cf_new_extra_cppflags=
+-
+-for cf_add_cflags in $cf_temp_xopen_source
+-do
+-case $cf_fix_cppflags in
+-no)
+-	case $cf_add_cflags in #(vi
+-	-undef|-nostdinc*|-I*|-D*|-U*|-E|-P|-C) #(vi
+-		case $cf_add_cflags in
+-		-D*)
+-			cf_tst_cflags=`echo ${cf_add_cflags} |sed -e 's/^-D[^=]*='\''\"[^"]*//'`
+-
+-			test "${cf_add_cflags}" != "${cf_tst_cflags}" \
+-				&& test -z "${cf_tst_cflags}" \
+-				&& cf_fix_cppflags=yes
+-
+-			if test $cf_fix_cppflags = yes ; then
+-				cf_new_extra_cppflags="$cf_new_extra_cppflags $cf_add_cflags"
+-				continue
+-			elif test "${cf_tst_cflags}" = "\"'" ; then
+-				cf_new_extra_cppflags="$cf_new_extra_cppflags $cf_add_cflags"
+-				continue
+-			fi
+-			;;
+-		esac
+-		case "$CPPFLAGS" in
+-		*$cf_add_cflags) #(vi
+-			;;
+-		*) #(vi
+-			case $cf_add_cflags in #(vi
+-			-D*)
+-				cf_tst_cppflags=`echo "x$cf_add_cflags" | sed -e 's/^...//' -e 's/=.*//'`
+-
+-CPPFLAGS=`echo "$CPPFLAGS" | \
+-	sed	-e 's/-[UD]'"$cf_tst_cppflags"'\(=[^ 	]*\)\?[ 	]/ /g' \
+-		-e 's/-[UD]'"$cf_tst_cppflags"'\(=[^ 	]*\)\?$//g'`
+-
+-				;;
+-			esac
+-			cf_new_cppflags="$cf_new_cppflags $cf_add_cflags"
+-			;;
+-		esac
+-		;;
+-	*)
+-		cf_new_cflags="$cf_new_cflags $cf_add_cflags"
+-		;;
+-	esac
+-	;;
+-yes)
+-	cf_new_extra_cppflags="$cf_new_extra_cppflags $cf_add_cflags"
+-
+-	cf_tst_cflags=`echo ${cf_add_cflags} |sed -e 's/^[^"]*"'\''//'`
+-
+-	test "${cf_add_cflags}" != "${cf_tst_cflags}" \
+-		&& test -z "${cf_tst_cflags}" \
+-		&& cf_fix_cppflags=no
+-	;;
+-esac
+-done
+-
+-if test -n "$cf_new_cflags" ; then
+-
+-	CFLAGS="$CFLAGS $cf_new_cflags"
+-fi
+-
+-if test -n "$cf_new_cppflags" ; then
+-
+-	CPPFLAGS="$CPPFLAGS $cf_new_cppflags"
+-fi
+-
+-if test -n "$cf_new_extra_cppflags" ; then
+-
+-	EXTRA_CPPFLAGS="$cf_new_extra_cppflags $EXTRA_CPPFLAGS"
+-fi
+-
+-fi
+-
+-	fi
+-fi
+-
+ # Work around breakage on OS X
+ 
+ echo "$as_me:8391: checking if SIGWINCH is defined" >&5

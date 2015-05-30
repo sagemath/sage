@@ -1,7 +1,7 @@
 """
 TESTS:
 
-We test various degenerate cases of kernel computation:
+We test various degenerate cases of kernel computation::
 
     sage: matrix(ZZ,1,0).kernel()
     Free module of degree 1 and rank 1 over Integer Ring

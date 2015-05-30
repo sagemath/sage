@@ -54,6 +54,9 @@ GNU Lesser General Public License, v2.1.  See src/LICENSE for more details.
 
 == Changelog ==
 
+=== cvxopt-1.1.7 (Dima Pasechnik, 24 Aug 2014) ===
+ * #16874: upgrade to version 1.1.7.
+
 === cvxopt-1.1.6.p0 (Volker Braun, Jeroen Demeyer, 15 May 2013) ===
  * #12832: upgrade to version 1.1.6.
  * Remove undocumented patch changing int_t to int.

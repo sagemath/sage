@@ -1,3 +1,0 @@
-MAINTAINERS:
-    * Josh Kantor
-    * William Stein

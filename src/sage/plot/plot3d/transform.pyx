@@ -1,29 +1,25 @@
+"Transformations"
+
 #*****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License version 2 (GPLv2)
-#
-#  The full text of the GPLv2 is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-cdef extern from *:
-    double sin(double)
-    double cos(double)
-    double sqrt(double)
 
-#from math import atan2, sin, cos, atan, sqrt, acos
+from libc.math cimport sin, cos, sqrt
 
 include "point_c.pxi"
 
 from sage.rings.real_double import RDF
-# from sage.misc.functional import sqrt, atan, acos
 
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 
 pi = RDF.pi()
-
 
 
 cdef class Transformation:
@@ -136,7 +132,7 @@ cdef class Transformation:
 def rotate_arbitrary(v, double theta):
     """
     Return a matrix that rotates the coordinate space about
-    the axis v by the angle theta.
+    the axis v by the angle ``theta``.
 
     INPUT:
 
@@ -149,41 +145,41 @@ def rotate_arbitrary(v, double theta):
     Try rotating about the axes::
 
         sage: rotate_arbitrary((1,0,0), 1)
-        [            1.0             0.0             0.0]
-        [            0.0  0.540302305868  0.841470984808]
-        [            0.0 -0.841470984808  0.540302305868]
+        [                1.0                 0.0                 0.0]
+        [                0.0  0.5403023058681398  0.8414709848078965]
+        [                0.0 -0.8414709848078965  0.5403023058681398]
         sage: rotate_arbitrary((0,1,0), 1)
-        [ 0.540302305868             0.0 -0.841470984808]
-        [            0.0             1.0             0.0]
-        [ 0.841470984808             0.0  0.540302305868]
+        [ 0.5403023058681398                 0.0 -0.8414709848078965]
+        [                0.0                 1.0                 0.0]
+        [ 0.8414709848078965                 0.0  0.5403023058681398]
         sage: rotate_arbitrary((0,0,1), 1)
-        [ 0.540302305868  0.841470984808             0.0]
-        [-0.841470984808  0.540302305868             0.0]
-        [            0.0             0.0             1.0]
+        [ 0.5403023058681398  0.8414709848078965                 0.0]
+        [-0.8414709848078965  0.5403023058681398                 0.0]
+        [                0.0                 0.0                 1.0]
 
-    These next two should be the same (up to machine epsilon)::
+    These next two should be the same (up to floating-point errors)::
 
-        sage: rotate_arbitrary((1,1,1), 1)
-        [ 0.693534870579  0.639056064305 -0.332590934883]
-        [-0.332590934883  0.693534870579  0.639056064305]
-        [ 0.639056064305 -0.332590934883  0.693534870579]
-        sage: rotate_arbitrary((1,1,1), -1)^(-1)
-        [ 0.693534870579  0.639056064305 -0.332590934883]
-        [-0.332590934883  0.693534870579  0.639056064305]
-        [ 0.639056064305 -0.332590934883  0.693534870579]
+        sage: rotate_arbitrary((1,1,1), 1)  # rel tol 1e-15
+        [  0.6935348705787598   0.6390560643047186 -0.33259093488347846]
+        [-0.33259093488347846   0.6935348705787598   0.6390560643047186]
+        [  0.6390560643047186  -0.3325909348834784   0.6935348705787598]
+        sage: rotate_arbitrary((1,1,1), -1)^(-1)  # rel tol 1e-15
+        [  0.6935348705787598   0.6390560643047186 -0.33259093488347846]
+        [-0.33259093488347846   0.6935348705787598   0.6390560643047186]
+        [  0.6390560643047185 -0.33259093488347835   0.6935348705787598]
 
     Make sure it does the right thing...::
 
         sage: rotate_arbitrary((1,2,3), -1).det()
-        1.0
-        sage: rotate_arbitrary((1,1,1), 2*pi/3) * vector(RDF, (1,2,3))
-        (2.0, 3.0, 1.0)
-        sage: rotate_arbitrary((1,2,3), 5) * vector(RDF, (1,2,3))
-        (1.0, 2.0, 3.0)
-        sage: rotate_arbitrary((1,1,1), pi/7)^7
-        [-0.333333333333  0.666666666667  0.666666666667]
-        [ 0.666666666667 -0.333333333333  0.666666666667]
-        [ 0.666666666667  0.666666666667 -0.333333333333]
+        1.0000000000000002
+        sage: rotate_arbitrary((1,1,1), 2*pi/3) * vector(RDF, (1,2,3))  # rel tol 2e-15
+        (1.9999999999999996, 2.9999999999999996, 0.9999999999999999)
+        sage: rotate_arbitrary((1,2,3), 5) * vector(RDF, (1,2,3))  # rel tol 2e-15
+        (1.0000000000000002, 2.0, 3.000000000000001)
+        sage: rotate_arbitrary((1,1,1), pi/7)^7  # rel tol 2e-15
+        [-0.33333333333333337   0.6666666666666671   0.6666666666666665]
+        [  0.6666666666666665 -0.33333333333333337   0.6666666666666671]
+        [  0.6666666666666671   0.6666666666666667 -0.33333333333333326]
 
     AUTHORS:
 

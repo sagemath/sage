@@ -23,20 +23,56 @@ to be aware of the modules described in this chapter.
 .. toctree::
    :maxdepth: 2
 
-   sage/libs/gap/libgap
-   sage/libs/gap/element
+   sage/libs/cremona/mat
+   sage/libs/cremona/newforms
+   sage/libs/cremona/homspace
+   sage/libs/cremona/constructor
+   sage/libs/gmp/rational_reconstruction
+   sage/libs/lcalc/lcalc_Lfunction
+   sage/libs/ratpoints
+   sage/libs/singular/function
+   sage/libs/singular/function_factory
+   sage/libs/singular/singular
+   sage/libs/singular/polynomial
+   sage/libs/singular/option
+   sage/libs/singular/ring
+   sage/libs/singular/groebner_strategy
+   sage/libs/ppl
+   sage/libs/linbox/linbox
+   sage/libs/flint/flint
    sage/libs/flint/fmpz_poly
+   sage/libs/flint/arith
+   sage/libs/symmetrica/symmetrica
+   sage/libs/mpmath/utils
+   sage/libs/ntl/all
    sage/libs/libecm
    sage/libs/lrcalc/lrcalc
-   sage/libs/ntl/all
-   sage/libs/mwrank/all
-   sage/libs/mwrank/mwrank
-   sage/libs/mwrank/interface
-   sage/libs/pari/pari_instance
+   sage/libs/pari/handle_error
+   sage/libs/pari/gen_py
    sage/libs/pari/gen
-   sage/libs/ppl
+   sage/libs/pari/pari_instance
+   sage/rings/pari_ring
+   sage/libs/fplll/fplll
+   sage/libs/readline
+   sage/libs/gap/context_managers
+   sage/libs/gap/gap_functions
+   sage/libs/gap/test_long
+   sage/libs/gap/util
+   sage/libs/gap/libgap
+   sage/libs/gap/test
+   sage/libs/gap/element
+   sage/libs/gap/saved_workspace
+   sage/libs/ecl
+   sage/libs/mwrank/interface
+   sage/libs/mwrank/mwrank
+
+   sage/gsl/gsl_array
+
+   sage/ext/interrupt
    sage/ext/pselect
-   sage/libs/singular/function
-   sage/libs/singular/option
+
+.. Cannot be imported independently of mpmath: sage/libs/mpmath/ext_main sage/libs/mpmath/ext_impl sage/libs/mpmath/ext_libmp
+
+.. Modules depending on optional packages: sage/libs/coxeter3/coxeter sage/libs/coxeter3/coxeter_group sage/libs/fes
 
 .. include:: ../footer.txt

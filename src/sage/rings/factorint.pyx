@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-*
 r"""
 Integer factorization functions
 
@@ -17,33 +18,35 @@ AUTHORS:
 #*****************************************************************************
 
 include "sage/libs/pari/decl.pxi"
-include "sage/ext/gmp.pxi"
-include "sage/ext/stdsage.pxi"
+from sage.ext.stdsage cimport PY_NEW
 
 from sage.rings.integer cimport Integer
 from sage.rings.fast_arith import prime_range
 from sage.structure.factorization_integer import IntegerFactorization
 from math import floor
-from sage.misc.superseded import deprecated_function_alias
+from sage.misc.misc_c import prod
 
 cdef extern from "limits.h":
     long LONG_MAX
 
-cpdef aurifeuillian(n, m, F=None):
+cpdef aurifeuillian(n, m, F=None, bint check=True):
     r"""
-    Return Aurifeuillian factors `F_n^\pm(m^2n)`
+    Return the Aurifeuillian factors `F_n^\pm(m^2n)`.
+
+    This is based off Theorem 3 of [Brent93]_.
 
     INPUT:
 
-    - ``n`` - integer
-    - ``m`` - integer
-    - ``F`` - integer (default: None)
+    - ``n`` -- integer
+    - ``m`` -- integer
+    - ``F`` -- integer (default: ``None``)
+    - ``check`` -- boolean (default: ``True``)
 
     OUTPUT:
 
-        List of factors
+    A list of factors.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.rings.factorint import aurifeuillian
         sage: aurifeuillian(2,2)
@@ -69,57 +72,68 @@ cpdef aurifeuillian(n, m, F=None):
 
     .. NOTE::
 
-    There is no need to set `F`. It's only for increasing speed
-    of factor_aurifeuillian().
+        There is no need to set `F`. It's only for increasing speed
+        of :meth:`factor_aurifeuillian()`.
 
     REFERENCES:
 
-    .. Brent, On computing factors of cyclotomic polynomials, Theorem 3
-        arXiv:1004.5466v1 [math.NT]
-
+    .. [Brent93] Richard P. Brent.
+       *On computing factors of cyclotomic polynomials*.
+       Mathematics of Computation. **61** (1993). No. 203. pp 131-149.
+       :arXiv:`1004.5466v1`. http://www.jstor.org/stable/2152941
     """
-    from sage.rings.arith import euler_phi, kronecker_symbol
-    from sage.functions.log import exp
-    from sage.rings.real_mpfr import RealField
-    if not n.is_squarefree():
-        raise ValueError, "n has to be square-free"
-    if n < 2:
-        raise ValueError, "n has to be greater than 1"
-    if m < 1:
-        raise ValueError, "m has to be positive"
+    from sage.rings.arith import euler_phi
+    from sage.rings.real_mpfi import RealIntervalField
+    if check:
+        if not n.is_squarefree():
+            raise ValueError("n has to be square-free")
+        if n < 2:
+            raise ValueError("n has to be greater than 1")
+        if m < 1:
+            raise ValueError("m has to be positive")
     x = m**2*n
-    y = euler_phi(2*n)//2
-    if F == None:
-        from sage.misc.functional import cyclotomic_polynomial
+    cdef Py_ssize_t y = euler_phi(2*n)//2
+    if F is None:
+        from sage.rings.polynomial.cyclotomic import cyclotomic_value
         if n%2:
             if n%4 == 3:
                 s = -1
             else:
                 s = 1
-            F = cyclotomic_polynomial(n)(s*x)
+            F = cyclotomic_value(n, s*x)
         else:
-            F = (-1)**euler_phi(n//2)*cyclotomic_polynomial(n//2)(-x**2)
-    tmp = sum([kronecker_symbol(n,2*j+1)/((2*j+1)*x**j) for j in range(y)])
-    R = RealField(300)
-    Fm = R(F.sqrt()*R(-1/m*tmp).exp()).round()
-    return [Fm, Integer(round(F//Fm))]
+            F = cyclotomic_value(n//2, -x**2)
+            if n == 2:
+                F = -F
+    cdef Py_ssize_t j
+    tmp = 0
+    for j in range(y):
+        tmp += n.kronecker(2*j + 1) / ((2*j + 1) * x**j)
+    prec = Integer(150)
+    R = RealIntervalField(prec)
+    Fm = R(F).sqrt() * R(-1/m*tmp).exp()
+    while Fm.upper().round() != Fm.lower().round():
+        prec *= 2
+        R = RealIntervalField(prec)
+        Fm = R(F).sqrt() * R(-1/m*tmp).exp()
+    Fm = Fm.upper().round()
+    assert (not check or Fm.divides(F))
+    return [Fm, F // Fm]
 
-base_exponent = deprecated_function_alias(12116, lambda n: n.perfect_power())
-
-cpdef factor_aurifeuillian(n):
+cpdef factor_aurifeuillian(n, check=True):
     r"""
-    Return Aurifeuillian factors of `n` if `n = x^{(2k-1)x} \pw 1`
+    Return Aurifeuillian factors of `n` if `n = x^{(2k-1)x} \pm 1`
     (where the sign is '-' if x = 1 mod 4, and '+' otherwise) else `n`
 
     INPUT:
 
-    - ``n`` - integer
+    - ``n`` -- integer
 
     OUTPUT:
 
-        List of factors of `n` found by Aurifeuillian factorization.
+    List of factors of `n` found by Aurifeuillian factorization.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
         sage: fa(2^6+1)
@@ -134,54 +148,81 @@ cpdef factor_aurifeuillian(n):
         True
         sage: fa(2^4+1)
         [17]
+        sage: fa((6^2*3)^3+1)
+        [109, 91, 127]
+
+    TESTS::
+
+        sage: for n in [2,3,5,6,30,31,33]:
+        ....:     for m in [8,96,109201283]:
+        ....:         s = -1 if n % 4 == 1 else 1
+        ....:         y = (m^2*n)^n + s
+        ....:         F = fa(y)
+        ....:         assert(len(F) > 0 and prod(F) == y)
 
     REFERENCES:
 
-    .. http://mathworld.wolfram.com/AurifeuilleanFactorization.html
-
+    - http://mathworld.wolfram.com/AurifeuilleanFactorization.html
+    - [Brent93]_ Theorem 3
     """
     if n in [-2, -1, 0, 1, 2]:
         return [n]
     cdef int exp = 1
-    for x in [-1, 1]:
-        b = n + x
-        b, exp = b.perfect_power()
+    for s in [-1, 1]:
+        x, exp = (n - s).perfect_power()
         if exp > 1:
-            if not b.is_prime():
-                continue
-            m = b**((exp+b)/(2*b)-1)
-            if m != floor(m):
-                continue
-            if b == 2:
-                if x == -1:
-                    return aurifeuillian(b, m, n)
+            # factorization is possible if x = m^2 * n and exp = n, n squarefree
+            # We have the freedom to replace exp by exp/a and x by x^a.  If a is even,
+            # n = 1 and we've gotten nowhere.  So set n as the squarefree part of x,
+            # and m^2 the remainder.  We can replace exp by exp/(2a+1) as long as we
+            # replace (m^2 * n) by (m^2 * n)^(2a + 1) = (m^(2a + 1) * n^a)^2 * n.
+            # In particular, n needs to be a divisor of both x and exp (as well as being squarefree).
+            a_guess = x.gcd(exp)
+            m = x // a_guess
+            # n_guess is small, so we can factor it.
+            a = 1
+            for p, e in a_guess.factor():
+                v = m.valuation(p)
+                if v + e % 2:
+                    # one factor of p remains in a.
+                    a *= p
+                    if e > 1:
+                        m *= p**(e-1)
                 else:
-                    return [2**(exp/2)-1, 2**(exp/2)+1]
-            F = b**(exp/b)-x
-            result = [F] + aurifeuillian(b, m, n/F)
-            prod = 1
-            for a in result:
-                prod *= a
-            if prod == n:
-                return result
+                    # all factors of p go to m
+                    m *= p**e
+            if a == 1 or (a % 4 == 1 and s == 1) or (a % 4 != 1 and s == -1): continue
+            m, r = m.sqrtrem()
+            if r: continue
+            exp_adjust = exp // a
+            if exp_adjust % 2 == 0: continue
+            m = m**exp_adjust * a**(exp_adjust//2)
+            F = aurifeuillian(a, m, check=False)
+            rem = prod(F)
+            if check and not rem.divides(n):
+                raise RuntimeError("rem=%s, F=%s, n=%s, m=%s"%(rem, F, n, m))
+            rem = n // rem
+            if rem != 1:
+                return [rem] + F
+            return F
     return [n]
 
 def factor_cunningham(m, proof=None):
     r"""
     Return factorization of self obtained using trial division
     for all primes in the so called Cunningham table. This is
-    efficient if self has some factors of type $b^n+1$ or $b^n-1$,
-    with $b$ in $\{2,3,5,6,7,10,11,12\}$.
+    efficient if self has some factors of type `b^n+1` or `b^n-1`,
+    with `b` in `\{2,3,5,6,7,10,11,12\}`.
 
     You need to install an optional package to use this method,
     this can be done with the following command line:
-    ``sage -i cunningham_tables``
+    ``sage -i cunningham_tables``.
 
     INPUT:
 
-     - ``proof`` - bool (default: None) whether or not to
-       prove primality of each factor, this is only for factors
-       not in the Cunningham table.
+    - ``proof`` -- bool (default: ``None``); whether or not to
+      prove primality of each factor, this is only for factors
+      not in the Cunningham table
 
     EXAMPLES::
 
@@ -216,7 +257,7 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     INPUT:
 
-     - ``limit`` - integer (default: LONG_MAX) that fits in a C signed long
+    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C signed long
 
     EXAMPLES::
 
@@ -266,19 +307,19 @@ cpdef factor_using_pari(n, int_=False, debug_level=0, proof=None):
 
     INPUT:
 
-     - ``int_`` -- (default: ``False``), whether the factors are
-       of type ``int`` instead of ``Integer``
+    - ``int_`` -- (default: ``False``), whether the factors are
+      of type ``int`` instead of ``Integer``
 
-     - ``debug_level`` -- (default: 0), debug level of the call
-       to PARI
+    - ``debug_level`` -- (default: 0), debug level of the call
+      to PARI
 
-     - ``proof`` -- (default: ``None``), whether the factors are
-       required to be proven prime;  if ``None``, the global default
-       is used
+    - ``proof`` -- (default: ``None``), whether the factors are
+      required to be proven prime;  if ``None``, the global default
+      is used
 
     OUTPUT:
 
-        -  a list of pairs
+    A list of pairs.
 
     EXAMPLES::
 

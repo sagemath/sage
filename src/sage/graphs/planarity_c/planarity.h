@@ -62,7 +62,7 @@ extern "C" {
 #include "graphDrawPlanar.h"
 #include "graphColorVertices.h"
 
-void ProjectTitle();
+void ProjectTitle(void);
 int helpMessage(char *param);
 
 /* Functions that call the Graph Library */
@@ -75,7 +75,7 @@ int makeg_main(char command, int argc, char *argv[]);
 /* Command line, Menu, and Configuration */
 int commandLine(int argc, char *argv[]);
 int legacyCommandLine(int argc, char *argv[]);
-int menu();
+int menu(void);
 
 char Mode,
      OrigOut,
@@ -84,7 +84,7 @@ char Mode,
      AdjListsForEmbeddingsOut,
      quietMode;
 
-void Reconfigure();
+void Reconfigure(void);
 
 /* Low-level Utilities */
 #define MAXLINE 1024

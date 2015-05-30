@@ -16,7 +16,7 @@ Partition/Diagram Algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from combinat import CombinatorialClass, catalan_number
+from combinat import catalan_number
 from combinatorial_algebra import CombinatorialAlgebra, CombinatorialAlgebraElement
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
 from sage.sets.set import Set, is_Set
@@ -27,7 +27,9 @@ from sage.rings.all import Integer
 from sage.rings.real_mpfr import is_RealNumber
 from subset import Subsets
 from sage.functions.all import ceil
-import functools, math
+import functools
+import math
+
 
 def create_set_partition_function(letter, k):
     """
@@ -47,6 +49,7 @@ def create_set_partition_function(letter, k):
 
     raise ValueError("k must be an integer or an integer + 1/2")
 
+
 class SetPartitionsXkElement(SetPartition):
     """
     An element for the classes of ``SetPartitionXk`` where ``X`` is some
@@ -59,11 +62,14 @@ class SetPartitionsXkElement(SetPartition):
         EXAMLPLES::
 
             sage: A2p5 = SetPartitionsAk(2.5)
-            sage: A2p5.first() # random
+            sage: x = A2p5.first(); x # random
             {{1, 2, 3, -1, -3, -2}}
+            sage: x.check()
+            sage: y = A2p5.next(x); y
+            {{-3, -2, -1, 2, 3}, {1}}
+            sage: y.check()
         """
         #Check to make sure each element of x is a set
-        u = Set([])
         for s in self:
             assert isinstance(s, (set, frozenset)) or is_Set(s)
 
@@ -675,7 +681,7 @@ class SetPartitionsBk_k(SetPartitionsAk_k):
             sage: all( [ bk.cardinality() == len(bk.list()) for bk in bks] )
             True
         """
-        for sp in SetPartitions(self._set, [2]*(len(self._set)/2)):
+        for sp in SetPartitions(self._set, [2]*(len(self._set)//2)):
             yield self.element_class(self, sp)
 
 class SetPartitionsBkhalf_k(SetPartitionsAkhalf_k):
@@ -747,7 +753,7 @@ class SetPartitionsBkhalf_k(SetPartitionsAkhalf_k):
              {{1, 2}, {-3, -1}, {4, -4}, {3, -2}}]
         """
         set = range(1,self.k+1) + map(lambda x: -1*x, range(1,self.k+1))
-        for sp in SetPartitions(set, [2]*(len(set)/2) ):
+        for sp in SetPartitions(set, [2]*(len(set)//2) ):
             yield self.element_class(self, Set(list(sp)) + Set([Set([self.k+1, -self.k -1])]))
 
 #####
@@ -1324,8 +1330,7 @@ class SetPartitionsPRk_k(SetPartitionsRk_k):
         yield self.element_class(self, to_set_partition([], self.k))
         for n in range(1,self.k+1):
             for top in Subsets(positives, n):
-                t = list(top)
-                t.sort()
+                t = sorted(top)
                 for bottom in Subsets(negatives, n):
                     b = list(bottom)
                     b.sort(reverse=True)
@@ -1381,12 +1386,9 @@ class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
         TESTS::
 
             sage: L = list(SetPartitionsPRk(2.5)); L
-            [{{-3, 3}, {-2}, {-1}, {1}, {2}},
-             {{-3, 3}, {-2}, {-1, 1}, {2}},
-             {{-3, 3}, {-2, 1}, {-1}, {2}},
-             {{-3, 3}, {-2}, {-1, 2}, {1}},
-             {{-3, 3}, {-2, 2}, {-1}, {1}},
-             {{-3, 3}, {-2, 2}, {-1, 1}}]
+            [{{-3, 3}, {-2}, {-1}, {1}, {2}}, {{-3, 3}, {-2}, {-1, 1}, {2}},
+             {{-3, 3}, {-2, 1}, {-1}, {2}}, {{-3, 3}, {-2}, {-1, 2}, {1}},
+             {{-3, 3}, {-2, 2}, {-1}, {1}}, {{-3, 3}, {-2, 2}, {-1, 1}}]
             sage: len(L)
             6
         """
@@ -1396,8 +1398,7 @@ class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
         yield self.element_class(self, to_set_partition([[self.k+1, -self.k-1]],k=self.k+1))
         for n in range(1,self.k+1):
             for top in Subsets(positives, n):
-                t = list(top)
-                t.sort()
+                t = sorted(top)
                 for bottom in Subsets(negatives, n):
                     b = list(bottom)
                     b.sort(reverse=True)
@@ -1419,7 +1420,7 @@ class PartitionAlgebra_generic(CombinatorialAlgebra):
         """
         self.k = k
         self.n = n
-        self._basis_keys = cclass
+        self._indices = cclass
         self._name = "Generic partition algebra with k = %s and n = %s and basis %s"%( self.k, self.n, cclass) if name is None else name
         self._one = identity(ceil(self.k))
         self._prefix = "" if prefix is None else prefix
@@ -1584,15 +1585,14 @@ def is_planar(sp):
     to_consider = map(list, sp)
 
     #Singletons don't affect planarity
-    to_consider = filter(lambda x: len(x) > 1, to_consider)
+    to_consider = [x for x in to_consider if len(x) > 1]
     n = len(to_consider)
 
     for i in range(n):
         #Get the positive and negative entries of this
         #part
-        ap = filter(lambda x: x>0, to_consider[i])
-        an = filter(lambda x: x<0, to_consider[i])
-        an = map(abs, an)
+        ap = [x for x in to_consider[i] if x>0]
+        an = [abs(x) for x in to_consider[i] if x<0]
         #print a, ap, an
 
 
@@ -1603,9 +1603,8 @@ def is_planar(sp):
                 if i == j:
                     continue
                 #Get the positive and negative entries of this part
-                bp = filter(lambda x: x>0, to_consider[j])
-                bn = filter(lambda x: x<0, to_consider[j])
-                bn = map(abs, bn)
+                bp = [x for x in to_consider[j] if x>0]
+                bn = [abs(x) for x in to_consider[j] if x<0]
 
                 #Skip the ones that don't involve numbers in both
                 #the bottom and top rows
@@ -1683,9 +1682,14 @@ def to_graph(sp):
 
 def pair_to_graph(sp1, sp2):
     """
-    Returns a graph consisting of the graphs of set partitions sp1 and
-    sp2 along with edges joining the bottom row (negative numbers) of
-    sp1 to the top row (positive numbers) of sp2.
+    Return a graph consisting of the disjoint union of the graphs of set
+    partitions ``sp1`` and ``sp2`` along with edges joining the bottom
+    row (negative numbers) of ``sp1`` to the top row (positive numbers)
+    of ``sp2``.
+
+    The vertices of the graph ``sp1`` appear in the result as pairs
+    ``(k, 1)``, whereas the vertices of the graph ``sp2`` appear as
+    pairs ``(k, 2)``.
 
     EXAMPLES::
 
@@ -1706,6 +1710,19 @@ def pair_to_graph(sp1, sp2):
          ((-1, 2), (2, 2), None),
          ((-2, 1), (1, 1), None),
          ((-2, 1), (2, 2), None)]
+
+    Another example which used to be wrong until :trac:`15958`::
+
+        sage: sp3 = pa.to_set_partition([[1, -1], [2], [-2]])
+        sage: sp4 = pa.to_set_partition([[1], [-1], [2], [-2]])
+        sage: g = pa.pair_to_graph( sp3, sp4 ); g
+        Graph on 8 vertices
+
+        sage: g.vertices()
+        [(-2, 1), (-2, 2), (-1, 1), (-1, 2), (1, 1), (1, 2), (2, 1), (2, 2)]
+        sage: g.edges()
+        [((-2, 1), (2, 2), None), ((-1, 1), (1, 1), None),
+         ((-1, 1), (1, 2), None)]
     """
     g = Graph()
 
@@ -1716,28 +1733,27 @@ def pair_to_graph(sp1, sp2):
             g.add_vertex( (part_list[0],1) )
 
             #Add the edge to the second part of the graph
-            if part_list[0] < 0 and len(part_list) > 1:
-                g.add_edge( (part_list[0], 1), (abs(part_list[0]),2)  )
+            if part_list[0] < 0:
+                g.add_edge( (part_list[0], 1), (abs(part_list[0]), 2)  )
 
         for i in range(1, len(part_list)):
-            g.add_vertex( (part_list[i],1) )
+            g.add_vertex( (part_list[i], 1) )
 
             #Add the edge to the second part of the graph
             if part_list[i] < 0:
-                g.add_edge( (part_list[i], 1), (abs(part_list[i]),2) )
+                g.add_edge( (part_list[i], 1), (abs(part_list[i]), 2) )
 
-            #Add the edge between parts
-            g.add_edge( (part_list[i-1],1), (part_list[i],1) )
+            #Add the edge between adjacent elements of a part
+            g.add_edge( (part_list[i-1], 1), (part_list[i], 1) )
 
     #Add the second set partition to the graph
     for part in sp2:
         part_list = list(part)
         if len(part_list) > 0:
-            g.add_vertex( (part_list[0],2) )
+            g.add_vertex( (part_list[0], 2) )
         for i in range(1, len(part_list)):
-            g.add_vertex( (part_list[i],2) )
-            g.add_edge( (part_list[i-1],2), (part_list[i],2) )
-
+            g.add_vertex( (part_list[i], 2) )
+            g.add_edge( (part_list[i-1], 2), (part_list[i], 2) )
 
     return g
 
@@ -1779,7 +1795,7 @@ def to_set_partition(l,k=None):
         sage: pa.to_set_partition([[1,-1],[2,-2]]) == pa.identity(2)
         True
     """
-    if k == None:
+    if k is None:
         if l == []:
             return Set([])
         else:
@@ -1835,7 +1851,7 @@ def set_partition_composition(sp1, sp2):
     total_removed = 0
     for cc in connected_components:
         #Remove the vertices that live in the middle two rows
-        new_cc = filter(lambda x: not ( (x[0]<0 and x[1] == 1) or (x[0]>0 and x[1]==2)), cc)
+        new_cc = [x for x in cc if not( (x[0]<0 and x[1] == 1) or (x[0]>0 and x[1]==2) )]
 
         if new_cc == []:
             if len(cc) > 1:
@@ -1845,4 +1861,3 @@ def set_partition_composition(sp1, sp2):
 
 
     return ( Set(res), total_removed )
-

@@ -6,7 +6,7 @@ weighted graph. It uses an exact branch-and-bound algorithm recently
 developed by Patr Ostergard.
 
 == License ==
-Cliquer is licensed under the GNU General Public License v2 ( June 1991 )
+GNU General Public License v2
 
 == SPKG Maintainers ==
 Nathann Cohen (nathann.cohen@gmail.com)
@@ -18,92 +18,8 @@ http://users.tkk.fi/pat/cliquer.html
 == Dependencies ==
  * None
 
-== TODO ==
- * A MAJOR cleanup of this package is required, see #9870, #14349
-
 == Patches ==
- * Makefile.patch: Patch the Makefile for Sage. This custom Makefile
-   contains Sage specific compilation and linking flags. More
-   importantly, we're building cliquer as a dynamic shared library,
-   instead of a stand alone program.
- * cl_c.patch, cl_h.patch: Hook into cliquer to access internal
-   functions. Could probably be done better (see TODO)
-
-== Changelog ==
-
-=== cliquer-1.21.p1 (Volker Braun, Felix Salfelder, 15 July 2013) ===
- * Trac #14892: Track all patches, remove unnecessary graph.c.patch
-
-=== cliquer-1.21.p0 (Nathann Cohen, 4 May 2012) ===
- * Solved memory leaks reported on #12905
- * Incidentally updated Cliquer to version 1.21
- * Incidentally removed Sage's code that was formerly directly
-   inserted in the original files. This code is now inserted during
-   installation from patches located in the patches/ folder. A bit
-   cleaner. A long way to go. But God this code really is messy and
-   full of global variables.
-
-=== cliquer-1.2.p11 (John Palmieri, 23 March 2012) ===
- * #12311: Remove explicit path to testcc.sh in spkg-install.
-
-=== cliquer-1.2.p10 (Karl-Dieter Crisman, 28 June 2011) ===
- * #11547: Make sure that libcliquer.so is copied as both
-   .dll and .so files on Cygwin
-
-=== cliquer-1.2.p9 (Jeroen Demeyer, 4 May 2011) ===
- * #11227: Apply workaround also for versions 4.6.1 of gcc, not only
-   version 4.6.0.  This is to support pre-release versions of
-   gcc 4.6.1, the bug should be fixed in the final gcc 4.6.1.
-
-=== cliquer-1.2.p8 (Jeroen Demeyer, 25 April 2011) ===
- * #11227: When compiling with gcc 4.6.0, add compiler flag -fno-ivopts
-   to work around a gcc bug.
- * Use `patch` for patching the Makefile and put patches/Makefile.patch
-   under hg control.
- * Some minor cleanup of spkg-install and Makefile.
-
-=== cliquer-1.2.p7 David Kirkby, Leif Leonhardy  (14 September 2010) ===
- * #9871 Change flags passed to the linker on Solaris to avoid problems with the
-   link-editor believing the shared library contains text relocations. This
-   problem can be seen on 32-bit builds of Solaris and OpenSolaris using
-   /usr/bin/elfdump, but the problems are much more serious on 64-bit
-   builds of Solaris - in some cases stopping code from building.
- * Added the linker flag -ztext on Solaris too, as -ztest forces a fatal
-   error if any  relocations   against   non-writable,  allocatable  sections
-   remain. This will make it easier to catch any similar bugs in future.
-
-=== cliquer-1.2.p6 Nathann Cohen, David Kirkby (31 August 2010) ===
- * #9766: Additions to SPKG.txt
-      - URL of the original website to the SPKG.txt file
-      - "Special Update/Build Instructions" section
-      - "Dependencies" section
- * Added an entry to SPKG showing when this package was first put into
-   Sage. The first mercurial log is dated 17th July 2009.
- * Added a note on to the cliquer-1.2.p0 entry in SPKG.txt that 'scons'
-   was no longer used.
-
-=== cliquer-1.2.p5 Mike Hansen (15 February 2010) ===
- * Fixed Trac #8279 to make the cliquer spkg work on Cygwin with the Sage library.
-
-=== cliquer-1.2.p4 Mike Hansen, William Stein (12 February 2010) ===
- * Fixed Trac #7308 to make the cliquer spkg work on Cygwin.
-
-=== cliquer-1.2.p3 (Peter Jeremy, 2010-01-25) ===
- * #7824: add FreeBSD support
-
-=== cliquer-1.2.p2 (?, ?) ===
- * changelog lost to history
-
-=== cliquer-1.2.p1 Karl-Dieter Crisman, Georg S. Weber (7th October 2009) ===
- * fix trac #7115: Re-add support for building cliquer on Mac OS X 10.4
-
-=== cliquer-1.2.p0 Minh Van Nguyen (16th September 2009) ===
- * Support for building cliquer 1.2 in 64-bit mode on Mac OS X 10.5.x
-   and 64-bit openSUSE 11.1.
- * Add custom compilation and linking flags on top of the Makefile of
-   cliquer 1.2.
- * Removed dependancy of cliquer on 'scons'
-
-=== cliquer-1.2 Nathann Cohen (17th July 2009) ===
- * First release put into Sage.
-
+ * Makefile.patch: Patch the Makefile for Sage. Remove hardcoded
+   compiler and linker flags, allow flags to be set from spkg-install.
+   More importantly, we're building cliquer as a dynamic shared library,
+   instead of a stand-alone program.

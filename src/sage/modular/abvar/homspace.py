@@ -173,8 +173,9 @@ AUTHORS:
 
 from copy import copy
 
-from sage.categories.homset import HomsetWithBase
-from sage.misc.functional import parent
+from sage.categories.homset import HomsetWithBase, End
+from sage.structure.all import parent
+from sage.misc.lazy_attribute import lazy_attribute
 
 import abvar as abelian_variety
 import morphism
@@ -195,6 +196,7 @@ class Homspace(HomsetWithBase):
     """
     A space of homomorphisms between two modular abelian varieties.
     """
+    Element = morphism.Morphism
     def __init__(self, domain, codomain, cat):
         """
         Create a homspace.
@@ -219,12 +221,45 @@ class Homspace(HomsetWithBase):
             Category of modular abelian varieties over Rational Field
         """
         if not abelian_variety.is_ModularAbelianVariety(domain):
-            raise TypeError, "domain must be a modular abelian variety"
+            raise TypeError("domain must be a modular abelian variety")
         if not abelian_variety.is_ModularAbelianVariety(codomain):
-            raise TypeError, "codomain must be a modular abelian variety"
-        self._matrix_space = MatrixSpace(ZZ,2*domain.dimension(), 2*codomain.dimension())
+            raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
-        HomsetWithBase.__init__(self, domain, codomain, cat)
+        HomsetWithBase.__init__(self, domain, codomain, category=cat)
+
+    @lazy_attribute
+    def _matrix_space(self):
+        """
+        Return the matrix space of ``self``.
+
+        .. WARNING::
+
+            During unpickling, the domain and codomain may be unable to
+            provide the necessary information. This is why this is a lazy
+            attribute. See :trac:`14793`.
+
+        EXAMPLES::
+
+            sage: Hom(J0(11), J0(22))._matrix_space
+            Full MatrixSpace of 2 by 4 dense matrices over Integer Ring
+        """
+        return MatrixSpace(ZZ,2*self.domain().dimension(), 2*self.codomain().dimension())
+
+    def _element_constructor_from_element_class(self, *args, **keywords):
+        """
+        Used in the coercion framework. Unfortunately, the default method
+        would get the order of parent and data different from what is expected
+        in ``MatrixMorphism.__init__``.
+
+        EXAMPLES::
+
+            sage: H = Hom(J0(11), J0(22))
+            sage: phi = H(matrix(ZZ,2,4,[5..12])); phi # indirect doctest
+            Abelian variety morphism:
+              From: Abelian variety J0(11) of dimension 1
+              To:   Abelian variety J0(22) of dimension 2
+        """
+        return self.element_class(self, *args, **keywords)
 
     def __call__(self, M):
         r"""
@@ -287,17 +322,17 @@ class Homspace(HomsetWithBase):
             elif M.domain() == self.domain() and M.codomain() == self.codomain():
                 M = M.matrix()
             else:
-                raise ValueError, "cannot convert %s into %s" % (M, self)
+                raise ValueError("cannot convert %s into %s" % (M, self))
         elif is_Matrix(M):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
             if M.nrows() != 2*self.domain().dimension() or M.ncols() != 2*self.codomain().dimension():
-                raise TypeError, "matrix has wrong dimension"
+                raise TypeError("matrix has wrong dimension")
         elif self.matrix_space().has_coerce_map_from(parent(M)):
             M = self.matrix_space()(M)
         else:
-            raise TypeError, "can only coerce in matrices or morphisms"
-        return morphism.Morphism(self, M)
+            raise TypeError("can only coerce in matrices or morphisms")
+        return self.element_class(self, M)
 
     def _coerce_impl(self, x):
         """
@@ -431,8 +466,8 @@ class Homspace(HomsetWithBase):
         """
         self.calculate_generators()
         if i > self.ngens():
-            raise ValueError, "self only has %s generators"%self.ngens()
-        return morphism.Morphism(self, self._gens[i])
+            raise ValueError("self only has %s generators"%self.ngens())
+        return self.element_class(self, self._gens[i])
 
     def ngens(self):
         """
@@ -682,7 +717,7 @@ class Homspace(HomsetWithBase):
 # to just a subgroup.
 class EndomorphismSubring(Homspace, Ring):
 
-    def __init__(self, A, gens=None):
+    def __init__(self, A, gens=None, category=None):
         """
         A subring of the endomorphism ring.
 
@@ -704,11 +739,13 @@ class EndomorphismSubring(Homspace, Ring):
             sage: E = J0(11).endomorphism_ring()
             sage: type(E)
             <class 'sage.modular.abvar.homspace.EndomorphismSubring_with_category'>
-            sage: E.category()
-            Join of Category of rings and Category of hom sets in Category of sets
             sage: E.homset_category()
             Category of modular abelian varieties over Rational Field
-            sage: TestSuite(E).run(skip=["_test_elements"])
+            sage: E.category()
+            Category of endsets of modular abelian varieties over Rational Field
+            sage: E in Rings()
+            True
+            sage: TestSuite(E).run(skip=["_test_prod"])
 
         TESTS:
 
@@ -718,19 +755,32 @@ class EndomorphismSubring(Homspace, Ring):
             sage: sage.modular.abvar.homspace.EndomorphismSubring(J1(12345))
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
+        :trac:`16275` removed the custom ``__reduce__`` method, since
+        :meth:`Homset.__reduce__` already implements appropriate
+        unpickling by construction::
+
+            sage: E.__reduce__.__module__
+            'sage.categories.homset'
+            sage: E.__reduce__()
+            (<function Hom at ...>,
+             (Abelian variety J0(11) of dimension 1,
+              Abelian variety J0(11) of dimension 1,
+              Category of modular abelian varieties over Rational Field,
+             False))
         """
         self._J = A.ambient_variety()
         self._A = A
 
         # Initialise self with the correct category.
-        # TODO: a category should be able to specify the appropriate
-        # category for its endomorphism sets
         # We need to initialise it as a ring first
-        homset_cat = A.category()
-        cat = Category.join([homset_cat.hom_category(),Rings()])
-        Ring.__init__(self, A.base_ring())
+        if category is None:
+            homset_cat = A.category()
+        else:
+            homset_cat = category
+        # Remark: Ring.__init__ will automatically form the join
+        # of the category of rings and of homset_cat
+        Ring.__init__(self, A.base_ring(), category=homset_cat.Endsets())
         Homspace.__init__(self, A, A, cat=homset_cat)
-        self._refine_category_(Rings())
         if gens is None:
             self._gens = None
         else:
@@ -793,9 +843,9 @@ class EndomorphismSubring(Homspace, Ring):
         """
         if check:
             if not isinstance(other, EndomorphismSubring):
-                raise ValueError, "other must be a subring of an endomorphism ring of an abelian variety."
+                raise ValueError("other must be a subring of an endomorphism ring of an abelian variety.")
             if not (self.abelian_variety() == other.abelian_variety()):
-                raise ValueError, "self and other must be endomorphisms of the same abelian variety"
+                raise ValueError("self and other must be endomorphisms of the same abelian variety")
 
         M = self.free_module()
         N = other.free_module()
@@ -897,7 +947,7 @@ class EndomorphismSubring(Homspace, Ring):
 
         A = self.abelian_variety()
         if not A.is_hecke_stable():
-            raise ValueError, "ambient variety is not Hecke stable"
+            raise ValueError("ambient variety is not Hecke stable")
 
         M = A.modular_symbols()
 

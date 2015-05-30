@@ -34,7 +34,9 @@ AUTHORS:
 
 
 from sage.all import *
-x=SR.var('x')
+from sagenb.notebook.interact import *
+
+x = SR.var('x')
 
 def library_interact(f):
     """
@@ -372,7 +374,9 @@ def trigonometric_properties_triangle(
     import math
 
     # Returns the distance between points (x1,y1) and (x2,y2)
-    def distance((x1, y1), (x2, y2)):
+    def distance(x1_y1, x2_y2):
+        (x1, y1) = x1_y1
+        (x2, y2) = x2_y2
         return sqrt((x2-x1)**2 + (y2-y1)**2)
 
     # Returns an angle (in radians) when sides a and b
@@ -543,11 +547,15 @@ def special_points(
         return (math.cos(p), math.sin(p))
 
     # Returns the distance between points (x1,y1) and (x2,y2)
-    def distance((x1, y1), (x2, y2)):
+    def distance(x1_y1, x2_y2):
+        (x1, y1) = x1_y1
+        (x2, y2) = x2_y2
         return math.sqrt((x2-x1)**2 + (y2-y1)**2)
 
     # Returns the line (graph) going through points (x1,y1) and (x2,y2)
-    def line_to_points((x1, y1), (x2, y2), **plot_kwargs):
+    def line_to_points(x1_y1, x2_y2, **plot_kwargs):
+        (x1, y1) = x1_y1 
+        (x2, y2) = x2_y2
         return plot((y2-y1) / (x2-x1) * (x-x1) + y1, (x,-3,3), **plot_kwargs)
 
     # Coordinates of the angles
@@ -741,7 +749,7 @@ def bisection_method(
             elif fc*fb < 0:
                 a, b = c, b
             else:
-                raise ValueError, "f must have a sign change in the interval (%s,%s)"%(a,b)
+                raise ValueError("f must have a sign change in the interval (%s,%s)"%(a,b))
             intervals.append((a,b))
             round += 1
         return c, intervals
@@ -1172,8 +1180,7 @@ def riemann_sum(
         b = interval_g[0][1]
     func = symbolic_expression(f).function(x)
     division = [a]+[a+random()*(b-a) for i in range(n-1)]+[b]
-    division = [i for i in division]
-    division.sort()
+    division = sorted([i for i in division])
     xs = [division[i]+random()*(division[i+1]-division[i]) for i in range(n)]
     ys = [func(x_val) for x_val in xs]
     rects = Graphics()
@@ -1238,7 +1245,7 @@ def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),lab
     x = SR.var('x')
     try:
         f = SR(f); g = SR(g); a = SR(a)
-    except TypeError, msg:
+    except TypeError as msg:
         print msg[-200:]
         print "Unable to make sense of f,g, or a as symbolic expressions in single variable x."
         return

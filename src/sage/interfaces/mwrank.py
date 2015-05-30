@@ -65,6 +65,79 @@ def Mwrank(options="", server=None, server_tmpdir=None):
     instances[options] = weakref.ref(X)
     return X
 
+import re
+# regex matching '[a1,a2,a3,a4,a6]', no spaces, each ai a possibly signed integer
+AINVS_LIST_RE = re.compile(r'\[[+-]?(\d+)(,[+-]?\d+){4}]')
+# regex matching ' a1 a2 a3 a4 a6 ', any whitespace, each ai a possibly signed integer
+AINVS_PLAIN_RE = re.compile(r'^(\s*)([+-]?(\d+)(\s+)){4}([+-]?(\d+))(\s*)$')
+
+
+def validate_mwrank_input(s):
+    r"""
+    Returns a string suitable for mwrank input, or raises an error.
+
+    INPUT:
+
+    - `s` -- one of the following:
+
+        - a list or tuple of 5 integers [a1,a2,a3,a4,a6] or (a1,a2,a3,a4,a6)
+        - a string of the form '[a1,a2,a3,a4,a6]' or 'a1 a2 a3 a4 a6' where a1, a2, a3, a4, a6 are integers
+
+    OUTPUT:
+
+    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.  For invalid input a ValueError is raised.
+
+    EXAMPLES:
+
+    A list or tuple of 5 integers::
+
+        sage: from sage.interfaces.mwrank import validate_mwrank_input
+        sage: validate_mwrank_input([1,2,3,4,5])
+        '[1, 2, 3, 4, 5]'
+        sage: validate_mwrank_input((-1,2,-3,4,-55))
+        '[-1, 2, -3, 4, -55]'
+        sage: validate_mwrank_input([1,2,3,4])
+        Traceback (most recent call last):
+        ...
+        ValueError: [1, 2, 3, 4] is not valid input to mwrank (should have 5 entries)
+        sage: validate_mwrank_input([1,2,3,4,i])
+        Traceback (most recent call last):
+        ...
+        ValueError: [1, 2, 3, 4, I] is not valid input to mwrank (entries should be integers)
+
+
+    A string of the form '[a1,a2,a3,a4,a6]' with any whitespace and integers ai::
+
+        sage: validate_mwrank_input('0 -1 1 -7 6')
+        '[0,-1,1,-7,6]'
+        sage: validate_mwrank_input("[0,-1,1,0,0]\n")
+        '[0,-1,1,0,0]'
+        sage: validate_mwrank_input('0\t -1\t 1\t 0\t 0\n')
+        '[0,-1,1,0,0]'
+        sage: validate_mwrank_input('0 -1 1 -7 ')
+        Traceback (most recent call last):
+        ...
+        ValueError: 0 -1 1 -7  is not valid input to mwrank
+
+    """
+    if isinstance(s,(list,tuple)):
+        from sage.rings.all import ZZ
+        if len(s)!=5:
+            raise ValueError("%s is not valid input to mwrank (should have 5 entries)" % s)
+        try:
+            ai = [ZZ(a) for a in s]
+            return str(ai)
+        except (TypeError,ValueError):
+            raise ValueError("%s is not valid input to mwrank (entries should be integers)" % s)
+
+    if isinstance(s,str):
+        if AINVS_PLAIN_RE.match(s):
+            ai = s.split()
+            return "["+",".join(ai)+"]"
+        ss = s.replace(' ','').replace('\n','').replace('\t','')
+        if AINVS_LIST_RE.match(ss):
+            return ss
+    raise ValueError("%s is not valid input to mwrank" % s)
 
 class Mwrank_class(Expect):
     """
@@ -105,7 +178,7 @@ class Mwrank_class(Expect):
             sage: from sage.interfaces.mwrank import Mwrank_class
             sage: M = Mwrank_class('-v 0 -l')
             sage: M('0 -1 1 0 0')
-            'Curve [0,-1,1,0,0] :   Rank = 0\n\n\nRegulator = 1\n'
+            'Curve [0,-1,1,0,0] :...Rank = 0...Regulator = 1...'
 
             sage: from sage.interfaces.mwrank import Mwrank_class
             sage: TestSuite(Mwrank_class).run()
@@ -145,22 +218,77 @@ class Mwrank_class(Expect):
 
     def __call__(self, cmd):
         """
-        Standard call function.
+        Interface to eval method.
 
-        EXAMPLES::
+        INPUT:
 
-            sage: s = mwrank("0 0 0 0 1"); print s
-            Curve [0,0,0,0,1] :
+        - ``cmd`` A string, or Sage object which when converted to a
+          string gives valid input to ``mwrank``.  The conversion is
+          done by :meth:`validate_mwrank_input`.
+
+        EXAMPLES:
+
+        The input can be five integers separated by whitespace::
+
+            sage: mwrank('0 -1 1 0 0')
+            'Curve [0,-1,1,0,0] :...Basic pair: I=16, J=-304...'
+
+        Or a list or tuple of exactly five integers::
+
+            sage: s = mwrank([0,-1,1,0,0])
+            sage: "Rank = 0" in s and "been determined unconditionally" in s
+            True
+
+        TESTS:
+
+        Invalid input raises an ValueError (see #10108); this includes
+        syntactically valid input which defines a singular curve::
+
+            sage: mwrank(10)
+            Traceback (most recent call last):
             ...
-            Rank = 0
-            ...
-        """
-        return self.eval(str(cmd))
+            ValueError: Invalid input: 10 is not valid input to mwrank
 
-    def eval(self, *args, **kwds):
+            sage: mwrank('0 0 0 0 0')
+            Traceback (most recent call last):
+            ...
+            ValueError: Invalid input ([0,0,0,0,0]) to mwrank (singular curve)
+
+            sage: mwrank('0 0 0 -3 2')
+            Traceback (most recent call last):
+            ...
+            ValueError: Invalid input ([0,0,0,-3,2]) to mwrank (singular curve)
+
         """
-        Send a line of input to mwrank, then when it finishes return
-        everything that mwrank output.
+        try:
+            s = validate_mwrank_input(cmd)
+        except ValueError as err:
+            raise ValueError("Invalid input: %s" % err)
+        try:
+            return self.eval(s)
+        except ValueError as err:
+            raise ValueError(err)
+        except RuntimeError:
+            raise ValueError(cmd)
+
+    def eval(self, s, **kwds):
+        """
+        Return mwrank's output for the given input.
+
+        INPUT:
+
+        - ``s`` (str) - a Sage object which when converted to a string
+          gives valid input to ``mwrank``.  The conversion is done by
+          :meth:`validate_mwrank_input`.  Possible formats are:
+
+          - a string representing exactly five integers separated by
+            whitespace, for example '1 2 3 4 5'
+
+          - a string representing exactly five integers separated by
+            commas, preceded by '[' and followed by ']' (with
+            arbitrary whitespace), for example '[1 2 3 4 5]'
+
+          - a list or tuple of exactly 5 integers.
 
         .. note::
 
@@ -171,6 +299,12 @@ class Mwrank_class(Expect):
 
             sage: mwrank.eval('12 3 4 5 6')
             'Curve [12,3,4,5,6] :...'
+            sage: mwrank.eval('[12, 3, 4, 5, 6]')
+            'Curve [12,3,4,5,6] :...'
+            sage: mwrank.eval([12, 3, 4, 5, 6])
+            'Curve [12,3,4,5,6] :...'
+            sage: mwrank.eval((12, 3, 4, 5, 6))
+            'Curve [12,3,4,5,6] :...'
         """
         if self._expect is not None and not self._expect.isalive():
             # if mwrank is interrupted twice in rapid succession,
@@ -178,7 +312,13 @@ class Mwrank_class(Expect):
             #   "RuntimeError: [Errno 9] Bad file descriptor"
             # Doing _start again fixes that always. See trac #5157.
             self._start()
-        return Expect.eval(self, *args, **kwds).replace('\t','   ')
+        try:
+            ss = validate_mwrank_input(s)
+            return Expect.eval(self, ss, **kwds)
+        except ValueError as err:
+            raise ValueError('Invalid input: %s' % err)
+        except RuntimeError:
+            raise ValueError('Invalid input (%s) to mwrank (singular curve)' % s)
 
     def console(self):
         """

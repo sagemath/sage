@@ -3,15 +3,11 @@
 """
 Sage IPython startup script.
 """
-from sage.misc.interpreter import SageTerminalApp
+
+from sage.repl.interpreter import SageTerminalApp
 
 # installs the extra readline commands before the IPython initialization begins.
-from sage.misc.readline_extra_commands import *
-
-# Make sure we're using the Sage profile if one isn't specified.
-import sys
-if '--profile' not in sys.argv:
-    sys.argv.extend(['--profile', 'sage'])
+from sage.repl.readline_extra_commands import *
 
 app = SageTerminalApp.instance()
 app.initialize()

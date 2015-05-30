@@ -1,8 +1,7 @@
-from category import    is_Category, Category, HomCategory
+from category import Category
 
 from category_types import(
                         Elements,
-                        Sequences,
                         SimplicialComplexes,
                         ChainComplexes,
 )
@@ -10,15 +9,14 @@ from category_types import(
 from tensor     import tensor
 from cartesian_product import cartesian_product
 
-from functor  import (is_Functor,
-                      ForgetfulFunctor,
+from functor  import (ForgetfulFunctor,
                       IdentityFunctor)
 
-from homset   import (Hom, hom, is_Homset,
-                      End, end, is_Endset,
+from homset   import (Hom, hom,
+                      End, end,
                       Homset, HomsetWithBase)
 
-from morphism import Morphism, is_Morphism
+from morphism import Morphism
 
 from basic import *
 
@@ -31,8 +29,10 @@ from sets_with_partial_maps import SetsWithPartialMaps
 from sets_with_grading import SetsWithGrading
 
 from groupoid import Groupoid
+from permutation_groups import PermutationGroups
 
 # enumerated sets
+from finite_sets import FiniteSets
 from enumerated_sets import EnumeratedSets
 from finite_enumerated_sets import FiniteEnumeratedSets
 from infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -117,7 +117,7 @@ from graded_bialgebras_with_basis    import GradedBialgebrasWithBasis
 from graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 
 
-# coxeter groups
+# Coxeter groups
 from coxeter_groups import CoxeterGroups
 from finite_coxeter_groups import FiniteCoxeterGroups
 from weyl_groups import WeylGroups

@@ -184,4 +184,16 @@ Mixing SymPy with Sage::
     2
     sage: sympify(-2)
     -2
+
+TESTS:
+
+This was fixed in Sympy, see :trac:`14437`::
+
+    sage: from sympy import Function, Symbol, rsolve
+    sage: u = Function('u')
+    sage: n = Symbol('n', integer=True)
+    sage: f = u(n+2) - u(n+1) + u(n)/4
+    sage: rsolve(f,u(n))
+    2**(-n)*(C0 + C1*n)
+
 """

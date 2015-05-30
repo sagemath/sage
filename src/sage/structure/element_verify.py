@@ -7,7 +7,7 @@ import os
 def element_verify(file, module_element=False, ring_element=False, monoid_element=False):
     try:
         r = open(file).read()
-    except OSError, msg:
+    except OSError as msg:
         print msg
         print "Invalid file!"
         return False

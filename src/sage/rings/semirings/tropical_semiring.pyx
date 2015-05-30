@@ -20,7 +20,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "../../ext/stdsage.pxi"
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -46,7 +45,7 @@ cdef class TropicalSemiringElement(RingElement):
         Return a new tropical semiring element with parent ``self`.
         """
         cdef TropicalSemiringElement x
-        x = PY_NEW(TropicalSemiringElement)
+        x = TropicalSemiringElement.__new__(TropicalSemiringElement)
         x._parent = self._parent
         x._val = self._val
         return x
@@ -174,7 +173,7 @@ cdef class TropicalSemiringElement(RingElement):
         """
         return (<RingElement>left)._richcmp(right, op)
 
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         Return ``-1`` if ``left`` is less than ``right``, ``0`` if
         ``left`` and ``right`` are equal, and ``1`` if ``left`` is
@@ -372,9 +371,25 @@ cdef class TropicalSemiringElement(RingElement):
             -4
             sage: elt**(3/7)
             6/7
+            sage: elt**0
+            0
+
+            sage: elt = T.infinity()
+            sage: elt**0
+            0
+            sage: elt**(1/2)
+            +infinity
+            sage: elt*33
+            +infinity
         """
         cdef TropicalSemiringElement self, x
         self = base
+        if self._val is None:
+            if exp > 0:
+                return self
+            elif exp == 0:
+                return self.parent().multiplicative_identity()
+            raise ZeroDivisionError("Tropical division by infinity")
         x = self._new()
         x._val = exp*self._val
         return x
@@ -386,15 +401,35 @@ cdef class TropicalSemiringElement(RingElement):
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: T.one().multiplicative_order()
+            sage: T.multiplicative_identity().multiplicative_order()
             1
-            sage: T.zero().multiplicative_order()
+            sage: T.additive_identity().multiplicative_order()
             +Infinity
         """
         if self.is_one():
             return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity
+
+    cpdef ModuleElement lift(self):
+        """
+        Return the value of ``self`` lifted to the base.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: elt = T(2)
+            sage: elt.lift()
+            2
+            sage: elt.lift().parent() is QQ
+            True
+            sage: T.additive_identity().lift().parent()
+            The Infinity Ring
+        """
+        if self._val is None:
+            from sage.rings.infinity import infinity
+            return infinity
+        return self._val
 
 class TropicalSemiring(Parent, UniqueRepresentation):
     r"""
@@ -424,12 +459,28 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     .. WARNING::
 
         :meth:`zero` and :meth:`one` refer to the tropical additive
-        and multiplicative identities respectively.
+        and multiplicative identities respectively. These are **not** the
+        same as calling ``T(0)`` and ``T(1)`` respectively as these are **not**
+        the tropical additive and multiplicative identities respectively.
+
+        Specifically do not use ``sum(...)`` as this converts `0` to `0` as
+        a tropical element, which is not the same as :meth:`zero`. Instead
+        use the ``sum`` method of the tropical semiring::
+
+            sage: T = TropicalSemiring(QQ)
+
+            sage: sum([T(1), T(2)]) # This is wrong
+            0
+            sage: T.sum([T(1), T(2)]) # This is correct
+            1
+
+        Be careful about using code that has not been checked for tropical
+        safety.
 
     INPUT:
 
-    - ``base`` -- The base ordered additive semigroup `R`.
-    - ``use_min`` -- (Default: ``True``) If ``True``, then the semiring uses
+    - ``base`` -- the base ordered additive semigroup `R`
+    - ``use_min`` -- (default: ``True``) if ``True``, then the semiring uses
       `a \oplus b = \min(a, b)`; otherwise uses `a \oplus b = \max(a, b)`
 
     EXAMPLES::
@@ -458,15 +509,19 @@ class TropicalSemiring(Parent, UniqueRepresentation):
         -6/7
 
     Note that "zero" and "one" are the additive and multiplicative
-    identities of the tropical semiring. In other words,
-    they are **not** `0 \in R` and `1 \in R` respectively, but instead
-    the (tropical) additive and multiplicative identities `+\infty` and `0`
-    respectively::
+    identities of the tropical semiring. In general, they are **not**
+    the elements `0` and `1` of `R`, respectively, even if such elements
+    exist (e.g., for `R = \ZZ`), but instead the (tropical) additive and
+    multiplicative identities `+\infty` and `0` respectively::
 
         sage: T.zero() + T(3) == T(3)
         True
         sage: T.one() * T(3) == T(3)
         True
+        sage: T.zero() == T(0)
+        False
+        sage: T.one() == T(1)
+        False
     """
     def __init__(self, base, use_min=True):
         r"""
@@ -491,7 +546,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
             sage: TropicalSemiring(QQ)
             Tropical semiring over Rational Field
         """
-        return "Tropical semiring over %s"%self.base()
+        return "Tropical semiring over {}".format(self.base())
 
     def _latex_(self):
         r"""
@@ -506,7 +561,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
     def _coerce_map_from_(self, S):
         """
-        Canonical coercion of into ``self`` from ``S``.
+        Canonical coercion into ``self`` from ``S``.
 
         The only objects that canonically coerce to a tropical semiring are
         tropical semirings whose base rings have a coercion.
@@ -565,37 +620,35 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     Element = TropicalSemiringElement
 
     @cached_method
-    def zero_element(self):
+    def zero(self):
         """
         Return the (tropical) additive identity element `+\infty`.
 
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: T.zero_element()
+            sage: T.zero()
             +infinity
         """
         return self.element_class(self, None)
 
-    zero = zero_element
-    infinity = zero_element
-    additive_identity = zero_element
+    infinity = zero
+    additive_identity = zero
 
     @cached_method
-    def one_element(self):
+    def one(self):
         """
         Return the (tropical) multiplicative identity element `0`.
 
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: T.one_element()
+            sage: T.one()
             0
         """
-        return self.element_class(self, self.base().zero_element())
+        return self.element_class(self, self.base().zero())
 
-    one = one_element
-    multiplicative_identity = one_element
+    multiplicative_identity = one
 
     def gens(self):
         """
@@ -607,7 +660,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
             sage: T.gens()
             (1, +infinity)
         """
-        return (self.element_class(self, self.base().one_element()), self.infinity())
+        return (self.element_class(self, self.base().one()), self.infinity())
 
 cdef class TropicalToTropical(Map):
     """
@@ -628,5 +681,5 @@ cdef class TropicalToTropical(Map):
             sage: f(TZ.infinity())
             +infinity
         """
-        return self._codomain((<TropicalSemiringElement>x)._val)
+        return self.codomain()((<TropicalSemiringElement>x)._val)
 

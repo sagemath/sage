@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo "SAGE_LOCAL undefined - exiting ..."
+    echo "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+cd src
+
+# PATCH
+for patch in ../patches/*.patch; do
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: Patch \"$patch\" failed to apply."
+        exit 1
+    fi
+done
+
+python setup.py install
+
+if [ $? -ne 0 ]; then
+    echo "Error building / installing Pillow"
+    exit 1
+fi

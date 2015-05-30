@@ -10,7 +10,6 @@ Commutative algebra ideals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from category_types import Category_ideal, Category_in_ambient
 from algebra_ideals import AlgebraIdeals
 
@@ -20,7 +19,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
 
     EXAMPLES::
 
-        sage: C = CommutativeAlgebraIdeals(QQ[x])
+        sage: C = CommutativeAlgebraIdeals(QQ['x'])
         sage: C
         Category of commutative algebra ideals in Univariate Polynomial Ring in x over Rational Field
     """
@@ -48,21 +47,21 @@ class CommutativeAlgebraIdeals(Category_ideal):
 
         TESTS::
 
-            sage: TestSuite(CommutativeAlgebraIdeals(QQ[x])).run()
+            sage: TestSuite(CommutativeAlgebraIdeals(QQ['x'])).run()
         """
         # TODO: replace by ``A in CommutativeAlgebras(*)`` once a
         # suitable mantra has been implemented for this.
         from sage.algebras.algebra import is_Algebra
         from sage.rings.commutative_ring import is_CommutativeRing
         if not (is_Algebra(A) and is_CommutativeRing(A)):
-            raise TypeError, "A (=%s) must be a commutative algebra"%A
+            raise TypeError("A (=%s) must be a commutative algebra"%A)
         Category_in_ambient.__init__(self, A)
 
     def algebra(self):
         """
         EXAMPLES::
 
-            sage: CommutativeAlgebraIdeals(QQ[x]).algebra()
+            sage: CommutativeAlgebraIdeals(QQ['x']).algebra()
             Univariate Polynomial Ring in x over Rational Field
         """
         return self.ambient()
@@ -71,7 +70,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
         """
         EXAMPLES::
 
-            sage: CommutativeAlgebraIdeals(QQ[x]).super_categories()
+            sage: CommutativeAlgebraIdeals(QQ['x']).super_categories()
             [Category of algebra ideals in Univariate Polynomial Ring in x over Rational Field]
         """
         R = self.algebra()

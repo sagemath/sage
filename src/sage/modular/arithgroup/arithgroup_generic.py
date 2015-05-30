@@ -108,7 +108,7 @@ class ArithmeticSubgroup(group.Group):
             ...
             NotImplementedError: all subclasses must define a __reduce__ method
         """
-        raise NotImplementedError, "all subclasses must define a __reduce__ method"
+        raise NotImplementedError("all subclasses must define a __reduce__ method")
 
     def _element_constructor_(self, x, check=True):
         r"""
@@ -137,7 +137,7 @@ class ArithmeticSubgroup(group.Group):
         x = SL2Z(x, check)
         if not check or x in self:
             return x
-        raise TypeError, "matrix %s is not an element of %s" % (x, self)
+        raise TypeError("matrix %s is not an element of %s" % (x, self))
 
     def __contains__(self, x):
         r"""
@@ -159,7 +159,7 @@ class ArithmeticSubgroup(group.Group):
         """
         # Do not override this function! Derived classes should override
         # _contains_sl2.
-        if type(x) == type([]) and len(x) == 4:
+        if isinstance(x, type([])) and len(x) == 4:
             if not (x[0] in ZZ and x[1] in ZZ and x[2] in ZZ and x[3] in ZZ):
                 return False
             a,b,c,d = map(ZZ, x)
@@ -188,7 +188,7 @@ class ArithmeticSubgroup(group.Group):
             ...
             NotImplementedError: Please implement _contains_sl2 for <class 'sage.modular.arithgroup.arithgroup_generic.ArithmeticSubgroup_with_category'>
         """
-        raise NotImplementedError, "Please implement _contains_sl2 for %s" % self.__class__
+        raise NotImplementedError("Please implement _contains_sl2 for %s" % self.__class__)
 
     def __hash__(self):
         r"""
@@ -323,7 +323,7 @@ class ArithmeticSubgroup(group.Group):
         if G is None:
             G = SL2Z
         if G != SL2Z:
-            raise NotImplementedError, "Don't know how to compute coset reps for subgroups yet"
+            raise NotImplementedError("Don't know how to compute coset reps for subgroups yet")
 
         id = SL2Z([1,0,0,1])
         l = SL2Z([1,1,0,1])
@@ -485,7 +485,7 @@ class ArithmeticSubgroup(group.Group):
         if self.is_even():
             return count
         else:
-            return count/2
+            return count // 2
 
     def __cmp__(self, other):
         r"""
@@ -712,7 +712,7 @@ class ArithmeticSubgroup(group.Group):
         elif algorithm == 'modsym':
             s = sorted([self.reduce_cusp(c) for c in self.modular_symbols().cusps()])
         else:
-            raise ValueError, "unknown algorithm: %s"%algorithm
+            raise ValueError("unknown algorithm: %s"%algorithm)
 
         self._cusp_list[algorithm] = s
         return copy(s)
@@ -823,7 +823,7 @@ class ArithmeticSubgroup(group.Group):
                 return (g * SL2Z([1,d,0,1]) * (~g), d, 1)
             elif g * SL2Z([-1,-d,0,-1]) * (~g) in self:
                 return (g * SL2Z([-1,-d,0,-1]) * (~g), d, -1)
-        raise ArithmeticError, "Can't get here!"
+        raise ArithmeticError("Can't get here!")
 
     def is_regular_cusp(self, c):
         r"""
@@ -1014,7 +1014,7 @@ class ArithmeticSubgroup(group.Group):
         elif algorithm == "todd-coxeter":
             return self.todd_coxeter()[1]
         else:
-            raise ValueError, "Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm
+            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def gens(self, *args, **kwds):
         r"""
@@ -1162,7 +1162,7 @@ class ArithmeticSubgroup(group.Group):
                     if e_reg > 2*self.genus() - 2:
                         return e_reg / ZZ(2)
                     else:
-                        raise NotImplementedError, "Computation of dimensions of weight 1 modular forms spaces not implemented in general"
+                        raise NotImplementedError("Computation of dimensions of weight 1 modular forms spaces not implemented in general")
 
     def dimension_cusp_forms(self, k=2):
         r"""
@@ -1222,7 +1222,7 @@ class ArithmeticSubgroup(group.Group):
                     if e_reg > 2*self.genus() - 2:
                         return ZZ(0)
                     else:
-                        raise NotImplementedError, "Computation of dimensions of weight 1 cusp forms spaces not implemented in general"
+                        raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
 
     def dimension_eis(self, k=2):
         r"""
@@ -1268,7 +1268,7 @@ class ArithmeticSubgroup(group.Group):
         Return self as an arithmetic subgroup defined in terms of the
         permutation action of `SL(2,\ZZ)` on its right cosets.
 
-        This method uses Todd-coxeter enumeration (via the method
+        This method uses Todd-Coxeter enumeration (via the method
         :meth:`~todd_coxeter`) which can be extremely slow for arithmetic
         subgroups with relatively large index in `SL(2,\ZZ)`.
 

@@ -44,7 +44,7 @@ def local_density(self, p, m):
     """
     n = self.dim()
     if (n == 0):
-        raise TypeError, "Oops!  We currently don't handle 0-dim'l forms. =("
+        raise TypeError("Oops!  We currently don't handle 0-dim'l forms. =(")
 
     ## Find the local normal form and p-scale of Q     --  Note: This uses the valuation ordering of local_normal_form.
     ##                                                     TO DO:  Write a separate p-scale and p-norm routines!
@@ -120,7 +120,7 @@ def local_primitive_density(self, p, m):
     """
     n = self.dim()
     if (n == 0):
-        raise TypeError, "Oops!  We currently don't handle 0-dim'l forms. =("
+        raise TypeError("Oops!  We currently don't handle 0-dim'l forms. =(")
 
     ## Find the local normal form and p-scale of Q     --  Note: This uses the valuation ordering of local_normal_form.
     ##                                                     TO DO:  Write a separate p-scale and p-norm routines!

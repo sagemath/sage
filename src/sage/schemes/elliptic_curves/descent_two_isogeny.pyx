@@ -14,17 +14,16 @@ from sage.rings.polynomial.polynomial_ring import polygen
 cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
 from sage.rings.arith import prime_divisors
-from sage.misc.all import walltime, cputime
 from sage.all import ntl
 
-from sage.rings.integer cimport Integer
-
-include "sage/ext/cdefs.pxi"
+include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
-include "sage/libs/flint/fmpz_poly.pxi"
 
-from sage.libs.flint.nmod_poly cimport *, nmod_poly_t
-from sage.libs.flint.ulong_extras cimport *, n_factor_t
+from sage.rings.integer cimport Integer
+from sage.libs.gmp.mpz cimport *
+from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.nmod_poly cimport *
+from sage.libs.flint.ulong_extras cimport *
 from sage.libs.ratpoints cimport ratpoints_mpz_exists_only
 
 cdef int N_RES_CLASSES_BSD = 10
@@ -1138,17 +1137,14 @@ def two_descent_by_two_isogeny(E,
     to a very high bound, it will still be working when we simulate a ``CTRL-C``::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import two_descent_by_two_isogeny
-        sage: import sage.tests.interrupt
         sage: E = EllipticCurve('960d'); E
         Elliptic Curve defined by y^2 = x^3 - x^2 - 900*x - 10098 over Rational Field
         sage: E.sha().an()
         4
-        sage: try:
-        ...     sage.tests.interrupt.interrupt_after_delay(1000)
-        ...     two_descent_by_two_isogeny(E, global_limit_large=10^8)
-        ... except KeyboardInterrupt:
-        ...     print "Caught!"
-        Caught!
+        sage: alarm(0.5); two_descent_by_two_isogeny(E, global_limit_large=10^8)
+        Traceback (most recent call last):
+        ...
+        AlarmInterrupt
     """
     cdef Integer a1, a2, a3, a4, a6, s2, s4, s6
     cdef Integer c, d, x0

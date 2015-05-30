@@ -12,22 +12,40 @@ AUTHORS:
 
 TESTS:
 
-Check the fix from trac #8323::
+The following test, verifying that :trac:`16181` has been resolved, needs
+to stay at the beginning of this file so that its context is not
+poisoned by other tests::
 
-    sage: globals().has_key('name')
+    sage: sage.misc.misc.inject_variable('a', 0)
+    sage: a
+    0
+
+Check the fix from :trac:`8323`::
+
+    sage: 'name' in globals()
     False
-    sage: globals().has_key('func')
+    sage: 'func' in globals()
     False
 
+Test deprecation::
+
+    sage: sage.misc.misc.mul([3,4])
+    doctest:...: DeprecationWarning: 
+    Importing prod from here is deprecated. If you need to use it, please import it directly from sage.misc.all
+    See http://trac.sagemath.org/17460 for details.
+    12
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-########################################################################
+#*****************************************************************************
+
 
 __doc_exclude=["cached_attribute", "cached_class_attribute", "lazy_prop",
                "generic_cmp", "to_gmp_hex", "todo",
@@ -35,16 +53,20 @@ __doc_exclude=["cached_attribute", "cached_class_attribute", "lazy_prop",
                "assert_attribute", "LOGFILE"]
 
 from warnings import warn
-import operator, os, stat, socket, sys, signal, time, weakref, resource, math
+import os, stat, sys, signal, time, resource, math
 import sage.misc.prandom as random
 from lazy_string import lazy_string
 
-from sage.misc.temporary_file import tmp_dir, tmp_filename, delete_tmpfiles
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.misc.temporary_file', ('tmp_dir', 'tmp_filename', 'delete_tmpfiles'), deprecation=17460)
+lazy_import('sage.misc.banner', ('version', 'banner'), deprecation=17460)
+lazy_import('sage.env', '*', deprecation=17460)
+lazy_import('sage.misc.decorators', ('infix_operator', 'decorator_defaults', 'sage_wraps'), deprecation=17460)
+lazy_import('sage.misc.all', ('prod', 'running_total', 'balanced_sum', 'is_64_bit', 'is_32_bit'), deprecation=17460)
+mul = prod
 
-from banner import version, banner
 
-# for backwards compatiblity
-from sage.env import *
+from sage.env import DOT_SAGE, HOSTNAME
 
 LOCAL_IDENTIFIER = '%s.%s'%(HOSTNAME , os.getpid())
 
@@ -91,9 +113,9 @@ def sage_makedirs(dir):
 sage_makedirs(DOT_SAGE)
 
 _mode = os.stat(DOT_SAGE)[stat.ST_MODE]
-_desired_mode = 040700     # drwx------
+_desired_mode = 0o40700     # drwx------
 if _mode != _desired_mode:
-    print "Setting permissions of DOT_SAGE directory so only you can read and write it."
+    print("Setting permissions of DOT_SAGE directory so only you can read and write it.")
     # Change mode of DOT_SAGE.
     os.chmod(DOT_SAGE, _desired_mode)
 
@@ -443,7 +465,7 @@ def verbose(mesg="", t=0, level=1, caller_name=None):
         mesg = "Finished."
 
     # see recipe 14.7 in Python Cookbook
-    if caller_name == None:
+    if caller_name is None:
         caller_name = frame.co_name
         if caller_name == "?: ":
             caller_name = ""
@@ -454,14 +476,14 @@ def verbose(mesg="", t=0, level=1, caller_name=None):
         s = "verbose %s (%s: %s, %s) %s"%(level, lineno, short_file_name, caller_name, mesg)
     if t!=0:
         s = s + " (time = %s)"%cputime(t)
-    print s
+    print(s)
     sys.stdout.flush()
     #open(LOGFILE,"a").write(s+"\n")
     return cputime()
 
 def todo(mesg=""):
     caller_name = sys._getframe(1).f_code.co_name
-    raise NotImplementedError, "%s: todo -- %s"%(caller_name, mesg)
+    raise NotImplementedError("{}: todo -- {}".format(caller_name, mesg))
 
 def set_verbose(level, files='all'):
     """
@@ -562,53 +584,6 @@ def cmp_props(left, right, props):
         if c: return c
     return 0
 
-from sage.misc.misc_c import prod, running_total, balanced_sum, is_64_bit, is_32_bit
-
-# alternative name for prod
-mul = prod
-
-add = sum
-
-## def add(x, z=0):
-##     """
-##     Return the sum of the elements of x.  If x is empty,
-##     return z.
-
-##     INPUT:
-##         x -- iterable
-##         z -- the "0" that will be returned if x is empty.
-
-##     OUTPUT:
-##         object
-
-##     EXAMPLES:
-
-##     A very straightforward usage:
-##         sage: add([1,2,3])
-##         6
-
-##     In the following example, xrange is an iterator:
-##         sage: add(xrange(101))
-##         5050
-
-##     Append two sequences.
-##         sage: add([[1,1], [-1,0]])
-##         [1, 1, -1, 0]
-
-##     The zero can be anything:
-##         sage: add([], "zero")
-##         'zero'
-##     """
-##     if len(x) == 0:
-##         return z
-##     if not isinstance(x, list):
-##         m = x.__iter__()
-##         y = m.next()
-##         return reduce(operator.add, m, y)
-##     else:
-##         return reduce(operator.add, x[1:], x[0])
-
-
 def union(x, y=None):
     """
     Return the union of x and y, as a list. The resulting list need not
@@ -652,8 +627,7 @@ def uniq(x):
         sage: set(v) == set(['a', 'x', -5, 1, 3, 8])
         True
     """
-    v = list(set(x))
-    v.sort()
+    v = sorted(set(x))
     return v
 
 
@@ -785,12 +759,10 @@ def repr_lincomb(terms, coeffs = None, is_latex=False, scalar_mult="*", strip_on
 
     s = ""
     first = True
-    i = 0
 
     if scalar_mult is None:
         scalar_mult = "" if is_latex else "*"
 
-    all_atomic = True
     for (monomial,c) in terms:
         if c != 0:
             coeff = coeff_repr(c)
@@ -888,7 +860,7 @@ def newton_method_sizes(N):
 
     N = int(N)
     if N < 1:
-        raise ValueError, "N (=%s) must be a positive integer" % N
+        raise ValueError("N (={}) must be a positive integer".format(N))
 
     output = []
     while N > 1:
@@ -910,7 +882,7 @@ def assert_attribute(x, attr, init=None):
     If the object x has the attribute attr, do nothing. If not, set
     x.attr to init.
     """
-    if x.__dict__.has_key(attr): return
+    if attr in x.__dict__: return
     if attr[:2] == "__":
         z = str(x.__class__).split("'")
         if len(z) > 1:
@@ -997,7 +969,7 @@ def self_compose(f, n):
 
     typecheck(n, (int, long, Integer), 'n')
     if n < 0:
-        raise ValueError, "n must be a nonnegative integer, not %s." % n
+        raise ValueError("n must be a nonnegative integer, not {}.".format(n))
 
     return lambda x: nest(f, n, x)
 
@@ -1042,7 +1014,7 @@ def nest(f, n, x):
 
     typecheck(n, (int, long, Integer), 'n')
     if n < 0:
-        raise ValueError, "n must be a nonnegative integer, not %s." % n
+        raise ValueError("n must be a nonnegative integer, not {}.".format(n))
 
     for i in xrange(n):
         x = f(x)
@@ -1152,13 +1124,13 @@ def srange(start, end=None, step=1, universe=None, check=True, include_endpoint=
     Try some inexact rings::
 
         sage: srange(0.5, 1.1, 0.1, universe=RDF, include_endpoint=False)
-        [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        [0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]
         sage: srange(0.5, 1, 0.1, universe=RDF, include_endpoint=False)
-        [0.5, 0.6, 0.7, 0.8, 0.9]
+        [0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999]
         sage: srange(0.5, 0.9, 0.1, universe=RDF, include_endpoint=False)
-        [0.5, 0.6, 0.7, 0.8]
+        [0.5, 0.6, 0.7, 0.7999999999999999]
         sage: srange(0, 1.1, 0.1, universe=RDF, include_endpoint=True)
-        [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1]
+        [0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999, 1.1]
         sage: srange(0, 0.2, 0.1, universe=RDF, include_endpoint=True)
         [0.0, 0.1, 0.2]
         sage: srange(0, 0.3, 0.1, universe=RDF, include_endpoint=True)
@@ -1166,7 +1138,7 @@ def srange(start, end=None, step=1, universe=None, check=True, include_endpoint=
 
     TESTS:
 
-    These are doctests from trac ticket #6409::
+    These are doctests from :trac:`6409`::
 
         sage: srange(1,0,include_endpoint=True)
         []
@@ -1192,7 +1164,7 @@ def srange(start, end=None, step=1, universe=None, check=True, include_endpoint=
         start, end, step = universe(start), universe(end), universe(step)
 
     if step == Sequence([step]).universe()(0):
-        raise ValueError, "srange() step argument must not be zero"
+        raise ValueError("srange() step argument must not be zero")
 
     if universe in [int, long, ZZ]:
         if include_endpoint and (end-start) % step == 0:
@@ -1287,7 +1259,7 @@ def xsrange(start, end=None, step=1, universe=None, check=True, include_endpoint
         start, end, step = universe(start), universe(end), universe(step)
 
     if step == Sequence([step]).universe()(0):
-        raise ValueError, "xsrange() step argument must not be zero"
+        raise ValueError("xsrange() step argument must not be zero")
 
     if universe in [int, long, ZZ]:
         if include_endpoint and (end-start) % step == 0:
@@ -1427,7 +1399,7 @@ def ellipsis_range(*args, **kwds):
             skip = False
         elif args[i] is Ellipsis:
             if len(args) == i+1:
-                raise IndexError, "Ellipsis range must have an endpoint, use (n..) for infinite sequence."
+                raise IndexError("Ellipsis range must have an endpoint, use (n..) for infinite sequence.")
             start, end = args[i-1], args[i+1]
             if i < 2 or args[i-2] is not Ellipsis:
                 L.pop()
@@ -1461,15 +1433,15 @@ def ellipsis_iter(*args, **kwds):
     EXAMPLES::
 
         sage: A = ellipsis_iter(1,2,Ellipsis)
-        sage: [A.next() for _ in range(10)]
+        sage: [next(A) for _ in range(10)]
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        sage: A.next()
+        sage: next(A)
         11
         sage: A = ellipsis_iter(1,3,5,Ellipsis)
-        sage: [A.next() for _ in range(10)]
+        sage: [next(A) for _ in range(10)]
         [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
         sage: A = ellipsis_iter(1,2,Ellipsis,5,10,Ellipsis)
-        sage: [A.next() for _ in range(10)]
+        sage: [next(A) for _ in range(10)]
         [1, 2, 3, 4, 5, 10, 11, 12, 13, 14]
 
     TESTS:
@@ -1550,7 +1522,6 @@ def ellipsis_iter(*args, **kwds):
             yield args[step_magic-2]
 
     # now onto the rest
-    L = []
     for i in range(step_magic, len(args)):
         if skip:
             skip = False
@@ -1583,6 +1554,69 @@ def ellipsis_iter(*args, **kwds):
                 yield next
             next = args[i]
             last_end = None
+
+
+#################################################################
+# The A \ b operator
+#################################################################
+
+class BackslashOperator:
+    """
+    Implements Matlab-style backslash operator for solving systems::
+
+        A \\ b
+
+    The preparser converts this to multiplications using
+    ``BackslashOperator()``.
+
+    EXAMPLES::
+
+        sage: preparse("A \ matrix(QQ,2,1,[1/3,'2/3'])")
+        "A  * BackslashOperator() * matrix(QQ,Integer(2),Integer(1),[Integer(1)/Integer(3),'2/3'])"
+        sage: preparse("A \ matrix(QQ,2,1,[1/3,2*3])")
+        'A  * BackslashOperator() * matrix(QQ,Integer(2),Integer(1),[Integer(1)/Integer(3),Integer(2)*Integer(3)])'
+        sage: preparse("A \ B + C")
+        'A  * BackslashOperator() * B + C'
+        sage: preparse("A \ eval('C+D')")
+        "A  * BackslashOperator() * eval('C+D')"
+        sage: preparse("A \ x / 5")
+        'A  * BackslashOperator() * x / Integer(5)'
+        sage: preparse("A^3 \ b")
+        'A**Integer(3)  * BackslashOperator() * b'
+    """
+    def __rmul__(self, left):
+        """
+        EXAMPLES::
+
+            sage: A = random_matrix(ZZ, 4)
+            sage: B = random_matrix(ZZ, 4)
+            sage: temp = A * BackslashOperator()
+            sage: temp.left is A
+            True
+            sage: X = temp * B
+            sage: A * X == B
+            True
+        """
+        self.left = left
+        return self
+
+    def __mul__(self, right):
+        """
+        EXAMPLES::
+
+            sage: A = matrix(RDF, 5, 5, 2)
+            sage: b = vector(RDF, 5, range(5))
+            sage: v = A \ b
+            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
+            (0.0, 0.5, 1.0, 1.5, 2.0)
+            sage: v = A._backslash_(b)
+            sage: v.zero_at(1e-19)
+            (0.0, 0.5, 1.0, 1.5, 2.0)
+            sage: v = A * BackslashOperator() * b
+            sage: v.zero_at(1e-19)
+            (0.0, 0.5, 1.0, 1.5, 2.0)
+        """
+        return self.left._backslash_(right)
 
 
 #################################################################
@@ -1633,7 +1667,7 @@ def is_iterator(it):
     # see trac #7398 for a discussion
     try:
         return it is iter(it)
-    except StandardError:
+    except Exception:
         return False
 
 
@@ -1721,8 +1755,8 @@ def powerset(X):
 
     You may also use subsets as an alias for powerset::
 
-        sage: subsets([1,2,3])   # random object location in output
-        <generator object at 0xaeae418c>
+        sage: subsets([1,2,3])
+        <generator object powerset at 0x...>
         sage: list(subsets([1,2,3]))
         [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
 
@@ -1756,7 +1790,7 @@ def typecheck(x, C, var="x"):
     error message.
     """
     if not isinstance(x, C):
-        raise TypeError, "%s (=%s) must be of type %s."%(var,x,C)
+        raise TypeError("{} (={}) must be of type {}.".format(var, x, C))
 
 #################################################################
 # This will likely eventually be useful.
@@ -1780,14 +1814,6 @@ class cached_attribute(object):
         setattr(inst, self.name, result)
         return result
 
-class cached_class_attribute(cached_attribute):
-    """
-    Computes attribute value and caches it in the class.
-    """
-    def __get__(self, inst, cls):
-        # just delegate to CachedAttribute, with 'cls' as ``instance''
-        return super(CachedClassAttribute, self).__get__(cls, cls)
-
 class lazy_prop(object):
     def __init__(self, calculate_function):
         self._calculate = calculate_function
@@ -1797,7 +1823,7 @@ class lazy_prop(object):
         if obj is None:
             return self
         value = self._calculate(obj)
-        setattr(obj, self._calculate.func_name, value)
+        setattr(obj, self._calculate.__name__, value)
         return value
 
 def prop(f):
@@ -1935,6 +1961,8 @@ def alarm(seconds):
     seconds. This is useful for automatically interrupting long
     computations and can be trapped using exception handling.
 
+    Use :func:`cancel_alarm` to cancel a previously scheduled alarm.
+
     INPUT:
 
     -  ``seconds`` -- positive number, may be floating point
@@ -1956,7 +1984,7 @@ def alarm(seconds):
 
 def cancel_alarm():
     """
-    Cancel a previously scheduled alarm (if any).
+    Cancel a previously scheduled alarm (if any) set by :func:`alarm`.
 
     EXAMPLES::
 
@@ -2215,6 +2243,21 @@ def attrcall(name, *args, **kwds):
     """
     return AttrCallObject(name, args, kwds)
 
+def call_method(obj, name, *args, **kwds):
+    """
+    Call the method ``name`` on ``obj``.
+
+    This has to exist somewhere in Python!!!
+
+    .. SEEALSO:: :func:`operator.methodcaller` :func:`attrcal`
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import call_method
+        sage: call_method(1, "__add__", 2)
+        3
+    """
+    return getattr(obj, name)(*args, **kwds)
 
 def is_in_string(line, pos):
     r"""
@@ -2266,7 +2309,7 @@ def is_in_string(line, pos):
 
 def get_main_globals():
     """
-    Return the main global namespace
+    Return the main global namespace.
 
     EXAMPLES::
 
@@ -2286,9 +2329,9 @@ def get_main_globals():
     from any function, even if it is in a Python module::
 
         sage: def f():
-        ...       G = get_main_globals()
-        ...       assert G['bli'] == 14
-        ...       G['blo'] = 42
+        ....:     G = get_main_globals()
+        ....:     assert G['bli'] == 14
+        ....:     G['blo'] = 42
         sage: bli = 14
         sage: f()
         sage: blo
@@ -2310,7 +2353,7 @@ def get_main_globals():
     depth = 0
     while True:
         G = sys._getframe(depth).f_globals
-        if G["__name__"] == "__main__" and G["__package__"] is None:
+        if G.get("__name__", None) == "__main__":
             break
         depth += 1
     return G
@@ -2318,11 +2361,12 @@ def get_main_globals():
 
 def inject_variable(name, value):
     """
-    inject a variable into the main global namespace
+    Inject a variable into the main global namespace.
 
     INPUT:
-     - ``name``  - a string
-     - ``value`` - anything
+
+    - ``name``  -- a string
+    - ``value`` -- anything
 
     EXAMPLES::
 
@@ -2345,12 +2389,12 @@ def inject_variable(name, value):
 
         sage: from warnings import warn
         sage: warn("blah")
-        doctest:1: UserWarning: blah
+        doctest:...: UserWarning: blah
         sage: warn("blah")
 
     Use with care!
     """
-    assert type(name) is str
+    assert isinstance(name, str)
     # Using globals() does not work, even in Cython, because
     # inject_variable is called not only from the interpreter, but
     # also from functions in various modules.
@@ -2386,7 +2430,3 @@ def inject_variable_test(name, value, depth):
         inject_variable(name, value)
     else:
         inject_variable_test(name, value, depth - 1)
-
-#For backward compatibility -- see #9907.
-from sage.misc.decorators import infix_operator, decorator_defaults, sage_wraps
-

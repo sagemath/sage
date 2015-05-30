@@ -28,21 +28,21 @@ Simple Workflow
     :align: center
 
 
-1. Alice creates a :ref:`new local branch <section-git-branch>` and
-   :ref:`commits <section-git-commit>` changes to the Sage sources.
+1. Alice creates a :ref:`new local branch <section-walkthrough-branch>` and
+   :ref:`commits <section-walkthrough-commit>` changes to the Sage sources.
 
-2. Alice :ref:`uploads her branch <section-git-push>` to the trac
-   server and fills in the "Branch:" field with her remote branch name
-   ``u/alice/description``.
+2. Alice :ref:`uploads her branch <section-git_trac-push>` to the trac
+   server. This fills in the "Branch:" field with her remote branch
+   name ``u/alice/description``.
 
-3. Bob :ref:`downloads Alice's branch <section-git-checkout>`, looks
+3. Bob :ref:`downloads Alice's branch <section-git_trac-checkout>`, looks
    through the source, and leaves a comment on the ticket about a
    mistake in Alice's code.
 
 4. Alice fixes the bug on top of her current branch, and uploads the
    updated branch.
 
-5. Bob :ref:`retrieves Alice's updates <section-git-pull>` and reviews
+5. Bob :ref:`retrieves Alice's updates <section-git_trac-pull>` and reviews
    the changes.
 
 6. Once Bob is satisfied, he sets the ticket to positive review. The
@@ -52,15 +52,15 @@ Simple Workflow
 Alternatively, Bob might want to make some changes himself. Then,
 instead, we would have
 
-3. Bob :ref:`downloads Alice's branch <section-git-checkout>`, makes
-   changes, and :ref:`commits <section-git-commit>` them to his local
+3. Bob :ref:`downloads Alice's branch <section-git_trac-checkout>`, makes
+   changes, and :ref:`commits <section-walkthrough-commit>` them to his local
    branch.
 
-4. Bob :ref:`uploads his branch <section-git-push>` to the trac server
-   and fills in the "Branch:" field with his remote branch name
+4. Bob :ref:`uploads his branch <section-git_trac-push>` to the trac
+   server. This fills in the "Branch:" field with his remote branch name
    ``u/bob/description``.
 
-5. Alice :ref:`downloads Bob's branch <section-git-checkout>` and
+5. Alice :ref:`downloads Bob's branch <section-git_trac-checkout>` and
    reviews his changes.
 
 6. Once Alice is satisfied, she sets the ticket to positive review. If
@@ -82,24 +82,24 @@ is a good idea to include your trac user name in the branch name, so
 it is recommended that you use ``public/<user>/<description>`` as the
 branch name. Now all ticket authors push to the same remote branch.
 
-1. Alice creates a :ref:`new local branch <section-git-branch>` and
-   :ref:`commits <section-git-commit>` some changes to the Sage library.
+1. Alice creates a :ref:`new local branch <section-walkthrough-branch>` and
+   :ref:`commits <section-walkthrough-commit>` some changes to the Sage library.
 
-2. Alice :ref:`uploads her branch <section-git-push>` as a public
-   branch to the trac server and fills in the "Branch:" field with her
-   remote branch name ``public/alice/description``.
+2. Alice :ref:`uploads her branch <section-git_trac-push>` as a public
+   branch to the trac server. This fills in the "Branch:" field with
+   her remote branch name ``public/alice/description``.
 
-3. Bob :ref:`downloads Alice's branch <section-git-checkout>` and
+3. Bob :ref:`downloads Alice's branch <section-git_trac-checkout>` and
    makes changes to his local copy.
 
-4. Bob :ref:`commits <section-git-commit>` changes to his local branch
+4. Bob :ref:`commits <section-walkthrough-commit>` changes to his local branch
    of the Sage sources.
 
 5. Bob uploads his changes to the joint remote repository::
 
        [bob@localhost sage]$ git push trac local_branch:public/alice/description
 
-6. Alice :ref:`retrieves Bob's updates <section-git-pull>`, makes
+6. Alice :ref:`retrieves Bob's updates <section-git_trac-pull>`, makes
    more changes, commits, and pushes them to trac.
 
 7. Charly reviews the final version, and then sets the ticket to
@@ -182,7 +182,7 @@ Push to Trac
 When you are satisfied with your branch, you push it to the Sage trac
 server::
 
-    $ git push trac u/user/description
+    $ git push trac HEAD:u/user/description
 
 and then fill in the "Branch" field in the trac ticket description as
 explained in :ref:`section-git-push`.

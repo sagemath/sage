@@ -169,7 +169,7 @@ class Superincreasing(SageObject):
             if self.is_superincreasing(seq):
                 self._seq = seq
             else:
-                raise ValueError, "seq must be a super-increasing sequence"
+                raise ValueError("seq must be a super-increasing sequence")
 
     def __cmp__(self, other):
         r"""
@@ -242,7 +242,7 @@ class Superincreasing(SageObject):
         But if no solution exists, return ``None``::
 
             sage: L = [2, 3, 7, 25, 67, 179, 356, 819]
-            sage: Superincreasing(L).largest_less_than(-1) == None
+            sage: Superincreasing(L).largest_less_than(-1) is None
             True
 
         TESTS:
@@ -271,9 +271,9 @@ class Superincreasing(SageObject):
         floor = Function_floor()
         # input error handling
         if len(self._seq) == 0:
-            raise TypeError, "self must be a non-empty list of integers."
+            raise TypeError("self must be a non-empty list of integers.")
         if (not isinstance(N, Integer)) and (not isinstance(N, int)):
-            raise TypeError, "N (= %s) must be an integer." % N
+            raise TypeError("N (= %s) must be an integer." % N)
 
         # halving the list at each iteration, just like binary search
         # TODO: some error handling to ensure that self only contains integers?
@@ -414,15 +414,15 @@ class Superincreasing(SageObject):
                 return False
             # so now self is known to represent a non-empty sequence
             if (not isinstance(self._seq[0], Integer)) and (not isinstance(self._seq[0], int)):
-                raise TypeError, "Element e (= %s) of self must be a non-negative integer." % self._seq[0]
+                raise TypeError("Element e (= %s) of self must be a non-negative integer." % self._seq[0])
             if self._seq[0] < 0:
-                raise TypeError, "Element e (= %s) of self must be a non-negative integer." % self._seq[0]
+                raise TypeError("Element e (= %s) of self must be a non-negative integer." % self._seq[0])
             cumSum = self._seq[0]  # the cumulative sum of the sequence represented by self
             for e in self._seq[1:]:
                 if (not isinstance(e, Integer)) and (not isinstance(e, int)):
-                    raise TypeError, "Element e (= %s) of self must be a non-negative integer." % e
+                    raise TypeError("Element e (= %s) of self must be a non-negative integer." % e)
                 if e < 0:
-                    raise TypeError, "Element e (= %s) of self must be a non-negative integer." % e
+                    raise TypeError("Element e (= %s) of self must be a non-negative integer." % e)
                 if e <= cumSum:
                     return False
                 cumSum += e
@@ -434,15 +434,15 @@ class Superincreasing(SageObject):
                 return False
             # so now seq is known to represent a non-empty sequence
             if (not isinstance(seq[0], Integer)) and (not isinstance(seq[0], int)):
-                raise TypeError, "Element e (= %s) of seq must be a non-negative integer." % seq[0]
+                raise TypeError("Element e (= %s) of seq must be a non-negative integer." % seq[0])
             if seq[0] < 0:
-                raise TypeError, "Element e (= %s) of seq must be a non-negative integer." % seq[0]
+                raise TypeError("Element e (= %s) of seq must be a non-negative integer." % seq[0])
             cumSum = seq[0]  # the cumulative sum of the sequence seq
             for e in seq[1:]:
                 if (not isinstance(e, Integer)) and (not isinstance(e, int)):
-                    raise TypeError, "Element e (= %s) of seq must be a non-negative integer." % e
+                    raise TypeError("Element e (= %s) of seq must be a non-negative integer." % e)
                 if e < 0:
-                    raise TypeError, "Element e (= %s) of seq must be a non-negative integer." % e
+                    raise TypeError("Element e (= %s) of seq must be a non-negative integer." % e)
                 if e <= cumSum:
                     return False
                 cumSum += e
@@ -527,11 +527,11 @@ class Superincreasing(SageObject):
         """
         # input error handling
         if not self.is_superincreasing():
-            raise TypeError, "self is not super-increasing. Only super-increasing sequences are currently supported."
+            raise TypeError("self is not super-increasing. Only super-increasing sequences are currently supported.")
         if (not isinstance(N, Integer)) and (not isinstance(N, int)):
-            raise TypeError, "N (= %s) must be a non-negative integer." % N
+            raise TypeError("N (= %s) must be a non-negative integer." % N)
         if N < 0:
-            raise TypeError, "N (= %s) must be a non-negative integer." % N
+            raise TypeError("N (= %s) must be a non-negative integer." % N)
 
         # solve subset sum problem for super-increasing sequence
         candidates = []
@@ -630,15 +630,15 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0):
         seq = [(x,1) for x in seq]
 
     from sage.numerical.mip import MixedIntegerLinearProgram
-    p = MixedIntegerLinearProgram(maximization=True, solver=solver)
-    present = p.new_variable()
-    p.set_objective(p.sum([present[i] * seq[i][1] for i in range(len(seq))]))
-    p.add_constraint(p.sum([present[i] * seq[i][0] for i in range(len(seq))]), max=max)
+    p = MixedIntegerLinearProgram(solver=solver, maximization=True)
 
     if binary:
-        p.set_binary(present)
+        present = p.new_variable(binary = True)
     else:
-        p.set_integer(present)
+        present = p.new_variable(integer = True)
+
+    p.set_objective(p.sum([present[i] * seq[i][1] for i in range(len(seq))]))
+    p.add_constraint(p.sum([present[i] * seq[i][0] for i in range(len(seq))]), max=max)
 
     if value_only:
         return p.solve(objective_only=True, log=verbose)

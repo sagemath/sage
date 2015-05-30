@@ -1,10 +1,12 @@
+.. _section-rings:
+
 ***************
 Anneaux de base
 ***************
 
 Nous illustrons la prise en main de quelques anneaux de base avec Sage.
 Par exemple, ``RationalField()`` ou ``QQ`` désigneront dans ce qui
-suit au corps des nombres rationnels :
+suit au corps des nombres rationnels :
 
 ::
 
@@ -17,7 +19,7 @@ suit au corps des nombres rationnels :
 
 Le nombre décimal ``1.2`` est considéré comme un élément de ``QQ``,
 puisqu'il existe une application de coercition entre les réels et les
-rationnels :
+rationnels :
 
 ::
 
@@ -25,7 +27,7 @@ rationnels :
     True
 
 Néanmoins, il n'y a pas d'application de coercition entre le corps fini
-à 3 éléments et les rationnels :
+à 3 éléments et les rationnels :
 
 ::
 
@@ -33,8 +35,8 @@ Néanmoins, il n'y a pas d'application de coercition entre le corps fini
     sage: c in QQ
     False
 
-De même, bien entendu, la constante symbolique :math:`\pi` n'appartient
-pas aux rationnels :
+De même, bien entendu, la constante symbolique :math:`\pi` n'appartient
+pas aux rationnels :
 
 ::
 
@@ -42,7 +44,7 @@ pas aux rationnels :
     False
 
 Le symbole ``I`` représente la racine carrée de :math:`-1`; ``i`` est
-synonyme de ``I``. Bien entendu, ``I`` n'appartient pas aux rationnels :
+synonyme de ``I``. Bien entendu, ``I`` n'appartient pas aux rationnels :
 
 ::
 
@@ -51,7 +53,7 @@ synonyme de ``I``. Bien entendu, ``I`` n'appartient pas aux rationnels :
     sage: i in QQ
     False
 
-À ce propos, d'autres anneaux sont prédéfinis en Sage : l'anneau des
+À ce propos, d'autres anneaux sont prédéfinis en Sage : l'anneau des
 entiers relatifs ``ZZ``, celui des nombres réels ``RR`` et celui des
 nombres complexes ``CC``. Les anneaux de polynômes sont décrits dans
 :ref:`section-poly`.

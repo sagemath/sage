@@ -14,7 +14,6 @@
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -51,6 +50,8 @@ cdef class ntl_ZZ_pEContext_class:
         ZZ_pEContext_construct_ZZ_pX(&self.x, &f.x)
         ZZ_pEContextDict[(repr(f),repr(f.c.p))] = self
         self.f = f
+        self.ptrs.zzpc = &(self.pc.x)
+        self.ptrs.zzpec = &(self.x)
 
     def __dealloc__(self):
         ZZ_pEContext_destruct(&self.x)

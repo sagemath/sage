@@ -6,7 +6,6 @@
 ##############################################################################
 
 from generic_backend cimport GenericBackend
-include 'sage/ext/stdsage.pxi'
 
 
 cdef extern from *:

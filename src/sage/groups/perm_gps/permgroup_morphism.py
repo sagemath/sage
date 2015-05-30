@@ -37,7 +37,6 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.superseded import deprecation
 from sage.categories.morphism import Morphism
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 
@@ -58,23 +57,6 @@ class PermutationGroupMorphism(Morphism):
             'Permutation group'
         """
         return "Permutation group"
-
-    def range(self):
-        """
-        Returns the codomain of this morphism.  This method is
-        deprecated.  Please use :meth:`codomain` instead.
-
-        EXAMPLES::
-
-            sage: G = PSL(2,7)
-            sage: D, iota1, iota2, pr1, pr2 = G.direct_product(G)
-            sage: pr1.range()
-            doctest:...: DeprecationWarning: range is deprecated. Please use codomain instead.
-            See http://trac.sagemath.org/10334 for details.
-            Permutation Group with generators [(3,7,5)(4,8,6), (1,2,6)(3,4,8)]
-        """
-        deprecation(10334, 'range is deprecated. Please use codomain instead.')
-        return self.codomain()
 
     def kernel(self):
         """
@@ -183,7 +165,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
               Defn: Identity
         """
         if not all(isinstance(X, PermutationGroup_generic) for X in [G, H]):
-            raise TypeError, "Sorry, the groups must be permutation groups."
+            raise TypeError("Sorry, the groups must be permutation groups.")
         PermutationGroupMorphism.__init__(self, G, H)
         self._gap_hom = gap_hom
 
@@ -236,7 +218,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
 
 
 class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
-    def __init__(self, G, H, gens=None, images=None):
+    def __init__(self, G, H, gens=None):
         """
         Some python code for wrapping GAP's GroupHomomorphismByImages
         function but only for permutation groups. Can be expensive if G is
@@ -268,13 +250,9 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         - David Joyner (2006-02)
         """
         if not all([isinstance(X, PermutationGroup_generic) for X in [G, H]]):
-            raise TypeError, "Sorry, the groups must be permutation groups."
-        if images is not None:
-            deprecation(10334, 'only the images need to be specified')
-        else:
-            images = gens
+            raise TypeError("Sorry, the groups must be permutation groups.")
         PermutationGroupMorphism.__init__(self, G, H)
-        self._images = [H(img) for img in images]
+        self._images = [H(img) for img in gens]
 
     def _repr_defn(self):
         """

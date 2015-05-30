@@ -1,6 +1,6 @@
---- src/src/mfile	2009-08-14 14:53:11.000000000 +0200
-+++ src/src/mfile	2013-06-05 20:43:25.845240069 +0200
-@@ -331,11 +334,11 @@
+--- ntl.orig/src/mfile	2014-10-11 07:33:02.904149666 +1300
++++ ntl/src/mfile	2014-10-09 22:14:46.730922903 +1300
+@@ -325,11 +325,11 @@
  # again.
  
  all:
@@ -17,7 +17,7 @@
  	touch all
  
  
-@@ -344,7 +348,7 @@
+@@ -338,7 +338,7 @@
  setup1:
  	$(COMPILE) MakeDescAux.c
  	$(LINK) -o MakeDesc MakeDesc.c MakeDescAux.o $(LDLIBS)
@@ -26,7 +26,7 @@
  	mv mach_desc.h ../include/NTL/mach_desc.h
  
  # setup2 generates the file GetTime.c
-@@ -367,7 +370,7 @@
+@@ -358,7 +358,7 @@
  # setup4 runs the wizard
  
  setup4:
@@ -35,7 +35,7 @@
  
  
  ntl.a:	$(OBJ) 
-@@ -406,10 +409,10 @@
+@@ -397,10 +397,10 @@
  
  check:
  	sh RemoveProg $(PROGS)
@@ -48,8 +48,8 @@
  
  #################################################################
  #
---- src/src/WizardAux	2009-08-14 14:53:12.000000000 +0200
-+++ src/src/WizardAux	2013-06-05 20:24:41.035239851 +0200
+--- ntl.orig/src/WizardAux	2014-08-27 05:51:43.000000000 +1200
++++ ntl/src/WizardAux	2014-10-09 22:14:46.730922903 +1300
 @@ -47,9 +47,9 @@
     my $val;
     my $res;
@@ -71,7 +71,7 @@
  
  @lines = `./InitSettings`;
  
-@@ -214,7 +214,7 @@
+@@ -254,7 +254,7 @@
  
  print "\n\n*** the wizard is done!!\n\n"; 
  

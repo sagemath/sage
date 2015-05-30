@@ -27,7 +27,7 @@ Methods
 #*****************************************************************************
 
 include 'sage/ext/stdsage.pxi'
-include 'sage/misc/bitset.pxi'
+include 'sage/data_structures/bitset.pxi'
 
 # SetSystem
 
@@ -78,7 +78,10 @@ cdef class SetSystem:
             Iterator over a system of subsets
         """
         cdef long i
-        self._groundset = groundset
+        if not isinstance(groundset, tuple):
+            self._groundset = tuple(groundset)
+        else:
+            self._groundset = groundset
         self._idx = {}
         for i in xrange(len(groundset)):
             self._idx[groundset[i]] = i
@@ -96,7 +99,7 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``groundset`` -- a list of finitely many elements.
+        - ``groundset`` -- a list or tuple of finitely many elements.
         - ``subsets`` -- (default: ``None``) an enumerator for a set of
           subsets of ``groundset``.
         - ``capacity`` -- (default: ``1``) Initial maximal capacity of the set
@@ -445,7 +448,10 @@ cdef class SetSystem:
         if E is None:
             E = xrange(self._len)
         if P is None:
-            P = SetSystem(self._groundset, [self._groundset], capacity=self._groundset_size)
+            if self._groundset:
+                P = SetSystem(self._groundset, [self._groundset], capacity=self._groundset_size)
+            else:
+                P = SetSystem([], [])
         cnt = self._incidence_count(E)
         self._groundset_partition(P, cnt)
         return P
@@ -604,6 +610,9 @@ cdef class SetSystem:
             ....:                                      ['a', 'c', 'd']])
             sage: S._isomorphism(T)
             {1: 'c', 2: 'd', 3: 'b', 4: 'a'}
+            sage: S = SetSystem([], [])
+            sage: S._isomorphism(S)
+            {}
         """
         cdef long l, p
         if SP is None or OP is None:

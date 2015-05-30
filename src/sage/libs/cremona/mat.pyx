@@ -1,3 +1,5 @@
+"Cremona matrices"
+
 from sage.matrix.all import MatrixSpace
 from sage.rings.all import ZZ
 
@@ -52,7 +54,7 @@ cdef class Matrix:
         return "%s x %s Cremona matrix over Rational Field"%(self.nrows(), self.ncols())
 
     def str(self):
-        """
+        r"""
         Return full string representation of this matrix, never in compact form.
 
         EXAMPLES::
@@ -98,7 +100,7 @@ cdef class Matrix:
         cdef long i, j
         if self.M:
             i, j = ij
-            if 0<i and i<=nrows(self.M[0]) and 0<j and j<=ncols(self.M[0]):
+            if 0<i and i<=self.M[0].nrows() and 0<j and j<=self.M[0].ncols():
                 return self.M.sub(i,j)
             raise IndexError, "matrix indices out of range"
         raise IndexError, "cannot index into an undefined matrix"
@@ -115,7 +117,7 @@ cdef class Matrix:
             sage: t.nrows()
             2
         """
-        return nrows(self.M[0])
+        return self.M[0].nrows()
 
     def ncols(self):
         """
@@ -129,7 +131,7 @@ cdef class Matrix:
             sage: M.dimension()
             156
         """
-        return ncols(self.M[0])
+        return self.M[0].ncols()
 
     # Commented out since it gives very weird
     # results when sign != 0.

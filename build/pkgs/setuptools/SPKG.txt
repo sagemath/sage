@@ -2,12 +2,11 @@
 
 == Description ==
 
-setuptools is a collection of enhancements to the Python distutils (for Python 2.3.5 and up on most platforms; 64-bit platforms require a minimum of Python 2.4) that allow you to more easily build and distribute Python packages, especially ones that have dependencies on other packages.
+setuptools is a collection of enhancements to the Python distutils (for
+Python 2.6 and up) that allow you to more easily build and distribute
+Python packages, especially ones that have dependencies on other packages.
 
 Website: http://pypi.python.org/pypi/setuptools/
-
-The present spkg is based on the fork of setuptools known as distribute.
-Website: http://pypi.python.org/pypi/distribute
 
 == License ==
 
@@ -16,7 +15,6 @@ PSF or ZPL. i.e Python Software Foundation License or Zope Public License
 == SPKG Maintainers ==
 
  * Jaap Spies, (j.spies@hccnet.nl)
- * Michael Abshoff
 
 == Upstream Contact ==
  * Phillip J. Eby (distutils-sig@python org)
@@ -24,7 +22,17 @@ PSF or ZPL. i.e Python Software Foundation License or Zope Public License
 == Dependencies ==
  * python
 
-== Changelog ==
+== Build Instructions/Changes ==
+
+The following patches are in the patches subdirectory.
+The patches are applied during the build process.
+
+ * pkg_resources.py.patch: silence warning about permissions.
+
+ * easy_install_lock.patch: lock the easy_install.pth file to allow
+   simultaneous installation
+
+= Changelog ==
 
 === setuptools-0.6.16.p0 (Jeroen Demeyer, 27 February 2012) ===
  * Trac #12599: make spkg-install executable.

@@ -45,9 +45,17 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-
+# We don't want to think about Fink or Macports
 export NO_FINK=1
 export NO_DARWIN_PORTS=1
+
+# Darwin 8 (Tiger) does not support common crypto
+if { uname -sr | grep 'Darwin 8' ;} &>/dev/null; then
+    export NO_APPLE_COMMON_CRYPTO=1
+fi
+
+# OSX Git with FSF GCC is broken, disable completely for now. See #17091
+export NO_APPLE_COMMON_CRYPTO=1
 
 # First make GIT-VERSION-FILE (we patched Makefile such that configure
 # no longer depends on this, so it's safer to explicitly build this).
@@ -58,6 +66,7 @@ $MAKE GIT-VERSION-FILE
 # some systems, leading for example to a different "make" being used.
 echo "Configuring git..."
 ./configure --prefix="$SAGE_LOCAL" \
+            --libexecdir="$SAGE_LOCAL"/libexec \
             --with-python="$SAGE_LOCAL"/bin/python \
             --without-tcltk \
             --with-sane-tool-path=

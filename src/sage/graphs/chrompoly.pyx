@@ -1,5 +1,5 @@
 """
-Chromatic Polynomial Routine
+Chromatic Polynomial
 
 AUTHORS:
     -- Gordon Royle - original C implementation
@@ -19,7 +19,7 @@ REFERENCE:
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.misc.misc import prod
+from sage.misc.all import prod
 include 'sage/ext/interrupt.pxi'
 include 'sage/ext/cdefs.pxi'
 include 'sage/ext/stdsage.pxi'
@@ -81,7 +81,6 @@ def chromatic_polynomial(G, return_tree_basis = False):
         sage: min((i for i in xrange(11) if P(i) > 0)) == G.chromatic_number()
         True
     """
-
     if not G.is_connected():
         return prod([chromatic_polynomial(g) for g in G.connected_components_subgraphs()])
     R = ZZ['x']
@@ -90,8 +89,14 @@ def chromatic_polynomial(G, return_tree_basis = False):
         return x*(x-1)**(G.num_verts()-1)
 
     cdef int nverts, nedges, i, j, u, v, top, bot, num_chords, next_v
-    cdef int *queue, *chords1, *chords2, *bfs_reorder, *parent
-    cdef mpz_t m, coeff, *tot, *coeffs
+    cdef int *queue
+    cdef int *chords1
+    cdef int *chords2
+    cdef int *bfs_reorder
+    cdef int *parent
+    cdef mpz_t m, coeff
+    cdef mpz_t *tot
+    cdef mpz_t *coeffs
     G = G.relabel(inplace=False)
     G.remove_multiple_edges()
     G.remove_loops()

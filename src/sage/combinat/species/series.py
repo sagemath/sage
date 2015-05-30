@@ -30,14 +30,17 @@ http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatse9.html.
 #*****************************************************************************
 from stream import Stream, Stream_class
 from series_order import  bounded_decrement, increment, inf, unk
-from sage.rings.all import Integer, prod
+from sage.rings.all import Integer
+from sage.misc.all import prod
 from functools import partial
 from sage.misc.misc import repr_lincomb, is_iterator
+from sage.misc.superseded import deprecated_function_alias
 
 from sage.algebras.algebra import Algebra
 from sage.algebras.algebra_element import AlgebraElement
 import sage.structure.parent_base
 from sage.categories.all import Rings
+from sage.structure.element import Element, parent
 
 class LazyPowerSeriesRing(Algebra):
     def __init__(self, R, element_class = None, names=None):
@@ -51,11 +54,11 @@ class LazyPowerSeriesRing(Algebra):
         """
         #Make sure R is a ring with unit element
         if not R in Rings():
-            raise TypeError, "Argument R must be a ring."
+            raise TypeError("Argument R must be a ring.")
         try:
             z = R(Integer(1))
-        except StandardError:
-            raise ValueError, "R must have a unit element"
+        except Exception:
+            raise ValueError("R must have a unit element")
 
         #Take care of the names
         if names is None:
@@ -120,7 +123,6 @@ class LazyPowerSeriesRing(Algebra):
         """
         return self(x)
 
-
     def __call__(self, x=None, order=unk):
         """
         EXAMPLES::
@@ -182,7 +184,7 @@ class LazyPowerSeriesRing(Algebra):
                     return x._new(partial(x._change_ring_gen, self.base_ring()), lambda ao: ao, x, parent=self)
 
 
-        if hasattr(x, "parent") and BR.has_coerce_map_from(x.parent()):
+        if BR.has_coerce_map_from(parent(x)):
             x = BR(x)
             return self.term(x, 0)
 
@@ -196,23 +198,34 @@ class LazyPowerSeriesRing(Algebra):
             aorder = order if order != unk else 0
             return cls(self, stream=x, order=order, aorder=aorder,
                        aorder_changed=False, is_initialized=True)
-        elif not hasattr(x, "parent"):
+        elif not isinstance(x, Element):
             x = BR(x)
             return self.term(x, 0)
 
-        raise TypeError, "do not know how to coerce %s into self"%x
+        raise TypeError("do not know how to coerce %s into self"%x)
 
-    def zero_element(self):
+    def zero(self):
         """
         Returns the zero power series.
 
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ)
+            sage: L.zero()
+            0
+
+        TESTS:
+
+        Check that the method `zero_element` raises a warning (:trac:`17694`)::
+
             sage: L.zero_element()
+            doctest:...: DeprecationWarning: zero_element is deprecated. Please use zero instead.
+            See http://trac.sagemath.org/17694 for details.
             0
         """
-        return self(self.base_ring()(0))
+        return self(self.base_ring().zero())
+
+    zero_element = deprecated_function_alias(17694, zero)
 
     def identity_element(self):
         """
@@ -249,7 +262,7 @@ class LazyPowerSeriesRing(Algebra):
             [0, 0, 3, 0, 0]
         """
         if n < 0:
-            raise ValueError, "n must be non-negative"
+            raise ValueError("n must be non-negative")
         BR = self.base_ring()
         if r == 0:
             res = self._new_initial(inf, Stream([0]))
@@ -307,7 +320,7 @@ class LazyPowerSeriesRing(Algebra):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: series_list = [ L([1]), L([0,1]), L([0,0,1]) ]
             sage: g = L._sum_gen(series_list)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [1, 2, 3, 3, 3]
         """
         last_index = len(series_list) - 1
@@ -340,7 +353,7 @@ class LazyPowerSeriesRing(Algebra):
             ...       while True:
             ...           yield s
             sage: g = L._sum_generator_gen(f())
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         """
         s = Stream(g)
@@ -384,10 +397,10 @@ class LazyPowerSeriesRing(Algebra):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: g = imap(lambda i: L([1]+[0]*i+[1]), _integers_from(0))
             sage: g2 = L._product_generator_gen(g)
-            sage: [g2.next() for i in range(10)]
+            sage: [next(g2) for i in range(10)]
             [1, 1, 2, 4, 7, 12, 20, 33, 53, 84]
         """
-        z = g.next()
+        z = next(g)
         yield z.coefficient(0)
         yield z.coefficient(1)
 
@@ -485,7 +498,7 @@ class LazyPowerSeries(AlgebraElement):
             self.order = inf
         self.aorder_changed = aorder_changed
         self.is_initialized = is_initialized
-        self._zero = A.base_ring().zero_element()
+        self._zero = A.base_ring().zero()
         self._name = name
 
     def compute_aorder(*args, **kwargs):
@@ -1039,13 +1052,13 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: gs1 = L([1])
             sage: g = gs1._plus_gen(gs1, 0)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [2, 2, 2, 2, 2]
 
         ::
 
             sage: g = gs1._plus_gen(gs1, 2)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [0, 0, 2, 2, 2]
         """
         base_ring = self.parent().base_ring()
@@ -1114,7 +1127,7 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: f = L([1,1,0])
             sage: g = f._times_gen(f,0)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [1, 2, 1, 0, 0]
         """
         base_ring = self.parent().base_ring()
@@ -1159,7 +1172,7 @@ class LazyPowerSeries(AlgebraElement):
             1
         """
         if not isinstance(n, (int, Integer)) or n < 0:
-            raise ValueError, "n must be a nonnegative integer"
+            raise ValueError("n must be a nonnegative integer")
         return prod([self]*n, self.parent().identity_element())
 
     def __call__(self, y):
@@ -1219,7 +1232,7 @@ class LazyPowerSeries(AlgebraElement):
             sage: s = L([1])
             sage: t = L([0,1])
             sage: g = s._compose_gen(t, 0)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [1, 1, 2, 4, 8, 16, 32, 64, 128, 256]
         """
         assert y.coefficient(0) == 0
@@ -1259,10 +1272,10 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: f = L(range(10))
             sage: g = f.iterator(2)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [2, 3, 4, 5, 6]
             sage: g = f.iterator(2, initial=[0,0])
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [0, 0, 2, 3, 4]
         """
         if initial is not None:
@@ -1283,11 +1296,11 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: f = L([1,1,0])
             sage: g = f._power_gen()
-            sage: g.next().coefficients(5)
+            sage: next(g).coefficients(5)
             [1, 1, 0, 0, 0]
-            sage: g.next().coefficients(5)
+            sage: next(g).coefficients(5)
             [1, 2, 1, 0, 0]
-            sage: g.next().coefficients(5)
+            sage: next(g).coefficients(5)
             [1, 3, 3, 1, 0]
         """
         z = self
@@ -1364,7 +1377,7 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: f = L([1])
             sage: g = f._diff_gen(0)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         """
         n = 1
@@ -1455,7 +1468,7 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: s = L.gen()
             sage: g = s._integral_zero_gen(1)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [0, 0, 1/2, 0, 0]
         """
         for n in range(ao):
@@ -1479,7 +1492,7 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: f = L._new_initial(2, Stream([0,0,4,5,6,0])).derivative()
             sage: g = f._integral_nonzero_gen(1)
-            sage: [g.next() for i in range(5)]
+            sage: [next(g) for i in range(5)]
             [1, 0, 4, 5, 6]
         """
         yield integration_constant
@@ -1556,7 +1569,7 @@ class LazyPowerSeries(AlgebraElement):
             sage: u = f.exponential()
             sage: g = inv_factorial()
             sage: z1 = [1,1,2,5,15,52,203,877,4140,21147,115975]
-            sage: l1 = [z*g.next() for z in z1]
+            sage: l1 = [z*next(g) for z in z1]
             sage: l1 = [1] + l1[1:]
             sage: u.coefficients(11)
             [1, 1, 1, 5/6, 5/8, 13/30, 203/720, 877/5040, 23/224, 1007/17280, 4639/145152]
@@ -1620,19 +1633,19 @@ class LazyPowerSeries(AlgebraElement):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: a = L([1])
             sage: g = a._restricted_gen(None, None, 2)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
             sage: g = a._restricted_gen(1, None, 2)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
             sage: g = a._restricted_gen(3, None, 2)
-            sage: [g.next() for i in range(10)]
+            sage: [next(g) for i in range(10)]
             [0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
 
         ::
 
             sage: g = a._restricted_gen(1, 5, 2)
-            sage: [g.next() for i in range(6)]
+            sage: [next(g) for i in range(6)]
             [0, 0, 1, 1, 1, 0]
         """
         BR = self.parent().base_ring()
@@ -1687,4 +1700,4 @@ def uninitialized():
         ...
         RuntimeError: we should never be here
     """
-    raise RuntimeError, "we should never be here"
+    raise RuntimeError("we should never be here")

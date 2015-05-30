@@ -12,7 +12,7 @@ IPython is a multiplatform, Free Software project (BSD licensed) that offers:
  * A library to build customized interactive environments using Python
    as the basic language (but with the possibility of having extended
    or alternate syntaxes).
-* A system for interactive distributed and parallel computing (this is
+ * A system for interactive distributed and parallel computing (this is
    part of IPython's new development).
 
 == License ==
@@ -21,8 +21,8 @@ BSD
 
 == SPKG Maintainers ==
 
+ * Jason Grout
  * William Stein
- * Mike Hansen
 
 == Upstream Contact ==
 
@@ -36,68 +36,7 @@ ipython-user@scipy.org
 
  * Python
 
-== Special Update/Build Instructions ==
-
 == Patches ==
 
- * prun_timeit_magics.patch: See https://github.com/ipython/ipython/pull/2403.
-   This patch allows Sage to preparse %prun and %timeit commands.  It will
-   probably not be needed with IPython 0.14, since the input splitter will need
-   to be rewritten.
+* github_pr_5874.patch: https://github.com/ipython/ipython/pull/5874
 
- * ipython-history-backport.patch: Backport of improvements to
-   IPython/core/history.py
-
-== Changelog ==
-
-=== ipython-0.13.2 (Volker Braun, June 24, 2013) ===
- * Upgrade to 0.13.2 (trac #14810)
-
-=== ipython-0.13.1 (Jason Grout, Volker Braun, Jan 22, 2013) ===
- * Upgrade to 0.13.1
- * Add backport of history fixes (to catch invalid databases)
-
-=== ipython-0.13 (Jason Grout, June 30, 2012) ===
- * Upgrade to 0.13
-
-=== ipython-0.12.1 (Jason Grout, May 08, 2012) ===
- * Upgrade to 0.12.1, see trac #12719
- * deleted rlineimpl.py patch (see
-   https://github.com/ipython/ipython/issues/473)
- * deleted oinspect.py patch -- this is a lot more difficult now that
-   the information fields are part of the official IPython messaging spec
-
-=== ipython-0.10.2.p1 (Maarten Derickx. March, 2011 [1]) ===
- * Add the OInspect.py patch.
- [1] Yes this patch is older then p0.
-
-=== ipython-0.10.2.p0 (John H. Palmieri, August 16th, 2011) ===
- * reinstated patch for src/IPython/rlineimpl.py.
- * use 'patch' to install patches.
-
-=== ipython-0.10.2 (François Bissey, August 1st, 2011) ===
- * trac #11460 update to IPython 0.10.2
- * remove all the patches as they don't seem to be necessary anymore,
-   IPython/Magic.py has been fixed upstream. sage -gdb seem to work
-   properly here.
-
-=== ipython-0.9.1.p0 (Mike Hansen, June 17th, 2009) ===
- * Remove usage of Set.
-
-=== ipython-0.9.1 (Mike Hansen, January 24th, 2009) ===
- * Update to IPython 0.9.1
-
-=== ipython-0.8.4.p1 (Michael Abshoff, January 19th, 2009) ===
- * Do not check for libedit on Darwin since that breaks 'sage -gdb' (#4991)
-
-=== ipython-0.8.4.p0 (Mike Hansen July 15th, 2008) ===
- * update to the official 0.8.4 release
-
-=== ipython-0.8.2.p0 (Michael Abshoff, May 11th, 2008) ===
- * add hg repo & .hgignore
- * clean up spkg-install
- * make sure SAGE_LOCAL is defined (#633)
-
-=== ipython-0.8.2 (Burcin Erocal, May 11, 2008) ===
- * update to the official IPython 0.8.2 release
- * remove workaround patches

@@ -37,7 +37,7 @@ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
 
 cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_pX y
-    y = <ntl_ZZ_pX>PY_NEW(ntl_ZZ_pX)
+    y = <ntl_ZZ_pX>ntl_ZZ_pX.__new__(ntl_ZZ_pX)
     y.c = ctx
     y.x = x[0]
     ZZ_pX_delete(x)
@@ -87,12 +87,12 @@ cdef class ntl_ZZ_pX:
         cdef ntl_ZZ_p cc
         cdef Py_ssize_t i
 
-        if PY_TYPE_CHECK(v, ntl_ZZ_pX) and (<ntl_ZZ_pX>v).c is self.c:
+        if isinstance(v, ntl_ZZ_pX) and (<ntl_ZZ_pX>v).c is self.c:
             self.x = (<ntl_ZZ_pX>v).x
-        elif PY_TYPE_CHECK(v, list) or PY_TYPE_CHECK(v, tuple):
+        elif isinstance(v, list) or isinstance(v, tuple):
             for i from 0 <= i < len(v):
                 x = v[i]
-                if not PY_TYPE_CHECK(x, ntl_ZZ_p):
+                if not isinstance(x, ntl_ZZ_p):
                     cc = ntl_ZZ_p(x,self.c)
                 else:
                     cc = x
@@ -110,7 +110,7 @@ cdef class ntl_ZZ_pX:
         ## the error checking in __init__ will prevent##
         ## you from constructing an ntl_ZZ_p          ##
         ## inappropriately.  However, from Cython, you##
-        ## could do r = PY_NEW(ntl_ZZ_p) without      ##
+        ## could do r = ntl_ZZ_p.__new__(ntl_ZZ_p) without
         ## first restoring a ZZ_pContext, which could ##
         ## have unfortunate consequences.  See _new   ##
         ## defined below for an example of the right  ##
@@ -120,7 +120,7 @@ cdef class ntl_ZZ_pX:
         if modulus is None:
             ZZ_pX_construct(&self.x)
             return
-        if PY_TYPE_CHECK( modulus, ntl_ZZ_pContext_class ):
+        if isinstance(modulus, ntl_ZZ_pContext_class):
             self.c = <ntl_ZZ_pContext_class>modulus
             self.c.restore_c()
             ZZ_pX_construct(&self.x)
@@ -135,7 +135,7 @@ cdef class ntl_ZZ_pX:
     cdef ntl_ZZ_pX _new(self):
         cdef ntl_ZZ_pX r
         self.c.restore_c()
-        r = PY_NEW(ntl_ZZ_pX)
+        r = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         #ZZ_pX_construct(&r.x)
         r.c = self.c
         return r
@@ -255,7 +255,7 @@ cdef class ntl_ZZ_pX:
             3
         """
         cdef ntl_ZZ_p r
-        r = PY_NEW(ntl_ZZ_p)
+        r = ntl_ZZ_p.__new__(ntl_ZZ_p)
         r.c = self.c
         self.c.restore_c()
         if i < 0:
@@ -434,8 +434,7 @@ cdef class ntl_ZZ_pX:
             sage: f % g
             Traceback (most recent call last):
             ...
-            RuntimeError: ZZ_p: division by non-invertible element
-
+            NTLError: ZZ_p: division by non-invertible element
         """
         if self.c is not other.c:
             raise ValueError, "You can not perform arithmetic with elements of different moduli."
@@ -661,11 +660,11 @@ cdef class ntl_ZZ_pX:
         """
         Multiplies all coefficients by n and the context by n.
         """
-        cdef ntl_ZZ new_c_p = PY_NEW(ntl_ZZ)
+        cdef ntl_ZZ new_c_p = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_mul(new_c_p.x, (<ntl_ZZ>self.c.p).x, n.x)
         cdef ntl_ZZ_pContext_class new_c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(new_c_p)
         new_c.restore_c()
-        cdef ntl_ZZ_pX ans = PY_NEW(ntl_ZZ_pX)
+        cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         ans.c = new_c
         ZZ_pX_left_pshift(ans.x, self.x, n.x, new_c.x)
         return ans
@@ -674,11 +673,11 @@ cdef class ntl_ZZ_pX:
         """
         Divides all coefficients by n and the context by n.  Only really makes sense when n divides self.c.p
         """
-        cdef ntl_ZZ new_c_p = PY_NEW(ntl_ZZ)
+        cdef ntl_ZZ new_c_p = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_div(new_c_p.x, (<ntl_ZZ>self.c.p).x, n.x)
         cdef ntl_ZZ_pContext_class new_c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(new_c_p)
         new_c.restore_c()
-        cdef ntl_ZZ_pX ans = PY_NEW(ntl_ZZ_pX)
+        cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         ans.c = new_c
         ZZ_pX_right_pshift(ans.x, self.x, n.x, new_c.x)
         return ans
@@ -874,7 +873,7 @@ cdef class ntl_ZZ_pX:
             [1 9 8 24 6]
         """
         c.restore_c()
-        cdef ntl_ZZ_pX ans = PY_NEW(ntl_ZZ_pX)
+        cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         ZZ_pX_construct(&ans.x)
         ZZ_pX_conv_modulus(ans.x, self.x, c.x)
         ans.c = c
@@ -984,7 +983,7 @@ cdef class ntl_ZZ_pX:
         sig_off()
         F = []
         for i from 0 <= i < n:
-            r = PY_NEW(ntl_ZZ_p)
+            r = ntl_ZZ_p.__new__(ntl_ZZ_p)
             r.c = self.c
             r.x = v[i][0]
             F.append(r)
@@ -1158,7 +1157,7 @@ cdef class ntl_ZZ_pX:
                 raise ValueError, "not eisenstein or unramified"
         else:
             ctx = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(p)
-            mod_prime = PY_NEW(ntl_ZZ_pX)
+            mod_prime = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
             ZZ_pX_conv_modulus(mod_prime.x, modulus.x, ctx.x)
             mod_prime.c = ctx
             F = mod_prime.factor()
@@ -1206,7 +1205,7 @@ cdef class ntl_ZZ_pX:
             3
         """
         self.c.restore_c()
-        cdef ntl_ZZ_p r = PY_NEW(ntl_ZZ_p)
+        cdef ntl_ZZ_p r = ntl_ZZ_p.__new__(ntl_ZZ_p)
         r.c = self.c
         sig_on()
         ZZ_pX_TraceMod(r.x, self.x, modulus.x)
@@ -1257,7 +1256,7 @@ cdef class ntl_ZZ_pX:
             0
         """
         self.c.restore_c()
-        cdef ntl_ZZ_p r = PY_NEW(ntl_ZZ_p)
+        cdef ntl_ZZ_p r = ntl_ZZ_p.__new__(ntl_ZZ_p)
         r.c = self.c
         sig_on()
         ZZ_pX_resultant(r.x, self.x, other.x)
@@ -1284,7 +1283,7 @@ cdef class ntl_ZZ_pX:
             [11 1 8 14 1]
         """
         self.c.restore_c()
-        cdef ntl_ZZ_p r = PY_NEW(ntl_ZZ_p)
+        cdef ntl_ZZ_p r = ntl_ZZ_p.__new__(ntl_ZZ_p)
         r.c = self.c
         sig_on()
         ZZ_pX_NormMod(r.x, self.x, modulus.x)

@@ -42,12 +42,12 @@ Sage fournit toutes les opérations mathématiques de base :
     38
 
 Le calcul d'une expression telle que ``3^2*4 + 2%5``  dépend de l'ordre
-dans lequel les opérations sont effectuées ; ceci est expliqué dans
+dans lequel les opérations sont effectuées ; ceci est expliqué dans
 l'annexe *Priorité des opérateurs arithmétiques binaires*
 :ref:`section-precedence`.
 
 Sage fournit également un grand nombre de fonctions mathématiques
-usuelles ; en voici quelques exemples choisis :
+usuelles ; en voici quelques exemples choisis :
 
 ::
 
@@ -65,7 +65,7 @@ utilise au choix la fonction ``n`` ou la méthode ``n`` (chacun de ces
 noms possède le nom plus long ``numerical_approx``, la fonction ``N``
 est identique à ``n``). Celles-ci acceptent, en argument optionnel,
 ``prec``, qui indique le nombre de bits de précisions requis, et
-``digits``, qui indique le nombre de décimales demandées ; par défaut,
+``digits``, qui indique le nombre de décimales demandées ; par défaut,
 il y a 53 bits de précision.
 
 ::
@@ -86,7 +86,7 @@ il y a 53 bits de précision.
 Python est doté d'un typage dynamique. Ainsi la valeur à laquelle fait
 référence une variable est toujours associée à un type donné, mais une
 variable donnée peut contenir des valeurs de plusieurs types Python au
-sein d'une même portée :
+sein d'une même portée :
 
 
 ::
@@ -102,11 +102,11 @@ sein d'une même portée :
     <type 'str'>
 
 Le langage de programmation C, qui est statiquement typé, est bien
-différent : une fois déclarée de type int, une variable ne peut contenir
+différent : une fois déclarée de type int, une variable ne peut contenir
 que des int au sein de sa portée.
 
 Un entier Python dont l'écriture commence par un zéro peut susciter des
-confusions : il est considéré comme un nombre octal, c'est-à-dire un
+confusions : il est considéré comme un nombre octal, c'est-à-dire un
 nombre en base huit.
 
 ::

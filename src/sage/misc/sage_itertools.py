@@ -1,4 +1,6 @@
 """
+Iterators
+
 Miscellaneous functions which should eventually be moved upstream into
 Python's standard itertools module.
 
@@ -77,9 +79,9 @@ def min_cmp(L, cmp=None):
 
     iterator = iter(L)
     try:
-        m = iterator.next()
+        m = next(iterator)
     except StopIteration:
-        raise ValueError, "min_cmp() arg is an empty sequence"
+        raise ValueError("min_cmp() arg is an empty sequence")
     for item in iterator:
         if cmp(item, m) < 0:
             m = item
@@ -132,9 +134,9 @@ def max_cmp(L, cmp=None):
 
     iterator = iter(L)
     try:
-        m = iterator.next()
+        m = next(iterator)
     except StopIteration:
-        raise ValueError, "max_cmp() arg is an empty sequence"
+        raise ValueError("max_cmp() arg is an empty sequence")
     for item in iterator:
         if cmp(item, m) > 0:
             m = item
@@ -149,10 +151,10 @@ def imap_and_filter_none(function, iterable):
 
         sage: from sage.misc.sage_itertools import imap_and_filter_none
         sage: p = imap_and_filter_none(lambda x: x if is_prime(x) else None, range(15))
-        sage: [p.next(), p.next(), p.next(), p.next(), p.next(), p.next()]
+        sage: [next(p), next(p), next(p), next(p), next(p), next(p)]
         [2, 3, 5, 7, 11, 13]
         sage: p = imap_and_filter_none(lambda x: x+x, ['a','b','c','d','e'])
-        sage: [p.next(), p.next(), p.next(), p.next(), p.next()]
+        sage: [next(p), next(p), next(p), next(p), next(p)]
         ['aa', 'bb', 'cc', 'dd', 'ee']
     """
     for x in iterable:

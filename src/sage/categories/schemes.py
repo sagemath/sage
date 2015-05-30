@@ -4,59 +4,76 @@ Schemes
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
-#                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category, HomCategory
+from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
-from sage.misc.cachefunc import cached_method
-from sets_cat import Sets
+from sage.categories.homsets import HomsetsCategory
+from sage.categories.sets_cat import Sets
 
-def Schemes(X=None):
+class Schemes(Category):
     """
-    Construct a category of schemes.
+    The category of all schemes.
 
     EXAMPLES::
 
         sage: Schemes()
-        Category of Schemes
+        Category of schemes
+
+    ``Schemes`` can also be used to construct the category of schemes
+    over a given base::
 
         sage: Schemes(Spec(ZZ))
         Category of schemes over Integer Ring
 
         sage: Schemes(ZZ)
         Category of schemes over Integer Ring
-    """
-    if X is None:
-        return Schemes_abstract()
-    from sage.schemes.generic.scheme import is_Scheme
-    if not is_Scheme(X):
-        X = Schemes()(X)
-    return Schemes_over_base(X)
 
-# TODO: rename into AbstractSchemes ???
-class Schemes_abstract(Category):
-    """
-    The category of all abstract schemes.
+    .. TODO::
 
-    EXAMPLES::
+        Make ``Schemes()`` a singleton category (and remove
+        :class:`Schemes` from the workaround in
+        :meth:`.category_types.Category_over_base._test_category_over_bases`).
 
-        sage: Schemes()
-        Category of Schemes
+        This is currently incompatible with the dispatching below.
+
+    TESTS::
+
+        sage: TestSuite(Schemes()).run()
+
+    Check that Hom sets of schemes are in the correct category::
+
+        sage: Schemes().Homsets().super_categories()
+        [Category of homsets]
     """
-    def __init__(self):
+
+    @staticmethod
+    def __classcall_private__(cls, X = None):
         """
-        TESTS::
+        Implement the dispatching ``Schemes(ZZ)`` -> ``Schemes_over_base``.
 
-            sage: C = Schemes()
-            sage: C
-            Category of Schemes
-            sage: TestSuite(C).run()
+        EXAMPLES::
+
+            sage: Schemes()
+            Category of schemes
+
+            sage: Schemes(Spec(ZZ))
+            Category of schemes over Integer Ring
+
+            sage: Schemes(ZZ)
+            Category of schemes over Integer Ring
         """
-        Category.__init__(self, "Schemes")
+        if X is not None:
+            from sage.schemes.generic.scheme import is_Scheme
+            if not is_Scheme(X):
+                X = Schemes()(X)
+            return Schemes_over_base(X)
+        else:
+            return super(Schemes, cls).__classcall__(cls)
 
     def super_categories(self):
         """
@@ -76,7 +93,7 @@ class Schemes_abstract(Category):
         Let us first construct the category of schemes::
 
             sage: S = Schemes(); S
-            Category of Schemes
+            Category of schemes
 
         We create a scheme from a ring::
 
@@ -130,25 +147,7 @@ class Schemes_abstract(Category):
             A = Spec(x.codomain())
             return A.hom(x)
         else:
-            raise TypeError, "No way to create an object or morphism in %s from %s"%(self, x)
-
-
-    class HomCategory(HomCategory):
-        def extra_super_categories(self):
-            """
-            EXAMPLES::
-
-                sage: Schemes().hom_category().extra_super_categories()
-                []
-                sage: Schemes().hom_category().super_categories()
-                [Category of hom sets in Category of sets]
-
-            FIXME: what category structure is there on Homsets of schemes?
-            The result above is wrong, and should be fixed during the next
-            homsets overhaul.
-            """
-            return []
-
+            raise TypeError("No way to create an object or morphism in %s from %s"%(self, x))
 
 
 #############################################################
@@ -183,9 +182,9 @@ class Schemes_over_base(Category_over_base):
         EXAMPLES::
 
             sage: Schemes(Spec(ZZ)).super_categories()
-            [Category of Schemes]
+            [Category of schemes]
         """
-        return [Schemes_abstract()]
+        return [Schemes()]
 
     def _repr_object_names(self):
         """
@@ -195,8 +194,8 @@ class Schemes_over_base(Category_over_base):
             Category of schemes over Integer Ring
         """
         # To work around the name of the class (schemes_over_base)
-        from sage.schemes.generic.spec import is_Spec
-        if is_Spec(self.base_scheme()):
+        from sage.schemes.generic.scheme import is_AffineScheme
+        if is_AffineScheme(self.base_scheme()):
             return "schemes over %s" % self.base_scheme().coordinate_ring()
         else:
             return "schemes over %s" % self.base_scheme()

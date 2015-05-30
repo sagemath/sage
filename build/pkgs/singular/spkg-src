@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-VERSION="3-1-5"
-
+VERSION="3-1-7"
+PATCHLEVEL="p1"
 
 if [ $# -ne 0 ]; then
     UPSTREAM_SOURCE_DIRECTORY=$1
@@ -20,10 +20,10 @@ cd src
 
 URL="http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES"
 if [ -z "$UPSTREAM_SOURCE_DIRECTORY" ]; then
-    tar xzf <( curl -L "$URL/$VERSION/Singular-$VERSION.tar.gz" )
+    tar xzf <( curl -L "$URL/$VERSION/Singular-$VERSION$PATCHLEVEL.tar.gz" )
     tar xzf <( curl -L "$URL/$VERSION/Singular-$VERSION-share.tar.gz" )
 else
-    tar xzf "$UPSTREAM_SOURCE_DIRECTORY/Singular-$VERSION.tar.gz"
+    tar xzf "$UPSTREAM_SOURCE_DIRECTORY/Singular-$VERSION$PATCHLEVEL.tar.gz"
     tar xzf "$UPSTREAM_SOURCE_DIRECTORY/Singular-$VERSION-share.tar.gz"
 fi
 

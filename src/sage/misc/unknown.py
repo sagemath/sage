@@ -146,11 +146,14 @@ class UnknownClass(UniqueRepresentation, SageObject):
             [False, True, True]
             [False, False, True]
         """
-        if other is self: return 0
-        if type(other) is type(True):
-            if other: return -1
-            else:     return +1
+        if other is self:
+            return 0
+        if isinstance(other, bool):
+            if other:
+                return -1
+            else:
+                return +1
         else:
-            raise ValueError, "Unable to compare %s with %s"%(self, other)
+            raise ValueError("Unable to compare {} with {}".format(self, other))
 
 Unknown = UnknownClass()

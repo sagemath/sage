@@ -265,9 +265,9 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     Test for several characters that the result agrees with the exact
     value, to a given accuracy ::
 
-        sage: for d in range(-20,0):
-        ...       if abs(RR(quadratic_L_function__numerical(1, d, 10000) - quadratic_L_function__exact(1, d))) > 0.001:
-        ...           print "Oops!  We have a problem at d = ", d, "    exact = ", RR(quadratic_L_function__exact(1, d)), "    numerical = ", RR(quadratic_L_function__numerical(1, d))
+        sage: for d in range(-20,0):  # long time (2s on sage.math 2014)
+        ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000) - quadratic_L_function__exact(1, d))) > 0.001:
+        ....:         print "Oops!  We have a problem at d = ", d, "    exact = ", RR(quadratic_L_function__exact(1, d)), "    numerical = ", RR(quadratic_L_function__numerical(1, d))
     """
     # Set the correct precision if it is given (for n).
     if is_RealField(n.parent()):

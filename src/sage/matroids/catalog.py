@@ -43,7 +43,7 @@ from sage.graphs.all import Graph, graphs
 
 from sage.rings.all import ZZ, QQ, FiniteField, GF
 from sage.schemes.all import ProjectiveSpace
-from sage.calculus.var import var
+from sage.symbolic.ring import SR
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -897,9 +897,18 @@ def Uniform(r, n):
         False
         sage: M.is_valid()
         True
+
+    Check that bug #15292 was fixed::
+
+        sage: M = matroids.Uniform(4,4)
+        sage: len(M.circuit_closures())
+        0
     """
     E = range(n)
-    CC = {r: [E]}
+    if r < n:
+        CC = {r: [E]}
+    else:
+        CC = {}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
     M.rename('U(' + str(r) + ', ' + str(n) + '): ' + repr(M))
     return M
@@ -938,7 +947,7 @@ def PG(n, q, x=None):
         the Finite Field of size 7
     """
     if x is None:
-        x = var('x')
+        x = SR.var('x')
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in P]).transpose()
@@ -982,7 +991,7 @@ def AG(n, q, x=None):
 
     """
     if x is None:
-        x = var('x')
+        x = SR.var('x')
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in P if not list(p)[0] == 0]).transpose()
@@ -1333,12 +1342,9 @@ def Block_9_4():
         sage: M = matroids.named_matroids.Block_9_4()
         sage: M.is_valid() # long time
         True
-        sage: C = M.nonspanning_circuits()
-        sage: D = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6,
-        ....:      'h': 7, 'i': 8}
-        sage: B = [[D[x] for x in L] for L in C]
-        sage: BlockDesign(9, B).is_block_design()
-        (True, [2, 9, 4, 3])
+        sage: BD = designs.BlockDesign(M.groundset(), M.nonspanning_circuits())
+        sage: BD.is_t_design(return_parameters=True)
+        (True, (2, 9, 4, 3))
     """
     E = 'abcdefghi'
     CC = {
@@ -1360,12 +1366,9 @@ def Block_10_5():
         sage: M = matroids.named_matroids.Block_10_5()
         sage: M.is_valid() # long time
         True
-        sage: C = M.nonspanning_circuits()
-        sage: D = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6,
-        ....:      'h': 7, 'i': 8, 'j': 9}
-        sage: B = [[D[x] for x in L] for L in C]
-        sage: BlockDesign(10, B).is_block_design()
-        (True, [3, 10, 5, 3])
+        sage: BD = designs.BlockDesign(M.groundset(), M.nonspanning_circuits())
+        sage: BD.is_t_design(return_parameters=True)
+        (True, (3, 10, 5, 3))
     """
 
     E = 'abcdefghij'

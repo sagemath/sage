@@ -1,8 +1,12 @@
+r"""
+Cunningham table
+"""
+
 import os
 from sage.misc.cachefunc import cached_function
 from sage.rings.integer import Integer
 from sage.structure.sage_object import load
-from sage.misc.misc import SAGE_SHARE
+from sage.env import SAGE_SHARE
 
 @cached_function
 def cunningham_prime_factors():

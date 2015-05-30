@@ -30,14 +30,17 @@ SOFTWARE                    LICENSE
 -----------------------------------------------------------------------
 atlas                       Modified BSD
 boehm_gc                    MIT-like license (see below)
+backports_ssl_match_hostname  Python License
 boost_cropped               Boost Software License (see below)
 bzip2                       BSD-ish (see below)
 cddlib                      GPLv2+
 cephes                      "may be used freely" (see below)
+certifi                     ISC
 cliquer                     GPLv2+
 conway_polynomials          None (database)
 cvxopt                      GPLv2+
 cython                      Apache, version 2.0
+dateutil                    Simplified BSD
 docutils                    Modified BSD
 ecl                         LGPLv2+
 eclib                       GPLv2+
@@ -51,9 +54,8 @@ freetype                    FreeType License (similar to BSD; see below)
 gap                         GPLv2+
 gcc                         GPLv3+
 gd                          Custom (BSD-ish)
-gdmodule                    Custom (BSD-ish)
 genus2reduction             GPLv2+
-gfan                        GPLv2+
+gfan                        GPLv2 or GPLv3
 gf2x                        GPLv2+
 givaro                      CeCILL-B (BSD-ish)
 glpk                        GPLv3+
@@ -64,17 +66,20 @@ iml                         COPYING is GPLv2, source files state modified BSD
 ipython                     Modified BSD
 jinja2                      Modified BSD
 jmol                        LGPLv2.1+
+jsonschema                  MIT License
 lcalc                       GPLv2+
 libfplll                    LGPLv2.1+
 libgap                      GPLv3+
-libm4ri                     GPLv2+
-libm4rie                    GPLv2+
 libpng                      Custom, very similar to zlib
 linbox                      LGPLv2.1+
 lrcalc                      GPLv2+
-matplotlib                  Python License
+m4ri                        GPLv2+
+m4rie                       GPLv2+
+markupsafe                  Simplified BSD
+mathjax                     Apache License 2.0
+matplotlib                  Matplotlib License (BSD compatible, see below)
 maxima                      See below
-mercurial                   GPLv2+
+mistune                     Modified BSD
 mpc                         LGPLv3+
 mpfi                        COPYING is GPLv2, source files state LGPLv2.1+
 mpfr                        LGPLv3+
@@ -87,13 +92,17 @@ palp                        GPLv3
 pari                        GPLv2+
 patch                       GPLv2+
 pexpect                     Python License
-pil                         Similar to MIT and modified BSD (see below)
+pillow                      Apache License 2.0
+pip                         MIT License
+pkgconf                     ISC License (equivalent to Simplified BSD)
+pkgconfig                   MIT License
 polybori                    GPLv2+
 polytopes_db                None (database)
 ppl                         GPLv3+
 pycrypto                    Public domain & Python License
 pygments                    Modified BSD
 pynac                       GPLv2+
+pyparsing                   MIT License
 python                      Python License (see below)
 R                           GPLv2+
 ratpoints                   GPLv2+
@@ -111,14 +120,16 @@ scipy                       Modified BSD
 scons                       MIT License
 setuptools                  Python License
 singular                    GPLv2 or GPLv3 (see below)
+six                         MIT License
 sphinx                      Modified BSD
-sqlalchemy                  MIT License
 sqlite                      Public Domain (see below)
 symmetrica                  MIT-like License (see below)
 sympow                      Modified BSD
 sympy                       Modified BSD
 tachyon                     Modified BSD
 termcap                     GPLv2+
+threejs                     MIT License
+tornado                     Apache License
 zlib                        Custom (Modified BSD)
 zn_poly                     GPLv2 or GPLv3 (no later versions, see below)
 
@@ -938,19 +949,6 @@ documentation.
 
 ================================================================================
 
-gdmodule:
-(http://newcenturycomputers.net/projects/gdmodule.html)
-
-Permission granted for unlimited use, provided that the Quest Center
-at Cold Spring Harbor Labs is given credit for the library in the
-user-visible documentation of your software. If you modify gd, we ask
-that you share the modifications with us so they can be added to the
-distribution. See gd.html for details.  (The rest of the notice is in
-the package gdmodule spkg, which is a bzip2'd tarball included in the
-Sage source distribution.)
-
-================================================================================
-
 genus2reduction:
 (http://www.math.u-bordeaux.fr/~liu/G2R/)
 Copyright Qing LIU. See PARI for the license terms.
@@ -1005,6 +1003,17 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+================================================================================
+
+matplotlib:
+(from http://matplotlib.sourceforge.net/users/license.html)
+
+Matplotlib only uses BSD compatible code, and its license is based on
+the PSF license. See the Open Source Initiative licenses page for
+details on individual licenses. Non-BSD compatible licenses (eg LGPL)
+are acceptable in matplotlib toolkits. For a discussion of the
+motivations behind the licencing choice, see Licenses.
 
 ================================================================================
 

@@ -1,7 +1,7 @@
 # Utilities for Sage-mpmath interaction
 # Also patches some mpmath functions for speed
 
-include "sage/ext/stdsage.pxi"
+from sage.ext.stdsage cimport PY_NEW
 
 from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber
@@ -39,7 +39,7 @@ cpdef int bitcount(n):
 
     """
     cdef Integer m
-    if PY_TYPE_CHECK(n, Integer):
+    if isinstance(n, Integer):
         m = <Integer>n
     else:
         m = Integer(n)
@@ -68,7 +68,7 @@ cpdef isqrt(n):
 
     """
     cdef Integer m, y
-    if PY_TYPE_CHECK(n, Integer):
+    if isinstance(n, Integer):
         m = <Integer>n
     else:
         m = Integer(n)
@@ -318,23 +318,23 @@ def sage_to_mpmath(x, prec):
     """
     cdef RealNumber y
     if isinstance(x, Element):
-        if PY_TYPE_CHECK(x, Integer):
+        if isinstance(x, Integer):
             return int(<Integer>x)
         try:
-            if PY_TYPE_CHECK(x, RealNumber):
+            if isinstance(x, RealNumber):
                 return x._mpmath_()
             else:
                 x = RealField(prec)(x)
                 return x._mpmath_()
         except TypeError:
-            if PY_TYPE_CHECK(x, ComplexNumber):
+            if isinstance(x, ComplexNumber):
                 return x._mpmath_()
             else:
                 x = ComplexField(prec)(x)
                 return x._mpmath_()
-    if PY_TYPE_CHECK(x, tuple) or PY_TYPE_CHECK(x, list):
+    if isinstance(x, tuple) or isinstance(x, list):
         return type(x)([sage_to_mpmath(v, prec) for v in x])
-    if PY_TYPE_CHECK(x, dict):
+    if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
     return x
 
@@ -403,14 +403,19 @@ def call(func, *args, **kwargs):
         sage: type(_)
         <type 'sage.rings.complex_number.ComplexNumber'>
         sage: a.call(a.polylog, 2, 1/2, parent=RDF)
-        0.582240526465
+        0.5822405264650125
         sage: type(_)
         <type 'sage.rings.real_double.RealDoubleElement'>
 
-    Check that Trac 11885 is fixed::
+    Check that :trac:`11885` is fixed::
 
         sage: a.call(a.ei, 1.0r, parent=float)
         1.8951178163559366
+
+    Check that :trac:`14984` is fixed::
+
+        sage: a.call(a.log, -1.0r, parent=float)
+        3.141592653589793j
 
     """
     from mpmath import mp
@@ -435,6 +440,11 @@ def call(func, *args, **kwargs):
         return y
     try:
         return parent(y)
-    except TypeError:
-        return parent.complex_field()(y)
-
+    except TypeError, error:
+        try:
+            return parent.complex_field()(y)
+        except AttributeError:
+            if parent is float:
+                return complex(y)
+            else:
+                raise TypeError(error)

@@ -28,6 +28,7 @@ cd src
 # * break when setting MAKE="make -jN"
 # They cover code that is not exposed by the Cython wrapper
 for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue
     patch -p1 <"$patch"
     if [ $? -ne 0 ]; then
         echo >&2 "Error applying '$patch'"

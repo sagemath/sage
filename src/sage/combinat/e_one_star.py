@@ -160,7 +160,9 @@ Plotting patches made of unit segments instead of unit faces::
     sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
     sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
     sage: E(P,5).plot()
+    Graphics object consisting of 21 graphics primitives
     sage: F(P,3).plot()
+    Graphics object consisting of 34 graphics primitives
 
 Everything works in any dimension (except for the plotting features
 which only work in dimension two or three)::
@@ -273,7 +275,7 @@ class Face(SageObject):
 
         TEST:
 
-        We test that types can be given by an int (see #10699)::
+        We test that types can be given by an int (see :trac:`10699`)::
 
             sage: f = Face((0,2,0), int(1))
         """
@@ -281,7 +283,7 @@ class Face(SageObject):
         self._vector.set_immutable()
 
         if not((t in ZZ) and 1 <= t <= len(v)):
-            raise ValueError, 'The type must be an integer between 1 and len(v)'
+            raise ValueError('The type must be an integer between 1 and len(v)')
         self._type = t
 
         if color is None:
@@ -495,6 +497,7 @@ class Face(SageObject):
 
             sage: f = Face((0,0), 2)
             sage: f._plot(None, None, 1)
+            Graphics object consisting of 1 graphics primitive
         """
         v = self.vector()
         t = self.type()
@@ -511,7 +514,7 @@ class Face(SageObject):
                    thickness=1, rgbcolor=self.color())
 
         else:
-            raise NotImplementedError, "Plotting is implemented only for patches in two or three dimensions."
+            raise NotImplementedError("Plotting is implemented only for patches in two or three dimensions.")
 
         return G
 
@@ -588,7 +591,8 @@ class Patch(SageObject):
 
         TEST:
 
-        We test that colors are not anymore mixed up between Patches (see #11255)::
+        We test that colors are not anymore mixed up between
+        Patches (see :trac:`11255`)::
 
             sage: P = Patch([Face([0,0,0],2)])
             sage: Q = Patch(P)
@@ -664,7 +668,7 @@ class Patch(SageObject):
 
         TEST:
 
-        We test that two equal patches have the same hash (see #11255)::
+        We test that two equal patches have the same hash (see :trac:`11255`)::
 
             sage: P = Patch([Face([0,0,0],1), Face([0,0,0],2)])
             sage: Q = Patch([Face([0,0,0],2), Face([0,0,0],1)])
@@ -716,13 +720,13 @@ class Patch(SageObject):
             sage: x = [Face((0,0,0),t) for t in [1,2,3]]
             sage: P = Patch(x)
             sage: it = iter(P)
-            sage: type(it.next())
+            sage: type(next(it))
             <class 'sage.combinat.e_one_star.Face'>
-            sage: type(it.next())
+            sage: type(next(it))
             <class 'sage.combinat.e_one_star.Face'>
-            sage: type(it.next())
+            sage: type(next(it))
             <class 'sage.combinat.e_one_star.Face'>
-            sage: type(it.next())
+            sage: type(next(it))
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1068,7 +1072,7 @@ class Patch(SageObject):
                 f.color(cmap(i/dim)[:3])
 
         else:
-            raise TypeError, "Type of cmap (=%s) must be dict, list or str" %cmap
+            raise TypeError("Type of cmap (=%s) must be dict, list or str" %cmap)
 
     def plot(self, projmat=None, opacity=0.75):
         r"""
@@ -1093,6 +1097,7 @@ class Patch(SageObject):
             sage: from sage.combinat.e_one_star import E1Star, Face, Patch
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: P.plot()
+            Graphics object consisting of 3 graphics primitives
 
         ::
 
@@ -1101,6 +1106,7 @@ class Patch(SageObject):
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: P = E(P, 5)
             sage: P.plot()
+            Graphics object consisting of 57 graphics primitives
 
         Plot with a different projection matrix::
 
@@ -1110,6 +1116,7 @@ class Patch(SageObject):
             sage: M = matrix(2, 3, [1,0,-1,0.3,1,-3])
             sage: P = E(P, 3)
             sage: P.plot(projmat=M)
+            Graphics object consisting of 17 graphics primitives
 
         Plot patches made of unit segments::
 
@@ -1117,7 +1124,9 @@ class Patch(SageObject):
             sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
             sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
             sage: E(P,5).plot()
+            Graphics object consisting of 21 graphics primitives
             sage: F(P,3).plot()
+            Graphics object consisting of 34 graphics primitives
         """
         if self.dimension() == 2:
             G = Graphics()
@@ -1127,7 +1136,7 @@ class Patch(SageObject):
             return G
 
         if self.dimension() == 3:
-            if projmat == None:
+            if projmat is None:
                 projmat = matrix(2, [-1.7320508075688772*0.5, 1.7320508075688772*0.5, 0, -0.5, -0.5, 1])
 
             G = Graphics()
@@ -1137,7 +1146,7 @@ class Patch(SageObject):
             return G
 
         else:
-            raise NotImplementedError, "Plotting is implemented only for patches in two or three dimensions."
+            raise NotImplementedError("Plotting is implemented only for patches in two or three dimensions.")
 
     def plot3d(self):
         r"""
@@ -1163,7 +1172,7 @@ class Patch(SageObject):
             sage: P.plot3d()                #not tested
         """
         if self.dimension() != 3:
-            raise NotImplementedError, "3D plotting is implemented only for patches in three dimensions."
+            raise NotImplementedError("3D plotting is implemented only for patches in three dimensions.")
 
         face_list = [face._plot3d(self._face_contour) for face in self]
         G = sum(face_list)
@@ -1285,9 +1294,9 @@ class Patch(SageObject):
             \end{tikzpicture}
         """
         if self.dimension() != 3:
-            raise NotImplementedError, "Tikz Plotting is implemented only for patches in three dimensions."
+            raise NotImplementedError("Tikz Plotting is implemented only for patches in three dimensions.")
 
-        if projmat == None:
+        if projmat is None:
             projmat = matrix(2, [-1.7320508075688772*0.5, 1.7320508075688772*0.5, 0, -0.5, -0.5, 1])*scale
 
         e1 = projmat*vector([1,0,0])
@@ -1388,17 +1397,17 @@ class E1Star(SageObject):
             E_1^*(1->12, 2->13, 3->1)
         """
         if not isinstance(sigma, WordMorphism):
-            raise TypeError, "sigma (=%s) must be an instance of WordMorphism"%sigma
+            raise TypeError("sigma (=%s) must be an instance of WordMorphism"%sigma)
 
         if sigma.domain().alphabet() != sigma.codomain().alphabet():
-            raise ValueError, "The domain and codomain of (%s) must be the same."%sigma
+            raise ValueError("The domain and codomain of (%s) must be the same."%sigma)
 
         if abs(det(matrix(sigma))) != 1:
-            raise ValueError, "The substitution (%s) must be unimodular."%sigma
+            raise ValueError("The substitution (%s) must be unimodular."%sigma)
 
         first_letter = sigma.codomain().alphabet()[0]
         if not (first_letter in ZZ) or (first_letter < 1):
-            raise ValueError, "The substitution (%s) must be defined on positive integers."%sigma
+            raise ValueError("The substitution (%s) must be defined on positive integers."%sigma)
 
         self._sigma = WordMorphism(sigma)
         self._d = self._sigma.domain().size_of_alphabet()
@@ -1415,10 +1424,10 @@ class E1Star(SageObject):
                 elif method == 'prefix':
                     image_word = subst_im[:n]
                 else:
-                    raise ValueError, "Option 'method' can only be 'prefix' or 'suffix'."
+                    raise ValueError("Option 'method' can only be 'prefix' or 'suffix'.")
                 if not letter in X:
                     X[letter] = []
-                v = self.inverse_matrix()*vector(image_word.parikh_vector())
+                v = self.inverse_matrix()*vector(image_word.abelian_vector())
                 X[letter].append((v, k))
         self._base_iter = X
 
@@ -1473,7 +1482,7 @@ class E1Star(SageObject):
 
         TEST:
 
-        We test that iterations=0 works (see #10699)::
+        We test that iterations=0 works (see :trac:`10699`)::
 
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: sigma = WordMorphism({1:[1,2], 2:[1,3], 3:[1]})
@@ -1484,7 +1493,7 @@ class E1Star(SageObject):
         if iterations == 0:
             return Patch(patch)
         elif iterations < 0:
-            raise ValueError, "iterations (=%s) must be >= 0." % iterations
+            raise ValueError("iterations (=%s) must be >= 0." % iterations)
         else:
             old_faces = patch
             for i in xrange(iterations):
@@ -1520,7 +1529,7 @@ class E1Star(SageObject):
             E_1^*(1->1, 2->1132, 3->1311)
         """
         if not isinstance(other, E1Star):
-            raise TypeError, "other (=%s) must be an instance of E1Star" % other
+            raise TypeError("other (=%s) must be an instance of E1Star" % other)
         return E1Star(other.sigma() * self.sigma())
 
     def __repr__(self):
@@ -1561,7 +1570,7 @@ class E1Star(SageObject):
             [[(3, 0, -3), 1]*, [(2, 1, -3), 2]*, [(2, 0, -2), 3]*]
         """
         if len(face.vector()) != self._d:
-            raise ValueError, "The dimension of the faces must be equal to the size of the alphabet of the substitution."
+            raise ValueError("The dimension of the faces must be equal to the size of the alphabet of the substitution.")
         x_new = self.inverse_matrix() * face.vector()
         t = face.type()
         return (Face(x_new + v, k, color=color) for v, k in self._base_iter[t])

@@ -8,22 +8,19 @@ AUTHORS:
   of coefficients of arbitrary size.
 """
 
-
 #*****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+include 'sage/ext/stdsage.pxi'
+
+from sage.misc.long cimport pyobject_to_long
 
 from cpython.sequence cimport *
 
@@ -53,7 +50,7 @@ cdef class Fmpz_poly(SageObject):
         cdef Py_ssize_t i
         cdef long c
         cdef Integer w
-        if PY_TYPE_CHECK(v, str):
+        if isinstance(v, str):
             if not fmpz_poly_set_str(self.poly, v):
                 return
             else:
@@ -87,7 +84,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f[2] == 10**100000
             True
         """
-        if PY_TYPE_CHECK(value, Integer) :
+        if isinstance(value, Integer) :
             fmpz_poly_set_coeff_mpz(self.poly, i, (<Integer>value).value)
         else :
             fmpz_poly_set_coeff_si(self.poly, i, value)
@@ -165,9 +162,9 @@ cdef class Fmpz_poly(SageObject):
             sage: Fmpz_poly([1,2,3]) + Fmpz_poly(range(6))
             6  1 3 5 3 4 5
         """
-        if not PY_TYPE_CHECK(left, Fmpz_poly) or not PY_TYPE_CHECK(right, Fmpz_poly):
+        if not isinstance(left, Fmpz_poly) or not isinstance(right, Fmpz_poly):
             raise TypeError
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_add(res.poly, (<Fmpz_poly>left).poly, (<Fmpz_poly>right).poly)
         return res
 
@@ -181,9 +178,9 @@ cdef class Fmpz_poly(SageObject):
             sage: Fmpz_poly([10,2,3]) - Fmpz_poly([4,-2,1])
             3  6 4 2
         """
-        if not PY_TYPE_CHECK(left, Fmpz_poly) or not PY_TYPE_CHECK(right, Fmpz_poly):
+        if not isinstance(left, Fmpz_poly) or not isinstance(right, Fmpz_poly):
             raise TypeError
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_sub(res.poly, (<Fmpz_poly>left).poly, (<Fmpz_poly>right).poly)
         return res
 
@@ -197,7 +194,7 @@ cdef class Fmpz_poly(SageObject):
             sage: -Fmpz_poly([2,10,2,3,18,-5])
             6  -2 -10 -2 -3 -18 5
         """
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_neg(res.poly, self.poly)
         return res
 
@@ -221,15 +218,15 @@ cdef class Fmpz_poly(SageObject):
             sage: f * 5r
             3  5 0 -5
         """
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
-        if not PY_TYPE_CHECK(left, Fmpz_poly) or not PY_TYPE_CHECK(right, Fmpz_poly):
-            if PY_TYPE_CHECK(left, int) :
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
+        if not isinstance(left, Fmpz_poly) or not isinstance(right, Fmpz_poly):
+            if isinstance(left, int) :
                 fmpz_poly_scalar_mul_si(res.poly, (<Fmpz_poly>right).poly, left)
-            elif PY_TYPE_CHECK(left, Integer) :
+            elif isinstance(left, Integer) :
                 fmpz_poly_scalar_mul_mpz(res.poly, (<Fmpz_poly>right).poly, (<Integer>left).value)
-            elif  PY_TYPE_CHECK(right, int) :
+            elif  isinstance(right, int) :
                 fmpz_poly_scalar_mul_si(res.poly, (<Fmpz_poly>left).poly, right)
-            elif PY_TYPE_CHECK(right, Integer) :
+            elif isinstance(right, Integer) :
                 fmpz_poly_scalar_mul_mpz(res.poly, (<Fmpz_poly>left).poly, (<Integer>right).value)
             else:
                 raise TypeError
@@ -252,11 +249,16 @@ cdef class Fmpz_poly(SageObject):
             1  1427247692705959881058285969449495136382746624
             sage: 2^150
             1427247692705959881058285969449495136382746624
+
+            sage: f**(3/2)
+            Traceback (most recent call last):
+            ...
+            TypeError: rational is not an integer
         """
-        cdef long nn = n
-        if not PY_TYPE_CHECK(self, Fmpz_poly):
+        cdef long nn = pyobject_to_long(n)
+        if not isinstance(self, Fmpz_poly):
             raise TypeError
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_pow(res.poly, (<Fmpz_poly>self).poly, nn)
         return res
 
@@ -278,7 +280,7 @@ cdef class Fmpz_poly(SageObject):
         if n < 0:
             raise ValueError, "Exponent must be at least 0"
         cdef long exp_c = exp, nn = n
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_pow_trunc(res.poly, (<Fmpz_poly>self).poly, exp_c, nn)
         return res
 
@@ -297,9 +299,9 @@ cdef class Fmpz_poly(SageObject):
             sage: f^4
             9  81 432 1404 2928 4486 4880 3900 2000 625
         """
-        if not PY_TYPE_CHECK(left, Fmpz_poly) or not PY_TYPE_CHECK(right, Fmpz_poly):
+        if not isinstance(left, Fmpz_poly) or not isinstance(right, Fmpz_poly):
             raise TypeError
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_div(res.poly, (<Fmpz_poly>left).poly, (<Fmpz_poly>right).poly)
         return res
 
@@ -326,8 +328,8 @@ cdef class Fmpz_poly(SageObject):
             sage: q*g+r
             10  1 2 3 4 5 6 7 8 9 10
         """
-        cdef Fmpz_poly Q = <Fmpz_poly>PY_NEW(Fmpz_poly)
-        cdef Fmpz_poly R = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly Q = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
+        cdef Fmpz_poly R = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_divrem(Q.poly, R.poly, self.poly, other.poly)
         return Q, R
 
@@ -342,7 +344,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f.left_shift(1).list() == [0,1,2]
             True
         """
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
 
         fmpz_poly_shift_left(res.poly, self.poly, n)
 
@@ -359,22 +361,22 @@ cdef class Fmpz_poly(SageObject):
             sage: f.right_shift(1).list() == [2]
             True
         """
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
 
         fmpz_poly_shift_right(res.poly, self.poly, n)
 
         return res
 
     def pseudo_div(self, Fmpz_poly other):
-        cdef unsigned long d
-        cdef Fmpz_poly Q = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef ulong d
+        cdef Fmpz_poly Q = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_pseudo_div(Q.poly, &d, self.poly, other.poly)
         return Q, d
 
     def pseudo_div_rem(self, Fmpz_poly other):
-        cdef unsigned long d
-        cdef Fmpz_poly Q = <Fmpz_poly>PY_NEW(Fmpz_poly)
-        cdef Fmpz_poly R = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef ulong d
+        cdef Fmpz_poly Q = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
+        cdef Fmpz_poly R = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_pseudo_divrem(Q.poly, R.poly, &d, self.poly, other.poly)
         return Q, R, d
 
@@ -389,14 +391,14 @@ cdef class Fmpz_poly(SageObject):
             sage: f.derivative().list() == [2, 12]
             True
         """
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
 
         fmpz_poly_derivative(res.poly, self.poly)
 
         return res
 
     def __copy__(self):
-        cdef Fmpz_poly res = <Fmpz_poly>PY_NEW(Fmpz_poly)
+        cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_set(res.poly, self.poly)
         return res
 

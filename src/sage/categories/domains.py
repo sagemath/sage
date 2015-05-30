@@ -3,34 +3,38 @@ Domains
 """
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#                2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.lazy_import import LazyImport
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rings import Rings
-from sage.categories.category import Category
-from sage.categories.category_singleton import Category_singleton
-from sage.misc.cachefunc import cached_method
 
-class Domains(Category_singleton):
+class Domains(CategoryWithAxiom):
     """
     The category of domains
 
-    An domain (or non-commutative integral domains), is a not
-    necessarily commutative ring which has no zero divisors.
+    A domain (or non-commutative integral domain), is a ring, not
+    necessarily commutative, with no nonzero zero divisors.
 
     EXAMPLES::
 
-        sage: Domains()
+        sage: C = Domains(); C
         Category of domains
-        sage: Domains().super_categories()
+        sage: C.super_categories()
         [Category of rings]
+        sage: C is Rings().NoZeroDivisors()
+        True
 
     TESTS::
 
-        sage: TestSuite(Domains()).run()
+        sage: TestSuite(C).run()
     """
+
+    _base_category_class_and_axiom = (Rings, "NoZeroDivisors")
 
     def super_categories(self):
         """
@@ -41,8 +45,49 @@ class Domains(Category_singleton):
         """
         return [Rings()]
 
+    Commutative = LazyImport('sage.categories.integral_domains', 'IntegralDomains', at_startup=True)
+
     class ParentMethods:
-        pass
+        def _test_zero_divisors(self, **options):
+            """
+            Check to see that there are no zero divisors.
+
+            .. NOTE::
+
+                In rings whose elements can not be represented exactly, there
+                may be zero divisors in practice, even though these rings do
+                not have them in theory. For such inexact rings, these tests
+                are not performed:
+
+                sage: R = ZpFM(5); R
+                5-adic Ring of fixed modulus 5^20
+                sage: R.is_exact()
+                False
+                sage: a = R(5^19)
+                sage: a.is_zero()
+                False
+                sage: (a*a).is_zero()
+                True
+                sage: R._test_zero_divisors()
+
+            EXAMPLES::
+
+                sage: ZZ._test_zero_divisors()
+                sage: ZpFM(5)._test_zero_divisors()
+
+            """
+            if not self.is_exact():
+                return # Can't check on inexact rings
+
+            tester = self._tester(**options)
+
+            # Filter out zero
+            S = [s for s in tester.some_elements() if not s.is_zero()]
+
+            from sage.combinat.cartesian_product import CartesianProduct
+            for a,b in tester.some_elements(CartesianProduct(S,S)):
+                p = a * b
+                tester.assertFalse(p.is_zero())
 
     class ElementMethods:
         pass

@@ -5,7 +5,7 @@ import os, os.path, sys, signal
 SAGE_ROOT = os.path.realpath(os.environ['SAGE_ROOT'])
 
 def handler(signum, frame):
-    print 'Signal handler called with signal', signum
+    print('Signal handler called with signal', signum)
     sys.exit(1)
 
 def filename_to_modname(fname):
@@ -35,31 +35,24 @@ def test(fname):
             modname = filename_to_modname(fname)
             err = os.system('python -c "import ' + modname +'" >/dev/null 2>&1')
             if err != 0:
-                print modname, err
-
+                print(modname, err)
 
 
 if len(sys.argv) < 2:
-    print "usage: sage-test-import <filename>"
-
+    print("usage: sage-test-import <filename>")
 
 arg = sys.argv[1]
 
 if not os.path.exists(arg):
-    print "%s does not exist, exiting"
+    print("%s does not exist, exiting")
     sys.exit(1)
 
 if not os.path.realpath(arg).startswith(SAGE_ROOT):
-    print "This script only supports testing modules in a Sage source tree under a corresponding Sage installation"
+    print("This script only supports testing modules in a Sage source tree under a corresponding Sage installation")
     sys.exit(1)
 
 signal.signal(signal.SIGTERM, handler)
 signal.signal(signal.SIGINT, handler)
 
-
 test(arg)
-
-
-
-
 

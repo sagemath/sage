@@ -128,13 +128,11 @@ env['PYV']=platform.python_version().rsplit('.', 1)[0]
 # whitespace without the syntax clutter of lists of strings.
 includes = ['$SAGE_LOCAL/include/', '$SAGE_LOCAL/include/python$PYV/',
             '$SAGE_LOCAL/include/NTL/', 'include']
-cFiles = Split( "convert.c  interrupt.c  memory.c  mpn_pylong.c  mpz_pylong.c") + \
-         Split( "mpz_longlong.c stdsage.c  gmp_globals.c" )
-cppFiles = Split( "ZZ_pylong.cpp  ntl_wrap.cpp" )
+cFiles = Split( "interrupt.c")
+cppFiles = Split( "ntl_wrap.cpp" )
 srcFiles = cFiles + cppFiles
-incFiles = Split( "ccobject.h  convert.h  ginac_wrap.h  gmp_globals.h" ) + \
-           Split( "interrupt.h  memory.h  mpn_pylong.h  mpz_longlong.h" ) + \
-           Split( "mpz_pylong.h  ntl_wrap.h  pb_wrap.h  stdsage.h  ZZ_pylong.h" )
+incFiles = Split( "interrupt.h" ) + \
+           Split( "ntl_wrap.h" )
 
 lib = env.SharedLibrary( "csage", [ "src/" + x for x in srcFiles ],
                          LIBS=['ntl', 'pari', 'gmp', 'python$PYV'],

@@ -1,6 +1,7 @@
-include "sage/ext/cdefs.pxi"
-
+from sage.libs.gmp.types cimport *
 cimport matrix_dense
+from sage.rings.integer cimport Integer
+from sage.ext.mod_int cimport *
 
 cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
 

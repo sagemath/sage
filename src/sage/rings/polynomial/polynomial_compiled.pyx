@@ -2,8 +2,9 @@
 Polynomial Compilers
 
 AUTHORS:
-    -- Tom Boothby, initial design & implementation
-    -- Robert Bradshaw, bug fixes / suggested & assisted with significant design improvements
+
+- Tom Boothby, initial design & implementation
+- Robert Bradshaw, bug fixes / suggested & assisted with significant design improvements
 """
 
 ################################################################################
@@ -19,15 +20,16 @@ from sage.misc.decorators import rename_keyword
 
 cdef class CompiledPolynomialFunction:
     """
-      Builds a reasonably optimized directed acyclic graph representation
+    Builds a reasonably optimized directed acyclic graph representation
     for a given polynomial.  A CompiledPolynomialFunction is callable from
     python, though it is a little faster to call the eval function from
     pyrex.
 
-      This class is not intended to be called by a user, rather, it is
+    This class is not intended to be called by a user, rather, it is
     intended to improve the performance of immutable polynomial objects.
 
-      TODO:
+    TODO::
+
         [ ] Recursive calling
         [ ] Faster casting of coefficients / argument
         [ ] Multivariate polynomials
@@ -55,10 +57,12 @@ cdef class CompiledPolynomialFunction:
                 Scan through coefficient list, and record the lengths of
                 sequences of zero coefficients.  This corresponds to
                 collapsing Horner's Form into a reduced representation.
-                For example,
+                For example, ::
+
                   x^8 + x^4 + x^2 + 1
                    = ((((((((1)*x + 0)*x+0)*x+0)*x+1)*x+0)*x+0)*x+1)*x+0)*x+1
                    = ((((1)*x^4 + 1)*x^2 + 1)*x^2 + 1
+
                 gives a list of "gaps": [2,4]
 
         Step 2: Fill in Gap Structure.
@@ -67,7 +71,8 @@ cdef class CompiledPolynomialFunction:
                 the computation of all desired exponents.  Record this
                 sequence of steps as an evaluation DAG, and retain
                 references to the nodes representing the desired
-                exponents.  For the example above, we would have:
+                exponents.  For the example above, we would have::
+
                   x^2 = x*x
                   x^4 = (x^2) * (x^2)
 
@@ -80,18 +85,18 @@ cdef class CompiledPolynomialFunction:
 
         Implementation considerations:
 
-         * By combining steps 1 and 3, we greatly improve the speed of
-        this construction, but some complexity is introduced.  The
-        solution to this is that "dummy" nodes are created to represent
-        the desired gaps.  As the structure of the gaps is filled in,
-        these dummies get references to usable DAG nodes.  After all gaps
-        are filled in, we strip out dummy nodes, and are left with a
-        complete representation of our polynomial.
+        * By combining steps 1 and 3, we greatly improve the speed of
+          this construction, but some complexity is introduced.  The
+          solution to this is that "dummy" nodes are created to represent
+          the desired gaps.  As the structure of the gaps is filled in,
+          these dummies get references to usable DAG nodes.  After all gaps
+          are filled in, we strip out dummy nodes, and are left with a
+          complete representation of our polynomial.
 
-         * The "binary" algorithm (currently the only algorithm; others are
-        forthcoming) requires the gaps to considered in order, and adds
-        additional dummies as it goes.  Hence, the gaps are put into a
-        binary tree.
+        * The "binary" algorithm (currently the only algorithm; others are
+          forthcoming) requires the gaps to considered in order, and adds
+          additional dummies as it goes.  Hence, the gaps are put into a
+          binary tree.
 
         """
         cdef generic_pd max_gap, dag
@@ -104,10 +109,9 @@ cdef class CompiledPolynomialFunction:
             if algorithm == 'binary':
                 self._fill_gaps_binary(gaps)
             elif algorithm == 'pippenger':
-                raise NotImplementedError, "Implementation of Pippenger's Algorithm is not ready for prime time."
-                self._fill_gaps_pippenger()
+                raise NotImplementedError("Implementation of Pippenger's Algorithm is not ready for prime time.")
             else:
-                raise RuntimeError, "Method '%s' not supported."
+                raise RuntimeError("Method '%s' not supported.")
 
         self._dag = dag.nodummies()
 
@@ -124,7 +128,7 @@ cdef class CompiledPolynomialFunction:
             temp = self._dag.value               #for an explanation
             pd_clean(self._dag)                  #of these 3 lines
             return temp
-        except TypeError,msg:
+        except TypeError as msg:
             self._dag.reset()
             raise TypeError, msg
 
@@ -191,9 +195,12 @@ cdef class CompiledPolynomialFunction:
         squaring nodes, we give the current dummy node a usable dag of the
         appropriate type, which treats the nodes being operated on as
         argument.  That is, if we want to multiply nodes A and B, and
-        give the result to M, we would call
+        give the result to M, we would call ::
+
             M.fill(mul_pd(A,B))
-        and refer to this operation as
+
+        and refer to this operation as ::
+
             M = A*B
 
         Sometimes we want a node that isn't in the tree.  In that case, we
@@ -204,21 +211,27 @@ cdef class CompiledPolynomialFunction:
 
         Fill in the gaps with the following algorithm:
 
-        Step 1: Remove max node from the tree, denote its width m.
-                If m == 1, halt.
-        Step 2: If m is even, check if m/2 is already in our tree.
-                If yes, square the node corresponding to m/2, and
-                go to step 1.
-        Step 3: Peek at the next-largest, and denote its width n.
-                Write m = qn+r.
-                If r != 0, get the node R, whose gap-width is r.
-                  Also, get the node QN, whose width is qn.
-                  Then, set M = R*QN and go to step 1.
-                If r == 0, we have two cases:
-                  q is even:  get/create the node for q/n, denote it T.
-                              Set M = T**2 and go to step 1.
-                  q is odd: get/create the node for (Q-1)*N, denote it T.
-                              Set M = T*N and go to step 1.
+        | Step 1:
+        |     Remove max node from the tree, denote its width m.
+        |     If m == 1, halt.
+        |
+        | Step 2:
+        |     If m is even, check if m/2 is already in our tree.
+        |     If yes, square the node corresponding to m/2, and go to step 1.
+        |
+        | Step 3:
+        |     Peek at the next-largest, and denote its width n.
+        |     Write m = qn+r.
+        |     If r != 0, get the node R, whose gap-width is r.
+        |         Also, get the node QN, whose width is qn.
+        |         Then, set M = R*QN and go to step 1.
+        |     If r == 0, we have two cases:
+        |         q is even:
+        |             get/create the node for q/n, denote it T.
+        |             Set M = T**2 and go to step 1.
+        |         q is odd:
+        |             get/create the node for (Q-1)*N, denote it T.
+        |             Set M = T*N and go to step 1.
 
         The r == 0 case in step 3 is equivalent to binary exponentiation.
         """

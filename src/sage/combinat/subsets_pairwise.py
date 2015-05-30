@@ -145,7 +145,7 @@ class PairwiseCompatibleSubsets(SearchForest):
             set(subset).issubset(self._ambient) and \
             all( self._predicate(x,y) for x,y in Subsets(subset,2) )
 
-    def post_process(self, (subset, rest) ):
+    def post_process(self, subset_rest):
         """
         TESTS::
 
@@ -158,9 +158,9 @@ class PairwiseCompatibleSubsets(SearchForest):
             sage: P.post_process( ((4,5), ()) )
             {4, 5}
         """
-        return self._element_class(subset)
+        return self._element_class(subset_rest[0])
 
-    def children(self, (subset, rest) ):
+    def children(self, subset_rest):
         """
         Returns the children of a node in the tree.
 
@@ -174,6 +174,7 @@ class PairwiseCompatibleSubsets(SearchForest):
             [((3, 5, 7), (11,)), ((3, 5, 11), (14,)), ((3, 5, 14), ())]
 
         """
+        (subset, rest) = subset_rest
         predicate = self._predicate
         result = []
         rest = list(rest)

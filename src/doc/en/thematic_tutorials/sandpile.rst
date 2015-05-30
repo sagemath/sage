@@ -77,9 +77,9 @@ Vertex 3 in the new configuration is now unstable.  The Sage code for this
 example follows. ::
 
     sage: g = {'sink':{},
-    ...        1:{'sink':1, 2:1, 3:2},
-    ...        2:{1:1, 3:1},
-    ...        3:{1:1, 2:1}}
+    ....:      1:{'sink':1, 2:1, 3:2},
+    ....:      2:{1:1, 3:1},
+    ....:      3:{1:1, 2:1}}
     sage: S = Sandpile(g, 'sink')   # create the sandpile
     sage: S.show(edge_labels=true)  # display the graph
 
@@ -256,7 +256,7 @@ directed multigraphs of Dhar's burning algorithm.
 **Example.** ::
 
     sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
-    ...        3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+    ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
     sage: G = Sandpile(g,0)
     sage: G.burning_config()
     {1: 2, 2: 0, 3: 1, 4: 1, 5: 0}
@@ -346,13 +346,14 @@ taken to be the sum of the number of times each vertex fires.
     sage: m = S.max_stable()
     sage: a = []
     sage: for i in range(10000):  # long time (15s on sage.math, 2012)
-    ...       m = m.add_random()
-    ...       m, f = m.stabilize(true)
-    ...       a.append(sum(f.values()))
+    ....:     m = m.add_random()
+    ....:     m, f = m.stabilize(true)
+    ....:     a.append(sum(f.values()))
     ...
     sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])  # long time
     sage: p.axes_labels(['log(N)','log(D(N))'])  # long time
     sage: p  # long time
+    Graphics object consisting of 1 graphics primitive
 
 .. figure:: media/sandpile/btw.png
    :align: center
@@ -550,7 +551,7 @@ non-homogeneous sandpile ideal with respect to `x_0.`
 **Example.**  ::
 
     sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
-    ...        3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+    ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
     sage: S = Sandpile(g, 0)
     sage: S.ring()
     Multivariate Polynomial Ring in x5, x4, x3, x2, x1, x0 over Rational Field
@@ -793,7 +794,7 @@ vertex.  There are four possible forms for ``graph``:
 1. a Python dictionary of dictionaries::
 
     sage: g = {0: {}, 1: {0: 1, 3: 1, 4: 1}, 2: {0: 1, 3: 1, 5: 1},
-    ...        3: {2: 1, 5: 1}, 4: {1: 1, 3: 1}, 5: {2: 1, 3: 1}}
+    ....:      3: {2: 1, 5: 1}, 4: {1: 1, 3: 1}, 5: {2: 1, 3: 1}}
 
 
 .. figure:: media/sandpile/initial.png
@@ -809,7 +810,7 @@ equal to ``weight``.  Loops are allowed. In the example above, all of the weight
 2. a Python dictionary of lists::
 
     sage: g = {0: [], 1: [0, 3, 4], 2: [0, 3, 5],
-    ...        3: [2, 5], 4: [1, 3], 5: [2, 3]}
+    ....:      3: [2, 5], 4: [1, 3], 5: [2, 3]}
 
 This is a short-hand when all of the edge-weights are equal to 1.  The above
 example is for the same displayed graph.
@@ -2715,9 +2716,9 @@ SandpileConfig
       sage: m = S.max_stable()
       sage: a = []
       sage: for i in range(1000):
-      ...       m = m.add_random()
-      ...       m, f = m.stabilize(True)
-      ...       a.append(sum(f.values()))
+      ....:     m = m.add_random()
+      ....:     m, f = m.stabilize(True)
+      ....:     a.append(sum(f.values()))
       ...
       sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
       sage: p.axes_labels(['log(N)','log(D(N))'])
@@ -4035,7 +4036,7 @@ Other
           {{0, 1}, {2}, {3}}],
          [{{0}, {1}, {2}, {3}}]]
         sage: for p in P: # long time
-        ...    sum([partition_sandpile(S, i).betti(verbose=false)[-1] for i in p]) # long time
+        ....:     sum([partition_sandpile(S, i).betti(verbose=false)[-1] for i in p]) # long time
         6
         8
         3
@@ -4066,19 +4067,29 @@ Other
     EXAMPLES::
 
         sage: aztec_sandpile(2)
-        {'sink': {(3/2, 1/2): 2, (-1/2, -3/2): 2, (-3/2, 1/2): 2, (1/2, 3/2): 2,
-        (1/2, -3/2): 2, (-3/2, -1/2): 2, (-1/2, 3/2): 2, (3/2, -1/2): 2},
-        (1/2, 3/2): {(-1/2, 3/2): 1, (1/2, 1/2): 1, 'sink': 2}, (1/2, 1/2):
-        {(1/2, -1/2): 1, (3/2, 1/2): 1, (1/2, 3/2): 1, (-1/2, 1/2): 1},
-        (-3/2, 1/2): {(-3/2, -1/2): 1, 'sink': 2, (-1/2, 1/2): 1}, (-1/2, -1/2):
-        {(-3/2, -1/2): 1, (1/2, -1/2): 1, (-1/2, -3/2): 1, (-1/2, 1/2): 1},
-        (-1/2, 1/2): {(-3/2, 1/2): 1, (-1/2, -1/2): 1, (-1/2, 3/2): 1,
-        (1/2, 1/2): 1}, (-3/2, -1/2): {(-3/2, 1/2): 1, (-1/2, -1/2): 1, 'sink': 2},
-        (3/2, 1/2): {(1/2, 1/2): 1, (3/2, -1/2): 1, 'sink': 2}, (-1/2, 3/2):
-        {(1/2, 3/2): 1, 'sink': 2, (-1/2, 1/2): 1}, (1/2, -3/2): {(1/2, -1/2): 1,
-        (-1/2, -3/2): 1, 'sink': 2}, (3/2, -1/2): {(3/2, 1/2): 1, (1/2, -1/2): 1,
-        'sink': 2}, (1/2, -1/2): {(1/2, -3/2): 1, (-1/2, -1/2): 1, (1/2, 1/2): 1,
-        (3/2, -1/2): 1}, (-1/2, -3/2): {(-1/2, -1/2): 1, 'sink': 2, (1/2, -3/2): 1}}
+        {'sink': {(-3/2, -1/2): 2,
+          (-3/2, 1/2): 2,
+          (-1/2, -3/2): 2,
+          (-1/2, 3/2): 2,
+          (1/2, -3/2): 2,
+          (1/2, 3/2): 2,
+          (3/2, -1/2): 2,
+          (3/2, 1/2): 2},
+         (-3/2, -1/2): {'sink': 2, (-3/2, 1/2): 1, (-1/2, -1/2): 1},
+         (-3/2, 1/2): {'sink': 2, (-3/2, -1/2): 1, (-1/2, 1/2): 1},
+         (-1/2, -3/2): {'sink': 2, (-1/2, -1/2): 1, (1/2, -3/2): 1},
+         (-1/2, -1/2): {(-3/2, -1/2): 1,
+          (-1/2, -3/2): 1,
+          (-1/2, 1/2): 1,
+          (1/2, -1/2): 1},
+         (-1/2, 1/2): {(-3/2, 1/2): 1, (-1/2, -1/2): 1, (-1/2, 3/2): 1, (1/2, 1/2): 1},
+         (-1/2, 3/2): {'sink': 2, (-1/2, 1/2): 1, (1/2, 3/2): 1},
+         (1/2, -3/2): {'sink': 2, (-1/2, -3/2): 1, (1/2, -1/2): 1},
+         (1/2, -1/2): {(-1/2, -1/2): 1, (1/2, -3/2): 1, (1/2, 1/2): 1, (3/2, -1/2): 1},
+         (1/2, 1/2): {(-1/2, 1/2): 1, (1/2, -1/2): 1, (1/2, 3/2): 1, (3/2, 1/2): 1},
+         (1/2, 3/2): {'sink': 2, (-1/2, 3/2): 1, (1/2, 1/2): 1},
+         (3/2, -1/2): {'sink': 2, (1/2, -1/2): 1, (3/2, 1/2): 1},
+         (3/2, 1/2): {'sink': 2, (1/2, 1/2): 1, (3/2, -1/2): 1}}
         sage: Sandpile(aztec_sandpile(2),'sink').group_order()
         4542720
 
@@ -4196,9 +4207,14 @@ Other
         sage: glue_y = {0: 1, 1: 2, 3: 1}
         sage: z = glue_graphs(x,y,glue_x,glue_y)
         sage: z
-        {0: {}, 'y2': {'y1': 2}, 'y1': {0: 2}, 'x2': {'x0': 1, 'x1': 1},
-        'x3': {'x2': 1, 'x0': 1, 'x1': 1}, 'y3': {0: 1, 'y2': 1},
-        'x1': {'x0': 1}, 'x0': {0: 1, 'x3': 2, 'y3': 1, 'x1': 1, 'y1': 2}}
+        {0: {},
+         'x0': {0: 1, 'x1': 1, 'x3': 2, 'y1': 2, 'y3': 1},
+         'x1': {'x0': 1},
+         'x2': {'x0': 1, 'x1': 1},
+         'x3': {'x0': 1, 'x1': 1, 'x2': 1},
+         'y1': {0: 2},
+         'y2': {'y1': 2},
+         'y3': {0: 1, 'y2': 1}}
         sage: S = Sandpile(z,0)
         sage: S.h_vector()
         [1, 6, 17, 31, 41, 41, 31, 17, 6, 1]
@@ -4233,19 +4249,19 @@ Other
     EXAMPLES::
 
         sage: grid_sandpile(3,4).dict()
-        {(1, 2): {(1, 1): 1, (1, 3): 1, 'sink': 1, (2, 2): 1},
-        (3, 2): {(3, 3): 1, (3, 1): 1, 'sink': 1, (2, 2): 1},
-        (1, 3): {(1, 2): 1, (2, 3): 1, 'sink': 1, (1, 4): 1},
-        (3, 3): {(2, 3): 1, (3, 2): 1, (3, 4): 1, 'sink': 1},
-        (3, 1): {(3, 2): 1, 'sink': 2, (2, 1): 1},
-        (1, 4): {(1, 3): 1, (2, 4): 1, 'sink': 2},
-        (2, 4): {(2, 3): 1, (3, 4): 1, 'sink': 1, (1, 4): 1},
-        (2, 3): {(3, 3): 1, (1, 3): 1, (2, 4): 1, (2, 2): 1},
-        (2, 1): {(1, 1): 1, (3, 1): 1, 'sink': 1, (2, 2): 1},
-        (2, 2): {(1, 2): 1, (3, 2): 1, (2, 3): 1, (2, 1): 1},
-        (3, 4): {(2, 4): 1, (3, 3): 1, 'sink': 2},
-        (1, 1): {(1, 2): 1, 'sink': 2, (2, 1): 1},
-        'sink': {}}
+        {'sink': {},
+         (1, 1): {'sink': 2, (1, 2): 1, (2, 1): 1},
+         (1, 2): {'sink': 1, (1, 1): 1, (1, 3): 1, (2, 2): 1},
+         (1, 3): {'sink': 1, (1, 2): 1, (1, 4): 1, (2, 3): 1},
+         (1, 4): {'sink': 2, (1, 3): 1, (2, 4): 1},
+         (2, 1): {'sink': 1, (1, 1): 1, (2, 2): 1, (3, 1): 1},
+         (2, 2): {(1, 2): 1, (2, 1): 1, (2, 3): 1, (3, 2): 1},
+         (2, 3): {(1, 3): 1, (2, 2): 1, (2, 4): 1, (3, 3): 1},
+         (2, 4): {'sink': 1, (1, 4): 1, (2, 3): 1, (3, 4): 1},
+         (3, 1): {'sink': 2, (2, 1): 1, (3, 2): 1},
+         (3, 2): {'sink': 1, (2, 2): 1, (3, 1): 1, (3, 3): 1},
+         (3, 3): {'sink': 1, (2, 3): 1, (3, 2): 1, (3, 4): 1},
+         (3, 4): {'sink': 2, (2, 4): 1, (3, 3): 1}}
         sage: grid_sandpile(3,4).group_order()
         4140081
 
@@ -4322,7 +4338,7 @@ Other
         sage: S = Sandpile(graphs.CycleGraph(4), 0)
         sage: P = [admissible_partitions(S, i) for i in [2,3,4]]
         sage: for p in P:  #long time
-        ...       sum([partition_sandpile(S, i).betti(verbose=false)[-1] for i in p]) # long time
+        ....:     sum([partition_sandpile(S, i).betti(verbose=false)[-1] for i in p]) # long time
         6
         8
         3

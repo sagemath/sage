@@ -1,0 +1,31 @@
+= dateutil =
+
+== Description ==
+
+The dateutil module provides powerful extensions to the standard
+datetime module.
+
+== License ==
+
+Simplified BSD License
+
+== SPKG Maintainers ==
+
+John H. Palmieri
+
+== Upstream Contact ==
+
+Author: Gustavo Niemeyer <gustavo@niemeyer.net>
+Home page: http://labix.org/python-dateutil
+
+== Dependencies ==
+
+* Python
+* Six
+
+== Changelog ==
+
+=== dateutil-2.2 (John H. Palmieri, 20 December 2013) ===
+
+ * Trac #14993: initial release.
+

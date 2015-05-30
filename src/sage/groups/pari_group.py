@@ -38,7 +38,7 @@ class PariGroup(Group):
                                            "_test_some_elements"])
         """
         if not isinstance(x, pari_gen):
-            raise TypeError, "x (=%s) must be a PARI gen"%x
+            raise TypeError("x (=%s) must be a PARI gen"%x)
         self.__x = x
         self.__degree = degree
         from sage.categories.finite_groups import FiniteGroups

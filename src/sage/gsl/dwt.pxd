@@ -1,5 +1,3 @@
-include 'sage/ext/cdefs.pxi'
-include 'sage/ext/interrupt.pxi'
 include "gsl_wavelet.pxi"
 import gsl_array
 cimport gsl_array

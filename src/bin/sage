@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
-usage() {
-    echo "----------------------------------------------------------------------"
-    grep -i version "$SAGE_LOCAL/bin/sage-banner"
-    echo "----------------------------------------------------------------------"
+help_banner() {
+    grep -v 'Type' "$SAGE_LOCAL/bin/sage-banner"
     echo
+}
+
+usage() {
+    help_banner
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Optional arguments:"
-    echo "  file.<sage|py|spyx> -- run given .sage, .py or .spyx files"
+    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
     echo "  -advanced           -- list all command line options"
     echo "  -c <cmd>            -- Evaluates cmd as sage code"
     echo "  -experimental       -- list all experimental packages that can be installed"
@@ -16,11 +18,13 @@ usage() {
     echo "  -gp [...]           -- run Sage's PARI/GP calculator with given arguments"
     echo "  -h, -?              -- print this help message"
     echo "  -i [packages]       -- install the given Sage packages"
-    echo "  -inotebook [...]    -- start the *insecure* Sage notebook"
+    echo "  -pip [...]          -- invoke pip, the Python package manager"
+    echo "  -inotebook [...]    -- start the *insecure* Sage notebook (deprecated)"
     echo "  -maxima [...]       -- run Sage's Maxima with given arguments"
     echo "  -mwrank [...]       -- run Sage's mwrank with given arguments"
-    echo "  -n, -notebook [...] -- start the Sage notebook (options are the same"
-    echo "                         as for the notebook command in Sage)"
+    echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
+    echo "                         'default', 'sagenb', and 'ipython')"
+    echo "  -n, --notebook      -- shortcut for --notebook=default"
     echo "  -optional           -- list all optional packages that can be installed"
     echo "  -python [...]       -- run the Python interpreter"
     echo "  -R [...]            -- run Sage's R with given arguments"
@@ -39,21 +43,18 @@ usage() {
     echo "                           --help - show all testing options"
     echo "  -upgrade [version]  -- download, build and install the given version. Here,"
     echo "                         'version' is a git branch or tag name. Useful values"
-    echo "                         are 'master' (the currend development version, this"
+    echo "                         are 'master' (the current development version, this"
     echo "                         is the default) or a version number like '5.13'."
-    echo "  -v, -version        -- print the Sage version"
+    echo "  -v, -version        -- display Sage version information"
     exit 0
 }
 
 usage_advanced() {
-    echo "----------------------------------------------------------------------"
-    grep -i version "$SAGE_LOCAL/bin/sage-banner"
-    echo "----------------------------------------------------------------------"
-    echo
+    help_banner
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Running Sage:"
-    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx files"
+    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
     echo "  -advanced           -- print this advanced help message"
     echo "  -c <cmd>            -- Evaluates cmd as sage code"
     echo "  -h, -?              -- print short help message"
@@ -64,17 +65,24 @@ usage_advanced() {
     echo "  -root               -- print the Sage root directory"
     echo "  -gthread, -qthread, -q4thread, -wthread, -pylab"
     echo "                      -- pass the option through to ipython"
-    echo "  -v, -version        -- print the Sage version"
+    echo "  -v, -version        -- display Sage version information"
+    echo "  -dumpversion        -- print Sage version"
+    echo "  -git-branch         -- print the current git branch"
 
     echo
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Running the notebook:"
+    echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
+    echo "                         'default', 'sagenb', and 'ipython'). See the output"
+    echo "                         of sage --notebook --help for more details and"
+    echo "                         examples of how to pass optional arguments"
     echo "  -bn, -build-and-notebook [...] -- build the Sage library then start"
     echo "                         the Sage notebook"
-    echo "  -inotebook [...]    -- start the *insecure* Sage notebook"
-    echo "  -n, -notebook [...] -- start the Sage notebook (options are the same"
-    echo "                         as for the notebook command in Sage)"
+    echo "  -inotebook [...]    -- start the *insecure* Sage notebook (deprecated)"
+    echo "  -n, -notebook [...] -- start the default Sage notebook (options are the"
+    echo "                         same as for the notebook command in Sage).  See the"
+    echo "                         output of sage -n -h for more details"
 
     echo
     ####  1.......................26..................................................78
@@ -123,36 +131,29 @@ usage_advanced() {
     echo "  -info [packages]    -- print the SPKG.txt of the given packages"
     echo "  -optional           -- list all optional packages that can be installed"
     echo "  -standard           -- list all standard packages that can be installed"
+    echo "  -installed          -- list all installed packages"
    #echo "  -update             -- download latest non-optional Sage packages (do not build them)"
    #echo "  -update-build       -- build and install all downloaded non-optional Sage packages"
     echo "  -upgrade [version]  -- download, build and install the given version. Here,"
     echo "                         'version' is a git branch or tag name. Useful values"
-    echo "                         are 'master' (the currend development version, this"
+    echo "                         are 'master' (the current development version, this"
     echo "                         is the default) or a version number like '5.13'."
 
     echo
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Building and testing the Sage library:"
-    echo "  -b [branch]         -- build Sage library.  If branch is given, switch to"
-    echo "                         branch in devel/sage-branch and build that branch"
-    echo "  -sync-build         -- delete old code and other files in the Sage library"
-    echo "                         that have already been deleted from devel/sage but"
-    echo "                         remain in the build directory.  This is sometimes"
-    echo "                         necessary because \`sage -b\` merely copies new or"
-    echo "                         modified files to the target directory."
-    echo "  -ba [branch]        -- same as -b and rebuild all Cython code"
-    echo "  -ba-force [branch]  -- same as -ba, but don't query before rebuilding"
-    echo "  -br [branch]        -- switch to, build, and run Sage given branch"
+    echo "  -b                  -- build Sage library."
+    echo "  -ba                 -- same as -b and rebuild all Cython code"
+    echo "  -ba-force           -- same as -ba, but don't query before rebuilding"
+    echo "  -br                 -- build and run Sage"
     echo "  -bt [...]           -- build and test, options like -t below"
     echo "  -btp <N> [...]      -- build and test parallel, options like -tp below"
     echo "  -btnew [...]        -- build and test modified files, options like -tnew"
     echo "  -fixdoctests <file.py> [output_file] [--long]"
-    echo "                      -- writes a new version of file.py to output_file"
-    echo "                         (defaults: to file.py.out) that will pass the doctests."
-    echo "                         With the optional --long argument the long time tests"
-    echo "                         are also checked."
-    echo "                         A patch for the new file is printed to stdout."
+    echo "                      -- replace failing doctests with the actual output. With"
+    echo "                         optional output_file: redirect there. With the --long"
+    echo "                         option: include #long time tests."
     echo "  -startuptime [module] -- display how long each component of Sage takes to"
     echo "                         start up; optionally specify a module to get more"
     echo "                         details about that particular module"
@@ -169,6 +170,7 @@ usage_advanced() {
     echo "                           --failed - only test files that failed last test"
     echo "                           --sagenb - test all sagenb files"
     echo "                           --help - show all testing options"
+    echo "                           --warn-long [timeout] - warning if doctest is slow"
     echo "  -tp <N> [...]       -- like -t above, but tests in parallel using N threads"
     echo "                         with 0 interpreted as a sensible default"
     echo "  -testall [options]  -- test all source files, docs, and examples.  options"
@@ -202,9 +204,7 @@ usage_advanced() {
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Making Sage packages or distributions:"
-    echo "  -bdist VER          -- build a binary distribution of Sage"
-    echo "  -combinat [...]     -- run sage-combinat patch management script"
-    echo "  -crap sage-ver.tar  -- detect suspicious garbage in sage source tarball"
+    echo "  -bdist <tmpdir>     -- build a binary distribution of Sage"
     echo "  -pkg <dir>          -- create Sage package dir.spkg from a given directory"
     echo "  -pkg_nc <dir>       -- as -pkg, but do not compress the package"
     echo "  -sdist              -- build a source distribution of Sage"
@@ -247,6 +247,14 @@ if [ "$1" = '--nodotsage' ]; then
     exit $status
 fi
 
+# Check for '--patchbot' before sourcing sage-env: patchbot needs
+# an unclobbered environment before testing unsafe tickets.
+if [ "$1" = '-patchbot' -o "$1" = "--patchbot" ]; then
+    shift
+    cd "$SAGE_ROOT"
+    exec local/bin/patchbot/patchbot.py "$@"
+fi
+
 # Check for '--upgrade' before sourcing sage-env: the top-level "make"
 # should be run outside of the Sage shell, see #15517.
 if [ "$1" = '-upgrade' -o "$1" = "--upgrade" ]; then
@@ -275,7 +283,6 @@ if [ $# -gt 0 ]; then
      usage_advanced
   fi
 fi
-
 
 # Prepare for running Sage, either interactively or non-interactively.
 sage_setup() {
@@ -350,11 +357,16 @@ fi
 # Report information about the Sage environment
 #####################################################################
 
+if [ "$1" = '-dumpversion' -o "$1" = '--dumpversion' ]; then
+	. "$SAGE_LOCAL"/bin/sage-version.sh
+	echo ${SAGE_VERSION}
+	exit 0
+fi
+
 if [ "$1" = '-v' -o "$1" = '-version' -o "$1" = '--version' ]; then
-    # Workaround for OSX, see http://trac.sagemath.org/15072
-    export LC_ALL=C
-    exec sed -n -e 's/.*\(Sage Version.*Date: [0-9-]*\).*/\1/p' \
-        "$SAGE_LOCAL"/bin/sage-banner
+	. "$SAGE_LOCAL"/bin/sage-version.sh
+	echo "SageMath Version ${SAGE_VERSION}, Release Date: ${SAGE_RELEASE_DATE}"
+	exit 0
 fi
 
 if [ "$1" = '-root'  -o "$1" = '--root' ]; then
@@ -369,11 +381,6 @@ fi
 if [ "$1" = '-axiom' -o "$1" = '--axiom' ]; then
     shift
     exec axiom "$@"
-fi
-
-if [ "$1" = '-combinat' -o "$1" = '--combinat' ]; then
-    shift
-    exec sage-combinat "$@"
 fi
 
 if [ "$1" = '-gap' -o "$1" = '--gap' ]; then
@@ -446,6 +453,11 @@ if [ "$1" = '-scons' -o "$1" = '--scons' ]; then
     exec scons "$@"
 fi
 
+if [ "$1" = '-pip' -o "$1" = '--pip' ]; then
+    shift
+    exec pip "$@"
+fi
+
 if [ "$1" = '-python' -o "$1" = '--python' ]; then
     shift
     exec python "$@"
@@ -464,6 +476,11 @@ fi
 if [ "$1" = '-git' -o "$1" = '--git' ]; then
     shift
     exec git "$@"
+fi
+
+if [ "$1" = '-git-branch' -o "$1" = '--git-branch' ]; then
+    shift
+    exec git --git-dir="$SAGE_ROOT"/.git rev-parse --abbrev-ref HEAD
 fi
 
 if [ "$1" = '-sh' -o "$1" = '--sh' ]; then
@@ -613,25 +630,20 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2sws' ]; then
 fi
 
 #####################################################################
-# Crap
-#####################################################################
-
-if [ "$1" = "-crap" -o "$1" = "--crap" ]; then
-    shift
-    exec sage-crap $@
-fi
-
-#####################################################################
 # Run Sage's versions of the standard Algebra/Geometry etc. software
 #####################################################################
 
 build_sage() {
     maybe_sage_location
-    sage-build "$@" || exit $?
+    ( cd "$SAGE_SRC" && $MAKE ) || exit $?
 }
 
+if [[ "$1" =~ ^--notebook=.* || "$1" =~ ^-n=.* || "$1" =~ ^-notebook=.* ]] ; then
+    sage-cleaner &>/dev/null &
+    exec sage-notebook "$@"
+fi
+
 if [ "$1" = "-notebook" -o "$1" = '--notebook' -o "$1" = '-n' ]; then
-    shift
     sage-cleaner &>/dev/null &
     exec sage-notebook "$@"
 fi
@@ -640,13 +652,13 @@ if [ "$1" = "-bn" -o "$1" = "--build-and-notebook" ]; then
     shift
     build_sage
     sage-cleaner &>/dev/null &
-    exec sage-notebook "$@"
+    exec sage-notebook --notebook=default "$@"
 fi
 
 if [ "$1" = "-inotebook" -o "$1" = '--inotebook' ]; then
     shift
     sage-cleaner &>/dev/null &
-    exec sage-notebook-insecure "$@"
+    exec sage-notebook --notebook=sagenb secure=False "$@"
 fi
 
 if [ "$1" = '-grep' -o "$1" = "--grep" -o "$1" = "-search_src" -o "$1" = "--search_src" ]; then
@@ -662,14 +674,12 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grepdoc" -o "$1" = "-search_doc" -o "$1" = "
 fi
 
 if [ "$1" = '-b' ]; then
-    shift
-    time build_sage "$@"
+    time build_sage
     exit $?
 fi
 
 if [ "$1" = '-br' -o "$1" = "--br" ]; then
-    shift
-    build_sage "$@"
+    build_sage
     interactive_sage
 fi
 
@@ -678,35 +688,10 @@ if [ "$1" = '-r' ]; then
    interactive_sage
 fi
 
-if [ "$1" = '-ba' ]; then
-    shift
-    echo " *** WARNING ***"
-    echo " You are about to rebuild the entire Sage library."
-    echo " This will take a significant amount of time."
-    echo " (Use --ba-force instead of -ba to skip this prompt.)"
-    echo -n " Do you want to proceed? [y/n] "
-    read CHOICE
-    while [ "$CHOICE" != "y" -a "$CHOICE" != "n" ]; do
-        echo -n " Choose one of y, n: "
-        read CHOICE
-    done
-    if [ $CHOICE = 'n' ]; then
-        exit 0
-    fi
-    build_sage -b "$@"
+if [ "$1" = '-ba' -o "$1" = '-ba-force' -o "$1" = '--ba-force' ]; then
+    ( cd "$SAGE_SRC" && make clean )
+    build_sage
     exit $?
-fi
-
-if [ "$1" = '-ba-force' -o "$1" = '--ba-force' ]; then
-    shift
-    build_sage -b "$@"
-    exit $?
-fi
-
-if [ "$1" = '-sync-build' -o "$1" = '--sync-build' ]; then
-    shift
-    cd "$SAGE_ROOT"
-    exec sage-sync-build.py "$@"
 fi
 
 if [ "$1" = '-t' -o "$1" = '-bt' -o "$1" = '-tp' -o "$1" = '-btp' ]; then
@@ -719,6 +704,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1" = '-tp' -o "$1" = '-btp' ]; then
     fi
     SAGE_BANNER="no"
     sage_setup
+    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
     if [ "$1" = '-tp' -o "$1" = '-btp' ]; then
         shift
         exec sage-runtests -p "$@"
@@ -735,6 +721,7 @@ if [ "$1" = '-tnew' -o "$1" = '-btnew' ]; then
     shift
     SAGE_BANNER="no"
     sage_setup
+    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
     exec sage-runtests --new "$@"
 fi
 
@@ -742,13 +729,8 @@ if [ "$1" = '-testall' -o "$1" = "--testall" ]; then
     shift
     SAGE_BANNER="no"
     sage_setup
+    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
     exec sage-runtests -a "$@"
-fi
-
-if [ "$1" = '-patchbot' -o "$1" = "--patchbot" ]; then
-    shift
-    cd "$SAGE_ROOT"
-    exec "$SAGE_LOCAL/bin/patchbot/patchbot.py" "$@"
 fi
 
 if [ "$1" = '-c' ]; then
@@ -797,19 +779,31 @@ install() {
             exit 1
         fi
     done
+    # Display a message if we actually installed something (using this
+    # file, generated by sage-spkg, is a bit of a hack though)
+    if [ -f "$SAGE_LOCAL/lib/sage-force-relocate.txt" ]; then
+        echo
+        echo "Warning: it might be needed to update the Sage library before"
+        echo "installed packages work: you should run 'make' from \$SAGE_ROOT"
+        echo "before running Sage."
+    fi
     exit 0
 }
 
 if [ "$1" = '-optional' -o "$1" = "--optional" ]; then
-    exec sage-list-optional
+    exec sage-list-packages optional
 fi
 
 if [ "$1" = '-experimental' -o "$1" = "--experimental" ]; then
-    exec sage-list-experimental
+    exec sage-list-packages experimental
 fi
 
 if [ "$1" = '-standard' -o "$1" = "--standard" ]; then
-    exec sage-list-standard
+    exec sage-list-packages standard
+fi
+
+if [ "$1" = '-installed' -o "$1" = "--installed" ]; then
+    exec sage-list-packages installed
 fi
 
 if [ "$1" = '-i' ]; then
@@ -885,7 +879,7 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
             -args python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
     else
         cygdb "$SAGE_SRC/build" "$SAGE_SRC/sage" \
-            -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
+            -- -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
             -args python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
     fi
     exit $?

@@ -9,6 +9,7 @@ Weyl Groups
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
+from sage.misc.lazy_import import LazyImport
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.rings.infinity import infinity
@@ -23,7 +24,7 @@ class WeylGroups(Category_singleton):
 
     EXAMPLES::
 
-        sage: WeylGroups()                      # todo: uppercase for Weyl
+        sage: WeylGroups()
         Category of weyl groups
         sage: WeylGroups().super_categories()
         [Category of coxeter groups]
@@ -57,6 +58,25 @@ class WeylGroups(Category_singleton):
         """
         return [CoxeterGroups()]
 
+    def additional_structure(self):
+        r"""
+        Return  ``None``.
+
+        Indeed, the category of Weyl groups defines no additional
+        structure: Weyl groups are a special class of Coxeter groups.
+
+        .. SEEALSO:: :meth:`Category.additional_structure`
+
+        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+
+        EXAMPLES::
+
+            sage: WeylGroups().additional_structure()
+        """
+        return None
+
+    Finite = LazyImport('sage.categories.finite_weyl_groups', 'FiniteWeylGroups')
+
     class ParentMethods:
 
         def pieri_factors(self, *args, **keywords):
@@ -71,10 +91,10 @@ class WeylGroups(Category_singleton):
 
             These are used to compute Stanley symmetric functions.
 
-            See also:
+            .. SEEALSO::
 
-             * :meth:WeylGroups.ElementMethods.stanley_symmetric_function`
-             * :mod:`sage.combinat.root_system.pieri_factors`
+                * :meth:`WeylGroups.ElementMethods.stanley_symmetric_function`
+                * :mod:`sage.combinat.root_system.pieri_factors`
 
             EXAMPLES::
 
@@ -94,13 +114,12 @@ class WeylGroups(Category_singleton):
                 True
             """
             # Do not remove this line which makes sure the pieri factor
-            # code is properly inserted inside the cartan types
+            # code is properly inserted inside the Cartan Types
             import sage.combinat.root_system.pieri_factors
             ct = self.cartan_type()
             if hasattr(ct, "PieriFactors"):
                 return ct.PieriFactors(self, *args, **keywords)
-            else:
-                raise NotImplementedError("Pieri factors for type %s"%ct)
+            raise NotImplementedError("Pieri factors for type {}".format(ct))
 
         @cached_method
         def quantum_bruhat_graph(self, index_set = ()):
@@ -133,11 +152,11 @@ class WeylGroups(Category_singleton):
                 ValueError: The Cartan type ['A', 3, 1] is not finite
             """
             if not self.cartan_type().is_finite():
-                raise ValueError, "The Cartan type %s is not finite"%(self.cartan_type())
+                raise ValueError("The Cartan type {} is not finite".format(self.cartan_type()))
             from sage.graphs.digraph import DiGraph
             WP = [x for x in self if x==x.coset_representative(index_set)]
             return DiGraph([[x,i[0],i[1]] for x in WP for i in x.quantum_bruhat_successors(index_set, roots = True)],
-                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self.__repr__(),index_set))
+                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set))
 
     class ElementMethods:
 
@@ -146,10 +165,10 @@ class WeylGroups(Category_singleton):
             Returns whether ``self`` is a Pieri factor, as used for
             computing Stanley symmetric functions.
 
-            See also:
+            .. SEEALSO::
 
-             * :meth:`stanley_symmetric_function`
-             * :meth:`WeylGroups.ParentMethods.pieri_factors`
+                * :meth:`stanley_symmetric_function`
+                * :meth:`WeylGroups.ParentMethods.pieri_factors`
 
             EXAMPLES::
 
@@ -180,10 +199,10 @@ class WeylGroups(Category_singleton):
             Returns all factorizations of ``self`` as `uv`, where `u`
             is a Pieri factor and `v` is an element of the Weyl group.
 
-            See also:
+            .. SEEALSO::
 
-             * :meth:`WeylGroups.ParentMethods.pieri_factors`
-             * :mod:`sage.combinat.root_system.pieri_factors`
+                * :meth:`WeylGroups.ParentMethods.pieri_factors`
+                * :mod:`sage.combinat.root_system.pieri_factors`
 
             EXAMPLES:
 
@@ -245,10 +264,11 @@ class WeylGroups(Category_singleton):
             factors of decreasing length, weighted by a statistic on
             Pieri factors.
 
-            See also:
-             * :meth:stanley_symmetric_function`
-             * :meth:`WeylGroups.ParentMethods.pieri_factors`
-             * :mod:`sage.combinat.root_system.pieri_factors`
+            .. SEEALSO::
+
+                * :meth:`stanley_symmetric_function`
+                * :meth:`WeylGroups.ParentMethods.pieri_factors`
+                * :mod:`sage.combinat.root_system.pieri_factors`
 
             INPUT:
 
@@ -258,7 +278,7 @@ class WeylGroups(Category_singleton):
             Returns the generating series for the Pieri factorizations
             `w = u_1 \cdots u_k`, where `u_i` is a Pieri factor for
             all `i`, `l(w) = \sum_{i=1}^k l(u_i)` and
-            ``max_length```\geq l(u_1) \geq \dots \geq l(u_k)`.
+            ``max_length`` `\geq l(u_1) \geq \cdots \geq l(u_k)`.
 
             A factorization `u_1 \cdots u_k` contributes a monomial of
             the form `\prod_i x_{l(u_i)}`, with coefficient given by
@@ -304,27 +324,39 @@ class WeylGroups(Category_singleton):
             R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
             x = R.gens()
             if self.is_one():
-                return R(1)
+                return R.one()
 
             return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length = u.length())
                            for (u,v) in self.left_pieri_factorizations(max_length)
-                           if u != W.unit()))
+                           if u != W.one()))
 
 
         def stanley_symmetric_function(self):
             r"""
+            Return the affine Stanley symmetric function indexed by ``self``.
+
             INPUT:
-                - ``self`` -- an element `w` of a Weyl group
+
+            - ``self`` -- an element `w` of a Weyl group
 
             Returns the affine Stanley symmetric function indexed by
             `w`. Stanley symmetric functions are defined as generating
             series of the factorizations of `w` into Pieri factors and
             weighted by a statistic on Pieri factors.
 
+            .. SEEALSO::
+
+                * :meth:`stanley_symmetric_function_as_polynomial`
+                * :meth:`WeylGroups.ParentMethods.pieri_factors`
+                * :mod:`sage.combinat.root_system.pieri_factors`
+
             EXAMPLES::
 
                 sage: W = WeylGroup(['A', 3, 1])
                 sage: W.from_reduced_word([3,1,2,0,3,1,0]).stanley_symmetric_function()
+                8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1] + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
+                sage: A = AffinePermutationGroup(['A',3,1])
+                sage: A.from_reduced_word([3,1,2,0,3,1,0]).stanley_symmetric_function()
                 8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1] + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
 
                 sage: W = WeylGroup(['C',3,1])
@@ -340,17 +372,33 @@ class WeylGroups(Category_singleton):
                 sage: w.stanley_symmetric_function()  # long time (6s on sage.math, 2011)
                 48*m[1, 1, 1, 1] + 24*m[2, 1, 1] + 12*m[2, 2] + 8*m[3, 1] + 2*m[4]
 
-             * :meth:stanley_symmetric_function_as_polynomial`
-             * :meth:`WeylGroups.ParentMethods.pieri_factors`
-             * :mod:`sage.combinat.root_system.pieri_factors`
+                sage: A = AffinePermutationGroup(['A',4,1])
+                sage: a = A([-2,0,1,4,12])
+                sage: a.stanley_symmetric_function()
+                6*m[1, 1, 1, 1, 1, 1, 1, 1] + 5*m[2, 1, 1, 1, 1, 1, 1] + 4*m[2, 2, 1, 1, 1, 1]
+                + 3*m[2, 2, 2, 1, 1] + 2*m[2, 2, 2, 2] + 4*m[3, 1, 1, 1, 1, 1] + 3*m[3, 2, 1, 1, 1]
+                + 2*m[3, 2, 2, 1] + 2*m[3, 3, 1, 1] + m[3, 3, 2] + 3*m[4, 1, 1, 1, 1] + 2*m[4, 2, 1, 1]
+                + m[4, 2, 2] + m[4, 3, 1]
+
+            One more example (:trac:`14095`)::
+
+                sage: G = SymmetricGroup(4)
+                sage: w = G.from_reduced_word([3,2,3,1])
+                sage: w.stanley_symmetric_function()
+                3*m[1, 1, 1, 1] + 2*m[2, 1, 1] + m[2, 2] + m[3, 1]
 
             REFERENCES:
 
-                .. [BH1994] S. Billey, M. Haiman.  Schubert polynomials for the classical groups. J. Amer. Math. Soc., 1994.
-                .. [Lam2008] T. Lam. Schubert polynomials for the affine Grassmannian.  J. Amer. Math. Soc., 2008.
-                .. [LSS2009] T. Lam, A. Schilling, M. Shimozono. Schubert polynomials for the affine Grassmannian of the symplectic group. Mathematische Zeitschrift 264(4) (2010) 765-811 (arXiv:0710.2720 [math.CO])
-                .. [Pon2010] S. Pon. Types B and D affine Stanley symmetric functions, unpublished PhD Thesis, UC Davis, 2010.
-
+            .. [BH1994] S. Billey, M. Haiman. *Schubert polynomials for the
+               classical groups*. J. Amer. Math. Soc., 1994.
+            .. [Lam2008] T. Lam. *Schubert polynomials for the affine
+               Grassmannian*. J. Amer. Math. Soc., 2008.
+            .. [LSS2009] T. Lam, A. Schilling, M. Shimozono. *Schubert
+               polynomials for the affine Grassmannian of the symplectic
+               group*. Mathematische Zeitschrift 264(4) (2010) 765-811
+               (:arxiv:`0710.2720`)
+            .. [Pon2010] S. Pon. *Types B and D affine Stanley symmetric
+               functions*, unpublished PhD Thesis, UC Davis, 2010.
             """
             import sage.combinat.sf
             m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
@@ -377,13 +425,13 @@ class WeylGroups(Category_singleton):
 
             i = self.first_descent()
             if i is None:
-                raise ValueError, "%s is not a reflection"%(self)
+                raise ValueError("{} is not a reflection".format(self))
             if self == self.parent().simple_reflection(i):
                 from sage.combinat.root_system.root_system import RootSystem
                 return RootSystem(self.parent().cartan_type()).root_lattice().simple_root(i)
                 #return self.parent().domain().simple_root(i)
             if not self.has_descent(i, side='left'):
-                raise ValueError, "%s is not a reflection"%(self)
+                raise ValueError("{} is not a reflection".format(self))
             return ((self.apply_conjugation_by_simple_reflection(i)).reflection_to_root()).simple_reflection(i)
 
         @cached_in_parent_method
@@ -407,13 +455,13 @@ class WeylGroups(Category_singleton):
 
             i = self.first_descent()
             if i is None:
-                raise ValueError, "%s is not a reflection"%(self)
+                raise ValueError("{} is not a reflection".format(self))
             if self == self.parent().simple_reflection(i):
                 from sage.combinat.root_system.root_system import RootSystem
                 return RootSystem(self.parent().cartan_type()).root_lattice().simple_coroot(i)
                 #return self.parent().domain().simple_coroot(i)
             if not self.has_descent(i, side='left'):
-                raise ValueError, "%s is not a reflection"%(self)
+                raise ValueError("{} is not a reflection".format(self))
             return ((self.apply_conjugation_by_simple_reflection(i)).reflection_to_coroot()).simple_reflection(i)
 
         def inversions(self, side = 'right', inversion_type = 'reflections'):
@@ -463,7 +511,52 @@ class WeylGroups(Category_singleton):
                 return [r.reflection_to_root() for r in reflections]
             if inversion_type == 'coroots':
                 return [r.reflection_to_coroot() for r in reflections]
-            raise ValueError, "inversion_type %s is invalid"%(inversion_type)
+            raise ValueError("inversion_type {} is invalid".format(inversion_type))
+
+        def inversion_arrangement(self, side='right'):
+            r"""
+            Return the inversion hyperplane arrangement of ``self``.
+
+            INPUT:
+
+            - ``side`` -- ``'right'`` (default) or ``'left'``
+
+            OUTPUT:
+
+            A (central) hyperplane arrangement whose hyperplanes correspond
+            to the inversions of ``self`` given as roots.
+
+            The ``side`` parameter determines on which side
+            to compute the inversions.
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(['A',3])
+                sage: w = W.from_reduced_word([1, 2, 3, 1, 2])
+                sage: A = w.inversion_arrangement(); A
+                Arrangement of 5 hyperplanes of dimension 3 and rank 3
+                sage: A.hyperplanes()
+                (Hyperplane 0*a1 + 0*a2 + a3 + 0,
+                 Hyperplane 0*a1 + a2 + 0*a3 + 0,
+                 Hyperplane 0*a1 + a2 + a3 + 0,
+                 Hyperplane a1 + a2 + 0*a3 + 0,
+                 Hyperplane a1 + a2 + a3 + 0)
+
+            The identity element gives the empty arrangement::
+
+                sage: W = WeylGroup(['A',3])
+                sage: W.one().inversion_arrangement()
+                Empty hyperplane arrangement of dimension 3
+            """
+            inv = self.inversions(side=side, inversion_type='roots')
+            from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
+            I = self.parent().cartan_type().index_set()
+            H = HyperplaneArrangements(QQ, tuple(['a{}'.format(i) for i in I]))
+            gens = H.gens()
+            if not inv:
+                return H()
+            return H([sum(c * gens[I.index(i)] for (i, c) in root)
+                      for root in inv])
 
         def bruhat_lower_covers_coroots(self):
             r"""
@@ -523,8 +616,8 @@ class WeylGroups(Category_singleton):
 
             - ``quantum_only`` -- (default: False) if True, returns only the quantum successors
 
-            Returns the successors of ``self`` in the quantum Bruhat graph on the parabolic quotient of the Weyl group determined
-            by the subset of Dynkin nodes ``index_set``.
+            Returns the successors of ``self`` in the quantum Bruhat graph on the parabolic
+            quotient of the Weyl group determined by the subset of Dynkin nodes ``index_set``.
 
             EXAMPLES::
 
@@ -544,25 +637,23 @@ class WeylGroups(Category_singleton):
                 sage: w.quantum_bruhat_successors([1,3])
                 Traceback (most recent call last):
                 ...
-                ValueError: s2*s3 is not of minimum length in its coset of the parabolic subgroup
-                generated by the reflections [1, 3]
+                ValueError: s2*s3 is not of minimum length in its coset of the parabolic subgroup generated by the reflections (1, 3)
 
             """
             W = self.parent()
             if not W.cartan_type().is_finite():
-                raise ValueError, "The Cartan type %s is not finite"%(W.cartan_type())
+                raise ValueError("The Cartan type {} is not finite".format(W.cartan_type()))
             if index_set is None:
                 index_set = []
             else:
                 index_set = [x for x in index_set]
+            index_set = tuple(index_set)
             if self != self.coset_representative(index_set):
-                raise ValueError, "%s is not of minimum length in its coset of the parabolic subgroup generated by the reflections %s"%(self,index_set)
+                raise ValueError("{} is not of minimum length in its coset of the parabolic subgroup generated by the reflections {}".format(self, index_set))
             lattice = W.cartan_type().root_system().root_lattice()
-            non_parab_roots = lattice.positive_roots_nonparabolic(tuple(index_set))
-            two_rho_minus_two_rho_P = lattice.positive_roots_nonparabolic_sum(tuple(index_set))
             w_length_plus_one = self.length() + 1
             successors = []
-            for alpha in non_parab_roots:
+            for alpha in lattice.nonparabolic_positive_roots(index_set):
                 wr = self * W.from_reduced_word(alpha.associated_reflection())
                 wrc = wr.coset_representative(index_set)
                 if wrc == wr and wr.length() == w_length_plus_one and not quantum_only:
@@ -570,7 +661,7 @@ class WeylGroups(Category_singleton):
                         successors.append((wr,alpha))
                     else:
                         successors.append(wr)
-                elif alpha.quantum_root() and wrc.length() == w_length_plus_one - two_rho_minus_two_rho_P.scalar(alpha.associated_coroot()):
+                elif alpha.quantum_root() and wrc.length() == w_length_plus_one - lattice.nonparabolic_positive_root_sum(index_set).scalar(alpha.associated_coroot()):
                     if roots:
                         successors.append((wrc,alpha))
                     else:

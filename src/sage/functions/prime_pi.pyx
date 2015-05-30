@@ -2,162 +2,236 @@
 Counting Primes
 
 AUTHORS:
-    * R. Andrew Ohana
-    * William Stein
 
-TESTS::
+- \R. Andrew Ohana (2009): initial version of efficient prime_pi
+
+- William Stein (2009): fix plot method
+
+- \R. Andrew Ohana (2011): complete rewrite, ~5x speedup
+
+EXAMPLES::
 
     sage: z = sage.functions.prime_pi.PrimePi()
     sage: loads(dumps(z))
-    Function that counts the number of primes up to x
+    prime_pi
     sage: loads(dumps(z)) == z
     True
 """
 
 #*****************************************************************************
-#       Copyright (C) 2009 R. Andrew Ohana <ohanar@u.washington.edu>
+#       Copyright (C) 2009,2011 R. Andrew Ohana <andrew.ohana@gmail.com>
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/cdefs.pxi'
 include 'sage/ext/stdsage.pxi'
 include 'sage/ext/interrupt.pxi'
+include 'sage/libs/pari/decl.pxi' # also declares diffptr (as extern char* [sic!])
 
-from sage.rings.integer import Integer
-from sage.rings.fast_arith import prime_range
-import sage.plot.all
+from libc.stdint cimport int_fast8_t, uint_fast16_t, uint8_t, uint32_t, uint64_t
+from sage.rings.integer cimport Integer
+from sage.libs.pari.all import pari
+from sage.symbolic.function cimport BuiltinFunction
 
-cdef extern from "math.h":
-    double sqrt(double)
-    double floor(double)
-    float sqrtf(float)
-    float floorf(float)
+cdef extern from "pari/pari.h":
+    cdef void NEXT_PRIME_VIADIFF(uint32_t, uint8_t *)
+    # Note that this is a generic (i.e. polymorphic) and somewhat ill-defined
+    # PARI macro (as it uses some kind of "call by name"), whose true signature
+    # cannot be expressed by a C prototype declaration, since its first para-
+    # meter can be of any (integral) number type, and both parameters are
+    # effectively passed *by reference* (i.e., get altered).
+    # We here use uint32_t for the first argument, while in effect a reference
+    # to a uint32_t is passed. Declaring it more correctly with uint32_t* as
+    # the type of its first parameter (and uint8_t** as the type of the second)
+    # would require changing the macro definition.
 
-cdef inline long sqrt_longlong(long long N) except -1:
-    """
-    Return the truncated integer part of the square root of N, i.e., the
-    floor of sqrt(N).
-    """
-    # code from Bill Hart.
-    cdef long long m = <long> floor(sqrt(<double> N))
-    cdef long long res = m + ((m+1)*(m+1) <= N)  # add 1 if too small.
-    res = res - (res*res > N)  # subtract 1 if too big.
-    if res*res <= N and (res+1)*(res+1) > N:
-        return res
-    else:
-        raise RuntimeError, "there is a bug in prime_pi.pyx's sqrt_longlong (res=%s, N=%s). Please report!"%(res,N)
+cdef uint64_t arg_to_uint64(x, str s1, str s2) except -1:
+    if not isinstance(x, Integer):
+        from other import floor
+        x = Integer(floor(x))
+    if mpz_sgn((<Integer>x).value) <= 0:
+        return 0ull
+    if mpz_sizeinbase((<Integer>x).value, 2) > 63:
+        raise NotImplementedError("computation of " + s1 + " for x >= "
+                + "2^63 is not implemented")
+    if mpz_sizeinbase((<Integer>x).value, 2) > 43:
+        import warnings
+        warnings.warn("computation of %s for large x can take minutes, "%s1
+                + "hours, or days depending on the size of %s"%s2)
+        if mpz_sizeinbase((<Integer>x).value, 2) > 50:
+            warnings.warn("computation of %s for x >= 2^50 has not "%s1
+                    + "been as thoroughly tested as for smaller values")
+    cdef uint64_t ret = mpz_get_ui((<Integer>x).value) & 0xfffffffful
+    ret += (<uint64_t>mpz_get_ui((<Integer>(x>>32)).value)) << 32ull
+    return ret
 
-cdef inline long sqrt_long(long N) except -1:
-    """
-    Return the truncated integer part of the square root of N, i.e., the
-    floor of sqrt(N).
-    """
-    if sizeof(long) == 8:
-        return sqrt_longlong(N)
-    # code from Bill Hart.
-    cdef long m = <long> floorf(sqrtf(<float> N))
-    cdef long res = m + ((m+1)*(m+1) <= N)  # add 1 if too small.
-    res = res - (res*res > N)  # subtract 1 if too big.
-    if res*res <= N and (res+1)*(res+1) > N:
-        return res
-    else:
-        raise RuntimeError, "there is a bug in prime_pi.pyx's sqrt_long (res=%s, N=%s). Please report!"%(res,N)
+cdef class PrimePi(BuiltinFunction):
+    def __init__(self):
+        r"""
+        The prime counting function, which counts the number of primes less
+        than or equal to a given value.
 
+        INPUT:
 
-cdef class PrimePi:
-    r"""
-    Return the number of primes $\leq x$.
+        - ``x`` - a real number
+        - ``prime_bound`` - (default 0) a real number < 2^32, ``prime_pi`` will
+          make sure to use all the primes up to ``prime_bound`` (although,
+          possibly more) in computing ``prime_pi``, this can potentially
+          speedup the time of computation, at a cost to memory usage.
 
-    EXAMPLES::
+        OUTPUT:
 
-        sage: prime_pi(7)
-        4
-        sage: prime_pi(100)
-        25
-        sage: prime_pi(1000)
-        168
-        sage: prime_pi(100000)
-        9592
-        sage: prime_pi(0.5)
-        0
-        sage: prime_pi(-10)
-        0
-        sage: prime_pi(500509)
-        41581
+        integer -- the number of primes :math:`\leq` ``x``
 
-    The following test is to verify that ticket #4670 has been essentially
-    resolved::
+        EXAMPLES:
 
-        sage: prime_pi(10**10)
-        455052511
+        These examples test common inputs::
 
-    The prime_pi function allows for use of additional memory::
+            sage: prime_pi(7)
+            4
+            sage: prime_pi(100)
+            25
+            sage: prime_pi(1000)
+            168
+            sage: prime_pi(100000)
+            9592
+            sage: prime_pi(500509)
+            41581
 
-        sage: prime_pi(500509, 8)
-        41581
+        These examples test a variety of odd inputs::
 
-    The prime_pi function also has a special plotting method, so it plots
-    quickly and perfectly as a step function::
+            sage: prime_pi(3.5)
+            2
+            sage: prime_pi(sqrt(2357))
+            15
+            sage: prime_pi(mod(30957, 9750979))
+            3337
 
-        sage: P = plot(prime_pi, 50,100)
-    """
-    def __repr__(self):
+        We test non-trivial ``prime_bound`` values::
+
+            sage: prime_pi(100000, 10000)
+            9592
+            sage: prime_pi(500509, 50051)
+            41581
+
+        The following test is to verify that ticket #4670 has been essentially
+        resolved::
+
+            sage: prime_pi(10^10)
+            455052511
+
+        The ``prime_pi`` function also has a special plotting method, so it
+        plots quickly and perfectly as a step function::
+
+            sage: P = plot(prime_pi, 50, 100)
+
+        NOTES:
+
+        Uses a recursive implementation, using the optimizations described in
+        [RAO2011]_.
+
+        REFERENCES:
+
+        .. [RAO2011] R.A. Ohana. On Prime Counting in Abelian Number Fields.
+           http://wstein.org/home/ohanar/papers/abelian_prime_counting/main.pdf.
+
+        AUTHOR:
+
+        - \R. Andrew Ohana (2011)
         """
-        EXAMPLES::
+        super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
+                conversions={'mathematica':'PrimePi', 'pari':'primepi'})
 
-            sage: prime_pi.__repr__()
-            'Function that counts the number of primes up to x'
-        """
-        return 'Function that counts the number of primes up to x'
+    cdef uint32_t *__primes
+    cdef uint32_t __numPrimes, __maxSieve, __primeBound
+    cdef int_fast8_t *__tabS
+    cdef uint_fast16_t *__smallPi
+    cdef uint8_t *__pariPrimePtr
 
-    def __cmp__(self, other):
-        """
-        EXAMPLES::
+    def __dealloc__(self):
+        if self.__smallPi != NULL:
+            sage_free(self.__smallPi)
+            sage_free(self.__tabS)
 
-            sage: P = sage.functions.prime_pi.PrimePi()
-            sage: P == prime_pi
-            True
-            sage: P != prime_pi
-            False
-        """
-        if isinstance(other, PrimePi):
-            return 0
-        return cmp(type(self), type(other))
+    cdef void _init_tables(self):
+        pari.init_primes(0xffffu)
+        self.__pariPrimePtr = <uint8_t *>diffptr
+        self.__smallPi = <uint_fast16_t *>sage_malloc(
+                0x10000u * sizeof(uint_fast16_t))
+        cdef uint32_t p=0u, i=0u, k=0u
+        while i < 0xfff1u: # 0xfff1 is the last prime up to 0xffff
+            NEXT_PRIME_VIADIFF(p, self.__pariPrimePtr)
+            while i < p:
+                self.__smallPi[i] = k
+                i += 1u
+            k += 1u
+        while i <= 0xffffu:
+            self.__smallPi[i] = k
+            i += 1u
 
-    cdef long* primes
-    cdef long primeCount, maxPrime
+        self.__tabS = <int_fast8_t *>sage_malloc(2310*sizeof(int_fast8_t))
+        for i in range(2310u):
+            self.__tabS[i] = ((i+1u)/2u - (i+3u)/6u - (i+5u)/10u + (i+15u)/30u
+                    - (i+7u)/14u + (i+21u)/42u + (i+35u)/70u - (i+105u)/210u
+                    - (i+11u)/22u + (i+33u)/66u + (i+55u)/110u + (i+77u)/154u
+                    - (i+165u)/330u - (i+231u)/462u - (i+385u)/770u
+                    + (i+1155u)/2310u - ((i/77u)<<4u))
 
-    def __call__(self, long long x, long mem_mult = 1):
+
+    def __call__(self, *args, coerce=True, hold=False):
         r"""
         EXAMPLES::
 
-            sage: prime_pi.__call__(7)
+            sage: prime_pi.__call__(756)
+            133
+            sage: prime_pi.__call__(6574, 577)
+            850
+            sage: f(x) = prime_pi.__call__(x^2); f(x)
+            prime_pi(x^2)
+            sage: f(5)
+            9
+            sage: prime_pi.__call__(1, 2, 3)
+            Traceback (most recent call last):
+            ...
+            TypeError: Symbolic function prime_pi takes 1 or 2 arguments (3 given)
+        """
+        if len(args) > 2:
+            raise TypeError("Symbolic function %s takes 1 or 2"%self._name
+                    + " arguments (%s given)"%len(args))
+        else:
+            self.__primeBound = 0u if len(args) < 2 else args[1]
+        return super(PrimePi, self).__call__(args[0], coerce=coerce, hold=hold)
+
+    def _eval_(self, x):
+        r"""
+        EXAMPLES::
+
+            sage: prime_pi._eval_(7)
             4
-            sage: prime_pi.__call__(100)
+            sage: prime_pi._eval_(100)
             25
-            sage: prime_pi.__call__(1000)
+            sage: prime_pi._eval_(1000)
             168
-            sage: prime_pi.__call__(100000)
+            sage: prime_pi._eval_(100000)
             9592
-            sage: prime_pi.__call__(0.5)
-            0
-            sage: prime_pi.__call__(-10)
-            0
-            sage: prime_pi.__call__(500509)
+            sage: prime_pi._eval_(500509)
             41581
-            sage: prime_pi.__call__(500509, 8)
-            41581
+            sage: prime_pi._eval_(3.5)
+            2
+            sage: prime_pi._eval_(sqrt(2357))
+            15
+            sage: prime_pi._eval_(str(-2^100))
+            0
+            sage: prime_pi._eval_(mod(30957, 9750979))
+            3337
 
-        TESTS:
+        Make sure we actually compute correct results for 64-bit entries::
 
-        Make sure we actually compute correct results::
-
-            sage: for n in (30..40): print prime_pi(2**n)  # long time (22s on sage.math, 2011)
-            54400028
-            105097565
+            sage: for i in (32..42): prime_pi(2^i) # long time (13s on sage.math, 2011)
             203280221
             393615806
             762939111
@@ -167,163 +241,327 @@ cdef class PrimePi:
             10866266172
             21151907950
             41203088796
+            80316571436
+            156661034233
 
-        We know this implementation is broken at least on some 32-bit
-        systems for `2^{46}`, so we are capping the maximum allowed value::
+        This implementation uses unsigned 64-bit ints and does not support
+        :math:`x \geq 2^63`::
 
-            sage: prime_pi(2^40+1)
+            sage: prime_pi(2^63)
             Traceback (most recent call last):
             ...
-            NotImplementedError: computation of prime_pi() greater than 2^40 not implemented
-
+            NotImplementedError: computation of prime_pi for x >= 2^63 is not implemented
         """
-        if mem_mult < 1:
-            raise ValueError, "mem_mult must be positive"
-        if x < 2:
-            return 0
-        if x > 1099511627776L:
-            raise NotImplementedError, "computation of prime_pi() greater than 2^40 not implemented"
-        x += x & 1
-        # m_max is the current sieving value, for prime counting - this value is sqrt(x)
-        cdef long m_max = sqrt_longlong(x) + 1
-        cdef long prime
-        cdef long i = 0
-        # mem_mult is the multiplier that determines how large a list of primes built
-        tempList = prime_range(mem_mult*m_max)
-        self.primeCount = len(tempList)
-        if self.primeCount > 1:
-            self.maxPrime = tempList[self.primeCount - 1]
-        self.primes = <long*> sage_malloc((self.primeCount+1)*sizeof(long))
-        for prime in tempList:
-            self.primes[i] = prime
-            i += 1
-        sig_on()
-        s = Integer(self.prime_phi_large(x, m_max))
-        sig_off()
-        sage_free(self.primes)
-        return s
-
-    cdef long long prime_phi_large(self, long long N, long m_max = 0):
-        """
-        Uses Legendre's Formula for computing pi(x). Both this and the prime_phi_small
-        methods are specialized versions of Legendre's Formula that takes advantage of
-        its recursive properties. Hans Riesel's Prime "Numbers and Computer Methods for
-        Factorization" discusses Legnedre's Formula, however there are many places
-        that discuss it as nearly every prime counting algorithm uses it.
-        """
+        cdef uint64_t z
         try:
-            return self.prime_phi_small(long(N), m_max)
-        except OverflowError:
-            pass
-        # m_max is the current sieving value
-        if m_max == 0:
-            m_max = sqrt_longlong(N) + 1
-        cdef long long sum = ( (N >> 1) - (N-4)/6 - (N-16)/10 + (N-16)/30 - (N-8)/14 \
-                               + (N-22)/42 + (N-106)/70 - (N-106)/210 + 2 )
-        cdef long prime = 11
-        cdef bint preTransition = True
-        cdef long long y
-        cdef long i
-        for i in range(4, self.primeCount):
-            if prime >= m_max: break
-            y = (N+prime-1)/(2*prime) << 1
-            if preTransition:
-                if prime*prime <= y:
-                    sum -= self.prime_phi_large(y, prime) - i
-                else:
-                    sum -= self.prime_phi_large(y) - i
-                    preTransition = False
-            else:
-                sum -= self.prime_phi_large(y) - i
-            prime = self.primes[i + 1]
-        return sum
+            z = arg_to_uint64(x, 'prime_pi', 'x')
+        except NotImplementedError:
+            raise
+        except TypeError:
+            return None
+        if self.__smallPi == NULL:
+            self._init_tables()
+        z = self._pi(z, self.__primeBound)
+        self._clean_cache()
+        return Integer(z)
 
-    cdef long prime_phi_small(self, long N, long m_max = 0):
-        if N < 2:
-            return 0
-        N += N & 1
-        if N < 9:
-            return N >> 1
-        if N < 25:
-            return (N >> 1) - (N-4)/6
-        if N < 49:
-            return (N >> 1) - (N-4)/6 - (N-16)/10 + (N-16)/30
-        if N < 121:
-            return (N >> 1) - (N-4)/6 - (N-16)/10 + (N-16)/30 - (N-36)/14 + (N-22)/42
-        # m_max is the current sieving value
-        if m_max == 0:
-            if N < self.maxPrime:
-                return self.bisect(N) + 1
-            m_max = sqrt_long(N) + 1
-        cdef long sum = ( (N >> 1) - (N-4)/6 - (N-16)/10 + (N-16)/30 - (N-8)/14 \
-                          + (N-22)/42 + (N-106)/70 - (N-106)/210 + 2 )
-        cdef long prime = 11
-        cdef bint preTransition = True
-        cdef long x, i
-        for i in range(4, self.primeCount):
-            if prime >= m_max: break
-            x = N / prime
-            if preTransition:
-                if prime*prime <= x:
-                    sum -= self.prime_phi_small(x, prime) - i
-                else:
-                    sum -= self.prime_phi_small(x) - i
-                    preTransition = False
-            else:
-                sum -= self.prime_phi_small(x) - i
-            prime = self.primes[i + 1]
-        return sum
+    cdef uint64_t _pi(self, uint64_t x, uint64_t b) except -1:
+        r"""
+        Returns pi(x) under the assumption that 0 <= x < 2^64
+        """
+        if x <= 0xffffull: return self.__smallPi[x]
+        if b*b < x:
+            b = Integer(x).sqrtrem()[0]
+        elif b > x:
+            b = x
+        self._init_primes(b)
+        if not sig_on_no_except():
+            self._clean_cache()
+            cython_check_exception()
+        b = self.__numPrimes
+        b += self._phi(x, b)-1ull
+        sig_off()
+        return b
 
-    cdef long bisect(self, long N):
-        cdef long size = self.primeCount >> 1
-        if N >> 2 < size:
-            size = N >> 2
-        cdef long position = size
-        cdef long prime
-        while size > 0:
-            prime = self.primes[position]
-            size >>= 1
-            if prime < N:
-                position += size
-            elif prime > N:
-                position -= size
-            else: break
-        if position < self.primeCount - 1:
-            prime = self.primes[position + 1]
-            while prime < N:
-                position += 1
-                prime = self.primes[position + 1]
-        prime = self.primes[position]
-        while prime > N:
-            position -= 1
-            prime = self.primes[position]
-        return position
+    cdef uint32_t _cached_count(self, uint32_t p):
+        r"""
+        For p < 65536, returns the value stored in ``self.__smallPi[p]``. For
+        p <= ``self.__maxSieve``, uses a binary seach on ``self.__primes`` to
+        compute pi(p).
+        """
+        # inspired by Yann Laigle-Chapuy's suggestion
+        if p <= 0xffffu: return self.__smallPi[p]
+        cdef uint32_t size = (self.__numPrimes)>>1u
+        # Use the expected density of primes for expected inputs to make an
+        # educated guess
+        if p>>3u < size:
+            size = p>>3u
+        # deal with edge case separately
+        elif p >= self.__primes[self.__numPrimes-1u]:
+            return self.__numPrimes
+        cdef uint32_t pos = size
+        cdef uint32_t prime
+        while size:
+            prime = self.__primes[pos]
+            size >>= 1u
+            if prime < p: pos += size
+            elif prime > p: pos -= size
+            else: return pos+1u
+        if self.__primes[pos] <= p:
+            while self.__primes[pos] <= p: pos += 1u
+            return pos
+        while self.__primes[pos] > p: pos -= 1u
+        return pos+1u
+
+    cdef void _clean_cache(self):
+        if self.__numPrimes:
+            sage_free(self.__primes)
+            self.__numPrimes = 0u
+            self.__maxSieve = 0u
+
+    cdef uint64_t _init_primes(self, uint32_t b) except -1:
+        """
+        Populates ``self.__primes`` with all primes < b
+        """
+        cdef uint32_t *prime
+        cdef uint32_t newNumPrimes, i
+        pari.init_primes(b+1u)
+        self.__pariPrimePtr = <uint8_t *>diffptr
+        newNumPrimes = self._pi(b, 0ull)
+        if self.__numPrimes:
+            prime = <uint32_t *>sage_realloc(self.__primes,
+                    newNumPrimes * sizeof(uint32_t))
+        else:
+            prime = <uint32_t *>sage_malloc(newNumPrimes*sizeof(uint32_t))
+        if not sig_on_no_except():
+            self.__numPrimes = newNumPrimes
+            self._clean_cache()
+            cython_check_exception()
+        if prime == NULL:
+            raise RuntimeError("not enough memory, maybe try with a smaller "
+                    + "prime_bound?")
+        self.__primes = prime
+        prime += self.__numPrimes
+        for i in range(self.__numPrimes, newNumPrimes):
+            prime[0] = 0u if prime == self.__primes else prime[-1]
+            NEXT_PRIME_VIADIFF(prime[0], self.__pariPrimePtr)
+            prime += 1
+        self.__numPrimes = newNumPrimes
+        self.__maxSieve = b
+        sig_off()
+
+    cdef uint64_t _phi(self, uint64_t x, uint64_t i):
+        r"""
+        Legendre's formula: returns the number of primes :math:`\leq` ``x``
+        that are not divisible by the first ``i`` primes
+        """
+        if not i: return x
+        # explicitly compute for small i
+        cdef uint64_t s = (x+1ull)>>1ull
+        if i == 1ull: return s
+        s -= (x+3ull)/6ull
+        if i == 2ull: return s
+        s -= (x+5ull)/10ull - (x+15ull)/30ull
+        if i == 3ull: return s
+        s -= ((x+7ull)/14ull - (x+21ull)/42ull - (x+35ull)/70ull +
+                (x+105ull)/210ull)
+        if i == 4ull: return s
+        s -= ((x+11ull)/22ull - (x+33ull)/66ull - (x+55ull)/110ull -
+                (x+77ull)/154ull + (x+165ull)/330ull + (x+231ull)/462ull +
+                (x+385ull)/770ull - (x+1155ull)/2310ull)
+        if i == 5ull: return s
+        cdef uint64_t y=x/13ull, j=5ull
+        cdef uint32_t *prime=self.__primes+5
+        # switch to 32-bit as quickly as possible
+        while y > 0xffffffffull:
+            s -= self._phi(y, j)
+            j += 1ull
+            if j == i: return s
+            prime += 1
+            y = x/(<uint64_t>prime[0])
+        # get y <= maxSieve so we can use a binary search with our table of
+        # primes
+        while y > (<uint64_t>self.__maxSieve):
+            s -= self._phi32(y, j)
+            j += 1ull
+            if j == i: return s
+            prime += 1
+            y = x/(<uint64_t>prime[0])
+        cdef uint64_t prime2 = prime[-1]
+        # get p^2 > y so that we can use the identity phi(x,a)=pi(x)-a+1
+        while prime2*prime2 <= y:
+            s -= self._phi32(y, j)
+            j += 1ull
+            if j == i: return s
+            prime2 = prime[0]
+            prime += 1
+            y = x/(<uint64_t>prime[0])
+        s += j
+        # use the identity phi(x,a) = pi(x)-a+1 and compute pi using a binary
+        # search
+        while prime2 < y:
+            s -= self._cached_count(y)-j
+            j += 1ull
+            if j == i: return s-i
+            prime2 = prime[0]
+            prime += 1
+            y = x/(<uint64_t>prime[0])
+        return s-i
+
+    cdef uint32_t _phi32(self, uint32_t x, uint32_t i):
+        """
+        Same as _phi except specialized for 32-bit ints
+        """
+        # table method for explicit computation was suggested by Yann
+        # Laigle-Chapuy
+        if i == 5u: return ((x/77u)<<4u) + self.__tabS[x%2310u]
+        cdef uint32_t s = ((x/77u)<<4u) + self.__tabS[x%2310u]
+        cdef uint32_t y = x/13u, j = 5u
+        cdef uint32_t *prime = self.__primes+5
+        while y > self.__maxSieve:
+            s -= self._phi32(y, j)
+            j += 1u
+            if j == i: return s
+            prime += 1
+            y = x/prime[0]
+        cdef uint32_t prime2 = prime[-1]
+        while prime2*prime2 <= y:
+            s -= self._phi32(y, j)
+            j += 1u
+            if j == i: return s
+            prime2 = prime[0]
+            prime += 1
+            y = x/prime[0]
+        s += j
+        while 0xffffu < y:
+            s -= self._cached_count(y)-j
+            j += 1u
+            if j == i: return s-i
+            prime += 1
+            y = x/prime[0]
+        while prime2 < y:
+            s -= self.__smallPi[y]-j
+            j += 1u
+            if j == i: return s-i
+            prime2 = prime[0]
+            prime += 1
+            y = x/prime[0]
+        return s-i
 
     def plot(self, xmin=0, xmax=100, vertical_lines=True, **kwds):
         """
-        Draw a plot of the prime counting function from xmin to xmax.
+        Draw a plot of the prime counting function from ``xmin`` to ``xmax``.
         All additional arguments are passed on to the line command.
 
-        WARNING: we draw the plot of prime_pi as a stairstep function
-        with explicitly drawn vertical lines where the function
-        jumps. Technically there should not be any vertical lines, but
-        they make the graph look much better, so we include them.
-        Use the option ``vertical_lines=False`` to turn these off.
+        WARNING: we draw the plot of ``prime_pi`` as a stairstep function with
+        explicitly drawn vertical lines where the function jumps. Technically
+        there should not be any vertical lines, but they make the graph look
+        much better, so we include them. Use the option ``vertical_lines=False``
+        to turn these off.
 
         EXAMPLES::
 
             sage: plot(prime_pi, 1, 100)
-            sage: prime_pi.plot(-2,50,thickness=2, vertical_lines=False)
+            Graphics object consisting of 1 graphics primitive
+            sage: prime_pi.plot(-2, sqrt(2501), thickness=2, vertical_lines=False)
+            Graphics object consisting of 16 graphics primitives
         """
+        from sage.plot.step import plot_step_function
+        if xmax < xmin:
+            return plot_step_function([], **kwds)
+        if xmax < 2:
+            return plot_step_function([(xmin,0),(xmax,0)], **kwds)
         y = self(xmin)
         v = [(xmin, y)]
-        for p in prime_range(xmin+1, xmax+1):
+        from sage.rings.all import prime_range
+        for p in prime_range(xmin+1, xmax+1, py_ints=True):
             y += 1
             v.append((p,y))
         v.append((xmax,y))
-        from sage.plot.step import plot_step_function
         return plot_step_function(v, vertical_lines=vertical_lines, **kwds)
 
-#############
+########
 prime_pi = PrimePi()
 
+cpdef Integer legendre_phi(x, a):
+    r"""
+    Legendre's formula, also known as the partial sieve function, is a useful
+    combinatorial function for computing the prime counting function (the
+    ``prime_pi`` method in Sage). It counts the number of positive integers
+    :math:`\leq` ``x`` that are not divisible by the first ``a`` primes.
+
+    INPUT:
+
+    - ``x`` -- a real number
+
+    - ``a`` -- a non-negative integer
+
+    OUTPUT:
+
+    integer -- the number of positive integers :math:`\leq` ``x`` that are not
+    divisible by the first ``a`` primes
+
+    EXAMPLES::
+
+        sage: legendre_phi(100, 0)
+        100
+        sage: legendre_phi(29375, 1)
+        14688
+        sage: legendre_phi(91753, 5973)
+        2893
+        sage: legendre_phi(7.5, 2)
+        3
+        sage: legendre_phi(str(-2^100), 92372)
+        0
+        sage: legendre_phi(4215701455, 6450023226)
+        1
+
+    NOTES:
+
+    Uses a recursive implementation, using the optimizations described in
+    [RAO2011]_.
+
+    AUTHOR:
+
+    - \R. Andrew Ohana (2011)
+    """
+    if not isinstance(a, Integer):
+        a = Integer(a)
+    if a < Integer(0):
+        raise ValueError("a (=%s) must be non-negative"%a)
+    cdef uint64_t y = arg_to_uint64(x, 'legendre_phi', 'x and a')
+
+    # legendre_phi(x, a) = 0 when x <= 0
+    if not y: return Integer(0)
+
+    # legendre_phi(x, 0) = x
+    if a == Integer(0): return Integer(y)
+
+    # Use knowledge about the density of primes to quickly compute for many
+    # cases where a is unusually large
+    if a > Integer(y>>1ull): return Integer(1)
+    if y > 1916ull:
+        chk = Integer(y)*Integer(13271040)//Integer(86822723)
+        if a > chk: return Integer(1)
+
+    # If a > prime_pi(2^32), we compute phi(x,a) = max(pi(x)-a+1,1)
+    if a > Integer(203280221):
+        ret = prime_pi(x)-a+Integer(1)
+        if ret < Integer(1): return Integer(1)
+        return ret
+
+    # Deal with the general case
+    if (<PrimePi>prime_pi).__smallPi == NULL:
+        (<PrimePi>prime_pi)._init_tables()
+    cdef uint32_t z = pari.nth_prime(a)
+    if z >= y: return Integer(1)
+    (<PrimePi>prime_pi)._init_primes(z)
+    if not sig_on_no_except():
+        (<PrimePi>prime_pi)._clean_cache()
+        cython_check_exception()
+    y = (<PrimePi>prime_pi)._phi(y, mpz_get_ui((<Integer>a).value))
+    sig_off()
+    (<PrimePi>prime_pi)._clean_cache()
+    return Integer(y)
+
+partial_sieve_function = legendre_phi

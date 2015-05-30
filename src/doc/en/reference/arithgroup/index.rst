@@ -17,6 +17,6 @@ the modular group `{\rm SL}_2(\ZZ)`.
    sage/modular/arithgroup/congroup_gamma
    sage/modular/arithgroup/congroup_sl2z
    sage/modular/arithgroup/farey_symbol
-   sage/modular/arithgroup/congroup_pyx
+   sage/modular/arithgroup/congroup
 
 .. include:: ../footer.txt

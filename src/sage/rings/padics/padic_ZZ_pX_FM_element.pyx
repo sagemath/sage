@@ -109,10 +109,12 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2008 David Roe <roed@math.harvard.edu>
+#       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
@@ -127,7 +129,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
-from sage.rings.padics.padic_base_generic_element cimport pAdicBaseGenericElement
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
@@ -174,10 +175,21 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: z = (1+w)^5; z # indirect doctest
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24 + O(w^25)
 
+        TESTS:
+
         Check that :trac:`3865` is fixed::
 
             sage: W(gp('2 + O(5^2)'))
             2 + O(w^25)
+
+        Check that :trac:`13612` has been fixed::
+
+            sage: R = ZpFM(3)
+            sage: S.<a> = R[]
+            sage: W.<a> = R.extension(a^2+1)
+            sage: W(W.residue_field().zero())
+            O(3^20)
+
         """
         pAdicZZpXElement.__init__(self, parent)
         ZZ_pX_construct(&self.value)
@@ -187,17 +199,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef ZZ_c tmp_z
         cdef Integer tmp_Int
         cdef Py_ssize_t i
-        if PY_TYPE_CHECK(x, pAdicGenericElement):
+        if isinstance(x, pAdicGenericElement):
             if x.valuation() < 0:
                 raise ValueError, "element has negative valuation"
+            if x._is_base_elt(self.prime_pow.prime):
+                xlift = <Integer>x.lift()
+                self._set_from_mpz(xlift.value)
+                return
             if parent.prime() != x.parent().prime():
                 raise TypeError, "Cannot coerce between p-adic parents with different primes."
-        if PY_TYPE_CHECK(x, pAdicBaseGenericElement):
-            mpz_init(tmp)
-            (<pAdicBaseGenericElement>x)._set_mpz_into(tmp)
-            self._set_from_mpz(tmp)
-            mpz_clear(tmp)
-            return
         if isinstance(x, GpElement):
             x = x._pari_()
         if isinstance(x, pari_gen):
@@ -223,30 +233,35 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 x = x.lift()
             else:
                 raise TypeError, "cannot coerce from the given integer mod ring (not a power of the same prime)"
-        elif PY_TYPE_CHECK(x, ntl_ZZ_p):
+        elif x in parent.residue_field():
+            # Should only reach here if x is not in F_p
+            z = parent.gen()
+            poly = x.polynomial().list()
+            x = sum([poly[i].lift() * (z ** i) for i in range(len(poly))], parent.zero())
+        elif isinstance(x, ntl_ZZ_p):
             ctx_prec = ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
             if ZZ_IsOne(tmp_z):
                 x = x.lift()
                 tmp_Int = PY_NEW(Integer)
-                ZZ_to_mpz(&tmp_Int.value, &(<ntl_ZZ>x).x)
+                ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
                 x = tmp_Int
             else:
                 raise TypeError, "cannot coerce the given ntl_ZZ_p (modulus not a power of the same prime)"
-        elif PY_TYPE_CHECK(x, ntl_ZZ):
+        elif isinstance(x, ntl_ZZ):
             tmp_Int = PY_NEW(Integer)
-            ZZ_to_mpz(&tmp_Int.value, &(<ntl_ZZ>x).x)
+            ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
         elif isinstance(x, (int, long)):
             x = Integer(x)
-        if PY_TYPE_CHECK(x, Integer):
+        if isinstance(x, Integer):
             self._set_from_mpz((<Integer>x).value)
-        elif PY_TYPE_CHECK(x, Rational):
+        elif isinstance(x, Rational):
             self._set_from_mpq((<Rational>x).value)
-        elif PY_TYPE_CHECK(x, ntl_ZZ_pX):
+        elif isinstance(x, ntl_ZZ_pX):
             self._set_from_ZZ_pX(&(<ntl_ZZ_pX>x).x, (<ntl_ZZ_pX>x).c)
-        elif PY_TYPE_CHECK(x, ntl_ZZX):
+        elif isinstance(x, ntl_ZZX):
             self._set_from_ZZX((<ntl_ZZX>x).x)
-        elif PY_TYPE_CHECK(x, pAdicExtElement):
+        elif isinstance(x, pAdicExtElement):
             if x.parent() is parent:
                 self._set_from_ZZ_pX(&(<pAdicZZpXFMElement>x).value, self.prime_pow.get_top_context())
             else:
@@ -280,7 +295,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         sig_on()
         mpz_init(tmp_m)
         mpz_set(tmp_m, x)
-        mpz_to_ZZ(&tmp, &tmp_m)
+        mpz_to_ZZ(&tmp, tmp_m)
         mpz_clear(tmp_m)
         ZZ_pX_SetCoeff(self.value, 0, ZZ_to_ZZ_p(tmp))
         sig_off()
@@ -309,10 +324,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef ZZ_c tmp_z
         sig_on()
         mpz_init(tmp_m)
-        mpz_invert(tmp_m, mpq_denref(x), self.prime_pow.pow_mpz_t_top()[0])
+        mpz_invert(tmp_m, mpq_denref(x), self.prime_pow.pow_mpz_t_top())
         mpz_mul(tmp_m, tmp_m, mpq_numref(x))
-        mpz_mod(tmp_m, tmp_m, self.prime_pow.pow_mpz_t_top()[0])
-        mpz_to_ZZ(&tmp_z, &tmp_m)
+        mpz_mod(tmp_m, tmp_m, self.prime_pow.pow_mpz_t_top())
+        mpz_to_ZZ(&tmp_z, tmp_m)
         ZZ_pX_SetCoeff(self.value, 0, ZZ_to_ZZ_p(tmp_z))
         mpz_clear(tmp_m)
         sig_off()
@@ -356,7 +371,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         self.prime_pow.restore_top_context()
         ZZX_to_ZZ_pX(self.value, poly)
 
-    cpdef bint _is_inexact_zero(self):
+    cpdef bint _is_inexact_zero(self) except -1:
         """
         Tests if ``self`` is an inexact zero.
 
@@ -390,7 +405,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             True
         """
         self.prime_pow.restore_top_context()
-        cdef ntl_ZZ_pX holder = PY_NEW(ntl_ZZ_pX)
+        cdef ntl_ZZ_pX holder = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         holder.c = self.prime_pow.get_top_context()
         holder.x = self.value
         return make_ZZpXFMElement, (self.parent(), holder)
@@ -424,7 +439,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             1 + w^5 + O(w^25)
         """
         self.prime_pow.restore_top_context()
-        cdef pAdicZZpXFMElement ans = PY_NEW(pAdicZZpXFMElement)
+        cdef pAdicZZpXFMElement ans = pAdicZZpXFMElement.__new__(pAdicZZpXFMElement)
         ans._parent = self._parent
         ZZ_pX_construct(&ans.value)
         ans.prime_pow = self.prime_pow
@@ -449,7 +464,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return (<Element>left)._richcmp(right, op)
 
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         First compare valuations, then compare the values.
 
@@ -485,32 +500,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 return 1
 
     def __invert__(self):
-        """
-        Returns the inverse of ``self``, as long as ``self`` is a
-        unit.
-
-        If ``self`` is not a unit, raises a ``ValueError``.
-
-        EXAMPLES::
-
-            sage: R = ZpFM(5,5)
-            sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
-            sage: W.<w> = R.ext(f)
-            sage: z = (1 + w)^5
-            sage: y = ~z; y # indirect doctest
-            1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16 + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24 + O(w^25)
-            sage: y.parent()
-            Eisenstein Extension of 5-adic Ring of fixed modulus 5^5 in w defined by (1 + O(5^5))*x^5 + (O(5^5))*x^4 + (3*5^2 + O(5^5))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x^2 + (5^3 + O(5^5))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))
-            sage: z = z - 1
-            sage: ~z
-            Traceback (most recent call last):
-            ...
-            ValueError: cannot invert non-unit
-        """
-        return self._invert_c_impl()
-
-    cpdef RingElement _invert_c_impl(self):
         """
         Returns the inverse of ``self``, as long as ``self`` is a
         unit.
@@ -596,7 +585,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             w^4 + w^5 + 2*w^6 + 4*w^7 + 3*w^9 + w^11 + 4*w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^19 + w^20 + 4*w^23 + 4*w^24 + O(w^25)
         """
         cdef pAdicZZpXFMElement ans
-        if not PY_TYPE_CHECK(shift, Integer):
+        if not isinstance(shift, Integer):
             shift = Integer(shift)
         if mpz_fits_slong_p((<Integer>shift).value) == 0:
             ans = self._new_c()
@@ -686,7 +675,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             w^4 + w^9 + w^10 + 2*w^11 + 4*w^12 + 3*w^14 + w^16 + 4*w^17 + 4*w^18 + 4*w^19 + 4*w^20 + 4*w^21 + 4*w^24 + O(w^25)
         """
         cdef pAdicZZpXFMElement ans
-        if not PY_TYPE_CHECK(shift, Integer):
+        if not isinstance(shift, Integer):
             shift = Integer(shift)
         if mpz_fits_slong_p((<Integer>shift).value) == 0:
             ans = self._new_c()
@@ -756,13 +745,13 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             True
 
         """
-        if not PY_TYPE_CHECK(right, Integer):
+        if not isinstance(right, Integer):
             right = Integer(right)
         if right == 0 and self == 0:
             return self.parent(1)
         cdef pAdicZZpXFMElement ans = self._new_c()
-        cdef ntl_ZZ rZZ = PY_NEW(ntl_ZZ)
-        mpz_to_ZZ(&rZZ.x, &(<Integer>right).value)
+        cdef ntl_ZZ rZZ = ntl_ZZ.__new__(ntl_ZZ)
+        mpz_to_ZZ(&rZZ.x, (<Integer>right).value)
         if mpz_sgn((<Integer>right).value) < 0:
             if self.valuation_c() > 0:
                 raise ValueError, "cannot invert non-unit"
@@ -933,7 +922,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         if absprec is None:
             ans = ZZ_pX_IsZero(self.value)
         else:
-            if not PY_TYPE_CHECK(absprec, Integer):
+            if not isinstance(absprec, Integer):
                 absprec = Integer(absprec)
             if mpz_fits_slong_p((<Integer>absprec).value) == 0:
                 if mpz_sgn((<Integer>absprec).value) < 0:
@@ -965,7 +954,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a.add_bigoh(1)
             1 + O(7^4)
         """
-        if not PY_TYPE_CHECK(absprec, Integer):
+        if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if mpz_cmp_ui((<Integer>absprec).value, self.prime_pow.prec_cap) >= 0:
             return self
@@ -1019,7 +1008,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             raise ValueError, "This element not well approximated by an integer."
         ans = PY_NEW(Integer)
         tmp_z = ZZ_p_rep(ZZ_pX_ConstTerm(self.value))
-        ZZ_to_mpz(&ans.value, &tmp_z)
+        ZZ_to_mpz(ans.value, &tmp_z)
         return ans
 
     def matrix_mod_pn(self):
@@ -1067,9 +1056,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #     def matrix(self, base = None):
 #         """
 #         If base is None, return the matrix of right multiplication by
-#         the element on the power basis $1, x, x^2, \ldots, x^{d-1}$
+#         the element on the power basis `1, x, x^2, \ldots, x^{d-1}`
 #         for this extension field.  Thus the \emph{rows} of this matrix
-#         give the images of each of the $x^i$.
+#         give the images of each of the `x^i`.
 
 #         If base is not None, then base must be either a field that
 #         embeds in the parent of self or a morphism to the parent of
@@ -1077,7 +1066,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #         multiplication by self on the power basis, where we view the
 #         parent field as a field over base.
 
-#         INPUT::
+#         INPUT:
 
 #             base -- field or morphism
 #         """
@@ -1174,7 +1163,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             [89 9 4 1]
         """
         self.prime_pow.restore_top_context()
-        cdef ntl_ZZ_pX ans = PY_NEW(ntl_ZZ_pX)
+        cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         ans.c = self.prime_pow.get_top_context()
         ans.x = self.value
         return ans
@@ -1376,13 +1365,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 self.prime_pow.eis_shift(&u.value, &u.value, 1, self.prime_pow.ram_prec_cap)
         return L
 
-    def _teichmuller_set(self):
+    def _teichmuller_set_unsafe(self):
         """
-        Sets ``self`` to the teichmuller representative congruent to
-        ``self`` modulo `\pi`.
+        Sets this element to the Teichmuller representative with the
+        same residue.
 
-        This function should not be used externally: elements are
-        supposed to be immutable.
+        .. WARNING::
+
+            This function modifies the element, which is not safe.
+            Elements are supposed to be immutable.
 
         EXAMPLES::
 
@@ -1417,12 +1408,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #         only if (p-1) divides the ramification index (see the
 #         documentation on __pow__).
 
-#         INPUT::
+#         INPUT:
 
 #             - self -- a p-adic element
 #             - prec -- an integer
 
-#         OUTPUT::
+#         OUTPUT:
 
 #             - integer -- the multiplicative order of self
 #         """
@@ -1430,8 +1421,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 #     def padded_list(self, n, lift_mode = 'simple'):
 #         """
-#         Returns a list of coefficients of pi starting with $pi^0$ up to
-#         $pi^n$ exclusive (padded with zeros if needed)
+#         Returns a list of coefficients of pi starting with `pi^0` up to
+#         `pi^n` exclusive (padded with zeros if needed)
 
 #         """
 #         raise NotImplementedError

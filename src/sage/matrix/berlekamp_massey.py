@@ -64,9 +64,9 @@ def berlekamp_massey(a):
     """
 
     if not isinstance(a, list):
-        raise TypeError, "Argument 1 must be a list."
+        raise TypeError("Argument 1 must be a list.")
     if len(a)%2 != 0:
-        raise ValueError, "Argument 1 must have an even number of terms."
+        raise ValueError("Argument 1 must have an even number of terms.")
 
     M = len(a)//2
 

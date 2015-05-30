@@ -29,8 +29,6 @@ from partially_ordered_monoids import PartiallyOrderedMonoids
 # For backward compatibility; might be deprecated at some point
 OrderedMonoids = PartiallyOrderedMonoids
 
-# TODO: commutative and finite variants once the variants infrastructure will be implemented
-
 from rngs import Rngs
 from semirings import Semirings
 from rings import Rings
@@ -43,7 +41,10 @@ from gcd_domains import GcdDomains
 from principal_ideal_domains import PrincipalIdealDomains
 from euclidean_domains import EuclideanDomains
 from unique_factorization_domains import UniqueFactorizationDomains
+from complete_discrete_valuation import CompleteDiscreteValuationRings
 
 from fields import Fields
 from quotient_fields import QuotientFields
 from finite_fields import FiniteFields
+from discrete_valuation import DiscreteValuationRings, DiscreteValuationFields
+from complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields

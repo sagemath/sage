@@ -22,6 +22,7 @@
        sage: f(3)
        9
        sage: plot(f, 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Обратите внимание на синтаксис в последней строчке. ``plot(f(z), 0, 2)``
 выдаст ошибку, так как ``z`` - это переменная-болванка в определении ``f``,
@@ -38,6 +39,7 @@
        sage: f(z)
        z^2
        sage: plot(f(z), 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 В этом случае ``f(z)`` - это символьное выражение.
 
@@ -58,6 +60,7 @@
        sage: type(g)
        <type 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Если ``g`` — это вызываемое символьное выражение, ``g(x)`` — это
 связянный с ним объект, но другого вида, для которого можно построить
@@ -74,6 +77,7 @@
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 3. Можно использовать уже определенную функцию Sage — 'функцию исчисления'.
 Для нее может быть построен график, она может быть продифференцирована
@@ -84,9 +88,11 @@
        sage: type(sin)
        <class 'sage.functions.trig.Function_sin'>
        sage: plot(sin, 0, 2)
+       Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
        <type 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Сама по себе функция ``sin`` не может быть продифференцирована, по крайней
 мере, не может произвести ``cos``.
@@ -115,10 +121,10 @@
 ::
 
        sage: def h(x):
-       ...       if x<2:
-       ...           return 0
-       ...       else:
-       ...           return x-2
+       ....:     if x<2:
+       ....:         return 0
+       ....:     else:
+       ....:         return x-2
 
 Проблема: ``plot(h(x), 0, 4)`` построит кривую `y=x-2`.
 Причина: В команде ``plot(h(x), 0, 4)`` сначала оценивается ``h(x)``,
@@ -138,6 +144,7 @@
 ::
 
        sage: plot(h, 0, 4)
+       Graphics object consisting of 1 graphics primitive
 
 \5. Ошибочное создание константы вместо функции.
 

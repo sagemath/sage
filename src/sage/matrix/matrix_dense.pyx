@@ -15,7 +15,6 @@ import sage.matrix.matrix_space
 import sage.structure.sequence
 
 include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi'
 
 cdef class Matrix_dense(matrix.Matrix):
     cdef bint is_sparse_c(self):
@@ -103,7 +102,7 @@ cdef class Matrix_dense(matrix.Matrix):
         else:
             raise RuntimeError, "unknown matrix version (=%s)"%version
 
-    cdef int _cmp_c_impl(self, Element right) except -2:
+    cpdef int _cmp_(self, Element right) except -2:
         """
         EXAMPLES::
 
@@ -265,143 +264,6 @@ cdef class Matrix_dense(matrix.Matrix):
                 entry = self.get_unsafe(r,c)*other.get_unsafe(r,c)
                 prod.set_unsafe(r,c,entry)
         return prod
-
-    def apply_morphism(self, phi):
-        """
-        Apply the morphism phi to the coefficients of this dense matrix.
-
-        The resulting matrix is over the codomain of phi.
-
-        INPUT:
-
-
-        -  ``phi`` - a morphism, so phi is callable and
-           phi.domain() and phi.codomain() are defined. The codomain must be a
-           ring.
-
-
-        OUTPUT: a matrix over the codomain of phi
-
-        EXAMPLES::
-
-            sage: m = matrix(ZZ, 3, range(9))
-            sage: phi = ZZ.hom(GF(5))
-            sage: m.apply_morphism(phi)
-            [0 1 2]
-            [3 4 0]
-            [1 2 3]
-            sage: parent(m.apply_morphism(phi))
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 5
-
-        We apply a morphism to a matrix over a polynomial ring::
-
-            sage: R.<x,y> = QQ[]
-            sage: m = matrix(2, [x,x^2 + y, 2/3*y^2-x, x]); m
-            [          x     x^2 + y]
-            [2/3*y^2 - x           x]
-            sage: phi = R.hom([y,x])
-            sage: m.apply_morphism(phi)
-            [          y     y^2 + x]
-            [2/3*x^2 - y           y]
-        """
-        R = phi.codomain()
-        M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
-                   self._ncols, sparse=False)
-        image = M([phi(z) for z in self.list()])
-        if self._subdivisions is not None:
-            image.subdivide(*self.subdivisions())
-        return image
-
-    def apply_map(self, phi, R=None, sparse=False):
-        """
-        Apply the given map phi (an arbitrary Python function or callable
-        object) to this dense matrix. If R is not given, automatically
-        determine the base ring of the resulting matrix.
-
-        INPUT:
-            sparse -- True to make the output a sparse matrix; default False
-
-
-        -  ``phi`` - arbitrary Python function or callable
-           object
-
-        -  ``R`` - (optional) ring
-
-
-        OUTPUT: a matrix over R
-
-        EXAMPLES::
-
-            sage: m = matrix(ZZ, 3, range(9))
-            sage: k.<a> = GF(9)
-            sage: f = lambda x: k(x)
-            sage: n = m.apply_map(f); n
-            [0 1 2]
-            [0 1 2]
-            [0 1 2]
-            sage: n.parent()
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field in a of size 3^2
-
-        In this example, we explicitly specify the codomain.
-
-        ::
-
-            sage: s = GF(3)
-            sage: f = lambda x: s(x)
-            sage: n = m.apply_map(f, k); n
-            [0 1 2]
-            [0 1 2]
-            [0 1 2]
-            sage: n.parent()
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field in a of size 3^2
-
-        If self is subdivided, the result will be as well::
-
-            sage: m = matrix(2, 2, srange(4))
-            sage: m.subdivide(None, 1); m
-            [0|1]
-            [2|3]
-            sage: m.apply_map(lambda x: x*x)
-            [0|1]
-            [4|9]
-
-        If the map sends most of the matrix to zero, then it may be useful
-        to get the result as a sparse matrix.
-
-        ::
-
-            sage: m = matrix(ZZ, 3, 3, range(1, 10))
-            sage: n = m.apply_map(lambda x: 1//x, sparse=True); n
-            [1 0 0]
-            [0 0 0]
-            [0 0 0]
-            sage: n.parent()
-            Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
-
-        TESTS::
-
-            sage: m = matrix([])
-            sage: m.apply_map(lambda x: x*x) == m
-            True
-
-            sage: m.apply_map(lambda x: x*x, sparse=True).parent()
-            Full MatrixSpace of 0 by 0 sparse matrices over Integer Ring
-        """
-        if self._nrows==0 or self._ncols==0:
-            if sparse:
-                return self.sparse_matrix()
-            else:
-                return self.__copy__()
-        v = [phi(z) for z in self.list()]
-        if R is None:
-            v = sage.structure.sequence.Sequence(v)
-            R = v.universe()
-        M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
-                   self._ncols, sparse=sparse)
-        image = M(v)
-        if self._subdivisions is not None:
-            image.subdivide(*self.subdivisions())
-        return image
 
     def _derivative(self, var=None, R=None):
         """

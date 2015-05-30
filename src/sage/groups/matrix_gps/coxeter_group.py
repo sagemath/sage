@@ -30,14 +30,14 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.all import ZZ
 from sage.rings.infinity import infinity
-from sage.rings.universal_cyclotomic_field.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 
 class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentation):
     r"""
     A Coxeter group represented as a matrix group.
 
-    Let `(W, S)` be a Coxeter system and we construct a vector space `V`
+    Let `(W, S)` be a Coxeter system. We construct a vector space `V`
     over `\RR` with a basis of `\{ \alpha_s \}_{s \in S}` and inner product
 
     .. MATH::
@@ -170,7 +170,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
         sage: W = CoxeterGroup(['D',5], implementation="reflection")
         sage: W
-        Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [1 3 2 2 2]
         [3 1 3 2 2]
         [2 3 1 3 3]
@@ -178,7 +178,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         [2 2 3 2 1]
         sage: W = CoxeterGroup(['H',3], implementation="reflection")
         sage: W
-        Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
@@ -278,11 +278,34 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: TestSuite(W).run(max_runs=30) # long time
             sage: W = CoxeterGroup([[1,3,2],[3,1,-1],[2,-1,1]])
             sage: TestSuite(W).run(max_runs=30) # long time
+
+        We check that :trac:`16630` is fixed::
+
+            sage: CoxeterGroup(['D',4], base_ring=QQ).category()
+            Category of finite coxeter groups
+            sage: CoxeterGroup(['H',4], base_ring=QQbar).category()
+            Category of finite coxeter groups
+            sage: F = CoxeterGroups().Finite()
+            sage: all(CoxeterGroup([letter,i]) in F
+            ....:     for i in range(2,5) for letter in ['A','B','D'])
+            True
+            sage: all(CoxeterGroup(['E',i]) in F for i in range(6,9))
+            True
+            sage: CoxeterGroup(['F',4]).category()
+            Category of finite coxeter groups
+            sage: CoxeterGroup(['G',2]).category()
+            Category of finite coxeter groups
+            sage: all(CoxeterGroup(['H',i]) in F for i in range(3,5))
+            True
+            sage: all(CoxeterGroup(['I',i]) in F for i in range(2,5))
+            True
         """
         self._matrix = coxeter_matrix
         self._index_set = index_set
         n = ZZ(coxeter_matrix.nrows())
+        # Compute the matrix with entries `2 \cos( \pi / m_{ij} )`.
         MS = MatrixSpace(base_ring, n, sparse=True)
+        MC = MS._get_matrix_class()
         # FIXME: Hack because there is no ZZ \cup \{ \infty \}: -1 represents \infty
         if base_ring is UniversalCyclotomicField():
             val = lambda x: base_ring.gen(2*x) + ~base_ring.gen(2*x) if x != -1 else base_ring(2)
@@ -290,12 +313,180 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
             val = lambda x: base_ring(2*cos(pi / x)) if x != -1 else base_ring(2)
-        gens = [MS.one() + MS({(i, j): val(coxeter_matrix[i, j])
-                               for j in range(n)})
+        gens = [MS.one() + MC(MS, entries={(i, j): val(coxeter_matrix[i, j])
+                                           for j in range(n)},
+                              coerce=True, copy=True)
                 for i in range(n)]
+        # Compute the matrix with entries `- \cos( \pi / m_{ij} )`.
+        # This describes the bilinear form corresponding to this
+        # Coxeter system, and might lead us out of our base ring.
+        base_field = base_ring.fraction_field()
+        MS2 = MatrixSpace(base_field, n, sparse=True)
+        MC2 = MS2._get_matrix_class()
+        self._bilinear = MC2(MS2, entries={(i, j): val(coxeter_matrix[i, j]) / base_field(-2)
+                                           for i in range(n) for j in range(n)
+                                           if coxeter_matrix[i, j] != 2},
+                             coerce=True, copy=True)
+        self._bilinear.set_immutable()
+        category = CoxeterGroups()
+        # Now we shall see if the group is finite, and, if so, refine
+        # the category to ``category.Finite()``. Otherwise the group is
+        # infinite and we refine the category to ``category.Infinite()``.
+        is_finite = self._finite_recognition()
+        if is_finite:
+            category = category.Finite()
+        else:
+            category = category.Infinite()
         FinitelyGeneratedMatrixGroup_generic.__init__(self, n, base_ring,
-                                                      gens,
-                                                      category=CoxeterGroups())
+                                                      gens, category=category)
+
+    def _finite_recognition(self):
+        """
+        Return ``True`` if and only if the type is finite.
+
+        This is an auxiliary function used during the initialisation.
+
+        EXAMPLES:
+
+        Some infinite ones::
+
+            sage: F = CoxeterGroups().Finite()
+            sage: W = CoxeterGroup([[1,3,2],[3,1,-1],[2,-1,1]])
+            sage: W in F  # indirect doctest
+            False
+            sage: W = CoxeterGroup([[1,-1,-1],[-1,1,-1],[-1,-1,1]])
+            sage: W in F  # indirect doctest
+            False
+
+        Some finite ones::
+
+            sage: CoxeterGroup(['D',4], base_ring=QQ) in F  # indirect doctest
+            True
+            sage: CoxeterGroup(['H',4]) in F  # indirect doctest
+            True
+        """
+        # First, we build the Coxeter graph of the group, without the
+        # edge labels.
+        coxeter_matrix = self._matrix
+        n = ZZ(coxeter_matrix.nrows())
+        G = Graph([(i, j) for i in range(n) for j in range(i)
+                   if coxeter_matrix[i, j] not in [1, 2]])
+        # Coxeter graphs of finite Coxeter groups are forests
+        if not(G.is_forest()):
+            return False
+        comps = G.connected_components()
+        finite = True
+        # The group is finite if and only if for every connected
+        # component ``comp`` of its Coxeter graph, the submatrix of
+        # the Coxeter matrix corresponding to ``comp`` is one of the
+        # type-A,B,D,E,F,H,I matrices (up to permutation). So we
+        # shall check this condition on every ``comp``.
+        for comp in comps:
+            l = len(comp)
+            if l == 1:
+                # Any `1 \times 1` Coxeter matrix gives a finite group.
+                continue  # A1
+            elif l == 2:
+                # A dihedral group is finite iff there is no `\infty`
+                # in its Coxeter matrix.
+                c0, c1 = comp
+                if coxeter_matrix[c0, c1] > 0:
+                    continue  # I2
+                return False
+            elif l == 3:
+                # The `3`-node case. The finite groups to check for
+                # here are `A_3`, `B_3` and `H_3`.
+                c0, c1, c2 = comp
+                s = sorted([coxeter_matrix[c0, c1],
+                            coxeter_matrix[c0, c2],
+                            coxeter_matrix[c1, c2]])
+                if s[1] == 3 and s[2] in [3, 4, 5]:
+                    continue  # A3, B3, H3
+                return False
+            elif l == 4:
+                # The `4`-node case. The finite groups to check for
+                # here are `A_4`, `B_4`, `D_4`, `F_4` and `H_4`.
+                c0, c1, c2, c3 = comp
+                u = [coxeter_matrix[c0, c1],
+                     coxeter_matrix[c0, c2],
+                     coxeter_matrix[c0, c3],
+                     coxeter_matrix[c1, c2],
+                     coxeter_matrix[c1, c3],
+                     coxeter_matrix[c2, c3]]
+                s = sorted(u)
+                # ``s`` is the list of all off-diagonal entries of
+                # the ``comp``-submatrix of the Coxeter matrix,
+                # sorted in increasing order.
+                if s[3:5] == [3, 3]:
+                    if s[5] == 3:
+                        continue  # A4, D4
+                    if s[5] in [4, 5]:
+                        u0 = u[0] + u[1] + u[2]
+                        u1 = u[0] + u[3] + u[4]
+                        u2 = u[1] + u[3] + u[5]
+                        u3 = u[2] + u[4] + u[5]
+                        ss = sorted([u0, u1, u2, u3])
+                        if ss in [[7, 7, 9, 9], [7, 8, 8, 9],
+                                  [7, 8, 9, 10]]:
+                            continue  # F4, B4, H4
+                return False
+            else:
+                # The case of `l \geq 5` nodes. The finite
+                # groups to check for here are `A_l`, `B_l`, `D_l`,
+                # and `E_l` (for `l = 6, 7, 8`).
+
+                # Checking that the Coxeter matrix of the subgroup
+                # corresponding to the vertices ``comp`` has all its
+                # off-diagonal entries equal to 2, 3 or at most once 4
+                found_a_4 = False
+                for j in range(l):
+                    for i in range(j):
+                        coxeter_entry = coxeter_matrix[comp[i], comp[j]]
+                        if coxeter_entry in [2, 3]:
+                            continue
+                        if coxeter_entry == 4 and not found_a_4:
+                            found_a_4 = True
+                            continue
+                        return False
+
+                G0 = G.subgraph(comp)
+                if found_a_4:
+                    # The case when a `4` has been found in the
+                    # Coxeter matrix. This needs only to be checked
+                    # against `B_l`. We use the observation that
+                    # the group is `B_l` if and only if the Coxeter
+                    # graph is an `l`-path (i.e., has diameter
+                    # `l - 1`) and the `4` corresponds to one of
+                    # its two outermost edges.
+                    diameter = G0.diameter()
+                    if diameter != l - 1:
+                        return False
+
+                    ecc = sorted(((u, v) for (v, u) in G0.eccentricity(with_labels=True).items()))
+                    left_end = ecc[-1][1]
+                    right_end = ecc[-2][1]
+                    left_almost_end = G0.neigbors(left_end)[0]
+                    right_almost_end = G0.neigbors(right_end)[0]
+                    if (coxeter_matrix[left_end, left_almost_end] == 4
+                        or coxeter_matrix[right_end, right_almost_end] == 4):
+                        continue  # Bl
+                    return False
+
+                # Now, all off-diagonal entries of the Coxeter matrix
+                # are 2's and 3's. We need to check our group against
+                # `A_l`, `D_l` and `E_l`. Knowing that the Coxeter
+                # graph is a tree, we can use its vertex
+                # eccentricities to check this.
+                ecc = sorted(G0.eccentricity())
+                if ecc[-1] == l - 1:
+                    continue  # Al
+                if ecc[-3] == l - 2:
+                    continue  # Dl
+                if l <= 8 and ecc[-2] == l - 2 and ecc[-5] == l - 3:
+                    continue  # El
+                return False
+
+        return True
 
     def _repr_(self):
         """
@@ -304,12 +495,14 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         EXAMPLES::
 
             sage: CoxeterGroup([[1,3,2],[3,1,3],[2,3,1]])
-            Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+            Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
             [1 3 2]
             [3 1 3]
             [2 3 1]
         """
-        return "Coxeter group over {} with Coxeter matrix:\n{}".format(self.base_ring(), self._matrix)
+        rep = "Finite " if self.is_finite() else ""
+        rep += "Coxeter group over {} with Coxeter matrix:\n{}".format(self.base_ring(), self._matrix)
+        return rep
 
     def index_set(self):
         """
@@ -375,9 +568,102 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
                     G.add_edge(self._index_set[i], self._index_set[i+1+j])
                 elif val > 3:
                     G.add_edge(self._index_set[i], self._index_set[i+1+j], val)
-                elif val == -1: # FIXME: Hack because there is no ZZ\cup\{\infty\}
+                elif val == -1:  # FIXME: Hack because there is no ZZ\cup\{\infty\}
                     G.add_edge(self._index_set[i], self._index_set[i+1+j], infinity)
         return G
+
+    def bilinear_form(self):
+        r"""
+        Return the bilinear form associated to ``self``.
+
+        Given a Coxeter group `G` with Coxeter matrix `M = (m_{ij})_{ij}`,
+        the associated bilinear form `A = (a_{ij})_{ij}` is given by
+
+        .. MATH::
+
+            a_{ij} = -\cos\left( \frac{\pi}{m_{ij}} \right).
+
+        If `A` is positive definite, then `G` is of finite type (and so
+        the associated Coxeter group is a finite group). If `A` is
+        positive semidefinite, then `G` is affine type.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['D',4])
+            sage: W.bilinear_form()
+            [   1 -1/2    0    0]
+            [-1/2    1 -1/2 -1/2]
+            [   0 -1/2    1    0]
+            [   0 -1/2    0    1]
+        """
+        return self._bilinear
+
+    def is_finite(self):
+        """
+        Return ``True`` if this group is finite.
+
+        EXAMPLES::
+
+            sage: [l for l in range(2, 9) if
+            ....:  CoxeterGroup([[1,3,2],[3,1,l],[2,l,1]]).is_finite()]
+            ....:
+            [2, 3, 4, 5]
+            sage: [l for l in range(2, 9) if
+            ....:  CoxeterGroup([[1,3,2,2],[3,1,l,2],[2,l,1,3],[2,2,3,1]]).is_finite()]
+            ....:
+            [2, 3, 4]
+            sage: [l for l in range(2, 9) if
+            ....:  CoxeterGroup([[1,3,2,2,2], [3,1,3,3,2], [2,3,1,2,2],
+            ....:                [2,3,2,1,l], [2,2,2,l,1]]).is_finite()]
+            ....:
+            [2, 3]
+            sage: [l for l in range(2, 9) if
+            ....:  CoxeterGroup([[1,3,2,2,2], [3,1,2,3,3], [2,2,1,l,2],
+            ....:                [2,3,l,1,2], [2,3,2,2,1]]).is_finite()]
+            ....:
+            [2, 3]
+            sage: [l for l in range(2, 9) if
+            ....:  CoxeterGroup([[1,3,2,2,2,2], [3,1,l,2,2,2], [2,l,1,3,l,2],
+            ....:                [2,2,3,1,2,2], [2,2,l,2,1,3], [2,2,2,2,3,1]]).is_finite()]
+            ....:
+            [2, 3]
+        """
+        # Finite Coxeter groups are marked as finite in
+        # their ``__init__`` method, so we can just check
+        # the category of ``self``.
+        return "Finite" in self.category().axioms()
+
+    def order(self):
+        """
+        Return the order of ``self``.
+
+        If the Coxeter group is finite, this uses an iterator.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup([[1,3],[3,1]])
+            sage: W.order()
+            6
+            sage: W = CoxeterGroup([[1,-1],[-1,1]])
+            sage: W.order()
+            +Infinity
+        """
+        if self.is_finite():
+            return self._cardinality_from_iterator()
+        return infinity
+
+    def canonical_representation(self):
+        r"""
+        Return the canonical faithful representation of ``self``, which
+        is ``self``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup([[1,3],[3,1]])
+            sage: W.canonical_representation() is W
+            True
+        """
+        return self
 
     def simple_reflection(self, i):
         """
@@ -418,7 +704,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             A Coxeter system `(W, S)` has a root system defined as
             `\{ w(\alpha_s) \}_{w \in W}` and we define the positive
             (resp. negative) roots `\alpha = \sum_{s \in S} c_s \alpha_s`
-            by all `c_s \geq 0` (resp.`c_s \leq 0`). In particular, we note
+            by all `c_s \geq 0` (resp. `c_s \leq 0`). In particular, we note
             that if `\ell(w s) > \ell(w)` then `w(\alpha_s) > 0` and if
             `\ell(ws) < \ell(w)` then `w(\alpha_s) < 0`.
             Thus `i \in I` is a right descent if `w(\alpha_{s_i}) < 0`
@@ -441,3 +727,19 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             col = self.matrix().column(i)
             return all(x <= 0 for x in col)
 
+        def canonical_matrix(self):
+            r"""
+            Return the matrix of ``self`` in the canonical faithful
+            representation, which is ``self`` as a matrix.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A',3], implementation="reflection")
+                sage: a,b,c = W.gens()
+                sage: elt = a*b*c
+                sage: elt.canonical_matrix()
+                [ 0  0 -1]
+                [ 1  0 -1]
+                [ 0  1 -1]
+            """
+            return self.matrix()

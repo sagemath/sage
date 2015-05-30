@@ -14,17 +14,12 @@ if [ "$SAGE_LOCAL" = "" ]; then
     exit 1
 fi
 
-# singular's build system uses the output of grep
-unset GREP_OPTIONS
-
 # disable the dynamic kernel, except on Linux
 if [ "$UNAME" != "Linux" ]; then
     SINGULAR_CONFIGURE="--without-dynamic-kernel $SINGULAR_CONFIGURE"
 fi
 
 if [ "$UNAME" = "Darwin" ]; then
-    export MACOSX_DEPLOYMENT_TARGET=10.4
-
     # Singular needs $LD set to "libtool", not "ld" on Darwin.
     # If we unset it, Singular will figure it out correctly.
     unset LD
@@ -86,14 +81,14 @@ if [ "$UNAME" = "SunOS" ]; then
 fi
 
 
+# There is a race condition in the Singular Makefiles, building in
+# parallel sometimes fails (Trac #17774)
+export MAKE="$MAKE -j1"
+
+
 choose_patches()
 {
     cd "$PATCHES" || return $?
-
-    # Move some patches which are conditionally applied
-    if [ "$UNAME" = "CYGWIN" ]; then
-        mv conditional/cygwin.patch . || return $?
-    fi
 
     if [ "x$SAGE_DEBUG" = "xyes" ]; then
         mv conditional/sage_debug.patch . || return $?
@@ -102,6 +97,7 @@ choose_patches()
         rm -r "$SRC/omalloc"/*
         mv configure_omalloc "$SRC/omalloc/configure"
         mv conditional/singular_xalloc.patch . || return $?
+        mv conditional/cygwin64_debug.patch ./cygwin64.patch || return $?
     fi
 }
 
@@ -146,10 +142,10 @@ config()
                 --with-apint=gmp \
                 --with-malloc=system \
                 --with-NTL \
+                --with-flint="$SAGE_LOCAL" \
                 --without-MP \
                 --without-lex \
                 --without-Boost \
-                --without-flint \
                 --enable-Singular \
                 --enable-factory \
                 --enable-libfac \
@@ -221,6 +217,10 @@ build_libsingular()
         echo >&2 "Unable to build and install libsingular."
         return 1
     fi
+
+    # singular does not install this header
+    cp Singular/sing_dbm.h $SAGE_LOCAL/include/singular/
+
     export CFLAGS="$OLD_CFLAGS"
     export CXXFLAGS="$OLD_CXXFLAGS"
 }
@@ -240,7 +240,7 @@ build_factory()
                 --with-gmp="$SAGE_LOCAL" \
                 --enable-NTL \
                 --with-NTL="$SAGE_LOCAL" \
-                --without-flint \
+                --with-flint="$SAGE_LOCAL" \
                 --with-gmp="$SAGE_LOCAL" \
                 $ENABLE_DEBUGOUTPUT
 

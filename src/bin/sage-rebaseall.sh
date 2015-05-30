@@ -17,6 +17,6 @@
 # (which usually means admin rights).
 
 echo "Getting list of dlls. This may take a while..."
-/bin/find -name "*.dll" -o -name "*.so" > /tmp/sage-dlls.lst
+/bin/find local -name "*.dll" -o -name "*.so" > /tmp/sage-dlls.lst
 echo "Now rebasing..."
 /bin/rebaseall -T /tmp/sage-dlls.lst

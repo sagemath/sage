@@ -14,9 +14,10 @@ copying a single file. See :ref:`installation` in this tutorial and the
 installation guide) for more information on doing that.
 
 Here is a very brief example of using SageTeX. The full documentation
-can be found in ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``,
+can be found in ``SAGE_ROOT/local/share/doc/sagetex``,
 where ``SAGE_ROOT`` is the directory where your Sage installation is
-located. That directory contains the documentation, an example file, and
+located. That directory contains the documentation and an example file.
+See ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex`` for
 some possibly useful Python scripts.
 
 To see how SageTeX works, follow the directions for installing SageTeX
@@ -69,16 +70,16 @@ complaints, which will include::
     command is on input line 25.
 
     Package sagetex Warning: There were undefined Sage formulas and/or
-    plots. Run Sage on st_example.sage, and then run LaTeX on
+    plots. Run Sage on st_example.sagetex.sage, and then run LaTeX on
     st_example.tex again.
 
 Notice that, in addition to the usual collection of files produced by
-LaTeX, there is a file called ``st_example.sage``. That is a Sage script
+LaTeX, there is a file called ``st_example.sagetex.sage``. That is a Sage script
 produced when you run LaTeX on ``st_example.tex``. The warning message
-told you to run Sage on ``st_example.sage``, so take its advice and do
+told you to run Sage on ``st_example.sagetex.sage``, so take its advice and do
 that. It will tell you to run LaTeX on ``st_example.tex`` again, but
 before you do that, notice that a new file has been created:
-``st_example.sout``. That file contains the results of Sage's
+``st_example.sagetex.sout``. That file contains the results of Sage's
 computations, in a format that LaTeX can use to insert into your text. A
 new directory containing an EPS file of your plot has also been created.
 Run LaTeX again and you'll see that everything that Sage computed and
@@ -104,4 +105,4 @@ commands in your document.
 There's a lot more to SageTeX, and since both Sage and LaTeX are
 complex, powerful tools, it's a good idea to read the documentation for
 SageTeX, which is in
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``.
+``SAGE_ROOT/local/share/doc/sagetex``.

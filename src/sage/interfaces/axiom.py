@@ -177,7 +177,8 @@ Python floats.
 import os, re
 
 from expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.misc.misc import verbose, DOT_SAGE
+from sage.misc.all import verbose
+from sage.env import DOT_SAGE
 from pexpect import EOF
 from sage.misc.multireplace import multiple_replace
 
@@ -262,7 +263,7 @@ class PanAxiom(Expect):
             '22'
         """
         if not filename.endswith('.input'):
-            raise ValueError, "the filename must end with .input"
+            raise ValueError("the filename must end with .input")
 
         # For some reason this trivial comp
         # keeps certain random freezes from occurring.  Do not remove this.
@@ -387,7 +388,7 @@ class PanAxiom(Expect):
         out = self._eval_line(cmd, reformat=False)
 
         if out.find("error") != -1:
-            raise TypeError, "Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s"%(cmd, out))
 
 
     def get(self, var):
@@ -425,7 +426,7 @@ class PanAxiom(Expect):
         if line == '':
             return ''
         if len(line) > 3000:
-            raise NotImplementedError, "evaluation of long input lines (>3000 characters) in Axiom not yet implemented."
+            raise NotImplementedError("evaluation of long input lines (>3000 characters) in Axiom not yet implemented.")
         if self._expect is None:
             self._start()
         if allow_use_file and self.__eval_using_file_cutoff and \
@@ -449,7 +450,7 @@ class PanAxiom(Expect):
 
         if '>> Error detected within library code:' in out or \
            'Cannot find a definition or applicable library operation named' in out:
-            raise RuntimeError, out
+            raise RuntimeError(out)
 
         if not reformat:
             return out
@@ -671,7 +672,7 @@ class PanAxiomElement(ExpectElement):
         """
         n = int(n)
         if n <= 0 or n > len(self):
-            raise IndexError, "index out of range"
+            raise IndexError("index out of range")
         P = self._check_valid()
         if not isinstance(n, tuple):
             return P.new('%s(%s)'%(self._name, n))
@@ -725,7 +726,7 @@ class PanAxiomElement(ExpectElement):
         P = self.parent()
         s = P._eval_line('outputAsTex(%s)'%self.name(), reformat=False)
         if not '$$' in s:
-            raise RuntimeError, "Error texing axiom object."
+            raise RuntimeError("Error texing axiom object.")
         i = s.find('$$')
         j = s.rfind('$$')
         s = s[i+2:j]
@@ -886,7 +887,7 @@ class PanAxiomElement(ExpectElement):
         try:
             import sage.misc.sage_eval
             return sage.misc.sage_eval.sage_eval(self.unparsed_input_form())
-        except StandardError:
+        except Exception:
             raise NotImplementedError
 
 

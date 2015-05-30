@@ -33,40 +33,6 @@ The MPC team can be contact via the MPC mailing list:
 
 == Special Update/Build Instructions ==
 
-Patches:
- * configure.patch: move AM_PROG_AR after MPC_GMP_CC_CFLAGS, see
-   https://gforge.inria.fr/tracker/?func=detail&group_id=131&aid=14669&atid=607
-   (patch scheduled to be merged upstream in mpc-1.0.1)
-
-== Changelog ==
-
-=== mpc-1.0.p0 (Jeroen Demeyer, 1 August 2012) ===
- * Trac #13290: add configure.patch (see above).
-
-=== mpc-1.0 (Jeroen Demeyer, 27 July 2012) ===
- * Trac #13290: upgrade to stable version 1.0.
- * Remove no_fortify_source.patch (which is upstream now).
- * Remove legacy "unset RM" command.
-
-=== mpc-1.0.0dev1126.p1 (Jeroen Demeyer, 23 March 2012) ===
- * Trac #12515: add no_fortify_source.patch to remove compiler option
-   "-D_FORTIFY_SOURCE=2".
-
-=== mpc-1.0.0dev1126 (Jeroen Demeyer, 22 February 2012) ===
- * Trac #12515: Upgrade to mpc-1.0.0, svn revision 1126
- * Unset CC and CFLAGS in spkg-install.
- * Various fixes in spkg-install.
- * Do not delete old libraries, see #12548.
-
-=== mpc-0.8.3-dev-svn793 (Yann Laigle-Chapuy, June 19th, 2010) ===
- * Upgrade to version 0.8.3-dev-svn793.  This version of MPC includes a
-   faster mpc_pow_si.
-
-=== mpc-0.8.1 (Yann Laigle-Chapuy, January 2010) ===
- * Upgrade to version 0.8.1.
-
-=== mpc-0.6 (Philippe Theveny, August 2009) ===
- * Upgrade to version 0.6 (there was an optional spkg mpc-0.5.p0)
-
-=== mpc-0.5 (Philippe Theveny, October 18th, 2008) ===
- * initial release
+* mpc_mul_faster.patch: Patch from Paul Zimmermann to speed up MPC
+  multiplication (for small precisions) by reducing overhead in MPFR
+  operations.

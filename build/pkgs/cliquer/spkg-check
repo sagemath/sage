@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+    echo "SAGE_LOCAL undefined ... exiting";
+    echo "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+OPTIMIZATION_FLAGS="-O3 -funroll-loops -fomit-frame-pointer"
+# Work around a bug in gcc 4.6.0: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48774
+if [ "`testcc.sh $CC`" = GCC ] ; then
+    if $CC -dumpversion 2>/dev/null |grep >/dev/null '^4\.6\.[01]' ; then
+        echo "Warning: Working around bug in gcc 4.6.0"
+        OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -fno-ivopts"
+    fi
+fi
+
+CFLAGS="$CFLAGS `testcflags.sh -g $OPTIMIZATION_FLAGS -fPIC -KPIC -Wall`"
+CPPFLAGS="$CPPFLAGS -I$SAGE_LOCAL/include"
+LDFLAGS="$LDFLAGS -L$SAGE_LOCAL/lib"
+
+# Compile for 64-bit if SAGE64 is set to 'yes'.
+# On 64-bit hardware, we don't need to set this variable to true. A
+# 64-bit cliquer library would be built on such platform.
+if [ "$SAGE64" = yes ]; then
+    CFLAGS="$CFLAGS -m64 "
+    LDFLAGS="$LDFLAGS -m64 "
+fi
+
+# Export everything
+export CFLAGS
+export CPPFLAGS
+export LDFLAGS
+
+cd src && $MAKE test

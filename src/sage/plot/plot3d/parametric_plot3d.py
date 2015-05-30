@@ -9,7 +9,9 @@ from sage.structure.element import is_Vector
 
 from sage.ext.fast_eval import fast_float, fast_float_constant
 
-def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_style=None, **kwds):
+
+def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
+                      boundary_style=None, **kwds):
     r"""
     Return a parametric three-dimensional space curve or surface.
 
@@ -82,6 +84,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
        ::
 
            sage: parametric_plot3d( (sin, cos, lambda u: u/10), (0, 20))
+           Graphics3d Object
 
        Note above the lambda function, which creates a callable Python
        function that sends `u` to `u/10`.
@@ -93,6 +96,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
 
            sage: u = var('u')
            sage: parametric_plot3d( (sin(u), cos(u), u/10), (u, 0, 20))
+           Graphics3d Object
 
     #. We draw a parametric surface using 3 Python functions (defined
        using lambda):
@@ -101,13 +105,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
 
            sage: f = (lambda u,v: cos(u), lambda u,v: sin(u)+cos(v), lambda u,v: sin(v))
            sage: parametric_plot3d(f, (0, 2*pi), (-pi, pi))
-
-    #. The surface, but with a mesh:
-
-       ::
-
-           sage: u, v = var('u,v')
-           sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, 2*pi), (v, -pi, pi), mesh=True)
+           Graphics3d Object
 
     #. The same surface, but where the defining functions are
        symbolic:
@@ -116,14 +114,52 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
 
            sage: u, v = var('u,v')
            sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, 2*pi), (v, -pi, pi))
+           Graphics3d Object
 
-       We increase the number of plot points, and make the surface green
-       and transparent:
+    The surface, but with a mesh::
 
-       ::
+           sage: u, v = var('u,v')
+           sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, 2*pi), (v, -pi, pi), mesh=True)
+           Graphics3d Object
 
-           sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, 2*pi), (v, -pi, pi), color='green', opacity=0.1, plot_points=[30,30])
+    We increase the number of plot points, and make the surface green
+    and transparent::
 
+        sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, 2*pi), (v, -pi, pi),
+        ....: color='green', opacity=0.1, plot_points=[30,30])
+        Graphics3d Object
+
+    One can also color the surface using a coloring function and a colormap::
+
+        sage: u,v = var('u,v')
+        sage: def cf(u,v): return sin(u+v/2)**2
+        sage: P = parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)),
+        ....:   (u, 0, 2*pi), (v, -pi, pi), color=(cf, colormaps.PiYG), plot_points=[60,60])
+        sage: P.show(viewer='tachyon')
+
+    Another example, a colored Mobius band::
+
+        sage: cm = colormaps.ocean
+        sage: def c(x,y): return sin(x*y)**2
+        sage: from sage.plot.plot3d.parametric_surface import MobiusStrip
+        sage: MobiusStrip(5,1,plot_points=200, color=(c,cm))
+        Graphics3d Object
+
+    Yet another colored example::
+
+        sage: from sage.plot.plot3d.parametric_surface import ParametricSurface
+        sage: cm = colormaps.autumn
+        sage: def c(x,y): return sin(x*y)**2
+        sage: def g(x,y): return x, y+sin(y), x**2 + y**2
+        sage: ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)),color=(c,cm))
+        Graphics3d Object
+
+    .. WARNING::
+
+        This kind of coloring using a colormap can be visualized
+        using Jmol, Tachyon (option ``viewer='tachyon'``) and
+        Canvas3D (option ``viewer='canvas3d'`` in the
+        notebook).
 
     We call the space curve function but with polynomials instead of
     symbolic variables.
@@ -132,37 +168,43 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
 
         sage: R.<t> = RDF[]
         sage: parametric_plot3d( (t, t^2, t^3), (t, 0, 3) )
+        Graphics3d Object
 
     Next we plot the same curve, but because we use (0, 3) instead of
     (t, 0, 3), each polynomial is viewed as a callable function of one
     variable::
 
         sage: parametric_plot3d( (t, t^2, t^3), (0, 3) )
+        Graphics3d Object
 
     We do a plot but mix a symbolic input, and an integer::
 
         sage: t = var('t')
         sage: parametric_plot3d( (1, sin(t), cos(t)), (t, 0, 3) )
+        Graphics3d Object
 
     We specify a boundary style to show us the values of the function at its
     extrema::
 
         sage: u, v = var('u,v')
-        sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, pi), (v, 0, pi), \
-        ...                     boundary_style={"color": "black", "thickness": 2})
+        sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, pi), (v, 0, pi),
+        ....:              boundary_style={"color": "black", "thickness": 2})
+        Graphics3d Object
 
     We can plot vectors::
 
-        sage: x,y=var('x,y')
+        sage: x,y = var('x,y')
         sage: parametric_plot3d(vector([x-y,x*y,x*cos(y)]), (x,0,2), (y,0,2))
-        sage: t=var('t')
-        sage: p=vector([1,2,3])
-        sage: q=vector([2,-1,2])
+        Graphics3d Object
+        sage: t = var('t')
+        sage: p = vector([1,2,3])
+        sage: q = vector([2,-1,2])
         sage: parametric_plot3d(p*t+q, (t, 0, 2))
+        Graphics3d Object
 
 
     Any options you would normally use to specify the appearance of a curve are
-    valid as entries in the boundary_style dict.
+    valid as entries in the ``boundary_style`` dict.
 
     MANY MORE EXAMPLES:
 
@@ -174,6 +216,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: p1 = parametric_plot3d(f1, (u,0,2*pi), (v,0,2*pi), texture="red")
         sage: p2 = parametric_plot3d(f2, (u,0,2*pi), (v,0,2*pi), texture="blue")
         sage: p1 + p2
+        Graphics3d Object
 
     A cylindrical Star of David::
 
@@ -182,6 +225,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: f_y = cos(u)*sin(v)*(abs(cos(3*v/4))^500 + abs(sin(3*v/4))^500)^(-1/260)*(abs(cos(4*u/4))^200 + abs(sin(4*u/4))^200)^(-1/200)
         sage: f_z = sin(u)*(abs(cos(4*u/4))^200 + abs(sin(4*u/4))^200)^(-1/200)
         sage: parametric_plot3d([f_x, f_y, f_z], (u, -pi, pi), (v, 0, 2*pi))
+        Graphics3d Object
 
     Double heart::
 
@@ -190,6 +234,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: f_y = ( abs(v) - abs(u) - abs(tanh((1/sqrt(2))*u)/(1/sqrt(2))) - abs(tanh((1/sqrt(2))*v)/(1/sqrt(2))) )*cos(v)
         sage: f_z = sin(u)*(abs(cos(4*u/4))^1 + abs(sin(4*u/4))^1)^(-1/1)
         sage: parametric_plot3d([f_x, f_y, f_z], (u, 0, pi), (v, -pi, pi))
+        Graphics3d Object
 
     Heart::
 
@@ -198,6 +243,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: f_y = sin(u) *(4*sqrt(1-v^2)*sin(abs(u))^abs(u))
         sage: f_z = v
         sage: parametric_plot3d([f_x, f_y, f_z], (u, -pi, pi), (v, -1, 1), frame=False, color="red")
+        Graphics3d Object
 
     Green bowtie::
 
@@ -206,6 +252,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: f_y = sin(u) / (sqrt(2) + cos(v))
         sage: f_z = cos(u) / (1 + sqrt(2))
         sage: parametric_plot3d([f_x, f_y, f_z], (u, -pi, pi), (v, -pi, pi), frame=False, color="green")
+        Graphics3d Object
 
     Boy's surface http://en.wikipedia.org/wiki/Boy's_surface
 
@@ -216,14 +263,16 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = 2/3* (cos(u)* sin(2*v) - sqrt(2)* sin(u)* sin(v))* cos(u) / (sqrt(2) - sin(2*u)* sin(3*v))
         sage: fz = sqrt(2)* cos(u)* cos(u) / (sqrt(2) - sin(2*u)* sin(3*v))
         sage: parametric_plot3d([fx, fy, fz], (u, -2*pi, 2*pi), (v, 0, pi), plot_points = [90,90], frame=False, color="orange") # long time -- about 30 seconds
+        Graphics3d Object
 
-    Maeder's_Owl (pretty but can't find an internet reference)::
+    Maeder's Owl (pretty but can't find an internet reference)::
 
         sage: u, v = var('u,v')
         sage: fx = v *cos(u) - 0.5* v^2 * cos(2* u)
         sage: fy = -v *sin(u) - 0.5* v^2 * sin(2* u)
         sage: fz = 4 *v^1.5 * cos(3 *u / 2) / 3
         sage: parametric_plot3d([fx, fy, fz], (u, -2*pi, 2*pi), (v, 0, 1),plot_points = [90,90], frame=False, color="purple")
+        Graphics3d Object
 
     Bracelet::
 
@@ -232,6 +281,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = 0.2*cos(2*pi*u) *3*cos(2*pi*v)
         sage: fz = (2 + 0.2*sin(2*pi*u))*cos(pi*v)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, pi/2), (v, 0, 3*pi/4), frame=False, color="gray")
+        Graphics3d Object
 
     Green goblet
 
@@ -242,6 +292,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = sin(u)*cos(2*v)
         sage: fz = sin(v)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, pi), frame=False, color="green")
+        Graphics3d Object
 
     Funny folded surface - with square projection::
 
@@ -250,6 +301,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = sin(u)*cos(2*v)
         sage: fz = sin(v)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi), frame=False, color="green")
+        Graphics3d Object
 
     Surface of revolution of figure 8::
 
@@ -258,6 +310,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = sin(u)*sin(2*v)
         sage: fz = sin(v)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi), frame=False, color="green")
+        Graphics3d Object
 
     Yellow Whitney's umbrella
     http://en.wikipedia.org/wiki/Whitney_umbrella::
@@ -267,6 +320,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = u
         sage: fz = v^2
         sage: parametric_plot3d([fx, fy, fz], (u, -1, 1), (v, -1, 1), frame=False, color="yellow")
+        Graphics3d Object
 
     Cross cap http://en.wikipedia.org/wiki/Cross-cap::
 
@@ -275,6 +329,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (1+cos(v))*sin(u)
         sage: fz = -tanh((2/3)*(u-pi))*sin(v)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi), frame=False, color="red")
+        Graphics3d Object
 
     Twisted torus::
 
@@ -283,6 +338,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (3+sin(v)+cos(u))*sin(2*v)
         sage: fz = sin(u)+2*cos(v)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi), frame=False, color="red")
+        Graphics3d Object
 
     Four intersecting discs::
 
@@ -291,6 +347,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = -v*sin(u) -0.5*v^2*sin(2*u)
         sage: fz = 4* v^1.5 *cos(3* u / 2) / 3
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 4*pi), (v, 0,2*pi), frame=False, color="red", opacity=0.7)
+        Graphics3d Object
 
     Steiner surface/Roman's surface (see
     http://en.wikipedia.org/wiki/Roman_surface and
@@ -301,6 +358,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (sin(u) * sin(2 * v))
         sage: fz = (cos(u) * sin(2 * v))
         sage: parametric_plot3d([fx, fy, fz], (u, -pi/2, pi/2), (v, -pi/2,pi/2), frame=False, color="red")
+        Graphics3d Object
 
     Klein bottle? (see http://en.wikipedia.org/wiki/Klein_bottle)::
 
@@ -309,6 +367,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (4+2*(1-cos(v)/2)*cos(u))*sin(v)
         sage: fz = -2*(1-cos(v)/2) * sin(u)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi), frame=False, color="green")
+        Graphics3d Object
 
     A Figure 8 embedding of the Klein bottle (see
     http://en.wikipedia.org/wiki/Klein_bottle)::
@@ -318,6 +377,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (2 + cos(v/2)* sin(u) - sin(v/2)* sin(2 *u))* sin(v)
         sage: fz = sin(v/2)* sin(u) + cos(v/2) *sin(2* u)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi), frame=False, color="red")
+        Graphics3d Object
 
     Enneper's surface (see
     http://en.wikipedia.org/wiki/Enneper_surface)::
@@ -327,6 +387,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = v -v^3/3  + v*u^2
         sage: fz = u^2 - v^2
         sage: parametric_plot3d([fx, fy, fz], (u, -2, 2), (v, -2, 2), frame=False, color="red")
+        Graphics3d Object
 
     Henneberg's surface (see
     http://xahlee.org/surface/gallery_m.html)
@@ -338,6 +399,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = 2*sinh(u)*sin(v) +(2/3)*sinh(3*u)*sin(3*v)
         sage: fz = 2*cosh(2*u)*cos(2*v)
         sage: parametric_plot3d([fx, fy, fz], (u, -1, 1), (v, -pi/2, pi/2), frame=False, color="red")
+        Graphics3d Object
 
     Dini's spiral
 
@@ -348,6 +410,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = sin(u)*sin(v)
         sage: fz = (cos(v)+log(tan(v/2))) + 0.2*u
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 12.4), (v, 0.1, 2),frame=False, color="red")
+        Graphics3d Object
 
     Catalan's surface (see
     http://xahlee.org/surface/catalan/catalan.html)::
@@ -357,6 +420,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = 1-cos(u)*cosh(v)
         sage: fz = 4*sin(1/2*u)*sinh(v/2)
         sage: parametric_plot3d([fx, fy, fz], (u, -pi, 3*pi), (v, -2, 2), frame=False, color="red")
+        Graphics3d Object
 
     A Conchoid::
 
@@ -364,11 +428,13 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: k = 1.2; k_2 = 1.2; a = 1.5
         sage: f = (k^u*(1+cos(v))*cos(u), k^u*(1+cos(v))*sin(u), k^u*sin(v)-a*k_2^u)
         sage: parametric_plot3d(f, (u,0,6*pi), (v,0,2*pi), plot_points=[40,40], texture=(0,0.5,0))
+        Graphics3d Object
 
     A Mobius strip::
 
         sage: u,v = var("u,v")
         sage: parametric_plot3d([cos(u)*(1+v*cos(u/2)), sin(u)*(1+v*cos(u/2)), 0.2*v*sin(u/2)], (u,0, 4*pi+0.5), (v,0, 0.3),plot_points=[50,50])
+        Graphics3d Object
 
     A Twisted Ribbon
 
@@ -376,31 +442,37 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
 
         sage: u, v = var('u,v')
         sage: parametric_plot3d([3*sin(u)*cos(v), 3*sin(u)*sin(v), cos(v)], (u,0, 2*pi), (v, 0, pi),plot_points=[50,50])
+        Graphics3d Object
 
     An Ellipsoid::
 
         sage: u, v = var('u,v')
         sage: parametric_plot3d([3*sin(u)*cos(v), 2*sin(u)*sin(v), cos(u)], (u,0, 2*pi), (v, 0, 2*pi),plot_points=[50,50], aspect_ratio=[1,1,1])
+        Graphics3d Object
 
     A Cone::
 
         sage: u, v = var('u,v')
         sage: parametric_plot3d([u*cos(v), u*sin(v), u], (u, -1, 1), (v, 0, 2*pi+0.5), plot_points=[50,50])
+        Graphics3d Object
 
     A Paraboloid::
 
         sage: u, v = var('u,v')
         sage: parametric_plot3d([u*cos(v), u*sin(v), u^2], (u, 0, 1), (v, 0, 2*pi+0.4), plot_points=[50,50])
+        Graphics3d Object
 
     A Hyperboloid::
 
         sage: u, v = var('u,v')
         sage: plot3d(u^2-v^2, (u, -1, 1), (v, -1, 1), plot_points=[50,50])
+        Graphics3d Object
 
     A weird looking surface - like a Mobius band but also an O::
 
         sage: u, v = var('u,v')
         sage: parametric_plot3d([sin(u)*cos(u)*log(u^2)*sin(v), (u^2)^(1/6)*(cos(u)^2)^(1/4)*cos(v), sin(v)], (u, 0.001, 1), (v, -pi, pi+0.2), plot_points=[50,50])
+        Graphics3d Object
 
     A heart, but not a cardioid (for my wife)::
 
@@ -417,6 +489,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (sinh(v)*sin(3*u))/(1+cosh(u)*cosh(v))
         sage: fz = (cosh(v)*sinh(u))/(1+cosh(u)*cosh(v))
         sage: parametric_plot3d([fx, fy, fz], (u, -pi, pi), (v, -pi, pi), plot_points = [50,50], frame=False, color="red")
+        Graphics3d Object
 
     A Helicoid (lines through a helix,
     http://en.wikipedia.org/wiki/Helix)::
@@ -426,6 +499,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = -sinh(v)*cos(u)
         sage: fz = 3*u
         sage: parametric_plot3d([fx, fy, fz], (u, -pi, pi), (v, -pi, pi), plot_points = [50,50], frame=False, color="red")
+        Graphics3d Object
 
     Kuen's surface
     (http://virtualmathmuseum.org/Surface/kuen/kuen.html)::
@@ -434,6 +508,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (2*(sin(u) - u*cos(u))*sin(v))/(1+ u^2*sin(v)^2)
         sage: fz = log(tan(1/2 *v)) + (2*cos(v))/(1+ u^2*sin(v)^2)
         sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0.01, pi-0.01), plot_points = [50,50], frame=False, color="green")
+        Graphics3d Object
 
     A 5-pointed star::
 
@@ -441,6 +516,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = cos(u)*sin(v)*(abs(cos(1*u/4))^0.5 + abs(sin(1*u/4))^0.5)^(-1/0.3)*(abs(cos(5*v/4))^1.7 + abs(sin(5*v/4))^1.7)^(-1/0.1)
         sage: fz = sin(u)*(abs(cos(1*u/4))^0.5 + abs(sin(1*u/4))^0.5)^(-1/0.3)
         sage: parametric_plot3d([fx, fy, fz], (u, -pi/2, pi/2), (v, 0, 2*pi), plot_points = [50,50], frame=False, color="green")
+        Graphics3d Object
 
     A cool self-intersecting surface (Eppener surface?)::
 
@@ -448,6 +524,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = v - v^3/3 + v*u^2
         sage: fz = u^2 - v^2
         sage: parametric_plot3d([fx, fy, fz], (u, -25, 25), (v, -25, 25), plot_points = [50,50], frame=False, color="green")
+        Graphics3d Object
 
     The breather surface
     (http://en.wikipedia.org/wiki/Breather_surface)::
@@ -456,6 +533,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         sage: fy = (2*sqrt(0.84)*cosh(0.4*u)*(-(sqrt(0.84)*sin(v)*cos(sqrt(0.84)*v)) + cos(v)*sin(sqrt(0.84)*v)))/(0.4*((sqrt(0.84)*cosh(0.4*u))^2 + (0.4*sin(sqrt(0.84)*v))^2))
         sage: fz = -u + (2*0.84*cosh(0.4*u)*sinh(0.4*u))/(0.4*((sqrt(0.84)*cosh(0.4*u))^2 + (0.4*sin(sqrt(0.84)*v))^2))
         sage: parametric_plot3d([fx, fy, fz], (u, -13.2, 13.2), (v, -37.4, 37.4), plot_points = [90,90], frame=False, color="green")
+        Graphics3d Object
 
     TESTS::
 
@@ -466,15 +544,18 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         ValueError: range variables should be distinct, but there are duplicates
 
 
-    From Trac #2858::
+    From :trac:`2858`::
 
         sage: parametric_plot3d((u,-u,v), (u,-10,10),(v,-10,10))
+        Graphics3d Object
         sage: f(u)=u; g(v)=v^2; parametric_plot3d((g,f,f), (-10,10),(-10,10))
+        Graphics3d Object
 
-    From Trac #5368::
+    From :trac:`5368`::
 
         sage: x, y = var('x,y')
         sage: plot3d(x*y^2 - sin(x), (x,-1,1), (y,-1,1))
+        Graphics3d Object
 
     """
     # TODO:
@@ -501,7 +582,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic", boundary_
         return sum([parametric_plot3d(v, urange, vrange, plot_points=plot_points, **kwds) for v in f])
 
     if not isinstance(f, (tuple, list)) or len(f) != 3:
-        raise ValueError, "f must be a list, tuple, or vector of length 3"
+        raise ValueError("f must be a list, tuple, or vector of length 3")
 
     if vrange is None:
         if plot_points == "automatic":
@@ -552,11 +633,13 @@ def _parametric_plot3d_curve(f, urange, plot_points, **kwds):
     callable Python function that sends `u` to `u/10`::
 
         sage: parametric_plot3d( (sin, cos, lambda u: u/10), (0, 20)) # indirect doctest
+        Graphics3d Object
 
     Now we do the same thing with symbolic expressions::
 
         sage: u = var('u')
         sage: parametric_plot3d( (sin(u), cos(u), u/10), (u, 0, 20))
+        Graphics3d Object
     """
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [urange], plot_points)
@@ -609,11 +692,13 @@ def _parametric_plot3d_surface(f, urange, vrange, plot_points, boundary_style, *
 
         sage: f = (lambda u,v: cos(u), lambda u,v: sin(u)+cos(v), lambda u,v: sin(v))
         sage: parametric_plot3d(f, (0, 2*pi), (-pi, pi)) # indirect doctest
+        Graphics3d Object
 
     Now we do the same thing with symbolic expressions::
 
         sage: u, v = var('u,v')
         sage: parametric_plot3d((cos(u), sin(u) + cos(v), sin(v)), (u, 0, 2*pi), (v, -pi, pi), mesh=True)
+        Graphics3d Object
     """
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [urange,vrange], plot_points)

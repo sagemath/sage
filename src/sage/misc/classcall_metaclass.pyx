@@ -17,12 +17,8 @@ AUTHORS:
 #*****************************************************************************
 
 include 'sage/ext/python.pxi'
-
-cdef extern from "Python.h":
-    ctypedef PyObject *(*callfunc)(type, object, object) except NULL
-    ctypedef struct PyTypeObject_call "PyTypeObject":
-        callfunc tp_call # needed to call type.__call__ at very high speed.
-    cdef PyTypeObject_call PyType_Type # Python's type
+from cpython.object cimport *
+from cpython.type cimport type as pytype
 
 __all__ = ['ClasscallMetaclass', 'typecall', 'timeCall']
 
@@ -160,7 +156,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         """
         cls.classcall = function
 
-    def __call__(cls, *args, **opts):
+    def __call__(cls, *args, **kwds):
         r"""
         This method implements ``cls(<some arguments>)``.
 
@@ -320,37 +316,17 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             ...       __metaclass__ = ClasscallMetaclass
             ...       @staticmethod
             ...       def __classcall__(cls):
-            ...           raise ValueError, "Calling classcall"
+            ...           raise ValueError("Calling classcall")
             sage: Exc()
             Traceback (most recent call last):
             ...
             ValueError: Calling classcall
         """
         if cls.classcall is not None:
-            return cls.classcall(cls,  *args, **opts)
+            return cls.classcall(cls, *args, **kwds)
         else:
-            ###########################################################
-            # This is  type.__call__(cls, *args, **opts)  twice faster
-            # Using the following test code:
-            #
-            #    sage: class NOCALL(object):
-            #    ...      __metaclass__ = ClasscallMetaclass
-            #    ...      pass
-            #
-            # with  type.__call__ :
-            #    sage: %timeit [NOCALL() for i in range(10000)]
-            #    125 loops, best of 3: 3.59 ms per loop
-            # with this ugly C call:
-            #    sage: %timeit [NOCALL() for i in range(10000)]
-            #    125 loops, best of 3: 1.76 ms per loop
-            #
-            # Note: compared to a standard void Python class the slow down is
-            # only 5%:
-            #    sage: %timeit [Rien() for i in range(10000)]
-            #    125 loops, best of 3: 1.7 ms per loop
-            res = <object> PyType_Type.tp_call(cls, args, opts)
-            Py_XDECREF(<PyObject*>res) # During the cast to <object> Cython did INCREF(res)
-            return res
+            # Fast version of type.__call__(cls, *args, **kwds)
+            return (<PyTypeObject*>type).tp_call(cls, args, kwds)
 
     def __get__(cls, instance, owner):
         r"""
@@ -481,7 +457,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             return x in object
 
 
-def typecall(type cls, *args, **opts):
+def typecall(pytype cls, *args, **kwds):
     r"""
     Object construction
 
@@ -514,10 +490,7 @@ def typecall(type cls, *args, **opts):
             ...
             TypeError: Argument 'cls' has incorrect type (expected type, got classobj)
     """
-    # See remarks in ClasscallMetaclass.__call__(cls, *args, **opts) for speed.
-    res = <object> PyType_Type.tp_call(cls, args, opts)
-    Py_XDECREF(<PyObject*>res) # During the cast to <object> Cython did INCREF(res)
-    return res
+    return (<PyTypeObject*>type).tp_call(cls, args, kwds)
 
 # Class for timing::
 

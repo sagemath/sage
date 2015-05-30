@@ -16,4 +16,5 @@ cdef class RealDoubleElement(FieldElement):
     cdef RealDoubleElement __pow_int(self, int exponent)
     cdef _log_base(self, double log_of_base)
 
-
+cdef double_repr(double x)
+cdef double_str(double x)

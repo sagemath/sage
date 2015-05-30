@@ -298,7 +298,6 @@ class GroupMixinLibGAP(object):
         reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
         return tuple(self(g) for g in reps)
 
-    @cached_method
     def conjugacy_classes(self):
         r"""
         Return a list with all the conjugacy classes of ``self``.
@@ -315,9 +314,28 @@ class GroupMixinLibGAP(object):
              [1 1] in Special Linear Group of degree 2 over Finite Field of size 2)
         """
         from sage.groups.conjugacy_classes import ConjugacyClassGAP
-        G = self.gap()
-        reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
-        return tuple(ConjugacyClassGAP(self, self(g)) for g in reps)
+        return tuple(ConjugacyClassGAP(self, self(g)) for g in self.conjugacy_class_representatives())
+
+    def conjugacy_class(self, g):
+        r"""
+        Return the conjugacy class of ``g``.
+
+        OUTPUT:
+
+        The conjugacy class of ``g`` in the group ``self``. If ``self`` is the
+        group denoted by `G`, this method computes the set
+        `\{x^{-1}gx\ \vert\ x\in G\}`.
+
+        EXAMPLES::
+
+            sage: G = SL(2, QQ)
+            sage: g = G([[1,1],[0,1]])
+            sage: G.conjugacy_class(g)
+            Conjugacy class of [1 1]
+            [0 1] in Special Linear Group of degree 2 over Rational Field
+        """
+        from sage.groups.conjugacy_classes import ConjugacyClassGAP
+        return ConjugacyClassGAP(self, self(g))
 
     def class_function(self, values):
         """
@@ -452,9 +470,9 @@ class GroupMixinLibGAP(object):
             sage: F = GF(3)
             sage: gens = [matrix(F,2, [1,0, -1,1]), matrix(F, 2, [1,1,0,1])]
             sage: G = MatrixGroup(gens)
-            sage: iter(G).next()
+            sage: next(iter(G))
+            [1 0]
             [0 1]
-            [2 0]
         """
         if hasattr(self.list, 'get_cache') and self.list.get_cache() is not None:
             for g in self.list():
@@ -486,8 +504,8 @@ class GroupMixinLibGAP(object):
             24
             sage: v[:5]
             (
-            [0 1]  [0 1]  [0 1]  [0 2]  [0 2]
-            [2 0], [2 1], [2 2], [1 0], [1 1]
+            [1 0]  [2 0]  [0 1]  [0 2]  [1 2]
+            [0 1], [0 2], [2 0], [1 0], [2 2]
             )
             sage: all(g in G for g in G.list())
             True
@@ -500,12 +518,12 @@ class GroupMixinLibGAP(object):
             sage: MG = MatrixGroup([M1, M2, M3])
             sage: MG.list()
             (
-            [-1  0]  [-1  0]  [ 1  0]  [1 0]
-            [ 0 -1], [ 0  1], [ 0 -1], [0 1]
+            [1 0]  [ 1  0]  [-1  0]  [-1  0]
+            [0 1], [ 0 -1], [ 0  1], [ 0 -1]
             )
             sage: MG.list()[1]
-            [-1  0]
-            [ 0  1]
+            [ 1  0]
+            [ 0 -1]
             sage: MG.list()[1].parent()
             Matrix group over Integer Ring with 3 generators (
             [-1  0]  [ 1  0]  [-1  0]

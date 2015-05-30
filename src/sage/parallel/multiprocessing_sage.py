@@ -73,4 +73,6 @@ def parallel_iter(processes, f, inputs):
     result = p.imap_unordered(call_pickled_function, [ (fp, t) for t in inputs ])
     for res in result:
         yield res
+    p.close()
+    p.join()
 

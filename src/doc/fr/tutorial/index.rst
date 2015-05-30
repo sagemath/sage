@@ -2,7 +2,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Bienvenue dans le tutoriel Sage !
+Bienvenue dans le tutoriel Sage !
 =================================
 
 Sage est un logiciel mathématique libre destiné à la recherche et à
@@ -10,7 +10,7 @@ l'enseignement en algèbre, géométrie, arithmétique, théorie des nombres,
 cryptographie, calcul scientifique et dans d'autres domaines apparentés. Le
 modèle de développement de Sage comme ses caractéristiques techniques se
 distinguent par un souci extrême d'ouverture, de partage, de
-coopération et de collaboration : notre but est de construire la voiture,
+coopération et de collaboration : notre but est de construire la voiture,
 non de réinventer la roue. L'objectif général de Sage est de créer une
 alternative libre viable à Maple, Mathematica, Magma et MATLAB.
 
@@ -38,6 +38,7 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    tour
    interactive_shell
    interfaces
+   latex
    programming
    sagetex
    afterword

@@ -1,15 +1,15 @@
 r"""
 Interface to FriCAS
 
-TODO:
+.. TODO::
 
-- Evaluation using a file is not done. Any input line with more than a
-  few thousand characters would hang the system, so currently it
-  automatically raises an exception.
+    - Evaluation using a file is not done. Any input line with more
+      than a few thousand characters would hang the system, so currently it
+      automatically raises an exception.
 
-- All completions of a given command.
+    - All completions of a given command.
 
-- Interactive help.
+    - Interactive help.
 
 FriCAS is a free GPL-compatible (modified BSD license) general
 purpose computer algebra system based on Axiom.  The FriCAS
@@ -289,14 +289,14 @@ class FriCASExpectFunction(PanAxiomExpectFunction):
 
 def is_FriCASElement(x):
     """
-    Returns True of x is of type FriCASElement.
+    Return True if x is of type FriCASElement.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import is_FriCASElement
-        sage: is_FriCASElement(fricas(2)) #optional - fricas
+        sage: from sage.interfaces.fricas import is_FriCASElement #optional - fricas
+        sage: is_FriCASElement(fricas(2))  #optional - fricas
         True
-        sage: is_FriCASElement(2)
+        sage: is_FriCASElement(2)  #optional - fricas
         False
     """
     return isinstance(x, FriCASElement)
@@ -340,13 +340,13 @@ def __doctest_cleanup():
     """
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import __doctest_cleanup
-        sage: a = FriCAS()
+        sage: from sage.interfaces.fricas import __doctest_cleanup #optional - fricas
+        sage: a = FriCAS()   #optional - fricas
         sage: two = a(2)     #optional - fricas
         sage: a.is_running() #optional - fricas
         True
-        sage: __doctest_cleanup()
-        sage: a.is_running()
+        sage: __doctest_cleanup()   #optional - fricas
+        sage: a.is_running()   #optional - fricas
         False
     """
     import sage.interfaces.quit

@@ -40,28 +40,6 @@ though. This scrip parses the GAP sources, identifies global
 identifiers, and adds a libGAP_ prefix to them to avoid symbol
 namespace collisions in Sage.
 
-== Changelog ==
+=== Patches === 
 
-=== libgap-4.6.4.p0 (Volker Braun, 3 June 2013) ===
- * Trac #14682: Update to latest upstream
- * Code cleanups following a code review by Fedora GAP packager Jerry
-   James, see https://bugzilla.redhat.com/show_bug.cgi?id=919703
-
-=== libgap-4.5.7.p2 (Volker Braun, 28 Feb 2013) ===
- * Trac #14323: remove one more SIGCHLD handler
-
-=== libgap-4.5.7.p1 (Volker Braun, 30 Jan 2013) ===
- * Cygwin fix
-
-=== libgap-4.5.7 (Volker Braun, 27 Dec 2012) ===
- * Update to latest upstream
- * Fix Exec command
-
-=== libgap-4.5.6.p1 (Volker Braun, 22 Oct 2012) ===
- * Remove GAP signal handlers
-
-=== libgap-4.5.6 (Volker Braun, 10 Sept 2012) ===
- * Update to newest upsteram
-
-=== libgap-4.5.5 (Volker Braun, 2 Sept 2012) ===
- * Initial release
+None

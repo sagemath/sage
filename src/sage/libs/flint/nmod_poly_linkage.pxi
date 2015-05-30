@@ -17,10 +17,12 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.libs.flint.nmod_poly cimport *, nmod_poly_t
+from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport *
 
 include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
+
 
 cdef inline celement *celement_new(unsigned long n):
     cdef celement *g = <celement *>sage_malloc(sizeof(nmod_poly_t))
@@ -429,7 +431,20 @@ cdef inline int celement_inv(nmod_poly_t res, nmod_poly_t a, unsigned long n) ex
 
 cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t modulus, unsigned long n) except -2:
     """
-    EXAMPLE:
+    Compute `x^e`, possibly modulo ``modulus``.
+
+    INPUT:
+
+    - ``x`` -- polynomial - the base.
+
+    - ``e`` -- integer - the exponent.
+
+    - ``modulus`` -- polynomial or NULL - if not NULL, then perform a modular exponentiation.
+
+    - ``n`` -- integer - not used, but all polynomials' coefficients are understood modulo ``n``.
+
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: f = 24998*x^2 + 29761*x + 2252
 
@@ -460,7 +475,7 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
         sage: f^-5
         24620/(x^10 + 20309*x^9 + 29185*x^8 + 11948*x^7 + 1965*x^6 + 7713*x^5 + 5810*x^4 + 20457*x^3 + 30732*x^2 + 9706*x + 4485)
 
-     Testing the modulus:
+     Testing the modulus::
 
         sage: g = 20778*x^2 + 15346*x + 12697
 
@@ -478,49 +493,23 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
         7231*x + 17274
         sage: f^5 % g
         7231*x + 17274
+
+    Make sure that exponentiation can be interrupted, see :trac:`17470`::
+
+        sage: n = 2^23
+        sage: alarm(0.2); x^n; cancel_alarm()
+        Traceback (most recent call last):
+        ...
+        AlarmInterrupt
     """
-    cdef nmod_poly_t pow2
-    cdef nmod_poly_t q
-    cdef nmod_poly_t tmp
-
-    nmod_poly_init(q, n)
-    nmod_poly_init(tmp, n)
-
-    if nmod_poly_degree(x) == 1 and nmod_poly_get_coeff_ui(x,0) == 0 and nmod_poly_get_coeff_ui(x,1) == 1:
-        nmod_poly_zero(res)
-        nmod_poly_set_coeff_ui(res,e,1)
-    elif e == 0:
-        nmod_poly_zero(res)
-        nmod_poly_set_coeff_ui(res,0,1)
-    elif e == 1:
-        nmod_poly_set(res, x)
-    elif e == 2:
-        nmod_poly_pow(res, x, 2)
-    else:
-        if res == x:
-            nmod_poly_set(tmp, x)
-            x = tmp
-        nmod_poly_init(pow2, n)
-        nmod_poly_set(pow2, x)
-        if e % 2:
-            nmod_poly_set(res, x)
-        else:
-            nmod_poly_zero(res)
-            nmod_poly_set_coeff_ui(res, 0, 1)
-        e = e >> 1
-        while(e != 0):
-            nmod_poly_pow(pow2, pow2, 2)
-            if e % 2:
-                nmod_poly_mul(res, res, pow2)
-            e = e >> 1
-            if modulus != NULL:
-                nmod_poly_divrem(q, res, res, modulus)
-        nmod_poly_clear(pow2)
-
     if modulus != NULL:
-        nmod_poly_divrem(q, res, res, modulus)
-    nmod_poly_clear(q)
-    nmod_poly_clear(tmp)
+        sig_on()
+        nmod_poly_powmod_ui_binexp(res, x, e, modulus)
+        sig_off()
+    else:
+        sig_on()
+        nmod_poly_pow(res, x, e)
+        sig_off()
 
 cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """

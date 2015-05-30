@@ -2,7 +2,6 @@
 Faster versions of some key functions in mpmath.libmp.
 """
 
-include "sage/ext/stdsage.pxi"
 from ext_impl cimport *
 from sage.libs.gmp.all cimport *
 from sage.rings.integer cimport Integer

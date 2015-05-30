@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Compile Fortran code within Sage,
-# see devel/sage/sage/misc/inline_fortran.py
+# see src/sage/misc/inline_fortran.py
 
 [ -n "$FC" ] || FC=gfortran
 

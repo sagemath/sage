@@ -17,6 +17,7 @@ AUTHORS::
 """
 
 import os, sys, difflib
+import subprocess
 from optparse import OptionParser
 from sage.misc.temporary_file import tmp_dir
 
@@ -25,15 +26,15 @@ Creates a file <source file>.out that passes the doctests (modulo any raised exc
 parser = OptionParser(usage=usage)
 parser.add_option('-l','--long',dest='long', action="store_true", default=False)
 
-options,args = parser.parse_args()
+options, args = parser.parse_args()
 
 if not (len(args) in [1,2]) :
-    print usage
+    print(usage)
     sys.exit(1)
 
 # set input and output files
-test_file=args[0]
-test_output=args[1] if len(args)==2 else test_file+'.out'
+test_file = args[0]
+test_output = args[1] if len(args)==2 else test_file
 try:
     with open(test_file,'r') as src:
         src_in = src.read()
@@ -43,7 +44,7 @@ except IOError:
     sys.exit(1)
 
 # put the output of the test into sage's temporary directory
-doc_out=tmp_dir()+'.tmp'
+doc_out = tmp_dir()+'.tmp'
 os.system('sage -t %s %s > %s'%('--long' if options.long else '', test_file, doc_out))
 
 doc_out = open(doc_out).read()
@@ -114,17 +115,24 @@ for block in doctests:
         src_in_lines[line_num+i] = None
 
 
-# We're done, so (try and) create and write the output file
-while True:
-    try:
-        open(test_output,'w').write('\n'.join( line for line in src_in_lines if line is not None ))
-        break
-    except IOError:
-        test_output = raw_input('Cannot write to %s. Please give a new filename: ' % test_output)
+# Overwrite the source (or whatever output file was specified on the command line)
+with open(test_output, 'w') as out:
+    for line in src_in_lines:
+        if line is None:
+            continue
+        out.write(line)
+        out.write('\n')
 
-# ...and print a diff of the old and new files to stdout
-with open(test_file,'r') as src:
-    with open(test_output,'r') as output:
-        sys.stdout.writelines(line for line in difflib.unified_diff(src.readlines(),output.readlines()))
 
+# Show summary of changes
+if test_file != test_output:
+    print('The fixed doctests have been saved as {0}.'.format(test_output))
+else:
+    from sage.env import SAGE_ROOT
+    relative = os.path.relpath(test_output, SAGE_ROOT)
+    print(relative)
+    if relative.startswith('..'):
+        print('Fixed source file is not part of Sage.')
+    else:
+        subprocess.call(['git', 'diff', relative], cwd=SAGE_ROOT)
 

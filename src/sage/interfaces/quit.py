@@ -102,13 +102,9 @@ def invalidate_all():
         (2, 3)
         sage: sage.interfaces.quit.invalidate_all()
         sage: a
-        Traceback (most recent call last):
-        ...
-        ValueError: The maxima session in which this object was defined is no longer running.
+        <repr(<sage.interfaces.maxima.MaximaElement at 0x...>) failed: ValueError: The maxima session in which this object was defined is no longer running.>
         sage: b
-        Traceback (most recent call last):
-        ...
-        ValueError: The pari session in which this object was defined is no longer running.
+        <repr(<sage.interfaces.gp.GpElement at 0x...>) failed: ValueError: The pari session in which this object was defined is no longer running.>
 
     However the maxima and gp sessions should still work out, though with their state reset:
 

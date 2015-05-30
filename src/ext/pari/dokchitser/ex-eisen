@@ -1,5 +1,5 @@
 /*** EXAMPLE: Eisenstein series G_k, k>2 even                       ***/
-/*** v1.0, July 2002, questions to tim.dokchitser@durham.ac.uk      ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk     ***/
 /***                                                                ***/
 /*** type \rex-eisen or read("ex-eisen") at gp prompt to run this   ***/
 

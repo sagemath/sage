@@ -6,14 +6,15 @@ that python classes can inherit.
 
 .. NOTE::
 
-    In its original version, this module provides a cython base class
-    :class:`WithEqualityById` implementing unique instance behaviour, and a
-    cython base class :class:`FastHashable_class`, which has a quite fast hash
+    This module provides a cython base class :class:`WithEqualityById`
+    implementing unique instance behaviour, and a cython base class
+    :class:`FastHashable_class`, which has a quite fast hash
     whose value can be freely chosen at initialisation time.
 
 AUTHOR:
 
-- Simon King (2013-02)
+- Simon King (2013-02): Original version
+- Simon King (2013-10): Add :class:`Singleton`
 
 """
 
@@ -32,7 +33,10 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-include "sage/ext/python_rich_object.pxi"
+from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.lazy_attribute import lazy_class_attribute
+
 from cpython.bool cimport *
 from cpython.ref cimport *
 
@@ -256,3 +260,129 @@ cdef class FastHashable_class:
 
         """
         return self._hash
+
+class Singleton(WithEqualityById):
+    """
+    A base class for singletons.
+
+    A singleton is a class that allows to create not more than a
+    single instance. This instance can also belong to a subclass, but
+    it is not possible to have several subclasses of a singleton all
+    having distinct unique instances.
+
+    In order to create a singleton, just add :class:`Singleton`
+    to the list of base classes::
+
+        sage: from sage.misc.fast_methods import Singleton
+        sage: class C(Singleton, SageObject):
+        ....:     def __init__(self):
+        ....:         print "creating singleton"
+        sage: c = C()
+        creating singleton
+        sage: c2 = C()
+        sage: c is c2
+        True
+
+    The unique instance of a singleton stays in memory as long as the
+    singleton itself does.
+
+    Pickling, copying, hashing, and comparison are provided for by
+    :class:`Singleton` according to the singleton paradigm. Note
+    that pickling fails if the class is replaced by a sub-sub-class
+    after creation of the instance::
+
+        sage: class D(C):
+        ....:     pass
+        sage: import __main__      # This is only needed ...
+        sage: __main__.C = C       # ... in doctests
+        sage: __main__.D = D       # same here, only in doctests
+        sage: orig = type(c)
+        sage: c.__class__ = D
+        sage: orig == type(c)
+        False
+        sage: loads(dumps(c))
+        Traceback (most recent call last):
+        ...
+        AssertionError: (("<class '__main__.D'> is not a direct
+        subclass of <class 'sage.misc.fast_methods.Singleton'>",),
+        <class '__main__.D'>, ())
+    """
+    __metaclass__ = ClasscallMetaclass
+
+    @staticmethod
+    def __classcall__(cls):
+        """
+        Create an instance ``O`` of the given class ``cls``, and make it
+        so that in future both ``cls.__call__`` and ``O.__class__.__call__``
+        are constant functions returning ``O``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.fast_methods import Singleton
+            sage: class C(Singleton, Parent):
+            ....:     def __init__(self):
+            ....:         print "creating singleton"
+            ....:         Parent.__init__(self, base=ZZ, category=Rings())
+            sage: c = C()
+            creating singleton
+            sage: import __main__      # This is only needed ...
+            sage: __main__.C = C       # ... in doctests
+            sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
+            True
+        """
+        assert cls.mro()[1] == Singleton, "{} is not a direct subclass of {}".format(cls, Singleton)
+        res = typecall(cls)
+        cf = ConstantFunction(res)
+        cls._set_classcall(cf)
+        res.__class__._set_classcall(cf)
+        return res
+
+    def __copy__(self):
+        """
+        There is a unique instance of a singleton, hence, copying
+        returns ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.fast_methods import Singleton
+            sage: class C(Singleton, Parent):                  
+            ....:     def __init__(self):
+            ....:         print "creating singleton"
+            ....:         Parent.__init__(self, base=ZZ, category=Rings())
+            sage: c = C()
+            creating singleton
+            sage: import __main__      # This is only needed ...
+            sage: __main__.C = C       # ... in doctests
+            sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
+            True
+        """ 
+        return self
+
+    def __reduce__(self):
+        """
+        There is a unique instance of a singleton, hence, pickling
+        returns ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.fast_methods import Singleton
+            sage: class C(Singleton, Parent):                  
+            ....:     def __init__(self):
+            ....:         print "creating singleton"
+            ....:         Parent.__init__(self, base=ZZ, category=Rings())
+            ....:
+            sage: c = C()
+            creating singleton
+            sage: import __main__      # This is only needed ...
+            sage: __main__.C = C       # ... in doctests
+            sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
+            True
+ 
+        The pickle data mainly consist of the class of the unique instance,
+        which may be a subclass of the original class used to create the
+        instance.If the class is replaced by a sub-sub-class after creation
+        of the instance, pickling fails. See the doctest
+        in :class:`Singleton`.
+        """ 
+        return self.__class__, ()
+

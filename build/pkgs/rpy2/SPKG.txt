@@ -19,31 +19,8 @@ Website: http://rpy.sourceforge.net/rpy2.html
 == Dependencies ==
 
 == Special Update/Build Instructions ==
- * setup.py change takes care of a few parsing issues and location issues
- * does this need to be reported upstream, or is it Sage-specific?
 
-== Changelog ==
+=== Patches ===
+ * setup.patch: takes care of a few parsing issues.
+ * cygwin.patch: let rpy2 build on Cygwin.
 
-=== rpy2-2.0.8.p0 (Jeroen Demeyer, 4 September 2012) ===
- * Trac #9906: use standard template for spkg-install
-
-=== rpy2-2.0.8 (Karl-Dieter Crisman, December 23, 2009) ===
- * upgrade
- * improve SPKG.txt
- * clarify license situation
-
-=== rpy2-2.0.6 (William Stein and Jason Grout, Sept 20, 2009) ===
- * upgrade to rpy2
-
-=== rpy-1.0.1.p2 (Michael Abshoff, May 28th, 2008) ===
- * Set RHOME so that Sage's R is used (Francois Bissey, #3328)
- * add basic SPKG.txt
-
-=== rpy-1.0.1.p1 ===
- * FIXME
-
-=== rpy-1.0.1.p0 ===
- * FIXME
-
-=== rpy-1.0.1 (Craig Citro) ===
- * initial release

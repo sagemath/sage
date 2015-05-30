@@ -24,7 +24,7 @@ cdef int singular_polynomial_rmul (poly **ret, poly *p, RingElement q, ring *r)
 cdef int singular_polynomial_mul (poly **ret, poly *p, poly *q, ring *r) except -1
 cdef int singular_polynomial_sub (poly **ret, poly *p, poly *q, ring *r)
 cdef int singular_polynomial_div_coeff (poly **ret, poly *p, poly *q, ring *r) except -1
-cdef int singular_polynomial_pow (poly **ret, poly *p, long exp, ring *r) except -1
+cdef int singular_polynomial_pow (poly **ret, poly *p, unsigned long exp, ring *r) except -1
 cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r)
 
 cdef object singular_polynomial_latex(poly *p, ring *r, object base, object latex_gens)
@@ -34,3 +34,4 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r)
 
 cdef int singular_polynomial_length_bounded(poly *p, int bound)
 cdef int singular_vector_maximal_component(poly *v, ring *r) except -1
+cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r) except -1

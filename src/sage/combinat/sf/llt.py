@@ -30,7 +30,6 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.calculus.var import var
 import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
 import sage.combinat.skew_partition
@@ -121,8 +120,6 @@ class LLT_class(UniqueRepresentation):
         self._k = k
         self._sym = Sym
         self._name = "level %s LLT polynomials"%self._k
-        if not (t in Sym.base_ring() or var(t) in Sym.base_ring()):
-            raise ValueError, "parameter t must be in the base ring"
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
         if str(t) !='t':
@@ -245,7 +242,7 @@ class LLT_class(UniqueRepresentation):
         if skp in sage.combinat.partition.Partitions():
             m = (sum(skp) / self.level()).floor()
             if m == 0:
-                raise ValueError, "level (%=) must divide %s "%(sum(skp), self.level())
+                raise ValueError("level (%=) must divide %s "%(sum(skp), self.level()))
             mu = sage.combinat.partition.Partitions( ZZ(sum(skp) / self.level()) )
 
         elif isinstance(skp, list) and skp[0] in sage.combinat.skew_partition.SkewPartitions():
@@ -259,7 +256,7 @@ class LLT_class(UniqueRepresentation):
             skp = sage.combinat.partition.Partition(core=[], quotient=skp)
             mu = sage.combinat.partition.Partitions( ZZ(sum(skp) / self.level() ))
         else:
-            raise ValueError, "LLT polynomials not defined for %s"%skp
+            raise ValueError("LLT polynomials not defined for %s"%skp)
 
         BR = self.base_ring()
         return sum([ BR(stat(skp,nu,self.level()).subs(t=self.t))*self._m(nu) for nu in mu])

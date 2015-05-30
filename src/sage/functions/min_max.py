@@ -154,12 +154,12 @@ class MinMax_base(BuiltinFunction):
         if len(args) == 1:
             try:
                 args=(SR._force_pyobject(iter(args[0])),)
-            except TypeError, e:
+            except TypeError as e:
                 raise e
 
         try:
             return BuiltinFunction.__call__(self, *args, **kwds)
-        except ValueError, e:
+        except ValueError as e:
             if e.args[0] == "return None":
                 return None
 
@@ -189,8 +189,11 @@ class MaxSymbolic(MinMax_base):
             max(x, 5)
             sage: latex(max_symbolic(x,5))
             \max\left(x, 5\right)
+            sage: max_symbolic(x, 5)._sympy_()
+            Max(5, x)
         """
-        BuiltinFunction.__init__(self, 'max', nargs=0, latex_name="\max")
+        BuiltinFunction.__init__(self, 'max', nargs=0, latex_name="\max",
+                                 conversions=dict(sympy='Max'))
 
     def _eval_(self, *args):
         """
@@ -275,8 +278,11 @@ class MinSymbolic(MinMax_base):
             min(x, 5)
             sage: latex(min_symbolic(x,5))
             \min\left(x, 5\right)
+            sage: min_symbolic(x, 5)._sympy_()
+            Min(5, x)
         """
-        BuiltinFunction.__init__(self, 'min', nargs=0, latex_name="\min")
+        BuiltinFunction.__init__(self, 'min', nargs=0, latex_name="\min",
+                                 conversions=dict(sympy='Min'))
 
     def _eval_(self, *args):
         """

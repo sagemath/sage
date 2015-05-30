@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ $# -ne 0 ]; then
+    UPSTREAM_SOURCE_TARBALL=$1
+    echo "Using $UPSTREAM_SOURCE_TARBALL instead of downloading tarball"
+fi
+
 SPKG_ROOT=`pwd`
 
 set -e
@@ -7,8 +12,12 @@ shopt -s extglob
 
 # Remove old sources and download new
 rm -rf src
-tar xjf <( curl ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/gap4r6p4_2013_05_04-16_36.tar.bz2 )
-mv gap4r6 src
+if [ -z "$UPSTREAM_SOURCE_TARBALL" ]; then
+    tar xjf <( curl http://www.gap-system.org/pub/gap/gap47/tar.bz2/gap4r7p2_2013_12_01-10_17.tar.bz2 )
+else
+    tar xjf "$UPSTREAM_SOURCE_TARBALL"
+fi
+mv gap4r7 src
 
 
 # Make everything writable
@@ -46,5 +55,8 @@ rm -r !(Makefile.in)
 
 # Write version to gap-version
 cd "$SPKG_ROOT"
-autoconf --trace='AC_INIT:$2' src/cnf/configure.in >gap-version
+autoconf --trace='AC_INIT:$2' src/cnf/configure.in > src/gap-version
 rm -rf autom4te.cache
+
+
+tar cjf gap-`cat src/gap-version`.tar.bz2 src/  && rm -rf src/

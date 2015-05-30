@@ -58,17 +58,29 @@ class HeckeModuleHomspace(sage.categories.homset.HomsetWithBase):
             True
         """
         if not module.is_HeckeModule(X) or not module.is_HeckeModule(Y):
-            raise TypeError, "X and Y must be Hecke modules"
+            raise TypeError("X and Y must be Hecke modules")
         if X.base_ring() != Y.base_ring():
-            raise TypeError, "X and Y must have the same base ring"
+            raise TypeError("X and Y must have the same base ring")
         if category is None:
             category = X.category()
         sage.categories.homset.HomsetWithBase.__init__(self, X, Y, category = category)
 
     def __call__(self, A, name=''):
         r"""
-        Create an element of this space from A, which should be an element of a
-        Hecke algebra, a Hecke module morphism, or a matrix.
+        Create an element of the homspace ``self`` from `A`.
+
+        INPUT:
+
+        - ``A`` -- one of the following:
+
+          - an element of a Hecke algebra
+
+          - a Hecke module morphism
+
+          - a matrix
+
+          - a list of elements of the codomain specifying the images
+            of the basis elements of the domain.
 
         EXAMPLES::
 
@@ -105,9 +117,10 @@ class HeckeModuleHomspace(sage.categories.homset.HomsetWithBase):
                 A._set_parent(self)
                 return A
             else:
-                raise TypeError, "unable to coerce A to self"
+                raise TypeError("unable to coerce A to self")
         except AttributeError:
             pass
+        if isinstance(A, (list, tuple)):
+            from sage.matrix.constructor import matrix
+            A = matrix([f.element() for f in A])
         return morphism.HeckeModuleMorphism_matrix(self, A, name)
-
-

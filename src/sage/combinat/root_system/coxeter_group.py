@@ -23,51 +23,53 @@ from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.groups.matrix_gps.coxeter_group', 'CoxeterMatrixGroup')
 
-def CoxeterGroup(data, implementation=None, base_ring=None, index_set=None):
+def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=None):
     """
     Return an implementation of the Coxeter group given by ``data``.
 
     INPUT:
 
-    - ``data`` -- a cartan type (or coercible into; see :class:`CartanType`)
+    - ``data`` -- a Cartan type (or coercible into; see :class:`CartanType`)
       or a Coxeter matrix or graph
 
-    - ``implementation`` -- (default: ``None``) can be one of the following:
+    - ``implementation`` -- (default: ``'reflection'``) can be one of
+      the following:
 
-      * "permutation" - as a permutation representation
-      * "matrix" - as a Weyl group (as a matrix group acting on the root space);
-        if this is not implemented, this uses the "reflection" implementation
-      * "coxeter3" - using the coxeter3 package
-      * "reflection" - as elements in the reflection representation; see
+      * ``'permutation'`` - as a permutation representation
+      * ``'matrix'`` - as a Weyl group (as a matrix group acting on the
+        root space); if this is not implemented, this uses the "reflection"
+        implementation
+      * ``'coxeter3'`` - using the coxeter3 package
+      * ``'reflection'`` - as elements in the reflection representation; see
         :class:`~sage.groups.matrix_gps.coxeter_groups.CoxeterMatrixGroup`
-      * ``None`` - choose "permutation" representation if possible, else
-        default to "matrix"
 
-    - ``base_ring`` -- (optional) the base ring for the "reflection"
+    - ``base_ring`` -- (optional) the base ring for the ``'reflection'``
       implementation
 
-    - ``index_set`` -- (optional) the index set for the "reflection"
+    - ``index_set`` -- (optional) the index set for the ``'reflection'``
       implementation
 
     EXAMPLES:
 
     Now assume that ``data`` represents a Cartan type. If
-    ``implementation`` is not specified, a permutation
-    representation is returned whenever possible (finite irreducible
-    Cartan type, with the GAP3 Chevie package available)::
+    ``implementation`` is not specified, the reflection representation
+    is returned::
 
         sage: W = CoxeterGroup(["A",2])
-        sage: W                                   # optional - chevie
-        Permutation Group with generators [(1,3)(2,5)(4,6), (1,4)(2,3)(5,6)]
-
-    Otherwise, a matrix representation is returned::
-
-        sage: W = CoxeterGroup(["A",3,1])
         sage: W
-        Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
-        sage: W = CoxeterGroup(['H',3])
-        sage: W
+        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        [1 3]
+        [3 1]
+
+        sage: W = CoxeterGroup(["A",3,1]); W
         Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        [1 3 2 3]
+        [3 1 3 2]
+        [2 3 1 3]
+        [3 2 3 1]
+
+        sage: W = CoxeterGroup(['H',3]); W
+        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
@@ -80,25 +82,25 @@ def CoxeterGroup(data, implementation=None, base_ring=None, index_set=None):
         sage: W.category()                       # optional - chevie
         Join of Category of finite permutation groups and Category of finite coxeter groups
 
-        sage: W = CoxeterGroup(["A",2], implementation = "matrix")
+        sage: W = CoxeterGroup(["A",2], implementation="matrix")
         sage: W
         Weyl Group of type ['A', 2] (as a matrix group acting on the ambient space)
 
-        sage: W = CoxeterGroup(["H",3], implementation = "matrix")
+        sage: W = CoxeterGroup(["H",3], implementation="matrix")
         sage: W
-        Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
 
         sage: W = CoxeterGroup(["H",3], implementation="reflection")
         sage: W
-        Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
 
-        sage: W = CoxeterGroup(["A",4,1], implementation = "permutation")
+        sage: W = CoxeterGroup(["A",4,1], implementation="permutation")
         Traceback (most recent call last):
         ...
         NotImplementedError: Coxeter group of type ['A', 4, 1] as permutation group not implemented
@@ -107,15 +109,19 @@ def CoxeterGroup(data, implementation=None, base_ring=None, index_set=None):
 
         sage: W = CoxeterGroup(["H",3], implementation="reflection", base_ring=RR)
         sage: W
-        Coxeter group over Real Field with 53 bits of precision with Coxeter matrix:
+        Finite Coxeter group over Real Field with 53 bits of precision with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
         sage: W = CoxeterGroup([[1,10],[10,1]], implementation="reflection", index_set=['a','b'], base_ring=SR)
         sage: W
-        Coxeter group over Symbolic Ring with Coxeter matrix:
+        Finite Coxeter group over Symbolic Ring with Coxeter matrix:
         [ 1 10]
         [10  1]
+
+    TESTS::
+
+        sage: W = groups.misc.CoxeterGroup(["H",3])
     """
     if implementation not in ["permutation", "matrix", "coxeter3", "reflection", None]:
         raise ValueError("invalid type implementation")
@@ -126,10 +132,7 @@ def CoxeterGroup(data, implementation=None, base_ring=None, index_set=None):
         return CoxeterMatrixGroup(data, base_ring, index_set)
 
     if implementation is None:
-        if cartan_type.is_finite() and cartan_type.is_irreducible() and is_chevie_available():
-            implementation = "permutation"
-        else:
-            implementation = "matrix"
+        implementation = "matrix"
 
     if implementation == "reflection":
         return CoxeterMatrixGroup(cartan_type, base_ring, index_set)
@@ -148,7 +151,7 @@ def CoxeterGroup(data, implementation=None, base_ring=None, index_set=None):
             return WeylGroup(cartan_type)
         return CoxeterMatrixGroup(cartan_type, base_ring, index_set)
 
-    raise NotImplementedError("Coxeter group of type %s as %s group not implemented " % (cartan_type, implementation))
+    raise NotImplementedError("Coxeter group of type {} as {} group not implemented".format(cartan_type, implementation))
 
 @cached_function
 def is_chevie_available():

@@ -63,8 +63,8 @@ either parents or have a parent. Typically whenever one sees the word
     sage: parent(f)
     Univariate Polynomial Ring in t over 5-adic Field with capped relative precision 20
     sage: f = EllipticCurve('37a').lseries().taylor_series(10); f
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442707*z^4 + (3.20363155418419e-6)*z^5 + O(z^6) # 32-bit
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960098*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442713*z^4 + (3.20363155418461e-6)*z^5 + O(z^6) # 64-bit
+    0.990010459847588 + 0.0191338632530789*z - 0.0197489006172923*z^2 + 0.0137240085327618*z^3 - 0.00703880791607153*z^4 + 0.00280906165766519*z^5 + O(z^6)           # 32-bit
+    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442707*z^4 + (3.20363155418419e-6)*z^5 + O(z^6)  # 64-bit
     sage: parent(f)
     Power Series Ring in z over Complex Field with 53 bits of precision
 
@@ -222,11 +222,11 @@ be obtained and queried.
 
     sage: cm.explain(ZZ['x','y'], QQ['x'])
     Coercion on left operand via
-       Call morphism:
+       Conversion map:
          From: Multivariate Polynomial Ring in x, y over Integer Ring
          To:   Multivariate Polynomial Ring in x, y over Rational Field
     Coercion on right operand via
-       Call morphism:
+       Conversion map:
          From: Univariate Polynomial Ring in x over Rational Field
          To:   Multivariate Polynomial Ring in x, y over Rational Field
     Arithmetic performed after coercions.
@@ -269,15 +269,36 @@ discovered between steps 1 and 2 above.
     sage: f = QQ.coerce_map_from(ZZ)
     sage: f(3).parent()
     Rational Field
-    sage: QQ.coerce_map_from(int)
+
+Note that by :trac:`14711` Sage's coercion system uses maps with weak
+references to the domain. Such maps should only be used internally, and so a
+copy should be used instead (unless one knows what one is doing)::
+
+    sage: QQ._internal_coerce_map_from(int)
+    (map internal to coercion system -- copy before use)
+    Native morphism:
+      From: Set of Python objects of type 'int'
+      To:   Rational Field
+    sage: copy(QQ._internal_coerce_map_from(int))
     Native morphism:
      From: Set of Python objects of type 'int'
      To:   Rational Field
+
+Note that the user-visible method (without underscore) automates this copy::
+
+    sage: copy(QQ.coerce_map_from(int))
+    Native morphism:
+     From: Set of Python objects of type 'int'
+     To:   Rational Field
+
+::
+
     sage: QQ.has_coerce_map_from(RR)
     False
     sage: QQ['x'].get_action(QQ)
     Right scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Rational Field
-    sage: (QQ^2).get_action(QQ)
+    sage: QQ2 = QQ^2
+    sage: (QQ2).get_action(QQ)
     Right scalar multiplication by Rational Field on Vector space of dimension 2 over Rational Field
     sage: QQ['x'].get_action(RR)
     Right scalar multiplication by Real Field with 53 bits of precision on Univariate Polynomial Ring in x over Rational Field

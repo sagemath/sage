@@ -35,38 +35,19 @@ import sage.databases.cremona
 class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_field):
     """
     Elliptic curve over a padic field.
+
+    EXAMPLES::
+
+        sage: Qp=pAdicField(17)
+        sage: E=EllipticCurve(Qp,[2,3]); E
+        Elliptic Curve defined by y^2  = x^3 + (2+O(17^20))*x + (3+O(17^20)) over 17-adic Field with capped relative precision 20
+        sage: E == loads(dumps(E))
+        True
     """
-    def __init__(self, x, y=None):
-        """
-        Constructor from [a1,a2,a3,a4,a6] or [a4,a6].
 
-        EXAMPLES::
+    _point = ell_point.EllipticCurvePoint_field
 
-            sage: Qp=pAdicField(17)
-            sage: E=EllipticCurve(Qp,[2,3]); E
-            Elliptic Curve defined by y^2  = x^3 + (2+O(17^20))*x + (3+O(17^20)) over 17-adic Field with capped relative precision 20
-            sage: E == loads(dumps(E))
-            True
-        """
-        if y is None:
-            if isinstance(x, list):
-                ainvs = x
-                field = ainvs[0].parent()
-        else:
-            if isinstance(y, str):
-                field = x
-                X = sage.databases.cremona.CremonaDatabase()[y]
-                ainvs = [field(a) for a in X.a_invariants()]
-            else:
-                field = x
-                ainvs = y
-        if not (isinstance(field, ring.Ring) and isinstance(ainvs,list)):
-            raise TypeError
-
-        EllipticCurve_field.__init__(self, [field(x) for x in ainvs])
-
-        self._point = ell_point.EllipticCurvePoint_field
-        self._genus = 1
+    _genus = 1
 
     def frobenius(self, P=None):
         """
@@ -92,7 +73,7 @@ class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_fi
 
             a1, a2, a3, a4, a6 = self.a_invariants()
             if a1 != 0 or a2 != 0:
-                raise NotImplementedError, "Curve must be in weierstrass normal form."
+                raise NotImplementedError("Curve must be in weierstrass normal form.")
 
             f = x*x*x + a2*x*x + a4*x + a6
             h = (f(x**p) - f**p)

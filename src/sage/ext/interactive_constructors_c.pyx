@@ -1,5 +1,6 @@
-# Optional versions of certain ring constructors that automatically
-# inject variables into the global module scope.
+r"""
+Constructors that automatically inject variables into the global module scope
+"""
 
 import sage.rings.all
 
@@ -18,11 +19,12 @@ def inject_on(verbose=True):
     variables into the global namespace.
 
     INPUT:
-        verbose -- (default: True) if True, print which constructors
-                   become interactive, and also print variables as
-                   they are implicitly defined.
 
-    EXAMPLES:
+    - verbose (default: ``True``) if ``True``, print which constructors become
+      interactive, and also print variables as they are implicitly defined.
+
+    EXAMPLES::
+
         sage: inject_on(verbose=True)
         Redefining: FiniteField Frac FractionField FreeMonoid GF LaurentSeriesRing NumberField PolynomialRing quo quotient
         sage: GF(9,'b')
@@ -46,20 +48,22 @@ def inject_on(verbose=True):
     ROLL YOUR OWN: If a constructor you would like to auto inject
     variables isn't made to do so by running this command your options
     are:
-         (1) Make your own constructor (factory function) using the explicit
-             inject_variables() method.  This is *very* easy:
 
-                sage: def poly(*args, **kwds):
-                ...    R = PolynomialRing(*args, **kwds)
-                ...    R.inject_variables()
-                ...    return R
-                sage: R = poly(QQ, 'z')
-                Defining z
-                sage: z^3 + 3
-                z^3 + 3
+    1. Make your own constructor (factory function) using the explicit
+       ``inject_variables()`` method.  This is *very* easy::
 
-         (2) Add code to do it to devel/sage/sage/ext/interactive_constructors_c.pyx,
-             rebuild Sage (with sage -br), and send William Stein a patch :-).
+            sage: def poly(*args, **kwds):
+            ....:  R = PolynomialRing(*args, **kwds)
+            ....:  R.inject_variables()
+            ....:  return R
+            sage: R = poly(QQ, 'z')
+            Defining z
+            sage: z^3 + 3
+            z^3 + 3
+
+    2. Add code to do it to src/sage/ext/interactive_constructors_c.pyx,
+       rebuild Sage (with sage -br), and send a patch to sage-devel ``:-)``.
+
     """
     global _verbose
     _verbose = verbose
@@ -93,7 +97,7 @@ cdef _inject(X, do):
     return X
 
 cdef _do_inject(kwds):
-    if kwds.has_key('inject'):
+    if 'inject' in kwds:
         s = kwds['inject']
         del kwds['inject']
         return s == True
@@ -103,8 +107,8 @@ def FiniteField(*args, **kwds):
     """
     Construct a finite field and inject the variables of the
     finite field to the global interactive interpreter.  Use
-    inject=False to not inject the variables.  This is a wrapper
-    around the following function: <<<FiniteField>>>
+    ``inject=False`` to not inject the variables.  This is a wrapper
+    around the following function: FiniteField
     """
     t = _do_inject(kwds)
     R = sage.rings.all.FiniteField(*args, **kwds)
@@ -116,10 +120,11 @@ def FractionField(*args, **kwds):
     """
     Construct the fraction field of a field and inject the generators
     of the fraction field to the global interactive interpreter.  Use
-    inject=False to not inject the variables.  This is a wrapper
-    around the following function: <<<FractionField>>>
+    ``inject=False`` to not inject the variables.  This is a wrapper
+    around the following function: FractionField
 
-    EXAMPLES (that illustrate interactive injection of variables):
+    EXAMPLES (that illustrate interactive injection of variables)::
+
         sage: inject_on(verbose=False)
         sage: Frac(QQ['x'])
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
@@ -136,13 +141,14 @@ Frac = FractionField
 def FreeMonoid(*args, **kwds):
     """
     Construct a free monoid and inject the variables of the monoid
-    into the global interactive interpreter.  Use inject=Fale to not
+    into the global interactive interpreter.  Use ``inject=False`` to not
     inject the variables.  This is a wrapper around the following
-    function: <<<FreeMonoid>>>
+    function: FreeMonoid
 
     EXAMPLES:
+
     We illustrate creating a free monoid with and without injecting
-    the variables into the interpreter.
+    the variables into the interpreter::
 
         sage: inject_on(verbose=False)
         sage: FreeMonoid(4,'x')
@@ -164,10 +170,10 @@ def LaurentSeriesRing(*args, **kwds):
     """
     Construct the Laurent series ring over a ring, and inject the
     generator into the interpreter's global namespace.  Use
-    inject=False to not inject the variables.  This is a wrapper
+    ``inject=False`` to not inject the variables.  This is a wrapper
     around the following function:
 
-    <<<LaurentSeries>>>
+    LaurentSeries
     """
     t = _do_inject(kwds)
     R = sage.rings.all.LaurentSeriesRing(*args, **kwds)
@@ -177,9 +183,9 @@ def NumberField(*args, **kwds):
     """
     Construct a number field, and inject the generator of the number
     fraction field into the interpreters global namespace.  Use
-    inject=False to not inject the variables.  This is a wrapper
+    ``inject=False`` to not inject the variables.  This is a wrapper
     around the following function:
-    <<<NumberField>>>
+    NumberField
     """
     t = _do_inject(kwds)
     R = sage.rings.all.NumberField(*args, **kwds)
@@ -188,9 +194,10 @@ def NumberField(*args, **kwds):
 def quotient(R, I, names, inject=True):
     """
     Construct the quotient R/I and name the generators, which are
-    then injected into the module scope (if inject=True).
+    then injected into the module scope (if ``inject=True``).
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: inject_on(verbose=False)
         sage: R = PolynomialRing(QQ, 'x,y')
         sage: S = quo(R, (x^3, x^2 + y^2), 'a,b')
@@ -215,12 +222,13 @@ def PolynomialRing(*args, **kwds):
     """
     Construct a polynomial ring and inject the variables of the
     polynomial ring to the global interactive interpreter.  Use
-    inject=False to not inject the variables.  This is a wrapper
-    around the following function: <<<PolynomialRing>>>
+    ``inject=False`` to not inject the variables.  This is a wrapper
+    around the following function: PolynomialRing
 
     MORE EXAMPLES:
+
     We illustrate creating a polynomial ring without injecting the variables
-    into the interpreter.
+    into the interpreter::
 
         sage: inject_on(verbose=False)
         sage: PolynomialRing(QQ,'w')

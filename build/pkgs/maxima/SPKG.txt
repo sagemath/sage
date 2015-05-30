@@ -29,169 +29,44 @@ COPYING.
 
  * The Maxima mailing list - see http://maxima.sourceforge.net/maximalist.html
 
+== Dependencies ==
+
+ * ECL (Embedded Common Lisp)
+
 == Special Update/Build Instructions ==
 
- * Make sure the patches still apply cleanly.
+1. Go to http://sourceforge.net/projects/maxima/files/Maxima-source/
+   and download the source tarball maxima-x.y.z.tar.gz; place it in
+   the upstream/ directory.
 
- * Run the `spkg-src` script after updating to a newer upstream
-   release. It removes a large amount of unused documentation and
-   disables the associated Makefiles, reducing the size of the SPKG
-   greatly.
+2. Update package-version.txt and run sage-fix-pkg-checksums.
 
-== Changelog ==
+3. Make sure the patches still apply cleanly, and update them if
+   necessary.
 
-=== maxima-5.29.1.p3 (Jeroen Demeyer, 24 June 2013) ===
- * #14556: fix improper quoting in spkg-src script
- * Remove redirection of stdout/stderr on OS X (why was that needed?)
- * Redirect stdin from /dev/null to avoid interactive prompts during
-   install
+4. Test the resulting package.
 
-=== maxima-5.29.1.p2 (Julien Puydt, 11 May 2013) ===
- * #14556: don't create the maxima-noreadline script, which is now useless
-   (it dated back to when sage was using clisp instead of ecl)
+All patch files in the patches/ directory are applied.  Descriptions
+of these patches are either in the patch files themselves or below.
 
-=== maxima-5.29.1.p1 (Jean-Pierre Flori, Dima Pasechnik, 29 December 2012) ===
- * #13364: update Maxima to version 5.29.1.
- * added the patch from Maxima bug tracker (bug 2520) to avoid
-   infinite recursion happening at integrate(abs(sin(x)),0,2*pi), leading
-   to a segfault
- * added the patch from  Maxima bug tracker (bug 2526) to fix
-   integrate(sqrt(x + sqrt(x)),x)
- * added the patch undoing the change
-   https://sf.net/p/maxima/code/ci/f5e9b0f7eb122c4e48ea9df144dd57221e5ea0ca
-   which caused extra '?' printed around some words (e.g. integer)
-   in Maxima dialogs. The issue this change addresses does not pop up for us.
- * rename spkg-dist to spkg-src
- * Remove comm.patch which has been integrated upstream.
+ * 0001-taylor2-Avoid-blowing-the-stack-when-diff-expand-isn.patch:
+   Fix for Maxima bug #2520 (abs_integrate fails on abs(sin(x)) and
+   abs(cos(x))).  Introduced in Trac #13364 (Upgrade Maxima to
+   5.29.1).
 
-=== maxima-5.26.0.p1 (Dima Pasechnik, Dec 23rd 2012) ===
- * ASDF has changed in newer ECL, and so we need to reflect this in spkg-install
-   (it will now work with both old and new ASDF)
- * Removed pdf figures from the source, as we don't install them
- * removed `pwd` from check_error calls in spkg-install, as per #13364#comment:24
+ * build-fasl.patch: Build a fasl library for ecl in addition to an
+   executable program.  Introduced in Trac #16178 (Build maxima fasl
+   without asdf).
 
-=== maxima-5.26.0.p0 (Dima Pasechnik, February 28th 2012) ===
- * upgrading to version 5.26.0 to take care of #10682.
- * added patch/comm.patch to fix Maxima bug #3484414.
-   (false) precedes the display output if display2d is set to false.
+ * infodir.patch: Correct the path to the Info directory.  Introduced
+   in Trac #11348 (maxima test fails when install tree is moved).
 
-=== maxima-5.24.0.p0 (Michael Orlitzky, January 29th 2012) ===
- * Trac #12094: Version bump to prevent a regression with the
-   abs_integrate package.
- * Allow installation of local docs via SAGE_SPKG_INSTALL_DOCS.
- * Remove more unused documentation in spkg-dist.
- * Update SPKG.txt to clarify the need to run spkg-dist.
- * Fix a double negative in the spkg-install output.
+ * matrixexp.patch: Fix matrixexp(matrix([%i*%pi])), which broke after
+   Maxima 5.29.1.  Introduced in Trac #13973.
 
-=== maxima-5.23.2.p3 (Simon King, December 10th, 2011) ===
- * #12131: Use --libdir, to make the package work on openSUSE.
+ * maxima.system.patch: Set c::*compile-in-constants* to t.
+   Introduced in Trac #11966 (OS X 10.7 Lion: Maxima fails to build).
 
-=== maxima-5.23.2.p2 (Leif Leonhardy, November 3rd 2011) ===
- * Trac #11966: Modification so that Sage will build on Lion.
-   Actually the new patch isn't specific to MacOS X 10.7 / Lion,
-   but necessary when building with the new ECL version from git
-   (ecl-11.1.2.git.20111030.spkg, see #11884).
- * Reviewer changes: Clean up `spkg-install`.
-
-=== maxima-5.23.2.p1 (William Stein, 31 October 2011) ===
- * Trac #11966: Modification so that Sage will build on Lion.
-
-=== maxima-5.23.2.p0 (Jeroen Demeyer, 18 May 2011) ===
- * Trac #11348: Add infodir.patch to use the correct "infodir" when
-   relocating the Sage install tree.
-
-=== maxima-5.23.2 (David Kirkby, 10th Feb 2011) ===
- * #10773 Update Maxima to the latest upstream release.
- * Starting with this version we need to touch all html and info files
-   in doc/info, otherwise they get regenerated which requires texinfo.
-
-=== maxima-5.22.1 (Nils Bruin, Volker Braun, 28 October 2010) ===
- * Update to the latest upstream version.
- * Rewrote section to build maxima.fas (ecl library) for new ASDF
-   (see Ticket #8645)
-
-=== maxima-5.20.1.p0 (William Stein, 3 April 2010) ===
- * Artificially bump version number to force rebuild, due to Maxima being broken
-   without doing so on upgrade.
-
-=== maxima-5.20.1 (Karl-Dieter Crisman, 21st December 2009) ===
- * Upgrade to the latest upstream release
- * Removed patches - the solver is now in Maxima, and topoly.lisp is no longer
-   used
- * Changed instructions below to not automatically assume spkg-dist, because
-   this calls automake and sometimes this causes build failures due to version
-   numbers (see Trac #7287)
-
-=== maxima-5.19.1.p2 (Mike Hansen, Nils Bruin,  December 2nd, 2009) ===
- * Added building Maxima as an ecl library to spkg-install
-
-=== maxima-5.19.1.p1 (Robert Marik, November 11th, 2009) ===
- * Added new CVS version for solve_rat_ineq.mac to close work on ticket #7325
-   (Sage cannot solve inequalities)
-
-=== maxima-5.19.1.p0 (Alex Ghitza, August 24th, 2009) ===
- * Added patch that works around bug in topoly.lisp by changing appropriate
-   instances of parg to carg
-
-=== maxima-5.19.1    (David Kirkby, 20th August 2009) ===
- * Upgrade to the latest upstream release
-
-=== maxima-5.16.3.p2 (Michael Abshoff, May 15th, 2009) ===
- * Switch lisp used to ecl
-
-=== maxima-5.16.3.p1 (Michael Abshoff, April 19th, 2009) ===
- * address review comment by Gonzalo
-
-=== maxima-5.16.3.p0 (Michael Abshoff, April 18th, 2009) ===
- * create maxima-noreadline script for matching dynamically readline disabling
-   clisp (#5662)
-
-=== maxima-5.16.3 (Michael Abshoff, September 27th, 2008) ===
- * Upgrade to upstream
-
-=== maxima-5.16.2.p0 (Michael Abshoff, September 16th, 2008) ===
- * Delete ~/.sage/maxima_commandlist_cache.sobj if it exists in spkg-install
-   (fixes #4133)
-
-=== maxima-5.16.2 (Michael Abshoff, August 21st, 2008) ===
- * Upgrade to upstream
-
-=== maxima-5.13.0.p2 (Michael Abshoff) ===
- * due to fixing #1471 we need to tell maxima to use clisp.bin as clisp
-   executable
-
-ToDo:
-
-Add history from hg
-
-=============================================================
-
-How to make a new version of the Maxima spkg.
-
-  1. Go to http://sourceforge.net/project/showfiles.php?group_id=4933
-     and download the source tar.gz ball.  That's near the bottom
-     of that page (i.e., hard to find if you don't scroll past
-     all the big red adds).
-
-  2. Extract the tarball to replace the src/ subdirectory of this package.
-
-  3. Create an spkg from this directory, with
-        sage -pkg maxima-x.y.z
-
-  4. Test the resulting maxima-??.spkg.
-
-=============================================================
-
-Here's what spkg-dist does:
-
-* Removes the foreign language versions of the info files,
-  since they add several MEGS (and they weren't in previous
-  versions of Maxima).  This means making empty directories
-  and changing the Makefile.in's.
-
-* In the past, before doing step 3 above, one would also type
-
-       ./spkg-dist
-
-  However, this caused problems with calling automake because
-  of the changed .in files.
+ * undoing_true_false_printing_patch.patch: Revert an upstream change
+   causing '?' to be printed around some words.  Introduced in Trac
+   #13364 (Upgrade Maxima to 5.29.1).

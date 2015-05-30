@@ -11,9 +11,13 @@ AUTHORS:
 
 TESTS::
 
-    sage: KRT = TensorProductOfKirillovReshetikhinTableaux(['A', 4, 1], [[2,1]])
+    sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A', 4, 1], [[2,1]])
     sage: from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
-    sage: bijection = KRTToRCBijectionTypeA(KRT(pathlist=[[4,3]]))
+    sage: bijection = KRTToRCBijectionTypeA(KRT(pathlist=[[5,2]]))
+    sage: TestSuite(bijection).run()
+    sage: RC = RiggedConfigurations(['A', 4, 1], [[2, 1]])
+    sage: from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
+    sage: bijection = RCToKRTBijectionTypeA(RC(partition_list=[[],[],[],[]]))
     sage: TestSuite(bijection).run()
 """
 
@@ -37,53 +41,44 @@ from sage.combinat.rigged_configurations.bij_abstract_class import RCToKRTBiject
 
 class KRTToRCBijectionTypeA(KRTToRCBijectionAbstract):
     r"""
-    Specific implementation of the bijection from KR tableaux to rigged configurations for type `A_n^{(1)}`.
+    Specific implementation of the bijection from KR tableaux to rigged
+    configurations for type `A_n^{(1)}`.
     """
 
     def next_state(self, val):
         r"""
-        Build the next state for type `A_n^{(1)}`
+        Build the next state for type `A_n^{(1)}`.
 
         EXAMPLES::
 
-            sage: KRT = TensorProductOfKirillovReshetikhinTableaux(['A', 4, 1], [[2,1]])
+            sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A', 4, 1], [[2,1]])
             sage: from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
             sage: bijection = KRTToRCBijectionTypeA(KRT(pathlist=[[4,3]]))
             sage: bijection.cur_path.insert(0, [])
             sage: bijection.cur_dims.insert(0, [0, 1])
             sage: bijection.cur_path[0].insert(0, [3])
             sage: bijection.next_state(3)
-            sage: bijection.ret_rig_con
-            <BLANKLINE>
-            -1[ ]-1
-            <BLANKLINE>
-            -1[ ]-1
-            <BLANKLINE>
-            (/)
-            <BLANKLINE>
-            (/)
-            <BLANKLINE>
         """
         tableau_height = len(self.cur_path[0]) - 1
+        n = self.n
 
         # Note first we subtract off for the n = max value (in the path) - 1,
         #   then we remove 1 to match the indices between math and programming.
         if val - 1 > tableau_height:
-            retRowPrev = -1
             # Always add a cell to the first singular value in the first
             #   tableau we are updating.
             if len(self.ret_rig_con[val - 2]) > 0:
-                maxWidth = self.ret_rig_con[val - 2][0] # + 1
+                max_width = self.ret_rig_con[val - 2][0]
             else:
-                maxWidth = 1
+                max_width = 1
 
             # Insert a cell into the rightmost rigged partition
-            maxWidth = self.ret_rig_con[val - 2].insert_cell(maxWidth)
+            max_width = self.ret_rig_con[val - 2].insert_cell(max_width)
 
             # Move to the left and update values as we have finished modifying
             #   everything which affects its vacancy/partition values
             for a in reversed(range(tableau_height, val - 2)):
-                maxWidth = self.ret_rig_con[a].insert_cell(maxWidth)
+                max_width = self.ret_rig_con[a].insert_cell(max_width)
                 self._update_vacancy_nums(a + 1)
                 self._update_partition_values(a + 1)
 
@@ -94,14 +89,14 @@ class KRTToRCBijectionTypeA(KRTToRCBijectionAbstract):
             self._update_vacancy_nums(tableau_height)
             self._update_partition_values(tableau_height)
 
-            if val - 1 < self.ret_rig_con.parent()._cartan_type.n:
+            if val - 1 < n:
                 self._update_vacancy_nums(val - 1)
 
             if tableau_height > 0:
                 self._update_vacancy_nums(tableau_height - 1)
-        elif tableau_height - 1 < self.ret_rig_con.parent()._cartan_type.n:
+        elif tableau_height - 1 < n:
             # Otherwise we just need to update the vacancy numbers that are affected
-            if tableau_height < self.ret_rig_con.parent()._cartan_type.n:
+            if tableau_height < n:
                 self._update_vacancy_nums(tableau_height)
 
             if tableau_height > 0:
@@ -109,7 +104,8 @@ class KRTToRCBijectionTypeA(KRTToRCBijectionAbstract):
 
 class RCToKRTBijectionTypeA(RCToKRTBijectionAbstract):
     r"""
-    Specific implementation of the bijection from rigged configurations to tensor products of KR tableaux for type `A_n^{(1)}`.
+    Specific implementation of the bijection from rigged configurations to
+    tensor products of KR tableaux for type `A_n^{(1)}`.
     """
 
     def next_state(self, height):
@@ -123,14 +119,8 @@ class RCToKRTBijectionTypeA(RCToKRTBijectionAbstract):
             sage: bijection = RCToKRTBijectionTypeA(RC(partition_list=[[1],[1],[1],[1]]))
             sage: bijection.next_state(0)
             5
-            sage: bijection.cur_partitions
-            [(/)
-            , (/)
-            , (/)
-            , (/)
-            ]
         """
-        n = self.rigged_con.parent()._cartan_type.n
+        n = self.n
         ell = [None] * n
         b = None
 

@@ -42,7 +42,7 @@ class DensityPlot(GraphicPrimitive):
 
     EXAMPLES:
 
-    Note this should normally be used indirectly via `density_plot``::
+    Note this should normally be used indirectly via ``density_plot``::
 
         sage: from sage.plot.density_plot import DensityPlot
         sage: D = DensityPlot([[1,3],[2,4]],(1,2),(2,3),options={})
@@ -59,6 +59,7 @@ class DensityPlot(GraphicPrimitive):
 
         sage: x,y = var('x,y')
         sage: density_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+        Graphics object consisting of 1 graphics primitive
     """
     def __init__(self, xy_data_array, xrange, yrange, options):
         """
@@ -134,6 +135,7 @@ class DensityPlot(GraphicPrimitive):
 
             sage: x,y = var('x,y')
             sage: density_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+            Graphics object consisting of 1 graphics primitive
         """
         options = self.options()
         cmap = get_cmap(options['cmap'])
@@ -184,6 +186,7 @@ def density_plot(f, xrange, yrange, **options):
 
         sage: x,y = var('x,y')
         sage: density_plot(sin(x)*sin(y), (x, -2, 2), (y, -2, 2))
+        Graphics object consisting of 1 graphics primitive
 
 
     Here we change the ranges and add some options; note that here
@@ -192,34 +195,56 @@ def density_plot(f, xrange, yrange, **options):
         sage: x,y = var('x,y')
         sage: f(x,y) = x^2*cos(x*y)
         sage: density_plot(f, (x,-10,5), (y, -5,5), interpolation='sinc', plot_points=100)
+        Graphics object consisting of 1 graphics primitive
 
     An even more complicated plot::
 
         sage: x,y = var('x,y')
         sage: density_plot(sin(x^2 + y^2)*cos(x)*sin(y), (x, -4, 4), (y, -4, 4), cmap='jet', plot_points=100)
+        Graphics object consisting of 1 graphics primitive
 
     This should show a "spotlight" right on the origin::
 
         sage: x,y = var('x,y')
         sage: density_plot(1/(x^10+y^10), (x, -10, 10), (y, -10, 10))
+        Graphics object consisting of 1 graphics primitive
 
     Some elliptic curves, but with symbolic endpoints.  In the first
     example, the plot is rotated 90 degrees because we switch the
     variables `x`, `y`::
 
         sage: density_plot(y^2 + 1 - x^3 - x, (y,-pi,pi), (x,-pi,pi))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: density_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi))
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: density_plot(log(x) + log(y), (x, 1, 10), (y, 1, 10), dpi=20)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: density_plot(log(x) + log(y), (x, 1, 10), (y, 1, 10)).show(dpi=20) # These are equivalent
+
+    TESTS:
+
+    Check that :trac:`15315` is fixed, i.e., density_plot respects the
+    ``aspect_ratio`` parameter. Without the fix, it looks like a thin line
+    of width a few mm. With the fix it should look like a nice fat layered
+    image::
+
+        sage: density_plot((x*y)^(1/2), (x,0,3), (y,0,500), aspect_ratio=.01)
+        Graphics object consisting of 1 graphics primitive
+
+    Default ``aspect_ratio`` is ``"automatic"``, and that should work too::
+
+        sage: density_plot((x*y)^(1/2), (x,0,3), (y,0,500))
+        Graphics object consisting of 1 graphics primitive
+
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid

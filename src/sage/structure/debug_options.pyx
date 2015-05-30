@@ -1,5 +1,5 @@
 """
-Debug options for the `sage.structure` modules
+Debug options for the :mod:`sage.structure` modules
 
 EXAMPLES::
 

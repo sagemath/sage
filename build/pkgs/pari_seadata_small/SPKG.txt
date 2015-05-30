@@ -1,0 +1,24 @@
+= pari_seadata_small =
+
+== Description ==
+
+PARI package "seadata_small": Needed by ellap for large primes. This
+"small" one is a much smaller version that should be suitable for
+primes up to 350 bits. These polynomials were extracted from the ECHIDNA
+databases and computed by David R. Kohel. 
+
+== License ==
+
+GPL version 2+
+
+== SPKG Maintainers ==
+
+* Jeroen Demeyer
+
+== Upstream Contact ==
+
+http://pari.math.u-bordeaux.fr/
+
+== Dependencies ==
+
+None (package contains data files only)

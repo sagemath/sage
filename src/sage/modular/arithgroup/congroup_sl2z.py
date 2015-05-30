@@ -107,7 +107,8 @@ class SL2Z_class(Gamma0_class):
             sage: SL2Z([1, QQ, False], check=False) # don't do this either!
             Traceback (most recent call last):
             ...
-            TypeError: entries has the wrong length
+            TypeError: cannot construct an element of Full MatrixSpace of 2 by 2
+            dense matrices over Integer Ring from [1, Rational Field, False]!
         """
         return ArithmeticSubgroupElement(self, x, check=check)
 

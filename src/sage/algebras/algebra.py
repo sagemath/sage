@@ -18,15 +18,21 @@ Abstract base class for algebras
 #*****************************************************************************
 
 from sage.rings.ring import Algebra
+from sage.categories.algebras import Algebras
 
 def is_Algebra(x):
     r"""
-    Return True if x is an Algebra
+    Return True if x is an Algebra.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.algebras.algebra import is_Algebra
         sage: R.<x,y> = FreeAlgebra(QQ,2)
         sage: is_Algebra(R)
         True
     """
-    return isinstance(x, Algebra)
+    try:
+        return isinstance(x, Algebra) or x in Algebras(x.base_ring())
+    except Exception:
+        return False
+

@@ -378,6 +378,194 @@ def WellsGraph():
 
     return g
 
+def Cell600(embedding=1):
+    r"""
+    Returns the 600-Cell graph
+
+    This is the adjacency graph of the 600-cell. It has 120 vertices and 720
+    edges. For more information, see the :wikipedia:`600-cell`.
+
+    INPUT:
+
+    - ``embedding`` (1 (default) or 2) -- two different embeddings for a plot.
+
+    EXAMPLES::
+
+        sage: g = graphs.Cell600()      # long time
+        sage: g.size()                  # long time
+        720
+        sage: g.is_regular(12)          # long time
+        True
+        sage: g.is_vertex_transitive()  # long time
+        True
+    """
+    from sage.rings.rational_field import QQ
+    from sage.rings.polynomial.polynomial_ring import polygen
+    from sage.rings.number_field.number_field import NumberField
+    from sage.modules.free_module import VectorSpace
+    from sage.groups.perm_gps.permgroup_named import AlternatingGroup
+
+    x = polygen(QQ, 'x')
+    K = NumberField(x ** 2 - x - 1, 'f')
+    f = K.gen()
+    K4 = VectorSpace(K, 4)
+
+    # first 96 vertices
+    step = [[a * f / 2, b * K(1) / 2, c * (f - 1) / 2, 0]
+            for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
+    vert96 = [K4([v[s(1) - 1], v[s(2) - 1], v[s(3) - 1], v[s(4) - 1]])
+              for v in step for s in AlternatingGroup(4)]
+
+    # 16 more vertices
+    vert16 = [K4([K(a) / 2, K(b) / 2, K(c) / 2, K(d) / 2])
+              for a in [-1, 1] for b in [-1, 1]
+              for c in [-1, 1] for d in [-1, 1]]
+
+    # 8 last vertices
+    vert8 = [K4([1, 0, 0, 0]), K4([-1, 0, 0, 0]),
+             K4([0, 1, 0, 0]), K4([0, -1, 0, 0]),
+             K4([0, 0, 1, 0]), K4([0, 0, -1, 0]),
+             K4([0, 0, 0, 1]), K4([0, 0, 0, -1])]
+
+    # all vertices together
+    U = vert96 + vert16 + vert8
+
+    g = Graph([range(120), lambda i, j: U[i].inner_product(U[j]) == f / 2])
+
+    # Embedding
+    from sage.graphs.graph_plot import _circle_embedding
+    if embedding == 1:
+        pos = [0, 1, 3, 13, 78, 90, 93, 110, 29, 104, 11, 48, 107, 83, 92, 55,
+               32, 16, 117, 24, 26, 56, 52, 47, 75, 72, 66, 112, 27, 115, 21,
+               33, 118, 79, 91, 37, 2, 5, 96, 31, 82, 88, 94, 74, 50, 28, 20,
+               105, 45, 99, 70, 25, 101, 54, 46, 51, 17, 35, 98, 41, 84, 85,
+               87, 73, 18, 6, 9, 97, 65, 103, 95, 36, 100, 23, 8, 43, 68, 76,
+               116, 60, 62, 44, 40, 59, 15, 12, 30, 113, 63, 114, 81, 69, 119,
+               19, 7, 49, 86, 89, 111, 67, 22, 4, 10, 14, 38, 64, 80, 102, 57,
+               108, 34, 61, 106, 42, 58, 39, 77, 71, 109, 53]
+    else:
+        pos = [0, 1, 2, 3, 4, 6, 7, 8, 10, 13, 14, 21, 37, 103, 36, 65, 113,
+               25, 80, 26, 12, 78, 24, 83, 54, 66, 114, 46, 63, 101, 109, 93,
+               79, 75, 51, 44, 31, 119, 43, 5, 57, 100, 11, 108, 34, 41, 69,
+               96, 82, 116, 68, 64, 47, 102, 52, 35, 17, 76, 110, 38, 84, 85,
+               86, 87, 88, 90, 91, 92, 94, 73, 74, 81, 49, 104, 48, 29, 112,
+               61, 20, 62, 72, 18, 60, 23, 42, 30, 115, 58, 27, 106, 98, 9, 19,
+               15, 39, 56, 67, 118, 55, 89, 45, 107, 95, 99, 70, 53, 33, 111,
+               22, 117, 32, 28, 59, 105, 40, 71, 77, 16, 97, 50]
+
+    _circle_embedding(g, pos)
+
+    return g
+
+def Cell120():
+    r"""
+    Returns the 120-Cell graph
+
+    This is the adjacency graph of the 120-cell. It has 600 vertices and 1200
+    edges. For more information, see the :wikipedia:`120-cell`.
+
+    EXAMPLES::
+
+        sage: g = graphs.Cell120()      # long time
+        sage: g.size()                  # long time
+        1200
+        sage: g.is_regular(4)           # long time
+        True
+        sage: g.is_vertex_transitive()  # long time
+        True
+    """
+    from sage.rings.rational_field import QQ
+    from sage.rings.polynomial.polynomial_ring import polygen
+    from sage.rings.number_field.number_field import NumberField
+    from sage.modules.free_module import VectorSpace
+    from sage.groups.perm_gps.permgroup_named import AlternatingGroup
+    from sage.combinat.permutation import Permutations
+
+    x = polygen(QQ, 'x')
+    K = NumberField(x ** 2 - x - 1, 'f')
+    f = K.gen()
+    K4 = VectorSpace(K, 4)
+
+    # first 216 vertices
+    step = [(0, 0, K(a) * 2, K(b) * 2)
+            for a in [-1, 1] for b in [-1, 1]]
+    step += [(a * K(1), b * K(1), c * K(1), d * (2 * f - 1))
+            for a in [-1, 1] for b in [-1, 1]
+            for c in [-1, 1] for d in [-1, 1]]
+    step += [(a * (2 - f), b * f, c * f, d * f)
+             for a in [-1, 1] for b in [-1, 1]
+             for c in [-1, 1] for d in [-1, 1]]
+    step += [(a * (f - 1), b * (f - 1), c * (f - 1), d * (f + 1))
+             for a in [-1, 1] for b in [-1, 1]
+             for c in [-1, 1] for d in [-1, 1]]
+    ens1 = frozenset([(v[s(1) - 1], v[s(2) - 1], v[s(3) - 1], v[s(4) - 1])
+                      for v in step for s in Permutations(4)])
+    vert1 = [K4(w) for w in ens1]
+
+    # 384 more vertices
+    step = [(0, a * (2 - f), b * K(1), c * (f + 1))
+            for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
+    step += [(0, a * (f - 1), b * f, c * (2 * f - 1))
+            for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
+    step += [(a * (f - 1), b * K(1), c * f, d * K(2))
+             for a in [-1, 1] for b in [-1, 1]
+             for c in [-1, 1] for d in [-1, 1]]
+    vert2 = [K4([v[s(1) - 1], v[s(2) - 1], v[s(3) - 1], v[s(4) - 1]])
+              for v in step for s in AlternatingGroup(4)]
+
+    # all vertices together
+    U = vert1 + vert2
+
+    g = Graph([range(600), lambda i, j: U[i].inner_product(U[j]) == 6*f-2])
+
+    from sage.graphs.graph_plot import _circle_embedding
+    pos = [0, 1, 3, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 17, 20, 21, 23, 24, 25,
+           27, 33, 40, 47, 49, 76, 77, 216, 217, 218, 219, 220, 222, 224, 225,
+           226, 230, 231, 232, 233, 235, 238, 241, 242, 245, 247, 249, 251, 253,
+           260, 261, 211, 66, 26, 307, 598, 305, 187, 374, 311, 205, 296, 108,
+           366, 172, 255, 89, 229, 81, 529, 548, 439, 382, 166, 496, 313, 484,
+           402, 234, 530, 256, 358, 406, 553, 577, 583, 401, 334, 417, 257, 438,
+           373, 544, 509, 365, 378, 487, 377, 390, 349, 325, 65, 78, 184, 13,
+           185, 18, 210, 84, 145, 83, 180, 158, 118, 109, 103, 130, 105, 51,
+           178, 155, 110, 85, 206, 95, 204, 190, 514, 513, 515, 466, 467, 441,
+           442, 587, 585, 576, 565, 564, 566, 540, 506, 436, 435, 424, 507, 543,
+           545, 547, 582, 440, 169, 63, 29, 575, 237, 549, 37, 375, 430, 159,
+           457, 61, 331, 208, 498, 39, 578, 48, 244, 486, 411, 364, 73, 455,
+           321, 240, 381, 542, 243, 500, 343, 333, 271, 518, 552, 357, 314, 299,
+           499, 412, 376, 596, 561, 319, 400, 264, 388, 362, 355, 386, 87, 186,
+           52, 99, 125, 113, 36, 121, 41, 127, 149, 100, 31, 137, 177, 43, 32,
+           45, 62, 191, 188, 106, 195, 141, 142, 96, 489, 491, 490, 475, 474,
+           447, 448, 589, 588, 517, 472, 473, 471, 450, 419, 519, 521, 468, 562,
+           594, 595, 488, 554, 413, 167, 116, 4, 557, 504, 536, 170, 389, 410,
+           128, 559, 203, 348, 147, 477, 22, 516, 162, 423, 266, 274, 320, 144,
+           246, 395, 437, 363, 452, 425, 478, 315, 312, 428, 288, 270, 344, 323,
+           493, 479, 275, 387, 286, 284, 347, 359, 462, 336, 368, 392, 324, 44,
+           75, 69, 46, 57, 138, 35, 80, 88, 199, 70, 152, 161, 181, 34, 207,
+           164, 71, 115, 55, 163, 72, 171, 93, 165, 124, 300, 301, 302, 303,
+           304, 306, 308, 309, 310, 290, 291, 292, 293, 295, 298, 277, 278, 281,
+           283, 285, 287, 265, 272, 273, 19, 10, 107, 223, 418, 221, 67, 338,
+           227, 196, 236, 91, 354, 154, 267, 30, 289, 215, 469, 464, 571, 346,
+           151, 508, 397, 520, 318, 294, 470, 268, 370, 322, 445, 421, 427, 317,
+           394, 597, 269, 570, 337, 460, 497, 353, 342, 523, 341, 330, 361, 385,
+           126, 92, 94, 176, 135, 117, 114, 197, 214, 179, 60, 42, 198, 202,
+           102, 101, 174, 104, 146, 90, 38, 111, 122, 157, 153, 133, 502, 501,
+           503, 550, 551, 573, 574, 431, 429, 420, 433, 432, 434, 456, 494, 568,
+           567, 580, 495, 459, 461, 463, 426, 572, 182, 58, 82, 443, 297, 465,
+           86, 339, 586, 209, 541, 140, 391, 143, 510, 28, 422, 213, 280, 522,
+           591, 352, 120, 563, 405, 276, 345, 458, 279, 512, 379, 393, 259, 482,
+           444, 369, 398, 239, 511, 592, 340, 416, 453, 403, 316, 252, 328, 350,
+           367, 326, 2, 175, 97, 139, 74, 131, 173, 134, 193, 192, 132, 79, 50,
+           200, 64, 150, 201, 194, 212, 183, 54, 56, 98, 123, 112, 156, 525,
+           527, 526, 535, 534, 555, 556, 409, 408, 481, 532, 533, 531, 558, 599,
+           483, 485, 528, 454, 414, 415, 524, 446, 593, 160, 59, 68, 449, 492,
+           476, 148, 329, 590, 119, 451, 189, 360, 53, 537, 129, 480, 136, 579,
+           254, 262, 404, 168, 282, 335, 569, 351, 560, 581, 538, 399, 396, 584,
+           228, 258, 380, 407, 505, 539, 263, 327, 250, 248, 383, 371, 546, 372,
+           356, 332, 384]
+    _circle_embedding(g, pos)
+
+    return g
+
 
 def HallJankoGraph(from_string=True):
     r"""
@@ -1419,8 +1607,8 @@ def KittellGraph():
     r"""
     Returns the Kittell Graph.
 
-    For more information on the Kittell Graph, see the `corresponding Wolfram
-    page <http://mathworld.wolfram.com/KittellGraph.html>`_.
+    For more information, see the `Wolfram page about the Kittel Graph
+    <http://mathworld.wolfram.com/KittellGraph.html>`_.
 
     EXAMPLES::
 
@@ -3153,8 +3341,8 @@ def MarkstroemGraph():
     Returns the Markström Graph.
 
     The Markström Graph is a cubic planar graph with no cycles of length 4 nor
-    8, but containing cycles of length 16. For more information on the Markström
-    Graph, see the `corresponding Wolfram page
+    8, but containing cycles of length 16. For more information, see the
+    `Wolfram page about the Markström Graph
     <http://mathworld.wolfram.com/MarkstroemGraph.html>`_.
 
     EXAMPLES::
@@ -3286,7 +3474,7 @@ def McLaughlinGraph():
     blocks = map(Set, blocks)
     B = [b for b in blocks if 0 in b]
     C = [b for b in blocks if not 0 in b]
-    g = graph.Graph()
+    g = Graph()
     for b in B:
         for x in range(23):
             if not x in b:
@@ -3644,7 +3832,7 @@ def ShrikhandeGraph():
         sage: set([ len([x for x in G.neighbors(i) if x in G.neighbors(j)])
         ....:     for i in range(G.order())
         ....:     for j in range(i) ])
-        set([2])
+        {2}
 
     It is non-planar, and both Hamiltonian and Eulerian::
 
@@ -3735,7 +3923,7 @@ def SylvesterGraph():
         True
     """
     g = HoffmanSingletonGraph()
-    e = g.edge_iterator(labels = False).next()
+    e = next(g.edge_iterator(labels = False))
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
     g.relabel()
     ordering = [0, 1, 2, 4, 5, 9, 16, 35, 15, 18, 20, 30, 22, 6, 33, 32, 14,
@@ -3775,7 +3963,7 @@ def SimsGewirtzGraph():
 
     """
     g = HigmanSimsGraph()
-    e = g.edge_iterator(labels = False).next()
+    e = next(g.edge_iterator(labels = False))
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
     g.relabel()
     ordering = [0, 2, 3, 4, 6, 7, 8, 17, 1, 41, 49, 5, 22, 26, 11, 27, 15, 47,
@@ -3913,7 +4101,7 @@ def TietzeGraph():
         sage: g.automorphism_group().is_isomorphic(groups.permutation.Dihedral(6))
         True
     """
-    g = Graph([(0,9),(3,10),(6,11),(1,5),(2,7),(4,8),(7,2)], name="Tietze Graph")
+    g = Graph([(0,9),(3,10),(6,11),(1,5),(2,7),(4,8)], name="Tietze Graph")
     g.add_cycle(range(9))
     g.add_cycle([9,10,11])
     _circle_embedding(g,range(9))
@@ -4137,10 +4325,10 @@ def WienerArayaGraph():
     Returns the Wiener-Araya Graph.
 
     The Wiener-Araya Graph is a planar hypohamiltonian graph on 42 vertices and
-    67 edges. For more information on the Wiener-Araya Graph, see its
-    corresponding `Wolfram Page
-    <http://mathworld.wolfram.com/Wiener-ArayaGraph.html>`_ or its `(french)
-    Wikipedia page <http://fr.wikipedia.org/wiki/Graphe_de_Wiener-Araya>`_.
+    67 edges. For more information, see the `Wolfram Page on the Wiener-Araya
+    Graph <http://mathworld.wolfram.com/Wiener-ArayaGraph.html>`_ or its
+    `(french) Wikipedia page
+    <http://fr.wikipedia.org/wiki/Graphe_de_Wiener-Araya>`_.
 
     EXAMPLES::
 

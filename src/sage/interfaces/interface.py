@@ -40,7 +40,7 @@ import operator
 
 from sage.structure.sage_object import SageObject
 from sage.structure.parent_base import ParentWithBase
-from sage.structure.element import RingElement
+from sage.structure.element import RingElement, parent
 
 import sage.misc.sage_eval
 
@@ -82,7 +82,7 @@ class Interface(ParentWithBase):
            Sage. Use sage(xxx) or interpretername(xxx) to pull objects
            in from sage to the interpreter.
         """
-        from sage.misc.interpreter import interface_shell_embed
+        from sage.repl.interpreter import interface_shell_embed
         shell = interface_shell_embed(self)
         try:
             ipython = get_ipython()
@@ -95,9 +95,6 @@ class Interface(ParentWithBase):
         pass
 
     def _post_interact(self):
-        pass
-
-    def __del__(self):
         pass
 
     def cputime(self):
@@ -115,7 +112,7 @@ class Interface(ParentWithBase):
             sage: f.write('x = 2\n')
             sage: f.close()
             sage: octave.read(filename)  # optional - octave
-            sage: octave.get('x')        #optional
+            sage: octave.get('x')        # optional - octave
             ' 2'
             sage: import os
             sage: os.unlink(filename)
@@ -125,34 +122,8 @@ class Interface(ParentWithBase):
     def _read_in_file_command(self, filename):
         raise NotImplementedError
 
-    def eval(self, code, locals=None, **kwds):
-        """
-        INPUT:
-
-
-        -  ``code`` - text to evaluate
-
-        - ``locals`` - None (ignored); this is used for compatibility with the
-          Sage notebook's generic system interface.
-
-        -  ``**kwds`` - All other arguments are passed onto
-           the _eval_line method. An often useful example is
-           reformat=False.
-        """
-
-        if not isinstance(code, basestring):
-            raise TypeError, 'input code must be a string.'
-
-        #Remove extra whitespace
-        code = code.strip()
-
-        try:
-            pass
-        # DO NOT CATCH KeyboardInterrupt, as it is being caught
-        # by _eval_line
-        # In particular, do NOT call self._keyboard_interrupt()
-        except TypeError, s:
-            raise TypeError, 'error evaluating "%s":\n%s'%(code,s)
+    def eval(self, code, **kwds):
+        raise NotImplementedError
 
     _eval_line = eval
 
@@ -201,15 +172,15 @@ class Interface(ParentWithBase):
             return self._coerce_from_special_method(x)
         except TypeError:
             raise
-        except AttributeError, msg:
+        except AttributeError as msg:
             pass
         try:
             return self._coerce_impl(x, use_special=False)
-        except TypeError, msg:
+        except TypeError as msg:
             try:
                 return cls(self, str(x), name=name)
-            except TypeError, msg2:
-                raise TypeError, msg
+            except TypeError as msg2:
+                raise TypeError(msg)
 
     def _coerce_from_special_method(self, x):
         """
@@ -238,7 +209,7 @@ class Interface(ParentWithBase):
         if use_special:
             try:
                 return self._coerce_from_special_method(x)
-            except AttributeError, msg:
+            except AttributeError as msg:
                 pass
 
         if isinstance(x, (list, tuple)):
@@ -258,7 +229,7 @@ class Interface(ParentWithBase):
             r.__sage_list = z   # do this to avoid having the entries of the list be garbage collected
             return r
 
-        raise TypeError, "unable to coerce element into %s"%self.name()
+        raise TypeError("unable to coerce element into %s"%self.name())
 
     def new(self, code):
         return self(code)
@@ -468,7 +439,7 @@ class Interface(ParentWithBase):
             AttributeError
         """
         if function == '':
-            raise ValueError, "function name must be nonempty"
+            raise ValueError("function name must be nonempty")
         if function[:2] == "__":
             raise AttributeError
 
@@ -622,8 +593,8 @@ class InterfaceElement(RingElement):
         else:
             try:
                 self._name = parent._create(value, name=name)
-            except (TypeError, RuntimeError, ValueError), x:
-                raise TypeError, x
+            except (TypeError, RuntimeError, ValueError) as x:
+                raise TypeError(x)
 
     def _latex_(self):
 #        return "\\begin{verbatim}%s\\end{verbatim}"%self
@@ -738,7 +709,7 @@ class InterfaceElement(RingElement):
         try:
             if P.eval("%s %s %s"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
                 return 1
-        except StandardError:
+        except Exception:
             pass
 
         # everything is supposed to be comparable in Python, so we define
@@ -764,9 +735,9 @@ class InterfaceElement(RingElement):
         try:
             P = self.parent()
             if P is None:
-                raise ValueError, "The %s session in which this object was defined is no longer running."%P.name()
+                raise ValueError("The %s session in which this object was defined is no longer running."%P.name())
         except AttributeError:
-            raise ValueError, "The session in which this object was defined is no longer running."
+            raise ValueError("The session in which this object was defined is no longer running.")
         return P
 
     def __del__(self):
@@ -851,8 +822,8 @@ class InterfaceElement(RingElement):
         string = self._sage_repr()
         try:
             return sage.misc.sage_eval.sage_eval(string)
-        except StandardError:
-            raise NotImplementedError, "Unable to parse output: %s" % string
+        except Exception:
+            raise NotImplementedError("Unable to parse output: %s" % string)
 
 
     def sage(self):
@@ -876,8 +847,10 @@ class InterfaceElement(RingElement):
         except AttributeError:
             s = self.parent().get(self._name)
         if s.__contains__(self._name):
-            if hasattr(self, '__custom_name'):
-                s =  s.replace(self._name, self.__dict__['__custom_name'])
+            try:
+                s = s.replace(self._name, self.__custom_name)
+            except AttributeError:
+                pass
         return s
 
     def __getattr__(self, attrname):
@@ -1057,7 +1030,7 @@ class InterfaceElement(RingElement):
         """
         if new_name is not None:
             if not isinstance(new_name, str):
-                raise TypeError, "new_name must be a string"
+                raise TypeError("new_name must be a string")
             p = self.parent()
             p.set(new_name, self._name)
             return p._object_class()(p, new_name, is_name=True)
@@ -1072,8 +1045,8 @@ class InterfaceElement(RingElement):
         P = self._check_valid()
         try:
             return P.new('%s %s %s'%(self._name, operation, right._name))
-        except Exception, msg:
-            raise TypeError, msg
+        except Exception as msg:
+            raise TypeError(msg)
 
     def _add_(self, right):
         """
@@ -1082,11 +1055,11 @@ class InterfaceElement(RingElement):
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f + g
-            sin(x)+cos(x)
+            sin(_SAGE_VAR_x)+cos(_SAGE_VAR_x)
             sage: f + 2
-            cos(x)+2
+            cos(_SAGE_VAR_x)+2
             sage: 2 + f
-            cos(x)+2
+            cos(_SAGE_VAR_x)+2
         """
         return self._operation("+", right)
 
@@ -1097,11 +1070,11 @@ class InterfaceElement(RingElement):
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f - g
-            cos(x)-sin(x)
+            cos(_SAGE_VAR_x)-sin(_SAGE_VAR_x)
             sage: f - 2
-            cos(x)-2
+            cos(_SAGE_VAR_x)-2
             sage: 2 - f
-            2-cos(x)
+            2-cos(_SAGE_VAR_x)
         """
         return self._operation('-', right)
 
@@ -1112,9 +1085,9 @@ class InterfaceElement(RingElement):
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f*g
-            cos(x)*sin(x)
+            cos(_SAGE_VAR_x)*sin(_SAGE_VAR_x)
             sage: 2*f
-            2*cos(x)
+            2*cos(_SAGE_VAR_x)
         """
         return self._operation('*', right)
 
@@ -1125,9 +1098,9 @@ class InterfaceElement(RingElement):
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f/g
-            cos(x)/sin(x)
+            cos(_SAGE_VAR_x)/sin(_SAGE_VAR_x)
             sage: f/2
-            cos(x)/2
+            cos(_SAGE_VAR_x)/2
         """
         return self._operation("/", right)
 
@@ -1140,7 +1113,7 @@ class InterfaceElement(RingElement):
             2^(3/4)
         """
         P = self._check_valid()
-        if not hasattr(n, 'parent') or P is not n.parent():
+        if parent(n) is not P:
             n = P(n)
         return self._operation("^", n)
 

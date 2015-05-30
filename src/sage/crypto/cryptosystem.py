@@ -204,7 +204,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             sage: vig1 == vig2
             False
         """
-        return type(self) == type(right) and  \
+        return isinstance(self, type(right)) and  \
             self._cipher_domain == right._cipher_domain and \
             self._cipher_codomain == right._cipher_codomain and \
             self._key_space ==  right._key_space and \
@@ -344,7 +344,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     def period(self):
         if self._period is None:
-            raise TypeError, "Argument has no associated period."
+            raise TypeError("Argument has no associated period.")
         return self._period
 
 class SymmetricKeyCryptosystem(Cryptosystem):

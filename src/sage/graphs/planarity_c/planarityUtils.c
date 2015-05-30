@@ -55,7 +55,7 @@ char Mode='r',
      AdjListsForEmbeddingsOut='n',
      quietMode='n';
 
-void Reconfigure()
+void Reconfigure(void)
 {
      fflush(stdin);
 

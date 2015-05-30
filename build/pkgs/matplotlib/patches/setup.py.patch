@@ -1,0 +1,11 @@
+--- src/setup.py	2013-10-10 05:42:48.000000000 -0700
++++ src/setup.py	2013-12-20 09:32:39.000000000 -0800
+@@ -81,7 +81,7 @@
+     'Optional subpackages',
+     setupext.SampleData(),
+     setupext.Toolkits(),
+-    setupext.Tests(),
++    # setupext.Tests(),
+     'Optional backend extensions',
+     # These backends are listed in order of preference, the first
+     # being the most preferred.  The first one that looks like it will

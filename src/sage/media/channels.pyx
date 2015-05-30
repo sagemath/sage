@@ -1,3 +1,5 @@
+"_separate_channels"
+
 def _separate_channels(_data, _width, _nchannels):
     """
     Separates the channels. This is an internal helper method for

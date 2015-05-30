@@ -670,7 +670,7 @@ class GenericCellComplex(SageObject):
             sage: P = SimplicialComplex([[0, 1], [1,2], [2,3]]).face_poset(); P
             Finite poset containing 7 elements
             sage: P.list()
-            [(3,), (2,), (2, 3), (1,), (0,), (0, 1), (1, 2)]
+            [(3,), (2,), (2, 3), (1,), (1, 2), (0,), (0, 1)]
 
             sage: S2 = cubical_complexes.Sphere(2)
             sage: S2.face_poset()
@@ -724,24 +724,6 @@ class GenericCellComplex(SageObject):
             sage: from sage.homology.cell_complex import GenericCellComplex
             sage: A = GenericCellComplex()
             sage: A.n_skeleton(3)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
-    def category(self):
-        """
-        Return the category to which this chain complex belongs: the
-        category of all cell complexes.
-
-        This is not implemented for general cell complexes.
-
-        EXAMPLES::
-
-            sage: from sage.homology.cell_complex import GenericCellComplex
-            sage: A = GenericCellComplex()
-            sage: A.category()
             Traceback (most recent call last):
             ...
             NotImplementedError

@@ -10,8 +10,5 @@ We verify that Trac #6919 is correctly fixed::
     sage: a == b
     True
 """
-include "sage/ext/stdsage.pxi"
-include "sage/ext/cdefs.pxi"
-
 def free_flint_stack():
     _fmpz_cleanup_mpz_content()

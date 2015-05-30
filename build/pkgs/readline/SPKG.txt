@@ -15,10 +15,6 @@ Website: http://tiswww.case.edu/php/chet/readline/rltop.html
 
  * GPL V3+
 
-== SPKG Maintainers ==
-
- * Volker Braun
-
 == Upstream Contact ==
 
  * Chet Ramey at http://cnswww.cns.cwru.edu/~chet
@@ -30,181 +26,14 @@ Website: http://tiswww.case.edu/php/chet/readline/rltop.html
 == Special Update/Build Instructions ==
 
 We build readline using ncurses. Readline needs to be told to link
-with libtinfo (part of ncurses), this is what the patch to shobj-conf
-does.
+with libtinfo (part of ncurses), this is what the patch
+0002-ltinfo.patch does.
 
 
 == Patches ==
 
- * shobj-conf.patch: Readline's hand-crafted shared library options
-   are buggy (should be using libtool).
-
-
-== Changelog ==
-
-=== readline-6.2.p4 (Volker Braun, 3 April 2013) ===
- * Do not build static libraries
- * Use ncurses instead of termcap
- * Remove various commented-out hacks
- * Patch to src/shlib/Makefile.in removed, this belongs into shobj-conf
-
-=== readline-6.2.p3 (Leif Leonhardy, 3 January 2012) ===
- * #11970: Support Ubuntu 11.10 by adding the library libreadline depends on
-   (libtermcap or a replacement) to the shared library, i.e. link against it,
-   such that it appears in libreadline's DT_NEEDED tags.
-   This is currently done by patching `src/shlib/Makefile.in`; we could also
-   do this [conditionally] in `spkg-install`, probably by also performing
-   some tests to check whether that (and which library) is needed.
-   It's likely to also fix the previous "undefined symbol" error on Arch Linux
-   (although currently our readline 6.2 works well without this; we previously
-   instead used the system's libreadline on that platform).
- * Do not make the static libraries executable.
- * Further clean-up to `spkg-install`, add comments and some more
-   messages.  All error messages now start with "Error", and go to
-   stderr. Also consistently use the shell's built-in `test` (`[[
-   ... ]]`), which is faster and more reliable.
-
-=== readline-6.2.p2 (Volker Braun, 10 Dec 2011) ===
- * Add configure --libdir (trac #12131).
-
-=== readline-6.2.p1 (John Palmieri, 14 Oct 2011) ===
- * Add some notes to SPKG.txt (trac #11882).
-
-=== readline-6.2.p0 (John Palmieri, 30 Sept 2011) ===
- * Update to version 6.2 (trac #11882).
- * Fix for Mac OS X 10.7 Lion.  This fix is taken from
-   https://trac.macports.org/browser/trunk/dports/devel/readline/files/patch-shobj-conf.diff
- * spkg-install: Turn off all hacks and fixes for Arch Linux and OpenSuSE.
- * Use 'patch' to install the patches.
-
-=== readline-6.1 (David Kirkby, 11th November 2010) ===
- * Update to latest version #9523
- * Removed a hack for Arch Linux, as this is no longer needed
-   with the latest readline (see #9523)
- * Removed some commented out code from spkg-install - the file
-   was big enough without even more things.
- * Removed checks that there was not a mix of Sun and
-   GNU compilers. This is a bit pointless now, as
-   the 'prereq' script does this.
- * Removed checks that SAGE_FORTRAN_LIB exits - again
-   this is taken care of in one place, and does not need
-   to be in every single .spkg file.
- * Removed reference to ABI, FCFLAGS and F77FLAGS since
-   there's no Fortran in the Readline package, and no ABI
-   to set.
- * Removed references to CXX and other C++ related items
-   as there is no C++ code.
- * No longer check if SAGE64=1, since it can only be set to
-   "yes" or "no", so restrict the check for "yes"
- * Removed a note that a 32-bit build was taking place if
-   SAGE64 was not set to "yes" or "1". This was in
-   inaccurate comment, as many systems build 64-bit by
-   default, and so the comment is inaccurate on many systems.
-   (Though of course it was harmless).
- * Removed an unnecessary semi-colon on the line
-   echo "SAGE_LOCAL undefined ... exiting"
-   The semi-colon is on various .spkg files, and seems
-   to be the result of a bit of code copied from one
-   package to another.
- * Updated the file to patch support/shobj-conf (done for
-   FreeBSD), since this file has changed in the latest source
-   code for readline. This should be reported upstream if it
-   has not already been done. It is pointless us patching
-   a file every time, if there's a bug in it that could be
-   solved in the upstream source code.
- * Add an spkg-check file, though it does nothing useful,
-   as there are no self-tests. However, there is a 'check'
-   target, so running 'make check' does not generate an
-   error, but instead reports there is nothing to be done.
- * Removed set -e and set +e. Used properly these are useful,
-   but used poorly they are likely to cause more problems than
-   enough. So these have been removed, as it's clear they were
-   not being used properly.
- * Added support for any compiler flag for 64-bit builds, using
-   $CFLAG64
- * Use compiler options -g -O0 if SAGE_DEBUG=yes. Otherwise use
-   -g -O2. Other options may be added too.
- * Removed the 'build' function as it was a bit pointless - it takes
-   less characters to just put the code inline.
- * Tested exit code of 'configure', 'make' and 'make install'
-   separately - no longer run "make install".
- * Used $MAKE instead of make, which will allow parallel builds
-   but will need extensive testing.
- * Change name of library from libreadline.so.6.0 to
-   libreadline.so.6.1 on OpenBSD. This seems logical, but is untested
-   as I don't have an OpenBSD box around, and currently there's even
-   less development going into OpenBSD than there is AIX or HP-UX!!
-
-=== readline-6.0.p4 (Leif Leonhardy, October 28th, 2010) ===
- * #9530: Reviewer patch. Some clean-up, also making it more
-   portable and robust. (Also fixes "set -e" preventing us to
-   check exit codes and print appropriate error messages.)
-   Now also supports Arch Linux with readline 5.x, then building
-   Sage's version.
-   Now does *not* build Sage's readline on OpenSuSE 11.x when
-   the headers are missing (since this would break bash as well);
-   instead, instruct the user to install OpenSuSE's devel version
-   of libreadline 6.x, which contains these.
- * Except for the "set -e" issue (and an added error check), the
-   changes again only affect Arch Linux and OpenSuSE.
- * Bumped the patch level again to avoid confusion.
-
-=== readline-6.0.p3 (Thomas Bächler, Mitesh Patel, October 24th, 2010) ===
- * #9530: Update openSuSE and Arch Linux workarounds to fix failed
-   builds. No changes that could affect other platforms.
-
-=== readline-6.0.p2 (Mike Hansen, June 22nd, 2010) ===
- * #7821: readline-6.0.p1 fails on FreeBSD
-
-=== readline-6.0.p1 (Tim Dumol, December 6th, 2009) ===
- * #7610: Add workaround for Arch Linux readline issues ("undefined
-   symbol: PC") by copying over the system version.
-
-=== readline-6.0.p0 (David Kirkby, November 29th, 2009) ===
- * Set the name of the dynamic library that gets copied to
-   $SAGE_LOCAL/lib/libreadline.sl.6 on the HP-UX platform.
-   (HP-UX uses .sl for the extension of shared libraries)
-
-=== readline-6.0 (William Stein and David Kirkby, Sept 16th, 2009) ===
- * Upgrade to 6.0 (latest upstream)
- * Remove numerous ugly build hacks needed only on OS X for older readline.
- * Track #6844 Made a test for /etc/SuSE-release, as the previous spkg-install
-   greped on it, which generates a warning if the file does not exist,
-   which it will not on most peoples systems.
- * Build 64-bit if SAGE64 is set to 'yes' on any platform (tested on
-   OS X and Solaris SPARC)
- * Allow debug information to be removed from file, if
-   SAGE_DEBUG is set to 'no', 'false' or '0'
- * Add a check that someone is not mixing the Sun and GNU compilers.
- * Checks SAGE_FORTRAN_LIB points to a file, if it is set.
- * Added 'set -e' so script will exit in case of error.
- * Print variable names (CC, CFLAGS etc) for information and to aid debugging.
-
-=== readline-5.2.p7 (Mike Hansen, June 19th, 2009) ===
- * Applied Peter Jeremy's fix from #5874.
-
-=== readline-5.2.p6 (Michael Abshoff, February 2nd, 2009) ===
- * Deal with 64 bit OpenSUSE 11.1 (#4946)
-
-=== readline-5.2.p5 (Michael Abshoff, January 5th, 2009) ===
- * Deal with OpenSUSE 11.1 (#4843)
-
-=== readline-5.2.p4 (Arnaud Bergeron, September 3rd, 2008) ===
- * add a fix to find the dynamic library file on OpenBSD
-
-=== readline-5.2.p3 (Michael Abshoff, May 18th, 2008) ===
- * add 64 bit OSX build support
-
-=== readline-5.2.p2 (William Stein, May 16, 2008)  ===
- * /usr/bin/env bash;  change == to =; add support for cygwin; improve error messages and checking
-
-=== readline-5.2.p1 (Craig Citro) ===
- * add fix for OSX 10.5 from Pari FAQ, where readline wasn't building
- a dynamic library
-
-=== readline-5.2.p0 (Michael Abshoff) ===
- * set correct permissions on libreadline.so* and libhistory.so* (#1752)
-
-=== readline-5.2 ===
- * changes lost to history - please let us know if you have any details.
-
+ * 0001-macports.patch: Changes to shobj.conf for OS/X, from macports:
+     https://trac.macports.org/browser/trunk/dports/devel/readline/files/patch-shobj-conf.diff
+ * 0002-ltinfo.patch: We build readline using ncurses, and for that it
+   needs to be told to link with libtinfo (part of ncurses).
+ * sigsetjmp.patch: Correctly define sigsetjmp and friends on Cygwin.

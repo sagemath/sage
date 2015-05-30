@@ -69,12 +69,27 @@ elif [ "$UNAME" = "SunOS" ] && [ -f /usr/X11/lib/libXv.so ] ; then
 else
     XSUPPORT=no
 fi
-R_CONFIGURE="--with-x=$XSUPPORT $R_CONFIGURE"
+
+if [ "$UNAME" = "Darwin" ]; then
+    echo "Configuring R without ATLAS for OS X"
+else
+    echo "Configuring R with ATLAS"
+    R_CONFIGURE_BLAS="--with-blas=\"-L$SAGE_LOCAL/lib -lf77blas -latlas\""
+    R_CONFIGURE_LAPACK="--with-lapack=\"-L$SAGE_LOCAL/lib -llapack -lcblas\""
+    echo $R_CONFIGURE_BLAS
+fi
 
 if [ "$UNAME" = "Darwin" ]; then
     # We don't want to install R as a library framework on OSX
     R_CONFIGURE="--enable-R-framework=no $R_CONFIGURE"
 fi
+
+# OS X 10.10 and/or Xcode 6.3 broke the R installation. See
+# http://trac.sagemath.org/ticket/18254.
+if { uname -sr | grep 'Darwin 14\.' ;} &>/dev/null; then
+    echo "OS X 10.10: Configuring R without aqua support."
+    R_CONFIGURE="--with-aqua=no $R_CONFIGURE"
+fi 
 
 if [ "$UNAME" = "CYGWIN" ]; then
     # Cygwin libm does not provide "long double" functions
@@ -83,8 +98,8 @@ if [ "$UNAME" = "CYGWIN" ]; then
 fi
 
 if [ "$SAGE_FAT_BINARY" = yes ]; then
-    echo "Disabling ICU for a binary build"
-    R_CONFIGURE="--without-ICU $R_CONFIGURE"
+    echo "Disabling ICU, OpenMP for a binary build"
+    R_CONFIGURE="--without-ICU --disable-openmp $R_CONFIGURE"
 elif [ "$UNAME" = "SunOS" ]; then
     # Note by David Kirkby, 16th Feb 2010. Even after adding the iconv library
     # R would not build properly on Solaris 10, complaining of undefined symbols
@@ -115,41 +130,38 @@ done
 # See patches/R.sh.patch
 export SAGE_BUILDING_R=yes
 
+config()
+{
+    ./configure \
+	--prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+	--with-readline=yes \
+	--with-x=$XSUPPORT \
+	"$R_CONFIGURE_BLAS" \
+	"$R_CONFIGURE_LAPACK" \
+	$R_CONFIGURE
+}
 
-if [ "$UNAME" = "Darwin" ]; then
-    echo "Configuring R without ATLAS for OS X"
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $R_CONFIGURE \
-        --with-readline=yes
-else
-    echo "Configuring R with ATLAS"
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $R_CONFIGURE \
-        --with-readline=yes \
-        --with-blas="-L$SAGE_LOCAL/lib -lf77blas -latlas" \
-        --with-lapack="-L$SAGE_LOCAL/lib -llapack -lcblas"
-fi
-
+config
 if [ $? -ne 0 ]; then
-    echo "Configuring R with fallback options"
-    R_CONFIGURE=`echo "$R_CONFIGURE" | sed 's/--with-x=yes/--with-x=no/' `
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $R_CONFIGURE \
-        --with-readline=yes
-fi
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring R."
-    exit 1
+    echo "Configuring R without X11"
+    XSUPPORT=no
+    config
+    if [ $? -ne 0 ]; then
+	echo >&2 "Error configuring R."
+	exit 1
+    fi
 fi
 
 if [ "$UNAME" = "Darwin" ]; then
-    # We have to move old installs of R when upgrading R in Sage on OS X.
-    # Indeed Sage modifies DYLD_LIBRARY_PATH whereas R build process
-    # modifies DYLD_LIBRARY_PATH, so that it is Sage's R and not the freshly
-    # built one which will get loaded during the build process and if they are
-    # different versions then the build process might fail.
+    # We have to move (i.e., hide) old installs of R when upgrading R in Sage on OS X.
+    # Indeed Sage modifies DYLD_LIBRARY_PATH whereas R's build process
+    # modifies DYLD_FALLBACK_LIBRARY_PATH, so that it is Sage's R and not the freshly
+    # built one which will get loaded during the build process; in case the versions
+    # differ, the build process might fail.
     # On systems using LD_LIBRARY_PATH, both Sage and R modify it and R wins,
     # so no problem should occur.
     if [ -d "$SAGE_LOCAL"/lib/R ]; then
-        RINSTALL_MOVED = yes
+        RINSTALL_MOVED=yes
         mv "$SAGE_LOCAL"/lib/R "$SAGE_LOCAL"/lib/R.old
     fi
 fi

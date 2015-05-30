@@ -953,7 +953,7 @@ class PermutationIET(Permutation):
         left_corner = ((self[1][0], self[0][0]), 'L')
         for s in self.separatrix_diagram(side=True):
             if left_corner in s:
-                return len(s)/2 - 1
+                return len(s)//2 - 1
 
     def attached_in_degree(self):
         r"""
@@ -977,7 +977,7 @@ class PermutationIET(Permutation):
 
         for s in self.separatrix_diagram(side=True):
             if right_corner in s:
-                return len(s)/2 - 1
+                return len(s)//2 - 1
 
     def attached_type(self):
         r"""
@@ -1026,11 +1026,11 @@ class PermutationIET(Permutation):
             if left_corner in s and right_corner in s:
                 i1 = s.index(left_corner)
                 i2 = s.index(right_corner)
-                return ([len(s)/2-1], ((i2-i1+1)/2) % 2)
+                return ([len(s)//2 - 1], ((i2-i1+1)//2) % 2)
             elif left_corner in s:
-                left_degree = len(s)/2-1
+                left_degree = len(s)//2 - 1
             elif right_corner in s:
-                right_degree = len(s)/2-1
+                right_degree = len(s)//2 - 1
 
         return ([left_degree,right_degree], 0)
 
@@ -1182,7 +1182,7 @@ class PermutationIET(Permutation):
         if len(self) == 1:
             return AbelianStratum([])
 
-        singularities = [len(x)/2 - 1 for x in self.separatrix_diagram()]
+        singularities = [len(x)//2 - 1 for x in self.separatrix_diagram()]
 
         return AbelianStratum(singularities,marked_separatrix=marked_separatrix)
 
@@ -2129,7 +2129,7 @@ class RauzyDiagram(SageObject):
                 False
             """
             return (
-                type(self) == type(other) and
+                isinstance(self, type(other)) and
                 self._parent == other._parent and
                 self._start == other._start and
                 self._edge_types == other._edge_types)
@@ -2152,7 +2152,7 @@ class RauzyDiagram(SageObject):
                 True
             """
             return (
-                type(self) != type(other) or
+                not isinstance(self, type(other)) or
                 self._parent != other._parent or
                 self._start != other._start or
                 self._edge_types != other._edge_types)
@@ -2729,7 +2729,7 @@ class RauzyDiagram(SageObject):
             True
         """
         return (
-            type(self) == type(other) and
+            isinstance(self, type(other)) and
             self._edge_types == other._edge_types and
             self._succ.keys()[0] in other._succ)
 
@@ -2753,7 +2753,7 @@ class RauzyDiagram(SageObject):
             False
         """
         return (
-            type(self) != type(other) or
+            not isinstance(self, type(other)) or
             self._edge_types != other._edge_types or
             self._succ.keys()[0] not in other._succ)
 

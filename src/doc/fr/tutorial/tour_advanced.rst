@@ -50,7 +50,7 @@ irréductibles.
     ]
 
 Ainsi, par exemple,  :math:`(1,0)` et :math:`(0,1)` appartiennent aux
-deux courbes (ce dont on pouvait directement s'apercevoir) ; il en va de même des
+deux courbes (ce dont on pouvait directement s'apercevoir) ; il en va de même des
 points (quadratiques), dont la coordonnée en :math:`y` satisfait à
 l'équation :math:`2y^2 + 4y + 3=0`.
 
@@ -93,7 +93,7 @@ La commande ``EllipticCurve`` permet de créer une courbe elliptique avec
 beaucoup de souplesse :
 
 
--  EllipticCurve([:math:`a_1`, :math:`a_2`, :math:`a_3`, :math:`a_4`, :math:`a_6`]) : renvoie la courbe elliptique
+-  EllipticCurve([:math:`a_1`, :math:`a_2`, :math:`a_3`, :math:`a_4`, :math:`a_6`]) : renvoie la courbe elliptique
 
    .. math::  y^2+a_1xy+a_3y=x^3+a_2x^2+a_4x+a_6,
 
@@ -102,19 +102,19 @@ beaucoup de souplesse :
    :math:`\ZZ`, ils sont convertis par coercition dans
    :math:`\QQ`.
 
--  EllipticCurve([:math:`a_4`, :math:`a_6`]) : idem
+-  EllipticCurve([:math:`a_4`, :math:`a_6`]) : idem
    avec :math:`a_1=a_2=a_3=0`.
 
--  EllipticCurve(label) : Renvoie la courbe elliptique sur  :math:`\QQ`  de la
+-  EllipticCurve(label) : Renvoie la courbe elliptique sur  :math:`\QQ`  de la
    base de données de Cremona selon son nom dans la (nouvelle !)
    nomenclature de Cremona. Les courbes sont étiquetées par une chaîne de
    caractère telle que ``"11a"`` ou ``"37b2"``. La lettre doit être en
    minuscule (pour faire la différence avec l'ancienne nomenclature).
 
--  EllipticCurve(j) : renvoie une courbe elliptique de
+-  EllipticCurve(j) : renvoie une courbe elliptique de
    :math:`j`-invariant :math:`j`.
 
--  EllipticCurve(R, [:math:`a_1`, :math:`a_2`, :math:`a_3`, :math:`a_4`,  :math:`a_6`]) : Crée la courbe elliptique sur l'anneau :math:`R` donnée
+-  EllipticCurve(R, [:math:`a_1`, :math:`a_2`, :math:`a_3`, :math:`a_4`,  :math:`a_6`]) : Crée la courbe elliptique sur l'anneau :math:`R` donnée
    par les coefficients :math:`a_i` comme ci-dessus.
 
 
@@ -357,12 +357,12 @@ Nous calculons ensuite différents invariants de ``G``:
 
     sage: G.gens()
     (Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1,
-    Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -i)
+    Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> i)
 
     sage: G.unit_gens()
     (11, 17)
     sage: G.zeta()
-    -i
+    i
     sage: G.zeta_order()
     4
 

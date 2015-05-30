@@ -95,7 +95,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: U3.cardinality()
         32
         sage: it = iter(U3)
-        sage: [it.next(), it.next(), it.next(), it.next(), it.next(), it.next()]
+        sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
         [[1, 2], [2, 1], [1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1]]
         sage: U3.unrank(18)
         [2, 4, 1, 3]
@@ -109,7 +109,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: U4.cardinality()
         +Infinity
         sage: it = iter(U4)
-        sage: [it.next(), it.next(), it.next(), it.next(), it.next(), it.next()]
+        sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
         [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
         sage: U4.unrank(18)
         [2, 3, 1, 4]
@@ -127,9 +127,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: Ukeep = DisjointUnionEnumeratedSets(
         ...              Family(range(4), Permutations), keepkey=True)
         sage: it = iter(Ukeep)
-        sage: [it.next() for i in range(6)]
+        sage: [next(it) for i in range(6)]
         [(0, []), (1, [1]), (2, [1, 2]), (2, [2, 1]), (3, [1, 2, 3]), (3, [1, 3, 2])]
-        sage: type(it.next()[1])
+        sage: type(next(it)[1])
         <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
 
     We now demonstrate the ``facade`` option::
@@ -137,9 +137,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: UNoFacade = DisjointUnionEnumeratedSets(
         ...                  Family(range(4), Permutations), facade=False)
         sage: it = iter(UNoFacade)
-        sage: [it.next() for i in range(6)]
+        sage: [next(it) for i in range(6)]
         [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
-        sage: el = it.next(); el
+        sage: el = next(it); el
         [2, 1, 3]
         sage: type(el)
         <type 'sage.structure.element_wrapper.ElementWrapper'>
@@ -352,16 +352,16 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U4 = DisjointUnionEnumeratedSets(
             ...            Family(NonNegativeIntegers(), Permutations))
             sage: it = iter(U4)
-            sage: [it.next(), it.next(), it.next(), it.next(), it.next(), it.next()]
+            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
             [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
 
             sage: U4 = DisjointUnionEnumeratedSets(
             ...            Family(NonNegativeIntegers(), Permutations),
             ...            keepkey=True, facade=False)
             sage: it = iter(U4)
-            sage: [it.next(), it.next(), it.next(), it.next(), it.next(), it.next()]
+            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
             [(0, []), (1, [1]), (2, [1, 2]), (2, [2, 1]), (3, [1, 2, 3]), (3, [1, 3, 2])]
-            sage: el = it.next(); el.parent() == U4
+            sage: el = next(it); el.parent() == U4
             True
             sage: el.value == (3, Permutation([2,1,3]))
             True

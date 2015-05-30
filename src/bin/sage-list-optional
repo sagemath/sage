@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
-sage-list-packages optional
-
+echo "DEPRECATION WARNING: this script is deprecated" >&2
+echo "do:"                                            >&2
+echo "    $ sage-list-packages optional"              >&2
+exec sage-list-packages optional

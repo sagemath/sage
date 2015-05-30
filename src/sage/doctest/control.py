@@ -23,7 +23,7 @@ import random, os, sys, time, json, re, types
 import sage.misc.flatten
 from sage.structure.sage_object import SageObject
 from sage.env import DOT_SAGE, SAGE_LIB, SAGE_SRC
-from sage.ext.c_lib import AlarmInterrupt, _init_csage
+from sage.ext.interrupt import AlarmInterrupt, init_interrupts
 
 from sources import FileDocTestSource, DictAsObject
 from forker import DocTestDispatcher
@@ -66,7 +66,7 @@ class DocTestDefaults(SageObject):
 
             sage: from sage.doctest.control import DocTestDefaults
             sage: D = DocTestDefaults(); D.optional
-            set(['sage'])
+            {'sage'}
         """
         self.nthreads = 1
         self.serial = False
@@ -168,7 +168,7 @@ def skipfile(filename):
         True
     """
     base, ext = os.path.splitext(filename)
-    if ext not in ('.py', '.pyx', '.pxi', '.sage', '.spyx', '.rst', '.tex'):
+    if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex'):
         return True
     with open(filename) as F:
         line_count = 0
@@ -258,6 +258,73 @@ class DocTestController(SageObject):
             self.logfile = None
         self.stats = {}
         self.load_stats(options.stats_path)
+        self._init_warn_long()
+
+    def _init_warn_long(self):
+        """
+        Pick a suitable default for the ``--warn-long`` option if not specified.
+
+        It is desirable to have all tests (even ``# long`` ones)
+        finish in less than about 5 seconds. Longer tests typically
+        don't add coverage, they just make testing slow.
+
+        The default used here is 60 seconds on a modern computer. It
+        should eventually be lowered to 5 seconds, but its best to
+        boil the frog slowly.
+
+        The stored timings are used to adjust this limit according to
+        the machine running the tests.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: DC = DocTestController(DocTestDefaults(), [])
+            sage: DC.options.warn_long = 5.0
+            sage: DC._init_warn_long()
+            sage: DC.options.warn_long    # existing command-line options are not changed
+            5.00000000000000
+        """
+        if self.options.warn_long is not None:     # Specified on the command line
+            return
+        try:
+            self.options.warn_long = 60.0 * self.second_on_modern_computer()
+        except RuntimeError as err:
+            if not sage.doctest.DOCTEST_MODE:
+                print(err)   # No usable timing information
+
+    def second_on_modern_computer(self):
+        """
+        Return the wall time equivalent of a second on a modern computer.
+
+        OUTPUT:
+
+        Float. The wall time on your computer that would be equivalent
+        to one second on a modern computer. Unless you have kick-ass
+        hardware this should always be >= 1.0. Raises a
+        ``RuntimeError`` if there are no stored timings to use as
+        benchmark.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: DC = DocTestController(DocTestDefaults(), [])
+            sage: DC.second_on_modern_computer()   # not tested
+        """
+        if len(self.stats) == 0:
+            raise RuntimeError('no stored timings available')
+        success = []
+        failed = []
+        for mod in self.stats.values():
+            if mod.get('failed', False):
+                failed.append(mod['walltime'])
+            else:
+                success.append(mod['walltime'])
+        if len(success) < 2500:
+            raise RuntimeError('too few successful tests, not using stored timings')
+        if len(failed) > 20:
+            raise RuntimeError('too many failed tests, not using stored timings')
+        expected = 12800.0       # Core i7 Quad-Core 2014
+        return sum(success) / expected
 
     def _repr_(self):
         """
@@ -309,7 +376,7 @@ class DocTestController(SageObject):
         try:
             with open(filename) as stats_file:
                 self.stats.update(json.load(stats_file))
-        except StandardError:
+        except Exception:
             self.log("Error loading stats from %s"%filename)
 
     def save_stats(self, filename):
@@ -461,6 +528,7 @@ class DocTestController(SageObject):
         def all_files():
             from glob import glob
             self.files.append(opj(SAGE_SRC, 'sage'))
+            self.files.append(opj(SAGE_SRC, 'sage_setup'))
             self.files.append(opj(SAGE_SRC, 'doc', 'common'))
             self.files.extend(glob(opj(SAGE_SRC, 'doc', '[a-z][a-z]')))
             self.options.sagenb = True
@@ -486,7 +554,7 @@ class DocTestController(SageObject):
                 if (set(status).issubset("MARCU")
                     and filename.startswith("src/sage")
                     and (filename.endswith(".py") or filename.endswith(".pyx"))):
-                    self.files.append(filename)
+                    self.files.append(os.path.relpath(opj(SAGE_ROOT,filename)))
         if self.options.sagenb:
             if not self.options.all:
                 self.log("Doctesting the Sage notebook.")
@@ -511,7 +579,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            9
+            10
             sage: DC.sources[0].options.optional
             True
 
@@ -584,7 +652,7 @@ class DocTestController(SageObject):
             def is_failure(source):
                 basename = source.basename
                 return basename not in self.stats or self.stats[basename].get('failed')
-            self.sources = filter(is_failure, self.sources)
+            self.sources = [x for x in self.sources if is_failure(x)]
 
     def sort_sources(self):
         r"""
@@ -611,6 +679,7 @@ class DocTestController(SageObject):
             sage.doctest.reporting
             sage.doctest.parsing
             sage.doctest.forker
+            sage.doctest.fixtures
             sage.doctest.control
             sage.doctest.all
             sage.doctest
@@ -842,7 +911,7 @@ class DocTestController(SageObject):
             return
 
         # Setup Sage signal handler
-        _init_csage()
+        init_interrupts()
 
         import signal, subprocess
         p = subprocess.Popen(cmd, shell=True)
@@ -896,6 +965,19 @@ class DocTestController(SageObject):
         else:
             self.test_safe_directory()
             self.create_run_id()
+            from sage.env import SAGE_ROOT
+            DOT_GIT= os.path.join(SAGE_ROOT, '.git')
+            if os.path.isdir(DOT_GIT):
+                import subprocess
+                try:
+                    branch = subprocess.check_output(["git",
+                                                      "--git-dir=" + DOT_GIT,
+                                                      "rev-parse",
+                                                      "--abbrev-ref",
+                                                      "HEAD"])
+                    self.log("Git branch: " + branch, end="")
+                except subprocess.CalledProcessError:
+                    pass
             self.add_files()
             self.expand_files_into_sources()
             self.filter_sources()

@@ -3,7 +3,7 @@
    contain the root `toctree` directive.
 
 Welcome to the Sage Tutorial!
-================================
+=============================
 
 Sage is free, open-source math software that supports research and
 teaching in algebra, geometry, number theory, cryptography,

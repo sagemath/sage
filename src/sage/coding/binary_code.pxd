@@ -87,7 +87,7 @@ cdef class PartitionStack:
     cdef int sort_wds(self, int, int)
     cdef int refine(self, int, int *, int, BinaryCode, int *)
     cdef void clear(self, int)
-    cdef int cmp(self, PartitionStack, BinaryCode)
+    cpdef int cmp(self, PartitionStack, BinaryCode)
     cdef int find_basis(self, int *)
     cdef void get_permutation(self, PartitionStack, int *, int *)
 
@@ -98,13 +98,19 @@ cdef class BinaryCodeClassifier:
     cdef unsigned int *Omega
     cdef unsigned int *W
     cdef int radix
-    cdef int *Lambda1, *Lambda2, *Lambda3
-    cdef int *w_gamma, *c_gamma
+    cdef int *Lambda1
+    cdef int *Lambda2
+    cdef int *Lambda3
+    cdef int *w_gamma
+    cdef int *c_gamma
     cdef int w_gamma_size
     cdef int *alpha
     cdef int alpha_size
-    cdef int *v, *e
-    cdef int *aut_gp_gens, *labeling, *base
+    cdef int *v
+    cdef int *e
+    cdef int *aut_gp_gens
+    cdef int *labeling
+    cdef int *base
     cdef int aut_gp_index, aut_gens_size, base_size
     cdef object aut_gp_size
 
@@ -112,6 +118,4 @@ cdef class BinaryCodeClassifier:
 
     cdef void record_automorphism(self, int *, int)
     cdef void aut_gp_and_can_label(self, BinaryCode, int)
-
-
 

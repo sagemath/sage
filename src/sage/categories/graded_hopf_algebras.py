@@ -2,46 +2,29 @@ r"""
 Graded Hopf algebras
 """
 #*****************************************************************************
-#  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
-#                     Nicolas M. Thiery <nthiery at users.sf.net>
+#  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_over_base_ring
-from sage.categories.all import HopfAlgebras, GradedBialgebras
-from sage.misc.cachefunc import cached_method
-
-class GradedHopfAlgebras(Category_over_base_ring):
+def GradedHopfAlgebras(base_ring):
     """
-    The category of GradedHopf algebras with several bases
+    The category of graded Hopf algebras.
 
     EXAMPLES::
 
-        sage: GradedHopfAlgebras(ZZ)
-        Category of graded hopf algebras over Integer Ring
-        sage: GradedHopfAlgebras(ZZ).super_categories()
-        [Category of graded bialgebras over Integer Ring, Category of hopf algebras over Integer Ring]
+        sage: C = GradedHopfAlgebras(QQ); C
+        Join of Category of hopf algebras over Rational Field
+            and Category of graded algebras over Rational Field
+        sage: C is HopfAlgebras(QQ).Graded()
+        True
 
     TESTS::
 
-        sage: TestSuite(GradedHopfAlgebras(ZZ)).run()
+        sage: TestSuite(C).run()
     """
+    from sage.categories.all import HopfAlgebras
+    return HopfAlgebras(base_ring).Graded()
 
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: GradedHopfAlgebras(QQ).super_categories()
-            [Category of graded bialgebras over Rational Field, Category of hopf algebras over Rational Field]
-        """
-        R = self.base_ring()
-        return [GradedBialgebras(R), HopfAlgebras(R)]
-
-    class ParentMethods:
-        pass
-
-    class ElementMethods:
-        pass

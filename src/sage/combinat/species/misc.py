@@ -16,7 +16,7 @@ Miscellaneous Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.groups.all import PermutationGroup, PermutationGroup_generic, PermutationGroupElement, SymmetricGroup
-from sage.rings.all import prod
+from sage.misc.all import prod
 from functools import wraps
 
 def change_support(perm, support, change_perm=None):
@@ -63,7 +63,7 @@ def accept_size(f):
     def new_func(*args, **kwds):
         if 'size' in kwds:
             if 'min' in kwds or 'max' in kwds:
-                raise ValueError, "cannot specify both size and (min or max)"
+                raise ValueError("cannot specify both size and (min or max)")
             kwds['min'] = kwds['size']
             kwds['max'] = kwds['size'] + 1
             del kwds['size']

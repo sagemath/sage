@@ -120,7 +120,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
             sage: C.__class__
             <class 'sage.combinat.integer_vector_weighted.WeightedIntegerVectors_all_with_category'>
             sage: C.category()
-            Join of Category of infinite enumerated sets and Category of sets with grading
+            Join of Category of sets with grading and Category of infinite enumerated sets
             sage: TestSuite(C).run()
         """
         self._weights = weights
@@ -256,13 +256,13 @@ class WeightedIntegerVectors_nweight(UniqueRepresentation, Parent):
         w = l[-1]
         l = l[:-1]
         if l == []:
-            d = int(n) / int(w)
+            d = int(n) // int(w)
             if n % w == 0:
                 yield [d]
                 # Otherwise: bad branch
             return
 
-        for d in range(int(n)/int(w), -1, -1):
+        for d in range(int(n)//int(w), -1, -1):
             for x in self._recfun(n-d*w, l):
                 yield x + [d]
 

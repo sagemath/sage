@@ -1,0 +1,18 @@
+--- old/support/shobj-conf	2014-02-23 19:06:29.000000000 -0700
++++ new/support/shobj-conf	2014-04-07 09:23:17.000000000 -0700
+@@ -189,13 +189,13 @@
+ 	darwin[1-7].*)
+ 		SHOBJ_STATUS=unsupported
+ 		SHOBJ_LDFLAGS='-dynamic'
+-		SHLIB_XLDFLAGS='-arch_only `/usr/bin/arch` -install_name $(libdir)/`echo $@ | sed "s:\\..*::"`.$(SHLIB_MAJOR).$(SHLIB_LIBSUFF) -current_version $(SHLIB_MAJOR)$(SHLIB_MINOR) -compatibility_version $(SHLIB_MAJOR) -v'
++		SHLIB_XLDFLAGS='-install_name $(libdir)/`echo $@ | sed "s:\\..*::"`.$(SHLIB_MAJOR).$(SHLIB_LIBSUFF) -current_version $(SHLIB_MAJOR)$(SHLIB_MINOR) -compatibility_version $(SHLIB_MAJOR) -v'
+ 		;;
+ 	# Darwin 8 == Mac OS X 10.4; Mac OS X 10.N == Darwin N+4
+ 	*)
+ 		case "${host_os}" in
+ 		darwin[89]*|darwin1[012]*)
+-			SHOBJ_ARCHFLAGS='-arch_only `/usr/bin/arch`'
++			SHOBJ_ARCHFLAGS=
+ 			;;
+ 		 *) 	# Mac OS X 10.9 (Mavericks) and later
+ 			SHOBJ_ARCHFLAGS=

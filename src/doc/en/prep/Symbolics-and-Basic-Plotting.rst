@@ -260,6 +260,7 @@ define a function of :math:`x` and plot it between :math:`-1` and
 
     sage: f(x)=x^3+1
     sage: plot(f,(x,-1,1))
+    Graphics object consisting of 1 graphics primitive
 
 We can give the plot a name, so that if we want to do something with the
 plot later, we don't have to type out the entire plot command.
@@ -282,6 +283,7 @@ for the line, but over the same interval.
 
     sage: Q=plot(1,(x,-1,1),color="red", linestyle="--")
     sage: Q
+    Graphics object consisting of 1 graphics primitive
 
 Because we put :math:`Q` in a line by itself at the end, it shows.  We
 were able to use just one cell to define :math:`Q` and show it, by
@@ -292,6 +294,7 @@ Now to show the plots superimposed on each other, we simply add them.
 ::
 
     sage: P+Q
+    Graphics object consisting of 2 graphics primitives
 
 Suppose we wanted to view a detail of this.
 
@@ -335,6 +338,7 @@ Two of the most useful of these options help in labeling graphs.
 ::
 
     sage: plot(f,(x,-1,1),axes_labels=['$x$','$y$'],legend_label='$f(x)$',show_legend=True)
+    Graphics object consisting of 1 graphics primitive
 
 - The ``legend_label`` option is especially useful with multiple plots.
 
@@ -348,6 +352,7 @@ Two of the most useful of these options help in labeling graphs.
     sage: P1 = plot(f,(x,-1,1),axes_labels=['$x$','$y$'],legend_label='$f(x)$')
     sage: P2 = plot(sin,(x,-1,1),axes_labels=['$x$','$y$'],legend_label='$\sin(x)$',color='red')
     sage: P1+P2
+    Graphics object consisting of 2 graphics primitives
 
 One additional useful note is that plots of functions with vertical
 asymptotes may need their vertical viewing range set manually; otherwise
@@ -356,6 +361,7 @@ the asymptote may really go to infinity!
 ::
 
     sage: plot(1/x^2,(x,-10,10),ymax=10)
+    Graphics object consisting of 1 graphics primitive
 
 Remember, you can use the command ``plot?`` to find out about most of
 the options demonstrated above.
@@ -378,19 +384,19 @@ Below, you can experiment with several of the plotting options.
     sage: x = var('x')
     sage: @interact
     sage: def plot_example(f=sin(x^2),r=range_slider(-5,5,step_size=1/4,default=(-3,3)),
-    ...                    color=color_selector(widget='colorpicker'),
-    ...                    thickness=(3,(1..10)),
-    ...                    adaptive_recursion=(5,(0..10)), adaptive_tolerance=(0.01,(0.001,1)),
-    ...                    plot_points=(20,(1..100)),
-    ...                    linestyle=['-','--','-.',':'],
-    ...                    gridlines=False, fill=False,
-    ...                    frame=False, axes=True
-    ...                    ):
-    ...       show(plot(f, (x,r[0],r[1]), color=color, thickness=thickness,
-    ...                    adaptive_recursion=adaptive_recursion,
-    ...                    adaptive_tolerance=adaptive_tolerance, plot_points=plot_points,
-    ...                    linestyle=linestyle, fill=fill if fill else None),
-    ...                    gridlines=gridlines, frame=frame, axes=axes)
+    ....:                  color=color_selector(widget='colorpicker'),
+    ....:                  thickness=(3,(1..10)),
+    ....:                  adaptive_recursion=(5,(0..10)), adaptive_tolerance=(0.01,(0.001,1)),
+    ....:                  plot_points=(20,(1..100)),
+    ....:                  linestyle=['-','--','-.',':'],
+    ....:                  gridlines=False, fill=False,
+    ....:                  frame=False, axes=True
+    ....:                  ):
+    ....:     show(plot(f, (x,r[0],r[1]), color=color, thickness=thickness,
+    ....:                  adaptive_recursion=adaptive_recursion,
+    ....:                  adaptive_tolerance=adaptive_tolerance, plot_points=plot_points,
+    ....:                  linestyle=linestyle, fill=fill if fill else None),
+    ....:                  gridlines=gridlines, frame=frame, axes=axes)
 
 .. _3DPlotting:
 
@@ -409,6 +415,7 @@ specify ranges for two variables instead of one.
 
     sage: g(x,y)=sin(x^2+y^2)
     sage: plot3d(g,(x,-5,5),(y,-5,5))
+    Graphics3d Object
 
 There is a lot you can do with the 3D plots.
 
@@ -443,6 +450,7 @@ points!
 ::
 
     sage: plot3d(g,(x,-5,5),(y,-5,5),plot_points=300)
+    Graphics3d Object
 
 As with 2D plots, we can superimpose 3D plots by adding them together.
 
@@ -458,6 +466,7 @@ wisest to define the variables ahead of time.
     sage: P=plot3d(sin(x^2-y^2),(x,-b,b),(y,-b,b), opacity=.7)
     sage: Q=plot3d(0, (x,-b,b), (y,-b,b), color='red')
     sage: P+Q
+    Graphics3d Object
 
 As usual, only the last command shows up in the notebook, though clearly
 all are evaluated.  This also demonstrates that many of the same options
@@ -474,6 +483,7 @@ We close this tutorial with a cool plot that we define *implicitly* as a
     sage: p = 2 - (cos(x + T*y) + cos(x - T*y) + cos(y + T*z) + cos(y - T*z) + cos(z - T*x) + cos(z + T*x))
     sage: r = 4.78
     sage: implicit_plot3d(p, (x, -r, r), (y, -r, r), (z, -r, r), plot_points=50, color='yellow')
+    Graphics3d Object
 
 The next tutorial will use all that you have learned about Sage basics,
 symbolics, and plotting in a specific mathematical venue \- the calculus

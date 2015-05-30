@@ -21,6 +21,7 @@ All the platonic solids in the same place::
 Display nice faces only::
 
     sage: icosahedron().stickers(['red','blue'], .075, .1)
+    Graphics3d Object
 
 AUTHORS:
 
@@ -75,21 +76,24 @@ def index_face_set(face_list, point_list, enclosed, **kwds):
     Verify that these are working and passing on keywords::
 
         sage: tetrahedron(center=(2,0,0),size=2,color='red')
+        Graphics3d Object
 
     ::
 
         sage: dodecahedron(center=(2,0,0),size=2,color='red')
+        Graphics3d Object
 
     ::
 
         sage: icosahedron(center=(2,0,0),size=2,color='red')
+        Graphics3d Object
     """
-    if kwds.has_key('center'):
+    if 'center' in kwds:
         center = kwds['center']
         del kwds['center']
     else:
         center = (0,0,0)
-    if kwds.has_key('size'):
+    if 'size' in kwds:
         size = kwds['size']
         del kwds['size']
     else:
@@ -119,6 +123,7 @@ def prep(G, center, size, kwds):
     and that keywords are passed (see Trac #10796)::
 
         sage: octahedron(center=(2,0,0),size=2,color='red')
+        Graphics3d Object
     """
     if size != 1:
         G = G.scale(size)
@@ -133,15 +138,12 @@ def tetrahedron(center=(0,0,0), size=1, **kwds):
 
     INPUT:
 
-
     -  ``center`` - (default: (0,0,0))
 
     -  ``size`` - (default: 1)
 
-    -  ``color`` - a word that describes a color
-
-    -  ``rgbcolor`` - (r,g,b) with r, g, b between 0 and 1
-       that describes a color
+    - ``color`` -- a string (``"red"``, ``"green"``, etc)
+      or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
     -  ``opacity`` - (default: 1) if less than 1 then is
        transparent
@@ -150,26 +152,32 @@ def tetrahedron(center=(0,0,0), size=1, **kwds):
     EXAMPLES: A default colored tetrahedron at the origin::
 
         sage: tetrahedron()
+        Graphics3d Object
 
     A transparent green tetrahedron in front of a solid red one::
 
         sage: tetrahedron(opacity=0.8, color='green') + tetrahedron((-2,1,0),color='red')
+        Graphics3d Object
 
     A translucent tetrahedron sharing space with a sphere::
 
         sage: tetrahedron(color='yellow',opacity=0.7) + sphere(r=.5, color='red')
+        Graphics3d Object
 
     A big tetrahedron::
 
         sage: tetrahedron(size=10)
+        Graphics3d Object
 
     A wide tetrahedron::
 
         sage: tetrahedron(aspect_ratio=[1,1,1]).scale((4,4,1))
+        Graphics3d Object
 
     A red and blue tetrahedron touching noses::
 
         sage: tetrahedron(color='red') + tetrahedron((0,0,-2)).scale([1,1,-1])
+        Graphics3d Object
 
     A Dodecahedral complex of 5 tetrahedrons (a more elaborate examples
     from Peter Jipsen)::
@@ -231,39 +239,48 @@ def cube(center=(0,0,0), size=1, color=None, frame_thickness=0, frame_color=None
     A simple cube::
 
         sage: cube()
+        Graphics3d Object
 
     A red cube::
 
         sage: cube(color="red")
+        Graphics3d Object
 
     A transparent grey cube that contains a red cube::
 
         sage: cube(opacity=0.8, color='grey') + cube(size=3/4)
+        Graphics3d Object
 
     A transparent colored cube::
 
         sage: cube(color=['red', 'green', 'blue'], opacity=0.5)
+        Graphics3d Object
 
     A bunch of random cubes::
 
         sage: v = [(random(), random(), random()) for _ in [1..30]]
         sage: sum([cube((10*a,10*b,10*c), size=random()/3, color=(a,b,c)) for a,b,c in v])
+        Graphics3d Object
 
     Non-square cubes (boxes)::
 
         sage: cube(aspect_ratio=[1,1,1]).scale([1,2,3])
+        Graphics3d Object
         sage: cube(color=['red', 'blue', 'green'],aspect_ratio=[1,1,1]).scale([1,2,3])
+        Graphics3d Object
 
     And one that is colored::
 
-        sage: cube(color=['red', 'blue', 'green', 'black', 'white', 'orange'], \
-                  aspect_ratio=[1,1,1]).scale([1,2,3])
+        sage: cube(color=['red', 'blue', 'green', 'black', 'white', 'orange'],
+        ....:      aspect_ratio=[1,1,1]).scale([1,2,3])
+        Graphics3d Object
 
     A nice translucent color cube with a frame::
 
-        sage: c = cube(color=['red', 'blue', 'green'], frame=False, frame_thickness=2, \
-                       frame_color='brown', opacity=0.8)
+        sage: c = cube(color=['red', 'blue', 'green'], frame=False, frame_thickness=2,
+        ....:          frame_color='brown', opacity=0.8)
         sage: c
+        Graphics3d Object
 
     A raytraced color cube with frame and transparency::
 
@@ -313,7 +330,8 @@ def octahedron(center=(0,0,0), size=1, **kwds):
     EXAMPLES::
 
         sage: octahedron((1,4,3), color='orange') + \
-                     octahedron((0,2,1), size=2, opacity=0.6)
+        ....:            octahedron((0,2,1), size=2, opacity=0.6)
+        Graphics3d Object
     """
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1,1,1]
@@ -341,11 +359,13 @@ def dodecahedron(center=(0,0,0), size=1, **kwds):
     EXAMPLES: A plain Dodecahedron::
 
         sage: dodecahedron()
+        Graphics3d Object
 
     A translucent dodecahedron that contains a black sphere::
 
         sage: dodecahedron(color='orange', opacity=0.8) + \
-              sphere(size=0.5, color='black')
+        ....:      sphere(size=0.5, color='black')
+        Graphics3d Object
 
     CONSTRUCTION: This is how we construct a dodecahedron. We let one
     point be `Q = (0,1,0)`.
@@ -444,13 +464,15 @@ def icosahedron(center=(0,0,0), size=1, **kwds):
     EXAMPLES::
 
         sage: icosahedron()
+        Graphics3d Object
 
     Two icosahedrons at different positions of different sizes.
 
     ::
 
         sage: icosahedron((-1/2,0,1), color='orange') + \
-              icosahedron((2,0,1), size=1/2, aspect_ratio=[1,1,1])
+        ....:      icosahedron((2,0,1), size=1/2, aspect_ratio=[1,1,1])
+        Graphics3d Object
     """
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1,1,1]

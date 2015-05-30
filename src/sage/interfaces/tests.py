@@ -63,7 +63,7 @@ def manyvars(s, num=70000, inlen=1, step=2000):
                 sys.stdout.flush()
             v.append(s(t))
         print '\nsuccess -- time = cpu: %s, wall: %s'%(cputime(t), walltime(w))
-    except StandardError:
+    except Exception:
         print "%s -- failed!"%s
 
 def manyvars_all(num=70000):

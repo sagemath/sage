@@ -1,5 +1,3 @@
-include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 include "defs.pxi"
 
@@ -43,8 +41,6 @@ cdef extern from "eclib/newforms.h":
     ctypedef struct newform "newform":
         #attributes
         newforms *nf
-
-
 
     # Constructors
     newforms *new_newforms "new newforms" (long n, int disp)

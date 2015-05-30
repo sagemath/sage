@@ -57,7 +57,6 @@ Two examples from the Mathematica documentation (done in Sage):
 #*****************************************************************************
 
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 from sage.libs.singular.decl cimport tHomog, number, IDELEMS, p_Copy, rChangeCurrRing
@@ -114,18 +113,32 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     INPUT:
 
     - ``I`` -- a Sage ideal in a ring of type
-      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular`
+      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular` or a list of generators.
+
+    TESTS:
+
+
+    We test conversion::
+
+        sage: P.<x,y,z> = QQ[]
+        sage: sage.libs.singular.function_factory.ff.std(Sequence([x,y,z]))
+        [z, y, x]
+        sage: sage.libs.singular.function_factory.ff.std(Ideal([x,y,z]))
+        [z, y, x]
     """
     R = I.ring()
-    gens = I.gens()
+    try:
+        gens = I.gens()
+    except AttributeError:
+        gens = I
     cdef ideal *result
     cdef ring *r
     cdef ideal *i
     cdef int j = 0
 
-    if PY_TYPE_CHECK(R,MPolynomialRing_libsingular):
+    if isinstance(R, MPolynomialRing_libsingular):
         r = (<MPolynomialRing_libsingular>R)._ring
-    elif PY_TYPE_CHECK(R, NCPolynomialRing_plural):
+    elif isinstance(R, NCPolynomialRing_plural):
         r = (<NCPolynomialRing_plural>R)._ring
     else:
         raise TypeError("Ring must be of type 'MPolynomialRing_libsingular'")
@@ -134,9 +147,9 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
 
     i = idInit(len(gens),1)
     for j,f in enumerate(gens):
-        if PY_TYPE_CHECK(f,MPolynomial_libsingular):
+        if isinstance(f, MPolynomial_libsingular):
             i.m[j] = p_Copy((<MPolynomial_libsingular>f)._poly, r)
-        elif PY_TYPE_CHECK(f, NCPolynomial_plural):
+        elif isinstance(f, NCPolynomial_plural):
             i.m[j] = p_Copy((<NCPolynomial_plural>f)._poly, r)
         else:
             id_Delete(&i, r)
@@ -288,10 +301,12 @@ def interred_libsingular(I):
     cdef int j
     cdef int bck
 
-
-    if len(I.gens()) == 0:
-        return Sequence([], check=False, immutable=True)
-
+    try:
+        if len(I.gens()) == 0:
+            return Sequence([], check=False, immutable=True)
+    except AttributeError:
+        pass
+            
     i = sage_ideal_to_singular_ideal(I)
     r = currRing
 

@@ -25,6 +25,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size
+from functools import reduce
 
 class PartitionSpeciesStructure(GenericSpeciesStructure):
     def __init__(self, parent, labels, list):

@@ -2,17 +2,18 @@ r"""
 Dense vectors using a NumPy backend.  This serves as a base class for
 dense vectors over Real Double Field and Complex Double Field
 
-EXAMPLES:
+EXAMPLES::
+
     sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)])
     sage: v
-    (1.0 - 1.0*I, 2.0 + 3.14159265359*I, 3.0 + 5.0*I)
+    (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)
     <type 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Complex Double Field
     sage: v[0] = 5
     sage: v
-    (5.0, 2.0 + 3.14159265359*I, 3.0 + 5.0*I)
+    (5.0, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: loads(dumps(v)) == v
     True
     sage: v = vector(RDF, [1,2,3,4]); v
@@ -21,38 +22,37 @@ EXAMPLES:
     True
 
 AUTHORS:
-    -- Jason Grout, Oct 2008: switch to numpy backend, factored out
+
+- Jason Grout, Oct 2008: switch to numpy backend, factored out
        Vector_double_dense class
-    -- Josh Kantor
-    -- William Stein
+- Josh Kantor
+- William Stein
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
-cimport free_module_element
-import  free_module_element
+cimport numpy
+import numpy
+import free_module_element
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
 from sage.rings.real_double import RDF
-
 from sage.rings.complex_double import CDF
-from sage.rings.complex_double cimport ComplexDoubleElement, new_ComplexDoubleElement
 
-cimport numpy as cnumpy
+# This is for the NumPy C API (the PyArray... functions) to work
+numpy.import_array()
 
-numpy = None
-scipy = None
 
-# This is for the NumPy C API to work
-cnumpy.import_array()
-
-cdef class Vector_double_dense(free_module_element.FreeModuleElement):
+cdef class Vector_double_dense(FreeModuleElement):
     """
     Base class for vectors over the Real Double Field and the Complex
     Double Field.  These are supposed to be fast vector operations
@@ -63,7 +63,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
     creation depends on several variables that are set in the
     subclasses.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: v = vector(RDF, [1,2,3,4]); v
         (1.0, 2.0, 3.0, 4.0)
         sage: v*v
@@ -73,19 +74,20 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Set up a new vector
 
-        EXAMPLE:
-        sage: v = vector(RDF, range(3))
-        sage: v.__new__(v.__class__, v.parent(), [1,1,1]) # random output
-        (3.00713073107e-261, 3.06320700422e-322, 2.86558074588e-322)
-        sage: v = vector(CDF, range(3))
-        sage: v.__new__(v.__class__, v.parent(), [1,1,1]) # random output
-        (-2.26770549592e-39, 5.1698223615e-252*I, -5.9147262602e-62 + 4.63145528786e-258*I)
+        EXAMPLES::
+
+            sage: v = vector(RDF, range(3))
+            sage: v.__new__(v.__class__, v.parent(), [1,1,1])  # random output
+            (3.00713073107e-261, 3.06320700422e-322, 2.86558074588e-322)
+            sage: v = vector(CDF, range(3))
+            sage: v.__new__(v.__class__, v.parent(), [1,1,1])  # random output
+            (-2.26770549592e-39, 5.1698223615e-252*I, -5.9147262602e-62 + 4.63145528786e-258*I)
         """
         self._is_mutable = 1
         self._degree = parent.degree()
         self._parent = parent
 
-    cdef Vector_double_dense _new(self, cnumpy.ndarray vector_numpy):
+    cdef Vector_double_dense _new(self, numpy.ndarray vector_numpy):
         """
         Return a new vector with same parent as self.
         """
@@ -106,14 +108,16 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         self._nrows and self._ncols have already been initialized.
 
         EXAMPLE:
+
         In this example, we throw away the current array and make a
-        new uninitialized array representing the data for the class.
+        new uninitialized array representing the data for the class. ::
+
             sage: a=vector(RDF, range(9))
             sage: a.__create_vector__()
         """
-        cdef cnumpy.npy_intp dims[1]
+        cdef numpy.npy_intp dims[1]
         dims[0] = self._degree
-        self._vector_numpy = cnumpy.PyArray_SimpleNew(1, dims, self._numpy_dtypeint)
+        self._vector_numpy = numpy.PyArray_SimpleNew(1, dims, self._numpy_dtypeint)
         return
 
     cdef bint is_dense_c(self):
@@ -133,7 +137,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Return a copy of the vector
 
-        EXAMPLE:
+        EXAMPLE::
+
             sage: a = vector(RDF, range(9))
             sage: a == copy(a)
             True
@@ -149,13 +154,15 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
 
         The numpy array must have already been allocated.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: vector(RDF, range(9))
             (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0)
             sage: vector(CDF, 5)
             (0.0, 0.0, 0.0, 0.0, 0.0)
 
-        TESTS:
+        TESTS::
+
             sage: vector(CDF, 0)
             ()
             sage: vector(RDF, 0)
@@ -170,11 +177,11 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
             (0.0, 1.0, 2.0, 3.0)
 
             sage: V = RDF^2
-            sage: V._element_class(V, 5)
+            sage: V.element_class(V, 5)
             Traceback (most recent call last):
             ...
             TypeError: entries must be a list or 0
-            sage: V._element_class(V, 0)
+            sage: V.element_class(V, 0)
             (0.0, 0.0)
         """
         cdef Py_ssize_t i,j
@@ -189,12 +196,11 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
                 for i from 0<=i<self._degree:
                     self.set_unsafe(i,entries[i])
 
-        elif isinstance(entries, cnumpy.ndarray):
+        elif isinstance(entries, numpy.ndarray):
             self._replace_self_with_numpy(entries)
         else:
-            cnumpy.PyArray_FILLWBYTE(self._vector_numpy, 0)
+            numpy.PyArray_FILLWBYTE(self._vector_numpy, 0)
             if entries is None:
-                print "entries is None"
                 return
             else:
                 try:
@@ -212,7 +218,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Return the length of the vector.
 
-        EXAMPLE:
+        EXAMPLE::
+
             sage: v = vector(RDF, 5); v
             (0.0, 0.0, 0.0, 0.0, 0.0)
             sage: len(v)
@@ -220,116 +227,54 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         return self._degree
 
-    def __setitem__(self, i, object value):
+    cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
         """
-        Set the `i`-th entry of self.
+        EXAMPLES::
 
-        EXAMPLES:
             sage: v = vector(CDF, [1,CDF(3,2), -1]); v
             (1.0, 3.0 + 2.0*I, -1.0)
             sage: v[1] = 2
             sage: v[-1] = I
-            sage: v[5] = 2
-            Traceback (most recent call last):
-            ...
-            IndexError: index out of range
             sage: v
             (1.0, 2.0, 1.0*I)
             sage: v[1:3] = [1, 1]; v
             (1.0, 1.0, 1.0)
         """
-        if not self._is_mutable:
-            raise ValueError("vector is immutable; please change a copy instead (use copy())")
-        cdef Py_ssize_t k, d, n
-        if isinstance(i, slice):
-            start, stop = i.start, i.stop
-            d = self.degree()
-            R = self.base_ring()
-            n = 0
-            for k from start <= k < stop:
-                if k >= d:
-                    return
-                if k >= 0:
-                    self[k] = R(value[n])
-                    n = n + 1
-        else:
-            if i < 0:
-                i += self._degree
-            if i < 0 or i >= self._degree:
-                raise IndexError('index out of range')
-            self.set_unsafe(i, value)
+        # We assume that Py_ssize_t is the same as npy_intp
 
-    def __getitem__(self, i):
+        # We call the self._python_dtype function on the value since
+        # numpy does not know how to deal with complex numbers other
+        # than the built-in complex number type.
+        cdef int status
+        status = numpy.PyArray_SETITEM(self._vector_numpy,
+                        numpy.PyArray_GETPTR1(self._vector_numpy, i),
+                        self._python_dtype(value))
+        #TODO: Throw an error if status == -1
+
+    cdef get_unsafe(self, Py_ssize_t i):
         """
-        Return the `i`-th entry of self.
+        EXAMPLES::
 
-        EXAMPLES:
             sage: v = vector(CDF, [1,CDF(3,2), -1]); v
             (1.0, 3.0 + 2.0*I, -1.0)
             sage: v[1]
             3.0 + 2.0*I
             sage: v[-1]
             -1.0
-            sage: v[5]
-            Traceback (most recent call last):
-            ...
-            IndexError: index out of range
-            sage: v[-5]
-            Traceback (most recent call last):
-            ...
-            IndexError: index out of range
             sage: v[1:3]
             (3.0 + 2.0*I, -1.0)
         """
-        if isinstance(i, slice):
-            start, stop, step = i.indices(len(self))
-            return free_module_element.vector(self.base_ring(), self.list()[start:stop])
-        else:
-            if i < 0:
-                i += self._degree
-            if i < 0 or i >= self._degree:
-                raise IndexError('index out of range')
-            return self.get_unsafe(i)
-
-    cdef set_unsafe(self, Py_ssize_t i, object value):
-        """
-        Set the ith entry to value without any bounds checking,
-        mutability checking, etc.
-        """
         # We assume that Py_ssize_t is the same as npy_intp
-
-        # We must patch the ndarrayobject.h file so that the SETITEM
-        # macro does not have a semicolon at the end for this to work.
-        # Cython wraps the macro in a function that converts the
-        # returned int to a python object, which leads to compilation
-        # errors because after preprocessing you get something that
-        # looks like "););".  This is bug
-        # http://scipy.org/scipy/numpy/ticket/918
-
-        # We call the self._python_dtype function on the value since
-        # numpy does not know how to deal with complex numbers other
-        # than the built-in complex number type.
-        cdef int status
-        status = cnumpy.PyArray_SETITEM(self._vector_numpy,
-                        cnumpy.PyArray_GETPTR1(self._vector_numpy, i),
-                        self._python_dtype(value))
-        #TODO: Throw an error if status == -1
-
-
-    cdef get_unsafe(self, Py_ssize_t i):
-        """
-        Get the (i,j) entry without any bounds checking, etc.
-        """
-        # We assume that Py_ssize_t is the same as npy_intp
-        return self._sage_dtype(cnumpy.PyArray_GETITEM(self._vector_numpy,
-                                                cnumpy.PyArray_GETPTR1(self._vector_numpy, i)))
+        return self._sage_dtype(numpy.PyArray_GETITEM(self._vector_numpy,
+                                                numpy.PyArray_GETPTR1(self._vector_numpy, i)))
 
 
     cpdef ModuleElement _add_(self, ModuleElement right):
         """
         Add two vectors together.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: A = vector(RDF, range(3))
             sage: A+A
             (0.0, 2.0, 4.0)
@@ -348,7 +293,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Return self - right
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: A = vector(RDF, range(3))
             sage: (A-A).is_zero()
             True
@@ -367,33 +313,32 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Dot product of self and right.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(RDF, [1,2,3]); w = vector(RDF, [2, 4, -3])
             sage: v*w
             1.0
             sage: w*v
             1.0
-        """
-        if not right.parent() == self.parent():
-            right = self.parent().ambient_module()(right)
-        if self._degree == 0:
-            from copy import copy
-            return copy(self)
 
+        This works correctly for zero-dimensional vectors::
+
+            sage: v = vector(RDF, [])
+            sage: v._dot_product_(v)
+            0.0
+        """
         cdef Vector_double_dense _right, _left
         _right = right
         _left = self
 
-        global scipy
-        if scipy is None:
-            import scipy
-        return self._sage_dtype(scipy.dot(_left._vector_numpy, _right._vector_numpy))
+        return self._sage_dtype(numpy.dot(_left._vector_numpy, _right._vector_numpy))
 
     cpdef Vector _pairwise_product_(self, Vector right):
         """
         Return the component-wise product of self and right.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(CDF, [1,2,3]); w = vector(CDF, [2, 4, -3])
             sage: v.pairwise_product(w)
             (2.0, 8.0, -9.0)
@@ -415,7 +360,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Multiply a scalar and vector
 
-        EXAMPLE:
+        EXAMPLE::
+
             sage: v = vector(CDF, range(3))
             sage: 3*v
             (0.0, 3.0, 6.0)
@@ -431,7 +377,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Multiply a scalar and vector
 
-        EXAMPLE:
+        EXAMPLE::
+
             sage: v = vector(CDF, range(3))
             sage: v*3
             (0.0, 3.0, 6.0)
@@ -452,7 +399,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
 
         This will be fastest if the vector's length is a power of 2.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(CDF,[1,2,3,4])
             sage: w = v.fft()
             sage: max(v - w.inv_fft()) < 1e-12
@@ -471,7 +419,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
 
         This function is fastest if the vector's length is a power of 2.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(CDF,[1+2*I,2,3*I,4])
             sage: v.fft()
             (7.0 + 5.0*I, 1.0 + 1.0*I, -5.0 + 5.0*I, 1.0 - 3.0*I)
@@ -505,9 +454,7 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
 
         if self._degree == 0:
             return self
-        global scipy
-        if scipy is None:
-            import scipy
+
         import scipy.fftpack
 
         if inplace:
@@ -526,28 +473,7 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
                 return Vector_complex_double_dense(V, scipy.ifft(self._vector_numpy))
 
 
-    def numpy(self):
-        """
-        Return numpy array corresponding to this vector.
-
-        EXAMPLES:
-            sage: v = vector(CDF,4,range(4))
-            sage: v.numpy()
-            array([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j])
-            sage: v = vector(CDF,0)
-            sage: v.numpy()
-            array([], dtype=complex128)
-            sage: v = vector(RDF,4,range(4))
-            sage: v.numpy()
-            array([ 0.,  1.,  2.,  3.])
-            sage: v = vector(RDF,0)
-            sage: v.numpy()
-            array([], dtype=float64)
-        """
-        from copy import copy
-        return copy(self._vector_numpy)
-
-    cdef _replace_self_with_numpy(self,cnumpy.ndarray numpy_array):
+    cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array):
         """
         Replace the underlying numpy array with numpy_array.
         """
@@ -564,7 +490,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         Return the associated complex vector, i.e., this vector but with
         coefficients viewed as complex numbers.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(RDF,4,range(4)); v
             (0.0, 1.0, 2.0, 3.0)
             sage: v.complex_vector()
@@ -614,10 +541,7 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
             (1e-06 + 5.0*I, 5.0 + 1e-06*I, 5.0 + 5.0*I, 1e-06 + 1e-06*I)
         """
         import sage.rings.complex_double
-        global numpy
         cdef Vector_double_dense v
-        if numpy is None:
-            import numpy
         eps = float(eps)
         out = self._vector_numpy.copy()
         if self._sage_dtype is sage.rings.complex_double.CDF:
@@ -710,7 +634,7 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
             0.953760808...
             sage: w = vector(CDF, [-1,0,1])
             sage: w.norm(p=-1.6)
-            doctest:1992: RuntimeWarning: divide by zero encountered in power
+            doctest:...: RuntimeWarning: divide by zero encountered in power
             0.0
 
         Return values are in ``RDF``, or an integer when ``p = 0``.  ::
@@ -729,9 +653,6 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
             ...
             ValueError: vector norm 'p' must be +/- infinity or a real number, not junk
         """
-        global numpy
-        if numpy is None:
-            import numpy
         import sage.rings.infinity
         import sage.rings.integer
         if p == sage.rings.infinity.Infinity:
@@ -741,7 +662,7 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         else:
             try:
                 p = RDF(p)
-            except StandardError:
+            except Exception:
                 raise ValueError("vector norm 'p' must be +/- infinity or a real number, not %s" % p)
         n = numpy.linalg.norm(self._vector_numpy, ord=p)
         # p = 0 returns integer *count* of non-zero entries
@@ -755,7 +676,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Calculate the arithmetic mean of the vector.
 
-        EXAMPLE:
+        EXAMPLE::
+
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.mean()
@@ -763,9 +685,6 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
             sage: w.mean()
             4.0 + 5.0*I
         """
-        global numpy
-        if numpy is None:
-            import numpy
         return self._sage_dtype(numpy.mean(self._vector_numpy))
 
     def variance(self, population=True):
@@ -773,24 +692,22 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         Calculate the variance of entries of the vector.
 
         INPUT:
-            population -- If False, calculate the sample variance.
 
-        EXAMPLE:
+        - ``population`` -- If False, calculate the sample variance.
+
+        EXAMPLES::
+
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.variance()
             7.5
             sage: v.variance(population=False)
-            6.66666666667
+            6.666666666666667
             sage: w.variance()
             15.0
             sage: w.variance(population=False)
-            13.3333333333
+            13.333333333333334
         """
-        global numpy
-        if numpy is None:
-            import numpy
-
         if population is True:
             return self._sage_dtype(numpy.var(self._vector_numpy, ddof=1))
         else:
@@ -803,22 +720,19 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         INPUT:
             population -- If False, calculate the sample standard deviation.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.standard_deviation()
-            2.73861278753
+            2.7386127875258306
             sage: v.standard_deviation(population=False)
-            2.58198889747
+            2.581988897471611
             sage: w.standard_deviation()
-            3.87298334621
+            3.872983346207417
             sage: w.standard_deviation(population=False)
-            3.6514837167
+            3.6514837167011076
         """
-        global numpy
-        if numpy is None:
-            import numpy
-
         if population is True:
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=1))
         else:
@@ -834,17 +748,15 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         subtracted from the result to give 0.0 for a normal
         distribution. (Paragraph from the scipy.stats docstring.)
 
-        EXAMPLE:
+        EXAMPLE::
+
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.stats_kurtosis()
-            -1.23
+            -1.2300000000000002
             sage: w.stats_kurtosis()
-            -1.23
+            -1.2300000000000002
         """
-        global scipy
-        if scipy is None:
-            import scipy
         import scipy.stats
         return self._sage_dtype(scipy.stats.kurtosis(self._vector_numpy))
 
@@ -852,7 +764,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Return the product of the entries of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.prod()
@@ -866,7 +779,8 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         Return the sum of the entries of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.sum()
@@ -876,3 +790,44 @@ cdef class Vector_double_dense(free_module_element.FreeModuleElement):
         """
         return self._sage_dtype(self._vector_numpy.sum())
 
+    # Put this method last, otherwise it overrides the "numpy" cimport
+    def numpy(self, dtype=None):
+        """
+        Return numpy array corresponding to this vector.
+
+        INPUT:
+
+        - ``dtype`` -- if specified, the `numpy dtype <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_
+                       of the returned array.
+
+        EXAMPLES::
+
+            sage: v = vector(CDF,4,range(4))
+            sage: v.numpy()
+            array([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j])
+            sage: v = vector(CDF,0)
+            sage: v.numpy()
+            array([], dtype=complex128)
+            sage: v = vector(RDF,4,range(4))
+            sage: v.numpy()
+            array([ 0.,  1.,  2.,  3.])
+            sage: v = vector(RDF,0)
+            sage: v.numpy()
+            array([], dtype=float64)
+
+        A numpy dtype may be requested manually::
+
+            sage: import numpy
+            sage: v = vector(CDF, 3, range(3))
+            sage: v.numpy()
+            array([ 0.+0.j,  1.+0.j,  2.+0.j])
+            sage: v.numpy(dtype=numpy.float64)
+            array([ 0.,  1.,  2.])
+            sage: v.numpy(dtype=numpy.float32)
+            array([ 0.,  1.,  2.], dtype=float32)
+        """
+        if dtype is None or dtype is self._vector_numpy.dtype:
+            from copy import copy
+            return copy(self._vector_numpy)
+        else:
+            return super(Vector_double_dense, self).numpy(dtype)

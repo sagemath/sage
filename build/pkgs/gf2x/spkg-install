@@ -19,6 +19,9 @@ for patch in ../patches/*.patch; do
     fi
 done
 
+# As config/acinclude.m4 is patched, we need to touch some files to prevent
+# autotools to invoke black magic.
+touch aclocal.m4 configure Makefile.in gf2x/gf2x-config.h.in
 
 if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building a debug version of gf2x."
@@ -33,9 +36,14 @@ if [ "$SAGE64" = "yes" ]; then
     CFLAGS="-m64 $CFLAGS"
 fi
 
+if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+    echo "Building a generic gf2x library."
+    GF2X_CONFIGURE="--disable-hardware-specific-code $GF2X_CONFIGURE"
+fi
 
 echo "Configuring gf2x."
-./configure --prefix="$SAGE_LOCAL"
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL"/lib \
+    $GF2X_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error: Failed to configure gf2x."
     exit 1

@@ -40,7 +40,7 @@ container for points of the same space that
 * allows (cached) access to alternative representations::
 
     sage: c.set()
-    frozenset([N(0, 1, 1), N(1, 1, 1), N(0, 0, 1), N(1, 0, 1)])
+    frozenset({N(0, 0, 1), N(0, 1, 1), N(1, 0, 1), N(1, 1, 1)})
 
 * allows introduction of additional methods::
 
@@ -363,6 +363,65 @@ cdef class PointCollection(SageObject):
         """
         return list(self._points)
 
+    def __mul__(left, right):
+        r"""
+        Return the product ``left * right``.
+
+        INPUT:
+
+        - a :class:`point collection <PointCollection>` and something that can
+          act both on ``self.module().zero()`` and either ``self.matrix()`` from
+          the right or ``self.column_matrix()`` from the left.
+
+        OUTPUT:
+
+        - the result of ``self.matrix() * right``, provided that
+          ``self.module().zero() * right`` can be computed.
+
+        The idea of this method is to provide a shortcut for matrix
+        multiplication with appropriate type checks, in particular, it is not
+        possible to multiply by a point of the same toric lattice as elements of
+        ``self``.
+
+        TESTS::
+
+            sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
+            sage: c.matrix()
+            [0 0 1]
+            [1 0 1]
+            [0 1 1]
+            [1 1 1]
+            sage: c * c[0]
+            Traceback (most recent call last):
+            ...
+            TypeError: elements of the same toric lattice cannot be multiplied!
+
+        If you really need such a product, state it explicitly::
+
+            sage: c.matrix() * c[0]
+            (1, 1, 1, 1)
+
+        Multiplication by matrices works as well::
+
+            sage: c * c.column_matrix()
+            [1 1 1 1]
+            [1 2 1 2]
+            [1 1 2 2]
+            [1 2 2 3]
+        """
+        cdef PointCollection pc
+        if isinstance(left, PointCollection):
+            pc = left
+            # Check that it is possible to act on points.
+            pc._module.zero() * right
+            return pc.matrix() * right
+        if isinstance(right, PointCollection):
+            pc = right
+            # Check that it is possible to act on points.
+            left * pc._module.zero()
+            return left * pc.column_matrix()
+        raise NotImplementedError
+
     def __reduce__(self):
         r"""
         Prepare ``self`` for pickling.
@@ -445,7 +504,7 @@ cdef class PointCollection(SageObject):
         EXAMPLES::
 
             sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
-            sage: matrix(c)
+            sage: matrix(c) # indirect doctest
             [0 0 1]
             [1 0 1]
             [0 1 1]
@@ -829,7 +888,7 @@ cdef class PointCollection(SageObject):
 
             sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
             sage: c.set()
-            frozenset([N(0, 1, 1), N(1, 1, 1), N(0, 0, 1), N(1, 0, 1)])
+            frozenset({N(0, 0, 1), N(0, 1, 1), N(1, 0, 1), N(1, 1, 1)})
         """
         if self._set is None:
             self._set = frozenset(self._points)

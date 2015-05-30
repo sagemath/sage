@@ -144,15 +144,42 @@ def ubs(f):
         sage: from sage.schemes.hyperelliptic_curves.invariants import ubs
         sage: x = QQ['x'].0
         sage: ubs(x^6 + 1)
-        {'A': 2, 'C': -2/9, 'B': 2/3, 'D': 0, 'f': x^6 + h^6, 'i': 2*x^2*h^2, 'Delta': -2/3*x^2*h^2, 'y1': 0, 'y3': 0, 'y2': 0}
+        {'A': 2,
+         'B': 2/3,
+         'C': -2/9,
+         'D': 0,
+         'Delta': -2/3*x^2*h^2,
+         'f': x^6 + h^6,
+         'i': 2*x^2*h^2,
+         'y1': 0,
+         'y2': 0,
+         'y3': 0}
 
         sage: R.<u, v> = QQ[]
         sage: ubs(u^6 + v^6)
-        {'A': 2, 'C': -2/9, 'B': 2/3, 'D': 0, 'f': u^6 + v^6, 'i': 2*u^2*v^2, 'Delta': -2/3*u^2*v^2, 'y1': 0, 'y3': 0, 'y2': 0}
+        {'A': 2,
+         'B': 2/3,
+         'C': -2/9,
+         'D': 0,
+         'Delta': -2/3*u^2*v^2,
+         'f': u^6 + v^6,
+         'i': 2*u^2*v^2,
+         'y1': 0,
+         'y2': 0,
+         'y3': 0}
 
         sage: R.<t> = GF(31)[]
         sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
-        {'A': 0, 'C': -15, 'B': -12, 'D': -15, 'f': t^6 + 2*t^5*h + t^2*h^4 + 3*t*h^5 + h^6, 'i': -4*t^4 + 10*t^3*h + 2*t^2*h^2 - 9*t*h^3 - 7*h^4, 'Delta': -10*t^4 + 12*t^3*h + 7*t^2*h^2 - 5*t*h^3 + 2*h^4, 'y1': 4*t^2 - 10*t*h - 13*h^2, 'y3': 4*t^2 - 4*t*h - 9*h^2, 'y2': 6*t^2 - 4*t*h + 2*h^2}
+        {'A': 0,
+         'B': -12,
+         'C': -15,
+         'D': -15,
+         'Delta': -10*t^4 + 12*t^3*h + 7*t^2*h^2 - 5*t*h^3 + 2*h^4,
+         'f': t^6 + 2*t^5*h + t^2*h^4 + 3*t*h^5 + h^6,
+         'i': -4*t^4 + 10*t^3*h + 2*t^2*h^2 - 9*t*h^3 - 7*h^4,
+         'y1': 4*t^2 - 10*t*h - 13*h^2,
+         'y2': 6*t^2 - 4*t*h + 2*h^2,
+         'y3': 4*t^2 - 4*t*h - 9*h^2}
     """
     ub = Ueberschiebung
     if f.parent().ngens() == 1:
@@ -245,7 +272,7 @@ def clebsch_invariants(f):
     """
     R = f.parent().base_ring()
     if R.characteristic() in [2, 3, 5]:
-        raise NotImplementedError, "Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5"
+        raise NotImplementedError("Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5")
 
     U = ubs(f)
     L = U['A'], U['B'], U['C'], U['D']
@@ -274,7 +301,7 @@ def igusa_clebsch_invariants(f):
 
     TESTS::
 
-        Let's check a symbolic example:
+        Let's check a symbolic example::
 
         sage: R.<a, b, c, d, e> = QQ[]
         sage: S.<x> = R[]

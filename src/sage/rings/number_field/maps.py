@@ -302,12 +302,12 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         # Apply to_B, so now each coefficient is in an absolute field,
         # and is expressed in terms of a polynomial in y, then make
         # the PARI poly in x.
-        w = [pari(to_B(a).polynomial('y')) for a in w]
+        w = [to_B(a)._pari_('y') for a in w]
         h = pari(w).Polrev()
 
         # Next we write the poly in x over a poly in y in terms
         # of an absolute polynomial for the rnf.
-        g = self.__R(self.__rnf.rnfeltreltoabs(h))
+        g = self.__rnf.rnfeltreltoabs(h)
         return self.__K._element_class(self.__K, g)
 
 class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):

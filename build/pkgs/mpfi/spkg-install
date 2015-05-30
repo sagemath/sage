@@ -10,12 +10,15 @@ fi
 unset RM
 
 if [ "$SAGE64" = "yes" ]; then
-   echo "64 bit build"
-   CFLAGS="-O2 -g -m64 -fPIC"; export CFLAGS
-   CXXLAGS="-O2 -g -m64 -fPIC"; export CXXFLAGS
-   LDFLAGS="-m64 "; export LDFLAGS
+    if [ -z "$CFLAG64" ]; then
+        CFLAG64=-m64
+    fi
+    echo "Building a 64-bit version of MPFI (using '$CFLAG64')."
+    CFLAGS="-O2 -g -fPIC $CFLAGS $CFLAG64"; export CFLAGS
+    CXXFLAGS="-O2 -g -fPIC $CXXFLAGS $CFLAG64"; export CXXFLAGS
+    LDFLAGS="$LDFLAGS $CFLAG64"; export LDFLAGS
 else
-   CFLAGS="-O2 -g -fPIC"; export CFLAGS
+    CFLAGS="-O2 -g -fPIC $CFLAGS"; export CFLAGS
 fi
 
 cd src

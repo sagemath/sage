@@ -11,7 +11,7 @@ Parallel iterator built using the ``fork()`` system call
 #                  http://www.gnu.org/licenses/
 ################################################################################
 
-from sage.ext.c_lib import AlarmInterrupt
+from sage.ext.interrupt import AlarmInterrupt
 from sage.misc.misc import alarm, cancel_alarm
 
 class p_iter_fork:
@@ -58,7 +58,7 @@ class p_iter_fork:
         """
         self.ncpus = int(ncpus)
         if self.ncpus != ncpus:  # check that there wasn't a roundoff
-            raise TypeError, "ncpus must be an integer"
+            raise TypeError("ncpus must be an integer")
         self.timeout = float(timeout)  # require a float
         self.verbose = verbose
         self.reset_interfaces = reset_interfaces
@@ -228,7 +228,7 @@ class p_iter_fork:
             sage: sorted(list( F( (lambda x: x^2), [([10],{}), ([20],{})])))
             [(([10], {}), 100), (([20], {}), 400)]
         """
-        import os, sys
+        import imp, os, sys
         from sage.structure.sage_object import save
 
         try:
@@ -241,7 +241,7 @@ class p_iter_fork:
             # pid has changed (forcing a reload of
             # misc).
             import sage.misc.misc
-            reload(sage.misc.misc)
+            imp.reload(sage.misc.misc)
 
             # The pexpect interfaces (and objects defined in them) are
             # not valid.
@@ -255,7 +255,7 @@ class p_iter_fork:
             sobj = os.path.join(dir, '%s.sobj'%os.getpid())
             save(value, sobj, compress=False)
 
-        except Exception, msg:
+        except Exception as msg:
             # Important to print this, so it is seen by the caller.
             print msg
         finally:

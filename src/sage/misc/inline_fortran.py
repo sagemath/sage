@@ -1,15 +1,17 @@
 """
 Fortran compiler
 """
-import __builtin__
-import os
+import os, imp, shutil
 
 from sage.misc.temporary_file import tmp_dir
 
 
 class InlineFortran:
-    def __init__(self,globals):
-        self.globals=globals
+    def __init__(self, globals=None):
+        if globals is None:
+            self.globs = {}
+        else:
+            self.globs = globals  # Deprecated
         self.library_paths=[]
         self.libraries=[]
         self.verbose = False
@@ -22,15 +24,45 @@ class InlineFortran:
 
     def eval(self, x, globals=None, locals=None):
         """
+        Compile fortran code ``x`` and adds the functions in it to
+        ``globals``.
+
+        INPUT:
+
+        - ``x`` -- Fortran code
+
+        - ``globals`` -- a dict to which to add the functions from the
+          fortran module
+
+        - ``locals`` -- ignored
+
         EXAMPLES::
 
-            sage: from sage.misc.inline_fortran import InlineFortran, _example
-            sage: fortran = InlineFortran(globals())
-            sage: fortran(_example)
+            sage: code = '''
+            ....: C FILE: FIB1.F
+            ....:       SUBROUTINE FIB(A,N)
+            ....: C
+            ....: C     CALCULATE FIRST N FIBONACCI NUMBERS
+            ....: C
+            ....:       INTEGER N
+            ....:       REAL*8 A(N)
+            ....:       DO I=1,N
+            ....:          IF (I.EQ.1) THEN
+            ....:             A(I) = 0.0D0
+            ....:          ELSEIF (I.EQ.2) THEN
+            ....:             A(I) = 1.0D0
+            ....:          ELSE
+            ....:             A(I) = A(I-1) + A(I-2)
+            ....:          ENDIF
+            ....:       ENDDO
+            ....:       END
+            ....: C END FILE FIB1.F
+            ....: '''
+            sage: fortran(code, globals())
             sage: import numpy
-            sage: n = numpy.array(range(10),dtype=float)
-            sage: fib(n,int(10))
-            sage: n
+            sage: a = numpy.array(range(10), dtype=float)
+            sage: fib(a, 10)
+            sage: a
             array([  0.,   1.,   1.,   2.,   3.,   5.,   8.,  13.,  21.,  34.])
 
         TESTS::
@@ -44,10 +76,15 @@ class InlineFortran:
             True
         """
         if len(x.splitlines()) == 1 and os.path.exists(x):
+            from sage.misc.superseded import deprecation
+            deprecation(2891, "Calling fortran() with a filename is deprecated, use fortran(open(f).read) instead")
             filename = x
             x = open(x).read()
             if filename.lower().endswith('.f90'):
                 x = '!f90\n' + x
+
+        if globals is None:
+            globals = self.globs
 
         from numpy import f2py
 
@@ -57,9 +94,6 @@ class InlineFortran:
         try:
             old_cwd = os.getcwd()
             os.chdir(mytmpdir)
-
-            old_import_path = os.sys.path
-            os.sys.path.append(mytmpdir)
 
             name = "fortran_module"  # Python module name
             # if the first line has !f90 as a comment, gfortran will
@@ -84,28 +118,22 @@ class InlineFortran:
             f2py.compile(x, name, extra_args = extra_args, source_fn=fortran_file)
             log_string = open(log).read()
 
-            # f2py.compile() doesn't raise any exception if it fails.
-            # So we manually check whether the compiled file exists.
-            # NOTE: the .so extension is used expect on Cygwin,
-            # that is even on OS X where .dylib might be expected.
-            soname = name
-            uname = os.uname()[0].lower()
-            if uname[:6] == "cygwin":
-                soname += '.dll'
-            else:
-                soname += '.so'
-            if not os.path.isfile(soname):
+            # Note that f2py() doesn't raise an exception if it fails.
+            # In that case, the import below will fail.
+            try:
+                file, pathname, description = imp.find_module(name, [mytmpdir])
+            except ImportError:
                 raise RuntimeError("failed to compile Fortran code:\n" + log_string)
+            try:
+                m = imp.load_module(name, file, pathname, description)
+            finally:
+                file.close()
 
             if self.verbose:
-                print log_string
-
-            m = __builtin__.__import__(name)
+                print(log_string)
         finally:
-            os.sys.path = old_import_path
             os.chdir(old_cwd)
             try:
-                import shutil
                 shutil.rmtree(mytmpdir)
             except OSError:
                 # This can fail for example over NFS
@@ -113,7 +141,7 @@ class InlineFortran:
 
         for k, x in m.__dict__.iteritems():
             if k[0] != '_':
-                self.globals[k] = x
+                globals[k] = x
 
     def add_library(self,s):
        self.libraries.append(s)
@@ -121,24 +149,5 @@ class InlineFortran:
     def add_library_path(self,s):
        self.library_paths.append(s)
 
-
-_example = """
-C FILE: FIB1.F
-      SUBROUTINE FIB(A,N)
-C
-C     CALCULATE FIRST N FIBONACCI NUMBERS
-C
-      INTEGER N
-      REAL*8 A(N)
-      DO I=1,N
-         IF (I.EQ.1) THEN
-            A(I) = 0.0D0
-         ELSEIF (I.EQ.2) THEN
-            A(I) = 1.0D0
-         ELSE
-            A(I) = A(I-1) + A(I-2)
-         ENDIF
-      ENDDO
-      END
-C END FILE FIB1.F
-"""
+# An instance
+fortran = InlineFortran()

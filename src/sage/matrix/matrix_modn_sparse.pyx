@@ -95,7 +95,6 @@ from sage.rings.arith import is_prime
 from sage.structure.element import is_Vector
 
 cimport sage.structure.element
-from matrix_modn_dense cimport Matrix_modn_dense
 
 include 'sage/modules/binary_search.pxi'
 include 'sage/modules/vector_integer_sparse_h.pxi'
@@ -159,25 +158,28 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
 
     def __init__(self, parent, entries, copy, coerce):
         """
-        Create a sparse matrix modulo n.
+        Create a sparse matrix over the integers modulo ``n``.
 
         INPUT:
 
+        - ``parent`` -- a matrix space
 
-        -  ``parent`` - a matrix space
+        - ``entries`` -- can be one of the following:
 
-        -  ``entries``
+          * a Python dictionary whose items have the
+            form ``(i, j): x``, where ``0 <= i < nrows``,
+            ``0 <= j < ncols``, and ``x`` is coercible to
+            an element of the integers modulo ``n``.
+            The ``i,j`` entry of ``self`` is
+            set to ``x``.  The ``x``'s can be ``0``.
+          * Alternatively, entries can be a list of *all*
+            the entries of the sparse matrix, read
+            row-by-row from top to bottom (so they would
+            be mostly 0).
 
-           - a Python list of triples (i,j,x), where 0 <= i < nrows, 0 <=
-             j < ncols, and x is coercible to an int. The i,j entry of
-             self is set to x. The x's can be 0.
+        - ``copy`` -- ignored
 
-           - Alternatively, entries can be a list of *all* the
-             entries of the sparse matrix (so they would be mostly 0).
-
-        -  ``copy`` - ignored
-
-        -  ``coerce`` - ignored
+        - ``coerce`` -- ignored
         """
         cdef int s, z, p
         cdef Py_ssize_t i, j, k
@@ -207,7 +209,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             R = self._base_ring
             # Get fast access to the entries list.
             for i from 0 <= i < self._nrows:
-                for  j from 0 <= j < self._ncols:
+                for j from 0 <= j < self._ncols:
                     z = R(<object>X[k])
                     if z != 0:
                         set_entry(&self.rows[i], j, z)
@@ -245,7 +247,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
     #   * def _unpickle
     #   * cdef _add_
     #   * cdef _mul_
-    #   * cdef _cmp_c_impl
+    #   * cpdef _cmp_
     #   * __neg__
     #   * __invert__
     #   * __copy__
@@ -257,7 +259,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
     # def _unpickle(self, data, int version):   # use version >= 0
     # cpdef ModuleElement _add_(self, ModuleElement right):
     # cdef _mul_(self, Matrix right):
-    # cdef int _cmp_c_impl(self, Matrix right) except -2:
+    # cpdef int _cmp_(self, Matrix right) except -2:
     # def __neg__(self):
     # def __invert__(self):
     # def __copy__(self):
@@ -276,7 +278,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             sage: MS = MatrixSpace(GF(13), 50, 50, sparse=True)
             sage: m = MS.random_element(density=0.002)
             sage: m._dict()
-            {(5, 25): 4, (4, 44): 7, (43, 43): 6, (26, 9): 9, (44, 38): 1}
+            {(4, 44): 7, (5, 25): 4, (26, 9): 9, (43, 43): 6, (44, 38): 1}
 
         TESTS::
 
@@ -561,7 +563,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         return nzp
 
     def visualize_structure(self, filename=None, maxsize=512):
-        """
+        r"""
         Write a PNG image to 'filename' which visualizes self by putting
         black pixels in those positions which have nonzero entries.
 
@@ -575,82 +577,63 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
 
         INPUT:
 
+        - ``filename`` -- String. Name of the filename to save the
+           resulting image.
 
-        -  ``filename`` - either a path or None in which case a
-           filename in the current directory is chosen automatically
-           (default:None)
-
-        -  ``maxsize`` - maximal dimension in either x or y
-           direction of the resulting image. If None or a maxsize larger than
-           max(self.nrows(),self.ncols()) is given the image will have the
-           same pixelsize as the matrix dimensions (default: 512)
+        - ``maxsize`` - integer (default: ``512``). Maximal dimension
+          in either x or y direction of the resulting image. If
+          ``None`` or a maxsize larger than
+          ``max(self.nrows(),self.ncols())`` is given the image will
+          have the same pixelsize as the matrix dimensions.
 
         EXAMPLES::
 
             sage: M = Matrix(GF(7), [[0,0,0,1,0,0,0,0],[0,1,0,0,0,0,1,0]], sparse=True); M
             [0 0 0 1 0 0 0 0]
             [0 1 0 0 0 0 1 0]
-            sage: M.visualize_structure()
-        """
-        import gd
-        import os
+            sage: img = M.visualize_structure();  img
+            8x2px 24-bit RGB image
 
+        You can use :meth:`~sage.repl.image.Image.save` to save the
+        resulting image::
+
+            sage: filename = tmp_filename(ext='.png')
+            sage: img.save(filename)
+            sage: open(filename).read().startswith('\x89PNG') 
+            True
+        """
         cdef Py_ssize_t i, j, k
         cdef float blk,invblk
         cdef int delta
         cdef int x,y,r,g,b
-
         mr, mc = self.nrows(), self.ncols()
-
         if maxsize is None:
-
             ir = mc
             ic = mr
             blk = 1.0
             invblk = 1.0
-
         elif max(mr,mc) > maxsize:
-
             maxsize = float(maxsize)
             ir = int(mc * maxsize/max(mr,mc))
             ic = int(mr * maxsize/max(mr,mc))
             blk = max(mr,mc)/maxsize
             invblk = maxsize/max(mr,mc)
-
         else:
-
             ir = mc
             ic = mr
             blk = 1.0
             invblk = 1.0
-
         delta = <int>(255.0 / blk*blk)
-
-        im = gd.image((ir,ic),1)
-        white = im.colorExact((255,255,255))
-        im.fill((0,0),white)
-
-        colorComponents = im.colorComponents
-        getPixel = im.getPixel
-        setPixel = im.setPixel
-        colorExact = im.colorExact
-
+        from sage.repl.image import Image
+        img = Image('RGB', (ir, ic), (255, 255, 255))
+        pixel = img.pixels()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self.rows[i].num_nonzero:
                 x = <int>(invblk * self.rows[i].positions[j])
                 y = <int>(invblk * i)
-                r,g,b = colorComponents( getPixel((x,y)))
-                setPixel( (x,y), colorExact((r-delta,g-delta,b-delta)) )
-
-        if filename is None:
-            from sage.misc.temporary_file import graphics_filename, tmp_dir
-            from sage.doctest import DOCTEST_MODE
-            filename = graphics_filename()
-            if DOCTEST_MODE:
-                import os
-                filename = os.path.join(tmp_dir(), filename)
-
-        im.writePng(filename)
+                r, g, b = pixel[x, y]
+                pixel[x, y] = (r-delta, g-delta, b-delta)
+        return img
 
     def density(self):
         """
@@ -959,7 +942,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         else:
             if not B.is_sparse():
                 B = B.sparse_matrix()
-            if PY_TYPE_CHECK(B, Matrix_modn_sparse):
+            if isinstance(B, Matrix_modn_sparse):
                 b = B
             else:
                 raise TypeError, "B must be a matrix or vector over the same base as self"

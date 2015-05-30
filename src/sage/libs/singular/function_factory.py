@@ -23,11 +23,13 @@ class SingularFunctionFactory(object):
         """
         EXAMPLE::
 
-            sage: groebner = sage.libs.singular.ff.groebner
+            sage: import sage.libs.singular.function_factory
+            sage: groebner = sage.libs.singular.function_factory.ff.groebner
             sage: groebner
             groebner (singular function)
 
-            sage: primdecSY = sage.libs.singular.ff.primdec__lib.primdecSY
+            sage: import sage.libs.singular.function_factory
+            sage: primdecSY = sage.libs.singular.function_factory.ff.primdec__lib.primdecSY
             sage: primdecSY
             primdecSY (singular function)
         """
@@ -48,7 +50,11 @@ class SingularFunctionFactory(object):
         """
         EXAMPLE::
 
-             sage: "groebner" in sage.libs.singular.ff.trait_names()
-             True
+            sage: import sage.libs.singular.function_factory
+            sage: "groebner" in sage.libs.singular.function_factory.ff.trait_names()
+            True
+            
         """
         return list_of_functions()
+
+ff = SingularFunctionFactory()

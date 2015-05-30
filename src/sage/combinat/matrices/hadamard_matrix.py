@@ -26,7 +26,7 @@ particular, if there is an `n\times n` Hadamard matrix then there is a
 This particular case is sometimes called the Sylvester construction.
 
 The Hadamard conjecture (possibly due to Paley) states that a Hadamard
-matrix of order `n` exists if and only if `n=2` or `n` is a multiple
+matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
 The module below implements the Paley constructions (see for example
@@ -57,77 +57,140 @@ from sage.rings.arith import is_prime
 def H1(i, j, p):
     """
     Returns the i,j-th entry of the Paley matrix, type I case.
+    The Paley type I case corresponds to the case `p \cong 3 \mod{4}`
+    for a prime `p`.
+
+    .. TODO::
+
+        This construction holds more generally for prime powers `q`
+        congruent to `3 \mod{4}`. We should implement these but we
+        first need to implement Quadratic character for `GF(q)`.
 
     EXAMPLES::
 
         sage: sage.combinat.matrices.hadamard_matrix.H1(1,2,3)
-        -1
+        1
     """
-    if i == 0:
+    if i == 0 or j == 0:
         return 1
-    if j == 0:
-        return -1
+    # what follows will not be executed for (i, j) = (0, 0).
     if i == j:
-        return 1
-    return kronecker_symbol(i - j, p)
+        return -1
+    return -kronecker_symbol(i - j, p)
 
 
 def H2(i, j, p):
     """
     Returns the i,j-th entry of the Paley matrix, type II case.
 
+    The Paley type II case corresponds to the case `p \cong 1 \mod{4}`
+    for a prime `p` (see [Hora]_).
+
+    .. TODO::
+
+        This construction holds more generally for prime powers `q`
+        congruent to `1 \mod{4}`. We should implement these but we
+        first need to implement Quadratic character for `GF(q)`.
+
     EXAMPLES::
 
-        sage: sage.combinat.matrices.hadamard_matrix.H1(1,2,5)
+        sage: sage.combinat.matrices.hadamard_matrix.H2(1,2,5)
         1
     """
     if i == 0 and j == 0:
         return 0
     if i == 0 or j == 0:
         return 1
-    if j == 0:
-        return -1
     if i == j:
         return 0
     return kronecker_symbol(i - j, p)
 
+def normalise_hadamard(H):
+    """
+    Return the normalised Hadamard matrix corresponding to ``H``.
+
+    The normalised Hadamard matrix corresponding to a Hadamard matrix `H` is a
+    matrix whose every entry in the first row and column is +1.
+
+    EXAMPLES::
+
+        sage: H = sage.combinat.matrices.hadamard_matrix.normalise_hadamard(hadamard_matrix(4))
+        sage: H == hadamard_matrix(4)
+        True
+    """
+    Hc1 = H.column(0)
+    Hr1 = H.row(0)
+    for i in range(H.ncols()):
+        if Hc1[i] < 0:
+            H.rescale_row(i, -1)
+    for i in range(H.nrows()):
+        if Hr1[i] < 0:
+            H.rescale_col(i, -1)
+    return H
 
 def hadamard_matrix_paleyI(n):
     """
     Implements the Paley type I construction.
 
-    EXAMPLES::
+    The Paley type I case corresponds to the case `p \cong 3 \mod{4}` for a
+    prime `p` (see [Hora]_).
+
+    EXAMPLES:
+
+    We note that this method returns a normalised Hadamard matrix ::
 
         sage: sage.combinat.matrices.hadamard_matrix.hadamard_matrix_paleyI(4)
-        [ 1 -1 -1 -1]
-        [ 1  1  1 -1]
-        [ 1 -1  1  1]
-        [ 1  1 -1  1]
+        [ 1  1  1  1]
+        [ 1 -1 -1  1]
+        [ 1  1 -1 -1]
+        [ 1 -1  1 -1]
     """
     p = n - 1
     if not(is_prime(p) and (p % 4 == 3)):
         raise ValueError("The order %s is not covered by the Paley type I construction." % n)
-    return matrix(ZZ, [[H1(i, j, p) for i in range(n)] for j in range(n)])
-
+    H = matrix(ZZ, [[H1(i, j, p) for i in range(n)] for j in range(n)])
+    # normalising H so that first row and column have only +1 entries.
+    return normalise_hadamard(H)
 
 def hadamard_matrix_paleyII(n):
     """
     Implements the Paley type II construction.
 
+    The Paley type II case corresponds to the case `p \cong 1 \mod{4}` for a
+    prime `p` (see [Hora]_).
+
     EXAMPLES::
 
-        sage: sage.combinat.matrices.hadamard_matrix.hadamard_matrix_paleyI(12).det()
+        sage: sage.combinat.matrices.hadamard_matrix.hadamard_matrix_paleyII(12).det()
         2985984
         sage: 12^6
         2985984
+
+    We note that the method returns a normalised Hadamard matrix ::
+
+        sage: sage.combinat.matrices.hadamard_matrix.hadamard_matrix_paleyII(12)
+        [ 1  1  1  1  1  1| 1  1  1  1  1  1]
+        [ 1  1  1 -1 -1  1|-1 -1  1 -1 -1  1]
+        [ 1  1  1  1 -1 -1|-1  1 -1  1 -1 -1]
+        [ 1 -1  1  1  1 -1|-1 -1  1 -1  1 -1]
+        [ 1 -1 -1  1  1  1|-1 -1 -1  1 -1  1]
+        [ 1  1 -1 -1  1  1|-1  1 -1 -1  1 -1]
+        [-----------------+-----------------]
+        [ 1 -1 -1 -1 -1 -1|-1  1  1  1  1  1]
+        [ 1 -1  1 -1 -1  1| 1 -1 -1  1  1 -1]
+        [ 1  1 -1  1 -1 -1| 1 -1 -1 -1  1  1]
+        [ 1 -1  1 -1  1 -1| 1  1 -1 -1 -1  1]
+        [ 1 -1 -1  1 -1  1| 1  1  1 -1 -1 -1]
+        [ 1  1 -1 -1  1 -1| 1 -1  1  1 -1 -1]
     """
     N = Integer(n/2)
     p = N - 1
     if not(is_prime(p) and (p % 4 == 1)):
         raise ValueError("The order %s is not covered by the Paley type II construction." % n)
     S = matrix(ZZ, [[H2(i, j, p) for i in range(N)] for j in range(N)])
-    return block_matrix([[S + 1, S - 1], [S - 1, -S - 1]])
-
+    H = block_matrix([[S + 1, S - 1], [1 - S, S + 1]])
+    # normalising H so that first row and column have only +1 entries.
+    return normalise_hadamard(H)
 
 def hadamard_matrix(n):
     """
@@ -140,6 +203,8 @@ def hadamard_matrix(n):
         2985984
         sage: 12^6
         2985984
+        sage: hadamard_matrix(1)
+        [1]
         sage: hadamard_matrix(2)
         [ 1  1]
         [ 1 -1]
@@ -154,8 +219,26 @@ def hadamard_matrix(n):
         [ 1 -1 -1  1 -1  1  1 -1]
         sage: hadamard_matrix(8).det() == 8^4
         True
+
+    We note that the method `hadamard_matrix()` returns a normalised Hadamard matrix
+    (the entries in the first row and column are all +1) ::
+
+        sage: hadamard_matrix(12)
+        [ 1  1  1  1  1  1| 1  1  1  1  1  1]
+        [ 1  1  1 -1 -1  1|-1 -1  1 -1 -1  1]
+        [ 1  1  1  1 -1 -1|-1  1 -1  1 -1 -1]
+        [ 1 -1  1  1  1 -1|-1 -1  1 -1  1 -1]
+        [ 1 -1 -1  1  1  1|-1 -1 -1  1 -1  1]
+        [ 1  1 -1 -1  1  1|-1  1 -1 -1  1 -1]
+        [-----------------+-----------------]
+        [ 1 -1 -1 -1 -1 -1|-1  1  1  1  1  1]
+        [ 1 -1  1 -1 -1  1| 1 -1 -1  1  1 -1]
+        [ 1  1 -1  1 -1 -1| 1 -1 -1 -1  1  1]
+        [ 1 -1  1 -1  1 -1| 1  1 -1 -1 -1  1]
+        [ 1 -1 -1  1 -1  1| 1  1  1 -1 -1 -1]
+        [ 1  1 -1 -1  1 -1| 1 -1  1  1 -1 -1]
     """
-    if not(n % 4 == 0) and (n != 2):
+    if not(n % 4 == 0) and (n > 2):
         raise ValueError("The Hadamard matrix of order %s does not exist" % n)
     if n == 2:
         return matrix([[1, 1], [1, -1]])
@@ -181,7 +264,7 @@ def hadamard_matrix(n):
 
 def hadamard_matrix_www(url_file, comments=False):
     """
-    Pulls file from Sloanes database and returns the corresponding Hadamard
+    Pulls file from Sloane's database and returns the corresponding Hadamard
     matrix as a Sage matrix.
 
     You must input a filename of the form "had.n.xxx.txt" as described

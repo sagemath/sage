@@ -213,9 +213,9 @@ def RandomBipartite(n1,n2, p):
         complement(Random bipartite graph of size 5+6 with edge probability 0.200000000000000): Graph on 11 vertices
     """
     if not (p>=0 and p<=1):
-        raise ValueError, "Parameter p is a probability, and so should be a real value between 0 and 1"
+        raise ValueError("Parameter p is a probability, and so should be a real value between 0 and 1")
     if not (n1>0 and n2>0):
-        raise ValueError, "n1 and n2 should be integers strictly greater than 0"
+        raise ValueError("n1 and n2 should be integers strictly greater than 0")
 
     from numpy.random import uniform
 
@@ -275,10 +275,10 @@ def RandomBoundedToleranceGraph(n):
     from sage.misc.prandom import randint
     from sage.graphs.generators.intersection import ToleranceGraph
 
-    W = n**2 * 2**n
+    W = n ** 2 * 2 ** n
 
-    tolrep = map(lambda (l,r): (l,r,randint(0,r-l)),
-        [sorted((randint(0,W), randint(0,W))) for i in range(n)])
+    tolrep = map(lambda l_r: (l_r[0], l_r[1], randint(0, l_r[1] - l_r[0])),
+                 [sorted((randint(0, W), randint(0, W))) for i in range(n)])
 
     return ToleranceGraph(tolrep)
 
@@ -439,20 +439,6 @@ def RandomHolmeKim(n, m, p, seed=None):
         seed = current_randstate().long_seed()
     import networkx
     return Graph(networkx.powerlaw_cluster_graph(n, m, p, seed=seed))
-
-def RandomInterval(n):
-    """
-    :meth:`RandomInterval` is deprecated.  Use :meth:`RandomIntervalGraph` instead.
-
-    TEST::
-
-        sage: g = graphs.RandomInterval(8)
-        doctest:...: DeprecationWarning: RandomInterval() is deprecated. Use RandomIntervalGraph() instead.
-        See http://trac.sagemath.org/13283 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(13283, "RandomInterval() is deprecated.  Use RandomIntervalGraph() instead.")
-    return RandomIntervalGraph(n)
 
 def RandomIntervalGraph(n):
     """
@@ -700,7 +686,7 @@ def RandomRegular(d, n, seed=None):
         N = networkx.random_regular_graph(d, n, seed=seed)
         if N is False: return False
         return Graph(N, sparse=True)
-    except StandardError:
+    except Exception:
         return False
 
 def RandomShell(constructor, seed=None):

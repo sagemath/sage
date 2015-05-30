@@ -17,12 +17,9 @@ Here is some terminology used in this file:
 #******************************************************************************
 
 from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.posets import Posets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.category_with_axiom import CategoryWithAxiom
 
-class FinitePosets(Category):
+class FinitePosets(CategoryWithAxiom):
     r"""
     The category of finite posets i.e. finite sets with a partial
     order structure.
@@ -32,7 +29,7 @@ class FinitePosets(Category):
         sage: FinitePosets()
         Category of finite posets
         sage: FinitePosets().super_categories()
-        [Category of posets, Category of finite enumerated sets]
+        [Category of posets, Category of finite sets]
         sage: FinitePosets().example()
         NotImplemented
 
@@ -41,21 +38,11 @@ class FinitePosets(Category):
     TESTS::
 
         sage: C = FinitePosets()
+        sage: C is Posets().Finite()
+        True
         sage: TestSuite(C).run()
 
     """
-    @cached_method
-    def super_categories(self):
-        r"""
-        Returns a list of the (immediate) super categories of
-        ``self``, as per :meth:`Category.super_categories`.
-
-        EXAMPLES::
-
-            sage: FinitePosets().super_categories()
-            [Category of posets, Category of finite enumerated sets]
-        """
-        return [Posets(), FiniteEnumeratedSets()]
 
     class ParentMethods:
 
@@ -101,7 +88,15 @@ class FinitePosets(Category):
                 sage: P.is_selfdual()
                 True
             """
-            return self.is_isomorphic( self.dual() )
+            # Two quick checks before full isomorphic test.
+            if sorted(self._hasse_diagram.in_degree()) != sorted(self._hasse_diagram.out_degree()):
+                return False
+            levels_orig=[len(x) for x in self._hasse_diagram.level_sets()]
+            dual_poset_hasse=self._hasse_diagram.reverse()
+            levels_dual=[len(x) for x in dual_poset_hasse.level_sets()]
+            if levels_orig != levels_dual:
+                return False
+            return self._hasse_diagram.is_isomorphic(dual_poset_hasse)
 
 
         ##########################################################################
@@ -273,7 +268,7 @@ class FinitePosets(Category):
 
                 sage: P = Poset((Subsets([1,2,3]), attrcall("issubset")))
                 sage: I = P.order_ideal([Set([1,2]), Set([2,3]), Set([1])]); I
-                [{}, {1}, {3}, {2}, {1, 2}, {2, 3}]
+                [{}, {3}, {2}, {2, 3}, {1}, {1, 2}]
 
             Then, we retrieve the generators of this ideal::
 
@@ -284,7 +279,7 @@ class FinitePosets(Category):
             the minimal generators for an order filter::
 
                 sage: I = P.order_filter([Set([1,2]), Set([2,3]), Set([1])]); I
-                [{1}, {1, 3}, {1, 2}, {2, 3}, {1, 2, 3}]
+                [{2, 3}, {1}, {1, 2}, {1, 3}, {1, 2, 3}]
                 sage: P.order_ideal_generators(I, direction='up')
                 {{2, 3}, {1}}
 
@@ -312,7 +307,7 @@ class FinitePosets(Category):
 
                 sage: P = Poset((Subsets([1,2,3]), attrcall("issubset")))
                 sage: I = P.order_filter([Set([1,2]), Set([2,3]), Set([1])]); I
-                [{1}, {1, 3}, {1, 2}, {2, 3}, {1, 2, 3}]
+                [{2, 3}, {1}, {1, 2}, {1, 3}, {1, 2, 3}]
                 sage: P.order_filter_generators(I)
                 {{2, 3}, {1}}
 
@@ -362,22 +357,22 @@ class FinitePosets(Category):
 
                 sage: P = Poset( ( [1,2,3], [ [1,3], [2,3] ] ) )
                 sage: P.order_ideal_complement_generators([1])
-                set([2])
+                {2}
                 sage: P.order_ideal_complement_generators([3])
-                set([])
+                set()
                 sage: P.order_ideal_complement_generators([1,2])
-                set([3])
+                {3}
                 sage: P.order_ideal_complement_generators([1,2,3])
-                set([])
+                set()
 
                 sage: P.order_ideal_complement_generators([1], direction="down")
-                set([2])
+                {2}
                 sage: P.order_ideal_complement_generators([3], direction="down")
-                set([1, 2])
+                {1, 2}
                 sage: P.order_ideal_complement_generators([1,2], direction="down")
-                set([])
+                set()
                 sage: P.order_ideal_complement_generators([1,2,3], direction="down")
-                set([])
+                set()
 
             .. WARNING::
 
@@ -437,6 +432,805 @@ class FinitePosets(Category):
                 result = self.order_ideal_toggle(result, i)
             return result
 
+        def birational_free_labelling(self, linear_extension=None,
+                                      prefix='x', base_field=None,
+                                      reduced=False, addvars=None):
+            r"""
+            Return the birational free labelling of ``self``.
+
+            Let us hold back defining this, and introduce birational
+            toggles and birational rowmotion first. These notions have
+            been introduced in [EP13]_ as generalizations of the notions
+            of toggles (:meth:`order_ideal_toggle`) and :meth:`rowmotion
+            <rowmotion>` on order ideals of a finite poset. They
+            have been studied further in [GR13]_.
+
+            Let `\mathbf{K}` be a field, and `P` be a finite poset. Let
+            `\widehat{P}` denote the poset obtained from `P` by adding a
+            new element `1` which is greater than all existing elements
+            of `P`, and a new element `0` which is smaller than all
+            existing elements of `P` and `1`. Now, a `\mathbf{K}`-*labelling
+            of* `P` will mean any function from `\widehat{P}` to `\mathbf{K}`.
+            The image of an element `v` of `\widehat{P}` under this labelling
+            will be called the *label* of this labelling at `v`. The set
+            of all `\mathbf{K}`-labellings of `P` is clearly
+            `\mathbf{K}^{\widehat{P}}`.
+
+            For any `v \in P`, we now define a rational map
+            `T_v : \mathbf{K}^{\widehat{P}} \dashrightarrow
+            \mathbf{K}^{\widehat{P}}` as follows: For every `f \in
+            \mathbf{K}^{\widehat{P}}`, the image `T_v f` should send every
+            element `u \in \widehat{P}` distinct from `v` to `f(u)` (so the
+            labels at all `u \neq v` don't change), while `v` is sent to
+
+            .. MATH::
+
+                \frac{1}{f(v)} \cdot
+                \frac{\sum_{u \lessdot v} f(u)}
+                {\sum_{u \gtrdot v} \frac{1}{f(u)}}
+
+            (both sums are over all `u \in \widehat{P}` satisfying the
+            respectively given conditions). Here, `\lessdot` and `\gtrdot`
+            mean (respectively) "covered by" and "covers", interpreted with
+            respect to the poset `\widehat{P}`. This rational map `T_v`
+            is an involution and is called the *(birational)* `v`-*toggle*; see
+            :meth:`birational_toggle` for its implementation.
+
+            Now, *birational rowmotion* is defined as the composition
+            `T_{v_1} \circ T_{v_2} \circ \cdots \circ T_{v_n}`, where
+            `(v_1, v_2, \ldots, v_n)` is a linear extension of `P`
+            (written as a linear ordering of the elements of `P`). This
+            is a rational map
+            `\mathbf{K}^{\widehat{P}} \dashrightarrow \mathbf{K}^{\widehat{P}}`
+            which does not depend on the choice of the linear extension;
+            it is denoted by `R`. See :meth:`birational_rowmotion` for
+            its implementation.
+
+            The definitions of birational toggles and birational
+            rowmotion extend to the case of `\mathbf{K}` being any semifield
+            rather than necessarily a field (although it becomes less
+            clear what constitutes a rational map in this generality).
+            The most useful case is that of the :class:`tropical semiring
+            <sage.rings.semirings.tropical_semiring.TropicalSemiring>`,
+            in which case birational rowmotion relates to classical
+            constructions such as promotion of rectangular semistandard
+            Young tableaux (page 5 of [EP13b]_ and future work, via the
+            related notion of birational *promotion*) and rowmotion on
+            order ideals of the poset ([EP13]_).
+
+            The *birational free labelling* is a special labelling
+            defined for every finite poset `P` and every linear extension
+            `(v_1, v_2, \ldots, v_n)` of `P`. It is given by sending
+            every element `v_i` in `P` to `x_i`, sending the element `0`
+            of `\widehat{P}` to `a`, and sending the element `1` of
+            `\widehat{P}` to `b`, where the ground field `\mathbf{K}` is the
+            field of rational functions in `n+2` indeterminates
+            `a, x_1, x_2, \ldots, x_n, b` over `\mathbb Q`.
+
+            In Sage, a labelling `f` of a poset `P` is encoded as a
+            `4`-tuple `(\mathbf{K}, d, u, v)`, where `\mathbf{K}` is the
+            ground field of the labelling (i. e., its target), `d` is the
+            dictionary containing the values of `f` at the elements of
+            `P` (the keys being the respective elements of `P`), `u`
+            is the label of `f` at `0`, and `v` is the label of `f` at
+            `1`.
+
+            .. WARNING::
+
+                The dictionary `d` is labelled by the elements of `P`.
+                If `P` is a poset with ``facade`` option set to
+                ``False``, these might not be what they seem to be!
+                (For instance, if
+                ``P == Poset({1: [2, 3]}, facade=False)``, then the
+                value of `d` at `1` has to be accessed by ``d[P(1)]``, not
+                by ``d[1]``.)
+
+            .. WARNING::
+
+                Dictionaries are mutable. They do compare correctly,
+                but are not hashable and need to be cloned to avoid
+                spooky action at a distance. Be careful!
+
+            INPUT:
+
+            - ``linear_extension`` -- (default: the default linear
+              extension of ``self``) a linear extension of ``self``
+              (as a linear extension or as a list), or more generally
+              a list of all elements of all elements of ``self`` each
+              occurring exactly once
+
+            - ``prefix`` -- (default: ``'x'``) the prefix to name
+              the indeterminates corresponding to the elements of
+              ``self`` in the labelling (so, setting it to
+              ``'frog'`` will result in these indeterminates being
+              called ``frog1, frog2, ..., frogn`` rather than
+              ``x1, x2, ..., xn``).
+
+            - ``base_field`` -- (default: ``QQ``) the base field to
+              be used instead of `\QQ` to define the rational
+              function field over; this is not going to be the base
+              field of the labelling, because the latter will have
+              indeterminates adjoined!
+
+            - ``reduced`` -- (default: ``False``) if set to
+              ``True``, the result will be the *reduced* birational
+              free labelling, which differs from the regular one by
+              having `0` and `1` both sent to `1` instead of `a` and
+              `b` (the indeterminates `a` and `b` then also won't
+              appear in the ground field)
+
+            - ``addvars`` -- (default: ``''``) a string containing
+              names of extra variables to be adjoined to the ground
+              field (these don't have an effect on the labels)
+
+            OUTPUT:
+
+            The birational free labelling of the poset ``self`` and the
+            linear extension ``linear_extension``. Or, if ``reduced``
+            is set to ``True``, the reduced birational free labelling.
+
+            REFERENCES:
+
+            .. [EP13] David Einstein, James Propp.
+               *Combinatorial, piecewise-linear, and birational homomesy
+               for products of two chains*.
+               :arxiv:`1310.5294v1`.
+
+            .. [EP13b] David Einstein, James Propp.
+               *Piecewise-linear and birational toggling*.
+               Extended abstract for FPSAC 2014.
+               http://faculty.uml.edu/jpropp/fpsac14.pdf
+
+            .. [GR13] Darij Grinberg, Tom Roby.
+               *Iterative properties of birational rowmotion I*.
+               http://web.mit.edu/~darij/www/algebra/skeletal.pdf
+
+            EXAMPLES:
+
+            We construct the birational free labelling on a simple
+            poset::
+
+                sage: P = Poset({1: [2, 3]})
+                sage: l = P.birational_free_labelling(); l
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(l[1].items())
+                [(1, x1), (2, x2), (3, x3)]
+
+                sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2]); l
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(l[1].items())
+                [(1, x1), (2, x3), (3, x2)]
+
+                sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2], reduced=True, addvars="spam, eggs"); l
+                (Fraction Field of Multivariate Polynomial Ring in x1, x2, x3, spam, eggs over Rational Field,
+                 {...},
+                 1,
+                 1)
+                sage: sorted(l[1].items())
+                [(1, x1), (2, x3), (3, x2)]
+
+                sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2], prefix="wut", reduced=True, addvars="spam, eggs"); l
+                (Fraction Field of Multivariate Polynomial Ring in wut1, wut2, wut3, spam, eggs over Rational Field,
+                 {...},
+                 1,
+                 1)
+                sage: sorted(l[1].items())
+                [(1, wut1), (2, wut3), (3, wut2)]
+
+                sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2], reduced=False, addvars="spam, eggs"); l
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b, spam, eggs over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(l[1].items())
+                [(1, x1), (2, x3), (3, x2)]
+                sage: l[1][2]
+                x3
+
+            Illustrating the warning about facade::
+
+                sage: P = Poset({1: [2, 3]}, facade=False)
+                sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2], reduced=False, addvars="spam, eggs"); l
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b, spam, eggs over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: l[1][2]
+                Traceback (most recent call last):
+                ...
+                KeyError: 2
+                sage: l[1][P(2)]
+                x3
+
+            Another poset::
+
+                sage: P = Posets.SSTPoset([2,1])
+                sage: lext = sorted(P)
+                sage: l = P.birational_free_labelling(linear_extension=lext, addvars="ohai")
+                sage: l
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, x4, x5, x6, x7, x8, b, ohai over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(l[1].items())
+                [([[1, 1], [2]], x1), ([[1, 1], [3]], x2), ([[1, 2], [2]], x3), ([[1, 2], [3]], x4),
+                 ([[1, 3], [2]], x5), ([[1, 3], [3]], x6), ([[2, 2], [3]], x7), ([[2, 3], [3]], x8)]
+
+            See :meth:`birational_rowmotion`, :meth:`birational_toggle` and
+            :meth:`birational_toggles` for more substantial examples of what
+            one can do with the birational free labelling.
+
+            TESTS:
+
+            The ``linear_extension`` keyword does not have to be given an
+            actual linear extension::
+
+                sage: P = Posets.ChainPoset(2).product(Posets.ChainPoset(3))
+                sage: P
+                Finite lattice containing 6 elements
+                sage: lex = [(1,0),(0,0),(1,1),(0,1),(1,2),(0,2)]
+                sage: l = P.birational_free_labelling(linear_extension=lex,
+                ....:                                 prefix="u", reduced=True)
+                sage: l
+                (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
+                 {...},
+                 1,
+                 1)
+                sage: sorted(l[1].items())
+                [((0, 0), u2),
+                 ((0, 1), u4),
+                 ((0, 2), u6),
+                 ((1, 0), u1),
+                 ((1, 1), u3),
+                 ((1, 2), u5)]
+
+            For comparison, the standard linear extension::
+
+                sage: l = P.birational_free_labelling(prefix="u", reduced=True); l
+                (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
+                 {...},
+                 1,
+                 1)
+                sage: sorted(l[1].items())
+                [((0, 0), u1),
+                 ((0, 1), u2),
+                 ((0, 2), u3),
+                 ((1, 0), u4),
+                 ((1, 1), u5),
+                 ((1, 2), u6)]
+
+            If you want your linear extension to be tested for being a
+            linear extension, just call the ``linear_extension`` method
+            on the poset::
+
+                sage: lex = [(0,0),(0,1),(1,0),(1,1),(0,2),(1,2)]
+                sage: l = P.birational_free_labelling(linear_extension=P.linear_extension(lex),
+                ....:                                 prefix="u", reduced=True)
+                sage: l
+                (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
+                 {...},
+                 1,
+                 1)
+                sage: sorted(l[1].items())
+                [((0, 0), u1),
+                 ((0, 1), u2),
+                 ((0, 2), u5),
+                 ((1, 0), u3),
+                 ((1, 1), u4),
+                 ((1, 2), u6)]
+
+            Nonstandard base field::
+
+                sage: P = Poset({1: [3], 2: [3,4]})
+                sage: lex = [1, 2, 4, 3]
+                sage: l = P.birational_free_labelling(linear_extension=lex,
+                ....:                                 prefix="aaa",
+                ....:                                 base_field=Zmod(13))
+                sage: l
+                (Fraction Field of Multivariate Polynomial Ring in a, aaa1, aaa2, aaa3, aaa4, b over Ring of integers modulo 13,
+                 {...},
+                 a,
+                 b)
+                sage: l[1][4]
+                aaa3
+
+            The empty poset::
+
+                sage: P = Poset({})
+                sage: P.birational_free_labelling(reduced=False, addvars="spam, eggs")
+                (Fraction Field of Multivariate Polynomial Ring in a, b, spam, eggs over Rational Field,
+                 {},
+                 a,
+                 b)
+                sage: P.birational_free_labelling(reduced=True, addvars="spam, eggs")
+                (Fraction Field of Multivariate Polynomial Ring in spam, eggs over Rational Field,
+                 {},
+                 1,
+                 1)
+                sage: P.birational_free_labelling(reduced=True)
+                (Multivariate Polynomial Ring in no variables over Rational Field,
+                 {},
+                 1,
+                 1)
+                sage: P.birational_free_labelling(prefix="zzz")
+                (Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field,
+                 {},
+                 a,
+                 b)
+            """
+            if base_field is None:
+                from sage.rings.rational_field import QQ
+                base_field = QQ
+            if linear_extension is None:
+                linear_extension = self.linear_extension()
+            n = self.cardinality()
+            varstring = ""
+            for i in range(1, n + 1):
+                varstring += prefix + str(i) + ','
+            if reduced:
+                varstring = varstring[:-1]
+            else:
+                varstring = 'a,' + varstring + 'b'
+            if addvars:
+                varstring += ',' + addvars
+            if len(varstring) > 0 and varstring[0] == ',':
+                varstring = varstring[1:]
+            if len(varstring) > 0:
+                varnum = varstring.count(',') + 1
+            else:
+                varnum = 0
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            PR = PolynomialRing(base_field, varstring, varnum)
+            # Now, ``PR`` is the polynomial ring in `n + 2` indeterminates
+            # (or more, if ``addvars`` was set; or less, if ``reduced`` is
+            # ``True``) over ``base_field``.
+            # The first `n + 2` of these indeterminates are named
+            # ``a, x1, x2, ..., xn, b`` (if ``reduced`` is ``False``).
+            # These will label the vertices of `\widehat{P}`.
+            if reduced:
+                xs = tuple(PR.gens()[: n])
+            else:
+                xs = tuple(PR.gens()[1 : n + 1])
+            # So ``xs`` is the list ``[x1, x2, ..., xn]``.
+            if not reduced:
+                a = PR.gens()[0]
+                b = PR.gens()[n + 1]
+            else:
+                a = PR.one()
+                b = PR.one()
+            # So ``a`` and ``b`` are the labels at `0` and `1`.
+            FF = PR.fraction_field()
+            # ``FF`` is the field of rational functions.
+            dct = {self(p): xs[i] for (i, p) in enumerate(linear_extension)}
+            return (FF, dct, a, b)
+
+        def birational_toggle(self, v, labelling):
+            r"""
+            Return the result of applying the birational `v`-toggle `T_v`
+            to the `\mathbf{K}`-labelling ``labelling`` of the poset ``self``.
+
+            See the documentation of :meth:`birational_free_labelling`
+            for a definition of this toggle and of `\mathbf{K}`-labellings as
+            well as an explanation of how `\mathbf{K}`-labellings are to be
+            encoded to be understood by Sage. This implementation allows
+            `\mathbf{K}` to be a semifield, not just a field. The birational
+            `v`-toggle is only a rational map, so an exception (most
+            likely, ``ZeroDivisionError``) will be thrown if the
+            denominator is zero.
+
+            INPUT:
+
+            - ``v`` -- an element of ``self`` (must have ``self`` as
+              parent if ``self`` is a ``facade=False`` poset)
+
+            - ``labelling`` -- a `\mathbf{K}`-labelling of ``self`` in the
+              sense as defined in the documentation of
+              :meth:`birational_free_labelling`
+
+            OUTPUT:
+
+            The `\mathbf{K}`-labelling `T_v f` of ``self``, where `f` is
+            ``labelling``.
+
+            EXAMPLES:
+
+            Let us start with the birational free labelling of the
+            "V"-poset (the three-element poset with Hasse diagram looking
+            like a "V")::
+
+                sage: V = Poset({1: [2, 3]})
+                sage: s = V.birational_free_labelling(); s
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(s[1].items())
+                [(1, x1), (2, x2), (3, x3)]
+
+            The image of `s` under the `1`-toggle `T_1` is::
+
+                sage: s1 = V.birational_toggle(1, s); s1
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(s1[1].items())
+                [(1, a*x2*x3/(x1*x2 + x1*x3)), (2, x2), (3, x3)]
+
+            Now let us apply the `2`-toggle `T_2` (to the old ``s``)::
+
+                sage: s2 = V.birational_toggle(2, s); s2
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(s2[1].items())
+                [(1, x1), (2, x1*b/x2), (3, x3)]
+
+            On the other hand, we can also apply `T_2` to the image of `s`
+            under `T_1`::
+
+                sage: s12 = V.birational_toggle(2, s1); s12
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(s12[1].items())
+                [(1, a*x2*x3/(x1*x2 + x1*x3)), (2, a*x3*b/(x1*x2 + x1*x3)), (3, x3)]
+
+            Each toggle is an involution::
+
+                sage: all( V.birational_toggle(i, V.birational_toggle(i, s)) == s
+                ....:      for i in V )
+                True
+
+            We can also start with a less generic labelling::
+
+                sage: t = (QQ, {1: 3, 2: 6, 3: 7}, 2, 10)
+                sage: t1 = V.birational_toggle(1, t); t1
+                (Rational Field, {...}, 2, 10)
+                sage: sorted(t1[1].items())
+                [(1, 28/13), (2, 6), (3, 7)]
+                sage: t13 = V.birational_toggle(3, t1); t13
+                (Rational Field, {...}, 2, 10)
+                sage: sorted(t13[1].items())
+                [(1, 28/13), (2, 6), (3, 40/13)]
+
+            However, labellings have to be sufficiently generic, lest
+            denominators vanish::
+
+                sage: t = (QQ, {1: 3, 2: 5, 3: -5}, 1, 15)
+                sage: t1 = V.birational_toggle(1, t)
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError: Rational division by zero
+
+            We don't get into zero-division issues in the tropical
+            semiring (unless the zero of the tropical semiring appears
+            in the labelling)::
+
+                sage: TT = TropicalSemiring(QQ)
+                sage: t = (TT, {1: TT(2), 2: TT(4), 3: TT(1)}, TT(6), TT(0))
+                sage: t1 = V.birational_toggle(1, t); t1
+                (Tropical semiring over Rational Field, {...}, 6, 0)
+                sage: sorted(t1[1].items())
+                [(1, 8), (2, 4), (3, 1)]
+                sage: t12 = V.birational_toggle(2, t1); t12
+                (Tropical semiring over Rational Field, {...}, 6, 0)
+                sage: sorted(t12[1].items())
+                [(1, 8), (2, 4), (3, 1)]
+                sage: t123 = V.birational_toggle(3, t12); t123
+                (Tropical semiring over Rational Field, {...}, 6, 0)
+                sage: sorted(t123[1].items())
+                [(1, 8), (2, 4), (3, 7)]
+
+            We turn to more interesting posets. Here is the `6`-element
+            poset arising from the weak order on `S_3`::
+
+                sage: P = Posets.SymmetricGroupWeakOrderPoset(3)
+                sage: sorted(list(P))
+                ['123', '132', '213', '231', '312', '321']
+                sage: t = (TT, {'123': TT(4), '132': TT(2), '213': TT(3), '231': TT(1), '321': TT(1), '312': TT(2)}, TT(7), TT(1))
+                sage: t1 = P.birational_toggle('123', t); t1
+                (Tropical semiring over Rational Field, {...}, 7, 1)
+                sage: sorted(t1[1].items())
+                [('123', 6), ('132', 2), ('213', 3), ('231', 1), ('312', 2), ('321', 1)]
+                sage: t13 = P.birational_toggle('213', t1); t13
+                (Tropical semiring over Rational Field, {...}, 7, 1)
+                sage: sorted(t13[1].items())
+                [('123', 6), ('132', 2), ('213', 4), ('231', 1), ('312', 2), ('321', 1)]
+
+            Let us verify on this example some basic properties of
+            toggles. First of all, again let us check that `T_v` is an
+            involution for every `v`::
+
+                sage: all( P.birational_toggle(v, P.birational_toggle(v, t)) == t
+                ....:      for v in P )
+                True
+
+            Furthermore, two toggles `T_v` and `T_w` commute unless
+            one of `v` or `w` covers the other::
+
+                sage: all( P.covers(v, w) or P.covers(w, v)
+                ....:      or P.birational_toggle(v, P.birational_toggle(w, t))
+                ....:         == P.birational_toggle(w, P.birational_toggle(v, t))
+                ....:      for v in P for w in P )
+                True
+
+            TESTS:
+
+            Setting ``facade`` to ``False`` does not break
+            ``birational_toggle``::
+
+                sage: P = Poset({'x': ['y', 'w'], 'y': ['z'], 'w': ['z']}, facade=False)
+                sage: lex = ['x', 'y', 'w', 'z']
+                sage: t = P.birational_free_labelling(linear_extension=lex)
+                sage: all( P.birational_toggle(v, P.birational_toggle(v, t)) == t
+                ....:      for v in P )
+                True
+                sage: t4 = P.birational_toggle(P('z'), t); t4
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, x4, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: t4[1][P('x')]
+                x1
+                sage: t4[1][P('y')]
+                x2
+                sage: t4[1][P('w')]
+                x3
+                sage: t4[1][P('z')]
+                (x2*b + x3*b)/x4
+
+            The one-element poset::
+
+                sage: P = Poset({8: []})
+                sage: t = P.birational_free_labelling()
+                sage: t8 = P.birational_toggle(8, t); t8
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: t8[1][8]
+                a*b/x1
+            """
+            FF = labelling[0]       # base field
+            a = labelling[2]        # label at `0 \in \widehat{P}`
+            b = labelling[3]
+            newdict = labelling[1].copy()
+            # Construct the harmonic sum ``x`` of the labels at the
+            # elements covering ``v``:
+            uppers = self.upper_covers(v)
+            if len(uppers) == 0:
+                x = FF.one() / b
+            else:
+                x = FF.sum(FF.one() / newdict[j] for j in uppers)
+                # ``FF.sum``, not ``sum``, see :trac:`15591`.
+            x = FF.one() / x
+            # Construct the sum ``y`` of the labels at the elements
+            # covered by ``v``:
+            lowers = self.lower_covers(v)
+            if len(lowers) == 0:
+                y = a
+            else:
+                y = FF.sum(newdict[j] for j in lowers)
+            # Now, transform the label at v:
+            newdict[v] = x * y / newdict[v]
+            return (FF, newdict, a, b)
+
+        def birational_toggles(self, vs, labelling):
+            r"""
+            Return the result of applying a sequence of birational
+            toggles (specified by ``vs``) to the `\mathbf{K}`-labelling
+            ``labelling`` of the poset ``self``.
+
+            See the documentation of :meth:`birational_free_labelling`
+            for a definition of birational toggles and `\mathbf{K}`-labellings
+            and for an explanation of how `\mathbf{K}`-labellings are to be
+            encoded to be understood by Sage. This implementation allows
+            `\mathbf{K}` to be a semifield, not just a field. The birational
+            `v`-toggle is only a rational map, so an exception (most
+            likely, ``ZeroDivisionError``) will be thrown if the
+            denominator is zero.
+
+            INPUT:
+
+            - ``vs`` -- an iterable comprising elements of ``self``
+              (which must have ``self`` as parent if ``self`` is a
+              ``facade=False`` poset)
+
+            - ``labelling`` -- a `\mathbf{K}`-labelling of ``self`` in the
+              sense as defined in the documentation of
+              :meth:`birational_free_labelling`
+
+            OUTPUT:
+
+            The `\mathbf{K}`-labelling `T_{v_n} T_{v_{n-1}} \cdots T_{v_1} f`
+            of ``self``, where `f` is ``labelling`` and
+            `(v_1, v_2, \ldots, v_n)` is ``vs`` (written as list).
+
+            EXAMPLES::
+
+                sage: P = Posets.SymmetricGroupBruhatOrderPoset(3)
+                sage: sorted(list(P))
+                ['123', '132', '213', '231', '312', '321']
+                sage: TT = TropicalSemiring(ZZ)
+                sage: t = (TT, {'123': TT(4), '132': TT(2), '213': TT(3), '231': TT(1), '321': TT(1), '312': TT(2)}, TT(7), TT(1))
+                sage: tA = P.birational_toggles(['123', '231', '312'], t); tA
+                (Tropical semiring over Integer Ring, {...}, 7, 1)
+                sage: sorted(tA[1].items())
+                [('123', 6), ('132', 2), ('213', 3), ('231', 2), ('312', 1), ('321', 1)]
+                sage: tAB = P.birational_toggles(['132', '213', '321'], tA); tAB
+                (Tropical semiring over Integer Ring, {...}, 7, 1)
+                sage: sorted(tAB[1].items())
+                [('123', 6), ('132', 6), ('213', 5), ('231', 2), ('312', 1), ('321', 1)]
+
+                sage: P = Poset({1: [2, 3], 2: [4], 3: [4]})
+                sage: Qx = PolynomialRing(QQ, 'x').fraction_field()
+                sage: x = Qx.gen()
+                sage: t = (Qx, {1: 1, 2: x, 3: (x+1)/x, 4: x^2}, 1, 1)
+                sage: t1 = P.birational_toggles((i for i in range(1, 5)), t); t1
+                (Fraction Field of Univariate Polynomial Ring in x over Rational Field,
+                 {...},
+                 1,
+                 1)
+                sage: sorted(t1[1].items())
+                [(1, (x^2 + x)/(x^2 + x + 1)), (2, (x^3 + x^2)/(x^2 + x + 1)), (3, x^4/(x^2 + x + 1)), (4, 1)]
+                sage: t2 = P.birational_toggles(reversed(range(1, 5)), t)
+                sage: sorted(t2[1].items())
+                [(1, 1/x^2), (2, (x^2 + x + 1)/x^4), (3, (x^2 + x + 1)/(x^3 + x^2)), (4, (x^2 + x + 1)/x^3)]
+
+            Facade set to ``False`` works::
+
+                sage: P = Poset({'x': ['y', 'w'], 'y': ['z'], 'w': ['z']}, facade=False)
+                sage: lex = ['x', 'y', 'w', 'z']
+                sage: t = P.birational_free_labelling(linear_extension=lex)
+                sage: sorted(P.birational_toggles([P('x'), P('y')], t)[1].items())
+                [(x, a*x2*x3/(x1*x2 + x1*x3)), (y, a*x3*x4/(x1*x2 + x1*x3)), (w, x3), (z, x4)]
+            """
+            l = labelling
+            for v in vs:
+                l = self.birational_toggle(v, l)
+            return l
+
+        def birational_rowmotion(self, labelling):
+            r"""
+            Return the result of applying birational rowmotion to the
+            `\mathbf{K}`-labelling ``labelling`` of the poset ``self``.
+
+            See the documentation of :meth:`birational_free_labelling`
+            for a definition of birational rowmotion and
+            `\mathbf{K}`-labellings and for an explanation of how
+            `\mathbf{K}`-labellings are to be encoded to be understood
+            by Sage. This implementation allows `\mathbf{K}` to be a
+            semifield, not just a field. Birational rowmotion is only a
+            rational map, so an exception (most likely, ``ZeroDivisionError``)
+            will be thrown if the denominator is zero.
+
+            INPUT:
+
+            - ``labelling`` -- a `\mathbf{K}`-labelling of ``self`` in the
+              sense as defined in the documentation of
+              :meth:`birational_free_labelling`
+
+            OUTPUT:
+
+            The image of the `\mathbf{K}`-labelling `f` under birational
+            rowmotion.
+
+            EXAMPLES::
+
+                sage: P = Poset({1: [2, 3], 2: [4], 3: [4]})
+                sage: lex = [1, 2, 3, 4]
+                sage: t = P.birational_free_labelling(linear_extension=lex); t
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, x4, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(t[1].items())
+                [(1, x1), (2, x2), (3, x3), (4, x4)]
+                sage: t = P.birational_rowmotion(t); t
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, x4, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: sorted(t[1].items())
+                [(1, a*b/x4), (2, (x1*x2*b + x1*x3*b)/(x2*x4)),
+                 (3, (x1*x2*b + x1*x3*b)/(x3*x4)), (4, (x2*b + x3*b)/x4)]
+
+            A result of [GR13]_ states that applying birational rowmotion
+            `n+m` times to a `\mathbf{K}`-labelling `f` of the poset
+            `[n] \times [m]` gives back `f`. Let us check this::
+
+                sage: def test_rectangle_periodicity(n, m, k):
+                ....:     P = Posets.ChainPoset(n).product(Posets.ChainPoset(m))
+                ....:     t0 = P.birational_free_labelling(P)
+                ....:     t = t0
+                ....:     for i in range(k):
+                ....:         t = P.birational_rowmotion(t)
+                ....:     return t == t0
+                sage: test_rectangle_periodicity(2, 2, 4)
+                True
+                sage: test_rectangle_periodicity(2, 2, 2)
+                False
+                sage: test_rectangle_periodicity(2, 3, 5)  # long time
+                True
+
+            While computations with the birational free labelling quickly
+            run out of memory due to the complexity of the rational
+            functions involved, it is computationally cheap to check
+            properties of birational rowmotion on examples in the tropical
+            semiring::
+
+                sage: def test_rectangle_periodicity_tropical(n, m, k):
+                ....:     P = Posets.ChainPoset(n).product(Posets.ChainPoset(m))
+                ....:     TT = TropicalSemiring(ZZ)
+                ....:     t0 = (TT, {v: TT(floor(random()*100)) for v in P}, TT(0), TT(124))
+                ....:     t = t0
+                ....:     for i in range(k):
+                ....:         t = P.birational_rowmotion(t)
+                ....:     return t == t0
+                sage: test_rectangle_periodicity_tropical(7, 6, 13)
+                True
+
+            Tropicalization is also what relates birational rowmotion to
+            classical rowmotion on order ideals. In fact, if `T` denotes
+            the :class:`tropical semiring
+            <sage.rings.semirings.tropical_semiring.TropicalSemiring>` of
+            `\ZZ` and `P` is a finite poset, then we can define an embedding
+            `\phi` from the set `J(P)` of all order ideals of `P` into the
+            set `T^{\widehat{P}}` of all `T`-labellings of `P` by sending
+            every `I \in J(P)` to the indicator function of `I` extended by
+            the value `1` at the element `0` and the value `0` at the
+            element `1`. This map `\phi` has the property that
+            `R \circ \phi = \phi \circ r`, where `R` denotes birational
+            rowmotion, and `r` denotes :meth:`classical rowmotion <rowmotion>`
+            on `J(P)`. An example::
+
+                sage: P = Posets.IntegerPartitions(5)
+                sage: TT = TropicalSemiring(ZZ)
+                sage: def indicator_labelling(I):
+                ....:     # send order ideal `I` to a `T`-labelling of `P`.
+                ....:     dct = {v: TT(v in I) for v in P}
+                ....:     return (TT, dct, TT(1), TT(0))
+                sage: all(indicator_labelling(P.rowmotion(I))
+                ....:     == P.birational_rowmotion(indicator_labelling(I))
+                ....:     for I in P.order_ideals_lattice(facade=True))
+                True
+
+            TESTS:
+
+            Facade set to false works::
+
+                sage: P = Poset({1: [2, 3], 2: [4], 3: [4]}, facade=False)
+                sage: lex = [1, 2, 3, 4]
+                sage: t = P.birational_free_labelling(linear_extension=lex); t
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, x4, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: t = P.birational_rowmotion(t); t
+                (Fraction Field of Multivariate Polynomial Ring in a, x1, x2, x3, x4, b over Rational Field,
+                 {...},
+                 a,
+                 b)
+                sage: t[1][P(2)]
+                (x1*x2*b + x1*x3*b)/(x2*x4)
+                sage: t = P.birational_rowmotion(t)
+                sage: t[1][P(2)]
+                a*b/x3
+            """
+            l = labelling
+            for v in reversed(self.linear_extension()):
+                l = self.birational_toggle(v, l)
+            return l
+
         def panyushev_orbits(self, element_constructor = set):
             r"""
             Return the Panyushev orbits of antichains in ``self``.
@@ -467,17 +1261,17 @@ class FinitePosets(Category):
 
                 sage: P = Poset( ( [1,2,3], [ [1,3], [2,3] ] ) )
                 sage: P.panyushev_orbits()
-                [[set([2]), set([1])], [set([]), set([1, 2]), set([3])]]
+                [[{2}, {1}], [set(), {1, 2}, {3}]]
                 sage: P.panyushev_orbits(element_constructor=list)
                 [[[2], [1]], [[], [1, 2], [3]]]
                 sage: P.panyushev_orbits(element_constructor=frozenset)
-                [[frozenset([2]), frozenset([1])],
-                 [frozenset([]), frozenset([1, 2]), frozenset([3])]]
+                [[frozenset({2}), frozenset({1})],
+                 [frozenset(), frozenset({1, 2}), frozenset({3})]]
                 sage: P.panyushev_orbits(element_constructor=tuple)
                 [[(2,), (1,)], [(), (1, 2), (3,)]]
                 sage: P = Poset( {} )
                 sage: P.panyushev_orbits()
-                [[set([])]]
+                [[set()]]
             """
             # TODO: implement a generic function taking a set and
             # bijections on this set, and returning the orbits.
@@ -575,7 +1369,7 @@ class FinitePosets(Category):
             """
             # TODO: implement a generic function taking a set and
             # bijections on this set, and returning the orbits.
-            OI = set(self.order_ideals_lattice())
+            OI = set(self.order_ideals_lattice(facade=True))
             orbits = []
             while OI:
                 A = OI.pop()
@@ -632,32 +1426,32 @@ class FinitePosets(Category):
 
                 sage: P = Poset( ( [1,2,3], [ [1,3], [2,3] ] ) )
                 sage: list(P.panyushev_orbit_iter(set([1, 2])))
-                [set([1, 2]), set([3]), set([])]
+                [{1, 2}, {3}, set()]
                 sage: list(P.panyushev_orbit_iter([1, 2]))
-                [set([1, 2]), set([3]), set([])]
+                [{1, 2}, {3}, set()]
                 sage: list(P.panyushev_orbit_iter([2, 1]))
-                [set([1, 2]), set([3]), set([])]
+                [{1, 2}, {3}, set()]
                 sage: list(P.panyushev_orbit_iter(set([1, 2]), element_constructor=list))
                 [[1, 2], [3], []]
                 sage: list(P.panyushev_orbit_iter(set([1, 2]), element_constructor=frozenset))
-                [frozenset([1, 2]), frozenset([3]), frozenset([])]
+                [frozenset({1, 2}), frozenset({3}), frozenset()]
                 sage: list(P.panyushev_orbit_iter(set([1, 2]), element_constructor=tuple))
                 [(1, 2), (3,), ()]
 
                 sage: P = Poset( {} )
                 sage: list(P.panyushev_orbit_iter([]))
-                [set([])]
+                [set()]
 
                 sage: P = Poset({ 1: [2, 3], 2: [4], 3: [4], 4: [] })
                 sage: Piter = P.panyushev_orbit_iter([2], stop=False)
-                sage: Piter.next()
-                set([2])
-                sage: Piter.next()
-                set([3])
-                sage: Piter.next()
-                set([2])
-                sage: Piter.next()
-                set([3])
+                sage: next(Piter)
+                {2}
+                sage: next(Piter)
+                {3}
+                sage: next(Piter)
+                {2}
+                sage: next(Piter)
+                {3}
             """
             # TODO: implement a generic function taking a set and
             # bijections on this set, and returning an orbit of a given
@@ -721,34 +1515,34 @@ class FinitePosets(Category):
 
                 sage: P = Poset( ( [1,2,3], [ [1,3], [2,3] ] ) )
                 sage: list(P.rowmotion_orbit_iter(set([1, 2])))
-                [set([1, 2]), set([1, 2, 3]), set([])]
+                [{1, 2}, {1, 2, 3}, set()]
                 sage: list(P.rowmotion_orbit_iter([1, 2]))
-                [set([1, 2]), set([1, 2, 3]), set([])]
+                [{1, 2}, {1, 2, 3}, set()]
                 sage: list(P.rowmotion_orbit_iter([2, 1]))
-                [set([1, 2]), set([1, 2, 3]), set([])]
+                [{1, 2}, {1, 2, 3}, set()]
                 sage: list(P.rowmotion_orbit_iter(set([1, 2]), element_constructor=list))
                 [[1, 2], [1, 2, 3], []]
                 sage: list(P.rowmotion_orbit_iter(set([1, 2]), element_constructor=frozenset))
-                [frozenset([1, 2]), frozenset([1, 2, 3]), frozenset([])]
+                [frozenset({1, 2}), frozenset({1, 2, 3}), frozenset()]
                 sage: list(P.rowmotion_orbit_iter(set([1, 2]), element_constructor=tuple))
                 [(1, 2), (1, 2, 3), ()]
 
                 sage: P = Poset( {} )
                 sage: list(P.rowmotion_orbit_iter([]))
-                [set([])]
+                [set()]
 
                 sage: P = Poset({ 1: [2, 3], 2: [4], 3: [4], 4: [] })
                 sage: Piter = P.rowmotion_orbit_iter([1, 2, 3], stop=False)
-                sage: Piter.next()
-                set([1, 2, 3])
-                sage: Piter.next()
-                set([1, 2, 3, 4])
-                sage: Piter.next()
-                set([])
-                sage: Piter.next()
-                set([1])
-                sage: Piter.next()
-                set([1, 2, 3])
+                sage: next(Piter)
+                {1, 2, 3}
+                sage: next(Piter)
+                {1, 2, 3, 4}
+                sage: next(Piter)
+                set()
+                sage: next(Piter)
+                {1}
+                sage: next(Piter)
+                {1, 2, 3}
 
                 sage: P = Poset({ 1: [4], 2: [4, 5], 3: [5] })
                 sage: list(P.rowmotion_orbit_iter([1, 2], element_constructor=list))
@@ -832,15 +1626,15 @@ class FinitePosets(Category):
 
                 sage: P = Poset( ( [1,2,3], [ [1,3], [2,3] ] ) )
                 sage: list(P.toggling_orbit_iter([1, 3, 1], set([1, 2])))
-                [set([1, 2])]
+                [{1, 2}]
                 sage: list(P.toggling_orbit_iter([1, 2, 3], set([1, 2])))
-                [set([1, 2]), set([]), set([1, 2, 3])]
+                [{1, 2}, set(), {1, 2, 3}]
                 sage: list(P.toggling_orbit_iter([3, 2, 1], set([1, 2])))
-                [set([1, 2]), set([1, 2, 3]), set([])]
+                [{1, 2}, {1, 2, 3}, set()]
                 sage: list(P.toggling_orbit_iter([3, 2, 1], set([1, 2]), element_constructor=list))
                 [[1, 2], [1, 2, 3], []]
                 sage: list(P.toggling_orbit_iter([3, 2, 1], set([1, 2]), element_constructor=frozenset))
-                [frozenset([1, 2]), frozenset([1, 2, 3]), frozenset([])]
+                [frozenset({1, 2}), frozenset({1, 2, 3}), frozenset()]
                 sage: list(P.toggling_orbit_iter([3, 2, 1], set([1, 2]), element_constructor=tuple))
                 [(1, 2), (1, 2, 3), ()]
                 sage: list(P.toggling_orbit_iter([3, 2, 1], [2, 1], element_constructor=tuple))
@@ -848,20 +1642,20 @@ class FinitePosets(Category):
 
                 sage: P = Poset( {} )
                 sage: list(P.toggling_orbit_iter([], []))
-                [set([])]
+                [set()]
 
                 sage: P = Poset({ 1: [2, 3], 2: [4], 3: [4], 4: [] })
                 sage: Piter = P.toggling_orbit_iter([1, 2, 4, 3], [1, 2, 3], stop=False)
-                sage: Piter.next()
-                set([1, 2, 3])
-                sage: Piter.next()
-                set([1])
-                sage: Piter.next()
-                set([])
-                sage: Piter.next()
-                set([1, 2, 3])
-                sage: Piter.next()
-                set([1])
+                sage: next(Piter)
+                {1, 2, 3}
+                sage: next(Piter)
+                {1}
+                sage: next(Piter)
+                set()
+                sage: next(Piter)
+                {1, 2, 3}
+                sage: next(Piter)
+                {1}
             """
             # TODO: implement a generic function taking a set and
             # bijections on this set, and returning an orbit of a given
@@ -883,7 +1677,7 @@ class FinitePosets(Category):
                     next = self.order_ideal_toggles(next, vs)
                     yield element_constructor(next)
 
-        def order_ideals_lattice(self, as_ideals=True):
+        def order_ideals_lattice(self, as_ideals=True, facade=False):
             r"""
             Return the lattice of order ideals of a poset ``self``,
             ordered by inclusion.
@@ -914,7 +1708,7 @@ class FinitePosets(Category):
                 sage: J = P.order_ideals_lattice(); J
                 Finite lattice containing 8 elements
                 sage: list(J)
-                [{}, {0}, {0, 2}, {0, 1}, {0, 1, 2}, {0, 2, 3}, {0, 1, 2, 3}, {0, 1, 2, 3, 4}]
+                [{}, {0}, {0, 2}, {0, 2, 3}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3}, {0, 1, 2, 3, 4}]
 
             As a lattice on antichains::
 
@@ -939,17 +1733,19 @@ class FinitePosets(Category):
             if as_ideals:
                 from sage.misc.misc import attrcall
                 from sage.sets.set import Set
-                ideals = [Set( self.order_ideal(antichain) ) for antichain in self.antichains()]
-                return LatticePoset((ideals,attrcall("issubset")))
+                ideals = [Set(self.order_ideal(antichain))
+                          for antichain in self.antichains()]
+                return LatticePoset((ideals, attrcall("issubset")),
+                                    facade=facade)
             else:
                 from sage.misc.cachefunc import cached_function
                 antichains = [tuple(a) for a in self.antichains()]
                 @cached_function
-                def is_above(a,xb):
-                    return any(self.is_lequal(xa,xb) for xa in a)
-                def cmp(a,b):
-                    return all(is_above(a,xb) for xb in b)
-                return LatticePoset((antichains,cmp))
+                def is_above(a, xb):
+                    return any(self.is_lequal(xa, xb) for xa in a)
+                def cmp(a, b):
+                    return all(is_above(a, xb) for xb in b)
+                return LatticePoset((antichains, cmp), facade=facade)
 
         @abstract_method(optional = True)
         def antichains(self):
@@ -988,4 +1784,6 @@ class FinitePosets(Category):
                 sage: list(Poset().directed_subsets('up'))
                 [[]]
             """
+            if direction != 'up' and direction != 'down':
+                raise ValueError("Direction must be either 'up' or 'down'.")
             return self.antichains().map(lambda elements: self.directed_subset(elements, direction))

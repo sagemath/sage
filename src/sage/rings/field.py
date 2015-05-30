@@ -17,6 +17,9 @@ Abstract base class for fields
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.superseded import deprecation
+deprecation(18108, "the module sage.rings.field is deprecated and will be removed")
+
 from sage.rings.ring import Field
 
 def is_PrimeField(R):
@@ -34,6 +37,9 @@ def is_PrimeField(R):
 
     EXAMPLES::
 
+        sage: import sage.rings.field
+        doctest:...: DeprecationWarning: the module sage.rings.field is deprecated and will be removed
+        See http://trac.sagemath.org/18108 for details.
         sage: sage.rings.field.is_PrimeField(QQ)
         True
         sage: sage.rings.field.is_PrimeField(GF(7))

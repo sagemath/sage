@@ -75,7 +75,7 @@ def easter(year, algorithm=EASTER_WESTERN):
     algorithm = int(algorithm)
 
     if not (1 <= algorithm <= 3):
-        raise ValueError, "invalid algorithm"
+        raise ValueError("invalid algorithm")
 
     # g - Golden year - 1
     # c - Century

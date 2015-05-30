@@ -1,0 +1,24 @@
+--- src/support/shobj-conf	2014-02-24 03:06:29.000000000 +0100
++++ new/support/shobj-conf	2014-06-15 14:04:15.561786158 +0200
+@@ -39,10 +39,10 @@
+ SHOBJ_LD=
+ SHOBJ_LDFLAGS=
+ SHOBJ_XLDFLAGS=
+-SHOBJ_LIBS=
++SHOBJ_LIBS='-ltinfo'
+ 
+ SHLIB_XLDFLAGS=
+-SHLIB_LIBS=
++SHLIB_LIBS='-ltinfo'
+ 
+ SHLIB_DOT='.'
+ SHLIB_LIBPREF='lib'
+@@ -209,7 +209,7 @@
+ 		;;
+ 	esac
+ 
+-	SHLIB_LIBS='-lncurses'	# see if -lcurses works on MacOS X 10.1 
++	SHLIB_LIBS='-ltinfo -lncurses'	# see if -lcurses works on MacOS X 10.1 
+ 	;;
+ 
+ openbsd*|netbsd*|mirbsd*)

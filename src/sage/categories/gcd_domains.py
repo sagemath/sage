@@ -8,9 +8,7 @@ Gcd domains
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-from sage.misc.cachefunc import cached_method
 from sage.categories.integral_domains import IntegralDomains
 
 class GcdDomains(Category_singleton):
@@ -39,6 +37,22 @@ class GcdDomains(Category_singleton):
             [Category of integral domains]
         """
         return [IntegralDomains()]
+
+    def additional_structure(self):
+        """
+        Return ``None``.
+
+        Indeed, the category of gcd domains defines no additional
+        structure: a ring morphism between two gcd domains is a gcd
+        domain morphism.
+
+        .. SEEALSO:: :meth:`Category.additional_structure`
+
+        EXAMPLES::
+
+            sage: GcdDomains().additional_structure()
+        """
+        return None
 
     class ParentMethods:
         pass

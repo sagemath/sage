@@ -2,9 +2,10 @@
 GenericGraph Cython functions
 
 AUTHORS:
-    -- Robert L. Miller   (2007-02-13): initial version
-    -- Robert W. Bradshaw (2007-03-31): fast spring layout algorithms
-    -- Nathann Cohen                  : exhaustive search
+
+- Robert L. Miller   (2007-02-13): initial version
+- Robert W. Bradshaw (2007-03-31): fast spring layout algorithms
+- Nathann Cohen                  : exhaustive search
 """
 
 #*****************************************************************************
@@ -17,7 +18,8 @@ AUTHORS:
 
 include "sage/ext/interrupt.pxi"
 include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi'
+from sage.ext.memory cimport check_allocarray, sage_malloc, sage_free
+include "sage/data_structures/binary_matrix.pxi"
 
 # import from Python standard library
 from sage.misc.prandom import random
@@ -37,12 +39,13 @@ def spring_layout_fast_split(G, **options):
     other without bound, resulting in very tight clumps for each
     component.
 
-    NOTE:
+    .. NOTE::
+
         If the axis are scaled to fit the plot in a square, the
         horizontal distance may end up being "squished" due to
         the several adjacent components.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: G = graphs.DodecahedralGraph()
         sage: for i in range(10): G.add_cycle(range(100*i, 100*i+3))
@@ -51,7 +54,8 @@ def spring_layout_fast_split(G, **options):
         {0: [0.452..., 0.247...], ..., 502: [25.7..., 0.505...]}
 
     AUTHOR:
-        Robert Bradshaw
+
+    Robert Bradshaw
     """
     Gs = G.connected_components_subgraphs()
     pos = {}
@@ -82,7 +86,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
     INPUT:
 
-     - ``by_component`` - a boolean
+    - ``by_component`` -- a boolean
 
     EXAMPLES::
 
@@ -98,11 +102,9 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     and further from each other without bound, resulting in very tight
     clumps for each component.
 
-    NOTE:
-
-        If the axis are scaled to fit the plot in a square, the
-        horizontal distance may end up being "squished" due to
-        the several adjacent components.
+    If the axis are scaled to fit the plot in a square, the
+    horizontal distance may end up being "squished" due to
+    the several adjacent components. ::
 
         sage: G = graphs.DodecahedralGraph()
         sage: for i in range(10): G.add_cycle(range(100*i, 100*i+3))
@@ -124,9 +126,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     if n == 0:
         return {}
 
-    cdef double* pos = <double*>sage_malloc(n * dim * sizeof(double))
-    if pos is NULL:
-            raise MemoryError, "error allocating scratch space for spring layout"
+    cdef double* pos = <double*>check_allocarray(n, dim * sizeof(double))
 
     # convert or create the starting positions as a flat list of doubles
     if vpos is None:  # set the initial positions randomly in 1x1 box
@@ -141,10 +141,12 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
     # here we construct a lexicographically ordered list of all edges
     # where elist[2*i], elist[2*i+1] represents the i-th edge
-    cdef int* elist = <int*>sage_malloc( (2 * len(G.edges()) + 2) * sizeof(int)  )
-    if elist is NULL:
+    cdef int* elist
+    try:
+        elist = <int*>check_allocarray(2 * len(G.edges()) + 2, sizeof(int))
+    except MemoryError:
         sage_free(pos)
-        raise MemoryError, "error allocating scratch space for spring layout"
+        raise
 
     cdef int cur_edge = 0
 
@@ -166,11 +168,12 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     cdef double* cen
     cdef double r, r2, max_r2 = 0
     if rescale:
-        cen = <double *>sage_malloc(sizeof(double) * dim)
-        if cen is NULL:
+        try:
+            cen = <double *>check_allocarray(dim, sizeof(double))
+        except MemoryError:
             sage_free(elist)
             sage_free(pos)
-            raise MemoryError, "error allocating scratch space for spring layout"
+            raise
         for x from 0 <= x < dim: cen[x] = 0
         for i from 0 <= i < n:
             for x from 0 <= x < dim:
@@ -214,6 +217,7 @@ cdef run_spring(int iterations, int dim, double* pos, int* edges, int n, bint he
     TODO: Are the hard-coded constants here optimal?
 
     INPUT:
+
         iterations -- number of steps to take
         dim        -- number of dimensions of freedom
         pos        -- already initialized initial positions
@@ -228,12 +232,13 @@ cdef run_spring(int iterations, int dim, double* pos, int* edges, int n, bint he
         height     -- if True, do not update the last coordinate ever
 
     OUTPUT:
-        Modifies contents of pos.
+
+    Modifies contents of pos.
 
     AUTHOR:
-        Robert Bradshaw
-    """
 
+    Robert Bradshaw
+    """
     cdef int cur_iter, cur_edge
     cdef int i, j, x
 
@@ -244,9 +249,7 @@ cdef run_spring(int iterations, int dim, double* pos, int* edges, int n, bint he
     cdef double* disp_j
     cdef double* delta
 
-    cdef double* disp = <double*>sage_malloc((n+1) * dim * sizeof(double))
-    if disp is NULL:
-            raise MemoryError, "error allocating scratch space for spring layout"
+    cdef double* disp = <double*>check_allocarray(n+1, dim * sizeof(double))
     delta = &disp[n*dim]
 
     if height:
@@ -307,16 +310,21 @@ cdef run_spring(int iterations, int dim, double* pos, int* edges, int n, bint he
 
     sage_free(disp)
 
-def binary(n, length=None):
+def int_to_binary_string(n):
     """
     A quick python int to binary string conversion.
 
-    EXAMPLE:
-        sage: sage.graphs.generic_graph_pyx.binary(389)
+    INPUT:
+
+    - ``n`` (integer)
+
+    EXAMPLE::
+
+        sage: sage.graphs.generic_graph_pyx.int_to_binary_string(389)
         '110000101'
         sage: Integer(389).binary()
         '110000101'
-        sage: sage.graphs.generic_graph_pyx.binary(2007)
+        sage: sage.graphs.generic_graph_pyx.int_to_binary_string(2007)
         '11111010111'
     """
     cdef mpz_t i
@@ -328,71 +336,86 @@ def binary(n, length=None):
     mpz_clear(i)
     return t
 
-def R(x):
-    """
-    A helper function for the graph6 format. Described in [McK]
+def binary_string_to_graph6(x):
+    r"""
+    Transforms a binary string into its graph6 representation.
 
-    EXAMPLE:
-        sage: from sage.graphs.generic_graph_pyx import R
-        sage: R('110111010110110010111000001100000001000000001')
+    This helper function is named `R` in [McK]_.
+
+    INPUT:
+
+    - ``x`` -- a binary string.
+
+    EXAMPLE::
+
+        sage: from sage.graphs.generic_graph_pyx import binary_string_to_graph6
+        sage: binary_string_to_graph6('110111010110110010111000001100000001000000001')
         'vUqwK@?G'
 
     REFERENCES:
-    McKay, Brendan. 'Description of graph6 and sparse6 encodings.'
-    http://cs.anu.edu.au/~bdm/data/formats.txt (2007-02-13)
+
+    .. [McK] McKay, Brendan. 'Description of graph6 and sparse6 encodings.'
+       http://cs.anu.edu.au/~bdm/data/formats.txt (2007-02-13)
     """
-    # pad on the right to make a multiple of 6
+    # The length of x must be a multiple of 6. We extend it with 0s.
     x += '0' * ( (6 - (len(x) % 6)) % 6)
 
-    # split into groups of 6, and convert numbers to decimal, adding 63
+    # Split into groups of 6, and convert numbers to decimal, adding 63
     six_bits = ''
     cdef int i
     for i from 0 <= i < len(x)/6:
         six_bits += chr( int( x[6*i:6*(i+1)], 2) + 63 )
     return six_bits
 
-def N(n):
-    """
-    A helper function for the graph6 format. Described in [McK]
+def small_integer_to_graph6(n):
+    r"""
+    Encodes a small integer (i.e. a number of vertices) as a graph6 string.
 
-    EXAMPLE:
-        sage: from sage.graphs.generic_graph_pyx import N
-        sage: N(13)
+    This helper function is named `N` [McK]_.
+
+    INPUT:
+
+    - ``n`` (integer)
+
+    EXAMPLE::
+
+        sage: from sage.graphs.generic_graph_pyx import small_integer_to_graph6
+        sage: small_integer_to_graph6(13)
         'L'
-        sage: N(136)
+        sage: small_integer_to_graph6(136)
         '~?AG'
-
-    REFERENCES:
-    McKay, Brendan. 'Description of graph6 and sparse6 encodings.'
-    http://cs.anu.edu.au/~bdm/data/formats.txt (2007-02-13)
     """
     if n < 63:
         return chr(n + 63)
     else:
         # get 18-bit rep of n
-        n = binary(n)
+        n = int_to_binary_string(n)
         n = '0'*(18-len(n)) + n
-        return chr(126) + R(n)
+        return chr(126) + binary_string_to_graph6(n)
 
-def N_inverse(s):
-    """
-    A helper function for the graph6 format. Described in [McK]
+def length_and_string_from_graph6(s):
+    r"""
+    Returns a pair `(length,graph6_string)` from a graph6 string of unknown length.
 
-    EXAMPLE:
-        sage: from sage.graphs.generic_graph_pyx import N_inverse
-        sage: N_inverse('~??~?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?')
+    This helper function is the inverse of `N` from [McK]_.
+
+    INPUT:
+
+    - ``s`` -- a graph6 string describing an binary vector (and encoding its
+      length).
+
+    EXAMPLE::
+
+        sage: from sage.graphs.generic_graph_pyx import length_and_string_from_graph6
+        sage: length_and_string_from_graph6('~??~?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?')
         (63, '?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?')
-        sage: N_inverse('_???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????')
+        sage: length_and_string_from_graph6('_???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????')
         (32, '???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????')
-
-    REFERENCES:
-    McKay, Brendan. 'Description of graph6 and sparse6 encodings.'
-    http://cs.anu.edu.au/~bdm/data/formats.txt (2007-02-13)
     """
     if s[0] == chr(126): # first four bytes are N
-        a = binary(ord(s[1]) - 63).zfill(6)
-        b = binary(ord(s[2]) - 63).zfill(6)
-        c = binary(ord(s[3]) - 63).zfill(6)
+        a = int_to_binary_string(ord(s[1]) - 63).zfill(6)
+        b = int_to_binary_string(ord(s[2]) - 63).zfill(6)
+        c = int_to_binary_string(ord(s[3]) - 63).zfill(6)
         n = int(a + b + c,2)
         s = s[4:]
     else: # only first byte is N
@@ -403,19 +426,24 @@ def N_inverse(s):
         s = s[1:]
     return n, s
 
-def R_inverse(s, n):
-    """
-    A helper function for the graph6 format. Described in [McK]
+def binary_string_from_graph6(s, n):
+    r"""
+    Decodes a binary string from its graph6 representation
 
-    REFERENCES:
-    McKay, Brendan. 'Description of graph6 and sparse6 encodings.'
-    http://cs.anu.edu.au/~bdm/data/formats.txt (2007-02-13)
+    This helper function is the inverse of `R` from [McK]_.
 
-    EXAMPLE:
-        sage: from sage.graphs.generic_graph_pyx import R_inverse
-        sage: R_inverse('?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?', 63)
+    INPUT:
+
+    - ``s`` -- a graph6 string
+
+    - ``n`` -- the length of the binary string encoded by ``s``.
+
+    EXAMPLE::
+
+        sage: from sage.graphs.generic_graph_pyx import binary_string_from_graph6
+        sage: binary_string_from_graph6('?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?', 63)
         '0000000000000000000000000000001000000000010000000001000010000000000000000000110000000000000000010100000010000000000001000000000010000000000...10000000000000000000000000000000010000000001011011000000100000000001001110000000000000000000000000001000010010000001100000001000000001000000000100000000'
-        sage: R_inverse('???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????', 32)
+        sage: binary_string_from_graph6('???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????', 32)
         '0000000000000000000001000000000000010000100000100000001000000000000000100000000100000...010000000000000100010000001000000000000000000000000000001010000000001011000000000000010010000000000000010000000000100000000001000001000000000000000001000000000000000000000000000000000000'
 
     """
@@ -425,20 +453,27 @@ def R_inverse(s, n):
         o = ord(s[i])
         if o > 126 or o < 63:
             raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
-        a = binary(o-63)
+        a = int_to_binary_string(o-63)
         l.append( '0'*(6-len(a)) + a )
     m = "".join(l)
     return m
 
-def D_inverse(s, n):
+def binary_string_from_dig6(s, n):
     """
     A helper function for the dig6 format.
 
-    EXAMPLE:
-        sage: from sage.graphs.generic_graph_pyx import D_inverse
-        sage: D_inverse('?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?', 63)
+    INPUT:
+
+    - ``s`` -- a graph6 string
+
+    - ``n`` -- the length of the binary string encoded by ``s``.
+
+    EXAMPLE::
+
+        sage: from sage.graphs.generic_graph_pyx import binary_string_from_dig6
+        sage: binary_string_from_dig6('?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?', 63)
         '0000000000000000000000000000001000000000010000000001000010000000000000000000110000000000000000010100000010000000000001000000000010000000000...10000000000000000000000000000000010000000001011011000000100000000001001110000000000000000000000000001000010010000001100000001000000001000000000100000000'
-        sage: D_inverse('???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????', 32)
+        sage: binary_string_from_dig6('???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????', 32)
         '0000000000000000000001000000000000010000100000100000001000000000000000100000000100000...010000000000000100010000001000000000000000000000000000001010000000001011000000000000010010000000000000010000000000100000000001000001000000000000000001000000000000000000000000000000000000'
 
     """
@@ -448,7 +483,7 @@ def D_inverse(s, n):
         o = ord(s[i])
         if o > 126 or o < 63:
             raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
-        a = binary(o-63)
+        a = int_to_binary_string(o-63)
         l.append( '0'*(6-len(a)) + a )
     m = "".join(l)
     return m[:n*n]
@@ -457,7 +492,7 @@ def D_inverse(s, n):
 
 cdef class SubgraphSearch:
     r"""
-    This class implements methods to exhaustively search for labelled
+    This class implements methods to exhaustively search for
     copies of a graph `H` in a larger graph `G`.
 
     It is possible to look for induced subgraphs instead, and to
@@ -474,6 +509,11 @@ cdef class SubgraphSearch:
     This way, most of the time we need to test far less than `k!
     \binom{|V(G)|}{k}` subsets, and hope this brute-force technique
     can sometimes be useful.
+
+    .. NOTE::
+
+        This algorithm does not take vertex/edge labels into account.
+
     """
     def __init__(self, G, H, induced = False):
         r"""
@@ -508,6 +548,9 @@ cdef class SubgraphSearch:
 
         if sum([G.is_directed(), H.is_directed()]) == 1:
             raise ValueError("One graph can not be directed while the other is not.")
+
+        G._scream_if_not_simple(allow_loops=True)
+        H._scream_if_not_simple(allow_loops=True)
 
         self._initialization()
 
@@ -568,7 +611,8 @@ cdef class SubgraphSearch:
         for _ in self:
             i+=1
 
-        return i
+        from sage.rings.integer import Integer
+        return Integer(i)
 
     def _initialization(self):
         r"""
@@ -641,8 +685,28 @@ cdef class SubgraphSearch:
 
         cdef int i, j, k
 
-        self.tmp_array = <int *>sage_malloc(self.ng * sizeof(int))
-        if self.tmp_array == NULL:
+        # A vertex is said to be busy if it is already part of the partial copy
+        # of H in G.
+        self.busy       = <int *>  sage_malloc(self.ng * sizeof(int))
+        self.tmp_array  = <int *>  sage_malloc(self.ng * sizeof(int))
+        self.stack      = <int *>  sage_malloc(self.nh * sizeof(int))
+        self.vertices   = <int *>  sage_malloc(self.nh * sizeof(int))
+        self.line_h_out = <int **> sage_malloc(self.nh * sizeof(int *))
+        self.line_h_in  = <int **> sage_malloc(self.nh * sizeof(int *)) if self.directed else NULL
+
+        if self.line_h_out is not NULL:
+            self.line_h_out[0] = <int *> sage_malloc(self.nh*self.nh*sizeof(int))
+        if self.line_h_in is not NULL:
+            self.line_h_in[0]  = <int *> sage_malloc(self.nh*self.nh*sizeof(int))
+
+        if (self.tmp_array     == NULL or
+            self.busy          == NULL or
+            self.stack         == NULL or
+            self.vertices      == NULL or
+            self.line_h_out    == NULL or
+            self.line_h_out[0] == NULL or
+            (self.directed and self.line_h_in == NULL) or
+            (self.directed and self.line_h_in[0] == NULL)):
             raise MemoryError()
 
         # Should we look for induced subgraphs ?
@@ -656,51 +720,31 @@ cdef class SubgraphSearch:
         self.h = DenseGraph(self.nh)
 
         # copying the adjacency relations in both G and H
-        i = 0
-        for row in G.adjacency_matrix():
-            j = 0
-            for k in row:
+        for i,row in enumerate(G.adjacency_matrix()):
+            for j,k in enumerate(row):
                 if k:
                     self.g.add_arc(i, j)
-                j += 1
-            i += 1
-        i = 0
-        for row in H.adjacency_matrix():
-            j = 0
-            for k in row:
+
+        for i,row in enumerate(H.adjacency_matrix()):
+            for j,k in enumerate(row):
                 if k:
                     self.h.add_arc(i, j)
-                j += 1
-            i += 1
-
-        # A vertex is said to be busy if it is already part of the partial copy
-        # of H in G.
-        self.busy = <int *>sage_malloc(self.ng * sizeof(int))
-        self.stack = <int *>sage_malloc(self.nh * sizeof(int))
 
         # vertices is equal to range(nh), as an int *variable
-        self.vertices = <int *>sage_malloc(self.nh * sizeof(int))
         for 0 <= i < self.nh:
             self.vertices[i] = i
 
         # line_h_out[i] represents the adjacency sequence of vertex i
         # in h relative to vertices 0, 1, ..., i-1
-        self.line_h_out = <int **>sage_malloc(self.nh * sizeof(int *))
-        for 0 <= i < self.nh:
-            self.line_h_out[i] = <int *> sage_malloc(self.nh * sizeof(int *))
-            if self.line_h_out[i] is NULL:
-                raise MemoryError()
+        for i in range(self.nh):
+            self.line_h_out[i] = self.line_h_out[0]+i*self.nh
             self.h.adjacency_sequence_out(i, self.vertices, i, self.line_h_out[i])
 
         # Similarly in the opposite direction (only useful if the
         # graphs are directed)
         if self.directed:
-            self.line_h_in = <int **>sage_malloc(self.nh * sizeof(int *))
-            for 0 <= i < self.nh:
-                self.line_h_in[i] = <int *> sage_malloc(self.nh * sizeof(int *))
-                if self.line_h_in[i] is NULL:
-                    raise MemoryError()
-
+            for i in range(self.nh):
+                self.line_h_in[i] = self.line_h_in[0]+i*self.nh
                 self.h.adjacency_sequence_in(i, self.vertices, i, self.line_h_in[i])
 
     def __next__(self):
@@ -790,22 +834,17 @@ cdef class SubgraphSearch:
         r"""
         Freeing the allocated memory.
         """
+        if self.line_h_in  is not NULL:
+            sage_free(self.line_h_in[0])
+        if self.line_h_out is not NULL:
+            sage_free(self.line_h_out[0])
 
         # Free the memory
         sage_free(self.busy)
         sage_free(self.stack)
         sage_free(self.vertices)
-        for 0 <= i < self.nh:
-            sage_free(self.line_h_out[i])
         sage_free(self.line_h_out)
-
-        if self.directed:
-            for 0 <= i < self.nh:
-                sage_free(self.line_h_in[i])
-            sage_free(self.line_h_in)
-
-        if self.tmp_array != NULL:
-            sage_free(self.tmp_array)
+        sage_free(self.line_h_in)
 
 cdef inline bint vectors_equal(int n, int *a, int *b):
     r"""
@@ -874,8 +913,8 @@ def _test_vectors_equal_inferior():
     """
     from sage.misc.prandom import randint
     n = randint(500, 10**3)
-    cdef int *u = <int *>sage_malloc(n * sizeof(int))
-    cdef int *v = <int *>sage_malloc(n * sizeof(int))
+    cdef int *u = <int *>check_allocarray(n, sizeof(int))
+    cdef int *v = <int *>check_allocarray(n, sizeof(int))
     cdef int i
     # equal vectors: u = v
     for 0 <= i < n:
@@ -1093,11 +1132,11 @@ cpdef tuple find_hamiltonian( G, long max_iter=100000, long reset_bound=30000, l
     cdef int m = G.num_edges()
 
     #Initialize the path.
-    cdef int *path = <int *>sage_malloc(n * sizeof(int))
+    cdef int *path = <int *>check_allocarray(n, sizeof(int))
     memset(path, -1, n * sizeof(int))
 
     #Initialize the membership array
-    cdef bint *member = <bint *>sage_malloc(n * sizeof(int))
+    cdef bint *member = <bint *>check_allocarray(n, sizeof(int))
     memset(member, 0, n * sizeof(int))
 
     # static copy of the graph for more efficient operations
@@ -1140,14 +1179,14 @@ cpdef tuple find_hamiltonian( G, long max_iter=100000, long reset_bound=30000, l
     cdef int longest = length
 
     #Initialize a path to contain the longest path
-    cdef int *longest_path = <int *>sage_malloc(n * sizeof(int))
+    cdef int *longest_path = <int *>check_allocarray(n, sizeof(int))
     memset(longest_path, -1, n * sizeof(int))
     i = 0
     for 0 <= i < length:
         longest_path[ i ] = path[ i ]
 
     #Initialize a temporary path for flipping
-    cdef int *temp_path = <int *>sage_malloc(n * sizeof(int))
+    cdef int *temp_path = <int *>check_allocarray(n, sizeof(int))
     memset(temp_path, -1, n * sizeof(int))
 
     cdef bint longer = False
@@ -1282,3 +1321,68 @@ cpdef tuple find_hamiltonian( G, long max_iter=100000, long reset_bound=30000, l
 
     return (True,output)
 
+def transitive_reduction_acyclic(G):
+    r"""
+    Returns the transitive reduction of an acyclic digraph
+
+    INPUT:
+
+    - ``G`` -- an acyclic digraph.
+
+    EXAMPLE::
+
+        sage: from sage.graphs.generic_graph_pyx import transitive_reduction_acyclic
+        sage: G = posets.BooleanLattice(4).hasse_diagram()
+        sage: G == transitive_reduction_acyclic(G.transitive_closure())
+        True
+    """
+    cdef int  n = G.order()
+    cdef dict v_to_int = {vv: i for i, vv in enumerate(G.vertices())}
+    cdef int  u, v, i
+
+    cdef list linear_extension
+
+    is_acyclic, linear_extension = G.is_directed_acyclic(certificate=True)
+    if not is_acyclic:
+        raise ValueError("The graph is not directed acyclic")
+
+    linear_extension.reverse()
+
+    cdef binary_matrix_t closure
+
+    # Build the transitive closure of G
+    #
+    # A point is reachable from u if it is one of its neighbours, or if it is
+    # reachable from one of its neighbours.
+    binary_matrix_init(closure, n, n)
+    for uu in linear_extension:
+        u = v_to_int[uu]
+        for vv in G.neighbors_out(uu):
+            v = v_to_int[vv]
+            binary_matrix_set1(closure, u, v)
+            bitset_or(closure.rows[u], closure.rows[u], closure.rows[v])
+
+    # Build the transitive reduction of G
+    #
+    # An edge uv belongs to the transitive reduction of G if no outneighbor of u
+    # can reach v (except v itself, of course).
+    linear_extension.reverse()
+    cdef list useful_edges = []
+    for uu in linear_extension:
+        u = v_to_int[uu]
+        for vv in G.neighbors_out(uu):
+            v = v_to_int[vv]
+            bitset_difference(closure.rows[u], closure.rows[u], closure.rows[v])
+        for vv in G.neighbors_out(uu):
+            v = v_to_int[vv]
+            if binary_matrix_get(closure, u, v):
+                useful_edges.append((uu, vv))
+
+    from sage.graphs.digraph import DiGraph
+    reduced = DiGraph()
+    reduced.add_edges(useful_edges)
+    reduced.add_vertices(linear_extension)
+
+    binary_matrix_free(closure)
+
+    return reduced

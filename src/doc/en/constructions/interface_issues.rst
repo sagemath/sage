@@ -312,7 +312,7 @@ Read in and execute ``example.sage`` file using the ``load`` command.
 
 ::
 
-    sage: load "example.sage"
+    sage: load("example.sage")
     Hello World
     8
 
@@ -324,7 +324,7 @@ You can also ``attach`` a Sage file to a running session:
 
 ::
 
-    sage: attach "example.sage"
+    sage: attach("example.sage")
     Hello World
     8
 
@@ -393,9 +393,6 @@ version of Sage (which is the "source" version, not the "binary").
    reinstalling.) This might be useful if you have a CD of these
    packages but no (or a very slow) internet connection.
 
-#. If you want to build the documentation, ``cd devel/doc`` and type
-   ``./rebuild``. This requires having latex and latex2html installed.
-
 
 .. index:: Python and Sage
 
@@ -427,53 +424,14 @@ use an editor to read the code itself.
 "Special functions" in Sage
 ===========================
 
-Sage has several special functions:
+Sage has many special functions (see the reference
+manual at http://sagemath.org/doc/reference/functions/),
+and most of them can be
+manipulated symbolically. Where this is not implemented,
+it is possible that other symbolic packages have the
+functionality.
 
-
--  Bessel functions and Airy functions
-
--  spherical harmonic functions
-
--  spherical Bessel functions (of the 1st and 2nd kind)
-
--  spherical Hankel functions (of the 1st and 2nd kind)
-
--  Jacobi elliptic functions
-
--  complete/incomplete elliptic integrals
-
--  hyperbolic trig functions (for completeness, since they are
-   special cases of elliptic functions)
-
-
-and orthogonal polynomials
-
-
--  chebyshev\_T (n, x), chebyshev\_U (n, x) - the Chebyshev
-   polynomial of the first, second kind for integers
-   :math:`n > -1`.
-
--  laguerre (n, x), gen\_laguerre (n, a, x) - the (generalized)
-   Laguerre poly. for :math:`n > -1`.
-
--  legendre\_P (n, x), legendre\_Q (n, x), gen\_legendre\_P (n, x),
-   gen\_legendre\_Q (n, x) - the (generalized) Legendre function of
-   the first, second kind for integers :math:`n > -1`.
-
--  hermite (n,x) - the Hermite poly. for integers
-   :math:`n > -1`.
-
--  jacobi\_P (n, a, b, x) - the Jacobi polynomial for integers
-   :math:`n > -1` and :math:`a` and :math:`b` symbolic or
-   :math:`a > -1` and :math:`b > -1`.
-
--  ultraspherical (n,a,x) - the ultraspherical polynomials for
-   integers :math:`n > -1`. The ultraspherical polynomials are also
-   known as Gegenbauer polynomials.
-
-
-In Sage, these are restricted to numerical evaluation and plotting but
-via maxima, some symbolic manipulation is allowed:
+Via Maxima, some symbolic manipulation is allowed:
 
 ::
 

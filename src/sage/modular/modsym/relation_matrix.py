@@ -34,7 +34,7 @@ from sage.rings.rational_field import is_RationalField
 
 import sage.misc.misc as misc
 
-import manin_symbols
+from sage.modular.modsym.manin_symbol_list import ManinSymbolList
 
 
 # S = [0,-1; 1,0]
@@ -67,9 +67,7 @@ def modS_relations(syms):
 
     INPUT:
 
-
-    -  ``syms`` - manin_symbols.ManinSymbols
-
+    - ``syms`` -- :class:`ManinSymbolList`
 
     OUTPUT:
 
@@ -80,7 +78,7 @@ def modS_relations(syms):
 
     EXAMPLES::
 
-        sage: from sage.modular.modsym.manin_symbols import ManinSymbolList_gamma0
+        sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
         sage: from sage.modular.modsym.relation_matrix import modS_relations
 
     ::
@@ -88,25 +86,37 @@ def modS_relations(syms):
         sage: syms = ManinSymbolList_gamma0(2, 4); syms
         Manin Symbol List of weight 4 for Gamma0(2)
         sage: modS_relations(syms)
-        set([((3, -1), (4, 1)), ((5, -1), (5, 1)), ((1, 1), (6, 1)), ((0, 1), (7, 1)), ((3, 1), (4, -1)), ((2, 1), (8, 1))])
+        {((0, 1), (7, 1)),
+         ((1, 1), (6, 1)),
+         ((2, 1), (8, 1)),
+         ((3, -1), (4, 1)),
+         ((3, 1), (4, -1)),
+         ((5, -1), (5, 1))}
 
     ::
 
         sage: syms = ManinSymbolList_gamma0(7, 2); syms
         Manin Symbol List of weight 2 for Gamma0(7)
         sage: modS_relations(syms)
-        set([((3, 1), (4, 1)), ((2, 1), (7, 1)), ((5, 1), (6, 1)), ((0, 1), (1, 1))])
+        {((0, 1), (1, 1)), ((2, 1), (7, 1)), ((3, 1), (4, 1)), ((5, 1), (6, 1))}
 
     Next we do an example with Gamma1::
 
-        sage: from sage.modular.modsym.manin_symbols import ManinSymbolList_gamma1
+        sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma1
         sage: syms = ManinSymbolList_gamma1(3,2); syms
         Manin Symbol List of weight 2 for Gamma1(3)
         sage: modS_relations(syms)
-        set([((3, 1), (6, 1)), ((0, 1), (5, 1)), ((0, 1), (2, 1)), ((3, 1), (4, 1)), ((6, 1), (7, 1)), ((1, 1), (2, 1)), ((1, 1), (5, 1)), ((4, 1), (7, 1))])
+        {((0, 1), (2, 1)),
+         ((0, 1), (5, 1)),
+         ((1, 1), (2, 1)),
+         ((1, 1), (5, 1)),
+         ((3, 1), (4, 1)),
+         ((3, 1), (6, 1)),
+         ((4, 1), (7, 1)),
+         ((6, 1), (7, 1))}
     """
-    if not isinstance(syms, manin_symbols.ManinSymbolList):
-        raise TypeError, "syms must be a ManinSymbolList"
+    if not isinstance(syms, ManinSymbolList):
+        raise TypeError("syms must be a ManinSymbolList")
     tm = misc.verbose()
     # We will fill in this set with the relations x_i + s*x_j = 0,
     # where the notation is as in _sparse_2term_quotient.
@@ -127,7 +137,7 @@ def modI_relations(syms, sign):
 
     INPUT:
 
-    -  ``syms`` - ManinSymbols
+    - ``syms`` -- :class:`ManinSymbolList`
 
     -  ``sign`` - int (either -1, 0, or 1)
 
@@ -138,9 +148,32 @@ def modI_relations(syms, sign):
 
     EXAMPLE::
 
-        sage: L = sage.modular.modsym.manin_symbols.ManinSymbolList_gamma1(4, 3)
+        sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma1(4, 3)
         sage: sage.modular.modsym.relation_matrix.modI_relations(L, 1)
-        set([((14, 1), (20, 1)), ((0, 1), (0, -1)), ((7, 1), (7, -1)), ((9, 1), (3, -1)), ((3, 1), (9, -1)), ((16, 1), (22, 1)), ((10, 1), (4, -1)), ((1, 1), (1, -1)), ((19, 1), (19, 1)), ((8, 1), (2, -1)), ((12, 1), (12, 1)), ((20, 1), (14, 1)), ((21, 1), (15, 1)), ((5, 1), (11, -1)), ((15, 1), (21, 1)), ((22, 1), (16, 1)), ((6, 1), (6, -1)), ((2, 1), (8, -1)), ((17, 1), (23, 1)), ((4, 1), (10, -1)), ((18, 1), (18, 1)), ((11, 1), (5, -1)), ((23, 1), (17, 1)), ((13, 1), (13, 1))])
+        {((0, 1), (0, -1)),
+         ((1, 1), (1, -1)),
+         ((2, 1), (8, -1)),
+         ((3, 1), (9, -1)),
+         ((4, 1), (10, -1)),
+         ((5, 1), (11, -1)),
+         ((6, 1), (6, -1)),
+         ((7, 1), (7, -1)),
+         ((8, 1), (2, -1)),
+         ((9, 1), (3, -1)),
+         ((10, 1), (4, -1)),
+         ((11, 1), (5, -1)),
+         ((12, 1), (12, 1)),
+         ((13, 1), (13, 1)),
+         ((14, 1), (20, 1)),
+         ((15, 1), (21, 1)),
+         ((16, 1), (22, 1)),
+         ((17, 1), (23, 1)),
+         ((18, 1), (18, 1)),
+         ((19, 1), (19, 1)),
+         ((20, 1), (14, 1)),
+         ((21, 1), (15, 1)),
+         ((22, 1), (16, 1)),
+         ((23, 1), (17, 1))}
 
     .. warning::
 
@@ -169,7 +202,7 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
 
     INPUT:
 
-    -  ``syms`` - ManinSymbols
+    - ``syms`` -- :class:`ManinSymbolList`
 
     -  ``mod`` - list that gives quotient modulo some two-term relations, i.e.,
        the S relations, and if sign is nonzero, the I relations.
@@ -185,12 +218,12 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
     EXAMPLE::
 
         sage: from sage.modular.modsym.relation_matrix import *
-        sage: L = sage.modular.modsym.manin_symbols.ManinSymbolList_gamma_h(GammaH(36, [17,19]), 2)
+        sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma_h(GammaH(36, [17,19]), 2)
         sage: modS = sparse_2term_quotient(modS_relations(L), 216, QQ)
         sage: T_relation_matrix_wtk_g0(L, modS, QQ, False)
-        72 x 216 dense matrix over Rational Field
+        72 x 216 dense matrix over Rational Field (use the '.str()' method to see the entries)
         sage: T_relation_matrix_wtk_g0(L, modS, GF(17), True)
-        72 x 216 sparse matrix over Finite Field of size 17
+        72 x 216 sparse matrix over Finite Field of size 17 (use the '.str()' method to see the entries)
     """
     tm = misc.verbose()
     row = 0
@@ -207,7 +240,7 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
             if w==2: already_seen.add(j)
             j0, s0 = mod[j]
             s0 = s*s0
-            if v.has_key(j0):
+            if j0 in v:
                 v[j0] += s0
             else:
                 v[j0] = s0
@@ -230,7 +263,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
 
     INPUT:
 
-    -  ``syms`` - a ManinSymbols object
+    - ``syms`` -- :class:`ManinSymbolList`
 
     -  ``relation_matrix`` - as output by
        ``__compute_T_relation_matrix(self, mod)``
@@ -255,7 +288,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     EXAMPLE::
 
         sage: from sage.modular.modsym.relation_matrix import *
-        sage: L = sage.modular.modsym.manin_symbols.ManinSymbolList_gamma1(4, 3)
+        sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma1(4, 3)
         sage: modS = sparse_2term_quotient(modS_relations(L), 24, GF(3))
         sage: gens_to_basis_matrix(L, T_relation_matrix_wtk_g0(L, modS, GF(3), 24), modS, GF(3), True)
         (24 x 2 sparse matrix over Finite Field of size 3, [13, 23])
@@ -288,8 +321,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     basis_mod2 = set([j for j,c in mod if c != 0])
 
     basis_set = basis_set.intersection(basis_mod2)
-    basis = list(basis_set)
-    basis.sort()
+    basis = sorted(basis_set)
 
     ONE = field(1)
 
@@ -334,7 +366,7 @@ def compute_presentation(syms, sign, field, sparse=None):
 
     INPUT:
 
-    -  ``syms`` - manin_symbols.ManinSymbols
+    - ``syms`` -- :class:`ManinSymbolList`
 
     -  ``sign`` - integer (-1, 0, 1)
 
@@ -391,7 +423,7 @@ def compute_presentation(syms, sign, field, sparse=None):
 
     EXAMPLE::
 
-        sage: L = sage.modular.modsym.manin_symbols.ManinSymbolList_gamma0(8,2)
+        sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma0(8,2)
         sage: sage.modular.modsym.relation_matrix.compute_presentation(L, 1, GF(9,'a'), True)
         (
         [2 0 0]
@@ -425,7 +457,7 @@ def relation_matrix_wtk_g0(syms, sign, field, sparse):
 
     INPUT:
 
-    - ``syms``: sage.modular.modsym.manin_symbols.ManinSymbolList object
+    - ``syms`` -- :class:`ManinSymbolList`
 
     - ``sign``: integer (0, 1 or -1)
 
@@ -444,7 +476,7 @@ def relation_matrix_wtk_g0(syms, sign, field, sparse):
 
     EXAMPLE::
 
-        sage: L =  sage.modular.modsym.manin_symbols.ManinSymbolList_gamma0(8,2)
+        sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma0(8,2)
         sage: A = sage.modular.modsym.relation_matrix.relation_matrix_wtk_g0(L, 0, GF(2), True); A
         (
         [0 0 0 0 0 0 0 0 1 0 0 0]
@@ -517,10 +549,10 @@ def sparse_2term_quotient(rels, n, F):
         [(3, -1/3), (3, -1), (3, -1), (3, 1), (5, 1), (5, 1)]
     """
     if not isinstance(rels, set):
-        raise TypeError, "rels must be a set"
+        raise TypeError("rels must be a set")
     n = int(n)
     if not isinstance(F, rings.Ring):
-        raise TypeError, "F must be a ring."
+        raise TypeError("F must be a ring.")
 
     tm = misc.verbose("Starting sparse 2-term quotient...")
     free = range(n)
@@ -786,7 +818,7 @@ def sparse_2term_quotient(rels, n, F):
 ##         iT_plus_iTT = M.apply_T(i) + M.apply_TT(i)
 ##         v = {i:ONE}
 ##         for j, s in iT_plus_iTT:
-##             if v.has_key(j):
+##             if j in v:
 ##                 v[j] += field(s)
 ##             else:
 ##                 v[j] = field(s)

@@ -1,0 +1,76 @@
+diff --git a/src.bak/src/Makefile.in b/src/src/Makefile.in
+index 8385e4d..b9f6a26 100644
+--- a/src.bak/src/Makefile.in
++++ b/src/src/Makefile.in
+@@ -36,7 +36,7 @@ bin_PROGRAMS = scdd$(EXEEXT) lcdd$(EXEEXT) redcheck$(EXEEXT) \
+ 	fourier$(EXEEXT) projection$(EXEEXT) adjacency$(EXEEXT) \
+ 	allfaces$(EXEEXT) testcdd1$(EXEEXT) testshoot$(EXEEXT) \
+ 	testcdd2$(EXEEXT) testlp1$(EXEEXT) testlp2$(EXEEXT) \
+-	testlp3$(EXEEXT)
++	testlp3$(EXEEXT) cdd_both_reps$(EXEEXT)
+ subdir = src
+ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+@@ -56,6 +56,10 @@ am_allfaces_OBJECTS = allfaces.$(OBJEXT)
+ allfaces_OBJECTS = $(am_allfaces_OBJECTS)
+ allfaces_LDADD = $(LDADD)
+ allfaces_DEPENDENCIES = ../lib-src/libcdd.la
++am_cdd_both_reps_OBJECTS = cdd_both_reps.$(OBJEXT)
++cdd_both_reps_OBJECTS = $(am_cdd_both_reps_OBJECTS)
++cdd_both_reps_LDADD = $(LDADD)
++cdd_both_reps_DEPENDENCIES = ../lib-src/libcdd.la
+ am_fourier_OBJECTS = fourier.$(OBJEXT)
+ fourier_OBJECTS = $(am_fourier_OBJECTS)
+ fourier_LDADD = $(LDADD)
+@@ -112,16 +116,16 @@ CCLD = $(CC)
+ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+ 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+ 	$(LDFLAGS) -o $@
+-SOURCES = $(adjacency_SOURCES) $(allfaces_SOURCES) $(fourier_SOURCES) \
+-	$(lcdd_SOURCES) $(projection_SOURCES) $(redcheck_SOURCES) \
+-	$(scdd_SOURCES) $(testcdd1_SOURCES) $(testcdd2_SOURCES) \
+-	$(testlp1_SOURCES) $(testlp2_SOURCES) $(testlp3_SOURCES) \
+-	$(testshoot_SOURCES)
++SOURCES = $(adjacency_SOURCES) $(allfaces_SOURCES) \
++	$(cdd_both_reps_SOURCES) $(fourier_SOURCES) $(lcdd_SOURCES) \
++	$(projection_SOURCES) $(redcheck_SOURCES) $(scdd_SOURCES) \
++	$(testcdd1_SOURCES) $(testcdd2_SOURCES) $(testlp1_SOURCES) \
++	$(testlp2_SOURCES) $(testlp3_SOURCES) $(testshoot_SOURCES)
+ DIST_SOURCES = $(adjacency_SOURCES) $(allfaces_SOURCES) \
+-	$(fourier_SOURCES) $(lcdd_SOURCES) $(projection_SOURCES) \
+-	$(redcheck_SOURCES) $(scdd_SOURCES) $(testcdd1_SOURCES) \
+-	$(testcdd2_SOURCES) $(testlp1_SOURCES) $(testlp2_SOURCES) \
+-	$(testlp3_SOURCES) $(testshoot_SOURCES)
++	$(cdd_both_reps_SOURCES) $(fourier_SOURCES) $(lcdd_SOURCES) \
++	$(projection_SOURCES) $(redcheck_SOURCES) $(scdd_SOURCES) \
++	$(testcdd1_SOURCES) $(testcdd2_SOURCES) $(testlp1_SOURCES) \
++	$(testlp2_SOURCES) $(testlp3_SOURCES) $(testshoot_SOURCES)
+ ETAGS = etags
+ CTAGS = ctags
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+@@ -249,6 +253,7 @@ testcdd2_SOURCES = testcdd2.c
+ testlp1_SOURCES = testlp1.c
+ testlp2_SOURCES = testlp2.c
+ testlp3_SOURCES = testlp3.c
++cdd_both_reps_SOURCES = cdd_both_reps.c
+ # cddmathlink_SOURCES                = cddmathlink.c cddmlio.h cddmlio.c
+ LDADD = ../lib-src/libcdd.la
+ INCLUDES = -I../lib-src
+@@ -320,6 +325,9 @@ adjacency$(EXEEXT): $(adjacency_OBJECTS) $(adjacency_DEPENDENCIES)
+ allfaces$(EXEEXT): $(allfaces_OBJECTS) $(allfaces_DEPENDENCIES) 
+ 	@rm -f allfaces$(EXEEXT)
+ 	$(LINK) $(allfaces_OBJECTS) $(allfaces_LDADD) $(LIBS)
++cdd_both_reps$(EXEEXT): $(cdd_both_reps_OBJECTS) $(cdd_both_reps_DEPENDENCIES) 
++	@rm -f cdd_both_reps$(EXEEXT)
++	$(LINK) $(cdd_both_reps_OBJECTS) $(cdd_both_reps_LDADD) $(LIBS)
+ fourier$(EXEEXT): $(fourier_OBJECTS) $(fourier_DEPENDENCIES) 
+ 	@rm -f fourier$(EXEEXT)
+ 	$(LINK) $(fourier_OBJECTS) $(fourier_LDADD) $(LIBS)
+@@ -362,6 +370,7 @@ distclean-compile:
+ 
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adjacency.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/allfaces.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cdd_both_reps.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fourier.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lcdd.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/projection.Po@am__quote@

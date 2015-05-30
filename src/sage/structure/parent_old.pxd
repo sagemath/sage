@@ -33,12 +33,3 @@ cdef class Parent(parent.Parent):
 
     cdef _an_element_c_impl(self)
     cpdef _an_element_c(self)
-
-    ################################################
-    # Comparison of parent objects
-    cdef _richcmp(left, right, int op)
-    cdef int _cmp_c_impl(left, parent.Parent right) except -2
-
-
-
-

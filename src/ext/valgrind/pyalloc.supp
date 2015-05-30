@@ -1,0 +1,58 @@
+# Read Misc/README.valgrind in the Python sourcs for a thorough explanation
+#
+# In short: We need these unless we compile python without pyalloc,
+# but that would be prohibitively slow. 
+
+# Upstream has these commented out in python.supp:
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:PyObject_Free
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:PyObject_Free
+}
+
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:PyObject_Free
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:PyObject_Realloc
+}
+
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:PyObject_Realloc
+}
+
+
+# These also happen in Python 2.7.8, pretty sure they are just pyalloc
+# artifacts as well:
+
+{
+   Spurious "Use of uninitialised value of size 8"
+   Memcheck:Value8
+   fun:PyObject_Free
+}
+
+{
+   Spurious "Use of uninitialised value of size 8"
+   Memcheck:Value8
+   fun:PyObject_Realloc
+}

@@ -1,8 +1,8 @@
 Remove tests that rely on the (non-GPL) small group library
 
 diff -ur old/tst/testinstall.g src/tst/testinstall.g
---- old/tst/testinstall.g	2012-06-04 23:58:40.000000000 +0100
-+++ src/tst/testinstall.g	2012-09-02 10:43:10.321694748 +0100
+--- old/tst/testinstall.g      2012-06-04 23:58:40.000000000 +0100
++++ src/tst/testinstall.g      2012-09-02 10:43:10.321694748 +0100
 @@ -49,7 +49,6 @@
    [ "ctblfuns.tst", 3900000 ],
    [ "ctblmoli.tst", 98500000 ],
@@ -11,13 +11,15 @@ diff -ur old/tst/testinstall.g src/tst/testinstall.g
    [ "cyclotom.tst", 900000 ],
    [ "ffe.tst", 3600000 ],
    [ "ffeconway.tst", 50200000 ],
-@@ -57,13 +56,11 @@
+@@ -57,7 +56,6 @@
    [ "grpfp.tst", 146700000 ],
    [ "grpfree.tst", 700000 ],
    [ "grpmat.tst", 481000000 ],
 -  [ "grppc.tst", 45300000 ],
    [ "grppcnrm.tst", 2333400000 ],
-   [ "listgen.tst", 1000000 ],
+   [ "infinity.tst", 1000 ], 
+   [ "intarith.tst", 2300000 ],
+@@ -65,7 +63,6 @@
    [ "mapping.tst", 37300000 ],
    [ "mgmring.tst", 1800000 ],
    [ "modfree.tst", 5800000 ],

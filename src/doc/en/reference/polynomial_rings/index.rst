@@ -21,4 +21,6 @@ Polynomial Rings
    sage/rings/polynomial/convolution
    sage/rings/polynomial/cyclotomic
 
+   sage/rings/polynomial/plural
+
 .. include:: ../footer.txt

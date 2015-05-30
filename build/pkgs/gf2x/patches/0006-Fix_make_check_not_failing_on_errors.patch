@@ -1,0 +1,27 @@
+Upstream patch, added by Sage trac ticket #18339.
+(gf2x's test suite may "pass" even though it actually failed.)
+
+See also https://gforge.inria.fr/tracker/index.php?func=detail&aid=18889&group_id=1874&atid=6979
+
+commit 13e8d124c7598d3b0e51ee7cb385435cd2ec57f5
+Author: Emmanuel Thomé <Emmanuel.Thome@inria.fr>
+Date:   Wed Apr 29 09:58:12 2015 +0200
+
+    fix #18889
+
+diff --git a/tests/do-check-mul.sh b/tests/do-check-mul.sh
+index 275414d..96c140f 100755
+--- a/tests/do-check-mul.sh
++++ b/tests/do-check-mul.sh
+@@ -36,6 +36,11 @@ cat "$srcdir/check-mul.res" | while read n1 n2 v s ; do
+         exit 1
+     fi
+ done
++
++if [ $? -ne 0 ]; then
++    exit 1
++fi
++
+ echo
+ 
+ ./check-addmul

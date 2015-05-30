@@ -12,18 +12,17 @@ from sage.misc.misc_c import prod
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_function
-from sage.structure.element import Element
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.partition import Partition
-from sage.combinat.combinat import CombinatorialObject
+from sage.combinat.combinat import CombinatorialElement
 from sage.rings.integer import Integer
 from sage.combinat.backtrack import GenericBacktracker
 import copy
 
-class CompositionTableau(CombinatorialObject, Element):
+class CompositionTableau(CombinatorialElement):
     r"""
     A composition tableau.
 
@@ -92,8 +91,7 @@ class CompositionTableau(CombinatorialObject, Element):
             Composition Tableaux
         """
         if isinstance(t, CompositionTableau):
-            Element.__init__(self, parent)
-            CombinatorialObject.__init__(self, t._list)
+            CombinatorialElement.__init__(self, parent, t._list)
             return
 
         # CombinatorialObject verifies that t is a list
@@ -124,8 +122,7 @@ class CompositionTableau(CombinatorialObject, Element):
                     if TT[j][k] != 0 and TT[j][k] >= TT[i][k] and TT[j][k] <= TT[i][k-1]:
                         raise ValueError("Triple condition must be satisfied.")
 
-        Element.__init__(self, parent)
-        CombinatorialObject.__init__(self, t)
+        CombinatorialElement.__init__(self, parent, t)
 
     def _repr_diagram(self):
         r"""
@@ -165,7 +162,7 @@ class CompositionTableau(CombinatorialObject, Element):
         try:
             return self[i][j]
         except IndexError:
-            raise IndexError, "The cell (%d,%d) is not contained in %s"%(i,j,self)
+            raise IndexError("The cell (%d,%d) is not contained in %s"%(i,j,self))
 
     def pp(self):
         r"""
@@ -221,8 +218,7 @@ class CompositionTableau(CombinatorialObject, Element):
         for row in self:
             for (col,i) in enumerate(row):
                 cols[i] = col
-        des_set = [i for i in cols if i+1 in cols and cols[i+1] >= cols[i]]
-        des_set.sort()
+        des_set = sorted([i for i in cols if i+1 in cols and cols[i+1] >= cols[i]])
         return des_set
 
     def descent_composition(self):
@@ -449,7 +445,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             sage: CT = CompositionTableaux()
             sage: TestSuite(CT).run()
         """
-        if kwds.has_key('max_entry'):
+        if 'max_entry' in kwds:
             self.max_entry = kwds['max_entry']
             kwds.pop('max_entry')
         else:
@@ -780,7 +776,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
         self._shape = shape
         self._n = sum(shape)
         self._initial_data = [ [None]*s for s in shape ]
-        if max_entry==None:
+        if max_entry is None:
             max_entry=sum(shape)
         self.max_entry=max_entry
 

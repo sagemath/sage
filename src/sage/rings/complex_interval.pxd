@@ -1,5 +1,4 @@
-include 'sage/ext/cdefs.pxi'
-include 'mpfi.pxi'
+from sage.libs.mpfi cimport *
 
 cimport sage.structure.element
 cimport real_mpfi

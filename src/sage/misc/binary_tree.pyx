@@ -84,7 +84,8 @@ cdef object binary_tree_delete(binary_tree_node *self, int key):
             return binary_tree_delete(self.right, key)
 
 cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
-    cdef binary_tree_node *left, *cur
+    cdef binary_tree_node *left
+    cdef binary_tree_node *cur
     if self.left == NULL:
         left = self.right
     elif self.right == NULL:
@@ -101,7 +102,8 @@ cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
 
 
 cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
-    cdef binary_tree_node *right, *cur
+    cdef binary_tree_node *right
+    cdef binary_tree_node *cur
     if self.right == NULL:
         right = self.left
     elif self.left == NULL:

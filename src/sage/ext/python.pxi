@@ -20,5 +20,4 @@ from cpython.instance cimport *
 from cpython.function cimport *
 from cpython.method cimport *
 from cpython.set cimport *
-
-include 'python_slice.pxi'
+from cpython.slice cimport *

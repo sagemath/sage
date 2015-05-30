@@ -4,10 +4,10 @@ Suffix Tries and Suffix Trees
 #*****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License version 2 (GPLv2)
-#
-#  The full text of the GPLv2 is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.sage_object import SageObject
@@ -113,7 +113,7 @@ class SuffixTrie(SageObject):
         # While r is not the auxiliary vertex, or
         # there is not transition from r along letter, ...
         while r != -1 and \
-                not self._transition_function.has_key((r,letter)):
+                (r,letter) not in self._transition_function:
             # adjoin a new state s
             s = len(self._suffix_link)
             self._suffix_link.append(None)
@@ -349,11 +349,11 @@ class SuffixTrie(SageObject):
             TypeError: 17 is not a state
         """
         if not isinstance(state, (int,Integer)):
-            raise TypeError, "%s is not an integer" % state
+            raise TypeError("%s is not an integer" % state)
         if state == -1:
-            raise TypeError, "suffix link is not defined for -1"
+            raise TypeError("suffix link is not defined for -1")
         if state not in range(len(self._suffix_link)):
-            raise TypeError, "%s is not a state" % state
+            raise TypeError("%s is not a state" % state)
         return self._suffix_link[state]
 
     def active_state(self):
@@ -462,6 +462,7 @@ class SuffixTrie(SageObject):
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
             sage: SuffixTrie(Word("cacao")).plot()
+            Graphics object consisting of 38 graphics primitives
 
         TESTS::
 
@@ -649,7 +650,7 @@ class ImplicitSuffixTree(SageObject):
         self._active_state = (s, (k, i+1))
         return
 
-    def _test_and_split(self, s, (k, p), letter):
+    def _test_and_split(self, s, k_p, letter):
         r"""
         Helper function for _process_letter. Tests to see whether an edge
         needs to be split. Returns ``(True, state)``, where ``state`` is the
@@ -664,6 +665,7 @@ class ImplicitSuffixTree(SageObject):
             sage: t._test_and_split(0, (4,5), w.parent().alphabet().rank("o"))
             (False, 3)
         """
+        (k, p) = k_p
         if k <= p:
             # find the transition from s that begins with k-th letter
             ((kk,pp), ss) = self._find_transition(s, self._letters[k-1])
@@ -684,7 +686,7 @@ class ImplicitSuffixTree(SageObject):
             else:
                 return (True, s)
 
-    def _canonize(self, s, (k, p)):
+    def _canonize(self, s, k_p):
         r"""
         Given an implicit or explicit reference pair for a node, returns
         the canonical reference pair.
@@ -703,8 +705,9 @@ class ImplicitSuffixTree(SageObject):
             sage: t._canonize(0,(2,5))
             (5, 3)
         """
+        (k, p) = k_p
         if p < k:
-            return (s,k)
+            return (s, k)
         else:
             ((kk,pp), ss) = self._find_transition(s, self._letters[k-1])
             while pp is not None and pp - kk <= p - k:
@@ -748,7 +751,7 @@ class ImplicitSuffixTree(SageObject):
         if state == -1:
             return ((0, 0), 0)
         else:
-            if self._transition_function.has_key(state):
+            if state in self._transition_function:
                 for ((k,p),s) in self._transition_function[state].iteritems():
                     if self._letters[k-1] == letter:
                         return ((k,p), s)
@@ -836,7 +839,7 @@ class ImplicitSuffixTree(SageObject):
             for (v,(i,j)) in d[u].iteritems():
                 if word_labels:
                     d[u][v] = self._word[i:j]
-                elif j == None:
+                elif j is None:
                     d[u][v] = (i,len(self._letters))
         return DiGraph(d)
 
@@ -862,7 +865,9 @@ class ImplicitSuffixTree(SageObject):
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
             sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)
+            Graphics object consisting of 23 graphics primitives
             sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)
+            Graphics object consisting of 23 graphics primitives
 
         TESTS::
 
@@ -1020,10 +1025,10 @@ class ImplicitSuffixTree(SageObject):
                 ...
             TypeError: there is no suffix link from -1
         """
-        if self._suffix_link.has_key(state):
+        if state in self._suffix_link:
             return self._suffix_link[state]
         else:
-            raise TypeError, "there is no suffix link from %s" % state
+            raise TypeError("there is no suffix link from %s" % state)
 
     def active_state(self):
         r"""
@@ -1183,7 +1188,7 @@ class ImplicitSuffixTree(SageObject):
             length_word = self.word().length()
             num_factors = 1 # empty word
             for (u,v,(i,j)) in self.edge_iterator():
-                if j == None:
+                if j is None:
                     num_factors += length_word - i
                 else:
                     num_factors += j - i
@@ -1198,14 +1203,14 @@ class ImplicitSuffixTree(SageObject):
                 if l < n:
                     if self._transition_function[v] != {}:
                         for ((i,j),u) in self._transition_function[v].iteritems():
-                            if j == None:
+                            if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
                                 num_factors += 1
                             else:
                                 queue.append((u,l+j-i+1))
         else:
-            raise TypeError, "not an integer or None: %s" %s
+            raise TypeError("not an integer or None: %s" %s)
         return num_factors
 
     def factor_iterator(self,n=None):
@@ -1251,7 +1256,7 @@ class ImplicitSuffixTree(SageObject):
                 yield w
                 if self._transition_function[v] != {}:
                     for ((i,j),u) in self._transition_function[v].iteritems():
-                        if j == None:
+                        if j is None:
                             j = self.word().length()
                         for k in range(i,j):
                             yield w * self.word()[i-1:k]
@@ -1266,14 +1271,14 @@ class ImplicitSuffixTree(SageObject):
                 if length_w < n:
                     if self._transition_function[v] != {}:
                         for ((i,j),u) in self._transition_function[v].iteritems():
-                            if j == None:
+                            if j is None:
                                 j = self.word().length()
                             if j - i >= n - length_w:
                                 yield w*self.word()[i-1:i-1+n-length_w]
                             else:
                                 queue.append((u,w*self.word()[i-1:j]))
         else:
-            raise TypeError, "not an integer or None: %s" %s
+            raise TypeError("not an integer or None: %s" %s)
 
     #####
     # Miscellaneous methods

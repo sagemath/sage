@@ -10,7 +10,8 @@ def chartafel_symmetrica(n):
     object and the result is a MATRIX object: the charactertable
     of the symmetric group of the given degree.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.chartafel(3)
         [ 1  1  1]
         [-1  0  2]
@@ -51,7 +52,8 @@ def charvalue_symmetrica(irred, cls, table=None):
     taken from a precalculated charactertable.
     FIXME: add table paramter
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: n = 3
         sage: m = matrix([[symmetrica.charvalue(irred, cls) for cls in Partitions(n)] for irred in Partitions(n)]); m
         [ 1  1  1]
@@ -106,7 +108,8 @@ def kranztafel_symmetrica(a, b):
     VECTOR object of classorders and cl becomes a VECTOR object of
     the classlabels.
 
-    EXAMPLES:
+    EXAMPLES::
+
        sage: (a,b,c) = symmetrica.kranztafel(2,2)
        sage: a
        [ 1 -1  1 -1  1]

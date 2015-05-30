@@ -40,17 +40,17 @@ class AffineSpaceCurve_generic(Curve_generic, AlgebraicScheme_subscheme_affine):
 
     def __init__(self, A, X):
         if not is_AffineSpace(A):
-            raise TypeError, "A (=%s) must be an affine space"%A
+            raise TypeError("A (=%s) must be an affine space"%A)
         Curve_generic.__init__(self, A, X)
         d = self.dimension()
         if d != 1:
-            raise ValueError, "defining equations (=%s) define a scheme of dimension %s != 1"%(X,d)
+            raise ValueError("defining equations (=%s) define a scheme of dimension %s != 1"%(X,d))
 
 class AffineCurve_generic(Curve_generic):
     def __init__(self, A, f):
         P = f.parent()
         if not (is_AffineSpace(A) and A.dimension != 2):
-            raise TypeError, "Argument A (= %s) must be an affine plane."%A
+            raise TypeError("Argument A (= %s) must be an affine plane."%A)
         Curve_generic.__init__(self, A, [f])
 
     def _repr_type(self):
@@ -155,7 +155,7 @@ class AffineCurve_generic(Curve_generic):
         S.eval('poly f = '+str(ft) + ';')
         c = S('coeffs(%s, t)'%ft)
         N = int(c.size())
-        b = ["%s[%s,1],"%(c.name(), i) for i in range(2,N/2-4)]
+        b = ["%s[%s,1],"%(c.name(), i) for i in range(2,N//2-4)]
         b = ''.join(b)
         b = b[:len(b)-1] # to cut off the trailing comma
         cmd = 'ideal I = '+b
@@ -207,6 +207,7 @@ class AffineCurve_generic(Curve_generic):
             sage: R.<x, y> = QQ[]
             sage: C = Curve(x^3 - y^2)
             sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
 
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
@@ -214,12 +215,14 @@ class AffineCurve_generic(Curve_generic):
             sage: R.<x, y> = ZZ[]
             sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9 - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
             sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)
+            Graphics object consisting of 1 graphics primitive
 
         A line over `\mathbf{RR}`::
 
             sage: R.<x, y> = RR[]
             sage: C = Curve(R(y - sqrt(2)*x))
             sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
         """
         I = self.defining_ideal()
         return I.plot(*args, **kwds)
@@ -234,10 +237,10 @@ class AffineCurve_finite_field(AffineCurve_generic):
 
         EXAMPLE::
 
-            sage: A, (x,y) = AffineSpace(2,GF(9,'a')).objgens()
+            sage: A.<x,y> = AffineSpace(2,GF(9,'a'))
             sage: C = Curve(x^2 + y^2 - 1)
             sage: C
-            Affine Curve over Finite Field in a of size 3^2 defined by x0^2 + x1^2 - 1
+            Affine Curve over Finite Field in a of size 3^2 defined by x^2 + y^2 - 1
             sage: C.rational_points()
             [(0, 1), (0, 2), (1, 0), (2, 0), (a + 1, a + 1), (a + 1, 2*a + 2), (2*a + 2, a + 1), (2*a + 2, 2*a + 2)]
         """
@@ -372,8 +375,8 @@ class AffineCurve_prime_finite_field(AffineCurve_finite_field):
             singular.lib('brnoeth')
             try:
                 X1 = f.Adj_div()
-            except (TypeError, RuntimeError), s:
-                raise RuntimeError, str(s) + "\n\n ** Unable to use the Brill-Noether Singular package to compute all points (see above)."
+            except (TypeError, RuntimeError) as s:
+                raise RuntimeError(str(s) + "\n\n ** Unable to use the Brill-Noether Singular package to compute all points (see above).")
 
             X2 = singular.NSplaces(1, X1)
             R = X2[5][1][1]
@@ -385,10 +388,9 @@ class AffineCurve_prime_finite_field(AffineCurve_finite_field):
             # with the expect interface could crop up.  Also, this is vastly
             # faster (and more robust).
             v = singular('POINTS').sage_flattened_str_list()
-            pnts = [self(int(v[3*i]), int(v[3*i+1])) for i in range(len(v)/3) if int(v[3*i+2])!=0]
+            pnts = [self(int(v[3*i]), int(v[3*i+1])) for i in range(len(v)//3) if int(v[3*i+2])!=0]
             # remove multiple points
-            pnts = list(set(pnts))
-            pnts.sort()
+            pnts = sorted(set(pnts))
             return pnts
 
         elif algorithm == "all":
@@ -396,8 +398,8 @@ class AffineCurve_prime_finite_field(AffineCurve_finite_field):
             S_enum = self.rational_points(algorithm = "enum")
             S_bn = self.rational_points(algorithm = "bn")
             if S_enum != S_bn:
-                raise RuntimeError, "Bug in rational_points -- different algorithms give different answers for curve %s!"%self
+                raise RuntimeError("Bug in rational_points -- different algorithms give different answers for curve %s!"%self)
             return S_enum
 
         else:
-            raise ValueError, "No algorithm '%s' known"%algorithm
+            raise ValueError("No algorithm '%s' known"%algorithm)

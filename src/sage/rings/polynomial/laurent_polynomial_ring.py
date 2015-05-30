@@ -1,11 +1,11 @@
 """
 Ring of Laurent Polynomials
 
-If `R` is a commutative ring, then the ring of Laurent polynomials in `n` variables
-over `R` is `R[x_1^{\pm 1}, x_2^{\pm 1}, \ldots, x_n^{\pm 1}]`.  We implement
-it as a quotient ring
+If `R` is a commutative ring, then the ring of Laurent polynomials in `n`
+variables over `R` is `R[x_1^{\pm 1}, x_2^{\pm 1}, \ldots, x_n^{\pm 1}]`.
+We implement it as a quotient ring
 
-.. math::
+.. MATH::
 
     R[x_1, y_1, x_2, y_2, \ldots, x_n, y_n] / (x_1 y_1 - 1, x_2 y_2 - 1, \ldots, x_n y_n - 1).
 
@@ -43,9 +43,10 @@ from sage.structure.parent_gens import normalize_names
 from sage.structure.element import is_Element
 from sage.rings.ring import is_Ring
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import _single_variate as _single_variate_poly
 from sage.rings.polynomial.polynomial_ring_constructor import _multi_variate as _multi_variate_poly
 from sage.misc.latex import latex
-from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair
+from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair, LaurentPolynomial_univariate
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent_gens import ParentWithGens
 
@@ -140,7 +141,7 @@ def LaurentPolynomialRing(base_ring, arg1=None, arg2=None, sparse = False, order
 
            sage: R.<w> = LaurentPolynomialRing(QQ)
            sage: (1 + w)^3
-           w^3 + 3*w^2 + 3*w + 1
+           1 + 3*w + 3*w^2 + w^3
 
        You must specify a name::
 
@@ -233,10 +234,10 @@ def LaurentPolynomialRing(base_ring, arg1=None, arg2=None, sparse = False, order
         arg1 = name
 
     if not is_Ring(base_ring):
-        raise TypeError, 'base_ring must be a ring'
+        raise TypeError('base_ring must be a ring')
 
     if arg1 is None:
-        raise TypeError, "You must specify the names of the variables."
+        raise TypeError("You must specify the names of the variables.")
 
     R = None
     if isinstance(arg1, (list, tuple)):
@@ -246,7 +247,7 @@ def LaurentPolynomialRing(base_ring, arg1=None, arg2=None, sparse = False, order
     if isinstance(arg2, (int, long, Integer)):
         # 3. LaurentPolynomialRing(base_ring, names, n, order='degrevlex'):
         if not isinstance(arg1, (list, tuple, str)):
-            raise TypeError, "You *must* specify the names of the variables."
+            raise TypeError("You *must* specify the names of the variables.")
         n = int(arg2)
         names = arg1
         R = _multi_variate(base_ring, names, n, sparse, order)
@@ -257,13 +258,13 @@ def LaurentPolynomialRing(base_ring, arg1=None, arg2=None, sparse = False, order
         if not ',' in arg1:
             # 1. LaurentPolynomialRing(base_ring, name, sparse=False):
             if not arg2 is None:
-                raise TypeError, "if second arguments is a string with no commas, then there must be no other non-optional arguments"
+                raise TypeError("if second arguments is a string with no commas, then there must be no other non-optional arguments")
             name = arg1
             R = _single_variate(base_ring, name, sparse)
         else:
             # 2-4. LaurentPolynomialRing(base_ring, names, order='degrevlex'):
             if not arg2 is None:
-                raise TypeError, "invalid input to LaurentPolynomialRing function; please see the docstring for that function"
+                raise TypeError("invalid input to LaurentPolynomialRing function; please see the docstring for that function")
             names = arg1.split(',')
             n = len(names)
             R = _multi_variate(base_ring, names, n, sparse, order)
@@ -274,9 +275,9 @@ def LaurentPolynomialRing(base_ring, arg1=None, arg2=None, sparse = False, order
         R = _multi_variate(base_ring, names, n, sparse, order)
 
     if arg1 is None and arg2 is None:
-        raise TypeError, "you *must* specify the indeterminates (as not None)."
+        raise TypeError("you *must* specify the indeterminates (as not None).")
     if R is None:
-        raise TypeError, "invalid input (%s, %s, %s) to PolynomialRing function; please see the docstring for that function"%(base_ring, arg1, arg2)
+        raise TypeError("invalid input (%s, %s, %s) to PolynomialRing function; please see the docstring for that function"%(base_ring, arg1, arg2))
 
     return R
 
@@ -293,10 +294,10 @@ def _get_from_cache(key):
         True
     """
     try:
-        if _cache.has_key(key):
+        if key in _cache:
             return _cache[key]   # put () here to re-enable weakrefs
-    except TypeError, msg:
-        raise TypeError, 'key = %s\n%s'%(key,msg)
+    except TypeError as msg:
+        raise TypeError('key = %s\n%s'%(key,msg))
     return None
 
 def _save_in_cache(key, R):
@@ -315,8 +316,8 @@ def _save_in_cache(key, R):
         # We disable weakrefs since they cause segfault at the end of doctesting.
         #weakref.ref(R)
         _cache[key] = R
-    except TypeError, msg:
-        raise TypeError, 'key = %s\n%s'%(key,msg)
+    except TypeError as msg:
+        raise TypeError('key = %s\n%s'%(key,msg))
 
 def _single_variate(base_ring, names, sparse):
     """
@@ -326,14 +327,6 @@ def _single_variate(base_ring, names, sparse):
         sage: _single_variate(QQ, ('x',), False)
         Univariate Laurent Polynomial Ring in x over Rational Field
     """
-    ############################################################
-    # This should later get moved to an actual single variate  #
-    # implementation with valuation tracking,                  #
-    # but I don't want to right now.                           #
-    ############################################################
-    # We need to come up with a name for the inverse that is easy to search
-    # for in a string *and* doesn't overlap with the name that we already have.
-    # For now, I'm going to use a name mangling with checking method.
     names = normalize_names(1, names)
     key = (base_ring, names, sparse)
     P = _get_from_cache(key)
@@ -345,8 +338,8 @@ def _single_variate(base_ring, names, sparse):
             prepend_string += 'k'
         else:
             break
-    R = _multi_variate_poly(base_ring, names, 1, sparse, 'degrevlex', None)
-    P = LaurentPolynomialRing_mpair(R, prepend_string, names)
+    R = _single_variate_poly(base_ring, names, sparse, None)
+    P = LaurentPolynomialRing_univariate(R, names)
     _save_in_cache(key, P)
     return P
 
@@ -469,8 +462,13 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
             ValueError: generator not defined
         """
         if i < 0 or i >= self._n:
-            raise ValueError, "generator not defined"
-        return self(self._R.gen(i))
+            raise ValueError("generator not defined")
+        try:
+            return self.__generators[i]
+        except AttributeError:
+            self.__generators = tuple(self(x) for x in self._R.gens())
+            return self.__generators[i]
+
 
     def is_integral_domain(self, proof = True):
         """
@@ -520,16 +518,32 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
         else:
             return LaurentPolynomialFunctor(vars[-1], True), LaurentPolynomialRing(self.base_ring(), vars[:-1])
 
+
+
     def completion(self, p, prec=20, extras=None):
         """
         EXAMPLES::
 
-            sage: LaurentPolynomialRing(QQ,2,'x').completion(3)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            sage: P.<x>=LaurentPolynomialRing(QQ)
+            sage: P
+            Univariate Laurent Polynomial Ring in x over Rational Field
+            sage: PP=P.completion(x)
+            sage: PP
+            Laurent Series Ring in x over Rational Field
+            sage: f=1-1/x
+            sage: PP(f)
+            -x^-1 + 1
+            sage: 1/PP(f)
+            -x - x^2 - x^3 - x^4 - x^5 - x^6 - x^7 - x^8 - x^9 - x^10 - x^11 - x^12 - x^13 - x^14 - x^15 - x^16 - x^17 - x^18 - x^19 - x^20 + O(x^21)
         """
-        raise NotImplementedError
+        if str(p) == self._names[0] and self._n == 1:
+            from sage.rings.laurent_series_ring import LaurentSeriesRing
+            return LaurentSeriesRing(self.base_ring(), name=self._names[0])
+        else:
+            raise TypeError, "Cannot complete %s with respect to %s" % (self, p)
+
+
+
 
     def remove_var(self, var):
         """
@@ -561,18 +575,30 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
                       Call morphism:
                       From: Multivariate Polynomial Ring in x, y over Rational Field
                       To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
-        """
 
-        if R is self._R:
+        Let us check that coercion between Laurent Polynomials over
+        different base rings works (:trac:`15345`)::
+
+            sage: R = LaurentPolynomialRing(ZZ, 'x')
+            sage: T = LaurentPolynomialRing(QQ, 'x')
+            sage: R.gen() + 3*T.gen()
+            4*x
+        """
+        if R is self._R or (isinstance(R, LaurentPolynomialRing_generic)
+            and self._R.has_coerce_map_from(R._R)):
             from sage.structure.coerce_maps import CallableConvertMap
             return CallableConvertMap(R, self, self._element_constructor_,
                                       parent_as_first_arg=False)
-        else:
-            f = self._R.coerce_map_from(R)
-            if f is not None:
-                from sage.categories.homset import Hom
-                from sage.categories.morphism import CallMorphism
-                return CallMorphism(Hom(self._R, self)) * f
+        elif isinstance(R, LaurentPolynomialRing_generic) and \
+             R.variable_names() == self.variable_names() and \
+             self.base_ring().has_coerce_map_from(R.base_ring()):
+            return True
+
+        f = self._R.coerce_map_from(R)
+        if f is not None:
+            from sage.categories.homset import Hom
+            from sage.categories.morphism import CallMorphism
+            return CallMorphism(Hom(self._R, self)) * f
 
     def __cmp__(left, right):
         """
@@ -752,13 +778,66 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
             base_ring = self.base_ring()
         if names is None:
             names = self.variable_names()
-        if order is None:
-            order = self.polynomial_ring().term_order()
         if self._n == 1:
             return LaurentPolynomialRing(base_ring, names[0], sparse = sparse)
-        else:
-            return LaurentPolynomialRing(base_ring, self._n, names, order = order)
 
+        if order is None:
+            order = self.polynomial_ring().term_order()
+        return LaurentPolynomialRing(base_ring, self._n, names, order = order)
+
+    def fraction_field(self):
+        """
+        The fraction field is the same as the fraction field of the
+        polynomial ring.
+
+        EXAMPLES::
+
+            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: L.fraction_field()
+            Fraction Field of Univariate Polynomial Ring in x over Rational Field
+            sage: (x^-1 + 2) / (x - 1)
+            (2*x + 1)/(x^2 - x)
+        """
+        return self.polynomial_ring().fraction_field()
+
+class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
+    def __init__(self, R, names):
+        """
+        EXAMPLES::
+
+            sage: L = LaurentPolynomialRing(QQ,'x')
+            sage: type(L)
+            <class 'sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_univariate_with_category'>
+            sage: L == loads(dumps(L))
+            True
+        """
+        if R.ngens() != 1:
+            raise ValueError("must be 1 generator")
+        if not R.base_ring().is_integral_domain():
+            raise ValueError("base ring must be an integral domain")
+        LaurentPolynomialRing_generic.__init__(self, R, '', names)
+
+    def _element_constructor_(self, x):
+        """
+        EXAMPLES::
+
+            sage: L = LaurentPolynomialRing(QQ, 'x')
+            sage: L(1/2)
+            1/2
+        """
+        return LaurentPolynomial_univariate(self, x)
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        EXAMPLES::
+
+            sage: L = LaurentPolynomialRing(QQ, 'x')
+            sage: loads(dumps(L)) == L
+            True
+        """
+        return LaurentPolynomialRing_univariate, (self._R, self._names)
 
 class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
     def __init__(self, R, prepend_string, names):
@@ -773,9 +852,9 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             True
         """
         if R.ngens() <= 0:
-            raise ValueError, "n must be positive"
+            raise ValueError("n must be positive")
         if not R.base_ring().is_integral_domain():
-            raise ValueError, "base ring must be an integral domain"
+            raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R, prepend_string, names)
 
     def _element_constructor_(self, x):
@@ -787,4 +866,17 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             1/2
         """
         return LaurentPolynomial_mpair(self, x)
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        EXAMPLES::
+
+            sage: L = LaurentPolynomialRing(QQ,2,'x')
+            sage: loads(dumps(L)) == L
+            True
+        """
+        return LaurentPolynomialRing_mpair, (self._R, self._prepend_string, self._names)
+
 

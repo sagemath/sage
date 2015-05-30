@@ -70,12 +70,12 @@ import os
 
 from sage.rings.all import NumberField, RationalField, PolynomialRing
 from sage.misc.misc import powerset
-import sage.misc.misc
+from sage.env import SAGE_SHARE
 
 from sage.structure.sage_object import load, save
 
 
-JONESDATA = os.path.join(sage.misc.misc.SAGE_SHARE, 'jones')
+JONESDATA = os.path.join(SAGE_SHARE, 'jones')
 
 class JonesDatabase:
     def __init__(self):
@@ -265,7 +265,7 @@ class JonesDatabase:
              Number Field in c with defining polynomial x^3 - x^2 - 48*x - 188]
         """
         Z = self.get(S, var=var)
-        if d == None:
+        if d is None:
             Z = [(k.degree(), k.discriminant().abs(), k.discriminant() > 0, k) for k in Z]
         else:
             Z = [(k.discriminant().abs(), k.discriminant() > 0, k) for k in Z if k.degree() == d]

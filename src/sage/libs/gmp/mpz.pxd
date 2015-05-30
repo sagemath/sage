@@ -1,4 +1,7 @@
 from types cimport *
+from libc.stdio cimport FILE
+
+from libc.stdint cimport intmax_t, uintmax_t
 
 cdef extern from "gmp.h":
 
@@ -14,6 +17,8 @@ cdef extern from "gmp.h":
     void mpz_set (mpz_t rop, mpz_t op)
     void mpz_set_ui (mpz_t rop, unsigned long int op)
     void mpz_set_si (mpz_t rop, signed long int op)
+    void mpz_set_ux (mpz_t rop, uintmax_t op)
+    void mpz_set_sx (mpz_t rop, intmax_t op)
     void mpz_set_d (mpz_t rop, double op)
     void mpz_set_q (mpz_t rop, mpq_t op)
     void mpz_set_f (mpz_t rop, mpf_t op)
@@ -24,12 +29,16 @@ cdef extern from "gmp.h":
     void mpz_init_set (mpz_t rop, mpz_t op)
     void mpz_init_set_ui (mpz_t rop, unsigned long int op)
     void mpz_init_set_si (mpz_t rop, signed long int op)
+    void mpz_init_set_ux (mpz_t rop, uintmax_t op)
+    void mpz_init_set_sx (mpz_t rop, intmax_t op)
     void mpz_init_set_d (mpz_t rop, double op)
     int mpz_init_set_str (mpz_t rop, char *str, int base)
 
     # Conversion Functions
     unsigned long int mpz_get_ui (mpz_t op)
     signed long int mpz_get_si (mpz_t op)
+    uintmax_t mpz_get_ux (mpz_t op)
+    intmax_t mpz_get_sx (mpz_t op)
     double mpz_get_d (mpz_t op)
     double mpz_get_d_2exp (long int *exp, mpz_t op)
     char * mpz_get_str (char *str, int base, mpz_t op)
@@ -154,10 +163,10 @@ cdef extern from "gmp.h":
     int mpz_tstbit (mpz_t op, unsigned long int bit_index)
 
     # Input and Output Functions
-    # size_t mpz_out_str (file *stream, int base, mpz_t op)
-    # size_t mpz_inp_str (mpz_t rop, file *stream, int base)
-    # size_t mpz_out_raw (file *stream, mpz_t op)
-    # size_t mpz_inp_raw (mpz_t rop, file *stream)
+    size_t mpz_out_str (FILE *stream, int base, mpz_t op)
+    size_t mpz_inp_str (mpz_t rop, FILE *stream, int base)
+    size_t mpz_out_raw (FILE *stream, mpz_t op)
+    size_t mpz_inp_raw (mpz_t rop, FILE *stream)
 
     # Random Number Functions
     void mpz_urandomb (mpz_t rop, gmp_randstate_t state, unsigned long int n)
@@ -182,7 +191,6 @@ cdef extern from "gmp.h":
     size_t mpz_sizeinbase (mpz_t op, int base)
 
     # Special Functions
-    void mpz_array_init (mpz_t integer_array, size_t array_size, mp_size_t fixed_num_bits)
     void * _mpz_realloc (mpz_t integer, mp_size_t new_alloc)
     mp_limb_t mpz_getlimbn (mpz_t op, mp_size_t n)
     size_t mpz_size (mpz_t op)

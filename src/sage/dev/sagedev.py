@@ -793,7 +793,7 @@ class SageDev(MercurialPatchMixin):
 
                 self._UI.debug('Creating a new branch for #{0} based on "{1}".', ticket, base)
                 self.git.silent.branch(branch, base)
-        except:
+        except BaseException:
             if self._is_local_branch_name(branch, exists=True):
                 self._UI.debug('Deleting local branch "{0}".', branch)
                 self.git.super_silent.branch(branch, D=True)
@@ -895,17 +895,18 @@ class SageDev(MercurialPatchMixin):
             #  Use "sage --dev merge" to include another ticket/branch.
             #  Use "sage --dev commit" to save changes into a new commit.
             sage: dev.git.echo.stash('apply')
-            # On branch branch2
-            # Changes not staged for commit:
-            #   (use "git add <file>..." to update what will be committed)
-            #   (use "git checkout -- <file>..." to discard changes in working directory)
-            #
-            #   modified:   tracked
-            #
-            # Untracked files:
-            #   (use "git add <file>..." to include in what will be committed)
-            #
-            #   untracked
+            On branch branch2
+            Changes not staged for commit:
+              (use "git add <file>..." to update what will be committed)
+              (use "git checkout -- <file>..." to discard changes in working directory)
+            <BLANKLINE>
+              modified:   tracked
+            <BLANKLINE>
+            Untracked files:
+              (use "git add <file>..." to include in what will be committed)
+            <BLANKLINE>
+              untracked
+            <BLANKLINE>
             no changes added to commit (use "git add" and/or "git commit -a")
 
         Or we can just discard the changes::
@@ -1320,7 +1321,7 @@ class SageDev(MercurialPatchMixin):
             except OperationCancelledError:
                 self._UI.debug("Not creating a commit.")
                 raise
-            except:
+            except BaseException:
                 self._UI.error("No commit has been created.")
                 raise
 
@@ -1502,11 +1503,12 @@ class SageDev(MercurialPatchMixin):
             <BLANKLINE>
             #  (use "sage --dev commit" to commit your merge)
 
-        Alice and Bob make non-conflicting changes simultaneously::
+        Alice and Bob make non-conflicting changes simultaneously (and alice
+        adds some characters that need escaping)::
 
             sage: with open("tracked", "w") as f: f.write("alice")
             sage: alice.git.super_silent.add("tracked")
-            sage: alice.git.super_silent.commit(message="alice: modified tracked")
+            sage: alice.git.super_silent.commit(message="alice: modified tracked {} {{0}} {1}")
 
             sage: bob._chdir()
             sage: open("tracked2", "w").close()
@@ -1521,7 +1523,7 @@ class SageDev(MercurialPatchMixin):
             sage: alice.push()
             Local commits that are not on the remote branch "u/alice/ticket/1":
             <BLANKLINE>
-                ...: alice: modified tracked
+                ...: alice: modified tracked {} {{0}} {1}
                 ...: bob: modified tracked
             <BLANKLINE>
             Push to remote branch? [Yes/no] y
@@ -1556,7 +1558,7 @@ class SageDev(MercurialPatchMixin):
             Local commits that are not on the remote branch "u/bob/ticket/1":
             <BLANKLINE>
                 ...: Merge branch 'u/alice/ticket/1' of ... into ticket/1
-                ...: alice: modified tracked
+                ...: alice: modified tracked {} {{0}} {1}
             <BLANKLINE>
             Push to remote branch? [Yes/no] y
             The branch field of ticket #1 needs to be updated from its current value
@@ -1768,7 +1770,7 @@ class SageDev(MercurialPatchMixin):
                         if remote_branch_exists:
                             commits = self.git.log("{0}..{1}".format('FETCH_HEAD', branch), '--pretty=%h: %s')
                             self._UI.show(['Local commits that are not on the remote branch "{0}":', ''] +
-                                          ['    ' + c for c in commits.splitlines()] +
+                                          ['    ' + c.replace('{','{{').replace('}','}}') for c in commits.splitlines()] +
                                           [''], remote_branch)
                             if not self._UI.confirm('Push to remote branch?', default=True):
                                 raise OperationCancelledError("user requested")
@@ -2713,17 +2715,16 @@ class SageDev(MercurialPatchMixin):
                     self._UI.show("Abandoning #{0}.".format(ticket))
                     self.abandon(ticket, helpful=False)
 
-    def abandon(self, ticket_or_branch=None, helpful=True):
+    def abandon(self, ticket_or_branch, helpful=True):
         r"""
         Abandon a ticket or branch.
 
         INPUT:
 
         - ``ticket_or_branch`` -- an integer or string identifying a ticket or
-          the name of a local branch or ``None`` (default: ``None``), remove
-          the branch ``ticket_or_branch`` or the branch for the ticket
-          ``ticket_or_branch`` (or the current branch if ``None``). Also
-          removes the users remote tracking branch.
+          the name of a local branch, remove the branch ``ticket_or_branch`` or
+          the branch for the ticket ``ticket_or_branch``. Also removes the
+          users remote tracking branch.
 
         - ``helpful`` -- boolean (default: ``True``). Whether to print
           informational messages to guide new users.
@@ -2782,6 +2783,14 @@ class SageDev(MercurialPatchMixin):
             <BLANKLINE>
             #  Use "sage --dev merge" to include another ticket/branch.
             #  Use "sage --dev commit" to save changes into a new commit.
+
+        Verify that :trac:`16249` has been resolved::
+
+            sage: dev.abandon()
+            Traceback (most recent call last):
+            ...
+            TypeError: abandon() takes at least 2 arguments (1 given)
+
         """
         ticket = None
 
@@ -2924,7 +2933,7 @@ class SageDev(MercurialPatchMixin):
                 self._UI.debug('Merging {2} branch "{0}" into "{1}".'
                               .format(branch_name, branch, local_remote))
                 self.merge(branch, pull=local_remote=="remote")
-        except:
+        except Exception:
             self.git.reset_to_clean_state()
             self.git.clean_wrapper()
             self.vanilla()
@@ -3183,11 +3192,11 @@ class SageDev(MercurialPatchMixin):
         remote_branch = None
 
         if ticket_or_branch == 'dependencies':
-            if current_ticket == None:
+            if current_ticket is None:
                 raise SageDevValueError("dependencies can only be merged if currently on a ticket.")
             if pull == False:
                 raise SageDevValueError('"pull" must not be "False" when merging dependencies.')
-            if create_dependency != None:
+            if create_dependency is not None:
                 raise SageDevValueError('"create_dependency" must not be set when merging dependencies.')
             for dependency in self._dependencies_for_ticket(current_ticket):
                 self._UI.debug("Merging dependency #{0}.".format(dependency))

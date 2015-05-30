@@ -56,6 +56,7 @@ class ContourPlot(GraphicPrimitive):
 
         sage: x,y = var('x,y')
         sage: contour_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+        Graphics object consisting of 1 graphics primitive
     """
     def __init__(self, xy_data_array, xrange, yrange, options):
         """
@@ -144,12 +145,13 @@ class ContourPlot(GraphicPrimitive):
 
             sage: x,y = var('x,y')
             sage: contour_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+            Graphics object consisting of 1 graphics primitive
         """
         from sage.rings.integer import Integer
         options = self.options()
         fill = options['fill']
         contours = options['contours']
-        if options.has_key('cmap'):
+        if 'cmap' in options:
             cmap = get_cmap(options['cmap'])
         elif fill or contours is None:
             cmap = get_cmap('gray')
@@ -319,16 +321,19 @@ def contour_plot(f, xrange, yrange, **options):
 
         sage: x,y = var('x,y')
         sage: contour_plot(cos(x^2+y^2), (x, -4, 4), (y, -4, 4))
+        Graphics object consisting of 1 graphics primitive
 
     Here we change the ranges and add some options::
 
         sage: x,y = var('x,y')
         sage: contour_plot((x^2)*cos(x*y), (x, -10, 5), (y, -5, 5), fill=False, plot_points=150)
+        Graphics object consisting of 1 graphics primitive
 
     An even more complicated plot::
 
         sage: x,y = var('x,y')
         sage: contour_plot(sin(x^2 + y^2)*cos(x)*sin(y), (x, -4, 4), (y, -4, 4),plot_points=150)
+        Graphics object consisting of 1 graphics primitive
 
     Some elliptic curves, but with symbolic endpoints.  In the first
     example, the plot is rotated 90 degrees because we switch the
@@ -336,72 +341,87 @@ def contour_plot(f, xrange, yrange, **options):
 
         sage: x,y = var('x,y')
         sage: contour_plot(y^2 + 1 - x^3 - x, (y,-pi,pi), (x,-pi,pi))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi))
+        Graphics object consisting of 1 graphics primitive
 
     We can play with the contour levels::
 
         sage: x,y = var('x,y')
         sage: f(x,y) = x^2 + y^2
         sage: contour_plot(f, (-2, 2), (-2, 2))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (-2, 2), (-2, 2), contours=2, cmap=[(1,0,0), (0,1,0), (0,0,1)])
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (-2, 2), (-2, 2), contours=(0.1, 1.0, 1.2, 1.4), cmap='hsv')
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (-2, 2), (-2, 2), contours=(1.0,), fill=False)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(x-y^2,(x,-5,5),(y,-3,3),contours=[-4,0,1])
+        Graphics object consisting of 1 graphics primitive
 
     We can change the style of the lines::
 
         sage: contour_plot(f, (-2,2), (-2,2), fill=False, linewidths=10)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (-2,2), (-2,2), fill=False, linestyles='dashdot')
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P=contour_plot(x^2-y^2,(x,-3,3),(y,-3,3),contours=[0,1,2,3,4],\
         ...    linewidths=[1,5],linestyles=['solid','dashed'],fill=False)
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P=contour_plot(x^2-y^2,(x,-3,3),(y,-3,3),contours=[0,1,2,3,4],\
         ...    linewidths=[1,5],linestyles=['solid','dashed'])
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
         sage: P=contour_plot(x^2-y^2,(x,-3,3),(y,-3,3),contours=[0,1,2,3,4],\
         ...    linewidths=[1,5],linestyles=['-',':'])
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     We can add labels and play with them::
 
         sage: contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi),  fill=False, cmap='hsv', labels=True)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P=contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi), fill=False, cmap='hsv',\
         ...     labels=True, label_fmt="%1.0f", label_colors='black')
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P=contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi), fill=False, cmap='hsv',labels=True,\
         ...    contours=[-4,0,4],  label_fmt={-4:"low", 0:"medium", 4: "hi"}, label_colors='black')
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
@@ -409,71 +429,86 @@ def contour_plot(f, xrange, yrange, **options):
         ...    contours=[-4,0,4],  label_fmt=lambda x: "$z=%s$"%x, label_colors='black', label_inline=True, \
         ...    label_fontsize=12)
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P=contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi), \
         ...    fill=False, cmap='hsv', labels=True, label_fontsize=18)
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P=contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi), \
         ...    fill=False, cmap='hsv', labels=True, label_inline_spacing=1)
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: P= contour_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi), \
         ...    fill=False, cmap='hsv', labels=True, label_inline=False)
         sage: P
+        Graphics object consisting of 1 graphics primitive
 
     We can change the color of the labels if so desired::
 
         sage: contour_plot(f, (-2,2), (-2,2), labels=True, label_colors='red')
+        Graphics object consisting of 1 graphics primitive
 
     We can add a colorbar as well::
 
         sage: f(x,y)=x^2-y^2
         sage: contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True,colorbar_orientation='horizontal')
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (x,-3,3), (y,-3,3), contours=[-2,-1,4],colorbar=True)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (x,-3,3), (y,-3,3), contours=[-2,-1,4],colorbar=True,colorbar_spacing='uniform')
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (x,-3,3), (y,-3,3), contours=[0,2,3,6],colorbar=True,colorbar_format='%.3f')
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (x,-3,3), (y,-3,3), labels=True,label_colors='red',contours=[0,2,3,6],colorbar=True)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: contour_plot(f, (x,-3,3), (y,-3,3), cmap='winter', contours=20, fill=False, colorbar=True)
+        Graphics object consisting of 1 graphics primitive
 
     This should plot concentric circles centered at the origin::
 
         sage: x,y = var('x,y')
         sage: contour_plot(x^2+y^2-2,(x,-1,1), (y,-1,1))
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: f(x, y) = cos(x) + sin(y)
         sage: contour_plot(f, (0, pi), (0, pi), axes=True)
+        Graphics object consisting of 1 graphics primitive
 
     One can also plot over a reduced region::
 
         sage: contour_plot(x**2-y**2, (x,-2, 2), (y,-2, 2),region=x-y,plot_points=300)
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
@@ -484,6 +519,7 @@ def contour_plot(f, xrange, yrange, **options):
     ``fill=False`` together with ``axes=True`` with caution::
 
         sage: contour_plot(f, (-pi, pi), (-pi, pi), fill=False, axes=True)
+        Graphics object consisting of 1 graphics primitive
 
     TESTS:
 
@@ -491,6 +527,7 @@ def contour_plot(f, xrange, yrange, **options):
 
         sage: x,y = var('x,y')
         sage: contour_plot(x-y^2,(x,-5,5),(y,-3,3),contours=[-4,-2,0], fill=False)
+        Graphics object consisting of 1 graphics primitive
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
@@ -599,30 +636,36 @@ def implicit_plot(f, xrange, yrange, **options):
         sage: var("x y")
         (x, y)
         sage: implicit_plot(x^2+y^2-2, (x,-3,3), (y,-3,3))
+        Graphics object consisting of 1 graphics primitive
 
     I can do the same thing, but using a callable function so I don't need
     to explicitly define the variables in the ranges, and filling the inside::
 
         sage: f(x,y) = x^2 + y^2 - 2
         sage: implicit_plot(f, (-3, 3), (-3, 3),fill=True)
+        Graphics object consisting of 1 graphics primitive
 
     The same circle but with a different line width::
 
         sage: implicit_plot(f, (-3,3), (-3,3), linewidth=6)
+        Graphics object consisting of 1 graphics primitive
 
     And again the same circle but this time with a dashdot border::
 
         sage: implicit_plot(f, (-3,3), (-3,3), linestyle='dashdot')
+        Graphics object consisting of 1 graphics primitive
 
     You can also plot an equation::
 
         sage: var("x y")
         (x, y)
         sage: implicit_plot(x^2+y^2 == 2, (x,-3,3), (y,-3,3))
+        Graphics object consisting of 1 graphics primitive
 
     You can even change the color of the plot::
 
         sage: implicit_plot(x^2+y^2 == 2, (x,-3,3), (y,-3,3), color="red")
+        Graphics object consisting of 1 graphics primitive
 
     Here is a beautiful (and long) example which also tests that all
     colors work with this::
@@ -650,10 +693,12 @@ def implicit_plot(f, xrange, yrange, **options):
     The first-level approximation is just a circle::
 
         sage: implicit_plot(mandel(1), (-3, 3), (-3, 3))
+        Graphics object consisting of 1 graphics primitive
 
     A third-level approximation starts to get interesting::
 
         sage: implicit_plot(mandel(3), (-2, 1), (-1.5, 1.5))
+        Graphics object consisting of 1 graphics primitive
 
     The seventh-level approximation is a degree 64 polynomial, and
     ``implicit_plot`` does a pretty good job on this part of the curve.
@@ -662,16 +707,19 @@ def implicit_plot(f, xrange, yrange, **options):
     ::
 
         sage: implicit_plot(mandel(7), (-0.3, 0.05), (-1.15, -0.9),plot_points=50)
+        Graphics object consisting of 1 graphics primitive
 
     When making a filled implicit plot using a python function rather than a
     symbolic expression the user should increase the number of plot points to
     avoid artifacts::
 
         sage: implicit_plot(lambda x,y: x^2+y^2-2, (x,-3,3), (y,-3,3), fill=True, plot_points=500) # long time
+        Graphics object consisting of 1 graphics primitive
 
     An example of an implicit plot on 'loglog' scale::
 
         sage: implicit_plot(x^2+y^2 == 200, (x,1,200), (y,1,200), scale='loglog')
+        Graphics object consisting of 1 graphics primitive
 
     TESTS::
 
@@ -684,7 +732,7 @@ def implicit_plot(f, xrange, yrange, **options):
     from sage.symbolic.expression import is_SymbolicEquation
     if is_SymbolicEquation(f):
         if f.operator() != operator.eq:
-            raise ValueError, "input to implicit plot must be function or equation"
+            raise ValueError("input to implicit plot must be function or equation")
         f = f.lhs() - f.rhs()
     linewidths = options.pop('linewidth', None)
     linestyles = options.pop('linestyle', None)
@@ -779,61 +827,75 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol, border
 
         sage: x,y = var('x,y')
         sage: region_plot(cos(x^2+y^2) <= 0, (x, -3, 3), (y, -3, 3))
+        Graphics object consisting of 1 graphics primitive
 
     Here we play with the colors::
 
         sage: region_plot(x^2+y^3 < 2, (x, -2, 2), (y, -2, 2), incol='lightblue', bordercol='gray')
+        Graphics object consisting of 2 graphics primitives
 
     An even more complicated plot, with dashed borders::
 
         sage: region_plot(sin(x)*sin(y) >= 1/4, (x,-10,10), (y,-10,10), incol='yellow', bordercol='black', borderstyle='dashed', plot_points=250)
+        Graphics object consisting of 2 graphics primitives
 
     A disk centered at the origin::
 
         sage: region_plot(x^2+y^2<1, (x,-1,1), (y,-1,1))
+        Graphics object consisting of 1 graphics primitive
 
     A plot with more than one condition (all conditions must be true for the statement to be true)::
 
         sage: region_plot([x^2+y^2<1, x<y], (x,-2,2), (y,-2,2))
+        Graphics object consisting of 1 graphics primitive
 
     Since it doesn't look very good, let's increase ``plot_points``::
 
         sage: region_plot([x^2+y^2<1, x<y], (x,-2,2), (y,-2,2), plot_points=400)
+        Graphics object consisting of 1 graphics primitive
 
     To get plots where only one condition needs to be true, use a function.
     Using lambda functions, we definitely need the extra ``plot_points``::
 
         sage: region_plot(lambda x,y: x^2+y^2<1 or x<y, (x,-2,2), (y,-2,2), plot_points=400)
+        Graphics object consisting of 1 graphics primitive
 
     The first quadrant of the unit circle::
 
         sage: region_plot([y>0, x>0, x^2+y^2<1], (x,-1.1, 1.1), (y,-1.1, 1.1), plot_points = 400)
+        Graphics object consisting of 1 graphics primitive
 
     Here is another plot, with a huge border::
 
         sage: region_plot(x*(x-1)*(x+1)+y^2<0, (x, -3, 2), (y, -3, 3), incol='lightblue', bordercol='gray', borderwidth=10, plot_points=50)
+        Graphics object consisting of 2 graphics primitives
 
     If we want to keep only the region where x is positive::
 
         sage: region_plot([x*(x-1)*(x+1)+y^2<0, x>-1], (x, -3, 2), (y, -3, 3), incol='lightblue', plot_points=50)
+        Graphics object consisting of 1 graphics primitive
 
     Here we have a cut circle::
 
         sage: region_plot([x^2+y^2<4, x>-1], (x, -2, 2), (y, -2, 2), incol='lightblue', bordercol='gray', plot_points=200)
+        Graphics object consisting of 2 graphics primitives
 
     The first variable range corresponds to the horizontal axis and
     the second variable range corresponds to the vertical axis::
 
         sage: s,t=var('s,t')
         sage: region_plot(s>0,(t,-2,2),(s,-2,2))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: region_plot(s>0,(s,-2,2),(t,-2,2))
+        Graphics object consisting of 1 graphics primitive
 
     An example of a region plot in 'loglog' scale::
 
         sage: region_plot(x^2+y^2<100, (x,1,10), (y,1,10), scale='loglog')
+        Graphics object consisting of 1 graphics primitive
 
     """
 

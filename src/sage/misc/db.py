@@ -1,5 +1,5 @@
 """
-Saving Sage objects to a file
+Saving Sage objects to a file (deprecated)
 """
 
 #*****************************************************************************
@@ -20,13 +20,15 @@ Saving Sage objects to a file
 
 import cPickle
 import os
-import misc
+from sage.env import SAGE_ROOT
 
-PATH = misc.SAGE_ROOT + "/db"
+PATH = os.path.join(SAGE_ROOT, "db")
 
 USE_DB = False
 
 def path():
+    from sage.misc.superseded import deprecation
+    deprecation(17653, 'The sage.misc.db module is deprecated, use the load/save functions from sage.structure.sage_object instead')
     from sage.misc.misc import sage_makedirs
     sage_makedirs(PATH)
 
@@ -47,6 +49,8 @@ def save(x, filename, bzip2=False, gzip=False):
        Creates a file named filename, from which the object x
        can be reconstructed.
     """
+    from sage.misc.superseded import deprecation
+    deprecation(17653, 'The sage.misc.db module is deprecated, use the load/save functions from sage.structure.sage_object instead')
 
     o=open(filename,"w")
     # Note: don't use protocol 2 here (use 1), since loading doesn't work
@@ -72,6 +76,9 @@ def load(filename, bzip2=False, gzip=False):
     OUTPUT:
        An almost arbitrary object.
     """
+    from sage.misc.superseded import deprecation
+    deprecation(17653, 'The sage.misc.db module is deprecated, use the load/save functions from sage.structure.sage_object instead')
+
     if bzip2:
         os.system("bunzip2 -f -k %s"%(filename + ".bz2"))
     if gzip:
@@ -88,6 +95,9 @@ def save_db(x):
     """
     Save x to the database.  x must define a filename method.
     """
+    from sage.misc.superseded import deprecation
+    deprecation(17653, 'The sage.misc.db module is deprecated, use the load/save functions from sage.structure.sage_object instead')
+
     path()
     fn = PATH + x.filename()
     save(x,fn)
@@ -98,11 +108,14 @@ def load_db(x):
     """
     Load x from the database.  x must define a filename method.
     """
+    from sage.misc.superseded import deprecation
+    deprecation(17653, 'The sage.misc.db module is deprecated, use the load/save functions from sage.structure.sage_object instead')
+
     fn = PATH + x.filename()
     if os.path.exists(fn + ".bz2"):
-        print "Loading %s from %s."%(x,x.filename())
-        os.system("bunzip2 -f -k %s"%(fn + ".bz2"))
-        o=open(fn,"r")
+        print("Loading {} from {}.".format(x, x.filename()))
+        os.system("bunzip2 -f -k {}".format(fn + ".bz2"))
+        o = open(fn, "r")
         x = cPickle.load(o)
         os.remove(fn)
         return x

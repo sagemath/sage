@@ -21,7 +21,7 @@ cdef class pAdicPrinter_class(SageObject):
     cdef long max_unram_terms
     cdef long max_terse_terms
 
-    cdef base_p_list(self, mpz_t value, bint pos)
+    cdef base_p_list(self, value, bint pos)
     cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, pname)
     cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int _mode, bint paren, pname)
     cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing)

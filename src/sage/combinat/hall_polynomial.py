@@ -16,7 +16,7 @@ Hall Polynomials
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from sage.rings.all import ZZ
 from sage.combinat.partition import Partition
 from sage.combinat.q_analogues import q_binomial

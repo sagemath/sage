@@ -131,7 +131,7 @@ def random_testing(fn):
             used_seed = initial_seed()
             if 'print_seed' in kwargs:
                 if kwargs['print_seed']:
-                    print "Random seed: %d" % used_seed
+                    print("Random seed: {}".format(used_seed))
                     del kwargs['print_seed']
                 # I don't know if this line is necessary, but it can't
                 # hurt; and it would be a real pity to lose the
@@ -140,20 +140,20 @@ def random_testing(fn):
                 stdout.flush()
             try:
                 fn(*args, **kwargs)
-            except StandardError, e:
-                # We treat any sort of StandardError as a doctest
+            except Exception as e:
+                # We treat any sort of Exception as a doctest
                 # failure.  (We have to eat the exception, because if
                 # doctesting sees an exception, it doesn't display
                 # whatever was printed before the exception happened
                 # -- so the text we print here would be lost.)  Note
-                # that KeyboardInterrupt is not a StandardError, so
+                # that KeyboardInterrupt is not an Exception, so
                 # pressing Control-C doesn't print this message.
-                print "Random testing has revealed a problem in " + fn.__name__
-                print "Please report this bug!  You may be the first"
-                print "person in the world to have seen this problem."
-                print "Please include this random seed in your bug report:"
-                print "Random seed: %d" % used_seed
-                print repr(e)
+                print("Random testing has revealed a problem in " + fn.__name__)
+                print("Please report this bug!  You may be the first")
+                print("person in the world to have seen this problem.")
+                print("Please include this random seed in your bug report:")
+                print("Random seed: {}".format(used_seed))
+                print(repr(e))
     return wrapped_fun
 
 @random_testing
@@ -180,10 +180,10 @@ def test_add_commutes(trials, verbose=False):
         a = QQ.random_element()
         b = QQ.random_element()
         if verbose:
-            print "a == %s, b == %s ..." % (a, b)
+            print("a == {}, b == {} ...".format(a, b))
         assert(a+b == b+a)
         if verbose:
-            print "Passes!"
+            print("Passes!")
 
 @random_testing
 def test_add_is_mul(trials, verbose=False):
@@ -253,8 +253,8 @@ def test_add_is_mul(trials, verbose=False):
         a = QQ.random_element()
         b = QQ.random_element()
         if verbose:
-            print "a == %s, b == %s ..." % (a, b)
+            print("a == {}, b == {} ...".format(a, b))
         assert(a+b == a*b)
         if verbose:
-            print "Passes!"
+            print("Passes!")
 

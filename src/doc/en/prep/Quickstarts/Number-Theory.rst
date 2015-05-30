@@ -44,7 +44,7 @@ we loop over a Sage object.
 ::
 
     sage: for a in Integers(11):
-    ...       print a, a^10
+    ....:     print a, a^10
     0 0
     1 1
     2 1
@@ -179,8 +179,8 @@ you see here?
 
     sage: @interact
     sage: def power_table_plot(p=(7,prime_range(50))):
-    ...       P=matrix_plot(matrix(p-1,[mod(a,p)^b for a in range(1,p) for b in srange(p)]),cmap='jet')
-    ...       show(P)
+    ....:     P=matrix_plot(matrix(p-1,[mod(a,p)^b for a in range(1,p) for b in srange(p)]),cmap='jet')
+    ....:     show(P)
 
 This is a graphic giving the various powers of integers modulo :math:`p`
 as colors, not numbers.  The columns are the powers, so the first column
@@ -194,6 +194,7 @@ One more very useful object is the prime counting function
 
     sage: prime_pi(100); plot(prime_pi,1,100)
     25
+    Graphics object consisting of 1 graphics primitive
 
 A very nice aspect of Sage is combining several aspects of mathematics
 together.  It can be very eye\-opening to students to see analytic
@@ -206,6 +207,7 @@ was a cryptographic key!)
     sage: var('x')
     x
     sage: plot(prime_pi,2,10^6,thickness=2)+plot(Li,2,10^6,color='red')+plot(x/ln(x),2,10^6,color='green')
+    Graphics object consisting of 3 graphics primitives
 
 Advanced Number Theory
 ----------------------
@@ -236,6 +238,7 @@ Riemann zeta.
 ::
 
     sage: complex_plot(zeta, (-30,30), (-30,30))
+    Graphics object consisting of 1 graphics primitive
 
 Cryptography
 ------------

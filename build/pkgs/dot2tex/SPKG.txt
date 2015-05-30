@@ -1,0 +1,34 @@
+= dot2tex =
+
+== Description ==
+
+dot2tex is a Python module, whose purpose is to give graphs generated
+by Graphviz a more LaTeX friendly look and feel. This is accomplished
+by converting xdot output from Graphviz to a series of PSTricks or
+PGF/TikZ commands.
+
+See http://www.fauskes.net/code/dot2tex/
+or http://dot2tex.googlecode.com/
+
+== License ==
+ * MIT
+
+== SPKG Maintainers ==
+ * Nicolas M. Thiery
+
+== Upstream Contact ==
+ * Kjell Magne Fauske, km@fauskes.net
+
+== Dependencies ==
+
+graphviz (www.graphviz.org) should be installed and in the path (for
+example via the graphviz spkg).
+
+preview, a LaTeX package for extracting parts of a document.
+
+== Special Update/Build Instructions ==
+
+Make sure corresponding optional doctests still pass:
+
+    sage -t --long --optional=dot2tex,graphviz,sage src/
+

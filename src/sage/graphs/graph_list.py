@@ -239,21 +239,18 @@ def to_sparse6(list, file = None, output_list=False):
         file.write(l)
         file.flush()
 
-def to_graphics_arrays(list, **kwds):
+        
+def to_graphics_array(graph_list, **kwds):
     """
-    Returns a list of Sage graphics arrays containing the graphs in
-    list. The maximum number of graphs per array is 20 (5 rows of 4).
-    Use this function if there are too many graphs for the show_graphs
-    function. The graphics arrays will contain 20 graphs each except
-    potentially the last graphics array in the list.
+    Draw all graphs in a graphics array
 
     INPUT:
 
+    -  ``graph_list`` - a list of Sage graphs
 
-    -  ``list`` - a list of Sage graphs
+    GRAPH PLOTTING: 
 
-
-    GRAPH PLOTTING: Defaults to circular layout for graphs. This allows
+    Defaults to circular layout for graphs. This allows
     for a nicer display in a small area and takes much less time to
     compute than the spring- layout algorithm for many graphs.
 
@@ -261,83 +258,44 @@ def to_graphics_arrays(list, **kwds):
 
         sage: glist = []
         sage: for i in range(999):
-        ...    glist.append(graphs.RandomGNP(6,.45))
-        ...
-        sage: garray = graphs_list.to_graphics_arrays(glist)
-
-    Display the first graphics array in the list.
-
-    ::
-
-        sage: garray[0].show()
-
-    Display the last graphics array in the list.
-
-    ::
-
-        sage: garray[len(garray)-1].show()
+        ....:     glist.append(graphs.RandomGNP(6,.45))
+        sage: garray = graphs_list.to_graphics_array(glist)
+        sage: garray.nrows(), garray.ncols()
+        (250, 4)
 
     See the .plot() or .show() documentation for an individual graph
-    for options, all of which are available from to_graphics_arrays
-
-    ::
+    for options, all of which are available from
+    :func:`to_graphics_array`::
 
         sage: glist = []
         sage: for _ in range(10):
         ...       glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: w = graphs_list.to_graphics_arrays(glist, layout='spring', vertex_size=20)
-        sage: len(w)
-        1
-        sage: w[0]
+        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)
+        Graphics Array of size 3 x 4
     """
-    from sage.plot.plot import graphics_array
     from sage.graphs import graph
     plist = []
-    g_arrays = []
-    for i in range (len(list)):
-        if ( isinstance( list[i], graph.GenericGraph ) ):
-            pos = list[i].get_pos()
-            if ( pos is None ):
-                if not kwds.has_key('layout'):
+    for i in range(len(graph_list)):
+        if isinstance(graph_list[i], graph.GenericGraph):
+            pos = graph_list[i].get_pos()
+            if pos is None:
+                if 'layout' not in kwds:
                     kwds['layout'] = 'circular'
-                if not kwds.has_key('vertex_size'):
+                if 'vertex_size' not in kwds:
                     kwds['vertex_size'] = 50
-                if not kwds.has_key('vertex_labels'):
+                if 'vertex_labels' not in kwds:
                     kwds['vertex_labels'] = False
                 kwds['graph_border'] = True
-                plist.append(list[i].plot(**kwds))
-            else: plist.append(list[i].plot(pos=pos, vertex_size=50, vertex_labels=False, graph_border=True))
-        else:  raise TypeError, 'Param list must be a list of Sage (di)graphs.'
+                plist.append(graph_list[i].plot(**kwds))
+            else:
+                plist.append(graph_list[i].plot(pos=pos, vertex_size=50, vertex_labels=False, graph_border=True))
+        else:
+            raise TypeError('param list must be a list of Sage (di)graphs.')
+    from sage.plot.plot import graphics_array
+    return graphics_array(plist, ncols=4)
 
-    num_arrays = len(plist)/20
-    if ( len(plist)%20 > 0 ): num_arrays += 1
-    rows = 5
-    cols = 4
 
-    for i in range (num_arrays-1):
-        glist = []
-        for j in range (rows*cols):
-            glist.append(plist[ i*rows*cols + j ])
-        ga = graphics_array(glist, rows, cols)
-        ga._set_figsize_([8,10])
-        g_arrays.append(ga)
-
-    last = len(plist)%20
-    if ( last == 0 and len(plist) != 0 ): last = 20
-    index = (num_arrays-1)*rows*cols
-    last_rows = last/cols
-    if ( last%cols > 0 ): last_rows += 1
-
-    glist = []
-    for i in range (last):
-        glist.append(plist[ i + index])
-    ga = graphics_array(glist, last_rows, cols)
-    ga._set_figsize_([8, 2*last_rows])
-    g_arrays.append(ga)
-
-    return g_arrays
-
-def show_graphs(list, **kwds):
+def show_graphs(graph_list, **kwds):
     """
     Shows a maximum of 20 graphs from list in a sage graphics array. If
     more than 20 graphs are given in the list argument, then it will
@@ -394,20 +352,18 @@ def show_graphs(list, **kwds):
         sage: graphs_list.show_graphs(g)
 
     See the .plot() or .show() documentation for an individual graph
-    for options, all of which are available from to_graphics_arrays
-
-    ::
+    for options, all of which are available from
+    :func:`to_graphics_array`::
 
         sage: glist = []
         sage: for _ in range(10):
-        ...       glist.append(graphs.RandomLobster(41, .3, .4))
+        ....:     glist.append(graphs.RandomLobster(41, .3, .4))
         sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)
     """
-    ga_list = to_graphics_arrays(list, **kwds)
+    graph_list = list(graph_list)
+    for i in range(len(graph_list) // 20 + 1):
+        graph_slice =graph_list[20*i:20*(i+1)]
+        to_graphics_array(graph_slice, **kwds).show()
 
-    for i in range (len(ga_list)):
-        (ga_list[i]).show()
-
-    return
 
 

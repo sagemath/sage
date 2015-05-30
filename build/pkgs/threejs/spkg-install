@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Check required environment variable
+if [ -z "$SAGE_SHARE" ]; then
+    echo >&2 "SAGE_SHARE undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+# Copy files
+TARGET="${SAGE_SHARE}/threejs"
+rm -rf "${TARGET}"
+cp -r 'src' "${TARGET}"
+

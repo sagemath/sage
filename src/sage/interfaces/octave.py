@@ -173,7 +173,7 @@ class Octave(Expect):
         'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
     """
 
-    def __init__(self, maxread=100, script_subdirectory="", logfile=None, server=None, server_tmpdir=None):
+    def __init__(self, maxread=100, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None):
         """
         EXAMPLES::
 
@@ -299,7 +299,7 @@ class Octave(Expect):
         cmd = '%s=%s;'%(var,value)
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError, "Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
         """
@@ -394,7 +394,7 @@ class Octave(Expect):
         m = A.nrows()
         n = A.ncols()
         if m != len(b):
-            raise ValueError, "dimensions of A and b must be compatible"
+            raise ValueError("dimensions of A and b must be compatible")
         from sage.matrix.all import MatrixSpace
         from sage.rings.all import QQ
         MS = MatrixSpace(QQ,m,1)
@@ -515,7 +515,7 @@ class OctaveElement(ExpectElement):
 
 
 # An instance
-octave = Octave(script_subdirectory='user')
+octave = Octave()
 
 def reduce_load_Octave():
     """

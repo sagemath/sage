@@ -58,7 +58,7 @@ We verify Lagrange's four squares identity::
 from sage.structure.element import CommutativeRingElement, canonical_coercion, coerce_binop
 
 
-import sage.misc.misc as misc
+from sage.misc.all import prod
 import sage.rings.integer
 
 import polydict
@@ -96,7 +96,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: P.<x,y,z> = PolynomialRing(QQbar)
             sage: x + QQbar.random_element() # indirect doctest
-            x + 4
+            x - 4
         """
         return "%s"%self.__element
 
@@ -144,7 +144,7 @@ class MPolynomial_element(MPolynomial):
             x = x[0]
         n = self.parent().ngens()
         if len(x) != n:
-            raise TypeError, "x must be of correct length"
+            raise TypeError("x must be of correct length")
         if n == 0:
             return self
         try:
@@ -153,7 +153,7 @@ class MPolynomial_element(MPolynomial):
             K = self.parent().base_ring()
         y = K(0)
         for (m,c) in self.element().dict().iteritems():
-            y += c*misc.mul([ x[i]**m[i] for i in range(n) if m[i] != 0])
+            y += c*prod([ x[i]**m[i] for i in range(n) if m[i] != 0])
         return y
 
     def __cmp__(self, right):
@@ -205,7 +205,7 @@ class MPolynomial_element(MPolynomial):
             return codomain._coerce_(self)
         y = codomain(0)
         for (m,c) in self.element().dict().iteritems():
-            y += codomain(c)*misc.mul([ im_gens[i]**m[i] for i in range(n) if m[i] ])
+            y += codomain(c)*prod([ im_gens[i]**m[i] for i in range(n) if m[i] ])
         return y
 
 
@@ -295,7 +295,7 @@ class MPolynomial_element(MPolynomial):
 
     def __rpow__(self, n):
         if not isinstance(n, (int, long, sage.rings.integer.Integer)):
-            raise TypeError, "The exponent must be an integer."
+            raise TypeError("The exponent must be an integer.")
         return self.parent()(self.__element**n)
 
     def element(self):
@@ -477,15 +477,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-
-        -  ``x`` - multivariate polynomial (a generator of the
-           parent of self) If x is not specified (or is None), return the
-           total degree, which is the maximum degree of any monomial.
-
+        - ``x`` - multivariate polynomial (a generator of the parent
+           of self). If ``x`` is not specified (or is None), return
+           the total degree, which is the maximum degree of any
+           monomial.
 
         OUTPUT: integer
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x,y> = RR[]
             sage: f = y^2 - x^9 - x
@@ -497,13 +496,43 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             3
             sage: (y^10*x - 7*x^2*y^5 + 5*x^3).degree(y)
             10
+
+        Note that if ``x`` is not a generator of the parent of self,
+        for example if it is a generator of a polynomial algebra which
+        maps naturally to this one, then it is converted to an element
+        of this algebra. (This fixes the problem reported in
+        :trac:`17366`.)
+
+        ::
+
+            sage: x, y = ZZ['x','y'].gens()
+            sage: GF(3037000453)['x','y'].gen(0).degree(x)
+            1
+
+            sage: x0, y0 = QQ['x','y'].gens()
+            sage: GF(3037000453)['x','y'].gen(0).degree(x0)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must canonically coerce to parent
+
+            sage: GF(3037000453)['x','y'].gen(0).degree(x^2)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be one of the generators of the parent
         """
         if x is None:
             return self.element().degree(None)
-        if not (isinstance(x, MPolynomial) and x.parent() is self.parent() and x.is_generator()):
-            raise TypeError, "x must be one of the generators of the parent."
+        if isinstance(x, MPolynomial):
+            if not x.parent() is self.parent():
+                try:
+                    x = self.parent().coerce(x)
+                except TypeError:
+                    raise TypeError("x must canonically coerce to parent")
+            if not x.is_generator():
+                raise TypeError("x must be one of the generators of the parent")
+        else:
+            raise TypeError("x must be one of the generators of the parent")
         return self.element().degree(x.element())
-
 
     def total_degree(self):
         """
@@ -598,7 +627,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             -a
         """
         if not (isinstance(mon, MPolynomial) and mon.parent() is self.parent() and mon.is_monomial()):
-            raise TypeError, "mon must be a monomial in the parent of self."
+            raise TypeError("mon must be a monomial in the parent of self.")
         R = self.parent().base_ring()
         return R(self.element().monomial_coefficient(mon.element().dict()))
 
@@ -748,9 +777,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         looking_for = None
         if isinstance(degrees, MPolynomial) and degrees.parent() == self.parent() and degrees.is_monomial():
             looking_for = [e if e > 0 else None for e in degrees.exponents()[0]]
-        elif type(degrees) is list:
+        elif isinstance(degrees, list):
             looking_for = degrees
-        elif type(degrees) is dict:
+        elif isinstance(degrees, dict):
             poly_vars = self.parent().gens()
             looking_for = [None] * len(poly_vars)
             for d, exp in degrees.items():
@@ -758,12 +787,21 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                     if d == poly_vars[i]:
                         looking_for[i] = exp
         if not looking_for:
-            raise ValueError, "You must pass a dictionary list or monomial."
+            raise ValueError("You must pass a dictionary list or monomial.")
         return self.parent()(self.element().polynomial_coefficient(looking_for))
 
-    def exponents(self):
+    def exponents(self, as_ETuples=True):
         """
         Return the exponents of the monomials appearing in self.
+
+        INPUT:
+
+        - as_ETuples (default: ``True``): return the list of exponents as a list
+          of ETuples.
+
+        OUTPUT:
+
+        Return the list of exponents as a list of ETuples or tuples.
 
         EXAMPLES::
 
@@ -771,16 +809,30 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = a^3 + b + 2*b^2
             sage: f.exponents()
             [(3, 0, 0), (0, 2, 0), (0, 1, 0)]
+
+        Be default the list of exponents is a list of ETuples::
+
+            sage: type(f.exponents()[0])
+            <type 'sage.rings.polynomial.polydict.ETuple'>
+            sage: type(f.exponents(as_ETuples=False)[0])
+            <type 'tuple'>
         """
         try:
-            return self.__exponents
+            exp = self.__exponents
+            if as_ETuples:
+                return exp
+            else:
+                return [tuple(e) for e in exp]
         except AttributeError:
             self.__exponents = self.element().dict().keys()
             try:
                 self.__exponents.sort(cmp=self.parent().term_order().compare_tuples, reverse=True)
             except AttributeError:
                 pass
-            return self.__exponents
+            if as_ETuples:
+                return self.__exponents
+            else:
+                return [tuple(e) for e in self.__exponents]
 
     def is_unit(self):
         """
@@ -813,10 +865,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         d = self.element().dict()
         k = d.keys()
         if len(k) != 1:
-            raise ArithmeticError, "is not a unit"
+            raise ArithmeticError("is not a unit")
         k = k[0]
         if k != polydict.ETuple([0]*self.parent().ngens()):
-            raise ArithmeticError, "is not a unit"
+            raise ArithmeticError("is not a unit")
         return ~d[k]
 
     def is_homogeneous(self):
@@ -989,9 +1041,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         variables = list(self.parent().gens())
         for i in range(0,len(variables)):
-            if kw.has_key(str(variables[i])):
+            if str(variables[i]) in kw:
                 variables[i]=kw[str(variables[i])]
-            elif fixed and fixed.has_key(variables[i]):
+            elif fixed and variables[i] in fixed:
                 variables[i] = fixed[variables[i]]
         return self(tuple(variables))
 
@@ -1130,7 +1182,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 return R(self)
 
         if not self.is_univariate():
-            raise TypeError, "polynomial must involve at most one variable"
+            raise TypeError("polynomial must involve at most one variable")
 
         #construct ring if None
         if R is None:
@@ -1284,7 +1336,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             R = self.parent()
             f = self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )
             one = R.base_ring()(1)
-            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f:one},zero=R.base_ring().zero_element(),force_int_exponents=False,  force_etuples=False))
+            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f:one},zero=R.base_ring().zero(),force_int_exponents=False,  force_etuples=False))
             return self.__lm
 
     def lc(self):
@@ -1343,36 +1395,23 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             R = self.parent()
             f = self._MPolynomial_element__element.dict()
             res = self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )
-            self.__lt = MPolynomial_polydict(R,polydict.PolyDict({res:f[res]},zero=R.base_ring().zero_element(),force_int_exponents=False, force_etuples=False))
+            self.__lt = MPolynomial_polydict(R,polydict.PolyDict({res:f[res]},zero=R.base_ring().zero(),force_int_exponents=False, force_etuples=False))
             return self.__lt
 
     def __eq__(self,right):
-        """
-
-        """
-        if not isinstance(right,MPolynomial_polydict):
+        if not isinstance(right, MPolynomial_polydict):
             # we want comparison with zero to be fast
-            if right == 0:
-                if self._MPolynomial_element__element.dict()=={}:
-                    return True
-                else:
-                    return False
-            return self._richcmp_(right,2)
+            if not right:
+                return not self._MPolynomial_element__element.dict()
+            return CommutativeRingElement.__eq__(self, right)
         return self._MPolynomial_element__element == right._MPolynomial_element__element
 
     def __ne__(self,right):
-        """
-
-        """
-        if not isinstance(right,MPolynomial_polydict):
+        if not isinstance(right, MPolynomial_polydict):
             # we want comparison with zero to be fast
-            if right == 0:
-                if self._MPolynomial_element__element.dict()=={}:
-                    return False
-                else:
-                    return True
-            # maybe add constant elements as well
-            return self._richcmp_(right,3)
+            if not right:
+                return not not self._MPolynomial_element__element.dict()
+            return CommutativeRingElement.__ne__(self, right)
         return self._MPolynomial_element__element != right._MPolynomial_element__element
 
     def __nonzero__(self):
@@ -1406,14 +1445,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: type(0//y)
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
         """
-        if type(self) is not type(right) or self.parent() is not right.parent():
+        if not isinstance(self, type(right)) or self.parent() is not right.parent():
             self, right = canonical_coercion(self, right)
             return self // right  # this looks like recursion, but, in fact, it may be that self, right are a totally new composite type
         # handle division by monomials without using Singular
         if len(right.dict()) == 1:
             P = self.parent()
             ret = P(0)
-            denC,denM = iter(right).next()
+            denC,denM = next(iter(right))
             for c,m in self:
                 t = c*m
                 if denC.divides(c) and P.monomial_divides(denM, m):
@@ -1604,12 +1643,19 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             Traceback (most recent call last):
             ...
             NotImplementedError: Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+
+        We check that the original issue in :trac:`7554` is fixed::
+
+            sage: K.<a> = PolynomialRing(QQ)
+            sage: R.<x,y> = PolynomialRing(FractionField(K))
+            sage: factor(x)
+            x
         """
         R = self.parent()
 
         # raise error if trying to factor zero
         if self == 0:
-            raise ArithmeticError, "Prime factorization of 0 not defined."
+            raise ArithmeticError("Prime factorization of 0 not defined.")
 
         # if number of variables is zero ...
         if R.ngens() == 0:
@@ -1630,17 +1676,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         base_ring = self.base_ring()
         if base_ring.is_finite():
             if base_ring.characteristic() > 1<<29:
-                raise NotImplementedError, "Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented."
+                raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
         if proof:
-            raise NotImplementedError, "proof = True factorization not implemented.  Call factor with proof=False."
+            raise NotImplementedError("proof = True factorization not implemented.  Call factor with proof=False.")
 
         R._singular_().set_ring()
         S = self._singular_().factorize()
         factors = S[1]
         exponents = S[2]
-        v = [(R(factors[i+1]), sage.rings.integer.Integer(exponents[i+1])) \
-                        for i in range(len(factors))]
-        v.sort()
+        v = sorted([(R(factors[i+1]), sage.rings.integer.Integer(exponents[i+1])) \
+                        for i in range(len(factors))])
         unit = R(1)
         for i in range(len(v)):
             if v[i][0].is_unit():
@@ -1675,41 +1720,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         try:
             M = Is.lift(fs)._sage_(P)
         except TypeError:
-            raise ArithmeticError, "f is not in I"
+            raise ArithmeticError("f is not in I")
         return Sequence(M.list(), P, check=False, immutable=True)
-
-    #def gcd(self, f):
-    #    """
-    #    Compute the greatest common divisor of this polynomial and f.
-    #
-    #    ALGORITHM: Use Singular.
-    #
-    #    EXAMPLES:
-    #        sage: R.<x,y> = CC[]
-    #        sage: gcd(2*x,4*x)
-    #        2*x
-    #        sage: gcd(2*x,4*x)
-    #        2*x
-    #        sage: gcd(9*x*y*(x^2-y^2), 15*x*y^2*(x^2+y^2))
-    #        3*x*y
-    #
-    #    """
-    #    if type(self) is not type(f) or self.parent() is not f.parent():
-    #        self, f = canonical_coercion(self, f)
-    #        return self.gcd(f)  # this looks like recursion, but, in fact, it may be that self, right are a totally new composite type
-    #
-    #    # Singular ignores coefficients anyway, thus it is okay to work over Z here
-    #    # PARI uses the coefficients btw.
-    #    # TODO: This is slow
-    #
-    #    P = self.parent()
-    #    if P.base_ring() == ZZ:
-    #        res = self.parent()(self._singular_(force=True).gcd(f._singular_(force=True)))
-    #        coef = gcd(self.element().dict().values() + f.element().dict().values(),True)
-    #        return coef*res
-    #
-    #    P._singular_().set_ring()
-    #    return P(self._singular_().gcd(f._singular_()))
 
     @coerce_binop
     def quo_rem(self, right):
@@ -1725,13 +1737,66 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ALGORITHM: Use Singular.
         """
-        if type(self) is not type(right) or self.parent() is not right.parent():
-            self, right = canonical_coercion(self, right)
-            return self.quo_rem(right)  # this looks like recursion, but, in fact, it may be that self, right are a totally new composite type
         R = self.parent()
         R._singular_().set_ring()
         X = self._singular_().division(right._singular_())
         return R(X[1][1,1]), R(X[2][1])
+
+    def resultant(self, other, variable=None):
+        """
+        Compute the resultant of ``self`` and ``other`` with respect
+        to ``variable``.
+
+        If a second argument is not provided, the first variable of
+        ``self.parent()`` is chosen.
+
+        INPUT:
+
+        - ``other`` -- polynomial in ``self.parent()``
+
+        - ``variable`` -- (optional) variable (of type polynomial) in
+          ``self.parent()``
+
+        EXAMPLES::
+
+            sage: P.<x,y> = PolynomialRing(QQ, 2)
+            sage: a = x + y
+            sage: b = x^3 - y^3
+            sage: a.resultant(b)
+            -2*y^3
+            sage: a.resultant(b, y)
+            2*x^3
+
+        TESTS::
+
+            sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
+            sage: P.<x,y> = MPolynomialRing_polydict_domain(QQ, 2, order='degrevlex')
+            sage: a = x + y
+            sage: b = x^3 - y^3
+            sage: a.resultant(b)
+            -2*y^3
+            sage: a.resultant(b, y)
+            2*x^3
+
+        Check that :trac:`15061` is fixed::
+
+            sage: R.<x, y> = AA[]
+            sage: (x^2 + 1).resultant(x^2 - y)
+            y^2 + 2*y + 1
+
+        """
+        R = self.parent()
+        if variable is None:
+            variable = R.gen(0)
+        if R._has_singular:
+            rt = self._singular_().resultant(other._singular_(), variable._singular_())
+            r = rt.sage_poly(R)
+        else:
+            r = self.sylvester_matrix(other, variable).det()
+        if R.ngens() <= 1 and r.degree() <= 0:
+            return R.base_ring()(r[0])
+        else:
+            return r
 
     def reduce(self, I):
         """
@@ -1790,7 +1855,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             I = I.gens()
 
         if not k.is_field():
-            raise TypeError, "Can only reduce polynomials over fields."
+            raise TypeError("Can only reduce polynomials over fields.")
 
         try:
             fs = self._singular_()

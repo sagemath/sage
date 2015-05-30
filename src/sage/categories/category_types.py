@@ -16,8 +16,9 @@ This is placed in a separate file from categories.py to avoid circular imports
 
 from sage.misc.latex import latex
 from sage.misc.unknown import Unknown
-from category import Category, CategoryWithParameters
-from objects import Objects
+from category import JoinCategory, Category, CategoryWithParameters
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.categories.objects', 'Objects')
 
 ####################################################################
 #   Different types of categories
@@ -110,106 +111,79 @@ class Elements(Category):
 
 
 #############################################################
-# Category of sequences of elements of objects
-#############################################################
-class Sequences(Category):
-    """
-    The category of sequences of elements of a given object.
-
-    This category is deprecated.
-
-    EXAMPLES::
-
-        sage: v = Sequence([1,2,3]); v
-        [1, 2, 3]
-        sage: C = v.category(); C
-        Category of sequences in Integer Ring
-        sage: loads(C.dumps()) == C
-        True
-        sage: Sequences(ZZ) is C
-        True
-
-        True
-        sage: Sequences(ZZ).category()
-        Category of objects
-    """
-    def __init__(self, object):
-        Category.__init__(self)
-        self.__object = object
-
-    @classmethod
-    def an_instance(cls):
-        """
-        Returns an instance of this class
-
-        EXAMPLES::
-
-            sage: Elements(ZZ)
-            Category of elements of Integer Ring
-        """
-        from sage.rings.rational_field import QQ
-        return cls(QQ)
-
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: Sequences(ZZ).super_categories()
-            [Category of objects]
-        """
-        return [Objects()]  # Almost FiniteEnumeratedSets() except for possible repetitions
-
-    def _call_(self, x):
-        """
-        EXAMPLES::
-
-            sage: v = Sequence([1,2,3]); v
-            [1, 2, 3]
-            sage: C = v.category(); C
-            Category of sequences in Integer Ring
-            sage: w = C([2/1, 3/1, GF(2)(5)]); w # indirect doctest
-            [2, 3, 1]
-            sage: w.category()
-            Category of sequences in Integer Ring
-        """
-        from sage.structure.sequence import Sequence
-        return Sequence(x, self.__object)
-
-    def object(self):
-        return self.__object
-
-    def __reduce__(self):
-        return Sequences, (self.__object, )
-
-    def _repr_object_names(self):
-        return "sequences in %s"%self.object()
-
-    def _latex_(self):
-        r"""
-        EXAMPLES::
-
-            sage: v = Sequence([1,2,3])
-            sage: latex(v.category()) # indirect doctest
-            \mathbf{Seq}_{\Bold{Z}}
-        """
-
-        return "\\mathbf{Seq}_{%s}"%latex(self.__object)
-
-#############################################################
 # Category of objects over some base object
 #############################################################
 class Category_over_base(CategoryWithParameters):
+    r"""
+    A base class for categories over some base object
+
+    INPUT:
+
+    - ``base`` -- a category `C` or an object of such a category
+
+    Assumption: the classes for the parents, elements, morphisms, of
+    ``self`` should only depend on `C`. See :trac:`11935` for details.
+
+    EXAMPLES::
+
+        sage: Algebras(GF(2)).element_class is Algebras(GF(3)).element_class
+        True
+
+        sage: C = GF(2).category()
+        sage: Algebras(GF(2)).parent_class is Algebras(C).parent_class
+        True
+
+        sage: C = ZZ.category()
+        sage: Algebras(ZZ).element_class is Algebras(C).element_class
+        True
+    """
+
     def __init__(self, base, name=None):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: S = Spec(ZZ)
+            sage: C = Schemes(S); C
+            Category of schemes over Integer Ring
+            sage: C.__class__.__init__ == sage.categories.category_types.Category_over_base.__init__
+            True
+            sage: C.base() is S
+            True
+            sage: TestSuite(C).run()
+        """
         self.__base = base
         Category.__init__(self, name)
+
+    def _test_category_over_bases(self, **options):
+        """
+        Run generic tests on this category with parameters.
+
+        .. SEEALSO:: :class:`TestSuite`.
+
+        EXAMPLES::
+
+            sage: Modules(QQ)._test_category_over_bases()
+        """
+        tester = self._tester(**options)
+        from sage.categories.category_singleton import Category_singleton
+        from bimodules import Bimodules
+        from schemes import Schemes
+        for cat in self.super_categories():
+            tester.assert_(isinstance(cat, (Category_singleton, Category_over_base,
+                                            Bimodules, Schemes)),
+                           "The super categories of a category over base should"
+                           " be a category over base (or the related Bimodules)"
+                           " or a singleton category")
 
     def _make_named_class_key(self, name):
         r"""
         Return what the element/parent/... classes depend on.
 
         Since :trac:`11935`, the element and parent classes of a
-        category over base only depend on the categories of the base
-        ring.
+        category over base only depend on the category of the base (or
+        the base itself if it is a category).
 
         .. SEEALSO::
 
@@ -219,14 +193,18 @@ class Category_over_base(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Category of euclidean domains
+            Join of Category of euclidean domains and Category of infinite enumerated sets
             sage: Modules(QQ)._make_named_class_key('parent_class')
             Category of quotient fields
             sage: Schemes(Spec(ZZ))._make_named_class_key('parent_class')
-            Category of Schemes
+            Category of schemes
             sage: ModularAbelianVarieties(QQ)._make_named_class_key('parent_class')
             Category of quotient fields
+            sage: Algebras(Fields())._make_named_class_key('morphism_class')
+            Category of fields
         """
+        if isinstance(self.__base, Category):
+            return self.__base
         return self.__base.category()
 
     @classmethod
@@ -250,20 +228,42 @@ class Category_over_base(CategoryWithParameters):
         return self.__base
 
     def _repr_object_names(self):
-        return Category._repr_object_names(self) + " over %s"%self.__base
+        r"""
+        Return the name of the objects of this category.
+
+        .. SEEALSO:: :meth:`Category._repr_object_names`
+
+        EXAMPLES::
+
+            sage: Algebras(QQ)._repr_object_names()
+            'algebras over Rational Field'
+            sage: Algebras(Fields())._repr_object_names()
+            'algebras over fields'
+            sage: Algebras(GF(2).category())._repr_object_names()
+            'algebras over (finite fields and subquotients of monoids and quotients of semigroups)'
+        """
+        base = self.__base
+        if isinstance(base, Category):
+            if isinstance(base, JoinCategory):
+                name = '('+' and '.join(C._repr_object_names() for C in base.super_categories())+')'
+            else:
+                name = base._repr_object_names()
+        else:
+            name = base
+        return Category._repr_object_names(self) + " over %s"%name
 
     def _latex_(self):
         r"""
         EXAMPLES::
 
-            sage: latex(ModulesWithBasis(QQ))
-            \mathbf{ModulesWithBasis}_{\Bold{Q}}
+            sage: latex(ModulesWithBasis(ZZ))
+            \mathbf{ModulesWithBasis}_{\Bold{Z}}
         """
         return "\\mathbf{%s}_{%s}"%(self._label, latex(self.__base))
 
     def _subcategory_hook_(self, C):
         """
-        A quick test whether a category ``C`` may be subcategory of
+        A quick test whether a category ``C`` may be a subcategory of
         this category.
 
         INPUT:
@@ -276,25 +276,86 @@ class Category_over_base(CategoryWithParameters):
         subcategory of self. :obj:`~sage.misc.unknown.Unknown`
         otherwise.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: Algebras(QQ)._subcategory_hook_(HopfAlgebras(QQ))
-            True
-            sage: Algebras(QQ)._subcategory_hook_(HopfAlgebras(ZZ))
+        The answer is ``False`` if the subcategory class of ``C`` is
+        not a subclass of the subcategory class of ``self``::
+
+            sage: Algebras(QQ)._subcategory_hook_(VectorSpaces(QQ))
             False
-            sage: VectorSpaces(QQ)._subcategory_hook_(VectorSpaces(QQ).hom_category())
-            True
-            sage: VectorSpaces(QQ)._subcategory_hook_(Category.join([VectorSpaces(QQ).hom_category(),Rings()]))
+            sage: VectorSpaces(QQ)._subcategory_hook_(Algebras(ZZ))
+            False
+
+        .. WARNING::
+
+            This test currently includes some false negatives::
+
+                sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))
+                False
+                sage: Modules(Rings())._subcategory_hook_(Modules(GroupAlgebras(Rings())))
+                False
+
+        The answer is unknown if ``C`` is not a category over base::
+
+            sage: VectorSpaces(QQ)._subcategory_hook_(VectorSpaces(QQ) & Rings())
             Unknown
+
+        Otherwise, the answer is ``True`` in the three following
+        cases, and ``False`` otherwise.
+
+        Case 1: the two bases are categories, and the base of ``C`` is
+        a subcategory of the base of ``self``::
+
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields()))
+            True
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) # todo: not implemented
+            True
+            sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(Fields()))
+            False
+
+        Case 2: the base of ``self`` is a category, and the base of
+        ``C`` is a parent in this category::
+
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                # todo: not implemented
+            True
+            sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(QQ))
+            False
+
+        Case 3: the two bases are parents and coincide::
+
+            sage: VectorSpaces(QQ)._subcategory_hook_(Algebras(QQ))
+            True
+            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categoriess
+            False
+            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category
+            Unknown
+
+        In this last example, it would be better to return ``False`` ;
+        however this is only guaranteed correct if e.g. ``self`` and
+        ``C`` are both categories over a base ring. Here is an example
+        where this is not the case::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases
+            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))
+            True
+            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))
+            Unknown
+
+        Maybe such situations should be forbidden.
 
         """
         if not issubclass(C.parent_class, self.parent_class):
             return False
-        try:
-            if C.base() is self.__base:
-                return True
-        except AttributeError:
-            pass
+        if not isinstance(C, Category_over_base):
+            return Unknown
+        if C.base() is self.__base:
+            return True
+        if isinstance(self.__base, Category):
+            if isinstance(C.base(), Category):
+                return C.base().is_subcategory(self.__base)
+            # else C.base() is a parent
+            return C.base() in self.__base
         return Unknown
 
 #    def construction(self):
@@ -322,16 +383,73 @@ class AbelianCategory(Category):
 
 class Category_over_base_ring(Category_over_base):
     def __init__(self, base, name=None):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: C = Algebras(GF(2)); C
+            Category of algebras over Finite Field of size 2
+            sage: TestSuite(C).run()
+        """
         from sage.categories.rings import Rings
-        assert base in Rings(), "base must be a ring"
+        if not (base in Rings or
+                isinstance(base, Category) and base.is_subcategory(Rings())):
+            raise ValueError("base must be a ring or a subcategory of Rings()")
         Category_over_base.__init__(self, base, name)
 
     def base_ring(self):
         """
         Return the base ring over which elements of this category are
         defined.
+
+        EXAMPLES::
+
+            sage: C = Algebras(GF(2))
+            sage: C.base_ring()
+            Finite Field of size 2
         """
         return self.base()
+
+    def __contains__(self, x):
+        """
+        Return whether ``x`` is an object of this category.
+
+        In most cases, ``x`` is an object in this category, if and
+        only if the category of ``x`` is a subcategory of ``self``.
+        Exception: ``x`` is also an object in this category if ``x``
+        is in a category over a base ring category ``C``, and ``self``
+        is a category over a base ring in ``C``.
+
+        This method implements this exception.
+
+        EXAMPLES::
+
+            sage: QQ['x'] in Algebras(QQ)
+            True
+            sage: ZZ['x'] in Algebras(ZZ)
+            True
+
+        We also would want the following to hold::
+
+            sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
+            True
+
+        """
+        try:
+            # The issubclass test handles extension types or when the
+            # category is not fully initialized
+            if isinstance(x, self.parent_class) or \
+               issubclass(x.category().parent_class, self.parent_class):
+                if isinstance(self.base(), Category):
+                    return True
+                else:
+                    return x.base_ring() is self.base_ring()
+            else:
+                return super(Category_over_base_ring, self).__contains__(x)
+        except AttributeError:
+            return False
+
 
 #############################################################
 # Category of objects in some ambient object

@@ -10,7 +10,7 @@ Quasisymmetric functions, denoted `QSym`, form a subring of the power
 series ring in countably many variables. `QSym` contains the symmetric
 functions.  These functions first arose in the theory of
 `P`-partitions.  The initial ideas in this field are attributed to
-MacMahon, Knuth, Kreweras, Glâffrwd Thomas, Stanley. In 1984, Gessel
+MacMahon, Knuth, Kreweras, Glânffrwd Thomas, Stanley. In 1984, Gessel
 formalized the study of quasisymmetric functions and introduced the
 basis of fundamental quasisymmetric functions [Ges]_. In 1995, Gelfand,
 Krob, Lascoux, Leclerc, Retakh, and Thibon showed that the ring of
@@ -38,10 +38,10 @@ numbers `\QQ`.  Other options include the integers `\ZZ` and `\CC`::
     Quasisymmetric functions over the Integer Ring
 
 All bases of `QSym` are indexed by compositions e.g. `[3,1,1,4]`. The
-convention is to use capitol letters for bases of `QSym` and lowercase
+convention is to use capital letters for bases of `QSym` and lowercase
 letters for bases of the symmetric functions `Sym`.  Next set up names for the
 known bases by running ``inject_shorthands()``. As with symmetric functions,
-you do not need to run this commmand and you could assign these bases other
+you do not need to run this command and you could assign these bases other
 names. ::
 
     sage: QSym = QuasiSymmetricFunctions(QQ)
@@ -111,7 +111,7 @@ and the support::
     [M[1, 2], M[3, 3], M[6]]
 
     sage: z.monomial_coefficients()
-    {[3, 3]: 2, [1, 2]: 3, [6]: 1}
+    {[1, 2]: 3, [3, 3]: 2, [6]: 1}
 
 As with the symmetric functions package, the quasisymmetric function ``1``
 has several instantiations. However, the most obvious way to write ``1``
@@ -137,7 +137,8 @@ Working with symmetric functions
 The quasisymmetric functions are a ring which contains the symmetric
 functions as a subring.  The Monomial quasisymmetric functions are
 related to the monomial symmetric functions by `m_\lambda =
-\sum_{sort(c) = \lambda} M_c`::
+\sum_{\mathrm{sort}(c) = \lambda} M_c`, where `\mathrm{sort}(c)`
+means the partition obtained by sorting the composition `c`::
 
     sage: SymmetricFunctions(QQ).inject_shorthands()
     doctest:...: RuntimeWarning: redefining global value `e`
@@ -220,7 +221,7 @@ equal to the base ring of ``Ht``::
 QSym is a Hopf algebra
 ----------------------
 
-The product on this space is commutative and is inherited from the
+The product on `QSym` is commutative and is inherited from the
 product by the realization within the polynomial ring::
 
     sage: M[3]*M[1,1] == M[1,1]*M[3]
@@ -324,7 +325,7 @@ as follows::
 
     sage: X = S[2,1,4,1].coproduct()
     sage: def linear_morphism(x, y):
-    ...     return x.duality_pairing(M[1,3]) * y.duality_pairing(M[2,1,1])
+    ....:     return x.duality_pairing(M[1,3]) * y.duality_pairing(M[2,1,1])
     sage: X.apply_multilinear_morphism(linear_morphism, codomain=ZZ)
     1
 
@@ -354,7 +355,7 @@ as above::
 
     sage: X = F[2,3,1].coproduct()
     sage: def linear_morphism(x, y):
-    ...     return x.duality_pairing(R[2,1]) * y.duality_pairing(R[2,1])
+    ....:     return x.duality_pairing(R[2,1]) * y.duality_pairing(R[2,1])
     sage: X.apply_multilinear_morphism(linear_morphism, codomain=ZZ)
     1
 
@@ -375,10 +376,9 @@ This is implemented by the method
 :meth:`~sage.combinat.ncsf_qsym.generic_basis_code.BasesOfQSymOrNCSF.ElementMethods.skew_by()`.
 Explicitly, if ``H`` is a quasisymmetric function and ``g``
 a non-commutative symmetric function, then ``H.skew_by(g)`` and
-``H.skew_by(g, side='right')`` are expressions that satisfy
-for any non-commutative symmetric function ``h``.
-
-::
+``H.skew_by(g, side='right')`` are expressions that satisfy,
+for any non-commutative symmetric function ``h``, the following
+identities::
 
     H.skew_by(g).duality_pairing(h) == H.duality_pairing(g*h)
     H.skew_by(g, side='right').duality_pairing(h) == H.duality_pairing(h*g)

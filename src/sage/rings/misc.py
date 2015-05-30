@@ -1,3 +1,5 @@
+"Miscellaneous utilities"
+
 ###########################################################################
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>               #
 #  Distributed under the terms of the GNU General Public License (GPL)    #
@@ -33,5 +35,5 @@ def composite_field(K, L):
     """
     C = Sequence([K(0), L(0)]).universe()
     if C not in _Fields:
-        raise ValueError, "unable to find a common field"
+        raise ValueError("unable to find a common field")
     return C

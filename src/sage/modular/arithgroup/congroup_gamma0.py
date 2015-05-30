@@ -22,13 +22,9 @@ from congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import (IntegerModRing, kronecker_symbol, ZZ)
-from sage.misc.misc import prod
+from sage.misc.all import prod
 import sage.modular.modsym.p1list
 import sage.rings.arith as arith
-
-# Just for now until we make an SL_2 group type.
-from sage.matrix.matrix_space import MatrixSpace
-Mat2Z = MatrixSpace(ZZ,2)
 
 
 def is_Gamma0(x):
@@ -376,15 +372,15 @@ class Gamma0_class(GammaH_class):
 
         elif algorithm=="todd-coxeter":
             from sage.modular.modsym.p1list import P1List
-            from congroup_pyx import generators_helper
+            from congroup import generators_helper
             level = self.level()
             if level == 1: # P1List isn't very happy working mod 1
                 return [ self([0,-1,1,0]), self([1,1,0,1]) ]
-            gen_list = generators_helper(P1List(level), level, Mat2Z)
+            gen_list = generators_helper(P1List(level), level)
             return [self(g, check=False) for g in gen_list]
 
         else:
-            raise ValueError, "Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm
+            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def gamma_h_subgroups(self):
         r"""

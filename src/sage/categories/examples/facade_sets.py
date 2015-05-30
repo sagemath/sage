@@ -27,7 +27,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
-        sage: S = Sets().Facades().example(); S
+        sage: S = Sets().Facade().example(); S
         An example of facade set: the monoid of positive integers
 
     TESTS::
@@ -75,7 +75,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: S = Sets().Facades().example()   # indirect doctest
+            sage: S = Sets().Facade().example()   # indirect doctest
 
         """
         return "An example of facade set: the monoid of positive integers"
@@ -91,7 +91,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: S = Sets().Facades().example(); S
+            sage: S = Sets().Facade().example(); S
             An example of facade set: the monoid of positive integers
             sage: S(1)
             1
@@ -114,7 +114,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         if object > ZZ(0):
             return object
         else:
-            raise ValueError, "%s should be positive"
+            raise ValueError("%s should be positive")
 
 class IntegersCompletion(UniqueRepresentation, Parent):
     r"""
@@ -126,7 +126,7 @@ class IntegersCompletion(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
-        sage: S = Sets().Facades().example("union"); S
+        sage: S = Sets().Facade().example("union"); S
         An example of a facade set: the integers completed by +-infinity
 
     TESTS::
@@ -174,7 +174,7 @@ class IntegersCompletion(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: S = Sets().Facades().example()   # indirect doctest
+            sage: S = Sets().Facade().example()   # indirect doctest
 
         """
         return "An example of a facade set: the integers completed by +-infinity"

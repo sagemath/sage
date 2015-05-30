@@ -4,69 +4,72 @@ from sage.matrix.matrix import is_Matrix
 from sage.rings.arith import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
-def is_triangular_number(n):
+def is_triangular_number(n, return_value=False):
     """
-    Determines if the integer n is a triangular number.
-    (I.e. determine if n = a*(a+1)/2 for some natural number a.)
-    If so, return the number a, otherwise return False.
+    Return whether ``n`` is a triangular number.
 
-    Note: As a convention, n=0 is considered triangular for the
-    number a=0 only (and not for a=-1).
+    A *triangular number* is a number of the form `k(k+1)/2` for some
+    non-negative integer `n`. See :wikipedia:`Triangular_number`. The sequence
+    of triangular number is references as A000217 in the Online encyclopedia of
+    integer sequences (OEIS).
 
-    WARNING: Any non-zero value will return True, so this will test as
-    True iff n is triangular and not zero.  If n is zero, then this
-    will return the integer zero, which tests as False, so one must test
-
-        if is_triangular_number(n) != False:
-
-    instead of
-
-        if is_triangular_number(n):
-
-    to get zero to appear triangular.
-
+    If you want to get the value of `k` for which `n=k(k+1)/2` set the
+    argument ``return_value`` to ``True`` (see the examples below).
 
     INPUT:
-        an integer
 
-    OUTPUT:
-        either False or a non-negative integer
+    - ``n`` - an integer
 
-    EXAMPLES:
+    - ``return_value`` - a boolean set to ``False`` by default. If set to
+      ``True`` the function returns a pair made of a boolean and the value ``v``
+      such that `v(v+1)/2 = n`.
+
+    EXAMPLES::
+
         sage: is_triangular_number(3)
-        2
-        sage: is_triangular_number(1)
-        1
+        True
+        sage: is_triangular_number(3, return_value=True)
+        (True, 2)
+        sage: 2*(2+1)/2
+        3
+
         sage: is_triangular_number(2)
         False
-        sage: is_triangular_number(0)
-        0
-        sage: is_triangular_number(-1)
-        False
-        sage: is_triangular_number(-11)
-        False
-        sage: is_triangular_number(-1000)
-        False
-        sage: is_triangular_number(-0)
-        0
-        sage: is_triangular_number(10^6 * (10^6 +1)/2)
-        1000000
+        sage: is_triangular_number(2, return_value=True)
+        (False, None)
+
+        sage: is_triangular_number(25*(25+1)/2)
+        True
+
+        sage: is_triangular_number(10^6 * (10^6 +1)/2, return_value=True)
+        (True, 1000000)
+
+    TESTS::
+
+        sage: F1 = filter(is_triangular_number, range(1,100*(100+1)/2))
+        sage: F2 = [n*(n+1)/2 for n in range(1,100)]
+        sage: F1 == F2
+        True
+
+        sage: for n in xrange(1000):
+        ....:     res,v = is_triangular_number(n,return_value=True)
+        ....:     assert res == is_triangular_number(n)
+        ....:     if res: assert v*(v+1)/2 == n
     """
-    if n < 0:
-        return False
-    elif n == 0:
-        return ZZ(0)
+    n = ZZ(n)
+
+    if return_value:
+        if n < 0:
+            return (False,None)
+        if n == 0:
+            return (True,ZZ(0))
+        s,r = (8*n+1).sqrtrem()
+        if r:
+            return (False,None)
+        return (True,(s-1)/2)
+
     else:
-        from sage.functions.all import sqrt
-        ## Try to solve for the integer a
-        try:
-            disc_sqrt = ZZ(sqrt(1+8*n))
-            a = ZZ( (ZZ(-1) + disc_sqrt) / ZZ(2) )
-            return a
-        except StandardError:
-            return False
-
-
+        return (8*n+1).is_square()
 
 def extend_to_primitive(A_input):
     """
@@ -174,14 +177,13 @@ def least_quadratic_nonresidue(p):
         ...
         ValueError: Oops!  There are no quadratic non-residues in Z/2Z.
     """
-    from sage.functions.all import floor
     p1 = abs(p)
 
     ## Deal with the prime p = 2 and |p| <= 1.
     if p1 == 2:
-        raise ValueError, "Oops!  There are no quadratic non-residues in Z/2Z."
+        raise ValueError("Oops!  There are no quadratic non-residues in Z/2Z.")
     if p1 < 2:
-        raise ValueError, "Oops!  p must be a prime number > 2."
+        raise ValueError("Oops!  p must be a prime number > 2.")
 
     ## Find the smallest non-residue mod p
     ## For 7/8 of primes the answer is 2, 3 or 5:
@@ -193,7 +195,7 @@ def least_quadratic_nonresidue(p):
         return ZZ(5)
     ## default case (first needed for p=71):
     if not p.is_prime():
-        raise ValueError, "Oops!  p must be a prime number > 2."
+        raise ValueError("Oops!  p must be a prime number > 2.")
     from sage.misc.misc import xsrange
     for r in xsrange(7,p):
         if legendre_symbol(r, p) == -1:

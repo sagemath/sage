@@ -1,35 +1,7 @@
-include "sage/ext/stdsage.pxi"
-include "sage/ext/cdefs.pxi"
-
-from sage.libs.flint.flint cimport *
-
-from flint import *
+from sage.libs.gmp.types cimport *
+from sage.libs.flint.types cimport *
 
 cdef extern from "flint/nmod_poly.h":
-    ctypedef unsigned long mp_bitcnt_t
-    ctypedef void * mp_srcptr
-
-    ctypedef struct nmod_t:
-        mp_limb_t n
-        mp_limb_t ninv
-        mp_bitcnt_t norm
-
-    ctypedef struct nmod_poly_struct:
-        mp_limb_t *coeffs
-        long alloc
-        long length
-        nmod_t mod
-
-    ctypedef nmod_poly_struct* nmod_poly_t
-
-    ctypedef struct nmod_poly_factor_struct:
-        nmod_poly_t p
-        long *exp
-        long num
-        long alloc
-
-    ctypedef nmod_poly_factor_struct* nmod_poly_factor_t
-
     # Memory management
     cdef void nmod_poly_init(nmod_poly_t poly, mp_limb_t n)
     cdef void nmod_poly_init_preinv(nmod_poly_t poly, mp_limb_t n, mp_limb_t ninv)
@@ -68,11 +40,14 @@ cdef extern from "flint/nmod_poly.h":
     cdef void nmod_poly_one(nmod_poly_t res)
     cdef void nmod_poly_truncate(nmod_poly_t poly, long len)
     cdef void nmod_poly_reverse(nmod_poly_t output, nmod_poly_t input, long m)
+    cdef void nmod_poly_revert_series(nmod_poly_t output, nmod_poly_t intput, long m)
+
     cdef int nmod_poly_equal(nmod_poly_t a, nmod_poly_t b)
 
     # Powering
     cdef void nmod_poly_pow(nmod_poly_t res, nmod_poly_t poly, unsigned long e)
     cdef void nmod_poly_pow_trunc(nmod_poly_t res, nmod_poly_t poly, unsigned long e, long trunc)
+    cdef void nmod_poly_powmod_ui_binexp(nmod_poly_t res, const nmod_poly_t poly, ulong e, const nmod_poly_t f)
 
     # Inflation and deflation
     cdef unsigned long nmod_poly_deflation(nmod_poly_t input)

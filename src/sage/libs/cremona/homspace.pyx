@@ -1,3 +1,7 @@
+"Cremona modular symbols"
+
+include "sage/ext/interrupt.pxi"
+
 from mat cimport MatrixFactory
 
 cdef MatrixFactory MF = MatrixFactory()

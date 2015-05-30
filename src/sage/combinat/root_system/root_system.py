@@ -1,32 +1,8 @@
-"""
+r"""
 Root systems
+============
 
-Quickref
---------
-
-- ``T = CartanType(["A", 3]), T.is_finite()``     -- Cartan types
-- ``T.dynkin_diagram(), DynkinDiagram(["G",2])``  -- Dynkin diagrams
-- ``T.cartan_matrix(),  CartanMatrix(["F",4])``   -- Cartan matrices
-- ``RootSystem(T).weight_lattice()``              -- Root systems
-- ``WeylGroup(["B", 6, 1]).simple_reflections()`` -- Affine weyl groups
-- ``WeylCharacterRing(["D", 4])``                 -- Weyl character rings
-
-Documentation
--------------
-
-- :ref:`sage.combinat.root_system.root_system`    -- This current overview
-- :class:`CartanType`                             -- An introduction to Cartan types
-- :class:`RootSystem`                             -- An introduction to root systems
-- :ref:`sage.combinat.root_system.plot`           -- A root system visualization tutorial
-- The ``Lie Methods and Related Combinatorics`` thematic tutorial
-
-See also
---------
-
-- :class:`CoxeterGroups`, :class:`WeylGroups`, ...-- The categories of Coxeter and Weyl groups
-- :ref:`sage.combinat.crystals.crystals`          -- An introduction to crystals
-- :mod:`.type_A`, :mod:`.type_B_affine`, ...      -- Type specific root system data
-
+See :ref:`sage.combinat.root_system` for an overview.
 """
 #*****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
@@ -229,18 +205,19 @@ class RootSystem(UniqueRepresentation, SageObject):
         sage: W = L.weyl_group()
         sage: S3 = [ w.action(id) for w in W.classical() ]
         sage: [L.classical()(x) for x in S3]
-        [(3, 2, 1), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (1, 2, 3)]
+        [(1, 2, 3), (3, 2, 1), (3, 1, 2), (2, 1, 3), (2, 3, 1), (1, 3, 2)]
 
     And the action of `s_0` on these yields::
 
         sage: s = W.simple_reflections()
         sage: [L.classical()(s[0].action(x)) for x in S3]
-        [(-2, 2, 6), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (0, 2, 4)]
+        [(0, 2, 4), (-2, 2, 6), (-1, 1, 6), (0, 1, 5), (-2, 3, 5), (-1, 3, 4)]
 
     We can also plot various components of the ambient spaces::
 
         sage: L = RootSystem(['A',2]).ambient_space()
         sage: L.plot()
+        Graphics object consisting of 13 graphics primitives
 
     For more on plotting, see :ref:`sage.combinat.root_system.plot`.
 
@@ -336,7 +313,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             # still fails for CartanType G2xA1
             try:
                 self.dual = RootSystem(self._cartan_type.dual(), as_dual_of=self);
-            except StandardError:
+            except Exception:
                 pass
         else:
             self.dual_side = True
@@ -516,18 +493,18 @@ class RootSystem(UniqueRepresentation, SageObject):
 
             sage: Phi = RootSystem(['A',2]).root_poset(); Phi
             Finite poset containing 3 elements
-            sage: Phi.cover_relations()
+            sage: sorted(Phi.cover_relations(), key=str)
             [[alpha[1], alpha[1] + alpha[2]], [alpha[2], alpha[1] + alpha[2]]]
 
             sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi
             Finite poset containing 3 elements
-            sage: Phi.cover_relations()
+            sage: sorted(Phi.cover_relations(), key=str)
             [[alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3]], [alpha[2] + alpha[3], alpha[1] + alpha[2] + alpha[3]]]
 
             sage: Phi = RootSystem(['B',2]).root_poset(); Phi
             Finite poset containing 4 elements
             sage: Phi.cover_relations()
-            [[alpha[1], alpha[1] + alpha[2]], [alpha[2], alpha[1] + alpha[2]], [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
+            [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]], [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
         """
         return self.root_lattice().root_poset(restricted=restricted,facade=facade)
 

@@ -113,15 +113,14 @@ benutzen. Zum Beispiel:
 ::
 
     sage: def is_even(n):
-    ...       return n%2 == 0
-    ...
+    ....:     return n%2 == 0
     sage: is_even(2)
     True
     sage: is_even(3)
     False
 
 Anmerkung: Abhängig von der Version des Tutorials, das Sie gerade lesen,
-sehen Sie vielleicht drei Punkte ``...`` in der zweiten Zeile dieses
+sehen Sie vielleicht drei Punkte ``....:`` in der zweiten Zeile dieses
 Beispiels. Tippen Sie diese nicht; sie sind nur da um zu
 verdeutlichen, dass der Code eingerückt ist. Wann immer dies der Fall
 ist, drücken Sie [Return/Enter] einmal am Ende des Blocks um eine
@@ -135,7 +134,7 @@ Zum Beispiel wird in der Funktion unterhalb standardmäßig der Wert
 ::
 
     sage: def is_divisible_by(number, divisor=2):
-    ...       return number%divisor == 0
+    ....:     return number%divisor == 0
     sage: is_divisible_by(6,2)
     True
     sage: is_divisible_by(6)
@@ -168,11 +167,11 @@ Zeilen zuvor.
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...      return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:    return v
     Syntax Error:
            return v
 
@@ -181,11 +180,11 @@ Wenn Sie die Einrückung korrigieren, funktioniert die Funktion:
 ::
 
     sage: def even(n):
-    ...       v = []
-    ...       for i in range(3,n):
-    ...           if i % 2 == 0:
-    ...               v.append(i)
-    ...       return v
+    ....:     v = []
+    ....:     for i in range(3,n):
+    ....:         if i % 2 == 0:
+    ....:             v.append(i)
+    ....:     return v
     sage: even(10)
     [4, 6, 8]
 
@@ -203,7 +202,7 @@ Zeilen erstreckt, können Sie einen terminierenden Backslash verwenden:
 ::
 
     sage: 2 + \
-    ...      3
+    ....:    3
     5
 
 In Sage können Sie zählen indem Sie über einen Zahlenbereich
@@ -213,7 +212,7 @@ iterieren. Zum Beispiel ist nächste Zeile unterhalb gleichwertig zu
 ::
 
     sage: for i in range(3):
-    ...       print i
+    ....:     print i
     0
     1
     2
@@ -223,7 +222,7 @@ Die nächste Zeile unterhalb ist gleichwertig zu ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ...       print i
+    ....:     print i
     2
     3
     4
@@ -235,7 +234,7 @@ gleichwertig zu
 ::
 
     sage: for i in range(1,6,2):
-    ...       print i
+    ....:     print i
     1
     3
     5
@@ -249,7 +248,7 @@ Quadrat- und Kubikzahlen.
 ::
 
     sage: for i in range(5):
-    ...       print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
          0      0      0
          1      1      1
          2      4      8
@@ -326,11 +325,11 @@ Sie wird von dem Standard-Typ ``list`` abgeleitet.
 ::
 
     sage: class Evens(list):
-    ...       def __init__(self, n):
-    ...           self.n = n
-    ...           list.__init__(self, range(2, n+1, 2))
-    ...       def __repr__(self):
-    ...           return "Even positive numbers up to n."
+    ....:     def __init__(self, n):
+    ....:         self.n = n
+    ....:         list.__init__(self, range(2, n+1, 2))
+    ....:     def __repr__(self):
+    ....:         return "Even positive numbers up to n."
 
 Die ``__init__`` Methode wird aufgerufen um das Objekt zu
 initialisieren, wenn es erzeugt wird; die ``__repr__`` Method gibt

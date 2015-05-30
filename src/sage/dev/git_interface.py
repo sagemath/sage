@@ -106,8 +106,7 @@ class GitProxy(object):
 
             sage: git._run_git('status', (), {})
             (0,
-             '# On branch master\n#\n# Initial commit\n#\nnothing to commit
-              (create/copy files and use "git add" to track)\n',
+             'On branch master\n\nInitial commit\n\nnothing to commit (create/copy files and use "git add" to track)\n',
              '',
              'git -c user.email=doc@test.test -c user.name=doctest status')
 
@@ -204,10 +203,10 @@ class GitProxy(object):
             sage: os.chdir(config['git']['src'])
 
             sage: git._execute('status')
-            # On branch master
-            #
-            # Initial commit
-            #
+            On branch master
+            <BLANKLINE>
+            Initial commit
+            <BLANKLINE>
             nothing to commit (create/copy files and use "git add" to track)
             sage: git._execute('status',foo=True) # --foo is not a valid parameter
             Traceback (most recent call last):
@@ -317,8 +316,7 @@ class GitProxy(object):
             sage: os.chdir(config['git']['src'])
 
             sage: git._read_output('status')
-            '# On branch master\n#\n# Initial commit\n#\nnothing to
-            commit (create/copy files and use "git add" to track)\n'
+            'On branch master\n\nInitial commit\n\nnothing to commit (create/copy files and use "git add" to track)\n'
             sage: git._read_output('status',foo=True) # --foo is not a valid parameter
             Traceback (most recent call last):
             ...
@@ -701,18 +699,19 @@ class GitInterface(ReadStdoutGitProxy):
             sage: open('ignored_dir/untracked','w').close()
             sage: with open('tracked','w') as f: f.write('version 0')
             sage: git.echo.status()
-            # On branch master
-            # Changes not staged for commit:
-            #   (use "git add <file>..." to update what will be committed)
-            #   (use "git checkout -- <file>..." to discard changes in working directory)
-            #
-            #   modified:   tracked
-            #
-            # Untracked files:
-            #   (use "git add <file>..." to include in what will be committed)
-            #
-            #   untracked
-            #   untracked_dir/
+            On branch master
+            Changes not staged for commit:
+              (use "git add <file>..." to update what will be committed)
+              (use "git checkout -- <file>..." to discard changes in working directory)
+            <BLANKLINE>
+              modified:   tracked
+            <BLANKLINE>
+            Untracked files:
+              (use "git add <file>..." to include in what will be committed)
+            <BLANKLINE>
+              untracked
+              untracked_dir/
+            <BLANKLINE>
             no changes added to commit (use "git add" and/or "git commit -a")
 
         Some invalid combinations of flags::
@@ -732,12 +731,13 @@ class GitInterface(ReadStdoutGitProxy):
 
             sage: git.clean_wrapper()
             sage: git.echo.status()
-            # On branch master
-            # Untracked files:
-            #   (use "git add <file>..." to include in what will be committed)
-            #
-            #   untracked
-            #   untracked_dir/
+            On branch master
+            Untracked files:
+              (use "git add <file>..." to include in what will be committed)
+            <BLANKLINE>
+              untracked
+              untracked_dir/
+            <BLANKLINE>
             nothing added to commit but untracked files present (use "git add" to track)
 
         Untracked items can be removed by setting the parameters::
@@ -1188,10 +1188,10 @@ for git_cmd_ in (
             sage: git = GitInterface(config["git"], DoctestUserInterface(config["UI"]))
             sage: os.chdir(config['git']['src'])
             sage: git.echo.status() # indirect doctest
-            # On branch master
-            #
-            # Initial commit
-            #
+            On branch master
+            <BLANKLINE>
+            Initial commit
+            <BLANKLINE>
             nothing to commit (create/copy files and use "git add" to track)
         """
         git_cmd = git_cmd__.replace("_","-")

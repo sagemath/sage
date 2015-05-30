@@ -1,392 +1,286 @@
-.. _chapter-walk-through:
+.. _chapter-walkthrough:
 
 ========================
 Sage Development Process
 ========================
 
 This section is a concise overview of the Sage development process. In
-it, we will see how to make changes to the Sage source code and
-communicate these changes back to the Sage project. If you are a
-beginner to Sage development, this introductory guide is here to help
-you become familiar with the Sage development process.
-
-Sage comes with a set of developer scripts, which help you with common
-interactions with the bug tracker (see :ref:`chapter-sage-trac`) and
-with handling revisions of your code. The developer scripts use the
-git distributed revison control system under the hood which you'll
-have to install (see :ref:`chapter-git-setup`), but you do not need to
-know anything about it (see :ref:`chapter-manual-git` only if you want
-to).
-
-Most of the commands in the following section will not work unless you have an
-account on the bug tracker. If you want to contribute to Sage, it is a good
-idea to get an account now (see :ref:`section-trac-account`).
-
-We assume here that the ``sage`` executable of your development
-installation of Sage is in your ``PATH``. If this is not the case, you
-might have to replace ``sage`` by ``./sage`` or ``/path/to/sage`` in
-the following. You can also use the developer scripts from the Sage
-prompt. All commandline options to ``sage -dev`` are also available as
-methods of the ``dev`` object in a Sage session. That is, for example,
-to checkout a ticktet you can either run::
-
-    [user@localhost]$ sage -dev checkout --ticket 1729
-    On ticket #1729 with associated local branch "ticket/1729".
-
-    #  Use "sage --dev merge" to include another ticket/branch.
-    #  Use "sage --dev commit" to save changes into a new commit.
-
-in a terminal or, equivalently, within Sage
-
-.. skip   # don't actually doctest
-
-::
-
-    sage: dev.checkout(1729)
-    On ticket #1729 with associated local branch "ticket/1729".
- 
-    #  Use "dev.merge()" to include another ticket/branch.
-    #  Use "dev.commit()" to save changes in a new commit.
-
-Note that the number sign ``#`` (a.k.a. hash or pound sign) is the
-comment marker for both the shell and Python. So if you were to input
-``#1729``, it will be interpreted as the comment "1729" and not passed
-to the development scripts. Always specify the ticket number as a
-plain number, without the number sign in front.
-
-.. warning::
-
-    During the transitional period it can happen that you end up
-    on a branch where the developer scripts are not available or
-    outdated. If this is the case, i.e., if ``sage -dev`` does not
-    work properly anymore, run::
-
-        git pull git://trac.sagemath.org/sage.git master
-        sage -b
-
-    This will merge the latest version of the developer scripts
-    with your current branch. After rebuilding the Sage library,
-    the dev scripts will work again.
+it, we will see how to make changes to the Sage source code and record
+them in the git revision control system. In the following section on
+:ref:`chapter-git_trac` we will look at communicating these changes
+back to the Sage project.
 
 
-.. _section-walkthrough-add:
+We also have a handy `one-page "cheat sheet"
+<http://github.com/sagemath/git-trac-command/raw/master/doc/git-cheat-sheet.pdf>`_
+of commonly used git commands that you can print out and leave on your
+desk.
+You can alternatively fork and create a pull request at
+`github <http://github.com/sagemath/sage>`_ which will automatically fetch
+your code and open a ticket on our trac server.
 
-Contributing to the Sage Source Code
-====================================
 
-.. _section-walkthrough-add-create:
+.. _section-walkthrough-setup-git:
 
-Create a Ticket
----------------
+Configuring Git
+===============
 
-Suppose you have written an algorithm for calculating the last twin prime, and
-want to add it to Sage. You would first open a ticket for that::
+One way or another, ``git`` is what Sage uses for tracking changes.
+So first, open a shell (for instance, Terminal on Mac) and check that
+``git`` works::
+    
+    [user@localhost]$ git
+    usage: git [--version] [--help] [-C <path>] [-c name=value]
+    ...
+    The most commonly used git commands are:
+       add        Add file contents to the index
+    ...
+       tag        Create, list, delete or verify a tag object signed with GPG
+    
+    'git help -a' and 'git help -g' lists available subcommands and some
+    concept guides. See 'git help <command>' or 'git help <concept>'
+    to read about a specific subcommand or concept.
 
-    [user@localhost]$ sage -dev create-ticket
 
-This will give you an editor in which you can give a summary and a
-description of what you want to do. If you are not sure which values
-to put for the other fields, you can leave the defaults or have a look
-at :ref:`section-trac-fields`. After you close the editor, a new
-ticket will be opened on the trac server. From that point on, everyone
-can see what you intend to do which lets us avoid duplicating work. If
-you want to cancel the creation of a ticket, then you can just save an
-empty file. This will abort the operation.
+Don't worry about the giant list of subcommands. You really only need
+a handful for effective development, and we will walk you through them
+in this guide. If you got a "command not found" error, then you don't
+have git installed. Now is the time to install it; see
+:ref:`chapter-git-setup` for instructions.
 
-Alternatively, you can use the `web interface to the Sage trac
-development server <http://trac.sagemath.org>`_ to open a new ticket,
-just log in and click on "Create Ticket".
+Because we also track who does changes in Sage with git, you must tell
+git how you want to be known. This only needs to be done once::
 
+    [user@localhost]$ git config --global user.name "Your Name"
+    [user@localhost]$ git config --global user.email you@yourdomain.example.com
+
+If you have multiple accounts / computers use the same name on each of
+them. This name/email combination ends up in commits, so do it now
+before you forget!
+
+
+.. _section-walkthrough-sage-source:
+
+Obtaining the Sage Source Code
+==============================
+
+Obviously one needs the Sage source code to develop.  You can use your
+local installation of Sage, or (to start without Sage) download it
+from github which is a public read-only mirror (=faster) of our
+internal git repository::
+
+    [user@localhost]$ git clone git://github.com/sagemath/sage.git
+    Cloning into 'sage'...
+    [...]
+    Checking connectivity... done.
+    
+This creates a directory named ``sage`` containing the sources for the
+current stable and development releases of Sage.  You will need to
+`compile Sage <http://www.sagemath.org/doc/installation/source.html>`_
+in order to use it.
+
+(For the experts, note that the repository at
+`git.sagemath.org <http://git.sagemath.org>`_ is where development
+actually takes place .)
+
+
+.. _section-walkthrough-branch:
+
+Branching Out
+=============
+
+In order to start modifying Sage, we want to make a *branch* of Sage.
+A branch is a copy (except that it doesn't take up twice the space) of
+the Sage source code where you can store your modifications to the
+Sage source code and which you can upload to trac tickets.
+
+It is easy to create a new branch, just check out (switch to) the branch
+from where you want to start (that is, ``master``) and use the ``git
+branch`` command::
+
+    [user@localhost sage]$ git checkout master
+    [user@localhost sage]$ git branch last_twin_prime
+    [user@localhost sage]$ git checkout last_twin_prime
+
+You can list all branches using::
+
+    [user@localhost]$ git branch
+      master
+    * last_twin_prime
+
+The asterisk shows you which branch you are on. Without an argument,
+the ``git branch`` command just displays a list of all local branches
+with the current one marked by an asterisk. Also note that ``git
+branch`` creates a new branch, but does not switch to it. For this,
+you have to use ``git checkout``::
+
+    [user@localhost sage]$ git checkout master
+    Switched to branch 'master'
+    Your branch is up-to-date with 'github/master'.
+    [user@localhost sage]$ git branch
+    * master
+      last_twin_prime
+    [user@localhost sage]$ git checkout last_twin_prime
+    Switched to branch 'last_twin_prime'
+
+Note that, unless you explicitly upload ("push") a branch to remote
+git repository, the local branch will only be on your computer and not
+visible to anyone else. 
+
+To avoid typing the new branch name twice you can use the shortcut
+``git checkout -b my_new_branch`` to create and switch to the new
+branch in one command.
+
+
+
+.. _section_walkthrough_logs:
+
+The History
+===========
+
+It is always a good idea to check that you are making your edits on
+the version that you think you are on. The first one shows you the
+topmost commit in detail, including its changes to the sources::
+
+    [user@localhost sage]$ git show
+
+To dig deeper, you can inspect the log::
+
+    [user@localhost sage]$ git log
+
+By default, this lists all commits in reverse chronological order.
+
+- If you find your branch to be in the wrong place, see the
+  :ref:`section-git-recovery` section.
+
+- Many programs are available to help you visualize the history tree
+  better. ``tig`` is a very nice text-mode such tool.
 
 .. _section-walkthrough-add-edit:
 
 Editing the Source Code
------------------------
+=======================
 
-If you want to work on a ticket which you or somebody else created,
-you first need to make a local "branch". The development scripts
-maintain a mapping between local branches and trac tickets. Creating a
-new local branch for a ticket is easy::
+Once you have your own branch, feel free to make any changes as you
+like. :ref:`Subsequent chapters <section-writing-code-for-sage>` of
+this developer guide explain how your code should look like to fit
+into Sage, and how we ensure high code quality throughout.
 
-    [user@localhost]$ sage -dev checkout --ticket 1729
-    On ticket #1729 with associated local branch "ticket/1729".
+*Status* is probably the most important git command. It tells
+you which files changed, and how to continue with recording the
+changes::
 
-    #  Use "sage --dev merge" to include another ticket/branch.
-    #  Use "sage --dev commit" to save changes into a new commit.
-
-Essentially, a branch is a copy (except that it doesn't take up twice
-the space) of the Sage source code where you can store your
-modifications to the Sage source code and which you can upload to trac
-tickets. Your new branch is now called ``ticket/<TICKETNUM>``. Unless
-you upload ("push") it, see below, it will only be on your local
-system and not visible to anyone else.
-
-At this point you can start editing the source code. The subsequent
-chapters of this developer guide explain how your code should look
-like to fit into Sage, and how we ensure high code quality
-throughout. Whenever you have reached one of your goals, you should
-make a *commit*. This takes a snapshot of the whole Sage source code
-that you have been working on and records the changes into your local
-branch::
-
-    [user@localhost]$ sage -dev commit
-    Commit your changes to branch "ticket/1729"? [Yes/no] y
-
-    #  Use "sage --dev push" to push your commits to the trac server once you are
-    #  done.
-
-You will be asked to write a message describing your changes. It is
-common to write a one line summary, then a blank line, and then a 1-2
-paragraph explanation of your changes. If your changes are minor, then
-just the one-line summary can be enough.
-
-If you are working on a larger project, it can be useful to break up
-your work into multiple commits: Each commit is saved, enabling you to
-retrieve older versions of files from the repository. So, even if you
-accidentally delete something, you can get it back later. Also, if you
-find a mistake in one of your earlier commits, then you just correct
-it in the Sage source code and then add another commit on top.
-
-
-.. _section-walkthrough-add-push:
-
-Uploading Changes to Trac
--------------------------
-
-At some point, you may wish to share your changes with the rest of us:
-maybe it is ready for review, or maybe you are collaborating with
-someone and want to share your changes "up until now". This is simply
-done by::
-
-    [user@localhost]$ sage -dev push
-
-On trac, your remote branch will be called
-``u/<USERNAME>/ticket/<TICKETNUM>``. This name will automatically be
-added to the "Branch:" field on the ticket. Other developers then know
-where to find your work in the git repository.
-
-It is common to go through some iterations of ``sage -dev commit``
-before you upload, and you will probably also have uploaded a few
-times before your changes are ready for review.
-
-If you are happy with the changes you uploaded, you want somebody else
-to review them, so they can be included into the next version of
-Sage. If your ticket is ready for review, you should set it to
-``needs_review`` on the trac server. This can be done though the `web
-interface <http://trac.sagemath.org>`_, or, alternatively, using the
-development scripts. For the latter, run::
-
-    [user@localhost]$ sage -dev edit-ticket
-
-This will give you an editor in which you can edit the ticket. Change the
-status to::
-
-    Status: needs_review
-
-And add yourself as an author for that ticket by inserting the following as the
-first line::
-
-    Authors: Your Real Name
-
-If you want to add an additional comment for potential reviewers, run::
-
-    [user@localhost]$ sage -dev comment
-
-
-.. _section-walkthrough-add-local:
-
-Starting Without a Ticket
--------------------------
-
-You might not want to create a trac ticket for your changes. For
-example, if you are only working on your own code or if you are making
-experimental changes that you are likely to throw away if they do not
-work out. In that case, you can also start a branch that only lives in
-your local repository. To do this, you use checkout but specify a
-branch name instead of the ticket number. For example, to create a new
-branch ``my_branch``, you would run::
-
-    [user@localhost]$ sage -dev checkout --branch my_branch
-
-This is assuming that you do not already have a local branch called
-``my_branch``. If that were the case, you would just switch to the
-already-existing branch. Once on your branch, you can work with it as
-described in :ref:`section-walkthrough-add-edit`.
-
-You can upload your local branch later to an existing ticket. This
-works exactly like in the case where you started with a ticket, except
-that you have to specify the ticket number. That is::
-
-    [user@localhost]$ sage -dev push --ticket <TICKETNUM>
+    [user@localhost sage]$ git status
+    On branch master
+    Changes not staged for commit:
+      (use "git add <file>..." to update what will be committed)
+      (use "git checkout -- <file>..." to discard changes in working directory)
     
-where you have to replace ``<TICKETNUM>`` with the number of the trac
-ticket. 
-
-
-.. _section-walkthrough-merge:
-
-Merging
-=======
-
-As soon as you are working on a bigger project that spans multiple
-tickets you will want to base your work on branches that have not been
-merged into Sage yet. This is natural in collaborative development,
-and in fact you are very much encouraged to split your work into
-logically different parts. Ideally, each part that is useful on its
-own and and can be reviewed independently should be a different
-ticket, instead of a huge patch bomb.
-
-For this purpose, you can incorporate branches from other tickets (or
-just other local branches) into your current branch. This is called
-merging, and all it does is include commits from other branches into
-your current branch. In particular, this is done when a new Sage
-release is made: the finished tickets are merged with the Sage master
-and the result is the next Sage version. Git is smart enough to not
-merge commits twice. In particular, it is possible to merge two
-branches, one of which had already merged the other branch.
-
-The syntax for merging is easy. If the code that you want to
-incorporate is on a trac ticket number ``<TICKETNUM>``, use::
-
-    [user@localhost]$ sage -dev merge --ticket <TICKETNUM>
-
-Optionally, you can add the merged ticket to the trac "Dependency:"
-field. Note that the merged commits become part of the current branch,
-regardless of whether they are noted on trac. Adding a dependency
-implies that the dependency must be reviewed first. After the
-dependency is reviewed, the commits that came from the dependency are
-no longer listed in the output of ``sage -dev diff``.
-
-.. warning::
-
-    You should avoid merging tickets both ways. Once ticket A merged
-    ticket B and ticket B merged ticket A, there is no way to
-    distinguish commits that were originally made in ticket A or in
-    ticket B. Effectively, merging both ways combines the branches and
-    makes individual review impossible.
-
-    In practice, you should only merge when one of the following holds:
-
-    * Either two tickets conflict, then you have to merge one into the
-      other in order to resolve the merge conflict.
-
-    * Or you definitely need a feature that has been developed as part
-      of another branch.
-
-A special case of merging is merging in the ``master`` branch. This
-brings your local branch up to date with the newest Sage version. The
-above warning against unnecessary merges still applies, though. Try to
-do all of your development with the Sage version that you originally
-started with. The only reason for merging in the master branch is if
-you need a new feature or if your branch conflicts.
-
-
-.. _section-walkthrough-review:
-
-Reviewing
-=========
-
-Now suppose you want to review the existing work on a ticket, such as the one
-you created in the last section.  For definiteness, suppose you want to review
-#12270. You would do that as follows::
-
-    [user@localhost]$ sage -dev checkout --ticket 12270
-
-This command will download the branch on Trac in case you do not have any local
-work on ticket 12270. (If you do, you may have to merge your changes; see
-below). You can now test the ticket; you'll probably want to call ``make`` or
-``sage -b`` first to rebuild Sage with the changes. Another important
-command is::
-
-    [user@localhost]$ sage -dev diff
-
-which lists all source code changes that are part of the current
-branch. That is, it lists the changes from the current master to the
-current branch. If the ticket were to be positively reviewed, this is
-the code that will be added to Sage. Note that there is no way to
-"exclude dependencies", just as there is no guarantee that unreviewed
-dependencies will become part of Sage. The best way to exclude
-dependencies from the diff output is to review them. Once the
-dependency becomes part of the master branch, they are automatically
-removed.
-
-Most likely, your will want to add a comment to the ticket as part of
-your review::
-
-    [user@localhost]$ sage -dev comment
-
-This will open a text editor in which you can type, and upload the
-result to Trac.
+        modified:   some_file.py
+        modified:   src/sage/primes/all.py
     
-It is also possible that you make some changes to the code as part of
-your review. After you have done that, you can upload your changes
-back to trac::
+    Untracked files:
+      (use "git add <file>..." to include in what will be committed)
+    
+        src/sage/primes/last_pair.py
+    
+    no changes added to commit (use "git add" and/or "git commit -a")
 
-    [user@localhost]$ sage -dev commit
-    [user@localhost]$ sage -dev push
+To dig deeper into what was changed in the files you can use::
 
-This will update the ticket to now point to your branch, including
-your changes. Your branch is based on the original author's branch, so
-s/he can easily incorporate your changes into his/her own branch (see
-below).
+    [user@localhost sage]$ git diff some_file.py
+
+to show you the differences.
 
 
-.. _section-walkthrough-collaborate:
 
-Collaboration
-=============
+.. _section-walkthrough-make:
 
-It is very easy to collaborate by just going through the above steps any number of times::
+Rebuilding Sage
+===============
 
-    # developer 1
-    <EDIT EDIT>
-    sage -dev commit
-    sage -dev push
+Once you have made any changes you of course want to build Sage and
+try out your edits. As long as you only modified the Sage library
+(that is, Python and Cython files under ``src/sage/...``) you just
+have to run::
 
-    # developer 2
-    sage -dev pull
-    <EDIT EDIT>
-    sage -dev commit
-    sage -dev push
+    [user@localhost sage]$ ./sage -br
 
-    # developer 1
-    sage -dev pull
-    <EDIT EDIT>
-    sage -dev commit
-    sage -dev push
-    (etc)
+to rebuild the Sage library and then start Sage. This should be quite
+fast. If you made changes to third-party packages then you have to
+run::
 
-The obvious problem is when you both work on the same ticket simultaneously::
+    [user@localhost sage]$ make
 
-    # developer 1
-    <EDIT EDIT>
-    sage -dev commit
-    sage -dev push
+as if you were `installing Sage from scratch
+<http://www.sagemath.org/doc/installation/source.html>`_.
+However, simply running ``make`` will only recompile packages
+that were changed, so it shoud be much faster than compiling Sage
+the first time. Rarely there are conflicts with other packages,
+or with the already-installed older version of the package that you
+changed, in that case you do have to recompile everything using::
 
-    # developer 2
-    <EDIT EDIT>
-    sage -dev commit
-    sage -dev push
-    Changes not compatible with remote branch
-    u/<developer1>/ticket/12270; consider 
-    downloading first. Are you sure you want to continue?
+    [user@localhost sage]$ make distclean && make
 
-Developer 2 should probably select ``No``, and do as suggested::
+Also, don't forget to run the tests (see :ref:`chapter-doctesting`)
+and build the documentation (see :ref:`chapter-sage_manuals`).
 
-    sage -dev pull
 
-This will try to merge the changes developer 1 made into the ones that
-developer 2 made. The latter should check whether all seems okay, and
-if so, upload the changes::
+.. _section-walkthrough-commit:
 
-    sage -dev push   # works now
+Commits (Snapshots)
+===================
 
-It is possible that the changes cannot be automatically merged. In
-that case, developer 2 will have to do some manual fixup after
-downloading and before uploading::
+Whenever you have reached your goal, a milestone towards it, or
+just feel like you got some work done you should *commit* your
+changes. A commit is just a snapshot of the state of all files in
+the *repository* (the program you are working on).
 
-    <EDIT EDIT FOR FIXUP>
-    sage -dev commit
-    sage -dev push
+Unlike with some other revision control programs, in git you first
+need to *stage* the changed files, which tells git which files you
+want to be part of the next commit::
+
+    [user@localhost sage]$ git status
+    # On branch my_branch
+    # Untracked files:
+    #   (use "git add <file>..." to include in what will be committed)
+    #
+    #       src/sage/primes/last_pair.py
+    nothing added to commit but untracked files present (use "git add" to track)
+
+    [user@localhost sage]$ git add src/sage/primes/last_pair.py
+    [user@localhost sage]$ git status
+    # On branch my_branch
+    # Changes to be committed:
+    #   (use "git reset HEAD <file>..." to unstage)
+    #
+    #   new file:   src/sage/primes/last_pair.py
+    #
+
+Once you are satisfied with the list of staged files, you create a new
+snapshot with the ``git commit`` command::
+
+    [user@localhost sage]$ git commit
+    ... editor opens ...
+    [my_branch 31331f7] Added the very important foobar text file
+     1 file changed, 1 insertion(+)
+      create mode 100644 foobar.txt
+
+This will open an editor for you to write your commit message. The
+commit message should generally have a one-line description, followed
+by an empty line, followed by further explanatory text::
+
+    Added the last twin prime
+
+    This is an example commit message. You see there is a one-line
+    summary followed by more detailed description, if necessary.
+
+You can then continue working towards your next milestone, make
+another commit, repeat until finished. As long as you do not
+``git checkout`` another branch, all commits that you make will be part of
+the branch that you created.
+
+
+
 
 

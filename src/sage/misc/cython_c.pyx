@@ -1,3 +1,5 @@
+"On-the-fly generation of compiled extensions"
+
 import sage.misc.misc
 import sage.server.support
 

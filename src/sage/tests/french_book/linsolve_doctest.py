@@ -48,8 +48,8 @@ Sage example in ./linsolve.tex, line 502::
 
   sage: A = matrix(RDF, [[-1,2],[3,4]])
   sage: b = vector(RDF, [2,3])
-  sage: x = A\b; x
-  (-0.2, 0.9)
+  sage: x = A\b; x  # rel tol 3e-15
+  (-0.20000000000000018, 0.9000000000000001)
 
 Sage example in ./linsolve.tex, line 512::
 
@@ -83,8 +83,8 @@ Sage example in ./linsolve.tex, line 786::
   sage: Z = transpose(A)*A
   sage: C = Z.cholesky()
   sage: R = transpose(A)*b
-  sage: Z.solve_right(R)
-  (-1.5, -0.5, 2.75)
+  sage: Z.solve_right(R)  # rel tol 1e-14
+  (-1.5000000000000044, -0.5000000000000009, 2.750000000000003)
 
 Sage example in ./linsolve.tex, line 822::
 
@@ -94,14 +94,14 @@ Sage example in ./linsolve.tex, line 822::
   sage: R1 = R[0:3,0:3]
   sage: b1 = transpose(Q)*b
   sage: c = b1[0:3]
-  sage: R1.solve_right(c)
-  (-1.5, -0.5, 2.75)
+  sage: R1.solve_right(c)  # rel tol 2e-14
+  (-1.499999999999999, -0.49999999999999867, 2.7499999999999973)
 
 Sage example in ./linsolve.tex, line 834::
 
   sage: Z = A.transpose()*A
-  sage: Z.norm(Infinity)*(Z^-1).norm(Infinity)
-  1992.375
+  sage: Z.norm(Infinity)*(Z^-1).norm(Infinity)  # rel tol 1e-14
+  1992.3750000000084
 
 Sage example in ./linsolve.tex, line 876::
 
@@ -116,8 +116,8 @@ Sage example in ./linsolve.tex, line 876::
   ....:     if s < 1e-12:
   ....:        break
   ....:     lamb[i] = U.column(i)*b / s
-  sage: x = V*lamb; x
-  (0.237037037037, 0.451851851852, 0.37037037037)
+  sage: x = V*lamb; x  # rel tol 1e-14
+  (0.2370370370370367, 0.4518518518518521, 0.3703703703703702)
 
 Sage example in ./linsolve.tex, line 968::
 
@@ -157,10 +157,14 @@ Sage example in ./linsolve.tex, line 1392::
   [  0.0   0.0   0.0   0.0   0.0   1.0   0.0 -10.0]
   [  0.0   0.0   0.0   0.0   0.0   0.0   1.0 -11.0]
   sage: racines = comp.eigenvalues(); racines  # abs tol 1e-10
-  [0.347521510119 + 0.566550553398*I, 0.347521510119 - 0.566550553398*I,
-  0.345023776962 + 0.439908702386*I, 0.345023776962 - 0.439908702386*I,
-  -0.517257614325 + 0.512958206789*I, -0.517257614325 -
-  0.512958206789*I, -1.36699716455, -9.98357818097]
+  [0.347521510119 + 0.566550553398*I,
+   0.347521510119 - 0.566550553398*I,
+   0.345023776962 + 0.439908702386*I,
+   0.345023776962 - 0.439908702386*I,
+   -0.517257614325 + 0.512958206789*I,
+   -0.517257614325 - 0.512958206789*I,
+   -1.36699716455,
+   -9.98357818097]
 
 Sage example in ./linsolve.tex, line 1515::
 

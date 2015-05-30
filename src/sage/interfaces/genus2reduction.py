@@ -8,6 +8,9 @@ AUTHORS:
 
 - William Stein (2006-03-05): wrote Sage interface to genus2reduction
 
+- Jeroen Demeyer (2014-09-17): replace genus2reduction program by PARI
+  library call (:trac:`15808`)
+
 ACKNOWLEDGMENT: (From Liu's website:) Many thanks to Henri Cohen
 who started writing this program. After this program is available,
 many people pointed out to me (mathematical as well as programming)
@@ -20,34 +23,23 @@ genus2reduction with Sage and for people to modify the C source
 code however they want.
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-########################################################################
+#*****************************************************************************
 
-
-import os
-from expect import Expect
 from sage.structure.sage_object import SageObject
+from sage.rings.all import ZZ, QQ, PolynomialRing
+from sage.libs.pari.all import pari
 
-class Genus2reduction_expect(Expect):
-    def __init__(self, server=None, server_tmpdir=None, logfile=None):
-        Expect.__init__(self,
-                        name = 'genus2reduction',
-                        prompt = 'enter',
-                        command = 'genus2reduction',
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        maxread = 10000,
-                        restart_on_ctrlc = True,
-                        logfile = logfile,
-                        verbose_start = False)
+roman_numeral = ["", "I", "II", "III", "IV", "V", "VI", "VII"]
 
-    def __getattr__(self, attrname):
-        raise AttributeError
 
 class ReductionData(SageObject):
     r"""
@@ -152,9 +144,9 @@ class ReductionData(SageObject):
        sur un corps de valuation discrete", Trans. AMS 348 (1996),
        4577-4610, Section 7.2, Proposition 4).
     """
-    def __init__(self, raw, P, Q, minimal_equation, minimal_disc,
+    def __init__(self, pari_result, P, Q, minimal_equation, minimal_disc,
                  local_data, conductor, prime_to_2_conductor_only):
-        self.raw = raw
+        self.pari_result = pari_result
         self.P = P
         self.Q = Q
         self.minimal_equation = minimal_equation
@@ -172,7 +164,7 @@ class ReductionData(SageObject):
             yterm = ''
         else:
             yterm = '+ (%s)*y '%self.Q
-        s =  'Reduction data about this proper smooth genus 2 curve:\n'
+        s = 'Reduction data about this proper smooth genus 2 curve:\n'
         s += '\ty^2 %s= %s\n'%(yterm, self.P)
         s += 'A Minimal Equation (away from 2):\n\ty^2 = %s\n'%self.minimal_equation
         s += 'Minimal Discriminant (away from 2):  %s\n'%self.minimal_disc
@@ -183,12 +175,54 @@ class ReductionData(SageObject):
     def _local_data_str(self):
         s = ''
         D = self.local_data
-        K = D.keys()
-        K.sort()
+        K = sorted(D.keys())
         for p in K:
             s += 'p=%s\n%s\n'%(p, D[p])
-        s = '\t' + '\n\t'.join(s.split('\n'))
+        s = '\t' + '\n\t'.join(s.strip().split('\n'))
         return s
+
+
+def divisors_to_string(divs):
+    """
+    Convert a list of numbers (representing the orders of cyclic groups
+    in the factorization of a finite abelian group) to a string
+    according to the format shown in the examples.
+
+    INPUT:
+
+    - ``divs`` -- a (possibly empty) list of numbers
+
+    OUTPUT: a string representation of these numbers
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.genus2reduction import divisors_to_string
+        sage: print divisors_to_string([])
+        (1)
+        sage: print divisors_to_string([5])
+        (5)
+        sage: print divisors_to_string([5]*6)
+        (5)^6
+        sage: print divisors_to_string([2,3,4])
+        (2)x(3)x(4)
+        sage: print divisors_to_string([6,2,2])
+        (6)x(2)^2
+    """
+    s = ""
+    n = 0  # How many times have we seen the current divisor?
+    for i in range(len(divs)):
+        n += 1
+        if i+1 == len(divs) or divs[i+1] != divs[i]:
+            # Next divisor is different or we are done? Print current one
+            if s:
+                s += "x"
+            s += "(%s)"%divs[i]
+            if n > 1:
+                s += "^%s" % n
+            n = 0
+
+    return s or "(1)"
+
 
 class Genus2reduction(SageObject):
     r"""
@@ -315,22 +349,24 @@ class Genus2reduction(SageObject):
     `J(X_1(p))` is trivial for all primes `p`.)
     """
     def __init__(self):
-        self.__expect = Genus2reduction_expect()
+        pass
 
     def _repr_(self):
-        return "Genus 2 reduction program"
+        """
+        EXAMPLES::
 
-    def console(self):
-        genus2reduction_console()
+            sage: genus2reduction
+            Genus 2 reduction PARI interface
+        """
+        return "Genus 2 reduction PARI interface"
 
     def raw(self, Q, P):
         r"""
-        Return the raw output of running the
+        Return a string emulating the raw output of running the old
         ``genus2reduction`` program on the hyperelliptic curve
-        `y^2 + Q(x)y = P(x)` as a string.
+        `y^2 + Q(x)y = P(x)`.
 
         INPUT:
-
 
         -  ``Q`` - something coercible to a univariate
            polynomial over Q.
@@ -338,9 +374,7 @@ class Genus2reduction(SageObject):
         -  ``P`` - something coercible to a univariate
            polynomial over Q.
 
-
         OUTPUT:
-
 
         -  ``string`` - raw output
 
@@ -350,11 +384,12 @@ class Genus2reduction(SageObject):
         -  ``P`` - what P was actually input to auxiliary
            genus2reduction program
 
-
         EXAMPLES::
 
             sage: x = QQ['x'].0
             sage: print genus2reduction.raw(x^3 - 2*x^2 - 2*x + 1, -5*x^5)[0]
+            doctest:...: DeprecationWarning: the raw() method is provided for backwards compatibility only, use the result of the genus2reduction() call instead of parsing strings
+            See http://trac.sagemath.org/15808 for details.
             a minimal equation over Z[1/2] is :
             y^2 = x^6-240*x^4-2550*x^3-11400*x^2-24100*x-19855
             <BLANKLINE>
@@ -371,97 +406,149 @@ class Genus2reduction(SageObject):
             reduction at p : [I{1-0-0}] page 170, (1), f=1
             <BLANKLINE>
             the prime to 2 part of the conductor is 1416875
-            in factorized form : [2,0;5,4;2267,1]
+            in factorized form : [5,4;2267,1]
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(15808, 'the raw() method is provided for backwards compatibility only, use the result of the genus2reduction() call instead of parsing strings')
 
-        Verify that we fix trac 5573::
+        d = self(Q, P)
+
+        s = "a minimal equation over Z[1/2] is :\n"
+        s += "y^2 = %s\n\n" % str(d.minimal_equation).replace(" ", "")
+        s += "factorization of the minimal (away from 2) discriminant :\n"
+        s += "%s\n\n" % str(pari(d.minimal_disc).factor()).replace(" ", "")
+
+        for p in sorted(d.local_data.keys()):
+            s += "p=%s\n" % p
+            s += d.local_data[p].replace(":", " :") + "\n"
+
+        if d.prime_to_2_conductor_only:
+            s += "the prime to 2 part of the conductor is %s\n" % d.conductor
+        else:
+            s += "the conductor is %s\n" % d.conductor
+        s += "in factorized form : %s" % str(pari(d.conductor).factor()).replace(" ", "")
+
+        return s, d.Q, d.P
+
+    def __call__(self, Q, P):
+        """
+        Compute and return the :class:`ReductionData` corresponding to
+        the genus 2 curve `y^2 + Q(x) y = P(x)`.
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ)
+            sage: genus2reduction(x^3 - 2*x^2 - 2*x + 1, -5*x^5)
+            Reduction data about this proper smooth genus 2 curve:
+                    y^2 + (x^3 - 2*x^2 - 2*x + 1)*y = -5*x^5
+            A Minimal Equation (away from 2):
+                    y^2 = x^6 - 240*x^4 - 2550*x^3 - 11400*x^2 - 24100*x - 19855
+            Minimal Discriminant (away from 2):  56675000
+            Conductor (away from 2): 1416875
+            Local Data:
+                    p=2
+                    (potential) stable reduction:  (II), j=1
+                    p=5
+                    (potential) stable reduction:  (I)
+                    reduction at p: [V] page 156, (3), f=4
+                    p=2267
+                    (potential) stable reduction:  (II), j=432
+                    reduction at p: [I{1-0-0}] page 170, (1), f=1
+
+        ::
+
+            sage: genus2reduction(x^2 + 1, -5*x^5)
+            Reduction data about this proper smooth genus 2 curve:
+                    y^2 + (x^2 + 1)*y = -5*x^5
+            A Minimal Equation (away from 2):
+                    y^2 = -20*x^5 + x^4 + 2*x^2 + 1
+            Minimal Discriminant (away from 2):  48838125
+            Conductor: 32025
+            Local Data:
+                    p=3
+                    (potential) stable reduction:  (II), j=1
+                    reduction at p: [I{1-0-0}] page 170, (1), f=1
+                    p=5
+                    (potential) stable reduction:  (IV)
+                    reduction at p: [I{1-1-2}] page 182, (5), f=2
+                    p=7
+                    (potential) stable reduction:  (II), j=4
+                    reduction at p: [I{1-0-0}] page 170, (1), f=1
+                    p=61
+                    (potential) stable reduction:  (II), j=57
+                    reduction at p: [I{2-0-0}] page 170, (2), f=1
+
+        Verify that we fix :trac:`5573`::
 
             sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)
             Reduction data about this proper smooth genus 2 curve:
-            y^2 + (x^3 + x^2 + x)*y = -2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2
-            ...
+                    y^2 + (x^3 + x^2 + x)*y = -2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2
+            A Minimal Equation (away from 2):
+                    y^2 = x^6 + 18*x^3 + 36*x^2 - 27
+            Minimal Discriminant (away from 2):  1520984142
+            Conductor: 954
+            Local Data:
+                    p=2
+                    (potential) stable reduction:  (II), j=1
+                    reduction at p: [I{1-0-0}] page 170, (1), f=1
+                    p=3
+                    (potential) stable reduction:  (I)
+                    reduction at p: [II] page 155, (1), f=2
+                    p=53
+                    (potential) stable reduction:  (II), j=12
+                    reduction at p: [I{1-0-0}] page 170, (1), f=1
         """
-        from sage.rings.all import QQ
-        R = QQ['x']
+        R = PolynomialRing(QQ, 'x')
         P = R(P)
         Q = R(Q)
         if P.degree() > 6:
-            raise ValueError, "P (=%s) must have degree at most 6"%P
+            raise ValueError("P (=%s) must have degree at most 6"%P)
         if Q.degree() >=4:
-            raise ValueError, "Q (=%s) must have degree at most 3"%Q
+            raise ValueError("Q (=%s) must have degree at most 3"%Q)
 
-        E = self.__expect
-        try:
-            E.eval(str(Q).replace(' ',''))
-            s = E.eval(str(P).replace(' ',''))
-        except RuntimeError:
-            # If something goes wrong genus2reduction often goes into
-            # a bad state, and quitting it fixes things, since next
-            # time it is used, it is started cleanly.  See trac 5573.
-            E.quit()
-            raise ValueError, "error in input; possibly singular curve? (Q=%s, P=%s)"%(Q,P)
-        i = s.find('a minimal')
-        j = s.rfind(']')
-        return s[i:j+2], Q, P
+        res = pari.genus2red([P,Q])
 
-    def __call__(self, Q, P):
-        from sage.rings.all import ZZ, QQ
-        from sage.misc.all import sage_eval
+        conductor = ZZ(res[0])
+        minimal_equation = R(res[2])
 
-        s, Q, P = self.raw(Q, P)
-        raw = s
-
-        if 'the prime to 2 part of the conductor' in s:
-            prime_to_2_conductor_only = True
-        else:
-            prime_to_2_conductor_only = False
-        x = QQ['x'].gen(0)
-        i = s.find('y^2 = ') + len('y^2 = ')
-        j = i + s[i:].find('\n')
-        minimal_equation = sage_eval(s[i:j], locals={'x':x})
-
-
-        s = s[j+1:]
-        i = s.find('[')
-        j = s.find(']')
-        minimal_disc = ZZ(eval(s[i+1:j].replace(',','**').replace(';','*')))
-
-        phrase = 'the conductor is '
-        j = s.find(phrase)
-        assert j != -1
-        k = s[j:].find('\n')
-        prime_to_2_conductor = ZZ(s[j+len(phrase):j+k])
+        minimal_disc = QQ(res[2].poldisc()).abs()
+        if minimal_equation.degree() == 5:
+            minimal_disc *= minimal_equation[5]**2
+        # Multiply with suitable power of 2 of the form 2^(2*(d-1) - 12)
+        b = 2 * (minimal_equation.degree() - 1)
+        k = QQ((12 - minimal_disc.valuation(2), b)).ceil()
+        minimal_disc >>= 12 - b*k
+        minimal_disc = ZZ(minimal_disc)
 
         local_data = {}
-        while True:
-            i = s.find('p=')
-            if i == -1:
-                break
-            j = s[i+2:].find('p=')
-            if j == -1:
-                j = s.find('\n  \n')
-                assert j != -1
-            else:
-                j = j + (i+2)
-            k = i + s[i:].find('\n')
-            p = ZZ(s[i+2:k])
-            data = s[k+1:j].strip().replace(' : ',': ')
+        for red in res[3]:
+            p = ZZ(red[0])
+
+            t = red[1]
+            data = "(potential) stable reduction:  (%s)" % roman_numeral[int(t[0])]
+            t = t[1]
+            if len(t) == 1:
+                data += ", j=%s" % t[0].lift()
+            elif len(t) == 2:
+                data += ", j1+j2=%s, j1*j2=%s" % (t[0].lift(), t[1].lift())
+
+            t = red[2]
+            if t:
+                data += "\nreduction at p: %s, " % str(t[0]).replace('"', '').replace("(tame) ", "")
+                data += divisors_to_string(t[1]) + ", f=" + str(res[0].valuation(red[0]))
+
             local_data[p] = data
-            s = s[j:]
 
-        return ReductionData(raw, P, Q, minimal_equation, minimal_disc, local_data,
-                             prime_to_2_conductor, prime_to_2_conductor_only)
-
+        prime_to_2_conductor_only = (-1 in res[1].component(2))
+        return ReductionData(res, P, Q, minimal_equation, minimal_disc, local_data,
+                             conductor, prime_to_2_conductor_only)
 
     def __reduce__(self):
-        return _reduce_load_Genus2reduction, tuple([])
+        return _reduce_load_genus2reduction, tuple([])
 
 # An instance
 genus2reduction = Genus2reduction()
 
+
 def _reduce_load_genus2reduction():
     return genus2reduction
-
-import os
-def genus2reduction_console():
-    os.system('genus2reduction')
-

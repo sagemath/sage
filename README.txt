@@ -3,17 +3,18 @@
        "Creating a Viable Open Source Alternative to
           Magma, Maple, Mathematica, and MATLAB"
 
-    Copyright (C) 2005-2012 William Stein and the Sage Development Team
+    Copyright (C) 2005-2014 The Sage Development Team
 
         http://www.sagemath.org
 
-    Over 200 people have contributed code to Sage. Please see the
-    following web page for a list:
+The Sage Library is GPLv2+, included packages have compatible OSS
+licenses (see COPYING.txt). Over 400 people have contributed code to
+Sage. Please see the following web page for a list:
 
-        http://www.sagemath.org/development-map.html
+    http://www.sagemath.org/development-map.html
 
-    In many cases, documentation for modules and functions list the
-    authors.
+In many cases, documentation for modules and functions list the
+authors.
 
 
 GETTING STARTED
@@ -37,7 +38,8 @@ SUPPORTED PLATFORMS
 -------------------
 
 Sage fully supports several Linux distributions, recent versions of
-Mac OS X, as well as a number of Solaris and OpenSolaris releases.
+Mac OS X, Windows (using virtualization), as well as a number of
+Solaris and OpenSolaris releases.
 
 There should be no serious bugs in an officially released version of
 Sage on any of the fully supported platforms, but any major issues with
@@ -62,25 +64,36 @@ QUICK INSTRUCTIONS TO BUILD FROM SOURCE
 
 The following steps briefly outline the process of building Sage from
 source. More detailed instructions, including how to build faster on
-multicore machines are contained later in this README and in the
+multicore machines, are contained later in this README and in the
 Installation Guide:
 
     http://www.sagemath.org/doc/installation
 
-1. Make sure you have the dependencies and 3 GB of free disk space.
+1. Make sure you have the dependencies and 5 GB of free disk space.
 
-   Linux: gcc, make, m4, perl, ranlib, and tar.
+   All Linux versions: gcc, make, m4, perl, ranlib, and tar.
+   Debian or Ubuntu systems: the dpkg-dev package.
+   Fedora or RedHat systems: the perl-ExtUtils-MakeMaker package.
    (install these using your package manager)
-   On recent Debian or Ubuntu systems (in particular Ubuntu 12.04
-   "Precise"), you need the dpkg-dev package.
 
    OS X: Xcode. Make sure you have installed the most recent version
-   of Xcode. For pre-Lion versions of OS X, you can download Xcode
-   from http://developer.apple.com/downloads/. For OS X Lion, you can
-   install it using the App Store. With Xcode 4.3 or later, you need
-   to install the "Command Line Tools": from the File menu, choose
-   "Preferences", then the "Downloads" tab, and then "Install" the
-   Command Line Tools.
+   of Xcode. With recent versions of OS X (OS X Lion or later), you
+   can install Xcode for free from the App Store. For pre-Lion
+   versions of OS X, you can download Xcode from
+   http://developer.apple.com/downloads/.
+
+   With OS X, you also need to install the "command line tools". When
+   using OS X Mavericks, after installing Xcode, run this command from
+   a terminal window:
+
+      xcode-select --install
+
+   Then click "Install" in the pop-up window.
+
+   When using OS X Mountain Lion or earlier, you need to install the
+   command line tools from Xcode: run Xcode; then from the File
+   menu, choose "Preferences", then the "Downloads" tab, and then
+   "Install" the Command Line Tools.
 
    Other platforms: See detailed instructions below.
 
@@ -107,19 +120,6 @@ process of Sage, see:
     http://sagemath.org/doc/installation/source.html#environment-variables
 
 
-SELINUX
---------
-
-On Linux, if you get this error message:
-
-    Error: cannot restore segment prot after reloc: Permission denied
-
-the problem is probably related to SELinux. See the following URL for
-further information:
-
-    http://www.exelisvis.com/Support/HelpArticleDetail/ArticleId/3092.aspx
-
-
 IMPLEMENTATION
 --------------
 
@@ -132,7 +132,7 @@ included (OS X only), so you do not need them in order to build Sage.
 MORE DETAILED INSTRUCTIONS TO BUILD FROM SOURCE
 -----------------------------------------------
 
-1. Make sure you have about 3 GB of free disk space.
+1. Make sure you have about 5 GB of free disk space.
 
 2. Install build dependencies.
 
@@ -152,8 +152,10 @@ MORE DETAILED INSTRUCTIONS TO BUILD FROM SOURCE
 
        http://wiki.sagemath.org/solaris
 
-   Windows: Not supported. A solution is to download and install
-   VirtualBox, install Linux into it, etc.
+   Windows: Download and install VirtualBox, and then download the
+   Sage virtual appliance. For details, see:
+
+       http://wiki.sagemath.org/SageAppliance
 
    NOTE: On some operating systems, it might be necessary to install
    gas/as, gld/ld, gnm/nm. On most platforms, these are automatically
@@ -193,37 +195,29 @@ MORE DETAILED INSTRUCTIONS TO BUILD FROM SOURCE
 
        make
 
-4. Wait about 1 hour to 14 days, depending on your computer (it took
+4. Wait about 20 minutes to 14 days, depending on your computer (it took
    about 2 weeks to build Sage on the T-Mobile G1 Android cell phone).
 
 5. Type "./sage" to try it out.
 
-6. OPTIONAL: Start Sage and run the command
-
-       install_scripts("/usr/local/bin/")   # change /usr/local/bin/
-
-   Type "install_scripts?" in Sage for more details about what this
-   command does.
-
-7. OPTIONAL: Type "make ptest" to test all examples in the documentation
-   (over 93,000 lines of input!) -- this takes from 30 minutes to
+6. OPTIONAL: Type "make ptest" to test all examples in the documentation
+   (over 200,000 lines of input!) -- this takes from 10 minutes to
    several hours. Don't get too disturbed if there are 2 to 3 failures,
    but always feel free to email the section of logs/ptest.log that
    contains errors to the sage-support mailing list. If there are
    numerous failures, there was a serious problem with your build.
 
-8. OPTIONAL: If you want to (try to) build the documentation, run:
-
-       sage --docbuild --help
-
-   for instructions. The HTML version of the documentation is built
+7. The HTML version of the documentation is built
    during the compilation process of Sage and resides in the directory:
 
-       $SAGE_ROOT/devel/sage/doc/output/html/
+       $SAGE_ROOT/src/doc/output/html/
 
-   LaTeX is required to build the PDF version of the documentation.
+   OPTIONAL: If you want to build the PDF version (requires LaTeX) of
+   the documentation, run:
 
-9. OPTIONAL: It is highly recommended that you install the optional GAP
+       make doc-pdf
+
+8. OPTIONAL: It is highly recommended that you install the optional GAP
    database by typing:
 
        ./sage --optional
@@ -233,43 +227,22 @@ MORE DETAILED INSTRUCTIONS TO BUILD FROM SOURCE
    sage.math.washington.edu and install it. While you're at it, you
    might install other databases of interest to you.
 
-10. OPTIONAL: It is recommended that you have both LaTeX and the
-    ImageMagick tools (e.g. the "convert" command) installed since some
-    plotting functionality benefits from it.
+9. OPTIONAL: It is recommended that you have both LaTeX and the
+   ImageMagick tools (e.g. the "convert" command) installed since some
+   plotting functionality benefits from it.
 
-11. OPTIONAL: Read this if you are intending to run a Sage notebook
+10. OPTIONAL: Read this if you are intending to run a Sage notebook
     server for multiple users. For security (i.e., to run
-    "notebook(secure=True)") you may wish users to access the server
-    using the HTTPS protocol. You also may want to use OpenID for user
-    authentication. The first of these requires you to install
-    pyOpenSSL, and they both require OpenSSL. If you have OpenSSL and
-    the OpenSSL development headers installed on your system, you can
+    "notebook(secure=True)") you want to access the server using the
+    HTTPS protocol. First, install OpenSSL and the OpenSSL development
+    headers on your system if they are not already installed. Then
     install pyOpenSSL by building Sage and then typing
 
         ./sage -i pyopenssl
 
     Note that this command requires internet access.  Alternatively,
-    "make ssl" builds Sage and installs pyOpenSSL.  If you are missing
-    either OpenSSL or OpenSSL's development headers, you can install a
-    local copy of both into your Sage installation first. Ideally,
-    this should be done before installing Sage; otherwise, you should
-    at least rebuild Sage's Python, and ideally any part of Sage
-    relying on it. So the procedure is as follows (again, with a
-    computer connected to the internet). Starting from a fresh Sage
-    tarball:
+    "make ssl" builds Sage and installs pyOpenSSL.
 
-        ./sage -i patch
-        ./sage -i openssl
-        make ssl
-
-    Alternatively, if you've already built Sage:
-
-        ./sage -i openssl
-        ./sage -f python   # rebuilds Python
-        SAGE_UPGRADING=yes make ssl
-
-    The third line will rebuild all parts of Sage that depend on
-    Python; this can take a while.
 
 PROBLEMS
 --------
@@ -313,6 +286,52 @@ you need a recent version of binutils; on OS X you need a recent version
 of XCode.
 
 
+DIRECTORY LAYOUT
+----------------
+
+Simplified directory layout (only essential files/directories):
+
+SAGE_ROOT                 Root directory (sage-x.y.z in the Sage tarball)
++-- build
+|   +-- deps              Dependency information of packages
+|   +-- pkgs              Every package is a subdirectory here
+|       +-- atlas
+|       ...
+|       +-- zn_poly
++-- COPYING.txt           Copyright information
++-- local                 Compiled packages are installed here
+|   +-- bin               Executables
+|   +-- include           C/C++ headers
+|   +-- lib               Shared libraries
+|   +-- share             Databases, architecture-independent data
+|   +-- var
+|       +-- sage          List of installed packages
+|       +-- tmp           Temporary files when building Sage
++-- logs 
+|   +-- dochtml.log       Log of the documentation build
+|   +-- install.log       Full install log
+|   +-- pkgs              Build logs of individual packages
+|       +--- atlas-3.10.1.p7.log
+|       ...
+|       +--- zn_poly-0.9.p11.log
++-- Makefile              Running "make" uses this file
++-- README.txt            This file
++-- sage                  Script to start Sage
++-- src                   All of the Sage source (not third-party packages)
+|   +-- bin               Scripts that Sage uses internally
+|   +-- doc               Sage documentation
+|   +-- sage              The Sage library source code
++-- upstream              Source tarballs of packages
+|   +-- atlas-3.10.1.tar.bz2
+|   ...
+|   +-- zn_poly-0.9.tar.bz2
++-- VERSION.txt
+
+For more details, see:
+
+    http://sagemath.org/doc/developer/coding_basics.html#files-and-directory-structure
+
+
 RELOCATION
 ----------
 
@@ -342,24 +361,22 @@ install. You can make changes to documentation, source, etc., and very
 easily package the complete results up for redistribution just like we
 do.
 
-1. To make your own source tarball (sage-x.y.z.tar) of Sage, type:
+1. To make your own source tarball of Sage, type:
 
-       sage --sdist x.y.z
-
-   where the version is whatever you want.
+       sage --sdist
 
 2. To make a binary distribution with your currently installed packages,
    type:
 
-       sage --bdist x.y.z
+       sage --bdist
 
 3. To make a binary that will run on the widest range of target
    machines, set the SAGE_FAT_BINARY environment variable to "yes"
    before building Sage:
 
        export SAGE_FAT_BINARY="yes"
-       make
-       ./sage --bdist x.y.z-fat
+       make distclean && make
+       ./sage --bdist
 
 In all cases, the result is placed in the directory "$SAGE_ROOT/dist/".
 
@@ -371,13 +388,8 @@ All software included with Sage is copyrighted by the respective authors
 and released under an open source license that is "GPL version 3 or
 later" compatible. See the file COPYING.txt for more details.
 
-Almost every spkg in $SAGE_ROOT/spkg/standard/ is a bzip2-compressed
-tarball (currently, the only exception is the bzip2 spkg itself, which
-is gzip-compressed). You can extract it with:
-
-    tar xvf name-*.spkg
-
-Inside the spkg, there is a file SPKG.txt that details all changes made
-to the given package for inclusion with Sage. The inclusion of such a
-file detailing changes is specifically required by some of the packages
-included with Sage (e.g. for GAP).
+Sources are in unmodified (as far as possible) tarballs in the
+"$SAGE_ROOT/upstream" directory. The remaining description, version
+information, patches, and build scripts are in the accompanying
+"$SAGE_ROOT/build/pkgs/<packagename>" directory. This directory is
+part of the Sage git repository.

@@ -22,70 +22,15 @@ Website: http://www.cs.uwaterloo.ca/~astorjoh/iml.html
  * Arne Storjohann astorjoh@uwaterloo.ca
 
 == Dependencies ==
- * GMP/MPIR
+ * GMP
  * ATLAS
 
 == Special Update/Build Instructions ==
 
- * Various files should be made executable. Run spkg-src after
-   extracting the sources to src/ to fix this.
+ * As of version 1.0.4, you need to repackage the upstream tarball
+   using the spkg-src script because there was a bugfix version of 1.0.4
+   reposted upstream without version number bump.
 
 === Patches ===
 
- * blas_headers.patch: Add BLAS header files from GSL, needed in case
-   ATLAS has not been installed.
- * build.patch: Made build scripts that work.
- * configure_default_cflags.patch: get rid of the following error
-   during configure:
-     ./configure: line 18624: -O3: command not found
  * examples.patch: Modified some of the examples.
- * memleak.patch: use mpz_set_ui instead of mpz_init_set_ui on mpz
-   which is already allocated.
- * remove_repl.patch: Do not build/install src/repl at all, since it
-   does nothing anyway and creating empty archives fails on OS X.
-
-== Changelog ==
-
-=== iml-1.0.3.p0 (Jeroen Demeyer, 12 June 2013) ===
- * #748: Upgrade to latest upstream version, rebase patches.
- * Remove rename_lift.patch and sage2.patch, which were upstreamed.
- * Removed tinyatlas.patch and #include "tinyatlas.h"
- * Removed sage1.patch
- * Apply sage3_memleak.patch in all 3 places with similar code, rename
-   to memleak.patch
- * Use -O3 optimization level by default.
- * Add configure_default_cflags.patch.
-
-=== iml-1.0.1.p15 (Jean-Pierre Flori, Jeroen Demeyer, 11 June 2013) ===
- * #14699: Cleanup spkg, restore upstream sources, moved patches
-   into patch files in patches/
- * Do not build/install src/repl at all, since it does nothing anyway
-   and creating empty archives fails on OS X.
-
-=== iml-1.0.1.p14 (Simon King, 10th December 2011) ===
- * #12131: Use --libdir, to make the package work on openSUSE.
-
-=== iml-1.0.1.p13 (David Kirkby, 22nd June, 2010) ===
- * #9309 Add an spkg-check file for the IML library. There are only
-   two self-tests, but at least there is some testing.
-
-=== iml-1.0.1.p12 (Jaap Spies, Jan 25th, 2010) ===
- * Let SAGE64 work for Open Solaris 64 bit
- * Update SPKG.txt
-
-=== iml-1.0.1.p11 (Michael Abshoff, May 18th, 2008) ===
- * add 64 bit OSX build support
-
-=== iml-1.0.1.p10 (Michael Abshoff, April 1st, 2008) ===
- * Update SPKG.txt
- * Tim Abbott: Update iml with Debian's gfortran transition. (#2758)
-
-=== iml-1.0.1.p9 (Tim Abbott, February 7th, 2008) ===
- * Add Debian build support.
-
-=== iml-1.0.1.p7 (Michael Abshoff, December 23rd, 2007) ===
- * apply memleak patch in nullspace.c (which has been send to the IML autors)
- * add .hgignore
-
-=== William Stein (2007-02-14) ===
- * initial version

@@ -77,6 +77,13 @@ We test that bug #8415 (caused by a PARI bug fixed in v2.3.5) is OK::
       Defn: a |--> -2.645751311064591?*I
 
 
+REFERENCES:
+
+.. [CT] J. E. Cremona and T. Thongjunthug, The Complex AGM, periods of
+   elliptic curves over $\CC$ and complex elliptic logarithms.
+   Journal of Number Theory Volume 133, Issue 8, August 2013, pages
+   2813-2841.
+
 
 AUTHORS:
 
@@ -104,6 +111,7 @@ from sage.rings.number_field.number_field import refine_embedding
 from sage.rings.infinity import Infinity
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.misc.cachefunc import cached_method
+
 
 class PeriodLattice(FreeModule_generic_pid):
     """
@@ -486,6 +494,60 @@ class PeriodLattice_ell(PeriodLattice):
         return periods
 
     @cached_method
+    def tau(self, prec=None, algorithm='sage'):
+        r"""
+        Return the upper half-plane parameter in the fundamental region.
+
+        INPUT:
+
+        - ``prec`` (default: ``None``) -- precision in bits (default
+          precision if ``None``).
+
+        - ``algorithm`` (string, default 'sage') -- choice of
+          implementation (for real embeddings only) between 'sage'
+          (native Sage implementation) or 'pari' (use the PARI
+          library: only available for real embeddings).
+
+        OUTPUT:
+
+        (Complex) `\tau = \omega_1/\omega_2` where the lattice has the
+        form `\ZZ\omega_1 + \ZZ\omega_2`, normalised so that `\tau =
+        \omega_1/\omega_2` is in the fundamental region of the upper
+        half-plane.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('37a')
+            sage: L = E.period_lattice()
+            sage: L.tau()
+            1.22112736076463*I
+
+        ::
+
+            sage: K.<a> = NumberField(x^3-2)
+            sage: emb = K.embeddings(RealField())[0]
+            sage: E = EllipticCurve([0,1,0,a,a])
+            sage: L = E.period_lattice(emb)
+            sage: tau = L.tau(); tau
+            -0.338718341018919 + 0.940887817679340*I
+            sage: tau.abs()
+            1.00000000000000
+            sage: -0.5 <= tau.real() <= 0.5
+            True
+
+            sage: emb = K.embeddings(ComplexField())[0]
+            sage: L = E.period_lattice(emb)
+            sage: tau = L.tau(); tau
+            0.387694505032876 + 1.30821088214407*I
+            sage: tau.abs()
+            1.36444961115933
+            sage: -0.5 <= tau.real() <= 0.5
+            True
+        """
+        w1, w2 = self.normalised_basis(prec=prec, algorithm=algorithm)
+        return w1/w2
+
+    @cached_method
     def _compute_periods_real(self, prec=None, algorithm='sage'):
         r"""
         Internal function to compute the periods (real embedding case).
@@ -530,16 +592,16 @@ class PeriodLattice_ell(PeriodLattice):
 
         if algorithm=='pari':
             if self.E.base_field() is QQ:
-                periods = self.E.pari_curve(prec).omega().python()
+                periods = self.E.pari_curve().omega(prec).python()
                 return (R(periods[0]), C(periods[1]))
 
             from sage.libs.pari.all import pari
-            E_pari = pari([R(self.embedding(ai).real()) for ai in self.E.a_invariants()]).ellinit(precision=prec)
-            periods = E_pari.omega().python()
+            E_pari = pari([R(self.embedding(ai).real()) for ai in self.E.a_invariants()]).ellinit()
+            periods = E_pari.omega(prec).python()
             return (R(periods[0]), C(periods[1]))
 
         if algorithm!='sage':
-            raise ValueError, "invalid value of 'algorithm' parameter"
+            raise ValueError("invalid value of 'algorithm' parameter")
 
         pi = R.pi()
         # Up to now everything has been exact in AA or QQbar, but now
@@ -693,7 +755,7 @@ class PeriodLattice_ell(PeriodLattice):
         """
         if self.is_real():
             return self.real_flag == +1
-        raise RuntimeError, "Not defined for non-real lattices."
+        raise RuntimeError("Not defined for non-real lattices.")
 
     def real_period(self, prec = None, algorithm='sage'):
         """
@@ -731,7 +793,7 @@ class PeriodLattice_ell(PeriodLattice):
         """
         if self.is_real():
             return self.basis(prec,algorithm)[0]
-        raise RuntimeError, "Not defined for non-real lattices."
+        raise RuntimeError("Not defined for non-real lattices.")
 
     def omega(self, prec = None):
         r"""
@@ -868,7 +930,7 @@ class PeriodLattice_ell(PeriodLattice):
         if self.is_real():
             return Matrix([[w1,0],list(w2)])
         else:
-            return Matrix([list(w) for w in w1,w2])
+            return Matrix([list(w) for w in (w1,w2)])
 
     def complex_area(self, prec=None):
         """
@@ -937,9 +999,9 @@ class PeriodLattice_ell(PeriodLattice):
         if prec is None:
             prec = RealField().precision()
         try:
-            return self.E.pari_curve(prec).ellsigma(z, flag)
+            return self.E.pari_curve().ellsigma(z, flag, precision=prec)
         except AttributeError:
-            raise NotImplementedError, "sigma function not yet implemented for period lattices of curves not defined over Q."
+            raise NotImplementedError("sigma function not yet implemented for period lattices of curves not defined over Q")
 
     def curve(self):
         r"""
@@ -983,7 +1045,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: E = EllipticCurve([0,1,0,a,a])
             sage: L = E.period_lattice(K.embeddings(RealField())[0])
             sage: L.ei()
-            [0.?e-19 - 1.122462048309373?*I, 0.?e-19 + 1.122462048309373?*I, -1]
+            [0.?e-17 - 1.122462048309373?*I, 0.?e-17 + 1.122462048309373?*I, -1]
 
         sage: L = E.period_lattice(K.embeddings(ComplexField())[0])
         sage: L.ei()
@@ -1052,7 +1114,7 @@ class PeriodLattice_ell(PeriodLattice):
                     C = ComplexField()
                     z = C(z)
                 except TypeError:
-                    raise TypeError, "%s is not a complex number"%z
+                    raise TypeError("%s is not a complex number"%z)
         prec = C.precision()
         from sage.matrix.all import Matrix
         from sage.modules.all import vector
@@ -1119,7 +1181,7 @@ class PeriodLattice_ell(PeriodLattice):
                     z = C(z)
                     z_is_real = z.is_real()
                 except TypeError:
-                    raise TypeError, "%s is not a complex number"%z
+                    raise TypeError("%s is not a complex number"%z)
         prec = C.precision()
         if self.real_flag:
             w1,w2 = self.basis(prec) # w1 real
@@ -1147,6 +1209,199 @@ class PeriodLattice_ell(PeriodLattice):
         else:
             return C(z.real(),0)
 
+    def e_log_RC(self, xP, yP, prec=None, reduce=True):
+        r"""
+        Return the elliptic logarithm of a real or complex point.
+
+        - ``xP, yP`` (real or complex) -- Coordinates of a point on
+          the embedded elliptic curve associated with this period
+          lattice.
+
+        - ``prec`` (default: ``None``) -- real precision in bits
+          (default real precision if None).
+
+        - ``reduce`` (default: ``True``) -- if ``True``, the result
+          is reduced with respect to the period lattice basis.
+
+        OUTPUT:
+
+        (complex number) The elliptic logarithm of the point `(xP,yP)`
+        with respect to this period lattice.  If `E` is the elliptic
+        curve and `\sigma:K\to\CC` the embedding, the the returned
+        value `z` is such that `z\pmod{L}` maps to `(xP,yP)=\sigma(P)`
+        under the standard Weierstrass isomorphism from `\CC/L` to
+        `\sigma(E)`.  If ``reduce`` is ``True``, the output is reduced
+        so that it is in the fundamental period parallelogram with
+        respect to the normalised lattice basis.
+
+        ALGORITHM:
+
+        Uses the complex AGM.  See [CT]_ for details.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: L = E.period_lattice()
+            sage: P = E([-1,1])
+            sage: xP, yP = [RR(c) for c in P.xy()]
+
+        The elliptic log from the real coordinates::
+
+            sage: L.e_log_RC(xP, yP)
+            0.479348250190219 + 0.985868850775824*I
+
+        The same elliptic log from the algebraic point::
+
+            sage: L(P)
+            0.479348250190219 + 0.985868850775824*I
+
+        A number field example::
+
+            sage: K.<a> = NumberField(x^3-2)
+            sage: E = EllipticCurve([0,0,0,0,a])
+            sage: v = K.real_places()[0]
+            sage: L = E.period_lattice(v)
+            sage: P = E.lift_x(1/3*a^2 + a + 5/3)
+            sage: L(P)
+            3.51086196882538
+            sage: xP, yP = [v(c) for c in P.xy()]
+            sage: L.e_log_RC(xP, yP)
+            3.51086196882538
+
+        Elliptic logs of real points which do not come from algebraic
+        points::
+
+            sage: ER = EllipticCurve([v(ai) for ai in E.a_invariants()])
+            sage: P = ER.lift_x(12.34)
+            sage: xP, yP = P.xy()
+            sage: xP, yP
+            (12.3400000000000, 43.3628968710567)
+            sage: L.e_log_RC(xP, yP)
+            3.76298229503967
+            sage: xP, yP = ER.lift_x(0).xy()
+            sage: L.e_log_RC(xP, yP)
+            2.69842609082114
+
+        Elliptic logs of complex points::
+
+            sage: v = K.complex_embeddings()[0]
+            sage: L = E.period_lattice(v)
+            sage: P = E.lift_x(1/3*a^2 + a + 5/3)
+            sage: L(P)
+            1.68207104397706 - 1.87873661686704*I
+            sage: xP, yP = [v(c) for c in P.xy()]
+            sage: L.e_log_RC(xP, yP)
+            1.68207104397706 - 1.87873661686704*I
+            sage: EC = EllipticCurve([v(ai) for ai in E.a_invariants()])
+            sage: xP, yP = EC.lift_x(0).xy()
+            sage: L.e_log_RC(xP, yP)
+            1.03355715602040 - 0.867257428417356*I
+        """
+        if prec is None:
+            prec = RealField().precision()
+        # Note: using log2(prec) + 3 guard bits is usually enough.
+        # To avoid computing a logarithm, we use 40 guard bits which
+        # should be largely enough in practice.
+        prec2 = prec + 40
+
+        R = RealField(prec2)
+        C = ComplexField(prec2)
+        pi = R.pi()
+        e1,e2,e3 = self._ei
+        a1,a2,a3 = [self.embedding(a) for a in self.E.ainvs()[:3]]
+
+        wP = 2*yP+a1*xP+a3
+
+        # We treat the case of 2-torsion points separately.  (Note
+        # that Cohen's algorithm does not handle these properly.)
+
+        if wP.is_zero():  # 2-torsion treated separately
+            w1,w2 = self._compute_periods_complex(prec,normalise=False)
+            if xP==e1:
+                z = w2/2
+            else:
+                if xP==e3:
+                    z = w1/2
+                else:
+                    z = (w1+w2)/2
+            if reduce:
+                z = self.reduce(z)
+            return z
+
+        # NB The first block of code works fine for real embeddings as
+        # well as complex embeddings.  The special code for real
+        # embeddings uses only real arithmetic in the iteration, and is
+        # based on Cremona and Thongjunthug.
+
+        # An older version, based on Cohen's Algorithm 7.4.8 also uses
+        # only real arithmetic, and gives different normalisations,
+        # but also causes problems (see #10026).  It is left in but
+        # commented out below.
+
+        if self.real_flag==0:  # complex case
+
+            a = C((e1-e3).sqrt())
+            b = C((e1-e2).sqrt())
+            if (a+b).abs() < (a-b).abs():  b=-b
+            r = C(((xP-e3)/(xP-e2)).sqrt())
+            if r.real()<0: r=-r
+            t = -C(wP)/(2*r*(xP-e2))
+            # eps controls the end of the loop. Since we aim at a target
+            # precision of prec bits, eps = 2^(-prec) is enough.
+            eps = R(1) >> prec
+            while True:
+                s = b*r+a
+                a, b = (a+b)/2, (a*b).sqrt()
+                if (a+b).abs() < (a-b).abs():  b=-b
+                r = (a*(r+1)/s).sqrt()
+                if (r.abs()-1).abs() < eps: break
+                if r.real()<0: r=-r
+                t *= r
+            z = ((a/t).arctan())/a
+            z = ComplexField(prec)(z)
+            if reduce:
+                z =  self.reduce(z)
+            return z
+
+        if self.real_flag==-1: # real, connected case
+            z = C(self._abc[0]) # sqrt(e3-e1)
+            a, y, b = z.real(), z.imag(), z.abs()
+            uv = (xP-e1).sqrt()
+            u, v = uv.real().abs(), uv.imag().abs()
+            r = (u*a/(u*a+v*y)).sqrt()
+            t = -r*R(wP)/(2*(u**2+v**2))
+            on_egg = False
+        else:                  # real, disconnected case
+            a = R(e3-e1).sqrt()
+            b = R(e3-e2).sqrt()
+            if (a+b).abs() < (a-b).abs():  b=-b
+            on_egg = (xP<e3)
+            if on_egg:
+                r = a/R(e3-xP).sqrt()
+                t = r*R(wP)/(2*R(xP-e1))
+            else:
+                r = R((xP-e1)/(xP-e2)).sqrt()
+                t = -R(wP)/(2*r*R(xP-e2))
+
+        # eps controls the end of the loop. Since we aim at a target
+        # precision of prec bits, eps = 2^(-prec) is enough.
+        eps = R(1) >> prec
+        while True:
+            s = b*r+a
+            a, b = (a+b)/2, (a*b).sqrt()
+            r = (a*(r+1)/s).sqrt()
+            if (r-1).abs() < eps: break
+            t *= r
+        z = ((a/t).arctan())/a
+        if on_egg:
+            w1,w2 = self._compute_periods_real(prec)
+            z += w2/2
+        z = ComplexField(prec)(z)
+        if reduce:
+            z =  self.reduce(z)
+        return z
+
+
     def elliptic_logarithm(self, P, prec=None, reduce=True):
         r"""
         Return the elliptic logarithm of a point.
@@ -1173,11 +1428,9 @@ class PeriodLattice_ell(PeriodLattice):
         in the fundamental period parallelogram with respect to the
         normalised lattice basis.
 
-        ALGORITHM:   Uses the complex AGM.  See  [Cremona2010]_ for details.
+        ALGORITHM:
 
-        .. [Cremona2010] J. E. Cremona and T. Thongjunthug, The
-          Complex AGM, periods of elliptic curves over $\CC$ and
-          complex elliptic logarithms.  Preprint 2010.
+        Uses the complex AGM.  See [CT]_ for details.
 
         EXAMPLES::
 
@@ -1300,7 +1553,7 @@ class PeriodLattice_ell(PeriodLattice):
 
             sage: K.<w> = QuadraticField(2)
             sage: E = EllipticCurve([ 0, -1, 1, -3*w -4, 3*w + 4 ])
-            sage: T = E.simon_two_descent()
+            sage: T = E.simon_two_descent(lim1=20,lim3=5,limtriv=20)
             sage: P,Q = T[2]
             sage: embs = K.embeddings(CC)
             sage: Lambda = E.period_lattice(embs[0])
@@ -1323,159 +1576,19 @@ class PeriodLattice_ell(PeriodLattice):
             1.17058357737548897849026170185581196033579563441850967539191867385734983296504066660506637438866628981886518901958717288150400849746892393771983141354014895386251320571643977497740116710952913769943240797618468987304985625823413440999754037939123032233879499904283600304184828809773650066658885672885 - 1.13513899565966043682474529757126359416758251309237866586896869548539516543734207347695898664875799307727928332953834601460994992792519799260968053875387282656993476491590607092182964878750169490985439873220720963653658829712494879003124071110818175013453207439440032582917366703476398880865439217473*I
         """
         if not P.curve() is self.E:
-            raise ValueError, "Point is on the wrong curve"
+            raise ValueError("Point is on the wrong curve")
         if prec is None:
             prec = RealField().precision()
         if P.is_zero():
             return ComplexField(prec)(0)
-        # Note: using log2(prec) + 3 guard bits is usually enough.
-        # To avoid computing a logarithm, we use 40 guard bits which
-        # should be largely enough in practice.
-        prec2 = prec + 40
-        R = RealField(prec2)
-        C = ComplexField(prec2)
-        pi = R.pi()
-        e1,e2,e3 = self._ei
-        a1,a2,a3 = [self.embedding(a) for a in self.E.ainvs()[:3]]
+
+        # Compute the real or complex coordinates of P:
+
         xP, yP = [self.embedding(coord) for coord in P.xy()]
-        wP = 2*yP+a1*xP+a3
 
-        # We treat the case of 2-torsion points separately.  (Note
-        # that Cohen's algorithm does not handle these properly.)
+        # The real work is done over R or C now:
 
-        if wP.is_zero():  # 2-torsion treated separately
-            w1,w2 = self._compute_periods_complex(prec,normalise=False)
-            if xP==e1:
-                z = w2/2
-            else:
-                if xP==e3:
-                    z = w1/2
-                else:
-                    z = (w1+w2)/2
-            if reduce:
-                z = self.reduce(z)
-            return z
-
-        # NB The first block of code works fine for real embeddings as
-        # well as complex embeddings.  The special code for real
-        # embeddings uses only real arithmetic in the iteration, and is
-        # based on Cremona and Thongjunthug.
-
-        # An older version, based on Cohen's Algorithm 7.4.8 also uses
-        # only real arithmetic, and gives different normalisations,
-        # but also causes problems (see #10026).  It is left in but
-        # commented out below.
-
-        if self.real_flag==0:  # complex case
-
-            a = C((e1-e3).sqrt())
-            b = C((e1-e2).sqrt())
-            if (a+b).abs() < (a-b).abs():  b=-b
-            r = C(((xP-e3)/(xP-e2)).sqrt())
-            if r.real()<0: r=-r
-            t = -C(wP)/(2*r*(xP-e2))
-            # eps controls the end of the loop. Since we aim at a target
-            # precision of prec bits, eps = 2^(-prec) is enough.
-            eps = R(1) >> prec
-            while True:
-                s = b*r+a
-                a, b = (a+b)/2, (a*b).sqrt()
-                if (a+b).abs() < (a-b).abs():  b=-b
-                r = (a*(r+1)/s).sqrt()
-                if (r.abs()-1).abs() < eps: break
-                if r.real()<0: r=-r
-                t *= r
-            z = ((a/t).arctan())/a
-            z = ComplexField(prec)(z)
-            if reduce:
-                z =  self.reduce(z)
-            return z
-
-        if self.real_flag==-1: # real, connected case
-            z = C(self._abc[0]) # sqrt(e3-e1)
-            a, y, b = z.real(), z.imag(), z.abs()
-            uv = (xP-e1).sqrt()
-            u, v = uv.real().abs(), uv.imag().abs()
-            r = (u*a/(u*a+v*y)).sqrt()
-            t = -r*R(wP)/(2*(u**2+v**2))
-            on_egg = False
-        else:                  # real, disconnected case
-            a = R(e3-e1).sqrt()
-            b = R(e3-e2).sqrt()
-            if (a+b).abs() < (a-b).abs():  b=-b
-            on_egg = (xP<e3)
-            if on_egg:
-                r = a/R(e3-xP).sqrt()
-                t = r*R(wP)/(2*R(xP-e1))
-            else:
-                r = R((xP-e1)/(xP-e2)).sqrt()
-                t = -R(wP)/(2*r*R(xP-e2))
-
-        # eps controls the end of the loop. Since we aim at a target
-        # precision of prec bits, eps = 2^(-prec) is enough.
-        eps = R(1) >> prec
-        while True:
-            s = b*r+a
-            a, b = (a+b)/2, (a*b).sqrt()
-            r = (a*(r+1)/s).sqrt()
-            if (r-1).abs() < eps: break
-            t *= r
-        z = ((a/t).arctan())/a
-        if on_egg:
-            w1,w2 = self._compute_periods_real(prec)
-            z += w2/2
-        z = ComplexField(prec)(z)
-        if reduce:
-            z =  self.reduce(z)
-        return z
-
-
-#         if self.real_flag==-1:
-#             z = self._abc[1] # sqrt(e3-e2)
-#             beta = z.norm()
-#             alpha = 2*(e3-e2).real()
-#             a = beta.sqrt()*2
-#             b = (alpha+2*beta).sqrt()
-#             c = (xP-e3+beta)/(xP-e3).sqrt()
-#         else:
-#             on_egg = (xP<e3)
-#             if on_egg:
-#                 y3 = -(a1*e1+a3)/2
-#                 lam = (yP-y3)/(xP-e1)
-#                 x3 = lam*(lam+a1)-a2-xP-e1
-#                 yP = lam*(xP-x3)-yP-a1*x3-a3
-#                 xP = x3
-#                 wP = 2*yP+a1*xP+a3
-#             a = self._abc[0] # sqrt(e3-e1)
-#             b = self._abc[1] # sqrt(e3-e2)
-#             c = (xP-e1).sqrt()
-#         # So far the values of a,b,c are algebraic (in AA)
-#         a = R(a)
-#         b = R(b)
-#         c = R(c)
-#         a,b,c = extended_agm_iteration(a,b,c)
-#         if self.real_flag==-1:
-#             z = (a/c).arcsin()
-#             if wP*((xP-e3)*(xP-e3)-beta*beta) >= 0:
-#                 z = pi - z
-#             if wP > 0:
-#                 z += pi
-#             z /= a
-#         elif self.real_flag==+1:
-#             z = (a/c).arcsin()/a
-#             w1 = w2 = None
-#             if wP > 0:
-#                 if w1 is None:
-#                     w1, w2 = self.basis(prec)
-#                 z = w1 - z
-#             if on_egg:
-#                 if w2 is None:
-#                     w1, w2 = self.basis(prec)
-#                 z += w2/2
-#         z =  ComplexField(prec)(z)
-#         if reduce:
-#             z =  self.reduce(z)
-#         return z
+        return self.e_log_RC(xP, yP, prec, reduce=reduce)
 
     def elliptic_exponential(self, z, to_curve=True):
         r"""
@@ -1621,7 +1734,7 @@ class PeriodLattice_ell(PeriodLattice):
                     z = C(z)
                     z_is_real = z.is_real()
                 except TypeError:
-                    raise TypeError, "%s is not a complex number"%z
+                    raise TypeError("%s is not a complex number"%z)
         prec = C.precision()
 
         # test for the point at infinity:
@@ -1792,7 +1905,7 @@ def extended_agm_iteration(a,b,c):
 
     """
     if not isinstance(a, (RealNumber,ComplexNumber)):
-        raise ValueError, "values must be real or complex numbers"
+        raise ValueError("values must be real or complex numbers")
     eps = a.parent().one().real()>>(a.parent().precision()-10)
     while True:
         a1 = (a + b)/2

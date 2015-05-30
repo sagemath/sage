@@ -18,7 +18,7 @@ interpreter.
 import cPickle, os
 
 from expect import Expect, ExpectElement, FunctionElement
-import sage.misc.preparser
+import sage.repl.preparse
 
 from sage.structure.sage_object import dumps, load
 
@@ -221,7 +221,7 @@ class Sage(Expect):
                 os.killpg(pid, 9)
                 os.kill(pid, 9)
 
-            except (RuntimeError, OSError), msg:
+            except (RuntimeError, OSError) as msg:
                 pass
 
             try:
@@ -296,7 +296,7 @@ class Sage(Expect):
             sage: sage0.preparse('2+2')
             'Integer(2)+Integer(2)'
         """
-        return sage.misc.preparser.preparse(x)
+        return sage.repl.preparse.preparse(x)
 
     def eval(self, line, strip=True, **kwds):
         """
@@ -336,7 +336,7 @@ class Sage(Expect):
         cmd = '%s=%s'%(var,value)
         out = self.eval(cmd)
         if 'Traceback' in out:
-            raise TypeError, "Error executing code in Sage\nCODE:\n\t%s\nSage ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSage ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
         """
@@ -385,7 +385,7 @@ class Sage(Expect):
 
             sage: sage0.console() #not tested
             ----------------------------------------------------------------------
-            | Sage Version ..., Release Date: ...                                |
+            | SageMath Version ..., Release Date: ...                            |
             | Type notebook() for the GUI, and license() for information.        |
             ----------------------------------------------------------------------
             ...
@@ -397,7 +397,7 @@ class Sage(Expect):
         EXAMPLES::
 
             sage: sage0.version()
-            'Sage Version ..., Release Date: ...'
+            'SageMath Version ..., Release Date: ...'
             sage: sage0.version() == version()
             True
         """
@@ -426,20 +426,21 @@ class Sage(Expect):
 
 class SageElement(ExpectElement):
 
-    def _graphics_(self):
+    def _rich_repr_(self, display_manager, **kwds):
         """
-        Disable graphical output.
+        Disable rich output
 
         This is necessary because otherwise our :meth:`__getattr__`
         would be called.
 
         EXAMPLES::
 
+            sage: from sage.repl.rich_output import get_display_manager
             sage: m = sage0(4)
-            sage: m._graphics_()
-            False
+            sage: m._rich_repr_(get_display_manager()) is None
+            True
         """
-        return False
+        return None
 
     def __getattr__(self, attrname):
         """
@@ -503,7 +504,7 @@ class SageFunction(FunctionElement):
         EXAMPLES::
 
             sage: sage0(4).gcd
-            <function gcd>
+            <built-in method gcd of sage.rings.integer.Integer object at 0x...>
         """
 
         return str(self._obj.parent().eval('%s.%s'%(self._obj._name, self._name)))
@@ -548,7 +549,7 @@ def sage0_console():
 
         sage: sage0_console() #not tested
         ----------------------------------------------------------------------
-        | Sage Version ..., Release Date: ...                                |
+        | SageMath Version ..., Release Date: ...                            |
         | Type notebook() for the GUI, and license() for information.        |
         ----------------------------------------------------------------------
         ...

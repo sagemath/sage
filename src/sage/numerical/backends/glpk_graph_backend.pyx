@@ -67,6 +67,7 @@ Classes and methods
 
 from sage.numerical.mip import MIPSolverException
 
+include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 cdef class GLPKGraphBackend(object):
@@ -601,11 +602,11 @@ cdef class GLPKGraphBackend(object):
 
         if params is not None:
             try:
-                if params.has_key("low"):
+                if "low" in params:
                     (<c_a_data *>a.data).low = params["low"]
-                if params.has_key("cap"):
+                if "cap" in params:
                     (<c_a_data *>a.data).cap = params["cap"]
-                if params.has_key("cost"):
+                if "cost" in params:
                     (<c_a_data *>a.data).cost = params["cost"]
             except TypeError:
                 glp_del_arc(self.graph, a)
@@ -668,18 +669,14 @@ cdef class GLPKGraphBackend(object):
         cdef _glp_arc* a
         cdef int u
         cdef int v
-        cdef char* u_name
-        cdef char* v_name
         cdef double cost
         cdef double cap
         cdef double low
         cdef int isdirected = g.is_directed()
 
         for (eu,ev,label) in g.edges():
-            s = str(eu)
-            u_name = s
-            s = str(ev)
-            v_name = s
+            u_name = str(eu)
+            v_name = str(ev)
             u = glp_find_vertex(self.graph, u_name)
             v = glp_find_vertex(self.graph, v_name)
             if u < 1 or v < 1:
@@ -688,24 +685,24 @@ cdef class GLPKGraphBackend(object):
             a = glp_add_arc(self.graph, u, v)
 
             if isinstance(label, dict):
-                if label.has_key("cost"):
+                if "cost" in label:
                     cost = label["cost"]
                     (<c_a_data *>a.data).cost = cost
-                if label.has_key("cap"):
+                if "cap" in label:
                     cap = label["cap"]
                     (<c_a_data *>a.data).cap = cap
-                if label.has_key("low"):
+                if "low" in label:
                     low = label["low"]
                     (<c_a_data *>a.data).low = low
 
             if not isdirected:
                 a = glp_add_arc(self.graph, v, u)
                 if isinstance(label, dict):
-                    if label.has_key("cost"):
+                    if "cost" in label:
                         (<c_a_data *>a.data).cost = cost
-                    if label.has_key("cap"):
+                    if "cap" in label:
                         (<c_a_data *>a.data).cap = cap
-                    if label.has_key("low"):
+                    if "low" in label:
                         (<c_a_data *>a.data).low = low
 
     cpdef tuple get_edge(self, char* u, char* v):
@@ -946,13 +943,13 @@ cdef class GLPKGraphBackend(object):
         cdef double low, cap, cost, x
 
         if params is not None:
-            if params.has_key("low"):
+            if "low" in params:
                 low = params["low"]
-            if params.has_key("cap"):
+            if "cap" in params:
                 cap = params["cap"]
-            if params.has_key("cost"):
+            if "cost" in params:
                 cost = params["cost"]
-            if params.has_key("x"):
+            if "x" in params:
                 x = params["x"]
 
         while a is not NULL:
@@ -961,16 +958,16 @@ cdef class GLPKGraphBackend(object):
                 glp_del_arc(self.graph, a)
             elif a.head == vert_v:
                 del_it = True
-                if params.has_key("low"):
+                if "low" in params:
                     if (<c_a_data *>a.data).low != low:
                         del_it = False
-                if params.has_key("cap"):
+                if "cap" in params:
                     if (<c_a_data *>a.data).cap != cap:
                         del_it = False
-                if params.has_key("cost"):
+                if "cost" in params:
                     if (<c_a_data *>a.data).cost != cost:
                         del_it = False
-                if params.has_key("x"):
+                if "x" in params:
                     if (<c_a_data *>a.data).x != x:
                         del_it = False
                 if del_it:

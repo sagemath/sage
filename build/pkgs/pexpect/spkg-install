@@ -11,6 +11,10 @@ for patch in ../patches/*.patch; do
     fi
 done
 
+# use 2to3 if we are running on python3
+if python -c 'import sys; sys.exit(sys.version_info.major != 3)'; then
+    2to3 -n -w --no-diffs pexpect.py
+fi
 
 # On some systems pexpect doesn't upgrade correctly without
 # first removing the old version.

@@ -1,12 +1,10 @@
---- a/numpy/linalg/setup.py	2009-03-29 06:24:21.000000000 -0500
-+++ b/numpy/linalg/setup.py	2008-09-25 22:43:28.000000000 -0500
-@@ -27,7 +27,8 @@
-                                     'zlapack_lite.c', 'dlapack_lite.c',
-                                     'blas_lite.c', 'dlamch.c',
-                                     'f2c_lite.c','f2c.h'],
--                         extra_info = lapack_info
-+                         extra_info = lapack_info,
-+                         extra_link_args = ['-shared']
+--- a/numpy/linalg/setup.py	2014-03-25 12:43:23.000000000 -0700
++++ b/numpy/linalg/setup.py 	2014-09-20 09:19:56.805175830 -0700
+@@ -46,6 +46,7 @@
+                          sources = [get_lapack_lite_sources],
+                          depends =  ['umath_linalg.c.src'] + lapack_lite_src,
+                          extra_info = lapack_info,
++                         extra_link_args = ['-shared'],
+                          libraries = ['npymath'],
                           )
- 
-     return config
+

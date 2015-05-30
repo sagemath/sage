@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
+    echo >&2 "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+cd src/tests/
+
+# Currently (as of version 2.8.7), there are four Python test files:
+# - test_buildexamples.py
+# - test_comparedotparsing.py
+# - test_dot2tex.py
+# - test_multirender.py
+
+passed=true
+for file in test_*.py; do
+    echo "############################################################"
+    echo "spkg-check: Running $file..."
+    echo "############################################################"
+    python $file || passed=false
+done
+echo
+if $passed; then
+    echo "dot2tex's test suite passed successfully."
+else
+    echo >&2 "Error(s) running dot2tex's test suite."
+    exit 1
+fi

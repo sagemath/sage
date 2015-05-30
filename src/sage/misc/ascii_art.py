@@ -38,7 +38,7 @@ EXAMPLES::
 This method :meth:`ascii_art` could be automatically use by the display hook
 manager activated by the magic function: ``%display ascii_art``::
 
-    sage: from sage.misc.interpreter import get_test_shell
+    sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
     sage: shell.run_cell("i = var('i')")
@@ -65,6 +65,7 @@ manager activated by the magic function: ``%display ascii_art``::
           ]
     ***** ]
     sage: shell.run_cell('%display simple')
+    sage: shell.quit()
 
 ::
 
@@ -150,8 +151,11 @@ manager activated by the magic function: ``%display ascii_art``::
 #
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
+
+import os, sys
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
+
 
 ################################################################################
 ### Global variable use to compute the maximal length allows for ascii art
@@ -199,7 +203,7 @@ class AsciiArt(SageObject):
         self._is_uniq = True
         self._matrix = lines
         self._breakpoints = breakpoints
-        self._baseline = baseline if baseline != None else 0
+        self._baseline = baseline if baseline is not None else 0
         self._is_atomic = atomic
 
         self._h = len(lines)
@@ -244,8 +248,6 @@ class AsciiArt(SageObject):
             sage: repr(p5)
             '  *  \n * * \n*****'
         """
-        #return "\n".join(self._matrix)
-        import os
         # Compute the max length of a draw
         global MAX_WIDTH
         if MAX_WIDTH is not None:
@@ -352,6 +354,34 @@ class AsciiArt(SageObject):
         """
         return self._breakpoints
 
+    def _isatty(self):
+        """
+        Test whether stdout is a TTY
+
+        If this test succeeds, you can assume that stdout is directly
+        connected to a terminal. Otherwise you should treat stdout as
+        being redirected to a file.
+
+        OUTPUT:
+
+        Boolean
+
+        EXAMPLES::
+
+            sage: from sage.misc.ascii_art import empty_ascii_art
+            sage: empty_ascii_art._isatty()
+            False
+        """
+        from sage.doctest import DOCTEST_MODE
+        if DOCTEST_MODE:
+            return False
+        try:
+            return os.isatty(sys.stdout.fileno())
+        except Exception:
+            # The IPython zeromq kernel uses a fake stdout that does
+            # not support fileno()
+            return False
+    
     def _terminal_width(self):
         """
         Compute the width size of the terminal.
@@ -362,10 +392,7 @@ class AsciiArt(SageObject):
             sage: empty_ascii_art._terminal_width()
             80
         """
-        import os, sys
-        from sage.doctest.__init__ import DOCTEST_MODE
-        isatty = os.isatty(sys.stdout.fileno())
-        if DOCTEST_MODE or not isatty:
+        if not self._isatty():
             return 80
         import fcntl, termios, struct
         rc = fcntl.ioctl(int(0), termios.TIOCGWINSZ,
@@ -696,7 +723,7 @@ class AsciiArt(SageObject):
         new_h = AsciiArt._compute_new_h(self, Nelt)
         new_baseline = AsciiArt._compute_new_baseline(self, Nelt)
 
-        if self._baseline != None and Nelt._baseline != None:
+        if self._baseline is not None and Nelt._baseline is not None:
             # left traitement
             for line in self._matrix:
                 new_matrix.append(line + " "** Integer(self._l - len(line)))
@@ -848,7 +875,7 @@ def _ascii_art_iter(iter, func=lambda elem, _: ascii_art(elem)):
     for elem in iter:
         if bool:
             #print repr_elems.get_baseline()
-            if repr_elems._baseline != None:
+            if repr_elems._baseline is not None:
                 repr_elems += AsciiArt(
                     ["" ** Integer(repr_elems._h - 1 - repr_elems._baseline) ] +
                     [", "],

@@ -28,6 +28,12 @@ The ``codes`` object may be used to access the codes that Sage can build.
 - :func:`codes.TrivialCode <sage.coding.code_constructions.TrivialCode>`
 - :func:`codes.WalshCode <sage.coding.code_constructions.WalshCode>`
 
+.. NOTE::
+
+    To import these names into the global namespace, use:
+
+        sage: from sage.coding.codes_catalog import *
+
 """
 
 # Implementation note:

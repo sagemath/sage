@@ -11,7 +11,7 @@ Evaluating a String in Sage
 #*****************************************************************************
 
 from copy import copy
-import preparser
+import sage.repl.preparse as preparser
 
 def sage_eval(source, locals=None, cmds='', preparse=True):
     r"""
@@ -178,7 +178,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         source = source[1]
 
     if not isinstance(source, basestring):
-        raise TypeError, "source must be a string."
+        raise TypeError("source must be a string.")
 
     if locals is None:
         locals = {}
@@ -193,7 +193,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
             source = preparser.preparse(source)
 
     if len(cmds):
-        exec cmd_seq in sage.all.__dict__, locals
+        exec(cmd_seq, sage.all.__dict__, locals)
         return locals['_sage_eval_returnval_']
     else:
         return eval(source, sage.all.__dict__, locals)

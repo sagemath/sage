@@ -1,0 +1,34 @@
+diff --git a/src.bak/lib-src/cddcore.c b/src/lib-src/cddcore.c
+index 9644788..a029bc3 100644
+--- a/src.bak/lib-src/cddcore.c
++++ b/src/lib-src/cddcore.c
+@@ -17,6 +17,7 @@
+ #include <time.h>
+ #include <math.h>
+ #include <string.h>
++#include "random.h"   /* include last - overrides RAND_MAX */
+ 
+ void dd_CheckAdjacency(dd_ConePtr cone,
+     dd_RayPtr *RP1, dd_RayPtr *RP2, dd_boolean *adjacent)
+@@ -1849,19 +1850,15 @@ void dd_QuickSort(dd_rowindex OV, long p, long r, dd_Amatrix A, long dmax)
+ }
+ 
+ 
+-#ifndef RAND_MAX 
+-#define RAND_MAX 32767 
+-#endif
+-
+ void dd_RandomPermutation(dd_rowindex OV, long t, unsigned int seed)
+ {
+   long k,j,ovj;
+   double u,xk,r,rand_max=(double) RAND_MAX;
+   dd_boolean localdebug=dd_FALSE;
+ 
+-  srand(seed);
++  portable_srand(seed);
+   for (j=t; j>1 ; j--) {
+-    r=rand();
++    r=portable_rand();
+     u=r/rand_max;
+     xk=(double)(j*u +1);
+     k=(long)xk;

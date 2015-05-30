@@ -36,6 +36,9 @@ class Function_sin(GinacFunction):
 
             sage: conjugate(sin(x))
             sin(conjugate(x))
+            sage: sin(complex(1,1))     # rel tol 1e-15
+            (1.2984575814159773+0.6349639147847361j)
+
         """
         GinacFunction.__init__(self, "sin", latex_name=r"\sin",
                 conversions=dict(maxima='sin',mathematica='Sin'))
@@ -73,6 +76,9 @@ class Function_cos(GinacFunction):
 
             sage: conjugate(cos(x))
             cos(conjugate(x))
+            sage: cos(complex(1,1))     # rel tol 1e-15
+            (0.8337300251311491-0.9888977057628651j)
+
         """
         GinacFunction.__init__(self, "cos", latex_name=r"\cos",
                 conversions=dict(maxima='cos',mathematica='Cos'))
@@ -114,6 +120,9 @@ class Function_tan(GinacFunction):
 
             sage: conjugate(tan(x))
             tan(conjugate(x))
+            sage: tan(complex(1,1))     # rel tol 1e-15
+            (0.2717525853195118+1.0839233273386946j)
+
         """
         GinacFunction.__init__(self, "tan", latex_name=r"\tan")
 
@@ -154,7 +163,7 @@ class Function_sec(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, "sec", latex_name=r"\sec")
 
-    def _evalf_(self, x, parent=None):
+    def _evalf_(self, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
@@ -162,6 +171,14 @@ class Function_sec(BuiltinFunction):
             1.4142135623730950488016887242
             sage: float(sec(pi/4))
             1.4142135623730951
+
+        TESTS:
+
+        Test complex input::
+
+            sage: sec(complex(1,1))     # rel tol 1e-15
+            (0.49833703055518686+0.5910838417210451j)
+
         """
         if parent is float:
             return 1/math.cos(x)
@@ -245,7 +262,7 @@ class Function_csc(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, "csc", latex_name=r"\csc")
 
-    def _evalf_(self, x, parent=None):
+    def _evalf_(self, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
@@ -253,6 +270,14 @@ class Function_csc(BuiltinFunction):
             1.4142135623730950488016887242
             sage: float(csc(pi/4))
             1.4142135623730951
+
+        TESTS:
+
+        Test complex input::
+
+            sage: csc(complex(1,1))     # rel tol 1e-15
+            (0.6215180171704284-0.30393100162842646j)
+
         """
         if parent is float:
             return 1/math.sin(x)
@@ -365,7 +390,7 @@ class Function_cot(BuiltinFunction):
         """
         return 1 / tan(x)
 
-    def _evalf_(self, x, parent=None):
+    def _evalf_(self, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
@@ -373,6 +398,14 @@ class Function_cot(BuiltinFunction):
             1.0000000000000000000000000000
             sage: float(cot(1))
             0.64209261593433...
+
+        TESTS:
+
+        Test complex input::
+
+            sage: cot(complex(1,1))     # rel tol 1e-15
+            (0.21762156185440273-0.8680141428959249j)
+
         """
         if parent is float:
             return 1/math.tan(x)
@@ -513,8 +546,8 @@ class Function_arctan(GinacFunction):
 
             sage: arctan(1/2)
             arctan(1/2)
-            sage: RDF(arctan(1/2))
-            0.463647609001
+            sage: RDF(arctan(1/2))  # rel tol 1e-15
+            0.46364760900080615
             sage: arctan(1 + I)
             arctan(I + 1)
             sage: arctan(1/2).n(100)
@@ -571,7 +604,7 @@ class Function_arccot(BuiltinFunction):
             sage: arccot(1/2)
             arccot(1/2)
             sage: RDF(arccot(1/2))
-            1.10714871779
+            1.1071487177940904
             sage: arccot(1 + I)
             arccot(I + 1)
 
@@ -590,7 +623,7 @@ class Function_arccot(BuiltinFunction):
         BuiltinFunction.__init__(self, "arccot", latex_name=r'{\rm arccot}',
                 conversions=dict(maxima='acot', sympy='acot'))
 
-    def _evalf_(self, x, parent=None):
+    def _evalf_(self, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
@@ -598,11 +631,25 @@ class Function_arccot(BuiltinFunction):
             1.1071487177940905030170654602
             sage: float(arccot(1/2))
             1.1071487177940904
+
+        TESTS:
+
+        Test complex input::
+
+            sage: arccot(complex(1,1))  # rel tol 1e-15
+            (0.5535743588970452-0.4023594781085251j)
+
         """
         if parent is float:
             return math.pi/2 - math.atan(x)
+
         from sage.symbolic.constants import pi
-        return parent(pi/2 - x.arctan())
+        try:
+            return parent(pi/2 - x.arctan())
+        except AttributeError:
+            # Usually this means that x is of type 'complex'
+            from sage.rings.complex_double import CDF
+            return complex(pi/2 - CDF(x).arctan())
 
     def _eval_numpy_(self, x):
         """
@@ -638,8 +685,8 @@ class Function_arccsc(BuiltinFunction):
 
             sage: arccsc(2)
             arccsc(2)
-            sage: RDF(arccsc(2))
-            0.523598775598
+            sage: RDF(arccsc(2))  # rel tol 1e-15
+            0.5235987755982988
             sage: arccsc(1 + I)
             arccsc(I + 1)
 
@@ -658,7 +705,7 @@ class Function_arccsc(BuiltinFunction):
         BuiltinFunction.__init__(self, "arccsc", latex_name=r'{\rm arccsc}',
                                    conversions=dict(maxima='acsc'))
 
-    def _evalf_(self, x, parent=None):
+    def _evalf_(self, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
@@ -666,10 +713,24 @@ class Function_arccsc(BuiltinFunction):
             0.52359877559829887307710723055
             sage: float(arccsc(2))
             0.52359877559829...
+
+        TESTS:
+
+        Test complex input::
+
+            sage: arccsc(complex(1,1))  # rel tol 1e-15
+            (0.45227844715119064-0.5306375309525178j)
+
         """
         if parent is float:
             return math.asin(1/x)
-        return (1/x).arcsin()
+
+        try:
+            return (1/x).arcsin()
+        except AttributeError:
+            # Usually this means that x is of type 'complex'
+            from sage.rings.complex_double import CDF
+            return complex(CDF(1/x).arcsin())
 
     def _eval_numpy_(self, x):
         """
@@ -702,8 +763,10 @@ class Function_arcsec(BuiltinFunction):
 
             sage: arcsec(2)
             arcsec(2)
-            sage: RDF(arcsec(2))
-            1.0471975512
+            sage: arcsec(2.0)
+            1.04719755119660
+            sage: RDF(arcsec(2))  # abs tol 1e-15
+            1.0471975511965976
             sage: arcsec(1 + I)
             arcsec(I + 1)
 
@@ -722,16 +785,32 @@ class Function_arcsec(BuiltinFunction):
         BuiltinFunction.__init__(self, "arcsec", latex_name=r'{\rm arcsec}',
                                    conversions=dict(maxima='asec'))
 
-    def _evalf_(self, x, parent=None):
+    def _evalf_(self, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
             sage: arcsec(2).n(100)
             1.0471975511965977461542144611
+            sage: arcsec(1/2).n(100)
+            NaN
+
+        TESTS:
+
+        Test complex input::
+
+            sage: arcsec(complex(1,1))  # rel tol 1e-15
+            (1.118517879643706+0.5306375309525178j)
+
         """
         if parent is float:
             return math.acos(1/x)
-        return (1/x).arccos()
+
+        try:
+            return (1/x).arccos()
+        except AttributeError:
+            # Usually this means that x is of type 'complex'
+            from sage.rings.complex_double import CDF
+            return complex(CDF(1/x).arccos())
 
     def _eval_numpy_(self, x):
         """
@@ -870,7 +949,7 @@ class Function_arctan2(GinacFunction):
             ValueError: arctan2(0,0) undefined
 
         Check if :trac:`10062` is fixed, this was caused by
-        ``(I*I)._is_positive()`` returning ``True``::
+        ``(I*I).is_positive()`` returning ``True``::
 
             sage: arctan2(0, I*I)
             pi

@@ -128,6 +128,7 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
+import types
 
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
@@ -146,6 +147,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.functions.generalized import sign
 from sage.matrix.constructor import matrix
+from sage.groups.generic import structure_description
 
 class FinitelyPresentedGroupElement(FreeGroupElement):
     """
@@ -198,7 +200,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         if not isinstance(x, GapElement):
             F = parent.free_group()
             free_element = F(x)
-            fp_family = parent.one().gap().FamilyObj()
+            fp_family = parent.gap().Identity().FamilyObj()
             x = libgap.ElementOfFpGroup(fp_family, free_element.gap())
         ElementLibGAP.__init__(self, parent, x)
 
@@ -219,10 +221,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
             sage: F.<a,b,c> = FreeGroup('a, b, c')
             sage: G = F.quotient([a*b*c/(b*c*a), a*b*c/(c*a*b)])
-            sage: G.__reduce__()
-            (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
-             (Free Group on generators {a, b, c},
-             (a*b*c*a^-1*c^-1*b^-1, a*b*c*b^-1*a^-1*c^-1)))
             sage: G.inject_variables()
             Defining a, b, c
             sage: x = a*b*c
@@ -383,6 +381,329 @@ def wrap_FpGroup(libgap_fpgroup):
     return FinitelyPresentedGroup(free_group, relations)
 
 
+class RewritingSystem(object):
+    """
+    A class that wraps GAP's rewriting systems.
+
+    A rewriting system is a set of rules that allow to transform
+    one word in the group to an equivalent one.
+
+    If the rewriting system is confluent, then the transformated
+    word is a unique reduced form of the element of the group.
+
+    .. WARNING::
+
+        Note that the process of making a rewriting system confluent
+        might not end.
+
+    INPUT:
+
+    - ``G`` -- a group
+
+    REFERENCES:
+
+    - :wikipedia:`Knuth-Bendix_completion_algorithm`
+
+    EXAMPLES::
+
+        sage: F.<a,b> = FreeGroup()
+        sage: G = F / [a*b/a/b]
+        sage: k = G.rewriting_system()
+        sage: k
+        Rewriting system of Finitely presented group < a, b | a*b*a^-1*b^-1 >
+        with rules:
+            a*b*a^-1*b^-1    --->    1
+
+        sage: k.reduce(a*b*a*b)
+        (a*b)^2
+        sage: k.make_confluent()
+        sage: k
+        Rewriting system of Finitely presented group < a, b | a*b*a^-1*b^-1 >
+        with rules:
+            b^-1*a^-1    --->    a^-1*b^-1
+            b^-1*a    --->    a*b^-1
+            b*a^-1    --->    a^-1*b
+            b*a    --->    a*b
+
+        sage: k.reduce(a*b*a*b)
+        a^2*b^2
+
+    .. TODO::
+
+        - Include support for different orderings (currently only shortlex
+          is used).
+
+        - Include the GAP package kbmag for more functionalities, including
+          automatic structures and faster compiled functions.
+
+    AUTHORS:
+
+    - Miguel Angel Marco Buzunariz (2013-12-16)
+    """
+    def __init__(self, G):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: F.<a,b,c> = FreeGroup()
+            sage: G = F / [a^2, b^3, c^5]
+            sage: k = G.rewriting_system()
+            sage: k
+            Rewriting system of Finitely presented group < a, b, c | a^2, b^3, c^5 >
+            with rules:
+                a^2    --->    1
+                b^3    --->    1
+                c^5    --->    1
+        """
+        self._free_group = G.free_group()
+        self._fp_group = G
+        self._fp_group_gap = G.gap()
+        self._monoid_isomorphism = self._fp_group_gap.IsomorphismFpMonoid()
+        self._monoid = self._monoid_isomorphism.Image()
+        self._gap = self._monoid.KnuthBendixRewritingSystem()
+
+    def __repr__(self):
+        """
+        Return a string representation.
+
+        EXAMPLES::
+
+            sage: F.<a> = FreeGroup()
+            sage: G = F / [a^2]
+            sage: k = G.rewriting_system()
+            sage: k
+            Rewriting system of Finitely presented group < a | a^2 >
+            with rules:
+                a^2    --->    1
+        """
+        ret = "Rewriting system of {}\nwith rules:".format(self._fp_group)
+        for i in sorted(self.rules().items()): # Make sure they are sorted to the repr is unique
+            ret += "\n    {}    --->    {}".format(i[0], i[1])
+        return ret
+
+    def free_group(self):
+        """
+        The free group after which the rewriting system is defined
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: G = F / [ [1,2,3], [-1,-2,-3] ]
+            sage: k = G.rewriting_system()
+            sage: k.free_group()
+            Free Group on generators {x0, x1, x2}
+        """
+        return self._free_group
+
+    def finitely_presented_group(self):
+        """
+        The finitely presented group where the rewriting system is defined.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: G = F / [ [1,2,3], [-1,-2,-3], [1,1], [2,2] ]
+            sage: k = G.rewriting_system()
+            sage: k.make_confluent()
+            sage: k
+            Rewriting system of Finitely presented group < x0, x1, x2 | x0*x1*x2, x0^-1*x1^-1*x2^-1, x0^2, x1^2 >
+            with rules:
+                x0^-1    --->    x0
+                x1^-1    --->    x1
+                x2^-1    --->    x2
+                x0^2    --->    1
+                x0*x1    --->    x2
+                x0*x2    --->    x1
+                x1*x0    --->    x2
+                x1^2    --->    1
+                x1*x2    --->    x0
+                x2*x0    --->    x1
+                x2*x1    --->    x0
+                x2^2    --->    1
+            sage: k.finitely_presented_group()
+            Finitely presented group < x0, x1, x2 | x0*x1*x2, x0^-1*x1^-1*x2^-1, x0^2, x1^2 >
+        """
+        return self._fp_group
+
+    def reduce(self, element):
+        """
+        Applies the rules in the rewriting system to the element, to obtain
+        a reduced form.
+
+        If the rewriting system is confluent, this reduced form is unique
+        for all words representing the same element.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F/[a^2, b^3, (a*b/a)^3, b*a*b*a]
+            sage: k = G.rewriting_system()
+            sage: k.reduce(b^4)
+            b
+            sage: k.reduce(a*b*a)
+            a*b*a
+        """
+        eg = self._fp_group(element).gap()
+        egim = self._monoid_isomorphism.Image(eg)
+        red = self.gap().ReducedForm(egim.UnderlyingElement())
+        redfpmon = self._monoid.One().FamilyObj().ElementOfFpMonoid(red)
+        reducfpgr = self._monoid_isomorphism.PreImagesRepresentative(redfpmon)
+        tz = reducfpgr.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
+        return self._fp_group(tz.sage())
+
+    def gap(self):
+        """
+        The gap representation of the rewriting system.
+
+        EXAMPLES::
+
+            sage: F.<a,b>=FreeGroup()
+            sage: G=F/[a*a,b*b]
+            sage: k=G.rewriting_system()
+            sage: k.gap()
+            Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
+            [ [ a^2, <identity ...> ], [ a*A, <identity ...> ],
+              [ A*a, <identity ...> ], [ b^2, <identity ...> ],
+              [ b*B, <identity ...> ], [ B*b, <identity ...> ] ]
+        """
+        return self._gap
+
+    def rules(self):
+        """
+        Return the rules that form the rewritig system.
+
+        OUTPUT:
+
+        A dictionary containing the rules of the rewriting system.
+        Each key is a word in the free group, and its corresponding
+        value is the word to which it is reduced.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*a*a,b*b*a*a]
+            sage: k = G.rewriting_system()
+            sage: k
+            Rewriting system of Finitely presented group < a, b | a^3, b^2*a^2 >
+            with rules:
+                a^3    --->    1
+                b^2*a^2    --->    1
+
+            sage: k.rules()
+            {a^3: 1, b^2*a^2: 1}
+            sage: k.make_confluent()
+            sage: sorted(k.rules().items())
+            [(a^-2, a), (a^-1*b^-1, a*b), (a^-1*b, b^-1), (a^2, a^-1),
+             (a*b^-1, b), (b^-1*a^-1, a*b), (b^-1*a, b), (b^-2, a^-1),
+             (b*a^-1, b^-1), (b*a, a*b), (b^2, a)]
+        """
+        dic = {}
+        grules = self.gap().Rules()
+        for i in grules:
+            a, b = i
+            afpmon = self._monoid.One().FamilyObj().ElementOfFpMonoid(a)
+            afg = self._monoid_isomorphism.PreImagesRepresentative(afpmon)
+            atz = afg.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
+            af = self._free_group(atz.sage())
+            if len(af.Tietze()) != 0:
+                bfpmon = self._monoid.One().FamilyObj().ElementOfFpMonoid(b)
+                bfg = self._monoid_isomorphism.PreImagesRepresentative(bfpmon)
+                btz = bfg.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
+                bf = self._free_group(btz.sage())
+                dic[af]=bf
+        return dic
+
+    def is_confluent(self):
+        """
+        Return ``True`` if the system is confluent and ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: G = F / [F([1,2,1,2,1,3,-1]),F([2,2,2,1,1,2]),F([1,2,3])]
+            sage: k = G.rewriting_system()
+            sage: k.is_confluent()
+            False
+            sage: k
+            Rewriting system of Finitely presented group < x0, x1, x2 | (x0*x1)^2*x0*x2*x0^-1, x1^3*x0^2*x1, x0*x1*x2 >
+            with rules:
+                x0*x1*x2    --->    1
+                x1^3*x0^2*x1    --->    1
+                (x0*x1)^2*x0*x2*x0^-1    --->    1
+
+            sage: k.make_confluent()
+            sage: k.is_confluent()
+            True
+            sage: k
+            Rewriting system of Finitely presented group < x0, x1, x2 | (x0*x1)^2*x0*x2*x0^-1, x1^3*x0^2*x1, x0*x1*x2 >
+            with rules:
+                x0^-1    --->    x0
+                x1^-1    --->    x1
+                x0^2    --->    1
+                x0*x1    --->    x2^-1
+                x0*x2^-1    --->    x1
+                x1*x0    --->    x2
+                x1^2    --->    1
+                x1*x2^-1    --->    x0*x2
+                x1*x2    --->    x0
+                x2^-1*x0    --->    x0*x2
+                x2^-1*x1    --->    x0
+                x2^-2    --->    x2
+                x2*x0    --->    x1
+                x2*x1    --->    x0*x2
+                x2^2    --->    x2^-1
+        """
+        return self._gap.IsConfluent().sage()
+
+    def make_confluent(self):
+        """
+        Applies Knuth-Bendix algorithm to try to transform the rewriting
+        system into a confluent one.
+
+        Note that this method does not return any object, just changes the
+        rewriting sytem internally.
+
+        .. WARNING:
+
+            This algorithm is not granted to finish. Although it may be useful
+            in some occasions to run it, interrupt it manually after some time
+            and use then the transformed rewriting system. Even if it is not
+            confluent, it could be used to reduce some words.
+
+        ALGORITHM:
+
+        Uses GAP's ``MakeConfluent``.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a^2,b^3,(a*b/a)^3,b*a*b*a]
+            sage: k = G.rewriting_system()
+            sage: k
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, (b*a)^2 >
+            with rules:
+                a^2    --->    1
+                b^3    --->    1
+                (b*a)^2    --->    1
+                a*b^3*a^-1    --->    1
+
+            sage: k.make_confluent()
+            sage: k
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, (b*a)^2 >
+            with rules:
+                a^-1    --->    a
+                a^2    --->    1
+                b^-1*a    --->    a*b
+                b^-2    --->    b
+                b*a    --->    a*b^-1
+                b^2    --->    b^-1
+        """
+        try:
+            self._gap.MakeConfluent()
+        except ValueError:
+            raise ValueError('could not make the system confluent')
+
 class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
     Group, ParentLibGAP):
     """
@@ -452,32 +773,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         parent_gap = free_group.gap() / libgap([ rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, parent_gap)
         Group.__init__(self)
-
-    def __reduce__(self):
-        """
-        Used in pickling.
-
-        TESTS::
-
-            sage: F = FreeGroup(4)
-            sage: F.inject_variables()
-            Defining x0, x1, x2, x3
-            sage: G = F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
-            sage: G.__reduce__()
-            (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
-             (Free Group on generators {x0, x1, x2, x3},
-              (x0*x2, x3*x1*x3, x2*x1*x2)))
-
-            sage: F.<a,b,c> = FreeGroup()
-            sage: F.inject_variables()
-            Defining a, b, c
-            sage: G = F / [a*b*c/(b*c*a), a*b*c/(c*a*b)]
-            sage: G.__reduce__()
-            (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
-             (Free Group on generators {a, b, c},
-              (a*b*c*a^-1*c^-1*b^-1, a*b*c*b^-1*a^-1*c^-1)))
-        """
-        return (FinitelyPresentedGroup, (self._free_group, self._relations))
 
     def _repr_(self):
         """
@@ -675,7 +970,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         from sage.combinat.permutation import Permutation
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
-                Permutation(coset_table[2*i]) for i in range(len(coset_table)/2)])
+                Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
@@ -786,7 +1081,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         GAP_gens = fp_product.FreeGeneratorsOfFpGroup()
         if new_names:
             name_itr = _lexi_gen() # Python generator for lexicographical variable names
-            gen_names = [name_itr.next() for i in GAP_gens]
+            gen_names = [next(name_itr) for i in GAP_gens]
         else:
             gen_names= [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
         # Build the direct product in Sage for better variable names
@@ -892,19 +1187,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         You can turn off the checks for the validity of the input morphisms.
         This check is expensive but behavior is unpredictable if inputs are
-        invalid and are not caught by these tests. Due to a failure in GAP
-        to list elements of an automorphism group in some cases, this check
-        may cause the method to timeout or raise a GAP error. For example,
-        if ``H`` is the cyclic group of order 6, then ``semidirect_product``
-        appears to fall into an infinite loop due to this failure.::
+        invalid and are not caught by these tests::
 
             sage: C5 = groups.presentation.Cyclic(5)
             sage: C12 = groups.presentation.Cyclic(12)
             sage: hom = (C5.gens(), [(C12.gens(), C12.gens())])
-            sage: C5.semidirect_product(C12, hom)
-            Traceback (most recent call last):
-            ...
-            ValueError: libGAP: Error, <elm> is not contained in the source group
             sage: sp = C5.semidirect_product(C12, hom, check=False); sp
             Finitely presented group < a, b, c, d |
              a^5, b^-1*a^-1*b*a, c^-1*a^-1*c*a, d^-1*a^-1*d*a, b^2*d^-1,
@@ -912,7 +1199,14 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: sp.as_permutation_group().is_cyclic(), sp.order()
             (True, 60)
 
-        TESTS::
+        TESTS:
+
+        The following was fixed in Gap-4.7.2::
+
+            sage: C5.semidirect_product(C12, hom) == sp
+            True
+
+        A more complicated semidirect product::
 
             sage: C = groups.presentation.Cyclic(7)
             sage: D = groups.presentation.Dihedral(5)
@@ -969,7 +1263,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         # lists for readability of variable names
         GAP_gens = prod.FreeGeneratorsOfFpGroup()
         name_itr = _lexi_gen() # Python generator for lexicographical variable names
-        ret_F = FreeGroup([name_itr.next() for i in GAP_gens])
+        ret_F = FreeGroup([next(name_itr) for i in GAP_gens])
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
             for rel_word in prod.RelatorsOfFpGroup()])
         ret_fpg = FinitelyPresentedGroup(ret_F, ret_rls)
@@ -1100,19 +1394,24 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         """
         return self.simplification_isomorphism().codomain()
 
-    def alexander_matrix(self):
+    def alexander_matrix(self, im_gens = None):
         """
         Return the Alexander matrix of the group.
 
         This matrix is given by the fox derivatives of the relations
         with respect to the generators.
 
+        - ``im_gens`` -- (optional) the images of the generators.
+
         OUTPUT:
 
-        A group algebra-valued matrix. It depends on the (fixed)
-        choice of presentation.
+        A matrix with coefficients in the group algebra. If ``im_gens`` is given,
+        the coefficients will live in the same algebra as the given values.
+        The result depends on the (fixed) choice of presentation.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        ::
 
             sage: G.<a,b,c> = FreeGroup()
             sage: H = G.quotient([a*b/a/b, a*c/a/c, c*b/c/b])
@@ -1120,6 +1419,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             [     B[1] - B[a*b*a^-1] B[a] - B[a*b*a^-1*b^-1]                       0]
             [     B[1] - B[a*c*a^-1]                       0 B[a] - B[a*c*a^-1*c^-1]]
             [                      0 B[c] - B[c*b*c^-1*b^-1]      B[1] - B[c*b*c^-1]]
+
+
+        If we introduce the images of the generators, we obtain the result in the corresponding algebra.
+
+        ::
 
             sage: G.<a,b,c,d,e> = FreeGroup()
             sage: H = G.quotient([a*b/a/b, a*c/a/c, a*d/a/d, b*c*d/(c*d*b), b*c*d/(d*b*c)])
@@ -1129,8 +1433,52 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             [              B[1] - B[a*d*a^-1]                                0                                0          B[a] - B[a*d*a^-1*d^-1]                                0]
             [                               0             B[1] - B[b*c*d*b^-1]   B[b] - B[b*c*d*b^-1*d^-1*c^-1]      B[b*c] - B[b*c*d*b^-1*d^-1]                                0]
             [                               0        B[1] - B[b*c*d*c^-1*b^-1]             B[b] - B[b*c*d*c^-1] B[b*c] - B[b*c*d*c^-1*b^-1*d^-1]                                0]
+            sage: R.<t1,t2,t3,t4> = LaurentPolynomialRing(ZZ)
+            sage: H.alexander_matrix([t1,t2,t3,t4])
+            [    -t2 + 1      t1 - 1           0           0           0]
+            [    -t3 + 1           0      t1 - 1           0           0]
+            [    -t4 + 1           0           0      t1 - 1           0]
+            [          0  -t3*t4 + 1      t2 - 1  t2*t3 - t3           0]
+            [          0     -t4 + 1 -t2*t4 + t2   t2*t3 - 1           0]
         """
         rel = self.relations()
         gen = self._free_group.gens()
         return matrix(len(rel), len(gen),
-                      lambda i,j: rel[i].fox_derivative(gen[j]))
+                      lambda i,j: rel[i].fox_derivative(gen[j], im_gens))
+
+    def rewriting_system(self):
+        """
+        Return the rewriting system corresponding to the finitely presented
+        group. This rewriting system can be used to reduce words with respect
+        to the relations.
+
+        If the rewriting system is transformed into a confluent one, the
+        reduction process will give as a result the (unique) reduced form
+        of an element.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a^2,b^3,(a*b/a)^3,b*a*b*a]
+            sage: k = G.rewriting_system()
+            sage: k
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, (b*a)^2 >
+            with rules:
+                a^2    --->    1
+                b^3    --->    1
+                (b*a)^2    --->    1
+                a*b^3*a^-1    --->    1
+
+            sage: G([1,1,2,2,2])
+            a^2*b^3
+            sage: k.reduce(G([1,1,2,2,2]))
+            1
+            sage: k.reduce(G([2,2,1]))
+            b^2*a
+            sage: k.make_confluent()
+            sage: k.reduce(G([2,2,1]))
+            a*b
+        """
+        return RewritingSystem(self)
+
+FinitelyPresentedGroup.structure_description = types.MethodType(structure_description, None, FinitelyPresentedGroup)

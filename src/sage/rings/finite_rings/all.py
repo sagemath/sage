@@ -18,10 +18,6 @@ Finite Fields.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from constructor import FiniteField, is_FiniteField, is_PrimeFiniteField
+from constructor import FiniteField
 from conway_polynomials import conway_polynomial, exists_conway_polynomial
 GF = FiniteField
-
-from element_base import FinitePolyExtElement as FiniteFieldElement # for backward compatibility; is this needed?
-from element_base import is_FiniteFieldElement
-

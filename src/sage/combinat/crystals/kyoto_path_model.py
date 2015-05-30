@@ -18,7 +18,6 @@ Kyoto Path Model for Affine Highest Weight Crystals
 #****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.combinat.crystals.tensor_product import TensorProductOfCrystals, \
@@ -86,8 +85,8 @@ class KyotoPathModel(TensorProductOfCrystals):
         u_{\lambda_N},
         \\ f_i(b) & = f_i\left( b^{\prime} \otimes b^{(N)} \right) \otimes
         u_{\lambda_N},
-        \\ \varepsilon_i(b) & = \max\bigl( \varepsilon_i(b^{\prime}) -
-        \varphi_i\left( b^{(N)} \right), 0 \bigr),
+        \\ \varepsilon_i(b) & = \max\left( \varepsilon_i(b^{\prime}) -
+        \varphi_i\left( b^{(N)} \right), 0 \right),
         \\ \varphi_i(b) & = \varphi_i(b^{\prime}) + \max\left(
         \varphi_i\left( b^{(N)} \right) - \varepsilon_i(b^{\prime}), 0 \right),
         \end{aligned}
@@ -131,9 +130,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
     EXAMPLES::
 
-        sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-        sage: L = RootSystem(['A',2,1]).weight_space()
-        sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+        sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+        sage: L = RootSystem(['A',2,1]).weight_lattice()
+        sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
         sage: mg = C.module_generators[0]; mg
         [[[3]]]
         sage: mg.f_string([0,1,2,2])
@@ -141,9 +140,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
     An example of type `A_5^{(2)}`::
 
-        sage: B = KirillovReshetikhinCrystal(['A',5,2], 1,1)
-        sage: L = RootSystem(['A',5,2]).weight_space()
-        sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+        sage: B = crystals.KirillovReshetikhin(['A',5,2], 1,1)
+        sage: L = RootSystem(['A',5,2]).weight_lattice()
+        sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
         sage: mg = C.module_generators[0]; mg
         [[[-1]]]
         sage: mg.f_string([0,2,1,3])
@@ -153,9 +152,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
     An example of type `D_3^{(2)}`::
 
-        sage: B = KirillovReshetikhinCrystal(['D',3,2], 1,1)
-        sage: L = RootSystem(['D',3,2]).weight_space()
-        sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+        sage: B = crystals.KirillovReshetikhin(['D',3,2], 1,1)
+        sage: L = RootSystem(['D',3,2]).weight_lattice()
+        sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
         sage: mg = C.module_generators[0]; mg
         [[]]
         sage: mg.f_string([0,1,2,0])
@@ -163,10 +162,10 @@ class KyotoPathModel(TensorProductOfCrystals):
 
     An example using multiple crystals of the same level::
 
-        sage: B1 = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-        sage: B2 = KirillovReshetikhinCrystal(['A',2,1], 2,1)
-        sage: L = RootSystem(['A',2,1]).weight_space()
-        sage: C = KyotoPathModel([B1, B2, B1], L.fundamental_weight(0))
+        sage: B1 = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+        sage: B2 = crystals.KirillovReshetikhin(['A',2,1], 2,1)
+        sage: L = RootSystem(['A',2,1]).weight_lattice()
+        sage: C = crystals.KyotoPathModel([B1, B2, B1], L.fundamental_weight(0))
         sage: mg = C.module_generators[0]; mg
         [[[3]]]
         sage: mg.f_string([0,1,2,2])
@@ -184,13 +183,19 @@ class KyotoPathModel(TensorProductOfCrystals):
 
         EXAMPLES::
 
-            sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-            sage: L = RootSystem(['A',2,1]).weight_space()
-            sage: C = KyotoPathModel(B, L.fundamental_weight(0))
-            sage: C2 = KyotoPathModel((B,), L.fundamental_weight(0))
-            sage: C3 = KyotoPathModel([B], L.fundamental_weight(0))
+            sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+            sage: L = RootSystem(['A',2,1]).weight_lattice()
+            sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
+            sage: C2 = crystals.KyotoPathModel((B,), L.fundamental_weight(0))
+            sage: C3 = crystals.KyotoPathModel([B], L.fundamental_weight(0))
             sage: C is C2 and C2 is C3
             True
+
+            sage: L = RootSystem(['A',2,1]).weight_space()
+            sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+            Traceback (most recent call last):
+            ...
+            ValueError: Lambda[0] is not in the weight lattice
         """
         if isinstance(crystals, list):
             crystals = tuple(crystals)
@@ -203,9 +208,12 @@ class KyotoPathModel(TensorProductOfCrystals):
         if any(B.level() != level for B in crystals[1:]):
             raise ValueError("all crystals must have the same level")
         ct = crystals[0].cartan_type()
+        P = RootSystem(ct).weight_lattice()
+        if weight.parent() is not P:
+            raise ValueError("{} is not in the weight lattice".format(weight))
         if sum( ct.dual().c()[i] * weight.scalar(h) for i,h in
-                enumerate(RootSystem(ct).weight_space().simple_coroots()) ) != level:
-            raise ValueError( "%s is not a level %s weight"%(weight, level) )
+                enumerate(P.simple_coroots()) ) != level:
+            raise ValueError( "{} is not a level {} weight".format(weight, level) )
 
         return super(KyotoPathModel, cls).__classcall__(cls, crystals, weight)
 
@@ -215,9 +223,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
         EXAMPLES::
 
-            sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-            sage: L = RootSystem(['A',2,1]).weight_space()
-            sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+            sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+            sage: L = RootSystem(['A',2,1]).weight_lattice()
+            sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
             sage: TestSuite(C).run() # long time
         """
         Parent.__init__(self, category=(HighestWeightCrystals(), InfiniteEnumeratedSets()))
@@ -235,12 +243,35 @@ class KyotoPathModel(TensorProductOfCrystals):
 
         EXAMPLES::
 
-            sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-            sage: L = RootSystem(['A',2,1]).weight_space()
-            sage: KyotoPathModel(B, L.fundamental_weight(0))
+            sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+            sage: L = RootSystem(['A',2,1]).weight_lattice()
+            sage: crystals.KyotoPathModel(B, L.fundamental_weight(0))
             Kyoto path realization of B(Lambda[0]) using [Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1)]
         """
-        return "Kyoto path realization of B(%s) using %s"%(self._weight, list(self.crystals))
+        return "Kyoto path realization of B({}) using {}".format(self._weight, list(self.crystals))
+
+    def finite_tensor_product(self, k):
+        """
+        Return the finite tensor product of crystals of length ``k``
+        from truncating ``self``.
+
+        EXAMPLES::
+
+            sage: B1 = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+            sage: B2 = crystals.KirillovReshetikhin(['A',2,1], 2,1)
+            sage: La = RootSystem(['A',2,1]).weight_lattice().fundamental_weights()
+            sage: C = crystals.KyotoPathModel([B1,B2,B1], La[0])
+            sage: C.finite_tensor_product(5)
+            Full tensor product of the crystals
+             [Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1),
+              Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(2,1),
+              Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1),
+              Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1),
+              Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(2,1)]
+        """
+        N = len(self.crystals)
+        crystals = [self.crystals[i % N] for i in range(k)]
+        return TensorProductOfCrystals(*crystals)
 
     class Element(TensorProductOfRegularCrystalsElement):
         """
@@ -253,9 +284,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
             EXAMPLES::
 
-                sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-                sage: L = RootSystem(['A',2,1]).weight_space()
-                sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+                sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+                sage: L = RootSystem(['A',2,1]).weight_lattice()
+                sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
                 sage: mg = C.module_generators[0]
                 sage: [mg.epsilon(i) for i in C.index_set()]
                 [0, 0, 0]
@@ -282,9 +313,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
             EXAMPLES::
 
-                sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-                sage: L = RootSystem(['A',2,1]).weight_space()
-                sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+                sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+                sage: L = RootSystem(['A',2,1]).weight_lattice()
+                sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
                 sage: mg = C.module_generators[0]
                 sage: [mg.phi(i) for i in C.index_set()]
                 [1, 0, 0]
@@ -308,9 +339,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
             EXAMPLES::
 
-                sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-                sage: L = RootSystem(['A',2,1]).weight_space()
-                sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+                sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+                sage: L = RootSystem(['A',2,1]).weight_lattice()
+                sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
                 sage: mg = C.module_generators[0]
                 sage: all(mg.e(i) is None for i in C.index_set())
                 True
@@ -318,7 +349,7 @@ class KyotoPathModel(TensorProductOfCrystals):
                 True
             """
             position = self.positions_of_unmatched_plus(i)
-            if position == []:
+            if not position:
                 return None
             k = position[0]
             if k == len(self)-1:
@@ -336,9 +367,9 @@ class KyotoPathModel(TensorProductOfCrystals):
 
             EXAMPLES::
 
-                sage: B = KirillovReshetikhinCrystal(['A',2,1], 1,1)
-                sage: L = RootSystem(['A',2,1]).weight_space()
-                sage: C = KyotoPathModel(B, L.fundamental_weight(0))
+                sage: B = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+                sage: L = RootSystem(['A',2,1]).weight_lattice()
+                sage: C = crystals.KyotoPathModel(B, L.fundamental_weight(0))
                 sage: mg = C.module_generators[0]
                 sage: mg.f(2)
                 sage: mg.f(0)
@@ -347,7 +378,7 @@ class KyotoPathModel(TensorProductOfCrystals):
                 [[[2]], [[3]], [[1]]]
             """
             position = self.positions_of_unmatched_minus(i)
-            if position == []:
+            if not position:
                 return None
             k = position[len(position)-1]
             if k == len(self)-1:
@@ -357,4 +388,48 @@ class KyotoPathModel(TensorProductOfCrystals):
                 l[-2] = l[-2].f(i)
                 return self.__class__(self.parent(), l)
             return self.set_index(k, self[k].f(i))
+
+        def truncate(self, k=None):
+            r"""
+            Truncate ``self`` to have length ``k`` and return as an element
+            in a (finite) tensor product of crystals.
+
+            INPUT:
+
+            - ``k`` -- (optional) the length to truncate to; if not specified,
+              then returns one more than the current non-ground-state elements
+              (i.e. the current list in ``self``)
+
+            EXAMPLES::
+
+                sage: B1 = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+                sage: B2 = crystals.KirillovReshetikhin(['A',2,1], 2,1)
+                sage: La = RootSystem(['A',2,1]).weight_lattice().fundamental_weights()
+                sage: C = crystals.KyotoPathModel([B1,B2,B1], La[0])
+                sage: mg = C.highest_weight_vector()
+                sage: elt = mg.f_string([0,1,2,2,1,0]); elt
+                [[[3]], [[2], [3]], [[1]], [[2]]]
+                sage: t = elt.truncate(); t
+                [[[3]], [[2], [3]], [[1]], [[2]]]
+                sage: t.parent() is C.finite_tensor_product(4)
+                True
+                sage: elt.truncate(2)
+                [[[3]], [[2], [3]]]
+                sage: elt.truncate(10)
+                [[[3]], [[2], [3]], [[1]], [[2]], [[1], [3]],
+                 [[2]], [[1]], [[2], [3]], [[1]], [[3]]]
+            """
+            if k is None:
+                k = len(self._list)
+
+            P = self.parent().finite_tensor_product(k)
+            if k <= len(self._list):
+                l = self._list[:k]
+            else:
+                l = self._list[:]
+                N = len(self.parent().crystals)
+                while len(l) < k:
+                    i = len(l) % N
+                    l.append(self.parent()._phi_dicts[i][ l[-1].Epsilon() ])
+            return P(*l)
 

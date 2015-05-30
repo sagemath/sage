@@ -44,7 +44,7 @@ def DivisorGroup(scheme, base_ring=None):
         sage: DivisorGroup(Spec(ZZ), base_ring=QQ)
         Group of QQ-Divisors on Spectrum of Integer Ring
     """
-    if base_ring==None:
+    if base_ring is None:
         base_ring = ZZ
 
     from sage.schemes.plane_curves.curve import Curve_generic

@@ -1,5 +1,12 @@
 r"""
 Base class for maps
+
+AUTHORS:
+
+- Robert Bradshaw: initial implementation
+
+- Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
+  a list of Map instead of only two Map. See :trac:`16291`.
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -17,19 +24,12 @@ Base class for maps
 #*****************************************************************************
 
 include "sage/ext/stdsage.pxi"
-
 import homset
+import weakref
 from sage.structure.parent cimport Set_PythonType
-
-# copied from sage.structure.parent
-cdef inline parent_c(x):
-    if PY_TYPE_CHECK(x, Element):
-        return (<Element>x)._parent
-    else:
-        try:
-            return x.parent()
-        except AttributeError:
-            return <object>PY_TYPE(x)
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.superseded import deprecated_function_alias
+from sage.structure.element cimport parent_c
 
 def unpickle_map(_class, parent, _dict, _slots):
     """
@@ -38,10 +38,9 @@ def unpickle_map(_class, parent, _dict, _slots):
     TEST::
 
         sage: R.<x,y> = QQ[]
-        sage: f = R.hom([x+y,x-y],R)
+        sage: f = R.hom([x+y, x-y], R)
         sage: f == loads(dumps(f))  # indirect doctest
         True
-
     """
     # should we use slots?
     # from element.pyx
@@ -59,7 +58,7 @@ def is_Map(x):
     EXAMPLE::
 
         sage: R.<x,y> = QQ[]
-        sage: f = R.hom([x+y,x-y],R)
+        sage: f = R.hom([x+y, x-y], R)
         sage: from sage.categories.map import is_Map
         sage: is_Map(f)
         True
@@ -70,11 +69,11 @@ cdef class Map(Element):
     """
     Basic class for all maps.
 
-    NOTE:
+    .. NOTE::
 
-    The call method is of course not implemented in this base class. This must
-    be done in the sub classes, by overloading ``_call_`` and possibly also
-    ``_call_with_args``.
+        The call method is of course not implemented in this base class. This must
+        be done in the sub classes, by overloading ``_call_`` and possibly also
+        ``_call_with_args``.
 
     EXAMPLES:
 
@@ -88,7 +87,7 @@ cdef class Map(Element):
         sage: phi(x^2+2*x-1)
         -1
         sage: R.<x,y> = QQ[]
-        sage: f = R.hom([x+y,x-y],R)
+        sage: f = R.hom([x+y, x-y], R)
         sage: f(x^2+2*x-1)
         x^2 + 2*x*y + y^2 + 2*x + 2*y - 1
     """
@@ -120,22 +119,254 @@ cdef class Map(Element):
               To:   Symmetric group of order 6! as a permutation group
         """
         if codomain is not None:
-            if PY_TYPE_CHECK(parent, type):
+            if isinstance(parent, type):
                 parent = Set_PythonType(parent)
             parent = homset.Hom(parent, codomain)
         elif not isinstance(parent, homset.Homset):
             raise TypeError, "parent (=%s) must be a Homspace"%parent
         Element.__init__(self, parent)
-        self._domain = parent.domain()
-        self._codomain = parent.codomain()
-        if self._domain.is_exact() and self._codomain.is_exact():
+        D = parent.domain()
+        C = parent.codomain()
+        self._category_for = parent.homset_category()
+        self._codomain = C
+        self.domain    = ConstantFunction(D)
+        self.codomain  = ConstantFunction(C)
+        if D.is_exact() and C.is_exact():
             self._coerce_cost = 10 # default value.
         else:
             self._coerce_cost = 10000 # inexact morphisms are bad.
 
-    cdef _update_slots(self, _slots):
+    def __copy__(self):
         """
-        Auxiliary method, used in pickling.
+        Return copy, with strong references to domain and codomain.
+
+        .. NOTE::
+
+            To implement copying on sub-classes, do not override this method, but
+            implement cdef methods ``_extra_slots()`` returning a dictionary and
+            ``_update_slots()`` using this dictionary to fill the cdef or cpdef
+            slots of the subclass.
+
+        EXAMPLES::
+
+            sage: phi = QQ['x']._internal_coerce_map_from(ZZ)
+            sage: phi.domain
+            <weakref at ...; to 'sage.rings.integer_ring.IntegerRing_class'
+            at ... (JoinCategory.parent_class)>
+            sage: type(phi)
+            <type 'sage.categories.map.FormalCompositeMap'>
+            sage: psi = copy(phi)   # indirect doctest
+            sage: psi
+            Composite map:
+              From: Integer Ring
+              To:   Univariate Polynomial Ring in x over Rational Field
+              Defn:   Natural morphism:
+                      From: Integer Ring
+                      To:   Rational Field
+                    then
+                      Polynomial base injection morphism:
+                      From: Rational Field
+                      To:   Univariate Polynomial Ring in x over Rational Field
+            sage: psi.domain
+            The constant function (...) -> Integer Ring
+            sage: psi(3)
+            3
+        """
+        cdef Map out = Element.__copy__(self)
+        # Element.__copy__ updates the __dict__, but not the slots.
+        # Let's do this now, but with strong references.
+        out._parent = self.parent() # self._parent might be None
+        out._update_slots(self._extra_slots({}))
+        return out
+
+    def parent(self):
+        r"""
+        Return the homset containing this map.
+
+        .. NOTE::
+
+            The method :meth:`_make_weak_references`, that is used for the maps
+            found by the coercion system, needs to remove the usual strong
+            reference from the coercion map to the homset containing it. As long
+            as the user keeps strong references to domain and codomain of the map,
+            we will be able to reconstruct the homset. However, a strong reference
+            to the coercion map does not prevent the domain from garbage collection!
+
+        EXAMPLES::
+
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF._internal_convert_map_from(Q)
+            sage: print phi.parent()
+            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 to Complex Double Field
+
+        We now demonstrate that the reference to the coercion map `\phi` does
+        not prevent `Q` from being garbage collected::
+
+            sage: import gc
+            sage: del Q
+            sage: _ = gc.collect()
+            sage: phi.parent()
+            Traceback (most recent call last):
+            ...
+            ValueError: This map is in an invalid state, the domain has been garbage collected
+
+        You can still obtain copies of the maps used by the coercion system with
+        strong references::
+
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF.convert_map_from(Q)
+            sage: print phi.parent()
+            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 to Complex Double Field
+            sage: import gc
+            sage: del Q
+            sage: _ = gc.collect()
+            sage: phi.parent()
+            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 to Complex Double Field
+        """
+        if self._parent is None:
+            D = self.domain()
+            C = self._codomain
+            if C is None or D is None:
+                raise ValueError("This map is in an invalid state, the domain has been garbage collected")
+            return homset.Hom(D, C, self._category_for)
+        return self._parent
+
+    def _make_weak_references(self):
+        """
+        Only store weak references to domain and codomain of this map.
+
+        .. NOTE::
+
+            This method is internally used on maps that are used for coercions
+            or conversions between parents. Without using this method, some objects
+            would stay alive indefinitely as soon as they are involved in a coercion
+            or conversion.
+
+        .. SEEALSO::
+
+            :meth:`_make_strong_references`
+
+        EXAMPLES::
+
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF._internal_convert_map_from(Q)
+
+        By :trac:`14711`, maps used in the coercion and conversion system
+        use *weak* references to domain and codomain, in contrast to other
+        maps::
+
+            sage: phi.domain
+            <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
+            sage: phi._make_strong_references()
+            sage: print phi.domain
+            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5
+
+        Now, as there is a strong reference, `Q` cannot be garbage collected::
+
+            sage: import gc
+            sage: _ = gc.collect()
+            sage: C = Q.__class__.__base__
+            sage: numberQuadFields = len([x for x in gc.get_objects() if isinstance(x, C)])
+            sage: del Q, x
+            sage: _ = gc.collect()
+            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)])
+            True
+
+        However, if we now make the references weak again, the number field can
+        be garbage collected, which of course makes the map and its parents
+        invalid. This is why :meth:`_make_weak_references` should only be used
+        if one really knows what one is doing::
+
+            sage: phi._make_weak_references()
+            sage: del x
+            sage: _ = gc.collect()
+            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1
+            True
+            sage: phi
+            Defunct map
+        """
+        if not isinstance(self.domain, ConstantFunction):
+            return
+        self.domain = weakref.ref(self.domain())
+        # Save the category before clearing the parent.
+        self._category_for = self._parent.homset_category()
+        self._parent = None
+
+    def _make_strong_references(self):
+        """
+        Store strong references to domain and codomain of this map.
+
+        .. NOTE::
+
+            By default, maps keep strong references to domain and codomain,
+            preventing them thus from garbage collection. However, in Sage's
+            coercion system, these strong references are replaced by weak
+            references, since otherwise some objects would stay alive indefinitely
+            as soon as they are involved in a coercion or conversion.
+
+        .. SEEALSO::
+
+            :meth:`_make_weak_references`
+
+        EXAMPLES::
+
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF._internal_convert_map_from(Q)
+
+        By :trac:`14711`, maps used in the coercion and conversion system
+        use *weak* references to domain and codomain, in contrast to other
+        maps::
+
+            sage: phi.domain
+            <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
+            sage: phi._make_strong_references()
+            sage: print phi.domain
+            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5
+
+        Now, as there is a strong reference, `Q` cannot be garbage collected::
+
+            sage: import gc
+            sage: _ = gc.collect()
+            sage: C = Q.__class__.__base__
+            sage: numberQuadFields = len([x for x in gc.get_objects() if isinstance(x, C)])
+            sage: del Q, x
+            sage: _ = gc.collect()
+            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)])
+            True
+
+        However, if we now make the references weak again, the number field can
+        be garbage collected, which of course makes the map and its parents
+        invalid. This is why :meth:`_make_weak_references` should only be used
+        if one really knows what one is doing::
+
+            sage: phi._make_weak_references()
+            sage: del x
+            sage: _ = gc.collect()
+            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1
+            True
+            sage: phi
+            Defunct map
+            sage: phi._make_strong_references()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: The domain of this map became garbage collected
+            sage: phi.parent()
+            Traceback (most recent call last):
+            ...
+            ValueError: This map is in an invalid state, the domain has been garbage collected
+        """
+        if isinstance(self.domain, ConstantFunction):
+            return
+        D = self.domain()
+        C = self._codomain
+        if D is None or C is None:
+            raise RuntimeError("The domain of this map became garbage collected")
+        self.domain = ConstantFunction(D)
+        self._parent = homset.Hom(D, C, self._category_for)
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Auxiliary method, used in pickling and copying.
 
         INPUT:
 
@@ -163,12 +394,13 @@ cdef class Map(Element):
         # todo: the following can break during unpickling of complex
         # objects with circular references! In that case, _slots might
         # contain incomplete objects.
-        self._domain = _slots['_domain']
+        self.domain = ConstantFunction(_slots['_domain'])
         self._codomain = _slots['_codomain']
+        self.codomain = ConstantFunction(self._codomain)
 
         # Several pickles exist without a _repr_type_str, so
         # if there is none saved, we just set it to None.
-        if _slots.has_key('_repr_type_str'):
+        if '_repr_type_str' in _slots:
             self._repr_type_str = _slots['_repr_type_str']
         else:
             self._repr_type_str = None
@@ -193,23 +425,7 @@ cdef class Map(Element):
         """
         self._update_slots(_slots)
 
-    cdef _extra_slots(self, _slots):
-        """
-        A Python method to test the cdef _extra_slots method.
-
-        TESTS::
-
-            sage: from sage.categories.map import Map
-            sage: f = Map(Hom(QQ, ZZ, Rings()))
-            sage: f._extra_slots_test({"bla": 1})
-            {'_codomain': Integer Ring, '_domain': Rational Field, 'bla': 1, '_repr_type_str': None}
-        """
-        _slots['_domain'] = self._domain
-        _slots['_codomain'] = self._codomain
-        _slots['_repr_type_str'] = self._repr_type_str
-        return _slots
-
-    def _extra_slots_test(self, _slots):
+    cdef dict _extra_slots(self, dict _slots):
         """
         Auxiliary method, used in pickling.
 
@@ -220,14 +436,25 @@ cdef class Map(Element):
         OUTPUT:
 
         The given dictionary, that is updated by the slots '_domain', '_codomain' and '_repr_type_str'.
+        """
+        _slots['_domain'] = self.domain()
+        _slots['_codomain'] = self._codomain
+        _slots['_repr_type_str'] = self._repr_type_str
+        return _slots
 
+    def _extra_slots_test(self, _slots):
+        """
+        A Python method to test the cdef _extra_slots method.
 
         TESTS::
 
             sage: from sage.categories.map import Map
             sage: f = Map(Hom(QQ, ZZ, Rings()))
-            sage: f._extra_slots_test({"bla": 1}) # indirect doctest
-            {'_codomain': Integer Ring, '_domain': Rational Field, 'bla': 1, '_repr_type_str': None}
+            sage: f._extra_slots_test({"bla": 1})
+            {'_codomain': Integer Ring,
+             '_domain': Rational Field,
+             '_repr_type_str': None,
+             'bla': 1}
         """
         return self._extra_slots(_slots)
 
@@ -244,7 +471,6 @@ cdef class Map(Element):
             Generic map:
               From: Rational Field
               To:   Integer Ring
-
         """
         if HAS_DICTIONARY(self):
             _dict = self.__dict__
@@ -256,9 +482,9 @@ cdef class Map(Element):
         """
         Return a string describing the specific type of this map, to be used when printing ``self``.
 
-        NOTE:
+        .. NOTE::
 
-        By default, the string ``"Generic"`` is returned. Subclasses may overload this method.
+            By default, the string ``"Generic"`` is returned. Subclasses may overload this method.
 
         EXAMPLE::
 
@@ -267,10 +493,9 @@ cdef class Map(Element):
             sage: print f._repr_type()
             Generic
             sage: R.<x,y> = QQ[]
-            sage: phi = R.hom([x+y,x-y],R)
+            sage: phi = R.hom([x+y, x-y], R)
             sage: print phi._repr_type()
             Ring
-
         """
         if self._repr_type_str is None:
             return "Generic"
@@ -281,7 +506,7 @@ cdef class Map(Element):
         """
         Return a string describing the definition of ``self``, to be used when printing ``self``.
 
-        NOTE:
+        .. NOTE::
 
         By default, the empty string is returned. Subclasses may overload this method.
 
@@ -292,23 +517,27 @@ cdef class Map(Element):
             sage: f._repr_defn() == ''
             True
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([x+y,x-y],R)
+            sage: f = R.hom([x+y, x-y], R)
             sage: print f._repr_defn()
             x |--> x + y
             y |--> x - y
-
         """
         return ""
 
     def _repr_(self):
         """
-        NOTE:
+        .. NOTE::
 
-        The string representation is based on the strings returned by
-        :meth:`_repr_defn` and :meth:`_repr_type`, as well as the domain
-        and the codomain.
+            The string representation is based on the strings returned by
+            :meth:`_repr_defn` and :meth:`_repr_type`, as well as the domain
+            and the codomain.
 
-        TEST::
+            A map that has been subject to :meth:`_make_weak_references` has
+            probably been used internally in the coercion system. Hence, it
+            may become defunct by garbage collection of the domain. In this
+            case, a warning is printed accordingly.
+
+        EXAMPLES::
 
             sage: from sage.categories.map import Map
             sage: Map(Hom(QQ, ZZ, Rings()))    # indirect doctest
@@ -316,61 +545,75 @@ cdef class Map(Element):
               From: Rational Field
               To:   Integer Ring
             sage: R.<x,y> = QQ[]
-            sage: R.hom([x+y,x-y],R)
+            sage: R.hom([x+y, x-y], R)
             Ring endomorphism of Multivariate Polynomial Ring in x, y over Rational Field
               Defn: x |--> x + y
                     y |--> x - y
+
+        TESTS::
+
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF._internal_coerce_map_from(Q); phi
+            (map internal to coercion system -- copy before use)
+            Composite map:
+              From: Number Field in a with defining polynomial x^2 + 5
+              To:   Complex Double Field
+            sage: del Q
+            sage: import gc
+            sage: _ = gc.collect()
+            sage: phi
+            Defunct map
         """
+        D = self.domain()
+        if D is None:
+            return "Defunct map"
         s = "%s map:"%self._repr_type()
-        s += "\n  From: %s"%self.domain()
-        s += "\n  To:   %s"%self.codomain()
-        d = self._repr_defn()
-        if d != '':
-            s += "\n  Defn: %s"%('\n        '.join(self._repr_defn().split('\n')))
+        s += "\n  From: %s"%D
+        s += "\n  To:   %s"%self._codomain
+        if isinstance(self.domain, ConstantFunction):
+            d = self._repr_defn()
+            if d != '':
+                s += "\n  Defn: %s"%('\n        '.join(d.split('\n')))
+        else:
+            d = "(map internal to coercion system -- copy before use)"
+            s = d + "\n" + s
         return s
 
-    cpdef domain(self):
+    def _default_repr_(self):
+        D = self.domain()
+        if D is None:
+            return "Defunct map"
+        s = "%s map:"%self._repr_type()
+        s += "\n  From: %s"%D
+        s += "\n  To:   %s"%self._codomain
+        d = self._repr_defn()
+        if d != '':
+            s += "\n  Defn: %s"%('\n        '.join(d.split('\n')))
+        return s
+
+    def domains(self):
         """
-        Return the domain of ``self``.
+        Iterate over the domains of the factors of a (composite) map.
 
-        EXAMPLE::
+        This default implementation simply yields the domain of this map.
 
-            sage: from sage.categories.map import Map
-            sage: f = Map(Hom(QQ, ZZ, Rings()))
-            sage: f.domain()
-            Rational Field
-            sage: R.<x,y> = QQ[]
-            sage: phi = R.hom([x+y,x-y],R)
-            sage: phi.domain()
-            Multivariate Polynomial Ring in x, y over Rational Field
+        .. SEEALSO:: :meth:`FormalCompositeMap.domains`
+
+        EXAMPLES::
+
+            sage: list(QQ.coerce_map_from(ZZ).domains())
+            [Integer Ring]
         """
-        return self._domain
-
-    cpdef codomain(self):
-        """
-        Return the codomain of ``self``.
-
-        EXAMPLE::
-
-            sage: from sage.categories.map import Map
-            sage: f = Map(Hom(QQ, ZZ, Rings()))
-            sage: f.codomain()
-            Integer Ring
-            sage: R.<x,y> = QQ[]
-            sage: phi = R.hom([x+y,x-y],R)
-            sage: phi.codomain()
-            Multivariate Polynomial Ring in x, y over Rational Field
-        """
-        return self._codomain
+        yield self.domain()
 
     def category_for(self):
         """
         Returns the category self is a morphism for.
 
-        NOTE:
+        .. NOTE::
 
-        This is different from the category of maps to which this
-        map belongs *as an object*.
+            This is different from the category of maps to which this
+            map belongs *as an object*.
 
         EXAMPLES::
 
@@ -381,17 +624,24 @@ cdef class Map(Element):
             sage: phi.category_for()
             Category of rings
             sage: phi.category()
-            Category of hom sets in Category of rings
+            Category of homsets of unital magmas and additive unital additive magmas
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([x+y,x-y],R)
+            sage: f = R.hom([x+y, x-y], R)
             sage: f.category_for()
-            Join of Category of unique factorization domains and Category of commutative algebras over Rational Field
+            Join of Category of unique factorization domains and Category of commutative algebras over quotient fields
             sage: f.category()
-            Join of Category of hom sets in Category of modules over Rational Field and Category of hom sets in Category of rings
+            Category of endsets of unital magmas and right modules over quotient fields and left modules over quotient fields
 
         FIXME: find a better name for this method
         """
-        return self.parent().homset_category()
+        if self._category_for is None:
+            # This can happen if the map is the result of unpickling.
+            # We have initialised self._parent, but could not set
+            # self._category_for at that moment, because it could
+            # happen that the parent was not fully constructed and
+            # did not know its category yet.
+            self._category_for = self._parent.homset_category()
+        return self._category_for
 
     def __call__(self, x, *args, **kwds):
         """
@@ -402,7 +652,7 @@ cdef class Map(Element):
         - To implement the call method in a subclass of Map, implement
           :meth:`_call_` and possibly also :meth:`_call_with_args` and
           :meth:`pushforward`.
-        - If the parent of ``x`` can not be coerced into the domain of
+        - If the parent of ``x`` cannot be coerced into the domain of
           ``self``, then the method ``pushforward`` is called with ``x``
           and the other given arguments, provided it is implemented.
           In that way, ``self`` could be applied to objects like ideals
@@ -427,13 +677,13 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; phi=R.hom([y,x])
+            sage: R.<x,y> = QQ[]; phi = R.hom([y, x])
             sage: phi(y)          # indirect doctest
             x
 
         We take the image of an ideal::
 
-            sage: I = ideal(x,y); I
+            sage: I = ideal(x, y); I
             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Rational Field
             sage: phi(I)
             Ideal (y, x) of Multivariate Polynomial Ring in x, y over Rational Field
@@ -444,7 +694,7 @@ cdef class Map(Element):
         (but not coerces) into the domain and can *not* be dealt with
         by :meth:`pushforward` (see trac ticket #10496)::
 
-            sage: D={(0, 2): -1, (0, 0): -1, (1, 1): 7, (2, 0): 1/3}
+            sage: D = {(0, 2): -1, (0, 0): -1, (1, 1): 7, (2, 0): 1/3}
             sage: phi(D)
             -x^2 + 7*x*y + 1/3*y^2 - 1
 
@@ -459,20 +709,20 @@ cdef class Map(Element):
             TypeError: 1/2 fails to convert into the map's domain Integer Ring, but a `pushforward` method is not properly implemented
 
         We test that the default call method really works as described
-        above (that was fixed in trac ticket #10496)::
+        above (that was fixed in :trac:`10496`)::
 
             sage: class FOO(Map):
-            ...     def _call_(self,x):
+            ...     def _call_(self, x):
             ...         print "_call_", parent(x)
             ...         return self.codomain()(x)
-            ...     def _call_with_args(self,x,args=(),kwds={}):
+            ...     def _call_with_args(self, x, args=(), kwds={}):
             ...         print "_call_with_args", parent(x)
-            ...         return self.codomain()(x)^kwds.get('exponent',1)
-            ...     def pushforward(self,x,exponent=1):
+            ...         return self.codomain()(x)^kwds.get('exponent', 1)
+            ...     def pushforward(self, x, exponent=1):
             ...         print "pushforward", parent(x)
             ...         return self.codomain()(1/x)^exponent
             ...
-            sage: f = FOO(ZZ,QQ)
+            sage: f = FOO(ZZ, QQ)
             sage: f(1/1)   #indirect doctest
             pushforward Rational Field
             1
@@ -482,7 +732,7 @@ cdef class Map(Element):
             sage: f(int(1))
             _call_ Integer Ring
             1
-            sage: f(int(2),exponent=2)
+            sage: f(int(2), exponent=2)
             _call_with_args Integer Ring
             4
 
@@ -491,48 +741,48 @@ cdef class Map(Element):
             sage: f(1/2)
             pushforward Rational Field
             2
-            sage: f(1/2,exponent=2)
+            sage: f(1/2, exponent=2)
             pushforward Rational Field
             4
 
         If the argument does not coerce into the domain, and if
-        ``pushforward`` fails, ``_call_`` is tried after conversion. ::
+        ``pushforward`` fails, ``_call_`` is tried after conversion::
 
-            sage: g = FOO(QQ,ZZ)
+            sage: g = FOO(QQ, ZZ)
             sage: g(SR(3))
             pushforward Symbolic Ring
             _call_ Rational Field
             3
-            sage: g(SR(3),exponent=2)
+            sage: g(SR(3), exponent=2)
             pushforward Symbolic Ring
             _call_with_args Rational Field
             9
 
         If conversion fails as well, an error is raised::
 
-            sage: h = FOO(ZZ,ZZ)
+            sage: h = FOO(ZZ, ZZ)
             sage: h(2/3)
             Traceback (most recent call last):
             ...
             TypeError: 2/3 fails to convert into the map's domain Integer Ring, but a `pushforward` method is not properly implemented
-
         """
         P = parent_c(x)
-        if P is self._domain: # we certainly want to call _call_/with_args
+        cdef Parent D = self.domain()
+        if P is D: # we certainly want to call _call_/with_args
             if not args and not kwds:
                 return self._call_(x)
             return self._call_with_args(x, args, kwds)
         # Is there coercion?
-        converter = self._domain.coerce_map_from(P)
+        converter = D._internal_coerce_map_from(P)
         if converter is None:
             try:
-                return self.pushforward(x,*args,**kwds)
+                return self.pushforward(x, *args, **kwds)
             except (AttributeError, TypeError, NotImplementedError):
-                pass # raise TypeError, "%s must be coercible into %s"%(x, self._domain)
+                pass
             try:
-                x = self._domain(x)
+                x = D(x)
             except (TypeError, NotImplementedError):
-                raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self._domain)
+                raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, D)
         else:
             x = converter(x)
         if not args and not kwds:
@@ -562,7 +812,7 @@ cdef class Map(Element):
 
             sage: from sage.categories.map import Map
             sage: f = Map(Hom(QQ, ZZ, Rings()))
-            sage: f(1/2,2,foo='bar')        # indirect doctest
+            sage: f(1/2, 2, foo='bar')      # indirect doctest
             Traceback (most recent call last):
             ...
             NotImplementedError: _call_with_args not overridden to accept arguments for <type 'sage.categories.map.Map'>
@@ -620,14 +870,14 @@ cdef class Map(Element):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([x+y,x-y],R)
-            sage: f = R.hom([a+b,a-b])
-            sage: g = S.hom([x+y,x-y])
+            sage: f = R.hom([x+y, x-y], R)
+            sage: f = R.hom([a+b, a-b])
+            sage: g = S.hom([x+y, x-y])
             sage: f*g
             Ring endomorphism of Multivariate Polynomial Ring in a, b over Rational Field
               Defn: a |--> 2*a
                     b |--> 2*b
-            sage: h = SetMorphism(Hom(S,QQ,Rings()), lambda p: p.lc())
+            sage: h = SetMorphism(Hom(S, QQ, Rings()), lambda p: p.lc())
             sage: h*f
             Composite map:
               From: Multivariate Polynomial Ring in x, y over Rational Field
@@ -686,7 +936,7 @@ cdef class Map(Element):
             Category of commutative additive monoids
         """
         category = self.category_for()._meet_(right.category_for())
-        H = homset.Hom(right.domain(), self.codomain(), category)
+        H = homset.Hom(right.domain(), self._codomain, category)
         return self._composition_(right, H)
 
     def _composition_(self, right, homset):
@@ -750,8 +1000,8 @@ cdef class Map(Element):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f_R = R.hom([x+y,x-y],R)
-            sage: f_S = S.hom([a+b,a-b],S)
+            sage: f_R = R.hom([x+y, x-y], R)
+            sage: f_S = S.hom([a+b, a-b], S)
             sage: foo_bar = f_R._composition_(f_S, Hom(S, R, Monoids()))
             sage: foo_bar(a)
             2*x
@@ -803,8 +1053,9 @@ cdef class Map(Element):
             sage: phi_xz.category_for()
             Category of monoids
         """
-        if self.domain() is not right.codomain():
-            right = right.extend_codomain(self.domain())
+        D = self.domain()
+        if D is not right.codomain():
+            right = right.extend_codomain(D)
         return self._composition(right)
 
     def post_compose(self, left):
@@ -876,13 +1127,16 @@ cdef class Map(Element):
             ...
             TypeError: No coercion from Univariate Polynomial Ring in x over Integer Ring to Real Double Field
         """
-        cdef Map connecting = self.domain().coerce_map_from(new_domain)
+        D = self.domain()
+        if D is None:
+            raise ValueError("This map became defunct by garbage collection")
+        cdef Map connecting = D._internal_coerce_map_from(new_domain)
         if connecting is None:
-            raise TypeError, "No coercion from %s to %s" % (new_domain, self.domain())
-        elif connecting.codomain() is not self.domain():
-            raise RuntimeError, "BUG: coerce_map_from should always return a map to self (%s)" % self.domain()
+            raise TypeError, "No coercion from %s to %s" % (new_domain, D)
+        elif connecting.codomain() is not D:
+            raise RuntimeError, "BUG: coerce_map_from should always return a map to self (%s)" % D
         else:
-            return self.pre_compose(connecting)
+            return self.pre_compose(connecting.__copy__())
 
     def extend_codomain(self, new_codomain):
         r"""
@@ -916,13 +1170,13 @@ cdef class Map(Element):
             ...
             TypeError: No coercion from Rational Field to Finite Field of size 7
         """
-        cdef Map connecting = new_codomain.coerce_map_from(self.codomain())
+        cdef Map connecting = new_codomain._internal_coerce_map_from(self._codomain)
         if connecting is None:
-            raise TypeError, "No coercion from %s to %s" % (self.codomain(), new_codomain)
-        elif connecting.domain() is not self.codomain():
+            raise TypeError, "No coercion from %s to %s" % (self._codomain, new_codomain)
+        elif connecting.domain() is not self._codomain:
             raise RuntimeError, "BUG: coerce_map_from should always return a map from its input (%s)" % new_codomain
         else:
-            return self.post_compose(connecting)
+            return self.post_compose(connecting.__copy__())
 
     def is_injective(self):
         """
@@ -993,9 +1247,8 @@ cdef class Map(Element):
               From: Cyclotomic Field of order 5 and degree 4
               To:   Number Field in a with defining polynomial x^4 - 5*x + 5
               Defn: z |--> 3/11*a^3 + 4/11*a^2 + 9/11*a - 14/11
-
         """
-        if self._domain is not self._codomain and n != 1 and n != -1:
+        if self.domain() is not self._codomain and n != 1 and n != -1:
             raise TypeError, "self must be an endomorphism."
         if n == 0:
             from sage.categories.morphism import IdentityMorphism
@@ -1009,12 +1262,12 @@ cdef class Map(Element):
 
         NOTE:
 
-        By default, it returns ``None``. You may override it in subclasses.
+            By default, it returns ``None``. You may override it in subclasses.
 
         TEST::
 
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([x+y,x-y],R)
+            sage: f = R.hom([x+y, x-y], R)
             sage: print f.section()
             None
 
@@ -1051,7 +1304,10 @@ cdef class Map(Element):
             sage: {f: 1}[f]
             1
         """
-        return hash((self._domain, self._codomain))
+        D = self.domain()
+        if D is None:
+            raise ValueError("This map became defunct by garbage collection")
+        return hash((self.domain(), self._codomain))
 
 cdef class Section(Map):
     """
@@ -1059,15 +1315,14 @@ cdef class Section(Map):
 
     NOTE:
 
-    Call methods are not implemented for the base class ``Section``.
-
+        Call methods are not implemented for the base class ``Section``.
 
     EXAMPLE::
 
         sage: from sage.categories.map import Section
         sage: R.<x,y> = ZZ[]
         sage: S.<a,b> = QQ[]
-        sage: f = R.hom([a+b,a-b])
+        sage: f = R.hom([a+b, a-b])
         sage: sf = Section(f); sf
         Section map:
           From: Multivariate Polynomial Ring in a, b over Rational Field
@@ -1076,7 +1331,6 @@ cdef class Section(Map):
         Traceback (most recent call last):
         ...
         NotImplementedError: <type 'sage.categories.map.Section'>
-
     """
 
     def __init__(self, map):
@@ -1089,7 +1343,7 @@ cdef class Section(Map):
 
             sage: from sage.categories.map import Section
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([x+y,x-y],R)
+            sage: f = R.hom([x+y, x-y], R)
             sage: sf = Section(f); sf
             Section map:
               From: Multivariate Polynomial Ring in x, y over Rational Field
@@ -1100,6 +1354,42 @@ cdef class Section(Map):
         Map.__init__(self, Hom(map.codomain(), map.domain(), SetsWithPartialMaps()))
         self._inverse = map    # TODO: Use this attribute somewhere!
 
+    cdef dict _extra_slots(self, dict _slots):
+        """
+        Helper for pickling and copying.
+
+        TEST::
+
+            sage: from sage.categories.map import Section
+            sage: R.<x,y> = QQ[]
+            sage: f = R.hom([x+y, x-y], R)
+            sage: sf = Section(f)
+            sage: copy(sf)   # indirect doctest
+            Section map:
+              From: Multivariate Polynomial Ring in x, y over Rational Field
+              To:   Multivariate Polynomial Ring in x, y over Rational Field
+        """
+        _slots['_inverse'] = self._inverse
+        return Map._extra_slots(self, _slots)
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Helper for pickling and copying.
+
+        TEST::
+
+            sage: from sage.categories.map import Section
+            sage: R.<x,y> = QQ[]
+            sage: f = R.hom([x+y, x-y], R)
+            sage: sf = Section(f)
+            sage: copy(sf)   # indirect doctest
+            Section map:
+              From: Multivariate Polynomial Ring in x, y over Rational Field
+              To:   Multivariate Polynomial Ring in x, y over Rational Field
+        """
+        Map._update_slots(self, _slots)
+        self._inverse = _slots['_inverse']
+
     def _repr_type(self):
         """
         Return a string describing the type of this map (which is "Section").
@@ -1108,7 +1398,7 @@ cdef class Section(Map):
 
             sage: from sage.categories.map import Section
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([x+y,x-y],R)
+            sage: f = R.hom([x+y, x-y], R)
             sage: sf = Section(f)
             sage: sf         # indirect doctest
             Section map:
@@ -1124,17 +1414,17 @@ cdef class FormalCompositeMap(Map):
     A formal composite map is formed by two maps, so that the codomain of the
     first map is contained in the domain of the second map.
 
-    NOTE:
+    .. NOTE::
 
-    When calling a composite with additional arguments, these arguments are
-    *only* passed to the second underlying map.
+        When calling a composite with additional arguments, these arguments are
+        *only* passed to the second underlying map.
 
     EXAMPLE::
 
         sage: R.<x> = QQ[]
         sage: S.<a> = QQ[]
         sage: from sage.categories.morphism import SetMorphism
-        sage: f = SetMorphism(Hom(R,S,Rings()), lambda p: p[0]*a^p.degree())
+        sage: f = SetMorphism(Hom(R, S, Rings()), lambda p: p[0]*a^p.degree())
         sage: g = S.hom([2*x])
         sage: f*g
         Composite map:
@@ -1166,35 +1456,36 @@ cdef class FormalCompositeMap(Map):
         20*x^2
     """
 
-    def __init__(self, parent, first, second):
+    def __init__(self, parent, first, second=None):
         """
         INPUT:
 
         - ``parent``: a homset
-        - ``first``, ``second``: two maps
+        - ``first``: a map or a list of maps
+        - ``second``: a map or None
 
-        NOTE:
+        ..  NOTE::
 
-        The intended use is of course that the codomain of the
-        first map is contained in the domain of the second map,
-        so that the two maps can be composed, and that the
-        composition belongs to ``parent``. However, none of
-        these conditions is verified in the init method.
+            The intended use is of course that the codomain of the
+            first map is contained in the domain of the second map,
+            so that the two maps can be composed, and that the
+            composition belongs to ``parent``. However, none of
+            these conditions is verified in the init method.
 
-        The user is advised to compose two maps ``f`` and ``g``
-        in multiplicative notation, ``g*f``, since this will in
-        some cases return a more efficient map object than a
-        formal composite map.
+            The user is advised to compose two maps ``f`` and ``g``
+            in multiplicative notation, ``g*f``, since this will in
+            some cases return a more efficient map object than a
+            formal composite map.
 
         TEST::
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([a+b,a-b])
-            sage: g = S.hom([x+y,x-y])
-            sage: H = Hom(R,R,Rings())
+            sage: f = R.hom([a+b, a-b])
+            sage: g = S.hom([x+y, x-y])
+            sage: H = Hom(R, R, Rings())
             sage: from sage.categories.map import FormalCompositeMap
-            sage: m = FormalCompositeMap(H,f,g); m
+            sage: m = FormalCompositeMap(H, f, g); m
             Composite map:
               From: Multivariate Polynomial Ring in x, y over Rational Field
               To:   Multivariate Polynomial Ring in x, y over Rational Field
@@ -1211,53 +1502,84 @@ cdef class FormalCompositeMap(Map):
                             b |--> x - y
             sage: m(x), m(y)
             (2*x, 2*y)
-
         """
         Map.__init__(self, parent)
-        self.__first = first
-        self.__second = second
+
+        if isinstance(first, (list, tuple)):
+            self.__list = first
+            self._coerce_cost = sum((<Map>f)._coerce_cost for f in first)
+            return
+
+        self.__list = []
+        if isinstance(first, FormalCompositeMap):
+            self.__list += (<FormalCompositeMap>first).__list
+        else:
+            self.__list += [first]
+
+        if isinstance(second, FormalCompositeMap):
+            self.__list += (<FormalCompositeMap>second).__list
+        else:
+            self.__list += [second]
         self._coerce_cost = (<Map>first)._coerce_cost + (<Map>second)._coerce_cost
 
-    cdef _update_slots(self, _slots):
+    def __copy__(self):
         """
-        Used in pickling.
+        Since :meth:`_extra_slots` would return the uncopied constituents
+        of this composite map, we cannot rely on the default copying method
+        of maps.
+
+        TESTS::
+
+            sage: copy(QQ['q,t'].coerce_map_from(int))   # indirect doctest
+            Composite map:
+              From: Set of Python objects of type 'int'
+              To:   Multivariate Polynomial Ring in q, t over Rational Field
+              Defn:   Native morphism:
+                      From: Set of Python objects of type 'int'
+                      To:   Rational Field
+                    then
+                      Polynomial base injection morphism:
+                      From: Rational Field
+                      To:   Multivariate Polynomial Ring in q, t over Rational Field
+        """
+        return FormalCompositeMap(self.parent(), [f.__copy__() for f in self.__list])
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Used in pickling and copying.
 
         TEST::
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([a+b,a-b])
-            sage: g = S.hom([x+y,x-y])
+            sage: f = R.hom([a+b, a-b])
+            sage: g = S.hom([x+y, x-y])
             sage: from sage.categories.map import FormalCompositeMap
-            sage: H = Hom(R,R,Rings())
-            sage: m = FormalCompositeMap(H,f,g)
+            sage: H = Hom(R, R, Rings())
+            sage: m = FormalCompositeMap(H, f, g)
             sage: m == loads(dumps(m))    # indirect doctest
             True
-
         """
-        self.__first = _slots['__first']
-        self.__second = _slots['__second']
+        self.__list = _slots['__list']
         Map._update_slots(self, _slots)
 
-    cdef _extra_slots(self, _slots):
+    cdef dict _extra_slots(self, dict _slots):
         """
-        Used in pickling.
+        Used in pickling and copying.
 
         TEST::
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([a+b,a-b])
-            sage: g = S.hom([x+y,x-y])
+            sage: f = R.hom([a+b, a-b])
+            sage: g = S.hom([x+y, x-y])
             sage: from sage.categories.map import FormalCompositeMap
-            sage: H = Hom(R,R,Rings())
-            sage: m = FormalCompositeMap(H,f,g)
+            sage: H = Hom(R, R, Rings())
+            sage: m = FormalCompositeMap(H, f, g)
             sage: m == loads(dumps(m))    # indirect doctest
             True
-
         """
-        _slots['__first'] = self.__first
-        _slots['__second'] = self.__second
+        _slots['__list'] = self.__list
         return Map._extra_slots(self, _slots)
 
     def __cmp__(self, other):
@@ -1266,18 +1588,17 @@ cdef class FormalCompositeMap(Map):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([a+b,a-b])
-            sage: g = S.hom([x+y,x-y])
+            sage: f = R.hom([a+b, a-b])
+            sage: g = S.hom([x+y, x-y])
             sage: from sage.categories.map import FormalCompositeMap
-            sage: H = Hom(R,R,Rings())
-            sage: m = FormalCompositeMap(H,f,g)
+            sage: H = Hom(R, R, Rings())
+            sage: m = FormalCompositeMap(H, f, g)
             sage: m == loads(dumps(m))
             True
-
         """
-        c = cmp(type(self),type(other))
+        c = cmp(type(self), type(other))
         if c == 0:
-            c = cmp([self.__first,self.__second],[(<FormalCompositeMap>other).__first,(<FormalCompositeMap>other).__second])
+            c = cmp(self.__list, (<FormalCompositeMap>other).__list)
         return c
 
     def __hash__(self):
@@ -1288,22 +1609,65 @@ cdef class FormalCompositeMap(Map):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([a+b,a-b])
-            sage: g = S.hom([x+y,x-y])
+            sage: f = R.hom([a+b, a-b])
+            sage: g = S.hom([x+y, x-y])
             sage: from sage.categories.map import FormalCompositeMap
-            sage: H = Hom(R,R,Rings())
-            sage: m = FormalCompositeMap(H,f,g)
+            sage: H = Hom(R, R, Rings())
+            sage: m = FormalCompositeMap(H, f, g)
             sage: hash(m) == hash(m)
             True
             sage: {m: 1}[m]
             1
-            sage: n = FormalCompositeMap(Hom(S,S,Rings()), g, f)
+            sage: n = FormalCompositeMap(Hom(S, S, Rings()), g, f)
             sage: hash(m) == hash(n)
             False
             sage: len({m: 1, n: 2}.keys())
             2
         """
-        return hash((self.__first, self.__second))
+        return hash(tuple(self.__list))
+
+    def __getitem__(self, i):
+        r"""
+        Return the `i`-th map of the formal composition.
+
+        If ``self`` represents `f_n \circ f_{n-1} \circ \cdots \circ
+        f_1 \circ f_0`, then ``self[i]`` gives `f_i`.  Support
+        negative indices as ``list.__getitem__``.  Raise an error if
+        the index does not match, in the same way as
+        ``list.__getitem__``.
+
+        EXAMPLES::
+
+            sage: from sage.categories.map import Map
+            sage: f = Map(ZZ, QQ)
+            sage: g = Map(QQ, ZZ)
+            sage: (f*g)[0]
+            Generic map:
+              From: Rational Field
+              To:   Integer Ring
+            sage: (f*g)[1]
+            Generic map:
+              From: Integer Ring
+              To:   Rational Field
+            sage: (f*g)[-1]
+            Generic map:
+              From: Integer Ring
+              To:   Rational Field
+            sage: (f*g)[-2]
+            Generic map:
+              From: Rational Field
+              To:   Integer Ring
+            sage: (f*g)[-3]
+            Traceback (most recent call last):
+            ...
+            IndexError: list index out of range
+            sage: (f*g)[2]
+            Traceback (most recent call last):
+            ...
+            IndexError: list index out of range
+
+        """
+        return self.__list[i]
 
     cpdef Element _call_(self, x):
         """
@@ -1314,42 +1678,45 @@ cdef class FormalCompositeMap(Map):
             sage: R.<x> = QQ[]
             sage: S.<a> = QQ[]
             sage: from sage.categories.morphism import SetMorphism
-            sage: f = SetMorphism(Hom(R,S,Rings()), lambda p: p[0]*a^p.degree())
+            sage: f = SetMorphism(Hom(R, S, Rings()), lambda p: p[0]*a^p.degree())
             sage: g = S.hom([2*x])
             sage: (g*f)((x+1)^2), (f*g)((a+1)^2)     # indirect doctest
             (4*x^2, a^2)
         """
-        return self.__second._call_(self.__first._call_(x))
+        for f in self.__list:
+            x = f._call_(x)
+        return x
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
-        Additional rguments are only passed to the second map
+        Additional arguments are only passed to the last applied map.
 
         TEST::
 
             sage: from sage.categories.morphism import SetMorphism
             sage: R.<x> = QQ[]
-            sage: def foo(x,*args,**kwds):
-            ...    print 'foo called with',args,kwds
+            sage: def foo(x, *args, **kwds):
+            ...    print 'foo called with', args, kwds
             ...    return x
-            sage: def bar(x,*args,**kwds):
-            ...    print 'bar called with',args,kwds
+            sage: def bar(x, *args, **kwds):
+            ...    print 'bar called with', args, kwds
             ...    return x
-            sage: f = SetMorphism(Hom(R,R,Rings()), foo)
-            sage: b = SetMorphism(Hom(R,R,Rings()), bar)
+            sage: f = SetMorphism(Hom(R, R, Rings()), foo)
+            sage: b = SetMorphism(Hom(R, R, Rings()), bar)
             sage: c = b*f
-            sage: c(2,'hello world',test=1)       # indirect doctest
+            sage: c(2, 'hello world', test=1)     # indirect doctest
             foo called with () {}
             bar called with ('hello world',) {'test': 1}
             2
             sage: c = f*b
-            sage: c(2,'hello world',test=1)
+            sage: c(2, 'hello world', test=1)
             bar called with () {}
             foo called with ('hello world',) {'test': 1}
             2
-
         """
-        return self.__second._call_with_args(self.__first._call_(x), args, kwds)
+        for f in self.__list[:-1]:
+            x = f._call_(x)
+        return self.__list[-1]._call_with_args(x, args, kwds)
 
     def _repr_type(self):
         """
@@ -1360,7 +1727,7 @@ cdef class FormalCompositeMap(Map):
             sage: R.<x> = QQ[]
             sage: S.<a> = QQ[]
             sage: from sage.categories.morphism import SetMorphism
-            sage: f = SetMorphism(Hom(R,S,Rings()), lambda p: p[0]*a^p.degree())
+            sage: f = SetMorphism(Hom(R, S, Rings()), lambda p: p[0]*a^p.degree())
             sage: g = S.hom([2*x])
             sage: f*g            # indirect doctest
             Composite map:
@@ -1389,7 +1756,7 @@ cdef class FormalCompositeMap(Map):
             sage: R.<x> = QQ[]
             sage: S.<a> = QQ[]
             sage: from sage.categories.morphism import SetMorphism
-            sage: f = SetMorphism(Hom(R,S,Rings()), lambda p: p[0]*a^p.degree())
+            sage: f = SetMorphism(Hom(R, S, Rings()), lambda p: p[0]*a^p.degree())
             sage: g = S.hom([2*x])
             sage: f*g            # indirect doctest
             Composite map:
@@ -1404,41 +1771,57 @@ cdef class FormalCompositeMap(Map):
                       From: Univariate Polynomial Ring in x over Rational Field
                       To:   Univariate Polynomial Ring in a over Rational Field
         """
-        return "  %s\nthen\n  %s"%(self.__first, self.__second)
+        s = "  %s"%(self.__list[0])
+        for f in self.__list[1:]:
+            s += "\nthen\n  %s" % f
+        return s
 
     def first(self):
-        """
-        The first map in the formal composition, where the
-        composition is ``x|--> second(first(x))``.
+        r"""
+        Return the first map in the formal composition.
+
+        If ``self`` represents `f_n \circ f_{n-1} \circ \cdots \circ
+        f_1 \circ f_0`, then ``self.first()`` returns `f_0`.  We have
+        ``self == self.then() * self.first()``.
 
         EXAMPLE::
 
             sage: R.<x> = QQ[]
             sage: S.<a> = QQ[]
             sage: from sage.categories.morphism import SetMorphism
-            sage: f = SetMorphism(Hom(R,S,Rings()), lambda p: p[0]*a^p.degree())
+            sage: f = SetMorphism(Hom(R, S, Rings()), lambda p: p[0]*a^p.degree())
             sage: g = S.hom([2*x])
-            sage: (f*g).first() is g
+            sage: fg = f * g
+            sage: fg.first() == g
+            True
+            sage: fg == fg.then() * fg.first()
             True
         """
-        return self.__first
+        return self.__list[0]
 
-    def second(self):
-        """
-        The second map in the formal composition, where the
-        composition is x|--> second(first(x)).
+    def then(self):
+        r"""
+        Return the tail of the list of maps.
+
+        If ``self`` represents `f_n \circ f_{n-1} \circ \cdots \circ
+        f_1 \circ f_0`, then ``self.first()`` returns `f_n \circ
+        f_{n-1} \circ \cdots \circ f_1`.  We have ``self ==
+        self.then() * self.first()``.
 
         EXAMPLE::
 
             sage: R.<x> = QQ[]
             sage: S.<a> = QQ[]
             sage: from sage.categories.morphism import SetMorphism
-            sage: f = SetMorphism(Hom(R,S,Rings()), lambda p: p[0]*a^p.degree())
+            sage: f = SetMorphism(Hom(R, S, Rings()), lambda p: p[0]*a^p.degree())
             sage: g = S.hom([2*x])
-            sage: (f*g).second() is f
+            sage: (f*g).then() == f
             True
         """
-        return self.__second
+        if len(self.__list) == 2: return self.__list[1]
+        return FormalCompositeMap(self.__list[1:])
+
+    second = deprecated_function_alias(16291, then)
 
     def is_injective(self):
         """
@@ -1450,21 +1833,21 @@ cdef class FormalCompositeMap(Map):
 
             sage: V1 = QQ^2
             sage: V2 = QQ^3
-            sage: phi1 = (QQ^1).hom(Matrix([[1,1]]),V1)
-            sage: phi2 = V1.hom(Matrix([[1,2,3],[4,5,6]]),V2)
+            sage: phi1 = (QQ^1).hom(Matrix([[1, 1]]), V1)
+            sage: phi2 = V1.hom(Matrix([[1, 2, 3], [4, 5, 6]]), V2)
 
         If both constituents are injective, the composition is injective::
 
             sage: from sage.categories.map import FormalCompositeMap
-            sage: c1 = FormalCompositeMap(Hom(QQ^1,V2,phi1.category_for()),phi1,phi2)
+            sage: c1 = FormalCompositeMap(Hom(QQ^1, V2, phi1.category_for()), phi1, phi2)
             sage: c1.is_injective()
             True
 
-        If it can not be determined whether the composition is injective,
+        If it cannot be determined whether the composition is injective,
         an error is raised::
 
-            sage: psi1 = V2.hom(Matrix([[1,2],[3,4],[5,6]]),V1)
-            sage: c2 = FormalCompositeMap(Hom(V1,V1,phi2.category_for()),phi2,psi1)
+            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)
+            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()), phi2, psi1)
             sage: c2.is_injective()
             Traceback (most recent call last):
             ...
@@ -1473,21 +1856,18 @@ cdef class FormalCompositeMap(Map):
         If the first map is surjective and the second map is not injective,
         then the composition is not injective::
 
-            sage: psi2 = V1.hom([[1],[1]],QQ^1)
-            sage: c3 = FormalCompositeMap(Hom(V2,QQ^1,phi2.category_for()),psi2,psi1)
+            sage: psi2 = V1.hom([[1], [1]], QQ^1)
+            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, phi2.category_for()), psi2, psi1)
             sage: c3.is_injective()
             False
-
         """
-        if self.__first.is_injective():
-            if self.__second.is_injective():
-                return True
-            elif self.__first.is_surjective():
-                return False
-            else:
-                raise NotImplementedError, "Not enough information to deduce injectivity."
-        else:
+        without_bij = (f for f in self.__list if not (f.is_injective() and f.is_surjective()))
+        if not next(without_bij).is_injective():
             return False
+
+        if all(f.is_injective() for f in without_bij):
+            return True
+        raise NotImplementedError("Not enough information to deduce injectivity.")
 
     def is_surjective(self):
         """
@@ -1504,41 +1884,55 @@ cdef class FormalCompositeMap(Map):
 
         If both maps are surjective, the composition is surjective::
 
-            sage: phi32 = V3.hom(Matrix([[1,2],[3,4],[5,6]]),V2)
-            sage: phi21 = V2.hom(Matrix([[1],[1]]),V1)
-            sage: c_phi = FormalCompositeMap(Hom(V3,V1,phi32.category_for()),phi32,phi21)
+            sage: phi32 = V3.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V2)
+            sage: phi21 = V2.hom(Matrix([[1], [1]]), V1)
+            sage: c_phi = FormalCompositeMap(Hom(V3, V1, phi32.category_for()), phi32, phi21)
             sage: c_phi.is_surjective()
             True
 
         If the second map is not surjective, the composition is not
         surjective::
 
-            sage: FormalCompositeMap(Hom(V3,V1,phi32.category_for()),phi32,V2.hom(Matrix([[0],[0]]),V1)).is_surjective()
+            sage: FormalCompositeMap(Hom(V3, V1, phi32.category_for()), phi32, V2.hom(Matrix([[0], [0]]), V1)).is_surjective()
             False
 
         If the second map is an isomorphism and the first map is not
         surjective, then the composition is not surjective::
 
-            sage: FormalCompositeMap(Hom(V2,V1,phi32.category_for()),V2.hom(Matrix([[0],[0]]),V1),V1.hom(Matrix([[1]]),V1)).is_surjective()
+            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()), V2.hom(Matrix([[0], [0]]), V1), V1.hom(Matrix([[1]]), V1)).is_surjective()
             False
 
-        Otherwise, surjectivity of the composition can not be determined::
+        Otherwise, surjectivity of the composition cannot be determined::
 
             sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),
-            ...     V2.hom(Matrix([[1,1], [1,1]]), V2),
+            ...     V2.hom(Matrix([[1, 1], [1, 1]]), V2),
             ...     V2.hom(Matrix([[1], [1]]), V1)).is_surjective()
             Traceback (most recent call last):
             ...
             NotImplementedError: Not enough information to deduce surjectivity.
-
         """
-        if self.__second.is_surjective():
-            if self.__first.is_surjective():
-                return True
-            elif self.__second.is_injective():
-                return False
-            else:
-                raise NotImplementedError, "Not enough information to deduce surjectivity."
-        else:
+        without_bij = (f for f in self.__list[-1::-1] if not (f.is_injective() and f.is_surjective()))
+        if not next(without_bij).is_surjective():
             return False
 
+        if all(f.is_surjective() for f in without_bij):
+            return True
+        raise NotImplementedError("Not enough information to deduce surjectivity.")
+
+    def domains(self):
+        """
+        Iterate over the domains of the factors of this map.
+
+        (This is useful in particular to check for loops in coercion maps.)
+
+        .. SEEALSO:: :meth:`Map.domains`
+
+        EXAMPLES::
+
+            sage: f = QQ.coerce_map_from(ZZ)
+            sage: g = MatrixSpace(QQ, 2, 2).coerce_map_from(QQ)
+            sage: list((g*f).domains())
+            [Integer Ring, Rational Field]
+        """
+        for f in self.__list:
+            yield f.domain()

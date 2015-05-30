@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-Construct Elliptic Curves as Jacobians
+Construct elliptic curves as Jacobians
 
 An elliptic curve is a genus one curve with a designated point. The
 Jacobian of a genus-one curve can be defined as the set of line
@@ -115,7 +116,7 @@ def Jacobian(X, **kwds):
         else:
             return Jacobian_of_equation(X, **kwds)
 
-    from sage.schemes.all import is_Scheme
+    from sage.schemes.generic.scheme import is_Scheme
     if is_Scheme(X) and X.dimension() == 1:
         return Jacobian_of_curve(X, morphism=morphism, **kwds)
 

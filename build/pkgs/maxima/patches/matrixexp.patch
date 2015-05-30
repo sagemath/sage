@@ -1,0 +1,13 @@
+--- a/share/linearalgebra/matrixexp.lisp
++++ b/share/linearalgebra/matrixexp.lisp
+@@ -138,8 +138,8 @@
+ 	   (print `(ratvars = ,$ratvars gcd = '$gcd algebraic = ,$algebraic))
+ 	   (print `(ratfac = ,$ratfac))
+ 	   (merror "Unable to find the spectrum")))
+-   
+-    (setq res ($fullratsimp (ncpower (sub (mult z ($ident n)) mat) -1) z))
++
++    (setq res ($fullratsimp ($invert_by_lu (sub (mult z ($ident n)) mat) '$crering) z))
+     (setq m (length sp))
+     (dotimes (i m)
+       (setq zi (nth i sp))

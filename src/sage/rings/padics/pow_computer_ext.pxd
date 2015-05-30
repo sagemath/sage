@@ -10,12 +10,6 @@ cdef class PowComputer_ext(PowComputer_class):
     cdef ZZ_c top_power
     cdef ZZ_c temp_z
 
-    # the following three should be set by the subclasses
-    cdef long ram_prec_cap # = prec_cap * e
-    cdef long deg
-    cdef long e
-    cdef long f
-
     # the following are for unpickling
     cdef object _poly
     cdef object _shift_seed

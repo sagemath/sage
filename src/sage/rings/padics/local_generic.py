@@ -9,20 +9,24 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2007 David Roe <roed@math.harvard.edu>
-#                          William Stein <wstein@gmail.com>
+#       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
+#                               William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.rings.ring import CommutativeRing
+from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
+from sage.structure.category_object import check_default_category
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 
 class LocalGeneric(CommutativeRing):
-    def __init__(self, base, prec, names, element_class):
+    def __init__(self, base, prec, names, element_class, category=None):
         """
         Initializes self.
 
@@ -46,7 +50,14 @@ class LocalGeneric(CommutativeRing):
         """
         self._prec = prec
         self.Element = element_class
-        Parent.__init__(self, base, names=(names,), normalize=False, category=getattr(self,'_default_category',None))
+        default_category = getattr(self, '_default_category', None)
+        if self.is_field():
+            category = CompleteDiscreteValuationFields()
+        else:
+            category = CompleteDiscreteValuationRings()
+        if default_category is not None:
+            category = check_default_category(default_category, category)
+        Parent.__init__(self, base, names=(names,), normalize=False, category=category, element_constructor=element_class)
 
     def is_capped_relative(self):
         """
@@ -235,7 +246,7 @@ class LocalGeneric(CommutativeRing):
         - ``self`` -- a local ring
         - ``var`` -- string (default: ``'x'``) the name of the variable
 
-        OUTPUT::
+        OUTPUT:
 
         - polynomial -- the defining polynomial of this ring as an extension over its ground ring
 
@@ -257,7 +268,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a local ring
 
-        OUTPUT::
+        OUTPUT:
 
         - the ground ring of ``self``, i.e., itself
 
@@ -333,7 +344,7 @@ class LocalGeneric(CommutativeRing):
         if K is None or K is self:
             return Integer(1)
         else:
-            raise ValueError, "K should be a subring of self"
+            raise ValueError("K should be a subring of self")
 
     def e(self, K = None):
         r"""
@@ -494,11 +505,11 @@ class LocalGeneric(CommutativeRing):
         r"""
         Returns whether this ring is finite, i.e. ``False``.
 
-        INPUT::
+        INPUT:
 
         - ``self`` -- a `p`-adic ring
 
-        OUTPUT::
+        OUTPUT:
 
         - boolean -- whether self is finite, i.e., ``False``
 
@@ -523,3 +534,41 @@ class LocalGeneric(CommutativeRing):
         """
         return self.extension(*args, **kwds)
 
+    def _test_residue(self, **options):
+        r"""
+        Perform some tests on the residue field of this ring.
+
+        EXAMPLES::
+
+            sage: R = Zp(2)
+            sage: R._test_residue()
+
+        """
+        tester = self._tester(**options)
+        tester.assertEqual(self.residue_field().characteristic(), self.residue_characteristic())
+
+        for x in tester.some_elements():
+            errors = []
+            if x.precision_absolute() <= 0:
+                from precision_error import PrecisionError
+                errors.append(PrecisionError)
+            if x.valuation() < 0:
+                errors.append(ValueError)
+            if errors:
+                with tester.assertRaises(tuple(errors)):
+                    x.residue()
+                continue
+            y = x.residue()
+            # residue() is in `Z/pZ` which is not identical to the residue field `F_p`
+            tester.assertEqual(y.parent().cardinality(), self.residue_field().cardinality())
+            z = self(y)
+            tester.assertGreater((x-z).valuation(), 0)
+
+        for x in self.residue_field().some_elements():
+            y = self(x)
+            if x.is_zero():
+                tester.assertGreater(y.valuation(), 0)
+            else:
+                tester.assertEqual(y.valuation(), 0)
+            z = y.residue()
+            tester.assertEqual(x, z)

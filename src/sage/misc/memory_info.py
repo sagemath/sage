@@ -298,7 +298,7 @@ class MemoryInfo_OSX(MemoryInfo_base):
 
         See :meth:`_parse_top`.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.misc.memory_info import MemoryInfo_OSX
             sage: m = MemoryInfo_OSX.__new__(MemoryInfo_OSX)

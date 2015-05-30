@@ -18,11 +18,10 @@ Cartesian Products
 
 from inspect import isgenerator
 import sage.misc.prandom as rnd
-import __builtin__
-from combinat import CombinatorialClass
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
+from combinat import CombinatorialClass
+from ranker import unrank
+from sage.rings.infinity import infinity
 
 def CartesianProduct(*iters):
     """
@@ -241,6 +240,13 @@ class CartesianProduct_iters(CombinatorialClass):
             sage: C = CartesianProduct(xrange(1000), xrange(1000), xrange(1000))
             sage: C[238792368]
             [238, 792, 368]
+
+        Check for :trac:`15919`::
+
+            sage: FF = IntegerModRing(29)
+            sage: C = CartesianProduct(FF, FF, FF)
+            sage: C.unrank(0)
+            [0, 0, 0]
         """
         try:
             lens = [_len(it) for it in self.iters]
@@ -257,7 +263,7 @@ class CartesianProduct_iters(CombinatorialClass):
         if x != 0:
             raise IndexError("x larger than the size of the Cartesian Product")
         positions.reverse()
-        return [L[i] for L,i in zip(self.iters, positions)]
+        return [unrank(L, i) for L,i in zip(self.iters, positions)]
 
     def random_element(self):
         """

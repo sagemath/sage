@@ -1,5 +1,5 @@
 r"""
-Work with WAV files.
+Work with WAV files
 
 A WAV file is a header specifying format information, followed by a
 sequence of bytes, representing the state of some audio signal over a
@@ -12,16 +12,17 @@ per channel, per frame. Every wav file has a sample width, or, the
 number of bytes per sample. Typically this is either 1 or 2 bytes.
 
 The wav module supplies more convenient access to this data. In
-particular, see the docstring for \code{Wave.channel_data()}.
+particular, see the docstring for ``Wave.channel_data()``.
 
 The header contains information necessary for playing the WAV file,
 including the number of frames per second, the number of bytes per
 sample, and the number of channels in the file.
 
 AUTHORS:
-    -- Bobby Moretti and Gonzolo Tornaria (2007-07-01): First version
-    -- William Stein (2007-07-03): add more
-    -- Bobby Moretti (2007-07-03): add doctests
+
+- Bobby Moretti and Gonzolo Tornaria (2007-07-01): First version
+- William Stein (2007-07-03): add more
+- Bobby Moretti (2007-07-03): add doctests
 """
 
 import math
@@ -39,23 +40,25 @@ class Wave(SageObject):
     A class wrapping a wave audio file.
 
     INPUT:
-        You must call Wave() with either data = filename, where
-        filename is the name of a wave file, or with each of the
-        following options:
 
-            channels  -- the number of channels in the wave file (1 for
-                        mono, 2 for stereo, etc...
-            width     -- the number of bytes per sample
-            framerate -- the number of frames per second
-            nframes   -- the number of frames in the data stream
-            bytes     -- a string object containing the bytes of the
-                         data stream
+    You must call Wave() with either data = filename, where
+    filename is the name of a wave file, or with each of the
+    following options:
+
+    - channels  -- the number of channels in the wave file (1 for mono, 2 for
+      stereo, etc...
+    - width     -- the number of bytes per sample
+    - framerate -- the number of frames per second
+    - nframes   -- the number of frames in the data stream
+    - bytes     -- a string object containing the bytes of the data stream
 
     Slicing:
+
         Slicing a Wave object returns a new wave object that has been
         trimmed to the bytes that you have given it.
 
     Indexing:
+
         Getting the $n$th item in a Wave object will give you the value
         of the $n$th frame.
     """
@@ -83,10 +86,10 @@ class Wave(SageObject):
                 self._nframes = kwds['nframes']
                 self._bytes = kwds['bytes']
                 self._channel_data = kwds['channel_data']
-            except KeyError, msg:
-                raise KeyError, msg + " invalid input to Wave initializer"
+            except KeyError as msg:
+                raise KeyError(msg + " invalid input to Wave initializer")
         else:
-            raise ValueError, "Must give a filename"
+            raise ValueError("Must give a filename")
 
 
     def save(self, filename='sage.wav'):
@@ -245,7 +248,7 @@ class Wave(SageObject):
         c = self.channel_data(channel)
         npoints = len(c)
         if len(values) != npoints:
-            raise ValueError, "values (of length %s) must have length %s"%(len(values), npoints)
+            raise ValueError("values (of length %s) must have length %s"%(len(values), npoints))
 
         # unscale the values
         scale = float(1 << (8*self._width -1))
@@ -267,13 +270,15 @@ class Wave(SageObject):
         Plots the audio data.
 
         INPUT:
-            npoints -- number of sample points to take; if not given, draws
-                       all known points.
-            channel -- 0 or 1 (if stereo).  default: 0
-            plotjoined -- whether to just draw dots or draw lines between sample points
+
+        - npoints -- number of sample points to take; if not given, draws all
+          known points.
+        - channel -- 0 or 1 (if stereo).  default: 0
+        - plotjoined -- whether to just draw dots or draw lines between sample points
 
         OUTPUT:
-            a plot object that can be shown.
+
+        a plot object that can be shown.
         """
 
         domain = self.domain(npoints = npoints)
@@ -367,7 +372,7 @@ class Wave(SageObject):
         inverse fft back.
         """
         if not isinstance(right, Wave):
-            raise TypeError, "right must be a wave"
+            raise TypeError("right must be a wave")
         npoints = self._nframes
         v = self.vector(npoints, channel=channel).fft()
         w = right.vector(npoints, channel=channel).fft()

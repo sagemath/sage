@@ -11,11 +11,6 @@ Matrix windows
 
 from cpython.tuple cimport *
 
-include 'sage/ext/stdsage.pxi'
-cdef extern from "stdsage.h":
-    object PY_NEW(PyObject *)
-
-
 #########################################################################
 # Generic matrix windows, which are used for block echelon and strassen #
 # algorithms.                                                           #
@@ -34,8 +29,8 @@ cdef class MatrixWindow:
         is that self._matrix and matrix are over the same base ring
         (so share the zero).
         """
-        cdef MatrixWindow M
-        M = <MatrixWindow>PY_NEW(PY_TYPE(self))
+        cdef type t = type(self)
+        cdef MatrixWindow M = <MatrixWindow>t.__new__(t)
         M._matrix = matrix
         M._row = row
         M._col = col

@@ -46,11 +46,6 @@ class HasseDiagram(DiGraph):
         Hasse diagram of a poset containing 4 elements
         sage: TestSuite(H).run()
     """
-
-    # Hasse diagrams are immutable. This temporary hack enables the
-    # __hash__ method of DiGraph
-    _immutable = True
-
     def _repr_(self):
         r"""
         TESTS::
@@ -106,71 +101,6 @@ class HasseDiagram(DiGraph):
                     return False
             return True
 
-    # Could this be achieved by adding some options to
-    # GenericGraph.plot, and just overriding graphics_array_defaults?
-
-    def plot(self, label_elements=True, element_labels=None,
-            label_font_size=12,label_font_color='black', layout = "acyclic", **kwds):
-        """
-        Returns a Graphics object corresponding to the Hasse diagram.
-
-        EXAMPLES::
-
-            sage: uc = [[2,3], [], [1], [1], [1], [3,4]]
-            sage: elm_lbls = Permutations(3).list()
-            sage: P = Poset(uc,elm_lbls)
-            sage: H = P._hasse_diagram
-            sage: levels = H.level_sets()
-            sage: heights = dict([[i, levels[i]] for i in range(len(levels))])
-            sage: type(H.plot(label_elements=True))
-            <class 'sage.plot.graphics.Graphics'>
-
-        ::
-
-            sage: P = Posets.SymmetricGroupBruhatIntervalPoset([1,2,3,4], [3,4,1,2])
-            sage: P._hasse_diagram.plot()
-        """
-        # Set element_labels to default to the vertex set.
-        if element_labels is None:
-            element_labels = range(self.num_verts())
-
-        # Create the underlying graph.
-        graph = DiGraph(self)
-        graph.relabel(element_labels)
-
-        return graph.plot(layout = layout, **kwds)
-
-    def show(self, label_elements=True, element_labels=None,
-            label_font_size=12,label_font_color='black',
-            vertex_size=300, vertex_colors=None,**kwds):
-        """
-        Shows the Graphics object corresponding to the Hasse diagram.
-        Optionally, it is labelled.
-
-        INPUT:
-
-
-        -  ``label_elements`` - whether to display element
-           labels
-
-        -  ``element_labels`` - a dictionary of element
-           labels
-
-
-        EXAMPLES::
-
-            sage: uc = [[2,3], [], [1], [1], [1], [3,4]]
-            sage: elm_lbls = Permutations(3).list()
-            sage: P = Poset(uc,elm_lbls)
-            sage: H = P._hasse_diagram
-            sage: levels = H.level_sets()
-            sage: heights = dict([[i, levels[i]] for i in range(len(levels))])
-            sage: H.show(label_elements=True)
-        """
-        self.plot(label_elements=label_elements, element_labels=element_labels,
-            label_font_size=label_font_size,label_font_color=label_font_color,
-            vertex_size=vertex_size, vertex_colors=vertex_colors).show(**kwds)
-
     def cover_relations_iterator(self):
         r"""
         TESTS::
@@ -183,7 +113,7 @@ class HasseDiagram(DiGraph):
         for u,v,l in self.edge_iterator():
             yield (u,v)
 
-    def cover_relations(self,element=None):
+    def cover_relations(self):
         r"""
         TESTS::
 
@@ -313,8 +243,7 @@ class HasseDiagram(DiGraph):
             sage: P(2) in P.minimal_elements()
             True
         """
-        indegs = self.in_degree(labels=True)
-        return [x for x in indegs if indegs[x]==0]
+        return self.sources()
 
     def maximal_elements(self):
         """
@@ -326,8 +255,7 @@ class HasseDiagram(DiGraph):
             sage: P.maximal_elements()
             [4]
         """
-        outdegs = self.out_degree(labels=True)
-        return [x for x,d in outdegs.iteritems() if d==0]
+        return self.sinks()
 
     def bottom(self):
         """
@@ -424,11 +352,18 @@ class HasseDiagram(DiGraph):
             sage: V = Poset({0:[1,2]})
             sage: V.is_chain()
             False
+
+        TESTS:
+
+        Check :trac:`15330`::
+
+            sage: p = Poset(DiGraph({0:[1],2:[1]}))
+            sage: p.is_chain()
+            False
         """
-        outdegs = self.out_degree()
-        outdegs.remove(0)
-        if len(set(outdegs))==1: return True
-        return False
+        return (self.num_edges()+1 == self.num_verts() and # Hasse Diagram is a tree
+                all(d<=1 for d in self.out_degree())   and # max outdegree is <= 1
+                all(d<=1 for d in self.in_degree()))       # max  indegree is <= 1
 
     def dual(self):
         """
@@ -450,22 +385,21 @@ class HasseDiagram(DiGraph):
             sage: H.is_isomorphic( H.dual() )
             False
         """
-        H = HasseDiagram(self.reverse())
+        H = self.reverse()
         H.relabel(perm=range(H.num_verts()-1,-1,-1), inplace=True)
-        return H
+        return HasseDiagram(H)
 
     def interval(self, x, y):
         """
-        Returns a list of the elements z such that x <= z <= y. The order is
-        that induced by the ordering in self.linear_extension.
+        Return a list of the elements `z` of ``self`` such that
+        `x \leq z \leq y`. The order is that induced by the
+        ordering in ``self.linear_extension``.
 
         INPUT:
 
+        -  ``x`` -- any element of the poset
 
-        -  ``x`` - any element of the poset
-
-        -  ``y`` - any element of the poset
-
+        -  ``y`` -- any element of the poset
 
         EXAMPLES::
 
@@ -480,26 +414,12 @@ class HasseDiagram(DiGraph):
         return [z for z in range(self.order())[x:y+1] if
                 self.is_lequal(x,z) and self.is_lequal(z,y)]
 
-    def closed_interval(self, x, y):
-        """
-        Returns a list of the elements z such that x = z = y. The order is
-        that induced by the ordering in self.linear_extension.
-
-        EXAMPLES::
-
-            sage: uc = [[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]]
-            sage: dag = DiGraph(dict(zip(range(len(uc)),uc)))
-            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram(dag)
-            sage: set([2,5,6,4,7]) == set(H.closed_interval(2,7))
-            True
-        """
-        return self.interval(x,y)
+    closed_interval = interval
 
     def open_interval(self, x, y):
         """
-        Returns a list of the elements `z` such that `x < z < y`. The
-        order is that induced by the ordering in
+        Return a list of the elements `z` of ``self`` such that
+        `x < z < y`. The order is that induced by the ordering in
         ``self.linear_extension``.
 
         EXAMPLES::
@@ -577,15 +497,15 @@ class HasseDiagram(DiGraph):
             sage: f = H.rank_function()
             sage: s = dumps(H)
         """
-        if(self._rank_dict is None):
+        if(self._rank is None):
             return None
-        return self._rank_dict.__getitem__ #the rank function is just the getitem of the dict
+        return self._rank.__getitem__ # the rank function is just the getitem of the list
 
     @lazy_attribute
-    def _rank_dict(self):
+    def _rank(self):
         r"""
-        Builds the rank dictionnary of the poset, if it exists, i.e.
-        a dictionary ``d`` where ``d[object] = self.rank_function()(object)
+        Builds the rank function of the poset, if it exists, i.e.
+        an array ``d`` where ``d[object] = self.rank_function()(object)``
 
         A *rank function* of a poset `P` is a function `r`
         that maps elements of `P` to integers and satisfies:
@@ -598,46 +518,47 @@ class HasseDiagram(DiGraph):
         EXAMPLES::
 
             sage: H = Poset()._hasse_diagram
-            sage: H._rank_dict
-            {}
+            sage: H._rank
+            []
             sage: H = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])._hasse_diagram
-            sage: H._rank_dict
-            {0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 1, 6: 2, 7: 3}
+            sage: H._rank
+            [0, 1, 1, 2, 2, 1, 2, 3]
             sage: H = Poset(([1,2,3,4,5],[[1,2],[2,3],[3,4],[1,5],[5,4]]))._hasse_diagram
-            sage: H._rank_dict is None
+            sage: H._rank is None
             True
         """
-        rank_fcn = {}  # rank_fcn will be the dictionary whose i-th entry
-                       # is the rank of vertex i for every i.
+        # rank[i] is the rank of point i. It is equal to None until the rank of
+        # i is computed
+        rank = [None]*self.order()
         not_found = set(self.vertices())
         while not_found:
             y = not_found.pop()
-            rank_fcn[y] = ZZ.zero()  # We set some vertex to have rank 0
+            rank[y] = 0  # We set some vertex to have rank 0
             component = set([y])
             queue = set([y])
             while queue:  # look at the neighbors of y and set the ranks;
                           # then look at the neighbors of the neighbors ...
                 y = queue.pop()
                 for x in self.neighbors_out(y):
-                    if x not in rank_fcn:
-                        rank_fcn[x] = rank_fcn[y] + 1
+                    if rank[x] is None:
+                        rank[x] = rank[y] + 1
                         queue.add(x)
                         component.add(x)
                 for x in self.neighbors_in(y):
-                    if x not in rank_fcn:
-                        rank_fcn[x] = rank_fcn[y] - 1
+                    if rank[x] is None:
+                        rank[x] = rank[y] - 1
                         queue.add(x)
                         component.add(x)
-                    elif rank_fcn[x] != rank_fcn[y] - 1:
+                    elif rank[x] != rank[y] - 1:
                         return None
             # Normalize the ranks of vertices in the connected component
             # so that smallest is 0:
-            m = min(rank_fcn[j] for j in component)
+            m = min(rank[j] for j in component)
             for j in component:
-                rank_fcn[j] -= m
+                rank[j] -= m
             not_found.difference_update(component)
         #now, all ranks are set.
-        return rank_fcn
+        return rank
 
     def rank(self,element=None):
         r"""
@@ -685,21 +606,14 @@ class HasseDiagram(DiGraph):
 
     def is_graded(self):
         r"""
-        Returns True if the poset is graded, and False otherwise.
+        Deprecated, has conflicting definition of "graded" vs. "ranked"
+        with posets.
 
-        A poset is *graded* if it admits a rank function. For more information
-        about the rank function, see :meth:`~rank_function`
-        and :meth:`~is_ranked`.
-
-        EXAMPLES::
-
-            sage: P = Poset([[1],[2],[3],[4],[]])
-            sage: P.is_graded()
-            True
-            sage: Q = Poset([[1,5],[2,6],[3],[4],[],[6,3],[4]])
-            sage: Q.is_graded()
-            False
+        Return ``True`` if the Hasse diagram is ranked. For definition
+        of ranked see :meth:`~rank_function`.
         """
+        from sage.misc.superseded import deprecation
+        deprecation(16998, "Use is_ranked(). Definition conflict with posets.")
         return self.is_ranked()
 
     def covers(self,x,y):
@@ -761,8 +675,8 @@ class HasseDiagram(DiGraph):
 
         For a time, this function was named ``size()``, which
         would override the same-named method of the underlying
-        digraph.  Trac #8735 renamed this method to ``cardinality()``
-        with a deprecation warning.  Trac #11214 removed the warning
+        digraph. :trac:`8735` renamed this method to ``cardinality()``
+        with a deprecation warning. :trac:`11214` removed the warning
         since code for graphs was raising the warning inadvertently.
         This tests that ``size()`` for a Hasse diagram returns the
         number of edges in the digraph. ::
@@ -1098,30 +1012,27 @@ class HasseDiagram(DiGraph):
             4
         """
         n = self.cardinality()
-        meet = [[0 for x in range(n)] for x in range(n)]
-        le = copy(self.lequal_matrix())
-        for i in range(n): le[i,i] = 1
-        if not all([le[0,x]==1 for x in range(n)]):
+        if n == 0:
+            return matrix(0)
+        if not self.has_bottom():
             raise ValueError("Not a meet-semilattice: no bottom element.")
-        lc = [[y[0] for y in self.incoming_edges([x])] for x in range(n)]
+        le = self._leq_matrix
+        meet = [[0 for x in range(n)] for x in range(n)]
+        lc = [self.neighbors_in(x) for x in range(n)]
 
         for x in range(n): # x=x_k
             meet[x][x] = x
             for y in range(x):
-                T = []
-                for z in lc[x]:
-                    T.append(meet[y][z]) # T = {x_i \wedge z : z>-x_k}
+                T = [meet[y][z] for z in lc[x]] # T = {x_i \wedge z : z>-x_k}
 
-                q = T[0]
-                for z in T:
-                    if z>q: q = z
+                q = max(T)
                 for z in T:
                     if not le[z,q]:
                         raise ValueError("No meet for x=%s y=%s"%(x,y))
                 meet[x][y] = q
                 meet[y][x] = q
 
-        return matrix(ZZ,meet)
+        return matrix(ZZ, meet)
 
     def meet_matrix(self):
         r"""
@@ -1244,30 +1155,30 @@ class HasseDiagram(DiGraph):
             0
         """
         n = self.cardinality()
-        join = [[0 for x in range(n)] for x in range(n)]
-        le = copy(self.lequal_matrix())
-        for i in range(n): le[i,i] = 1
-        if not all([le[x,n-1]==1 for x in range(n)]):
+        if n == 0:
+            return matrix(0)
+        if not self.has_top():
             raise ValueError("Not a join-semilattice: no top element.")
-        uc = [sorted([n-1-y[1] for y in self.outgoing_edges([x])]) for
+        join = [[0 for x in range(n)] for x in range(n)]
+        le = self.lequal_matrix()
+        uc = [sorted([n-1-y for y in self.neighbors_out(x)]) for
                 x in reversed(range(n))]
 
         for x in range(n): # x=x_k
             join[x][x] = x
 
             for y in range(x):
-                T = []
-                for z in uc[x]:
-                    T.append(join[y][z]) # T = {x_i \vee z : z>-x_k}
-                q = T[0]
+                T = [join[y][z] for z in uc[x]]
+
+                q = max(T)
                 for z in T:
-                    if z>q: q = z
-                for z in T:
-                    if not le[n-1-q,n-1-z]:
+                    if not le[n-1-q, n-1-z]:
                         raise ValueError("No join for x=%s y=%s"%(x,y))
                 join[x][y] = q
                 join[y][x] = q
-        return matrix(ZZ,[[n-1-join[n-1-x][n-1-y] for y in range(n)] for x in range(n)])
+
+        return matrix(ZZ, [[n-1-join[n-1-x][n-1-y] for y in range(n)]
+                           for x in range(n)])
 
     def join_matrix(self):
         r"""
@@ -1401,24 +1312,10 @@ class HasseDiagram(DiGraph):
 
     def complements(self):
         r"""
-        Returns a list ``l`` such that ``l[i]`` is a complement of
-        ``i`` in ``self``.
-
-        A complement of ``x`` is an element ``y`` such that the meet
-        of ``x`` and ``y`` is the bottom element of ``self`` and the
-        join of ``x`` and ``y`` is the top element of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram({0:[1,2,3],1:[4],2:[4],3:[4]})
-            sage: H.complements()
-            [4, 3, 3, 2, 0]
-
-            sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[4]})
-            sage: H.complements()
-            [4, None, None, None, 0]
+        Deprecated.
         """
+        from sage.misc.superseded import deprecation
+        deprecation(17138, "This function is broken. Do not use.")
         jn = self.join_matrix()
         mt = self.meet_matrix()
         n = self.cardinality()

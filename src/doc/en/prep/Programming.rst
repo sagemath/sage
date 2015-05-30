@@ -246,7 +246,7 @@ notation below; it's at least vaguely mathematical.
 ::
 
     sage: for i in [0,1,2,3,4]:
-    ...       A^i
+    ....:     A^i
     [1 0]
     [0 1]
     [1 2]
@@ -276,7 +276,7 @@ best to find a quicker way to write the the possible values for
 ::
 
     sage: for i in [0..4]:
-    ...       det(A^i)
+    ....:     det(A^i)
     1
     -2
     4
@@ -286,7 +286,7 @@ best to find a quicker way to write the the possible values for
 ::
 
     sage: for i in range(5):
-    ...       det(A^i)
+    ....:     det(A^i)
     1
     -2
     4
@@ -342,6 +342,7 @@ This is phenomenally useful.  Here is a nice plotting example.
 ::
 
     sage: plot([x^n for n in [2..6]],(x,0,1))
+    Graphics object consisting of 5 graphics primitives
 
 Now we apply it to the example we were doing in the first place.  Notice
 we now have a nice concise description of all determinants of these
@@ -409,7 +410,7 @@ programming.  Here is how we solve this problem.
 ::
 
     sage: def square_and_subtract(mymatrix):
-    ...       return mymatrix^2-mymatrix
+    ....:     return mymatrix^2-mymatrix
 
 The ``def`` command has created a new function called
 ``square_and_subtract``.  It should even be available using
@@ -444,10 +445,10 @@ quotes ``"""``.
 ::
 
     sage: def square_and_subtract(mymatrix):
-    ...       """
-    ...       Return `A^2-A`
-    ...       """
-    ...       return mymatrix^2-mymatrix
+    ....:     """
+    ....:     Return `A^2-A`
+    ....:     """
+    ....:     return mymatrix^2-mymatrix
 
 .. skip
 
@@ -656,8 +657,8 @@ conditionals ("if" clauses) before.
 
     sage: B = matrix([[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,0,0]])
     sage: for i in range(5): # all integers from 0 to 4, remember
-    ...       if B^i==0: # We ask if the power is the zero matrix
-    ...           print i
+    ....:     if B^i==0: # We ask if the power is the zero matrix
+    ....:         print i
     4
 
 We use the double equals sign to test for equality, because ``=``

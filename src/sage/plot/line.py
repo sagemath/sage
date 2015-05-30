@@ -99,7 +99,7 @@ class Line(GraphicPrimitive_xydata):
             Line defined by 4 points
             sage: m=l.plot3d(z=2)
             sage: m.texture.opacity
-            0.500000000000000
+            0.5
             sage: m.thickness
             10
             sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=":")
@@ -107,7 +107,7 @@ class Line(GraphicPrimitive_xydata):
             Traceback (most recent call last):
             NotImplementedError: Invalid 3d line style: ':'
         """
-        if options == None:
+        if options is None:
             options = dict(self.options())
         options_3d = {}
         if 'thickness' in options:
@@ -132,6 +132,7 @@ class Line(GraphicPrimitive_xydata):
             sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()
             sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)
             sage: E + F  # long time (5s on sage.math, 2012)
+            Graphics3d Object
         """
         from sage.plot.plot3d.shapes2 import line3d
         options = self._plot3d_options()
@@ -206,6 +207,7 @@ class Line(GraphicPrimitive_xydata):
         Plotting we visibly see the change -- now the line starts at `(0,0)`::
 
             sage: L
+            Graphics object consisting of 1 graphics primitive
         """
         self.xdata[i] = float(point[0])
         self.ydata[i] = float(point[1])
@@ -239,6 +241,7 @@ class Line(GraphicPrimitive_xydata):
         This implicitly calls this function::
 
             sage: line([(1,2), (3,-4), (2, 5), (1,2)])
+            Graphics object consisting of 1 graphics primitive
         """
         import matplotlib.lines as lines
         options = dict(self.options())
@@ -266,16 +269,23 @@ def line(points, **kwds):
     Returns either a 2-dimensional or 3-dimensional line depending
     on value of points.
 
+    INPUT:
+
+    -  ``points`` - either a single point (as a tuple), a list of
+       points, a single complex number, or a list of complex numbers.
+
     For information regarding additional arguments, see either line2d?
     or line3d?.
 
     EXAMPLES::
 
         sage: line([(0,0), (1,1)])
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: line([(0,0,1), (1,1,1)])
+        Graphics3d Object
     """
     try:
         return line2d(points, **kwds)
@@ -290,6 +300,11 @@ def line(points, **kwds):
 def line2d(points, **options):
     r"""
     Create the line through the given list of points.
+
+    INPUT:
+
+    -  ``points`` - either a single point (as a tuple), a list of
+       points, a single complex number, or a list of complex numbers.
 
     Type ``line2d.options`` for a dictionary of the default options for
     lines.  You can change this to change the defaults for all future
@@ -355,26 +370,39 @@ def line2d(points, **options):
     A line with no points or one point::
 
         sage: line([])      #returns an empty plot
+        Graphics object consisting of 0 graphics primitives
+        sage: import numpy; line(numpy.array([]))
+        Graphics object consisting of 0 graphics primitives
         sage: line([(1,1)])
+        Graphics object consisting of 1 graphics primitive
+
+    A line with numpy arrays::
+
+        sage: line(numpy.array([[1,2], [3,4]]))
+        Graphics object consisting of 1 graphics primitive
 
     A line with a legend::
 
         sage: line([(0,0),(1,1)], legend_label='line')
+        Graphics object consisting of 1 graphics primitive
 
     Lines with different colors in the legend text::
 
         sage: p1 = line([(0,0),(1,1)], legend_label='line')
         sage: p2 = line([(1,1),(2,4)], legend_label='squared', legend_color='red')
         sage: p1 + p2
+        Graphics object consisting of 2 graphics primitives
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: line([(0,1), (3,4)], figsize=[10, 2])
+        Graphics object consisting of 1 graphics primitive
         sage: line([(0,1), (3,4)]).show(figsize=[10, 2]) # These are equivalent
 
     We can also use a logarithmic scale if the data will support it::
 
         sage: line([(1,2),(2,4),(3,4),(4,8),(4.5,32)],scale='loglog',base=2)
+        Graphics object consisting of 1 graphics primitive
 
     Many more examples below!
 
@@ -382,33 +410,39 @@ def line2d(points, **options):
 
         sage: L = [[1+5*cos(pi/2+pi*i/100), tan(pi/2+pi*i/100)*(1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
         sage: line(L, rgbcolor=(1/4,1/8,3/4))
+        Graphics object consisting of 1 graphics primitive
 
     A line with 2 complex points::
 
         sage: i = CC.0
         sage: line([1+i, 2+3*i])
+        Graphics object consisting of 1 graphics primitive
 
     A blue hypotrochoid (3 leaves)::
 
         sage: n = 4; h = 3; b = 2
         sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: line(L, rgbcolor=(1/4,1/4,3/4))
+        Graphics object consisting of 1 graphics primitive
 
     A blue hypotrochoid (4 leaves)::
 
         sage: n = 6; h = 5; b = 2
         sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: line(L, rgbcolor=(1/4,1/4,3/4))
+        Graphics object consisting of 1 graphics primitive
 
     A red limacon of Pascal::
 
         sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))] for i in range(-100,101)]
         sage: line(L, rgbcolor=(1,1/4,1/2))
+        Graphics object consisting of 1 graphics primitive
 
     A light green trisectrix of Maclaurin::
 
         sage: L = [[2*(1-4*cos(-pi/2+pi*i/100)^2),10*tan(-pi/2+pi*i/100)*(1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
         sage: line(L, rgbcolor=(1/4,1,1/8))
+        Graphics object consisting of 1 graphics primitive
 
     A green lemniscate of Bernoulli::
 
@@ -416,16 +450,20 @@ def line2d(points, **options):
         sage: v = [(1/c, tan(-pi/2+pi*i/100)) for i,c in enumerate(cosines) if c != 0]
         sage: L = [(a/(a^2+b^2), b/(a^2+b^2)) for a,b in v]
         sage: line(L, rgbcolor=(1/4,3/4,1/8))
+        Graphics object consisting of 1 graphics primitive
 
     A red plot of the Jacobi elliptic function `\text{sn}(x,2)`, `-3 < x < 3`::
 
-        sage: L = [(i/100.0, jacobi('sn', i/100.0 ,2.0)) for i in range(-300,300,30)]
-        sage: line(L, rgbcolor=(3/4,1/4,1/8))
+        sage: L = [(i/100.0, real_part(jacobi('sn', i/100.0, 2.0))) for i in
+        ....:      range(-300, 300, 30)]
+        sage: line(L, rgbcolor=(3/4, 1/4, 1/8))
+        Graphics object consisting of 1 graphics primitive
 
     A red plot of `J`-Bessel function `J_2(x)`, `0 < x < 10`::
 
         sage: L = [(i/10.0, bessel_J(2,i/10.0)) for i in range(100)]
         sage: line(L, rgbcolor=(3/4,1/4,5/8))
+        Graphics object consisting of 1 graphics primitive
 
 
     A purple plot of the Riemann zeta function `\zeta(1/2 + it)`, `0 < t < 30`::
@@ -434,14 +472,15 @@ def line2d(points, **options):
         sage: v = [zeta(0.5 + n/10 * i) for n in range(300)]
         sage: L = [(z.real(), z.imag()) for z in v]
         sage: line(L, rgbcolor=(3/4,1/2,5/8))
+        Graphics object consisting of 1 graphics primitive
 
     A purple plot of the Hasse-Weil `L`-function `L(E, 1 + it)`, `-1 < t < 10`::
 
         sage: E = EllipticCurve('37a')
         sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100) # critical line
-          ***   Warning:...new stack size = ...
         sage: L = [(z[1].real(), z[1].imag()) for z in vals]
         sage: line(L, rgbcolor=(3/4,1/2,5/8))
+        Graphics object consisting of 1 graphics primitive
 
     A red, blue, and green "cool cat"::
 
@@ -449,6 +488,7 @@ def line2d(points, **options):
         sage: P = polygon([[1,2], [5,6], [5,0]], rgbcolor=(1,0,0))
         sage: Q = polygon([(-x,y) for x,y in P[0]], rgbcolor=(0,0,1))
         sage: G + P + Q   # show the plot
+        Graphics object consisting of 3 graphics primitives
 
     TESTS:
 
@@ -456,12 +496,20 @@ def line2d(points, **options):
     as markers.::
 
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')
+        Graphics object consisting of 1 graphics primitive
 
     """
     from sage.plot.all import Graphics
     from sage.plot.plot import xydata_from_point_list
-    if points == []:
-        return Graphics()
+    from sage.rings.all import CC, CDF
+    if points in CC or points in CDF:
+        pass
+    else:
+        try:
+            if not points:
+                return Graphics()
+        except ValueError: # numpy raises a ValueError if not empty
+            pass
     xdata, ydata = xydata_from_point_list(points)
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))

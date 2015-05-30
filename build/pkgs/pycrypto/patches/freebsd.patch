@@ -1,0 +1,13 @@
+--- src/src/libtom/tomcrypt_pk.h-orig	2012-01-21 
+19:43:56.000000000 +0000
++++ src/src/libtom/tomcrypt_pk.h	2012-01-21 
+19:45:01.000000000 +0000
+@@ -496,7 +496,7 @@
+ int der_printable_value_decode(int v);
+ 
+ /* UTF-8 */
+-#if (defined(SIZE_MAX) || __STDC_VERSION__ >= 199901L || defined(WCHAR_MAX) || defined(_WCHAR_T) || defined(_WCHAR_T_DEFINED)) && !defined(LTC_NO_WCHAR)
++#if (defined(SIZE_MAX) || __STDC_VERSION__ >= 199901L || defined(WCHAR_MAX) || defined(_WCHAR_T) || defined(_WCHAR_T_DEFINED) || defined(_GCC_WCHAR_T)) && !defined(LTC_NO_WCHAR)
+ #include <wchar.h>
+ #else
+ typedef ulong32 wchar_t;

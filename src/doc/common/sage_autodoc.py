@@ -38,7 +38,8 @@ from sphinx.util.compat import Directive
 from sphinx.util.inspect import isdescriptor, safe_getmembers, safe_getattr
 from sphinx.util.docstrings import prepare_docstring
 
-from sage.misc.sageinspect import _sage_getdoc_unformatted, sage_getargspec, isclassinstance
+from sage.misc.sageinspect import sage_getdoc_original, sage_getargspec, isclassinstance
+from sage.misc.lazy_import import LazyImport
 
 try:
     base_exception = BaseException
@@ -407,7 +408,7 @@ class Documenter(object):
 
     def get_doc(self, encoding=None):
         """Decode and return lines of the docstring(s) for the object."""
-        docstring = _sage_getdoc_unformatted(self.object) #self.get_attr(self.object, '__doc__', None)
+        docstring = sage_getdoc_original(self.object)
         if docstring:
             # make sure we have Unicode docstrings, then sanitize and split
             # into lines
@@ -513,6 +514,11 @@ class Documenter(object):
 
         # process members and determine which to skip
         for (membername, member) in members:
+            # Immediately skip lazy imports to avoid deprecation
+            # messages (#17455).
+            if isinstance(member, LazyImport):
+                continue
+
             # if isattr is True, the member is documented as an attribute
             isattr = False
 
@@ -526,7 +532,7 @@ class Documenter(object):
             else:
                 # ignore undocumented members if :undoc-members:
                 # is not given
-                doc = _sage_getdoc_unformatted(member) #self.get_attr(member, '__doc__', None)
+                doc = sage_getdoc_original(member)
                 skip = not self.options.undoc_members and not doc
 
             # give the user a chance to decide whether this member
@@ -811,7 +817,9 @@ class FunctionDocumenter(ModuleLevelDocumenter):
         # whose doc string coincides with that of f and is thus different from
         # that of the class CachedFunction. In that situation, we want that f is documented.
         # This is part of SAGE TRAC 9976
-        return isinstance(member, (FunctionType, BuiltinFunctionType)) or (isclassinstance(member) and _sage_getdoc_unformatted(member)!=_sage_getdoc_unformatted(member.__class__))
+        return (isinstance(member, (FunctionType, BuiltinFunctionType))
+                or (isclassinstance(member)
+                    and sage_getdoc_original(member) != sage_getdoc_original(member.__class__)))
 
     #SAGE TRAC 9976: This function has been rewritten to support the
     #_sage_argspec_ attribute which makes it possible to get argument
@@ -955,15 +963,15 @@ class ClassDocumenter(ModuleLevelDocumenter):
         content = self.env.config.autoclass_content
 
         docstrings = []
-        docstring = _sage_getdoc_unformatted(self.object) #self.get_attr(self.object, '__doc__', None)
+        docstring = sage_getdoc_original(self.object)
         if docstring:
             docstrings.append(docstring)
 
         # for classes, what the "docstring" is can be controlled via a
         # config value; the default is only the class docstring
         if content in ('both', 'init'):
-            initdocstring = _sage_getdoc_unformatted( #self.get_attr(
-                self.get_attr(self.object, '__init__', None))#, '__doc__')
+            initdocstring = sage_getdoc_original(
+                self.get_attr(self.object, '__init__', None))
             # for new-style classes, no __init__ means default __init__
             if initdocstring == object.__init__.__doc__:
                 initdocstring = None

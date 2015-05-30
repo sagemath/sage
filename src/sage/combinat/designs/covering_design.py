@@ -222,14 +222,17 @@ class CoveringDesign(SageObject):
             Lower bound: 7
             Method: Projective Plane
         """
-        repr =  '(%d,%d,%d)-covering design of size %d\n'%(self.__v,self.__k,self.__t,self.__size)
-        repr +=  'Lower bound: %d\n'%(self.__low_bd)
+        repr = '(%d,%d,%d)-covering design of size %d\n' % (self.__v,
+                                                            self.__k,
+                                                            self.__t,
+                                                            self.__size)
+        repr += 'Lower bound: %d\n' % (self.__low_bd)
         if self.__creator != '':
-            repr += 'Created by: %s\n'%(self.__creator)
+            repr += 'Created by: %s\n' % (self.__creator)
         if self.__method != '':
-            repr += 'Method: %s\n'%(self.__method)
+            repr += 'Method: %s\n' % (self.__method)
         if self.__timestamp != '':
-            repr += 'Submitted on: %s\n'%(self.__timestamp)
+            repr += 'Submitted on: %s\n' % (self.__timestamp)
 
         return repr
 
@@ -439,7 +442,7 @@ class CoveringDesign(SageObject):
             sage: from sage.combinat.designs.covering_design import CoveringDesign
             sage: C=CoveringDesign(7,3,2,7,range(7),[[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5], [1, 4, 6], [2, 3, 6], [2, 4, 5]],0, 'Projective Plane')
             sage: D = C.incidence_structure()
-            sage: D.points()
+            sage: D.ground_set()
             [0, 1, 2, 3, 4, 5, 6]
             sage: D.blocks()
             [[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5], [1, 4, 6], [2, 3, 6], [2, 4, 5]]
@@ -501,6 +504,6 @@ def best_known_covering_design_www(v, k, t, verbose=False):
 
     if 'covering not in database' in s:   #not found
         str = "no (%d,%d,%d) covering design in database\n"%(v,k,t)
-        raise ValueError, str
+        raise ValueError(str)
 
     return sage_eval(s)

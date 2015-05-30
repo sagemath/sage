@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+cd src/
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+./configure --with-arithmetic=gmp --with-extra-includes="$SAGE_LOCAL/include" --with-extra-libs="$SAGE_LOCAL/lib" --prefix="$SAGE_LOCAL" --enable-shared=yes --enable-static=no
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring lidia."
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building lidia."
+    exit 1
+fi
+
+$MAKE install
+if [ $? -ne 0 ]; then
+   echo "Error installing lidia"
+   exit 1
+fi
+
+# LiDIA 2.2.0 installs its headers into lidia/ but expects them in LiDIA!?!
+# So we make a symbolic link, just in case.  
+# (On the Mac, nothing is done because of its case-preserving, case-insensitive file system.)
+( cd "$SAGE_LOCAL/include" && if [ ! -r LiDIA ] ; then ln -s lidia LiDIA; fi  || true )
+

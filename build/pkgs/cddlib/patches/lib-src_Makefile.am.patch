@@ -1,0 +1,14 @@
+diff --git a/src.bak/lib-src/Makefile.am b/src/lib-src/Makefile.am
+index fe08dc3..5b964c6 100644
+--- a/src.bak/lib-src/Makefile.am
++++ b/src/lib-src/Makefile.am
+@@ -7,7 +7,8 @@ cddmp.c \
+ cddio.c \
+ cddlib.c \
+ cddproj.c \
+-setoper.c
++setoper.c \
++random.c
+ 
+ include_HEADERS = \
+ cdd.h \

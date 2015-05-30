@@ -17,7 +17,7 @@ Elements of posets, lattices, semilattices, etc.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.element import Element
-from sage.structure.sage_object import have_same_parent
+from sage.structure.element import have_same_parent
 
 class PosetElement(Element):
 
@@ -281,7 +281,7 @@ class MeetSemilatticeElement(PosetElement):
 
         EXAMPLES::
 
-            sage: D = Posets.DiamondPoset(5)
+            sage: D = Posets.DiamondPoset(5,facade=False)
             sage: D(1) * D(2)
             0
             sage: D(1) * D(1)
@@ -300,7 +300,7 @@ class JoinSemilatticeElement(PosetElement):
 
         EXAMPLES::
 
-            sage: D = Posets.DiamondPoset(5)
+            sage: D = Posets.DiamondPoset(5,facade=False)
             sage: D(1) + D(2)
             4
             sage: D(1) + D(1)

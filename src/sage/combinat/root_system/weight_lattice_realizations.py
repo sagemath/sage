@@ -20,7 +20,8 @@ Weight lattice realizations
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import prod
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.all import prod
 from sage.categories.category_types import Category_over_base_ring
 from sage.combinat.family import Family
 from root_lattice_realizations import RootLatticeRealizations
@@ -266,7 +267,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                        for base_ring in set([ZZ, self.base_ring()])
                        for extended  in set([self.cartan_type().is_affine(), self.is_extended()])]
             for domain in domains:
-                tester.assert_(self.coerce_map_from(domain) is not None)
+                tester.assert_(self._internal_coerce_map_from(domain) is not None)
                 for i in self.index_set():
                     # This embedding maps fundamental weights to fundamental weights
                     tester.assertEqual(self(domain.fundamental_weight(i)), Lambda[i])
@@ -343,7 +344,8 @@ class WeightLatticeRealizations(Category_over_base_ring):
             interpretation of type `A`; see the thematic tutorial on Lie
             Methods and Related Combinatorics in Sage for details.
             """
-            assert i in self.index_set()
+            if i not in self.index_set():
+                raise ValueError("{} is not in the index set".format(i))
             alphai = self.root_system.weight_lattice().simple_root(i)
             # Note: it would be nicer to just return ``self(alpha[i])``,
             # However the embedding from the weight lattice is defined
@@ -642,7 +644,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             r"""
             Tests the method :meth:`reduced_word_of_translation`.
 
-            INPUT::
+            INPUT:
 
             - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
 
@@ -728,9 +730,17 @@ class WeightLatticeRealizations(Category_over_base_ring):
                   y_k = s_{w_{k-1} \alpha_{i_k}} y_{k-1}
 
             The step is said positive if `w_{k-1} \alpha_{i_k}` is a
-            negative root (considering `w_{k-1}` as element of the classical
-            Weyl group and `\alpha_{i_k}` as a classical root) and
-            negative otherwise.
+            negative root (considering `w_{k-1}` as element of the
+            classical Weyl group and `\alpha_{i_k}` as a classical
+            root) and negative otherwise. The algorithm implemented
+            here use the equivalent property::
+
+                .. MATH:: \langle w_{k-1}^{-1} \rho_0, \alpha^\vee_{i_k}\rangle > 0
+
+            Where `\rho_0` is the sum of the classical fundamental
+            weights embedded at level 0 in this space (see
+            :meth:`rho_classical`), and `\alpha^\vee_{i_k}` is the
+            simple coroot associated to `\alpha_{i_k}`.
 
             This function returns a list of the form `[+1,+1,-1,...]`,
             where the `k^{th}` entry denotes whether the `k^{th}` step was
@@ -743,42 +753,106 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: L = RootSystem(['C',2,1]).weight_lattice()
                 sage: L.signs_of_alcovewalk([1,2,0,1,2,1,2,0,1,2])
                 [-1, -1, 1, -1, 1, 1, 1, 1, 1, 1]
+
                 sage: L = RootSystem(['A',2,1]).weight_lattice()
                 sage: L.signs_of_alcovewalk([0,1,2,1,2,0,1,2,0,1,2,0])
                 [1, 1, 1, 1, -1, 1, -1, 1, -1, 1, -1, 1]
+
+                sage: L = RootSystem(['B',2,1]).coweight_lattice()
+                sage: L.signs_of_alcovewalk([0,1,2,0,1,2])
+                [1, -1, 1, -1, 1, 1]
+
+            .. WARNING::
+
+                This method currently does not work in the weight
+                lattice for type BC dual because `\rho_0` does not
+                live in this lattice (but an integral multiple of it
+                would do the job as well).
             """
-            lattice_classical = self.root_system.cartan_type().classical().root_system().ambient_space()
-            W = lattice_classical.weyl_group()
-            simple_reflections = W.simple_reflections()
-            alphacheck = lattice_classical.alphacheck()
-            rho = lattice_classical.rho()
-            word = W.unit()
+            # Below, w is w_{k-1} and we use the fact that, for a root
+            # `a` the following are equivalent:
+            # - w a is a negative root
+            # - <w a, rho^\vee> < 0
+            # - <w a^\vee, rho> < 0
+            # - <a^\vee, w^-1 rho> < 0
+            W = self.weyl_group()
+            s = W.simple_reflections()
+            alphacheck = self.alphacheck()
+            rho0 = self.rho_classical()
+            w = W.one()
             signs = []
-            for s in walk:
-                if ((alphacheck[s]).scalar((word).action(rho)) > 0):
+            for i in walk:
+                if (w.action(rho0).scalar(alphacheck[i]) > 0):
                     signs.append(-1)
                 else:
                     signs.append(1)
-                word = simple_reflections[s]*word
+                w = s[i]*w
             return signs
 
         def rho_classical(self):
-            """
-            For an affine type in a weight space, rho_classical is the analog of
-            rho in the classical parabolic subgroup. it lives in the level 0.
+            r"""
+            Return the embedding at level 0 of `\rho` of the classical lattice.
 
             EXAMPLES::
 
-                sage: RootSystem(['C',4,1]).weight_space().rho_classical()
+                sage: RootSystem(['C',4,1]).weight_lattice().rho_classical()
                 -4*Lambda[0] + Lambda[1] + Lambda[2] + Lambda[3] + Lambda[4]
-                sage: WS = RootSystem(['D',4,1]).weight_space()
-                sage: WS.rho_classical().scalar(WS.null_coroot())
+                sage: L = RootSystem(['D',4,1]).weight_lattice()
+                sage: L.rho_classical().scalar(L.null_coroot())
                 0
+
+            .. WARNING::
+
+                In affine type BC dual, this does not live in the weight lattice::
+
+                    sage: L = CartanType(["BC",2,2]).dual().root_system().weight_space()
+                    sage: L.rho_classical()
+                    -3/2*Lambda[0] + Lambda[1] + Lambda[2]
+                    sage: L = CartanType(["BC",2,2]).dual().root_system().weight_lattice()
+                    sage: L.rho_classical()
+                    Traceback (most recent call last):
+                    ...
+                    ValueError: 5 is not divisible by 2
             """
             rho = self.rho()
             Lambda = self.fundamental_weights()
-            return rho - (rho.level()/Lambda[0].level()) * Lambda[0]
+            return rho - Lambda[0] * rho.level() / Lambda[0].level()
 
+        def embed_at_level(self, x, level = 1):
+            r"""
+            Embed the classical weight `x` in the level ``level`` hyperplane
+
+            This is achieved by translating the straightforward
+            embedding of `x` by `c\Lambda_0` for `c` some appropriate
+            scalar.
+
+            INPUT:
+
+            - ``x`` -- an element of the corresponding classical weight/ambient lattice
+            - ``level`` -- an integer or element of the base ring (default: 1)
+
+            EXAMPLES::
+
+                sage: L = RootSystem(["B",3,1]).weight_space()
+                sage: L0 = L.classical()
+                sage: alpha = L0.simple_roots()
+                sage: omega = L0.fundamental_weights()
+                sage: L.embed_at_level(omega[1], 1)
+                Lambda[1]
+                sage: L.embed_at_level(omega[2], 1)
+                -Lambda[0] + Lambda[2]
+                sage: L.embed_at_level(omega[3], 1)
+                Lambda[3]
+                sage: L.embed_at_level(alpha[1], 1)
+                Lambda[0] + 2*Lambda[1] - Lambda[2]
+            """
+            if not self.classical().is_parent_of(x):
+                raise ValueError("x must be an element of the classical type")
+            Lambda = self.fundamental_weights()
+            result = self.sum_of_terms(x)
+            result += Lambda[0] * (level-result.level()) / (Lambda[0].level())
+            assert result.level() == level
+            return result
 
 
         # Should it be a method of highest_weight?
@@ -793,9 +867,168 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 <type 'sage.rings.integer.Integer'>
             """
             highest_weight = self(highest_weight)
-            assert(highest_weight.is_dominant())
+            if not highest_weight.is_dominant():
+                raise ValueError("the highest weight must be dominant")
             rho = self.rho()
             n = prod([(rho+highest_weight).dot_product(x) for x in self.positive_roots()])
             d = prod([ rho.dot_product(x) for x in self.positive_roots()])
             from sage.rings.integer import Integer
             return Integer(n/d)
+
+        @lazy_attribute
+        def _symmetric_form_matrix(self):
+            r"""
+            Return the matrix for the symmetric form `( | )` in
+            the weight lattice basis.
+
+            Let `A` be a symmetrizable Cartan matrix with symmetrizer `D`,.
+            This returns the matrix `M^t DA M`, where `M` is dependent upon
+            the type given below.
+
+            In finite types, `M` is the inverse of the Cartan matrix.
+
+            In affine types, `M` takes the basis
+            `(\Lambda_0, \Lambda_1, \ldots, \Lambda_r, \delta)` to
+            `(\alpha_0, \ldots, \alpha_r, \Lambda_0)` where `r` is the
+            rank of ``self``.
+
+            This is used in computing the symmetric form for affine
+            root systems.
+
+            EXAMPLES::
+
+                sage: P = RootSystem(['C',2]).weight_lattice()
+                sage: P._symmetric_form_matrix
+                [1 1]
+                [1 2]
+
+                sage: P = RootSystem(['C',2,1]).weight_lattice()
+                sage: P._symmetric_form_matrix
+                [0 0 0 1]
+                [0 1 1 1]
+                [0 1 2 1]
+                [1 1 1 0]
+
+                sage: P = RootSystem(['A',4,2]).weight_lattice()
+                sage: P._symmetric_form_matrix
+                [  0   0   0 1/2]
+                [  0   2   2   1]
+                [  0   2   4   1]
+                [1/2   1   1   0]
+            """
+            from sage.matrix.constructor import matrix
+            ct = self.cartan_type()
+            cm = ct.cartan_matrix()
+            if cm.det() != 0:
+                cm_inv = cm.inverse()
+                diag = cm.is_symmetrizable(True)
+                return cm_inv.transpose() * matrix.diagonal(diag)
+
+            if not ct.is_affine():
+                raise ValueError("only implemented for affine types when the"
+                                 " Cartan matrix is singular")
+
+            r = ct.rank()
+            a = ct.a()
+            # Determine the change of basis matrix
+            # La[0], ..., La[r], delta -> al[0], ..., al[r], La[0]
+            M = cm.stack( matrix([1] + [0]*(r-1)) )
+            M = matrix.block([[ M, matrix([[1]] + [[0]]*r) ]])
+            M = M.inverse()
+
+            if a[0] != 1:
+                from sage.rings.all import QQ
+                S = matrix([~a[0]]+[0]*(r-1))
+                A = cm.symmetrized_matrix().change_ring(QQ).stack(S)
+            else:
+                A = cm.symmetrized_matrix().stack(matrix([1]+[0]*(r-1)))
+            A = matrix.block([[A, matrix([[~a[0]]] + [[0]]*r)]])
+            return M.transpose() * A * M
+
+    class ElementMethods:
+        def symmetric_form(self, la):
+            r"""
+            Return the symmetric form of ``self`` with ``la``.
+
+            Return the pairing `( | )` on the weight lattice. See Chapter 6
+            in Kac, Infinite Dimensional Lie Algebras for more details.
+
+            .. WARNING::
+
+                For affine root systems, if you are not working in the
+                extended weight lattice/space, this may return incorrect
+                results.
+
+            EXAMPLES::
+
+                sage: P = RootSystem(['C',2]).weight_lattice()
+                sage: al = P.simple_roots()
+                sage: al[1].symmetric_form(al[1])
+                2
+                sage: al[1].symmetric_form(al[2])
+                -2
+                sage: al[2].symmetric_form(al[1])
+                -2
+                sage: Q = RootSystem(['C',2]).root_lattice()
+                sage: alQ = Q.simple_roots()
+                sage: all(al[i].symmetric_form(al[j]) == alQ[i].symmetric_form(alQ[j])
+                ....:     for i in P.index_set() for j in P.index_set())
+                True
+
+                sage: P = RootSystem(['C',2,1]).weight_lattice(extended=True)
+                sage: al = P.simple_roots()
+                sage: al[1].symmetric_form(al[1])
+                2
+                sage: al[1].symmetric_form(al[2])
+                -2
+                sage: al[1].symmetric_form(al[0])
+                -2
+                sage: al[0].symmetric_form(al[1])
+                -2
+                sage: Q = RootSystem(['C',2,1]).root_lattice()
+                sage: alQ = Q.simple_roots()
+                sage: all(al[i].symmetric_form(al[j]) == alQ[i].symmetric_form(alQ[j])
+                ....:     for i in P.index_set() for j in P.index_set())
+                True
+                sage: La = P.basis()
+                sage: [La['delta'].symmetric_form(al) for al in P.simple_roots()]
+                [0, 0, 0]
+                sage: [La[0].symmetric_form(al) for al in P.simple_roots()]
+                [1, 0, 0]
+
+                sage: P = RootSystem(['C',2,1]).weight_lattice()
+                sage: Q = RootSystem(['C',2,1]).root_lattice()
+                sage: al = P.simple_roots()
+                sage: alQ = Q.simple_roots()
+                sage: all(al[i].symmetric_form(al[j]) == alQ[i].symmetric_form(alQ[j])
+                ....:     for i in P.index_set() for j in P.index_set())
+                True
+
+            The result of `(\Lambda_0 | \alpha_0)` should be `1`, however we
+            get `0` because we are not working in the extended weight
+            lattice::
+
+                sage: La = P.basis()
+                sage: [La[0].symmetric_form(al) for al in P.simple_roots()]
+                [0, 0, 0]
+
+            TESTS:
+
+            We check that `A_{2n}^{(2)}` has 3 different root lengths::
+
+                sage: P = RootSystem(['A',4,2]).weight_lattice()
+                sage: al = P.simple_roots()
+                sage: [al[i].symmetric_form(al[i]) for i in P.index_set()]
+                [2, 4, 8]
+            """
+            P = self.parent()
+            ct = P.cartan_type()
+            sym = P._symmetric_form_matrix
+
+            if ct.is_finite():
+                iset = P.index_set()
+            else:
+                iset = P.index_set() + ('delta',)
+
+            return sum(cl*sym[iset.index(ml),iset.index(mr)]*cr
+                       for ml,cl in self for mr,cr in la)

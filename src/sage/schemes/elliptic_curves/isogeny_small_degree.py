@@ -302,12 +302,11 @@ def isogenies_prime_degree_genus_0(E, l=None):
         if l==13:
             return isogenies_13_1728(E)
 
-    if l != None:
+    if l is not None:
         R = PolynomialRing(F,'t')
         t = R.gen()
         f = R(Fricke_polynomial(l))
-        t_list = (f-j*t).roots(multiplicities=False)
-        t_list.sort()
+        t_list = sorted((f-j*t).roots(multiplicities=False))
         # The generic kernel polynomial applies to a standard curve
         # E_t with the correct j-invariant; we must compute the
         # appropriate twising factor to scale X by:
@@ -329,7 +328,7 @@ def isogenies_prime_degree_genus_0(E, l=None):
         [isog.set_pre_isomorphism(w) for isog in isogs]
         return isogs
 
-    if l == None:
+    if l is None:
         return sum([isogenies_prime_degree_genus_0(E, l) for l in [2,3,5,7,13]],[])
 
 
@@ -624,8 +623,7 @@ def isogenies_sporadic_Q(E, l=None):
         sage: isogenies_sporadic_Q(E,163)
         [Isogeny of degree 163 from Elliptic Curve defined by y^2 = x^3 - 34790720*x - 78984748304 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 924354639680*x + 342062961763303088 over Rational Field]
     """
-    if E.base_ring() != QQ:
-        raise ValueError("The elliptic curve must be defined over QQ.")
+    F = E.base_field()
     j = E.j_invariant()
     j = QQ(j)
     if (j not in sporadic_j
@@ -638,10 +636,11 @@ def isogenies_sporadic_Q(E, l=None):
     c4, c6 = Ew.c_invariants()
     (a4,a6), f = data
     d = (c6*a4)/(18*c4*a6) # twisting factor
-    R = PolynomialRing(E.base_field(),'X')
+    R = PolynomialRing(F,'X')
     n = len(f)
     ker = R([d**(n-i-1) * f[i] for i in range(n)])
-    isog = Ew.isogeny(kernel=ker, degree=l, model="minimal", check=False)
+    model = "minimal" if F is QQ else None
+    isog = Ew.isogeny(kernel=ker, degree=l, model=model, check=False)
     isog.set_pre_isomorphism(E_to_Ew)
     return [isog]
 
@@ -676,8 +675,7 @@ def isogenies_2(E):
         sage: isogenies_2(E) # not implemented
     """
     f2 = E.division_polynomial(2)
-    x2 = f2.roots(multiplicities=False)
-    x2.sort()
+    x2 = sorted(f2.roots(multiplicities=False))
     x = f2.parent().gen()
     ff = [x-x2i for x2i in x2]
     model = "minimal" if E.base_field() is QQ else None
@@ -717,8 +715,7 @@ def isogenies_3(E):
         []
     """
     f3 = E.division_polynomial(3)
-    x3 = f3.roots(multiplicities=False)
-    x3.sort()
+    x3 = sorted(f3.roots(multiplicities=False))
     x = f3.parent().gen()
     ff = [x-x3i for x3i in x3]
     model = "minimal" if E.base_field() is QQ else None
@@ -774,8 +771,7 @@ def isogenies_5_0(E):
     Ew = E.short_weierstrass_model()
     a = Ew.a6()
     x = polygen(F)
-    betas = (x**6-160*a*x**3-80*a**2).roots(multiplicities=False)
-    betas.sort()
+    betas = sorted((x**6-160*a*x**3-80*a**2).roots(multiplicities=False))
     if len(betas)==0:
         return []
     gammas = [(beta**2 *(beta**3-140*a))/(120*a) for beta in betas]
@@ -863,8 +859,7 @@ def isogenies_5_1728(E):
         [isog.set_post_isomorphism(isog.codomain().isomorphism_to(E)) for isog in isogs]
     # Type 2: if 5 is a square we have up to 4 (non-endomorphism) isogenies
     if square5:
-        betas = (x**4+20*a*x**2-80*a**2).roots(multiplicities=False)
-        betas.sort()
+        betas = sorted((x**4+20*a*x**2-80*a**2).roots(multiplicities=False))
         gammas = [a*(beta**2-2)/6 for beta in betas]
         isogs += [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
     [isog.set_pre_isomorphism(iso) for isog in isogs]
@@ -943,8 +938,7 @@ def isogenies_7_0(E):
 
     # there will be 2 endomorphisms if -3 is a square:
 
-    ts = (x**2+3).roots(multiplicities=False)
-    ts.sort()
+    ts = sorted((x**2+3).roots(multiplicities=False))
     kers = [7*x-(2+6*t) for t in ts]
     kers = [k(x**3/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
@@ -955,8 +949,7 @@ def isogenies_7_0(E):
     ts = (x**2-21).roots(multiplicities=False)
     for t0 in ts:
         s3 = a/(28+6*t0)
-        ss = (x**3-s3).roots(multiplicities=False)
-        ss.sort()
+        ss = sorted((x**3-s3).roots(multiplicities=False))
         ker = x**3 - 2*t0*x**2 - 4*t0*x + 4*t0 + 28
         kers = [ker(x/s).monic() for s in ss]
         isogs += [Ew.isogeny(k, model=model) for k in kers]
@@ -1044,8 +1037,7 @@ def isogenies_7_1728(E):
     x = polygen(F)
     for t0 in ts:
         s2 = a/t0
-        ss = (x**2-s2).roots(multiplicities=False)
-        ss.sort()
+        ss = sorted((x**2-s2).roots(multiplicities=False))
         ker = 9*x**3 + (-3*t0**3 - 36*t0**2 - 123*t0)*x**2 + (-8*t0**3 - 101*t0**2 - 346*t0 + 35)*x - 7*t0**3 - 88*t0**2 - 296*t0 + 28
 
         kers = [ker(x/s) for s in ss]
@@ -1136,8 +1128,7 @@ def isogenies_13_0(E):
     x = polygen(F)
 
     # there will be 2 endomorphisms if -3 is a square:
-    ts = (x**2+3).roots(multiplicities=False)
-    ts.sort()
+    ts = sorted((x**2+3).roots(multiplicities=False))
     kers = [13*x**2 + (78*t + 26)*x + 24*t + 40 for t in ts]
     kers = [k(x**3/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
@@ -1149,8 +1140,7 @@ def isogenies_13_0(E):
     ts.sort()
     for t0 in ts:
         s3 = a / (6*t0**3 + 32*t0**2 + 68*t0 + 4)
-        ss = (x**3-s3).roots(multiplicities=False)
-        ss.sort()
+        ss = sorted((x**3-s3).roots(multiplicities=False))
         ker = (x**6 + (20*t0**3 + 106*t0**2 + 218*t0 + 4)*x**5
             + (-826*t0**3 - 4424*t0**2 - 9244*t0 - 494)*x**4
             + (13514*t0**3 + 72416*t0**2 + 151416*t0 + 8238)*x**3
@@ -1247,8 +1237,7 @@ def isogenies_13_1728(E):
     x = polygen(F)
 
     # we will have two endomorphisms if -1 is a square:
-    ts = (x**2+1).roots(multiplicities=False)
-    ts.sort()
+    ts = sorted((x**2+1).roots(multiplicities=False))
     kers = [13*x**3 + (-26*i - 13)*x**2 + (-52*i - 13)*x - 2*i - 3 for i in ts]
     kers = [k(x**2/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
@@ -1261,8 +1250,7 @@ def isogenies_13_1728(E):
     ts.sort()
     for t0 in ts:
         s2 = a/(66*t0**5 + 630*t0**4 + 2750*t0**3 + 5882*t0**2 + 5414*t0 + 162)
-        ss = (x**2-s2).roots(multiplicities=False)
-        ss.sort()
+        ss = sorted((x**2-s2).roots(multiplicities=False))
         ker = (x**6 + (-66*t0**5 - 630*t0**4 - 2750*t0**3 - 5882*t0**2
               - 5414*t0 - 162)*x**5 + (-21722*t0**5 - 205718*t0**4 -
               890146*t0**3 - 1873338*t0**2 - 1652478*t0 + 61610)*x**4
@@ -1668,7 +1656,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l):
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
     F = E.base_field()
     if E.j_invariant() != 0:
-        raise ValueError,("j-invariant must be 0.")
+        raise ValueError(("j-invariant must be 0."))
     if F.characteristic() in [2,3,l]:
         raise NotImplementedError("Not implemented in characteristic 2, 3 or l.")
 
@@ -1937,7 +1925,7 @@ def isogenies_prime_degree_general(E, l):
     from sage.rings.arith import gcd
     from sage.misc.all import prod
     def mult(f):
-        return gcd(F(f(m([x,0])).numerator()),psi_l).monic()
+        return gcd(F(f(m(x)).numerator()),psi_l).monic()
     while len(factors) > 0:
         f = factors[0]
         factors.remove(f)
@@ -2045,5 +2033,11 @@ def isogenies_prime_degree(E, l):
 
     if l in hyperelliptic_primes and not p in [2,3]:
         return isogenies_prime_degree_genus_plus_0(E,l)
+
+    j = E.j_invariant()
+    if j in QQ:
+        j = QQ(j)
+        if j in sporadic_j:
+            return isogenies_sporadic_Q(E,l)
 
     return isogenies_prime_degree_general(E,l)

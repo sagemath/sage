@@ -103,7 +103,7 @@ class CuspidalSubmodule(submodule.ModularFormsSubmodule):
             ...
             NotImplementedError: q-expansion basis not implemented for "Cuspidal subspace of ..."
         """
-        raise NotImplementedError, 'q-expansion basis not implemented for "%s"' % self
+        raise NotImplementedError('q-expansion basis not implemented for "%s"' % self)
 
     def _repr_(self):
         """
@@ -231,7 +231,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
             ]
         """
-        if prec == None:
+        if prec is None:
             prec = self.prec()
         else:
             prec = Integer(prec)
@@ -271,7 +271,7 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
             q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
             ]
         """
-        if prec == None:
+        if prec is None:
             prec = self.prec()
         else:
             prec = Integer(prec)

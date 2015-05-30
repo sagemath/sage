@@ -56,14 +56,14 @@ class func_persist:
         self.__dir  = dir
         sage_makedirs(dir)
         self.__doc__ = '%s%s%s'%(\
-            f.func_name,
-            inspect.formatargspec(*inspect.getargs(f.func_code)),
+            f.__name__,
+            inspect.formatargspec(*inspect.getargs(f.__code__)),
             f.__doc__)
 
     def __call__(self, *args, **kwds):
         key = (tuple(args), tuple(kwds.items()))
         h = hash(key)
-        name = '%s/%s_%s.sobj'%(self.__dir, self.__func.func_name, h)
+        name = '%s/%s_%s.sobj'%(self.__dir, self.__func.__name__, h)
 
         if os.path.exists(name):
             key2, val = persist.load(name)

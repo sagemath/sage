@@ -43,7 +43,7 @@ _steenrod_milnor_basis_names = ['milnor']
 _steenrod_serre_cartan_basis_names = ['serre_cartan', 'serre-cartan', 'sc',
                                          'adem', 'admissible']
 
-def get_basis_name(basis, p):
+def get_basis_name(basis, p, generic=None):
     """
     Return canonical basis named by string basis at the prime p.
 
@@ -52,6 +52,8 @@ def get_basis_name(basis, p):
     - ``basis`` - string
 
     - ``p`` - positive prime number
+
+    - ``generic`` - boolean, optional, default to 'None'
 
     OUTPUT:
 
@@ -105,6 +107,10 @@ def get_basis_name(basis, p):
         'pst_llex'
         sage: get_basis_name('wood_abcdedfg_y', 2)
         'woody'
+        sage: get_basis_name('wood', 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: wood is not a recognized basis at the prime 2.
         sage: get_basis_name('arnon--hello--long', 2)
         'arnona_long'
         sage: get_basis_name('arnona_long', p=5)
@@ -115,7 +121,13 @@ def get_basis_name(basis, p):
         Traceback (most recent call last):
         ...
         ValueError: not_a_basis is not a recognized basis at the prime 2.
+        sage: get_basis_name('woody', 2, generic=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: woody is not a recognized basis for the generic Steenrod algebra at the prime 2.
     """
+    if generic is None:
+        generic = False if p==2 else True
     basis = basis.lower()
     if basis in _steenrod_milnor_basis_names:
         result = 'milnor'
@@ -145,30 +157,33 @@ def get_basis_name(basis, p):
             result = 'comm_revz'
         if basis.find('long') >= 0:
             result = result + '_long'
-    elif p == 2 and basis.find('wood') >= 0:
+    elif not generic and basis.find('wood') >= 0:
         if basis.find('y') >= 0:
             result = 'woody'
         elif basis.find('z') >= 0:
             result = 'woodz'
-    elif p == 2 and basis.find('arnon') >= 0:
+        else:
+             raise ValueError("%s is not a recognized basis at the prime %s." % (basis, p))
+    elif not generic and basis.find('arnon') >= 0:
         if basis.find('c') >= 0:
             result = 'arnonc'
         else:
             result = 'arnona'
             if basis.find('long') >= 0:
                 result = result + '_long'
-    elif p == 2 and basis.find('wall') >= 0:
+    elif not generic and basis.find('wall') >= 0:
         result = 'wall'
         if basis.find('long') >= 0:
             result = result + '_long'
     else:
-        raise ValueError("%s is not a recognized basis at the prime %s." % (basis, p))
+        gencase = " for the generic Steenrod algebra" if p==2 and generic else ""
+        raise ValueError("%s is not a recognized basis%s at the prime %s." % (basis, gencase, p))
     return result
 
 ######################################################
 # profile functions
 
-def is_valid_profile(profile, truncation_type, p=2):
+def is_valid_profile(profile, truncation_type, p=2, generic=None):
     """
     True if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
@@ -181,6 +196,8 @@ def is_valid_profile(profile, truncation_type, p=2):
     - ``truncation_type`` - either 0 or `\infty`
 
     - `p` - prime number, optional, default 2
+
+    - `generic` - boolean, optional, default None
 
     OUTPUT: True if the profile function is valid, False otherwise.
 
@@ -233,9 +250,13 @@ def is_valid_profile(profile, truncation_type, p=2):
         False
         sage: is_valid_profile(([1,2,1], []), 0, p=7)
         True
+        sage: is_valid_profile(([0,0,0], [2,1,1,1,2,2]), 0, p=2, generic=True)
+        True
     """
     from sage.rings.infinity import Infinity
-    if p == 2:
+    if generic is None:
+        generic = False if p==2 else True
+    if not generic:
         pro = list(profile) + [truncation_type]*len(profile)
         r = 0
         for pro_r in pro:
@@ -273,7 +294,7 @@ def is_valid_profile(profile, truncation_type, p=2):
                         return False
     return True
 
-def normalize_profile(profile, precision=None, truncation_type='auto', p=2):
+def normalize_profile(profile, precision=None, truncation_type='auto', p=2, generic=None):
     """
     Given a profile function and related data, return it in a standard form,
     suitable for hashing and caching as data defining a sub-Hopf
@@ -285,14 +306,15 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2):
     - ``precision`` - integer or ``None``, optional, default ``None``
     - ``truncation_type`` - 0 or `\infty` or 'auto', optional, default 'auto'
     - `p` - prime, optional, default 2
+    - `generic` - boolean, optional, default ``None``
 
     OUTPUT: a triple ``profile, precision, truncation_type``, in
     standard form as described below.
 
     The "standard form" is as follows: ``profile`` should be a tuple
     of integers (or `\infty`) with no trailing zeroes when `p=2`, or a
-    pair of such when `p` is odd.  ``precision`` should be a positive
-    integer.  ``truncation_type`` should be 0 or `\infty`.
+    pair of such when `p` is odd or `generic` is ``True``.  ``precision``
+    should be a positive integer.  ``truncation_type`` should be 0 or `\infty`.
     Furthermore, this must be a valid profile, as determined by the
     funtion :func:`is_valid_profile`.  See also the documentation for
     the module :mod:`sage.algebras.steenrod.steenrod_algebra` for information
@@ -440,7 +462,9 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2):
         truncation_type = 0
     if truncation_type == 'infinity':
         truncation_type = Infinity
-    if p == 2:
+    if generic is None:
+        generic = False if p==2 else True
+    if not generic:
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile
             # for the entire Steenrod algebra
@@ -531,7 +555,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2):
                 while len(k) > 0 and k[-1] == 2:
                     k = k[:-1]
             new_profile = (e, k)
-        if is_valid_profile(new_profile, truncation_type, p):
+        if is_valid_profile(new_profile, truncation_type, p, generic=True):
             return new_profile, truncation_type
         else:
             raise ValueError("Invalid profile")
@@ -539,7 +563,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2):
 ######################################################
 # string representations for elements
 
-def milnor_mono_to_string(mono, latex=False, p=2):
+def milnor_mono_to_string(mono, latex=False, generic=False):
     """
     String representation of element of the Milnor basis.
 
@@ -547,19 +571,19 @@ def milnor_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    - ``mono`` - if `p=2`, tuple of non-negative integers (a,b,c,...);
-      if `p>2`, pair of tuples of non-negative integers ((e0, e1, e2,
+    - ``mono`` - if `generic=False`, tuple of non-negative integers (a,b,c,...);
+      if `generic=True`, pair of tuples of non-negative integers ((e0, e1, e2,
       ...), (r1, r2, ...))
 
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    - ``p`` - positive prime number (optional, default 2)
+    - ``generic`` - whether to format generically, or for the prime 2 (default)
 
     OUTPUT: ``rep`` - string
 
-    This returns a string like ``Sq(a,b,c,...)`` when p=2, or a string
-    like ``Q_e0 Q_e1 Q_e2 ... P(r1, r2, ...)`` when p is odd.
+    This returns a string like ``Sq(a,b,c,...)`` when `generic=False`, or a string
+    like ``Q_e0 Q_e1 Q_e2 ... P(r1, r2, ...)`` when `generic=True`.
 
     EXAMPLES::
 
@@ -568,34 +592,34 @@ def milnor_mono_to_string(mono, latex=False, p=2):
         'Sq(1,2,3,4)'
         sage: milnor_mono_to_string((1,2,3,4),latex=True)
         '\\text{Sq}(1,2,3,4)'
-        sage: milnor_mono_to_string(((1,0), (2,3,1)), p=3)
+        sage: milnor_mono_to_string(((1,0), (2,3,1)), generic=True)
         'Q_{1} Q_{0} P(2,3,1)'
-        sage: milnor_mono_to_string(((1,0), (2,3,1)), latex=True, p=3)
+        sage: milnor_mono_to_string(((1,0), (2,3,1)), latex=True, generic=True)
         'Q_{1} Q_{0} \\mathcal{P}(2,3,1)'
 
     The empty tuple represents the unit element::
 
         sage: milnor_mono_to_string(())
         '1'
-        sage: milnor_mono_to_string((), p=5)
+        sage: milnor_mono_to_string((), generic=True)
         '1'
     """
     if latex:
-        if p == 2:
+        if not generic:
             sq = "\\text{Sq}"
             P = "\\text{Sq}"
         else:
             P = "\\mathcal{P}"
     else:
-        if p == 2:
+        if not generic:
             sq = "Sq"
             P = "Sq"
         else:
             P = "P"
-    if mono == () or mono == (0,) or (p > 2 and len(mono[0]) + len(mono[1]) == 0):
+    if mono == () or mono == (0,) or (generic and len(mono[0]) + len(mono[1]) == 0):
         return "1"
     else:
-        if p == 2:
+        if not generic:
             string = sq + "(" + str(mono[0])
             for n in mono[1:]:
                 string = string + "," + str(n)
@@ -612,7 +636,7 @@ def milnor_mono_to_string(mono, latex=False, p=2):
                 string = string + ")"
         return string.strip(" ")
 
-def serre_cartan_mono_to_string(mono, latex=False, p=2):
+def serre_cartan_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of the Serre-Cartan basis.
 
@@ -620,21 +644,22 @@ def serre_cartan_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    - ``mono`` - tuple of positive integers (a,b,c,...)  when `p=2`,
-      or tuple (e0, n1, e1, n2, ...) when `p>2`, where each ei is 0 or
+    - ``mono`` - tuple of positive integers (a,b,c,...)  when `generic=False`,
+      or tuple (e0, n1, e1, n2, ...) when `generic=True`, where each ei is 0 or
       1, and each ni is positive
 
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    - ``p`` - positive prime number (optional, default 2)
+    - ``generic`` - whether to format generically, or for the prime 2 (default)
 
     OUTPUT: ``rep`` - string
 
     This returns a string like ``Sq^{a} Sq^{b} Sq^{c} ...`` when
-    `p=2`, or a string like
-    ``\beta^{e0} P^{n1} \beta^{e1} P^{n2} ...`` when `p`
+    `generic=False`, or a string like
+    ``\beta^{e0} P^{n1} \beta^{e1} P^{n2} ...`` when `generic=True`.
     is odd.
+
 
     EXAMPLES::
 
@@ -643,26 +668,26 @@ def serre_cartan_mono_to_string(mono, latex=False, p=2):
         'Sq^{1} Sq^{2} Sq^{3} Sq^{4}'
         sage: serre_cartan_mono_to_string((1,2,3,4),latex=True)
         '\\text{Sq}^{1} \\text{Sq}^{2} \\text{Sq}^{3} \\text{Sq}^{4}'
-        sage: serre_cartan_mono_to_string((0,5,1,1,0), p=3)
+        sage: serre_cartan_mono_to_string((0,5,1,1,0), generic=True)
         'P^{5} beta P^{1}'
-        sage: serre_cartan_mono_to_string((0,5,1,1,0), p=3, latex=True)
+        sage: serre_cartan_mono_to_string((0,5,1,1,0), generic=True, latex=True)
         '\\mathcal{P}^{5} \\beta \\mathcal{P}^{1}'
 
     The empty tuple represents the unit element 1::
 
         sage: serre_cartan_mono_to_string(())
         '1'
-        sage: serre_cartan_mono_to_string((), p=7)
+        sage: serre_cartan_mono_to_string((), generic=True)
         '1'
     """
     if latex:
-        if p == 2:
+        if not generic:
             sq = "\\text{Sq}"
             P = "\\text{Sq}"
         else:
             P = "\\mathcal{P}"
     else:
-        if p == 2:
+        if not generic:
             sq = "Sq"
             P = "Sq"
         else:
@@ -670,7 +695,7 @@ def serre_cartan_mono_to_string(mono, latex=False, p=2):
     if len(mono) == 0 or mono == (0,):
         return "1"
     else:
-        if p == 2:
+        if not generic:
             string = ""
             for n in mono:
                 string = string + sq + "^{" + str(n) + "} "
@@ -896,7 +921,7 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
                 string = string + sq + "^{" + str(2**i) + "} "
         return string.strip(" ")
 
-def pst_mono_to_string(mono, latex=False, p=2):
+def pst_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of a `P^s_t`-basis.
 
@@ -910,7 +935,7 @@ def pst_mono_to_string(mono, latex=False, p=2):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    - ``p`` - positive prime number (optional, default 2).
+    - ``generic`` - whether to format generically, or for the prime 2 (default)
 
     OUTPUT: ``string`` - concatenation of strings of the form
     ``P^{s}_{t}`` for each pair (s,t)
@@ -918,13 +943,13 @@ def pst_mono_to_string(mono, latex=False, p=2):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_misc import pst_mono_to_string
-        sage: pst_mono_to_string(((1,2),(0,3)), p=2)
+        sage: pst_mono_to_string(((1,2),(0,3)), generic=False)
         'P^{1}_{2} P^{0}_{3}'
-        sage: pst_mono_to_string(((1,2),(0,3)),latex=True, p=2)
+        sage: pst_mono_to_string(((1,2),(0,3)),latex=True, generic=False)
         'P^{1}_{2} P^{0}_{3}'
-        sage: pst_mono_to_string(((1,4), (((1,2), 1),((0,3), 2))), p=3)
+        sage: pst_mono_to_string(((1,4), (((1,2), 1),((0,3), 2))), generic=True)
         'Q_{1} Q_{4} P^{1}_{2} (P^{0}_{3})^2'
-        sage: pst_mono_to_string(((1,4), (((1,2), 1),((0,3), 2))), latex=True, p=3)
+        sage: pst_mono_to_string(((1,4), (((1,2), 1),((0,3), 2))), latex=True, generic=True)
         'Q_{1} Q_{4} P^{1}_{2} (P^{0}_{3})^{2}'
 
     The empty tuple represents the unit element::
@@ -936,7 +961,7 @@ def pst_mono_to_string(mono, latex=False, p=2):
         return "1"
     else:
         string = ""
-        if p == 2:
+        if not generic:
             for (s,t) in mono:
                 string = string + "P^{" + str(s) + "}_{" \
                     + str(t) + "} "
@@ -956,7 +981,7 @@ def pst_mono_to_string(mono, latex=False, p=2):
                         + str(t) + "})^" + pow + " "
         return string.strip(" ")
 
-def comm_mono_to_string(mono, latex=False, p=2):
+def comm_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of a commutator basis.
 
@@ -970,7 +995,7 @@ def comm_mono_to_string(mono, latex=False, p=2):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    - ``p`` - positive prime number (optional, default 2)
+    - ``generic`` - whether to format generically, or for the prime 2 (default)
 
     OUTPUT: ``string`` - concatenation of strings of the form
     ``c_{s,t}`` for each pair (s,t)
@@ -978,13 +1003,13 @@ def comm_mono_to_string(mono, latex=False, p=2):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_misc import comm_mono_to_string
-        sage: comm_mono_to_string(((1,2),(0,3)), p=2)
+        sage: comm_mono_to_string(((1,2),(0,3)), generic=False)
         'c_{1,2} c_{0,3}'
-        sage: comm_mono_to_string(((1,2),(0,3)), latex=True, p=2)
+        sage: comm_mono_to_string(((1,2),(0,3)), latex=True)
         'c_{1,2} c_{0,3}'
-        sage: comm_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), p=5)
+        sage: comm_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), generic=True)
         'Q_{1} Q_{4} c_{1,2} c_{0,3}^2'
-        sage: comm_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), latex=True, p=5)
+        sage: comm_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), latex=True, generic=True)
         'Q_{1} Q_{4} c_{1,2} c_{0,3}^{2}'
 
     The empty tuple represents the unit element::
@@ -996,7 +1021,7 @@ def comm_mono_to_string(mono, latex=False, p=2):
         return "1"
     else:
         string = ""
-        if p == 2:
+        if not generic:
             for (s,t) in mono:
                 string = string + "c_{" + str(s) + "," \
                     + str(t) + "} "
@@ -1015,7 +1040,7 @@ def comm_mono_to_string(mono, latex=False, p=2):
                 string = string + " "
         return string.strip(" ")
 
-def comm_long_mono_to_string(mono, latex=False, p=2):
+def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     r"""
     Alternate string representation of element of a commutator basis.
 
@@ -1030,7 +1055,7 @@ def comm_long_mono_to_string(mono, latex=False, p=2):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    - ``p`` - positive prime number (optional, default 2).
+    - ``generic`` - whether to format generically, or for the prime 2 (default)
 
     OUTPUT: ``string`` - concatenation of strings of the form ``s_{2^s
     ... 2^(s+t-1)}`` for each pair (s,t)
@@ -1038,25 +1063,25 @@ def comm_long_mono_to_string(mono, latex=False, p=2):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_misc import comm_long_mono_to_string
-        sage: comm_long_mono_to_string(((1,2),(0,3)))
+        sage: comm_long_mono_to_string(((1,2),(0,3)), 2)
         's_{24} s_{124}'
-        sage: comm_long_mono_to_string(((1,2),(0,3)),latex=True)
+        sage: comm_long_mono_to_string(((1,2),(0,3)), 2, latex=True)
         's_{24} s_{124}'
-        sage: comm_long_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), p=5)
+        sage: comm_long_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), 5, generic=True)
         'Q_{1} Q_{4} s_{5,25} s_{1,5,25}^2'
-        sage: comm_long_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), latex=True, p=3)
+        sage: comm_long_mono_to_string(((1, 4), (((1,2), 1),((0,3), 2))), 3, latex=True, generic=True)
         'Q_{1} Q_{4} s_{3,9} s_{1,3,9}^{2}'
 
     The empty tuple represents the unit element::
 
-        sage: comm_long_mono_to_string(())
+        sage: comm_long_mono_to_string((), p=2)
         '1'
     """
     if len(mono) == 0:
         return "1"
     else:
         string = ""
-        if p == 2:
+        if not generic:
             for (s,t) in mono:
                 if s + t > 4:
                     comma = ","

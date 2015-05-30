@@ -1587,7 +1587,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                 if max_letter is not None:
                     puzzle_pieces = BK_pieces(max_letter)
                 else:
-                    raise ValueError, "max_letter needs to be specified"
+                    raise ValueError("max_letter needs to be specified")
         return super(KnutsonTaoPuzzleSolver, cls).__classcall__(cls, puzzle_pieces)
 
     def __call__(self, lamda, mu, algorithm='strips'):

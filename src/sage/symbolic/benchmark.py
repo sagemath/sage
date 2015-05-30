@@ -7,9 +7,9 @@ parameters chosen below are such that with pynac most of these take
 well less than a second, but would not even be feasible using Sage's
 Maxima-based symbolics.
 
-Problem R1::
+Problem R1
 
-Important note. Below we do s.expand().real() because s.real() takes forever (TODO?).
+Important note. Below we do s.expand().real() because s.real() takes forever (TODO?). ::
 
     sage: f(z) = sqrt(1/3)*z^2 + i/3
     sage: s = f(f(f(f(f(f(f(f(f(f(i/2))))))))))

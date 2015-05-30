@@ -13,6 +13,8 @@
 # AUTHOR: Jeroen Demeyer (2011-12-08): Trac ticket #12016
 #
 
+from __future__ import print_function
+
 import os
 import multiprocessing
 import re
@@ -75,14 +77,14 @@ def parse_jobs_from_MAKE(MAKE, unlimited=999999):
     (j,num) = re.subn(r'^(.* )?(-j *|--jobs(=(?=[0-9])| +))([0-9]*)( .*?)?$', r'\4', MAKE, count=1)
     if num < 1:
         # No replacement done, i.e. no -j option found
-        raise KeyError, "No number of jobs specified"
+        raise KeyError("No number of jobs specified")
     elif j == "":
         # j is empty: unlimited number of jobs! :-)
         j = unlimited
     else:
         j = int(j)
         if j <= 0:
-            raise ValueError, "Non-positive value specified for -j"
+            raise ValueError("Non-positive value specified for -j")
 
     # Next, find the value of -l
     # If it is specified, use this as an upper bound on j
@@ -177,4 +179,4 @@ def num_threads():
 
     return (num_threads, num_threads_parallel, num_cores)
 
-print "%i %i %i"%num_threads()
+print(*num_threads())

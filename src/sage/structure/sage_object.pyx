@@ -10,16 +10,16 @@ from sage.misc.sage_unittest import TestSuite
 
 sys_modules = sys.modules
 
+from sage.misc.lazy_import import LazyImport
+have_same_parent = LazyImport('sage.structure.element', 'have_same_parent', deprecation=17533)
+
 # change to import zlib to use zlib instead; but this
 # slows down loading any data stored in the other format
 import zlib; comp = zlib
 import bz2; comp_other = bz2
 
-base=None
 
 cdef process(s):
-    if base is not None and not os.path.isabs(s):
-        s = os.path.join(base,s)
     if s[-5:] != '.sobj':
         return s + '.sobj'
     else:
@@ -27,6 +27,15 @@ cdef process(s):
 
 
 cdef class SageObject:
+    """
+    Base class for all (user-visible) objects in Sage
+
+    Every object that can end up being returned to the user should
+    inherit from :class:`SageObject`.
+
+    .. automethod:: _ascii_art_
+    .. automethod:: _cache_key
+    """
 
     #######################################################################
     # Textual representation code
@@ -91,7 +100,7 @@ cdef class SageObject:
 
     def reset_name(self):
         """
-        Remove the custrom name of an object.
+        Remove the custom name of an object.
 
         EXAMPLES::
 
@@ -161,10 +170,7 @@ cdef class SageObject:
         you must override this method. Unlike :meth:`_repr_`, which is
         sometimes used for the hash key, the output of
         :meth:`_ascii_art_` may depend on settings and is allowed to
-        change during runtime. For example,
-        :meth:`~sage.combinat.tableau.Tableau.set_ascii_art` can be
-        used to switch the ASCII art of tableaux between different
-        mathematical conventions.
+        change during runtime.
 
         OUTPUT:
 
@@ -190,7 +196,7 @@ cdef class SageObject:
         Alternatively, you can use the ``%display ascii_art/simple`` magic to
         switch all output to ASCII art and back::
 
-            sage: from sage.misc.interpreter import get_test_shell
+            sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
             [[1, 2], [3]]
@@ -205,8 +211,9 @@ cdef class SageObject:
             +---+---+
             | 1 | 2 |
             +---+---+
-            sage: shell.run_cell('%display simple')
+            sage: shell.run_cell('%display plain')
             sage: shell.run_cell('Tableaux.global_options.reset()')
+            sage: shell.quit()
 
         TESTS::
 
@@ -221,6 +228,71 @@ cdef class SageObject:
     def __hash__(self):
         return hash(self.__repr__())
 
+    def _cache_key(self):
+        r"""
+        Return a hashable key which identifies this objects for caching. The
+        output must be hashable itself, or a tuple of objects which are
+        hashable or define a ``_cache_key``.
+
+        This method will only be called if the object itself is not hashable.
+
+        Some immutable objects (such as `p`-adic numbers) cannot implement a
+        reasonable hash function because their ``==`` operator has been
+        modified to return ``True`` for objects which might behave differently
+        in some computations::
+
+            sage: K.<a> = Qq(9)
+            sage: b = a + O(3)
+            sage: c = a + 3
+            sage: b
+            a + O(3)
+            sage: c
+            a + 3 + O(3^20)
+            sage: b == c
+            True
+            sage: b == a
+            True
+            sage: c == a
+            False
+
+        If such objects defined a non-trivial hash function, this would break
+        caching in many places. However, such objects should still be usable in
+        caches. This can be achieved by defining an appropriate
+        ``_cache_key``::
+
+            sage: hash(b)
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'sage.rings.padics.padic_ZZ_pX_CR_element.pAdicZZpXCRElement'
+            sage: @cached_method
+            ....: def f(x): return x==a
+            sage: f(b)
+            True
+            sage: f(c) # if b and c were hashable, this would return True
+            False
+
+            sage: b._cache_key()
+            (..., ((0, 1),), 0, 1)
+            sage: c._cache_key()
+            (..., ((0, 1), (1,)), 0, 20)
+
+        An implementation must make sure that for elements ``a`` and ``b``,
+        if ``a != b``, then also ``a._cache_key() != b._cache_key()``.
+        In practice this means that the ``_cache_key`` should always include
+        the parent as its first argument::
+
+            sage: S.<a> = Qq(4)
+            sage: d = a + O(2)
+            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included
+            False
+
+        """
+        try:
+            hash(self)
+        except TypeError:
+            raise TypeError("{} is not hashable and does not implement _cache_key()".format(type(self)))
+        else:
+            assert False, "_cache_key() must not be called for hashable elements"
 
     #############################################################################
     # DATABASE Related code
@@ -235,7 +307,15 @@ cdef class SageObject:
         version of Sage it was created.
 
         This only works on Python classes that derive from SageObject.
+
+        TESTS::
+
+            sage: v = DiGraph().version()
+            doctest:... DeprecationWarning: version() is deprecated.
+            See http://trac.sagemath.org/2536 for details.
         """
+        from sage.misc.superseded import deprecation
+        deprecation(2536, 'version() is deprecated.')
         try:
             return self.__version
         except AttributeError:
@@ -300,24 +380,17 @@ cdef class SageObject:
         reload.
 
         The database directory is ``$HOME/.sage/db``
+
+        TESTS::
+
+            sage: SageObject().db("Test")
+            doctest:... DeprecationWarning: db() is deprecated.
+            See http://trac.sagemath.org/2536 for details.
         """
-        #if name is None:
-        #    name = self._db_name()
+        from sage.misc.superseded import deprecation
+        deprecation(2536, 'db() is deprecated.')
         from sage.misc.all import SAGE_DB
         return self.dump('%s/%s'%(SAGE_DB,name), compress=compress)
-
-##     def _db_name(self):
-##         t = str(type(self)).split()[-1][1:-2]
-##         try:
-##             d = str(self._defining_params_())
-##         except AttributeError:
-##             d = str(self)
-##         d = '_'.join(d.split())
-##         from sage.misc.all import SAGE_DB
-##         if not os.path.exists('%s/%s'%(SAGE_DB, t)):
-##             os.makedirs(t)
-##         return '%s/%s'%(t, d)
-
 
     #############################################################################
     # Category theory / structure
@@ -358,15 +431,20 @@ cdef class SageObject:
         tester.assert_(category.is_subcategory(Objects()))
         tester.assert_(self in category)
 
-##     def category(self):
-##         try:
-##             return self.__category
-##         except AttributeError:
-##             from sage.categories.all import Objects
-##             return Objects()
+    def parent(self):
+        """
+        Return the type of ``self`` to support the coercion framework.
 
-##     def _set_category(self, C):
-##         self.__category = C
+        EXAMPLES::
+
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t
+            log(sqrt(2) + 1) + log(sqrt(2) - 1)
+            sage: u = t.maxima_methods()
+            sage: u.parent()
+            <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
+        """
+        return type(self)
+
 
     #############################################################################
     # Test framework
@@ -443,7 +521,7 @@ cdef class SageObject:
             except NotImplementedError:
                 # It would be best to make sure that this NotImplementedError was triggered by AbstractMethod
                 tester.fail("Not implemented method: %s"%name)
-            except StandardError:
+            except Exception:
                 pass
 
     def _test_pickling(self, **options):
@@ -509,7 +587,7 @@ cdef class SageObject:
         else:
             try:
                 s = self._interface_init_(I)
-            except StandardError:
+            except Exception:
                 raise NotImplementedError, "coercion of object %s to %s not implemented:\n%s\n%s"%\
                   (repr(self), I)
         X = I(s)
@@ -755,49 +833,18 @@ cdef class SageObject:
         from sage.interfaces.gp import gp
         return self._interface_init_(gp)
 
-
-######################################################
-# A python-accessible version of the one in coerce.pxi
-# Where should it be?
-
-def have_same_parent(self, other):
-    """
-    EXAMPLES::
-
-        sage: from sage.structure.sage_object import have_same_parent
-        sage: have_same_parent(1, 3)
-        True
-        sage: have_same_parent(1, 1/2)
-        False
-        sage: have_same_parent(gap(1), gap(1/2))
-        True
-    """
-    from sage.structure.coerce import parent
-    return parent(self) == parent(other)
-
 ##################################################################
 
 def load(*filename, compress=True, verbose=True):
-    """
+    r"""
     Load Sage object from the file with name filename, which will have
-    an .sobj extension added if it doesn't have one.  Or, if the input
-    is a filename ending in .py, .pyx, or .sage, load that file into
-    the current running session.  Loaded files are not loaded into
-    their own namespace, i.e., this is much more like Python's
-    ``execfile`` than Python's ``import``.
-
-    .. NOTE::
-
-       There is also a special Sage command (that is not
-       available in Python) called load that you use by typing
-
-       ::
-
-          sage: load filename.sage           # not tested
-
-       The documentation below is not for that command.  The
-       documentation for load is almost identical to that for attach.
-       Type attach? for help on attach.
+    an ``.sobj`` extension added if it doesn't have one.  Or, if the input
+    is a filename ending in ``.py``, ``.pyx``, ``.sage``, ``.spyx``,
+    ``.f``, ``.f90`` or ``.m``, load that file into the current running
+    session.
+    
+    Loaded files are not loaded into their own namespace, i.e., this is
+    much more like Python's ``execfile`` than Python's ``import``.
 
     This function also loads a ``.sobj`` file over a network by
     specifying the full URL.  (Setting ``verbose = False`` suppresses
@@ -818,31 +865,42 @@ def load(*filename, compress=True, verbose=True):
 
     We test loading a file or multiple files or even mixing loading files and objects::
 
-        sage: t=tmp_filename()+'.py'; open(t,'w').write("print 'hello world'")
+        sage: t = tmp_filename(ext='.py')
+        sage: open(t,'w').write("print 'hello world'")
         sage: load(t)
         hello world
         sage: load(t,t)
         hello world
         hello world
-        sage: t2=tmp_filename(); save(2/3,t2)
+        sage: t2 = tmp_filename(); save(2/3,t2)
         sage: load(t,t,t2)
         hello world
         hello world
         [None, None, 2/3]
-    """
-    import sage.misc.preparser
-    if len(filename) != 1:
-        v = [load(file, compress=True, verbose=True) for file in filename]
-        ret = False
-        for file in filename:
-            if not sage.misc.preparser.is_loadable_filename(file):
-                ret = True
-        return v if ret else None
-    else:
-        filename = filename[0]
 
-    if sage.misc.preparser.is_loadable_filename(filename):
-        sage.misc.preparser.load(filename, globals())
+    We can load Fortran files::
+
+        sage: code = '      subroutine hello\n         print *, "Hello World!"\n      end subroutine hello\n'
+        sage: t = tmp_filename(ext=".F")
+        sage: open(t, 'w').write(code)
+        sage: load(t)
+        sage: hello
+        <fortran object>
+    """
+    import sage.repl.load
+    if len(filename) != 1:
+        v = [load(file, compress=compress, verbose=verbose) for file in filename]
+        # Return v if one of the filenames refers to an object and not
+        # a loadable filename.
+        for file in filename:
+            if not sage.repl.load.is_loadable_filename(file):
+                return v
+        return
+
+    filename = filename[0]
+
+    if sage.repl.load.is_loadable_filename(filename):
+        sage.repl.load.load(filename, globals())
         return
 
     ## Check if filename starts with "http://" or "https://"
@@ -851,9 +909,6 @@ def load(*filename, compress=True, verbose=True):
         from sage.misc.remote_file import get_remote_file
         filename = get_remote_file(filename, verbose=verbose)
         tmpfile_flag = True
-    elif lower.endswith('.f') or lower.endswith('.f90'):
-        globals()['fortran'](filename)
-        return
     else:
         tmpfile_flag = False
         filename = process(filename)
@@ -875,7 +930,7 @@ def load(*filename, compress=True, verbose=True):
 def save(obj, filename=None, compress=True, **kwds):
     """
     Save ``obj`` to the file with name ``filename``, which will have an
-    ``.sobj`` extension added if it doesn't have one, or if ``obj``
+    ``.sobj`` extension added if it doesn't have one and if ``obj``
     doesn't have its own ``save()`` method, like e.g. Python tuples.
 
     For image objects and the like (which have their own ``save()`` method),
@@ -924,10 +979,8 @@ def save(obj, filename=None, compress=True, **kwds):
     # Add '.sobj' if the filename currently has no extension
     # and also if the object doesn't have its own save() method (#11577)
     # since we otherwise assume below it is an image object:
-    if (os.path.splitext(filename)[1] == ''
-        or (os.path.splitext(filename)[1] != '.sobj'
-             and not hasattr(obj,"save"))):
-        filename += '.sobj'
+    if not os.path.splitext(filename)[1] or not hasattr(obj, "save"):
+        filename = process(filename)
 
     if filename.endswith('.sobj'):
         try:
@@ -979,24 +1032,6 @@ def register_unpickle_override(module, name, callable, call_name=None):
     to use for unpickling.  (If this callable is a value in some module,
     you can specify the module name and class name, for the benefit of
     :func:`~sage.misc.explain_pickle.explain_pickle` when called with ``in_current_sage=True``).)
-
-    EXAMPLES::
-
-        sage: from sage.structure.sage_object import unpickle_override, register_unpickle_override
-        sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
-
-    Now we horribly break the pickling system::
-
-        sage: register_unpickle_override('sage.rings.integer', 'Integer', Rational, call_name=('sage.rings.rational', 'Rational'))
-        sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.rational.Rational'>
-
-    and we reach into the internals and put it back::
-
-        sage: del unpickle_override[('sage.rings.integer', 'Integer')]
-        sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
 
     In many cases, unpickling problems for old pickles can be resolved with a
     simple call to ``register_unpickle_override``, as in the example above and
@@ -1223,10 +1258,10 @@ def loads(s, compress=True):
     if compress:
         try:
             s = comp.decompress(s)
-        except Exception, msg1:
+        except Exception as msg1:
             try:
                 s = comp_other.decompress(s)
-            except Exception, msg2:
+            except Exception as msg2:
                 # Maybe data is uncompressed?
                 pass
 
@@ -1236,7 +1271,7 @@ def loads(s, compress=True):
     return unpickler.load()
 
 
-cdef bint make_pickle_jar = os.environ.has_key('SAGE_PICKLE_JAR')
+cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
 
 def picklejar(obj, dir=None):
     """
@@ -1272,7 +1307,7 @@ def picklejar(obj, dir=None):
     Test an unaccessible directory::
 
         sage: import os
-        sage: os.chmod(dir, 0000)
+        sage: os.chmod(dir, 0o000)
         sage: try:
         ...   uid = os.getuid()
         ... except AttributeError:
@@ -1283,7 +1318,7 @@ def picklejar(obj, dir=None):
         Traceback (most recent call last):
         ...
         OSError: ...
-        sage: os.chmod(dir, 0755)
+        sage: os.chmod(dir, 0o755)
     """
     if dir is None:
         dir = os.environ['SAGE_ROOT'] + '/tmp/pickle_jar/'
@@ -1344,8 +1379,14 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
     ::
 
         sage: sage.structure.sage_object.unpickle_all()  # (4s on sage.math, 2011)
-        doctest:... DeprecationWarning: This class is replaced by Matrix_modn_dense_float/Matrix_modn_dense_double.
-        See http://trac.sagemath.org/4260 for details.
+        doctest:... DeprecationWarning: ...
+        See http://trac.sagemath.org/... for details.
+        Successfully unpickled ... objects.
+        Failed to unpickle 0 objects.
+
+    Check that unpickling a second time works (see :trac:`5838`)::
+
+        sage: sage.structure.sage_object.unpickle_all()
         Successfully unpickled ... objects.
         Failed to unpickle 0 objects.
 
@@ -1381,7 +1422,7 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
 
         Create a custom-made ``SourPickle`` for the last example.
 
-    If you want to find *lots* of little issues in Sage then try the following:
+    If you want to find *lots* of little issues in Sage then try the following::
 
         sage: print "x"; sage.structure.sage_object.unpickle_all(run_test_suite = True) # todo: not tested
 
@@ -1408,7 +1449,7 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
     """
     if dir is None:
         pickle_jar=True
-        from sage.misc.misc import SAGE_EXTCODE
+        from sage.env import SAGE_EXTCODE
         dir = os.path.join(SAGE_EXTCODE,'pickle_jar','pickle_jar.tar.bz2')
     else:
         pickle_jar=False
@@ -1433,12 +1474,14 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
                 if run_test_suite:
                     TestSuite(object).run(catch = False)
                 i += 1
-            except Exception, msg:
+            except Exception:
                 j += 1
                 if run_test_suite:
                     print " * unpickle failure: TestSuite(load('%s')).run()"%os.path.join(dir,A)
                 else:
                     print " * unpickle failure: load('%s')"%os.path.join(dir,A)
+                from traceback import print_exc
+                print_exc()
                 failed.append(A)
                 if debug:
                     tracebacks.append(sys.exc_info())
@@ -1458,4 +1501,3 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
     print "Failed to unpickle %s objects."%j
     if debug:
         return tracebacks
-

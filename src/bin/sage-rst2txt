@@ -111,8 +111,8 @@ try:
     with open(input, 'r') as f:
         rst = f.read()
 except IOError as e:
-    print "IOError: %s" % e
-    print "Unable to open source file for reading ('%s').  Exiting." % input
+    print("IOError: {}".format(e))
+    print("Unable to open source file for reading ('{}').  Exiting.".format(input))
     sys.exit(1)
 
 # docutils loses the single backslashes, so we prepend them with escapes
@@ -139,4 +139,4 @@ if output:
     with open(output, "w") as f:
         f.write(worksheet_txt)
 else:
-    print worksheet_txt
+    print(worksheet_txt)

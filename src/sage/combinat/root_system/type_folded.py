@@ -1,5 +1,5 @@
 r"""
-Folded Cartan Types
+Root system data for folded Cartan types
 
 AUTHORS:
 

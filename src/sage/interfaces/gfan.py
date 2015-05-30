@@ -2,16 +2,18 @@ r"""
 Interface to Groebner Fan
 
 AUTHOR:
-   -- Anders Nedergaard Jensen: Write gfan C++ program, which implements
-      algorithms many of which were invented by Jensen, Komei
-      Fukuda, and Rekha Thomas.
-   -- William Stein (2006-03-18): wrote gfan interface (first version)
-   -- Marshall Hampton (2008-03-17): modified to use gfan-0.3, subprocess instead of os.popen2
 
-TODO -- much functionality of gfan-0.3 is still not exposed
+- Anders Nedergaard Jensen: Write gfan C++ program, which implements
+  algorithms many of which were invented by Jensen, Komei
+  Fukuda, and Rekha Thomas.
+- William Stein (2006-03-18): wrote gfan interface (first version)
+- Marshall Hampton (2008-03-17): modified to use gfan-0.3, subprocess instead of os.popen2
+
+TODO -- much functionality of gfan-0.3 is still not exposed::
 
    * at most 52 variables:
-       use gfan_substitute to make easier (?)
+
+       - use gfan_substitute to make easier (?)
        MH: I think this is now irrelevant since gfan can accept the original ring variables
 
    * --symmetry is really useful
@@ -63,7 +65,7 @@ class Gfan:
         # since version 0.4, gfan indicates which LP algorithm it is using.
         # we avoid interpreting this as an error
         if (len(err) > 0) and not (err.startswith('LP algorithm being used:')):
-            raise RuntimeError, err
+            raise RuntimeError(err)
 
         return ans
 

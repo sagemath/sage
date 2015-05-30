@@ -43,7 +43,7 @@ def ncpus():
     """
     #for Linux, Unix and MacOS
     if hasattr(os, "sysconf"):
-        if os.sysconf_names.has_key("SC_NPROCESSORS_ONLN"):
+        if "SC_NPROCESSORS_ONLN" in os.sysconf_names:
             #Linux and Unix
             ncpus = os.sysconf("SC_NPROCESSORS_ONLN")
             if isinstance(ncpus, int) and ncpus > 0:
@@ -54,7 +54,7 @@ def ncpus():
             process = subprocess.Popen("sysctl -n hw.ncpu", shell=True, stdin=subprocess.PIPE, stdout = subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
             return int(process.stdout.read())
     #for Windows
-    if os.environ.has_key("NUMBER_OF_PROCESSORS"):
+    if "NUMBER_OF_PROCESSORS" in os.environ:
         ncpus = int(os.environ["NUMBER_OF_PROCESSORS"])
         if ncpus > 0:
             return ncpus

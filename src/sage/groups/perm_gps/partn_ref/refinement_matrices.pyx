@@ -218,7 +218,8 @@ cdef class MatrixStruct:
 
         """
         cdef int i, j, n = self.degree
-        cdef int *output, *ordering
+        cdef int *output
+        cdef int *ordering
         cdef PartitionStack *part
         cdef NonlinearBinaryCodeStruct S_temp
         for i from 0 <= i < self.nsymbols:

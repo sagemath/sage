@@ -105,8 +105,8 @@ those integers `n`, where `1 \leq n \leq 20`, such that
 little bit of Sage programming::
 
     sage: for n in range(1, 21):
-    ...       if gcd(n, 20) == 1:
-    ...           print n,
+    ....:     if gcd(n, 20) == 1:
+    ....:         print n,
     ...
     1 3 7 9 11 13 17 19
 
@@ -316,7 +316,7 @@ required value of `e` as follows::
     4951760152529835076874141700
     sage: e = ZZ.random_element(phi)
     sage: while gcd(e, phi) != 1:
-    ...       e = ZZ.random_element(phi)
+    ....:     e = ZZ.random_element(phi)
     ...
     sage: e  # random
     1850567623300615966303954877

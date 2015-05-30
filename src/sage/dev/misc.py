@@ -59,7 +59,7 @@ def tmp_filename():
         True
     """
     try:
-        from sage.misc.misc import tmp_filename
+        from sage.misc.temporary_file import tmp_filename
         return tmp_filename()
     except ImportError:
         from tempfile import NamedTemporaryFile
@@ -83,7 +83,7 @@ def tmp_dir():
         True
     """
     try:
-        from sage.misc.misc import tmp_dir
+        from sage.misc.all import tmp_dir
         return tmp_dir()
     except ImportError:
         from tempfile import mkdtemp

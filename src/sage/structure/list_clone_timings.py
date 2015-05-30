@@ -112,7 +112,7 @@ class IncreasingArraysPy(IncreasingArrays):
             """
             for i in range(len(self)-1):
                 if self[i] >= self[i+1]:
-                    raise ValueError, "Lists is not increasing"
+                    raise ValueError("Lists is not increasing")
 
 
 #####################################################################

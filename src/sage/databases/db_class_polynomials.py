@@ -17,11 +17,11 @@ Database of Hilbert Polynomials
 
 
 import bz2, os
-import sage.misc.misc
+from sage.env import SAGE_SHARE
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-dblocation = os.path.join(sage.misc.misc.SAGE_SHARE,'kohel')
+dblocation = os.path.join(SAGE_SHARE, 'kohel')
 
 disc_length = 7
 level_length = 3

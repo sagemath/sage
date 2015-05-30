@@ -78,7 +78,7 @@ class Debug:
                 tb=tb.tb_next
             self._stack = inspect.getinnerframes(tb)
         except AttributeError:
-            raise RuntimeError, "no traceback has been produced; nothing to debug"
+            raise RuntimeError("no traceback has been produced; nothing to debug")
         self._curframe_index = len(self._stack) - 1
 
     def curframe(self):
@@ -123,11 +123,11 @@ class Debug:
         globals = self.curframe().f_globals
         try:
             code = compile(line + '\n', '<stdin>', 'single')
-            exec code in globals, locals
-        except StandardError:
+            exec(code, globals, locals)
+        except Exception:
             import sys
             t, v = sys.exc_info()[:2]
-            if type(t) == type(''):
+            if isinstance(t, type('')):
                 exc_type_name = t
             else:
                 exc_type_name = t.__name__
@@ -155,7 +155,7 @@ class Debug:
                  2...      x = a + b
              --&gt; ...      y = a * b
                  ...      return x, y, x&lt;y, x&gt;y   # &lt; to ensure HTML is properly escaped
-             <hr>> <a href="/src/interacts/debugger.py" target="_new">devel/sage/sage/interacts/debugger.py</a>
+             <hr>> <a href="/src/interacts/debugger.py" target="_new">src/sage/interacts/debugger.py</a>
              sage: print sage0("d.listing()")
                  2...
                  ...
@@ -168,7 +168,7 @@ class Debug:
                  4...       else:
              --&gt; ...      test_function2(m, n)
                  ...
-                 <hr>> <a href="/src/interacts/debugger.py" target="_new">devel/sage/sage/interacts/debugger.py</a>
+                 <hr>> <a href="/src/interacts/debugger.py" target="_new">src/sage/interacts/debugger.py</a>
         """
         # TODO: Currently, just as with ipdb on the command line,
         # there is no support for displaying code in Cython files.
@@ -196,7 +196,7 @@ class Debug:
         i = filename.rfind('site-packages/sage')
         if i != -1:
             fname = filename[i+len('site-packages/sage')+1:].rstrip('/')
-            file = '<a href="/src/%s" target="_new">devel/sage/sage/%s</a>'%(fname,fname)
+            file = '<a href="/src/%s" target="_new">src/sage/%s</a>'%(fname,fname)
         else:
             file = filename
 

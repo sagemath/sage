@@ -79,3 +79,16 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         """
         from sage.graphs.graph import Graph
         return Graph([[1,2,self.n]], multiedges=False)
+
+    def coxeter_number(self):
+        """
+        Return the Coxeter number associated with ``self``.
+
+        EXAMPLES::
+
+            sage: CartanType(['I',3]).coxeter_number()
+            3
+            sage: CartanType(['I',12]).coxeter_number()
+            12
+        """
+        return self.n

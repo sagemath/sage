@@ -24,6 +24,7 @@ Here is a simple example of how to triangulate a point configuration::
     sage: triang = points.triangulate();  triang
     (<0,1,2,5>, <0,1,3,5>, <1,3,4,5>)
     sage: triang.plot(axes=False)
+    Graphics3d Object
 
 See :mod:`sage.geometry.triangulation.point_configuration` for more details.
 """
@@ -65,6 +66,7 @@ def triangulation_render_2d(triangulation, **kwds):
         sage: points = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
         sage: triang = points.triangulate()
         sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest
+        Graphics object consisting of 12 graphics primitives
     """
     from sage.plot.all import point2d, line2d, arrow, polygon2d
     points = [ point.reduced_affine() for point in triangulation.point_configuration() ]
@@ -128,6 +130,7 @@ def triangulation_render_3d(triangulation, **kwds):
         sage: points = PointConfiguration(p)
         sage: triang = points.triangulate()
         sage: triang.plot(axes=False)     # indirect doctest
+        Graphics3d Object
     """
     from sage.plot.plot3d.all import point3d, line3d, arrow3d, polygon3d
     points = [ point.reduced_affine() for point in triangulation.point_configuration() ]
@@ -343,11 +346,11 @@ class Triangulation(Element):
             sage: pc = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
             sage: triangulation = pc.triangulate()
             sage: iter = triangulation.__iter__()
-            sage: iter.next()
+            sage: next(iter)
             (1, 3, 4)
-            sage: iter.next()
+            sage: next(iter)
             (2, 3, 4)
-            sage: iter.next()
+            sage: next(iter)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -387,7 +390,7 @@ class Triangulation(Element):
 
             sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
             sage: pc = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
-            sage: triangulation = pc.triangulations().next()
+            sage: triangulation = next(pc.triangulations())
             sage: triangulation.__len__()
             2
             sage: len(triangulation)    # equivalent
@@ -405,7 +408,7 @@ class Triangulation(Element):
             sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
             sage: pc = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1],[2,2]])
             sage: t = pc.triangulations()
-            sage: t.next()._repr_()
+            sage: next(t)._repr_()
             '(<1,4,5>, <2,4,5>)'
         """
         #s = 'A triangulation'
@@ -428,6 +431,7 @@ class Triangulation(Element):
             sage: triangulation
             (<1,3,4>, <2,3,4>)
             sage: triangulation.plot(axes=False)
+            Graphics object consisting of 12 graphics primitives
         """
         dim = self.point_configuration().dim()
 
@@ -437,8 +441,7 @@ class Triangulation(Element):
         if dim == 3:
             return triangulation_render_3d(self, **kwds)
 
-        raise NotImplementedError, \
-            'Plotting '+str(dim)+'-dimensional triangulations not implemented!'
+        raise NotImplementedError('Plotting '+str(dim)+'-dimensional triangulations not implemented!')
 
 
     def gkz_phi(self):
@@ -613,34 +616,34 @@ class Triangulation(Element):
 
         TESTS::
 
-            sage: triangulation = polytopes.n_cube(2).triangulate(engine='internal')
+            sage: triangulation = polytopes.hypercube(2).triangulate(engine='internal')
             sage: triangulation._boundary_simplex_dictionary()
             {(0, 1): ((0, 1, 3),),
+             (0, 2): ((0, 2, 3),),
              (0, 3): ((0, 1, 3), (0, 2, 3)),
              (1, 3): ((0, 1, 3),),
-             (2, 3): ((0, 2, 3),),
-             (0, 2): ((0, 2, 3),)}
+             (2, 3): ((0, 2, 3),)}
 
-            sage: triangulation = polytopes.n_cube(3).triangulate(engine='internal')
+            sage: triangulation = polytopes.cube().triangulate(engine='internal')
             sage: triangulation._boundary_simplex_dictionary()
-            {(1, 4, 7): ((0, 1, 4, 7), (1, 4, 5, 7)),
-             (1, 3, 7): ((1, 2, 3, 7),),
-             (0, 1, 7): ((0, 1, 2, 7), (0, 1, 4, 7)),
-             (0, 2, 7): ((0, 1, 2, 7), (0, 2, 4, 7)),
+            {(0, 1, 2): ((0, 1, 2, 7),),
              (0, 1, 4): ((0, 1, 4, 7),),
-             (2, 4, 6): ((2, 4, 6, 7),),
-             (0, 1, 2): ((0, 1, 2, 7),),
-             (1, 2, 7): ((0, 1, 2, 7), (1, 2, 3, 7)),
-             (2, 6, 7): ((2, 4, 6, 7),),
-             (2, 3, 7): ((1, 2, 3, 7),),
-             (1, 4, 5): ((1, 4, 5, 7),),
-             (1, 5, 7): ((1, 4, 5, 7),),
-             (4, 5, 7): ((1, 4, 5, 7),),
+             (0, 1, 7): ((0, 1, 2, 7), (0, 1, 4, 7)),
+             (0, 2, 4): ((0, 2, 4, 7),),
+             (0, 2, 7): ((0, 1, 2, 7), (0, 2, 4, 7)),
              (0, 4, 7): ((0, 1, 4, 7), (0, 2, 4, 7)),
-             (2, 4, 7): ((0, 2, 4, 7), (2, 4, 6, 7)),
              (1, 2, 3): ((1, 2, 3, 7),),
-             (4, 6, 7): ((2, 4, 6, 7),),
-             (0, 2, 4): ((0, 2, 4, 7),)}
+             (1, 2, 7): ((0, 1, 2, 7), (1, 2, 3, 7)),
+             (1, 3, 7): ((1, 2, 3, 7),),
+             (1, 4, 5): ((1, 4, 5, 7),),
+             (1, 4, 7): ((0, 1, 4, 7), (1, 4, 5, 7)),
+             (1, 5, 7): ((1, 4, 5, 7),),
+             (2, 3, 7): ((1, 2, 3, 7),),
+             (2, 4, 6): ((2, 4, 6, 7),),
+             (2, 4, 7): ((0, 2, 4, 7), (2, 4, 6, 7)),
+             (2, 6, 7): ((2, 4, 6, 7),),
+             (4, 5, 7): ((1, 4, 5, 7),),
+             (4, 6, 7): ((2, 4, 6, 7),)}
         """
         result = dict()
         for simplex in self:
@@ -663,14 +666,24 @@ class Triangulation(Element):
 
         EXAMPLES::
 
-            sage: triangulation = polytopes.n_cube(3).triangulate(engine='internal')
+            sage: triangulation = polytopes.cube().triangulate(engine='internal')
             sage: triangulation
             (<0,1,2,7>, <0,1,4,7>, <0,2,4,7>, <1,2,3,7>, <1,4,5,7>, <2,4,6,7>)
             sage: triangulation.boundary()
-            frozenset([(1, 3, 7), (4, 5, 7), (1, 2, 3), (0, 1, 2), (2, 4, 6), (2, 6, 7),
-                       (2, 3, 7), (1, 5, 7), (0, 1, 4), (1, 4, 5), (4, 6, 7), (0, 2, 4)])
+            frozenset({(0, 1, 2),
+                       (0, 1, 4),
+                       (0, 2, 4),
+                       (1, 2, 3),
+                       (1, 3, 7),
+                       (1, 4, 5),
+                       (1, 5, 7),
+                       (2, 3, 7),
+                       (2, 4, 6),
+                       (2, 6, 7),
+                       (4, 5, 7),
+                       (4, 6, 7)})
             sage: triangulation.interior_facets()
-            frozenset([(1, 4, 7), (1, 2, 7), (2, 4, 7), (0, 1, 7), (0, 4, 7), (0, 2, 7)])
+            frozenset({(0, 1, 7), (0, 2, 7), (0, 4, 7), (1, 2, 7), (1, 4, 7), (2, 4, 7)})
         """
         return frozenset(facet for facet, bounded_simplices
                          in self._boundary_simplex_dictionary().iteritems()
@@ -689,14 +702,24 @@ class Triangulation(Element):
 
         EXAMPLES::
 
-            sage: triangulation = polytopes.n_cube(3).triangulate(engine='internal')
+            sage: triangulation = polytopes.cube().triangulate(engine='internal')
             sage: triangulation
             (<0,1,2,7>, <0,1,4,7>, <0,2,4,7>, <1,2,3,7>, <1,4,5,7>, <2,4,6,7>)
             sage: triangulation.boundary()
-            frozenset([(1, 3, 7), (4, 5, 7), (1, 2, 3), (0, 1, 2), (2, 4, 6), (2, 6, 7),
-                       (2, 3, 7), (1, 5, 7), (0, 1, 4), (1, 4, 5), (4, 6, 7), (0, 2, 4)])
+            frozenset({(0, 1, 2),
+                       (0, 1, 4),
+                       (0, 2, 4),
+                       (1, 2, 3),
+                       (1, 3, 7),
+                       (1, 4, 5),
+                       (1, 5, 7),
+                       (2, 3, 7),
+                       (2, 4, 6),
+                       (2, 6, 7),
+                       (4, 5, 7),
+                       (4, 6, 7)})
             sage: triangulation.interior_facets()
-            frozenset([(1, 4, 7), (1, 2, 7), (2, 4, 7), (0, 1, 7), (0, 4, 7), (0, 2, 7)])
+            frozenset({(0, 1, 7), (0, 2, 7), (0, 4, 7), (1, 2, 7), (1, 4, 7), (2, 4, 7)})
         """
         return frozenset(facet for facet, bounded_simplices
                          in self._boundary_simplex_dictionary().iteritems()
@@ -727,7 +750,7 @@ class Triangulation(Element):
 
         EXAMPLES::
 
-            sage: triangulation = polytopes.n_cube(2).triangulate(engine='internal')
+            sage: triangulation = polytopes.hypercube(2).triangulate(engine='internal')
             sage: triangulation
             (<0,1,3>, <0,2,3>)
             sage: N = triangulation.normal_cone();  N
@@ -749,7 +772,7 @@ class Triangulation(Element):
 
         TESTS::
 
-            sage: polytopes.n_simplex(2).triangulate().normal_cone()
+            sage: polytopes.simplex(2).triangulate().normal_cone()
             3-d cone in 3-d lattice
             sage: _.dual().is_trivial()
             True

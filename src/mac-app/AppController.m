@@ -33,6 +33,7 @@
 
     // Find sageBinary etc.
     [self setupPaths];
+    [self ensureReadWrite];
 
     // Initialize the StatusItem if desired.
     // If we are on Tiger, then showing in the dock doesn't work
@@ -105,9 +106,17 @@
     }
 
     // Create a task to start the server
-    [NSTask launchedTaskWithLaunchPath:scriptPath
-                             arguments:[NSArray arrayWithObjects:sageBinary, logPath, nil]];
-    // We now forget about the task.  I hope that's okay...
+    
+    // Get any default options they might have for this session
+    [defaults synchronize];
+    NSString *defArgs = [[defaults dictionaryForKey:@"DefaultArguments"]
+                         objectForKey:@"notebook"];
+    launchTask = [[NSTask launchedTaskWithLaunchPath:scriptPath
+                                           arguments:[NSArray arrayWithObjects:sageBinary,
+                                                      logPath,
+                                                      defArgs, // May be nil, but that's okay
+                                                      nil]]
+                  retain];
 
     // Open loading page since it can take a while to start
     [self browseRemoteURL:[[NSBundle mainBundle] pathForResource:@"loading-page" ofType:@"html"]];
@@ -161,7 +170,9 @@
             [self serverStartedWithPort:p];
         } else {
             // We failed, so tell the user
-            if (haveStatusItem)  [statusItem setImage:statusImageGrey];
+            if (haveStatusItem) {
+                [statusItem setImage:statusImageGrey];
+            }
             port = 0;
         }
         // Reset for next time.
@@ -169,6 +180,34 @@
         theTask = nil;
         [taskPipe release];
         taskPipe = nil;
+    } else if (theObject == launchTask ) {
+        
+        const int status = [theObject terminationStatus];
+        if (status != 0) {
+            // We failed, so tell the user
+            if (haveStatusItem) {
+                [statusItem setImage:statusImageGrey];
+            }
+            port = 0;
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Sage Server failed to start"
+                                             defaultButton:@"View Log"
+                                           alternateButton:@"Cancel"
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"For some reason the Sage server failed to start.  "
+                              "Please check the log for clues, and have that information handy when asking for help."];
+            [alert setAlertStyle:NSWarningAlertStyle];
+            NSInteger resp = [alert runModal];
+            if (resp == NSAlertDefaultReturn) {
+                // View Log
+                [self viewSageLog:self];
+            } else {
+                // Cancel
+            }
+        }
+        // Reset for next time.
+        [launchTask release];
+        launchTask = nil;
+        
     } else {
         // NSLog(@"Got called for a different task.");
     }
@@ -303,6 +342,33 @@ You can change it later in Preferences."];
 
         NSLog(@"WARNING: Could not find a good sage executable, falling back to sage and hoping it's in PATH.");
         sageBinary = @"sage";
+    }
+}
+
+-(void)ensureReadWrite {
+    NSFileManager *filemgr = [NSFileManager defaultManager];
+    NSLog(@"Checking if sageBinary (%@) is writeable.",sageBinary);
+    if ( ! [filemgr isWritableFileAtPath:sageBinary] ) {
+        NSAlert *alert = [NSAlert alertWithMessageText:@"Read-only Sage"
+                                         defaultButton:@"Quit"
+                                       alternateButton:@"Preferences"
+                                           otherButton:@"Continue"
+                             informativeTextWithFormat:@"You are attempting to run Sage.app with a read-only copy of Sage "
+                          "(most likely due to running it from the disk image).  "
+                          "Unfortunately, this is not supported for technical reasons.  \n"
+                          "Please drag Sage.app to your hard-drive and run it from there, "
+                          "or choose a different executable in Preferences."];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        NSInteger resp = [alert runModal];
+        if (resp == NSAlertDefaultReturn) {// Quit
+            NSLog(@"Quitting after a read-only Sage warning.");
+            [NSApp terminate:self];
+        } else if ( resp == NSAlertAlternateReturn) { // Continue
+            NSLog(@"Preferences after a read-only Sage warning.");
+            [self showPreferences:self];
+        } else {
+            NSLog(@"Continuing from read-only Sage warning.");
+        }
     }
 }
 

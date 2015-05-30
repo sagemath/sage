@@ -21,7 +21,8 @@ AUTHORS:
 
 import os, sys, re, random
 import doctest
-from sage.misc.preparser import preparse, load
+from sage.repl.preparse import preparse
+from sage.repl.load import load
 from sage.misc.lazy_attribute import lazy_attribute
 from parsing import SageDocTestParser
 from util import NestedName
@@ -35,6 +36,8 @@ name_regex = re.compile(r".*\s(\w+)([(].*)?:")
 # LaTeX file parsing
 begin_verb = re.compile(r"\s*\\begin{verbatim}")
 end_verb = re.compile(r"\s*\\end{verbatim}\s*(%link)?")
+begin_lstli = re.compile(r"\s*\\begin{lstlisting}")
+end_lstli = re.compile(r"\s*\\end{lstlisting}\s*(%link)?")
 skip = re.compile(r".*%skip.*")
 
 # ReST file parsing
@@ -43,7 +46,7 @@ double_colon = re.compile(r"^(\s*).*::\s*$")
 
 whitespace = re.compile("\s*")
 bitness_marker = re.compile('#.*(32|64)-bit')
-bitness_value = '64' if sys.maxint > (1 << 32) else '32'
+bitness_value = '64' if sys.maxsize > (1 << 32) else '32'
 
 # For neutralizing doctests
 find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
@@ -51,6 +54,9 @@ find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
 # For testing that enough doctests are created
 sagestart = re.compile(r"^\s*(>>> |sage: )\s*[^#\s]")
 untested = re.compile("(not implemented|not tested)")
+
+# Source line number in warning output
+doctest_line_number = re.compile(r"^\s*doctest:[0-9]")
 
 
 def get_basename(path):
@@ -147,7 +153,7 @@ class DocTestSource(object):
         This function is called when a docstring block is completed
         (either by ending a triple quoted string in a Python file,
         unindenting from a comment block in a ReST file, or ending a
-        verbatim environment in a LaTeX file.
+        verbatim or lstlisting environment in a LaTeX file).
 
         INPUT:
 
@@ -230,6 +236,8 @@ class DocTestSource(object):
             40
             sage: extras['tab']
             False
+            sage: extras['line_number']
+            False
         """
         if tab_okay is None:
             tab_okay = isinstance(self,TexSource)
@@ -244,7 +252,10 @@ class DocTestSource(object):
         doc = []
         start = None
         tab_locations = []
+        contains_line_number = False
         for lineno, line in self:
+            if doctest_line_number.search(line) is not None:
+                contains_line_number = True
             if "\t" in line:
                 tab_locations.append(str(lineno+1))
             if "SAGE_DOCTEST_ALLOW_TABS" in line:
@@ -293,8 +304,9 @@ class DocTestSource(object):
         if unparsed_doc:
             self._process_doc(doctests, doc, namespace, start)
 
-        extras = dict(tab = not tab_okay and tab_locations,
-                      optionals = self.parser.optionals)
+        extras = dict(tab=not tab_okay and tab_locations,
+                      line_number=contains_line_number,
+                      optionals=self.parser.optionals)
         if self.options.randorder is not None and self.options.randorder is not False:
             # we want to randomize even when self.randorder = 0
             random.seed(self.options.randorder)
@@ -340,6 +352,20 @@ class StringDocTestSource(DocTestSource):
         1
         sage: extras['tab']
         []
+        sage: extras['line_number']
+        False
+
+        sage: s = "'''\n\tsage: 2 + 2\n\t4\n'''"
+        sage: PSS = PythonStringSource('<runtime>', s, DocTestDefaults(), 'runtime')
+        sage: dt, extras = PSS.create_doctests({})
+        sage: extras['tab']
+        ['2', '3']
+
+        sage: s = "'''\n    sage: import warnings; warnings.warn('foo')\n    doctest:1: UserWarning: foo \n'''"
+        sage: PSS = PythonStringSource('<runtime>', s, DocTestDefaults(), 'runtime')
+        sage: dt, extras = PSS.create_doctests({})
+        sage: extras['line_number']
+        True
     """
     def __init__(self, basename, source, options, printpath, lineno_shift=0):
         r"""
@@ -457,12 +483,14 @@ class FileDocTestSource(DocTestSource):
         self.path = path
         DocTestSource.__init__(self, options)
         base, ext = os.path.splitext(path)
-        if ext in ('.py', '.pyx', '.pxi', '.sage', '.spyx'):
+        if ext in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx'):
             self.__class__ = dynamic_class('PythonFileSource',(FileDocTestSource,PythonSource))
         elif ext == '.tex':
             self.__class__ = dynamic_class('TexFileSource',(FileDocTestSource,TexSource))
         elif ext == '.rst':
             self.__class__ = dynamic_class('RestFileSource',(FileDocTestSource,RestSource))
+        else:
+            raise ValueError("unknown file extension %r"%ext)
 
     def __iter__(self):
         r"""
@@ -610,7 +638,7 @@ class FileDocTestSource(DocTestSource):
         vs 64 bit architecture::
 
             sage: import sys
-            sage: bitness = '64' if sys.maxint > (1 << 32) else '32'
+            sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
             sage: n = -920390823904823094890238490238484; hash(n) > 0
             False # 32-bit
             True  # 64-bit
@@ -668,16 +696,19 @@ class FileDocTestSource(DocTestSource):
             ....:     dirs.sort(); files.sort()
             ....:     for F in files:
             ....:         _, ext = os.path.splitext(F)
-            ....:         if ext in ('.py', '.pyx', '.pxi', '.sage', '.spyx', '.rst'):
+            ....:         if ext in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst'):
             ....:             filename = os.path.join(path, F)
             ....:             FDS = FileDocTestSource(filename, DocTestDefaults(long=True,optional=True))
             ....:             FDS._test_enough_doctests(verbose=False)
             There are 7 tests in sage/combinat/dyck_word.py that are not being run
+            There are 4 tests in sage/combinat/finite_state_machine.py that are not being run
+            There are 6 tests in sage/combinat/interval_posets.py that are not being run
             There are 18 tests in sage/combinat/partition.py that are not being run
             There are 15 tests in sage/combinat/permutation.py that are not being run
             There are 14 tests in sage/combinat/skew_partition.py that are not being run
             There are 18 tests in sage/combinat/tableau.py that are not being run
             There are 8 tests in sage/combinat/crystals/tensor_product.py that are not being run
+            There are 11 tests in sage/combinat/rigged_configurations/rigged_configurations.py that are not being run
             There are 15 tests in sage/combinat/root_system/cartan_type.py that are not being run
             There are 8 tests in sage/combinat/root_system/type_A.py that are not being run
             There are 8 tests in sage/combinat/root_system/type_G.py that are not being run
@@ -1108,11 +1139,11 @@ class TexSource(SourceLanguage):
         r"""
         Determines whether the input line starts a docstring.
 
-        Docstring blocks in tex files are defined by verbatim
-        environments, and can be linked together by adding %link
-        immediately after the \end{verbatim}.
+        Docstring blocks in tex files are defined by verbatim or
+        lstlisting environments, and can be linked together by adding
+        %link immediately after the \end{verbatim} or \end{lstlisting}.
 
-        Within a verbatim block, you can tell Sage not to
+        Within a verbatim (or lstlisting) block, you can tell Sage not to
         process the rest of the block by including a %skip line.
 
         INPUT:
@@ -1132,9 +1163,11 @@ class TexSource(SourceLanguage):
             sage: FDS = FileDocTestSource(filename,DocTestDefaults())
             sage: FDS._init()
 
-        We start docstrings with \begin{verbatim}::
+        We start docstrings with \begin{verbatim} or \begin{lstlisting}::
 
             sage: FDS.starting_docstring(r"\begin{verbatim}")
+            True
+            sage: FDS.starting_docstring(r"\begin{lstlisting}")
             True
             sage: FDS.skipping
             False
@@ -1177,17 +1210,17 @@ class TexSource(SourceLanguage):
             if self.ending_docstring(line, check_skip=False):
                 self.skipping = False
             return False
-        return bool(begin_verb.match(line))
+        return bool(begin_verb.match(line) or begin_lstli.match(line))
 
     def ending_docstring(self, line, check_skip=True):
         r"""
         Determines whether the input line ends a docstring.
 
-        Docstring blocks in tex files are defined by verbatim
-        environments, and can be linked together by adding %link
-        immediately after the \end{verbatim}.
+        Docstring blocks in tex files are defined by verbatim or
+        lstlisting environments, and can be linked together by adding
+        %link immediately after the \end{verbatim} or \end{lstlisting}.
 
-        Within a verbatim block, you can tell Sage not to
+        Within a verbatim (or lstlisting) block, you can tell Sage not to
         process the rest of the block by including a %skip line.
 
         INPUT:
@@ -1209,6 +1242,8 @@ class TexSource(SourceLanguage):
             sage: FDS = FileDocTestSource(filename,DocTestDefaults())
             sage: FDS._init()
             sage: FDS.ending_docstring(r"\end{verbatim}")
+            True
+            sage: FDS.ending_docstring(r"\end{lstlisting}")
             True
             sage: FDS.linking
             False
@@ -1232,10 +1267,18 @@ class TexSource(SourceLanguage):
             else:
                 self.linking = False
             return True
+        m = end_lstli.match(line)
+        if m:
+            if m.groups()[0]:
+                self.linking = True
+            else:
+                self.linking = False
+            return True
         if check_skip and skip.match(line):
             self.skipping = True
             return True
         return False
+
 
 class RestSource(SourceLanguage):
     """

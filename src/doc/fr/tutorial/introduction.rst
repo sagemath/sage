@@ -13,7 +13,7 @@ Python n'est nécessaire pour lire ce tutoriel. Par la suite, vous
 souhaiterez sans doute apprendre Python, et il existe pour cela de
 nombreuses ressources libres d'excellente qualité, dont [PyT]_ et
 [Dive]_. Mais si ce que vous voulez est découvrir rapidement Sage, ce
-tutoriel est le bon endroit où commencer. Voici quelques exemples :
+tutoriel est le bon endroit où commencer. Voici quelques exemples :
 
 ::
 
@@ -94,7 +94,7 @@ Nous nous limiterons ici à quelques remarques.
    guide d'installation (`Sage installation guide
    <http://www.sagemath.org/doc/installation/>`_, `ce lien
    <../../en/installation/index.html>`_ devrait pointer vers une copie
-   locale). L'installation est facile : il suffit de copier un fichier
+   locale). L'installation est facile : il suffit de copier un fichier
    dans un répertoire que TeX examine, ou de régler une variable
    d'environnement.
 
@@ -108,23 +108,23 @@ Les différentes manières d'utiliser Sage
 
 Il y a plusieurs façons d'utiliser Sage.
 
--  **Interface graphique (« notebook ») :** voir la section sur le
+-  **Interface graphique (« notebook ») :** voir la section sur le
    *Notebook* du manuel de référence, et :ref:`section-notebook`
-   ci-dessous ;
+   ci-dessous ;
 
--  **Ligne de commande :** voir :ref:`chapter-interactive_shell` ;
+-  **Ligne de commande :** voir :ref:`chapter-interactive_shell` ;
 
--  **Programmes :** en écrivant des programmes interprétés ou
-   compilés en Sage (voir :ref:`section-loadattach` et :ref:`section-compile`) ;
+-  **Programmes :** en écrivant des programmes interprétés ou
+   compilés en Sage (voir :ref:`section-loadattach` et :ref:`section-compile`) ;
 
--  **Scripts :** en écrivant des programmes Python indépendants qui font
+-  **Scripts :** en écrivant des programmes Python indépendants qui font
    appel à la bibliothèque Sage (voir :ref:`section-standalone`).
 
 
 Objectifs à long terme de Sage
 ===============================
 
--  **Étre utile :** le public visé par Sage comprend les étudiants  (du lycée
+-  **Étre utile :** le public visé par Sage comprend les étudiants  (du lycée
    au doctorat), les enseignants et les chercheurs en mathématiques.
    Le but est de fournir un logiciel qui permette d'explorer toutes
    sortes de constructions mathématiques et de faire des expériences
@@ -132,11 +132,11 @@ Objectifs à long terme de Sage
    nombres, en analyse, en calcul numérique, etc. Sage facilite
    l'expérimentation interactive avec des objets mathématiques.
 
--  **Être efficace :** c'est-à-dire rapide. Sage fait appel à des
+-  **Être efficace :** c'est-à-dire rapide. Sage fait appel à des
    logiciels matures et soigneusement optimisés comme GMP, PARI, GAP et
    NTL, ce qui le rend très rapide pour certaines opérations.
 
--  **Être libre/open-source :** le code source doit être disponible
+-  **Être libre/open-source :** le code source doit être disponible
    librement et lisible, de sorte que les utilisateurs puissent
    comprendre ce que fait le système et l'étendre facilement. Tout
    comme les mathématiciens acquièrent une compréhension plus profonde
@@ -149,25 +149,25 @@ Objectifs à long terme de Sage
    pouvez même archiver et redistribuer vous-même la version de Sage que
    vous utilisez.
 
--  **Être facile à compiler :** le code source de Sage devrait être
+-  **Être facile à compiler :** le code source de Sage devrait être
    facile à compiler pour les utilisateurs de Linux, d'OS X et de
    Windows. Cela rend le système plus flexible pour les utilisateurs qui
    souhaiteraient le modifier.
 
--  **Favoriser la coopération :** fournir des interfaces robustes à
+-  **Favoriser la coopération :** fournir des interfaces robustes à
    la plupart des autres systèmes de calcul formel, notamment PARI, GAP,
    Singular, Maxima, KASH, Magma, Maple et Mathematica. Sage cherche à
    unifier et étendre les logiciels existants.
 
--  **Être bien documenté :** tutoriel, guide du programmeur, manuel de
+-  **Être bien documenté :** tutoriel, guide du programmeur, manuel de
    référence, guides pratiques, avec de nombreux exemples et une
    discussion des concepts mathématiques sous-jacents.
 
--  **Être extensible  :** permettre de définir de nouveaux types de
+-  **Être extensible  :** permettre de définir de nouveaux types de
    données ou des types dérivés de types existants, et d'utiliser du
    code écrit dans différents langages.
 
--  **Être convivial :** il doit être facile de comprendre quelles
+-  **Être convivial :** il doit être facile de comprendre quelles
    fonctionnalités sont disponibles pour travailler avec un objet donné,
    et de consulter la documentation et le code source. Également,
    arriver à un bon niveau d'assistance utilisateur.

@@ -1,4 +1,6 @@
 r"""
+Catalog of permutation groups
+
 Type ``groups.permutation.<tab>`` to access examples
 of groups implemented as permutation groups.
 """

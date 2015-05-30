@@ -96,12 +96,15 @@ family of reflections::
 If instead you want a dictionary whose keys are the roots and whose
 values are the reflections, you may use the inverse family::
 
+    sage: from pprint import pprint
     sage: W = WeylGroup("B3",prefix="s")
     sage: [s1,s2,s3] = W.simple_reflections()
-    sage: altref = W.reflections().inverse_family(); altref
-    Finite family {(1, 0, 0): s1*s2*s3*s2*s1, (1, 0, 1): s3*s1*s2*s3*s1, (0, 1, 0): s2*s3*s2,
-    (0, 1, -1): s2, (1, 0, -1): s1*s2*s1, (0, 1, 1): s3*s2*s3, (1, 1, 0): s2*s3*s1*s2*s3*s1*s2,
-    (0, 0, 1): s3, (1, -1, 0): s1}
+    sage: altref = W.reflections().inverse_family()
+    sage: pprint(altref)
+    Finite family {(1, 0, 0): s1*s2*s3*s2*s1, (0, 1, 1): s3*s2*s3,
+                   (0, 1, -1): s2, (0, 0, 1): s3, (1, -1, 0): s1,
+                   (1, 1, 0): s2*s3*s1*s2*s3*s1*s2, (1, 0, -1): s1*s2*s1,
+                   (1, 0, 1): s3*s1*s2*s3*s1, (0, 1, 0): s2*s3*s2}
     sage: [a1,a2,a3] = W.domain().simple_roots()
     sage: a1+a2+a3
     (1, 0, 0)
@@ -200,10 +203,10 @@ that represents `u`, then `u \le v`.
 The Bruhat order is implemented in Sage as a method of Coxeter groups,
 and so it is available for Weyl groups, classical or affine.
 
-If `u`, `v \in W` then ``u.bruhat_le(v)`` returns true of
+If `u`, `v \in W` then ``u.bruhat_le(v)`` returns ``True`` if
 `u \le v` in the Bruhat order.
 
-If `u \le v` then The *Bruhat interval* `[u,v]` is defined to be the
+If `u \le v` then the *Bruhat interval* `[u,v]` is defined to be the
 set of all `t` such that `u \le t \le v`. One might try to implement
 this as follows::
 
@@ -212,7 +215,7 @@ this as follows::
     sage: def bi(u,v) : return [t for t in W if u.bruhat_le(t) and t.bruhat_le(v)]
     ...
     sage: bi(s1,s1*s2*s1)
-    [s1*s2*s1, s1*s2, s2*s1, s1]
+    [s1*s2*s1, s1*s2, s1, s2*s1]
 
 This would not be a good definition since it would fail if `W` is
 affine and be inefficient of `W` is large. Sage has a Bruhat interval
@@ -239,10 +242,10 @@ References:
 
 - [BumpNakasuji2010]_
 
-The *Bruhat Graph* is a structure on the Bruhat interval. Suppose that
+The *Bruhat graph* is a structure on the Bruhat interval. Suppose that
 `u \le v`. The vertices of the graph are `x` with `u \le x \le v`.
-There is a vertex connecting `x,y \in [x,y]` if `x = y.r` where `r` is
-a reflection. If this is true then either `x < y` or `y < x`.
+There is a vertex connecting `x,y \in [x,y]` if `x = y \cdot r` where
+`r` is a reflection. If this is true then either `x < y` or `y < x`.
 
 If `W` is a classical Weyl group the Bruhat graph is implemented in Sage::
 
@@ -256,12 +259,12 @@ The Bruhat graph has interesting regularity properties that were
 investigated by Carrell and Peterson. It is a regular graph if both
 the Kazhdan Lusztig polynomials `P_{u,v}` and `P_{w_0v,w_0u}` are 1,
 where `w_0` is the long Weyl group element. It is closely related to
-the *Deodhar conjecture* which was proved by Deodhar, Carrell and
+the *Deodhar conjecture*, which was proved by Deodhar, Carrell and
 Peterson, Dyer and Polo.
 
 Deodhar proved that if `u < v` then the Bruhat interval `[u,v]`
 contains as many elements of odd length as it does of even length. We
-observe that often this can be strengthened: if there exists a
+observe that often this can be strengthened: If there exists a
 reflection `r` such that left (or right) multiplication by `r` takes
 the Bruhat interval `[u,v]` to itself, then this gives an explicit
 bijection between the elements of odd and even length in `[u,v]`.
@@ -292,5 +295,5 @@ all pairs `(u,v)` with `u < v` except the following two:
 precisely the pairs such that `u\prec v` in the notation of Kazhdan
 and Lusztig, and `l(v)-l(u) > 1`. One should not rashly suppose that
 this is a general characterization of the pairs `(u,v)` such that no
-reflection stabilizes the Bruhat interval, for this is not true, but
+reflection stabilizes the Bruhat interval, for this is not true. However
 it does suggest that the question is worthy of further investigation.

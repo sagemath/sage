@@ -382,10 +382,10 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
             [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
         """
         if not isinstance(x, GenericCombinatorialSpecies):
-            raise TypeError, "x must be a combinatorial species"
+            raise TypeError("x must be a combinatorial species")
 
         if self.__class__ is not CombinatorialSpecies:
-            raise TypeError, "only undefined combinatorial species can be set"
+            raise TypeError("only undefined combinatorial species can be set")
 
         self._reference = x
 

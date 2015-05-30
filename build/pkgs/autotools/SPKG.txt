@@ -1,0 +1,69 @@
+= autotools =
+
+== Description ==
+
+This package contains a recent version of Texinfo, GNU m4, and help2man.
+It contains the git repository of autoconf, automake and libtool.
+
+For the latter 3 packages (commonly referred to as "autotools"),
+many different versions are installed, by checking out the versions
+from the git repo and building/installing them separately. Since the
+complete git repository is shipped in the spkg, this does not require
+internet access.
+
+For Texinfo, m4 and help2man, just one version is installed. These are
+prerequisites for autotools. Moreover, Texinfo is often needed for
+bootstrapping packages. Even though m4 is already a prerequisite of
+Sage, autoconf requires an up-to-date version of GNU m4.
+
+The package makes wrapper scripts in $SAGE_LOCAL/bin for the various
+autotools, which call the "correct" version. This means that, if a file
+"configure" already exists in the current directory, the same autoconf
+version is run which created the original file. Otherwise, the latest
+version is run. The goal of all this is to make it easier to patch
+configure.ac or Makefile.am files inside a spkg. By using the same
+version of autotools as originally used, the patch files should be
+relatively small. The environment variables AUTOCONF_VERSION,
+AUTOMAKE_VERSION and LIBTOOL_VERSION can be used to override the
+chosen version.
+
+== License ==
+
+GNU General Public License version 3 or later.
+
+== SPKG Maintainers ==
+
+* Jeroen Demeyer
+
+== Upstream Contact ==
+
+* http://www.gnu.org/software/texinfo/
+* http://www.gnu.org/software/m4/
+* http://www.gnu.org/software/help2man/
+* http://www.gnu.org/software/autoconf/
+* http://www.gnu.org/software/automake/
+* http://www.gnu.org/software/libtool/
+
+== Dependencies ==
+
+To install the package:
+* Perl
+* Git
+
+To update the package:
+* Sage with autotools package installed
+* Internet access
+
+== Special Update/Build Instructions ==
+
+The file spkg-src can be used to automatically create the upstream
+tarball from the git repositories. This obviously requires internet
+access.
+
+The file version-list defines the list of versions installed by this
+spkg. If you edit this, you must update Makefile.build using the
+spkg-write-makefile script. After optionally updating the git repos
+using spkg-src, you need to run
+  ./spkg-write-makefile >Makefile.build
+This must be run in a Sage shell, with the the autotools spkg
+installed.

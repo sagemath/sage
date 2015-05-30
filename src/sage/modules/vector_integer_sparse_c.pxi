@@ -125,7 +125,7 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
     ins[0] = j+1
     return -1
 
-cdef int mpz_vector_get_entry(mpz_t* ans, mpz_vector* v, Py_ssize_t n) except -1:
+cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     """
     Returns the n-th entry of the sparse vector v.  This
     would be v[n] in Python syntax.
@@ -138,9 +138,9 @@ cdef int mpz_vector_get_entry(mpz_t* ans, mpz_vector* v, Py_ssize_t n) except -1
     cdef Py_ssize_t m
     m = binary_search0(v.positions, v.num_nonzero, n)
     if m == -1:
-        mpz_set_si(ans[0], 0)
+        mpz_set_si(ans, 0)
         return 0
-    mpz_set(ans[0], v.entries[m])
+    mpz_set(ans, v.entries[m])
     return 0
 
 cdef object mpz_vector_to_list(mpz_vector* v):

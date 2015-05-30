@@ -15,31 +15,37 @@ if [ "x$SAGE64" = xyes ]; then
     CFLAGS="$CFLAG64 $CFLAGS"
 fi
 
-export CFLAGS="-fPIC -O2 -g $CFLAGS"
+export CFLAGS="-O2 -g $CFLAGS"
 
-cd src
+cd src/src
 
-########################################################################
-# Build bzip2
-########################################################################
+# Patch bzip2
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
 
-# Since bzip2 doesn't use configure, we need to pass flags as arguments
-# to make.
-$MAKE CC="$CC" CFLAGS="$CFLAGS"
+# Autotoolify bzip2
+cp -r -f ../autotools/* ./
+
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring bzip2"
+    exit 1
+fi
+
+$MAKE
 if [ $? -ne 0 ]; then
     echo >&2 "Error building bzip2"
     exit 1
 fi
 
-$MAKE install PREFIX="$SAGE_LOCAL" CC="$CC" CFLAGS="$CFLAGS"
+$MAKE install
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing bzip2"
     exit 1
 fi
-
-# Fix a bunch of hard-coding that bzip2 does during installation.
-cd "$SAGE_LOCAL/bin"
-rm bzcmp; ln -s bzdiff bzcmp
-rm bzegrep; ln -s bzgrep bzegrep
-rm bzfgrep; ln -s bzgrep bzfgrep
-rm bzless; ln -s bzmore bzless

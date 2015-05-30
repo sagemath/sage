@@ -152,6 +152,28 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     AmbientSpace = AmbientSpace
 
+    def coxeter_number(self):
+        """
+        Return the Coxeter number associated with ``self``.
+
+        EXAMPLES::
+
+            sage: CartanType(['G',2]).coxeter_number()
+            6
+        """
+        return 6
+
+    def dual_coxeter_number(self):
+        """
+        Return the dual Coxeter number associated with ``self``.
+
+        EXAMPLES::
+
+            sage: CartanType(['G',2]).dual_coxeter_number()
+            4
+        """
+        return 4
+
     def dynkin_diagram(self):
         """
         Returns a Dynkin diagram for type G.
@@ -173,7 +195,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         g.set_edge_label(2,1,3)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -184,9 +206,12 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             \draw (0, 0.15 cm) -- +(2 cm,0);
             \draw (0, -0.15 cm) -- +(2 cm,0);
             \draw[shift={(0.8, 0)}, rotate=180] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);
-            \draw[fill=white] (0, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
+            <BLANKLINE>
         """
+        if node is None:
+            node = self._latex_draw_node
         ret = "\\draw (0,0) -- (%s cm,0);\n"%node_dist
         ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
         ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
@@ -194,22 +219,25 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
         else:
             ret += self._latex_draw_arrow_tip(0.5*node_dist-0.2, 0, 180)
-        ret += "\\draw[fill=white] (0, 0) circle (.25cm) node[below=4pt]{$%s$};\n"%label(1)
-        ret += "\\draw[fill=white] (%s cm, 0) circle (.25cm) node[below=4pt]{$%s$};"%(node_dist, label(2))
+        ret += node(0, 0, label(1))
+        ret += node(node_dist, 0, label(2))
         return ret
 
-    def ascii_art(self, label = lambda x: x):
+    def ascii_art(self, label=lambda i: i, node=None):
         """
-        Returns an ascii art representation of the Dynkin diagram
+        Return an ascii art representation of the Dynkin diagram.
 
         EXAMPLES::
 
-            sage: print CartanType(['G',2]).ascii_art(label = lambda x: x+2)
+            sage: print CartanType(['G',2]).ascii_art(label=lambda x: x+2)
               3
             O=<=O
             3   4
         """
-        return "  3\nO=<=O\n%s   %s"%tuple(label(i) for i in (1,2))
+        if node is None:
+            node = self._ascii_art_node
+        ret = "  3\n{}=<={}\n".format(node(label(1)), node(label(2)))
+        return ret + "{!s:4}{!s:4}".format(label(1), label(2))
 
     def dual(self):
         r"""

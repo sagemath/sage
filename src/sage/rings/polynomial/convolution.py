@@ -50,7 +50,7 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.misc.functional import parent
+from sage.structure.all import parent
 from math import log, ceil
 
 
@@ -80,7 +80,7 @@ def convolution(L1, L2):
        True
    """
    if (not len(L1)) or (not len(L2)):
-      raise ValueError, "cannot compute convolution of empty lists"
+      raise ValueError("cannot compute convolution of empty lists")
 
    if len(L1) <= 100 and len(L2) <= 100:   # very arbitrary cutoff
       return _convolution_naive(L1, L2)

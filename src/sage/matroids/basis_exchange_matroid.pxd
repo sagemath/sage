@@ -1,6 +1,4 @@
-from sage.misc.bitset cimport *
-
-DEF BINT_EXCEPT = -2**31 - 1  # def. repeated in .pyx file
+from sage.data_structures.bitset cimport *
 
 from matroid cimport Matroid
 from set_system cimport SetSystem
@@ -8,7 +6,7 @@ from set_system cimport SetSystem
 cdef class BasisExchangeMatroid(Matroid):
     cdef long _groundset_size, _matroid_rank, _bitset_size
     cdef bitset_t _current_basis, _inside, _outside, _input, _input2, _output, _temp
-    cdef list _E
+    cdef tuple _E
     cdef dict _idx
     cdef frozenset _groundset
 
@@ -18,24 +16,24 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cdef __relabel(self, l)
 
-    cdef  __pack(self, bitset_t, X)
-    cdef  __unpack(self, bitset_t)
-    cdef  bint __is_exchange_pair(self, long x, long y) except BINT_EXCEPT
-    cdef  bint __exchange(self, long x, long y) except BINT_EXCEPT
-    cdef  __move(self, bitset_t X, bitset_t Y)
-    cdef  __fundamental_cocircuit(self, bitset_t, long x)
-    cdef  __fundamental_circuit(self, bitset_t, long y)
+    cdef __pack(self, bitset_t, X)
+    cdef __unpack(self, bitset_t)
+    cdef bint __is_exchange_pair(self, long x, long y) except -1
+    cdef int __exchange(self, long x, long y) except -1
+    cdef int __move(self, bitset_t X, bitset_t Y) except -1
+    cdef __fundamental_cocircuit(self, bitset_t, long x)
+    cdef __fundamental_circuit(self, bitset_t, long y)
 
-    cdef  __max_independent(self, bitset_t, bitset_t)
-    cdef  __circuit(self, bitset_t, bitset_t)
-    cdef  __closure(self, bitset_t, bitset_t)
-    cdef  __max_coindependent(self, bitset_t, bitset_t)
-    cdef  __cocircuit(self, bitset_t, bitset_t)
-    cdef  __coclosure(self, bitset_t, bitset_t)
+    cdef __max_independent(self, bitset_t, bitset_t)
+    cdef __circuit(self, bitset_t, bitset_t)
+    cdef __closure(self, bitset_t, bitset_t)
+    cdef __max_coindependent(self, bitset_t, bitset_t)
+    cdef __cocircuit(self, bitset_t, bitset_t)
+    cdef __coclosure(self, bitset_t, bitset_t)
 
-    cdef  __augment(self, bitset_t, bitset_t, bitset_t)
-    cdef  bint __is_independent(self, bitset_t F)
-    cdef  __move_current_basis(self, bitset_t, bitset_t)
+    cdef __augment(self, bitset_t, bitset_t, bitset_t)
+    cdef bint __is_independent(self, bitset_t F) except -1
+    cdef __move_current_basis(self, bitset_t, bitset_t)
 
     cdef bint _set_current_basis(self, F)
 
@@ -92,6 +90,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cpdef _equitable_partition(self, P=*)
     cpdef _is_isomorphic(self, other)
+    cpdef _isomorphism(self, other)
     cpdef _is_isomorphism(self, other, morphism)
     cdef bint __is_isomorphism(self, BasisExchangeMatroid other, morphism)
 

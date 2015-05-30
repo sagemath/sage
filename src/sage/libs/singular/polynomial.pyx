@@ -26,6 +26,8 @@ from sage.libs.singular.decl cimport p_GetMaxExp, pp_Mult_qq, pPower, p_String, 
 from sage.libs.singular.decl cimport n_Delete, idInit, fast_map, id_Delete
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omFree
 from sage.libs.singular.decl cimport p_GetComp, p_SetComp
+from sage.libs.singular.decl cimport pSubst
+from sage.libs.singular.decl cimport p_Normalize
 
 
 from sage.libs.singular.singular cimport sa2si, si2sa, overflow_check
@@ -143,6 +145,49 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
 
         sage: (3*x*z)(x,x,x)
         3*x^2
+
+    TESTS:
+
+    Test that there is no memory leak in evaluating polynomials. Note
+    that (lib)Singular has pre-allocated buckets, so we have to run a
+    lot of iterations to fill those up first::
+
+        sage: import resource
+        sage: import gc
+        sage: F.<a> = GF(7^2)
+        sage: R.<x,y> = F[]
+        sage: p = x+2*y
+        sage: def leak(N):
+        ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        ....:     gc.collect()
+        ....:     for i in range(N):
+        ....:         _ = p(a, a)
+        ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+    Loop (at most 30 times) until we have 6 consecutive zeros when
+    calling ``leak(10000)``. Depending on the operating system, it is
+    possible to have several non-zero leak values in the beginning, but
+    after a while we should get only zeros. The fact that we require 6
+    zeros also means that Singular's pre-allocated buckets should not
+    be sufficient if there really would be a memory leak. ::
+
+        sage: zeros = 0
+        sage: for i in range(30):  # long time
+        ....:     n = leak(10000)
+        ....:     print("Leaked {} bytes".format(n))
+        ....:     if n == 0:
+        ....:         zeros += 1
+        ....:         if zeros >= 6:
+        ....:             break
+        ....:     else:
+        ....:         zeros = 0
+        Leaked...
+        Leaked 0 bytes
+        Leaked 0 bytes
+        Leaked 0 bytes
+        Leaked 0 bytes
+        Leaked 0 bytes
     """
     cdef long l = len(args)
     cdef ideal *to_id = idInit(l,1)
@@ -155,6 +200,9 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
     rChangeCurrRing(r)
     cdef ideal *res_id = fast_map(from_id, r, to_id, r)
     ret[0] = res_id.m[0]
+
+    # Unsure why we have to normalize here. See #16958
+    p_Normalize(ret[0], r)
 
     from_id.m[0] = NULL
     res_id.m[0] = NULL
@@ -282,13 +330,15 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
     """
     if q == NULL:
         raise ZeroDivisionError
+    sig_on()
     cdef number *n = p_GetCoeff(q, r)
     n = r.cf.nInvers(n)
     ret[0] = pp_Mult_nn(p, n, r)
     n_Delete(&n, r)
+    sig_off()
     return 0
 
-cdef int singular_polynomial_pow(poly **ret, poly *p, long exp, ring *r) except -1:
+cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r) except -1:
     """
     ``ret[0] = p**exp`` where ``p`` in ``r`` and ``exp`` > 0.
 
@@ -318,7 +368,6 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, long exp, ring *r) except 
     """
     cdef unsigned long v = p_GetMaxExp(p, r)
     v = v * exp
-
     overflow_check(v, r)
 
     if(r != currRing): rChangeCurrRing(r)
@@ -405,7 +454,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         \left(z + 1\right) v w - z w^{2} + z v + \left(-z - 1\right) w + z + 1
     """
     poly = ""
-    cdef long e,j
+    cdef unsigned long e,j
     cdef int n = r.N
     cdef int atomic_repr = base._repr_option('element_is_atomic')
     while p:
@@ -517,11 +566,41 @@ cdef int singular_vector_maximal_component(poly *v, ring *r) except -1:
     returns the maximal module component of the vector ``v``.
     INPUT:
 
-       - ``v`` - a polynomial/vector
-       - ``r`` - a ring
+    - ``v`` - a polynomial/vector
+    - ``r`` - a ring
     """
     cdef int res=0
     while v!=NULL:
         res=max(p_GetComp(v, r), res)
         v = pNext(v)
     return res
+
+cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r) except -1:
+    """
+    Substitute variable ``var_index`` with ``value`` in ``p``.
+
+    INPUT:
+
+    - ``p`` - a polynomial
+    - ``var_index`` - an integer < ngens (zero based indexing)
+    - ``value`` - a polynomial
+    - ``r`` - a ring
+    """
+
+    if p_IsConstant(value, r):
+        p[0] = pSubst(p[0], var_index+1, value)
+        return 0
+
+    cdef unsigned long exp = p_GetExp(p[0], var_index+1, r) * p_GetMaxExp(value, r)
+
+    overflow_check(exp, r)
+    if(r != currRing):
+        rChangeCurrRing(r)
+
+    cdef int count = singular_polynomial_length_bounded(p[0], 15)
+    if unlikely(count >= 15 or exp > 15): sig_on()
+    p[0] = pSubst(p[0], var_index+1, value)
+    if unlikely(count >= 15 or exp > 15): sig_off()
+    return 0
+
+

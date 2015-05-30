@@ -37,7 +37,6 @@ interface.
  * David Kirkby
  * Mike Hansen
  * Andrzej Giniewicz
- * Michael Abshoff
 
 
 == Upstream Contact ==
@@ -69,75 +68,3 @@ This spkg depends on:
  * TODO: [Optionally] also install some of the documentation.
  * TODO: I doubt the CFLAGS set for AIX and HP-UX won't get overridden
          by the created Makefile, but that's a minor issue. -leif
-
-
-== Changelog ==
-
-=== tachyon-0.98.9.p5 (William Stein and Leif Leonhardy, August 19th 2011) ===
- * #11706: Make package build on 64-bit PPC Linux, too (by using the `linux-ppc`
-   `make` target, which works for ppc64 as well).
- * Check exit codes of `cp`, especially in the last case where the built
-   Tachyon executable gets installed. Also use `cp -p` (and `-f`) there, to
-   avoid permission issues in multi-user environments.
- * Quote all instances of `$UNAME`.
- * Copy / install `tachyon.exe` (instead of `tachyon`) on Cygwin.
- * Make `spkg-install` executable.
- * Fix all file permissions (see Special Update/Build Instructions).
- * Fix mark-up of headings of changelog entries.
- * Minor cosmetic clean-up.
-
-=== tachyon-0.98.9.p4 (Karl-Dieter Crisman, June 22, 2011) ===
- * #11504: Made package build on Cygwin (again)
-
-=== tachyon-0.98.9.p3 (Julien Puydt, March 12, 2011) ===
- * #10820: Made package compile on ARM
-
-=== tachyon-0.98.9.p2 (Volker Braun, January 24, 2011) ===
- * #10681: Remove "CC=cc" for the maxosx (32-bit) make target
-
-=== tachyon-0.98.9.p1 (Willem Jan Palenstijn, January 12, 2011) ===
- * #10609: Fix filename extension detection
-
-=== tachyon-0.98.9 (Marshall Hampton, David Kirkby, Volker Braun, Leif Leonhardy, January 11, 2011) ===
- * #5281: upgrade to 0.98.9 form 0.98.beta.
- * Also cleaned up SPKG.txt and spkg-install.
- * Deleted scenes folder and msvc folders to save space.
- * #9997 Add targets for AIX and HP-UX for a generic compiler
-   such as gcc into patches/Make-arch. These 4 targets are:
-   aix-generic, aix-generic-thr, hpux-generic and hpux-generic-thr
- * Call the targets aix-generic-thr and hpux-generic-thr from
-   spkg-install on AIX and HP-UX repectively.
-
-=== tachyon-0.98beta.p12 (Mariah Lenox, 11 Jan 2011) ===
- * not officially released
- * #9378: changed Make-arch so that neither CC, AR, nor RANLIB are
-   overridden on GNU compiler targets.
-
-=== tachyon-0.98beta.p11 (David Kirkby, May 23rd 2010) ===
- * #9024: tachyon is buiding 32-bit on OpenSolaris x64 even when SAGE64 is set to "yes"
-
-=== tachyon-0.98beta.p10 (Mike Hansen, November 6th, 2009) ===
- * Fixed tachyon on Cygwin (#7335)
-
-=== tachyon-0.98beta.p9 (Mike Hansen, June 19th, 2009) ===
- * Applied Peter Jeremy's fix at #5875.
-
-=== tachyon-0.98beta.p8 (Michael Abshoff, February 15th, 2009) ===
- * changed Make-config to link against libpng12
-
-=== tachyon-0.98beta.p7 (Michael Abshoff, January 20th, 2009) ===
- * Add 64 bit OSX support
-
-=== tachyon-0.98beta.p6 (Andrzej Giniewicz, August 2nd, 2008) ===
- * Workaround segfault on new GCC versions (#3710)
-
-=== tachyon-0.98beta.p5 (Michael Abshoff, April 1st, 2008) ===
- * Debian amd64 fixes (Tim Abbott, #2761)
-
-=== tachyon-0.98beta.p4 (Tim Abbott, Jan. 15th, 2008) ===
- * Debianize spkg (Tim Abbott)
- * add .hgignore, update SPKG.txt (Michael Abshoff)
-
-=== tachyon-0.98beta.p3 ===
- * Changes lost to history
-

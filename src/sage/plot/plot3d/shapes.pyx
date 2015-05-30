@@ -2,11 +2,13 @@
 Basic objects such as Sphere, Box, Cone, etc.
 
 AUTHORS:
-    -- Robert Bradshaw 2007-02: initial version
-    -- Robert Bradshaw 2007-08: obj/tachon rendering, much updating
-    -- Robert Bradshaw 2007-08: cythonization
 
-EXAMPLES:
+- Robert Bradshaw 2007-02: initial version
+- Robert Bradshaw 2007-08: obj/tachon rendering, much updating
+- Robert Bradshaw 2007-08: cythonization
+
+EXAMPLES::
+
     sage: from sage.plot.plot3d.shapes import *
     sage: S = Sphere(.5, color='yellow')
     sage: S += Cone(.5, .5, color='red').translate(0,0,.3)
@@ -58,7 +60,7 @@ from base import Graphics3dGroup, Graphics3d
 # Helper function to check that Box input is right
 def validate_frame_size(size):
     """
-    Checks that the input is an iterable of length 3 with all
+    Check that the input is an iterable of length 3 with all
     elements nonnegative and coercible to floats.
 
     EXAMPLES::
@@ -95,27 +97,36 @@ def validate_frame_size(size):
 
 class Box(IndexFaceSet):
     """
-    EXAMPLES:
+    Return a box.
+
+    EXAMPLES::
+
         sage: from sage.plot.plot3d.shapes import Box
 
-    A square black box:
-        sage: show(Box([1,1,1]))
+    A square black box::
+    
+        sage: show(Box([1,1,1]), color='black')
 
-    A red rectangular box.
+    A red rectangular box::
+
         sage: show(Box([2,3,4], color="red"))
 
-    A stack of boxes:
+    A stack of boxes::
+    
         sage: show(sum([Box([2,3,1], color="red").translate((0,0,6*i)) for i in [0..3]]))
 
-    A sinusoidal stack of multicolored boxes:
+    A sinusoidal stack of multicolored boxes::
+    
         sage: B = sum([Box([2,4,1/4], color=(i/4,i/5,1)).translate((sin(i),0,5-i)) for i in [0..20]])
         sage: show(B, figsize=6)
     """
     def __init__(self, *size, **kwds):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.plot.plot3d.shapes import Box
             sage: Box(10, 1, 1) + Box(1, 10, 1) + Box(1, 1, 10)
+            Graphics3d Object
         """
         if isinstance(size[0], (tuple, list)):
             size = validate_frame_size(size[0])
@@ -129,7 +140,8 @@ class Box(IndexFaceSet):
 
     def bounding_box(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.plot.plot3d.shapes import Box
             sage: Box([1,2,3]).bounding_box()
             ((-1.0, -2.0, -3.0), (1.0, 2.0, 3.0))
@@ -138,36 +150,43 @@ class Box(IndexFaceSet):
 
     def x3d_geometry(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.plot.plot3d.shapes import Box
             sage: Box([1,2,1/4]).x3d_geometry()
             "<Box size='1.0 2.0 0.25'/>"
         """
         return "<Box size='%s %s %s'/>" % tuple(self.size)
 
+
 def ColorCube(size, colors, opacity=1, **kwds):
     """
     Return a cube with given size and sides with given colors.
 
     INPUT:
-        size -- 3-tuple of sizes (same as for box and frame)
-        colors -- a list of either 3 or 6 colors
-        opacity -- (default: 1) opacity of cube sides
-        **kwds -- passed to the face constructor
+
+    - ``size`` -- 3-tuple of sizes (same as for box and frame)
+    - ``colors`` -- a list of either 3 or 6 colors
+    - ``opacity`` -- (default: 1) opacity of cube sides
+    - ``**kwds`` -- passed to the face constructor
 
     OUTPUT:
-        -- a 3d graphics object
+
+    a 3d graphics object
 
     EXAMPLES:
-    A color cube with translucent sides:
+
+    A color cube with translucent sides::
+
         sage: from sage.plot.plot3d.shapes import ColorCube
         sage: c = ColorCube([1,2,3], ['red', 'blue', 'green', 'black', 'white', 'orange'], opacity=0.5)
         sage: c.show()
         sage: list(c.texture_set())[0].opacity
-        0.500000000000000
+        0.5
 
     If you omit the last 3 colors then the first three are repeated (with
-    repeated colors on opposing faces):
+    repeated colors on opposing faces)::
+
         sage: c = ColorCube([0.5,0.5,0.5], ['red', 'blue', 'green'])
     """
     if not isinstance(size, (tuple, list)):
@@ -185,19 +204,20 @@ def ColorCube(size, colors, opacity=1, **kwds):
              **kwds))
     return Graphics3dGroup(all)
 
+
 cdef class Cone(ParametricSurface):
     """
     A cone, with base in the xy-plane pointing up the z-axis.
 
     INPUT:
 
-        - ``radius`` - positive real number
+    - ``radius`` -- positive real number
 
-        - ``height`` - positive real number
+    - ``height`` -- positive real number
 
-        - ``closed`` - whether or not to include the base (default True)
+    - ``closed`` -- whether or not to include the base (default ``True``)
 
-        - ``**kwds`` -- passed to the ParametricSurface constructor
+    - ``**kwds`` -- passed to the ParametricSurface constructor
 
     EXAMPLES::
 
@@ -208,10 +228,12 @@ cdef class Cone(ParametricSurface):
     We may omit the base::
 
         sage: Cone(1, 1, closed=False)
+        Graphics3d Object
 
     A spiky plot of the sine function::
 
         sage: sum(Cone(.1, sin(n), color='yellow').translate(n, sin(n), 0) for n in [0..10, step=.1])
+        Graphics3d Object
 
     A Christmas tree::
 
@@ -221,7 +243,8 @@ cdef class Cone(ParametricSurface):
     """
     def __init__(self, radius, height, closed=True, **kwds):
         """
-        TESTS:
+        TESTS::
+
             sage: from sage.plot.plot3d.shapes import Cone
             sage: c = Cone(1/2, 1, opacity=.5)
         """
@@ -237,13 +260,13 @@ cdef class Cone(ParametricSurface):
             sage: from sage.plot.plot3d.shapes import Cone
             sage: Cone(1, 3).x3d_geometry()
             "<Cone bottomRadius='1.0' height='3.0'/>"
-
         """
-        return "<Cone bottomRadius='%s' height='%s'/>"%(self.radius, self.height)
+        return "<Cone bottomRadius='%s' height='%s'/>" % (self.radius,
+                                                          self.height)
 
     def get_grid(self, ds):
         """
-        Returns the grid on which to evaluate this parametric surface.
+        Return the grid on which to evaluate this parametric surface.
 
         EXAMPLES::
 
@@ -280,13 +303,13 @@ cdef class Cylinder(ParametricSurface):
 
     INPUT:
 
-        - ``radius`` - positive real number
+    - ``radius`` -- positive real number
 
-        - ``height`` - positive real number
+    - ``height`` -- positive real number
 
-        - ``closed`` - whether or not to include the ends (default True)
+    - ``closed`` -- whether or not to include the ends (default ``True``)
 
-        - ``**kwds`` -- passed to the ParametricSurface constructor
+    - ``**kwds`` -- passed to the ParametricSurface constructor
 
     EXAMPLES::
 
@@ -297,6 +320,7 @@ cdef class Cylinder(ParametricSurface):
     We may omit the base::
 
         sage: Cylinder(1, 1, closed=False)
+        Graphics3d Object
 
     Some gears::
 
@@ -308,9 +332,11 @@ cdef class Cylinder(ParametricSurface):
     """
     def __init__(self, radius, height, closed=True, **kwds):
         """
-        TESTS:
+        TESTS::
+
             sage: from sage.plot.plot3d.shapes import Cylinder
             sage: Cylinder(1, 1, color='red')
+            Graphics3d Object
         """
         ParametricSurface.__init__(self, **kwds)
         self.radius = radius
@@ -324,9 +350,9 @@ cdef class Cylinder(ParametricSurface):
             sage: from sage.plot.plot3d.shapes import Cylinder
             sage: Cylinder(1, 2).bounding_box()
             ((-1.0, -1.0, 0), (1.0, 1.0, 2.0))
-
         """
-        return (-self.radius, -self.radius, 0), (self.radius, self.radius, self.height)
+        return ((-self.radius, -self.radius, 0),
+                (self.radius, self.radius, self.height))
 
     def x3d_geometry(self):
         """
@@ -335,12 +361,12 @@ cdef class Cylinder(ParametricSurface):
             sage: from sage.plot.plot3d.shapes import Cylinder
             sage: Cylinder(1, 2).x3d_geometry()
             "<Cylinder radius='1.0' height='2.0'/>"
-
         """
-        return "<Cylinder radius='%s' height='%s'/>"%(self.radius, self.height)
+        return "<Cylinder radius='%s' height='%s'/>" % (self.radius,
+                                                        self.height)
 
     def tachyon_repr(self, render_params):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.plot.plot3d.shapes import Cylinder
@@ -378,17 +404,19 @@ cdef class Cylinder(ParametricSurface):
             return cyl
 
     def jmol_repr(self, render_params):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.plot.plot3d.shapes import Cylinder
 
         For thin cylinders, lines are used::
+
             sage: C = Cylinder(.1, 4)
             sage: C.jmol_repr(C.default_render_params())
             ['\ndraw line_1 width 0.1 {0 0 0} {0 0 4.0}\ncolor $line_1  [102,102,255]\n']
 
         For anything larger, we use a pmesh::
+
             sage: C = Cylinder(3, 1, closed=False)
             sage: C.jmol_repr(C.testing_render_params())
             ['pmesh obj_1 "obj_1.pmesh"\ncolor pmesh  [102,102,255]']
@@ -442,13 +470,12 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
         """
         if transform is None:
             return self.radius
-        else:
-            radv = transform.transform_vector((self.radius,0,0))
-            return sqrt(sum([x*x for x in radv]))
+        radv = transform.transform_vector((self.radius, 0, 0))
+        return sqrt(sum([x * x for x in radv]))
 
     def get_grid(self, ds):
         """
-        Returns the grid on which to evaluate this parametric surface.
+        Return the grid on which to evaluate this parametric surface.
 
         EXAMPLES::
 
@@ -488,21 +515,23 @@ def LineSegment(start, end, thickness=1, radius=None, **kwds):
     Create a line segment, which is drawn as a cylinder from start to
     end with radius radius.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.plot.plot3d.shapes import LineSegment, Sphere
         sage: P = (0,0,0.1)
         sage: Q = (0.5,0.6,0.7)
-        sage: S = Sphere(.2, color='red').translate(P) + \
-                  Sphere(.2, color='blue').translate(Q) + \
-                  LineSegment(P, Q, .05, color='black')
+        sage: S = Sphere(.2, color='red').translate(P)
+        sage: S += Sphere(.2, color='blue').translate(Q)
+        sage: S += LineSegment(P, Q, .05, color='black')
         sage: S.show()
-        sage: S = Sphere(.1, color='red').translate(P) + \
-                  Sphere(.1, color='blue').translate(Q) + \
-                  LineSegment(P, Q, .15, color='black')
+        sage: S = Sphere(.1, color='red').translate(P)
+        sage: S += Sphere(.1, color='blue').translate(Q)
+        sage: S += LineSegment(P, Q, .15, color='black')
         sage: S.show()
 
     AUTHOR:
-        -- Robert Bradshaw
+
+    - Robert Bradshaw
     """
     if radius is None:
         radius = thickness/50.0
@@ -528,35 +557,51 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
     Create a 3d arrow.
 
     INPUT:
-        start -- (x,y,z) point; the starting point of the arrow
-        end -- (x,y,z) point; the end point
-        width -- (default: 1); how wide the arrow is
-        radius -- (default: width/50.0) the radius of the arrow
-        head_radius -- (default: 3*radius); radius of arrow head
-        head_len -- (default: 3*head_radius); len of arrow head
+
+    - start -- (x,y,z) point; the starting point of the arrow
+    - end -- (x,y,z) point; the end point
+    - width -- (default: 1); how wide the arrow is
+    - radius -- (default: width/50.0) the radius of the arrow
+    - head_radius -- (default: 3*radius); radius of arrow head
+    - head_len -- (default: 3*head_radius); len of arrow head
 
     EXAMPLES:
-    The default arrow:
+
+    The default arrow::
+
         sage: arrow3d((0,0,0), (1,1,1), 1)
+        Graphics3d Object
 
-    A fat arrow:
+    A fat arrow::
+
         sage: arrow3d((0,0,0), (1,1,1), radius=0.1)
+        Graphics3d Object
 
-    A green arrow:
+    A green arrow::
+
         sage: arrow3d((0,0,0), (1,1,1), color='green')
+        Graphics3d Object
 
-    A fat arrow head:
+    A fat arrow head::
+
         sage: arrow3d((2,1,0), (1,1,1), color='green', head_radius=0.3, aspect_ratio=[1,1,1])
+        Graphics3d Object
 
-    Many arrow arranged in a circle (flying spears?):
+    Many arrows arranged in a circle (flying spears?)::
+
         sage: sum([arrow3d((cos(t),sin(t),0),(cos(t),sin(t),1)) for t in [0,0.3,..,2*pi]])
+        Graphics3d Object
 
     Change the width of the arrow. (Note: for an arrow that scales with zoom, please consider
-    the 'line3d' function with the option 'arrow_head=True'):
+    the ``line3d`` function with the option ``arrow_head=True``)::
+
         sage: arrow3d((0,0,0), (1,1,1), width=1)
+        Graphics3d Object
 
     TESTS:
-    If the arrow is too long, the shaft and part of the head is cut off.
+
+    If the arrow is too long, the shaft and part of the head is cut off. ::
+
         sage: a = arrow3d((0,0,0), (0,0,0.5), head_len=1)
         sage: len(a.all)
         1
@@ -570,24 +615,17 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
     direction, and if it should, just scaling the constructed arrow by
     -1 (i.e., every point is sent to its negative). The scaled arrow
     then points downwards. The doctest just tests that the scale of -1
-    is applied to the arrow.
+    is applied to the arrow. ::
 
         sage: a = arrow3d((0,0,0), (0,0,-1))
         sage: a.all[0].get_transformation().transform_point((0,0,1))
         (0.0, 0.0, -1.0)
-
-    The thickness option is now deprecated.  It has been replaced by the width option.
-
-        sage: arrow3d((0,0,0), (1,1,1), thickness=1)
-        doctest:...: DeprecationWarning: use the option 'width' instead of 'thickness'
-        See http://trac.sagemath.org/7154 for details.
-        <BLANKLINE>
     """
     if radius is None:
         radius = width/50.0
-    if head_radius == None:
+    if head_radius is None:
         head_radius = 3*radius
-    if head_len == None:
+    if head_len is None:
         head_len = 3*head_radius
     start = vector(RDF, start, sparse=False)
     end = vector(RDF, end, sparse=False)
@@ -610,7 +648,6 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
         return arrow.rotate(axis, theta).translate(start)
 
 
-
 cdef class Sphere(ParametricSurface):
     """
     This class represents a sphere centered at the origin.
@@ -619,6 +656,7 @@ cdef class Sphere(ParametricSurface):
 
         sage: from sage.plot.plot3d.shapes import Sphere
         sage: Sphere(3)
+        Graphics3d Object
 
     Plot with aspect_ratio=1 to see it unsquashed::
 
@@ -626,15 +664,17 @@ cdef class Sphere(ParametricSurface):
         sage: S.show(aspect_ratio=1)
 
     Scale to get an ellipsoid::
+
         sage: S = Sphere(1).scale(1,2,1/2)
         sage: S.show(aspect_ratio=1)
-
     """
     def __init__(self, radius, **kwds):
         """
-        TESTS:
+        TESTS::
+
             sage: from sage.plot.plot3d.shapes import Sphere
             sage: Sphere(3)
+            Graphics3d Object
         """
         ParametricSurface.__init__(self, **kwds)
         self.radius = radius
@@ -663,7 +703,7 @@ cdef class Sphere(ParametricSurface):
         return "<Sphere radius='%s'/>"%(self.radius)
 
     def tachyon_repr(self, render_params):
-        """
+        r"""
         Tachyon can natively handle spheres. Ellipsoids rendering is done
         as a parametric surface.
 
@@ -696,7 +736,7 @@ cdef class Sphere(ParametricSurface):
         return "Sphere center %s %s %s Rad %s %s" % (cen[0], cen[1], cen[2], rad, self.texture.id)
 
     def jmol_repr(self, render_params):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.plot.plot3d.shapes import Sphere
@@ -709,7 +749,7 @@ cdef class Sphere(ParametricSurface):
             sage: S.translate(10, 100, 1000).jmol_repr(S.default_render_params())
             [['isosurface sphere_1  center {10.0 100.0 1000.0} sphere 2.0\ncolor isosurface  [102,102,255]']]
 
-        It can't natively handle ellipsoids::
+        It cannot natively handle ellipsoids::
 
             sage: Sphere(1).scale(2, 3, 4).jmol_repr(S.testing_render_params())
             [['pmesh obj_2 "obj_2.pmesh"\ncolor pmesh  [102,102,255]']]
@@ -739,7 +779,7 @@ cdef class Sphere(ParametricSurface):
 
     def get_grid(self, double ds):
         """
-        Returns the the range of variables to be evaluated on to render as a
+        Return the range of variables to be evaluated on to render as a
         parametric surface.
 
         EXAMPLES::
@@ -768,14 +808,15 @@ cdef class Sphere(ParametricSurface):
 
 
 cdef class Torus(ParametricSurface):
-# e.g  show(sum([Torus(1,.03,20,20, color=[1, float(t/30), 0]).rotate((1,1,1),t) for t in range(30)], Sphere(.3)))
     """
     INPUT:
-        R -- (default: 1) outer radius
-        r -- (default: .3) inner radius
+
+    - R -- (default: 1) outer radius
+    - r -- (default: .3) inner radius
 
     OUTPUT:
-        a 3d torus
+
+    a 3d torus
 
     EXAMPLES::
 
@@ -795,7 +836,8 @@ cdef class Torus(ParametricSurface):
     """
     def __init__(self, R=1, r=.3, **kwds):
         """
-        TESTS:
+        TESTS::
+
             sage: from sage.plot.plot3d.shapes import Torus
             sage: T = Torus(1, .5)
         """
@@ -805,7 +847,7 @@ cdef class Torus(ParametricSurface):
 
     def get_grid(self, ds):
         """
-        Returns the the range of variables to be evaluated on to render as a
+        Return the the range of variables to be evaluated on to render as a
         parametric surface.
 
         EXAMPLES::
@@ -837,13 +879,15 @@ class Text(PrimitiveObject):
 
         sage: from sage.plot.plot3d.shapes import Text
         sage: Text("Just a lonely label.")
+        Graphics3d Object
         sage: pts = [(RealField(10)^3).random_element() for k in range(20)]
         sage: sum(Text(str(P)).translate(P) for P in pts)
-
+        Graphics3d Object
     """
     def __init__(self, string, **kwds):
         """
-        TEST:
+        TESTS::
+
             sage: from sage.plot.plot3d.shapes import Text
             sage: T = Text("Hi")
         """
@@ -862,7 +906,7 @@ class Text(PrimitiveObject):
 
     def obj_repr(self, render_params):
         """
-        The obj file format doesn't support text strings::
+        The obj file format does not support text strings::
 
             sage: from sage.plot.plot3d.shapes import Text
             sage: Text("Hi").obj_repr(None)
@@ -927,4 +971,3 @@ class Text(PrimitiveObject):
             ((0, 0, 0), (0, 0, 0))
         """
         return (0,0,0), (0,0,0)
-

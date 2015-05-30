@@ -1,3 +1,5 @@
+"IntegerFactorization objects"
+
 from sage.structure.factorization import Factorization
 
 from sage.rings.integer_ring import ZZ

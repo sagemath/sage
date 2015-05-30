@@ -1,9 +1,10 @@
 r"""
-This file contains helper functions for detecting the mutation type of a cluster algebra or quiver.
+This file contains helper functions for detecting the mutation type of
+a cluster algebra or quiver.
 
 For the compendium on the cluster algebra and quiver package see
 
-http://arxiv.org/abs/1102.4844
+:arxiv:`1102.4844`
 
 AUTHORS:
 
@@ -18,27 +19,23 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-import time
-from sage.groups.perm_gps.partn_ref.refinement_graphs import *
-from sage.graphs.generic_graph import graph_isom_equivalent_non_edge_labeled_graph
 from copy import copy
 from sage.misc.all import cached_function
 from sage.misc.flatten import flatten
-from sage.rings.all import ZZ, infinity
-from sage.graphs.all import Graph, DiGraph
-from sage.matrix.all import matrix
+from sage.graphs.all import DiGraph
 from sage.combinat.all import Combinations
-from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType, QuiverMutationType_Irreducible, QuiverMutationType_Reducible
+from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType
 
-def is_mutation_finite(M,nr_of_checks=None):
+
+def is_mutation_finite(M, nr_of_checks=None):
     r"""
-    Uses a non-deterministic method by random mutations in various directions. Can result in a wrong answer.
+    Use a non-deterministic method by random mutations in various directions. Can result in a wrong answer.
 
     .. ATTENTION: This method modifies the input matrix ``M``!
 
     INPUT:
 
-    - ``nr_of_checks`` -- (default: None) number of mutations applied. Standard is 500*(number of vertices of self).
+    - ``nr_of_checks`` -- (default: ``None``) number of mutations applied. Standard is 500*(number of vertices of self).
 
     ALGORITHM:
 
@@ -62,24 +59,25 @@ def is_mutation_finite(M,nr_of_checks=None):
     import random
     n, m = M.ncols(), M.nrows()
     if nr_of_checks is None:
-        nr_of_checks = 1000*n
+        nr_of_checks = 1000 * n
     k = 0
     path = []
     for i in xrange(nr_of_checks):
         # this test is done to avoid mutating back in the same direction
         k_test = k
         while k_test == k:
-            k = random.randint(0,n-1)
+            k = random.randint(0, n - 1)
         M.mutate(k)
         path.append(k)
-        for i,j in M.nonzero_positions():
-            if i<j and M[i,j]*M[j,i] < -4:
+        for i, j in M.nonzero_positions():
+            if i < j and M[i, j] * M[j, i] < -4:
                 return False, path
     return True, None
 
-def _triangles( dg ):
+
+def _triangles(dg):
     """
-    Returns a list of all oriented triangles in the digraph ``dg``.
+    Return a list of all oriented triangles in the digraph ``dg``.
 
     EXAMPLES::
 
@@ -105,73 +103,79 @@ def _triangles( dg ):
         v1, v2 = e
         for v in V:
             if not v in e:
-                if (v,v1) in E:
-                    if (v2,v) in E:
+                if (v, v1) in E:
+                    if (v2, v) in E:
                         flat_trian = sorted([v,v1,v2])
                         if flat_trian not in flat_trians:
                             flat_trians.append( flat_trian )
                             trians.append( ( [(v,v1),(v1,v2),(v2,v)], True ) )
-                    elif (v,v2) in E:
+                    elif (v, v2) in E:
                         flat_trian = sorted([v,v1,v2])
                         if flat_trian not in flat_trians:
                             flat_trians.append( flat_trian )
                             trians.append( ( [(v,v1),(v1,v2),(v,v2)], False ) )
-                if (v1,v) in E:
-                    if (v2,v) in E:
+                if (v1, v) in E:
+                    if (v2, v) in E:
                         flat_trian = sorted([v,v1,v2])
                         if flat_trian not in flat_trians:
                             flat_trians.append( flat_trian )
                             trians.append( ( [(v1,v),(v1,v2),(v2,v)], False ) )
-                    elif (v,v2) in E:
+                    elif (v, v2) in E:
                         flat_trian = sorted([v,v1,v2])
                         if flat_trian not in flat_trians:
                             flat_trians.append( flat_trian )
                             trians.append( ( [(v1,v),(v1,v2),(v,v2)], False ) )
     return trians
 
+
 def _all_induced_cycles_iter( dg ):
     """
-    Returns an iterator for all induced oriented cycles of length greater than or equal to 4 in the digraph ``dg``.
+    Return an iterator for all induced oriented cycles of length
+    greater than or equal to 4 in the digraph ``dg``.
 
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _all_induced_cycles_iter
         sage: Q = ClusterQuiver(['A',[6,0],1]); Q
         Quiver on 6 vertices of type ['D', 6]
-        sage: _all_induced_cycles_iter(Q.digraph()).next()
+        sage: next(_all_induced_cycles_iter(Q.digraph()))
         ([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0)], True)
         sage: Q.mutate(0)
-        sage: _all_induced_cycles_iter(Q.digraph()).next()
+        sage: next(_all_induced_cycles_iter(Q.digraph()))
         ([(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)], True)
         sage: Q2 = ClusterQuiver(['A',[2,3],1])
-        sage: _all_induced_cycles_iter(Q2.digraph()).next()
+        sage: next(_all_induced_cycles_iter(Q2.digraph()))
         ([(1, 0), (1, 2), (3, 2), (3, 4), (4, 0)], False)
     """
     dg_new = DiGraph(dg)
     E = dg_new.edges()
-    for v1,v2,label in E:
-        dg_new.add_edge( (v2,v1,label) )
+    for v1, v2, label in E:
+        dg_new.add_edge((v2, v1, label))
     induced_sets = []
     cycle_iter = dg_new.all_cycles_iterator(simple=True)
     for cycle in cycle_iter:
-        if len(cycle)>3:
+        if len(cycle) > 3:
             cycle_set = set(cycle)
             if not any(cycle_set.issuperset(induced_set) for induced_set in induced_sets):
-                induced_sets.append( cycle_set )
-                if len(cycle)>4:
-                    sg = dg.subgraph( cycle )
+                induced_sets.append(cycle_set)
+                if len(cycle) > 4:
+                    sg = dg.subgraph(cycle)
                     is_oriented = True
                     V = sg.vertices()
                     while is_oriented and V:
                         v = V.pop()
                         if not sg.in_degree(v) == 1:
                             is_oriented = False
-                    yield ( sg.edges(labels=False), is_oriented )
+                    yield (sg.edges(labels=False), is_oriented)
 
 # a debug function
+
+
 def _false_return(s=False):
     """
-    Returns 'unknown'.  (Written for potential debugging purposes.)
+    Return 'unknown'.
+
+    Written for potential debugging purposes.
 
     EXAMPLES::
 
@@ -184,11 +188,16 @@ def _false_return(s=False):
 #        print 'DEBUG: error %s'%s
     return 'unknown'
 
-def _reset_dg( dg, vertices, dict_in_out, del_vertices ):
-    """
-    Deletes the specified vertices (del_vertices) from the DiGraph dg, and the lists vertices and dict_in_out.
 
-    Note that vertices and dict_in_out are the vertices of dg and a dictionary of in- and out-degrees that depend on the digrapu ``dg`` but they are passed through as arguments so the function can change their values.
+def _reset_dg(dg, vertices, dict_in_out, del_vertices):
+    """
+    Delete the specified vertices (del_vertices) from the DiGraph dg,
+    and the lists vertices and dict_in_out.
+
+    Note that vertices and dict_in_out are the vertices of dg and a
+    dictionary of in- and out-degrees that depend on the digraph
+    ``dg`` but they are passed through as arguments so the function
+    can change their values.
 
     EXAMPLES::
 
@@ -218,13 +227,21 @@ def _reset_dg( dg, vertices, dict_in_out, del_vertices ):
     for v in vertices:
         dict_in_out[v] = (dg.in_degree(v), dg.out_degree(v), dg.degree(v))
 
-def _check_special_BC_cases( dg, n, check_letter_list, check_twist_list, hope_letter_list, conn_vert_list=False ):
+
+def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
+                            hope_letter_list, conn_vert_list=False):
     """
-    Tests if dg (on at most `n` vertices) is a quiver of type `A` or `D` (as inputed in hope_letter_list) with conn_vert_list (if given)
-    as connecting vertices.  Since this is supposed to be run on a ``dg`` coming from a larger quiver where vertices
-    have already been removed (outside of the connecting vertices), this program therefore recognizes the type
-    of the larger quiver as an `n`-vertex quiver of letter on ``check_letter_list`` and twist on ``check_twist_list``.
-    This method is utilized in _connected_mutation_type to test for types BC, BB, CC, BD, or CD.
+    Test if dg (on at most `n` vertices) is a quiver of type `A` or
+    `D` (as given in hope_letter_list) with conn_vert_list (if
+    given) as connecting vertices.
+
+    Since this is supposed to be run on a ``dg`` coming from a larger
+    quiver where vertices have already been removed (outside of the
+    connecting vertices), this program therefore recognizes the type
+    of the larger quiver as an `n`-vertex quiver of letter on
+    ``check_letter_list`` and twist on ``check_twist_list``.  This
+    method is utilized in _connected_mutation_type to test for types
+    BC, BB, CC, BD, or CD.
 
     EXAMPLES::
 
@@ -281,9 +298,11 @@ def _check_special_BC_cases( dg, n, check_letter_list, check_twist_list, hope_le
                 return QuiverMutationType([check_letter, n, check_twist])
     return 'unknown'
 
-def _connected_mutation_type( dg ):
+
+def _connected_mutation_type(dg):
     """
-    Assuming that ``dg`` is a connected digraph, checks the mutation type of ``dg`` as a valued quiver.
+    Assuming that ``dg`` is a connected digraph, checks the mutation
+    type of ``dg`` as a valued quiver.
 
     EXAMPLES::
 
@@ -305,7 +324,7 @@ def _connected_mutation_type( dg ):
     exc_labels = []
     exc_labels41 = []
     double_edges = []
-    letter = None
+    # letter = None
 
     # replacing higher labels by multiple edges.  Multiple edges and acyclic is a sign that quiver is infinite mutation type with the exception of A_tilde where there might be one multiple edge with multiplicity 2.  Multiple edges is at least a sign that the quiver is of 'undetermined finite mutation type'.
     dg.allow_multiple_edges( True )
@@ -347,8 +366,8 @@ def _connected_mutation_type( dg ):
             bool2 = exc_labels41[0][2] == (4,-1) and exc_labels[0][2] == exc_labels[1][2] == (1,-2)
             bool3 = exc_labels41[0][2] == (1,-4) and exc_labels[0][2] == exc_labels[1][2] == (2,-1)
             if bool2 or bool3:
-                v1,v2,label = exc_labels41[0]
-                label1,label2 = exc_labels
+                v1, v2, label = exc_labels41[0]
+                label1, label2 = exc_labels
                 # delete the two vertices associated to the edge with label (1,-4) or (4,-1) and test if the rest of the quiver is of type A.
                 # the third vertex of the triangle T should be a connecting_vertex.
                 if label1[1] == label2[0] and label2[1] == v1 and v2 == label1[0] and dict_in_out[v1][2] == dict_in_out[v2][2] == 2:
@@ -368,8 +387,8 @@ def _connected_mutation_type( dg ):
 
     # first test for affine type C: if there are 4 exceptional labels, test if both belong to triangles with leaves
     if len( exc_labels ) == 4:
-        exc_labels12 = [ label for label in exc_labels if label[2] == (1,-2) ]
-        exc_labels21 = [ label for label in exc_labels if label[2] == (2,-1) ]
+        exc_labels12 = [labl for labl in exc_labels if labl[2] == (1, -2)]
+        exc_labels21 = [labl for labl in exc_labels if labl[2] == (2, -1)]
         # check that we have two labels of one kind and one label of the other
         if len( exc_labels12 ) != 2 or len( exc_labels21 ) != 2:
             return _false_return()
@@ -441,8 +460,8 @@ def _connected_mutation_type( dg ):
 
     # first test for affine type C: if there are three exceptional labels, we must be in both cases below of the same construction
     elif len( exc_labels ) == 3:
-        exc_labels12 = [ label for label in exc_labels if label[2] == (1,-2) ]
-        exc_labels21 = [ label for label in exc_labels if label[2] == (2,-1) ]
+        exc_labels12 = [labl for labl in exc_labels if labl[2] == (1, -2)]
+        exc_labels21 = [labl for labl in exc_labels if labl[2] == (2, -1)]
         # check that we have two labels of one kind and one label of the other
         if exc_labels12 == [] or exc_labels21 == []:
             return _false_return()
@@ -638,7 +657,7 @@ def _connected_mutation_type( dg ):
                     dg.remove_multiple_edges()
                     dg = DiGraph( dg )
                     _reset_dg( dg, vertices, dict_in_out, [v] )
-                    if dict_in_out[v1][0] == dict_in_out[v1][1] == dict_in_out[v2][0] == dict_in_out[v2][1] == 1 and dg.neighbor_out_iterator(v1).next() == dg.neighbor_in_iterator(v2).next():
+                    if dict_in_out[v1][0] == dict_in_out[v1][1] == dict_in_out[v2][0] == dict_in_out[v2][1] == 1 and next(dg.neighbor_out_iterator(v1)) == next(dg.neighbor_in_iterator(v2)):
                         if label1 == (2,-1) and label2 == (1,-2):
                             return _check_special_BC_cases( dg, n, ['CD'],[1],['A'] )
                         elif label1 == (1,-2) and label2 == (2,-1):
@@ -751,16 +770,22 @@ def _connected_mutation_type( dg ):
                 return _false_return()
 
     # if no edges of type (1,-2) nor (2,-1), then tests for type A, affine A, or D.
-    return _connected_mutation_type_AAtildeD( dg )
+    return _connected_mutation_type_AAtildeD(dg)
 
-def _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False  ):
+
+def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
     """
-    Returns mutation type of ClusterQuiver(dg) for DiGraph dg if it is of type finite A, affine A, or finite D.
+    Return mutation type of ClusterQuiver(dg) for DiGraph dg if it is
+    of type finite A, affine A, or finite D.
+
     For all other types (including affine D), outputs 'unknown'
 
-    See http://arxiv.org/pdf/0906.0487.pdf (by Bastian, Prellberg, Rubey, and Stump) and http://arxiv.org/pdf/0810.4789v1.pdf (by Vatne) for theoretical details.
+    See :arxiv:`0906.0487` (by Bastian, Prellberg, Rubey, and Stump)
+    and :arxiv:`0810.4789v1` (by Vatne) for theoretical details.
 
-    TODO: Improve this algorithm to also recognize affine D.
+    .. TODO::
+
+        Improve this algorithm to also recognize affine D.
 
     INPUT:
 
@@ -935,11 +960,11 @@ def _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False  ):
     # test that there is no triple-edge or higher multiplicity and that there is at most one double-edge.
     if dg.has_multiple_edges():
         multiple_edges = dg.multiple_edges(labels=False)
-        if len( multiple_edges ) > 2:
+        if len(multiple_edges) > 2:
             return _false_return(14)
-        elif len( multiple_edges ) ==  2:
+        elif len(multiple_edges) == 2:
             # we think of the double-edge as a long_cycle, an unoriented 2-cycle.
-            long_cycle = [ multiple_edges, ['A',n-1,1] ]
+            long_cycle = [multiple_edges, ['A', n - 1, 1]]
 
     # creating a dictionary of in-, out- and total degrees
     dict_in_out = {}
@@ -949,7 +974,7 @@ def _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False  ):
     # computing the absolute degree of dg
     abs_deg = max( [ x[2] for x in list( dict_in_out.values() ) ] )
 
-    edges = dg.edges( labels=False )
+    # edges = dg.edges( labels=False )
 
     # test that no vertex has valency more than 4
     if abs_deg > 4:
@@ -1127,7 +1152,7 @@ def _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False  ):
                     connecting_vertices.append( v )
 
     # post-parsing 1: if we are in the affine type A case, the two parameters for the non-oriented long cycle are computed
-    if type( long_cycle[1] ) == list and len( long_cycle[1] ) == 3 and long_cycle[1][0] == 'A' and long_cycle[1][2] == 1:
+    if isinstance(long_cycle[1], list) and len( long_cycle[1] ) == 3 and long_cycle[1][0] == 'A' and long_cycle[1][2] == 1:
         tmp = list( long_cycle[0] )
         e = tmp.pop()
         cycle = [e]
@@ -1182,12 +1207,13 @@ def _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False  ):
         else:
             return long_cycle[1]
 
+
 @cached_function
-def load_data( n ):
+def load_data(n):
     r"""
-    Loads a dict with keys being tuples representing exceptional QuiverMutationTypes,
-    and with values being lists or sets containing all mutation equivalent
-    quivers as dig6 data.
+    Load a dict with keys being tuples representing exceptional
+    QuiverMutationTypes, and with values being lists or sets
+    containing all mutation equivalent quivers as dig6 data.
 
     We check
      - if the data is stored by the user, and if this is not the case
@@ -1201,7 +1227,7 @@ def load_data( n ):
     """
     import os.path
     import cPickle
-    from sage.misc.misc import DOT_SAGE, SAGE_SHARE
+    from sage.env import DOT_SAGE, SAGE_SHARE
     relative_filename = 'cluster_algebra_quiver/mutation_classes_%s.dig6'%n
     getfilename = lambda path: os.path.join(path,relative_filename)
     # we check
@@ -1216,11 +1242,14 @@ def load_data( n ):
             data_dict.update(data_new)
     return data_dict
 
+
 def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
     r"""
-    Returns the mutation type from the given dig6 data by looking into the precomputed mutation types
+    Return the mutation type from the given dig6 data by looking into
+    the precomputed mutation types
 
-    Attention: it is assumed that dig6 is the dig6 data of the canonical form of the given quiver!
+    Attention: it is assumed that dig6 is the dig6 data of the
+    canonical form of the given quiver!
 
     EXAMPLES::
 
@@ -1247,9 +1276,12 @@ def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
             return QuiverMutationType( mutation_type )
     return 'unknown'
 
-def _mutation_type_test( n ):
+
+def _mutation_type_test(n):
     """
-    Tests all quivers (of the given types) of rank n to check that mutation_type() works.
+    Tests all quivers (of the given types) of rank n to check that
+    mutation_type() works.
+
     Affine type D does not return True since this test is not implemented.
 
     EXAMPLES::
@@ -1274,7 +1306,7 @@ def _mutation_type_test( n ):
         True ('G', 2, -1)
         True ('G', 2, 1)
 
-        sage: _mutation_type_test(4) # long time
+        sage: _mutation_type_test(4) # not tested
         True ('A', (2, 2), 1)
         True ('A', (3, 1), 1)
         True ('A', 4)
@@ -1291,7 +1323,7 @@ def _mutation_type_test( n ):
         True ('G', 2, (1, 3))
         True ('G', 2, (3, 3))
 
-        sage: _mutation_type_test(5) # long time
+        sage: _mutation_type_test(5) # not tested
         True ('A', (3, 2), 1)
         True ('A', (4, 1), 1)
         True ('A', 5)
@@ -1308,7 +1340,7 @@ def _mutation_type_test( n ):
         True ('F', 4, 1)
     """
     from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _construct_classical_mutation_classes
-    from sage.combinat.cluster_algebra_quiver.mutation_class import _dig6_to_matrix, _matrix_to_digraph, _digraph_mutate, _edge_list_to_matrix, _dig6_to_digraph
+    from sage.combinat.cluster_algebra_quiver.mutation_class import _dig6_to_digraph
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
     data = _construct_classical_mutation_classes( n )
     keys = data.keys()
@@ -1322,21 +1354,25 @@ def _mutation_type_test( n ):
         mt = QuiverMutationType( mutation_type )
         print all( ClusterQuiver(_dig6_to_digraph(dig6)).mutation_type() == mt for dig6 in data[mutation_type]), mutation_type
 
-def _random_tests( mt, k, mut_class=None, nr_mut=5 ):
+
+def _random_tests(mt, k, mut_class=None, nr_mut=5):
     """
-    Provides random tests to find bugs in the mutation type methods
+    Provide random tests to find bugs in the mutation type methods.
 
     INPUT:
 
     - ``mt`` something that can be turned into a QuiverMutationType
     - ``k`` (integer) the number of tests performed for each quiver of rank ``n``
     - ``mut_class`` is given, this mutation class is used
-    - ``nr_mut`` (integer, default:5) the number of mutations performed before testing
+    - ``nr_mut`` (integer, default:5) the number of mutations performed before
+      testing
 
-    The idea of of this random test is to start with a mutation type and compute is mutation class
-    (or have this class given). Now, every quiver in this mutation class is slightly changed
-    in order to obtain a matrix of the same type or something very similar.
-    Now, the new type is computed and checked if it stays stable for ``nr_mut``'s many mutations.
+    The idea of of this random test is to start with a mutation type
+    and compute is mutation class (or have this class given). Now,
+    every quiver in this mutation class is slightly changed in order
+    to obtain a matrix of the same type or something very similar.
+    Now, the new type is computed and checked if it stays stable for
+    ``nr_mut``'s many mutations.
 
     TESTS::
 
@@ -1345,7 +1381,7 @@ def _random_tests( mt, k, mut_class=None, nr_mut=5 ):
         testing ['A', 3]
     """
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-    from sage.combinat.cluster_algebra_quiver.mutation_class import _dig6_to_matrix, _matrix_to_digraph, _digraph_mutate, _edge_list_to_matrix, _dig6_to_digraph
+    from sage.combinat.cluster_algebra_quiver.mutation_class import _dig6_to_matrix, _matrix_to_digraph, _digraph_mutate, _edge_list_to_matrix
     import random
     if mut_class is None:
         mut_class = ClusterQuiver(mt).mutation_class(data_type='dig6')
@@ -1393,7 +1429,7 @@ def _random_tests( mt, k, mut_class=None, nr_mut=5 ):
                     mut = random.randint(0,dg.order()-1)
                 dg_new = _digraph_mutate( dg, mut, dg.order(), 0 )
                 M = _edge_list_to_matrix(dg.edges(),dg.order(),0)
-                M_new = _edge_list_to_matrix(dg_new.edges(),dg_new.order(),0)
+                # M_new = _edge_list_to_matrix(dg_new.edges(),dg_new.order(),0)
                 mt_new = _connected_mutation_type( dg_new )
                 if not mt == mt_new:
                     print "FOUND ERROR!"
@@ -1406,26 +1442,27 @@ def _random_tests( mt, k, mut_class=None, nr_mut=5 ):
                 else:
                     dg = dg_new
 
+
 def _random_multi_tests( n, k, nr_mut=5 ):
     """
-    Provides multiple random tests to find bugs in the mutation type methods
+    Provide multiple random tests to find bugs in the mutation type methods.
 
     INPUT:
 
-    - ``n`` (integer) the rank of the mutation types to test
-    - ``k`` (integer) the number of tests performed for each quiver of rank ``n``
-    - ``nr_mut`` (integer, default:5) the number of mutations performed before testing
+    - ``n`` (integer) -- the rank of the mutation types to test
+    - ``k`` (integer) -- the number of tests performed for each quiver of rank ``n``
+    - ``nr_mut`` (integer, default:5) -- the number of mutations performed before testing
 
     TESTS::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _random_multi_tests
-        sage: _random_multi_tests(2,100) # long time
+        sage: _random_multi_tests(2,1)  # not tested
         testing ('A', (1, 1), 1)
         testing ('A', 2)
         testing ('B', 2)
         testing ('BC', 1, 1)
 
-        sage: _random_multi_tests(3,100) # long time
+        sage: _random_multi_tests(3,1)  # not tested
         testing ('A', (2, 1), 1)
         testing ('A', 3)
         testing ('B', 3)
@@ -1434,7 +1471,7 @@ def _random_multi_tests( n, k, nr_mut=5 ):
         testing ('C', 3)
         testing ('CC', 2, 1)
 
-        sage: _random_multi_tests(4,100) # long time
+        sage: _random_multi_tests(4,1)  # not tested
         testing ('A', (2, 2), 1)
         testing ('A', (3, 1), 1)
         testing ('A', 4)
@@ -1448,6 +1485,7 @@ def _random_multi_tests( n, k, nr_mut=5 ):
         testing ('D', 4)
     """
     from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _construct_classical_mutation_classes
-    mutation_classes = _construct_classical_mutation_classes( n )
+    mutation_classes = _construct_classical_mutation_classes(n)
     for mutation_type in sorted(mutation_classes, key=str):
-        _random_tests( mutation_type, k, mut_class=mutation_classes[mutation_type], nr_mut=nr_mut )
+        _random_tests(mutation_type, k,
+                      mut_class=mutation_classes[mutation_type], nr_mut=nr_mut)

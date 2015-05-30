@@ -1,5 +1,5 @@
 /*** EXAMPLE: Dirichlet L-function of a quadratic character modulo odd P ***/
-/*** v1.1, December 2003, questions to tim.dokchitser@durham.ac.uk       ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk          ***/
 /***                                                                     ***/
 /*** type \rex-chqua or read("ex-chqua") at pari prompt to run this      ***/
 

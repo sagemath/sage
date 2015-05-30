@@ -37,7 +37,9 @@ AUTHORS:
 #include <execinfo.h>
 #endif
 #endif
-#include "stdsage.h"
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
 #include "interrupt.h"
 
 
@@ -129,8 +131,8 @@ void sage_interrupt_handler(int sig)
     else
     {
         /* Set the Python interrupt indicator, which will cause the
-         * Python-level interrupt handler in sage/ext/c_lib.pyx to be
-         * called. */
+         * Python-level interrupt handler in sage/ext/interrupt.pyx to
+         * be called. */
         PyErr_SetInterrupt();
     }
 
@@ -366,6 +368,12 @@ void print_backtrace()
 
 void print_enhanced_backtrace()
 {
+    /* Bypass Linux Yama restrictions on ptrace() to allow debugging */
+    /* See https://www.kernel.org/doc/Documentation/security/Yama.txt */
+#ifdef PR_SET_PTRACER
+    prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0);
+#endif
+
     /* Flush all buffers before forking */
     fflush(stdout);
     fflush(stderr);

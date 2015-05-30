@@ -1,7 +1,7 @@
---- src.orig/src/tools.c	2012-08-06 11:54:53.652334400 +0200
-+++ src/src/tools.c	2012-08-06 11:59:18.183993600 +0200
+--- ntl.orig/src/tools.c	2014-08-27 05:51:42.000000000 +1200
++++ ntl/src/tools.c	2014-10-09 22:02:59.679703796 +1300
 @@ -18,8 +18,35 @@
- void (*ErrorCallback)() = 0;
+ NTL_THREAD_LOCAL void (*ErrorCallback)() = 0;
  
  
 +/*
@@ -36,8 +36,8 @@
     cerr << s << "\n";
     _ntl_abort();
  }
---- src.orig/include/NTL/tools.h	2012-08-06 11:54:52.830333000 +0200
-+++ src/include/NTL/tools.h	2012-08-06 11:59:18.143993600 +0200
+--- ntl.orig/include/NTL/tools.h	2014-08-27 05:51:43.000000000 +1200
++++ ntl/include/NTL/tools.h	2014-10-09 22:02:59.679703796 +1300
 @@ -10,6 +10,7 @@
  
  #include <cstdlib>
@@ -46,7 +46,7 @@
  #include <iostream>
  
  #else
-@@ -252,6 +253,12 @@
+@@ -310,6 +311,12 @@
  char IntValToChar(long a);
  
  

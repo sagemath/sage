@@ -24,10 +24,12 @@ exec </dev/null
 # We don't have to set up CFLAGS etc., since these are taken from ECL
 # (i.e., ECL uses the ones that were specified when ECL was built).
 
-export MAKE="$MAKE -j1"  # force sequential build (1 job)
+
+# workaround for configure braindamage, see Trac #15546
+export EMACS=no
+
 
 CUR=`pwd`
-
 
 cd src/
 
@@ -47,16 +49,6 @@ echo
 echo "Now configuring Maxima..."
 ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --enable-ecl git_found=false
 check_error "Failed to configure Maxima."
-
-
-# Touching html and info files to avoid to regenerate them.
-# This must be done after configuration since the timestamps need
-# to be later than include-maxima.texi which is generated at
-# configuration time:
-echo
-echo "Now touching documentation files..."
-touch `find doc/info -name \*.info\* -o -name \*.html`
-check_error "Failed to touch documentation files."
 
 
 echo
@@ -79,36 +71,12 @@ if [[ -f "$DOT_SAGE/maxima_commandlist_cache.sobj" ]]; then
 fi
 
 
-# Build Maxima as a Lisp library
-# and install it into ECL's library directory:
-echo
-echo "Now building Maxima as an ECL library..."
-cd "$CUR"/src/src &&
-mkdir -p ./lisp-cache &&
-ecl \
-  -eval '(require `asdf)' \
-  -eval '(setf asdf::*user-cache* (truename "./lisp-cache"))' \
-  -eval '(load "maxima-build.lisp")' \
-  -eval '(asdf:make-build :maxima :type :fasl :move-here ".")' \
-  -eval '(quit)'
-check_error "Failed to build Maxima as an ECL library."
-
+# Install Maxima into ECL's library directory:
 ECLLIB=`ecl -eval "(princ (SI:GET-LIBRARY-PATHNAME))" -eval "(quit)"`
 echo
 echo "Now installing the Maxima library as '$ECLLIB/maxima.fas'..."
-PWD=`pwd`
-if [[ -f "maxima.system.fasb" ]]; then
-    echo "New ASDF encountered"
-    cp -f maxima.system.fasb "$ECLLIB/maxima.fas"
-    check_error "Failed to install '$PWD/maxima.system.fasb' as '$ECLLIB/maxima.fas'."
-elif [[ -f "maxima.fasb" ]]; then
-    echo "Old ASDF encountered"
-    cp -f maxima.fasb "$ECLLIB/maxima.fas"
-    check_error "Failed to install '$PWD/maxima.fasb' as '$ECLLIB/maxima.fas'."
-else
-    echo >&2 "Error: cannot find an .fasb file to install - exiting..."
-    exit 1
-fi
+cp -f "$CUR/src/src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas"
+check_error "Failed to install '$CUR/src/src/binary-ecl/maxima.fas' as '$ECLLIB/maxima.fas'."
 
 
 if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]] ; then

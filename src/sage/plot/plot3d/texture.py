@@ -11,7 +11,7 @@ for full details about options and use.
 Initially, we have no textures set::
 
     sage: sage.plot.plot3d.base.Graphics3d().texture_set()
-    set([])
+    set()
 
 However, one can access these textures in the following manner::
 
@@ -26,8 +26,9 @@ And the Texture objects keep track of all their data::
     sage: T = tetrahedron(color='red', opacity=0.5)
     sage: t = T.get_texture()
     sage: t.opacity
-    0.500000000000000
+    0.5
     sage: T # should be translucent
+    Graphics3d Object
 
 AUTHOR:
 
@@ -40,6 +41,21 @@ from sage.plot.colors import Color
 
 
 uniq_c = 0
+def _new_global_texture_id():
+    """
+    Generate a new unique id for a texture.
+
+    EXAMPLES::
+
+        sage: sage.plot.plot3d.texture._new_global_texture_id()
+        'texture...'
+        sage: sage.plot.plot3d.texture._new_global_texture_id()
+        'texture...'
+    """
+    global uniq_c
+    uniq_c += 1
+    return "texture%s" % uniq_c
+
 
 from sage.plot.colors import colors
 
@@ -69,7 +85,7 @@ def Texture(id=None, **kwds):
 
     - ``id`` - a texture (optional, default: None), a dict, a color, a
       str, a tuple, None or any other type acting as an ID. If ``id`` is
-      None, then it returns a unique texture object.
+      None and keyword ``texture`` is empty, then it returns a unique texture object.
     - ``texture`` - a texture
     - ``color`` - tuple or str, (optional, default: (.4, .4, 1))
     - ``opacity`` - number between 0 and 1 (optional, default: 1)
@@ -131,7 +147,7 @@ def Texture(id=None, **kwds):
         Texture(texture..., 6666ff)
         sage: Texture(shininess=0.3)
         Texture(texture..., 6666ff)
-        sage: Texture(ambiant=0.7)
+        sage: Texture(ambient=0.7)
         Texture(texture..., 6666ff)
     """
     if isinstance(id, Texture_class):
@@ -157,9 +173,7 @@ def Texture(id=None, **kwds):
         kwds['color'] = id
         id = None
     if id is None:
-        global uniq_c
-        uniq_c += 1
-        id = "texture%s" % uniq_c
+        id = _new_global_texture_id()
     return Texture_class(id, **kwds)
 
 def parse_color(info, base=None):
@@ -240,13 +254,18 @@ class Texture_class(SageObject):
         sage: t
         Texture(texture..., 6666ff)
         sage: t.opacity
-        0.600000000000000
+        0.6
         sage: t.jmol_str('obj')
         'color obj translucent 0.4 [102,102,255]'
         sage: t.mtl_str()
-        'newmtl texture...\nKa 0.2 0.2 0.5\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1\nd 0.600000000000000'
+        'newmtl texture...\nKa 0.2 0.2 0.5\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1.0\nd 0.6'
         sage: t.x3d_str()
-        "<Appearance><Material diffuseColor='0.4 0.4 1.0' shininess='1' specularColor='0.0 0.0 0.0'/></Appearance>"
+        "<Appearance><Material diffuseColor='0.4 0.4 1.0' shininess='1.0' specularColor='0.0 0.0 0.0'/></Appearance>"
+
+    TESTS::
+
+        sage: Texture(opacity=1/3).opacity
+        0.3333333333333333
     """
     def __init__(self, id, color=(.4, .4, 1), opacity=1, ambient=0.5, diffuse=1, specular=0, shininess=1, name=None, **kwds):
         r"""
@@ -274,8 +293,8 @@ class Texture_class(SageObject):
             color = (float(color[0]), float(color[1]), float(color[2]))
 
         self.color = color
-        self.opacity = opacity
-        self.shininess = shininess
+        self.opacity = float(opacity)
+        self.shininess = float(shininess)
 
         if not isinstance(ambient, tuple):
             ambient = parse_color(ambient, color)
@@ -327,7 +346,7 @@ class Texture_class(SageObject):
             sage: from sage.plot.plot3d.texture import Texture
             sage: t = Texture(opacity=0.6)
             sage: t.tachyon_str()
-            'Texdef texture...\n  Ambient 0.333333333333 Diffuse 0.666666666667 Specular 0.0 Opacity 0.600000000000000\n   Color 0.4 0.4 1.0\n   TexFunc 0'
+            'Texdef texture...\n  Ambient 0.333333333333 Diffuse 0.666666666667 Specular 0.0 Opacity 0.6\n   Color 0.4 0.4 1.0\n   TexFunc 0'
         """
         total_color = float(sum(self.ambient) + sum(self.diffuse) + sum(self.specular))
         if total_color == 0:
@@ -350,7 +369,7 @@ class Texture_class(SageObject):
             sage: from sage.plot.plot3d.texture import Texture
             sage: t = Texture(opacity=0.6)
             sage: t.x3d_str()
-            "<Appearance><Material diffuseColor='0.4 0.4 1.0' shininess='1' specularColor='0.0 0.0 0.0'/></Appearance>"
+            "<Appearance><Material diffuseColor='0.4 0.4 1.0' shininess='1.0' specularColor='0.0 0.0 0.0'/></Appearance>"
         """
         return "<Appearance><Material diffuseColor='%s %s %s' shininess='%s' specularColor='%s %s %s'/></Appearance>" % \
                 (self.color[0], self.color[1], self.color[2], self.shininess, self.specular[0], self.specular[0], self.specular[0])
@@ -364,7 +383,7 @@ class Texture_class(SageObject):
             sage: from sage.plot.plot3d.texture import Texture
             sage: t = Texture(opacity=0.6)
             sage: t.mtl_str()
-            'newmtl texture...\nKa 0.2 0.2 0.5\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1\nd 0.600000000000000'
+            'newmtl texture...\nKa 0.2 0.2 0.5\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1.0\nd 0.6'
         """
         return "\n".join(["newmtl %s" % self.id,
                    "Ka %s %s %s" % self.ambient,

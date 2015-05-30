@@ -53,7 +53,7 @@ class InfiniteSeriesOrder(SeriesOrderElement):
         """
         if isinstance(x, (int, Integer)):
             if x < 0:
-                raise ValueError, "x must be a positive integer"
+                raise ValueError("x must be a positive integer")
             return self
 
         if isinstance(x, InfiniteSeriesOrder):
@@ -62,7 +62,7 @@ class InfiniteSeriesOrder(SeriesOrderElement):
         if isinstance(x, UnknownSeriesOrder):
             return x
 
-        raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+        raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
     __radd__ = __add__
 
@@ -93,7 +93,7 @@ class InfiniteSeriesOrder(SeriesOrderElement):
         """
         if isinstance(x, (int, Integer)):
             if x < 0:
-                raise ValueError, "x must be a positive integer"
+                raise ValueError("x must be a positive integer")
             elif x == 0:
                 return x
             return self
@@ -104,7 +104,7 @@ class InfiniteSeriesOrder(SeriesOrderElement):
         if isinstance(x, UnknownSeriesOrder):
             return x
 
-        raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+        raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
     __rmul__ = __mul__
 
@@ -129,7 +129,7 @@ class InfiniteSeriesOrder(SeriesOrderElement):
         """
         if isinstance(x, (int, Integer)):
             if x < 0:
-                raise ValueError, "x must be a positive integer"
+                raise ValueError("x must be a positive integer")
             return False
 
         if isinstance(x, InfiniteSeriesOrder):
@@ -139,7 +139,7 @@ class InfiniteSeriesOrder(SeriesOrderElement):
             return False
 
 
-        raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+        raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
 
     def __gt__(self, x):
@@ -178,13 +178,13 @@ class UnknownSeriesOrder(SeriesOrderElement):
 
         if isinstance(x, (int, Integer)):
             if x < 0:
-                raise ValueError, "x must be a positive integer"
+                raise ValueError("x must be a positive integer")
             return self
 
         if isinstance(x, SeriesOrderElement):
             return self
 
-        raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+        raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
     __radd__ = __add__
 
@@ -202,13 +202,13 @@ class UnknownSeriesOrder(SeriesOrderElement):
         """
         if isinstance(x, (int, Integer)):
             if x < 0:
-                raise ValueError, "x must be a positive integer"
+                raise ValueError("x must be a positive integer")
             return self
 
         if isinstance(x, SeriesOrderElement):
             return self
 
-        raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+        raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
     __rmul__ = __mul__
 
@@ -226,13 +226,13 @@ class UnknownSeriesOrder(SeriesOrderElement):
         """
         if isinstance(x, (int, Integer)):
             if x < 0:
-                raise ValueError, "x must be a positive integer"
+                raise ValueError("x must be a positive integer")
             return True
 
         if isinstance(x, SeriesOrderElement):
             return True
 
-        raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+        raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
     def __gt__(self, x):
         """
@@ -263,10 +263,10 @@ def bounded_decrement(x):
 
     if isinstance(x, (int, Integer)):
         if x < 0:
-            raise ValueError, "x must be a positive integer"
+            raise ValueError("x must be a positive integer")
         return max(0, x - 1)
 
-    raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+    raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
 
 def increment(x):
@@ -285,10 +285,10 @@ def increment(x):
 
     if isinstance(x, (int, Integer)):
         if x < 0:
-            raise ValueError, "x must be a positive integer"
+            raise ValueError("x must be a positive integer")
         return x+1
 
-    raise TypeError, "x must be a positive integer or a SeriesOrderElement"
+    raise TypeError("x must be a positive integer or a SeriesOrderElement")
 
 inf = InfiniteSeriesOrder()
 unk = UnknownSeriesOrder()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Lazy strings.
+Lazy strings
 
 Based on speaklater: https://github.com/mitsuhiko/speaklater.
 

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+cd src
+
+./configure --disable-gui --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring Gambit."
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building Gambit."
+    exit 1
+fi
+
+$MAKE -j1 install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing Gambit."
+    exit 1
+fi
+
+cd src/python
+python setup.py build
+python setup.py install
+
+if [ $? -ne 0 ]; then
+    echo "Error installing Python API"
+    exit 1
+fi

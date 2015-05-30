@@ -84,13 +84,13 @@ class ScatterPlot(GraphicPrimitive):
             ('edgecolor', 'The color of the marker border.'),
             ('facecolor', 'The color of the marker face.'),
             ('hue', 'The color given as a hue.'),
-            ('marker', 'What shape to plot the points.'),
+            ('marker', 'What shape to plot the points. See the documentation of plot() for the full list of markers.'),
             ('markersize', 'the size of the markers.'),
             ('rgbcolor', 'The color as an RGB tuple.'),
             ('zorder', 'The layer level in which to draw.')]
         """
         return {'markersize': 'the size of the markers.',
-                'marker': 'What shape to plot the points.',
+                'marker': 'What shape to plot the points. See the documentation of plot() for the full list of markers.',
                 'alpha':'How transparent the marker border is.',
                 'rgbcolor':'The color as an RGB tuple.',
                 'hue':'The color given as a hue.',
@@ -121,10 +121,12 @@ class ScatterPlot(GraphicPrimitive):
         EXAMPLES::
 
             sage: scatter_plot([[0,1],[2,2],[4.3,1.1]], marker='s')
+            Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: scatter_plot([[n,n] for n in range(5)])
+            Graphics object consisting of 1 graphics primitive
         """
         from matplotlib.pyplot import scatter
         options = self.options()
@@ -150,18 +152,8 @@ def scatter_plot(datalist, **options):
 
     - ``markersize`` -- default: 50
 
-    - ``marker``  - The style of the markers (default ``"o"``), which is one of
-       - ``"None"`` or ``" "`` or ``""`` (nothing)
-       - ``","`` (pixel), ``"."`` (point)
-       - ``"_"`` (horizontal line), ``"|"`` (vertical line)
-       - ``"o"`` (circle), ``"p"`` (pentagon), ``"s"`` (square), ``"x"`` (x), ``"+"`` (plus), ``"*"`` (star)
-       - ``"D"`` (diamond), ``"d"`` (thin diamond)
-       - ``"H"`` (hexagon), ``"h"`` (alternative hexagon)
-       - ``"<"`` (triangle left), ``">"`` (triangle right), ``"^"`` (triangle up), ``"v"`` (triangle down)
-       - ``"1"`` (tri down), ``"2"`` (tri up), ``"3"`` (tri left), ``"4"`` (tri right)
-       - ``0`` (tick left), ``1`` (tick right), ``2`` (tick up), ``3`` (tick down)
-       - ``4`` (caret left), ``5`` (caret right), ``6`` (caret up), ``7`` (caret down)
-       - ``"$...$"`` (math TeX string)
+    - ``marker``  - The style of the markers (default ``"o"``). See the
+      documentation of :func:`plot` for the full list of markers.
 
     - ``facecolor`` -- default: ``'#fec7b8'``
 
@@ -172,10 +164,12 @@ def scatter_plot(datalist, **options):
     EXAMPLES::
 
         sage: scatter_plot([[0,1],[2,2],[4.3,1.1]], marker='s')
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to :meth:`~Graphics.show`, as long as they are valid::
 
         sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green', ymax=100)
+        Graphics object consisting of 1 graphics primitive
         sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent
     """
     import numpy

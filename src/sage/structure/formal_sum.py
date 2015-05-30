@@ -68,11 +68,10 @@ import sage.misc.misc
 import operator
 import sage.misc.latex
 
-from sage.modules.module import Module_old as Module
+from sage.modules.module import Module
 from sage.structure.element import ModuleElement
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
-from sage.structure.parent_base import ParentWithBase
 from sage.structure.coerce import LeftModuleAction, RightModuleAction
 from sage.categories.action import PrecomposedAction
 from sage.structure.unique_representation import UniqueRepresentation
@@ -86,6 +85,10 @@ class FormalSums(UniqueRepresentation, Module):
 
         sage: FormalSums()
         Abelian Group of all Formal Finite Sums over Integer Ring
+        sage: FormalSums(ZZ)
+        Abelian Group of all Formal Finite Sums over Integer Ring
+        sage: FormalSums(GF(7))
+        Abelian Group of all Formal Finite Sums over Finite Field of size 7
         sage: FormalSums(ZZ[sqrt(2)])
         Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2 with defining polynomial x^2 - 2
         sage: FormalSums(GF(9,'a'))
@@ -103,21 +106,6 @@ class FormalSums(UniqueRepresentation, Module):
             True
         """
         return UniqueRepresentation.__classcall__(cls, base_ring)
-
-    def __init__(self, base_ring):
-        """
-        INPUT:
-
-        - ``R`` -- a ring (default: ZZ).
-
-        EXAMPLES::
-
-            sage: FormalSums(ZZ)
-            Abelian Group of all Formal Finite Sums over Integer Ring
-            sage: FormalSums(GF(7))
-            Abelian Group of all Formal Finite Sums over Finite Field of size 7
-        """
-        ParentWithBase.__init__(self, base_ring)
 
     def _repr_(self):
         """
@@ -198,15 +186,15 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: A = FormalSums(RR).get_action(RR); A     # indirect doctest
+            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
             Right scalar multiplication by Real Field with 53 bits of precision on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
 
-            sage: A = FormalSums(ZZ).get_action(QQ); A
+            sage: A = FormalSums(ZZ);  A.get_action(QQ)
             Right scalar multiplication by Rational Field on Abelian Group of all Formal Finite Sums over Rational Field
             with precomposition on left by Conversion map:
               From: Abelian Group of all Formal Finite Sums over Integer Ring
               To:   Abelian Group of all Formal Finite Sums over Rational Field
-            sage: A = FormalSums(QQ).get_action(ZZ); A
+            sage: A = FormalSums(QQ);  A.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Abelian Group of all Formal Finite Sums over Rational Field
         """
         if op is operator.mul and isinstance(other, Parent):
@@ -214,11 +202,11 @@ class FormalSums(UniqueRepresentation, Module):
             if self_is_left:
                 action = RightModuleAction(other, extended)
                 if extended is not self:
-                    action = PrecomposedAction(action, extended.coerce_map_from(self), None)
+                    action = PrecomposedAction(action, extended._internal_coerce_map_from(self), None)
             else:
                 action = LeftModuleAction(other, extended)
                 if extended is not self:
-                    action = PrecomposedAction(action, None, extended.coerce_map_from(self))
+                    action = PrecomposedAction(action, None, extended._internal_coerce_map_from(self))
             return action
 
     def _an_element_(self, check=False, reduce=False):
@@ -301,8 +289,8 @@ class FormalSum(ModuleElement):
             k = parent.base_ring()
             try:
                 self._data = [(k(t[0]), t[1]) for t in self._data]
-            except (IndexError, KeyError), msg:
-                raise TypeError, "%s\nInvalid formal sum"%msg
+            except (IndexError, KeyError) as msg:
+                raise TypeError("%s\nInvalid formal sum"%msg)
 
     def __iter__(self):
         """

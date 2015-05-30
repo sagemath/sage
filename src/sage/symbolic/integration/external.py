@@ -1,3 +1,5 @@
+"Symbolic integration via external software"
+
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 
@@ -48,7 +50,7 @@ def mma_free_integrator(expression, v, a=None, b=None):
     # We need to integrate against x
     vars = [str(x) for x in expression.variables()]
     if any(len(x)>1 for x in vars):
-        raise NotImplementedError, "Mathematica online integrator can only handle single letter variables."
+        raise NotImplementedError("Mathematica online integrator can only handle single letter variables.")
     x = SR.var('x')
     if repr(v) != 'x':
         for i in range(ord('a'), ord('z')+1):
@@ -67,4 +69,48 @@ def mma_free_integrator(expression, v, a=None, b=None):
             ans = ans.subs({x:v}).subs({shadow_x:x})
         return ans
     except TypeError:
-        raise ValueError, "Unable to parse: %s" % mexpr
+        raise ValueError("Unable to parse: %s" % mexpr)
+
+
+def fricas_integrator(expression, v, a=None, b=None):
+    """
+    Integration using FriCAS
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.integration.external import fricas_integrator  # optional - fricas
+        sage: fricas_integrator(sin(x), x)                                      # optional - fricas
+        -cos(x)
+        sage: fricas_integrator(cos(x), x)                                      # optional - fricas
+        sin(x)
+        sage: fricas_integrator(1/(x^2-2), x, 0, 1)                             # optional - fricas
+        1/4*(log(3*sqrt(2) - 4) - log(sqrt(2)))*sqrt(2)
+        sage: fricas_integrator(1/(x^2+6), x, -oo, oo)                          # optional - fricas
+        1/6*pi*sqrt(6)
+    """
+    if not isinstance(expression, Expression):
+        expression = SR(expression)
+    if a is None:
+        result = expression._fricas_().integrate(v)
+    else:
+        import sage.rings.infinity
+        if a == sage.rings.infinity.PlusInfinity():
+            a = "%plusInfinity"
+        elif a == sage.rings.infinity.MinusInfinity():
+            a = "%minusInfinity"
+        if b == sage.rings.infinity.PlusInfinity():
+            b = "%plusInfinity"
+        elif b == sage.rings.infinity.MinusInfinity():
+            b = "%minusInfinity"
+
+        result = expression._fricas_().integrate("{}={}..{}".format(v, a, b))
+    locals = {str(v): v for v in expression.variables()}
+    if str(result) == "potentialPole":
+        raise ValueError("The integrand has a potential pole"
+                         " in the integration interval")
+    parsed_result = result.unparsed_input_form()
+    import sage.misc.sage_eval
+    try:
+        return sage.misc.sage_eval.sage_eval(parsed_result, locals=locals)
+    except:
+        raise ValueError("Unable to parse: {}".format(parsed_result))

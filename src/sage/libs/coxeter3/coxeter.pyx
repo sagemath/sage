@@ -14,7 +14,6 @@ Low level part of the interface to Fokko Ducloux's Coxeter 3 library
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
 include "decl.pxi"
 
@@ -284,9 +283,9 @@ cdef class CoxGroup(SageObject):
         self.out_ordering = dict(zip(range(1, rank+1), ordering))
         self.in_ordering = dict([(b,a) for a,b in self.out_ordering.items()])
 
-        # Check that the coxeter matrices match up.
+        # Check that the Coxeter matrices match up.
         if self.coxeter_matrix() != coxeter_matrix(self.cartan_type):
-            print "Warning, differing coxeter matrices"
+            print "Warning, differing Coxeter matrices"
 
     @classmethod
     def _ordering_from_cartan_type(cls, cartan_type):

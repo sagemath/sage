@@ -33,7 +33,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         True
 
         sage: NN.category()
-        Join of Category of semirings and Category of infinite enumerated sets and Category of facade sets
+        Join of Category of semirings and Category of commutative monoids and Category of infinite enumerated sets and Category of facade sets
 
     Here is a piece of the Cayley graph for the multiplicative structure::
 
@@ -41,10 +41,11 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         sage: G
         Looped multi-digraph on 9 vertices
         sage: G.plot()
+        Graphics object consisting of 48 graphics primitives
 
     This is the Hasse diagram of the divisibility order on ``NN``.
 
-        sage: Poset(NN.cayley_graph(elements=range(13), generators=[0,1,2,3,5,7,11])).show()
+        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()
 
     Note: as for :class:`NonNegativeIntegers
     <sage.sets.non_negative_integers.NonNegativeIntegers>`, ``NN`` is
@@ -66,10 +67,10 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
             sage: NN = NonNegativeIntegerSemiring(); NN
             Non negative integer semiring
             sage: NN.category()
-            Join of Category of semirings and Category of infinite enumerated sets and Category of facade sets
+            Join of Category of semirings and Category of commutative monoids and Category of infinite enumerated sets and Category of facade sets
             sage: TestSuite(NN).run()
         """
-        NonNegativeIntegers.__init__(self, category=(Semirings(), InfiniteEnumeratedSets()) )
+        NonNegativeIntegers.__init__(self, category=(Semirings().Commutative(), InfiniteEnumeratedSets()) )
 
     def _repr_(self):
         r"""

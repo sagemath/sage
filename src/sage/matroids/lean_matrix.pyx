@@ -30,7 +30,7 @@ AUTHORS:
 #*****************************************************************************
 
 include 'sage/ext/stdsage.pxi'
-include 'sage/misc/bitset.pxi'
+include 'sage/data_structures/bitset.pxi'
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.all import ZZ, FiniteField, GF
 from sage.rings.integer cimport Integer
@@ -109,7 +109,7 @@ cdef class LeanMatrix:
         cdef LeanMatrix A = type(self)(self.nrows(), self.ncols(), self)
         return A
 
-    cdef void resize(self, long k):    # Not a Sage matrix operation
+    cdef int resize(self, long k) except -1:    # Not a Sage matrix operation
         """
         Change number of rows of ``self`` to ``k``. Preserves data.
         """
@@ -162,7 +162,7 @@ cdef class LeanMatrix:
                 A.set_unsafe(i, self.nrows() + j, self.get_unsafe(i, j))
         return A
 
-    cpdef long ncols(self):
+    cpdef long ncols(self) except -1:
         """
         Return the number of columns.
 
@@ -175,7 +175,7 @@ cdef class LeanMatrix:
         """
         return self._ncols
 
-    cpdef long nrows(self):
+    cpdef long nrows(self) except -1:
         """
         Return the number of rows.
 
@@ -222,19 +222,19 @@ cdef class LeanMatrix:
         """
         raise NotImplementedError
 
-    cdef void set_unsafe(self, long r, long c, x):
+    cdef int set_unsafe(self, long r, long c, x) except -1:
         """
         Set the value in row ``r``, column ``c`` to ``x``.
         """
         raise NotImplementedError
 
-    cdef bint is_nonzero(self, long r, long c):   # Not a Sage matrix operation
+    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         """
         Check if value in row ``r``, column ``c`` equals ``0``.
         """
         return self.get_unsafe(r, c) != 0
 
-    cdef void add_multiple_of_row_c(self, long x, long y, s, bint col_start):
+    cdef int add_multiple_of_row_c(self, long x, long y, s, bint col_start) except -1:
         """
         Add ``s`` times row ``y`` to row ``x``. Argument ``col_start`` is
         ignored.
@@ -246,8 +246,9 @@ cdef class LeanMatrix:
         else:
             for i from 0 <= i < self._ncols:
                 self.set_unsafe(x, i, self.get_unsafe(x, i) + s * self.get_unsafe(y, i))
+        return 0
 
-    cdef void swap_rows_c(self, long x, long y):
+    cdef int swap_rows_c(self, long x, long y) except -1:
         """
         Swap rows ``x`` and ``y``.
         """
@@ -256,8 +257,9 @@ cdef class LeanMatrix:
             tmp = self.get_unsafe(x, i)
             self.set_unsafe(x, i, self.get_unsafe(y, i))
             self.set_unsafe(y, i, tmp)
+        return 0
 
-    cdef void rescale_row_c(self, long x, s, bint col_start):
+    cdef int rescale_row_c(self, long x, s, bint col_start) except -1:
         """
         Scale row ``x`` by ``s``. Argument ``col_start`` is for Sage
         compatibility, and is ignored.
@@ -265,8 +267,9 @@ cdef class LeanMatrix:
         cdef long i
         for i from 0 <= i < self._ncols:
             self.set_unsafe(x, i, s * self.get_unsafe(x, i))
+        return 0
 
-    cdef void rescale_column_c(self, long y, s, bint start_row):
+    cdef int rescale_column_c(self, long y, s, bint start_row) except -1:
         """
         Scale column ``y`` by ``s``. Argument ``start_row`` is for Sage
         compatibility, and ignored.
@@ -274,8 +277,9 @@ cdef class LeanMatrix:
         cdef long j
         for j from 0 <= j < self._nrows:
             self.set_unsafe(j, y, self.get_unsafe(j, y) * s)
+        return 0
 
-    cdef void pivot(self, long x, long y):   # Not a Sage matrix operation
+    cdef int pivot(self, long x, long y) except -1:   # Not a Sage matrix operation
         """
         Row-reduce to make column ``y`` have a ``1`` in row ``x`` and zeroes
         elsewhere.
@@ -294,6 +298,7 @@ cdef class LeanMatrix:
             s = self.get_unsafe(i, y)
             if s and i != x:
                 self.add_multiple_of_row_c(i, x, -s, 0)
+        return 0
 
     cdef list gauss_jordan_reduce(self, columns):   # Not a Sage matrix operation
         """
@@ -607,7 +612,7 @@ cdef class GenericMatrix(LeanMatrix):
         cdef GenericMatrix M = GenericMatrix(self._nrows, self._ncols, M=self)
         return M
 
-    cdef void resize(self, long k):   # Not a Sage matrix operation
+    cdef int resize(self, long k) except -1:   # Not a Sage matrix operation
         """
         Change number of rows to ``k``. Preserves data.
         """
@@ -617,6 +622,7 @@ cdef class GenericMatrix(LeanMatrix):
         elif l < 0:
             del self._entries[k * self._ncols:]
         self._nrows = k
+        return 0
 
     cdef LeanMatrix stack(self, LeanMatrix M):
         """
@@ -681,16 +687,18 @@ cdef class GenericMatrix(LeanMatrix):
     cdef get_unsafe(self, long r, long c):
         return self._entries[r * self._ncols + c]
 
-    cdef void set_unsafe(self, long r, long c, x):
+    cdef int set_unsafe(self, long r, long c, x) except -1:
         self._entries[r * self._ncols + c] = x
+        return 0
 
-    cdef void swap_rows_c(self, long x, long y):
+    cdef int swap_rows_c(self, long x, long y) except -1:
         """
         Swap rows ``x`` and ``y``.
         """
         cdef list tmp = self._entries[x * self._ncols:(x + 1) * self._ncols]
         self._entries[x * self._ncols:(x + 1) * self._ncols] = self._entries[y * self._ncols:(y + 1) * self._ncols]
         self._entries[y * self._ncols:(y + 1) * self._ncols] = tmp
+        return 0
 
     cdef LeanMatrix transpose(self):
         """
@@ -937,7 +945,7 @@ cdef class BinaryMatrix(LeanMatrix):
             bitset_copy(B._M[i], self._M[i])
         return B
 
-    cdef void resize(self, long k):   # Not a Sage matrix operation
+    cdef int resize(self, long k) except -1:   # Not a Sage matrix operation
         """
         Change number of rows to ``k``. Preserves data.
         """
@@ -954,6 +962,7 @@ cdef class BinaryMatrix(LeanMatrix):
                 bitset_init(self._M[i], c)
                 bitset_clear(self._M[i])
             self._nrows = k
+        return 0
 
     cdef LeanMatrix stack(self, LeanMatrix MM):
         """
@@ -1029,13 +1038,14 @@ cdef class BinaryMatrix(LeanMatrix):
             return GF2_one
         return GF2_zero
 
-    cdef void set_unsafe(self, long r, long c, x):
+    cdef int set_unsafe(self, long r, long c, x) except -1:
         if x:
             bitset_add(self._M[r], c)
         else:
             bitset_discard(self._M[r], c)
+        return 0
 
-    cdef bint is_nonzero(self, long r, long c):   # Not a Sage matrix operation
+    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M[r], c)
 
     cdef inline bint get(self, long r, long c):   # Not a Sage matrix operation
@@ -1044,7 +1054,7 @@ cdef class BinaryMatrix(LeanMatrix):
     cdef inline void set(self, long x, long y):   # Not a Sage matrix operation
         bitset_add(self._M[x], y)
 
-    cdef void pivot(self, long x, long y):   # Not a Sage matrix operation
+    cdef int pivot(self, long x, long y) except -1:   # Not a Sage matrix operation
         """
         Row-reduce to make column ``y`` have a ``1`` in row ``x`` and
         zeroes elsewhere.
@@ -1061,8 +1071,9 @@ cdef class BinaryMatrix(LeanMatrix):
         for i from 0 <= i < self._nrows:
             if bitset_in(self._M[i], y) and i != x:
                 bitset_symmetric_difference(self._M[i], self._M[i], self._M[x])
+        return 0
 
-    cdef inline long row_len(self, long i):   # Not a Sage matrix operation
+    cdef inline long row_len(self, long i) except -1:   # Not a Sage matrix operation
         """
         Return number of nonzero entries in row ``i``.
         """
@@ -1076,16 +1087,18 @@ cdef class BinaryMatrix(LeanMatrix):
         bitset_intersection(self._temp, self._temp, self._M[j])
         return bitset_len(self._temp) % 2
 
-    cdef void add_multiple_of_row_c(self, long i, long j, s, bint col_start):
+    cdef int add_multiple_of_row_c(self, long i, long j, s, bint col_start) except -1:
         """
         Add row ``j`` to row ``i``. Other arguments are ignored.
         """
         bitset_symmetric_difference(self._M[i], self._M[i], self._M[j])
+        return 0
 
-    cdef void swap_rows_c(self, long i, long j):
+    cdef int swap_rows_c(self, long i, long j) except -1:
         bitset_copy(self._temp, self._M[i])
         bitset_copy(self._M[i], self._M[j])
         bitset_copy(self._M[j], self._temp)
+        return 0
 
     cdef inline list nonzero_positions_in_row(self, long i):
         """
@@ -1226,7 +1239,7 @@ cdef class BinaryMatrix(LeanMatrix):
             P = P._splice_by(self._distinguish_by(P))
         return P
 
-    cdef bint is_isomorphic(self, BinaryMatrix other, BinaryMatrix s_eq=None, BinaryMatrix o_eq=None):   # Not a Sage matrix operation
+    cdef bint is_isomorphic(self, BinaryMatrix other, BinaryMatrix s_eq=None, BinaryMatrix o_eq=None) except -2:   # Not a Sage matrix operation
         """
         Test for isomorphism between the row spaces.
         """
@@ -1516,8 +1529,9 @@ cdef class TernaryMatrix(LeanMatrix):
             return GF3_one
         return GF3_minus_one
 
-    cdef void set_unsafe(self, long r, long c, x):
+    cdef int set_unsafe(self, long r, long c, x) except -1:
         self.set(r, c, x)
+        return 0
 
     cdef LeanMatrix copy(self):   # Deprecated Sage matrix operation
         cdef TernaryMatrix T
@@ -1528,7 +1542,7 @@ cdef class TernaryMatrix(LeanMatrix):
             bitset_copy(T._M1[i], self._M1[i])
         return T
 
-    cdef void resize(self, long k):   # Not a Sage matrix operation
+    cdef int resize(self, long k) except -1:   # Not a Sage matrix operation
         """
         Change number of rows to ``k``. Preserves data.
         """
@@ -1550,6 +1564,7 @@ cdef class TernaryMatrix(LeanMatrix):
                 bitset_init(self._M1[i], c)
                 bitset_clear(self._M1[i])
             self._nrows = k
+        return 0
 
     cdef LeanMatrix stack(self, LeanMatrix MM):
         cdef TernaryMatrix R
@@ -1620,7 +1635,7 @@ cdef class TernaryMatrix(LeanMatrix):
             return 1
         return -1
 
-    cdef inline void set(self, long r, long c, x):   # Not a Sage matrix operation
+    cdef inline int set(self, long r, long c, x) except -1:   # Not a Sage matrix operation
         if x == 0:
             bitset_discard(self._M0[r], c)
             bitset_discard(self._M1[r], c)
@@ -1630,8 +1645,9 @@ cdef class TernaryMatrix(LeanMatrix):
         if x == -1:
             bitset_add(self._M0[r], c)
             bitset_add(self._M1[r], c)
+        return 0
 
-    cdef bint is_nonzero(self, long r, long c):   # Not a Sage matrix operation
+    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M0[r], c)
 
     cdef bint _is_negative(self, long r, long c):
@@ -1656,7 +1672,7 @@ cdef class TernaryMatrix(LeanMatrix):
         u = (bitset_len(self._s) + bitset_len(self._t)) % 3
         return u
 
-    cdef void add_multiple_of_row_c(self, long x, long y, s, bint col_start):
+    cdef int add_multiple_of_row_c(self, long x, long y, s, bint col_start) except -1:
         """
         Add ``s`` times row ``y`` to row ``x``. Argument ``col_start`` is
         ignored.
@@ -1679,6 +1695,7 @@ cdef class TernaryMatrix(LeanMatrix):
             bitset_copy(self._M1[x], self._u)
         else:  # -1, since we assume no 0-multiple ever gets added.
             self.row_subs(x, y)
+        return 0
 
     cdef void row_subs(self, long x, long y):   # Not a Sage matrix operation
         """
@@ -1694,15 +1711,16 @@ cdef class TernaryMatrix(LeanMatrix):
     cdef void _row_negate(self, long x):
         bitset_symmetric_difference(self._M1[x], self._M1[x], self._M0[x])
 
-    cdef void swap_rows_c(self, long x, long y):
+    cdef int swap_rows_c(self, long x, long y) except -1:
         bitset_copy(self._s, self._M0[x])
         bitset_copy(self._M0[x], self._M0[y])
         bitset_copy(self._M0[y], self._s)
         bitset_copy(self._t, self._M1[x])
         bitset_copy(self._M1[x], self._M1[y])
         bitset_copy(self._M1[y], self._t)
+        return 0
 
-    cdef void pivot(self, long x, long y):   # Not a Sage matrix operation
+    cdef int pivot(self, long x, long y) except -1:   # Not a Sage matrix operation
         """
         Row-reduce to make column ``y`` have a ``1`` in row ``x`` and zeroes
         elsewhere.
@@ -1724,6 +1742,7 @@ cdef class TernaryMatrix(LeanMatrix):
                     self.add_multiple_of_row_c(i, x, 1, 0)
                 else:
                     self.row_subs(i, x)
+        return 0
 
     cdef list nonzero_positions_in_row(self, long r):
         """
@@ -2030,7 +2049,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             else:
                 return self._zero
 
-    cdef inline void set(self, long r, long c, x):   # Not a Sage matrix operation
+    cdef inline int set(self, long r, long c, x) except -1:   # Not a Sage matrix operation
         if x == self._zero:
             bitset_discard(self._M0[r], c)
             bitset_discard(self._M1[r], c)
@@ -2043,14 +2062,16 @@ cdef class QuaternaryMatrix(LeanMatrix):
         if x == self._x_one:
             bitset_add(self._M0[r], c)
             bitset_add(self._M1[r], c)
+        return 0
 
     cdef get_unsafe(self, long r, long c):
         return self.get(r, c)
 
-    cdef void set_unsafe(self, long r, long c, x):
+    cdef int set_unsafe(self, long r, long c, x) except -1:
         self.set(r, c, x)
+        return 0
 
-    cdef bint is_nonzero(self, long r, long c):   # Not a Sage matrix operation
+    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M0[r], c) or bitset_in(self._M1[r], c)
 
     cdef LeanMatrix copy(self):   # Deprecated Sage matrix operation
@@ -2062,7 +2083,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             bitset_copy(T._M1[i], self._M1[i])
         return T
 
-    cdef void resize(self, long k):   # Not a Sage matrix operation
+    cdef int resize(self, long k) except -1:   # Not a Sage matrix operation
         """
         Change number of rows to ``k``. Preserves data.
         """
@@ -2083,6 +2104,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
                 bitset_init(self._M1[i], c)
                 bitset_clear(self._M1[i])
             self._nrows = k
+        return 0
 
     cdef LeanMatrix stack(self, LeanMatrix MM):
         cdef QuaternaryMatrix R
@@ -2144,7 +2166,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         """
         return 2
 
-    cdef inline long row_len(self, long i):   # Not a Sage matrix operation
+    cdef inline long row_len(self, long i) except -1:   # Not a Sage matrix operation
         """
         Return number of nonzero entries in row ``i``.
         """
@@ -2176,52 +2198,54 @@ cdef class QuaternaryMatrix(LeanMatrix):
             else:
                 return self._zero
 
-    cdef void add_multiple_of_row_c(self, long x, long y, s, bint col_start):
+    cdef int add_multiple_of_row_c(self, long x, long y, s, bint col_start) except -1:
         """
         Add ``s`` times row ``y`` to row ``x``. Argument ``col_start`` is
         ignored.
         """
         if s == self._zero:
-            return
+            return 0
         if s == self._one or s is None:
             bitset_symmetric_difference(self._M0[x], self._M0[x], self._M0[y])
             bitset_symmetric_difference(self._M1[x], self._M1[x], self._M1[y])
-            return
+            return 0
         if s == self._x_zero:
             bitset_symmetric_difference(self._M0[x], self._M0[x], self._M1[y])
             bitset_symmetric_difference(self._M1[x], self._M1[x], self._M0[y])
             bitset_symmetric_difference(self._M1[x], self._M1[x], self._M1[y])
-            return
+            return 0
         if s == self._x_one:
             bitset_symmetric_difference(self._M0[x], self._M0[x], self._M0[y])
             bitset_symmetric_difference(self._M0[x], self._M0[x], self._M1[y])
             bitset_symmetric_difference(self._M1[x], self._M1[x], self._M0[y])
-            return
+            return 0
 
-    cdef void swap_rows_c(self, long x, long y):
+    cdef int swap_rows_c(self, long x, long y) except -1:
         bitset_copy(self._s, self._M0[x])
         bitset_copy(self._M0[x], self._M0[y])
         bitset_copy(self._M0[y], self._s)
         bitset_copy(self._t, self._M1[x])
         bitset_copy(self._M1[x], self._M1[y])
         bitset_copy(self._M1[y], self._t)
+        return 0
 
-    cdef inline void _row_div(self, long x, object s):
+    cdef inline int _row_div(self, long x, object s) except -1:
         """
         Divide all entries in row ``x`` by ``s``.
         """
         if s == self._one:
-            return
+            return 0
         if s == self._x_zero:
             bitset_symmetric_difference(self._M0[x], self._M0[x], self._M1[x])
             bitset_symmetric_difference(self._M1[x], self._M0[x], self._M1[x])
-            return
+            return 0
         if s == self._x_one:
             bitset_symmetric_difference(self._M1[x], self._M0[x], self._M1[x])
             bitset_symmetric_difference(self._M0[x], self._M0[x], self._M1[x])
-            return
+            return 0
+        raise ZeroDivisionError
 
-    cdef void pivot(self, long x, long y):   # Not a Sage matrix operation
+    cdef int pivot(self, long x, long y) except -1:   # Not a Sage matrix operation
         """
         Row-reduce to make column ``y`` have a ``1`` in row ``x`` and zeroes
         elsewhere.
@@ -2239,6 +2263,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         for i from 0 <= i < self._nrows:
             if self.is_nonzero(i, y) and i != x:
                 self.add_multiple_of_row_c(i, x, self.get(i, y), 0)
+        return 0
 
     cdef list nonzero_positions_in_row(self, long r):
         """
@@ -2525,10 +2550,11 @@ cdef class IntegerMatrix(LeanMatrix):
         """
         return Integer(self.get(r, c))
 
-    cdef void set_unsafe(self, long r, long c, x):
+    cdef int set_unsafe(self, long r, long c, x) except -1:
         self.set(r, c, x)
+        return 0
 
-    cdef bint is_nonzero(self, long r, long c):   # Not a Sage matrix operation
+    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return self.get(r, c)
 
     cdef LeanMatrix copy(self):   # Deprecated Sage matrix operation
@@ -2536,7 +2562,7 @@ cdef class IntegerMatrix(LeanMatrix):
         memcpy(M._entries, self._entries, self._nrows * self._ncols * sizeof(int))
         return M
 
-    cdef void resize(self, long k):   # Not a Sage matrix operation
+    cdef int resize(self, long k) except -1:   # Not a Sage matrix operation
         """
         Change number of rows to ``k``. Preserves data.
         """
@@ -2547,6 +2573,7 @@ cdef class IntegerMatrix(LeanMatrix):
         elif l < 0:
             sage_realloc(self._entries, self._ncols * k * sizeof(int))
         self._nrows = k
+        return 0
 
     cdef LeanMatrix stack(self, LeanMatrix M):
         """
@@ -2606,7 +2633,7 @@ cdef class IntegerMatrix(LeanMatrix):
         """
         return 0
 
-    cdef inline long row_len(self, long i):   # Not a Sage matrix operation
+    cdef inline long row_len(self, long i) except -1:   # Not a Sage matrix operation
         """
         Return number of nonzero entries in row ``i``.
         """
@@ -2627,7 +2654,7 @@ cdef class IntegerMatrix(LeanMatrix):
             res += self.get(i, k) * self.get(j, k)
         return res
 
-    cdef void add_multiple_of_row_c(self, long x, long y, s, bint col_start):
+    cdef int add_multiple_of_row_c(self, long x, long y, s, bint col_start) except -1:
         """
         Add ``s`` times row ``y`` to row ``x``. Argument ``col_start`` is
         ignored.
@@ -2639,19 +2666,23 @@ cdef class IntegerMatrix(LeanMatrix):
         else:
             for i from 0 <= i < self._ncols:
                 self.set(x, i, self.get(x, i) + s * self.get(y, i))
+        return 0
 
-    cdef void swap_rows_c(self, long x, long y):
+    cdef int swap_rows_c(self, long x, long y) except -1:
         """
         Swap rows ``x`` and ``y``.
         """
         cdef int* tmp
         tmp = <int* > sage_malloc(self._ncols * sizeof(int))
+        if not tmp:
+            raise MemoryError
         memcpy(tmp, self._entries + x * self._ncols, self._ncols * sizeof(int))
         memcpy(self._entries + x * self._ncols, self._entries + y * self._ncols, self._ncols * sizeof(int))
         memcpy(self._entries + y * self._ncols, tmp, self._ncols * sizeof(int))
         sage_free(tmp)
+        return 0
 
-    cdef void rescale_row_c(self, long x, s, bint col_start):
+    cdef int rescale_row_c(self, long x, s, bint col_start) except -1:
         """
         Scale row ``x`` by ``s``. Argument ``col_start`` is for Sage
         compatibility, and is ignored.
@@ -2660,8 +2691,9 @@ cdef class IntegerMatrix(LeanMatrix):
         # print "row-scale: ", x, ", ", s
         for i from 0 <= i < self._ncols:
             self.set(x, i, s * self.get(x, i))
+        return 0
 
-    cdef void rescale_column_c(self, long y, s, bint start_row):
+    cdef int rescale_column_c(self, long y, s, bint start_row) except -1:
         """
         Scale column ``y`` by ``s``. Argument ``start_row`` is for Sage
         compatibility, and is ignored.
@@ -2669,8 +2701,9 @@ cdef class IntegerMatrix(LeanMatrix):
         cdef long j
         for j from 0 <= j < self._nrows:
             self.set(j, y, self.get(j, y) * s)
+        return 0
 
-    cdef void pivot(self, long x, long y):   # Not a Sage matrix operation
+    cdef int pivot(self, long x, long y) except -1:   # Not a Sage matrix operation
         """
         Row-reduce to make column ``y`` have a ``1`` in row ``x`` and zeroes
         elsewhere.
@@ -2691,6 +2724,7 @@ cdef class IntegerMatrix(LeanMatrix):
             s = self.get(i, y)
             if s and i != x:
                 self.add_multiple_of_row_c(i, x, -s, 0)
+        return 0
 
     cdef list nonzero_positions_in_row(self, long r):
         """

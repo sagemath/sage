@@ -39,8 +39,8 @@ import integer
 import infinity
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.rings.integer_ring import ZZ
 
-include "sage/ext/stdsage.pxi"
 
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -120,7 +120,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         parent as ``self``.
         """
         cdef ComplexNumber x
-        x = PY_NEW(ComplexNumber)
+        x = ComplexNumber.__new__(ComplexNumber)
         x._parent = self._parent
         x._prec = self._prec
         x._multiplicative_order = None
@@ -167,7 +167,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         if imag is None:
             if real is None: return
 
-            if PY_TYPE_CHECK(real, ComplexNumber):
+            if isinstance(real, ComplexNumber):
                 real, imag = (<ComplexNumber>real).real(), (<ComplexNumber>real).imag()
             elif isinstance(real, sage.libs.pari.all.pari_gen):
                 real, imag = real.real(), real.imag()
@@ -544,7 +544,8 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
     def _pari_(self):
         r"""
-        Coerces ``self`` into a Pari ``complex`` object.
+        Coerces ``self`` into a PARI ``t_COMPLEX`` object,
+        or a ``t_REAL`` if ``self`` is real.
 
         EXAMPLES:
 
@@ -553,14 +554,26 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: a = ComplexNumber(2,1)
             sage: pari(a)
             2.00000000000000 + 1.00000000000000*I
+            sage: pari(a).type()
+            't_COMPLEX'
             sage: type(pari(a))
             <type 'sage.libs.pari.gen.gen'>
             sage: a._pari_()
             2.00000000000000 + 1.00000000000000*I
             sage: type(a._pari_())
             <type 'sage.libs.pari.gen.gen'>
+            sage: a = CC(pi)
+            sage: pari(a)
+            3.14159265358979
+            sage: pari(a).type()
+            't_REAL'
+            sage: a = CC(-2).sqrt()
+            sage: pari(a)
+            1.41421356237310*I
         """
-        return sage.libs.pari.all.pari.complex(self.real()._pari_(), self.imag()._pari_())
+        if self.is_real():
+            return self.real()._pari_()
+        return sage.libs.pari.all.pari.complex(self.real() or 0, self.imag())
 
     def _mpmath_(self, prec=None, rounding=None):
         """
@@ -576,7 +589,8 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             mpc(real='1.0', imag='2.0')
         """
         if prec is not None:
-            return self.n(prec=prec)._mpmath_()
+            from complex_field import ComplexField
+            return ComplexField(prec)(self)._mpmath_()
         from sage.libs.mpmath.all import make_mpc
         re = mpfr_to_mpfval(self.__re)
         im = mpfr_to_mpfval(self.__im)
@@ -1124,7 +1138,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         return (<Element>left)._richcmp(right, op)
 
-    cdef int _cmp_c_impl(left, sage.structure.element.Element right) except -2:
+    cpdef int _cmp_(left, sage.structure.element.Element right) except -2:
         cdef int a, b
         a = mpfr_nan_p(left.__re)
         b = mpfr_nan_p((<ComplexNumber>right).__re)
@@ -1209,11 +1223,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: z = CC(0,1)
             sage: plot(z)
+            Graphics object consisting of 1 graphics primitive
 
         or the more direct::
 
             sage: z = CC(0,1)
             sage: z.plot()
+            Graphics object consisting of 1 graphics primitive
         """
         return sage.plot.point.point2d((self.real(), self.imag()), **kargs)
 
@@ -1494,7 +1510,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: z = 1 + i
             sage: z.eta(omit_frac=True)
-            0.998129069925959 - 8.12769318...e-22*I
+            0.998129069925959
             sage: prod([1-exp(2*pi*i*n*z) for n in range(1,10)])
             0.998129069925958 + 4.59099857829247e-19*I
 
@@ -1707,13 +1723,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: a.agm(b, algorithm="principal")
             0.338175462986180 - 0.0135326969565405*I
             sage: a.agm(b, algorithm="pari")
-            0.0806891850759812 + 0.239036532685557*I
+            -0.371591652351761 + 0.319894660206830*I
             sage: a.agm(b, algorithm="optimal").abs()
             0.490319232466314
             sage: a.agm(b, algorithm="principal").abs()
             0.338446122230459
             sage: a.agm(b, algorithm="pari").abs()
-            0.252287947683910
+            0.490319232466314
 
         TESTS:
 
@@ -2006,7 +2022,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: C, i = ComplexField(30).objgen()
-            sage: (1+i).gamma_inc(2 + 3*i)
+            sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10
             0.0020969149 - 0.059981914*I
             sage: (1+i).gamma_inc(5)
             -0.0013781309 + 0.0065198200*I
@@ -2014,8 +2030,17 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             0.70709210 - 0.42035364*I
             sage: CC(2).gamma_inc(5)
             0.0404276819945128
+
+        TESTS:
+
+        Check that :trac:`7099` is fixed::
+
+            sage: C = ComplexField(400)
+            sage: C(2 + I).gamma_inc(C(3 + I))  # abs tol 1e-120
+            0.121515644664508695525971545977439666159749344176962379708992904126499444842886620664991650378432544392118359044438541515 + 0.101533909079826033296475736021224621546966200987295663190553587086145836461236284668967411665020429964946098113930918850*I
+
         """
-        return self._parent(self._pari_().incgam(t))
+        return self._parent(self._pari_().incgam(t, precision=self.prec()))
 
     def log(self,base=None):
         r"""
@@ -2249,7 +2274,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: CC(1+i).is_real()
             False
         """
-        return (mpfr_zero_p(self.__im) <> 0)
+        return (mpfr_zero_p(self.__im) != 0)
 
     def is_imaginary(self):
         """
@@ -2262,7 +2287,63 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: CC(1+i).is_imaginary()
             False
         """
-        return (mpfr_zero_p(self.__re) <> 0)
+        return (mpfr_zero_p(self.__re) != 0)
+
+    def is_integer(self):
+        """
+        Return ``True`` if ``self`` is a integer
+
+        EXAMPLES::
+
+            sage: CC(3).is_integer()
+            True
+            sage: CC(1,2).is_integer()
+            False
+        """
+        return self.is_real() and self.real() in ZZ
+
+    def is_positive_infinity(self):
+        r"""
+        Check if ``self`` is `+\infty`.
+
+        EXAMPLES::
+
+            sage: CC(1, 2).is_positive_infinity()
+            False
+            sage: CC(oo, 0).is_positive_infinity()
+            True
+            sage: CC(0, oo).is_positive_infinity()
+            False
+        """
+        return self.real().is_positive_infinity() and self.imag().is_zero()
+
+    def is_negative_infinity(self):
+        r"""
+        Check if ``self`` is `-\infty`.
+
+        EXAMPLES::
+
+            sage: CC(1, 2).is_negative_infinity()
+            False
+            sage: CC(-oo, 0).is_negative_infinity()
+            True
+            sage: CC(0, -oo).is_negative_infinity()
+            False
+        """
+        return self.real().is_negative_infinity() and self.imag().is_zero()
+
+    def is_infinity(self):
+        r"""
+        Check if ``self`` is `\infty`.
+
+        EXAMPLES::
+
+            sage: CC(1, 2).is_infinity()
+            False
+            sage: CC(0, oo).is_infinity()
+            True
+        """
+        return self.real().is_infinity() or self.imag().is_infinity()
 
     def zeta(self):
         """
@@ -2444,6 +2525,50 @@ cdef class RRtoCC(Map):
         self._zero = ComplexNumber(CC, 0)
         self._repr_type_str = "Natural"
 
+    cdef dict _extra_slots(self, dict _slots):
+        """
+        A helper for pickling and copying.
+
+        INPUT:
+
+        ``_slots`` -- a dictionary
+
+        OUTPUT:
+
+        The given dictionary, with zero added.
+
+        EXAMPLES::
+
+            sage: from sage.rings.complex_number import RRtoCC
+            sage: f = RRtoCC(RR, CC)
+            sage: g = copy(f) # indirect doctest
+            sage: g
+            Natural map:
+              From: Real Field with 53 bits of precision
+              To:   Complex Field with 53 bits of precision
+        """
+        _slots['_zero'] = self._zero
+        return Map._extra_slots(self, _slots)
+
+    cdef _update_slots(self, dict _slots):
+        """
+        A helper for unpickling and copying.
+
+        INPUT:
+
+        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+
+        EXAMPLES::
+
+            sage: from sage.rings.complex_number import RRtoCC
+            sage: RRtoCC(RR, CC)
+            Natural map:
+              From: Real Field with 53 bits of precision
+              To:   Complex Field with 53 bits of precision
+        """
+        Map._update_slots(self, _slots)
+        self._zero = _slots['_zero']
+
     cpdef Element _call_(self, x):
         """
         EXAMPLES::
@@ -2470,9 +2595,9 @@ cdef class CCtoCDF(Map):
             sage: f(CC.0)
             1.0*I
             sage: f(exp(pi*CC.0/4))
-            0.707106781187 + 0.707106781187*I
+            0.7071067811865476 + 0.7071067811865475*I
         """
-        cdef ComplexDoubleElement z = <ComplexDoubleElement>PY_NEW(ComplexDoubleElement)
+        cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
         z._complex.dat[0] = mpfr_get_d((<ComplexNumber>x).__re, GMP_RNDN)
         z._complex.dat[1] = mpfr_get_d((<ComplexNumber>x).__im, GMP_RNDN)
         return z

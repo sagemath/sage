@@ -57,6 +57,10 @@ representation. For example, `(0,0)` is a superfluous vertex here::
     sage: triangle.vertices()
     (A vertex at (-1, 0), A vertex at (1, 0), A vertex at (0, 2))
 
+
+Unbounded Polyhedra
+-------------------
+
 A polytope is defined as a bounded polyhedron. In this case, the
 minimal representation is unique and a vertex of the minimal
 representation is equivalent to a 0-dimensional face of the
@@ -99,7 +103,7 @@ EXAMPLES::
     sage: trunc_quadr = Polyhedron(vertices=[[1,0],[0,1]], rays=[[1,0],[0,1]])
     sage: trunc_quadr
     A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices and 2 rays
-    sage: v = trunc_quadr.vertex_generator().next()  # the first vertex in the internal enumeration
+    sage: v = next(trunc_quadr.vertex_generator())  # the first vertex in the internal enumeration
     sage: v
     A vertex at (0, 1)
     sage: v.vector()
@@ -118,7 +122,7 @@ EXAMPLES::
     <type 'sage.modules.vector_integer_dense.Vector_integer_dense'>
     sage: v.polyhedron()
     A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices and 2 rays
-    sage: r = trunc_quadr.ray_generator().next()
+    sage: r = next(trunc_quadr.ray_generator())
     sage: r
     A ray in the direction (0, 1)
     sage: r.vector()
@@ -137,6 +141,57 @@ specified by a list ``[b, A]``::
 See :func:`Polyhedron` for a detailed description of all possible ways
 to construct a polyhedron.
 
+
+Base Rings
+----------
+
+The base ring of the polyhedron can be specified by the ``base_ring``
+optional keyword argument. If not specified, a suitable common base
+ring for all coordinates/coefficients will be chosen
+automatically. Important cases are:
+
+* ``base_ring=QQ`` uses a fast implementation for exact rational
+  numbers.
+
+* ``base_ring=ZZ`` is similar to ``QQ``, but the resulting polyhedron
+  object will have extra methods for lattice polyhedra.
+
+* ``base_ring=RDF`` uses floating point numbers, this is fast but
+  susceptible to numerical errors.
+
+Polyhedra with symmetries often are defined over some algebraic field
+extension of the rationals. As a simple example, consider the
+equilateral triangle whose vertex coordinates involve `\sqrt{3}`. An
+exact way to work with roots in Sage is the :mod:`Algebraic Real Field
+<sage.rings.qqbar>` ::
+
+    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA)
+    sage: triangle.Hrepresentation()
+    (An inequality (-1, -0.5773502691896258?) x + 1 >= 0, 
+     An inequality (1, -0.5773502691896258?) x + 0 >= 0, 
+     An inequality (0, 1.154700538379252?) x + 0 >= 0)
+
+Without specifying the ``base_ring``, the ``sqrt(3)`` would be a
+symbolic ring element and, therefore, the polyhedron defined over the
+symbolic ring. This is possible as well, but rather slow::
+
+    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)])
+    A 2-dimensional polyhedron in (Symbolic Ring)^2 defined as the convex 
+    hull of 3 vertices
+
+Even faster than all algebraic real numbers (the field ``AA``) is
+to take the smallest extension field. For the equilateral
+triangle, that would be::
+
+    sage: K.<sqrt3> = NumberField(x^2-3)
+    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])
+    A 2-dimensional polyhedron in (Number Field in sqrt3 with defining 
+    polynomial x^2 - 3)^2 defined as the convex hull of 3 vertices
+
+
+Appendix
+--------
+
 REFERENCES:
 
     Komei Fukuda's `FAQ in Polyhedral Computation
@@ -150,25 +205,22 @@ AUTHORS:
     - Volker Braun: refactoring, handle non-compact case, 2009 and 2010
     - Andrey Novoseltsev: added Hasse_diagram_from_incidences, 2010
     - Volker Braun: rewrite to use PPL instead of cddlib, 2011
+    - Volker Braun: Add support for arbitrary subfields of the reals
 """
 
 ########################################################################
 #       Copyright (C) 2008 Marshall Hampton <hamptonio@gmail.com>
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
 
-from sage.rings.all import QQ, ZZ, RDF
+from sage.rings.all import QQ, ZZ, RDF, RR
 from sage.misc.decorators import rename_keyword
 
 from misc import _make_listlist, _common_length_of
-
-
-
-
 
 
 #########################################################################
@@ -206,11 +258,12 @@ def Polyhedron(vertices=None, rays=None, lines=None,
       any iterable container of ``base_ring`` elements. An entry equal to
       ``[-1,7,3,4]`` represents the equality `7x_1+3x_2+4x_3= 1`.
 
-    - ``base_ring`` -- either ``QQ`` or ``RDF``. The field over which
-      the polyhedron will be defined. For ``QQ``, exact arithmetic
-      will be used. For ``RDF``, floating point numbers will be
-      used. Floating point arithmetic is faster but might give the
-      wrong result for degenerate input.
+    - ``base_ring`` -- a sub-field of the reals implemented in
+      Sage. The field over which the polyhedron will be defined. For
+      ``QQ`` and algebraic extensions, exact arithmetic will be
+      used. For ``RDF``, floating point numbers will be used. Floating
+      point arithmetic is faster but might give the wrong result for
+      degenerate input.
 
     - ``ambient_dim`` -- integer. The ambient space dimension. Usually
       can be figured out automatically from the H/Vrepresentation
@@ -222,10 +275,12 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         (:mod:`~sage.geometry.polyhedron.backend_cdd`) with `\QQ` or
         `\RDF` coefficients depending on ``base_ring``.
 
-
       * ``'ppl'``: use ppl
         (:mod:`~sage.geometry.polyhedron.backend_ppl`) with `\ZZ` or
         `\QQ` coefficients depending on ``base_ring``.
+
+      * ``'field'``: use python implementation
+        (:mod:`~sage.geometry.polyhedron.backend_field`) for any field
 
     Some backends support further optional arguments:
 
@@ -301,6 +356,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     .. NOTE::
 
       * Once constructed, a ``Polyhedron`` object is immutable.
+
       * Although the option ``field=RDF`` allows numerical data to
         be used, it might not give the right answer for degenerate
         input data - the results can depend upon the tolerance
@@ -331,7 +387,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
             base_ring = ZZ
 
     # set ambient_dim
-    if ambient_dim is not None and deduced_ambient_dim!=ambient_dim:
+    if ambient_dim is not None and deduced_ambient_dim != ambient_dim:
         raise ValueError('Ambient space dimension mismatch. Try removing the "ambient_dim" parameter.')
     ambient_dim = deduced_ambient_dim
 
@@ -352,13 +408,13 @@ def Polyhedron(vertices=None, rays=None, lines=None,
                 base_ring = ZZ
             else:   # integral inequalities usually do not determine a latice polytope!
                 base_ring = QQ
-            convert=False
+            convert = False
         elif all(is_Rational(x) for x in values):
             base_ring = QQ
-            convert=False
+            convert = False
         elif all(is_RealDoubleElement(x) for x in values):
             base_ring = RDF
-            convert=False
+            convert = False
         else:
             try:
                 map(ZZ, values)
@@ -367,14 +423,18 @@ def Polyhedron(vertices=None, rays=None, lines=None,
                 else:
                     base_ring = QQ
                 convert = True
-            except TypeError:
+            except (TypeError, ValueError):
                 from sage.structure.sequence import Sequence
                 values = Sequence(values)
-                if QQ.has_coerce_map_from(values.universe()):
+                common_ring = values.universe()
+                if QQ.has_coerce_map_from(common_ring):
                     base_ring = QQ
                     convert = True
-                else:
+                elif common_ring is RR:   # DWIM: replace with RDF
                     base_ring = RDF
+                    convert = True
+                else:
+                    base_ring = common_ring
                     convert = True
 
     # Add the origin if necesarry
@@ -386,14 +446,11 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     parent = Polyhedra(base_ring, ambient_dim, backend=backend)
     base_ring = parent.base_ring()
 
-    # Convert into base_ring if necessary
-    def convert_base_ring(lstlst):
-        return [ [base_ring(x) for x in lst] for lst in lstlst]
+
+    # finally, construct the Polyhedron
     Hrep = Vrep = None
     if got_Hrep:
         Hrep = [ieqs, eqns]
     if got_Vrep:
         Vrep = [vertices, rays, lines]
-
-    # finally, construct the Polyhedron
     return parent(Vrep, Hrep, convert=convert, verbose=verbose)

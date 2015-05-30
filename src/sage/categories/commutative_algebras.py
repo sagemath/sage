@@ -10,12 +10,10 @@ Commutative algebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from category_types import Category_over_base_ring
-from algebras import Algebras
-from commutative_rings import CommutativeRings
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.algebras import Algebras
 
-class CommutativeAlgebras(Category_over_base_ring):
+class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
     """
     The category of commutative algebras with unit over a given base ring.
 
@@ -24,9 +22,18 @@ class CommutativeAlgebras(Category_over_base_ring):
         sage: M = CommutativeAlgebras(GF(19))
         sage: M
         Category of commutative algebras over Finite Field of size 19
+        sage: CommutativeAlgebras(QQ).super_categories()
+        [Category of algebras over Rational Field, Category of commutative rings]
+
+    This is just a shortcut for::
+
+        sage: Algebras(QQ).Commutative()
+        Category of commutative algebras over Rational Field
 
     TESTS::
 
+        sage: Algebras(QQ).Commutative() is CommutativeAlgebras(QQ)
+        True
         sage: TestSuite(CommutativeAlgebras(ZZ)).run()
 
     Todo:
@@ -34,7 +41,6 @@ class CommutativeAlgebras(Category_over_base_ring):
      - product   ( = cartesian product)
      - coproduct ( = tensor product over base ring)
     """
-
 
     def __contains__(self, A):
         """
@@ -52,14 +58,3 @@ class CommutativeAlgebras(Category_over_base_ring):
         """
         return super(CommutativeAlgebras, self).__contains__(A) or \
             (A in Algebras(self.base_ring()) and hasattr(A, "is_commutative") and A.is_commutative())
-
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: CommutativeAlgebras(QQ).super_categories()
-            [Category of algebras over Rational Field, Category of commutative rings]
-        """
-        R = self.base_ring()
-        return [Algebras(R), CommutativeRings()]

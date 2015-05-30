@@ -9,7 +9,7 @@ Charger et attacher des fichiers Sage
 
 Nous décrivons maintenant la manière de charger dans Sage des programmes
 écrits dans des fichiers séparés. Créons un fichier appelé
-``example.sage`` avec le contenu suivant :
+``example.sage`` avec le contenu suivant :
 
 .. skip
 
@@ -25,7 +25,7 @@ en utilisant la commande ``load``.
 
 ::
 
-    sage: load "example.sage"
+    sage: load("example.sage")
     Hello World
     8
 
@@ -36,7 +36,7 @@ la commande ``attach`` :
 
 ::
 
-    sage: attach "example.sage"
+    sage: attach("example.sage")
     Hello World
     8
 
@@ -47,7 +47,7 @@ rechargé dans Sage.
 
 Avec ``attach``, le fichier est rechargé automatiquement
 dans Sage à chaque modification, ce qui est pratique pour déboguer du
-code ; tandis qu'avec ``load`` il n'est chargé qu'une fois.
+code ; tandis qu'avec ``load`` il n'est chargé qu'une fois.
 
 Lorsque Sage lit ``example.sage``, il le convertit en un programme
 Python qui est ensuite exécuté par l'interpréteur Python. Cette
@@ -56,7 +56,7 @@ littéraux entiers dans des ``Integer()`` et les littéraux flottants dans
 des ``RealNumber()``, à remplacer les ``^`` par des ``**``, et à
 remplacer par exemple ``R.2`` par ``R.gen(2)``. La version convertie en
 Python de ``example.sage`` est placée dans le même répertoire sous le
-nom ``example.sage.py``. Elle contient le code suivant :
+nom ``example.sage.py``. Elle contient le code suivant :
 
 ::
 
@@ -89,7 +89,7 @@ niveau, certaines opérations peuvent être plus rapides de plusieurs
 ordres de grandeur si elles sont implémentées sur des types statiques
 dans un langage compilé. Certaines parties de Sage auraient été trop
 lentes si elles avaient été écrites entièrement en Python. Pour pallier
-ce problème, Sage supporte une sorte de « version compilée » de Python
+ce problème, Sage supporte une sorte de « version compilée » de Python
 appelée Cython (voir [Cyt]_ et [Pyr]_). Cython ressemble à la fois
 à Python et à C. La plupart des constructions Python, dont la définition
 de listes par compréhension, les expressions conditionnelles, les
@@ -104,34 +104,8 @@ l'exension ``.spyx`` (à la place de ``.sage``). Avec l'interface en
 ligne de commande, vous pouvez charger ou attacher des fichiers de code
 compilé exactement comme les fichiers interprétés. Pour l'instant,
 le *notebook* ne permet pas d'attacher des fichiers compilés. La
-compilation proprement dite a lieu « en coulisse », sans que vous ayez à
-la déclencher explicitement. Le fichier
-``$SAGE_ROOT/examples/programming/sagex/factorial.spyx`` donne un exemple
-d'implémentation compilée de la fonction factorielle, qui appelle
-directement la bibliothèque GMP. Pour l'essayer, placez-vous dans le
-répertoire ``$SAGE_ROOT/examples/programming/sagex/`` et entrez les
-commandes suivantes :
-
-
-.. skip
-
-::
-
-    sage: load "factorial.spyx"
-    ***************************************************
-                    Recompiling factorial.spyx
-    ***************************************************
-    sage: factorial(50)
-    30414093201713378043612608166064768844377641568960512000000000000L
-    sage: time n = factorial(10000)
-    CPU times: user 0.03 s, sys: 0.00 s, total: 0.03 s
-    Wall time: 0.03
-
-Le suffixe ``L`` ci-dessus dénote un entier long Python (voir
-:ref:`section-mathannoy`).
-
-Notez que si vous quittez et relancez Sage, ``factorial.spyx`` sera
-recompilé. La bibliothèque d'objets partagés compilés se trouve
+compilation proprement dite a lieu « en coulisse », sans que vous ayez à
+la déclencher explicitement.  La bibliothèque d'objets partagés compilés se trouve
 dans ``$HOME/.sage/temp/hostname/pid/spyx``. Ces fichiers sont supprimés
 lorsque vous quittez Sage.
 
@@ -152,9 +126,9 @@ Appeler des fonctions définies dans des fichiers C séparés
 
 Il n'est pas difficile non plus d'accéder à des fonctions écrites en C,
 dans des fichiers \*.c séparés. Créez dans un même répertoire deux
-fichiers ``test.c`` et ``test.spyx`` avec les contenus suivants :
+fichiers ``test.c`` et ``test.spyx`` avec les contenus suivants :
 
-Le code C pur : ``test.c``
+Le code C pur : ``test.c``
 
 ::
 
@@ -162,7 +136,7 @@ Le code C pur : ``test.c``
       return n + 1;
     }
 
-Le code Cython : ``test.spyx``:
+Le code Cython : ``test.spyx``:
 
 ::
 
@@ -172,13 +146,13 @@ Le code Cython : ``test.spyx``:
     def test(n):
         return add_one(n)
 
-Vous pouvez alors faire :
+Vous pouvez alors faire :
 
 .. skip
 
 ::
 
-    sage: attach "test.spyx"
+    sage: attach("test.spyx")
     Compiling (...)/test.spyx...
     sage: test(10)
     11
@@ -195,7 +169,7 @@ Scripts Python/Sage autonomes
 =============================
 
 Le script autonome suivant, écrit en Sage, permet de factoriser des
-entiers, des polynômes, etc. :
+entiers, des polynômes, etc. :
 
 ::
 
@@ -214,7 +188,7 @@ entiers, des polynômes, etc. :
 Pour utiliser ce script, votre répertoire ``SAGE_ROOT`` doit apparaître
 dans la variable d'environnement PATH. Supposons que le script ci-dessus
 soit appelé ``factor``, il peut alors être utilisé comme dans l'exemple
-suivant :
+suivant :
 
 ::
 
@@ -229,7 +203,7 @@ Types de données
 Chaque objet Sage a un type bien défini. Python dispose d'une vaste
 gamme de types intégrés et la bibliothèque Sage en fournit de nombreux
 autres. Parmi les types intégrés de Python, citons les chaînes, les
-listes, les n-uplets, les entiers et les flottants :
+listes, les n-uplets, les entiers et les flottants :
 
 ::
 
@@ -247,7 +221,7 @@ listes, les n-uplets, les entiers et les flottants :
     <type 'float'>
 
 Sage ajoute de nombreux autres types. Par exemple, les espaces
-vectoriels :
+vectoriels :
 
 ::
 
@@ -258,15 +232,15 @@ vectoriels :
 
 Seules certaines fonctions peuvent être appelées sur ``V``. Dans
 d'autres logiciels mathématiques, cela se fait en notation
-« fonctionnelle », en écrivant ``foo(V,...)``. En Sage, certaines
+« fonctionnelle », en écrivant ``foo(V,...)``. En Sage, certaines
 fonctions sont attachés au type (ou classe) de l'objet et appelées avec
-une syntaxe « orientée objet » comme en Java ou en C++, par exemple
+une syntaxe « orientée objet » comme en Java ou en C++, par exemple
 ``V.foo(...)``. Cela évite de polluer l'espace de noms global avec des
 dizaines de milliers de fonctions, et cela permet d'avoir plusieurs
 fonctions appelées ``foo``, avec des comportements différents, sans devoir
 se reposer sur le type des arguments (ni sur des instructions case) pour
 décider laquelle appeler. De plus, une fonction dont vous réutilisez le
-nom demeure disponible : par exemple, si vous appelez quelque chose
+nom demeure disponible : par exemple, si vous appelez quelque chose
 ``zeta`` et si ensuite vous voulez calculer la valeur de la fonction
 zêta de Riemann au point 0.5, vous pouvez encore écrire ``s=.5;
 s.zeta()``.
@@ -309,7 +283,7 @@ ne sont pas claires en notation orientée objet. Voici quelques exemples.
     x^2 + 2*x + 5
 
 Pour obtenir la liste de toutes les fonctions membres de :math:`A`,
-utilisez la complétion de ligne de commande : tapez ``A.``, puis appuyez
+utilisez la complétion de ligne de commande : tapez ``A.``, puis appuyez
 sur la touche ``[tab]`` de votre clavier, comme expliqué dans la section
 :ref:`section-tabcompletion`.
 
@@ -356,7 +330,7 @@ Sage) :
     sage: range(1, 15)
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
-Cela est utile pour construire des listes par compréhension :
+Cela est utile pour construire des listes par compréhension :
 
 ::
 
@@ -374,7 +348,7 @@ Pour plus d'information sur les compréhensions, voir [PyT]_.
 
 Une fonctionnalité merveilleuse est l'extraction de tranches d'une
 liste. Si ``L`` est une liste, ``L[m:n]`` renvoie la sous-liste de ``L``
-formée des éléments d'indices :math:`m` à :math:`n-1` inclus :
+formée des éléments d'indices :math:`m` à :math:`n-1` inclus :
 
 ::
 
@@ -431,7 +405,7 @@ l'univers de la séquence.
     ValueError: object is immutable; please change a copy instead.
 
 Les séquences sont des objets dérivés des listes, et peuvent être
-utilisées partout où les listes peuvent l'être :
+utilisées partout où les listes peuvent l'être :
 
 ::
 
@@ -443,7 +417,7 @@ utilisées partout où les listes peuvent l'être :
     sage: type(list(v))
     <type 'list'>
 
-Autre exemple : les bases d'espaces vectoriels sont des séquences non
+Autre exemple : les bases d'espaces vectoriels sont des séquences non
 mutables, car il ne faut pas les modifier.
 
 ::
@@ -467,7 +441,7 @@ Dictionnaires
 =============
 
 Un dictionnaire (parfois appelé un tableau associatif) est une
-correspondance entre des objets « hachables » (par exemple des chaînes, des
+correspondance entre des objets « hachables » (par exemple des chaînes, des
 nombres, ou des n-uplets de tels objets, voir
 http://docs.python.org/tut/node7.html et
 http://docs.python.org/lib/typesmapping.html dans la documentation de
@@ -492,7 +466,7 @@ montre que les indices d'un dictionnaire peuvent être des objets
 compliqués.
 
 Un dictionnaire peut être transformé en une liste de couples clé-objet
-contenant les mêmes données :
+contenant les mêmes données :
 
 .. link
 
@@ -502,7 +476,7 @@ contenant les mêmes données :
     [(1, 5), ('sage', 17), (Integer Ring, Finite Field of size 7)]
 
 Le parcours itératifs des paires d'un dictionnaire est un idiome de
-programmation fréquent :
+programmation fréquent :
 
 ::
 
@@ -524,16 +498,18 @@ ensemblistes usuelles.
 ::
 
     sage: X = set([1,19,'a']);   Y = set([1,1,1, 2/3])
-    sage: X
-    set(['a', 1, 19])
+    sage: X   # random sort order
+    {1, 19, 'a'}
+    sage: X == set(['a', 1, 1, 19])
+    True
     sage: Y
-    set([1, 2/3])
+    {2/3, 1}
     sage: 'a' in X
     True
     sage: 'a' in Y
     False
     sage: X.intersection(Y)
-    set([1])
+    {1}
 
 Sage a son propre type ensemble, qui est (dans certains cas) implémenté
 au-dessus du type Python, mais offre quelques fonctionnalités
@@ -543,8 +519,10 @@ supplémentaires utiles à Sage. Pour créer un ensemble Sage, on utilise
 ::
 
     sage: X = Set([1,19,'a']);   Y = Set([1,1,1, 2/3])
-    sage: X
+    sage: X   # random sort order
     {'a', 1, 19}
+    sage: X == Set(['a', 1, 1, 19])
+    True
     sage: Y
     {1, 2/3}
     sage: X.intersection(Y)
@@ -565,11 +543,11 @@ d'entiers positifs jusqu'à :math:`10000000`.
 ::
 
     sage: v = (n^2 for n in xrange(10000000))
-    sage: v.next()
+    sage: next(v)
     0
-    sage: v.next()
+    sage: next(v)
     1
-    sage: v.next()
+    sage: next(v)
     4
 
 Nous créons maintenant un itérateur sur les nombres premiers de la forme
@@ -581,26 +559,26 @@ quelques premières valeurs qu'il prend.
     sage: w = (4*p + 1 for p in Primes() if is_prime(4*p+1))
     sage: w
     <generator object <genexpr> at 0x...>
-    sage: w.next()
+    sage: next(w)
     13
-    sage: w.next()
+    sage: next(w)
     29
-    sage: w.next()
+    sage: next(w)
     53
 
 Certains anneaux, par exemple les corps finis et les entiers, disposent
-d'itérateurs associés :
+d'itérateurs associés :
 
 ::
 
     sage: [x for x in GF(7)]
     [0, 1, 2, 3, 4, 5, 6]
     sage: W = ((x,y) for x in ZZ for y in ZZ)
-    sage: W.next()
+    sage: next(W)
     (0, 0)
-    sage: W.next()
+    sage: next(W)
     (0, 1)
-    sage: W.next()
+    sage: next(W)
     (0, -1)
 
 Boucles, fonctions, structures de contrôle et comparaisons
@@ -608,7 +586,7 @@ Boucles, fonctions, structures de contrôle et comparaisons
 
 Nous avons déjà vu quelques exemples courants d'utilisation des boucles
 ``for``. En Python, les boucles ``for`` ont la structure suivante, avec
-une indentation :
+une indentation :
 
 ::
 
@@ -622,12 +600,12 @@ une indentation :
     4
 
 Notez bien les deux points à la fin de l'instruction for (il n'y a pas de
-« do » ou « od » comme en Maple ou en GAP) ainsi que l'indentation du
+« do » ou « od » comme en Maple ou en GAP) ainsi que l'indentation du
 corps de la boucle, formé de l'unique instruction ``print(i)``. Cette
 indentation est significative, c'est elle qui délimite le corps de la
 boucle. Depuis la ligne de commande Sage, les lignes suivantes sont
 automatiquement indentées quand vous appuyez sur ``entrée`` après un
-signe « : », comme illustré ci-dessous.
+signe « : », comme illustré ci-dessous.
 
 ::
 
@@ -646,8 +624,8 @@ L'opérateur ``==`` est le test d'égalité.
 ::
 
     sage: for i in range(15):
-    ...       if gcd(i,15) == 1:
-    ...           print(i)
+    ....:     if gcd(i,15) == 1:
+    ....:         print(i)
     1
     2
     4
@@ -663,11 +641,11 @@ instructions ``if``, ``for`` et ``while`` :
 ::
 
     sage: def legendre(a,p):
-    ...       is_sqr_modp=-1
-    ...       for i in range(p):
-    ...           if a % p == i^2 % p:
-    ...               is_sqr_modp=1
-    ...       return is_sqr_modp
+    ....:     is_sqr_modp=-1
+    ....:     for i in range(p):
+    ....:         if a % p == i^2 % p:
+    ....:             is_sqr_modp=1
+    ....:     return is_sqr_modp
 
     sage: legendre(2,7)
     1
@@ -675,14 +653,14 @@ instructions ``if``, ``for`` et ``while`` :
     -1
 
 Naturellement, l'exemple précédent n'est pas une implémentation efficace du
-symbole de Legendre ! Il est simplement destiné à illustrer différents
+symbole de Legendre ! Il est simplement destiné à illustrer différents
 aspects de la programmation Python/Sage. La fonction {kronecker} fournie
 avec Sage calcule le symbole de Legendre efficacement, en appelant la
 bibliothèque C de PARI.
 
 Remarquons aussi que les opérateurs de comparaison numériques comme ``==``,
 ``!=``, ``<=``, ``>=``, ``>``, ``<`` convertissent automatiquement leurs
-deux membres en des nombres du même type lorsque c'est possible :
+deux membres en des nombres du même type lorsque c'est possible :
 
 ::
 
@@ -712,12 +690,13 @@ Pour évaluer des inégalités symboliques, utilisez ``bool`` :
     sage: bool(x < x + 1)
     True
 
-Lorsque l'on cherche à comparer des objets de types différents, Sage
-essaie le plus souvent de trouver une coercition canonique des deux
-objets dans un même parent. Si cela réussit, la comparaison est faite
-entre les objets convertis ; sinon, les objets sont simplement considérés
-comme différents. Pour tester si deux variables font référence au même
-objet, on utilise l'opérateur ``is``.
+Lorsque l'on cherche à comparer des objets de types différents, Sage essaie le
+plus souvent de trouver une coercition canonique des deux objets dans un même
+parent (voir la section :ref:`section-coercion` pour plus de détails). Si cela
+réussit, la comparaison est faite entre les objets convertis ; sinon, les
+objets sont simplement considérés comme différents. Pour tester si deux
+variables font référence au même objet, on utilise l'opérateur ``is``. Ainsi,
+l'entier Python (``int``) ``1`` est unique, mais pas l'entier Sage ``1`` :
 
 ::
 
@@ -733,7 +712,7 @@ qu'il n'y a pas de morphisme canonique :math:`\QQ\to
 \GF{5}`, et donc pas de manière canonique de comparer l'élément
 :math:`1` de :math:`\GF{5}` à :math:`1 \in \QQ`. En
 revanche, il y a une projection canonique :math:`\ZZ \to
-\GF{5}`, de sorte que la deuxième comparaison renvoie « vrai ».
+\GF{5}`, de sorte que la deuxième comparaison renvoie « vrai ».
 Remarquez aussi que l'ordre des membres de l'égalité n'a pas
 d'importance.
 
@@ -748,7 +727,7 @@ d'importance.
     sage: ZZ(1) == QQ(1)
     True
 
-ATTENTION : La comparaison est plus restrictive en Sage qu'en Magma, qui
+ATTENTION : La comparaison est plus restrictive en Sage qu'en Magma, qui
 considère :math:`1 \in \GF{5}` comme égal à :math:`1 \in \QQ`.
 
 
@@ -760,15 +739,15 @@ considère :math:`1 \in \GF{5}` comme égal à :math:`1 \in \QQ`.
 Profilage (profiling)
 =====================
 
-Auteur de la section : Martin Albrecht (malb@informatik.uni-bremen.de)
+Auteur de la section : Martin Albrecht (malb@informatik.uni-bremen.de)
 
     "Premature optimization is the root of all evil." - Donald Knuth
-    (« L'optimisation prématurée est la source de tous les maux. »)
+    (« L'optimisation prématurée est la source de tous les maux. »)
 
 
 Il est parfois utile de rechercher dans un programme les goulets
 d'étranglements qui représentent la plus grande partie du temps de
-calcul : cela peut donner une idée des parties à optimiser. Cette
+calcul : cela peut donner une idée des parties à optimiser. Cette
 opération s'appelle profiler le code. Python, et donc Sage, offrent un
 certain nombre de possibilités pour ce faire.
 
@@ -776,7 +755,7 @@ La plus simple consiste à utiliser la commande ``prun`` du shell
 interactif. Elle renvoie un rapport qui résume les temps d'exécution des
 fonctions les plus coûteuses. Pour profiler, par exemple, le produit de
 matrices à coefficients dans un corps fini (qui, dans Sage 1.0, est
-lent), on entre :
+lent), on entre :
 
 ::
 
@@ -818,7 +797,7 @@ Comme d'habitude, ``prun?`` donne plus d'informations sur l'utilisation
 du profileur et la signification de sa sortie.
 
 Il est possible d'écrire les données de profilage dans un objet pour les
-étudier de plus près :
+étudier de plus près :
 
 .. skip
 
@@ -828,7 +807,7 @@ Il est possible d'écrire les données de profilage dans un objet pour les
     sage: stats = _
     sage: stats?
 
-Remarque : entrer ``stats = prun -r A\*A`` à la place des deux premières
+Remarque : entrer ``stats = prun -r A\*A`` à la place des deux premières
 lignes ci-dessus provoque une erreur de syntaxe, car prun n'est pas une
 fonction normale mais une commande du shell IPython.
 
@@ -836,7 +815,7 @@ Pour obtenir une jolie représentation graphique des données de
 profilage, vous pouvez utiliser le profileur hotshot, un petit script
 appelé ``hotshot2cachetree`` et (sous Unix uniquement) le programme
 ``kcachegrind``. Voici le même exemple que ci-dessus avec le profileur
-hotshot :
+hotshot :
 
 .. skip
 

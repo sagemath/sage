@@ -582,7 +582,7 @@ class ReducedPermutationIET(ReducedPermutation, PermutationIET):
             sage: q4 < q5 and q5 > q4
             True
         """
-        if type(self) != type(other):
+        if not isinstance(self, type(other)):
             raise ValueError("Permutations must be of the same type")
 
         if len(self) > len(other):
@@ -962,7 +962,7 @@ class ReducedPermutationLI(ReducedPermutation, PermutationLI):
             sage: p == r
             True
         """
-        return type(self) == type(other) and self._twin == other._twin
+        return isinstance(self, type(other)) and self._twin == other._twin
 
     def __ne__(self, other) :
         """
@@ -977,7 +977,7 @@ class ReducedPermutationLI(ReducedPermutation, PermutationLI):
             sage: p != r
             False
         """
-        return type(self) != type(other) or (self._twin != other._twin)
+        return not isinstance(self, type(other)) or (self._twin != other._twin)
 
     def _get_loser_to(self, winner) :
         r"""
@@ -1406,7 +1406,7 @@ class FlippedReducedPermutationIET(
             sage: p1 < r and p2 < r and p3 < r
             True
         """
-        if type(self) != type(other):
+        if not isinstance(self, type(other)):
             return -1
 
         if len(self) > len(other):
@@ -1675,7 +1675,7 @@ class FlippedReducedPermutationLI(
             sage: p == r or q == r
             False
         """
-        return (type(self) == type(other) and
+        return (isinstance(self, type(other)) and
             self._twin == other._twin and
             self._flips == other._flips)
 
@@ -1696,7 +1696,7 @@ class FlippedReducedPermutationLI(
             sage: p != r and q != r
             True
         """
-        return (type(self) != type(other) or
+        return (not isinstance(self, type(other)) or
             self._twin != other._twin or
             self._flips != other._flips)
 

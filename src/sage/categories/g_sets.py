@@ -11,7 +11,6 @@ G-Sets
 #******************************************************************************
 
 from sage.categories.category import Category
-from sage.misc.cachefunc import cached_method
 from sets_cat import Sets
 
 #############################################################
@@ -37,7 +36,7 @@ class GSets(Category):
             sage: S8 = SymmetricGroup(8)
             sage: TestSuite(GSets(S8)).run()
         """
-        Category.__init__(self, "G-sets")
+        Category.__init__(self)
         self.__G = G
 
     def _repr_object_names(self):

@@ -21,6 +21,7 @@ cell complexes.
    sage/homology/delta_complex
    sage/homology/cubical_complex
    sage/homology/cell_complex
+   sage/homology/koszul_complex
    sage/homology/homology_group
    sage/homology/matrix_utils
    sage/interfaces/chomp

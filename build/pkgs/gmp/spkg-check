@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
+    echo >&2 "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+cd src
+
+# We don't have to set up any environment variables here since the
+# Makefiles already have them from 'configure'.
+
+echo "Now building and running GMP's test suite..."
+$MAKE check
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: The GMP test suite failed."
+    exit 1
+fi
+
+echo "The GMP test suite passed successfully."

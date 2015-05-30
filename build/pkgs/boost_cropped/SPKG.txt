@@ -14,10 +14,6 @@ Website: http://www.boost.org/
 
 Boost Software License - see http://www.boost.org/users/license.html
 
-== Maintainers ==
-
- * Michael Abshoff
-
 == Upstream Contact ==
 
 See mailing list page at http://www.boost.org/community/groups.html

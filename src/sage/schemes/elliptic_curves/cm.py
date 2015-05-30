@@ -93,9 +93,9 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     D = Integer(D)
     if D >= 0:
-        raise ValueError, "D (=%s) must be negative"%D
+        raise ValueError("D (=%s) must be negative"%D)
     if not (D%4 in [0,1]):
-         raise ValueError, "D (=%s) must be a discriminant"%D
+         raise ValueError("D (=%s) must be a discriminant"%D)
 
     if algorithm == "magma":
         magma.eval("R<x> := PolynomialRing(IntegerRing())")
@@ -103,7 +103,7 @@ def hilbert_class_polynomial(D, algorithm=None):
         return IntegerRing()['x'](f)
 
     if algorithm != "sage":
-        raise ValueError, "%s is not a valid algorithm"%algorithm
+        raise ValueError("%s is not a valid algorithm"%algorithm)
 
     from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
     from sage.rings.all import RR, ZZ, ComplexField
@@ -149,7 +149,7 @@ def hilbert_class_polynomial(D, algorithm=None):
         tau = (b+Dsqrt)/(a<<1)
         pol *=  (t - elliptic_j(tau))
 
-    coeffs = [cof.real().round() for cof in pol.coeffs()]
+    coeffs = [cof.real().round() for cof in pol.coefficients(sparse=False)]
     return IntegerRing()['x'](coeffs)
 
 
@@ -268,7 +268,7 @@ def cm_orders(h, proof=None):
         sage: len(v)
         29
         sage: set([hilbert_class_polynomial(D*f^2).degree() for D,f in v])
-        set([2])
+        {2}
 
     Any degree up to 100 is implemented, but may be prohibitively slow::
 
@@ -361,7 +361,7 @@ def largest_fundamental_disc_with_class_number(h):
         return (Integer(B), Integer(c))
     except KeyError:
         # nobody knows, since I guess Watkins's is state of the art.
-        raise NotImplementedError, "largest discriminant not known for class number %s"%h
+        raise NotImplementedError("largest discriminant not known for class number %s"%h)
 
 def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     """
@@ -411,7 +411,6 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     """
     # imports that are needed only for this function
     from sage.structure.proof.proof import get_flag
-    from sage.libs.pari.all import pari
     import math
     from sage.misc.functional import round
 
@@ -450,21 +449,10 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         if f <= 1: return 0  # don't do log(log(1)) = log(0)
         return f/(1.79*log(log(f)) + 3.0/log(log(f)))
 
-    # We define a little function to compute the class number of
-    # discriminant d quickly, using pari, with proof inherited from
-    # the containing scope.  Fast classno functionality should
-    # probably be moved elsewhere in Sage, but I'm not sure where.
-    # The same line also occurs in the number fields code, but to use
-    # it requires making a number field, which is very slow, and this
-    # function must be fast, since it is the main bottleneck.
-    def classno(d):
-        """Return the class number of the order of discriminant d."""
-        # There is currently no qfbclassno method in gen.pyx, hence the string.
-        return Integer(pari('qfbclassno(%s,%s)'%(d, 1 if proof else 0)))
-
     for D in range(-B, -2):
+        D = Integer(D)
         if is_fundamental_discriminant(D):
-            h_D = classno(D)
+            h_D = D.class_number(proof)
             # For each fundamental discrimant D, loop through the f's such
             # that h(D*f^2) could possibly be <= hmax.  As explained to me by Cremona,
             # we have h(D*f^2) >= (1/c)*h(D)*phi_D(f) >= (1/c)*h(D)*euler_phi(f), where
@@ -494,7 +482,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
             #
             # TODO: Maybe we could do better using a bound for for phi_D(f).
             #
-            f = 1
+            f = Integer(1)
             chmax=hmax
             if D==-3:
                 chmax*=3
@@ -505,14 +493,14 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
                 if f == 1:
                     h = h_D
                 else:
-                    h = classno(D*f*f)
+                    h = (D*f*f).class_number(proof)
                 # If the class number of this order is within the range, then
                 # use it.  (NOTE: In some cases there is a simple relation between
                 # the class number for D and D*f^2, and this could be used to
                 # optimize this inner loop a little.)
                 if h <= hmax:
-                    z = (Integer(D), Integer(f))
-                    if T.has_key(h):
+                    z = (D, f)
+                    if h in T:
                         T[h].append(z)
                     else:
                         T[h] = [z]
@@ -527,10 +515,68 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         # data.
         for h in T.keys():
             if len([D for D,f in T[h] if f==1]) != fund_count[h]:
-                raise RuntimeError, "number of discriminants inconsistent with Watkins's table"
+                raise RuntimeError("number of discriminants inconsistent with Watkins's table")
 
     return T
 
+def is_cm_j_invariant(j):
+    """
+    Returns whether or not this is a CM `j`-invariant.
+
+    INPUT:
+
+    - ``j`` -- an element of a number field `K`
+
+    OUTPUT:
+
+    A pair (bool, (d,f)) which is either (False, None) if `j` is not a
+    CM j-invariant or (True, (d,f)) if `j` is the `j`-invariant of the
+    immaginary quadratic order of discriminant `D=df^2` where `d` is
+    the associated fundamental discriminant and `f` the index.
+
+    .. note::
+
+       The current implementation makes use of the classification of
+       all orders of class number up to 100, and hence will raise an
+       error if `j` is an algebraic integer of degree greater than
+       this.  It would be possible to implement a more general
+       version, using the fact that `d` must be supported on the
+       primes dividing the discriminant of the minimal polynomial of
+       `j`.
 
 
+    EXAMPLES::
 
+        sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
+        sage: is_cm_j_invariant(0)
+        (True, (-3, 1))
+        sage: is_cm_j_invariant(8000)
+        (True, (-8, 1))
+
+        sage: K.<a> = QuadraticField(5)
+        sage: is_cm_j_invariant(282880*a + 632000)
+        (True, (-20, 1))
+        sage: K.<a> = NumberField(x^3 - 2)
+        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)
+        (True, (-3, 6))
+
+    TESTS::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
+        sage: all([is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ)])
+        True
+
+    """
+    from sage.rings.all import NumberFieldElement
+    if not isinstance(j, NumberFieldElement) and not j in QQ:
+        raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
+    if not j.is_integral():
+        return False, None
+    h = 1 if j in QQ else j.absolute_minpoly().degree()
+    if h>100:
+        raise NotImplementedError("CM data only available for class numbers up to 100")
+    for d,f in cm_orders(h):
+        pol = hilbert_class_polynomial(d*f**2)
+        if pol(j)==0:
+            return True, (d,f)
+    return False, None

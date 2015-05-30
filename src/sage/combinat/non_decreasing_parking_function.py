@@ -48,64 +48,66 @@ def NonDecreasingParkingFunctions(n=None):
 
     Here are all the-non decreasing parking functions of size 5::
 
-      sage: NonDecreasingParkingFunctions(3).list()
-      [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2], [1, 2, 3]]
+        sage: NonDecreasingParkingFunctions(3).list()
+        [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2], [1, 2, 3]]
 
     If no size is specified, then NonDecreasingParkingFunctions
     returns the combinatorial class of all non-decreasing parking functions.
 
     ::
 
-         sage: PF = NonDecreasingParkingFunctions(); PF
-         Non-decreasing parking functions
-         sage: [] in PF
-         True
-         sage: [1] in PF
-         True
-         sage: [2] in PF
-         False
-         sage: [1,1,3] in PF
-         True
-         sage: [1,1,4] in PF
-         False
+        sage: PF = NonDecreasingParkingFunctions(); PF
+        Non-decreasing parking functions
+        sage: [] in PF
+        True
+        sage: [1] in PF
+        True
+        sage: [2] in PF
+        False
+        sage: [1,1,3] in PF
+        True
+        sage: [1,1,4] in PF
+        False
 
     If the size `n` is specified, then NonDecreasingParkingFunctions returns
     combinatorial class of all non-decreasing parking functions of size `n`.
 
     ::
 
-         sage: PF = NonDecreasingParkingFunctions(0)
-         sage: PF.list()
-         [[]]
-         sage: PF = NonDecreasingParkingFunctions(1)
-         sage: PF.list()
-         [[1]]
-         sage: PF = NonDecreasingParkingFunctions(3)
-         sage: PF.list()
-         [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2], [1, 2, 3]]
+        sage: PF = NonDecreasingParkingFunctions(0)
+        sage: PF.list()
+        [[]]
+        sage: PF = NonDecreasingParkingFunctions(1)
+        sage: PF.list()
+        [[1]]
+        sage: PF = NonDecreasingParkingFunctions(3)
+        sage: PF.list()
+        [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2], [1, 2, 3]]
 
-         sage: PF3 = NonDecreasingParkingFunctions(3); PF3
-         Non-decreasing parking functions of size 3
-         sage: [] in PF3
-         False
-         sage: [1] in PF3
-         False
-         sage: [1,1,3] in PF3
-         True
-         sage: [1,1,4] in PF3
-         False
+        sage: PF3 = NonDecreasingParkingFunctions(3); PF3
+        Non-decreasing parking functions of size 3
+        sage: [] in PF3
+        False
+        sage: [1] in PF3
+        False
+        sage: [1,1,3] in PF3
+        True
+        sage: [1,1,4] in PF3
+        False
 
     TESTS::
 
-         sage: PF = NonDecreasingParkingFunctions(5)
-         sage: len(PF.list()) == PF.cardinality()
-         True
-
+        sage: PF = NonDecreasingParkingFunctions(5)
+        sage: len(PF.list()) == PF.cardinality()
+        True
+        sage: NonDecreasingParkingFunctions("foo")
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert 'foo' to an integer
     """
     if n is None:
         return NonDecreasingParkingFunctions_all()
     else:
-        assert isinstance(n, (Integer, int)) and n >= 0, '%s is not a non-negative integer.' % n
         return NonDecreasingParkingFunctions_n(n)
 
 def is_a(x, n=None):
@@ -185,7 +187,7 @@ class NonDecreasingParkingFunctions_all(InfiniteAbstractCombinatorialClass):
             ...    == NonDecreasingParkingFunctions(4))
             True
             sage: it = iter(NonDecreasingParkingFunctions()) # indirect doctest
-            sage: [it.next() for i in range(8)]
+            sage: [next(it) for i in range(8)]
             [[], [1], [1, 1], [1, 2], [1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2]]
          """
         return NonDecreasingParkingFunctions_n(n)
@@ -231,6 +233,9 @@ class NonDecreasingParkingFunctions_n(CombinatorialClass):
             sage: PF == loads(dumps(PF))
             True
         """
+        n = Integer(n)
+        if n < 0:
+            raise ValueError('%s is not a non-negative integer' % n)
         self.n = n
 
     def __repr__(self):
@@ -368,7 +373,7 @@ class NonDecreasingParkingFunction(CombinatorialObject):
         sage: NonDecreasingParkingFunction([2])
         Traceback (most recent call last):
         ...
-        AssertionError: [2] is not a non-decreasing parking function.
+        ValueError: [2] is not a non-decreasing parking function
         sage: NonDecreasingParkingFunction([1,2])
         [1, 2]
         sage: NonDecreasingParkingFunction([1,1,2])
@@ -376,7 +381,7 @@ class NonDecreasingParkingFunction(CombinatorialObject):
         sage: NonDecreasingParkingFunction([1,1,4])
         Traceback (most recent call last):
         ...
-        AssertionError: [1, 1, 4] is not a non-decreasing parking function.
+        ValueError: [1, 1, 4] is not a non-decreasing parking function
     """
     def __init__(self, lst):
         """
@@ -385,7 +390,8 @@ class NonDecreasingParkingFunction(CombinatorialObject):
             sage: NonDecreasingParkingFunction([1, 1, 2, 2, 5, 6])
             [1, 1, 2, 2, 5, 6]
         """
-        assert is_a(lst), '%s is not a non-decreasing parking function.' % lst
+        if not is_a(lst):
+            raise ValueError('%s is not a non-decreasing parking function' % lst)
         CombinatorialObject.__init__(self, lst)
 
     def __getitem__(self, n):

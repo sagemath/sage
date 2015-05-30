@@ -1,34 +1,194 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import os, sys, socket
+import os
+import sys
+import ast
+import argparse
+import logging
+import textwrap
+logging.basicConfig()
+logger = logging.getLogger()
 
-print open(os.environ['SAGE_ROOT'] + '/local/bin/sage-banner').read()
+from sage.env import SAGE_ROOT
+from sage.misc.banner import banner
 
-print "Please wait while the Sage Notebook server starts..."
 
-from sage.all import *
+class NotebookSageNB(object):
 
-def wrap(s):
+    def cmdline2argspec(self, cmdline_args):
+        """
+        Convert command line arguments to Python argspec
+
+        AKA the crappy copy of argparse. Only here for the legacy
+        notebook, do not use.
+
+        INPUT:
+    
+        - ``cmdline_args`` -- list of string.
+    
+        OUTPUT:
+    
+        A python argspec: A pair consisting of a tuple and a dict.
+        """
+        args = []
+        kwds = dict()
+        for x in cmdline_args:
+            logger.info('Parsing %s', x)
+            if '=' in x:
+                key, value = x.split('=', 2)
+                logger.debug('keyword argument %s = %s', key, value)
+                try:
+                    value = ast.literal_eval(value)
+                except Exception:
+                    logger.debug('cannot evaluate, treat as string')
+                kwds[key] = value
+            else:
+                logger.debug('positional argument %s', x)
+                try:
+                    value = ast.literal_eval(x)
+                except Exception:
+                    value = x
+                    logger.debug('cannot evaluate, treat as string')
+                args.append(value)
+        return tuple(args), kwds
+
+    def __init__(self, argv, help=False):
+        self.args, self.kwds = self.cmdline2argspec(argv)
+        logger.info('notebook positional arguments = %s', self.args)
+        logger.info('notebook keyword arguments = %s', self.kwds)
+        from sagenb.notebook.notebook_object import notebook
+        if help:
+            from sage.misc.sageinspect import sage_getdoc
+            print(sage_getdoc(notebook))
+        else:
+            notebook(*self.args, **self.kwds)
+
+
+class NotebookIPython(object):
+
+    PREREQUISITE_ERROR = textwrap.dedent("""
+    The IPython notebook requires ssl, even if you do not use
+    https. Install the openssl development packages in your system and
+    then rebuild Python (sage -f python).
+    """)
+
+    def __init__(self, argv):
+        from sage.repl.ipython_kernel.install import \
+            SageKernelSpec, have_prerequisites
+        SageKernelSpec.update()
+        if not have_prerequisites():
+            print(self.PREREQUISITE_ERROR)
+            raise SystemExit(1)
+        from IPython import start_ipython
+        start_ipython(['notebook'] + argv)
+
+
+description = \
+"""
+The Sage notebook launcher is used to start the notebook, and allows
+you to choose between different implementations. Any further command
+line options are passed to the respective notebook.
+"""
+
+help_help = \
+"""
+show this help message and exit. Can be combined with
+"--notebook=[...]" to see notebook-specific options
+"""
+
+epilog = \
+"""
+EXAMPLES: 
+
+* Run default notebook on port 1234. Note that the first argument
+  after "-n" will be interpreted as notebook name unless you stop
+  processing with "--":
+
+      sage -n default port=1234
+      sage -n -- port=1234      # equivalent
+      sage -n port=1234         # ERROR: invalid notebook name
+
+* Run IPython notebook in custom directory:
+
+      sage --notebook=ipython --notebook-dir=/home/foo/bar
+"""
+
+
+notebook_launcher = {
+    'default': NotebookSageNB,   # change this to change the default
+    'sagenb': NotebookSageNB,
+    'ipython': NotebookIPython,
+} 
+
+notebook_names = ', '.join(notebook_launcher.keys())
+
+
+def make_parser():
     """
-    INPUT:
-        s -- string
-    OUTPUT:
-        string
+    The main parser handling the selection of the notebook.
 
-    Do nothing to True, False or positive integer.  Wrap everything
-    else in a raw triple quoted string.
+    Any arguments that are not parsed here are supposed to be handled
+    by the notebook implementation.
     """
-    if '=' in s:
-        v = s.split('=')
-        return v[0] + '=' + wrap(v[1])
-    if s in ['True', 'False']:
-        return s
-    if s.isdigit(): return s
-    return "r'''%s'''"%s
+    parser = argparse.ArgumentParser(
+        description=description, epilog=epilog,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        add_help=False)
+    parser.add_argument('-h', '--help',
+                        dest='option_help', action='store_true',
+                        default=False, 
+                        help=help_help)
+    parser.add_argument('--log', dest='log', default=None,
+                        help='one of [DEBUG, INFO, ERROR, WARNING, CRITICAL]')
+    default = None
+    for name, launcher in notebook_launcher.items():
+        if launcher == notebook_launcher['default'] and name != 'default':
+            default = name
+    if default is None:
+        raise RuntimeError('default launcher is defined but not known under a specific name')
+    parser.add_argument('--notebook',    # long style
+                        '-n',            # short style
+                        '-notebook',     # wtf style, we can't decide (legacy support)
+                        dest='notebook', type=str, nargs='?', const='default',
+                        help='The notebook to run [one of: {0}]. Default is {1}'.format(
+                            notebook_names, default))
+    return parser
 
-if len(sys.argv) > 1:
-    cmd = "notebook(" + ",".join([wrap(v) for v in sys.argv[1:]]) + ")"
-    print cmd
-    exec cmd
-else:
-    notebook()
+
+if __name__ == '__main__':
+    parser = make_parser()
+    args, unknown = parser.parse_known_args(sys.argv[1:])
+    if len(unknown) > 0 and unknown[0] == '--':
+        unknown = unknown[1:]
+    if args.log is not None:
+        import logging
+        level = getattr(logging, args.log.upper())
+        logger.setLevel(level=level)
+    logger.info('Main parser got arguments %s', args)
+    logger.info('Passing on to notebook implementation: %s', unknown)
+
+    try:
+        launcher = notebook_launcher[args.notebook]
+    except KeyError:
+        logger.critical('unknown notebook: %s', args.notebook)
+        print('Error, notebook must be one of {0} but got {1}'.
+              format(notebook_names, args.notebook))
+        sys.exit(1)
+
+    if args.option_help:
+        if args.notebook == 'default':
+            parser.print_help()
+        elif launcher == NotebookSageNB:
+            NotebookSageNB([], help=True)
+        elif launcher == NotebookIPython:
+            NotebookIPython(['help'])
+        else:
+            parser.print_help()
+        sys.exit(0)
+
+    banner()
+    print("Please wait while the Sage Notebook server starts...")
+    launcher(unknown)
+
+

@@ -72,7 +72,6 @@ TESTS::
 #*****************************************************************************
 
 import ring
-import field
 import fraction_field_element
 import sage.misc.latex as latex
 from sage.misc.cachefunc import cached_method
@@ -123,9 +122,9 @@ def FractionField(R, names=None):
         TypeError: R must be an integral domain.
     """
     if not ring.is_Ring(R):
-        raise TypeError, "R must be a ring"
+        raise TypeError("R must be a ring")
     if not R.is_integral_domain():
-        raise TypeError, "R must be an integral domain."
+        raise TypeError("R must be an integral domain.")
     return R.fraction_field()
 
 def is_FractionField(x):
@@ -142,7 +141,7 @@ def is_FractionField(x):
     """
     return isinstance(x, FractionField_generic)
 
-class FractionField_generic(field.Field):
+class FractionField_generic(ring.Field):
     """
     The fraction field of an integral domain.
     """
@@ -265,10 +264,27 @@ class FractionField_generic(field.Field):
             sage: F2(R22(F2('a')))
             a
 
+        Coercion from Laurent polynomials now works (:trac:`15345`)::
+
+            sage: R = LaurentPolynomialRing(ZZ, 'x')
+            sage: T = PolynomialRing(ZZ, 'x')
+            sage: R.gen() + FractionField(T).gen()
+            2*x
+            sage: 1/(R.gen() + 1)
+            1/(x + 1)
+
+            sage: R = LaurentPolynomialRing(ZZ, 'x,y')
+            sage: FF = FractionField(PolynomialRing(ZZ, 'x,y'))
+            sage: prod(R.gens()) + prod(FF.gens())
+            2*x*y
+            sage: 1/(R.gen(0) + R.gen(1))
+            1/(x + y)
         """
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
         from sage.rings.number_field.number_field_base import NumberField
+        from sage.rings.polynomial.laurent_polynomial_ring import \
+            LaurentPolynomialRing_generic
 
         # The case ``S`` being `\QQ` requires special handling since `\QQ` is
         # not implemented as a ``FractionField_generic``.
@@ -282,6 +298,16 @@ class FractionField_generic(field.Field):
             return CallableConvertMap(S, self, \
                 self._number_field_to_frac_of_ring_of_integers, \
                 parent_as_first_arg=False)
+
+        # special treatment for LaurentPolynomialRings
+        if isinstance(S, LaurentPolynomialRing_generic):
+            def converter(x,y=None):
+                if y is None:
+                    return self._element_class(self, *x._fraction_pair())
+                xnum, xden = x._fraction_pair()
+                ynum, yden = y._fraction_pair()
+                return self._element_class(self, xnum*yden, xden*ynum)
+            return CallableConvertMap(S, self, converter, parent_as_first_arg=False)
 
         if isinstance(S, FractionField_generic) and \
             self._R.has_coerce_map_from(S.ring()):
@@ -485,24 +511,90 @@ class FractionField_generic(field.Field):
 
             sage: F._element_constructor_(x/y)
             x/y
+
+        TESTS:
+
+        The next example failed before :trac:`4376`::
+
+            sage: K(pari((x + 1)/(x^2 + x + 1)))
+            (x + 1)/(x^2 + x + 1)
+
+        These examples failed before :trac:`11368`::
+
+            sage: R.<x, y, z> = PolynomialRing(QQ)
+            sage: S = R.fraction_field()
+            sage: S(pari((x + y)/y))
+            (x + y)/y
+
+            sage: S(pari(x + y + 1/z))
+            (x*z + y*z + 1)/z
+
+        Test conversions where `y` is a string but `x` not::
+
+            sage: K = ZZ['x,y'].fraction_field()
+            sage: K._element_constructor_(2, 'x+y')
+            2/(x + y)
+            sage: K._element_constructor_(1, 'z')
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to evaluate 'z' in Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
+
+        Check that :trac:`17971` is fixed::
+
+            sage: A.<a,c> = Frac(PolynomialRing(QQ,'a,c'))
+            sage: B.<d,e> = PolynomialRing(A,'d,e')
+            sage: R.<x> = PolynomialRing(B,'x')
+            sage: (a*d*x^2+a+e+1).resultant(-4*c^2*x+1)
+            a*d + 16*c^4*e + 16*a*c^4 + 16*c^4
+
         """
         Element = self._element_class
-        if isinstance(x, Element):
+        if isinstance(x, Element) and y == 1:
             if x.parent() is self:
                 return x
             else:
                 return Element(self, x.numerator(), x.denominator())
-        elif isinstance(x, basestring):
+
+        recurse = False
+        if isinstance(x, basestring):
+            from sage.misc.sage_eval import sage_eval
             try:
-                from sage.misc.sage_eval import sage_eval
                 x = sage_eval(x, self.gens_dict_recursive())
-                y = sage_eval(str(y), self.gens_dict_recursive())
-                return Element(self, x, y, coerce=coerce, reduce=True)
-            except NameError, e:
-                raise TypeError, "unable to convert string"
-        else:
-            return Element(self, x, y,
-                           coerce=coerce, reduce=self.is_exact())
+            except NameError:
+                raise TypeError("unable to evaluate {!r} in {}".format(x, self))
+            recurse = True
+        if isinstance(y, basestring):
+            from sage.misc.sage_eval import sage_eval
+            try:
+                y = sage_eval(y, self.gens_dict_recursive())
+            except NameError:
+                raise TypeError("unable to evaluate {!r} in {}".format(y, self))
+            recurse = True
+
+        try:
+            return Element(self, x, y, coerce=coerce)
+        except (TypeError, ValueError):
+            if recurse:
+                return self._element_constructor(x, y)
+            if y == 1:
+                from sage.symbolic.expression import Expression
+                if isinstance(x, Expression):
+                    return Element(self, x.numerator(), x.denominator())
+                from sage.libs.pari.all import pari_gen
+                if isinstance(x, pari_gen):
+                    t = x.type()
+                    if t == 't_RFRAC':
+                        return Element(self, x.numerator(), x.denominator())
+                    elif t == 't_POL':
+                        # This recursive approach is needed because PARI
+                        # represents multivariate polynomials as iterated
+                        # univariate polynomials (see the above examples).
+                        # Below, v is the variable with highest priority,
+                        # and the x[i] are rational functions in the
+                        # remaining variables.
+                        v = Element(self, x.variable(), 1)
+                        return sum(self(x[i]) * v**i for i in xrange(x.poldegree() + 1))
+            raise
 
     def construction(self):
         """
@@ -566,7 +658,7 @@ class FractionField_generic(field.Field):
             z3
         """
         x = self._R.gen(i)
-        one = self._R.one_element()
+        one = self._R.one()
         r = self._element_class(self, x, one, coerce=False, reduce=False)
         return r
 
@@ -610,20 +702,25 @@ class FractionField_generic(field.Field):
         """
         Returns a random element in this fraction field.
 
+        The arguments are passed to the random generator of the underlying ring.
+
         EXAMPLES::
 
             sage: F = ZZ['x'].fraction_field()
-            sage: F.random_element()
+            sage: F.random_element()  # random
             (2*x - 8)/(-x^2 + x)
 
         ::
 
-            sage: F.random_element(degree=5)
-            (-12*x^5 - 2*x^4 - x^3 - 95*x^2 + x + 2)/(-x^5 + x^4 - x^3 + x^2)
+            sage: f = F.random_element(degree=5)
+            sage: f.numerator().degree()
+            5
+            sage: f.denominator().degree()
+            5
         """
         return self._element_class(self, self._R.random_element(*args, **kwds),
             self._R._random_nonzero_element(*args, **kwds),
-            coerce = False, reduce=True)
+            coerce=False, reduce=True)
 
 class FractionField_1poly_field(FractionField_generic):
     """

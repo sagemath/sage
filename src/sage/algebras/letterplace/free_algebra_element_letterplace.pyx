@@ -124,7 +124,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: set([x*y*z, z*y+x*z,x*y*z])  # indirect doctest
-            set([x*z + z*y, x*y*z])
+            {x*z + z*y, x*y*z}
 
         """
         return hash(self._poly)
@@ -471,7 +471,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         """
         return (<Element>left)._cmp(right)
 
-    cdef int _cmp_c_impl(self, Element other) except -2:
+    cpdef int _cmp_(self, Element other) except -2:
         """
         Auxiliary method for comparison.
 
@@ -710,7 +710,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         cdef FreeAlgebra_letterplace P = self._parent
         if not isinstance(G,(list,tuple)):
             if G==P:
-                return P.zero_element()
+                return P.zero()
             if not (isinstance(G,MPolynomialIdeal) and G.ring()==P._current_ring):
                 G = G.gens()
         C = P.current_ring()

@@ -52,17 +52,24 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
 
         sage: x,y,z=var('x y z')
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi))
+        Graphics3d Object
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors=['red','green','blue'])
+        Graphics3d Object
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors='red')
+        Graphics3d Object
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=4)
+        Graphics3d Object
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=[3,5,7])
+        Graphics3d Object
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True)
+        Graphics3d Object
 
     TESTS:
 
     This tests that :trac:`2100` is fixed in a way compatible with this command::
 
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True,aspect_ratio=(1,2,1))
+        Graphics3d Object
     """
     (ff,gg,hh), ranges = setup_for_eval_on_grid(functions, [xrange, yrange, zrange], plot_points)
     xpoints, ypoints, zpoints = [srange(*r, include_endpoint=True) for r in ranges]

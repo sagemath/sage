@@ -10,7 +10,7 @@ version adaptée du shell (interpréteur de commandes) IPython et importe
 un grand nombre de fonctions et de classes qui sont ainsi prêtes à
 l'emploi depuis l'invite de commande. D'autres personnalisations sont
 possibles en éditant le fichier ``$SAGE_ROOT/ipythonrc``. Au démarrage,
-le shell Sage affiche un message de ce genre :
+le shell Sage affiche un message de ce genre :
 
 .. skip
 
@@ -51,15 +51,16 @@ Une session est la suite des entrées et sorties qui interviennent entre
 le moment où vous démarrez Sage et celui où vous le quittez. Sage
 enregistre un journal de toutes les entrées via IPython. Si vous
 utilisez le shell interactif (par opposition à l'interface *notebook*),
-vous pouvez taper ``%hist`` à n'importe quel moment pour obtenir la
+vous pouvez taper ``%history`` (ou ``%hist``) à n'importe
+quel moment pour obtenir la
 liste de toutes les lignes de commandes entrées depuis le début de la
 session. Tapez ``?`` à l'invite de commande Sage pour plus
-d'informations sur IPython. Par exemple : « IPython fournit des invites
+d'informations sur IPython. Par exemple : « IPython fournit des invites
 de commande numérotées [...] avec un cache des entrées-sorties. Toutes
 les entrées sont sauvegardées et peuvent être rappelées comme variables
 (en plus de la navigation habituelle dans l'historique avec les flèches
 du clavier). Les variables GLOBALES suivantes existent toujours (ne les
-écrasez pas !) » :
+écrasez pas !) » :
 
 ::
 
@@ -67,7 +68,7 @@ du clavier). Les variables GLOBALES suivantes existent toujours (ne les
       __ : avant-dernière entrée (shell uniquement)
       _oh : liste de toutes les entrées précédentes (shell uniquement)
 
-Voici un exemple :
+Voici un exemple :
 
 .. skip
 
@@ -204,7 +205,7 @@ session future (en rechargeant le fichier journal).
     | Type notebook() for the GUI, and license() for information.        |
     ----------------------------------------------------------------------
 
-    sage: load "setup"
+    sage: load("setup")
     Loading log file <setup> one line at a time...
     Finished replaying log file <setup>
     sage: E
@@ -216,11 +217,11 @@ session future (en rechargeant le fichier journal).
     [(2 : 3 : 1)]
 
 Si vous utilisez le terminal Konsole de KDE, vous pouvez aussi sauver votre
-session comme suit : après avoir lancé Sage dans la ``konsole``, ouvrez
-le menu « Configuration » et choisissez « Historique... » puis comme
-nombre de lignes « Illimité ». Ensuite, lorsque vous souhaitez
-enregistrer l'état de votre session, sélectionnez « Enregistrer
-l'historique sous... » dans le menu « Édition » et entrez le nom d'un
+session comme suit : après avoir lancé Sage dans la ``konsole``, ouvrez
+le menu « Configuration » et choisissez « Historique... » puis comme
+nombre de lignes « Illimité ». Ensuite, lorsque vous souhaitez
+enregistrer l'état de votre session, sélectionnez « Enregistrer
+l'historique sous... » dans le menu « Édition » et entrez le nom d'un
 fichier où enregistrer le texte de votre session. Une fois le fichier
 sauvegardé, vous pouvez par exemple l'ouvrir dans un éditeur comme xemacs et
 l'imprimer.
@@ -231,10 +232,10 @@ Coller du texte ignore les invites
 Imaginons que vous lisiez une session Sage ou Python et que vous vouliez
 copier-coller les calculs dans Sage. Le problème est qu'il y a des
 invites ``>>>`` ou ``sage:`` en plus des entrées. En fait, vous pouvez
-tout à fait copier un exemple complet, invites comprises : par défaut,
+tout à fait copier un exemple complet, invites comprises : par défaut,
 l'analyseur syntaxique de Sage supprime les ``>>>`` et ``sage:`` en
 début de ligne avant de passer la ligne à Python. Par exemple, les
-lignes suivantes sont interprétées correctement :
+lignes suivantes sont interprétées correctement :
 
 .. skip
 
@@ -255,7 +256,7 @@ commande correspondante est affiché après la sortie. Nous pouvons par
 exemple comparer le temps que prend le calcul d'une certaine puissance
 entière par diverses méthodes. Les temps de calcul ci-dessous seront
 sans doute très différents suivant l'ordinateur, voire la version de
-Sage utilisés. Premièrement, en pur Python :
+Sage utilisés. Premièrement, en pur Python :
 
 .. skip
 
@@ -273,7 +274,7 @@ processeur.
 
 Chronométrons maintenant le calcul de la même puissance avec le type
 Integer de Sage, qui est implémenté (en Cython) en utilisant la
-bibliothèque GMP :
+bibliothèque GMP :
 
 .. skip
 
@@ -283,7 +284,7 @@ bibliothèque GMP :
     CPU times: user 0.04 s, sys: 0.00 s, total: 0.04 s
     Wall time: 0.04
 
-Avec l'interface à la bibliothèque C PARI :
+Avec l'interface à la bibliothèque C PARI :
 
 .. skip
 
@@ -323,7 +324,7 @@ commande ``cputime``, comme dans l'exemple suivant :
             float -- time in CPU seconds
 
 La commande ``walltime`` fonctionne comme ``cputime``, à ceci près
-qu'elle mesure le temps total écoulé « à la montre ».
+qu'elle mesure le temps total écoulé « à la montre ».
 
 Nous pouvons aussi faire faire le calcul de puissance ci-dessus à chacun
 des systèmes de calcul formel inclus dans Sage. Dans chaque cas, nous
@@ -376,14 +377,91 @@ la machine ``sage.math.washington.edu``). Mais en raison du surcoût de
 l'interface pexpect, la comparaison avec Sage, qui est le plus rapide,
 n'est pas vraiment équitable.
 
+Trucs et astuces IPython
+========================
+
+Comme signalé plus haut, Sage utilise l'interpréteur de commandes IPython, et
+met donc à votre disposition toutes les commandes et fonctionnalités de
+celui-ci. Vous voudrez peut-être consulter la `documentation complète de IPython
+<http://ipython.scipy.org/moin/Documentation>`_. Voici en attendant quelques
+astuces utiles -- qui reposent sur ce que IPython appelle des « commandes
+magiques » :
+
+- La commande magique ``%bg`` lance une commande en arrière-plan. Le résultat
+  sera ensuite accessible à travers l'objet ``jobs``, comme dans l'exemple
+  ci-dessous. (Les commentaires « not tested » sont là parce que ``%bg`` ne
+  fonctionne pas correctement dans l'infrastructure de test automatisé de Sage,
+  mais si vous reproduisez l'exemple, il devrait fonctionner comme indiqué.
+  Naturellement, ``%bg`` est surtout utile pour les commandes dont l'exécution
+  prend beaucoup de temps.)
+
+  ::
+
+    sage: def quick(m): return 2*m
+    sage: %bg quick(20)  # not tested
+    Starting job # 0 in a separate thread.
+    sage: jobs.status()  # not tested
+    Completed jobs:
+    0 : quick(20)
+    sage: jobs[0].result  # the actual answer, not tested
+    40
+
+  Attention, les tâches lancées en arrière-plan ignorent le préprocesseur Sage
+  (voir section :ref:`section-mathannoy`). Une manière (certes pas très
+  commode) de contourner le problème est la suivante ::
+
+    sage: %bg eval(preparse('quick(20)')) # not tested
+
+  Mais il est plus simple et plus sûr de réserver ``%bg`` aux commandes en pur
+  Python, qui ne font pas appel au préprocesseur.
+
+- Lorsque l'on souhaite saisir un morceau de code complexe, on peut utiliser
+  ``%edit`` (ou ``%ed``, ou ``ed``) pour ouvrir un éditeur de texte.
+  Assurez-vous que la variable d'environnement :envvar:`EDITOR` est réglée à
+  votre éditeur favori au démarrage de Sage (en plaçant si nécessaire quelque
+  chose du genre ``export EDITOR=/usr/bin/emacs`` ou encore  ``export
+  EDITOR=/usr/bin/vim`` dans un fichier de configuration convenable, par
+  exemple ``.profile``). La commande ``%edit`` à l'invite de Sage ouvrira
+  l'éditeur sélectionné. Vous pouvez alors par exemple saisir une définition de
+  fonction::
+  
+    def some_function(n):
+        return n**2 + 3*n + 2
+
+  puis enregistrer le fichier et quitter l'éditeur. La fonction
+  ``some_function`` est désormais disponible dans votre session Sage, et vous
+  pouvez la modifier en saisissant ``edit some_function`` à l'invite de
+  commande.
+
+- Si vous souhaitez reprendre une version modifiée du résultat d'un calcul dans
+  une nouvelle commande, tapez ``%rep`` après avoir fait le calcul. Cela
+  récupère le texte du résultat et le place sur la ligne de commande, prêt à
+  être modifié. ::
+
+    sage: f(x) = cos(x)
+    sage: f(x).derivative(x)
+    -sin(x)
+
+  Ainsi, après les commandes ci-dessus, la commande ``%rep`` fournit un nouvel
+  invite de commande pré-rempli avec le texte ``-sin(x)`` et le curseur en fin
+  de ligne.
+
+Pour plus d'information, entrez la commande ``%quickref`` pour un résumé des
+possibilités de IPython. Au moment où cette documentation est écrite
+(avril 2011), Sage emploie IPython 0.9.1. La `documentation des commandes
+magiques
+<http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magic-functions>`_
+est disponible en ligne, et divers aspects un peu plus avancés de leur
+fonctionnement sont décrits `ici  <http://ipython.org/ipython-doc/stable/interactive/reference.html#magic-command-system>`_.
+
 Erreurs et exceptions
 =====================
 
 Quand quelque chose ne marche pas, cela se manifeste habituellement par
-une « exception » Python. Python essaie de plus de donner une idée de ce
+une « exception » Python. Python essaie de plus de donner une idée de ce
 qui a pu déclencher l'exception. Bien souvent, il affiche le nom de
 l'exception (par exemple ``NameError`` ou ``ValueError``, voir le manuel
-de référence de Python [Py]_ pour une liste complète). Par exemple :
+de référence de Python [Py]_ pour une liste complète). Par exemple :
 
 .. skip
 
@@ -407,7 +485,7 @@ passé. Il s'active ou se désactive avec ``%pdb`` (et est désactivé par
 défaut). L'invite ``ipdb>>`` du débogueur apparaît si une exception a
 lieu alors que celui-ci est actif. Le débogueur permet d'afficher l'état
 de n'importe quelle variable locale et de monter ou descendre dans la
-pile d'exécution. Par exemple :
+pile d'exécution. Par exemple :
 
 .. skip
 
@@ -454,7 +532,7 @@ Recherche en arrière et complétion de ligne de commande
 =======================================================
 
 Commençons par créer l'espace vectoriel de dimension trois
-:math:`V=\QQ^3` comme suit :
+:math:`V=\QQ^3` comme suit :
 
 ::
 
@@ -497,7 +575,7 @@ appuyez sur la touche tabulation.
 
 Si vous tapez les quelques premières lettres d'un nom de fonction avant
 d'appuyer sur ``tab``, vous n'obtiendrez que les fonctions qui
-commencent par ces quelques lettres :
+commencent par ces quelques lettres :
 
 .. skip
 
@@ -593,9 +671,9 @@ que fait la fonction ``coordinate_vector`` ?
 La fonction ``coordinate_vector`` convertit son entrée en un élément de
 l'espace ambiant, ce qui a pour effet de calculer le vecteur des
 coefficients de  :math:`v` dans :math:`V`. L'espace :math:`V` est déjà
-« l'espace ambiant » puisque c'est simplement :math:`\QQ^3`. Il y
+« l'espace ambiant » puisque c'est simplement :math:`\QQ^3`. Il y
 a aussi une fonction ``coordinate_vector`` différente pour les
-sous-espaces. Créons un sous-espace et examinons-là :
+sous-espaces. Créons un sous-espace et examinons-là :
 
 
 .. skip
@@ -617,7 +695,7 @@ sous-espaces. Créons un sous-espace et examinons-là :
             return T.linear_combination_of_rows(w)
 
 (Si vous pensez que cette implémentation est inefficace, venez nous
-aider à optimiser l'algèbre linéaire !)
+aider à optimiser l'algèbre linéaire !)
 
 Vous pouvez aussi taper ``help(commande)`` ou ``help(classe)`` pour
 appeler une sorte de page de manuel relative à une commande ou une
@@ -639,7 +717,7 @@ classe.
      :
 
 Pour quitter la page d'aide, appuyez sur ``q``. Votre session revient à
-l'écran comme elle était : contrairement à la sortie de ``fonction?``,
+l'écran comme elle était : contrairement à la sortie de ``fonction?``,
 celle de ``help`` n'encombre pas votre session. Une possibilité
 particulièrement utile est de consulter l'aide d'un module entier avec
 ``help(nom_du_module``. Par exemple, les espaces vectoriels sont définis
@@ -659,13 +737,13 @@ un usage futur. Les systèmes de calcul formel ont différentes approches
 pour permettre cela.
 
 
-#. **Sauver la partie :** il n'est possible de sauver que la session
+#. **Sauver la partie :** il n'est possible de sauver que la session
    entière (p.ex. GAP, Magma).
 
-#. **Format d'entrée/sortie unifié :** chaque objet est
+#. **Format d'entrée/sortie unifié :** chaque objet est
    affiché sous une forme qui peut être relue (GP/PARI).
 
-#. **Eval :** permettre d'évaluer facilement du code arbitraire dans
+#. **Eval :** permettre d'évaluer facilement du code arbitraire dans
    l'interpréteur (p.ex. Singular, PARI).
 
 
@@ -676,7 +754,7 @@ méthode semblable dans l'esprit à l'unification des entrées et sorties
 de PARI, avec l'avantage que l'affichage normal des objets n'a pas
 besoin d'être trop compliqué. En outre, cette fonction de sauvegarde et
 de relecture des objets ne nécessite (dans la plupart des cas) aucune
-programmation supplémentaire : il s'agit simplement une fonctionnalité de
+programmation supplémentaire : il s'agit simplement une fonctionnalité de
 Python fournie par le langage depuis la base.
 
 Quasiment n'importe quel objet Sage ``x`` peut être enregistré sur le
@@ -732,15 +810,15 @@ contient les 100000 premiers :math:`a_n`.
     -rw-r--r--  1 was was 153500 2006-01-28 19:23 E.sobj
     ~/tmp$ sage [...]
     sage: E = load('E')
-    sage: v = E.anlist(100000)              # instantané !
+    sage: v = E.anlist(100000)              # instantané !
 
 (En Python, les sauvegardes et rechargements s'effectuent à l'aide du
 module ``cPickle``. En particulier, on peut sauver un objet Sage ``x``
 par la commande ``cPickle.dumps(x, 2)``.  Attention au ``2`` !)
 
 Sage n'est pas capable de sauvegarder les objets créés dans d'autres systèmes
-de calcul formel comme GAP, Singular, Maxima etc. : au rechargement, ils
-sont dans un état marqué « invalide ». Concernant GAP, un certain
+de calcul formel comme GAP, Singular, Maxima etc. : au rechargement, ils
+sont dans un état marqué « invalide ». Concernant GAP, un certain
 nombre d'objets sont affichés sous une forme qui permet de les
 reconstruire, mais d'autres non, aussi la reconstruction d'objets GAP
 à partir de leur affichage est intentionnellement interdite.
@@ -815,13 +893,13 @@ La commande ``save_session(nom_de_session)`` enregistre toutes les
 variables définies dans la session courante sous forme de dictionnaire
 dans le fichier ``nom_de_session.sobj``. (Les éventuelles variables qui
 ne supportent pas la sauvegarde sont ignorées.) Le fichier ``.sobj`` obtenu
-peut être rechargé comme n'importe quel objet sauvegardé ; on obtient en
+peut être rechargé comme n'importe quel objet sauvegardé ; on obtient en
 le rechargeant un dictionnaire dont les clés sont les noms de variables
 et les valeurs les objets correspondants.
 
 La commande ``reload_session(nom_de_session)`` charge toutes les
 variables sauvées dans ``nom_de_session``. Cela n'efface pas les
-variables déjà définies dans la session courante : les deux sessions
+variables déjà définies dans la session courante : les deux sessions
 sont fusionnées.
 
 Commençons par démarrer Sage et par définir quelques variables.
@@ -838,7 +916,7 @@ Commençons par démarrer Sage et par définir quelques variables.
 
 Nous sauvons maintenant notre session, ce qui a pour effet d'enregistrer
 dans un même fichier toutes les variables ci-dessus. Nous pouvons
-constater que le fichier fait environ 3 ko.
+constater que le fichier fait environ 3 ko.
 
 .. skip
 
@@ -941,7 +1019,7 @@ chose, si Sage rencontre un problème, ou quoi que ce soit de ce genre.
 Dans Sage, vous pouvez taper ``notebook?`` pour beaucoup plus
 d'informations sur comment démarrer un serveur.
 
-Le schéma suivant présente l'architecture du *Notebook* Sage :
+Le schéma suivant présente l'architecture du *Notebook* Sage :
 
 ::
 

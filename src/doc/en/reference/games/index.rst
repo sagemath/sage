@@ -10,5 +10,14 @@ Rubik's cube solver (see
 
    sage/games/sudoku
    sage/games/quantumino
+   sage/games/hexad
+
+Internals
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/games/sudoku_backtrack
 
 .. include:: ../footer.txt

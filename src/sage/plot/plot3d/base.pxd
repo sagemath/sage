@@ -5,7 +5,7 @@ cdef class Graphics3d(SageObject):
     cdef public object texture
     cdef object _aspect_ratio
     cdef object _frame_aspect_ratio
-    cdef public object _extra_kwds
+    cdef public dict _extra_kwds
 
 cdef class PrimitiveObject(Graphics3d):
     pass

@@ -6,10 +6,12 @@ AUTHOR: Martin Albrecht <malb@informatik.uni-bremen.de>
 NOTE: our ring, poly etc. types are not the SINGULAR ring, poly,
 etc. types. They are deferences. So a SINGULAR ring is a ring pointer
 here.
-
 """
-include "sage/ext/stdsage.pxi"
+
 include "sage/ext/cdefs.pxi"
+
+cdef extern from "ccobject.h":
+    pass
 
 cdef extern from "stdlib.h":
     void delete "delete" (void *ptr)
@@ -188,7 +190,7 @@ cdef extern from "libsingular.h":
         short P # number of parameters
         int ch # characteristic (0:QQ, p:GF(p),-p:GF(q), 1:NF)
         unsigned int ringtype # field etc.
-        mpz_t ringflaga
+        mpz_ptr ringflaga
         unsigned long ringflagb
         int pCompIndex # index of components
         unsigned long bitmask # mask for getting single exponents
@@ -338,6 +340,7 @@ cdef extern from "libsingular.h":
         void* data
         #data is some union, so this might be very dangerous, but I am lazy now
         attr *attribute
+        void (* Copy)(leftv*)
         void (* Init)()
         void (* CleanUp)(ring *r)
         int  rtyp
@@ -782,7 +785,7 @@ cdef extern from "libsingular.h":
 
     # mpz_t to integer handle
 
-    long SR_HDL(mpz_t )
+    long SR_HDL(number *)
 
     # map Q -> Q(a)
     number *naMap00(number *c)
@@ -953,6 +956,7 @@ cdef extern from "libsingular.h":
     #
     # INTERPRETER
     #
+    leftv iiRETURNEXPR
 
     cdef omBin* sleftv_bin
 
@@ -960,7 +964,7 @@ cdef extern from "libsingular.h":
 
     idhdl* ggetid(char *n)
 
-    leftv * iiMake_proc(idhdl *pn, package *pack, leftv *sl)
+    bint iiMake_proc(idhdl *pn, package *pack, leftv *sl)
 
     bint iiExprArith1(leftv *res, leftv* a, int op)
     bint iiExprArith2(leftv *res, leftv* a, int op, leftv *b, bint proc_call)

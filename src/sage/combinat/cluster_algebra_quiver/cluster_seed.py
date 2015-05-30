@@ -26,6 +26,7 @@ import time
 from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.rings.all import QQ, infinity
+from sage.rings.integer_ring import ZZ
 from sage.rings.all import FractionField, PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.sets.all import Set
@@ -92,7 +93,7 @@ class ClusterSeed(SageObject):
         from quiver import ClusterQuiver
 
         # constructs a cluster seed from a cluster seed
-        if type(data) is ClusterSeed:
+        if isinstance(data, ClusterSeed):
             if frozen:
                 print "The input \'frozen\' is ignored"
             self._M = copy( data._M )
@@ -106,7 +107,7 @@ class ClusterSeed(SageObject):
             self._is_principal = data._is_principal
 
         # constructs a cluster seed from a quiver
-        elif type(data) is ClusterQuiver:
+        elif isinstance(data, ClusterQuiver):
             if frozen:
                 print "The input \'frozen\' is ignored"
 
@@ -126,7 +127,7 @@ class ClusterSeed(SageObject):
             quiver = ClusterQuiver( data, frozen=frozen )
             self.__init__( quiver )
 
-        if is_principal != None:
+        if is_principal is not None:
             self._is_principal = is_principal
 
     def __eq__(self, other):
@@ -144,7 +145,7 @@ class ClusterSeed(SageObject):
             sage: S.__eq__( T )
             True
         """
-        return type( other ) is ClusterSeed and self._M == other._M and self._cluster == other._cluster
+        return isinstance(other, ClusterSeed) and self._M == other._M and self._cluster == other._cluster
 
     def _repr_(self):
         r"""
@@ -230,7 +231,6 @@ class ClusterSeed(SageObject):
         from sage.plot.plot import EMBEDDED_MODE
         from sagenb.notebook.interact import interact, selector
         from sage.misc.all import html,latex
-        from sage.all import var
 
         if not EMBEDDED_MODE:
             return "The interactive mode only runs in the Sage notebook."
@@ -268,8 +268,7 @@ class ClusterSeed(SageObject):
                     html( "Cluster variables:" )
                     table = "$\\begin{align*}\n"
                     for i in xrange(self._n):
-                        v = var('v%s'%i)
-                        table += "\t" + latex( v ) + " &= " + latex( self._cluster[i] ) + "\\\\ \\\\\n"
+                        table += "\tv_{%s} &= "%i + latex( self._cluster[i] ) + "\\\\ \\\\\n"
                     table += "\\end{align*}$"
                     html( "$ $" )
                     html( table )
@@ -809,11 +808,11 @@ class ClusterSeed(SageObject):
             seq = [sequence]
         else:
             seq = sequence
-        if type( seq ) is tuple:
+        if isinstance(seq, tuple):
             seq = list( seq )
-        if not type( seq ) is list:
+        if not isinstance(seq, list):
             raise ValueError('The quiver can only be mutated at a vertex or at a sequence of vertices')
-        if not type(inplace) is bool:
+        if not isinstance(inplace, bool):
             raise ValueError('The second parameter must be boolean.  To mutate at a sequence of length 2, input it as a list.')
         if any( v not in V for v in seq ):
             v = filter( lambda v: v not in V, seq )[0]
@@ -915,6 +914,90 @@ class ClusterSeed(SageObject):
         eval_dict = dict( [ ( self.y(i), 1 ) for i in xrange(self._m) ] )
         seed = ClusterSeed( _principal_part( self._M ) )
         seed._cluster = [ self._cluster[k].subs(eval_dict) for k in xrange(self._n) ]
+        seed._mutation_type = self._mutation_type
+        return seed
+
+    def universal_extension(self):
+        r"""
+        Returns the universal extension of ``self``.
+
+        This is the initial seed of the associated cluster algebra
+        with universal coefficients, as defined in section 12 of
+        :arxiv:`math/0602259`.
+
+        This method works only if ``self`` is a bipartite, finite-type seed.
+
+        Due to some limitations in the current implementation of
+        ``CartanType``, we need to construct the set of almost positive
+        coroots by hand. As a consequence their ordering is not the
+        standard one (the rows of the bottom part of the exchange
+        matrix might be a shuffling of those you would expect).
+
+        EXAMPLES::
+
+            sage: S = ClusterSeed(['A',2])
+            sage: T = S.universal_extension()
+            sage: T.b_matrix()
+            [ 0  1]
+            [-1  0]
+            [-1  0]
+            [ 1  0]
+            [ 1 -1]
+            [ 0  1]
+            [ 0 -1]
+
+            sage: S = ClusterSeed(['A',3])
+            sage: T = S.universal_extension()
+            sage: T.b_matrix()
+            [ 0  1  0]
+            [-1  0 -1]
+            [ 0  1  0]
+            [-1  0  0]
+            [ 1  0  0]
+            [ 1 -1  0]
+            [ 1 -1  1]
+            [ 0  1  0]
+            [ 0 -1  0]
+            [ 0 -1  1]
+            [ 0  0 -1]
+            [ 0  0  1]
+
+            sage: S = ClusterSeed(['B',2])
+            sage: T = S.universal_extension()
+            sage: T.b_matrix()
+            [ 0  1]
+            [-2  0]
+            [-1  0]
+            [ 1  0]
+            [ 1 -1]
+            [ 2 -1]
+            [ 0  1]
+            [ 0 -1]
+
+        """
+        if self._m != 0:
+            raise ValueError("To have universal coefficients we need "
+                             "to start from a coefficient-free seed")
+        if not self.is_bipartite() or not self.is_finite():
+            raise ValueError("Universal coefficients are defined only "
+                             "for finite type cluster algebras at a "
+                             "bipartite initial cluster")
+
+        from sage.matrix.all import matrix
+        from sage.combinat.root_system.cartan_matrix import CartanMatrix
+
+        A = 2 - self.b_matrix().apply_map(abs).transpose()
+
+        rs = CartanMatrix(A).root_space()
+        almost_positive_coroots = rs.almost_positive_roots()
+
+        sign = [-1 if all(x <= 0 for x in self.b_matrix()[i]) else 1
+                for i in range(self._n)]
+        C = matrix([[sign[j] * alpha[j + 1] for j in range(self._n)]
+                    for alpha in almost_positive_coroots])
+
+        M = self._M.stack(C)
+        seed = ClusterSeed(M, is_principal=False)
         seed._mutation_type = self._mutation_type
         return seed
 
@@ -1214,13 +1297,13 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['A',[1,1],1])
             sage: it = S.mutation_class_iter()
-            sage: it.next()
+            sage: next(it)
             A seed for a cluster algebra of rank 2 of type ['A', [1, 1], 1]
-            sage: it.next()
+            sage: next(it)
             A seed for a cluster algebra of rank 2 of type ['A', [1, 1], 1]
-            sage: it.next()
+            sage: next(it)
             A seed for a cluster algebra of rank 2 of type ['A', [1, 1], 1]
-            sage: it.next()
+            sage: next(it)
             A seed for a cluster algebra of rank 2 of type ['A', [1, 1], 1]
 
             sage: it = S.mutation_class_iter(depth=3, return_paths=True)
@@ -1403,15 +1486,15 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['A',[1,1],1])
             sage: it = S.cluster_class_iter()
-            sage: it.next()
+            sage: next(it)
             [x0, x1]
-            sage: it.next()
+            sage: next(it)
             [x0, (x0^2 + 1)/x1]
-            sage: it.next()
+            sage: next(it)
             [(x1^2 + 1)/x0, x1]
-            sage: it.next()
+            sage: next(it)
             [(x0^4 + 2*x0^2 + x1^2 + 1)/(x0*x1^2), (x0^2 + 1)/x1]
-            sage: it.next()
+            sage: next(it)
             [(x1^2 + 1)/x0, (x1^4 + x0^2 + 2*x1^2 + 1)/(x0^2*x1)]
 
             sage: it = S.cluster_class_iter(depth=3)
@@ -1751,9 +1834,7 @@ class ClusterSeed(SageObject):
             raise ValueError('The variable class can - for infinite types - only be computed up to a given depth')
 
         var_iter = self.variable_class_iter( depth=depth, ignore_bipartite_belt=ignore_bipartite_belt )
-        Vs = [ var for var in var_iter ]
-        Vs.sort(cmp=cmp)
-        return Vs
+        return sorted(var_iter)
 
     def is_finite( self ):
         r"""
@@ -1770,7 +1851,7 @@ class ClusterSeed(SageObject):
             False
         """
         mt = self.mutation_type()
-        if type(mt) is str:
+        if isinstance(mt, str):
             return False
         else:
             return mt.is_finite()
@@ -2005,15 +2086,15 @@ def PathSubset(n,m):
 
         sage: from sage.combinat.cluster_algebra_quiver.cluster_seed import PathSubset
         sage: PathSubset(4,0)
-        set([1, 3, 5, 7])
+        {1, 3, 5, 7}
         sage: PathSubset(4,1)
-        set([1, 3, 5, 6, 7])
+        {1, 3, 5, 6, 7}
         sage: PathSubset(4,2)
-        set([1, 2, 3, 5, 6, 7])
+        {1, 2, 3, 5, 6, 7}
         sage: PathSubset(4,3)
-        set([1, 2, 3, 4, 5, 6, 7])
+        {1, 2, 3, 4, 5, 6, 7}
         sage: PathSubset(4,4)
-        set([0, 1, 2, 3, 4, 5, 6, 7])
+        {0, 1, 2, 3, 4, 5, 6, 7}
     """
     from sage.misc.misc import union
     from sage.functions.other import floor
@@ -2045,7 +2126,7 @@ def SetToPath(T):
         sage: SetToPath(PathSubset(4,4))
         [1, 0, 3, 2, 5, 4, 7, 6]
     """
-    n = (max(T)+1)/2
+    n = (max(T)+1) // 2
     ans = [1]
     for i in range(n-1):
         if 2*i in T:
@@ -2177,7 +2258,7 @@ class ClusterVariable(FractionFieldElement):
         """
         if self._variable_type == 'frozen variable':
             raise ValueError('The variable is frozen.')
-        if type(self._mutation_type) is str:
+        if isinstance(self._mutation_type, str):
             raise ValueError('The cluster algebra for %s is not of finite type.'%self._repr_())
         else:
             if self._mutation_type is None:
@@ -2185,7 +2266,10 @@ class ClusterVariable(FractionFieldElement):
             if self._mutation_type.is_finite():
                 from sage.combinat.root_system.root_system import RootSystem
                 # the import above is used in the line below
-                exec "Phi = RootSystem("+self._mutation_type._repr_()+")"
+                mt = self._mutation_type._repr_()
+                # mt is a string of the shape "['A', 15]"
+                # where A is a single letter and 15 is an integer
+                Phi = RootSystem([mt[2: 3], ZZ(mt[6: -1])])
                 Phiplus = Phi.root_lattice().simple_roots()
                 if self.denominator() == 1:
                     return -Phiplus[ self.numerator().degrees().index(1) + 1 ]

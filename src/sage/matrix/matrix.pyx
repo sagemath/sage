@@ -13,7 +13,7 @@ For design documentation see matrix/docs.py.
 #                  http://www.gnu.org/licenses/
 ################################################################################
 
-include 'sage/ext/stdsage.pxi'
+from sage.ext.stdsage cimport PY_SET_TP_NEW
 
 def is_Matrix(x):
     """
@@ -25,7 +25,7 @@ def is_Matrix(x):
         sage: is_Matrix(matrix([[1,2],[3,4]]))
         True
     """
-    return IS_INSTANCE(x, Matrix)
+    return isinstance(x, Matrix)
 
 cdef class Matrix(matrix2.Matrix):
     pass

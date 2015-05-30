@@ -87,10 +87,10 @@ diff --git a/tests/rtest_taylor.mac b/tests/rtest_taylor.mac
 index 1b26258..d2132c7 100644
 --- a/tests/rtest_taylor.mac
 +++ b/tests/rtest_taylor.mac
-@@ -517,3 +517,9 @@ diff('(f(taylor(x,x,0,6))),x);
- 'diff(f(taylor(x,x,0,6)),x,1);
- ev(%,nouns);
- 'diff(f(+x),x,1);
+@@ -539,3 +539,9 @@
+  + 2856700692480*x^2  + 3370143559680*x + 2386516803584)],
+  pade (t, 5, 5), is (equal (%%, foo)));
+ true;
 +
 +/* Avoid blowing the stack if diff-expand doesn't return anything
 +   helpful. Example comes from Bug ID: 2520

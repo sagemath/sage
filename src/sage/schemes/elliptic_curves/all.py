@@ -27,16 +27,12 @@ from constructor import (EllipticCurve,
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.schemes.elliptic_curves.jacobian', 'Jacobian')
 
-from ell_generic import is_EllipticCurve
-
 from ell_rational_field import cremona_curves, cremona_optimal_curves
 
 from cm import ( cm_orders,
                  cm_j_invariants,
                  cm_j_invariants_and_orders,
                  hilbert_class_polynomial )
-
-import monsky_washnitzer
 
 from ec_database import elliptic_curves
 

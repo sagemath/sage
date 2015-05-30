@@ -29,7 +29,7 @@ cdef extern from "pb_wrap.h":
         bint (* isConstant)()
         bint (* isTerminated)()
         bint (* is_equal "operator==")(PBNavigator right)
-        int (* hash)()
+        size_t (* hash)()
 
     # non-allocating versions
     PBNavigator* PBNavigator_construct \
@@ -44,7 +44,7 @@ cdef extern from "pb_wrap.h":
     ctypedef struct PBBlockIter "COrderingBase::block_iterator":
         int (* value "operator*")()
         PBBlockIter (* next "operator++")()
-        int (* hash)()
+        size_t (* hash)()
 
     bint PBBlockIter_equals "operator=="(PBBlockIter lhs, PBBlockIter rhs)
 
@@ -65,13 +65,13 @@ cdef extern from "pb_wrap.h":
         bint (* is_equal "operator==")(PBVar right)
 
     ctypedef struct PBRing "BoolePolyRing":
-        long (*id) ()
-        int (* nVariables )()
+        size_t (*id) ()
+        size_t (* nVariables )()
         PBVar (* variable )(int n)
         PBOrdering (*ordering )()
         void (*appendBlock "ordering().appendBlock")(int nextBlockStartIndex)
         void (*changeOrdering  )(int)
-        int (*hash )()
+        size_t (*hash )()
         void (*setVariableName ) (int idx, char *varname)
         char* (*getVariableName )(int idx)
         PBRing (*clone )()
@@ -88,7 +88,7 @@ cdef extern from "pb_wrap.h":
         int (* value "operator*")()
         int (* next "operator++")()
         bint (* equal "equal")(PBMonomIter rhs)
-        int (* hash)()
+        size_t (* hash)()
 
     void PBMonomIter_destruct "Destruct<BooleMonomial::const_iterator>" \
             (PBMonomIter *mem)
@@ -105,8 +105,8 @@ cdef extern from "pb_wrap.h":
     ctypedef struct PBMonom "DefaultRinged<BooleMonomial>":
         bint (* reducibleBy)(PBMonom rhs)
         int (* deg)()
-        int (* hash)()
-        int (* stableHash)()
+        size_t (* hash)()
+        size_t (* stableHash)()
         int (* firstIndex)()
         comparecodes (* compare)(PBMonom rhs)
         PBSet (* set)()
@@ -146,8 +146,8 @@ cdef extern from "pb_wrap.h":
         int (* nNodes)()
         int (* nSupport)()
         int (* size)()
-        int (* hash)()
-        int (* stableHash)()
+        size_t (* hash)()
+        size_t (* stableHash)()
         PBNavigator (* navigation)()
         PBSet (* cartesianProduct)(PBSet rhs)
         PBSet (* diff)(PBSet rhs)
@@ -195,8 +195,8 @@ cdef extern from "pb_wrap.h":
         int (* eliminationLength)()
         int (* nUsedVariables)()
         int (* nNodes)()
-        int (* hash)()
-        int (* stableHash)()
+        size_t (* hash)()
+        size_t (* stableHash)()
         bint (* isZero)()
         bint (* isOne)()
         bint (* isConstant)()

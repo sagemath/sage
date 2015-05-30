@@ -80,10 +80,10 @@ Sage содержит стандартные функции теории чис�
 
     sage: n = 2005
     sage: for i in range(1000):
-    ...       n = 3*odd_part(n) + 1
-    ...       if odd_part(n)==1:
-    ...           print i
-    ...           break
+    ....:     n = 3*odd_part(n) + 1
+    ....:     if odd_part(n)==1:
+    ....:         print i
+    ....:         break
     38
 
 Китайская теорема об остатках:
@@ -151,7 +151,7 @@ Sage содержит стандартные функции теории чис�
     Univariate Quotient Polynomial Ring in a over Rational Field with modulus
     x^3 + x^2 - 2*x + 8
     sage: K.units()
-    [3*a^2 + 13*a + 13]
+    (3*a^2 + 13*a + 13,)
     sage: K.discriminant()
     -503
     sage: K.class_group()

@@ -1,7 +1,7 @@
 diff -ruN a/kernel/kutil.cc b/kernel/kutil.cc
 --- a/kernel/kutil.cc	2012-02-22 16:00:05.000000000 +0100
 +++ b/kernel/kutil.cc	2012-12-21 11:08:42.117513571 +0100
-@@ -666,7 +666,9 @@
+@@ -662,7 +662,9 @@
            return dReportError("pNext(%c[%d].max) != NULL", TN, i);
  
          pFalseReturn(p_CheckPolyRing(T->max, tailRing));
@@ -14,23 +14,7 @@ diff -ruN a/kernel/kutil.cc b/kernel/kutil.cc
 diff -ruN a/kernel/pDebug.cc b/kernel/pDebug.cc
 --- a/kernel/pDebug.cc	2012-07-10 12:00:15.000000000 +0200
 +++ b/kernel/pDebug.cc	2012-12-21 11:08:42.127513707 +0100
-@@ -72,6 +72,7 @@
- {
-   if (p != NULL)
-   {
-+#ifndef X_OMALLOC
-     #if (OM_TRACK > 0) && defined(OM_TRACK_CUSTOM)
-     void* custom = omGetCustomOfAddr(p);
-     if (custom != NULL)
-@@ -92,6 +93,7 @@
-       return TRUE;
-     }
-     return FALSE;
-+#endif
-   }
-   return TRUE;
- }
-@@ -211,8 +213,10 @@
+@@ -221,8 +221,10 @@
  
    #ifndef OM_NDEBUG
    // check addr with level+1 so as to check bin/page of addr
@@ -41,7 +25,7 @@ diff -ruN a/kernel/pDebug.cc b/kernel/pDebug.cc
    #endif
  
    pFalseReturn(p_CheckRing(r));
-@@ -231,8 +235,10 @@
+@@ -241,8 +243,10 @@
      pFalseReturn(p_LmCheckIsFromRing(p, r));
      #ifndef OM_NDEBUG
      // omAddr check
@@ -52,65 +36,6 @@ diff -ruN a/kernel/pDebug.cc b/kernel/pDebug.cc
      #endif
      // number/coef check
      pPolyAssumeReturnMsg(p->coef != NULL || (n_GetChar(r) >= 2), "NULL coef",p,r);
-diff -ruN a/kernel/pInline1.h b/kernel/pInline1.h
---- a/kernel/pInline1.h	2012-07-10 12:00:15.000000000 +0200
-+++ b/kernel/pInline1.h	2012-12-21 11:08:42.127513707 +0100
-@@ -94,7 +94,9 @@
- PINLINE1 poly p_Init(const ring r, omBin bin)
- {
-   p_CheckRing1(r);
-+#ifndef X_OMALLOC
-   pAssume1(bin != NULL && r->PolyBin->sizeW == bin->sizeW);
-+#endif
-   poly p;
-   omTypeAlloc0Bin(poly, p, bin);
-   p_MemAdd_NegWeightAdjust(p, r);
-@@ -177,7 +179,9 @@
- PINLINE1 poly p_LmShallowCopyDelete(poly p, const ring r, omBin bin)
- {
-   p_LmCheckPolyRing1(p, r);
-+#ifndef X_OMALLOC
-   pAssume1(bin->sizeW == r->PolyBin->sizeW);
-+#endif
-   poly new_p = p_New(r);
-   p_MemCopy_LengthGeneral(new_p->exp, p->exp, r->ExpL_Size);
-   pSetCoeff0(new_p, pGetCoeff(p));
-diff -ruN a/kernel/pInline2.h b/kernel/pInline2.h
---- a/kernel/pInline2.h	2012-07-10 12:00:15.000000000 +0200
-+++ b/kernel/pInline2.h	2012-12-21 11:08:42.127513707 +0100
-@@ -296,7 +296,9 @@
- PINLINE2 poly p_New(ring r, omBin bin)
- {
-   p_CheckRing2(r);
-+#ifndef X_OMALLOC
-   pAssume2(bin != NULL && r->PolyBin->sizeW == bin->sizeW);
-+#endif
-   poly p;
-   omTypeAllocBin(poly, p, bin);
-   p_SetRingOfLm(p, r);
-@@ -478,7 +480,9 @@
- PINLINE2 poly p_ShallowCopyDelete(poly p, const ring r, omBin bin)
- {
-   p_LmCheckPolyRing2(p, r);
-+#ifndef X_OMALLOC
-   pAssume2(r->PolyBin->sizeW == bin->sizeW);
-+#endif
-   return r->p_Procs->p_ShallowCopyDelete(p, r, bin);
- }
- 
-diff -ruN a/kernel/pShallowCopyDelete.cc b/kernel/pShallowCopyDelete.cc
---- a/kernel/pShallowCopyDelete.cc	2012-07-10 12:00:15.000000000 +0200
-+++ b/kernel/pShallowCopyDelete.cc	2012-12-21 11:08:42.127513707 +0100
-@@ -18,7 +18,9 @@
-   p_CheckPolyRing(s_p, s_r);
-   p_CheckRing(d_r);
-   assume(d_bin != NULL);
-+#ifndef X_OMALLOC
-   assume(d_bin == d_r->PolyBin || d_bin->sizeW == d_r->PolyBin->sizeW);
-+#endif
-   assume(s_r->N == d_r->N);
- 
-   spolyrec dp;
 diff -ruN a/omalloc/Makefile.in b/omalloc/Makefile.in
 --- a/omalloc/Makefile.in	1970-01-01 01:00:00.000000000 +0100
 +++ b/omalloc/Makefile.in	2012-12-21 11:17:12.767512898 +0100
@@ -166,17 +91,17 @@ diff -ruN a/omalloc/Makefile.in b/omalloc/Makefile.in
 +.c.o:
 +	${CC} ${CFLAGS} ${CPPFLAGS} ${DEFS} -c $<
 +
-+all:	libomalloc.a
++all:	libomalloc_ndebug.a
 +
-+libomalloc.a: $(OBJS)
++libomalloc_ndebug.a: $(OBJS)
 +	rm -f $@
 +	$(AR) cr $@ $(OBJS)
 +	$(RANLIB) $@
 +
-+install: libomalloc.a
++install: libomalloc_ndebug.a
 +	$(INSTALL_DATA) omalloc.h $(includedir)
 +	$(INSTALL_DATA) mylimits.h $(includedir)
-+	$(INSTALL_DATA) libomalloc.a $(libdir)
++	$(INSTALL_DATA) libomalloc_ndebug.a $(libdir)
 +
 +install-nolns: install
 +
@@ -447,7 +372,7 @@ diff -ruN a/omalloc/om_Alloc.c b/omalloc/om_Alloc.c
 diff -ruN a/omalloc/omalloc.h b/omalloc/omalloc.h
 --- a/omalloc/omalloc.h	1970-01-01 01:00:00.000000000 +0100
 +++ b/omalloc/omalloc.h	2012-12-21 11:08:42.137513466 +0100
-@@ -0,0 +1,230 @@
+@@ -0,0 +1,235 @@
 +#ifndef XMEMORY_H
 +#define XMEMORY_H
 +/****************************************
@@ -538,6 +463,9 @@ diff -ruN a/omalloc/omalloc.h b/omalloc/omalloc.h
 +static inline void * omAlloc0(size_t s)
 +{ void *d=omAlloc(s);memset(d,0,s); return d; }
 +
++static inline void * omalloc0(size_t s)
++{ if (s!=0) { void *d=omAlloc(s);memset(d,0,s); return d;} else return NULL; }
++
 +static inline void *omRealloc(void *d, size_t ns)
 +{ if (d==NULL) return omAlloc(ns);
 +  else 
@@ -612,6 +540,7 @@ diff -ruN a/omalloc/omalloc.h b/omalloc/omalloc.h
 +#define omFreeFunc               omFree
 +#define omFreeBinAddr(P)         omFree(P)
 +#define omrealloc(A,NS)          omRealloc(A,NS)
++#define omReallocAligned(A,NS)   omRealloc(A,NS)
 +#define omreallocSize(A,OS,NS)   omRealloc(A,NS)
 +#define omRealloc0Size(A,OS,NS)  omRealloc0(A,NS)
 +#define omrealloc0Size(A,OS,NS)  omRealloc(A,NS)
@@ -641,6 +570,7 @@ diff -ruN a/omalloc/omalloc.h b/omalloc/omalloc.h
 +#define omCheckBin(bin)                          ((void) 0)
 +#define omCheckMemory()                          ((void) 0)
 +#define omPrintCurrentBackTraceMax(A,B)          ((void) 0)
++#define omPrintCurrentBackTrace(fd) omPrintCurrentBackTraceMax(fd, 1000)
 +#define omdebugAddrSize(A,B)                     ((void) 0)
 +#define omPrintAddrInfo(A,B,C)                   ((void) 0)
 +#define omIsBinPageAddr(A)                       ((void) 0)

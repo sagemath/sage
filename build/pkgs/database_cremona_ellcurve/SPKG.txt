@@ -1,21 +1,30 @@
-= database_cremona_ellcurve = 
+= database_cremona_ellcurve =
 
 == Description ==
-John Cremona's huge database of elliptic curves
+John Cremona's database of elliptic curves
 
-See http://www.warwick.ac.uk/~masgaj/ftp/data/ or
-http://sage.math.washington.edu/cremona/INDEX.html
+See https://github.com/JohnCremona/ecdata
 
 This is an optional package, not included by default.
 
+== License ==
+Public Domain
+
 == SPKG Maintainers ==
  * R. Andrew Ohana
+ * John Cremona
+
+== Dependencies ==
+None
+
+=== Patches ===
+ * None
 
 == Upstream Contact ==
 
  * Author: John Cremona
  * Email: john.cremona@gmail.com
- * Website: http://www.warwick.ac.uk/~masgaj/ftp/data/
+ * Website: http://homepages.warwick.ac.uk/staff/J.E.Cremona/
 
 == Update Instructions ==
 
@@ -24,81 +33,20 @@ At the end of either method, copy `SAGE_DATA/cremona/cremona.db` to the src dire
 === Method 1 ===
 
 If the cremona database has already been installed, remove
-`SAGE_DATA/cremona/cremona.db`. Run 
+`SAGE_DATA/cremona/cremona.db`. Run
 
-{{{ 
+{{{
 sage: sage.databases.cremona.build('cremona','path/to/ecdata.tgz')
-}}} 
+}}}
 
 === Method 2 ===
 
 Install the current version of the spkg, and copy the new files into a new
-folder. Then run 
+folder. Then run
 
-{{{ 
+{{{
 sage: C = sage.databases.cremona.LargeCremonaDatabase('cremona',False)
-sage: C._init_from_ftpdata('path/to/said/folder',0) 
-}}}    
+sage: C._init_from_ftpdata('path/to/said/folder',0)
+}}}
 
 This method is much faster, but won't include any potential fixes old entries.
-
-== Changelog ==
-
-=== database_cremona_ellcurve-20121022 (Volker Braun, 7 October 2013) ===
- * #14962: Update for the sage-git directory layout
-
-=== database_cremona_ellcurve-20121022 (John Cremona, 22 October 2012) ===
- * #13547: Updated the tables to include all conductors up to 300000
-
-=== database_cremona_ellcurve-20121013 (John Cremona, 13 October 2012) ===
- * #13547: Updated the tables to include all conductors up to 290000
-
-=== database_cremona_ellcurve-20120928 (John Cremona, 28 September 2012) ===
- * #13547: Updated the tables to include all conductors up to 280000
-
-=== database_cremona_ellcurve-20120827 (John Cremona, 27 August 2012) ===
- * #13298: Updated the tables to include all conductors up to 270000
-
-=== database_cremona_ellcurve-20120606 (John Cremona, 6 June 2012) ===
- * #13095: Updated the tables to include all conductors up to 240000
-
-=== database_cremona_ellcurve-20120302 (R. Andrew Ohana, 2 March 2012) ===
- * #12617: Updated the tables to include all conductors up to 230000
-
-=== database_cremona_ellcurve-20120113 (R. Andrew Ohana, 14 January 2012) ===
- * Updated the tables to include all conductors up to 220000
-
-=== database_cremona_ellcurve-20111121 (R. Andrew Ohana, 27 November 2011) ===
- * Older versions of Sage will now revert to the 20071019.p0 version
- * Version number is now based off of Cremona's release of the tables
- * Updated the tables to include all conductors up to 210000
-
-=== database_cremona_ellcurve-20111029 (R. Andrew Ohana, 29 October 2011) ===
- * Updated the tables to include all conductors up to 200000
- * Fixed a mistake in update instructions
-
-=== database_cremona_ellcurve-20110915 (R. Andrew Ohana, 15 September 2011) ===
- * Updated the tables to include all conductors up to 190000
- * Added directions on how to update database
-
-=== database_cremona_ellcurve-20110809 (R. Andrew Ohana, 9 August 2011) ===
- * Updated the tables to include all conductors up to 180000
-
-=== database_cremona_ellcurve-20110801 (R. Andrew Ohana, 1 August 2011) ===
- * Updated the database to use SQLite3
- * Updated the tables to include all conductors up to 170000
- * Introduced a mercurial repository in the spkg
-
-=== database_cremona_ellcurve-20071019.p0 (David Kirkby, 14th Nov 2009) ===
- * Fix trac #7464
-   Remove the '-v' option to 'cp' as '-v' is not a 
-   POSIX option for 'cp' and was not implemented on
-   Solaris. It is only to display what is actaully being 
-   copied, and so there is no need to use this GNUism. 
- * Renamed SAGE.txt to SPKG.txt to be like other packages.
- * Added an upstream contact, and other data found in 
-   a typical SPKG.txt file
-
-=== previous versions ===
- * lost to history
-

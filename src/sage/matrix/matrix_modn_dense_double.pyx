@@ -2,6 +2,7 @@
 Dense matrices over `\ZZ/n\ZZ` for `n < 2^{23}` using LinBox's ``Modular<double>``
 
 AUTHORS:
+
 - Burcin Erocal
 - Martin Albrecht
 """
@@ -14,7 +15,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 from sage.rings.finite_rings.stdint cimport *

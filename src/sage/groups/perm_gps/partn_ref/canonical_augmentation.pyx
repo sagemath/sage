@@ -173,8 +173,11 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
     # degree ignored!
     cdef canonical_generator_data *cgd = <canonical_generator_data *> can_gen_data
     cdef iterator *cur_iter
-    cdef void *next_candidate, *parent_cand, *aug
-    cdef int i, next_cand_deg, *isom, parent_cand_deg
+    cdef void *next_candidate
+    cdef void *parent_cand
+    cdef void *aug
+    cdef int i, next_cand_deg, parent_cand_deg
+    cdef int *isom
     cdef PartitionStack *part
     cdef bint augmentation_is_canonical
     cdef aut_gp_and_can_lab *output

@@ -22,12 +22,14 @@ origin:
 ::
 
     sage: circle((0,0), 1, rgbcolor=(1,1,0))
+    Graphics object consisting of 1 graphics primitive
 
 You can also produce a filled circle:
 
 ::
 
     sage: circle((0,0), 1, rgbcolor=(1,1,0), fill=True)
+    Graphics object consisting of 1 graphics primitive
 
 You can also create a circle by assigning it to a variable; this
 does not plot it:
@@ -65,6 +67,7 @@ It's easy to plot basic functions:
 ::
 
     sage: plot(cos, (-5,5))
+    Graphics object consisting of 1 graphics primitive
 
 Once you specify a variable name, you can create parametric plots
 also:
@@ -73,6 +76,7 @@ also:
 
     sage: x = var('x')
     sage: parametric_plot((cos(x),sin(x)^3),(x,0,2*pi),rgbcolor=hue(0.6))
+    Graphics object consisting of 1 graphics primitive
 
 It's important to notice that the axes of the plots will only
 intersect if the origin is in the viewing range of the graph, and
@@ -81,6 +85,7 @@ that with sufficiently large values scientific notation may be used:
 ::
 
     sage: plot(x^2,(x,300,500))
+    Graphics object consisting of 1 graphics primitive
 
 You can combine several plots by adding them:
 
@@ -99,10 +104,11 @@ example, here is a green deltoid:
 
 ::
 
-    sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),\
-    ...   2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
+    sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),
+    ....:     2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
     sage: p = polygon(L, rgbcolor=(1/8,3/4,1/2))
     sage: p
+    Graphics object consisting of 1 graphics primitive
 
 Type ``show(p, axes=false)`` to see this without any axes.
 
@@ -110,8 +116,8 @@ You can add text to a plot:
 
 ::
 
-    sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),\
-    ...   6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
+    sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),
+    ....:     6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
     sage: p = polygon(L, rgbcolor=(1/8,1/4,1/2))
     sage: t = text("hypotrochoid", (5,4), rgbcolor=(1,0,0))
     sage: show(p+t)
@@ -126,6 +132,7 @@ Sage commands construct this:
 
     sage: v = [(sin(x),x) for x in srange(-2*float(pi),2*float(pi),0.1)]
     sage: line(v)
+    Graphics object consisting of 1 graphics primitive
 
 Since the tangent function has a larger range than sine, if you use
 the same trick to plot the inverse tangent, you should change the
@@ -144,6 +151,7 @@ plot:
 
     sage: f = lambda x,y: cos(x*y)
     sage: contour_plot(f, (-4, 4), (-4, 4))
+    Graphics object consisting of 1 graphics primitive
 
 Three-Dimensional Plots
 -----------------------
@@ -159,6 +167,7 @@ Use ``plot3d`` to graph a function of the form `f(x, y) = z`:
 
     sage: x, y = var('x,y')
     sage: plot3d(x^2 + y^2, (x,-2,2), (y,-2,2))
+    Graphics3d Object
 
 Alternatively, you can use ``parametric_plot3d`` to graph a
 parametric surface where each of `x, y, z` is determined by
@@ -173,6 +182,7 @@ as follows:
     sage: f_y(u, v) = v
     sage: f_z(u, v) = u^2 + v^2
     sage: parametric_plot3d([f_x, f_y, f_z], (u, -2, 2), (v, -2, 2))
+    Graphics3d Object
 
 The third way to plot a 3D surface in Sage is ``implicit_plot3d``,
 which graphs a contour of a function like `f(x, y, z) = 0` (this
@@ -183,6 +193,7 @@ formula:
 
     sage: x, y, z = var('x, y, z')
     sage: implicit_plot3d(x^2 + y^2 + z^2 - 4, (x,-2, 2), (y,-2, 2), (z,-2, 2))
+    Graphics3d Object
 
 Here are some more examples:
 
@@ -195,7 +206,8 @@ Here are some more examples:
     sage: fy = u
     sage: fz = v^2
     sage: parametric_plot3d([fx, fy, fz], (u, -1, 1), (v, -1, 1),
-    ...   frame=False, color="yellow")
+    ....:   frame=False, color="yellow")
+    Graphics3d Object
 
 `Cross cap <http://en.wikipedia.org/wiki/Cross-cap>`__:
 
@@ -206,7 +218,8 @@ Here are some more examples:
     sage: fy = (1+cos(v))*sin(u)
     sage: fz = -tanh((2/3)*(u-pi))*sin(v)
     sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi),
-    ...   frame=False, color="red")
+    ....:   frame=False, color="red")
+    Graphics3d Object
 
 Twisted torus:
 
@@ -217,7 +230,8 @@ Twisted torus:
     sage: fy = (3+sin(v)+cos(u))*sin(2*v)
     sage: fz = sin(u)+2*cos(v)
     sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi),
-    ...   frame=False, color="red")
+    ....:   frame=False, color="red")
+    Graphics3d Object
 
 Lemniscate:
 
@@ -226,3 +240,4 @@ Lemniscate:
     sage: x, y, z = var('x,y,z')
     sage: f(x, y, z) = 4*x^2 * (x^2 + y^2 + z^2 + z) + y^2 * (y^2 + z^2 - 1)
     sage: implicit_plot3d(f, (x, -0.5, 0.5), (y, -1, 1), (z, -1, 1))
+    Graphics3d Object

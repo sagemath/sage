@@ -83,7 +83,6 @@ ntl_configure()
     esac
 
     ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
-        CC="$CC" CFLAGS="$CFLAGS $SHAREDFLAGS" \
         CXX="$CXX" CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
         NTL_GMP_LIP=on NTL_GF2X_LIB=on NTL_STD_CXX=on \
@@ -113,6 +112,11 @@ ntl_build()
 ntl_install()
 {
     echo
+    echo "Removing old NTL files."
+    rm -rf "$SAGE_LOCAL"/lib/libntl*
+    rm -rf "$SAGE_LOCAL"/include/NTL
+
+    echo
     echo "Installing NTL."
 
     cd "$CUR/src/ntl/src"
@@ -125,8 +129,8 @@ ntl_install()
     fi
 }
 
-ntl_libtool
 ntl_patch
+ntl_libtool
 ntl_configure
 ntl_build
 ntl_install

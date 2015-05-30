@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 0 ]; then
+    UPSTREAM_SOURCE_TARBALL=$1
+    echo "Using $UPSTREAM_SOURCE_TARBALL instead of downloading tarball"
+fi
+
+SPKG_ROOT=`pwd`
+
+set -e
+shopt -s extglob
+
+# Remove old sources and download new
+rm -rf src
+if [ -z "$UPSTREAM_SOURCE_TARBALL" ]; then
+    tar xjf <( curl http://www.gap-system.org/pub/gap/gap47/tar.bz2/gap4r7p2_2013_12_01-10_17.tar.bz2 )
+else
+    tar xjf "$UPSTREAM_SOURCE_TARBALL"
+fi
+GAP=`pwd`/gap4r7
+
+# Make everything writable
+chmod -R u+w "$GAP"
+
+
+mkdir src
+mkdir src/pkg
+for pkg in small pkg/tomlib pkg/atlasrep prim trans
+do
+    cp -rap "$GAP/$pkg" "src/$pkg"
+done
+rm -rf "$GAP"
+
+
+tar cjf database_gap-`cat package-version.txt`.tar.bz2 src/  && rm -rf src/

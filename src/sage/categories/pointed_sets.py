@@ -10,9 +10,7 @@ Pointed sets
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-from sage.misc.cachefunc import cached_method
 from sets_cat import Sets
 
 class PointedSets(Category_singleton):

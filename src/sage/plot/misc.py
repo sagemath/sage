@@ -1,3 +1,5 @@
+"Plotting utilities"
+
 #*****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -24,17 +26,17 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
 
     INPUT:
 
-    -  ``funcs`` - a function, or a list, tuple, or vector of functions
+    - ``funcs`` -- a function, or a list, tuple, or vector of functions
 
-    - ``ranges`` - a list of ranges.  A range can be a 2-tuple of
+    - ``ranges`` -- a list of ranges.  A range can be a 2-tuple of
       numbers specifying the minimum and maximum, or a 3-tuple giving
       the variable explicitly.
 
-    - ``plot_points`` - a tuple of integers specifying the number of
+    - ``plot_points`` -- a tuple of integers specifying the number of
       plot points for each range.  If a single number is specified, it
       will be the value for all ranges.  This defaults to 2.
 
-    - ``return_vars`` - (default False) If True, return the variables,
+    - ``return_vars`` -- (default ``False``) If ``True``, return the variables,
       in order.
 
 
@@ -42,14 +44,14 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
 
 
     - ``fast_funcs`` - if only one function passed, then a fast
-       callable function.  If funcs is a list or tuple, then a tuple
-       of fast callable functions is returned.
+      callable function.  If funcs is a list or tuple, then a tuple
+      of fast callable functions is returned.
 
     - ``range_specs`` - a list of range_specs: for each range, a
-       tuple is returned of the form (range_min, range_max,
-       range_step) such that ``srange(range_min, range_max,
-       range_step, include_endpoint=True)`` gives the correct points
-       for evaluation.
+      tuple is returned of the form (range_min, range_max,
+      range_step) such that ``srange(range_min, range_max,
+      range_step, include_endpoint=True)`` gives the correct points
+      for evaluation.
 
     EXAMPLES::
 
@@ -100,13 +102,13 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
         (<sage.ext...>, [(1.0, -1.0, 2.0), (-1.0, 1.0, 2.0)], [y, x])
     """
     if max(map(len, ranges)) != min(map(len, ranges)):
-        raise ValueError, "Some variable ranges specify variables while others do not"
+        raise ValueError("Some variable ranges specify variables while others do not")
 
     if len(ranges[0])==3:
         vars = [r[0] for r in ranges]
         ranges = [r[1:] for r in ranges]
         if len(set(vars))<len(vars):
-            raise ValueError, "range variables should be distinct, but there are duplicates"
+            raise ValueError("range variables should be distinct, but there are duplicates")
     else:
         vars, free_vars = unify_arguments(funcs)
         if len(free_vars)>1:
@@ -126,12 +128,12 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
     if not isinstance(plot_points, (list, tuple)):
         plot_points = [plot_points]*len(ranges)
     elif len(plot_points)!=nargs:
-        raise ValueError, "plot_points must be either an integer or a list of integers, one for each range"
+        raise ValueError("plot_points must be either an integer or a list of integers, one for each range")
 
     plot_points = [int(p) if p>=2 else 2 for p in plot_points]
     range_steps = [abs(range[1] - range[0])/(p-1) for range, p in zip(ranges, plot_points)]
     if min(range_steps) == float(0):
-        raise ValueError, "plot start point and end point must be different"
+        raise ValueError("plot start point and end point must be different")
 
     options={}
     if nargs==1:
@@ -150,14 +152,14 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
 
 def unify_arguments(funcs):
     """
-    Returns a tuple of variables of the functions, as well as the
+    Return a tuple of variables of the functions, as well as the
     number of "free" variables (i.e., variables that defined in a
     callable function).
 
     INPUT:
 
     - ``funcs`` -- a list of functions; these can be symbolic
-            expressions, polynomials, etc
+      expressions, polynomials, etc
 
     OUTPUT: functions, expected arguments
 
@@ -165,7 +167,7 @@ def unify_arguments(funcs):
 
     - A tuple of variables that were "free" in the functions
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: x,y,z=var('x,y,z')
         sage: f(x,y)=x+y-z
@@ -221,29 +223,39 @@ def _multiple_of_constant(n,pos,const):
     Here is the intended use::
 
         sage: plot(sin(x), (x,0,2*pi), ticks=pi/3, tick_formatter=pi)
+        Graphics object consisting of 1 graphics primitive
 
     Here is an unintended use, which yields unexpected (and probably
     undesired) results::
 
         sage: plot(x^2, (x, -2, 2), tick_formatter=pi)
+        Graphics object consisting of 1 graphics primitive
 
     We can also use more unusual constant choices::
 
         sage: plot(ln(x), (x,0,10), ticks=e, tick_formatter=e)
+        Graphics object consisting of 1 graphics primitive
         sage: plot(x^2, (x,0,10), ticks=[sqrt(2),8], tick_formatter=sqrt(2))
+        Graphics object consisting of 1 graphics primitive
     """
     from sage.misc.latex import latex
-    from sage.rings.arith import convergents
-    c=[i for i in convergents(n/const.n()) if i.denominator()<12]
-    return '$%s$'%latex(c[-1]*const)
+    from sage.rings.continued_fraction import continued_fraction
+    from sage.rings.infinity import Infinity
+    cf = continued_fraction(n/const)
+    k = 1
+    while cf.quotient(k) != Infinity and cf.denominator(k) < 12:
+        k += 1
+    return '$%s$'%latex(cf.convergent(k-1)*const)
 
 
 def get_matplotlib_linestyle(linestyle, return_type):
     """
     Function which translates between matplotlib linestyle in short notation
     (i.e. '-', '--', ':', '-.') and long notation (i.e. 'solid', 'dashed',
-    'dotted', 'dashdot' ). If linestyle is none of these allowed options the
-    function raises a ValueError.
+    'dotted', 'dashdot' ).
+
+    If linestyle is none of these allowed options, the function raises
+    a ValueError.
 
     INPUT:
 
@@ -373,4 +385,3 @@ def get_matplotlib_linestyle(linestyle, return_type):
                              "'dashed', 'dotted', dashdot', 'None'}, "
                              "respectively {'-', '--', ':', '-.', ''}"%
                              (linestyle))
-

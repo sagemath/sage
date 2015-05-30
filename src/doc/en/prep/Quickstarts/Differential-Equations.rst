@@ -64,6 +64,7 @@ slope field.
     sage: Plot1=plot_slope_field(2-y,(x,0,3),(y,0,5))
     sage: Plot2=plot(h,x,0,3)
     sage: Plot1+Plot2
+    Graphics object consisting of 2 graphics primitives
 
 .. note::
    Regarding symbolic functions versus symbolic variables:
@@ -96,7 +97,7 @@ In all differential equation solving routines, it is important to pay
 attention to the syntax!  In the following example, we have placed the
 differential equation in the body of the command, and had to specify
 that ``f`` was the **d**\ ependent **var**\ iable (``dvar``), as well as
-give initial conditions :math:`f(0)=1` and :math:`f’(0)=2`, which
+give initial conditions :math:`f(0)=1` and :math:`f'(0)=2`, which
 gives the last list in the example.
 
 ::
@@ -134,6 +135,7 @@ use the ``points`` command from the advanced plotting tutorial.
 
     sage: h1 = desolve(de, y, ics=[0,3])
     sage: plot(h1,(x,0,5),color='red')+points(h)
+    Graphics object consisting of 2 graphics primitives
 
 The primary use of numerical routines from here is pedagogical in nature.
 
@@ -163,6 +165,7 @@ This power series solution is pretty good for a while!
 
     sage: h = h.polynomial()
     sage: plot(h,-2,5)+plot(2+e^-x,(x,-2,5),color='red',linestyle=':',thickness=3)
+    Graphics object consisting of 2 graphics primitives
 
 This was just an introduction; there are a lot of resources for
 differential equations using Sage elsewhere, including a book by David

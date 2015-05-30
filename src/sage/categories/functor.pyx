@@ -253,7 +253,7 @@ cdef class Functor(SageObject):
         """
         try:
             return self(f.domain()).hom(f, self(f.codomain()))
-        except StandardError:
+        except Exception:
             raise TypeError, 'unable to transform %s into a morphism in %s'%(f,self.codomain())
 
     def _coerce_into_domain(self, x):
@@ -285,13 +285,22 @@ cdef class Functor(SageObject):
             raise TypeError, "x (=%s) is not in %s"%(x, self.__domain)
         return x
 
-    def __repr__(self):
+    def _repr_(self):
         """
         TESTS::
+
             sage: from sage.categories.functor import Functor
             sage: F = Functor(Rings(),Fields())
             sage: F #indirect doctest
             Functor from Category of rings to Category of fields
+
+        A functor can be renamed if its type is a Python class
+        (see :trac:`16156`)::
+
+            sage: I = IdentityFunctor(Rings()); I
+            The identity functor on Category of rings
+            sage: I.rename('Id'); I
+            Id
 
         """
         return "Functor from %s to %s"%(self.__domain, self.__codomain)
@@ -453,7 +462,7 @@ class ForgetfulFunctor_generic(Functor):
         """
         return ForgetfulFunctor, (self.domain(), self.codomain())
 
-    def __repr__(self):
+    def _repr_(self):
         """
         TESTS::
 
@@ -557,7 +566,7 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
         """
         return IdentityFunctor, (self.domain(), )
 
-    def __repr__(self):
+    def _repr_(self):
         """
         TESTS::
 

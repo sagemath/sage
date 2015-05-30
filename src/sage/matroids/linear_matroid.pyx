@@ -108,7 +108,7 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-include 'sage/misc/bitset.pxi'
+include 'sage/data_structures/bitset.pxi'
 
 from sage.matroids.matroid cimport Matroid
 from basis_exchange_matroid cimport BasisExchangeMatroid
@@ -377,13 +377,13 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return characteristic(self._A)
 
-    cdef  bint __is_exchange_pair(self, long x, long y):
+    cdef bint __is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
-        return self._A.is_nonzero(self._prow[x], self._prow[y])   # Not a Sage matrix operation
+        return self._A.is_nonzero(self._prow[x], self._prow[y])
 
-    cdef bint __exchange(self, long x, long y):
+    cdef int __exchange(self, long x, long y) except -1:
         """
         Put element indexed by ``x`` into basis, taking out element ``y``.
         Assumptions are that this is a valid basis exchange.
@@ -908,7 +908,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             False
             sage: M1.is_field_equivalent(M3)
             True
+            sage: M1.is_field_equivalent(M1)
+            True
         """
+        if self is other:
+            return True
         if self.base_ring() != other.base_ring():
             return False
         if self.groundset() != other.groundset():
@@ -1655,7 +1659,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             [2, 3, 4, 5, 6]
             sage: M = matroids.CompleteGraphic(5)
             sage: M.cross_ratios()
-            set([])
+            set()
         """
         if hyperlines is None:
             hyperlines = self.flats(self.full_rank() - 2)
@@ -1897,8 +1901,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 i += 1
             if i < self._representation.nrows():
                 raise ValueError("provided column has too few entries")
-            E = copy(self._E)
-            E.append(element)
+            E = self._E + (element,)
             return type(self)(matrix=self._representation.augment(cl), groundset=E)
         elif col is not None:
             raise ValueError("can only specify column relative to fixed representation. Run self._matrix_() first.")
@@ -1997,8 +2000,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 i += 1
             if i < self._representation.ncols():
                 raise ValueError("provided row has too few entries")
-            E = copy(self._E)
-            E.append(element)
+            E = self._E + (element,)
             col = type(self._representation)(self._representation.nrows() + 1, 1, ring=self.base_ring())
             col.set_unsafe(self._representation.nrows(), 0, self._one)
             return type(self)(matrix=self._representation.stack(rw).augment(col), groundset=E)
@@ -2046,7 +2048,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             M = type(self._A)(self.full_rank(), self.size() + 1, self._basic_representation())
         else:
             M = type(self._A)(self._representation.nrows(), self.size() + 1, self._representation)
-        E = self._E + [element]
+        E = self._E + (element,)
         D = {}
         for i from 0 <= i < self.size():
             D[E[i]] = i
@@ -2097,7 +2099,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             M = type(self._A)(self._representation.nrows() + 1, self.size() + 1, self._representation)
         M.set_unsafe(M.nrows() - 1, M.ncols() - 1, self._one)
-        E = self._E + [element]
+        E = self._E + (element,)
         D = {}
         for i from 0 <= i < self.size():
             D[E[i]] = i
@@ -2402,7 +2404,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     cpdef linear_extensions(self, element=None, F=None, simple=False, fundamentals=None):
         r"""
-        Create a list of linear matroids represented by single-element
+        Create a list of linear matroids represented by rank-preserving single-element
         extensions of this linear matroid representation.
 
         INPUT:
@@ -2416,8 +2418,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         OUTPUT:
 
-        A list of linear matroids represented by single-element extensions of
-        this linear matroid representation.
+        A list of linear matroids represented by rank-preserving single-element extensions of
+        this linear matroid representation. In particular, the extension by a coloop is not 
+        generated.
 
         If one or more of the above inputs is given, the list is restricted to
         matroids
@@ -2470,7 +2473,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     cpdef linear_coextensions(self, element=None, F=None, cosimple=False, fundamentals=None):
         r"""
-        Create a list of linear matroids represented by single-element
+        Create a list of linear matroids represented by corank-preserving single-element
         coextensions of this linear matroid representation.
 
         INPUT:
@@ -2484,8 +2487,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         OUTPUT:
 
-        A list of linear matroids represented by single-element coextensions
-        of this linear matroid representation.
+        A list of linear matroids represented by corank-preserving single-element 
+        coextensions of this linear matroid representation. In particular, the coextension 
+        by a loop is not generated. 
 
         If one or more of the above inputs is given, the list is restricted to
         coextensions
@@ -2853,13 +2857,13 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         return 2
 
-    cdef  bint __is_exchange_pair(self, long x, long y):
+    cdef bint __is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
-        return (<BinaryMatrix>self._A).get(self._prow[x], y)   # Not a Sage matrix operation
+        return (<BinaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef bint __exchange(self, long x, long y):
+    cdef int __exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
@@ -3787,13 +3791,13 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         return 3
 
-    cdef  bint __is_exchange_pair(self, long x, long y):
+    cdef bint __is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
-        return (<TernaryMatrix>self._A).get(self._prow[x], y)   # Not a Sage matrix operation
+        return (<TernaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef bint __exchange(self, long x, long y):
+    cdef int __exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
@@ -4581,13 +4585,13 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         return 2
 
-    cdef  bint __is_exchange_pair(self, long x, long y):
+    cdef bint __is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
-        return (<QuaternaryMatrix>self._A).get(self._prow[x], y)   # Not a Sage matrix operation
+        return (<QuaternaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef bint __exchange(self, long x, long y):
+    cdef int __exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
@@ -5252,13 +5256,13 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return 0
 
-    cdef  bint __is_exchange_pair(self, long x, long y):
+    cdef bint __is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
-        return (<IntegerMatrix>self._A).get(self._prow[x], self._prow[y])   # Not a Sage matrix operation
+        return (<IntegerMatrix>self._A).is_nonzero(self._prow[x], self._prow[y])
 
-    cdef bint __exchange(self, long x, long y):
+    cdef int __exchange(self, long x, long y) except -1:
         """
         Put element indexed by ``x`` into basis, taking out element ``y``. Assumptions are that this is a valid basis exchange.
 
@@ -5344,13 +5348,13 @@ cdef class RegularMatroid(LinearMatroid):
         of the matroid, then `Q = A^T (A A^T)^{-1} A`. Finally, `P` is equal
         to `Q` multiplied by the number of bases of the matroid.
 
-        The matrix `P` is independent of the choice of `A`, except for column
-        scaling. It has the property that `xP` is the orthogonal projection of
-        the row vector `x` onto the row space of `A`. For regular matroids,
+        The matrices `P` and `Q` are independent of the choice of `A`, except for column
+        scaling. The vector `Qx` is the orthogonal projection of
+        the vector `x` onto the row space of `A`. For regular matroids,
         there is an extended Matrix Tree theorem that derives the fraction of
         bases containing a subset by computing the determinant of the
-        principal submatrix corresponding to that subset. See [Lyons]_ .
-        In particular, the entries of `P` are integers.
+        principal submatrix of `Q` corresponding to that subset. See [Lyons]_ .
+        Due to the scaling, the entries of `P` are integers.
 
         EXAMPLES::
 
@@ -5367,9 +5371,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         if self._r_projection is None:
             R = self._basic_representation()._matrix_()
-            X = (R * R.transpose())
-            self._bases_count = X.det()
-            self._r_projection = self._bases_count * R.transpose() * X.inverse() * R
+            self._r_projection = R.transpose() * (R * R.transpose()).adjoint() * R
         return self._r_projection
 
     cpdef _invariant(self):
@@ -5378,10 +5380,11 @@ cdef class RegularMatroid(LinearMatroid):
 
         OUTPUT:
 
-        The hash of a list of pairs `(w, A[w])` and `(w, B[w])`, where `A[w]`
-        counts the number of `i` such that `|P[i, i]|=w` (where `P` is the
-        projection matrix from ``self._projection()``), and `B[w]` counts the
-        number of pairs `(i, j)` such that `|P[i, j]|=w`.
+        The hash value of a list of pairs `(w, A[w])` and `(w, B[w])` and a number `N`, 
+        derived form the projection matrix `P` as obtained from ``self._projection()`` 
+        as follows: `A[w]` counts the number of `i` such that `|P[i, i]|=w`, `B[w]` counts 
+        the number of pairs `(i, j)` such that `|P[i, j]|=w`, and `N` counts the number 
+        of triples `(i,j,k)` so that `P[i,j]*P'j,k]*P[k,i]` is negative.
 
         EXAMPLES::
 
@@ -5400,6 +5403,7 @@ cdef class RegularMatroid(LinearMatroid):
         P = self._projection()
         A = {}
         B = {}
+        N = 0
         for i in xrange(P.nrows()):
             w = P.get_unsafe(i, i)
             if w != 0:
@@ -5414,7 +5418,10 @@ cdef class RegularMatroid(LinearMatroid):
                         B[w] += 1
                     else:
                         B[w] = 1
-        self._r_invariant = hash(tuple([tuple([(w, A[w]) for w in sorted(A)]), tuple([(w, B[w]) for w in sorted(B)])]))
+                    for k in range(j):
+                        if P.get_unsafe(i, j)*P.get_unsafe(j, k)*P.get_unsafe(k, i)<0:
+                            N=N+1
+        self._r_invariant = hash(tuple([tuple([(w, A[w]) for w in sorted(A)]), tuple([(w, B[w]) for w in sorted(B)]), N]))
         return self._r_invariant
 
     cpdef _hypergraph(self):
@@ -5526,6 +5533,28 @@ cdef class RegularMatroid(LinearMatroid):
             False
             sage: M1._is_isomorphic(M2.delete('a'))
             True
+
+        Check that trac ticket #17316 was fixed::
+
+            sage: from sage.matroids.advanced import *
+            sage: Mnew = RegularMatroid(groundset=range(12), matrix=Matrix(ZZ,
+            ....: [[ 1, 0, 0, 0, 1, 0, 0,-1,-1, 0, 1, 0],
+            ....:  [ 0, 1, 0, 0,-1, 1, 0, 0, 0, 0, 0, 0],
+            ....:  [ 0, 0, 1, 0, 0,-1, 1, 0, 1, 0,-1, 0],
+            ....:  [ 0, 0, 0, 1, 0, 0,-1, 1, 0, 0, 0, 0],
+            ....:  [ 0, 0, 0, 0, 0, 1,-1, 0, 0, 1, 1, 0],
+            ....:  [ 0, 0, 0, 0, 1, 0, 0,-1,-1, 0, 0, 1]]))
+            sage: Nnew = RegularMatroid(groundset=range(12), matrix=Matrix(ZZ,
+            ....: [[1,0,0,0,0,0,1,1,0,0,1,0],
+            ....:  [0,1,0,0,0,0,1,0,1,0,1,0],
+            ....:  [0,0,1,0,0,0,1,0,0,1,1,0],
+            ....:  [0,0,0,1,0,0,1,1,0,0,0,1],
+            ....:  [0,0,0,0,1,0,1,0,1,0,0,1],
+            ....:  [0,0,0,0,0,1,1,0,0,1,0,1]]))
+            sage: Mnew.is_isomorphic(Nnew)
+            False
+            sage: len(Mnew.circuits()) == len(Nnew.circuits())
+            False
         """
         if type(other) == RegularMatroid:
             return self.is_field_isomorphic(other)
@@ -5553,6 +5582,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         - ``True``, if ``self`` is isomorphic to ``other``;
         - ``False``, if ``self`` is not isomorphic to ``other``;
+        - ``None``, if the test is inconclusive.
 
         EXAMPLES::
 
@@ -5566,12 +5596,16 @@ cdef class RegularMatroid(LinearMatroid):
         if self._invariant() != other._invariant():
             return False
         if self.size() > 8:  # TODO: Optimize the cutoff. _hypertest() is slow for small matroids, and can be fast for larger ones.
-            return self._hypertest(other)
+            m = self._hypertest(other)
+            if m is None:
+                return False
+            if self._is_field_isomorphism(other, m):
+                return True
 
     cdef _hypertest(self, other):
         """
         Test if the hypergraphs associated with ``self`` and ``other`` are
-        isomorphic.
+        isomorphic, and if so return an isomorphism.
 
         INPUT:
 
@@ -5579,7 +5613,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         OUTPUT:
 
-        - ``True`` if the hypergraphs are isomorphic; ``False`` otherwise.
+        - a dictionary, if the hypergraphs are isomorphic; ``None`` otherwise.
         """
         from sage.groups.perm_gps.partn_ref.refinement_graphs import isomorphic
         HS = self._hypergraph()
@@ -5587,8 +5621,11 @@ cdef class RegularMatroid(LinearMatroid):
         VO = []
         for X in HO[0]:
             VO.extend(X)
-        return isomorphic(HS[2], HO[2], HS[0], VO, 1, 1) is not None
-
+        m = isomorphic(HS[2], HO[2], HS[0], VO, 1, 1)
+        if m is not None:
+            idx={str(f):f for f in other.groundset()}
+            return {e:idx[m[str(e)]] for e in self.groundset() if str(e) in m}
+    
     cpdef has_line_minor(self, k, hyperlines=None):
         """
         Test if the matroid has a `U_{2, k}`-minor.

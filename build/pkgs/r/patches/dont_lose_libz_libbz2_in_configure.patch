@@ -1,0 +1,35 @@
+Fix bug in R_PCRE autoconf macro which leads to 'configure' losing '-lz'
+and/or '-lbz2' from LIBS (under certain circumstances, and only relevant
+if "system" versions of these libraries are used).  (cf. #18229)
+
+
+--- R-3.2.0/m4/R.m4	2015-03-19 00:02:06.000000000 +0100
++++ R-3.2.0/m4/R.m4	2015-05-04 18:09:13.742304005 +0200
+@@ -3107,11 +3107,11 @@
+ #endif
+ }
+ ]])], [r_cv_have_pcre810=yes], [r_cv_have_pcre810=no], [r_cv_have_pcre810=no])])
+-fi
+ if test "x${r_cv_have_pcre810}" != xyes; then
+   have_pcre=no
+   LIBS="${r_save_LIBS}"
+ fi
++fi
+ AC_MSG_CHECKING([whether PCRE support needs to be compiled])
+ if test "x${r_cv_have_pcre810}" = xyes; then
+   AC_MSG_RESULT([no])
+--- R-3.2.0/configure	2015-04-09 00:16:36.000000000 +0200
++++ R-3.2.0/configure	2015-05-04 18:19:37.942304048 +0200
+@@ -34543,11 +34543,11 @@
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $r_cv_have_pcre810" >&5
+ $as_echo "$r_cv_have_pcre810" >&6; }
+-fi
+ if test "x${r_cv_have_pcre810}" != xyes; then
+   have_pcre=no
+   LIBS="${r_save_LIBS}"
+ fi
++fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether PCRE support needs to be compiled" >&5
+ $as_echo_n "checking whether PCRE support needs to be compiled... " >&6; }
+ if test "x${r_cv_have_pcre810}" = xyes; then

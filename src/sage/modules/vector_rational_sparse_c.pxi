@@ -10,7 +10,6 @@
 
 include 'vector_rational_sparse_h.pxi'
 include "sage/ext/cdefs.pxi"
-include "sage/ext/gmp.pxi"
 include "sage/ext/stdsage.pxi"
 
 
@@ -136,7 +135,7 @@ cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* i
     ins[0] = j+1
     return -1
 
-cdef int mpq_vector_get_entry(mpq_t* ans, mpq_vector* v, Py_ssize_t n) except -1:
+cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     """
     Returns the n-th entry of the sparse vector v.  This
     would be v[n] in Python syntax.
@@ -149,9 +148,9 @@ cdef int mpq_vector_get_entry(mpq_t* ans, mpq_vector* v, Py_ssize_t n) except -1
     cdef Py_ssize_t m
     m = binary_search0(v.positions, v.num_nonzero, n)
     if m == -1:
-        mpq_set_si(ans[0], 0,1)
+        mpq_set_si(ans, 0,1)
         return 0
-    mpq_set(ans[0], v.entries[m])
+    mpq_set(ans, v.entries[m])
     return 0
 
 cdef object mpq_vector_to_list(mpq_vector* v):

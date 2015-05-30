@@ -2,14 +2,13 @@ r"""
 Base class for elements of multivariate polynomial rings
 """
 
-import sage.misc.misc as misc
-
-include "sage/ext/stdsage.pxi"
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 
 from sage.misc.derivative import multi_derivative
 from sage.rings.infinity import infinity
+
+from sage.misc.all import prod
 
 def is_MPolynomial(x):
     return isinstance(x, MPolynomial)
@@ -287,7 +286,7 @@ cdef class MPolynomial(CommutativeRingElement):
         n = len(x)
         expr = fast_float_constant(0)
         for (m,c) in self.dict().iteritems():
-            monom = misc.mul([ x[i]**m[i] for i in range(n) if m[i] != 0], fast_float_constant(c))
+            monom = prod([ x[i]**m[i] for i in range(n) if m[i] != 0], fast_float_constant(c))
             expr = expr + monom
         return expr
 
@@ -329,7 +328,7 @@ cdef class MPolynomial(CommutativeRingElement):
 
         expr = etb.constant(self.base_ring()(0))
         for (m, c) in self.dict().iteritems():
-            monom = misc.mul([ x[i]**m[i] for i in range(n) if m[i] != 0],
+            monom = prod([ x[i]**m[i] for i in range(n) if m[i] != 0],
                              etb.constant(c))
             expr = expr + monom
         return expr
@@ -472,7 +471,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: t,s = R.gens()
             sage: x,y,z = R.base_ring().gens()
             sage: (x+y+2*z*s+3*t)._mpoly_dict_recursive(['z','t','s'])
-            {(1, 0, 1): 2, (0, 1, 0): 3, (0, 0, 0): x + y}
+            {(0, 0, 0): x + y, (0, 1, 0): 3, (1, 0, 1): 2}
 
         TESTS::
 
@@ -551,7 +550,7 @@ cdef class MPolynomial(CommutativeRingElement):
                 D[ETuple(tmp)] = a
             return D
 
-    cdef long _hash_c(self):
+    cdef long _hash_c(self) except -1:
         """
         This hash incorporates the variable name in an effort to respect the obvious inclusions
         into multi-variable polynomial rings.
@@ -577,6 +576,19 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: f=x/y
             sage: f.subs({x:1})
             1/y
+
+        TESTS:
+
+        Verify that :trac:`16251` has been resolved, i.e., polynomials with
+        unhashable coefficients are unhashable::
+
+            sage: K.<a> = Qq(9)
+            sage: R.<t,s> = K[]
+            sage: hash(t)
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'sage.rings.padics.padic_ZZ_pX_CR_element.pAdicZZpXCRElement'
+
         """
         cdef long result = 0 # store it in a c-int and just let the overflowing additions wrap
         cdef long result_mon
@@ -621,53 +633,89 @@ cdef class MPolynomial(CommutativeRingElement):
 
     def homogenize(self, var='h'):
         r"""
-        Return self if self is homogeneous.  Otherwise return a homogenized
-        polynomial for self. If a string is given, return a polynomial in one
-        more variable named after the string such that setting that variable
-        equal to 1 yields self. This variable is added to the end of the
-        variables. If a variable in ``self.parent()`` is given, this variable
-        is used to homogenize the polynomial. If an integer is given, the
-        variable with this index is used for homogenization.
+        Return the homogenization of this polynomial.
+
+        The polynomial itself is returned if it is homogeneous already.
+        Otherwise, the monomials are multiplied with the smallest powers of
+        ``var`` such that they all have the same total degree.
 
         INPUT:
 
-        - ``var`` -- either a variable name, variable index or a variable
-          (default: 'h').
+        - ``var`` -- a variable in the polynomial ring (as a string, an element of
+          the ring, or a zero-based index in the list of variables) or a name
+          for a new variable (default: ``'h'``)
 
         OUTPUT:
 
-        a multivariate polynomial
+        If ``var`` specifies a variable in the polynomial ring, then a
+        homogeneous element in that ring is returned. Otherwise, a homogeneous
+        element is returned in a polynomial ring with an extra last variable
+        ``var``.
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQ,2)
+            sage: R.<x,y> = QQ[]
             sage: f = x^2 + y + 1 + 5*x*y^10
+            sage: f.homogenize()
+            5*x*y^10 + x^2*h^9 + y*h^10 + h^11
+
+        The parameter ``var`` can be used to specify the name of the variable::
+
             sage: g = f.homogenize('z'); g
             5*x*y^10 + x^2*z^9 + y*z^10 + z^11
             sage: g.parent()
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
+        However, if the polynomial is homogeneous already, then that parameter
+        is ignored and no extra variable is added to the polynomial ring::
+
+            sage: f = x^2 + y^2
+            sage: g = f.homogenize('z'); g
+            x^2 + y^2
+            sage: g.parent()
+            Multivariate Polynomial Ring in x, y over Rational Field
+
+        If you want the ring of the result to be independent of whether the
+        polynomial is homogenized, you can use ``var`` to use an existing
+        variable to homogenize::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x^2 + y^2
+            sage: g = f.homogenize(z); g
+            x^2 + y^2
+            sage: g.parent()
+            Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: f = x^2 - y
+            sage: g = f.homogenize(z); g
+            x^2 - y*z
+            sage: g.parent()
+            Multivariate Polynomial Ring in x, y, z over Rational Field
+
+        The parameter ``var`` can also be given as a zero-based index in the
+        list of variables::
+
+            sage: g = f.homogenize(2); g
+            x^2 - y*z
+
+        If the variable specified by ``var`` is not present in the polynomial,
+        then setting it to 1 yields the original polynomial::
+
+            sage: g(x,y,1)
+            x^2 - y
+
+        If it is present already, this might not be the case::
+
+            sage: g = f.homogenize(x); g
+            x^2 - x*y
+            sage: g(1,y,z)
+            -y + 1
+
+        In particular, this can be surprising in positive characteristic::
+
+            sage: R.<x,y> = GF(2)[]
+            sage: f = x + 1
             sage: f.homogenize(x)
-            2*x^11 + x^10*y + 5*x*y^10
-
-            sage: f.homogenize(0)
-            2*x^11 + x^10*y + 5*x*y^10
-
-            sage: x, y = Zmod(3)['x', 'y'].gens()
-            sage: (x + x^2).homogenize(y)
-            x^2 + x*y
-
-            sage: x, y = Zmod(3)['x', 'y'].gens()
-            sage: (x + x^2).homogenize(y).parent()
-            Multivariate Polynomial Ring in x, y over Ring of integers modulo 3
-
-            sage: x, y = GF(3)['x', 'y'].gens()
-            sage: (x + x^2).homogenize(y)
-            x^2 + x*y
-
-            sage: x, y = GF(3)['x', 'y'].gens()
-            sage: (x + x^2).homogenize(y).parent()
-            Multivariate Polynomial Ring in x, y over Finite Field of size 3
+            0
 
         TESTS::
 
@@ -677,13 +725,14 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: q2 = p.homogenize()
             sage: q1.parent() is q2.parent()
             True
+
         """
         P = self.parent()
 
         if self.is_homogeneous():
             return self
 
-        if PY_TYPE_CHECK(var, basestring):
+        if isinstance(var, basestring):
             V = list(P.variable_names())
             try:
                 i = V.index(var)
@@ -692,7 +741,7 @@ cdef class MPolynomial(CommutativeRingElement):
                 P = PolynomialRing(P.base_ring(), len(V)+1, V + [var], order=P.term_order())
                 return P(self)._homogenize(len(V))
 
-        elif PY_TYPE_CHECK(var, MPolynomial) and \
+        elif isinstance(var, MPolynomial) and \
              ((<MPolynomial>var)._parent is P or (<MPolynomial>var)._parent == P):
             V = list(P.gens())
             try:
@@ -702,7 +751,7 @@ cdef class MPolynomial(CommutativeRingElement):
                 P = P.change_ring(names=P.variable_names() + [str(var)])
                 return P(self)._homogenize(len(V))
 
-        elif PY_TYPE_CHECK(var, int) or PY_TYPE_CHECK(var, Integer):
+        elif isinstance(var, int) or isinstance(var, Integer):
             if 0 <= var < P.ngens():
                 return self._homogenize(var)
             else:
@@ -1041,7 +1090,6 @@ cdef class MPolynomial(CommutativeRingElement):
         p = k.characteristic()
         e = k.degree()
         v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1,e)]
-        from sage.misc.misc_c import prod
         return prod(v).change_ring(k.prime_subfield())
 
     def sylvester_matrix(self, right, variable = None):
@@ -1199,6 +1247,134 @@ cdef class MPolynomial(CommutativeRingElement):
 
         return M
 
+    def macaulay_resultant(self, *args):
+        r"""
+        This is an implementation of the Macaulay Resultant. It computes
+        the resultant of universal polynomials as well as polynomials
+        with constant coefficients. This is a project done in
+        sage days 55. It's based on the implementation in Maple by
+        Manfred Minimair, which in turn is based on the references [CLO], [Can], [Mac].
+        It calculates the Macaulay resultant for a list of Polynomials,
+        up to sign!
+
+        AUTHORS:
+
+        - Hao Chen, Solomon Vishkautsan (7-2014)
+
+        INPUT:
+
+        - ``args`` -- a list of `n-1` homogeneous polynomials in `n` variables.
+                  works when ``args[0]`` is the list of polynomials,
+                  or ``args`` is itself the list of polynomials
+
+        OUTPUT:
+
+        - the macaulay resultant
+
+        EXAMPLES:
+
+        The number of polynomials has to match the number of variables::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: y.macaulay_resultant(x+z)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of polynomials(= 2) must equal number of variables (= 3)
+
+        The polynomials need to be all homogeneous::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: y.macaulay_resultant([x+z, z+x^3])
+            Traceback (most recent call last):
+            ...
+            TypeError: resultant for non-homogeneous polynomials is not supported
+
+        All polynomials must be in the same ring::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: S.<x,y> = PolynomialRing(QQ, 2)
+            sage: y.macaulay_resultant(z+x,z)
+            Traceback (most recent call last):
+            ...
+            TypeError: not all inputs are polynomials in the calling ring
+
+        The following example recreates Proposition 2.10 in Ch.3 of Using Algebraic Geometry::
+
+            sage: K.<x,y> = PolynomialRing(ZZ, 2)
+            sage: flist,R = K._macaulay_resultant_universal_polynomials([1,1,2])
+            sage: flist[0].macaulay_resultant(flist[1:])
+            u2^2*u4^2*u6 - 2*u1*u2*u4*u5*u6 + u1^2*u5^2*u6 - u2^2*u3*u4*u7 + u1*u2*u3*u5*u7 + u0*u2*u4*u5*u7 - u0*u1*u5^2*u7 + u1*u2*u3*u4*u8 - u0*u2*u4^2*u8 - u1^2*u3*u5*u8 + u0*u1*u4*u5*u8 + u2^2*u3^2*u9 - 2*u0*u2*u3*u5*u9 + u0^2*u5^2*u9 - u1*u2*u3^2*u10 + u0*u2*u3*u4*u10 + u0*u1*u3*u5*u10 - u0^2*u4*u5*u10 + u1^2*u3^2*u11 - 2*u0*u1*u3*u4*u11 + u0^2*u4^2*u11
+
+        The following example degenerates into the determinant of a `3*3` matrix::
+
+            sage: K.<x,y> = PolynomialRing(ZZ, 2)
+            sage: flist,R = K._macaulay_resultant_universal_polynomials([1,1,1])
+            sage: flist[0].macaulay_resultant(flist[1:])
+            -u2*u4*u6 + u1*u5*u6 + u2*u3*u7 - u0*u5*u7 - u1*u3*u8 + u0*u4*u8
+
+        The following example is by Patrick Ingram(arxiv:1310.4114)::
+
+            sage: U = PolynomialRing(ZZ,'y',2); y0,y1 = U.gens()
+            sage: R = PolynomialRing(U,'x',3); x0,x1,x2 = R.gens()
+            sage: f0 = y0*x2^2 - x0^2 + 2*x1*x2
+            sage: f1 = y1*x2^2 - x1^2 + 2*x0*x2
+            sage: f2 = x0*x1 - x2^2
+            sage: f0.macaulay_resultant(f1,f2)
+            y0^2*y1^2 - 4*y0^3 - 4*y1^3 + 18*y0*y1 - 27
+
+        a simple example with constant rational coefficients::
+
+            sage: R.<x,y,z,w> = PolynomialRing(QQ,4)
+            sage: w.macaulay_resultant([z,y,x])
+            1
+
+        an example where the resultant vanishes::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: (x+y).macaulay_resultant([y^2,x])
+            0
+
+        an example of bad reduction at a prime ``p = 5``::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: y.macaulay_resultant([x^3+25*y^2*x,5*z])
+            125
+
+        The input can given as an unpacked list of polynomials::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: y.macaulay_resultant(x^3+25*y^2*x,5*z)
+            125
+
+        an example when the coefficients live in a finite field::
+
+            sage: F = FiniteField(11)
+            sage: R.<x,y,z,w> = PolynomialRing(F,4)
+            sage: z.macaulay_resultant([x^3,5*y,w])
+            4
+
+        example when the denominator in the algorithm vanishes(in this case
+        the resultant is the constant term of the quotient of
+        char polynomials of numerator/denominator)::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ,3)
+            sage: y.macaulay_resultant([x+z, z^2])
+            -1
+
+        when there are only 2 polynomials, macaulay resultant degenerates to the traditional resultant::
+
+            sage: R.<x> = PolynomialRing(QQ,1)
+            sage: f =  x^2+1; g = x^5+1
+            sage: fh = f.homogenize()
+            sage: gh = g.homogenize()
+            sage: RH = fh.parent()
+            sage: f.resultant(g) == fh.macaulay_resultant(gh)
+            True
+
+        """
+        if len(args) == 1 and isinstance(args[0],list):
+            return self.parent().macaulay_resultant(self, *args[0])
+        return self.parent().macaulay_resultant(self, *args)
 
     def denominator(self):
         """
@@ -1271,7 +1447,7 @@ cdef class MPolynomial(CommutativeRingElement):
             True
         """
         if self.degree() == -1:
-            return self.base_ring().one_element()
+            return self.base_ring().one()
         x = self.coefficients()
         try:
             d = x[0].denominator()
@@ -1279,7 +1455,7 @@ cdef class MPolynomial(CommutativeRingElement):
                 d = d.lcm(y.denominator())
             return d
         except(AttributeError):
-            return self.base_ring().one_element()
+            return self.base_ring().one()
 
     def numerator(self):
         """
@@ -1404,6 +1580,114 @@ cdef class MPolynomial(CommutativeRingElement):
            return P(XY[0])
        except ValueError:
            raise ArithmeticError, "element is non-invertible"
+
+    def weighted_degree(self, *weights):
+        """
+        Return the weighted degree of ``self``, which is the maximum weighted
+        degree of all monomials in ``self``; the weighted degree of a monomial
+        is the sum of all powers of the variables in the monomial, each power
+        multiplied with its respective weight in ``weights``.
+
+        This method is given for convenience. It is faster to use polynomial
+        rings with weighted term orders and the standard ``degree`` function.
+
+        INPUT:
+
+        - ``weights`` - Either individual numbers, an iterable or a dictionary,
+          specifying the weights of each variable. If it is a dictionary, it
+          maps each variable of ``self`` to its weight. If it is a sequence of
+          individual numbers or a tuple, the weights are specified in the order
+          of the generators as given by ``self.parent().gens()``:
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = GF(7)[]
+            sage: p = x^3 + y + x*z^2
+            sage: p.weighted_degree({z:0, x:1, y:2})
+            3
+            sage: p.weighted_degree(1, 2, 0)
+            3
+            sage: p.weighted_degree((1, 4, 2))
+            5
+            sage: p.weighted_degree((1, 4, 1))
+            4
+            sage: p.weighted_degree(2**64, 2**50, 2**128)
+            680564733841876926945195958937245974528
+            sage: q = R.random_element(100, 20) #random
+            sage: q.weighted_degree(1, 1, 1) == q.total_degree()
+            True
+
+        You may also work with negative weights
+
+        ::
+
+            sage: p.weighted_degree(-1, -2, -1)
+            -2
+
+        Note that only integer weights are allowed
+
+        ::
+
+            sage: p.weighted_degree(x,1,1)
+            Traceback (most recent call last):
+            ...
+            TypeError
+            sage: p.weighted_degree(2/1,1,1)
+            6
+
+        The ``weighted_degree`` coincides with the ``degree`` of a weighted
+        polynomial ring, but the later is faster.
+
+        ::
+
+            sage: K = PolynomialRing(QQ, 'x,y', order=TermOrder('wdegrevlex', (2,3)))
+            sage: p = K.random_element(10)
+            sage: p.degree() == p.weighted_degree(2,3)
+            True
+
+        TESTS::
+
+            sage: R = PolynomialRing(QQ, 'a', 5)
+            sage: f = R.random_element(terms=20)
+            sage: w = random_vector(ZZ,5)
+            sage: d1 = f.weighted_degree(w)
+            sage: d2 = (f*1.0).weighted_degree(w)
+            sage: d1 == d2
+            True
+        """
+        if self.is_zero():
+            #Corner case, note that the degree of zero is an Integer
+            return Integer(-1)
+
+        if len(weights) ==  1:
+            # First unwrap it if it is given as one element argument
+            weights = weights[0]
+
+        if isinstance(weights, dict):
+            weights = [weights[g] for g in self.parent().gens()]
+
+        weights = [Integer(w) for w in weights]
+
+        # Go through each monomial, calculating the weight
+        cdef int n = self.parent().ngens()
+        cdef int i, j
+        cdef Integer deg
+        cdef Integer l
+        cdef tuple m
+        A = self.exponents(as_ETuples=False)
+        l = Integer(0)
+        m = <tuple>(A[0])
+        for i in range(n):
+            l += weights[i]*m[i]
+        deg = l
+        for j in range(1,len(A)):
+            l = Integer(0)
+            m = <tuple>A[j]
+            for i in range(n):
+                l += weights[i]*m[i]
+            if deg < l:
+                deg = l
+        return deg
 
 cdef remove_from_tuple(e, int ind):
     w = list(e)

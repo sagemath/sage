@@ -1,0 +1,29 @@
+= six =
+
+== Description ==
+
+Python 2 and 3 compatibility utilities
+
+== License ==
+
+MIT License
+
+== SPKG Maintainers ==
+
+John H. Palmieri
+
+== Upstream Contact ==
+
+Author: Benjamin Peterson
+Home page: http://pypi.python.org/pypi/six/
+
+== Dependencies ==
+
+Python
+
+== Changelog ==
+
+=== six-1.4.1 (John H. Palmieri, 20 December 2013) ===
+
+ * Trac #14993: initial release.
+

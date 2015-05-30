@@ -15,53 +15,6 @@ AUTHORS:
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
-# This is Category.Subobjects
-def Subobjects(self):
-    """
-    INPUT:
-     - ``self`` -- a concrete category
-
-    Given a concrete category ``As()`` (i.e. a subcategory of
-    ``Sets()``), ``As().Subobjects()`` returns the category of objects
-    of ``As()`` endowed with a distinguished description as subobject
-    of some other object of ``As()``.
-
-    See :func:`~sage.categories.subquotients.Subquotients` for background.
-
-    EXAMPLES::
-
-        sage: C = Sets().Subobjects(); C
-        Category of subobjects of sets
-
-        sage: C.super_categories()
-        [Category of subquotients of sets]
-
-        sage: C.all_super_categories()
-        [Category of subobjects of sets,
-         Category of subquotients of sets,
-         Category of sets,
-         Category of sets with partial maps,
-         Category of objects]
-
-    Unless something specific about subobjects is implemented for this
-    category, one actually get an optimized super category::
-
-        sage: C = Semigroups().Subobjects(); C
-        Join of Category of subquotients of semigroups and Category of subobjects of sets
-
-    The caller is responsible for checking that the given category
-    admits a well defined category of subobjects.
-
-    TESTS::
-
-        sage: Semigroups().Subobjects().is_subcategory(Semigroups().Subquotients())
-        True
-        sage: TestSuite(C).run()
-    """
-    return SubobjectsCategory.category_of(self)
-
-Category.Subobjects = Subobjects
-
 class SubobjectsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Subobjects"

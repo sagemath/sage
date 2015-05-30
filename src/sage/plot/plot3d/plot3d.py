@@ -41,6 +41,7 @@ We plot "cape man"::
 Or, we plot a very simple function indeed::
 
     sage: plot3d(pi, (-1,1), (-1,1))
+    Graphics3d Object
 
 AUTHORS:
 
@@ -118,7 +119,7 @@ class _Coordinates(object):
         import inspect
         all_vars=inspect.getargspec(self.transform).args[1:]
         if set(all_vars) != set(indep_vars + [dep_var]):
-            raise ValueError, 'variables were specified incorrectly for this coordinate system; incorrect variables were %s'%list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var])))
+            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s'%list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
         self.dep_var = dep_var
         self.indep_vars = indep_vars
 
@@ -232,6 +233,7 @@ class _Coordinates(object):
             sage: import scipy.interpolate
             sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r)
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
+            Graphics3d Object
 
         """
         from sage.symbolic.expression import is_Expression
@@ -260,7 +262,7 @@ class _Coordinates(object):
                     if params is None:
                         params=['u','v']
                 else:
-                    raise ValueError, "function is not callable"
+                    raise ValueError("function is not callable")
             def subs_func(t):
                 # We use eval so that the lambda function has the same
                 # variable names as the original function
@@ -423,12 +425,14 @@ class Spherical(_Coordinates):
     azimuth and the inclination (in that order)::
 
         sage: plot3d(phi * theta, (theta, 0, pi), (phi, 0, 1), transformation=T)
+        Graphics3d Object
 
     We next graph the function where the inclination angle is constant::
 
         sage: S=Spherical('inclination', ['radius', 'azimuth'])
         sage: r,theta=var('r,theta')
         sage: plot3d(3, (r,0,3), (theta, 0, 2*pi), transformation=S)
+        Graphics3d Object
 
     See also :func:`spherical_plot3d` for more examples of plotting in spherical
     coordinates.
@@ -478,6 +482,7 @@ class SphericalElevation(_Coordinates):
     azimuth and the elevation (in that order)::
 
         sage: plot3d(phi * theta, (theta, 0, pi), (phi, 0, 1), transformation=T)
+        Graphics3d Object
 
     We next graph the function where the elevation angle is constant. This
     should be compared to the similar example for the ``Spherical`` coordinate
@@ -486,12 +491,14 @@ class SphericalElevation(_Coordinates):
         sage: SE=SphericalElevation('elevation', ['radius', 'azimuth'])
         sage: r,theta=var('r,theta')
         sage: plot3d(3, (r,0,3), (theta, 0, 2*pi), transformation=SE)
+        Graphics3d Object
 
     Plot a sin curve wrapped around the equator::
 
         sage: P1=plot3d( (pi/12)*sin(8*theta), (r,0.99,1), (theta, 0, 2*pi), transformation=SE, plot_points=(10,200))
         sage: P2=sphere(center=(0,0,0), size=1, color='red', opacity=0.3)
         sage: P1+P2
+        Graphics3d Object
 
     Now we graph several constant elevation functions alongside several constant
     inclination functions. This example illustrates the difference between the
@@ -556,12 +563,14 @@ class Cylindrical(_Coordinates):
     radius and the azimuth (in that order)::
 
         sage: plot3d(9-r^2, (r, 0, 3), (theta, 0, pi), transformation=T)
+        Graphics3d Object
 
     We next graph the function where the radius is constant::
 
         sage: S=Cylindrical('radius', ['azimuth', 'height'])
         sage: theta,z=var('theta, z')
         sage: plot3d(3, (theta,0,2*pi), (z, -2, 2), transformation=S)
+        Graphics3d Object
 
     See also :func:`cylindrical_plot3d` for more examples of plotting in cylindrical
     coordinates.
@@ -689,34 +698,42 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     EXAMPLES: We plot a 3d function defined as a Python function::
 
         sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2))
+        Graphics3d Object
 
     We plot the same 3d function but using adaptive refinement::
 
         sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2), adaptive=True)
+        Graphics3d Object
 
     Adaptive refinement but with more points::
 
         sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2), adaptive=True, initial_depth=5)
+        Graphics3d Object
 
     We plot some 3d symbolic functions::
 
         sage: var('x,y')
         (x, y)
         sage: plot3d(x^2 + y^2, (x,-2,2), (y,-2,2))
+        Graphics3d Object
         sage: plot3d(sin(x*y), (x, -pi, pi), (y, -pi, pi))
+        Graphics3d Object
 
     We give a plot with extra sample points::
 
         sage: var('x,y')
         (x, y)
         sage: plot3d(sin(x^2+y^2),(x,-5,5),(y,-5,5), plot_points=200)
+        Graphics3d Object
         sage: plot3d(sin(x^2+y^2),(x,-5,5),(y,-5,5), plot_points=[10,100])
+        Graphics3d Object
 
     A 3d plot with a mesh::
 
         sage: var('x,y')
         (x, y)
         sage: plot3d(sin(x-y)*y*cos(x),(x,-3,3),(y,-3,3), mesh=True)
+        Graphics3d Object
 
     Two wobby translucent planes::
 
@@ -724,6 +741,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: P = plot3d(x+y+sin(x*y), (x,-10,10),(y,-10,10), opacity=0.87, color='blue')
         sage: Q = plot3d(x-2*y-cos(x*y),(x,-10,10),(y,-10,10),opacity=0.3,color='red')
         sage: P + Q
+        Graphics3d Object
 
     We draw two parametric surfaces and a transparent plane::
 
@@ -731,16 +749,19 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: P = plot3d(lambda x,y: 4 - x^3 - y^2, (-2,2), (-2,2), color='green')
         sage: Q = plot3d(lambda x,y: x^3 + y^2 - 4, (-2,2), (-2,2), color='orange')
         sage: L + P + Q
+        Graphics3d Object
 
     We draw the "Sinus" function (water ripple-like surface)::
 
         sage: x, y = var('x y')
         sage: plot3d(sin(pi*(x^2+y^2))/2,(x,-1,1),(y,-1,1))
+        Graphics3d Object
 
     Hill and valley (flat surface with a bump and a dent)::
 
         sage: x, y = var('x y')
         sage: plot3d( 4*x*exp(-x^2-y^2), (x,-2,2), (y,-2,2))
+        Graphics3d Object
 
     An example of a transformation::
 
@@ -752,6 +773,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
         sage: cylindrical(r,theta,z)=[r*cos(theta),r*sin(theta),z]
         sage: plot3d(3,(theta,0,pi/2),(z,0,pi/2),transformation=cylindrical)
+        Graphics3d Object
 
     Many more examples of transformations::
 
@@ -816,13 +838,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         if isinstance(transformation, (tuple, list,Vector_callable_symbolic_dense)):
             if len(transformation)==3:
                 if params is None:
-                    raise ValueError, "must specify independent variable names in the ranges when using generic transformation"
+                    raise ValueError("must specify independent variable names in the ranges when using generic transformation")
                 indep_vars = params
             elif len(transformation)==4:
                 indep_vars = transformation[3]
                 transformation = transformation[0:3]
             else:
-                raise ValueError, "unknown transformation type"
+                raise ValueError("unknown transformation type")
             # find out which variable is the function variable by
             # eliminating the parameter variables.
             all_vars = set(sum([list(s.variables()) for s in transformation],[]))
@@ -831,13 +853,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
                 dep_var = dep_var.pop()
                 transformation = _ArbitraryCoordinates(transformation, dep_var, indep_vars)
             else:
-                raise ValueError, "unable to determine the function variable in the transform"
+                raise ValueError("unable to determine the function variable in the transform")
 
         if isinstance(transformation, _Coordinates):
             R = transformation.to_cartesian(f, params)
             return parametric_plot3d.parametric_plot3d(R, urange, vrange, **kwds)
         else:
-            raise ValueError, 'unknown transformation type'
+            raise ValueError('unknown transformation type')
     elif adaptive:
         P = plot3d_adaptive(f, urange, vrange, **kwds)
     else:
@@ -891,6 +913,7 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
 
         sage: from sage.plot.plot3d.plot3d import plot3d_adaptive
         sage: x,y=var('x,y'); plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5)
+        Graphics3d Object
     """
     if initial_depth >= max_depth:
         max_depth = initial_depth
@@ -954,12 +977,14 @@ def spherical_plot3d(f, urange, vrange, **kwds):
         sage: f=u*v; urange=(u,0,pi); vrange=(v,0,pi)
         sage: T = (r*cos(u)*sin(v), r*sin(u)*sin(v), r*cos(v), [u,v])
         sage: plot3d(f, urange, vrange, transformation=T)
+        Graphics3d Object
 
     or equivalently::
 
         sage: T = Spherical('radius', ['azimuth', 'inclination'])
         sage: f=lambda u,v: u*v; urange=(u,0,pi); vrange=(v,0,pi)
         sage: plot3d(f, urange, vrange, transformation=T)
+        Graphics3d Object
 
     INPUT:
 
@@ -975,6 +1000,7 @@ def spherical_plot3d(f, urange, vrange, **kwds):
 
         sage: x,y=var('x,y')
         sage: spherical_plot3d(2,(x,0,2*pi),(y,0,pi))
+        Graphics3d Object
 
     The real and imaginary parts of a spherical harmonic with `l=2` and `m=1`::
 
@@ -993,6 +1019,7 @@ def spherical_plot3d(f, urange, vrange, **kwds):
 
         sage: x,y=var('x,y')
         sage: spherical_plot3d((2+cos(2*x))*(y+1),(x,0,2*pi),(y,0,pi),rgbcolor=(1,.1,.1))
+        Graphics3d Object
 
     Some random figures:
 
@@ -1000,6 +1027,7 @@ def spherical_plot3d(f, urange, vrange, **kwds):
 
         sage: x,y=var('x,y')
         sage: spherical_plot3d(1+sin(5*x)/5,(x,0,2*pi),(y,0,pi),rgbcolor=(1,0.5,0),plot_points=(80,80),opacity=0.7)
+        Graphics3d Object
 
     ::
 
@@ -1017,12 +1045,14 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
         sage: f=u*v; urange=(u,0,pi); vrange=(v,0,pi)
         sage: T = (r*cos(u), r*sin(u), v, [u,v])
         sage: plot3d(f, urange, vrange, transformation=T)
+        Graphics3d Object
 
     or equivalently::
 
         sage: T = Cylindrical('radius', ['azimuth', 'height'])
         sage: f=lambda u,v: u*v; urange=(u,0,pi); vrange=(v,0,pi)
         sage: plot3d(f, urange, vrange, transformation=T)
+        Graphics3d Object
 
 
     INPUT:
@@ -1042,12 +1072,14 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
 
         sage: theta,z=var('theta,z')
         sage: cylindrical_plot3d(2,(theta,0,3*pi/2),(z,-2,2))
+        Graphics3d Object
 
     Some random figures:
 
     ::
 
         sage: cylindrical_plot3d(cosh(z),(theta,0,2*pi),(z,-2,2))
+        Graphics3d Object
 
     ::
 
@@ -1070,10 +1102,12 @@ def axes(scale=1, radius=None, **kwds):
 
         sage: from sage.plot.plot3d.plot3d import axes
         sage: S = axes(6, color='black'); S
+        Graphics3d Object
 
     ::
 
         sage: T = axes(2, .5); T
+        Graphics3d Object
     """
     if radius is None:
         radius = scale/100.0

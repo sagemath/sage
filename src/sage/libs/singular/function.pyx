@@ -50,7 +50,8 @@ available, use the :func:`lib` function as shown below::
 
 There is also a short-hand notation for the above::
 
-    sage: primdecSY = sage.libs.singular.ff.primdec__lib.primdecSY
+    sage: import sage.libs.singular.function_factory
+    sage: primdecSY = sage.libs.singular.function_factory.ff.primdec__lib.primdecSY
 
 The above line will load "primdec.lib" first and then load the
 function ``primdecSY``.
@@ -70,7 +71,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 from sage.structure.sage_object cimport SageObject
@@ -102,8 +102,7 @@ from sage.interfaces.singular import get_docstring
 from sage.misc.misc import get_verbose
 
 from sage.structure.sequence import Sequence, Sequence_generic
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
 
 cdef poly* sage_vector_to_poly(v, ring *r) except <poly*> -1:
     """
@@ -383,17 +382,17 @@ def is_sage_wrapper_for_singular_ring(ring):
         True
 
     """
-    if PY_TYPE_CHECK(ring, MPolynomialRing_libsingular):
+    if isinstance(ring, MPolynomialRing_libsingular):
         return True
-    if PY_TYPE_CHECK(ring, NCPolynomialRing_plural):
+    if isinstance(ring, NCPolynomialRing_plural):
         return True
     return False
 
 cdef new_sage_polynomial(ring,  poly *p):
-    if PY_TYPE_CHECK(ring, MPolynomialRing_libsingular):
+    if isinstance(ring, MPolynomialRing_libsingular):
         return new_MP(ring, p)
     else:
-        if PY_TYPE_CHECK(ring, NCPolynomialRing_plural):
+        if isinstance(ring, NCPolynomialRing_plural):
             return new_NCP(ring, p)
     raise ValueError("not a singular or plural ring")
 
@@ -410,7 +409,7 @@ def is_singular_poly_wrapper(p):
         True
 
     """
-    return PY_TYPE_CHECK(p, MPolynomial_libsingular) or PY_TYPE_CHECK(p,  NCPolynomial_plural)
+    return isinstance(p, MPolynomial_libsingular) or isinstance(p,  NCPolynomial_plural)
 
 def all_singular_poly_wrapper(s):
     """
@@ -435,10 +434,10 @@ cdef poly* access_singular_poly(p) except <poly*> -1:
     """
     Get the raw ``poly`` pointer from a wrapper object.
     """
-    if PY_TYPE_CHECK(p, MPolynomial_libsingular):
+    if isinstance(p, MPolynomial_libsingular):
         return (<MPolynomial_libsingular> p)._poly
     else:
-        if PY_TYPE_CHECK(p, NCPolynomial_plural):
+        if isinstance(p, NCPolynomial_plural):
             return (<NCPolynomial_plural> p)._poly
     raise ValueError("not a singular polynomial wrapper")
 
@@ -446,9 +445,9 @@ cdef ring* access_singular_ring(r) except <ring*> -1:
     """
     Get the singular ``ring`` pointer from a wrapper object.
     """
-    if PY_TYPE_CHECK(r, MPolynomialRing_libsingular):
+    if isinstance(r, MPolynomialRing_libsingular):
         return (<MPolynomialRing_libsingular> r )._ring
-    if PY_TYPE_CHECK(r, NCPolynomialRing_plural):
+    if isinstance(r, NCPolynomialRing_plural):
         return (<NCPolynomialRing_plural> r )._ring
     raise ValueError("not a singular polynomial ring wrapper")
 
@@ -475,7 +474,7 @@ def all_vectors(s):
         False
     """
     for p in s:
-        if not (PY_TYPE_CHECK(p, FreeModuleElement_generic_dense)\
+        if not (isinstance(p, FreeModuleElement_generic_dense)\
             and is_sage_wrapper_for_singular_ring(p.parent().base_ring())):
             return False
     return True
@@ -521,30 +520,30 @@ cdef class Converter(SageObject):
             elif is_sage_wrapper_for_singular_ring(a):
                 v = self.append_ring(a)
 
-            elif PY_TYPE_CHECK(a, MPolynomialIdeal) or \
-                    PY_TYPE_CHECK(a, NCPolynomialIdeal):
+            elif isinstance(a, MPolynomialIdeal) or \
+                    isinstance(a, NCPolynomialIdeal):
                 v = self.append_ideal(a)
 
-            elif PY_TYPE_CHECK(a, int) or PY_TYPE_CHECK(a, long):
+            elif isinstance(a, int) or isinstance(a, long):
                 v = self.append_int(a)
 
-            elif PY_TYPE_CHECK(a, basestring):
+            elif isinstance(a, basestring):
                 v = self.append_str(a)
 
-            elif PY_TYPE_CHECK(a, Matrix_mpolynomial_dense):
+            elif isinstance(a, Matrix_mpolynomial_dense):
                 v = self.append_matrix(a)
 
-            elif PY_TYPE_CHECK(a, Matrix_integer_dense):
+            elif isinstance(a, Matrix_integer_dense):
                 v = self.append_intmat(a)
 
-            elif PY_TYPE_CHECK(a, Matrix_generic_dense) and\
+            elif isinstance(a, Matrix_generic_dense) and\
                 is_sage_wrapper_for_singular_ring(a.parent().base_ring()):
                 self.append_matrix(a)
 
-            elif PY_TYPE_CHECK(a, Resolution):
+            elif isinstance(a, Resolution):
                 v = self.append_resolution(a)
 
-            elif PY_TYPE_CHECK(a, FreeModuleElement_generic_dense)\
+            elif isinstance(a, FreeModuleElement_generic_dense)\
                 and is_sage_wrapper_for_singular_ring(
                     a.parent().base_ring()):
                 v = self.append_vector(a)
@@ -553,22 +552,22 @@ cdef class Converter(SageObject):
             # sequences of polynomials should get converted to ideals
             # this means, that Singular lists should not be converted to Sequences,
             # as we do not want ambiguities
-            elif PY_TYPE_CHECK(a, Sequence_generic)\
+            elif isinstance(a, Sequence_generic)\
                 and all_singular_poly_wrapper(a):
                 v = self.append_ideal(ring.ideal(a))
-            elif PY_TYPE_CHECK(a, PolynomialSequence):
+            elif isinstance(a, PolynomialSequence_generic):
                 v = self.append_ideal(ring.ideal(a))
-            elif PY_TYPE_CHECK(a, Sequence_generic)\
+            elif isinstance(a, Sequence_generic)\
                 and all_vectors(a):
                 v = self.append_module(a)
-            elif PY_TYPE_CHECK(a, list):
+            elif isinstance(a, list):
                 v = self.append_list(a)
 
-            elif PY_TYPE_CHECK(a, tuple):
+            elif isinstance(a, tuple):
                 is_intvec = True
                 for i in a:
-                    if not (PY_TYPE_CHECK(i, int)
-                        or PY_TYPE_CHECK(i, Integer)):
+                    if not (isinstance(i, int)
+                        or isinstance(i, Integer)):
                         is_intvec = False
                         break
                 if is_intvec:
@@ -578,7 +577,7 @@ cdef class Converter(SageObject):
             elif a.parent() is self._sage_ring.base_ring():
                 v = self.append_number(a)
 
-            elif PY_TYPE_CHECK(a, Integer):
+            elif isinstance(a, Integer):
                 v = self.append_int(a)
 
             else:
@@ -925,6 +924,18 @@ cdef class Converter(SageObject):
         INPUT:
 
         - ``to_convert`` - a Singular ``leftv``
+
+        TEST:
+
+        Check that negative integers come through unscathed::
+
+            sage: P.<x,y,z> = QQ[]
+            sage: C= Curve((x-y)*(y-z)*(z-x)); 
+            sage: import sage.libs.singular.function_factory
+            sage: sing_genus = sage.libs.singular.function_factory.ff.normal__lib.genus
+            sage: I=C.defining_ideal()
+            sage: sing_genus(I)
+            -2
         """
         #FIXME
         cdef MPolynomial_libsingular res_poly
@@ -943,7 +954,7 @@ cdef class Converter(SageObject):
             return res_poly
 
         elif rtyp == INT_CMD:
-            return <long>to_convert.data
+            return <int><long>to_convert.data
 
         elif rtyp == NUMBER_CMD:
             return si2sa(<number *>to_convert.data, self._singular_ring, self._sage_ring.base_ring())
@@ -1035,7 +1046,15 @@ cdef class LibraryCallHandler(BaseCallHandler):
 
     cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL):
         if _ring != currRing: rChangeCurrRing(_ring)
-        return iiMake_proc(self.proc_idhdl, NULL, argument_list.args)
+        cdef bint error = iiMake_proc(self.proc_idhdl, NULL, argument_list.args)
+        cdef leftv * res
+        if not error:
+            res = <leftv*> omAllocBin(sleftv_bin)
+            res.Init()
+            res.Copy(&iiRETURNEXPR)
+            iiRETURNEXPR.Init();
+            return res
+        raise RuntimeError("Error raised calling singular function")
 
     cdef bint free_res(self):
         """
@@ -1146,10 +1165,11 @@ cdef class SingularFunction(SageObject):
             foobar (singular function)
         """
         self._name = name
-
         global currRingHdl
         if currRingHdl == NULL:
-            currRingHdl = enterid("my_awesome_sage_ring", 0, RING_CMD, &IDROOT, 1)
+            currRingHdl = ggetid("my_awesome_sage_ring")
+            if currRingHdl == NULL:
+                currRingHdl = enterid("my_awesome_sage_ring", 0, RING_CMD, &IDROOT, 1)
             currRingHdl.data.uring.ref += 1
 
     cdef BaseCallHandler get_call_handler(self):
@@ -1222,7 +1242,7 @@ cdef class SingularFunction(SageObject):
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
             sage: I = Ideal(I.groebner_basis())
-            sage: hilb = sage.libs.singular.ff.hilb
+            sage: hilb = sage.libs.singular.function_factory.ff.hilb
             sage: hilb(I) # Singular will print // ** _ is no standard basis
             // ** _ is no standard basis
             //         1 t^0
@@ -1258,7 +1278,7 @@ cdef class SingularFunction(SageObject):
             sage: P.<e,d,c,b,a> = PolynomialRing(QQ,5,order='lex')
             sage: I = sage.rings.ideal.Cyclic(P)
 
-            sage: triangL = sage.libs.singular.ff.triang__lib.triangL
+            sage: triangL = sage.libs.singular.function_factory.ff.triang__lib.triangL
             sage: _ = triangL(I)
             Traceback (most recent call last):
             ...
@@ -1272,8 +1292,8 @@ cdef class SingularFunction(SageObject):
         """
         if ring is None:
             ring = self.common_ring(args, ring)
-        if not (PY_TYPE_CHECK(ring, MPolynomialRing_libsingular) or \
-                PY_TYPE_CHECK(ring, NCPolynomialRing_plural)):
+        if not (isinstance(ring, MPolynomialRing_libsingular) or \
+                isinstance(ring, NCPolynomialRing_plural)):
             raise TypeError("Cannot call Singular function '%s' with ring parameter of type '%s'"%(self._name,type(ring)))
         return call_function(self, args, ring, interruptible, attributes)
 
@@ -1309,13 +1329,13 @@ INPUT:
 
 EXAMPLE::
 
-    sage: groebner = sage.libs.singular.ff.groebner
+    sage: groebner = sage.libs.singular.function_factory.ff.groebner
     sage: P.<x, y> = PolynomialRing(QQ)
     sage: I = P.ideal(x^2-y, y+x)
     sage: groebner(I)
     [x + y, y^2 - y]
 
-    sage: triangL = sage.libs.singular.ff.triang__lib.triangL
+    sage: triangL = sage.libs.singular.function_factory.ff.triang__lib.triangL
     sage: P.<x1, x2> = PolynomialRing(QQ, order='lex')
     sage: f1 = 1/2*((x1^2 + 2*x1 - 4)*x2^2 + 2*(x1^2 + x1)*x2 + x1^2)
     sage: f2 = 1/2*((x1^2 + 2*x1 + 1)*x2^2 + 2*(x1^2 + x1)*x2 - 4*x1^2)
@@ -1350,28 +1370,28 @@ The Singular documentation for '%s' is given below.
         from sage.matrix.matrix_integer_dense import Matrix_integer_dense
         ring2 = None
         for a in args:
-            if PY_TYPE_CHECK(a, MPolynomialIdeal) or \
-                    PY_TYPE_CHECK(a, NCPolynomialIdeal):
+            if isinstance(a, MPolynomialIdeal) or \
+                    isinstance(a, NCPolynomialIdeal):
                 ring2 = a.ring()
             elif is_singular_poly_wrapper(a):
                 ring2 = a.parent()
             elif is_sage_wrapper_for_singular_ring(a):
                 ring2 = a
-            elif PY_TYPE_CHECK(a, int) or\
-                PY_TYPE_CHECK(a, long) or\
-                PY_TYPE_CHECK(a, basestring):
+            elif isinstance(a, int) or\
+                isinstance(a, long) or\
+                isinstance(a, basestring):
                 continue
-            elif PY_TYPE_CHECK(a, Matrix_integer_dense):
+            elif isinstance(a, Matrix_integer_dense):
                 continue
-            elif PY_TYPE_CHECK(a, Matrix_mpolynomial_dense):
+            elif isinstance(a, Matrix_mpolynomial_dense):
                 ring2 = a.base_ring()
-            elif PY_TYPE_CHECK(a, list) or PY_TYPE_CHECK(a, tuple)\
-                or PY_TYPE_CHECK(a, Sequence_generic):
+            elif isinstance(a, list) or isinstance(a, tuple)\
+                or isinstance(a, Sequence_generic):
                 #TODO: catch exception, if recursion finds no ring
                 ring2 = self.common_ring(tuple(a), ring)
-            elif PY_TYPE_CHECK(a, Resolution):
+            elif isinstance(a, Resolution):
                 ring2 = (<Resolution> a).base_ring
-            elif PY_TYPE_CHECK(a, FreeModuleElement_generic_dense)\
+            elif isinstance(a, FreeModuleElement_generic_dense)\
                 and is_sage_wrapper_for_singular_ring(
                     a.parent().base_ring()):
                 ring2 = a.parent().base_ring()
@@ -1411,7 +1431,7 @@ The Singular documentation for '%s' is given below.
             sage: groebner == 1
             False
         """
-        if not PY_TYPE_CHECK(other, SingularFunction):
+        if not isinstance(other, SingularFunction):
             return cmp(type(self),type(other))
         else:
             return cmp(self._name, (<SingularFunction>other)._name)
@@ -1425,7 +1445,7 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
 
 
     cdef ring *si_ring
-    if PY_TYPE_CHECK(R, MPolynomialRing_libsingular):
+    if isinstance(R, MPolynomialRing_libsingular):
         si_ring = (<MPolynomialRing_libsingular>R)._ring
     else:
         si_ring = (<NCPolynomialRing_plural>R)._ring
@@ -1815,7 +1835,7 @@ def list_of_functions(packages=False):
 
 #cdef ring*?
 cdef inline RingWrap new_RingWrap(ring* r):
-    cdef RingWrap ring_wrap_result = PY_NEW(RingWrap)
+    cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)
     ring_wrap_result._ring = r
     ring_wrap_result._ring.ref += 1
 

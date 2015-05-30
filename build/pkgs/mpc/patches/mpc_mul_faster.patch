@@ -1,0 +1,124 @@
+diff -ru src/src/mul.c b/src/mul.c
+--- src/src/mul.c	2012-07-22 17:40:22.000000000 +0200
++++ b/src/mul.c	2014-01-27 15:12:37.449617411 +0100
+@@ -170,6 +170,10 @@
+    return MPC_INEX (inex_re, inex_im);
+ }
+ 
++#define MPFR_MANT(x)      ((x)->_mpfr_d)
++#define MPFR_PREC(x)      ((x)->_mpfr_prec)
++#define MPFR_EXP(x)       ((x)->_mpfr_exp)
++#define MPFR_LIMB_SIZE(x) ((MPFR_PREC (x) - 1) / GMP_NUMB_BITS + 1)
+ 
+ static int
+ mpfr_fmma (mpfr_ptr z, mpfr_srcptr a, mpfr_srcptr b, mpfr_srcptr c,
+@@ -183,33 +187,68 @@
+ 
+    int inex;
+    mpfr_t u, v;
++   mp_size_t an, bn, cn, dn;
+ 
+    /* u=a*b, v=sign*c*d exactly */
+-   mpfr_init2 (u, mpfr_get_prec (a) + mpfr_get_prec (b));
+-   mpfr_init2 (v, mpfr_get_prec (c) + mpfr_get_prec (d));
+-   mpfr_mul (u, a, b, GMP_RNDN);
+-   mpfr_mul (v, c, d, GMP_RNDN);
+-   if (sign < 0)
+-      mpfr_neg (v, v, GMP_RNDN);
++   an = MPFR_LIMB_SIZE(a);
++   bn = MPFR_LIMB_SIZE(b);
++   cn = MPFR_LIMB_SIZE(c);
++   dn = MPFR_LIMB_SIZE(d);
++   MPFR_MANT(u) = malloc ((an + bn) * sizeof (mp_limb_t));
++   MPFR_MANT(v) = malloc ((cn + dn) * sizeof (mp_limb_t));
++   if (an >= bn)
++     mpn_mul (MPFR_MANT(u), MPFR_MANT(a), an, MPFR_MANT(b), bn);
++   else
++     mpn_mul (MPFR_MANT(u), MPFR_MANT(b), bn, MPFR_MANT(a), an);
++   if ((MPFR_MANT(u)[an + bn - 1] >> (GMP_NUMB_BITS - 1)) == 0)
++     {
++       mpn_lshift (MPFR_MANT(u), MPFR_MANT(u), an + bn, 1);
++       MPFR_EXP(u) = MPFR_EXP(a) + MPFR_EXP(b) - 1;
++     }
++   else
++     MPFR_EXP(u) = MPFR_EXP(a) + MPFR_EXP(b);
++   if (cn >= dn)
++     mpn_mul (MPFR_MANT(v), MPFR_MANT(c), cn, MPFR_MANT(d), dn);
++   else
++     mpn_mul (MPFR_MANT(v), MPFR_MANT(d), dn, MPFR_MANT(c), cn);
++   if ((MPFR_MANT(v)[cn + dn - 1] >> (GMP_NUMB_BITS - 1)) == 0)
++     {
++       mpn_lshift (MPFR_MANT(v), MPFR_MANT(v), cn + dn, 1);
++       MPFR_EXP(v) = MPFR_EXP(c) + MPFR_EXP(d) - 1;
++     }
++   else
++     MPFR_EXP(v) = MPFR_EXP(c) + MPFR_EXP(d);
++   MPFR_PREC(u) = (an + bn) * GMP_NUMB_BITS;
++   MPFR_PREC(v) = (cn + dn) * GMP_NUMB_BITS;
++   MPFR_SIGN(u) = MPFR_SIGN(a) * MPFR_SIGN(b);
++   if (sign > 0)
++     MPFR_SIGN(v) = MPFR_SIGN(c) * MPFR_SIGN(d);
++   else
++     MPFR_SIGN(v) = -MPFR_SIGN(c) * MPFR_SIGN(d);
++
++   mpfr_check_range (u, 0, GMP_RNDN);
++   mpfr_check_range (v, 0, GMP_RNDN);
+ 
+    /* tentatively compute z as u+v; here we need z to be distinct
+       from a, b, c, d to not lose the latter */
+    inex = mpfr_add (z, u, v, rnd);
+-
+-   if (mpfr_inf_p (z)) {
+-      /* replace by "correctly rounded overflow" */
+-      mpfr_set_si (z, (mpfr_signbit (z) ? -1 : 1), GMP_RNDN);
+-      inex = mpfr_mul_2ui (z, z, mpfr_get_emax (), rnd);
+-   }
+-   else if (mpfr_zero_p (u) && !mpfr_zero_p (v)) {
+-      /* exactly u underflowed, determine inexact flag */
+-      inex = (mpfr_signbit (u) ? 1 : -1);
+-   }
+-   else if (mpfr_zero_p (v) && !mpfr_zero_p (u)) {
+-      /* exactly v underflowed, determine inexact flag */
+-      inex = (mpfr_signbit (v) ? 1 : -1);
+-   }
+-   else if (mpfr_nan_p (z) || (mpfr_zero_p (u) && mpfr_zero_p (v))) {
++   
++   if (!mpfr_regular_p(z) || !mpfr_regular_p(u) || !mpfr_regular_p(v))
++     {
++       if (mpfr_inf_p (z)) {
++         /* replace by "correctly rounded overflow" */
++         mpfr_set_si (z, (mpfr_signbit (z) ? -1 : 1), GMP_RNDN);
++         inex = mpfr_mul_2ui (z, z, mpfr_get_emax (), rnd);
++       }
++       else if (mpfr_zero_p (u) && !mpfr_zero_p (v)) {
++         /* exactly u underflowed, determine inexact flag */
++         inex = (mpfr_signbit (u) ? 1 : -1);
++       }
++       else if (mpfr_zero_p (v) && !mpfr_zero_p (u)) {
++         /* exactly v underflowed, determine inexact flag */
++         inex = (mpfr_signbit (v) ? 1 : -1);
++       }
++       else if (mpfr_nan_p (z) || (mpfr_zero_p (u) && mpfr_zero_p (v))) {
+       /* In the first case, u and v are infinities with opposite signs.
+          In the second case, u and v are zeroes; their sum may be 0 or the
+          least representable number, with a sign to be determined.
+@@ -312,15 +351,14 @@
+       mpfr_set_exp ((mpfr_ptr) c, ec);
+       mpfr_set_exp ((mpfr_ptr) d, ed);
+          /* works also when some of a, b, c, d are not all distinct */
+-   }
+-
+-   mpfr_clear (u);
+-   mpfr_clear (v);
++       }
++     }
+ 
++   free (MPFR_MANT(u));
++   free (MPFR_MANT(v));
+    return inex;
+ }
+ 
+-
+ int
+ mpc_mul_naive (mpc_ptr z, mpc_srcptr x, mpc_srcptr y, mpc_rnd_t rnd)
+ {

@@ -74,7 +74,7 @@ cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
     """
     cdef int i
     if step < 0 or step > v1._len or step > v2._len:
-        raise IndexError, "list index out of range"
+        raise IndexError("list index out of range")
 
     for i in range(step):
         if v1._list[i] != v2._list[i]:
@@ -261,12 +261,12 @@ cpdef set orbit(list sgs, ClonableIntArray v):
 
     EXAMPLES::
 
-        sage: from sage.combinat.enumeration_mod_permgroup import orbit, lex_cmp
+        sage: from sage.combinat.enumeration_mod_permgroup import orbit
         sage: G = PermutationGroup([[(1,2,3,4)]])
         sage: sgs = G.strong_generating_system()
         sage: from sage.structure.list_clone_demo import IncreasingIntArrays
         sage: IA = IncreasingIntArrays()
-        sage: sorted(orbit(sgs, IA([1,2,3,4])), cmp=lex_cmp)
+        sage: sorted(orbit(sgs, IA([1,2,3,4])))
         [[1, 2, 3, 4], [2, 3, 4, 1], [3, 4, 1, 2], [4, 1, 2, 3]]
     """
     cdef i,l

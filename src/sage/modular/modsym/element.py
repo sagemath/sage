@@ -23,7 +23,6 @@ A single element of an ambient space of modular symbols
 import sage.modules.free_module_element
 import sage.misc.misc as misc
 import sage.structure.formal_sum as formal_sum
-import ambient
 import sage.modular.hecke.all as hecke
 import sage.misc.latex as latex
 
@@ -76,7 +75,7 @@ def set_modsym_print_mode(mode="manin"):
     """
     mode = str(mode).lower()
     if not (mode in ['manin', 'modular', 'vector']):
-        raise ValueError, "mode must be one of 'manin', 'modular', or 'vector'"
+        raise ValueError("mode must be one of 'manin', 'modular', or 'vector'")
     global _print_mode
     _print_mode = mode
 
@@ -94,11 +93,10 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         """
         INPUT:
 
+        - ``parent`` -- a space of modular symbols
 
-        -  ``parent`` - a space of modular symbols
-
-        -  ``x`` - a free module element that represents the
-           modular symbol in terms of a basis for the ambient space (not in
+        - ``x`` -- a free module element that represents the modular
+           symbol in terms of a basis for the ambient space (not in
            terms of a basis for parent!)
 
         EXAMPLE::
@@ -112,12 +110,13 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             TypeError: x does not coerce to an element of this Hecke module
         """
         if check:
-            if not isinstance(parent, ambient.ModularSymbolsAmbient):
-                raise TypeError, "parent must be an ambient space of modular symbols."
+            from space import ModularSymbolsSpace
+            if not isinstance(parent, ModularSymbolsSpace):
+                raise TypeError("parent (= %s) must be a space of modular symbols" % parent)
             if not isinstance(x, sage.modules.free_module_element.FreeModuleElement):
-                raise TypeError, "x must be a free module element."
+                raise TypeError("x must be a free module element.")
             if x.degree() != parent.degree():
-                raise TypeError, "x (of degree %s) must be of degree the same as the degree of the parent (of degree %s)."%(x.degree(), parent.degree())
+                raise TypeError("x (of degree %s) must be of degree the same as the degree of the parent (of degree %s)."%(x.degree(), parent.degree()))
         hecke.HeckeModuleElement.__init__(self, parent, x)
 
     def __cmp__(self, other):

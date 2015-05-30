@@ -12,24 +12,25 @@ Miscellaneous arithmetic functions
 
 
 import math
-import sys
-import sage.misc.misc as misc
+
+from sage.misc.misc import powerset
+from sage.misc.misc_c import prod
+
 from sage.libs.pari.all import pari
 import sage.libs.flint.arith as flint_arith
 
-from sage.rings.rational_field import QQ
-import sage.rings.rational
-import sage.rings.complex_field
-import sage.rings.complex_number
-import sage.rings.real_mpfr
 from sage.structure.element import parent
-from sage.misc.misc import prod, union
-from sage.rings.real_mpfi import RealIntervalField
+from sage.structure.coerce import py_scalar_to_element
+
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer, GCD_list, LCM_list
+from sage.rings.rational import Rational
+from sage.rings.real_mpfr import RealNumber
+from sage.rings.complex_number import ComplexNumber
 
 import fast_arith
 
-from integer_ring import ZZ
-import integer
 
 ##################################################################
 # Elementary Arithmetic
@@ -163,31 +164,27 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_dig
         x^2 - 2*x + 5
     """
     if proof and not height_bound:
-        raise ValueError, "height_bound must be given for proof=True"
+        raise ValueError("height_bound must be given for proof=True")
 
     x = ZZ['x'].gen()
 
-    if isinstance(z, (int, long, integer.Integer)):
+    z = py_scalar_to_element(z)
+
+    if isinstance(z, Integer):
         if height_bound and abs(z) >= height_bound:
             return None
         return x - ZZ(z)
 
     degree = ZZ(degree)
 
-    if isinstance(z, (sage.rings.rational.Rational)):
+    if isinstance(z, Rational):
         if height_bound and max(abs(z.denominator()), abs(z.numerator())) >= height_bound:
             return None
         return z.denominator()*x - z.numerator()
 
-    if isinstance(z, float):
-        z = sage.rings.all.RR(z)
-    elif isinstance(z, complex):
-        z = sage.rings.all.CC(z)
+    if isinstance(z, (RealNumber, ComplexNumber)):
 
-    if isinstance(z, (sage.rings.real_mpfr.RealNumber,
-                      sage.rings.complex_number.ComplexNumber)):
-
-        log2_10 = 3.32192809488736
+        log2_10 = math.log(10,2)
 
         prec = z.prec() - 6
         if known_digits is not None:
@@ -199,15 +196,15 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_dig
         if use_bits is not None:
             prec = int(use_bits)
 
-        is_complex = isinstance(z, sage.rings.complex_number.ComplexNumber)
+        is_complex = isinstance(z, ComplexNumber)
         n = degree+1
         from sage.matrix.all import matrix
         M = matrix(ZZ, n, n+1+int(is_complex))
-        r = ZZ(1) << prec
+        r = ZZ.one() << prec
         M[0, 0] = 1
-        M[0,-1] = r
+        M[0, -1] = r
         for k in range(1, degree+1):
-            M[k,k] = 1
+            M[k, k] = 1
             r *= z
             if is_complex:
                 M[k, -1] = r.real().round()
@@ -226,16 +223,16 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_dig
                     # Given an LLL reduced basis $b_1, ..., b_n$, we only
                     # know that $|b_1| <= 2^((n-1)/2) |x|$ for non-zero $x \in L$.
                     if norm(LLL[0]) <= 2**((n-1)/2) * n.sqrt() * height_bound:
-                        raise ValueError, "insufficient precision for non-existence proof"
+                        raise ValueError("insufficient precision for non-existence proof")
                 return None
             elif proof and norm(LLL[1]) < 2**((n-1)/2) * max(norm(LLL[0]), n.sqrt()*height_bound):
-                raise ValueError, "insufficient precision for uniqueness proof"
+                raise ValueError("insufficient precision for uniqueness proof")
         if coeffs[degree] < 0:
             coeffs = -coeffs
         f = list(coeffs)
 
     elif proof or height_bound:
-        raise NotImplementedError, "proof and height bound only implemented for real and complex numbers"
+        raise NotImplementedError("proof and height bound only implemented for real and complex numbers")
 
     else:
         y = pari(z)
@@ -306,8 +303,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     - David Joyner and William Stein
     """
-    from sage.rings.all import Integer, Rational
-    n = Integer(n)
+    n = ZZ(n)
 
     if algorithm == 'default':
         algorithm = 'pari' if n <= 30000 else 'bernmm'
@@ -331,7 +327,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         import sage.rings.bernmm
         return sage.rings.bernmm.bernmm_bern_rat(n, num_threads)
     else:
-        raise ValueError, "invalid choice of algorithm"
+        raise ValueError("invalid choice of algorithm")
 
 
 def factorial(n, algorithm='gmp'):
@@ -396,30 +392,34 @@ def factorial(n, algorithm='gmp'):
        calculations.)
     """
     if n < 0:
-        raise ValueError, "factorial -- must be nonnegative"
+        raise ValueError("factorial -- must be nonnegative")
     if algorithm == 'gmp':
         return ZZ(n).factorial()
     elif algorithm == 'pari':
         return pari.factorial(n)
     else:
-        raise ValueError, 'unknown algorithm'
+        raise ValueError('unknown algorithm')
 
 def is_prime(n):
     r"""
-    Returns ``True`` if `n` is prime, and ``False`` otherwise.
+    Return ``True`` if `n` is a prime number, and ``False`` otherwise.
 
-    AUTHORS:
-
-    - Kevin Stueve kstueve@uw.edu (2010-01-17):
-      delegated calculation to ``n.is_prime()``
+    Use a provable primality test or a strong pseudo-primality test depending
+    on the global :mod:`arithmetic proof flag <sage.structure.proof.proof>`.
 
     INPUT:
 
     -  ``n`` - the object for which to determine primality
 
-    OUTPUT:
+    .. SEEALSO::
 
-    -  ``bool`` - ``True`` or ``False``
+        - :meth:`is_pseudoprime`
+        - :meth:`sage.rings.integer.Integer.is_prime`
+
+    AUTHORS:
+
+    - Kevin Stueve kstueve@uw.edu (2010-01-17):
+      delegated calculation to ``n.is_prime()``
 
     EXAMPLES::
 
@@ -431,63 +431,32 @@ def is_prime(n):
         True
         sage: is_prime(-1)
         False
-        sage: factor(-6)
-        -1 * 2 * 3
         sage: is_prime(1)
         False
         sage: is_prime(-2)
         False
 
-    ALGORITHM:
-
-    Calculation is delegated to the ``n.is_prime()`` method, or in special
-    cases (e.g., Python ``int``s) to ``Integer(n).is_prime()``.  If an
-    ``n.is_prime()`` method is not available, it otherwise raises a
-    ``TypeError``.
+        sage: a = 2**2048 + 981
+        sage: is_prime(a)    # not tested - takes ~ 1min
+        sage: proof.arithmetic(False)
+        sage: is_prime(a)    # instantaneous!
+        True
+        sage: proof.arithmetic(True)
     """
-    if isinstance(n, sage.symbolic.expression.Expression):
-        try:
-            n = n.pyobject()
-        except TypeError:
-            pass
-
-    from sage.structure.proof.all import arithmetic
-    proof = arithmetic()
-    if isinstance(n, int) or isinstance(n, long):
-        from sage.rings.integer import Integer
-        if proof:
-            return Integer(n).is_prime()
-        else:
-            return Integer(n).is_pseudoprime()
     try:
-        if proof:
-            return n.is_prime()
-        else:
-            return n.is_pseudoprime()
-    except AttributeError:
-        raise TypeError, "is_prime() is not written for this type"
+        return n.is_prime()
+    except (AttributeError, NotImplementedError):
+        return ZZ(n).is_prime()
 
-def is_pseudoprime(n, flag=0):
+def is_pseudoprime(n, flag=None):
     r"""
-    Returns True if `x` is a pseudo-prime, and False otherwise.  The
-    result is *NOT* proven correct - *this is a pseudo-primality
-    test!*.
+    Test whether ``n`` is a pseudo-prime
+
+    The result is *NOT* proven correct - *this is a pseudo-primality test!*.
 
     INPUT:
 
-        -  ``flag`` - int
-        - ``0`` (default): checks whether x is a Baillie-Pomerance-
-          Selfridge-Wagstaff pseudo prime (strong Rabin-Miller pseudo
-          prime for base 2, followed by strong Lucas test for the
-          sequence (P,-1), P smallest positive integer such that `P^2
-          - 4` is not a square mod x).
-        - ``>0``: checks whether x is a strong Miller-Rabin pseudo
-          prime for flag randomly chosen bases (with end-matching to
-          catch square roots of -1).
-
-    OUTPUT:
-
-        -  ``bool`` - True or False
+    - ``n`` -- an integer
 
     .. note::
 
@@ -510,24 +479,34 @@ def is_pseudoprime(n, flag=0):
         sage: is_pseudoprime(-2)
         False
 
-    IMPLEMENTATION: Calls the PARI ispseudoprime function.
-    """
-    n = ZZ(n)
-    return pari(n).ispseudoprime()
+    TESTS:
 
-def is_prime_power(n, flag=0):
+    Deprecation warning from :trac:`16878`::
+
+        sage: is_pseudoprime(127, flag=0)
+        doctest:...: DeprecationWarning: the keyword 'flag' is deprecated and no longer used
+        See http://trac.sagemath.org/16878 for details.
+        True
+    """
+    if flag is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(16878, "the keyword 'flag' is deprecated and no longer used")
+    return ZZ(n).is_pseudoprime()
+
+def is_prime_power(n, flag=None, get_data=False):
     r"""
-    Returns True if `n` is a prime power, and False otherwise.  The
-    result is proven correct - *this is NOT a pseudo-primality test!*.
+    Test whether ``n`` is a positive power of a prime number
+
+    This function simply calls the method :meth:`Integer.is_prime_power()
+    <sage.rings.integer.Integer.is_prime_power>` of Integers.
 
     INPUT:
 
-        -  ``n`` - an integer or rational number
-        -  ``flag (for primality testing)`` - int
-        - ``0`` (default): use a combination of algorithms.
-        - ``1``: certify primality using the Pocklington-Lehmer Test.
-        - ``2``: certify primality using the APRCL test.
+    - ``n`` -- an integer
 
+    - ``get_data`` -- if set to ``True``, return a pair ``(p,k)`` such that
+      this integer equals ``p^k`` instead of ``True`` or ``(self,0)`` instead of
+      ``False``
 
     EXAMPLES::
 
@@ -539,121 +518,119 @@ def is_prime_power(n, flag=0):
         True
         sage: is_prime_power(1024)
         True
+        sage: is_prime_power(1024, get_data=True)
+        (2, 10)
+
+    The same results can be obtained with::
+
+        sage: 389.is_prime_power()
+        True
+        sage: 2000.is_prime_power()
+        False
+        sage: 2.is_prime_power()
+        True
+        sage: 1024.is_prime_power()
+        True
+        sage: 1024.is_prime_power(get_data=True)
+        (2, 10)
+
+    TESTS::
+
         sage: is_prime_power(-1)
         False
         sage: is_prime_power(1)
-        True
-        sage: is_prime_power(997^100)
+        False
+        sage: is_prime_power(QQ(997^100))
         True
         sage: is_prime_power(1/2197)
-        True
-        sage: is_prime_power(1/100)
-        False
-        sage: is_prime_power(2/5)
-        False
+        Traceback (most recent call last):
+        ...
+        TypeError: no conversion of this rational to integer
+        sage: is_prime_power("foo")
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert 'foo' to an integer
     """
-    try:
-        n = ZZ(n)
-    except TypeError:
-        # n might be a nonintegral rational number, in which case it is a
-        # prime power iff the integer 1/n is a prime power
-        r = QQ(1/n)
-        if not r.is_integral():
-            return False
-        n = ZZ(r)
+    if flag is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(16878, "the keyword 'flag' is deprecated and no longer used")
+    return ZZ(n).is_prime_power(get_data=get_data)
 
-    from sage.structure.proof.all import arithmetic
-    proof = arithmetic()
-    if proof:
-        return n.is_prime_power(flag=flag)
-    else:
-        return is_pseudoprime_small_power(n)
-
-def is_pseudoprime_small_power(n, bound=1024, get_data=False):
+def is_pseudoprime_power(n, get_data=False):
     r"""
-    Return True if `n` is a small power of a pseudoprime, and False
-    otherwise.  The result is *NOT* proven correct - *this IS a
-    pseudo-primality test!*.
+    Test if ``n`` is a power of a pseudoprime.
 
-    If `get_data` is set to true and `n = p^d`, for a pseudoprime `p`
-    and power `d`, return [(p, d)].
-
+    The result is *NOT* proven correct - *this IS a pseudo-primality test!*.
+    Note that a prime power is a positive power of a prime number so that 1 is
+    not a prime power.
 
     INPUT:
 
-        -  ``n`` - an integer
-        -  ``bound (default: 1024)`` - int: highest power to test.
-        -  ``get_data`` - boolean: return small pseudoprime and the power.
+    -  ``n`` - an integer
+
+    -  ``get_data`` - (boolean) instead of a boolean return a pair `(p,k)` so
+       that ``n`` equals `p^k` and `p` is a pseudoprime or `(n,0)` otherwise.
 
     EXAMPLES::
 
-        sage: is_pseudoprime_small_power(389)
+        sage: is_pseudoprime_power(389)
         True
-        sage: is_pseudoprime_small_power(2000)
+        sage: is_pseudoprime_power(2000)
         False
-        sage: is_pseudoprime_small_power(2)
+        sage: is_pseudoprime_power(2)
         True
-        sage: is_pseudoprime_small_power(1024)
+        sage: is_pseudoprime_power(1024)
         True
-        sage: is_pseudoprime_small_power(-1)
+        sage: is_pseudoprime_power(-1)
         False
-        sage: is_pseudoprime_small_power(1)
-        True
-        sage: is_pseudoprime_small_power(997^100)
-        True
-
-    The default bound is 1024::
-
-        sage: is_pseudoprime_small_power(3^1024)
-        True
-        sage: is_pseudoprime_small_power(3^1025)
+        sage: is_pseudoprime_power(1)
         False
-
-    But it can be set higher or lower::
-
-        sage: is_pseudoprime_small_power(3^1025, bound=2000)
+        sage: is_pseudoprime_power(997^100)
         True
-        sage: is_pseudoprime_small_power(3^100, bound=20)
-        False
 
     Use of the get_data keyword::
 
+        sage: is_pseudoprime_power(3^1024, get_data=True)
+        (3, 1024)
+        sage: is_pseudoprime_power(2^256, get_data=True)
+        (2, 256)
+        sage: is_pseudoprime_power(31, get_data=True)
+        (31, 1)
+        sage: is_pseudoprime_power(15, get_data=True)
+        (15, 0)
+    """
+    return ZZ(n).is_prime_power(proof=False, get_data=get_data)
+
+def is_pseudoprime_small_power(n, bound=None, get_data=False):
+    """
+    Deprecated version of ``is_pseudoprime_power``.
+
+    EXAMPLES::
+
+        sage: is_pseudoprime_small_power(1234)
+        doctest:...: DeprecationWarning: the function is_pseudoprime_small_power() is deprecated, use is_pseudoprime_power() instead.
+        See http://trac.sagemath.org/16878 for details.
+        False
         sage: is_pseudoprime_small_power(3^1024, get_data=True)
         [(3, 1024)]
-        sage: is_pseudoprime_small_power(2^256, get_data=True)
-        [(2, 256)]
-        sage: is_pseudoprime_small_power(31, get_data=True)
-        [(31, 1)]
-        sage: is_pseudoprime_small_power(15, get_data=True)
-        False
     """
-    n = ZZ(n)
-    if n == 1:
-        # canonical way to write 1 as a prime power?
-        return True
-    if n <= 0:
-        return False
-    if n.is_pseudoprime():
-        if get_data == True:
-            return [(n, 1)]
-        else:
-            return True
-    for i in xrange(2, bound + 1):
-        p, boo = n.nth_root(i, truncate_mode=True)
-        if boo:
-            if p.is_pseudoprime():
-                if get_data == True:
-                    return [(p, i)]
-                else:
-                    return True
-    return False
+    from sage.misc.superseded import deprecation
+    deprecation(16878, "the function is_pseudoprime_small_power() is deprecated, use is_pseudoprime_power() instead.")
+    if get_data:
+        return [ZZ(n).is_prime_power(proof=False, get_data=True)]
+    else:
+        return ZZ(n).is_prime_power(proof=False)
 
 
-def valuation(m,*args1, **args2):
+def valuation(m, *args, **kwds):
     """
-    This actually just calls the m.valuation() method.
+    Return the valuation of ``m``.
+
+    This function simply calls the m.valuation() method.
     See the documentation of m.valuation() for a more precise description.
-    Use of this function by developers is discouraged. Use m.valuation() instead.
+
+    Note that the use of this functions is discouraged as it is better to use
+    m.valuation() directly.
 
     .. NOTE::
 
@@ -704,9 +681,10 @@ def valuation(m,*args1, **args2):
         ...
         ValueError: You can only compute the valuation with respect to a integer larger than 1.
     """
-    if isinstance(m,(int,long)):
-        m=ZZ(m)
-    return m.valuation(*args1, **args2)
+    try:
+        return m.valuation(*args, **kwds)
+    except AttributeError:
+        return ZZ(m).valuation(*args, **kwds)
 
 def prime_powers(start, stop=None):
     r"""
@@ -720,25 +698,26 @@ def prime_powers(start, stop=None):
       for the returned set of prime powers. If this is the only input,
       then it is an upper bound.
 
-    - ``stop`` - an integer (default: ``None``) An upper bound for the
+    - ``stop`` - an integer (default: ``None``). An upper bound for the
       returned set of prime powers.
 
     OUTPUT:
 
     The set of all prime powers between ``start`` and ``stop`` or, if
     only one argument is passed, the set of all prime powers between 1
-    and ``start``. Note that we will here say that the number `n` is a
-    prime power if `n=p^k`, where `p` is a prime number and `k` is a
-    nonnegative integer. Thus, `1` is a prime power, as `1 = 2^0`.
+    and ``start``. The number `n` is a prime power if `n=p^k`, where
+    `p` is a prime number and `k` is a positive integer. Thus, `1` is
+    not a prime power.
 
     EXAMPLES::
 
         sage: prime_powers(20)
-        [1, 2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19]
+        [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19]
         sage: len(prime_powers(1000))
-        194
+        193
         sage: len(prime_range(1000))
         168
+
         sage: a = [z for z in range(95,1234) if is_prime_power(z)]
         sage: b = prime_powers(95,1234)
         sage: len(b)
@@ -751,69 +730,68 @@ def prime_powers(start, stop=None):
         [97, 101, 103, 107, 109, 113, 121, 125, 127, 128]
         sage: a == b
         True
+
+        sage: prime_powers(100) == [i for i in range(100) if is_prime_power(i)]
+        True
+
         sage: prime_powers(10,7)
         []
         sage: prime_powers(-5)
         []
-        sage: prime_powers(-1,2)
-        [1]
+        sage: prime_powers(-1,3)
+        [2]
 
-    TESTS::
+    TESTS:
+
+    Check that output are always Sage integers (:trac:`922`)::
 
         sage: v = prime_powers(10)
-        sage: type(v[0])      # trac #922
+        sage: type(v[0])
         <type 'sage.rings.integer.Integer'>
+
+        sage: prime_powers(0,1)
+        []
+        sage: prime_powers(2)
+        []
+        sage: prime_powers(3)
+        [2]
 
         sage: prime_powers("foo")
         Traceback (most recent call last):
         ...
-        TypeError: start must be an integer, foo is not an integer
+        TypeError: unable to convert 'foo' to an integer
 
         sage: prime_powers(6, "bar")
         Traceback (most recent call last):
         ...
-        TypeError: stop must be an integer, bar is not an integer
+        TypeError: unable to convert 'bar' to an integer
 
+    Check that long input are accepted (:trac:`17852`)::
+
+        sage: prime_powers(6l)
+        [2, 3, 4, 5]
+        sage: prime_powers(6l,10l)
+        [7, 8, 9]
     """
-    from sage.rings.integer import Integer
-    # check to ensure that both inputs are positive integers
-    if not isinstance(start, (int, Integer)):
-        raise TypeError("start must be an integer, {} is not an integer".format(start))
-    if not (isinstance(stop, (int, Integer)) or stop is None):
-        raise TypeError("stop must be an integer, {} is not an integer".format(stop))
+    start = ZZ(start)
 
-    # coerce inputs that are ints into Integers for efficiency
-    start = Integer(start)
-    if(stop is not None):
-        stop = Integer(stop)
-
-    # deal with the case in which only one input is given
+    ZZ_2 = Integer(2)
     if stop is None:
-        start, stop = 1, Integer(start)
+        stop = start
+        start = ZZ_2
+    else:
+        stop = ZZ(stop)
 
-    # inserted to prevent an error from occurring
-    if stop < 1:
-        return [];
+    if stop <= ZZ_2 or start >= stop:
+        return []
 
-    # find all the primes in the given range
-    from fast_arith import prime_range
-    temp = prime_range(stop)
-    output = [p for p in temp if p>=start]
-
-    if start <= 1:
-        output.append(Integer(1))
-
-    s = stop.sqrt()
-    for p in temp:
-        # if p > the square root of stop, p^2 will be outside the given
-        # range
-        if p > s:
-            break
-        q = p*p
-        # check if each power of p falls within the given range
+    output = []
+    for p in fast_arith.prime_range(stop):
+        q = p
+        while q < start:
+            q *= p
         while q < stop:
-            if start <= q:
-                output.append(q)
+            output.append(q)
             q *= p
 
     output.sort()
@@ -841,10 +819,10 @@ def primes_first_n(n, leave_pari=False):
         []
     """
     if n < 0:
-        raise ValueError, "n must be nonnegative"
+        raise ValueError("n must be nonnegative")
     if n < 1:
         return []
-    return fast_arith.prime_range(pari.nth_prime(n) + 1)
+    return fast_arith.prime_range(nth_prime(n) + 1)
 
 #
 # This is from
@@ -868,56 +846,38 @@ def eratosthenes(n):
 
     EXAMPLES::
 
-        sage: len(eratosthenes(100))
-        25
         sage: eratosthenes(3)
         [2, 3]
+        sage: eratosthenes(50)
+        [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+        sage: len(eratosthenes(100))
+        25
+        sage: eratosthenes(213) == prime_range(213)
+        True
     """
     n = int(n)
-    if n == 2:
-        return [2]
-    elif n<2:
+
+    if n < 2:
         return []
-    s = range(3,n+3,2)
-    mroot = n ** 0.5
-    half = (n+1)/2
+    elif n == 2:
+        return [ZZ(2)]
+
+    s = range(3, n+3, 2)
+    mroot = int(n ** 0.5)
+    half = (n+1) // 2
     i = 0
     m = 3
     while m <= mroot:
         if s[i]:
-            j = (m*m-3)/2
+            j = (m*m-3) // 2
             s[j] = 0
             while j < half:
                 s[j] = 0
                 j += m
         i = i+1
         m = 2*i+3
-    return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
-# My old versions; not as fast as the above.
-## def eratosthenes(n):
-##     """
-##     Returns a list of the primes up to n, computed
-##     using the Sieve of Eratosthenes.
-##     Input:
-##         n -- a positive integer
-##     Output:
-##         list -- a list of the primes up to n
-##     Examples:
-##     sage: eratosthenes(7)
-##     [2, 3, 5, 7]
-##     sage: eratosthenes(45)
-##     [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
-##     """
-##     if n <= 1: return []
-##     X = [i for i in range(3,n+1) if i%2 != 0]
-##     P = [2]
-##     sqrt_n = sqrt(n)
-##     while len(X) > 0 and X[0] <= sqrt_n:
-##         p = X[0]
-##         P.append(p)
-##         X = [a for a in X if a%p != 0]
-##     return P + X
+    return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 def primes(start, stop=None, proof=None):
     r"""
@@ -991,14 +951,14 @@ def primes(start, stop=None, proof=None):
     from sage.rings.infinity import infinity
 
     start = ZZ(start)
-    if stop == None:
+    if stop is None:
         stop = start
         start = ZZ(2)
     elif stop != infinity:
         stop = ZZ(stop)
     n = start - 1
     while True:
-        n = next_prime(n, proof)
+        n = n.next_prime(proof)
         if n < stop:
             yield n
         else:
@@ -1006,18 +966,24 @@ def primes(start, stop=None, proof=None):
 
 def next_prime_power(n):
     """
-    The next prime power greater than the integer n. If n is a prime
-    power, then this function does not return n, but the next prime
-    power after n.
+    Return the smallest prime power greater than ``n``.
+
+    Note that if ``n`` is a prime power, then this function does not return
+    ``n``, but the next prime power after ``n``.
+
+    This function just calls the method
+    :meth:`Integer.next_prime_power() <sage.rings.integer.Integer.next_prime_power>`
+    of Integers.
+
+    .. SEEALSO::
+
+        - :func:`is_prime_power` (and
+          :meth:`Integer.is_prime_power() <sage.rings.integer.Integer.is_prime_power()>`)
+        - :func:`previous_prime_power` (and
+          :meth:`Integer.previous_prime_power() <sage.rings.integer.Integer.next_prime_power>`)
 
     EXAMPLES::
 
-        sage: next_prime_power(-10)
-        1
-        sage: is_prime_power(1)
-        True
-        sage: next_prime_power(0)
-        1
         sage: next_prime_power(1)
         2
         sage: next_prime_power(2)
@@ -1028,15 +994,24 @@ def next_prime_power(n):
         8
         sage: next_prime_power(99)
         101
+
+    The same results can be obtained with::
+
+        sage: 1.next_prime_power()
+        2
+        sage: 2.next_prime_power()
+        3
+        sage: 10.next_prime_power()
+        11
+
+    Note that `2` is the smallest prime power::
+
+        sage: next_prime_power(-10)
+        2
+        sage: next_prime_power(0)
+        2
     """
-    if n < 0:   # negatives are not prime.
-        return ZZ(1)
-    if n == 2:
-        return ZZ(3)
-    n = ZZ(n) + 1
-    while not is_prime_power(n):  # pari isprime is provably correct
-        n += 1
-    return n
+    return ZZ(n).next_prime_power()
 
 def next_probable_prime(n):
     """
@@ -1099,10 +1074,7 @@ def next_prime(n, proof=None):
         sage: next_prime(2004)
         2011
     """
-    try:
-        return n.next_prime(proof)
-    except AttributeError:
-        return ZZ(n).next_prime(proof)
+    return ZZ(n).next_prime(proof)
 
 def previous_prime(n):
     """
@@ -1138,7 +1110,7 @@ def previous_prime(n):
     """
     n = ZZ(n)-1
     if n <= 1:
-        raise ValueError, "no previous prime"
+        raise ValueError("no previous prime")
     if n <= 3:
         return ZZ(n)
     if n%2 == 0:
@@ -1149,15 +1121,26 @@ def previous_prime(n):
 
 def previous_prime_power(n):
     r"""
-    The largest prime power `< n`. The result is provably
-    correct. If `n \leq 2`, this function returns `-x`,
-    where `x` is prime power and `-x < n` and no larger
-    negative of a prime power has this property.
+    Return the largest prime power smaller than ``n``.
+
+    The result is provably correct. If ``n`` is smaller or equal than ``2`` this
+    function raises an error.
+
+    This function simply call the method
+    :meth:`Integer.previous_prime_power() <sage.rings.integer.Integer.previous_prime_power>`
+    of Integers.
+
+    .. SEEALSO::
+
+        - :func:`is_prime_power` (and :meth:`Integer.is_prime_power()
+          <sage.rings.integer.Integer.is_prime_power>`)
+        - :func:`next_prime_power` (and :meth:`Integer.next_prime_power()
+          <sage.rings.integer.Integer.next_prime_power>`)
 
     EXAMPLES::
 
-        sage: previous_prime_power(2)
-        1
+        sage: previous_prime_power(3)
+        2
         sage: previous_prime_power(10)
         9
         sage: previous_prime_power(7)
@@ -1165,31 +1148,37 @@ def previous_prime_power(n):
         sage: previous_prime_power(127)
         125
 
-    ::
+    The same results can be obtained with::
 
-        sage: previous_prime_power(0)
+        sage: 3.previous_prime_power()
+        2
+        sage: 10.previous_prime_power()
+        9
+        sage: 7.previous_prime_power()
+        5
+        sage: 127.previous_prime_power()
+        125
+
+    Input less than or equal to `2` raises errors::
+
+        sage: previous_prime_power(2)
         Traceback (most recent call last):
         ...
-        ValueError: no previous prime power
-        sage: previous_prime_power(1)
+        ValueError: no prime power less than 2
+        sage: previous_prime_power(-10)
         Traceback (most recent call last):
         ...
-        ValueError: no previous prime power
+        ValueError: no prime power less than 2
 
     ::
 
         sage: n = previous_prime_power(2^16 - 1)
         sage: while is_prime(n):
-        ...    n = previous_prime_power(n)
+        ....:     n = previous_prime_power(n)
         sage: factor(n)
         251^2
     """
-    n = ZZ(n)-1
-    if n <= 0:
-        raise ValueError, "no previous prime power"
-    while not is_prime_power(n):
-        n -= 1
-    return n
+    return ZZ(n).previous_prime_power()
 
 def random_prime(n, proof=None, lbound=2):
     """
@@ -1256,9 +1245,9 @@ def random_prime(n, proof=None, lbound=2):
     proof = get_flag(proof, "arithmetic")
     n = ZZ(n)
     if n < 2:
-        raise ValueError, "n must be greater than or equal to 2"
+        raise ValueError("n must be greater than or equal to 2")
     if n < lbound:
-        raise ValueError, "n must be at least lbound: %s"%(lbound)
+        raise ValueError("n must be at least lbound: %s"%(lbound))
     elif n == 2:
         return n
     lbound = max(2, lbound)
@@ -1274,8 +1263,7 @@ def random_prime(n, proof=None, lbound=2):
                     else:
                         smallest_prime = ZZ(lbound-1).next_probable_prime()
                     if smallest_prime > n:
-                        raise ValueError, \
-                              "There are no primes between %s and %s (inclusive)" % (lbound, n)
+                        raise ValueError("There are no primes between %s and %s (inclusive)" % (lbound, n))
 
     if proof:
         prime_test = is_prime
@@ -1334,7 +1322,7 @@ def divisors(n):
         sage: divisors(K.ideal(3))
         [Fractional ideal (1), Fractional ideal (3), Fractional ideal (-a + 2), Fractional ideal (-a - 2)]
         sage: divisors(K.ideal(35))
-        [Fractional ideal (1), Fractional ideal (35), Fractional ideal (5*a), Fractional ideal (5), Fractional ideal (a), Fractional ideal (7)]
+        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (a), Fractional ideal (7), Fractional ideal (5*a), Fractional ideal (35)]
 
     TESTS::
 
@@ -1342,26 +1330,27 @@ def divisors(n):
         [1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 25, 30, 50, 60, 75, 100, 150, 300]
     """
     if not n:
-        raise ValueError, "n must be nonzero"
+        raise ValueError("n must be nonzero")
 
-    R = parent(n)
-    if R in [int, long]:
+    if isinstance(n, (int, long)):
         n = ZZ(n) # we have specialized code for this case, make sure it gets used
+
     try:
         return n.divisors()
     except AttributeError:
         pass
+
     f = factor(n)
-    one = R(1)
-    all = [one]
+    one = parent(n)(1)
+    output = [one]
     for p, e in f:
-        prev = all[:]
+        prev = output[:]
         pn = one
         for i in range(e):
             pn *= p
-            all.extend([a*pn for a in prev])
-    all.sort()
-    return all
+            output.extend(a*pn for a in prev)
+    output.sort()
+    return output
 
 class Sigma:
     """
@@ -1446,13 +1435,13 @@ class Sigma:
         one = ZZ(1)
 
         if (k == ZZ(0)):
-            return prod([ expt+one for p, expt in factor(n) ])
+            return prod(expt+one for p, expt in factor(n))
         elif (k == one):
-            return prod([ (p**(expt+one) - one).divide_knowing_divisible_by(p - one)
-                          for p, expt in factor(n) ])
+            return prod((p**(expt+one) - one).divide_knowing_divisible_by(p - one)
+                          for p, expt in factor(n))
         else:
-            return prod([ (p**((expt+one)*k)-one).divide_knowing_divisible_by(p**k-one)
-                          for p,expt in factor(n) ])
+            return prod((p**((expt+one)*k)-one).divide_knowing_divisible_by(p**k-one)
+                          for p,expt in factor(n))
 
     def plot(self, xmin=1, xmax=50, k=1, pointsize=30, rgbcolor=(0,0,1), join=True,
              **kwds):
@@ -1556,12 +1545,12 @@ def gcd(a, b=None, **kwargs):
     TESTS:
 
     The following shows that indeed coercion takes place before computing
-    the gcd. This behaviour was introduced in trac ticket #10771::
+    the gcd. This behaviour was introduced in :trac:`10771`::
 
         sage: R.<x>=QQ[]
         sage: S.<x>=ZZ[]
-        sage: p = S.random_element()
-        sage: q = R.random_element()
+        sage: p = S.random_element(degree=(0,10))
+        sage: q = R.random_element(degree=(0,10))
         sage: parent(gcd(1/p,q))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
         sage: parent(gcd([1/p,q]))
@@ -1595,23 +1584,20 @@ def gcd(a, b=None, **kwargs):
     """
     # Most common use case first:
     if b is not None:
-        from sage.structure.element import get_coercion_model
-        cm = get_coercion_model()
-        a,b = cm.canonical_coercion(a,b)
         try:
-            GCD = a.gcd
-        except AttributeError:
-            try:
-                return ZZ(a).gcd(ZZ(b))
-            except TypeError:
-                raise TypeError("unable to find gcd")
-        return GCD(b, **kwargs)
+            return a.gcd(b, **kwargs)
+        except (AttributeError, TypeError):
+            pass
+        try:
+            return ZZ(a).gcd(ZZ(b))
+        except TypeError:
+            raise TypeError("unable to find gcd")
 
     from sage.structure.sequence import Sequence
     seq = Sequence(a)
     U = seq.universe()
     if U is ZZ or U is int or U is long:# ZZ.has_coerce_map_from(U):
-        return sage.rings.integer.GCD_list(a)
+        return GCD_list(a)
     return __GCD_sequence(seq, **kwargs)
 
 GCD = gcd
@@ -1698,8 +1684,7 @@ def lcm(a, b=None):
 
     TESTS:
 
-    The following tests against a bug that was fixed in trac
-    ticket #10771::
+    The following tests against a bug that was fixed in :trac:`10771`::
 
         sage: lcm(4/1,2)
         4
@@ -1709,8 +1694,8 @@ def lcm(a, b=None):
 
         sage: R.<x>=QQ[]
         sage: S.<x>=ZZ[]
-        sage: p = S.random_element()
-        sage: q = R.random_element()
+        sage: p = S.random_element(degree=(0,5))
+        sage: q = R.random_element(degree=(0,5))
         sage: parent(lcm([1/p,q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
@@ -1739,26 +1724,29 @@ def lcm(a, b=None):
         ...
         TypeError: unable to find lcm
 
+    Check rational and integers (:trac:`17852`)::
+
+        sage: lcm(1/2, 4)
+        4
+        sage: lcm(4, 1/2)
+        4
     """
     # Most common use case first:
     if b is not None:
-        from sage.structure.element import get_coercion_model
-        cm = get_coercion_model()
-        a,b = cm.canonical_coercion(a,b)
         try:
-            LCM = a.lcm
-        except AttributeError:
-            try:
-                return ZZ(a).lcm(ZZ(b))
-            except TypeError:
-                raise TypeError("unable to find lcm")
-        return LCM(b)
+            return a.lcm(b)
+        except (AttributeError,TypeError):
+            pass
+        try:
+            return ZZ(a).lcm(ZZ(b))
+        except TypeError:
+            raise TypeError("unable to find lcm")
 
     from sage.structure.sequence import Sequence
     seq = Sequence(a)
     U = seq.universe()
     if U is ZZ or U is int or U is long:
-        return sage.rings.integer.LCM_list(a)
+        return LCM_list(a)
     return __LCM_sequence(seq)
 
 LCM = lcm
@@ -1819,7 +1807,7 @@ def __LCM_sequence(v):
             return g
     return g
 
-def xlcm(m,n):
+def xlcm(m, n):
     r"""
     Extended lcm function: given two positive integers `m,n`, returns
     a triple `(l,m_1,n_1)` such that `l=\mathop{\mathrm{lcm}}(m,n)=m_1
@@ -1834,48 +1822,44 @@ def xlcm(m,n):
         sage: xlcm(120,36)
         (360, 40, 9)
     """
-    g=gcd(m,n)
-    l=m*n//g      # = lcm(m,n)
-    g=gcd(m,n//g) # divisible by those primes which divide n to a
-                  # higher power than m
+    g = gcd(m, n)
+    l = m*n//g       # = lcm(m, n)
+    g = gcd(m, n//g) # divisible by those primes which divide n to a
+                     # higher power than m
 
     while not g==1:
-        m//=g
-        g=gcd(m,g)
+        m //= g
+        g = gcd(m, g)
 
-    n=l//m;
-    return (l,m,n)
+    n = l//m
+    return (l, m, n)
 
 def xgcd(a, b):
     r"""
     Return a triple ``(g,s,t)`` such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
 
-    .. note::
+    .. NOTE::
 
-       One exception is if `a` and `b` are not in a PID, e.g., they are
-       both polynomials over the integers, then this function can't in
-       general return ``(g,s,t)`` as above, since they need not exist.
-       Instead, over the integers, we first multiply `g` by a divisor of
-       the resultant of `a/g` and `b/g`, up to sign.
+       One exception is if `a` and `b` are not in a principal ideal domain (see
+       :wikipedia:`Principal_ideal_domain`), e.g., they are both polynomials
+       over the integers. Then this function can't in general return ``(g,s,t)``
+       as above, since they need not exist.  Instead, over the integers, we
+       first multiply `g` by a divisor of the resultant of `a/g` and `b/g`, up
+       to sign.
 
     INPUT:
 
-
-    -  ``a, b`` - integers or univariate polynomials (or
-       any type with an xgcd method).
-
+    -  ``a, b`` - integers or more generally, element of a ring for which the
+       xgcd make sense (e.g. a field or univariate polynomials).
 
     OUTPUT:
 
     -  ``g, s, t`` - such that `g = s\cdot a + t\cdot b`
 
-
-    .. note::
+    .. NOTE::
 
        There is no guarantee that the returned cofactors (s and t) are
-       minimal. In the integer case, see
-       :meth:`sage.rings.integer.Integer._xgcd()` for minimal
-       cofactors.
+       minimal.
 
     EXAMPLES::
 
@@ -1883,14 +1867,20 @@ def xgcd(a, b):
         (4, 4, -5)
         sage: 4*56 + (-5)*44
         4
+
         sage: g, a, b = xgcd(5/1, 7/1); g, a, b
         (1, 3, -2)
         sage: a*(5/1) + b*(7/1) == g
         True
+
         sage: x = polygen(QQ)
         sage: xgcd(x^3 - 1, x^2 - 1)
         (x - 1, 1, -x)
+
         sage: K.<g> = NumberField(x^2-3)
+        sage: g.xgcd(g+2)
+        (1, 1/3*g, 0)
+
         sage: R.<a,b> = K[]
         sage: S.<y> = R.fraction_field()[]
         sage: xgcd(y^2, a*y+b)
@@ -1898,8 +1888,8 @@ def xgcd(a, b):
         sage: xgcd((b+g)*y^2, (a+g)*y+b)
         (1, (a^2 + (2*g)*a + 3)/(b^3 + (g)*b^2), ((-a + (-g))/b^2)*y + 1/b)
 
-    We compute an xgcd over the integers, where the linear combination
-    is not the gcd but the resultant::
+    Here is an example of a xgcd for two polynomials over the integers, where the linear
+    combination is not the gcd but the gcd multiplied by the resultant::
 
         sage: R.<x> = ZZ[]
         sage: gcd(2*x*(x-1), x^2)
@@ -1913,9 +1903,7 @@ def xgcd(a, b):
         return a.xgcd(b)
     except AttributeError:
         pass
-    if not isinstance(a, sage.rings.integer.Integer):
-        a = ZZ(a)
-    return a.xgcd(ZZ(b))
+    return ZZ(a).xgcd(ZZ(b))
 
 XGCD = xgcd
 
@@ -1950,6 +1938,59 @@ XGCD = xgcd
 ##         r = new_r; s = new_s
 ##     return (a, p*psign, q*qsign)
 
+def xkcd(n=""):
+    r"""
+    This function is similar to the xgcd function, but behaves
+    in a completely different way.
+
+    INPUT:
+
+    -  ``n`` - an integer (optional)
+
+    OUTPUT:
+
+    This function outputs nothing it just prints something. Note that this
+    function does not feel itself at ease in a html deprived environment.
+
+    EXAMPLES::
+
+        sage: xkcd(353) # optional - internet
+        <html><font color='black'><h1>Python</h1><img src="http://imgs.xkcd.com/comics/python.png" title="I wrote 20 short programs in Python yesterday.  It was wonderful.  Perl, I'm leaving you."><div>Source: <a href="http://xkcd.com/353" target="_blank">http://xkcd.com/353</a></div></font></html>
+    """
+    import contextlib
+    import urllib2
+    import json
+    from sage.misc.html import html
+
+    data = None
+    url = "http://dynamic.xkcd.com/api-0/jsonp/comic/{}".format(n)
+
+    try:
+        with contextlib.closing(urllib2.urlopen(url)) as f:
+            data = f.read()
+    except urllib2.HTTPError as error:
+        if error.getcode() == 400: # this error occurs when asking for a non valid comic number
+            raise RuntimeError("Could not obtain comic data from {}. Maybe you should enable time travel!".format(url))
+    except urllib2.URLError:
+        pass
+
+    if n == 1024:
+        data = None
+
+    if data:
+        data = json.loads(data)
+        img = data['img']
+        alt = data['alt']
+        title = data['safe_title']
+        link = "http://xkcd.com/{}".format(data['num'])
+        html('<h1>{}</h1><img src="{}" title="{}">'.format(title, img, alt)
+            + '<div>Source: <a href="{0}" target="_blank">{0}</a></div>'.format(link))
+        return
+
+    # TODO: raise this error in such a way that it's not clear that
+    # it is produced by sage, see http://xkcd.com/1024/
+    html('<script> alert("Error: -41"); </script>')
+
 def inverse_mod(a, m):
     """
     The inverse of the ring element a modulo m.
@@ -1969,7 +2010,7 @@ def inverse_mod(a, m):
     try:
         return a.inverse_mod(m)
     except AttributeError:
-        return integer.Integer(a).inverse_mod(m)
+        return Integer(a).inverse_mod(m)
 
 #######################################################
 # Functions to find the fastest available commands
@@ -2054,7 +2095,7 @@ def power_mod(a,n,m):
         ZeroDivisionError: modulus must be nonzero.
     """
     if m==0:
-        raise ZeroDivisionError, "modulus must be nonzero."
+        raise ZeroDivisionError("modulus must be nonzero.")
     if m==1:
         return 0
     if n < 0:
@@ -2062,7 +2103,7 @@ def power_mod(a,n,m):
         return power_mod(ainv, -n, m)
     if n==0:
         if a == 0:
-            raise ArithmeticError, "0^0 is undefined."
+            raise ArithmeticError("0^0 is undefined.")
         return 1
 
     apow = a % m
@@ -2094,15 +2135,14 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     INPUT:
 
-    - ``a`` - an integer
+    - ``a`` -- an integer
 
-    - ``m`` - a modulus
+    - ``m`` -- a modulus
 
-    - ``algorithm`` - (default: 'fast')
+    - ``algorithm`` -- (default: 'fast')
 
-      - ``'fast'`` - a fast compiled implementation
-
-      - ``'python'`` - a slow pure python implementation
+      - ``'fast'`` - a fast implementation using direct MPIR calls
+        in Cython.
 
     OUTPUT:
 
@@ -2141,95 +2181,37 @@ def rational_reconstruction(a, m, algorithm='fast'):
         sage: rational_reconstruction(400,1000)
         Traceback (most recent call last):
         ...
-        ValueError: Rational reconstruction of 400 (mod 1000) does not exist.
+        ArithmeticError: rational reconstruction of 400 (mod 1000) does not exist
 
     ::
 
-        sage: rational_reconstruction(3,292393, algorithm='python')
+        sage: rational_reconstruction(3, 292393)
         3
         sage: a = Integers(292393)(45/97); a
         204977
-        sage: rational_reconstruction(a,292393, algorithm='python')
+        sage: rational_reconstruction(a, 292393, algorithm='fast')
         45/97
-        sage: a = Integers(292393)(45/97); a
-        204977
-        sage: rational_reconstruction(a,292393, algorithm='fast')
-        45/97
-        sage: rational_reconstruction(293048,292393, algorithm='fast')
+        sage: rational_reconstruction(293048, 292393)
         Traceback (most recent call last):
         ...
-        ValueError: Rational reconstruction of 655 (mod 292393) does not exist.
-        sage: rational_reconstruction(293048,292393, algorithm='python')
+        ArithmeticError: rational reconstruction of 655 (mod 292393) does not exist
+        sage: rational_reconstruction(0, 0)
         Traceback (most recent call last):
         ...
-        ValueError: Rational reconstruction of 655 (mod 292393) does not exist.
-
-    TESTS:
-
-    Check that ticket #9345 is fixed::
-
-        sage: rational_reconstruction(1, 0)
+        ZeroDivisionError: rational reconstruction with zero modulus
+        sage: rational_reconstruction(0, 1, algorithm="foobar")
         Traceback (most recent call last):
         ...
-        ZeroDivisionError: The modulus cannot be zero
-        sage: rational_reconstruction(randint(-10^6, 10^6), 0)
-        Traceback (most recent call last):
-        ...
-        ZeroDivisionError: The modulus cannot be zero
+        ValueError: unknown algorithm 'foobar'
     """
     if algorithm == 'fast':
         return ZZ(a).rational_reconstruction(m)
     elif algorithm == 'python':
-        return _rational_reconstruction_python(a,m)
+        from sage.misc.superseded import deprecation
+        deprecation(17180, 'The %r algorithm for rational_reconstruction is deprecated' % algorithm)
+        return ZZ(a).rational_reconstruction(m)
     else:
-        raise ValueError("unknown algorithm")
-
-def _rational_reconstruction_python(a,m):
-    """
-    Internal fallback function for rational_reconstruction; see
-    documentation of that function for details.
-
-    INPUT:
-
-    - ``a`` - an integer
-
-    - ``m`` - a modulus
-
-    EXAMPLES::
-
-        sage: from sage.rings.arith import _rational_reconstruction_python
-        sage: _rational_reconstruction_python(20,31)
-        -2/3
-        sage: _rational_reconstruction_python(11323,100000)
-        119/53
-    """
-    a = int(a); m = int(m)
-    a %= m
-    if a == 0 or m==0:
-        return ZZ(0)/ZZ(1)
-    if m < 0:
-        m = -m
-    if a < 0:
-        a = m-a
-    if a == 1:
-        return ZZ(1)/ZZ(1)
-    u = m
-    v = a
-    bnd = math.sqrt(m/2)
-    U = (1,0,u)
-    V = (0,1,v)
-    while abs(V[2]) > bnd:
-        q = U[2]/V[2]  # floor is implicit
-        T = (U[0]-q*V[0], U[1]-q*V[1], U[2]-q*V[2])
-        U = V
-        V = T
-    x = abs(V[1])
-    y = V[2]
-    if V[1] < 0:
-        y *= -1
-    if x <= bnd and GCD(x,y) == 1:
-        return ZZ(y) / ZZ(x)
-    raise ValueError, "Rational reconstruction of %s (mod %s) does not exist."%(a,m)
+        raise ValueError("unknown algorithm %r" % algorithm)
 
 def mqrr_rational_reconstruction(u, m, T):
     r"""
@@ -2444,7 +2426,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: K.<i> = QuadraticField(-1)
         sage: factor(122 - 454*i)
-        (-1) * (-i - 4) * (-3*i - 2) * (-i - 2)^3 * (i + 1)^3
+        (-3*i - 2) * (-i - 2)^3 * (i + 1)^3 * (i + 4)
 
     To access the data in a factorization::
 
@@ -2463,7 +2445,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     if isinstance(n, (int, long)):
         n = ZZ(n)
 
-    if isinstance(n, integer.Integer):
+    if isinstance(n, Integer):
         return n.factor(proof=proof, algorithm=algorithm,
                         int_ = int_, verbose=verbose)
     else:
@@ -2471,13 +2453,13 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         try:
             return n.factor(proof=proof, **kwds)
         except AttributeError:
-            raise TypeError, "unable to factor n"
+            raise TypeError("unable to factor n")
         except TypeError:
             # Just in case factor method doesn't have a proof option.
             try:
                 return n.factor(**kwds)
             except AttributeError:
-                raise TypeError, "unable to factor n"
+                raise TypeError("unable to factor n")
 
 def radical(n, *args, **kwds):
     """
@@ -2512,9 +2494,16 @@ def radical(n, *args, **kwds):
 
 def prime_divisors(n):
     """
-    The prime divisors of the integer n, sorted in increasing order. If
-    n is negative, we do *not* include -1 among the prime divisors,
-    since -1 is not a prime number.
+    The prime divisors of ``n``.
+
+    INPUT:
+
+    - ``n`` -- any object which can be factored
+
+    OUTPUT:
+
+    A list of prime factors of ``n``. For integers, this list is sorted
+    in increasing order.
 
     EXAMPLES::
 
@@ -2522,12 +2511,26 @@ def prime_divisors(n):
         []
         sage: prime_divisors(100)
         [2, 5]
-        sage: prime_divisors(-100)
-        [2, 5]
         sage: prime_divisors(2004)
         [2, 3, 167]
+
+    If ``n`` is negative, we do *not* include -1 among the prime
+    divisors, since -1 is not a prime number::
+
+        sage: prime_divisors(-100)
+        [2, 5]
+
+    For polynomials we get all irreducible factors::
+
+        sage: R.<x> = PolynomialRing(QQ)
+        sage: prime_divisors(x^12 - 1)
+        [x - 1, x + 1, x^2 - x + 1, x^2 + 1, x^2 + x + 1, x^4 - x^2 + 1]
     """
-    return [p for p,_ in factor(n) if p != -1]
+    try:
+        return n.prime_divisors()
+    except AttributeError:
+        pass
+    return [p for p,_ in factor(n)]
 
 prime_factors = prime_divisors
 
@@ -2545,7 +2548,7 @@ def odd_part(n):
         sage: odd_part(factorial(31))
         122529844256906551386796875
     """
-    if not isinstance(n, integer.Integer):
+    if not isinstance(n, Integer):
         n = ZZ(n)
     return n.odd_part()
 
@@ -2556,32 +2559,25 @@ def prime_to_m_part(n,m):
 
     INPUT:
 
-
     -  ``n`` - Integer (nonzero)
 
     -  ``m`` - Integer
-
 
     OUTPUT: Integer
 
     EXAMPLES::
 
-        sage: z = 43434
-        sage: z.prime_to_m_part(20)
+        sage: 240.prime_to_m_part(2)
+        15
+        sage: 240.prime_to_m_part(3)
+        80
+        sage: 240.prime_to_m_part(5)
+        48
+
+        sage: 43434.prime_to_m_part(20)
         21717
     """
-    if n == 0:
-        raise ValueError, "n must be nonzero."
-    if m == 0:
-        return ZZ(1)
-    n = ZZ(n)
-    m = ZZ(m)
-    while True:
-        g = gcd(n,m)
-        if g == 1:
-            return n
-        n = n // g
-
+    return ZZ(n).prime_to_m_part(m)
 
 def is_square(n, root=False):
     """
@@ -2626,6 +2622,8 @@ def is_square(n, root=False):
         sage: is_square(4, True)
         (True, 2)
     """
+    if isinstance(n, (int,long)):
+        n = ZZ(n)
     try:
         if root:
             try:
@@ -2641,18 +2639,13 @@ def is_square(n, root=False):
     t, x = pari(n).issquare(find_root=True)
     if root:
         if t:
-            if hasattr(n, 'parent'):
-                x = n.parent()(str(x))
-            else:
-                x = x.python()
+            x = parent(n)(x)
         return t, x
     return t
 
-
 def is_squarefree(n):
     """
-    Returns True if and only if n is not divisible by the square of an
-    integer > 1.
+    Test whether ``n`` is square free.
 
     EXAMPLES::
 
@@ -2660,13 +2653,43 @@ def is_squarefree(n):
         False
         sage: is_squarefree(101)
         True
+
+        sage: R = ZZ['x']
+        sage: x = R.gen()
+        sage: is_squarefree((x^2+x+1) * (x-2))
+        True
+        sage: is_squarefree((x-1)**2 * (x-3))
+        False
+
+        sage: O = ZZ[sqrt(-1)]
+        sage: I = O.gen(1)
+        sage: is_squarefree(I+1)
+        True
+        sage: is_squarefree(O(2))
+        False
+        sage: O(2).factor()
+        (-I) * (I + 1)^2
+
+    This method fails on domains which are not Unique Factorization Domains::
+
+        sage: O = ZZ[sqrt(-5)]
+        sage: a = O.gen(1)
+        sage: is_squarefree(a - 3)
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: non-principal ideal in factorization
     """
-    if n==0:
+    if isinstance(n, (int,long)):
+        n = Integer(n)
+
+    try:
+        return n.is_squarefree()
+    except AttributeError:
+        pass
+
+    if n == 0:
         return False
-    for p, r in factor(n):
-        if r>1:
-            return False
-    return True
+    return all(r[1] == 1 for r in factor(n))
 
 
 #################################################################
@@ -2766,7 +2789,6 @@ class Euler_Phi:
         if n<=2:
             return ZZ(1)
         return ZZ(pari(n).phi())
-        #return misc.mul([(p-1)*p**(r-1) for p, r in factor(n)])
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0,0,1), join=True,
              **kwds):
@@ -2910,7 +2932,7 @@ def crt(a,b,m=None,n=None):
     if isinstance(a, list):
         return CRT_list(a, b)
     if isinstance(a, (int, long)):
-        a = integer.Integer(a) # otherwise we get an error at (b-a).quo_rem(g)
+        a = Integer(a) # otherwise we get an error at (b-a).quo_rem(g)
     g, alpha, beta = XGCD(m, n)
     q, r = (b - a).quo_rem(g)
     if r != 0:
@@ -2981,9 +3003,9 @@ def CRT_list(v, moduli):
 
     """
     if not isinstance(v,list) or not isinstance(moduli,list):
-        raise ValueError, "Arguments to CRT_list should be lists"
+        raise ValueError("Arguments to CRT_list should be lists")
     if len(v) != len(moduli):
-        raise ValueError, "Arguments to CRT_list should be lists of the same length"
+        raise ValueError("Arguments to CRT_list should be lists of the same length")
     if len(v) == 0:
         return ZZ(0)
     if len(v) == 1:
@@ -3068,10 +3090,10 @@ def CRT_vectors(X, moduli):
         return []
     n = len(X)
     if n != len(moduli):
-        raise ValueError, "number of moduli must equal length of X"
+        raise ValueError("number of moduli must equal length of X")
     a = CRT_basis(moduli)
-    modulus = misc.prod(moduli)
-    return [sum([a[i]*X[i][j] for i in range(n)]) % modulus for j in range(len(X[0]))]
+    modulus = prod(moduli)
+    return [sum(a[i]*X[i][j] for i in range(n)) % modulus for j in range(len(X[0]))]
 
 def binomial(x, m, **kwds):
     r"""
@@ -3079,8 +3101,7 @@ def binomial(x, m, **kwds):
 
     .. math::
 
-                \binom{x}{m} = x (x-1) \cdots (x-m+1) / m!
-
+        \binom{x}{m} = x (x-1) \cdots (x-m+1) / m!
 
     which is defined for `m \in \ZZ` and any
     `x`. We extend this definition to include cases when
@@ -3088,7 +3109,7 @@ def binomial(x, m, **kwds):
 
     .. math::
 
-        \binom{x}{m}= \binom{x}{x-m}
+        \binom{x}{m} = \binom{x}{x-m}
 
     If `m < 0`, return `0`.
 
@@ -3101,6 +3122,7 @@ def binomial(x, m, **kwds):
 
     EXAMPLES::
 
+        sage: from sage.rings.arith import binomial
         sage: binomial(5,2)
         10
         sage: binomial(2,0)
@@ -3126,9 +3148,11 @@ def binomial(x, m, **kwds):
         sage: binomial(2^100, 2^100)
         1
 
-        sage: k, i = var('k,i')
-        sage: binomial(k,i)
-        binomial(k, i)
+        sage: x = polygen(ZZ)
+        sage: binomial(x, 3)
+        1/6*x^3 - 1/2*x^2 + 1/3*x
+        sage: binomial(x, x-3)
+        1/6*x^3 - 1/2*x^2 + 1/3*x
 
     If `x \in \ZZ`, there is an optional 'algorithm' parameter, which
     can be 'mpir' (faster for small values) or 'pari' (faster for
@@ -3173,88 +3197,136 @@ def binomial(x, m, **kwds):
         sage: binomial(float(1000), 1001)
         0.0
 
+    Test more output types::
+
+        sage: type(binomial(5r, 2))
+        <type 'int'>
+        sage: type(binomial(5, 2r))
+        <type 'sage.rings.integer.Integer'>
+
+        sage: type(binomial(5.0r, 2))
+        <type 'float'>
+
+        sage: type(binomial(5/1, 2))
+        <type 'sage.rings.rational.Rational'>
+
+        sage: R = Integers(11)
+        sage: b = binomial(R(7), R(3))
+        sage: b
+        2
+        sage: b.parent()
+        Ring of integers modulo 11
+
     Test symbolic and uni/multivariate polynomials::
 
-        sage: K.<x> = ZZ[]
-        sage: binomial(x,3)
+        sage: x = polygen(ZZ)
+        sage: binomial(x, 3)
         1/6*x^3 - 1/2*x^2 + 1/3*x
-        sage: binomial(x,3).parent()
+        sage: binomial(x, 3).parent()
         Univariate Polynomial Ring in x over Rational Field
+
         sage: K.<x,y> = Integers(7)[]
         sage: binomial(y,3)
         -y^3 + 3*y^2 - 2*y
         sage: binomial(y,3).parent()
         Multivariate Polynomial Ring in x, y over Ring of integers modulo 7
+
         sage: n = var('n')
         sage: binomial(n,2)
         1/2*(n - 1)*n
+
+    Invalid inputs::
+
+        sage: x = polygen(ZZ)
+        sage: binomial(x, x^2)
+        Traceback (most recent call last):
+        ...
+        TypeError: either m or x-m must be an integer
+
+        sage: k, i = var('k,i')
+        sage: binomial(k,i)
+        Traceback (most recent call last):
+        ...
+        TypeError: either m or x-m must be an integer
+
+        sage: R6 = Zmod(6)
+        sage: binomial(R6(5), 2)
+        Traceback (most recent call last):
+        ...
+        ZeroDivisionError: factorial(2) not invertible in Ring of integers modulo 6
+
+        sage: R7 = Zmod(7)
+        sage: binomial(R7(10), 7)
+        Traceback (most recent call last):
+        ...
+        ZeroDivisionError: factorial(7) not invertible in Ring of integers modulo 7
+
+    The last two examples failed to execute since `2!` and `7!` are respectively
+    not invertible in `\ZZ/6\ZZ` and `\ZZ/7\ZZ`. One can check that there
+    is no well defined value for that binomial coefficient in the quotient::
+
+        sage: R6(binomial(5,2))
+        4
+        sage: R6(binomial(5+6,2))
+        1
+
+        sage: R7(binomial(3, 7))
+        0
+        sage: R7(binomial(10, 7))
+        1
+        sage: R7(binomial(17, 7))
+        2
+
+    For symbolic manipulation, you should use the function
+    :func:`~sage.functions.other.binomial` from the module
+    :mod:`sage.functions.other`::
+
+        sage: from sage.functions.other import binomial
+        sage: binomial(k, i)
+        binomial(k, i)
     """
-    if isinstance(m,sage.symbolic.expression.Expression):
-        try:
-            # For performance reasons, we avoid to try to coerce
-            # to Integer in the symbolic case (see #6870)
-            m=m.pyobject()
-            m=ZZ(m)
-        except TypeError:
-            pass
-    else:
-        try:
-            m=ZZ(m)
-        except TypeError:
-            pass
-    if not isinstance(m,integer.Integer):
+    try:
+        m = ZZ(m)
+    except TypeError:
         try:
             m = ZZ(x-m)
         except TypeError:
-            try:
-                return x.binomial(m)
-            except AttributeError:
-                pass
-            raise TypeError('Either m or x-m must be an integer')
-    if isinstance(x, (float, sage.rings.real_mpfr.RealNumber,
-                      sage.rings.real_mpfr.RealLiteral)):
-        P = parent(x)
-        # Try to convert x to an integer if it *is* an integer but of type
-        # float. Otherwise, pari fails below in the case m > x.
-        try:
-            x = ZZ(x)
-        except TypeError:
-            pass
-        if m < 0:
-            return P(0)
-        return P(pari(x).binomial(m))
-    if isinstance(x,sage.symbolic.expression.Expression):
-        try:
-            x=x.pyobject()
-            x=ZZ(x)
-        except TypeError:
-            pass
-    else:
-        try:
-            x=ZZ(x)
-        except TypeError:
-            pass
-    if isinstance(x,integer.Integer):
-        if m < 0 or (x >= 0 and m > x):
-            return ZZ.zero()
+            raise TypeError("either m or x-m must be an integer")
 
-        s = sys.maxint
-        if m > s:
-            m = x - m
-            if m > s:
-                raise ValueError("binomial not implemented for "
-                        "m > " + str(s) + ".\nThis is probably OK, "
-                        "since the answer would have "
-                        "billions of digits.")
+    P = parent(x)
+    x = py_scalar_to_element(x)
 
-        return x.binomial(m, **kwds)
+    # case 1: native binomial implemented on x
     try:
-        P = x.parent()
-    except AttributeError:
-        P = type(x)
-    if m < 0:
+        return P(x.binomial(m, **kwds))
+    except (AttributeError,TypeError):
+        pass
+
+    # case 2: conversion to integers
+    try:
+        x = ZZ(x)
+    except TypeError:
+        pass
+    else:
+        # Check invertibility of factorial(m) in P
+        try:
+            c = P.characteristic()
+        except AttributeError:
+            # Assume that P has characteristic zero (can be int, float, ...)
+            pass
+        else:
+            if c > 0 and any(c.gcd(k) > 1 for k in range(2, m+1)):
+                raise ZeroDivisionError("factorial({}) not invertible in {}".format(m, P))
+        return P(x.binomial(m, **kwds))
+
+    # case 3: rational, real numbers, complex numbers -> use pari
+    if isinstance(x, (Rational, RealNumber, ComplexNumber)):
+        return P(x._pari_().binomial(m))
+
+    # case 4: naive method
+    if m < ZZ.zero():
         return P(0)
-    return misc.prod([x-i for i in xrange(m)])/factorial(m)
+    return P(prod(x-i for i in xrange(m))) / m.factorial()
 
 def multinomial(*ks):
     r"""
@@ -3294,7 +3366,7 @@ def multinomial(*ks):
     """
     if isinstance(ks[0],list):
         if len(ks) >1:
-            raise ValueError, "multinomial takes only one list argument"
+            raise ValueError("multinomial takes only one list argument")
         ks=ks[0]
 
     s, c = 0, 1
@@ -3533,9 +3605,9 @@ def legendre_symbol(x,p):
     x = QQ(x).numerator() * QQ(x).denominator()
     p = ZZ(p)
     if not p.is_prime():
-        raise ValueError, "p must be a prime"
+        raise ValueError("p must be a prime")
     if p == 2:
-        raise ValueError, "p must be odd"
+        raise ValueError("p must be odd")
     return x.kronecker(p)
 
 def jacobi_symbol(a,b):
@@ -3578,10 +3650,9 @@ def jacobi_symbol(a,b):
     """
 
     if b%2==0:
-        raise ValueError, "second input must be odd, %s is not odd"%b
+        raise ValueError("second input must be odd, %s is not odd"%b)
 
     return kronecker_symbol(a,b)
-
 
 def primitive_root(n, check=True):
     """
@@ -3649,11 +3720,13 @@ def primitive_root(n, check=True):
         0
         sage: primitive_root(2)
         1
+        sage: primitive_root(3)
+        2
         sage: primitive_root(4)
         3
 
     We test that various numbers without primitive roots give
-    an error - see Trac 10836::
+    an error - see :trac:`10836`::
 
         sage: primitive_root(15)
         Traceback (most recent call last):
@@ -3675,16 +3748,18 @@ def primitive_root(n, check=True):
     if not check:
         return ZZ(pari(n).znprimroot())
     n = ZZ(n).abs()
-    if n == 4:
-        return ZZ(3)
-    if n%2: # n odd
+    if n <= 4:
+        if n:
+            # n-1 is a primitive root for n in {1,2,3,4}
+            return n-1
+    elif n%2: # n odd
         if n.is_prime_power():
             return ZZ(pari(n).znprimroot())
     else:   # n even
         m = n // 2
         if m%2 and m.is_prime_power():
             return ZZ(pari(n).znprimroot())
-    raise ValueError, "no primitive root"
+    raise ValueError("no primitive root")
 
 def nth_prime(n):
     """
@@ -3742,13 +3817,8 @@ def quadratic_residues(n):
         159
     """
     n = abs(int(n))
-    X = list(set([ZZ((a*a)%n) for a in range(n/2+1)]))
-    X.sort()
+    X = sorted(set(ZZ((a*a)%n) for a in range(n//2+1)))
     return X
-
-## This much slower than above, for obvious reasons.
-## def quadratic_residues2(p):
-##     return [x for x in range(p-1) if kronecker_symbol(x,p)==1]
 
 class Moebius:
     r"""
@@ -3809,7 +3879,7 @@ class Moebius:
         """
         if isinstance(n, (int, long)):
             n = ZZ(n)
-        elif not isinstance(n, integer.Integer):
+        elif not isinstance(n, Integer):
             # Use a generic algorithm.
             if n < 0:
                 n = -n
@@ -3821,7 +3891,7 @@ class Moebius:
 
         # Use fast PARI algorithm
         if n == 0:
-            return integer.Integer(0)
+            return ZZ.zero()
         return ZZ(pari(n).moebius())
 
 
@@ -3901,10 +3971,8 @@ class Moebius:
         else:
             step = int(step)
 
-        Z = integer.Integer
-
         if start <= 0 and 0 < stop and start % step == 0:
-            return self.range(start, 0, step) + [Z(0)] +\
+            return self.range(start, 0, step) + [ZZ.zero()] +\
                    self.range(step, stop, step)
 
         if step == 1:
@@ -3914,435 +3982,13 @@ class Moebius:
             n = len(range(start, stop, step)) # stupid
             v = pari('vector(%s, i, moebius(%s*(i-1) + %s))'%(
                 n, step, start))
-        return [Z(x) for x in v]
+        return [Integer(x) for x in v]
 
 moebius = Moebius()
 
-def farey(v, lim):
-    """
-    Return the Farey sequence associated to the floating point number
-    v.
 
-    INPUT:
-
-
-    -  ``v`` - float (automatically converted to a float)
-
-    -  ``lim`` - maximum denominator.
-
-
-    OUTPUT: Results are (numerator, denominator); (1, 0) is "infinity".
-
-    EXAMPLES::
-
-        sage: farey(2.0, 100)
-        (2, 1)
-        sage: farey(2.0, 1000)
-        (2, 1)
-        sage: farey(2.1, 1000)
-        (21, 10)
-        sage: farey(2.1, 100000)
-        (21, 10)
-        sage: farey(pi, 100000)
-        (312689, 99532)
-
-    AUTHORS:
-
-    - Scott David Daniels: Python Cookbook, 2nd Ed., Recipe 18.13
-    """
-    v = float(v)
-    if v < 0:
-        n, d = farey(-v, lim)
-        return -n, d
-    z = lim - lim    # Get a "0 of the right type" for denominator
-    lower, upper = (z, z+1), (z+1, z)
-    while True:
-        mediant = (lower[0] + upper[0]), (lower[1] + upper[1])
-        if v * mediant[1] > mediant[0]:
-            if lim < mediant[1]:
-                return upper
-            lower = mediant
-        elif v * mediant[1] == mediant[0]:
-            if lim >= mediant[1]:
-                return mediant
-            if lower[1] < upper[1]:
-                return lower
-            return upper
-        else:
-            if lim < mediant[1]:
-                return lower
-            upper = mediant
-
-
-## def convergents_pnqn(x):
-##     """
-##     Return the pairs (pn,qn) that are the numerators and denominators
-##     of the partial convergents of the continued fraction of x.  We
-##     include (0,1) and (1,0) at the beginning of the list (these are
-##     the -2 and -1 th convergents).
-##     """
-##     v = pari(x).contfrac()
-##     w = [(0,1), (1,0)]
-##     for n in range(len(v)):
-##         pn = w[n+1][0]*v[n] + w[n][0]
-##         qn = w[n+1][1]*v[n] + w[n][1]
-##         w.append(int(pn), int(qn))
-##     return w
-
-def continued_fraction_list(x, partial_convergents=False, bits=None, nterms=None):
-    r"""
-    Returns the continued fraction of x as a list.
-
-    The continued fraction expansion of `x` are the coefficients `a_i` in
-
-    .. math::
-
-        x = a_1 + 1/(a_2+1/(...) ... )
-
-    with `a_1` integer and `a_2`, `...` positive integers.
-
-    .. note::
-
-       This may be slow for real number input, since it's implemented in pure
-       Python. For rational number input the PARI C library is used.
-
-    .. SEEALSO::
-
-         :func:`Hirzebruch_Jung_continued_fraction_list` for
-         Hirzebruch-Jung continued fractions.
-
-    INPUT:
-
-    - ``x`` -- exact rational or floating-point number. The number to
-      compute the continued fraction of.
-
-    - ``partial_convergents`` -- boolean. Whether to return the partial convergents.
-
-    - ``bits`` -- integer. the precision of the real interval field
-      that is used internally.
-
-    - ``nterms`` -- integer. The upper bound on the number of terms in
-      the continued fraction expansion to return.
-
-    OUTPUT:
-
-    A lits of integers, the coefficients in the continued fraction
-    expansion of ``x``. If ``partial_convergents=True`` is passed, a
-    pair containing the coefficient list and the partial convergents
-    list is returned.
-
-    EXAMPLES::
-
-        sage: continued_fraction_list(45/17)
-        [2, 1, 1, 1, 5]
-        sage: continued_fraction_list(e, bits=20)
-        [2, 1, 2, 1, 1, 4, 1, 1]
-        sage: continued_fraction_list(e, bits=30)
-        [2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8]
-        sage: continued_fraction_list(sqrt(2))
-        [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-        sage: continued_fraction_list(sqrt(4/19))
-        [0, 2, 5, 1, 1, 2, 1, 16, 1, 2, 1, 1, 5, 4, 5, 1, 1, 2, 1]
-        sage: continued_fraction_list(RR(pi), partial_convergents=True)
-        ([3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 3],
-         [(3, 1),
-          (22, 7),
-          (333, 106),
-          (355, 113),
-          (103993, 33102),
-          (104348, 33215),
-          (208341, 66317),
-          (312689, 99532),
-          (833719, 265381),
-          (1146408, 364913),
-          (4272943, 1360120),
-          (5419351, 1725033),
-          (80143857, 25510582),
-          (245850922, 78256779)])
-        sage: continued_fraction_list(e)
-        [2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12, 1, 1]
-        sage: continued_fraction_list(RR(e))
-        [2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12, 1, 1]
-        sage: continued_fraction_list(RealField(200)(e))
-        [2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12, 1, 1,
-         14, 1, 1, 16, 1, 1, 18, 1, 1, 20, 1, 1, 22, 1, 1, 24, 1, 1,
-         26, 1, 1, 28, 1, 1, 30, 1, 1, 32, 1, 1, 34, 1, 1, 36, 1, 1, 38, 1, 1]
-
-    TESTS::
-
-        sage: continued_fraction_list(1 + 10^-10, nterms=3)
-        [1, 10000000000]
-        sage: continued_fraction_list(1 + 10^-20 - e^-100, bits=10, nterms=3)
-        [1, 100000000000000000000, 2688]
-        sage: continued_fraction_list(1 + 10^-20 - e^-100, bits=10, nterms=5)
-        [1, 100000000000000000000, 2688, 8, 1]
-        sage: continued_fraction_list(1 + 10^-20 - e^-100, bits=1000, nterms=5)
-        [1, 100000000000000000000, 2688, 8, 1]
-    """
-    if isinstance(x, (integer.Integer, int, long)):
-        if partial_convergents:
-            return [x], [(x,1)]
-        else:
-            return [x]
-
-    if isinstance(x, sage.rings.rational.Rational):
-        if bits is not None and nterms is None:
-            x = RealIntervalField(bits)(x)
-        else:
-            # PARI is faster than the pure Python below, but doesn't give us the convergents.
-            v = pari(x).contfrac().python()
-            if nterms is not None:
-                v = v[:nterms]
-            if partial_convergents:
-                w = [(0,1), (1,0)]
-                for a in v:
-                    pn = a*w[-1][0] + w[-2][0]
-                    qn = a*w[-1][1] + w[-2][1]
-                    w.append((pn, qn))
-                return v, w[2:]
-            else:
-                return v
-
-    # Work in interval field, increasing precision as needed.
-    if bits is None:
-        try:
-            bits = x.prec()
-        except AttributeError:
-            bits = 53
-    RIF = RealIntervalField(bits)
-    v = []
-    w = [(0,1), (1,0)]
-    orig, x = x, RIF(x)
-
-    while True:
-        try:
-            a = x.unique_floor()
-        except ValueError:
-            # Either we're done or we need more precision.
-            if nterms is None:
-                break
-            else:
-                RIF = RIF.to_prec(2*RIF.prec())
-                x = RIF(orig)
-                for a in v: x = ~(x-a)
-                continue
-        if partial_convergents:
-            pn = a*w[-1][0] + w[-2][0]
-            qn = a*w[-1][1] + w[-2][1]
-            w.append((pn, qn))
-        v.append(a)
-        if x == a or nterms is not None and len(v) >= nterms:
-            break
-        x = ~(x-a)
-
-    if partial_convergents:
-        return v, w[2:]
-    else:
-        return v
-
-
-def Hirzebruch_Jung_continued_fraction_list(x, bits=None, nterms=None):
-    r"""
-    Return the Hirzebruch-Jung continued fraction of ``x`` as a list.
-
-    The Hirzebruch-Jung continued fraction of `x` is similar to the
-    ordinary continued fraction expansion, but with minus signs. That
-    is, the coefficients `a_i` in
-
-    .. math::
-
-        x = a_1 - 1/(a_2-1/(...) ... )
-
-    with `a_1` integer and `a_2`, `...` positive integers.
-
-    .. SEEALSO::
-
-         :func:`continued_fraction_list` for ordinary continued fractions.
-
-    INPUT:
-
-    - ``x`` -- exact rational or something that can be numerically
-      evaluated. The number to compute the continued fraction of.
-
-    - ``bits`` -- integer (default: the precision of ``x``). the
-      precision of the real interval field that is used
-      internally. This is only used if ``x`` is not an exact fraction.
-
-    - ``nterms`` -- integer (default: None). The upper bound on the
-      number of terms in the continued fraction expansion to return.
-
-    OUTPUT:
-
-    A lits of integers, the coefficients in the Hirzebruch-Jung continued
-    fraction expansion of ``x``.
-
-    EXAMPLES::
-
-        sage: Hirzebruch_Jung_continued_fraction_list(17/11)
-        [2, 3, 2, 2, 2, 2]
-        sage: Hirzebruch_Jung_continued_fraction_list(45/17)
-        [3, 3, 6]
-        sage: Hirzebruch_Jung_continued_fraction_list(e, bits=20)
-        [3, 4, 3, 2, 2, 2, 3, 7]
-        sage: Hirzebruch_Jung_continued_fraction_list(e, bits=30)
-        [3, 4, 3, 2, 2, 2, 3, 8, 3, 2, 2, 2, 2, 2, 2, 2, 3]
-        sage: Hirzebruch_Jung_continued_fraction_list(sqrt(2), bits=100)
-        [2, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4,
-         2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 2]
-        sage: Hirzebruch_Jung_continued_fraction_list(sqrt(4/19))
-        [1, 2, 7, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 3, 7,
-         2, 2, 2, 7, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-        sage: Hirzebruch_Jung_continued_fraction_list(pi)
-        [4, 2, 2, 2, 2, 2, 2, 17, 294, 3, 4, 5, 16, 2, 2]
-        sage: Hirzebruch_Jung_continued_fraction_list(e)
-        [3, 4, 3, 2, 2, 2, 3, 8, 3, 2, 2, 2, 2, 2, 2, 2,
-         3, 12, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 10]
-        sage: Hirzebruch_Jung_continued_fraction_list(e, nterms=20)
-        [3, 4, 3, 2, 2, 2, 3, 8, 3, 2, 2, 2, 2, 2, 2, 2, 3, 12, 3, 2]
-        sage: len(_) == 20
-        True
-
-    TESTS::
-
-        sage: Hirzebruch_Jung_continued_fraction_list(1 - 10^-10, nterms=3)
-        [1, 10000000000]
-        sage: Hirzebruch_Jung_continued_fraction_list(1 - 10^-10 - e^-100, bits=100, nterms=5)
-        [1, 10000000000]
-        sage: Hirzebruch_Jung_continued_fraction_list(1 - 10^-20 - e^-100, bits=1000, nterms=5)
-        [1, 100000000000000000000, 2689, 2, 2]
-   """
-    if not isinstance(x, sage.rings.rational.Rational):
-        try:
-            x = QQ(x)
-        except TypeError:
-            # Numerically evaluate x
-            if bits is None:
-                try:
-                    bits = x.prec()
-                except AttributeError:
-                    bits = 53
-            x = QQ(x.n(bits))
-    v = []
-    while True:
-        div, mod = divmod(x.numerator(), x.denominator())
-        if mod == 0:
-            v.append(div)
-            break
-        v.append(div+1)
-        if nterms is not None and len(v) >= nterms:
-            break
-        x = 1/(div+1-x)
-    return v
-
-
-def convergent(v, n):
-    r"""
-    Return the n-th continued fraction convergent of the continued
-    fraction defined by the sequence of integers v. We assume
-    `n \geq 0`.
-
-    INPUT:
-
-
-    -  ``v`` - list of integers
-
-    -  ``n`` - integer
-
-
-    OUTPUT: a rational number
-
-    If the continued fraction integers are
-
-    .. math::
-
-       v = [a_0, a_1, a_2, \ldots, a_k]
-
-
-    then ``convergent(v,2)`` is the rational number
-
-    .. math::
-
-       a_0 + 1/a_1
-
-    and ``convergent(v,k)`` is the rational number
-
-    .. math::
-
-       a1 + 1/(a2+1/(...) ... )
-
-    represented by the continued fraction.
-
-    EXAMPLES::
-
-        sage: convergent([2, 1, 2, 1, 1, 4, 1, 1], 7)
-        193/71
-    """
-    if hasattr(v, 'convergent'):
-        return v.convergent(n)
-    i = int(n)
-    x = QQ(v[i])
-    i -= 1
-    while i >= 0:
-        x = QQ(v[i]) + 1/x
-        i -= 1
-    return x
-
-
-def convergents(v):
-    """
-    Return all the partial convergents of a continued fraction defined
-    by the sequence of integers v.
-
-    If v is not a list, compute the continued fraction of v and return
-    its convergents (this is potentially much faster than calling
-    continued_fraction first, since continued fractions are
-    implemented using PARI and there is overhead moving the answer back
-    from PARI).
-
-    INPUT:
-
-
-    -  ``v`` - list of integers or a rational number
-
-
-    OUTPUT:
-
-
-    -  ``list`` - of partial convergents, as rational
-       numbers
-
-
-    EXAMPLES::
-
-        sage: convergents([2, 1, 2, 1, 1, 4, 1, 1])
-        [2, 3, 8/3, 11/4, 19/7, 87/32, 106/39, 193/71]
-    """
-    if hasattr(v, 'convergents'):
-        return v.convergents()
-    if not isinstance(v, list):
-        v = pari(v).contfrac()
-    w = [(0,1), (1,0)]
-    for n in range(len(v)):
-        pn = w[n+1][0]*v[n] + w[n][0]
-        qn = w[n+1][1]*v[n] + w[n][1]
-        w.append((pn, qn))
-    return [QQ(x) for x in w[2:]]
-
-
-## def continuant(v, n=None):
-##     """
-##     Naive implementation with recursion.
-##
-##     See Graham, Knuth and Patashnik: Concrete Mathematics: 6.7 Continuants
-##     """
-##     m = len(v)
-##     if n == None or m < n:
-##         n = m
-##     if n == 0:
-##         return 1
-##     if n == 1:
-##         return v[0]
-##     return continuant(v[:n-1])*v[n-1] + continuant(v[:n-2])
+## Note: farey, convergent, continued_fraction_list and convergents have been moved to
+## sage.rings.continued_fraction
 
 def continuant(v, n=None):
     r"""
@@ -4374,7 +4020,7 @@ def continuant(v, n=None):
         sage: q = continuant([1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10])
         sage: p/q
         517656/190435
-        sage: convergent([2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10],14)
+        sage: continued_fraction([2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10]).convergent(14)
         517656/190435
         sage: x = PolynomialRing(RationalField(),'x',5).gens()
         sage: continuant(x)
@@ -4406,7 +4052,7 @@ def continuant(v, n=None):
     - Jaap Spies (2007-02-06)
     """
     m = len(v)
-    if n == None or m < n:
+    if n is None or m < n:
         n = m
     if n == 0:
         return 1
@@ -4438,7 +4084,7 @@ def number_of_divisors(n):
     """
     m = ZZ(n)
     if m.is_zero():
-        raise ValueError, "input must be nonzero"
+        raise ValueError("input must be nonzero")
     return ZZ(pari(m).numdiv())
 
 
@@ -4497,11 +4143,13 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
     """
     p = ZZ(p)
     if p != -1 and not p.is_prime():
-        raise ValueError, "p must be prime or -1"
+        raise ValueError("p must be prime or -1")
     a = QQ(a).numerator() * QQ(a).denominator()
     b = QQ(b).numerator() * QQ(b).denominator()
 
     if algorithm == "pari":
+        if p == -1:
+            p = 0
         return ZZ(pari(a).hilbert(b,p))
 
     elif algorithm == 'direct':
@@ -4539,10 +4187,10 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
         ans_pari = hilbert_symbol(a,b,p,algorithm='pari')
         ans_direct = hilbert_symbol(a,b,p,algorithm='direct')
         if ans_pari != ans_direct:
-            raise RuntimeError, "There is a bug in hilbert_symbol; two ways of computing the Hilbert symbol (%s,%s)_%s disagree"%(a,b,p)
+            raise RuntimeError("There is a bug in hilbert_symbol; two ways of computing the Hilbert symbol (%s,%s)_%s disagree"%(a,b,p))
         return ans_pari
     else:
-        raise ValueError, "Algorithm %s not defined"%algorithm
+        raise ValueError("Algorithm %s not defined"%algorithm)
 
 
 def hilbert_conductor(a, b):
@@ -4576,7 +4224,7 @@ def hilbert_conductor(a, b):
     """
     a, b = ZZ(a), ZZ(b)
     d = ZZ(1)
-    for p in union(union( [2], prime_divisors(a) ), prime_divisors(b) ):
+    for p in set().union([2], prime_divisors(a), prime_divisors(b)):
         if hilbert_symbol(a, b, p) == -1:
             d *= p
     return d
@@ -4626,7 +4274,7 @@ def hilbert_conductor_inverse(d):
     Z = ZZ
     d = Z(d)
     if d <= 0:
-        raise ValueError, "d needs to be positive"
+        raise ValueError("d needs to be positive")
     if d == 1:
         return (Z(-1), Z(1))
     if d == 2:
@@ -4643,7 +4291,7 @@ def hilbert_conductor_inverse(d):
     else:
         mo = moebius(d)
         if mo == 0:
-            raise ValueError, "d needs to be squarefree"
+            raise ValueError("d needs to be squarefree")
         if d % 2 == 0 and mo*d % 16 != 2:
             dd = mo * d / 2
         else:
@@ -4729,12 +4377,29 @@ def falling_factorial(x, a):
         sage: falling_factorial(x, 4)
         x^4 - 6*x^3 + 11*x^2 - 6*x
 
+    TESTS:
+
+    Check that :trac:`14858` is fixed::
+
+        sage: falling_factorial(-4, SR(2))
+        20
+
+    Check that :trac:`16770` is fixed::
+
+        sage: d = var('d')
+        sage: type(falling_factorial(d, 0))
+        <type 'sage.symbolic.expression.Expression'>
+
     AUTHORS:
 
     - Jaap Spies (2006-03-05)
     """
-    if isinstance(a, (integer.Integer, int, long)) and a >= 0:
-        return misc.prod([(x - i) for i in range(a)])
+    from sage.symbolic.expression import Expression
+
+    if (isinstance(a, (Integer, int, long)) or
+        (isinstance(a, Expression) and
+         a.is_integer())) and a >= 0:
+        return prod(((x - i) for i in range(a)), z=x.parent().one())
     from sage.functions.all import gamma
     return gamma(x+1) / gamma(x-a+1)
 
@@ -4800,12 +4465,31 @@ def rising_factorial(x, a):
         sage: rising_factorial(x, 4)
         x^4 + 6*x^3 + 11*x^2 + 6*x
 
+    TESTS:
+
+    Check that :trac:`14858` is fixed::
+
+        sage: bool(rising_factorial(-4, 2) ==
+        ....:      rising_factorial(-4, SR(2)) ==
+        ....:      rising_factorial(SR(-4), SR(2)))
+        True
+
+    Check that :trac:`16770` is fixed::
+
+        sage: d = var('d')
+        sage: type(rising_factorial(d, 0))
+        <type 'sage.symbolic.expression.Expression'>
+
     AUTHORS:
 
     - Jaap Spies (2006-03-05)
     """
-    if isinstance(a, (integer.Integer, int, long)) and a >= 0:
-        return misc.prod([(x + i) for i in range(a)])
+    from sage.symbolic.expression import Expression
+
+    if (isinstance(a, (Integer, int, long)) or
+        (isinstance(a, Expression) and
+         a.is_integer())) and a >= 0:
+        return prod(((x + i) for i in range(a)), z=x.parent().one())
     from sage.functions.all import gamma
     return gamma(x+a) / gamma(x)
 
@@ -4818,15 +4502,19 @@ def integer_ceil(x):
 
         sage: integer_ceil(5.4)
         6
+        sage: integer_ceil(x)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: computation of ceil of x not implemented
     """
     try:
-        return sage.rings.all.Integer(x.ceil())
+        return ZZ(x.ceil())
     except AttributeError:
         try:
-            return sage.rings.all.Integer(int(math.ceil(float(x))))
+            return ZZ(math.ceil(float(x)))
         except TypeError:
             pass
-    raise NotImplementedError, "computation of floor of %s not implemented"%repr(x)
+    raise NotImplementedError("computation of ceil of %s not implemented"%x)
 
 def integer_floor(x):
     r"""
@@ -4834,10 +4522,8 @@ def integer_floor(x):
 
     INPUT:
 
-
     -  ``x`` - an object that has a floor method or is
        coercible to int
-
 
     OUTPUT: an Integer
 
@@ -4851,152 +4537,423 @@ def integer_floor(x):
         -3
         sage: integer_floor(RDF(-5/2))
         -3
+
+        sage: integer_floor(x)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: computation of floor of x not implemented
     """
     try:
         return ZZ(x.floor())
     except AttributeError:
         try:
-            return ZZ(int(math.floor(float(x))))
+            return ZZ(math.floor(float(x)))
         except TypeError:
             pass
-    raise NotImplementedError, "computation of floor of %s not implemented"%x
+    raise NotImplementedError("computation of floor of %s not implemented"%x)
 
 
-
-def two_squares(n, algorithm='gap'):
+def two_squares(n):
     """
-    Write the integer n as a sum of two integer squares if possible;
-    otherwise raise a ValueError.
+    Write the integer `n` as a sum of two integer squares if possible;
+    otherwise raise a ``ValueError``.
+
+    INPUT:
+
+    - ``n`` -- an integer
+
+    OUTPUT: a tuple `(a,b)` of non-negative integers such that
+    `n = a^2 + b^2` with `a <= b`.
 
     EXAMPLES::
 
         sage: two_squares(389)
         (10, 17)
-        sage: two_squares(7)
+        sage: two_squares(21)
         Traceback (most recent call last):
         ...
-        ValueError: 7 is not a sum of two squares
-        sage: a,b = two_squares(2009); a,b
-        (28, 35)
+        ValueError: 21 is not a sum of 2 squares
+        sage: two_squares(21^2)
+        (0, 21)
+        sage: a,b = two_squares(100000000000000000129); a,b
+        (4418521500, 8970878873)
         sage: a^2 + b^2
-        2009
+        100000000000000000129
+        sage: two_squares(2^222+1)
+        (253801659504708621991421712450521, 2583712713213354898490304645018692)
+        sage: two_squares(0)
+        (0, 0)
+        sage: two_squares(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: -1 is not a sum of 2 squares
 
-    TODO: Create an implementation using PARI's continued fraction
-    implementation.
+    TESTS::
+
+        sage: for _ in xrange(100):
+        ....:     a = ZZ.random_element(2**16, 2**20)
+        ....:     b = ZZ.random_element(2**16, 2**20)
+        ....:     n = a**2 + b**2
+        ....:     aa,bb = two_squares(n)
+        ....:     assert aa**2 + bb**2 == n
+
+    ALGORITHM:
+
+    See http://www.schorn.ch/howto.html
     """
-    from sage.rings.all import Integer
-    n = Integer(n)
+    n = ZZ(n)
 
-    if algorithm == 'gap':
-        import sage.interfaces.gap as gap
-        a = gap.gap.eval('TwoSquares(%s)'%n)
-        if a == 'fail':
-            raise ValueError, "%s is not a sum of two squares"%n
-        x, y = eval(a)
-        return Integer(x), Integer(y)
+    if n <= 0:
+        if n == 0:
+            z = ZZ.zero()
+            return (z, z)
+        raise ValueError("%s is not a sum of 2 squares"%n)
+
+    if n.nbits() <= 32:
+        from sage.rings import sum_of_squares
+        return sum_of_squares.two_squares_pyx(n)
+
+    # Start by factoring n (which seems to be unavoidable)
+    F = n.factor(proof=False)
+
+    # First check whether it is possible to write n as a sum of two
+    # squares: all prime powers p^e must have p = 2 or p = 1 mod 4
+    # or e even.
+    for (p,e) in F:
+        if e % 2 == 1 and p % 4 == 3:
+            raise ValueError("%s is not a sum of 2 squares"%n)
+
+    # We run over all factors of n, write each factor p^e as
+    # a sum of 2 squares and accumulate the product
+    # (using multiplication in Z[I]) in a^2 + b^2.
+    from sage.rings.finite_rings.integer_mod import Mod
+    a = ZZ.one()
+    b = ZZ.zero()
+    for (p,e) in F:
+        if e >= 2:
+            m = p ** (e//2)
+            a *= m
+            b *= m
+        if e % 2 == 1:
+            if p == 2:
+                # (a + bi) *= (1 + I)
+                a,b = a - b, a + b
+            else:  # p = 1 mod 4
+                # Find a square root of -1 mod p.
+                # If y is a non-square, then y^((p-1)/4) is a square root of -1.
+                y = Mod(2,p)
+                while True:
+                    s = y**((p-1)/4)
+                    if not s*s + 1:
+                        s = s.lift()
+                        break
+                    y += 1
+                # Apply Cornacchia's algorithm to write p as r^2 + s^2.
+                r = p
+                while s*s > p:
+                    r,s = s, r % s
+                r %= s
+
+                # Multiply (a + bI) by (r + sI)
+                a,b = a*r - b*s, b*r + a*s
+
+    a = a.abs()
+    b = b.abs()
+    assert a*a + b*b == n
+    if a <= b:
+        return (a,b)
     else:
-        raise RuntimeError, "unknown algorithm '%s'"%algorithm
+        return (b,a)
 
-def _brute_force_four_squares(n):
+def three_squares(n):
     """
-    Brute force search for decomposition into a sum of four squares,
-    for cases that the main algorithm fails to handle.
+    Write the integer `n` as a sum of three integer squares if possible;
+    otherwise raise a ``ValueError``.
 
     INPUT:
 
-    - ``n`` - a positive integer
+    - ``n`` -- an integer
 
-    OUTPUT:
-
-    - a list of four numbers whose squares sum to n
+    OUTPUT: a tuple `(a,b,c)` of non-negative integers such that
+    `n = a^2 + b^2 + c^2` with `a <= b <= c`.
 
     EXAMPLES::
 
-        sage: from sage.rings.arith import _brute_force_four_squares
-        sage: _brute_force_four_squares(567)
-        [1, 1, 6, 23]
+        sage: three_squares(389)
+        (1, 8, 18)
+        sage: three_squares(946)
+        (9, 9, 28)
+        sage: three_squares(2986)
+        (3, 24, 49)
+        sage: three_squares(7^100)
+        (0, 0, 1798465042647412146620280340569649349251249)
+        sage: three_squares(11^111-1)
+        (616274160655975340150706442680, 901582938385735143295060746161, 6270382387635744140394001363065311967964099981788593947233)
+        sage: three_squares(7 * 2^41)
+        (1048576, 2097152, 3145728)
+        sage: three_squares(7 * 2^42)
+        Traceback (most recent call last):
+        ...
+        ValueError: 30786325577728 is not a sum of 3 squares
+        sage: three_squares(0)
+        (0, 0, 0)
+        sage: three_squares(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: -1 is not a sum of 3 squares
+
+    TESTS::
+
+        sage: for _ in xrange(100):
+        ....:     a = ZZ.random_element(2**16, 2**20)
+        ....:     b = ZZ.random_element(2**16, 2**20)
+        ....:     c = ZZ.random_element(2**16, 2**20)
+        ....:     n = a**2 + b**2 + c**2
+        ....:     aa,bb,cc = three_squares(n)
+        ....:     assert aa**2 + bb**2 + cc**2 == n
+
+    ALGORITHM:
+
+    See http://www.schorn.ch/howto.html
     """
-    from math import sqrt
-    for i in range(0,int(sqrt(n))+1):
-        for j in range(i,int(sqrt(n-i**2))+1):
-            for k in range(j, int(sqrt(n-i**2-j**2))+1):
-                rem = n-i**2-j**2-k**2
-                if rem >= 0:
-                    l = int(sqrt(rem))
-                    if rem-l**2==0:
-                        return [i,j,k,l]
+    n = ZZ(n)
+
+    if n <= 0:
+        if n == 0:
+            z = ZZ.zero()
+            return (z, z, z)
+        raise ValueError("%s is not a sum of 3 squares"%n)
+
+    if n.nbits() <= 32:
+        from sage.rings import sum_of_squares
+        return sum_of_squares.three_squares_pyx(n)
+
+    # First, remove all factors 4 from n
+    e = n.valuation(2)//2
+    m = ZZ.one() << e
+    N = n >> (2*e)
+
+    # Let x be the largest integer at most sqrt(N)
+    x, r = N.sqrtrem()
+    # We need to check for this special case,
+    # otherwise N - x^2 will always factor.
+    if not r:
+        z = ZZ.zero()
+        return (z, z, x*m)
+
+    # Consider different cases to find an x such that N - x^2 is easily
+    # written as the sum of 2 squares, because it is either p or 2p,
+    # with p a prime which is 1 mod 4.
+    if N % 4 == 1:
+        # Write N = x^2 + p with x even, p = 1 mod 4 prime
+        if x % 2 == 1:
+            x -= 1
+        while x >= 0:
+            p = N - x*x
+            if p.is_pseudoprime():
+                break
+            x -= 2
+    elif N % 4 == 2:
+        # Write N = x^2 + p with x odd, p = 1 mod 4 prime
+        if x % 2 == 0:
+            x -= 1
+        while x >= 0:
+            p = N - x*x
+            if p.is_pseudoprime():
+                break
+            x -= 2
+    elif N % 8 == 3:
+        # Write N = x^2 + 2p with x odd, p = 1 mod 4 prime
+        if x % 2 == 0:
+            x -= 1
+        while x >= 0:
+            p = (N - x*x) >> 1
+            if p.is_pseudoprime():
+                break
+            x -= 2
+    else:  # 7 mod 8
+        raise ValueError("%s is not a sum of 3 squares"%n)
+
+    if x < 0:
+        # We found no good x, brute force instead.
+        # Normally, this should only happen for small values of N.
+        if N > 10000:
+            from warnings import warn
+            warn("Brute forcing sum of 3 squares for large N = %s"%N, RuntimeWarning)
+        x = N.isqrt()
+
+    # In the usual case, this loop will only be executed once, since
+    # we already know the "right" value of x.
+    # This will only really loop if we hit the "x < 0" case above.
+    while True:
+        try:
+            a,b = two_squares(N - x*x)
+            break
+        except ValueError:
+            x -= 1
+            assert x >= 0
+
+    if x >= b:
+        return (a*m, b*m, x*m)
+    elif x >= a:
+        return (a*m, x*m, b*m)
+    else:
+        return (x*m, a*m, b*m)
 
 def four_squares(n):
     """
-    Computes the decomposition into the sum of four squares,
-    using an algorithm described by Peter Schorn at:
-    http://www.schorn.ch/howto.html.
+    Write the integer `n` as a sum of four integer squares.
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- an integer
 
-    OUTPUT:
-
-    - a list of four numbers whose squares sum to n
+    OUTPUT: a tuple `(a,b,c,d)` of non-negative integers such that
+    `n = a^2 + b^2 + c^2 + d^2` with `a <= b <= c <= d`.
 
     EXAMPLES::
 
         sage: four_squares(3)
-        [0, 1, 1, 1]
+        (0, 1, 1, 1)
+        sage: four_squares(13)
+        (0, 0, 2, 3)
         sage: four_squares(130)
-        [0, 0, 3, 11]
+        (0, 0, 3, 11)
         sage: four_squares(1101011011004)
-        [2, 1049178, 2370, 15196]
-        sage: sum([i-sum([q^2 for q in four_squares(i)]) for i in range(2,10000)]) # long time
-        0
-    """
-    from sage.rings.finite_rings.integer_mod import mod
-    from math import sqrt
-    from sage.rings.arith import _brute_force_four_squares
-    try:
-        ts = two_squares(n)
-        return [0,0,ts[0],ts[1]]
-    except ValueError:
-        pass
-    m = n
-    v = 0
-    while mod(m,4) == 0:
-        v = v +1
-        m = m // 4
-    if mod(m,8) == 7:
-        d = 1
-        m = m - 1
-    else:
-        d = 0
-    if mod(m,8)==3:
-        x = int(sqrt(m))
-        if mod(x,2) == 0:
-            x = x - 1
-        p = (m-x**2) // 2
-        while not is_prime(p):
-            x = x - 2
-            p = (m-x**2) // 2
-            if x < 0:
-            # fall back to brute force
-                m = m + d
-                return [2**v*q for q in _brute_force_four_squares(m)]
-        y,z = two_squares(p)
-        return [2**v*q for q in [d,x,y+z,abs(y-z)]]
-    x = int(sqrt(m))
-    p = m - x**2
-    if p == 1:
-        return[2**v*q for q in [d,0,x,1]]
-    while not is_prime(p):
-        x = x - 1
-        p = m - x**2
-        if x < 0:
-            # fall back to brute force
-            m = m + d
-            return [2**v*q for q in _brute_force_four_squares(m)]
-    y,z = two_squares(p)
-    return [2**v*q for q in [d,x,y,z]]
+        (90, 102, 1220, 1049290)
+        sage: four_squares(10^100-1)
+        (155024616290, 2612183768627, 14142135623730950488016887, 99999999999999999999999999999999999999999999999999)
+        sage: for i in range(2^129, 2^129+10000):  # long time
+        ....:     S = four_squares(i)
+        ....:     assert sum(x^2 for x in S) == i
 
+    TESTS::
+
+        sage: for _ in xrange(100):
+        ....:     n = ZZ.random_element(2**32,2**34)
+        ....:     aa,bb,cc,dd = four_squares(n)
+        ....:     assert aa**2 + bb**2 + cc**2 + dd**2 == n
+    """
+    n = ZZ(n)
+
+    if n <= 0:
+        if n == 0:
+            z = ZZ.zero()
+            return (z, z, z, z)
+        raise ValueError("%s is not a sum of 4 squares"%n)
+
+    if n.nbits() <= 32:
+        from sage.rings import sum_of_squares
+        return sum_of_squares.four_squares_pyx(n)
+
+    # First, remove all factors 4 from n
+    e = n.valuation(2) // 2
+    m = ZZ.one() << e
+    N = n >> (2*e)
+
+    # Subtract a suitable x^2 such that N - x^2 is 1,2,3,5,6 mod 8,
+    # which can then be written as a sum of 3 squares.
+    x = N.isqrt()
+    y = N - x*x
+    if y >= 7 and (y % 4 == 0 or y % 8 == 7):
+        x -= 1
+        y += 2*x + 1
+
+    a,b,c = three_squares(y)
+
+    # Correct sorting is guaranteed by construction
+    return (a*m, b*m, c*m, x*m)
+
+def sum_of_k_squares(k,n):
+    """
+    Write the integer `n` as a sum of `k` integer squares if possible;
+    otherwise raise a ``ValueError``.
+
+    INPUT:
+
+    - ``k`` -- a non-negative integer
+
+    - ``n`` -- an integer
+
+    OUTPUT: a tuple `(x_1, ..., x_k)` of non-negative integers such that
+    their squares sum to `n`.
+
+    EXAMPLES::
+
+        sage: sum_of_k_squares(2, 9634)
+        (15, 97)
+        sage: sum_of_k_squares(3, 9634)
+        (0, 15, 97)
+        sage: sum_of_k_squares(4, 9634)
+        (1, 2, 5, 98)
+        sage: sum_of_k_squares(5, 9634)
+        (0, 1, 2, 5, 98)
+        sage: sum_of_k_squares(6, 11^1111-1)
+        (19215400822645944253860920437586326284, 37204645194585992174252915693267578306, 3473654819477394665857484221256136567800161086815834297092488779216863122, 5860191799617673633547572610351797996721850737768032876360978911074629287841061578270832330322236796556721252602860754789786937515870682024273948, 20457423294558182494001919812379023992538802203730791019728543439765347851316366537094696896669915675685581905102118246887673397020172285247862426612188418787649371716686651256443143210952163970564228423098202682066311189439731080552623884051737264415984619097656479060977602722566383385989, 311628095411678159849237738619458396497534696043580912225334269371611836910345930320700816649653412141574887113710604828156159177769285115652741014638785285820578943010943846225597311231847997461959204894255074229895666356909071243390280307709880906261008237873840245959883405303580405277298513108957483306488193844321589356441983980532251051786704380984788999660195252373574924026139168936921591652831237741973242604363696352878914129671292072201700073286987126265965322808664802662993006926302359371379531571194266134916767573373504566621665949840469229781956838744551367172353)
+        sage: sum_of_k_squares(7, 0)
+        (0, 0, 0, 0, 0, 0, 0)
+        sage: sum_of_k_squares(30,999999)
+        (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7, 44, 999)
+        sage: sum_of_k_squares(1, 9)
+        (3,)
+        sage: sum_of_k_squares(1, 10)
+        Traceback (most recent call last):
+        ...
+        ValueError: 10 is not a sum of 1 square
+        sage: sum_of_k_squares(1, -10)
+        Traceback (most recent call last):
+        ...
+        ValueError: -10 is not a sum of 1 square
+        sage: sum_of_k_squares(0, 9)
+        Traceback (most recent call last):
+        ...
+        ValueError: 9 is not a sum of 0 squares
+        sage: sum_of_k_squares(0, 0)
+        ()
+        sage: sum_of_k_squares(7, -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: -1 is not a sum of 7 squares
+        sage: sum_of_k_squares(-1, 0)
+        Traceback (most recent call last):
+        ...
+        ValueError: k = -1 must be non-negative
+    """
+    n = ZZ(n)
+    k = int(k)
+
+    if k <= 4:
+        if k == 4:
+            return four_squares(n)
+        if k == 3:
+            return three_squares(n)
+        if k == 2:
+            return two_squares(n)
+        if k == 1:
+            if n >= 0:
+                x, r = n.sqrtrem()
+                if not r:
+                    return (x,)
+            raise ValueError("%s is not a sum of 1 square"%n)
+        if k == 0:
+            if n == 0:
+                return tuple()
+            raise ValueError("%s is not a sum of 0 squares"%n)
+        raise ValueError("k = %s must be non-negative"%k)
+
+    if n < 0:
+        raise ValueError("%s is not a sum of %s squares"%(n,k))
+
+    # Recursively subtract the largest square
+    t = []
+    while k > 4:
+        x = n.isqrt()
+        t.insert(0, x)
+        n -= x*x
+        k -= 1
+
+    t = list(four_squares(n)) + t
+    return tuple(t)
 
 def subfactorial(n):
     r"""
@@ -5030,59 +4987,35 @@ def subfactorial(n):
     """
     return factorial(n)*sum(((-1)**k)/factorial(k) for k in range(n+1))
 
-
 def is_power_of_two(n):
     r"""
-    This function returns True if and only if `n` is a power of
+    This function returns True if and only if ``n`` is a power of
     2
 
     INPUT:
 
-
     -  ``n`` - integer
 
-
     OUTPUT:
-
 
     -  ``True`` - if n is a power of 2
 
     -  ``False`` - if not
 
-
     EXAMPLES::
 
         sage: is_power_of_two(1024)
         True
-
-    ::
-
         sage: is_power_of_two(1)
         True
-
-    ::
-
         sage: is_power_of_two(24)
         False
-
-    ::
-
         sage: is_power_of_two(0)
         False
-
-    ::
-
         sage: is_power_of_two(-4)
         False
-
-    AUTHORS:
-
-    - Jaap Spies (2006-12-09)
     """
-    # modification of is2pow(n) from the Programming Guide
-    while n > 0 and n%2 == 0:
-        n = n >> 1
-    return n == 1
+    return ZZ(n).popcount() == 1
 
 def differences(lis, n=1):
     """
@@ -5108,7 +5041,7 @@ def differences(lis, n=1):
     """
     n = ZZ(n)
     if n < 1:
-        raise ValueError, 'n must be greater than 0'
+        raise ValueError('n must be greater than 0')
     lis = [lis[i + 1] - num for i, num in enumerate(lis[:-1])]
     if n == 1:
         return lis
@@ -5198,13 +5131,13 @@ def sort_complex_numbers_for_display(nums):
         sage: sort_c = sort_complex_numbers_for_display
         sage: nums = [CDF(i) for i in range(3)]
         sage: for i in range(3):
-        ...       nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
-        ...                       RDF.random_element()))
-        ...       nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
-        ...                       RDF.random_element()))
+        ....:     nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
+        ....:                     RDF.random_element()))
+        ....:     nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
+        ....:                     RDF.random_element()))
         sage: shuffle(nums)
         sage: sort_c(nums)
-        [0.0, 1.0, 2.0, -2.862406201e-11 - 0.708874026302*I, 2.2108362707e-11 - 0.436810529675*I, 1.00000000001 - 0.758765473764*I, 0.999999999976 - 0.723896589334*I, 1.99999999999 - 0.456080101207*I, 1.99999999999 + 0.609083628313*I]
+        [0.0, 1.0, 2.0, -2.862406201002009e-11 - 0.7088740263015161*I, 2.2108362706985576e-11 - 0.43681052967509904*I, 1.0000000000138833 - 0.7587654737635712*I, 0.9999999999760288 - 0.7238965893336062*I, 1.9999999999874383 - 0.4560801012073723*I, 1.9999999999869107 + 0.6090836283134269*I]
     """
     if len(nums) == 0:
         return nums
@@ -5239,8 +5172,7 @@ def fundamental_discriminant(D):
         8
 
     """
-    from sage.rings.all import Integer
-    D = Integer(D)
+    D = ZZ(D)
     D = D.squarefree_part()
     if D%4 == 1:
         return D
@@ -5266,11 +5198,19 @@ def squarefree_divisors(x):
         sage: list(squarefree_divisors(12))
         [1, 2, 3, 6]
 
+    TESTS:
+
+    Check that the first divisor (i.e. `1`) is a Sage integer (see
+    :trac:`17852`)::
+
+        sage: a = squarefree_divisors(14).next()
+        sage: a
+        1
+        sage: type(a)
+        <type 'sage.rings.integer.Integer'>
     """
-    p_list = prime_divisors(x)
-    from sage.misc.misc import powerset
-    for a in powerset(p_list):
-        yield prod(a,1)
+    for a in powerset(prime_divisors(x)):
+        yield prod(a, ZZ.one())
 
 def dedekind_sum(p, q, algorithm='default'):
     r"""
@@ -5342,7 +5282,7 @@ def dedekind_sum(p, q, algorithm='default'):
         sage: dedekind_sum(3^54 - 1, 2^93 + 1, algorithm='pari')
         459340694971839990630374299870/29710560942849126597578981379
 
-    Pari uses a different definition if the inputs are not coprime::
+    We check consistency of the results::
 
         sage: dedekind_sum(5, 7, algorithm='default')
         -1/14
@@ -5355,7 +5295,7 @@ def dedekind_sum(p, q, algorithm='default'):
         sage: dedekind_sum(6, 8, algorithm='flint')
         -1/8
         sage: dedekind_sum(6, 8, algorithm='pari')
-        -1/24
+        -1/8
 
     REFERENCES:
 
@@ -5370,7 +5310,7 @@ def dedekind_sum(p, q, algorithm='default'):
     if algorithm == 'pari':
         import sage.interfaces.gp
         x = sage.interfaces.gp.gp('sumdedekind(%s,%s)' % (p, q))
-        return sage.rings.rational.Rational(x)
+        return Rational(x)
 
     raise ValueError('unknown algorithm')
 

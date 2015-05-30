@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# spkg-install file for
+# * database_stein_watkins
+# * database_stein_watkins_mini
+
+if [ -z "$SAGE_SHARE" ]; then
+    echo >&2 "SAGE_SHARE undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+TARGET="${SAGE_SHARE}/stein_watkins"
+if [ ! -d "${TARGET}" ]; then
+   mkdir "${TARGET}"
+fi
+
+exec cp -R src/swdb/* "${TARGET}/"

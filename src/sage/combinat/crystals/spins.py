@@ -7,17 +7,21 @@ representations: the spin representations of odd orthogonal groups
 representations of the even orthogonal groups.
 
 We follow Kashiwara and Nakashima (Journal of Algebra 165, 1994) in
-representing the elements of the spin Crystal by sequences of signs
-`\pm`. Two other representations are available as attributes
-:meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
-
-- A numerical internal representation, an integer `n` such that if `n-1`
-  is written in binary and the `1`'s are replaced by ``-``, the `0`'s by
-  ``+``
-
-- The signature, which is a list in which ``+`` is replaced by `+1` and
-  ``-`` by `-1`.
+representing the elements of the spin crystal by sequences of signs
+`\pm`.
 """
+#TODO: Do we want the following two representations?
+#
+#Two other representations are available as attributes
+#:meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
+#
+#- A numerical internal representation, an integer `n` such that if `n-1`
+#  is written in binary and the `1`'s are replaced by ``-``, the `0`'s by
+#  ``+``
+#
+#- The signature, which is a list in which ``+`` is replaced by `+1` and
+#  ``-`` by `-1`.
+
 
 #*****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
@@ -56,8 +60,9 @@ def CrystalOfSpins(ct):
     This is a combinatorial model for the crystal with highest weight
     `Lambda_n` (the `n`-th fundamental weight). It has
     `2^n` elements, here called Spins. See also
-    :func:`CrystalOfLetters`, :func:`CrystalOfSpinsPlus`,
-    and :func:`CrystalOfSpinsMinus`.
+    :func:`~sage.combinat.crystals.letters.CrystalOfLetters`,
+    :func:`~sage.combinat.crystals.spins.CrystalOfSpinsPlus`,
+    and :func:`~sage.combinat.crystals.spins.CrystalOfSpinsMinus`.
 
     INPUT:
 
@@ -65,7 +70,7 @@ def CrystalOfSpins(ct):
 
     EXAMPLES::
 
-        sage: C = CrystalOfSpins(['B',3])
+        sage: C = crystals.Spins(['B',3])
         sage: C.list()
         [+++, ++-, +-+, -++, +--, -+-, --+, ---]
         sage: C.cartan_type()
@@ -78,7 +83,7 @@ def CrystalOfSpins(ct):
 
     TESTS::
 
-        sage: TensorProductOfCrystals(C,C,generators=[[C.list()[0],C.list()[0]]]).cardinality()
+        sage: crystals.TensorProduct(C,C,generators=[[C.list()[0],C.list()[0]]]).cardinality()
         35
     """
     ct = CartanType(ct)
@@ -104,7 +109,7 @@ def CrystalOfSpinsPlus(ct):
 
     EXAMPLES::
 
-        sage: D = CrystalOfSpinsPlus(['D',4])
+        sage: D = crystals.SpinsPlus(['D',4])
         sage: D.list()
         [++++, ++--, +-+-, -++-, +--+, -+-+, --++, ----]
 
@@ -136,7 +141,7 @@ def CrystalOfSpinsMinus(ct):
 
     EXAMPLES::
 
-        sage: E = CrystalOfSpinsMinus(['D',4])
+        sage: E = crystals.SpinsMinus(['D',4])
         sage: E.list()
         [+++-, ++-+, +-++, -+++, +---, -+--, --+-, ---+]
         sage: [x.signature() for x in E]
@@ -144,10 +149,10 @@ def CrystalOfSpinsMinus(ct):
 
     TESTS::
 
-        sage: len(TensorProductOfCrystals(E,E,generators=[[E[0],E[0]]]).list())
+        sage: len(crystals.TensorProduct(E,E,generators=[[E[0],E[0]]]).list())
         35
-        sage: D = CrystalOfSpinsPlus(['D',4])
-        sage: len(TensorProductOfCrystals(D,E,generators=[[D.list()[0],E.list()[0]]]).list())
+        sage: D = crystals.SpinsPlus(['D',4])
+        sage: len(crystals.TensorProduct(D,E,generators=[[D.list()[0],E.list()[0]]]).list())
         56
     """
     ct = CartanType(ct)
@@ -164,7 +169,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: E = CrystalOfSpinsMinus(['D',4])
+            sage: E = crystals.SpinsMinus(['D',4])
             sage: TestSuite(E).run()
         """
         self._cartan_type = CartanType(ct)
@@ -196,7 +201,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: C([1,1,1])
             +++
         """
@@ -211,7 +216,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: C((1,1,1))
             +++
         """
@@ -223,7 +228,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: CrystalOfSpins(['B',3]).list()
+            sage: crystals.Spins(['B',3]).list()
             [+++, ++-, +-+, -++, +--, -+-, --+, ---]
         """
         return self._list
@@ -234,7 +239,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: CrystalOfSpins(['B',3]).digraph()
+            sage: crystals.Spins(['B',3]).digraph()
             Digraph on 8 vertices
         """
         return self._digraph
@@ -250,7 +255,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: x = C([1,1,1])
             sage: y = C([-1,-1,-1])
             sage: C.lt_elements(x,y)
@@ -272,7 +277,7 @@ class Spin(LetterTuple):
 
     EXAMPLES::
 
-        sage: C = CrystalOfSpins(['B',3])
+        sage: C = crystals.Spins(['B',3])
         sage: c = C([1,1,1])
         sage: TestSuite(c).run()
 
@@ -283,7 +288,7 @@ class Spin(LetterTuple):
         sage: c._repr_()
         '+++'
 
-        sage: D = CrystalOfSpins(['B',4])
+        sage: D = crystals.Spins(['B',4])
         sage: a = C([1,1,1])
         sage: b = C([-1,-1,-1])
         sage: c = D([1,1,1,1])
@@ -300,7 +305,7 @@ class Spin(LetterTuple):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: C([1,1,1]).signature()
             '+++'
             sage: C([1,1,-1]).signature()
@@ -317,7 +322,7 @@ class Spin(LetterTuple):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: b = C([1,1,-1])
             sage: b
             ++-
@@ -326,13 +331,43 @@ class Spin(LetterTuple):
         """
         return self.signature()
 
+    def _repr_diagram(self):
+        """
+        Return a representation of ``self`` as a diagram.
+
+        EXAMPLES::
+
+            sage: C = crystals.Spins(['B',3])
+            sage: b = C([1,1,-1])
+            sage: print b._repr_diagram()
+            +
+            +
+            -
+        """
+        return '\n'.join(self.signature())
+
+    def pp(self):
+        """
+        Pretty print ``self`` as a column.
+
+        EXAMPLES::
+
+            sage: C = crystals.Spins(['B',3])
+            sage: b = C([1,1,-1])
+            sage: b.pp()
+            +
+            +
+            -
+        """
+        print self._repr_diagram()
+
     def _latex_(self):
         r"""
         Gives the latex output of a spin column.
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: b = C([1,1,-1])
             sage: print b._latex_()
             {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
@@ -351,7 +386,7 @@ class Spin(LetterTuple):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: [[C[m].epsilon(i) for i in range(1,4)] for m in range(8)]
             [[0, 0, 0], [0, 0, 1], [0, 1, 0], [1, 0, 0],
              [0, 0, 1], [1, 0, 1], [0, 1, 0], [0, 0, 1]]
@@ -366,7 +401,7 @@ class Spin(LetterTuple):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: [[C[m].phi(i) for i in range(1,4)] for m in range(8)]
             [[0, 0, 1], [0, 1, 0], [1, 0, 1], [0, 0, 1],
              [1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]]
@@ -385,7 +420,7 @@ class Spin_crystal_type_B_element(Spin):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: [[C[m].e(i) for i in range(1,4)] for m in range(8)]
             [[None, None, None], [None, None, +++], [None, ++-, None], [+-+, None, None],
             [None, None, +-+], [+--, None, -++], [None, -+-, None], [None, None, --+]]
@@ -412,7 +447,7 @@ class Spin_crystal_type_B_element(Spin):
 
         EXAMPLES::
 
-            sage: C = CrystalOfSpins(['B',3])
+            sage: C = crystals.Spins(['B',3])
             sage: [[C[m].f(i) for i in range(1,4)] for m in range(8)]
             [[None, None, ++-], [None, +-+, None], [-++, None, +--], [None, None, -+-],
             [-+-, None, None], [None, --+, None], [None, None, ---], [None, None, None]]
@@ -443,14 +478,14 @@ class Spin_crystal_type_D_element(Spin):
 
         EXAMPLES::
 
-            sage: D = CrystalOfSpinsPlus(['D',4])
+            sage: D = crystals.SpinsPlus(['D',4])
             sage: [[D.list()[m].e(i) for i in range(1,4)] for m in range(8)]
             [[None, None, None], [None, None, None], [None, ++--, None], [+-+-, None, None],
             [None, None, +-+-], [+--+, None, -++-], [None, -+-+, None], [None, None, None]]
 
         ::
 
-            sage: E = CrystalOfSpinsMinus(['D',4])
+            sage: E = crystals.SpinsMinus(['D',4])
             sage: [[E[m].e(i) for i in range(1,4)] for m in range(8)]
             [[None, None, None], [None, None, +++-], [None, ++-+, None], [+-++, None, None],
             [None, None, None], [+---, None, None], [None, -+--, None], [None, None, --+-]]
@@ -478,14 +513,14 @@ class Spin_crystal_type_D_element(Spin):
 
         EXAMPLES::
 
-            sage: D = CrystalOfSpinsPlus(['D',4])
+            sage: D = crystals.SpinsPlus(['D',4])
             sage: [[D.list()[m].f(i) for i in range(1,4)] for m in range(8)]
             [[None, None, None], [None, +-+-, None], [-++-, None, +--+], [None, None, -+-+],
             [-+-+, None, None], [None, --++, None], [None, None, None], [None, None, None]]
 
         ::
 
-            sage: E = CrystalOfSpinsMinus(['D',4])
+            sage: E = crystals.SpinsMinus(['D',4])
             sage: [[E[m].f(i) for i in range(1,4)] for m in range(8)]
             [[None, None, ++-+], [None, +-++, None], [-+++, None, None], [None, None, None],
             [-+--, None, None], [None, --+-, None], [None, None, ---+], [None, None, None]]

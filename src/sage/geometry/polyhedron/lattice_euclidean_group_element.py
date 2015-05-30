@@ -56,10 +56,8 @@ class LatticeEuclideanGroupElement(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.geometry.polyhedron.ppl_lattice_polytope \
-            ....:     import LatticePolytope_PPL, C_Polyhedron
-            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element \
-            ....:     import LatticeEuclideanGroupElement
+            sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL, C_Polyhedron
+            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element import LatticeEuclideanGroupElement
             sage: M = LatticeEuclideanGroupElement([[1,2],[2,3],[-1,2]], [1,2,3])
             sage: M
             The map A*x+b with A=
@@ -95,10 +93,8 @@ class LatticeEuclideanGroupElement(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.geometry.polyhedron.ppl_lattice_polytope \
-            ....:     import LatticePolytope_PPL, C_Polyhedron
-            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element \
-            ....:     import LatticeEuclideanGroupElement
+            sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL, C_Polyhedron
+            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element import LatticeEuclideanGroupElement
             sage: M = LatticeEuclideanGroupElement([[1,2],[2,3],[-1,2]], [1,2,3])
             sage: M(vector(ZZ, [11,13]))
             (38, 63, 18)
@@ -125,8 +121,7 @@ class LatticeEuclideanGroupElement(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element \
-            ....:     import LatticeEuclideanGroupElement
+            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element import LatticeEuclideanGroupElement
             sage: M = LatticeEuclideanGroupElement([[1,2],[2,3],[-1,2]], [1,2,3])
             sage: M._repr_()
             'The map A*x+b with A=\n[ 1  2]\n[ 2  3]\n[-1  2]\nb = \n(1, 2, 3)'
@@ -141,8 +136,7 @@ class LatticeEuclideanGroupElement(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element \
-            ....:     import LatticeEuclideanGroupElement
+            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element import LatticeEuclideanGroupElement
             sage: M = LatticeEuclideanGroupElement([[1,2],[2,3],[-1,2]], [1,2,3])
             sage: M
             The map A*x+b with A=
@@ -162,8 +156,7 @@ class LatticeEuclideanGroupElement(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element \
-            ....:     import LatticeEuclideanGroupElement
+            sage: from sage.geometry.polyhedron.lattice_euclidean_group_element import LatticeEuclideanGroupElement
             sage: M = LatticeEuclideanGroupElement([[1,2],[2,3],[-1,2]], [1,2,3])
             sage: M
             The map A*x+b with A=

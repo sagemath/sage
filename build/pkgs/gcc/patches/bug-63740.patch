@@ -1,0 +1,21 @@
+Bug 63740 - [4.9 Regression] GCC 4.9.2 bootstrap fails on ARM, haifa-sched.c:6507:1: internal compiler error: in lra_create
+
+Upstream tracker: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63740
+Patch taken from https://gcc.gnu.org/viewcvs/gcc/trunk/gcc/lra-lives.c?view=patch&r1=211701&r2=211700&pathrev=211701
+
+
+--- trunk/gcc/lra-lives.c	2014/06/16 09:25:26	211700
++++ trunk/gcc/lra-lives.c	2014/06/16 09:58:34	211701
+@@ -558,7 +558,11 @@
+ 	      /* It might be 'inheritance pseudo <- reload pseudo'.  */
+ 	      || (src_regno >= lra_constraint_new_regno_start
+ 		  && ((int) REGNO (SET_DEST (set))
+-		      >= lra_constraint_new_regno_start))))
++		      >= lra_constraint_new_regno_start)
++		  /* Remember to skip special cases where src/dest regnos are
++		     the same, e.g. insn SET pattern has matching constraints
++		     like =r,0.  */
++		  && src_regno != (int) REGNO (SET_DEST (set)))))
+ 	{
+ 	  int hard_regno = -1, regno = -1;
+ 

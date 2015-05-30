@@ -1,0 +1,43 @@
+# The file sage.supp is meant to be a suppression file containing only
+# suppressions for errors which are actually benign.
+
+# The file sage-liberal.supp is a file with more suppressions.  Use it
+# if you wish search for memory leaks in new code without being
+# bothered by memory leaks which (likely) occur in other parts of
+# sage.
+
+{
+   zlib Decompression 1
+   Memcheck:Cond
+   fun:longest_match
+   fun:deflate_slow
+   fun:deflate
+   fun:PyZlib_compress
+}
+
+{
+   zlib Decompression 2
+   Memcheck:Cond
+   fun:longest_match
+   fun:deflate_slow
+   fun:deflate
+   fun:PyZlib_flush
+}
+
+{
+   Cython initmodule 1
+   Memcheck:Leak
+   fun:malloc
+   fun:PyString_FromString
+   fun:*__Pyx_ImportType*
+}
+
+{
+   Cython initmodule 2
+   Memcheck:Leak
+   fun:malloc
+   fun:PyCObject_FromVoidPtrAndDesc
+   fun:*__Pyx_ExportFunction*
+}
+
+

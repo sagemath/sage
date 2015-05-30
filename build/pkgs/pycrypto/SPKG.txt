@@ -27,9 +27,19 @@ Python 2.2 license.
 
 == Special Update/Build Instructions ==
 
- * None
+=== Patches ===
+
+ * freebsd.patch: let pycrypto build on FreeBSD.
+ * config.patch: let pycrypto build when $SAGE_ROOT is in $PATH
+   (see #16049).
 
 == Changelog ==
+
+=== pycrypto-2.6.1.p0 (Jean-Pierre Flori, 25 Decembre 2013) ===
+ * #14854; Update to version 2.6.1.
+
+=== pycrypto-2.1.0.p0 (Jean-Pierre Flori, 4 July 2013) ===
+ * #12399: Let pycrypto build on FreeBSD.
 
 === pycrypto-2.1.0 (Minh Van Nguyen, June 26th, 2010) ===
 

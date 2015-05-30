@@ -26,10 +26,9 @@ AUTHORS:
 
 from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
-from sage.quadratic_forms.all import is_QuadraticForm
-from sage.rings.all import (PolynomialRing,
-                            is_PrimeFiniteField
-                           )
+from sage.quadratic_forms.quadratic_form import is_QuadraticForm
+from sage.rings.all import PolynomialRing
+from sage.rings.finite_rings.constructor import is_PrimeFiniteField
 
 from sage.rings.integral_domain import is_IntegralDomain
 from sage.rings.rational_field import is_RationalField
@@ -140,7 +139,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         sage: Conic([a([x,x^2]) for x in range(5)])
         Projective Conic Curve over Finite Field of size 13 defined by x^2 - y*z
     """
-    if not (is_IntegralDomain(base_field) or base_field == None):
+    if not (is_IntegralDomain(base_field) or base_field is None):
         if names is None:
             names = F
         F = base_field
@@ -148,7 +147,7 @@ def Conic(base_field, F=None, names=None, unique=True):
     if isinstance(F, (list,tuple)):
         if len(F) == 1:
             return Conic(base_field, F[0], names)
-        if names == None:
+        if names is None:
             names = 'x,y,z'
         if len(F) == 5:
             L=[]
@@ -156,7 +155,7 @@ def Conic(base_field, F=None, names=None, unique=True):
                 if isinstance(f, SchemeMorphism_point_affine):
                     C = Sequence(f, universe = base_field)
                     if len(C) != 2:
-                        raise TypeError, "points in F (=%s) must be planar"%F
+                        raise TypeError("points in F (=%s) must be planar"%F)
                     C.append(1)
                 elif isinstance(f, SchemeMorphism_point_projective_field):
                     C = Sequence(f, universe = base_field)
@@ -165,20 +164,20 @@ def Conic(base_field, F=None, names=None, unique=True):
                     if len(C) == 2:
                         C.append(1)
                 else:
-                    raise TypeError, "F (=%s) must be a sequence of planar " \
-                                      "points" % F
+                    raise TypeError("F (=%s) must be a sequence of planar " \
+                                      "points" % F)
                 if len(C) != 3:
-                    raise TypeError, "points in F (=%s) must be planar" % F
+                    raise TypeError("points in F (=%s) must be planar" % F)
                 P = C.universe()
                 if not is_IntegralDomain(P):
-                    raise TypeError, "coordinates of points in F (=%s) must " \
-                                     "be in an integral domain" % F
+                    raise TypeError("coordinates of points in F (=%s) must " \
+                                     "be in an integral domain" % F)
                 L.append(Sequence([C[0]**2, C[0]*C[1], C[0]*C[2], C[1]**2,
                                    C[1]*C[2], C[2]**2], P.fraction_field()))
             M=Matrix(L)
             if unique and M.rank() != 5:
-                raise ValueError, "points in F (=%s) do not define a unique " \
-                                   "conic" % F
+                raise ValueError("points in F (=%s) do not define a unique " \
+                                   "conic" % F)
             con = Conic(base_field, Sequence(M.right_kernel().gen()), names)
             con.point(F[0])
             return con
@@ -191,29 +190,29 @@ def Conic(base_field, F=None, names=None, unique=True):
         if len(F) == 6:
             return Conic(F[0]*x**2 + F[1]*x*y + F[2]*x*z + F[3]*y**2 + \
                          F[4]*y*z + F[5]*z**2)
-        raise TypeError, "F (=%s) must be a sequence of 3 or 6" \
-                         "coefficients" % F
+        raise TypeError("F (=%s) must be a sequence of 3 or 6" \
+                         "coefficients" % F)
     if is_QuadraticForm(F):
         F = F.matrix()
     if is_Matrix(F) and F.is_square() and F.ncols() == 3:
-        if names == None:
+        if names is None:
             names = 'x,y,z'
         temp_ring = PolynomialRing(F.base_ring(), 3, names)
         F = vector(temp_ring.gens()) * F * vector(temp_ring.gens())
 
     if not is_MPolynomial(F):
-        raise TypeError, "F (=%s) must be a three-variable polynomial or " \
-                         "a sequence of points or coefficients" % F
+        raise TypeError("F (=%s) must be a three-variable polynomial or " \
+                         "a sequence of points or coefficients" % F)
 
     if F.total_degree() != 2:
-        raise TypeError, "F (=%s) must have degree 2" % F
+        raise TypeError("F (=%s) must have degree 2" % F)
 
-    if base_field == None:
+    if base_field is None:
         base_field = F.base_ring()
     if not is_IntegralDomain(base_field):
-        raise ValueError, "Base field (=%s) must be a field" % base_field
+        raise ValueError("Base field (=%s) must be a field" % base_field)
     base_field = base_field.fraction_field()
-    if names == None:
+    if names is None:
         names = F.parent().variable_names()
     pol_ring = PolynomialRing(base_field, 3, names)
 
@@ -222,11 +221,11 @@ def Conic(base_field, F=None, names=None, unique=True):
         F = pol_ring(F(x/z,y/z)*z**2)
 
     if F == 0:
-        raise ValueError, "F must be nonzero over base field %s" % base_field
+        raise ValueError("F must be nonzero over base field %s" % base_field)
 
     if F.total_degree() != 2:
-        raise TypeError, "F (=%s) must have degree 2 over base field %s" % \
-                          (F, base_field)
+        raise TypeError("F (=%s) must have degree 2 over base field %s" % \
+                          (F, base_field))
 
     if F.parent().ngens() == 3:
         P2 = ProjectiveSpace(2, base_field, names)
@@ -240,4 +239,4 @@ def Conic(base_field, F=None, names=None, unique=True):
             return ProjectiveConic_number_field(P2, F)
         return ProjectiveConic_field(P2, F)
 
-    raise TypeError, "Number of variables of F (=%s) must be 2 or 3" % F
+    raise TypeError("Number of variables of F (=%s) must be 2 or 3" % F)

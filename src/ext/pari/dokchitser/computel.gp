@@ -1,8 +1,7 @@
-/*********** ComputeL v1.3, Apr 2006, (c) Tim Dokchitser **********/
-/************ (computing special values of L-functions) ***********/
-/******* see preprint http://arXiv.org/abs/math.NT/0207280, *******/
-/******* appeared in Exper. Math. 13 (2004), no. 2, 137-150 *******/
-/*** Questions/comments welcome! -> tim.dokchitser@durham.ac.uk ***/
+/************* ComputeL v1.3.3, 2001-2013, (c) Tim Dokchitser ************/
+/**************** computing special values of L-functions ****************/
+/* arXiv.org/abs/math.NT/0207280, Exper. Math. 13 (2004), no. 2, 137-150 */
+/****** Questions/comments welcome! -> tim.dokchitser@bristol.ac.uk ******/
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\ Distributed under the terms of the GNU General Public License (GPL)
@@ -168,8 +167,9 @@ errprint(x)=if(type(x)=="t_COMPLEX",x=abs(x));
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-gammaseries(z0,terms,
-    Avec,Bvec,Qvec,n,z,err,res,c0,c1,c2,c3,sinser,reflect,digits,srprec,negint)=
+gammaseries(z0,terms)=
+  local(Avec,Bvec,Qvec,n,z,err,res,c0,c1,c2,c3,sinser,reflect,digts,srprec,negint);
+
   srprec=default(seriesprecision);
   if (z0==real(round(z0)),z0=real(round(z0)));    \\ you don't want to know
   negint=type(z0)=="t_INT" && z0<=0;              \\ z0 is a pole
@@ -181,17 +181,17 @@ gammaseries(z0,terms,
   if (z0==1, res=gamma(1+x),
   if (z0==2, res=gamma(1+x)*(1+x),
   \\ otherwise use Luke's rational approximations for psi(x)
-  digits=default(realprecision);   \\ save working precision
-  default(realprecision,digits+3);  \\   and work with 3 digits more
-  reflect=real(z0)<0.5;               \\ left of 1/2 use reflection formula
+  digts=default(realprecision);      \\ save working precision
+  default(realprecision,digts+3);    \\   and work with 3 digits more
+  reflect=real(z0)<0.5;              \\ left of 1/2 use reflection formula
   if (reflect,z0=1-z0);
-  z=subst(Ser(precision(1.*z0,digits+3)+X),X,x);
+  z=subst(Ser(precision(1.*z0,digts+3)+X),X,x);
     \\ work with z0+x as a variable gives power series in X as an answer
   Avec=[1,(z+6)/2,(z^2+82*z+96)/6,(z^3+387*z^2+2906*z+1920)/12];
   Bvec=[1,4,8*z+28,14*z^2+204*z+310];
   Qvec=[0,0,0,Avec[4]/Bvec[4]];
   n=4;
-  until(err<0.1^(digits+1.5),         \\ Luke's recursions for psi(x)
+  until(err<0.1^(digts+1.5),         \\ Luke's recursions for psi(x)
     c1=(2*n-1)*(3*(n-1)*z+7*n^2-9*n-6);
     c2=-(2*n-3)*(z-n-1)*(3*(n-1)*z-7*n^2+19*n-4);
     c3=(2*n-1)*(n-3)*(z-n)*(z-n-1)*(z+n-4);
@@ -208,7 +208,7 @@ gammaseries(z0,terms,
     if (negint,sinser[1]=0);          \\ taking slight care at integers<0
     res=subst(Pi/res/Ser(sinser),x,-x);
   );
-  default(realprecision,digits);
+  default(realprecision,digts);
   )))));
   default(seriesprecision,srprec);
   res;
@@ -219,8 +219,13 @@ gammaseries(z0,terms,
 \\   vA^s*Gamma((s+gammaV[1])/2)*...*Gamma((s+gammaV[d])/2)               \\
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-fullgamma(ss) = if(ss!=lastFGs,lastFGs=ss;\
-  lastFGval=prod(j=1,length(gammaV),gamma((ss+gammaV[j])/2),vA^ss));lastFGval
+{
+fullgamma(ss) =
+  if(ss!=lastFGs,lastFGs=ss;
+    lastFGval=prod(j=1,length(gammaV),gamma((ss+gammaV[j])/2),vA^ss)
+  );
+  lastFGval;
+}
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\ fullgammaseries(ss,extraterms) - Laurent series for the gamma factor   \\
@@ -230,11 +235,12 @@ fullgamma(ss) = if(ss!=lastFGs,lastFGs=ss;\
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-fullgammaseries(ss,extraterms,
-    digits,GSD)=
-  digits=default(realprecision);
+fullgammaseries(ss,extraterms)=
+  local(digts,GSD);
+
+  digts=default(realprecision);
   if (lastFGSs!=ss || lastFGSterms!=extraterms,
-    GSD=sum(j=1,numpoles,(abs((ss+poles[j])/2-round(real((ss+poles[j])/2)))<10^(2-digits)) * PoleOrders[j] )+extraterms;
+    GSD=sum(j=1,numpoles,(abs((ss+poles[j])/2-round(real((ss+poles[j])/2)))<10^(2-digts)) * PoleOrders[j] )+extraterms;
     lastFGSs=ss;
     lastFGSterms=extraterms;
     lastFGSval=subst(prod(j=1,length(gammaV),gammaseries((ss+gammaV[j])/2,GSD)),x,S/2);
@@ -249,8 +255,8 @@ fullgammaseries(ss,extraterms,
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-RecursionsAtInfinity(gammaV,
-     d,p,j,k,symvec,modsymvec,deltapol,recF,recG)=
+RecursionsAtInfinity(gammaV)=
+  local(d,p,j,k,symvec,modsymvec,deltapol,recF,recG);
 
   \\ d = number of Gamma-factors in question
   \\ gammaV[k] = Gamma-factors
@@ -291,8 +297,9 @@ RecursionsAtInfinity(gammaV,
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-SeriesToContFrac(vec,
-    res=[],ind)=
+SeriesToContFrac(vec)=
+  local(res=[],ind);
+
   vec=1.*vec;
   while (1,
     res=concat(res,[vec[1]]);
@@ -311,8 +318,9 @@ SeriesToContFrac(vec,
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-EvaluateContFrac(cfvec,terms,t,
-    res)=
+EvaluateContFrac(cfvec,terms,t)=
+  local(res);
+
   if (terms<0 || terms>length(cfvec)\2,terms=length(cfvec)\2);
   res=cfvec[2*terms+1];
   while(terms>0,res=if(res,cfvec[2*terms-1]+t^cfvec[2*terms]/res,10^asympdigits);terms--);
@@ -331,10 +339,9 @@ EvaluateContFrac(cfvec,terms,t,
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-/* jdemeyer: second argument is never used, it gets overriden in the
- * first line */
-cflength(cutoff=1.2,
-    vA_not_used,d,expdifff,asympconstf,err,t,t1=0,t2=2,tt,res,lfundigits)=
+cflength(cutoff=1.2)=
+  local(vA,d,expdifff,asympconstf,err,t,t1=0,t2=2,tt,res,lfundigits);
+
   vA = sqrt(conductor/Pi^length(gammaV));
   d  = length(gammaV);
   lfundigits = default(realprecision) +
@@ -372,8 +379,8 @@ cflength(cutoff=1.2,
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-initLdata(vstr,cutoff=1.2,vdualstr="",
-    len,d,pordtmp,recF,recG,terms)=
+initLdata(vstr,cutoff=1.2,vdualstr="")=
+  local(len,d,pordtmp,recF,recG,terms);
 
   if (type(gammaV)!="t_VEC",
     error("Gamma-factor gammaV has to be defined before calling initLdata()"));
@@ -505,8 +512,9 @@ RecursephiV()=     \\ compute one more term for the recursions at the origin
 }
 
 {
-phi0(t,                              \\ phi(t) using series expansion at t=0
-    t2,LogTTerm,TPower,res=0,nn=0,totalold)=
+phi0(t)=                              \\ phi(t) using series expansion at t=0
+  local(t2,LogTTerm,TPower,res=0,nn=0,totalold);
+
   default(realprecision,taylordigits);
   t        = precision(t,taylordigits);
   t2       = t^2;
@@ -515,16 +523,18 @@ phi0(t,                              \\ phi(t) using series expansion at t=0
   until (abs(res-totalold)<10^-(termdigits+1)&&(nn>3),
     totalold=res;
     nn++;
+    if(nn>phiVnn,RecursephiV());
     res+=TPower*phiV[nn]*LogTTerm;
     TPower*=t2;
   );
   default(realprecision,termdigits);
-  res
+  res;
 }
 
 {                          \\ phi(t) using asymptotic expansion at infinity
-phiinf(t,ncf=fncf,
-    res,d,td2) =
+phiinf(t,ncf=fncf)=
+  local(res,d,td2);
+
   default(realprecision,asympdigits);
   t=precision(t,asympdigits);
   d=length(gammaV);
@@ -543,8 +553,9 @@ phiinf(t,ncf=fncf,
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-G(t,ss,der=0,
-    nn)=
+G(t,ss,der=0)=
+  local(nn);
+
   if(lastGs!=[ss,der] || type(Ginfterms)!="t_VEC",
     initGinf(ss,der);lastGs=[ss,der]);
   if(t<GCaseBound,G0(t,ss,der),
@@ -552,12 +563,14 @@ G(t,ss,der=0,
     Ginf(t,ss,der,Ginfterms[nn]));
 }
 
+
 LogInt(i,j,logt,der)=\
   if (abs(i)<10^(2-termdigits),0,sum(k=0,j-1,binomial((k-j),der)*der!*(-i*logt)^k/k!)/i^(j+der));
 
 {
-MakeLogSum(ss,der,
-    nn,V,logsum)=
+MakeLogSum(ss,der)=
+  local(nn,V,logsum);
+
   if(length(LogSum)==phiVnn,                      \\ more phiV's necessary
     for (j=1,floor(phiVnn/10)+1,RecursephiV()));
   for (nn=length(LogSum)+1,phiVnn,                \\ generate logsums
@@ -569,8 +582,9 @@ MakeLogSum(ss,der,
 }
 
 {
-G0(t,ss,der,                 \\ G(t,s,der) computed using Taylor series at 0
-    t2,LT,TPower,res,nn,term,gmser,gmcf,dgts)=
+G0(t,ss,der)=                 \\ G(t,s,der) computed using Taylor series at 0
+  local(t2,LT,TPower,res,nn,term,gmser,gmcf,dgts);
+
   default(realprecision,taylordigits);
   ss     = precision(ss,taylordigits);
   if ([ss,der]!=lastLSs,LogSum=[]);
@@ -592,13 +606,14 @@ G0(t,ss,der,                 \\ G(t,s,der) computed using Taylor series at 0
   gmcf=polcoeff(gmser,der,S)*der!;
   res=(gmcf-res);
   default(realprecision,termdigits);
-  res
+  res;
 }
 
 
 {
-Ginf(t,ss,der,ncf=-1,     \\ G(t,s,der) computed using asymptotic expansion
-    res,d,tt) =           \\ at infinity and associated continued fraction
+Ginf(t,ss,der,ncf=-1)=     \\ G(t,s,der) computed using asymptotic expansion
+  local(res,d,tt);         \\ at infinity and associated continued fraction
+
   default(realprecision,asympdigits);
   ss=precision(ss,asympdigits);
   t=precision(t,asympdigits);
@@ -613,8 +628,9 @@ Ginf(t,ss,der,ncf=-1,     \\ G(t,s,der) computed using asymptotic expansion
 
 
 {
-initGinf(ss,der,          \\ pre-compute asymptotic expansions for a given s
-    d,gvec,gncf,terms,t1)=
+initGinf(ss,der)=          \\ pre-compute asymptotic expansions for a given s
+
+  local(d,gvec,gncf,terms,t1);
   default(realprecision,asympdigits);
   ss=precision(ss,asympdigits);
   d=length(gammaV);
@@ -652,15 +668,15 @@ ldualtheta(t) = t=precision(t/vA,taylordigits);\
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 {
-checkfeq(t=6/5,             \\ determine residues if they are not yet set
-    nlp,lpx,lpv,lpm,res)=   \\ .. and check the functional equation
+checkfeq(t=6/5)=                \\ determine residues if they are not yet set
+  local(nlp,lpx,lpv,lpm,res);   \\ .. and check the functional equation
+
   if (Lresidues==automatic && Lpoles!=[],
     nlp=length(Lpoles);
     lpx=vector(nlp,k,1.15+if(k==1,0,k-1)/10);
     lpv=vector(nlp,k,tq=lpx[k];sgn*tq^weight*ldualtheta(tq)-ltheta(1/tq));
     lpm=matrix(nlp,nlp,k,j,tq=lpx[k];ss=Lpoles[j];tq^ss-sgn*tq^(weight-ss));
     Lresidues=matsolve(lpm,lpv~)~;
-    \\for (k=1,nlp,print("Residue at ",Lpoles[k]," = ",Lresidues[k]));
   );
   res=ltheta(t)-sgn*t^(-weight)*ldualtheta(1/t)+
     sum(k=1,length(Lpoles),Lresidues[k]*(t^-Lpoles[k]-sgn*t^(-weight+Lpoles[k])));
@@ -678,8 +694,10 @@ L(ss,cutoff=1,der=0)=polcoeff(Lseries(ss,cutoff,der),der)*der!
 
 
 {       \\ Lseries(s,,der) = L(s)+L'(s)S+L''(s)*S^2/2!+... ,first der terms
-Lseries(ss,cutoff=1,der=0,
-    FGSeries,LGSeries,res)=
+Lseries(ss,cutoff=1,der=0)=
+
+  local(FGSeries,LGSeries,res);
+
   default(realprecision,lfundigits);
   FGSeries = fullgammaseries(ss,der)*vA^(ss+S);
   if (length(Lpoles) && (vecmin(abs(vector(length(Lpoles),k,Lpoles[k]-ss)))<10^(-answerdigits) ||
@@ -700,8 +718,9 @@ Lseries(ss,cutoff=1,der=0,
 
 
 {
-Lstar(ss,cutoff=1,der=0,                \\ Lstar(s) = L(s) * Gamma factor
-    res,ncf1,ncf2)=
+Lstar(ss,cutoff=1,der=0)=                \\ Lstar(s) = L(s) * Gamma factor
+  local(res,ncf1,ncf2);
+
   if (der & (cutoff!=1),error("L(s,cutoff,k>0) is only implemented for cutoff=1"));
   ss     = precision(ss,taylordigits);
   cutoff = precision(cutoff,taylordigits);

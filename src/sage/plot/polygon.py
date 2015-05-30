@@ -21,6 +21,7 @@ from sage.plot.primitive import GraphicPrimitive_xydata
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 
+
 class Polygon(GraphicPrimitive_xydata):
     """
     Primitive class for the Polygon graphics type.  For information
@@ -53,10 +54,12 @@ class Polygon(GraphicPrimitive_xydata):
     We test creating polygons::
 
         sage: polygon([(0,0), (1,1), (0,1)])
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: polygon([(0,0,1), (1,1,1), (2,0,1)])
+        Graphics3d Object
     """
     def __init__(self, xdata, ydata, options):
         """
@@ -145,6 +148,7 @@ class Polygon(GraphicPrimitive_xydata):
         """
         return {'alpha':'How transparent the figure is.',
                 'thickness': 'How thick the border line is.',
+                'edgecolor':'The color for the border of filled polygons.',
                 'fill':'Whether or not to fill the polygon.',
                 'legend_label':'The label for this item in the legend.',
                 'legend_color':'The color of the legend text.',
@@ -163,11 +167,11 @@ class Polygon(GraphicPrimitive_xydata):
             Polygon defined by 4 points
             sage: q=p.plot3d()
             sage: q.texture.opacity
-            0.500000000000000
+            0.5
         """
         if options is None:
             options = dict(self.options())
-        for o in ['thickness', 'zorder', 'legend_label', 'fill']:
+        for o in ['thickness', 'zorder', 'legend_label', 'fill', 'edgecolor']:
             options.pop(o, None)
         return GraphicPrimitive_xydata._plot3d_options(self, options)
 
@@ -186,6 +190,7 @@ class Polygon(GraphicPrimitive_xydata):
         A pentagon::
 
             sage: polygon([(cos(t), sin(t)) for t in srange(0, 2*pi, 2*pi/5)]).plot3d()
+            Graphics3d Object
 
         Showing behavior of the optional parameter z::
 
@@ -218,14 +223,14 @@ class Polygon(GraphicPrimitive_xydata):
         options = self._plot3d_options()
         options.update(kwds)
         zdata=[]
-        if type(z) is list:
+        if isinstance(z, list):
             zdata=z
         else:
             zdata=[z]*len(self.xdata)
         if len(zdata)==len(self.xdata):
             return IndexFaceSet([[(x, y, z) for x, y, z in zip(self.xdata, self.ydata, zdata)]], **options)
         else:
-            raise ValueError, 'Incorrect number of heights given'
+            raise ValueError('Incorrect number of heights given')
 
     def _render_on_subplot(self, subplot):
         """
@@ -243,11 +248,19 @@ class Polygon(GraphicPrimitive_xydata):
         f = options.pop('fill')
         p.set_fill(f)
         c = to_mpl_color(options['rgbcolor'])
-        p.set_edgecolor(c)
-        p.set_facecolor(c)
+        if f:
+            ec = options['edgecolor']
+            if ec is None:
+                p.set_color(c)
+            else:
+                p.set_facecolor(c)
+                p.set_edgecolor(to_mpl_color(ec))
+        else:
+            p.set_color(c)
         p.set_label(options['legend_label'])
         p.set_zorder(z)
         subplot.add_patch(p)
+
 
 def polygon(points, **options):
     """
@@ -262,11 +275,14 @@ def polygon(points, **options):
     EXAMPLES::
 
         sage: polygon([(0,0), (1,1), (0,1)])
+        Graphics object consisting of 1 graphics primitive
         sage: polygon([(0,0,1), (1,1,1), (2,0,1)])
+        Graphics3d Object
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: polygon([(0,0), (1,1), (0,1)], axes=False)
+        Graphics object consisting of 1 graphics primitive
         sage: polygon([(0,0), (1,1), (0,1)]).show(axes=False) # These are equivalent
     """
     try:
@@ -276,7 +292,8 @@ def polygon(points, **options):
         return polygon3d(points, **options)
 
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, rgbcolor=(0,0,1), thickness=None, legend_label=None, legend_color=None,
+@options(alpha=1, rgbcolor=(0,0,1), edgecolor=None, thickness=None,
+         legend_label=None, legend_color=None,
          aspect_ratio=1.0, fill=True)
 def polygon2d(points, **options):
     r"""
@@ -292,66 +309,86 @@ def polygon2d(points, **options):
     We create a purple-ish polygon::
 
         sage: polygon2d([[1,2], [5,6], [5,0]], rgbcolor=(1,0,1))
+        Graphics object consisting of 1 graphics primitive
 
     By default, polygons are filled in, but we can make them
     without a fill as well::
 
         sage: polygon2d([[1,2], [5,6], [5,0]], fill=False)
+        Graphics object consisting of 1 graphics primitive
 
     In either case, the thickness of the border can be controlled::
 
         sage: polygon2d([[1,2], [5,6], [5,0]], fill=False, thickness=4, color='orange')
+        Graphics object consisting of 1 graphics primitive
+
+    For filled polygons, one can use different colors for the border
+    and the interior as follows::
+
+        sage: L = [[0,0]]+[[i/100, 1.1+cos(i/20)] for i in range(100)]+[[1,0]]
+        sage: polygon2d(L, color="limegreen", edgecolor="black", axes=False)
+        Graphics object consisting of 1 graphics primitive
 
     Some modern art -- a random polygon, with legend::
 
         sage: v = [(randrange(-5,5), randrange(-5,5)) for _ in range(10)]
         sage: polygon2d(v, legend_label='some form')
+        Graphics object consisting of 1 graphics primitive
 
     A purple hexagon::
 
         sage: L = [[cos(pi*i/3),sin(pi*i/3)] for i in range(6)]
         sage: polygon2d(L, rgbcolor=(1,0,1))
+        Graphics object consisting of 1 graphics primitive
 
     A green deltoid::
 
         sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))
+        Graphics object consisting of 1 graphics primitive
 
     A blue hypotrochoid::
 
         sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(1/8,1/4,1/2))
+        Graphics object consisting of 1 graphics primitive
 
     Another one::
 
         sage: n = 4; h = 5; b = 2
         sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(1/8,1/4,3/4))
+        Graphics object consisting of 1 graphics primitive
 
     A purple epicycloid::
 
         sage: m = 9; b = 1
         sage: L = [[m*cos(pi*i/100)+b*cos((m/b)*pi*i/100),m*sin(pi*i/100)-b*sin((m/b)*pi*i/100)] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(7/8,1/4,3/4))
+        Graphics object consisting of 1 graphics primitive
 
     A brown astroid::
 
         sage: L = [[cos(pi*i/100)^3,sin(pi*i/100)^3] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(3/4,1/4,1/4))
+        Graphics object consisting of 1 graphics primitive
 
     And, my favorite, a greenish blob::
 
         sage: L = [[cos(pi*i/100)*(1+cos(pi*i/50)), sin(pi*i/100)*(1+sin(pi*i/50))] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(1/8, 3/4, 1/2))
+        Graphics object consisting of 1 graphics primitive
 
     This one is for my wife::
 
         sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))] for i in range(-100,100)]
         sage: polygon2d(L, rgbcolor=(1,1/4,1/2))
+        Graphics object consisting of 1 graphics primitive
 
     One can do the same one with a colored legend label::
 
         sage: polygon2d(L, color='red', legend_label='For you!', legend_color='red')
+        Graphics object consisting of 1 graphics primitive
 
     Polygons have a default aspect ratio of 1.0::
 
@@ -365,8 +402,9 @@ def polygon2d(points, **options):
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics
-    if options["thickness"] is None:    # If the user did not specify thickness
-        if options["fill"]:                 # If the user chose fill
+    if options["thickness"] is None:   # If the user did not specify thickness
+        if options["fill"] and options["edgecolor"] is None:
+            # If the user chose fill
             options["thickness"] = 0
         else:
             options["thickness"] = 1

@@ -5,7 +5,7 @@ Literaturverzeichnis
 ..  [Cyt] Cython, http://www.cython.org/.
 
 ..  [Dive] Dive into Python, online frei verfügbar unter
-    http://diveintopython.org/.
+    http://www.diveintopython.net/.
 
 ..  [GAP] The GAP Group, GAP - Groups, Algorithms, and
     Programming, Version 4.4; 2005, http://www.gap-system.org/.

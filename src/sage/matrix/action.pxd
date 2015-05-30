@@ -1,9 +1,9 @@
 from sage.structure.element cimport Element, Matrix, Vector
-from sage.structure.parent_base cimport ParentWithBase
+from sage.structure.parent cimport Parent
 from sage.categories.action cimport Action
 
 cdef class MatrixMulAction(Action):
-    cdef ParentWithBase _codomain
+    cdef Parent _codomain
     cdef bint fix_sparseness
 
 cdef class MatrixMatrixAction(MatrixMulAction):

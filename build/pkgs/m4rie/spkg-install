@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo >&2 "SAGE_LOCAL undefined ... exiting"
+   echo >&2 "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+unset RM
+
+ROOT_DIR="`pwd`"
+
+INCLUDES="-I$SAGE_LOCAL/include"
+LIBDIRS="-L$SAGE_LOCAL/lib"
+
+CFLAGS="`testcflags.sh -fPIC -Wall -pedantic -g` $CFLAGS $INCLUDES"
+LDFLAGS="$LIBDIRS"
+
+COMPILER=`testcc.sh $CC`
+if [ "$COMPILER" = "Sun_Studio" ] ; then
+    CFLAGS="$CFLAGS -Kpic"
+elif [ "$COMPILER" = "HP_on_HP-UX" ] ; then
+    CFLAGS="$CFLAGS + z"
+fi
+
+CPPFLAGS="$INCLUDES"
+
+if [ "x$SAGE_DEBUG" = "xyes" ]; then
+   CFLAGS="-O0 $CFLAGS"
+   ENABLE_DEBUG="--enable-debug"
+else
+   CFLAGS="-O2 $CFLAGS"
+   ENABLE_DEBUG=""
+fi
+
+if [ "x$SAGE64" = "xyes" ]; then
+    CFLAGS="$CFLAGS -m64"
+    CPPFLAGS="$CPPFLAGS -m64"
+fi
+
+export CFLAGS
+export CPPFLAGS
+export LDFLAGS
+
+# otherwise we might run into problems with old headers
+
+if [ -d "$SAGE_LOCAL/include/m4rie" ]; then
+    rm -rf "$SAGE_LOCAL/include/m4rie"
+fi
+
+# build M4RIE
+
+cd $ROOT_DIR/src/
+./configure \
+    --prefix="$SAGE_LOCAL" \
+    --libdir="$SAGE_LOCAL/lib" \
+    --enable-shared --disable-static \
+    $ENABLE_DEBUG
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring m4rie"
+    exit 1
+fi
+
+$MAKE
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building m4rie"
+    exit 1
+fi
+
+$MAKE install
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing m4rie"
+    exit 1
+fi
+

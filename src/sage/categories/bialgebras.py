@@ -9,7 +9,6 @@ Bialgebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.all import Algebras, Coalgebras
 
@@ -38,6 +37,24 @@ class Bialgebras(Category_over_base_ring):
         """
         R = self.base_ring()
         return [Algebras(R), Coalgebras(R)]
+
+    def additional_structure(self):
+        r"""
+        Return ``None``.
+
+        Indeed, the category of bialgebras defines no additional
+        structure: a morphism of coalgebras and of algebras between
+        two bialgebras is a bialgebra morphism.
+
+        .. SEEALSO:: :meth:`Category.additional_structure`
+
+        .. TODO:: This category should be a :class:`CategoryWithAxiom`.
+
+        EXAMPLES::
+
+            sage: Bialgebras(QQ).additional_structure()
+        """
+        return None
 
     class ParentMethods:
         pass

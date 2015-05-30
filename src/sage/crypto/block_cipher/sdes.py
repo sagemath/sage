@@ -202,15 +202,15 @@ class SimplifiedDES(SageObject):
         Blength = 8
 
         if not isinstance(B, StringMonoidElement):
-            raise TypeError, "input B must be a non-empty binary string with number of bits a multiple of 8"
+            raise TypeError("input B must be a non-empty binary string with number of bits a multiple of 8")
         if (len(B) == 0) or (Mod(len(B), Blength).lift() != 0):
-            raise ValueError, "the number of bits in the binary string B must be positive and a multiple of 8"
+            raise ValueError("the number of bits in the binary string B must be positive and a multiple of 8")
         if not isinstance(K, StringMonoidElement):
-            raise TypeError, "secret key must be a 10-bit binary string"
+            raise TypeError("secret key must be a 10-bit binary string")
         if len(K) != self._key_size:
-            raise ValueError, "secret key must be a 10-bit binary string"
+            raise ValueError("secret key must be a 10-bit binary string")
 
-        N = len(B) / Blength  # the number of 8-bit blocks
+        N = len(B) // Blength  # the number of 8-bit blocks
         S = ""
         bin = BinaryStrings()
         # encrypt each 8-bit block in succession
@@ -241,7 +241,7 @@ class SimplifiedDES(SageObject):
             return bin(S)
         # invalid value for algorithm option
         else:
-            raise ValueError, "algorithm must be either 'encrypt' or 'decrypt'"
+            raise ValueError("algorithm must be either 'encrypt' or 'decrypt'")
 
     def __eq__(self, other):
         r"""
@@ -384,13 +384,13 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(C, list):
-            raise TypeError, "ciphertext must be a list of 8 bits"
+            raise TypeError("ciphertext must be a list of 8 bits")
         if len(C) != 8:
-            raise ValueError, "ciphertext must be a list of 8 bits"
+            raise ValueError("ciphertext must be a list of 8 bits")
         if not isinstance(K, list):
-            raise TypeError, "the key must be a list of 10 bits"
+            raise TypeError("the key must be a list of 10 bits")
         if len(K) != 10:
-            raise TypeError, "the key must be a list of 10 bits"
+            raise TypeError("the key must be a list of 10 bits")
 
         # run through initial permutation
         P = self.initial_permutation(C, inverse=False)
@@ -498,13 +498,13 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(P, list):
-            raise TypeError, "plaintext must be a list of 8 bits"
+            raise TypeError("plaintext must be a list of 8 bits")
         if len(P) != 8:
-            raise ValueError, "plaintext must be a list of 8 bits"
+            raise ValueError("plaintext must be a list of 8 bits")
         if not isinstance(K, list):
-            raise TypeError, "the key must be a list of 10 bits"
+            raise TypeError("the key must be a list of 10 bits")
         if len(K) != 10:
-            raise TypeError, "the key must be a list of 10 bits"
+            raise TypeError("the key must be a list of 10 bits")
 
         # run through initial permutation
         C = self.initial_permutation(P, inverse=False)
@@ -612,9 +612,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input block must be a list of 8 bits"
+            raise TypeError("input block must be a list of 8 bits")
         if len(B) != 8:
-            raise ValueError, "input block must be a list of 8 bits"
+            raise ValueError("input block must be a list of 8 bits")
 
         bin = BinaryStrings()
 
@@ -739,9 +739,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input block must be a list of 10 bits"
+            raise TypeError("input block must be a list of 10 bits")
         if len(B) != 10:
-            raise ValueError, "input block must be a list of 10 bits"
+            raise ValueError("input block must be a list of 10 bits")
 
         bin = BinaryStrings()
         # circular left shift by 1 position
@@ -760,7 +760,7 @@ class SimplifiedDES(SageObject):
                      bin(str(B[5])), bin(str(B[6])) ]
         # an invalid number of shift positions
         else:
-            raise ValueError, "input n must be either 1 or 2"
+            raise ValueError("input n must be either 1 or 2")
 
     def list_to_string(self, B):
         r"""
@@ -802,15 +802,13 @@ class SimplifiedDES(SageObject):
         Input must be a non-empty list of bits::
 
             sage: sdes.list_to_string([0, 1, 2])
-            Traceback (most recent call last):
-            ...
-            IndexError: tuple index out of range
+            <repr(<sage.monoids.string_monoid_element.StringMonoidElement at 0x...>) failed: IndexError: tuple index out of range>
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input B must be a non-empty list of bits"
+            raise TypeError("input B must be a non-empty list of bits")
         if len(B) == 0:
-            raise ValueError, "input B must be a non-empty list of bits"
+            raise ValueError("input B must be a non-empty list of bits")
 
         # perform the conversion from list to binary string
         from sage.rings.integer import Integer
@@ -892,9 +890,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input block must be a list of 4 bits"
+            raise TypeError("input block must be a list of 4 bits")
         if len(B) != 4:
-            raise ValueError, "input block must be a list of 4 bits"
+            raise ValueError("input block must be a list of 4 bits")
 
         # perform the permutation
         bin = BinaryStrings()
@@ -981,9 +979,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input block must be a list of 10 bits"
+            raise TypeError("input block must be a list of 10 bits")
         if len(B) != 10:
-            raise ValueError, "input block must be a list of 10 bits"
+            raise ValueError("input block must be a list of 10 bits")
 
         # perform the permutation
         bin = BinaryStrings()
@@ -1071,9 +1069,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input block must be a list of 10 bits"
+            raise TypeError("input block must be a list of 10 bits")
         if len(B) != 10:
-            raise ValueError, "input block must be a list of 10 bits"
+            raise ValueError("input block must be a list of 10 bits")
 
         # perform the permutation
         bin = BinaryStrings()
@@ -1249,13 +1247,13 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input B must be an 8-bit string"
+            raise TypeError("input B must be an 8-bit string")
         if len(B) != 8:
-            raise ValueError, "input B must be an 8-bit string"
+            raise ValueError("input B must be an 8-bit string")
         if not isinstance(key, list):
-            raise TypeError, "input key must be an 8-bit subkey"
+            raise TypeError("input key must be an 8-bit subkey")
         if len(key) != 8:
-            raise ValueError, "input key must be an 8-bit subkey"
+            raise ValueError("input key must be an 8-bit subkey")
 
         from sage.rings.finite_rings.constructor import FiniteField
         GF = FiniteField(2, "x")
@@ -1363,9 +1361,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(S, str):
-            raise TypeError, "input S must be a non-empty string of bits"
+            raise TypeError("input S must be a non-empty string of bits")
         if len(S) == 0:
-            raise ValueError, "input S must be a non-empty string of bits"
+            raise ValueError("input S must be a non-empty string of bits")
 
         # perform the conversion from string to list
         bin = BinaryStrings()
@@ -1442,9 +1440,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(K, list):
-            raise TypeError, "input K must be a 10-bit key"
+            raise TypeError("input K must be a 10-bit key")
         if len(K) != self._key_size:
-            raise ValueError, "input K must be a 10-bit key"
+            raise ValueError("input K must be a 10-bit key")
 
         # get the first subkey
         if n == 1:
@@ -1459,7 +1457,7 @@ class SimplifiedDES(SageObject):
             return self.permutation8(key2)
         # an invalid subkey number
         else:
-            raise ValueError, "input n must be either 1 or 2"
+            raise ValueError("input n must be either 1 or 2")
 
     def switch(self, B):
         r"""
@@ -1538,9 +1536,9 @@ class SimplifiedDES(SageObject):
         """
         # sanity check
         if not isinstance(B, list):
-            raise TypeError, "input block must be a list of 8 bits"
+            raise TypeError("input block must be a list of 8 bits")
         if len(B) != 8:
-            raise ValueError, "input block must be a list of 8 bits"
+            raise ValueError("input block must be a list of 8 bits")
 
         # perform the switch
         bin = BinaryStrings()

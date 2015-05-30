@@ -27,8 +27,10 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     The Witt basis of the ring of symmetric functions is
     denoted by `(x_{\lambda})` in [HazWitt1]_, section 9.63, and by
     `(q_{\lambda})` in [DoranIV1996]_. We will denote this basis by
-    `(w_{\lambda})`. It is a multiplicative basis (meaning that
-    `w_{\emptyset} = 1` and that every partition `\lambda` satisfies
+    `(w_{\lambda})` (which is precisely how it is denoted in
+    [GriRei2014]_, Exercise 2.76(d)). It is a multiplicative basis
+    (meaning that `w_{\emptyset} = 1` and that every partition
+    `\lambda` satisfies
     `w_{\lambda} = w_{\lambda_1} w_{\lambda_2} w_{\lambda_3} \cdots`,
     where `w_i` means `w_{(i)}` for every nonnegative integer `i`).
 
@@ -88,15 +90,15 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     INPUT:
 
     - ``Sym`` -- an instance of the ring of the symmetric functions.
-    - ``coerce_h`` - (default: ``True``) a boolean that determines
+    - ``coerce_h`` -- (default: ``True``) a boolean that determines
       whether the transition maps between the Witt basis and the
       complete homogeneous basis will be cached and registered as
       coercions.
-    - ``coerce_e`` - (default: ``False``) a boolean that determines
+    - ``coerce_e`` -- (default: ``False``) a boolean that determines
       whether the transition maps between the Witt basis and the
       elementary symmetric basis will be cached and registered as
       coercions.
-    - ``coerce_p`` - (default: ``False``) a boolean that determines
+    - ``coerce_p`` -- (default: ``False``) a boolean that determines
       whether the transition maps between the Witt basis and the
       powersum basis will be cached and registered as coercions (or
       conversions, if the base ring is not a `\QQ`-algebra).
@@ -194,7 +196,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         sage: w([2]).antipode()
         -w[1, 1] - w[2]
 
-    This holds for all odd `i` and is easily proven by induction::
+    The following holds for all odd `i` and is easily proven by
+    induction::
 
         sage: all( w([i]).antipode() == -w([i]) for i in range(1, 10, 2) )
         True
@@ -212,7 +215,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     variables do not affect the results of the (non-underscored)
     methods of ``self``, but they affect the speed of the computations
     (the more of these variables are set to ``True``, the
-    faster these are) and on the size of the cache (the more of
+    faster these are) and the size of the cache (the more of
     these variables are set to ``True``, the bigger the cache). Let us
     check that the results are the same no matter to what the
     variables are set::
@@ -365,6 +368,12 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         -h[1, 1, 1, 1] + 2*h[2, 1, 1] - h[2, 2] - h[3, 1] + h[4]
         sage: s(w([4]))
         -s[1, 1, 1, 1] - s[2, 1, 1] - s[2, 2] - s[3, 1]
+        sage: [type(coeff) for a, coeff in h(w([4]))]
+        [<type 'sage.rings.integer.Integer'>,
+         <type 'sage.rings.integer.Integer'>,
+         <type 'sage.rings.integer.Integer'>,
+         <type 'sage.rings.integer.Integer'>,
+         <type 'sage.rings.integer.Integer'>]
 
         sage: w(h[3])
         w[1, 1, 1] + w[2, 1] + w[3]
@@ -495,10 +504,11 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         # Handle the n == 0 case separately
         if n == 0:
             part = Partition([])
-            to_self_cache[ part ] = { part: base_ring.one() }
-            from_self_cache[ part ] = { part: base_ring.one() }
-            transition_matrices[n] = matrix(base_ring, [[1]])
-            inverse_transition_matrices[n] = matrix(base_ring, [[1]])
+            one = base_ring.one()
+            to_self_cache[ part ] = { part: one }
+            from_self_cache[ part ] = { part: one }
+            transition_matrices[n] = matrix(base_ring, [[one]])
+            inverse_transition_matrices[n] = matrix(base_ring, [[one]])
             return
 
         partitions_n = Partitions_n(n).list()
@@ -550,7 +560,14 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         # of this matrix (e. g., it being triangular in most standard cases).
         # Are there significantly faster ways to invert a triangular
         # matrix (compared to the usual matrix inversion algorithms)?
-        inverse_transition = ~transition_matrix_n
+        inverse_transition = (~transition_matrix_n).change_ring(base_ring)
+        # Note that we don't simply write
+        # "inverse_transition = ~transition_matrix_n" because that
+        # tends to cast the entries of the matrix into a quotient
+        # field even if this is unnecessary.
+
+        # TODO: This still looks fragile when the base ring is weird!
+        # Possibly work over ZZ in this method?
 
         for i in range(len(partitions_n)):
             d_mcs = {}
@@ -952,15 +969,20 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
             sage: Sym = SymmetricFunctions(QQ) # indirect doctest
             sage: h = Sym.h(); w = Sym.w()
-            sage: h.coerce_map_from(w)
+
+            sage: phi = h.coerce_map_from(w); phi
             Generic morphism:
               From: Symmetric Functions over Rational Field in the Witt basis
               To:   Symmetric Functions over Rational Field in the homogeneous basis
+            sage: phi(w.an_element()) == h(w.an_element())
+            True
             sage: e = Sym.e(); w2 = Sym.w(coerce_e=True)
-            sage: e.coerce_map_from(w2)
+            sage: psi = e.coerce_map_from(w2); psi
             Generic morphism:
               From: Symmetric Functions over Rational Field in the Witt basis
               To:   Symmetric Functions over Rational Field in the elementary basis
+            sage: psi(w2.an_element()) == e(w2.an_element())
+            True
         """
 
         #category = sage.categories.all.ModulesWithBasis(self.base_ring())
@@ -1027,7 +1049,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             self._h_inverse_transition_matrices = {}
             self   .register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain = self))
             self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain = self._h))
-            if self._friendly == None:
+            if self._friendly is None:
                 self._friendly = self._h
 
         if self._coerce_e:
@@ -1049,7 +1071,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             self._e_inverse_transition_matrices = {}
             self   .register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain = self))
             self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain = self._e))
-            if self._friendly == None:
+            if self._friendly is None:
                 self._friendly = self._e
 
     def from_other_uncached(self, u):

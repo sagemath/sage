@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 r"""
 Dyck Words
 
 A class of an object enumerated by the
 :func:`Catalan numbers<sage.combinat.combinat.catalan_number>`,
-see [Sta1999]_, [Sta]_ for details.
+see [Sta-EC2]_, [StaCat98]_ for details.
 
 AUTHORS:
 
@@ -27,14 +28,18 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Sta1999] R. Stanley, Enumerative Combinatorics, Volume 2.
+.. [Sta-EC2] Richard P. Stanley.
+   *Enumerative Combinatorics*, Volume 2.
    Cambridge University Press, 2001.
 
-.. [Sta] R. Stanley, electronic document containing the list
-   of Catalan objects at http://www-math.mit.edu/~rstan/ec/catalan.pdf
+.. [StaCat98] Richard Stanley. *Exercises on Catalan and Related Numbers
+   excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999)*,
+   version of 23 June 1998.
+   http://www-math.mit.edu/~rstan/ec/catalan.pdf
 
-.. [Hag2008] The `q,t` -- Catalan Numbers and the Space of Diagonal Harmonics:
-   With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund,
+.. [Hag2008] James Haglund. *The* `q,t` -- *Catalan Numbers and the
+   Space of Diagonal Harmonics:
+   With an Appendix on the Combinatorics of Macdonald Polynomials*.
    University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
 """
 
@@ -53,28 +58,26 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from combinat import CombinatorialObject, catalan_number
+from combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
 from backtrack import GenericBacktracker
 
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
-from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.all import Posets
 
-from sage.rings.all import QQ
+from sage.rings.all import ZZ, QQ
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.words.word import Word
 from sage.combinat.alternating_sign_matrix import AlternatingSignMatrices
 from sage.misc.latex import latex
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.superseded import deprecated_function_alias
 
 
-DyckWordOptions=GlobalOptions(name='Dyck words',
+DyckWordOptions = GlobalOptions(name='Dyck words',
     doc=r"""
     Set and display the global options for Dyck words. If no parameters
     are set, then the function returns a copy of the options dictionary.
@@ -115,18 +118,18 @@ DyckWordOptions=GlobalOptions(name='Dyck words',
     diagram_style=dict(default="grid",
                        values=dict(grid='printing as paths on a grid using N and E steps',
                                    line='printing as paths on a line using NE and SE steps',),
-                       alias={'N-E':'grid', 'NE-SE':'line'},
+                       alias={'N-E': 'grid', 'NE-SE': 'line'},
                        case_sensitive=False),
     latex_tikz_scale=dict(default=1,
                           description='The default value for the tikz scale when latexed',
-                          checker=lambda x: True), # More trouble than it's worth to check
+                          checker=lambda x: True),  # More trouble than it's worth to check
     latex_diagonal=dict(default=False,
                         description='The default value for displaying the diagonal when latexed',
                         checker=lambda x: isinstance(x, bool)),
     latex_line_width_scalar=dict(default=2,
                                  description='The default value for the line width as a'
                                              'multiple of the tikz scale when latexed',
-                                 checker=lambda x: True), # More trouble than it's worth to check
+                                 checker=lambda x: True),  # More trouble than it's worth to check
     latex_color=dict(default="black",
                      description='The default value for the color when latexed',
                      checker=lambda x: isinstance(x, str)),
@@ -143,6 +146,7 @@ DyckWordOptions=GlobalOptions(name='Dyck words',
 
 open_symbol = 1
 close_symbol = 0
+
 
 def replace_parens(x):
     r"""
@@ -189,6 +193,7 @@ def replace_parens(x):
     else:
         raise ValueError
 
+
 def replace_symbols(x):
     r"""
     A map sending ``open_symbol`` to ``'('`` and ``close_symbol`` to ``')'``,
@@ -232,7 +237,8 @@ def replace_symbols(x):
     else:
         raise ValueError
 
-class DyckWord(CombinatorialObject, Element):
+
+class DyckWord(CombinatorialElement):
     r"""
     A Dyck word.
 
@@ -326,8 +332,6 @@ class DyckWord(CombinatorialObject, Element):
          _|  .
         |  . .
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, dw=None, noncrossing_partition=None,
                               area_sequence=None, heights_sequence=None,
@@ -337,12 +341,12 @@ class DyckWord(CombinatorialObject, Element):
 
         EXAMPLES::
 
-        sage: DyckWord([1,0,1,1,0,0])
-        [1, 0, 1, 1, 0, 0]
-        sage: DyckWord(heights_sequence=(0,1,2,1,0))
-        [1, 1, 0, 0]
-        sage: DyckWord(noncrossing_partition=[[1],[2]])
-        [1, 0, 1, 0]
+            sage: DyckWord([1,0,1,1,0,0])
+            [1, 0, 1, 1, 0, 0]
+            sage: DyckWord(heights_sequence=(0,1,2,1,0))
+            [1, 1, 0, 0]
+            sage: DyckWord(noncrossing_partition=[[1],[2]])
+            [1, 0, 1, 0]
         """
         if dw is None:
             if catalan_code is not None:
@@ -395,8 +399,7 @@ class DyckWord(CombinatorialObject, Element):
             sage: DW = DyckWords().from_area_sequence([])
             sage: TestSuite(DW).run()
         """
-        Element.__init__(self, parent)
-        CombinatorialObject.__init__(self, l)
+        CombinatorialElement.__init__(self, parent, l)
         self._latex_options = dict(latex_options)
 
     _has_2D_print = False
@@ -466,7 +469,13 @@ class DyckWord(CombinatorialObject, Element):
 
             sage: D = DyckWord([1,0,1,0,1,0])
             sage: D.latex_options()
-            {'valleys': False, 'peaks': False, 'tikz_scale': 1, 'color': 'black', 'diagonal': False, 'bounce path': False, 'line width': 2}
+            {'bounce path': False,
+             'color': 'black',
+             'diagonal': False,
+             'line width': 2,
+             'peaks': False,
+             'tikz_scale': 1,
+             'valleys': False}
         """
         d = self._latex_options.copy()
         if "tikz_scale" not in d:
@@ -542,10 +551,10 @@ class DyckWord(CombinatorialObject, Element):
             else:
                 if len(labelling) != n:
                     raise ValueError("The given labelling has the wrong length.")
-                labels = [ str(label) for label in labelling ]
+                labels = [str(label) for label in labelling]
                 if not underpath:
-                    max_length = max( len(label) for label in labels )
-                    labels = [ label.rjust(max_length+1) for label in labels ]
+                    max_length = max(len(label) for label in labels)
+                    labels = [lbl.rjust(max_length + 1) for lbl in labels]
 
             length_of_final_fall = list(reversed(self)).index(open_symbol)
             if length_of_final_fall == 0:
@@ -553,25 +562,25 @@ class DyckWord(CombinatorialObject, Element):
             else:
                 final_fall = " _" + "__"*(length_of_final_fall-1)
             row = "  "*(n - alst[-1]-1) + final_fall + "\n"
-            for i in range(n-1):
-                c=0
+            for i in range(n - 1):
+                c = 0
                 row = row + "  "*(n-i-2-alst[-i-2])
-                c+=n-i-2-alst[-i-2]
-                if alst[-i-2]+1!=alst[-i-1]:
-                    row+=" _"
-                c+=alst[-i-2]-alst[-i-1]
+                c += n-i-2-alst[-i-2]
+                if alst[-i-2]+1 != alst[-i-1]:
+                    row += " _"
+                c += alst[-i-2] - alst[-i-1]
                 if underpath:
-                    row+="__"*(alst[-i-2]-alst[-i-1])+"|" + labels[-1] + "x "*(n-c-2-i)+ " ."*i + "\n"
+                    row += "__"*(alst[-i-2]-alst[-i-1])+"|" + labels[-1] + "x "*(n-c-2-i) + " ."*i + "\n"
                 else:
-                    row+="__"*(alst[-i-2]-alst[-i-1])+"| " + "x "*(n-c-2-i)+ " ."*i + labels[-1] + "\n"
+                    row += "__"*(alst[-i-2]-alst[-i-1])+"| " + "x "*(n-c-2-i) + " ."*i + labels[-1] + "\n"
                 labels.pop()
             if underpath:
-                row = row + "|" + labels[-1] + " ."*(n-1) + "\n"
+                row += "|" + labels[-1] + " ."*(n-1) + "\n"
             else:
-                row = row + "| "+" ."*(n-1) + labels[-1] + "\n"
+                row += "| "+" ."*(n-1) + labels[-1] + "\n"
             return row
         else:
-            raise ValueError("The given type (=\s) is not valid."%type)
+            raise ValueError("The given type (=\s) is not valid." % type)
 
     @staticmethod
     def set_ascii_art(rep="path"):
@@ -644,9 +653,9 @@ class DyckWord(CombinatorialObject, Element):
         for i, p in enumerate(self):
             if p == open_symbol:
                 res[-h][i] = "/"
-                h +=1
+                h += 1
             else:
-                h -=1
+                h -= 1
                 res[-h][i] = "\\"
         return "\n".join("".join(l) for l in res)
 
@@ -655,9 +664,10 @@ class DyckWord(CombinatorialObject, Element):
         Display a DyckWord as a lattice path in the `\ZZ^2` grid.
 
         If the ``type`` is "N-E", then the a cell below the diagonal is
-        indicated by a period, a cell below the path, but above the
-        diagonal are indicated by an x. If a list of labels is included,
-        they are displayed along the vertical edges of the Dyck path.
+        indicated by a period, whereas a cell below the path but above
+        the diagonal is indicated by an x. If a list of labels is
+        included, they are displayed along the vertical edges of the
+        Dyck path.
 
         If the ``type`` is "NE-SE", then the path is simply printed
         as up steps and down steps.
@@ -675,7 +685,7 @@ class DyckWord(CombinatorialObject, Element):
           the up steps in ``self``.
 
         - ``underpath`` -- (if type is "N-E", default:``True``) If ``True``,
-          the labelling is shown under the path otherwise, it is shown to
+          the labelling is shown under the path; otherwise, it is shown to
           the right of the path.
 
         EXAMPLES::
@@ -816,7 +826,7 @@ class DyckWord(CombinatorialObject, Element):
         r"""
         A latex representation of ``self`` using the tikzpicture package.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: D = DyckWord([1,0,1,1,1,0,1,1,0,0,0,1,0,0])
             sage: D.set_latex_options({"valleys":True, "peaks":True, "bounce path":True})
@@ -842,30 +852,31 @@ class DyckWord(CombinatorialObject, Element):
         heights = self.heights()
         latex_options = self.latex_options()
         diagonal = latex_options["diagonal"]
-        ht = [(0,0)]
+        ht = [(0, 0)]
         valleys = []
         peaks = []
-        for i in range(1,len(heights)):
-            a,b = ht[-1]
+        for i in range(1, len(heights)):
+            a, b = ht[-1]
             if heights[i] > heights[i-1]:
                 if diagonal:
-                    ht.append((a,b+1))
+                    ht.append((a, b+1))
                 else:
-                    ht.append((a+1,b+1))
+                    ht.append((a+1, b+1))
                 if i < len(heights)-1 and heights[i+1] < heights[i]:
                     peaks.append(ht[-1])
             else:
                 if diagonal:
-                    ht.append((a+1,b))
+                    ht.append((a+1, b))
                 else:
-                    ht.append((a+1,b-1))
+                    ht.append((a+1, b-1))
                 if i < len(heights)-1 and heights[i+1] > heights[i]:
                     valleys.append(ht[-1])
         ht = iter(ht)
         if diagonal:
-            grid = [((0,i),(i,i+1)) for i in range(self.number_of_open_symbols())]
+            grid = [((0, i), (i, i+1))
+                    for i in range(self.number_of_open_symbols())]
         else:
-            grid = [((0,0),(len(self),self.height()))]
+            grid = [((0, 0), (len(self), self.height()))]
         res = "\\vcenter{\\hbox{$\\begin{tikzpicture}[scale="+str(latex_options['tikz_scale'])+"]\n"
         mark_points = []
         if latex_options['valleys']:
@@ -873,20 +884,23 @@ class DyckWord(CombinatorialObject, Element):
         if latex_options['peaks']:
             mark_points.extend(peaks)
         for v in mark_points:
-            res += "  \\draw[line width=2,color=red,fill=red] %s circle (%s);\n"%(str(v),0.15+.03*latex_options['line width'])
+            res += "  \\draw[line width=2,color=red,fill=red] %s circle (%s);\n" % (str(v), 0.15 + .03 * latex_options['line width'])
         if latex_options["bounce path"]:
             D = self.bounce_path()
             D.set_latex_options(latex_options)
-            D.set_latex_options({"color":"green","line width":2*latex_options['line width'],"bounce path":False, "peaks":False, "valleys":False})
+            D.set_latex_options({"color": "green",
+                                 "line width": 2 * latex_options['line width'],
+                                 "bounce path": False,
+                                 "peaks": False, "valleys": False})
             res += D._latex_().split("\n")[-2] + "\n"
-        for v1,v2 in grid:
-            res += "  \\draw[dotted] %s grid %s;\n"%(str(v1),str(v2))
+        for v1, v2 in grid:
+            res += "  \\draw[dotted] %s grid %s;\n" % (str(v1), str(v2))
         if diagonal:
-            res += "  \\draw (0,0) -- %s;\n"%str((self.number_of_open_symbols(),self.number_of_open_symbols()))
-        res += "  \\draw[rounded corners=1, color=%s, line width=%s] (0, 0)"%(latex_options['color'],str(latex_options['line width']))
-        ht.next()
+            res += "  \\draw (0,0) -- %s;\n" % str((self.number_of_open_symbols(), self.number_of_open_symbols()))
+        res += "  \\draw[rounded corners=1, color=%s, line width=%s] (0, 0)" % (latex_options['color'], str(latex_options['line width']))
+        next(ht)
         for i, j in ht:
-            res += " -- (%s, %s)"%(i, j)
+            res += " -- (%s, %s)" % (i, j)
         res += ";\n"
         res += "\\end{tikzpicture}$}}"
         return res
@@ -925,9 +939,7 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([]).number_of_open_symbols()
             0
         """
-        return len(filter(lambda x: x == open_symbol, self))
-
-    size = deprecated_function_alias(13550, number_of_open_symbols)
+        return len([x for x in self if x == open_symbol])
 
     def number_of_close_symbols(self):
         r"""
@@ -945,7 +957,7 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([]).number_of_close_symbols()
             0
         """
-        return len(filter(lambda x: x == close_symbol, self))
+        return len([x for x in self if x == close_symbol])
 
     def is_complete(self):
         r"""
@@ -1039,14 +1051,14 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([1, 1, 0, 0, 1, 1, 1, 0, 0, 0]).heights()
             (0, 1, 2, 1, 0, 1, 2, 3, 2, 1, 0)
         """
-        height  = 0
-        heights = [0]*(len(self)+1)
+        height = 0
+        heights = [0] * (len(self) + 1)
         for i, letter in enumerate(self):
             if letter == open_symbol:
                 height += 1
             elif letter == close_symbol:
                 height -= 1
-            heights[i+1] = height
+            heights[i + 1] = height
         return tuple(heights)
 
     @classmethod
@@ -1064,7 +1076,7 @@ class DyckWord(CombinatorialObject, Element):
             []
         """
         from sage.misc.superseded import deprecation
-        deprecation(14875,'this method is deprecated. Use DyckWords(complete=False).from_heights instead.')
+        deprecation(14875, 'this method is deprecated. Use DyckWords(complete=False).from_heights instead.')
         return DyckWords_all().from_heights(heights)
 
     @classmethod
@@ -1082,13 +1094,15 @@ class DyckWord(CombinatorialObject, Element):
             []
         """
         from sage.misc.superseded import deprecation
-        deprecation(14875,'this method is deprecated. Use DyckWords(complete=False).from_min_heights instead.')
+        deprecation(14875, 'this method is deprecated. Use DyckWords(complete=False).from_min_heights instead.')
         return DyckWords_all().from_heights(heights)
 
     def associated_parenthesis(self, pos):
         r"""
         Report the position for the parenthesis in ``self`` that matches the
-        one at position ``pos`` .
+        one at position ``pos``.
+
+        The positions in ``self`` are counted from `0`.
 
         INPUT:
 
@@ -1131,7 +1145,7 @@ class DyckWord(CombinatorialObject, Element):
             d -= 1
             height -= 1
         else:
-            raise ValueError("unknown symbol %s"%self[pos-1])
+            raise ValueError("unknown symbol %s" % self[pos])
 
         while height != 0:
             pos += d
@@ -1173,7 +1187,7 @@ class DyckWord(CombinatorialObject, Element):
             return 0
         i = 1
         while self[i] == open_symbol:
-            i+=1
+            i += 1
         return i
 
     def peaks(self):
@@ -1192,7 +1206,8 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([1,1,0,1,0,1,0,0]).peaks() # Haglund's def gives 2
             [1, 3, 5]
         """
-        return [i for i in range(len(self)-1) if self[i] == open_symbol and self[i+1] == close_symbol]
+        return [i for i in range(len(self)-1)
+                if self[i] == open_symbol and self[i+1] == close_symbol]
 
     def number_of_peaks(self):
         r"""
@@ -1228,7 +1243,8 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([1,1,0,1,0,1,0,0]).valleys()
             [2, 4]
         """
-        return [i for i in xrange(len(self)-1) if self[i] == close_symbol and self[i+1] == open_symbol]
+        return [i for i in xrange(len(self)-1)
+                if self[i] == close_symbol and self[i+1] == open_symbol]
 
     def number_of_valleys(self):
         r"""
@@ -1292,7 +1308,8 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([1, 0, 1, 0]).positions_of_double_rises()
             []
         """
-        return [ i for i in xrange(len(self)-1) if self[i] == self[i+1] == open_symbol ]
+        return [i for i in xrange(len(self)-1)
+                if self[i] == self[i+1] == open_symbol]
 
     def number_of_double_rises(self):
         r"""
@@ -1329,8 +1346,6 @@ class DyckWord(CombinatorialObject, Element):
         h = self.heights()
         return [i for i in xrange(2, len(h), 2) if h[i] == 0]
 
-    return_to_zero = deprecated_function_alias(13550, returns_to_zero)
-
     def touch_points(self):
         r"""
         Return the abscissae (or, equivalently, ordinates) of the
@@ -1357,7 +1372,7 @@ class DyckWord(CombinatorialObject, Element):
             sage: DyckWord([1, 0, 1, 1, 0, 0]).touch_points()
             [1, 3]
         """
-        return [ i // 2 for i in self.returns_to_zero() ]
+        return [i // 2 for i in self.returns_to_zero()]
 
     def touch_composition(self):
         r"""
@@ -1386,7 +1401,7 @@ class DyckWord(CombinatorialObject, Element):
         from sage.combinat.composition import Composition
         if self.length() == 0:
             return Composition([])
-        return Composition( descents=[i-1 for i in self.touch_points()] )
+        return Composition(descents=[i-1 for i in self.touch_points()])
 
     def number_of_touch_points(self):
         r"""
@@ -1474,17 +1489,18 @@ class DyckWord(CombinatorialObject, Element):
         close_positions = []
         for i in range(len(self)):
             if self[i] == open_symbol:
-                open_positions.append(i+1)
+                open_positions.append(i + 1)
             else:
-                close_positions.append(i+1)
+                close_positions.append(i + 1)
         from sage.combinat.tableau import StandardTableau
-        return StandardTableau(filter(lambda x: x != [],  [ open_positions, close_positions ]))
+        return StandardTableau([x for x in [open_positions, close_positions] if x != []])
 
     @combinatorial_map(name="to binary trees: up step, left tree, down step, right tree")
     def to_binary_tree(self, usemap="1L0R"):
         r"""
         Return a binary tree recursively constructed from the Dyck path
-        by the sent ``usemap``. The default usemap is ``1L0R`` which means:
+        ``self`` by the map ``usemap``. The default ``usemap`` is ``'1L0R'``
+        which means:
 
         - an empty Dyck word is a leaf,
 
@@ -1493,11 +1509,13 @@ class DyckWord(CombinatorialObject, Element):
 
         INPUT:
 
-        - ``usemap`` -- a string, either ``1L0R``, ``1R0L``, ``L1R0``,
-          ``R1L0``.
+        - ``usemap`` -- a string, either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
+          ``'R1L0'``
 
-        Other valid ``usemap`` are ``1R0L``, ``L1R0``, and ``R1L0`` and all
-        corresponding to different recursive definitions of Dyck paths.
+        Other valid ``usemap`` are ``'1R0L'``, ``'L1R0'``, and ``'R1L0'``.
+        These correspond to different maps from Dyck paths to binary
+        trees, whose recursive definitions are hopefully clear from the
+        names.
 
         EXAMPLES::
 
@@ -1527,24 +1545,25 @@ class DyckWord(CombinatorialObject, Element):
             ValueError: R10L is not a correct map
         """
         if usemap not in ["1L0R", "1R0L", "L1R0", "R1L0"]:
-            raise ValueError("%s is not a correct map"%(usemap))
+            raise ValueError("%s is not a correct map" % (usemap))
         from sage.combinat.binary_tree import BinaryTree
         if len(self) == 0:
             return BinaryTree()
         tp = [0]
         tp.extend(self.touch_points())
         l = len(self)
-        if usemap[0] == '1': # we check what kind of reduction we want
-            s0 = 1 #start point for first substree
-            e0 = tp[1] *2 -1 #end point for first subtree
-            s1 = e0 + 1 #start point for second subtree
-            e1 = l #end point for second subtree
+        if usemap[0] == '1':  # we check what kind of reduction we want
+            s0 = 1  # start point for first substree
+            e0 = tp[1] * 2 - 1  # end point for first subtree
+            s1 = e0 + 1  # start point for second subtree
+            e1 = l  # end point for second subtree
         else:
             s0 = 0
-            e0 = tp[len(tp)-2] *2
+            e0 = tp[len(tp) - 2] * 2
             s1 = e0 + 1
             e1 = l - 1
-        trees = [DyckWord(self[s0:e0]).to_binary_tree(usemap), DyckWord(self[s1:e1]).to_binary_tree(usemap)]
+        trees = [DyckWord(self[s0:e0]).to_binary_tree(usemap),
+                 DyckWord(self[s1:e1]).to_binary_tree(usemap)]
         if usemap[0] == "R" or usemap[1] == "R":
             trees.reverse()
         return BinaryTree(trees)
@@ -1552,8 +1571,11 @@ class DyckWord(CombinatorialObject, Element):
     @combinatorial_map(name="to the Tamari corresponding Binary tree")
     def to_binary_tree_tamari(self):
         r"""
-        Return the binary tree with consistency with the Tamari order
-        of ``self``.
+        Return the binary tree corresponding to ``self`` in a way which
+        is consistent with the Tamari orders on the set of Dyck paths and
+        on the set of binary trees.
+
+        This is the ``'L1R0'`` map documented in :meth:`to_binary_tree`.
 
         EXAMPLES::
 
@@ -1565,6 +1587,51 @@ class DyckWord(CombinatorialObject, Element):
             [[[., .], .], .]
         """
         return self.to_binary_tree("L1R0")
+
+    def tamari_interval(self, other):
+        r"""
+        Return the Tamari interval between ``self`` and ``other`` as a
+        :class:`~sage.combinat.interval_posets.TamariIntervalPoset`.
+
+        A "Tamari interval" means an interval in the Tamari order. The
+        Tamari order on the set of Dyck words of size `n` is the
+        partial order obtained from the Tamari order on the set of
+        binary trees of size `n` (see
+        :meth:`~sage.combinat.binary_tree.BinaryTree.tamari_lequal`)
+        by means of the Tamari bijection between Dyck words and binary
+        trees
+        (:meth:`~sage.combinat.binary_tree.BinaryTree.to_dyck_word_tamari`).
+
+        INPUT:
+
+        - ``other`` -- a Dyck word greater or equal to ``self`` in the
+          Tamari order
+
+        EXAMPLES::
+
+            sage: dw = DyckWord([1, 1, 0, 1, 0, 0, 1, 0])
+            sage: ip = dw.tamari_interval(DyckWord([1, 1, 1, 0, 0, 1, 0, 0])); ip
+            The tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)]
+            sage: ip.lower_dyck_word()
+            [1, 1, 0, 1, 0, 0, 1, 0]
+            sage: ip.upper_dyck_word()
+            [1, 1, 1, 0, 0, 1, 0, 0]
+            sage: ip.interval_cardinality()
+            4
+            sage: ip.number_of_tamari_inversions()
+            2
+            sage: list(ip.dyck_words())
+            [[1, 1, 1, 0, 0, 1, 0, 0],
+             [1, 1, 1, 0, 0, 0, 1, 0],
+             [1, 1, 0, 1, 0, 1, 0, 0],
+             [1, 1, 0, 1, 0, 0, 1, 0]]
+            sage: dw.tamari_interval(DyckWord([1,1,0,0,1,1,0,0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: The two Dyck words are not comparable on the Tamari lattice.
+        """
+        from sage.combinat.interval_posets import TamariIntervalPosets
+        return TamariIntervalPosets.from_dyck_words(self, other)
 
     def to_area_sequence(self):
         r"""
@@ -1625,6 +1692,7 @@ class DyckWord(CombinatorialObject, Element):
             else:
                 a -= 1
         return seq
+
 
 class DyckWord_complete(DyckWord):
     r"""
@@ -1721,9 +1789,9 @@ class DyckWord_complete(DyckWord):
             6
         """
         from sage.rings.arith import multinomial
-        return multinomial( list(self.rise_composition()) )
+        return multinomial(list(self.rise_composition()))
 
-    def list_parking_functions( self ):
+    def list_parking_functions(self):
         r"""
         Return all parking functions whose supporting Dyck path is ``self``.
 
@@ -1766,10 +1834,12 @@ class DyckWord_complete(DyckWord):
         if len(alist) == 0:
             return Permutation([])
         m = max(alist)
-        p1 = Word([m-alist[-i-1] for i in range(len(alist))]).standard_permutation()
+        p1 = Word([m-alist[-i-1]
+                   for i in range(len(alist))]).standard_permutation()
         return p1.inverse().complement()
 
-    def characteristic_symmetric_function(self, q=None, R=QQ['q','t'].fraction_field()):
+    def characteristic_symmetric_function(self, q=None,
+                                          R=QQ['q', 't'].fraction_field()):
         r"""
         The characteristic function of ``self`` is the sum of
         `q^{dinv(D,F)} Q_{ides(read(D,F))}` over all permutation
@@ -1802,14 +1872,15 @@ class DyckWord_complete(DyckWord):
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
         from sage.combinat.sf.sf import SymmetricFunctions
         if q is None:
-            q=R('q')
+            q = R('q')
         else:
             if not q in R:
-                raise ValueError("q=%s must be an element of the base ring %s"%(q,R))
+                raise ValueError("q=%s must be an element of the base ring %s" % (q, R))
         F = QuasiSymmetricFunctions(R).Fundamental()
         p = self.reading_permutation().inverse()
-        perms = [Word(perm).standard_permutation() for perm in self.list_parking_functions()]
-        QSexpr = sum( q**self.dinv(pv.inverse())*F(Permutation([p(i) for i in pv]).descents_composition()) for pv in perms)
+        perms = [Word(perm).standard_permutation()
+                 for perm in self.list_parking_functions()]
+        QSexpr = sum(q**self.dinv(pv.inverse())*F(Permutation([p(i) for i in pv]).descents_composition()) for pv in perms)
         s = SymmetricFunctions(R).s()
         return s(QSexpr.to_symmetric_function())
 
@@ -1829,18 +1900,18 @@ class DyckWord_complete(DyckWord):
         """
         from sage.combinat.tableau import Tableau
         n = self.semilength()
-        if n==0:
+        if n == 0:
             return (Tableau([]), Tableau([]))
-        elif self.height()==n:
-            return (Tableau([range(1,n+1)]),Tableau([range(1,n+1)]))
+        elif self.height() == n:
+            return (Tableau([range(1, n + 1)]), Tableau([range(1, n + 1)]))
         else:
-            left = [[],[]]
+            left = [[], []]
             right = [[], []]
             for pos in range(n):
                 if self[pos] == open_symbol:
-                    left[0].append(pos+1)
+                    left[0].append(pos + 1)
                 else:
-                    left[1].append(pos+1)
+                    left[1].append(pos + 1)
                 if self[-pos-1] == close_symbol:
                     right[0].append(pos+1)
                 else:
@@ -1929,16 +2000,16 @@ class DyckWord_complete(DyckWord):
             True
         """
         n = self.semilength()
-        if n==0:
+        if n == 0:
             return Permutation([])
-        D,touch_sequence = pealing(self, return_touches=True)
+        D, touch_sequence = pealing(self, return_touches=True)
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         S = SymmetricGroup(n)
         pi = S.one()
         while touch_sequence:
             for touches in touch_sequence:
-                pi = pi * S( tuple(touches) )
-            D,touch_sequence = pealing(D, return_touches=True)
+                pi = pi * S(tuple(touches))
+            D, touch_sequence = pealing(D, return_touches=True)
         return Permutation(pi)
 
     @combinatorial_map(name='to 321 avoiding permutation')
@@ -2003,8 +2074,8 @@ class DyckWord_complete(DyckWord):
             True
         """
         from sage.combinat.rsk import RSK_inverse
-        A,B = self.to_pair_of_standard_tableaux()
-        return RSK_inverse(A,B, output='permutation')
+        A, B = self.to_pair_of_standard_tableaux()
+        return RSK_inverse(A, B, output='permutation')
 
     @combinatorial_map(name='to 132 avoiding permutation')
     def to_132_avoiding_permutation(self):
@@ -2014,8 +2085,8 @@ class DyckWord_complete(DyckWord):
 
         REFERENCES:
 
-        .. [Kra2001] C. Krattenthaler -- Permutations with restricted patterns and Dyck
-           paths, Adv. Appl. Math. 27 (2001), 510--530.
+        .. [Kra2001] C. Krattenthaler -- Permutations with restricted
+           patterns and Dyck paths, Adv. Appl. Math. 27 (2001), 510--530.
 
         EXAMPLES::
 
@@ -2036,18 +2107,18 @@ class DyckWord_complete(DyckWord):
         area = self.to_area_sequence()
         area.append(0)
         pi = []
-        values = range(1,n+1)
+        values = range(1, n+1)
         for i in range(n):
             if area[n-i-1]+1 > area[n-i]:
                 pi.append(n-i-area[n-i-1])
                 values.remove(n-i-area[n-i-1])
             else:
-                v = min( v for v in values if v > n-i-area[n-i-1] )
+                v = min(v for v in values if v > n-i-area[n-i-1])
                 pi.append(v)
                 values.remove(v)
         return Permutation(pi)
 
-    def to_permutation(self,map):
+    def to_permutation(self, map):
         r"""
         This is simply a method collecting all implemented maps from Dyck
         words to permutations.
@@ -2081,13 +2152,13 @@ class DyckWord_complete(DyckWord):
             sage: D.to_permutation(map="Krattenthaler")
             [2, 1, 3, 4]
         """
-        if   map=="Bandlow-Killpatrick":
+        if map == "Bandlow-Killpatrick":
             return self.to_312_avoiding_permutation()
-        elif map=="Knuth":
+        elif map == "Knuth":
             return self.to_321_avoiding_permutation()
-        elif map=="Krattenthaler":
+        elif map == "Krattenthaler":
             return self.to_132_avoiding_permutation()
-        elif map=="Stump":
+        elif map == "Stump":
             return self.to_noncrossing_permutation()
         else:
             raise ValueError("The given map is not valid.")
@@ -2133,8 +2204,9 @@ class DyckWord_complete(DyckWord):
             sage: DyckWord([1, 1, 0, 1, 0, 0]).to_noncrossing_partition("Stump")
             [[1, 2, 3]]
         """
-        if bijection=="Stump":
-            return [[v for v in c] for c in self.to_noncrossing_permutation().cycle_tuples()]
+        if bijection == "Stump":
+            return [[v for v in c]
+                    for c in self.to_noncrossing_permutation().cycle_tuples()]
         partition = []
         stack = []
         i = 0
@@ -2151,14 +2223,14 @@ class DyckWord_complete(DyckWord):
                 j += 1
 
             #Now j points to the next 1 or past the end of self
-            nz = j - (i+1) # the number of )'s between i and j
+            nz = j - (i + 1)  # the number of )'s between i and j
             if nz > 0:
                 # Remove the nz last elements of stack and
                 # make a new part in partition
                 if nz > len(stack):
                     raise ValueError("incorrect Dyck word")
 
-                partition.append( stack[-nz:] )
+                partition.append(stack[-nz:])
 
                 stack = stack[: -nz]
             i = j
@@ -2171,15 +2243,24 @@ class DyckWord_complete(DyckWord):
 
     def to_Catalan_code(self):
         r"""
-        Return the Catalan code associated to ``self`` .  The Catalan code is a
-        sequence of non--negative integers `a_i` such that if `i < j` and
-        `a_i > 0` and `a_j > 0` and `a_{i+1} = a_{i+2} = \cdots = a_{j-1} = 0`
-        then `a_i - a_j < j-i`.
+        Return the Catalan code associated to ``self``.
+
+        A Catalan code of length `n` is a sequence
+        `(a_1, a_2, \ldots, a_n)` of `n` integers `a_i` such that:
+
+        - `0 \leq a_i \leq n-i` for every `i`;
+
+        - if `i < j` and `a_i > 0` and `a_j > 0` and
+          `a_{i+1} = a_{i+2} = \cdots = a_{j-1} = 0`,
+          then `a_i - a_j < j-i`.
+
+        It turns out that the Catalan codes of length `n` are in
+        bijection with Dyck words.
 
         The Catalan code of a Dyck word is example (x) in Richard Stanley's
         exercises on combinatorial interpretations for Catalan objects.
         The code in this example is the reverse of the description provided
-        there. See [Sta1999]_ and [Sta]_.
+        there. See [Sta-EC2]_ and [StaCat98]_.
 
         EXAMPLES::
 
@@ -2220,7 +2301,7 @@ class DyckWord_complete(DyckWord):
             []
         """
         from sage.misc.superseded import deprecation
-        deprecation(14875,'this method is deprecated. Use DyckWords().from_Catalan_code instead.')
+        deprecation(14875, 'this method is deprecated. Use DyckWords().from_Catalan_code instead.')
         return CompleteDyckWords_all().from_Catalan_code(code)
 
     @classmethod
@@ -2238,7 +2319,7 @@ class DyckWord_complete(DyckWord):
             []
         """
         from sage.misc.superseded import deprecation
-        deprecation(14875,'this method is deprecated. Use DyckWords().from_area_sequence instead.')
+        deprecation(14875, 'this method is deprecated. Use DyckWords().from_area_sequence instead.')
         return CompleteDyckWords_all().from_area_sequence(code)
 
     @combinatorial_map(name="To Ordered tree")
@@ -2274,7 +2355,7 @@ class DyckWord_complete(DyckWord):
             if u == 1:
                 levels.append(OrderedTree().clone())
             else:
-                tree =levels.pop()
+                tree = levels.pop()
                 tree.set_immutable()
                 root = levels.pop()
                 root.append(tree)
@@ -2287,18 +2368,91 @@ class DyckWord_complete(DyckWord):
         r"""
         Map ``self`` to a triangulation.
 
-        .. TODO::
+        The map from complete Dyck words of length `2n` to
+        triangulations of `n+2`-gon given by this function is a
+        bijection that can be described as follows.
 
-            Implement :meth:`DyckWord_complete.to_triangulation`.
+        Consider the Dyck word as a path from `(0, 0)` to `(n, n)`
+        staying above the diagonal, where `1` is an up step and `0` is
+        a right step. Then each horizontal step has a co-height (`0`
+        at the top and `n-1` at most at the bottom). One reads the
+        Dyck word from left to right. At the begining, all vertices
+        from `0` to `n+1` are available. For each horizontal step,
+        one creates an edge from the vertex indexed by the co-height
+        to the next available vertex. This chops out a triangle from
+        the polygon and one removes the middle vertex of this triangle
+        from the list of available vertices.
 
-        TESTS::
+        This bijection has the property that the set of smallest
+        vertices of the edges in a triangulation is an encoding of the
+        co-heights, from which the Dyck word can be easily recovered.
+
+        OUTPUT:
+
+        a list of pairs `(i, j)` that are the edges of the
+        triangulations.
+
+        EXAMPLES::
 
             sage: DyckWord([1, 1, 0, 0]).to_triangulation()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: TODO
+            [(0, 2)]
+
+            sage: [t.to_triangulation() for t in DyckWords(3)]
+            [[(2, 4), (1, 4)],
+            [(2, 4), (0, 2)],
+            [(1, 3), (1, 4)],
+            [(1, 3), (0, 3)],
+            [(0, 2), (0, 3)]]
+
+        REFERENCES:
+
+        .. [Cha2005] F. Chapoton, Une Base Symétrique de l'algèbre des
+           Coinvariants Quasi-Symétriques, Electronic Journal of
+           Combinatorics Vol 12(1) (2005) N16.
         """
-        raise NotImplementedError("TODO")
+        n = self.number_of_open_symbols()
+        l = range(n + 2)  # from 0 to n + 1
+        edges = []
+        coheight = n - 1
+        for letter in self[1:-1]:
+            if letter == 1:
+                coheight -= 1
+            else:
+                edges.append((coheight, l[coheight + 2]))
+                l.pop(coheight + 1)
+
+        return edges
+
+    def to_triangulation_as_graph(self):
+        r"""
+        Map ``self`` to a triangulation and return the result as a graph.
+
+        See :meth:`to_triangulation` for the bijection used to map
+        complete Dyck words to triangulations.
+
+        OUTPUT:
+
+        - a graph containing both the perimeter edges and the inner
+          edges of a triangulation of a regular polygon.
+
+        EXAMPLES::
+
+            sage: g = DyckWord([1, 1, 0, 0, 1, 0]).to_triangulation_as_graph()
+            sage: g
+            Graph on 5 vertices
+            sage: g.edges(labels=False)
+            [(0, 1), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (3, 4)]
+            sage: g.show()        # not tested
+        """
+        n = self.number_of_open_symbols()
+        edges = self.to_triangulation()
+        from sage.graphs.graph import Graph
+        peri = [(i, i + 1) for i in range(n + 1)] + [(n + 1, 0)]
+        g = Graph(n + 2)
+        g.add_edges(peri)
+        g.add_edges(edges)
+        g.set_pos(g.layout_circular())
+        return g
 
     def to_non_decreasing_parking_function(self):
         r"""
@@ -2345,8 +2499,8 @@ class DyckWord_complete(DyckWord):
             []
         """
         from sage.misc.superseded import deprecation
-        deprecation(14875,'this method is deprecated. Use DyckWords().from_non_decreasing_parking_function instead.')
-        return CompleteDyckWords_all().from_area_sequence([ i - pf[i] + 1 for i in range(len(pf)) ])
+        deprecation(14875, 'this method is deprecated. Use DyckWords().from_non_decreasing_parking_function instead.')
+        return CompleteDyckWords_all().from_area_sequence([i - pf[i] + 1 for i in range(len(pf))])
 
     def major_index(self):
         r"""
@@ -2376,7 +2530,7 @@ class DyckWord_complete(DyckWord):
         valleys = self.valleys()
         return sum(valleys) + len(valleys)
 
-    def pyramid_weight( self ):
+    def pyramid_weight(self):
         r"""
         A pyramid of ``self`` is a subsequence of the form
         `1^h 0^h`. A pyramid is maximal if it is neither preceded by a `1`
@@ -2405,14 +2559,15 @@ class DyckWord_complete(DyckWord):
         bseq = self.reverse().to_area_sequence() + [0]
         apeak = []
         bpeak = []
-        for i in range(len(aseq)-1):
-            if aseq[i+1]<=aseq[i]:
+        for i in range(len(aseq) - 1):
+            if aseq[i + 1] <= aseq[i]:
                 apeak.append(i)
-            if bseq[i+1]<=bseq[i]:
+            if bseq[i + 1] <= bseq[i]:
                 bpeak.append(i)
         out = 0
         for i in range(len(apeak)):
-            out += min(aseq[apeak[i]]-aseq[apeak[i]+1]+1,bseq[bpeak[-i-1]]-bseq[bpeak[-i-1]+1]+1)
+            out += min(aseq[apeak[i]]-aseq[apeak[i]+1]+1,
+                       bseq[bpeak[-i-1]]-bseq[bpeak[-i-1]+1]+1)
         return out
 
     def tunnels(self):
@@ -2432,10 +2587,10 @@ class DyckWord_complete(DyckWord):
         for i in range(len(heights)-1):
             height = heights[i]
             if height < heights[i+1]:
-                tunnels.append( (i,i+1+heights[i+1:].index(height)) )
+                tunnels.append((i, i+1+heights[i+1:].index(height)))
         return tunnels
 
-    def number_of_tunnels(self,tunnel_type='centered'):
+    def number_of_tunnels(self, tunnel_type='centered'):
         r"""
         Return the number of tunnels of ``self`` of type ``tunnel_type``.
 
@@ -2466,17 +2621,17 @@ class DyckWord_complete(DyckWord):
         n = len(self)
         tunnels = self.tunnels()
         if tunnel_type == 'left':
-            return len( [ i for (i,j) in tunnels if i+j < n ] )
+            return len([i for (i, j) in tunnels if i + j < n])
         elif tunnel_type == 'centered':
-            return len( [ i for (i,j) in tunnels if i+j == n ] )
+            return len([i for (i, j) in tunnels if i + j == n])
         elif tunnel_type == 'right':
-            return len( [ i for (i,j) in tunnels if i+j > n ] )
+            return len([i for (i, j) in tunnels if i + j > n])
         elif tunnel_type == 'all':
             return len(tunnels)
         else:
             raise ValueError("The given tunnel_type is not valid.")
 
-    @combinatorial_map(order = 2, name="Reverse path")
+    @combinatorial_map(order=2, name="Reverse path")
     def reverse(self):
         r"""
         Return the reverse and complement of ``self``.
@@ -2522,8 +2677,8 @@ class DyckWord_complete(DyckWord):
             sage: DyckWord([1,0,1,0]).first_return_decomposition()
             ([], [1, 0])
         """
-        k = self.position_of_first_return()*2
-        return DyckWord(self[1:k-1]),DyckWord(self[k:])
+        k = self.position_of_first_return() * 2
+        return DyckWord(self[1:k - 1]), DyckWord(self[k:])
 
     def decomposition_reverse(self):
         r"""
@@ -2547,8 +2702,9 @@ class DyckWord_complete(DyckWord):
         if self.semilength() == 0:
             return self
         else:
-            D1,D2 = self.first_return_decomposition()
-            return DyckWord([1]+list(D2.decomposition_reverse())+[0]+list(D1.decomposition_reverse()))
+            D1, D2 = self.first_return_decomposition()
+            return DyckWord([1] + list(D2.decomposition_reverse())
+                            + [0] + list(D1.decomposition_reverse()))
 
     @combinatorial_map(name="Area-dinv to bounce-area")
     def area_dinv_to_bounce_area_map(self):
@@ -2588,7 +2744,7 @@ class DyckWord_complete(DyckWord):
             return self
         a.reverse()
         image = []
-        for i in range(max(a),-2,-1):
+        for i in range(max(a), -2, -1):
             for j in a:
                 if j == i:
                     image.append(1)
@@ -2597,7 +2753,7 @@ class DyckWord_complete(DyckWord):
         return DyckWord(image)
 
     @combinatorial_map(name="Bounce-area to area-dinv")
-    def bounce_area_to_area_dinv_map( D ):
+    def bounce_area_to_area_dinv_map(D):
         r"""
         Return the image of the Dyck word under the map which sends a
         Dyck word with ``bounce`` equal to `r` and ``area`` equal to `s` to a
@@ -2640,7 +2796,7 @@ class DyckWord_complete(DyckWord):
             p = (zeros+[len(out)])[aseq[i]]
             out = [1] + out[p:]+[0] + out[:p]
             zeros = [0] + [j+len(out)-p for j in zeros[:aseq[i]]]
-        return DyckWord( out )
+        return DyckWord(out)
 
     def area(self):
         r"""
@@ -2712,8 +2868,6 @@ class DyckWord_complete(DyckWord):
                 a += above - diagonal
         return a
 
-    a_statistic = deprecated_function_alias(13550, area)
-
     def bounce_path(self):
         r"""
         Return the bounce path of ``self`` formed by starting at `(n,n)` and
@@ -2744,7 +2898,7 @@ class DyckWord_complete(DyckWord):
 
         """
         area_seq = self.to_area_sequence()
-        i = len(area_seq)-1
+        i = len(area_seq) - 1
         n = 5
         while i > 0:
             n -= 1
@@ -2752,9 +2906,9 @@ class DyckWord_complete(DyckWord):
             i_new = i - a
             while i > i_new:
                 i -= 1
-                area_seq[i] = area_seq[i+1] - 1
+                area_seq[i] = area_seq[i + 1] - 1
             i -= 1
-        return DyckWord(area_sequence = area_seq)
+        return DyckWord(area_sequence=area_seq)
 
     def bounce(self):
         r"""
@@ -2851,9 +3005,7 @@ class DyckWord_complete(DyckWord):
 
         return b
 
-    b_statistic = deprecated_function_alias(13550, bounce)
-
-    def dinv(self, labeling = None):
+    def dinv(self, labeling=None):
         r"""
         Return the dinv statistic of ``self`` due to M. Haiman, see [Hag2008]_.
 
@@ -2889,8 +3041,8 @@ class DyckWord_complete(DyckWord):
         cnt = 0
         for j in range(len(alist)):
             for i in range(j):
-                if (alist[i]-alist[j] == 0 and (labeling is None or labeling[i]<labeling[j])) or (alist[i]-alist[j]==1 and (labeling is None or labeling[i]>labeling[j])):
-                    cnt+=1
+                if (alist[i] - alist[j] == 0 and (labeling is None or labeling[i] < labeling[j])) or (alist[i] - alist[j] == 1 and (labeling is None or labeling[i] > labeling[j])):
+                    cnt += 1
         return cnt
 
     @combinatorial_map(name='to alternating sign matrix')
@@ -2916,13 +3068,15 @@ class DyckWord_complete(DyckWord):
         """
         parkfn = self.reverse().to_non_decreasing_parking_function()
         parkfn2 = [len(parkfn) + 1 - parkfn[i] for i in range(len(parkfn))]
-        monotone_triangle = [[0]*(len(parkfn2) - j) for j in range(len(parkfn2))]
+        monotone_triangle = [[0] * (len(parkfn2) - j)
+                             for j in range(len(parkfn2))]
         for i in range(len(monotone_triangle)):
             for j in range(len(monotone_triangle[i])):
                 monotone_triangle[i][j] = len(monotone_triangle[i]) - j
-            monotone_triangle[i][0]=parkfn2[i]
+            monotone_triangle[i][0] = parkfn2[i]
         A = AlternatingSignMatrices(len(parkfn))
         return A.from_monotone_triangle(monotone_triangle)
+
 
 class DyckWords(Parent, UniqueRepresentation):
     r"""
@@ -3014,12 +3168,19 @@ class DyckWords(Parent, UniqueRepresentation):
                 if complete:
                     return CompleteDyckWords_all()
                 return DyckWords_all()
-            return CompleteDyckWords_size(k1)
 
+            k1 = ZZ(k1)
+            if k1 < 0:
+                raise ValueError("k1 (= %s) must be nonnegative" % k1)
+            return CompleteDyckWords_size(k1)
+        else:
+            k1 = ZZ(k1)
+
+        k2 = ZZ(k2)
         if k1 < 0 or (k2 is not None and k2 < 0):
-            raise ValueError("k1 (= %s) and k2 (= %s) must be nonnegative, with k1 >= k2."%(k1, k2))
+            raise ValueError("k1 (= %s) and k2 (= %s) must be nonnegative, with k1 >= k2." % (k1, k2))
         if k1 < k2:
-            raise ValueError("k1 (= %s) must be >= k2 (= %s)"%(k1, k2))
+            raise ValueError("k1 (= %s) must be >= k2 (= %s)" % (k1, k2))
 
         if k1 == k2:
             return CompleteDyckWords_size(k1)
@@ -3120,12 +3281,12 @@ class DyckWords(Parent, UniqueRepresentation):
         l1 = len(heights)-1
         res = [0]*(l1)
         if heights == () or heights[0] != 0:
-            raise ValueError("heights must start with 0: %s"%(heights,))
+            raise ValueError("heights must start with 0: %s" % (heights,))
         for i in range(l1):
             if heights[i] == heights[i+1]-1:
                 res[i] = 1
             elif heights[i] != heights[i+1]+1:
-                raise ValueError("consecutive heights must differ by exactly 1: %s"%(heights,))
+                raise ValueError("consecutive heights must differ by exactly 1: %s" % (heights,))
         return self.element_class(self, res)
 
     def min_from_heights(self, heights):
@@ -3174,24 +3335,25 @@ class DyckWords(Parent, UniqueRepresentation):
             ValueError: heights must start with 0: ()
         """
         if heights == () or heights[0] != 0:
-            raise ValueError("heights must start with 0: %s"%(heights,))
+            raise ValueError("heights must start with 0: %s" % (heights,))
         # round heights to the smallest even-odd integer
         heights = list(heights)
         for i in range(0, len(heights), 2):
             if heights[i] % 2 == 1:
-                heights[i]+=1
+                heights[i] += 1
         for i in range(1, len(heights), 2):
             if heights[i] % 2 == 0:
-                heights[i]+=1
+                heights[i] += 1
 
         # smooth heights
-        for i in range(len(heights)-1):
-            if heights[i+1] < heights[i]:
-                heights[i+1] = heights[i]-1
+        for i in range(len(heights) - 1):
+            if heights[i + 1] < heights[i]:
+                heights[i + 1] = heights[i] - 1
         for i in range(len(heights)-1, 0, -1):
-            if heights[i] > heights[i-1]:
-                heights[i-1] = heights[i]-1
+            if heights[i] > heights[i - 1]:
+                heights[i-1] = heights[i] - 1
         return self.from_heights(heights)
+
 
 class DyckWords_all(DyckWords):
     """
@@ -3232,7 +3394,7 @@ class DyckWords_all(DyckWords):
         EXAMPLES::
 
             sage: it = DyckWords(complete=False).__iter__()
-            sage: [it.next() for x in range(10)]
+            sage: [next(it) for x in range(10)]
             [[],
              [1],
              [1, 0],
@@ -3251,6 +3413,7 @@ class DyckWords_all(DyckWords):
                 for x in DyckWords_size(k, n-k):
                     yield self.element_class(self, list(x))
             n += 1
+
 
 class DyckWordBacktracker(GenericBacktracker):
     r"""
@@ -3287,6 +3450,8 @@ class DyckWordBacktracker(GenericBacktracker):
         # Dyck paths, not words; having k1 opening parens and k2 closing
         # parens corresponds to paths of length k1 + k2 ending at height
         # k1 - k2.
+        k1 = ZZ(k1)
+        k2 = ZZ(k2)
         self.n = k1 + k2
         self.endht = k1 - k2
 
@@ -3326,18 +3491,25 @@ class DyckWordBacktracker(GenericBacktracker):
             else:
                 yield path + [0], None, True
 
+
 class DyckWords_size(DyckWords):
     """
     Dyck words with `k_1` openers and `k_2` closers.
     """
     def __init__(self, k1, k2):
         r"""
-        TESTS::
+        TESTS:
 
+        Check that :trac:`18244` is fixed::
+
+            sage: DyckWords(13r, 8r).cardinality()
+            87210
+            sage: parent(_)
+            Integer Ring
             sage: TestSuite(DyckWords(4,2)).run()
         """
-        self.k1 = k1
-        self.k2 = k2
+        self.k1 = ZZ(k1)
+        self.k2 = ZZ(k2)
         DyckWords.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
@@ -3347,7 +3519,7 @@ class DyckWords_size(DyckWords):
             sage: DyckWords(4)
             Dyck words with 4 opening parentheses and 4 closing parentheses
         """
-        return "Dyck words with %s opening parentheses and %s closing parentheses"%(self.k1, self.k2)
+        return "Dyck words with %s opening parentheses and %s closing parentheses" % (self.k1, self.k2)
 
     def __contains__(self, x):
         r"""
@@ -3414,9 +3586,9 @@ class DyckWords_size(DyckWords):
 
             sage: DyckWords(3, 2).cardinality()
             5
-            sage: all( all( DyckWords(p, q).cardinality()
-            ....:           == len(DyckWords(p, q).list()) for q in range(p + 1) )
-            ....:      for p in range(7) )
+            sage: all(all(DyckWords(p, q).cardinality()
+            ....:           == len(DyckWords(p, q).list()) for q in range(p + 1))
+            ....:      for p in range(7))
             True
         """
         from sage.rings.arith import binomial
@@ -3424,6 +3596,7 @@ class DyckWords_size(DyckWords):
 
 ################################################################
 ## Complete Dyck words
+
 
 class CompleteDyckWords(DyckWords):
     """
@@ -3458,14 +3631,22 @@ class CompleteDyckWords(DyckWords):
         Return the Dyck word associated to the given Catalan code
         ``code``.
 
-        A Catalan code is a sequence of non--negative integers `a_i` such
-        that if `i < j` and `a_i > 0` and `a_j > 0` and `a_{i+1} = a_{i+2}
-        = \cdots = a_{j-1} = 0` then `a_i - a_j < j-i`.
+        A Catalan code of length `n` is a sequence
+        `(a_1, a_2, \ldots, a_n)` of `n` integers `a_i` such that:
+
+        - `0 \leq a_i \leq n-i` for every `i`;
+
+        - if `i < j` and `a_i > 0` and `a_j > 0` and
+          `a_{i+1} = a_{i+2} = \cdots = a_{j-1} = 0`,
+          then `a_i - a_j < j-i`.
+
+        It turns out that the Catalan codes of length `n` are in
+        bijection with Dyck words.
 
         The Catalan code of a Dyck word is example (x) in Richard Stanley's
         exercises on combinatorial interpretations for Catalan objects.
         The code in this example is the reverse of the description provided
-        there. See [Sta1999]_ and [Sta]_.
+        there. See [Sta-EC2]_ and [StaCat98]_.
 
         EXAMPLES::
 
@@ -3513,7 +3694,9 @@ class CompleteDyckWords(DyckWords):
             [1, 0, 1, 0]
         """
         if not is_area_sequence(code):
-            raise ValueError("The given sequence is not a sequence giving the number of cells between the Dyck path and the diagonal.")
+            raise ValueError("The given sequence is not a sequence giving "
+                             "the number of cells between the Dyck path "
+                             "and the diagonal.")
         dyck_word = []
         for i in xrange(len(code)):
             if i > 0:
@@ -3536,18 +3719,18 @@ class CompleteDyckWords(DyckWords):
         ::
 
             sage: dws = DyckWords(5).list()
-            sage: ncps = map( lambda x: x.to_noncrossing_partition(), dws)
-            sage: dws2 = map( lambda x: DyckWord(noncrossing_partition=x), ncps)
+            sage: ncps = map(lambda x: x.to_noncrossing_partition(), dws)
+            sage: dws2 = map(lambda x: DyckWord(noncrossing_partition=x), ncps)
             sage: dws == dws2
             True
         """
-        l = [ 0 ] * int( sum( [ len(v) for v in ncp ] ) )
+        l = [0] * int(sum([len(v) for v in ncp]))
         for v in ncp:
-            l[v[-1]-1] = len(v)
+            l[v[-1] - 1] = len(v)
 
         res = []
         for i in l:
-            res += [ open_symbol ] + [close_symbol]*int(i)
+            res += [open_symbol] + [close_symbol]*int(i)
         return self.element_class(self, res)
 
     def from_non_decreasing_parking_function(self, pf):
@@ -3583,7 +3766,8 @@ class CompleteDyckWords(DyckWords):
             sage: D.from_non_decreasing_parking_function(NonDecreasingParkingFunction([1,1,3,3,4,6,6]))
             [1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0]
         """
-        return self.from_area_sequence([ i - pf[i] + 1 for i in range(len(pf)) ])
+        return self.from_area_sequence([i - pf[i] + 1 for i in range(len(pf))])
+
 
 class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
     """
@@ -3605,7 +3789,7 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
         EXAMPLES::
 
             sage: it = DyckWords().__iter__()
-            sage: [it.next() for x in range(10)]
+            sage: [next(it) for x in range(10)]
             [[],
              [1, 0],
              [1, 0, 1, 0],
@@ -3681,13 +3865,16 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
                 False
                 sage: [poset.le(dw1, dw2)
                 ....:     for dw1 in DyckWords(3) for dw2 in DyckWords(3)]
-                [True, True, True, True, True, False, True, False, True, True, False, False, True, True, True, False, False, False, True, True, False, False, False, False, True]
+                [True, True, True, True, True, False, True, False, True, True,
+                False, False, True, True, True, False, False, False, True,
+                True, False, False, False, False, True]
             """
             if len(dw1) != len(dw2):
-                raise ValueError("Length mismatch: %s and %s"%(dw1, dw2))
+                raise ValueError("Length mismatch: %s and %s" % (dw1, dw2))
             sh = dw1.heights()
             oh = dw2.heights()
             return all(sh[i] <= oh[i] for i in range(len(dw1)))
+
 
 class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
     """
@@ -3730,10 +3917,54 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
             14
             sage: ns = range(9)
             sage: dws = [DyckWords(n) for n in ns]
-            sage: all([ dw.cardinality() == len(dw.list()) for dw in dws])
+            sage: all([dw.cardinality() == len(dw.list()) for dw in dws])
             True
         """
         return catalan_number(self.k1)
+
+    def random_element(self):
+        """
+        Return a random complete Dyck word of semilength `n`
+
+        The algorithm is based on a classical combinatorial fact. One
+        chooses at random a word with `n` 0's and `n+1` 1's. One then
+        considers every 1 as an ascending step and every 0 as a
+        descending step, and one finds the lowest point of the path
+        (with respect to a slightly tilted slope). One then cuts the
+        path at this point and builds a Dyck word by exchanging the
+        two parts of the word and removing the initial step.
+
+        .. TODO::
+
+            extend this to m-Dyck words
+
+        EXAMPLES::
+
+            sage: dw = DyckWords(8)
+            sage: dw.random_element()  # random
+            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0]
+
+            sage: D = DyckWords(8)
+            sage: D.random_element() in D
+            True
+        """
+        from sage.misc.prandom import shuffle
+        n = self.k1
+        w = [0] * n + [1] * (n + 1)
+        shuffle(w)
+        idx = 0
+        height = 0
+        height_min = 0
+        for i in range(2 * n):
+            if w[i] == 1:
+                height += n
+            else:
+                height -= n + 1
+                if height < height_min:
+                    height_min = height
+                    idx = i + 1
+        w = w[idx:] + w[:idx]
+        return self.element_class(self, w[1:])
 
     def _iter_by_recursion(self):
         """
@@ -3781,6 +4012,7 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
                 for s in P[-i-1]._iter_by_recursion():
                     yield self.element_class(self, list_1p0 + list(s))
 
+
 def is_area_sequence(seq):
     r"""
     Test if a sequence `l` of integers satisfies `l_0 = 0` and
@@ -3802,9 +4034,11 @@ def is_area_sequence(seq):
     """
     if seq == []:
         return True
-    return seq[0] == 0 and all( 0 <= seq[i+1] and seq[i+1] <= seq[i]+1 for i in xrange(len(seq)-1) )
+    return seq[0] == 0 and all(0 <= seq[i+1] and seq[i+1] <= seq[i]+1
+                               for i in xrange(len(seq)-1))
 
-def is_a(obj, k1 = None, k2 = None):
+
+def is_a(obj, k1=None, k2=None):
     r"""
     Test if ``obj`` is a Dyck word with exactly ``k1`` open symbols and
     exactly ``k2`` close symbols.
@@ -3843,7 +4077,7 @@ def is_a(obj, k1 = None, k2 = None):
         if k2 is None:
             k2 = k1
         elif k1 < k2:
-            raise ValueError("k1 (= %s) must be >= k2 (= %s)"%(k1, k2))
+            raise ValueError("k1 (= %s) must be >= k2 (= %s)" % (k1, k2))
 
     n_opens = 0
     n_closes = 0
@@ -3862,6 +4096,7 @@ def is_a(obj, k1 = None, k2 = None):
 
 is_a_prefix = deprecated_function_alias(14875, is_a)
 
+
 def from_noncrossing_partition(ncp):
     r"""
     This is deprecated in :trac:`14875`. Instead use
@@ -3875,8 +4110,9 @@ def from_noncrossing_partition(ncp):
         [1, 1, 0, 0]
     """
     from sage.misc.superseded import deprecation
-    deprecation(14875,'this method is deprecated. Use DyckWords().from_noncrossing_partition instead.')
+    deprecation(14875, 'this method is deprecated. Use DyckWords().from_noncrossing_partition instead.')
     return CompleteDyckWords_all().from_noncrossing_partition(ncp)
+
 
 def from_ordered_tree(tree):
     r"""
@@ -3889,7 +4125,8 @@ def from_ordered_tree(tree):
     """
     raise NotImplementedError("TODO")
 
-def pealing(D,return_touches=False):
+
+def pealing(D, return_touches=False):
     r"""
     A helper function for computing the bijection from a Dyck word to a
     `231`-avoiding permutation using the bijection "Stump".  For details
@@ -3935,7 +4172,7 @@ def pealing(D,return_touches=False):
         else:
             new_area.append(area[i+1]-2)
     new_area.append(0)
-    if area[n-1] != 0:
+    if area[n - 1] != 0:
         touches.append(n)
         if len(touches) > 1:
             touch_sequences.append(touches)
@@ -3947,4 +4184,3 @@ def pealing(D,return_touches=False):
 
 from sage.structure.sage_object import register_unpickle_override
 register_unpickle_override('sage.combinat.dyck_word', 'DyckWord', DyckWord)
-

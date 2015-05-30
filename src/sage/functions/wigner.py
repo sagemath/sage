@@ -198,7 +198,7 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
                           _Factlist[int(j_1 + j_2 + j_3 + 1)]
 
     ressqrt = argsqrt.sqrt(prec)
-    if type(ressqrt) is ComplexNumber:
+    if isinstance(ressqrt, ComplexNumber):
         ressqrt = ressqrt.real()
 
     imin = max(-j_3 + j_1 + m_2, -j_3 + j_2 - m_1, 0)
@@ -316,7 +316,7 @@ def _big_delta_coeff(aa, bb, cc, prec=None):
                           Integer(_Factlist[int(aa + bb + cc + 1)])
 
     ressqrt = argsqrt.sqrt(prec)
-    if type(ressqrt) is ComplexNumber:
+    if isinstance(ressqrt, ComplexNumber):
         res = ressqrt.real()
     else:
         res = ressqrt
@@ -621,16 +621,24 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
         sage: gaunt(1000,1000,1200,9,3,-12).n(64)
         0.00689500421922113448
 
-    It is an error to use non-integer values for `l` and `m`::
+    If the sum of the `l_i` is odd, the answer is zero, even for Python
+    ints (see :trac:`14766`)::
+
+        sage: gaunt(1,2,2,1,0,-1)
+        0
+        sage: gaunt(int(1),int(2),int(2),1,0,-1)
+        0
+
+    It is an error to use non-integer values for `l` or `m`::
 
         sage: gaunt(1.2,0,1.2,0,0,0)
         Traceback (most recent call last):
         ...
-        ValueError: l values must be integer
+        TypeError: Attempt to coerce non-integral RealNumber to Integer
         sage: gaunt(1,0,1,1.1,0,-1.1)
         Traceback (most recent call last):
         ...
-        ValueError: m values must be integer
+        TypeError: Attempt to coerce non-integral RealNumber to Integer
 
     NOTES:
 
@@ -681,10 +689,12 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     - Jens Rasch (2009-03-24): initial version for Sage
     """
-    if int(l_1) != l_1 or int(l_2) != l_2 or int(l_3) != l_3:
-        raise ValueError("l values must be integer")
-    if int(m_1) != m_1 or int(m_2) != m_2 or int(m_3) != m_3:
-        raise ValueError("m values must be integer")
+    l_1 = Integer(l_1)
+    l_2 = Integer(l_2)
+    l_3 = Integer(l_3)
+    m_1 = Integer(m_1)
+    m_2 = Integer(m_2)
+    m_3 = Integer(m_3)
 
     bigL = (l_1 + l_2 + l_3) / 2
     a1 = l_1 + l_2 - l_3
@@ -728,6 +738,6 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
         sumres = sumres + Integer((-1) ** ii) / den
 
     res = ressqrt * prefac * sumres * (-1) ** (bigL + l_3 + m_1 - m_2)
-    if prec != None:
+    if prec is not None:
         res = res.n(prec)
     return res

@@ -9,10 +9,8 @@ Affine Weyl Groups
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.weyl_groups import WeylGroups
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 
 class AffineWeylGroups(Category_singleton):
     """
@@ -30,7 +28,7 @@ class AffineWeylGroups(Category_singleton):
         sage: C = AffineWeylGroups(); C
         Category of affine weyl groups
         sage: C.super_categories()
-        [Category of weyl groups, Category of infinite enumerated sets]
+        [Category of infinite weyl groups]
 
         sage: C.example()
         NotImplemented
@@ -49,9 +47,27 @@ class AffineWeylGroups(Category_singleton):
         EXAMPLES::
 
             sage: AffineWeylGroups().super_categories()
-            [Category of weyl groups, Category of infinite enumerated sets]
+            [Category of infinite weyl groups]
         """
-        return [WeylGroups(), InfiniteEnumeratedSets()]
+        return [WeylGroups().Infinite()]
+
+    def additional_structure(self):
+        r"""
+        Return ``None``.
+
+        Indeed, the category of affine Weyl groups defines no
+        additional structure: affine Weyl groups are a special class
+        of Weyl groups.
+
+        .. SEEALSO:: :meth:`Category.additional_structure`
+
+        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+
+        EXAMPLES::
+
+            sage: AffineWeylGroups().additional_structure()
+        """
+        return None
 
     class ParentMethods:
 
@@ -80,12 +96,14 @@ class AffineWeylGroups(Category_singleton):
                 sage: [x.reduced_word() for x in W.affine_grassmannian_elements_of_given_length(3)]
                 [[2, 1, 0], [3, 1, 0], [2, 3, 0]]
 
-            SEE ALSO: :meth:`AffineWeylGroups.ElementMethods.is_affine_grassmannian`.
+            .. SEEALSO::
 
-            TODO: should return an enumerated set, with iterator, ...
+                :meth:`AffineWeylGroups.ElementMethods.is_affine_grassmannian`
+
+            .. TODO:: should return an enumerated set, with iterator, ...
             """
-            if k == 0:
-                return [self.unit()]
+            if not k:
+                return [self.one()]
             w = []
             s = self.simple_reflections()
             for x in self.affine_grassmannian_elements_of_given_length(k-1):
@@ -158,12 +176,12 @@ class AffineWeylGroups(Category_singleton):
             from sage.combinat.partition import Partition
             from sage.combinat.core import Core
             if not self.is_affine_grassmannian() or not self.parent().cartan_type().letter == 'A':
-                raise ValueError, "Error! this only works on type 'A' affine Grassmannian elements"
+                raise ValueError("Error! this only works on type 'A' affine Grassmannian elements")
             out = Partition([])
             rword = self.reduced_word()
             kp1 = self.parent().n
             for i in range(len(rword)):
-                for c in filter( lambda x: (x[1]-x[0])%kp1==rword[-i-1], out.outside_corners()):
+                for c in (x for x in out.outside_corners() if (x[1]-x[0])%kp1 == rword[-i-1] ):
                     out = out.add_cell(c[0],c[1])
             return Core(out._list,kp1)
 

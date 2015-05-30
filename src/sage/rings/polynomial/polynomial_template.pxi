@@ -9,8 +9,6 @@ Polynomial Template for C/C++ Library Interfaces
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.element cimport ModuleElement, Element, RingElement
@@ -27,7 +25,7 @@ def make_element(parent, args):
     return parent(*args)
 
 cdef inline Polynomial_template element_shift(self, int n):
-     if not PY_TYPE_CHECK(self, Polynomial_template):
+     if not isinstance(self, Polynomial_template):
          if n > 0:
              error_msg = "Cannot shift %s << %n."%(self, n)
          else:
@@ -40,7 +38,8 @@ cdef inline Polynomial_template element_shift(self, int n):
      cdef celement *gen = celement_new((<Polynomial_template>self)._cparent)
      celement_gen(gen, 0, (<Polynomial_template>self)._cparent)
      celement_pow(gen, gen, abs(n), NULL, (<Polynomial_template>self)._cparent)
-     cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+     cdef type T = type(self)
+     cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
      celement_construct(&r.x, (<Polynomial_template>self)._cparent)
      r._parent = (<Polynomial_template>self)._parent
      r._cparent = (<Polynomial_template>self)._cparent
@@ -96,7 +95,8 @@ cdef class Polynomial_template(Polynomial):
             sage: P(map(GF(2),[1,0,1]))
             x^2 + 1
         """
-        cdef celement *gen, *monomial
+        cdef celement *gen
+        cdef celement *monomial
         cdef Py_ssize_t deg
 
         Polynomial.__init__(self, parent, is_gen=is_gen)
@@ -107,21 +107,21 @@ cdef class Polynomial_template(Polynomial):
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
             celement_gen(&self.x, 0, (<Polynomial_template>self)._cparent)
 
-        elif PY_TYPE_CHECK(x, Polynomial_template):
+        elif isinstance(x, Polynomial_template):
             try:
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set(&self.x, &(<Polynomial_template>x).x, (<Polynomial_template>self)._cparent)
             except NotImplementedError:
                 raise TypeError("%s not understood."%x)
 
-        elif PY_TYPE_CHECK(x, int) or PY_TYPE_CHECK(x, Integer):
+        elif isinstance(x, int) or isinstance(x, Integer):
             try:
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set_si(&self.x, int(x), (<Polynomial_template>self)._cparent)
             except NotImplementedError:
                 raise TypeError("%s not understood."%x)
 
-        elif PY_TYPE_CHECK(x, list) or PY_TYPE_CHECK(x, tuple):
+        elif isinstance(x, list) or isinstance(x, tuple):
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
             gen = celement_new((<Polynomial_template>self)._cparent)
             monomial = celement_new((<Polynomial_template>self)._cparent)
@@ -140,7 +140,7 @@ cdef class Polynomial_template(Polynomial):
             celement_delete(gen, (<Polynomial_template>self)._cparent)
             celement_delete(monomial, (<Polynomial_template>self)._cparent)
 
-        elif PY_TYPE_CHECK(x, dict):
+        elif isinstance(x, dict):
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
             gen = celement_new((<Polynomial_template>self)._cparent)
             monomial = celement_new((<Polynomial_template>self)._cparent)
@@ -156,15 +156,15 @@ cdef class Polynomial_template(Polynomial):
             celement_delete(gen, (<Polynomial_template>self)._cparent)
             celement_delete(monomial, (<Polynomial_template>self)._cparent)
 
-        elif PY_TYPE_CHECK(x, pari_gen):
+        elif isinstance(x, pari_gen):
             k = (<Polynomial_template>self)._parent.base_ring()
             x = [k(w) for w in x.list()]
             self.__class__.__init__(self, parent, x, check=True, is_gen=False, construct=construct)
-        elif PY_TYPE_CHECK(x, Polynomial):
+        elif isinstance(x, Polynomial):
             k = (<Polynomial_template>self)._parent.base_ring()
             x = [k(w) for w in list(x)]
             Polynomial_template.__init__(self, parent, x, check=True, is_gen=False, construct=construct)
-        elif PY_TYPE_CHECK(x, FractionFieldElement) and (x.parent().base() is parent or x.parent().base() == parent) and x.denominator() == 1:
+        elif isinstance(x, FractionFieldElement) and (x.parent().base() is parent or x.parent().base() == parent) and x.denominator() == 1:
             x = x.numerator()
             self.__class__.__init__(self, parent, x, check=check, is_gen=is_gen, construct=construct)
         else:
@@ -226,7 +226,8 @@ cdef class Polynomial_template(Polynomial):
             sage: x + 1
             x + 1
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
 
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
@@ -243,7 +244,8 @@ cdef class Polynomial_template(Polynomial):
             sage: x - 1
             x + 1
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -259,7 +261,8 @@ cdef class Polynomial_template(Polynomial):
             sage: -x
             x
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -289,7 +292,8 @@ cdef class Polynomial_template(Polynomial):
             sage: (-2^81)*u
             3*y^2 + 3*y + 3
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -325,7 +329,8 @@ cdef class Polynomial_template(Polynomial):
             sage: x*(x+1)
             x^2 + x
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -352,7 +357,8 @@ cdef class Polynomial_template(Polynomial):
         if(celement_is_zero(&other.x, (<Polynomial_template>self)._cparent)):
             return self
 
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -379,17 +385,18 @@ cdef class Polynomial_template(Polynomial):
         if(celement_is_zero(&other.x, (<Polynomial_template>self)._cparent)):
             return self, self._parent(1), self._parent(0)
 
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
 
-        cdef Polynomial_template s = <Polynomial_template>PY_NEW(self.__class__)
+        cdef Polynomial_template s = <Polynomial_template>T.__new__(T)
         celement_construct(&s.x, (<Polynomial_template>self)._cparent)
         s._parent = (<Polynomial_template>self)._parent
         s._cparent = (<Polynomial_template>self)._cparent
 
-        cdef Polynomial_template t = <Polynomial_template>PY_NEW(self.__class__)
+        cdef Polynomial_template t = <Polynomial_template>T.__new__(T)
         celement_construct(&t.x, (<Polynomial_template>self)._cparent)
         t._parent = (<Polynomial_template>self)._parent
         t._cparent = (<Polynomial_template>self)._cparent
@@ -420,7 +427,8 @@ cdef class Polynomial_template(Polynomial):
 
         if celement_is_zero(&_right.x, (<Polynomial_template>self)._cparent):
             raise ZeroDivisionError
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -456,7 +464,8 @@ cdef class Polynomial_template(Polynomial):
         if celement_is_zero(&_other.x, (<Polynomial_template>self)._cparent):
             raise ZeroDivisionError
 
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -477,12 +486,13 @@ cdef class Polynomial_template(Polynomial):
         if celement_is_zero(&right.x, (<Polynomial_template>self)._cparent):
             raise ZeroDivisionError
 
-        cdef Polynomial_template q = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template q = <Polynomial_template>T.__new__(T)
         celement_construct(&q.x, (<Polynomial_template>self)._cparent)
         q._parent = (<Polynomial_template>self)._parent
         q._cparent = (<Polynomial_template>self)._cparent
 
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -533,7 +543,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return (<Element>left)._richcmp(right, op)
 
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         EXAMPLE::
 
@@ -596,7 +606,7 @@ cdef class Polynomial_template(Polynomial):
             sage: pow(f, 2, h)
             x^9 + x^8 + x^7 + x^5 + x^3
         """
-        if not PY_TYPE_CHECK(self, Polynomial_template):
+        if not isinstance(self, Polynomial_template):
             raise NotImplementedError("%s^%s not defined."%(ee,self))
         cdef bint recip = 0, do_sig
 
@@ -613,7 +623,8 @@ cdef class Polynomial_template(Polynomial):
         if not self:
             if e == 0:
                 raise ArithmeticError("0^0 is undefined.")
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
 
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         parent = (<Polynomial_template>self)._parent
@@ -643,7 +654,8 @@ cdef class Polynomial_template(Polynomial):
             sage: copy(x) == x
             True
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
@@ -752,7 +764,8 @@ cdef class Polynomial_template(Polynomial):
             sage: f.truncate(6)
             x^5 + x^4 + x^3 + x^2 + x + 1
         """
-        cdef Polynomial_template r = <Polynomial_template>PY_NEW(self.__class__)
+        cdef type T = type(self)
+        cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent

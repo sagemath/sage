@@ -28,6 +28,10 @@ REFERENCES:
 .. [LLM1998] L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
    Macdonald Polynomials, IRMN no. 18 (1998).
    :arXiv:`math/9808050`.
+
+.. [BH2013] F. Bergeron, M. Haiman, Tableaux Formulas for Macdonald Polynomials,
+   Special edition in honor of Christophe Reutenauer 60 birthday, International
+   Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
 
 #*****************************************************************************
@@ -46,15 +50,17 @@ REFERENCES:
 #*****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.calculus.var import var
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
 import sfa
-import sage.combinat.partition
+from sage.combinat.partition import Partition, Partitions_n, _Partitions
+from sage.combinat.skew_partition import SkewPartitions
 from sage.matrix.all import MatrixSpace
 from sage.rings.all import QQ
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from sage.rings.fraction_field import FractionField
+from sage.misc.cachefunc import cached_function
 import functools
 
 # cache in q,t globally and subs locally with q and t values
@@ -63,13 +69,8 @@ import functools
 _j_to_s_cache = {}
 _s_to_j_cache = {}
 
-#H basis cache
-_h_to_s_cache = {}
-_s_to_h_cache = {}
-
 #Ht basis cache
-_ht_to_s_cache = {}
-_s_to_ht_cache = {}
+_ht_to_m_cache = {}
 
 #S basis cache
 _S_to_s_cache = {}
@@ -116,15 +117,11 @@ class Macdonald(UniqueRepresentation):
             sage: Sym = SymmetricFunctions(FractionField(QQ['t'])).macdonald()
             Traceback (most recent call last):
             ...
-            ValueError: parameter q must be in the base ring
+            TypeError: unable to evaluate 'q' in Fraction Field of Univariate Polynomial Ring in t over Rational Field
         """
         self._sym = Sym
         self._s = Sym.s()
-        if not (q in Sym.base_ring() or var(q) in Sym.base_ring()):
-            raise ValueError, "parameter q must be in the base ring"
         self.q = Sym.base_ring()(q)
-        if not (t in Sym.base_ring() or var(t) in Sym.base_ring()):
-            raise ValueError, "parameter t must be in the base ring"
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
         if str(q) !='q':
@@ -440,7 +437,7 @@ class Macdonald(UniqueRepresentation):
             sage: H = Sym.macdonald().H()
             sage: s = Sym.schur()
             sage: H(s([2]))
-            ((-q)/(-q*t+1))*McdH[1, 1] + (1/(-q*t+1))*McdH[2]
+            (q/(q*t-1))*McdH[1, 1] - (1/(q*t-1))*McdH[2]
         """
         return MacdonaldPolynomials_h(self)
 
@@ -486,7 +483,7 @@ class Macdonald(UniqueRepresentation):
             sage: Ht = Sym.macdonald().Ht()
             sage: s = Sym.schur()
             sage: Ht(s([2,1]))
-            ((-q)/(-q*t^2+t^3+q^2-q*t))*McdHt[1, 1, 1] + ((q^2+q*t+t^2)/(-q^2*t^2+q^3+t^3-q*t))*McdHt[2, 1] + ((-t)/(q^3-q^2*t-q*t+t^2))*McdHt[3]
+            ((-q)/(-q*t^2+t^3+q^2-q*t))*McdHt[1, 1, 1] + ((q^2+q*t+t^2)/(-q^2*t^2+q^3+t^3-q*t))*McdHt[2, 1] + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
             sage: Ht(s([2]))
             ((-q)/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
         """
@@ -611,6 +608,112 @@ def c2(part, q, t):
         res *= 1-q**(sum(part.arm_lengths(),[])[i])*t**(sum(part.leg_lengths(),[])[i]+1)
     return res
 
+@cached_function
+def cmunu1(mu, nu):
+    r"""
+    Return the coefficient of `{\tilde H}_\nu` in `h_1^\perp {\tilde H}_\mu`.
+
+    INPUT:
+
+    - ``mu``, ``nu`` -- partitions with ``nu`` preceeds ``mu``
+
+    OUTPUT:
+
+    - an element of the fraction field of polynomials in `q` and `t`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.macdonald import cmunu1
+        sage: cmunu1(Partition([2,1]),Partition([2]))
+        (-t^2 + q)/(q - t)
+        sage: cmunu1(Partition([2,1]),Partition([1,1]))
+        (-q^2 + t)/(-q + t)
+        sage: Sym = SymmetricFunctions(QQ['q','t'].fraction_field())
+        sage: h = Sym.h()
+        sage: Ht = Sym.macdonald().Ht()
+        sage: all(Ht[3,2,1].skew_by(h[1]).coefficient(nu)
+        ....:     == cmunu1(Partition([3,2,1]),nu)
+        ....:     for nu in Partition([3,2,1]).down_list())
+        True
+    """
+    q,t = QQqt.gens()
+    # The following for loop is equivalent to getting the cell:
+    #    SkewPartition([mu,nu]).cells()[0]
+    for i, val in enumerate(nu._list):
+        if val < mu._list[i]:
+            A = prod((t**mu.leg_length(i, s) - q**(mu.arm_length(i, s)+1))
+                     / (t**nu.leg_length(i, s) - q**(nu.arm_length(i, s)+1))
+                     for s in range(val))
+            B = prod((q**mu.arm_length(*s) - t**(mu.leg_length(*s)+1))
+                     / (q**nu.arm_length(*s) - t**(nu.leg_length(*s)+1))
+                     for s in nu.cells() if s[1] == val)
+            return QQqt(A * B)
+
+    return QQqt(prod( (q**mu.arm_length(s, 0) - t**(mu.leg_length(s, 0)+1))
+                      / (q**nu.arm_length(s, 0) - t**(nu.leg_length(s, 0)+1))
+                      for s in range(len(nu._list)) ))
+
+@cached_function
+def cmunu(mu, nu):
+    r"""
+    Return the coefficient of `{\tilde H}_\nu` in `h_r^\perp {\tilde H}_\mu`.
+
+    Proposition 5 of F. Bergeron and M. Haiman [BH2013]_ states
+
+    .. MATH::
+
+        c_{\mu\nu} = \sum_{\alpha \leftarrow \nu} c_{\mu\alpha}
+        c_{\alpha\nu} B_{\alpha/\nu}/B_{\mu/\nu}
+
+    where `c_{\mu\nu}` is the coefficient of `{\tilde H}_\nu` in
+    `h_r^\perp {\tilde H}_\mu` and `B_{\mu/\nu}` is the bi-exponent generator
+    implemented in the function :func:`sage.combinat.sf.macdonald.Bmu`.
+
+    INPUT:
+
+    - ``mu``, ``nu`` -- partitions with ``nu`` contained in ``mu``
+
+    OUTPUT:
+
+    - an element of the fraction field of polynomials in `q` and `t`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.macdonald import cmunu
+        sage: cmunu(Partition([2,1]),Partition([1]))
+        q + t + 1
+        sage: cmunu(Partition([2,2]),Partition([1,1]))
+        (-q^3 - q^2 + q*t + t)/(-q + t)
+        sage: Sym = SymmetricFunctions(QQ['q','t'].fraction_field())
+        sage: h = Sym.h()
+        sage: Ht = Sym.macdonald().Ht()
+        sage: all(Ht[2,2].skew_by(h[r]).coefficient(nu)
+        ....:     == cmunu(Partition([2,2]),nu)
+        ....:     for r in range(1,5) for nu in Partitions(4-r))
+        True
+    """
+    if not nu:
+        return QQqt.one()
+    if not mu.contains(nu):
+        return QQqt.zero()
+    if mu.size() == nu.size() + 1:
+        return cmunu1(mu, nu)
+
+    # This is equivalent to:
+    #   Bmu(SkewPartition([outer, inner]))
+    def Bmu_skew(outer, inner):
+        inner = list(inner) # This makes a (shallow) copy of inner
+        inner += [0]*(len(outer)-len(inner))
+        q,t = QQqt.gens()
+        res = QQqt.zero()
+        for i, val in enumerate(outer):
+            for j in range(inner[i], val):
+                res += t**i * q**j
+        return res
+
+    nulist = nu._list
+    return (sum(cmunu(mu, al) * cmunu1(al, nu) * Bmu_skew(al, nulist)
+                for al in nu.up()) / Bmu_skew(mu, nulist))
 
 #Generic MacdonaldPolynomials
 class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
@@ -655,7 +758,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         # common category BasesByOrthotriangularity (shared with Jack, HL, orthotriang, Mcdo)
         if hasattr(self, "_s_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-            category = sage.categories.all.ModulesWithBasis(self.base_ring())
+            category = ModulesWithBasis(self.base_ring())
             self   .register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
 
@@ -790,13 +893,13 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: J._multiply( J[1], J[2] )
             ((-q^2+1)/(-q^2*t+1))*McdJ[2, 1] + ((-t+1)/(-q^2*t+1))*McdJ[3]
             sage: H._multiply( H[1], H[2] )
-            ((-q^2+1)/(-q^2*t+1))*McdH[2, 1] + ((-t+1)/(-q^2*t+1))*McdH[3]
+            ((q^2-1)/(q^2*t-1))*McdH[2, 1] + ((-t+1)/(-q^2*t+1))*McdH[3]
             sage: P._multiply( P[1], P[2] )
             ((-q^3*t^2+q*t^2+q^2-1)/(-q^3*t^2+q^2*t+q*t-1))*McdP[2, 1] + McdP[3]
             sage: Q._multiply(Q[1],Q[2])
             McdQ[2, 1] + ((q^2*t-q^2+q*t-q+t-1)/(q^2*t-1))*McdQ[3]
             sage: Ht._multiply(Ht[1],Ht[2])
-            ((-q^2+1)/(-q^2+t))*McdHt[2, 1] + ((t-1)/(-q^2+t))*McdHt[3]
+            ((-q^2+1)/(-q^2+t))*McdHt[2, 1] + ((-t+1)/(q^2-t))*McdHt[3]
         """
         return self( self._s(left)*self._s(right) )
 
@@ -824,13 +927,17 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def nabla(self, q=None, t=None, power=1):
             r"""
-            Returns the value of the nabla operator applied to ``self``. The
-            eigenvectors of the nabla operator are the Macdonald polynomials in
-            the `Ht` basis.  For more information see: [BGHT1999]_.
+            Return the value of the nabla operator applied to ``self``.
+
+            The eigenvectors of the nabla operator are the Macdonald
+            polynomials in the `Ht` basis.  For more information
+            see: [BGHT1999]_.
 
             The operator nabla acts on symmetric functions and has the
             Macdonald `Ht` basis as eigenfunctions and the eigenvalues
-            are `q^{n(\mu')} t^{n(\mu)}` where `n(\mu) = \sum_{i} (i-1) \mu_i`.
+            are `q^{n(\mu')} t^{n(\mu)}` where
+            `n(\mu) = \sum_{i} (i-1) \mu_i` and `\mu'` is the conjugate
+            shape of `\mu`.
 
             If the parameter ``power`` is an integer then it calculates
             nabla to that integer.  The default value of ``power`` is 1.
@@ -860,10 +967,10 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
                 ((t^2+q-t-1)/(q*t-1))*McdH[1, 1] + ((-t^3+t^2+t-1)/(q*t-1))*McdH[2]
                 sage: H(0).nabla()
                 0
-                sage: H([2,2,1]).nabla(t=1/H.t)  # long time (4s on sage.math, 2012)
-                q^2/t^4*McdH[2, 2, 1]
-                sage: H([2,2,1]).nabla(t=1/H.t,power=-1)  # long time (4s on sage.math, 2013)
-                t^4/q^2*McdH[2, 2, 1]
+                sage: H([2,2,1]).nabla(t=1/H.t)
+                ((-q^2)/(-t^4))*McdH[2, 2, 1]
+                sage: H([2,2,1]).nabla(t=1/H.t,power=-1)
+                ((-t^4)/(-q^2))*McdH[2, 2, 1]
             """
             parent = self.parent()
             if (q is None and t is None):
@@ -899,7 +1006,7 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
 
         self._J = macdonald.J()
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         phi = self._J.module_morphism(diagonal = self.c2, codomain = self, category = category)
         self.register_coercion( phi)
         self._J.register_coercion(~phi)
@@ -970,7 +1077,7 @@ class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
         self._P = macdonald.P()
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         phi = self._P.module_morphism(diagonal = self._P.scalar_qt_basis, codomain = self, category = category)
         self   .register_coercion( phi)
         self._P.register_coercion(~phi)
@@ -1077,9 +1184,11 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
 class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
-        The `H` basis is expanded in the Schur basis by extracting the
-        `q,t`-Kostka coefficient through the `t`-scalar product of `J_{\mu}`
-        and `s_{\lambda}`.
+        The `H` basis is defined as `H_\mu = \sum_{\lambda} K_{\lambda\mu}(q,t) s_\lambda`
+        where `K_{\lambda\mu}(q,t)` are the Macdonald Kostka coefficients.
+
+        In this implementation, it is calculated by using the Macdonald `Ht` basis and
+        substituting `t \rightarrow 1/t` and multiplying by `t^{n(\mu)}`.
 
         INPUT:
 
@@ -1092,78 +1201,202 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             sage: H = Sym.macdonald().H()
             sage: TestSuite(H).run(skip=["_test_associativity","_test_distributivity","_test_prod"])
             sage: TestSuite(H).run(elements = [H.t*H[1,1]+H.q*H[2], H[1]+(H.q+H.t)*H[1,1]])  # long time (26s on sage.math, 2012)
+
         """
-        self._self_to_s_cache = _h_to_s_cache
-        self._s_to_self_cache = _s_to_h_cache
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._Ht = macdonald.Ht()
+        self._m = self._sym.m()
+        self._Lmunu = macdonald.Ht()._Lmunu
+        if not self.t:
+            self._Qp = self._sym.hall_littlewood(t=self.q).Qp()
+        category = ModulesWithBasis(self.base_ring())
+        self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
+        self.register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
+        self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
+        self.register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
 
-
-    def _s_cache(self, n):
+    def _self_to_s(self, x):
         r"""
-        Compute the change of basis and its inverse between the Macdonald
-        polynomials on the `H` basis and the Schur functions.
-        these computations are completed with coefficients in fraction
-        field of polynomials in `q` and `t`
+        Return an element ``x`` of ``self`` expanded in the Schur basis.
+
+        If `t=0` then the expression for `H_\mu[X;q,0]` is equal to
+        `\omega Q'_{\mu'}[X;q]` where `Q'` is the Hall-Littlewood basis.
+
+        If `t \neq 0` then the conversion uses the monomial basis.
 
         INPUT:
 
-        - ``self`` -- a Macdonald `H` basis
-        - ``n`` -- a non-negative integer
-
-        EXAMPLES::
-
-            sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
-            sage: H = Sym.macdonald().H()
-            sage: H._s_cache(2)
-            sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
-            sage: l( H._s_to_self_cache[2] )
-            [([1, 1], [([1, 1], 1/(-q*t + 1)), ([2], (-t)/(-q*t + 1))]),
-             ([2], [([1, 1], (-q)/(-q*t + 1)), ([2], 1/(-q*t + 1))])]
-            sage: l( H._self_to_s_cache[2] )
-            [([1, 1], [([1, 1], 1), ([2], t)]), ([2], [([1, 1], q), ([2], 1)])]
-        """
-        self._invert_morphism(n, QQqt, self._self_to_s_cache, \
-                              self._s_to_self_cache, to_other_function = self._to_s)
-
-    def _to_s(self, part):
-        r"""
-        Returns a function which gives the coefficient of a partition in
-        the Schur expansion of self(part).
-        these computations are completed with coefficients in fraction
-        field of polynomials in `q` and `t`
-
-        INPUT:
-
-        - ``self`` -- a Macdonald `H` basis
-        - ``part`` -- a partition
+        - ``x`` -- an element of ``H`` basis
 
         OUTPUT:
 
-        - returns a function which returns the coefficients of the expansion of `H`
-          in the Schur basis
+        - an element of the Schur basis
 
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: H = Sym.macdonald().H()
-            sage: f21 = H._to_s(Partition([2,1]))
-            sage: [f21(part) for part in Partitions(3)]
-            [t, q*t + 1, q]
-            sage: Sym.schur()( H[2,1] )
+            sage: s = Sym.s()
+            sage: s(H[2,1])
             q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3]
-            sage: f22 = H._to_s(Partition([2,2]))
-            sage: [f22(part) for part in Partitions(4)]
-            [t^2, q*t^2 + q*t + t, q^2*t^2 + 1, q^2*t + q*t + q, q^2]
+            sage: H2 = Sym.macdonald(t=0).H()
+            sage: s(H2[2,1])
+            q*s[1, 1, 1] + s[2, 1]
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
+            sage: x = Sym.base_ring().gen()
+            sage: H = Sym.macdonald(q=x,t=1/x).H()
+            sage: s = Sym.s()
+            sage: s(H[2,1])
+            x*s[1, 1, 1] + 2*s[2, 1] + 1/x*s[3]
         """
-        (q,t) = QQqt.gens()
-        J = self._macdonald.J()
-        s = self._s
-        res = 0
-        for p in sage.combinat.partition.Partitions(sum(part)):
-            res += (J(part).scalar_t(s(p), t))*s(p)
-        f = lambda part2: res.coefficient(part2)
-        return f
+        if self.t:
+            return self._s(self._self_to_m(x))
+        else:
+            return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
+
+    def _s_to_self(self, x):
+        r"""
+        Return an element of the Schur basis ``x`` expanded in the ``H`` basis.
+
+        If `t=0` then the expression for `H_\mu[X;q,0]` is equal to
+        `\omega Q'_{\mu'}[X;q]` where `Q'` is the Hall-Littlewood basis.
+
+        If `t \neq 0` then the conversion uses the monomial basis.
+
+        INPUT:
+
+        - ``x`` -- an element of the Schur basis
+
+        OUTPUT:
+
+        - an element of the ``H`` basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
+            sage: H = Sym.macdonald().H()
+            sage: s = Sym.s()
+            sage: H(s[1,1])
+            -(1/(q*t-1))*McdH[1, 1] + (t/(q*t-1))*McdH[2]
+            sage: (q,t) = Sym.base_ring().gens()
+            sage: H(q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3])
+            McdH[2, 1]
+            sage: H2 = Sym.macdonald(t=0).H()
+            sage: H2(q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3])
+            (-q^2*t+1)*McdH[2, 1] + t*McdH[3]
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
+            sage: x = Sym.base_ring().gen()
+            sage: H = Sym.macdonald(q=x,t=1/x).H()
+            sage: s = Sym.s()
+            sage: H(x*s[1, 1, 1] + 2*s[2, 1] + 1/x*s[3])
+            McdH[2, 1]
+        """
+        if self.t:
+            return self._m_to_self(self._m(x))
+        else:
+            return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
+
+    def _self_to_m(self, x):
+        r"""
+        Return an element ``x`` of ``self`` expanded in the monomial basis.
+
+        INPUT:
+
+        - ``x`` -- an element of ``H`` basis
+
+        OUTPUT:
+
+        - an element of the monomial basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
+            sage: H = Sym.macdonald().H()
+            sage: m = Sym.m()
+            sage: m(H[2,1])
+            (2*q*t+q+t+2)*m[1, 1, 1] + (q*t+t+1)*m[2, 1] + t*m[3]
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
+            sage: x = Sym.base_ring().gen()
+            sage: H = Sym.macdonald(q=x,t=1/x).H()
+            sage: m = Sym.m()
+            sage: m(H[2,1])
+            ((x^2+4*x+1)/x)*m[1, 1, 1] + ((2*x+1)/x)*m[2, 1] + 1/x*m[3]
+            sage: H2 = Sym.macdonald(q=x,t=1).H()
+            sage: H2((3*x+3)*m[1, 1, 1] + (x+2)*m[2, 1] + m[3])
+            McdH[2, 1]
+            sage: H3 = Sym.macdonald(q=x,t=0).H()
+            sage: H3((3*x+3)*m[1, 1, 1] + (x+2)*m[2, 1] + m[3])
+            (-x^2+1)*McdH[2, 1] + McdH[3]
+        """
+        if self.t:
+            tinv = ~self.t
+            part_coeff = lambda x, d: sorted((mu,c) for mu,c in x if sum(mu) == d)
+            return self._m._from_dict({ part2:
+                self._base( sum(c * self.t**mu.weighted_size()
+                                * self._Lmunu(part2, mu).subs(q=self.q, t=tinv)
+                                for mu,c in part_coeff(x, d)) )
+                for d in range(x.degree()+1) for part2 in Partitions_n(d) })
+        else:
+            return self._m(self._self_to_s(x))
+
+    def _m_to_self( self, f ):
+        r"""
+        Convert an element ``f`` from the monomial basis to the ``H`` basis.
+
+        This calculation is performed by using the fact that `H_\mu[X(1-t)]`
+        is `c_\mu m_\mu` plus terms which are smaller in dominance order. 
+        The leading coefficient of the expansion of ``f`` in the `H_\mu`
+        basis is equal to the leading coefficient of `c_\mu^{-1} f[X(1-t)]`.
+
+        If `t=1`, we must appeal to another triangularity since ``Ht``
+        is (usually) still a basis, however `H_\mu[X(1-t)]=0`.  In this
+        case we assume that it is a basis and `H_\mu[X(q-1)]` is
+        `c_\mu m_{\mu'}` plus terms which are lower in dominance order.
+
+        INPUT:
+
+        - ``f`` -- an element of the monomial basis
+
+        OUTPUT:
+
+        - an element of the ``H`` basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
+            sage: H = Sym.macdonald().H()
+            sage: m = Sym.m()
+            sage: H(m[1,1])
+            -(1/(q*t-1))*McdH[1, 1] + (t/(q*t-1))*McdH[2]
+            sage: (q,t) = Sym.base_ring().gens()
+            sage: H((2*q*t+q+t+2)*m[1, 1, 1] + (q*t+t+1)*m[2, 1] + t*m[3])
+            McdH[2, 1]
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
+            sage: x = Sym.base_ring().gen()
+            sage: H = Sym.macdonald(q=x,t=1).H()
+            sage: m = Sym.m()
+            sage: H((3*x+3)*m[1, 1, 1] + (x+2)*m[2, 1] + m[3])
+            McdH[2, 1]
+        """
+        if self.t == 1:
+            g = f.omega_qt(q=self.q, t=0)
+            fl = lambda x: x.conjugate()
+            mu_to_H = lambda mu: self._self_to_m(self(mu.conjugate())).omega_qt(q=self.q, t=0)
+        else:
+            g = f.theta_qt(q=self.t, t=0)
+            fl = lambda x: x
+            mu_to_H = lambda mu: self._self_to_m(self(mu)).theta_qt(q=self.t, t=0)
+        out = {}
+        while not g.is_zero():
+            sprt = g.support()
+            Hmu = mu_to_H(sprt[-1])
+            fl_sprt = fl(sprt[-1])
+            out[fl_sprt] = self._base(g.coefficient(sprt[-1]) / Hmu.coefficient(sprt[-1]))
+            g -= out[fl_sprt] * Hmu
+        return self._from_dict(out)
 
     class Element(MacdonaldPolynomials_generic.Element):
         pass
@@ -1171,8 +1404,12 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
-        The `Ht` basis is defined from the `H` basis by replacing `t \to 1/t`
-        and multiplying by a normalizing power of `t`.
+        The `Ht` basis is defined as `{\tilde H}_\mu = t^{n(\mu)} \sum_{\lambda}
+        K_{\lambda\mu}(q,t^{-1}) s_\lambda` where `K_{\lambda\mu}(q,t)` are the
+        Macdonald `(q,t)`-Kostka coefficients and `n(\mu) = \sum_{i} (i-1) \mu_i`.
+
+        It is implemented here by using a Pieri formula due to F. Bergeron
+        and M. Haiman [BH2013]_.
 
         INPUT:
 
@@ -1185,78 +1422,214 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: Ht = Sym.macdonald().Ht()
             sage: TestSuite(Ht).run(skip=["_test_associativity","_test_distributivity","_test_prod"])  # long time (26s on sage.math, 2012)
             sage: TestSuite(Ht).run(elements = [Ht.t*Ht[1,1]+Ht.q*Ht[2], Ht[1]+(Ht.q+Ht.t)*Ht[1,1]])  # long time (depends on previous)
+
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._self_to_s_cache = _ht_to_s_cache
-        self._s_to_self_cache = _s_to_ht_cache
-        self._J = macdonald.J()
+        self._self_to_m_cache = _ht_to_m_cache
+        self._m = self._sym.m()
+        category = ModulesWithBasis(self.base_ring())
+        self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
+        self.register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
+        self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
+        self.register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
 
-    def _s_cache(self, n):
+    def _self_to_s(self, x):
         r"""
-        Compute the change of basis and its inverse between the Macdonald
-        polynomials on the `Ht` basis and the Schur functions.
-        These computations are completed with coefficients in fraction
-        field of polynomials in `q` and `t`
+        Convert an element of the ``Ht`` basis to the Schur basis
+
+        This function is here to force the coercion path to the Schur basis
+        because these bases are computed using their monomial expansion.
 
         INPUT:
 
-        - ``self`` -- a Macdonald `Ht` basis
-        - ``n`` -- a positive integer
-
-        EXAMPLES::
-
-            sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
-            sage: Ht = Sym.macdonald().Ht()
-            sage: Ht._s_cache(2)
-            sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
-            sage: l( Ht._s_to_self_cache[2] )
-            [([1, 1], [([1, 1], 1/(-q + t)), ([2], (-1)/(-q + t))]),
-             ([2], [([1, 1], (-q)/(-q + t)), ([2], t/(-q + t))])]
-            sage: l( Ht._self_to_s_cache[2] )
-            [([1, 1], [([1, 1], t), ([2], 1)]), ([2], [([1, 1], q), ([2], 1)])]
-        """
-        self._invert_morphism(n, QQqt, self._self_to_s_cache, \
-                              self._s_to_self_cache, to_other_function = self._to_s)
-
-    def _to_s(self, part):
-        r"""
-        Returns a function which gives the coefficient of a partition in
-        the Schur expansion of ``self``(``part``).
-        These computations are completed with coefficients in fraction
-        field of polynomials in `q` and `t`
-
-        INPUT:
-
-        - ``self`` -- a Macdonald `Ht` basis
-        - ``part`` -- a partition
+        - ``x`` - an element of ``self``
 
         OUTPUT:
 
-        - returns a function which accepts a partition ``part2`` and
-          this function returns the coefficient of the Schur function
-          indexed by ``part2`` in ``Ht(part)``
+        - an element of the Schur basis
+
+        EXAMPLES::
+
+            sage: Ht = SymmetricFunctions(FractionField(QQ['q','t'])).macdonald().Ht()
+            sage: s = Ht.symmetric_function_ring().s()
+            sage: Ht._self_to_s(Ht[2,1])
+            q*t*s[1, 1, 1] + (q+t)*s[2, 1] + s[3]
+        """
+        return self._s(self._self_to_m(x))
+
+    def _s_to_self( self, x ):
+        r"""
+        Convert an element of either the Schur basis to the ``Ht`` basis
+
+        This function is here to force the coercion path from the Schur basis
+        because these bases are computed using the monomial expansion.
+
+        INPUT:
+
+        - ``x`` - an element of ``s`` basis
+
+        OUTPUT:
+
+        - an element of the basis ``self``
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(FractionField(QQ['q','t'])).s()
+            sage: Ht = s.symmetric_function_ring().macdonald().Ht()
+            sage: Ht._s_to_self(s[2])
+            ((-q)/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
+        """
+        return self._m_to_self(self._m(x))
+
+    def _Lmunu(self, nu, mu):
+        r"""
+        Return the coefficient of `m_\nu` in `{\tilde H}_\mu`.
+
+        The coefficient is a `(q,t)`-analogue of `n` choose `\nu`.  Let
+        `c_{\mu\gamma}` be the coefficient of `{\tilde H}_\gamma` in
+        `h_r^\perp {\tilde H}_\mu`.  The coefficient of `m_\nu` in
+        `{\tilde H}_\mu` is
+
+        .. MATH::
+
+            L_{\mu\nu} = \sum_{\gamma} c_{\mu\gamma} L_{\gamma\overline{\nu}},
+
+        where the sum is over partitions `\gamma \subseteq \mu` with
+        `\gamma \vdash |(\nu_1, \ldots, \nu_{\ell(\nu)-1})|`.  There is a
+        recursive formula for `c_{\mu\gamma}` which is due to F. Bergeron
+        and M. Haiman [BH2013]_ and this is implemented in
+        :func:`sage.combinat.sf.macdonald.cmunu`.
+
+        INPUT:
+
+        - ``nu``, ``mu`` -- partitions of the same size
+
+        OUTPUT:
+
+        - a polynomial in `q` and `t`
+
+        EXAMPLES::
+
+            sage: Lmunu = SymmetricFunctions(FractionField(QQ['q','t'])).macdonald().Ht()._Lmunu
+            sage: Lmunu(Partition([3,1]),Partition([3,1]))
+            q^2 + q + t + 1
+            sage: Lmunu(Partition([3,1]),Partition([2,2]))
+            q*t + q + t + 1
+            sage: Lmunu(Partition([3,1]),Partition([2,1,1]))
+            t^2 + q + t + 1
+            sage: Lmunu(Partition([2,2]),Partition([2,1,1]))
+            q*t + 2*t^2 + q + t + 1
+
+        """
+        if not mu:
+            if not nu:
+                return QQqt.one()
+            else:
+                return QQqt.zero()
+        if (mu,nu) in self._self_to_m_cache:
+            return self._self_to_m_cache[(mu,nu)]
+        if len(nu) == 1:
+            return QQqt.one()
+        short_nu = _Partitions(nu[:-1])
+        if nu[-1] == 1:
+            self._self_to_m_cache[(mu,nu)] = QQqt( sum(cmunu1(mu,ga) * self._Lmunu(short_nu, ga)
+                                                       for ga in mu.down()) )
+        else:
+            self._self_to_m_cache[(mu,nu)] = QQqt( sum(cmunu(mu,ga) * self._Lmunu(short_nu, ga)
+                        for ga in Partitions_n(short_nu.size()) if mu.contains(ga) ) )
+        return self._self_to_m_cache[(mu,nu)]
+
+    def _self_to_m(self, x):
+        r"""
+        Takes an element of the ``Ht`` basis and returns the expansion in the
+        monomial basis.
+
+        INPUT:
+
+        - ``x`` -- an element of ``Ht`` basis
+
+        OUTPUT:
+
+        - an element of the monomial basis
 
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: Ht = Sym.macdonald().Ht()
-            sage: f21 = Ht._to_s(Partition([2,1]))
-            sage: [f21(part) for part in Partitions(3)]
-            [1, q + t, q*t]
-            sage: f22 = Ht._to_s(Partition([2,2]))
-            sage: [f22(part) for part in Partitions(4)]
-            [1, q*t + q + t, q^2 + t^2, q^2*t + q*t^2 + q*t, q^2*t^2]
+            sage: m = Sym.m()
+            sage: m(Ht[2,1])
+            (q*t+2*q+2*t+1)*m[1, 1, 1] + (q+t+1)*m[2, 1] + m[3]
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
+            sage: x = Sym.base_ring().gen()
+            sage: Ht = Sym.macdonald(q=x,t=1/x).Ht()
+            sage: m = Sym.m()
+            sage: m(Ht[2,1])
+            ((2*x^2+2*x+2)/x)*m[1, 1, 1] + ((x^2+x+1)/x)*m[2, 1] + m[3]
+
         """
-        (q,t) = QQqt.gens()
-        Sym = self._sym
-        J = Sym.macdonald().J()
-        s = self._s
-        res = 0
-        ve = part.weighted_size()
-        for p in sage.combinat.partition.Partitions(sum(part)):
-            res += t**ve*(J(part).scalar_t(s(p), t)).subs(t=1/t)*s(p)
-        f = lambda part2: res.coefficient(part2)
-        return f
+        part_coeff = lambda x, d: sorted((mu,c) for mu,c in x if sum(mu) == d)
+        return self._m._from_dict({ part2:
+            self._base( sum(c * self._Lmunu(part2, mu).subs(q=self.q, t=self.t)
+                            for mu,c in part_coeff(x, d)) )
+                    for d in range(x.degree()+1) for part2 in Partitions_n(d) })
+
+    def _m_to_self( self, f ):
+        r"""
+        Convert an element ``f`` from the monomial basis to the ``Ht`` basis.
+
+        This calculation is performed by using the fact that
+        `{\tilde H}_\mu[X(t-1)]` is `c_\mu m_\mu` plus terms which are
+        smaller in dominance order.  The leading coefficient of the
+        expansion of ``f`` in the `{\tilde H}_\mu` basis is equal to
+        the leading coefficient of `c_\mu^{-1} f[X(t-1)]`.
+
+        If `t=1`, we must appeal to another triangularity since ``Ht``
+        is (usually) still a basis, however `{\tilde H}_\mu[X(t-1)]=0`.
+        In this case we assume that it is a basis and `{\tilde H}_\mu[X(q-1)]`
+        is `c_\mu m_{\mu'}` plus terms which are lower in dominance order.
+
+        INPUT:
+
+        - ``f`` -- an element of the monomial basis
+
+        OUTPUT:
+
+        - an element of the ``Ht`` basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
+            sage: Ht = Sym.macdonald().Ht()
+            sage: m = Sym.m()
+            sage: Ht(m[1,1])
+            (1/(-q+t))*McdHt[1, 1] - (1/(-q+t))*McdHt[2]
+            sage: (q,t) = Sym.base_ring().gens()
+            sage: Ht((q*t+2*q+2*t+1)*m[1, 1, 1] + (q+t+1)*m[2, 1] + m[3])
+            McdHt[2, 1]
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
+            sage: x = Sym.base_ring().gen()
+            sage: Ht = Sym.macdonald(q=x,t=1).Ht()
+            sage: m = Sym.m()
+            sage: Ht((3*x+3)*m[1, 1, 1] + (x+2)*m[2, 1] + m[3])
+            McdHt[2, 1]
+
+        """
+        if self.t == 1:
+            subsval = self.q
+            fl = lambda x: x.conjugate()
+        else:
+            subsval = self.t
+            fl = lambda x: x
+        g = f.omega_qt(q=subsval, t=0)
+        out = {}
+        while not g.is_zero():
+            sprt = g.support()
+            Htmu = self._self_to_m(self(fl(sprt[-1]))).omega_qt(q=subsval, t=0)
+            out[fl(sprt[-1])] = self._base(g.coefficient(sprt[-1]) / Htmu.coefficient(sprt[-1]))
+            g -= out[fl(sprt[-1])] * Htmu
+        return self._from_dict(out)
 
     class Element(MacdonaldPolynomials_generic.Element):
         def nabla(self, q=None, t=None, power=1):
@@ -1307,6 +1680,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
                 sage: a = sum(Ht(p) for p in Partitions(3))
                 sage: s(a.nabla())
                 (t^6+9*t^2+729)*s[1, 1, 1] + (t^5+t^4+3*t^2+9*t+324)*s[2, 1] + (t^3+3*t+27)*s[3]
+
             """
             P = self.parent()
             Ht = P._macdonald.Ht()
@@ -1471,12 +1845,13 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
                 (q^3*t-q^2*t-q+1)*McdS[2, 1] + (q^3-q^2*t-q+t)*McdS[3]
             """
             (q,t) = QQqt.gens()
-            S = sage.combinat.sf.sf.SymmetricFunctions(QQqt).macdonald().S()
+            from sage.combinat.sf.sf import SymmetricFunctions
+            S = SymmetricFunctions(QQqt).macdonald().S()
 
             part += [0]*(k-len(part))
 
             if len(part) > k:
-                raise ValueError, "the column to add is too small"
+                raise ValueError("the column to add is too small")
 
             #Create the matrix over the homogeneous symmetric
             #functions and take its determinant
@@ -1622,8 +1997,8 @@ def qt_kostka(lam, mu):
         sage: qt_kostka([2,1],[1,1,1,1])
         0
     """
-    lam = sage.combinat.partition.Partition(lam)
-    mu = sage.combinat.partition.Partition(mu)
+    lam = _Partitions(lam)
+    mu = _Partitions(mu)
 
     if lam.size() != mu.size():
         return QQqt.zero()
@@ -1631,11 +2006,12 @@ def qt_kostka(lam, mu):
     if (lam,mu) in _qt_kostka_cache:
         return _qt_kostka_cache[(lam,mu)]
 
-    Sym = sage.combinat.sf.sf.SymmetricFunctions(QQqt)
+    from sage.combinat.sf.sf import SymmetricFunctions
+    Sym = SymmetricFunctions(QQqt)
     H = Sym.macdonald().H()
     s = Sym.schur()
 
-    parts = sage.combinat.partition.Partitions(mu.size())
+    parts = Partitions_n(mu.size())
 
     for p2 in parts:
         res = s(H(p2))

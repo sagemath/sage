@@ -299,6 +299,7 @@ numbers.
 
     sage: f(x)=x^2*(sqrt(x^4+16)-x^2)
     sage: plot(f,(x,0,2e4))
+    Graphics object consisting of 1 graphics primitive
 
 We can instead make a function that specifically evaluates all
 intermediate steps to 100 bits of precision using the ``fast_callable``
@@ -309,4 +310,5 @@ system.
     sage: R=RealField(100) # 100 bits
     sage: g=fast_callable(f, vars=[x], domain=R)
     sage: plot(g,(x,0,2e4))
+    Graphics object consisting of 1 graphics primitive
 

@@ -164,7 +164,7 @@ def FinitelyGeneratedAbelianPresentation(int_list):
         sage: groups.presentation.FGAbelian([2,'a',4])
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert x (=a) to an integer
+        TypeError: unable to convert 'a' to an integer
 
     TESTS::
 
@@ -189,7 +189,7 @@ def FinitelyGeneratedAbelianPresentation(int_list):
     col_sp = diagonal_matrix(int_list).column_space()
     invariants = FGP_Module(ZZ**(len(int_list)), col_sp).invariants()
     name_gen = _lexi_gen()
-    F = FreeGroup([name_gen.next() for i in invariants])
+    F = FreeGroup([next(name_gen) for i in invariants])
     ret_rls = [F([i+1])**invariants[i] for i in range(len(invariants)) if invariants[i]!=0]
 
     # Build commutator relations
@@ -327,7 +327,7 @@ def SymmetricPresentation(n):
     GAP_fp_rep = libgap.Image(libgap.IsomorphismFpGroupByGenerators(perm_rep, perm_rep.gens()))
     image_gens = GAP_fp_rep.FreeGeneratorsOfFpGroup()
     name_itr = _lexi_gen() # Python generator object for variable names
-    F = FreeGroup([name_itr.next() for x in perm_rep.gens()])
+    F = FreeGroup([next(name_itr) for x in perm_rep.gens()])
     ret_rls = tuple([F(rel_word.TietzeWordAbstractWord(image_gens).sage())
                 for rel_word in GAP_fp_rep.RelatorsOfFpGroup()])
     return FinitelyPresentedGroup(F,ret_rls)
@@ -400,7 +400,7 @@ def AlternatingPresentation(n):
     GAP_fp_rep = libgap.Image(libgap.IsomorphismFpGroupByGenerators(perm_rep, perm_rep.gens()))
     image_gens = GAP_fp_rep.FreeGeneratorsOfFpGroup()
     name_itr = _lexi_gen() # Python generator object for variable names
-    F = FreeGroup([name_itr.next() for x in perm_rep.gens()])
+    F = FreeGroup([next(name_itr) for x in perm_rep.gens()])
     ret_rls = tuple([F(rel_word.TietzeWordAbstractWord(image_gens).sage())
                 for rel_word in GAP_fp_rep.RelatorsOfFpGroup()])
     return FinitelyPresentedGroup(F,ret_rls)

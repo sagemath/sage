@@ -8,6 +8,5 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
     cdef pAdicZZpXFMElement _new_c(self)
     cdef pAdicZZpXFMElement _lshift_c(self, long n)
     cdef pAdicZZpXFMElement _rshift_c(self, long n)
-    cpdef RingElement _invert_c_impl(self)
 
     cpdef pAdicZZpXFMElement unit_part(self)

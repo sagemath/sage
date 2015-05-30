@@ -51,8 +51,8 @@ cdef class Polynomial_GF2X(Polynomial_template):
             0
         """
         try:
-            if (PY_TYPE_CHECK(x, int)
-                or PY_TYPE_CHECK(x, Integer)):
+            if (isinstance(x, int)
+                or isinstance(x, Integer)):
                 x = int(x % 2)
             elif (x.parent() is parent.base_ring()
                 or x.parent() == parent.base_ring()):
@@ -77,6 +77,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: f[1:]
             x^3 + x^2
         """
+        cdef type t
         cdef long c = 0
         cdef Polynomial_template r
         if isinstance(i, slice):
@@ -88,7 +89,8 @@ cdef class Polynomial_GF2X(Polynomial_template):
             x = (<Polynomial_template>self)._parent.gen()
             v = [self[t] for t from start <= t < stop]
 
-            r = <Polynomial_template>PY_NEW(self.__class__)
+            t = self.__class__
+            r = <Polynomial_template>t.__new__(t)
             Polynomial_template.__init__(r, (<Polynomial_template>self)._parent, v)
             return r << start
         else:
@@ -157,7 +159,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
         cdef GF2XModulus_c modulus
         GF2XModulus_build(modulus, (<Polynomial_GF2X>h).x)
 
-        res = <Polynomial_GF2X>PY_NEW(Polynomial_GF2X)
+        res = <Polynomial_GF2X>Polynomial_GF2X.__new__(Polynomial_GF2X)
         res._parent = self._parent
         res._cparent = self._cparent
 

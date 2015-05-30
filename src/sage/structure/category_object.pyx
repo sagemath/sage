@@ -46,9 +46,18 @@ This example illustrates generators for a free module over `\ZZ`.
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-import generators
-import sage_object
-from sage.categories.category import Category, JoinCategory
+#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+include 'sage/ext/stdsage.pxi'
+cimport generators
+cimport sage_object
+from sage.categories.category import Category
 from sage.structure.debug_options import debug
 
 def guess_category(obj):
@@ -72,7 +81,7 @@ def guess_category(obj):
                     return Algebras(obj._base)
                 else:
                     return Rings()
-    except StandardError:
+    except Exception:
         pass
     from sage.structure.parent import Parent
     #if isinstance(obj, Parent):
@@ -83,9 +92,6 @@ def guess_category(obj):
     return None # don't want to risk importing stuff...
 
 cpdef inline check_default_category(default_category, category):
-    """
-
-    """
     ## The resulting category is guaranteed to be
     ## a sub-category of the default.
     if category is None:
@@ -141,6 +147,10 @@ cdef class CategoryObject(sage_object.SageObject):
         """
         Sets the category or categories of this object.
 
+        INPUT:
+
+        - ``category`` -- a category, or list or tuple thereof, or ``None``
+
         EXAMPLES::
 
             sage: A = sage.structure.category_object.CategoryObject()
@@ -150,17 +160,20 @@ cdef class CategoryObject(sage_object.SageObject):
             sage: A._init_category_((Semigroups(), CommutativeAdditiveSemigroups()))
             sage: A.category()
             Join of Category of semigroups and Category of commutative additive semigroups
+            sage: A._init_category_(None)
+            sage: A.category()
+            Category of objects
+
+            sage: P = Parent(category = None)
+            sage: P.category()
+            Category of sets
         """
         if category is None:
             if debug.bad_parent_warnings:
                 print "No category for %s" % type(self)
             category = guess_category(self) # so generators don't crash
-        elif (type(category) == tuple or type(category) == list):
-            assert(len(category)>0) # or we should decide of the semantic for an empty category
-            if len(category) == 1:
-                category = category[0]
-            else:
-                category = JoinCategory(category)
+        elif isinstance(category, (list, tuple)):
+            category = Category.join(category)
         self._category = category
 
     def _refine_category_(self, category):
@@ -216,28 +229,23 @@ cdef class CategoryObject(sage_object.SageObject):
 
     def categories(self):
         """
+        Return the categories of ``self``.
+
         EXAMPLES::
 
             sage: ZZ.categories()
-            [Category of euclidean domains,
+            [Join of Category of euclidean domains
+                 and Category of infinite enumerated sets,
+             Category of euclidean domains,
              Category of principal ideal domains,
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,
              Category of domains,
-             Category of commutative rings,
-             Category of rings,
-             Category of rngs,
-             Category of semirings,
-             Category of monoids,
-             Category of semigroups,
-             Category of magmas,
-             Category of commutative additive groups,
-             Category of commutative additive monoids,
-             Category of commutative additive semigroups,
-             Category of additive magmas,
-             Category of sets,
-             Category of sets with partial maps,
+             Category of commutative rings, ...
+             Category of monoids, ...,
+             Category of commutative additive groups, ...,
+             Category of sets, ...,
              Category of objects]
         """
         return self.category().all_super_categories()
@@ -247,7 +255,7 @@ cdef class CategoryObject(sage_object.SageObject):
     ##############################################################################
 
     def _populate_generators_(self, gens=None, names=None, normalize = True, category=None):
-        if self._generators.has_key(category):
+        if category in self._generators:
             raise ValueError, "Generators cannot be changed after object creation."
         if category is None:
             category = self._category
@@ -414,11 +422,11 @@ cdef class CategoryObject(sage_object.SageObject):
             names = self.normalize_names(ngens, names)
         if self._names is not None and names != self._names:
             raise ValueError, 'variable names cannot be changed after object creation.'
-        if PY_TYPE_CHECK(names, str):
+        if isinstance(names, str):
             names = (names, )  # make it a tuple
-        elif PY_TYPE_CHECK(names, list):
+        elif isinstance(names, list):
             names = tuple(names)
-        elif not PY_TYPE_CHECK(names, tuple):
+        elif not isinstance(names, tuple):
             raise TypeError, "names must be a tuple of strings"
         self._names = names
 
@@ -468,7 +476,7 @@ cdef class CategoryObject(sage_object.SageObject):
         return tuple(v)
 
     def variable_names(self):
-        if self._names != None:
+        if self._names is not None:
             return self._names
         raise ValueError, "variable names have not yet been set using self._assign_names(...)"
 
@@ -546,72 +554,70 @@ cdef class CategoryObject(sage_object.SageObject):
     # Bases
     #################################################################################################
 
-#    cpdef base(self, category=None):
-#        if category is None:
-#            return self._base
-#        else:
-#            return category._obj_base(self)
-
     def has_base(self, category=None):
         if category is None:
             return self._base is not None
         else:
             return category._obj_base(self) is not None
 
-#    cpdef base_extend(self, other, category=None):
-#        """
-#        EXAMPLES:
-#            sage: QQ.base_extend(GF(7))
-#            Traceback (most recent call last):
-#            ...
-#            TypeError: base extension not defined for Rational Field
-#            sage: ZZ.base_extend(GF(7))
-#            Finite Field of size 7
-#        """
-#        try:
-#            if category is None:
-#                method = self._category.get_object_method("base_extend") # , self._categories[1:])
-#            else:
-#                method = category.get_object_method("base_extend")
-#            return method(self)
-#        except AttributeError:
-#            raise TypeError, "base extension not defined for %s" % self
+    def base_ring(self):
+        """
+        Return the base ring of ``self``.
 
-    # COERCE TODO: When everything has a category, move let it be an optional arg.
-    def base_ring(self): # This should be in a category or elsewhere, but not here
+        INPUT:
+
+        - ``self`` -- an object over a base ring; typically a module
+
+        EXAMPLES::
+
+            sage: from sage.modules.module import Module
+            sage: Module(ZZ).base_ring()
+            Integer Ring
+
+            sage: F = FreeModule(ZZ,3)
+            sage: F.base_ring()
+            Integer Ring
+            sage: F.__class__.base_ring
+            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+
+        Note that the coordinates of the elements of a module can lie
+        in a bigger ring, the ``coordinate_ring``::
+
+            sage: M = (ZZ^2) * (1/2)
+            sage: v = M([1/2, 0])
+            sage: v.base_ring()
+            Integer Ring
+            sage: parent(v[0])
+            Rational Field
+            sage: v.coordinate_ring()
+            Rational Field
+
+        More examples::
+
+            sage: F = FreeAlgebra(QQ, 'x')
+            sage: F.base_ring()
+            Rational Field
+            sage: F.__class__.base_ring
+            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+
+            sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
+            sage: F = CombinatorialFreeModule(ZZ, [2,3,4])
+            sage: H = Hom(E, F)
+            sage: H.base_ring()
+            Integer Ring
+            sage: H.__class__.base_ring
+            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+
+        .. TODO::
+
+            Move this method elsewhere (typically in the Modules
+            category) so as not to pollute the namespace of all
+            category objects.
+        """
         return self._base
 
     def base(self):
         return self._base
-
-    #################################################################################################
-    # Automatic lookup of methods on the category.
-    #################################################################################################
-
-#    def __getattr__(self, name):
-#        """
-#        Overriding the __getattr__ method allows one to define methods for objects in a particular
-#        category by writing a corresponding method on the category.
-#
-#        In order to write a method called FOO that's automatically attached to a category object,
-#        write a method object_FOO on one of that object's categories.
-#
-#        EXAMPLES:
-#        sage: G = DirichletGroup(18); G
-#        Group of Dirichlet characters of modulus 18 over Cyclotomic Field of order 6 and degree 2
-#        sage: G.generator_orders()
-#        [1, 6]
-#        sage: G.category().object_generator_orders(G)
-#        [1, 6]
-#        """
-#        if self._category is not None:
-#            attr = self._category.get_object_method(name)
-#            if attr is not None:
-#                if callable(attr):
-#                    return FillFirstArg(attr, self)
-#                else:
-#                    return attr
-#        return object.__getattribute__(self, name)
 
     ############################################################################
     # Homomorphism --
@@ -659,7 +665,7 @@ cdef class CategoryObject(sage_object.SageObject):
 
         EXAMPLES::
 
-         sage: R, x = PolynomialRing(QQ,'x',12).objgens()
+         sage: R, x = PolynomialRing(QQ, 'x', 12).objgens()
          sage: x
          (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
          sage: print R.latex_variable_names ()
@@ -751,8 +757,8 @@ cdef class CategoryObject(sage_object.SageObject):
                         from sage.structure.generators import Generators
                         self._generators = Generators(self, None, Objects())
                     else:
-                        from sage.structure.generators import Generator_list
-                        self._generators = Generator_list(self, d['_gens'], Objects())
+                        from sage.structure.generators import Generators_list
+                        self._generators = Generators_list(self, d['_gens'], Objects())
                     self._generator_orders = d['_generator_orders'] # this may raise a KeyError, but that's okay.
                     # We throw away d['_latex_names'] and d['_list'] and d['_gens_dict']
                 except (AttributeError, KeyError):
@@ -795,7 +801,7 @@ cdef class CategoryObject(sage_object.SageObject):
 
 # cdef class ParentWithMultiplicativeAbelianGens(Parent):
 #     def generator_orders(self):
-#         if self._generator_orders != None:
+#         if self._generator_orders is not None:
 #             return self._generator_orders
 #         else:
 #             g = []
@@ -814,7 +820,7 @@ cdef class CategoryObject(sage_object.SageObject):
 
 # cdef class ParentWithAdditiveAbelianGens(Parent):
 #     def generator_orders(self):
-#         if self._generator_orders != None:
+#         if self._generator_orders is not None:
 #             return self._generator_orders
 #         else:
 #             g = []
@@ -883,17 +889,3 @@ class localvars:
 
     def __exit__(self, type, value, traceback):
         self._obj._temporarily_change_names(self._orig_names)
-
-
-# This Cython class confuses the hell out of the Sphinx documentation parser
-# (because __doc__ is defined but not set). And the only code that refers to it
-# is commented out. So I'm commenting it out too. -- David Loeffler 2009-07-06
-#cdef class FillFirstArg:
-#    cdef object arg, f
-#    cdef public __doc__
-#    def __init__(self, f, arg):
-#        self.arg = arg
-#        self.f = f
-#        self.__doc__ = f.__doc__
-#    def __call__(self, *args, **kwds):
-#        return self.f(self.arg, *args, **kwds)

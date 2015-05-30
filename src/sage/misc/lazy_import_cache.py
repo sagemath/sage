@@ -1,4 +1,6 @@
 """
+Lazy import cache
+
 This is a pure Python file with no dependencies so it can be used in setup.py.
 """
 

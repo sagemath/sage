@@ -200,7 +200,7 @@ def ChainComplex(data=None, **kwds):
 
         sage: IZ = ChainComplex({0: identity_matrix(ZZ, 1)})
         sage: IZ.differential()  # the differentials in the chain complex
-        {0: [1], 1: [], -1: []}
+        {-1: [], 0: [1], 1: []}
         sage: IZ.differential(1).parent()
         Full MatrixSpace of 0 by 1 dense matrices over Integer Ring
         sage: mat = ChainComplex({0: matrix(ZZ, 3, 4)}).differential(1)
@@ -230,13 +230,14 @@ def ChainComplex(data=None, **kwds):
         TypeError: Unable to coerce 0 (<type 
         'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'>) to Rational
     """
+    
     check = kwds.get('check', True)
     base_ring = kwds.get('base_ring', None)
     grading_group = kwds.get('grading_group', ZZ)
     degree = kwds.get('degree_of_differential', kwds.get('degree', 1))
     try:
         degree = grading_group(degree)
-    except StandardError:
+    except Exception:
         raise ValueError('degree is not an element of the grading group')
 
     # transform data into data_dict
@@ -245,14 +246,14 @@ def ChainComplex(data=None, **kwds):
         try:
             zero = grading_group.identity()
         except AttributeError:
-            zero = grading_group.zero_element()
+            zero = grading_group.zero()
         if base_ring is None:
             base_ring = ZZ
         data_dict = dict()
     elif isinstance(data, dict):  # data is dictionary
         data_dict = data
     else: # data is list/tuple/iterable
-        data_matrices = filter(lambda x: isinstance(x, Matrix), data)
+        data_matrices = [x for x in data if isinstance(x, Matrix)]
         if degree != 1:
             raise ValueError('degree must be +1 if the data argument is a list or tuple')
         if grading_group != ZZ:
@@ -393,7 +394,7 @@ class Chain_class(ModuleElement):
             return 'Trivial chain'
 
         if n == 1:
-            deg, vec = self._vec.iteritems().next()
+            deg, vec = next(self._vec.iteritems())
             return 'Chain({0}:{1})'.format(deg, vec)
 
         return 'Chain with {0} nonzero terms over {1}'.format(
@@ -428,7 +429,7 @@ class Chain_class(ModuleElement):
             if v.degree() == 0:
                 return AsciiArt(['0'])
             v = str(v.column()).splitlines()
-            return AsciiArt(v, baseline=len(v)/2)
+            return AsciiArt(v, baseline=len(v)//2)
             
         result = []
         chain_complex = self.parent()
@@ -734,11 +735,11 @@ class ChainComplex_class(Parent):
         EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([0, 3])
-            sage: C = ChainComplex(grading_group=G, degree=G([1,2]))
+            sage: C = ChainComplex(grading_group=G, degree=G(vector([1,2])))
             sage: C.grading_group()
-            Additive abelian group isomorphic to Z/3 + Z
+            Additive abelian group isomorphic to Z + Z/3
             sage: C.degree_of_differential()
-            (2, 1)
+            (1, 2)
         """
         return self._grading_group
         
@@ -879,15 +880,16 @@ class ChainComplex_class(Parent):
 
             sage: D = ChainComplex({0: matrix(ZZ, 2, 2, [1,0,0,2])})
             sage: D.differential()
-            {0: [1 0]
-            [0 2], 1: [], -1: []}
+            {-1: [], 0: [1 0]
+             [0 2], 1: []}
             sage: D.differential(0)
             [1 0]
             [0 2]
             sage: C = ChainComplex({0: identity_matrix(ZZ, 40)})
             sage: C.differential()
-            {0: 40 x 40 dense matrix over Integer Ring, 1: [],
-             -1: 40 x 0 dense matrix over Integer Ring}
+            {-1: 40 x 0 dense matrix over Integer Ring,
+             0: 40 x 40 dense matrix over Integer Ring,
+             1: []}
         """
         if dim is None:
             return copy(self._diff)
@@ -1018,7 +1020,7 @@ class ChainComplex_class(Parent):
             return 0
         return -1
 
-    def _homology_chomp(deg, base_ring, verbose, generators):
+    def _homology_chomp(self, deg, base_ring, verbose, generators):
         """
         Helper function for :meth:`homology`.
 
@@ -1026,15 +1028,16 @@ class ChainComplex_class(Parent):
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))
             sage: C._homology_chomp(None, GF(2), False, False)   # optional - CHomP
-        
+            {0: Vector space of dimension 2 over Finite Field of size 2, 1: Vector space of dimension 1 over Finite Field of size 2}
         """
+        from sage.interfaces.chomp import homchain
         H = homchain(self, base_ring=base_ring, verbose=verbose, generators=generators)
         if H is None:
             raise RuntimeError('ran CHomP, but no output')
         if deg is None:
             return H
         try:
-            return H[d]
+            return H[deg]
         except KeyError:
             return HomologyGroup(0, base_ring)
 
@@ -1263,7 +1266,7 @@ class ChainComplex_class(Parent):
                 all_divs = all_divs[:d_out_nullity]
                 # divisors equal to 1 produce trivial
                 # summands, so filter them out
-                divisors = filter(lambda x: x != 1, all_divs)
+                divisors = [x for x in all_divs if x != 1]
                 answer = HomologyGroup(len(divisors), base_ring, divisors)
             else:
                 raise NotImplementedError('only base rings ZZ and fields are supported')
@@ -1299,7 +1302,7 @@ class ChainComplex_class(Parent):
             all_divs[i] = N[i][i]
             if N[i][i] == 1:
                 non_triv = non_triv + 1
-        divisors = filter(lambda x: x != 1, all_divs)
+        divisors = [x for x in all_divs if x != 1]
         gens = (K * P.inverse().submatrix(col=non_triv)).columns()
         return divisors, gens
 
@@ -1338,9 +1341,13 @@ class ChainComplex_class(Parent):
             [2, 1, 0, 0, 0]
             sage: C.betti()
             {0: 2, 1: 1}
+
+            sage: D = ChainComplex({0:matrix(GF(5), [[3, 1],[1, 2]])})
+            sage: D.betti()
+            {0: 1, 1: 1}
         """
         if base_ring is None:
-            base_ring = QQ
+            base_ring = self.base_ring()
         try:
             base_ring = base_ring.fraction_field()
         except AttributeError:
@@ -1504,6 +1511,9 @@ class ChainComplex_class(Parent):
         else:
             diffs = self._flip_().differential()
 
+        if len(diffs) == 0:
+            diffs = {0: matrix(ZZ, 0,0)}
+
         maxdim = max(diffs)
         mindim = min(diffs)
         # will shift chain complex by subtracting mindim from
@@ -1542,8 +1552,7 @@ class ChainComplex_class(Parent):
             sage: C
             Chain complex with at most 2 nonzero terms over Integer Ring
         """
-        diffs = filter(lambda mat: mat.nrows() + mat.ncols() > 0,
-                       self._diff.values())
+        diffs = [mat for mat in self._diff.values() if mat.nrows() + mat.ncols() > 0]
         if len(diffs) == 0:
             s = 'Trivial chain complex'
         else:
@@ -1654,6 +1663,337 @@ class ChainComplex_class(Parent):
                 string += _latex_module(ring, mat.ncols())
         return string
 
+    def cartesian_product(self, *factors, **kwds):
+        r"""
+        Return the direct sum (Cartesian product) of ``self`` with ``D``.
+
+        Let `C` and `D` be two chain complexes with differentials
+        `\partial_C` and `\partial_D`, respectively, of the same degree (so
+        they must also have the same grading group).
+        The direct sum `S = C \oplus D` is a chain complex given by
+        `S_i = C_i \oplus D_i` with differential
+        `\partial = \partial_C \oplus \partial_D`.
+
+        INPUT:
+
+        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+          the differential matrices
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = ChainComplex([matrix([[-y],[x]]), matrix([[x, y]])])
+            sage: D = ChainComplex([matrix([[x-y]]), matrix([[0], [0]])])
+            sage: ascii_art(C.cartesian_product(D))
+                        [x y 0]       [   -y     0]
+                        [0 0 0]       [    x     0]
+                        [0 0 0]       [    0 x - y]
+             0 <-- C_2 <-------- C_1 <-------------- C_0 <-- 0
+
+            sage: D = ChainComplex({1:matrix([[x-y]]), 4:matrix([[x], [y]])})
+            sage: ascii_art(D)
+                        [x]
+                        [y]                     [x - y]
+             0 <-- C_5 <---- C_4 <-- 0 <-- C_2 <-------- C_1 <-- 0
+            sage: ascii_art(cartesian_product([C, D]))
+                                                                          [-y]
+                        [x]                     [    x     y     0]       [ x]
+                        [y]                     [    0     0 x - y]       [ 0]
+             0 <-- C_5 <---- C_4 <-- 0 <-- C_2 <-------------------- C_1 <----- C_0 <-- 0
+
+        The degrees of the differentials must agree::
+
+            sage: C = ChainComplex({1:matrix([[x]])}, degree_of_differential=-1)
+            sage: D = ChainComplex({1:matrix([[x]])}, degree_of_differential=1)
+            sage: C.cartesian_product(D)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degrees of the differentials must match
+
+        TESTS::
+
+            sage: C = ChainComplex({2:matrix([[-1],[2]]), 1:matrix([[2, 1]])},
+            ....:                  degree_of_differential=-1)
+            sage: ascii_art(C.cartesian_product(C, subdivide=True))
+                                        [-1| 0]
+                                        [ 2| 0]
+                        [2 1|0 0]       [--+--]
+                        [---+---]       [ 0|-1]
+                        [0 0|2 1]       [ 0| 2]
+             0 <-- C_0 <---------- C_1 <-------- C_2 <-- 0
+
+        ::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: C1 = ChainComplex({1:matrix([[x]])})
+            sage: C2 = ChainComplex({1:matrix([[y]])})
+            sage: C3 = ChainComplex({1:matrix([[z]])})
+            sage: ascii_art(cartesian_product([C1, C2, C3]))
+                        [x 0 0]
+                        [0 y 0]
+                        [0 0 z]
+             0 <-- C_2 <-------- C_1 <-- 0
+            sage: ascii_art(C1.cartesian_product([C2, C3], subdivide=True))
+                        [x|0|0]
+                        [-+-+-]
+                        [0|y|0]
+                        [-+-+-]
+                        [0|0|z]
+             0 <-- C_2 <-------- C_1 <-- 0
+
+        ::
+
+            sage: R.<x> = ZZ[]
+            sage: G = AdditiveAbelianGroup([0,7])
+            sage: d = {G(vector([1,1])):matrix([[x]])}
+            sage: C = ChainComplex(d, grading_group=G, degree=G(vector([2,1])))
+            sage: ascii_art(C.cartesian_product(C))
+                             [x 0]
+                             [0 x]
+             0 <-- C_(3, 2) <------ C_(1, 1) <-- 0
+        """
+        if not factors:
+            return self
+        if isinstance(factors[0], (list, tuple)):
+            factors = factors[0]
+        deg_diff = self.degree_of_differential()
+        if any(D.degree_of_differential() != deg_diff for D in factors):
+            raise ValueError("the degrees of the differentials must match")
+        if any(D.grading_group() != self._grading_group for D in factors):
+            raise ValueError("the grading groups must match")
+
+        factors = [self] + list(factors)
+        R = self.base_ring()
+        zero = matrix(R, [])
+        subdivide = kwds.get('subdivide', False)
+        ret = self
+
+        diffs = [D.differential() for D in factors]
+        keys = reduce(lambda X,d: X.union(d.keys()), diffs, set())
+        ret = {k: matrix.block_diagonal([d.get(k, zero) for d in diffs],
+                                         subdivide=subdivide)
+               for k in keys}
+        return ChainComplex(ret, degree_of_differential=deg_diff,
+                            grading_group=self._grading_group)
+
+    def tensor(self, *factors, **kwds):
+        r"""
+        Return the tensor product of ``self`` with ``D``.
+
+        Let `C` and `D` be two chain complexes with differentials
+        `\partial_C` and `\partial_D`, respectively, of the same degree (so
+        they must also have the same grading group).
+        The tensor product `S = C \otimes D` is a chain complex given by
+
+        .. MATH::
+
+            S_i = \bigoplus_{a+b=i} C_a \otimes D_b
+
+        with differential
+
+        .. MATH::
+
+            \partial(x \otimes y) = \partial_C x \otimes y
+            + (-1)^{|a| \cdot |\partial_D|} x \otimes \partial_D y
+
+        for `x \in C_a` and `y \in D_b`, where `|a|` is the degree of `a` and
+        `|\partial_D|` is the degree of `\partial_D`.
+
+        .. WARNING::
+
+            If the degree of the differential is even, then this may not
+            result in a valid chain complex.
+
+        INPUT:
+
+        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+          the differential matrices
+
+        .. TODO::
+
+            Make subdivision work correctly on multiple factors.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: C1 = ChainComplex({1:matrix([[x]])}, degree_of_differential=-1)
+            sage: C2 = ChainComplex({1:matrix([[y]])}, degree_of_differential=-1)
+            sage: C3 = ChainComplex({1:matrix([[z]])}, degree_of_differential=-1)
+            sage: ascii_art(C1.tensor(C2))
+                                    [ x]
+                        [y x]       [-y]
+             0 <-- C_0 <------ C_1 <----- C_2 <-- 0
+            sage: ascii_art(C1.tensor(C2).tensor(C3))
+                                      [ y  x  0]       [ x]
+                                      [-z  0  x]       [-y]
+                        [z y x]       [ 0 -z -y]       [ z]
+             0 <-- C_0 <-------- C_1 <----------- C_2 <----- C_3 <-- 0
+
+        ::
+
+            sage: C = ChainComplex({2:matrix([[-y],[x]]), 1:matrix([[x, y]])},
+            ....:                  degree_of_differential=-1); ascii_art(C)
+                                    [-y]
+                        [x y]       [ x]
+             0 <-- C_0 <------ C_1 <----- C_2 <-- 0
+            sage: T = C.tensor(C)
+            sage: T.differential(1)
+            [x y x y]
+            sage: T.differential(2)
+            [-y  x  0  y  0  0]
+            [ x  0  x  0  y  0]
+            [ 0 -x -y  0  0 -y]
+            [ 0  0  0 -x -y  x]
+            sage: T.differential(3)
+            [ x  y  0  0]
+            [ y  0 -y  0]
+            [-x  0  0 -y]
+            [ 0  y  x  0]
+            [ 0 -x  0  x]
+            [ 0  0  x  y]
+            sage: T.differential(4)
+            [-y]
+            [ x]
+            [-y]
+            [ x]
+
+        The degrees of the differentials must agree::
+
+            sage: C1p = ChainComplex({1:matrix([[x]])}, degree_of_differential=1)
+            sage: C1.tensor(C1p)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degrees of the differentials must match
+
+        TESTS::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: C1 = ChainComplex({1:matrix([[x]])})
+            sage: C2 = ChainComplex({1:matrix([[y]])})
+            sage: C3 = ChainComplex({1:matrix([[z]])})
+            sage: ascii_art(tensor([C1, C2, C3]))
+                                      [-y -z  0]       [ z]
+                                      [ x  0 -z]       [-y]
+                        [x y z]       [ 0  x  y]       [ x]
+             0 <-- C_6 <-------- C_5 <----------- C_4 <----- C_3 <-- 0
+
+        ::
+
+            sage: R.<x,y> = ZZ[]
+            sage: G = AdditiveAbelianGroup([0,7])
+            sage: d1 = {G(vector([1,1])):matrix([[x]])}
+            sage: C1 = ChainComplex(d1, grading_group=G, degree=G(vector([2,1])))
+            sage: d2 = {G(vector([3,0])):matrix([[y]])}
+            sage: C2 = ChainComplex(d2, grading_group=G, degree=G(vector([2,1])))
+            sage: ascii_art(C1.tensor(C2))
+                                                [y]
+                             [ x -y]            [x]
+             0 <-- C_(8, 3) <-------- C_(6, 2) <---- C_(4, 1) <-- 0
+        """
+        if not factors:
+            return self
+        if isinstance(factors[0], (list, tuple)):
+            factors = factors[0]
+        deg_diff = self.degree_of_differential()
+        if any(D.degree_of_differential() != deg_diff for D in factors):
+            raise ValueError("the degrees of the differentials must match")
+        if any(D.grading_group() != self._grading_group for D in factors):
+            raise ValueError("the grading groups must match")
+
+        R = self.base_ring()
+        zero = R.zero()
+        subdivide = kwds.get('subdivide', False)
+        ret = self
+
+        if self._grading_group is ZZ:
+            scalar = lambda a: (-1)**(a * deg_diff)
+        else:
+            scalar = lambda a: (-1)**(sum(a) * sum(deg_diff))
+
+        for D in factors:
+            # Setup
+            d = ret.differential()
+            dD = D.differential()
+            deg = sorted((k, ret.free_module_rank(k)) for k in d.keys()
+                         if ret.free_module_rank(k) > 0)
+            degD = sorted((k, D.free_module_rank(k)) for k in dD.keys()
+                          if D.free_module_rank(k) > 0)
+            diff = {}
+
+            # Our choice for tensor products will be x # y = x1 * y + x2 * y + ...
+
+            # Generate the data for the differential
+            for a,r in deg:
+                for b,s in degD:
+                    rp = d[a].nrows()
+                    sp = dD[b].nrows()
+                    if a+b not in diff:
+                        diff[a+b] = {}
+                    mor = diff[a+b]
+                    cur = {}
+                    if rp != 0:
+                        cur[(a+deg_diff,b)] = []
+                    if sp != 0:
+                        cur[(a,b+deg_diff)] = []
+
+                    for i in range(r):
+                        for j in range(s):
+                            # \partial x_i \otimes y_j
+                            if rp != 0:
+                                vec = [zero]*(rp*s)
+                                for k,val in enumerate(d[a].column(i)):
+                                    vec[s*k+j] += val
+                                cur[(a+deg_diff,b)].append(vec)
+
+                            # (-1)^a x_i \otimes \partial y_j
+                            if sp != 0:
+                                vec = [zero]*(r*sp)
+                                for k,val in enumerate(dD[b].column(j)):
+                                    vec[sp*i+k] += scalar(a) * val
+                                cur[(a,b+deg_diff)].append(vec)
+
+                    mor[a,b] = cur
+
+            # Parse the data into matrices
+            to_delete = []
+            for k in diff:
+                # Get the data and interchange the indices
+                mor = diff[k]
+                row_keys = sorted(mor.keys())
+                cols = {}
+                col_widths = {}
+                for dom in mor:
+                    c = mor[dom]
+                    for im in c:
+                        if im not in cols:
+                            cols[im] = {}
+                            col_widths[im] = len(c[im])
+                        cols[im][dom] = c[im]
+                col_keys = sorted(cols.keys())
+                # Now build the matrix
+                M = []
+                for ck in col_keys:
+                    M.append([])
+                    col = cols[ck]
+                    for rk in row_keys:
+                        if rk in col:
+                            M[-1].append(matrix(R, col[rk]).transpose())
+                        else:
+                            M[-1].append(zero)
+                diff[k] = matrix.block(M, subdivide=subdivide)
+
+                # Flag for removal any 0x0 matrices
+                if diff[k].nrows() == 0 and diff[k].ncols() == 0:
+                    to_delete.append(k)
+
+            # Delete the 0x0 matrices
+            for k in to_delete:
+                del diff[k]
+
+            ret = ChainComplex(diff, degree_of_differential=deg_diff,
+                               grading_group=self._grading_group)
+
+        return ret
 
 from sage.structure.sage_object import register_unpickle_override
 register_unpickle_override('sage.homology.chain_complex', 'ChainComplex', ChainComplex_class)

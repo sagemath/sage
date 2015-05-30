@@ -20,7 +20,7 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-from sage.categories.all import Morphism, is_Morphism
+from sage.categories.morphism import Morphism, is_Morphism
 import fgp_module
 
 
@@ -105,14 +105,14 @@ class FGP_Morphism(Morphism):
 
             MO, _ = M.optimized()
             if phi.domain() != MO.V():
-                raise ValueError, "domain of phi must be the covering module for the optimized covering module of the domain"
+                raise ValueError("domain of phi must be the covering module for the optimized covering module of the domain")
             if phi.codomain() != N.V():
-                raise ValueError, "codomain of phi must be the covering module the codomain."
+                raise ValueError("codomain of phi must be the covering module the codomain.")
             # check that MO.W() gets sent into N.W()
             # todo (optimize): this is slow:
             for x in MO.W().basis():
                 if phi(x) not in N.W():
-                    raise ValueError, "phi must send optimized submodule of M.W() into N.W()"
+                    raise ValueError("phi must send optimized submodule of M.W() into N.W()")
         self._phi = phi
 
     def _repr_(self):
@@ -149,7 +149,7 @@ class FGP_Morphism(Morphism):
         self.__im_gens = tuple([self(x) for x in self.domain().gens()])
         return self.__im_gens
 
-    def __cmp__(self, right):
+    def _cmp_(self, right):
         """
         EXAMPLES::
 
@@ -173,13 +173,13 @@ class FGP_Morphism(Morphism):
             sage: phi == psi
             True
         """
-        if not isinstance(right, FGP_Morphism):
-            raise TypeError
         a = (self.domain(), self.codomain())
         b = (right.domain(), right.codomain())
         c = cmp(a,b)
         if c: return c
         return cmp(self.im_gens(), right.im_gens())
+
+    __cmp__ = _cmp_
 
     def __add__(self, right):
         """
@@ -276,7 +276,7 @@ class FGP_Morphism(Morphism):
         from fgp_module import is_FGP_Module
         if is_FGP_Module(x):
             if not x.is_submodule(self.domain()):
-                raise ValueError, "x must be a submodule or element of the domain"
+                raise ValueError("x must be a submodule or element of the domain")
             # perhaps can be optimized with a matrix multiply; but note
             # the subtlety of optimized representations.
             return self.codomain().submodule([self(y) for y in x.smith_form_gens()])
@@ -353,9 +353,9 @@ class FGP_Morphism(Morphism):
         """
         from fgp_module import is_FGP_Module
         if not is_FGP_Module(A):
-            raise TypeError, "A must be a finitely generated quotient module"
+            raise TypeError("A must be a finitely generated quotient module")
         if not A.is_submodule(self.codomain()):
-            raise ValueError, "A must be a submodule of the codomain"
+            raise ValueError("A must be a submodule of the codomain")
         V = self._phi.inverse_image(A.V())
         D = self.domain()
         V = D.W() + V
@@ -438,7 +438,7 @@ class FGP_Morphism(Morphism):
             if z.denominator() != 1:
                 raise ValueError
         except ValueError:
-            raise ValueError, "no lift of element to domain"
+            raise ValueError("no lift of element to domain")
 
         # Write back in terms of rows of B, and delete rows not corresponding to A,
         # since those corresponding to relations
@@ -478,7 +478,20 @@ def FGP_Homset(X, Y):
 
 
 class FGP_Homset_class(Homset):
-    def __init__(self, X, Y):
+    """
+    Homsets of :class:`~sage.modules.fg_pid.fgp_module.FGP_Module`
+
+    TESTS::
+
+        sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2]); Q = V/W
+        sage: H = Hom(Q,Q); H    # indirect doctest
+        Set of Morphisms from Finitely generated module V/W over Integer Ring with invariants (4, 12) to Finitely generated module V/W over Integer Ring with invariants (4, 12) in Category of modules over Integer Ring
+        sage: type(H)
+        <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
+
+    """
+    Element = FGP_Morphism
+    def __init__(self, X, Y, category=None):
         """
         EXAMPLES::
 
@@ -486,7 +499,15 @@ class FGP_Homset_class(Homset):
             sage: type(Q.Hom(Q))
             <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
         """
-        Homset.__init__(self, X, Y)
+        if category is None:
+            from sage.modules.free_module import is_FreeModule
+            if is_FreeModule(X) and is_FreeModule(Y):
+                from sage.all import FreeModules
+                category = FreeModules(X.base_ring())
+            else:
+                from sage.all import Modules
+                category = Modules(X.base_ring())
+        Homset.__init__(self, X, Y, category)
         self._populate_coercion_lists_(element_constructor = FGP_Morphism,
                                        coerce_list = [])
 
@@ -521,5 +542,4 @@ class FGP_Homset_class(Homset):
             sage: H(3)
             Morphism from module over Integer Ring with invariants (4, 16) to module with invariants (4, 16) that sends the generators to [(3, 0), (0, 3)]
         """
-        return FGP_Morphism(self, x)
-
+        return self.element_class(self, x)

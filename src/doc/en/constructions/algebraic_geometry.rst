@@ -144,8 +144,10 @@ Other methods
        sage: # Here you have all the points :
        sage: print L
        [1]:
-          _[1]=y^2+y+1
-          _[2]=x+1
+          _[1]=y+1  # 32-bit
+          _[2]=x+1  # 32-bit
+          _[1]=y    # 64-bit
+          _[2]=x    # 64-bit
        ...
 
 -  Another way to compute rational points is to use Singular's
@@ -377,11 +379,11 @@ Singular itself to help an understanding of how the wrapper works.
    ::
 
        sage: singular.eval("intvec G = 4,4,4,0,0,0;")
-       'intvec G = 4,4,4,0,0,0;'
+       ''
        sage: singular.eval("def R = X[1][2];")
-       'def R = X[1][2];'
+       ''
        sage: singular.eval("setring R;")
-       'setring R;'
+       ''
        sage: print singular.eval("list LG = BrillNoether(G,X);")
        Forms of degree 6 :
        28
@@ -415,7 +417,7 @@ command.
 
     sage: singular.LIB('brnoeth.lib')
     sage: singular.eval("ring s = 2,(x,y),lp;")
-    'ring s = 2,(x,y),lp;'
+    ''
     sage: print singular.eval("list HC = Adj_div(x3+y2+y);")
     Computing affine singular points ...
     Computing all points at infinity ...
@@ -436,7 +438,7 @@ We set the following to ``junk`` to discard the output::
     sage: junk = singular.eval("intvec G = 5;")      # the rational divisor G = 5*HC[3][1]
     sage: junk = singular.eval("def R = HC[1][2];")
     sage: singular.eval("setring R;")
-    'setring R;'
+    ''
 
 The vector :math:`G` represents the divisor
 "5 times the point at infinity".

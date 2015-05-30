@@ -56,12 +56,12 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
         q
     """
     if mu not in sage.combinat.partition.Partitions_all():
-        raise ValueError, "mu must be a partition"
+        raise ValueError("mu must be a partition")
     if nu not in sage.combinat.partition.Partitions_all():
-        raise ValueError, "nu must be a partition"
+        raise ValueError("nu must be a partition")
 
     if sum(mu) != sum(nu):
-        raise ValueError, "mu and nu must be partitions of the same size"
+        raise ValueError("mu and nu must be partitions of the same size")
 
     return kfpoly(mu, nu, t)
 

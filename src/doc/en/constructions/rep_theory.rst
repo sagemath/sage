@@ -51,10 +51,10 @@ Here is another example:
 
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
     sage: G.character_table()
-    [          1           1           1           1]
-    [          1           1  -zeta3 - 1       zeta3]
-    [          1           1       zeta3  -zeta3 - 1]
-    [          3          -1           0           0]
+    [         1          1          1          1]
+    [         1 -zeta3 - 1      zeta3          1]
+    [         1      zeta3 -zeta3 - 1          1]
+    [         3          0          0         -1]
     sage: gap.eval("G := Group((1,2)(3,4),(1,2,3))")
     'Group([ (1,2)(3,4), (1,2,3) ])'
     sage: gap.eval("T := CharacterTable(G)")
@@ -62,17 +62,17 @@ Here is another example:
     sage: print gap.eval("Display(T)")
     CT2
     <BLANKLINE>
-         2  2  2  .  .
-         3  1  .  1  1
+         2  2  .  .  2
+         3  1  1  1  .
     <BLANKLINE>
-           1a 2a 3a 3b
-        2P 1a 1a 3b 3a
-        3P 1a 2a 1a 1a
+           1a 3a 3b 2a
+        2P 1a 3b 3a 1a
+        3P 1a 1a 1a 2a
     <BLANKLINE>
     X.1     1  1  1  1
-    X.2     1  1  A /A
-    X.3     1  1 /A  A
-    X.4     3 -1  .  .
+    X.2     1  A /A  1
+    X.3     1 /A  A  1
+    X.4     3  .  . -1
     <BLANKLINE>
     A = E(3)^2
       = (-1-Sqrt(-3))/2 = -1-b3
@@ -85,25 +85,25 @@ Python command. This makes the output look much nicer.
 ::
 
     sage: print gap.eval("irr := Irr(G)")
-    [ Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ),
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, E(3)^2, E(3) ] ),
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, E(3), E(3)^2 ] ),
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, -1, 0, 0 ] ) ]
+    [ Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ), 
+      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] ), 
+      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3), E(3)^2, 1 ] ), 
+      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, 0, 0, -1 ] ) ]
     sage: print gap.eval("Display(irr)")
     [ [       1,       1,       1,       1 ],
-      [       1,       1,  E(3)^2,    E(3) ],
-      [       1,       1,    E(3),  E(3)^2 ],
-      [       3,      -1,       0,       0 ] ]
+      [       1,  E(3)^2,    E(3),       1 ],
+      [       1,    E(3),  E(3)^2,       1 ],
+      [       3,       0,       0,      -1 ] ]
     sage: gap.eval("CG := ConjugacyClasses(G)")
-    '[ ()^G, (1,2)(3,4)^G, (1,2,3)^G, (1,2,4)^G ]'
+    '[ ()^G, (2,3,4)^G, (2,4,3)^G, (1,2)(3,4)^G ]'
     sage: gap.eval("gamma := CG[3]")
-    '(1,2,3)^G'
+    '(2,4,3)^G'
     sage: gap.eval("g := Representative(gamma)")
-    '(1,2,3)'
+    '(2,4,3)'
     sage: gap.eval("chi := irr[2]")
-    'Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, E(3)^2, E(3) ] )'
+    'Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] )'
     sage: gap.eval("g^chi")
-    'E(3)^2'
+    'E(3)'
 
 This last quantity is the value of the character ``chi`` at the group
 element ``g``.
@@ -191,17 +191,17 @@ The example below using the GAP interface illustrates the syntax.
     sage: print gap.eval("Display(T)")
     CT3
     <BLANKLINE>
-         2  2  2  .  .
-         3  1  .  1  1
+         2  2  .  .  2
+         3  1  1  1  .
     <BLANKLINE>
-           1a 2a 3a 3b
-        2P 1a 1a 3b 3a
-        3P 1a 2a 1a 1a
+           1a 3a 3b 2a
+        2P 1a 3b 3a 1a
+        3P 1a 1a 1a 2a
     <BLANKLINE>
     X.1     1  1  1  1
-    X.2     1  1  A /A
-    X.3     1  1 /A  A
-    X.4     3 -1  .  .
+    X.2     1  A /A  1
+    X.3     1 /A  A  1
+    X.4     3  .  . -1
     <BLANKLINE>
     A = E(3)^2
       = (-1-Sqrt(-3))/2 = -1-b3

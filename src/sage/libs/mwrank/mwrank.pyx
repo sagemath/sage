@@ -500,8 +500,6 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         if verbose:
             sys.stdout.flush()
             sys.stderr.flush()
-        from sage.misc.all import preparse
-        from sage.rings.all import Integer
         return eval(s)
 
 

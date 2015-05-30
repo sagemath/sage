@@ -21,6 +21,8 @@ lazy_import('sage.groups.braid', 'BraidGroup')
 lazy_import('sage.groups.affine_gps.affine_group', 'AffineGroup')
 lazy_import('sage.groups.affine_gps.euclidean_group', 'EuclideanGroup')
 
+lazy_import('sage.groups.raag', 'RightAngledArtinGroup')
+
 lazy_import('sage.groups', 'groups_catalog', 'groups')
 
 lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group',

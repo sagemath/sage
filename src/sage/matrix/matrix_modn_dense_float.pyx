@@ -14,7 +14,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 from sage.rings.finite_rings.stdint cimport *

@@ -28,61 +28,65 @@ from sage.combinat.root_system.cartan_type import CartanType
 
 
 class FastCrystal(UniqueRepresentation, Parent):
-    """
+    r"""
     An alternative implementation of rank 2 crystals. The root
     operators are implemented in memory by table lookup. This means
-    that in comparison with the CrystalsOfTableaux, these crystals
-    are slow to instantiate but faster for computation. Implemented for
-    types A2, B2 and C2.
+    that in comparison with the
+    :class:`~sage.combinat.crystals.tensor_product.CrystalsOfTableaux`, these
+    crystals are slow to instantiate but faster for computation. Implemented
+    for types `A_2`, `B_2`, and `C_2`.
 
-    Input: CartanType and a shape. The CartanType is ['A',2], ['B',2]
-    or ['C',2]. The shape is of the form [l1,l2] where l1 and l2 are
-    either integers or (in type B) half integers such that l1-l2 is
-    integral. It is assumed that l1 >= l2 >= 0. If l1 and l2 are
-    integers, this will produce the a crystal isomorphic to the one
-    obtained by CrystalOfTableaux(type, shape=[l1,l2]). Furthermore
-    FastCrystal(['B', 2], l1+1/2, l2+1/2) produces a crystal isomorphic
-    to the following crystal T::
+    INPUT:
 
-        C = CrystalOfTableaux(['B',2], shape=[l1,l2])
-        D = CrystalOfSpins(['B',2])
-        T = TensorProductOfCrystals(C,D,C.list()[0],D.list()[0])
+    - ``cartan_type`` -- the Cartan type and must be either type `A_2`, `B_2`, or `C_2`
 
-    The representation of elements is in term of the
-    Berenstein-Zelevinsky-Littelmann strings [a1, a2, ...] described
-    under metapost in crystals.py. Alternative representations may be
-    obtained by the options format="dual_string" or format="simple".
-    In the simple format, the element is represented by and integer,
-    and in the dual_string format, it is represented by the
-    Berenstein-Zelevinsky-Littelmann string, but the underlying
-    decomposition of the long Weyl group element into simple
-    reflections is changed.
+    - ``shape`` -- A shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
+      are either integers or (in type `B_2`) half integers such that
+      ``l1 - l2`` is integral. It is assumed that ``l1 >= l2 >= 0``. If
+      ``l1`` and ``l2` are integers, this will produce the a crystal
+      isomorphic to the one obtained by
+      ``crystals.Tableaux(type, shape=[l1,l2])``. Furthermore
+      ``crystals.FastRankTwo(['B', 2], l1+1/2, l2+1/2)`` produces a crystal
+      isomorphic to the following crystal ``T``::
+
+          sage: C = crystals.Tableaux(['B',2], shape=[l1,l2])               # not tested
+          sage: D = crystals.Spins(['B',2])                                 # not tested
+          sage: T = crystals.TensorProduct(C, D, C.list()[0], D.list()[0])  # not tested
+
+    - ``format`` -- (default: ``'string'``) the default representation of
+      elements is in term of theBerenstein-Zelevinsky-Littelmann (BZL)
+      strings ``[a1, a2, ...]`` described under metapost in
+      :mod:`~sage.categories.crystals`. Alternative representations may be
+      obtained by the options ``'dual_string'`` or ``'simple'``.
+      In the ``'simple'`` format, the element is represented by and integer,
+      and in the ``'dual_string'`` format, it is represented by the
+      BZL string, but the underlying decomposition of the long Weyl group
+      element into simple reflections is changed.
 
     TESTS::
 
-        sage: C = FastCrystal(['A',2],shape=[4,1])
+        sage: C = crystals.FastRankTwo(['A',2],shape=[4,1])
         sage: C.cardinality()
         24
         sage: C.cartan_type()
         ['A', 2]
         sage: TestSuite(C).run()
-        sage: C = FastCrystal(['B',2],shape=[4,1])
+        sage: C = crystals.FastRankTwo(['B',2],shape=[4,1])
         sage: C.cardinality()
         154
         sage: TestSuite(C).run()
-        sage: C = FastCrystal(['B',2],shape=[3/2,1/2])
+        sage: C = crystals.FastRankTwo(['B',2],shape=[3/2,1/2])
         sage: C.cardinality()
         16
         sage: TestSuite(C).run()
-        sage: C = FastCrystal(['C',2],shape=[2,1])
+        sage: C = crystals.FastRankTwo(['C',2],shape=[2,1])
         sage: C.cardinality()
         16
-        sage: C = FastCrystal(['C',2],shape=[3,1])
+        sage: C = crystals.FastRankTwo(['C',2],shape=[3,1])
         sage: C.cardinality()
         35
         sage: TestSuite(C).run()
     """
-
     @staticmethod
     def __classcall__(cls, cartan_type, shape, format = "string"):
         """
@@ -90,15 +94,15 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C1 = FastCrystal(['A',2],            shape=(4,1))
-            sage: C2 = FastCrystal(CartanType(['A',2]),shape=[4,1])
+            sage: C1 = crystals.FastRankTwo(['A',2],            shape=(4,1))
+            sage: C2 = crystals.FastRankTwo(CartanType(['A',2]),shape=[4,1])
             sage: C1 is C2
             True
         """
         cartan_type = CartanType(cartan_type)
         shape = tuple(shape)
         if len(shape) > 2:
-            raise ValueError, "The shape must have length <=2"
+            raise ValueError("The shape must have length <=2")
         shape = shape + (0,)*(2-len(shape))
         return super(FastCrystal, cls).__classcall__(cls, cartan_type, shape, format)
 
@@ -106,7 +110,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: C = FastCrystal(['A',2],shape=[4,1]); C
+            sage: C = crystals.FastRankTwo(['A',2],shape=[4,1]); C
             The fast crystal for A2 with shape [4,1]
             sage: TestSuite(C).run()
         """
@@ -171,7 +175,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: C = FastCrystal(['A',2],shape=[1,1])
+            sage: C = crystals.FastRankTwo(['A',2],shape=[1,1])
             sage: C.delpat # indirect doctest
             [[0, 0, 0], [0, 1, 0], [1, 1, 0]]
             sage: C.gampat
@@ -193,12 +197,12 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: C = FastCrystal(['B',2],shape=[1])
+            sage: C = crystals.FastRankTwo(['B',2],shape=[1])
             sage: len(C.delpat) # indirect doctest
             5
             sage: len(C.gampat)
             5
-            sage: C = FastCrystal(['C',2],shape=[1])
+            sage: C = crystals.FastRankTwo(['C',2],shape=[1])
             sage: len(C.delpat)
             4
             sage: len(C.gampat)
@@ -231,7 +235,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: C = FastCrystal(['A',2],shape=[2,1])
+            sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
             sage: C(0)
             [0, 0, 0]
             sage: C(1)
@@ -249,7 +253,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = FastCrystal(['A',2],shape=[2,1])
+            sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
             sage: C.list()
             [[0, 0, 0],
              [1, 0, 0],
@@ -268,7 +272,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = FastCrystal(['A',2],shape=[2,1])
+            sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
             sage: C.digraph()
             Digraph on 8 vertices
         """
@@ -285,7 +289,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = FastCrystal(['A',2],shape=[2,1])
+            sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
             sage: x = C(0)
             sage: y = C(1)
             sage: C.cmp_elements(x,y)
@@ -308,7 +312,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: c = C(0); c
                 [0, 0, 0]
                 sage: C[0].parent()
@@ -325,15 +329,15 @@ class FastCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: [v.weight() for v in FastCrystal(['A',2], shape=[2,1])]
+                sage: [v.weight() for v in crystals.FastRankTwo(['A',2], shape=[2,1])]
                 [(2, 1, 0), (1, 2, 0), (1, 1, 1), (1, 0, 2), (0, 1, 2), (2, 0, 1), (1, 1, 1), (0, 2, 1)]
-                sage: [v.weight() for v in FastCrystal(['B',2], shape=[1,0])]
+                sage: [v.weight() for v in crystals.FastRankTwo(['B',2], shape=[1,0])]
                 [(1, 0), (0, 1), (0, 0), (0, -1), (-1, 0)]
-                sage: [v.weight() for v in FastCrystal(['B',2], shape=[1/2,1/2])]
+                sage: [v.weight() for v in crystals.FastRankTwo(['B',2], shape=[1/2,1/2])]
                 [(1/2, 1/2), (1/2, -1/2), (-1/2, 1/2), (-1/2, -1/2)]
-                sage: [v.weight() for v in FastCrystal(['C',2], shape=[1,0])]
+                sage: [v.weight() for v in crystals.FastRankTwo(['C',2], shape=[1,0])]
                 [(1, 0), (0, 1), (0, -1), (-1, 0)]
-                sage: [v.weight() for v in FastCrystal(['C',2], shape=[1,1])]
+                sage: [v.weight() for v in crystals.FastRankTwo(['C',2], shape=[1,1])]
                 [(1, 1), (1, -1), (0, 0), (-1, 1), (-1, -1)]
             """
             delpat = self.parent().delpat[self.value]
@@ -347,7 +351,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: C[0]._repr_()
                 '[0, 0, 0]'
             """
@@ -364,8 +368,8 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
-                sage: D = FastCrystal(['B',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
+                sage: D = crystals.FastRankTwo(['B',2],shape=[2,1])
                 sage: C(0) == C(0)
                 True
                 sage: C(1) == C(0)
@@ -381,8 +385,8 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
-                sage: D = FastCrystal(['B',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
+                sage: D = crystals.FastRankTwo(['B',2],shape=[2,1])
                 sage: C(0) != C(0)
                 False
                 sage: C(1) != C(0)
@@ -397,7 +401,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: C(1) < C(2)
                 True
                 sage: C(2) < C(1)
@@ -407,7 +411,7 @@ class FastCrystal(UniqueRepresentation, Parent):
                 sage: C(1) <= C(1)
                 True
             """
-            if type(self) is not type(other):
+            if not isinstance(self, type(other)):
                 return cmp(type(self), type(other))
             if self.parent() != other.parent():
                 return cmp(self.parent(), other.parent())
@@ -419,7 +423,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: C(1).e(1)
                 [0, 0, 0]
                 sage: C(0).e(1) is None
@@ -439,7 +443,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: C = FastCrystal(['A',2],shape=[2,1])
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: C(6).f(1)
                 [1, 2, 1]
                 sage: C(7).f(1) is None

@@ -47,7 +47,7 @@ from sage.rings.all import ZZ
 from sage.combinat.partition import Partitions
 from sage.combinat.tableau import Tableau, SemistandardTableaux
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.misc.misc import prod
+from sage.misc.all import prod
 
 class GelfandTsetlinPattern(ClonableArray):
     r"""
@@ -728,7 +728,7 @@ class GelfandTsetlinPatterns(Parent, UniqueRepresentation):
 
             sage: T = GelfandTsetlinPatterns()
             sage: it = T.__iter__()
-            sage: [it.next() for i in range(10)]
+            sage: [next(it) for i in range(10)]
             [[],
              [[1]],
              [[2]],
@@ -741,7 +741,7 @@ class GelfandTsetlinPatterns(Parent, UniqueRepresentation):
              [[3, 1], [1]]]
             sage: T = GelfandTsetlinPatterns(k=1)
             sage: it = T.__iter__()
-            sage: [it.next() for i in range(10)]
+            sage: [next(it) for i in range(10)]
             [[],
              [[0]],
              [[1]],
@@ -824,13 +824,13 @@ class GelfandTsetlinPatterns(Parent, UniqueRepresentation):
         iters = [None]*n
         ret = [None]*n
         iters[0] = self._top_row_iter(n)
-        ret[0] = iters[0].next()
+        ret[0] = next(iters[0])
         min_pos = 0
         iters[1] = self._row_iter(ret[0])
         pos = 1
         while pos >= min_pos:
             try:
-                ret[pos] = iters[pos].next()
+                ret[pos] = next(iters[pos])
                 pos += 1
                 # If we've reached 0 width, yield and backstep
                 if pos == n:
@@ -1017,7 +1017,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
         pos = 1
         while pos >= min_pos:
             try:
-                ret[pos] = iters[pos].next()
+                ret[pos] = next(iters[pos])
                 pos += 1
                 # If we've reached 0 width, yield and backstep
                 if pos == self._n:

@@ -13,7 +13,13 @@ SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 SAGE_VERSION=`cat $SAGE_ROOT/VERSION.txt | sed 's+.*\ \(.*\),.*+\1+'`
-PATH="$SAGE_ROOT/src/bin:$SAGE_LOCAL/bin:$PATH"
+
+if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
+    SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
+    SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET
+fi
+PATH="$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
+
 PYTHONPATH="$SAGE_LOCAL"
 export SAGE_ROOT SAGE_SRC SAGE_LOCAL SAGE_EXTCODE SAGE_LOGS SAGE_SPKG_INST SAGE_VERSION PATH PYTHONPATH
 
@@ -43,17 +49,10 @@ EOF
     exit 2
 fi
 
-if [ "$SAGE_UPGRADING" = yes ]; then
-    # We're doing an upgrade. Let build/Makefile call sage-spkg with
-    # "-f" to force rebuilding dependent packages, too:
-    export SAGE_SPKG_OPTS="-f"
-fi
-
 ###############################################################################
 # Create basic directories needed for Sage
 ###############################################################################
 
-mkdir -p "$SAGE_ROOT/tmp"
 mkdir -p "$SAGE_LOGS"
 mkdir -p "$SAGE_LOCAL/bin"
 mkdir -p "$SAGE_LOCAL/etc"
@@ -61,65 +60,62 @@ mkdir -p "$SAGE_LOCAL/lib"
 mkdir -p "$SAGE_SPKG_INST"
 mkdir -p "$SAGE_SHARE"
 
-# If we are upgrading from an old version of Sage where $SAGE_SHARE
-# was stored at $SAGE_ROOT/data, move it to the right location.
-# Check that $SAGE_ROOT/data is an existing directory and not a symlink.
-if [ -d "$SAGE_ROOT/data" ] && [ ! -h "$SAGE_ROOT/data" ]; then
-    mkdir -p "$SAGE_ROOT/devel"
-    mv "$SAGE_ROOT"/data/extcode "$SAGE_ROOT/devel/ext-main"
-    mv "$SAGE_ROOT"/data/* "$SAGE_SHARE"
-    rm -rf "$SAGE_ROOT/data"
+###############################################################################
+# Determine whether to use MPIR (default standard pkg) or GMP (optional pkg).
+###############################################################################
+
+if [ -z "$SAGE_MP_LIBRARY" ]; then
+    # Automatic detection of installed MP library.
+    if [ ! -f "$SAGE_LOCAL/share/mp_config" ]; then
+        echo "MPIR" > "$SAGE_LOCAL/share/mp_config"
+    fi
+    SAGE_MP_LIBRARY=`cat "$SAGE_LOCAL/share/mp_config"`
+else
+    if [ -f "$SAGE_LOCAL/share/mp_config" -a "$SAGE_MP_LIBRARY" != `cat "$SAGE_LOCAL/share/mp_config"` ]; then
+        echo "SAGE_MP_LIBRARY differs from the value stored in"
+        echo "\"$SAGE_LOCAL/share/mp_config\"."
+        echo "This is not supported; you should rebuild Sage from scratch"
+        echo "using the new SAGE_MP_LIBRARY value."
+        exit 1
+    fi
+
+    case "$SAGE_MP_LIBRARY" in
+        MPIR|GMP)
+            echo "Using $SAGE_MP_LIBRARY as default MP library."
+            echo $SAGE_MP_LIBRARY > "$SAGE_LOCAL/share/mp_config"
+            ;;
+        *)
+            echo "Allowed values for SAGE_MP_LIBRARY are \"MPIR\" and \"GMP\"."
+            echo "If you did not set this variable, check the content of"
+            echo "\"$SAGE_LOCAL/share/mp_config\"."
+            exit 1
+            ;;
+    esac
 fi
+
+export SAGE_MP_LIBRARY
 
 ###############################################################################
 # Determine whether to install GCC (gcc, g++, gfortran).
 ###############################################################################
-
-# Give a deprecation message whenever SAGE_FORTRAN or SAGE_FORTRAN_LIB
-# is set to something. See Trac #13349.
-if [ -n "$SAGE_FORTRAN" ] || [ -n "$SAGE_FORTRAN_LIB" ]; then
-cat >&2 <<EOF
-WARNING: the environment variables SAGE_FORTRAN and SAGE_FORTRAN_LIB
-are deprecated since sage-5.3.
-
-The GNU Compiler Collection (GCC) is included in Sage and will be
-installed if you do not have a Fortran compiler. If you do have a
-Fortran compiler installed and you want to specify its path, you can
-use the standard environment variable FC (instead of SAGE_FORTRAN) to
-point to the Fortran compiler.
-
-As replacement to SAGE_FORTRAN_LIB, you can either add the directory
-containing the Fortran library to LIBRARY_PATH and/or LD_LIBRARY_PATH,
-or copy/symlink the Fortran library into \$SAGE_ROOT/local/lib. In most
-cases, none of this is needed as the compiler/linker should find the
-Fortran library by itself.
-
-Support for SAGE_FORTRAN and SAGE_FORTRAN_LIB might be removed from
-future versions of Sage. Moreover, these variables are not tested
-anymore and might not work as you expect.
-EOF
-sleep 5
-fi
 
 # Determine various compilers.  These variables should not be exported,
 # they are only used in this build/install script to determine whether to
 # install GCC.  The "real" $CC, $CXX,... variables for building Sage are
 # set in sage-env.
 
-if [ -z "$CC" ]; then
-    CC=gcc
+if [ -z "$CXX" ]; then
+    CXX=g++
 fi
 
-if [ -z "$CXX" ]; then
-    if command -v g++ >/dev/null 2>/dev/null; then
-        CXX=g++
+if [ -z "$CC" ]; then
+    if command -v gcc >/dev/null 2>/dev/null; then
+        CC=gcc
     fi
 fi
 
 if [ -z "$FC" ]; then
-    if [ -n "$SAGE_FORTRAN" ]; then
-        FC="$SAGE_FORTRAN"
-    elif command -v gfortran >/dev/null 2>/dev/null; then
+    if command -v gfortran >/dev/null 2>/dev/null; then
         FC=gfortran
     elif command -v g95 >/dev/null 2>/dev/null; then
         FC=g95
@@ -129,23 +125,11 @@ if [ -z "$FC" ]; then
 fi
 
 if [ -f "$SAGE_LOCAL/bin/gcc" ]; then
-    # GCC is already installed. Normally we don't need to re-install
-    # GCC, unless this is an upgrade. To disable unneeded rebuilding
-    # of GCC, we touch the installed file for GCC, such that it will
-    # really only be built if one of its dependencies has been upgraded.
-    if [ "$SAGE_UPGRADING" = yes ]; then
-        echo >&2 "We are upgrading Sage and GCC was installed before, it will get"
-        echo >&2 "re-installed if needed."
-        need_to_install_gcc=yes
-        for f in "$SAGE_SPKG_INST"/gcc-*; do
-            if [ -f "$f" ]; then
-                touch "$f"
-            fi
-        done
-    else
-        need_to_install_gcc=no
-    fi
-elif [ -n "$SAGE_INSTALL_GCC" ]; then
+    # Ignore SAGE_INSTALL_GCC if GCC is already installed
+    SAGE_INSTALL_GCC=""
+fi
+
+if [ -n "$SAGE_INSTALL_GCC" ]; then
     # Check the value of the environment variable SAGE_INSTALL_GCC
     case "$SAGE_INSTALL_GCC" in
         yes)
@@ -162,15 +146,15 @@ else
     # SAGE_INSTALL_GCC is not set, install GCC when needed.
     need_to_install_gcc=no
 
-    # Check whether $CC is some version of GCC.  If it's a different
+    # Check whether $CXX is some version of GCC.  If it's a different
     # compiler, install GCC.
-    CCtype=`testcc.sh $CC`
-    if [ "$CCtype" != GCC ]; then
-        echo >&2 "Installing GCC because your '$CC' isn't GCC (GNU CC)."
+    CXXtype=`source sage-env; testcxx.sh $CXX`
+    if [ "$CXXtype" != GCC ]; then
+        echo >&2 "Installing GCC because your '$CXX' isn't GCC (GNU C++)."
         need_to_install_gcc=yes
     else
-        # $CC points to some version of GCC, find out which version.
-        GCCVERSION=`$CC -dumpversion`
+        # $CXX points to some version of GCC, find out which version.
+        GCCVERSION=`$CXX -dumpversion`
         case $GCCVERSION in
             [0-3].*|4.[0-3]|4.[0-3].*)
                 # Install our own GCC if the system-provided one is older than gcc-4.4.
@@ -178,47 +162,41 @@ else
                 # https://groups.google.com/forum/?fromgroups#!topic/sage-devel/Ux3t0dW2FSI
                 # * gcc-4.3 might have trouble building ATLAS:
                 # https://groups.google.com/forum/?fromgroups#!topic/sage-devel/KCeFqQ_w2FE
-                echo >&2 "Installing GCC because you have $CC version $GCCVERSION, which is quite old."
+                echo >&2 "Installing GCC because you have $CXX version $GCCVERSION, which is quite old."
                 need_to_install_gcc=yes;;
-            4.4*|4.5*)
+            4.4.*|4.5.*)
                 # GCC 4.4.x and GCC 4.5.x fail to compile PARI/GP on ia64:
                 # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46044
                 if [ x`uname -m` = xia64 ]; then
-                    echo >&2 "Installing GCC because you have $CC version $GCCVERSION on ia64."
+                    echo >&2 "Installing GCC because you have $CXX version $GCCVERSION on ia64."
                     echo >&2 "gcc <= 4.5 fails to compile PARI/GP on ia64."
                     need_to_install_gcc=yes
                 fi;;
-            4.6.[01])
-                # Also install GCC if we have version 4.6.0 or 4.6.1, which is
+            4.6.*)
+                # Also install GCC if we have version 4.6.* which is
                 # known to give trouble within Sage:
                 # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48702
                 # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48774
-                echo >&2 "Installing GCC because you have $CC version $GCCVERSION."
-                echo >&2 "gcc-4.6.0 and gcc-4.6.1 have known bugs affecting Sage."
-                need_to_install_gcc=yes;;
-            4.6*)
-                # GCC 4.6.x doesn't compile ECL on Cygwin:
                 # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52061
-                if uname | grep CYGWIN >/dev/null; then
-                    echo >&2 "Installing GCC because you have $CC version $GCCVERSION on Cygwin."
-                    echo >&2 "gcc-4.6.x fails to compile ECL on Cygwin."
-                    need_to_install_gcc=yes
-                fi;;
+                # * https://groups.google.com/d/msg/sage-release/xgmJ3nAcUOY/jH8OZjftYRsJ
+                echo >&2 "Installing GCC because you have $CXX version $GCCVERSION."
+                echo >&2 "gcc-4.6.* has known bugs affecting Sage."
+                need_to_install_gcc=yes;;
             4.7.0)
                 # GCC 4.7.0 is very broken on ia64, see
                 # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48496
                 # This is fixed in GCC 4.7.1.
                 if [ x`uname -m` = xia64 ]; then
-                    echo >&2 "Installing GCC because you have $CC version $GCCVERSION on ia64."
+                    echo >&2 "Installing GCC because you have $CXX version $GCCVERSION on ia64."
                     echo >&2 "gcc-4.7.0 has a serious bug on ia64."
                     need_to_install_gcc=yes
                 fi;;
         esac
     fi
 
-    # Check C++ and Fortran compilers.
-    if [ -z "$CXX" ]; then
-        echo >&2 "Installing GCC because a C++ compiler is missing."
+    # Check C, C++ and Fortran compilers.
+    if [ -z "$CC" ]; then
+        echo >&2 "Installing GCC because a C compiler is missing."
         need_to_install_gcc=yes
     fi
 
@@ -229,17 +207,17 @@ else
 fi
 
 # If we are not installing GCC: check that the assembler and linker
-# used by $CC match $AS and $LD.
+# used by $CXX match $AS and $LD.
 # See http://trac.sagemath.org/sage_trac/ticket/14296
 if [ $need_to_install_gcc != yes ]; then
     if [ "$AS" != "" ]; then
-        CC_as=`$CC -print-file-name=as 2>/dev/null`
-        CC_as=`command -v $CC_as 2>/dev/null`
+        CXX_as=`$CXX -print-file-name=as 2>/dev/null`
+        CXX_as=`command -v $CXX_as 2>/dev/null`
         cmd_AS=`command -v $AS`
 
-        if [ "$CC_as" != "" -a "$CC_as" != "$cmd_AS" ]; then
+        if [ "$CXX_as" != "" -a "$CXX_as" != "$cmd_AS" ]; then
             echo >&2 "Error: Mismatch of assemblers between"
-            echo >&2 " * $CC using $CC_as"
+            echo >&2 " * $CXX using $CXX_as"
             echo >&2 " * \$AS equal to $AS"
             if [ "$SAGE_PORT" = "" ]; then
                 echo >&2 "Aborting, either change or unset AS or set SAGE_PORT=yes or set"
@@ -251,13 +229,13 @@ if [ $need_to_install_gcc != yes ]; then
         fi
     fi
     if [ "$LD" != "" ]; then
-        CC_ld=`$CC -print-file-name=ld 2>/dev/null`
-        CC_ld=`command -v $CC_ld 2>/dev/null`
+        CXX_ld=`$CXX -print-file-name=ld 2>/dev/null`
+        CXX_ld=`command -v $CXX_ld 2>/dev/null`
         cmd_LD=`command -v $LD`
 
-        if [ "$CC_ld" != "" -a "$CC_ld" != "$cmd_LD" ]; then
+        if [ "$CXX_ld" != "" -a "$CXX_ld" != "$cmd_LD" ]; then
             echo >&2 "Error: Mismatch of linkers between"
-            echo >&2 " * $CC using $CC_ld"
+            echo >&2 " * $CXX using $CXX_ld"
             echo >&2 " * \$LD equal to $LD"
             if [ "$SAGE_PORT" = "" ]; then
                 echo >&2 "Aborting, either change or unset LD or set SAGE_PORT=yes or set"
@@ -270,59 +248,15 @@ if [ $need_to_install_gcc != yes ]; then
     fi
 fi
 
-###############################################################################
-# Create the sage_fortran script.
-###############################################################################
-
-# Don't use FC and SAGE_FORTRAN_LIB if we are installing GCC or have
-# installed gfortran, as that can cause compatibility problems.
-# We want to use the Fortran compiler that we build as part of GCC.
-if [ "$need_to_install_gcc" = yes ] || [ -x "$SAGE_LOCAL/bin/gfortran" ]; then
-    unset FC
-    unset SAGE_FORTRAN_LIB
-fi
-
-# Write sage_fortran script.
-cat >"$SAGE_LOCAL/bin/sage_fortran" <<EOF
-#!/bin/sh
-
-cat >&2 <<ENDOFWARNING
-WARNING: The sage_fortran script is deprecated since Sage 5.11 and
-might not be supported in future versions of Sage. You should update
-your package to use the standard environment variable \\\$FC instead.
-
-ENDOFWARNING
-
-if [ "x\$FC" = x ]; then
-    # Default value determined in build/install
-    myFC='${FC:-gfortran}'
-else
-    myFC="\$FC"
-fi
-
-# unset FC to avoid an infinite loop in the case that FC=sage_fortran.
-unset FC
-
-if [ "\$SAGE64" = yes ]; then
-    exec \$myFC -m64 -fPIC "\$@"
-else
-    exec \$myFC -fPIC "\$@"
-fi
-EOF
-chmod +x "$SAGE_LOCAL/bin/sage_fortran"
-
-# Make the fortran library symlink if requested
-if [ -f "$SAGE_FORTRAN_LIB" ]; then
-    ( cd "$SAGE_LOCAL/lib" && ln -sf "$SAGE_FORTRAN_LIB" . )
-fi
 
 ###############################################################################
 # Create $SAGE_ROOT/build/Makefile starting from build/deps
 ###############################################################################
 
-exec 3>Makefile
+# Trac #15624: use file descriptor 5 since make uses 3 and 4
+exec 5>Makefile
 
-cat >&3 <<EOF
+cat >&5 <<EOF
 #==============================================================================
 # This file has been automatically generated by
 #   $SAGE_ROOT/build/install
@@ -331,34 +265,19 @@ cat >&3 <<EOF
 
 EOF
 
+# Use bash as shell for the Makefile (bash obviously exists, since
+# this build/install script runs under bash).
+echo >&5 "SHELL = `command -v bash`"
+echo >&5
+
 # If the user (or the Makefile) has set SAGE_PARALLEL_SPKG_BUILD=no,
 # then turn off parallel building: disable just building multiple
 # packages at the same time.   Individual packages can still be built
 # in parallel by specifying '-j' in $MAKE.
 if [ "${SAGE_PARALLEL_SPKG_BUILD:-yes}" = no ]; then
-    echo ".NOTPARALLEL:" >&3
-    echo "" >&3
+    echo ".NOTPARALLEL:" >&5
+    echo "" >&5
 fi
-
-# Usage: newest_version_base $pkg
-# Print version number of latest (according to modification time)
-# base package $pkg
-newest_version_base() {
-    PKG=$1
-    # As a fallback, we also look at the latest installed package.
-    for FILE in `{ ls -1t base/$PKG-*-install; ls -1t installed/$PKG-*; } 2>/dev/null`
-    do
-        ANS=`echo "$FILE" | sed 's|.*/||; s|-install||'`
-        if [ -n "$ANS" ]; then
-            echo "$ANS"
-            return 0
-        fi
-    done
-
-    echo >&2 "Cannot determine latest version of $PKG."
-    echo "$PKG"
-    return 1
-}
 
 # Usage: newest_version $pkg
 # Print version number of latest standard package $pkg
@@ -374,21 +293,22 @@ newest_version() {
     fi
 }
 
-cat >&3 <<EOF
-# Base packages
-PREREQ=`newest_version_base prereq`
-
+cat >&5 <<EOF
 # Standard packages
 ATLAS=`newest_version atlas`
+BACKPORTS_SSL_MATCH_HOSTNAME=`newest_version backports_ssl_match_hostname`
 BOEHM_GC=`newest_version boehm_gc`
 BOOST_CROPPED=`newest_version boost_cropped`
 BZIP2=`newest_version bzip2`
 CDDLIB=`newest_version cddlib`
 CEPHES=`newest_version cephes`
+CERTIFI=`newest_version certifi`
 CLIQUER=`newest_version cliquer`
+COMBINATORIAL_DESIGNS=`newest_version combinatorial_designs`
 CONWAY=`newest_version conway_polynomials`
 CVXOPT=`newest_version cvxopt`
 CYTHON=`newest_version cython`
+DATEUTIL=`newest_version dateutil`
 DOCUTILS=`newest_version docutils`
 ECL=`newest_version ecl`
 ECLIB=`newest_version eclib`
@@ -401,9 +321,7 @@ FPLLL=`newest_version libfplll`
 FREETYPE=`newest_version freetype`
 GAP=`newest_version gap`
 GCC=`newest_version gcc`
-GD=`newest_version gd`
-GDMODULE=`newest_version gdmodule`
-GENUS2REDUCTION=`newest_version genus2reduction`
+GD=`newest_version libgd`
 GFAN=`newest_version gfan`
 GF2X=`newest_version gf2x`
 GIT=`newest_version git`
@@ -416,35 +334,45 @@ IML=`newest_version iml`
 IPYTHON=`newest_version ipython`
 JINJA2=`newest_version jinja2`
 JMOL=`newest_version jmol`
+JSONSCHEMA=`newest_version jsonschema`
 LCALC=`newest_version lcalc`
 LRCALC=`newest_version lrcalc`
 LIBGAP=`newest_version libgap`
 LIBPNG=`newest_version libpng`
 LINBOX=`newest_version linbox`
-M4RI=`newest_version libm4ri`
-M4RIE=`newest_version libm4rie`
+M4RI=`newest_version m4ri`
+M4RIE=`newest_version m4rie`
+MARKUPSAFE=`newest_version markupsafe`
+MATHJAX=`newest_version mathjax`
 MATPLOTLIB=`newest_version matplotlib`
 MAXIMA=`newest_version maxima`
+MISTUNE=`newest_version mistune`
 MPC=`newest_version mpc`
 MPFI=`newest_version mpfi`
 MPFR=`newest_version mpfr`
-MPIR=`newest_version mpir`
 MPMATH=`newest_version mpmath`
 NETWORKX=`newest_version networkx`
 NTL=`newest_version ntl`
 NUMPY=`newest_version numpy`
 PALP=`newest_version palp`
 PARI=`newest_version pari`
+PARI_GALDATA=`newest_version pari_galdata`
+PARI_SEADATA_SMALL=`newest_version pari_seadata_small`
 PATCH=`newest_version patch`
 PEXPECT=`newest_version pexpect`
-PIL=`newest_version pil`
+PILLOW=`newest_version pillow`
+PIP=`newest_version pip`
+PKGCONF=`newest_version pkgconf`
+PKGCONFIG=`newest_version pkgconfig`
 POLYBORI=`newest_version polybori`
 POLYTOPES_DB=`newest_version polytopes_db`
 PPL=`newest_version ppl`
 PYCRYPTO=`newest_version pycrypto`
 PYGMENTS=`newest_version pygments`
 PYNAC=`newest_version pynac`
+PYPARSING=`newest_version pyparsing`
 PYTHON=`newest_version python`
+PYZMQ=`newest_version pyzmq`
 R=`newest_version r`
 RPY=`newest_version rpy2`
 RATPOINTS=`newest_version ratpoints`
@@ -456,14 +384,16 @@ SCIPY=`newest_version scipy`
 SCONS=`newest_version scons`
 SETUPTOOLS=`newest_version setuptools`
 SINGULAR=`newest_version singular`
+SIX=`newest_version six`
 SPHINX=`newest_version sphinx`
-SQLALCHEMY=`newest_version sqlalchemy`
 SQLITE=`newest_version sqlite`
 SYMMETRICA=`newest_version symmetrica`
 SYMPOW=`newest_version sympow`
 SYMPY=`newest_version sympy`
 TACHYON=`newest_version tachyon`
+TORNADO=`newest_version tornado`
 NCURSES=`newest_version ncurses`
+ZEROMQ=`newest_version zeromq`
 ZLIB=`newest_version zlib`
 ZNPOLY=`newest_version zn_poly`
 
@@ -472,41 +402,54 @@ INST=`echo "$SAGE_SPKG_INST" | sed 's/ /\\\\ /g'`
 
 EOF
 
+# Sage MP library
+sage_mp_library=`echo "$SAGE_MP_LIBRARY" | tr '[A-Z]' '[a-z]'`
+cat >&5 << EOF
+# Sage MP library
+SAGE_MP_LIBRARY=`newest_version $sage_mp_library`
+
+EOF
+
 # $(TOOLCHAIN) variable containing prerequisites for the build
-echo >&3 -n 'TOOLCHAIN ='
+echo >&5 -n 'TOOLCHAIN ='
 if [ "$SAGE_INSTALL_CCACHE" = yes ]; then
-    echo >&3 -n ' $(INST)/ccache'
+    echo >&5 -n ' $(INST)/ccache'
 fi
 if [ "$need_to_install_gcc" = yes ]; then
-    echo >&3 -n ' $(INST)/$(GCC)'
+    echo >&5 -n ' $(INST)/$(GCC)'
     # Use this option for the prereq configure script, such that it
     # will skip all compiler checks.
     export PREREQ_OPTIONS="--disable-compiler-checks $PREREQ_OPTIONS"
 fi
-echo >&3
+echo >&5
 
-echo >&3 'SCRIPT_SOURCES = \'
+echo >&5 'CSAGE_SOURCES = \'
+for file in "$SAGE_SRC/c_lib/src/"*.c "$SAGE_SRC/c_lib/src/"*.cpp "$SAGE_SRC/c_lib/include"/*.h; do
+    echo >&5 "                \$(SAGE_SRC)${file#$SAGE_SRC} \\"
+done
+echo >&5
+echo >&5 'SCRIPT_SOURCES = \'
 for file in "$SAGE_SRC/bin/"*; do
-    echo >&3 "                 \$(SAGE_SRC)${file#$SAGE_SRC} \\"
+    echo >&5 "                 \$(SAGE_SRC)${file#$SAGE_SRC} \\"
 done
-echo >&3
-echo >&3 'SCRIPT_TARGETS = \'
+echo >&5
+echo >&5 'SCRIPTS = \'
 for file in "$SAGE_SRC/bin/"*; do
-    echo >&3 "                 \$(SAGE_LOCAL)${file#$SAGE_SRC} \\"
+    echo >&5 "                 \$(SAGE_LOCAL)${file#$SAGE_SRC} \\"
 done
-echo >&3
-echo >&3 'EXTCODE_SOURCES = \'
+echo >&5
+echo >&5 'EXTCODE_SOURCES = \'
 for file in `find "$SAGE_SRC"/ext -type f`; do
-    echo >&3 "                  \$(SAGE_SRC)${file#$SAGE_SRC} \\"
+    echo >&5 "                  \$(SAGE_SRC)${file#$SAGE_SRC} \\"
 done
-echo >&3
-echo >&3 'EXTCODE_TARGETS = \'
+echo >&5
+echo >&5 'EXTCODE = \'
 for file in `find "$SAGE_SRC"/ext -type f`; do
-    echo >&3 "                  \$(SAGE_EXTCODE)${file#$SAGE_SRC/ext} \\"
+    echo >&5 "                  \$(SAGE_EXTCODE)${file#$SAGE_SRC/ext} \\"
 done
-echo >&3
+echo >&5
 
-cat >&3 <<EOF
+cat >&5 <<EOF
 # don't just use \`install\` since we don't want to change permissions
 \$(SAGE_LOCAL)/bin/%: \$(SAGE_SRC)/bin/%
 	cp \$< \$@
@@ -520,7 +463,7 @@ cat >&3 <<EOF
 EOF
 
 # Copy build/deps
-cat >&3 <<EOF
+cat >&5 <<EOF
 
 #==============================================================================
 # What follows now is a copy of
@@ -529,10 +472,10 @@ cat >&3 <<EOF
 
 EOF
 
-cat "$SAGE_ROOT/build/deps" >&3
+cat "$SAGE_ROOT/build/deps" >&5
 
 # Close the Makefile
-exec 3>&-
+exec 5>&-
 
 ###############################################################################
 # Skip the rest if nothing to do (i.e., to [re]build).

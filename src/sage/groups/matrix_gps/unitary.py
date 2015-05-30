@@ -41,7 +41,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*********************************************************************************
 
-from sage.rings.all import ZZ, is_FiniteField, GF
+from sage.rings.all import ZZ, GF
+from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.misc.latex import latex
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, NamedMatrixGroup_generic, NamedMatrixGroup_gap )

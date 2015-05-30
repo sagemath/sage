@@ -1,5 +1,5 @@
 """
-Multiplex calls to one object to calls to many objects.
+Multiplex calls to one object to calls to many objects
 
 AUTHORS:
 

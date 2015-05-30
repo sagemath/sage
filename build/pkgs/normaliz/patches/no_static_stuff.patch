@@ -1,0 +1,13 @@
+diff --git a/source/Makefile.configuration b/source/Makefile.configuration
+index 2160c1b..6f4cd95 100644
+--- a/source/Makefile.configuration
++++ b/source/Makefile.configuration
+@@ -19,7 +19,7 @@ else
+ endif
+ 
+ ## for distributing the executables link static (does not work for mac)
+-CXXFLAGS += -static
++#CXXFLAGS += -static
+ ## for almost static compilation on Mac use
+ #CXXFLAGS += -static-libgcc
+ ## make it compatible with older Mac versions

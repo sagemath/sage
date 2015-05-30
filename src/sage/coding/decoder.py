@@ -1,15 +1,18 @@
 """
 Decoding methods for linear error-correcting codes.
+
 Methods implemented:
 
  * nearest neighbor
  * syndrome
 
 AUTHOR:
-    -- David Joyner (2009-02-01): initial version
 
-TODO:
-  Add lots more methods!
+- David Joyner (2009-02-01): initial version
+
+.. TODO::
+
+    Add lots more methods!
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Joyner <wdjoyner@gmail.com>
@@ -29,7 +32,8 @@ def syndrome(C, v):
     elements in V (including v) which belong to the
     syndrome of v (ie, the coset v+C, sorted by weight).
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: C = codes.HammingCode(2,GF(3)); C
         Linear code of length 4, dimension 2 over Finite Field of size 3
         sage: V = VectorSpace(GF(3), 4)
@@ -44,8 +48,7 @@ def syndrome(C, v):
         v = v.list()
     v = V(v)
     coset = [[c + v, (c + v).hamming_weight()] for c in C]
-    coset.sort(lambda x, y: x[1] - y[1])
-    return [x[0] for x in coset]
+    return [x[0] for x in sorted(coset, key=lambda x: x[1])]
 
 def coset_leader(C, v):
     """
@@ -53,7 +56,8 @@ def coset_leader(C, v):
     be in the same ambient space V as C. Returns an
     element of the syndrome of v of lowest weight.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: C = codes.HammingCode(2,GF(3)); C
         Linear code of length 4, dimension 2 over Finite Field of size 3
         sage: V = VectorSpace(GF(3), 4)
@@ -88,7 +92,8 @@ def decode(C, v, algorithm="syndrome"):
     Methods implemented include "nearest neighbor" (essentially
     a brute force search) and "syndrome".
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: C = codes.HammingCode(2,GF(3))
         sage: V = VectorSpace(GF(3), 4)
         sage: v = V([0, 2, 0, 1])
@@ -114,7 +119,7 @@ def decode(C, v, algorithm="syndrome"):
     v = V(v)
     if algorithm == "nearest neighbor":
         diffs = [[c - v, (c - v).hamming_weight()] for c in C]
-        diffs.sort(lambda x, y:  x[1] - y[1])
+        diffs.sort(key=lambda x: x[1])
         return diffs[0][0] + v
     if algorithm == "syndrome":
         return -V(syndrome(C, v)[0]) + v

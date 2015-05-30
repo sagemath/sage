@@ -9,33 +9,37 @@ Finite Permutation Groups
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.finite_groups import FiniteGroups
+from sage.categories.magmas import Magmas
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.permutation_groups import PermutationGroups
 
-class FinitePermutationGroups(Category):
+class FinitePermutationGroups(CategoryWithAxiom):
     r"""
     The category of finite permutation groups, i.e. groups concretely
     represented as groups of permutations acting on a finite set.
 
+    It is currently assumed that any finite permutation group comes
+    endowed with a distinguished finite set of generators (method
+    ``group_generators``); this is the case for all the existing
+    implementations in Sage.
+
     EXAMPLES::
 
-        sage: FinitePermutationGroups()
+        sage: C = PermutationGroups().Finite(); C
         Category of finite permutation groups
-        sage: FinitePermutationGroups().super_categories()
-        [Category of finite groups]
+        sage: C.super_categories()
+        [Category of permutation groups,
+         Category of finite groups,
+         Category of finite finitely generated semigroups]
 
-        sage: FinitePermutationGroups().example()
+        sage: C.example()
         Dihedral group of order 6 as a permutation group
 
     TESTS::
 
-        sage: C = FinitePermutationGroups()
-        sage: TestSuite(C).run(verbose = True)
-        running ._test_category() . . . pass
-        running ._test_category_graph() . . . pass
-        running ._test_not_implemented_methods() . . . pass
-        running ._test_pickling() . . . pass
+        sage: C is FinitePermutationGroups()
+        True
+        sage: TestSuite(C).run()
 
         sage: G = FinitePermutationGroups().example()
         sage: TestSuite(G).run(verbose = True)
@@ -64,17 +68,6 @@ class FinitePermutationGroups(Category):
         running ._test_prod() . . . pass
         running ._test_some_elements() . . . pass
     """
-    @cached_method
-    def super_categories(self):
-        r"""
-        Returns a list of the (immediate) super categories of ``self``.
-
-        EXAMPLES::
-
-            sage: FinitePermutationGroups().super_categories()
-            [Category of finite groups]
-        """
-        return [FiniteGroups()]
 
     def example(self):
         """
@@ -88,6 +81,17 @@ class FinitePermutationGroups(Category):
         """
         from sage.groups.perm_gps.permgroup_named import DihedralGroup
         return DihedralGroup(3)
+
+    def extra_super_categories(self):
+        """
+        Any permutation group is assumed to be endowed with a finite set of generators.
+
+        TESTS:
+
+            sage: PermutationGroups().Finite().extra_super_categories()
+            [Category of finitely generated magmas]
+        """
+        return [Magmas().FinitelyGenerated()]
 
     class ParentMethods:
         # TODO

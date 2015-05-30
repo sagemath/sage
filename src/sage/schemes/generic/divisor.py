@@ -305,21 +305,18 @@ class Divisor_curve(Divisor_generic):
                     try:
                         C = t[1].scheme()
                     except (TypeError, AttributeError):
-                        raise TypeError, \
-                              "Argument v (= %s) must consist of multiplicities and points on a scheme."
+                        raise TypeError("Argument v (= %s) must consist of multiplicities and points on a scheme.")
                 else:
                     try:
                         C = t.scheme()
                     except TypeError:
-                        raise TypeError, \
-                              "Argument v (= %s) must consist of multiplicities and points on a scheme."
+                        raise TypeError("Argument v (= %s) must consist of multiplicities and points on a scheme.")
                 parent = DivisorGroup(C)
             else:
-                raise TypeError, \
-                      "Argument v (= %s) must consist of multiplicities and points on a scheme."
+                raise TypeError("Argument v (= %s) must consist of multiplicities and points on a scheme.")
         else:
             if not isinstance(parent, DivisorGroup_curve):
-                raise TypeError, "parent (of type %s) must be a DivisorGroup_curve"%type(parent)
+                raise TypeError("parent (of type %s) must be a DivisorGroup_curve"%type(parent))
             C = parent.scheme()
 
         if len(v) < 1:
@@ -380,15 +377,40 @@ class Divisor_curve(Divisor_generic):
             3*(x, y) - (x - 2, y - 2)
             sage: D.support()
             [(0, 0), (2, 2)]
+
+        TESTS:
+
+        This checks that :trac:`10732` is fixed::
+
+            sage: R.<x, y, z> = GF(5)[]
+            sage: C = Curve(x^7 + y^7 + z^7)
+            sage: pts = C.rational_points()
+            sage: D = C.divisor([(2, pts[0])])
+            sage: D.support()
+            [(0 : 4 : 1)]
+            sage: (D + D).support()
+            [(0 : 4 : 1)]
+            sage: E = C.divisor([(-3, pts[1]), (1, pts[2])])
+            sage: (D - 2*E).support()
+            [(0 : 4 : 1), (1 : 2 : 1), (2 : 1 : 1)]
+            sage: (D - D).support()
+            []
         """
         try:
             return self._support
         except AttributeError:
             try:
-                self._support = [s[1] for s in self._points]
-                return self._support
+                pts = self._points
             except AttributeError:
-                raise NotImplementedError
+                # TODO: in the next line, we should probably replace
+                # rational_points() with irreducible_components()
+                # once Sage can deal with divisors that are not only
+                # rational points (see trac #16225)
+                self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
+                pts = self._points
+            self._support = [s[1] for s in pts]
+            return self._support
+
 
     def coefficient(self, P):
         """
@@ -419,29 +441,4 @@ class Divisor_curve(Divisor_generic):
             return self._points[i][0]
         except AttributeError:
                 raise NotImplementedError
-
-    def coef(self,P):
-        r"""
-        Synonym for :meth:`coefficient`
-
-        .. WARNING::
-
-            This method is deprecated. It will be removed in a future
-            release of Sage. Please use the ``coefficient(P)`` method
-            instead.
-
-        EXAMPLES::
-
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-            sage: C = Curve(y^2 - x^9 - x)
-            sage: pts = C.rational_points(); pts
-            [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
-            sage: D = C.divisor(pts[0])
-            sage: D.coefficient(pts[0])
-            1
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(9337, "This method is deprecated. It will be removed in a future release of Sage. Please use the coefficient() method instead.")
-        return self.coefficient(P)
-
 

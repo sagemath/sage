@@ -1,3 +1,4 @@
+"Monomials"
 
 def _monomials(gens, R, n, i):
     """
@@ -60,7 +61,7 @@ def monomials(v, n):
     """
 
     if (len(v) != len(n)):
-        raise ValueError, "inputs must be of the same length."
+        raise ValueError("inputs must be of the same length.")
     if len(v) == 0:
         return []
     v = Sequence(v)

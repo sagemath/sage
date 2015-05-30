@@ -22,21 +22,23 @@ La commande suivante produit un cercle jaune de rayon 1 centré à l'origine :
 ::
 
     sage: circle((0,0), 1, rgbcolor=(1,1,0))
+    Graphics object consisting of 1 graphics primitive
 
 Il est également possible de produire un disque plein :
 
 ::
 
     sage: circle((0,0), 1, rgbcolor=(1,1,0), fill=True)
+    Graphics object consisting of 1 graphics primitive
 
-Il est aussi possible de créer un cercle en l'affectant à une variable ;
+Il est aussi possible de créer un cercle en l'affectant à une variable ;
 ceci ne provoque pas son affichage.
 
 ::
 
     sage: c = circle((0,0), 1, rgbcolor=(1,1,0))
 
-Pour l'afficher, on utilise ``c.show()``  ou  ``show(c)``, comme suit :
+Pour l'afficher, on utilise ``c.show()``  ou  ``show(c)``, comme suit :
 
 .. link
 
@@ -47,7 +49,7 @@ Pour l'afficher, on utilise ``c.show()``  ou  ``show(c)``, comme suit :
 Alternativement, l'évaluation de ``c.save('filename.png')`` enregistre
 le graphique dans le fichier spécifié.
 
-Toutefois, ces « cercles » ressemblent plus à des ellipses qu'à des
+Toutefois, ces « cercles » ressemblent plus à des ellipses qu'à des
 cercles, puisque les axes possèdent des échelles différentes. On peut
 arranger ceci :
 
@@ -66,6 +68,7 @@ Il est très facile de tracer le graphique de fonctions de base :
 ::
 
     sage: plot(cos, (-5,5))
+    Graphics object consisting of 1 graphics primitive
 
 En spécifiant un nom de variable, on peut aussi créer des graphes
 paramétriques :
@@ -74,6 +77,7 @@ paramétriques :
 
     sage: x = var('x')
     sage: parametric_plot((cos(x),sin(x)^3),(x,0,2*pi),rgbcolor=hue(0.6))
+    Graphics object consisting of 1 graphics primitive
 
 Différents graphiques peuvent se combiner sur une même image :
 
@@ -88,29 +92,30 @@ Différents graphiques peuvent se combiner sur une même image :
 Une manière commode de tracer des formes pleines est de préparer une
 liste de points  (``L`` dans l'exemple ci-dessous) puis d'utiliser la
 commande ``polygon`` pour tracer la forme pleine dont le bord est formé
-par ces points. Par example, voici un deltoïde vert :
+par ces points. Par example, voici un deltoïde vert :
 
 ::
 
-    sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),\
-    ...   2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
+    sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),
+    ....:     2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
     sage: polygon(L, rgbcolor=(1/8,3/4,1/2))
+    Graphics object consisting of 1 graphics primitive
 
 Pour visualiser le graphique en masquant les axes, tapez ``show(p,
 axes=false)``.
 
-On peut ajouter un texte à un graphique :
+On peut ajouter un texte à un graphique :
 
 ::
 
-    sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),\
-    ...   6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
+    sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),
+    ....:     6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
     sage: p = polygon(L, rgbcolor=(1/8,1/4,1/2))
     sage: t = text("hypotrochoid", (5,4), rgbcolor=(1,0,0))
     sage: show(p+t)
 
 En cours d'analyse, les professeurs font souvent le dessin suivant
-au tableau : non pas une mais plusieurs branches de la fonction arcsin, autrement dit, le graphe d'équation :math:`y=\sin(x)`
+au tableau : non pas une mais plusieurs branches de la fonction arcsin, autrement dit, le graphe d'équation :math:`y=\sin(x)`
 pour  :math:`x` entre :math:`-2\pi` et :math:`2\pi`, renversé par
 symétrie par rapport à la première bissectrice des axes. La commande
 Sage suivante réalise cela :
@@ -119,6 +124,7 @@ Sage suivante réalise cela :
 
     sage: v = [(sin(x),x) for x in srange(-2*float(pi),2*float(pi),0.1)]
     sage: line(v)
+    Graphics object consisting of 1 graphics primitive
 
 Comme les valeurs prises par la fonction tangente ne sont pas bornées,
 pour utiliser la même astuce pour représenter la fonction arctangente,
@@ -131,12 +137,13 @@ il faut préciser les bornes de la coordonnée *x* :
 
 Sage sait aussi tracer des graphiques en coordonnées polaires, des
 lignes de niveau et (pour certains types de fonctions) des champs de
-vecteurs.  Voici un exemple de lignes de niveau :
+vecteurs.  Voici un exemple de lignes de niveau :
 
 ::
 
     sage: f = lambda x,y: cos(x*y)
     sage: contour_plot(f, (-4, 4), (-4, 4))
+    Graphics object consisting of 1 graphics primitive
 
 Graphiques en trois dimensions
 ------------------------------
@@ -154,7 +161,8 @@ http://en.wikipedia.org/wiki/Whitney_umbrella:
     sage: fy = u
     sage: fz = v^2
     sage: parametric_plot3d([fx, fy, fz], (u, -1, 1), (v, -1, 1),
-    ...   frame=False, color="yellow")
+    ....:   frame=False, color="yellow")
+    Graphics3d Object
 
 
 Une fois évaluée la commande ``parametric_plot3d``, qui affiche le
@@ -171,7 +179,8 @@ http://www.mathcurve.com/surfaces/bonnetcroise/bonnetcroise.shtml) :
     sage: fy = (1+cos(v))*sin(u)
     sage: fz = -tanh((2/3)*(u-pi))*sin(v)
     sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi),
-    ...   frame=False, color="red")
+    ....:   frame=False, color="red")
+    Graphics3d Object
 
 Un tore tordu :
 
@@ -182,6 +191,7 @@ Un tore tordu :
     sage: fy = (3+sin(v)+cos(u))*sin(2*v)
     sage: fz = sin(u)+2*cos(v)
     sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi),
-    ...   frame=False, color="red")
+    ....:   frame=False, color="red")
+    Graphics3d Object
 
 

@@ -22,6 +22,7 @@ oder integriert werden.
        sage: f(3)
        9
        sage: plot(f, 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Beachten Sie die Syntax in der letzten Zeile. Falls Sie stattdessen
 ``plot(f(z), 0, 2)`` verwenden, erhalten Sie einen Fehler, da ``z``
@@ -40,6 +41,7 @@ sollte. (Beachten Sie unten den 4. Punkt)
        sage: f(z)
        z^2
        sage: plot(f(z), 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Nun ist `f(z)`` ein symbolischer Ausdruck. Dies ist unser nächster Stichpunkt
 unserer Aufzählung.
@@ -61,6 +63,7 @@ können geplottet, differenziert und integriert werden.
        sage: type(g)
        <type 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Beachten Sie, dass während ``g`` ein aufrufbarer symbolischer Ausdruck
 ist, ``g(x)`` ein verwandtes aber unterschiedliches Objekt ist,
@@ -79,6 +82,7 @@ Erläuterung zu erhalten.
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 3. Benutzung einer vordefinierten 'trigonometrischen Sage-Funktion'.
 Diese können mit ein wenig Hilfestellung differenziert und integriert
@@ -89,9 +93,11 @@ werden.
        sage: type(sin)
        <class 'sage.functions.trig.Function_sin'>
        sage: plot(sin, 0, 2)
+       Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
        <type 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
+       Graphics object consisting of 1 graphics primitive
 
 Alleinestehend kann ``sin`` nicht differenziert werden, zumindest nicht
 um ``cos`` zu erhalten.
@@ -121,10 +127,10 @@ Hier sind ein paar häufige Probleme mit Erklärungen:
 ::
 
        sage: def h(x):
-       ...       if x<2:
-       ...           return 0
-       ...       else:
-       ...           return x-2
+       ....:     if x<2:
+       ....:         return 0
+       ....:     else:
+       ....:         return x-2
 
 Das Problem: ``plot(h(x), 0, 4)`` zeichnet die Linie `y=x-2` und nicht
 die mehrzeilige Funktion, welche durch ``h`` definiert wird.  Der
@@ -151,6 +157,7 @@ Die Lösung: verwenden Sie nicht ``plot(h(x), 0, 4)``; benutzen Sie stattdessen:
 ::
 
        sage: plot(h, 0, 4)
+       Graphics object consisting of 1 graphics primitive
 
 \5. Versehentliches Erzeugen einer Konstanten anstelle von einer Funktion.
 

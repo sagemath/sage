@@ -1,5 +1,4 @@
 include "sage/ext/cdefs.pxi"
-include "sage/ext/stdsage.pxi"
 
 cdef double eval_seq_as_poly(int *f, int n, double x)
 cdef double newton(int *f, int *df, int n, double x0, double eps)
@@ -20,7 +19,8 @@ cdef class tr_data:
     cdef double B
     cdef double b_lower, b_upper, gamma
 
-    cdef int *a, *amax
+    cdef int *a
+    cdef int *amax
     cdef double *beta
     cdef int *gnk
 

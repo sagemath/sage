@@ -15,7 +15,7 @@ Miscellaneous
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.misc.misc import prod
+from sage.misc.all import prod
 
 class DoublyLinkedList():
     """
@@ -294,10 +294,6 @@ class IterableFunctionCall:
         """
         return "Iterable function call %s with args=%s and kwargs=%s"%(self.f, self.args, self.kwargs)
 
-
-
-
-
 def check_integer_list_constraints(l, **kwargs):
     """
     EXAMPLES::
@@ -344,7 +340,6 @@ def check_integer_list_constraints(l, **kwargs):
         else:
             return []
 
-
     min_part = kwargs.get('min_part', None)
     max_part = kwargs.get('max_part', None)
 
@@ -359,7 +354,7 @@ def check_integer_list_constraints(l, **kwargs):
     inner = kwargs.get('inner', None)
     outer = kwargs.get('outer', None)
 
-    #Preprocess the constraints
+    # Preprocess the constraints
     if outer is not None:
         max_length = len(outer)
         for i in range(max_length):
@@ -384,7 +379,7 @@ def check_integer_list_constraints(l, **kwargs):
     filters['inner'] = lambda x: len(x) >= len(inner) and max([inner[i]-x[i] for i in range(len(inner))]) <= 0
 
     for key in kwargs:
-        result = filter( filters[key], result )
+        result = [x for x in result if filters[key](x)]
 
     if singleton:
         try:

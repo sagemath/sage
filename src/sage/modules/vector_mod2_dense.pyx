@@ -26,7 +26,6 @@ EXAMPLES::
 ##############################################################################
 
 include 'sage/ext/interrupt.pxi'
-include 'sage/ext/stdsage.pxi'
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
@@ -49,7 +48,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         cdef Vector_mod2_dense y
-        y = PY_NEW(Vector_mod2_dense)
+        y = Vector_mod2_dense.__new__(Vector_mod2_dense)
         y._init(self._degree, self._parent)
         return y
 
@@ -159,7 +158,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
             for i from 0 <= i < self._degree:
-                if PY_TYPE_CHECK(x[i],IntegerMod_int) or PY_TYPE_CHECK(x[i],int) or PY_TYPE_CHECK(x[i],Integer):
+                if isinstance(x[i], IntegerMod_int) or isinstance(x[i], int) or isinstance(x[i], Integer):
                     xi = x[i]
                     # the if/else statement is because in some compilers, (-1)%2 is -1
                     mzd_write_bit(self._entries, 0, i, 0 if xi%2==0 else 1)
@@ -186,7 +185,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         if self._entries:
             mzd_free(self._entries)
 
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         EXAMPLES::
             sage: v = vector(GF(2), [0,0,0,0])
@@ -229,16 +228,24 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         return free_module_element.FreeModuleElement.__hash__(self)
 
-    def __len__(self):
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
-            sage: len(vector(GF(2),[0,0,1,1,1]))
-            5
+            sage: v = vector(GF(2), [1,2,3]); v
+            (1, 0, 1)
+            sage: v[0]
+            1
+            sage: v[2]
+            1
+            sage: v[-2]
+            0
+            sage: v[0:2]
+            (1, 0)
         """
-        return self._degree
+        return self._base_ring(mzd_read_bit(self._entries, 0, i))
 
-    def __setitem__(self, i, value):
+    cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
         """
         EXAMPLES::
 
@@ -252,65 +259,10 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: v[4] = 0
             Traceback (most recent call last):
             ...
-            IndexError: Index '4' out of bound.
+            IndexError: vector index out of range
         """
-        if not self._is_mutable:
-            raise ValueError("vector is immutable; please change a copy instead (use copy())")
-        cdef IntegerMod_int m
-        cdef Py_ssize_t k, d, n
-        if isinstance(i, slice):
-            start, stop = i.start, i.stop
-            d = self.degree()
-            R = self.base_ring()
-            n = 0
-            for k from start <= k < stop:
-                if k >= d:
-                    return
-                if k >= 0:
-                    self[k] = R(value[n])
-                    n = n + 1
-        else:
-            m = self.base_ring()(value)
-            if i < 0 or i >= self._degree:
-                raise IndexError("Index '%s' out of bound."%(i))
-            else:
-                mzd_write_bit(self._entries, 0, i, m)
+        mzd_write_bit(self._entries, 0, i, value)
 
-    def __getitem__(self, i):
-        """
-        Returns `i`-th entry or slice of self.
-
-        EXAMPLES::
-
-            sage: v = vector(GF(2), [1,2,3]); v
-            (1, 0, 1)
-            sage: v[0]
-            1
-            sage: v[2]
-            1
-            sage: v[-2]
-            0
-            sage: v[0:2]
-            (1, 0)
-            sage: v[5]
-            Traceback (most recent call last):
-            ...
-            IndexError: index '5' out of range
-
-            sage: v[-5]
-            Traceback (most recent call last):
-            ...
-            IndexError: index '-2' out of range
-        """
-        if isinstance(i, slice):
-            start, stop, step = i.indices(len(self))
-            return vector(self.base_ring(), self.list()[start:stop])
-        else:
-            if i < 0:
-                i += self._degree
-            if i < 0 or i >= self._degree:
-                raise IndexError("index '%s' out of range"%(i,))
-            return self._base_ring(mzd_read_bit(self._entries, 0, i))
 
     def __reduce__(self):
         """
@@ -523,8 +475,8 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         cdef Py_ssize_t i
         cdef list v = [0]*d
         K = self.base_ring()
-        z = K.zero_element()
-        o = K.one_element()
+        z = K.zero()
+        o = K.one()
         cdef list switch = [z,o]
         for i in range(d):
             v[i] = switch[mzd_read_bit(self._entries, 0, i)]
@@ -541,12 +493,12 @@ def unpickle_v0(parent, entries, degree, is_mutable):
     """
     # If you think you want to change this function, don't.
     cdef Vector_mod2_dense v
-    v = PY_NEW(Vector_mod2_dense)
+    v = Vector_mod2_dense.__new__(Vector_mod2_dense)
     v._init(degree, parent)
     cdef int xi
 
     for i from 0 <= i < degree:
-        if PY_TYPE_CHECK(entries[i],IntegerMod_int) or PY_TYPE_CHECK(entries[i],int) or PY_TYPE_CHECK(entries[i],Integer):
+        if isinstance(entries[i], IntegerMod_int) or isinstance(entries[i], int) or isinstance(entries[i], Integer):
             xi = entries[i]
             mzd_write_bit(v._entries, 0, i, xi%2)
         else:

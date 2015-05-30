@@ -146,7 +146,7 @@ class Config(collections.MutableMapping):
             self._config.write(F)
         # set the configuration file to read only by this user,
         # because it may contain the trac password
-        os.chmod(self._devrc, 0600)
+        os.chmod(self._devrc, 0o600)
 
     def __getitem__(self, section):
         r"""

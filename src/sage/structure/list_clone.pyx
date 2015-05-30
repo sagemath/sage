@@ -143,13 +143,13 @@ AUTHORS:
 
 
 include "sage/ext/stdsage.pxi"
+from sage.ext.memory cimport check_reallocarray
 from cpython.list cimport *
 from cpython.int cimport *
 from cpython.ref cimport *
 
 import sage
 from sage.structure.element cimport Element
-from sage.structure.element import Element
 from sage.structure.parent cimport Parent
 
 ############################################################################
@@ -291,7 +291,7 @@ cdef class ClonableElement(Element):
         self._is_immutable = False
         self._hash = 0
 
-    cpdef bint _require_mutable(self):
+    cpdef bint _require_mutable(self) except -2:
         """
         Check that ``self`` is mutable.
 
@@ -648,7 +648,7 @@ cdef class ClonableArray(ClonableElement):
             sage: type(IncreasingArrays()([1,2,3])[:])
             <type 'list'>
         """
-        if PY_TYPE_CHECK(key, slice):
+        if isinstance(key, slice):
             self._list[key.start:key.stop:key.step]
         return self._list[key]
 
@@ -759,7 +759,7 @@ cdef class ClonableArray(ClonableElement):
         """
         return self._list.__contains__(item)
 
-    cpdef int index(self, x, start=None, stop=None):
+    cpdef int index(self, x, start=None, stop=None) except -1:
         """
         Returns the smallest ``k`` such that ``s[k] == x`` and ``i <= k < j``
 
@@ -783,7 +783,7 @@ cdef class ClonableArray(ClonableElement):
         else:
             return self._list.index(x, start, stop)
 
-    cpdef int count(self, key):
+    cpdef int count(self, key) except -1:
         """
         Returns number of ``i``'s for which ``s[i] == key``
 
@@ -837,7 +837,7 @@ cdef class ClonableArray(ClonableElement):
         return (<Element>left)._richcmp(right, op)
 
     # See protocol in comment in sage/structure/element.pyx
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         TEST::
 
@@ -888,8 +888,8 @@ cdef class ClonableArray(ClonableElement):
             2
         """
         cdef ClonableArray res
-        #res = type(self).__new__(type(self), self._parent)
-        res = PY_NEW_SAME_TYPE(self)
+        cdef type t = type(self)
+        res = t.__new__(t)
         res._parent = self._parent
         res._list = self._list[:]
         if HAS_DICTIONARY(self):
@@ -909,13 +909,13 @@ cdef class ClonableArray(ClonableElement):
             sage: ClonableArray(Parent(), [1,2,3]) # indirect doctest
             Traceback (most recent call last):
             ...
-            AssertionError: This should never be called, please overload the check method
+            NotImplementedError: this should never be called, please overload the check method
             sage: from sage.structure.list_clone_demo import IncreasingArrays
             sage: el = IncreasingArrays()([1,2,4]) # indirect doctest
         """
-        assert False, "This should never be called, please overload the check method"
+        raise NotImplementedError("this should never be called, please overload the check method")
 
-    cpdef long _hash_(self):
+    cpdef long _hash_(self) except? -1:
         """
         Return the hash value of ``self``.
 
@@ -984,7 +984,7 @@ def _make_array_clone(clas, parent, list, needs_check, is_immutable, dic):
         2
     """
     cdef ClonableArray res
-    res = <ClonableArray> PY_NEW(clas)
+    res = <ClonableArray> clas.__new__(clas)
     res._parent = parent
     res._list = list
     res._needs_check = needs_check
@@ -1316,12 +1316,8 @@ cdef class ClonableIntArray(ClonableElement):
         """
         assert size >= 0, "Negative size is forbidden"
         self._is_immutable = False
-        if self._list is NULL:
-            self._len = size
-            self._list = <int *>sage_malloc(sizeof(int) * self._len)
-        else:
-            self._len = size
-            self._list = <int *>sage_realloc(self._list, sizeof(int) * self._len)
+        self._list = <int *>check_reallocarray(self._list, size, sizeof(int))
+        self._len = size
 
     def __dealloc__(self):
         if self._list is not NULL:
@@ -1438,7 +1434,7 @@ cdef class ClonableIntArray(ClonableElement):
         cdef list res
         cdef slice keysl
         # print key
-        if PY_TYPE_CHECK(key, slice):
+        if isinstance(key, slice):
             keysl = <slice> key
             start, stop, step = keysl.indices(self._len)
             res = []
@@ -1538,7 +1534,7 @@ cdef class ClonableIntArray(ClonableElement):
                 return True
         return False
 
-    cpdef int index(self, int item):
+    cpdef int index(self, int item) except -1:
         """
         EXAMPLES::
 
@@ -1597,7 +1593,7 @@ cdef class ClonableIntArray(ClonableElement):
         return (<Element>left)._richcmp(right, op)
 
     # See protocol in comment in sage/structure/element.pyx
-    cdef int _cmp_c_impl(left, Element right) except -2:
+    cpdef int _cmp_(left, Element right) except -2:
         """
         TEST::
 
@@ -1673,7 +1669,8 @@ cdef class ClonableIntArray(ClonableElement):
             2
         """
         cdef ClonableIntArray res
-        res = PY_NEW_SAME_TYPE(self)
+        cdef type t = type(self)
+        res = t.__new__(t)
         res._parent = self._parent
         if self:
             res._alloc_(self._len)
@@ -1696,13 +1693,13 @@ cdef class ClonableIntArray(ClonableElement):
             sage: ClonableArray(Parent(), [1,2,3]) # indirect doctest
             Traceback (most recent call last):
             ...
-            AssertionError: This should never be called, please overload the check method
+            NotImplementedError: this should never be called, please overload the check method
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
             sage: el = IncreasingIntArrays()([1,2,4]) # indirect doctest
         """
-        assert False, "This should never be called, please overload the check method"
+        raise NotImplementedError("this should never be called, please overload the check method")
 
-    cpdef long _hash_(self):
+    cpdef long _hash_(self) except? -1:
         """
         Return the hash value of ``self``.
 
@@ -1774,7 +1771,7 @@ def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
         2
     """
     cdef ClonableIntArray res
-    res = <ClonableIntArray> PY_NEW(clas)
+    res = <ClonableIntArray> clas.__new__(clas)
     ClonableIntArray.__init__(res, parent, lst, needs_check, is_immutable)
     if dic is not None:
         res.__dict__ = dic
@@ -1862,5 +1859,5 @@ cdef class NormalizedClonableList(ClonableList):
             ...
             ValueError: list is not strictly increasing
         """
-        assert False, "This should never be called, please overload the normalize method"
+        raise NotImplementedError("This should never be called, please overload the normalize method")
 

@@ -1,3 +1,5 @@
+"Precision management for non-exact objects"
+
 import sage.rings.integer
 
 class Nonexact:
@@ -7,7 +9,7 @@ class Nonexact:
     def default_prec(self):
         r"""
         Return the default precision for self.  Use
-        \code{set_default_prec} to set the default precision.
+        ``set_default_prec`` to set the default precision.
         """
         try:
             return self.__default_prec

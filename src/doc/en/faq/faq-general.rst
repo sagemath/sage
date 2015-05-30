@@ -15,11 +15,13 @@ predecessors, known as HECKE and Manin, came about because William
 Stein needed to write them as part of his research in number
 theory. Started by William in 2005 during his time at Harvard
 University, Sage combines best-of-breed free open source mathematics
-software, packaging and unifying them through a common interface. Many
-researchers in number theory, including William himself, use this
-common interface to build upon and extend the functionalities of
-underlying packages for number theory research. Such software packages
-include
+software, packaging and unifying them through a common interface. Since
+then Sage has become something used not just by researchers in
+number theory, but throughout the mathematical sciences.
+
+Sage builds upon and extends functionalities of many underlying
+packages.  Even from early on, when Sage was primarily used for
+number theory, this included
 `Givaro <http://ljk.imag.fr/CASYS/LOGICIELS/givaro>`_,
 `MPIR <http://www.mpir.org>`_,
 `NTL <http://www.shoup.net/ntl>`_,
@@ -28,7 +30,9 @@ and many others too numerous to list here. Students, teachers,
 professors, researchers throughout the world use Sage because they
 require a comprehensive free open source mathematics package that
 offers symbolic and numerical computation. Most of the time, people
-are happy with what Sage has to offer. As is common throughout the
+are happy with what Sage has to offer.
+
+As is common throughout the
 free open source software (FOSS) world, many people often identify
 cases where Sage lacks certain mathematics functionalities that they
 require. And so they delve into the underlying source code that
@@ -39,7 +43,9 @@ use their favourite mathematics software packages from within Sage. The
 team is comprised of researchers in algebraic combinatorics. The
 team's stated mission is to improve Sage as an extensible toolbox for
 computer exploration in algebraic combinatorics, and foster code
-sharing between researchers in this area. For detailed information
+sharing between researchers in this area.
+
+For detailed information
 about why Sage exists, see William's personal
 `mathematics software biography <http://sagemath.blogspot.com/2009/12/mathematical-software-and-me-very.html>`_.
 
@@ -60,9 +66,10 @@ You pronounce "Sage" similar to how you would pronounce "sage" which
 refers to a wise person, or "sage" which refers to a plant. Some
 people pronounce "Sage" as "sarge", similar to how you would pronounce
 `Debian <http://www.debian.org>`_
-Sarge. However you pronounce "Sage", please
-do not confuse the Sage project with an accounting software by the
-same name.
+Sarge.
+
+However you pronounce "Sage", please do not confuse the Sage project
+with an accounting software by the same name.
 
 
 Who is behind this project?
@@ -74,8 +81,9 @@ professors, researchers, software engineers, and people working in
 diverse areas of mathematics, science, engineering, software
 development, and all levels of education. The development of Sage has
 benefited from the financial support of numerous institutions, and the
-previous and ongoing work of many authors of included components. A
-list of direct contributors can be found on the
+previous and ongoing work of many authors of included components.
+
+A list of (some) direct contributors can be found on the
 `Sage Development Map <http://www.sagemath.org/development-map.html>`_
 and the history of changes can be found in the high-level
 `changelog <http://www.sagemath.org/mirror/src/changelog.txt>`_. Refer
@@ -97,8 +105,9 @@ practices. An underlying philosophical principle of Sage is to apply
 the system of open exchange and peer review that characterizes
 scientific communication to the development of mathematics
 software. Neither the Sage project nor the Sage Development Team make
-any claims to being the original proponents of this principle. The
-development model of Sage is largely inspired by the free software
+any claims to being the original proponents of this principle.
+
+The development model of Sage is largely inspired by the free software
 movement as spearheaded by the
 `Free Software Foundation <http://www.fsf.org>`_,
 and by the open source movement. One source of inspiration from within
@@ -192,7 +201,7 @@ functionalities are made possible through FOSS projects such as
 * And many more too numerous to list here.
 
 An up-to-date list can be found on the page for the
-`standard packages repository <http://www.sagemath.org/packages/standard>`_.
+`standard packages repository <http://www.sagemath.org/packages/upstream/>`_.
 The principle programming languages of Sage are
 `Python <http://www.python.org>`_
 and
@@ -203,83 +212,22 @@ and interfacing with C libraries and C extensions for Python. Sage
 integrates over 90 FOSS packages into a common interface. On top of
 these packages is the Sage library, which consists of over 700,000
 lines of new Python and Cython code. See
-`ohloh.net <https://www.ohloh.net/p/sage/analyses/latest>`_
+`openhub.net <https://www.openhub.net/p/sage>`_
 for source code analysis of the latest stable Sage release.
-
-
-Who uses Sage?
-""""""""""""""
-
-The following is an incomplete list of institutions and projects that
-use Sage. If any institution or project is missing, please let us know
-by reporting to the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
-mailing list.
-
-#. `California Institute of Technology <http://www.caltech.edu>`_,
-   Pasadena, California, USA
-#. `California Polytechnic State University <http://www.calpoly.edu>`_,
-   San Luis Obispo, CA, USA
-#. `Chang Gung University <http://www.cgu.edu.tw>`_,
-   Taiwan
-#. `Chapman University <http://www.chapman.edu>`_,
-   Orange, CA, USA
-#. `Clemson University <http://www.clemson.edu>`_,
-   Clemson, South Carolina, USA
-#. `Drake University <http://www.drake.edu>`_,
-   Des Moines, IA, USA
-#. `FEMhub <http://www.femhub.org>`_,
-   an open source distribution of scientific computing code enhanced
-   with a unified Python interface. The FEMhub Notebook is based on
-   the Sage Notebook.
-#. `Gordon College <http://www.gordon.edu>`_,
-   Wenham, MA, USA
-#. `Korea Advanced Institute of Science and Technology <http://www.kaist.edu>`_,
-   Daejeon, Korea
-#. `Mendel University in Brno <http://www.mendelu.cz>`_,
-   Czech Republic
-#. `Reykjavik University <http://www.ru.is>`_,
-   Iceland
-#. `Universidad Autónoma de Madrid <http://www.uam.es>`_,
-   Spain
-#. `Universidad de la República <http://www.universidad.edu.uy>`_,
-   Montevideo, Uruguay
-#. `Universitat Politècnica de Catalunya <http://www.upc.edu>`_,
-   Barcelona, Catalonia, Spain
-#. `Université Claude Bernard Lyon 1 <http://www.univ-lyon1.fr>`_,
-   France
-#. `Université de Provence <http://www.univ-mrs.fr>`_,
-   Marseille, France
-#. `Universiteit Leiden <http://www.leidenuniv.nl>`_,
-   The Netherlands
-#. `University of Canterbury <http://www.canterbury.ac.nz>`_,
-   Christchurch, New Zealand
-#. `University of Minnesota Duluth <http://www.d.umn.edu>`_,
-   Duluth, MN, USA
-#. `University of Nevada, Reno <http://www.unr.edu>`_,
-   Reno, NV, USA
-#. `University of Puget Sound <http://www.pugetsound.edu>`_,
-   Tacoma, WA, USA
-#. `University of Washington <http://www.washington.edu>`_,
-   Seattle, Washington, USA
-#. `University of Wisconsin, Oshkosh <http://www.uwosh.edu>`_,
-   Oshkosh, WI, USA
-#. `US Naval Academy <http://www.usna.edu>`_,
-   Annapolis, Maryland, USA
 
 
 How do I get help?
 """"""""""""""""""
 
-Sage has two very active email lists:
+For support about usage of Sage, there are two options:
 
-* ``sage-devel``: http://groups.google.com/group/sage-devel
-* ``sage-support``: http://groups.google.com/group/sage-support
+* The question-and-answer website `ask.sagemath.org <http://ask.sagemath.org/questions/>`_
+* The email list `sage-support <http://groups.google.com/group/sage-support>`_
 
-There is also a very active IRC channels: ``#sage-devel`` on
-freenode. Many developers also actively blog and also post other
-Sage-related tutorials and talks. See
-http://www.sagemath.org/help.html for a listing of these resources.
+For support about development of Sage, there is an email list
+`sage-devel <http://groups.google.com/group/sage-devel>`_
+
+See http://www.sagemath.org/help.html for a listing of other resources.
 
 
 Wouldn't it be way better if Sage did not ship as a gigantic bundle?
@@ -318,13 +266,16 @@ neither the Sage community nor the Sage Development Team make any
 claims that Sage is free of bugs. To do so would be an act of
 dishonesty.
 
-A Sage release cycle usually lasts for about 3 to 4 weeks. Each
+A Sage release cycle usually lasts for a few months, with several
+betas appearing at a 2-3 week intervals.  Each
 release cycle is usually chaired by a single release manager who looks
 after the Sage merge tree for the duration of the release
 cycle. During that time, the release manager often needs to devote the
 equivalent of full-time work to quality management and actively
 interacts with an international community of Sage users, developers,
-and potential contributors. There have been a number of cases where
+and potential contributors.
+
+There have been a number of cases where
 two Sage contributors paired up to be the release managers for a Sage
 release cycle. However, it is often the case that few people have the
 equivalent of 3 weeks' worth of free time to devote to release
@@ -340,7 +291,9 @@ contributor can discourage another, so tradeoffs need to be made. To
 decide that a stabilization release would merge patches with bug
 fixes, and only fix bugs, would likely discourage someone from
 contributing when they have been told in advance that their positively
-reviewed patches will not be merged. The Sage community believes in
+reviewed patches will not be merged.
+
+The Sage community believes in
 the principle of "release early, release often". How the Sage project
 is organized and run differ greatly from that of a commercial software
 company. Contributors are all volunteers and this changes the dynamic
@@ -360,7 +313,7 @@ documentation that makes up the Sage standard documentation. If you
 have downloaded a binary Sage release, the HTML version of the
 corresponding documentation comes pre-built and can be found under the
 directory
-``SAGE_ROOT/devel/sage-main/doc/output/html/``. During the compilation
+``SAGE_ROOT/src/doc/output/html/``. During the compilation
 of Sage from source, the HTML version of the documentation is also
 built in the process. To build the HTML version of the documentation,
 issue the following command from ``SAGE_ROOT``::

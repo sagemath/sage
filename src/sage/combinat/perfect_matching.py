@@ -133,7 +133,7 @@ class PerfectMatching(ElementWrapper):
 
         The function checks that the given list or permutation is a valid perfect
         matching (i.e. a list of pairs with pairwise disjoint elements  or a
-        fixpoint-free involution) and raises a ValueError otherwise:
+        fixpoint-free involution) and raises a ValueError otherwise::
 
             sage: PerfectMatching([(1, 2, 3), (4, 5)])
             Traceback (most recent call last):
@@ -241,7 +241,7 @@ class PerfectMatching(ElementWrapper):
         r"""
         A latex representation of ``self`` using the tikzpicture package.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: P = PerfectMatching([(1,3),(2,5),(4,6)])
             sage: latex(P) #indirect doctest # optional - requires dot2tex
@@ -365,9 +365,9 @@ class PerfectMatching(ElementWrapper):
             sage: o = PerfectMatching([(1, 7), (2, 4), (3, 8), (5, 6)])
             sage: p = PerfectMatching([(1, 6), (2, 7), (3, 4), (5, 8)])
             sage: it = o.loops_iterator(p)
-            sage: it.next()
+            sage: next(it)
             [1, 7, 2, 4, 3, 8, 5, 6]
-            sage: it.next()
+            sage: next(it)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -498,9 +498,9 @@ class PerfectMatching(ElementWrapper):
             sage: n = PerfectMatching([3,8,1,7,6,5,4,2]); n
             [(1, 3), (2, 8), (4, 7), (5, 6)]
             sage: it = n.crossings_iterator();
-            sage: it.next()
+            sage: next(it)
             ((1, 3), (2, 8))
-            sage: it.next()
+            sage: next(it)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -597,7 +597,7 @@ class PerfectMatching(ElementWrapper):
         """
         it = self.crossings_iterator()
         try:
-            it.next()
+            next(it)
         except StopIteration:
             return True
         else:
@@ -621,11 +621,11 @@ class PerfectMatching(ElementWrapper):
 
             sage: n = PerfectMatching([(1, 6), (2, 7), (3, 5), (4, 8)])
             sage: it = n.nestings_iterator();
-            sage: it.next()
+            sage: next(it)
             ((1, 6), (3, 5))
-            sage: it.next()
+            sage: next(it)
             ((2, 7), (3, 5))
-            sage: it.next()
+            sage: next(it)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -726,7 +726,7 @@ class PerfectMatching(ElementWrapper):
         """
         it = self.nestings_iterator()
         try:
-            it.next()
+            next(it)
         except StopIteration:
             return True
         else:

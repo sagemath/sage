@@ -19,7 +19,7 @@ AUTHORS:
 
 from element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from finite_field_base import FiniteField
-
+from constructor import GF
 
 class FiniteField_pari_ffelt(FiniteField):
     """
@@ -44,14 +44,11 @@ class FiniteField_pari_ffelt(FiniteField):
 
     .. NOTE::
 
-        - Direct construction of FiniteField_pari_ffelt objects
-          requires specifying a characteristic and a modulus.
-          To construct a finite field by specifying a cardinality and
-          an algorithm for finding an irreducible polynomial, use the
-          FiniteField constructor with ``impl='pari_ffelt'``.
-
-        - Two finite fields are considered equal if and only if they
-          have the same cardinality, variable name, and modulus.
+        Direct construction of :class:`FiniteField_pari_ffelt` objects
+        requires specifying a characteristic and a modulus.  To
+        construct a finite field by specifying a cardinality and an
+        algorithm for finding an irreducible polynomial, use the
+        ``FiniteField`` constructor with ``impl='pari_ffelt'``.
 
     EXAMPLES:
 
@@ -113,57 +110,22 @@ class FiniteField_pari_ffelt(FiniteField):
             sage: k = FiniteField_pari_ffelt(3, x^2 + 2*x + 2, 'a'); k
             Finite Field in a of size 3^2
         """
-        import constructor
-        from sage.libs.pari.all import pari
-        from sage.rings.integer import Integer
-        from sage.structure.proof.all import arithmetic
-        proof = arithmetic()
-
-        p = Integer(p)
-        if ((p < 2)
-            or (proof and not p.is_prime())
-            or (not proof and not p.is_pseudoprime())):
-            raise ArithmeticError("p must be a prime number")
-        Fp = constructor.FiniteField(p)
-
-        if name is None:
-            name = modulus.variable_name()
-
-        FiniteField.__init__(self, base=Fp, names=name, normalize=True)
-
-        modulus = self.polynomial_ring()(modulus)
         n = modulus.degree()
         if n < 2:
             raise ValueError("the degree must be at least 2")
 
+        FiniteField.__init__(self, base=GF(p), names=name, normalize=True)
+
         self._modulus = modulus
         self._degree = n
-        self._card = p ** n
         self._kwargs = {}
 
-        self._gen_pari = pari(modulus).ffgen()
+        self._gen_pari = modulus._pari_with_name(self._names[0]).ffgen()
         self._zero_element = self.element_class(self, 0)
         self._one_element = self.element_class(self, 1)
         self._gen = self.element_class(self, self._gen_pari)
 
     Element = FiniteFieldElement_pari_ffelt
-
-    def __hash__(self):
-        """
-        Return the hash of this field.
-
-        EXAMPLE::
-
-            sage: {GF(9, 'a', impl='pari_ffelt'): 1} # indirect doctest
-            {Finite Field in a of size 3^2: 1}
-            sage: {GF(9, 'b', impl='pari_ffelt'): 1} # indirect doctest
-            {Finite Field in b of size 3^2: 1}
-        """
-        try:
-            return self.__hash
-        except AttributeError:
-            self.__hash = hash((self._card, self.variable_name(), self._modulus))
-            return self.__hash
 
     def __reduce__(self):
         """
@@ -179,65 +141,28 @@ class FiniteField_pari_ffelt(FiniteField):
         """
         return self._factory_data[0].reduce_data(self)
 
-    def __cmp__(self, other):
-        """
-        Compare ``self`` to ``other``.
-
-        EXAMPLES::
-
-            sage: k = FiniteField(7^20, 'a', impl='pari_ffelt')
-            sage: k == k
-            True
-            sage: k2 = FiniteField(7^20, 'a', impl='pari_ffelt')
-            sage: k2 == k
-            True
-            sage: kb = FiniteField(7^20, 'b', impl='pari_ffelt')
-            sage: kb == k
-            False
-        """
-        if not isinstance(other, FiniteField_pari_ffelt):
-            return cmp(type(self), type(other))
-        return cmp((self._card, self.variable_name(), self._modulus),
-                   (other._card, other.variable_name(), other._modulus))
-
-    def __richcmp__(left, right, op):
-        """
-        Compare ``left`` with ``right``.
-
-        EXAMPLE::
-
-            sage: k = FiniteField(2^17, 'a', impl='pari_ffelt')
-            sage: j = FiniteField(2^18, 'b', impl='pari_ffelt')
-            sage: k == j
-            False
-
-            sage: k == copy(k)
-            True
-        """
-        return left._richcmp_helper(right, op)
-
     def gen(self, n=0):
         """
-        Return a generator of the finite field.
+        Return a generator of ``self`` over its prime field, which is a
+        root of ``self.modulus()``.
 
         INPUT:
 
-        - ``n`` -- ignored
+        - ``n`` -- must be 0
 
         OUTPUT:
 
-        A generator of the finite field.
-
-        This generator is a root of the defining polynomial of the
-        finite field.
+        An element `a` of ``self`` such that ``self.modulus()(a) == 0``.
 
         .. WARNING::
 
-            This generator is not guaranteed to be a generator
-            for the multiplicative group.  To obtain the latter, use
-            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`.
+            This generator is not guaranteed to be a generator for the
+            multiplicative group.  To obtain the latter, use
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            or use the ``modulus="primitive"`` option when constructing
+            the field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(GF(2))
             sage: FiniteField(2^4, 'b', impl='pari_ffelt').gen()
@@ -249,6 +174,8 @@ class FiniteField_pari_ffelt(FiniteField):
             sage: a^4
             alpha^3 + 1
         """
+        if n:
+            raise IndexError("only one generator")
         return self._gen
 
     def characteristic(self):
@@ -275,25 +202,6 @@ class FiniteField_pari_ffelt(FiniteField):
             20
         """
         return self._degree
-
-    def polynomial(self):
-        """
-        Return the minimal polynomial of the generator of ``self`` in
-        ``self.polynomial_ring()``.
-
-        EXAMPLES::
-
-            sage: F = FiniteField(3^2, 'a', impl='pari_ffelt')
-            sage: F.polynomial()
-            a^2 + 2*a + 2
-
-            sage: F = FiniteField(7^20, 'a', impl='pari_ffelt')
-            sage: f = F.polynomial(); f
-            a^20 + a^12 + 6*a^11 + 2*a^10 + 5*a^9 + 2*a^8 + 3*a^7 + a^6 + 3*a^5 + 3*a^3 + a + 3
-            sage: f(F.gen())
-            0
-        """
-        return self._modulus
 
     def _element_constructor_(self, x):
         """
@@ -329,7 +237,7 @@ class FiniteField_pari_ffelt(FiniteField):
         the polynomial at the field's generator::
 
             sage: R.<x> = QQ[]
-            sage: k, a = FiniteField(5^2, 'a', impl='pari_ffelt').objgen()
+            sage: k.<a> = FiniteField(5^2, 'a', impl='pari_ffelt')
             sage: k(R(2/3))
             4
             sage: k(x^2)
@@ -343,7 +251,7 @@ class FiniteField_pari_ffelt(FiniteField):
             sage: k(x^25)
             a
 
-            sage: Q, q = FiniteField(5^7, 'q', impl='pari_ffelt').objgen()
+            sage: Q.<q> = FiniteField(5^7, 'q', impl='pari_ffelt')
             sage: L = GF(5)
             sage: LL.<xx> = L[]
             sage: Q(xx^2 + 2*xx + 4)
@@ -499,17 +407,3 @@ class FiniteField_pari_ffelt(FiniteField):
             return x
         else:
             return self.element_class(self, x)
-
-    def order(self):
-        """
-        The number of elements of the finite field.
-
-        EXAMPLE::
-
-            sage: k = FiniteField(2^10, 'a', impl='pari_ffelt')
-            sage: k
-            Finite Field in a of size 2^10
-            sage: k.order()
-            1024
-        """
-        return self._card

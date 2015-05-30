@@ -692,7 +692,7 @@ class GlobalOptions(SageObject):
             link,linked_opt=self._linked_value[option]
             return link[linked_opt]
         elif option in self._value:
-            if self._display_values.has_key(option):
+            if option in self._display_values:
                 return self._display_values[option][self._value[option]]
             return self._value[option]
 
@@ -826,7 +826,7 @@ class GlobalOptions(SageObject):
                     for opt in self._values:
                         self._display_values[option] = {val.lower():val for val in self._values[option]}
                         self._values[option] = [val.lower() for val in self._values[option]]
-                    if self._alias.has_key(option):
+                    if option in self._alias:
                         self._alias[option] = {k.lower():v.lower() for k,v in self._alias[option].iteritems()}
                 self._case_sensitive[option] = bool(specifications[spec])
             elif spec!='description':

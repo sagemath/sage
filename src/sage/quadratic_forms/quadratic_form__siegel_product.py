@@ -62,19 +62,19 @@ def siegel_product(self, u):
         1
         sage: M = 4; len([v  for v in mrange([M,M,M,M])  if Q(v) % M == 1]) / M^3
         1
-        sage: M = 16; len([v  for v in mrange([M,M,M,M])  if Q(v) % M == 1]) / M^3  # long time (41s on sage.math, 2011)
+        sage: M = 16; len([v  for v in mrange([M,M,M,M])  if Q(v) % M == 1]) / M^3  # long time (2s on sage.math, 2014)
         1
 
         sage: Q.local_density(2,2)
         3/2
         sage: M = 4; len([v  for v in mrange([M,M,M,M])  if Q(v) % M == 2]) / M^3
         3/2
-        sage: M = 16; len([v  for v in mrange([M,M,M,M])  if Q(v) % M == 2]) / M^3  # long time (41s on sage.math, 2011)
+        sage: M = 16; len([v  for v in mrange([M,M,M,M])  if Q(v) % M == 2]) / M^3  # long time (2s on sage.math, 2014)
         3/2
 
     TESTS::
 
-        sage: [1] + [Q.siegel_product(ZZ(a))  for a in range(1,11)] == Q.theta_series(11).list()
+        sage: [1] + [Q.siegel_product(ZZ(a))  for a in range(1,11)] == Q.theta_series(11).list()  # long time (2s on sage.math, 2014)
         True
     """
     ## Protect u (since it fails often if it's an just an int!)
@@ -99,7 +99,7 @@ def siegel_product(self, u):
 
     ## Make the odd generic factors
     if ((n % 2) == 1):
-        m = (n-1) / 2
+        m = (n-1) // 2
         d1 = fundamental_discriminant(((-1)**m) * 2*d * u)     ## Replaced d by 2d here to compensate for the determinant
         f = abs(d1)                                            ## gaining an odd power of 2 by using the matrix of 2Q instead
                                                                ## of the matrix of Q.
@@ -124,7 +124,7 @@ def siegel_product(self, u):
 
     ## Make the even generic factor
     if ((n % 2) == 0):
-        m = n / 2
+        m = n // 2
         d1 = fundamental_discriminant(((-1)**m) * d)
         f = abs(d1)
 

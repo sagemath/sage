@@ -1,3 +1,5 @@
+include "sage/ext/cdefs.pxi"
+
 include "math.pxi"
 cdef enum:
   GSL_SUCCESS = 0

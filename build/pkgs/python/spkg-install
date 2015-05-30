@@ -16,6 +16,9 @@ fi
 unset PYTHONHOME
 unset PYTHONPATH
 
+# Prevent use of the system hg and svn as it might make the installation fail
+export HAS_HG=no
+export SVNVERSION=no
 
 cd src
 
@@ -89,6 +92,14 @@ build()
         echo >&2 "Error installing Python."
         exit 1
     fi
+
+    echo "Installing valgrind suppression file..."
+    mkdir -p "$SAGE_EXTCODE/valgrind"
+    cp Misc/valgrind-python.supp "$SAGE_EXTCODE/valgrind/python.supp"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error installing valgrind suppression file."
+        exit 1
+    fi
 }
 
 
@@ -151,3 +162,4 @@ if $import_errors; then
     fi
     exit 1
 fi
+

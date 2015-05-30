@@ -7,17 +7,11 @@ Group Theory and Sage
 
 .. MODULEAUTHOR:: Robert A. Beezer, University of Puget Sound
 
-Changelog:
-
-* 2009/01/30  Version 1.0, first complete release
-* 2009/03/03  Version 1.1, added cyclic group size interact
-* 2010/03/10  Version 1.3, dropped US on license, some edits.
-
 This compilation collects Sage commands that are useful for a student
 in an introductory course on group theory.  It is not intended to
 teach Sage or to teach group theory.  (There are many introductory
 texts on group theory and more information on Sage can be found via
-www.sagemath.org.) Rather, by presenting commands roughly in the
+`<www.sagemath.org>`_) Rather, by presenting commands roughly in the
 order a student would learn the corresponding mathematics they might
 be encouraged to experiment and learn more about mathematics and learn
 more about Sage.  Not coincidentally, when Sage was the acronym SAGE,
@@ -31,6 +25,14 @@ link below each cell, for a fully interactive experience. A PDF and
 Sage worksheet versions of this tutorial are available at
 http://abstract.ups.edu/sage-aata.html.
 
+.. contents:: Table of contents
+   :depth: 2
+
+Changelog:
+
+* 2009/01/30  Version 1.0, first complete release
+* 2009/03/03  Version 1.1, added cyclic group size interact
+* 2010/03/10  Version 1.3, dropped US on license, some edits.
 
 Basic properties of the integers
 ================================
@@ -325,10 +327,10 @@ Creating groups
 ---------------
 
 This is an annotated list of some small well-known permutation groups
-that can be created simply in Sage. (You can find more in the source
+that can be created simply in Sage. You can find more in the source
 code file ::
 
-    SAGE_ROOT/devel/sage/sage/groups/perm_gps/permgroup_named.py
+    SAGE_ROOT/src/sage/groups/perm_gps/permgroup_named.py
 
 * ``SymmetricGroup(n)``: All `n!` permutations on `n` symbols.
 * ``DihedralGroup(n)``: Symmetries of an `n`-gon.  Rotations and
@@ -411,7 +413,18 @@ The command ::
 
     sage: H = DihedralGroup(6)
     sage: H.list()
-    [(), (2,6)(3,5), (1,2)(3,6)(4,5), (1,2,3,4,5,6), (1,3)(4,6), (1,3,5)(2,4,6), (1,4)(2,3)(5,6), (1,4)(2,5)(3,6), (1,5)(2,4), (1,5,3)(2,6,4), (1,6,5,4,3,2), (1,6)(2,5)(3,4)]
+    [(),
+     (1,6)(2,5)(3,4),
+     (1,2,3,4,5,6),
+     (1,5)(2,4),
+     (2,6)(3,5),
+     (1,3,5)(2,4,6),
+     (1,4)(2,3)(5,6),
+     (1,6,5,4,3,2),
+     (1,4)(2,5)(3,6),
+     (1,2)(3,6)(4,5),
+     (1,5,3)(2,6,4),
+     (1,3)(4,6)]
 
 will return all of the elements of `H` in a fixed order as a Python
 list.  Indexing (``[ ]``) can be used to extract the individual
@@ -420,7 +433,7 @@ list begins at zero. ::
 
     sage: H = DihedralGroup(6)
     sage: elements = H.list()
-    sage: elements[3]
+    sage: elements[2]
     (1,2,3,4,5,6)
 
 
@@ -434,17 +447,18 @@ The command ::
     *  a b c d e f g h i j k l
      +------------------------
     a| a b c d e f g h i j k l
-    b| b a d c f e h g j i l k
-    c| c k a e d g f i h l b j
-    d| d l b f c h e j g k a i
-    e| e j k g a i d l f b c h
-    f| f i l h b j c k e a d g
-    g| g h j i k l a b d c e f
-    h| h g i j l k b a c d f e
-    i| i f h l j b k c a e g d
-    j| j e g k i a l d b f h c
-    k| k c e a g d i f l h j b
-    l| l d f b h c j e k g i a
+    b| b a e h c j k d l f g i
+    c| c d f g b i l a k e h j
+    d| d c b a f e h g j i l k
+    e| e h j k a l i b g c d f
+    f| f g i l d k j c h b a e
+    g| g f d c i b a l e k j h
+    h| h e a b j c d k f l i g
+    i| i l k j g h e f a d c b
+    j| j k l i h g f e d a b c
+    k| k j h e l a b i c g f d
+    l| l i g f k d c j b h e a
+
 
 will construct the Cayley table (or "multiplication table") of `H`.
 By default the table uses lowercase Latin letters to name the elements
@@ -457,8 +471,7 @@ element named ``e``::
     sage: T = H.cayley_table()
     sage: headings = T.row_keys()
     sage: headings[4]
-    (1,3)(4,6)
-
+    (2,6)(3,5)
 
 Center
 ------
@@ -509,7 +522,7 @@ In more mathematical notation, we might write
     sage: sigma = G("(1,2,3) (4,5)")
     sage: H = G.subgroup([sigma])
     sage: H.list()
-    [(), (4,5), (1,2,3), (1,2,3)(4,5), (1,3,2), (1,3,2)(4,5)]
+    [(), (1,2,3)(4,5), (1,3,2), (4,5), (1,2,3), (1,3,2)(4,5)]
 
 Experiment by trying different permutations for ``sigma`` and
 observing the effect on ``H``.
@@ -528,7 +541,7 @@ preceded by the order of each element. ::
     sage: n = 20
     sage: CN = CyclicPermutationGroup(n)
     sage: for g in CN:
-    ...       print g.order(), "  ", g
+    ....:     print g.order(), "  ", g
     ...
     1    ()
     20    (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
@@ -563,7 +576,11 @@ subgroup::
     sage: rho = C20("(1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)")
     sage: H = C20.subgroup([rho])
     sage: H.list()
-    [(), (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20), (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16), (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12), (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)]
+    [(),
+     (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8),
+     (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12),
+     (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16),
+     (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)]
 
 For a cyclic group, the following command will list *all* of the
 subgroups. ::
@@ -721,9 +738,32 @@ rotation about each axis.  These three rotations will construct the
 entire symmetry group.  Use ::
 
     sage: cube = PermutationGroup(["(3,2,6,7)(4,1,5,8)",
-    ...   "(1,2,6,5)(4,3,7,8)", "(1,2,3,4)(5,6,7,8)"])
+    ....:     "(1,2,6,5)(4,3,7,8)", "(1,2,3,4)(5,6,7,8)"])
     sage: cube.list()
-    [(), (2,4,5)(3,8,6), (2,5,4)(3,6,8), (1,2)(3,5)(4,6)(7,8), (1,2,3,4)(5,6,7,8), (1,2,6,5)(3,7,8,4), (1,3,6)(4,7,5), (1,3)(2,4)(5,7)(6,8), (1,3,8)(2,7,5), (1,4,3,2)(5,8,7,6), (1,4,8,5)(2,3,7,6), (1,4)(2,8)(3,5)(6,7), (1,5,6,2)(3,4,8,7), (1,5,8,4)(2,6,7,3), (1,5)(2,8)(3,7)(4,6), (1,6,3)(4,5,7), (1,6)(2,5)(3,8)(4,7), (1,6,8)(2,7,4), (1,7)(2,3)(4,6)(5,8), (1,7)(2,6)(3,5)(4,8), (1,7)(2,8)(3,4)(5,6), (1,8,6)(2,4,7), (1,8,3)(2,5,7), (1,8)(2,7)(3,6)(4,5)]
+    [(),
+     (1,2,3,4)(5,6,7,8),
+     (1,2,6,5)(3,7,8,4),
+     (1,5,8,4)(2,6,7,3),
+     (1,6,8)(2,7,4),
+     (1,3,8)(2,7,5),
+     (1,6,3)(4,5,7),
+     (1,6)(2,5)(3,8)(4,7),
+     (2,5,4)(3,6,8),
+     (1,3)(2,4)(5,7)(6,8),
+     (1,8)(2,7)(3,6)(4,5),
+     (1,7)(2,3)(4,6)(5,8),
+     (1,5,6,2)(3,4,8,7),
+     (1,7)(2,6)(3,5)(4,8),
+     (1,7)(2,8)(3,4)(5,6),
+     (1,4,3,2)(5,8,7,6),
+     (1,4)(2,8)(3,5)(6,7),
+     (1,5)(2,8)(3,7)(4,6),
+     (1,4,8,5)(2,3,7,6),
+     (1,2)(3,5)(4,6)(7,8),
+     (1,8,6)(2,4,7),
+     (1,3,6)(4,7,5),
+     (2,4,5)(3,8,6),
+     (1,8,3)(2,5,7)]
 
 A cube has four distinct diagonals (joining opposite vertices through
 the center of the cube).  Each symmetry of the cube will cause the
@@ -734,7 +774,7 @@ diagonals is created by exactly one symmetry of the 8 vertices of the
 cube.  So this subgroup of `S_8` is "the same as" `S_4`.  In Sage::
 
     sage: cube = PermutationGroup(["(3,2,6,7)(4,1,5,8)",
-    ...   "(1,2,6,5)(4,3,7,8)", "(1,2,3,4)(5,6,7,8)"])
+    ....:     "(1,2,6,5)(4,3,7,8)", "(1,2,3,4)(5,6,7,8)"])
     sage: cube.is_isomorphic(SymmetricGroup(4))
     True
 
@@ -749,7 +789,30 @@ two opposite faces) can be used as generators of the symmetry group::
 
     sage: cubeface = PermutationGroup(["(1,3,2,5)", "(1,4,2,6)", "(3,4,5,6)"])
     sage: cubeface.list()
-    [(), (3,4,5,6), (3,5)(4,6), (3,6,5,4), (1,2)(4,6), (1,2)(3,4)(5,6), (1,2)(3,5), (1,2)(3,6)(4,5), (1,3)(2,5)(4,6), (1,3,2,5), (1,3,4)(2,5,6), (1,3,6)(2,5,4), (1,4,3)(2,6,5), (1,4,5)(2,6,3), (1,4,2,6), (1,4)(2,6)(3,5), (1,5,2,3), (1,5)(2,3)(4,6), (1,5,6)(2,3,4), (1,5,4)(2,3,6), (1,6,3)(2,4,5), (1,6,5)(2,4,3), (1,6,2,4), (1,6)(2,4)(3,5)]
+    [(),
+     (3,4,5,6),
+     (1,4,2,6),
+     (1,3,2,5),
+     (1,3,4)(2,5,6),
+     (1,3,6)(2,5,4),
+     (1,2)(3,5),
+     (1,4,5)(2,6,3),
+     (1,5,6)(2,3,4),
+     (3,5)(4,6),
+     (1,2)(4,6),
+     (1,5,2,3),
+     (1,6)(2,4)(3,5),
+     (1,4)(2,6)(3,5),
+     (1,2)(3,4)(5,6),
+     (1,3)(2,5)(4,6),
+     (3,6,5,4),
+     (1,5)(2,3)(4,6),
+     (1,6,2,4),
+     (1,2)(3,6)(4,5),
+     (1,6,3)(2,4,5),
+     (1,6,5)(2,4,3),
+     (1,5,4)(2,3,6),
+     (1,4,3)(2,6,5)]
 
 Again, this subgroup of `S_6` is "same as" the full symmetric group, `S_4`::
 
@@ -873,7 +936,7 @@ conjugacy classes of the full symmetric group on 5 symbols::
     sage: reps = G.conjugacy_classes_representatives()
     sage: class_sizes = []
     sage: for g in reps:
-    ...       class_sizes.append(group_order / G.centralizer(g).order())
+    ....:     class_sizes.append(group_order / G.centralizer(g).order())
     ...
     sage: class_sizes
     [1, 10, 15, 20, 20, 30, 24]
@@ -894,33 +957,31 @@ example, if `p` is a prime, and `p^r` divides the order of a group
 could be found among the output of the
 ``conjugacy_classes_subgroups()`` command by checking the orders of
 the subgroups produced.  The ``map()`` command is a quick way
-to do this.  The symmetric group on 8 symbols, `S_8`, has order
-`8! = 40320` and is divisible by `2^7 = 128`.  Let's find one example
-of a subgroup of permutations on 8 symbols with order 128. The next
-command takes a few minutes to run, so go get a cup of coffee after
-you set it in motion. ::
+to do this.  The symmetric group on 7 symbols, `S_7`, has order
+`7! = 5040` and is divisible by `2^4 = 16`.  Let's find one example
+of a subgroup of permutations on 4 symbols with order 16::
 
-    sage: G = SymmetricGroup(8)
-    sage: subgroups = G.conjugacy_classes_subgroups()  # long time (9s on sage.math, 2011)
-    sage: map(order, subgroups)  # long time
-    [1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 18, 18, 18, 18, 18, 18, 20, 20, 20, 21, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 30, 30, 30, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 40, 42, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 56, 60, 60, 60, 60, 60, 64, 64, 64, 64, 64, 64, 64, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 120, 120, 120, 120, 120, 120, 120, 128, 144, 144, 144, 168, 168, 168, 180, 192, 192, 192, 192, 192, 240, 240, 288, 288, 288, 336, 360, 360, 360, 360, 384, 576, 576, 576, 720, 720, 720, 720, 1152, 1344, 1440, 2520, 5040, 20160, 40320]
+    sage: G = SymmetricGroup(7)
+    sage: subgroups = G.conjugacy_classes_subgroups()
+    sage: map(order, subgroups)
+    [1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 8, 9, 10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 14, 16, 18, 18, 18, 20, 20, 20, 21, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 36, 36, 36, 36, 40, 42, 48, 48, 48, 60, 60, 72, 72, 72, 72, 120, 120, 120, 120, 144, 168, 240, 360, 720, 2520, 5040]
 
 The ``map(order, subgroups)`` command will apply the ``order()``
-method to each of the subgroups in the list ``subgroups``.  The output
-is thus a large list of the orders of many  subgroups (296 to be
-precise).  If you count carefully, you will see that the 259-th
-subgroup has order 128.  You can retrieve this group for further study
-by referencing it as ``subgroups[258]`` (remember that counting starts at
-zero).
+function to each of the subgroups in the list ``subgroups``.  The
+output is thus a large list of the orders of many subgroups (96 to be
+precise).  If you count carefully, you will see that the 49-th
+subgroup has order 16.  You can retrieve this group for further study
+by referencing it as ``subgroups[48]`` (remember that counting starts
+at zero).
 
 If `p^r` is the highest power of `p` to divide the order of `G`, then
 a subgroup of order `p^r` is known as a "Sylow `p`-subgroup." Sylow's
 Theorems also say any two Sylow `p`-subgroups are conjugate, so the
 output of ``conjugacy_classes_subgroups()`` should only contain each
 Sylow `p`-subgroup once.  But there is an easier way,
-``sylow_subgroup(p)`` will return one.  Notice that the argument of
-the command is just the prime $p$, not the full power `p^r`.  Failure
-to use a prime will generate an informative error message.
+``sylow_subgroup(p)`` will return one. Notice that the argument of the
+command is just the prime $p$, not the full power `p^r`.  Failure to
+use a prime will generate an informative error message.
 
 
 Groups of small order as permutation groups

@@ -4,46 +4,53 @@ Calculate symplectic bases for matrices over fields and the integers.
 This module finds a symplectic basis for an anti-symmetric,
 alternating matrix M defined over a field or the integers.
 
-Anti-symmetric means that $M = -M^t$, where $M^t$ denotes the
-transpose of $M$.  Alternating means that the diagonal of $M$ is
+Anti-symmetric means that `M = -M^t`, where `M^t` denotes the
+transpose of `M`.  Alternating means that the diagonal of `M` is
 identically zero.
 
-A symplectic basis is a basis of the form $e_1,
-\ldots, e_j, f_1, \ldots, f_j, z_1, \ldots, z_k$ such that
-    * $z_i M v^t$ = 0 for all vectors $v$;
-    * $e_i M {e_j}^t = 0$ for all $i, j$;
-    * $f_i M {f_j}^t = 0$ for all $i, j$;
-    * $e_i M {f_j}^t = 0$ for all $i$ not equal $j$;
+A symplectic basis is a basis of the form `e_1,
+\ldots, e_j, f_1, \ldots, f_j, z_1, \ldots, z_k` such that
+
+* `z_i M v^t` = 0 for all vectors `v`;
+* `e_i M {e_j}^t = 0` for all `i, j`;
+* `f_i M {f_j}^t = 0` for all `i, j`;
+* `e_i M {f_j}^t = 0` for all `i` not equal `j`;
+
 and such that the non-zero terms
-    * $e_i M {f_i}^t$ are "as nice as possible": 1 over fields, or
-      integers satisfying divisibility properties otherwise.
+
+* `e_i M {f_i}^t` are "as nice as possible": 1 over fields, or
+  integers satisfying divisibility properties otherwise.
 
 REFERENCES:
-    Bourbaki gives a nice proof that can be made constructive but is
-    not efficient (see Section 5, Number 1, Theorem 1, page 79):
 
-    Bourbaki, N.  Elements of Mathematics, Algebra III, Springer
-    Verlag 2007.
+Bourbaki gives a nice proof that can be made constructive but is
+not efficient (see Section 5, Number 1, Theorem 1, page 79):
 
-    Kuperburg gives a more efficient and constructive exposition (see
-    Theorem 18).
+Bourbaki, N.  Elements of Mathematics, Algebra III, Springer
+Verlag 2007.
 
-    Kuperberg, Greg.  Kasteleyn Cokernels.  Electr. J. Comb. 9(1), 2002.
+Kuperburg gives a more efficient and constructive exposition (see
+Theorem 18).
+
+Kuperberg, Greg.  Kasteleyn Cokernels.  Electr. J. Comb. 9(1), 2002.
 
 TODO:
-    The routine over the integers applies over general principal ideal
-    domains.
+
+The routine over the integers applies over general principal ideal
+domains.
 
 WARNING:
-    This code is not a good candidate for conversion to Cython.  The
-    majority of the execution time is spent adding multiples of
-    columns and rows, which is already fast.  It would be better to
-    devise a better algorithm, perhaps modular or based on a fast
-    \code{smith_form} implementation.
+
+This code is not a good candidate for conversion to Cython.  The
+majority of the execution time is spent adding multiples of
+columns and rows, which is already fast.  It would be better to
+devise a better algorithm, perhaps modular or based on a fast
+``smith_form`` implementation.
 
 AUTHOR:
-    -- Nick Alexander: initial implementation
-    -- David Loeffler (2008-12-08): changed conventions for consistency with smith_form
+
+- Nick Alexander: initial implementation
+- David Loeffler (2008-12-08): changed conventions for consistency with smith_form
 """
 
 ######################################################################
@@ -65,7 +72,8 @@ def _inplace_move_to_positive_pivot(G, row, col, B, pivot):
 
     WARNING: not intended for external use!
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.matrix.symplectic_basis import _inplace_move_to_positive_pivot
         sage: E = matrix(ZZ, 4, 4, [0, 16, 0, 2, -16, 0, 0, -4, 0, 0, 0, 0, -2, 4, 0, 0]); E
         [  0  16   0   2]
@@ -132,25 +140,27 @@ def symplectic_basis_over_field(M):
     M defined over a field.
 
     Returns a pair (F, C) such that the rows of C form a symplectic
-    basis for M and F = C * M * C.transpose().
+    basis for M and ``F = C * M * C.transpose()``.
 
     Anti-symmetric means that $M = -M^t$.  Alternating means that the
     diagonal of $M$ is identically zero.
 
     A symplectic basis is a basis of the form $e_1,
     \ldots, e_j, f_1, \ldots f_j, z_1, \ldots, z_k$ such that
-        * $z_i M v^t$ = 0 for all vectors $v$;
-        * $e_i M {e_j}^t = 0$ for all $i, j$;
-        * $f_i M {f_j}^t = 0$ for all $i, j$;
-        * $e_i M {f_i}^t = 1$ for all $i$;
-        * $e_i M {f_j}^t = 0$ for all $i$ not equal $j$.
+
+    * $z_i M v^t$ = 0 for all vectors $v$;
+    * $e_i M {e_j}^t = 0$ for all $i, j$;
+    * $f_i M {f_j}^t = 0$ for all $i, j$;
+    * $e_i M {f_i}^t = 1$ for all $i$;
+    * $e_i M {f_j}^t = 0$ for all $i$ not equal $j$.
 
     See the examples for a pictorial description of such a basis.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.matrix.symplectic_basis import symplectic_basis_over_field
 
-        A full rank exact example:
+    A full rank exact example::
 
         sage: E = matrix(QQ, 8, 8, [0, -1/2, -2, 1/2, 2, 0, -2, 1, 1/2, 0, -1, -3, 0, 2, 5/2, -3, 2, 1, 0, 3/2, -1, 0, -1, -2, -1/2, 3, -3/2, 0, 1, 3/2, -1/2, -1/2, -2, 0, 1, -1, 0, 0, 1, -1, 0, -2, 0, -3/2, 0, 0, 1/2, -2, 2, -5/2, 1, 1/2, -1, -1/2, 0, -1, -1, 3, 2, 1/2, 1, 2, 1, 0]); E
         [   0 -1/2   -2  1/2    2    0   -2    1]
@@ -173,7 +183,7 @@ def symplectic_basis_over_field(M):
         sage: F == C * E * C.transpose()
         True
 
-        An example over a finite field:
+    An example over a finite field::
 
         sage: E = matrix(GF(7), 8, 8, [0, -1/2, -2, 1/2, 2, 0, -2, 1, 1/2, 0, -1, -3, 0, 2, 5/2, -3, 2, 1, 0, 3/2, -1, 0, -1, -2, -1/2, 3, -3/2, 0, 1, 3/2, -1/2, -1/2, -2, 0, 1, -1, 0, 0, 1, -1, 0, -2, 0, -3/2, 0, 0, 1/2, -2, 2, -5/2, 1, 1/2, -1, -1/2, 0, -1, -1, 3, 2, 1/2, 1, 2, 1, 0]); E
         [0 3 5 4 2 0 5 1]
@@ -196,7 +206,7 @@ def symplectic_basis_over_field(M):
         sage: F == C * E * C.transpose()
         True
 
-        The tricky case of characteristic 2:
+    The tricky case of characteristic 2::
 
         sage: E = matrix(GF(2), 8, 8, [0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0]); E
         [0 0 1 1 0 1 0 1]
@@ -219,7 +229,7 @@ def symplectic_basis_over_field(M):
         sage: F == C * E * C.transpose()
         True
 
-        An inexact example:
+    An inexact example::
 
         sage: E = matrix(RR, 8, 8, [0.000000000000000, 0.420674846479344, -0.839702420666807, 0.658715385244413, 1.69467394825853, -1.14718543053828, 1.03076138152950, -0.227739521708484, -0.420674846479344, 0.000000000000000, 0.514381455379082, 0.282194064028260, -1.38977093018412, 0.278305070958958, -0.0781320488361574, -0.496003664217833, 0.839702420666807, -0.514381455379082, 0.000000000000000, -0.00618222322875384, -0.318386939149028, -0.0840205427053993, 1.28202592892333, -0.512563654267693, -0.658715385244413, -0.282194064028260, 0.00618222322875384, 0.000000000000000, 0.852525732369211, -0.356957405431611, -0.699960114607661, 0.0260496330859998, -1.69467394825853, 1.38977093018412, 0.318386939149028, -0.852525732369211, 0.000000000000000, -0.836072521423577, 0.450137632758469, -0.696145287292091, 1.14718543053828, -0.278305070958958, 0.0840205427053993, 0.356957405431611, 0.836072521423577, 0.000000000000000, 0.214878541347751, -1.20221688928379, -1.03076138152950, 0.0781320488361574, -1.28202592892333, 0.699960114607661, -0.450137632758469, -0.214878541347751, 0.000000000000000, 0.785074452163036, 0.227739521708484, 0.496003664217833, 0.512563654267693, -0.0260496330859998, 0.696145287292091, 1.20221688928379, -0.785074452163036, 0.000000000000000]); E
         [   0.000000000000000    0.420674846479344   -0.839702420666807    0.658715385244413     1.69467394825853    -1.14718543053828     1.03076138152950   -0.227739521708484]
@@ -252,17 +262,17 @@ def symplectic_basis_over_field(M):
         Full MatrixSpace of 8 by 8 dense matrices over Real Field with 53 bits of precision
     """
     if not M.base_ring().is_field():
-        raise ValueError, "Can only find symplectic bases for matrices over fields"
+        raise ValueError("Can only find symplectic bases for matrices over fields")
     if not M.is_square():
-        raise ValueError, "Can only find symplectic bases for square matrices"
+        raise ValueError("Can only find symplectic bases for square matrices")
     if not M.transpose() + M == 0:
-        raise ValueError, "Can only find symplectic bases for anti-symmetric matrices"
+        raise ValueError("Can only find symplectic bases for anti-symmetric matrices")
 
     E = M.__copy__()
     n = E.nrows()
     for i in range(n):
         if not E[i, i].is_zero():
-            raise ValueError, "Can only find symplectic bases for alternating matrices"
+            raise ValueError("Can only find symplectic bases for alternating matrices")
     B = E.parent().one().__copy__()
 
     zeroes = []
@@ -319,11 +329,12 @@ def _smallest_element_position_or_None(E, pivot):
     r"""
     Return a tuple (row, col) such that E[row, col] is the smallest
     positive element of E, or None if E has no positive elements, and
-    \code{row >= pivot} and \code{col >= pivot}.
+    ``row >= pivot`` and ``col >= pivot``.
 
     WARNING: not intended for external use!
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.matrix.symplectic_basis import _smallest_element_position_or_None
 
         sage: E = matrix(ZZ, 4, 4, [0, 16, 0, 2, -16, 0, 0, -4, 0, 0, 0, 0, -2, 4, 0, 0]); E
@@ -357,27 +368,29 @@ def symplectic_basis_over_ZZ(M):
     Returns a pair (F, C) such that the rows of C form a symplectic
     basis for M and F = C * M * C.transpose().
 
-    Anti-symmetric means that $M = -M^t$.  Alternating means that the
-    diagonal of $M$ is identically zero.
+    Anti-symmetric means that `M = -M^t`.  Alternating means that the
+    diagonal of `M` is identically zero.
 
-    A symplectic basis is a basis of the form $e_1,
-    \ldots, e_j, f_1, \ldots, f_j, z_1, \ldots, z_k$ such that
-        * $z_i M v^t$ = 0 for all vectors $v$;
-        * $e_i M {e_j}^t = 0$ for all $i, j$;
-        * $f_i M {f_j}^t = 0$ for all $i, j$;
-        * $e_i M {f_i}^t = d_i$ for all $i$, where d_i are positive integers such that $d_{i} | d_{i+1}$ for all $i$;
-        * $e_i M {f_j}^t = 0$ for all $i$ not equal $j$.
+    A symplectic basis is a basis of the form `e_1,
+    \ldots, e_j, f_1, \ldots, f_j, z_1, \ldots, z_k` such that
 
-    The ordering for the factors $d_{i} | d_{i+1}$ and for the
+    * `z_i M v^t` = 0 for all vectors `v`;
+    * `e_i M {e_j}^t = 0` for all `i, j`;
+    * `f_i M {f_j}^t = 0` for all `i, j`;
+    * `e_i M {f_i}^t = d_i` for all `i`, where d_i are positive integers such that `d_{i} | d_{i+1}` for all `i`;
+    * `e_i M {f_j}^t = 0` for all `i` not equal `j`.
+
+    The ordering for the factors `d_{i} | d_{i+1}` and for the
     placement of zeroes was chosen to agree with the output of
-    \code{smith_form}.
+    ``smith_form``.
 
     See the examples for a pictorial description of such a basis.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.matrix.symplectic_basis import symplectic_basis_over_ZZ
 
-        An example which does not have full rank:
+    An example which does not have full rank::
 
         sage: E = matrix(ZZ, 4, 4, [0, 16, 0, 2, -16, 0, 0, -4, 0, 0, 0, 0, -2, 4, 0, 0]); E
         [  0  16   0   2]
@@ -393,7 +406,7 @@ def symplectic_basis_over_ZZ(M):
         sage: C * E * C.transpose() == F
         True
 
-        A larger example:
+    A larger example::
 
         sage: E = matrix(ZZ, 8, 8, [0, 25, 0, 0, -37, -3, 2, -5, -25, 0, 1, -5, -54, -3, 3, 3, 0, -1, 0, 7, 0, -4, -20, 0, 0, 5, -7, 0, 0, 14, 0, -3, 37, 54, 0, 0, 0, 2, 3, -12, 3, 3, 4, -14, -2, 0, -3, 2, -2, -3, 20, 0, -3, 3, 0, -2, 5, -3, 0, 3, 12, -2, 2, 0]); E
         [  0  25   0   0 -37  -3   2  -5]
@@ -426,7 +439,7 @@ def symplectic_basis_over_ZZ(M):
         [    0     0     0     0     0     0 20191     0]
         [    0     0     0     0     0     0     0 20191]
 
-        An odd dimensional example:
+    An odd dimensional example::
 
         sage: E = matrix(ZZ, 5, 5, [0, 14, 0, -8, -2, -14, 0, -3, -11, 4, 0, 3, 0, 0, 0, 8, 11, 0, 0, 8, 2, -4, 0, -8, 0]); E
         [  0  14   0  -8  -2]
@@ -456,15 +469,15 @@ def symplectic_basis_over_ZZ(M):
         Full MatrixSpace of 5 by 5 dense matrices over Integer Ring
     """
     if not M.is_square():
-        raise ValueError, "Can only find symplectic bases for square matrices"
+        raise ValueError("Can only find symplectic bases for square matrices")
     if not M.transpose() + M == 0:
-        raise ValueError, "Can only find symplectic bases for anti-symmetric matrices"
+        raise ValueError("Can only find symplectic bases for anti-symmetric matrices")
 
     E = M.__copy__().change_ring(ZZ)
     n = E.nrows()
     for i in range(n):
         if not E[i, i].is_zero():
-            raise ValueError, "Can only find symplectic bases for alternating matrices"
+            raise ValueError("Can only find symplectic bases for alternating matrices")
     B = E.parent().one().__copy__()
 
     zeroes = []

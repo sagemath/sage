@@ -10,8 +10,21 @@ AUTHORS:
 - Johan S. R. Nielsen (8 apr 2011) -- improve introspection on decorators.
 - Simon King (2011-05-26) -- improve introspection of sage_wraps. Put this
   file into the reference manual.
+- Julian Rueth (2014-03-19): added ``decorator_keywords`` decorator
 
 """
+#*****************************************************************************
+#       Copyright (C) 2009 Tim Dumol
+#                     2010,2011 Johan S. R. Nielsen
+#                     2011 Simon King <simon.king@uni-jena.de>
+#                     2014 Julian Rueth <julian.rueth@fsfe.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
 from copy import copy
@@ -86,13 +99,13 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
         sage: sage_getfile(I.interreduced_basis)
-        '...sage/rings/polynomial/multi_polynomial_ideal.py'
+        '.../sage/interfaces/singular.py'
         sage: sage_getsourcelines(I.interreduced_basis)
-        (['    @singular_standard_options\n',
-          '    @libsingular_standard_options\n',
+        (['    @singular_gb_standard_options\n',
+          '    @libsingular_gb_standard_options\n',
           '    def interreduced_basis(self):\n',
           ...
-          '        return ret\n'], ...)
+          '        return self.basis.reduced()\n'], ...)
 
     Demonstrate that sage_wraps works for non-function callables
     (:trac:`9919`)::
@@ -693,7 +706,6 @@ class rename_keyword(object):
 
         return wrapper
 
-
 class specialize:
     r"""
     A decorator generator that returns a decorator that in turn
@@ -731,3 +743,42 @@ class specialize:
 
     def __call__(self, f):
         return sage_wraps(f)(partial(f, *self.args, **self.kwargs))
+
+def decorator_keywords(func):
+    r"""
+    A decorator for decorators with optional keyword arguments.
+
+    EXAMPLES::
+
+        sage: from sage.misc.decorators import decorator_keywords
+        sage: @decorator_keywords
+        ....: def preprocess(f=None, processor=None):
+        ....:     def wrapper(*args, **kwargs):
+        ....:         if processor is not None:
+        ....:             args, kwargs = processor(*args, **kwargs)
+        ....:         return f(*args, **kwargs)
+        ....:     return wrapper
+
+    This decorator can be called with and without arguments::
+
+        sage: @preprocess
+        ....: def foo(x): return x
+        sage: foo(None)
+        sage: foo(1)
+        1
+
+        sage: def normalize(x): return ((0,),{}) if x is None else ((x,),{})
+        sage: @preprocess(processor=normalize)
+        ....: def foo(x): return x
+        sage: foo(None)
+        0
+        sage: foo(1)
+        1
+    """
+    @sage_wraps(func)
+    def wrapped(f=None, **kwargs):
+        if f is None:
+            return sage_wraps(func)(lambda f:func(f, **kwargs))
+        else:
+            return func(f, **kwargs)
+    return wrapped

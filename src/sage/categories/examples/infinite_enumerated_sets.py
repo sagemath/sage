@@ -33,9 +33,9 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         sage: NN.element_class
         <type 'sage.rings.integer.Integer'>
         sage: it = iter(NN)
-        sage: [it.next(), it.next(), it.next(), it.next(), it.next()]
+        sage: [next(it), next(it), next(it), next(it), next(it)]
         [0, 1, 2, 3, 4]
-        sage: x = it.next(); type(x)
+        sage: x = next(it); type(x)
         <type 'sage.rings.integer.Integer'>
         sage: x.parent()
         Integer Ring
@@ -113,7 +113,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
             sage: NN = InfiniteEnumeratedSets().example()
             sage: g = iter(NN)
-            sage: g.next(), g.next(), g.next(), g.next()
+            sage: next(g), next(g), next(g), next(g)
             (0, 1, 2, 3)
         """
         i = Integer(0)
@@ -137,7 +137,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         if elt in self:
             return self._element_constructor_(elt)
         else:
-            raise ValueError, "Value %s is not a non negative integer."%(elt)
+            raise ValueError("Value %s is not a non negative integer."%(elt))
 
     def an_element(self):
         """

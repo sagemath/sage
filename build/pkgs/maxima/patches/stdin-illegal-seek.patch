@@ -1,0 +1,32 @@
+#17667: Maxima parser fails on ==
+
+There is no == operator in Maxima, but on invalid input it does bad
+things to the C-level stream. On Linux (below) this is caught by
+gilbc, on OSX the Maxima process hangs indefinitely.
+
+Patch taken from the upstream repo:
+
+commit f7c388a0f030b2701ac982ea66cce61ce8002bf8
+tree 948ebe84ce56a76090e2b86403b18d7bc262e67c
+parent a57b4323587f6f4c1115a51915cfb096f4d820c2
+author Andrej Vodopivec <andrej.vodopivec@gmail.com> 1423041512 +0100
+committer Andrej Vodopivec <andrej.vodopivec@gmail.com> 1423041512 +0100
+
+    mread-synerr: don't report line/column for errors from user input.
+
+diff -ru src/src/nparse.lisp b/src/nparse.lisp
+--- src/src/nparse.lisp	2014-11-19 06:00:09.000000000 +0100
++++ b/src/nparse.lisp	2015-02-13 10:12:49.107785016 +0100
+@@ -37,8 +37,10 @@
+ (defmvar $report_synerr_info t "If T, report the syntax error details from all sources; otherwise, only report details from standard-input.")
+ 
+ (defun mread-synerr (format-string &rest l)
+-  (let ((fp (file-position *parse-stream*))
+-	(file (cadr *current-line-info*)))
++  (let ((fp (and (not (eq *parse-stream* *standard-input*))
++                 (file-position *parse-stream*)))
++	(file (and (not (eq *parse-stream* *standard-input*))
++                   (cadr *current-line-info*))))
+     (flet ((line-number ()
+ 	     ;; Fix me: Neither batch nor load track the line number
+ 	     ;; correctly. batch, via dbm-read, does not track the

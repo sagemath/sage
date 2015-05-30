@@ -1,3 +1,5 @@
+"Interface to the free online MAGMA calculator"
+
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #

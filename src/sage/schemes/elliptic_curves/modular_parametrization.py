@@ -208,7 +208,7 @@ class ModularParameterization:
             raise NotImplementedError
         z = CC(z)
         if z.imag() <= 0:
-            raise ValueError, "Point must be in the upper half plane"
+            raise ValueError("Point must be in the upper half plane")
         # TODO: for very small imaginary part, maybe try to transform under
         # \Gamma_0(N) to a better representative?
         q = (2*CC.gen()*CC.pi()*z).exp()
@@ -245,9 +245,9 @@ class ModularParameterization:
 
         EXAMPLES::
 
-            sage: E=EllipticCurve('389a1')
+            sage: E = EllipticCurve('389a1')
             sage: phi = E.modular_parametrization()
-            sage: X,Y = phi.power_series(prec = 10)
+            sage: X,Y = phi.power_series(prec=10)
             sage: X
             q^-2 + 2*q^-1 + 4 + 7*q + 13*q^2 + 18*q^3 + 31*q^4 + 49*q^5 + 74*q^6 + 111*q^7 + O(q^8)
             sage: Y
@@ -264,21 +264,16 @@ class ModularParameterization:
             sage: E.defining_polynomial()(X,Y,1) + O(q^11) == 0
             True
 
-        Note that below we have to change variable from x to q::
+        Note that below we have to change variable from `x` to `q`::
 
-            sage: a1,_,a3,_,_=E.a_invariants()
-            sage: f=E.q_expansion(17)
-            sage: q=f.parent().gen()
+            sage: a1,_,a3,_,_ = E.a_invariants()
+            sage: f = E.q_expansion(17)
+            sage: q = f.parent().gen()
             sage: f/q == (X.derivative()/(2*Y+a1*X+a3))
             True
         """
         R = LaurentSeriesRing(RationalField(),'q')
         if not self._E.is_minimal():
-            raise NotImplementedError, "Only implemented for minimal curves."
-        from sage.libs.all import pari
-        old_prec = pari.get_series_precision()
-        pari.set_series_precision(prec-1)
-        XY = self._E.pari_mincurve().elltaniyama()
-        pari.set_series_precision(old_prec)
+            raise NotImplementedError("only implemented for minimal curves")
+        XY = self._E.pari_mincurve().elltaniyama(prec-1)
         return R(XY[0]),R(XY[1])
-

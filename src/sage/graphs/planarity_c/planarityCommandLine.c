@@ -142,10 +142,10 @@ int Result;
  Quick regression test
  ****************************************************************************/
 
-int runSpecificGraphTests();
+int runSpecificGraphTests(void);
 int runSpecificGraphTest(char *command, char *infileName);
 
-int runSpecificGraphTests()
+int runSpecificGraphTests(void)
 {
 	char origDir[2049];
 	int retVal = 0;

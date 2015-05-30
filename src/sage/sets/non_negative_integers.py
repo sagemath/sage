@@ -36,7 +36,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         sage: NN.element_class
         <type 'sage.rings.integer.Integer'>
         sage: it = iter(NN)
-        sage: [it.next(), it.next(), it.next(), it.next(), it.next()]
+        sage: [next(it), next(it), next(it), next(it), next(it)]
         [0, 1, 2, 3, 4]
         sage: NN.first()
         0
@@ -154,7 +154,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         if i in self:
             return self.from_integer(i)
         else:
-            raise ValueError, "Value %s in not in %s."%(i, self)
+            raise ValueError("Value %s in not in %s."%(i, self))
 
     from_integer = Integer
 
@@ -166,7 +166,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
             sage: NN = NonNegativeIntegers()
             sage: g = iter(NN)
-            sage: g.next(), g.next(), g.next(), g.next()
+            sage: next(g), next(g), next(g), next(g)
             (0, 1, 2, 3)
         """
         i = 0

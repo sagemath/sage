@@ -114,12 +114,12 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 7])
             sage: I = K.ideal(2, (a + 2*b + 3)/2)
             sage: I.pari_rhnf()
-            [[1, -2; 0, 1], [[2, 1; 0, 1], [1/2, 0; 0, 1/2]]]
+            [[1, -2; 0, 1], [[2, 1; 0, 1], 1/2]]
         """
         try:
             return self.__pari_rhnf
         except AttributeError:
-            nfzk = self.number_field().absolute_field('a').pari_zk()
+            nfzk = self.number_field().pari_nf().nf_subst('x').nf_get_zk()
             rnf = self.number_field().pari_rnf()
             L_hnf = self.absolute_ideal().pari_hnf()
             self.__pari_rhnf = rnf.rnfidealabstorel(nfzk * L_hnf)
@@ -215,8 +215,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: J.absolute_norm()
             22584817
             sage: J.absolute_ideal()
-            Fractional ideal (22584817, -4417/2438733*a^5 - 2867/1625822*a^4 - 1307249/4877466*a^3 - 112151/443406*a^2 - 22904674/2438733*a - 13720435234111/2438733)  # 32-bit
-            Fractional ideal (22584817, -1473/812911*a^5 + 8695/4877466*a^4 - 1308209/4877466*a^3 + 117415/443406*a^2 - 22963264/2438733*a - 13721081784272/2438733)   # 64-bit
+            Fractional ideal (22584817, -1473/812911*a^5 + 8695/4877466*a^4 - 1308209/4877466*a^3 + 117415/443406*a^2 - 22963264/2438733*a - 13721081784272/2438733)
             sage: J.absolute_ideal().norm()
             22584817
 
@@ -403,7 +402,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             ...
             NotImplementedError: For a fractional ideal in a relative number field you must use relative_norm or absolute_norm as appropriate
         """
-        raise NotImplementedError, "For a fractional ideal in a relative number field you must use relative_norm or absolute_norm as appropriate"
+        raise NotImplementedError("For a fractional ideal in a relative number field you must use relative_norm or absolute_norm as appropriate")
 
     def ideal_below(self):
         r"""
@@ -485,7 +484,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: I = K.ideal(3, c)
             sage: J = I.ideal_below(); J
-            Fractional ideal (-b)
+            Fractional ideal (b)
             sage: J.number_field() == F
             True
         """
@@ -505,12 +504,12 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
             sage: K.<a, b> = QQ.extension([x^2 + 11, x^2 - 5])
             sage: K.factor(5)
-            (Fractional ideal (5, 1/2*a - 1/2*b - 1))^2 * (Fractional ideal (5, 1/2*a - 1/2*b + 1))^2
+            (Fractional ideal (5, (1/4*b - 1/4)*a - 1/4*b - 3/4))^2 * (Fractional ideal (5, (1/4*b - 1/4)*a - 1/4*b - 7/4))^2
             sage: K.ideal(5).factor()
-            (Fractional ideal (5, 1/2*a - 1/2*b - 1))^2 * (Fractional ideal (5, 1/2*a - 1/2*b + 1))^2
+            (Fractional ideal (5, (1/4*b - 1/4)*a - 1/4*b - 3/4))^2 * (Fractional ideal (5, (1/4*b - 1/4)*a - 1/4*b - 7/4))^2
             sage: K.ideal(5).prime_factors()
-            [Fractional ideal (5, 1/2*a - 1/2*b - 1),
-             Fractional ideal (5, 1/2*a - 1/2*b + 1)]
+            [Fractional ideal (5, (1/4*b - 1/4)*a - 1/4*b - 3/4),
+             Fractional ideal (5, (1/4*b - 1/4)*a - 1/4*b - 7/4)]
 
             sage: PQ.<X> = QQ[]
             sage: F.<a, b> = NumberFieldTower([X^2 - 2, X^2 - 3])
@@ -638,7 +637,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         """
         if self.is_prime():
             return self.absolute_ideal().ramification_index()
-        raise ValueError, "the fractional ideal (= %s) is not prime"%self
+        raise ValueError("the fractional ideal (= %s) is not prime"%self)
 
     def relative_ramification_index(self):
         """
@@ -673,7 +672,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             abs_index = self.absolute_ramification_index()
             base_ideal = self.ideal_below()
             return ZZ(abs_index/base_ideal.absolute_ramification_index())
-        raise ValueError, "the fractional ideal (= %s) is not prime"%self
+        raise ValueError("the fractional ideal (= %s) is not prime"%self)
 
     def ramification_index(self):
         r"""
@@ -690,7 +689,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             ...
             NotImplementedError: For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate
         """
-        raise NotImplementedError, "For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate"
+        raise NotImplementedError("For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate")
 
     def residue_class_degree(self):
         r"""
@@ -707,7 +706,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
          """
         if self.is_prime():
             return self.absolute_ideal().residue_class_degree()
-        raise ValueError, "the ideal (= %s) is not prime"%self
+        raise ValueError("the ideal (= %s) is not prime"%self)
 
     def residues(self):
         """
@@ -762,14 +761,14 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         # Catch invalid inputs by making sure that we can make an ideal out of other.
         K = self.number_field()
         if not self.is_integral():
-            raise TypeError, "%s is not an integral ideal"%self
+            raise TypeError("%s is not an integral ideal"%self)
 
         other = K.ideal(other)
         if not other.is_integral():
-            raise TypeError, "%s is not an integral ideal"%other
+            raise TypeError("%s is not an integral ideal"%other)
 
         if not self.is_coprime(other):
-            raise TypeError, "%s and %s are not coprime ideals"%(self, other)
+            raise TypeError("%s and %s are not coprime ideals"%(self, other))
 
         to_K = K.absolute_field('a').structure()[0]
         return to_K(self.absolute_ideal().element_1_mod(other.absolute_ideal()))
@@ -819,13 +818,13 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             ValueError: p (= Fractional ideal (5)) must be a prime
          """
         if p == 0:
-            raise ValueError, "p (= %s) must be nonzero"%p
+            raise ValueError("p (= %s) must be nonzero"%p)
         if not isinstance(p, NumberFieldFractionalIdeal):
             p = self.number_field().ideal(p)
         if not p.is_prime():
-            raise ValueError, "p (= %s) must be a prime"%p
+            raise ValueError("p (= %s) must be a prime"%p)
         if p.ring() != self.number_field():
-            raise ValueError, "p (= %s) must be an ideal in %s"%self.number_field()
+            raise ValueError("p (= %s) must be an ideal in %s"%self.number_field())
         return self.absolute_ideal().valuation(p.absolute_ideal())
 
 def is_NumberFieldFractionalIdeal_rel(x):

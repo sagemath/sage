@@ -38,13 +38,7 @@ if [ "$LINBOX_BLAS" != "" ]; then
 
 elif [ $UNAME = "Darwin" -a -f "/usr/lib/libcblas.dylib" ]; then
 
-    LINBOX_BLAS=/usr/lib/libcblas.dylib
-
-elif [ $UNAME = "Linux" -a -f "${SAGE_LOCAL}/lib/libcblas.so" ]; then
-
-    echo "Linux cblas"
-
-    LINBOX_BLAS="-lcblas -latlas"
+    LINBOX_BLAS=-lcblas
 
 elif [ $UNAME = "CYGWIN" ]; then
 
@@ -60,21 +54,15 @@ elif [ $UNAME = "CYGWIN" ]; then
     fi
     LINBOX_BLAS="-lblas "
 
-elif [ $UNAME = "SunOS" -a -f "${SAGE_LOCAL}/lib/libcblas.so" ]; then
+elif [ -f "${SAGE_LOCAL}/lib/libcblas.so" ]; then
 
-    echo "Solaris cblas"
-
-    LINBOX_BLAS="-lcblas -latlas"
-
-elif [ $UNAME = "FreeBSD" -a -f "${SAGE_LOCAL}/lib/libcblas.a" ]; then
-
-    echo "FreeBSD cblas"
+    echo "ATLAS"
 
     LINBOX_BLAS="-lcblas -latlas"
 
-elif [ $UNAME = "FreeBSD" -a -f "${SAGE_LOCAL}/lib/libcblas.so" ]; then
+elif [ -f "${SAGE_LOCAL}/lib/libcblas.a" ]; then
 
-    echo "FreeBSD cblas"
+    echo "Static ATLAS"
 
     LINBOX_BLAS="-lcblas -latlas"
 
@@ -90,11 +78,7 @@ else
     echo "WARNING WARNING"
     echo "WARNING WARNING"
 
-    if [ $UNAME = "Darwin" ]; then
-        LINBOX_BLAS="$SAGE_LOCAL"/lib/libgslcblas.dylib
-    else
-        LINBOX_BLAS="$SAGE_LOCAL"/lib/libgslcblas.so
-    fi
+    LINBOX_BLAS=-lgslcblas
 
 fi
 
@@ -122,6 +106,4 @@ if [ $? -ne 0 ]; then
     echo "Error installing linbox"
     exit 1
 fi
-
-echo $LINBOX_BLAS > $SAGE_LOCAL/share/cblas_config
 

@@ -365,6 +365,7 @@ AUTHORS:
 import os
 import re
 
+from sage.misc.cachefunc import cached_method
 from expect import (Expect, ExpectElement, ExpectFunction,
                     FunctionElement, AsciiArtString)
 
@@ -399,11 +400,11 @@ class Mathematica(Expect):
     """
     Interface to the Mathematica interpreter.
     """
-    def __init__(self, maxread=100, script_subdirectory="", logfile=None, server=None, server_tmpdir=None):
+    def __init__(self, maxread=100, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None):
         Expect.__init__(self,
                         name = 'mathematica',
                         prompt = 'In[[0-9]+]:=',
-                        command = "math",
+                        command = "math-readline",
                         maxread = maxread,
                         server = server,
                         server_tmpdir = server_tmpdir,
@@ -509,7 +510,7 @@ remote connection to a server running Mathematica -- for hints, type
         #out = self.eval(cmd)
         out = self._eval_line(cmd, allow_use_file=True)
         if len(out) > 8:
-            raise TypeError, "Error executing code in Mathematica\nCODE:\n\t%s\nMathematica ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Mathematica\nCODE:\n\t%s\nMathematica ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var, ascii_art=False):
         """
@@ -743,8 +744,8 @@ class MathematicaElement(ExpectElement):
         # Get Mathematica's output and perform preliminary formatting
         res = self._sage_repr()
         if '"' in res:
-            raise NotImplementedError, "String conversion from Mathematica \
-                does not work.  Mathematica's output was: %s" % res
+            raise NotImplementedError("String conversion from Mathematica \
+                does not work.  Mathematica's output was: %s" % res)
 
         # Find all the mathematica functions, constants and symbolic variables
         # present in `res`.  Convert MMA functions and constants to their
@@ -779,13 +780,13 @@ class MathematicaElement(ExpectElement):
             elif m.end() < len(res) and res[m.end()] == '(':
                 for t in autotrans:
                     f = find_func(t(m.group()), create_when_missing = False)
-                    if f != None:
+                    if f is not None:
                         lsymbols[m.group()] = f
                         break
                 else:
-                    raise NotImplementedError, "Don't know a Sage equivalent \
+                    raise NotImplementedError("Don't know a Sage equivalent \
                         for Mathematica function '%s'.  Please specify one \
-                        manually using the 'locals' dictionary" % m.group()
+                        manually using the 'locals' dictionary" % m.group())
             # Check if Sage has an equivalent constant
             else:
                 for t in autotrans:
@@ -797,9 +798,9 @@ class MathematicaElement(ExpectElement):
         try:
             return symbolic_expression_from_string(res, lsymbols,
                 accept_sequence=True)
-        except StandardError:
-            raise NotImplementedError, "Unable to parse Mathematica \
-                output: %s" % res
+        except Exception:
+            raise NotImplementedError("Unable to parse Mathematica \
+                output: %s" % res)
 
     def __str__(self):
         P = self._check_valid()
@@ -819,9 +820,94 @@ class MathematicaElement(ExpectElement):
         """
         return self.Length()
 
-    def show(self, filename=None, ImageSize=600):
+    @cached_method
+    def _is_graphics(self):
+        """
+        Test whether the mathematica expression is graphics
+
+        OUTPUT:
+
+        Boolean.
+
+        EXAMPLES::
+
+            sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
+            sage: P._is_graphics()                               # optional - mathematica
+            True
+        """
+        P = self._check_valid()
+        return P.eval('InputForm[%s]' % self.name()).strip().startswith('Graphics[')
+
+    def save_image(self, filename, ImageSize=600):
         r"""
-        Show a mathematica expression or plot in the Sage notebook.
+        Save a mathematica graphics
+
+        INPUT:
+
+        - ``filename`` -- string. The filename to save as. The
+          extension determines the image file format.
+
+        - ``ImageSize`` -- integer. The size of the resulting image.
+
+        EXAMPLES::
+
+            sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
+            sage: filename = tmp_filename()                      # optional - mathematica
+            sage: P.save(filename, ImageSize=800)                # optional - mathematica
+        """
+        P = self._check_valid()
+        if not self._is_graphics():
+            raise ValueError('mathematica expression is not graphics')
+        filename = os.path.abspath(filename)
+        s = 'Export["%s", %s, ImageSize->%s]'%(filename, self.name(), ImageSize)
+        P.eval(s)
+
+    def _rich_repr_(self, display_manager, **kwds):
+        """
+        Rich Output Magic Method
+
+        See :mod:`sage.repl.rich_output` for details.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output import get_display_manager
+            sage: dm = get_display_manager()
+            sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
+            sage: P._rich_repr_(dm)                              # optional - mathematica
+            OutputImagePng container
+        """
+        if self._is_graphics():
+            OutputImagePng = display_manager.types.OutputImagePng
+            if display_manager.preferences.graphics == 'disable':
+                return
+            if OutputImagePng in display_manager.supported_output():
+                return display_manager.graphics_from_save(
+                    self.save, kwds, '.png', OutputImagePng)
+        else:
+            OutputLatex = display_manager.types.OutputLatex
+            if display_manager.preferences.text == 'plain':
+                return
+            if OutputLatex in display_manager.supported_output():
+                return OutputLatex(self._latex_())
+        
+    def show(self, ImageSize=600):
+        r"""
+        Show a mathematica expression immediately.
+
+        This method attempts to display the graphics immediately,
+        without waiting for the currently running code (if any) to
+        return to the command line. Be careful, calling it from within
+        a loop will potentially launch a large number of external
+        viewer programs.
+
+        INPUT:
+
+        - ``ImageSize`` -- integer. The size of the resulting image.
+
+        OUTPUT:
+
+        This method does not return anything. Use :meth:`save` if you
+        want to save the figure as an image.
 
         EXAMPLES::
 
@@ -832,19 +918,10 @@ class MathematicaElement(ExpectElement):
             sage: show(Q)                                        # optional - mathematica
             <html><div class="math">\frac{\sin (x \cos (y))}{\sqrt{1-x^2}}</div></html>
         """
-        P = self._check_valid()
-        if P.eval('InputForm[%s]' % self.name()).strip().startswith('Graphics['):
-            if filename is None:
-                from sage.misc.temporary_file import graphics_filename
-                filename = graphics_filename()
-            orig_dir = P.eval('Directory[]').strip()
-            P.chdir(os.path.abspath("."))
-            s = 'Export["%s", %s, ImageSize->%s]'%(filename, self.name(), ImageSize)
-            P.eval(s)
-            P.chdir(orig_dir)
-        else:
-            print '<html><div class="math">%s</div></html>' % self._latex_()
-
+        from sage.repl.rich_output import get_display_manager
+        dm = get_display_manager()
+        dm.display_immediately(self, ImageSize=ImageSize) 
+        
     def str(self):
         return str(self)
 
@@ -890,38 +967,16 @@ class MathematicaFunctionElement(FunctionElement):
 
 
 # An instance
-mathematica = Mathematica(script_subdirectory='user')
+mathematica = Mathematica()
 
 def reduce_load(X):
     return mathematica(X)
-
-# Cleverly run Mathematica with the benefit of readline, which
-# is something the usual commercial mathematica doesn't provide!
-# See
-#    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/363500
 
 import os, sys
 def mathematica_console(readline=True):
     if not readline:
         os.system('math')
         return
-    f1 = os.popen('math ', 'w')
-    f1.flush()
-    try:
-        while True:
-            sys.stdout.write('')
-            try:
-                line = raw_input('        ')
-                f1.writelines(line+'\n')
-                f1.flush()
-            except KeyboardInterrupt:
-                f1.close()
-                break
-    except EOFError:
-        pass
-    sys.stdout.write('\n')
-
-#def mathematica_console():
-#    os.system('mathematica')
-
-
+    else:
+        os.system('math-readline')
+        return

@@ -2,7 +2,9 @@
 Power Series
 
 Sage provides an implementation of dense and sparse power series
-over any Sage base ring.
+over any Sage base ring. This is the base class of the implementations
+of univariate and multivariate power series ring elements in Sage
+(see also :doc:`power_series_poly`, :doc:`multi_power_series_ring_element`).
 
 AUTHORS:
 
@@ -32,7 +34,8 @@ EXAMPLE::
 In Python (as opposed to Sage) create the power series ring and
 its generator as follows::
 
-    sage: R, x = objgen(PowerSeriesRing(ZZ, 'x'))
+    sage: R = PowerSeriesRing(ZZ, 'x')
+    sage: x = R.gen()
     sage: parent(x)
     Power Series Ring in x over Integer Ring
 
@@ -74,11 +77,6 @@ With power series the behavior is the same.
     gen1
     sage: huge_power_ring(gen2)
     x
-
-TODO: Rewrite valuation so it is *carried* along after any
-calculation, so in almost all cases f.valuation() is instant. Also,
-if you add f and g and their valuations are the same, note that we
-only have to look at terms at positions = f.valuation().
 """
 
 #*****************************************************************************
@@ -96,7 +94,6 @@ only have to look at terms at positions = f.valuation().
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
 
 import operator
 
@@ -112,8 +109,7 @@ import rational_field, integer_ring
 from integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.libs.pari.all import pari
-from sage.misc.functional import sqrt, log
-from sage.rings.arith import integer_ceil as ceil
+from sage.misc.superseded import deprecated_function_alias
 
 from sage.categories.fields import Fields
 _Fields = Fields()
@@ -126,16 +122,47 @@ from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, 
 
 
 def is_PowerSeries(x):
+    """
+    Return True if ``x`` is an instance of a univariate
+    or multivariate power series.
+    
+    EXAMPLES::
+    
+        sage: R.<x> = PowerSeriesRing(ZZ)
+        sage: from sage.rings.power_series_ring_element import is_PowerSeries
+        sage: is_PowerSeries(1+x^2)
+        True
+        sage: is_PowerSeries(x-x)
+        True
+        sage: is_PowerSeries(0)
+        False
+        sage: var('x')
+        x
+        sage: is_PowerSeries(1+x^2)
+        False
+    """
     return isinstance(x, PowerSeries)
 
 cdef class PowerSeries(AlgebraElement):
     """
-    A power series.
+    A power series. Base class of univariate and
+    multivariate power series. The following methods
+    are available with both types of objects.
     """
 
     def __init__(self, parent, prec, is_gen=False):
         """
-        Initialize a power series.
+        Initialize a power series. Not for public use.
+        It gets called by the ``PowerSeries_poly`` and
+        ``MPowerSeries`` constructors.
+        
+        EXAMPLES::
+        
+            sage: PowerSeriesRing(CC, 'q')
+            Power Series Ring in q over Complex Field with 53 bits of precision
+            sage: T = PowerSeriesRing(GF(3),5,'t'); T
+            Multivariate Power Series Ring in t0, t1, t2, t3, t4 over Finite
+            Field of size 3
         """
         AlgebraElement.__init__(self, parent)
         self.__is_gen = is_gen
@@ -144,6 +171,15 @@ cdef class PowerSeries(AlgebraElement):
         self._prec = prec
 
     def __hash__(self):
+        """
+        Compute a hash of self.
+        
+        EXAMPLES::
+        
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: (1+x^2).__hash__()     # random
+            15360174650385709
+        """
         return hash(self.polynomial())
 
     def __reduce__(self):
@@ -185,7 +221,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_gen(self):
         """
-        Returns True if this the generator (the variable) of the power
+        Return True if this is the generator (the variable) of the power
         series ring.
 
         EXAMPLES::
@@ -196,7 +232,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (1 + 2*t).is_gen()
             False
 
-        Note that this only returns true on the actual generator, not on
+        Note that this only returns True on the actual generator, not on
         something that happens to be equal to it.
 
         ::
@@ -210,8 +246,8 @@ cdef class PowerSeries(AlgebraElement):
 
     def _im_gens_(self, codomain, im_gens):
         """
-        Returns the image of this series under the map that sends the
-        generators to im_gens. This is used internally for computing
+        Return the image of this series under the map that sends the
+        generators to ``im_gens``. This is used internally for computing
         homomorphisms.
 
         EXAMPLES::
@@ -223,11 +259,11 @@ cdef class PowerSeries(AlgebraElement):
         """
         return codomain(self(im_gens[0]))
 
-    def base_extend(self, R):
+    cpdef base_extend(self, R):
         """
         Return a copy of this power series but with coefficients in R.
 
-        The following coercion uses base_extend implicitly::
+        The following coercion uses ``base_extend`` implicitly::
 
             sage: R.<t> = ZZ[['t']]
             sage: (t - t^2) * Mod(1, 3)
@@ -256,8 +292,8 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ZeroDivisionError: Inverse does not exist.
 
-        We can only change ring if there is a __call__ coercion
-        defined. The following succeeds because ZZ(K(4)) is defined.
+        We can only change the ring if there is a ``__call__`` coercion
+        defined. The following succeeds because ``ZZ(K(4))`` is defined.
 
         ::
 
@@ -266,7 +302,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (4*t).change_ring(ZZ)
             4*t
 
-        This does not succeed because ZZ(K(a+1)) is not defined.
+        This does not succeed because ``ZZ(K(a+1))`` is not defined.
 
         ::
 
@@ -281,23 +317,37 @@ cdef class PowerSeries(AlgebraElement):
         return S(self)
 
     def __cmp__(left, right):
+        """
+        Called by comparison operations.
+        
+        EXAMPLES::
+        
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: 1+x^2 < 2-x
+            True
+        """
         return (<Element>left)._cmp(right)
 
-    cdef int _cmp_c_impl(self, Element right) except -2:
+    cpdef int _cmp_(self, Element right) except -2:
         r"""
-        Comparison of self and right.
+        Comparison of self and ``right``.
 
-        We say two approximate power series are equal, if they agree for
+        We say two approximate power series are equal if they agree for
         all coefficients up to the *minimum* of the precisions of each.
-        Thus, e.g., `f=1+q+O(q^2)` is equal to `g=1+O(q)`.
+        Thus, e.g., `f = 1 + q + O(q^2)` is equal to `g = 1 + O(q)`.
+
         This is how PARI defines equality of power series, but not how
-        MAGMA defines equality. (MAGMA would declare f and g unequal.) I
-        side with PARI, because even if `g=1+q+O(q^2)`, we don't
-        really know whether f equals g, since we don't know the
-        coefficients of `q^2`.
+        Magma defines equality. (Magma would declare `f` and `g` unequal.)
+        The PARI/Sage convention is consistent with the idea that
+        comparison should take place after coercing both elements into
+        a common parent.  Hence, in the above example `f` is truncated
+        to `f + O(q)`, which is considered to be equal to `g`, even
+        though the coefficients of `q` are unknown for both series in
+        that comparison.
 
         Comparison is done in dictionary order from lowest degree to
-        highest degree coefficients (this is different than polynomials).
+        highest degree coefficients.  This is different than polynomial
+        comparison.
 
         EXAMPLES::
 
@@ -308,20 +358,49 @@ cdef class PowerSeries(AlgebraElement):
             True
             sage: 1 - 2*q + q^2 +O(q^3) == 1 - 2*q^2 + q^2 + O(q^4)
             False
+
+        TESTS:
+
+        Ticket :trac:`9457` is fixed::
+
+            sage: A.<t> = PowerSeriesRing(ZZ)
+            sage: g = t + t^3 + t^5 + O(t^6); g
+            t + t^3 + t^5 + O(t^6)
+            sage: [g == g.add_bigoh(i) for i in range(7)]
+            [True, True, True, True, True, True, True]
+            sage: A(g.polynomial()) == g
+            True
+
+            sage: f = t + t^2 + O(t^10)
+            sage: f == f.truncate()
+            True
         """
         # A very common case throughout code
-        if PY_TYPE_CHECK(right, int):
+        if isinstance(right, int):
             return self.is_zero()
 
         prec = self.common_prec(right)
         x = self.list()
         y = right.list()
         if not (prec is infinity):
-            x = x[:prec]
+            x += [0]*(prec - len(x)) # self.list() does not include trailing zeroes
+            x = x[:prec] # truncate x to common prec
+            y += [0]*(prec - len(y))
             y = y[:prec]
         return cmp(x,y)
 
-    def __call__(self, x):   # you *MUST* override this in the derived class
+    def __call__(self, x):
+        """
+        Implementations *MUST* override this in the derived class.
+        
+        EXAMPLES::
+        
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: PowerSeries.__call__(1+x^2,x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError        
+        """
         raise NotImplementedError
 
 
@@ -336,7 +415,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.coefficients()
             [1, 1, -10/3]
         """
-        zero = self.parent().base_ring().zero_element()
+        zero = self.parent().base_ring().zero()
         return [c for c in self.list() if c != zero]
 
     def exponents(self):
@@ -350,14 +429,48 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.exponents()
             [1, 2, 3]
         """
-        zero = self.parent().base_ring().zero_element()
+        zero = self.parent().base_ring().zero()
         l = self.list()
         return [i for i in range(len(l)) if l[i] != zero]
 
-    def list(self):          # you *MUST* override this in the derived class
+    def list(self):
+        """
+        See this method in derived classes:
+        
+        - :meth:`sage.rings.power_series_poly.PowerSeries_poly.list`,
+        
+        - :meth:`sage.rings.multi_power_series_ring_element.MPowerSeries.list`
+        
+        Implementations *MUST* override this in the derived class.
+        
+        EXAMPLES::
+
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: PowerSeries.list(1+x^2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError        
+        """
         raise NotImplementedError
 
-    def polynomial(self):          # you *MUST* override this in the derived class
+    def polynomial(self):
+        """
+        See this method in derived classes:
+        
+        - :meth:`sage.rings.power_series_poly.PowerSeries_poly.polynomial`,
+        
+        - :meth:`sage.rings.multi_power_series_ring_element.MPowerSeries.polynomial`
+
+        Implementations *MUST* override this in the derived class.
+        
+        EXAMPLES::
+
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: PowerSeries.polynomial(1+x^2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError        
+        """
         raise NotImplementedError
 
     def __copy__(self):
@@ -400,7 +513,7 @@ cdef class PowerSeries(AlgebraElement):
 
         -  ``n`` - (optional) an integer that is at least 0. If ``n`` is
            not given, it will be taken to be the precision of self,
-           unless this is +Infinity, in which case we just return
+           unless this is ``+Infinity``, in which case we just return
            ``self.list()``.
 
 
@@ -455,9 +568,50 @@ cdef class PowerSeries(AlgebraElement):
         """
         return self._prec
 
+    def precision_absolute(self):
+        """
+        Return the absolute precision of this series.
+
+        By definition, the absolute precision of
+        `...+O(x^r)` is `r`.
+
+        EXAMPLES::
+
+            sage: R.<t> = ZZ[[]]
+            sage: (t^2 + O(t^3)).precision_absolute()
+            3
+            sage: (1 - t^2 + O(t^100)).precision_absolute()
+            100
+        """
+        return self.prec()
+
+    def precision_relative(self):
+        """
+        Return the relative precision of this series, that
+        is the difference between its absolute precision
+        and its valuation.
+
+        By convension, the relative precision of `0` (or
+        `O(x^r)` for any `r`) is `0`.
+
+        EXAMPLES::
+
+            sage: R.<t> = ZZ[[]]
+            sage: (t^2 + O(t^3)).precision_relative()
+            1
+            sage: (1 - t^2 + O(t^100)).precision_relative()
+            100
+            sage: O(t^4).precision_relative()
+            0
+        """
+        if self.is_zero():
+            return 0
+        else:
+            return self.prec() - self.valuation()
+
     def _repr_(self):
         """
-        Return string representation of this power series.
+        Return the string representation of this power series.
 
         EXAMPLES::
 
@@ -548,7 +702,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def _latex_(self):
         r"""
-        Return latex representation of this power series.
+        Return the latex representation of this power series.
 
         EXAMPLES::
 
@@ -629,8 +783,8 @@ cdef class PowerSeries(AlgebraElement):
 
     def add_bigoh(self, prec):
         r"""
-        Returns the power series of precision at most prec got by adding
-        `O(q^\text{prec})` to f, where q is the variable.
+        Return the power series of precision at most ``prec`` got by adding
+        `O(q^\text{prec})` to `f`, where `q` is the variable.
 
         EXAMPLES::
 
@@ -653,20 +807,20 @@ cdef class PowerSeries(AlgebraElement):
         Return the coefficient of `t^n` in this power series, where
         `t` is the indeterminate of the power series ring.
 
-        If n is negative returns 0. If n is beyond the precision, raises an
+        If `n` is negative return 0. If `n` is beyond the precision, raise an
         IndexError.
 
         EXAMPLES::
 
             sage: R.<m> = CDF[[]]
             sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f
-            9.86960440109 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.71828182846*m^4 + O(m^10)
+            9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
             sage: f[-5]
             0.0
             sage: f[0]
-            9.86960440109
+            9.869604401089358
             sage: f[4]
-            2.71828182846
+            2.718281828459045
             sage: f[9]
             0.0
             sage: f[10]
@@ -690,7 +844,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def common_prec(self, f):
         r"""
-        Returns minimum precision of `f` and self.
+        Return minimum precision of `f` and ``self``.
 
         EXAMPLES::
 
@@ -776,8 +930,10 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_unit(self):
         """
-        Returns whether this power series is invertible, which is the case
-        precisely when the constant term is invertible.
+        Return True if this power series is invertible.
+        
+        A power series is invertible precisely when the
+        constant term is invertible.
 
         EXAMPLES::
 
@@ -795,10 +951,12 @@ cdef class PowerSeries(AlgebraElement):
 
     def __invert__(self):
         """
-        Inverse of the power series (i.e. a series Y such that XY = 1). The
-        first nonzero coefficient must be a unit in the coefficient ring.
-        If the valuation of the series is positive, this function will
-        return a Laurent series.
+        Return the inverse of the power series (i.e., a series `Y` such
+        that `XY = 1`).
+        
+        The first nonzero coefficient must be a unit in
+        the coefficient ring. If the valuation of the series is positive,
+        this function will return a :doc:`laurent_series_ring_element`.
 
         ALGORITHM: Uses Newton's method. Complexity is around
         `O(M(n) \log n)`, where `n` is the precision and
@@ -910,6 +1068,22 @@ cdef class PowerSeries(AlgebraElement):
 
         return self._parent(current, prec=prec)
 
+    def inverse(self):
+        """
+        Return the inverse of self, i.e., self^(-1).
+
+        EXAMPLES::
+
+            sage: R.<t> = PowerSeriesRing(QQ, sparse=True)
+            sage: t.inverse()
+            t^-1
+            sage: type(_)
+            <type 'sage.rings.laurent_series_ring_element.LaurentSeries'>
+            sage: (1-t).inverse()
+            1 + t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + ...
+        """
+        return self.__invert__()
+
     def valuation_zero_part(self):
         r"""
         Factor self as as `q^n \cdot (a_0 + a_1 q + \cdots)` with
@@ -1001,7 +1175,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def shift(self, n):
         r"""
-        Returns this power series multiplied by the power `t^n`. If
+        Return this power series multiplied by the power `t^n`. If
         `n` is negative, terms below `t^n` will be
         discarded. Does not change this power series.
 
@@ -1039,11 +1213,33 @@ cdef class PowerSeries(AlgebraElement):
     def __rshift__(self, n):
         return self.parent()(self.polynomial() >> n, self.prec())
 
+    def is_monomial(self):
+        """
+        Return True if this element is a monomial.  That is, if self is
+        `x^n` for some non-negative integer `n`.
+
+        EXAMPLES::
+
+            sage: k.<z> = PowerSeriesRing(QQ, 'z')
+            sage: z.is_monomial()
+            True
+            sage: k(1).is_monomial()
+            True
+            sage: (z+1).is_monomial()
+            False
+            sage: (z^2909).is_monomial()
+            True
+            sage: (3*z^2909).is_monomial()
+            False
+        """
+
+        return self.polynomial().is_monomial()
+
     def is_square(self):
         """
-        Returns True if this function has a square root in this ring, e.g.
+        Return True if this function has a square root in this ring, e.g.,
         there is an element `y` in ``self.parent()``
-        such that `y^2 = ``self```.
+        such that `y^2` equals ``self``.
 
         ALGORITHM: If the base ring is a field, this is true whenever the
         power series has even valuation and the leading coefficient is a
@@ -1086,32 +1282,33 @@ cdef class PowerSeries(AlgebraElement):
                 return False
 
     def sqrt(self, prec=None, extend=False, all=False, name=None):
-        r""" The square root function.
+        r"""
+        Return a square root of self.
 
         INPUT:
 
-          - prec - integer (default: None): if not None and the series
+          - ``prec`` - integer (default: None): if not None and the series
             has infinite precision, truncates series at precision
             prec.
 
-          - extend - bool (default: False); if True, return a square
+          - ``extend`` - bool (default: False); if True, return a square
             root in an extension ring, if necessary. Otherwise, raise
-            a ValueError if the square is not in the base power series
-            ring. For example, if extend is True the square root of a
+            a ValueError if the square root is not in the base power series
+            ring. For example, if ``extend`` is True the square root of a
             power series with odd degree leading coefficient is
             defined as an element of a formal extension ring.
 
-          - name - if extend is True, you must also specify the print
+          - ``name`` - string; if ``extend`` is True, you must also specify the print
             name of the formal square root.
 
-          - all - bool (default: False); if True, return all square
+          - ``all`` - bool (default: False); if True, return all square
             roots of self, instead of just one.
 
         ALGORITHM: Newton's method
 
         .. math::
 
-           x_{i+1} = \frac{1}{2}( x_i + self/x_i )
+           x_{i+1} = \frac{1}{2}( x_i + \mathrm{self}/x_i )
 
         EXAMPLES::
 
@@ -1264,7 +1461,7 @@ cdef class PowerSeries(AlgebraElement):
         then an error will be raised.
 
         This function succeeds if and only if
-        ``self.is_square()``
+        ``self``. :meth:`.is_square`
 
         EXAMPLES::
 
@@ -1312,6 +1509,20 @@ cdef class PowerSeries(AlgebraElement):
         r"""
         Return this series plus `O(x^\text{prec})`. Does not change
         self.
+        
+        EXAMPLES::
+        
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: p = 1 + x^2 + x^10; p
+            1 + x^2 + x^10
+            sage: p.O(15)
+            1 + x^2 + x^10 + O(x^15)
+            sage: p.O(5)
+            1 + x^2 + O(x^5)
+            sage: p.O(-5)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be at least 0
         """
         if prec is infinity or prec >= self.prec():
             return self
@@ -1321,7 +1532,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def solve_linear_de(self, prec = infinity, b = None, f0 = None):
         r"""
-        Obtains a power series solution to an inhomogeneous linear
+        Obtain a power series solution to an inhomogeneous linear
         differential equation of the form:
 
         .. math::
@@ -1345,13 +1556,13 @@ cdef class PowerSeries(AlgebraElement):
            reduced if either a or b have less precision available)
 
 
-        OUTPUT: the power series f, to indicated precision
+        OUTPUT: the power series `f`, to indicated precision
 
         ALGORITHM: A divide-and-conquer strategy; see the source code.
         Running time is approximately `M(n) \log n`, where
         `M(n)` is the time required for a polynomial multiplication
         of length `n` over the coefficient ring. (If you're working
-        over something like RationalField(), running time analysis can be a
+        over something like `\QQ`, running time analysis can be a
         little complicated because the coefficients tend to explode.)
 
         .. note::
@@ -1435,22 +1646,21 @@ cdef class PowerSeries(AlgebraElement):
 
     def exp(self, prec=None):
         r"""
-        Returns exp of this power series to the indicated precision.
+        Return exp of this power series to the indicated precision.
 
         INPUT:
 
 
         -  ``prec`` - integer; default is
-           self.parent().default_prec
+           ``self.parent().default_prec``
 
 
-        ALGORITHM: See PowerSeries.solve_linear_de().
+        ALGORITHM: See :meth:`.solve_linear_de`.
 
         .. note::
 
            - Screwy things can happen if the coefficient ring is not a
-             field of characteristic zero. See
-             PowerSeries.solve_linear_de().
+             field of characteristic zero. See :meth:`.solve_linear_de`.
 
         AUTHORS:
 
@@ -1543,7 +1753,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def log(self, prec=None):
         r"""
-        Returns log of this power series to the indicated precision.
+        Return log of this power series to the indicated precision.
 
         This works only if the constant term of the power series is 1.
 
@@ -1589,6 +1799,16 @@ cdef class PowerSeries(AlgebraElement):
         r"""
         If `f = \sum a_m x^m`, then this function returns
         `\sum a_m x^{nm}`.
+        
+        EXAMPLES::
+        
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: p = 1 + x^2 + x^10; p
+            1 + x^2 + x^10
+            sage: p.V(3)
+            1 + x^6 + x^30
+            sage: (p+O(x^20)).V(3)
+            1 + x^6 + x^30 + O(x^60)
         """
         v = self.list()
         m = 0
@@ -1632,6 +1852,9 @@ cdef class PowerSeries(AlgebraElement):
 
     def variable(self):
         """
+        Return a string with the name of the variable
+        of this power series.
+        
         EXAMPLES::
 
             sage: R.<x> = PowerSeriesRing(Rationals())
@@ -1690,6 +1913,8 @@ cdef class PowerSeries(AlgebraElement):
 
     def __setitem__(self, n, value):
         """
+        Called when an attempt is made to change a power series.
+        
         EXAMPLES::
 
             sage: R.<t> = ZZ[[]]
@@ -1717,9 +1942,10 @@ cdef class PowerSeries(AlgebraElement):
         """
         return self._parent.laurent_series_ring()(self)
 
-    def ogf(self):
+    def egf_to_ogf(self):
         r"""
-        Returns the ordinary generating function associated to self.
+        Returns the ordinary generating function power series,
+        assuming self is an exponential generating function power series.
 
         This function is known as ``serlaplace`` in PARI/GP.
 
@@ -1727,14 +1953,15 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: R.<t> = PowerSeriesRing(QQ)
             sage: f = t + t^2/factorial(2) + 2*t^3/factorial(3)
-            sage: f.ogf()
+            sage: f.egf_to_ogf()
             t + t^2 + 2*t^3
         """
         return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree()+1)])
 
-    def egf(self):
+    def ogf_to_egf(self):
         r"""
-        Returns the exponential generating function associated to self.
+        Returns the exponential generating function power series,
+        assuming self is an ordinary generating function power series.
 
         This can also be computed as ``serconvol(f,exp(t))`` in PARI/GP.
 
@@ -1742,10 +1969,13 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: R.<t> = PowerSeriesRing(QQ)
             sage: f = t + t^2 + 2*t^3
-            sage: f.egf()
+            sage: f.ogf_to_egf()
             t + 1/2*t^2 + 1/3*t^3
         """
         return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree()+1)])
+
+    ogf = deprecated_function_alias(15705, egf_to_ogf)
+    egf = deprecated_function_alias(15705, ogf_to_egf)
 
     def _pari_(self):
         """

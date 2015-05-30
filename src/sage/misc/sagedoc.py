@@ -22,7 +22,7 @@ see :trac:`12849`::
     sage: for line in open(docfilename):
     ...       if "#sage.symbolic.expression.Expression.N" in line:
     ...           print line
-    <tt class="descname">N</tt><big>(</big><em>prec=None</em>, <em>digits=None</em><big>)</big>...
+    <tt class="descname">N</tt><big>(</big><em>prec=None</em>, <em>digits=None</em>, <em>algorithm=None</em><big>)</big>...
 """
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -33,31 +33,43 @@ see :trac:`12849`::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from __future__ import print_function
 import os, re, sys
 import pydoc
 from sage.misc.viewer import browser
-from sage.misc.misc import tmp_dir
-from sagenb.misc.sphinxify import sphinxify
+from sage.misc.temporary_file import tmp_dir
 import sage.version
 from sage.env import SAGE_DOC, SAGE_SRC
 
-# two kinds of substitutions: math, which should only be done on the
-# command line -- in the notebook, these should instead by taken care
-# of by MathJax -- and nonmath, which should be done always.
-math_substitutes = [ # don't forget leading backslash '\\'
-    ('\\to', '-->'),
-    ('\\leq', '<='),
-    ('\\geq', '>='),
-    ('\\le', '<='),
-    ('\\ge', '>='),
-    ('\\cdots', '...'),
-    ('\\ldots', '...'),
-    ('\\dots', '...'),
-    ('\\cdot', ' *'),
-    (' \\times', ' x'),
-    ('\\times', ' x'),
-    ('\\backslash','\\'),
-    ('\\mapsto', ' |--> '),
+# The detex function does two kinds of substitutions: math, which
+# should only be done on the command line -- in the notebook, these
+# should instead by taken care of by MathJax -- and nonmath, which
+# should be done always.
+
+# Math substititions: don't forget the leading backslash '\\'. These
+# are done using regular expressions, so it works best to also make
+# the strings raw: r'\\blah'.
+math_substitutes = [
+    (r'\\to', '-->'),
+    (r'\\left', ''),
+    (r'\\right', ''),
+    (r'\\bigl', ''),
+    (r'\\bigr', ''),
+    (r'\\leq', '<='),
+    (r'\\geq', '>='),
+    (r'\\le', '<='),
+    (r'\\ge', '>='),
+    (r'\\cdots', '...'),
+    (r'\\ldots', '...'),
+    (r'\\dots', '...'),
+    (r'\\cdot', ' *'),
+    (r'\\ast', ' *'),
+    (r' \\times', ' x'),
+    (r'\\times', ' x'),
+    (r'\\backslash','\\'),
+    (r'\\mapsto', ' |--> '),
+    (r'\\lvert', '|'),
+    (r'\\rvert', '|'),
 ]
 nonmath_substitutes = [
     ('\\_','_'),
@@ -178,6 +190,10 @@ def detex(s, embedded=False):
         'a, b, c, ..., z\n'
         sage: detex(r'`a, b, c, \ldots, z`', embedded=True)
         '`a, b, c, \\ldots, z`'
+        sage: detex(r'`\left(\lvert x\ast y \rvert\right]`')
+        '(| x * y |]\n'
+        sage: detex(r'`\left(\leq\le\leftarrow \rightarrow\to`')
+        '(<=<=leftarrow rightarrow-->\n'
     """
     s = _rmcmd(s, 'url')
     s = _rmcmd(s, 'code')
@@ -198,9 +214,14 @@ def detex(s, embedded=False):
     if not embedded: # not in the notebook
         s = _rmcmd(s, 'mathop')
         s = _rmcmd(s, 'mathrm')
+        from sagenb.misc.sphinxify import sphinxify
         s = sphinxify(s, format='text')
-        for a,b in math_substitutes:  # do math substitutions
-            s = s.replace(a,b)
+        # Do math substitutions. The strings to be replaced should be
+        # TeX commands like "\\blah". Do a regular expression
+        # replacement to replace "\\blah" but not "\\blahxyz", etc.:
+        # test to make sure the next character is not a letter.
+        for a,b in math_substitutes:
+            s = re.sub(a+'([^a-zA-Z])', b+'\\1', s)
         s = s.replace('\\','')        # nuke backslashes
     return s
 
@@ -388,12 +409,6 @@ def format(s, embedded=False):
 
     Directives must be separated by a comma.
 
-    NOTE:
-
-    If the first line of the string provides embedding information,
-    which is the case for doc strings from extension modules, then
-    the first line will not be changed.
-
     INPUT:
 
     - ``s`` - string
@@ -404,13 +419,19 @@ def format(s, embedded=False):
     Set ``embedded`` equal to True if formatting for use in the
     notebook; this just gets passed as an argument to ``detex``.
 
+    .. SEEALSO::
+
+        :func:`sage.misc.sageinspect.sage_getdoc` to get the formatted
+        documentation of a given object.
+
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[115:184]
-        '   Let `A` be an `m` by `n` (0,1)-matrix with `m \\le n`. We identify\n'
-        sage: format(identity_matrix(2).rook_vector.__doc__[115:184])
-        '   Let A be an m by n (0,1)-matrix with m <= n. We identify\n'
+        sage: identity_matrix(2).rook_vector.__doc__[201:273]
+        'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
+
+        sage: format(identity_matrix(2).rook_vector.__doc__[201:273])
+        'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but
     don't modify any TeX commands::
@@ -434,18 +455,6 @@ def format(s, embedded=False):
         sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
-    We check that the embedding information of a doc string from an extension
-    module is preserved, even if it is longer than a usual line. Moreover,
-    a ``nodetex`` directive in the first "essential" line of the doc string
-    is recognised. That has been implemented in trac ticket #11815::
-
-        sage: r = 'File: _local_user_with_a_very_long_name_that_would_normally_be_wrapped_sage_temp_machine_name_1234_tmp_1_spyx_0.pyx (starting at line 6)\nnodetex\nsome doc for a cython method\n`x \geq y`'
-        sage: print format(r)
-        File: _local_user_with_a_very_long_name_that_would_normally_be_wrapped_sage_temp_machine_name_1234_tmp_1_spyx_0.pyx (starting at line 6)
-        <BLANKLINE>
-        some doc for a cython method
-        `x \geq y`
-
     In the following use case, the ``nodetex`` directive would have been ignored prior
     to #11815::
 
@@ -466,11 +475,10 @@ def format(s, embedded=False):
             `x \geq y`
         <BLANKLINE>
 
-    We check that the ``noreplace`` directive works, even combined with ``nodetex`` and
-    an embedding information (see trac ticket #11817)::
+    We check that the ``noreplace`` directive works, even combined with
+    ``nodetex`` (see :trac:`11817`)::
 
-        sage: print format('File: bla.py (starting at line 1)\nnodetex, noreplace\n<<<identity_matrix>>>`\\not= 0`')
-        File: bla.py (starting at line 1)
+        sage: print format('''nodetex, noreplace\n<<<identity_matrix>>>`\\not= 0`''')
         <<<identity_matrix>>>`\not= 0`
 
     If replacement is impossible, then no error is raised::
@@ -488,25 +496,7 @@ def format(s, embedded=False):
 
     """
     if not isinstance(s, str):
-        raise TypeError, "s must be a string"
-
-    # Doc strings may contain embedding information, which should not
-    # be subject to formatting (line breaks must not be inserted).
-    # Hence, we first try to find out whether there is an embedding
-    # information.
-    first_newline = s.find(os.linesep)
-    embedding_info = ''
-    if first_newline > -1:
-        first_line = s[:first_newline]
-        from sage.misc.sageinspect import _extract_embedded_position
-        if _extract_embedded_position(first_line) is not None:
-            embedding_info = first_line + os.linesep
-            s = s[first_newline+len(os.linesep):]
-            # Hence, by now, s starts with the second line.
-    else:
-        from sage.misc.sageinspect import _extract_embedded_position
-        if _extract_embedded_position(s) is not None:
-            return s
+        raise TypeError("s must be a string")
 
     # Leading empty lines must be removed, since we search for directives
     # in the first line.
@@ -565,7 +555,7 @@ def format(s, embedded=False):
             s = process_mathtt(s)
         s = process_extlinks(s, embedded=embedded)
         s = detex(s, embedded=embedded)
-    return embedding_info+s
+    return s
 
 def format_src(s):
     """
@@ -587,7 +577,7 @@ def format_src(s):
         'Sq(*nums):'
     """
     if not isinstance(s, str):
-        raise TypeError, "s must be a string"
+        raise TypeError("s must be a string")
     docs = set([])
     import sage.all
     while True:
@@ -600,10 +590,10 @@ def format_src(s):
             t = ''
         else:
             x = eval('sage.all.%s'%obj, locals())
-            t = my_getsource(x, False)
+            t = my_getsource(x)
             docs.add(obj)
         if t is None:
-            print x
+            print(x)
             t = ''
         s = s[:i] + '\n' + t + s[i+6+j:]
 
@@ -732,24 +722,24 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
                    os.path.exists(os.path.join(doc_path, 'output', 'html', doc))]
         num_missing = len(missing)
         if num_missing > 0:
-            print """Warning, the following Sage documentation hasn't been built,
+            print("""Warning, the following Sage documentation hasn't been built,
 so documentation search results may be incomplete:
-"""
+""")
             for s in missing:
-                print s
+                print(s)
             if num_missing > 1:
-                print """
+                print("""
 You can build these with 'sage -docbuild DOCUMENT html',
-where DOCUMENT is one of""",
+where DOCUMENT is one of""", end=' ')
                 for s in missing:
                     if s.find('en') != -1:
-                        print "'%s'," % os.path.split(s)[-1],
+                        print("'{}',".format(os.path.split(s)[-1]), end=' ')
                     else:
-                        print "'%s'," % os.path.join(
+                        print("'{}',".format(os.path.join(
                             os.path.split(os.path.split(s)[0])[-1],
-                            os.path.split(s)[-1]),
-                print """
-or you can use 'sage -docbuild all html' to build all of the missing documentation."""
+                            os.path.split(s)[-1])), end=' ')
+                print("""
+or you can use 'sage -docbuild all html' to build all of the missing documentation.""")
             else:
                 s = missing[0]
                 if s.find('en') != -1:
@@ -758,8 +748,8 @@ or you can use 'sage -docbuild all html' to build all of the missing documentati
                     s = os.path.join(
                         os.path.split(os.path.split(s)[0])[-1],
                         os.path.split(s)[-1])
-                print """
-You can build this with 'sage -docbuild %s html'.""" % s
+                print("""
+You can build this with 'sage -docbuild {} html'.""".format(s))
 
     strip = len(base_path)
     results = ''
@@ -807,14 +797,10 @@ You can build this with 'sage -docbuild %s html'.""" % s
                                       if re.search(string, line, flags)]
                         for extra in [extra1, extra2, extra3, extra4, extra5]:
                             if extra:
-                                match_list = filter(lambda s:
-                                                        re.search(extra, s[1],
-                                                                  re.MULTILINE | flags),
-                                                    match_list)
+                                match_list = [s for s in match_list 
+                                                if re.search(extra, s[1], re.MULTILINE | flags)]
                         for num, line in match_list:
-                            results += ':'.join([filename[strip:].lstrip("/"),
-                                                 str(num+1),
-                                                 line])
+                            results += ':'.join([filename[strip:].lstrip("/"), str(num+1), line])
 
     if not interact:
         return results
@@ -826,7 +812,7 @@ You can build this with 'sage -docbuild %s html'.""" % s
         # format the search terms nicely
         terms = ', '.join(['"%s"' % s for s in [string] + [extra1,
                           extra2, extra3, extra4, extra5] if s])
-        print format_search_as_html(title, results, terms)
+        print(format_search_as_html(title, results, terms))
     else:
         import pager
         pager.pager()(results)
@@ -1038,7 +1024,7 @@ def search_doc(string, extra1='', extra2='', extra3='', extra4='',
 
         sage: len(search_doc('tree', interact=False).splitlines()) > 4000  # long time
         True
-        sage: len(search_doc('tree', whole_word=True, interact=False).splitlines()) < 1000  # long time
+        sage: len(search_doc('tree', whole_word=True, interact=False).splitlines()) < 2000  # long time
         True
     """
     return _search_src_or_doc('doc', string, extra1=extra1, extra2=extra2,
@@ -1133,8 +1119,7 @@ def format_search_as_html(what, r, search):
         i = L.find(':')
         if i != -1:
             files.add(L[:i])
-    files = list(files)
-    files.sort()
+    files = sorted(files)
     for F in files:
         if F.endswith('.html'):
             F = F.split('/', 2)[2]
@@ -1155,29 +1140,33 @@ def format_search_as_html(what, r, search):
 #######################################
 import sageinspect
 
-def my_getsource(obj, is_binary):
+def my_getsource(obj, oname=''):
     """
     Retrieve the source code for ``obj``.
 
     INPUT:
 
-    - ``obj`` - a Sage object, function, etc.
-    - ``is_binary`` - (boolean) ignored argument.
+    - ``obj`` -- a Sage object, function, etc.
 
-    OUTPUT: its documentation (string)
+    - ``oname`` -- str (optional). A name under which the object is
+      known. Currently ignored by Sage.
+
+    OUTPUT: 
+
+    Its documentation (string)
 
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import my_getsource
-        sage: s = my_getsource(identity_matrix, True)
+        sage: s = my_getsource(identity_matrix)
         sage: s[15:34]
         'def identity_matrix'
     """
     try:
-        s = sageinspect.sage_getsource(obj, is_binary)
+        s = sageinspect.sage_getsource(obj)
         return format_src(s)
-    except Exception, msg:
-        print 'Error getting source:', msg
+    except Exception as msg:
+        print('Error getting source:', msg)
         return None
 
 class _sage_doc:
@@ -1279,6 +1268,7 @@ class _sage_doc:
 
         # now s should be the reST version of the docstring
         if output == 'html':
+            from sagenb.misc.sphinxify import sphinxify
             html = sphinxify(s)
             if view:
                 path = os.path.join(tmp_dir(), "temp.html")
@@ -1347,9 +1337,10 @@ class _sage_doc:
         elif output == 'rst':
             return s
         elif output == 'text':
+            from sagenb.misc.sphinxify import sphinxify
             return sphinxify(s, format='text')
         else:
-            raise ValueError, "output type %s not recognized" % output
+            raise ValueError("output type {} not recognized".format(output))
 
     def _open(self, name, testing=False):
         """
@@ -1375,8 +1366,8 @@ class _sage_doc:
         url = self._base_url + os.path.join(name, "index.html")
         path = os.path.join(self._base_path, name, "index.html")
         if not os.path.exists(path):
-            raise OSError, """The document '%s' does not exist.  Please build it
-with 'sage -docbuild %s html --mathjax' and try again.""" %(name, name)
+            raise OSError("""The document '{0}' does not exist.  Please build it
+with 'sage -docbuild {0} html --mathjax' and try again.""".format(name))
 
         if testing:
             return (url, path)
@@ -1452,9 +1443,15 @@ def help(module=None):
         Welcome to Sage ...
     """
     if not module is None:
-        python_help(module)
+        if hasattr(module, '_sage_doc_'):
+            from sage.misc.sageinspect import sage_getdef, _sage_getdoc_unformatted
+            docstr = 'Help on ' + str(module) + '\n'
+            docstr += 'Definition: ' + module.__name__ + sage_getdef(module) + '\n' 
+            pydoc.pager(docstr + _sage_getdoc_unformatted(module))
+        else:
+            python_help(module)
     else:
-        print """Welcome to Sage %s!
+        print("""Welcome to Sage {}!
 
 To view the Sage tutorial in your web browser, type "tutorial()", and
 to view the (very detailed) Sage reference manual, type "manual()".
@@ -1476,4 +1473,4 @@ or type "license()".
 
 To enter Python's interactive online help utility, type "python_help()".
 To get help on a Python function, module or package, type "help(MODULE)" or
-"python_help(MODULE)".""" % sage.version.version
+"python_help(MODULE)".""".format(sage.version.version))

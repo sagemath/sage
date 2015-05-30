@@ -4,14 +4,14 @@ Dense real double vectors using a NumPy backend.
 EXAMPLES:
     sage: v = vector(RDF,[1, pi, sqrt(2)])
     sage: v
-    (1.0, 3.14159265359, 1.41421356237)
+    (1.0, 3.141592653589793, 1.414213562373095)
     sage: type(v)
     <type 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Real Double Field
     sage: v[0] = 5
     sage: v
-    (5.0, 3.14159265359, 1.41421356237)
+    (5.0, 3.141592653589793, 1.414213562373095)
     sage: loads(dumps(v)) == v
     True
 
@@ -20,18 +20,20 @@ AUTHORS:
        Vector_double_dense class
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2008 Jason Grout <jason-sage@creativetrax.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
+
 from sage.rings.real_double import RDF
 
-cimport numpy as cnumpy
+cimport numpy
 
-numpy=None
-scipy=None
 
 cdef class Vector_real_double_dense(vector_double_dense.Vector_double_dense):
     """
@@ -47,11 +49,8 @@ cdef class Vector_real_double_dense(vector_double_dense.Vector_double_dense):
         30.0
     """
     def __cinit__(self, parent, entries, coerce=True, copy=True):
-        global numpy
-        if numpy is None:
-            import numpy
         self._numpy_dtype = numpy.dtype('float64')
-        self._numpy_dtypeint = cnumpy.NPY_DOUBLE
+        self._numpy_dtypeint = numpy.NPY_DOUBLE
         self._python_dtype = float
         # TODO: Make RealDoubleElement instead of RDF for speed
         self._sage_dtype = RDF
@@ -72,9 +71,6 @@ cdef class Vector_real_double_dense(vector_double_dense.Vector_double_dense):
             sage: v.stats_skew()
             0.0
         """
-        global scipy
-        if scipy is None:
-            import scipy
         import scipy.stats
         return self._sage_dtype(scipy.stats.skew(self._vector_numpy))
 

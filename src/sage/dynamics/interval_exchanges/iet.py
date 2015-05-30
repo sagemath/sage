@@ -35,10 +35,12 @@ There are two plotting methods for iet::
 .. plot the domain and the range of T::
 
     sage: T.plot_two_intervals()
+    Graphics object consisting of 12 graphics primitives
 
 .. plot T as a function::
 
     sage: T.plot_function()
+    Graphics object consisting of 3 graphics primitives
 """
 from copy import copy
 from sage.structure.sage_object import SageObject
@@ -487,7 +489,7 @@ class IntervalExchangeTransformation(SageObject):
             True
         """
         return (
-            type(self) == type(other) and
+            isinstance(self, type(other)) and
             self._permutation == other._permutation and
             self._lengths == other._lengths)
 
@@ -502,7 +504,7 @@ class IntervalExchangeTransformation(SageObject):
             False
         """
         return (
-            type(self) != type(other) or
+            not isinstance(self, type(other)) or
             self._permutation != other._permutation or
             self._lengths != other._lengths)
 
@@ -709,7 +711,7 @@ class IntervalExchangeTransformation(SageObject):
 
         - ``side`` - must be 0 or -1 (no verification)
 
-        TEST:
+        TEST::
 
             sage: t = iet.IntervalExchangeTransformation(('a b c','c b a'),[1,1,3])
             sage: t
@@ -790,6 +792,7 @@ class IntervalExchangeTransformation(SageObject):
 
             sage: t = iet.IntervalExchangeTransformation(('a b c d','d a c b'),[1,1,1,1])
             sage: t.plot_function(rgbcolor=(0,1,0))
+            Graphics object consisting of 4 graphics primitives
         """
         from sage.plot.all import Graphics
         from sage.plot.plot import line2d
@@ -835,6 +838,7 @@ class IntervalExchangeTransformation(SageObject):
 
             sage: t = iet.IntervalExchangeTransformation(('a b','b a'),[1,1])
             sage: t.plot_two_intervals()
+            Graphics object consisting of 8 graphics primitives
         """
         from sage.plot.all import Graphics
         from sage.plot.plot import line2d

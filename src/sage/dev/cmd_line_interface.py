@@ -132,13 +132,13 @@ class CmdLineInterface(UserInterface):
 
                 itr = (opt for opt in options if opt.lower().startswith(s.lower()))
                 try:
-                    ret = itr.next()
+                    ret = next(itr)
                 except StopIteration:
                     self.show("Please specify an allowable option.")
                     continue
 
                 try:
-                    ret = itr.next()
+                    ret = next(itr)
                     self.show("Please disambiguate between options.")
                 except StopIteration:
                     return ret

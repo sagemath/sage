@@ -57,6 +57,7 @@ class Disk(GraphicPrimitive):
     We test creating a disk::
 
         sage: disk((2,3), 2, (0,pi/2))
+        Graphics object consisting of 1 graphics primitive
     """
     def __init__(self, point, r, angle, options):
         """
@@ -147,6 +148,7 @@ class Disk(GraphicPrimitive):
         TESTS::
 
             sage: D = disk((2,-1), 2, (0, pi), color='black', thickness=3, fill=False); D
+            Graphics object consisting of 1 graphics primitive
 
         Save alpha information in pdf (see :trac:`13732`)::
 
@@ -189,15 +191,18 @@ class Disk(GraphicPrimitive):
         EXAMPLES::
 
             sage: disk((0,0), 1, (0, pi/2)).plot3d()
+            Graphics3d Object
             sage: disk((0,0), 1, (0, pi/2)).plot3d(z=2)
+            Graphics3d Object
             sage: disk((0,0), 1, (pi/2, 0), fill=False).plot3d(3)
+            Graphics3d Object
 
         These examples show that the appropriate options are passed::
 
             sage: D = disk((2,3), 1, (pi/4,pi/3), hue=.8, alpha=.3, fill=True)
             sage: d = D[0]
             sage: d.plot3d(z=2).texture.opacity
-            0.300000000000000
+            0.3
 
         ::
 
@@ -265,6 +270,7 @@ def disk(point, radius, angle, **options):
     that option when using ``fill=False``::
 
         sage: disk((2,3), 1, (pi/4,pi/3), hue=.8, alpha=.3, fill=False, thickness=2)
+        Graphics object consisting of 1 graphics primitive
 
     The previous two examples also illustrate using ``hue`` and ``rgbcolor``
     as ways of specifying the color of the graphic.
@@ -274,12 +280,14 @@ def disk(point, radius, angle, **options):
 
         sage: d = disk((1,1,3), 1, (pi,3*pi/2), rgbcolor=(1,0,0))
         sage: d
+        Graphics3d Object
         sage: type(d)
         <type 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
 
     Extra options will get passed on to ``show()``, as long as they are valid::
 
         sage: disk((0, 0), 5, (0, pi/2), xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2), rgbcolor=(1, 0, 1))
+        Graphics object consisting of 1 graphics primitive
         sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2)) # These are equivalent
 
     TESTS:
@@ -287,6 +295,7 @@ def disk(point, radius, angle, **options):
     Testing that legend labels work right::
 
         sage: disk((2,4), 3, (pi/8, pi/4), hue=1, legend_label='disk', legend_color='blue')
+        Graphics object consisting of 1 graphics primitive
 
     We cannot currently plot disks in more than three dimensions::
 
@@ -316,4 +325,4 @@ def disk(point, radius, angle, **options):
     elif len(point)==3:
         return g[0].plot3d(z=point[2])
     else:
-        raise ValueError, 'The center point of a plotted disk should have two or three coordinates.'
+        raise ValueError('The center point of a plotted disk should have two or three coordinates.')

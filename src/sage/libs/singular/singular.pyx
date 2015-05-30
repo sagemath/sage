@@ -15,7 +15,6 @@ AUTHOR:
 ###############################################################################
 
 include "sage/libs/ntl/decl.pxi"
-include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 cdef extern from "limits.h":
@@ -23,8 +22,6 @@ cdef extern from "limits.h":
     long INT_MIN
 
 import os
-
-from sage.misc.misc_c import is_64_bit
 
 from sage.libs.singular.decl cimport intvec
 from sage.libs.singular.decl cimport SR_HDL, SR_INT, SR_TO_INT
@@ -128,7 +125,7 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring):
     """
     cdef Integer z
     z = Integer()
-    z.set_from_mpz(<__mpz_struct*>n)
+    z.set_from_mpz(<mpz_ptr>n)
     return z
 
 cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
@@ -154,7 +151,7 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
         return cache._one_element
     z = (<lnumber*>n).z
 
-    a = cache.objectptr.sage_generator()
+    a = cache.objectptr.indeterminate()
     ret = cache.objectptr.zero
     order = cache.objectptr.cardinality() - 1
 
@@ -164,7 +161,7 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
         if e == 0:
             ret = cache.objectptr.add(ret, c, ret)
         else:
-            a = ( e * cache.objectptr.sage_generator() ) % order
+            a = ( e * cache.objectptr.indeterminate() ) % order
             ret = cache.objectptr.axpy(ret, c, a, ret)
         z = <napoly*>pNext(<poly*>z)
     return (<FFgivE>cache._zero_element)._new_c(ret)
@@ -231,13 +228,13 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
     cdef object ret
 
     if naIsZero(n):
-        return base.zero_element()
+        return base.zero()
     elif naIsOne(n):
-        return base.one_element()
+        return base.one()
     z = (<lnumber*>n).z
 
     a = base.gen()
-    ret = base.zero_element()
+    ret = base.zero()
 
     while z:
         c = <long>napGetCoeff(z)
@@ -328,10 +325,8 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
         return base(<long>n)
     else:
         ret = Integer()
-        ret.set_from_mpz(<__mpz_struct*>n)
+        ret.set_from_mpz(<mpz_ptr>n)
         return base(ret)
-
-    return base(_ring.cf.n_Int(n,_ring))
 
 cdef number *sa2si_QQ(Rational r, ring *_ring):
     """
@@ -354,7 +349,12 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
     """
     """
     if _ring != currRing: rChangeCurrRing(_ring)
-    cdef number *n1, *n2, *a, *coeff, *apow1, *apow2
+    cdef number *n1
+    cdef number *n2
+    cdef number *a
+    cdef number *coeff
+    cdef number *apow1
+    cdef number *apow2
     cdef int b = - _ring.ch
 
     a = naPar(1)
@@ -388,7 +388,12 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
     """
     if _ring != currRing: rChangeCurrRing(_ring)
     cdef int i
-    cdef number *n1, *n2, *a, *coeff, *apow1, *apow2
+    cdef number *n1
+    cdef number *n2
+    cdef number *a
+    cdef number *coeff
+    cdef number *apow1
+    cdef number *apow2
     cdef GF2X_c rep = GF2E_rep(elem.x)
 
     if GF2X_deg(rep) >= 1:
@@ -423,7 +428,12 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring):
     """
     """
     cdef int i
-    cdef number *n1, *n2, *a, *coeff, *apow1, *apow2
+    cdef number *n1
+    cdef number *n2
+    cdef number *a
+    cdef number *coeff
+    cdef number *apow1
+    cdef number *apow2
     elem = elem.polynomial()
 
     if _ring != currRing: rChangeCurrRing(_ring)
@@ -459,7 +469,13 @@ cdef number *sa2si_NF(object elem, ring *_ring):
     """
     """
     cdef int i
-    cdef number *n1, *n2, *a, *nlCoeff, *naCoeff, *apow1, *apow2
+    cdef number *n1
+    cdef number *n2
+    cdef number *a
+    cdef number *nlCoeff
+    cdef number *naCoeff
+    cdef number *apow1
+    cdef number *apow2
     elem = list(elem)
 
     if _ring != currRing: rChangeCurrRing(_ring)
@@ -505,7 +521,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring):
     """
     if _ring != currRing: rChangeCurrRing(_ring)
     cdef number *n = nrzInit(0, _ring)
-    mpz_set(<__mpz_struct*>n, d.value)
+    mpz_set(<mpz_ptr>n, d.value)
     return <number*>n
 
 cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
@@ -555,28 +571,28 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
         return nrnMapGMP(<number *>((<Integer>lift).value))
 
 cdef object si2sa(number *n, ring *_ring, object base):
-    if PY_TYPE_CHECK(base, FiniteField_prime_modn):
+    if isinstance(base, FiniteField_prime_modn):
         return base(_ring.cf.n_Int(n, _ring))
 
-    elif PY_TYPE_CHECK(base, RationalField):
+    elif isinstance(base, RationalField):
         return si2sa_QQ(n,_ring)
 
-    elif PY_TYPE_CHECK(base, IntegerRing_class):
+    elif isinstance(base, IntegerRing_class):
         return si2sa_ZZ(n,_ring)
 
-    elif PY_TYPE_CHECK(base, FiniteField_givaro):
+    elif isinstance(base, FiniteField_givaro):
         return si2sa_GFqGivaro(n, _ring, base._cache)
 
-    elif PY_TYPE_CHECK(base, FiniteField_ntl_gf2e):
+    elif isinstance(base, FiniteField_ntl_gf2e):
         return si2sa_GFqNTLGF2E(n, _ring, <Cache_ntl_gf2e>base._cache)
 
-    elif PY_TYPE_CHECK(base, FiniteField):
+    elif isinstance(base, FiniteField):
         return si2sa_GFq_generic(n, _ring, base)
 
-    elif PY_TYPE_CHECK(base, NumberField) and base.is_absolute():
+    elif isinstance(base, NumberField) and base.is_absolute():
         return si2sa_NF(n, _ring, base)
 
-    elif PY_TYPE_CHECK(base, IntegerModRing_generic):
+    elif isinstance(base, IntegerModRing_generic):
         if _ring.ringtype == 0:
             return base(_ring.cf.n_Int(n, _ring))
         return si2sa_ZZmod(n, _ring, base)
@@ -585,28 +601,28 @@ cdef object si2sa(number *n, ring *_ring, object base):
         raise ValueError, "cannot convert from SINGULAR number"
 
 cdef number *sa2si(Element elem, ring * _ring):
-    cdef int i
-    if PY_TYPE_CHECK(elem._parent, FiniteField_prime_modn):
+    cdef int i = 0
+    if isinstance(elem._parent, FiniteField_prime_modn):
         return n_Init(int(elem),_ring)
 
-    elif PY_TYPE_CHECK(elem._parent, RationalField):
+    elif isinstance(elem._parent, RationalField):
         return sa2si_QQ(elem, _ring)
 
-    elif PY_TYPE_CHECK(elem._parent, IntegerRing_class):
+    elif isinstance(elem._parent, IntegerRing_class):
         return sa2si_ZZ(elem, _ring)
 
     elif isinstance(elem._parent, FiniteField_givaro):
         return sa2si_GFqGivaro( (<FFgivE>elem)._cache.objectptr.convert(i, (<FFgivE>elem).element ), _ring )
 
-    elif PY_TYPE_CHECK(elem._parent, FiniteField_ntl_gf2e):
+    elif isinstance(elem._parent, FiniteField_ntl_gf2e):
         return sa2si_GFqNTLGF2E(elem, _ring)
 
-    elif PY_TYPE_CHECK(elem._parent, FiniteField):
+    elif isinstance(elem._parent, FiniteField):
         return sa2si_GFq_generic(elem, _ring)
 
-    elif PY_TYPE_CHECK(elem._parent, NumberField) and elem._parent.is_absolute():
+    elif isinstance(elem._parent, NumberField) and elem._parent.is_absolute():
         return sa2si_NF(elem, _ring)
-    elif PY_TYPE_CHECK(elem._parent, IntegerModRing_generic):
+    elif isinstance(elem._parent, IntegerModRing_generic):
         if _ring.ringtype == 0:
             return n_Init(int(elem),_ring)
         return sa2si_ZZmod(elem, _ring)
@@ -637,12 +653,9 @@ cdef extern from "dlfcn.h":
     cdef long RTLD_LAZY
     cdef long RTLD_GLOBAL
 
-# Our attempt at avoiding exponent overflows.
-cdef unsigned int max_exponent_size
-
 cdef int overflow_check(long e, ring *_ring) except -1:
     """
-    Raises an ``OverflowError`` if e is > ``max_exponent_size``,
+    Raises an ``OverflowError`` if e is > max degree per variable,
     or if it is not acceptable for Singular as exponent of the
     given ring.
 
@@ -676,7 +689,8 @@ cdef int overflow_check(long e, ring *_ring) except -1:
         OverflowError: Exponent overflow (1073741824). # 32-bit
 
     """
-    if unlikely(e > min(max_exponent_size,max(_ring.N,_ring.bitmask))):
+    # 2^31 (pPower takes ints)
+    if unlikely(e >= _ring.bitmask or e >= 2**31):
         raise OverflowError("Exponent overflow (%d)."%(e))
     return 0
 
@@ -693,7 +707,6 @@ cdef init_libsingular():
     """
     global singular_options
     global singular_verbose_options
-    global max_exponent_size
     global WerrorS_callback
     global error_messages
 
@@ -703,10 +716,13 @@ cdef init_libsingular():
         lib = os.environ['SAGE_LOCAL']+"/lib/libsingular."+extension
         if os.path.exists(lib):
             handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
+            if not handle:
+                err = dlerror()
+                if err:
+                    print err
             break
 
     if handle == NULL:
-        print dlerror()
         raise ImportError, "cannot load libSINGULAR library"
 
     # load SINGULAR
@@ -727,18 +743,9 @@ cdef init_libsingular():
     On(SW_USE_EZGCD)
     Off(SW_USE_NTL_SORT)
 
-    if is_64_bit:
-        max_exponent_size = 1<<31-1;
-    else:
-        max_exponent_size = 1<<16-1;
-
     WerrorS_callback = libsingular_error_callback
 
     error_messages = []
-
-cdef inline unsigned long get_max_exponent_size():
-    global max_exponent_size
-    return max_exponent_size
 
 # call the init routine
 init_libsingular()

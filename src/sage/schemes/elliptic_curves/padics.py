@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Miscellaneous p-adic functions
+Miscellaneous `p`-adic functions
 
-p-adic functions from ell_rational_field.py, moved here to reduce
+`p`-adic functions from ell_rational_field.py, moved here to reduce
 crowding in that file.
 """
 
@@ -37,7 +37,7 @@ import math
 import sage.misc.misc as misc
 import sage.matrix.all as matrix
 sqrt = math.sqrt
-import monsky_washnitzer
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 import sage.schemes.hyperelliptic_curves.hypellfrob
 
 def __check_padic_hypotheses(self, p):
@@ -58,15 +58,15 @@ def __check_padic_hypotheses(self, p):
     """
     p = rings.Integer(p)
     if not p.is_prime():
-        raise ValueError, "p = (%s) must be prime"%p
+        raise ValueError("p = (%s) must be prime"%p)
     if p == 2:
-        raise ValueError, "p must be odd"
+        raise ValueError("p must be odd")
     if self.conductor() % p == 0 or self.ap(p) % p == 0:
-        raise ArithmeticError, "p must be a good ordinary prime"
+        raise ArithmeticError("p must be a good ordinary prime")
     return p
 
 
-def padic_lseries(self, p, normalize='L_ratio', use_eclib=False):
+def padic_lseries(self, p, normalize='L_ratio', use_eclib=True):
     r"""
     Return the `p`-adic `L`-series of self at
     `p`, which is an object whose approx method computes
@@ -78,7 +78,7 @@ def padic_lseries(self, p, normalize='L_ratio', use_eclib=False):
 
     -  ``p`` - prime
 
-    -  ``use_eclib`` - bool (default:False); whether or not to use
+    -  ``use_eclib`` - bool (default:True); whether or not to use
        John Cremona's eclib for the computation of modular
        symbols
 
@@ -137,11 +137,11 @@ def padic_lseries(self, p, normalize='L_ratio', use_eclib=False):
         sage: P(0)
         3 + 3^2 + 2*3^4 + 2*3^5 + O(3^6)
 
-    We can use eclib to compute the `L`-series::
+    We can use Sage modular symbols instead to compute the `L`-series::
 
         sage: e = EllipticCurve('11a')
-        sage: L = e.padic_lseries(3,use_eclib=True)
-        sage: L.series(5,prec=10)   # NOTE: Output below prints slightly incorrectly -- see trac 10280!
+        sage: L = e.padic_lseries(3,use_eclib=False)
+        sage: L.series(5,prec=10)
         2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 3^6 + O(3^7) + (1 + 3 + 2*3^2 + 3^3 + O(3^4))*T + (1 + 2*3 + O(3^4))*T^2 + (3 + 2*3^2 + O(3^3))*T^3 + (2*3 + 3^2 + O(3^3))*T^4 + (2 + 2*3 + 2*3^2 + O(3^3))*T^5 + (1 + 3^2 + O(3^3))*T^6 + (2 + 3^2 + O(3^3))*T^7 + (2 + 2*3 + 2*3^2 + O(3^3))*T^8 + (2 + O(3^2))*T^9 + O(T^10)
 
     """
@@ -165,7 +165,7 @@ def padic_lseries(self, p, normalize='L_ratio', use_eclib=False):
 
 def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
     r"""
-    Computes the cyclotomic p-adic regulator of this curve.
+    Computes the cyclotomic `p`-adic regulator of this curve.
 
 
     INPUT:
@@ -227,7 +227,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_regulator(5, max_prec)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ...       assert E.padic_regulator(5, prec) == full   # long time
+        ....:     assert E.padic_regulator(5, prec) == full   # long time
 
     A case where the generator belongs to the formal group already
     (trac #3632)::
@@ -252,11 +252,11 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
     p = Integer(p)  # this is assumed in code below
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError, "p = (%s) must be prime"%p
+            raise ValueError("p = (%s) must be prime"%p)
         if p == 2:
-            raise ValueError, "p must be odd"   # todo
+            raise ValueError("p must be odd")   # todo
         if self.conductor() % (p**2) == 0:
-            raise ArithmeticError, "p must be a semi-stable prime"
+            raise ArithmeticError("p must be a semi-stable prime")
 
     if self.conductor() % p == 0:
         Eq = self.tate_curve(p)
@@ -444,15 +444,15 @@ def _multiply_point(E, R, P, m):
         sage: from sage.schemes.elliptic_curves.padics import _multiply_point
         sage: Q = P
         sage: for n in range(1, 25):
-        ...      naive = R(Q[0].numerator()),  \
-        ...              R(Q[1].numerator()),  \
-        ...              R(Q[0].denominator().sqrt())
-        ...      triple = _multiply_point(E, R, P, n)
-        ...      assert (triple[0] == naive[0]) and ( \
-        ...        (triple[1] == naive[1] and triple[2] == naive[2]) or \
-        ...        (triple[1] == -naive[1] and triple[2] == -naive[2])), \
-        ...           "_multiply_point() gave an incorrect answer"
-        ...      Q = Q + P
+        ....:      naive = R(Q[0].numerator()), \
+        ....:              R(Q[1].numerator()), \
+        ....:              R(Q[0].denominator().sqrt())
+        ....:      triple = _multiply_point(E, R, P, n)
+        ....:      assert (triple[0] == naive[0]) and ( \
+        ....:        (triple[1] == naive[1] and triple[2] == naive[2]) or \
+        ....:        (triple[1] == -naive[1] and triple[2] == -naive[2])), \
+        ....:           "_multiply_point() gave an incorrect answer"
+        ....:      Q = Q + P
     """
     assert m >= 1
 
@@ -605,7 +605,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ...       assert E.padic_height(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height(5, prec)(P) == full   # long time
 
     A supersingular prime for a curve::
 
@@ -645,15 +645,15 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     """
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError, "p = (%s) must be prime"%p
+            raise ValueError("p = (%s) must be prime"%p)
         if p == 2:
-            raise ValueError, "p must be odd"   # todo
+            raise ValueError("p must be odd")   # todo
         if self.conductor() % (p**2) == 0:
-            raise ArithmeticError, "p must be a semi-stable prime"
+            raise ArithmeticError("p must be a semi-stable prime")
 
     prec = int(prec)
     if prec < 1:
-        raise ValueError, "prec (=%s) must be at least 1" % prec
+        raise ValueError("prec (=%s) must be at least 1" % prec)
 
     if self.conductor() % p == 0:
         Eq = self.tate_curve(p,prec=prec)
@@ -797,21 +797,21 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(2, max_prec):                 # long time
-        ...       assert E.padic_height_via_multiply(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full   # long time
     """
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError, "p = (%s) must be prime"%p
+            raise ValueError("p = (%s) must be prime"%p)
         if p == 2:
-            raise ValueError, "p must be odd"   # todo
+            raise ValueError("p must be odd")   # todo
         if self.conductor() % p == 0:
-            raise ArithmeticError, "must have good reduction at p"
+            raise ArithmeticError("must have good reduction at p")
         if self.ap(p) % p == 0:
-            raise ArithmeticError, "must be ordinary at p"
+            raise ArithmeticError("must be ordinary at p")
 
     prec = int(prec)
     if prec < 1:
-        raise ValueError, "prec (=%s) must be at least 1" % prec
+        raise ValueError("prec (=%s) must be at least 1" % prec)
 
     # For notation and definitions, see ``Computing p-adic heights via point
     # multiplication'' (David Harvey, still in draft form)
@@ -981,8 +981,8 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
         sage: E2 = E.padic_E2(5, max_N)                     # long time
         sage: max_sigma = E.padic_sigma(p, max_N, E2=E2)    # long time
         sage: for N in range(3, max_N):                     # long time
-        ...      sigma = E.padic_sigma(p, N, E2=E2)         # long time
-        ...      assert sigma == max_sigma
+        ....:    sigma = E.padic_sigma(p, N, E2=E2)         # long time
+        ....:    assert sigma == max_sigma
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -992,13 +992,13 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     # the precision loss estimates (below) very carefully; I think it
     # may become necessary to compute E2 to an even higher precision.
     if p < 5:
-        raise NotImplementedError, "p (=%s) must be at least 5" % p
+        raise NotImplementedError("p (=%s) must be at least 5" % p)
 
     N = int(N)
     if N <= 2:
         # a few special cases for small N
         if N < 1:
-            raise ValueError, "N (=%s) must be at least 1" % prec
+            raise ValueError("N (=%s) must be at least 1" % prec)
 
         if N == 1:
             # return simply t + O(t^2)
@@ -1013,12 +1013,12 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
                                             K(self.a1()/2, 1)], prec=3)
 
     if self.discriminant().valuation(p) != 0:
-        raise NotImplementedError, "equation of curve must be minimal at p"
+        raise NotImplementedError("equation of curve must be minimal at p")
 
     if E2 is None:
         E2 = self.padic_E2(p, N-2, check_hypotheses=False)
     elif E2.precision_absolute() < N-2:
-        raise ValueError, "supplied E2 has insufficient precision"
+        raise ValueError("supplied E2 has insufficient precision")
 
     QQt = LaurentSeriesRing(RationalField(), "x")
 
@@ -1168,10 +1168,10 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
         sage: E = EllipticCurve([1, 2, 3, 4, 7])                            # long time
         sage: E2 = E.padic_E2(5, 50)                                        # long time
         sage: for N in range(2, 10):                                        # long time
-        ...      for lamb in range(10):                                     # long time
-        ...         correct = E.padic_sigma(5, N + 3*lamb, E2=E2)           # long time
-        ...         compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)    # long time
-        ...         assert compare == correct                               # long time
+        ....:    for lamb in range(10):                                     # long time
+        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)           # long time
+        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)    # long time
+        ....:       assert compare == correct                               # long time
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -1181,17 +1181,17 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     # the precision loss estimates (below) very carefully; I think it
     # may become necessary to compute E2 to an even higher precision.
     if p < 5:
-        raise NotImplementedError, "p (=%s) must be at least 5" % p
+        raise NotImplementedError("p (=%s) must be at least 5" % p)
 
     N = int(N)
     lamb = int(lamb)
 
     if lamb < 0:
-        raise ValueError, "lamb (=%s) must be at least 0" % lamb
+        raise ValueError("lamb (=%s) must be at least 0" % lamb)
 
     # a few special cases for small N
     if N <= 1:
-        raise ValueError, "N (=%s) must be at least 2" % N
+        raise ValueError("N (=%s) must be at least 2" % N)
 
     if N == 2:
         # return t + a_1/2 t^2 + O(t^3)
@@ -1200,12 +1200,12 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
                                         K(self.a1()/2, lamb+1)], prec=3)
 
     if self.discriminant().valuation(p) != 0:
-        raise NotImplementedError, "equation of curve must be minimal at p"
+        raise NotImplementedError("equation of curve must be minimal at p")
 
     if E2 is None:
         E2 = self.padic_E2(p, N-2, check_hypotheses=False)
     elif E2.precision_absolute() < N-2:
-        raise ValueError, "supplied E2 has insufficient precision"
+        raise ValueError("supplied E2 has insufficient precision")
 
     # The main part of the algorithm is exactly the same as
     # for padic_sigma(), but we truncate all the series earlier.
@@ -1508,10 +1508,10 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
     if algorithm == "auto":
         algorithm = "standard" if p < 6*prec else "sqrtp"
     elif algorithm == "sqrtp" and p < 6*prec:
-        raise ValueError, "sqrtp algorithm is only available when p > 6*prec"
+        raise ValueError("sqrtp algorithm is only available when p > 6*prec")
 
     if algorithm not in ["standard", "sqrtp"]:
-        raise ValueError, "unknown algorithm '%s'" % algorithm
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
     # todo: maybe it would be good if default prec was None, and then
     # it selects an appropriate precision based on how large the prime
@@ -1519,11 +1519,11 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
     # todo: implement the p == 3 case
     if p < 5:
-        raise NotImplementedError, "p (=%s) must be at least 5" % p
+        raise NotImplementedError("p (=%s) must be at least 5" % p)
 
     prec = int(prec)
     if prec < 1:
-        raise ValueError, "prec (=%s) must be at least 1" % prec
+        raise ValueError("prec (=%s) must be at least 1" % prec)
 
     # To run matrix_of_frobenius(), we need to have the equation in the
     # form y^2 = x^3 + ax + b, whose discriminant is invertible mod p.
@@ -1549,7 +1549,7 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
         # Need to increase precision a little to compensate for precision
         # losses during the computation. (See monsky_washnitzer.py
         # for more details.)
-        adjusted_prec = monsky_washnitzer.adjusted_prec(p, prec)
+        adjusted_prec = sage.schemes.hyperelliptic_curves.monsky_washnitzer.adjusted_prec(p, prec)
 
         if check:
             trace = None
@@ -1561,7 +1561,7 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
         R, x = rings.PolynomialRing(base_ring, 'x').objgen()
         Q = x**3 + base_ring(X.a4()) * x + base_ring(X.a6())
-        frob_p = monsky_washnitzer.matrix_of_frobenius(
+        frob_p = sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius(
                          Q, p, adjusted_prec, trace)
 
 
@@ -1626,26 +1626,26 @@ def _brent(F, p, N):
 
         sage: brent = sage.schemes.elliptic_curves.padics._brent
         sage: for p in [2, 3, 5]:
-        ...     for N in [2, 3, 10, 50]:
-        ...       R = Integers(p**(N-1))
-        ...       Rx, x = PowerSeriesRing(R, "x").objgen()
-        ...       for _ in range(5):
-        ...         g = [R.random_element() for i in range(N)]
-        ...         g[0] = R(1)
-        ...         g = Rx(g, len(g))
-        ...         f = g.derivative() / g
-        ...         # perturb f by something whose integral is in I
-        ...         err = [R.random_element() * p**(N-i) for i in range(N+1)]
-        ...         err = Rx(err, len(err))
-        ...         err = err.derivative()
-        ...         F = f + err
-        ...         # run brent() and compare output modulo I
-        ...         G = brent(F, p, N)
-        ...         assert G.prec() >= N, "not enough output terms"
-        ...         err = (G - g).list()
-        ...         for i in range(len(err)):
-        ...           assert err[i].lift().valuation(p) >= (N - i), \
-        ...                  "incorrect precision output"
+        ....:   for N in [2, 3, 10, 50]:
+        ....:     R = Integers(p**(N-1))
+        ....:     Rx.<x> = PowerSeriesRing(R, "x")
+        ....:     for _ in range(5):
+        ....:       g = [R.random_element() for i in range(N)]
+        ....:       g[0] = R(1)
+        ....:       g = Rx(g, len(g))
+        ....:       f = g.derivative() / g
+        ....:       # perturb f by something whose integral is in I
+        ....:       err = [R.random_element() * p**(N-i) for i in range(N+1)]
+        ....:       err = Rx(err, len(err))
+        ....:       err = err.derivative()
+        ....:       F = f + err
+        ....:       # run brent() and compare output modulo I
+        ....:       G = brent(F, p, N)
+        ....:       assert G.prec() >= N, "not enough output terms"
+        ....:       err = (G - g).list()
+        ....:       for i in range(len(err)):
+        ....:         assert err[i].lift().valuation(p) >= (N - i), \
+        ....:                "incorrect precision output"
     """
     Rx = F.parent()           # Rx = power series ring over Z/p^{N-1} Z
     R = Rx.base_ring()        # R = Z/p^{N-1} Z

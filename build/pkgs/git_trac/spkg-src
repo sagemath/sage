@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+TARBALL=https://codeload.github.com/sagemath/git-trac-command/legacy.tar.gz/master
+VERSION=`cat package-version.txt`
+
+tar xzf <( curl $TARBALL )
+mv sagemath-git-trac-command-* git_trac-$VERSION
+tar cjf git_trac-$VERSION.tar.bz2 git_trac-$VERSION
+rm -rf git_trac-$VERSION

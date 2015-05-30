@@ -2,30 +2,30 @@
 Enumeration of Totally Real Fields
 
 AUTHORS:
-    -- Craig Citro and John Voight (2007-11-04):
-        * Type checking and other polishing.
-    -- John Voight (2007-10-09):
-        * Improvements: Symth bound, Lagrange multipliers for b.
-    -- John Voight (2007-09-19):
-        * Various optimization tweaks.
-    -- John Voight (2007-09-01):
-        * Initial version.
+
+- Craig Citro and John Voight (2007-11-04):
+  Type checking and other polishing.
+- John Voight (2007-10-09):
+  Improvements: Smyth bound, Lagrange multipliers for b.
+- John Voight (2007-09-19):
+  Various optimization tweaks.
+- John Voight (2007-09-01):
+  Initial version.
 """
 
-#**************************************************************************************
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein and John Voight
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#**************************************************************************************
+#*****************************************************************************
+
+
+include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
 
 from sage.rings.arith import binomial, gcd
 from sage.rings.rational_field import RationalField
@@ -33,64 +33,70 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField
 from sage.rings.integer_ring import ZZ
-
-from sage.rings.integer import Integer
 from sage.rings.integer cimport Integer
 
 # Other global variables
 ZZx = PolynomialRing(ZZ, 'x')
 
-cdef extern from "math.h":
-    cdef long lrint(double x)
-    cdef double floor(double x)
-    cdef double ceil(double x)
-    cdef double fabs(double x)
-    cdef double round(double x)
-    cdef int abs(int x)
+from libc.math cimport lrint, floor, ceil, fabs, round
 
 
-#*********************************************************************************
+#*********************************************************************
 # Auxiliary routine
 # Hermite constant, naive Newton-Raphson, and a specialized Lagrange
 # multiplier solver.
-#*********************************************************************************
+#*********************************************************************
 
 def hermite_constant(n):
     r"""
-    This function returns the nth Hermite constant (typically denoted
-    $gamma_n$), defined to be
-    $$ \max_L \min_{0 \neq x \in L} ||x||^2 $$
-    where $L$ runs over all lattices of dimension $n$ and determinant $1$.
-    For $n \leq 8$ it returns the exact value of $\gamma_n$, and for $n > 9$
-    it returns an upper bound on $\gamma_n$.
+    This function returns the nth Hermite constant
+
+    The nth Hermite constant (typically denoted `\gamma_n`), is defined
+    to be
+
+    .. math::
+
+        \max_L \min_{0 \neq x \in L} ||x||^2
+
+    where `L` runs over all lattices of dimension `n` and determinant `1`.
+
+    For `n \leq 8` it returns the exact value of `\gamma_n`, and for
+    `n > 9` it returns an upper bound on `\gamma_n`.
 
     INPUT:
-    n -- integer
+
+    - n -- integer
 
     OUTPUT:
-    (an upper bound for) the Hermite constant gamma_n
 
-    EXAMPLES:
-    sage: hermite_constant(1) # trivial one-dimensional lattice
-    1.0
-    sage: hermite_constant(2) # Eisenstein lattice
-    1.1547005383792515
-    sage: 2/sqrt(3.)
-    1.15470053837925
-    sage: hermite_constant(8) # E_8
-    2.0
+    - (an upper bound for) the Hermite constant gamma_n
 
-    NOTES:
-    The upper bounds used can be found in [CS] and [CE].
+    EXAMPLES::
+
+        sage: hermite_constant(1) # trivial one-dimensional lattice
+        1.0
+        sage: hermite_constant(2) # Eisenstein lattice
+        1.1547005383792515
+        sage: 2/sqrt(3.)
+        1.15470053837925
+        sage: hermite_constant(8) # E_8
+        2.0
+
+    .. NOTE::
+
+        The upper bounds used can be found in [CS]_ and [CE]_.
 
     REFERENCES:
-        [CE] Henry Cohn and Noam Elkies, New upper bounds on sphere
-               packings I, Ann. Math. 157 (2003), 689--714.
-        [CS] J.H. Conway and N.J.A. Sloane, Sphere packings, lattices and
-               groups, 3rd. ed., Grundlehren der Mathematischen Wissenschaften,
-               vol. 290, Springer-Verlag, New York, 1999.
+
+    .. [CE] Henry Cohn and Noam Elkies, New upper bounds on sphere
+       packings I, Ann. Math. 157 (2003), 689--714.
+
+    .. [CS] J.H. Conway and N.J.A. Sloane, Sphere packings, lattices
+       and groups, 3rd. ed., Grundlehren der Mathematischen
+       Wissenschaften, vol. 290, Springer-Verlag, New York, 1999.
 
     AUTHORS:
+
     - John Voight (2007-09-03)
     """
 
@@ -118,7 +124,10 @@ def hermite_constant(n):
 cdef double eval_seq_as_poly(int *f, int n, double x):
     r"""
     Evaluates the sequence a, thought of as a polynomial with
-        $$ f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0]. $$
+
+    .. math::
+
+        f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
     cdef double s, xp
 
@@ -135,7 +144,11 @@ cdef double newton(int *f, int *df, int n, double x0, double eps):
     with provable precision eps, i.e. |x-z| < eps where z is the actual
     root.
     The sequence a corresponds to the polynomial f with
-        $$ f(x) = x^n + a[n-1]*x^(n-1) + ... + a[0]. $$
+
+    .. math::
+
+        f(x) = x^n + a[n-1]*x^(n-1) + ... + a[0].
+
     This function (for speed reasons) has no error checking and no
     guarantees are made as to the convergence; a naive Newton-Raphson
     method is used.
@@ -173,7 +186,9 @@ cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
                               double eps, double *rts):
     r"""
     Find the real roots of f in the intervals specified by beta:
+
         (beta[0],beta[1]), (beta[1],beta[2]), ..., (beta[n-1], beta[n])
+
     Calls newton_kernel, so same provisos apply---in particular,
     each interval should contain a unique simple root.
     Note the derivative *df is passed but is recomputed--this is
@@ -190,17 +205,27 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
     r"""
     Private function.  Solves the equations which arise in the Lagrange multiplier
     for degree 3: for each 1 <= r <= n-2, we solve
+
         r*x^i + (n-1-r)*y^i + z^i = s_i (i = 1,2,3)
+
     where the s_i are the power sums determined by the coefficients a.
     We output the largest value of z which occurs.
     We use a precomputed elimination ideal.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: ls = sage.rings.number_field.totallyreal_data.lagrange_degree_3(3,0,1,2)
         sage: [RealField(10)(x) for x in ls]
         [-1.0, -1.0]
         sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(3,6,1,2) # random
         [-5.8878, -5.8878]
+
+    TESTS:
+
+    Check that :trac:`13101` is solved::
+
+        sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)
+        [0.0, -1.0]
     """
     cdef double zmin, zmax, val
     cdef double *roots_data
@@ -292,6 +317,9 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
             rts = [rts[i][0] for i in range(len(rts))]
             z4minmax = [min(rts + z4minmax), max(rts + z4minmax)]
 
+    if not z4minmax:
+        return [0.0, -1.0]
+
     return z4minmax
 
 cdef int __len_primes = 46
@@ -304,7 +332,8 @@ def int_has_small_square_divisor(sage.rings.integer.Integer d):
     r"""
     Returns the largest a such that a^2 divides d and a has prime divisors < 200.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.rings.number_field.totallyreal_data import int_has_small_square_divisor
         sage: int_has_small_square_divisor(500)
         100
@@ -330,7 +359,10 @@ def int_has_small_square_divisor(sage.rings.integer.Integer d):
 cdef int eval_seq_as_poly_int(int *f, int n, int x):
     r"""
     Evaluates the sequence a, thought of as a polynomial with
-        $$ f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0]. $$
+
+    .. math::
+
+        f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
     cdef int s, xp
 
@@ -391,7 +423,8 @@ def easy_is_irreducible_py(f):
     """
     Used solely for testing easy_is_irreducible.
 
-    EXAMPLES:
+    EXAMPLES::
+
       sage: sage.rings.number_field.totallyreal_data.easy_is_irreducible_py(pari('x^2+1'))
       1
       sage: sage.rings.number_field.totallyreal_data.easy_is_irreducible_py(pari('x^2-1'))
@@ -435,17 +468,20 @@ cdef class tr_data:
         Initialization routine (constructor).
 
         INPUT:
+
         n -- integer, the degree
         B -- integer, the discriminant bound
         a -- list (default: []), the coefficient list to begin with, where
              a[len(a)]*x^n + ... + a[0]x^(n-len(a))
 
         OUTPUT:
+
         the data initialized to begin enumeration of totally real fields
         with degree n, discriminant bounded by B, and starting with
         coefficients a.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: T = sage.rings.number_field.totallyreal_data.tr_data(2,100)
             sage: T.printa()
             k = 0
@@ -505,7 +541,7 @@ cdef class tr_data:
             # The value of k is the largest index of the coefficients of a which is
             # currently unknown; e.g., if k == -1, then we can iterate
             # over polynomials, and if k == n-1, then we have finished iterating.
-            if a[len(a)-1] <> 1:
+            if a[len(a)-1] != 1:
                 raise ValueError, "a[len(a)-1](=%s) must be 1 so polynomial is monic"%a[len(a)-1]
 
             k = n-len(a)
@@ -568,16 +604,19 @@ cdef class tr_data:
         polynomial.
 
         INPUT:
-            verbose -- boolean to print verbosely computational details
-            haltk -- integer, the level at which to halt the inductive
-                     coefficient bounds
-            phc -- boolean, if PHCPACK is available, use it when k == n-5 to
-                   compute an improved Lagrange multiplier bound
+
+        - verbose -- boolean to print verbosely computational details
+        - haltk -- integer, the level at which to halt the inductive
+          coefficient bounds
+        - phc -- boolean, if PHCPACK is available, use it when k == n-5 to
+          compute an improved Lagrange multiplier bound
 
         OUTPUT:
-            The next polynomial, as a sequence of integers
 
-        EXAMPLES:
+        The next polynomial, as a sequence of integers
+
+        EXAMPLES::
+
             sage: T = sage.rings.number_field.totallyreal_data.tr_data(2,100)
             sage: T.increment()
             [-24, -1, 1]
@@ -621,21 +660,25 @@ cdef class tr_data:
         polynomial.
 
         INPUT:
-            f_out -- an integer sequence, to be written with the
-                     coefficients of the next polynomial
-            verbose -- boolean to print verbosely computational details
-            haltk -- integer, the level at which to halt the inductive
-                     coefficient bounds
-            phc -- boolean, if PHCPACK is available, use it when k == n-5 to
-                   compute an improved Lagrange multiplier bound
+
+        - f_out -- an integer sequence, to be written with the coefficients of
+          the next polynomial
+        - verbose -- boolean to print verbosely computational details
+        - haltk -- integer, the level at which to halt the inductive
+          coefficient bounds
+        - phc -- boolean, if PHCPACK is available, use it when k == n-5 to
+          compute an improved Lagrange multiplier bound
 
         OUTPUT:
+
             None. The return value is stored in the variable f_out.
         """
 
         cdef int n, np1, k, i, j, nk, kz
-        cdef int *gnkm, *gnkm1
-        cdef double *betak, bl, br, akmin, akmax, tmp_dbl
+        cdef int *gnkm
+        cdef int *gnkm1
+        cdef double *betak
+        cdef double bl, br, akmin, akmax, tmp_dbl
         cdef bint maxoutflag
 
         n = self.n
@@ -754,7 +797,7 @@ cdef class tr_data:
                             f = ZZx([self.gnk[(k+1)*n+i] for i in range(n-(k+1)+1)])
                             # Could just take self.gnk(k+2)*n+i, but this may not be initialized...
                             df = ZZx([i*self.gnk[(k+1)*n+i] for i in range(1,n-(k+1)+1)])
-                            if gcd(f,df) <> 1:
+                            if gcd(f,df) != 1:
                                 if verbose:
                                     print "  gnk has multiple factor!"
                                 maxoutflag = 1
@@ -877,7 +920,8 @@ cdef class tr_data:
         """
         Print relevant data for self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: T = sage.rings.number_field.totallyreal_data.tr_data(3,2^10)
             sage: T.printa()
             k = 1

@@ -44,10 +44,10 @@ by a word describing a path from the root node.
 
 **Canonical labellings**
 
-Equality between instances of classes extending both of :class:`AbstractTree`
+Equality between instances of classes extending both :class:`AbstractTree`
 and ``A`` is entirely defined by the equality defined on the elements of
-``A``. A canonical labelling of such a tree however, should be such that two
-trees ``a`` and ``b`` satisfying ``a == b`` should have the same canonical
+``A``. A canonical labelling of such a tree, however, should be such that
+two trees ``a`` and ``b`` satisfying ``a == b`` have the same canonical
 labellings. On the other hand, the canonical labellings of trees ``a`` and
 ``b`` satisfying ``a != b`` are expected to be different.
 
@@ -66,18 +66,20 @@ incoherent with the data structure.
 from sage.structure.list_clone import ClonableArray
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
+from functools import reduce
+
 
 # Unfortunately Cython forbids multiple inheritance. Therefore, we do not
-# inherits from SageObject to be able to inherits from Element or a subclass
+# inherit from SageObject to be able to inherit from Element or a subclass
 # of it later.
 class AbstractTree(object):
     """
-    Abstract Tree
+    Abstract Tree.
 
     There is no data structure defined here, as this class is meant to be
     extended, not instantiated.
 
-    .. rubric:: How should this class be extended ?
+    .. rubric:: How should this class be extended?
 
     A class extending :class:`AbstractTree
     <sage.combinat.abstract_tree.AbstractTree>` should respect several
@@ -90,7 +92,7 @@ class AbstractTree(object):
       <AbstractTree.canonical_labelling>` method
       should return the same value for trees that are considered equal (see the
       "canonical labellings" section in the documentation of the
-      :class:`AbstractTree <sage.combinat.abstract_tree.AbstractTree>` module).
+      :class:`AbstractTree <sage.combinat.abstract_tree.AbstractTree>` class).
 
     * For a tree ``T`` the call ``T.parent().labelled_trees()`` should return
       a parent for labelled trees of the same kind: for example,
@@ -106,12 +108,641 @@ class AbstractTree(object):
         sage: TestSuite(OrderedTree()).run()
         sage: TestSuite(BinaryTree()).run()
     """
+    def pre_order_traversal_iter(self):
+        r"""
+        The depth-first pre-order traversal iterator.
+
+        This method iters each node following the depth-first pre-order
+        traversal algorithm (recursive implementation). The algorithm
+        is::
+
+            yield the root (in the case of binary trees, if it is not
+                a leaf);
+            then explore each subtree (by the algorithm) from the
+                leftmost one to the rightmost one.
+
+        EXAMPLES:
+
+        For example, on the following binary tree `b`::
+
+            |   ___3____      |
+            |  /        \     |
+            | 1         _7_   |
+            |  \       /   \  |
+            |   2     5     8 |
+            |        / \      |
+            |       4   6     |
+
+        (only the nodes shown), the depth-first pre-order traversal
+        algorithm explores `b` in the following order of nodes:
+        `3,1,2,7,5,4,6,8`.
+
+        Another example::
+
+            |     __1____ |
+            |    /  /   / |
+            |   2  6   8_ |
+            |   |  |  / / |
+            |   3_ 7 9 10 |
+            |  / /        |
+            | 4 5         |
+
+        The algorithm explores this labelled tree in the following
+        order: `1,2,3,4,5,6,7,8,9,10`.
+
+        TESTS::
+
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: ascii_art([b])
+            [   ___3____      ]
+            [  /        \     ]
+            [ 1         _7_   ]
+            [  \       /   \  ]
+            [   2     5     8 ]
+            [        / \      ]
+            [       4   6     ]
+            sage: [n.label() for n in b.pre_order_traversal_iter()]
+            [3, 1, 2, 7, 5, 4, 6, 8]
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).canonical_labelling()
+            sage: ascii_art([t])
+            [     __1____   ]
+            [    /  /   /   ]
+            [   2  6   8_   ]
+            [   |  |  / /   ]
+            [   3_ 7 9 10   ]
+            [  / /          ]
+            [ 4 5           ]
+            sage: [n.label() for n in t.pre_order_traversal_iter()]
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+            sage: [n for n in BinaryTree(None).pre_order_traversal_iter()]
+            []
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = [1 for i in t.pre_order_traversal_iter()]
+            sage: len(l)
+            7
+        """
+        if self.is_empty():
+            return
+        yield self
+        # TODO:: PYTHON 3
+        # import itertools
+        # yield from itertools.chain(map(
+        #     lambda c: c.pre_order_traversal_iter(),
+        #     self
+        # ))
+        for children in self:
+            for node in children.pre_order_traversal_iter():
+                yield node
+
+    def iterative_pre_order_traversal(self, action=None):
+        r"""
+        Run the depth-first pre-order traversal algorithm (iterative
+        implementation) and subject every node encountered
+        to some procedure ``action``. The algorithm is::
+
+            manipulate the root with function `action` (in the case
+                of a binary tree, only if the root is not a leaf);
+            then explore each subtree (by the algorithm) from the
+                leftmost one to the rightmost one.
+
+        INPUT:
+
+        - ``action`` -- (optional) a function which takes a node as
+          input, and does something during the exploration
+
+        OUTPUT:
+
+        ``None``. (This is *not* an iterator.)
+
+        .. SEEALSO::
+
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.pre_order_traversal_iter()`
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.pre_order_traversal()`
+
+        TESTS::
+
+            sage: l = []
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: b
+            3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
+            sage: b.iterative_pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [3, 1, 2, 7, 5, 4, 6, 8]
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).canonical_labelling()
+            sage: t
+            1[2[3[4[], 5[]]], 6[7[]], 8[9[], 10[]]]
+            sage: l = []
+            sage: t.iterative_pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            sage: l = []
+
+            sage: BinaryTree().canonical_labelling().\
+            ....:     pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            []
+            sage: OrderedTree([]).canonical_labelling().\
+            ....:     iterative_pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [1]
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = []
+            sage: t.iterative_pre_order_traversal(lambda node: l.append(1))
+            sage: len(l)
+            7
+        """
+        if self.is_empty():
+            return
+        if action is None:
+            action = lambda x: None
+        stack = []
+        stack.append(self)
+        while len(stack) > 0:
+            node = stack.pop()
+            action(node)
+            for i in range(len(node)):
+                subtree = node[-i - 1]
+                if not subtree.is_empty():
+                    stack.append(subtree)
+
+    def pre_order_traversal(self, action=None):
+        r"""
+        Run the depth-first pre-order traversal algorithm (recursive
+        implementation) and subject every node encountered
+        to some procedure ``action``. The algorithm is::
+
+            manipulate the root with function `action` (in the case
+                of a binary tree, only if the root is not a leaf);
+            then explore each subtree (by the algorithm) from the
+                leftmost one to the rightmost one.
+
+        INPUT:
+
+        - ``action`` -- (optional) a function which takes a node as
+          input, and does something during the exploration
+
+        OUTPUT:
+
+        ``None``. (This is *not* an iterator.)
+
+        EXAMPLES:
+
+        For example, on the following binary tree `b`::
+
+            |   ___3____      |
+            |  /        \     |
+            | 1         _7_   |
+            |  \       /   \  |
+            |   2     5     8 |
+            |        / \      |
+            |       4   6     |
+
+        the depth-first pre-order traversal algorithm explores `b` in the
+        following order of nodes: `3,1,2,7,5,4,6,8`.
+
+        Another example::
+
+            |     __1____ |
+            |    /  /   / |
+            |   2  6   8_ |
+            |   |  |  / / |
+            |   3_ 7 9 10 |
+            |  / /        |
+            | 4 5         |
+
+        The algorithm explores this tree in the following order:
+        `1,2,3,4,5,6,7,8,9,10`.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.pre_order_traversal_iter()`
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.iterative_pre_order_traversal()`
+
+        TESTS::
+
+            sage: l = []
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: b
+            3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
+            sage: b.pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [3, 1, 2, 7, 5, 4, 6, 8]
+            sage: li = []
+            sage: b.iterative_pre_order_traversal(lambda node: li.append(node.label()))
+            sage: l == li
+            True
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).canonical_labelling()
+            sage: t
+            1[2[3[4[], 5[]]], 6[7[]], 8[9[], 10[]]]
+            sage: l = []
+            sage: t.pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            sage: li = []
+            sage: t.iterative_pre_order_traversal(lambda node: li.append(node.label()))
+            sage: l == li
+            True
+
+            sage: l = []
+            sage: BinaryTree().canonical_labelling().\
+            ....:     pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            []
+            sage: OrderedTree([]).canonical_labelling().\
+            ....:     pre_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [1]
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = []
+            sage: t.pre_order_traversal(lambda node: l.append(1))
+            sage: len(l)
+            7
+        """
+        if action is None:
+            action = lambda x: None
+        for node in self.pre_order_traversal_iter():
+            action(node)
+
+    def post_order_traversal_iter(self):
+        r"""
+        The depth-first post-order traversal iterator.
+
+        This method iters each node following the depth-first post-order
+        traversal algorithm (recursive implementation). The algorithm
+        is::
+
+            explore each subtree (by the algorithm) from the
+                leftmost one to the rightmost one;
+            then yield the root (in the case of binary trees, only if
+                it is not a leaf).
+
+        EXAMPLES:
+
+        For example on the following binary tree `b`::
+
+            |   ___3____      |
+            |  /        \     |
+            | 1         _7_   |
+            |  \       /   \  |
+            |   2     5     8 |
+            |        / \      |
+            |       4   6     |
+
+        (only the nodes are shown), the depth-first post-order traversal
+        algorithm explores `b` in the following order of nodes:
+        `2,1,4,6,5,8,7,3`.
+
+        For another example, consider the labelled tree::
+
+            |     __1____ |
+            |    /  /   / |
+            |   2  6   8_ |
+            |   |  |  / / |
+            |   3_ 7 9 10 |
+            |  / /        |
+            | 4 5         |
+
+        The algorithm explores this tree in the following order:
+        `4,5,3,2,7,6,9,10,8,1`.
+
+        TESTS::
+
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: ascii_art([b])
+            [   ___3____      ]
+            [  /        \     ]
+            [ 1         _7_   ]
+            [  \       /   \  ]
+            [   2     5     8 ]
+            [        / \      ]
+            [       4   6     ]
+            sage: [node.label() for node in b.post_order_traversal_iter()]
+            [2, 1, 4, 6, 5, 8, 7, 3]
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).canonical_labelling()
+            sage: ascii_art([t])
+            [     __1____   ]
+            [    /  /   /   ]
+            [   2  6   8_   ]
+            [   |  |  / /   ]
+            [   3_ 7 9 10   ]
+            [  / /          ]
+            [ 4 5           ]
+            sage: [node.label() for node in t.post_order_traversal_iter()]
+            [4, 5, 3, 2, 7, 6, 9, 10, 8, 1]
+
+            sage: [node.label() for node in BinaryTree().canonical_labelling().\
+            ....:     post_order_traversal_iter()]
+            []
+            sage: [node.label() for node in OrderedTree([]).\
+            ....:     canonical_labelling().post_order_traversal_iter()]
+            [1]
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = [1 for i in t.post_order_traversal_iter()]
+            sage: len(l)
+            7
+        """
+        if self.is_empty():
+            return
+        # TODO:: PYTHON 3
+        # import itertools
+        # yield from itertools.chain(map(
+        #     lambda c: c.post_order_traversal_iter(),
+        #     self
+        # ))
+        for children in self:
+            for node in children.post_order_traversal_iter():
+                yield node
+        yield self
+
+    def post_order_traversal(self, action=None):
+        r"""
+        Run the depth-first post-order traversal algorithm (recursive
+        implementation) and subject every node encountered
+        to some procedure ``action``. The algorithm is::
+
+            explore each subtree (by the algorithm) from the
+                leftmost one to the rightmost one;
+            then manipulate the root with function `action` (in the
+                case of a binary tree, only if the root is not a leaf).
+
+        INPUT:
+
+        - ``action`` -- (optional) a function which takes a node as
+          input, and does something during the exploration
+
+        OUTPUT:
+
+        ``None``. (This is *not* an iterator.)
+
+        .. SEEALSO::
+
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.post_order_traversal_iter()`
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.iterative_post_order_traversal()`
+
+        TESTS::
+
+            sage: l = []
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: b
+            3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
+            sage: b.post_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [2, 1, 4, 6, 5, 8, 7, 3]
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).\
+            ....:     canonical_labelling(); t
+            1[2[3[4[], 5[]]], 6[7[]], 8[9[], 10[]]]
+            sage: l = []
+            sage: t.post_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [4, 5, 3, 2, 7, 6, 9, 10, 8, 1]
+
+            sage: l = []
+            sage: BinaryTree().canonical_labelling().\
+            ....:     post_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            []
+            sage: OrderedTree([]).canonical_labelling().\
+            ....:     post_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [1]
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = []
+            sage: t.post_order_traversal(lambda node: l.append(1))
+            sage: len(l)
+            7
+        """
+        if action is None:
+            action = lambda x: None
+        for node in self.post_order_traversal_iter():
+            action(node)
+
+    def iterative_post_order_traversal(self, action=None):
+        r"""
+        Run the depth-first post-order traversal algorithm (iterative
+        implementation) and subject every node encountered
+        to some procedure ``action``. The algorithm is::
+
+            explore each subtree (by the algorithm) from the
+                leftmost one to the rightmost one;
+            then manipulate the root with function `action` (in the
+                case of a binary tree, only if the root is not a leaf).
+
+        INPUT:
+
+        - ``action`` -- (optional) a function which takes a node as
+          input, and does something during the exploration
+
+        OUTPUT:
+
+        ``None``. (This is *not* an iterator.)
+
+        .. SEEALSO::
+
+            - :meth:`~sage.combinat.abstract_tree.AbstractTree.post_order_traversal_iter()`
+
+        TESTS::
+
+            sage: l = []
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: b
+            3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
+            sage: b.iterative_post_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [2, 1, 4, 6, 5, 8, 7, 3]
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).canonical_labelling()
+            sage: t
+            1[2[3[4[], 5[]]], 6[7[]], 8[9[], 10[]]]
+            sage: l = []
+            sage: t.iterative_post_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [4, 5, 3, 2, 7, 6, 9, 10, 8, 1]
+
+            sage: l = []
+            sage: BinaryTree().canonical_labelling().\
+            ....:     iterative_post_order_traversal(
+            ....:         lambda node: l.append(node.label()))
+            sage: l
+            []
+            sage: OrderedTree([]).canonical_labelling().\
+            ....:     iterative_post_order_traversal(
+            ....:         lambda node: l.append(node.label()))
+            sage: l
+            [1]
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = []
+            sage: t.iterative_post_order_traversal(lambda node: l.append(1))
+            sage: len(l)
+            7
+        """
+        if self.is_empty():
+            return
+        if action is None:
+            action = lambda x: None
+        stack = [self]
+        while len(stack) > 0:
+            node = stack[-1]
+            if node is not None:
+                # A "None" on the stack means that the node right before
+                # it on the stack has already been "exploded" into
+                # subtrees, and should not be exploded again, but instead
+                # should be manipulated and removed from the stack.
+                stack.append(None)
+                for i in range(len(node)):
+                    subtree = node[-i - 1]
+                    if not subtree.is_empty():
+                        stack.append(subtree)
+            else:
+                stack.pop()
+                node = stack.pop()
+                action(node)
+
+    def breadth_first_order_traversal(self, action=None):
+        r"""
+        Run the breadth-first post-order traversal algorithm
+        and subject every node encountered to some procedure
+        ``action``. The algorithm is::
+
+            queue <- [ root ];
+            while the queue is not empty:
+                node <- pop( queue );
+                manipulate the node;
+                prepend to the queue the list of all subtrees of
+                    the node (from the rightmost to the leftmost).
+
+        INPUT:
+
+        - ``action`` -- (optional) a function which takes a node as
+          input, and does something during the exploration
+
+        OUTPUT:
+
+        ``None``. (This is *not* an iterator.)
+
+        EXAMPLES:
+
+        For example, on the following binary tree `b`::
+
+            |   ___3____      |
+            |  /        \     |
+            | 1         _7_   |
+            |  \       /   \  |
+            |   2     5     8 |
+            |        / \      |
+            |       4   6     |
+
+        the breadth-first order traversal algorithm explores `b` in the
+        following order of nodes: `3,1,7,2,5,8,4,6`.
+
+        TESTS::
+
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: l = []
+            sage: b.breadth_first_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [3, 1, 7, 2, 5, 8, 4, 6]
+
+            sage: t = OrderedTree([[[[],[]]],[[]],[[],[]]]).canonical_labelling()
+            sage: t
+            1[2[3[4[], 5[]]], 6[7[]], 8[9[], 10[]]]
+            sage: l = []
+            sage: t.breadth_first_order_traversal(lambda node: l.append(node.label()))
+            sage: l
+            [1, 2, 6, 8, 3, 7, 9, 10, 4, 5]
+
+            sage: l = []
+            sage: BinaryTree().canonical_labelling().\
+            ....:     breadth_first_order_traversal(
+            ....:         lambda node: l.append(node.label()))
+            sage: l
+            []
+            sage: OrderedTree([]).canonical_labelling().\
+            ....:     breadth_first_order_traversal(
+            ....:         lambda node: l.append(node.label()))
+            sage: l
+            [1]
+        """
+        if self.is_empty():
+            return
+        if action is None:
+            action = lambda x: None
+        queue = []
+        queue.append(self)
+        while len(queue) > 0:
+            node = queue.pop()
+            action(node)
+            for subtree in node:
+                if not subtree.is_empty():
+                    queue.insert(0, subtree)
 
     def subtrees(self):
         """
-        Returns a generator for all subtrees of ``self``
+        Return a generator for all nonempty subtrees of ``self``.
 
-        The number of subtrees of a tree is its number of elements.
+        The number of nonempty subtrees of a tree is its number of
+        nodes. (The word "nonempty" makes a difference only in the
+        case of binary trees. For ordered trees, for example, all
+        trees are nonempty.)
 
         EXAMPLES::
 
@@ -120,8 +751,15 @@ class AbstractTree(object):
             sage: list(OrderedTree([[],[[]]]).subtrees())
             [[[], [[]]], [], [[]], []]
 
+            sage: list(OrderedTree([[],[[]]]).canonical_labelling().subtrees())
+            [1[2[], 3[4[]]], 2[], 3[4[]], 4[]]
+
             sage: list(BinaryTree([[],[[],[]]]).subtrees())
             [[[., .], [[., .], [., .]]], [., .], [[., .], [., .]], [., .], [., .]]
+
+            sage: v = BinaryTree([[],[]])
+            sage: list(v.canonical_labelling().subtrees())
+            [2[1[., .], 3[., .]], 1[., .], 3[., .]]
 
         TESTS::
 
@@ -134,23 +772,21 @@ class AbstractTree(object):
             sage: bt.node_number() == len(list(bt.subtrees()))
             True
         """
-        if not self.is_empty():
-            yield self
-            for i in self:
-                for t in i.subtrees():
-                    yield t
+        return self.pre_order_traversal_iter()
 
     def paths(self):
         """
-        Returns a generator for all paths to nodes of ``self``
+        Return a generator for all paths to nodes of ``self``.
 
         OUTPUT:
 
         This method returns a list of sequences of integers. Each of these
-        sequences represents a path from the root node to another one : `(1, 3,
-        2, 5, 3)` represents the node obtained by chosing the 1st children of
-        the root node (in the ordering returned by ``iter``), then the 3rd of
-        its children, then the 2nd of this element, etc.
+        sequences represents a path from the root node to some node. For
+        instance, `(1, 3, 2, 5, 0, 3)` represents the node obtained by
+        choosing the 1st child of the root node (in the ordering returned
+        by ``iter``), then the 3rd child of its child, then the 2nd child
+        of the latter, etc. (where the labelling of the children is
+        zero-based).
 
         The root element is represented by the empty tuple ``()``.
 
@@ -183,7 +819,7 @@ class AbstractTree(object):
 
     def node_number(self):
         """
-        The number of nodes of ``self``
+        The number of nodes of ``self``.
 
         EXAMPLES::
 
@@ -198,7 +834,7 @@ class AbstractTree(object):
             sage: OrderedTree([[], [[], [[], []], [[], []]], [[], []]]).node_number()
             13
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: BinaryTree(None).node_number()
             0
@@ -216,7 +852,7 @@ class AbstractTree(object):
 
     def depth(self):
         """
-        The depth of ``self``
+        The depth of ``self``.
 
         EXAMPLES::
 
@@ -354,7 +990,7 @@ class AbstractTree(object):
 
     def canonical_labelling(self,shift=1):
         """
-        Returns a labelled version of ``self``
+        Returns a labelled version of ``self``.
 
         The actual canonical labelling is currently unspecified. However, it
         is guaranteed to have labels in `1...n` where `n` is the number of
@@ -431,7 +1067,7 @@ class AbstractTree(object):
 
     def tree_factorial(self):
         """
-        Returns the tree-factorial of ``self``
+        Return the tree-factorial of ``self``.
 
         Definition:
 
@@ -456,134 +1092,420 @@ class AbstractTree(object):
         nb = self.node_number()
         if nb <= 1:
             return 1
-        else:
-            return nb*prod(s.tree_factorial() for s in self)
-
-    latex_unit_length   = "4mm"
-    latex_node_diameter = "0.5"
-    latex_root_diameter = "0.7"
+        return nb * prod(s.tree_factorial() for s in self)
 
     def _latex_(self):
-        """
-        Returns a LaTeX version of ``self``
-
-        EXAMPLES::
-
-            sage: print(OrderedTree([[],[]])._latex_())
-            \vcenter{\hbox{{\setlength\unitlength{4mm}
-            \begin{picture}(4,3)
-            \put(1,1){\circle*{0.5}}
-            \put(2,2){\circle*{0.5}}
-            \put(3,1){\circle*{0.5}}
-            \put(2,2){\line(-1,-1){1}}
-            \put(2,2){\line(1,-1){1}}
-            \put(2,2){\circle*{0.7}}
-            \end{picture}}}}
+        r"""
+        Generate `\LaTeX` output which can be easily modified.
 
         TESTS::
 
-            sage: OrderedTree([])._latex_()
-            '\\vcenter{\\hbox{{\\setlength\\unitlength{4mm}\n\\begin{picture}(2,2)\n\\put(1,1){\\circle*{0.5}}\n\\put(1,1){\\circle*{0.7}}\n\\end{picture}}}}'
-            sage: OrderedTree([[]])._latex_()
-            '\\vcenter{\\hbox{{\\setlength\\unitlength{4mm}\n\\begin{picture}(2,3)\n\\put(1,1){\\circle*{0.5}}\n\\put(1,2){\\circle*{0.5}}\n\\put(1,2){\\line(0,-1){1}}\n\\put(1,2){\\circle*{0.7}}\n\\end{picture}}}}'
-            sage: OrderedTree([[], [[], [[], []], [[], []]], [[], []]])._latex_()
-            '\\vcenter{\\hbox{{\\setlength\\unitlength{4mm}\n\\begin{picture}(12,5)\n\\put(1,3){\\circle*{0.5}}\n\\put(2,2){\\circle*{0.5}}\n\\put(3,1){\\circle*{0.5}}\n\\put(4,2){\\circle*{0.5}}\n\\put(5,1){\\circle*{0.5}}\n\\put(4,2){\\line(-1,-1){1}}\n\\put(4,2){\\line(1,-1){1}}\n\\put(4,3){\\circle*{0.5}}\n\\put(6,1){\\circle*{0.5}}\n\\put(7,2){\\circle*{0.5}}\n\\put(8,1){\\circle*{0.5}}\n\\put(7,2){\\line(-1,-1){1}}\n\\put(7,2){\\line(1,-1){1}}\n\\put(4,3){\\line(-2,-1){2}}\n\\put(4,3){\\line(0,-1){1}}\n\\put(4,3){\\line(3,-1){3}}\n\\put(4,4){\\circle*{0.5}}\n\\put(9,2){\\circle*{0.5}}\n\\put(10,3){\\circle*{0.5}}\n\\put(11,2){\\circle*{0.5}}\n\\put(10,3){\\line(-1,-1){1}}\n\\put(10,3){\\line(1,-1){1}}\n\\put(4,4){\\line(-3,-1){3}}\n\\put(4,4){\\line(0,-1){1}}\n\\put(4,4){\\line(6,-1){6}}\n\\put(4,4){\\circle*{0.7}}\n\\end{picture}}}}'
+            sage: latex(BinaryTree([[[],[]],[[],None]]))
+            { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
+            ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$$}
+            ;}\newcommand{\nodec}{\node[draw,circle] (c) {$$}
+            ;}\newcommand{\noded}{\node[draw,circle] (d) {$$}
+            ;}\newcommand{\nodee}{\node[draw,circle] (e) {$$}
+            ;}\newcommand{\nodef}{\node[draw,circle] (f) {$$}
+            ;}\begin{tikzpicture}[auto]
+            \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                     \&         \&         \& \nodea  \&         \&         \&         \\
+                     \& \nodeb  \&         \&         \&         \& \nodee  \&         \\
+             \nodec  \&         \& \noded  \&         \& \nodef  \&         \&         \\
+            };
+            <BLANKLINE>
+            \path[ultra thick, red] (b) edge (c) edge (d)
+                (e) edge (f)
+                (a) edge (b) edge (e);
+            \end{tikzpicture}}
         """
+        ###############################################################################
+        # # use to load tikz in the preamble (one for *view* and one for *notebook*)
         from sage.misc.latex import latex
-        drawing = [""] # allows modification of  in rec...
-        x = [1]        # allows modification of x[0] in rec...
-        max_label_width = [0] # allows modification of x[0] in rec...
-        maxy = self.depth()
+        latex.add_package_to_preamble_if_available("tikz")
+        latex.add_to_mathjax_avoid_list("tikz")
+        ###############################################################################
+        # latex environnement : TikZ
+        begin_env = "\\begin{tikzpicture}[auto]\n"
+        end_env = "\\end{tikzpicture}"
+        # it uses matrix trick to place each node
+        matrix_begin = "\\matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{\n"
+        matrix_end = "\\\\\n};\n"
+        # a basic path to each edges
+        path_begin = "\\path[ultra thick, red] "
+        path_end = ";\n"
+        # to make a pretty output, it creates one LaTeX command for
+        # each node
+        cmd = "\\node"
+        new_cmd1 = "\\newcommand{" + cmd
+        new_cmd2 = "}{\\node[draw,circle] ("
+        new_cmd3 = ") {$"
+        new_cmd4 = "$}\n;}"
+        # some variables to simplify code
+        sep = "\\&"
+        space = " "*9
+        sepspace = sep + space
+        spacesep = space + sep
+        node_to_str = lambda node: " " + node + " " * (len(space) - 1 - len(node))
+        # # TODO:: modify how to create nodes --> new_cmd : \\node[...] in create_node
+        num = [0]
 
-        def rec(t, y):
-            """
-            Draw the subtree t on the drawing, below y (included) and to
-            the right of x[0] (included). Update x[0]. Returns the horizontal
-            position of the root
-            """
-            if t.node_number() == 0 : return -1
-            n = len(t)
-            posChild = [rec(t[i], y+1) for i in range(n // 2)]
-            i = n // 2
-            if n % 2 == 1:
-                xc = rec(t[i], y+1)
-                posChild.append(xc)
-                i += 1
-            else:
-                xc = x[0]
-                x[0] +=1
-            drawing[0] = drawing[0] + "\\put(%s,%s){\\circle*{%s}}\n"%(
-                xc, maxy-y, self.latex_node_diameter)
-            try:
-                lbl = t.label()
-            except AttributeError:
-                pass
-            else:
-                max_label_width[0] = 1 # TODO find a better heuristic
-                drawing[0] = drawing[0] + "\\put(%s,%s){$\scriptstyle %s$}"%(
-                    xc+0.3, maxy-y-0.3, latex(lbl))
-            posChild += [rec(t[j], y+1) for j in range(i, n)]
-            for i in range(n):
-                if posChild[i] != -1:
-                    drawing[0] = (drawing[0] +
-                        "\\put(%s,%s){\\line(%s,-1){%s}}\n"%(
-                            xc, maxy-y, posChild[i]-xc,
-                            max(abs(posChild[i]-xc), 1)))
-            return xc
+        def resolve(self):
+            nodes = []; matrix = []; edges = []
 
-        res = rec(self, 0)
-        drawing[0] = drawing[0] + "\\put(%s,%s){\\circle*{%s}}\n"%(
-            res, maxy, self.latex_root_diameter)
-        return "\\vcenter{\hbox{{\setlength\unitlength{%s}\n\\begin{picture}(%s,%s)\n%s\\end{picture}}}}"%(
-            self.latex_unit_length,
-            x[0] + max_label_width[0],
-            maxy + 1,
-            drawing[0])
+            def create_node(self):
+                r"""
+                create a name (infixe reading)
+                 -> ex: b
+                create a new command:
+                 -> ex: \newcommand{\nodeb}{\node[draw,circle] (b) {$$};
+                return the name and the command to build:
+                  . the matrix
+                  . and the edges
+                """
+                name = reduce(
+                    lambda x, y: x + y,
+                    map(
+                        lambda x: chr(ord(x) + 49),
+                        list(str(num[0]))),
+                    "")
+                node = cmd + name
+                nodes.append((name,
+                    (str(self.label()) if hasattr(self, "label") else ""))
+                )
+                num[0] += 1
+                return node, name
+
+            def empty_tree():
+                r"""
+                TESTS::
+
+                    sage: t = BinaryTree()
+                    sage: print latex(t)
+                    { \begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                             \\
+                    };
+                    \end{tikzpicture}}
+                """
+                matrix.append(space)
+
+            def one_node_tree(self):
+                r"""
+                TESTS::
+
+                    sage: t = BinaryTree([]); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                     \nodea  \\
+                    };
+                    \end{tikzpicture}}
+                    sage: t = OrderedTree([]); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                     \nodea  \\
+                    };
+                    \end{tikzpicture}}
+                """
+                node, _ = create_node(self)
+                matrix.append(node_to_str(node))
+
+            def concat_matrix(mat, mat2):
+                lmat = len(mat); lmat2 = len(mat2)
+                for i in range(max(lmat, lmat2)):
+                    # mat[i] --> n & n & ...
+                    # mat2[i] -> n' & n' & ...
+                    # ==> n & n & ... & n' & n' & ...
+                    try:
+                        mat[i] += sep + mat2[i]
+                    except Exception:
+                        if i >= lmat:
+                            if i != 0:
+                                # mat[i] does not exist but
+                                # mat[0] has k "&"
+                                # mat2[i] -> n' & n' & ...
+                                # ==> (_ &)*k+1 n' & n' & ...
+                                nb_of_and = mat[0].count(sep) - mat2[0].count(sep)
+                                mat.append(spacesep * (nb_of_and) + mat2[i])
+                            else:
+                                # mat is empty
+                                # mat2[i] -> n' & n' & ...
+                                # ==> mat2
+                                mat.extend(mat2)
+                                return
+                        else:
+                            # mat[i] -> n & n & ...
+                            # mat2[i] does not exist but mat2[0] exists
+                            # # and has k "&"
+                            # NOTE:: i != 0 because that is a no-empty subtree.
+                            # ==> n & n & ... (& _)*k+1
+                            nb_of_and = mat2[0].count(sep)
+                            mat[i] += sepspace * (nb_of_and + 1)
+
+            def tmp(subtree, edge, nodes, edges, matrix):
+                if not subtree.is_empty():
+                    # # create representation of the subtree
+                    nodes_st, matrix_st, edges_st = resolve(subtree)
+                    # # add its nodes to the "global" nodes set
+                    nodes.extend(nodes_st)
+                    # # create a new edge between the root and the subtree
+                    edge.append(nodes_st[0][0])
+                    # # add the subtree edges to the "global" edges set
+                    edges.extend(edges_st)
+                    # # build a new matrix by concatenation
+                    concat_matrix(matrix, matrix_st)
+                else:
+                    concat_matrix(matrix, [space])
+
+            def pair_nodes_tree(self, nodes, edges, matrix):
+                r"""
+                TESTS::
+
+                    sage: t = OrderedTree([[[],[]],[[],[]]]).\
+                    ....:     canonical_labelling(); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$1$}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$2$}
+                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {$3$}
+                    ;}\newcommand{\noded}{\node[draw,circle] (d) {$4$}
+                    ;}\newcommand{\nodee}{\node[draw,circle] (e) {$5$}
+                    ;}\newcommand{\nodef}{\node[draw,circle] (f) {$6$}
+                    ;}\newcommand{\nodeg}{\node[draw,circle] (g) {$7$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                             \&         \&         \& \nodea  \&         \&         \&         \\
+                             \& \nodeb  \&         \&         \&         \& \nodee  \&         \\
+                     \nodec  \&         \& \noded  \&         \& \nodef  \&         \& \nodeg  \\
+                    };
+                    <BLANKLINE>
+                    \path[ultra thick, red] (b) edge (c) edge (d)
+                        (e) edge (f) edge (g)
+                        (a) edge (b) edge (e);
+                    \end{tikzpicture}}
+                    sage: t = BinaryTree([[],[[],[]]]); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$$}
+                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {$$}
+                    ;}\newcommand{\noded}{\node[draw,circle] (d) {$$}
+                    ;}\newcommand{\nodee}{\node[draw,circle] (e) {$$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                             \& \nodea  \&         \&         \&         \\
+                     \nodeb  \&         \&         \& \nodec  \&         \\
+                             \&         \& \noded  \&         \& \nodee  \\
+                    };
+                    <BLANKLINE>
+                    \path[ultra thick, red] (c) edge (d) edge (e)
+                        (a) edge (b) edge (c);
+                    \end{tikzpicture}}
+                """
+                # build all subtree matrices.
+                node, name = create_node(self)
+                edge = [name]
+                split = len(self) // 2
+                # the left part
+                for i in range(split):
+                    tmp(self[i], edge, nodes, edges, matrix)
+                # # prepare the root line
+                nb_of_and = matrix[0].count(sep)
+                # the middle
+                for i in range(len(matrix)):
+                    matrix[i] += sepspace
+                # the right part
+                for i in range(split, len(self)):
+                    tmp(self[i], edge, nodes, edges, matrix)
+
+                # # create the root line
+                root_line = (spacesep * (nb_of_and + 1) + node_to_str(node) +
+                    sepspace * (matrix[0].count(sep) - nb_of_and - 1))
+                matrix.insert(0, root_line)
+                # add edges from the root
+                edges.append(edge)
+
+            def odd_nodes_tree(self, nodes, edges, matrix):
+                r"""
+                TESTS::
+
+                    sage: t = OrderedTree([[]]).canonical_labelling()
+                    sage: print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$1$}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$2$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                     \nodea  \\
+                     \nodeb  \\
+                    };
+                    <BLANKLINE>
+                    \path[ultra thick, red] (a) edge (b);
+                    \end{tikzpicture}}
+                    sage: t = OrderedTree([[[],[]]]).canonical_labelling(); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$1$}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$2$}
+                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {$3$}
+                    ;}\newcommand{\noded}{\node[draw,circle] (d) {$4$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                             \& \nodea  \&         \\
+                             \& \nodeb  \&         \\
+                     \nodec  \&         \& \noded  \\
+                    };
+                    <BLANKLINE>
+                    \path[ultra thick, red] (b) edge (c) edge (d)
+                        (a) edge (b);
+                    \end{tikzpicture}}
+                    sage: t = OrderedTree([[[],[],[]]]).canonical_labelling(); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$1$}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$2$}
+                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {$3$}
+                    ;}\newcommand{\noded}{\node[draw,circle] (d) {$4$}
+                    ;}\newcommand{\nodee}{\node[draw,circle] (e) {$5$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                             \& \nodea  \&         \\
+                             \& \nodeb  \&         \\
+                     \nodec  \& \noded  \& \nodee  \\
+                    };
+                    <BLANKLINE>
+                    \path[ultra thick, red] (b) edge (c) edge (d) edge (e)
+                        (a) edge (b);
+                    \end{tikzpicture}}
+                    sage: t = OrderedTree([[[],[],[]],[],[]]).canonical_labelling(); print latex(t)
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {$1$}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$2$}
+                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {$3$}
+                    ;}\newcommand{\noded}{\node[draw,circle] (d) {$4$}
+                    ;}\newcommand{\nodee}{\node[draw,circle] (e) {$5$}
+                    ;}\newcommand{\nodef}{\node[draw,circle] (f) {$6$}
+                    ;}\newcommand{\nodeg}{\node[draw,circle] (g) {$7$}
+                    ;}\begin{tikzpicture}[auto]
+                    \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+                             \&         \&         \& \nodea  \&         \\
+                             \& \nodeb  \&         \& \nodef  \& \nodeg  \\
+                     \nodec  \& \noded  \& \nodee  \&         \&         \\
+                    };
+                    <BLANKLINE>
+                    \path[ultra thick, red] (b) edge (c) edge (d) edge (e)
+                        (a) edge (b) edge (f) edge (g);
+                    \end{tikzpicture}}
+                """
+                # build all subtree matrices.
+                node, name = create_node(self)
+                edge = [name]
+                split = len(self) // 2
+                # the left part
+                for i in range(split):
+                    tmp(self[i], edge, nodes, edges, matrix)
+                # # prepare the root line
+                if len(matrix) != 0:
+                    nb_of_and = matrix[0].count(sep)
+                    sizetmp = len(matrix[0])
+                else:
+                    nb_of_and = 0
+                    sizetmp = 0
+                # the middle
+                tmp(self[split], edge, nodes, edges, matrix)
+                nb_of_and += matrix[0][sizetmp:].split("node")[0].count(sep)
+
+                # the right part
+                for i in range(split + 1, len(self)):
+                    tmp(self[i], edge, nodes, edges, matrix)
+
+                # # create the root line
+                root_line = (spacesep * (nb_of_and) + node_to_str(node) +
+                    sepspace * (matrix[0].count(sep) - nb_of_and))
+                matrix.insert(0, root_line)
+                # add edges from the root
+                edges.append(edge)
+            if self.is_empty():
+                empty_tree()
+            elif len(self) == 0 or all(subtree.is_empty()
+                    for subtree in self):
+                one_node_tree(self)
+            elif len(self) % 2 == 0:
+                pair_nodes_tree(self, nodes, edges, matrix)
+            else:
+                odd_nodes_tree(self, nodes, edges, matrix)
+            return nodes, matrix, edges
+
+        nodes, matrix, edges = resolve(self)
+
+        def make_cmd(nodes):
+            cmds = []
+            for name, label in nodes:
+                cmds.append(new_cmd1 + name + new_cmd2 +
+                    name + new_cmd3 +
+                    label + new_cmd4)
+            return cmds
+
+        def make_edges(edges):
+            all_paths = []
+            for edge in edges:
+                path = "(" + edge[0] + ")"
+                for i in range(1, len(edge)):
+                    path += " edge (%s)" % edge[i]
+                all_paths.append(path)
+            return all_paths
+        return ("{ " +
+            "".join(make_cmd(nodes)) +
+            begin_env +
+                (matrix_begin +
+                    "\\\\ \n".join(matrix) +
+                matrix_end +
+                ("\n" +
+                path_begin +
+                    "\n\t".join(make_edges(edges)) +
+                path_end if len(edges) > 0 else "")
+                if len(matrix) > 0 else "") +
+            end_env +
+            "}")
+
 
 class AbstractClonableTree(AbstractTree):
     """
-    Abstract Clonable Tree
+    Abstract Clonable Tree.
 
     An abstract class for trees with clone protocol (see
     :mod:`~sage.structure.list_clone`). It is expected that classes extending
     this one may also inherit from classes like :class:`ClonableArray` or
-    :class:`~sage.structure.list_clone.ClonableList` depending wether one
+    :class:`~sage.structure.list_clone.ClonableList` depending whether one
     wants to build trees where adding a child is allowed.
 
     .. NOTE:: Due to the limitation of Cython inheritance, one cannot inherit
        here from :class:`~sage.structure.list_clone.ClonableElement`, because
-       it would prevent us to inherit later from
+       it would prevent us from later inheriting from
        :class:`~sage.structure.list_clone.ClonableArray` or
        :class:`~sage.structure.list_clone.ClonableList`.
 
     .. rubric:: How should this class be extended ?
 
-    A class extending :class:`AbstractTree
-    <sage.combinat.abstract_tree.AbstractTree>` should the following
-    assumptions:
+    A class extending :class:`AbstractClonableTree
+    <sage.combinat.abstract_tree.AbstractClonableTree>` should satisfy the
+    following assumptions:
 
-    * An instantiable class extending :class:`AbstractTree
-      <sage.combinat.abstract_tree.AbstractTree>` should also extend the
-      :class:`ClonableElement <sage.structure.list_clone.ClonableElement>`
-      class or one of its subclass generally at least :class:`ClonableArray
+    * An instantiable class extending :class:`AbstractClonableTree
+      <sage.combinat.abstract_tree.AbstractClonableTree>` should also extend
+      the :class:`ClonableElement <sage.structure.list_clone.ClonableElement>`
+      class or one of its subclasses generally, at least :class:`ClonableArray
       <sage.structure.list_clone.ClonableArray>`.
-
 
     * To respect the Clone protocol, the :meth:`AbstractClonableTree.check`
       method should be overridden by the new class.
+
+    See also the assumptions in :class:`AbstractTree`.
     """
     def check(self):
         """
-        Check that ``self`` is a correct tree
+        Check that ``self`` is a correct tree.
 
         This method does nothing. It is implemented here because many
-        extensions of :class:`AbstractTree
-        <sage.combinat.abstract_tree.AbstractTree>` also extend
+        extensions of :class:`AbstractClonableTree
+        <sage.combinat.abstract_tree.AbstractClonableTree>` also extend
         :class:`sage.structure.list_clone.ClonableElement`, which requires it.
 
-        It should be overriden in subclass in order to check that the
-        invariant of the kind of tree holds (eg: two children for binary
-        trees).
+        It should be overridden in subclasses in order to check that the
+        characterizing property of the respective kind of tree holds (eg: two
+        children for binary trees).
 
         EXAMPLES::
 
@@ -625,7 +1547,7 @@ class AbstractClonableTree(AbstractTree):
 
             sage: x = OrderedTree([[],[[]]])
             sage: with x.clone() as x:
-            ...    x[0] = OrderedTree([[]])
+            ....:     x[0] = OrderedTree([[]])
             sage: x
             [[[]], [[]]]
 
@@ -633,13 +1555,13 @@ class AbstractClonableTree(AbstractTree):
 
             sage: y = OrderedTree(x)
             sage: with x.clone() as x:
-            ...    x[0,0] = OrderedTree([[]])
+            ....:     x[0,0] = OrderedTree([[]])
             sage: x
             [[[[]]], [[]]]
             sage: y
             [[[]], [[]]]
             sage: with y.clone() as y:
-            ...    y[(0,)] = OrderedTree([])
+            ....:     y[(0,)] = OrderedTree([])
             sage: y
             [[], [[]]]
 
@@ -648,7 +1570,7 @@ class AbstractClonableTree(AbstractTree):
             sage: bt = BinaryTree([[],[[],[]]]); bt
             [[., .], [[., .], [., .]]]
             sage: with bt.clone() as bt1:
-            ...    bt1[0,0] = BinaryTree([[[], []], None])
+            ....:     bt1[0,0] = BinaryTree([[[], []], None])
             sage: bt1
             [[[[[., .], [., .]], .], .], [[., .], [., .]]]
 
@@ -656,14 +1578,14 @@ class AbstractClonableTree(AbstractTree):
 
             sage: x = OrderedTree([])
             sage: with x.clone() as x:
-            ...    x[0] = OrderedTree([[]])
+            ....:     x[0] = OrderedTree([[]])
             Traceback (most recent call last):
-            ...
+            ....:
             IndexError: list assignment index out of range
 
-            sage: x = OrderedTree([]); x = OrderedTree([x,x]);x = OrderedTree([x,x]); x = OrderedTree([x,x])
+            sage: x = OrderedTree([]); x = OrderedTree([x,x]); x = OrderedTree([x,x]); x = OrderedTree([x,x])
             sage: with x.clone() as x:
-            ...    x[0,0] = OrderedTree()
+            ....:     x[0,0] = OrderedTree()
             sage: x
             [[[], [[], []]], [[[], []], [[], []]]]
         """
@@ -680,7 +1602,7 @@ class AbstractClonableTree(AbstractTree):
 
             sage: x = OrderedTree([[[], []],[[]]])
             sage: with x.clone() as x:
-            ...    x[0,1] = OrderedTree([[[]]]) # indirect doctest
+            ....:     x[0,1] = OrderedTree([[[]]]) # indirect doctest
             sage: x
             [[[], [[[]]]], [[]]]
         """
@@ -693,9 +1615,16 @@ class AbstractClonableTree(AbstractTree):
 
     def __getitem__(self, idx):
         """
+        Return the ``idx``-th child of ``self`` (which is a subtree) if
+        ``idx`` is an integer, or the ``idx[n-1]``-th child of the
+        ``idx[n-2]``-th child of the ... of the ``idx[0]``-th child of
+        ``self`` if ``idx`` is a list (or iterable) of length `n`.
+
+        The indexing of the children is zero-based.
+
         INPUT:
 
-        - ``idx`` -- a valid path in ``self`` identifying a node
+        - ``idx`` -- an integer, or a valid path in ``self`` identifying a node
 
         .. NOTE::
 
@@ -717,6 +1646,22 @@ class AbstractClonableTree(AbstractTree):
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([u, v])
+            sage: t = BinaryTree([v, w])
+            sage: z = BinaryTree([w, t])
+            sage: z[0,1]
+            [., .]
+            sage: z[0,0]
+            .
+            sage: z[1]
+            [[., .], [., [., .]]]
+            sage: z[1,1]
+            [., [., .]]
+            sage: z[1][1,1]
+            [., .]
         """
         if isinstance(idx, slice):
             return ClonableArray.__getitem__(self, idx)
@@ -734,10 +1679,10 @@ class AbstractClonableTree(AbstractTree):
 
 class AbstractLabelledTree(AbstractTree):
     """
-    Abstract Labelled Tree
+    Abstract Labelled Tree.
 
-    Typically a class for labelled tree is contructed by inheriting from a
-    class for unlabelled trees and :class:`AbstractLabelledTree`
+    Typically a class for labelled trees is contructed by inheriting from
+    a class for unlabelled trees and :class:`AbstractLabelledTree`.
 
     .. rubric:: How should this class be extended ?
 
@@ -746,7 +1691,8 @@ class AbstractLabelledTree(AbstractTree):
     following assumptions:
 
     * For a labelled tree ``T`` the call ``T.parent().unlabelled_trees()``
-      should return a parent for labelled trees of the same kind: for example,
+      should return a parent for unlabelled trees of the same kind: for
+      example,
 
       - if ``T`` is a binary labelled tree, ``T.parent()`` is
         ``LabelledBinaryTrees()`` and ``T.parent().unlabelled_trees()`` is
@@ -757,8 +1703,10 @@ class AbstractLabelledTree(AbstractTree):
         ``OrderedTrees()``
 
     * In the same vein, the class of ``T`` should contain an attribute
-      ``_Unlabelled`` which should be the class for the corresponding
+      ``_UnLabelled`` which should be the class for the corresponding
       unlabelled trees.
+
+    See also the assumptions in :class:`AbstractTree`.
 
     .. SEEALSO:: :class:`AbstractTree`
     """
@@ -776,11 +1724,35 @@ class AbstractLabelledTree(AbstractTree):
             1[None[42[], 21[]]]
             sage: LabelledOrderedTree(OrderedTree([[],[[],[]],[]]))
             None[None[], None[None[], None[]], None[]]
+
+        We test that inheriting from `LabelledOrderedTree` allows construction from a
+        `LabelledOrderedTree` (:trac:`16314`)::
+
+            sage: LBTS = LabelledOrderedTrees()
+            sage: class Foo(LabelledOrderedTree):
+            ....:     def bar(self):
+            ....:         print "bar called"
+            sage: foo = Foo(LBTS, [], label=1); foo
+            1[]
+            sage: foo1 = LBTS([LBTS([], label=21)], label=42); foo1
+            42[21[]]
+            sage: foo2 = Foo(LBTS, foo1); foo2
+            42[21[]]
+            sage: foo2[0]
+            21[]
+            sage: foo2.__class__
+            <class '__main__.Foo'>
+            sage: foo2[0].__class__
+            <class '__main__.Foo'>
+            sage: foo2.bar()
+            bar called
+            sage: foo2.label()
+            42
         """
         # We must initialize the label before the subtrees to allows rooted
         # trees canonization. Indeed it needs that ``self``._hash_() is working
         # at the end of the call super(..., self).__init__(...)
-        if isinstance(children, self.__class__):
+        if isinstance(children, AbstractLabelledTree):
             if label is None:
                 self._label = children._label
             else:
@@ -808,7 +1780,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def label(self, path=None):
         """
-        Returns the label of ``self``
+        Return the label of ``self``.
 
         INPUT:
 
@@ -842,7 +1814,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def labels(self):
         """
-        Returns the list of labels of ``self``
+        Return the list of labels of ``self``.
 
         EXAMPLES::
 
@@ -859,7 +1831,11 @@ class AbstractLabelledTree(AbstractTree):
 
     def leaf_labels(self):
         """
-        Returns the list of labels of the leaves of ``self``
+        Return the list of labels of the leaves of ``self``.
+
+        In case of a labelled binary tree, these "leaves" are not actually
+        the leaves of the binary trees, but the nodes whose both children
+        are leaves!
 
         EXAMPLES::
 
@@ -1029,7 +2005,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             ...
             ValueError: object is immutable; please change a copy instead.
             sage: with t.clone() as t:
-            ...    t.set_root_label(3)
+            ....:     t.set_root_label(3)
             sage: t.label()
             3
             sage: t
@@ -1043,7 +2019,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             ...
             ValueError: object is immutable; please change a copy instead.
             sage: with bt.clone() as bt:
-            ...    bt.set_root_label(3)
+            ....:     bt.set_root_label(3)
             sage: bt.label()
             3
             sage: bt
@@ -1052,14 +2028,14 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
         TESTS::
 
             sage: with t.clone() as t:
-            ...    t[0] = LabelledOrderedTree(t[0], label = 4)
+            ....:     t[0] = LabelledOrderedTree(t[0], label = 4)
             sage: t
             3[4[], None[None[], None[]]]
             sage: with t.clone() as t:
-            ...    t[1,0] = LabelledOrderedTree(t[1,0], label = 42)
+            ....:     t[1,0] = LabelledOrderedTree(t[1,0], label = 42)
             sage: t
             3[4[], None[42[], None[]]]
-            """
+        """
         self._require_mutable()
         self._label = label
 
@@ -1090,11 +2066,11 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             ...
             ValueError: object is immutable; please change a copy instead.
             sage: with t.clone() as t:
-            ...    t.set_label((0,), 4)
+            ....:     t.set_label((0,), 4)
             sage: t
             None[4[], None[None[], None[]]]
             sage: with t.clone() as t:
-            ...    t.set_label((1,0), label = 42)
+            ....:     t.set_label((1,0), label = 42)
             sage: t
             None[4[], None[42[], None[]]]
 

@@ -282,7 +282,7 @@ class CartanType(SageObject, CartanType_abstract):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node_dist=2):
+    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -295,28 +295,29 @@ class CartanType(SageObject, CartanType_abstract):
             sage: print CartanType("A2","B2")._latex_dynkin_diagram()
             {
             \draw (0 cm,0) -- (2 cm,0);
-            \draw[fill=white] (0 cm, 0) circle (.25cm) node[below=4pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};\pgftransformyshift{-3 cm}
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
+            \pgftransformyshift{-3 cm}
             \draw (0 cm,0) -- (0 cm,0);
             \draw (0 cm, 0.1 cm) -- +(2 cm,0);
             \draw (0 cm, -0.1 cm) -- +(2 cm,0);
             \draw[shift={(1.2, 0)}, rotate=0] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);
-            \draw[fill=white] (0 cm, 0) circle (.25cm) node[below=4pt]{$3$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$4$};
+            \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             }
         """
         types = self.component_types()
         relabelling = self._index_relabelling
         ret = "{\n"
         ret += "\\pgftransformyshift{-3 cm}\n".join(types[i]._latex_dynkin_diagram(
-                    node_dist=node_dist, label=lambda x: label(relabelling[i,x]))
+                    lambda x: label(relabelling[i,x]), node, node_dist=node_dist)
                     for i in range(len(types)))
-        ret += "\n}"
+        ret += "}"
         return ret
 
-    def ascii_art(self, label = lambda x: x):
+    def ascii_art(self, label=lambda i: i, node=None):
         """
-        Returns an ascii art representation of this reducible Cartan type
+        Return an ascii art representation of this reducible Cartan type.
 
         EXAMPLES::
 
@@ -342,7 +343,7 @@ class CartanType(SageObject, CartanType_abstract):
         """
         types = self.component_types()
         relabelling = self._index_relabelling
-        return "\n".join(types[i].ascii_art(label = lambda x: label(relabelling[i,x]))
+        return "\n".join(types[i].ascii_art(lambda x: label(relabelling[i,x]), node)
                          for i in range(len(types)))
 
     @cached_method
@@ -481,14 +482,15 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: A.simple_roots()
             Finite family {1: (1, -1, 0, 0), 2: (0, 0, 1, -1), 3: (0, 0, 0, 1)}
         """
-        assert i in self.index_set()
+        if i not in self.index_set():
+            raise ValueError("{} is not in the index set".format(i))
         (i, j) = self.cartan_type()._indices[i]
         return self.inject_weights(i, self.ambient_spaces()[i].simple_root(j))
 
     @cached_method
     def simple_coroot(self, i):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A = RootSystem("A1xB2").ambient_space()
             sage: A.simple_coroot(2)
@@ -496,7 +498,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: A.simple_coroots()
             Finite family {1: (1, -1, 0, 0), 2: (0, 0, 1, -1), 3: (0, 0, 0, 2)}
         """
-        assert i in self.index_set()
+        if i not in self.index_set():
+            raise ValueError("{} is not in the index set".format(i))
         (i, j) = self.cartan_type()._indices[i]
         return self.inject_weights(i, self.ambient_spaces()[i].simple_coroot(j))
 

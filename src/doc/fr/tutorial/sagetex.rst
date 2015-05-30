@@ -1,3 +1,5 @@
+.. _sec-sagetex:
+
 ****************
 Utiliser SageTeX
 ****************
@@ -5,7 +7,7 @@ Utiliser SageTeX
 Le paquet SageTeX permet d'inclure dans un document LaTeX les résultats
 de calculs effectués avec Sage. Il est fourni avec Sage, mais pour
 l'utiliser, vous aurez besoin de l'ajouter à votre installation TeX.
-Cette opération se résume à copier un fichier ; voyez la section
+Cette opération se résume à copier un fichier ; voyez la section
 :ref:`installation` du présent tutoriel ainsi que "Make SageTeX known to
 TeX" dans le guide d'installation de Sage (`Sage installation guide
 <http://sagemath.org/doc/installation/>`_, `ce lien
@@ -99,10 +101,10 @@ un peu plus compliquées. L'exemple ci-dessus utilise la forme la plus
 simple, ``\sageplot{toto}``, qui insère dans le document l'image obtenue
 sous Sage par ``toto.save('fichier.eps')``.
 
-Pour utiliser SageTeX, la procédure est donc la suivante :
+Pour utiliser SageTeX, la procédure est donc la suivante :
 
-    - lancez LaTeX sur votre fichier .tex ;
-    - lancez Sage sur le fichier .sage produit pas LaTeX ;
+    - lancez LaTeX sur votre fichier .tex ;
+    - lancez Sage sur le fichier .sage produit pas LaTeX ;
     - lancez LaTeX une seconde fois.
 
 (Il n'est pas nécessaire de lancer Sage si vous recompilez un document

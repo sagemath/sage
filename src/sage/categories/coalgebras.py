@@ -10,13 +10,14 @@ Coalgebras
 #******************************************************************************
 
 from category_types import Category_over_base_ring
-from sage.categories.all import Modules, Algebras
+from sage.categories.all import Modules
 from sage.categories.tensor import TensorProductsCategory, tensor
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.realizations import RealizationsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 class Coalgebras(Category_over_base_ring):
     """
@@ -41,6 +42,8 @@ class Coalgebras(Category_over_base_ring):
             [Category of vector spaces over Rational Field]
         """
         return [Modules(self.base_ring())]
+
+    WithBasis = LazyImport('sage.categories.coalgebras_with_basis',  'CoalgebrasWithBasis')
 
     class ParentMethods:
         #def __init_add__(self): # The analogue of initDomainAdd
@@ -148,7 +151,8 @@ class Coalgebras(Category_over_base_ring):
                 sage: Coalgebras(QQ).TensorProducts().extra_super_categories()
                 [Category of coalgebras over Rational Field]
                 sage: Coalgebras(QQ).TensorProducts().super_categories()
-                [Category of coalgebras over Rational Field]
+                [Category of tensor products of vector spaces over Rational Field,
+                 Category of coalgebras over Rational Field]
 
             Meaning: a tensor product of coalgebras is a coalgebra
             """
@@ -167,7 +171,7 @@ class Coalgebras(Category_over_base_ring):
 
         def extra_super_categories(self):
             r"""
-            Returns the dual category
+            Return the dual category.
 
             EXAMPLES:
 
@@ -180,6 +184,10 @@ class Coalgebras(Category_over_base_ring):
                 sage: C.dual().super_categories() # indirect doctest
                 [Category of algebras over Rational Field, Category of duals of vector spaces over Rational Field]
 
+            .. WARNING::
+
+                This is only correct in certain cases (finite dimension, ...).
+                See :trac:`15647`.
             """
             from sage.categories.algebras import Algebras
             return [Algebras(self.base_category().base_ring())]

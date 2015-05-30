@@ -67,7 +67,7 @@ class QuadraticStratum(SageObject):
             sage: QuadraticStratum(4) == QuadraticStratum(0)
             False
         """
-        return type(self) == type(other) and self._zeroes == other._zeroes
+        return isinstance(self, type(other)) and self._zeroes == other._zeroes
 
     def __ne__(self, other):
         r"""
@@ -78,7 +78,7 @@ class QuadraticStratum(SageObject):
             sage: QuadraticStratum(4) != QuadraticStratum(0)
             True
         """
-        return type(self) != type(other) or self._zeroes != other._zeroes
+        return not isinstance(self, type(other)) or self._zeroes != other._zeroes
 
     def genus(self):
         r"""

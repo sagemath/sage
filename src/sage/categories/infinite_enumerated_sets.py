@@ -14,12 +14,9 @@ AUTHORS:
 #******************************************************************************
 
 
-from category_types import Category
-from sage.categories.category_singleton import Category_singleton
-from sage.misc.cachefunc import cached_method
-from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.category_with_axiom import CategoryWithAxiom
 
-class InfiniteEnumeratedSets(Category_singleton):
+class InfiniteEnumeratedSets(CategoryWithAxiom):
     """
     The category of infinite enumerated sets
 
@@ -31,10 +28,11 @@ class InfiniteEnumeratedSets(Category_singleton):
         sage: InfiniteEnumeratedSets()
         Category of infinite enumerated sets
         sage: InfiniteEnumeratedSets().super_categories()
-        [Category of enumerated sets]
+        [Category of enumerated sets, Category of infinite sets]
         sage: InfiniteEnumeratedSets().all_super_categories()
         [Category of infinite enumerated sets,
          Category of enumerated sets,
+         Category of infinite sets,
          Category of sets,
          Category of sets with partial maps,
          Category of objects]
@@ -44,42 +42,8 @@ class InfiniteEnumeratedSets(Category_singleton):
         sage: C = InfiniteEnumeratedSets()
         sage: TestSuite(C).run()
     """
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: InfiniteEnumeratedSets().super_categories()
-            [Category of enumerated sets]
-        """
-        return [EnumeratedSets()]
 
     class ParentMethods:
-
-        def is_finite(self):
-            """
-            Returns ``False`` since self is not finite.
-
-            EXAMPLES::
-
-                sage: C = InfiniteEnumeratedSets().example()
-                sage: C.is_finite()
-                False
-            """
-            return False
-
-        def cardinality(self):
-            """
-            Counts the elements of the enumerated set.
-
-            EXAMPLES::
-
-                sage: NN = InfiniteEnumeratedSets().example()
-                sage: NN.cardinality()
-                +Infinity
-            """
-            from sage.rings.infinity import infinity
-            return infinity
 
         def random_element(self):
             """
@@ -95,7 +59,7 @@ class InfiniteEnumeratedSets(Category_singleton):
 
             TODO: should this be an optional abstract_method instead?
             """
-            raise NotImplementedError, "infinite set"
+            raise NotImplementedError("infinite set")
 
         def list(self):
             """
@@ -109,7 +73,7 @@ class InfiniteEnumeratedSets(Category_singleton):
                 ...
                 NotImplementedError: infinite list
             """
-            raise NotImplementedError, "infinite list"
+            raise NotImplementedError("infinite list")
         _list_default  = list # needed by the check system.
 
         def _test_enumerated_set_iter_cardinality(self, **options):

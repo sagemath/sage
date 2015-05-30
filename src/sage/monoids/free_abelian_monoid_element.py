@@ -88,11 +88,10 @@ class FreeAbelianMonoidElement(MonoidElement):
             self.__element_vector = [ 0 for i in range(n) ]
         elif isinstance(x, list):
             if len(x) != n:
-                raise IndexError, \
-                      "Argument length (= %s) must be %s."%(len(x), n)
+                raise IndexError("Argument length (= %s) must be %s."%(len(x), n))
             self.__element_vector = x
         else:
-            raise TypeError, "Argument x (= %s) is of wrong type."%x
+            raise TypeError("Argument x (= %s) is of wrong type."%x)
 
     def __repr__(self):
         s = ""
@@ -114,7 +113,7 @@ class FreeAbelianMonoidElement(MonoidElement):
 
     def __mul__(self, y):
         if not isinstance(y, FreeAbelianMonoidElement):
-            raise TypeError, "Argument y (= %s) is of wrong type."%y
+            raise TypeError("Argument y (= %s) is of wrong type."%y)
         M = self.parent()
         z = M(1)
         xelt = self.__element_vector
@@ -144,9 +143,9 @@ class FreeAbelianMonoidElement(MonoidElement):
         """
 
         if not isinstance(n, (int, long, Integer)):
-            raise TypeError, "Argument n (= %s) must be an integer."%n
+            raise TypeError("Argument n (= %s) must be an integer."%n)
         if n < 0:
-            raise IndexError, "Argument n (= %s) must be positive."%n
+            raise IndexError("Argument n (= %s) must be positive."%n)
         elif n == 1:
             return self
         z = self.parent()(1)

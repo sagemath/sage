@@ -2,15 +2,17 @@ r"""
 Interface to MuPAD
 
 AUTHOR:
-    -- Mike Hansen
-    -- William Stein
+
+- Mike Hansen
+- William Stein
 
 You must have the optional commercial MuPAD interpreter installed and
 available as the command \code{mupkern} in your PATH in order to use
 this interface.  You do not have to install any optional \sage
 packages.
 
-TESTS:
+TESTS::
+
     sage: mupad.package('"MuPAD-Combinat"')                        # optional - mupad
     sage: combinat = mupad.combinat                                # optional - mupad
     sage: examples = mupad.examples                                # optional - mupad
@@ -94,7 +96,7 @@ from expect import (Expect, ExpectElement, ExpectFunction,
                     FunctionElement, AsciiArtString)
 
 
-from sage.misc.misc import verbose, DOT_SAGE
+from sage.env import DOT_SAGE
 
 COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj'%DOT_SAGE
 PROMPT = ">>"
@@ -104,11 +106,12 @@ class Mupad(Expect):
     """
     Interface to the MuPAD interpreter.
     """
-    def __init__(self, maxread=1000, script_subdirectory="", server=None, server_tmpdir=None, logfile=None):
+    def __init__(self, maxread=1000, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
         """
         Create an instance of the MuPAD interpreter.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad == loads(dumps(mupad))                      # optional - mupad
             True
         """
@@ -130,7 +133,8 @@ class Mupad(Expect):
 
     def _function_class(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._function_class()
             <class 'sage.interfaces.mupad.MupadFunction'>
 
@@ -143,7 +147,8 @@ class Mupad(Expect):
 
     def __reduce__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.__reduce__()
             (<function reduce_load_mupad at 0x...>, ())
 
@@ -152,7 +157,8 @@ class Mupad(Expect):
 
     def _read_in_file_command(self, filename):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._read_in_file_command('test')
             'read("test")'
 
@@ -169,7 +175,8 @@ class Mupad(Expect):
 
     def _quit_string(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._quit_string()
             'quit'
         """
@@ -179,7 +186,8 @@ class Mupad(Expect):
         """
         Hints for installing MuPAD on your computer.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: print mupad._install_hints()
             <BLANKLINE>
             In order to use the MuPAD interface you need to have MuPAD installed
@@ -201,7 +209,8 @@ command-line version of MuPAD.
 
     def expect(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: a = mupad(1)   # optional - mupad
             sage: mupad.expect() # optional - mupad
             <pexpect.spawn instance at 0x...>
@@ -212,7 +221,8 @@ command-line version of MuPAD.
         """
         Spawn a new MuPAD command-line session.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.console() #not tested
 
                *----*    MuPAD Pro 4.0.2 -- The Open Computer Algebra System
@@ -227,7 +237,8 @@ command-line version of MuPAD.
 
     def eval(self, code, strip=True, **kwds):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.eval('2+2')   # optional - mupad
                                                    4
 
@@ -238,7 +249,8 @@ command-line version of MuPAD.
     def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True,
                    need_output=True, restart_if_needed=False):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._eval_line('2+2')  # optional - mupad
             '                                       4'
             sage: mupad._eval_line('x::asdf') # optional - mupad
@@ -268,17 +280,18 @@ command-line version of MuPAD.
         z = E.before
         i = z.find(START)
         if i == -1:
-            raise RuntimeError, "%s\nError evaluating code in MuPAD"%z
+            raise RuntimeError("%s\nError evaluating code in MuPAD"%z)
         z = z[i+len(START)+2:]
         z = z.rstrip().rstrip(END).rstrip('"').rstrip().strip('\n').strip('\r').strip('\n').replace('\\\r\n','')
         i = z.find('Error: ')
         if i != -1:
-            raise RuntimeError, z[i + 7:]
+            raise RuntimeError(z[i + 7:])
         return z
 
     def cputime(self, t=None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: t = mupad.cputime() #random, optional - MuPAD
             0.11600000000000001
         """
@@ -291,7 +304,8 @@ command-line version of MuPAD.
         """
         Set the variable var to the given value.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.set('a', 4) # optional - mupad
             sage: mupad.get('a').strip() # optional - mupad
             '4'
@@ -300,13 +314,14 @@ command-line version of MuPAD.
         out = self.eval(cmd)
         i = out.find('Error: ')
         if i != -1:
-            raise RuntimeError, out[i + 7:]
+            raise RuntimeError(out[i + 7:])
 
     def get(self, var):
         """
         Get the value of the variable var.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.set('a', 4) # optional - mupad
             sage: mupad.get('a').strip() # optional - mupad
             '4'
@@ -318,7 +333,8 @@ command-line version of MuPAD.
 
     def _object_class(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._object_class()
             <class 'sage.interfaces.mupad.MupadElement'>
         """
@@ -326,7 +342,8 @@ command-line version of MuPAD.
 
     def _equality_symbol(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._equality_symbol()
             '='
         """
@@ -334,7 +351,8 @@ command-line version of MuPAD.
 
     def _assign_symbol(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._assign_symbol()
             ':='
         """
@@ -342,7 +360,8 @@ command-line version of MuPAD.
 
     def _continuation_prompt(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad._continuation_prompt()
             '&>'
         """
@@ -352,7 +371,8 @@ command-line version of MuPAD.
         """
         Return list of all commands defined in MuPAD.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: cmds = mupad._commands()  # optional - mupad
             sage: len(cmds) > 100 # optional - mupad
             True
@@ -373,7 +393,8 @@ command-line version of MuPAD.
 
     def trait_names(self, verbose=True, use_disk_cache=True):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: names = mupad.trait_names() # optional - mupad
             sage: len(names) > 100 # optional - mupad
             True
@@ -403,7 +424,8 @@ command-line version of MuPAD.
 
     def completions(self, string, strip=False):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.completions('linal') # optional - mupad
             ['linalg']
         """
@@ -422,7 +444,8 @@ command-line version of MuPAD.
 class MupadFunction(ExpectFunction):
     def _sage_doc_(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.diff._sage_doc_()
             No help on diff available
         """
@@ -431,7 +454,8 @@ class MupadFunction(ExpectFunction):
 
     def __getattr__(self, attrname):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.linalg.addRow
             linalg::addRow
         """
@@ -441,7 +465,8 @@ class MupadFunction(ExpectFunction):
 
     def trait_names(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.linalg.trait_names() # optional - mupad
             ['addCol',
              'addRow',
@@ -455,7 +480,8 @@ class MupadFunction(ExpectFunction):
 class MupadFunctionElement(FunctionElement):
     def _sage_doc_(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = mupad('x') # optional - mupad
             sage: x.diff._sage_doc_() # optional - mupad
             No help on diff available
@@ -465,7 +491,8 @@ class MupadFunctionElement(FunctionElement):
 
     def __getattr__(self, attrname):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
             sage: combinat = mupad.combinat          # optional - mupad-Combinat
             sage: three = mupad(3)                   # optional - mupad-Combinat
@@ -489,7 +516,8 @@ class MupadFunctionElement(FunctionElement):
 
     def trait_names(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: three = mupad(3) # optional - mupad
             sage: 'list' in three.combinat.tableaux.trait_names() #optional
             True
@@ -501,7 +529,8 @@ class MupadFunctionElement(FunctionElement):
 
     def __call__(self, *args):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.package('"MuPAD-Combinat"') # optional - mupad-Combinat
             sage: combinat = mupad.combinat         # optional - mupad-Combinat
             sage: examples = mupad.examples         # optional - mupad-Combinat
@@ -520,7 +549,8 @@ class MupadFunctionElement(FunctionElement):
 class MupadElement(ExpectElement):
     def __getattr__(self, attrname):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.package('"MuPAD-Combinat"') # optional - mupad-Combinat
             sage: S = mupad.examples.SymmetricFunctions() #optional
             sage: type(S)                           # optional - mupad-Combinat
@@ -546,7 +576,7 @@ class MupadElement(ExpectElement):
                 return P.new("%s::%s"%(self.name(),attrname))
             else:
                 return MupadFunctionElement(self, name)
-        except RuntimeError, err:
+        except RuntimeError as err:
             if 'Unknown slot' in str(err):
                 return MupadFunctionElement(self, attrname)
             else:
@@ -555,7 +585,8 @@ class MupadElement(ExpectElement):
 
     def trait_names(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.package('"MuPAD-Combinat"')       # optional - mupad-Combinat
             sage: S = mupad.examples.SymmetricFunctions() # optional - mupad-Combinat
             sage: 'HallLittlewood' in S.trait_names()     # optional - mupad-Combinat
@@ -566,7 +597,8 @@ class MupadElement(ExpectElement):
 
     def __repr__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
             sage: S = mupad.examples.SymmetricFunctions(); S # optional - mupad-Combinat
             examples::SymmetricFunctions(Dom::ExpressionField())
@@ -576,7 +608,8 @@ class MupadElement(ExpectElement):
 
     def _latex_(self):
         r"""
-        EXAMPLES:
+        EXAMPLES::
+
             sage: mupad.package('"MuPAD-Combinat"') # optional - mupad-Combinat
             sage: S = mupad.examples.SymmetricFunctions() # optional - mupad-Combinat
             sage: latex(S) # optional - mupad-Combinat
@@ -618,11 +651,12 @@ class MupadElement(ExpectElement):
         return mupad.nops(self)
 
 # An instance
-mupad = Mupad(script_subdirectory='user')
+mupad = Mupad()
 
 def reduce_load_mupad():
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.mupad import reduce_load_mupad
         sage: reduce_load_mupad()
         Mupad
@@ -634,7 +668,8 @@ def mupad_console():
     """
     Spawn a new MuPAD command-line session.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.mupad import mupad_console
         sage: mupad_console() #not tested
 
@@ -651,7 +686,8 @@ def mupad_console():
 
 def __doctest_cleanup():
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.mupad import __doctest_cleanup
         sage: m = mupad(2)         # optional - mupad
         sage: mupad.is_running()   # optional - mupad

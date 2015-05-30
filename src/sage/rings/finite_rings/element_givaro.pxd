@@ -42,7 +42,7 @@ cdef extern from "givaro/givgfq.h":
         int (* random)(GivRandom gen, int res)
         int (* initi "init")(int res, int e)
         int (* initd "init")(int res, double e)
-        int (* sage_generator)() # SAGE specific method, not found upstream
+        int (* indeterminate)()
         int (* convert)(int r, int p)
         int (* read)(int r, int p)
         int (* axpyin)(int r, int a, int x)
@@ -54,7 +54,6 @@ cdef extern from "givaro/givgfq.h":
         bint (* isunit)(int e)
 
     GivaroGfq *gfq_factorypk "new Givaro::GFqDom<int>" (unsigned int p, unsigned int k)
-    # SAGE specific method, not found upstream
     GivaroGfq *gfq_factorypkp "new Givaro::GFqDom<int>" (unsigned int p, unsigned int k, intvec poly)
     GivaroGfq *gfq_factorycopy "new Givaro::GFqDom<int>"(GivaroGfq orig)
     GivaroGfq  gfq_deref "*"(GivaroGfq *orig)
@@ -79,6 +78,8 @@ cdef class Cache_givaro(SageObject):
     cpdef FiniteField_givaroElement gen(self)
     cpdef FiniteField_givaroElement element_from_data(self, e)
     cdef FiniteField_givaroElement _new_c(self, int value)
+    cpdef int int_to_log(self, int i) except -1
+    cpdef int log_to_int(self, int i) except -1
 
 cdef class FiniteField_givaro_iterator:
     cdef int iterator

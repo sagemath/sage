@@ -104,7 +104,7 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
         sage: curve=(sin(3*u),.8*cos(4*u),cos(u))
         sage: revolution_plot3d(curve,(u,0,pi),(0,pi/2),show_curve=True,parallel_axis='z',opacity=0.5).show(aspect_ratio=(1,1,1),frame=False)
     """
-    from sage.symbolic.ring import var
+    from sage.symbolic.ring import SR
     from sage.symbolic.constants import pi
     from sage.functions.other import sqrt
     from sage.functions.trig import sin
@@ -113,15 +113,15 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
 
 
     if parallel_axis not in ['x','y','z']:
-        raise ValueError, "parallel_axis must be either 'x', 'y', or 'z'."
+        raise ValueError("parallel_axis must be either 'x', 'y', or 'z'.")
 
     vart=trange[0]
 
 
     if str(vart)=='phi':
-        phi=var('fi')
+        phi = SR.var('fi')
     else:
-        phi=var('phi')
+        phi = SR.var('phi')
 
 
     if phirange is None:#this if-else provides a phirange

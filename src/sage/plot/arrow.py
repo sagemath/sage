@@ -120,6 +120,7 @@ class CurveArrow(GraphicPrimitive):
 
         This function implicitly ends up rendering this arrow on a matplotlib subplot:
             sage: arrow(path=[[(0,1), (2,-1), (4,5)]])
+            Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.misc import get_matplotlib_linestyle
 
@@ -245,7 +246,7 @@ class Arrow(GraphicPrimitive):
             sage: q.thickness
             5
         """
-        if options == None:
+        if options is None:
             options = self.options()
         options = dict(self.options())
         options_3d = {}
@@ -317,6 +318,7 @@ class Arrow(GraphicPrimitive):
         a matplotlib subplot::
 
             sage: arrow((0,1), (2,-1))
+            Graphics object consisting of 1 graphics primitive
 
         TESTS:
 
@@ -444,7 +446,9 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
     EXAMPLES::
 
         sage: arrow((0,0), (1,1))
+        Graphics object consisting of 1 graphics primitive
         sage: arrow((0,0,1), (1,1,1))
+        Graphics3d Object
     """
     try:
         return arrow2d(tailpoint, headpoint, **kwds)
@@ -500,42 +504,53 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     A straight, blue arrow::
 
        sage: arrow2d((1, 1), (3, 3))
+       Graphics object consisting of 1 graphics primitive
 
     Make a red arrow::
 
        sage: arrow2d((-1, -1), (2, 3), color=(1,0,0))
+       Graphics object consisting of 1 graphics primitive
        sage: arrow2d((-1, -1), (2, 3), color='red')
+       Graphics object consisting of 1 graphics primitive
 
     You can change the width of an arrow::
 
         sage: arrow2d((1, 1), (3, 3), width=5, arrowsize=15)
+        Graphics object consisting of 1 graphics primitive
 
     Use a dashed line instead of a solid one for the arrow::
 
         sage: arrow2d((1, 1), (3, 3), linestyle='dashed')
+        Graphics object consisting of 1 graphics primitive
         sage: arrow2d((1, 1), (3, 3), linestyle='--')
+        Graphics object consisting of 1 graphics primitive
 
     A pretty circle of arrows::
 
         sage: sum([arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi)) for x in [0..2*pi,step=0.1]])
+        Graphics object consisting of 63 graphics primitives
 
     If we want to draw the arrow between objects, for example, the
     boundaries of two lines, we can use the arrowshorten option
     to make the arrow shorter by a certain number of points::
 
         sage: line([(0,0),(1,0)],thickness=10)+line([(0,1),(1,1)], thickness=10)+arrow2d((0.5,0),(0.5,1), arrowshorten=10,rgbcolor=(1,0,0))
+        Graphics object consisting of 3 graphics primitives
 
     If BOTH headpoint and tailpoint are None, then an empty plot is returned::
 
         sage: arrow2d(headpoint=None, tailpoint=None)
+        Graphics object consisting of 0 graphics primitives
 
     We can also draw an arrow with a legend::
 
         sage: arrow((0,0), (0,2), legend_label='up', legend_color='purple')
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: arrow2d((-2, 2), (7,1), frame=True)
+        Graphics object consisting of 1 graphics primitive
         sage: arrow2d((-2, 2), (7,1)).show(frame=True)
     """
     from sage.plot.all import Graphics

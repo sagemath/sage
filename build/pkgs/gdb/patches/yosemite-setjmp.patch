@@ -1,0 +1,13 @@
+Patch for building on OSX 10.10 taken from https://trac.macports.org/ticket/43973
+
+--- gdb-7.7.1/gdb/darwin-nat.c.orig	2014-06-15 10:49:39.000000000 -0700
++++ gdb-7.7.1/gdb/darwin-nat.c	2014-06-15 10:51:23.000000000 -0700
+@@ -42,7 +42,7 @@
+ 
+ #include <sys/ptrace.h>
+ #include <sys/signal.h>
+-#include <machine/setjmp.h>
++#include <setjmp.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ #include <signal.h>

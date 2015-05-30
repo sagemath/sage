@@ -43,11 +43,11 @@ solutions::
     sage: q = Polyomino([(0,0), (0,1), (1,0), (1,1)])
     sage: T = TilingSolver([p,q], box=[3,2])
     sage: it = T.solve()
-    sage: it.next()
+    sage: next(it)
     [Polyomino: [(0, 0), (0, 1), (1, 0), (1, 1)], Color: gray, Polyomino: [(2, 0), (2, 1)], Color: gray]
-    sage: it.next()
+    sage: next(it)
     [Polyomino: [(1, 0), (1, 1), (2, 0), (2, 1)], Color: gray, Polyomino: [(0, 0), (0, 1)], Color: gray]
-    sage: it.next()
+    sage: next(it)
     Traceback (most recent call last):
     ...
     StopIteration
@@ -67,9 +67,9 @@ length 6 with three sticks of length 1, 2 and 3. There are six solutions::
     sage: len(T.rows())
     15
     sage: it = T.solve()
-    sage: it.next()
+    sage: next(it)
     [Polyomino: [(0,)], Color: gray, Polyomino: [(1,), (2,)], Color: gray, Polyomino: [(3,), (4,), (5,)], Color: gray]
-    sage: it.next()
+    sage: next(it)
     [Polyomino: [(0,)], Color: gray, Polyomino: [(1,), (2,), (3,)], Color: gray, Polyomino: [(4,), (5,)], Color: gray]
     sage: T.number_of_solutions()
     6
@@ -103,7 +103,7 @@ If reflections are allowed, there are solutions. Solve the puzzle and show
 one solution::
 
     sage: T = TilingSolver(L, (8,8), reflection=True)
-    sage: solution = T.solve().next()
+    sage: solution = next(T.solve())
     sage: G = sum([piece.show2d() for piece in solution], Graphics())
     sage: G.show(aspect_ratio=1, axes=False)
 
@@ -139,7 +139,7 @@ The same thing done in 3d *without* allowing reflections this time::
 Solve the puzzle and show one solution::
 
     sage: T = TilingSolver(L, (8,8,1))
-    sage: solution = T.solve().next()
+    sage: solution = next(T.solve())
     sage: G = sum([piece.show3d(size=0.85) for piece in solution], Graphics())
     sage: G.show(aspect_ratio=1, viewer='tachyon')
 
@@ -159,7 +159,7 @@ Donald Knuth [Knuth1]_ considered the problem of packing 45 Y pentaminoes into a
     sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
     sage: T.number_of_solutions()
     10
-    sage: solution = T.solve().next()
+    sage: solution = next(T.solve())
     sage: G = sum([piece.show2d() for piece in solution], Graphics())
     sage: G.show(aspect_ratio=1)
 
@@ -177,17 +177,16 @@ Animation of the solutions::
     sage: from sage.combinat.tiling import Polyomino, TilingSolver
     sage: Y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='yellow')
     sage: T = TilingSolver([Y], box=(15,15), reusable=True, reflection=True)
-    sage: a = T.animate(stop=40)            # long time
-    sage: a                                 # long time
+    sage: a = T.animate(stop=40)            # long time  # optional -- ImageMagick
+    sage: a                                 # long time  # optional -- ImageMagick
     Animation with 40 frames
-    sage: a.show()                          # not tested  - requires convert command
 
 Incremental animation of the solutions (one piece is removed/added at a time)::
 
-    sage: a = T.animate('incremental', stop=40)   # long time
-    sage: a                                       # long time
+    sage: a = T.animate('incremental', stop=40)   # long time  # optional -- ImageMagick
+    sage: a                                       # long time  # optional -- ImageMagick
     Animation with 40 frames
-    sage: a.show(delay=50, iterations=1)     # not tested  - requires convert command
+    sage: a.show(delay=50, iterations=1)          # long time  # optional -- ImageMagick
 
 5d Easy Example
 ---------------
@@ -221,7 +220,7 @@ REFERENCES:
 import itertools
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.misc import prod
+from sage.misc.all import prod
 from sage.combinat.all import WeylGroup
 from sage.plot.all import Graphics
 from sage.plot.polygon import polygon
@@ -258,31 +257,31 @@ def orthogonal_transformation(n, orientation_preserving=True):
         sage: from sage.combinat.tiling import orthogonal_transformation
         sage: orthogonal_transformation(2)
         [
-        [-1  0]  [ 0 -1]  [ 0  1]  [1 0]
-        [ 0 -1], [ 1  0], [-1  0], [0 1]
+        [1 0]  [ 0  1]  [-1  0]  [ 0 -1]
+        [0 1], [-1  0], [ 0 -1], [ 1  0]
         ]
         sage: orthogonal_transformation(2, orientation_preserving=False)
         [
-        [-1  0]  [-1  0]  [ 0 -1]  [ 0 -1]  [ 0  1]  [0 1]  [ 1  0]  [1 0]
-        [ 0 -1], [ 0  1], [-1  0], [ 1  0], [-1  0], [1 0], [ 0 -1], [0 1]
+        [1 0]  [ 0 -1]  [ 1  0]  [ 0  1]  [0 1]  [-1  0]  [ 0 -1]  [-1  0]
+        [0 1], [-1  0], [ 0 -1], [-1  0], [1 0], [ 0 -1], [ 1  0], [ 0  1]
         ]
         sage: orthogonal_transformation(3)
         [
-        [-1  0  0]  [-1  0  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0 -1  0]
-        [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [ 0  1  0]  [-1  0  0]  [ 0  0 -1]
-        [ 0  0  1], [ 0 -1  0], [ 0  1  0], [ 0  0 -1], [ 0  0 -1], [ 1  0  0],
+        [1 0 0]  [ 1  0  0]  [-1  0  0]  [-1  0  0]  [0 0 1]  [ 0  0 -1]
+        [0 1 0]  [ 0 -1  0]  [ 0  1  0]  [ 0 -1  0]  [1 0 0]  [ 1  0  0]
+        [0 0 1], [ 0  0 -1], [ 0  0 -1], [ 0  0  1], [0 1 0], [ 0 -1  0],
         <BLANKLINE>
-        [ 0 -1  0]  [ 0 -1  0]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0 -1]
-        [ 0  0  1]  [ 1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0  1  0]  [ 1  0  0]
-        [-1  0  0], [ 0  0  1], [ 0  1  0], [-1  0  0], [ 1  0  0], [ 0 -1  0],
+        [ 0  0 -1]  [ 0  0  1]  [0 1 0]  [ 0 -1  0]  [ 0  1  0]  [ 0 -1  0]
+        [-1  0  0]  [-1  0  0]  [0 0 1]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0  1]
+        [ 0  1  0], [ 0 -1  0], [1 0 0], [ 1  0  0], [-1  0  0], [-1  0  0],
         <BLANKLINE>
-        [ 0  0  1]  [ 0  0  1]  [ 0  0  1]  [0 0 1]  [ 0  1  0]  [ 0  1  0]
-        [-1  0  0]  [ 0 -1  0]  [ 0  1  0]  [1 0 0]  [-1  0  0]  [ 0  0 -1]
-        [ 0 -1  0], [ 1  0  0], [-1  0  0], [0 1 0], [ 0  0  1], [-1  0  0],
+        [ 0  1  0]  [ 0 -1  0]  [ 0  1  0]  [ 0 -1  0]  [ 1  0  0]  [ 1  0  0]
+        [ 1  0  0]  [ 1  0  0]  [-1  0  0]  [-1  0  0]  [ 0  0 -1]  [ 0  0  1]
+        [ 0  0 -1], [ 0  0  1], [ 0  0  1], [ 0  0 -1], [ 0  1  0], [ 0 -1  0],
         <BLANKLINE>
-        [0 1 0]  [ 0  1  0]  [ 1  0  0]  [ 1  0  0]  [ 1  0  0]  [1 0 0]
-        [0 0 1]  [ 1  0  0]  [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [0 1 0]
-        [1 0 0], [ 0  0 -1], [ 0  0 -1], [ 0  1  0], [ 0 -1  0], [0 0 1]
+        [-1  0  0]  [-1  0  0]  [ 0  0 -1]  [ 0  0  1]  [ 0  0  1]  [ 0  0 -1]
+        [ 0  0  1]  [ 0  0 -1]  [ 0  1  0]  [ 0 -1  0]  [ 0  1  0]  [ 0 -1  0]
+        [ 0  1  0], [ 0 -1  0], [ 1  0  0], [ 1  0  0], [-1  0  0], [-1  0  0]
         ]
 
     TESTS::
@@ -292,7 +291,7 @@ def orthogonal_transformation(n, orientation_preserving=True):
         sage: orthogonal_transformation(0)
         Traceback (most recent call last):
         ...
-        ValueError: ['B', 0] is not a valid cartan type
+        ValueError: ['B', 0] is not a valid Cartan type
     """
     if orientation_preserving:
         return [w.matrix() for w in WeylGroup(['B', n])
@@ -433,7 +432,7 @@ class Polyomino(SageObject):
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')
             sage: it = iter(p)
-            sage: it.next()
+            sage: next(it)
             (1, 1, 0)
         """
         return iter(self._blocs)
@@ -908,6 +907,7 @@ class Polyomino(SageObject):
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')
             sage: p.show3d()
+            Graphics3d Object
         """
         assert self._dimension == 3, "Dimension of the polyomino must be 3."
         G = Graphics()
@@ -938,6 +938,7 @@ class Polyomino(SageObject):
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)], color='deeppink')
             sage: p.show2d()              # long time (0.5s)
+            Graphics object consisting of 17 graphics primitives
         """
         assert self._dimension == 2, "Dimension of the polyomino must be 2."
         h = size / 2.0
@@ -995,14 +996,14 @@ class TilingSolver(SageObject):
     Solutions are given by an iterator::
 
         sage: it = T.solve()
-        sage: for p in it.next(): p
+        sage: for p in next(it): p
         Polyomino: [(0, 0, 0)], Color: gray
         Polyomino: [(0, 0, 1), (0, 0, 2)], Color: gray
         Polyomino: [(0, 0, 3), (0, 0, 4), (0, 0, 5)], Color: gray
 
     Another solution::
 
-        sage: for p in it.next(): p
+        sage: for p in next(it): p
         Polyomino: [(0, 0, 0)], Color: gray
         Polyomino: [(0, 0, 1), (0, 0, 2), (0, 0, 3)], Color: gray
         Polyomino: [(0, 0, 4), (0, 0, 5)], Color: gray
@@ -1381,31 +1382,31 @@ class TilingSolver(SageObject):
             sage: y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='yellow')
             sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
             sage: for a in T.dlx_common_prefix_solutions(): a
-            [46, 83, 149, 26, 179, 44, 81, 162, 132, 101]
-            [46, 83, 149, 26, 179]
-            [46, 83, 149, 26, 179, 154, 81, 162, 132, 175]
-            [46, 83, 149]
-            [46, 83, 149, 97, 21, 162, 81, 44, 30, 106]
-            [46]
-            [46, 157, 149, 136, 179, 44, 81, 162, 132, 101]
-            [46, 157, 149, 136, 179]
-            [46, 157, 149, 136, 179, 154, 81, 162, 132, 175]
+            [64, 83, 149, 44, 179, 62, 35, 162, 132, 101]
+            [64, 83, 149, 44, 179]
+            [64, 83, 149, 44, 179, 154, 35, 162, 132, 175]
+            [64, 83, 149]
+            [64, 83, 149, 97, 39, 162, 35, 62, 48, 106]
+            [64]
+            [64, 157, 149, 136, 179, 62, 35, 162, 132, 101]
+            [64, 157, 149, 136, 179]
+            [64, 157, 149, 136, 179, 154, 35, 162, 132, 175]
             []
-            [82, 119, 40, 97, 20, 87, 8, 45, 30, 107]
-            [82, 119, 40, 97, 20]
-            [82, 119, 40, 97, 20, 161, 8, 45, 140, 107]
+            [82, 119, 58, 97, 38, 87, 8, 63, 48, 107]
+            [82, 119, 58, 97, 38]
+            [82, 119, 58, 97, 38, 161, 8, 63, 140, 107]
             [82, 119]
-            [82, 119, 150, 136, 180, 45, 8, 161, 131, 175]
+            [82, 119, 150, 136, 180, 63, 8, 161, 131, 175]
             [82, 119, 150]
-            [82, 119, 150, 171, 20, 87, 8, 45, 30, 107]
-            [82, 119, 150, 171, 20]
-            [82, 119, 150, 171, 20, 161, 8, 45, 140, 107]
+            [82, 119, 150, 171, 38, 87, 8, 63, 48, 107]
+            [82, 119, 150, 171, 38]
+            [82, 119, 150, 171, 38, 161, 8, 63, 140, 107]
         """
         it = self.dlx_solutions()
-        B = it.next()
+        B = next(it)
         while True:
             yield B
-            A, B = B, it.next()
+            A, B = B, next(it)
             common_prefix = []
             for a, b in itertools.izip(A, B):
                 if a == b:
@@ -1446,24 +1447,24 @@ class TilingSolver(SageObject):
             sage: y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='yellow')
             sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
             sage: for a in T.dlx_solutions(): a
-            [46, 83, 149, 26, 179, 44, 81, 162, 132, 101]
-            [46, 83, 149, 26, 179, 154, 81, 162, 132, 175]
-            [46, 83, 149, 97, 21, 162, 81, 44, 30, 106]
-            [46, 157, 149, 136, 179, 44, 81, 162, 132, 101]
-            [46, 157, 149, 136, 179, 154, 81, 162, 132, 175]
-            [82, 119, 40, 97, 20, 87, 8, 45, 30, 107]
-            [82, 119, 40, 97, 20, 161, 8, 45, 140, 107]
-            [82, 119, 150, 136, 180, 45, 8, 161, 131, 175]
-            [82, 119, 150, 171, 20, 87, 8, 45, 30, 107]
-            [82, 119, 150, 171, 20, 161, 8, 45, 140, 107]
+            [64, 83, 149, 44, 179, 62, 35, 162, 132, 101]
+            [64, 83, 149, 44, 179, 154, 35, 162, 132, 175]
+            [64, 83, 149, 97, 39, 162, 35, 62, 48, 106]
+            [64, 157, 149, 136, 179, 62, 35, 162, 132, 101]
+            [64, 157, 149, 136, 179, 154, 35, 162, 132, 175]
+            [82, 119, 58, 97, 38, 87, 8, 63, 48, 107]
+            [82, 119, 58, 97, 38, 161, 8, 63, 140, 107]
+            [82, 119, 150, 136, 180, 63, 8, 161, 131, 175]
+            [82, 119, 150, 171, 38, 87, 8, 63, 48, 107]
+            [82, 119, 150, 171, 38, 161, 8, 63, 140, 107]
             sage: len(list(T.dlx_incremental_solutions()))
             123
         """
         it = self.dlx_solutions()
-        B = it.next()
+        B = next(it)
         while True:
             yield B
-            A, B = B, it.next()
+            A, B = B, next(it)
             common_prefix = 0
             for a, b in itertools.izip(A, B):
                 if a == b:
@@ -1502,15 +1503,15 @@ class TilingSolver(SageObject):
             sage: r = Polyomino([(0,0,0), (0,0,1), (0,0,2)])
             sage: T = TilingSolver([p,q,r], box=(1,1,6))
             sage: it = T.solve()
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0)], Color: gray
             Polyomino: [(0, 0, 1), (0, 0, 2)], Color: gray
             Polyomino: [(0, 0, 3), (0, 0, 4), (0, 0, 5)], Color: gray
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0)], Color: gray
             Polyomino: [(0, 0, 1), (0, 0, 2), (0, 0, 3)], Color: gray
             Polyomino: [(0, 0, 4), (0, 0, 5)], Color: gray
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0), (0, 0, 1)], Color: gray
             Polyomino: [(0, 0, 2), (0, 0, 3), (0, 0, 4)], Color: gray
             Polyomino: [(0, 0, 5)], Color: gray
@@ -1518,18 +1519,18 @@ class TilingSolver(SageObject):
         Including the partial solutions::
 
             sage: it = T.solve(partial='common_prefix')
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0)], Color: gray
             Polyomino: [(0, 0, 1), (0, 0, 2)], Color: gray
             Polyomino: [(0, 0, 3), (0, 0, 4), (0, 0, 5)], Color: gray
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0)], Color: gray
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0)], Color: gray
             Polyomino: [(0, 0, 1), (0, 0, 2), (0, 0, 3)], Color: gray
             Polyomino: [(0, 0, 4), (0, 0, 5)], Color: gray
-            sage: for p in it.next(): p
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0), (0, 0, 1)], Color: gray
             Polyomino: [(0, 0, 2), (0, 0, 3), (0, 0, 4)], Color: gray
             Polyomino: [(0, 0, 5)], Color: gray
@@ -1541,7 +1542,7 @@ class TilingSolver(SageObject):
             sage: r = Polyomino([(0,0,0), (0,0,1), (0,0,2)], color='yellow')
             sage: T = TilingSolver([p,q,r], box=(1,1,6), reusable=True)
             sage: it = T.solve()
-            sage: for p in it.next(): p
+            sage: for p in next(it): p
             Polyomino: [(0, 0, 0)], Color: yellow
             Polyomino: [(0, 0, 1)], Color: yellow
             Polyomino: [(0, 0, 2)], Color: yellow
@@ -1552,7 +1553,7 @@ class TilingSolver(SageObject):
         TESTS::
 
             sage: T = TilingSolver([p,q,r], box=(1,1,7))
-            sage: T.solve().next()
+            sage: next(T.solve())
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1648,20 +1649,20 @@ class TilingSolver(SageObject):
             sage: y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='cyan')
             sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
             sage: a = T.animate()
-            sage: a
+            sage: a             # optional -- ImageMagick
             Animation with 10 frames
 
         Include partial solutions (common prefix between two consecutive
         solutions)::
 
             sage: a = T.animate('common_prefix')
-            sage: a
+            sage: a             # optional -- ImageMagick
             Animation with 19 frames
 
         Incremental solutions (one piece removed or added at a time)::
 
             sage: a = T.animate('incremental')      # long time (2s)
-            sage: a                                 # long time (2s)
+            sage: a                                 # long time (2s)  # optional -- ImageMagick
             Animation with 123 frames
 
         ::

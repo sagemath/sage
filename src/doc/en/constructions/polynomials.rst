@@ -89,8 +89,8 @@ polynomials.
 ::
 
     sage: x, y = PolynomialRing(RationalField(), 2, ['x','y']).gens()
-    sage: f =  9*y^6 - 9*x^2*y^5 - 18*x^3*y^4 - 9*x^5*y^4 + 9*x^6*y^2 + 9*x^7*y^3\
-    ...   + 18*x^8*y^2 - 9*x^11
+    sage: f =  (9*y^6 - 9*x^2*y^5 - 18*x^3*y^4 - 9*x^5*y^4 + 9*x^6*y^2 + 9*x^7*y^3
+    ....:     + 18*x^8*y^2 - 9*x^11)
     sage: f.factor()
     (9) * (-x^5 + y^2) * (x^6 - 2*x^3*y^2 - x^2*y^3 + y^4)
 

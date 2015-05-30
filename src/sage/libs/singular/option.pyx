@@ -12,7 +12,8 @@ We compute a Groebner basis for Cyclic-5 in two different contexts::
 
     sage: P.<a,b,c,d,e> = PolynomialRing(GF(127))
     sage: I = sage.rings.ideal.Cyclic(P)
-    sage: std = sage.libs.singular.ff.std
+    sage: import sage.libs.singular.function_factory
+    sage: std = sage.libs.singular.function_factory.ff.std
 
 By default, tail reductions are performed::
 
@@ -277,7 +278,7 @@ cdef class LibSingularOptions_abstract:
             sage: sopt['redTail']
             True
         """
-        if value == None:
+        if value is None:
             value = (None,0,0)
         self.global_options[0] = int(value[0])
         global Kstd1_deg

@@ -4,11 +4,10 @@ User-customizable options for words
 #*****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License version 2
-#  (GPLv2)
-#
-#  The full text of the GPLv2 is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 import copy
@@ -65,36 +64,36 @@ def WordOptions(**kwargs):
         return copy.copy(word_options)
     if 'display' in kwargs:
         if kwargs['display'] not in ['list', 'string']:
-            raise ValueError, "display must be either 'list' or 'string'"
+            raise ValueError("display must be either 'list' or 'string'")
         else:
             word_options['display'] = kwargs['display']
     elif 'truncate' in kwargs:
         if not isinstance(kwargs['truncate'], bool):
-            raise ValueError, "truncate must be True or False"
+            raise ValueError("truncate must be True or False")
         else:
             word_options['truncate'] = kwargs['truncate']
     elif 'truncate_length' in kwargs:
         if not isinstance(kwargs['truncate_length'], (int,Integer)) or kwargs['truncate_length'] <= 0:
-            raise ValueError, "truncate_length must be a positive integer"
+            raise ValueError("truncate_length must be a positive integer")
         else:
             word_options['truncate_length'] = kwargs['truncate_length']
     elif 'letter_separator' in kwargs:
         if not isinstance(kwargs['letter_separator'], str):
-            raise ValueError, "letter_separator must be a string"
+            raise ValueError("letter_separator must be a string")
         else:
             word_options['letter_separator'] = kwargs['letter_separator']
     elif 'identifier' in kwargs:
         if not isinstance(kwargs['identifier'], str):
-            raise ValueError, "identifier must be a string"
+            raise ValueError("identifier must be a string")
         else:
             word_options['identifier'] = kwargs['identifier']
     elif 'cache' in kwargs:
         if not isinstance(kwargs['cache'], bool):
-            raise ValueError, "cache must be True or False"
+            raise ValueError("cache must be True or False")
         else:
             word_options['cache'] = kwargs['cache']
     elif 'old_repr' in kwargs:
         if not isinstance(kwargs['old_repr'], bool):
-            raise ValueError, "old_repr must be True or False"
+            raise ValueError("old_repr must be True or False")
         else:
             word_options['old_repr'] = kwargs['old_repr']

@@ -11,18 +11,22 @@ class POVRay:
     POV-Ray The Persistence of Vision Ray Tracer
 
     INPUT:
-        pov_file -- complete path to the .pov file you want to be rendered
-        outfile -- the filename you want to save your result to
-        **kwargs -- additionally keyword arguments you want to pass to POVRay
+
+    - ``pov_file`` -- complete path to the .pov file you want to be rendered
+    - ``outfile`` -- the filename you want to save your result to
+    - ``**kwargs`` -- additionally keyword arguments you want to pass to POVRay
 
     OUTPUT:
-        Image is written to the file you specified in outfile
+
+    Image is written to the file you specified in outfile
 
     EXAMPLES:
 
     AUTHOR:
-        Sage interface written by Yi Qiang (yqiang _atNOSPAM_ gmail.com)
-        POVRay: http://www.povray.org
+
+    Sage interface written by Yi Qiang (yqiang _atNOSPAM_ gmail.com)
+
+    POVRay: http://www.povray.org
     """
     def __repr__(self):
         return 'POV-Ray The Persistence of Vision Ray Tracer'

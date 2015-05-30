@@ -190,22 +190,22 @@ class MSymbol(SageObject):
                     c1 = R(c[0])
                     d1 = R(c[1])
                 else:
-                    raise ValueError, "Cannot change level of an MSymbol"
+                    raise ValueError("Cannot change level of an MSymbol")
             else:
                 try:
                     c1 = R(c[0])
                     d1 = R(c[1])
                 except (ValueError, TypeError):
-                    raise TypeError, "Unable to create a Manin symbol from %s"%c
+                    raise TypeError("Unable to create a Manin symbol from %s"%c)
         else:
             try:
                 c1 = R(c)
                 d1 = R(d)
             except (ValueError, TypeError):
-                raise TypeError, "Unable to create a Manin symbol from (%s, %s)"%(c, d)
+                raise TypeError("Unable to create a Manin symbol from (%s, %s)"%(c, d))
         if check:
             if (c1.is_zero() and d1.is_zero()) or not N.is_coprime(k.ideal(c1, d1)):
-                raise ValueError, "(%s, %s) is not an element of P1(R/N)."%(c1, d1)
+                raise ValueError("(%s, %s) is not an element of P1(R/N)."%(c1, d1))
         self.__c, self.__d = (c1, d1)
 
     def __repr__(self):
@@ -254,7 +254,7 @@ class MSymbol(SageObject):
             True
         """
         if not isinstance(other, MSymbol):
-            raise ValueError, "You can only compare with another M-symbol"
+            raise ValueError("You can only compare with another M-symbol")
         return cmp([self.__c.list(), self.__d.list()],
                             [other.__c.list(), other.__d.list()])
 
@@ -427,7 +427,7 @@ class MSymbol(SageObject):
             else:
                 return MSymbol(N, 1, N.reduce(self.d*cinv))
 
-        if _level_cache.has_key(N):
+        if N in _level_cache:
             Lfacs, Lxs = _level_cache[N]
         else:
             Lfacs = [p**e for p, e in N.factor()]
@@ -513,14 +513,14 @@ class P1NFList(SageObject):
             sage: N2 = k.ideal(a + 2)
             sage: P2 = P1NFList(N2)
             sage: P1 < P2
-            False
-            sage: P1 > P2
             True
+            sage: P1 > P2
+            False
             sage: P1 == P1NFList(N1)
             True
         """
         if not isinstance(other, P1NFList):
-            raise ValueError, "You can only compare with another P1NFList"
+            raise ValueError("You can only compare with another P1NFList")
         return cmp(self.__N, other.__N)
 
     def __getitem__(self, n):
@@ -635,7 +635,7 @@ class P1NFList(SageObject):
             try:
                 c = MSymbol(self.__N, c) # check that c is an MSymbol
             except ValueError: # catch special case of wrong level
-                raise ValueError, "The MSymbol is of a different level"
+                raise ValueError("The MSymbol is of a different level")
             return c.normalize(with_scalar)
         return MSymbol(self.N(), c, d).normalize(with_scalar)
 
@@ -718,7 +718,7 @@ class P1NFList(SageObject):
             try:
                 c = MSymbol(self.__N, c) # check that c is an MSymbol
             except ValueError: # catch special case of wrong level
-                raise ValueError, "The MSymbol is of a different level"
+                raise ValueError("The MSymbol is of a different level")
             if with_scalar:
                 u, norm_c = c.normalize(with_scalar=True)
             else:
@@ -769,7 +769,7 @@ class P1NFList(SageObject):
             try:
                 c = MSymbol(self.__N, c) # check that c is an MSymbol
             except ValueError: # catch special case of wrong level
-                raise ValueError, "The MSymbol is of a different level"
+                raise ValueError("The MSymbol is of a different level")
             t, i = search(self.__list, c)
         else:
             t, i = search(self.__list, MSymbol(self.__N, c, d))
@@ -1001,9 +1001,9 @@ def p1NFlist(N):
                 c = D.gens_reduced()[0]
             else:
                 it = k.primes_of_degree_one_iter()
-                Dp = it.next()
+                Dp = next(it)
                 while not Dp.is_coprime(N) or not (Dp*D).is_principal():
-                    Dp = it.next()
+                    Dp = next(it)
                 c = (D*Dp).gens_reduced()[0]
             #now we find all the (c,d)'s which have associated divisor D
             I = D + N/D
@@ -1088,9 +1088,9 @@ def lift_to_sl2_Ok(N, c, d):
     k = N.number_field()
     #check the input
     if c.is_zero() and d.is_zero():
-        raise ValueError, "Cannot lift (%s, %s) to an element of Sl2(Ok)."%(c, d)
+        raise ValueError("Cannot lift (%s, %s) to an element of Sl2(Ok)."%(c, d))
     if not N.is_coprime(k.ideal(c, d)):
-        raise ValueError, "<%s> + <%s> and the %s are not coprime."%(c, d, N)
+        raise ValueError("<%s> + <%s> and the %s are not coprime."%(c, d, N))
     #a few special cases
     if c - 1 in N:
         return [k(0), k(-1), 1, d]
@@ -1100,7 +1100,7 @@ def lift_to_sl2_Ok(N, c, d):
         it = k.primes_of_degree_one_iter()
         q = k.ideal(1)
         while not (q.is_coprime(d) and (q*N).is_principal()):
-            q = it.next()
+            q = next(it)
         m = (q*N).gens_reduced()[0]
         B = k.ideal(m).element_1_mod(k.ideal(d))
         return [(1-B)/d, -B/m, m, d]
@@ -1108,7 +1108,7 @@ def lift_to_sl2_Ok(N, c, d):
         it = k.primes_of_degree_one_iter()
         q = k.ideal(1)
         while not (q.is_coprime(c) and (q*N).is_principal()):
-            q = it.next()
+            q = next(it)
         m = (q*N).gens_reduced()[0]
         B = k.ideal(c).element_1_mod(k.ideal(m))
         return [(1-B)/m, -B/c, c, m]
@@ -1162,7 +1162,7 @@ def make_coprime(N, c, d):
         r = k.ideal(1)
         qN = q*N
         while not (r.is_coprime(c) and (r*qN).is_principal()):
-            r = it.next()
+            r = next(it)
         m = (r*qN).gens_reduced()[0]
         d1 = d + m
         return c, d1
@@ -1189,9 +1189,9 @@ def psi(N):
         26
     """
     if not N.is_integral():
-        raise ValueError, "psi only defined for integral ideals"
+        raise ValueError("psi only defined for integral ideals")
 
-    from sage.misc.misc import prod
+    from sage.misc.all import prod
     return prod([(np+1)*np**(e-1) \
                      for np,e in [(p.absolute_norm(),e) \
                                   for p,e in N.factor()]])

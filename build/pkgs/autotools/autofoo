@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Script to automatically call the "right" version of @AUTOFOO@
+# installed within Sage. We read the @AUTOFOO@ output file(s) to
+# determine the version from that file. Otherwise, we simply run the
+# latest version. In all cases, the version can be overridden by the
+# @AUTOVAR@ environment variable.
+
+v="$@AUTOVAR@"
+
+if [ -z "$v" ]; then
+    for v_file in @AUTOFILES@; do
+        v=`exec 2>/dev/null; sed -n <$v_file \
+            's/^\(.*generated.*@AUTOFOO@\( *version\)*\|version=\)[ "]*\([0-9][-0-9a-z.]*\)/\3=/i; T; s/[.]*=.*//; p; q;'`
+        if [ -n "$v" ]; then break; fi
+    done
+fi
+
+# Default version
+if [ -z "$v" ]; then
+    v=@DEFAULT_VERSION@
+fi
+
+prog=`basename "$0"`
+exec "$SAGE_LOCAL/@AUTOFOO@-$v/bin/$prog" "$@"

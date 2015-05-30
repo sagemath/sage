@@ -332,21 +332,21 @@ cdef class lazy_list(object):
         if not isinstance(start, (int,long)):
             try:
                 start = start.__index__()
-            except StandardError:
+            except Exception:
                 raise TypeError("start must be None or integer")
         if start < 0:
             raise ValueError("start must be non negative")
         if not isinstance(stop, (int,long)):
             try:
                 stop = stop.__index__()
-            except StandardError:
+            except Exception:
                 raise TypeError("stop must be None or integer")
         if stop < 0:
             raise ValueError("stop must be larger than -2")
         if not isinstance(step, (int,long)):
             try:
                 step = step.__index__()
-            except StandardError:
+            except Exception:
                 raise TypeError("step must be None or integer")
         if step <= 0:
             raise ValueError("step must be positive")
@@ -662,8 +662,8 @@ cdef class lazy_list(object):
 
             sage: from itertools import count
             sage: from sage.misc.lazy_list import lazy_list
-            sage: iter(lazy_list(count()))    #random indirect doctest
-            <generator object lazy_list at 0x5201190>
+            sage: iter(lazy_list(count()))
+            iterator of lazy list [0, 1, 2, ...]
         """
         if self.stop == PY_SSIZE_T_MAX:
             return lazy_list_iterator(self)
@@ -746,7 +746,7 @@ cdef class lazy_list(object):
         else:
             try:
                 start = key.start.__index__()
-            except StandardError:
+            except Exception:
                 raise TypeError("slice indices must be integers or None or have an __index__ method")
 
         if key.stop is None:
@@ -756,7 +756,7 @@ cdef class lazy_list(object):
         else:
             try:
                 stop = key.stop.__index__()
-            except StandardError:
+            except Exception:
                 raise TypeError("slice indices must be integers or None or have an __index__ method")
 
         if key.step is None:
@@ -766,7 +766,7 @@ cdef class lazy_list(object):
         else:
             try:
                 step = key.step.__index__()
-            except StandardError:
+            except Exception:
                 raise TypeError("slice indices must be integers or None or have an __index__ method")
 
         if step == 0:

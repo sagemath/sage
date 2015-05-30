@@ -1,0 +1,10 @@
+diff -ur old/setup.py src/setup.py
+--- old/setup.py	2013-11-06 15:14:54.000000000 +0100
++++ src/setup.py	2014-02-28 11:33:12.718096602 +0100
+@@ -12,6 +12,5 @@
+     packages=['pkgconfig'],
+     description="Interface Python with pkg-config",
+     long_description=open('README.rst').read(),
+-    setup_requires=['nose>=1.0'],
+     test_suite='test',
+ )

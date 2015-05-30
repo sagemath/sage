@@ -119,7 +119,8 @@ def hypellfrob(p, N, Q):
 
    cdef int result
    sig_on()
-   result = hypellfrob_matrix(mm.x, pp.x, N, QQ.x)
+   cdef mat_ZZ_c *mm_x = &mm.x    # workaround for Cython misfeature
+   result = hypellfrob_matrix(mm_x[0], pp.x, N, QQ.x)
    sig_off()
 
    if not result:

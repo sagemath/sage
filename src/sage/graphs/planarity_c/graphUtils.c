@@ -2320,7 +2320,7 @@ int  stackBottom = sp_GetCurrentSize(theGraph->theStack);
  Comment out the exit() call to get a stack trace.
  ********************************************************************/
 
-int debugNOTOK()
+int debugNOTOK(void)
 {
 	//exit(-1);
 	return 0; // NOTOK is normally defined to be zero

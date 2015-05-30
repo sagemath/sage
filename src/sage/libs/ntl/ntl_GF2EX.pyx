@@ -14,7 +14,6 @@
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -60,7 +59,7 @@ cdef class ntl_GF2EX:
         ## the error checking in __init__ will prevent##
         ## you from constructing an ntl_GF2E          ##
         ## inappropriately.  However, from Cython, you##
-        ## could do r = PY_NEW(ntl_GF2E) without      ##
+        ## could do r = ntl_GF2E.__new__(ntl_GF2E) without
         ## first restoring a GF2EContext, which could ##
         ## have unfortunate consequences.  See _new  ##
         ## defined below for an example of the right  ##
@@ -69,7 +68,7 @@ cdef class ntl_GF2EX:
         ################################################
         if modulus is None:
             return
-        if PY_TYPE_CHECK( modulus, ntl_GF2EContext_class ):
+        if isinstance(modulus, ntl_GF2EContext_class):
             self.c = <ntl_GF2EContext_class>modulus
             self.c.restore_c()
             GF2EX_construct(&self.x)
@@ -81,14 +80,14 @@ cdef class ntl_GF2EX:
     cdef ntl_GF2E _new_element(self):
         cdef ntl_GF2E r
         self.c.restore_c()
-        r = PY_NEW(ntl_GF2E)
+        r = ntl_GF2E.__new__(ntl_GF2E)
         r.c = self.c
         return r
 
     cdef ntl_GF2EX _new(self):
         cdef ntl_GF2EX r
         self.c.restore_c()
-        r = PY_NEW(ntl_GF2EX)
+        r = ntl_GF2EX.__new__(ntl_GF2EX)
         r.c = self.c
         return r
 

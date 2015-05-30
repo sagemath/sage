@@ -38,7 +38,7 @@ cdef class ClonableArray(ClonableElement):
     cpdef _setitem(self, int key, value)
     cpdef int index(self, key, start=*, stop=*) except -1
     cpdef int count(self, key) except -1
-    cpdef long int _hash_(self) except 0
+    cpdef long int _hash_(self) except? -1
 
 cdef class ClonableList(ClonableArray):
     cpdef append(self, el)
@@ -60,5 +60,5 @@ cdef class ClonableIntArray(ClonableElement):
     cpdef object _getitem(self, int key)
     cpdef _setitem(self, int item, value)
     cpdef int index(self, int item) except -1
-    cpdef long int _hash_(self) except 0
+    cpdef long int _hash_(self) except? -1
     cpdef list list(self)

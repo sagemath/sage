@@ -33,7 +33,6 @@ Functions
 
 from sage.interfaces.all import gap
 from sage.misc.randstate import current_randstate
-from sage.misc.preparser import *
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.finite_rings.constructor import FiniteField as GF
 from sage.interfaces.gap import gfq_gap_to_sage
@@ -64,7 +63,7 @@ def BinaryReedMullerCode(r,k):
         Linear code of length 16, dimension 11 over Finite Field of size 2
         sage: C.minimum_distance()              # optional - gap_packages (Guava package)
         4
-        sage: C.gen_mat()                       # optional - gap_packages (Guava package)
+        sage: C.generator_matrix()                       # optional - gap_packages (Guava package)
         [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
         [0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1]
         [0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1]
@@ -80,6 +79,7 @@ def BinaryReedMullerCode(r,k):
     AUTHOR: David Joyner (11-2005)
     """
     F = GF(2)
+    gap.load_package("guava")
     gap.eval("C:=ReedMullerCode("+str(r)+", "+str(k)+")")
     gap.eval("G:=GeneratorMat(C)")
     k = int(gap.eval("Length(G)"))
@@ -123,6 +123,7 @@ def QuasiQuadraticResidueCode(p):
     AUTHOR: David Joyner (11-2005)
     """
     F = GF(2)
+    gap.load_package("guava")
     gap.eval("C:=QQRCode("+str(p)+")")
     gap.eval("G:=GeneratorMat(C)")
     k = int(gap.eval("Length(G)"))
@@ -159,6 +160,7 @@ def RandomLinearCodeGuava(n,k,F):
     current_randstate().set_seed_gap()
 
     q = F.order()
+    gap.load_package("guava")
     gap.eval("C:=RandomLinearCode("+str(n)+","+str(k)+", GF("+str(q)+"))")
     gap.eval("G:=GeneratorMat(C)")
     k = int(gap.eval("Length(G)"))

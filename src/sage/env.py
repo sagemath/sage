@@ -17,7 +17,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ########################################################################
 
-import os, socket
+import os, socket, site
 import version
 
 opj = os.path.join
@@ -73,9 +73,10 @@ def _add_variable_or_fallback(key, fallback, force=False):
         value = fallback
     if force:
         value = fallback
-    for k,v in SAGE_ENV.iteritems():
-        if isinstance(k, basestring):
-            value = value.replace('$'+k, v)
+    if isinstance(value, basestring):
+        for k,v in SAGE_ENV.iteritems():
+            if isinstance(v, basestring):
+                value = value.replace('$'+k, v)
     SAGE_ENV[key] = value
     globals()[key] = value
 
@@ -90,10 +91,9 @@ _add_variable_or_fallback('SAGE_LOCAL',      opj('$SAGE_ROOT', 'local'))
 _add_variable_or_fallback('SAGE_ETC',        opj('$SAGE_LOCAL', 'etc'))
 _add_variable_or_fallback('SAGE_SHARE',      opj('$SAGE_LOCAL', 'share'))
 
-# SAGE_LIB is the site-packages directory if the sage library
-# has been installed, otherwise it is the same of SAGE_SRC
 _add_variable_or_fallback('SAGE_SRC',        opj('$SAGE_ROOT', 'src'))
-_add_variable_or_fallback('SAGE_LIB',        os.path.dirname(os.path.dirname(__file__)))
+_add_variable_or_fallback('SITE_PACKAGES',   site.getsitepackages())
+_add_variable_or_fallback('SAGE_LIB',        SITE_PACKAGES[0])
 
 _add_variable_or_fallback('SAGE_EXTCODE',    opj('$SAGE_SHARE', 'sage', 'ext'))
 _add_variable_or_fallback('SAGE_LOGS',       opj('$SAGE_ROOT', 'logs', 'pkgs'))
@@ -101,6 +101,7 @@ _add_variable_or_fallback('SAGE_SPKG_INST',  opj('$SAGE_LOCAL', 'var', 'lib', 's
 _add_variable_or_fallback('SAGE_DOC',        opj('$SAGE_SRC', 'doc'))
 _add_variable_or_fallback('DOT_SAGE',        opj(os.environ.get('HOME','$SAGE_ROOT'), '.sage'))
 _add_variable_or_fallback('SAGE_DOT_GIT',    opj('$SAGE_ROOT', '.git'))
+_add_variable_or_fallback('SAGE_DISTFILES',  opj('$SAGE_ROOT', 'upstream'))
 
 # misc
 _add_variable_or_fallback('SAGE_URL',                'http://sage.math.washington.edu/sage/')
@@ -110,6 +111,7 @@ _add_variable_or_fallback('SAGE_REPO_AUTHENTICATED', 'ssh://git@trac.sagemath.or
 _add_variable_or_fallback('SAGE_REPO_ANONYMOUS',     'git://trac.sagemath.org/sage.git')
 _add_variable_or_fallback('SAGE_VERSION',            version.version)
 _add_variable_or_fallback('SAGE_DATE',               version.date)
+_add_variable_or_fallback('SAGE_IMPORTALL',          'yes')
 
 # post process
 if ' ' in DOT_SAGE:
@@ -127,5 +129,9 @@ if ' ' in DOT_SAGE:
         print("directory with no spaces that you have write")
         print("permissions to before you start sage.")
 
+# things that need DOT_SAGE
+_add_variable_or_fallback('PYTHON_EGG_CACHE',   opj('$DOT_SAGE', '.python-eggs'))
+_add_variable_or_fallback('SAGE_STARTUP_FILE',  opj('$DOT_SAGE', 'init.sage'))
+
 # delete temporary variables used for setting up sage.env
-del opj, os, socket, version
+del opj, os, socket, version, site

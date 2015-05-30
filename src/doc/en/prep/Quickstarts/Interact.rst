@@ -29,6 +29,7 @@ look like.  Here we just want a simple plot.
 ::
 
     sage: plot(x^2,(x,-3,3))
+    Graphics object consisting of 1 graphics primitive
 
 Then abstract out the parts you want to change.  We'll be letting the
 user change the function, so let's make that a variable ``f``.
@@ -37,6 +38,7 @@ user change the function, so let's make that a variable ``f``.
 
     sage: f=x^3
     sage: plot(f,(x,-3,3))
+    Graphics object consisting of 1 graphics primitive
 
 This was important because it allowed you to step back and think about
 what you would really be doing.
@@ -47,7 +49,7 @@ Now for the technical part.  We make this a ``def`` function \- see the
 ::
 
     sage: def myplot(f=x^2):
-    ...       show(plot(f,(x,-3,3)))
+    ....:     show(plot(f,(x,-3,3)))
 
 .. note:
    The ``show`` or ``print`` is needed since the output is not
@@ -78,7 +80,7 @@ a "control" to allow the user to interactively enter the function, we just prefa
 
     sage: @interact
     sage: def myplot(f=x^2):
-    ...       show(plot(f,(x,-3,3)))
+    ....:     show(plot(f,(x,-3,3)))
 
 .. note::
    Technically what ``@interact`` does is wrap the function, so the
@@ -107,7 +109,7 @@ convention for throw\-away names that we don't care about.
 
     sage: @interact
     sage: def _(f=x^2, a=-3, b=3):
-    ...       show(plot(f,(x,a,b)))
+    ....:     show(plot(f,(x,a,b)))
 
 If we pass ``('label', default_value)`` in for a control, then the
 control gets the label when printed. Here, we've put in some text for
@@ -121,7 +123,7 @@ called "lower", which it will think you forgot to define.
 
     sage: @interact
     sage: def _(f=('$f$', x^2), a=('lower', -3), b=('upper', 3)):
-    ...       show(plot(f,(x,a,b)))
+    ....:     show(plot(f,(x,a,b)))
 
 We can specify the type of control explicitly, along with options.
 See :ref:`below <Control>` for more detail on the possibilities.
@@ -132,7 +134,7 @@ See :ref:`below <Control>` for more detail on the possibilities.
 
     sage: @interact
     sage: def _(f=input_box(x^2, width=20, label="$f$")):
-    ...       show(plot(f,(x,-3,3)))
+    ....:     show(plot(f,(x,-3,3)))
 
 ..
    Currently doesn't work.
@@ -145,7 +147,7 @@ See :ref:`below <Control>` for more detail on the possibilities.
 
        sage: @interact
        sage: def _(f=input_box(x^2, width=20), color=color_selector()):
-       ...       show(plot(f,(x,-3,3), color=color))
+       ....:     show(plot(f,(x,-3,3), color=color))
 
 Here we demonstrate a bunch of options.  Notice the new controls:
 
@@ -159,11 +161,11 @@ Here we demonstrate a bunch of options.  Notice the new controls:
 
     sage: @interact
     sage: def _(f=input_box(x^2,width=20),
-    ...   color=color_selector(widget='colorpicker', label=""),
-    ...   axes=True,
-    ...   fill=True,
-    ...   zoom=range_slider(-3,3,default=(-3,3))):
-    ...       show(plot(f,(x,zoom[0], zoom[1]), color=color, axes=axes,fill=fill))
+    ....: color=color_selector(widget='colorpicker', label=""),
+    ....: axes=True,
+    ....: fill=True,
+    ....: zoom=range_slider(-3,3,default=(-3,3))):
+    ....:     show(plot(f,(x,zoom[0], zoom[1]), color=color, axes=axes,fill=fill))
 
 There is also one button type to :ref:`disable automatic updates <NoUpdate>`.
 
@@ -177,14 +179,14 @@ controls in a grid (at the top, bottom, left, or right) using the
 ::
 
     sage: @interact(layout=dict(top=[['f', 'color']],
-    ...   left=[['axes'],['fill']],
-    ...   bottom=[['zoom']]))
+    ....: left=[['axes'],['fill']],
+    ....: bottom=[['zoom']]))
     sage: def _(f=input_box(x^2,width=20),
-    ...   color=color_selector(widget='colorpicker', label=""),
-    ...   axes=True,
-    ...   fill=True,
-    ...   zoom=range_slider(-3,3, default=(-3,3))):
-    ...       show(plot(f,(x,zoom[0], zoom[1]), color=color, axes=axes,fill=fill))
+    ....: color=color_selector(widget='colorpicker', label=""),
+    ....: axes=True,
+    ....: fill=True,
+    ....: zoom=range_slider(-3,3, default=(-3,3))):
+    ....:     show(plot(f,(x,zoom[0], zoom[1]), color=color, axes=axes,fill=fill))
 
 .. _Control:
 
@@ -220,7 +222,7 @@ For complete detail, see the official
 
     sage: @interact
     sage: def _(frame=checkbox(True, label='Use frame')):
-    ...       show(plot(sin(x), (x,-5,5)), frame=frame)
+    ....:     show(plot(sin(x), (x,-5,5)), frame=frame)
 
 .. skip
 
@@ -230,7 +232,7 @@ For complete detail, see the official
     sage: colormaps=sage.plot.colors.colormaps.keys()
     sage: @interact
     sage: def _(cmap=selector(colormaps)):
-    ...       contour_plot(x^2-y^2,(x,-2,2),(y,-2,2),cmap=cmap).show()
+    ....:     contour_plot(x^2-y^2,(x,-2,2),(y,-2,2),cmap=cmap).show()
 
 .. skip
 
@@ -241,10 +243,10 @@ For complete detail, see the official
     sage: @interact
     sage: def _(cmap=selector(['RdBu', 'jet', 'gray','gray_r'],buttons=True),
     sage: type=['density','contour']):
-    ...       if type=='contour':
-    ...           contour_plot(x^2-y^2,(x,-2,2),(y,-2,2),cmap=cmap, aspect_ratio=1).show()
-    ...       else:
-    ...           density_plot(x^2-y^2,(x,-2,2),(y,-2,2),cmap=cmap, frame=True,axes=False,aspect_ratio=1).show()
+    ....:     if type=='contour':
+    ....:         contour_plot(x^2-y^2,(x,-2,2),(y,-2,2),cmap=cmap, aspect_ratio=1).show()
+    ....:     else:
+    ....:         density_plot(x^2-y^2,(x,-2,2),(y,-2,2),cmap=cmap, frame=True,axes=False,aspect_ratio=1).show()
 
 By default, ranges are sliders that divide the range into 50 steps.
 
@@ -254,7 +256,7 @@ By default, ranges are sliders that divide the range into 50 steps.
 
     sage: @interact
     sage: def _(n=(1,20)):
-    ...       print factorial(n)
+    ....:     print factorial(n)
 
 You can set the step size to get, for example, just integer values.
 
@@ -264,7 +266,7 @@ You can set the step size to get, for example, just integer values.
 
     sage: @interact
     sage: def _(n=slider(1,20, step_size=1)):
-    ...       print factorial(n)
+    ....:     print factorial(n)
 
 Or you can explicitly specify the slider values.
 
@@ -274,7 +276,7 @@ Or you can explicitly specify the slider values.
 
     sage: @interact
     sage: def _(n=slider([1..20])):
-    ...       print factorial(n)
+    ....:     print factorial(n)
 
 And the slider values don't even have to be numbers!
 
@@ -284,7 +286,7 @@ And the slider values don't even have to be numbers!
 
     sage: @interact
     sage: def _(fun=('function', slider([sin,cos,tan,sec,csc,cot]))):
-    ...       print fun(4.39293)
+    ....:     print fun(4.39293)
 
 Matrices are automatically converted to a grid of input boxes.
 
@@ -294,7 +296,7 @@ Matrices are automatically converted to a grid of input boxes.
 
     sage: @interact
     sage: def _(m=('matrix', identity_matrix(2))):
-    ...       print m.eigenvalues()
+    ....:     print m.eigenvalues()
 
 Here's how to get vectors from a grid of boxes.
 
@@ -304,7 +306,7 @@ Here's how to get vectors from a grid of boxes.
 
     sage: @interact
     sage: def _(v=('vector', input_grid(1, 3, default=[[1,2,3]], to_value=lambda x: vector(flatten(x))))):
-    ...       print v.norm()
+    ....:     print v.norm()
 
 .. _NoUpdate:
 
@@ -327,5 +329,5 @@ button to enable the user to update as soon as he or she is ready.
 
     sage: @interact
     sage: def _(m=('matrix', identity_matrix(2)), auto_update=False):
-    ...       print m.eigenvalues()
+    ....:     print m.eigenvalues()
 

@@ -307,7 +307,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     """
     bases = tuple(bases)
     #assert(len(bases) > 0 )
-    assert(type(name) is str)
+    assert(isinstance(name, str))
     #    assert(cls is None or issubtype(type(cls), type) or type(cls) is classobj)
     if cache is True:
         return dynamic_class_internal(name, bases, cls, reduction, doccls, prepend_cls_bases)
@@ -372,7 +372,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
     if cls is not None:
         methods = dict(cls.__dict__)
         # Anything else that should not be kept?
-        if methods.has_key("__dict__"):
+        if "__dict__" in methods:
             methods.__delitem__("__dict__")
         if prepend_cls_bases:
             bases = cls.__bases__ + bases
@@ -385,7 +385,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
             assert bases != ()
             doccls = bases[0]
     methods['_reduction'] = reduction
-    if not methods.has_key("_sage_src_lines_"):
+    if "_sage_src_lines_" not in methods:
         from sage.misc.sageinspect import sage_getsourcelines
         @staticmethod
         def _sage_src_lines():
@@ -393,11 +393,6 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         methods['_sage_src_lines_'] = _sage_src_lines
     methods['__doc__'] = doccls.__doc__
     methods['__module__'] = doccls.__module__
-    #if not methods.has_key("_sage_doc_"):
-    #    from sage.misc.sageinspect import sage_getdoc
-    #    def _sage_getdoc(obj):
-    #        return sage_getdoc(cls)
-    #    methods['_sage_src_lines_'] = _sage_getdoc
 
     metaclass = DynamicMetaclass
     # The metaclass of a class must derive from the metaclasses of its
@@ -406,7 +401,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
     # approach won't scale well if we start using metaclasses
     # elsewhere in Sage.
     for base in bases:
-        if type(base) is ClasscallMetaclass:
+        if isinstance(base, ClasscallMetaclass):
             metaclass = DynamicClasscallMetaclass
     return metaclass(name, bases, methods)
 

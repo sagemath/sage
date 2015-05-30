@@ -25,7 +25,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
     cdef int _normalize(self) except -1
     cdef pAdicZZpXCRElement _lshift_c(self, long n)
     cdef pAdicZZpXCRElement _rshift_c(self, long n)
-    cpdef RingElement _invert_c_impl(self)
     cpdef pAdicZZpXCRElement unit_part(self)
     cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self)
     cpdef _ntl_rep_abs(self)

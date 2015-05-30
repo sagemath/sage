@@ -92,16 +92,16 @@ class BipartiteGraph(Graph):
         sage: B == G
         True
         sage: B.left
-        set([0, 1, 2, 3])
+        {0, 1, 2, 3}
         sage: B.right
-        set([4, 5, 6])
+        {4, 5, 6}
         sage: B = BipartiteGraph({0:[5,6], 1:[4,5], 2:[4,6], 3:[4,5,6]})
         sage: B == G
         True
         sage: B.left
-        set([0, 1, 2, 3])
+        {0, 1, 2, 3}
         sage: B.right
-        set([4, 5, 6])
+        {4, 5, 6}
 
     You can specify a partition using ``partition`` argument. Note that if such graph
     is not bipartite, then Sage will raise an error. However, if one specifies
@@ -118,7 +118,7 @@ class BipartiteGraph(Graph):
 
         sage: B = BipartiteGraph(P, partition, check=False)
         sage: B.left
-        set([0, 1, 2, 3, 4])
+        {0, 1, 2, 3, 4}
         sage: B.show()
 
       ::
@@ -260,7 +260,7 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph(P, partition, check=False)
         """
         if data is None:
-            if partition != None and check:
+            if partition is not None and check:
                 if partition[0] or partition[1]:
                     raise ValueError("Invalid partition.")
             Graph.__init__(self, **kwds)
@@ -323,7 +323,7 @@ class BipartiteGraph(Graph):
                     for jj in range(nrows):
                         if data[jj][ii] != 0:
                             self.add_edge((ii, jj + ncols))
-        elif (isinstance(data, Graph) and partition != None):
+        elif (isinstance(data, Graph) and partition is not None):
             from copy import copy
             left, right = partition
             left = copy(left)
@@ -361,7 +361,7 @@ class BipartiteGraph(Graph):
             Graph.__init__(self, data, *args, **kwds)
             try:
                 self.left, self.right = self.bipartite_sets()
-            except StandardError:
+            except Exception:
                 raise TypeError("Input graph is not bipartite!")
         else:
             import networkx
@@ -384,7 +384,7 @@ class BipartiteGraph(Graph):
             if not (hasattr(self, "left") and hasattr(self, "right")):
                 try:
                     self.left, self.right = self.bipartite_sets()
-                except StandardError:
+                except Exception:
                     raise TypeError("Input graph is not bipartite!")
 
         # restore vertex partition checking
@@ -458,9 +458,9 @@ class BipartiteGraph(Graph):
             sage: G.vertices()
             [0, 1]
             sage: G.left
-            set([0])
+            {0}
             sage: G.right
-            set([1])
+            {1}
 
         TESTS:
 
@@ -505,7 +505,7 @@ class BipartiteGraph(Graph):
 
         # add the vertex
         retval = Graph.add_vertex(self, name)
-        if retval != None: name = retval
+        if retval is not None: name = retval
 
         # add to proper partition
         if left:
@@ -542,9 +542,9 @@ class BipartiteGraph(Graph):
             sage: bg.add_vertices([6,7,8], right=[True, False, True])
             sage: bg.add_vertices([9,10,11], right=True)
             sage: bg.left
-            set([0, 1, 2, 3, 5, 7])
+            {0, 1, 2, 3, 5, 7}
             sage: bg.right
-            set([4, 6, 8, 9, 10, 11])
+            {4, 6, 8, 9, 10, 11}
 
         TEST::
 
@@ -566,7 +566,7 @@ class BipartiteGraph(Graph):
             ...
             RuntimeError: Cannot add duplicate vertex to other partition.
             sage: (bg.left, bg.right)
-            (set([0, 1, 2]), set([]))
+            ({0, 1, 2}, set())
         """
         # sanity check on partition specifiers
         if left and right:  # also triggered if both lists are specified
@@ -630,12 +630,12 @@ class BipartiteGraph(Graph):
             sage: B
             Bipartite cycle graph: graph on 3 vertices
             sage: B.left
-            set([2])
+            {2}
             sage: B.edges()
             [(1, 2, None), (2, 3, None)]
             sage: B.delete_vertex(3)
             sage: B.right
-            set([1])
+            {1}
             sage: B.edges()
             [(1, 2, None)]
             sage: B.delete_vertex(0)
@@ -670,10 +670,10 @@ class BipartiteGraph(Graph):
         # vertex)
         try:
             self.left.remove(vertex)
-        except StandardError:
+        except Exception:
             try:
                 self.right.remove(vertex)
-            except StandardError:
+            except Exception:
                 raise RuntimeError(
                     "Vertex (%s) not found in partitions" % vertex)
 
@@ -696,9 +696,9 @@ class BipartiteGraph(Graph):
             sage: B
             Bipartite cycle graph: graph on 2 vertices
             sage: B.left
-            set([2])
+            {2}
             sage: B.right
-            set([1])
+            {1}
             sage: B.edges()
             [(1, 2, None)]
             sage: B.delete_vertices([0])
@@ -714,10 +714,10 @@ class BipartiteGraph(Graph):
         for vertex in vertices:
             try:
                 self.left.remove(vertex)
-            except StandardError:
+            except Exception:
                 try:
                     self.right.remove(vertex)
-                except StandardError:
+                except Exception:
                     raise RuntimeError(
                         "Vertex (%s) not found in partitions" % vertex)
 
@@ -771,7 +771,7 @@ class BipartiteGraph(Graph):
             if v is None:
                 try:
                     u, v, label = u
-                except StandardError:
+                except Exception:
                     u, v = u
                     label = None
         else:
@@ -813,7 +813,7 @@ class BipartiteGraph(Graph):
 
             sage: B = BipartiteGraph(graphs.CycleGraph(4))
             sage: B.bipartition()
-            (set([0, 2]), set([1, 3]))
+            ({0, 2}, {1, 3})
         """
         return (self.left, self.right)
 
@@ -863,6 +863,7 @@ class BipartiteGraph(Graph):
 
             sage: B = BipartiteGraph(graphs.CycleGraph(20))
             sage: B.plot()
+            Graphics object consisting of 41 graphics primitives
         """
         if "pos" not in kwds:
             kwds["pos"] = None
@@ -892,6 +893,78 @@ class BipartiteGraph(Graph):
                     i += 1
             kwds["pos"] = pos
         return Graph.plot(self, *args, **kwds)
+
+    def matching_polynomial(self, algorithm="Godsil", name=None):
+        r"""
+        Computes the matching polynomial.
+
+        If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)
+        in `G`, then the *matching polynomial* is defined as [Godsil93]_:
+
+        .. MATH::
+
+            \mu(x)=\sum_{k \geq 0} (-1)^k p(G,k) x^{n-2k}
+
+        INPUT:
+
+        - ``algorithm`` - a string which must be either "Godsil" (default)
+          or "rook"; "rook" is usually faster for larger graphs.
+
+        - ``name`` - optional string for the variable name in the polynomial.
+
+        EXAMPLE::
+
+            sage: BipartiteGraph(graphs.CubeGraph(3)).matching_polynomial()
+            x^8 - 12*x^6 + 42*x^4 - 44*x^2 + 9
+
+        ::
+
+            sage: x = polygen(ZZ)
+            sage: g = BipartiteGraph(graphs.CompleteBipartiteGraph(16, 16))
+            sage: factorial(16)*laguerre(16,x^2) == g.matching_polynomial(algorithm='rook')
+            True
+
+        Compute the matching polynomial of a line with `60` vertices::
+
+            sage: from sage.functions.orthogonal_polys import chebyshev_U
+            sage: g = next(graphs.trees(60))
+            sage: chebyshev_U(60, x/2) == BipartiteGraph(g).matching_polynomial(algorithm='rook')
+            True
+
+        The matching polynomial of a tree graphs is equal to its characteristic
+        polynomial::
+
+            sage: g = graphs.RandomTree(20)
+            sage: p = g.characteristic_polynomial()
+            sage: p == BipartiteGraph(g).matching_polynomial(algorithm='rook')
+            True
+
+        TESTS::
+
+            sage: g = BipartiteGraph(matrix.ones(4,3))
+            sage: g.matching_polynomial()
+            x^7 - 12*x^5 + 36*x^3 - 24*x
+            sage: g.matching_polynomial(algorithm="rook")
+            x^7 - 12*x^5 + 36*x^3 - 24*x
+        """
+        if algorithm == "Godsil":
+            return Graph.matching_polynomial(self, complement=False, name=name)
+        elif algorithm == "rook":
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            A = self.reduced_adjacency_matrix()
+            a = A.rook_vector()
+            m = A.nrows()
+            n = A.ncols()
+            b = [0]*(m + n + 1)
+            for i in range(min(m, n) + 1):
+                b[m + n - 2*i] = a[i]*(-1)**i
+            if name is None:
+                name = 'x'
+            K = PolynomialRing(A.base_ring(), name)
+            p = K(b)
+            return p
+        else:
+            raise ValueError('algorithm must be one of "Godsil" or "rook".')
 
     def load_afile(self, fname):
         r"""
@@ -1009,24 +1082,24 @@ class BipartiteGraph(Graph):
 
             sage: file_name = os.path.join(SAGE_TMP, 'deleteme.alist.txt')
             sage: for order in range(3, 13, 3):
-            ...       num_chks = int(order / 3)
-            ...       num_vars = order - num_chks
-            ...       partition = (range(num_vars), range(num_vars, num_vars+num_chks))
-            ...       for idx in range(100):
-            ...           g = graphs.RandomGNP(order, 0.5)
-            ...           try:
-            ...               b = BipartiteGraph(g, partition, check=False)
-            ...               b.save_afile(file_name)
-            ...               b2 = BipartiteGraph(file_name)
-            ...               if b != b2:
-            ...                   print "Load/save failed for code with edges:"
-            ...                   print b.edges()
-            ...                   break
-            ...           except StandardError:
-            ...               print "Exception encountered for graph of order "+ str(order)
-            ...               print "with edges: "
-            ...               g.edges()
-            ...               raise
+            ....:     num_chks = int(order / 3)
+            ....:     num_vars = order - num_chks
+            ....:     partition = (range(num_vars), range(num_vars, num_vars+num_chks))
+            ....:     for idx in range(100):
+            ....:         g = graphs.RandomGNP(order, 0.5)
+            ....:         try:
+            ....:             b = BipartiteGraph(g, partition, check=False)
+            ....:             b.save_afile(file_name)
+            ....:             b2 = BipartiteGraph(file_name)
+            ....:             if b != b2:
+            ....:                 print "Load/save failed for code with edges:"
+            ....:                 print b.edges()
+            ....:                 break
+            ....:         except Exception:
+            ....:             print "Exception encountered for graph of order "+ str(order)
+            ....:             print "with edges: "
+            ....:             g.edges()
+            ....:             raise
         """
         # open the file
         try:

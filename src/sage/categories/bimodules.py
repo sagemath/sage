@@ -11,7 +11,6 @@ Bimodules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.unknown import Unknown
 from sage.categories.category import Category, CategoryWithParameters
 from sage.categories.left_modules import LeftModules
 from sage.categories.right_modules import RightModules
@@ -43,8 +42,14 @@ class Bimodules(CategoryWithParameters):
             sage: C = Bimodules(QQ, ZZ)
             sage: TestSuite(C).run()
         """
-        assert left_base  in _Rings, "The left base must be a ring"
-        assert right_base in _Rings, "The right base must be a ring"
+        if not ( left_base in Rings or
+                 (isinstance(left_base, Category)
+                  and left_base.is_subcategory(Rings())) ):
+            raise ValueError("the left base must be a ring or a subcategory of Rings()")
+        if not ( right_base in Rings or
+                 (isinstance(right_base, Category)
+                  and right_base.is_subcategory(Rings())) ):
+            raise ValueError("the right base must be a ring or a subcategory of Rings()")
         self._left_base_ring = left_base
         self._right_base_ring = right_base
         Category.__init__(self, name)
@@ -65,14 +70,26 @@ class Bimodules(CategoryWithParameters):
         EXAMPLES::
 
             sage: Bimodules(QQ,ZZ)._make_named_class_key('parent_class')
-            (Category of quotient fields, Category of euclidean domains)
+            (Category of quotient fields,
+             Join of Category of euclidean domains and Category of infinite enumerated sets)
+
+            sage: Bimodules(Fields(), ZZ)._make_named_class_key('element_class')
+            (Category of fields,
+             Join of Category of euclidean domains and Category of infinite enumerated sets)
+
+            sage: Bimodules(QQ, Rings())._make_named_class_key('element_class')
+            (Category of quotient fields, Category of rings)
+
+            sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
+            (Category of fields, Category of rings)
         """
-        return (self._left_base_ring.category(), self._right_base_ring.category())
+        return (self._left_base_ring  if isinstance(self._left_base_ring,  Category) else self._left_base_ring.category(),
+                self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category())
 
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -94,7 +111,7 @@ class Bimodules(CategoryWithParameters):
 
     def left_base_ring(self):
         """
-        Returns the left base ring over which elements of this category are
+        Return the left base ring over which elements of this category are
         defined.
 
         EXAMPLES::
@@ -106,7 +123,7 @@ class Bimodules(CategoryWithParameters):
 
     def right_base_ring(self):
         """
-        Returns the right base ring over which elements of this category are
+        Return the right base ring over which elements of this category are
         defined.
 
         EXAMPLES::
@@ -118,13 +135,17 @@ class Bimodules(CategoryWithParameters):
 
     def _latex_(self):
         """
+        Return a latex representation of ``self``.
+
         EXAMPLES::
 
             sage: print Bimodules(QQ, ZZ)._latex_()
-            {\mathbf{Bimodules}}_{\Bold{Q}}_{\Bold{Z}}
+            {\mathbf{Bimodules}}_{\Bold{Q}, \Bold{Z}}
         """
         from sage.misc.latex import latex
-        return "{%s}_{%s}_{%s}"%(Category._latex_(self), latex(self._left_base_ring), latex(self._right_base_ring))
+        return "{{{0}}}_{{{1}, {2}}}".format(Category._latex_(self),
+                                             latex(self._left_base_ring),
+                                             latex(self._right_base_ring))
 
     def super_categories(self):
         """
@@ -136,6 +157,24 @@ class Bimodules(CategoryWithParameters):
         R = self.left_base_ring()
         S = self.right_base_ring()
         return [LeftModules(R), RightModules(S)]
+
+    def additional_structure(self):
+        r"""
+        Return ``None``.
+
+        Indeed, the category of bimodules defines no additional
+        structure: a left and right module morphism between two
+        bimodules is a bimodule morphism.
+
+        .. SEEALSO:: :meth:`Category.additional_structure`
+
+        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+
+        EXAMPLES::
+
+            sage: Bimodules(QQ, ZZ).additional_structure()
+        """
+        return None
 
     class ParentMethods:
         pass

@@ -4,6 +4,19 @@
 /local
 /logs
 /upstream
+/src/mac-app/build
+
+#############################
+# Autotools generated files #
+#############################
+/aclocal.m4
+/autom4te.cache/
+/config/
+/config.log
+/config.status
+/configure
+/build/Makefile-auto
+/build/Makefile-auto.in
 
 ###################
 # Temporary Files #
@@ -17,13 +30,18 @@
 .\#*
 
 # Vim
-*.s[a-w][a-z]
+*.swp
+*.swo
+*.swn
 *.un~
 .netrwhist
 
 # PyCharm
 .idea
 .iml
+
+# XCode
+xcuserdata/
 
 # Eclipse
 *.pydevproject
@@ -53,3 +71,10 @@ $RECYCLE.BIN/
 
 # SublimeText
 *.sublime-workspace
+
+#################
+# SageMathCloud #
+#################
+*.sage-chat
+*.sage-history
+*.syncdoc*

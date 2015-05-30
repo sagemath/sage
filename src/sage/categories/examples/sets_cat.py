@@ -211,7 +211,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         if i in self:
             return self._from_integer_(i)
         else:
-            raise ValueError, "%s is not a prime number"%(i)
+            raise ValueError("%s is not a prime number"%(i))
 
     @abstract_method
     def _from_integer_(self, i):
@@ -285,7 +285,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: P = Sets().example("inherits")
-                sage: P.an_element().next()
+                sage: next(P.an_element())
                 53
             """
             return self.parent().next(self)
@@ -613,9 +613,9 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
 
     whereas::
 
-        sage: pw.next()
+        sage: next(pw)
         53
-        sage: pi.next()
+        sage: next(pi)
         53
 
     TESTS::

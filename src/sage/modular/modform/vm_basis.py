@@ -125,7 +125,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     if k%2 == 1 or k==2:
         return Sequence([])
     elif k < 0:
-        raise ValueError, "k must be non-negative"
+        raise ValueError("k must be non-negative")
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
     e = k.mod(12)
@@ -230,7 +230,7 @@ def _delta_poly(prec=10):
         7  0 1 -24 252 -1472 4830 -6048
     """
     if prec <= 0:
-        raise ValueError, "prec must be positive"
+        raise ValueError("prec must be positive")
     v = [0] * prec
 
     # Let F = \sum_{n >= 0} (-1)^n (2n+1) q^(floor(n(n+1)/2)).

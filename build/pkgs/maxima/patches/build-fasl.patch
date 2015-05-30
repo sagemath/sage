@@ -1,0 +1,23 @@
+Build a fasl library for ecl in addition to an executable program.
+
+References:
+* http://trac.sagemath.org/ticket/16178
+* https://github.com/cschwan/sage-on-gentoo/issues/226
+* https://bugs.gentoo.org/show_bug.cgi?id=499634
+
+Index: maxima-5.29.1/src/maxima.system
+===================================================================
+--- maxima-5.29.1.orig/src/maxima.system
++++ maxima-5.29.1/src/maxima.system
+@@ -75,6 +75,11 @@
+ 			     ;; Convert dir/foo.fas to dir/foo.o
+ 			     (make-pathname :type "o" :defaults p))
+ 			 files)))
++	(c::build-fasl "binary-ecl/maxima" :lisp-files obj
++			  :ld-flags
++			  (let ((x (symbol-value (find-symbol "*AUTOCONF-LD-FLAGS*"
++							      (find-package "MAXIMA")))))
++			    (if (and x (not (string= x ""))) (list x))))
+ 	(c::build-program "binary-ecl/maxima" :lisp-files obj
+ 			  :ld-flags
+ 			  (let ((x (symbol-value (find-symbol "*AUTOCONF-LD-FLAGS*"

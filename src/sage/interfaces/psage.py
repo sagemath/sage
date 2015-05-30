@@ -50,8 +50,8 @@ number = 0
 
 class PSage(Sage):
     def __init__(self,  **kwds):
-        if kwds.has_key('server'):
-            raise NotImplementedError, "PSage doesn't work on remote server yet."
+        if 'server' in kwds:
+            raise NotImplementedError("PSage doesn't work on remote server yet.")
         Sage.__init__(self, **kwds)
         import sage.misc.misc
         T = sage.misc.temporary_file.tmp_dir('sage_smp')
@@ -138,7 +138,7 @@ class PSage(Sage):
 
     def _send_nowait(self, x):
         if x.find('\n') != -1:
-            raise ValueError, "x must not have any newlines"
+            raise ValueError("x must not have any newlines")
         # Now we want the client Python process to execute two things.
         # The first is x and the second is c.  The effect of c
         # will be to unlock the lock.

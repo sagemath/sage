@@ -1,7 +1,7 @@
 diff -ru src/configure src.configure/configure
 --- src/configure	2011-10-24 00:05:54.000000000 +0200
 +++ src.configure/configure	2012-03-30 16:31:51.409247321 +0200
-@@ -22492,7 +22492,7 @@
+@@ -22877,7 +22493,7 @@
  if ac_fn_f77_try_compile "$LINENO"; then :
    ac_cv_prog_f77_v=
  # Try some options frequently used verbose output
@@ -10,7 +10,7 @@ diff -ru src/configure src.configure/configure
    cat > conftest.$ac_ext <<_ACEOF
        program main
  
-@@ -22808,7 +22808,7 @@
+@@ -23233,7 +22809,7 @@
  if ac_fn_c_try_compile "$LINENO"; then :
    r_cv_prog_c_v=
  # Try some options frequently used verbose output

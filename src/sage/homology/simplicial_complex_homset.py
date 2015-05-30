@@ -129,7 +129,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                     f[i] = (i,i)
             return simplicial_complex_morphism.SimplicialComplexMorphism(f, self._domain,X)
         else:
-            raise TypeError, "Diagonal morphism is only defined for Hom(X,XxX)."
+            raise TypeError("Diagonal morphism is only defined for Hom(X,XxX).")
 
     def identity(self):
         """
@@ -173,12 +173,12 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         """
         X_vertices = self._domain.vertices().set()
         try:
-            i = self._codomain.vertices().set().__iter__().next()
+            i = next(self._codomain.vertices().set().__iter__())
         except StopIteration:
             if len(X_vertices) == 0:
                 return dict()
             else:
-                raise TypeError, "There are no morphisms from a non-empty simplicial complex to an empty simplicial comples."
+                raise TypeError("There are no morphisms from a non-empty simplicial complex to an empty simplicial comples.")
         f = dict()
         for x in X_vertices:
             f[x]=i

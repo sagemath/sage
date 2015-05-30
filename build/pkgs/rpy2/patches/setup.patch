@@ -1,32 +1,12 @@
-diff -ru src/setup.py b/setup.py
---- src/setup.py	2009-11-04 20:43:40.000000000 +0100
-+++ b/setup.py	2012-09-04 22:04:20.244365287 +0200
-@@ -83,8 +83,10 @@
-             return ()
-         else:
-             raise Exception(cmd + '\nreturned\n' + rconfig)
--    else:
--        return rconfig_m.groups()
-+        
-+    # program around some parsing oddities on some systems:
-+    v = rconfig_m.groups()
-+    return tuple([x for x in v if ':' not in x])
+diff --git a/setup.py b/setup.py
+--- a/setup.py
++++ b/setup.py
+@@ -279,7 +279,7 @@ class RConfig(object):
+         rc = RConfig()
  
- rnewest = [0, 0, 0]
- rversions = []
-@@ -136,9 +138,14 @@
-             extra_link_args = get_rconfig(RHOME, '--ldflags') +\
-                               get_rconfig(RHOME, 'LAPACK_LIBS',
-                                           allow_empty = True) +\
--                              get_rconfig(RHOME, 'BLAS_LIBS'),
-+                              get_rconfig(RHOME, 'BLAS_LIBS', allow_empty=True)
-             )
- 
-+    print get_rconfig(RHOME, '--ldflags') +\
-+                              get_rconfig(RHOME, 'LAPACK_LIBS',
-+                                          allow_empty = True) +\
-+                              get_rconfig(RHOME, 'BLAS_LIBS', allow_empty=True)
-+
-     return rinterface_ext
- 
- 
+         for substring in re.split('(?<!-framework) ', string):
+-            ok = False
++            ok = True # work program around some parsing issues on some systems
+             for pattern in pp:
+                 rconfig_m = pattern.match(substring)
+                 if rconfig_m is not None:

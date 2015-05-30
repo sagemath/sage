@@ -31,7 +31,7 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         """
         self._alphabet = alphabet
-        CombinatorialFreeModule.__init__(self, R, Words(alphabet), category = AlgebrasWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, Words(alphabet, infinite=False), category = AlgebrasWithBasis(R))
 
     def _repr_(self):
         """
@@ -48,7 +48,7 @@ class FreeAlgebra(CombinatorialFreeModule):
         Returns the empty word, which index the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
-        EXAMPLES::
+        EXAMPLES::r
 
             sage: A = AlgebrasWithBasis(QQ).example()
             sage: A.one_basis()
@@ -60,7 +60,8 @@ class FreeAlgebra(CombinatorialFreeModule):
 
     def product_on_basis(self, w1, w2):
         r"""
-        Product of basis elements, as per :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        Product of basis elements, as per
+        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
 
         EXAMPLES::
 
@@ -77,7 +78,7 @@ class FreeAlgebra(CombinatorialFreeModule):
     @cached_method
     def algebra_generators(self):
         r"""
-        Returns the generators of this algebra, as per :meth:`Algebras.ParentMethods.algebra_generators`.
+        Return the generators of this algebra, as per :meth:`~.magmatic_algebras.MagmaticAlgebras.ParentMethods.algebra_generators`.
 
         EXAMPLES::
 

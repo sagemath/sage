@@ -55,13 +55,13 @@ def global_genus_symbol(self):
     """
     ## Check that the form is defined over ZZ
     if not self.base_ring() == IntegerRing():
-        raise TypeError, "Oops!  The quadratic form is not defined over the integers."
+        raise TypeError("Oops!  The quadratic form is not defined over the integers.")
 
     ## Return the result
     try:
         return Genus(self.Hessian_matrix())
-    except StandardError:
-        raise TypeError, "Oops!  There is a problem computing the genus symbols for this form."
+    except Exception:
+        raise TypeError("Oops!  There is a problem computing the genus symbols for this form.")
 
 
 
@@ -119,16 +119,16 @@ def local_genus_symbol(self, p):
     """
     ## Check that p is prime and that the form is defined over ZZ.
     if not is_prime(p):
-        raise TypeError, "Oops!  The number " + str(p) + " isn't prime."
+        raise TypeError("Oops!  The number " + str(p) + " isn't prime.")
     if not self.base_ring() == IntegerRing():
-        raise TypeError, "Oops!  The quadratic form is not defined over the integers."
+        raise TypeError("Oops!  The quadratic form is not defined over the integers.")
 
     ## Return the result
     try:
         M = self.Hessian_matrix()
         return LocalGenusSymbol(M, p)
-    except StandardError:
-        raise TypeError, "Oops!  There is a problem computing the local genus symbol at the prime " + str(p) + " for this form."
+    except Exception:
+        raise TypeError("Oops!  There is a problem computing the local genus symbol at the prime " + str(p) + " for this form.")
 
 
 

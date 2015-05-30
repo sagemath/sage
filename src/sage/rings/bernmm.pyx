@@ -2,6 +2,7 @@ r"""
 Cython wrapper for bernmm library
 
 AUTHOR:
+
     - David Harvey (2008-06): initial version
 """
 
@@ -34,14 +35,17 @@ def bernmm_bern_rat(long k, int num_threads = 1):
     (Wrapper for bernmm library.)
 
     INPUT:
-        k -- non-negative integer
-        num_threads -- integer >= 1, number of threads to use
+
+    - k -- non-negative integer
+    - num_threads -- integer >= 1, number of threads to use
 
     COMPLEXITY:
-        Pretty much quadratic in $k$. See the paper ``A multimodular algorithm
-        for computing Bernoulli numbers'', David Harvey, 2008, for more details.
 
-    EXAMPLES:
+        Pretty much quadratic in $k$. See the paper "A multimodular algorithm
+        for computing Bernoulli numbers", David Harvey, 2008, for more details.
+
+    EXAMPLES::
+
         sage: from sage.rings.bernmm import bernmm_bern_rat
 
         sage: bernmm_bern_rat(0)
@@ -57,7 +61,8 @@ def bernmm_bern_rat(long k, int num_threads = 1):
         sage: bernmm_bern_rat(100, 3)
         -94598037819122125295227433069493721872702841533066936133385696204311395415197247711/33330
 
-    TESTS:
+    TESTS::
+
         sage: lst1 = [ bernoulli(2*k, algorithm='bernmm', num_threads=2) for k in [2932, 2957, 3443, 3962, 3973] ]
         sage: lst2 = [ bernoulli(2*k, algorithm='pari') for k in [2932, 2957, 3443, 3962, 3973] ]
         sage: lst1 == lst2
@@ -87,13 +92,16 @@ def bernmm_bern_modp(long p, long k):
     If $B_k$ is not $p$-integral, returns -1.
 
     INPUT:
+
         p -- a prime
         k -- non-negative integer
 
     COMPLEXITY:
+
         Pretty much linear in $p$.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.rings.bernmm import bernmm_bern_modp
 
         sage: bernoulli(0) % 5, bernmm_bern_modp(5, 0)

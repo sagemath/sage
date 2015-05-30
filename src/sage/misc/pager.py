@@ -18,7 +18,7 @@ Pager for showing strings
 EMBEDDED_MODE = False
 
 def cat(x):
-    print x
+    print(x)
 
 def pager():
     if EMBEDDED_MODE:

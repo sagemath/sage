@@ -92,75 +92,11 @@ else
    echo "Unset SAGE_DEBUG if you want debugging information present (-g added)"
 fi
 
-# Add appropriate flag(s) to show all warnings.
-# This test of a compiler is not perfect by any means, but
-# is better than nothing.
-if "$CC" -flags > /dev/null 2>&1 ; then
-   SUN_COMPILER=1
-   # The Sun compilers are fussy, and adding extra
-   # warnings will just show too many.
-else
-   # Assume gcc if not the Sun C compiler.
-   # Add -Wall to show all warnings.
-   CFLAGS="$CFLAGS -Wall "
-   CXXFLAGS="$CXXFLAGS -Wall "
-   FCFLAGS="$FCFLAGS -Wall "
-   F77FLAGS="$F77FLAGS -Wall "
-   GNU_COMPILER=1
-fi
-
-# Determine if the C++ compiler is the Sun or GNU compiler
-# Just to check we are not mising GNU and non-GNU.
-if "$CXX" -flags > /dev/null 2>&1 ; then
-   SUN_COMPILER=1
-else
-   GNU_COMPILER=1
-fi
-
-
-# Determine if the Fortran compiler is the Sun or GNU compiler
-if [ -z "$SAGE_FORTRAN" ] ; then
-   echo "No Fortran compiler has been defined. This is not normally a problem."
-else
-   if "$SAGE_FORTRAN" -flags > /dev/null 2>&1 ;  then
-      SUN_COMPILER=1
-   else
-      GNU_COMPILER=1
-   fi
-fi
-
-# Check if SAGE_FORTRAN_LIB is defined, that the file actually exists.
-# SAGE_FORTRAN_LIB does not always need to be defined, but if it is defined, then
-# the file should exist.
-
-if [ -n "$SAGE_FORTRAN_LIB" ] &&  [ ! -e "$SAGE_FORTRAN_LIB" ]; then
-   echo "SAGE_FORTRAN_LIB is defined as $SAGE_FORTRAN_LIB, but does not exist"
-   exit 1
-fi
-
-# Checks that the user is not mixing the Sun and GNU compilers. This problem
-# has been seen on code built with the aid of SCons, but in general could
-# happen with any code if the user has specified a C compiler but not a C++ one.
-# This problem is even more likely to occur with the Fortran compiler - I've done
-# it myself when building Sage!
-
-if [ "x$SUN_COMPILER" = "x1" ] && [ "x$GNU_COMPILER" = "x1" ] ; then
-   echo "You are mixing the Sun and GNU C/C++/Fortran compilers"
-   echo "Such a combination will lead to problems."
-   echo "Check CC, CXX & SAGE_FORTRAN carefully."
-   echo "Exiting ..."
-   exit 1
-fi
-
 # These are all used by GNU to specify compilers.
 echo "Using CC=$CC"
 echo "Using CXX=$CXX"
 echo "Using FC=$FC"
 echo "Using F77=$F77"
-
-# Used by Sage in connection with Fortran
-echo "Using SAGE_FORTRAN=$SAGE_FORTRAN"
-echo "Using SAGE_FORTRAN_LIB=$SAGE_FORTRAN_LIB"
 
 # Flags which may be set.
 echo "The following environment variables will be exported"

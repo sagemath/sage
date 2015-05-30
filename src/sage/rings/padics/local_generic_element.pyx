@@ -20,8 +20,20 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+#*****************************************************************************
+#       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
+#                               William Stein <wstein@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from sage.rings.infinity import infinity
 from sage.structure.element cimport ModuleElement, RingElement, CommutativeRingElement
+from sage.structure.element import coerce_binop
 
 cdef class LocalGenericElement(CommutativeRingElement):
     #cpdef ModuleElement _add_(self, ModuleElement right):
@@ -544,11 +556,16 @@ cdef class LocalGenericElement(CommutativeRingElement):
             True
             sage: Qq(3^2,5,names='a')(3).is_unit()
             True
+            sage: R(0,0).is_unit()
+            False
+            sage: K(0,0).is_unit()
+            False
         """
+        if self.is_zero():
+            return False
         if self.parent().is_field():
-            return not self.is_zero()
-        else:
-            return self.valuation() == 0
+            return True
+        return self.valuation() == 0
 
     #def is_zero(self, prec):
     #    raise NotImplementedError
@@ -660,3 +677,78 @@ cdef class LocalGenericElement(CommutativeRingElement):
             -1
         """
         return self.valuation()
+
+    def euclidean_degree(self):
+        r"""
+        Return the degree of this element as an element of a euclidean domain.
+
+        EXAMPLES:
+
+        For a field, this is always zero except for the zero element::
+
+            sage: K = Qp(2)
+            sage: K.one().euclidean_degree()
+            0
+            sage: K.gen().euclidean_degree()
+            0
+            sage: K.zero().euclidean_degree()
+            Traceback (most recent call last):
+            ...
+            ValueError: euclidean degree not defined for the zero element
+
+        For a ring which is not a field, this is the valuation of the element::
+
+            sage: R = Zp(2)
+            sage: R.one().euclidean_degree()
+            0
+            sage: R.gen().euclidean_degree()
+            1
+            sage: R.zero().euclidean_degree()
+            Traceback (most recent call last):
+            ...
+            ValueError: euclidean degree not defined for the zero element
+        """
+        if self.is_zero():
+            raise ValueError("euclidean degree not defined for the zero element")
+
+        from sage.categories.fields import Fields
+        if self.parent() in Fields():
+            from sage.rings.all import Integer
+            return Integer(0)
+        return self.valuation()
+
+    @coerce_binop
+    def quo_rem(self, other):
+        r"""
+        Return the quotient with remainder of the division of this element by
+        ``other``.
+
+        INPUT:
+
+        - ``other`` -- an element in the same ring
+
+        EXAMPLES::
+
+            sage: R = Zp(3, 5)
+            sage: R(12).quo_rem(R(2))
+            (2*3 + O(3^6), 0)
+            sage: R(2).quo_rem(R(12))
+            (0, 2 + O(3^5))
+
+            sage: K = Qp(3, 5)
+            sage: K(12).quo_rem(K(2))
+            (2*3 + O(3^6), 0)
+            sage: K(2).quo_rem(K(12))
+            (2*3^-1 + 1 + 3 + 3^2 + 3^3 + O(3^4), 0)
+        """
+        if other.is_zero():
+            raise ZeroDivisionError
+
+        from sage.categories.fields import Fields
+        if self.parent() in Fields():
+            return (self / other, self.parent().zero())
+        if self.valuation() < other.valuation():
+            return (self.parent().zero(), self)
+        return ( (self>>other.valuation())*other.unit_part().inverse_of_unit(),
+                 self.parent().zero() )
+

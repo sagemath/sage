@@ -24,8 +24,6 @@ done
 ###############################################################################
 # Set up environment variables:
 ###############################################################################
-LD_CBLAS=`cat $SAGE_LOCAL/share/cblas_config`
-LDFLAGS="$LDFLAGS -L$SAGE_LOCAL/lib $LD_CBLAS"
 
 export CFLAGS="$CFLAGS -g -fPIC"
 export CXXFLAGS="$CXXFLAGS -g -fPIC"

@@ -17,13 +17,23 @@ Tools
 #*****************************************************************************
 
 def transitive_ideal(f, x):
-    """
-    Given an initial value x and a successor function f, return a list
-    containing x and all of its successors. The successor function
-    should return a list of all the successors of f.
+    r"""
+    Return a list of all elements reachable from `x` in the abstract
+    reduction system whose reduction relation is given by the function
+    `f`.
 
-    Note that if x has an infinite number of successors,
-    transitive_ideal won't return.
+    In more elementary terms:
+    If `S` is a set, and `f` is a function sending every element of `S`
+    to a list of elements of `S`, then we can define a digraph on the
+    vertex set `S` by drawing an edge from `s` to `t` for every
+    `s \in S` and every `t \in f(s)`.
+    If `x \in S`, then an element `y \in S` is said to be reachable
+    from `x` if there is a path `x \to y` in this graph.
+    Given `f` and `x`, this method computes the list of all elements of
+    `S` reachable from `x`.
+
+    Note that if there are infinitely many such elements, then this
+    method will never halt.
 
     EXAMPLES::
 

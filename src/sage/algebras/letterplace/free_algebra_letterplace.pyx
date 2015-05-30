@@ -470,7 +470,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
             sage: F.<bla,alpha,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[1,2,3])
             sage: latex(F)
-            \Bold{Q}\langle \mbox{bla}, \alpha, z\rangle
+            \Bold{Q}\langle \mathit{bla}, \alpha, z\rangle
 
         """
         from sage.all import latex
@@ -598,13 +598,11 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: from sage.algebras.letterplace.free_algebra_element_letterplace import FreeAlgebraElement_letterplace
             sage: P = F.commutative_ring()
             sage: FreeAlgebraElement_letterplace(F, P.0*P.1^2+P.1^3) # indirect doctest
-            Traceback (most recent call last):
-            ...
-            NotImplementedError:
+            <repr(<sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace at 0x...>) failed: NotImplementedError: 
               Apparently you tried to view the letterplace algebra with
               shift-multiplication as the free algebra over a finitely
               generated free abelian monoid.
-              In principle, this is correct, but it is not implemented, yet.
+              In principle, this is correct, but it is not implemented, yet.>
 
         """
         cdef int ngens = self.__ngens
@@ -832,7 +830,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
         """
         if not D:
-            return self.zero_element()
+            return self.zero()
         cdef int l
         for e in D.iterkeys():
             l = len(e)

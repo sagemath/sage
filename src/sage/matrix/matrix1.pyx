@@ -18,10 +18,10 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ################################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/python.pxi"
 
 import sage.modules.free_module
+
 
 cdef class Matrix(matrix0.Matrix):
     ###################################################
@@ -1116,8 +1116,11 @@ cdef class Matrix(matrix0.Matrix):
     ###########################################################################
     def stack(self, bottom, subdivide=False):
         r"""
-        Returns a new matrix formed by appending the matrix
-        (or vector) ``bottom`` beneath ``self``.
+        Return a new matrix formed by appending the matrix (or vector)
+        ``bottom`` below ``self``::
+
+            [  self  ]
+            [ bottom ]
 
         INPUT:
 
@@ -1142,6 +1145,7 @@ cdef class Matrix(matrix0.Matrix):
         in the result.
 
         .. warning::
+
             If ``subdivide`` is ``True`` then unequal column subdivisions
             will be discarded, since it would be ambiguous how to interpret
             them.  If the subdivision behavior is not what you need,
@@ -1153,7 +1157,6 @@ cdef class Matrix(matrix0.Matrix):
             or
             :func:`~sage.matrix.constructor.block_diagonal_matrix`
             useful and simpler in some instances.
-
 
         EXAMPLES:
 
@@ -1187,13 +1190,13 @@ cdef class Matrix(matrix0.Matrix):
             sage: A.stack(B)
             Traceback (most recent call last):
             ...
-            TypeError: number of columns must be the same, 2 != 3
+            TypeError: number of columns must be the same, not 2 and 3
 
             sage: v = vector(RR, [100, 200, 300])
             sage: A.stack(v)
             Traceback (most recent call last):
             ...
-            TypeError: number of columns must be the same, 2 != 3
+            TypeError: number of columns must be the same, not 2 and 3
 
         Setting ``subdivide`` to ``True`` will, in its simplest form,
         add a subdivision between ``self`` and ``bottom``. ::
@@ -1251,16 +1254,17 @@ cdef class Matrix(matrix0.Matrix):
             [ 5  6  7  8  9]
             [10 11 12 13 14]
 
-        The result retains the base ring of ``self`` by coercing
-        the elements of ``bottom`` into the base ring of ``self``. ::
+        The base ring of the result is the common parent for the base
+        rings of ``self`` and ``bottom``. In particular, the parent for
+        ``A.stack(B)`` and ``B.stack(A)`` should be equal::
 
             sage: A = matrix(QQ, 1, 2, [1,2])
             sage: B = matrix(RR, 1, 2, [sin(1.1), sin(2.2)])
             sage: C = A.stack(B); C
-            [                  1                   2]
-            [183017397/205358938 106580492/131825561]
+            [ 1.00000000000000  2.00000000000000]
+            [0.891207360061435 0.808496403819590]
             sage: C.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+            Full MatrixSpace of 2 by 2 dense matrices over Real Field with 53 bits of precision
 
             sage: D = B.stack(A); D
             [0.891207360061435 0.808496403819590]
@@ -1268,32 +1272,52 @@ cdef class Matrix(matrix0.Matrix):
             sage: D.parent()
             Full MatrixSpace of 2 by 2 dense matrices over Real Field with 53 bits of precision
 
-        Sometimes it is not possible to coerce into the base ring
-        of ``self``.  A solution is to change the base ring of ``self``
-        to a more expansive ring.  Here we mix the rationals with
-        a ring of polynomials with rational coefficients.  ::
+        ::
 
-            sage: R = PolynomialRing(QQ, 'y')
-            sage: A = matrix(QQ, 1, 2, [1,2])
-            sage: B = matrix(R, 1, 2, ['y', 'y^2'])
+            sage: R.<y> = PolynomialRing(ZZ)
+            sage: A = matrix(QQ, 1, 2, [1, 2/3])
+            sage: B = matrix(R, 1, 2, [y, y^2])
 
-            sage: C = B.stack(A); C
+            sage: C = A.stack(B); C
+            [  1 2/3]
             [  y y^2]
-            [  1   2]
             sage: C.parent()
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field
 
-            sage: D = A.stack(B)
-            Traceback (most recent call last):
-            ...
-            TypeError: not a constant polynomial
+        Stacking a dense matrix atop a sparse one returns a sparse
+        matrix::
 
-            sage: E = A.change_ring(R)
-            sage: F = E.stack(B); F
-            [  1   2]
-            [  y y^2]
-            sage: F.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field
+            sage: M = Matrix(ZZ, 2, 3, range(6), sparse=False)
+            sage: N = diagonal_matrix([10,11,12], sparse=True)
+            sage: P = M.stack(N); P
+            [ 0  1  2]
+            [ 3  4  5]
+            [10  0  0]
+            [ 0 11  0]
+            [ 0  0 12]
+            sage: P.is_sparse()
+            True
+            sage: P = N.stack(M); P
+            [10  0  0]
+            [ 0 11  0]
+            [ 0  0 12]
+            [ 0  1  2]
+            [ 3  4  5]
+            sage: P.is_sparse()
+            True
+
+        One can stack matrices over different rings (:trac:`16399`). ::
+
+            sage: M = Matrix(ZZ, 2, 3, range(6))
+            sage: N = Matrix(QQ, 1, 3, [10,11,12])
+            sage: M.stack(N)
+            [ 0  1  2]
+            [ 3  4  5]
+            [10 11 12]
+            sage: N.stack(M)
+            [10 11 12]
+            [ 0  1  2]
+            [ 3  4  5]
 
         TESTS:
 
@@ -1306,42 +1330,79 @@ cdef class Matrix(matrix0.Matrix):
             [ 3  4  5]
             [10 11 12]
 
-        AUTHOR:
+        Non-matrices fail gracefully::
 
-        - Rob Beezer (2011-03-19) - rewritten to mirror code for :meth:`augment`
+            sage: M.stack(polygen(QQ))
+            Traceback (most recent call last):
+            ...
+            TypeError: a matrix must be stacked with another matrix or a vector
+
+        AUTHORS:
+
+        - Rob Beezer (2011-03-19): rewritten to mirror code for :meth:`augment`
+
+        - Jeroen Demeyer (2015-01-06): refactor, see :trac:`16399`.
+          Put all boilerplate in one place (here) and put the actual
+          type-dependent implementation in ``_stack_impl``.
         """
-        from sage.matrix.constructor import matrix
-
-        if hasattr(bottom, '_vector_'):
-            bottom = bottom.row()
-        if not isinstance(bottom, sage.matrix.matrix1.Matrix):
-            raise TypeError('a matrix must be stacked with another matrix, or '
-                'a vector')
-
         cdef Matrix other
-        other = bottom
+        if isinstance(bottom, Matrix):
+            other = <Matrix>bottom
+        else:
+            if hasattr(bottom, '_vector_'):
+                bottom = bottom.row()
+            else:
+                raise TypeError('a matrix must be stacked with '
+                        'another matrix or a vector')
+            other = <Matrix?>bottom
 
         if self._ncols != other._ncols:
-            raise TypeError('number of columns must be the same, '
-                '{0} != {1}'.format(self._ncols, other._ncols))
-        if not (self._base_ring is other.base_ring()):
-            other = other.change_ring(self._base_ring)
+            raise TypeError("number of columns must be the same, not %s and %s" %
+                    (self.ncols(), bottom.ncols()) )
 
-        cdef Matrix Z
-        Z = self.new_matrix(nrows = self._nrows + other._nrows)
+        top_ring = self._base_ring
+        bottom_ring = other._base_ring
+        if top_ring is not bottom_ring:
+            from sage.structure.element import get_coercion_model
+            coercion_model = get_coercion_model()
+            R = coercion_model.common_parent(top_ring, bottom_ring)
+            if top_ring is not R:
+                self = self.change_ring(R)
+            if bottom_ring is not R:
+                other = other.change_ring(R)
+        
+        if type(self) is not type(other):
+            # If one of the matrices is sparse, return a sparse matrix
+            if self.is_sparse_c() and not other.is_sparse_c():
+                other = other.sparse_matrix()
+            elif other.is_sparse_c() and not self.is_sparse_c():
+                self = self.sparse_matrix()
 
-        cdef Py_ssize_t r, c
-        for r from 0 <= r < self._nrows:
-            for c from 0 <= c < self._ncols:
-                Z.set_unsafe(r,c, self.get_unsafe(r,c))
-        nr = self.nrows()
-
-        for r from 0 <= r < other._nrows:
-            for c from 0 <= c < other._ncols:
-                Z.set_unsafe(r+nr, c, other.get_unsafe(r,c))
-
+        Z = self._stack_impl(other)
         if subdivide:
             Z._subdivide_on_stack(self, other)
+        return Z
+
+    cdef _stack_impl(self, bottom):
+        """
+        Implementation of :meth:`stack`.
+        
+        Assume that ``self`` and ``other`` are compatible in the sense
+        that they have the same base ring and that both are either
+        dense or sparse.
+        """
+        cdef Matrix other = <Matrix>bottom
+        cdef Matrix Z
+        Z = self.new_matrix(nrows=self._nrows + other._nrows, ncols=self._ncols)
+
+        cdef Py_ssize_t r, c
+        cdef Py_ssize_t nr = self._nrows
+        for r in range(self._nrows):
+            for c in range(self._ncols):
+                Z.set_unsafe(r, c, self.get_unsafe(r,c))
+        for r in range(other._nrows):
+            for c in range(other._ncols):
+                Z.set_unsafe(r+nr, c, other.get_unsafe(r,c))
 
         return Z
 
@@ -1563,7 +1624,7 @@ cdef class Matrix(matrix0.Matrix):
             [5 4]
             [0 7]
         """
-        if not (PY_TYPE_CHECK(columns, list) or PY_TYPE_CHECK(columns, tuple)):
+        if not (isinstance(columns, list) or isinstance(columns, tuple)):
             raise TypeError, "columns (=%s) must be a list of integers"%columns
         cdef Matrix A
         cdef Py_ssize_t ncols,k,r
@@ -1632,7 +1693,7 @@ cdef class Matrix(matrix0.Matrix):
         AUTHORS:
             - Wai Yan Pong (2012-03-05)
         """
-        if not (PY_TYPE_CHECK(dcols, list) or PY_TYPE_CHECK(dcols, tuple)):
+        if not (isinstance(dcols, list) or isinstance(dcols, tuple)):
             raise TypeError("The argument must be a list or a tuple, not {l}".format(l=dcols))
         cdef list cols, diff_cols
 
@@ -1659,7 +1720,7 @@ cdef class Matrix(matrix0.Matrix):
             [6 7 0]
             [3 4 5]
         """
-        if not (PY_TYPE_CHECK(rows, list) or PY_TYPE_CHECK(rows, tuple)):
+        if not (isinstance(rows, list) or isinstance(rows, tuple)):
             raise TypeError, "rows must be a list of integers"
         cdef Matrix A
         cdef Py_ssize_t nrows,k,c
@@ -1728,7 +1789,7 @@ cdef class Matrix(matrix0.Matrix):
         AUTHORS:
             - Wai Yan Pong (2012-03-05)
         """
-        if not (PY_TYPE_CHECK(drows, list) or PY_TYPE_CHECK(drows, tuple)):
+        if not (isinstance(drows, list) or isinstance(drows, tuple)):
             raise TypeError("The argument must be a list or a tuple, not {l}".format(l=drows))
         cdef list rows, diff_rows
 
@@ -1779,9 +1840,9 @@ cdef class Matrix(matrix0.Matrix):
 
         - Didier Deshommes: some Pyrex speedups implemented
         """
-        if not PY_TYPE_CHECK(rows, list):
+        if not isinstance(rows, list):
             raise TypeError, "rows must be a list of integers"
-        if not PY_TYPE_CHECK(columns, list):
+        if not isinstance(columns, list):
             raise TypeError, "columns must be a list of integers"
 
         cdef Matrix A
@@ -2065,6 +2126,14 @@ cdef class Matrix(matrix0.Matrix):
             sage: b = a.sparse_matrix().dense_matrix()
             sage: b.subdivisions()
             ([1, 2], [2])
+
+        Ensure we can compute the correct dense matrix even if the
+        dict items are ETuples (see :trac:`17658`)::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: matrix(GF(5^2,"z"),{ETuple((1, 1)): 2}).dense_matrix()
+            [0 0]
+            [0 2]
         """
         if self.is_dense():
             return self

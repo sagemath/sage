@@ -212,9 +212,10 @@ AUTHORS:
 ##########################################################################
 
 from expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.misc.misc import DOT_SAGE
+from sage.env import DOT_SAGE
 import re
 import sage.rings.integer
+from sage.structure.element import parent
 
 COMMANDS_CACHE = '%s/r_commandlist.sobj'%DOT_SAGE
 PROMPT = '__SAGE__R__PROMPT__> '
@@ -361,7 +362,7 @@ class R(Expect):
         s = self.eval('capabilities("png")')
         t = r.eval('capabilities("aqua")')
         if "TRUE" not in s+t:
-            raise RuntimeError, "R was not compiled with PNG support"
+            raise RuntimeError("R was not compiled with PNG support")
 
         from sage.server.support import EMBEDDED_MODE
         if EMBEDDED_MODE:
@@ -512,9 +513,8 @@ class R(Expect):
 
         EXAMPLES::
 
-            sage: print r._source("print.anova")
-            function (x, digits = max(getOption("digits") - 2L, 3L), signif.stars = getOption("show.signif.stars"),
-            ...
+            sage: print r._source("c")
+            function (..., recursive = FALSE)  .Primitive("c")
         """
         if s[-2:] == "()":
             s = s[-2:]
@@ -532,9 +532,8 @@ class R(Expect):
 
         EXAMPLES::
 
-            sage: print r.source("print.anova")
-            function (x, digits = max(getOption("digits") - 2L, 3L), signif.stars = getOption("show.signif.stars"),
-            ...
+            sage: print r.source("c")
+            function (..., recursive = FALSE)  .Primitive("c")
         """
         return self._source(s)
 
@@ -590,7 +589,7 @@ class R(Expect):
         ret = self.eval('require("%s")'%library_name)
         # try hard to parse the message string in a locale-independent way
         if ' library(' in ret:       # locale-independent key-word
-            raise ImportError, "%s"%ret
+            raise ImportError("%s"%ret)
         else:
             try:
                 # We need to rebuild keywords!
@@ -701,14 +700,11 @@ class R(Expect):
 
         EXAMPLES::
 
-            sage: r.help('print.anova')
-            anova                 package:stats                 R Documentation
-            ...
-                 Chambers, J. M. and Hastie, T. J. (1992) _Statistical Models in
-                 S_, Wadsworth & Brooks/Cole.
+            sage: r.help('c')
+            c                     package:base                     R Documentation
             ...
 
-        .. note::
+            .. note::
 
             This is similar to typing r.command?.
         """
@@ -832,7 +828,7 @@ class R(Expect):
         cmd = '%s <- %s'%(var,value)
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError, "Error executing code in R\nCODE:\n\t%s\nR ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in R\nCODE:\n\t%s\nR ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
         """
@@ -1189,7 +1185,7 @@ class RElement(ExpectElement):
             ...
             NotImplementedError: pickling of R elements is not yet supported
         """
-        raise NotImplementedError, "pickling of R elements is not yet supported"
+        raise NotImplementedError("pickling of R elements is not yet supported")
 
     def trait_names(self):
         """
@@ -1314,14 +1310,14 @@ class RElement(ExpectElement):
         if isinstance(n, basestring):
             n = n.replace('self', self._name)
             return P.new('%s[%s]'%(self._name, n))
-        elif (hasattr(n,'parent') and n.parent() is P): # the key is RElement itself
+        elif parent(n) is P:  # the key is RElement itself
             return P.new('%s[%s]'%(self._name, n.name()))
         elif not isinstance(n,tuple):
             return P.new('%s[%s]'%(self._name, n))
         else:
             L = []
             for i in xrange(len(n)):
-                if (hasattr(n[i],'parent') and n[i].parent() is P):
+                if parent(n[i]) is P:
                     L.append(n[i].name())
                 else:
                     L.append(str(n[i]))
@@ -1849,7 +1845,7 @@ class RElement(ExpectElement):
         try:
             P.library('Hmisc')
         except ImportError:
-            raise RuntimeError, "The R package 'Hmisc' is required for R to LaTeX conversion, but it is not available."
+            raise RuntimeError("The R package 'Hmisc' is required for R to LaTeX conversion, but it is not available.")
         return LatexExpr(P.eval('latex(%s, file="");'%self.name()))
 
 
@@ -1867,7 +1863,7 @@ class RFunctionElement(FunctionElement):
             ...
             NotImplementedError: pickling of R element methods is not yet supported
         """
-        raise NotImplementedError, "pickling of R element methods is not yet supported"
+        raise NotImplementedError("pickling of R element methods is not yet supported")
 
     def _sage_doc_(self):
         """

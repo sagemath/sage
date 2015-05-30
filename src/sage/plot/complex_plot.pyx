@@ -19,7 +19,6 @@ Complex Plots
 
 # TODO: use NumPy buffers and complex fast_callable (when supported)
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 
 cimport numpy as cnumpy
@@ -29,17 +28,13 @@ from sage.misc.decorators import options
 from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.misc.misc import srange
 
-cdef extern from "math.h":
-    double hypot(double, double)
-    double atan2(double, double)
-    double atan(double)
-    double log(double)
-    double exp(double)
-    double sqrt(double)
-    double PI
+from libc.math cimport hypot, atan2, atan, log, sqrt
+
+cdef double PI = 4 * atan(1)
+
 
 cdef inline ComplexDoubleElement new_CDF_element(double x, double y):
-    cdef ComplexDoubleElement z = <ComplexDoubleElement>PY_NEW(ComplexDoubleElement)
+    cdef ComplexDoubleElement z = ComplexDoubleElement.__new__(ComplexDoubleElement)
     z._complex.dat[0] = x
     z._complex.dat[1] = y
     return z
@@ -115,7 +110,10 @@ def complex_to_rgb(z_values):
         for j from 0 <= j < jmax:
 
             zz = row[j]
-            z = <ComplexDoubleElement>(zz if PY_TYPE_CHECK_EXACT(zz, ComplexDoubleElement) else CDF(zz))
+            if type(zz) is ComplexDoubleElement:
+                z = <ComplexDoubleElement>zz
+            else:
+                z = CDF(zz)
             x, y = z._complex.dat[0], z._complex.dat[1]
             mag = hypot(x, y)
             arg = atan2(y, x) # math module arctan has range from -pi to pi, so cut along negative x-axis
@@ -230,6 +228,7 @@ class ComplexPlot(GraphicPrimitive):
         TESTS::
 
             sage: complex_plot(lambda x: x^2, (-5, 5), (-5, 5))
+            Graphics object consisting of 1 graphics primitive
         """
         options = self.options()
         x0,x1 = float(self.xrange[0]), float(self.xrange[1])
@@ -274,35 +273,43 @@ def complex_plot(f, xrange, yrange, **options):
     Here we plot a couple of simple functions::
 
         sage: complex_plot(sqrt(x), (-5, 5), (-5, 5))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: complex_plot(sin(x), (-5, 5), (-5, 5))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: complex_plot(log(x), (-10, 10), (-10, 10))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: complex_plot(exp(x), (-10, 10), (-10, 10))
+        Graphics object consisting of 1 graphics primitive
 
     A function with some nice zeros and a pole::
 
         sage: f(z) = z^5 + z - 1 + 1/z
         sage: complex_plot(f, (-3, 3), (-3, 3))
+        Graphics object consisting of 1 graphics primitive
 
     Here is the identity, useful for seeing what values map to what colors::
 
         sage: complex_plot(lambda z: z, (-3, 3), (-3, 3))
+        Graphics object consisting of 1 graphics primitive
 
     The Riemann Zeta function::
 
         sage: complex_plot(zeta, (-30,30), (-30,30))
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: complex_plot(lambda z: z, (-3, 3), (-3, 3), figsize=[1,1])
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
@@ -320,6 +327,10 @@ def complex_plot(f, xrange, yrange, **options):
         sage: R = complex_plot(h, (-10, 10), (-10, 10))
         sage: S = complex_plot(exp(x)-sin(x), (-10, 10), (-10, 10))
         sage: P; Q; R; S
+        Graphics object consisting of 1 graphics primitive
+        Graphics object consisting of 1 graphics primitive
+        Graphics object consisting of 1 graphics primitive
+        Graphics object consisting of 1 graphics primitive
 
     Test to make sure symbolic functions still work without declaring
     a variable.  (We don't do this in practice because it doesn't use
@@ -328,6 +339,7 @@ def complex_plot(f, xrange, yrange, **options):
     ::
 
         sage: complex_plot(sqrt, (-5, 5), (-5, 5))
+        Graphics object consisting of 1 graphics primitive
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid

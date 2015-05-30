@@ -74,12 +74,12 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
     if eps is None:
         # Need to have base_ring=ZZ to work over finite fields, since
         # ZZ can coerce to GF(p), but QQ can't.
-        eps = DirichletGroup(1, base_ring=ZZ).gen(0)
+        eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
         if not (is_PowerSeries(f) or is_ModularFormElement(f)):
-            raise TypeError, "f (=%s) must be a power series or modular form"%f
+            raise TypeError("f (=%s) must be a power series or modular form"%f)
         if not is_DirichletCharacter(eps):
-            raise TypeError, "eps (=%s) must be a Dirichlet character"%eps
+            raise TypeError("eps (=%s) must be a Dirichlet character"%eps)
         k = Integer(k)
         n = Integer(n)
     v = []
@@ -207,7 +207,7 @@ def hecke_operator_on_basis(B, n, k, eps=None,
         Full MatrixSpace of 0 by 0 dense matrices over Cyclotomic Field of order 12 and degree 4
     """
     if not isinstance(B, (list, tuple)):
-        raise TypeError, "B (=%s) must be a list or tuple"%B
+        raise TypeError("B (=%s) must be a list or tuple"%B)
     if len(B) == 0:
         if eps is None:
             R = CyclotomicField(1)
@@ -217,13 +217,13 @@ def hecke_operator_on_basis(B, n, k, eps=None,
     f = B[0]
     R = f.base_ring()
     if eps is None:
-        eps = DirichletGroup(1, R).gen(0)
+        eps = DirichletGroup(1, R)[0]
     all_powerseries = True
     for x in B:
         if not is_PowerSeries(x):
             all_powerseries = False
     if not all_powerseries:
-        raise TypeError, "each element of B must be a power series"
+        raise TypeError("each element of B must be a power series")
     n = Integer(n)
     k = Integer(k)
     prec = (f.prec()-1)//n

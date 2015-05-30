@@ -35,7 +35,7 @@ which enable easy looping through the Cremona elliptic curve database.
 
 import os
 
-from ell_rational_field import (EllipticCurve_rational_field)
+from constructor import EllipticCurve
 
 class EllipticCurves:
     def rank(self, rank, tors=0, n=10, labels=False):
@@ -83,7 +83,7 @@ class EllipticCurves:
             ((0, 0, 1, -23737, 960366), 457532830151317)
 
         """
-        from sage.misc.misc import SAGE_SHARE
+        from sage.env import SAGE_SHARE
         db = os.path.join(SAGE_SHARE,'ellcurves')
         data = os.path.join(db,'rank%s'%rank)
         if not os.path.exists(data):
@@ -98,7 +98,7 @@ class EllipticCurves:
             if labels:
                 v.append(label)
             else:
-                E = EllipticCurve_rational_field(eval(ainvs))
+                E = EllipticCurve(eval(ainvs))
                 E._set_rank(r)
                 E._set_torsion_order(t)
                 E._set_conductor(N)

@@ -547,7 +547,7 @@ class TermOrder(SageObject):
             sage: t2._weights is None
             True
         """
-        if not dict.has_key('_weights'):
+        if '_weights' not in dict:
             name = dict['_TermOrder__name']
             n = dict['_TermOrder__length']
             t = TermOrder(name,n)
@@ -555,7 +555,7 @@ class TermOrder(SageObject):
         else:
             self.__dict__.update(dict)
 
-    def __init__(self, name='lex', n=0, blocks=True, force=False):
+    def __init__(self, name='lex', n=0, force=False):
         """
         Construct a new term order object.
 
@@ -566,8 +566,6 @@ class TermOrder(SageObject):
         - ``n`` - number of variables (default is `0`) weights for
           weighted degree orders. The weights are converted to
           integers and must be positive.
-
-        - ``blocks`` - this is deprecated.
 
         - ``force`` - ignore unknown term orders.
 
@@ -653,8 +651,8 @@ class TermOrder(SageObject):
                 if not isinstance(name, (tuple,list)):
                     name = name.list() # name may be a matrix
                 name = tuple(name)
-            except StandardError:
-                raise TypeError, "%s is not a valid term order"%(name,)
+            except Exception:
+                raise TypeError("%s is not a valid term order"%(name,))
 
         self._blocks = tuple()
         self._weights = None
@@ -672,7 +670,7 @@ class TermOrder(SageObject):
                 if not isinstance(t, TermOrder):
                     try:
                         t = TermOrder(t,force=True)
-                    except StandardError:
+                    except Exception:
                         raise TypeError
                 if t.name() == 'block':
                     blocks = blocks + list(t.blocks())
@@ -680,7 +678,7 @@ class TermOrder(SageObject):
                     macaulay2_str.append("%s"%(t.macaulay2_str()[1:-1],))
                 else:
                     if len(t) == 0:
-                        raise ArithmeticError, "Can only concatenate term orders with length attribute."
+                        raise ArithmeticError("Can only concatenate term orders with length attribute.")
                     blocks.append(t)
                     if t.is_weighted_degree_order(): # true if t is a matrix order as well
                         singular_str.append("%s"%(t.singular_str(),))
@@ -710,7 +708,7 @@ class TermOrder(SageObject):
                 block_names = re.findall(split_pattern,name)
 
                 if len(block_names) == 0:
-                    raise TypeError, "No term order specified"
+                    raise TypeError("No term order specified")
                 elif len(block_names) == 1:
                     name = block_names[0]
                     match = re.match('m\(([-+0-9,]+)\)$',name)
@@ -719,7 +717,7 @@ class TermOrder(SageObject):
                         self.__copy(TermOrder(m))
                     else: # simple order
                         if name not in print_name_mapping.keys() and name not in singular_name_mapping.values():
-                            raise TypeError, "Unknown term order '%s'"%(name,)
+                            raise TypeError("Unknown term order '%s'"%(name,))
                         self._length = n
                         self._name = name
                         self._singular_str = singular_name_mapping.get(name,name)
@@ -747,17 +745,17 @@ class TermOrder(SageObject):
                         except ValueError:
                             block_name = block.strip()
                             if block_name.lower() != "c":
-                                raise TypeError, "%s is not a valid term ordering (wrong part: '%s')"%(name, block)
+                                raise TypeError("%s is not a valid term ordering (wrong part: '%s')"%(name, block))
 
                     if n != 0 and length != n:
-                        raise TypeError, "Term order length does not match the number of generators"
+                        raise TypeError("Term order length does not match the number of generators")
                     self.__copy(TermOrder('block', blocks))
         elif isinstance(name, str) and (isinstance(n, tuple) or isinstance(n,list)): # weighted degree term orders
             if name not in print_name_mapping.keys() and name not in singular_name_mapping.values() and not force:
-                raise TypeError, "Unknown term order '%s'"%(name,)
+                raise TypeError("Unknown term order '%s'"%(name,))
             weights = tuple(int(w) for w in n) # n is a tuple of weights
             if any([w<=0 for w in weights]):
-                raise ValueError, "the degree weights must be positive integers"
+                raise ValueError("the degree weights must be positive integers")
 
             self._length = len(weights)
             self._name = name
@@ -770,7 +768,7 @@ class TermOrder(SageObject):
                 from math import sqrt
                 n = int(sqrt(len(name)))
             if n**2 != len(name):
-                raise TypeError, "%s does not specify a square matrix"%(name,)
+                raise TypeError("%s does not specify a square matrix"%(name,))
 
             int_str = ','.join([str(int(e)) for e in name])
 
@@ -784,7 +782,7 @@ class TermOrder(SageObject):
             self._matrix = matrix(n,name)  # defined only for matrix term order
             self._weights = name[:n] # the first row of the matrix gives weights
         else:
-            raise TypeError, "%s is not a valid term order"%(name,)
+            raise TypeError("%s is not a valid term order"%(name,))
 
         if self._length != 0:
             self._singular_str = self._singular_str%dict(ngens=self._length)
@@ -825,7 +823,7 @@ class TermOrder(SageObject):
         elif name == 'greater_tuple':
             return getattr(self,'greater_tuple_'+self._name)
         else:
-            raise AttributeError,name
+            raise AttributeError(name)
 
     def compare_tuples_matrix(self,f,g):
         """
@@ -1851,7 +1849,7 @@ class TermOrder(SageObject):
         if not isinstance(other, TermOrder):
             try:
                 other = TermOrder(other, force=True)
-            except StandardError:
+            except Exception:
                 return False
 
         return (self._name == other._name       # note that length is not considered.
@@ -1992,7 +1990,7 @@ class TermOrder(SageObject):
         """
         if self.name() in ('lex','degrevlex','deglex','degneglex','wdegrevlex','wdeglex'):
             return True
-        elif self.name() is 'block':
+        elif self.name() == 'block':
             return all([t.is_global() for t in self.blocks()])
         else:
             return False
@@ -2018,7 +2016,7 @@ class TermOrder(SageObject):
         if (self.name() in ('neglex','negdegrevlex','negdeglex','negwdegrevlex','negwdeglex') or
             self.singular_str() in ('ls','ds','Ds','ws','Ws')):
             return True
-        elif self.name() is 'block':
+        elif self.name() == 'block':
             return all([t.is_local() for t in self.blocks()])
         else:
             return False
@@ -2064,7 +2062,7 @@ def termorder_from_singular(S):
     EXAMPLE::
 
         sage: singular.eval('ring r1 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp)')
-        'ring r1 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp);'
+        ''
         sage: from sage.rings.polynomial.term_order import termorder_from_singular
         sage: termorder_from_singular(singular)
         Block term order with blocks:
@@ -2098,7 +2096,7 @@ def termorder_from_singular(S):
         else:
             order.append(TermOrder(inv_singular_name_mapping[blocktype], ZZ(singular.eval("size(%s[2])"%block.name()))))
     if not order:
-        raise ValueError, "Invalid term order in Singular"
+        raise ValueError("Invalid term order in Singular")
     out = order.pop(0)
     while order:
         out = out + order.pop(0)

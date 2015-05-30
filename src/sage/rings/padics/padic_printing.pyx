@@ -12,16 +12,16 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2008 David Roe <roed@math.harvard.edu>
-#                          William Stein <wstein@gmail.com>
+#       Copyright (C) 2008-2013 David Roe <roed.math@gmail.com>
+#                               William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
-include "sage/ext/gmp.pxi"
 from cpython.list cimport *
 
 
@@ -41,7 +41,7 @@ def pAdicPrinter(ring, options={}):
     """
     Creates a pAdicPrinter.
 
-    INPUT::
+    INPUT:
 
         - ring -- a p-adic ring or field.
 
@@ -58,7 +58,7 @@ def pAdicPrinter(ring, options={}):
         series printer for 5-adic Ring with capped relative precision 20
     """
     for option in ['mode', 'pos', 'ram_name', 'unram_name', 'var_name', 'max_ram_terms', 'max_unram_terms', 'max_terse_terms', 'sep', 'alphabet']:
-        if not options.has_key(option):
+        if option not in options:
             options[option] = None
     return pAdicPrinter_class(ring, **options)
 
@@ -84,13 +84,13 @@ class pAdicPrinterDefaults(SageObject):
         """
         self._mode = mode
         self._pos = bool(pos)
-        if not -1 <= max_ram_terms <= sys.maxint:
+        if not -1 <= max_ram_terms <= sys.maxsize:
             raise ValueError, "max_ram_terms must be positive and fit in a long"
         self._max_ram_terms = int(max_ram_terms)
-        if not -1 <= max_unram_terms <= sys.maxint:
+        if not -1 <= max_unram_terms <= sys.maxsize:
             raise ValueError, "max_unram_terms must be positive and fit in a long"
         self._max_unram_terms = int(max_unram_terms)
-        if not -1 <= max_terse_terms <= sys.maxint:
+        if not -1 <= max_terse_terms <= sys.maxsize:
             raise ValueError, "max_terse_terms must be positive and fit in a long"
         self._max_terse_terms = int(max_terse_terms)
         self._sep = sep
@@ -469,7 +469,7 @@ cdef class pAdicPrinter_class(SageObject):
             sage: R = Zp(5); S = Zp(5,print_mode='bars'); R._printer == S._printer
             False
         """
-        if not PY_TYPE_CHECK(other, pAdicPrinter_class):
+        if not isinstance(other, pAdicPrinter_class):
             return 1
         return self.cmp_modes(other)
 
@@ -739,11 +739,14 @@ cdef class pAdicPrinter_class(SageObject):
             [2, 15, 5, 9, 15]
             sage: P._base_p_list(1298734,False)
             [2, -2, 6, -8, -1, 1]
+            sage: P._base_p_list(Zp(17)(1298734),True)
+            [2, 15, 5, 9, 15]
+            sage: P._base_p_list(Zp(17)(1298734),False)
+            [2, -2, 6, -8, -1, 1]
         """
-        cdef Integer _value = Integer(value)
-        return self.base_p_list(_value.value, pos)
+        return self.base_p_list(value, pos)
 
-    cdef base_p_list(self, mpz_t value, bint pos):
+    cdef base_p_list(self, value, bint pos):
         """
         Returns a list of integers forming the base p expansion of
         value.
@@ -762,52 +765,19 @@ cdef class pAdicPrinter_class(SageObject):
             sage: P._base_p_list(1298734,False)
             [2, -2, 6, -8, -1, 1]
         """
-        cdef mpz_t tmp, halfp
-        cdef int neg, curpower
-        cdef Integer list_elt
-        cdef unsigned long preccap = self.prime_pow.prec_cap
-        ans = PyList_New(0)
-        mpz_init_set(tmp, value)
-
-
-        list_elt = PY_NEW(Integer)
-        mpz_set(list_elt.value, value)
-        if pos:
-            while mpz_sgn(tmp) != 0:
-                list_elt = PY_NEW(Integer)
-                mpz_mod(list_elt.value, tmp, self.prime_pow.prime.value)
-                mpz_sub(tmp, tmp, list_elt.value)
-                mpz_divexact(tmp, tmp, self.prime_pow.prime.value)
-                PyList_Append(ans, list_elt)
+        if isinstance(value, Integer):
+            from sage.rings.padics.padic_capped_relative_element import base_p_list
+            return base_p_list(value, pos, self.prime_pow)
+        elif pos:
+            return value.unit_part().list()
         else:
-            neg = 0
-            curpower = preccap
-            mpz_init(halfp)
-            mpz_fdiv_q_2exp(halfp, self.prime_pow.prime.value, 1)
-            while mpz_sgn(tmp) != 0:
-                curpower -= 1
-                list_elt = PY_NEW(Integer)
-                mpz_mod(list_elt.value, tmp, self.prime_pow.prime.value)
-                if mpz_cmp(list_elt.value, halfp) > 0:
-                    mpz_sub(list_elt.value, list_elt.value, self.prime_pow.prime.value)
-                    neg = 1
-                else:
-                    neg = 0
-                mpz_sub(tmp, tmp, list_elt.value)
-                mpz_divexact(tmp, tmp, self.prime_pow.prime.value)
-                if neg == 1:
-                    if mpz_cmp(tmp, self.prime_pow.pow_mpz_t_tmp(curpower)[0]) >= 0:
-                        mpz_sub(tmp, tmp, self.prime_pow.pow_mpz_t_tmp(curpower)[0])
-                PyList_Append(ans, list_elt)
-            mpz_clear(halfp)
-        mpz_clear(tmp)
-        return ans
+            return value.unit_part().list('smallest')
 
     def repr_gen(self, elt, do_latex, pos = None, mode = None, ram_name = None):
         """
         The entry point for printing an element.
 
-        INPUT::
+        INPUT:
 
             - elt -- a p-adic element of the appropriate ring to print.
 
@@ -903,7 +873,7 @@ cdef class pAdicPrinter_class(SageObject):
         elif mode == digits:
             n = elt.valuation()
             if self.base:
-                L = self.base_p_list((<Integer>elt.unit_part().lift()).value, True)
+                L = self.base_p_list(elt, True)
             else:
                 L = elt._ext_p_list(True)
             if self.max_ram_terms != -1:
@@ -922,7 +892,7 @@ cdef class pAdicPrinter_class(SageObject):
         elif mode == bars:
             n = elt.valuation()
             if self.base:
-                L = self.base_p_list((<Integer>elt.unit_part().lift()).value, self.pos)
+                L = self.base_p_list(elt, self.pos)
             else:
                 L = elt._ext_p_list(self.pos)
             if self.max_ram_terms != -1:
@@ -1001,7 +971,7 @@ cdef class pAdicPrinter_class(SageObject):
                 else:
                     return s
             else: # mode == series
-                slist = self.base_p_list((<Integer>elt.unit_part().lift()).value, pos)
+                slist = self.base_p_list(elt, pos)
                 slist, ellipsis = self._truncate_list(slist, self.max_ram_terms, 0)
                 s = ""
                 exp = elt.valuation()

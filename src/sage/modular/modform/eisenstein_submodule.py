@@ -336,7 +336,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             q^2 + 9*q^4 + 28*q^6 + 73*q^8 + 126*q^10 + 252*q^12 + 344*q^14 + O(q^15),
             q^11 + O(q^15)]
         """
-        if prec == None:
+        if prec is None:
             prec = self.prec()
         else:
             prec = rings.Integer(prec)
@@ -657,14 +657,14 @@ def cyclotomic_restriction_tower(L,K):
         x + zeta6
     """
     if not L.has_coerce_map_from(K):
-        raise ValueError, "K must be contained in L"
+        raise ValueError("K must be contained in L")
     f = L.defining_polynomial()
     R = K['x']
     x = R.gen()
     g = R(f)
     h_ls = [ t[0] for t in g.factor() if t[0](L.gen(0)) == 0 ]
     if len(h_ls) == 0:
-        raise ValueError, "K (= Q(\zeta_%s)) is not contained in L (= Q(\zeta_%s))"%(K._n(), L._n())
+        raise ValueError("K (= Q(\zeta_%s)) is not contained in L (= Q(\zeta_%s))"%(K._n(), L._n()))
     h = h_ls[0]
     def z(a):
         """

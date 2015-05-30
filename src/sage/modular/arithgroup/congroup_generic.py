@@ -90,7 +90,7 @@ def CongruenceSubgroup_constructor(*args):
     if is_MatrixGroup(args[0]):
         G = args[0]
 
-    elif type(args[0]) == type([]):
+    elif isinstance(args[0], type([])):
         G = MatrixGroup(args[0])
 
     elif args[0] in ZZ:
@@ -99,10 +99,10 @@ def CongruenceSubgroup_constructor(*args):
 
     R = G.matrix_space().base_ring()
     if not hasattr(R, "cover_ring") or R.cover_ring() != ZZ:
-        raise TypeError, "Ring of definition must be Z / NZ for some N"
+        raise TypeError("Ring of definition must be Z / NZ for some N")
 
     if not all([x.matrix().det() == 1 for x in G.gens()]):
-        raise ValueError, "Group must be contained in SL(2, Z / N)"
+        raise ValueError("Group must be contained in SL(2, Z / N)")
     GG = _minimize_level(G)
     if GG in ZZ:
         from all import Gamma
@@ -152,7 +152,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         """
         level = ZZ(level)
         if level <= 0:
-            raise ArithmeticError, "Congruence groups only defined for positive levels."
+            raise ArithmeticError("Congruence groups only defined for positive levels.")
         self.__level = level
         ArithmeticSubgroup.__init__(self)
 
@@ -396,7 +396,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         r"""
         Raise an error: all derived subclasses should override this function.
 
-        EXAMPLE:
+        EXAMPLE::
 
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5).image_mod_n()
             Traceback (most recent call last):
@@ -503,7 +503,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         from all import Gamma0, Gamma1, GammaH
         N = self.level()
         if (level%N) and (N%level):
-            raise ValueError, "one level must divide the other"
+            raise ValueError("one level must divide the other")
         if is_Gamma0(self):
             return Gamma0(level)
         elif is_Gamma1(self):
@@ -556,19 +556,20 @@ def _minimize_level(G):
     N = G.base_ring().characteristic()
     i = Gamma(N).index()
 
-    for p in N.prime_divisors():
-        j = Gamma(N // p).index()
-        k = len([g for g in Glist if g.matrix().change_ring(Zmod(N // p)) == 1])
+    for d in N.divisors()[:-1]:
+        j = Gamma(d).index()
+        k = len([g for g in Glist if g.matrix().change_ring(Zmod(d)) == 1])
         if k == i // j:
-            if N // p == 1:
+            if d == 1:
                 return ZZ(1)
-            H = MatrixGroup([g.matrix().change_ring(Zmod(N//p)) for g in G.gens()])
-            return _minimize_level(H)
+            G = MatrixGroup([g.matrix().change_ring(Zmod(d)) for g in G.gens()])
+            N = d
+            break
 
     # now sanitize the generators (remove duplicates and copies of the identity)
     new_gens = [x.matrix() for x in G.gens() if x.matrix() != 1]
     all([x.set_immutable() for x in new_gens])
     new_gens = list(Set(new_gens))
     if new_gens == []:
-        return ZZ(G.base_ring().characteristic())
+        return ZZ(N)
     return MatrixGroup(new_gens)

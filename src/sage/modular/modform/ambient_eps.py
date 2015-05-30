@@ -116,12 +116,12 @@ class ModularFormsAmbient_eps(ambient.ModularFormsAmbient):
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
         if not dirichlet.is_DirichletCharacter(character):
-            raise TypeError, "character (=%s) must be a Dirichlet character"%character
-        if base_ring==None: base_ring=character.base_ring()
+            raise TypeError("character (=%s) must be a Dirichlet character"%character)
+        if base_ring is None: base_ring=character.base_ring()
         if character.base_ring() != base_ring:
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
-            raise ValueError, "the base ring must have characteristic 0."
+            raise ValueError("the base ring must have characteristic 0.")
         group = arithgroup.Gamma1(character.modulus())
         base_ring = character.base_ring()
         ambient.ModularFormsAmbient.__init__(self, group, weight, base_ring, character)
@@ -271,7 +271,7 @@ class ModularFormsAmbient_eps(ambient.ModularFormsAmbient):
         elif self.level() % N == 0:
             return constructor.ModularForms(self.character().restrict(N), self.weight(), self.base_ring(), prec=self.prec())
         else:
-            raise ValueError, "N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level())
+            raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
 
     ####################################################################
     # Computations of Dimensions

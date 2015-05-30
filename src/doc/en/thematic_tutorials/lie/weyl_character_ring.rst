@@ -157,10 +157,13 @@ irreducibles, each with multiplicity one.
 The highest weights that appear here are available (with their
 coefficients) through the usual free module accessors::
 
-    sage: list(chi)
-    [((1, 1, 1), 1), ((1, 0, 0), 1), ((1, 1, 0), 1), ((0, 0, 0), 1)]
-    sage: dict(chi)
-    {(1, 1, 1): 1, (1, 0, 0): 1, (1, 1, 0): 1, (0, 0, 0): 1}
+    sage: from pprint import pprint
+    sage: list(chi)                           # random
+    [((1, 1, 1), 1), ((0, 0, 0), 1), ((1, 0, 0), 1), ((1, 1, 0), 1)]
+    sage: sorted(chi, key=str)
+    [((0, 0, 0), 1), ((1, 0, 0), 1), ((1, 1, 0), 1), ((1, 1, 1), 1)]
+    sage: pprint(dict(chi))
+    {(0, 0, 0): 1, (1, 0, 0): 1, (1, 1, 0): 1, (1, 1, 1): 1}
     sage: chi.monomials()
     [B3(0,0,0), B3(1,0,0), B3(1,1,0), B3(1,1,1)]
     sage: chi.support()
@@ -183,14 +186,14 @@ The weights of the character are available (with their coefficients)
 through the method ``weight_multiplicities``. Continuing from the
 example in the last section::
 
-    sage: chi.weight_multiplicities()
-    {(0, 1, 0): 4, (1, -1, 1): 1, (-1, -1, 1): 1, (0, 1, 1): 2,
-     (0, -1, -1): 2, (0, -1, 0): 4, (1, -1, -1): 1, (0, 1, -1): 2,
-     (-1, 0, 1): 2, (1, 1, 0): 2, (-1, 0, 0): 4, (-1, 1, 0): 2,
-     (1, 0, 0): 4, (-1, -1, 0): 2, (1, 0, -1): 2, (0, 0, -1): 4,
-     (0, -1, 1): 2, (1, 1, -1): 1, (0, 0, 1): 4, (-1, 0, -1): 2,
-     (-1, 1, 1): 1, (-1, 1, -1): 1, (0, 0, 0): 8, (-1, -1, -1): 1,
-     (1, 0, 1): 2, (1, 1, 1): 1, (1, -1, 0): 2}
+    sage: pprint(chi.weight_multiplicities())
+    {(0, 0, 0): 8, (-1, 0, 0): 4, (-1, -1, 0): 2, (-1, -1, -1): 1,
+     (-1, -1, 1): 1, (-1, 1, 0): 2, (-1, 1, -1): 1, (-1, 1, 1): 1,
+     (-1, 0, -1): 2, (-1, 0, 1): 2, (1, 0, 0): 4, (1, -1, 0): 2,
+     (1, -1, -1): 1, (1, -1, 1): 1, (1, 1, 0): 2, (1, 1, -1): 1,
+     (1, 1, 1): 1, (1, 0, -1): 2, (1, 0, 1): 2, (0, -1, 0): 4,
+     (0, -1, -1): 2, (0, -1, 1): 2, (0, 1, 0): 4, (0, 1, -1): 2,
+     (0, 1, 1): 2, (0, 0, -1): 4, (0, 0, 1): 4}
 
 Each key of this dictionary is a weight, and its value is the
 multiplicity of that weight in the character.
@@ -415,7 +418,7 @@ coroot notation, you are working with `SL` automatically::
 
     sage: A2 = WeylCharacterRing("A2", style="coroots")
     sage: A2(1,0).weight_multiplicities()
-    {(-1/3, -1/3, 2/3): 1, (2/3, -1/3, -1/3): 1, (-1/3, 2/3, -1/3): 1}
+    {(-1/3, -1/3, 2/3): 1, (-1/3, 2/3, -1/3): 1, (2/3, -1/3, -1/3): 1}
 
 There is no convenient way to create the determinant in the Weyl
 character ring if you adopt the coroot style.

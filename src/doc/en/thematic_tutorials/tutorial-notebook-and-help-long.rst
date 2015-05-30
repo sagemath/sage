@@ -297,6 +297,7 @@ Here is a simple example::
     sage: var('x')   # make sure x is a symbolic variable
     x
     sage: plot(sin(x^2), (x,0,10))
+    Graphics object consisting of 1 graphics primitive
 
 Here is a more complicated plot. Try to change every single input to the plot
 command in some way, evaluating to see what happens::
@@ -323,6 +324,7 @@ Plotting multiple functions at once is as easy as adding them together::
     sage: P1 = plot(sin(x), (x,0,2*pi))
     sage: P2 = plot(cos(x), (x,0,2*pi), rgbcolor='red')
     sage: P1 + P2
+    Graphics object consisting of 2 graphics primitives
 
 Symbolic Expressions
 ====================

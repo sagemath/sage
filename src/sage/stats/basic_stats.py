@@ -126,7 +126,7 @@ def mode(v):
 
     freq = {}
     for i in v:
-        if freq.has_key(i):
+        if i in freq:
             freq[i] += 1
         else:
             freq[i] = 1
@@ -339,10 +339,10 @@ def median(v):
         return NaN
     values = sorted(v)
     if len(values) % 2 == 1:
-        return values[((len(values))+1)/2-1]
+        return values[((len(values))+1)//2-1]
     else:
-        lower = values[(len(values)+1)/2-1]
-        upper = values[len(values)/2]
+        lower = values[(len(values)+1)//2-1]
+        upper = values[len(values)//2]
         return (lower + upper)/ZZ(2)
 
 def moving_average(v, n):
@@ -393,7 +393,7 @@ def moving_average(v, n):
         return v.simple_moving_average(n)[n-1:]
     n = int(n)
     if n <= 0:
-        raise ValueError, "n must be positive"
+        raise ValueError("n must be positive")
     nn = ZZ(n)
     s = sum(v[:n])
     ans = [s/nn]

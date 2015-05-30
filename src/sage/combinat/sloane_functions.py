@@ -214,13 +214,13 @@ class SloaneSequence(SageObject):
             ValueError: input n (=0) must be a positive integer
         """
         if not isinstance(n, (int, long, Integer_class)):
-            raise TypeError, "input must be an int, long, or Integer"
+            raise TypeError("input must be an int, long, or Integer")
         m = ZZ(n)
         if m < self.offset:
             if self.offset == 1:
-                raise ValueError, "input n (=%s) must be a positive integer" % (n)
+                raise ValueError("input n (=%s) must be a positive integer" % (n))
             else:
-                raise ValueError, "input n (=%s) must be an integer >= %s" % (n, self.offset)
+                raise ValueError("input n (=%s) must be an integer >= %s" % (n, self.offset))
         return self._eval(m)
 
     def _eval(self, n):
@@ -291,7 +291,7 @@ class SloaneSequence(SageObject):
         LENGTH = 100000
         (start, stop, step) = n.indices(2*LENGTH)
         if abs(stop - start) > LENGTH:
-            raise IndexError, "slice (=%s) too long"%n
+            raise IndexError("slice (=%s) too long"%n)
         # The dirty work of generating indices is left to a range list
         # This could be slow but in practice seems fine
         # NOTE: n is a SLICE, not an index
@@ -306,7 +306,7 @@ import sage.rings.arith as arith
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.combinat import combinat
-from sage.misc.misc import prod
+from sage.misc.all import prod
 import sage.interfaces.gap as gap
 
 # This one should be here!
@@ -370,12 +370,13 @@ class A000001(SloaneSequence):
             sage: sloane.A000001._eval(4)
             2
             sage: sloane.A000001._eval(51) # optional - database_gap
+            1
         """
         if n <= 50:
             return self._small[n-1]
         try:
             return Integer(gap.gap.eval('NumberSmallGroups(%s)'%n))
-        except StandardError:  # help, don't know what to do here? Jaap
+        except Exception:  # help, don't know what to do here? Jaap
             print "Install database_gap first. See optional packages"
 
 
@@ -656,17 +657,17 @@ class A000009(SloaneSequence):
         EXAMPLES::
 
             sage: it = sloane.A000009.cf()
-            sage: [it.next() for i in range(14)]
+            sage: [next(it) for i in range(14)]
             [1, 1, 1, 2, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18]
         """
         R, x = QQ['x'].objgen()
         k = 0
         yield ZZ(1)
         p = 1
-        while 1:
+        while True:
             k += 1
             p *= (1+x**k)
-            yield ZZ(p.coeffs()[k])
+            yield ZZ(p.coefficients(sparse=False)[k])
 
     def _precompute(self, how_many=50):
         """
@@ -682,7 +683,7 @@ class A000009(SloaneSequence):
         except AttributeError:
             self._f = self.cf()
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
 
     def _eval(self, n):
@@ -764,11 +765,11 @@ class A000796(SloaneSequence):
         EXAMPLES::
 
             sage: it = sloane.A000796.pi()
-            sage: [it.next() for i in range(10)]
+            sage: [next(it) for i in range(10)]
             [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]
         """
         k, a, b, a1, b1 = ZZ(2), ZZ(4), ZZ(1), ZZ(12), ZZ(4)
-        while 1:
+        while True:
             p, q, k = k*k, 2*k+1, k+1
             a, b, a1, b1 = a1, b1, p*a+q*a1, p*b+q*b1
             d, d1 = a//b, a1//b1
@@ -792,7 +793,7 @@ class A000796(SloaneSequence):
         except AttributeError:
             self._f = self.pi()
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
 
     def _eval(self, n):
@@ -2389,7 +2390,8 @@ class A000225(SloaneSequence):
 class A000015(SloaneSequence):
     def __init__(self):
         r"""
-        Smallest prime power `\geq n`.
+        Smallest prime power `\geq n` (where `1` is considered a prime
+        power).
 
         INPUT:
 
@@ -2446,7 +2448,7 @@ class A000015(SloaneSequence):
             sage: [sloane.A000015._eval(n) for n in range(1,11)]
             [1, 2, 3, 4, 5, 7, 7, 8, 9, 11]
         """
-        if arith.is_prime_power(n):
+        if n == 1 or arith.is_prime_power(n):
             return n
         else:
             return arith.next_prime_power(n)
@@ -4154,7 +4156,7 @@ class A000045(SloaneSequence):
         except AttributeError:
             self._f = self.fib()
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def fib(self):
         """
@@ -4163,7 +4165,7 @@ class A000045(SloaneSequence):
         EXAMPLES::
 
             sage: it = sloane.A000045.fib()
-            sage: [it.next() for i in range(10)]
+            sage: [next(it) for i in range(10)]
             [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
         """
         x, y = Integer(0), Integer(1)
@@ -5076,7 +5078,7 @@ class A006882(SloaneSequence):
         except AttributeError:
             self._f = self.df()
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def df(self):
         """
@@ -5085,7 +5087,7 @@ class A006882(SloaneSequence):
         EXAMPLES::
 
             sage: it = sloane.A006882.df()
-            sage: [it.next() for i in range(10)]
+            sage: [next(it) for i in range(10)]
             [1, 1, 2, 3, 8, 15, 48, 105, 384, 945]
         """
         x = Integer(1)
@@ -5366,14 +5368,14 @@ class ExtremesOfPermanentsSequence(SloaneSequence):
         except AttributeError:
             self._f = self.gen(*self._a0a1d)
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def gen(self,a0,a1,d):
         """
         EXAMPLES::
 
             sage: it = sloane.A000153.gen(0,1,2)
-            sage: [it.next() for i in range(5)]
+            sage: [next(it) for i in range(5)]
             [0, 1, 2, 7, 32]
         """
         x, y = ZZ(a0), ZZ(a1)
@@ -5723,7 +5725,7 @@ class ExtremesOfPermanentsSequence2(ExtremesOfPermanentsSequence):
             sage: from sage.combinat.sloane_functions import ExtremesOfPermanentsSequence2
             sage: e = ExtremesOfPermanentsSequence2()
             sage: it = e.gen(6,43,6)
-            sage: [it.next() for i in range(5)]
+            sage: [next(it) for i in range(5)]
             [6, 43, 307, 2542, 23799]
         """
         x, y = ZZ(a0), ZZ(a1)
@@ -6771,13 +6773,13 @@ def recur_gen2b(a0,a1,a2,a3,b):
 
         sage: from sage.combinat.sloane_functions import recur_gen2b
         sage: it = recur_gen2b(1,1,1,1, lambda n: 0)
-        sage: [it.next() for i in range(10)]
+        sage: [next(it) for i in range(10)]
         [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
     """
     x, y = ZZ(a0), ZZ(a1)
     n = 1
     yield x
-    while 1:
+    while True:
         n = n+1
         x, y = y, a3*x+a2*y + b(n)
         yield x
@@ -6797,7 +6799,7 @@ class RecurrenceSequence(SloaneSequence):
         except AttributeError:
             self._f = recur_gen2b(*self._params)
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def _eval(self, n):
         """
@@ -7621,13 +7623,13 @@ def recur_gen2(a0,a1,a2,a3):
 
         sage: from sage.combinat.sloane_functions import recur_gen2
         sage: it = recur_gen2(1,1,1,1)
-        sage: [it.next() for i in range(10)]
+        sage: [next(it) for i in range(10)]
         [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
     """
     x, y = ZZ(a0), ZZ(a1)
     n = 0
     yield x
-    while 1:
+    while True:
         n = n+1
         x, y = y, a3*x+a2*y
         yield x
@@ -7651,7 +7653,7 @@ class RecurrenceSequence2(SloaneSequence):
         except AttributeError:
             self._f = recur_gen2(*self._params)
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def _eval(self, n):
         """
@@ -8626,13 +8628,13 @@ def recur_gen3(a0,a1,a2,a3,a4,a5):
 
         sage: from sage.combinat.sloane_functions import recur_gen3
         sage: it = recur_gen3(1,1,1,1,1,1)
-        sage: [it.next() for i in range(10)]
+        sage: [next(it) for i in range(10)]
         [1, 1, 1, 3, 5, 9, 17, 31, 57, 105]
     """
     x, y ,z = Integer(a0), Integer(a1), Integer(a2)
     n = 0
     yield x
-    while 1:
+    while True:
         n = n+1
         x, y, z = y, z, a5*x+a4*y+a3*z
         yield x
@@ -8701,7 +8703,7 @@ class A000213(SloaneSequence):
         except AttributeError:
             self._f = recur_gen3(1,1,1,1,1,1)
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def _eval(self, n):
         """
@@ -8788,7 +8790,7 @@ class A000073(SloaneSequence):
         except AttributeError:
             self._f = recur_gen3(0,0,1,1,1,1)
             f = self._f
-        self._b += [f.next() for i in range(how_many)]
+        self._b += [next(f) for i in range(how_many)]
 
     def _eval(self, n):
         """
@@ -9426,7 +9428,7 @@ class A111787(SloaneSequence):
         else:
             for d in srange(3,n,2):
                 if n % d == 0:
-                    return min(d, 2*n/d)
+                    return min(d, 2*n//d)
 
 
 class ExponentialNumbers(SloaneSequence):
@@ -9738,6 +9740,6 @@ class Sloane(SageObject):
                 setattr(self, name, seq)
                 return seq
             except AttributeError:
-                raise AttributeError, name
+                raise AttributeError(name)
 
 sloane = Sloane()

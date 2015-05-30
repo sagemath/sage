@@ -111,7 +111,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         g.add_edge(0,2)
         return g
 
-    def _latex_dynkin_diagram(self, label = lambda x: x, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -123,12 +123,15 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             \draw (2 cm,0) -- (2 cm,0);
             \draw (2 cm,0) -- (4 cm,0.7 cm);
             \draw (2 cm,0) -- (4 cm,-0.7 cm);
-            \draw[fill=white] (0, 0.7 cm) circle (.25cm) node[left=3pt]{$0$};
-            \draw[fill=white] (0, -0.7 cm) circle (.25cm) node[left=3pt]{$1$};
-            \draw[fill=white] (2 cm, 0) circle (.25cm) node[below=4pt]{$2$};
+            \draw[fill=white] (0 cm, 0.7 cm) circle (.25cm) node[left=3pt]{$0$};
+            \draw[fill=white] (0 cm, -0.7 cm) circle (.25cm) node[left=3pt]{$1$};
+            \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
             \draw[fill=white] (4 cm, 0.7 cm) circle (.25cm) node[right=3pt]{$4$};
             \draw[fill=white] (4 cm, -0.7 cm) circle (.25cm) node[right=3pt]{$3$};
+            <BLANKLINE>
         """
+        if node is None:
+            node = self._latex_draw_node
         n = self.n
         if n == 3:
             import cartan_type
@@ -139,23 +142,23 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         else:
             special_fill = 'white'
         rt_most = (n-2)*node_dist
-        center_point = rt_most-node_dist
+        center_point = rt_most - node_dist
         ret = "\\draw (0,0.7 cm) -- (%s cm,0);\n"%node_dist
         ret += "\\draw (0,-0.7 cm) -- (%s cm,0);\n"%node_dist
         ret += "\\draw (%s cm,0) -- (%s cm,0);\n"%(node_dist, center_point)
         ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n"%(center_point, rt_most)
         ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n"%(center_point, rt_most)
-        ret += "\\draw[fill=%s] (0, 0.7 cm) circle (.25cm) node[left=3pt]{$%s$};\n"%(special_fill, label(0))
-        ret += "\\draw[fill=white] (0, -0.7 cm) circle (.25cm) node[left=3pt]{$%s$};\n"%label(1)
+        ret += node(0, 0.7, label(0), "left=3pt")
+        ret += node(0, -0.7, label(1), "left=3pt")
         for i in range(1, self.n-2):
-            ret += "\\draw[fill=white] (%s cm, 0) circle (.25cm) node[below=4pt]{$%s$};\n"%(i*node_dist, label(i+1))
-        ret += "\\draw[fill=white] (%s cm, 0.7 cm) circle (.25cm) node[right=3pt]{$%s$};\n"%(rt_most, label(n))
-        ret += "\\draw[fill=white] (%s cm, -0.7 cm) circle (.25cm) node[right=3pt]{$%s$};"%(rt_most, label(n-1))
+            ret += node(i*node_dist, 0, label(i+1))
+        ret += node(rt_most, 0.7, label(n), "right=3pt")
+        ret += node(rt_most, -0.7, label(n-1), "right=3pt")
         return ret
 
-    def ascii_art(self, label = lambda x: x):
+    def ascii_art(self, label=lambda i: i, node=None):
         """
-        Returns a ascii art representation of the extended Dynkin diagram
+        Return an ascii art representation of the extended Dynkin diagram.
 
         TESTS::
 
@@ -183,20 +186,24 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O
             5   3   4
         """
+        if node is None:
+            node = self._ascii_art_node
         n = self.n
         if n == 3:
             import cartan_type
-            return cartan_type.CartanType(["A",3,1]).relabel({0:0, 1:3, 2:1, 3: 2}).ascii_art(label)
-        if self.global_options('mark_special_node') in ['printing', 'both']:
-            special_str = self.global_options('special_node_str')
-        else:
-            special_str = 'O'
+            return cartan_type.CartanType(["A",3,1]).relabel({0:0, 1:3, 2:1, 3: 2}).ascii_art(label, node)
         if n == 4:
-            return "    " + special_str + " %s\n    |\n    |\nO---O---O\n%s   |%s  %s\n    |\n    O %s"%tuple(label(i) for i in (4,1,2,3,0))
-        ret = "  %s O"%label(0) +(4*(n-4)-1)*" "+"O %s"%label(n)+ "\n"
-        ret += "    |"          +(4*(n-4)-1)*" "                  +"|\n"
-        ret += "    |"          +(4*(n-4)-1)*" "                  +"|\n"
-        ret += (n-2)*"O---"+"O\n"
-        ret += "   ".join("%s"%label(i) for i in range(1,n))
+            ret = "    {} {}\n".format(node(label(4)), label(4)) + "    |\n    |\n"
+            ret += "{}---{}---{}\n".format(node(label(1)), node(label(2)), node(label(3)))
+            ret += "{!s:4}|{!s:3}{!s:4}\n".format(label(1), label(2), label(3))
+            ret += "    |\n    {} {}".format(node(label(0)), label(0))
+            return ret
+
+        ret = "{!s:>3} {}".format(label(0), node(label(0)))
+        ret += (4*(n-4)-1)*" "+"{} {}\n".format(node(label(n)), label(n))
+        ret += "    |" + (4*(n-4)-1)*" " + "|\n"
+        ret += "    |" + (4*(n-4)-1)*" " + "|\n"
+        ret += "---".join(node(label(i)) for i in range(1, n))
+        ret += '\n' + "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret
 

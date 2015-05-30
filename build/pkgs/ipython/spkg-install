@@ -39,3 +39,17 @@ if [ $? -ne 0 ]; then
     echo >&2 "Error installing IPython"
     exit 1
 fi
+
+# add symlink if we are running on python3
+if python -c 'import sys; sys.exit(sys.version_info.major != 3)'; then
+    cd "$SAGE_LOCAL"/bin
+    rm -f ipython
+    ln -s ipython3 ipython
+fi
+
+# let ipython use mathjax
+cd "$SAGE_LOCAL/lib/python/site-packages/IPython/html/static"
+rm -rf mathjax
+ln -s ../../../../../../share/mathjax/ mathjax
+
+

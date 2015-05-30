@@ -68,20 +68,17 @@ Here is a list of some of the software included with Sage:
 * libfplll: contains different implementations of the floating-point LLL
   reduction algorithm, offering different speed/guarantees ratios
 
-* libm4ri: Library for matrix multiplication, reduction and inversion
-  over GF(2)
-
 * linbox: C++ template library for exact, high-performance linear
   algebra computation
+
+* m4ri: Library for matrix multiplication, reduction and inversion
+  over GF(2)
 
 * mathjax: Javascript display engine for mathematics
 
 * matplotlib: a Python 2-D plotting library
 
 * maxima: symbolic algebra and calculus
-
-* mercurial: a Source Control Management system designed for handling of
-  very large distributed projects
 
 * mpfi: a C library for arithmetic by multi-precision intervals, based
   on MPFR and GMP

@@ -511,7 +511,7 @@ def evalunitdict():
 
     for w in unitdict.iterkeys():
         for j in unitdict[w].iterkeys():
-            if type(unitdict[w][j]) == tuple: unitdict[w][j] = unitdict[w][j][0]
+            if isinstance(unitdict[w][j], tuple): unitdict[w][j] = unitdict[w][j][0]
         value_to_unit[w] = dict(zip(unitdict[w].itervalues(), unitdict[w].iterkeys()))
 
 
@@ -1131,7 +1131,7 @@ class Units:
             True
 
         """
-        if self.__units.has_key(name):
+        if name in self.__units:
             return self.__units[name]
         if len(unit_to_type) == 0:
             evalunitdict()
@@ -1191,7 +1191,7 @@ def unitdocs(unit):
     if is_unit(unit):
         return unit_docs[unit_to_type[str(unit)]+"_docs"][str(unit)]
     else:
-        raise ValueError, "No documentation exists for the unit %s."%unit
+        raise ValueError("No documentation exists for the unit %s."%unit)
 
 def is_unit(s):
     """
@@ -1223,7 +1223,7 @@ def is_unit(s):
         sage: sage.symbolic.units.is_unit(var('meter'))
         True
     """
-    return unit_to_type.has_key(str(s))
+    return str(s) in unit_to_type
 
 def convert(expr, target):
     """
@@ -1313,7 +1313,7 @@ def convert(expr, target):
 
         for variable in coeff.variables():
             if is_unit(str(variable)):
-                raise ValueError, "Incompatible units"
+                raise ValueError("Incompatible units")
 
         return coeff.mul(target, hold=True)
 
@@ -1352,13 +1352,13 @@ def base_units(unit):
         x
     """
     from sage.misc.all import sage_eval
-    if not unit_to_type.has_key(str(unit)):
+    if str(unit) not in unit_to_type:
         return unit
     elif unit_to_type[str(unit)] == 'si_prefixes' or unit_to_type[str(unit)] == 'unit_multipliers':
         return sage_eval(unitdict[unit_to_type[str(unit)]][str(unit)])
     else:
         v = SR.var(unit_to_type[str(unit)])
-        if unit_derivations.has_key(str(v)):
+        if str(v) in unit_derivations:
             base = unit_derivations_expr(v)
             for i in base.variables():
                 base = base.subs({i:SR.var(value_to_unit[str(i)]['1'])})
@@ -1413,15 +1413,15 @@ def convert_temperature(expr, target):
         98.6000000000000
     """
     if len(expr.variables()) != 1:
-        raise ValueError, "Cannot convert"
-    elif target == None or unit_to_type[str(target)] == 'temperature':
+        raise ValueError("Cannot convert")
+    elif target is None or unit_to_type[str(target)] == 'temperature':
         from sage.misc.all import sage_eval
         expr_temp = expr.variables()[0]
         coeff = expr/expr_temp
-        if target != None:
+        if target is not None:
             target_temp = target.variables()[0]
         a = sage_eval(unitdict['temperature'][str(expr_temp)], locals = {'x':coeff})
-        if  target == None or target_temp == units.temperature.kelvin:
+        if  target is None or target_temp == units.temperature.kelvin:
             return a[0]*units.temperature.kelvin
         elif target_temp == units.temperature.celsius or target_temp == units.temperature.centigrade:
             return a[1]*target_temp
@@ -1430,4 +1430,4 @@ def convert_temperature(expr, target):
         elif target_temp == units.temperature.rankine:
             return a[3]*target_temp
     else:
-        raise ValueError, "Cannot convert"
+        raise ValueError("Cannot convert")

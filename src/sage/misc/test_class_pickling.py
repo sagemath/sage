@@ -22,7 +22,7 @@ def metaclass(name, bases):
         (<type 'object'>, <class sage.misc.test_class_pickling.bar at ...>)
 
     """
-    print "constructing class"
+    print("constructing class")
     result = Metaclass(name, bases, dict())
     result.reduce_args = (name, bases)
     return result
@@ -52,8 +52,8 @@ class Metaclass(type):
         True
     """
     def __eq__(self, other):
-        print "calling __eq__ defined in Metaclass"
-        return (type(self) == type(other)) and (self.reduce_args == other.reduce_args)
+        print("calling __eq__ defined in Metaclass")
+        return (isinstance(self, type(other))) and (self.reduce_args == other.reduce_args)
 
     def __reduce__(self):
         """
@@ -69,7 +69,7 @@ class Metaclass(type):
             reducing a class
             (<function metaclass at ...>, ('foo3', (<type 'object'>, <class sage.misc.test_class_pickling.bar at ...>)))
         """
-        print "reducing a class"
+        print("reducing a class")
         return (metaclass, self.reduce_args)
 
 

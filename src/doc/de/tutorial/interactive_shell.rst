@@ -198,7 +198,7 @@ in einer zukünftigen Sitzung (indem Sie einfach die Log-Datei laden).
     | Type notebook() for the GUI, and license() for information.        |
     ----------------------------------------------------------------------
 
-    sage: load "setup"
+    sage: load("setup")
     Loading log file <setup> one line at a time...
     Finished replaying log file <setup>
     sage: E
@@ -250,7 +250,7 @@ Zeit, die der Aufruf benötigt, ausgegeben nachdem er gelaufen ist.
 Zum Beispiel können wir die Laufzeit einer bestimmten Potenzierung auf
 verschiedene Arten vergleichen. Die unten genannte Laufzeit wird unter
 Umständen weit von der Laufzeit auf Ihrem Computer oder sogar zwischen
-verschiedenen Sage Versionen abweichen. Zuerst natives Python:
+verschiedenen SageMath Versionen abweichen. Zuerst natives Python:
 
 .. skip
 
@@ -758,13 +758,13 @@ oder Betriebssystemen wieder geladen werden. Zum Beispiel können Sie
 eine riesige Matrix auf einem 32 Bit Mac OS X speichern und später auf
 einem 64 Bit Linux System laden, dort die Stufenform herstellen und dann
 wieder zurückladen. Außerdem können Sie in den meisten Fällen auch Objekte
-laden, die mit anderen Sage Versionen gespeichert wurden, solange der Quelltext
+laden, die mit anderen SageMath Versionen gespeichert wurden, solange der Quelltext
 des Objekts nicht zu verschieden ist. Alle Attribute eines Objekts werden zusammen
 mit seiner Klasse (aber nicht dem Quellcode) gespeichert. Sollte diese Klasse
-in einer neueren Sage Version nicht mehr existieren, kann das Objekt in dieser
-neueren Sage Version nicht mehr geladen werden. Aber Sie könnten es in der alten
-Sage Version laden, die Objekt Dictionaries mit ``x.__dict__`` laden und das Objekt
-zusammen mit diesem in der neuen Sage Version laden.
+in einer neueren SageMath Version nicht mehr existieren, kann das Objekt in dieser
+neueren SageMath Version nicht mehr geladen werden. Aber Sie könnten es in der alten
+SageMath Version laden, die Objekt Dictionaries mit ``x.__dict__`` laden und das Objekt
+zusammen mit diesem in der neuen SageMath Version laden.
 
 Als Text speichern
 ------------------

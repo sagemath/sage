@@ -64,10 +64,10 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
 
     if (Max not in ['mod_form']) and (not M >= 0):
         print Max
-        raise TypeError, "Oops!  Max is not an integer >= 0 or an allowed string."
+        raise TypeError("Oops!  Max is not an integer >= 0 or an allowed string.")
 
     if Max == 'mod_form':
-        raise NotImplementedError, "Oops!  We have to figure out the correct number of Fourier coefficients to use..."
+        raise NotImplementedError("Oops!  We have to figure out the correct number of Fourier coefficients to use...")
         #return self.theta_by_pari(sturm_bound(self.level(), self.dim() / ZZ(2)) + 1, var_str, safe_flag)
     else:
         return self.theta_by_pari(M, var_str, safe_flag)
@@ -295,10 +295,10 @@ def theta_by_cholesky(self, q_prec):
         ## OPTIONAL SAFETY CHECK:
         eps = 0.000000001
         if (abs(Q_val_double - Q_val) > eps):
-            raise RuntimeError, "Oh No!  We have a problem with the floating point precision... \n" \
+            raise RuntimeError("Oh No!  We have a problem with the floating point precision... \n" \
                 + " Q_val_double = " + str(Q_val_double) + "\n" \
                 + " Q_val = " + str(Q_val) + "\n" \
-                + " x = " + str(x) + "\n"
+                + " x = " + str(x) + "\n")
 
 
         ## DIAGNOSTIC
@@ -364,16 +364,16 @@ def theta_series_degree_2(Q, prec):
       (preprint)
     """
     if Q.base_ring() != ZZ:
-        raise TypeError, "The quadratic form must be integral"
+        raise TypeError("The quadratic form must be integral")
     if not Q.is_positive_definite():
-        raise ValueError, "The quadratic form must be positive definite"
+        raise ValueError("The quadratic form must be positive definite")
     try:
         X = ZZ(prec-1)    # maximum discriminant
     except TypeError:
-        raise TypeError, "prec is not an integer"
+        raise TypeError("prec is not an integer")
 
     if X < -1:
-        raise ValueError, "prec must be >= 0"
+        raise ValueError("prec must be >= 0")
 
     if X == -1:
         return {}
@@ -384,7 +384,7 @@ def theta_series_degree_2(Q, prec):
     t = cputime()
     max = int(floor((X+1)/4))
     v_list = (Q.vectors_by_length(max))        # assume a>0
-    v_list = map(lambda(vs):map(V,vs), v_list) # coerce vectors into V
+    v_list = map(lambda vs: map(V, vs), v_list)  # coerce vectors into V
     verbose("Computed vectors_by_length" , t)
 
     # Deal with the singular part

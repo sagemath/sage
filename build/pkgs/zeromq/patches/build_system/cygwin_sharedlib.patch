@@ -1,0 +1,41 @@
+Pass -no-undefined to libtool on Cygwin.
+diff -druN zeromq-4.0.5.tmp/configure.ac zeromq-4.0.5.new/configure.ac
+--- zeromq-4.0.5.tmp/configure.ac	2014-10-14 01:06:40.000000000 -0700
++++ zeromq-4.0.5.new/configure.ac	2015-01-12 05:14:03.273512789 -0800
+@@ -248,6 +248,7 @@
+         if test "x$enable_static" = "xyes"; then
+             AC_MSG_ERROR([Building static libraries is not supported under Cygwin])
+         fi
++        libzmq_on_cygwin="yes"
+         ;;
+     *)
+         AC_MSG_ERROR([unsupported system: ${host_os}.])
+@@ -429,6 +430,7 @@
+ 
+ AM_CONDITIONAL(BUILD_PGM, test "x$libzmq_pgm_ext" = "xyes")
+ AM_CONDITIONAL(ON_MINGW, test "x$libzmq_on_mingw32" = "xyes")
++AM_CONDITIONAL(ON_CYGWIN, test "x$libzmq_on_cygwin" = "xyes")
+ AM_CONDITIONAL(ON_ANDROID, test "x$libzmq_on_android" = "xyes")
+ AM_CONDITIONAL(ON_LINUX, test "x$libzmq_on_linux" = "xyes")
+ 
+diff -druN zeromq-4.0.5.tmp/src/Makefile.am zeromq-4.0.5.new/src/Makefile.am
+--- zeromq-4.0.5.tmp/src/Makefile.am	2014-03-10 14:41:29.000000000 -0700
++++ zeromq-4.0.5.new/src/Makefile.am	2015-01-12 05:21:31.464543871 -0800
+@@ -170,6 +170,9 @@
+ if ON_MINGW
+ libzmq_la_LDFLAGS = -no-undefined -avoid-version -version-info @LTVER@ @LIBZMQ_EXTRA_LDFLAGS@
+ else
++if ON_CYGWIN
++libzmq_la_LDFLAGS = -no-undefined -version-info @LTVER@ @LIBZMQ_EXTRA_LDFLAGS@
++else
+ if ON_ANDROID
+ libzmq_la_LDFLAGS = -avoid-version -version-info @LTVER@ @LIBZMQ_EXTRA_LDFLAGS@
+ else
+@@ -180,6 +183,7 @@
+ endif
+ endif
+ endif
++endif
+ 
+ EXTRA_DIST = libzmq.vers
+ 

@@ -141,7 +141,7 @@ class PseudoConwayLattice(SageObject):
 
             sage: PCL = PseudoConwayLattice(5, use_database=False)
             sage: PCL.polynomial(12)
-            x^12 + 2*x^11 + x^10 + 4*x^9 + 4*x^8 + 4*x^7 + x^6 + 4*x^5 + x^4 + 3*x + 2
+            x^12 + 4*x^11 + 2*x^10 + 4*x^9 + 2*x^8 + 2*x^7 + 4*x^6 + x^5 + 2*x^4 + 2*x^2 + x + 2
             sage: PCL.polynomial(6)
             x^6 + x^5 + 4*x^4 + 3*x^3 + 3*x^2 + 2*x + 2
             sage: PCL.polynomial(11)
@@ -156,6 +156,33 @@ class PseudoConwayLattice(SageObject):
                           for n in C.degrees(p)}
         else:
             self.nodes = {}
+
+    def __cmp__(self, other):
+        """
+        TEST::
+
+            sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
+            sage: PCL3 = PseudoConwayLattice(3)
+            sage: PCL5 = PseudoConwayLattice(5)
+            sage: PCL3 == PCL3
+            True
+            sage: PCL3 == PCL5
+            False
+            sage: PCL3 = PseudoConwayLattice(3, use_database=False)
+            sage: PCL5 = PseudoConwayLattice(5, use_database=False)
+            sage: PCL5 == PCL5
+            True
+            sage: PCL3 == PCL5
+            False
+
+        """
+        if self is other:
+            return 0
+        c = cmp(type(self), type(other))
+        if c != 0:
+            return c
+        return cmp((self.p, self.nodes),
+                   (other.p, other.nodes))
 
     def polynomial(self, n):
         r"""
@@ -195,7 +222,7 @@ class PseudoConwayLattice(SageObject):
             sage: PCL.polynomial(60)
             x^60 + x^59 + x^58 + x^55 + x^54 + x^53 + x^52 + x^51 + x^48 + x^46 + x^45 + x^42 + x^41 + x^39 + x^38 + x^37 + x^35 + x^32 + x^31 + x^30 + x^28 + x^24 + x^22 + x^21 + x^18 + x^17 + x^16 + x^15 + x^14 + x^10 + x^8 + x^7 + x^5 + x^3 + x^2 + x + 1
         """
-        if self.nodes.has_key(n):
+        if n in self.nodes:
             return self.nodes[n]
 
         p = self.p
@@ -301,7 +328,7 @@ def _find_pow_of_frobenius(p, n, x, y):
         if x == y: break
         y = y**p
     else:
-        raise RuntimeError, "No appropriate power of Frobenius found"
+        raise RuntimeError("No appropriate power of Frobenius found")
     return mod(i, n)
 
 def _crt_non_coprime(running, a):
@@ -444,7 +471,7 @@ def _frobenius_shift(K, generators, check_only=False):
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
-                elif not searched.has_key(j):
+                elif j not in searched:
                     crt_possibles.append(j)
         for j in crt_possibles:
             path = find_leveller(qindex, level, x, xleveled, searched, j)

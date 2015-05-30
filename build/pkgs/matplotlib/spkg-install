@@ -41,13 +41,7 @@ rm -rf "$SAGE_LOCAL"/lib/python/site-packages/matplotlib
 python setup.py install
 
 # Print value of MPLCONFIGDIR
-MPLINITFILE="$SAGE_LOCAL/lib/python/site-packages/matplotlib/__init__.py"
-if [ -f "$MPLINITFILE" ]; then
-    MPLVERSION=`sed -n "/^__version__[ ]*=/s/[^']*'\([^']*\)'.*$/\1/p" "$MPLINITFILE"`
-    echo
-    echo "When Sage runs, MPLCONFIGDIR will be set to '\$DOT_SAGE/matplotlib-$MPLVERSION'."
-    echo
-else
-    echo "$MPLINITFILE not found.  What happened?"
-    exit 1
-fi
+VERSION=`python -c 'import pkg_resources; print pkg_resources.get_distribution("matplotlib").version'`
+echo
+echo "When Sage runs, MPLCONFIGDIR will be set to '\$DOT_SAGE/matplotlib-$VERSION'."
+echo

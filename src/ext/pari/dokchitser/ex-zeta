@@ -1,5 +1,5 @@
 /*** EXAMPLE: Riemann's zeta-function                             ***/
-/*** v1.0, July 2002, questions to tim.dokchitser@durham.ac.uk    ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk   ***/
 /***                                                              ***/
 /*** type \rex-zeta or read("ex-zeta") at pari prompt to run this ***/
 

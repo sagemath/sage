@@ -9,7 +9,6 @@ EXAMPLES::
     <class 'sage.dev.test.sagedev.DoctestSageDevWrapper'>
 """
 
-
 from sage.doctest import DOCTEST_MODE
 if DOCTEST_MODE:
     from sage.dev.test.sagedev import DoctestSageDevWrapper
@@ -17,6 +16,9 @@ if DOCTEST_MODE:
     from sage.dev.test.trac_server import DoctestTracServer
     dev = DoctestSageDevWrapper(DoctestConfig(), DoctestTracServer())
 else:
+    from sage.misc.superseded import deprecation
+    deprecation(18403,"the 'dev' scripts are deprecated. Please use "
+                "'git-trac' instead (see the developer's manual)")
     from sagedev import SageDev
     from sagedev_wrapper import SageDevWrapper
     dev = SageDevWrapper(SageDev())

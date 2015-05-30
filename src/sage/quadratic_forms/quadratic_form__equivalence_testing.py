@@ -88,7 +88,7 @@ def is_globally_equivalent__souvigner(self, other, return_transformation=False):
     G2 = open(G1.name, 'r')
     line = G2.readline()
     if line.startswith("Error:"):
-        raise RuntimeError, "There is a problem using the souvigner code...  " + line
+        raise RuntimeError("There is a problem using the souvigner code...  " + line)
     elif line.find("not isomorphic") != -1:     ## Checking if this text appears, if so then they're not isomorphic!
         return False
     else:
@@ -120,7 +120,7 @@ def is_globally_equivalent__souvigner(self, other, return_transformation=False):
             #return True, M
 
     ## Raise and error if we're here:
-    raise RuntimeError, "Oops! There is a problem..."
+    raise RuntimeError("Oops! There is a problem...")
 
 
 
@@ -174,12 +174,12 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
     """
     ## only for definite forms
     if not self.is_definite():
-        raise ValueError, "not a definite form in QuadraticForm.is_globally_equivalent_to()"
+        raise ValueError("not a definite form in QuadraticForm.is_globally_equivalent_to()")
 
     ## Check that other is a QuadraticForm
     #if not isinstance(other, QuadraticForm):
     if not is_QuadraticForm(other):
-        raise TypeError, "Oops!  You must compare two quadratic forms, but the argument is not a quadratic form. =("
+        raise TypeError("Oops!  You must compare two quadratic forms, but the argument is not a quadratic form. =(")
 
 
     ## Now use the Souvigner code by default! =)
@@ -195,7 +195,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
             return False
 
     ## Check that the forms have the same theta function up to the desired precision (this can be set so that it determines the cusp form)
-    if check_theta_to_precision != None:
+    if check_theta_to_precision is not None:
         if self.theta_series(check_theta_to_precision, var_str='', safe_flag=False) != other.theta_series(check_theta_to_precision, var_str='', safe_flag=False):
             return False
 
@@ -262,7 +262,7 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
     """
     ## TO IMPLEMENT:
     if self.det() == 0:
-        raise NotImplementedError, "OOps!  We need to think about whether this still works for degenerate forms...  especially check the signature."
+        raise NotImplementedError("OOps!  We need to think about whether this still works for degenerate forms...  especially check the signature.")
 
     ## Check that both forms have the same dimension and base ring
     if (self.dim() != other.dim()) or (self.base_ring() != other.base_ring()):
@@ -331,10 +331,10 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
     """
     ## Sanity Checks
     #if not isinstance(other, QuadraticForm):
-    if type(other) != type(self):
-        raise TypeError, "Oops!  The first argument must be of type QuadraticForm."
+    if not isinstance(other, type(self)):
+        raise TypeError("Oops!  The first argument must be of type QuadraticForm.")
     if not is_prime(p):
-        raise TypeError, "Oops!  The second argument must be a prime number."
+        raise TypeError("Oops!  The second argument must be a prime number.")
 
     ## Get the relevant local normal forms quickly
     self_jordan = self.jordan_blocks_by_scale_and_unimodular(p, safe_flag= False)
@@ -411,7 +411,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         ## SANITY CHECK -- check that the scale powers are strictly increasing
         for i in range(1, len(scale_list)):
             if scale_list[i-1] >= scale_list[i]:
-                   raise RuntimeError, "Oops!  There is something wrong with the Jordan Decomposition -- the given scales are not strictly increasing!"
+                   raise RuntimeError("Oops!  There is something wrong with the Jordan Decomposition -- the given scales are not strictly increasing!")
 
 
         ## DIAGNOSTIC
@@ -448,7 +448,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         return True
 
     else:
-        raise TypeError, "Oops!  This should not have happened."
+        raise TypeError("Oops!  This should not have happened.")
 
 
 

@@ -73,7 +73,7 @@ Sage example in ./nonlinear.tex, line 315::
     sage: x, a, b, c, d = var('x, a, b, c, d')
     sage: P = a * x^3 + b * x^2 + c * x + d
     sage: alpha = var('alpha')
-    sage: P.subs(x=x + alpha).expand().coeff(x, 2)
+    sage: P.subs(x=x + alpha).expand().coefficient(x, 2)
     3*a*alpha + b
     sage: P.subs(x = x - b / (3 * a)).expand().collect(x)
     a*x^3 - 1/3*(b^2/a - 3*c)*x + 2/27*b^3/a^2 - 1/3*b*c/a + d
@@ -241,11 +241,11 @@ Sage example in ./nonlinear.tex, line 785::
     sage: a, b
     (-3.14159265358979, 3.14159265358979)
     sage: bisection = intervalgen(f, phi, a, b)
-    sage: bisection.next()
+    sage: next(bisection)
     -3.14159265358979
-    sage: bisection.next()
+    sage: next(bisection)
     3.14159265358979
-    sage: bisection.next()
+    sage: next(bisection)
     0.000000000000000
 
 Sage example in ./nonlinear.tex, line 805::
@@ -257,10 +257,10 @@ Sage example in ./nonlinear.tex, line 805::
     ....:     assert isinstance(series, GeneratorType)
     ....:     assert isinstance(check, FunctionType)
     ....:     niter = 2
-    ....:     v, w = series.next(), series.next()
+    ....:     v, w = next(series), next(series)
     ....:     while (niter <= maxit):
     ....:         niter += 1
-    ....:         u, v, w = v, w, series.next()
+    ....:         u, v, w = v, w, next(series)
     ....:         if check(u, v, w, prec):
     ....:             print 'After {0} iterations: {1}'.format(niter, w)
     ....:             return
@@ -285,7 +285,7 @@ Sage example in ./nonlinear.tex, line 906::
     sage: g = plot(f, a, b, rgbcolor='blue')
     sage: phi(s, t) = t - f(t) * (s - t) / (f(s) - f(t))
     sage: falsepos = intervalgen(f, phi, a, b)
-    sage: u, v, w = falsepos.next(), falsepos.next(), falsepos.next()
+    sage: u, v, w = next(falsepos), next(falsepos), next(falsepos)
     sage: niter = 3
     sage: while niter < 9:
     ....:     g += line([(u, 0), (u, f(u))], rgbcolor='red',
@@ -298,7 +298,7 @@ Sage example in ./nonlinear.tex, line 906::
     ....:         u, v = u, w
     ....:     else:
     ....:         u, v = w, v
-    ....:     w = falsepos.next()
+    ....:     w = next(falsepos)
     ....:     niter += 1
 
 Sage example in ./nonlinear.tex, line 942::
@@ -319,7 +319,7 @@ Sage example in ./nonlinear.tex, line 954::
     sage: g = plot(f, a, b, rgbcolor='blue')
     sage: phi(s, t) = t - f(t) * (s - t) / (f(s) - f(t))
     sage: falsepos = intervalgen(f, phi, a, b)
-    sage: u, v, w = falsepos.next(), falsepos.next(), falsepos.next()
+    sage: u, v, w = next(falsepos), next(falsepos), next(falsepos)
     sage: niter = 3
     sage: while niter < 7:
     ....:     g += line([(u, 0), (u, f(u))], rgbcolor='red',
@@ -332,7 +332,7 @@ Sage example in ./nonlinear.tex, line 954::
     ....:         u, v = u, w
     ....:     else:
     ....:         u, v = w, v
-    ....:     w = falsepos.next()
+    ....:     w = next(falsepos)
     ....:     niter += 1
 
 Sage example in ./nonlinear.tex, line 1025::
@@ -359,14 +359,14 @@ Sage example in ./nonlinear.tex, line 1058::
 
     sage: generator = newtongen(f, a)
     sage: g = plot(f, a, b, rgbcolor='blue')
-    sage: u, v = generator.next(), generator.next()
+    sage: u, v = next(generator), next(generator)
     sage: niter = 2
     sage: while niter < 6:
     ....:     g += point((u, 0), rgbcolor='red')
     ....:     g += line([(u, 0), (u, f(u))], rgbcolor='red',
     ....:               linestyle=':')
     ....:     g += line([(u, f(u)), (v, 0)], rgbcolor='red')
-    ....:     u, v = v, generator.next()
+    ....:     u, v = v, next(generator)
     ....:     niter += 1
 
 Sage example in ./nonlinear.tex, line 1109::
@@ -395,14 +395,14 @@ Sage example in ./nonlinear.tex, line 1148::
 
     sage: g = plot(f, a, b, rgbcolor='blue')
     sage: sequence = secantgen(f, a)
-    sage: u, v = sequence.next(), sequence.next()
+    sage: u, v = next(sequence), next(sequence)
     sage: niter = 2
     sage: while niter < 6:
     ....:     g += point((u, 0), rgbcolor='red')
     ....:     g += line([(u, 0), (u, f(u))], rgbcolor='red',
     ....:               linestyle=':')
     ....:     g += line([(u, f(u)), (v, 0)], rgbcolor='red')
-    ....:     u, v = v, sequence.next()
+    ....:     u, v = v, next(sequence)
     ....:     niter += 1
 
 Sage example in ./nonlinear.tex, line 1198::
@@ -448,10 +448,10 @@ Sage example in ./nonlinear.tex, line 1403::
     ....:  assert isinstance(sequence, GeneratorType)
     ....:  values = deque(maxlen=3)
     ....:  for i in range(3):
-    ....:      values.append(sequence.next())
+    ....:      values.append(next(sequence))
     ....:      yield values[i]
     ....:  while 1:
-    ....:      values.append(sequence.next())
+    ....:      values.append(next(sequence))
     ....:      u, v, w = values
     ....:      yield u - (v - u)^2 / (w - 2 * v + u)
 
@@ -484,9 +484,9 @@ Sage example in ./nonlinear.tex, line 1494::
 
     sage: a, b = pi/2, pi
     sage: generator = newtongen(f, a)
-    sage: generator.next()
+    sage: next(generator)
     1/2*pi
-    sage: generator.next()
+    sage: next(generator)
     1/2*pi - (e^(1/2*pi) - 10)*e^(-1/2*pi)
 
 """

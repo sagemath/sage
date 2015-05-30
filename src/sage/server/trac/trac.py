@@ -53,7 +53,7 @@ def trac_create_instance(directory = 'sage_trac', easy_setup = False):
 
     e = os.system(cmd)
     if e:
-        raise RuntimeError, "Error creating trac environment."
+        raise RuntimeError("Error creating trac environment.")
 
     if easy_setup:
         conf_name = os.path.abspath(os.path.join(directory, 'conf/trac.ini'))

@@ -19,6 +19,7 @@ AUTHORS:
 
 
 include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
 include "sage/libs/pari/pari_err.pxi"
 
 from element_base cimport FinitePolyExtElement
@@ -36,12 +37,7 @@ from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
 from sage.structure.element cimport Element, ModuleElement, RingElement
 
-cdef long mpz_t_offset = sage.rings.integer.mpz_t_offset_python
-
 cdef PariInstance pari = sage.libs.pari.pari_instance.pari
-
-cdef extern from "sage/libs/pari/misc.h":
-    int gcmp_sage(GEN x, GEN y)
 
 
 cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
@@ -49,7 +45,19 @@ cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
     Convert the t_INT `x` to an element of the field of definition of
     the t_FFELT `g`.
 
-    This function must be called within pari_catch_sig_on() ... pari_catch_sig_off().
+    This function must be called within ``pari_catch_sig_on()``
+    ... ``pari_catch_sig_off()``.
+
+    TESTS:
+
+    Converting large integers to finite field elements does not lead
+    to overflow errors (see :trac:`16807`)::
+
+        sage: p = previous_prime(2^64)
+        sage: F.<x> = GF(p^2)
+        sage: x * 2^63
+        9223372036854775808*x
+
     """
     cdef GEN f, p = gel(g, 4), result
     cdef long t
@@ -71,7 +79,7 @@ cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
         elif t == t_FF_Flxq:
             f = cgetg(3, t_VECSMALL)
             set_gel(f, 1, gmael(g, 2, 1))
-            f[2] = itos(x)
+            f[2] = itou(x)
         else:
             pari_catch_sig_off()
             raise TypeError("unknown PARI finite field type")
@@ -194,13 +202,12 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                 pari_catch_sig_on()
                 self.construct((<FiniteFieldElement_pari_ffelt>x).val)
             else:
-                # This is where we *would* do coercion from one finite field to another...
                 raise TypeError("no coercion defined")
 
         elif isinstance(x, Integer):
             g = (<pari_gen>self._parent._gen_pari).g
             pari_catch_sig_on()
-            x_GEN = pari._new_GEN_from_mpz_t(<void *>x + mpz_t_offset)
+            x_GEN = pari._new_GEN_from_mpz_t((<Integer>x).value)
             self.construct(_INT_to_FFELT(g, x_GEN))
 
         elif isinstance(x, int) or isinstance(x, long):
@@ -213,9 +220,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         elif isinstance(x, IntegerMod_abstract):
             if self._parent.characteristic().divides(x.modulus()):
                 g = (<pari_gen>self._parent._gen_pari).g
-                x = Integer(x)
                 pari_catch_sig_on()
-                x_GEN = pari._new_GEN_from_mpz_t(<void *>x + mpz_t_offset)
+                x_GEN = pari._new_GEN_from_mpz_t(Integer(x).value)
                 self.construct(_INT_to_FFELT(g, x_GEN))
             else:
                 raise TypeError("no coercion defined")
@@ -267,7 +273,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                 set_gel(f, 1, gmael(g, 2, 1))
                 for i in xrange(n):
                     xi = Integer(x[i])
-                    set_gel(f, i + 2, pari._new_GEN_from_mpz_t(<void *>xi + mpz_t_offset))
+                    set_gel(f, i + 2, pari._new_GEN_from_mpz_t(xi.value))
             elif t == t_FF_Flxq or t == t_FF_F2xq:
                 f = cgetg(n + 2, t_VECSMALL)
                 set_gel(f, 1, gmael(g, 2, 1))
@@ -376,7 +382,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         x.construct(self.val)
         return x
 
-    cdef int _cmp_c_impl(FiniteFieldElement_pari_ffelt self, Element other) except -2:
+    cpdef int _cmp_(FiniteFieldElement_pari_ffelt self, Element other) except -2:
         """
         Comparison of finite field elements.
 
@@ -394,7 +400,11 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a > a^2
             False
         """
-        return gcmp_sage(self.val, (<FiniteFieldElement_pari_ffelt>other).val)
+        cdef int r
+        pari_catch_sig_on()
+        r = cmp_universal(self.val, (<FiniteFieldElement_pari_ffelt>other).val)
+        pari_catch_sig_off()
+        return r
 
     def __richcmp__(FiniteFieldElement_pari_ffelt left, object right, int op):
         """
@@ -612,12 +622,28 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             2*a^9 + a^5 + 4*a^4 + 4*a^3 + a^2 + 3*a
             sage: a^(e % (5^10 - 1))
             2*a^9 + a^5 + 4*a^4 + 4*a^3 + a^2 + 3*a
+
+        The exponent is converted to an integer (see :trac:`16540`)::
+
+            sage: q = 11^23
+            sage: F.<a> = FiniteField(q)
+            sage: a^Mod(1, q - 1)
+            a
+
+        .. WARNING::
+
+            For efficiency reasons, we do not verify that the
+            exponentiation is well defined before converting the
+            exponent to an integer.  This means that ``a^Mod(1, n)``
+            returns `a` even if `n` is not a multiple of the
+            multiplicative order of `a`.
+
         """
         if exp == 0:
-            return self._parent.one_element()
+            return self._parent.one()
         if exp < 0 and FF_equal0(self.val):
             raise ZeroDivisionError
-        exp = pari(exp)
+        exp = Integer(exp)._pari_()
         cdef FiniteFieldElement_pari_ffelt x = self._new()
         pari_catch_sig_on()
         x.construct(FF_pow(self.val, (<pari_gen>exp).g))

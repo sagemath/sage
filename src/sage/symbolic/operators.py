@@ -1,7 +1,59 @@
-import operator
-from sage.symbolic.ring import is_SymbolicVariable, var
+"Operators"
 
-arithmetic_operators = {operator.add: '+',
+import operator
+from sage.symbolic.ring import is_SymbolicVariable, SR
+
+def add_vararg(first,*rest):
+    r"""
+    Addition of a variable number of arguments.
+
+    INPUT:
+
+    - ``first``, ``rest`` - arguments to add
+
+    OUTPUT: sum of arguments
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.operators import add_vararg
+        sage: add_vararg(1,2,3,4,5,6,7)
+        28
+        sage: F=(1+x+x^2)
+        sage: bool(F.operator()(*F.operands()) == F)
+        True
+    """
+
+    for r in rest:
+        first = first + r
+    return first
+
+def mul_vararg(first,*rest):
+    r"""
+    Multiplication of a variable number of arguments.
+
+    INPUT:
+
+    - ``args`` - arguments to multiply
+
+    OUTPUT: product of arguments
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.operators import mul_vararg
+        sage: mul_vararg(9,8,7,6,5,4)
+        60480
+        sage: G=x*cos(x)*sin(x)
+        sage: bool(G.operator()(*G.operands())==G)
+        True
+    """
+
+    for r in rest:
+        first = first * r
+    return first
+
+arithmetic_operators = {add_vararg: '+',
+                        mul_vararg: '*',
+                        operator.add: '+',
                         operator.sub: '-',
                         operator.mul: '*',
                         operator.div: '/',
@@ -61,7 +113,7 @@ class FDerivativeOperator(object):
             # temporary variable e.g. `t0` and then evaluate the
             # derivative f'(t0) symbolically at t0=1. See trac
             # #12796.
-            temp_args=[var("t%s"%i) for i in range(len(args))]
+            temp_args=[SR.var("t%s"%i) for i in range(len(args))]
             vars=[temp_args[i] for i in self._parameter_set]
             return self._f(*temp_args).diff(*vars).function(*temp_args)(*args)
         vars = [args[i] for i in self._parameter_set]

@@ -42,10 +42,13 @@ element by a braid::
     sage: f1^-1 * b1
     f1*f2^-1*f1^-1
 
-AUTHOR:
+AUTHORS:
 
 - Miguel Angel Marco Buzunariz
 - Volker Braun
+- Robert Lipshitz
+- Thierry Monteil: add a ``__hash__`` method consistent with the word
+  problem to ensure correct Cayley graph computations.
 """
 
 ##############################################################################
@@ -87,8 +90,7 @@ class Braid(FinitelyPresentedGroupElement):
         sage: B((1, 2, -3, -2))
         s0*s1*s2^-1*s1^-1
     """
-
-    def __cmp__(self, other):
+    def _cmp_(self, other):
         """
         Compare ``self`` and ``other``
 
@@ -99,9 +101,9 @@ class Braid(FinitelyPresentedGroupElement):
             sage: c = B([2, 1, 2])
             sage: b == c #indirect doctest
             True
-            sage: b.__cmp__(c^(-1))
+            sage: b._cmp_(c^(-1))
             -1
-            sage: B([]).__cmp__(B.one())
+            sage: B([])._cmp_(B.one())
             0
         """
         if self.Tietze()==other.Tietze():
@@ -109,6 +111,22 @@ class Braid(FinitelyPresentedGroupElement):
         nfself = map(lambda i: i.Tietze(), self.left_normal_form())
         nfother = map(lambda i: i.Tietze(), other.left_normal_form())
         return cmp(nfself, nfother)
+
+    __cmp__ = _cmp_
+
+    def __hash__(self):
+        r"""
+        Return a hash value for ``self``.
+
+        EXAMPLES::
+
+            sage: B.<s0,s1,s2> = BraidGroup(4)
+            sage: hash(s0*s2) == hash(s2*s0)
+            True
+            sage: hash(s0*s1) == hash(s1*s0)
+            False
+        """
+        return hash(tuple(i.Tietze() for i in self.left_normal_form()))
 
     def _latex_(self):
         """
@@ -146,58 +164,161 @@ class Braid(FinitelyPresentedGroupElement):
         """
         return self.parent().strands()
 
-    def burau_matrix(self, var='t'):
+    def burau_matrix(self, var='t', reduced=False):
         """
         Return the Burau matrix of the braid.
 
         INPUT:
 
-        - ``var`` -- string (default: ``'t'``). The name of the
-          variable in the entries of the matrix.
+        - ``var`` -- string (default: ``'t'``); the name of the
+          variable in the entries of the matrix
+        - ``reduced`` -- boolean (default: ``False``); whether to
+          return the reduced or unreduced Burau representation
 
         OUTPUT:
 
         The Burau matrix of the braid. It is a matrix whose entries
-        are Laurent polynomials in the variable ``var``.
+        are Laurent polynomials in the variable ``var``. If ``reduced``
+        is ``True``, return the matrix for the reduced Burau representation
+        instead.
 
         EXAMPLES::
 
             sage: B = BraidGroup(4)
             sage: B.inject_variables()
             Defining s0, s1, s2
-            sage: b=s0*s1/s2/s1
+            sage: b = s0*s1/s2/s1
             sage: b.burau_matrix()
-            [     -t + 1           0    -t^2 + t         t^2]
-            [          1           0           0           0]
-            [          0           0           1           0]
-            [          0        t^-2 t^-1 - t^-2    1 - t^-1]
+            [       1 - t            0      t - t^2          t^2]
+            [           1            0            0            0]
+            [           0            0            1            0]
+            [           0         t^-2 -t^-2 + t^-1    -t^-1 + 1]
             sage: s2.burau_matrix('x')
-            [     1      0      0      0]
-            [     0      1      0      0]
-            [     0      0 -x + 1      x]
-            [     0      0      1      0]
+            [    1     0     0     0]
+            [    0     1     0     0]
+            [    0     0 1 - x     x]
+            [    0     0     1     0]
+            sage: s0.burau_matrix(reduced=True)
+            [-t  0  0]
+            [-t  1  0]
+            [-t  0  1]
 
         REFERENCES:
 
-            http://en.wikipedia.org/wiki/Burau_representation
+        - :wikipedia:`Burau_representation`
         """
         R = LaurentPolynomialRing(IntegerRing(), var)
         t = R.gen()
-        M = identity_matrix(R, self.strands())
-        for i in self.Tietze():
-            A = identity_matrix(R, self.strands())
-            if i>0:
-                A[i-1, i-1] = 1-t
-                A[i, i] = 0
-                A[i, i-1] = 1
-                A[i-1, i] = t
-            if i<0:
-                A[-1-i, -1-i] = 0
-                A[-i, -i] = 1-t**(-1)
-                A[-1-i, -i] = 1
-                A[-i, -1-i] = t**(-1)
-            M=M*A
+        n = self.strands()
+        if not reduced:
+            M = identity_matrix(R, n)
+            for i in self.Tietze():
+                A = identity_matrix(R, n)
+                if i > 0:
+                    A[i-1, i-1] = 1-t
+                    A[i, i] = 0
+                    A[i, i-1] = 1
+                    A[i-1, i] = t
+                if i < 0:
+                    A[-1-i, -1-i] = 0
+                    A[-i, -i] = 1-t**(-1)
+                    A[-1-i, -i] = 1
+                    A[-i, -1-i] = t**(-1)
+                M = M * A
+        else:
+            M = identity_matrix(R, n - 1)
+            for j in self.Tietze():
+                A = identity_matrix(R, n - 1)
+                if j > 1:
+                    i = j-1
+                    A[i-1, i-1] = 1-t
+                    A[i, i] = 0
+                    A[i, i-1] = 1
+                    A[i-1, i] = t
+                if j < -1:
+                    i = j+1
+                    A[-1-i, -1-i] = 0
+                    A[-i, -i] = 1-t**(-1)
+                    A[-1-i, -i] = 1
+                    A[-i, -1-i] = t**(-1)
+                if j == 1:
+                    for k in range(n - 1):
+                        A[k,0] = -t
+                if j == -1:
+                    A[0,0] = -t**(-1)
+                    for k in range(1, n - 1):
+                        A[k,0] = -1
+                M = M * A
         return M
+
+    def alexander_polynomial(self, var='t', normalized=True):
+        r"""
+        Return the Alexander polynomial of the closure of the braid.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'t'``); the name of the
+          variable in the entries of the matrix
+        - ``normalized`` -- boolean (default: ``True``); whether to
+          return the normalized Alexander polynomial
+
+        OUTPUT:
+
+        The Alexander polynomial of the braid closure of the braid.
+
+        This is computed using the reduced Burau representation. The
+        unnormalized Alexander polynomial is a Laurent polynomial,
+        which is only well-defined up to multiplication by plus or
+        minus times a power of `t`.
+
+        We normalize the polynomial by dividing by the largest power
+        of `t` and then if the resulting constant coefficient
+        is negative, we multiply by `-1`.
+
+        EXAMPLES:
+
+        We first construct the trefoil::
+
+            sage: B = BraidGroup(3)
+            sage: b = B([1,2,1,2])
+            sage: b.alexander_polynomial(normalized=False)
+            1 - t + t^2
+            sage: b.alexander_polynomial()
+            t^-2 - t^-1 + 1
+
+        Next we construct the figure 8 knot::
+
+            sage: b = B([-1,2,-1,2])
+            sage: b.alexander_polynomial(normalized=False)
+            -t^-2 + 3*t^-1 - 1
+            sage: b.alexander_polynomial()
+            t^-2 - 3*t^-1 + 1
+
+        Our last example is the Kinoshita-Terasaka knot::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1,1,1,3,3,2,-3,-1,-1,2,-1,-3,-2])
+            sage: b.alexander_polynomial(normalized=False)
+            -t^-1
+            sage: b.alexander_polynomial()
+            1
+
+        REFERENCES:
+
+        - :wikipedia:`Alexander_polynomial`
+        """
+        n = self.strands()
+        p = (self.burau_matrix(reduced=True) - identity_matrix(n - 1)).det()
+        K, t = LaurentPolynomialRing(IntegerRing(), var).objgen()
+        if p == 0:
+            return K.zero()
+        qn = sum(t ** i for i in range(n))
+        p //= qn
+        if normalized:
+            p *= t ** (-p.degree())
+            if p.constant_coefficient() < 0:
+                p = -p
+        return p
 
     def permutation(self):
         """
@@ -262,11 +383,14 @@ class Braid(FinitelyPresentedGroupElement):
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
             sage: b.plot()
+            Graphics object consisting of 30 graphics primitives
             sage: b.plot(color=["red", "blue", "red", "blue"])
+            Graphics object consisting of 30 graphics primitives
 
             sage: B.<s,t> = BraidGroup(3)
             sage: b = t^-1*s^2
             sage: b.plot(orientation="left-right", color="red")
+            Graphics object consisting of 12 graphics primitives
         """
         from sage.plot.bezier_path import bezier_path
         from sage.plot.plot import Graphics, line
@@ -360,8 +484,11 @@ class Braid(FinitelyPresentedGroupElement):
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
             sage: b.plot3d()
+            Graphics3d Object
             sage: b.plot3d(color="red")
+            Graphics3d Object
             sage: b.plot3d(color=["red", "blue", "red", "blue"])
+            Graphics3d Object
         """
         from sage.plot.plot3d.shapes2 import bezier3d
         from sage.plot.colors import rainbow
@@ -574,7 +701,7 @@ class Braid(FinitelyPresentedGroupElement):
                     i += 1
             j += 1
             i = 0
-        form = filter(lambda a: a.length()>0, form)
+        form = [a for a in form if a.length()>0]
         while form!=[] and form[0]==Delta:
             form.pop(0)
             delta = delta-1
@@ -612,6 +739,8 @@ class BraidGroup_class(FinitelyPresentedGroup):
             sage: B1 = BraidGroup(5) # indirect doctest
             sage: B1
             Braid group on 5 strands
+            sage: TestSuite(B1).run()
+
 
         Check that :trac:`14081` is fixed::
 
@@ -745,7 +874,38 @@ class BraidGroup_class(FinitelyPresentedGroup):
             sage: B([1, 2, 3]) # indirect doctest
             s0*s1*s2
         """
-        return Braid(self, x)
+        return self.element_class(self, x)
+
+    def an_element(self):
+        """
+        Return an element of the braid group.
+
+        This is used both for illustration and testing purposes.
+
+        EXAMPLES::
+
+            sage: B=BraidGroup(2)
+            sage: B.an_element()
+            s
+        """
+        return self.gen(0)
+
+    def some_elements(self):
+        """
+        Return a list of some elements of the braid group.
+
+        This is used both for illustration and testing purposes.
+
+        EXAMPLES::
+
+            sage: B=BraidGroup(3)
+            sage: B.some_elements()
+            [s0, s0*s1, (s0*s1)^3]
+        """
+        elements_list = [self.gen(0)]
+        elements_list.append(self(range(1,self.strands())))
+        elements_list.append(elements_list[-1]**self.strands())
+        return elements_list
 
     def _permutation_braid_Tietze(self, p):
         """
@@ -998,6 +1158,27 @@ def BraidGroup(n=None, names='s'):
         (s0, s1)
         sage: BraidGroup(3, 'g').generators()
         (g0, g1)
+
+    Since the word problem for the braid groups is solvable, their Cayley graph
+    can be localy obtained as follows (see :trac:`16059`)::
+
+        sage: def ball(group, radius):
+        ....:     ret = set()
+        ....:     ret.add(group.one())
+        ....:     for length in range(1, radius):
+        ....:         for w in Words(alphabet=group.gens(), length=length):
+        ....:              ret.add(prod(w))
+        ....:     return ret
+        sage: B = BraidGroup(4)
+        sage: GB = B.cayley_graph(elements=ball(B, 4), generators=B.gens()); GB
+        Digraph on 31 vertices
+
+    Since the braid group has nontrivial relations, this graph contains less
+    vertices than the one associated to the free group (which is a tree)::
+
+        sage: F = FreeGroup(3)
+        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF
+        Digraph on 40 vertices
 
     TESTS::
 

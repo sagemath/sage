@@ -1,3 +1,5 @@
+"Utility functions on strings"
+
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
@@ -7,19 +9,20 @@
 #*****************************************************************************
 
 from sage.rings.all import RealField
-from sage.probability.random_variable import DiscreteProbabilitySpace
 from string_monoid_element import StringMonoidElement
 
 def strip_encoding(S):
     """
     The upper case string of S stripped of all non-alphabetic characters.
-    EXAMPLES:
+
+    EXAMPLES::
+
         sage: S = "The cat in the hat."
         sage: strip_encoding(S)
         'THECATINTHEHAT'
     """
     if not isinstance(S,str):
-        raise TypeError, "Argument S (= %s) must be a string."
+        raise TypeError("Argument S (= %s) must be a string.")
     X = ''
     for i in range(len(S)):
         C = S[i]
@@ -43,17 +46,20 @@ def frequency_distribution(S, n=1, field=None):
         eps = field(1)/N
         for i in range(N):
             c = S[i]
-            if P.has_key(c):
+            if c in P:
                 P[c] += eps
             else:
                 P[c] = eps
+        from sage.probability.random_variable import DiscreteProbabilitySpace
         return DiscreteProbabilitySpace(S,P,field)
-    raise TypeError, "Argument S (= %s) must be a string, list, or tuple."
+    raise TypeError("Argument S (= %s) must be a string, list, or tuple.")
 
 def coincidence_index(S,n=1):
     """
     The coincidence index of the string S.
-    EXAMPLES:
+
+    EXAMPLES::
+
         sage: S = strip_encoding("The cat in the hat.")
         sage: coincidence_index(S)
         0.120879120879121
@@ -62,13 +68,13 @@ def coincidence_index(S,n=1):
         try:
             S.coincidence_index(n)
         except AttributeError:
-            raise TypeError, "Argument S (= %s) must be a string."
+            raise TypeError("Argument S (= %s) must be a string.")
     S = strip_encoding(S)
     N = len(S)-n+1
     X = {}
     for i in range(N):
         c = S[i:i+n]
-        if X.has_key(c):
+        if c in X:
             X[c] += 1
         else:
             X[c] = 1
@@ -82,24 +88,25 @@ def coincidence_discriminant(S,n=2):
     Output: A measure of the difference of probability of association of
     character pairs, relative to their independent one-character probabilities.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: S = strip_encoding("The cat in the hat.")
         sage: coincidence_discriminant([ S[i:i+2] for i in range(len(S)-1) ])
         0.0827001855677322
     """
     if not isinstance(S,(list,tuple)):
-        raise TypeError, "Argument S (= %s) must be a list or tuple" % S
+        raise TypeError("Argument S (= %s) must be a list or tuple" % S)
     if n != 2:
-        raise ValueError, "Argument n (= %s) is only implemented for n = 2" % n
+        raise ValueError("Argument n (= %s) is only implemented for n = 2" % n)
     truth = True
     for bool in ( isinstance(c,(str,StringMonoidElement)) for c in S ):
         truth = truth and bool
     if not truth:
-        raise TypeError, "Argument S (= %s) must be a list of strings."
+        raise TypeError("Argument S (= %s) must be a list of strings.")
     for bool in ( len(c) == n for c in S ):
         truth = truth and bool
     if not truth:
-        raise ValueError, "Argument S (= %s) must be a list of strings of length 2" % S
+        raise ValueError("Argument S (= %s) must be a list of strings of length 2" % S)
     X1 = [ frequency_distribution([ s[i] for s in S]) for i in range(2) ]
     XX = frequency_distribution(S)
     if isinstance(S[0],StringMonoidElement):

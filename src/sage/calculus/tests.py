@@ -45,7 +45,7 @@ Some basic things::
 
 A polynomial over a symbolic base ring::
 
-    sage: R = SR[x]
+    sage: R = SR['x']
     sage: f = R([1/sqrt(2), 1/(4*sqrt(2))])
     sage: f
     1/8*sqrt(2)*x + 1/2*sqrt(2)
@@ -109,7 +109,7 @@ from some Mathematica docs::
     sage: integrate(exp(1-x^2),x)
     1/2*sqrt(pi)*erf(x)*e
     sage: integrate(sin(x^2),x)
-    1/8*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x))
+    1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
 
     sage: integrate((1-x^2)^n,x)
     integrate((-x^2 + 1)^n, x)

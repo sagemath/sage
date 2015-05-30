@@ -27,7 +27,7 @@ public:
 protected:
   ElementType M[2][2];
 public:
-  const static SL2Z E, R, T, S, U;
+  const static SL2Z E, R, T, S, U, I;
   SL2Z(int a_, int b_, int c_, int d_);
   SL2Z(const ElementType& a_, const ElementType& b_,
        const ElementType& c_, const ElementType& d_);
@@ -83,18 +83,28 @@ SL2Z SL2Z::operator-() const {
 
 inline
 SL2Z SL2Z::operator*=(const SL2Z& x) {
-  return SL2Z(M[0][0]*x.M[0][0] + M[0][1]*x.M[1][0],
-              M[0][0]*x.M[0][1] + M[0][1]*x.M[1][1],
-              M[1][0]*x.M[0][0] + M[1][1]*x.M[1][0],
-              M[1][0]*x.M[0][1] + M[1][1]*x.M[1][1]);
+  SL2Z result(M[0][0]*x.M[0][0] + M[0][1]*x.M[1][0],
+	      M[0][0]*x.M[0][1] + M[0][1]*x.M[1][1],
+	      M[1][0]*x.M[0][0] + M[1][1]*x.M[1][0],
+	      M[1][0]*x.M[0][1] + M[1][1]*x.M[1][1]);
+  M[0][0] = result.M[0][0];
+  M[0][1] = result.M[0][1];
+  M[1][0] = result.M[1][0];
+  M[1][1] = result.M[1][1];
+  return *this;
 }
 
 inline
 SL2Z SL2Z::operator/=(const SL2Z& x) {
-  return SL2Z( M[0][0]*x.M[1][1] - M[0][1]*x.M[1][0],
-              -M[0][0]*x.M[0][1] + M[0][1]*x.M[0][0],
-               M[1][0]*x.M[1][1] - M[1][1]*x.M[1][0],
-              -M[1][0]*x.M[0][1] + M[1][1]*x.M[0][0]);
+  SL2Z result( M[0][0]*x.M[1][1] - M[0][1]*x.M[1][0],
+	      -M[0][0]*x.M[0][1] + M[0][1]*x.M[0][0],
+	       M[1][0]*x.M[1][1] - M[1][1]*x.M[1][0],
+	      -M[1][0]*x.M[0][1] + M[1][1]*x.M[0][0]);
+  M[0][0] = result.M[0][0];
+  M[0][1] = result.M[0][1];
+  M[1][0] = result.M[1][0];
+  M[1][1] = result.M[1][1];
+  return *this;
 }
 
 inline

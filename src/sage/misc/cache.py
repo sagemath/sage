@@ -38,7 +38,7 @@ class Cache:
         Return the object from the cache defined by the arguments,
         or make it using the factoring function if it doesn't exist.
         """
-        #if self.canonical_params_function != None:
+        #if self.canonical_params_function is not None:
         #    args = self.canonical_params_function(*args, **kwds)
         #    kwds = {}
 

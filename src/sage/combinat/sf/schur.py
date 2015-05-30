@@ -160,7 +160,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ[x]).s()
+                sage: s = SymmetricFunctions(QQ['x']).s()
                 sage: len(s([2,1])^8) # long time (~ 4 s)
                 1485
                 sage: len(s([2,1])^9) # long time (~10 s)
@@ -180,10 +180,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             With polynomial coefficients, this is actually much *slower*
             (although this should be profiled further; there seems to
             be an unreasonable number of polynomial multiplication involved,
-            besides the fact that 1 * QQ[x].one() currently involves a
+            besides the fact that 1 * QQ['x'].one() currently involves a
             polynomial multiplication)
 
-            #    sage: sage: s = SymmetricFunctions(QQ[x]).s()
+            #    sage: sage: s = SymmetricFunctions(QQ['x']).s()
             #    sage: y = s([2,1])
             #    sage: %timeit y**7
             #    10 loops, best of 3: 18.9 s per loop
@@ -199,21 +199,41 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             r"""
             Return the image of ``self`` under the omega automorphism.
 
-            The omega automorphism is defined to be the unique algebra
+            The *omega automorphism* is defined to be the unique algebra
             endomorphism `\omega` of the ring of symmetric functions that
             satisfies `\omega(e_k) = h_k` for all positive integers `k`
             (where `e_k` stands for the `k`-th elementary symmetric
             function, and `h_k` stands for the `k`-th complete homogeneous
             symmetric function). It furthermore is a Hopf algebra
-            endomorphism, and sends the power-sum symmetric function `p_k`
-            to `(-1)^{k-1} p_k` for every positive integer `k`.
+            endomorphism and an involution, and it is also known as the
+            *omega involution*. It sends the power-sum symmetric function
+            `p_k` to `(-1)^{k-1} p_k` for every positive integer `k`.
 
-            The default implementation converts to the Schurs, then
-            performs the automorphism and changes back.
+            The images of some bases under the omega automorphism are given by
+
+            .. MATH::
+
+                \omega(e_{\lambda}) = h_{\lambda}, \qquad
+                \omega(h_{\lambda}) = e_{\lambda}, \qquad
+                \omega(p_{\lambda}) = (-1)^{|\lambda| - \ell(\lambda)}
+                p_{\lambda}, \qquad
+                \omega(s_{\lambda}) = s_{\lambda^{\prime}},
+
+            where `\lambda` is any partition, where `\ell(\lambda)` denotes
+            the length (:meth:`~sage.combinat.partition.Partition.length`)
+            of the partition `\lambda`, where `\lambda^{\prime}` denotes the
+            conjugate partition
+            (:meth:`~sage.combinat.partition.Partition.conjugate`) of
+            `\lambda`, and where the usual notations for bases are used
+            (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
+            `s` = Schur).
+
+            :meth:`omega_involution()` is a synonym for the :meth:`omega()`
+            method.
 
             OUTPUT:
 
-            - the image of ``self`` under omega as an element of the Schur basis
+            - the image of ``self`` under the omega automorphism
 
             EXAMPLES::
 
@@ -226,9 +246,11 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             conj = lambda part: part.conjugate()
             return self.map_support(conj)
 
+        omega_involution = omega
+
         def scalar(self, x, zee=None):
             """
-            Returns the standard scalar product between ``self`` and `x`.
+            Return the standard scalar product between ``self`` and `x`.
 
             Note that the Schur functions are self-dual with respect to this
             scalar product. They are also lower-triangularly related to the
@@ -236,10 +258,14 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``x`` -- an element of the symmetric functions
-            - ``zee`` -- an optional function that specifies the scalar product
-              between two power sum symmetric functions indexed by the same
-              partition.  If ``zee`` is not specified.
+            - ``x`` -- element of the ring of symmetric functions over the
+              same base ring as ``self``
+
+            - ``zee`` -- an optional function on partitions giving
+              the value for the scalar product between the power-sum
+              symmetric function `p_{\mu}` and itself
+              (the default value is the standard
+              :meth:`~sage.combinat.sf.sfa.zee` function)
 
             OUTPUT:
 
@@ -284,7 +310,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             if zee is None:
                 s = self.parent()
                 R = s.base_ring()
-                one = R(1)
+                one = R.one()
                 f = lambda p1, p2: one
                 x = s(x)
                 return s._apply_multi_module_morphism(self, x, f, orthogonal=True)
@@ -447,15 +473,19 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
         def expand(self, n, alphabet='x'):
             """
-            Expands the symmetric function as a symmetric polynomial in `n` variables.
+            Expand the symmetric function ``self`` as a symmetric polynomial
+            in ``n`` variables.
 
             INPUT:
 
-            - ``self`` -- an element of the Schur symmetric function basis
-            - ``n`` -- a positive integer
-            - ``alphabet`` -- a variable for the expansion (default: `x`)
+            - ``n`` -- a nonnegative integer
 
-            OUTPUT: a monomial expansion of an instance of ``self`` in `n` variables
+            - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
+
+            OUTPUT:
+
+            A monomial expansion of ``self`` in the `n` variables
+            labelled by ``alphabet``.
 
             EXAMPLES::
 
@@ -475,6 +505,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 0
                 sage: (s([]) + 2*s([1])).expand(3)
                 2*x0 + 2*x1 + 2*x2 + 1
+                sage: s([1]).expand(0)
+                0
+                sage: (3*s([])).expand(0)
+                3
             """
             condition = lambda part: len(part) > n
             return self._expand(condition, n, alphabet)

@@ -67,6 +67,14 @@ class Polynomial_generic_sparse(Polynomial):
         s^2 + 2*Tbar*s + 4
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
+        """
+        TESTS::
+
+            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])
+            0.?*z + 0.?
+            sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])
+            0.?*z + 0.? + 0.?*I
+        """
         Polynomial.__init__(self, parent, is_gen=is_gen)
         if x is None:
             self.__coeffs = {}
@@ -85,11 +93,7 @@ class Polynomial_generic_sparse(Polynomial):
                 # Apparently, the "else" case has never occured before.
                 x = w
         elif isinstance(x, list):
-            y = {}
-            for i in xrange(len(x)):
-                if x[i] != 0:
-                    y[i] = x[i]
-            x = y
+            x = dict((i, c) for (i, c) in enumerate(x) if c)
         elif isinstance(x, pari_gen):
             y = {}
             for i in range(len(x)):
@@ -118,14 +122,14 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f = 5 + w^1997 - w^10000; f
             7*w^10000 + w^1997 + 5
             sage: d = f.dict(); d
-            {0: 5, 10000: 7, 1997: 1}
+            {0: 5, 1997: 1, 10000: 7}
             sage: d[0] = 10
             sage: f.dict()
-            {0: 5, 10000: 7, 1997: 1}
+            {0: 5, 1997: 1, 10000: 7}
         """
         return dict(self.__coeffs)
 
-    def coefficients(self):
+    def coefficients(self,sparse=True):
         """
         Return the coefficients of the monomials appearing in self.
 
@@ -137,7 +141,10 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f.coefficients()
             [5, 1, 7]
         """
-        return [c[1] for c in sorted(self.__coeffs.iteritems())]
+        if sparse:
+          return [c[1] for c in sorted(self.__coeffs.iteritems())]
+        else:
+          return [self.__coeffs[i] if self.__coeffs.has_key(i) else 0 for i in xrange(self.degree() + 1)]
 
     def exponents(self):
         """
@@ -212,7 +219,7 @@ class Polynomial_generic_sparse(Polynomial):
         d = {}
         for n, c in self.__coeffs.iteritems():
             d[n-1] = n*c
-        if d.has_key(-1):
+        if -1 in d:
             del d[-1]
         return P(d)
 
@@ -240,9 +247,15 @@ class Polynomial_generic_sparse(Polynomial):
             sage: R.<w> = PolynomialRing(CDF, sparse=True)
             sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)
             sage: f._repr()
-            '1.0*w^5 - 3.14159265359*w + 3.71828182846 + 2.0*I'
+            '1.0*w^5 - 3.141592653589793*w + 3.718281828459045 + 2.0*I'
             sage: f._repr(name='z')
-            '1.0*z^5 - 3.14159265359*z + 3.71828182846 + 2.0*I'
+            '1.0*z^5 - 3.141592653589793*z + 3.718281828459045 + 2.0*I'
+
+        TESTS::
+
+            sage: pol = RIF['x']([0, 0, (-1,1)])
+            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)
+            0.?*x^2
 
         AUTHOR:
 
@@ -254,10 +267,9 @@ class Polynomial_generic_sparse(Polynomial):
         if name is None:
             name = self.parent().variable_name()
         atomic_repr = self.parent().base_ring()._repr_option('element_is_atomic')
-        coeffs = list(self.__coeffs.iteritems())
-        coeffs.sort()
+        coeffs = sorted(self.__coeffs.iteritems())
         for (n, x) in reversed(coeffs):
-            if x != 0:
+            if x:
                 if n != m-1:
                     s += " + "
                 x = y = repr(x)
@@ -298,9 +310,9 @@ class Polynomial_generic_sparse(Polynomial):
             sage: R.<w> = PolynomialRing(RDF, sparse=True)
             sage: e = RDF(e)
             sage: f = sum(e^n*w^n for n in range(4)); f
-            20.0855369232*w^3 + 7.38905609893*w^2 + 2.71828182846*w + 1.0
+            20.085536923187664*w^3 + 7.3890560989306495*w^2 + 2.718281828459045*w + 1.0
             sage: f[1]
-            2.71828182846
+            2.718281828459045
             sage: f[5]
             0.0
             sage: f[-1]
@@ -329,7 +341,7 @@ class Polynomial_generic_sparse(Polynomial):
             P = self.parent()
             return P(v)
         else:
-            if not self.__coeffs.has_key(n):
+            if n not in self.__coeffs:
                 return self.base_ring()(0)
             return self.__coeffs[n]
 
@@ -357,9 +369,9 @@ class Polynomial_generic_sparse(Polynomial):
         value = self.base_ring()(value)
         x = self.__coeffs
         if n < 0:
-            raise IndexError, "polynomial coefficient index must be nonnegative"
+            raise IndexError("polynomial coefficient index must be nonnegative")
         if value == 0:
-            if x.has_key(n):
+            if n in x:
                 del x[n]
         else:
             x[n] = value
@@ -556,6 +568,88 @@ class Polynomial_generic_sparse(Polynomial):
                     output[index + n] = coeff
             return self.parent()(output, check=False)
 
+    @coerce_binop
+    def quo_rem(self, other):
+        """
+        Returns the quotient and remainder of the Euclidean division of
+        ``self`` and ``other``.
+
+        Raises ZerodivisionError if ``other`` is zero. Raises ArithmeticError
+        if ``other`` has a nonunit leading coefficient.
+
+        EXAMPLES::
+
+            sage: P.<x> = PolynomialRing(ZZ,sparse=True)
+            sage: R.<y> = PolynomialRing(P,sparse=True)
+            sage: f = R.random_element(10)
+            sage: g = y^5+R.random_element(4)
+            sage: q,r = f.quo_rem(g)
+            sage: f == q*g + r and r.degree() < g.degree()
+            True
+            sage: g = x*y^5
+            sage: f.quo_rem(g)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: Nonunit leading coefficient
+            sage: g = 0
+            sage: f.quo_rem(g)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Division by zero polynomial
+
+        TESTS::
+
+            sage: P.<x> = PolynomialRing(ZZ,sparse=True)
+            sage: f = x^10-4*x^6-5
+            sage: g = 17*x^22+x^15-3*x^5+1
+            sage: q,r = g.quo_rem(f)
+            sage: g == f*q + r and r.degree() < f.degree()
+            True
+            sage: zero = P(0)
+            sage: zero.quo_rem(f)
+            (0, 0)
+            sage: Q.<y> = IntegerModRing(14)[]
+            sage: f = y^10-4*y^6-5
+            sage: g = 17*y^22+y^15-3*y^5+1
+            sage: q,r = g.quo_rem(f)
+            sage: g == f*q + r and r.degree() < f.degree()
+            True
+            sage: f += 2*y^10 # 3 is invertible mod 14
+            sage: q,r = g.quo_rem(f)
+            sage: g == f*q + r and r.degree() < f.degree()
+            True
+
+        AUTHORS:
+
+        - Bruno Grenet (2014-07-09)
+        """
+        if other.is_zero():
+            raise ZeroDivisionError("Division by zero polynomial")
+        if not other.leading_coefficient().is_unit():
+            raise ArithmeticError("Nonunit leading coefficient")
+        if self.is_zero():
+            return self, self
+
+        R = self.parent()
+
+        d = other.degree()
+        if self.degree() < d:
+            return R.zero(), self
+
+        quo = R.zero()
+        rem = self
+        inv_lc = R.base_ring().one()/other.leading_coefficient()
+
+        while rem.degree() >= d:
+
+            c = rem.leading_coefficient()*inv_lc
+            e = rem.degree() - d
+            quo += c*R.one().shift(e)
+            # we know that the leading coefficient of rem vanishes
+            # thus we avoid doing a useless computation
+            rem = rem[:rem.degree()] - c*other[:d].shift(e)
+        return (quo,rem)
+
 
 class Polynomial_generic_domain(Polynomial, IntegralDomainElement):
     def __init__(self, parent, is_gen=False, construct=False):
@@ -612,13 +706,13 @@ class Polynomial_generic_field(Polynomial_singular_repr,
         """
         P = self.parent()
         if other.is_zero():
-            raise ZeroDivisionError, "other must be nonzero"
+            raise ZeroDivisionError("other must be nonzero")
 
         # This is algorithm 3.1.1 in Cohen GTM 138
         A = self
         B = other
         R = A
-        Q = P.zero_element()
+        Q = P.zero()
         while R.degree() >= B.degree():
             aaa = R.leading_coefficient()/B.leading_coefficient()
             diff_deg=R.degree()-B.degree()
@@ -632,17 +726,39 @@ class Polynomial_generic_field(Polynomial_singular_repr,
             R = R[:R.degree()] - (aaa*B[:B.degree()]).shift(diff_deg)
         return (Q, R)
 
-    def _gcd(self, other):
+    @coerce_binop
+    def gcd(self, other):
         """
-        Return the GCD of self and other, as a monic polynomial.
+        Return the greatest common divisor of this polynomial and ``other``, as
+        a monic polynomial.
+
+        INPUT:
+
+        - ``other`` -- a polynomial defined over the same ring as ``self``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQbar[]
+            sage: (2*x).gcd(2*x^2)
+            x
+
+            sage: zero = R.zero()
+            sage: zero.gcd(2*x)
+            x
+            sage: (2*x).gcd(zero)
+            x
+            sage: zero.gcd(zero)
+            0
         """
-        g = EuclideanDomainElement._gcd(self, other)
+        from sage.categories.euclidean_domains import EuclideanDomains
+        g = EuclideanDomains().ElementMethods().gcd(self, other)
         c = g.leading_coefficient()
         if c.is_unit():
             return (1/c)*g
         return g
 
-    def _xgcd(self, other):
+    @coerce_binop
+    def xgcd(self, other):
         r"""
         Extended gcd of ``self`` and polynomial ``other``.
 
@@ -675,25 +791,43 @@ class Polynomial_generic_field(Polynomial_singular_repr,
             sage: g == u*P(0) + v*x
             True
 
+        TESTS:
+
+        We check that the behavior of xgcd with zero elements is compatible with
+        gcd (:trac:`17671`)::
+
+            sage: R.<x> = QQbar[]
+            sage: zero = R.zero()
+            sage: zero.xgcd(2*x)
+            (x, 0, 1/2)
+            sage: (2*x).xgcd(zero)
+            (x, 1/2, 0)
+            sage: zero.xgcd(zero)
+            (0, 0, 0)
         """
-        if other.is_zero():
-            R = self.parent()
-            return self, R.one_element(), R.zero_element()
-        # Algorithm 3.2.2 of Cohen, GTM 138
         R = self.parent()
+        zero = R.zero()
+        one = R.one()
+        if other.is_zero():
+            if self.is_zero():
+                return (zero, zero, zero)
+            else:
+                c = self.leading_coefficient()
+                return (self/c, one/c, zero)
+        elif self.is_zero():
+            c = other.leading_coefficient()
+            return (other/c, zero, one/c)
+
+        # Algorithm 3.2.2 of Cohen, GTM 138
         A = self
         B = other
-        U = R.one_element()
+        U = one
         G = A
-        V1 = R.zero_element()
+        V1 = zero
         V3 = B
         while not V3.is_zero():
             Q, R = G.quo_rem(V3)
-            T = U - V1*Q
-            U = V1
-            G = V3
-            V1 = T
-            V3 = R
+            G, U, V1, V3 = V3, V1, U-V1*Q, R
         V = (G-A*U)//B
         lc = G.leading_coefficient()
         return G/lc, U/lc, V/lc

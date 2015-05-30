@@ -24,34 +24,31 @@ Solaris, but should also work on OSX and Cygwin.
 
  * Python
 
-== Build Instructions/Notes ==
+== Special Update/Build Instructions ==
 
- * patches/archinfo_linux.c.patch: Fix Itanium2 support on modern
-   RHEL 5 and SLES 10 systems.
- * patches/probe_comp.c.patch: work around -m64 issue on Itanium2
- * patches/long_filenames.patch: fix for long filenames (>128 chars)
- * patches/shell.patch: replace two instances of "test -e" by "test -f",
-   as the former is not portable (in particular for the Solaris
-   shell).
- * patches/threads.patch: Avoid thread-related symbols
-   ATL_(Set|Reset|Free|Dec)AtomicCount symbols in single-threaded
-   library.
+ * src/lapack-x.y.z.tgz: The netlib lapack tarball. If you update this,
+   make sure you also update the LAPACK_TARBALL variable in spkg-install.
+ * src/ATLAS-lib: We are using a dummy autotools/libtools project
+   to repack the static ATLAS libraries into shared libraries.
+ * src/ARCHS: We ship some archdef tarballs to speed ATLAS build.
+ * spkg-install: If you update atlas to a new version make sure that the
+   ATLAS_OSTYPE, ATLAS_MACHTYPE, and ATLAS_ISAEXT variables in
+   spkg-install remain in sync with atlas' CONFIG/include/atlconf.h
+ * The package is never installed on OS X, unless you set SAGE_ATLAS_ARCH.
+
+=== Patches ===
+ * patches/detect.patch: Fix Itanium2 support on modern
+   RHEL 5 and SLES 10 systems, work around -m64 issue on Itanium2,
+   and correctly detect number and speed of CPUs on a bunch of systems.
+ * patches/arm_hard_floats.patch: make sure soft floats are not enforced on ARM.
+ * patches/Makefile.patch: fix clean target.
  * patches/do_not_force_mutex.patch: always use assembly over mutex
    since the mutex version fails to build a shared library. See #15045
    for details.
- * lapack-x.y.z.tgz: The netlib lapack tarball. If you update this,
-   make sure you also update the LAPACK_TARBALL variable in
-   spkg-install.
- * If you update atlas to a new version make sure that the
-   ATLAS_OSTYPE, ATLAS_MACHTYPE, and ATLAS_ISAEXT variables in
-   spkg-install remain in sync with atlas' CONFIG/include/atlconf.h
- * The package is never installed on Cygwin or OS X, unless you set
-   SAGE_ATLAS_ARCH.
+ * patches/glibc_scanf_workaround.patch: Workaround for the scanf bug
+   in glibc-2.18 that breaks the atlas auto-tuning system.
 
-We are using a dummy autotools/libtools project (see
-src/ATLAS-lib) to repack the static ATLAS libraries into shared
-libraries.
-
+=== Configuration ===
 The package can be configured via three environment variables:
 
  * SAGE_ATLAS_LIB=path
@@ -69,8 +66,8 @@ The package can be configured via three environment variables:
      IBMz10, IBMz196, x86x87, x86SSE1, x86SSE2, x86SSE3, P5, P5MMX,
      PPRO, PII, PIII, PM, CoreSolo, CoreDuo, Core2Solo, Core2, Corei1,
      Corei2, Atom, P4, P4E, Efficeon, K7, HAMMER, AMD64K10h, AMDDOZER,
-     UNKNOWNx86, IA64Itan, IA64Itan2, USI, USII, USIII, USIV, UST2,
-     UnknownUS, MIPSR1xK, MIPSICE9, ARMv7
+     UNKNOWNx86, IA64Itan, IA64Itan2, USI, USII, USIII, USIV, UST1, UST2,
+     UnknownUS, MIPSR1xK, MIPSICE9, ARMv6, ARMv7
 
    and instruction set extensions are
 
@@ -93,310 +90,3 @@ The package can be configured via three environment variables:
  * If SAGE_ATLAS_SAVE_ARCHDEF = <path> is given, then a new archdef
    file is created and saved to the given path.
 
-== ChangeLog ==
-
-=== atlas-3.10.1.p7, lapack-3.4.2 (Jean-Pierre Flori, 25 November 2013) ===
- * Trac #14410: Let ATLAS build and install shared libraries on Cygwin.
- * Bunch of modifications to the autotools project generating shared libraries
-   so that it does not invoke libtool on Cygwin.
- * Fix a bug in spkg-install.
- * Cleanup spkg-check.
-
-=== atlas-3.10.1.p6, lapack-3.4.2 (Volker Braun, 11 October 2013) ===
- * Trac #15270: Do not give up if the upstream shared library build
-   fails
- * Solaris / ZFS fixes
-
-=== atlas-3.10.1.p5, lapack-3.4.2 (Volker Braun, 30 August 2013) ===
- * Trac #15045: Another workaround for shared library bug that does
-   not involve static libraries
-
-=== atlas-3.10.1.p4, lapack-3.4.2 (Volker Braun, 14 August 2013) ===
- * Trac #15045: Workaround for shared library bug,
-   non-deterministically affecting some old platforms
-
-=== atlas-3.10.1.p3, lapack-3.4.2 (Volker Braun, 6 July 2013) ===
- * Trac #14781: move untracked files to src/ in preparation for git
- * Added spkg-src to populate the src/ directory
- * Remove the archdef_dir variable, we already copy our own archdefs into src/
- * Trac #14754: Match other isa_ext level to existing archdefs too, if possible.
-
-=== atlas-3.10.1.p2, lapack-3.4.2 (Jeroen Demeyer, 18 June 2013) ===
- * Trac #14754: Do not use 3DNow in configure_base().
- * Use "None" instead of the empty tuple for isa_ext.
- * Use $FC instead of sage_fortran in configuration.py.
- * Apply patches at -p1 level like all other packages.
-
-=== atlas-3.10.1.p1, lapack-3.4.2 (Volker Braun, Jean-Pierre Flori, 7 June 2013) ===
- * Trac #14699: Install ATLAS header files
-
-=== atlas-3.10.1.p0, lapack-3.4.2 (Jean-Pierre Flori, 26 February 2013) ===
- * Trac #10508: Update ATLAS to version 3.10.1 and LAPACK to version 3.4.2.
- * Removed patches integrated upstream.
- * Add shell.patch to correctly build LAPACK on Solaris.
- * Replace os.system() by subprocess.call()
-
-=== atlas-3.10.0.p1, lapack-3.4.1 (Volker Braun, September 20 2012) ===
- * Trac #10508: Fix for long file names.
- * Disable tuning on Itanium, go straight to "fast".
-
-=== atlas-3.10.0.p0, lapack-3.4.1 (Jeroen Demeyer, 19 September 2012) ===
- * Trac #10508: re-run autotools in patches/ATLAS-lib to fix timestamps.
- * Re-download sources to fix timestamps.
- * Remove backup files (ending with ~).
- * Uncompress lapack tarball, yielding a smaller spkg.
-
-=== atlas-3.10.0, lapack-3.4.1 (Volker Braun, July 11 2012) ===
- * Stable release
- * Now OSX and Cygwin will attempt to build if SAGE_ATLAS_ARCH is set.
-
-=== atlas-3.9.85, lapack-3.4.1 (Volker Braun, July 9 2012) ===
- * Should be identical to the next stable release
-
-=== atlas-3.9.84, lapack-3.4.1 (Volker Braun, July 8 2012) ===
- * Update to the newest upstream version
- * flush before os.system()
- * completely new shared library build system
-
-=== atlas-3.9.80, lapack-3.4.1 (Volker Braun, June 23rd 2012) ===
- * Update to the newest upstream version
- * remove obsoleted patches
-
-=== atlas-3.9.68, lapack-3.4.0 (Volker Braun, Jeroen Demeyer, March 6th 2012) ===
- * In src/CONFIG/src/Makefile, change "rm -f" to "rm -rf" in
-   the "clean" rule to support Xcode creating directories like
-   xspew.dSYM.
- * update to latest upstream version
- * Make atlas respect CC environment variable.
- * Cygwin library name fix.
-
-=== atlas-3.9.32, lapack-3.3.0 (Volker Braun, December 5th 2010) ===
- * Introduce the SAGE_ATLAS_ARCH environment variable.
- * Update to the developer release atlas-3.9.32 according to advice of
-   Clint Whaley (ATLAS developer).
- * Now includes LAPACK source tarball.
-
-=== atlas-3.8.4.p1 (Jeroen Demeyer, 15 January 2012) ===
- * Trac #12312: Completely disable parallel make everywhere
-
-=== atlas-3.8.4 (Volker Braun, 15 June 2011) ===
- * Trac #10226: Rewrite spkg-install in Python
- * Updated to new upstream stable version.
- * Removed SpewMakeInc.c.patch as it is included in new upstream
-   version.
- * Rediffed other patches.
- * Cygwin library name fix.
-
-=== atlas-3.8.3.p18 (Mariah Lenox, 11 May 2011) ===
- * Make atlas respect CC environment variable.
-
-=== atlas-3.8.3.p17 (Volker Braun, November 5th 2010) ===
- * Rewrite the spkg-install script in pure python. Introduce the
-   SAGE_ATLAS_ARCH environment variable.
-
-=== atlas-3.8.3.p16 (John Palmieri, September 19th 2010) ===
- * Make spkg-check work when using SAGE_ATLAS_LIB: if SAGE_ATLAS_LIB
-   is set, skip the self-tests.
-
-=== atlas-3.8.3.p15 (David Kirkby, September 6th 2010) ===
- * Make SAGE_ATLAS_LIB use static libraries on all platforms,
-   as building two shared libraries often fails on Linux, and
-   messes things up on Solaris. The static library is less hassle
-   all around. Worth noting is that the ATLAS package only builds
-   the static library and Wolfram Research only ship the static
-   library with Mathematica, despite they usually use shared
-   libraries. To ensure full compatibility with a fresh build
-   of ATLAS, the symbolic links are created for the shared libraries too.
-   The links will fail to be created if the shared libraries do not exist,
-   but will not cause any extra problems.
- * Update the list of dependencies to include Python and Lapack (see
-   spkg/deps)
- * Note that the ATLAS build process could be made much quicker if its
-   depenancy on Python was removed. Since the amount of Python code is
-   very small compared to the bash code, this seems logical to do at
-   a later date. The Fortran package would need the same change - but again
-   the amount of Python in that is trivial.
- * Add a note that make-correct-shared.sh is badly named, as it often fails.
- * Remove the OS X specific code from make-correct-shared.sh, as ATLAS is
-   never installed on OS X - see the spkg-install-script.
-
-=== atlas-3.8.3.p14 (David Kirkby, August 10th 2010) ===
- * #9508 Fix multiple ATLAS build issues on Solaris 10 and OpenSolaris.
- * Remove an inaccurate comment from spkg-install-script
-   about the number of shred libraries built.
- * Build shared libraries libatlas.so libf77blas.so libcblas.so
-   on Solaris properly using the Sun linker. The library
-   liblapack.so is NOT built as it causes problems with R.
- * Delete liblapack.so in make_correct_shared.sh on Solaris just
-   in case it is built by ATLAS, which does build some
-   libraries. (This is probably an unnecessary step, but
-   it's better to be safe than sorry).
- * Correct linker options on 32-bit Solaris 10 or 32-bit
-   OpenSolaris builds on x86. These may not be optimal, but at
-   least they allow ATLAS to build.
- * Make SPKG.txt have lines with less than 80 characters
- * Fix a couple of spelling errors.
- * Report whether the tests pass or fail in spkg-check.
- * Report whether the timing data is collected correctly in spkg-check
-
-=== atlas-3.8.3.p13 (John Palmieri, June 27th, 2010) ===
- * #9356. Fix system_alias.py so that it works properly with Solaris:
-   when we build ATLAS on Solaris, we do not install liblapack.so --
-   see make_correct_shared.sh.  So we shouldn't test for its
-   existence when using SAGE_ATLAS_LIB, either.
-
-=== atlas-3.8.3.p12 (Jaap Spies, Februari 22th 2010) ===
- * #8039 For use with the Sun ld with SAGE64="yes" change ldflag
-   -melf_86_64 to -64
- * See also the remarks from David Kirkby on atlas-3.8.3.p5
-
-=== atlas-3.8.3.p11 (Peter Jeremy, 2010-01-25)===
- * #7827: Fix atlas-3.8.3.p9 compilation on FreeBSD
- * Minh Van Nguyen: patch spkg-install-script to copy
-   patches/SpewMakeInc.c over to src/CONFIG/src/SpewMakeInc.c
-
-=== atlas-3.8.3.p10 (David Kirkby, January 5th 2010) ===
- * replace bitwidth.py which uses 'ctypes' at that is broken
-   on many platforms.
-
-=== atlas-3.8.3.p7 (William Stein, Sept 21 2009) ===
- * Make this into a dummy package on Cygwin that requires lapack.
-
-=== atlas-3.8.3.p6 (David Kirkby, July 19th 2009) ===
- * Trac #6558
-   This is an enhancement to trac #6276, which applies a Solaris patch
-   to only those based on the sun4v architecture, rather than all Solaris
-   machines.
- * Finished off an unfinished sentance in a comment in spkg-install
-
-=== atlas-3.8.3.p5 (David Kirkby, June 24th 2009) ===
- * Made a backup of ATLAS-build/lib/Makefile to ATLAS-build/lib/Makefile.orig
- * Alter the flags in ATLAS-build/lib/Makefile with those that will work if
-   the linker used is the Sun linker. The default Makefile makes use of the
-   GNU linker's flags, such as "-shared" which is not acceptable to the Sun
-   linker.
-
-   The patch is only applied if the operating system is Solaris, and the
-   linker is not the GNU linker. The flags charged are:
-   -shared ==> -G
-   -soname ==> -h
-   --whole-archive ==>  -z allextract
-   --no-whole-archive ==> -z defaultextract
-
-    NOTES:
-    1) Sun have a tool which accepts gcc flags, but calls the Sun compiler.
-    This patch might mess things up if that is used. Having never used the tool
-    it's impossible to be 100% sure of this. Anyway, that will be some time in
-    the future, so this patch can be removed.
-
-    2) The fact the linker flags are GNU specific has been reported to the ATLAS
-    maintainer, so they may fix this problem. In which case the patch could be
-    removed at a later date.
-  * Fixed a minor spelling mistake in this file
-
-=== atlas-3.8.3.p4 (David Kirkby, June 16th 2009) ===
- * Change GuessSmallNB() in src/tune/blas/gemm/mmsearch.c
-   as suggested by Clint Whaley to return 28
-   on Solaris. This is ONLY A TEMPORARY FIX and once the real problem
-   in the function is sorted out, this fix will need to be removed. But
-   for now it permits ATLAS to build on a Sun T5240 with gcc-4.4.0.
-
-=== atlas-3.8.3.p3 (William Stein, June 2, 2009) ===
- * Fix so SAGE_FAT_BINARY *only* used on x86 boxes.
-
-=== atlas-3.8.3.p2 (William Stein, May 31, 2009) ===
- * Change SAGE_SIMD_MODE --> SAGE_FAT_BINARY
-
-=== atlas-3.8.3.p1 (Michael Abshoff, April 17th, 2009) ===
- * Introduce SAGE_SIMD_MODE. If set to SSE2 only use SSE1 and SSE2
-   instructions (#5219)
- * Detect Atom CPUs as Core2 (#5741)
- * unbreak parallel make on system with "real" sh (#5742)
-
-=== atlas-3.8.3.p0 (William Stein, February 20, 2009) ===
- * implement up to 5 auto-restarts with random timeouts.
-
-=== atlas-3.8.3 (Michael Abshoff, February 20, 2009) ===
- * rebase against latest upstream (#5311)
- * make ATLAS automatically restart build on tolerance error (#1641)
-
-=== atlas-3.8.2.p2 (Michael Abshoff, January 2nd, 2009) ===
- * Actually fix dynamic liblapack.so on Solaris as intended in atlas-3.8.2.p1
- * revert dumb mistake from atlas-3.8.2.p1 make_correct_shared.sh
-
-=== atlas-3.8.2.p1 (Michael Abshoff, January 2nd, 2009) ===
- * Do not create any dynamic liblapack.so on non-Linux since they break
-   numpy and scipy
-
-=== atlas-3.8.2.p0 (Michael Abshoff, January 2nd, 2009) ===
- * copy Make.top into the right directory
-
-=== atlas-3.8.2 (Michael Abshoff, January 1st, 2009) ===
- * update to latest upstream
- * add cleaned up patches to repo
- * clean up SPKG.txt some more
-
-=== atlas-3.8.1.p3 (Michael Abshoff, July 6th, 2008) ===
- * Really apply the ATLAS-3.8.1-ppc-g4-7447-detect-fix.patch
-
-=== atlas-3.8.1.p2 (Michael Abshoff, June 26th, 2008) ===
- * Complex GEMM sometimes accesses C when BETA=0 (#3290)
- * Bad GEMM call causes performance drop for all architectures (#3380)
-
-=== atlas-3.8.1.p1 (Michael Abshoff, March 21st, 2008) ===
- * add Pentium D 64 bit tuning info (#2986)
-
-=== atlas-3.8.1.p0 (Michael Abshoff, March 19th, 2008) ===
- * update patch description
- * Fix Itanium2 detection and work around "-m64" issue on RHEL 64 bit
-
-=== atlas-3.8 (Michael Abshoff, March 19th, 2008) ===
- * update to 3.8.1 release
- * add tuning info for G4 on Linux
- * add tuning and detection for Pentium D process (together with Burcin Erocal)
- * clean up SPKG.txt
-
-=== atlas-3.8.p11 (Michael Abshoff, Feb. 2nd, 2008) ===
- * add pre-tuned information for Pentium M, Athlon MP
-
-=== atlas-3.8.p10 (Michael Abshoff, Jan. 26th, 2008) ===
- * exit spkg-check on Darwin (fixes #1934)
-
-=== atlas-3.8.p9 (Michael Abshoff, Jan. 22nd, 2008) ===
- * fix SAGE_ATLAS_LIB to point to the root of the ATLAS directory
- * also link the headers which is the prime motivation for the change above
- * Apply row-major GEMM major ATLAS errata (#1787)
-
-=== atlas-3.8.p8 (Josh Kantor, Jan. 19th, 2008) ===
- * Added optional environment variable SAGE_ATLAS_LIB. This should be a
-   directory that contains liblapack.so,libcblas.so, libf77blas.so,
-   libatlas.so. Instead of building atlas we make symbolic links to these
-   libraries in $SAGE_LOCAL/lib
-
-=== atlas-3.8.p6 (Josh Kantor, Dec. 15th, 2007) ===
- * check if ATLAS bailed out due to unprecise timings. This happens if the
-   system is too loaded.
-
-=== atlas-3.8.p5 (Josh Kantor, Dec. 14th, 2007) ===
- * introduce workaround for 32 bit userspace build on 64 bit CPUs - see #1497
-
-=== atlas-3.8.p4 (Michael Abshoff, Dec. 13th, 2007) ===
- * disable parallel make
-
-=== atlas-3.8.p3 (Josh Kantor, Dec. 11th, 2007) ===
- * disable build on OSX for now
-
-=== atlas-3.8 (Josh Kantor, Nov. 28th, 2007) ===
- * updated to version 3.8
- * applied patch so that shared libraries are copied
- * fortran wrapper uses sage_fortran
- * ATLAS produces borked lapack.so which has missing symbols
- * liblapack.so is around 100k while liblapack.a is 8 mb
- * manually create a full liblapack.so
-
-=== atlas-3.7.38 (Michael Abshoff, Oct. 6th, 2007) ===
- * update to 3.7.38
-
-=== atlas-3.7.37 (Michael Abshoff, Aug. 15th, 2007) ===
- * new upstream release (3.7.37), initial release
- * {{{make check}}} added in spkg-check

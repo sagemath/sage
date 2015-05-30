@@ -3,32 +3,34 @@ Algebras With Basis
 """
 #*****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
-#                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.all import ModulesWithBasis, Algebras
+from sage.misc.lazy_import import LazyImport
 from sage.categories.tensor import TensorProductsCategory, tensor
 from sage.categories.cartesian_product import CartesianProductsCategory
-from category_types import Category_over_base_ring
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from unital_algebras import UnitalAlgebras
 
-class AlgebrasWithBasis(Category_over_base_ring):
+class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of algebras with a distinguished basis
+    The category of algebras with a distinguished basis.
 
     EXAMPLES::
 
         sage: C = AlgebrasWithBasis(QQ); C
         Category of algebras with basis over Rational Field
-        sage: C.super_categories()
-        [Category of modules with basis over Rational Field, Category of algebras over Rational Field]
+        sage: sorted(C.super_categories(), key=str)
+        [Category of algebras over Rational Field,
+         Category of unital algebras with basis over Rational Field]
 
-    We construct a typical parent in this category, and do some computations with it::
+    We construct a typical parent in this category, and do some
+    computations with it::
 
         sage: A = C.example(); A
         An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
@@ -44,7 +46,7 @@ class AlgebrasWithBasis(Category_over_base_ring):
         sage: A.base_ring()
         Rational Field
         sage: A.basis().keys()
-        Words over {'a', 'b', 'c'}
+        Finite Words over {'a', 'b', 'c'}
 
         sage: (a,b,c) = A.algebra_generators()
         sage: a^3, b^2
@@ -53,7 +55,8 @@ class AlgebrasWithBasis(Category_over_base_ring):
         B[word: acb]
 
         sage: A.product
-        <bound method FreeAlgebra_with_category._product_from_product_on_basis_multiply of An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field>
+        <bound method FreeAlgebra_with_category._product_from_product_on_basis_multiply of
+         An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field>
         sage: A.product(a*b,b)
         B[word: abb]
 
@@ -96,20 +99,11 @@ class AlgebrasWithBasis(Category_over_base_ring):
         sage: TestSuite(AlgebrasWithBasis(QQ)).run()
     """
 
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: AlgebrasWithBasis(QQ).super_categories()
-            [Category of modules with basis over Rational Field, Category of algebras over Rational Field]
-        """
-        R = self.base_ring()
-        return [ModulesWithBasis(R), Algebras(R)]
-
     def example(self, alphabet = ('a','b','c')):
         """
-        Returns an example of algebra with basis::
+        Return an example of algebra with basis.
+
+        EXAMPLES::
 
             sage: AlgebrasWithBasis(QQ).example()
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
@@ -122,191 +116,13 @@ class AlgebrasWithBasis(Category_over_base_ring):
         from sage.categories.examples.algebras_with_basis import Example
         return Example(self.base_ring(), alphabet)
 
+    FiniteDimensional = LazyImport('sage.categories.finite_dimensional_algebras_with_basis', 'FiniteDimensionalAlgebrasWithBasis')
+    Graded = LazyImport('sage.categories.graded_algebras_with_basis', 'GradedAlgebrasWithBasis')
+
     class ParentMethods:
 
-        @abstract_method(optional = True)
-        def one_basis(self):
-            """
-            When the one of an algebra with basis is an element of
-            this basis, this optional method can return the index of
-            this element. This is used to provide a default
-            implementation of :meth:`.one`, and an optimized default
-            implementation of :meth:`.from_base_ring`.
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: A.one_basis()
-                word:
-                sage: A.one()
-                B[word: ]
-                sage: A.from_base_ring(4)
-                4*B[word: ]
-            """
-
-        @cached_method
-        def one_from_one_basis(self):
-            """
-            Returns the one of the algebra, as per
-            :meth:`Monoids.ParentMethods.one()
-            <sage.categories.monoids.Monoids.ParentMethods.one>`
-
-            By default, this is implemented from
-            :meth:`.one_basis`, if available.
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: A.one_basis()
-                word:
-                sage: A.one_from_one_basis()
-                B[word: ]
-                sage: A.one()
-                B[word: ]
-
-            TESTS:
-
-            Try to check that #5843 Heisenbug is fixed::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: B = AlgebrasWithBasis(QQ).example(('a', 'c'))
-                sage: A == B
-                False
-                sage: Aone = A.one_from_one_basis
-                sage: Bone = B.one_from_one_basis
-                sage: Aone is Bone
-                False
-
-           Even if called in the wrong order, they should returns their
-           respective one::
-
-                sage: Bone().parent() is B
-                True
-                sage: Aone().parent() is A
-                True
-            """
-            return self.monomial(self.one_basis()) #.
-
-        @lazy_attribute
-        def one(self):
-            r"""
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: A.one_basis()
-                word:
-                sage: A.one()
-                B[word: ]
-            """
-            if self.one_basis is not NotImplemented:
-                return self.one_from_one_basis
-            else:
-                return NotImplemented
-
-        @lazy_attribute
-        def from_base_ring(self):
-            """
-            TESTS::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: A.from_base_ring(3)
-                3*B[word: ]
-            """
-            if self.one_basis is not NotImplemented:
-                return self.from_base_ring_from_one_basis
-            else:
-                return NotImplemented
-
-        def from_base_ring_from_one_basis(self, r):
-            """
-            INPUTS:
-
-             - `r`: an element of the coefficient ring
-
-            Implements the canonical embeding from the ground ring.
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: A.from_base_ring_from_one_basis(3)
-                3*B[word: ]
-                sage: A.from_base_ring(3)
-                3*B[word: ]
-                sage: A(3)
-                3*B[word: ]
-
-            """
-            return self.term(self.one_basis(), r) #.
-
-        @abstract_method(optional = True)
-        def product_on_basis(self, i, j):
-            """
-            The product of the algebra on the basis (optional)
-
-            INPUT:
-
-             - ``i``, ``j`` -- the indices of two elements of the basis of self
-
-            Returns the product of the two corresponding basis elements
-
-            If implemented, :meth:`product` is defined from it by bilinearity.
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: Word = A.basis().keys()
-                sage: A.product_on_basis(Word("abc"),Word("cba"))
-                B[word: abccba]
-            """
-
-        @lazy_attribute
-        def product(self):
-            """
-            The product of the algebra, as per
-            :meth:`Magmas.ParentMethods.product()
-            <sage.categories.magmas.Magmas.ParentMethods.product>`
-
-            By default, this is implemented using one of the following methods,
-            in the specified order:
-
-            - :meth:`.product_on_basis`
-            - :meth:`._multiply` or :meth:`._multiply_basis`
-            - :meth:`.product_by_coercion`
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example()
-                sage: a, b, c = A.algebra_generators()
-                sage: A.product(a + 2*b, 3*c)
-                3*B[word: ac] + 6*B[word: bc]
-            """
-            if self.product_on_basis is not NotImplemented:
-                return self._product_from_product_on_basis_multiply
-#                return self._module_morphism(self._module_morphism(self.product_on_basis, position = 0, codomain=self),
-#                                                                                          position = 1)
-            elif hasattr(self, "_multiply") or hasattr(self, "_multiply_basis"):
-                return self._product_from_combinatorial_algebra_multiply
-            elif hasattr(self, "product_by_coercion"):
-                return self.product_by_coercion
-            else:
-                return NotImplemented
-
-        # Provides a product using the product_on_basis by calling linear_combination only once
-        def _product_from_product_on_basis_multiply( self, left, right ):
-            r"""
-            Computes the product of two elements by extending
-            bilinearly the method :meth:`product_on_basis`.
-
-            EXAMPLES::
-
-                sage: A = AlgebrasWithBasis(QQ).example(); A
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                sage: (a,b,c) = A.algebra_generators()
-                sage: A._product_from_product_on_basis_multiply(a*b + 2*c, a - b)
-                B[word: aba] - B[word: abb] + 2*B[word: ca] - 2*B[word: cb]
-
-            """
-            return self.linear_combination( ( self.product_on_basis( mon_left, mon_right ), coeff_left * coeff_right ) for ( mon_left, coeff_left ) in left.monomial_coefficients().iteritems() for ( mon_right, coeff_right ) in right.monomial_coefficients().iteritems() )
+        # For backward compatibility
+        one = UnitalAlgebras.WithBasis.ParentMethods.one
 
         # Backward compatibility temporary cruft to help migrating form CombinatorialAlgebra
         def _product_from_combinatorial_algebra_multiply(self,left,right):
@@ -410,7 +226,7 @@ class AlgebrasWithBasis(Category_over_base_ring):
             if len(mcs) == 1 and one in mcs:
                 return self.parent()( ~mcs[ one ] )
             else:
-                raise ValueError, "cannot invert self (= %s)"%self
+                raise ValueError("cannot invert self (= %s)"%self)
 
 
     class CartesianProducts(CartesianProductsCategory):
@@ -432,19 +248,20 @@ class AlgebrasWithBasis(Category_over_base_ring):
                 sage: AlgebrasWithBasis(QQ).CartesianProducts().extra_super_categories()
                 [Category of algebras with basis over Rational Field]
                 sage: AlgebrasWithBasis(QQ).CartesianProducts().super_categories()
-                [Category of algebras with basis over Rational Field, Category of Cartesian products of algebras over Rational Field, Category of Cartesian products of modules with basis over Rational Field]
-
+                [Category of algebras with basis over Rational Field,
+                 Category of Cartesian products of algebras over Rational Field,
+                 Category of Cartesian products of vector spaces with basis over Rational Field]
             """
             return [self.base_category()]
 
         class ParentMethods:
-            @cached_method   # todo: reinstate once #5843 is fixed
+            @cached_method
             def one_from_cartesian_product_of_one_basis(self):
                 """
                 Returns the one of this cartesian product of algebras, as per ``Monoids.ParentMethods.one``
 
                 It is constructed as the cartesian product of the ones of the
-                summands, using their :meth:`.one_basis` methods.
+                summands, using their :meth:`~AlgebrasWithBasis.ParentMethods.one_basis` methods.
 
                 This implementation does not require multiplication by
                 scalars nor calling cartesian_product. This might help keeping
@@ -505,7 +322,7 @@ class AlgebrasWithBasis(Category_over_base_ring):
                 sage: AlgebrasWithBasis(QQ).TensorProducts().super_categories()
                 [Category of algebras with basis over Rational Field,
                  Category of tensor products of algebras over Rational Field,
-                 Category of tensor products of modules with basis over Rational Field]
+                 Category of tensor products of vector spaces with basis over Rational Field]
             """
             return [self.base_category()]
 

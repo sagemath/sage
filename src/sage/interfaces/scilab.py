@@ -196,7 +196,8 @@ class Scilab(Expect):
     """
     Interface to the Scilab interpreter.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: a = scilab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional - scilab
         sage: b = scilab('[ 1; 3; 13]')                         # optional - scilab
         sage: c = a * b                                         # optional - scilab
@@ -205,20 +206,21 @@ class Scilab(Expect):
           122.
           505.
     """
-    def __init__(self, maxread=100, script_subdirectory="",
+    def __init__(self, maxread=100, script_subdirectory=None,
                  logfile=None, server=None,server_tmpdir=None):
         """
         Initializes the Scilab class.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.interfaces.scilab import Scilab
-            sage: sci_obj = Scilab(script_subdirectory='user')  # optional - scilab
-            sage: del sci_obj                                   # optional - scilab
+            sage: sci_obj = Scilab()
+            sage: del sci_obj
         """
         Expect.__init__(self,
                         name = 'scilab',
                         prompt = '-->',
-                        command = "scilab -nogui",
+                        command = "scilab -nw",
                         maxread = maxread,
                         server = server,
                         server_tmpdir = server_tmpdir,
@@ -232,7 +234,8 @@ class Scilab(Expect):
         """
         Returns the string used to quit the pexpect interface.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab._quit_string()                 # optional - scilab
             'quit;'
         """
@@ -242,7 +245,8 @@ class Scilab(Expect):
         """
         Hints for installing Scilab.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: print scilab._install_hints()               # optional - scilab
             You must ...
         """
@@ -257,7 +261,8 @@ class Scilab(Expect):
         """
         Starts Scilab and sets some options.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab._start()                       # optional - scilab
         """
         Expect._start(self)
@@ -267,7 +272,8 @@ class Scilab(Expect):
         """
         Evaluates commands.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.eval("5")                      # optional - scilab
             'ans  =\n \n    5.'
             sage: scilab.eval("d=44")                   # optional - scilab
@@ -283,7 +289,8 @@ class Scilab(Expect):
         nam: first characters of selected names
         typ: name of selected Scilab variable type
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.whos("core")                   # optional - scilab
             'Name                     Type           Size           Bytes...'
             sage: scilab.whos(typ='function')           # optional - scilab
@@ -300,7 +307,8 @@ class Scilab(Expect):
         """
         Set the variable var to the given value.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.set('a', 123)        # optional - scilab
             sage: scilab.get('a')               # optional - scilab
             '\n \n    123.'
@@ -308,13 +316,14 @@ class Scilab(Expect):
         cmd = '%s=%s;'%(var,value)
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError, "Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
         """
         Get the value of the variable var.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.eval('b=124;')                 # optional - scilab
             ''
             sage: scilab.get('b')                       # optional - scilab
@@ -328,7 +337,8 @@ class Scilab(Expect):
         """
         Starts Scilab console.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.console()          # optional - scilab; not tested
 
         """
@@ -338,7 +348,8 @@ class Scilab(Expect):
         """
         Returns the version of the Scilab software used.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.version()                      # optional - scilab
             'scilab-...'
         """
@@ -354,7 +365,8 @@ class Scilab(Expect):
         OUTPUT:
             A string that evaluates to an Scilab matrix.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: M33 = MatrixSpace(QQ,3,3)             # optional - scilab
             sage: A = M33([1,2,3,4,5,6,7,8,0])          # optional - scilab
             sage: scilab.sage2scilab_matrix_string(A)   # optional - scilab
@@ -367,7 +379,8 @@ class Scilab(Expect):
         """
         Returns the class of the object.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab._object_class()                # optional - scilab
             <class 'sage.interfaces.scilab.ScilabElement'>
             sage: type(scilab(2))                       # optional - scilab
@@ -381,7 +394,8 @@ class ScilabElement(ExpectElement):
         """
         Use parenthesis for Scilab matrices instead.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: M = scilab('[1,2,3;4,5,6;7,8,9]')     # optional - scilab
             sage: M[1]                                  # optional - scilab
             1.
@@ -400,7 +414,8 @@ class ScilabElement(ExpectElement):
         """
         Sets an element of a matrix.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: M = scilab('[1,2,3;4,5,6;7,8,9]')     # optional - scilab
             sage: M[6] = 0                              # optional - scilab
             sage: M                                     # optional - scilab
@@ -423,7 +438,8 @@ class ScilabElement(ExpectElement):
         r"""
         Return \sage matrix from this scilab element.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: A = scilab('[1,2;3,4]')       # optional - scilab
             sage: matrix(ZZ, A)                 # optional - scilab
             [1 2]
@@ -449,7 +465,8 @@ class ScilabElement(ExpectElement):
         """
         Set the variable var to the given value.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: scilab.set('c', 125)          # optional - scilab
             sage: scilab.get('c')               # optional - scilab
             '\n \n    125.'
@@ -459,7 +476,7 @@ class ScilabElement(ExpectElement):
         P.eval('%s(%s,%s) = %s'%(self.name(), i, j, z.name()))
 
 # An instance
-scilab = Scilab(script_subdirectory='user')
+scilab = Scilab()
 
 
 
@@ -469,7 +486,8 @@ def scilab_console():
     This requires that the optional Scilab program be installed and in
     your PATH, but no optional Sage packages need to be installed.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.scilab import scilab_console # optional - scilab
         sage: scilab_console()                               # optional - scilab; not tested
                 ___________________________________________
@@ -495,14 +513,15 @@ def scilab_console():
     Scilab, like Sage, remembers its history from one session to
     another.
     """
-    os.system('scilab -nogui')
+    os.system('scilab -nw')
 
 
 def scilab_version():
     """
     Return the version of Scilab installed.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.interfaces.scilab import scilab_version # optional - scilab
         sage: scilab_version()    # optional - scilab
         'scilab-...'

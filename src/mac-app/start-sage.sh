@@ -8,7 +8,7 @@
 
 # Ensure we have enough arguments
 if [ $# -lt 2 ]; then
-    echo "usage: $0 SAGE_EXECUTABLE LOG"
+    echo "usage: $0 SAGE_EXECUTABLE LOG [ARGS_FOR_NOTEBOOK]"
     exit 1;
 fi
 
@@ -50,10 +50,18 @@ echo Checking install location >> "$SAGE_LOG"
 ./local/bin/sage-location >> "$SAGE_LOG" 2>> "$SAGE_LOG" || exit 1
 
 echo Checking existence of notebook directory >> "$SAGE_LOG"
-if [ -d $DOT_SAGE/sage_notebook.sagenb ]; then
+if [ -e $DOT_SAGE/sage_notebook.sagenb/users.pickle ]; then
     echo Starting Notebook >> "$SAGE_LOG"
-    ./sage --notebook >> "$SAGE_LOG" 2>> "$SAGE_LOG"
+    # $3 is not quoted because it comes as one argument from the app,
+    # so we need the shell to parse it here.
+    ./sage --notebook $3 >> "$SAGE_LOG" 2>> "$SAGE_LOG"
 else
+    false
+fi
+
+# If it failed to start or it hasn't been run before, hope that we can
+# fix it by running in a terminal to allow typing in a password.
+if [ $? != 0 ]; then
     # if Terminal.app is not running before it is activated by
     # osascript, then it inherits the environment from osascript.
     # This includes SAGE_ENV_SOURCED which causes problems because
@@ -67,5 +75,7 @@ else
         -e '    activate' \
         -e "    do script \"'$SAGE_ROOT'/sage --notebook\"" \
         -e 'end'
+    # We don't include $3 here since this should only happen the first time
+    # they run it, and this way we don't have to worry about quoting it.
 fi
-exit 0
+exit $?

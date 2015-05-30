@@ -29,10 +29,10 @@ instructions. Say you want to implement addition and multiplication
 over the integers. A procedural program to do so would be as follows::
 
     sage: def add_ZZ(a, b):
-    ...       return a + b
+    ....:     return a + b
     ...
     sage: def mult_ZZ(a, b):
-    ...       return a * b
+    ....:     return a * b
     ...
     sage: add_ZZ(2, 3)
     5
@@ -60,12 +60,12 @@ and functionalities. You could encapsulate integer addition and
 multiplication as in the following object-oriented implementation::
 
     sage: class MyInteger:
-    ...       def __init__(self):
-    ...           self.cardinality = "infinite"
-    ...       def add(self, a, b):
-    ...           return a + b
-    ...       def mult(self, a, b):
-    ...           return a * b
+    ....:     def __init__(self):
+    ....:         self.cardinality = "infinite"
+    ....:     def add(self, a, b):
+    ....:         return a + b
+    ....:     def mult(self, a, b):
+    ....:         return a * b
     ...
     sage: myZZ = MyInteger()
     sage: myZZ.cardinality
@@ -145,11 +145,11 @@ You could use list comprehension together with ``map`` and
 integers and ``M`` is a list of moduli. ::
 
     sage: def crt(A, M):
-    ...       Mprod = prod(M)
-    ...       Mdiv = map(lambda x: Integer(Mprod / x), M)
-    ...       X = map(inverse_mod, Mdiv, M)
-    ...       x = sum([A[i]*X[i]*Mdiv[i] for i in range(len(A))])
-    ...       return mod(x, Mprod).lift()
+    ....:     Mprod = prod(M)
+    ....:     Mdiv = map(lambda x: Integer(Mprod / x), M)
+    ....:     X = map(inverse_mod, Mdiv, M)
+    ....:     x = sum([A[i]*X[i]*Mdiv[i] for i in range(len(A))])
+    ....:     return mod(x, Mprod).lift()
     ...
     sage: A = [2, 3, 1]
     sage: M = [3, 4, 5]
@@ -277,13 +277,13 @@ using ``sum`` as was done previously. The version below uses
 instead of two. ::
 
     sage: def crt(A, M):
-    ...       from operator import add
-    ...       Mprod = prod(M)
-    ...       Mdiv = map(lambda x: Integer(Mprod / x), M)
-    ...       X = map(inverse_mod, Mdiv, M)
-    ...       mul3 = lambda a, b, c: a * b * c
-    ...       x = reduce(add, map(mul3, A, X, Mdiv))
-    ...       return mod(x, Mprod).lift()
+    ....:     from operator import add
+    ....:     Mprod = prod(M)
+    ....:     Mdiv = map(lambda x: Integer(Mprod / x), M)
+    ....:     X = map(inverse_mod, Mdiv, M)
+    ....:     mul3 = lambda a, b, c: a * b * c
+    ....:     x = reduce(add, map(mul3, A, X, Mdiv))
+    ....:     return mod(x, Mprod).lift()
     ...
     sage: A = [2, 3, 1]
     sage: M = [3, 4, 5]
@@ -330,13 +330,13 @@ integer in the list being relatively prime to the order of the
 multiplicative group `(\ZZ/p\ZZ)^{\ast}`. ::
 
     sage: def primroots(p):
-    ...       g = primitive_root(p)
-    ...       znorder = p - 1
-    ...       is_coprime = lambda x: gcd(x, znorder) == 1
-    ...       good_odd_integers = filter(is_coprime, [1..p-1, step=2])
-    ...       all_primroots = [power_mod(g, k, p) for k in good_odd_integers]
-    ...       all_primroots.sort()
-    ...       return all_primroots
+    ....:     g = primitive_root(p)
+    ....:     znorder = p - 1
+    ....:     is_coprime = lambda x: gcd(x, znorder) == 1
+    ....:     good_odd_integers = filter(is_coprime, [1..p-1, step=2])
+    ....:     all_primroots = [power_mod(g, k, p) for k in good_odd_integers]
+    ....:     all_primroots.sort()
+    ....:     return all_primroots
     ...
     sage: primroots(3)
     [2]
@@ -394,9 +394,9 @@ by A. M. Kuchling. Steven F. Lott's book
 has a chapter on
 `Functional Programming using Collections <http://homepage.mac.com/s_lott/books/python/html/p02/p02c10_adv_seq.html>`_.
 See also the chapter
-`Functional Programming <http://www.diveintopython.org/functional_programming/index.html>`_
+`Functional Programming <http://www.diveintopython.net/functional_programming/index.html>`_
 from Mark Pilgrim's book
-`Dive Into Python <http://www.diveintopython.org/>`_.
+`Dive Into Python <http://www.diveintopython.net/>`_.
 
 You might also want to consider experimenting with
 `Haskell <http://www.haskell.org>`_

@@ -28,8 +28,9 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.realizations import Category_realization_of_parent
-from sage.categories.modules_with_basis import ModulesWithBasis, ModuleMorphismByLinearity
-from sage.combinat.composition import Composition
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.modules.with_basis.morphism import ModuleMorphismByLinearity
+from sage.combinat.composition import Compositions, Composition
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.rings.integer import Integer
@@ -41,19 +42,22 @@ from sage.categories.realizations import RealizationsCategory
 
 class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
-    def _repr_(self):
+    def _repr_object_names(self):
         r"""
-        String representation of this category
+        Return the name of the objects of this category.
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(ZZ).R()
-            sage: C = R.category().super_categories()[0]
-            sage: C._repr_()
-            'Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Integer Ring'
+            sage: from sage.combinat.ncsf_qsym.generic_basis_code import BasesOfQSymOrNCSF
+            sage: QSym = QuasiSymmetricFunctions(QQ)
+            sage: C = BasesOfQSymOrNCSF(QSym)
+            sage: C._repr_object_names()
+            'bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field'
+            sage: C
+            Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field
 
         """
-        return "Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the %s" % self.base().base_ring()
+        return "bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the %s" % self.base().base_ring()
 
     def super_categories(self):
         r"""
@@ -64,8 +68,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             sage: BasesOfQSymOrNCSF(QSym).super_categories()
             [Category of realizations of Quasisymmetric functions over the Rational Field,
              Category of graded hopf algebras with basis over Rational Field,
-             Join of Category of graded hopf algebras over Rational Field and Category of realizations of hopf algebras over Rational Field]
-
+             Join of Category of realizations of hopf algebras over Rational Field and
+             Category of graded algebras over Rational Field]
         """
         R = self.base().base_ring()
         from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
@@ -114,9 +118,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 assert len(rest) == 0
             else:
                 if len(rest) > 0 or isinstance(c, (int, Integer)):
-                    c = Composition([c] + list(rest))
+                    c = self._indices([c] + list(rest))
                 else:
-                    c = Composition(list(c))
+                    c = self._indices(list(c))
             return self.monomial(c)
 
         # could go to Algebras(...).Graded().Connected() or Modules(...).Graded().Connected()
@@ -137,7 +141,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: parent(L).one_basis()
                 []
             """
-            return Composition([])
+            return Compositions()([])
 
         # Combinatorial rules
 
@@ -294,7 +298,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: elementary.sum_of_partition_rearrangements(Partition([]))
                 L[]
             """
-            return self.sum_of_monomials( Composition(comp) for comp in Permutations(par) )
+            return self.sum_of_monomials( self._indices(comp) for comp in Permutations(par) )
 
         def _comp_to_par(self, comp):
             """
@@ -519,11 +523,20 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 0
                 sage: S.duality_pairing(S[1,1,1,1], F[4])
                 1
+
+            TESTS:
+
+            The result has the right parent even if the sum is empty::
+
+                sage: x = S.duality_pairing(S.zero(), F.zero()); x
+                0
+                sage: parent(x)
+                Rational Field
             """
             if hasattr(self, 'dual'):
                 x = self(x)
                 y = self.dual()(y)
-                return sum(coeff * y[I] for (I, coeff) in x)
+                return self.base_ring().sum(coeff * y[I] for (I, coeff) in x)
             else:
                 return self.duality_pairing_by_coercion(x, y)
 
@@ -541,8 +554,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             OUTPUT:
 
-            - The result of pairing the function ``x`` from ``self`` with the function
-              ``y`` from the dual basis of ``self``
+            - The result of pairing the function ``x`` from ``self`` with
+              the function ``y`` from the dual basis of ``self``
 
             EXAMPLES::
 
@@ -556,11 +569,20 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 1
                 sage: F.duality_pairing_by_coercion(F[1,2], L[1,1,1])
                 1
+
+            TESTS:
+
+            The result has the right parent even if the sum is empty::
+
+                sage: x = F.duality_pairing_by_coercion(F.zero(), L.zero()); x
+                0
+                sage: parent(x)
+                Rational Field
             """
             a_realization = self.realization_of().a_realization()
             x = a_realization(x)
             y = a_realization.dual()(y)
-            return sum(coeff * y[I] for (I, coeff) in x)
+            return self.base_ring().sum(coeff * y[I] for (I, coeff) in x)
 
         def duality_pairing_matrix(self, basis, degree):
             r"""
@@ -574,8 +596,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             OUTPUT:
 
-            - The matrix of scalar products between the basis ``self`` and the basis
-              ``basis`` in the dual Hopf algebra of degree ``degree``.
+            - The matrix of scalar products between the basis ``self``
+              and the basis ``basis`` in the dual Hopf algebra in
+              degree ``degree``.
 
             EXAMPLES:
 
@@ -680,7 +703,105 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             else:
                 return self.base_ring().one()
 
+        def degree_negation(self, element):
+            r"""
+            Return the image of ``element`` under the degree negation
+            automorphism of ``self``.
+
+            The degree negation is the automorphism which scales every
+            homogeneous element of degree `k` by `(-1)^k` (for all `k`).
+
+            INPUT:
+
+            - ``element`` -- element of ``self``
+
+            EXAMPLES::
+
+                sage: NSym = NonCommutativeSymmetricFunctions(ZZ)
+                sage: S = NSym.S()
+                sage: f = 2*S[2,1] + 4*S[1,1] - 5*S[1,2] - 3*S[[]]
+                sage: S.degree_negation(f)
+                -3*S[] + 4*S[1, 1] + 5*S[1, 2] - 2*S[2, 1]
+
+                sage: QSym = QuasiSymmetricFunctions(QQ)
+                sage: dI = QSym.dualImmaculate()
+                sage: f = -3*dI[2,1] + 4*dI[2] + 2*dI[1]
+                sage: dI.degree_negation(f)
+                -2*dI[1] + 4*dI[2] + 3*dI[2, 1]
+
+            TESTS:
+
+            Using :meth:`degree_negation` on an element of a different
+            basis works correctly::
+
+                sage: NSym = NonCommutativeSymmetricFunctions(QQ)
+                sage: S = NSym.S()
+                sage: Phi = NSym.Phi()
+                sage: S.degree_negation(Phi[2])
+                -S[1, 1] + 2*S[2]
+                sage: S.degree_negation(Phi[3])
+                -S[1, 1, 1] + 3/2*S[1, 2] + 3/2*S[2, 1] - 3*S[3]
+                sage: Phi.degree_negation(S[3])
+                -1/6*Phi[1, 1, 1] - 1/4*Phi[1, 2] - 1/4*Phi[2, 1] - 1/3*Phi[3]
+
+            The zero element behaves well::
+
+                sage: a = Phi.degree_negation(S.zero()); a
+                0
+                sage: parent(a)
+                Non-Commutative Symmetric Functions over the Rational Field in the Phi basis
+
+            .. TODO::
+
+                Generalize this to all graded vector spaces?
+            """
+            return self.sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+                                       for lam, a in self(element) ],
+                                     distinct=True)
+
     class ElementMethods:
+
+        def degree_negation(self):
+            r"""
+            Return the image of ``self`` under the degree negation
+            automorphism of the parent of ``self``.
+
+            The degree negation is the automorphism which scales every
+            homogeneous element of degree `k` by `(-1)^k` (for all `k`).
+
+            Calling ``degree_negation(self)`` is equivalent to calling
+            ``self.parent().degree_negation(self)``.
+
+            EXAMPLES::
+
+                sage: NSym = NonCommutativeSymmetricFunctions(ZZ)
+                sage: S = NSym.S()
+                sage: f = 2*S[2,1] + 4*S[1,1] - 5*S[1,2] - 3*S[[]]
+                sage: f.degree_negation()
+                -3*S[] + 4*S[1, 1] + 5*S[1, 2] - 2*S[2, 1]
+
+                sage: QSym = QuasiSymmetricFunctions(QQ)
+                sage: dI = QSym.dualImmaculate()
+                sage: f = -3*dI[2,1] + 4*dI[2] + 2*dI[1]
+                sage: f.degree_negation()
+                -2*dI[1] + 4*dI[2] + 3*dI[2, 1]
+
+            TESTS:
+
+            The zero element behaves well::
+
+                sage: a = S.zero().degree_negation(); a
+                0
+                sage: parent(a)
+                Non-Commutative Symmetric Functions over the Integer Ring in the Complete basis
+
+            .. TODO::
+
+                Generalize this to all graded vector spaces?
+            """
+            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+                                                for lam, a in self ],
+                                              distinct=True)
 
         def duality_pairing(self, y):
             r"""
@@ -874,7 +995,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
             2*Psi[] + 3*Psi[1, 1, 3, 3, 2, 2] + Psi[2, 2, 4, 4]
             sage: f.category()
-            Join of Category of hom sets in Category of modules with basis over Rational Field and Category of hom sets in Category of rings
+            Category of endsets of unital magmas and right modules over Rational Field and left modules over Rational Field
 
         When extra properties about the morphism are known, one
         can specify the category of which it is a morphism::
@@ -886,7 +1007,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
             2*Psi[] - 3*Psi[1, 3, 2] + Psi[2, 4]
             sage: f.category()
-            Join of Category of hom sets in Category of modules with basis over Rational Field and Category of hom sets in Category of rings
+            Category of endsets of hopf algebras over Rational Field and graded modules over Rational Field
 
         If ``anti`` is true, this returns an anti-algebra morphism::
 
@@ -896,8 +1017,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
             2*Psi[] + 3*Psi[2, 2, 3, 3, 1, 1] + Psi[4, 4, 2, 2]
             sage: f.category()
-            Category of hom sets in Category of modules with basis over Rational Field
-
+            Category of endsets of modules with basis over Rational Field
 
         TESTS::
 
@@ -909,11 +1029,8 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(Psi[3, 1, 2])
             -Phi[3, 1, 2]
             sage: f.__class__
-            <class 'sage.combinat.ncsf_qsym.generic_basis_code.AlgebraMorphism'>
-            sage: TestSuite(f).run(skip=['_test_nonzero_equal']) # known issue; see ModuleMorphismByLinearity.__init__
-            Failure in _test_category:
-            ...
-            The following tests failed: _test_category
+            <class 'sage.combinat.ncsf_qsym.generic_basis_code.AlgebraMorphism_with_category'>
+            sage: TestSuite(f).run(skip=['_test_nonzero_equal'])
         """
         assert position == 0
         assert codomain is not None
@@ -1072,11 +1189,73 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
 
             .. MATH::
 
-                \langle f * g, h \rangle = \sum_i \langle f, h^{\prime}_i
-                \rangle \langle g, h^{\prime\prime}_i \rangle,
+                \langle f * g, h \rangle
+                = \sum_i \left\langle f, h^{\prime}_i \right\rangle
+                \left\langle g, h^{\prime\prime}_i \right\rangle,
 
             where we write `\Delta^{\times}(h)` as `\sum_i h^{\prime}_i
-            \otimes h^{\prime\prime}_i`.
+            \otimes h^{\prime\prime}_i`. Here, `f * g` denotes the internal
+            product of the non-commutative symmetric functions `f` and `g`.
+
+            If `f` and `g` are two homogeneous elements of `NSym` having
+            distinct degrees, then the internal product `f * g` is zero.
+
+            Explicit formulas can be given for internal products of
+            elements of the complete and the Psi bases. First, the formula
+            for the Complete basis ([NCSF1]_ Proposition 5.1): If `I` and
+            `J` are two compositions of lengths `p` and `q`, respectively,
+            then the corresponding Complete homogeneous non-commutative
+            symmetric functions `S^I` and `S^J` have internal product
+
+            .. MATH::
+
+                S^I * S^J = \sum S^{\operatorname*{comp}M},
+
+            where the sum ranges over all `p \times q`-matrices
+            `M \in \NN^{p \times q}` (with nonnegative integers as
+            entries) whose row sum vector is `I` (that is, the sum of the
+            entries of the `r`-th row is the `r`-th part of `I` for all
+            `r`) and whose column sum vector is `J` (that is, the sum of
+            all entries of the `s`-th row is the `s`-th part of `J` for
+            all `s`). Here, for any `M \in \NN^{p \times q}`, we denote
+            by `\operatorname*{comp}M` the composition obtained by
+            reading the entries of the matrix `M` in the usual order
+            (row by row, proceeding left to right in each row,
+            traversing the rows from top to bottom).
+
+            The formula on the Psi basis ([NCSF2]_ Lemma 3.10) is more
+            complicated. Let `I` and `J` be two compositions of lengths
+            `p` and `q`, respectively, having the same size `|I| = |J|`.
+            We denote by `\Psi^K` the element of the Psi basis
+            corresponding to any composition `K`.
+
+            - If `p > q`, then `\Psi^I * \Psi^J` is plainly `0`.
+
+            - Assume that `p = q`. Let `\widetilde{\delta}_{I, J}` denote
+              the integer `1` if the compositions `I` and `J` are
+              permutations of each other, and the integer `0` otherwise.
+              For every positive integer `i`, let `m_i` denote the number
+              of parts of `I` equal to `i`. Then, `\Psi^I * \Psi^J` equals
+              `\widetilde{\delta}_{I, J} \prod_{i>0} i^{m_i} m_i! \Psi^I`.
+
+            - Now assume that `p < q`. Write the composition `I` as
+              `I = (i_1, i_2, \ldots, i_p)`. For every nonempty
+              composition `K = (k_1, k_2, \ldots, k_s)`, denote by
+              `\Gamma_K` the non-commutative symmetric function
+              `k_1 [\ldots [[\Psi_{k_1}, \Psi_{k_2}], \Psi_{k_3}],
+              \ldots \Psi_{k_s}]`. For any subset `A` of
+              `\{ 1, 2, \ldots, q \}`, let `J_A` be the composition
+              obtained from `J` by removing the `r`-th parts for all
+              `r \notin A` (while keeping the `r`-th parts for all
+              `r \in A` in order). Then, `\Psi^I * \Psi^J` equals the
+              sum of `\Gamma_{J_{K_1}} \Gamma_{J_{K_2}} \cdots
+              \Gamma_{J_{K_p}}` over all ordered set partitions
+              `(K_1, K_2, \ldots, K_p)` of `\{ 1, 2, \ldots, q \}`
+              into `p` parts such that each `1 \leq k \leq p` satisfies
+              `\left\lvert J_{K_k} \right\rvert = i_k`.
+              (See
+              :meth:`~sage.combinat.set_partition_ordered.OrderedSetPartition`
+              for the meaning of "ordered set partition".)
 
             Aliases for :meth:`internal_product()` are :meth:`itensor()` and
             :meth:`kronecker_product()`.

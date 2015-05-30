@@ -86,15 +86,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
     In particular, this function can be used for strictly convex cones and
     complete fans.
 
-    REFERENCES:
-
-    ..  [KP2002]
-        Volker Kaibel and Marc E. Pfetsch,
-        "Computing the Face Lattice of a Polytope from its Vertex-Facet
-        Incidences", Computational Geometry: Theory and Applications,
-        Volume 23, Issue 3 (November 2002), 281-290.
-        Available at http://portal.acm.org/citation.cfm?id=763203
-        and free of charge at http://arxiv.org/abs/math/0106043
+    REFERENCES: [KP2002]_
 
     AUTHORS:
 
@@ -115,7 +107,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
         sage: L = sage.geometry.cone.Hasse_diagram_from_incidences(
         ...                       atom_to_coatoms, coatom_to_atoms)
         sage: L
-        Finite poset containing 8 elements
+        Finite poset containing 8 elements with distinguished linear extension
         sage: for level in L.level_sets(): print level
         [((), (0, 1, 2))]
         [((0,), (0, 1)), ((1,), (0, 2)), ((2,), (1, 2))]
@@ -207,6 +199,8 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
         atoms, coatoms = face
         elements[labels[index]] = face_constructor(
                         tuple(sorted(atoms)), tuple(sorted(coatoms)), **kwds)
+    D = {i:f for i,f in enumerate(elements)}
+    L.relabel(D)
     return FinitePoset(L, elements, key = key)
 
 

@@ -172,7 +172,8 @@ cdef extern from 'symmetrica/macro.h':
         INT exist
         INT reihenart
         INT z
-        reihe *x, *y
+        reihe *x
+        reihe *y
         reihe *p
         INT (*eingabefkt)()
         char ope
@@ -432,8 +433,8 @@ cdef void late_import():
     import sage.functions.all
     sqrt = sage.functions.all.sqrt
 
-    import sage.misc.misc
-    prod = sage.misc.misc.prod
+    import sage.misc.all
+    prod = sage.misc.all.prod
 
     import sage.rings.polynomial.polynomial_ring_constructor
     PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
@@ -837,7 +838,7 @@ cdef object _op_polynom(object d, OP res):
 
     poly_ring = d.parent()
 
-    if not PY_TYPE_CHECK(poly_ring, MPolynomialRing_generic):
+    if not isinstance(poly_ring, MPolynomialRing_generic):
         raise TypeError, "you must pass a multivariate polynomial"
     base_ring = poly_ring.base_ring()
 

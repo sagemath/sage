@@ -44,22 +44,6 @@ None
 
 === Patches ===
 
- * osx_gcc_flags.patch: Pass -no-cpp-precomp to GCC on OS X.
+ * xopen_source.patch: remove harmful check from aclocal.m4 which may
+   reintroduce XOPEN_SOURCE on systems where it should not be used.
 
- * SPARC_fix.patch: Don't mess with _XOPEN_SOURCE on Solaris.
-
- * xopen_source_extended.patch: Only define _XOPEN_SOURCE_EXTENDED for
-   C compiler.
-
-
-== Changelog ==
-
-=== ncurses-5.9.p2 (Jean-Pierre Flori, 4 November 2013) ===
- * #15268: Let ncurses build on Solaris.
- * Build without ADA support.
-
-=== ncurses-5.9.p1 (Volker Braun, 22 Aug 2013) ===
- * Build narrow and wide versions (#15080)
-
-=== ncurses-5.9 (Volker Braun, 3 April 2013) ===
- * Initial version

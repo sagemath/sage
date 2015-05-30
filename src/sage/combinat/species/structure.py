@@ -99,7 +99,7 @@ class GenericSpeciesStructure(CombinatorialObject, SpeciesStructure):
             sage: t[0] == t[1][0]
             False
         """
-        if type(self) != type(other):
+        if not isinstance(self, type(other)):
             return False
         return self._list == other._list and self.labels() == other.labels()
 

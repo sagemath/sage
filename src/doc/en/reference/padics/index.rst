@@ -26,7 +26,6 @@ p-Adics
    sage/rings/padics/local_generic_element
    sage/rings/padics/padic_generic_element
 
-   sage/rings/padics/padic_base_generic_element
    sage/rings/padics/padic_capped_relative_element
    sage/rings/padics/padic_capped_absolute_element
    sage/rings/padics/padic_fixed_mod_element
@@ -43,5 +42,9 @@ p-Adics
    sage/rings/padics/padic_printing
    sage/rings/padics/precision_error
    sage/rings/padics/misc
+
+   sage/rings/padics/common_conversion
+   sage/rings/padics/discrete_value_group
+   sage/rings/padics/morphism
 
 .. include:: ../footer.txt

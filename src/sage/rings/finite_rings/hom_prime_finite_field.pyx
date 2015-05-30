@@ -1,4 +1,6 @@
 """
+Finite field morphisms for prime fields
+
 Special implementation for prime finite field of:
 
 - embeddings of such field into general finite fields
@@ -39,7 +41,7 @@ from sage.rings.morphism cimport RingHomomorphism_im_gens
 cdef class SectionFiniteFieldHomomorphism_prime(SectionFiniteFieldHomomorphism_generic):
     cpdef Element _call_(self, x):
         try:
-            return self._codomain(x)
+            return self._codomain._element_constructor(x)
         except TypeError:
             raise ValueError("%s is not in the image of %s" % (x, self._inverse))
 
@@ -72,7 +74,7 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
         domain = parent.domain()
         if not is_FiniteField(domain) or not domain.is_prime_field():
             raise TypeError("The domain is not a finite prime field")
-        if section_class == None:
+        if section_class is None:
             section_class = SectionFiniteFieldHomomorphism_prime
         FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check,
                                                  section_class)
@@ -91,7 +93,7 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
             sage: a.parent()
             Finite Field in t of size 3^5
         """
-        return self._codomain(x)
+        return self._codomain._element_constructor(x)
 
 
 cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
@@ -162,4 +164,4 @@ cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
             sage: [ embed(x) == x for x in kfixed ]
             [True, True, True, True, True]
         """
-        return self._domain, self._domain.hom(self._domain)
+        return self.domain(), self.domain().hom(self.domain())

@@ -122,19 +122,19 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         a23+=a12*m
 
         # order 12
-        if ((a1>a2) or ((a1==a2) & (abs(a23)>abs(a13)))):
+        if a1 > a2 or (a1 == a2 and abs(a23) > abs(a13)):
             M*=matrix(ZZ,3,[0,-1,0,-1,0,0,0,0,-1])
             [a1,a2]=[a2,a1]
             [a13,a23]=[a23,a13]
 
         # order 23
-        if ((a2>a3) or ((a2==a3) & (abs(a13)>abs(a12)))):
+        if a2 > a3 or (a2 == a3 and abs(a13) > abs(a12)):
             M*=matrix(ZZ,3,[-1,0,0,0,0,-1,0,-1,0])
             [a2,a3]=[a3,a2]
             [a13,a12]=[a12,a13]
 
         # order 12
-        if ((a1>a2) or ((a1==a2) & (abs(a23)>abs(a13)))):
+        if a1 > a2 or (a1 == a2 and abs(a23) > abs(a13)):
             M*=matrix(ZZ,3,[0,-1,0,-1,0,0,0,0,-1])
             [a1,a2]=[a2,a1]
             [a13,a23]=[a23,a13]
@@ -176,7 +176,7 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
                   M*=diagonal_matrix([1,1,-1])
                   a12=-a12
 
-        loop=(not ((abs(a23)<=a2) & (abs(a13)<=a1) & (abs(a12)<=a1) & (a1+a2+a23+a13+a12>=0)))
+        loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1+a2+a23+a13+a12>=0)
 
 
 ################
@@ -185,14 +185,14 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
 
 
     # adj 3
-    if ((a1+a2+a23+a13+a12==0) & (2*a1+2*a13+a12>0)):
+    if a1+a2+a23+a13+a12 == 0 and 2*a1+2*a13+a12 > 0:
         M*=matrix(ZZ,3,[-1,0,1,0,-1,1,0,0,1])
         # a3 += a1+a2+a23+a13+a12
         a23=-2*a2-a23-a12
         a13=-2*a1-a13-a12
 
     # adj 5.12
-    if ((a1==-a12) & (a13!=0)):
+    if a1 == -a12 and a13 != 0:
         M*=matrix(ZZ,3,[-1,-1,0,0,-1,0,0,0,1])
         #a2 += a1+a12
         a23=-a23-a13
@@ -200,7 +200,7 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         a12=-a12  # = 2*a1+a12
 
     # adj 5.13
-    if ((a1==-a13) & (a12!=0)):
+    if a1 == -a13 and a12 != 0:
         M*=matrix(ZZ,3,[-1,0,-1,0,1,0,0,0,-1])
         # a3 += a1+a13
         a23=-a23-a12
@@ -208,7 +208,7 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         a12=-a12
 
     # adj 5.23
-    if ((a2==-a23) & (a12!=0)):
+    if a2 == -a23 and a12 != 0:
         M*=matrix(ZZ,3,[1,0,0,0,-1,-1,0,0,-1])
         # a3 += a2+a23
         a23=-a23  # = 2*a2+a23
@@ -216,39 +216,39 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         a12=-a12
 
     # adj 4.12
-    if ((a1==a12) & (a13>2*a23)):
+    if a1 == a12 and a13 > 2*a23:
         M*=matrix(ZZ,3,[-1,-1,0,0,1,0,0,0,-1])
         # a 2 += a1-a12
         a23 = -a23 + a13
         # a12 = 2*a1 - a12
 
     # adj 4.13
-    if ((a1==a13) & (a12>2*a23)):
+    if a1 == a13 and a12 > 2*a23:
         M*=matrix(ZZ,3,[-1,0,-1,0,-1,0,0,0,1])
         # a3 += a1-a13
         a23 = -a23 + a12
         # a13 = 2*a1 - a13
 
     # adj 4.23
-    if ((a2==a23) & (a12>2*a13)):
+    if a2 == a23 and a12 > 2*a13:
         M*=matrix(ZZ,3,[-1,0,0,0,-1,-1,0,0,1])
         # a3 += a2-a23
         # a23 = 2*a2 - a23
         a13 = -a13 + a12
 
     # order 12
-    if (a1==a2) & (abs(a23)>abs(a13)):
+    if a1 == a2 and abs(a23) > abs(a13):
         M*=matrix(ZZ,3,[0,-1,0,-1,0,0,0,0,-1])
         [a1,a2]=[a2,a1]
         [a13,a23]=[a23,a13]
 
     # order 23
-    if (a2==a3) & (abs(a13)>abs(a12)):
+    if a2 == a3 and abs(a13) > abs(a12):
         M*=matrix(ZZ,3,[-1,0,0,0,0,-1,0,-1,0])
         [a13,a12]=[a12,a13]
 
     # order 12
-    if (a1==a2) & (abs(a23)>abs(a13)):
+    if a1 == a2 and abs(a23) > abs(a13):
         M*=matrix(ZZ,3,[0,-1,0,-1,0,0,0,0,-1])
         [a13,a23]=[a23,a13]
 
@@ -309,22 +309,22 @@ def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
         a23+=a12*m
 
         # order 12
-        if ((a1>a2) or ((a1==a2) & (abs(a23)>abs(a13)))):
+        if a1 > a2 or (a1 == a2 and abs(a23) > abs(a13)):
             [a1,a2]=[a2,a1]
             [a13,a23]=[a23,a13]
 
         # order 23
-        if ((a2>a3) or ((a2==a3) & (abs(a13)>abs(a12)))):
+        if a2 > a3 or (a2 == a3 and abs(a13) > abs(a12)):
             [a2,a3]=[a3,a2]
             [a13,a12]=[a12,a13]
 
         # order 12
-        if ((a1>a2) or ((a1==a2) & (abs(a23)>abs(a13)))):
+        if a1 > a2 or (a1 == a2 and abs(a23) > abs(a13)):
             [a1,a2]=[a2,a1]
             [a13,a23]=[a23,a13]
 
         # signs
-        if (a23*a13*a12>0):
+        if a23*a13*a12 > 0:
             # a23, a13, a12 positive
 
             if (a23<0):
@@ -354,7 +354,7 @@ def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
             if s3:
                   a12=-a12
 
-        loop=(not ((abs(a23)<=a2) & (abs(a13)<=a1) & (abs(a12)<=a1) & (a1+a2+a23+a13+a12>=0)))
+        loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1+a2+a23+a13+a12 >= 0)
 
 
 ################
@@ -363,61 +363,61 @@ def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
 
 
     # adj 3
-    if ((a1+a2+a23+a13+a12==0) & (2*a1+2*a13+a12>0)):
+    if a1+a2+a23+a13+a12 == 0 and 2*a1+2*a13+a12 > 0:
         # a3 += a1+a2+a23+a13+a12
         a23=-2*a2-a23-a12
         a13=-2*a1-a13-a12
 
     # adj 5.12
-    if ((a1==-a12) & (a13!=0)):
+    if a1 == -a12 and a13 != 0:
         #a2 += a1+a12
         a23=-a23-a13
         a13=-a13
         a12=-a12  # = 2*a1+a12
 
     # adj 5.13
-    if ((a1==-a13) & (a12!=0)):
+    if a1 == -a13 and a12 != 0:
         # a3 += a1+a13
         a23=-a23-a12
         a13=-a13  # = 2*a1+a13
         a12=-a12
 
     # adj 5.23
-    if ((a2==-a23) & (a12!=0)):
+    if a2 == -a23 and a12 != 0:
         # a3 += a2+a23
         a23=-a23  # = 2*a2+a23
         a13=-a13-a12
         a12=-a12
 
     # adj 4.12
-    if ((a1==a12) & (a13>2*a23)):
+    if a1 == a12 and a13 > 2*a23:
         # a 2 += a1-a12
         a23 = -a23 + a13
         # a12 = 2*a1 - a12
 
     # adj 4.13
-    if ((a1==a13) & (a12>2*a23)):
+    if a1 == a13 and a12 > 2*a23:
         # a3 += a1-a13
         a23 = -a23 + a12
         # a13 = 2*a1 - a13
 
     # adj 4.23
-    if ((a2==a23) & (a12>2*a13)):
+    if a2 == a23 and a12 > 2*a13:
         # a3 += a2-a23
         # a23 = 2*a2 - a23
         a13 = -a13 + a12
 
     # order 12
-    if (a1==a2) & (abs(a23)>abs(a13)):
+    if a1 == a2 and abs(a23) > abs(a13):
         [a1,a2]=[a2,a1]
         [a13,a23]=[a23,a13]
 
     # order 23
-    if (a2==a3) & (abs(a13)>abs(a12)):
+    if a2 == a3 and abs(a13) > abs(a12):
         [a13,a12]=[a12,a13]
 
     # order 12
-    if (a1==a2) & (abs(a23)>abs(a13)):
+    if a1 == a2 and abs(a23) > abs(a13):
         [a13,a23]=[a23,a13]
 
     return((a1,a2,a3,a23,a13,a12))
@@ -727,44 +727,44 @@ def _find_all_ternary_qf_by_level_disc(long long N, long long d):
                         if (d-r*s*t+a*r*r+b*s*s)%(4*a*b-t**2)==0:
 
                             c=(d-r*s*t+a*r*r+b*s*s)//(4*a*b-t**2)
-                            if r<=0:
-                                is_reduced=True
-                                if r<-b:
-                                    is_reduced=False
-                                elif not ((b<=c) & (0<=a+b+r-s-t)):
-                                    is_reduced=False
-                                elif ((a==b) & (abs(r) > abs(s))):
-                                    is_reduced=False
-                                elif ((b==c) & (abs(s) > abs(t))):
-                                    is_reduced=False
-                                elif ((a+b+r-s-t==0) & (2*a-2*s-t>0)):
-                                    is_reduced=False
-                                elif ((a==t) & (s<>0)):
-                                    is_reduced=False
-                                elif ((a==s) & (t<>0)):
-                                    is_reduced=False
-                                elif ((b==-r) & (t<>0)):
-                                    is_reduced=False
+                            if r <= 0:
+                                is_reduced = True
+                                if r < -b:
+                                    is_reduced = False
+                                elif not (b <= c and 0 <= a+b+r-s-t):
+                                    is_reduced = False
+                                elif a == b and abs(r) > abs(s):
+                                    is_reduced = False
+                                elif b == c and abs(s) > abs(t):
+                                    is_reduced = False
+                                elif a+b+r-s-t == 0 and 2*a-2*s-t > 0:
+                                    is_reduced = False
+                                elif a == t and s != 0:
+                                    is_reduced = False
+                                elif a == s and t != 0:
+                                    is_reduced = False
+                                elif b == -r and t != 0:
+                                    is_reduced = False
                                 if is_reduced:
                                     m_q=gcd((4*b*c-r**2, 4*a*c-s**2, 4*a*b-t**2, 2*s*t-4*a*r, -2*r*t+4*b*s, -2*r*s+4*c*t))
                                     if m_q==m:
                                         l.append((ZZ(a), ZZ(b), ZZ(c), ZZ(r), ZZ(-s), ZZ(-t)))
                             else:
                                 is_reduced=True
-                                if not ((b<=c) & (0<=a+b+r+s+t)):
-                                    is_reduced=False
-                                elif ((a==b) & (abs(r) > abs(s))):
-                                    is_reduced=False
-                                elif ((b==c) & (abs(s) > abs(t))):
-                                    is_reduced=False
-                                elif ((a+b+r+s+t==0) & (2*a+2*s+t>0)):
-                                    is_reduced=False
-                                elif ((a==t) & (s>2*r)):
-                                    is_reduced=False
-                                elif ((a==s) & (t>2*r)):
-                                    is_reduced=False
-                                elif ((b==r) & (t>2*s)):
-                                    is_reduced=False
+                                if not (b <= c and 0 <= a+b+r+s+t):
+                                    is_reduced = False
+                                elif a == b and abs(r) > abs(s):
+                                    is_reduced = False
+                                elif b == c and abs(s) > abs(t):
+                                    is_reduced = False
+                                elif a+b+r+s+t == 0 and 2*a+2*s+t > 0:
+                                    is_reduced = False
+                                elif a == t and s > 2*r:
+                                    is_reduced = False
+                                elif a == s and t > 2*r:
+                                    is_reduced = False
+                                elif b == r and t > 2*s:
+                                    is_reduced = False
                                 if is_reduced:
                                     m_q=gcd((4*b*c-r**2, 4*a*c-s**2, 4*a*b-t**2, 2*s*t-4*a*r, 2*r*t-4*b*s, 2*r*s-4*c*t))
                                     if m_q==m:
@@ -868,44 +868,44 @@ def _find_a_ternary_qf_by_level_disc(long long N, long long d):
                         if (d-r*s*t+a*r*r+b*s*s)%(4*a*b-t**2)==0:
 
                             c=(d-r*s*t+a*r*r+b*s*s)//(4*a*b-t**2)
-                            if r<=0:
-                                is_reduced=True
-                                if r<-b:
-                                    is_reduced=False
-                                elif not ((b<=c) & (0<=a+b+r-s-t)):
-                                    is_reduced=False
-                                elif ((a==b) & (abs(r) > abs(s))):
-                                    is_reduced=False
-                                elif ((b==c) & (abs(s) > abs(t))):
-                                    is_reduced=False
-                                elif ((a+b+r-s-t==0) & (2*a-2*s-t>0)):
-                                    is_reduced=False
-                                elif ((a==t) & (s<>0)):
-                                    is_reduced=False
-                                elif ((a==s) & (t<>0)):
-                                    is_reduced=False
-                                elif ((b==-r) & (t<>0)):
-                                    is_reduced=False
+                            if r <= 0:
+                                is_reduced = True
+                                if r < -b:
+                                    is_reduced = False
+                                elif not (b <= c and 0 <= a+b+r-s-t):
+                                    is_reduced = False
+                                elif a == b and abs(r) > abs(s):
+                                    is_reduced = False
+                                elif b == c and abs(s) > abs(t):
+                                    is_reduced = False
+                                elif a+b+r-s-t == 0 and 2*a-2*s-t > 0:
+                                    is_reduced = False
+                                elif a == t and s != 0:
+                                    is_reduced = False
+                                elif a == s and t != 0:
+                                    is_reduced = False
+                                elif b == -r and t != 0:
+                                    is_reduced = False
                                 if is_reduced:
                                     m_q=gcd((4*b*c-r**2, 4*a*c-s**2, 4*a*b-t**2, 2*s*t-4*a*r, -2*r*t+4*b*s, -2*r*s+4*c*t))
                                     if m_q==m:
                                         return ZZ(a), ZZ(b), ZZ(c), ZZ(r), ZZ(-s), ZZ(-t)
                             else:
-                                is_reduced=True
-                                if not ((b<=c) & (0<=a+b+r+s+t)):
-                                    is_reduced=False
-                                elif ((a==b) & (abs(r) > abs(s))):
-                                    is_reduced=False
-                                elif ((b==c) & (abs(s) > abs(t))):
-                                    is_reduced=False
-                                elif ((a+b+r+s+t==0) & (2*a+2*s+t>0)):
-                                    is_reduced=False
-                                elif ((a==t) & (s>2*r)):
-                                    is_reduced=False
-                                elif ((a==s) & (t>2*r)):
-                                    is_reduced=False
-                                elif ((b==r) & (t>2*s)):
-                                    is_reduced=False
+                                is_reduced = True
+                                if not (b <= c and 0 <= a+b+r+s+t):
+                                    is_reduced = False
+                                elif a == b and abs(r) > abs(s):
+                                    is_reduced = False
+                                elif b == c and abs(s) > abs(t):
+                                    is_reduced = False
+                                elif a+b+r+s+t == 0 and 2*a+2*s+t > 0:
+                                    is_reduced = False
+                                elif a==t and s > 2*r:
+                                    is_reduced = False
+                                elif a == s and t>2*r:
+                                    is_reduced = False
+                                elif b == r and t > 2*s:
+                                    is_reduced = False
                                 if is_reduced:
                                     m_q=gcd((4*b*c-r**2, 4*a*c-s**2, 4*a*b-t**2, 2*s*t-4*a*r, 2*r*t-4*b*s, 2*r*s-4*c*t))
                                     if m_q==m:

@@ -49,7 +49,7 @@ def WithRealizations(self):
     .. RUBRIC:: Parent with realizations
 
     Let us now explain the concept of realizations. A *parent with
-    realizations* is a facade parent (see :class:`Sets.Facades`)
+    realizations* is a facade parent (see :class:`Sets.Facade`)
     admitting multiple concrete realizations where its elements are
     represented. Consider for example an algebra `A` which admits
     several natural bases::
@@ -157,7 +157,9 @@ def WithRealizations(self):
         is a subcategory of ``self`` by default::
 
             sage: Algebras(QQ).WithRealizations().super_categories()
-            [Category of algebras over Rational Field, Category of monoids with realizations, Category of commutative additive monoids with realizations]
+            [Category of algebras over Rational Field,
+             Category of monoids with realizations,
+             Category of additive unital additive magmas with realizations]
 
         Is this always desirable? For example,
         ``AlgebrasWithBasis(QQ).WithRealizations()`` should certainly
@@ -173,14 +175,8 @@ def WithRealizations(self):
         sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C
         Category of graded hopf algebras with basis over Rational Field with realizations
         sage: C.super_categories()
-        [Category of graded hopf algebras over Rational Field]
-        sage: C.all_super_categories()
-        [Category of graded hopf algebras with basis over Rational Field with realizations,
-         Category of graded hopf algebras over Rational Field,
-         Category of graded bialgebras over Rational Field,
-         Category of graded algebras over Rational Field,
-         ...]
-
+        [Join of Category of hopf algebras over Rational Field
+             and Category of graded algebras over Rational Field]
         sage: TestSuite(Semigroups().WithRealizations()).run()
 
     """

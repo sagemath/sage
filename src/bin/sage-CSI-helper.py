@@ -25,9 +25,9 @@ def cython_debug_files():
 
 
 
-print '\n\n'
-print 'Cython backtrace'
-print '----------------'
+print('\n\n')
+print('Cython backtrace')
+print('----------------')
 
 # The Python interpreter in GDB does not do automatic backtraces for you
 try:
@@ -73,14 +73,14 @@ try:
 
             source_desc, lineno = self.get_source_desc(frame)
             a = ', '.join('%s=%s' % (name, val) for name, val in func_args)
-            print '#%-2d 0x%016x in %s(%s)' % (index, func_address, func_name, a),
+            out = '#%-2d 0x%016x in %s(%s)' % (index, func_address, func_name, a)
             if source_desc.filename is not None:
-                print 'at %s:%s' % (source_desc.filename, lineno),
-            print
+                out += 'at %s:%s' % (source_desc.filename, lineno)
+            print(out)
             try:
                 source = source_desc.get_source(lineno - 5, lineno + 5,
                                                 mark_line=lineno, lex_entire=True)
-                print source
+                print(source)
             except gdb.GdbError:
                 pass
 
@@ -118,7 +118,6 @@ try:
 
 
 except Exception as e:
-    print 'Exception: ', type(e), e
     import traceback
     traceback.print_exc()
 

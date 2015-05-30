@@ -10,7 +10,7 @@ supporting "giac --sage" ( roughly after 0.9.1 ). In this case you do not have
 to install any  optional Sage packages. If giac is not already installed, you can
 download binaries or sources or spkg (follow the sources link) from the homepage:
 
-Homepage http://www-fourier.ujf-grenoble.fr/~parisse/giac.html
+Homepage <http://www-fourier.ujf-grenoble.fr/~parisse/giac.html>
 
 Type ``giac.[tab]`` for a list of all the functions
 available from your Giac install. Type
@@ -19,9 +19,9 @@ function. Type ``giac(...)`` to create a new Giac
 object, and ``giac.eval(...)`` to run a string using
 Giac (and get the result back as a string).
 
-If the giac spkg is installed, you should find the full html documentation there:
+If the giac spkg is installed, you should find the full html documentation there::
 
-$SAGE_LOCAL/share/giac/doc/en/cascmd_local/index.html
+    $SAGE_LOCAL/share/giac/doc/en/cascmd_local/index.html
 
 
 EXAMPLES::
@@ -135,11 +135,9 @@ command
 Note that the above two commands are slightly different, and the
 first is preferred.
 
-For example, for help on the giac command factors, we type
+For example, for help on the giac command factors, we type ::
 
-::
-
-sage: giac.help('factors')                     # not tested
+    sage: giac.help('factors')                     # not tested
 
 ::
 
@@ -190,7 +188,7 @@ from sage.interfaces.expect import Expect, ExpectElement, ExpectFunction, Functi
 
 import pexpect
 
-from sage.misc.misc import verbose, DOT_SAGE
+from sage.env import DOT_SAGE
 from sage.misc.pager import pager
 
 COMMANDS_CACHE = '%s/giac_commandlist_cache.sobj'%DOT_SAGE
@@ -260,7 +258,7 @@ class Giac(Expect):
 
 
     """
-    def __init__(self, maxread=10000, script_subdirectory="", server=None, server_tmpdir=None, logfile=None):
+    def __init__(self, maxread=10000, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
         """
         Create an instance of the Giac interpreter.
 
@@ -275,7 +273,6 @@ class Giac(Expect):
                         command = "giac --sage",
                         init_code= ['maple_mode(0);I:=i;'],      #  coercion could be broken in maple_mode
                         maxread = maxread,
-#                        script_subdirectory = None,
                         script_subdirectory = script_subdirectory,
                         restart_on_ctrlc = False,                        server = server,
                         server_tmpdir = server_tmpdir,
@@ -319,7 +316,7 @@ class Giac(Expect):
         self._expect.sendline(chr(3))  # send ctrl-c
         self._expect.expect(self._prompt)
 #        self._expect.expect(self._prompt)
-        raise RuntimeError, "Ctrl-c pressed while running %s"%self
+        raise RuntimeError("Ctrl-c pressed while running %s"%self)
 
     def __reduce__(self):
         """
@@ -428,15 +425,15 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-        sage: giac_console()                   # not tested - giac
-        ...
-        Homepage http://www-fourier.ujf-grenoble.fr/~parisse/giac.html
-        Released under the GPL license 3.0 or above
-        See http://www.gnu.org for license details
-        -------------------------------------------------
-        Press CTRL and D simultaneously to finish session
-        Type ?commandname for help
-        0>>
+            sage: giac_console()                   # not tested - giac
+            ...
+            Homepage http://www-fourier.ujf-grenoble.fr/~parisse/giac.html
+            Released under the GPL license 3.0 or above
+            See http://www.gnu.org for license details
+            -------------------------------------------------
+            Press CTRL and D simultaneously to finish session
+            Type ?commandname for help
+            0>>
 
         """
         giac_console()
@@ -567,21 +564,23 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
                     wait_for_prompt=wait_for_prompt)
             if z.lower().find("error") != -1:
-                raise RuntimeError, "An error occurred running a Giac command:\nINPUT:\n%s\nOUTPUT:\n%s"%(line, z)
+                raise RuntimeError("An error occurred running a Giac command:\nINPUT:\n%s\nOUTPUT:\n%s"%(line, z))
         return z
 
 
     def eval(self, code, strip=True, **kwds):
-        """
+        r"""
         Send the code x to the Giac interpreter.
-        Remark: To enable multi-lines codes in the notebook magic mode: %giac,
-        the \\n are removed before sending the code to giac.
+        Remark: To enable multi-lines codes in the notebook magic mode: ``%giac``,
+        the ``\n`` are removed before sending the code to giac.
 
         INPUT:
-            code -- str
-            strip -- Default is True and removes \n
 
-        EXAMPLES:
+        - code -- str
+        - strip -- Default is True and removes ``\n``
+
+        EXAMPLES::
+
             sage: giac.eval("2+2;\n3") #optional - giac
             '4,3'
             sage: giac.eval("2+2;\n3",False) # optional - giac
@@ -616,7 +615,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         cmd = '%s:=%s:;'%(var,value)   #if giac is not in maple mode ( maple_mode(0))
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError, "Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, out)
+            raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, out))
 
 
     def get(self, var):
@@ -725,7 +724,6 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         the Giac console.
 
         INPUT:
-
 
         -  ``str`` - a string to search for in the giac help
            system
@@ -889,7 +887,7 @@ class GiacElement(ExpectElement):
         try:
             if P.eval("evalb(%s %s %s)"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
                 return -1
-        except RuntimeError, e:
+        except RuntimeError as e:
             msg = str(e)
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
@@ -897,7 +895,7 @@ class GiacElement(ExpectElement):
                 else:
                     return 1
             else:
-                raise RuntimeError, e
+                raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
             return 1
         # everything is supposed to be comparable in Python, so we define
@@ -1048,8 +1046,8 @@ class GiacElement(ExpectElement):
             try:
                 from sage.symbolic.all import SR
                 return SR(result)
-            except StandardError:
-                raise NotImplementedError, "Unable to parse Giac output: %s" % result
+            except Exception:
+                raise NotImplementedError("Unable to parse Giac output: %s" % result)
         else:
             return [entry.sage() for entry in self]
 
@@ -1090,7 +1088,7 @@ class GiacElement(ExpectElement):
             return giac('int(%s,%s)'%(self.name(),var))
         else:
             if max is None:
-                raise ValueError, "neither or both of min/max must be specified."
+                raise ValueError("neither or both of min/max must be specified.")
         return giac('int(%s,%s,%s,%s)'%(self.name(),var,giac(min),giac(max)))
 
     integrate=integral
@@ -1122,12 +1120,12 @@ class GiacElement(ExpectElement):
             return giac('sum(%s,%s)'%(self.name(),var))
         else:
             if max is None:
-                raise ValueError, "neither or both of min/max must be specified."
+                raise ValueError("neither or both of min/max must be specified.")
             return giac('sum(%s,%s,%s,%s)'%(self.name(),var,giac(min),giac(max)))
 
 
 # An instance
-giac = Giac(script_subdirectory='user')
+giac = Giac()
 
 def reduce_load_Giac():
     """

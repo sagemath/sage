@@ -362,7 +362,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         #Test if u_1-u_0 = u_2-u_1 = u_3-u_2
 
-        return bool(self(1) - self(0) == self(2) - self(1) ==  self(3) - self(2))
+        return bool(self(1) - self(0) == self(2) - self(1) == self(3) - self(2))
 
 
     def period(self, m):
@@ -606,7 +606,7 @@ class BinaryRecurrenceSequence(SageObject):
                     return [0]
                 return []
             else :
-                raise ValueError, "The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers."
+                raise ValueError("The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.")
 
         #If the sequence is degenerate without being geometric or quasigeometric, there
         #may be many ``p`` th powers or no ``p`` th powers.
@@ -633,7 +633,7 @@ class BinaryRecurrenceSequence(SageObject):
                 #This linear equation represents a pth power iff A is a pth power mod B.
 
                 if _is_p_power_mod(A, p, B):
-                    raise ValueError, "The degenerate binary recurrence sequence has many pth powers."
+                    raise ValueError("The degenerate binary recurrence sequence has many pth powers.")
             return []
 
         #We find ``p`` th powers using an elementary sieve.  Term `u_n` is a ``p`` th
@@ -792,10 +792,9 @@ def _prime_powers(N):
         [65537]
 
     """
-
-    output =  [i**j for i,j in N.factor()]
-    output.sort()
+    output = sorted([i ** j for i, j in N.factor()])
     return output
+
 
 #This function finds the largest prime power divisor of an integer N
 def _largest_ppower_divisor(N):
@@ -1037,7 +1036,7 @@ def _is_p_power_mod(a,p,N):
 
         #If q = p and ee = 1, then everything is a pth power p by Fermat's little theorem.
 
-        elif ee >  1:
+        elif ee > 1:
 
             #We use the strong statement of Hensel's lemma, which implies that if p is odd
             #and aa is a pth power mod p^2, then aa is a pth power mod any higher power of p

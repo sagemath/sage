@@ -1,7 +1,6 @@
 = gfan =
 
 == Description ==
-From http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html:
 
 Gfan is a software package for computing Groebner fans and tropical varieties.
 These are polyhedral fans associated to polynomial ideals. The maximal cones
@@ -13,21 +12,18 @@ algorithms for computing this complex for general ideals and specialized
 algorithms for tropical curves, tropical hypersurfaces and tropical varieties
 of prime ideals. In addition to the above core functions the package contains
 many tools which are useful in the study of Groebner bases, initial ideals and
-tropical geometry.
+tropical geometry. The full list of commands can be found in Appendix B of the
+manual. For ordinary Groebner basis computations Gfan is not competitive in
+speed compared to programs such as CoCoA, Singular and Macaulay2.
 
 == License ==
 
- * GPL v2
-
-== SPKG Maintainers ==
-
- * Marshall Hampton
- * William Stein
+ * GPL version 2 or version 3 (according to the gfan website)
 
 == Upstream Contact ==
 
 Anders Nedergaard Jensen; for contact info check out
-http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
+http://home.imf.au.dk/jensen/software/gfan/gfan.html
 
 == Dependencies ==
 
@@ -36,70 +32,5 @@ http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
 
 == Special Update/Build Instructions ==
 
-Download the package from
-  http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
-then remove the doc, homepage, and examples subdirectories, which take up
+Remove the doc, homepage, and examples subdirectories, which take up
 most of the space.
-
-Make sure the patches still apply, i.e., remove unnecessary ones and/or
-refresh the prepatched files in `patches/`.
-
-== Changelog ==
-
-=== gfan-0.5.p0 ( François Bissey, July 3, 2012 )
- * #11395 upgrade to gfan 0.5
- * use patch
- * try to have a better patch for the Makefile, use LDFLAGS, CPPFLAGS and CXXFLAGS
- * Clean spkg-install
-
-=== gfan-0.4plus.p3 (Leif Leonhardy, April 5th 2012) ===
- * #12760: Fix erroneous unconditional export of `CXXFLAG64`, which is now in
-   the first place always set, and used in the patched Makefile.  (Also do not
-   export `CFLAG64`, which is only used within `spkg-install`.)
- * Add further TODOs... ;-)
-
-=== gfan-0.4plus.p2 (Leif Leonhardy, March 25th 2012) ===
- * #12760: Correct trivial C++ programming error to make gfan build with
-   GCC 4.7.0.
- * Clean up and beautify `spkg-install`.
-
-=== gfan-0.4plus.p1 (William Stein, Willem Jan Palenstijn, April 28, 2010) ===
- * #8770: Work around gcc 4.5.0 bug in matrix.h by removing an assert
- * #8770: Fix syntax error in linalg.cpp that gcc 4.5.0 complains about
-
-=== gfan-0.4plus (Alex Ghitza, David Kirkby, January 6, 2010) ===
- * Upgrade to version 0.4plus
- * Clarify license (trac #3043)
- * Remove dist/ directory (part of trac #5903)
- * Restore src/ to vanilla upstream (trac #3338)
- * Numerous changes to Makefile to allow gfan to work
-   with compilers specified by CC and CXX.
- * Changes to spkg-install so that certain variables
-   (CFLAGS, CXXFLAGS, CFLAG64, CXXFLAG64 etc) can be set
-   and will work with any compiler. Current spkg-install has
-   -m64 hard-coded in, but the Makefile does not.
- * Patched polynomial.cpp to fix a bug in 0.4plus until the next
-   release of gfan
-
-=== gfan-0.3.p5 (William Stein, December 17, 2009) ===
- * remove an accidental .DS_Store OS X file.
-
-=== gfan-0.3.p4 (Michael Abshoff, May 18th, 2008) ===
- * add 64 bit OSX build support
-
-=== gfan-0.3.p3 (Michael Abshoff, March 28th 2008) ===
- * clean up SPKG.txt
- * fix repo, readd .hgignore
-
-=== gfan-0.3.p2 (Marshall Hampton 2008) ===
- * Cleaned up a little from previous version, no real changes.
-
-=== gfan-0.3.p1 (Marshall Hampton 2008) ===
- * Updated to new version
-
-=== gfan-0.2.2.p3 (Tim Abbott, Feb. 17th, 2008)  ===
- * Debianize spkg
-
-=== gfan-0.2.2.p2 ===
- * details lost to history
-

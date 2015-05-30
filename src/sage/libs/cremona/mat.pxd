@@ -13,11 +13,13 @@ cdef extern from "eclib/homspace.h":
     ctypedef struct mat "mat":
         scalar* get_entries()   # TODO: possibly not int --
         scalar sub(long,long)
+        # These became methods from eclib-20150228:
+        long nrows()
+        long ncols()
+        long rank()
 
-    long nrows(mat M)
-    long ncols(mat M)
     mat addscalar(mat M, scalar)
-    long rank(mat M)
+
 
     # Constructors
     mat *new_mat "new mat" (mat m)

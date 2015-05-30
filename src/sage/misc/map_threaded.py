@@ -1,5 +1,5 @@
 """
-The threaded map function.
+Threaded map function
 """
 
 def map_threaded(function, sequence):
@@ -7,7 +7,8 @@ def map_threaded(function, sequence):
     Apply the function to the elements in the sequence by threading
     recursively through all sub-sequences in the sequence.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: map_threaded(log, [[1,2], [3,e]])
         [[0, log(2)], [log(3), 1]]
         sage: map_threaded(log, [(1,2), (3,e)])
@@ -18,13 +19,15 @@ def map_threaded(function, sequence):
         [[1, 4, 9, 25], [4, 100]]
 
     map_threaded also works on any object with an apply_map method, e.g.,
-    on matrices:
+    on matrices::
+
         sage: map_threaded(lambda x: x^2, matrix([[1,2], [3,4]]))
         [ 1  4]
         [ 9 16]
 
     AUTHORS:
-        -- William Stein (2007-12); based on feedback from Peter Doyle.
+
+    - William Stein (2007-12); based on feedback from Peter Doyle.
     """
     if hasattr(sequence, 'apply_map'):
         return sequence.apply_map(function)

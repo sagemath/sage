@@ -3,6 +3,8 @@
 #                  http://www.gnu.org/licenses/
 ######################################################################
 
+from __future__ import print_function
+
 import platform, os, sys, time, shutil, glob, subprocess
 
 
@@ -27,7 +29,7 @@ conf = dict()
 #
 # Linux?, Solaris?, Darwin?, FreeBSD?, CYGWIN?  # system
 # OS_X_Lion?                                    # release
-# Intel?, PPC?, SPARC?                          # processor
+# Intel?, PPC?, SPARC? ARM?                     # processor
 # 64bit?, 32bit?                                # bits
 # fortran_g95?, fortran_GNU?                    # fortran
 # linker_GNU?, linker_Solaris?, linker_Darwin?  # ld
@@ -37,9 +39,9 @@ conf = dict()
 ### Sanity check
 ######################################################################
 
-if not os.environ.has_key('SAGE_LOCAL'):
-    print "SAGE_LOCAL undefined ... exiting"
-    print "Maybe run 'sage -sh'?"
+if 'SAGE_LOCAL' not in os.environ:
+    print("SAGE_LOCAL undefined ... exiting")
+    print("Maybe run 'sage -sh'?")
     sys.exit(1)
 
 
@@ -63,7 +65,7 @@ def try_run(command, ignore=False):
     if (not ignore) and (rc!=0):
         return None
     # concatenate stdout and stderr
-    return result[0].strip() + result[1].strip()
+    return (result[0].strip() + result[1].strip()).decode('utf8')
 
 
 def cp(source_pattern, destination):
@@ -71,7 +73,7 @@ def cp(source_pattern, destination):
     Portable implementation of "cp -p"
     """
     for filename in glob.iglob(source_pattern):
-        print 'Copying', filename, 'to', destination
+        print('Copying', filename, 'to', destination)
         shutil.copy2(filename, destination)
 
 
@@ -81,7 +83,7 @@ def ln(source, destination):
     """
     if os.path.exists(destination):
         os.remove(destination)
-    print 'Linking', source, 'to', destination
+    print('Linking', source, 'to', destination)
     os.symlink(source, destination)
 
 
@@ -134,7 +136,7 @@ except KeyError:
     conf['system'] = platform.system()
 
 try:
-    conf['release'] = subprocess.check_output(['uname', '-r']).strip()
+    conf['release'] = subprocess.check_output(['uname', '-r']).decode('utf8').strip()
 except subprocess.CalledProcessError:
     conf['release'] = ""
 
@@ -149,6 +151,7 @@ conf['machine'] = platform.machine()
 
 conf['processor'] = platform.processor()
 
+conf['ARM?'] = (platform.machine().startswith('arm'))
 conf['Intel?'] = (platform.machine() in ('i386', 'i486', 'i586', 'i686', 'x86_64',
                                          'AMD64', 'i86pc'))
 conf['IA64?']   = ((platform.processor() == 'ia64')
@@ -179,14 +182,14 @@ conf['32bit?'] = not conf['64bit?']
 
 fortran_version = try_run('$FC --version')
 if fortran_version is None:
-    print 'Cannot execute fortran compiler ($FC)!'
+    print('Cannot execute fortran compiler ($FC)!')
     sys.exit(3)
 if 'G95' in fortran_version:
     conf['fortran'] = 'g95'
 elif 'GNU Fortran' in fortran_version:
     conf['fortran'] = 'gfortran'
 else:
-    print 'Unknown fortran compiler version: '+fortran_version
+    print('Unknown fortran compiler version: '+fortran_version)
     conf['fortran'] = None
 
 
@@ -211,7 +214,7 @@ else:
     ld_version = try_run('ld  -v')
 
 if ld_version is None:
-    print 'Cannot execute ld!'
+    print('Cannot execute ld!')
     sys.exit(3)
 if 'GNU' in ld_version:
     conf['ld'] = 'GNU'
@@ -220,7 +223,7 @@ elif 'Solaris' in ld_version:
 elif 'Apple' in ld_version:
     conf['ld'] = 'Darwin'
 else:
-    print 'Unknown linker: '+ld_version
+    print('Unknown linker: '+ld_version)
     conf['ld'] = None
 
 conf['linker_GNU?'] = (conf['ld'] == 'GNU')
@@ -229,11 +232,11 @@ conf['linker_Darwin?'] = (conf['ld'] == 'Darwin')
 
 
 if conf['Solaris?'] and conf['linker_GNU?']:
-    print "WARNING: You are using the GNU linker from 'binutils'"
-    print "Generally it is considered better to use the Sun linker"
-    print "but Sage has been built on Solaris using the GNU linker"
-    print "although that was a very old version of Sage, which"
-    print "never passes all the Sage test-suite."
+    print("WARNING: You are using the GNU linker from 'binutils'")
+    print("Generally it is considered better to use the Sun linker")
+    print("but Sage has been built on Solaris using the GNU linker")
+    print("although that was a very old version of Sage, which")
+    print("never passes all the Sage test-suite.")
 
 
 
@@ -249,9 +252,9 @@ conf['SAGE_LOCAL'] = os.environ['SAGE_LOCAL']
 ### The end: print configuration
 ######################################################################
 
-print "Configuration:"
+print("Configuration:")
 for key, value in conf.items():
-    print '    '+str(key)+': '+str(value)
+    print('    '+str(key)+': '+str(value))
 
 
 

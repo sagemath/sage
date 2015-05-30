@@ -236,7 +236,7 @@ class CNFEncoder(ANF2CNFConverter):
             res = self.one_set
             for i in reversed(indices):
                 res = ite(i, res, self.empty_set)
-            return iter(res).next()
+            return next(iter(res))
 
         while not rest.empty():
             l = choose(rest)

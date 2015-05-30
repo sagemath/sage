@@ -12,12 +12,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
 
 class TensorProductFunctor(CovariantFunctorialConstruction):
     """
-    A singleton class for the tensor functor
+    A singleton class for the tensor functor.
 
     This functor takes a collection of vector spaces (or modules with
     basis), and constructs the tensor product of those vector spaces.
@@ -68,11 +67,11 @@ class TensorProductsCategory(CovariantConstructionCategory):
 
         sage: C = ModulesWithBasis(QQ).TensorProducts()
         sage: C
-        Category of tensor products of modules with basis over Rational Field
+        Category of tensor products of vector spaces with basis over Rational Field
         sage: C.base_category()
-        Category of modules with basis over Rational Field
+        Category of vector spaces with basis over Rational Field
         sage: latex(C)
-        \mathbf{TensorProducts}(\mathbf{ModulesWithBasis}_{\Bold{Q}})
+        \mathbf{TensorProducts}(\mathbf{WithBasis}_{\Bold{Q}})
         sage: TestSuite(C).run()
     """
 
@@ -88,7 +87,7 @@ class TensorProductsCategory(CovariantConstructionCategory):
         EXAMPLES::
 
             sage: ModulesWithBasis(QQ).TensorProducts().TensorProducts()
-            Category of tensor products of modules with basis over Rational Field
+            Category of tensor products of vector spaces with basis over Rational Field
         """
         return self
 
@@ -102,25 +101,3 @@ class TensorProductsCategory(CovariantConstructionCategory):
             Integer Ring
         """
         return self.base_category().base()
-
-# This is Category.TensorProducts
-def TensorProducts(self):
-    """
-    INPUT:
-
-     - ``self`` -- a subcategory of ``ModulesWithBasis(...)``
-
-    Returns the category of objects constructed as tensor products of
-    objects of ``self``.
-
-    See :class:`TensorProductFunctor` for more information
-
-    EXAMPLES::
-
-        sage: ModulesWithBasis(QQ).TensorProducts()
-        Category of tensor products of modules with basis over Rational Field
-    """
-    return TensorProductsCategory.category_of(self)
-
-
-Category.TensorProducts = TensorProducts

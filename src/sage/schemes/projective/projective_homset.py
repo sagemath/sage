@@ -1,5 +1,5 @@
 r"""
-Set of homomorphisms between two proejctive schemes
+Set of homomorphisms between two projective schemes
 
 For schemes `X` and `Y`, this module implements the set of morphisms
 `Hom(X,Y)`. This is done by :class:`SchemeHomset_generic`.
@@ -40,6 +40,8 @@ from sage.rings.all import ZZ
 from sage.schemes.generic.homset import SchemeHomset_points
 
 from sage.rings.rational_field import is_RationalField
+from sage.categories.fields import Fields
+from sage.categories.number_fields import NumberFields
 from sage.rings.finite_rings.constructor import is_FiniteField
 
 #*******************************************************************
@@ -59,14 +61,16 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         sage: SchemeHomset_points_projective_field(Spec(QQ), ProjectiveSpace(QQ,2))
         Set of rational points of Projective Space of dimension 2 over Rational Field
     """
-    def points(self, B=0):
+    def points(self, B=0, prec=53):
         """
         Return some or all rational points of a projective scheme.
 
         INPUT:
 
-        - `B` -- integer (optional, default=0). The bound for the
+        - `B` - integer (optional, default=0). The bound for the
           coordinates.
+
+        - ``prec`` - he precision to use to compute the elements of bounded height for number fields
 
         OUTPUT:
 
@@ -74,24 +78,81 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         returned. Over an infinite field, all points satisfying the
         bound are returned.
 
+        .. WARNING::
+
+           In the current implementation, the output of the [Doyle-Krumm] algorithm
+           cannot be guaranteed to be correct due to the necessity of floating point
+           computations. In some cases, the default 53-bit precision is
+           considerably lower than would be required for the algorithm to
+           generate correct output.
+
         EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P(QQ).points(4)
+            [(-4 : 1), (-3 : 1), (-2 : 1), (-3/2 : 1), (-4/3 : 1), (-1 : 1),
+            (-3/4 : 1), (-2/3 : 1), (-1/2 : 1), (-1/3 : 1), (-1/4 : 1), (0 : 1),
+            (1/4 : 1), (1/3 : 1), (1/2 : 1), (2/3 : 1), (3/4 : 1), (1 : 0), (1 : 1),
+            (4/3 : 1), (3/2 : 1), (2 : 1), (3 : 1), (4 : 1)]
+
+        ::
+
+            sage: u = QQ['u'].0
+            sage: K.<v> = NumberField(u^2 + 3)
+            sage: P.<x,y,z> = ProjectiveSpace(K,2)
+            sage: len(P(K).points(1.8))
+            381
+
+        ::
 
             sage: P1 = ProjectiveSpace(GF(2),1)
             sage: F.<a> = GF(4,'a')
             sage: P1(F).points()
             [(0 : 1), (1 : 0), (1 : 1), (a : 1), (a + 1 : 1)]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: E = P.subscheme([(y^3-y*z^2) - (x^3-x*z^2),(y^3-y*z^2) + (x^3-x*z^2)])
+            sage: E(P.base_ring()).points()
+            [(-1 : -1 : 1), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 1),
+            (1 : -1 : 1), (1 : 0 : 1), (1 : 1 : 1)]
         """
-        from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
-        from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
+        X = self.codomain()
+
+        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        if not is_ProjectiveSpace(X) and X.base_ring() in Fields():
+            #Then it must be a subscheme
+            dim_ideal = X.defining_ideal().dimension()
+            if dim_ideal < 1: # no points
+                return []
+            if dim_ideal == 1: # if X zero-dimensional
+                points = set()
+                for i in range(X.ambient_space().dimension_relative() + 1):
+                    Y = X.affine_patch(i)
+                    phi = Y.projective_embedding()
+                    aff_points = Y.rational_points()
+                    for PP in aff_points:
+                        points.add(X.ambient_space()(list(phi(PP))))
+                points = list(points)
+                points.sort()
+                return points
         R = self.value_ring()
         if is_RationalField(R):
             if not B > 0:
-                raise TypeError, "A positive bound B (= %s) must be specified."%B
+                raise TypeError("A positive bound B (= %s) must be specified."%B)
+            from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
             return enum_projective_rational_field(self,B)
+        elif R in NumberFields():
+            if not B > 0:
+                raise TypeError("A positive bound B (= %s) must be specified."%B)
+            from sage.schemes.projective.projective_rational_point import enum_projective_number_field
+            return enum_projective_number_field(self,B, prec=prec)
         elif is_FiniteField(R):
+            from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
             return enum_projective_finite_field(self.extended_codomain())
         else:
-            raise TypeError, "Unable to enumerate points over %s."%R
+            raise TypeError("Unable to enumerate points over %s."%R)
 
 class SchemeHomset_points_projective_ring(SchemeHomset_points):
     """
@@ -154,11 +215,11 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
         R = self.value_ring()
         if R == ZZ:
             if not B > 0:
-                raise TypeError, "A positive bound B (= %s) must be specified."%B
+                raise TypeError("A positive bound B (= %s) must be specified."%B)
             from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
             return enum_projective_rational_field(self,B)
         else:
-            raise TypeError, "Unable to enumerate points over %s."%R
+            raise TypeError("Unable to enumerate points over %s."%R)
 
 
 #*******************************************************************
@@ -280,4 +341,3 @@ from sage.structure.sage_object import register_unpickle_override
 register_unpickle_override('sage.schemes.generic.homset',
                            'SchemeHomsetModule_abelian_variety_coordinates_field',
                            SchemeHomset_points_abelian_variety_field)
-

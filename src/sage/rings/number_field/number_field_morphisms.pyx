@@ -20,10 +20,12 @@ fields (generally `\RR` or `\CC`).
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.complex_double
 
 from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
+from sage.categories.pushout import pushout
 
 from sage.rings.real_mpfr import RealField, mpfr_prec_min
 from sage.rings.complex_field import ComplexField
@@ -63,6 +65,62 @@ cdef class NumberFieldEmbedding(Morphism):
         else:
             self._gen_image = R(gen_embedding)
 
+    cdef dict _extra_slots(self, dict _slots):
+        """
+        A helper for pickling and copying.
+
+        INPUT:
+
+        ``_slots`` -- a dictionary
+
+        OUTPUT:
+
+        The given dictionary, with the generator image added.
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ)
+            sage: from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
+            sage: K.<a> = NumberField(x^3-2)
+            sage: f = NumberFieldEmbedding(K, RLF, 1)
+            sage: g = copy(f)    # indirect doctest
+            sage: g
+            Generic morphism:
+              From: Number Field in a with defining polynomial x^3 - 2
+              To:   Real Lazy Field
+              Defn: a -> 1.259921049894873?
+            sage: g(a)^3
+            2.00000000000000?
+        """
+        _slots['_gen_image'] = self._gen_image
+        return Morphism._extra_slots(self, _slots)
+
+    cdef _update_slots(self, dict _slots):
+        """
+        A helper for unpickling and copying.
+
+        INPUT:
+
+        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ)
+            sage: from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
+            sage: K.<a> = NumberField(x^3-2)
+            sage: f = NumberFieldEmbedding(K, RLF, 1)
+            sage: g = copy(f)    # indirect doctest
+            sage: g
+            Generic morphism:
+              From: Number Field in a with defining polynomial x^3 - 2
+              To:   Real Lazy Field
+              Defn: a -> 1.259921049894873?
+            sage: g(a)^3
+            2.00000000000000?
+        """
+        Morphism._update_slots(self, _slots)
+        self._gen_image = _slots['_gen_image']
+
     cpdef Element _call_(self, x):
         """
         EXAMPLES::
@@ -89,7 +147,7 @@ cdef class NumberFieldEmbedding(Morphism):
               To:   Real Lazy Field
               Defn: a -> 1.414213562373095?
         """
-        return "%s -> %s" % (self._domain.variable_name(), self._gen_image)
+        return "{} -> {}".format(self.domain().variable_name(), self._gen_image)
 
     def gen_image(self):
         """
@@ -107,8 +165,16 @@ cdef class NumberFieldEmbedding(Morphism):
 cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
     r"""
     This allows one to go from one number field in another consistently,
-    assuming they both have specified embeddings into an ambient field
-    (by default it looks for an embedding into `\CC`).
+    assuming they both have specified embeddings into an ambient field.
+
+    If no ambient field is supplied, then the following ambient fields are
+    tried:
+
+    * the pushout of the fields where the number fields are embedded;
+
+    * the algebraic closure of the previous pushout;
+
+    * `\CC`.
 
     EXAMPLES::
 
@@ -161,15 +227,46 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for '+': 'Number Field in a with defining polynomial x^3 + 2' and 'Number Field in a with defining polynomial x^3 + 2'
+
+        The following was fixed to raise a ``TypeError`` in :trac:`15331`::
+
+            sage: L.<i> = NumberField(x^2 + 1)
+            sage: K = NumberField(L(i/2+3).minpoly(), names=('i0',), embedding=L(i/2+3))
+            sage: EmbeddedNumberFieldMorphism(K, L)
+            Traceback (most recent call last):
+            ...
+            TypeError: No embedding available for Number Field in i with defining polynomial x^2 + 1
+
         """
         if ambient_field is None:
-            from sage.rings.complex_double import CDF
-            ambient_field = CDF
-        gen_image = matching_root(K.polynomial().change_ring(L), K.gen(), ambient_field=ambient_field, margin=2)
-        if gen_image is None:
+            if K.coerce_embedding() is None:
+                raise TypeError("No embedding available for %s"%K)
+            Kemb = K
+            while Kemb.coerce_embedding() is not None:
+                Kemb = Kemb.coerce_embedding().codomain()
+            if L.coerce_embedding() is None:
+                raise TypeError("No embedding available for %s"%L)
+            Lemb = L
+            while Lemb.coerce_embedding() is not None:
+                Lemb = Lemb.coerce_embedding().codomain()
+            ambient_field = pushout(Kemb, Lemb)
+            candidate_ambient_fields = [ambient_field]
+            try:
+                candidate_ambient_fields.append(ambient_field.algebraic_closure())
+            except NotImplementedError:
+                pass
+            candidate_ambient_fields.append(sage.rings.complex_double.CDF)
+        else:
+            candidate_ambient_fields = [ambient_field]
+
+        for ambient_field in candidate_ambient_fields:
+            gen_image = matching_root(K.polynomial().change_ring(L), K.gen(), ambient_field=ambient_field, margin=2)
+            if gen_image is not None:
+                NumberFieldEmbedding.__init__(self, K, L, gen_image)
+                self.ambient_field = ambient_field
+                return
+        else:
             raise ValueError, "No consistent embedding of all of %s into %s." % (K, L)
-        NumberFieldEmbedding.__init__(self, K, L, gen_image)
-        self.ambient_field = ambient_field
 
     def section(self):
         """
@@ -185,7 +282,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             sage: g(2*b^3-1)
             2*a - 1
         """
-        return EmbeddedNumberFieldConversion(self._codomain, self._domain, self.ambient_field)
+        return EmbeddedNumberFieldConversion(self.codomain(), self.domain(), self.ambient_field)
 
 
 cdef class EmbeddedNumberFieldConversion(Map):
@@ -236,9 +333,9 @@ cdef class EmbeddedNumberFieldConversion(Map):
             ValueError: No consistent embedding of Cyclotomic Field of order 12 and degree 4 into Cyclotomic Field of order 15 and degree 8.
         """
         minpoly = x.minpoly()
-        gen_image = matching_root(minpoly.change_ring(self._codomain), x, self.ambient_field, 4)
+        gen_image = matching_root(minpoly.change_ring(self.codomain()), x, self.ambient_field, 4)
         if gen_image is None:
-            raise ValueError, "No consistent embedding of %s into %s." % (self._domain, self._codomain)
+            raise ValueError("No consistent embedding of {} into {}.".format(self.domain(), self.codomain()))
         return gen_image
 
 
@@ -472,6 +569,64 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         self.ratio = L._log_gen(K.coerce_embedding()(K.gen()))
         self._gen_image = L.gen() ** self.ratio
 
+    cdef dict _extra_slots(self, dict _slots):
+        """
+        A helper for pickling and copying.
+
+        INPUT:
+
+        ``_slots`` -- a dictionary
+
+        OUTPUT:
+
+        The given dictionary, with _gen_image and ratio added.
+
+        EXAMPLES::
+
+            sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldEmbedding
+            sage: cf6 = CyclotomicField(6)
+            sage: cf12 = CyclotomicField(12)
+            sage: f = CyclotomicFieldEmbedding(cf6, cf12)
+            sage: g = copy(f) # indirect doctest
+            sage: g
+            Generic morphism:
+              From: Cyclotomic Field of order 6 and degree 2
+              To:   Cyclotomic Field of order 12 and degree 4
+              Defn: zeta6 -> zeta12^2
+            sage: g(cf6.0)
+            zeta12^2
+        """
+        _slots['_gen_image'] = self._gen_image
+        _slots['ratio'] = self.ratio
+        return Morphism._extra_slots(self, _slots)
+
+    cdef _update_slots(self, dict _slots):
+        """
+        A helper for unpickling and copying.
+
+        INPUT:
+
+        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+
+        EXAMPLES::
+
+            sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldEmbedding
+            sage: cf6 = CyclotomicField(6)
+            sage: cf12 = CyclotomicField(12)
+            sage: f = CyclotomicFieldEmbedding(cf6, cf12)
+            sage: g = copy(f) # indirect doctest
+            sage: g
+            Generic morphism:
+              From: Cyclotomic Field of order 6 and degree 2
+              To:   Cyclotomic Field of order 12 and degree 4
+              Defn: zeta6 -> zeta12^2
+            sage: g(cf6.0)
+            zeta12^2
+        """
+        Morphism._update_slots(self, _slots)
+        self._gen_image = _slots['_gen_image']
+        self.ratio = _slots['ratio']
+
     cpdef Element _call_(self, x):
         """
         EXAMPLES::
@@ -485,4 +640,4 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
             sage: f(K.gen()^2 + 3) # indirect doctest
             zeta21^6 + 3
         """
-        return x._lift_cyclotomic_element(self._codomain, False, self.ratio)
+        return x._lift_cyclotomic_element(self.codomain(), False, self.ratio)

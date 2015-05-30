@@ -5,4 +5,3 @@
 ###########################################################################
 
 from constructor import J0, J1, JH, AbelianVariety
-from abvar import is_ModularAbelianVariety

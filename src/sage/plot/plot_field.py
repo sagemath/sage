@@ -111,8 +111,30 @@ class PlotField(GraphicPrimitive):
             sage: P=plot_vector_field((sin(x), cos(y)), (x,-3,3), (y,-3,3))
             sage: P[0]
             PlotField defined by a 20 x 20 vector grid
+
+        TESTS:
+        We check that :trac:`15052` is fixed
+        (note that in general :trac:`15002` should be fixed)::
+
+            sage: x,y=var('x,y')
+            sage: P=plot_vector_field((sin(x), cos(y)), (x,-3,3), (y,-3,3), wrong_option='nonsense')
+            sage: P[0].options()['plot_points']
+            verbose 0 (...: primitive.py, options) WARNING: Ignoring option 'wrong_option'=nonsense
+            verbose 0 (...: primitive.py, options)
+            The allowed options for PlotField defined by a 20 x 20 vector grid are:
+                color          The color of the arrows
+                headaxislength head length at shaft intersection, default is 4.5
+                headlength     head length as multiple of shaft width, default is 5
+                headwidth      Head width as multiple of shaft width, default is 3
+                pivot          Where the arrow should be placed in relation to the point (tail, middle, tip)
+                plot_points    How many points to use for plotting precision
+                zorder         The layer level in which to draw
+            <BLANKLINE>
+            20
+
         """
-        return "PlotField defined by a %s x %s vector grid"%(self.options()['plot_points'], self.options()['plot_points'])
+        return "PlotField defined by a %s x %s vector grid"%(
+               self._options['plot_points'], self._options['plot_points'])
 
     def _render_on_subplot(self, subplot):
         """
@@ -127,7 +149,7 @@ class PlotField(GraphicPrimitive):
         subplot.quiver(self.xpos_array, self.ypos_array, self.xvec_array, self.yvec_array, angles='xy', **quiver_options)
 
 @options(plot_points=20,frame=True)
-def plot_vector_field((f, g), xrange, yrange, **options):
+def plot_vector_field(f_g, xrange, yrange, **options):
     r"""
     ``plot_vector_field`` takes two functions of two variables xvar and yvar
     (for instance, if the variables are `x` and `y`, take `(f(x,y), g(x,y))`)
@@ -142,16 +164,19 @@ def plot_vector_field((f, g), xrange, yrange, **options):
 
         sage: x,y = var('x y')
         sage: plot_vector_field((sin(x), cos(y)), (x,-3,3), (y,-3,3))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: plot_vector_field(( y, (cos(x)-2)*sin(x)), (x,-pi,pi), (y,-pi,pi))
+        Graphics object consisting of 1 graphics primitive
 
     Plot a gradient field::
 
         sage: u,v = var('u v')
         sage: f = exp(-(u^2+v^2))
         sage: plot_vector_field(f.gradient(), (u,-2,2), (v,-2,2), color='blue')
+        Graphics object consisting of 1 graphics primitive
 
     Plot two orthogonal vector fields::
 
@@ -164,17 +189,21 @@ def plot_vector_field((f, g), xrange, yrange, **options):
 
         sage: x,y = var('x,y')
         sage: plot_vector_field( (-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)), (x, -10, 10), (y, -10, 10))
+        Graphics object consisting of 1 graphics primitive
 
     ::
 
         sage: x,y = var('x,y')
         sage: plot_vector_field( (-x/sqrt(x+y), -y/sqrt(x+y)), (x, -10, 10), (y, -10, 10))
+        Graphics object consisting of 1 graphics primitive
 
     Extra options will get passed on to show(), as long as they are valid::
 
         sage: plot_vector_field((x, y), (x, -2, 2), (y, -2, 2), xmax=10)
+        Graphics object consisting of 1 graphics primitive
         sage: plot_vector_field((x, y), (x, -2, 2), (y, -2, 2)).show(xmax=10) # These are equivalent
     """
+    (f, g) = f_g
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     z, ranges = setup_for_eval_on_grid([f,g], [xrange, yrange], options['plot_points'])
@@ -213,15 +242,18 @@ def plot_slope_field(f, xrange, yrange, **kwds):
         sage: capacity = 3 # thousand
         sage: growth_rate = 0.7 # population increases by 70% per unit of time
         sage: plot_slope_field(growth_rate*(1-y/capacity)*y, (x,0,5), (y,0,capacity*2))
+        Graphics object consisting of 1 graphics primitive
 
     Plot a slope field involving sin and cos::
 
         sage: x,y = var('x y')
         sage: plot_slope_field(sin(x+y)+cos(x+y), (x,-3,3), (y,-3,3))
+        Graphics object consisting of 1 graphics primitive
 
     Plot a slope field using a lambda function::
 
         sage: plot_slope_field(lambda x,y: x+y, (-2,2), (-2,2))
+        Graphics object consisting of 1 graphics primitive
 
     TESTS:
 
@@ -232,6 +264,7 @@ def plot_slope_field(f, xrange, yrange, **kwds):
         sage: import numpy # bump warnings up to errors for testing purposes
         sage: old_err = numpy.seterr('raise')
         sage: plot_slope_field(sin(x+y)+cos(x+y), (x,-3,3), (y,-3,3))
+        Graphics object consisting of 1 graphics primitive
         sage: dummy_err = numpy.seterr(**old_err)
     """
     slope_options = {'headaxislength': 0, 'headlength': 1e-9, 'pivot': 'middle'}

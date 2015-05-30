@@ -8,39 +8,26 @@ Finite Monoids
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category
-from sage.categories.category import Category
-from sage.categories.finite_semigroups import FiniteSemigroups
-from sage.categories.monoids import Monoids
+from sage.categories.category_with_axiom import CategoryWithAxiom
 
-
-class FiniteMonoids(Category):
+class FiniteMonoids(CategoryWithAxiom):
     """
-    The category of finite monoids
+    The category of finite (multiplicative) :class:`monoids <Monoids>`.
+
+    A finite monoid is a :class:`finite sets <FiniteSets>` endowed
+    with an associative unital binary operation `*`.
 
     EXAMPLES::
 
         sage: FiniteMonoids()
         Category of finite monoids
         sage: FiniteMonoids().super_categories()
-        [Category of finite semigroups, Category of monoids]
+        [Category of monoids, Category of finite semigroups]
 
     TESTS::
 
         sage: TestSuite(FiniteMonoids()).run()
     """
-
-    @cached_method
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: FiniteMonoids().super_categories()
-            [Category of finite semigroups, Category of monoids]
-        """
-        return [FiniteSemigroups(), Monoids()]
-
 
     class ElementMethods:
         def pseudo_order(self):

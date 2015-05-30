@@ -1,5 +1,4 @@
 include "sage/ext/interrupt.pxi"
-include 'sage/ext/stdsage.pxi'
 
 include "symmetrica.pxi"
 

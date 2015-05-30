@@ -21,12 +21,10 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 ################################################################################
 
-include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
 include "sage/ext/python.pxi"
 from cpython.list cimport *
 from cpython.object cimport *
-include "sage/ext/python_slice.pxi"
 from cpython.tuple cimport *
 
 import sage.modules.free_module
@@ -49,8 +47,6 @@ import sage.modules.free_module
 
 import matrix_misc
 
-cdef extern from "Python.h":
-    bint PySlice_Check(PyObject* ob)
 
 cdef class Matrix(sage.structure.element.Matrix):
     r"""
@@ -98,16 +94,18 @@ cdef class Matrix(sage.structure.element.Matrix):
     """
     def __init__(self, parent):
         """
-        The initialization routine of the Matrix base class ensures that it sets
-        the attributes self._parent, self._base_ring, self._nrows, self._ncols.
-        It sets the latter ones by accessing the relevant information on parent,
-        which is often slower than what a more specific subclass can do.
+        The initialization routine of the ``Matrix`` base class ensures
+        that it sets the attributes ``self._parent``, ``self._base_ring``,
+        ``self._nrows``, ``self._ncols``. It sets the latter ones by
+        accessing the relevant information on ``parent``, which is often
+        slower than what a more specific subclass can do.
 
-        Subclasses of Matrix can safely skip calling Matrix.__init__ provided they
-        take care of initializing these attributes themselves.
+        Subclasses of ``Matrix`` can safely skip calling
+        ``Matrix.__init__`` provided they take care of initializing these
+        attributes themselves.
 
-        The private attributes self._is_immutable and self._cache are implicitly
-        initialized to valid values upon memory allocation.
+        The private attributes ``self._is_immutable`` and ``self._cache``
+        are implicitly initialized to valid values upon memory allocation.
 
         EXAMPLES::
 
@@ -123,15 +121,15 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def list(self):
         """
-        List of the elements of self ordered by elements in each
+        List of the elements of ``self`` ordered by elements in each
         row. It is safe to change the returned list.
 
         .. warning::
 
            This function returns a list of the entries in the matrix
-           self.  It does not return a list of the rows of self, so it
-           is different than the output of list(self), which returns
-           ``[self[0],self[1],...]``.
+           ``self``.  It does not return a list of the rows of ``self``,
+           so it is different than the output of ``list(self)``, which
+           returns ``[self[0],self[1],...]``.
 
         EXAMPLES::
 
@@ -161,12 +159,14 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def _list(self):
         """
-        Unsafe version of the list method, mainly for internal use. This
-        may return the list of elements, but as an *unsafe* reference to
-        the underlying list of the object. It is might be dangerous if you
-        change entries of the returned list.
+        Unsafe version of the ``list`` method, mainly for internal use.
+        This may return the list of elements, but as an *unsafe* reference
+        to the underlying list of the object. It is dangerous to change
+        entries of the returned list.
 
-        EXAMPLES: Using _list is potentially fast and memory efficient,
+        EXAMPLES:
+
+        Using ``_list`` is potentially fast and memory efficient,
         but very dangerous (at least for generic dense matrices).
 
         ::
@@ -224,7 +224,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [      x       y       0]
             [      0       0 2*x + y]
             sage: d = a.dict(); d
-            {(0, 1): y, (1, 2): 2*x + y, (0, 0): x}
+            {(0, 0): x, (0, 1): y, (1, 2): 2*x + y}
 
         Notice that changing the returned list does not change a (the list
         is a copy)::
@@ -252,16 +252,16 @@ cdef class Matrix(sage.structure.element.Matrix):
             [0 1 2]
             [3 4 5]
             sage: v = a._dict(); v
-            {(0, 1): 1, (1, 2): 5, (1, 0): 3, (0, 2): 2, (1, 1): 4}
+            {(0, 1): 1, (0, 2): 2, (1, 0): 3, (1, 1): 4, (1, 2): 5}
 
         If you change a key of the dictionary, the corresponding entry of
         the matrix will be changed (but without clearing any caches of
         computing information about the matrix)::
 
             sage: v[0,1] = -2/3; v
-            {(0, 1): -2/3, (1, 2): 5, (1, 0): 3, (0, 2): 2, (1, 1): 4}
+            {(0, 1): -2/3, (0, 2): 2, (1, 0): 3, (1, 1): 4, (1, 2): 5}
             sage: a._dict()
-            {(0, 1): -2/3, (1, 2): 5, (1, 0): 3, (0, 2): 2, (1, 1): 4}
+            {(0, 1): -2/3, (0, 2): 2, (1, 0): 3, (1, 1): 4, (1, 2): 5}
             sage: a[0,1]
             -2/3
 
@@ -875,7 +875,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
                     if ind < 0 or ind >= nrows:
                         raise IndexError("matrix index out of range")
-            elif PySlice_Check(<PyObject *>row_index):
+            elif isinstance(row_index, slice):
                 row_list = range(*row_index.indices(nrows))
             else:
                 if not PyIndex_Check(row_index):
@@ -907,7 +907,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
                     if ind < 0 or ind >= ncols:
                         raise IndexError("matrix index out of range")
-            elif PySlice_Check(<PyObject *>col_index):
+            elif isinstance(col_index, slice):
                 col_list =  range(*col_index.indices(ncols))
             else:
                 if not PyIndex_Check(col_index):
@@ -959,7 +959,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 if ind < 0 or ind >= nrows:
                     raise IndexError("matrix index out of range")
             r = self.matrix_from_rows(row_list)
-        elif PySlice_Check(<PyObject *>row_index):
+        elif isinstance(row_index, slice):
             row_list = range(*row_index.indices(nrows))
             r = self.matrix_from_rows(row_list)
         else:
@@ -1390,9 +1390,9 @@ cdef class Matrix(sage.structure.element.Matrix):
                 # M[1] = [1,2,3] or M[1,:]=[1,2,3]
                 value_list_one_dimensional = 1
             value_list = list(value)
-        elif IS_INSTANCE(value, Matrix):
+        elif isinstance(value, Matrix):
             value_list = list(value)
-        elif IS_INSTANCE(value, Vector):
+        elif isinstance(value, Vector):
             if single_row or single_col:
                 value_list_one_dimensional = 1
                 value_list = list(value)
@@ -1478,7 +1478,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         Return coercion of x into the base ring of self.
         """
-        if PY_TYPE_CHECK(x, Element) and (<Element> x)._parent is self._base_ring:
+        if isinstance(x, Element) and (<Element> x)._parent is self._base_ring:
             return x
         return self._base_ring(x)
 
@@ -1646,45 +1646,34 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: A = random_matrix(ZZ, 100)
             sage: A.__repr__()
-            "100 x 100 dense matrix over Integer Ring (type 'print A.str()' to see all of the entries)"
+            '100 x 100 dense matrix over Integer Ring'
             sage: print A
-            100 x 100 dense matrix over Integer Ring (type 'print A.str()' to see all of the entries)
-
-        If there are several names for the same matrix, write it as "obj"::
-
-            sage: B = A; print B
-            100 x 100 dense matrix over Integer Ring (type 'print obj.str()' to see all of the entries)
-
-        If the matrix doesn't have a name, don't print the extra string::
-
-            sage: A.transpose()
             100 x 100 dense matrix over Integer Ring
-            sage: T = A.transpose(); T
-            100 x 100 dense matrix over Integer Ring (type 'print T.str()' to see all of the entries)
+
+        When a big matrix returned, include a hint on how to get the entries.
+        This is a feature of the sage command-line::
+
+            sage: A
+            100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
+
+        But don't do that when the matrix is part of a larger data structure::
+
+            sage: [A]*2
+            [100 x 100 dense matrix over Integer Ring,
+             100 x 100 dense matrix over Integer Ring]
+
         """
-        from sage.misc.sageinspect import sage_getvariablename
         if self._nrows < max_rows and self._ncols < max_cols:
             return self.str()
         if self.is_sparse():
             s = 'sparse'
         else:
             s = 'dense'
-        rep = "%s x %s %s matrix over %s"%(self._nrows, self._ncols, s, self.base_ring())
-        name = sage_getvariablename(self)
-        if isinstance(name, list) and len(name) == 0:
-            # don't print the name if the matrix doesn't have a name
-            return rep
-        if isinstance(name, list):
-            name = [x for x in name if not x.startswith('_')]
-        if len(name) == 1:
-            name = name[0]
-        # now name is either a string (if one choice) or a list (if many)
-        if not isinstance(name, str):
-            name = "obj"
-        return rep + " (type 'print %s.str()' to see all of the entries)" % name
+        return "{} x {} {} matrix over {}".format(self._nrows, self._ncols, s, self.base_ring())
 
-    def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None):
-        r"""
+    def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
+            *, unicode=False, shape=None):
+        ur"""
         Return a nice string representation of the matrix.
 
         INPUT:
@@ -1717,6 +1706,17 @@ cdef class Matrix(sage.structure.element.Matrix):
           use the value of ``minus_one`` as the representation of the
           negative of the one element.
 
+        - ``unicode`` - boolean (default: ``False``).
+          Whether to use Unicode symbols instead of ASCII symbols
+          for brackets and subdivision lines.
+
+        - ``shape`` - one of ``"square"`` or ``"round"`` (default: ``None``).
+          Switches between round and square brackets.
+          The default depends on the setting of the ``unicode`` keyword
+          argument. For Unicode symbols, the default is round brackets
+          in accordance with the TeX rendering,
+          while the ASCII rendering defaults to square brackets.
+
         EXAMPLES::
 
             sage: R = PolynomialRing(QQ,6,'z')
@@ -1744,9 +1744,25 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: M.str(repr)
             '[ 1  0]\n[ 2 -1]'
 
+            sage: M = matrix([[1,2,3],[4,5,6],[7,8,9]])
+            sage: M.subdivide(None, 2)
+            sage: print(M.str(unicode=True))
+            ⎛1 2│3⎞
+            ⎜4 5│6⎟
+            ⎝7 8│9⎠
+            sage: M.subdivide([0,1,1,3], [0,2,3,3])
+            sage: print(M.str(unicode=True, shape="square"))
+            ⎡┼───┼─┼┼⎤
+            ⎢│1 2│3││⎥
+            ⎢┼───┼─┼┼⎥
+            ⎢┼───┼─┼┼⎥
+            ⎢│4 5│6││⎥
+            ⎢│7 8│9││⎥
+            ⎣┼───┼─┼┼⎦
+
         TESTS:
 
-        Prior to Trac #11544 this could take a full minute to run (2011). ::
+        Prior to :trac:`11544` this could take a full minute to run (2011). ::
 
             sage: A = matrix(QQ, 4, 4, [1, 2, -2, 2, 1, 0, -1, -1, 0, -1, 1, 1, -1, 2, 1/2, 0])
             sage: e = A.eigenvalues()[3]
@@ -1754,17 +1770,56 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: P = K.basis_matrix()
             sage: P.str()
             '[             1.000000000000000? + 0.?e-17*I -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.288602340904754?*I -0.4847545623533090? - 1.871890760086142?*I]'
+
+        Use single-row delimiters where appropriate::
+
+            sage: print(matrix([[1]]).str(unicode=True))
+            (1)
+            sage: print(matrix([[],[]]).str(unicode=True))
+            ()
+            sage: M = matrix([[1]])
+            sage: M.subdivide([0,1], [])
+            sage: print(M.str(unicode=True))
+            ⎛─⎞
+            ⎜1⎟
+            ⎝─⎠
         """
-        #x = self.fetch('repr')  # too confusing!!
-        #if not x is None: return x
         cdef Py_ssize_t nr, nc, r, c
         nr = self._nrows
         nc = self._ncols
 
+        # symbols is a string with 11 elements:
+        # - top left bracket         (tlb)
+        # - middle left bracket      (mlb)
+        # - bottom left bracket      (blb)
+        # - single-row left bracket  (slb)
+        # - top right bracket        (trb)
+        # - middle right bracket     (mrb)
+        # - bottom right bracket     (brb)
+        # - single-row right bracket (srb)
+        # - vertical line            (vl)
+        # - horizontal line          (hl)
+        # - crossing lines           (cl)
+        if shape is None:
+            shape = "round" if unicode else "square"
+        if shape == "square":
+            symbols = u"⎡⎢⎣[⎤⎥⎦]│─┼" if unicode else "[[[[]]]]|-+"
+        elif shape == "round":
+            symbols = u"⎛⎜⎝(⎞⎟⎠)│─┼" if unicode else "(((())))|-+"
+        else:
+            raise ValueError("No such shape")
+        tlb, mlb, blb, slb, trb, mrb, brb, srb, vl, hl, cl = symbols
+
         if nr == 0 or nc == 0:
-            return "[]"
+            return slb + srb
 
         row_divs, col_divs = self.subdivisions()
+        row_div_counts = [0] * (nr + 1)
+        for r in row_divs:
+            row_div_counts[r] += 1
+        col_div_counts = [0] * (nc + 1)
+        for c in col_divs:
+            col_div_counts[c] += 1
 
         # Set the mapping based on keyword arguments
         if rep_mapping is None:
@@ -1784,53 +1839,45 @@ cdef class Matrix(sage.structure.element.Matrix):
             if callable(rep_mapping):
                 rep = rep_mapping(x)
             # avoid hashing entries, especially algebraic numbers
-            elif rep_mapping and rep_mapping.has_key(x):
+            elif rep_mapping and x in rep_mapping:
                 rep = rep_mapping.get(x)
             else:
                 rep = repr(x)
             S.append(rep)
 
-        tmp = []
-        for x in S:
-            tmp.append(len(x))
-
-        width = max(tmp)
+        width = max(map(len, S))
         rows = []
         m = 0
 
-        left_bracket = "["
-        right_bracket = "]"
-        while nc in col_divs:
-            right_bracket = "|" + right_bracket
-            col_divs.remove(nc)
-        while 0 in col_divs:
-            left_bracket += "|"
-            col_divs.remove(0)
-        line = '+'.join(['-'*((width+1)*(b-a)-1) for a,b in zip([0] + col_divs, col_divs + [nc])])
-        hline = (left_bracket + line + right_bracket).replace('|', '+')
+        hline = cl.join(hl * ((width + 1)*(b - a) - 1)
+                       for a,b in zip([0] + col_divs, col_divs + [nc]))
 
         # compute rows
         for r from 0 <= r < nr:
             rows += [hline] * row_divs.count(r)
             s = ""
             for c from 0 <= c < nc:
-                if c+1 in col_divs:
-                    sep = "|"*col_divs.count(c+1)
-                elif c == nc - 1:
-                    sep=""
+                if col_div_counts[c]:
+                    sep = vl * col_div_counts[c]
+                elif c == 0:
+                    sep = ""
                 else:
-                    sep=" "
-                entry = S[r*nc+c]
-                if c == 0:
-                    m = max(m, len(entry))
-                entry = " "*(width-len(entry)) + entry
-                s = s + entry + sep
-            rows.append(left_bracket + s + right_bracket)
-
+                    sep = " "
+                entry = S[r * nc + c]
+                entry = " " * (width - len(entry)) + entry
+                s = s + sep + entry
+            s = s + vl * col_div_counts[nc]
+            rows.append(s)
         rows += [hline] * row_divs.count(nr)
 
+        last_row = len(rows) - 1
+        if last_row == 0:
+            return slb + rows[0] + srb
+        rows[0] = tlb + rows[0] + trb
+        for r from 1 <= r < last_row:
+            rows[r] = mlb + rows[r] + mrb
+        rows[last_row] = blb + rows[last_row] + brb
         s = "\n".join(rows)
-        #self.cache('repr',s)
         return s
 
 ##     def _latex_sparse(self, variable="x"):
@@ -1895,6 +1942,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         latex = sage.misc.latex.latex
         matrix_delimiters = latex.matrix_delimiters()
+        align = latex.matrix_column_alignment()
         cdef Py_ssize_t nr, nc, r, c
         nr = self._nrows
         nc = self._ncols
@@ -1928,7 +1976,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             tmp.append(str(row))
         s = " \\\\\n".join(tmp)
 
-        tmp = ['r'*(b-a) for a,b in zip([0] + col_divs, col_divs + [nc])]
+        tmp = [align*(b-a) for a,b in zip([0] + col_divs, col_divs + [nc])]
         format = '|'.join(tmp)
 
         return "\\left" + matrix_delimiters[0] + "\\begin{array}{%s}\n"%format + s + "\n\\end{array}\\right" + matrix_delimiters[1]
@@ -2125,20 +2173,28 @@ cdef class Matrix(sage.structure.element.Matrix):
     # involve multiplication outside base ring, including
     # with_ versions of these methods for this situation
     ###################################################
+    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2):
+        if r1 < 0 or r1 >= self._nrows or r2 < 0 or r2 >= self._nrows:
+            raise IndexError("matrix row index out of range")
+
     cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2):
         if self._is_immutable:
-            raise ValueError("matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
+            raise ValueError("Matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
         else:
             self._cache = None
-        if r1<0 or r1 >= self._nrows or r2<0 or r2 >= self._nrows:
+        if r1 < 0 or r1 >= self._nrows or r2 < 0 or r2 >= self._nrows:
             raise IndexError("matrix row index out of range")
+
+    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2):
+        if c1 < 0 or c1 >= self._ncols or c2 < 0 or c2 >= self._ncols:
+            raise IndexError("matrix column index out of range")
 
     cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2):
         if self._is_immutable:
-            raise ValueError("matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
+            raise ValueError("Matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
         else:
             self._cache = None
-        if c1<0 or c1 >= self._ncols or c2<0 or c2 >= self._ncols:
+        if c1 < 0 or c1 >= self._ncols or c2 < 0 or c2 >= self._ncols:
             raise IndexError("matrix column index out of range")
 
     def swap_columns(self, Py_ssize_t c1, Py_ssize_t c2):
@@ -2218,6 +2274,105 @@ cdef class Matrix(sage.structure.element.Matrix):
         temp = self.__copy__()
         if c1 != c2:
             temp.swap_columns_c(c1,c2)
+        return temp
+
+    def permute_columns(self, permutation):
+        r"""
+        Permute the columns of ``self`` by applying the permutation
+        group element ``permutation``.
+
+        As a permutation group element acts on integers `\{1, \hdots, n\}`
+        the columns are considered as being numbered from 1 for this
+        operation.
+
+        INPUT:
+
+        - ``permutation`` -- a ``PermutationGroupElement``.
+
+        EXAMPLE: We create a matrix::
+
+            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M
+            [1 0 0 0 0]
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [0 0 0 4 0]
+            [0 0 0 0 5]
+
+        Next of all, create a permutation group element and act
+        on ``M`` with it::
+
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
+            sage: sigma, tau = G.gens()
+            sage: sigma
+            (1,2,3)(4,5)
+            sage: M.permute_columns(sigma)
+            sage: M
+            [0 0 1 0 0]
+            [2 0 0 0 0]
+            [0 3 0 0 0]
+            [0 0 0 0 4]
+            [0 0 0 5 0]
+
+        """
+        self.check_mutability()
+        for cycle in permutation.cycle_tuples():
+            cycle = [elt-1 for elt in reversed(cycle)]
+            for elt in cycle:
+                self.check_column_bounds(cycle[0], elt)
+                if cycle[0] != elt:
+                    self.swap_columns_c(cycle[0], elt)
+
+    def with_permuted_columns(self, permutation):
+        r"""
+        Return the matrix obtained from permuting the columns
+        of ``self`` by applying the permutation group element
+        ``permutation``.
+
+        As a permutation group element acts on integers `\{1,\hdots,n\}`
+        the columns are considered as being numbered from 1 for this
+        operation.
+
+        INPUT:
+
+        - ``permutation``, a ``PermutationGroupElement``
+
+        OUTPUT:
+
+        - A matrix.
+
+        EXAMPLE: We create some matrix::
+
+            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M
+            [1 0 0 0 0]
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [0 0 0 4 0]
+            [0 0 0 0 5]
+
+        Next of all, create a permutation group element and
+        act on ``M``::
+
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
+            sage: sigma, tau = G.gens()
+            sage: sigma
+            (1,2,3)(4,5)
+            sage: M.with_permuted_columns(sigma)
+            [0 0 1 0 0]
+            [2 0 0 0 0]
+            [0 3 0 0 0]
+            [0 0 0 0 4]
+            [0 0 0 5 0]
+        """
+        cdef Matrix temp
+        temp = self.__copy__()
+        for cycle in permutation.cycle_tuples():
+            cycle = [(elt - 1) for elt in reversed(cycle)]
+            for elt in cycle:
+                self.check_column_bounds(cycle[0], elt)
+                if cycle[0] != elt:
+                    temp.swap_columns_c(cycle[0], elt)
         return temp
 
     cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2):
@@ -2306,12 +2461,198 @@ cdef class Matrix(sage.structure.element.Matrix):
             temp.swap_rows_c(r1,r2)
         return temp
 
+    def permute_rows(self, permutation):
+        r"""
+        Permute the rows of ``self`` by applying the permutation
+        group element ``permutation``.
+
+        As a permutation group element acts on integers `\{1,\hdots,n\}`
+        the rows are considered as being numbered from 1 for this
+        operation.
+
+        INPUT:
+
+        - ``permutation`` -- a ``PermutationGroupElement``
+
+        EXAMPLE: We create a matrix::
+
+            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M
+            [1 0 0 0 0]
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [0 0 0 4 0]
+            [0 0 0 0 5]
+
+        Next of all, create a permutation group element and act on ``M``::
+
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
+            sage: sigma, tau = G.gens()
+            sage: sigma
+            (1,2,3)(4,5)
+            sage: M.permute_rows(sigma)
+            sage: M
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [1 0 0 0 0]
+            [0 0 0 0 5]
+            [0 0 0 4 0]
+        """
+        self.check_mutability()
+        for cycle in permutation.cycle_tuples():
+            cycle = [elt - 1 for elt in reversed(cycle)]
+            for elt in cycle:
+                self.check_row_bounds(cycle[0], elt)
+                if cycle[0] != elt:
+                    self.swap_rows_c(cycle[0], elt)
+
+    def with_permuted_rows(self, permutation):
+        r"""
+        Return the matrix obtained from permuting the rows
+        of ``self`` by applying the permutation group element
+        ``permutation``.
+
+        As a permutation group element acts on integers `\{1,\hdots,n\}`
+        the rows are considered as being numbered from 1 for this
+        operation.
+
+        INPUT:
+
+        - ``permutation`` -- a ``PermutationGroupElement``
+
+        OUTPUT:
+
+        - A matrix.
+
+        EXAMPLE: We create a matrix::
+
+            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M
+            [1 0 0 0 0]
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [0 0 0 4 0]
+            [0 0 0 0 5]
+
+        Next of all, create a permutation group element and act on ``M``::
+
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
+            sage: sigma, tau = G.gens()
+            sage: sigma
+            (1,2,3)(4,5)
+            sage: M.with_permuted_rows(sigma)
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [1 0 0 0 0]
+            [0 0 0 0 5]
+            [0 0 0 4 0]
+        """
+        cdef Matrix temp
+        temp = self.__copy__()
+        for cycle in permutation.cycle_tuples():
+            cycle = [elt - 1 for elt in reversed(cycle)]
+            for elt in cycle:
+                self.check_row_bounds(cycle[0], elt)
+                if cycle[0] != elt:
+                    temp.swap_rows_c(cycle[0], elt)
+        return temp
+
     cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2):
         cdef Py_ssize_t c
         for c from 0 <= c < self._ncols:
             a = self.get_unsafe(r2, c)
             self.set_unsafe(r2, c, self.get_unsafe(r1, c))
             self.set_unsafe(r1, c, a)
+
+    def permute_rows_and_columns(self, row_permutation, column_permutation):
+        r"""
+        Permute the rows and columns of ``self`` by applying the permutation
+        group elements ``row_permutation`` and ``column_permutation``
+        respectively.
+        
+        As a permutation group element acts on integers `\{1,\hdots,n\}`
+        the rows and columns are considered as being numbered from 1 for
+        this operation.
+
+        INPUT:
+
+        - ``row_permutation`` -- a ``PermutationGroupElement``
+        - ``column_permutation`` -- a ``PermutationGroupElement``
+
+        OUTPUT:
+
+        - A matrix.
+
+        EXAMPLE: We create a matrix::
+
+            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M
+            [1 0 0 0 0]
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [0 0 0 4 0]
+            [0 0 0 0 5]
+
+        Next of all, create a permutation group element and act on ``M``::
+
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
+            sage: sigma, tau = G.gens()
+            sage: sigma
+            (1,2,3)(4,5)
+            sage: M.permute_rows_and_columns(sigma,tau)
+            sage: M
+            [2 0 0 0 0]
+            [0 3 0 0 0]
+            [0 0 0 0 1]
+            [0 0 0 5 0]
+            [0 0 4 0 0]
+        """
+        self.permute_rows(row_permutation)
+        self.permute_columns(column_permutation)
+
+    def with_permuted_rows_and_columns(self,row_permutation,column_permutation):
+        r"""
+        Return the matrix obtained from permuting the rows and
+        columns of ``self`` by applying the permutation group
+        elements ``row_permutation`` and ``column_permutation``.
+        
+        As a permutation group element acts on integers `\{1,\hdots,n\}`
+        the rows are considered as being numbered from 1 for this
+        operation.
+
+        INPUT:
+
+        - ``row_permutation`` -- a ``PermutationGroupElement``
+        - ``column_permutation`` -- a ``PermutationGroupElement``
+
+        OUTPUT:
+
+        - A matrix.
+
+        EXAMPLE: We create a matrix::
+
+            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M
+            [1 0 0 0 0]
+            [0 2 0 0 0]
+            [0 0 3 0 0]
+            [0 0 0 4 0]
+            [0 0 0 0 5]
+
+        Next of all, create a permutation group element and act on ``M``::
+
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
+            sage: sigma, tau = G.gens()
+            sage: sigma
+            (1,2,3)(4,5)
+            sage: M.with_permuted_rows_and_columns(sigma,tau)
+            [2 0 0 0 0]
+            [0 3 0 0 0]
+            [0 0 0 0 1]
+            [0 0 0 5 0]
+            [0 0 4 0 0]
+        """
+        return self.with_permuted_rows(row_permutation).with_permuted_columns(column_permutation)
 
     def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_col=0):
         """
@@ -3085,7 +3426,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             # testing the diagonal entries to be zero
             zero = self.parent().base_ring().zero()
             for i from 0 <= i < self._nrows:
-                if not self.get_unsafe(i,i) == zero:
+                if self.get_unsafe(i,i) != zero:
                     return False
             sign = -1
         else:
@@ -3275,6 +3616,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         Returns True if this is a symmetric matrix.
 
+        A symmetric matrix is necessarily square.
+
         EXAMPLES::
 
             sage: m=Matrix(QQ,2,range(0,4))
@@ -3450,8 +3793,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Here, "alternating matrix" means a square matrix `A`
         satisfying `A^T = -A` and such that the diagonal entries
-        of `0`. Notice that the condition that the diagonal
-        entries be `0` is not redundant for matrices over
+        of `A` are `0`. Notice that the condition that the
+        diagonal entries be `0` is not redundant for matrices over
         arbitrary ground rings (but it is redundant when `2` is
         invertible in the ground ring). A square matrix `A` only
         required to satisfy `A^T = -A` is said to be
@@ -3481,11 +3824,12 @@ cdef class Matrix(sage.structure.element.Matrix):
         #  is the type used for indexing.
         cdef Py_ssize_t i,j
 
+        zero = self._base_ring.zero()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < i:
                 if self.get_unsafe(i,j) != -self.get_unsafe(j,i):
                     return False
-            if self.get_unsafe(i,i) != 0:
+            if not self.get_unsafe(i,i) == zero:
                 return False
         return True
 
@@ -3719,7 +4063,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: B.left_kernel().dimension()
             0
 
-        For "rectangular" matrices, invertibility is always
+        For *rectangular* matrices, invertibility is always
         ``False``, but asking about singularity will give an error. ::
 
             sage: C = matrix(QQ, 5, range(30))
@@ -3743,10 +4087,114 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: d.is_unit()
             False
         """
-        if self.ncols() == self.nrows():
-            return self.rank() != self.nrows()
+        if self._ncols == self._nrows:
+            return self.rank() != self._nrows
         else:
             raise ValueError("self must be a square matrix")
+
+    def is_weak_popov(self):
+        r"""
+        Return ``True`` if the matrix is in weak Popov form.
+
+        OUTPUT:
+
+        A matrix over an ordered ring is in weak Popov form if all
+        leading positions are different [MulSto]_. A leading position
+        is the position `i` in a row with the highest order (for
+        polynomials this is the degree), for multiple entries with
+        equal but highest order the maximal `i` is chosen (which is
+        the furthest to the right in the matrix).
+
+        .. WARNING::
+
+            This implementation only works for objects implementing a degree
+            function. It is designed to work for polynomials.
+
+        EXAMPLES:
+
+        A matrix with the same leading position in two rows is not in weak
+        Popov form. ::
+
+            sage: PF = PolynomialRing(GF(2^12,'a'),'x')
+            sage: A = matrix(PF,3,[x,x^2,x^3,x^2,x^2,x^2,x^3,x^2,x])
+            sage: A.is_weak_popov()
+            False
+
+        If a matrix has different leading positions, it is in weak Popov
+        form. ::
+
+            sage: B = matrix(PF,3,[1,1,x^3,x^2,1,1,1,x^2,1])
+            sage: B.is_weak_popov()
+            True
+
+        A matrix not over a polynomial ring will give an error. ::
+
+            sage: C = matrix(ZZ,4,[-1, 1, 0, 0, 7, 2, 1, 0, 1, 0, 2, -5, -1, 1, 0, 2])
+            sage: C.is_weak_popov()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_weak_popov only implements support for matrices ordered by a function self[x,y].degree()
+
+        Weak Popov form is not restricted to square matrices. ::
+
+            sage: PF = PolynomialRing(GF(7),'x')
+            sage: D = matrix(PF,2,4,[x^2+1,1,2,x,3*x+2,0,0,0])
+            sage: D.is_weak_popov()
+            False
+
+        Even a matrix with more rows than cols can still be in weak Popov
+        form. ::
+
+            sage: E = matrix(PF,4,2,[4*x^3+x,x^2+5*x+2,0,0,4,x,0,0])
+            sage: E.is_weak_popov()
+            True
+
+        But a matrix with less cols than non zero rows is never in weak
+        Popov form. ::
+
+            sage: F = matrix(PF,3,2,[x^2,x,x^3+2,x,4,5])
+            sage: F.is_weak_popov()
+            False
+
+        TESTS:
+
+        A matrix to check if really the rightmost value is taken. ::
+
+            sage: F = matrix(PF,2,2,[x^2,x^2,x,5])
+            sage: F.is_weak_popov()
+            True
+
+        .. SEEALSO::
+
+            - :meth:`weak_popov_form <sage.matrix.matrix2.weak_popov_form>`
+
+        REFERENCES:
+
+        .. [MulSto] T. Mulders, A. Storjohann, "On lattice reduction
+          for polynomial matrices", J. Symbolic Comput. 35 (2003),
+          no. 4, 377--401
+
+        AUTHOR:
+
+        - David Moedinger (2014-07-30)
+        """
+        try:
+            t = set()
+            for r in range(self.nrows()):
+                max = -1
+                for c in range(self.ncols()):
+                    if self[r, c].degree() >= max:
+                        max = self[r, c].degree()
+                        p = c
+                if not max == -1:
+                    if p in t:
+                        return False
+                    t.add(p)
+        except (NotImplementedError, AttributeError):
+            raise NotImplementedError(
+                "is_weak_popov only implements support for matrices ordered" +
+                " by a function self[x,y].degree()")
+        return True
 
     ###################################################
     # Invariants of a matrix
@@ -3761,7 +4209,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         This returns a tuple so it is immutable; see #10752.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A = matrix(QQ, 2, 2, range(4))
             sage: A.pivots()
@@ -3780,11 +4228,26 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def rank(self):
         """
+        Return the rank of this matrix.
+
+        EXAMPLES::
+
+            sage: m = matrix(GF(7),5,range(25))
+            sage: m.rank()
+            2
+
+        Rank is not implemented over the integers modulo a composite yet.::
+
+            sage: m = matrix(Integers(4), 2, [2,2,2,2])
+            sage: m.rank()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 4'.
 
         TESTS:
 
         We should be able to compute the rank of a matrix whose
-        entries are polynomials over a finite field (trac #5014)::
+        entries are polynomials over a finite field (trac:`5014`)::
 
             sage: P.<x> = PolynomialRing(GF(17))
             sage: m = matrix(P, [ [ 6*x^2 + 8*x + 12, 10*x^2 + 4*x + 11],
@@ -4134,17 +4597,25 @@ cdef class Matrix(sage.structure.element.Matrix):
             (32, 38, 44, 50)
             sage: (v * m).parent() is m.row(0).parent()
             True
+
+        TESTS:
+
+        Check that :trac:`8198` is fixed::
+
+            sage: R = Qp(5, 5)
+            sage: x = R(5).add_bigoh(1)
+            sage: I = matrix(R, [[1, 0], [0, 1]])
+            sage: v = vector(R, [1, x])
+            sage: v*I
+            (1 + O(5^5), O(5))
+
         """
         M = sage.modules.free_module.FreeModule(self._base_ring, self.ncols(), sparse=self.is_sparse())
         if self.nrows() != v.degree():
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
-        s = M(0)
-        zero = self.base_ring()(0)
         cdef Py_ssize_t i
-        for i from 0 <= i < self._nrows:
-            if v[i] != zero:
-                s += v[i]*self.row(i, from_list=True)
-        return s
+        return sum([v[i] * self.row(i, from_list=True)
+                    for i in xrange(self._nrows)], M(0))
 
     cdef Vector _matrix_times_vector_(self, Vector v):
         """
@@ -4160,17 +4631,25 @@ cdef class Matrix(sage.structure.element.Matrix):
             (8, 26, 44, 62)
             sage: (m * v).parent() is m.column(0).parent()
             True
+
+        TESTS:
+
+        Check that :trac:`8198` is fixed::
+
+            sage: R = Qp(5, 5)
+            sage: x = R(5).add_bigoh(1)
+            sage: I = matrix(R, [[1, 0], [0, 1]])
+            sage: v = vector(R, [1, x])
+            sage: I*v
+            (1 + O(5^5), O(5))
+
         """
         M = sage.modules.free_module.FreeModule(self._base_ring, self.nrows(), sparse=self.is_sparse())
-        if not PY_TYPE_CHECK(v, sage.modules.free_module_element.FreeModuleElement):
-            v = M(v)
         if self.ncols() != v.degree():
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
-        s = M(0)
-        for i in xrange(self.ncols()):
-            if v[i] != 0:
-                s = s + self.column(i, from_list=True)*v[i]
-        return s
+        cdef Py_ssize_t i
+        return sum([self.column(i, from_list=True) * v[i]
+                    for i in xrange(self._ncols)], M(0))
 
     def iterates(self, v, n, rows=True):
         r"""
@@ -4360,16 +4839,15 @@ cdef class Matrix(sage.structure.element.Matrix):
             [     -x*y*x*y x*y*x + x*y^2 x*y*x - x*y^2]
         """
         # derived classes over a commutative base *just* overload _lmul_ (!!)
-        if PY_TYPE_CHECK(self._base_ring, CommutativeRing):
+        if isinstance(self._base_ring, CommutativeRing):
             return self._lmul_(left)
         cdef Py_ssize_t r,c
-        cpdef RingElement x
         x = self._base_ring(left)
         cdef Matrix ans
         ans = self._parent.zero_matrix().__copy__()
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
-                ans.set_unsafe(r, c, x._mul_(<RingElement>self.get_unsafe(r, c)))
+                ans.set_unsafe(r, c, x * self.get_unsafe(r, c))
         return ans
 
     cpdef ModuleElement _lmul_(self, RingElement right):
@@ -4406,13 +4884,12 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         # derived classes over a commutative base *just* overload this and not _rmul_
         cdef Py_ssize_t r,c
-        cpdef RingElement x
         x = self._base_ring(right)
         cdef Matrix ans
         ans = self._parent.zero_matrix().__copy__()
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
-                ans.set_unsafe(r, c, (<RingElement>self.get_unsafe(r, c))._mul_(x))
+                ans.set_unsafe(r, c, self.get_unsafe(r, c) * x)
         return ans
 
     cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
@@ -4715,7 +5192,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: M = MatrixSpace(CC, 2)(-1.10220440881763)
             sage: N = ~M
             sage: (N*M).norm()
-            1.0
+            0.9999999999999999
         """
         if not self.base_ring().is_field():
             try:
@@ -4818,8 +5295,9 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
-
-        return RingElement.__pow__(self, n, ignored)
+        if ignored is not None:
+            raise RuntimeError("__pow__ third argument not used")
+        return sage.structure.element.generic_power_c(self, n, None)
 
     ###################################################
     # Comparison
@@ -4841,7 +5319,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef long _hash(self) except -1:
         raise NotImplementedError
 
-    cdef int _cmp_c_impl(left,Element right) except -2:
+    cpdef int _cmp_(left,Element right) except -2:
         """
         Compare two matrices.
 

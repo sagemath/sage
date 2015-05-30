@@ -33,7 +33,6 @@ interface http://www.sagenb.org/ on the web.
    groups
    linear_algebra
    linear_codes
-   graph_theory
    rep_theory
    rings
    polynomials

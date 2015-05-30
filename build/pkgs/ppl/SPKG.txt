@@ -42,39 +42,7 @@ Enea Zaffanella (University of Parma)
 
 == Special Update/Build Instructions ==
 
-== Changelog ==
-
-=== ppl-1.1pre9.p0 (Jean-Pierre Flori, 6 August 2013) ===
- * #15001: Update to prerelease 1.1pre9 version.
- * Let PPL build on Cygwin.
-
-=== ppl-1.0.p0 (Jeroen Demeyer, 10 June 2013) ===
- * #12672: Build PPL with its C interface if possible, fall back to
-   only C++ interface if needed.
- * Add support for PPL_CONFIGURE environment variable.
- * Use "make install" instead of "make install-strip".
-
-=== ppl-1.0 (Volker Braun, 2 March 2013) ===
- * #14232: Update to latest upstream version
- * #14201: Set gmp/gmpxx include dir
-
-=== ppl-0.11.2.p1 (Jeroen Demeyer, 29 February 2012) ===
- * #12608: remove useless "Dependencies check".
- * General clean-up of spkg-install, use patch for patching.
-
-=== ppl-0.11.2.p0 (Simon King, Dec 11, 2011) ===
-* #12131: Use --libdir, to make the package work on openSUSE
-
-=== ppl-0.11.2 (Volker Braun, Mar 8, 2011) ===
-* Update to newest version
-* The SIGILL issue was fixed upstream
-* configure --disable-fpmath works now (since we don't use the
-  floating point math stuff).
-
-=== ppl-0.11.1 (Volker Braun, Feb 20, 2011) ===
-* Update to newest version
-* Patch to avoid SIGILL issue, see #9678
-
-=== ppl-0.11 (Volker Braun, Sept 20, 2010) ===
-* initial SPKG
-
+=== Patches ===
+* ptrdiff_t-ppl-1.1.patch: Fixes to compile with gcc 4.9; C++ name
+  lookup issue.
+* weak.patch: disable use of weak symbols on Cygwin64.

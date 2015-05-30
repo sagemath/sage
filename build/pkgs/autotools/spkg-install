@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+# Check that git is installed
+if ! git --version &>/dev/null; then
+    echo >&2 "git is not installed, try running"
+    echo >&2 "  sage -i git"
+    exit 3
+fi
+
+# Create an empty git repo here, otherwise the autotools installers
+# get confused (they try to take version info from git if possible)
+git init
+
+
+SRC=`pwd`/src
+BUILD=`pwd`/build
+
+########################################################################
+# Apply patch(es)
+########################################################################
+
+cd src
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+########################################################################
+# Remove old installed versions
+########################################################################
+
+cd "$SAGE_LOCAL"
+rm -rf autoconf-* automake-* libtool-*
+cd bin
+rm -f m4 makeinfo help2man autoconf autoheader autom4te autoreconf \
+    autoscan automake aclocal libtool libtoolize
+
+########################################################################
+# Install wrapper scripts in $SAGE_LOCAL/bin
+########################################################################
+
+# Determine the default versions of the various autotools, which is the
+# last version in the list from version-list.
+source "$SRC/../version-list"
+for x in $autoconf_versions; do autoconf_latest=$x ; done
+for x in $automake_versions; do automake_latest=$x ; done
+for x in $libtool_versions; do libtool_latest=$x ; done
+
+# We install scripts for autoconf,... based on the generic "autofoo" script
+cd "$SAGE_LOCAL/bin"
+sed <"$SRC/../autofoo" >autoconf \
+    "s/@AUTOFOO@/autoconf/; s/@AUTOFILES@/configure/; s/@AUTOVAR@/AUTOCONF_VERSION/; s/@DEFAULT_VERSION@/${autoconf_latest}/"
+sed <"$SRC/../autofoo" >automake \
+    "s/@AUTOFOO@/automake/; s/@AUTOFILES@/Makefile.in/; s/@AUTOVAR@/AUTOMAKE_VERSION/; s/@DEFAULT_VERSION@/${automake_latest}/"
+sed <"$SRC/../autofoo" >libtool \
+    "s/@AUTOFOO@/libtool/; s/@AUTOFILES@/ltmain.sh/; s/@AUTOVAR@/LIBTOOL_VERSION/; s/@DEFAULT_VERSION@/${libtool_latest}/"
+
+# Correct permissions
+for prog in autoconf automake libtool; do
+    chmod 0755 $prog
+done
+
+# Make symlinks
+for prog in autoheader autom4te autoreconf autoscan; do
+    ln -s autoconf $prog
+done
+ln -s automake aclocal
+ln -s libtool libtoolize
+
+# Make symlinks for some non-exact version matches
+cd "$SAGE_LOCAL"
+ln -s autoconf-2.13.rc1 autoconf-2.4
+ln -s autoconf-2.13.rc1 autoconf-2.13
+ln -s autoconf-2.60 autoconf-2.59a
+ln -s autoconf-2.60 autoconf-2.59c
+ln -s libtool-2.2.4 libtool-2.2.3a
+ln -s libtool-2.2.8 libtool-2.2.7a
+
+########################################################################
+# Copy the Makefile and build everything
+########################################################################
+
+mkdir -p "$BUILD"
+cd "$BUILD"
+(
+    echo "SRC = $SRC"
+    echo "SAGE_LOCAL = $SAGE_LOCAL"
+    # Force the use of bash as shell (/bin/sh on OpenSolaris has
+    # problems with very long command lines used in some make rules).
+    echo "SHELL = `which bash`"
+    echo
+    cat "$SRC/../Makefile.build"
+) >Makefile
+
+$MAKE
