@@ -49,6 +49,13 @@ Miscellaneous
 - :ref:`sage.combinat.species.structure`
 - :ref:`sage.combinat.species.misc`
 - :ref:`sage.combinat.species.combinatorial_logarithm`
+
+Group cycle index series
+------------------------
+
+- :ref:`sage.combinat.species.group_cycle_index_series`
+- :ref:`sage.combinat.species.group_cycle_index_series_library`
+
 """
 
 import all

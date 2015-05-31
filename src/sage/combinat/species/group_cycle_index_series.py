@@ -1,42 +1,43 @@
-# -*- coding: utf-8 -*-
-"""Group Cycle Indices
+r"""
+Group Cycle Indices
 
 This file implements the group cycle indices of Henderson and Gainer-Dewar.
 
-For a group `\\Gamma` and a ring `R`, a `\\Gamma`-cycle index over `R`
+For a group `\Gamma` and a ring `R`, a `\Gamma`-cycle index over `R`
 is an element of the free module over the ring of cycle index series
-over `R` with basis `\\Gamma`.
+over `R` with basis `\Gamma`.
 
-In other words, a `\\Gamma`-cycle index series over `R` is a formal sum
+In other words, a `\Gamma`-cycle index series over `R` is a formal sum
 
 .. MATH::
 
-    F = \\sum_{\gamma \\in \Gamma} F[\gamma] \cdot \gamma,
+    F = \sum_{\gamma \in \Gamma} F[\gamma] \cdot \gamma,
 
-where each coefficient `F[\\gamma]` is a cycle index series over `R`.
-(By functoriality, if `F` is the `\\Gamma`-cycle index of a
-`\\Gamma`-species, it must be a class function of `\\Gamma`.)
+where each coefficient `F[\gamma]` is a cycle index series over `R`.
+(By functoriality, if `F` is the `\Gamma`-cycle index of a
+`\Gamma`-species, it must be a class function of `\Gamma`.)
 
-These objects are of interest because they can be used to enumerate `\\Gamma`-species;
+These objects are of interest because they can be used to enumerate `\Gamma`-species;
 they serve the same role in that theory as ordinary cycle indices do for classical
 species.
 
-Just like classical species, `\\Gamma`-species may be combined in ways
+Just like classical species, `\Gamma`-species may be combined in ways
 which correspond naturally to algebraic operations on their
-`\\Gamma`-cycle indices.  Many standard operations on
-`\\Gamma`-species are available, including addition, multiplication,
-and differentiation.  The associated operations `+`, `\\cdot`, and
-`\\prime` on `\\Gamma`-cycle indices are defined componentwise and are
+`\Gamma`-cycle indices.  Many standard operations on
+`\Gamma`-species are available, including addition, multiplication,
+and differentiation.  The associated operations `+`, `\cdot`, and
+`\prime` on `\Gamma`-cycle indices are defined componentwise and are
 implemented by this class.
 
-Additionally, there is a natural way to compose `\\Gamma`-species,
+Additionally, there is a natural way to compose `\Gamma`-species,
 corresponding to the construction of
 :class:`~sage.combinat.species.composition_species.CompositionSpecies`.
-The `\\Gamma`-cycle index of such a composition can be computed using
+The `\Gamma`-cycle index of such a composition can be computed using
 a variant of plethysm, but this depends on having access to all the
-terms of both component `\\Gamma`-cycle indices; it cannot be computed
+terms of both component `\Gamma`-cycle indices; it cannot be computed
 componentwise.  More details of this operation are available in the
-documentation for :meth:`.composition`, which implements it in Sage.
+documentation for :meth:`~sage.combinat.species.group_cycle_index_series.GroupCycleIndexSeries.composition`,
+which implements it in Sage.
 
 AUTHORS:
 
@@ -52,7 +53,7 @@ EXAMPLES::
 .. TODO::
 
     Implement (optional?) optimizations using assumption that a
-    `\\Gamma`-cycle index is a class function of `\\Gamma`.
+    `\Gamma`-cycle index is a class function of `\Gamma`.
 
 """
 #*****************************************************************************
@@ -99,18 +100,18 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         """
         from sage.combinat.species.generating_series import CycleIndexSeriesRing
         from sage.categories.algebras_with_basis import AlgebrasWithBasis
-        
+
         self._coeff_ring = R
         CISR = CycleIndexSeriesRing(R)
         self._cisr = CISR
         self._group = G
 
         CombinatorialFreeModule.__init__(self, CISR, G, element_class = GroupCycleIndexSeries, category = AlgebrasWithBasis(CISR), prefix = 'G')
-    
+
     def product_on_basis(self, left, right):
         """
         Return the product of two basis elements ``left`` and ``right`` of ``self``.
-        
+
         Multiplication of `\Gamma`-cycle indices is defined componentwise.
         That is, if `F` and `G` are two `\Gamma`-cycle indices, then `(F \cdot G) [\gamma] = F [\gamma] \cdot G [\gamma]`,
         where the multiplication on the right-hand side is ordinary multiplication of cycle indices.
@@ -126,7 +127,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
             sage: t = SymmetricGroup(4)([4,3,2,1])
             sage: GCISR.product_on_basis(t,t) == GCISR(t)
             True
-        
+
         """
         if left == right:
             return self.monomial(left)
@@ -160,16 +161,16 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
 
 class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
     """
-    
+
     EXAMPLES::
 
         sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
         sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
         sage: GCISR.an_element()
         p[]*G[()] + 2*p[]*G[(3,4)] + 3*p[]*G[(2,3)] + p[]*G[(1,2,3,4)]
-    
+
     """
-    
+
     def quotient(self):
         """Return the quotient of this group cycle index.
 
@@ -198,7 +199,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         REFERENCES:
 
         .. [AGdiss] Andrew Gainer. "`\Gamma`-species, quotients, and graph enumeration". Ph.D. diss. Brandeis University, 2012.
-        .. [Bousquet] Michel Bousquet. "Espèces de structures et applications du dénombrement de cartes et de cactus planaires". Ph.D. diss. Université du Québec à Montréal, 1999.
+        .. [Bousquet] Michel Bousquet. "Especes de structures et applications du denombrement de cartes et de cactus planaires". Ph.D. diss. Universite du Quebec a Montreal, 1999.
            http://lacim.uqam.ca/publications_pdf/24.pdf
 
         """
@@ -207,7 +208,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
     def composition(self, y, test_constant_term_is_zero = True):
         """Return the group-cycle-index plethysm of ``self`` with ``y``.
-        
+
         Plethysm of group cycle index series is defined by a sort of 'mixing' operation in [Hend]_:
 
         .. MATH::
@@ -240,7 +241,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: x.first_terms(8)
             (1, 1, 2, 5, 17, 73, 398, 2636)
             sage: x.name()
-            'Number of inverse pairs of elements in symmetric group S_n, or pairs of total orders on n nodes (average of A000085 and A000142).'            
+            'Number of inverse pairs of elements in symmetric group S_n, or pairs of total orders on n nodes (average of A000085 and A000142).'
             sage: example[S2.identity()].coefficients(4)
             [p[], p[1], p[1, 1] + p[2], p[1, 1, 1] + p[2, 1] + p[3]]
             sage: example[S2.gen()].coefficients(4)
@@ -280,7 +281,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             ycontrib = lambda part, mult: ypowers[g**part][mult-1].stretch(part)
             res = cisr.one()*prod(ycontrib(part, mult) for part,mult in partmults)
             return res
-        
+
         def term_map( term, g ):
             if test_constant_term_is_zero and term == 0:
                 return cisr.zero()
@@ -291,8 +292,8 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         def component_builder( g ):
             if test_constant_term_is_zero and self[g] == 0:
                 res = cisr.zero()
-            #elif g == group.identity(): #Save time by using existing CIS composition code
-            #    res = self[g](y[g])
+            elif g == group.identity(): #Save time by using existing CIS composition code
+                res = self[g](y[g])
             else:
                 res = cisr.sum_generator(term_map(self[g].coefficient(i), g) for i in _integers_from(0))
             return res
@@ -306,7 +307,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
     def derivative(self):
         """
         Return the cycle-index derivative of ``self``.
-        
+
         Differentiation of group cycle index series is defined termwise:
 
         .. MATH::
@@ -365,7 +366,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         described previously.
 
         To enumerate this species using Sage, we first need to set up an environment::
-        
+
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
@@ -375,16 +376,16 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: X = GCISR(species.SingletonSpecies().cycle_index_series())
 
         We can then use ``define`` to set up `\mathcal{A}`::
-        
+
             sage: A = GCISR(e)*0 + GCISR(t)*0
             sage: A.define(X*L(A))
             sage: A.quotient().isotype_generating_series().counts(8)
             [0, 1, 1, 2, 4, 10, 26, 76]
 
         (Compare :oeis:`A007123`.)
-        
-        """        
-        
+
+        """
+
         keys = self.parent().basis().keys()
         for key in keys:
             self[key].define(x[key])
