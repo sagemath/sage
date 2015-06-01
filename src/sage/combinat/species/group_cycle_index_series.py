@@ -318,6 +318,90 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
     __call__ = composition
 
+    def functorial_composition(self, y):
+        """
+        Return the functorial composition of ``self`` with ``y``.
+
+        Functorial composition of group cycle index series satisfies
+
+        .. MATH::
+          (F \square G) [\gamma] = \sum_{n \geq 0} \frac{1}{n!} \sum_{\sigma \in \mathfrak{S}_{n}}
+             \fix \left(\gamma \cdot F \left[ \gamma \cdot G [\sigma] \right] \right).
+
+        This operation on $\Gamma$-cycle indices corresponds to the functorial composition
+        operation on $\Gamma$-species. A formula for the permutation `\gamma \cdot G [\sigma]`
+        is given in [AGDPolya].
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: from sage.combinat.species.library import SetSpecies, SubsetSpecies
+            sage: from sage.combinat.species.group_cycle_index_series_library import LinearOrderWithReversalGroupCycleIndex
+            sage: S2 = SymmetricGroup(2)
+            sage: GCISR = GroupCycleIndexSeriesRing(S2)
+            sage: P = GCISR(SubsetSpecies().cycle_index_series())
+            sage: E = GCISR(SetSpecies().cycle_index_series())
+            sage: L2 = LinearOrderWithReversalGroupCycleIndex().restricted(min=2,max=3)
+            sage: D = P.functorial_composition(L2*E)
+            sage: D.quotient().isotype_generating_series().counts(5)
+            [1, 1, 3, 13, 144]
+
+        REFERENCES:
+
+        .. [AGDPolya] Andrew Gainer-Dewar. "Species with an equivariant group action." Preprint, :arxiv:`1401.6202`.
+        """
+        from sage.combinat.species.stream import Stream, _integers_from
+        from sage.combinat.partition import Partition, Partitions
+        from sage.rings.arith import divisors, moebius, factorial
+        from sage.rings.integer import Integer
+
+        assert self.parent() == y.parent()
+
+        parent = self.parent()
+        group = parent._group
+        cisr = parent.base_ring()
+        p = cisr.base_ring()
+
+        # Compute the number of k-cycles in g*y[sigma] if sigma has cycle type partition ctp
+        def cyccount(k, g, ctp):
+            # Helper function for cycle computation
+            sumterm = lambda d: moebius(k / d) * y[g**d].coefficient_cycle_type(ctp.power(d)) * ctp.power(d).aut()
+            result = sum(sumterm(d) for d in divisors(k)) / k
+            return Integer(result)
+
+        # Find the cycle type of g*y[sigma] if sigma has cycle type partition ctp
+        def g_ctp_builder(g, ctp):
+            n = ctp.size()
+            scount = y[group.one()].coefficient_cycle_type([1]*n) * factorial(n) # Number of y-structures with n labels
+
+            result = []
+            k = 1
+
+            while sum(result) < scount and k <= scount:
+                result = [k]*cyccount(k, g, ctp) + result
+                k += 1
+
+            assert sum(result) == scount
+
+            return Partition(result)
+
+        # Compute the g*ctp term of the result
+        def ctp_term(g, ctp):
+            gpart = g_ctp_builder(g, ctp)
+            ctp_coeff = self[g].coefficient_cycle_type(gpart) * gpart.aut() / ctp.aut()
+            return ctp_coeff * p(ctp)
+
+        # Compute the order-n term of the result as a sum of partitions
+        n_term = lambda g, n: sum(ctp_term(g, ctp) for ctp in Partitions(n))
+
+        # Build the g component of the result
+        component_builder = lambda g: cisr(n_term(g, n) for n in _integers_from(0))
+
+        # Construct the result
+        components_dict = {g: component_builder(g) for g in group}
+        result = parent._from_dict(components_dict)
+        return result
+
     def derivative(self):
         """
         Return the cycle-index derivative of ``self``.
