@@ -149,6 +149,20 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         basis = self.basis()
         return self.sum(basis[k] for k in basis.keys())
 
+    def _an_element_(self):
+        """
+        Return a representative element of this algebra.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+            sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(2))
+            sage: GCISR.an_element()
+            p[]*G[()] + p[]*G[(1,2)]
+        """
+        G = self.basis().keys()
+        return self.monomial(G.one()) + self.monomial(G.an_element())
+
     def _repr_(self):
         """
         EXAMPLES::
@@ -167,7 +181,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
         sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
         sage: GCISR.an_element()
-        p[]*G[()] + 2*p[]*G[(3,4)] + 3*p[]*G[(2,3)] + p[]*G[(1,2,3,4)]
+        p[]*G[()] + p[]*G[(1,2,3,4)]
 
     """
 
@@ -192,9 +206,9 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: S4 = SymmetricGroup(4)
             sage: GCISR = GroupCycleIndexSeriesRing(S4)
             sage: GCISR.an_element()
-            p[]*G[()] + 2*p[]*G[(3,4)] + 3*p[]*G[(2,3)] + p[]*G[(1,2,3,4)]
+            p[]*G[()] + p[]*G[(1,2,3,4)]
             sage: GCISR.an_element().quotient().coefficients(4)
-            [7/24*p[], 0, 0, 0]
+            [1/12*p[], 0, 0, 0]
 
         REFERENCES:
 
