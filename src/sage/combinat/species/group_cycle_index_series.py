@@ -243,7 +243,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         EXAMPLES::
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
-            sage: from sage.combinat.species.gci_library import CyclicOrderWithReversalGroupCycleIndex
+            sage: from sage.combinat.species.group_cycle_index_series_library import CyclicOrderWithReversalGroupCycleIndex
             sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: E = sage.combinat.species.set_species.SetSpecies().cycle_index_series()
@@ -351,7 +351,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         EXAMPLES::
 
-            sage: from sage.combinat.species.gci_library import LinearOrderWithReversalGroupCycleIndex
+            sage: from sage.combinat.species.group_cycle_index_series_library import LinearOrderWithReversalGroupCycleIndex
             sage: L = LinearOrderWithReversalGroupCycleIndex()
             sage: e,t = L.parent().basis().keys()
             sage: L.restricted(min=2,max=4)[t].coefficients(5)
@@ -385,7 +385,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: e,t = GCISR.basis().keys()
-            sage: from sage.combinat.species.gci_library import LinearOrderWithReversalGroupCycleIndex
+            sage: from sage.combinat.species.group_cycle_index_series_library import LinearOrderWithReversalGroupCycleIndex
             sage: L = LinearOrderWithReversalGroupCycleIndex()
             sage: X = GCISR(species.SingletonSpecies().cycle_index_series())
 
