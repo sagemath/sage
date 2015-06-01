@@ -17,6 +17,7 @@ Subset Species
 #*****************************************************************************
 
 from species import GenericCombinatorialSpecies
+from set_species import SetSpecies
 from generating_series import _integers_from, factorial_stream
 from structure import GenericSpeciesStructure
 from sage.rings.all import ZZ
@@ -208,12 +209,11 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _cis(self, series_ring, base_ring):
         r"""
-        The cycle index series for the species of subsets is given by
+        The cycle index series for the species of subsets satisfies
 
         .. math::
 
-             exp \left( 2 \cdot \sum_{n=1}^\infty \frac{x_n}{n} \right).
-
+             Z_{\mathfrak{p}} = Z_{\mathcal{E}} \cdot Z_{\mathcal{E}}
 
 
         EXAMPLES::
@@ -226,22 +226,11 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
              4/3*p[1, 1, 1] + 2*p[2, 1] + 2/3*p[3],
              2/3*p[1, 1, 1, 1] + 2*p[2, 1, 1] + 1/2*p[2, 2] + 4/3*p[3, 1] + 1/2*p[4]]
         """
-        return series_ring(self._cis_gen(base_ring)).exponential()
-
-    def _cis_gen(self, base_ring):
-        """
-        EXAMPLES::
-
-            sage: S = species.SubsetSpecies()
-            sage: g = S._cis_gen(QQ)
-            sage: [next(g) for i in range(5)]
-            [0, 2*p[1], p[2], 2/3*p[3], 1/2*p[4]]
-        """
-        from sage.combinat.sf.sf import SymmetricFunctions
-        p = SymmetricFunctions(base_ring).power()
-        yield base_ring(0)
-        for n in _integers_from(ZZ(1)):
-            yield 2*p([n])/n
+        ciset = SetSpecies().cycle_index_series(base_ring)
+        res = ciset**2
+        if self.is_weighted():
+            res *= self._weight
+        return res
 
 #Backward compatibility
 SubsetSpecies_class = SubsetSpecies

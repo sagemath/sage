@@ -8,19 +8,15 @@ the species `E^{+}` of nonempty sets:
 .. MATH::
     \Omega \circ E^{+} = E^{+} \circ \Omega = X.
 
+.. warning::
+
+    This module is now deprecated.  Please use
+    :meth:`sage.combinat.species.generating_series.CycleIndexSeriesRing.exponential`
+    instead of :func:`CombinatorialLogarithmSeries`.
+
 AUTHORS:
 
 - Andrew Gainer-Dewar (2013): initial version
-
-TESTS::
-
-    sage: from sage.combinat.species.combinatorial_logarithm import CombinatorialLogarithmSeries
-    sage: CombinatorialLogarithmSeries().coefficients(5)
-    [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3], -1/4*p[1, 1, 1, 1] + 1/4*p[2, 2]]
-
-    sage: Eplus = sage.combinat.species.set_species.SetSpecies(min=1).cycle_index_series()
-    sage: CombinatorialLogarithmSeries().compose(Eplus).coefficients(4)
-    [0, p[1], 0, 0]
 
 """
 #*****************************************************************************
@@ -32,54 +28,14 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.combinat.species.generating_series import CycleIndexSeriesRing, LogarithmCycleIndexSeries
+from sage.rings.all import QQ
 from sage.misc.cachefunc import cached_function
-from sage.combinat.species.stream import _integers_from
-from sage.combinat.sf.all import SymmetricFunctions
-from sage.combinat.species.generating_series import CycleIndexSeriesRing
-from sage.rings.all import RationalField, Integer, divisors
+from sage.misc.superseded import deprecation
 
 @cached_function
-def _cl_term(n, R = RationalField()):
-    """
-    Compute the order-n term of the cycle index series of the virtual species `\Omega`,
-    the compositional inverse of the species `E^{+}` of nonempty sets.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.species.combinatorial_logarithm import _cl_term
-        sage: [_cl_term(i) for i in range(4)]
-        [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
-    """
-
-    n = Integer(n) #check that n is an integer
-
-    p = SymmetricFunctions(R).power()
-
-    res = p.zero()
-    if n == 1:
-        res = p([1])
-    elif n > 1:
-        res = 1/n * ((-1)**(n-1) * p([1])**n - sum(d * p([Integer(n/d)]).plethysm(_cl_term(d, R)) for d in divisors(n)[:-1]))
-
-    return res
-
-def _cl_gen (R = RationalField()):
-    """
-    Produce a generator which yields the terms of the cycle index series of the virtual species
-    `\Omega`, the compositional inverse of the species `E^{+}` of nonempty sets.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.species.combinatorial_logarithm import _cl_gen
-        sage: g = _cl_gen()
-        sage: [next(g) for i in range(4)]
-        [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
-    """
-    return (_cl_term(i, R) for i in _integers_from(0))
-
-@cached_function
-def CombinatorialLogarithmSeries(R = RationalField()):
-    """
+def CombinatorialLogarithmSeries(R=QQ):
+    r"""
     Return the cycle index series of the virtual species `\Omega`, the compositional inverse
     of the species `E^{+}` of nonempty sets.
 
@@ -93,6 +49,8 @@ def CombinatorialLogarithmSeries(R = RationalField()):
 
         sage: from sage.combinat.species.combinatorial_logarithm import CombinatorialLogarithmSeries
         sage: CombinatorialLogarithmSeries().coefficients(4)
+        doctest:...: DeprecationWarning: CombinatorialLogarithmSeries is deprecated, use CycleIndexSeriesRing(R).logarithm_series() or CycleIndexSeries().logarithm() instead
+        See http://trac.sagemath.org/14846 for details.
         [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
 
     Its defining property is that `\Omega \circ E^{+} = E^{+} \circ \Omega = X` (that is, that
@@ -101,12 +59,6 @@ def CombinatorialLogarithmSeries(R = RationalField()):
         sage: Eplus = sage.combinat.species.set_species.SetSpecies(min=1).cycle_index_series()
         sage: CombinatorialLogarithmSeries().compose(Eplus).coefficients(4)
         [0, p[1], 0, 0]
-
-    REFERENCES:
-
-    .. [BLL] F. Bergeron, G. Labelle, and P. Leroux. "Combinatorial species and tree-like structures". Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
-
-    .. [Labelle] G. Labelle. "New combinatorial computational methods arising from pseudo-singletons." DMTCS Proceedings 1, 2008.
     """
-    CIS = CycleIndexSeriesRing(R)
-    return CIS(_cl_gen(R))
+    deprecation(14846, "CombinatorialLogarithmSeries is deprecated, use CycleIndexSeriesRing(R).logarithm_series() or CycleIndexSeries().logarithm() instead")
+    return LogarithmCycleIndexSeries(R)

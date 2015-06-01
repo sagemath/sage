@@ -74,7 +74,7 @@ weighted degree where each variable x_i has weight i.
 #*****************************************************************************
 from series import LazyPowerSeriesRing, LazyPowerSeries
 from stream import Stream, _integers_from
-from sage.rings.all import Integer, moebius, lcm, divisors
+from sage.rings.all import Integer, moebius, lcm, divisors, RationalField
 from sage.combinat.partition import Partition, Partitions
 from functools import partial
 from sage.combinat.sf.sf import SymmetricFunctions
@@ -863,11 +863,11 @@ class CycleIndexSeries(LazyPowerSeries):
 
     def _compose_gen(self, y, ao):
         """
-        Return a generator for the coefficients of the composition of this 
-        cycle index series and the cycle index series ``y``. This overrides 
-        the method defined in ``LazyPowerSeries``. 
+        Return a generator for the coefficients of the composition of this
+        cycle index series and the cycle index series ``y``. This overrides
+        the method defined in ``LazyPowerSeries``.
 
-        The notion "composition" means plethystic substitution here, as 
+        The notion "composition" means plethystic substitution here, as
         defined in Section 2.2 of [BLL-Intro]_.
 
         EXAMPLES::
@@ -1049,14 +1049,14 @@ class CycleIndexSeries(LazyPowerSeries):
         It follows that `(F - X) \circ G = F \circ G - X \circ G = X - G`.
         Rearranging, we obtain the recursive equation `G = X - (F - X) \circ G`, which can be
         solved using iterative methods.
-        
+
         .. WARNING::
-        
+
             This algorithm is functional but can be very slow.
             Use with caution!
 
         .. SEEALSO::
-        
+
             The compositional inverse `\Omega` of the species `E_{+}`
             of nonempty sets can be handled much more efficiently
             using specialized methods. These are implemented in
@@ -1079,4 +1079,275 @@ class CycleIndexSeries(LazyPowerSeries):
 
         return res
 
+    def derivative(self, order=1):
+        r"""
+        Return the species-theoretic nth derivative of ``self``, where n is ``order``.
 
+        For a cycle index series `F (p_{1}, p_{2}, p_{3}, \dots)`, its derivative is the cycle index series
+        `F' = D_{p_{1}} F` (that is, the formal derivative of `F` with respect to the variable `p_{1}`).
+
+        If `F` is the cycle index series of a species `S` then `F'` is the cycle index series of an associated
+        species `S'` of `S`-structures with a "hole".
+
+        EXAMPLES:
+
+        The species `E` of sets satisfies the relationship `E' = E`::
+
+            sage: E = species.SetSpecies().cycle_index_series()
+            sage: E.coefficients(8) == E.derivative().coefficients(8)
+            True
+
+        The species `C` of cyclic orderings and the species `L` of linear orderings satisfy the relationship `C' = L`::
+
+            sage: C = species.CycleSpecies().cycle_index_series()
+            sage: L = species.LinearOrderSpecies().cycle_index_series()
+            sage: L.coefficients(8) == C.derivative().coefficients(8)
+            True
+
+        """
+
+        # Make sure that order is integral
+        order = Integer(order)
+
+        if order < 0:
+            raise ValueError("Order must be a non-negative integer")
+
+        elif order == 0:
+            return self
+
+        elif order == 1:
+            parent = self.parent()
+            derivative_term = lambda n: parent.term(self.coefficient(n+1).derivative_with_respect_to_p1(), n)
+            return parent.sum_generator(derivative_term(i) for i in _integers_from(0))
+
+        else:
+            return self.derivative(order-1)
+
+    def pointing(self):
+        r"""
+        Return the species-theoretic pointing of ``self``.
+
+        For a cycle index `F`, its pointing is the cycle index series `F^{\bullet} = p_{1} \cdot F'`.
+
+        If `F` is the cycle index series of a species `S` then `F^{\bullet}` is the cycle index series of an associated
+        species `S^{\bullet}` of `S`-structures with a marked "root".
+
+        EXAMPLES:
+
+        The species `E^{\bullet}` of "pointed sets" satisfies `E^{\bullet} = X \cdot E`::
+
+            sage: E = species.SetSpecies().cycle_index_series()
+            sage: X = species.SingletonSpecies().cycle_index_series()
+            sage: E.pointing().coefficients(8) == (X*E).coefficients(8)
+            True
+
+        """
+        p1 = self.base_ring()([1])
+        X = self.parent()([0, p1, 0])
+
+        return X*self.derivative()
+
+    def integral(self, *args):
+        """
+        Given a cycle index `G`, it is not in general possible to recover a single cycle index `F`
+        such that `F' = G` (even up to addition of a constant term).
+
+        More broadly, it may be the case that there are many non-isomorphic species `S` such that
+        `S' = T` for a given species `T`.
+        For example, the species `3 C_{3}` of 3-cycles from three distinct classes
+        and the species `X^{3}` of 3-sets are not isomorphic, but `(3 C_{3})' = (X^{3})' = 3 X^{2}`.
+
+        EXAMPLES::
+
+            sage: C3 = species.CycleSpecies(size=3).cycle_index_series()
+            sage: X = species.SingletonSpecies().cycle_index_series()
+            sage: (3*C3).derivative().coefficients(8) == (3*X^2).coefficients(8)
+            True
+            sage: (X^3).derivative().coefficients(8) == (3*X^2).coefficients(8)
+            True
+
+        .. WARNING::
+
+            This method has no implementation and exists only to prevent you from doing something
+            strange. Calling it raises a ``NotImplementedError``!
+
+        """
+
+        raise NotImplementedError
+
+    def exponential(self):
+        r"""
+        Return the species-theoretic exponential of ``self``.
+
+        For a cycle index `Z_{F}` of a species `F`, its exponential is the cycle index series
+        `Z_{E} \\circ Z_{F}`, where `Z_{E}` is the :meth:`~sage.combinat.species.generating_series.ExponentialCycleIndexSeries`.
+
+        The exponential `Z_{E} \circ Z_{F}` is then the cycle index series of the species `E \\circ F` of
+        "sets of `F`-structures".
+
+        EXAMPLES:
+
+        Let `BT` be the species of binary trees, `BF` the species of binary forests, and
+        `E` the species of sets. Then we have `BF = E \circ BT`::
+
+            sage: BT = species.BinaryTreeSpecies().cycle_index_series()
+            sage: BF = species.BinaryForestSpecies().cycle_index_series()
+            sage: BT.exponential().isotype_generating_series().coefficients(8) == BF.isotype_generating_series().coefficients(8)
+            True
+
+
+        """
+        base_ring = self.parent().base_ring().base_ring()
+        E = ExponentialCycleIndexSeries(base_ring)
+        return E.compose(self)
+
+    def logarithm(self):
+        r"""
+        Return the combinatorial logarithm of ``self``.
+
+        For a cycle index `Z_{F}` of a species `F`, its logarithm is the cycle index series
+        `Z_{\Omega} \circ Z_{F}`, where `Z_{\Omega}` is the
+        :meth:`~sage.combinat.species.generating_series.LogarithmCycleIndexSeries`.
+
+        The logarithm `Z_{\Omega} \circ Z_{F}` is then the cycle index series of the (virtual) species
+        `\Omega \circ F` of "connected `F`-structures".
+        In particular, if `F = E^{+} \circ G` for `E^{+}` the species of nonempty sets and `G`
+        some other species, then `\Omega \circ F = G`.
+
+        EXAMPLES:
+
+        Let `G` be the species of nonempty graphs and  `CG` be the species of nonempty connected
+        graphs. Then `G = E^{+} \circ CG`, so `CG = \Omega \circ G`::
+
+            sage: G = species.SimpleGraphSpecies().cycle_index_series() - 1
+            sage: from sage.combinat.species.generating_series import LogarithmCycleIndexSeries
+            sage: CG = LogarithmCycleIndexSeries().compose(G)
+            sage: CG.isotype_generating_series().coefficients(8)
+            [0, 1, 1, 2, 6, 21, 112, 853]
+        """
+
+        base_ring = self.parent().base_ring().base_ring()
+        Omega = LogarithmCycleIndexSeries(base_ring)
+        return Omega.compose(self)
+
+@cached_function
+def _exp_term(n, R = RationalField()):
+    """
+    Compute the order-n term of the cycle index series of the species `E` of sets.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.species.generating_series import _exp_term
+        sage: [_exp_term(i) for i in range(4)]
+        [p[], p[1], 1/2*p[1, 1] + 1/2*p[2], 1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3]]
+    """
+
+    p = SymmetricFunctions(R)
+    res = sum(p(part)/part.aut() for part in Partitions(n))
+    return res
+
+def _exp_gen(R = RationalField()):
+    """
+    Produce a generator which yields the terms of the cycle index series of the species `E` of sets.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.species.generating_series import _exp_gen
+        sage: g = _exp_gen()
+        sage: [g.next() for i in range(4)]
+        [p[], p[1], 1/2*p[1, 1] + 1/2*p[2], 1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3]]
+    """
+    return (_exp_term(i, R) for i in _integers_from(0))
+
+@cached_function
+def ExponentialCycleIndexSeries(R = RationalField()):
+    """
+    Return the cycle index series of the species `E` of sets.
+
+    This cycle index satisfies
+
+    .. math::
+
+        Z_{E} = \\sum_{n \\geq 0} \\sum_{\\lambda \\vdash n} \\frac{p_{\\lambda}}{z_{\\lambda}}.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.species.generating_series import ExponentialCycleIndexSeries
+        sage: ExponentialCycleIndexSeries().coefficients(5)
+        [p[], p[1], 1/2*p[1, 1] + 1/2*p[2], 1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3], 1/24*p[1, 1, 1, 1] + 1/4*p[2, 1, 1] + 1/8*p[2, 2] + 1/3*p[3, 1] + 1/4*p[4]]
+    """
+    CIS = CycleIndexSeriesRing(R)
+    return CIS(_exp_gen(R))
+
+@cached_function
+def _cl_term(n, R = RationalField()):
+    """
+    Compute the order-n term of the cycle index series of the virtual species `\Omega`,
+    the compositional inverse of the species `E^{+}` of nonempty sets.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.species.generating_series import _cl_term
+        sage: [_cl_term(i) for i in range(4)]
+        [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
+    """
+
+    n = Integer(n) #check that n is an integer
+
+    p = SymmetricFunctions(R).power()
+
+    res = p.zero()
+    if n == 1:
+        res = p([1])
+    elif n > 1:
+        res = 1/n * ((-1)**(n-1) * p([1])**n - sum(d * p([Integer(n/d)]).plethysm(_cl_term(d, R)) for d in divisors(n)[:-1]))
+
+    return res
+
+def _cl_gen (R = RationalField()):
+    """
+    Produce a generator which yields the terms of the cycle index series of the virtual species
+    `\Omega`, the compositional inverse of the species `E^{+}` of nonempty sets.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.species.generating_series import _cl_gen
+        sage: g = _cl_gen()
+        sage: [g.next() for i in range(4)]
+        [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
+    """
+    return (_cl_term(i, R) for i in _integers_from(0))
+
+@cached_function
+def LogarithmCycleIndexSeries(R = RationalField()):
+    """
+    Return the cycle index series of the virtual species `\Omega`, the compositional inverse
+    of the species `E^{+}` of nonempty sets.
+
+    The notion of virtual species is treated thoroughly in [BLL]_. The specific algorithm used
+    here to compute the cycle index of `\Omega` is found in [Labelle]_.
+
+    EXAMPLES:
+
+    The virtual species `\Omega` is 'properly virtual', in the sense that its cycle index
+    has negative coefficients::
+
+        sage: from sage.combinat.species.generating_series import LogarithmCycleIndexSeries
+        sage: LogarithmCycleIndexSeries().coefficients(4)
+        [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
+
+    Its defining property is that `\Omega \circ E^{+} = E^{+} \circ \Omega = X` (that is, that
+    composition with `E^{+}` in both directions yields the multiplicative identity `X`)::
+
+        sage: Eplus = sage.combinat.species.set_species.SetSpecies(min=1).cycle_index_series()
+        sage: LogarithmCycleIndexSeries().compose(Eplus).coefficients(4)
+        [0, p[1], 0, 0]
+
+    REFERENCES:
+
+    .. [BLL] F. Bergeron, G. Labelle, and P. Leroux. "Combinatorial species and tree-like structures". Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
+
+    .. [Labelle] G. Labelle. "New combinatorial computational methods arising from pseudo-singletons." DMTCS Proceedings 1, 2008.
+    """
+    CIS = CycleIndexSeriesRing(R)
+    return CIS(_cl_gen(R))

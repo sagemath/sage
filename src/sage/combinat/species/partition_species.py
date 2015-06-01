@@ -274,8 +274,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
              5/8*p[1, 1, 1, 1] + 7/4*p[2, 1, 1] + 7/8*p[2, 2] + p[3, 1] + 3/4*p[4]]
         """
         ciset = SetSpecies().cycle_index_series(base_ring)
-        CIS = ciset.parent()
-        res = CIS.sum_generator(((1/n)*ciset).stretch(n) for n in _integers_from(ZZ(1))).exponential()
+        res = ciset.composition(ciset - 1)
         if self.is_weighted():
             res *= self._weight
         return res
