@@ -325,14 +325,22 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         Functorial composition of group cycle index series satisfies
 
         .. MATH::
-          (F \square G) [\gamma] = \sum_{n \geq 0} \frac{1}{n!} \sum_{\sigma \in \mathfrak{S}_{n}}
-             \fix \left(\gamma \cdot F \left[ \gamma \cdot G [\sigma] \right] \right).
+          (F \\square G) [\\gamma] = \\sum_{n \\geq 0} \\frac{1}{n!} \\sum_{\\sigma \in \\mathfrak{S}_{n}}
+             \\fix \\left(\gamma \\cdot F \\left[ \\gamma \\cdot G [\\sigma] \\right] \\right).
 
-        This operation on $\Gamma$-cycle indices corresponds to the functorial composition
-        operation on $\Gamma$-species. A formula for the permutation `\gamma \cdot G [\sigma]`
+        This operation on `\Gamma`-cycle indices corresponds to the functorial composition
+        operation on `\Gamma`-species. A formula for the permutation `\gamma \cdot G [\sigma]`
         is given in [AGDPolya].
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Consider the `\mathfrak{S}_{2}`-species `\mathcal{D}` of directed graphs, where the action
+        of the nontrivial element of `\mathfrak{S}_{2}` reverses the directions of all the edges.
+
+        Let `\mathcal{E}` be the species of sets with the trivial action of `\mathfrak{S}_{2}`,
+        `\mathcal{P}` the species of subsets with the trivial action, and `\mathcal{L}_{2}` the species
+        of linear `2`-orders with the order-reversing `\mathfrak{S}_{2}`-action as defined in
+        :meth:`~sage.combinat.species.group_cycle_index_series_library.LinearOrderWithReversalGroupCycleIndex`.:
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: from sage.combinat.species.library import SetSpecies, SubsetSpecies
@@ -346,10 +354,14 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: D.quotient().isotype_generating_series().counts(5)
             [1, 1, 3, 13, 144]
 
+        (Compare :oeis:`A054933`.)
+
         REFERENCES:
 
         .. [AGDPolya] Andrew Gainer-Dewar. "Species with an equivariant group action." Preprint, :arxiv:`1401.6202`.
+
         """
+
         from sage.combinat.species.stream import Stream, _integers_from
         from sage.combinat.partition import Partition, Partitions
         from sage.rings.arith import divisors, moebius, factorial
@@ -466,6 +478,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         To enumerate this species using Sage, we first need to set up an environment::
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
+
             sage: S2 = SymmetricGroup(2)
             sage: GCISR = GroupCycleIndexSeriesRing(S2)
             sage: e,t = GCISR.basis().keys()
