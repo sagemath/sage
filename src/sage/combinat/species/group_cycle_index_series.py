@@ -326,11 +326,11 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         .. MATH::
           (F \\square G) [\\gamma] = \\sum_{n \\geq 0} \\frac{1}{n!} \\sum_{\\sigma \in \\mathfrak{S}_{n}}
-             \\fix \\left(\gamma \\cdot F \\left[ \\gamma \\cdot G [\\sigma] \\right] \\right).
+             \\operatorname{fix} \\left(\gamma \\cdot F \\left[ \\gamma \\cdot G [\\sigma] \\right] \\right).
 
         This operation on `\Gamma`-cycle indices corresponds to the functorial composition
         operation on `\Gamma`-species. A formula for the permutation `\gamma \cdot G [\sigma]`
-        is given in [AGDPolya].
+        is given in [AGDPolya]_.
 
         EXAMPLES:
 
@@ -340,7 +340,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         Let `\mathcal{E}` be the species of sets with the trivial action of `\mathfrak{S}_{2}`,
         `\mathcal{P}` the species of subsets with the trivial action, and `\mathcal{L}_{2}` the species
         of linear `2`-orders with the order-reversing `\mathfrak{S}_{2}`-action as defined in
-        :meth:`~sage.combinat.species.group_cycle_index_series_library.LinearOrderWithReversalGroupCycleIndex`.:
+        :meth:`~sage.combinat.species.group_cycle_index_series_library.LinearOrderWithReversalGroupCycleIndex`.::
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
             sage: from sage.combinat.species.library import SetSpecies, SubsetSpecies
