@@ -188,7 +188,7 @@ class Jack(UniqueRepresentation):
             sage: Z([2])^2
             64/45*Z[2, 2] + 16/21*Z[3, 1] + Z[4]
 
-        :::
+        ::
 
             sage: Sym = SymmetricFunctions(QQ['a','b'].fraction_field())
             sage: (a,b) = Sym.base_ring().gens()

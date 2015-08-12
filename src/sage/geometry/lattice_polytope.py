@@ -518,8 +518,8 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
 
         .. NOTE::
 
-            Two lattice polytopes are if they have the same vertices listed in
-            the same order.
+            Two lattice polytopes are equal if they have the same vertices 
+            listed in the same order.
 
         TESTS::
 
@@ -683,7 +683,7 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
             self._vertices = PointCollection((p0, ), N)
         elif self._dim == self.ambient_dim():
             if compute_vertices:
-                points = map(N, read_palp_matrix(self.poly_x("v")).columns())
+                points = [N(_) for _ in read_palp_matrix(self.poly_x("v")).columns()]
                 for point in points:
                     point.set_immutable()
                 self._vertices = PointCollection(points, N)
@@ -772,7 +772,7 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
         else:
             sp = self._sublattice_polytope
             N = self.dual_lattice()
-            normals = map(N, sp.facet_normals() * self._dual_embedding_matrix)
+            normals = [N(_) for _ in sp.facet_normals() * self._dual_embedding_matrix]
             for n in normals:
                 n.set_immutable()
             self._facet_normals = PointCollection(normals, N)
@@ -2532,7 +2532,7 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
         if algorithm == "palp":
             vertices = vertices.columns()
         M = self.lattice()
-        vertices = map(M, vertices)
+        vertices = [M(_) for _ in vertices]
         for v in vertices:
             v.set_immutable()
         vertices = PointCollection(vertices, M)
@@ -3160,6 +3160,19 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
                 pplot += text3d(i+self.nvertices(), bc+index_shift*(p-bc), rgbcolor=pindex_color)
         return pplot
 
+    def polyhedron(self):
+        r"""
+        Return the Polyhedron object determined by this polytope's vertices.
+        
+        EXAMPLES::
+        
+            sage: o = lattice_polytope.cross_polytope(2)
+            sage: o.polyhedron()
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        return Polyhedron(vertices=[list(v) for v in self._vertices])        
+    
     def show3d(self):
         """
         Show a 3d picture of the polytope with default settings and without axes or frame.
@@ -3307,7 +3320,7 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
                 points = self._embed(read_palp_matrix(
                             self.poly_x("p", reduce_dimension=True))).columns()
                 M = self.lattice()
-                points = map(M, points)
+                points = [M(_) for _ in points]
                 for point in points:
                     point.set_immutable()
                 self._points = PointCollection(points, M)
@@ -5002,7 +5015,7 @@ def _palp_canonical_order(V, PM_max, permutations):
     Vs = [(V.column_matrix().with_permuted_columns(k).hermite_form(), k) 
           for k in permutations]
     Vmin = min(Vs, key=lambda x:x[0])
-    vertices = map(V.module(), Vmin[0].columns())
+    vertices = [V.module()(_) for _ in Vmin[0].columns()]
     for v in vertices:
         v.set_immutable()
     return (PointCollection(vertices, V.module()), Vmin[1])
@@ -5335,7 +5348,7 @@ def all_points(polytopes):
             raise RuntimeError("Cannot read points of a polytope!"
                                                         +"\nPolytope: %s" % p)
         M = p.lattice()
-        points = map(M, points.columns())
+        points = [M(_) for _ in points.columns()]
         for point in points:
             point.set_immutable()
         p._points = PointCollection(points, M)
@@ -5881,7 +5894,7 @@ def read_palp_matrix(data, permutation=False):
     if permutation:
         last_piece = first_line[-1]
         last_piece = last_piece.split('=')
-        if last_piece[0] <> 'perm':
+        if last_piece[0] != 'perm':
             raise ValueError('PALP did not return a permutation.')
         p = _palp_convert_permutation(last_piece[1])
         return (mat, p)

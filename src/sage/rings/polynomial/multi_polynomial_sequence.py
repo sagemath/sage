@@ -311,11 +311,14 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     try:
         e = next(iter(gens))
-
-        try:
-            parts = tuple(map(ring, gens)),
-        except TypeError:
+        # fast path for known collection types
+        if isinstance(e, (tuple, list, Sequence_generic, PolynomialSequence_generic)):
             parts = tuple(tuple(ring(f) for f in part) for part in gens)
+        else:
+            try:
+                parts = tuple(map(ring, gens)),
+            except TypeError:
+                parts = tuple(tuple(ring(f) for f in part) for part in gens)
     except StopIteration:
         parts = ((),)
 
@@ -853,7 +856,7 @@ class PolynomialSequence_generic(Sequence_generic):
         if is_PolynomialSequence(right) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right,(tuple,list)) and all(map(lambda x: x.parent() == self.ring(), right)):
+        elif isinstance(right,(tuple,list)) and all((x.parent() == self.ring() for x in right)):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
         elif isinstance(right,MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
@@ -1370,7 +1373,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         And we may use SAT-solvers if they are available::
 
-            sage: sol = S.solve(algorithm='sat'); sol                     # random, optional - CryptoMiniSat
+            sage: sol = S.solve(algorithm='sat'); sol                     # random, optional - cryptominisat
             [{y: 1, z: 0, x: 0}]
             sage: S.subs( sol[0] )
             [0, 0, 0]
@@ -1409,7 +1412,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if eliminate_linear_variables:
             T, reductors = self.eliminate_linear_variables(return_reductors=True)
             if T.variables() != ():
-                R_solving = BooleanPolynomialRing( T.nvariables(), map(str, list(T.variables())) )
+                R_solving = BooleanPolynomialRing( T.nvariables(), [str(_) for _ in list(T.variables())] )
             S = PolynomialSequence( R_solving, [ R_solving(f) for f in T] )
 
         if S != []:

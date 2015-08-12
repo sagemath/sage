@@ -27,10 +27,11 @@ if __name__ == "__main__":
     parser.add_option("--warn-long", dest="warn_long", default=None, action="callback",
         callback=optional_argument, callback_args=(float, 1.0), nargs=0,
         metavar="SECONDS", help="warn if tests take more time than SECONDS")
-    parser.add_option("--optional", metavar="PKGS", default="sage",
+    parser.add_option("--optional", metavar="PKGS", default="sage,optional",
         help='only run tests including one of the "# optional" tags listed in PKGS; '
              'if "sage" is listed will also test the standard doctests; '
-             'if PKGS=all, then all tests will be run')
+             'if "optional" is listed will also test all available optional (new-style) packages; '
+             'if set to "all", then all tests will be run; ')
     parser.add_option("--randorder", type=int, metavar="SEED", help="randomize order of tests")
     parser.add_option("--global-iterations", "--global_iterations", type=int, default=0, help="repeat the whole testing process this many times")
     parser.add_option("--file-iterations", "--file_iterations", type=int, default=0, help="repeat each file this many times, stopping on the first failure")

@@ -99,9 +99,9 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
             where the product is taken on the left, right, or both
             sides.
 
-            INPUT::
+            INPUT:
 
-             - ``side``: "left", "right", or "twosided"
+            - ``side``: "left", "right", or "twosided"
 
             FIXME: find a better name for this method
             FIXME: should we return a set? a family?
@@ -151,10 +151,10 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
 
             .. SEEALSO:: :meth:`semigroup_generators`
 
-            INPUT::
+            INPUT:
 
-             - ``gens``: a list (or iterable) of elements of ``self``
-             - ``side``: [default: "twosided"] "left", "right" or "twosided"
+            - ``gens`` -- a list (or iterable) of elements of ``self``
+            - ``side`` -- [default: "twosided"] "left", "right" or "twosided"
 
             EXAMPLES::
 

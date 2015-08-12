@@ -158,23 +158,15 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return '%s' % self.__x._latex_()
         
-    def __richcmp__(left, right, int op):
-        r"""
-        Rich comparison.
-
-        EXAMPLE::
-
-            sage: SL2Z.0 > None
-            True
-        """
-        return (<Element>left)._richcmp(right, op)
-
     cpdef int _cmp_(self, Element right_r) except -2:
         """
         Compare self to right, where right is guaranteed to have the same
         parent as self.
 
         EXAMPLES::
+
+            sage: SL2Z.0 > None
+            True
 
             sage: x = Gamma0(18)([19,1,18,1])
             sage: cmp(x, 3) is not 0
@@ -186,7 +178,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x == 0
             False
 
-        This once caused a segfault (see trac #5443)::
+        This once caused a segfault (see :trac:`5443`)::
 
             sage: r,s,t,u,v = map(SL2Z, [[1, 1, 0, 1], [-1, 0, 0, -1], [1, -1, 0, 1], [1, -1, 2, -1], [-1, 1, -2, 1]])
             sage: v == s*u

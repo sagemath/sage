@@ -23,6 +23,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
+
 # log levels
 ERROR = -2
 WARNING = -1
@@ -180,7 +182,7 @@ class UserInterface(object):
             raise ValueError('the only allowed keyword argument is "log_level"')
         config_log_level = int(self._config.get("log_level", str(INFO)))
         if config_log_level >= log_level:
-            if isinstance(message, basestring):
+            if isinstance(message, six.string_types):
                 self._show(message, log_level, *args)
             else:
                 for msg in message:

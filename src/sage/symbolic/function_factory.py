@@ -124,7 +124,7 @@ def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
         sage: nf(2).conjugate()
         1
     """
-    funcs = map(unpickle_wrapper, pickled_funcs)
+    funcs = [unpickle_wrapper(_) for _ in pickled_funcs]
     args = [name, nargs, latex_name, conversions, evalf_params_first] + funcs
     return function_factory(*args)
 
@@ -323,7 +323,7 @@ def function(s, *args, **kwds):
         names = s.split(' ')
     else:
         names = [s]
-    names = [s.strip() for s in names if s.strip()]
+    names = [sn.strip() for sn in names if sn.strip()]
 
     funcs = [function_factory(name, **kwds) for name in names]
 

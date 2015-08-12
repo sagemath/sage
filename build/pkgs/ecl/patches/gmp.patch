@@ -1,33 +1,13 @@
-diff -druN src.orig/src/configure.in src/src/configure.in
---- src.orig/src/configure.in	2012-12-07 22:01:02.000000000 +0100
-+++ src/src/configure.in	2014-04-09 15:17:50.282780900 +0200
-@@ -11,7 +11,7 @@
- AC_INIT([ecl],[13.5.1],[])
+diff --git b/src/configure.ac a/src/configure.ac
+index bc8d84b..e076e09 100644
+--- b/src/configure.ac
++++ a/src/configure.ac
+@@ -11,7 +11,7 @@ dnl
+ AC_INIT([ecl],[15.3.7],[])
  AC_REVISION([$Revision$])
  AC_CONFIG_SRCDIR([bare.lsp.in])
 -AC_CONFIG_AUX_DIR([gmp])
 +AC_CONFIG_AUX_DIR([.])
- AC_PREREQ(2.59)
+ AC_PREREQ(2.69)
  
  dnl -----------------------------------------------------------------------
-diff -druN src.orig/src/configure src/src/configure
---- src.orig/src/configure	2012-12-07 22:01:02.000000000 +0100
-+++ src/src/configure	2014-04-09 15:20:21.360905900 +0200
-@@ -2546,7 +2546,7 @@
- 
- 
- ac_aux_dir=
--for ac_dir in gmp "$srcdir"/gmp; do
-+for ac_dir in . "$srcdir"/.; do
-   if test -f "$ac_dir/install-sh"; then
-     ac_aux_dir=$ac_dir
-     ac_install_sh="$ac_aux_dir/install-sh -c"
-@@ -2562,7 +2562,7 @@
-   fi
- done
- if test -z "$ac_aux_dir"; then
--  as_fn_error $? "cannot find install-sh, install.sh, or shtool in gmp \"$srcdir\"/gmp" "$LINENO" 5
-+  as_fn_error $? "cannot find install-sh, install.sh, or shtool in . \"$srcdir\"/." "$LINENO" 5
- fi
- 
- # These three variables are undocumented and unsupported,

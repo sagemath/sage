@@ -40,7 +40,10 @@ Windows
 
 OS X
     Use the `git OSX installer
-    <http://code.google.com/p/git-osx-installer/downloads/list>`_
+    <https://sourceforge.net/projects/git-osx-installer/files/>`_.  If you
+    have an older Mac, be sure to get the correct version. (Alternately you
+    may get it from the Command Line Tools or even simply by attempting to
+    use ``git`` and then following instructions.)
 
 Finally, Sage includes git. Obviously there is a chicken-and-egg
 problem to checkout the Sage source code from its git repository, but

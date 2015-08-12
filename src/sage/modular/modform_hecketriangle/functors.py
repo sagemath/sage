@@ -298,9 +298,9 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
             False
         """
 
-        if    ( type(self)                  == type(other)\
-            and self._ambient_space_functor == other._ambient_space_functor\
-            and self._generators            == other._generators ):
+        if (type(self) is type(other) and
+            self._ambient_space_functor == other._ambient_space_functor and
+            self._generators == other._generators):
                 return True
         else:
             return False
@@ -485,11 +485,11 @@ class FormsSpaceFunctor(ConstructionFunctor):
             False
         """
 
-        if    ( type(self)          == type(other)\
-            and self._group         == other._group\
-            and self._analytic_type == other._analytic_type\
-            and self._k             == other._k\
-            and self._ep            == other._ep ):
+        if (type(self) is type(other) and
+            self._group == other._group and
+            self._analytic_type == other._analytic_type and
+            self._k == other._k and
+            self._ep == other._ep):
                 return True
         else:
             return False
@@ -672,10 +672,10 @@ class FormsRingFunctor(ConstructionFunctor):
             False
         """
 
-        if    ( type(self)          == type(other)\
-            and self._group         == other._group\
-            and self._analytic_type == other._analytic_type\
-            and self._red_hom       == other._red_hom ):
+        if (type(self) is type(other) and
+            self._group == other._group and
+            self._analytic_type == other._analytic_type and
+            self._red_hom == other._red_hom):
                 return True
         else:
             return False

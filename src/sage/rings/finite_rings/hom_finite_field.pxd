@@ -9,7 +9,7 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
 
 cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
     cdef _gen
-    cdef type _section_class
+    cdef _section_class
 
     cpdef Element _call_(self, x)
 

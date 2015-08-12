@@ -575,7 +575,7 @@ class Function_log_integral_offset(BuiltinFunction):
         -x*log_integral(2) + x*log_integral(x) - Ei(2*log(x))
         sage: Li(x).integrate(x,2.0,4.5)
         -2.5*log_integral(2) + 5.799321147411334
-        sage: N(f.integrate(x,2.0,3.0))
+        sage: N(f.integrate(x,2.0,3.0))   # abs tol 1e-15
         0.601621785860587
 
     ALGORITHM:

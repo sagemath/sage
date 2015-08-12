@@ -21,6 +21,9 @@ This module implements:
 
 - :func:`RBIBD(120,8,1) <RBIBD_120_8_1>`
 
+- `(v,k,\lambda)`-BIBD:
+{LIST_OF_BIBD}
+
 - `(v,k,\lambda)`-difference families:
 {LIST_OF_DF}
 
@@ -52,7 +55,6 @@ from sage.combinat.designs.orthogonal_arrays import (OA_from_quasi_difference_ma
                                                      OA_n_times_2_pow_c_from_matrix,
                                                      orthogonal_array)
 from orthogonal_arrays import wilson_construction
-from string import join
 
 # Cyclic shift of a list
 cyclic_shift = lambda l,i : l[-i:]+l[:-i]
@@ -78,7 +80,7 @@ def _MOLS_from_string(s,k):
     for i,l in enumerate(s.split()):
         l = [ord(x) - 97 for x in l]
         matrices[i%k].append(l)
-    return map(Matrix, matrices)
+    return [Matrix(_) for _ in matrices]
 
 def MOLS_10_2():
     r"""
@@ -295,9 +297,8 @@ MOLS_constructions = {
 }
 
 # Add this data to the module's doc
-LIST_OF_MOLS_CONSTRUCTIONS = join([":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
-                                for n,(k,_) in MOLS_constructions.items()],
-                               ", ")
+LIST_OF_MOLS_CONSTRUCTIONS = ", ".join([":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
+                                        for n,(k,_) in MOLS_constructions.items()])
 
 def OA_7_18():
     r"""
@@ -334,7 +335,7 @@ def OA_7_18():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     from sage.categories.cartesian_product import cartesian_product
     G = cartesian_product([AdditiveCyclic(2),AdditiveCyclic(3),AdditiveCyclic(3)])
-    M = [G(map(int,xxx)) for xxx in M.split()]
+    M = [G([int(_) for _ in xx]) for xx in M.split()]
     M = [M[i*12:(i+1)*12] for i in range(7)]
 
     Mb = []
@@ -2051,9 +2052,8 @@ OA_constructions = {
     1620 : (10, OA_10_1620),
 }
 # Add this data to the module's doc
-LIST_OF_OA_CONSTRUCTIONS = join((":func:`OA({},{}) <OA_{}_{}>`".format(k,n,k,n)
-                                for n,(k,_) in OA_constructions.items()),
-                               ", ")
+LIST_OF_OA_CONSTRUCTIONS = ", ".join(":func:`OA({},{}) <OA_{}_{}>`".format(k,n,k,n)
+                                      for n,(k,_) in OA_constructions.items())
 
 def QDM_19_6_1_1_1():
     r"""
@@ -2466,11 +2466,10 @@ for ((n,k,lmbda,mu,u),f) in [((19,6,1,1,1), QDM_19_6_1_1_1),
     QDM[n+u,lmbda][n,lmbda,mu,u] = (k,f)
 
 # Create the list of QDM matrices for the doc
-LIST_OF_QDM = join(("`({},{};{},{};{})`".format(n,k,lmbda,mu,u)
-                    for n,k,lmbda,mu,u in
-                    sorted((n,k,lmbda,mu,u) for entry in QDM.values()
-                           for (n,lmbda,mu,u),(k,_) in sorted(entry.items()))),
-                   ", ")
+LIST_OF_QDM = ", ".join("`({},{};{},{};{})`".format(n,k,lmbda,mu,u)
+                         for n,k,lmbda,mu,u in
+                          sorted((n,k,lmbda,mu,u) for entry in QDM.values()
+                            for (n,lmbda,mu,u),(k,_) in sorted(entry.items())))
 
 _ref_Handbook = """Handbook of Combinatorial Designs (2ed),
     C. Colbourn, J. Dinitz, 2010 CRC Press"""
@@ -2701,9 +2700,9 @@ for (m,t),(vec,source) in Vmt_vectors.iteritems():
 
 # Create the list of V(m,t) vectors for the doc
 _all_m = sorted(set(m for m,_ in Vmt_vectors.keys()))
-LIST_OF_VMT_VECTORS = join(("    - `m={}` and `t=` ".format(m)+
-                           join(("`{}`".format(t) for _,t in sorted(Vmt_vectors.keys()) if _ == m),", ")
-                           for m in _all_m), "\n")
+LIST_OF_VMT_VECTORS = "\n".join("    - `m={}` and `t=` ".format(m) +
+                                ", ".join("`{}`".format(t) for _,t in sorted(Vmt_vectors.keys()) if _ == m)
+                                for m in _all_m)
 
 r""""
 Tests for the Vmt vectors
@@ -2792,6 +2791,10 @@ DF = {
            [0,11,31,35],[0,12,26,34,],[0,5,30,33]]},
 ( 91, 6, 1):
   {(91,): [[0,1,3,7,25,38], [0,16,21,36,48,62], [0,30,40,63,74,82]]},
+
+( 91, 7, 1): # from the La Jolla covering repository, attributed to Jan de Heer and Steve Muir
+  {(91,): [[8, 9, 14, 25, 58, 81, 85], [5, 33, 35, 42, 45, 67, 88], [4, 17, 30, 43, 56, 69, 82]]},
+
 (121, 5, 1):
   {(121,): [[0,14,26,51,60],[0,15,31,55,59],[0,10,23,52,58],
             [0,3,36,56,57],[0,7,18,45,50],[0,8,30,47,49]]},
@@ -3113,9 +3116,9 @@ DF = {
 
 # Create the list of DF for the documentation
 _all_l = sorted(set(l for v,k,l in DF.keys()))
-LIST_OF_DF = join(("    - `\lambda={}`:\n       ".format(l)+
-                  join(("`({},{},{})`".format(v,k,l) for v,k,_ in sorted(DF.keys()) if _ == l),", ")
-                  for l in _all_l), "\n")
+LIST_OF_DF = "\n".join("    - `\lambda={}`:\n       ".format(l) +
+                       ", ".join("`({},{},{})`".format(v,k,l) for v,k,_ in sorted(DF.keys()) if _ == l)
+                       for l in _all_l)
 
 def DM_12_6_1():
     r"""
@@ -3224,7 +3227,7 @@ def DM_24_8_1():
 
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     from sage.categories.cartesian_product import cartesian_product
-    G = cartesian_product(map(AdditiveCyclic,[2,2,6]))
+    G = cartesian_product([AdditiveCyclic(_) for _ in [2, 2, 6]])
     rlabel = {(x%2,x%3):x for x in range(6)}
     M = [G([int(c),int(d),rlabel[int(b),int(a)]]) for a,b,c,d in M.split()]
     M = [M[i*12:(i+1)*12] for i in range(8)]
@@ -4033,9 +4036,9 @@ DM = {
 
 # Create the list of DM for the documentation
 _all_l = sorted(set(l for v,l in DM.keys()))
-LIST_OF_DM = join(("    - `\lambda={}`:\n       ".format(l)+
-                   join(("`({},{},{})`".format(v,k,l) for (v,_),(k,__) in sorted(DM.items()) if _ == l),", ")
-                   for l in _all_l), "\n")
+LIST_OF_DM = "\n".join("    - `\lambda={}`:\n       ".format(l)+
+                       ", ".join("`({},{},{})`".format(v,k,l) for (v,_),(k,__) in sorted(DM.items()) if _ == l)
+                       for l in _all_l)
 
 def RBIBD_120_8_1():
     r"""
@@ -4118,6 +4121,299 @@ def RBIBD_120_8_1():
     equiv = [[M.nonzero_positions_in_row(x) for x in S] for S in equiv]
     return [B for S in equiv for B in S]
 
+def BIBD_66_6_1():
+    r"""
+    Return a (66,6,1)-BIBD.
+
+    This BIBD was obtained from La Jolla covering repository
+    (https://www.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_66_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(66, BIBD_66_6_1())
+        (66,6,1)-Balanced Incomplete Block Design
+    """
+    BIBD = [frozenset([(x+i*5)%65 if x<65 else x for x in b])
+            for i in range(65)
+            for b in
+            [6, 38, 42, 46, 53, 62], [9, 11, 21, 49, 56, 60], [18, 31, 37, 44, 52, 60],
+            [0, 12, 29, 46, 51, 63], [0, 6, 21, 30, 43, 48], [4, 17, 22, 36, 47, 59],
+            [0, 1, 2, 3, 4, 65], [23, 39, 44, 53, 59, 63], [12, 22, 28, 48, 55, 60],
+            [19, 22, 25, 40, 49, 50], [4, 30, 37, 50, 58, 61]]
+    return map(list,frozenset(BIBD))
+
+def BIBD_76_6_1():
+    r"""
+    Return a (76,6,1)-BIBD.
+
+    This BIBD was obtained from La Jolla covering repository
+    (https://www.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_76_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(76, BIBD_76_6_1())
+        (76,6,1)-Balanced Incomplete Block Design
+    """
+    BIBD = [frozenset([(x+i*4)%76 if x<76 else x for x in b])
+            for i in range(76)
+            for b in
+            [[3, 5, 21, 33, 72, 73], [4, 37, 57, 58, 64, 75], [7, 14, 44, 47, 59, 63],
+             [10, 20, 61, 63, 71, 72], [13, 26, 30, 39, 45, 67], [11, 21, 25, 30, 55, 58],
+             [2, 5, 34, 52, 54, 70], [6, 8, 29, 48, 70, 71], [10, 15, 36, 41, 44, 56],
+             [0, 6, 13, 27, 44, 72]]]
+    return map(list,frozenset(BIBD))
+
+def BIBD_96_6_1():
+    r"""
+    Return a (96,6,1)-BIBD.
+
+    This BIBD was obtained from La Jolla covering repository
+    (https://www.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_96_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(96, BIBD_96_6_1())
+        (96,6,1)-Balanced Incomplete Block Design
+    """
+    BIBD = [frozenset([(x+i*2)%96 if x<96 else x for x in b])
+            for i in range(96)
+            for b in
+            [[3, 13, 32, 47, 68, 87], [9, 36, 70, 75, 81, 88], [22, 52, 72, 76, 78, 79],
+             [15, 23, 41, 43, 46, 58], [7, 8, 21, 57, 66, 94], [8, 22, 30, 51, 55, 93],
+             [15, 31, 47, 63, 79, 95], [2, 18, 34, 50, 66, 82]]]
+    return map(list,frozenset(BIBD))
+
+def BIBD_106_6_1():
+    r"""
+    Return a (106,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_106_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(106, BIBD_106_6_1())
+        (106,6,1)-Balanced Incomplete Block Design
+    """
+    bibd = [((0,0), ( 1,0), ( 3,0), (11,0), (38,0), ( 0,1)),
+            ((0,0), (13,0), (30,0), (23,1), (35,1), (51,1)),
+            ((0,0), ( 5,0), (19,0), (25,0), (36,1), (39,1)),
+            ((0,0), ( 4,0), (28,1), (30,1), (37,1), (47,1)),
+            ((0,0), ( 7,0), (29,0), ( 8,1), (16,1), (48,1)),
+            ((0,0), ( 2,1), ( 7,1), (25,1), (29,1), (49,1)),
+            ((0,0), ( 9,0), (21,0), (12,1), (13,1), (27,1))]
+
+    return [[((x+i)%53+y*53) for x,y in B] for i in range(53) for B in bibd]
+
+def BIBD_111_6_1():
+    r"""
+    Return a (111,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_111_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(111, BIBD_111_6_1())
+        (111,6,1)-Balanced Incomplete Block Design
+    """
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+    from incidence_structures import IncidenceStructure
+    bibd = [(( 0,0), ( 1,0), ( 3,0), ( 7,0), (17,0), ( 0,1)),
+            (( 0,0), ( 5,0), (19,1), (28,1), (10,2), (30,2)),
+            (( 5,0), (33,0), (13,1), (34,1), (19,2), ( 7,2)),
+            (( 9,0), (27,0), (16,1), (11,1), (12,2), (36,2)),
+            ((10,0), (23,0), (26,1), ( 8,1), ( 1,2), ( 6,2)),
+            ((13,0), (24,0), (19,1), (18,1), ( 5,2), (32,2)),
+            ((26,0), (34,0), ( 1,1), ( 7,1), (10,2), (33,2))]
+    gens = lambda B: [frozenset(((x*10)%37,(y+1)%3) for x,y in B),
+                      frozenset(((x+1) %37,      y) for x,y in B)]
+    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    return IncidenceStructure(bibd)._blocks
+
+def BIBD_126_6_1():
+    r"""
+    Return a (126,6,1)-BIBD.
+
+    This constructions appears in VI.16.92 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_126_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(126, BIBD_126_6_1())
+        (126,6,1)-Balanced Incomplete Block Design
+    """
+    from itertools import product
+    bibd = [[((x+xx)%5, (y+yy)%5, (z+zz)%5) for x,y,z in B]
+            for xx,yy,zz in product(range(5),repeat=3)
+            for B in
+            [[(0,0,1),(0,0,4),(1,2,2),(1,3,3),(4,2,1),(4,3,4)],
+             [(0,0,2),(0,0,3),(1,4,4),(1,1,1),(4,4,2),(4,1,3)],
+             [(0,4,3),(0,1,2),(2,2,0),(2,3,0),(3,3,2),(3,2,3)],
+             [(0,3,1),(0,2,4),(2,4,0),(2,1,0),(3,1,4),(3,4,1)]]]
+
+    bibd.extend([[(125,0,0), (0,x,y),(1,x,y),(2,x,y),(3,x,y),(4,x,y)]
+                 for x,y in product(range(5),repeat=2)])
+    return [[x+y*5+z*25 for x,y,z in B]
+            for B in bibd]
+
+def BIBD_136_6_1():
+    r"""
+    Return a (136,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_136_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(136, BIBD_136_6_1())
+        (136,6,1)-Balanced Incomplete Block Design
+    """
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+    from incidence_structures import IncidenceStructure
+    inf=(None,None)
+    bibd = [((0,0), ( 3,0), (15,0), (35,0), ( 6,2), (10,2)),
+            ((0,0), (22,0), (11,1), (30,1), ( 1,2), (18,2)),
+            ((0,0), ( 5,0), (18,1), (41,1), (13,2), (42,2)),
+            ((0,0), (11,0), (17,0), ( 4,2), ( 5,2), (28,2)),
+            ((0,0), ( 1,0), ( 0,1), (16,1), ( 0,2), (31,2)),
+            ( inf ,( 0,0), ( 9,0), (18,0), (27,0), (36,0))]
+    gens = lambda B: [frozenset(((x*16)%45,(y+1)%3) if (x,y)!=inf else inf for x,y in B),
+                      frozenset(((x+1) %45,y)       if (x,y)!=inf else inf for x,y in B)]
+    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    return IncidenceStructure(bibd)._blocks
+
+
+def BIBD_141_6_1():
+    r"""
+    Return a (141,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_141_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(141, BIBD_141_6_1())
+        (141,6,1)-Balanced Incomplete Block Design
+    """
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+    from incidence_structures import IncidenceStructure
+    a = 'a'
+    inf = (None,None)
+    bibd = [((0,0), (16,0), (24,0), (24,1), (15,2), (25,2)),
+            ((0,0), ( 3,0), (26,0), (13,1), (33,1), (34,a)),
+            ((0,0), (13,0), (18,0), (15,1), ( 7,2), ( 0,a)),
+            ((0,0), ( 2,0), (14,1), (23,1), (26,a), (32,a)),
+            ((0,0), ( 4,0), (29,1), ( 6,2), ( 9,a), (20,a)),
+            ((0,0), ( 1,0), (12,2), ( 2,a), ( 4,a), (19,a)),
+            ( inf ,( 0,0), ( 7,0), (14,0), (21,0), (28,0)),
+            ( inf ,( 0,a), ( 7,a), (14,a), (21,a), (28,a))]
+
+    gens = lambda B: [frozenset(((x*16)%35,(y+1)%3 if y!=a else a) if (x,y)!=inf else inf for x,y in B),
+                      frozenset(((x+1) %35, y )                    if (x,y)!=inf else inf for x,y in B)]
+    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    return IncidenceStructure(bibd)._blocks
+
+def BIBD_171_6_1():
+    r"""
+    Return a (171,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_171_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(171, BIBD_171_6_1())
+        (171,6,1)-Balanced Incomplete Block Design
+    """
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+    from incidence_structures import IncidenceStructure
+    bibd = [(( 0,0), (19,0), (39,0), (41,0), (14,1), (38,2)),
+            (( 0,0), (21,0), (44,0), (48,0), (26,1), (11,2)),
+            (( 0,0), ( 1,0), (43,0), ( 8,2), (15,2), (44,2)),
+            (( 0,0), ( 3,0), (31,0), (23,1), (43,1), (36,2)),
+            (( 0,0), (40,0), (50,0), (11,1), (25,2), (34,2)),
+            (( 0,0), (12,0), ( 0,1), (27,1), ( 0,2), (18,2)),
+            ((37,0), (42,0), (31,1), ( 9,1), (46,2), ( 6,2))]
+
+    gens = lambda B: [frozenset(((x*7) %57,(y+1)%3) for x,y in B),
+                      frozenset(((x+1) %57,      y) for x,y in B)]
+    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    return IncidenceStructure(bibd)._blocks
+
+def BIBD_196_6_1():
+    r"""
+    Return a (196,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_196_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(196, BIBD_196_6_1())
+        (196,6,1)-Balanced Incomplete Block Design
+    """
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+    from incidence_structures import IncidenceStructure
+    a = 'a'
+    bibd = [((0,0), ( 2,0), (12,0), (45,0), ( 3,1), (11,a)),
+            ((0,0), ( 3,0), ( 8,0), ( 5,1), (17,1), (39,a)),
+            ((0,0), ( 9,0), (36,0), (24,1), (44,1), (37,a)),
+            ((0,0), (15,0), (34,1), (41,1), (47,2), (18,a)),
+            ((0,0), ( 7,0), (31,0), (13,1), (35,2), (41,a)),
+            ((0,0), (14,0), (32,1), (10,2), (22,a), (44,a)),
+            ((0,0), (23,0), (21,1), (39,1), (19,a), (25,a)),
+            ((0,0), (33,1), ( 0,a), ( 5,a), (29,a), (47,a)),
+            ((0,0), ( 1,0), ( 0,1), (30,1), ( 0,2), (18,2)),
+            ((8,0), (19,0), (44,1), (31,1), (46,2), (48,2))]
+
+    gens = lambda B: [frozenset(((x*30)%49,(y+1)%3 if y!=a else a) for x,y in B),
+                      frozenset(((x+1) %49,   y)                   for x,y in B)]
+    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    return IncidenceStructure(bibd)._blocks
+
+def BIBD_201_6_1():
+    r"""
+    Return a (201,6,1)-BIBD.
+
+    This constructions appears in II.3.32 from [DesignHandbook]_.
+
+    EXAMPLE::
+
+        sage: from sage.combinat.designs.database import BIBD_201_6_1
+        sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
+        sage: BalancedIncompleteBlockDesign(201, BIBD_201_6_1())
+        (201,6,1)-Balanced Incomplete Block Design
+    """
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+    from incidence_structures import IncidenceStructure
+    bibd = [((0,0), ( 1,0), ( 4,2), ( 9,2), (34,2), (62,2)),
+            ((0,1), ( 2,1), (15,1), ( 8,2), (27,2), (49,2)),
+            ((0,0), ( 3,0), (22,0), (54,1), (13,2), (40,2)),
+            ((0,0), (36,0), (40,0), (31,1), (34,1), ( 5,2)),
+            ((0,0), (50,0), (55,0), ( 6,1), (24,1), (26,2)),
+            ((0,0), ( 2,0), ( 3,1), (14,1), (35,1), (25,2)),
+            ((3,1), (20,1), (44,1), (36,2), (39,2), (59,2)),
+            ((0,0), ( 0,1), (30,1), (38,1), (66,1), ( 0,2))]
+
+    gens = lambda B: [frozenset(((x*29)%67,y) for x,y in B),
+                      frozenset(((x+1) %67,y) for x,y in B)]
+    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    return IncidenceStructure(bibd)._blocks
+
 # Index of the BIBD constructions
 #
 # Associates to triple (v,k,lambda) a function that return a
@@ -4126,8 +4422,25 @@ def RBIBD_120_8_1():
 # This dictionary is used by designs.BalancedIncompleteBlockDesign
 
 BIBD_constructions = {
+    ( 66,6,1): BIBD_66_6_1,
+    ( 76,6,1): BIBD_76_6_1,
+    ( 96,6,1): BIBD_96_6_1,
     (120,8,1): RBIBD_120_8_1,
+    (106,6,1): BIBD_106_6_1,
+    (111,6,1): BIBD_111_6_1,
+    (126,6,1): BIBD_126_6_1,
+    (136,6,1): BIBD_136_6_1,
+    (141,6,1): BIBD_141_6_1,
+    (171,6,1): BIBD_171_6_1,
+    (196,6,1): BIBD_196_6_1,
+    (201,6,1): BIBD_201_6_1,
 }
+
+# Create the list of DF for the documentation
+_all_l = sorted(set(l for v,k,l in BIBD_constructions.keys()))
+LIST_OF_BIBD = "\n".join("    - `\lambda={}`:\n       ".format(l) +
+                       ", ".join("`({},{},{})`".format(v,k,l) for v,k,_ in sorted(BIBD_constructions) if _ == l)
+                       for l in _all_l)
 
 # Evenly Distributed Sets (EDS)
 #
@@ -4413,16 +4726,18 @@ EDS={
     }
 }
 
-LIST_OF_EDS = ("\n".join("    - `k = {}`: {}".format(
-                  k, ', '.join('`{}`'.format(q) for q in sorted(EDS[k]) if EDS[k][q] is not False)) for k in sorted(EDS)))
+LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
+                        k, ', '.join('`{}`'.format(q) for q in sorted(EDS[k]) if EDS[k][q] is not False))
+                        for k in sorted(EDS))
 
 __doc__ = __doc__.format(
     LIST_OF_OA_CONSTRUCTIONS   = LIST_OF_OA_CONSTRUCTIONS,
     LIST_OF_MOLS_CONSTRUCTIONS = LIST_OF_MOLS_CONSTRUCTIONS,
     LIST_OF_VMT_VECTORS        = LIST_OF_VMT_VECTORS,
+    LIST_OF_BIBD               = LIST_OF_BIBD,
     LIST_OF_DF                 = LIST_OF_DF,
     LIST_OF_DM                 = LIST_OF_DM,
     LIST_OF_QDM                = LIST_OF_QDM,
     LIST_OF_EDS                = LIST_OF_EDS)
-del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS
+del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD
 del PolynomialRing, ZZ, a,

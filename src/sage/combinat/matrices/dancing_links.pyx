@@ -1,42 +1,28 @@
+# distutils: language = c++
 """
 Dancing Links internal pyx code
 """
+
 #*****************************************************************************
-#       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
+#       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-#clang c++
 
-import sys
+include 'sage/ext/interrupt.pxi'
 
-from cpython.list cimport *
-from cpython.int cimport *
-from cpython.ref cimport *
+from libcpp.vector cimport vector
 
 cdef extern from "dancing_links_c.h":
-    ctypedef struct vector_int "std::vector<int>":
-        void (* push_back)(int elem)
-        void clear()
-        int at(size_t loc)
-        int size()
-
-    ctypedef struct vector_vector_int "std::vector<vector<int> >":
-        void (* push_back)(vector_int elem)
-
     ctypedef struct dancing_links:
-        vector_int solution
-        void add_rows(vector_vector_int rows)
+        vector[int] solution
+        int number_of_columns()
+        void add_rows(vector[vector[int]] rows)
         int search()
         void freemem()
 
@@ -44,86 +30,92 @@ cdef extern from "ccobject.h":
     dancing_links* dancing_links_construct "Construct<dancing_links>"(void *mem)
     void dancing_links_destruct "Destruct<dancing_links>"(dancing_links *mem)
 
-
-from sage.rings.integer cimport Integer
-
 cdef class dancing_linksWrapper:
-    cdef dancing_links x
-    cdef object rows
+    cdef dancing_links _x
+    cdef _rows
 
     def __init__(self, rows):
         """
-        Initialize our wrapper (self.x) as an actual C++ object.
+        Initialize our wrapper (self._x) as an actual C++ object.
 
         We must pass a list of rows at start up. There are no methods
         for resetting the list of rows, so this class acts as a one-time
         executor of the C++ code.
 
-        TESTS:
+        TESTS::
+
             sage: rows = [[0,1,2], [1, 2]]
-            sage: x = make_dlxwrapper(dumps(rows))
-            sage: loads(x.__reduce__()[1][0])
-            [[0, 1, 2], [1, 2]]
-
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: x = dlx_solver(rows)
+            sage: x
+            Dancing links solver for 3 columns and 2 rows
+            sage: type(x)
+            <type 'sage.combinat.matrices.dancing_links.dancing_linksWrapper'>
         """
-        pass
+        self._init_rows(rows)
 
-    # Note that the parameters to __cinit__, if any, must be identical to __init__
-    # This is due to the way Python constructs class instance.
-    def __cinit__(self, rows):
-        self.rows = PyList_New(len(rows))
-        dancing_links_construct(&self.x)
-        if rows:
-            self.add_rows(rows)
+    def __cinit__(self):
+        dancing_links_construct(&self._x)
 
     def __dealloc__(self):
-        self.x.freemem()
-        dancing_links_destruct(&self.x)
+        self._x.freemem()
+        dancing_links_destruct(&self._x)
 
-    def __str__(self):
+    def __repr__(self):
         """
         The string representation of this wrapper is just the list of
         rows as supplied at startup.
 
-        TESTS:
-            sage: rows = [[0,1,2]]
-            sage: print make_dlxwrapper(dumps(rows)).__str__()
-            [[0, 1, 2]]
-        """
+        TESTS::
 
-        return self.rows.__str__()
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [1,2], [0]]
+            sage: dlx_solver(rows)
+            Dancing links solver for 3 columns and 3 rows
+        """
+        return "Dancing links solver for {} columns and {} rows".format(
+                self._x.number_of_columns(),
+                len(self._rows))
+
+    def rows(self):
+        r"""
+        Return the list of rows.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [1,2], [0]]
+            sage: x = dlx_solver(rows)
+            sage: x.rows()
+            [[0, 1, 2], [1, 2], [0]]
+        """
+        return self._rows
 
     def __reduce__(self):
         """
         This is used when pickling.
 
-        TESTS:
+        TESTS::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2]]
-            sage: x = make_dlxwrapper(dumps(rows))
-            sage: loads(x.__reduce__()[1][0])
-            [[0, 1, 2]]
+            sage: X = dlx_solver(rows)
+            sage: X == loads(dumps(X))
+            1
+            sage: rows += [[2]]
+            sage: Y = dlx_solver(rows)
+            sage: Y == loads(dumps(X))
+            0
         """
-        # A comment from sage/rings/integer.pyx:
-
-        # This single line below took me HOURS to figure out.
-        # It is the *trick* needed to pickle Cython extension types.
-        # The trick is that you must put a pure Python function
-        # as the first argument, and that function must return
-        # the result of unpickling with the argument in the second
-        # tuple as input. All kinds of problems happen
-        # if we don't do this.
-        #return sage.rings.integer.make_integer, (self.str(32),)
-
-        import sage.combinat.matrices.dancing_links
-        from sage.all import dumps
-        return sage.combinat.matrices.dancing_links.make_dlxwrapper, (dumps(self.rows),)
+        return type(self), (self._rows,)
 
     def __richcmp__(dancing_linksWrapper left, dancing_linksWrapper right, int op):
         """
         Two dancing_linksWrapper objects are equal if they were
         initialised using the same row list.
 
-        TESTS:
+        TESTS::
+
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2]]
             sage: X = dlx_solver(rows)
@@ -137,7 +129,7 @@ cdef class dancing_linksWrapper:
         """
 
         cdef int equal
-        equal = left.rows == right.rows
+        equal = left._rows == right._rows
 
         if op == 2: # ==
             return equal
@@ -146,29 +138,16 @@ cdef class dancing_linksWrapper:
         else:
             return NotImplemented
 
-    def dumps(self):
-        """
-        TESTS:
-            sage: from sage.combinat.matrices.dancing_links import dlx_solver
-            sage: rows = [[0,1,2]]
-            sage: X = dlx_solver(rows)
-            sage: X == loads(dumps(X))
-            1
-            sage: rows += [[2]]
-            sage: Y = dlx_solver(rows)
-            sage: Y == loads(dumps(X))
-            0
-        """
-        return self.rows.dumps()
-
-    def add_rows(self, rows):
+    def _init_rows(self, rows):
         """
         Initialize our instance of dancing_links with the given rows.
-        This is for internal use by dlx_solver.
 
-        This doctest tests add_rows vicariously!
+        This is for internal use by dlx_solver only.
 
         TESTS:
+
+        This doctest tests ``_init_rows`` vicariously! ::
+
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2]]
             sage: rows+= [[0,2]]
@@ -179,7 +158,7 @@ cdef class dancing_linksWrapper:
             1
 
         The following example would crash in Sage's debug version
-        from :trac:`13864` prior to the fix from :trac:`13822`::
+        from :trac:`13864` prior to the fix from :trac:`13882`::
 
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: x = dlx_solver([])          # indirect doctest
@@ -187,35 +166,31 @@ cdef class dancing_linksWrapper:
             []
 
         """
-        if not rows:
-            return
+        cdef vector[int] v
+        cdef vector[vector[int]] vv
 
-        cdef vector_int v
-        cdef vector_vector_int vv
+        self._rows = [row for row in rows]
 
-        cdef int i = 0
-
-        for row in rows:
+        for row in self._rows:
             v.clear()
-
-            Py_INCREF(row);
-            PyList_SET_ITEM(self.rows, i, row)
-            i += 1
 
             for x in row:
                 v.push_back(x)
 
             vv.push_back(v)
 
-        self.x.add_rows(vv)
+        sig_on()
+        self._x.add_rows(vv)
+        sig_off()
 
     def get_solution(self):
         """
         After calling search(), we can extract a solution
-        from the instance variable self.x.solution, a C++ vector<int>
+        from the instance variable self._x.solution, a C++ vector<int>
         listing the rows that make up the current solution.
 
-        TESTS:
+        TESTS::
+
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2]]
             sage: rows+= [[0,2]]
@@ -227,16 +202,18 @@ cdef class dancing_linksWrapper:
             sage: print x.get_solution()
             [3, 0]
         """
+        cdef size_t i
 
         s = []
-        for i in range(self.x.solution.size()):
-            s.append(self.x.solution.at(i))
+        for i in range(self._x.solution.size()):
+            s.append(self._x.solution.at(i))
 
         return s
 
     def search(self):
         """
-        TESTS:
+        EXAMPLES::
+
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2]]
             sage: rows+= [[0,2]]
@@ -247,17 +224,38 @@ cdef class dancing_linksWrapper:
             1
             sage: print x.get_solution()
             [3, 0]
+
+        TESTS:
+
+        Test that :trac:`11814` is fixed::
+
+            sage: dlx_solver([]).search()
+            0
+            sage: dlx_solver([[]]).search()
+            0
+
+        If search is called once too often, it keeps returning 0::
+
+            sage: x = dlx_solver([[0]])
+            sage: x.search()
+            1
+            sage: x.search()
+            0
+            sage: x.search()
+            0
         """
-
-        x = self.x.search()
-
+        sig_on()
+        x = self._x.search()
+        sig_off()
         return x
+
 
 def dlx_solver(rows):
     """
     Internal-use wrapper for the dancing links C++ code.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.combinat.matrices.dancing_links import dlx_solver
         sage: rows = [[0,1,2]]
         sage: rows+= [[0,2]]
@@ -275,31 +273,24 @@ def dlx_solver(rows):
         sage: print x.search()
         0
     """
-
-    cdef dancing_linksWrapper dlw
-
-    dlw = dancing_linksWrapper(rows)
-    #dlw.add_rows(rows)
-
-    return dlw
+    return dancing_linksWrapper(rows)
 
 
 def make_dlxwrapper(s):
     """
     Create a dlx wrapper from a Python *string* s.
-    This is used in unpickling. We expect s to be dumps(rows) where
-    rows is the list of rows used to instantiate the object.
 
-    TESTS:
+    This was historically used in unpickling and is kept for backwards
+    compatibility. We expect s to be ``dumps(rows)`` where rows is the
+    list of rows used to instantiate the object.
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.dancing_links import make_dlxwrapper
         sage: rows = [[0,1,2]]
         sage: x = make_dlxwrapper(dumps(rows))
         sage: print x.__str__()
-        [[0, 1, 2]]
+        Dancing links solver for 3 columns and 1 rows
     """
-
     from sage.all import loads
-
-    cdef dancing_linksWrapper dlw
-    dlw = dancing_linksWrapper(loads(s))
-    return dlw
-
+    return dancing_linksWrapper(loads(s))

@@ -89,7 +89,7 @@ from libc.stdint cimport uint64_t
 from cpython.string cimport *
 
 from sage.ext.memory cimport sage_malloc, sage_free
-
+from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport fflas_trans_enum, fflas_no_trans, fflas_trans, \
     fflas_right, vector, list as std_list
 

@@ -247,23 +247,24 @@ Checking the consistency of enumeration and test::
     list of them first, then iterate on this list.  This is obviously bad, as it
     requires uselessly a **lot** of memory for large values of `n`.
 
-    As soon as the ``yield`` keyword is available in Cython this should be
-    changed. Updating the code does not require more than a couple of minutes.
-
+    This should be changed. Updating the code does not require more
+    than a couple of minutes.
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
 
-from sage.libs.gmp.all cimport mpz_t
-from sage.libs.gmp.all cimport *
+
+from libc.string cimport memset
 from sage.rings.integer cimport Integer
 include 'sage/ext/stdsage.pxi'
-include 'sage/ext/cdefs.pxi'
 include "sage/ext/interrupt.pxi"
 
 

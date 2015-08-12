@@ -8,7 +8,6 @@ from matrix_integer_dense cimport Matrix_integer_dense
 
 from sage.rings.real_double import RDF
 
-include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 
 def integer_to_real_double_dense(Matrix_integer_dense A):

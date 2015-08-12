@@ -165,7 +165,7 @@ def plot(hyperplane_arrangement, **kwds):
             hyp_colors = [hyp_colors] * N
     else:
         HSV_tuples = [(i*1.0/N, 0.8, 0.9) for i in range(N)]
-        hyp_colors = map(lambda x: hsv_to_rgb(*x), HSV_tuples)
+        hyp_colors = [hsv_to_rgb(*x) for x in HSV_tuples]
     if 'hyperplane_labels' in kwds:
         hyp_labels = kwds.pop('hyperplane_labels')
         has_hyp_label = True

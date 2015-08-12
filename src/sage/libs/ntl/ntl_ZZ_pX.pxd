@@ -1,5 +1,3 @@
-include "sage/ext/cdefs.pxi"
-
 from ntl_ZZ_pX_decl cimport *
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 

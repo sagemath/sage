@@ -140,6 +140,7 @@ from sage.misc.superseded import deprecated_function_alias
 from sage.misc.long cimport pyobject_to_long
 
 include "sage/ext/interrupt.pxi"  # ctrl-c interrupt block support
+include "sage/ext/cdefs.pxi"
 include "sage/ext/stdsage.pxi"
 from sage.ext.memory cimport check_malloc, check_allocarray
 from cpython.list cimport *
@@ -150,7 +151,7 @@ from libc.stdint cimport uint64_t
 cimport sage.structure.element
 from sage.structure.element cimport Element, EuclideanDomainElement, parent_c
 include "sage/ext/python_debug.pxi"
-include "sage/libs/pari/decl.pxi"
+from sage.libs.pari.paridecl cimport *
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.libs.gmp.pylong cimport *
@@ -1568,11 +1569,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_add(x.value, self.value, (<Integer>right).value)
         return x
 
-    cpdef ModuleElement _iadd_(self, ModuleElement right):
-        # self and right are guaranteed to be Integers, self safe to mutate
-        mpz_add(self.value, self.value, (<Integer>right).value)
-        return self
-
     cdef RingElement _add_long(self, long n):
         """
         Fast path for adding a C long.
@@ -1633,10 +1629,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef Integer x = <Integer>PY_NEW(Integer)
         mpz_sub(x.value, self.value, (<Integer>right).value)
         return x
-
-    cpdef ModuleElement _isub_(self, ModuleElement right):
-        mpz_sub(self.value, self.value, (<Integer>right).value)
-        return self
 
     def __neg__(self):
         """
@@ -1720,17 +1712,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             mpz_mul(x.value, self.value, (<Integer>right).value)
         return x
-
-    cpdef RingElement _imul_(self, RingElement right):
-        if mpz_size(self.value) + mpz_size((<Integer>right).value) > 100000:
-            # We only use the signal handler (to enable ctrl-c out) when the
-            # product might take a while to compute
-            sig_on()
-            mpz_mul(self.value, self.value, (<Integer>right).value)
-            sig_off()
-        else:
-            mpz_mul(self.value, self.value, (<Integer>right).value)
-        return self
 
     cpdef RingElement _div_(self, RingElement right):
         r"""
@@ -1866,7 +1847,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             2^x
             sage: 2^1.5              # real number
             2.82842712474619
-            sage: 2^float(1.5)       # python float
+            sage: 2^float(1.5)       # python float  abs tol 3e-16
             2.8284271247461903
             sage: 2^I                # complex number
             2^I

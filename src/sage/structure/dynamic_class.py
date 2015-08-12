@@ -110,14 +110,18 @@ an inheritance can be partially emulated using :meth:`__getattr__`. See
 """
 
 #*****************************************************************************
-#  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.misc.cachefunc import weak_cached_function
-from sage.structure.unique_representation import ClasscallMetaclass
+from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonMetaclass, InheritComparisonClasscallMetaclass
 
 def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
                   prepend_cls_bases=True, cache=True):
@@ -350,20 +354,20 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
 
     We check that instrospection works reasonably::
 
-        sage: import inspect
-        sage: inspect.getfile(Foo2)
-        '.../sage/structure/dynamic_class.pyc'
-        sage: inspect.getfile(Foo3)
-        '.../sage/structure/dynamic_class.pyc'
-        sage: sage.misc.sageinspect.sage_getsourcelines(Foo2)
+        sage: from sage.misc.sageinspect import sage_getfile, sage_getsourcelines
+        sage: sage_getfile(Foo2)
+        '.../sage/structure/dynamic_class.py'
+        sage: sage_getfile(Foo3)
+        '.../sage/structure/dynamic_class.py'
+        sage: sage_getsourcelines(Foo2)
         (['class TestClass:...'], ...)
-        sage: sage.misc.sageinspect.sage_getsourcelines(Foo3)
+        sage: sage_getsourcelines(Foo3)
         (['class TestClass:...'], ...)
-        sage: sage.misc.sageinspect.sage_getsourcelines(Foo2())
+        sage: sage_getsourcelines(Foo2())
         (['class TestClass:...'], ...)
-        sage: sage.misc.sageinspect.sage_getsourcelines(Foo3())
+        sage: sage_getsourcelines(Foo3())
         (['class TestClass:...'], ...)
-        sage: sage.misc.sageinspect.sage_getsourcelines(Foo3().bla)
+        sage: sage_getsourcelines(Foo3().bla)
         (['    def bla():...'], ...)
 
     """
@@ -397,22 +401,25 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
     metaclass = DynamicMetaclass
     # The metaclass of a class must derive from the metaclasses of its
     # bases. The following handles the case where one of the base
-    # class is readilly in the ClasscallMetaclass. This
-    # approach won't scale well if we start using metaclasses
-    # elsewhere in Sage.
+    # classes is a known Sage metaclass.  This approach won't scale
+    # well if we start using metaclasses seriously in Sage.
     for base in bases:
-        if isinstance(base, ClasscallMetaclass):
+        if isinstance(base, InheritComparisonClasscallMetaclass):
+            metaclass = DynamicInheritComparisonClasscallMetaclass
+        elif isinstance(base, ClasscallMetaclass):
             metaclass = DynamicClasscallMetaclass
+        elif isinstance(base, InheritComparisonMetaclass):
+            metaclass = DynamicInheritComparisonMetaclass
     return metaclass(name, bases, methods)
 
 class DynamicMetaclass(type):
     """
     A metaclass implementing an appropriate reduce-by-construction method
     """
-
     def __reduce__(self):
         """
-        See sage.structure.dynamic_class.dynamic_class? for non trivial tests.
+        See :func:`sage.structure.dynamic_class.dynamic_class` for
+        non-trivial tests.
 
         TESTS::
 
@@ -431,12 +438,20 @@ class DynamicMetaclass(type):
 class DynamicClasscallMetaclass(DynamicMetaclass, ClasscallMetaclass):
     pass
 
-# This registers the appropriate reduction methods (depends on #5985)
-import copy_reg
-copy_reg.pickle(DynamicMetaclass, DynamicMetaclass.__reduce__)
+class DynamicInheritComparisonMetaclass(DynamicMetaclass, InheritComparisonMetaclass):
+    pass
 
+class DynamicInheritComparisonClasscallMetaclass(DynamicMetaclass, InheritComparisonClasscallMetaclass):
+    pass
+
+# This registers the appropriate reduction methods (see Trac #5985)
 import copy_reg
-copy_reg.pickle(DynamicClasscallMetaclass, DynamicMetaclass.__reduce__)
+for M in [DynamicMetaclass,
+          DynamicClasscallMetaclass,
+          DynamicInheritComparisonMetaclass,
+          DynamicInheritComparisonClasscallMetaclass]:
+    copy_reg.pickle(M, M.__reduce__)
+
 
 class TestClass:
     """

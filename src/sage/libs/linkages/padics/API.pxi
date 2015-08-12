@@ -51,8 +51,7 @@ file gives the function signatures.
 - :meth:`cconv_mpq_t_out` -- conversion into an mpq_t
 - _list_zero -- the entry that should be used for zero in clist
 
-The gluing file should ctypedef celement as appropriate, and should
-include cdefs.pxi, either in the pxd file or above the linkage file.
+The gluing file should ctypedef celement as appropriate.
 
 Each linkage file should include interrupt.pxi and stdsage.pxi
 

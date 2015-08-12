@@ -25,8 +25,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/cdefs.pxi'
 include 'sage/ext/stdsage.pxi'
+from libc.string cimport strlen
 from sage.libs.gmp.mpn cimport *
 from sage.data_structures.bitset cimport *
 from cython.operator import preincrement as preinc

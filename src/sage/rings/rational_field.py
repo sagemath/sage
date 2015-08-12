@@ -1182,7 +1182,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: macaulay2(QQ)   # optional- macaulay2 # indirect doctest
+            sage: macaulay2(QQ)   # optional - macaulay2 # indirect doctest
             QQ
         """
         return "QQ"

@@ -25,7 +25,7 @@ def multiplicative_iterator(M):
         yield M(1)
         return
 
-    stop = list(M.generator_orders())
+    stop = [g.multiplicative_order() for g in G]
     for i in range(len(stop)):
         if stop[i] is infinity:
             raise ArithmeticError("%s is not finite."%M)

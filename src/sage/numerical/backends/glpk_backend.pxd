@@ -9,7 +9,6 @@ from generic_backend cimport GenericBackend
 
 
 cdef extern from *:
-    ctypedef double* const_double_ptr "const double*"
     ctypedef char * const_char_ptr "const char*"
 
 cdef extern from "float.h":
@@ -69,6 +68,7 @@ cdef extern from "glpk.h":
      void glp_set_obj_coef(c_glp_prob *, int, double)
      void glp_load_matrix(c_glp_prob *, int, int *, int *, double *)
      int glp_simplex(c_glp_prob *, c_glp_smcp *)
+     int glp_exact(c_glp_prob *, c_glp_smcp *)
      int glp_intopt(c_glp_prob *, c_glp_iocp *)
      int lpx_intopt(c_glp_prob *)
      void glp_std_basis(c_glp_prob *)
@@ -76,7 +76,10 @@ cdef extern from "glpk.h":
      double glp_get_col_prim(c_glp_prob *, int)
      double glp_get_obj_val(c_glp_prob *)
      double glp_get_col_dual(c_glp_prob *, int)
+     double glp_get_row_prim(c_glp_prob *, int)
      double glp_get_row_dual(c_glp_prob *, int)
+     int glp_get_col_stat(c_glp_prob *, int)
+     int glp_get_row_stat(c_glp_prob *, int)
      int glp_print_ranges(c_glp_prob *lp, int,int, int, char *fname)
      int glp_get_num_rows(c_glp_prob *)
      int glp_get_num_cols(c_glp_prob *)
@@ -95,17 +98,17 @@ cdef extern from "glpk.h":
 
      double glp_get_col_ub(c_glp_prob *lp, int i)
      double glp_get_col_lb(c_glp_prob *lp, int i)
+
      void glp_set_col_ub(c_glp_prob *lp, int i, double value)
      void glp_set_col_lb(c_glp_prob *lp, int i, double value)
 
+     int glp_eval_tab_row(c_glp_prob *lp, int k, int ind[], double val[])
+     int glp_eval_tab_col(c_glp_prob *lp, int k, int ind[], double val[])
 
      const_char_ptr glp_get_row_name(c_glp_prob *lp, int i)
      const_char_ptr glp_get_col_name(c_glp_prob *lp, int i)
 
      void glp_create_index(c_glp_prob *lp)
-
-     double glp_get_col_lb(c_glp_prob *lp, int i)
-     double glp_get_col_ub(c_glp_prob *lp, int i)
 
      int glp_get_prim_stat(c_glp_prob *lp)
      int glp_mip_status(c_glp_prob *lp)
@@ -199,6 +202,12 @@ cdef extern from "glpk.h":
 
      int GLP_MSG_DBG
 
+     int GLP_BS      # basic variable
+     int GLP_NL      # non-basic variable on lower bound
+     int GLP_NU      # non-basic variable on upper bound
+     int GLP_NF      # non-basic free (unbounded) variable
+     int GLP_NS      # non-basic fixed variable
+
 cdef class GLPKBackend(GenericBackend):
     cdef c_glp_prob * lp
     cdef c_glp_iocp * iocp
@@ -209,3 +218,8 @@ cdef class GLPKBackend(GenericBackend):
     cpdef int print_ranges(self, char * filename = *) except -1
     cpdef double get_row_dual(self, int variable)
     cpdef double get_col_dual(self, int variable)
+    cpdef int get_row_stat(self, int variable)
+    cpdef int get_col_stat(self, int variable)
+    cpdef eval_tab_row(self, int k)
+    cpdef eval_tab_col(self, int k)
+

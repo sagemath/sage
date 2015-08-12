@@ -329,16 +329,19 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
 
         INPUT:
 
-        - ``i`` -- The index of the module generator
+        - ``i`` -- the index of the module generator
 
         We can also get a module generator by using one of the following
         optional arguments:
 
-        - ``shape`` -- The associated shape
-        - ``column_shape`` -- The shape given as columns (a column of length
+        - ``shape`` -- the associated shape
+        - ``column_shape`` -- the shape given as columns (a column of length
           `k` correspond to a classical weight `\omega_k`)
-        - ``weight`` -- The weight
-        - ``classical_weight`` -- The classical weight
+        - ``weight`` -- the weight
+        - ``classical_weight`` -- the classical weight
+
+        If no arugments are specified, then return the unique module generator
+        of classical weight `s \Lambda_r`.
 
         EXAMPLES::
 
@@ -355,6 +358,8 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
             sage: WSC = RootSystem(['D',4]).weight_space()
             sage: KRT.module_generator(classical_weight=WSC.fundamental_weight(2))
             [[1, 1], [2, -1]]
+            sage: KRT.module_generator()
+            [[1, 1], [2, 2]]
 
             sage: KRT = crystals.KirillovReshetikhin(['A', 3, 1], 2, 2, model='KR')
             sage: KRT.module_generator()
@@ -363,6 +368,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         if i is not None:
             return self.module_generators[i]
         n = self._cartan_type.classical().rank()
+
         if "shape" in options:
             shape = list(options["shape"])
             # Make sure the shape is the correct length
@@ -372,29 +378,40 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
                 if list(mg.classical_weight().to_vector()) == shape:
                     return mg
             return None
+
         if "column_shape" in options:
             shape = list(Partition(options["column_shape"]).conjugate())
-            if len(shape) < self._cartan_type.classical().rank():
+            if len(shape) < n:
                 shape.extend( [0]*(n - len(shape)) )
             for mg in self.module_generators:
                 if list(mg.classical_weight().to_vector()) == shape:
                     return mg
             return None
+
         if "weight" in options:
             wt = options["weight"]
             for mg in self.module_generators:
                 if mg.weight() == wt:
                     return mg
             return None
+
         if "classical_weight" in options:
             wt = options["classical_weight"]
             for mg in self.module_generators:
                 if mg.classical_weight() == wt:
                     return mg
             return None
-        if len(self.module_generators) == 1:
-            return self.module_generators[0]
-        raise ValueError("Invalid parameter")
+
+        # Otherwise return the unique module generator of classical weight `s \Lambda_r`
+        R = self.weight_lattice_realization()
+        Lambda = R.fundamental_weights()
+        r = self.r()
+        s = self.s()
+        weight = s*Lambda[r] - s*Lambda[0] * Lambda[r].level() / Lambda[0].level()
+        for b in self.module_generators:
+            if b.weight() == weight:
+                return b
+        assert False
 
     @abstract_method
     def _build_module_generators(self):
@@ -485,6 +502,19 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
             Kirillov-Reshetikhin crystal of type ['A', 4, 1] with (r,s)=(2,1)
         """
         return KashiwaraNakashimaTableaux(self._cartan_type, self._r, self._s)
+
+    def affinization(self):
+        """
+        Return the corresponding affinization crystal of ``self``.
+
+        EXAMPLES::
+
+            sage: K = crystals.KirillovReshetikhin(['A',2,1], 1, 1, model='KR')
+            sage: K.affinization()
+            Affinization of Kirillov-Reshetikhin tableaux of type ['A', 2, 1] and shape (1, 1)
+        """
+        from sage.combinat.crystals.affinization import AffinizationOfCrystal
+        return AffinizationOfCrystal(self)
 
     def classical_decomposition(self):
         """
@@ -1083,7 +1113,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
               1  3
               2  4
         """
-        from sage.misc.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(self._repr_diagram().splitlines())
 
     def to_kirillov_reshetikhin_crystal(self):

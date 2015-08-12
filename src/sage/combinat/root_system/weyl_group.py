@@ -916,6 +916,27 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
         return s is positive
 
+    def has_left_descent(self,i):
+        """
+        Tests if self has a left descent at position `i`.
+
+        EXAMPLES::
+
+            sage: W = WeylGroup(['A',3])
+            sage: s = W.simple_reflections()
+            sage: [W.one().has_descent(i) for i in W.domain().index_set()]
+            [False, False, False]
+            sage: [s[1].has_descent(i) for i in W.domain().index_set()]
+            [True, False, False]
+            sage: [s[2].has_descent(i) for i in W.domain().index_set()]
+            [False, True, False]
+            sage: [s[3].has_descent(i) for i in W.domain().index_set()]
+            [False, False, True]
+            sage: [s[3].has_descent(i, True) for i in W.domain().index_set()]
+            [True, True, False]
+        """
+        return self.has_descent(i, side = "left")
+
     def apply_simple_reflection(self, i, side = "right"):
         s = self.parent().simple_reflections()
         if side == "right":

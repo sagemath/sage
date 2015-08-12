@@ -88,7 +88,7 @@ The graph is produced via::
 
     sage: G = L.markov_chain_digraph(labeling='source'); G
     Looped multi-digraph on 6 vertices
-    sage: view(G) # optional - dot2tex
+    sage: view(G)  # not tested
 
 We can now look at the transition matrix and see whether we notice anything about
 its eigenvalue and eigenvectors::

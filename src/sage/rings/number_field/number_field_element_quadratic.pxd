@@ -1,6 +1,6 @@
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 
+from sage.libs.gmp.types cimport mpz_t
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, FieldElement, RingElement, ModuleElement
@@ -15,7 +15,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     cdef mpz_t a, b, denom
     cdef Integer D
     cdef bint standard_embedding
-    cdef NumberFieldElement conjugate_c(self)
+    cpdef NumberFieldElement galois_conjugate(self)
     cdef bint is_sqrt_disc(self)
 
     cdef int _randomize(self, num_bound, den_bound, distribution) except -1

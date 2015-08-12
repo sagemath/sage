@@ -251,6 +251,53 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         """
         return self.value()
 
+    def representative_prime(self, norm_bound=1000):
+        r"""
+        Return a prime ideal in this ideal class.
+
+        INPUT:
+
+        ``norm_bound`` (positive integer) -- upper bound on the norm of primes tested.
+
+        EXAMPLE::
+
+           sage: K.<a> = NumberField(x^2+31)
+           sage: K.class_number()
+           3
+           sage: Cl = K.class_group()
+           sage: [c.representative_prime() for c in Cl]
+           [Fractional ideal (3),
+           Fractional ideal (2, 1/2*a + 1/2),
+           Fractional ideal (2, 1/2*a - 1/2)]
+
+           sage: K.<a> = NumberField(x^2+223)
+           sage: K.class_number()
+           7
+           sage: Cl = K.class_group()
+           sage: [c.representative_prime() for c in Cl]
+           [Fractional ideal (3),
+           Fractional ideal (2, 1/2*a + 1/2),
+           Fractional ideal (17, 1/2*a + 7/2),
+           Fractional ideal (7, 1/2*a - 1/2),
+           Fractional ideal (7, 1/2*a + 1/2),
+           Fractional ideal (17, 1/2*a + 27/2),
+           Fractional ideal (2, 1/2*a - 1/2)]
+        """
+        if self.value().is_prime():
+            return self.value()
+        c = self.reduce()
+        if c.value().is_prime():
+            return c.value()
+        # otherwise we just search:
+        Cl = self.parent()
+        K = Cl.number_field()
+        from sage.rings.all import RR
+        for P in K.primes_of_bounded_norm_iter(RR(norm_bound)):
+            if Cl(P)==c:
+                return P
+        raise RuntimeError("No prime of norm less than %s found in class %s" % (norm_bound, c))
+
+
     def gens(self):
         r"""
         Return generators for a representative ideal in this
@@ -464,16 +511,16 @@ class ClassGroup(AbelianGroupWithValues_class):
         EXAMPLES::
 
             sage: K.<a> = NumberField(x^4 + 23)
-            sage: K.class_group().gens()   # random gens (platform dependent)
-            [Fractional ideal class (2, 1/2*a^2 - a + 3/2)]
+            sage: K.class_group().gens_ideals()   # random gens (platform dependent)
+            (Fractional ideal (2, 1/4*a^3 - 1/4*a^2 + 1/4*a - 1/4),)
 
             sage: C = NumberField(x^2 + x + 23899, 'a').class_group(); C
             Class group of order 68 with structure C34 x C2 of Number Field
             in a with defining polynomial x^2 + x + 23899
             sage: C.gens()
             (Fractional ideal class (7, a + 5), Fractional ideal class (5, a + 3))
-            sage: C.ngens()
-            2
+            sage: C.gens_ideals()
+            (Fractional ideal (7, a + 5), Fractional ideal (5, a + 3))
         """
         return self.gens_values()
 

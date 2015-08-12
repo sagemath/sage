@@ -977,7 +977,7 @@ class GraphClasses(UniqueRepresentation):
 
         # Computing te max of each field with the database
         for key in MAX:
-            MAX[key] = len(max(map(lambda x:str(x.get(key,"")),classes_list), key = len))
+            MAX[key] = len(max((str(x.get(key,"")) for x in classes_list), key = len))
 
         # At most MAX characters per field
         for key, length in MAX.iteritems():

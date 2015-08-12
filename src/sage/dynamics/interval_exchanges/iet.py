@@ -240,7 +240,7 @@ class IntervalExchangeTransformation(SageObject):
             sage: t.lengths()
             [2]
         """
-        self._lengths = map(lambda t: t*x, self._lengths)
+        self._lengths = [t*x for t in self._lengths]
 
     def _repr_(self):
         r"""
@@ -489,7 +489,7 @@ class IntervalExchangeTransformation(SageObject):
             True
         """
         return (
-            isinstance(self, type(other)) and
+            type(self) is type(other) and
             self._permutation == other._permutation and
             self._lengths == other._lengths)
 
@@ -504,7 +504,7 @@ class IntervalExchangeTransformation(SageObject):
             False
         """
         return (
-            not isinstance(self, type(other)) or
+            type(self) is not type(other) or
             self._permutation != other._permutation or
             self._lengths != other._lengths)
 
@@ -847,7 +847,7 @@ class IntervalExchangeTransformation(SageObject):
 
         G = Graphics()
 
-        lengths = map(float,self._lengths)
+        lengths = [float(_) for _ in self._lengths]
         total_length = sum(lengths)
 
         if colors is None:

@@ -193,14 +193,14 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
 
         ::
 
-            sage: R.<x,y> = PolynomialRing(QQ, 2)                        # optional
-            sage: I = R.ideal([x^3 + y, y])                              # optional
-            sage: S = I._macaulay2_()                                    # optional
-            sage: T = S*S*S                                              # optional
-            sage: U = T.gens().entries().flatten()                       # optional
-            sage: f = U[2]; f                                            # optional
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: I = R.ideal([x^3 + y, y])
+            sage: S = I._macaulay2_()                                    # optional - macaulay2
+            sage: T = S*S*S                                              # optional - macaulay2
+            sage: U = T.gens().entries().flatten()                       # optional - macaulay2
+            sage: f = U[2]; f                                            # optional - macaulay2
             x^6*y+2*x^3*y^2+y^3
-            sage: R(repr(f))                                             # optional
+            sage: R(repr(f))                                             # optional - macaulay2
             x^6*y + 2*x^3*y^2 + y^3
 
         Some other subtle conversions. We create polynomial rings in 2

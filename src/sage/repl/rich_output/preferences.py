@@ -399,7 +399,7 @@ class DisplayPreferences(PreferencesABC):
 
 DisplayPreferences._add_option(
     'text',
-    ('plain', 'ascii_art', 'latex'),
+    ('plain', 'ascii_art', 'unicode_art', 'latex'),
     """
     Which textual representation is preferred
     """

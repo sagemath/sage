@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# creates the tarball in the current dir, to be moved to ../../../upstream
+
+#PATCHLEVEL=".p0"
+PATCHLEVEL=
+
+rm -rf csdp/
+git clone https://github.com/dimpase/csdp.git
+cd csdp
+
+VERSION=`autoconf --trace='AC_INIT:$2'`
+autoreconf --install 
+automake --add-missing --copy
+./configure
+
+rm -f csdp-$VERSION.tar.gz
+make dist
+mv csdp-$VERSION.tar.gz ../
+cd ..
+rm -rf csdp/
+
+

@@ -1,5 +1,3 @@
-#!/bin/sh
-#
 # This file defines the versions installed by this spkg.  If you edit
 # this, re-create Makefile.build using
 #

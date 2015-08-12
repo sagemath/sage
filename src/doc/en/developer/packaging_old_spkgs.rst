@@ -33,7 +33,7 @@ and/or bzip2, note that ``.spkg`` files contain control information
 (installation scripts and metadata) that are necessary for building
 and installing them.  When you compile Sage from a source distribution
 (or when you run ``sage -i <pkg>`` or ``sage -f <pkg>``), the file
-``SAGE_ROOT/src/bin/sage-spkg`` takes care of the unpacking,
+``SAGE_ROOT/build/bin/sage-spkg`` takes care of the unpacking,
 compilation, and installation of Sage packages for you. You can type::
 
     tar -jxvf mypackage-version.spkg

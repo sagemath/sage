@@ -25,6 +25,7 @@ from sage.modules.free_module_element import vector
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 from constructor import rational_type, FormsSpace, FormsRing
 from series_constructor import MFSeriesConstructor
@@ -38,6 +39,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation):
     r"""
     Element of a FormsRing.
     """
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     from analytic_type import AnalyticType
     AT = AnalyticType()
@@ -2098,7 +2100,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation):
             q_exp = self.q_expansion_fixed_d(prec=prec, d_num_prec=num_prec)
             (A, w) = self.group().get_FD(tau)
             aut_factor = self.reduce(force=True).parent().aut_factor(A, w)
-            if (type(q_exp) == LaurentSeries):
+            if (type(q_exp) is LaurentSeries):
                 return q_exp.laurent_polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
             else:
                 return q_exp.polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor

@@ -1,4 +1,3 @@
-
 include "decl.pxi"
 
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class

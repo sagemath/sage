@@ -230,14 +230,14 @@ class SageMagics(Magics):
             sage: shell.run_cell('%display ascii_art')
             sage: shell.run_cell('StandardTableaux(4).list()')
             [
-            [                                                                  1  4    1  3
-            [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
-            [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,   4
+            [                                                                  1  4
+            [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2
+            [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,
             <BLANKLINE>
-                        1 ]
-                1  2    2 ]
-                3       3 ]
-            ,   4   ,   4 ]
+                               1 ]
+               1  3    1  2    2 ]
+               2       3       3 ]
+               4   ,   4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
             sage: shell.run_cell('StandardTableaux(4).list()')
             [
@@ -269,7 +269,7 @@ class SageMagics(Magics):
         TESTS::
 
             sage: shell.run_cell('%display invalid_mode')
-            value must be unset (None) or one of ('plain', 'ascii_art', 'latex'), got invalid_mode
+            value must be unset (None) or one of ('plain', 'ascii_art', 'unicode_art', 'latex'), got invalid_mode
             sage: shell.quit()
         """
         from sage.repl.rich_output import get_display_manager
@@ -284,17 +284,17 @@ class SageMagics(Magics):
             dm.preferences.text = 'plain'
         elif arg0 == 'typeset':
             dm.preferences.text = 'latex'
-        elif arg0 == 'ascii_art' and len(args) > 1:
+        elif arg0 in ['ascii_art', 'unicode_art'] and len(args) > 1:
             try:
                 max_width = int(args[1])
             except ValueError:
                 max_width = 0
             if max_width <= 0:
                 raise ValueError(
-                        "ascii_art max width must be a positive integer")
-            import sage.misc.ascii_art as ascii_art
-            ascii_art.MAX_WIDTH = max_width
-            dm.preferences.text = 'ascii_art'
+                        "max width must be a positive integer")
+            import sage.typeset.character_art as character_art
+            character_art.MAX_WIDTH = max_width
+            dm.preferences.text = arg0
         # Unset all
         elif arg0 in ['default', 'None']:  # un-stringify "%display None"
             for option in map(str, dm.preferences.available_options()):

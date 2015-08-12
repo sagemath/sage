@@ -19,10 +19,10 @@ Not sure what to download? This short guide should get you started.
   http://www.sagemath.org/mirrors.html
 
 - Follow the binary installation guide
-  (http://www.sagemath.org/doc/installation/binary.html) to actually
+  (:ref:`sec-installation-from-binaries`) to actually
   install a pre-compiled version of Sage. The source installation
   guide
-  (http://www.sagemath.org/doc/installation/source.html)
+  (:ref:`sec-installation-from-binaries`)
   contains more detailed information on compiling Sage from source.
 
 

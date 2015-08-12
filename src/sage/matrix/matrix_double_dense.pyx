@@ -2482,7 +2482,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             True
             sage: U.is_unitary(algorithm='orthonormal')
             True
-            sage: V.is_unitary(algorithm='naive')  # not tested - known bug (trac #11248)
+            sage: V.is_unitary(algorithm='naive')
             True
 
         If we make the tolerance too strict we can get misleading results.  ::

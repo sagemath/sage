@@ -25,6 +25,48 @@ from sage.graphs.graph_plot import _circle_embedding, _line_embedding
 #   Named Graphs
 #######################################################################
 
+def HarborthGraph():
+    r"""
+    Return the Harborth Graph
+
+    The Harborth graph has 104 edges and 52 vertices, and is the smallest known
+    example of a 4-regular matchstick graph. For more information, see the
+    :wikipedia:`Harborth_graph`.
+
+    EXAMPLES::
+
+        sage: g = graphs.HarborthGraph(); g
+        Harborth Graph: Graph on 52 vertices
+        sage: g.is_regular(4)
+        True
+
+    """
+    g = Graph(':s_OGKI?@_?g[QABAo__YEFCp@?iIEbqHWuWLbbh?}[OfcXpGhNHdYPY_SgdYX]'+
+              'pZkfJPuo[lfZHys^mFcDs}`pG{UNNgoHC}DIgrI[qjMhTyDQrQlVydrBYmWkn',
+              loops=False, multiedges=False)
+
+    g.set_pos({ 0: ( 51.5, 400.0),  1: ( 90.6, 308.0),  2: ( 90.6, 492.0),
+                3: (129.8, 216.0),  4: (129.8, 584.0),  5: (150.7, 387.9),
+                6: (150.7, 412.1),  7: (169.0, 124.0),  8: (169.0, 676.0),
+                9: (189.9, 295.9), 10: (189.9, 504.1), 11: (229.1, 203.9),
+               12: (229.1, 596.1), 13: (250.0, 400.0), 14: (251.4, 180.6),
+               15: (251.4, 619.4), 16: (256.1, 300.2), 17: (256.1, 499.8),
+               18: (259.3, 080.9), 19: (259.3, 719.1), 20: (333.8, 237.2),
+               21: (333.8, 562.8), 22: (341.7, 137.5), 23: (341.7, 662.5),
+               24: (350.0, 037.9), 25: (350.0, 336.0), 26: (350.0, 464.0),
+               27: (350.0, 762.1), 28: (358.3, 137.5), 29: (358.3, 662.5),
+               30: (366.2, 237.2), 31: (366.2, 562.8), 32: (440.7, 080.9),
+               33: (440.7, 719.1), 34: (443.9, 300.2), 35: (443.9, 499.8),
+               36: (448.6, 180.6), 37: (448.6, 619.4), 38: (450.0, 400.0),
+               39: (470.9, 203.9), 40: (470.9, 596.1), 41: (510.1, 295.9),
+               42: (510.1, 504.1), 43: (531.0, 124.0), 44: (531.0, 676.0),
+               45: (549.3, 387.9), 46: (549.3, 412.1), 47: (570.2, 216.0),
+               48: (570.2, 584.0), 49: (609.4, 308.0), 50: (609.4, 492.0),
+               51: (648.5, 400.0)})
+    g.name("Harborth Graph")
+    return g
+
+
 def HarriesGraph(embedding=1):
     r"""
     Returns the Harries Graph.
@@ -1357,7 +1399,7 @@ def BrouwerHaemersGraph():
     V = VectorSpace(F,d)
     M = Matrix(F,identity_matrix(d))
     M[1,1]=-1
-    G = Graph([map(tuple,V), lambda x,y:(V(x)-V(y))*(M*(V(x)-V(y))) == 0], loops = False)
+    G = Graph([[tuple(_) for _ in V], lambda x,y:(V(x)-V(y))*(M*(V(x)-V(y))) == 0], loops = False)
     G.relabel()
     ordering = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
                 18, 19, 20, 21, 22, 23, 24, 25, 26, 48, 49, 50, 51, 52, 53,
@@ -1487,6 +1529,45 @@ def BuckyBall():
     g.set_pos(pos)
 
     return g
+
+def GossetGraph():
+    r"""
+    Return the Gosset graph.
+
+    The Gosset graph is the skeleton of the
+    :meth:`~sage.geometry.polyhedron.library.polytopes.gosset_3_21` polytope. It
+    has with 56 vertices and degree 27. For more information, see the
+    :wikipedia:`Gosset_graph`.
+
+    EXAMPLE::
+
+        sage: g = graphs.GossetGraph(); g
+        Gosset Graph: Graph on 56 vertices
+
+        sage: g.order(), g.size()
+        (56, 756)
+
+    TESTS::
+
+        sage: g.is_isomorphic(polytopes.Gosset_3_21().graph()) # not tested (~16s)
+        True
+    """
+    string = ('w~~~~rt{~Z\\ZxnvYZYmlfrb}|hDuhLlcmmMNf_^zzQGNYcP\\kcRZbaJjoNBx{'+
+              '?N~o^}?A`}F_Kbbm_[QZ\\_]Cj\\oN_dm{BzB{?]WIMM@tPQRYBYRPIuAyJgQv?'+
+              '|Bxb_M[kWIR@jTQcciDjShXCkFMgpwqBKxeKoS`TYqdTCcKtkdKwWQXrbEZ@OdU'+
+              'mITZ@_e[{KXn?YPABzvY?IcO`zvYg@caC\\zlf?BaGR]zb{?@wOjv`~w??N_n_~'+
+              '~w???^_^~~{')
+
+    G = Graph(string,name="Gosset Graph")
+
+    ordering = [0, 2, 4, 6, 43, 23, 50, 18, 28, 9, 8, 7, 44, 3, 26, 35, 16, 14,
+                33, 15, 54, 30, 17, 21, 10, 13, 36, 31, 55, 53, 51, 49, 12, 32,
+                5, 37, 27, 46, 47, 48, 11, 52, 29, 20, 39, 41, 22, 40, 1, 25, 38,
+                34, 45, 42, 19, 24]
+
+    _circle_embedding(G,ordering)
+
+    return G
 
 def DoubleStarSnark():
     r"""
@@ -1728,8 +1809,16 @@ def ChvatalGraph():
         2
         2
         4
+
+    TEST:
+
+        sage: import networkx
+        sage: G = graphs.ChvatalGraph()
+        sage: G.is_isomorphic(Graph(networkx.chvatal_graph()))
+        True
     """
-    import networkx
+    edges = {0:[1, 4, 6, 9], 1:[2, 5, 7], 2:[3, 6, 8], 3:[4, 7, 9], 4:[5, 8],
+             5:[10, 11], 6:[10, 11], 7:[8, 11], 8:[10], 9:[10, 11]}
     pos_dict = {}
     for i in range(5, 10):
         x = float(cos((pi / 2) + ((2 * pi) / 5) * i))
@@ -1742,7 +1831,7 @@ def ChvatalGraph():
     pos_dict[10] = (0.5, 0)
     pos_dict[11] = (-0.5, 0)
 
-    return Graph(networkx.chvatal_graph(), pos=pos_dict, name="Chvatal graph")
+    return Graph(edges, pos=pos_dict, name="Chvatal graph")
 
 def ClebschGraph():
     r"""
@@ -1814,6 +1903,34 @@ def CoxeterGraph():
 
     g.name("Coxeter Graph")
 
+    return g
+
+def DejterGraph():
+    r"""
+    Return the Dejter graph.
+
+    The Dejter graph is obtained from the binary 7-cube by deleting a copy of
+    the Hamming code of length 7. It is 6-regular, with 112 vertices and 336
+    edges. For more information, see the :wikipedia:`Dejter_graph`.
+
+    EXAMPLES::
+
+        sage: g = graphs.DejterGraph(); g
+        Dejter Graph: Graph on 112 vertices
+        sage: g.is_regular(k=6)
+        True
+        sage: g.girth()
+        4
+    """
+    from sage.graphs.generators.families import CubeGraph
+    from sage.coding.code_constructions import HammingCode
+    from sage.rings.finite_rings.constructor import FiniteField
+
+    from string import join
+    g = CubeGraph(7)
+    g.delete_vertices([join(map(str,x),"")
+                       for x in HammingCode(3, FiniteField(2))])
+    g.name("Dejter Graph")
     return g
 
 def DesarguesGraph():
@@ -2294,6 +2411,33 @@ def ErreraGraph():
         14: [16]}
     return Graph(edge_dict, name="Errera graph")
 
+def F26AGraph():
+    r"""
+    Return the F26A graph.
+
+    The F26A graph is a symmetric bipartite cubic graph with 26 vertices and 39
+    edges. For more information, see the :wikipedia:`F26A_graph`.
+
+    EXAMPLE::
+
+        sage: g = graphs.F26AGraph(); g
+        F26A Graph: Graph on 26 vertices
+        sage: g.order(),g.size()
+        (26, 39)
+        sage: g.automorphism_group().cardinality()
+        78
+        sage: g.girth()
+        6
+        sage: g.is_bipartite()
+        True
+        sage: g.characteristic_polynomial().factor()
+        (x - 3) * (x + 3) * (x^4 - 5*x^2 + 3)^6
+    """
+    from sage.graphs.generators.families import LCFGraph
+    g= LCFGraph(26, [7,-7],13)
+    g.name("F26A Graph")
+    return g
+
 def FlowerSnark():
     """
     Returns a Flower Snark.
@@ -2483,8 +2627,6 @@ def FruchtGraph():
     A Frucht graph has 12 nodes and 18 edges. It is the smallest cubic
     identity graph. It is planar and it is Hamiltonian.
 
-    This constructor is dependent on NetworkX's numeric labeling.
-
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the first
     seven nodes are on the outer circle, with the next four on an inner
@@ -2504,7 +2646,16 @@ def FruchtGraph():
         sage: FRUCHT.graph6_string()
         'KhCKM?_EGK?L'
         sage: (graphs.FruchtGraph()).show() # long time
+
+    TEST:
+
+        sage: import networkx
+        sage: G = graphs.FruchtGraph()
+        sage: G.is_isomorphic(Graph(networkx.frucht_graph()))
+        True
     """
+    edges = {0:[1, 6, 7], 1:[2, 7], 2:[3, 8], 3:[4, 9], 4:[5, 9],
+             5:[6, 10], 6:[10], 7:[11], 8:[9, 11], 10:[11]}
     pos_dict = {}
     for i in range(7):
         x = float(2*(cos((pi/2) + ((2*pi)/7)*i)))
@@ -2515,9 +2666,7 @@ def FruchtGraph():
     pos_dict[9] = (0,-1)
     pos_dict[10] = (1,0)
     pos_dict[11] = (0,0)
-    import networkx
-    G = networkx.frucht_graph()
-    return Graph(G, pos=pos_dict, name="Frucht graph")
+    return Graph(edges, pos=pos_dict, name="Frucht graph")
 
 def GoldnerHararyGraph():
     r"""
@@ -2727,8 +2876,6 @@ def HeawoodGraph():
     nonplanar and Hamiltonian. It has diameter = 3, radius = 3, girth =
     6, chromatic number = 2. It is 4-transitive but not 5-transitive.
 
-    This constructor is dependent on NetworkX's numeric labeling.
-
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the nodes are
     positioned in a circular layout with the first node appearing at
@@ -2748,15 +2895,22 @@ def HeawoodGraph():
         sage: H.graph6_string()
         'MhEGHC@AI?_PC@_G_'
         sage: (graphs.HeawoodGraph()).show() # long time
+
+    TEST:
+
+        sage: import networkx
+        sage: G = graphs.HeawoodGraph()
+        sage: G.is_isomorphic(Graph(networkx.heawood_graph()))
+        True
     """
+    edges = {0:[1, 5, 13], 1:[2, 10], 2:[3, 7], 3:[4, 12], 4:[5, 9], 5:[6],
+             6:[7, 11], 7:[8], 8:[9, 13], 9:[10], 10:[11], 11:[12], 12:[13]}
     pos_dict = {}
     for i in range(14):
         x = float(cos((pi/2) + (pi/7)*i))
         y = float(sin((pi/2) + (pi/7)*i))
         pos_dict[i] = (x,y)
-    import networkx
-    G = networkx.heawood_graph()
-    return Graph(G, pos=pos_dict, name="Heawood graph")
+    return Graph(edges, pos=pos_dict, name="Heawood graph")
 
 def HerschelGraph():
     r"""
@@ -3188,8 +3342,6 @@ def KrackhardtKiteGraph():
     - [1] Kreps, V. (2002). "Social Network Analysis".  [Online] Available:
       http://www.orgnet.com/sna.html
 
-    This constructor depends on NetworkX numeric labeling.
-
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the graph is
     drawn left to right, in top to bottom row sequence of [2, 3, 2, 1,
@@ -3210,11 +3362,106 @@ def KrackhardtKiteGraph():
 
         sage: g = graphs.KrackhardtKiteGraph()
         sage: g.show() # long time
+
+    TEST:
+
+        sage: import networkx
+        sage: G = graphs.KrackhardtKiteGraph()
+        sage: G.is_isomorphic(Graph(networkx.krackhardt_kite_graph()))
+        True
     """
+    edges = {0:[1, 2, 3, 5], 1:[3, 4, 6], 2:[3, 5], 3:[4, 5, 6],
+             4:[6], 5:[6, 7], 6:[7], 7:[8], 8:[9]}
     pos_dict = {0:(-1,4),1:(1,4),2:(-2,3),3:(0,3),4:(2,3),5:(-1,2),6:(1,2),7:(0,1),8:(0,0),9:(0,-1)}
-    import networkx
-    G = networkx.krackhardt_kite_graph()
-    return Graph(G, pos=pos_dict, name="Krackhardt Kite Graph")
+    return Graph(edges, pos=pos_dict, name="Krackhardt Kite Graph")
+
+def Klein3RegularGraph():
+    r"""
+    Return the Klein 3-regular graph.
+
+    The cubic Klein graph has 56 vertices and can be embedded on a surface of
+    genus 3. It is the dual of
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.Klein7RegularGraph`. For
+    more information, see the :wikipedia:`Klein_graphs`.
+
+    EXAMPLE::
+
+        sage: g = graphs.Klein3RegularGraph(); g
+        Klein 3-regular Graph: Graph on 56 vertices
+        sage: g.order(), g.size()
+        (56, 84)
+        sage: g.girth()
+        7
+        sage: g.automorphism_group().cardinality()
+        336
+        sage: g.chromatic_number()
+        3
+    """
+    from sage.graphs.graph_plot import _circle_embedding
+    g3 = Graph(':w`_GKWDBap`CMWFCpWsQUNdBwwuXPHrg`U`RIqypehVLqgHupYcFJyAv^Prk]'+
+               'EcarHwIVHAKh|\\tLVUxT]`ZDTJ{Af[o_AuKs{r_?ef',
+               loops=False, multiedges=False)
+    _circle_embedding(g3,[0, 2, 3, 4, 6, 8, 14, 1, 37, 30, 34, 48, 55, 43, 40,
+                          45, 18, 20, 47, 42, 23, 17, 16, 10, 41, 11, 49, 25,
+                          51, 26, 54, 9, 22, 15, 21, 12, 24, 7, 52, 31, 32, 36,
+                          46, 35, 29, 50, 27, 19, 28, 5, 33, 13, 53, 39, 38, 44])
+    g3.name("Klein 3-regular Graph")
+    return g3
+
+def Klein7RegularGraph():
+    r"""
+    Return the Klein 7-regular graph.
+
+    The 7-valent Klein graph has 24 vertices and can be embedded on a surface of
+    genus 3. It is the dual of
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.Klein3RegularGraph`. For
+    more information, see the :wikipedia:`Klein_graphs`.
+
+    EXAMPLE::
+
+        sage: g = graphs.Klein7RegularGraph(); g
+        Klein 7-regular Graph: Graph on 24 vertices
+        sage: g.order(), g.size()
+        (24, 84)
+        sage: g.girth()
+        3
+        sage: g.automorphism_group().cardinality()
+        336
+        sage: g.chromatic_number()
+        4
+    """
+    from sage.graphs.graph_plot import _circle_embedding
+    g7 = Graph(':W__@`AaBbC_CDbDcE`F_AG_@DEH_IgHIJbFGIKaFHILeFGHMdFKN_EKOPaCNP'+
+               'Q`HOQRcGLRS`BKMSTdJKLPTU',loops=False,multiedges=False)
+    _circle_embedding(g7,[0, 2, 3, 1, 9, 16, 20, 21, 4, 19, 17, 7, 15,
+                          10, 8, 13, 11, 5, 23, 22, 14, 12, 18, 6])
+    g7.name("Klein 7-regular Graph")
+    return g7
+
+def LocalMcLaughlinGraph():
+    r"""
+    Return the local McLaughlin graph
+
+    The local McLaughlin graph is a strongly regular graph with parameters
+    `(162,56,10,24)`. It can be obtained from
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.McLaughlinGraph` by
+    considering the stabilizer of a point: one of its orbits has cardinality
+    162.
+
+    EXAMPLES::
+
+        sage: g = graphs.LocalMcLaughlinGraph(); g   # long time # optional - gap_packages
+        Local McLaughlin Graph: Graph on 162 vertices
+        sage: g.is_strongly_regular(parameters=True) # long time # optional - gap_packages
+        (162, 56, 10, 24)
+    """
+    g = McLaughlinGraph()
+    orbits = g.automorphism_group().stabilizer(1).orbits()
+    orbit = [x for x in orbits if len(x) == 162][0]
+    g = g.subgraph(vertices=orbit)
+    g.relabel()
+    g.name("Local McLaughlin Graph")
+    return g
 
 def LjubljanaGraph(embedding=1):
     r"""
@@ -3302,6 +3549,35 @@ def LjubljanaGraph(embedding=1):
     else:
         raise ValueError("The value of embedding must be 1 or 2.")
 
+def LivingstoneGraph():
+    r"""
+    Returns the Livingstone Graph.
+
+    The Livingstone graph is a distance-transitive graph on 266 vertices whose
+    automorphism group is the :class:`J1 group
+    <sage.groups.perm_gps.permgroup_named.JankoGroup>`. For more information,
+    see the :wikipedia:`Livingstone_graph`.
+
+    EXAMPLES::
+
+        sage: g = graphs.LivingstoneGraph() # optional - gap_packages internet
+        sage: g.order()                     # optional - gap_packages internet
+        266
+        sage: g.size()                      # optional - gap_packages internet
+        1463
+        sage: g.girth()                     # optional - gap_packages internet
+        5
+        sage: g.is_vertex_transitive()      # optional - gap_packages internet
+        True
+        sage: g.is_distance_regular()       # optional - gap_packages internet
+        True
+    """
+    from sage.groups.perm_gps.permgroup_named import JankoGroup
+    from sage.graphs.graph import Graph
+    G = JankoGroup(1)
+    edges = map(tuple,G.orbit((1,24),action="OnSets"))
+    return Graph(edges,name="Livingstone Graph")
+
 def M22Graph():
     r"""
     Returns the M22 graph.
@@ -3323,7 +3599,7 @@ def M22Graph():
         (77, 16, 0, 4)
     """
     from sage.groups.perm_gps.permgroup_named import MathieuGroup
-    sets = map(tuple,MathieuGroup(22).orbit((1,2,3,7,10,20), action = "OnSets"))
+    sets = [tuple(_) for _ in MathieuGroup(22).orbit((1,2,3,7,10,20), action = "OnSets")]
     g = Graph([sets, lambda x,y : not any(xx in y for xx in x)], name="M22 Graph")
     g.relabel()
     ordering = [0, 1, 3, 4, 5, 6, 7, 10, 12, 19, 20, 31, 2, 24, 35, 34, 22, 32,
@@ -3470,10 +3746,10 @@ def McLaughlinGraph():
     from itertools import combinations
     from sage.sets.set import Set
 
-    blocks = WittDesign(23).blocks()
-    blocks = map(Set, blocks)
+    blocks = [Set(_) for _ in WittDesign(23).blocks()]
+
     B = [b for b in blocks if 0 in b]
-    C = [b for b in blocks if not 0 in b]
+    C = [b for b in blocks if 0 not in b]
     g = Graph()
     for b in B:
         for x in range(23):
@@ -3721,6 +3997,33 @@ def PetersenGraph():
     P.name("Petersen graph")
     return P
 
+def PerkelGraph():
+    r"""
+    Return the Perkel Graph.
+
+    The Perkel Graph is a 6-regular graph with `57` vertices and `171` edges. It
+    is the unique distance-regular graph with intersection array
+    `(6,5,2;1,1,3)`. For more information, see the :wikipedia:`Perkel_graph` or
+    http://www.win.tue.nl/~aeb/graphs/Perkel.html.
+
+    EXAMPLE::
+
+        sage: g = graphs.PerkelGraph(); g
+        Perkel Graph: Graph on 57 vertices
+        sage: g.is_distance_regular(parameters=True)
+        ([6, 5, 2, None], [None, 1, 1, 3])
+    """
+    g = Graph(name="Perkel Graph")
+    for i in range(19):
+        g.add_edges(((0, i), (1, (i + j) % 19)) for j in [2, 5, 7])
+        g.add_edges(((0, i), (2, (i + j) % 19)) for j in [5, -4, -8])
+        g.add_edges(((1, i), (2, (i + j) % 19)) for j in [7, -4, -5])
+    g.relabel()
+    _circle_embedding(g,[0, 2, 3, 35, 8, 33, 45, 5, 53, 51, 18, 50, 29, 46, 30,
+                         48, 40, 17, 20, 27, 43, 16, 7, 14, 6, 4, 15, 41, 24, 37,
+                         28, 9, 55, 38, 19, 34, 39, 36, 54, 52, 44, 23, 12, 22,
+                         32, 10, 13, 26, 1, 21, 42, 56, 49, 31, 47, 11, 25])
+    return g
 
 def RobertsonGraph():
     """
@@ -4073,10 +4376,9 @@ def ThomsenGraph():
         'EFz_'
         sage: (graphs.ThomsenGraph()).show() # long time
     """
+    edges = {0:[3, 4, 5], 1:[3, 4, 5], 2:[3, 4, 5]}
     pos_dict = {0:(-1,1),1:(0,1),2:(1,1),3:(-1,0),4:(0,0),5:(1,0)}
-    import networkx
-    G = networkx.complete_bipartite_graph(3,3)
-    return Graph(G, pos=pos_dict, name="Thomsen graph")
+    return Graph(edges, pos=pos_dict, name="Thomsen graph")
 
 def TietzeGraph():
     r"""
@@ -4107,6 +4409,50 @@ def TietzeGraph():
     _circle_embedding(g,range(9))
     _circle_embedding(g,[9,10,11],radius=.5)
 
+    return g
+
+def TruncatedIcosidodecahedralGraph():
+    r"""
+    Return the truncated icosidodecahedron.
+
+    The truncated icosidodecahedron is an Archimedean solid with 30 square
+    faces, 20 regular hexagonal faces, 12 regular decagonal faces, 120 vertices
+    and 180 edges. For more information, see the
+    :wikipedia:`Truncated_icosidodecahedron`.
+
+    EXAMPLE::
+
+        sage: g = graphs.TruncatedIcosidodecahedralGraph(); g
+        Truncated Icosidodecahedron: Graph on 120 vertices
+        sage: g.order(), g.size()
+        (120, 180)
+    """
+    from sage.geometry.polyhedron.library import polytopes
+    G = polytopes.icosidodecahedron(exact=False).edge_truncation().graph()
+    G.name("Truncated Icosidodecahedron")
+    return G
+
+def TruncatedTetrahedralGraph():
+    r"""
+    Return the truncated tetrahedron.
+
+    The truncated tetrahedron is an Archimedean solid with 12 vertices and 18
+    edges. For more information, see the :wikipedia:`Truncated_tetrahedron`.
+
+    EXAMPLE::
+
+        sage: g = graphs.TruncatedTetrahedralGraph(); g
+        Truncated Tetrahedron: Graph on 12 vertices
+        sage: g.order(), g.size()
+        (12, 18)
+        sage: g.is_isomorphic(polytopes.simplex(3).edge_truncation().graph())
+        True
+    """
+    g = Graph(':K`ESwC_EOyDl\\MCi', loops=False, multiedges=False)
+    _circle_embedding(g, range(6), radius=1)
+    _circle_embedding(g, range(6,9), radius=.6, shift=.25)
+    _circle_embedding(g, range(9,12), radius=.2, shift=.25)
+    g.name("Truncated Tetrahedron")
     return g
 
 def Tutte12Cage():

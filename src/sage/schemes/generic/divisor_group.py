@@ -1,4 +1,6 @@
 """
+Divisor groups
+
 AUTHORS:
 
 - David Kohel (2006): Initial version
@@ -292,5 +294,3 @@ class DivisorGroup_curve(DivisorGroup_generic):
             return Divisor_curve([], check=False, reduce=False, parent=self)
         else:
             return Divisor_curve([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
-
-

@@ -1,5 +1,5 @@
 """
-Hyperelliptic curves over the rationals
+Hyperelliptic curves of genus 2 over a p-adic field
 """
 
 #*****************************************************************************

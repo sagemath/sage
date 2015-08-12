@@ -241,7 +241,7 @@ class FiniteWord_class(Word_class):
         global word_options
         if word_options['display'] == 'string':
             ls = word_options['letter_separator']
-            letters = map(str, self)
+            letters = [str(_) for _ in self]
             if all(len(a)==1 for a in letters):
                 return ''.join(letters)
             else:
@@ -561,6 +561,112 @@ class FiniteWord_class(Word_class):
         for k in range(r.length()):
             w[k] = n+1 - w[k]
         return parent(w, check=False)
+
+    def foata_bijection(self):
+        r"""
+        Return word ``self`` under the Foata bijection.
+
+        The Foata bijection `\phi` is a bijection on the set of words
+        of given content (by a slight generalization of Section 2 in [FoSc78]_).
+        It can be defined by induction on the size of the word: Given a word
+        `w_1 w_2 \cdots w_n`, start with `\phi(w_1) = w_1`. At the `i`-th step, if
+        `\phi(w_1 w_2 \cdots w_i) = v_1 v_2 \cdots v_i`, we define
+        `\phi(w_1 w_2 \cdots w_i w_{i+1})` by placing `w_{i+1}` on the end of
+        the word `v_1 v_2 \cdots v_i` and breaking the word up into blocks
+        as follows. If `w_{i+1} \ge v_i`, place a vertical line to the right
+        of each `v_k` for which `w_{i+1} \ge v_k`. Otherwise, if
+        `w_{i+1} < v_i`, place a vertical line to the right of each `v_k`
+        for which `w_{i+1} < v_k`. In either case, place a vertical line at
+        the start of the word as well. Now, within each block between
+        vertical lines, cyclically shift the entries one place to the
+        right.
+
+        For instance, to compute `\phi([4,1,5,4,2,2,3])`, the sequence of
+        words is
+
+        * `4`,
+        * `|4|1 \to 41`,
+        * `|4|1|5 \to 415`,
+        * `|415|4 \to 5414`,
+        * `|5|4|14|2 \to 54412`,
+        * `|5441|2|2 \to 154422`,
+        * `|1|5442|2|3 \to 1254423`.
+
+        So `\phi([4,1,5,4,2,2,3]) = [1,2,5,4,4,2,3]`.
+
+        .. SEEALSO::
+
+            :meth:`Foata bijection on Permutations <sage.combinat.permutation.Permutation.foata_bijection()>`.
+
+        EXAMPLES::
+
+            sage: w = Word([2,2,2,1,1,1])
+            sage: w.foata_bijection()
+            word: 112221
+            sage: w = Word([2,2,1,2,2,2,1,1,2,1])
+            sage: w.foata_bijection()
+            word: 2122212211
+            sage: w = Word([4,1,5,4,2,2,3])
+            sage: w.foata_bijection()
+            word: 1254423
+
+        TESTS::
+
+            sage: w = Word('121314')
+            sage: w.foata_bijection()
+            word: 231114
+            sage: w = Word('1133a1')
+            sage: w.foata_bijection()
+            word: 3113a1
+        """
+        s = self.standard_permutation()
+        ordered_alphabet = sorted(self.letters(), cmp=self.parent().cmp_letters)
+        eval_dict = self.evaluation_dict()
+        weight = [eval_dict[a] for a in ordered_alphabet]
+        return (s.foata_bijection()).destandardize(weight, ordered_alphabet=ordered_alphabet)
+
+    def major_index(self, final_descent=False):
+        r"""
+        Return the major index of ``self``.
+
+        The major index of a word `w` is the sum of the descents of `w`.
+
+        With the ``final_descent`` option, the last position of a
+        non-empty word is also considered as a descent.
+
+        .. SEEALSO::
+
+            :meth:`major index on Permutations <sage.combinat.permutation.Permutation.major_index()>`.
+
+        EXAMPLES::
+
+            sage: w = Word([2,1,3,3,2])
+            sage: w.major_index()
+            5
+            sage: w = Word([2,1,3,3,2])
+            sage: w.major_index(final_descent=True)
+            10
+        """
+        return (self.standard_permutation()).major_index(final_descent=final_descent)
+
+    def number_of_inversions(self):
+        r"""
+        Return the number of inversions in ``self``.
+
+        An inversion of a word `w = w_1 \ldots w_n` is a pair of indices `(i, j)`
+        with `i < j` and `w_i > w_j`.
+
+        .. SEEALSO::
+
+            :meth:`number of inversions on Permutations <sage.combinat.permutation.Permutation.number_of_inversions()>`.
+
+        EXAMPLES::
+
+            sage: w = Word([2,1,3,3,2])
+            sage: w.number_of_inversions()
+            3
+        """
+        return (self.standard_permutation()).number_of_inversions()
 
     def is_empty(self):
         r"""
@@ -953,7 +1059,7 @@ class FiniteWord_class(Word_class):
             sage: w = Word([1,2,1,2,3])
             sage: w.number_of_factors()
             13
-            sage: map(w.number_of_factors, range(6))
+            sage: [w.number_of_factors(i) for i in range(6)]
             [1, 3, 3, 3, 2, 1]
 
         ::
@@ -988,7 +1094,7 @@ class FiniteWord_class(Word_class):
             sage: blueberry = Word("blueberry")
             sage: blueberry.number_of_factors()
             43
-            sage: map(blueberry.number_of_factors, range(10))
+            sage: [blueberry.number_of_factors(i) for i in range(10)]
             [1, 6, 8, 7, 6, 5, 4, 3, 2, 1]
         """
         if algorithm == 'suffix tree':
@@ -4281,8 +4387,7 @@ class FiniteWord_class(Word_class):
         """
         idx = 0
         tab = {}
-        ret = map(lambda w: tab.setdefault(w, len(tab)) + 1, \
-                                self._return_words_list(fact))
+        ret = [tab.setdefault(w, len(tab)) + 1 for w in self._return_words_list(fact)]
         from sage.combinat.words.word import Word
         return Word(ret)
 
@@ -5325,13 +5430,13 @@ class FiniteWord_class(Word_class):
         EXAMPLES::
 
             sage: w = words.FibonacciWord()[:100]
-            sage: map(w.abelian_complexity, range(20))
+            sage: [w.abelian_complexity(i) for i in range(20)]
             [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
         ::
 
             sage: w = words.ThueMorseWord()[:100]
-            sage: map(w.abelian_complexity, range(20))
+            sage: [w.abelian_complexity(i) for i in range(20)]
             [1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2]
 
         """

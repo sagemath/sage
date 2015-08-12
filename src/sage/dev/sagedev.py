@@ -44,6 +44,8 @@ GIT_BRANCH_REGEX = re.compile(
     r'^(?!.*/\.)(?!.*\.\.)(?!/)(?!.*//)(?!.*@\{)(?!.*\\)'
     r'[^\040\177 ~^:?*[]+(?<!\.lock)(?<!/)(?<!\.)$')
 
+GIT_COMMIT_REGEX = re.compile(r'[0-9a-f]{5,40}')
+
 # the name of the branch which holds the vanilla clone of sage
 MASTER_BRANCH = "master"
 USER_BRANCH = re.compile(r"^u/([^/]+)/")
@@ -1145,10 +1147,8 @@ class SageDev(MercurialPatchMixin):
             Automatic merge failed, there are conflicting commits.
             <BLANKLINE>
             Auto-merging alices_file
-            CONFLICT (add/add): Merge conflict in alices_file
-            <BLANKLINE>
-            Please edit the affected files to resolve the conflicts. When you are finished,
-            your resolution will be commited.
+            CONFLICT (add/add): Merge conflict in alices_file...
+            Please edit the affected files to resolve the conflicts...
             Finished? [ok/Abort] abort
 
         Undo the latest commit by alice, so we can pull again::
@@ -3130,8 +3130,7 @@ class SageDev(MercurialPatchMixin):
             Automatic merge failed, there are conflicting commits.
             <BLANKLINE>
             Auto-merging alice2
-            CONFLICT (add/add): Merge conflict in alice2
-            <BLANKLINE>
+            CONFLICT (add/add): Merge conflict in alice2...
             Please edit the affected files to resolve the conflicts. When you are finished,
             your resolution will be commited.
             Finished? [ok/Abort] abort
@@ -3166,6 +3165,26 @@ class SageDev(MercurialPatchMixin):
             Cannot merge because working directory is not in a clean state.
             <BLANKLINE>
             #  (use "sage --dev commit" to commit your changes)
+
+        Merging a ticket whose branch field points to a commit checks whether
+        the commit is present in the current branch::
+
+            sage: alice.trac.set_attributes(1, branch='12345678')
+            sage: alice._UI.append("discard")
+            sage: alice.merge(ticket_or_branch=1, pull=True)
+            The following files in your working directory contain uncommitted changes:
+            <BLANKLINE>
+                 alice2
+            <BLANKLINE>
+            Discard changes? [discard/Cancel/stash] discard
+            # It seems that the branch for #1 has already been merged in the latest version of sage. The branch field on #1 points to the commit "12345678".
+            Failed to determine whether commit "12345678" is present in the current branch "ticket/2". Is your "master" branch up to date?
+            sage: sha = alice.git.show_ref('master',hash=True)[:8]
+            sage: alice.trac.set_attributes(1, branch=sha)
+            sage: alice.merge(ticket_or_branch=1, pull=True)
+            # It seems that the branch for #1 has already been merged in the latest version of sage. The branch field on #1 points to the commit "...".
+            Your branch "ticket/2" already contains commit "...". Nothing to merge.
+
         """
         try:
             self.reset_to_clean_state()
@@ -3247,9 +3266,34 @@ class SageDev(MercurialPatchMixin):
         if pull:
             assert remote_branch
             if not self._is_remote_branch_name(remote_branch, exists=True):
+                if ticket and self._is_commit_name(remote_branch):
+                    commit = remote_branch
+                    self._UI.info('It seems that the branch for #{0} has already been merged in the latest version of sage. The branch field on #{0} points to the commit "{1}".', ticket, commit)
+                    from git_error import GitError
+                    try:
+                        branches = self.git.branch(contains=commit)
+                    except GitError as e:
+                        self._UI.error('Failed to determine whether commit "{0}" is present in the current branch "{1}". Is your "{2}" branch up to date?', commit, current_branch, MASTER_BRANCH)
+                        raise OperationCancelledError("unknown commit")
+                    present_in_master = False
+                    for present_in_branch in branches.split():
+                        present_in_branch = present_in_branch.split()[-1]
+                        if current_branch == present_in_branch:
+                            self._UI.show('Your branch "{0}" already contains commit "{1}". Nothing to merge.', current_branch, commit)
+                            return
+                        if MASTER_BRANCH == present_in_branch:
+                            present_in_master = True
+                    self._UI.show('Your branch "{0}" does not contain commit "{1}". Merging of remote commits is not implemented. You need to merge manually.', current_branch, commit)
+                    if present_in_master:
+                        self._UI.info('Merge "{0}" into your branch "{1}" with "{2}".', MASTER_BRANCH, current_branch, self._format_command("merge"))
+                    else:
+                        self._UI.info('Your branch "{0}" seems to be out of date. Pull the latest changes to "{0}" with "{1}" and "{2}". Then come back to this branch and merge "{0}" with "{3}" and "{4}".', MASTER_BRANCH, self._format_command("checkout", branch=MASTER_BRANCH), self._format_command("pull"), self._format_command("checkout", branch=current_branch), self._format_command("merge"))
+                    raise OperationCancelledError("Remote commit merge not implemented.")
+
                 self._UI.error('Can not merge remote branch "{0}". It does not exist.',
                                remote_branch)
                 raise OperationCancelledError("no such branch")
+
             self._UI.show('Merging the remote branch "{0}" into the local branch "{1}".',
                           remote_branch, current_branch)
             self.git.super_silent.fetch(self.git._repository_anonymous, remote_branch)
@@ -4365,6 +4409,33 @@ class SageDev(MercurialPatchMixin):
             return True
         else:
             raise ValueError("exists")
+
+    def _is_commit_name(self, name):
+        r"""
+        Return whether ``name`` is a valid name for a commit.
+
+        INPUT:
+
+        - ``name`` -- a string
+
+        TESTS::
+
+            sage: from sage.dev.test.sagedev import single_user_setup
+            sage: dev, config, UI, server = single_user_setup()
+            sage: dev = dev._sagedev
+
+            sage: dev._is_commit_name('')
+            False
+            sage: dev._is_commit_name('ticket/1')
+            False
+            sage: dev._is_commit_name('12345a78')
+            True
+
+        """
+        if not isinstance(name, str):
+            raise ValueError("name must be a string")
+
+        return bool(GIT_COMMIT_REGEX.match(name))
 
     def _is_trash_name(self, name, exists=any):
         r"""

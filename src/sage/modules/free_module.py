@@ -603,12 +603,12 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
                                 "free module elements!")
             M = FreeModule(R, len(x))
             try:
-                gens = map(M, gens)
+                gens = [M(_) for _ in gens]
             except TypeError:
                 R = R.fraction_field()
                 M = FreeModule(R, len(x))
                 try:
-                    gens = map(M, gens)
+                    gens = [M(_) for _ in gens]
                 except TypeError:
                     raise ValueError("The elements of gens (= %s) must be "
                                      "defined over base_ring (= %s) or its "
@@ -910,7 +910,7 @@ done from the right side.""")
         ``check`` is ``True``, confirm that the
         element specified by x does in fact lie in self.
 
-        .. note:::
+        .. note::
 
            In the case of an inexact base ring (i.e. RDF), we don't
            verify that the element is in the subspace, even when
@@ -2073,7 +2073,7 @@ done from the right side.""")
         EXAMPLES::
 
             sage: R = QQ^2
-            sage: macaulay2(R) # optional
+            sage: macaulay2(R) # optional - macaulay2
               2
             QQ
         """
@@ -3320,12 +3320,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [0 1 0]
-            sage: v = V((1, pi, e)); v
-            (1.0, 3.141592653589793, 2.718281828459045)
+            sage: v = V((1, pi, log(2))); v
+            (1.0, 3.141592653589793, 0.6931471805599453)
             sage: W.span([v], base_ring=GF(7))
             Traceback (most recent call last):
             ...
-            ValueError: Argument gens (= [(1.0, 3.141592653589793, 2.718281828459045)]) is not compatible with base_ring (= Finite Field of size 7).
+            ValueError: Argument gens (= [(1.0, 3.141592653589793, 0.6931471805599453)]) is not compatible with base_ring (= Finite Field of size 7).
             sage: W = V.submodule([v])
             sage: W.span([V.gen(2)], base_ring=GF(7))
             Vector space of degree 3 and dimension 1 over Finite Field of size 7

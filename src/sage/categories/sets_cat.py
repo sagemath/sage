@@ -130,6 +130,7 @@ class Sets(Category_singleton):
 
         sage: TestSuite(P).run(verbose=True)
         running ._test_an_element() . . . pass
+        running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
@@ -1363,6 +1364,39 @@ class Sets(Category_singleton):
         # def is_empty(self)
         # def random_element(self):
 
+        def _test_cardinality(self, **options):
+            r"""
+            Run generic test on the method :meth:`.cardinality`.
+
+            EXAMPLES::
+
+                sage: C = Sets().example()
+                sage: C._test_cardinality()
+
+            Let us now write a broken :meth:`cardinality` method::
+
+                sage: from sage.categories.examples.sets_cat import *
+                sage: class CCls(PrimeNumbers):
+                ....:     def cardinality(self):
+                ....:         return int(5)
+                sage: CC = CCls()
+                sage: CC._test_cardinality()
+                Traceback (most recent call last):
+                ...
+                AssertionError: the output of the method cardinality must either
+                be a Sage integer or infinity. Not <type 'int'>.
+            """
+            try:
+                cardinality = self.cardinality()
+            except (AttributeError,NotImplementedError):
+                return
+            from sage.structure.element import parent
+            from sage.rings.infinity import Infinity
+            from sage.rings.integer_ring import ZZ
+            tester = self._tester(**options)
+            tester.assertTrue(cardinality is Infinity or parent(cardinality) is ZZ,
+                    "the output of the method cardinality must either be a Sage integer or infinity. Not {}.".format(type(cardinality)))
+
         # Functorial constructions
 
         CartesianProduct = CartesianProduct
@@ -2265,7 +2299,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 Test that this parent with realizations is
                 properly implemented.
 
-                INPUT::
+                INPUT:
 
                 - ``options`` -- any keyword arguments accepted
                   by :meth:`_tester`

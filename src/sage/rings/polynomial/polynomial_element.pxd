@@ -13,6 +13,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
     cpdef constant_coefficient(self)
     cpdef Polynomial _new_constant_poly(self, a, Parent P)
 
+    cpdef bint is_zero(self)
+    cpdef bint is_one(self)
+
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n)
+
     # UNSAFE, only call from an inplace operator
     # may return a new element if not possible to modify inplace
     cdef _inplace_truncate(self, long n)

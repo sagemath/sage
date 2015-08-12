@@ -19,7 +19,9 @@ Direct Sum of Crystals
 from sage.structure.parent import Parent
 from sage.categories.category import Category
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family
 from sage.structure.element_wrapper import ElementWrapper
+from sage.structure.element import get_coercion_model
 
 class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
     r"""
@@ -80,10 +82,46 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
 
         sage: TestSuite(C).run()
     """
-    __classcall_private__ = staticmethod(DisjointUnionEnumeratedSets.__classcall_private__)
+    @staticmethod
+    def __classcall_private__(cls, crystals, facade=True, keepkey=False, category=None):
+        """
+        Normalization of arguments; see :class:`UniqueRepresentation`.
 
+        TESTS:
 
-    def __init__(self, crystals, **options):
+        We check that direct sum of crystals have unique representation::
+
+            sage: B = crystals.Tableaux(['A',2], shape=[2,1])
+            sage: C = crystals.Letters(['A',2])
+            sage: D1 = crystals.DirectSum([B, C])
+            sage: D2 = crystals.DirectSum((B, C))
+            sage: D1 is D2
+            True
+            sage: D3 = crystals.DirectSum([B, C, C])
+            sage: D4 = crystals.DirectSum([D1, C])
+            sage: D3 is D4
+            True
+        """
+        if not isinstance(facade, bool) or not isinstance(keepkey, bool):
+            raise TypeError
+        # Normalize the facade-keepkey by giving keepkey dominance
+        if keepkey:
+            facade = False
+        else:
+            facade = True
+
+        # We expand out direct sums of crystals
+        ret = []
+        for x in Family(crystals):
+            if isinstance(x, DirectSumOfCrystals):
+                ret += list(x.crystals)
+            else:
+                ret.append(x)
+        category = Category.meet([Category.join(c.categories()) for c in ret])
+        return super(DirectSumOfCrystals, cls).__classcall__(cls,
+            Family(ret), facade=facade, keepkey=keepkey, category=category)
+
+    def __init__(self, crystals, facade, keepkey, category, **options):
         """
         TESTS::
 
@@ -98,19 +136,12 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
             sage: isinstance(B, DirectSumOfCrystals)
             True
         """
-        if 'keepkey' in options:
-            keepkey = options['keepkey']
+        if facade:
+            Parent.__init__(self, facade=tuple(crystals), category=category)
         else:
-            keepkey = False
-#        facade = options['facade']
-        if keepkey:
-            facade = False
-        else:
-            facade = True
-        category = Category.meet([Category.join(crystal.categories()) for crystal in crystals])
-        Parent.__init__(self, category = category)
-        DisjointUnionEnumeratedSets.__init__(self, crystals, keepkey = keepkey, facade = facade)
-        self.rename("Direct sum of the crystals %s"%(crystals,))
+            Parent.__init__(self, category=category)
+        DisjointUnionEnumeratedSets.__init__(self, crystals, keepkey=keepkey, facade=facade)
+        self.rename("Direct sum of the crystals {}".format(crystals))
         self._keepkey = keepkey
         self.crystals = crystals
         if len(crystals) == 0:
@@ -124,6 +155,31 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         else:
             self.module_generators = sum( (list(B.module_generators) for B in crystals), [])
 
+    def weight_lattice_realization(self):
+        r"""
+        Return the weight lattice realization used to express weights.
+
+        The weight lattice realization is the common parent which all
+        weight lattice realizations of the crystals of ``self`` coerce
+        into.
+
+        EXAMPLES::
+
+            sage: LaZ = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
+            sage: LaQ = RootSystem(['A',2,1]).weight_space(extended=True).fundamental_weights()
+            sage: B = crystals.LSPaths(LaQ[1])
+            sage: B.weight_lattice_realization()
+            Extended weight space over the Rational Field of the Root system of type ['A', 2, 1]
+            sage: C = crystals.AlcovePaths(LaZ[1])
+            sage: C.weight_lattice_realization()
+            Extended weight lattice of the Root system of type ['A', 2, 1]
+            sage: D = crystals.DirectSum([B,C])
+            sage: D.weight_lattice_realization()
+            Extended weight space over the Rational Field of the Root system of type ['A', 2, 1]
+        """
+        cm = get_coercion_model()
+        return cm.common_parent(*[crystal.weight_lattice_realization()
+                                  for crystal in self.crystals])
 
     class Element(ElementWrapper):
         r"""

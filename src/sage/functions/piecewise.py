@@ -491,7 +491,7 @@ class PiecewisePolynomial:
             sage: Q = tf.plot(rgbcolor=(0.7,0.6,0.6), plot_points=40)
             sage: L = add([line([[a,0],[a,f(a)]],rgbcolor=(0.7,0.6,0.6)) for (a,b),f in tf.list()])
             sage: P+Q+L
-            Graphics object consisting of 14 graphics primitives
+            Graphics object consisting of 13 graphics primitives
 
         TESTS:
 

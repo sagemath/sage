@@ -35,7 +35,8 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurationOptions
 from sage.combinat.rigged_configurations.rigged_configuration_element import (
-     RCHighestWeightElement, RCHWNonSimplyLacedElement)
+     RiggedConfigurationElement, RCHighestWeightElement, RCHWNonSimplyLacedElement)
+from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition
 
 # Note on implementation, this class is used for simply-laced types only
 class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
@@ -91,7 +92,7 @@ class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
        *A rigged configuration model for* `B(\infty)`. :arxiv:`1404.6539`.
     """
     @staticmethod
-    def __classcall_private__(cls, cartan_type, wt=None):
+    def __classcall_private__(cls, cartan_type, wt=None, WLR=None):
         r"""
         Normalize the input arguments to ensure unique representation.
 
@@ -100,24 +101,35 @@ class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
             sage: La = RootSystem(['A', 2]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(La[1])
             sage: RC2 = crystals.RiggedConfigurations(['A', 2], La[1])
-            sage: RC is RC2
+            sage: RC3 = crystals.RiggedConfigurations(['A', 2], La[1], La[1].parent())
+            sage: RC is RC2 and RC2 is RC3
             True
+
+            sage: La = RootSystem(['A',2,1]).weight_lattice().fundamental_weights()
+            sage: LaE = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
+            sage: RC = crystals.RiggedConfigurations(La[1])
+            sage: RCE = crystals.RiggedConfigurations(LaE[1])
+            sage: RC is RCE
+            False
         """
         if wt is None:
             wt = cartan_type
             cartan_type = wt.parent().cartan_type()
         else:
             cartan_type = CartanType(cartan_type)
-            wt_lattice = cartan_type.root_system().weight_lattice()
-            wt = wt_lattice(wt)
+
+        if WLR is None:
+            WLR = wt.parent()
+        else:
+            wt = WLR(wt)
 
         if not cartan_type.is_simply_laced():
             vct = cartan_type.as_folding()
-            return CrystalOfNonSimplyLacedRC(vct, wt)
+            return CrystalOfNonSimplyLacedRC(vct, wt, WLR)
 
-        return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt)
+        return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt, WLR=WLR)
 
-    def __init__(self, wt):
+    def __init__(self, wt, WLR):
         r"""
         Initialize ``self``.
 
@@ -131,7 +143,7 @@ class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
             sage: RC = crystals.RiggedConfigurations(La[0])
             sage: TestSuite(RC).run() # long time
         """
-        self._cartan_type = wt.parent().cartan_type()
+        self._cartan_type = WLR.cartan_type()
         self._wt = wt
         self._rc_index = self._cartan_type.index_set()
         # We store the cartan matrix for the vacancy number calculations for speed
@@ -183,7 +195,30 @@ class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
             <BLANKLINE>
             -2[ ][ ]-2
             <BLANKLINE>
+
+        TESTS:
+
+        Check that :trac:`17054` is fixed::
+
+            sage: La = RootSystem(['A', 2]).weight_lattice().fundamental_weights()
+            sage: RC = crystals.RiggedConfigurations(4*La[1] + 4*La[2])
+            sage: B = crystals.infinity.RiggedConfigurations(['A',2])
+            sage: x = B.an_element().f_string([2,2,1,1,2,1,2,1])
+            sage: ascii_art(x)
+            -4[ ][ ][ ][ ]-4  -4[ ][ ][ ][ ]0
+            sage: ascii_art(RC(x.nu()))
+            0[ ][ ][ ][ ]-4  0[ ][ ][ ][ ]0
+            sage: x == B.an_element().f_string([2,2,1,1,2,1,2,1])
+            True
         """
+        if isinstance(lst[0], (list, tuple)):
+            lst = lst[0]
+
+        if isinstance(lst[0], RiggedPartition):
+            lst = [p._clone() for p in lst] # Make a deep copy
+        elif isinstance(lst[0], RiggedConfigurationElement):
+            lst = [p._clone() for p in lst[0]] # Make a deep copy
+
         return self.element_class(self, list(lst), **options)
 
     def _calc_vacancy_number(self, partitions, a, i, **options):
@@ -222,13 +257,27 @@ class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
 
         return vac_num
 
+    def weight_lattice_realization(self):
+        """
+        Return the weight lattice realization used to express the weights
+        of elements in ``self``.
+
+        EXAMPLES::
+
+            sage: La = RootSystem(['A', 2, 1]).weight_lattice(extended=True).fundamental_weights()
+            sage: RC = crystals.RiggedConfigurations(La[0])
+            sage: RC.weight_lattice_realization()
+            Extended weight lattice of the Root system of type ['A', 2, 1]
+        """
+        return self._wt.parent()
+
     Element = RCHighestWeightElement
 
 class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
     """
     Highest weight crystal of rigged configurations in non-simply-laced type.
     """
-    def __init__(self, vct, wt):
+    def __init__(self, vct, wt, WLR):
         """
         Initialize ``self``.
 
@@ -239,7 +288,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             sage: TestSuite(RC).run()
          """
         self._folded_ct = vct
-        CrystalOfRiggedConfigurations.__init__(self, wt)
+        CrystalOfRiggedConfigurations.__init__(self, wt, WLR)
 
     @lazy_attribute
     def virtual(self):
@@ -334,7 +383,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             (/)
             <BLANKLINE>
         """
-        gamma = map(int, self._folded_ct.scaling_factors())
+        gamma = [int(_) for _ in self._folded_ct.scaling_factors()]
         sigma = self._folded_ct._orbit
         n = self._folded_ct._folding.rank()
         vindex = self._folded_ct._folding.index_set()

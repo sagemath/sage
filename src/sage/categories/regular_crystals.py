@@ -21,6 +21,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
+from sage.combinat.subset import Subsets
 from sage.graphs.dot2tex_utils import have_dot2tex
 
 class RegularCrystals(Category_singleton):
@@ -56,6 +57,7 @@ class RegularCrystals(Category_singleton):
         sage: B = RegularCrystals().example()
         sage: TestSuite(B).run(verbose = True)
         running ._test_an_element() . . . pass
+        running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
@@ -121,6 +123,38 @@ class RegularCrystals(Category_singleton):
         """
         return None
 
+    class MorphismMethods:
+        def is_isomorphism(self):
+            """
+            Check if ``self`` is a crystal isomorphism, which is true
+            if and only if this is a strict embedding with the same number
+            of connected components.
+
+            EXAMPLES::
+
+                sage: La = RootSystem(['A',2,1]).weight_space(extended=True).fundamental_weights()
+                sage: B = crystals.LSPaths(La[0])
+                sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
+                sage: C = crystals.GeneralizedYoungWalls(2, La[0])
+                sage: H = Hom(B, C)
+                sage: from sage.categories.highest_weight_crystals import HighestWeightCrystalMorphism
+                sage: class Psi(HighestWeightCrystalMorphism):
+                ....:     def is_strict(self):
+                ....:         return True
+                sage: psi = Psi(H, C.module_generators)
+                sage: psi
+                ['A', 2, 1] Crystal morphism:
+                  From: The crystal of LS paths of type ['A', 2, 1] and weight Lambda[0]
+                  To:   Highest weight crystal of generalized Young walls of Cartan type ['A', 2, 1]
+                         and highest weight Lambda[0]
+                  Defn: (Lambda[0],) |--> []
+                sage: psi.is_isomorphism()
+                True
+            """
+            return (self.is_strict()
+                    and self.domain().number_of_connected_components() ==
+                        self.codomain().number_of_connected_components())
+
     class ParentMethods:
 
         # TODO: this could be a method in Crystals.Algebras.ElementMethods, so that
@@ -174,6 +208,64 @@ class RegularCrystals(Category_singleton):
                 element = M.linear_combination((c.demazure_operator_simple(i), coeff)
                                                for c, coeff in element)
             return element
+
+        def demazure_subcrystal(self, element, reduced_word, only_support=True):
+            r"""
+            Return the subcrystal corresponding to the application of
+            Demazure operators `D_i` for `i` from ``reduced_word`` on
+            ``element``.
+
+            INPUT:
+
+            - ``element`` -- an element of a free module indexed by the
+              underlying crystal
+            - ``reduced_word`` -- a reduced word of the Weyl group of the
+              same type as the underlying crystal
+            - ``only_support`` -- (default: ``True``) only include arrows
+              corresponding the the support of ``reduced_word``
+
+            OUTPUT:
+
+            - the Demazure subcrystal 
+
+            EXAMPLES::
+
+                sage: T = crystals.Tableaux(['A',2], shape=[2,1])
+                sage: t = T.highest_weight_vector()
+                sage: S = T.demazure_subcrystal(t, [1,2])
+                sage: list(S)
+                [[[1, 1], [2]], [[1, 1], [3]], [[1, 2], [2]],
+                 [[1, 2], [3]], [[2, 2], [3]]]
+                sage: S = T.demazure_subcrystal(t, [2,1])
+                sage: list(S)
+                [[[1, 1], [2]], [[1, 1], [3]], [[1, 2], [2]],
+                 [[1, 3], [2]], [[1, 3], [3]]]
+
+            We construct an example where we don't only want the arrows
+            indicated by the support of the reduced word::
+
+                sage: K = crystals.KirillovReshetikhin(['A',1,1], 1, 2)
+                sage: mg = K.module_generator()
+                sage: S = K.demazure_subcrystal(mg, [1])
+                sage: S.digraph().edges()
+                [([[1, 1]], [[1, 2]], 1), ([[1, 2]], [[2, 2]], 1)]
+                sage: S = K.demazure_subcrystal(mg, [1], only_support=False)
+                sage: S.digraph().edges()
+                [([[1, 1]], [[1, 2]], 1),
+                 ([[1, 2]], [[1, 1]], 0),
+                 ([[1, 2]], [[2, 2]], 1),
+                 ([[2, 2]], [[1, 2]], 0)]
+            """
+            from sage.combinat.free_module import CombinatorialFreeModule
+            from sage.rings.all import QQ
+            C = CombinatorialFreeModule(QQ, self)
+            D = self.demazure_operator(C(element), reduced_word)
+            if only_support:
+                index_set = tuple(frozenset(reduced_word))
+            else:
+                index_set = self.cartan_type().index_set()
+            return self.subcrystal(contained=D.support(), generators=[element],
+                                   index_set=index_set)
 
         def _test_stembridge_local_axioms(self, index_set=None, verbose=False, complete=False, **options):
             r"""
@@ -660,7 +752,6 @@ class RegularCrystals(Category_singleton):
                 sage: t._test_stembridge_local_axioms(verbose=True)
                 True
             """
-            from sage.combinat.subset import Subsets
             tester = self._tester(**options)
             goodness=True
             if index_set is None: index_set=self.index_set()

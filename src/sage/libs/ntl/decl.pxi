@@ -1,12 +1,9 @@
-include "sage/ext/cdefs.pxi"
+# distutils: depends = NTL/ZZ.h
+
 include "sage/ext/python.pxi"
 
 cdef extern from "ccobject.h":
     pass
-
-cdef extern from "ntl_wrap.h":
-    long NTL_OVFBND
-    bint NTL_OVERFLOW(long, long, long)
 
 from sage.libs.ntl.ntl_ZZ_decl cimport *
 from sage.libs.ntl.ntl_lzz_pX_decl cimport *
@@ -21,7 +18,10 @@ from sage.libs.ntl.ntl_ZZ_pE_decl cimport *
 from sage.libs.ntl.ntl_vec_ZZ_pE_decl cimport *
 from sage.libs.ntl.ntl_ZZ_pEX_decl cimport *
 
-cdef extern from "ntl_wrap.h":
+cdef extern from "sage/libs/ntl/ntlwrap.h":
+    long NTL_OVFBND
+    bint NTL_OVERFLOW(long, long, long)
+
     #### mat_ZZ_c
     cdef cppclass mat_ZZ_c "mat_ZZ":
         pass
@@ -36,7 +36,7 @@ cdef extern from "ntl_wrap.h":
     void mat_ZZ_mul "mul"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_add "add"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_sub "sub"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
-    void mat_ZZ_power "power"( mat_ZZ_c x, mat_ZZ_c a, long e)
+    void mat_ZZ_power "NTL::power"( mat_ZZ_c x, mat_ZZ_c a, long e)
     void mat_ZZ_CharPoly "CharPoly"(ZZX_c r, mat_ZZ_c m)
     void mat_ZZ_SetDims(mat_ZZ_c* mZZ, long nrows, long ncols)
 
@@ -110,8 +110,8 @@ cdef extern from "ntl_wrap.h":
     void GF2_sub "sub"( GF2_c x, GF2_c a, GF2_c b)
     void GF2_mul "mul"( GF2_c x, GF2_c a, GF2_c b)
     void GF2_div "div"( GF2_c x, GF2_c a, GF2_c b)
-    void GF2_negate "negate"(GF2_c x, GF2_c a)
-    void GF2_power "power"(GF2_c t, GF2_c x, long e)
+    void GF2_negate "NTL::negate"(GF2_c x, GF2_c a)
+    void GF2_power "NTL::power"(GF2_c t, GF2_c x, long e)
     long GF2_deg "deg"(GF2_c x)
 
     void GF2_conv_long "conv" (GF2_c x, long i)
@@ -137,8 +137,8 @@ cdef extern from "ntl_wrap.h":
     void GF2X_add "add"( GF2X_c x, GF2X_c a, GF2X_c b)
     void GF2X_sub "sub"( GF2X_c x, GF2X_c a, GF2X_c b)
     void GF2X_mul "mul"( GF2X_c x, GF2X_c a, GF2X_c b)
-    void GF2X_negate "negate"(GF2X_c x, GF2X_c a)
-    void GF2X_power "power"(GF2X_c t, GF2X_c x, long e)
+    void GF2X_negate "NTL::negate"(GF2X_c x, GF2X_c a)
+    void GF2X_power "NTL::power"(GF2X_c t, GF2X_c x, long e)
     long GF2X_deg "deg"(GF2X_c x)
 
     void GF2X_conv_long "conv" (GF2X_c x, long a)
@@ -217,7 +217,7 @@ cdef extern from "ntl_wrap.h":
     void GF2E_sub "sub"( GF2E_c x, GF2E_c a, GF2E_c b)
     void GF2E_mul "mul"( GF2E_c x, GF2E_c a, GF2E_c b)
     void GF2E_div "div"( GF2E_c x, GF2E_c a, GF2E_c b)
-    void GF2E_power "power"(GF2E_c t, GF2E_c x, long e)
+    void GF2E_power "NTL::power"(GF2E_c t, GF2E_c x, long e)
     long GF2E_deg "deg"(GF2E_c x)
 
     void GF2E_conv_GF2X "conv" (GF2E_c out, GF2X_c inp)
@@ -244,8 +244,8 @@ cdef extern from "ntl_wrap.h":
     void GF2EX_add "add"( GF2EX_c x, GF2EX_c a, GF2EX_c b)
     void GF2EX_sub "sub"( GF2EX_c x, GF2EX_c a, GF2EX_c b)
     void GF2EX_mul "mul"( GF2EX_c x, GF2EX_c a, GF2EX_c b)
-    void GF2EX_negate "negate"(GF2EX_c x, GF2EX_c a)
-    void GF2EX_power "power"(GF2EX_c t, GF2EX_c x, long e)
+    void GF2EX_negate "NTL::negate"(GF2EX_c x, GF2EX_c a)
+    void GF2EX_power "NTL::power"(GF2EX_c t, GF2EX_c x, long e)
     int GF2EX_IsOne "IsOne"(GF2EX_c x)
     int GF2EX_IsZero "IsZero"(GF2EX_c x)
 
@@ -277,8 +277,8 @@ cdef extern from "ntl_wrap.h":
     void mat_GF2E_add "add"( mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
     void mat_GF2E_sub "sub"( mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
     void mat_GF2E_mul "mul"( mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
-    void mat_GF2E_negate "negate"(mat_GF2E_c x, mat_GF2E_c a)
-    void mat_GF2E_power "power"(mat_GF2E_c t, mat_GF2E_c x, long e)
+    void mat_GF2E_negate "NTL::negate"(mat_GF2E_c x, mat_GF2E_c a)
+    void mat_GF2E_power "NTL::power"(mat_GF2E_c t, mat_GF2E_c x, long e)
     GF2E_c mat_GF2E_determinant "determinant"(mat_GF2E_c m)
     void mat_GF2E_transpose "transpose"(mat_GF2E_c r, mat_GF2E_c m)
     long mat_GF2E_IsZero "IsZero"(mat_GF2E_c x)
@@ -328,8 +328,8 @@ cdef extern from "ntl_wrap.h":
     void mat_GF2_add "add"( mat_GF2_c x, mat_GF2_c a, mat_GF2_c b)
     void mat_GF2_sub "sub"( mat_GF2_c x, mat_GF2_c a, mat_GF2_c b)
     void mat_GF2_mul "mul"( mat_GF2_c x, mat_GF2_c a, mat_GF2_c b)
-    void mat_GF2_negate "negate"(mat_GF2_c x, mat_GF2_c a)
-    void mat_GF2_power "power"(mat_GF2_c t, mat_GF2_c x, long e)
+    void mat_GF2_negate "NTL::negate"(mat_GF2_c x, mat_GF2_c a)
+    void mat_GF2_power "NTL::power"(mat_GF2_c t, mat_GF2_c x, long e)
     GF2_c mat_GF2_determinant "determinant"(mat_GF2_c m)
     void mat_GF2_transpose "transpose"(mat_GF2_c r, mat_GF2_c m)
     long mat_GF2_IsZero "IsZero"(mat_GF2_c x)
@@ -349,3 +349,5 @@ cdef extern from "ntl_wrap.h":
 
     void vec_GF2_conv_mat_GF2 "conv" (vec_GF2_c out, mat_GF2_c inp)
     void mat_GF2_conv_vec_GF2(mat_GF2_c out, vec_GF2_c inp)
+
+from sage.libs.ntl.convert cimport mpz_to_ZZ, ZZ_to_mpz

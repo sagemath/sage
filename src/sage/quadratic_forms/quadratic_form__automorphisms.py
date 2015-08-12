@@ -305,19 +305,92 @@ def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=Fa
     return prim_vec_list
 
 
-
-
-## ----------------------------------------------------------------------------------------------------
-
-
-def automorphisms(self):
+def _compute_automorphisms(self):
     """
-    Return a list of the automorphisms of the quadratic form.
+    Call PARI to compute the automorphism group of the quadratic form.
+
+    OUTPUT: None, this just caches the result.
+
+    TESTS::
+
+        sage: DiagonalQuadraticForm(ZZ, [-1,1,1])._compute_automorphisms()
+        Traceback (most recent call last):
+        ...
+        ValueError: not a definite form in QuadraticForm.automorphisms()
+        sage: DiagonalQuadraticForm(GF(5), [1,1,1])._compute_automorphisms()
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: computing the automorphism group of a quadratic form is only supported over ZZ
+    """
+    if self.base_ring() is not ZZ:
+        raise NotImplementedError("computing the automorphism group of a quadratic form is only supported over ZZ")
+    if not self.is_definite():
+        raise ValueError("not a definite form in QuadraticForm.automorphisms()")
+
+    if hasattr(self, "__automorphisms_pari"):
+        return
+
+    A = self._pari_().qfauto()
+    self.__number_of_automorphisms = A[0]
+    self.__automorphisms_pari = A[1]
+
+
+def automorphism_group(self):
+    """
+    Return the group of automorphisms of the quadratic form.
+
+    OUTPUT: a :class:`MatrixGroup`
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.number_of_automorphisms()                     # optional -- souvigner
+        sage: Q.automorphism_group()
+        Matrix group over Rational Field with 3 generators (
+        [-1  0  0]  [0 0 1]  [ 0  0  1]
+        [ 0 -1  0]  [0 1 0]  [-1  0  0]
+        [ 0  0 -1], [1 0 0], [ 0  1  0]
+        )
+
+    ::
+
+        sage: DiagonalQuadraticForm(ZZ, [1,3,5,7]).automorphism_group()
+        Matrix group over Rational Field with 4 generators (
+        [-1  0  0  0]  [ 1  0  0  0]  [ 1  0  0  0]  [ 1  0  0  0]
+        [ 0 -1  0  0]  [ 0 -1  0  0]  [ 0  1  0  0]  [ 0  1  0  0]
+        [ 0  0 -1  0]  [ 0  0  1  0]  [ 0  0 -1  0]  [ 0  0  1  0]
+        [ 0  0  0 -1], [ 0  0  0  1], [ 0  0  0  1], [ 0  0  0 -1]
+        )
+
+    The smallest possible automorphism group has order two, since we
+    can always change all signs::
+
+        sage: Q = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
+        sage: Q.automorphism_group()
+        Matrix group over Rational Field with 1 generators (
+        [-1  0  0]
+        [ 0 -1  0]
+        [ 0  0 -1]
+        )
+    """
+    self._compute_automorphisms()
+
+    from sage.matrix.matrix_space import MatrixSpace
+    from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+    MS = MatrixSpace(self.base_ring().fraction_field(), self.dim(), self.dim())
+    gens = [MS(x.sage()) for x in self.__automorphisms_pari]
+    return MatrixGroup(gens)
+
+
+def automorphisms(self):
+    """
+    Return the list of the automorphisms of the quadratic form.
+
+    OUTPUT: a list of matrices
+
+    EXAMPLES::
+
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
+        sage: Q.number_of_automorphisms()
         48
         sage: 2^3 * factorial(3)
         48
@@ -327,7 +400,7 @@ def automorphisms(self):
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q.number_of_automorphisms()                     # optional -- souvigner
+        sage: Q.number_of_automorphisms()
         16
         sage: aut = Q.automorphisms()
         sage: len(aut)
@@ -342,192 +415,41 @@ def automorphisms(self):
         [0 1 0]  [ 0 -1  0]
         [0 0 1], [ 0  0 -1]
         ]
-
-    ::
-
-        sage: Q = DiagonalQuadraticForm(ZZ, [1, -1])
-        sage: Q.automorphisms()
-        Traceback (most recent call last):
-        ...
-        ValueError: not a definite form in QuadraticForm.automorphisms()
     """
-    ## only for definite forms
-    if not self.is_definite():
-        raise ValueError("not a definite form in QuadraticForm.automorphisms()")
-
-    ## Check for a cached value
-    try:
-        return self.__automorphisms
-    except AttributeError:
-        pass
+    return [x.matrix() for x in self.automorphism_group().list()]
 
 
-    ## Find a basis of short vectors, and their lengths
-    basis, pivot_lengths = self.basis_of_short_vectors(show_lengths=True)
-
-    ## List the relevant vectors by length
-    max_len = max(pivot_lengths)
-    vector_list_by_length = self.short_primitive_vector_list_up_to_length(max_len + 1)
-
-
-    ## Make the matrix A:e_i |--> v_i to our new basis.
-    A = Matrix(basis).transpose()
-    Ainv = A.inverse()
-    #A1 = A.inverse() * A.det()
-    #Q1 = A1.transpose() * self.matrix() * A1       ## This is the matrix of Q
-    #Q = self.matrix() * A.det()**2
-    Q2 = A.transpose() * self.matrix() * A       ## This is the matrix of Q in the new basis
-    Q3 = self.matrix()
-
-
-    ## Determine all automorphisms
-    n = self.dim()
-    Auto_list = []
-    #ct = 0
-
-    ## DIAGNOSTIC
-    #print "n = " + str(n)
-    #print "pivot_lengths = " + str(pivot_lengths)
-    #print "vector_list_by_length = " + str(vector_list_by_length)
-    #print "length of vector_list_by_length = " + str(len(vector_list_by_length))
-
-    for index_vec in mrange([len(vector_list_by_length[pivot_lengths[i]])  for i in range(n)]):
-        M = Matrix([vector_list_by_length[pivot_lengths[i]][index_vec[i]]   for i in range(n)]).transpose()
-        #Q1 = self.matrix()
-        #if self(M) == self:
-        #ct += 1
-        #print "ct = ", ct, "   M = "
-        #print M
-        #print
-        if M.transpose() * Q3 * M == Q2:       ## THIS DOES THE SAME THING! =(
-            Auto_list.append(M * Ainv)
-
-
-    ## Cache the answer and return the list
-    self.__automorphisms = Auto_list
-    self.__number_of_automorphisms = len(Auto_list)
-    return Auto_list
-
-
-
-
-def number_of_automorphisms(self, recompute=False):
+def number_of_automorphisms(self, recompute=None):
     """
     Return a list of the number of automorphisms (of det 1 and -1) of
     the quadratic form.
-
-    If recompute is True, then we will recompute the cached result.
 
     OUTPUT:
         an integer >= 2.
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 1, 0, 1], unsafe_initialization=True, number_of_automorphisms=-1)
-        sage: Q.list_external_initializations()
-        ['number_of_automorphisms']
+        sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 1, 0, 1], unsafe_initialization=True)
         sage: Q.number_of_automorphisms()
-        -1
-        sage: Q.number_of_automorphisms(recompute=True)           # optional -- souvigner
         48
-        sage: Q.list_external_initializations()                   # optional -- souvigner
-        []
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: Q.number_of_automorphisms()                         # optional -- souvigner
+        sage: Q.number_of_automorphisms()
         384
         sage: 2^4 * factorial(4)
         384
-
-    ::
-
-        sage: Q = DiagonalQuadraticForm(ZZ, [1, -1])
-        sage: Q.number_of_automorphisms()
-        Traceback (most recent call last):
-        ...
-        ValueError: not a definite form in QuadraticForm.number_of_automorphisms()
-
     """
-    ## only for definite forms
-    if not self.is_definite():
-        raise ValueError("not a definite form in QuadraticForm.number_of_automorphisms()")
+    if recompute is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(6326, "the 'recompute' argument is no longer used")
 
-    ## Try to use the cached version if we can
-    if not recompute:
-        try:
-            #print "Using the cached number of automorphisms."
-            #print "We stored", self.__number_of_automorphisms
-            return self.__number_of_automorphisms
-        except AttributeError:
-            pass
-
-    ## Otherwise cache and return the result
-    #print "Recomputing the number of automorphisms based on the list of automorphisms."
-    #self.__number_of_automorphisms = len(self.automorphisms())                                     ## This is now deprecated.
-    self.__number_of_automorphisms = self.number_of_automorphisms__souvigner()
     try:
-        self._external_initialization_list.remove('number_of_automorphisms')
-    except Exception:
-        pass  ## Do nothing if the removal fails, since it might not be in the list (causing an error)!
-    return self.__number_of_automorphisms
-
-
-
-def number_of_automorphisms__souvigner(self):
-    """
-    Uses the Souvigner code to compute the number of automorphisms.
-
-    EXAMPLES::
-
-        sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1])
-        sage: Q.number_of_automorphisms__souvigner()                           # optional -- souvigner
-        3840
-        sage: 2^5 * factorial(5)
-        3840
-
-    """
-    ## Write an input text file
-    F_filename = '/tmp/tmp_isom_input' + str(random()) + ".txt"
-    F = open(F_filename, 'w')
-    #F = tempfile.NamedTemporaryFile(prefix='tmp_auto_input', suffix=".txt")   ## This fails because the Souvigner code doesn't like random filenames (hyphens are bad...)!
-    F.write("#1 \n")
-    n = self.dim()
-    F.write(str(n) + "x0 \n")      ## Use the lower-triangular form
-    for i in range(n):
-        for j in range(i+1):
-            if i == j:
-                F.write(str(2 * self[i,j]) + " ")
-            else:
-                F.write(str(self[i,j]) + " ")
-        F.write("\n")
-    F.flush()
-    #print "Input filename = ", F.name
-    #os.system("less " + F.name)
-
-    ## Call the Souvigner automorphism code
-    souvigner_auto_path = os.path.join(SAGE_LOCAL,'bin','Souvigner_AUTO')                 ## FIX THIS LATER!!!
-    G1 = tempfile.NamedTemporaryFile(prefix='tmp_auto_ouput', suffix=".txt")
-    #print "Output filename = ", G1.name
-    os.system(souvigner_auto_path + " '" +  F.name + "' > '" + G1.name +"'")
-
-
-    ## Read the output
-    G2 = open(G1.name, 'r')
-    for line in G2:
-        if line.startswith("|Aut| = "):
-            num_of_autos = sage_eval(line.lstrip("|Aut| = "))
-            F.close()
-            G1.close()
-            G2.close()
-            os.system("rm -f " + F_filename)
-            #os.system("rm -f " + G1.name)
-            return num_of_autos
-
-    ## Raise and error if we're here:
-    raise RuntimeError("Oops! There is a problem...")
-
+        return self.__number_of_automorphisms
+    except AttributeError:
+        self._compute_automorphisms()
+        return self.__number_of_automorphisms
 
 
 def set_number_of_automorphisms(self, num_autos):
@@ -542,8 +464,7 @@ def set_number_of_automorphisms(self, num_autos):
     Return a list of the number of
     automorphisms (of det 1 and -1) of the quadratic form.
 
-    OUTPUT:
-        None
+    OUTPUT: None
 
     EXAMPLES::
 
@@ -561,21 +482,3 @@ def set_number_of_automorphisms(self, num_autos):
     text = 'number_of_automorphisms'
     if not text in self._external_initialization_list:
         self._external_initialization_list.append(text)
-
-
-
-### TODO
-# def Nipp_automorphism_testing(self):
-#     """
-#     Testing the automorphism routine against Nipp's Tables
-#
-#         --- MOVE THIS ELSEWHERE!!! ---
-#
-#     """
-#     for i in range(20):
-#         Q = QuadraticForm(ZZ, 4, Nipp[i][2])
-#         my_num = Q.number_of_automorphisms()
-#         nipp_num = Nipp.number_of_automorphisms(i)
-#         print "    i = " + str(i) + "  my_num = " + str(my_num) + "  nipp_num = " + str(nipp_num)
-#
-

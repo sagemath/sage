@@ -18,6 +18,7 @@ Path Algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
 
@@ -75,12 +76,12 @@ class PathAlgebra(CombinatorialFreeModule):
         sage: S = A.semigroup()
         sage: S
         Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices
-        sage: p = S((1, 2, 'a'))
-        sage: r = S((2, 3, 'b'))
-        sage: e2 = S((2, 2))
+        sage: p = S([(1, 2, 'a')])
+        sage: r = S([(2, 3, 'b')])
+        sage: e2 = S([(2, 2)])
         sage: x = A(p) + A(e2)
         sage: x
-        e_2 + a
+        a + e_2
         sage: y = A(p) + A(r)
         sage: y
         a + b
@@ -250,11 +251,11 @@ class PathAlgebra(CombinatorialFreeModule):
 
             sage: A = DiGraph({1:{2:['a']}}).path_semigroup().algebra(QQ)
             sage: B = DiGraph({1:{2:['a']}, 2:{3:['b']}}).path_semigroup().algebra(QQ)
-            sage: x = A((1, 2, 'a')) + 1 # indirect doctest
+            sage: x = A('a') + 1 # indirect doctest
             sage: x
-            e_1 + e_2 + a
+            a + e_1 + e_2
             sage: B(x) # indirect doctest
-            e_1 + e_2 + a
+            a + e_1 + e_2
             sage: A(1) # indirect doctest
             e_1 + e_2
         """
@@ -274,7 +275,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
         # If it's a tuple or a list try and create a QuiverPath from it and
         # then return the associated basis element
-        if isinstance(x, (tuple, list)):
+        if isinstance(x, (tuple, list, six.string_types)):
             return self.monomial(self._semigroup(x))
 
         # Otherwise let CombinatorialFreeModule try
@@ -342,8 +343,8 @@ class PathAlgebra(CombinatorialFreeModule):
         if isinstance(other, PathAlgebra) and self._base.has_coerce_map_from(other._base):
             OQ = other._quiver
             SQ = self._quiver
-            SQE = SQ.edges()
-            if all(v in SQ for v in OQ.vertices()) and all(e in SQE for e in OQ.edges()):
+            SQE = self._semigroup._sorted_edges
+            if all(v in SQ for v in OQ.vertices()) and all(e in SQE for e in other._semigroup._sorted_edges):
                 return True
         if self._semigroup.has_coerce_map_from(other):
             return True
@@ -376,9 +377,9 @@ class PathAlgebra(CombinatorialFreeModule):
         TESTS::
 
             sage: P = DiGraph({1:{2:['a']}, 2:{3:['b']}}).path_semigroup()
-            sage: P.algebra(ZZ)(P((1,2,'a'))*P((2,3,'b')))
+            sage: P.algebra(ZZ)(P('a')*P('b'))
             a*b
-            sage: P.algebra(ZZ)(P((2,3,'b')))*P.algebra(ZZ)(P((1,2,'a')))  # indirect doctest
+            sage: P.algebra(ZZ)(P('b'))*P.algebra(ZZ)(P('a'))  # indirect doctest
             0
 
         The following was an issue during work at :trac:`12630`::
@@ -392,8 +393,7 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A1(b)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot interpret b as element of Partial semigroup
-            formed by the directed paths of Multi-digraph on 2 vertices
+            ValueError: b is not an edge
         """
         if index is not None:
             return self._from_dict( {self._semigroup(index): self.base_ring().one()},
@@ -415,7 +415,7 @@ class PathAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: Q = DiGraph({1:{2:['a']}, 2:{3:['b']}, 3:{4:['c']}}).path_semigroup()
-            sage: p1 = Q((1, 2, 'a'))
+            sage: p1 = Q('a')
             sage: p2 = Q([(2, 3, 'b'), (3, 4, 'c')])
             sage: A = Q.algebra(QQ)
             sage: A.product_on_basis(p1, p2)
@@ -437,9 +437,9 @@ class PathAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = DiGraph({1:{2:['a']}, 2:{3:['b']}}).path_semigroup().algebra(QQ)
-            sage: A.degree_on_basis((1, 1))
+            sage: A.degree_on_basis([(1, 1)])
             0
-            sage: A.degree_on_basis((1, 2, 'a'))
+            sage: A.degree_on_basis('a')
             1
             sage: A.degree_on_basis([(1, 2, 'a'), (2, 3, 'b')])
             2
@@ -595,9 +595,9 @@ class PathAlgebra(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: A = DiGraph({1:{2:['a', 'b']}, 2:{3:['c']}}).path_semigroup().algebra(QQ)
-                sage: (A((1, 2, 'a')) + A((1, 2, 'b'))).is_homogeneous()
+                sage: (A('a') + A('b')).is_homogeneous()
                 True
-                sage: (A((1, 1)) + A((1, 2, 'a'))).is_homogeneous()
+                sage: (A(1) + A('a')).is_homogeneous()
                 False
             """
             # Get the support, the zero element is homogeneous
@@ -619,14 +619,14 @@ class PathAlgebra(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: A = DiGraph({1:{2:['a', 'b']}, 2:{3:['c']}}).path_semigroup().algebra(QQ)
-                sage: A((1, 1)).degree()
+                sage: A(1).degree()
                 0
-                sage: (A((1, 2, 'a')) + A((1, 2, 'b'))).degree()
+                sage: (A('a') + A('b')).degree()
                 1
 
             An error is raised if the element is not homogeneous::
 
-                sage: (A((1, 1)) + A((1, 2, 'a'))).degree()
+                sage: (A(1) + A('a')).degree()
                 Traceback (most recent call last):
                 ...
                 ValueError: Element is not homogeneous.

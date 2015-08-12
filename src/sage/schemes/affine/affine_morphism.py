@@ -175,9 +175,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 try:
                     x = self.domain()(x)
                 except (TypeError, NotImplementedError):
-                    raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain())
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain()))
             elif self.domain()!=x.codomain():
-                raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain())
+                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain()))
 
         # Passes the array of args to _fast_eval
         P = self._fast_eval(x._coords)

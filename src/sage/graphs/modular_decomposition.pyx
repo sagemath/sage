@@ -4,7 +4,8 @@ Modular decomposition
 
 include "sage/ext/interrupt.pxi"
 include "sage/ext/stdsage.pxi"
-include "sage/ext/cdefs.pxi"
+
+from libc.string cimport memset
 
 #####################################################
 # The following code is mainly a Cythonized

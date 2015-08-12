@@ -502,7 +502,7 @@ def relabel_system(B):
             label[x] = total
             return total
 
-    B = [map(get_label,s) for s in B]
+    B = [[get_label(_) for _ in s] for s in B]
     return IncidenceStructure(n,B)
 
 def P(alpha, m):

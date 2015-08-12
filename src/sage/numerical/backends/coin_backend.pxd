@@ -7,19 +7,8 @@
 
 from sage.numerical.backends.generic_backend cimport GenericBackend
 
-include 'sage/ext/cdefs.pxi'
-
 from libcpp cimport bool
 
-# apparently sage's cython can't import string! until it does...
-#cdef extern from "<string>" namespace "std":
-#    cdef cppclass string:
-#        string()
-#        string(char *)
-#        char * c_str()
-
-cdef extern from *:
-    ctypedef double* const_double_ptr "const double*"
 
 cdef extern from "coin/CbcStrategy.hpp":
     cdef cppclass CbcStrategy:

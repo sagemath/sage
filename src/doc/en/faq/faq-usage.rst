@@ -13,19 +13,17 @@ You can try out Sage without downloading anything:
 * **SageMathCloud™:** Go to http://cloud.sagemath.org and set up a free
   account.
 
-  If you log in, you will access to the latest version of Sage and to
-  many other software.
+  If you log in, you will gain access to the latest version of Sage and to 
+  many other programs.
 
-* **Sage cell:** A "once-off" version of Sage, available for doing one
+* **Sage cell:** A "one-off" version of Sage, available for doing one
   computation at a time. http://sagecell.sagemath.org/
 
-* **Sagenb:** some public Sage notebook server allow you to create a free
+* **Sagenb:** Some public Sage notebook servers allow you to create a free
   account.
 
-  If you log in, you will be working on a free Sage notebook server that will
-  work identically to the one you get within Sage. The server http://sagenb.org
-  is one such, though it runs an older version of Sage and is scheduled to be
-  retired in the future in favor of the SageMathCloud.
+  If you log in, you will be working on a free, browser-based Sage notebook 
+  server that will work identically to the one you get within Sage. 
 
 To download a **pre-built binary** Sage distribution, visit
 http://sagemath.org/download.html and click on the link for the binary for your
@@ -44,9 +42,13 @@ You can also run it from the command line of sage::
 
     sage: notebook() # not tested
 
+Where can I find more information about using SageMathCloud™?
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-What are Sage's prerequisites?
-""""""""""""""""""""""""""""""
+Visit the Frequently Asked Questions page for SageMathCloud™ at https://github.com/sagemath/cloud/wiki/FAQ .
+
+What are the prerequisites for installing a copy of Sage on my computer?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Most of the dependencies of Sage are shipped with Sage itself. In most
 cases, you can download a pre-built binary and use that without
@@ -575,7 +577,7 @@ plugin (for linux see your package manager), see:
 or the Oracle Java plugin see:
 `Java <https://java.com/en/download/help/index_installing.xml>`_.
 
-If you are using a Sage server over the web and even javascript rendering 
+If you are using a Sage server over the web and even javascript rendering
 does not work, you may have a problem with your browser's javascript
 engine or have it turned off.
 

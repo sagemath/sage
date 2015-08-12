@@ -5,8 +5,6 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/cdefs.pxi"
-
 cdef extern from "ccobject.h":
     #We do this to get access to Construct_p, etc.
     pass
@@ -14,8 +12,6 @@ cdef extern from "ccobject.h":
 cdef extern from "globals.h":
     ctypedef unsigned long Ulong
 
-#cdef extern from "klsupport.h":
-#ctypedef unsigned short KLCoeff
 
 ########
 # Bits #

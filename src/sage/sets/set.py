@@ -563,16 +563,21 @@ class Set_object(Set_generic):
         try:
             if not self.is_finite():
                 return sage.rings.infinity.infinity
-        except AttributeError:
+        except (AttributeError, NotImplementedError):
             pass
-        try:
-            return self.__object.cardinality()
-        except AttributeError:
-            pass
-        try:
-            return len(self.__object)
-        except TypeError:
-            raise NotImplementedError("computation of cardinality of %s not yet implemented"%self.__object)
+
+        if self is not self.__object:
+            try:
+                return self.__object.cardinality()
+            except (AttributeError, NotImplementedError):
+                pass
+            from sage.rings.integer import Integer
+            try:
+                return Integer(len(self.__object))
+            except TypeError:
+                pass
+
+        raise NotImplementedError("computation of cardinality of %s not yet implemented"%self.__object)
 
     def is_empty(self):
         """
@@ -645,7 +650,6 @@ class Set_object(Set_generic):
         """
         return self.__object
 
-
     def subsets(self,size=None):
         """
         Return the :class:`Subsets` object representing the subsets of a set.
@@ -681,6 +685,17 @@ class Set_object_enumerated(Set_object):
         """
         Set_object.__init__(self, X)
 
+    def is_finite(self):
+        r"""
+        Return ``True`` as this is a finite set.
+
+        EXAMPLES::
+
+            sage: Set(GF(19)).is_finite()
+            True
+        """
+        return True
+
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -690,7 +705,8 @@ class Set_object_enumerated(Set_object):
             sage: Set([1,1]).cardinality()
             1
         """
-        return len(self.set())
+        from sage.rings.integer import Integer
+        return Integer(len(self.set()))
 
     def __len__(self):
         """
@@ -699,8 +715,7 @@ class Set_object_enumerated(Set_object):
             sage: len(Set([1,1]))
             1
         """
-        return self.cardinality()
-
+        return len(self.set())
 
     def __iter__(self):
         r"""
@@ -719,8 +734,7 @@ class Set_object_enumerated(Set_object):
             sage: next(I)
             3
         """
-        for x in self.set():
-            yield x
+        return iter(self.set())
 
     def _latex_(self):
         r"""
@@ -1055,21 +1069,6 @@ class Set_object_binary(Set_object):
         """
         return latex(self._X) + self._latex_op + latex(self._Y)
 
-    def cardinality(self):
-        """
-        This tries to return the cardinality of this set.
-
-        Note that this is not likely to work in very much generality,
-        and may just hang if either set involved is infinite.
-
-        EXAMPLES::
-
-            sage: X = Set(GF(13)).intersection(Set(ZZ))
-            sage: X.cardinality()
-            13
-        """
-        return len(list(self))
-
     def __hash__(self):
         """
         The hash value of this set.
@@ -1116,6 +1115,22 @@ class Set_object_union(Set_object_binary):
             sage: TestSuite(X).run()
         """
         Set_object_binary.__init__(self, X, Y, "union", "\\cup")
+
+    def is_finite(self):
+        r"""
+        Return whether this set is finite.
+
+        EXAMPLES::
+
+            sage: X = Set(range(10))
+            sage: Y = Set(range(-10,0))
+            sage: Z = Set(Primes())
+            sage: X.union(Y).is_finite()
+            True
+            sage: X.union(Z).is_finite()
+            False
+        """
+        return self._X.is_finite() and self._Y.is_finite()
 
     def __cmp__(self, right):
         r"""
@@ -1222,9 +1237,34 @@ class Set_object_intersection(Set_object_binary):
             \Bold{Q}^{2} \cap \Bold{Z}
 
             sage: X = Set(IntegerRange(100)).intersection(Primes())
+            sage: X.is_finite()
+            True
             sage: TestSuite(X).run()
         """
         Set_object_binary.__init__(self, X, Y, "intersection", "\\cap")
+
+    def is_finite(self):
+        r"""
+        Return whether this set is finite.
+
+        EXAMPLES::
+
+            sage: X = Set(IntegerRange(100))
+            sage: Y = Set(ZZ)
+            sage: X.intersection(Y).is_finite()
+            True
+            sage: Y.intersection(X).is_finite()
+            True
+            sage: Y.intersection(Set(QQ)).is_finite()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        if self._X.is_finite():
+            return True
+        elif self._Y.is_finite():
+            return True
+        raise NotImplementedError
 
     def __cmp__(self, right):
         r"""
@@ -1277,9 +1317,20 @@ class Set_object_intersection(Set_object_binary):
             sage: I = X.__iter__()
             sage: next(I)
             2
+
+        Check that known finite intersections have finite iterators (see
+        :trac:`18159`)::
+
+            sage: P = Set(ZZ).intersection(Set(range(10,20)))
+            sage: list(P)
+            [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
         """
-        for x in self._X:
-            if x in self._Y:
+        X = self._X
+        Y = self._Y
+        if not self._X.is_finite() and self._Y.is_finite():
+            X,Y = Y,X
+        for x in X:
+            if x in Y:
                 yield x
 
     def __contains__(self, x):
@@ -1330,6 +1381,32 @@ class Set_object_difference(Set_object_binary):
             sage: TestSuite(X).run()
         """
         Set_object_binary.__init__(self, X, Y, "difference", "-")
+
+    def is_finite(self):
+        r"""
+        Return whether this set is finite.
+
+        EXAMPLES::
+
+            sage: X = Set(range(10))
+            sage: Y = Set(range(-10,5))
+            sage: Z = Set(QQ)
+            sage: X.difference(Y).is_finite()
+            True
+            sage: X.difference(Z).is_finite()
+            True
+            sage: Z.difference(X).is_finite()
+            False
+            sage: Z.difference(Set(ZZ)).is_finite()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        if self._X.is_finite():
+            return True
+        elif self._Y.is_finite():
+            return False
+        raise NotImplementedError
 
     def __cmp__(self, right):
         r"""
@@ -1441,6 +1518,32 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: TestSuite(X).run()
         """
         Set_object_binary.__init__(self, X, Y, "symmetric difference", "\\bigtriangleup")
+
+    def is_finite(self):
+        r"""
+        Return whether this set is finite.
+
+        EXAMPLES::
+
+            sage: X = Set(range(10))
+            sage: Y = Set(range(-10,5))
+            sage: Z = Set(QQ)
+            sage: X.symmetric_difference(Y).is_finite()
+            True
+            sage: X.symmetric_difference(Z).is_finite()
+            False
+            sage: Z.symmetric_difference(X).is_finite()
+            False
+            sage: Z.symmetric_difference(Set(ZZ)).is_finite()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        if self._X.is_finite():
+            return self._Y.is_finite()
+        elif self._Y.is_finite():
+            return False
+        raise NotImplementedError
 
     def __cmp__(self, right):
         r"""

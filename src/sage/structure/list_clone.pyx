@@ -800,8 +800,6 @@ cdef class ClonableArray(ClonableElement):
         """
         return self._list.count(key)
 
-    # __hash__ is not properly inherited if comparison is changed
-    # see <http://groups.google.com/group/cython-users/t/e89a9bd2ff20fd5a>
     def __hash__(self):
         """
         Returns the hash value of ``self``.
@@ -824,7 +822,8 @@ cdef class ClonableArray(ClonableElement):
                 self._hash = self._hash_()
         return self._hash
 
-    def __richcmp__(left, right, int op):
+    # See protocol in comment in sage/structure/element.pyx
+    cpdef int _cmp_(left, Element right) except -2:
         """
         TESTS::
 
@@ -833,13 +832,8 @@ cdef class ClonableArray(ClonableElement):
             sage: elc = copy(el)
             sage: elc == el             # indirect doctest
             True
-        """
-        return (<Element>left)._richcmp(right, op)
 
-    # See protocol in comment in sage/structure/element.pyx
-    cpdef int _cmp_(left, Element right) except -2:
-        """
-        TEST::
+        ::
 
             sage: from sage.structure.list_clone_demo import IncreasingArrays
             sage: el1 = IncreasingArrays()([1,2,4])
@@ -1427,7 +1421,7 @@ cdef class ClonableIntArray(ClonableElement):
             <type 'list'>
             sage: list(el)
             [1, 2, 3]
-            sage: it = iter(el); it.next(), it.next()
+            sage: it = iter(el); next(it), next(it)
             (1, 2)
         """
         cdef int start, stop, step, keyi
@@ -1580,7 +1574,8 @@ cdef class ClonableIntArray(ClonableElement):
                 self._hash = self._hash_()
         return self._hash
 
-    def __richcmp__(left, right, int op):
+    # See protocol in comment in sage/structure/element.pyx
+    cpdef int _cmp_(left, Element right) except -2:
         """
         TESTS::
 
@@ -1589,13 +1584,8 @@ cdef class ClonableIntArray(ClonableElement):
             sage: elc = copy(el)
             sage: elc == el             # indirect doctest
             True
-        """
-        return (<Element>left)._richcmp(right, op)
 
-    # See protocol in comment in sage/structure/element.pyx
-    cpdef int _cmp_(left, Element right) except -2:
-        """
-        TEST::
+        ::
 
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
             sage: el1 = IncreasingIntArrays()([1,2,4])

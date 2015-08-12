@@ -23,6 +23,7 @@ from __future__ import print_function
 from subprocess import check_call, CalledProcessError
 from getpass import getpass
 
+import six
 import os
 import textwrap
 import itertools
@@ -88,7 +89,7 @@ class CmdLineInterface(UserInterface):
         prompt = self._color_code('prompt') + prompt + self._color_code() + " "
         return prompt, options, default
 
-    def _get_input(self, prompt, options=None, default=None, input_func=raw_input):
+    def _get_input(self, prompt, options=None, default=None, input_func=six.moves.input):
         r"""
         Helper method for :meth:`switch`, :meth:`get_input`, and :meth:`get_password`.
 

@@ -105,7 +105,7 @@ class HeckeModules(Category_module):
             r"""
             Returns the homset from ``self`` to ``Y`` in the category ``category``
 
-            INPUT::
+            INPUT:
 
             - ``Y`` -- an Hecke module
             - ``category`` -- a subcategory of :class:`HeckeModules`() or None

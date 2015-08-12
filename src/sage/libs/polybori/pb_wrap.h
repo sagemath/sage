@@ -177,23 +177,23 @@ PyObject* preallocated_to_PyString(const DefaultRinged<T> *wrapped) {
 
 
 template <class Type>
-class WrappedPtr:
+class PBWrappedPtr:
   public boost::shared_ptr<Type> {
-    typedef WrappedPtr self;
+    typedef PBWrappedPtr self;
     typedef boost::shared_ptr<Type> base;
 
  public:
-    WrappedPtr(): base() {}
-    WrappedPtr(const self& rhs): base(rhs) {}
+    PBWrappedPtr(): base() {}
+    PBWrappedPtr(const self& rhs): base(rhs) {}
 
     template <class T1>
-    WrappedPtr(const T1& arg): base(new Type(arg)) {}
+    PBWrappedPtr(const T1& arg): base(new Type(arg)) {}
 
     template <class T1, class T2>
-    WrappedPtr(const T1& arg1, const T2& arg2): base(new Type(arg1, arg2)) {}
+    PBWrappedPtr(const T1& arg1, const T2& arg2): base(new Type(arg1, arg2)) {}
 
       template <class T1, class T2, class T3>
-        WrappedPtr(const T1& arg1, const T2& arg2, const T3& arg3):
+        PBWrappedPtr(const T1& arg1, const T2& arg2, const T3& arg3):
         base(new Type(arg1, arg2, arg3)) {}
 
     operator Type&() { return base::operator*();}

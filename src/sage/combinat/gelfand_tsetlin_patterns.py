@@ -19,6 +19,8 @@ REFERENCES:
    A Generating Function of Strict Gelfand Patterns and Some Formulas on
    Characters of General Linear Groups.
    J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
+
+
 """
 #*****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
@@ -40,7 +42,7 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.all import ZZ
@@ -132,7 +134,7 @@ class GelfandTsetlinPattern(ClonableArray):
     """
     # Note that the width == height, so len(gt) == len(gt[0]) except
     #   we don't have to check if it is the emtry GT pattern
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     @staticmethod
     def __classcall_private__(self, gt):
@@ -913,6 +915,163 @@ class GelfandTsetlinPatterns(Parent, UniqueRepresentation):
             row[pos] += 1
             pos += 1
 
+    def _toggle_markov_chain(self, chain_state, row, col, direction):
+        """
+        Helper for coupling from the past. Advance the Markov chain one step.
+
+        INPUT:
+
+        - ``chain_state`` -- A GelfandTsetlin pattern represented as a list of lists
+        - ``row`` -- The row of the cell being modified
+        - ``col`` -- The column of the cell being modified
+        - ``direction`` -- The direction to change the cell 1 = increase, 0 = decrease
+
+        OUTPUT:
+
+        ``chain_state`` is possibly modified.
+
+        TESTS:
+
+            sage: G=GelfandTsetlinPatterns(3,4)
+            sage: state = [[3,2,1],[3,1],[2]]
+            sage: G._toggle_markov_chain(state, 0, 0, 1)
+            sage: state
+            [[4, 2, 1], [3, 1], [2]]
+            sage: G._toggle_markov_chain(state, 1, 1, 1)
+            sage: state
+            [[4, 2, 1], [3, 2], [2]]
+            sage: G._toggle_markov_chain(state, 0, 2, 1)
+            sage: state
+            [[4, 2, 2], [3, 2], [2]]
+            sage: G._toggle_markov_chain(state, 0, 2, 1)
+            sage: state
+            [[4, 2, 2], [3, 2], [2]]
+            sage: G._toggle_markov_chain(state, 0, 2, 0)
+            sage: state
+            [[4, 2, 1], [3, 2], [2]]
+            sage: G._toggle_markov_chain(state, 0, 2, 0)
+            sage: state
+            [[4, 2, 0], [3, 2], [2]]
+            sage: G._toggle_markov_chain(state, 0, 2, 0)
+            sage: state
+            [[4, 2, 0], [3, 2], [2]]
+
+            """
+        if direction == 1:
+            upbound = self._k
+            if row != 0:
+                upbound = min(upbound, chain_state[row - 1][col])
+            if self._strict and col > 0:
+                upbound = min(upbound, chain_state[row][col - 1] - 1)
+            if row < self._n and col > 0:
+                upbound = min(upbound, chain_state[row + 1][col - 1])
+            if chain_state[row][col] < upbound:
+                chain_state[row][col] += 1
+        else:
+            lobound = 0
+            if row != 0:
+                lobound = max(lobound, chain_state[row - 1][col + 1])
+            if self._strict and col < self._n - row - 1:
+                lobound = max(lobound, chain_state[row][col + 1] + 1)
+            if row < self._n and col < self._n - row - 1:
+                lobound = max(lobound, chain_state[row + 1][col])
+            if chain_state[row][col] > lobound:
+                chain_state[row][col] -= 1
+
+
+    def _cftp_upper(self):
+        """
+        Return the largest member of the poset of Gelfand-Tsetlin patterns having the given ``n`` and ``k``.
+
+        TESTS:
+
+            sage: GelfandTsetlinPatterns(3, 5)._cftp_upper()
+            [[5, 5, 5], [5, 5], [5]]
+            sage: GelfandTsetlinPatterns(3, 5, strict=True)._cftp_upper()
+            [[5, 4, 3], [5, 4], [5]]
+        """
+        if self._strict:
+            return [[self._k - j for j in range(self._n - i)] for i in range(self._n)]
+        else:
+            return [[self._k for j in range(self._n - i)] for i in range(self._n)]
+
+    def _cftp_lower(self):
+        """
+        Return the smallest member of the poset of Gelfand-Tsetlin patterns having the given ``n`` and ``k``.
+
+        TESTS:
+
+            sage: GelfandTsetlinPatterns(3, 5)._cftp_lower()
+            [[0, 0, 0], [0, 0], [0]]
+            sage: GelfandTsetlinPatterns(3, 5, strict=True)._cftp_lower()
+            [[2, 1, 0], [1, 0], [0]]
+        """
+        if self._strict:
+            return [[self._n - j - i - 1 for j in range(self._n - i)] for i in range(self._n)]
+        else:
+            return [[0 for j in range(self._n - i)] for i in range(self._n)]
+
+    def _cftp(self, start_row):
+        """
+        Implement coupling from the past.
+
+        ALGORITHM:
+
+        The set of Gelfand-Tsetlin patterns can partially ordered by elementwise
+        domination.  The partial order has unique maximum and minimum elements
+        that are computed by the methods ``_cftp_upper`` and ``_cftp_lower``.
+        We then run the Markov chain that randomly toggles each element up or
+        down from the past until the state reached from the upper and lower start
+        points coalesce as described in [Propp1997]_.
+        """
+        from sage.misc.randstate import current_randstate
+        from sage.misc.randstate import seed
+        from sage.misc.randstate import random
+
+        count = self._n * self._k
+        seedlist = [(current_randstate().long_seed(), count)]
+        upper = []
+        lower = []
+        while True:
+            upper = self._cftp_upper()
+            lower = self._cftp_lower()
+            for currseed, count in seedlist:
+                with seed(currseed):
+                    for _ in range(count):
+                        for row in range(start_row, self._n):
+                            for col in range(self._n - row):
+                                direction = random() % 2
+                                self._toggle_markov_chain(upper, row, col, direction)
+                                self._toggle_markov_chain(lower, row, col, direction)
+            if all(all(x == y for x,y in zip(l1, l2)) for l1, l2 in zip(upper, lower)):
+                break
+            count = seedlist[0][1] * 2
+            seedlist.insert(0, (current_randstate().long_seed(), count))
+        return GelfandTsetlinPattern(upper)
+
+    def random_element(self):
+        """
+        Return a uniformly random Gelfand-Tsetlin pattern.
+
+        EXAMPLES::
+
+            sage: g = GelfandTsetlinPatterns(4, 5)
+            sage: g.random_element()
+            [[5, 2, 2, 1], [2, 2, 1], [2, 1], [1]]
+            sage: g = GelfandTsetlinPatterns(4, 5, strict=True)
+            sage: g.random_element()
+            [[5, 4, 1, 0], [5, 2, 1], [2, 1], [2]]
+        """
+        if self._n is not None and self._k is not None:
+            if self._strict and self._k+1 < self._n:
+                raise ValueError('Cannot sample from empty set')
+            elif self._k < 0:
+                raise ValueError('Cannot sample from empty set')
+            else:
+                return self._cftp(0)
+        else:
+            raise ValueError('Cannot sample from infinite set')
+
 class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
     """
     Gelfand-Tsetlin patterns with a fixed top row.
@@ -1081,3 +1240,44 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
         x = R.gens()[1:]
         GT = GelfandTsetlinPatterns(top_row=self._row, strict=True)
         return sum((t+1)**(gt.number_of_special_entries()) * t**(gt.number_of_boxes()) * prod(x[i]**gt.weight()[i] for i in range(n)) for gt in GT)
+
+    def _cftp_upper(self):
+        """
+        Return the largest member of the poset of Gelfand-Tsetlin patterns having the given ``top_row``.
+
+        TESTS:
+
+            sage: GelfandTsetlinPatterns(top_row = [5, 4, 3])._cftp_upper()
+            [[5, 4, 3], [5, 4], [5]]
+        """
+        return [[self._row[j] for j in range(self._n - i)] for i in range(self._n)]
+
+    def _cftp_lower(self):
+        """
+        Return the smallest member of the poset of Gelfand-Tsetlin patterns having the given ``top_row``.
+
+        TESTS:
+
+            sage: GelfandTsetlinPatterns(top_row = [5, 4, 3])._cftp_lower()
+            [[5, 4, 3], [4, 3], [3]]
+        """
+        return [[self._row[i + j] for j in range(self._n - i)] for i in range(self._n)]
+
+    def random_element(self):
+        """
+        Return a uniformly random Gelfand-Tsetlin pattern with specified top row.
+
+        EXAMPLES::
+
+            sage: g = GelfandTsetlinPatterns(top_row = [4, 3, 1, 1])
+            sage: g.random_element()
+            [[4, 3, 1, 1], [4, 3, 1], [4, 1], [3]]
+            sage: g = GelfandTsetlinPatterns(top_row=[4, 3, 2, 1], strict=True)
+            sage: g.random_element()
+            [[4, 3, 2, 1], [4, 2, 1], [4, 1], [2]]
+        """
+        if self._strict:
+            return self._cftp(1)
+        else:
+            l = [i for i in self._row if i > 0]
+            return SemistandardTableaux(l, max_entry=self._n).random_element().to_Gelfand_Tsetlin_pattern()

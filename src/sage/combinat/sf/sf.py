@@ -681,7 +681,75 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     .. rubric:: Implementing new bases
 
-    .. todo:: to be described
+    In order to implement a new symmetric function basis, Sage will need
+    to know at a minimum how to change back and forth between at least one
+    other basis (although they do not necessarily have to be the same basis).
+    All of the standard functions associated with the basis will have a
+    default implementation (although a more specific implementation may
+    be more efficient).
+
+    To present an idea of how this is done, we will create
+    here the example of how to implement the basis `s_\mu[X(1-t)]`.
+
+    To begin, we import the class
+    :class:`sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic()`.  Our
+    new basis will inherit all of the default methods from this class::
+
+        sage: from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic as SFA_generic
+
+    Now the basis we are creating has a parameter `t` which is possible
+    to specialize. In this example we will convert to and from the Schur
+    basis.  For this we implement methods ``_self_to_s`` and ``_s_to_self``.
+    By registering these two functions as coercions, Sage then knows
+    automatically how it possible to change between any two bases for
+    which there is a path of changes of bases. ::
+
+        sage: from sage.categories.morphism import SetMorphism
+        sage: class SFA_st(SFA_generic):
+        ....:     def __init__(self, Sym, t):
+        ....:         SFA_generic.__init__(self, Sym, basis_name=
+        ....:           "Schur functions with a plethystic substitution of X -> X(1-t)",
+        ....:           prefix='st')
+        ....:         self._s = Sym.s()
+        ....:         self.t = Sym.base_ring()(t)
+        ....:         cat = HopfAlgebras(Sym.base_ring()).WithBasis()
+        ....:         self.register_coercion(
+        ....:           SetMorphism(Hom(self._s, self, cat), self._s_to_self))
+        ....:         self._s.register_coercion(
+        ....:           SetMorphism(Hom(self, self._s, cat), self._self_to_s))
+        ....:     def _s_to_self(self, f):
+        ....:         # f is a Schur function and the output is in the st basis
+        ....:         return self._from_dict(f.theta_qt(0,self.t)._monomial_coefficients)
+        ....:     def _self_to_s(self, f):
+        ....:         # f is in the st basis and the output is in the Schur basis
+        ....:         return self._s.sum(cmu*self._s(mu).theta_qt(self.t,0) for mu,cmu in f)
+        ....:     class Element(SFA_generic.Element):
+        ....:         pass
+
+    An instance of this basis is created by calling it with a symmetric
+    function ring ``Sym`` and a parameter ``t`` which is in the base ring
+    of ``Sym``.  The ``Element`` class inherits all of the methods from
+    :class:`sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element`.
+
+    In the reference [MAC]_ on page 354, this basis is denoted
+    `S_\lambda(x;t)` and the change of basis coefficients of the
+    Macdonald ``J`` basis are the coefficients `K_{\lambda\mu}(q,t)`.
+    Here is an example of its use::
+
+        sage: QQqt = QQ['q','t'].fraction_field()
+        sage: (q,t) = QQqt.gens()
+        sage: st = SFA_st(SymmetricFunctions(QQqt),t)
+        sage: st
+        Symmetric Functions over Fraction Field of Multivariate Polynomial
+         Ring in q, t over Rational Field in the Schur functions with a
+         plethystic substitution of X -> X(1-t) basis
+        sage: st[2,1] * st[1]
+        st[2, 1, 1] + st[2, 2] + st[3, 1]
+        sage: st([2]).coproduct()
+        st[] # st[2] + st[1] # st[1] + st[2] # st[]
+        sage: J = st.symmetric_function_ring().macdonald().J()
+        sage: st(J[2,1])
+        q*st[1, 1, 1] + (q*t+1)*st[2, 1] + t*st[3]
 
     .. rubric:: Acknowledgements
 

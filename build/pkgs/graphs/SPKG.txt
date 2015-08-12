@@ -12,13 +12,27 @@ Grout. Since April 2012 it also contains the ISGCI graph database.
 
 == Upstream Contact ==
 
- * For ISGCI : H.N. de Ridder (hnridder@graphclasses.org)
+ * For ISGCI:
+ 
+   H.N. de Ridder (hnridder@graphclasses.org)
+
+ * For Andries Brouwer's database:
+
+   The data is taken from from Andries E. Brouwer's website
+   (http://www.win.tue.nl/~aeb/). Anything related to the data should be
+   reported to him directly (aeb@cwi.nl)
+
+   The code used to parse the data and create the .json file is available at
+   https://github.com/nathanncohen/strongly_regular_graphs_database.
 
 == Dependencies ==
 
 N/A
 
 == Changelog ==
+
+== graphs-20150724.p6 (Nathann Cohen, 2013-07-24 ==
+ * Added the database on strongly regular graphs
 
 == graphs-20130920.p5 (Nathann Cohen, 2013-09-20) ==
  * #14396: Update of isgci_sage.xml, added smallgraphs.txt

@@ -1,6 +1,6 @@
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 
+from sage.libs.gmp.types cimport mpz_t, mpq_t
 from sage.rings.padics.padic_ZZ_pX_element cimport pAdicZZpXElement
 from sage.structure.element cimport RingElement, ModuleElement
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX

@@ -90,7 +90,7 @@ def CongruenceSubgroup_constructor(*args):
     if is_MatrixGroup(args[0]):
         G = args[0]
 
-    elif isinstance(args[0], type([])):
+    elif isinstance(args[0], list):
         G = MatrixGroup(args[0])
 
     elif args[0] in ZZ:

@@ -315,7 +315,7 @@ class IntegerListsLex(Parent):
 
         sage: L = IntegerListsLex(3, check=False)
         sage: it = iter(L)
-        sage: [it.next() for i in range(6)]
+        sage: [next(it) for i in range(6)]
         [[3], [2, 1], [2, 0, 1], [2, 0, 0, 1], [2, 0, 0, 0, 1], [2, 0, 0, 0, 0, 1]]
 
     In fact, being inverse lexicographically enumerable is almost
@@ -412,7 +412,7 @@ class IntegerListsLex(Parent):
 
             sage: L = IntegerListsLex(3, floor=lambda i: 0, check=False)
             sage: it = iter(L)
-            sage: [it.next() for i in range(6)]
+            sage: [next(it) for i in range(6)]
             [[3], [2, 1], [2, 0, 1], [2, 0, 0, 1], [2, 0, 0, 0, 1], [2, 0, 0, 0, 0, 1]]
 
         Hence a warning is raised when a function is specified as
@@ -431,11 +431,11 @@ class IntegerListsLex(Parent):
             sage: L.first()           # not tested: will hang forever
             sage: L = IntegerListsLex(2,ceiling=lambda i:0 if i<20 else 1, check=False)
             sage: it = iter(L)
-            sage: it.next()
+            sage: next(it)
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
-            sage: it.next()
+            sage: next(it)
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
-            sage: it.next()
+            sage: next(it)
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]
 
 
@@ -495,7 +495,7 @@ class IntegerListsLex(Parent):
         sage: C
         Disjoint union of Lazy family (<lambda>(i))_{i in Non negative integer semiring}
         sage: it = iter(C)
-        sage: [it.next() for i in range(10)]
+        sage: [next(it) for i in range(10)]
         [[0, 0],
          [1, 0], [0, 1],
          [2, 0], [1, 1], [0, 2],
@@ -730,9 +730,9 @@ class IntegerListsLex(Parent):
     Same, step by step::
 
         sage: it = iter(P)
-        sage: a = it.next(); a
+        sage: a = next(it); a
         [3]
-        sage: b = it.next(); b
+        sage: b = next(it); b
         [2, 1]
         sage: a
         [3]
@@ -1243,9 +1243,9 @@ If you know what you are doing, you can set check=False to skip this warning."""
         a = self._element_constructor
         b = other._element_constructor
         if ismethod(a):
-            a = a.im_func
+            a = a.__func__
         if ismethod(b):
-            b = b.im_func
+            b = b.__func__
         return a == b
 
     def __ne__(self, other):
@@ -1587,9 +1587,9 @@ class IntegerListsLexIter:
             sage: from sage.combinat.integer_list import IntegerListsLexIter
             sage: C = IntegerListsLex(2, length=3)
             sage: I = IntegerListsLexIter(C)
-            sage: I.next()
+            sage: next(I)
             [2, 0, 0]
-            sage: I.next()
+            sage: next(I)
             [1, 1, 0]
         """
         p = self._parent
@@ -1675,7 +1675,7 @@ class IntegerListsLexIter:
             []
             sage: I._internal_list_valid()
             False
-            sage: I.next()
+            sage: next(I)
             [2, 0, 0]
             sage: I._current_list
             [2, 0, 0]

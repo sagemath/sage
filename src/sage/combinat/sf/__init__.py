@@ -18,7 +18,7 @@ Symmetric Functions
 - :ref:`sage.combinat.sf.kfpoly`
 - :ref:`sage.combinat.sf.hall_littlewood`
 - :ref:`sage.combinat.sf.jack`
-- :ref:`sage.combinat.sf.new_kschur`
+- :ref:`k-Schur Functions <sage.combinat.sf.new_kschur>`
 - :ref:`sage.combinat.sf.k_dual`
 - :ref:`sage.combinat.sf.llt`
 - :ref:`sage.combinat.sf.macdonald`

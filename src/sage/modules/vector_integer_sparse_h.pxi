@@ -4,6 +4,8 @@
 #
 #############################################################
 
+from sage.libs.gmp.types cimport mpz_t
+
 cdef struct mpz_vector:
     mpz_t *entries      # array of nonzero entries
     Py_ssize_t   *positions    # positions of those nonzero entries, starting at 0

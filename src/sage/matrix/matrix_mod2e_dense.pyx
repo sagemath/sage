@@ -67,8 +67,6 @@ REFERENCES:
 """
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
-include 'sage/ext/random.pxi'
 
 cimport matrix_dense
 from sage.structure.element cimport Matrix, Vector
@@ -1281,15 +1279,16 @@ cdef class Matrix_mod2e_dense(matrix_dense.Matrix_dense):
         A._entries = mzed_stack(A._entries, self._entries, other._entries)
         return A
 
-    def submatrix(self, lowr, lowc, nrows , ncols):
+    def submatrix(self, Py_ssize_t row=0, Py_ssize_t col=0,
+                        Py_ssize_t nrows=-1, Py_ssize_t ncols=-1):
         """
-        Return submatrix from the index ``lowr,lowc`` (inclusive) with
+        Return submatrix from the index ``row,col`` (inclusive) with
         dimension ``nrows x ncols``.
 
         INPUT:
 
-        - ``lowr`` -- index of start row
-        - ``lowc`` -- index of start column
+        - ``row`` -- index of start row
+        - ``col`` -- index of start column
         - ``nrows`` -- number of rows of submatrix
         - ``ncols`` -- number of columns of submatrix
 
@@ -1310,12 +1309,28 @@ cdef class Matrix_mod2e_dense(matrix_dense.Matrix_dense):
              True
              sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
              True
-        """
-        cdef int highr = lowr + nrows
-        cdef int highc = lowc + ncols
 
-        if nrows <= 0 or ncols <= 0:
-            raise TypeError("Expected nrows, ncols to be > 0, but got %d,%d instead."%(nrows, ncols))
+        TESTS for handling of default arguments (ticket #18761)::
+
+             sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
+             True
+             sage: A.submatrix(row=100,col=37,nrows=1,ncols=3) == A.submatrix(100,37,1,3)
+             True
+        """
+        if nrows < 0:
+            nrows = self._nrows - row
+
+        if ncols < 0:
+            ncols = self._ncols - col
+
+        cdef int highr = row + nrows
+        cdef int highc = col + ncols
+
+        if row < 0:
+            raise TypeError("Expected row >= 0, but got %d instead."%row)
+
+        if col < 0:
+            raise TypeError("Expected col >= 0, but got %d instead."%col)
 
         if highc > self._entries.ncols:
             raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead."%(highc, self._entries.ncols))
@@ -1323,16 +1338,10 @@ cdef class Matrix_mod2e_dense(matrix_dense.Matrix_dense):
         if highr > self._entries.nrows:
             raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
 
-        if lowr < 0:
-            raise TypeError("Expected lowr >= 0, but got %d instead."%lowr)
-
-        if lowc < 0:
-            raise TypeError("Expected lowc >= 0, but got %d instead."%lowc)
-
         cdef Matrix_mod2e_dense A = self.new_matrix(nrows = nrows, ncols = ncols)
-        if self._ncols == 0 or self._nrows == 0:
+        if ncols == 0 or nrows == 0:
             return A
-        A._entries = mzed_submatrix(A._entries, self._entries, lowr, lowc, highr, highc)
+        A._entries = mzed_submatrix(A._entries, self._entries, row, col, highr, highc)
         return A
 
     def rank(self):

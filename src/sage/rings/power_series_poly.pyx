@@ -553,34 +553,6 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f + right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef ModuleElement _iadd_(self, ModuleElement right_m):
-        """
-        EXAMPLES::
-
-            sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: f = x^4
-            sage: f += x; f
-            x + x^4
-            sage: g = x^2 + O(x^3); g
-            x^2 + O(x^3)
-            sage: f += g; f
-            x + x^2 + O(x^3)
-            sage: f._iadd_(g)
-            x + 2*x^2 + O(x^3)
-        """
-        cdef PowerSeries_poly right = <PowerSeries_poly>right_m
-        self.__f += right.__f
-        if self._prec is not infinity:
-            if self._prec < right._prec:
-                self.__f = self.__f._inplace_truncate(self._prec)
-            else:
-                self.__f = self.__f._inplace_truncate(right._prec)
-                self._prec = right._prec
-        elif right._prec is not infinity:
-            self.__f = self.__f._inplace_truncate(right._prec)
-            self._prec = right._prec
-        return self
-
     cpdef ModuleElement _sub_(self, ModuleElement right_m):
         """
         Return the difference of two power series.
@@ -612,29 +584,6 @@ cdef class PowerSeries_poly(PowerSeries):
                                 prec = prec,
                                 check = True)  # check, since truncation may be needed
 
-    cpdef RingElement _imul_(self, RingElement right_r):
-        """
-        Set self to self * right_r, and return this result.
-
-        EXAMPLES::
-
-            sage: k.<w> = ZZ[[]]
-            sage: f = (1+17*w+15*w^3+O(w^5))
-            sage: f *= (19*w^10+O(w^12))
-            sage: f
-            19*w^10 + 323*w^11 + O(w^12)
-
-            sage: f = 1 + w^2 + O(w^5)
-            sage: f._imul_(w^3)
-            w^3 + w^5 + O(w^8)
-        """
-        prec = self._mul_prec(right_r)
-        self.__f *= (<PowerSeries_poly>right_r).__f
-        if prec is not infinity:
-            self.__f = self.__f._inplace_truncate(prec)
-            self._prec = prec
-        return self
-
     cpdef ModuleElement _rmul_(self, RingElement c):
         """
         Multiply self on the right by a scalar.
@@ -660,22 +609,6 @@ cdef class PowerSeries_poly(PowerSeries):
             2 + 6*t^4 + O(t^120)
         """
         return PowerSeries_poly(self._parent, c * self.__f, self._prec, check=False)
-
-    cpdef ModuleElement _ilmul_(self, RingElement c):
-        """
-        Set self to self left-multiplied by a scalar.
-
-        EXAMPLES::
-
-            sage: R.<t> = GF(13)[[]]
-            sage: f = 3 + 7*t^3 + O(t^4)
-            sage: f._ilmul_(2)
-            6 + t^3 + O(t^4)
-            sage: f *= 7 ; f
-            3 + 7*t^3 + O(t^4)
-        """
-        self.__f *= c
-        return self
 
     def __floordiv__(self, denom):
         """

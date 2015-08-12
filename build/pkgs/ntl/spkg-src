@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
 
-NTL=ntl-6.2.1
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
+    echo >&2 "Maybe run 'sage -sh'?"
+    exit 1
+fi
 
 
-SPKG_ROOT=`pwd`
+NTL=ntl-9.3.0
+SPKG_ROOT="$SAGE_ROOT/build/pkgs/ntl"
 
 set -e
-shopt -s extglob
+
+cd "$SPKG_ROOT"
 
 # Remove old sources and download new
 rm -rf src
 mkdir src
 cd src
 
-tar xzf <( curl -L "http://www.shoup.net/ntl/$NTL.tar.gz" )
+tar xzf <( sage-download-file "http://www.shoup.net/ntl/$NTL.tar.gz" )
 
 if [ ! -d "$NTL" ]; then
     echo "$NTL directory not in tarball, aborting"
@@ -40,3 +46,5 @@ rm -rf autom4te.cache
 # Make everything writable
 cd "$SPKG_ROOT"
 chmod -R u+w src
+tar c src | bzip2 --best >"$SAGE_DISTFILES/$NTL.tar.bz2"
+rm -rf src

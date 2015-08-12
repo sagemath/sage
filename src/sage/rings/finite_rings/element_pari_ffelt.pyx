@@ -20,6 +20,8 @@ AUTHORS:
 
 include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
+from sage.libs.pari.paridecl cimport *
+from sage.libs.pari.paripriv cimport *
 include "sage/libs/pari/pari_err.pxi"
 
 from element_base cimport FinitePolyExtElement

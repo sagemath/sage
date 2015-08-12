@@ -68,7 +68,7 @@ which is anyway set to raise an error::
 
 from sage.symbolic.ring import SR
 
-from sage.libs.ecl import *
+from sage.libs.ecl import EclObject, ecl_eval
 
 from maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
   MaximaAbstractElement, MaximaAbstractFunctionElement,
@@ -426,7 +426,7 @@ class MaximaLib(MaximaAbstract):
                 statement = line[:ind_dollar]
                 line = line[ind_dollar+1:]
                 if statement:
-                    _ = maxima_eval("#$%s$"%statement)
+                    maxima_eval("#$%s$" % statement)
         if not reformat:
             return result
         return ''.join([x.strip() for x in result.split()])
@@ -871,7 +871,7 @@ class MaximaLib(MaximaAbstract):
             else:
                 raise
 
-    def sr_limit(self,expr,v,a,dir=None):
+    def sr_limit(self, expr, v, a, dir=None):
         """
         Helper function to wrap calculus use of Maxima's limits.
 
@@ -936,12 +936,12 @@ class MaximaLib(MaximaAbstract):
 
         """
         try:
-            L=[sr_to_max(SR(a)) for a in [expr,v,a]]
+            L = [sr_to_max(SR(aa)) for aa in [expr, v, a]]
             if dir == "plus":
                 L.append(max_plus)
             elif dir == "minus":
                 L.append(max_minus)
-            return max_to_sr(maxima_eval(([max_limit],L)))
+            return max_to_sr(maxima_eval(([max_limit], L)))
         except RuntimeError as error:
             s = str(error)
             if "Is" in s: # Maxima asked for a condition
@@ -949,7 +949,7 @@ class MaximaLib(MaximaAbstract):
             else:
                 raise
 
-    def sr_tlimit(self,expr,v,a,dir=None):
+    def sr_tlimit(self, expr, v, a, dir=None):
         """
         Helper function to wrap calculus use of Maxima's Taylor series limits.
 
@@ -959,13 +959,13 @@ class MaximaLib(MaximaAbstract):
             sage: limit(f, x = I, taylor=True)
             (-I + 1)^I
         """
-        L=[sr_to_max(SR(a)) for a in [expr,v,a]]
+        L = [sr_to_max(SR(aa)) for aa in [expr, v, a]]
         if dir == "plus":
             L.append(max_plus)
         elif dir == "minus":
             L.append(max_minus)
-        return max_to_sr(maxima_eval(([max_tlimit],L)))
-    
+        return max_to_sr(maxima_eval(([max_tlimit], L)))
+
     def _missing_assumption(self,errstr):
         """
         Helper function for unified handling of failed computation because an

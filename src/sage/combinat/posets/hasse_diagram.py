@@ -1,5 +1,8 @@
 r"""
 Hasse diagrams of posets
+
+{INDEX_OF_FUNCTIONS}
+
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Peter Jipsen <jipsen@chapman.edu>,
@@ -58,6 +61,8 @@ class HasseDiagram(DiGraph):
 
     def linear_extension(self):
         r"""
+        Return a linear extension
+
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -70,6 +75,8 @@ class HasseDiagram(DiGraph):
 
     def linear_extensions(self):
         r"""
+        Return all linear extensions
+
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -81,6 +88,8 @@ class HasseDiagram(DiGraph):
 
     def is_linear_extension(self,lin_ext=None):
         r"""
+        Test if an ordering is a linear extension.
+
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -103,6 +112,8 @@ class HasseDiagram(DiGraph):
 
     def cover_relations_iterator(self):
         r"""
+        Iterate over cover relations.
+
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -115,6 +126,8 @@ class HasseDiagram(DiGraph):
 
     def cover_relations(self):
         r"""
+        Return the list of cover relations.
+
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -1525,3 +1538,7 @@ class HasseDiagram(DiGraph):
         return PairwiseCompatibleSubsets(vertices,
                                          self.are_comparable,
                                          element_class = element_class)
+
+from sage.misc.rest_index_of_methods import gen_rest_table_index
+import sys
+__doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index(HasseDiagram))

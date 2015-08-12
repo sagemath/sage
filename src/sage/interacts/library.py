@@ -393,7 +393,7 @@ def trigonometric_properties_triangle(
     xy = [0]*3
     html('<h2>Trigonometric Properties of a Triangle</h2>')
     # Coordinates of the angles
-    a = map(lambda x : math.radians(float(x)), [a0, a1, a2])
+    a = [math.radians(float(x)) for x in [a0, a1, a2]]
     for i in range(3):
         xy[i] = (cos(a[i]), sin(a[i]))
 
@@ -559,7 +559,7 @@ def special_points(
         return plot((y2-y1) / (x2-x1) * (x-x1) + y1, (x,-3,3), **plot_kwargs)
 
     # Coordinates of the angles
-    a = map(lambda x : math.radians(float(x)), [a0, a1, a2])
+    a = [math.radians(float(x)) for x in [a0, a1, a2]]
     xy = [(math.cos(a[i]), math.sin(a[i])) for i in range(3)]
 
     # Labels of the angles drawn in a distance from points

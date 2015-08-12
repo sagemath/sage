@@ -1,5 +1,4 @@
-include "sage/libs/singular/singular-cdefs.pxi"
-
+from sage.libs.singular.decl cimport *
 from sage.rings.ring cimport Ring
 from sage.structure.element cimport RingElement, Element
 from sage.structure.parent cimport Parent

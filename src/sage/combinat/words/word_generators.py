@@ -1439,7 +1439,7 @@ class WordGenerator(object):
             sage: words.UpperChristoffelWord(4,7)
             word: 10100100100
 
-        TESTS:::
+        TESTS::
 
             sage: words.UpperChristoffelWord(51,43,"abc")
             Traceback (most recent call last):

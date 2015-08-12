@@ -345,7 +345,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         from sage.categories.sets_cat import EmptySetError
         it = iter(self)
         try:
-            B = it.next()
+            B = next(it)
         except StopIteration:
             raise EmptySetError("no {}-evenly distributed set in {}".format(self.k,self.K))
         self.to_difference_family(B, check=True) # check the validity

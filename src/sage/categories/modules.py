@@ -352,7 +352,7 @@ class Modules(Category_module):
             r"""
             Return the subcategory of the graded objects of ``self``.
 
-            INPUT::
+            INPUT:
 
             - ``base_ring`` -- this is ignored
 

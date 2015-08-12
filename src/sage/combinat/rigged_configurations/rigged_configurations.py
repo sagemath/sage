@@ -37,6 +37,7 @@ from sage.combinat.rigged_configurations.kleber_tree import KleberTree, VirtualK
 from sage.combinat.rigged_configurations.rigged_configuration_element import (
      RiggedConfigurationElement, KRRCSimplyLacedElement, KRRCNonSimplyLacedElement,
      KRRCTypeA2DualElement)
+from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition
 
 RiggedConfigurationOptions=GlobalOptions(name='rigged configurations',
     doc=r"""
@@ -725,7 +726,24 @@ class RiggedConfigurations(Parent, UniqueRepresentation):
             -1[ ]-1
             -1[ ]-1
             <BLANKLINE>
+
+        TESTS:
+
+        Check that :trac:`17054` is fixed::
+
+            sage: B = crystals.infinity.RiggedConfigurations(['A',2])
+            sage: RC = RiggedConfigurations(['A',2,1], [[1,1]]*4 + [[2,1]]*4)
+            sage: x = B.an_element().f_string([2,2,1,1,2,1,2,1])
+            sage: ascii_art(x)
+            -4[ ][ ][ ][ ]-4  -4[ ][ ][ ][ ]0
+            sage: ascii_art(RC(x))
+            0[ ][ ][ ][ ]-4  0[ ][ ][ ][ ]0
+            sage: x == B.an_element().f_string([2,2,1,1,2,1,2,1])
+            True
         """
+        if not lst:
+            return self.element_class(self, [], **options)
+
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux_element import TensorProductOfKirillovReshetikhinTableauxElement
         if isinstance(lst[0], TensorProductOfKirillovReshetikhinTableauxElement):
             if self != lst[0].parent().rigged_configurations():
@@ -741,8 +759,13 @@ class RiggedConfigurations(Parent, UniqueRepresentation):
             krt_elt = KRT(*[x.to_kirillov_reshetikhin_tableau() for x in lst])
             return krt_elt.to_rigged_configuration()
 
-        if isinstance(lst[0], RiggedConfigurationElement):
+        if isinstance(lst[0], (list, tuple)):
             lst = lst[0]
+
+        if isinstance(lst[0], RiggedPartition):
+            lst = [p._clone() for p in lst] # Make a deep copy
+        elif isinstance(lst[0], RiggedConfigurationElement):
+            lst = [p._clone() for p in lst[0]] # Make a deep copy
 
         return self.element_class(self, list(lst), **options)
 
@@ -1828,7 +1851,6 @@ class RCTypeA2Dual(RCTypeA2Even):
             yield []
             return
 
-        half = lambda x: QQ(x) / QQ(2)
         pos = 0
         length = len(container)
         ret_part = [-1] * length
@@ -1842,7 +1864,7 @@ class RCTypeA2Dual(RCTypeA2Even):
                 pos += 1
 
             if pos == length:
-                yield map(half, ret_part[:])
+                yield [QQ(_) / QQ(2) for _ in ret_part]
                 pos -= 1
 
     def to_virtual(self, rc):

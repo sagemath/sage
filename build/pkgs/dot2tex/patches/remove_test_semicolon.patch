@@ -1,0 +1,32 @@
+--- src/tests/test_dot2tex.py        2014-11-08 10:21:31.565955354 -0800
++++ src/tests/test_dot2tex.py        2014-11-08 10:24:09.985964244 -0800
+@@ -137,29 +137,6 @@
+         self.failUnless(r'{1.2.3.4}' in source)
+ 
+ 
+-class MultipleStatements(unittest.TestCase):
+-    # https://github.com/kjellmf/dot2tex/issues/5
+-    def test_semicolon(self):
+-        """Test for issue 5"""
+-        testgraph1 = """
+-        digraph example {
+-          a -> b
+-          a -> c
+-          {rank=same; b;c}
+-        }"""
+-        testgraph2 = """
+-        digraph example {
+-          a -> b;
+-          a -> c;
+-          {rank=same; b;c}
+-        }"""
+-        source1 = dot2tex.dot2tex(testgraph1,
+-                                  figonly=True, format='tikz', autosize=True)
+-        source2 = dot2tex.dot2tex(testgraph2,
+-                                  figonly=True, format='tikz', autosize=True)
+-        self.failUnless(source1 == source2)
+-
+-
+ class TestPositionsOutputFormat(unittest.TestCase):
+     # http://code.google.com/p/dot2tex/issues/detail?id=20
+     def test_floating_point_coordinates(self):

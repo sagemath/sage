@@ -1,4 +1,3 @@
-# distutils: libraries = gmp
 r"""
 Common graphs and digraphs generators (Cython)
 

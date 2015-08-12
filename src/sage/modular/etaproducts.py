@@ -42,7 +42,6 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module import FreeModule
 from sage.misc.misc import union
 
-from string import join
 import weakref
 
 ZZ = IntegerRing()
@@ -474,7 +473,7 @@ class EtaGroupElement(MultiplicativeGroupElement):
         if self.degree() == 0:
             return "1"
         else:
-            return join(["(eta_%s)^%s" % (d,self.r(d)) for d in self._keys])
+            return " ".join("(eta_%s)^%s" % (d,self.r(d)) for d in self._keys)
 
     def _repr_(self):
         r"""

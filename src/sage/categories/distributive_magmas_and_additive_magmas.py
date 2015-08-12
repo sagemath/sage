@@ -51,7 +51,7 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
             Test the distributivity of `*` on `+` on (not necessarily
             all) elements of this set.
 
-            INPUT::
+            INPUT:
 
             - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 

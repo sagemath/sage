@@ -42,7 +42,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
         sage: Sets().Realizations().super_categories()
         [Category of sets]
         sage: Groups().Realizations().super_categories()
-        [Category of groups, Category of realizations of magmas]
+        [Category of groups, Category of realizations of unital magmas]
     """
 
     _functor_category = "Realizations"
@@ -66,7 +66,7 @@ def Realizations(self):
     The category of realizations of some algebra::
 
         sage: Algebras(QQ).Realizations()
-        Join of Category of algebras over Rational Field and Category of realizations of magmas
+        Join of Category of algebras over Rational Field and Category of realizations of unital magmas
 
     The category of realizations of a given algebra::
 

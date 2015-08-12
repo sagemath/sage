@@ -1,4 +1,3 @@
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement

@@ -101,7 +101,7 @@ decl_re = re.compile(" ([A-Za-z][A-Za-z0-9_]*)[(]")
 
 def read_decl():
     """
-    Read the files ``decl.pxi`` and ``declinl.pxi`` and return a set
+    Read the files ``paridecl.pxd`` and ``declinl.pxi`` and return a set
     of all declared PARI library functions.
 
     We do a simple regexp search, so there might be false positives.
@@ -114,7 +114,7 @@ def read_decl():
         {'ABC_to_bnr', ..., 'zx_to_ZX'}
     """
     s = set()
-    with open(os.path.join(sage_src_pari(), "decl.pxi")) as f:
+    with open(os.path.join(sage_src_pari(), "paridecl.pxd")) as f:
         s.update(decl_re.findall(f.read()))
     with open(os.path.join(sage_src_pari(), "declinl.pxi")) as f:
         s.update(decl_re.findall(f.read()))

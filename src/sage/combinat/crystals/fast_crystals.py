@@ -411,7 +411,7 @@ class FastCrystal(UniqueRepresentation, Parent):
                 sage: C(1) <= C(1)
                 True
             """
-            if not isinstance(self, type(other)):
+            if type(self) is not type(other):
                 return cmp(type(self), type(other))
             if self.parent() != other.parent():
                 return cmp(self.parent(), other.parent())

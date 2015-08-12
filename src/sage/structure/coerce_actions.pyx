@@ -1,13 +1,17 @@
 """
 Coerce actions
 """
+
 #*****************************************************************************
 #     Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#                    http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 
 import operator
 
@@ -15,14 +19,9 @@ include "sage/ext/interrupt.pxi"
 from cpython.int cimport *
 from cpython.number cimport *
 from sage.structure.element cimport parent_c
-include "coerce.pxi"
 
 from sage.categories.action import InverseAction, PrecomposedAction
 from coerce_exceptions import CoercionException
-
-cdef extern from *:
-    ctypedef struct RefPyObject "PyObject":
-        int ob_refcnt
 
 cdef _record_exception():
     from element import get_coercion_model
@@ -571,10 +570,6 @@ cdef class LeftModuleAction(ModuleAction):
 
 
 cdef class RightModuleAction(ModuleAction):
-
-    def __cinit__(self):
-        self.is_inplace = 0
-
     cpdef _call_(self, a, g):
         """
         A right module action is an action that takes the module element as the
@@ -601,22 +596,7 @@ cdef class RightModuleAction(ModuleAction):
             g = self.connecting._call_(g)
         if self.extended_base is not None:
             a = self.extended_base(a)
-            # TODO: figure out where/why the polynomial constructor is caching 'a'
-            if (<RefPyObject *>a).ob_refcnt == 2:
-                b = self.extended_base(0)
-            if (<RefPyObject *>a).ob_refcnt == 1:
-                # This is a truly new object, mutate it
-                return (<ModuleElement>a)._ilmul_(<RingElement>g)  # a * g
-            else:
-                return (<ModuleElement>a)._lmul_(<RingElement>g)  # a * g
-        else:
-            # If we have few enough references to this object, then we know
-            # it is safe to do a (mutating) inplace operation.
-            if (<RefPyObject *>a).ob_refcnt < inplace_threshold + self.is_inplace:
-                return (<ModuleElement>a)._ilmul_(<RingElement>g)  # a * g
-            else:
-                return (<ModuleElement>a)._lmul_(<RingElement>g)  # a * g
-
+        return (<ModuleElement>a)._lmul_(<RingElement>g)  # a * g
 
 
 cdef class IntegerMulAction(Action):

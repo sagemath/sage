@@ -39,8 +39,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.calculus.functions       import jacobian
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset        import Hom, End
+from sage.combinat.sf.sf           import SymmetricFunctions
 from sage.functions.all            import sqrt
 from sage.libs.pari.all            import PariError
 from sage.matrix.constructor       import matrix, identity_matrix
@@ -49,7 +51,7 @@ from sage.misc.cachefunc           import cached_method
 from sage.misc.misc                import subsets
 from sage.misc.mrange              import xmrange
 from sage.modules.free_module_element import vector
-from sage.rings.all                import Integer, moebius
+from sage.rings.all                import Integer, moebius, CIF
 from sage.rings.arith              import gcd, lcm, next_prime, binomial, primes
 from sage.rings.complex_field      import ComplexField_class,ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField_class
@@ -193,9 +195,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 try:
                     x = self.domain()(x)
                 except (TypeError, NotImplementedError):
-                    raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain())
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain()))
             elif self.domain()!=x.codomain():
-                raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain())
+                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain()))
 
         # Passes the array of args to _fast_eval
         P = self._fast_eval(x._coords)
@@ -508,7 +510,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         For a map `f:\mathbb{P}^1 \to \mathbb{P}^1` this function computes the dynatomic polynomial.
 
         The dynatomic polynomial is the analog of the cyclotomic
-        polynomial and its roots are the points of formal period `period`.
+        polynomial and its roots are the points of formal period `period`. If possible the division is
+        done in the coordinate ring of ``self`` and a polynomial is returned. In rings where that is not possible,
+        a FractionField element will be returned. In certain cases, when the conversion back to a polynomial
+        fails, a SymbolRing element will be returned.
 
         ALGORITHM:
 
@@ -543,12 +548,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         OUTPUT:
 
         - If possible, a two variable polynomial in the coordinate ring of ``self``.
-          Otherwise a fraction field element of the coordinate ring of ``self``
+          Otherwise a fraction field element of the coordinate ring of ``self``. Or,
+          a Symbolic Ring element.
 
         .. TODO::
 
-            Do the division when the base ring is p-adic or a function field
-            so that the output is a polynomial.
+            - Do the division when the base ring is p-adic so that the output is a polynomial.
+
+            - Convert back to a polynomial when the base ring is a function field (not over `\QQ` or `F_p`)
 
         EXAMPLES::
 
@@ -680,9 +687,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y> = ProjectiveSpace(CC, 1)
             sage: H = Hom(P,P)
-            sage: f = H([x^2+(1+CC.0)*y^2,y^2])
+            sage: f = H([x^2-CC.0/3*y^2,y^2])
             sage: f.dynatomic_polynomial(2)
-            x^2 + x*y + (2.00000000000000 + 1.00000000000000*I)*y^2
+            0.666666666666667*x^2 + 0.333333333333333*y^2
 
         ::
 
@@ -692,57 +699,87 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H ([x^2 + (t ^ 2 + 1) * y^2 , y^2 ])
             sage: f.dynatomic_polynomial(2)
             x^2 + x*y + (t^2 + 2)*y^2
+
+        TESTS:
+
+        We check that the dynatomic polynomial has the right parent (see :trac:`18409`)::
+
+            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
+            sage: H = End(P)
+            sage: R = P.coordinate_ring()
+            sage: f = H([x^2-1/3*y^2,y^2])
+            sage: f.dynatomic_polynomial(2).parent()
+            Multivariate Polynomial Ring in x, y over Algebraic Field
+
+        ::
+
+            sage: T.<v> = QuadraticField(33)
+            sage: S.<t> = PolynomialRing(T)
+            sage: P.<x,y> = ProjectiveSpace(FractionField(S),1)
+            sage: H = End(P)
+            sage: f = H([t*x^2-1/t*y^2,y^2])
+            sage: f.dynatomic_polynomial([1,2]).parent()
+            Multivariate Polynomial Ring in x, y over Fraction Field of Univariate Polynomial
+            Ring in t over Number Field in v with defining polynomial x^2 - 33
+
+        This one still does not work, some function fields still return Symoblic Ring elements::
+
+            sage: S.<t> = FunctionField(CC)
+            sage: P.<x,y> = ProjectiveSpace(S,1)
+            sage: H = End(P)
+            sage: R = P.coordinate_ring()
+            sage: f = H([t*x^2-1*y^2,t*y^2])
+            sage: f.dynatomic_polynomial([1,2]).parent()
+            Symbolic Ring
        """
         if self.domain().ngens() > 2:
             raise TypeError("Does not make sense in dimension >1")
-        if (isinstance(period, (list, tuple)) is False):
+        if not isinstance(period, (list, tuple)):
             period = [0, period]
+        x = self.domain().gen(0)
+        y = self.domain().gen(1)
+        f0, f1 = F0, F1 = self._polys
+        PHI = self.base_ring().one()
+        n = period[1]
         if period[0] != 0:
             m = period[0]
             fm = self.nth_iterate_map(m)
             fm1 = self.nth_iterate_map(m - 1)
-            n = period[1]
-            PHI = 1;
-            x = self.domain().gen(0)
-            y = self.domain().gen(1)
-            F = self._polys
-            f = F
-            for d in range(1, n + 1):
+            for d in range(1, n):
                 if n % d == 0:
-                    PHI = PHI * ((y*F[0] - x*F[1]) ** moebius(n/d))
-                if d != n: # avoid extra iteration
-                    F = [f[0](F[0], F[1]), f[1](F[0], F[1])]
+                    PHI = PHI * ((y*F0 - x*F1) ** moebius(n/d))
+                F0, F1 = f0(F0, F1), f1(F0, F1)
+            PHI = PHI * (y*F0 - x*F1)
             if m != 0:
                 PHI = PHI(fm._polys)/ PHI(fm1._polys )
         else:
-            PHI = 1
-            x = self.domain().gen(0)
-            y = self.domain().gen(1)
-            F = self._polys
-            f = F
-            for d in range(1, period[1] + 1):
-                if period[1] % d == 0:
-                    PHI = PHI * ((y*F[0] - x*F[1]) ** moebius(period[1]/d))
-                if d != period[1]: # avoid extra iteration
-                    F = [f[0](F[0], F[1]), f[1](F[0], F[1])]
+            for d in range(1, n):
+                if n % d == 0:
+                    PHI = PHI * ((y*F0 - x*F1) ** moebius(n//d))
+                F0, F1 = f0(F0, F1), f1(F0, F1)
+            PHI = PHI * (y*F0 - x*F1)
         try:
             QR = PHI.numerator().quo_rem(PHI.denominator())
-            if QR[1] == 0:
+            if not QR[1]:
                 return(QR[0])
         except TypeError: # something Singular can't handle
             pass
+        #even when the ring can be passed to singular in quo_rem,
+        #it can't always do the division, so we call Maxima
         from sage.rings.padics.generic_nodes import is_pAdicField, is_pAdicRing
-        BR = self.domain().base_ring().base_ring()
-        if not (is_pAdicRing(BR) or is_pAdicField(BR)):
-            try:
-                PHI = PHI.numerator()._maxima_().divide(PHI.denominator())[0].sage()
-                # do it again to divide out by denominators of coefficients
-                PHI = PHI.numerator()._maxima_().divide(PHI.denominator())[0].sage()
-                if PHI.denominator() == 1:
-                    PHI = self.coordinate_ring()(PHI)
-            except TypeError: #something Maxima can't handle
-                pass
-        return(PHI)
+        if period != [0,1]: #period==[0,1] we don't need to do any division
+            BR = self.domain().base_ring().base_ring()
+            if not (is_pAdicRing(BR) or is_pAdicField(BR)):
+                try:
+                    PHI = PHI.numerator()._maxima_().divide(PHI.denominator())[0].sage()
+                    # do it again to divide out by denominators of coefficients
+                    PHI = PHI.numerator()._maxima_().divide(PHI.denominator())[0].sage()
+                    if not is_FractionFieldElement(PHI):
+                        from sage.symbolic.expression_conversions import polynomial
+                        PHI = polynomial(PHI, ring=self.coordinate_ring())
+                except (TypeError, NotImplementedError): #something Maxima, or the conversion, can't handle
+                    pass
+        return PHI
 
     def nth_iterate_map(self, n):
         r"""
@@ -812,26 +849,28 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^4 : x^2*z^2 : z^4)
         """
-        if self.domain() != self.codomain():
+        E = self.domain()
+        if E is not self.codomain():
             raise TypeError("Domain and Codomain of function not equal")
-        if n < 0:
+
+        D = int(n)
+        if D < 0:
             raise TypeError("Iterate number must be a positive integer")
         N = self.codomain().ambient_space().dimension_relative() + 1
         F = list(self._polys)
-        D = Integer(n).digits(2)  #need base 2
         Coord_ring = self.codomain().coordinate_ring()
         if isinstance(Coord_ring, QuotientRing_generic):
             PHI = [Coord_ring.gen(i).lift() for i in range(N)]
         else:
             PHI = [Coord_ring.gen(i) for i in range(N)]
-        for i in range(len(D)):
-            T = tuple([F[j] for j in range(N)])
-            for k in range(D[i]):
-                PHI = [PHI[j](T) for j in range(N)]
-            if i != len(D) - 1: #avoid extra iterate
-                F = [F[j](T) for j in range(N)] #'square'
-        H = Hom(self.domain(), self.codomain())
-        return(H(PHI))
+
+        while D:
+            if D&1:
+                PHI = [PHI[j](*F) for j in range(N)]
+            if D > 1: #avoid extra iterate
+                F = [F[j](*F) for j in range(N)] #'square'
+            D >>= 1
+        return End(E)(PHI)
 
     def nth_iterate(self, P, n, normalize=False):
         r"""
@@ -1535,11 +1574,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         kwds:
 
-        - ``N`` - positive integer. number of terms of the series to use, default: 10
+        - ``N`` - positive integer. number of terms of the series to use, (optional - default: 10)
 
         - ``prec`` - positive integer, float point or p-adic precision, default: 100
 
-        - ``error_bound`` - a positive real number
+        - ``error_bound`` - a positive real number (optional)
 
         OUTPUT:
 
@@ -1575,13 +1614,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         kwds:
 
-        - ``badprimes`` - a list of primes of bad reduction
+        - ``badprimes`` - a list of primes of bad reduction (optional)
 
         - ``N`` - positive integer. number of terms of the series to use in the local green functions
+          (optional - default: 10)
 
         - ``prec`` - positive integer, float point or p-adic precision, default: 100
 
-        - ``error_bound`` - a positive real number
+        - ``error_bound`` - a positive real number (optional)
 
         OUTPUT:
 
@@ -2179,11 +2219,23 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         """
         V = []
         E = []
+        #We store the points we encounter is a list, D. Each new point is checked to
+        #see if it is in that list (which uses ==) so that equal points with different
+        #representations only appear once in the graph.
+        D=[]
         for i in range(0, len(preper)):
-            V.append(str(preper[i]))
+            try:
+                V.append(D[D.index(preper[i])])
+            except ValueError:
+                D.append(preper[i])
+                V.append(preper[i])
             Q = self(preper[i])
             Q.normalize_coordinates()
-            E.append([str(Q)])
+            try:
+                E.append([D[D.index(Q)]])
+            except ValueError:
+                D.append(Q)
+                E.append([Q])
         from sage.graphs.digraph import DiGraph
         g = DiGraph(dict(zip(V, E)), loops=True)
         return(g)
@@ -2247,12 +2299,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         REFERENCES:
 
-        .. [Bruin-Molnar] N. Bruin and A. Molnar, Minimal models for rational
-           functions in a dynamical setting
-           LMS Journal of Computation and Mathematics, Volume 15 (2012), pp 400-417.
-
-        .. [Molnar] A. Molnar, Fractional Linear Minimal Models of Rational Functions,
-           M.Sc. Thesis.
+        [Bruin-Molnar]_, [Molnar]_
 
         INPUT:
 
@@ -2425,6 +2472,18 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([3*x^2*y - y^3,x^3 - 3*x*y^2])
             sage: f.automorphism_group(algorithm='CRT',return_functions=True,iso_type=True)
             ([x, (x + 1)/(x - 1), (-x + 1)/(x + 1), -x, 1/x, -1/x, (x - 1)/(x + 1), (-x - 1)/(x - 1)], 'Dihedral of order 8')
+
+        ::
+
+            sage: A.<z> = AffineSpace(QQ,1)
+            sage: H = End(A)
+            sage: f = H([1/z^3])
+            sage: F = f.homogenize(1)
+            sage: F.automorphism_group()
+            [
+            [1 0]  [0 2]  [-1  0]  [ 0 -2]
+            [0 1], [2 0], [ 0  1], [ 2  0]
+            ]
         """
 
         alg = kwds.get('algorithm',None)
@@ -2434,13 +2493,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         if self.domain().dimension_relative() != 1:
             raise NotImplementedError("Must be dimension 1")
-        else:
-            f = self.dehomogenize(1)
-            z = f[0].parent().gen()
+        f = self.dehomogenize(1)
+        R = PolynomialRing(f.base_ring(),'x')
         if is_FractionFieldElement(f[0]):
-            F = (f[0].numerator().polynomial(z))/f[0].denominator().polynomial(z)
+            F = (f[0].numerator().univariate_polynomial(R))/f[0].denominator().univariate_polynomial(R)
         else:
-            F = f[0].polynomial(z)
+            F = f[0].univariate_polynomial(R)
         from endPN_automorphism_group import automorphism_group_QQ_CRT, automorphism_group_QQ_fixedpoints
         if alg is None:
             if self.degree() <= 12:
@@ -2450,6 +2508,289 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             return(automorphism_group_QQ_CRT(F, p, return_functions, iso_type))
 
         return(automorphism_group_QQ_fixedpoints(F, return_functions, iso_type))
+
+    def wronskian_ideal(self):
+        r"""
+        Returns the ideal generated by the critical point locus.
+        This is the vanishing of the maximal minors of the jacobian matrix.
+        Not implemented for subvarieties.
+
+        OUTPUT: an ideal in ``self.domain().coordinate_ring()``
+
+        Examples::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<w> = NumberField(x^2+11)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x^2-w*y^2,w*y^2])
+            sage: f.wronskian_ideal()
+            Ideal ((4*w)*x*y) of Multivariate Polynomial Ring in x, y over Number
+            Field in w with defining polynomial x^2 + 11
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P2.<u,v,t> = ProjectiveSpace(K,2)
+            sage: H = Hom(P,P2)
+            sage: f = H([x^2-2*y^2,y^2,x*y])
+            sage: f.wronskian_ideal()
+            Ideal (4*x*y, 2*x^2 + 4*y^2, -2*y^2) of Multivariate Polynomial Ring in
+            x, y over Rational Field
+        """
+        dom = self.domain()
+        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        if not (is_ProjectiveSpace(dom) and is_ProjectiveSpace(self.codomain())):
+            raise NotImplementedError("Not implemented for subschemes")
+        N = dom.dimension_relative()+1
+        R = dom.coordinate_ring()
+        J = jacobian(self.defining_polynomials(),dom.gens())
+        return(R.ideal(J.minors(N)))
+
+    def critical_points(self, R = None):
+        r"""
+        Returns the critical points of the endomorphism ``self`` defined over the ring ``R``
+        or the base ring of ``self``. Must be dimension 1.
+
+        INPUT:
+
+            - ``R`` - a ring (optional)
+
+        OUTPUT: a list of projective space points defined over ``R``
+
+        Examples::
+
+            sage: set_verbose(None)
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^3-2*x*y^2 + 2*y^3, y^3])
+            sage: f.critical_points()
+            [(1 : 0)]
+            sage: K.<w> = QuadraticField(6)
+            sage: f.critical_points(K)
+            [(-1/3*w : 1), (1/3*w : 1), (1 : 0)]
+
+        ::
+
+            sage: set_verbose(None)
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([2*x^2-y^2, x*y])
+            sage: f.critical_points(QQbar)
+            [(-0.7071067811865475?*I : 1), (0.7071067811865475?*I : 1)]
+        """
+        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        PS = self.domain()
+        if not is_ProjectiveSpace(PS):
+            raise NotImplementedError("Not implemented for subschemes")
+        if not self.is_endomorphism():
+            raise NotImplementedError("Must be an endomorphism")
+        if PS.dimension_relative() > 1:
+            raise NotImplementedError("Use .wronskian_ideal() for dimension > 1")
+
+        if R is None:
+            F = self
+        else:
+            F = self.change_ring(R)
+        P = F.codomain()
+        wr = F.wronskian_ideal()
+        X = P.subscheme(wr)
+        crit_points = X.rational_points()
+        return crit_points
+
+    def is_postcritically_finite(self, err = 0.01):
+        r"""
+        Determine if ``self`` is post-critially finite for ``self`` an endomorphism of
+        `\mathbb{P}^1`, i.e., check if each critical point is preperiodic. The optional
+        parameter ``err`` is passed into ``is_preperiodic()`` as part of the preperiodic check.
+
+        INPUT:
+
+            - ``err`` - positive real number (optional, Default: 0.01)
+
+        OUTPUT: Boolean
+
+        Examples::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - y^2, y^2])
+            sage: f.is_postcritically_finite()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^3- y^3, y^3])
+            sage: f.is_postcritically_finite()
+            False
+
+        ::
+
+            sage: R.<z> = QQ[]
+            sage: K.<v> = NumberField(z^8 + 3*z^6 + 3*z^4 + z^2 + 1)
+            sage: PS.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(PS)
+            sage: f = H([x^3+v*y^3,y^3])
+            sage: f.is_postcritically_finite() # long time
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([6*x^2+16*x*y+16*y^2,-3*x^2-4*x*y-4*y^2])
+            sage: f.is_postcritically_finite()
+            True
+        """
+        if not self.is_endomorphism():
+            raise TypeError("Must be an endomorphism")
+
+        #iteration of subschemes not yet implemented
+        if self.domain().dimension_relative() > 1:
+            raise NotImplementedError("Only implemented in dimension 1")
+
+        #Since is_preperiodic uses heights we need to be over a numberfield
+        K = FractionField(self.codomain().base_ring())
+        if not K in _NumberFields and not K is QQbar:
+            raise NotImplementedError("Must be over a NumberField or a NumberField Order or QQbar")
+
+        F = self.change_ring(QQbar)
+        crit_points = F.critical_points()
+        pcf = True
+        i = 0
+        while pcf and i < len(crit_points):
+            if crit_points[i].is_preperiodic(F, err) == False:
+                pcf = False
+            i += 1
+        return(pcf)
+
+    def critical_point_portrait(self, check=True):
+        r"""
+        If ``self`` is post-critically finite, return the critical point portrait of ``self``.
+        This is the directed graph of iterates starting with the critical points. Must be
+        dimension 1. If ``check`` is True, then the map is first checked to see if it is
+        postcrtically finite.
+
+        INPUT:
+
+            - check - Boolean
+
+        OUTPUT: a digraph
+
+        Examples::
+
+            sage: R.<z> = QQ[]
+            sage: K.<v> = NumberField(z^6 + 2*z^5 + 2*z^4 + 2*z^3 + z^2 + 1)
+            sage: PS.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(PS)
+            sage: f = H([x^2+v*y^2,y^2])
+            sage: f.critical_point_portrait(check = False) # long time
+            Looped digraph on 6 vertices
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^5 + 5/4*x*y^4,y^5])
+            sage: f.critical_point_portrait(check = False)
+            Looped digraph on 5 vertices
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + 2*y^2,y^2])
+            sage: f.critical_point_portrait()
+            Traceback (most recent call last):
+            ...
+            TypeError: Map be be post-critically finite
+        """
+        #input checking done in is_postcritically_finite
+        if check:
+            if not self.is_postcritically_finite():
+                raise TypeError("Map be be post-critically finite")
+        F = self.change_ring(QQbar)
+        crit_points = F.critical_points()
+        N = len(crit_points)
+        for i in range(N):
+            done = False
+            Q= F(crit_points[i])
+            while not done:
+                if Q in crit_points:
+                    done = True
+                else:
+                    crit_points.append(Q)
+                Q = F(Q)
+        return(F._preperiodic_points_to_cyclegraph(crit_points))
+
+    def critical_height(self, **kwds):
+        r"""
+        Compute the critical height of ``self``. The critical height is defined by J. Silverman as
+        the sum of the canonical heights of the critical points. This must be dimension 1 and
+        defined over a number field or number field order.
+
+        INPUT:
+
+        kwds:
+
+        - ``badprimes`` - a list of primes of bad reduction (optional)
+
+        - ``N`` - positive integer. number of terms of the series to use in the local green functions
+          (optional - Default: 10)
+
+        - ``prec`` - positive integer, float point or p-adic precision, Default: 100
+
+        - ``error_bound`` - a positive real number (optional)
+
+        OUTPUT: Real number
+
+        Examples::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^3+7*y^3, 11*y^3])
+            sage: f.critical_height()
+            1.1989273321156851418802151128
+
+        ::
+
+            sage: K.<w> = QuadraticField(2)
+            sage: O = K.maximal_order()
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = Hom(P,P)
+            sage: f = H([x^2+w*y^2,y^2])
+            sage: f.critical_height()
+            0.16090842452312941163719755472
+
+        Postcritically finite maps have critical height 0::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^3-3/4*x*y^2 + 3/4*y^3, y^3])
+            sage: f.critical_height(error_bound=0.0001)
+            0.000011738508366948556443245983996
+        """
+        if not self.is_endomorphism():
+            raise TypeError("Must be an endomorphism")
+        PS = self.codomain()
+        if PS.dimension_relative() > 1:
+            raise NotImplementedError("Only implemented in dimension 1")
+
+        K = FractionField(PS.base_ring())
+        if not K in _NumberFields and not K is QQbar:
+            raise NotImplementedError("Must be over a NumberField or a NumberField Order or QQbar")
+        F = self.change_ring(QQbar)
+        crit_points = F.critical_points()
+        n = len(crit_points)
+        err_bound = kwds.get("error_bound", None)
+        if not err_bound is None:
+            kwds.update({"error_bound": err_bound/n})
+        ch = 0
+        for P in crit_points:
+            ch += P.canonical_height(F, **kwds)
+        return(ch)
 
     def periodic_points(self, n, minimal = True):
         r"""
@@ -2550,6 +2891,185 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                         points.pop(i)
                         break
             return points
+
+    def multiplier_spectra(self,n,formal = True):
+        r"""
+        Computes the formal ``n`` multiplier spectra of ``self``, which is the set of multipliers of the
+        periodic points of formal period ``n`` of ``self`` included with the appropriate multiplicity.
+        User can also specify to compute the ``n`` multiplier spectra instead which includes the
+        multipliers of all periodic points of period ``n`` of ``self``. ``self`` must be defined over
+        projective space of dimension 1 over a number field.
+
+        INPUT:
+
+        - ``n`` - a positive integer, the period
+
+        - ``formal`` - a Boolean. True specifies to find the formal ``n`` multiplier spectra of ``self``. False
+            specifies to find the ``n`` multiplier spectra of ``self``. Default: True
+
+        OUTPUT:
+
+        - a list of QQbar elements
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([4608*x^10 - 2910096*x^9*y + 325988068*x^8*y^2 + 31825198932*x^7*y^3 - 4139806626613*x^6*y^4\
+            - 44439736715486*x^5*y^5 + 2317935971590902*x^4*y^6 - 15344764859590852*x^3*y^7 + 2561851642765275*x^2*y^8\
+            + 113578270285012470*x*y^9 - 150049940203963800*y^10, 4608*y^10])
+            sage: f.multiplier_spectra(1)
+            [0, -7198147681176255644585/256, 848446157556848459363/19683, -3323781962860268721722583135/35184372088832,
+            529278480109921/256, -4290991994944936653/2097152, 1061953534167447403/19683, -3086380435599991/9,
+            82911372672808161930567/8192, -119820502365680843999, 3553497751559301575157261317/8192]
+
+        ::
+
+            sage: set_verbose(None)
+            sage: z = QQ['z'].0
+            sage: K.<w> = NumberField(z^4 - 4*z^2 + 1,'z')
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - w/4*y^2,y^2])
+            sage: f.multiplier_spectra(2,False)
+            [0, 5.931851652578137? + 0.?e-17*I, 0.0681483474218635? - 1.930649271699173?*I,
+            0.0681483474218635? + 1.930649271699173?*I]
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - 3/4*y^2,y^2])
+            sage: f.multiplier_spectra(2)
+            [1]
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - 7/4*y^2,y^2])
+            sage: f.multiplier_spectra(3)
+            [1, 1]
+        """
+        PS = self.domain()
+        n = Integer(n)
+
+        if (n < 1):
+            raise ValueError("Period must be a positive integer")
+        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        if not is_ProjectiveSpace(PS):
+            raise NotImplementedError("Not implemented for subschemes")
+        if (PS.dimension_relative() > 1):
+            raise NonImplementedError("Only implemented for dimension 1")
+        if not self.is_endomorphism():
+            raise TypeError("self must be an endomorphism")
+        if not PS.base_ring() in NumberFields() and not PS.base_ring() is QQbar:
+            raise NotImplementedError("self must be a map over a number field")
+
+        f = self.change_ring(QQbar)
+
+        PS = f.domain()
+
+        if not formal:
+            G = f.nth_iterate_map(n)
+            F = G[0]*PS.gens()[1] - G[1]*PS.gens()[0]
+        else:
+            # periodic points of formal period n are the roots of the nth dynatomic polynomial
+            K = f._number_field_from_algebraics()
+            F = K.dynatomic_polynomial(n)
+            if K.domain().base_ring() != QQ: # need to coerce F to poly over QQbar. This is only needed if base ring is not QQ
+                abspoly = K.domain().base_ring().absolute_polynomial()
+                phi = K.domain().base_ring().hom(QQbar.polynomial_root(abspoly,abspoly.any_root(CIF)),QQbar)
+                Kx = K.coordinate_ring()
+                QQbarx = QQbar[Kx.variable_names()]
+                phix = Kx.hom(phi,QQbarx)
+                F = phix(F)
+
+        other_roots = F([(f.domain().gens()[0]),1]).univariate_polynomial().roots(ring=QQbar)
+
+        points = []
+
+        minfty = min([e[1] for e in F.exponents()]) # include the point at infinity with the right multiplicity
+        for i in range(minfty):
+            points.append(PS([1,0]))
+
+        for R in other_roots:
+            for i in range(R[1]):
+                points.append(PS([R[0],1])) # include copies of higher multiplicity roots
+
+        newpoints = [] # should include one representative point per cycle, included with the right multiplicity
+
+        while(points != []):
+            P = points[0]
+            newpoints.append(P)
+            points.pop(0)
+            Q = P
+            for i in range(1,n):
+                try:
+                    points.remove(f(Q))
+                except ValueError:
+                    pass
+                Q = f(Q)
+
+        multipliers = [f.multiplier(P,n)[0,0] for P in newpoints]
+
+        return multipliers
+
+    def sigma_invariants(self,n,formal = True):
+        r"""
+        Computes the values of the elementary symmetric polynomials of the formal ``n`` multilpier spectra
+        of ``self``. Can specify to instead compute the values corresponding to the elementary symmetric
+        polynomials of the ``n`` multiplier spectra of ``self``, which include the multipliers of all periodic
+        points of period ``n`` of ``self``. `self`` must be defined over projective space of dimension 1 over
+        a number field.
+
+        INPUT:
+
+        - ``n`` - a positive integer, the period.
+
+        - ``formal`` - a Boolean. True specifies to find the values of the elementary symmetric polynomials
+            corresponding to the formal ``n`` multiplier spectra of ``self``. False specifies to instead find
+            the values corresponding to the ``n`` multiplier spectra of ``self``, which includes the multipliers
+            of all periodic points of period ``n`` of ``self``. Default: True
+
+        OUTPUT:
+
+        - a list of QQbar elements
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([512*x^5 - 378128*x^4*y + 76594292*x^3*y^2 - 4570550136*x^2*y^3 - 2630045017*x*y^4\
+            + 28193217129*y^5,512*y^5])
+            sage: f.sigma_invariants(1)
+            [19575526074450617/1048576, -9078122048145044298567432325/2147483648,
+            -2622661114909099878224381377917540931367/1099511627776,
+            -2622661107937102104196133701280271632423/549755813888,
+            338523204830161116503153209450763500631714178825448006778305/72057594037927936, 0]
+
+        ::
+
+            sage: set_verbose(None)
+            sage: z = QQ['z'].0
+            sage: K = NumberField(z^4 - 4*z^2 + 1,'z')
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - 5/4*y^2,y^2])
+            sage: f.sigma_invariants(2,False)
+            [13.00000000000000?, 11.00000000000000?, -25.00000000000000?, 0]
+        """
+        polys = []
+
+        multipliers = self.multiplier_spectra(n, formal)
+
+        e = SymmetricFunctions(QQbar).e()
+
+        N = len(multipliers)
+        for i in range(0,N):
+            polys.append(e([i+1]).expand(N)(multipliers))
+        return polys
+
 
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
 
@@ -3568,19 +4088,19 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
         if is_ProjectiveSpace(self.domain()) is True:
             for P in self.domain():
-                V.append(str(P))
+                V.append(P)
                 Q = self(P)
                 Q.normalize_coordinates()
-                E.append([str(Q)])
+                E.append([Q])
         else:
             X = self.domain()
             for P in X.ambient_space():
                 try:
                     XP = X.point(P)
-                    V.append(str(XP))
+                    V.append(XP)
                     Q = self(XP)
                     Q.normalize_coordinates()
-                    E.append([str(Q)])
+                    E.append([Q])
                 except TypeError:  # not a point on the scheme
                     pass
         from sage.graphs.digraph import DiGraph
@@ -3713,7 +4233,7 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
         return_functions=kwds.get('return_functions',False)
 
         if self.domain().dimension_relative()!=1:
-            raise NotImplementedError, "Must be dimension 1"
+            raise NotImplementedError("Must be dimension 1")
         else:
             f=self.dehomogenize(1)
             z=f[0].parent().gen()

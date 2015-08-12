@@ -117,9 +117,9 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.some_elements()
-                [(2,3,4), (1,2,3)]
+                Family ((2,3,4), (1,2,3))
             """
-            return self.gens()
+            return self.group_generators()
 
         # TODO: merge with that of finite semigroups
         def cayley_graph_disabled(self, connecting_set=None):
@@ -132,7 +132,7 @@ class FiniteGroups(CategoryWithAxiom):
             - Robert Miller (2008-05-01): editing
             """
             if connecting_set is None:
-                connecting_set = self.gens()
+                connecting_set = self.group_generators()
             else:
                 for g in connecting_set:
                     if not g in self:

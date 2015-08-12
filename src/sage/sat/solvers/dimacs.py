@@ -441,7 +441,7 @@ class RSat(DIMACS):
 
            sage: from sage.sat.boolean_polynomials import solve as solve_sat
            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
-           sage: solve_sat(F, solver=sage.sat.solvers.RSat) # not tested, requires RSat in PATH
+           sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat
         """
         DIMACS.__call__(self)
 
@@ -488,7 +488,7 @@ class Glucose(DIMACS):
 
            sage: from sage.sat.boolean_polynomials import solve as solve_sat
            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
-           sage: solve_sat(F, solver=sage.sat.solvers.Glucose) # not tested, requires Glucose in PATH
+           sage: solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - Glucose
         """
         DIMACS.__call__(self)
 

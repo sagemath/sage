@@ -187,7 +187,7 @@ class ModularFormsAmbient_eps(ambient.ModularFormsAmbient):
             sage: m.change_ring(QQ)
             Traceback (most recent call last):
             ...
-            ValueError: cannot coerce element of order 6 into self
+            TypeError: Unable to coerce zeta6 to a rational
         """
         if self.base_ring() == base_ring:
             return self

@@ -27,6 +27,18 @@ fi
 
 cd src/
 
+# Apply fixes to upstream source
+echo "Applying patches..."
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+
 # HAPprime should be added in the future?
 for p in \
     crime ctbllib design factint grape \

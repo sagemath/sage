@@ -14,7 +14,7 @@ cdef class LeftModuleAction(ModuleAction):
     pass
 
 cdef class RightModuleAction(ModuleAction):
-    cdef public bint is_inplace
+    pass
 
 cdef class PyScalarAction(Action):
     cdef Action _action

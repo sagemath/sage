@@ -366,8 +366,8 @@ import os
 import re
 
 from sage.misc.cachefunc import cached_method
-from expect import (Expect, ExpectElement, ExpectFunction,
-                    FunctionElement, AsciiArtString)
+from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
+                                    FunctionElement, AsciiArtString)
 
 def clean_output(s):
     if s is None:
@@ -570,8 +570,8 @@ remote connection to a server running Mathematica -- for hints, type
 
         EXAMPLES::
 
-            sage: mathematica.chdir('/')          # optional
-            sage: mathematica('Directory[]')      # optional
+            sage: mathematica.chdir('/')          # optional - mathematica
+            sage: mathematica('Directory[]')      # optional - mathematica
             "/"
         """
         self.eval('SetDirectory["%s"]'%dir)
@@ -972,7 +972,7 @@ mathematica = Mathematica()
 def reduce_load(X):
     return mathematica(X)
 
-import os, sys
+
 def mathematica_console(readline=True):
     if not readline:
         os.system('math')

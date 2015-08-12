@@ -1,4 +1,4 @@
-include "sage/ext/cdefs.pxi"
+from sage.libs.gmp.types cimport mpz_t
 
 include 'sage/modules/vector_modn_sparse_h.pxi'
 

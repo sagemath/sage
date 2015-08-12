@@ -227,7 +227,7 @@ def riggings(part):
         res = new_res
 
 
-    return map(lambda x: x[:l], res)
+    return [x[:l] for x in res]
 
 def compat(n, mu, nu):
     r"""
@@ -261,7 +261,7 @@ def compat(n, mu, nu):
         sage: compat(4, [2], [])
         [[4]]
     """
-    sp = map(lambda p: p.conjugate(),sage.combinat.partition.Partitions_n(n))
+    sp = [p.conjugate() for p in sage.combinat.partition.Partitions_n(n)]
     l = max( len(mu), len(nu))
     mmu = list(mu) + [0]*(l-len(mu))
     nnu = list(nu) + [0]*(l-len(nu))
@@ -355,7 +355,7 @@ def weight(rg, t=None):
     nu = rg + [ [] ]
     l = 1 + max( map(len, nu) )
     nu = [ list(mu) + [0]*l for mu in nu ]
-    res = t**int(sum( [ i*(i-1)/2 for i in rg[-1] ] ))
+    res = t**int(sum(i*(i-1)/2 for i in rg[-1]))
     for k in range(1, len(nu)-1):
         sa = 0
         for i in range( max( len(rg[k]), len(rg[k-1])) ):

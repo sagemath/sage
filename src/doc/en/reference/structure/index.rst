@@ -80,6 +80,8 @@ Sets
    sage/sets/non_negative_integers
    sage/sets/primes
    sage/sets/real_set
+   sage/structure/set_factories
+   sage/structure/set_factories_example
 
 Use of Heuristic and Probabilistic Algorithms
 ---------------------------------------------

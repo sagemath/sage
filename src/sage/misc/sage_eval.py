@@ -10,6 +10,8 @@ Evaluating a String in Sage
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from __future__ import absolute_import
+import six
 from copy import copy
 import sage.repl.preparse as preparser
 
@@ -177,7 +179,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
             locals = copy(source[2])
         source = source[1]
 
-    if not isinstance(source, basestring):
+    if not isinstance(source, six.string_types):
         raise TypeError("source must be a string.")
 
     if locals is None:

@@ -343,7 +343,7 @@ class LyndonWords_nk(FiniteWords_length_k_over_OrderedAlphabet):
                 if c[i] != 0:
                     nonzero_indices.append(i)
             for lw in LyndonWords_evaluation(cf):
-                yield LyndonWord(map(lambda x: nonzero_indices[x-1]+1, lw), check=False)
+                yield LyndonWord([nonzero_indices[x-1]+1 for x in lw], check=False)
 
 def StandardBracketedLyndonWords(n, k):
     """

@@ -17,6 +17,7 @@ General Rings, Ideals, and Morphisms
    sage/rings/quotient_ring
    sage/rings/quotient_ring_element
    sage/rings/invariant_theory
+   sage/rings/cfinite_sequence
 
    sage/rings/bernmm
    sage/rings/bernoulli_mod_p

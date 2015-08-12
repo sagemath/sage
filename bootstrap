@@ -27,7 +27,7 @@ CONFVERSION=`cat $PKG/package-version.txt`
 
 bootstrap () {
     aclocal -I m4 && \
-    automake --add-missing --copy build/Makefile-auto && \
+    automake --add-missing --copy build/make/Makefile-auto && \
     autoconf
 
     st=$?
@@ -75,7 +75,7 @@ save () {
     # Create configure tarball
     echo "Creating $CONFBALL..."
     mkdir -p upstream
-    tar zcf "$CONFBALL" configure config/* build/Makefile-auto.in
+    tar zcf "$CONFBALL" configure config/* build/make/Makefile-auto.in
     
     # Update version number
     echo "$CONFVERSION" >$PKG/package-version.txt

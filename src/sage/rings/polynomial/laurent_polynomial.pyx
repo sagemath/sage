@@ -501,23 +501,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial_generic):
         # 3. Add
         return LaurentPolynomial_univariate(self._parent, f1 + f2, m)
 
-    cpdef ModuleElement _iadd_(self, ModuleElement right_m):
-        """
-        EXAMPLES::
-
-            sage: R.<t> = LaurentPolynomialRing(QQ)
-            sage: f = t+t
-            sage: f += t; f
-            3*t
-            sage: f += t*t; f
-            3*t + t^2
-        """
-        cdef LaurentPolynomial_univariate right = <LaurentPolynomial_univariate>right_m
-        if self.__n == right.__n:
-            self.__u += right.__u
-            return self
-        return self._add_(right)
-
     cpdef ModuleElement _sub_(self, ModuleElement right_m):
         """
         Subtract two Laurent polynomials with the same parent.
@@ -596,21 +579,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial_generic):
                              self.__u * right.__u,
                              self.__n + right.__n)
 
-    cpdef RingElement _imul_(self, RingElement right_r):
-        """
-        EXAMPLES::
-
-            sage: R.<x> = LaurentPolynomialRing(ZZ)
-            sage: f = 1/x^3 + x + x^2 + 3*x^4
-            sage: g = 1 - x + x^2 - x^4
-            sage: f *= g; f
-            x^-3 - x^-2 + x^-1 + 4*x^4 - 4*x^5 + 2*x^6 - 3*x^8
-        """
-        cdef LaurentPolynomial_univariate right = <LaurentPolynomial_univariate>right_r
-        self.__u *= right.__u
-        self.__n += right.__n
-        return self
-
     cpdef ModuleElement _rmul_(self, RingElement c):
         """
         EXAMPLES::
@@ -632,17 +600,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial_generic):
             3*x^-3 + 3*x + 3*x^2 + 9*x^4
         """
         return LaurentPolynomial_univariate(self._parent, self.__u._lmul_(c), self.__n)
-
-    cpdef ModuleElement _ilmul_(self, RingElement c):
-        """
-        EXAMPLES::
-
-            sage: R.<x> = LaurentPolynomialRing(ZZ)
-            sage: f = 1/x^3 + x + x^2 + 3*x^4
-            sage: f *= 3
-        """
-        self.__u *= c
-        return self
 
     def is_monomial(self):
         """
@@ -1463,6 +1420,36 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial_generic):
         """
         self._prod = PolyDict(self._dict(), force_etuples = False)
 
+    def is_unit(self):
+        """
+        Return ``True`` if ``self`` is a unit.
+
+        The ground ring is assumed to be an integral domain.
+
+        This means that the Laurent polynomial is a monomial
+        with unit coefficient.
+
+        EXAMPLES::
+
+            sage: L.<x,y> = LaurentPolynomialRing(QQ)
+            sage: (x*y/2).is_unit()
+            True
+            sage: (x + y).is_unit()
+            False
+            sage: (L.zero()).is_unit()
+            False
+            sage: (L.one()).is_unit()
+            True
+
+            sage: L.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: (2*x*y).is_unit()
+            False
+        """
+        coeffs = self.coefficients()
+        if len(coeffs) != 1:
+            return False
+        return coeffs[0].is_unit()
+        
     def _repr_(self):
         """
         EXAMPLES::
@@ -1920,6 +1907,38 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial_generic):
         else:
             ans._poly -= right._poly
         return ans
+
+    cpdef RingElement _div_(self, RingElement rhs):
+        """
+        Return the division of ``self`` by ``rhs``.
+
+        If the denominator is not a unit,
+        the result will be given in the fraction field.
+
+        EXAMPLES::
+
+            sage: R.<s,q,t> = LaurentPolynomialRing(QQ)
+            sage: 1/s
+            s^-1
+            sage: 1/(s*q)
+            s^-1*q^-1
+            sage: 1/(s+q)
+            1/(s + q)
+            sage: (1/(s+q)).parent()
+            Fraction Field of Multivariate Polynomial Ring in s, q, t over Rational Field
+            sage: (1/(s*q)).parent()
+            Multivariate Laurent Polynomial Ring in s, q, t over Rational Field
+            sage: (s+q)/(q^2*t^(-2))
+            s*q^-2*t^2 + q^-1*t^2
+        """
+        cdef LaurentPolynomial_mpair right = <LaurentPolynomial_mpair> rhs
+        if right.is_zero():
+            raise ZeroDivisionError
+        cdef dict d = right.dict()
+        if len(d) == 1:
+            return self * ~right
+        else:
+            return RingElement._div_(self, rhs)
 
     def is_monomial(self):
         """

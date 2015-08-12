@@ -329,7 +329,7 @@ AUTHORS:
 
 """
 import operator
-from sage.calculus.calculus import maxima
+
 
 def test_relation_maxima(relation):
     """
@@ -459,20 +459,20 @@ def test_relation_maxima(relation):
     if relation.operator() == operator.eq: # operator is equality
         try:
             s = m.parent()._eval_line('is (equal(%s,%s))'%(repr(m.lhs()),repr(m.rhs())))
-        except TypeError as msg:
-            raise ValueError("unable to evaluate the predicate '%s'"%repr(relation))
+        except TypeError:
+            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     elif relation.operator() == operator.ne: # operator is not equal
         try:
             s = m.parent()._eval_line('is (notequal(%s,%s))'%(repr(m.lhs()),repr(m.rhs())))
-        except TypeError as msg:
-            raise ValueError("unable to evaluate the predicate '%s'"%repr(relation))
+        except TypeError:
+            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     else: # operator is < or > or <= or >=, which Maxima handles fine
         try:
             s = m.parent()._eval_line('is (%s)'%repr(m))
-        except TypeError as msg:
-            raise ValueError("unable to evaluate the predicate '%s'"%repr(relation))
+        except TypeError:
+            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     if s == 'true':
         return True
@@ -1153,7 +1153,7 @@ def solve_ineq_univar(ineq):
     """
     ineqvar = ineq.variables()
     if len(ineqvar) != 1:
-        raise NotImplementedError, "The command solve_ineq_univar accepts univariate inequalities only. Your variables are ", ineqvar
+        raise NotImplementedError("The command solve_ineq_univar accepts univariate inequalities only. Your variables are " + ineqvar)
     ineq0 = ineq._maxima_()
     ineq0.parent().eval("if solve_rat_ineq_loaded#true then (solve_rat_ineq_loaded:true,load(\"solve_rat_ineq.mac\")) ")
     sol = ineq0.solve_rat_ineq().sage()
@@ -1204,7 +1204,7 @@ def solve_ineq_fourier(ineq,vars=None):
     Note that different systems will find default variables in different
     orders, so the following is not tested::
 
-        sage: solve_ineq_fourier([log(x)>log(y)]) # not tested - one of the following appears
+        sage: solve_ineq_fourier([log(x)>log(y)])  # random (one of the following appears)
         [[0 < y, y < x, 0 < x]]
         [[y < x, 0 < y]]
 
@@ -1294,7 +1294,7 @@ def solve_ineq(ineq, vars=None):
     the order it puts them in may depend on the system, so the following
     command is only guaranteed to give you one of the above answers::
 
-        sage: solve_ineq([x-y<0,x+y-3<0]) # not tested - random
+        sage: solve_ineq([x-y<0,x+y-3<0])  # random
         [[x < y, y < -x + 3, x < (3/2)]]
 
     ALGORITHM:

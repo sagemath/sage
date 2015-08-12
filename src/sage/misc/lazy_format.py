@@ -1,12 +1,15 @@
 """
 Lazy format strings
 """
-from copy import copy
 
 class LazyFormat(str):
     """
     Lazy format strings
 
+    .. NOTE::
+
+        We recommend to use :func:`sage.misc.lazy_string.lazy_string` instead,
+        which is both faster and more flexible.
 
     An instance of :class:`LazyFormat` behaves like a usual format
     string, except that the evaluation of the ``__repr__`` method of
@@ -26,8 +29,8 @@ class LazyFormat(str):
     ``__repr__`` method::
 
         sage: class IDontLikeBeingPrinted(object):
-        ...    def __repr__(self):
-        ...        raise ValueError("Don't ever try to print me !")
+        ....:     def __repr__(self):
+        ....:         raise ValueError("Don't ever try to print me !")
 
     There is no error when binding a lazy format with the broken object::
 
@@ -49,14 +52,14 @@ class LazyFormat(str):
     messages in :mod:`unittest` or :class:`TestSuite` executions::
 
         sage: QQ._tester().assertTrue(0 in QQ,
-        ...                "%s doesn't contain 0"%QQ)
+        ....:                "%s doesn't contain 0"%QQ)
 
     In the above ``QQ.__repr__()`` has been called, and the result
     immediately discarded. To demonstrate this we replace ``QQ`` in
     the format string argument with our broken object::
 
         sage: QQ._tester().assertTrue(True,
-        ...                "%s doesn't contain 0"%IDontLikeBeingPrinted())
+        ....:                "%s doesn't contain 0"%IDontLikeBeingPrinted())
         Traceback (most recent call last):
         ...
         ValueError: Don't ever try to print me !
@@ -69,9 +72,9 @@ class LazyFormat(str):
     We now check that :class:`LazyFormat` indeed solves the assertion problem::
 
         sage: QQ._tester().assertTrue(True,
-        ...               LazyFormat("%s is wrong")%IDontLikeBeingPrinted())
+        ....:               LazyFormat("%s is wrong")%IDontLikeBeingPrinted())
         sage: QQ._tester().assertTrue(False,
-        ...               LazyFormat("%s is wrong")%IDontLikeBeingPrinted())
+        ....:               LazyFormat("%s is wrong")%IDontLikeBeingPrinted())
         Traceback (most recent call last):
         ...
         AssertionError: <unprintable AssertionError object>
@@ -84,14 +87,14 @@ class LazyFormat(str):
         EXAMPLES::
 
             sage: from sage.misc.lazy_format import LazyFormat
-            sage: form = LazyFormat("<%s>");
+            sage: form = LazyFormat("<%s>")
             sage: form
             unbound LazyFormat("<%s>")
             sage: form%"params"
             <params>
         """
         if hasattr(self, "_args"): # self is already bound...
-            self = copy(self)
+            self = LazyFormat(""+self)
         self._args = args
         return self
 

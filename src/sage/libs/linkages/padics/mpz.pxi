@@ -20,6 +20,7 @@ include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 from cpython.list cimport *
 
+from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_pythonhash
 from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.rings.integer cimport Integer

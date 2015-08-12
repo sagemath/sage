@@ -50,7 +50,7 @@ from fpickle import pickle_function, unpickle_function
 
 from dist import install_scripts
 
-from package import install_package, is_package_installed, standard_packages, optional_packages, experimental_packages, upgrade
+from package import install_package, is_package_installed, standard_packages, optional_packages, experimental_packages, upgrade, package_versions
 
 from pager import pager
 
@@ -64,8 +64,6 @@ from reset import reset, restore
 
 from getusage import top, get_memory_usage
 
-from log import log_html, log_dvi, log_text
-
 from mathml import mathml
 
 from defaults import (set_default_variable_name,
@@ -76,9 +74,9 @@ from sage_eval import sage_eval, sageobj
 from sage_input import sage_input
 
 from cython import cython_lambda, cython_create_local_so
-from cython_c import cython
-pyrex = cython # synonym -- for now
-sagex = cython # synonym -- for now
+from cython_c import cython_compile as cython
+lazy_import("sage.misc.cython_c", "cython_compile", "pyrex", deprecation=9552)
+lazy_import("sage.misc.cython_c", "cython_compile", "sagex", deprecation=9552)
 
 from persist import save, load, dumps, loads, db, db_save
 
@@ -200,4 +198,3 @@ class logstr(str):
 
 lazy_import("sage.misc", "messaging", deprecation=18140)
 
-from ascii_art import ascii_art

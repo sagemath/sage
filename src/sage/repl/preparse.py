@@ -220,6 +220,7 @@ Behind the scenes what happens is the following::
 
 import os
 import re
+import six
 
 from sage.repl.load import load_wrap
 
@@ -1225,7 +1226,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         _sage_const_100 = Integer(100)
         type(100 ), type(_sage_const_100 )
     """
-    if not isinstance(contents, basestring):
+    if not isinstance(contents, six.string_types):
         raise TypeError("contents must be a string")
 
     if globals is None:

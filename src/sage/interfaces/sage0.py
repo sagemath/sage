@@ -15,7 +15,8 @@ interpreter.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import cPickle, os
+import cPickle
+import os
 
 from expect import Expect, ExpectElement, FunctionElement
 import sage.repl.preparse
@@ -194,47 +195,6 @@ class Sage(Expect):
             True
         """
         return eval(self.eval('print repr(globals().keys())'))
-
-    def quit(self, verbose=False):
-        """
-        EXAMPLES::
-
-            sage: s = Sage()
-            sage: s.eval('2+2')
-            '4'
-            sage: s.quit()
-        """
-        import signal
-        if not self._expect is None:
-            pid = self._expect.pid
-            if verbose:
-                if self.is_remote():
-                    print "Exiting spawned %s process (local pid=%s, running on %s)"%(self,pid,self._server)
-                else:
-                    print "Exiting spawned %s process (pid=%s)."%(self, pid)
-            try:
-                for i in range(10):   # multiple times, since clears out junk injected with ._get, etc.
-                    self._expect.sendline(chr(3))  # send ctrl-c
-                    self._expect.sendline('quit_sage(verbose=%s)'%verbose)
-                    self._so_far(wait=0.2)
-
-                os.killpg(pid, 9)
-                os.kill(pid, 9)
-
-            except (RuntimeError, OSError) as msg:
-                pass
-
-            try:
-                os.killpg(pid, 9)
-                os.kill(pid, 9)
-            except OSError:
-                pass
-
-            try:
-                self._expect.close(signal.SIGQUIT)
-            except Exception:
-                pass
-            self._expect = None
 
     def __call__(self, x):
         """
@@ -540,7 +500,6 @@ def reduce_load_element(s):
     return sage0('loads(base64.b32decode("%s"))'%s)
 
 
-import os
 def sage0_console():
     """
     Spawn a new Sage command-line session.

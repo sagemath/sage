@@ -56,6 +56,7 @@ from cpython.dict cimport *
 import weakref
 from sage.misc.misc import cputime
 from sage.rings.infinity import infinity
+from sage.libs.gmp.mpz cimport *
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_factory
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ

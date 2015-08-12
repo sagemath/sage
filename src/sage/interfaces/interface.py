@@ -19,6 +19,8 @@ AUTHORS:
   which is important for forking.
 
 - Jean-Pierre Flori (2010,2011): Split non Pexpect stuff into a parent class.
+
+- Simon King (2015): Improve pickling for InterfaceElement
 """
 
 #*****************************************************************************
@@ -37,6 +39,7 @@ AUTHORS:
 #*****************************************************************************
 
 import operator
+import six
 
 from sage.structure.sage_object import SageObject
 from sage.structure.parent_base import ParentWithBase
@@ -59,6 +62,7 @@ class Interface(ParentWithBase):
         self.__coerce_name = '_' + name.lower() + '_'
         self.__seq = -1
         self._available_vars = []
+        self._seed = None
         ParentWithBase.__init__(self, self)
 
     def _repr_(self):
@@ -66,6 +70,74 @@ class Interface(ParentWithBase):
 
     def name(self, new_name=None):
         return self.__name
+
+    def get_seed(self):
+        """
+        Returns the seed used to set the random
+        number generator in this interface.
+        The seed is initialized as None
+        but should be set when the interface starts.
+
+        EXAMPLES::
+
+            sage: s = Singular()
+            sage: s.set_seed(107)
+            107
+            sage: s.get_seed()
+            107
+        """
+        return self._seed
+
+    def rand_seed(self):
+        """
+        Returns a random seed that can be
+        put into set_seed function for
+        any interpreter.
+        This should be overridden if
+        the particular interface needs something
+        other than a small positive integer.
+
+        EXAMPLES::
+            from sage.misc.random_testing import random_testing
+            sage: from sage.interfaces.interface import Interface
+            sage: i = Interface("")
+            sage: i.rand_seed() # random
+            318491487L
+
+            sage: s = Singular()
+            sage: s.rand_seed() # random
+            365260051L
+        """
+        from sage.misc.randstate import randstate
+        return long(randstate().seed()&0x1FFFFFFF)
+
+    def set_seed(self,seed = None):
+        """
+        Sets the random seed for the interpreter
+        and returns the new value of the seed.
+        This is dependent on which interpreter
+        so must be implemented in each
+        separately. For examples see
+        gap.py or singular.py.
+        If seed is None then should generate
+        a random seed.
+
+        EXAMPLES::
+
+            sage: s = Singular()
+            sage: s.set_seed(1)
+            1
+            sage: [s.random(1,10) for i in range(5)]
+            [8, 10, 4, 9, 1]
+
+            sage: from sage.interfaces.interface import Interface
+            sage: i = Interface("")
+            sage: i.set_seed()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: This interpreter did not implement a set_seed function
+        """
+        raise NotImplementedError("This interpreter did not implement a set_seed function")
 
     def interact(self):
         r"""
@@ -166,20 +238,20 @@ class Interface(ParentWithBase):
             except (NotImplementedError, TypeError):
                 pass
 
-        if isinstance(x, basestring):
+        if isinstance(x, six.string_types):
             return cls(self, x, name=name)
         try:
             return self._coerce_from_special_method(x)
         except TypeError:
             raise
-        except AttributeError as msg:
+        except AttributeError:
             pass
         try:
             return self._coerce_impl(x, use_special=False)
         except TypeError as msg:
             try:
                 return cls(self, str(x), name=name)
-            except TypeError as msg2:
+            except TypeError:
                 raise TypeError(msg)
 
     def _coerce_from_special_method(self, x):
@@ -209,7 +281,7 @@ class Interface(ParentWithBase):
         if use_special:
             try:
                 return self._coerce_from_special_method(x)
-            except AttributeError as msg:
+            except AttributeError:
                 pass
 
         if isinstance(x, (list, tuple)):
@@ -633,10 +705,98 @@ class InterfaceElement(RingElement):
         return len(self.sage())
 
     def __reduce__(self):
-        return reduce_load, (self.parent(), self._reduce())
+        """
+        The default linearisation is to return self's parent,
+        which will then get the items returned by :meth:`_reduce`
+        as arguments to reconstruct the element.
+
+        EXAMPLES::
+
+            sage: G = gap.SymmetricGroup(6)
+            sage: loads(dumps(G)) == G     # indirect doctest
+            True
+            sage: y = gap(34)
+            sage: loads(dumps(y))
+            34
+            sage: type(_)
+            <class 'sage.interfaces.gap.GapElement'>
+            sage: y = singular(34)
+            sage: loads(dumps(y))
+            34
+            sage: type(_)
+            <class 'sage.interfaces.singular.SingularElement'>
+            sage: G = gap.PolynomialRing(QQ, ['x'])
+            sage: loads(dumps(G))
+            PolynomialRing( Rationals, ["x"] )
+            sage: S = singular.ring(0, ('x'))
+            sage: loads(dumps(S))
+            //   characteristic : 0
+            //   number of vars : 1
+            //        block   1 : ordering lp
+            //                  : names    x
+            //        block   2 : ordering C
+
+        Here are further examples of pickling of interface elements::
+
+            sage: loads(dumps(gp('"abc"')))
+            abc
+            sage: loads(dumps(gp([1,2,3])))
+            [1, 2, 3]
+            sage: loads(dumps(pari('"abc"')))
+            "abc"
+            sage: loads(dumps(pari([1,2,3])))
+            [1, 2, 3]
+            sage: loads(dumps(r('"abc"')))
+            [1] "abc"
+            sage: loads(dumps(r([1,2,3])))
+            [1] 1 2 3
+            sage: loads(dumps(maxima([1,2,3])))
+            [1,2,3]
+
+        Unfortunately, strings in maxima can't be pickled yet::
+
+            sage: loads(dumps(maxima('"abc"')))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to make sense of Maxima expression '"abc"' in Sage
+
+        """
+        return self.parent(), (self._reduce(),)
 
     def _reduce(self):
-        return repr(self)
+        """
+        Helper for pickling.
+
+        By default, if self is a string, then the representation of
+        that string is returned (not the string itself). Otherwise,
+        it is attempted to return the corresponding Sage object.
+        If this fails with a NotImplementedError, the string
+        representation of self is returned instead.
+
+        EXAMPLES::
+
+            sage: S = singular.ring(0, ('x'))
+            sage: S._reduce()
+            Univariate Polynomial Ring in x over Rational Field
+            sage: G = gap.PolynomialRing(QQ, ['x'])
+            sage: G._reduce()
+            'PolynomialRing( Rationals, ["x"] )'
+            sage: G.sage()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Unable to parse output: PolynomialRing( Rationals, ["x"] )
+            sage: singular('"abc"')._reduce()
+            "'abc'"
+            sage: singular('1')._reduce()
+            1
+
+        """
+        if self.is_string():
+            return repr(self.sage())
+        try:
+            return self.sage()
+        except NotImplementedError:
+            return repr(self)
 
     def __call__(self, *args):
         self._check_valid()
@@ -718,6 +878,14 @@ class InterfaceElement(RingElement):
             return -1
         else:
             return 1
+
+    def is_string(self):
+        """
+        Tell whether this element is a string.
+
+        By default, the answer is negative.
+        """
+        return False
 
     def _matrix_(self, R):
         raise NotImplementedError
@@ -826,9 +994,12 @@ class InterfaceElement(RingElement):
             raise NotImplementedError("Unable to parse output: %s" % string)
 
 
-    def sage(self):
+    def sage(self, *args, **kwds):
         """
         Attempt to return a Sage version of this object.
+
+        This method does nothing more than calling :meth:`_sage_`,
+        simply forwarding any additional arguments.
 
         EXAMPLES::
 
@@ -836,8 +1007,13 @@ class InterfaceElement(RingElement):
             1/2
             sage: _.parent()
             Rational Field
+            sage: singular.lib("matrix")
+            sage: R = singular.ring(0, '(x,y,z)', 'dp')
+            sage: singular.matrix(2,2).sage()
+            [0 0]
+            [0 0]
         """
-        return self._sage_()
+        return self._sage_(*args, **kwds)
 
     def __repr__(self):
         self._check_valid()
@@ -1116,6 +1292,3 @@ class InterfaceElement(RingElement):
         if parent(n) is not P:
             n = P(n)
         return self._operation("^", n)
-
-def reduce_load(parent, x):
-    return parent(x)

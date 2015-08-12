@@ -18,6 +18,8 @@ Groups
    sage/groups/braid
    sage/groups/indexed_free_group
    sage/groups/raag
+   sage/groups/group_exp
+   sage/groups/group_semidirect_product
    sage/groups/abelian_gps/abelian_group
    sage/groups/abelian_gps/values
    sage/groups/abelian_gps/dual_abelian_group
@@ -55,7 +57,6 @@ Groups
    sage/groups/conjugacy_classes
    sage/groups/perm_gps/partn_ref
    sage/groups/perm_gps/partn_ref2
-
 
 Internals
 ---------

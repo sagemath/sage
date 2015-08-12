@@ -1991,7 +1991,7 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
         q = Integer(q)
         F = q.factor()
         if len(F) != 1:
-            raise ValueError, "q must be a prime power"
+            raise ValueError("q must be a prime power")
     else:
         F = q
         q = F[0][0]**F[0][1]

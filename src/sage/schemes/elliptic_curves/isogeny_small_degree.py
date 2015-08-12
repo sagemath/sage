@@ -38,11 +38,9 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.categories import homset
-
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
-from sage.rings.all import Integer, ZZ, QQ
+from sage.rings.all import ZZ, QQ
 from sage.schemes.elliptic_curves.all import EllipticCurve
 
 from sage.misc.cachefunc import cached_function
@@ -323,7 +321,8 @@ def isogenies_prime_degree_genus_0(E, l=None):
         kernels = [ker.monic() for ker in kernels]
         E1 = EllipticCurve([-27*c4,-54*c6])
         w = E.isomorphism_to(E1)
-        model = "minimal" if F is QQ else None
+        from sage.rings.number_field.number_field_base import is_NumberField
+        model = "minimal" if is_NumberField(F) else None
         isogs = [E1.isogeny(kernel=ker, model=model) for ker in kernels]
         [isog.set_pre_isomorphism(w) for isog in isogs]
         return isogs
@@ -639,15 +638,15 @@ def isogenies_sporadic_Q(E, l=None):
     R = PolynomialRing(F,'X')
     n = len(f)
     ker = R([d**(n-i-1) * f[i] for i in range(n)])
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
     isog = Ew.isogeny(kernel=ker, degree=l, model=model, check=False)
     isog.set_pre_isomorphism(E_to_Ew)
     return [isog]
 
 
 def isogenies_2(E):
-    """
-    Returns a list of all 2-isogenies with domain ``E``.
+    """Returns a list of all 2-isogenies with domain ``E``.
 
     INPUT:
 
@@ -656,7 +655,8 @@ def isogenies_2(E):
     OUTPUT:
 
     (list) 2-isogenies with domain ``E``.  In general these are
-    normalised, but over `\QQ` the codomain is a minimal model.
+    normalised, but over `\QQ` and other number fields, the codomain
+    is a minimal model where possible.
 
     EXAMPLES::
 
@@ -673,18 +673,19 @@ def isogenies_2(E):
         sage: E = EllipticCurve(QQbar, [9,8]); E
         Elliptic Curve defined by y^2 = x^3 + 9*x + 8 over Algebraic Field
         sage: isogenies_2(E) # not implemented
+
     """
     f2 = E.division_polynomial(2)
     x2 = sorted(f2.roots(multiplicities=False))
     x = f2.parent().gen()
     ff = [x-x2i for x2i in x2]
-    model = "minimal" if E.base_field() is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(E.base_field()) else None
     isogs = [E.isogeny(f, model=model) for f in ff]
     return isogs
 
 def isogenies_3(E):
-    """
-    Returns a list of all 3-isogenies with domain ``E``.
+    """Returns a list of all 3-isogenies with domain ``E``.
 
     INPUT:
 
@@ -693,7 +694,8 @@ def isogenies_3(E):
     OUTPUT:
 
     (list) 3-isogenies with domain ``E``.  In general these are
-    normalised, but over `\QQ` the codomain is a minimal model.
+    normalised, but over `\QQ` or a number field, the codomain is a
+    global minimal model where possible.
 
     EXAMPLES::
 
@@ -713,26 +715,28 @@ def isogenies_3(E):
         sage: E = EllipticCurve([1,1])
         sage: [phi.codomain().ainvs() for phi in isogenies_3(E)]
         []
+
     """
     f3 = E.division_polynomial(3)
     x3 = sorted(f3.roots(multiplicities=False))
     x = f3.parent().gen()
     ff = [x-x3i for x3i in x3]
-    model = "minimal" if E.base_field() is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(E.base_field()) else None
     isogs = [E.isogeny(f, model=model) for f in ff]
     return isogs
 
 # 6 special cases: `l` = 5, 7, 13 and `j` = 0, 1728.
 
 def isogenies_5_0(E):
-    """
-    Returns a list of all the 5-isogenies  with domain ``E`` when the
+    """Returns a list of all the 5-isogenies  with domain ``E`` when the
     j-invariant is 0.
 
     OUTPUT:
 
     (list) 5-isogenies with codomain E.  In general these are
-    normalised, but over `\QQ` the codomain is a minimal model.
+    normalised, but over `\QQ` or a number field, the codomain is a
+    global minimal model where possible.
 
     .. note::
 
@@ -757,9 +761,8 @@ def isogenies_5_0(E):
         sage: K.<a> = NumberField(x**6-320*x**3-320)
         sage: E = EllipticCurve(K,[0,0,1,0,0])
         sage: isogenies_5_0(E)
-        [Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 = x^3 + (a^5-400*a^2)*x + (280*a^3-3120) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320,
-        Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 = x^3 + (23/2*a^5-3700*a^2)*x + (-280*a^3+86480) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320]
-
+        [Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 + y = x^3 + (24425/32*a^5-19175/24*a^4+3299/6*a^3-985993/4*a^2+738838/3*a-738670/3)*x + (27015449/96*a^5-13187467/48*a^4+7635337/24*a^3-540421205/6*a^2+269949304/3*a-269539670/3) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320,
+        Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 + y = x^3 + (56855/8*a^5-341065/48*a^4+169679/24*a^3-4562891/2*a^2+13678499/6*a-6830905/3)*x + (-687550711/96*a^5+343406645/48*a^4-171566945/24*a^3+13793791135/6*a^2-6889739876/3*a+6882614290/3) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320]
     """
     F = E.base_field()
     if E.j_invariant() != 0:
@@ -775,15 +778,15 @@ def isogenies_5_0(E):
     if len(betas)==0:
         return []
     gammas = [(beta**2 *(beta**3-140*a))/(120*a) for beta in betas]
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
     isogs = [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
     iso = E.isomorphism_to(Ew)
     [isog.set_pre_isomorphism(iso) for isog in isogs]
     return isogs
 
 def isogenies_5_1728(E):
-    """
-    Returns a list of 5-isogenies with domain ``E`` when the j-invariant is
+    """Returns a list of 5-isogenies with domain ``E`` when the j-invariant is
     1728.
 
     OUTPUT:
@@ -791,7 +794,8 @@ def isogenies_5_1728(E):
     (list) 5-isogenies with codomain E.  In general these are
     normalised; but if `-1` is a square then there are two
     endomorphisms of degree `5`, for which the codomain is the same as
-    the domain curve; and over `\QQ`, the codomain is a minimal model.
+    the domain curve; and over `\QQ` or a number field, the codomain
+    is a global minimal model where possible.
 
     .. note::
 
@@ -834,13 +838,15 @@ def isogenies_5_1728(E):
         sage: isogenies_5_1728(E)
         [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^4 + 20*x^2 - 80 to Elliptic Curve defined by y^2 = x^3 + (-20*a^2-39)*x + (35*a^3+112*a) over Number Field in a with defining polynomial x^4 + 20*x^2 - 80,
         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^4 + 20*x^2 - 80 to Elliptic Curve defined by y^2 = x^3 + (-20*a^2-39)*x + (-35*a^3-112*a) over Number Field in a with defining polynomial x^4 + 20*x^2 - 80]
+
     """
     F = E.base_field()
     if E.j_invariant() != 1728:
         raise ValueError("j-invariant must be 1728.")
     if F.characteristic() in [2,3,5]:
         raise NotImplementedError("Not implemented in characteristic 2, 3 or 5.")
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
     # quick test for a negative answer (from Fricke module)
     square5 = F(5).is_square()
     square1 = F(-1).is_square()
@@ -866,15 +872,15 @@ def isogenies_5_1728(E):
     return isogs
 
 def isogenies_7_0(E):
-    """
-    Returns list of all 7-isogenies from E when the j-invariant is 0.
+    """Returns list of all 7-isogenies from E when the j-invariant is 0.
 
     OUTPUT:
 
     (list) 7-isogenies with codomain E.  In general these are
     normalised; but if `-3` is a square then there are two
     endomorphisms of degree `7`, for which the codomain is the same as
-    the domain; and over `\QQ`, the codomain is a minimal model.
+    the domain; and over `\QQ` or a number field, the codomain is a
+    global minimal model where possible.
 
     .. note::
 
@@ -924,6 +930,7 @@ def isogenies_7_0(E):
         sage: [phi.codomain().j_invariant() for phi in isogs]
         [158428486656000/7*a^3 - 313976217600000,
         -158428486656000/7*a^3 - 34534529335296000]
+
     """
     if E.j_invariant()!=0:
         raise ValueError("j-invariant must be 0.")
@@ -934,7 +941,8 @@ def isogenies_7_0(E):
     Ew = E.short_weierstrass_model()
     iso = E.isomorphism_to(Ew)
     a = Ew.a6()
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
 
     # there will be 2 endomorphisms if -3 is a square:
 
@@ -958,13 +966,13 @@ def isogenies_7_0(E):
     return isogs
 
 def isogenies_7_1728(E):
-    """
-    Returns list of all 7-isogenies from E when the j-invariant is 1728.
+    """Returns list of all 7-isogenies from E when the j-invariant is 1728.
 
     OUTPUT:
 
     (list) 7-isogenies with codomain E.  In general these are
-    normalised; but over `\QQ` the codomain is a minimal model.
+    normalised; but over `\QQ` or a number field, the codomain is a
+    global minimal model where possible.
 
     .. note::
 
@@ -998,17 +1006,6 @@ def isogenies_7_1728(E):
         sage: K.<a> = NumberField(x^8 + 84*x^6 - 1890*x^4 + 644*x^2 - 567)
         sage: E = EllipticCurve(K, [1, 0])
         sage: isogs = isogenies_7_1728(E)
-        sage: [phi.codomain().a_invariants() for phi in isogs]
-        [(0,
-        0,
-        0,
-        35/636*a^6 + 55/12*a^4 - 79135/636*a^2 + 1127/212,
-        155/636*a^7 + 245/12*a^5 - 313355/636*a^3 - 3577/636*a),
-        (0,
-        0,
-        0,
-        35/636*a^6 + 55/12*a^4 - 79135/636*a^2 + 1127/212,
-        -155/636*a^7 - 245/12*a^5 + 313355/636*a^3 + 3577/636*a)]
         sage: [phi.codomain().j_invariant() for phi in isogs]
         [-526110256146528/53*a^6 + 183649373229024*a^4 - 3333881559996576/53*a^2 + 2910267397643616/53,
         -526110256146528/53*a^6 + 183649373229024*a^4 - 3333881559996576/53*a^2 + 2910267397643616/53]
@@ -1018,6 +1015,7 @@ def isogenies_7_1728(E):
         False
         sage: E1.is_quadratic_twist(E2)
         -1
+
     """
     if E.j_invariant()!=1728:
         raise ValueError("j_invariant must be 1728 (in base field).")
@@ -1033,7 +1031,8 @@ def isogenies_7_1728(E):
         return []
     ts.sort()
     isogs = []
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
     x = polygen(F)
     for t0 in ts:
         s2 = a/t0
@@ -1114,7 +1113,16 @@ def isogenies_13_0(E):
         sage: E = EllipticCurve(j=K(0)); E.ainvs()
         (0, 0, 0, 0, 1)
         sage: [phi.codomain().ainvs() for phi in isogenies_13_0(E)]
-        [(0, 0, 0, -739946459/23857162861049856*a^11 - 2591641747/1062017577504*a^8 + 16583647773233/4248070310016*a^5 - 14310911337/378211388*a^2, 26146225/4248070310016*a^9 + 7327668845/14750244132*a^6 + 174618431365/756422776*a^3 - 378332499709/94552847), (0, 0, 0, 3501275/5964290715262464*a^11 + 24721025/531008788752*a^8 - 47974903745/1062017577504*a^5 - 6773483100/94552847*a^2, 6699581/4248070310016*a^9 + 1826193509/14750244132*a^6 - 182763866047/756422776*a^3 - 321460597/94552847)]
+        [(0,
+        0,
+        205825837/1431429771662991360*a^11 - 3643073/16516497365342208*a^10 + 1887439/1146978983704320*a^9 + 1621335811/143372372963040*a^8 - 82824971/4779079098768*a^7 + 1030632647/7965131831280*a^6 - 4711889295559/254884218600960*a^5 + 87205112531/2940971753088*a^4 - 43618899433/204234149520*a^3 - 21162543671/204234149520*a^2 - 1858703809/1134634164*a + 2535050171/1418292705,
+        -99832349/23857162861049856*a^11 - 16289/490161958848*a^10 - 2763263/50976843720192*a^9 - 348917917/1062017577504*a^8 - 695320861/265504394376*a^7 - 367465091/88501464792*a^6 + 2445585356663/4248070310016*a^5 + 1281006913/378211388*a^4 + 89974914541/9077073312*a^3 + 9474603033/378211388*a^2 + 3904896474/94552847*a + 682272477/94552847,
+        -467906657389/6441433972483461120*a^11 + 1058243515/5505499121780736*a^10 - 10939706521/1720468475556480*a^9 - 3276915905299/573489491852160*a^8 + 43669400873/2389539549384*a^7 - 2917849320757/7965131831280*a^6 + 11990661617853943/1146978983704320*a^5 + 12707905589039/980323917696*a^4 - 2276230681703/306351224280*a^3 - 1943867839409/5673170820*a^2 - 3350243693899/3403902492*a - 1191943546157/472764235),
+        (0,
+        0,
+        205825837/1431429771662991360*a^11 - 3643073/16516497365342208*a^10 + 1887439/1146978983704320*a^9 + 1621335811/143372372963040*a^8 - 82824971/4779079098768*a^7 + 1030632647/7965131831280*a^6 - 4711889295559/254884218600960*a^5 + 87205112531/2940971753088*a^4 - 43618899433/204234149520*a^3 - 21162543671/204234149520*a^2 - 1858703809/1134634164*a + 2535050171/1418292705,
+        -75562609/5964290715262464*a^11 - 811477/25488421860096*a^10 - 1191257/25488421860096*a^9 - 66060323/66376098594*a^8 - 651447419/265504394376*a^7 - 66673807/22125366198*a^6 + 1755277837243/1062017577504*a^5 + 6030139133/1512845552*a^4 + 24733892899/4538536656*a^3 - 2287537122/94552847*a^2 - 8986590234/94552847*a - 21573191214/94552847,
+        818908222871/6441433972483461120*a^11 + 6745355197/5505499121780736*a^10 + 20822609111/430117118889120*a^9 + 458587981097/44114576296320*a^8 + 60120233159/2389539549384*a^7 - 39829344877/7965131831280*a^6 - 19685594339421077/1146978983704320*a^5 - 44727794715895/980323917696*a^4 - 14678179233679/153175612140*a^3 + 902506518901/5673170820*a^2 + 2580634424735/3403902492*a + 1226193701173/472764235)]
     """
     if E.j_invariant()!=0:
         raise ValueError("j-invariant must be 0.")
@@ -1124,7 +1132,8 @@ def isogenies_13_0(E):
     Ew = E.short_weierstrass_model()
     iso = E.isomorphism_to(Ew)
     a = Ew.a6()
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
     x = polygen(F)
 
     # there will be 2 endomorphisms if -3 is a square:
@@ -1136,8 +1145,7 @@ def isogenies_13_0(E):
         [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
 
     # we may have up to 12 other isogenies:
-    ts = (x**4 + 7*x**3 + 20*x**2 + 19*x + 1).roots(multiplicities=False)
-    ts.sort()
+    ts = sorted((x**4 + 7*x**3 + 20*x**2 + 19*x + 1).roots(multiplicities=False))
     for t0 in ts:
         s3 = a / (6*t0**3 + 32*t0**2 + 68*t0 + 4)
         ss = sorted((x**3-s3).roots(multiplicities=False))
@@ -1155,15 +1163,15 @@ def isogenies_13_0(E):
     return isogs
 
 def isogenies_13_1728(E):
-    """
-    Returns list of all 13-isogenies from E when the j-invariant is 1728.
+    """Returns list of all 13-isogenies from E when the j-invariant is 1728.
 
     OUTPUT:
 
     (list) 13-isogenies with codomain E.  In general these are
     normalised; but if `-1` is a square then there are two
     endomorphisms of degree `13`, for which the codomain is the same
-    as the domain; and over `\QQ`, the codomain is a minimal model.
+    as the domain; and over `\QQ` or a number field, the codomain is a
+    global minimal model where possible.
 
     .. note::
 
@@ -1233,7 +1241,8 @@ def isogenies_13_1728(E):
     Ew = E.short_weierstrass_model()
     iso = E.isomorphism_to(Ew)
     a = Ew.a4()
-    model = "minimal" if F is QQ else None
+    from sage.rings.number_field.number_field_base import is_NumberField
+    model = "minimal" if is_NumberField(F) else None
     x = polygen(F)
 
     # we will have two endomorphisms if -1 is a square:
@@ -1246,8 +1255,7 @@ def isogenies_13_1728(E):
 
     # we may have up to 12 other isogenies:
 
-    ts = (x**6 + 10*x**5 + 46*x**4 + 108*x**3 + 122*x**2 + 38*x - 1).roots(multiplicities=False)
-    ts.sort()
+    ts = sorted((x**6 + 10*x**5 + 46*x**4 + 108*x**3 + 122*x**2 + 38*x - 1).roots(multiplicities=False))
     for t0 in ts:
         s2 = a/(66*t0**5 + 630*t0**4 + 2750*t0**3 + 5882*t0**2 + 5414*t0 + 162)
         ss = sorted((x**2-s2).roots(multiplicities=False))
@@ -1848,7 +1856,7 @@ def isogenies_prime_degree_general(E, l):
     ALGORITHM:
 
     This algorithm factors the ``l``-division polynomial, then
-    combines its factors to otain kernels. See [KT2013]_, Chapter 3.
+    combines its factors to obtain kernels. See [KT2013]_, Chapter 3.
 
     .. note::
 
@@ -1907,6 +1915,33 @@ def isogenies_prime_degree_general(E, l):
         [Isogeny of degree 43 from Elliptic Curve defined by y^2 + y = x^3 + x^2 + 42*x + 42 over Finite Field of size 43 to Elliptic Curve defined by y^2 + y = x^3 + x^2 + 36 over Finite Field of size 43]
         [Isogeny of degree 47 from Elliptic Curve defined by y^2 + y = x^3 + x^2 + 46*x + 46 over Finite Field of size 47 to Elliptic Curve defined by y^2 + y = x^3 + x^2 + 42*x + 34 over Finite Field of size 47]
 
+    Note that not all factors of degree (l-1)/2 of the l-division
+    polynomial are kernel polynomials.  In this example, the
+    13-division polynomial factors as a product of 14 irreducible
+    factors of degree 6 each, but only two those are kernel
+    polynomials::
+
+        sage: F3 = GF(3)
+        sage: E = EllipticCurve(F3,[0,0,0,-1,0])
+        sage: Psi13 = E.division_polynomial(13)
+        sage: len([f for f,e in Psi13.factor() if f.degree()==6])
+        14
+        sage: len(E.isogenies_prime_degree(13))
+        2
+
+    Over GF(9) the other factors of degree 6 split into pairs of
+    cubics which can be rearranged to give the remaining 12 kernel
+    polynomials::
+
+        sage: len(E.change_ring(GF(3^2,'a')).isogenies_prime_degree(13))
+        14
+
+    See :trac:`18589`: the following example took 20s before, now only 4s::
+
+        sage: K.<i> = QuadraticField(-1)
+        sage: E = EllipticCurve(K,[0,0,0,1,0])
+        sage: [phi.codomain().ainvs() for phi in E.isogenies_prime_degree(37)] # long time
+        [(0, 0, 0, -840*i + 1081, 0), (0, 0, 0, 840*i + 1081, 0)]
     """
     if not l.is_prime():
         raise ValueError("%s is not prime."%l)
@@ -1916,29 +1951,72 @@ def isogenies_prime_degree_general(E, l):
         return isogenies_3(E)
 
     psi_l = E.division_polynomial(l)
-    factors = [h for h,e in psi_l.factor() if (l-1)/2 % h.degree() == 0]
+
+    # Every kernel polynomial is a product of irreducible factors of
+    # the division polynomial of the same degree, where this degree is
+    # a divisor of (l-1)/2, so we keep only such factors:
+
+    l2 = (l-1)//2
+    factors = [h for h,e in psi_l.factor()]
+    factors_by_degree = dict([(d,[f for f in factors if f.degree()==d])
+                              for d in l2.divisors()])
+
+    ker = [] # will store all kernel polynomials found
+
+    # If for some d dividing (l-1)/2 there are exactly (l-1)/2d
+    # divisors of degree d, then their product is a kernel poly, which
+    # we add to the list and remove the factors used.
+
+    from sage.misc.all import prod
+    for d in factors_by_degree.keys():
+        if d*len(factors_by_degree[d]) == l2:
+            ker.append(prod(factors_by_degree.pop(d)))
+
+    # Exit now if all factors have been used already:
+
+    if all(factors == [] for factors in factors_by_degree.values()):
+        return [E.isogeny(k) for k in ker]
+
+    # In general we look for products of factors of the same degree d
+    # which can be kernel polynomials
+
     a = _least_semi_primitive(l)
     m = E.multiplication_by_m(a, x_only=True)
-    F = psi_l.parent()
-    x = F.gen()
-    ker = []
-    from sage.rings.arith import gcd
-    from sage.misc.all import prod
-    def mult(f):
-        return gcd(F(f(m(x)).numerator()),psi_l).monic()
-    while len(factors) > 0:
-        f = factors[0]
-        factors.remove(f)
-        d = f.degree()
-        S = [f]
-        for i in range((l-1)/(2*d)-1):
-            g = mult(S[i])
-            S.append(g)
-            if g in factors:
-                factors.remove(g)
-        if mult(S[-1]) == f:
-            ker.append(prod(S))
+    m_num = m.numerator()
+    m_den = m.denominator()
+    R = psi_l.parent()
+
+    # This function permutes the factors of a given degree, replacing
+    # the factor with roots alpha with the one whose roots are
+    # m(alpha), where m(x) is the rational function giving the
+    # multiplcation-by-a map on the X-coordinates.  Here, a is a
+    # generator for (Z/lZ)^* / <-1> (a so-called semi-primitive root).
+    def mult(g):
+        # Find f such that f(m) = 0 mod g
+        S = R.quotient_ring(g)
+        Sm = S(m_num) / S(m_den)
+        return Sm.charpoly('x')
+
+    # kernel polynomials are the products of factors of degree d in
+    # one orbit under mult, provided that the orbit has length
+    # (l-1)/2d.  Otherwise the orbit will be longer.
+    for d in factors_by_degree:
+        factors = factors_by_degree[d]
+        while factors:
+            # Compute an orbit under mult:
+            f0 = factors.pop(0)
+            orbit = [f0]
+            f = mult(f0)
+            while f != f0:
+                orbit.append(f)
+                factors.remove(f)
+                f = mult(f)
+            # Check orbit length:
+            if d*len(orbit) == l2:
+                ker.append(prod(orbit))
+
     return [E.isogeny(k) for k in ker]
+
 
 def isogenies_prime_degree(E, l):
     """
@@ -2014,8 +2092,6 @@ def isogenies_prime_degree(E, l):
         []
         sage: E.isogenies_prime_degree(73) # not tested (very long time: 32s)
         []
-
-
     """
     if not l.is_prime():
         raise ValueError("%s is not prime."%l)

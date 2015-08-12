@@ -274,4 +274,4 @@ class CartesianProduct_iters(CombinatorialClass):
             sage: CartesianProduct('dog', 'cat').random_element()
             ['d', 'a']
         """
-        return list(map(rnd.choice, self.iters))
+        return [rnd.choice(_) for _ in self.iters]

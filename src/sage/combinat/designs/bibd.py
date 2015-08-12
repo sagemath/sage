@@ -113,10 +113,10 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
         [[0, 1, 2, 3, 4, 65], [0, 5, 24, 25, 39, 57], [0, 6, 27, 38, 44, 55], ...
         sage: designs.balanced_incomplete_block_design(66, 6, use_LJCR=True)  # optional - internet
         Incidence structure with 66 points and 143 blocks
-        sage: designs.balanced_incomplete_block_design(141, 6)
+        sage: designs.balanced_incomplete_block_design(216, 6)
         Traceback (most recent call last):
         ...
-        NotImplementedError: I don't know how to build a (141,6,1)-BIBD!
+        NotImplementedError: I don't know how to build a (216,6,1)-BIBD!
 
     TESTS::
 
@@ -146,10 +146,10 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
 
     For `k > 5` there are currently very few constructions::
 
-        sage: [v for v in xrange(150) if designs.balanced_incomplete_block_design(v,6,existence=True) is True]
-        [1, 6, 31, 91, 121]
-        sage: [v for v in xrange(150) if designs.balanced_incomplete_block_design(v,6,existence=True) is Unknown]
-        [51, 61, 66, 76, 81, 96, 106, 111, 126, 136, 141]
+        sage: [v for v in xrange(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is True]
+        [1, 6, 31, 66, 76, 91, 96, 106, 111, 121, 126, 136, 141, 151, 156, 171, 181, 186, 196, 201, 211, 241, 271]
+        sage: [v for v in xrange(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is Unknown]
+        [51, 61, 81, 166, 216, 226, 231, 246, 256, 261, 276, 286, 291]
 
     Here are some constructions with `k \geq 7` and `v` a prime power::
 
@@ -317,7 +317,7 @@ def steiner_triple_system(n):
         t = (n-3) // 6
         Z = range(2*t+1)
 
-        T = lambda (x,y) : x + (2*t+1)*y
+        T = lambda x_y : x_y[0] + (2*t+1)*x_y[1]
 
         sts = [[(i,0),(i,1),(i,2)] for i in Z] + \
             [[(i,k),(j,k),(((t+1)*(i+j)) % (2*t+1),(k+1)%3)] for k in range(3) for i in Z for j in Z if i != j]
@@ -326,7 +326,7 @@ def steiner_triple_system(n):
 
         t = (n-1) // 6
         N = range(2*t)
-        T = lambda (x,y) : x+y*t*2 if (x,y) != (-1,-1) else n-1
+        T = lambda x_y : x_y[0]+x_y[1]*t*2 if x_y != (-1,-1) else n-1
 
         L1 = lambda i,j : (i+j) % ((n-1)//3)
         L = lambda i,j : L1(i,j)//2 if L1(i,j)%2 == 0 else t+(L1(i,j)-1)//2
@@ -502,7 +502,7 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
     its set of translates `\{B_i \cdot g; i \in \{1,\ldots,b\}, g \in G\}` is a
     `(v,k,\lambda)`-BIBD where `v` is the cardinality of `G`.
 
-    INPUT::
+    INPUT:
 
     - ``G`` - a finite additive Abelian group
 
@@ -550,7 +550,7 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
     Gset = set(G)
     p_to_i = {g:i for i,g in enumerate(Gset)}
     for b in D:
-        b = map(G,b)
+        b = [G(_) for _ in b]
         S = block_stabilizer(G,b)
         GG = Gset.copy()
         while GG:
@@ -1231,3 +1231,115 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         k = len(self._blocks[0]) if self._blocks else 0
         l = self._lambd
         return "({},{},{})-Balanced Incomplete Block Design".format(v,k,l)
+
+    def arc(self, s=2, solver=None, verbose=0):
+        r"""
+        Return the ``s``-arc with maximum cardinality.
+
+        A `s`-arc is a subset of points in a BIBD that intersects each block on
+        at most `s` points. It is one possible generalization of independent set
+        for graphs.
+
+        A simple counting shows that the cardinality of a `s`-arc is at most
+        `(s-1) * r + 1` where `r` is the number of blocks incident to any point.
+        A `s`-arc in a BIBD with cardinality `(s-1) * r + 1` is called maximal
+        and is characterized by the following property: it is not empty and each
+        block either contains `0` or `s` points of this arc. Equivalently, the
+        trace of the BIBD on these points is again a BIBD (with block size `s`).
+
+        For more informations, see :wikipedia:`Arc_(projective_geometry)`.
+
+        INPUT:
+
+        - ``s`` - (default to ``2``) the maximum number of points from the arc
+          in each block
+
+        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP)
+          solver to be used. If set to ``None``, the default one is used. For
+          more information on LP solvers and which default solver is used, see
+          the method
+          :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
+          of the class
+          :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: ``0``). Sets the level of
+          verbosity. Set to 0 by default, which means quiet.
+
+        EXAMPLES::
+
+            sage: B = designs.balanced_incomplete_block_design(21, 5)
+            sage: a2 = B.arc()
+            sage: a2 # random
+            [5, 9, 10, 12, 15, 20]
+            sage: len(a2)
+            6
+            sage: a4 = B.arc(4)
+            sage: a4 # random
+            [0, 1, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20]
+            sage: len(a4)
+            16
+
+        The `2`-arc and `4`-arc above are maximal. One can check that they
+        intersect the blocks in either 0 or `s` points. Or equivalently that the
+        traces are again BIBD::
+
+            sage: r = (21-1)/(5-1)
+            sage: 1 + r*1
+            6
+            sage: 1 + r*3
+            16
+
+            sage: B.trace(a2).is_t_design(2, return_parameters=True)
+            (True, (2, 6, 2, 1))
+            sage: B.trace(a4).is_t_design(2, return_parameters=True)
+            (True, (2, 16, 4, 1))
+
+        Some other examples which are not maximal::
+
+            sage: B = designs.balanced_incomplete_block_design(25, 4)
+            sage: a2 = B.arc(2)
+            sage: r = (25-1)/(4-1)
+            sage: print len(a2), 1 + r
+            8 9
+            sage: sa2 = set(a2)
+            sage: set(len(sa2.intersection(b)) for b in B.blocks())
+            {0, 1, 2}
+            sage: B.trace(a2).is_t_design(2)
+            False
+
+            sage: a3 = B.arc(3)
+            sage: print len(a3), 1 + 2*r
+            15 17
+            sage: sa3 = set(a3)
+            sage: set(len(sa3.intersection(b)) for b in B.blocks())
+            {0, 1, 2, 3}
+            sage: B.trace(a3).is_t_design(3)
+            False
+
+        TESTS:
+
+        Test consistency with relabeling::
+
+            sage: b = designs.balanced_incomplete_block_design(7,3)
+            sage: b.relabel(list("abcdefg"))
+            sage: set(b.arc()).issubset(b.ground_set())
+            True
+        """
+        s = int(s)
+
+        # trivial cases
+        if s <= 0:
+            return []
+        elif s >= max(self.block_sizes()):
+            return self._points[:]
+
+        # linear program
+        from sage.numerical.mip import MixedIntegerLinearProgram
+
+        p = MixedIntegerLinearProgram(solver=solver)
+        b = p.new_variable(binary=True)
+        p.set_objective(p.sum(b[i] for i in range(len(self._points))))
+        for i in self._blocks:
+            p.add_constraint(p.sum(b[k] for k in i) <= s)
+        p.solve(log=verbose)
+        return [self._points[i] for (i,j) in p.get_values(b).items() if j == 1]

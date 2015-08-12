@@ -21,7 +21,7 @@ element contains the following data:
   `p^{ceil(a/e)}`.  Note that all kinds of problems arise if you try
   to mix moduli.  ``ZZ_pX_conv_modulus`` gives a semi-safe way to
   convert between different moduli without having to pass through ZZX
-  (see ``sage/libs/ntl/decl.pxi`` and ``c_lib/src/ntl_wrap.cpp``)
+  (see ``sage/libs/ntl/decl.pxi`` and ``c_lib/src/ntlwrap.cpp``)
 
 - ``prime_pow`` (some subclass of ``PowComputer_ZZ_pX``) -- a class,
   identical among all elements with the same parent, holding common
@@ -165,6 +165,8 @@ include "sage/ext/interrupt.pxi"
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p

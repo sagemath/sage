@@ -57,6 +57,8 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.structure.sage_object cimport rich_to_bool
 from sage.misc.superseded import deprecation, deprecated_function_alias
 
+from .paridecl cimport *
+from .paripriv cimport *
 include 'pari_err.pxi'
 include 'sage/ext/stdsage.pxi'
 include 'sage/ext/python.pxi'
@@ -67,7 +69,9 @@ cimport cython
 cdef extern from "misc.h":
     int     factorint_withproof_sage(GEN* ans, GEN x, GEN cutoff)
 
+from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_set_pylong
+from sage.libs.pari.closure cimport objtoclosure
 
 from pari_instance cimport PariInstance, prec_bits_to_words, pari_instance
 cdef PariInstance P = pari_instance
@@ -271,10 +275,6 @@ cdef class gen(gen_auto):
     def __neg__(gen self):
         pari_catch_sig_on()
         return P.new_gen(gneg(self.g))
-
-    def __xor__(gen self, n):
-        raise RuntimeError, "Use ** for exponentiation, not '^', which means xor\n"+\
-              "in Python, and has the wrong precedence."
 
     def __rshift__(self, long n):
         """
@@ -780,9 +780,9 @@ cdef class gen(gen_auto):
 
         if isinstance(n, tuple):
             if pari_type != t_MAT:
-                raise TypeError, "self must be of pari type t_MAT"
+                raise TypeError("self must be of pari type t_MAT")
             if len(n) != 2:
-                raise IndexError, "index must be an integer or a 2-tuple (i,j)"
+                raise IndexError("index must be an integer or a 2-tuple (i,j)")
             i = int(n[0])
             j = int(n[1])
 
@@ -988,19 +988,19 @@ cdef class gen(gen_auto):
         try:
             if isinstance(n, tuple):
                 if typ(self.g) != t_MAT:
-                    raise TypeError, "cannot index PARI type %s by tuple"%typ(self.g)
+                    raise TypeError("cannot index PARI type %s by tuple" % typ(self.g))
 
                 if len(n) != 2:
-                    raise ValueError, "matrix index must be of the form [row, column]"
+                    raise ValueError("matrix index must be of the form [row, column]")
 
                 i = int(n[0])
                 j = int(n[1])
                 ind = (i,j)
 
                 if i < 0 or i >= glength(<GEN>(self.g[1])):
-                    raise IndexError, "row i(=%s) must be between 0 and %s"%(i,self.nrows()-1)
+                    raise IndexError("row i(=%s) must be between 0 and %s" % (i, self.nrows()-1))
                 if j < 0 or j >= glength(self.g):
-                    raise IndexError, "column j(=%s) must be between 0 and %s"%(j,self.ncols()-1)
+                    raise IndexError("column j(=%s) must be between 0 and %s" % (j, self.ncols()-1))
                 if self.refers_to is None:
                     self.refers_to = {ind: x}
                 else:
@@ -1014,7 +1014,7 @@ cdef class gen(gen_auto):
                 inds = xrange(*n.indices(l))
                 k = len(inds)
                 if k > len(y):
-                    raise ValueError, "attempt to assign sequence of size %s to slice of size %s"%(len(y), k)
+                    raise ValueError("attempt to assign sequence of size %s to slice of size %s" % (len(y), k))
 
                 # actually set the values
                 for i,j in enumerate(inds):
@@ -1024,7 +1024,7 @@ cdef class gen(gen_auto):
             i = int(n)
 
             if i < 0 or i >= glength(self.g):
-                raise IndexError, "index (%s) must be between 0 and %s"%(i,glength(self.g)-1)
+                raise IndexError("index (%s) must be between 0 and %s" % (i, glength(self.g)-1))
 
             # so python memory manager will work correctly
             # and not free x if PARI part of self is the
@@ -1051,9 +1051,6 @@ cdef class gen(gen_auto):
     ###########################################
     # comparisons
     ###########################################
-
-    def __richcmp__(left, right, int op):
-        return (<Element>left)._richcmp(right, op)
 
     cpdef _richcmp_(left, Element right, int op):
         """
@@ -1127,9 +1124,6 @@ cdef class gen(gen_auto):
             r = rich_to_bool(op, gcmp(x, y))
         pari_catch_sig_off()
         return r
-
-    def __cmp__(left, right):
-        return (<Element>left)._cmp(right)
 
     cpdef int _cmp_(left, Element right) except -2:
         """
@@ -1253,7 +1247,7 @@ cdef class gen(gen_auto):
         cdef int size
         x = self.g
         if typ(x) != t_INT:
-            raise TypeError, "gen must be of PARI type t_INT"
+            raise TypeError("gen must be of PARI type t_INT")
         if not signe(x):
             return "0"
         lx = lgefint(x)-2  # number of words
@@ -1330,7 +1324,7 @@ cdef class gen(gen_auto):
         """
         cdef long n, m
         if typ(self.g) != t_VECSMALL:
-            raise TypeError, "Object (=%s) must be of type t_VECSMALL."%self
+            raise TypeError("Object (=%s) must be of type t_VECSMALL." % self)
         V = []
         m = glength(self.g)
         for n from 0 <= n < m:
@@ -1365,7 +1359,7 @@ cdef class gen(gen_auto):
         cdef gen t
 
         if typ(self.g) != t_VEC:
-            raise TypeError, "Object (=%s) must be of type t_VEC."%self
+            raise TypeError("Object (=%s) must be of type t_VEC." % self)
         m = glength(self.g)
         V = []
         for n from 0 <= n < m:
@@ -2853,7 +2847,7 @@ cdef class gen(gen_auto):
             TypeError: x (="2") must be of type t_INT, but is of type t_STR.
         """
         if typ(x.g) != t_INT:
-            raise TypeError, "x (=%s) must be of type t_INT, but is of type %s."%(x,x.type())
+            raise TypeError("x (=%s) must be of type t_INT, but is of type %s." % (x, x.type()))
         pari_catch_sig_on()
         return P.new_gen(binaire(x.g))
 
@@ -6706,6 +6700,87 @@ cdef class gen(gen_auto):
         pari_catch_sig_on()
         return P.new_gen(bnrclassno(self.g, t0.g))
 
+    def _eltabstorel(self, x):
+        """
+        Return the relative number field element corresponding to `x`.
+
+        The result is a ``t_POLMOD`` with ``t_POLMOD`` coefficients.
+
+        .. WARNING::
+
+            This is a low-level version of :meth:`rnfeltabstorel` that
+            only needs the output of :meth:`_nf_rnfeq`, not a full
+            PARI ``rnf`` structure.  This method may raise errors or
+            return undefined results if called with invalid arguments.
+
+        TESTS::
+
+            sage: K = pari('y^2 + 1').nfinit()
+            sage: rnfeq = K._nf_rnfeq(x^2 + 2)
+            sage: f_abs = rnfeq[0]; f_abs
+            x^4 + 6*x^2 + 1
+            sage: x_rel = rnfeq._eltabstorel(x); x_rel
+            Mod(x + Mod(-y, y^2 + 1), x^2 + 2)
+            sage: f_abs(x_rel)
+            Mod(0, x^2 + 2)
+
+        """
+        cdef gen t0 = objtogen(x)
+        pari_catch_sig_on()
+        return P.new_gen(eltabstorel(self.g, t0.g))
+
+    def _eltabstorel_lift(self, x):
+        """
+        Return the relative number field element corresponding to `x`.
+
+        The result is a ``t_POL`` with ``t_POLMOD`` coefficients.
+
+        .. WARNING::
+
+            This is a low-level version of :meth:`rnfeltabstorel` that
+            only needs the output of :meth:`_nf_rnfeq`, not a full
+            PARI ``rnf`` structure.  This method may raise errors or
+            return undefined results if called with invalid arguments.
+
+        TESTS::
+
+            sage: K = pari('y^2 + 1').nfinit()
+            sage: rnfeq = K._nf_rnfeq(x^2 + 2)
+            sage: rnfeq._eltabstorel_lift(x)
+            x + Mod(-y, y^2 + 1)
+
+        """
+        cdef gen t0 = objtogen(x)
+        pari_catch_sig_on()
+        return P.new_gen(eltabstorel_lift(self.g, t0.g))
+
+    def _eltreltoabs(self, x):
+        """
+        Return the absolute number field element corresponding to `x`.
+
+        The result is a ``t_POL``.
+
+        .. WARNING::
+
+            This is a low-level version of :meth:`rnfeltreltoabs` that
+            only needs the output of :meth:`_nf_rnfeq`, not a full
+            PARI ``rnf`` structure.  This method may raise errors or
+            return undefined results if called with invalid arguments.
+
+        TESTS::
+
+            sage: K = pari('y^2 + 1').nfinit()
+            sage: rnfeq = K._nf_rnfeq(x^2 + 2)
+            sage: rnfeq._eltreltoabs(x)
+            1/2*x^3 + 7/2*x
+            sage: rnfeq._eltreltoabs('y')
+            1/2*x^3 + 5/2*x
+
+        """
+        cdef gen t0 = objtogen(x)
+        pari_catch_sig_on()
+        return P.new_gen(eltreltoabs(self.g, t0.g))
+
     def galoisinit(self, den=None):
         """
         Calculate the Galois group of ``self``.
@@ -7542,7 +7617,7 @@ cdef class gen(gen_auto):
         pari_catch_sig_on()
         return P.new_gen(nfinit0(self.g, flag, prec_bits_to_words(precision)))
 
-    def nfisisom(self, gen other):
+    def nfisisom(self, other):
         """
         nfisisom(x, y): Determine if the number fields defined by x and y
         are isomorphic. According to the PARI documentation, this is much
@@ -7578,9 +7653,20 @@ cdef class gen(gen_auto):
             sage: H = NumberField(x^2-2,'alpha')
             sage: F._pari_().nfisisom(H._pari_())
             0
+
+        TESTS:
+
+        This method converts its second argument (:trac:`18728`)::
+
+            sage: K.<a> = NumberField(x^2 + x + 1)
+            sage: L.<b> = NumberField(x^2 + 3)
+            sage: pari(K).nfisisom(L)
+            [-1/2*y - 1/2, 1/2*y - 1/2]
+
         """
+        cdef gen t0 = objtogen(other)
         pari_catch_sig_on()
-        return P.new_gen(nfisisom(self.g, other.g))
+        return P.new_gen(nfisisom(self.g, t0.g))
 
     def nfrootsof1(self):
         """
@@ -7616,11 +7702,34 @@ cdef class gen(gen_auto):
         pari_catch_sig_on()
         return P.new_gen(nfsubfields(self.g, d))
 
+    def _nf_rnfeq(self, relpol):
+        """
+        Return data for converting number field elements between
+        absolute and relative representation.
+
+        .. NOTE::
+
+            The output of this method is suitable for the methods
+            :meth:`_eltabstorel`, :meth:`_eltabstorel_lift` and
+            :meth:`_eltreltoabs`.
+
+        TESTS::
+
+            sage: K = pari('y^2 + 1').nfinit()
+            sage: K._nf_rnfeq(x^2 + 2)
+            [x^4 + 6*x^2 + 1, 1/2*x^3 + 5/2*x, -1, y^2 + 1, x^2 + 2]
+
+        """
+        cdef gen t0 = objtogen(relpol)
+        pari_catch_sig_on()
+        return P.new_gen(nf_rnfeq(self.g, t0.g))
+
     def rnfidealdown(self, x):
         r"""
         rnfidealdown(rnf,x): finds the intersection of the ideal x with the base field.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ZZ['xx1'].0; pari(x)
             xx1
             sage: y = ZZ['yy1'].0; pari(y)
@@ -7825,6 +7934,15 @@ cdef class gen(gen_auto):
             sage: f()
             [0, 0, 1.00000000000000]
 
+        Variadic closures are supported as well (:trac:`18623`)::
+
+            sage: f = pari("(v[..])->length(v)")
+            sage: f('a', f)
+            2
+            sage: g = pari("(x,y,z[..])->[x,y,z]")
+            sage: g(), g(1), g(1,2), g(1,2,3), g(1,2,3,4)
+            ([0, 0, []], [1, 0, []], [1, 2, []], [1, 2, [3]], [1, 2, [3, 4]])
+
         Using keyword arguments, we can substitute in more complicated
         objects, for example a number field::
 
@@ -7846,12 +7964,9 @@ cdef class gen(gen_auto):
         if t == t_CLOSURE:
             if nkwds > 0:
                 raise TypeError("cannot evaluate a PARI closure using keyword arguments")
-            # XXX: use undocumented internals to get arity of closure
-            # (In PARI 2.6, there is closure_arity() which does this)
-            arity = self.g[1]
-            if nargs > arity:
-                raise TypeError("PARI closure takes at most %d argument%s (%d given)"%(
-                    arity, "s" if (arity!=1) else "", nargs))
+            if closure_is_variadic(self.g):
+                arity = closure_arity(self.g) - 1
+                args = list(args[:arity]) + [0]*(arity-nargs) + [args[arity:]]
             t0 = objtogen(args)
             pari_catch_sig_on()
             result = closure_callgenvec(self.g, t0.g)
@@ -7931,7 +8046,7 @@ cdef class gen(gen_auto):
             sage: pari('() -> 42')(1,2,3)
             Traceback (most recent call last):
             ...
-            TypeError: PARI closure takes at most 0 arguments (3 given)
+            PariError: too many parameters in user-defined function call
             sage: pari('n -> n')(n=2)
             Traceback (most recent call last):
             ...
@@ -8976,7 +9091,7 @@ cdef class gen(gen_auto):
         if varn(self.g) == n:
             return self
         if typ(self.g) != t_POL and typ(self.g) != t_SER:
-            raise TypeError, "set_variable() only works for polynomials or power series"
+            raise TypeError("set_variable() only works for polynomials or power series")
         # Copy self and then change the variable in place
         cdef gen newg = P.new_gen_noclear(self.g)
         setvarn(newg.g, n)
@@ -9103,7 +9218,7 @@ cdef class gen(gen_auto):
         elif t == t_VECSMALL: return 't_VECSMALL'
         elif t == t_CLOSURE:  return 't_CLOSURE'
         else:
-            raise TypeError, "Unknown PARI type: %s"%t
+            raise TypeError("Unknown PARI type: %s" % t)
 
     def polinterpolate(self, ya, x):
         """
@@ -9469,6 +9584,9 @@ cpdef gen objtogen(s):
         for i from 0 <= i < length:
             v[i] = objtogen(s[i])
         return v
+
+    if callable(s):
+        return objtoclosure(s)
 
     if s is None:
         raise ValueError("Cannot convert None to pari")

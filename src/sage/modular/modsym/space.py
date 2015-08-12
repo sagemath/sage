@@ -1128,15 +1128,15 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
         choice of `q`-eigenform attached to this simple cuspidal
         modular symbols space.
 
-        INPUT::
+        INPUT:
 
-            - ``names` -- string, name of the variable.
+        - ``names`` -- string, name of the variable.
 
         OUTPUT:
 
-            - a Dirichlet character taking values in the Hecke eigenvalue
-              field, where the indeterminant of that field is determined
-              by the given variable name.
+        - a Dirichlet character taking values in the Hecke eigenvalue
+          field, where the indeterminate of that field is determined
+          by the given variable name.
 
         EXAMPLES::
 

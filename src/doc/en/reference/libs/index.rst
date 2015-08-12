@@ -51,6 +51,7 @@ to be aware of the modules described in this chapter.
    sage/libs/pari/gen_py
    sage/libs/pari/gen
    sage/libs/pari/pari_instance
+   sage/libs/pari/closure
    sage/rings/pari_ring
    sage/libs/fplll/fplll
    sage/libs/readline

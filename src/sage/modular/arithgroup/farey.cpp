@@ -29,12 +29,7 @@
 #include <Python.h>
 
 #include "farey.hpp"
-
-extern "C" long convert_to_long(PyObject *);
-extern "C" PyObject *convert_to_Integer(mpz_class);
-extern "C" PyObject *convert_to_rational(mpq_class);
-extern "C" PyObject *convert_to_cusp(mpq_class);
-extern "C" PyObject *convert_to_SL2Z(SL2Z);
+#include "sage/modular/arithgroup/farey_symbol.h"
 
 
 using namespace std;
@@ -1006,17 +1001,18 @@ PyObject* FareySymbol::is_element(const mpz_t a, const mpz_t b,
 }
 
 PyObject* FareySymbol::word_problem(const mpz_t a, const mpz_t b, 
-				  const mpz_t c, const mpz_t d) const {
+				    const mpz_t c, const mpz_t d, SL2Z *beta) const {
   const SL2Z M = SL2Z(mpz_class(a), mpz_class(b), mpz_class(c), mpz_class(d));
   vector<int> p;
   PyObject* wd;
-  SL2Z beta = SL2Z::E;
+  SL2Z beta1 = SL2Z::E;
   size_t i;
-  LLT_algorithm(M, p, beta);
+  LLT_algorithm(M, p, beta1);
   wd = PyList_New(p.size());
   for(i=0; i<p.size(); i++) {
     PyList_SetItem(wd, i, PyInt_FromLong(p[i]));
   }
+  *beta = beta1;
   return wd;
 }
 

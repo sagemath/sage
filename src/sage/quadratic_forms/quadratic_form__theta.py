@@ -384,7 +384,7 @@ def theta_series_degree_2(Q, prec):
     t = cputime()
     max = int(floor((X+1)/4))
     v_list = (Q.vectors_by_length(max))        # assume a>0
-    v_list = map(lambda vs: map(V, vs), v_list)  # coerce vectors into V
+    v_list = [[V(_) for _ in vs] for vs in v_list]  # coerce vectors into V
     verbose("Computed vectors_by_length" , t)
 
     # Deal with the singular part

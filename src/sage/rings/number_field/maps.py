@@ -162,9 +162,6 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
             sage: type(fr)
             <class 'sage.rings.number_field.maps.MapVectorSpaceToNumberField'>
         """
-        self.__V = V
-        self.__K = K
-        self.__R = K.polynomial_ring()
         NumberFieldIsomorphism.__init__(self, Hom(V, K))
 
     def _call_(self, v):
@@ -176,8 +173,9 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
             sage: map(fr, V.gens()) # indirect doctest
             [1, c, c^2, c^3, c^4, c^5, c^6, c^7, c^8]
         """
-        f = self.__R(self.__V(v).list())
-        return self.__K._element_class(self.__K, f)
+        K = self.codomain()
+        f = K.polynomial_ring()(v.list())
+        return K._element_class(K, f)
 
 class MapNumberFieldToVectorSpace(Map):
     r"""
@@ -203,10 +201,6 @@ class MapNumberFieldToVectorSpace(Map):
               From: Number Field in a with defining polynomial x^3 - x + 1
               To:   Vector space of dimension 3 over Rational Field
         """
-        self.__V = V
-        self.__K = K
-        self.__zero = QQ(0)
-        self.__n = K.degree()
         NumberFieldIsomorphism.__init__(self, Hom(K, V))
 
     def _repr_type(self):
@@ -231,10 +225,11 @@ class MapNumberFieldToVectorSpace(Map):
             sage: v.parent() is V
             True
         """
-        y = self.__K(x)
-        v = y._coefficients()
-        w = v + [self.__zero]*(self.__n - len(v))
-        return self.__V(w)
+        v = x._coefficients()
+        k = self.domain().degree() - len(v)
+        if k > 0:
+            v = v + [QQ.zero()] * k
+        return self.codomain()(v)
 
 class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
     r"""
@@ -272,11 +267,6 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
               From: Number Field in a with defining polynomial x^2 + 1 over its base field
               To:   Vector space of dimension 2 over Number Field in b with defining polynomial x^2 - 2
         """
-        self.__V = V
-        self.__K = K
-        self.__R = K.polynomial_ring()
-        self.__rnf = K.pari_rnf()
-        self.__B = K.base_field().absolute_field('a')
         NumberFieldIsomorphism.__init__(self, Hom(V, K))
 
     def _call_(self, v):
@@ -290,25 +280,16 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             sage: fr(to(a0 + 2*b0)), fr(V([0, 1])), fr(V([b0, 2*b0])) # indirect doctest
             (a0 + 2*b0, a0, 2*b0*a0 + b0)
         """
-        # Given a relative vector space element, we have to
-        # compute the corresponding number field element, in terms
-        # of an absolute generator.
-        w = self.__V(v).list()
-
-        # First, construct from w a PARI polynomial in x with coefficients
-        # that are polynomials in y:
-        B = self.__B
+        K = self.codomain()
+        B = K.base_field().absolute_field('a')
+        # Convert v to a PARI polynomial in x with coefficients that
+        # are polynomials in y.
         _, to_B = B.structure()
-        # Apply to_B, so now each coefficient is in an absolute field,
-        # and is expressed in terms of a polynomial in y, then make
-        # the PARI poly in x.
-        w = [to_B(a)._pari_('y') for a in w]
-        h = pari(w).Polrev()
-
-        # Next we write the poly in x over a poly in y in terms
-        # of an absolute polynomial for the rnf.
-        g = self.__rnf.rnfeltreltoabs(h)
-        return self.__K._element_class(self.__K, g)
+        h = pari([to_B(a)._pari_('y') for a in v]).Polrev()
+        # Rewrite the polynomial in terms of an absolute generator for
+        # the relative number field.
+        g = K.pari_rnf().rnfeltreltoabs(h)
+        return K._element_class(K, g)
 
 class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
     r"""
@@ -332,14 +313,6 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
               From: Number Field in a0 with defining polynomial x^2 - b0*x + 1 over its base field
               To:   Vector space of dimension 2 over Number Field in b0 with defining polynomial x^2 + 1
         """
-        self.__V = V
-        self.__K = K
-        self.__rnf = K.pari_rnf()
-        self.__zero = QQ(0)
-        self.__n = K.relative_degree()
-        self.__x = pari("'x")
-        self.__y = pari("'y")
-        self.__B = K.absolute_base_field()
         NumberFieldIsomorphism.__init__(self, Hom(K, V))
 
     def _call_(self, alpha):
@@ -371,31 +344,16 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
             sage: to_V(a) # indirect doctest
             (a)
         """
-        # An element of a relative number field is represented
-        # internally by an absolute polynomial over QQ.
-        alpha = self.__K(alpha)
-
-        # f is the absolute polynomial that defines this number field
-        # element
-        f = alpha.polynomial('x')
-        g = self.__rnf.rnfeltabstorel(pari(f)).lift().lift()
-        # Now g is a relative polynomial that defines this element.
-        # This g is a polynomial in a pari variable x with
-        # coefficients polynomials in a variable y.  These
-        # coefficients define the coordinates of the vector we are
-        # constructing.
-
-        # The list v below has the coefficients that are the
-        # components of the vector we are constructing, but each is
-        # converted into polynomials in a variable x, which we will
-        # use to define elements of the base field.
-        (x, y) = (self.__x, self.__y)
-        v = [g.polcoeff(i).subst(x,y) for i in range(self.__n)]
-        B,from_B, _ = self.__B
-        w = [from_B(B(z)) for z in v]
-
-        # Now w gives the coefficients.
-        return self.__V(w)
+        K = self.domain()
+        # The element alpha is represented internally by an absolute
+        # polynomial over QQ, and f is its PARI representation.
+        f = alpha._pari_('x')
+        # Convert f to a relative polynomial g; this is a polynomial
+        # in x whose coefficients are polynomials in y.
+        g = K.pari_rnf().rnfeltabstorel(f).lift().lift()
+        # Convert the coefficients to elements of the base field.
+        B, from_B, _ = K.absolute_base_field()
+        return self.codomain()([from_B(B(z)) for z in g.Vecrev(-K.relative_degree())])
 
 class NameChangeMap(NumberFieldIsomorphism):
     r"""
@@ -431,8 +389,6 @@ class NameChangeMap(NumberFieldIsomorphism):
               From: Number Field in a with defining polynomial x^2 - 3 over its base field
               To:   Number Field in c with defining polynomial x^2 - 3 over its base field)
         """
-        self.__K = K
-        self.__L = L
         NumberFieldIsomorphism.__init__(self, Hom(K, L))
 
     def _repr_type(self):
@@ -459,10 +415,9 @@ class NameChangeMap(NumberFieldIsomorphism):
             sage: to_K(57*c + 19/8*d) # indirect doctest
             57*a + 19/8*b
         """
-        y = self.__K(x)
-        z = y.__copy__()
-        z._set_parent(self.__L)
-        return z
+        y = x.__copy__()
+        y._set_parent(self.codomain())
+        return y
 
 class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
     r"""
@@ -522,11 +477,6 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
             sage: type(f)
             <class 'sage.rings.number_field.maps.MapRelativeToAbsoluteNumberField'>
         """
-        self.__R = R          # relative field
-        self.__A = A          # absolute field
-        self.__poly_ring = self.__A.polynomial_ring()
-        self.__zero = QQ(0)
-        self.__n = A.degree()
         NumberFieldIsomorphism.__init__(self, Hom(R, A))
 
     def _call_(self, x):
@@ -539,8 +489,9 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
             sage: f(a + 3*b) # indirect doctest
             -c^3 - 17*c
         """
-        f = self.__R(x).polynomial()
-        return self.__A._element_class(self.__A, f)
+        A = self.codomain()  # absolute field
+        f = x.polynomial()
+        return A._element_class(A, f)
 
 class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
     r"""
@@ -556,11 +507,6 @@ class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
             sage: type(f)
             <class 'sage.rings.number_field.maps.MapAbsoluteToRelativeNumberField'>
         """
-        self.__A = A          # absolute field
-        self.__R = R          # relative field
-        self.__poly_ring = self.__A.polynomial_ring()
-        self.__zero = QQ(0)
-        self.__n = A.degree()
         NumberFieldIsomorphism.__init__(self, Hom(A, R))
 
     def _call_(self, x):
@@ -573,9 +519,9 @@ class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
             sage: f(c + 13*c^2) # indirect doctest
             (-26*b + 1)*a - b - 104
         """
-
-        f = self.__A(x).polynomial()
-        return self.__R._element_class(self.__R, f)
+        R = self.codomain()  # relative field
+        f = x.polynomial()
+        return R._element_class(R, f)
 
 class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
     r"""
@@ -601,8 +547,6 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
               From: Vector space of dimension 4 over Rational Field
               To:   Number Field in a with defining polynomial x^2 + 3 over its base field
         """
-        self.__V = V
-        self.__L = L
         self.__from_V = from_V
         self.__from_K = from_K
         NumberFieldIsomorphism.__init__(self, Hom(V, L))
@@ -664,8 +608,6 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
               From: Number Field in a with defining polynomial x^2 + 3 over its base field
               To:   Vector space of dimension 4 over Rational Field
         """
-        self.__L = L
-        self.__V = V
         self.__to_K = to_K
         self.__to_V = to_V
         NumberFieldIsomorphism.__init__(self, Hom(L, V))

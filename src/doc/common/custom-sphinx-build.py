@@ -191,7 +191,7 @@ class SageSphinxLogger(object):
             self._write(str)
         except OSError:
             raise
-        except StandardError:
+        except Exception:
             import traceback
             traceback.print_exc(file=self._stream)
 

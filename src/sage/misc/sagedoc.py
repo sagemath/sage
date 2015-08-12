@@ -70,6 +70,7 @@ math_substitutes = [
     (r'\\mapsto', ' |--> '),
     (r'\\lvert', '|'),
     (r'\\rvert', '|'),
+    (r'\\mid', '|'),
 ]
 nonmath_substitutes = [
     ('\\_','_'),
@@ -343,16 +344,16 @@ def process_extlinks(s, embedded=False):
 
         sage: from sage.misc.sagedoc import process_extlinks
         sage: process_extlinks('See :trac:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :trac:`4321` ...')
-        'See http://trac.sagemath.org/1234, http://en.wikipedia.org/wiki/Sage_(mathematics_software), and http://trac.sagemath.org/4321 ...'
+        'See http://trac.sagemath.org/1234, https://en.wikipedia.org/wiki/Sage_(mathematics_software), and http://trac.sagemath.org/4321 ...'
         sage: process_extlinks('See :trac:`1234` for more information.', embedded=True)
         'See :trac:`1234` for more information.'
         sage: process_extlinks('see :python:`Implementing Descriptors <reference/datamodel.html#implementing-descriptors>` ...')
-        'see http://docs.python.org/release/.../reference/datamodel.html#implementing-descriptors ...'
+        'see https://docs.python.org/release/.../reference/datamodel.html#implementing-descriptors ...'
     """
     if embedded:
         return s
     oldpath = sys.path
-    sys.path = oldpath + [os.path.join(SAGE_DOC, 'common')]
+    sys.path = [os.path.join(SAGE_DOC, 'common')] + oldpath
     from conf import pythonversion, extlinks
     sys.path = oldpath
     for key in extlinks:
@@ -673,7 +674,7 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
     if 'ignore_case' in kwds:
         ignore_case = kwds['ignore_case']
     else:
-        ignore_case = False
+        ignore_case = True
     if 'multiline' in kwds:
         multiline = kwds['multiline']
     else:
@@ -797,7 +798,7 @@ You can build this with 'sage -docbuild {} html'.""".format(s))
                                       if re.search(string, line, flags)]
                         for extra in [extra1, extra2, extra3, extra4, extra5]:
                             if extra:
-                                match_list = [s for s in match_list 
+                                match_list = [s for s in match_list
                                                 if re.search(extra, s[1], re.MULTILINE | flags)]
                         for num, line in match_list:
                             results += ':'.join([filename[strip:].lstrip("/"), str(num+1), line])
@@ -822,7 +823,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
     r"""
     Search Sage library source code for lines containing ``string``.
-    The search is case-sensitive.
+    The search is case-insensitive by default.
 
     INPUT:
 
@@ -837,8 +838,8 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
       regular expression, and it might have unexpected results if used
       with regular expressions.
 
-    - ``ignore_case`` (optional, default False) - if True, perform a
-      case-insensitive search
+    - ``ignore_case`` (optional, default True) - if False, perform a
+      case-sensitive search
 
     - ``multiline`` (optional, default False) - if True, search more
       than one line at a time.  In this case, print any matching file
@@ -872,8 +873,8 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     The ``string`` and ``extraN`` arguments are treated as regular
     expressions, as is ``path_re``, and errors will be raised if they
-    are invalid. The matches will be case-sensitive unless
-    ``ignore_case`` is True.
+    are invalid. The matches will be case-insensitive unless
+    ``ignore_case`` is False.
 
     .. note::
 
@@ -924,17 +925,17 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         sage: print search_src(" fetch\(", "def", "pyx", interact=False) # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
 
-    As noted above, the search is case-sensitive, but you can make it
-    case-insensitive with the 'ignore_case' key word::
+    As noted above, the search is case-insensitive, but you can make it
+    case-sensitive with the 'ignore_case' key word::
 
         sage: s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
         True
 
         sage: s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
-        False
-
-        sage: s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=True); s.find('x') > 0
         True
+
+        sage: s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=False); s.find('x') > 0
+        False
 
     Searches are by default restricted to single lines, but this can
     be changed by setting ``multiline`` to be True.  In the following,
@@ -943,9 +944,9 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     ``search_src(string, interact=False).splitlines()`` gives the
     number of matches. ::
 
-        sage: len(search_src('log', 'derivative', interact=False).splitlines()) < 10
+        sage: len(search_src('log', 'derivative', interact=False).splitlines()) < 40
         True
-        sage: len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 30
+        sage: len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 70
         True
 
     A little recursive narcissism: let's do a doctest that searches for
@@ -964,9 +965,9 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         misc/sagedoc.py:... print search_src(" fetch\(", "def", "pyx", interact=False) # random # long time
         misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
         misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
-        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=True); s.find('x') > 0
-        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 10
-        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 30
+        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=False); s.find('x') > 0
+        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 40
+        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 70
         misc/sagedoc.py:... print search_src('^ *sage[:] .*search_src\(', interact=False) # long time
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) > 9000 # long time
         misc/sagedoc.py:... print search_src('matrix', 'column', 'row', 'sub', 'start', 'index', interact=False) # random # long time
@@ -997,7 +998,7 @@ def search_doc(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
     """
     Search Sage HTML documentation for lines containing ``string``. The
-    search is case-sensitive.
+    search is case-insensitive by default.
 
     The file paths in the output are relative to
     ``$SAGE_DOC/output``.
@@ -1035,7 +1036,7 @@ def search_def(name, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
     r"""
     Search Sage library source code for function definitions containing
-    ``name``. The search is case sensitive.
+    ``name``. The search is case-insensitive by default.
 
     INPUT: same as for :func:`search_src`.
 
@@ -1446,7 +1447,7 @@ def help(module=None):
         if hasattr(module, '_sage_doc_'):
             from sage.misc.sageinspect import sage_getdef, _sage_getdoc_unformatted
             docstr = 'Help on ' + str(module) + '\n'
-            docstr += 'Definition: ' + module.__name__ + sage_getdef(module) + '\n' 
+            docstr += 'Definition: ' + module.__name__ + sage_getdef(module) + '\n'
             pydoc.pager(docstr + _sage_getdoc_unformatted(module))
         else:
             python_help(module)

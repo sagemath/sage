@@ -1,5 +1,5 @@
 """
-Hyperelliptic curves over a finite field
+Hyperelliptic curves of genus 2 over a finite field
 """
 
 #*****************************************************************************

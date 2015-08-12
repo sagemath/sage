@@ -62,7 +62,7 @@ def lift_to_gamma1(g, m, n):
         raise ValueError( "Determinant is {0} mod {1}, should be 1".format((a*d - b*c) % m, m) )
     c2 = crt(c, 0, m, n)
     d2 = crt(d, 1, m, n)
-    a3,b3,c3,d3 = map(ZZ, lift_to_sl2z(c2,d2,m*n))
+    a3,b3,c3,d3 = [ZZ(_) for _ in lift_to_sl2z(c2,d2,m*n)]
     r = (a3*b - b3*a) % m
     return [a3 + r*c3, b3 + r*d3, c3, d3]
 

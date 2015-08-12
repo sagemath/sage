@@ -63,7 +63,7 @@ from sage.combinat.binary_tree import BinaryTrees
 from sage.combinat.binary_tree import LabelledBinaryTrees
 from sage.combinat.dyck_word import DyckWords
 from sage.combinat.permutation import Permutation
-from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
@@ -248,7 +248,7 @@ class TamariIntervalPoset(Element):
         sage: TIP(Poset({}))
         The tamari interval of size 0 induced by relations []
     """
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     @staticmethod
     def __classcall_private__(cls, *args, **opts):

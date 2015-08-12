@@ -8,11 +8,11 @@ AUTHORS:
 
  - Joris Vankerschaver (2010-05-26)
 
-TODO:
+.. TODO::
 
- - Allow for forms with values in a vector space
+    - Allow for forms with values in a vector space
 
- - Incorporate Kahler differentials
+    - Incorporate Kahler differentials
 
 REFERENCES:
 
@@ -78,7 +78,7 @@ class DifferentialForms(Algebra):
         Construct the algebra of differential forms on a given coordinate patch.
         See ``DifferentialForms`` for details.
 
-        INPUT::
+        INPUT:
 
         - ``coordinate_patch`` -- Coordinate patch where the algebra lives.
         If no coordinate patch is given, a default coordinate patch with
@@ -134,7 +134,7 @@ class DifferentialForms(Algebra):
             True
         """
 
-        if isinstance(other, type(self)):
+        if type(other) is type(self):
             return self._patch == other._patch
         else:
             return False
@@ -346,9 +346,8 @@ class DifferentialForms(Algebra):
             'Algebra of differential forms in the variables x, y, z'
         """
 
-        from string import join
         return "Algebra of differential forms in the variables " + \
-            ', '.join([str(var) for var in self._patch.coordinates()])
+            ', '.join(str(var) for var in self._patch.coordinates())
 
 
     def _latex_(self):

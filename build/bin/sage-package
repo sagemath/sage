@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+# Script to manage third-party tarballs.
+#
+# Usage:
+#
+# * Print the configuration
+#
+#   $ sage-package config
+#   Configuration:
+#     * log = info
+#     * interactive = True
+#
+# * Print a list of all available packages
+#
+#   $ sage-package list | sort
+#   4ti2
+#   arb
+#   atlas
+#   autotools
+#   [...]
+#   zn_poly
+#
+# * Find the package name given a tarball filename
+#
+#   $ sage-package name pari-2.8-1564-gdeac36e.tar.gz
+#   pari
+#
+# * Find the tarball filename given a package name
+#
+#   $ sage-package tarball pari
+#   pari-2.8-1564-gdeac36e.tar.gz
+
+try:
+    import sage_bootstrap
+except ImportError:
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    import sage_bootstrap
+
+from sage_bootstrap.cmdline import SagePkgApplication
+SagePkgApplication().run()

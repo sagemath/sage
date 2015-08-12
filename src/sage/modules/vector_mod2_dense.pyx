@@ -4,7 +4,6 @@ Vectors with elements in GF(2).
 AUTHOR:
 
 - Martin Albrecht (2009-12): initial implementation
-
 - Thomas Feulner (2012-11): added :meth:`Vector_mod2_dense.hamming_weight`
 
 EXAMPLES::
@@ -16,14 +15,24 @@ EXAMPLES::
     (0, 1, 1)
     sage: e + f
     (1, 1, 1)
+
+TESTS::
+
+    sage: w = vector(GF(2), [-1,0,0,0])
+    sage: w.set_immutable()
+    sage: isinstance(hash(w), int)
+    True
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
 
 include 'sage/ext/interrupt.pxi'
 
@@ -200,33 +209,13 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             False
             sage: w > v
             True
-        """
-        if left._degree == 0:
-            return 0
-        return mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
-
-    # see sage/structure/element.pyx
-    def __richcmp__(left, right, int op):
-        """
-        TEST::
-
             sage: w = vector(GF(2), [-1,0,0,0])
             sage: w == w
             True
         """
-        return (<Element>left)._richcmp(right, op)
-
-    # __hash__ is not properly inherited if comparison is changed
-    def __hash__(self):
-        """
-        TEST::
-
-            sage: w = vector(GF(2), [-1,0,0,0])
-            sage: w.set_immutable()
-            sage: isinstance(hash(w), int)
-            True
-        """
-        return free_module_element.FreeModuleElement.__hash__(self)
+        if left._degree == 0:
+            return 0
+        return mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -461,7 +450,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` - always ``True
+        - ``copy`` - always ``True``
 
         EXAMPLE::
 

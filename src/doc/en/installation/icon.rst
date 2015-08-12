@@ -1,5 +1,5 @@
-Desktop icon
-============
+KDE Desktop icon
+================
 
 These instructions will help you make a KDE desktop icon which
 starts the Sage notebook. Instructions for a Gnome desktop icon are

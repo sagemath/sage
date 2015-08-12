@@ -1,11 +1,9 @@
-include "sage/ext/cdefs.pxi"
-cimport sage.structure.element
-import  sage.structure.element
+from sage.libs.gmp.types cimport mpq_t
 
+cimport sage.structure.element
 cimport integer
 
 cpdef rational_power_parts(a, b, factor_limit=?)
-
 
 cdef class Rational(sage.structure.element.FieldElement):
     cdef mpq_t value

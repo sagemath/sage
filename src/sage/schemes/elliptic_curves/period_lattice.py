@@ -1039,19 +1039,27 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L.ei()
             [-1.107159871688768?, 0.2695944364054446?, 0.8375654352833230?]
 
+        In the following example, we should have one purely real 2-division point coordinate,
+        and two conjugate purely imaginary coordinates.
+
         ::
 
             sage: K.<a> = NumberField(x^3-2)
             sage: E = EllipticCurve([0,1,0,a,a])
             sage: L = E.period_lattice(K.embeddings(RealField())[0])
-            sage: L.ei()
-            [0.?e-17 - 1.122462048309373?*I, 0.?e-17 + 1.122462048309373?*I, -1]
+            sage: x1,x2,x3 = L.ei()
+            sage: abs(x1.real())+abs(x2.real())<1e-14
+            True
+            sage: x1.imag(),x2.imag(),x3
+            (-1.122462048309373?, 1.122462048309373?, -1)
 
-        sage: L = E.period_lattice(K.embeddings(ComplexField())[0])
-        sage: L.ei()
-        [-1.000000000000000? + 0.?e-1...*I,
-        -0.9720806486198328? - 0.561231024154687?*I,
-        0.9720806486198328? + 0.561231024154687?*I]
+        ::
+
+            sage: L = E.period_lattice(K.embeddings(ComplexField())[0])
+            sage: L.ei()
+            [-1.000000000000000? + 0.?e-1...*I,
+            -0.9720806486198328? - 0.561231024154687?*I,
+            0.9720806486198328? + 0.561231024154687?*I]
         """
         return self._ei
 

@@ -10,5 +10,6 @@ with :math:`L`-functions.
    sage/lfunctions/lcalc
    sage/lfunctions/sympow
    sage/lfunctions/dokchitser
+   sage/lfunctions/zero_sums
 
 .. include:: ../footer.txt

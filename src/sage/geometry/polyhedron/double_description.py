@@ -213,7 +213,7 @@ class DoubleDescriptionPair:
              [ 2/3 -1/3 -1/3]\nA = [ 0  1  1],   R = [-1/3  2/3 -1/3]\n
              [-1 -1  1]        [ 1/3  1/3  1/3]'
         """
-        from sage.misc.ascii_art import ascii_art
+        from sage.typeset.ascii_art import ascii_art
         from sage.matrix.constructor import matrix
         s = ascii_art('Double description pair (A, R) defined by')
         A = ascii_art(matrix(self.A))

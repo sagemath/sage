@@ -34,6 +34,9 @@ include 'sage/ext/interrupt.pxi'
 from cpython.int cimport *
 include "sage/ext/stdsage.pxi"
 
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
+
 import sage.rings.field_element
 import sage.rings.infinity
 import sage.rings.polynomial.polynomial_element
@@ -2293,7 +2296,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: SR(b.minpoly()).solve(SR('x'), explicit_solutions=True)
             []
             sage: SR(b)
-            1/8*((sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)^2 + 4)*(sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)
+            1/8*(sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)^3 + 1/2*sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5/2
 
         """
         K = self._parent.fraction_field()

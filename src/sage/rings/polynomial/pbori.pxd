@@ -6,12 +6,8 @@ from sage.rings.polynomial.multi_polynomial_ring_generic cimport \
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.structure.element cimport MonoidElement
 
-#explicit is better than implicit
-from sage.libs.polybori.decl cimport PBPoly, PBRing, PBNavigator, \
-    PBPolyVector, PBPolyVectorIter, PBSet, PBMonom,  PBMonomVarIter, PBMonomIter, \
-    PBPolyIter, PBSetIter, PBRedStrategy, PBGBStrategy, PBFglmStrategy, PBVar
-
 from sage.libs.polybori.decl cimport *
+
 
 cdef class BooleanPolynomialRing(MPolynomialRing_generic):
     cdef PBRing _pbring

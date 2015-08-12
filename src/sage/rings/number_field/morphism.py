@@ -259,8 +259,8 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
             raise TypeError("Can only invert isomorphisms")
         V, V_into_K, _ = K.vector_space()
         _, _, L_into_W = L.vector_space()
-        linear_inverse = ~V.hom(map(L_into_W*self*V_into_K, V.basis()))
-        return L.hom(map(V_into_K*linear_inverse*L_into_W, [L.gen()]))
+        linear_inverse = ~V.hom([(L_into_W*self*V_into_K)(_) for _ in V.basis()])
+        return L.hom([(V_into_K*linear_inverse*L_into_W)(_) for _ in [L.gen()]])
 
     def preimage(self, y):
         r"""

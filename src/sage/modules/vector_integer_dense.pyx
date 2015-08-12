@@ -36,14 +36,23 @@ TESTS::
     sage: v = vector(ZZ, [1,2,3,4])
     sage: loads(dumps(v)) == v
     True
+
+    sage: w = vector(ZZ, [-1,0,0,0])
+    sage: w.set_immutable()
+    sage: isinstance(hash(w), int)
+    True
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
+
 
 include 'sage/ext/interrupt.pxi'
 include 'sage/ext/stdsage.pxi'
@@ -133,6 +142,8 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             sage: v == v
             True
             sage: w = vector(ZZ, [-1,0,0,0])
+            sage: w == w
+            True
             sage: w < v
             True
             sage: w > v
@@ -147,29 +158,6 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             elif c > 0:
                 return 1
         return 0
-
-    # see sage/structure/element.pyx
-    def __richcmp__(left, right, int op):
-        """
-        TEST::
-
-            sage: w = vector(ZZ, [-1,0,0,0])
-            sage: w == w
-            True
-        """
-        return (<Element>left)._richcmp(right, op)
-
-    # __hash__ is not properly inherited if comparison is changed
-    def __hash__(self):
-        """
-        TEST::
-
-            sage: w = vector(ZZ, [-1,0,0,0])
-            sage: w.set_immutable()
-            sage: isinstance(hash(w), int)
-            True
-        """
-        return free_module_element.FreeModuleElement.__hash__(self)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """

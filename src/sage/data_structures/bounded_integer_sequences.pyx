@@ -107,7 +107,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 include 'sage/data_structures/bitset.pxi'
 

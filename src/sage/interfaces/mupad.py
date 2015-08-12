@@ -440,7 +440,6 @@ command-line version of MuPAD.
         return res if res != [''] else []
 
 
-
 class MupadFunction(ExpectFunction):
     def _sage_doc_(self):
         """
@@ -476,6 +475,7 @@ class MupadFunction(ExpectFunction):
         """
         res = self._parent.completions(self._name+"::", strip=True)
         return res if res != [] else self._parent.trait_names()
+
 
 class MupadFunctionElement(FunctionElement):
     def _sage_doc_(self):
@@ -519,7 +519,7 @@ class MupadFunctionElement(FunctionElement):
         EXAMPLES::
 
             sage: three = mupad(3) # optional - mupad
-            sage: 'list' in three.combinat.tableaux.trait_names() #optional
+            sage: 'list' in three.combinat.tableaux.trait_names() # optional - mupad
             True
         """
         P = self._obj.parent()
@@ -552,7 +552,7 @@ class MupadElement(ExpectElement):
         EXAMPLES::
 
             sage: mupad.package('"MuPAD-Combinat"') # optional - mupad-Combinat
-            sage: S = mupad.examples.SymmetricFunctions() #optional
+            sage: S = mupad.examples.SymmetricFunctions() # optional - mupad-Combinat
             sage: type(S)                           # optional - mupad-Combinat
             <class 'sage.interfaces.mupad.MupadElement'>
             sage: S.s                               # optional - mupad-Combinat
@@ -663,7 +663,7 @@ def reduce_load_mupad():
     """
     return mupad
 
-import os
+
 def mupad_console():
     """
     Spawn a new MuPAD command-line session.

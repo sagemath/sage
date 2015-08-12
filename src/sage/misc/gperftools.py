@@ -204,11 +204,12 @@ class Profiler(SageObject):
 
         EXAMPLES::
 
+            sage: import six
             sage: from sage.misc.gperftools import Profiler
             sage: prof = Profiler()
             sage: try:
             ....:     pp = prof._pprof()
-            ....:     assert isinstance(pp, basestring)
+            ....:     assert isinstance(pp, six.string_types)
             ....: except OSError:
             ....:     pass    # not installed
         """

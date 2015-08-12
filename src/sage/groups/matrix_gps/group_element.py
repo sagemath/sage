@@ -216,7 +216,7 @@ class MatrixGroupElement_base(MultiplicativeGroupElement):
             sage: g.list()
             [[1, 0], [0, 1]]
         """
-        return map(list, self.matrix().rows())
+        return [list(_) for _ in self.matrix().rows()]
 
 
 ###################################################################

@@ -33,6 +33,7 @@ include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 include "sage/libs/ntl/decl.pxi"
 
+from sage.libs.gmp.mpz cimport *
 from sage.misc.long cimport pyobject_to_long
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
@@ -56,6 +57,8 @@ from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport fmpz_poly_reverse, fmpz_poly_revert_series
 from sage.libs.flint.ntl_interface cimport fmpz_set_ZZ, fmpz_poly_set_ZZX, fmpz_poly_get_ZZX
 from sage.libs.ntl.ntl_ZZX_decl cimport *
+from sage.rings.integer cimport smallInteger
+
 
 cdef extern from "limits.h":
     long LONG_MAX
@@ -66,6 +69,13 @@ cdef extern from "flint/flint.h":
 cdef class Polynomial_integer_dense_flint(Polynomial):
     r"""
     A dense polynomial over the integers, implemented via FLINT.
+
+    .. automethod:: _add_
+    .. automethod:: _sub_
+    .. automethod:: _lmul_
+    .. automethod:: _rmul_
+    .. automethod:: _mul_
+    .. automethod:: _mul_trunc_
     """
 
     def __cinit__(self):
@@ -825,6 +835,36 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
+        r"""
+        Truncated multiplication
+
+        .. SEEALSO:
+
+            :meth:`_mul_` for standard multiplication
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ)
+            sage: p1 = 1 + x + x**2 + x**4
+            sage: p2 = -2 + 3*x**2 + 5*x**4
+            sage: p1._mul_trunc_(p2, 4)
+            3*x^3 + x^2 - 2*x - 2
+            sage: (p1*p2).truncate(4)
+            3*x^3 + x^2 - 2*x - 2
+            sage: p1._mul_trunc_(p2, 6)
+            5*x^5 + 6*x^4 + 3*x^3 + x^2 - 2*x - 2
+        """
+        if n <= 0:
+            raise ValueError("length must be > 0")
+
+        cdef Polynomial_integer_dense_flint x = self._new()
+        sig_on()
+        fmpz_poly_mullow(x.__poly, self.__poly,
+                    (<Polynomial_integer_dense_flint>right).__poly,
+                    n)
+        sig_off()
+        return x
 
     cpdef ModuleElement _lmul_(self, RingElement right):
         r"""
@@ -1041,8 +1081,9 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     def degree(self, gen=None):
         """
-        Return the degree of this polynomial.  The zero polynomial
-        has degree -1.
+        Return the degree of this polynomial.
+
+        The zero polynomial has degree -1.
 
         EXAMPLES::
 
@@ -1055,8 +1096,13 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             0
             sage: R(0).degree()
             -1
+
+        TESTS::
+
+            sage: type(x.degree())
+            <type 'sage.rings.integer.Integer'>
         """
-        return fmpz_poly_degree(self.__poly)
+        return smallInteger(fmpz_poly_degree(self.__poly))
 
     def pseudo_divrem(self, B):
         """

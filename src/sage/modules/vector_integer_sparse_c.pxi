@@ -9,6 +9,7 @@
 
 include 'vector_integer_sparse_h.pxi'
 
+from sage.libs.gmp.mpz cimport *
 from sage.rings.integer cimport Integer
 
 

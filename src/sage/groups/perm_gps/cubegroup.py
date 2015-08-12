@@ -726,8 +726,7 @@ class CubeGroup(PermutationGroup_generic):
                 state_facets = state_facets + r
             state0 = self.faces("")
             state0_facets = []
-            keyss = state0.keys()
-            keyss.sort()
+            keyss = sorted(state0.keys())
             for k in keyss:
                 r = state0[k][0]+state0[k][1]+state0[k][2]
                 r.remove(0)

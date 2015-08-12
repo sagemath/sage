@@ -5,6 +5,7 @@ Handle PARI documentation for Sage
 
 from __future__ import unicode_literals
 import re, subprocess
+from six import unichr
 
 
 leading_ws = re.compile("^ +", re.MULTILINE)
@@ -90,7 +91,7 @@ def raw_to_rest(doc):
         ...
         SyntaxError: @ found: @[invalid]
     """
-    doc = unicode(doc)
+    doc = doc.decode("utf-8")
 
     # Work around a specific problem with doc of "component"
     doc = doc.replace("[@[dollar]@[dollar]]", "[]")
@@ -234,7 +235,7 @@ def get_raw_doc(function):
         RuntimeError: no help found for 'abcde'
     """
     doc = subprocess.check_output(["gphelp", "-raw", function])
-    if doc.endswith("""' not found !\n"""):
+    if doc.endswith(b"""' not found !\n"""):
         raise RuntimeError("no help found for '{}'".format(function))
     return doc
 

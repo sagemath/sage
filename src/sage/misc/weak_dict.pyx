@@ -1236,7 +1236,7 @@ cdef class WeakValueDictionary(dict):
             sage: D = WeakValueDictionary((K[i],K[i+1]) for i in range(10))
             sage: k = K[10]
             sage: del K
-            sage: i = D.iterkeys(); d = i.next(); del d
+            sage: i = D.iterkeys(); d = next(i); del d
             sage: len(D.keys())
             10
             sage: del k
@@ -1263,7 +1263,7 @@ cdef class WeakValueDictionary(dict):
             sage: D = WeakValueDictionary((K[i],K[i+1]) for i in range(10))
             sage: k = K[10]
             sage: del K
-            sage: i = D.iterkeys(); d = i.next(); del d
+            sage: i = D.iterkeys(); d = next(i); del d
             sage: len(D.keys())
             10
             sage: del k

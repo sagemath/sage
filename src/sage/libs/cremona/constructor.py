@@ -24,23 +24,24 @@ def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
 
     When run interactively, the following command will display verbose output::
 
-        sage: M = CremonaModularSymbols(43, verbose=1); M   # not tested, since verbose output goes to stderr.
+        sage: M = CremonaModularSymbols(43, verbose=1)
         After 2-term relations, ngens = 22
-        predicted value of ngens = 22
         ngens     = 22
-        maxnumrel = 22
-        relation matrix has = 484 entries...
-        Finished 3-term relations: numrel = 17 ( maxnumrel = 22)
-        predicted value of ntriangles = 16 --WRONG!
+        maxnumrel = 32
+        relation matrix has = 704 entries...
+        Finished 3-term relations: numrel = 16 ( maxnumrel = 32)
+        relmat has 42 nonzero entries (density = 0.0596591)
         Computing kernel...
+        time to compute kernel =  (... seconds)
         rk = 7
-        About to compute cusps
+        Number of cusps is 2
         ncusps = 2
         About to compute matrix of delta
         delta matrix done: size 2x7.
         About to compute kernel of delta
         done
         Finished constructing homspace.
+        sage: M
         Cremona Modular Symbols space of dimension 7 for Gamma_0(43) of weight 2 with sign 0
 
     The input must be valid or a ValueError is raised::

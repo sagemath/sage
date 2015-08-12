@@ -2092,7 +2092,7 @@ def find_all_ternary_qf_by_level_disc(N, d):
 
     """
 
-    return map(TernaryQF, _find_all_ternary_qf_by_level_disc(N, d))
+    return [TernaryQF(_) for _ in _find_all_ternary_qf_by_level_disc(N, d)]
 
 def find_a_ternary_qf_by_level_disc(N, d):
     """

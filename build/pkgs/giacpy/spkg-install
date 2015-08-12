@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+###########################################
+## Giacpy 
+###########################################
+
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+cd src
+
+
+# It is very important that we have SAGE_LOCAL set, otherwise this
+# might potentially delete stuff in /lib
+echo "Deleting $SAGE_LOCAL/lib/python/site-packages/giacpy*"
+rm -rf "$SAGE_LOCAL"/lib/python/site-packages/giacpy*
+
+
+sage setup.py install
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+

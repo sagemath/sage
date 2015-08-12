@@ -1,4 +1,3 @@
-#include "cl.h"
 #include "cliquer/cliquer.h"
 
 static int maximal;
@@ -6,7 +5,7 @@ static int sage_clique_count=0;
 static set_t *sage_clique_list;
 static int sage_clique_list_size=0;
 
-// As the global variables remain between two SAGE call, they
+// As the global variables remain between two Sage calls, they
 // have to be reset each time
 void sage_reset_global_variables(void){
   maximal=FALSE; // reachable from read_options
@@ -27,7 +26,7 @@ static boolean sage_record_clique_func(set_t s,graph_t *g,clique_options *opts) 
 
 static int *(*reorder)(graph_t *, boolean)=reorder_by_default;
 static int quiet=0;
-// The opt structure has to be initialised in each SAGE function
+// The opt structure has to be initialised in each Sage function
 clique_options * sage_init_clique_opt(){
   sage_reset_global_variables();
   clique_options *opts;

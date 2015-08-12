@@ -13,6 +13,8 @@ cd "latte-int-${LATTE_VERSION}"
 
 #CFLAGS="-I $SAGE_LOCAL/include -L$SAGE_LOCAL/lib $CFLAGS"
 #export CFLAGS
+CXXFLAGS="-DNTL_STD_CXX $CXXFLAGS"
+export CXXFLAGS
 ./configure --prefix=$SAGE_LOCAL --enable-shared=yes --enable-static=false --with-gmp=$SAGE_LOCAL --with-ntl=$SAGE_LOCAL --with-cddlib=$SAGE_LOCAL --with-4ti2=$SAGE_LOCAL --with-lidia=$SAGE_LOCAL
 $MAKE
 $MAKE install

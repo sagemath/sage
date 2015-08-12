@@ -62,9 +62,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.functional import is_odd, is_even
 from sage.misc.misc_c import prod
 from sage.categories.algebras import Algebras
@@ -106,6 +108,8 @@ class Differential(UniqueRepresentation, Morphism):
         sage: B.differential()(x)
         x*y
     """
+    __metaclass__ = InheritComparisonClasscallMetaclass
+
     @staticmethod
     def __classcall__(cls, A, im_gens):
         r"""
@@ -832,7 +836,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             else:
                 n = len(degrees)
             names = tuple('x{}'.format(i) for i in range(n))
-        elif isinstance(names, basestring):
+        elif isinstance(names, six.string_types):
             names = tuple(names.split(','))
             n = len(names)
         else:
@@ -973,7 +977,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         if n == 0:
             return ((0,)*len(self._degrees),)
         if self.base_ring().characteristic() == 2:
-            return map(tuple, WeightedIntegerVectors(n, self._degrees))
+            return [tuple(_) for _ in WeightedIntegerVectors(n, self._degrees)]
 
         even_degrees = []
         odd_degrees = []
@@ -984,9 +988,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 odd_degrees.append(a)
 
         if not even_degrees: # No even generators.
-            return map( tuple, exterior_algebra_basis(n, tuple(odd_degrees)) )
+            return [tuple(_) for _ in exterior_algebra_basis(n, tuple(odd_degrees))]
         if not odd_degrees: # No odd generators.
-            return map( tuple, WeightedIntegerVectors(n, tuple(even_degrees)) )
+            return [tuple(_) for _ in WeightedIntegerVectors(n, tuple(even_degrees))]
 
         # General case: both even and odd generators.
         result = []
@@ -2473,7 +2477,8 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
     multi = False
     if degrees:
         try:
-            map(list, degrees)
+            for d in degrees:
+                _ = list(d)
             # If the previous line doesn't raise an error, looks multigraded.
             multi = True
         except TypeError:

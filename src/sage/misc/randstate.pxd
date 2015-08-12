@@ -1,4 +1,4 @@
-include "sage/ext/cdefs.pxi"
+from sage.libs.gmp.types cimport gmp_randstate_t
 
 cdef class randstate:
     cdef gmp_randstate_t gmp_state

@@ -417,7 +417,8 @@ def Polyhedron(vertices=None, rays=None, lines=None,
             convert = False
         else:
             try:
-                map(ZZ, values)
+                for v in values:
+                    ZZ(v)
                 if got_Vrep:
                     base_ring = ZZ
                 else:

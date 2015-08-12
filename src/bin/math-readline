@@ -5,20 +5,27 @@
 # See
 #    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/363500
 
-import os, sys
-f1 = os.popen('math ', 'w')
-f1.flush()
-try:
-    while True:
-        sys.stdout.write('')
-        try:
-            line = raw_input()
-            f1.writelines(line+'\n')
-            f1.flush()
-        except KeyboardInterrupt:
-            f1.close()
-            break
-except EOFError:
-    pass
+import sys, signal, subprocess
+import readline
+from six.moves import input
+
+def child_exited(*args):
+    global child
+    status = child.poll()
+    if status is not None:
+        sys.exit(status)
+
+signal.signal(signal.SIGCHLD, child_exited)
+
+child = subprocess.Popen('math', shell=True, stdin=subprocess.PIPE)
+pipe = child.stdin
+while True:
+    try:
+        line = input()
+        pipe.write(line + '\n')
+        pipe.flush()
+    except KeyboardInterrupt:
+        pipe.close()
+    except EOFError:
+        break
 sys.stdout.write('\n')
-sys.exit()

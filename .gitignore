@@ -15,8 +15,6 @@
 /config.log
 /config.status
 /configure
-/build/Makefile-auto
-/build/Makefile-auto.in
 
 ###################
 # Temporary Files #

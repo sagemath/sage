@@ -1,8 +1,7 @@
-include "sage/ext/cdefs.pxi"
-
-ctypedef mpz_t celement
+from sage.libs.gmp.types cimport mpz_t
 from sage.libs.pari.gen cimport gen as pari_gen
 
+ctypedef mpz_t celement
 include "CA_template_header.pxi"
 
 cdef class pAdicCappedAbsoluteElement(CAElement):

@@ -21,7 +21,6 @@ AUTHOR:
 
 include "sage/ext/python.pxi"
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
 

@@ -20,8 +20,6 @@ include 'sage/ext/interrupt.pxi'
 from libc.stdint cimport uint8_t
 
 cdef class FastDigraph:
-    cdef uint8_t n
-    cdef int * graph
 
     def __cinit__(self, D):
         r"""
@@ -45,8 +43,10 @@ cdef class FastDigraph:
 
         # When the vertices are not consecutive integers
         cdef dict vertices_to_int = {}
+        self.int_to_vertices = {}
         for i,v in enumerate(D.vertices()):
             vertices_to_int[v] = i
+            self.int_to_vertices[i] = v
 
         if D.is_directed():
             for u in D:
@@ -61,12 +61,17 @@ cdef class FastDigraph:
                     tmp |= 1 << vertices_to_int[v]
                 self.graph[vertices_to_int[u]] = tmp
 
+        self.degree = <int *> sage_malloc(self.n*sizeof(int))
+        for i in range(self.n):
+            self.degree[i] = popcount32(self.graph[i])
+
     def __dealloc__(self):
         r"""
         Destructor.
         """
         if self.graph != NULL:
             sage_free(self.graph)
+        sage_free(self.degree)
 
     def print_adjacency_matrix(self):
         r"""
@@ -89,8 +94,8 @@ cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
     """
     cdef int i
     cdef int tmp = 0
-    for 0<= i<g.n:
-        tmp |= g.graph[i] * ((S >> i)&1)
+    for i in range(g.n):
+        tmp |= g.graph[i] & (-((S >> i)&1))
 
     tmp &= (~S)
     return popcount32(tmp)
@@ -118,7 +123,7 @@ def test_popcount():
 
    EXAMPLE::
 
-       sage: from sage.graphs.graph_decompositions.vertex_separation import test_popcount
+       sage: from sage.graphs.graph_decompositions.fast_digraph import test_popcount
        sage: test_popcount() # not tested
    """
    cdef int i = 1

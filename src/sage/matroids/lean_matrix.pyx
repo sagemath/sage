@@ -31,6 +31,7 @@ AUTHORS:
 
 include 'sage/ext/stdsage.pxi'
 include 'sage/data_structures/bitset.pxi'
+from libc.string cimport memcpy, memset
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.all import ZZ, FiniteField, GF
 from sage.rings.integer cimport Integer
@@ -318,10 +319,7 @@ cdef class LeanMatrix:
                     break
             if is_pivot:
                 self.swap_rows_c(p, r)
-                self.rescale_row_c(r, self.get_unsafe(r, c) ** (-1), 0)
-                for row from 0 <= row < self._nrows:
-                    if row != r and self.is_nonzero(row, c):
-                        self.add_multiple_of_row_c(row, r, -self.get_unsafe(row, c), 0)
+                self.pivot(r, c)
                 P.append(c)
                 r += 1
             if r == self._nrows:
@@ -874,18 +872,15 @@ cdef class BinaryMatrix(LeanMatrix):
             if isinstance(M, BinaryMatrix):
                 for i from 0 <= i < M.nrows():
                     bitset_copy(self._M[i], (<BinaryMatrix>M)._M[i])
-                j = max(1, self._ncols)
-                for i from 0 <= i < self._nrows:
-                    bitset_realloc(self._M[i], j)
             elif isinstance(M, LeanMatrix):
                 for i from 0 <= i < M.nrows():
                     for j from 0 <= j < M.ncols():
-                        if int((<LeanMatrix>M).get_unsafe(i, j)) % 2:
+                        if int((<LeanMatrix>M).get_unsafe(i, j)) & 1:
                             self.set(i, j)
             elif isinstance(M, Matrix):
                 for i from 0 <= i < M.nrows():
                     for j from 0 <= j < M.ncols():
-                        if int((<Matrix>M).get_unsafe(i, j)) % 2:
+                        if int((<Matrix>M).get_unsafe(i, j)) & 1:
                             self.set(i, j)
             else:
                 raise TypeError("unrecognized input type")
@@ -999,10 +994,8 @@ cdef class BinaryMatrix(LeanMatrix):
         cdef long i, j
         cdef BinaryMatrix A = BinaryMatrix(self._nrows, self._ncols + self._nrows)
         for i from 0 <= i < self._nrows:
+            bitset_lshift(A._M[i], self._M[i], self._nrows)
             A.set(i, i)
-            for j from 0 <= j < self._ncols:
-                if self.get(i, j):
-                    A.set(i, self._nrows + j)
         return A
 
     cpdef base_ring(self):
@@ -1045,7 +1038,7 @@ cdef class BinaryMatrix(LeanMatrix):
             bitset_discard(self._M[r], c)
         return 0
 
-    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
+    cdef inline bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M[r], c)
 
     cdef inline bint get(self, long r, long c):   # Not a Sage matrix operation
@@ -1085,7 +1078,7 @@ cdef class BinaryMatrix(LeanMatrix):
         """
         bitset_copy(self._temp, self._M[i])
         bitset_intersection(self._temp, self._temp, self._M[j])
-        return bitset_len(self._temp) % 2
+        return bitset_len(self._temp) & 1
 
     cdef int add_multiple_of_row_c(self, long i, long j, s, bint col_start) except -1:
         """
@@ -1164,6 +1157,63 @@ cdef class BinaryMatrix(LeanMatrix):
                 if bitset_in(self._M[rows[r]], columns[c]):
                     bitset_add(A._M[r], c)
         return A
+
+    cdef matrix_from_rows_and_columns_reordered(self, rows, columns):
+        """
+        Return a submatrix indexed by indicated rows and columns, as well as
+        the column order of the resulting submatrix.
+        """
+        cdef BinaryMatrix A = BinaryMatrix(len(rows), len(columns))
+        cdef long r, c, lc, lg
+        cdef mp_bitcnt_t *cols
+        # deal with trivial case
+        lc = len(columns)
+        if lc == 0:
+            return A, []
+        # write [c for c in columns if c<lc] as bitset `mask` and
+        # write [c for c in columns if c>=lc] as array `cols`
+        cdef bitset_t mask
+        bitset_init(mask, lc)
+        bitset_clear(mask)
+        cols = <mp_bitcnt_t*>sage_malloc(lc*sizeof(mp_bitcnt_t))
+        g = 0
+        for c in columns:
+            if c<lc:
+                bitset_add(mask, c)
+            else:
+                cols[g] = c
+                g = g+1
+        # write [ c for c in range(lc) if c not in columns] as array `gaps`
+        cdef mp_bitcnt_t *gaps
+        gaps = <mp_bitcnt_t*>sage_malloc(lc*sizeof(mp_bitcnt_t))
+        bitset_complement(mask, mask)
+        g = 0
+        c = bitset_first(mask)
+        while c>=0:
+            gaps[g] = c
+            g = g+1
+            c =  bitset_next(mask, c+1)
+        lg = g
+        bitset_complement(mask, mask)
+        # copy relevant part of this matrix into A
+        cdef bitset_t row, row2
+        for r in xrange(len(rows)):
+            row = self._M[rows[r]]
+            row2 = A._M[r]
+            bitset_intersection(row2, row, mask) # yes, this is safe
+            for g in xrange(lg):
+                if bitset_in(row, cols[g]):
+                    bitset_add(row2, gaps[g])
+        # record order of the columns in list `order`
+        cdef list order = range(lc)
+        g = 0
+        for g in xrange(lg):
+            order[gaps[g]] = cols[g]
+        # free up the two arrays and the bitset
+        sage_free(gaps)
+        sage_free(cols)
+        bitset_free(mask)
+        return A, order
 
     cdef list _character(self, bitset_t x):   # Not a Sage matrix operation
         """
@@ -1439,10 +1489,6 @@ cdef class TernaryMatrix(LeanMatrix):
                 for i from 0 <= i < (<TernaryMatrix>M)._nrows:
                     bitset_copy(self._M0[i], (<TernaryMatrix>M)._M0[i])
                     bitset_copy(self._M1[i], (<TernaryMatrix>M)._M1[i])
-                j = max(1, self._ncols)
-                for i from 0 <= i < self._nrows:
-                    bitset_realloc(self._M0[i], j)
-                    bitset_realloc(self._M1[i], j)
                 return
             if isinstance(M, LeanMatrix):
                 for i from 0 <= i < M.nrows():
@@ -1596,9 +1642,9 @@ cdef class TernaryMatrix(LeanMatrix):
         cdef long i, j
         cdef TernaryMatrix A = TernaryMatrix(self._nrows, self._ncols + self._nrows)
         for i from 0 <= i < self._nrows:
+            bitset_lshift(A._M0[i], self._M0[i], self._nrows)
+            bitset_lshift(A._M1[i], self._M1[i], self._nrows)
             A.set(i, i, 1)
-            for j from 0 <= j < self._ncols:
-                A.set(i, self._nrows + j, self.get(i, j))
         return A
 
     cpdef base_ring(self):
@@ -1647,10 +1693,10 @@ cdef class TernaryMatrix(LeanMatrix):
             bitset_add(self._M1[r], c)
         return 0
 
-    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
+    cdef inline bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M0[r], c)
 
-    cdef bint _is_negative(self, long r, long c):
+    cdef inline bint _is_negative(self, long r, long c):
         return bitset_in(self._M1[r], c)
 
     cdef inline long row_len(self, long i):   # Not a Sage matrix operation
@@ -1785,6 +1831,71 @@ cdef class TernaryMatrix(LeanMatrix):
                 j = bitset_next(self._M0[i], j + 1)
         M.resize(self._nrows)
         return M
+
+    cdef matrix_from_rows_and_columns_reordered(self, rows, columns):
+        """
+        Return a submatrix indexed by indicated rows and columns, as well as
+        the column order of the resulting submatrix.
+        """
+        cdef TernaryMatrix A = TernaryMatrix(len(rows), len(columns))
+        cdef long r, c, lc, lg
+        cdef mp_bitcnt_t *cols
+        # deal with trivial case
+        lc = len(columns)
+        if lc == 0:
+            return A, []
+        # write [c for c in columns if c<lc] as bitset `mask` and
+        # write [c for c in columns if c>=lc] as array `cols`
+        cdef bitset_t mask
+        bitset_init(mask, lc)
+        bitset_clear(mask)
+        cols = <mp_bitcnt_t*>sage_malloc(lc*sizeof(mp_bitcnt_t))
+        g = 0
+        for c in columns:
+            if c<lc:
+                bitset_add(mask, c)
+            else:
+                cols[g] = c
+                g = g+1
+        # write [ c for c in range(lc) if c not in columns] as array `gaps`
+        cdef mp_bitcnt_t *gaps
+        gaps = <mp_bitcnt_t*>sage_malloc(lc*sizeof(mp_bitcnt_t))
+        bitset_complement(mask, mask)
+        g = 0
+        c = bitset_first(mask)
+        while c>=0:
+            gaps[g] = c
+            g = g+1
+            c =  bitset_next(mask, c+1)
+        lg = g
+        bitset_complement(mask, mask)
+        # copy relevant part of this matrix into A
+        cdef bitset_t row0, row1, row0_2, row1_2
+        cdef mp_bitcnt_t p, q
+        for r in xrange(len(rows)):
+            row0 = self._M0[rows[r]]
+            row1 = self._M1[rows[r]]
+            row0_2 = A._M0[r]
+            row1_2 = A._M1[r]
+            bitset_intersection(row0_2, row0, mask) # yes, this is safe
+            bitset_intersection(row1_2, row1, mask) # yes, this is safe
+            for g in xrange(lg):
+                p = cols[g]
+                if bitset_in(row0, p):
+                    q = gaps[g]
+                    bitset_add(row0_2, q)
+                    if bitset_in(row1, p):
+                        bitset_add(row1_2, q)
+        # record order of the columns in list `order`
+        cdef list order = range(lc)
+        g = 0
+        for g in xrange(lg):
+            order[gaps[g]] = cols[g]
+        # free up the two arrays and the bitset
+        sage_free(gaps)
+        sage_free(cols)
+        bitset_free(mask)
+        return A, order
 
     def __richcmp__(left, right, op):
         """
@@ -1934,10 +2045,6 @@ cdef class QuaternaryMatrix(LeanMatrix):
                 for i from 0 <= i < (<QuaternaryMatrix>M)._nrows:
                     bitset_copy(self._M0[i], (<QuaternaryMatrix>M)._M0[i])
                     bitset_copy(self._M1[i], (<QuaternaryMatrix>M)._M1[i])
-                j = max(1, self._ncols)
-                for i from 0 <= i < self._nrows:
-                    bitset_realloc(self._M0[i], j)
-                    bitset_realloc(self._M1[i], j)
             elif isinstance(M, LeanMatrix):
                 self._gf4 = (<LeanMatrix>M).base_ring()
                 self._zero = self._gf4(0)
@@ -2071,7 +2178,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         self.set(r, c, x)
         return 0
 
-    cdef bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
+    cdef inline bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M0[r], c) or bitset_in(self._M1[r], c)
 
     cdef LeanMatrix copy(self):   # Deprecated Sage matrix operation
@@ -2135,9 +2242,9 @@ cdef class QuaternaryMatrix(LeanMatrix):
         cdef long i, j
         cdef QuaternaryMatrix A = QuaternaryMatrix(self._nrows, self._ncols + self._nrows, ring=self._gf4)
         for i from 0 <= i < self._nrows:
+            bitset_lshift(A._M0[i], self._M0[i], self._nrows)
+            bitset_lshift(A._M1[i], self._M1[i], self._nrows)
             A.set(i, i, 1)
-            for j from 0 <= j < self._ncols:
-                A.set(i, self._nrows + j, self.get(i, j))
         return A
 
     cpdef base_ring(self):
@@ -2185,8 +2292,8 @@ cdef class QuaternaryMatrix(LeanMatrix):
         bitset_symmetric_difference(self._u, self._u, self._s)
         bitset_intersection(self._s, self._M1[i], self._M1[j])
         bitset_symmetric_difference(self._t, self._t, self._s)
-        a = bitset_len(self._t) % 2
-        b = bitset_len(self._u) % 2
+        a = bitset_len(self._t) & 1
+        b = bitset_len(self._u) & 1
         if a:
             if b:
                 return self._x_one
@@ -2308,6 +2415,71 @@ cdef class QuaternaryMatrix(LeanMatrix):
         M.resize(self._nrows)
         return M
 
+    cdef matrix_from_rows_and_columns_reordered(self, rows, columns):
+        """
+        Return a submatrix indexed by indicated rows and columns, as well as
+        the column order of the resulting submatrix.
+        """
+        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring = self._gf4)
+        cdef long r, c, lc, lg
+        cdef mp_bitcnt_t *cols
+        # deal with trivial case
+        lc = len(columns)
+        if lc == 0:
+            return A, []
+        # write [c for c in columns if c<lc] as bitset `mask` and
+        # write [c for c in columns if c>=lc] as array `cols`
+        cdef bitset_t mask
+        bitset_init(mask, lc)
+        bitset_clear(mask)
+        cols = <mp_bitcnt_t*>sage_malloc(lc*sizeof(mp_bitcnt_t))
+        g = 0
+        for c in columns:
+            if c<lc:
+                bitset_add(mask, c)
+            else:
+                cols[g] = c
+                g = g+1
+        # write [ c for c in range(lc) if c not in columns] as array `gaps`
+        cdef mp_bitcnt_t *gaps
+        gaps = <mp_bitcnt_t*>sage_malloc(lc*sizeof(mp_bitcnt_t))
+        bitset_complement(mask, mask)
+        g = 0
+        c = bitset_first(mask)
+        while c>=0:
+            gaps[g] = c
+            g = g+1
+            c =  bitset_next(mask, c+1)
+        lg = g
+        bitset_complement(mask, mask)
+        # copy relevant part of this matrix into A
+        cdef bitset_t row0, row1, row0_2, row1_2
+        cdef mp_bitcnt_t p, q
+        for r in xrange(len(rows)):
+            row0 = self._M0[rows[r]]
+            row1 = self._M1[rows[r]]
+            row0_2 = A._M0[r]
+            row1_2 = A._M1[r]
+            bitset_intersection(row0_2, row0, mask) # yes, this is safe
+            bitset_intersection(row1_2, row1, mask)
+            for g in xrange(lg):
+                p = cols[g]
+                q = gaps[g]
+                if bitset_in(row0, p):
+                    bitset_add(row0_2, q)
+                if bitset_in(row1, p):
+                    bitset_add(row1_2, q)
+        # record order of the columns in list `order`
+        cdef list order = range(lc)
+        g = 0
+        for g in xrange(lg):
+            order[gaps[g]] = cols[g]
+        # free up the two arrays and the bitset
+        sage_free(gaps)
+        sage_free(cols)
+        bitset_free(mask)
+        return A, order
+    
     def __neg__(self):
         """
         Negate the matrix.
@@ -2444,7 +2616,7 @@ cdef class IntegerMatrix(LeanMatrix):
 
     EXAMPLES::
 
-        sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(),
+        sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(oriented=True),
         ....:             regular=True)  # indirect doctest
         sage: M.is_isomorphic(matroids.Wheel(3))
         True

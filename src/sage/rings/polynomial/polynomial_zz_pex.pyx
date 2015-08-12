@@ -178,7 +178,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             x = (<Polynomial_template>self)._parent.gen()
             v = [self[t] for t from start <= t < stop]
 
-            t = self.__class__
+            t = type(self)
             r = <Polynomial_template>t.__new__(t)
             Polynomial_template.__init__(r, (<Polynomial_template>self)._parent, v)
             return r << start
@@ -251,7 +251,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: P.<y> = F[]
             sage: p = y^4 + x*y^3 + y^2 + (x + 1)*y + x + 1
             sage: SR(p)      #indirect doctest
-            (((y + x)*y + 1)*y + x + 1)*y + x + 1
+            y^4 + x*y^3 + y^2 + (x + 1)*y + x + 1
             sage: p(2)
             x + 1
             sage: p(y=2)

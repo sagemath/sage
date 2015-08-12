@@ -71,6 +71,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
 import ring
 import fraction_field_element
 import sage.misc.latex as latex
@@ -556,14 +557,14 @@ class FractionField_generic(ring.Field):
                 return Element(self, x.numerator(), x.denominator())
 
         recurse = False
-        if isinstance(x, basestring):
+        if isinstance(x, six.string_types):
             from sage.misc.sage_eval import sage_eval
             try:
                 x = sage_eval(x, self.gens_dict_recursive())
             except NameError:
                 raise TypeError("unable to evaluate {!r} in {}".format(x, self))
             recurse = True
-        if isinstance(y, basestring):
+        if isinstance(y, six.string_types):
             from sage.misc.sage_eval import sage_eval
             try:
                 y = sage_eval(y, self.gens_dict_recursive())

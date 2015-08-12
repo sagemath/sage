@@ -1,7 +1,8 @@
+Modfiy new.h to accomodate Singular.
 --- src.orig/include/NTL/new.h	2012-08-06 17:12:25.658913083 +0200
 +++ src/include/NTL/new.h	2012-08-06 17:11:15.002915713 +0200
 @@ -12,7 +12,8 @@
- 
+ #include <NTL/config.h>
  #include <new>
  
 -#define NTL_NEW_OP new (std::nothrow)
@@ -9,4 +10,4 @@
 +#define NTL_NEW_OP new //(std::nothrow) 
  
  
- #else
+ #endif

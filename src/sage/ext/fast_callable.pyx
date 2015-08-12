@@ -253,8 +253,8 @@ AUTHOR:
         sage: z = etb.constant(0)
         sage: c = etb.var('c')
         sage: for i in range(16):
-        ...       z = z*z + c
-        sage: mand = fast_callable(z, domain=CDF) # not tested
+        ....:     z = z*z + c
+        sage: mand = fast_callable(z, domain=CDF)
 
     Now ``ff`` does 32 complex arithmetic operations on each call
     (16 additions and 16 multiplications).  However, if ``z*z`` produced
@@ -267,13 +267,13 @@ AUTHOR:
 
         sage: etb = ExpressionTreeBuilder('x')
         sage: x = etb.var('x')
-        sage: (x+1)*(x+1) # not tested
-        *(+(v_0, 1), +(v_0, 1))
+        sage: (x+1)*(x+1)
+        mul(add(v_0, 1), add(v_0, 1))
 
     but this code will only evaluate ``x+1`` once::
 
-        sage: v = x+1; v*v # not tested
-        *(+(v_0, 1), +(v_0, 1))
+        sage: v = x+1; v*v
+        mul(add(v_0, 1), add(v_0, 1))
 """
 
 
@@ -300,7 +300,6 @@ from copy import copy
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
 from sage.structure.element cimport Element
 from sage.rings.all import RDF, CDF
-from sage.libs.mpfr cimport mpfr_t, mpfr_ptr, mpfr_init2, mpfr_set, GMP_RNDN
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import parent
@@ -374,7 +373,7 @@ def fast_callable(x, domain=None, vars=None,
         sage: fp = fast_callable(p, domain=RDF)
         sage: fp.op_list()
         [('load_const', 0.0), ('load_const', -3.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', -6.0), ('load_arg', 0), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 2), 'mul', 'mul', 'add', 'return']
-        sage: fp(e, pi, sqrt(2))
+        sage: fp(e, pi, sqrt(2))   # abs tol 3e-14
         -98.00156403362932
         sage: symbolic_result = p(e, pi, sqrt(2)); symbolic_result
         -pi^2*e - pi^2 - 3*sqrt(2)*e - 6*e^2 - 2*e

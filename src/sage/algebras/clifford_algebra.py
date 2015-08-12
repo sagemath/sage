@@ -31,6 +31,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.subset import SubsetsSorted
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.algebras.weyl_algebra import repr_from_monomials
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 class CliffordAlgebraElement(CombinatorialFreeModule.Element):
     """
@@ -171,7 +172,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
             sage: elt.list()
             [((0,), 5), ((1,), 1)]
         """
-        return sorted(self._monomial_coefficients.items(), key=lambda (m,c) : (-len(m), m))
+        return sorted(self._monomial_coefficients.items(), key=lambda m_c : (-len(m_c[0]), m_c[0]))
 
     def support(self):
         """
@@ -2161,6 +2162,8 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity, UniqueRepresentatio
         This is not a general class for differentials on the exterior
         algebra.
     """
+    __metaclass__ = InheritComparisonClasscallMetaclass
+
     @staticmethod
     def __classcall__(cls, E, s_coeff):
         """

@@ -851,7 +851,7 @@ class Qepcad:
             sage: var('x,y')
             (x, y)
             sage: qf = qepcad_formula
-            sage: qe = qepcad(qf.and_(x^2 + y^2 - 3 == 0, x + y > 0), interact=True) # optional
+            sage: qe = qepcad(qf.and_(x^2 + y^2 - 3 == 0, x + y > 0), interact=True) # optional - qepcad
             sage: qe.go(); qe.go(); qe.go() # optional - qepcad
             QEPCAD object has moved to phase 'Before Projection (y)'
             QEPCAD object has moved to phase 'Before Choice'
@@ -919,15 +919,15 @@ class Qepcad:
             sage: qe = qepcad(x > 2/3, interact=True) # optional - qepcad
             sage: qe.phase() # optional - qepcad
             'Before Normalization'
-            sage: qe.go() # optional
+            sage: qe.go() # optional - qepcad
             QEPCAD object has moved to phase 'At the end of projection phase'
             sage: qe.phase() # optional  - qepcad
             'At the end of projection phase'
-            sage: qe.go() # optional
+            sage: qe.go() # optional - qepcad
             QEPCAD object has moved to phase 'Before Choice'
             sage: qe.phase() # optional - qepcad
             'Before Choice'
-            sage: qe.go() # optional
+            sage: qe.go() # optional - qepcad
             QEPCAD object has moved to phase 'Before Solution'
             sage: qe.phase() # optional - qepcad
             'Before Solution'
@@ -993,10 +993,10 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x == 0, interact=True) # optional
-            sage: qe.finish() # optional
+            sage: qe = qepcad(x == 0, interact=True)  # optional - qepcad
+            sage: qe.finish()  # optional - qepcad
             x = 0
-            sage: qe.final_stats() # random, optional
+            sage: qe.final_stats()  # random, optional - qepcad
             -----------------------------------------------------------------------------
             0 Garbage collections, 0 Cells and 0 Arrays reclaimed, in 0 milliseconds.
             492840 Cells in AVAIL, 500000 Cells in SPACE.
@@ -1177,7 +1177,7 @@ class Qepcad:
                    = x - 1
         """
         name = name.replace('_', '-')
-        args = map(str, args)
+        args = [str(_) for _ in args]
         pre_phase = self.phase()
         result = self._eval_line('%s %s'%(name, ' '.join(args)))
         post_phase = self.phase()
@@ -1517,7 +1517,6 @@ def qepcad_banner():
     qex = Qepcad_expect()
     qex._start()
     banner = qex.expect().before
-    qex.quit(timeout=0)
     return AsciiArtString(banner)
 
 def qepcad_version():
@@ -1669,7 +1668,7 @@ class qepcad_formula_factory:
         """
         formulas = map(self.atomic, formulas)
         formulas = map(self.atomic, formulas)
-        formula_strs = map(repr, formulas)
+        formula_strs = [repr(_) for _ in formulas]
         vars = frozenset()
         for f in formulas:
             vars = vars | f.vars
@@ -2302,12 +2301,12 @@ class QepcadCell:
 
             sage: var('x,y')
             (x, y)
-            sage: qe = qepcad(x^2 + y^2 == 1, interact=True) # optional
-            sage: qe.go(); qe.go(); qe.go() # optional
+            sage: qe = qepcad(x^2 + y^2 == 1, interact=True)  # optional - qepcad
+            sage: qe.go(); qe.go(); qe.go()  # optional - qepcad
             QEPCAD object has moved to phase 'Before Projection (y)'
             QEPCAD object has moved to phase 'Before Choice'
             QEPCAD object has moved to phase 'Before Solution'
-            sage: qe.cell(2).__getitem__(3) # optional
+            sage: qe.cell(2).__getitem__(3)  # optional - qepcad
             QEPCAD cell (2, 3)
         """
         return self._parent.cell(self.index() + (i,))

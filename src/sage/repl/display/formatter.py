@@ -36,19 +36,19 @@ generally, all sage expression as an ASCII art object::
     10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
     sage: shell.run_cell('StandardTableaux(4).list()')
     [
-    [                                                                  1  4    1  3
-    [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
-    [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,   4
+    [                                                                  1  4
+    [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2
+    [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,
     <BLANKLINE>
-                1 ]
-        1  2    2 ]
-        3       3 ]
-    ,   4   ,   4 ]
+                       1 ]
+       1  3    1  2    2 ]
+       2       3       3 ]
+       4   ,   4   ,   4 ]
     sage: shell.run_cell('%display default')
     sage: shell.quit()
 
 This other facility uses a simple
-:class:`~sage.misc.ascii_art.AsciiArt` object (see and
+:class:`~sage.typeset.ascii_art.AsciiArt` object (see and
 :meth:`sage.structure.sage_object.SageObject._ascii_art_`).  """
 
 #*****************************************************************************
@@ -74,7 +74,7 @@ class SageDisplayFormatter(DisplayFormatter):
     def __init__(self, *args, **kwds):
         """
         This is where the Sage rich objects are translated to IPython
- 
+
         INPUT/OUTPUT:
 
         See the IPython documentation.
@@ -126,7 +126,7 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.quit()
         """
         return self.dm.displayhook(obj)
-        
+
 
 
 class SagePlainTextFormatter(PlainTextFormatter):
@@ -138,7 +138,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
         In particular, it correctly print lists of matrices or other
         objects (see
         :meth:`sage.structure.parent.Parent._repr_option`).
- 
+
         .. warning::
 
             This IPython formatter is NOT used. You could use it to
@@ -151,7 +151,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
         See the IPython documentation.
 
         EXAMPLES::
-    
+
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.display_formatter.formatters['text/plain']

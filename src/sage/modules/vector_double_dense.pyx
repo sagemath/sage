@@ -1,6 +1,8 @@
 r"""
-Dense vectors using a NumPy backend.  This serves as a base class for
-dense vectors over Real Double Field and Complex Double Field
+Dense vectors using a NumPy backend.
+
+This serves as a base class for dense vectors over Real Double Field and
+Complex Double Field
 
 EXAMPLES::
 
@@ -24,7 +26,7 @@ EXAMPLES::
 AUTHORS:
 
 - Jason Grout, Oct 2008: switch to numpy backend, factored out
-       Vector_double_dense class
+  ``Vector_double_dense`` class
 - Josh Kantor
 - William Stein
 """

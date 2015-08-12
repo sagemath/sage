@@ -162,7 +162,6 @@ def subexpressions_list(f, pars=None):
     varpar = list(parameters) + list(variables)
     F = symbolic_expression([i(*variables) for i in f]).function(*varpar)
     lis = flatten([fast_callable(i,vars=varpar).op_list() for i in F], max_level=1)
-    deflist = []
     stack = []
     const =[]
     stackcomp=[]

@@ -1444,7 +1444,7 @@ class RealSet(UniqueRepresentation, Parent):
             sage: RealSet.are_pairwise_disjoint(s1, s2, s3, [-1, 1/2])
             False
         """
-        sets = map(RealSet, real_set_collection)
+        sets = [RealSet(_) for _ in real_set_collection]
         for i in range(len(sets)):
             for j in range(i):
                 si = sets[i]

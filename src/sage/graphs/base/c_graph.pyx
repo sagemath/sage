@@ -2181,7 +2181,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         return []
 
-    def bidirectional_dijkstra(self, x, y):
+    def bidirectional_dijkstra(self, x, y, weight_function=None):
         r"""
         Returns the shortest path between ``x`` and ``y`` using a
         bidirectional version of Dijkstra's algorithm.
@@ -2192,6 +2192,10 @@ cdef class CGraphBackend(GenericGraphBackend):
           ``y``.
 
         - ``y`` -- the end vertex in the shortest path from ``x`` to ``y``.
+
+        - ``weight_function`` -- a function that inputs an edge
+          ``(u, v, l)`` and outputs its weight. If ``None``, we use
+          the edge label ``l`` as a weight.
 
         OUTPUT:
 
@@ -2204,18 +2208,17 @@ cdef class CGraphBackend(GenericGraphBackend):
             ...      G.set_edge_label(u,v,1)
             sage: G.shortest_path(0, 1, by_weight=True)
             [0, 1]
+            sage: G = DiGraph([(1,2,{'weight':1}), (1,3,{'weight':5}), (2,3,{'weight':1})])
+            sage: G.shortest_path(1, 3, weight_function=lambda e:e[2]['weight'])
+            [1, 2, 3]
 
         TEST:
 
         Bugfix from #7673 ::
 
-            sage: G = Graph(implementation="networkx")
-            sage: G.add_edges([(0,1,9),(0,2,8),(1,2,7)])
-            sage: Gc = G.copy(implementation='c_graph')
-            sage: sp = G.shortest_path_length(0,1,by_weight=True)
-            sage: spc = Gc.shortest_path_length(0,1,by_weight=True)
-            sage: sp == spc
-            True
+            sage: G = Graph([(0,1,9),(0,2,8),(1,2,7)])
+            sage: G.shortest_path_length(0,1,by_weight=True)
+            9
         """
         if x == y:
             return 0
@@ -2268,6 +2271,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef int meeting_vertex = -1
         cdef float shortest_path_length
 
+        if weight_function is None:
+            weight_function = lambda e:e[2]
+
         # As long as the current side (x or y) is not totally explored ...
         while queue:
             (distance, side, pred, v) = heappop(queue)
@@ -2303,7 +2309,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                     if w not in dist_current:
                         v_obj = self.vertex_label(v)
                         w_obj = self.vertex_label(w)
-                        edge_label = self.get_edge_label(v_obj, w_obj) if side == 1 else self.get_edge_label(w_obj, v_obj)
+                        edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj))) if side == 1 else weight_function((w_obj, v_obj, self.get_edge_label(w_obj, v_obj)))
                         heappush(queue, (distance + edge_label, side, v, w))
 
         # No meeting point has been found
@@ -3034,7 +3040,7 @@ cdef class Search_iterator:
             sage: g = graphs.PetersenGraph()
             sage: g.breadth_first_search(0)
             <generator object breadth_first_search at ...
-            sage: g.breadth_first_search(0).next()
+            sage: next(g.breadth_first_search(0))
             0
         """
         cdef int v_int

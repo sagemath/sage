@@ -411,7 +411,7 @@ class Arrow(GraphicPrimitive):
                         return False
 
 
-            class ConditionalStroke(pe._Base):
+            class ConditionalStroke(pe.RendererBase):
 
                 def __init__(self, condition_func, pe_list):
                     """

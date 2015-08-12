@@ -1,6 +1,7 @@
 from sage_object cimport SageObject
 from parent cimport Parent
 from cpython.number cimport PyNumber_Check
+from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
 
 cdef inline parent_c(x):
     if isinstance(x, Element):
@@ -63,11 +64,6 @@ cdef class ModuleElement(Element):
 
     cdef ModuleElement _mul_long(self, long n)
 
-    # Inplace operations, override, do *NOT* call directly
-    cpdef ModuleElement _iadd_(self, ModuleElement right)
-    cpdef ModuleElement _isub_(self, ModuleElement right)
-    cpdef ModuleElement _ilmul_(self, RingElement right)
-
     # Coerce x to the base ring of self and return the result.
     cdef RingElement coerce_to_base_ring(self, x)
 
@@ -84,10 +80,6 @@ cdef class AdditiveGroupElement(ModuleElement):
 cdef class RingElement(ModuleElement):
     cpdef RingElement _mul_(self, RingElement right)
     cpdef RingElement _div_(self, RingElement right)
-
-    # Inplace operations, override, do *NOT* call directly
-    cpdef RingElement _imul_(self, RingElement right)
-    cpdef RingElement _idiv_(self, RingElement right)
 
     cdef RingElement _add_long(self, long n)
 

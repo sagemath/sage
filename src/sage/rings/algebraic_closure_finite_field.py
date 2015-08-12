@@ -922,7 +922,7 @@ class AlgebraicClosureFiniteField_generic(Field):
                 FF, pphi = self.subfield(ll)
                 # note: there is no coercion from the l-th subfield to the ll-th
                 # subfield. The line below does the conversion manually.
-                g = PolynomialRing(FF, 'x')(map(psi, g))
+                g = PolynomialRing(FF, 'x')([psi(_) for _ in g])
                 polys.extend((gg,m,ll,pphi) for gg,_ in g.factor())
 
         if multiplicities:

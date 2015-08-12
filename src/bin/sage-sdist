@@ -45,10 +45,10 @@ sage-clone-source "$SAGE_ROOT" "$TMP_DIR/$TARGET"
 
 # Download and copy all upstream tarballs (the -B option to make forces
 # all targets to be built unconditionally)
-cd "$SAGE_ROOT/build"
+cd "$SAGE_ROOT/build/make"
 SAGE_INSTALL_GCC=yes SAGE_SPKG_COPY_UPSTREAM="$TMP_DIR/$TARGET/upstream" \
 SAGE_INSTALL_FETCH_ONLY=yes \
-./install -B all
+./install -B all-build
 
 # Create source .tar.gz
 cd "$TMP_DIR"

@@ -16,6 +16,7 @@ overridden by subclasses.
 ###############################################################################
 
 import operator as _operator
+from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
 from sage.symbolic.pynac import I
 from sage.functions.all import exp
@@ -23,6 +24,7 @@ from sage.symbolic.operators import arithmetic_operators, relation_operators, FD
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from functools import reduce
 GaussianField = I.pyobject().parent()
+
 
 class FakeExpression(object):
     r"""
@@ -237,7 +239,7 @@ class Converter(object):
             sage: c.get_fake_div((2*x^3+2*x-1)/((x-2)*(x+1)))
             FakeExpression([2*x^3 + 2*x - 1, FakeExpression([x + 1, x - 2], <built-in function mul>)], <built-in function div>)
 
-        Check if #8056 is fixed, i.e., if numerator is 1.::
+        Check if :trac:`8056` is fixed, i.e., if numerator is 1.::
 
             sage: c.get_fake_div(1/pi/x)
             FakeExpression([1, FakeExpression([pi, x], <built-in function mul>)], <built-in function div>)
@@ -256,7 +258,7 @@ class Converter(object):
 
         len_d = len(d)
         if len_d == 0:
-            repr_n = map(repr, n)
+            repr_n = [repr(_) for _ in n]
             if len(n) == 2 and "-1" in repr_n:
                 a = n[0] if repr_n[1] == "-1" else n[1]
                 return FakeExpression([a], _operator.neg)
@@ -635,7 +637,7 @@ class InterfaceInit(Converter):
         if hasattr(operator, self.name_init + "evaled_"):
             return getattr(operator, self.name_init + "evaled_")(*ops)
         else:
-            ops = map(self, ops)
+            ops = [self(_) for _ in ops]
         try:
             op = getattr(operator, self.name_init)()
         except (TypeError, AttributeError):
@@ -1357,7 +1359,7 @@ class FastFloatConverter(Converter):
             1.41421356237309...
         """
         f = operator
-        g = map(self, ex.operands())
+        g = [self(_) for _ in ex.operands()]
         try:
             return f(*g)
         except TypeError:
@@ -1460,7 +1462,8 @@ class FastCallableConverter(Converter):
 
         TESTS:
 
-        Check if rational functions with numerator 1 can be converted. #8056::
+        Check if rational functions with numerator 1 can
+        be converted. (:trac:`8056`)::
 
             sage: (1/pi/x)._fast_callable_(etb)
             div(1, mul(pi, v_0))
@@ -1666,13 +1669,126 @@ class RingConverter(Converter):
             sage: R(cos(2))
             -0.4161468365471424?
         """
-        res =  operator(*map(self, ex.operands()))
+        res =  operator(*[self(_) for _ in ex.operands()])
         if res.parent() is not self.ring:
             raise TypeError
         else:
             return res
 
-class SubstituteFunction(Converter):
+
+class ExpressionTreeWalker(Converter):
+    def __init__(self, ex):
+        """
+        A class that walks the tree. Mainly for subclassing.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: from sage.symbolic.random_tests import random_expr
+            sage: ex = sin(atan(0,hold=True)+hypergeometric((1,),(1,),x))
+            sage: s = ExpressionTreeWalker(ex)
+            sage: bool(s() == ex)
+            True
+            sage: foo = random_expr(20, nvars=2)
+            sage: s = ExpressionTreeWalker(foo)
+            sage: bool(s() == foo)
+            True
+        """
+        self.ex = ex
+
+    def symbol(self, ex):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: s = ExpressionTreeWalker(x)
+            sage: bool(s.symbol(x) == x)
+            True
+        """
+        return ex
+
+    def pyobject(self, ex, obj):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: f = SR(2)
+            sage: s = ExpressionTreeWalker(f)
+            sage: bool(s.pyobject(f, f.pyobject()) == f.pyobject())
+            True
+        """
+        return ex
+
+    def relation(self, ex, operator):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: foo = function('foo')
+            sage: eq = foo(x) == x
+            sage: s = ExpressionTreeWalker(eq)
+            sage: s.relation(eq, eq.operator()) == eq
+            True
+        """
+        return operator(self(ex.lhs()), self(ex.rhs()))
+
+    def arithmetic(self, ex, operator):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: foo = function('foo')
+            sage: f = x*foo(x) + pi/foo(x)
+            sage: s = ExpressionTreeWalker(f)
+            sage: bool(s.arithmetic(f, f.operator()) == f)
+            True
+        """
+        return reduce(operator, map(self, ex.operands()))
+
+    def composition(self, ex, operator):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: foo = function('foo')
+            sage: f = foo(atan2(0, 0, hold=True))
+            sage: s = ExpressionTreeWalker(f)
+            sage: bool(s.composition(f, f.operator()) == f)
+            True
+        """
+        from sage.symbolic.function import Function
+        if isinstance(operator, Function):
+            return operator(*map(self, ex.operands()), hold=True)
+        else:
+            return operator(*map(self, ex.operands()))
+
+    def derivative(self, ex, operator):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: foo = function('foo')
+            sage: f = foo(x).diff(x)
+            sage: s = ExpressionTreeWalker(f)
+            sage: bool(s.derivative(f, f.operator()) == f)
+            True
+        """
+        return operator(*map(self, ex.operands()))
+
+    def tuple(self, ex):
+        """
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import ExpressionTreeWalker
+            sage: foo = function('foo')
+            sage: f = hypergeometric((1,2,3,),(x,),x)
+            sage: s = ExpressionTreeWalker(f)
+            sage: bool(s() == f)
+            True
+        """
+        return ex.operands()
+
+class SubstituteFunction(ExpressionTreeWalker):
     def __init__(self, ex, original, new):
         """
         A class that walks the tree and replaces occurrences of a
@@ -1689,63 +1805,6 @@ class SubstituteFunction(Converter):
         self.original = original
         self.new = new
         self.ex = ex
-
-    def symbol(self, ex):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.expression_conversions import SubstituteFunction
-            sage: foo = function('foo'); bar = function('bar')
-            sage: s = SubstituteFunction(foo(x), foo, bar)
-            sage: s.symbol(x)
-            x
-        """
-        return ex
-
-    def pyobject(self, ex, obj):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.expression_conversions import SubstituteFunction
-            sage: foo = function('foo'); bar = function('bar')
-            sage: s = SubstituteFunction(foo(x), foo, bar)
-            sage: f = SR(2)
-            sage: s.pyobject(f, f.pyobject())
-            2
-            sage: _.parent()
-            Symbolic Ring
-        """
-        return ex
-
-    def relation(self, ex, operator):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.expression_conversions import SubstituteFunction
-            sage: foo = function('foo'); bar = function('bar')
-            sage: s = SubstituteFunction(foo(x), foo, bar)
-            sage: eq = foo(x) == x
-            sage: s.relation(eq, eq.operator())
-            bar(x) == x
-        """
-        return operator(self(ex.lhs()), self(ex.rhs()))
-
-    def arithmetic(self, ex, operator):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.expression_conversions import SubstituteFunction
-            sage: foo = function('foo'); bar = function('bar')
-            sage: s = SubstituteFunction(foo(x), foo, bar)
-            sage: f = x*foo(x) + pi/foo(x)
-            sage: s.arithmetic(f, f.operator())
-            x*bar(x) + pi/bar(x)
-        """
-        if operator == add_vararg:
-            operator = _operator.add
-        elif operator == mul_vararg:
-            operator = _operator.mul
-        return reduce(operator, map(self, ex.operands()))
 
     def composition(self, ex, operator):
         """
@@ -1768,9 +1827,9 @@ class SubstituteFunction(Converter):
             bar(sin(x))
         """
         if operator == self.original:
-            return self.new(*map(self, ex.operands()))
+            return self.new(*[self(_) for _ in ex.operands()])
         else:
-            return operator(*map(self, ex.operands()))
+            return super(SubstituteFunction, self).composition(ex, operator)
 
     def derivative(self, ex, operator):
         """
@@ -1795,6 +1854,7 @@ class SubstituteFunction(Converter):
 
         """
         if operator.function() == self.original:
-            return operator.change_function(self.new)(*map(self,ex.operands()))
+            return operator.change_function(self.new)(*[self(_) for _ in ex.operands()])
         else:
-            return operator(*map(self, ex.operands()))
+            return operator(*[self(_) for _ in ex.operands()])
+

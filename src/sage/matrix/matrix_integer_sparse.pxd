@@ -1,6 +1,6 @@
-include 'sage/ext/cdefs.pxi'
 include 'sage/modules/vector_integer_sparse_h.pxi'
 
+from sage.libs.gmp.types cimport mpz_t
 from sage.ext.mod_int cimport *
 cimport matrix_sparse
 

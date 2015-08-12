@@ -1225,7 +1225,7 @@ def gen_legendre_P(n,m,x):
         sage: gen_legendre_P(3, 1, t)
         -3/2*(5*t^2 - 1)*sqrt(-t^2 + 1)
         sage: gen_legendre_P(4, 3, t)
-        105*(t^2 - 1)*sqrt(-t^2 + 1)*t
+        105*(t^3 - t)*sqrt(-t^2 + 1)
         sage: gen_legendre_P(7, 3, I).expand()
         -16695*sqrt(2)
         sage: gen_legendre_P(4, 1, 2.5)

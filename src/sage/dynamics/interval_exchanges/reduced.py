@@ -379,8 +379,8 @@ def alphabetized_atwin(twin, alphabet):
     """
     l = [[],[]]
 
-    l[0] = map(lambda x: alphabet.unrank(x), range(len(twin[0])))
-    l[1] = map(lambda x: alphabet.unrank(x), twin[1])
+    l[0] = [alphabet.unrank(x) for x in range(len(twin[0]))]
+    l[1] = [alphabet.unrank(x) for x in twin[1]]
 
     return l
 
@@ -511,8 +511,8 @@ class ReducedPermutationIET(ReducedPermutation, PermutationIET):
             sage: iet.GeneralizedPermutation(p.list(),reduced=True) == p
             True
         """
-        a0 = map(self._alphabet.unrank, range(0,len(self)))
-        a1 = map(self._alphabet.unrank, self._twin[1])
+        a0 = [self._alphabet.unrank(_) for _ in range(0,len(self))]
+        a1 = [self._alphabet.unrank(_) for _ in self._twin[1]]
         return [a0,a1]
 
     def is_identity(self):
@@ -582,7 +582,7 @@ class ReducedPermutationIET(ReducedPermutation, PermutationIET):
             sage: q4 < q5 and q5 > q4
             True
         """
-        if not isinstance(self, type(other)):
+        if type(self) is not type(other):
             raise ValueError("Permutations must be of the same type")
 
         if len(self) > len(other):
@@ -962,7 +962,7 @@ class ReducedPermutationLI(ReducedPermutation, PermutationLI):
             sage: p == r
             True
         """
-        return isinstance(self, type(other)) and self._twin == other._twin
+        return type(self) is type(other) and self._twin == other._twin
 
     def __ne__(self, other) :
         """
@@ -977,7 +977,7 @@ class ReducedPermutationLI(ReducedPermutation, PermutationLI):
             sage: p != r
             False
         """
-        return not isinstance(self, type(other)) or (self._twin != other._twin)
+        return type(self) is not type(other) or (self._twin != other._twin)
 
     def _get_loser_to(self, winner) :
         r"""
@@ -1406,7 +1406,7 @@ class FlippedReducedPermutationIET(
             sage: p1 < r and p2 < r and p3 < r
             True
         """
-        if not isinstance(self, type(other)):
+        if type(self) is not type(other):
             return -1
 
         if len(self) > len(other):
@@ -1458,12 +1458,12 @@ class FlippedReducedPermutationIET(
             True
         """
         if flips:
-            a0 = zip(map(self.alphabet().unrank, range(0,len(self))), self._flips[0])
-            a1 = zip(map(self.alphabet().unrank, self._twin[1]), self._flips[1])
+            a0 = zip([self.alphabet().unrank(_) for _ in range(0,len(self))], self._flips[0])
+            a1 = zip([self.alphabet().unrank(_) for _ in self._twin[1]], self._flips[1])
 
         else:
-            a0 = map(self.alphabet().unrank, range(0,len(self)))
-            a1 = map(self.alphabet().unrank, self._twin[1])
+            a0 = [self.alphabet().unrank(_) for _ in range(0,len(self))]
+            a1 = [self.alphabet().unrank(_) for _ in self._twin[1]]
 
         return [a0,a1]
 
@@ -1675,7 +1675,7 @@ class FlippedReducedPermutationLI(
             sage: p == r or q == r
             False
         """
-        return (isinstance(self, type(other)) and
+        return (type(self) is type(other) and
             self._twin == other._twin and
             self._flips == other._flips)
 
@@ -1696,7 +1696,7 @@ class FlippedReducedPermutationLI(
             sage: p != r and q != r
             True
         """
-        return (not isinstance(self, type(other)) or
+        return (type(self) is not type(other) or
             self._twin != other._twin or
             self._flips != other._flips)
 

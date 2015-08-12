@@ -794,11 +794,11 @@ class AffineSpace_field(AffineSpace_generic):
             iters = [ R.range_by_height(bound) for _ in range(n) ]
         else:
             iters = [ R.elements_of_bounded_height(bound) for _ in range(n) ]
-        for x in iters: x.next() # put at zero
+        for x in iters: next(x) # put at zero
         i = 0
         while i < n:
             try:
-                P[i] = iters[i].next()
+                P[i] = next(iters[i])
                 yield self(P)
                 i = 0
             except StopIteration:
@@ -806,7 +806,7 @@ class AffineSpace_field(AffineSpace_generic):
                     iters[i] = R.range_by_height(bound) # reset
                 else:
                     iters[i] = R.elements_of_bounded_height(bound)
-                iters[i].next() # put at zero
+                next(iters[i]) # put at zero
                 P[i] = zero
                 i += 1
 

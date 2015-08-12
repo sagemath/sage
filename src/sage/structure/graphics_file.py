@@ -4,6 +4,7 @@ Wrapper for Graphics Files
 """
 
 import os
+import six
 
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
@@ -50,7 +51,7 @@ class Mime(object):
         """
         value = str(value).lower()
         for k, v in cls.__dict__.items():
-            if isinstance(v, basestring) and v == value:
+            if isinstance(v, six.string_types) and v == value:
                 return v
         raise ValueError('unknown mime type')
 

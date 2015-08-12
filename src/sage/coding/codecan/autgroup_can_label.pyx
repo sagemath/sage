@@ -372,7 +372,7 @@ class LinearCodeAutGroupCanLabel:
         for p in P:
             while len(p) > 0:
                 pos = p.pop()
-                perm[pos] = it.next() + 1
+                perm[pos] = next(it) + 1
 
         self._canonical_form = LinearCode(canonical_form.transpose())
         self._transporter = S(perm=Permutation(perm), v=mult, autom=can_transp.get_autom()) * normalization
@@ -519,7 +519,7 @@ class LinearCodeAutGroupCanLabel:
                 c = col2pos[i]
                 img_iter = iter(col2pos[short_perm(i + 1) - 1])
                 for x in c:
-                    perm[x] = img_iter.next() + 1
+                    perm[x] = next(img_iter) + 1
                     mult[x] = short_mult[i]
             A.append(normalization_inverse * S(perm=perm, v=mult, autom=g.get_autom()) * normalization)
         return A

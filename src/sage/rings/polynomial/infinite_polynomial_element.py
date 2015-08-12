@@ -334,7 +334,7 @@ class InfinitePolynomial_sparse(RingElement):
         res = R(self._p)(*args, **kwargs)
         try:
             from sage.misc.sage_eval import sage_eval
-            return sage_eval(repr(res), self.parent()._gens_dict)
+            return sage_eval(repr(res), self.parent().gens_dict())
         except Exception:
             return res
 
@@ -1028,8 +1028,7 @@ class InfinitePolynomial_sparse(RingElement):
         # "not Fbig" is now impossible, because we only consider *global* monomial orderings.
         # These are the occurring shifts:
         Lsmall = sorted(Fsmall.keys())
-        Lbig   = Fbig.keys()
-        Lbig.sort()
+        Lbig   = sorted(Fbig.keys())
         P = range(Lbig[-1]+1)
         gens = xrange(PARENT.ngens())
         if Lsmall[0]==0:

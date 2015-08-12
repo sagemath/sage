@@ -21,6 +21,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ######################################################################
 
+import six
 from sage.structure.sage_object import SageObject
 
 def sudoku(m):
@@ -180,7 +181,7 @@ class Sudoku(SageObject):
             if verify_input and not(puzzle.is_square()):
                 raise ValueError('Sudoku puzzle must be a square matrix')
             self.puzzle = tuple([int(x) for x in puzzle.list()])
-        elif isinstance(puzzle, basestring):
+        elif isinstance(puzzle, six.string_types):
             puzzle_size = int(round(sqrt(len(puzzle))))
             puzzle_numeric = []
             for char in puzzle:

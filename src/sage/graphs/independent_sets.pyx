@@ -200,13 +200,13 @@ cdef class IndependentSets:
             sage: I = IndependentSets(graphs.PetersenGraph())
             sage: iter1 = iter(I)
             sage: iter2 = iter(I)
-            sage: iter1.next()      # indirect doctest
+            sage: next(iter1)      # indirect doctest
             [0]
-            sage: iter2.next()      # indirect doctest
+            sage: next(iter2)      # indirect doctest
             [0]
-            sage: iter2.next()
+            sage: next(iter2)
             [0, 2]
-            sage: iter1.next()
+            sage: next(iter1)
             [0, 2]
         """
         if self.n == 0:

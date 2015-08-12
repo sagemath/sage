@@ -127,7 +127,7 @@ class QuiverHomSpace(Homset):
         # previous vertex.
         for v in verts:
             varstart[verts.index(v) + 1] = domain._spaces[v].dimension()*codomain._spaces[v].dimension()
-        for e in domain._quiver.edges():
+        for e in domain._semigroup._sorted_edges:
             eqs += domain._spaces[e[0]].dimension()*codomain._spaces[e[1]].dimension()
 
         # After this cascading sum varstart[v] will be the sum of the
@@ -155,7 +155,7 @@ class QuiverHomSpace(Homset):
         # Below we loop through these values of i,j,k and write the
         # coefficients of the equation above into the coefficient matrix.
         eqn = 0
-        for e in domain._quiver.edges():
+        for e in domain._semigroup._sorted_edges:
             X = domain._maps[e].matrix()
             Y = codomain._maps[e].matrix()
             for i in range(0, X.nrows()):
@@ -631,7 +631,7 @@ class QuiverHomSpace(Homset):
 
         # Create the maps
         maps = {}
-        for e in self._quiver.edges():
+        for e in self._semigroup._sorted_edges:
             e_op = (e[1], e[0], e[2])
             maps[e_op] = []
             for vec in spaces[e[1]].gens():

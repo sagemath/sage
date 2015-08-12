@@ -30,6 +30,7 @@ AUTHORS:
 from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
+from sage.categories.homset import Hom
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 
@@ -37,6 +38,7 @@ from sage.combinat.partition import Partition
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.letters import CrystalOfLetters
 from sage.combinat.crystals.tensor_product import CrystalOfWords, CrystalOfTableauxElement
+
 
 class InfinityCrystalOfTableaux(CrystalOfWords):
     r"""
@@ -95,7 +97,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
     `\mathcal{T}(\infty)` is the set of marginally large semistandard
     tableaux with exactly `n-1` rows over the alphabet `\{1 \prec \cdots
     \prec n, \overline{n} \prec \cdots \prec \overline{1} \}` and subject
-    to the following constaints:
+    to the following constraints:
 
     - for each `1 \le i \le n`, the contents of the boxes in the `i`-th
       row are `\preceq \overline{i}`,
@@ -163,8 +165,11 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
     We check that a few classical crystals embed into `\mathcal{T}(\infty)`::
 
         sage: def crystal_test(B, C):
-        ....:     g = {C.module_generators[0] : B.module_generators[0]}
-        ....:     f = C.crystal_morphism(g)
+        ....:     T = crystals.elementary.T(C.cartan_type(), C.module_generators[0].weight())
+        ....:     TP = crystals.TensorProduct(T, B)
+        ....:     mg = TP(T[0], B.module_generators[0])
+        ....:     g = {C.module_generators[0]: mg}
+        ....:     f = C.crystal_morphism(g, category=HighestWeightCrystals())
         ....:     G = B.digraph(subset=[f(x) for x in C])
         ....:     return G.is_isomorphic(C.digraph(), edge_labels=True)
         sage: B = crystals.infinity.Tableaux(['A',2])
@@ -223,7 +228,8 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             sage: B = crystals.infinity.Tableaux(['A',2])
             sage: TestSuite(B).run() # long time
         """
-        Parent.__init__( self, category=(HighestWeightCrystals(), InfiniteEnumeratedSets()) )
+        Parent.__init__(self, category=(HighestWeightCrystals(),
+                                        InfiniteEnumeratedSets()))
         self._cartan_type = cartan_type
         self.letters = CrystalOfLetters(cartan_type)
         self.module_generators = (self.module_generator(),)
@@ -237,7 +243,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             sage: B = crystals.infinity.Tableaux(['A',4]); B
             The infinity crystal of tableaux of type ['A', 4]
         """
-        return "The infinity crystal of tableaux of type %s"%self._cartan_type
+        return "The infinity crystal of tableaux of type %s" % self._cartan_type
 
     @cached_method
     def module_generator(self):
@@ -272,6 +278,25 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             [[1, 2], [3, 4]]
         """
         return self.element_class(self, *args, **options)
+
+    def _coerce_map_from_(self, P):
+        """
+        Return ``True`` or the coerce map from ``P`` if a map exists.
+
+        EXAMPLES::
+
+            sage: T = crystals.infinity.Tableaux(['A',3])
+            sage: RC = crystals.infinity.RiggedConfigurations(['A',3])
+            sage: T._coerce_map_from_(RC)
+            Crystal Isomorphism morphism:
+              From: The infinity crystal of rigged configurations of type ['A', 3]
+              To:   The infinity crystal of tableaux of type ['A', 3]
+        """
+        from sage.combinat.rigged_configurations.rc_infinity import InfinityCrystalOfRiggedConfigurations
+        if isinstance(P, InfinityCrystalOfRiggedConfigurations):
+            from sage.combinat.rigged_configurations.bij_infinity import FromRCIsomorphism
+            return FromRCIsomorphism(Hom(P, self))
+        return super(InfinityCrystalOfTableaux, self)._coerce_map_from_(P)
 
     class Element(CrystalOfTableauxElement):
         r"""
@@ -469,7 +494,8 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
                     cur_col_len = 1
                 else:
                     cur_col_len += 1
-            shape_wt += La[1] # Since we miss the last column (which is always height 1)
+            shape_wt += La[1]
+            # Since we miss the last column (which is always height 1)
             return CrystalOfTableauxElement.weight(self) - shape_wt
 
         def reduced_form(self):
@@ -623,7 +649,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             ct = self.parent().cartan_type().type()
             for i,row in enumerate(tab):
                 for entry in row:
-                    if entry == -i-1 and ct in ('B','D','G'):
+                    if entry == -i-1 and ct in ('B', 'D', 'G'):
                         count += 2
                     elif entry != i+1:
                         count += 1
@@ -675,6 +701,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
                     a += 1
                 ret.append(a)
             return ret
+
 
 class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
     r"""
@@ -815,4 +842,3 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
                 for j in range(i-1):
                     ret._list.insert(0,self.parent().letters(j+1))
             return ret
-

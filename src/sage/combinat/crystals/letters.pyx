@@ -418,19 +418,6 @@ cdef class Letter(Element):
         """
         return self.value
 
-    def __richcmp__(left, right, int op):
-        """
-        Entry point for rich comparisons. Needed for cython because we are
-        overriding `__hash__()`.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['D', 4])
-            sage: C(4) > C(-4)
-            False
-        """
-        return (<Element>left)._richcmp(right, op)
-
     cpdef _richcmp_(left, Element right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
@@ -1297,19 +1284,6 @@ cdef class LetterTuple(Element):
             True
         """
         return hash(self.value)
-
-    def __richcmp__(left, right, int op):
-        """
-        Entry point for rich comparisons. Needed for cython because we are
-        overriding `__hash__()`.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['E', 6])
-            sage: C((1,)) > C((-1, 3))
-            False
-        """
-        return (<Element>left)._richcmp(right, op)
 
     cpdef _richcmp_(left, Element right, int op):
         """

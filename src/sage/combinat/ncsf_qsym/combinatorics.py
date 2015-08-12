@@ -22,6 +22,7 @@ from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_function
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_tableau import CompositionTableaux
+from sage.rings.all import ZZ
 
 
 # The following might call for defining a morphism from ``structure
@@ -96,7 +97,7 @@ def coeff_ell(J,I):
         sage: coeff_ell(Composition([2,1]), Composition([3]))
         2
     """
-    return prod(map(len, J.refinement_splitting(I)))
+    return prod([len(_) for _ in J.refinement_splitting(I)])
 
 def coeff_sp(J,I):
     r"""
@@ -253,5 +254,73 @@ def number_of_fCT(content_comp, shape_comp):
     for x in C:
         if len(x) >= len(shape_comp)-1:
             s += number_of_fCT(Composition(content_comp[:-1]),x)
+    return s
+
+@cached_function
+def number_of_SSRCT(content_comp, shape_comp):
+    r"""
+    The number of semi-standard reverse composition tableaux.
+
+    The dual quasisymmetric-Schur functions satisfy a left Pieri rule
+    where `S_n dQS_\gamma` is a sum over dual quasisymmetric-Schur
+    functions indexed by compositions which contain the composition
+    `\gamma`.  The definition of an SSRCT comes from this rule.  The
+    number of SSRCT of content `\beta` and shape `\alpha` is equal to
+    the number of SSRCT of content `(\beta_2, \ldots, \beta_\ell)`
+    and shape `\gamma` where `dQS_\alpha` appears in the expansion of
+    `S_{\beta_1} dQS_\gamma`.
+
+    In sage the recording tableau for these objects are called
+    :class:`~sage.combinat.composition_tableau.CompositionTableaux`.
+
+    INPUT:
+
+    - ``content_comp``, ``shape_comp`` -- compositions
+
+    OUTPUT:
+
+    - An integer
+
+    EXAMPLES::
+
+        sage: from sage.combinat.ncsf_qsym.combinatorics import number_of_SSRCT
+        sage: number_of_SSRCT(Composition([3,1]), Composition([1,3]))
+        0
+        sage: number_of_SSRCT(Composition([1,2,1]), Composition([1,3]))
+        1
+        sage: number_of_SSRCT(Composition([1,1,2,2]), Composition([3,3]))
+        2
+        sage: all(CompositionTableaux(be).cardinality()
+        ....:     == sum(number_of_SSRCT(al,be)*binomial(4,len(al))
+        ....:            for al in Compositions(4))
+        ....:     for be in Compositions(4))
+        True
+    """
+    if len(content_comp) == 1:
+        if len(shape_comp) == 1:
+            return ZZ.one()
+        else:
+            return ZZ.zero()
+    s = ZZ.zero()
+    cond = lambda al,be: all(al[j] <= be_val
+                             and not any(al[i] <= k and k <= be[i]
+                                         for k in range(al[j], be_val)
+                                         for i in range(j))
+                             for j, be_val in enumerate(be))
+    C = Compositions(content_comp.size()-content_comp[0],
+                     inner=[1]*len(shape_comp),
+                     outer=list(shape_comp))
+    for x in C:
+        if cond(x, shape_comp):
+            s += number_of_SSRCT(Composition(content_comp[1:]), x)
+    if shape_comp[0] <= content_comp[0]:
+        C = Compositions(content_comp.size()-content_comp[0],
+                         inner=[min(val, shape_comp[0]+1)
+                                for val in shape_comp[1:]],
+                         outer=shape_comp[1:])
+        Comps = Compositions()
+        for x in C:
+            if cond([shape_comp[0]]+list(x), shape_comp):
+                s += number_of_SSRCT(Comps(content_comp[1:]), x)
     return s
 

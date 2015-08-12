@@ -119,7 +119,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
     """
 
     @staticmethod
-    def __classcall_private__(cls, starting_weight, cartan_type = None):
+    def __classcall_private__(cls, starting_weight, cartan_type = None, starting_weight_parent = None):
         """
         Classcall to mend the input.
 
@@ -137,7 +137,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             The crystal of LS paths of type ['A', 2, 1] and weight -Lambda[0] + Lambda[2]
 
             sage: R = RootSystem(['B',2,1])
-            sage: La = R.weight_space().basis()
+            sage: La = R.weight_space(extended=True).basis()
             sage: C = crystals.LSPaths(['B',2,1],[0,0,1])
             sage: B = crystals.LSPaths(La[2])
             sage: B is C
@@ -155,10 +155,17 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             Lambda = P.basis()
             offset = R.index_set()[Integer(0)]
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
+        if starting_weight_parent is None:
+            starting_weight_parent = starting_weight.parent()
+        else:
+            # Both the weight and the parent of the weight are passed as arguments of init to be able
+            # to distinguish between crystals with the extended and non-extended weight lattice!
+            if starting_weight.parent() != starting_weight_parent:
+                raise ValueError("The passed parent is not equal to parent of the inputted weight!")
 
-        return super(CrystalOfLSPaths, cls).__classcall__(cls, starting_weight)
+        return super(CrystalOfLSPaths, cls).__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
 
-    def __init__(self, starting_weight):
+    def __init__(self, starting_weight, starting_weight_parent):
         """
         EXAMPLES::
 
@@ -179,6 +186,18 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             sage: TestSuite(C).run() # long time
             sage: C = crystals.LSPaths(['E',6], [1,0,0,0,0,0])
             sage: TestSuite(C).run()
+
+            sage: R = RootSystem(['C',3,1])
+            sage: La = R.weight_space().basis()
+            sage: LaE = R.weight_space(extended=True).basis()
+            sage: B = crystals.LSPaths(La[0])
+            sage: BE = crystals.LSPaths(LaE[0])
+            sage: B is BE
+            False
+            sage: B.weight_lattice_realization()
+            Weight space over the Rational Field of the Root system of type ['C', 3, 1]
+            sage: BE.weight_lattice_realization()
+            Extended weight space over the Rational Field of the Root system of type ['C', 3, 1]
         """
         cartan_type = starting_weight.parent().cartan_type()
         self.R = RootSystem(cartan_type)
@@ -214,12 +233,27 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
         """
         return self._name
 
+    def weight_lattice_realization(self):
+        r"""
+        Return weight lattice realization of ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.LSPaths(['B',3],[1,1,0])
+            sage: B.weight_lattice_realization()
+            Weight space over the Rational Field of the Root system of type ['B', 3]
+            sage: B = crystals.LSPaths(['B',3,1],[1,1,1,0])
+            sage: B.weight_lattice_realization()
+            Extended weight space over the Rational Field of the Root system of type ['B', 3, 1]
+        """
+        return self.weight.parent()
+
     class Element(ElementWrapper):
         """
         TESTS::
 
             sage: C = crystals.LSPaths(['E',6],[1,0,0,0,0,0])
-            sage: c=C.an_element()
+            sage: c = C.an_element()
             sage: TestSuite(c).run()
         """
 
@@ -564,6 +598,20 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             else:
                 return self.e(i, power=-diff)
 
+        def weight(self):
+            """
+            Return the weight of ``self``.
+
+            EXAMPLES::
+
+                sage: B = crystals.LSPaths(['A',1,1],[1,0])
+                sage: b = B.highest_weight_vector()
+                sage: b.f(0).weight()
+                -Lambda[0] + 2*Lambda[1] - delta
+            """
+            P = self.parent().weight_lattice_realization()
+            return sum([p for p in self.value], P.zero())
+
         def _latex_(self):
             r"""
             Latex method for ``self``.
@@ -642,10 +690,19 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             sage: C2 = crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])
             sage: C is C2
             True
+
+            sage: R = RootSystem(['C',3,1])
+            sage: La = R.weight_space(extended = True).basis()
+            sage: crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])
+            Traceback (most recent call last):
+            ...
+            ValueError: The weight should be in the non-extended weight lattice!
         """
+        if weight.parent().is_extended():
+            raise ValueError("The weight should be in the non-extended weight lattice!")
         La = weight.parent().basis()
         weight = weight - (weight.level())*La[0]/(La[0].level())
-        return super(CrystalOfLSPaths, cls).__classcall__(cls, weight)
+        return super(CrystalOfLSPaths, cls).__classcall__(cls, weight, starting_weight_parent = weight.parent())
 
     def one_dimensional_configuration_sum(self, q = None, group_components = True):
         r"""
@@ -709,13 +766,17 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
         if q is None:
             from sage.rings.all import QQ
             q = QQ['q'].gens()[0]
-        P0 = self.weight_lattice_realization().classical()
+        #P0 = self.weight_lattice_realization().classical()
+        P0 = RootSystem(self.cartan_type().classical()).weight_lattice()
         B = P0.algebra(q.parent())
+        def weight(x):
+            w = x.weight()
+            return P0.sum(int(c)*P0.basis()[i] for i,c in w if i in P0.index_set())
         if group_components:
             G = self.digraph(index_set = self.cartan_type().classical().index_set())
             C = G.connected_components()
-            return sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c) for c in C)
-        return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
+            return sum(q**(c[0].energy_function())*B.sum(B(weight(b)) for b in c) for c in C)
+        return B.sum(q**(b.energy_function())*B(weight(b)) for b in self)
 
     def is_perfect(self, level=1):
         r"""

@@ -10,17 +10,26 @@ Implemented functions:
 
     :meth:`automorphism_group` | Returns the automorphism group of the given (di)graph
     :meth:`canonical_form` | Computes a canonical certificate for the given (di) graph.
-    :meth:`is_isomorphic` | Tests whether the passed (di) graphs are isomorphic.
-
 
 AUTHORS:
 
     - Jernej Azarija
 
 """
+
+#*****************************************************************************
+#       Copyright (C) 2015 Jernej Azarija
+#       Copyright (C) 2015 Nathann Cohen <nathann.cohen@gail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 include "sage/ext/interrupt.pxi"
 include 'sage/ext/stdsage.pxi'
-include 'sage/ext/cdefs.pxi'
 from cpython cimport PyObject
 
 cdef extern from "graph.hh" namespace "bliss":

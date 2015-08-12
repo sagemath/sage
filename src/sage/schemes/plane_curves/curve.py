@@ -1,3 +1,7 @@
+"""
+Generic plane curves
+"""
+
 from sage.misc.all import latex
 
 
@@ -40,7 +44,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
     def _latex_(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
             sage: latex(C)
@@ -55,6 +60,16 @@ class Curve_generic(AlgebraicScheme_subscheme):
         return latex(self.defining_polynomial())
 
     def defining_polynomial(self):
+        """
+        Return the defining polynomial of the curve.
+
+        EXAMPLES::
+
+            sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
+            sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
+            sage: C.defining_polynomial()
+            -x^3 + y^2*z - 17*x*z^2 + y*z^2
+        """
         return self.defining_polynomials()[0]
 
     def divisor_group(self, base_ring=None):
@@ -101,15 +116,21 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
     def geometric_genus(self):
         r"""
-        The geometric genus of the curve, which is by definition the
+        Return the geometric genus of the curve.
+
+        This is by definition the
         genus of the normalization of the projective closure of the
         curve over the algebraic closure of the base field; the base
         field must be a prime field.
 
-        \note{Calls Singular's genus command.}
+        .. NOTE::
+
+            This calls Singular's genus command.
 
         EXAMPLE:
-        Examples of projective curves.
+
+        Examples of projective curves. ::
+
             sage: P2 = ProjectiveSpace(2, GF(5), names=['x','y','z'])
             sage: x, y, z = P2.coordinate_ring().gens()
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
@@ -122,7 +143,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
                   3
 
-        Examples of affine curves.
+        Examples of affine curves. ::
+
             sage: x, y = PolynomialRing(GF(5), 2, 'xy').gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
             sage: C.geometric_genus()
@@ -142,6 +164,17 @@ class Curve_generic(AlgebraicScheme_subscheme):
             return self.__genus
 
     def union(self, other):
+        """
+        Return the union of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
+            sage: C1 = Curve(z - x)
+            sage: C2 = Curve(y - x)
+            sage: C1.union(C2).defining_polynomial()
+            x^2 - x*y - x*z + y*z
+        """
         from constructor import Curve
         return Curve(AlgebraicScheme_subscheme.union(self, other))
 

@@ -200,13 +200,13 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
             for j in xrange(1, i) :
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
-        return Sequence(map(lambda l: P(l.list()).add_bigoh(prec), ls[1:]),cr=True)
+        return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]],cr=True)
     else :
         for i in xrange(1,n+1) :
             for j in xrange(i) :
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
-        return Sequence(map(lambda l: P(l.list()).add_bigoh(prec), ls), cr=True)
+        return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
 
 def _delta_poly(prec=10):
     """
@@ -308,11 +308,11 @@ def _delta_poly_modulo(N, prec=10):
     f = P(v)
     t = verbose('made series')
     # fast way of computing f*f truncated at prec
-    f = f._mul_trunc(f, prec)
+    f = f._mul_trunc_(f, prec)
     t = verbose('squared (1 of 3)', t)
-    f = f._mul_trunc(f, prec)
+    f = f._mul_trunc_(f, prec)
     t = verbose('squared (2 of 3)', t)
-    f = f._mul_trunc(f, prec - 1)
+    f = f._mul_trunc_(f, prec - 1)
     t = verbose('squared (3 of 3)', t)
     f = f.shift(1)
     t = verbose('shifted', t)

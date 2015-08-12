@@ -156,6 +156,7 @@ from sage.misc.misc_c import prod
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
 from sage.calculus.functional import derivative
+from functools import reduce
 
 
 def rational_param_as_tuple(x):

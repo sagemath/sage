@@ -180,10 +180,10 @@ from itertools import chain
 from sage.misc.all import prod
 from sage.functions.all import factorial
 from sage.rings.arith import moebius
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.partition import Partitions, Partition
@@ -353,7 +353,7 @@ class PrimarySimilarityClassType(Element):
 
     for some irreducible polynomial `p(t)` of degree `d`.
     """
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     @staticmethod
     def __classcall_private__(cls, deg, par):

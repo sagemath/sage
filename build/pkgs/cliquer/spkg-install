@@ -58,7 +58,7 @@ if [ $? -ne 0 ]; then
 fi
 
 rm -rf "$SAGE_LOCAL/include/cliquer/"
-mkdir "$SAGE_LOCAL/include/cliquer/"
+mkdir -p "$SAGE_LOCAL/include/cliquer/"
 cp *.h "$SAGE_LOCAL/include/cliquer/"
 
 if [ "$UNAME" = "Darwin" ]; then

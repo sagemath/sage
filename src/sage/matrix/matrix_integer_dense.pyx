@@ -54,6 +54,7 @@ TESTS::
 #*****************************************************************************
 
 from libc.stdint cimport int64_t
+include "sage/ext/cdefs.pxi"
 
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 
@@ -74,7 +75,7 @@ from sage.libs.pari.pari_instance cimport PariInstance, INT_to_mpz
 import sage.libs.pari.pari_instance
 cdef PariInstance pari = sage.libs.pari.pari_instance.pari
 
-include "sage/libs/pari/decl.pxi"
+from sage.libs.pari.paridecl cimport *
 include "sage/libs/pari/pari_err.pxi"
 
 #########################################################

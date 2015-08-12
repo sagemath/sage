@@ -601,7 +601,7 @@ class QuiverRepHom(CallMorphism):
             raise ValueError("dimensions do not match domain and codomain")
 
         # Check that the edge diagrams commute
-        for e in self._quiver.edges():
+        for e in self._domain._semigroup._sorted_edges:
             if self.get_matrix(e[0])*self._codomain._maps[e].matrix() != self._domain._maps[e].matrix()*self.get_matrix(e[1]):
                 raise ValueError("the diagram of edge {} does not commute".format(e))
 

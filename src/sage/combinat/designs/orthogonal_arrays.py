@@ -593,18 +593,17 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     n_trunc = len(u)
 
     if explain_construction:
-        from string import join
         if not u:
             return ("Product of orthogonal arrays n={}.{}").format(r,m)
         elif all(len(uu) == 1 and uu[0][0] == 1 for uu in u):
-            return (("Wilson's construction n={}.{}+{} with master design OA({}+{},{})")
-                    .format(r,m,join((str(x) for ((_,x),) in u),"+"),k,n_trunc,r))
+            return ("Wilson's construction n={}.{}+{} with master design OA({}+{},{})"
+                    .format(r, m, "+".join(str(x) for ((_,x),) in u), k, n_trunc, r))
         else:
-            return (("Brouwer-van Rees construction n={}.{}+{} with master design OA({}+{},{})")
-                    .format(r,m,
-                            join(("("+join((str(x)+"."+str(mul) for mul,x in uu),"+")+")"
-                                  for uu in u),"+"),
-                            k,n_trunc,r))
+            return ("Brouwer-van Rees construction n={}.{}+{} with master design OA({}+{},{})"
+                    .format(r, m,
+                            "+".join("(" + "+".join(str(x)+"."+str(mul) for mul,x in uu) + ")"
+                                     for uu in u),
+                            k, n_trunc, r))
 
     if OA is None:
         master_design = orthogonal_array(k+n_trunc,r,check=False)
@@ -847,8 +846,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
             k = orthogonal_array(None,n,existence=True)-1
             if existence:
                 return k
-        OA = orthogonal_array(k+1,n,check=check)
-        OA.sort()
+        OA = sorted(orthogonal_array(k+1,n,check=check))
         return [B[1:] for B in OA]
 
     # If k is set to None we find the largest value available
@@ -900,7 +898,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
             return "Trivial construction [n]^k"
 
         from itertools import product
-        return map(list, product(range(n), repeat=k))
+        return [list(x) for x in product(range(n), repeat=k)]
 
     elif t != 2:
         if existence:
@@ -1264,8 +1262,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         if existence:
             return orthogonal_array(k+1,n,existence=True)
 
-        OA = orthogonal_array(k+1,n)
-        OA.sort() # The future classes are now well-ordered
+        OA = sorted(orthogonal_array(k+1,n))
         OA = [B[1:] for B in OA]
 
         # We now relabel the points so that the last n blocks are the [i,i,...]
@@ -1400,9 +1397,8 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         if existence:
             return Unknown
         # format the list of holes
-        from string import join
         f = lambda x: "" if x == 1 else "{}.".format(x)
-        holes_string = join(["-{}OA({},{})".format(f(holes.count(x)),k,x) for x in sorted(set(holes))],'')
+        holes_string = "".join("-{}OA({},{})".format(f(holes.count(x)),k,x) for x in sorted(set(holes)))
         raise NotImplementedError("I was not able to build this OA({},{}){}".format(k,n,holes_string))
 
     assert number_of_holes == len(independent_set)

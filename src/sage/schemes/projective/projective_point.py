@@ -975,13 +975,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         kwds:
 
-        - ``badprimes`` - a list of primes of bad reduction
+        - ``badprimes`` - a list of primes of bad reduction (optional)
 
         - ``N`` - positive integer. number of terms of the series to use in the local green functions
+          (optional - default:10)
 
-        - ``prec`` - positive integer, float point or p-adic precision
+        - ``prec`` - positive integer, float point or p-adic precision, default:100
 
-        - ``error_bound`` - a positive real number
+        - ``error_bound`` - a positive real number (optional)
 
         OUTPUT: a real number
 

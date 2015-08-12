@@ -1,5 +1,4 @@
 include "decl.pxi"
-include "sage/ext/cdefs.pxi"
 
 cdef class ntl_mat_ZZ:
     cdef mat_ZZ_c x

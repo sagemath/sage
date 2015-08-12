@@ -150,18 +150,22 @@ These functions are available so that Python modules from Sage can call the
 Cython routines this module implements (as they can not directly call methods
 with C arguments).
 """
+
+#*****************************************************************************
+#       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 include "sage/data_structures/bitset.pxi"
 cimport cpython
-
-##############################################################################
-#       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-##############################################################################
-
-from sage.graphs.base.c_graph cimport CGraph
+from libc.string cimport memset
 from libc.stdint cimport INT32_MAX
+from sage.graphs.base.c_graph cimport CGraph
 from static_sparse_backend cimport StaticSparseCGraph
 from static_sparse_backend cimport StaticSparseBackend
 
@@ -500,7 +504,7 @@ def strongly_connected_components(G):
 
 def triangles_count(G):
     r"""
-    Return the number of triangles in an undirected graph G
+    Return the number of triangles containing `v`, for every `v`.
 
     INPUT:
 
@@ -510,18 +514,21 @@ def triangles_count(G):
 
         sage: from sage.graphs.base.static_sparse_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
-        0
-        sage: triangles_count(graphs.CompleteGraph(15)) == binomial(15,3)
+        {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)
         True
     """
+    from sage.rings.integer import Integer
     G._scream_if_not_simple()
 
     # g is a copy of G. If G is internally a static sparse graph, we use it.
     cdef short_digraph g
     G = G.copy(immutable=True)
+
+    cdef uint64_t * count = <uint64_t *> check_calloc(G.order(), sizeof(uint64_t))
     g[0] = (<StaticSparseCGraph> (<StaticSparseBackend> G._backend)._cg).g[0]
 
-    cdef uint64_t count = 0
+    cdef uint64_t tmp_count = 0
     cdef uint32_t u,v,i
     cdef uint32_t * p1
     cdef uint32_t * p2
@@ -535,9 +542,10 @@ def triangles_count(G):
             # Size of [N(u) inter N(v)]. Both are sorted lists.
             p1 = g.neighbors[u]
             p2 = g.neighbors[v]
+            tmp_count = 0
             while (p1 < g.neighbors[u+1] and p2 < g.neighbors[v+1]):
                 if p1[0] == p2[0]:
-                    count += 1
+                    tmp_count += 1
                     p1 += 1
                     p2 += 1
                 elif p1[0] < p2[0]:
@@ -545,5 +553,11 @@ def triangles_count(G):
                 else:
                     p2 += 1
 
-    from sage.rings.integer import Integer
-    return Integer(count)//3
+            count[u] += tmp_count
+            count[v] += tmp_count
+
+    ans = {w:Integer(count[i]/2)
+           for i,w in enumerate(G.vertices())}
+
+    sage_free(count)
+    return ans

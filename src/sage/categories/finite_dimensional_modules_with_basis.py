@@ -406,7 +406,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             try:
                 inv_mat = mat.parent()(~mat)
             except (ZeroDivisionError, TypeError):
-                raise RuntimeError, "morphism is not invertible"
+                raise RuntimeError("morphism is not invertible")
             return self.codomain().module_morphism(
                 matrix=inv_mat,
                 codomain=self.domain(), category=self.category_for())

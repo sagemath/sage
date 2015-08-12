@@ -98,7 +98,7 @@ def rank(comb, n, check=True):
     if check:
         if k > n:
             raise ValueError("len(comb) must be <= n")
-        comb = map(int, comb)
+        comb = [int(_) for _ in comb]
         for i in xrange(k - 1):
             if comb[i + 1] <= comb[i]:
                 raise ValueError("comb must be a subword of (0,1,...,n)")

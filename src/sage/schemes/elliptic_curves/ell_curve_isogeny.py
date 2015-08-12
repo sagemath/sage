@@ -566,8 +566,8 @@ class EllipticCurveIsogeny(Morphism):
 
     - ``model`` -- a string (default:``None``).  Only supported
       variable is ``minimal``, in which case if ``E`` is a curve over
-      the rationals, then the codomain is set to be the unique global
-      minimum model.
+      the rationals or over a number field, then the codomain is a
+      global minimum model where this exists.
 
     - ``check`` (default: ``True``) checks if the input is valid to
       define an isogeny
@@ -986,7 +986,7 @@ class EllipticCurveIsogeny(Morphism):
         if not is_EllipticCurve(E):
             raise ValueError("E parameter must be an EllipticCurve.")
 
-        if not isinstance(kernel, type([1,1])) and kernel in E :
+        if not isinstance(kernel, list) and kernel in E :
             # a single point was given, we put it in a list
             # the first condition assures that [1,1] is treated as x+1
             kernel = [kernel]
@@ -1806,10 +1806,10 @@ class EllipticCurveIsogeny(Morphism):
 
             if ('minimal' == model):
 
-                if (not is_RationalField(oldE2.base_field())):
-                    raise ValueError("specifying minimal for model flag only valid with curves over the rational numbers.")
+                if (not is_NumberField(oldE2.base_field())):
+                    raise ValueError("specifying minimal for model flag only valid with curves over number fields.")
 
-                newE2 = oldE2.minimal_model()
+                newE2 = oldE2.global_minimal_model(semi_global=True)
                 post_isom = oldE2.isomorphism_to(newE2)
 
             else:

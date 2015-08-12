@@ -147,7 +147,7 @@ public:
   friend std::istream& operator>>(std::istream&,       FareySymbol&);
   //--- communication with sage -------------------------------------------
   PyObject* is_element(const mpz_t, const mpz_t, const mpz_t, const mpz_t) const;
-  PyObject* word_problem(const mpz_t, const mpz_t, const mpz_t, const mpz_t) const;
+  PyObject* word_problem(const mpz_t, const mpz_t, const mpz_t, const mpz_t, SL2Z *) const;
   PyObject* get_transformation_to_cusp(const mpz_t, const mpz_t) const;
   PyObject* get_cusps() const;
   PyObject* get_cusp_widths() const;

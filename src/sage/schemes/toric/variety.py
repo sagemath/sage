@@ -3215,7 +3215,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         r"""
         Construct a :class:`CohomologyClass`.
 
-        INPUT::
+        INPUT:
 
         - ``x`` -- something that defines a cohomology class. Either a
           cohomology class, a cone of the fan, or something that can

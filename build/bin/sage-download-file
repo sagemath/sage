@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+# USAGE:
+#
+#     sage-download-file --print-fastest-mirror
+#
+# Print out the fastest mirror. All further arguments are ignored in
+# that case.
+#
+#     sage-download-file [--quiet] url-or-tarball [destination]
+#
+# The single mandatory argument can be a http:// url or a tarball
+# filename. In the latter case, the tarball is downloaded from the
+# mirror network and its checksum is verified.
+#
+# If the destination is not specified:
+# * a url will be downloaded and the content written to stdout
+# * a tarball will be saved under {SAGE_DISTFILES}
+
+try:
+    import sage_bootstrap
+except ImportError:
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    import sage_bootstrap
+
+from sage_bootstrap.cmdline import SageDownloadFileApplication
+SageDownloadFileApplication().run()

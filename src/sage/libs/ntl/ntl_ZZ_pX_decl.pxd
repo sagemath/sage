@@ -1,11 +1,12 @@
+# distutils: depends = NTL/ZZ.h
+
 from sage.libs.ntl.ntl_ZZ_p_decl cimport ZZ_p_c
 from sage.libs.ntl.ntl_vec_ZZ_p_decl cimport vec_ZZ_p_c
 from sage.libs.ntl.ntl_ZZ_decl cimport ZZ_c
 from sage.libs.ntl.ntl_ZZX_decl cimport ZZX_c
 from sage.libs.ntl.ntl_ZZ_pContext_decl cimport ZZ_pContext_c
 
-
-cdef extern from "ntl_wrap.h":
+cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     #### ZZ_pX_c
     ctypedef struct ZZ_pX_c "struct ZZ_pX":
         void *rep
@@ -17,7 +18,6 @@ cdef extern from "ntl_wrap.h":
     void ZZ_pX_delete "Delete<ZZ_pX>"(ZZ_pX_c *mem)
     void ZZ_pX_from_str "_from_str<ZZ_pX>"(ZZ_pX_c* dest, char* s)
     object ZZ_pX_to_PyString "_to_PyString<ZZ_pX>"(ZZ_pX_c *x)
-    #int ZZ_pX_equal "_equal<ZZ_pX>"(ZZ_pX_c x, ZZ_pX_c y)
 
     long ZZ_pX_equal "operator=="(ZZ_pX_c a, ZZ_pX_c b)
     long ZZ_pX_IsZero "IsZero"(ZZ_pX_c a)
@@ -27,14 +27,14 @@ cdef extern from "ntl_wrap.h":
     void ZZ_pX_add_long "add"(ZZ_pX_c x, ZZ_pX_c a, long b)
     void ZZ_pX_sub "sub"( ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_sub_long "sub"(ZZ_pX_c x, long a, ZZ_pX_c b)
-    void ZZ_pX_negate "negate"(ZZ_pX_c x, ZZ_pX_c a)
+    void ZZ_pX_negate "NTL::negate"(ZZ_pX_c x, ZZ_pX_c a)
 
     void ZZ_pX_mul "mul"( ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_mul_long "mul"( ZZ_pX_c x, ZZ_pX_c a, long b)
     void ZZ_pX_mul_ZZ_p "mul"( ZZ_pX_c x, ZZ_pX_c a, ZZ_p_c b)
     void ZZ_pX_rmul "mul"( ZZ_pX_c x, ZZ_pX_c a, ZZ_p_c b)
     void ZZ_pX_sqr "sqr"( ZZ_pX_c x, ZZ_pX_c a)
-    long ZZ_pX_power "power"( ZZ_pX_c x, ZZ_pX_c a, long e)
+    long ZZ_pX_power "NTL::power"( ZZ_pX_c x, ZZ_pX_c a, long e)
 
     void ZZ_pX_LeftShift "LeftShift"(ZZ_pX_c x, ZZ_pX_c a, long n)
     void ZZ_pX_RightShift "RightShift"(ZZ_pX_c x, ZZ_pX_c a, long n)
@@ -135,41 +135,12 @@ cdef extern from "ntl_wrap.h":
     void ZZ_pX_to_ZZX "conv"(ZZX_c x, ZZ_pX_c a)
     void ZZX_to_ZZ_pX "conv"(ZZ_pX_c x, ZZX_c a)
 
-    #char* ZZ_pX_repr(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_copy(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_mod(ZZ_pX_c* x, ZZ_pX_c* y)
-    #void ZZ_pX_quo_rem(ZZ_pX_c* x, ZZ_pX_c* other, ZZ_pX_c** r, ZZ_pX_c** q)
-    #ZZ_pX_c* ZZ_pX_square(ZZ_pX_c* x)
-    #int ZZ_pX_is_monic(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_neg(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_left_shift(ZZ_pX_c* x, long n)
-    #ZZ_pX_c* ZZ_pX_right_shift(ZZ_pX_c* x, long n)
-    #ZZ_pX_c* ZZ_pX_gcd(ZZ_pX_c* x, ZZ_pX_c* y)
-    #ZZ_pX_c* ZZ_pX_xgcd(ZZ_pX_c** d, ZZ_pX_c** s, ZZ_pX_c** t, ZZ_pX_c* a, ZZ_pX_c* b)
-    #ZZ_pX_c* ZZ_pX_plain_xgcd(ZZ_pX_c** d, ZZ_pX_c** s, ZZ_pX_c** t, ZZ_pX_c* a, ZZ_pX_c* b)
-    #void ZZ_pX_set_x(ZZ_pX_c* x)
-    #int ZZ_pX_is_x(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_derivative(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_reverse(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_reverse_hi(ZZ_pX_c* x, long hi)
-    #ZZ_pX_c* ZZ_pX_truncate(ZZ_pX_c* x, long m)
-    #ZZ_pX_c* ZZ_pX_multiply_and_truncate(ZZ_pX_c* x, ZZ_pX_c* y, long m)
-    #ZZ_pX_c* ZZ_pX_square_and_truncate(ZZ_pX_c* x, long m)
-    #ZZ_pX_c* ZZ_pX_invert_and_truncate(ZZ_pX_c* x, long m)
-    #ZZ_pX_c* ZZ_pX_multiply_mod(ZZ_pX_c* x, ZZ_pX_c* y,  ZZ_pX_c* modulus)
-    #ZZ_p_c* ZZ_pX_trace_mod(ZZ_pX_c* x, ZZ_pX_c* y)
     char* ZZ_pX_trace_list(ZZ_pX_c* x)
-    #ZZ_p_c* ZZ_pX_resultant(ZZ_pX_c* x, ZZ_pX_c* y)
-    #ZZ_p_c* ZZ_pX_norm_mod(ZZ_pX_c* x, ZZ_pX_c* y)
-    #ZZ_p_c* ZZ_pX_discriminant(ZZ_pX_c* x)
-    #ZZ_pX_c* ZZ_pX_charpoly_mod(ZZ_pX_c* x, ZZ_pX_c* y)
-    #ZZ_pX_c* ZZ_pX_minpoly_mod(ZZ_pX_c* x, ZZ_pX_c* y)
-    #void ZZ_pX_preallocate_space(ZZ_pX_c* x, long n)
 
     void ZZ_pX_factor(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x, long verbose)
     void ZZ_pX_linear_roots(ZZ_p_c*** v, long* n, ZZ_pX_c* x)
 
-    # The following are ZZ_pX functions written in ntl_wrap, used for padics.
+    # The following are ZZ_pX functions written in ntlwrap, used for padics.
 
     void ZZ_pX_conv_modulus(ZZ_pX_c fout, ZZ_pX_c fin, ZZ_pContext_c c)
     void ZZ_pX_min_val_coeff(long valuation, long index, ZZ_pX_c f, ZZ_c p)

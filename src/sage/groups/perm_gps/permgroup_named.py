@@ -979,6 +979,44 @@ class KleinFourGroup(PermutationGroup_unique):
         """
         return 'The Klein 4 group of order 4, as a permutation group'
 
+class JankoGroup(PermutationGroup_unique):
+    def __init__(self, n):
+        r"""
+        Janko Groups `J1, J2`, and `J3`.
+        (Note that `J4` is too big to be treated here.)
+
+        INPUT:
+
+        - ``n`` -- an integer among `\{1,2,3\}`.
+
+        EXAMPLES::
+
+            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            Janko group J1 of order 175560 as a permutation group
+
+        TESTS::
+
+            sage: G.category() # optional - gap_packages internet
+            Category of finite permutation groups
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+        """
+        from sage.interfaces.gap import gap
+        if n not in [1,2,3]:
+            raise ValueError("n must belong to {1,2,3}.")
+        self._n = n
+        gap.load_package("atlasrep")
+        id = 'AtlasGroup("J%s")'%n
+        PermutationGroup_generic.__init__(self, gap_group=id)
+
+    def _repr_(self):
+        """
+        EXAMPLES::
+
+            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            Janko group J1 of order 175560 as a permutation group
+        """
+        return "Janko group J%s of order %s as a permutation group"%(self._n,self.order())
+
 class QuaternionGroup(DiCyclicGroup):
     r"""
     The quaternion group of order 8.
@@ -2606,7 +2644,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,13)
-            sage: G.ramification_module_decomposition_hurwitz_curve() # random, optional - database_gap
+            sage: G.ramification_module_decomposition_hurwitz_curve() # random, optional - database_gap gap_packages
             [0, 7, 7, 12, 12, 12, 13, 15, 14]
 
         This means, for example, that the trivial representation does not
@@ -2654,7 +2692,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,7)
-            sage: G.ramification_module_decomposition_modular_curve() # random, optional - database_gap
+            sage: G.ramification_module_decomposition_modular_curve() # random, optional - database_gap gap_packages
             [0, 4, 3, 6, 7, 8]
 
         This means, for example, that the trivial representation does not

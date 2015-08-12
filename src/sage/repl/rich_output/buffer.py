@@ -87,7 +87,7 @@ class OutputBuffer(SageObject):
           stored.
 
         OUTPUT:
-        
+
         String containing the buffer data.
 
         EXAMPLES::
@@ -141,7 +141,7 @@ class OutputBuffer(SageObject):
         mode = os.stat(filename).st_mode
         mode = stat.S_IMODE(mode) & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
         os.chmod(filename, mode)
-        
+
     def _repr_(self):
         """
         Return a string representation
@@ -157,11 +157,11 @@ class OutputBuffer(SageObject):
             buffer containing 8 bytes
         """
         return 'buffer containing {0} bytes'.format(len(self.get()))
-        
+
     def get(self):
         """
         Return the buffer content
-        
+
         OUTPUT:
 
         Bytes. A string in Python 2.x.
@@ -176,6 +176,25 @@ class OutputBuffer(SageObject):
             with open(self._filename) as f:
                 self._data = f.read()
         return self._data
+
+    def get_unicode(self):
+        """
+        Return the buffer content as string
+
+        OUTPUT:
+
+        String. Unicode in Python 2.x. Raises a ``UnicodeEncodeError``
+        if the data is not valid utf-8.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.buffer import OutputBuffer
+            sage: OutputBuffer('test1234').get()
+            'test1234'
+            sage: OutputBuffer('test1234').get_unicode()
+            u'test1234'
+        """
+        return self.get().decode('utf-8')
 
     def filename(self, ext=None):
         """
@@ -232,7 +251,7 @@ class OutputBuffer(SageObject):
 
         self._chmod_readonly(output)
         return output
-        
+
     def save_as(self, filename):
         """
         Save a copy of the buffer content.

@@ -18,6 +18,7 @@ If you define another output type then you must add it to the imports here.
 from .output_basic import (
     OutputPlainText,
     OutputAsciiArt,
+    OutputUnicodeArt,
     OutputLatex,
 )
 

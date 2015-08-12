@@ -16,7 +16,6 @@ AUTHOR:
 #*****************************************************************************
 
 import os
-import sys
 
 from sage.misc.pager import pager
 from sage.misc.temporary_file import tmp_filename

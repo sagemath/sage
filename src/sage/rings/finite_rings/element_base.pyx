@@ -486,7 +486,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             raise ArithmeticError("Multiplicative order of 0 not defined.")
         n = self._parent.order() - 1
         F = self._parent.factored_unit_order()[0]
-        order = 1
+        order = Integer(1)
         for p, e in F:
             # Determine the power of p that divides the order.
             a = self**(n//(p**e))

@@ -9,7 +9,7 @@ an algorithm is already implemented in a well-tested library then
 consider incorporating that library into Sage. The current list of
 available packages are the subdirectories of ``SAGE_ROOT/build/pkgs/``.
 The management of packages is done through a bash script located in
-``SAGE_ROOT/local/bin/sage-spkg``. This script is typically invoked by
+``SAGE_ROOT/build/bin/sage-spkg``. This script is typically invoked by
 giving the command::
 
     [user@localhost]$ sage -i <options> <package name>...
@@ -331,7 +331,7 @@ After the ticket was reviewed and included, optional packages stay in
 that status for at least a year, after which they can be proposed to be
 included as standard packages in Sage. For this a trac ticket is opened
 with the ``Component:`` field set to ``packages:standard``. Note that
-the script in ``SAGE_ROOT/build/deps`` is called when building Sage so
+the script in ``SAGE_ROOT/build/make/deps`` is called when building Sage so
 please include the build command for your standard package there. Then
 make a proposal in the Google Group ``sage-devel``.
 

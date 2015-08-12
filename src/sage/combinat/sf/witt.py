@@ -1326,7 +1326,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         parent = self.parent()
         w_coords_of_self = self.monomial_coefficients().items()
         from sage.combinat.partition import Partition
-        dct = {Partition(map(lambda i: i // n, lam)): coeff
+        dct = {Partition([i // n for i in lam]): coeff
                for (lam, coeff) in w_coords_of_self
                if all( i % n == 0 for i in lam )}
         result_in_w_basis = parent._from_dict(dct)

@@ -69,7 +69,7 @@ cdef class Matroid(SageObject):
     cpdef is_basis(self, X)
     cpdef is_circuit(self, X)
     cpdef is_closed(self, X)
-    cpdef is_subset_k_closed(self, X, k)
+    cpdef is_subset_k_closed(self, X, int k)
 
     cpdef coloops(self)
     cpdef is_coindependent(self, X)
@@ -134,11 +134,33 @@ cdef class Matroid(SageObject):
     cpdef is_simple(self)
     cpdef is_cosimple(self)
     cpdef components(self)
-    cpdef is_connected(self)
-    cpdef is_3connected(self)
+    cpdef is_connected(self, certificate=*)
+    cpdef connectivity(self, S, T=*)
+    cpdef _connectivity(self, S, T)
+    cpdef is_kconnected(self, k, certificate=*)
+    cpdef link(self, S, T)
+    cpdef _link(self, S, T)
+    cpdef is_3connected(self, certificate=*, algorithm=*, separation=*)
+    cpdef _is_3connected_CE(self, certificate=*)
+    cpdef _is_3connected_BC(self, certificate=*)
+    cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits)
+
+    # representability
+    cpdef _local_binary_matroid(self, basis=*)
+    cpdef binary_matroid(self, randomized_tests=*, verify=*)
+    cpdef is_binary(self, randomized_tests=*)
+    cpdef _local_ternary_matroid(self, basis=*)
+    cpdef ternary_matroid(self, randomized_tests=*, verify=*)
+    cpdef is_ternary(self, randomized_tests=*)
 
     # matroid k-closed
-    cpdef is_k_closed(self, k)
+    cpdef is_k_closed(self, int k)
+
+    # matroid chordality
+    cpdef _is_circuit_chordal(self, frozenset C)
+    cpdef is_circuit_chordal(self, C)
+    cpdef is_chordal(self, k1=*, k2=*)
+    cpdef chordality(self)
 
     # optimization
     cpdef max_weight_independent(self, X=*, weights=*)

@@ -1,22 +1,36 @@
-###############################################################################
-#   SAGE: Open Source Mathematical Software
+# distutils: language = c++
+# distutils: libraries = pynac gmp
+"""
+Declarations for pynac, a Python frontend for ginac
+
+Check that we can externally cimport this (:trac:`18825`)::
+
+    sage: cython(  # long time
+    ....: '''
+    ....: #clang c++
+    ....: #clib pynac
+    ....: cimport sage.symbolic.ginac
+    ....: ''')
+"""
+
+#*****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Burcin Erocal
-#  Distributed under the terms of the GNU General Public License (GPL),
-#  version 2 or any later version.  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
 # NOTE: Because of the except+'s below, i.e., C++ exception handling,
 # we do *not* have to use sig_on() and sig_off(). We do use it a little
 # in the actual pyx code to catch control-c for long running functions.
 
-# distutils: language = c++
-# distutils: libraries = pynac gmp
-
 from cpython cimport PyObject
 
-cdef extern from "ginac_wrap.h":
+cdef extern from "sage/symbolic/ginac_wrap.h":
     void ginac_pyinit_Integer(object)
     void ginac_pyinit_Float(object)
     void ginac_pyinit_I(object)

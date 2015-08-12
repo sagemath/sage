@@ -126,12 +126,11 @@ include "sage/ext/stdsage.pxi"
 include "sage/ext/random.pxi"
 include 'sage/libs/pari/pari_err.pxi'
 
+from sage.libs.gmp.mpz cimport *
 cimport sage.rings.ring
-import  sage.rings.ring
 
 cimport sage.structure.element
 from sage.structure.element cimport RingElement, Element, ModuleElement
-import  sage.structure.element
 cdef bin_op
 from sage.structure.element import bin_op
 
@@ -140,14 +139,13 @@ import sage.misc.weak_dict
 import operator
 
 import sage.libs.pari.pari_instance
+from sage.libs.pari.paridecl cimport *
 from sage.libs.pari.gen cimport gen
 from sage.libs.pari.pari_instance cimport PariInstance
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 
-from integer import Integer
 from integer cimport Integer
-from rational import Rational
 from rational cimport Rational
 
 from sage.categories.map cimport Map

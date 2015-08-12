@@ -426,11 +426,11 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
 
         #Construction of the steps
         from sage.structure.element import Vector
-        if all(map(lambda x: isinstance(x, Vector), steps)):
+        if all((isinstance(x, Vector) for x in steps)):
             vsteps = steps
         else:
             try:
-                vsteps = map(vector, steps)
+                vsteps = [vector(_) for _ in steps]
             except (TypeError):
                 raise ValueError("Can't make vectors from steps")
         try:
@@ -1354,41 +1354,49 @@ class FiniteWordPath_all(SageObject):
             sage: v = s.pisot_eigenvector_right()
             sage: P = WordPaths('123',[(1,0,0),(0,1,0),(0,0,1)])
             sage: w = P(D[:200])
-            sage: w.plot_projection(v) # optional long time (2 s)
+            sage: w.plot_projection(v)  # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         In this case, the abelianized vector doesn't give a good
         projection::
 
-            sage: w.plot_projection()     # optional long time (2 s)
+            sage: w.plot_projection()  # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         You can project only the letters you want::
 
-            sage: w.plot_projection(v, letters='12') # optional long time (2 s)
+            sage: w.plot_projection(v, letters='12')  # long time (2s)
+            Graphics object consisting of 168 graphics primitives
 
         You can increase or decrease the precision of the computations by
         changing the ring of the projection matrix::
 
-            sage: w.plot_projection(v, ring=RealField(20)) # optional long time (2 s)
+            sage: w.plot_projection(v, ring=RealField(20))  # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         You can change the size of the points::
 
-            sage: w.plot_projection(v, size=30) # optional long time (2 s)
+            sage: w.plot_projection(v, size=30)  # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         You can assign the color of a letter to the projected prefix to the
         right or the left of the letter::
 
-            sage: w.plot_projection(v, kind='left') # optional long time (2 s)
+            sage: w.plot_projection(v, kind='left')  # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         To remove the axis, do like this::
 
             sage: r = w.plot_projection(v)
             sage: r.axes(False)
-            sage: r               # optional long time (2 s)
+            sage: r               # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         You can assign different colors to each letter::
 
             sage: color = {'1':'purple', '2':(.2,.3,.4), '3': 'magenta'}
-            sage: w.plot_projection(v, color=color)   # optional long time (2 s)
+            sage: w.plot_projection(v, color=color)  # long time (2s)
+            Graphics object consisting of 200 graphics primitives
 
         The 3d-Rauzy fractal::
 
@@ -1397,7 +1405,8 @@ class FiniteWordPath_all(SageObject):
             sage: v = s.pisot_eigenvector_right()
             sage: P = WordPaths('1234',[(1,0,0,0), (0,1,0,0), (0,0,1,0), (0,0,0,1)])
             sage: w = P(D[:200])
-            sage: w.plot_projection(v)      # optional long time (1 s)
+            sage: w.plot_projection(v)
+            Graphics3d Object
 
         The dimension of vector space of the parent must be 3 or 4::
 
@@ -1587,7 +1596,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         #Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [map(RR, x) for x in pts]
+        pts = [[RR(_) for _ in x] for x in pts]
 
         #Inside
         if fill and self.is_closed():
@@ -1629,6 +1638,8 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             Animation with 9 frames
             sage: show(a)               # optional -- ImageMagick
             sage: a.gif(delay=35, iterations=3)    # optional -- ImageMagick
+            doctest:...: DeprecationWarning: use tmp_filename instead
+            See http://trac.sagemath.org/17234 for details.
 
         ::
 
@@ -1648,7 +1659,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         Another example illustrating a Fibonacci tile::
 
             sage: w = words.fibonacci_tile(2)
-            sage: show(w.animate())      # optional
+            sage: show(w.animate())  # optional -- ImageMagick
 
         The first 4 Fibonacci tiles in an animation::
 
@@ -1656,7 +1667,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: b = words.fibonacci_tile(1).animate()
             sage: c = words.fibonacci_tile(2).animate()
             sage: d = words.fibonacci_tile(3).animate()
-            sage: (a*b*c*d).show()       # optional
+            sage: (a*b*c*d).show()  # optional -- ImageMagick
 
         .. note::
 
@@ -1682,7 +1693,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         #Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [map(RR, x) for x in pts]
+        pts = [[RR(_) for _ in x] for x in pts]
 
         images = [line(pts[:i]) for i in range(1,len(pts)+1)]
 
@@ -2067,7 +2078,9 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
              8822750406821,
              51422757785981,
              299713796309065,
-             1746860020068409)
+             1746860020068409,
+             10181446324101389,
+             59341817924539925)
 
         TESTS::
 

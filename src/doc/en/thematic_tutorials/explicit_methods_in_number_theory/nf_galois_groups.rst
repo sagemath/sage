@@ -89,7 +89,7 @@ groups in the GAP transitive groups database.
 ::
 
     sage: K.<a> = NumberField(x^3 - 2)
-    sage: K.galois_group(type="gap", algorithm='magma')    # optional
+    sage: K.galois_group(type="gap", algorithm='magma')  # optional - magma
     verbose...
     Galois group Transitive group number 2 of degree 3 of
     the Number Field in a with defining polynomial x^3 - 2

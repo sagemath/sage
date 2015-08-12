@@ -10,6 +10,7 @@ This module implements general operation tables, which are very matrix-like.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+import six
 from sage.structure.sage_object import SageObject
 
 class OperationTable(SageObject):
@@ -519,7 +520,7 @@ class OperationTable(SageObject):
                 raise ValueError('list of element names must be the same size as the set, %s != %s'%(len(names), self._n))
             width = 0
             for str in names:
-                if not isinstance(str, basestring):
+                if not isinstance(str, six.string_types):
                     raise ValueError('list of element names must only contain strings, not %s'%str)
                 if len(str) > width:
                     width = len(str)
@@ -693,9 +694,9 @@ class OperationTable(SageObject):
             ...
             ValueError: ASCII symbol should be a single character, not 5
         """
-        if not isinstance(ascii, basestring) or not len(ascii)==1:
+        if not isinstance(ascii, six.string_types) or not len(ascii)==1:
             raise ValueError('ASCII symbol should be a single character, not %s' % ascii)
-        if not isinstance(latex, basestring):
+        if not isinstance(latex, six.string_types):
             raise ValueError('LaTeX symbol must be a string, not %s' % latex)
         self._ascii_symbol = ascii
         self._latex_symbol = latex

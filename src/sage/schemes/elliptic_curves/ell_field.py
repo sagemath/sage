@@ -797,10 +797,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                           kernel polynomial with the two torsion polynomial of
                           ``E``.
 
-        - ``model``     - a string (default:None).  Only supported variable is
-                          "minimal", in which case if``E`` is a curve over the
-                          rationals, then the codomain is set to be the unique
-                          global minimum model.
+        - ``model`` - a string (default:None).  Only supported
+                          variable is "minimal", in which case if``E``
+                          is a curve over the rationals or over a
+                          number field, then the codomain is a global
+                          minimum model where this exists.
 
         - ``check`` (default: True) does some partial checks that the
                           input is valid (e.g., that the points
@@ -860,7 +861,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
         """
         try:
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
-        except AttributeError, e:
+        except AttributeError as e:
             raise RuntimeError("Unable to contruct isogeny: %s" % e)
 
 
@@ -983,16 +984,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: QQroot2.<e> = NumberField(x^2-2)
             sage: E = EllipticCurve(QQroot2, j=8000)
             sage: E.isogenies_prime_degree()
-            [Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 = x^3 + (-602112000)*x + 5035261952000 over Number Field in e with defining polynomial x^2 - 2,
-            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 = x^3 + (903168000*e-1053696000)*x + (14161674240000*e-23288086528000) over Number Field in e with defining polynomial x^2 - 2,
-            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 = x^3 + (-903168000*e-1053696000)*x + (-14161674240000*e-23288086528000) over Number Field in e with defining polynomial x^2 - 2]
+            [Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 = x^3 + (-36750)*x + 2401000 over Number Field in e with defining polynomial x^2 - 2,
+            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 = x^3 + (220500*e-257250)*x + (54022500*e-88837000) over Number Field in e with defining polynomial x^2 - 2,
+            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 = x^3 + (-220500*e-257250)*x + (-54022500*e-88837000) over Number Field in e with defining polynomial x^2 - 2]
 
             sage: E = EllipticCurve(QQroot2, [1,0,1,4, -6]); E
             Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6) over Number Field in e with defining polynomial x^2 - 2
             sage: E.isogenies_prime_degree(2)
             [Isogeny of degree 2 from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + (-36)*x + (-70) over Number Field in e with defining polynomial x^2 - 2]
             sage: E.isogenies_prime_degree(3)
-            [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + (-128/3)*x + 5662/27 over Number Field in e with defining polynomial x^2 - 2, Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + (-171)*x + (-874) over Number Field in e with defining polynomial x^2 - 2]
+            [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + (-1)*x over Number Field in e with defining polynomial x^2 - 2,
+            Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6) over Number Field in e with defining polynomial x^2 - 2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + (-171)*x + (-874) over Number Field in e with defining polynomial x^2 - 2]
         """
         F = self.base_ring()
         if is_RealField(F):

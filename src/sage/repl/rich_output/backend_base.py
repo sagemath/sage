@@ -88,7 +88,7 @@ class BackendBase(SageObject):
         instance.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
             sage: backend.get_display_manager()
@@ -234,7 +234,7 @@ class BackendBase(SageObject):
         OUTPUT:
 
         String.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
@@ -288,9 +288,9 @@ class BackendBase(SageObject):
             sage: out.text
             buffer containing 139 bytes
             sage: out.text.get()
-            '[0,\n 1,\n 2,\n 3,\n 4,\n 5,\n 6,\n 7,\n 8,\n 9,\n 
-            10,\n 11,\n 12,\n 13,\n 14,\n 15,\n 16,\n 17,\n 18,\n 
-            19,\n 20,\n 21,\n 22,\n 23,\n 24,\n 25,\n 26,\n 27,\n 
+            '[0,\n 1,\n 2,\n 3,\n 4,\n 5,\n 6,\n 7,\n 8,\n 9,\n
+            10,\n 11,\n 12,\n 13,\n 14,\n 15,\n 16,\n 17,\n 18,\n
+            19,\n 20,\n 21,\n 22,\n 23,\n 24,\n 25,\n 26,\n 27,\n
             28,\n 29]'
 
             sage: out = backend.plain_text_formatter(range(20), concatenate=True)
@@ -336,30 +336,72 @@ class BackendBase(SageObject):
             sage: out
             OutputAsciiArt container
             sage: out.ascii_art
-            buffer containing 228 bytes
+            buffer containing 114 bytes
             sage: print(out.ascii_art.get())
-            [                                                                              
             [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
             <BLANKLINE>
-                                            ]
              22, 23, 24, 25, 26, 27, 28, 29 ]
-
             sage: backend.ascii_art_formatter([1,2,3], concatenate=False).ascii_art.get()
-            '[         ]\n[ 1, 2, 3 ]'
+            '[ 1, 2, 3 ]'
             sage: backend.ascii_art_formatter([1,2,3], concatenate=True ).ascii_art.get()
             '1 2 3'
         """
-        from sage.misc.ascii_art import ascii_art, empty_ascii_art
+        from sage.typeset.ascii_art import ascii_art, empty_ascii_art
         if kwds.get('concatenate', False):
-            result = empty_ascii_art
-            for o in obj:
-                if result is not empty_ascii_art:
-                    result += ascii_art(' ')
-                result += ascii_art(o)
+            result = ascii_art(*obj, sep=' ')
         else:
             result = ascii_art(obj)
         from sage.repl.rich_output.output_basic import OutputAsciiArt
         return OutputAsciiArt(str(result))
+
+    def unicode_art_formatter(self, obj, **kwds):
+        r"""
+        Hook to override how unicode art is being formatted.
+
+        INPUT:
+
+        - ``obj`` -- anything.
+
+        - ``**kwds`` -- optional keyword arguments to control the
+          formatting. Supported are:
+
+            * ``concatenate`` -- boolean (default: ``False``). If
+              ``True``, the argument ``obj`` must be iterable and its
+              entries will be concatenated. There is a single
+              whitespace between entries.
+
+        OUTPUT:
+
+        Instance of
+        :class:`~sage.repl.rich_output.output_basic.OutputUnicodeArt`
+        containing the unicode art string representation of the object.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.backend_base import BackendBase
+            sage: backend = BackendBase()
+            sage: out = backend.unicode_art_formatter(range(30))
+            sage: out
+            OutputUnicodeArt container
+            sage: out.unicode_art
+            buffer containing 114 bytes
+            sage: print(out.unicode_art.get())
+            [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+            <BLANKLINE>
+            22, 23, 24, 25, 26, 27, 28, 29 ]
+
+            sage: backend.unicode_art_formatter([1,2,3], concatenate=False).unicode_art.get()
+            '[ 1, 2, 3 ]'
+            sage: backend.unicode_art_formatter([1,2,3], concatenate=True ).unicode_art.get()
+            '1 2 3'
+        """
+        from sage.typeset.unicode_art import unicode_art, empty_unicode_art
+        if kwds.get('concatenate', False):
+            result = unicode_art(*obj, sep=' ')
+        else:
+            result = unicode_art(obj)
+        from sage.repl.rich_output.output_basic import OutputUnicodeArt
+        return OutputUnicodeArt(str(result))
 
     def latex_formatter(self, obj, **kwds):
         r"""
@@ -448,11 +490,11 @@ class BackendBase(SageObject):
         """
         import __builtin__
         __builtin__._ = obj
-    
+
     def displayhook(self, plain_text, rich_output):
         """
         Backend implementation of the displayhook
-        
+
         The value of the last statement on a REPL input line or
         notebook cell are usually handed to the Python displayhook and
         shown on screen.  By overriding this method you define how
@@ -461,7 +503,7 @@ class BackendBase(SageObject):
         most suitable rich output container.
 
         Derived classes must implement this method.
-        
+
         INPUT:
 
         - ``plain_text`` -- instance of
@@ -504,7 +546,7 @@ class BackendBase(SageObject):
         up being called by :meth:`sage.plot.graphics.Graphics.show`.
 
         Derived classes must implement this method.
-        
+
         INPUT:
 
         Same as :meth:`displayhook`.
@@ -536,14 +578,14 @@ class BackendSimple(BackendBase):
     Simple Backend
 
     This backend only supports plain text.
-    
+
     EXAMPLES::
 
         sage: from sage.repl.rich_output.backend_base import BackendSimple
         sage: BackendSimple()
         simple
     """
-    
+
     def _repr_(self):
         r"""
         Return string representation of the backend

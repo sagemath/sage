@@ -1,8 +1,10 @@
+# distutils: depends = NTL/ZZ.h
+
 from sage.libs.ntl.ntl_GF2_decl cimport GF2_c
 from sage.libs.ntl.ntl_ZZ_decl cimport ZZ_c
 from sage.libs.ntl.ntl_vec_GF2_decl cimport vec_GF2_c
 
-cdef extern from "ntl_wrap.h":
+cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     ctypedef struct GF2X_c "struct GF2X":
         pass
 
@@ -22,8 +24,8 @@ cdef extern from "ntl_wrap.h":
     void GF2X_add "add"( GF2X_c x, GF2X_c a, GF2X_c b)
     void GF2X_sub "sub"( GF2X_c x, GF2X_c a, GF2X_c b)
     void GF2X_mul "mul"( GF2X_c x, GF2X_c a, GF2X_c b)
-    void GF2X_negate "negate"(GF2X_c x, GF2X_c a)
-    void GF2X_power "power"(GF2X_c t, GF2X_c x, long e)
+    void GF2X_negate "NTL::negate"(GF2X_c x, GF2X_c a)
+    void GF2X_power "NTL::power"(GF2X_c t, GF2X_c x, long e)
     long GF2X_deg "deg"(GF2X_c x)
 
     void GF2X_conv_long "conv" (GF2X_c x, long a)

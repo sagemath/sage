@@ -14,7 +14,6 @@ cimport parent_base
 
 cdef class ParentWithGens(parent_base.ParentWithBase):
     cdef public object _gens
-    cdef public object _gens_dict
     cdef public object _latex_names
     cdef public object _list
 

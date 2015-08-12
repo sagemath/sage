@@ -581,7 +581,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: R = IntegerModRing(18)
             sage: M = AutomaticSemigroup([R(3), R(5)], one=R.one())
             sage: M.repr_element_method("reduced_word")
-            sage: M.__iter__().next()
+            sage: next(M.__iter__())
             []
             sage: list(M)
             [[], [0], [1], [0, 0], [0, 1], [1, 1], [1, 1, 1], [1, 1, 1, 1], [1,
@@ -615,11 +615,11 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: R = IntegerModRing(5)
             sage: M = AutomaticSemigroup([R(3), R(4)], one=R.one())
             sage: I = M.__iter__()
-            sage: I.next()
+            sage: next(I)
             1
             sage: M.list()
             [1, 3, 4, 2]
-            sage: I.next()
+            sage: next(I)
             3
         """
         if self._constructed:
@@ -639,30 +639,30 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())
             sage: f = iter(M)            # indirect doctest
             sage: g = iter(M)
-            sage: f.next(), g.next()
+            sage: next(f), next(g)
             (1, 1)
-            sage: g.next(), f.next()
+            sage: next(g), next(f)
             (3, 3)
-            sage: f.next(), g.next()
+            sage: next(f), next(g)
             (5, 5)
-            sage: f.next(), g.next()
+            sage: next(f), next(g)
             (9, 9)
             sage: h = iter(M)
-            sage: h.next(), h.next(), h.next(), h.next(), h.next()
+            sage: next(h), next(h), next(h), next(h), next(h)
             (1, 3, 5, 9, 4)
-            sage: f.next(), g.next()
+            sage: next(f), next(g)
             (4, 4)
             sage: M._constructed
             False
-            sage: f.next()
+            sage: next(f)
             Traceback (most recent call last):
             ...
             StopIteration
-            sage: g.next()
+            sage: next(g)
             Traceback (most recent call last):
             ...
             StopIteration
-            sage: h.next()
+            sage: next(h)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -677,7 +677,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             # been called before we move on to the next line
             i += 1
             if i == len(self._elements) and not self._constructed:
-                self._iter.next()
+                next(self._iter)
 
     def cardinality(self):
         """
@@ -815,7 +815,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 raise ValueError("Only one of the options `up_to` or `n` should be specified")
             i = len(self._elements)
             while i < n and not self._constructed:
-                self._iter.next()
+                next(self._iter)
                 i += 1
         elif up_to is not None:
             if up_to.parent() is self._ambient:
@@ -994,7 +994,7 @@ class AutomaticMonoid(AutomaticSemigroup):
         return self._one
 
     # This method takes the monoid generators and adds the unit
-    semigroup_generators = Monoids.ParentMethods.semigroup_generators.im_func
+    semigroup_generators = Monoids.ParentMethods.semigroup_generators.__func__
 
     def monoid_generators(self):
         """

@@ -232,7 +232,7 @@ def is_strongly_regular(g, parameters = False):
 
 def triangles_count(G):
     r"""
-    Return the number of triangles in G
+    Return the number of triangles containing `v`, for every `v`.
 
     INPUT:
 
@@ -242,12 +242,15 @@ def triangles_count(G):
 
         sage: from sage.graphs.base.static_dense_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
-        0
-        sage: triangles_count(graphs.CompleteGraph(15)) == binomial(15,3)
+        {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)
         True
     """
+    from sage.rings.integer import Integer
     G._scream_if_not_simple()
     cdef int n = G.order()
+
+    cdef uint64_t * count = <uint64_t *> check_calloc(n, sizeof(uint64_t))
 
     cdef binary_matrix_t g
     dense_graph_init(g, G)
@@ -256,17 +259,22 @@ def triangles_count(G):
     bitset_init(b_tmp, n)
 
     cdef int i,j
-    cdef uint64_t count = 0
+    cdef uint64_t tmp_count = 0
 
     for i in range(n):
         for j in range(i+1,n):
             if not bitset_in(g.rows[i],j):
                 continue
             bitset_and(b_tmp, g.rows[i], g.rows[j])
-            count += bitset_len(b_tmp)
+            tmp_count = bitset_len(b_tmp)
+            count[i] += tmp_count
+            count[j] += tmp_count
+
+    ans = {v:Integer(count[i]/2)
+           for i,v in enumerate(G.vertices())}
 
     bitset_free(b_tmp)
     binary_matrix_free(g)
+    sage_free(count)
 
-    from sage.rings.integer import Integer
-    return Integer(count)//3
+    return ans

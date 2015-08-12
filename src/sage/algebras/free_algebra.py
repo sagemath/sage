@@ -128,6 +128,7 @@ Note that the letterplace implementation can only be used if the corresponding
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
 from sage.categories.rings import Rings
 
 from sage.monoids.free_monoid import FreeMonoid
@@ -594,7 +595,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                     return M(out)
                 return self.element_class(self, dict([(exp_to_monomial(T),c) for T,c in x.letterplace_polynomial().dict().iteritems()]))
         # ok, not a free algebra element (or should not be viewed as one).
-        if isinstance(x, basestring):
+        if isinstance(x, six.string_types):
             from sage.all import sage_eval
             G = self.gens()
             d = {str(v): G[i] for i,v in enumerate(self.variable_names())}

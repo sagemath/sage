@@ -517,7 +517,7 @@ class LatinSquare:
             2
         """
 
-        symbols = uniq(flatten(map(lambda x: list(x), list(self.square))))
+        symbols = uniq(flatten([list(x) for x in list(self.square)]))
         symbols = [x for x in symbols if x >= 0]
 
         return len(symbols)
@@ -1229,10 +1229,10 @@ class LatinSquare:
 
     def find_disjoint_mates(self, nr_to_find = None, allow_subtrade = False):
         r"""
-        .. warning:::
+        .. warning::
 
-           If allow_subtrade is True then we may return a partial
-           latin square that is *not* disjoint to self. In that case,
+           If allow_subtrade is ``True`` then we may return a partial
+           latin square that is *not* disjoint to ``self``. In that case,
            use bitrade(P, Q) to get an actual bitrade.
 
         EXAMPLES::
@@ -1517,12 +1517,12 @@ def isotopism(p):
     if isinstance(p, list):
         # We expect a list like [0,3,2,1] which means
         # that 0 goes to 0, 1 goes to 3, etc.
-        return Permutation(map(lambda x: x+1, p))
+        return Permutation([x+1 for x in p])
 
     if isinstance(p, tuple):
         # We have a single cycle:
         if isinstance(p[0], Integer):
-            return Permutation(tuple(map(lambda x: x+1, p)))
+            return Permutation(tuple((x+1 for x in p)))
 
         # We have a tuple of cycles:
         if isinstance(p[0], tuple):
@@ -2318,13 +2318,12 @@ def group_to_LatinSquare(G):
         [1 2 0]
         [2 0 1]
     """
-
     if isinstance(G, GapElement):
-        rows = map(lambda x: list(x), list(gap.MultiplicationTable(G)))
+        rows = (list(x) for x in list(gap.MultiplicationTable(G)))
         new_rows = []
 
         for x in rows:
-            new_rows.append(map(lambda x: int(x)-1, x))
+            new_rows.append([int(xx) - 1 for xx in x])
 
         return matrix(new_rows)
 

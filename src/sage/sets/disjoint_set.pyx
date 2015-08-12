@@ -483,11 +483,11 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             ...
             ValueError: j(=5) must be between 0 and 4
         """
-        card = self.cardinality()
-        if i < 0 or i>= card:
-            raise ValueError, 'i(=%s) must be between 0 and %s'%(i, card-1)
-        if j < 0 or j>= card:
-            raise ValueError, 'j(=%s) must be between 0 and %s'%(j, card-1)
+        cdef int card = self._nodes.degree
+        if i < 0 or i >= card:
+            raise ValueError('i(=%s) must be between 0 and %s'%(i, card-1))
+        if j < 0 or j >= card:
+            raise ValueError('j(=%s) must be between 0 and %s'%(j, card-1))
         OP_join(self._nodes, i, j)
 
     def root_to_elements_dict(self):

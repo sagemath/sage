@@ -279,10 +279,10 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
         """
         Make ``f`` into an element of this order.
 
-        INPUT::
+        INPUT:
 
-            - ``f`` -- the element
-            - ``check`` -- check if the element is in the order
+        - ``f`` -- the element
+        - ``check`` -- check if the element is in the order
 
         EXAMPLES::
 

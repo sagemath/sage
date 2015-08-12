@@ -7,12 +7,7 @@
 
 from sage.numerical.backends.generic_backend cimport GenericBackend
 
-include 'sage/ext/cdefs.pxi'
-
 cdef struct c_cpxlp
-
-cdef extern from *:
-    ctypedef double* const_double_ptr "double*"
 
 
 cdef class CPLEXBackend(GenericBackend):

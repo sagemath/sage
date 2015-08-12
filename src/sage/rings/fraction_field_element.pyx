@@ -973,6 +973,36 @@ cdef class FractionFieldElement(FieldElement):
         return (make_element,
                 (self._parent, self.__numerator, self.__denominator))
 
+    def _evaluate_polynomial(self, pol):
+        """
+        Evaluate a univariate polynomial on this fraction.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: pol = x^3 + 1
+            sage: pol(1/x)
+            (x^3 + 1)/x^3
+
+        TESTS::
+
+            sage: R.<y,z> = ZZ[]
+            sage: (~(y+z))._evaluate_polynomial(pol)
+            (y^3 + 3*y^2*z + 3*y*z^2 + z^3 + 1)/(y^3 + 3*y^2*z + 3*y*z^2 + z^3)
+            sage: rat = (y+z)/y
+            sage: rat._evaluate_polynomial(pol)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+            sage: pol(rat)
+            (2*y^3 + 3*y^2*z + 3*y*z^2 + z^3)/y^3
+        """
+        inverse = ~self
+        if inverse.denominator().is_one():
+            num = inverse.numerator()
+            return pol.reverse()(num)/num**pol.degree()
+        else:
+            raise NotImplementedError
 
 class FractionFieldElement_1poly_field(FractionFieldElement):
     """

@@ -1,49 +1,73 @@
-diff -durN src.orig/src/configure.in src/src/configure.in
---- src.orig/src/configure.in	2012-12-17 11:08:10.000000000 +0100
-+++ src/src/configure.in	2013-01-18 11:34:30.012132746 +0100
-@@ -582,6 +582,19 @@
- AC_SUBST(SONAME)
- AC_SUBST(SONAME_LDFLAGS)
- 
-+dnl ----------------------------------------------------------------------
-+dnl IMPLIB_NAME is only active when IMPLIB_NAME is non nil
-+dnl
-+AC_MSG_CHECKING(for import name)
-+if test "${enable_soname}" != yes; then
-+   IMPLIB_NAME=''
-+   AC_MSG_RESULT([none])
-+else
-+   AC_MSG_RESULT([${IMPLIB_NAME}])
-+fi
-+AC_SUBST(IMPLIB_NAME)
-+AC_SUBST(IMPLIB_LDFLAGS)
-+
- dnl Related to that, the package version number
- ECL_VERSION_NUMBER=$(($PACKAGE_MAJOR * 10000 + $PACKAGE_MINOR * 100 + $PACKAGE_LEAST))
- AC_SUBST(ECL_VERSION_NUMBER)
-diff -durN src.orig/src/Makefile.in src/src/Makefile.in
---- src.orig/src/Makefile.in	2012-12-17 11:08:06.000000000 +0100
-+++ src/src/Makefile.in	2013-01-18 11:34:30.012132746 +0100
-@@ -174,10 +174,14 @@
- 	  if test -s $$i ; then \
- 	   if echo $$i | grep dll; then \
- 	    $(INSTALL_LIBRARY) $$i $(DESTDIR)$(bindir); \
--	   fi; \
--	   $(INSTALL_LIBRARY) $$i $(DESTDIR)$(libdir); \
-+	   else \
-+	    $(INSTALL_LIBRARY) $$i $(DESTDIR)$(libdir); \
-+	   fi \
- 	  fi \
- 	done
-+	if [ "x@IMPLIB_NAME@" != "x" -a -f "@IMPLIB_NAME@" ]; then \
-+	  $(INSTALL_LIBRARY) @IMPLIB_NAME@ $(DESTDIR)$(libdir); \
-+	fi
- 	if [ "x@SONAME@" != "x" -a -f "@SONAME@" ]; then \
- 	  ( cd $(DESTDIR)$(libdir) && $(RM) -f @SONAME3@ @SONAME2@ @SONAME1@ && \
- 	    mv @SONAME@ @SONAME3@ && \
-diff -durN src.orig/src/compile.lsp.in src/src/compile.lsp.in
---- src.orig/src/compile.lsp.in	2012-12-17 11:08:05.000000000 +0100
-+++ src/src/compile.lsp.in	2013-01-18 11:34:30.012132746 +0100
+diff --git a/src/aclocal.m4 b/src/aclocal.m4
+index 63d8997..79ff24d 100644
+--- a/src/aclocal.m4
++++ b/src/aclocal.m4
+@@ -233,6 +233,8 @@ AC_SUBST(LIBPREFIX)dnl	Name components of a statically linked library
+ AC_SUBST(LIBEXT)
+ AC_SUBST(SHAREDEXT)dnl	Name components of a dynamically linked library
+ AC_SUBST(SHAREDPREFIX)
++AC_SUBST(IMPLIB_EXT)dnl	Name components of a dynamically linked library import file
++AC_SUBST(IMPLIB_PREFIX)
+ AC_SUBST(OBJEXT)dnl	These are set by autoconf
+ AC_SUBST(EXEEXT)
+ AC_SUBST(INSTALL_TARGET)dnl Which type of installation: flat directory or unix like.
+@@ -242,6 +244,8 @@ ECL_GC_DIR=gc-unstable
+ ECL_LDRPATH=''
+ SHAREDEXT='so'
+ SHAREDPREFIX='lib'
++IMPLIB_EXT=''
++IMPLIB_PREFIX=''
+ LIBPREFIX='lib'
+ LIBEXT='a'
+ PICFLAG='-fPIC'
+@@ -253,6 +257,8 @@ THREAD_OBJ="$THREAD_OBJ threads/process threads/queue threads/mutex threads/cond
+ clibs=''
+ SONAME=''
+ SONAME_LDFLAGS=''
++IMPLIB_NAME=''
++IMPLIB_LDFLAGS=''
+ case "${host_os}" in
+ 	# libdir may have a dollar expression inside
+ 	linux*)
+@@ -355,10 +361,14 @@ case "${host_os}" in
+ 		shared='yes'
+ 		THREAD_CFLAGS='-D_THREAD_SAFE'
+ 		THREAD_LIBS='-lpthread'
+-		SHARED_LDFLAGS="-shared ${LDFLAGS}"
+-		BUNDLE_LDFLAGS="-shared ${LDFLAGS}"
+-		SHAREDPREFIX=''
++		SHARED_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
++		BUNDLE_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
++		SHAREDPREFIX='cyg'
+ 		SHAREDEXT='dll'
++		IMPLIB_PREFIX='lib'
++		IMPLIB_EXT='dll.a'
++		IMPLIB_NAME="${IMPLIB_PREFIX}ecl.${IMPLIB_EXT}"
++		IMPLIB_LDFLAGS="-Wl,--out-implib,${IMPLIB_NAME}"
+ 		PICFLAG=''
+ 		if test "x$host_cpu" = "xx86_64" ; then
+ 		   # Our GMP library is too old and does not support
+@@ -373,10 +383,14 @@ case "${host_os}" in
+                 enable_threads='yes'
+ 		THREAD_CFLAGS='-D_THREAD_SAFE'
+ 		THREAD_GC_FLAGS='--enable-threads=win32'
+-		SHARED_LDFLAGS=''
+-		BUNDLE_LDFLAGS=''
++		SHARED_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
++		BUNDLE_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
+ 		SHAREDPREFIX=''
+ 		SHAREDEXT='dll'
++		IMPLIB_PREFIX='lib'
++		IMPLIB_EXT='dll.a'
++		IMPLIB_NAME="${IMPLIB_PREFIX}ecl.${IMPLIB_EXT}"
++		IMPLIB_LDFLAGS="-Wl,--out-implib,${IMPLIB_NAME}"
+ 		PICFLAG=''
+ 		INSTALL_TARGET='flatinstall'
+ 		TCPLIBS='-lws2_32'
+diff --git a/src/compile.lsp.in b/src/compile.lsp.in
+index 773fe99..697c115 100755
+--- a/src/compile.lsp.in
++++ b/src/compile.lsp.in
 @@ -58,7 +58,7 @@
  ;;;
  ;;; * Add include path to not yet installed headers, and remove include flag
@@ -62,167 +86,49 @@ diff -durN src.orig/src/compile.lsp.in src/src/compile.lsp.in
  			     #+msvc "@SHARED_LDFLAGS@ @LDFLAGS@ @STATICLIBS@ @CLIBS@")
         (c::*cc-flags* (concatenate 'string "-DECL_API -I@true_builddir@/c " c::*cc-flags*))
         (extra-args nil))
-diff -durN src.orig/src/aclocal.m4 src/src/aclocal.m4
---- src.orig/src/aclocal.m4	2012-12-17 11:08:05.000000000 +0100
-+++ src/src/aclocal.m4	2013-01-18 11:34:30.012132746 +0100
-@@ -232,6 +232,8 @@
- AC_SUBST(LIBEXT)
- AC_SUBST(SHAREDEXT)dnl	Name components of a dynamically linked library
- AC_SUBST(SHAREDPREFIX)
-+AC_SUBST(IMPLIB_EXT)dnl	Name components of a dynamically linked library import file
-+AC_SUBST(IMPLIB_PREFIX)
- AC_SUBST(OBJEXT)dnl	These are set by autoconf
- AC_SUBST(EXEEXT)
- AC_SUBST(INSTALL_TARGET)dnl Which type of installation: flat directory or unix like.
-@@ -241,6 +243,8 @@
- ECL_LDRPATH=''
- SHAREDEXT='so'
- SHAREDPREFIX='lib'
-+IMPLIB_EXT=''
-+IMPLIB_PREFIX=''
- LIBPREFIX='lib'
- LIBEXT='a'
- PICFLAG='-fPIC'
-@@ -252,6 +256,8 @@
- clibs=''
- SONAME=''
- SONAME_LDFLAGS=''
-+IMPLIB_NAME=''
-+IMPLIB_LDFLAGS=''
- case "${host_os}" in
- 	# libdir may have a dollar expression inside
- 	linux*)
-@@ -354,10 +360,14 @@
- 		shared='yes'
- 		THREAD_CFLAGS='-D_THREAD_SAFE'
- 		THREAD_LIBS='-lpthread'
--		SHARED_LDFLAGS="-shared ${LDFLAGS}"
--		BUNDLE_LDFLAGS="-shared ${LDFLAGS}"
--		SHAREDPREFIX=''
-+		SHARED_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
-+		BUNDLE_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
-+		SHAREDPREFIX='cyg'
- 		SHAREDEXT='dll'
-+		IMPLIB_PREFIX='lib'
-+		IMPLIB_EXT='dll.a'
-+		IMPLIB_NAME="${IMPLIB_PREFIX}ecl.${IMPLIB_EXT}"
-+		IMPLIB_LDFLAGS="-Wl,--out-implib,${IMPLIB_NAME}"
- 		PICFLAG=''
- 		;;
- 	mingw*)
-@@ -367,10 +377,14 @@
-                 enable_threads='yes'
- 		THREAD_CFLAGS='-D_THREAD_SAFE'
- 		THREAD_GC_FLAGS='--enable-threads=win32'
--		SHARED_LDFLAGS=''
--		BUNDLE_LDFLAGS=''
-+		SHARED_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
-+		BUNDLE_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
- 		SHAREDPREFIX=''
- 		SHAREDEXT='dll'
-+		IMPLIB_PREFIX='lib'
-+		IMPLIB_EXT='dll.a'
-+		IMPLIB_NAME="${IMPLIB_PREFIX}ecl.${IMPLIB_EXT}"
-+		IMPLIB_LDFLAGS="-Wl,--out-implib,${IMPLIB_NAME}"
- 		PICFLAG=''
- 		INSTALL_TARGET='flatinstall'
- 		TCPLIBS='-lws2_32'
-diff -durN src.orig/src/configure src/src/configure
---- src.orig/src/configure	2012-12-17 11:08:11.000000000 +0100
-+++ src/src/configure	2013-01-18 11:35:15.231702758 +0100
-@@ -643,6 +643,8 @@
- CL_FIXNUM_TYPE
- XMKMF
- ECL_VERSION_NUMBER
-+IMPLIB_LDFLAGS
-+IMPLIB_NAME
- SONAME_LDFLAGS
- SONAME
- SONAME1
-@@ -659,6 +661,8 @@
- ECL_GC_DIR
- thehost
- INSTALL_TARGET
-+IMPLIB_PREFIX
-+IMPLIB_EXT
- SHAREDPREFIX
- SHAREDEXT
- LIBEXT
-@@ -4855,10 +4859,13 @@
+diff --git a/src/configure.ac b/src/configure.ac
+index e076e09..15d307a 100644
+--- a/src/configure.ac
++++ b/src/configure.ac
+@@ -588,6 +588,20 @@ AC_SUBST(SONAME1)
+ AC_SUBST(SONAME)
+ AC_SUBST(SONAME_LDFLAGS)
  
- 
- 
-+
- ECL_GC_DIR=gc-unstable
- ECL_LDRPATH=''
- SHAREDEXT='so'
- SHAREDPREFIX='lib'
-+IMPLIB_EXT=''
-+IMPLIB_PREFIX=''
- LIBPREFIX='lib'
- LIBEXT='a'
- PICFLAG='-fPIC'
-@@ -4870,6 +4877,8 @@
- clibs=''
- SONAME=''
- SONAME_LDFLAGS=''
-+IMPLIB_NAME=''
-+IMPLIB_LDFLAGS=''
- case "${host_os}" in
- 	# libdir may have a dollar expression inside
- 	linux*)
-@@ -4972,10 +4981,14 @@
- 		shared='yes'
- 		THREAD_CFLAGS='-D_THREAD_SAFE'
- 		THREAD_LIBS='-lpthread'
--		SHARED_LDFLAGS="-shared ${LDFLAGS}"
--		BUNDLE_LDFLAGS="-shared ${LDFLAGS}"
--		SHAREDPREFIX=''
-+		SHARED_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
-+		BUNDLE_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
-+		SHAREDPREFIX='cyg'
- 		SHAREDEXT='dll'
-+		IMPLIB_PREFIX='lib'
-+		IMPLIB_EXT='dll.a'
-+		IMPLIB_NAME="${IMPLIB_PREFIX}ecl.${IMPLIB_EXT}"
-+		IMPLIB_LDFLAGS="-Wl,--out-implib,${IMPLIB_NAME}"
- 		PICFLAG=''
- 		;;
- 	mingw*)
-@@ -4985,10 +4998,14 @@
-                 enable_threads='yes'
- 		THREAD_CFLAGS='-D_THREAD_SAFE'
- 		THREAD_GC_FLAGS='--enable-threads=win32'
--		SHARED_LDFLAGS=''
--		BUNDLE_LDFLAGS=''
-+		SHARED_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
-+		BUNDLE_LDFLAGS="-shared -Wl,--enable-auto-image-base ${LDFLAGS}"
- 		SHAREDPREFIX=''
- 		SHAREDEXT='dll'
-+		IMPLIB_PREFIX='lib'
-+		IMPLIB_EXT='dll.a'
-+		IMPLIB_NAME="${IMPLIB_PREFIX}ecl.${IMPLIB_EXT}"
-+		IMPLIB_LDFLAGS="-Wl,--out-implib,${IMPLIB_NAME}"
- 		PICFLAG=''
- 		INSTALL_TARGET='flatinstall'
- 		TCPLIBS='-lws2_32'
-@@ -6131,6 +6148,19 @@
- 
- 
- 
-+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for import name" >&5
-+$as_echo_n "checking for import name... " >&6; }
++dnl ----------------------------------------------------------------------
++dnl IMPLIB_NAME is only active when IMPLIB_NAME is non nil
++dnl
++AC_MSG_CHECKING(for import name)
 +if test "${enable_soname}" != yes; then
 +   IMPLIB_NAME=''
-+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none" >&5
-+$as_echo "none" >&6; }
++   AC_MSG_RESULT([none])
 +else
-+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${IMPLIB_NAME}" >&5
-+$as_echo "${IMPLIB_NAME}" >&6; }
++   AC_MSG_RESULT([${IMPLIB_NAME}])
 +fi
++AC_SUBST(IMPLIB_NAME)
++AC_SUBST(IMPLIB_LDFLAGS)
 +
 +
-+
+ dnl Related to that, the package version number
  ECL_VERSION_NUMBER=$(($PACKAGE_MAJOR * 10000 + $PACKAGE_MINOR * 100 + $PACKAGE_LEAST))
- 
- 
+ AC_SUBST(ECL_VERSION_NUMBER)
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 12e9f05..74bc216 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -174,10 +174,14 @@ install:
+ 	  if test -s $$i ; then \
+ 	   if echo $$i | grep dll; then \
+ 	    $(INSTALL_LIBRARY) $$i $(DESTDIR)$(bindir); \
+-	   fi; \
+-	   $(INSTALL_LIBRARY) $$i $(DESTDIR)$(libdir); \
++	   else \
++	    $(INSTALL_LIBRARY) $$i $(DESTDIR)$(libdir); \
++	   fi \
+ 	  fi \
+ 	done
++	if [ "x@IMPLIB_NAME@" != "x" -a -f "@IMPLIB_NAME@" ]; then \
++	  $(INSTALL_LIBRARY) @IMPLIB_NAME@ $(DESTDIR)$(libdir); \
++	fi
+ 	if [ "x@SONAME@" != "x" -a -f "@SONAME@" ]; then \
+ 	  ( cd $(DESTDIR)$(libdir) && $(RM) -f @SONAME3@ @SONAME2@ @SONAME1@ && \
+ 	    mv @SONAME@ @SONAME3@ && \

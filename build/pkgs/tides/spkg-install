@@ -19,13 +19,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building TIDES."
-    exit 1
-fi
-
-$MAKE -j1 install
+# Use $SAGE_LOCAL/include instead of hardcoded /usr/local/include
+$MAKE AM_CPPFLAGS="-I '$SAGE_LOCAL/include'" install
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing TIDES."
     exit 1

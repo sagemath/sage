@@ -509,7 +509,7 @@ class ModularSymbolsAmbient(space.ModularSymbolsSpace, hecke.AmbientHeckeModule)
             sage: M.change_ring(QQ)
             Traceback (most recent call last):
             ...
-            ValueError: cannot coerce element of order 4 into self
+            TypeError: Unable to coerce zeta4 to a rational
 
         Similarly with :meth:`base_extend`::
 

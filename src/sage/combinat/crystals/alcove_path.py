@@ -263,8 +263,13 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             if highest_weight_crystal == False:
                 cartan_type = cartan_type.classical()
 
+            if cartan_type.is_affine():
+                extended = True
+            else:
+                extended = False
+
             R = RootSystem(cartan_type)
-            P = R.weight_space()
+            P = R.weight_space(extended=extended)
             Lambda = P.basis()
             offset = R.index_set()[Integer(0)]
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
@@ -497,6 +502,27 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         return DiGraph(G)
 
+    def weight_lattice_realization(self):
+        r"""
+        Return the weight lattice realization of ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.AlcovePaths(['A',2,1],[1,0,0])
+            sage: B.weight_lattice_realization()
+            Extended weight lattice of the Root system of type ['A', 2, 1]
+
+            sage: C = crystals.AlcovePaths("B3",[1,0,0])
+            sage: C.weight_lattice_realization()
+            Ambient space of the Root system of type ['B', 3]
+        """
+        F = self.cartan_type().root_system()
+        if self.cartan_type().is_affine():
+            return F.weight_lattice(extended=True)
+        if self.cartan_type().is_finite() and F.ambient_space() is not None:
+            return F.ambient_space()
+        return F.weight_lattice()
+
 class CrystalOfAlcovePathsElement(ElementWrapper):
     """
     Crystal of alcove paths element.
@@ -701,7 +727,10 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             -Lambda[1]
             -2*Lambda[2]
 
-
+            sage: B = crystals.AlcovePaths(['A',2,1],[1,0,0])
+            sage: p = B.module_generators[0].f_string([0,1,2])
+            sage: p.weight()
+            Lambda[0] - delta
         """
         root_space = self.parent().R.root_space()
         weight = -self.parent().weight

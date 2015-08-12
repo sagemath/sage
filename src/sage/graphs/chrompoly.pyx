@@ -19,6 +19,7 @@ REFERENCE:
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
+from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.misc.all import prod
 include 'sage/ext/interrupt.pxi'
 include 'sage/ext/cdefs.pxi'
@@ -102,31 +103,15 @@ def chromatic_polynomial(G, return_tree_basis = False):
     G.remove_loops()
     nverts = G.num_verts()
     nedges = G.num_edges()
-    queue = <int *> sage_malloc(nverts * sizeof(int))
-    chords1 = <int *> sage_malloc((nedges - nverts + 1) * sizeof(int))
-    chords2 = <int *> sage_malloc((nedges - nverts + 1) * sizeof(int))
-    parent = <int *> sage_malloc(nverts * sizeof(int))
-    bfs_reorder = <int *> sage_malloc(nverts * sizeof(int))
-    tot = <mpz_t *> sage_malloc((nverts+1) * sizeof(mpz_t))
-    if queue is NULL or \
-       chords1 is NULL or \
-       chords2 is NULL or \
-       parent is NULL or \
-       bfs_reorder is NULL or \
-       tot is NULL:
-        if queue is not NULL:
-            sage_free(queue)
-        if chords1 is not NULL:
-            sage_free(chords1)
-        if chords2 is not NULL:
-            sage_free(chords2)
-        if parent is not NULL:
-            sage_free(parent)
-        if bfs_reorder is not NULL:
-            sage_free(bfs_reorder)
-        if tot is not NULL:
-            sage_free(tot)
-        raise RuntimeError("Error allocating memory for chrompoly.")
+
+    cdef MemoryAllocator mem = MemoryAllocator()
+    queue       = <int *>   mem.allocarray(nverts, sizeof(int))
+    chords1     = <int *>   mem.allocarray((nedges - nverts + 1), sizeof(int))
+    chords2     = <int *>   mem.allocarray((nedges - nverts + 1), sizeof(int))
+    parent      = <int *>   mem.allocarray(nverts, sizeof(int))
+    bfs_reorder = <int *>   mem.allocarray(nverts, sizeof(int))
+    tot         = <mpz_t *> mem.allocarray((nverts+1), sizeof(mpz_t))
+    coeffs      = <mpz_t *> mem.allocarray((nverts+1), sizeof(mpz_t))
     num_chords = 0
 
     # Breadth first search from 0:
@@ -173,29 +158,14 @@ def chromatic_polynomial(G, return_tree_basis = False):
                     i -= 1
     try:
         sig_on()
-        contract_and_count(chords1, chords2, num_chords, nverts, tot, parent)
-        sig_off()
-    except RuntimeError:
-        sage_free(queue)
-        sage_free(chords1)
-        sage_free(chords2)
-        sage_free(parent)
-        sage_free(bfs_reorder)
-        for i from 0 <= i <= nverts:
+        try:
+            contract_and_count(chords1, chords2, num_chords, nverts, tot, parent)
+        finally:
+            sig_off()
+    except BaseException:
+        for i in range(nverts):
             mpz_clear(tot[i])
-        sage_free(tot)
-        raise RuntimeError("Error allocating memory for chrompoly.")
-    coeffs = <mpz_t *> sage_malloc((nverts+1) * sizeof(mpz_t))
-    if coeffs is NULL:
-        sage_free(queue)
-        sage_free(chords1)
-        sage_free(chords2)
-        sage_free(parent)
-        sage_free(bfs_reorder)
-        for i from 0 <= i <= nverts:
-            mpz_clear(tot[i])
-        sage_free(tot)
-        raise RuntimeError("Error allocating memory for chrompoly.")
+        raise
     for i from 0 <= i <= nverts:
         mpz_init(coeffs[i]) # also sets them to 0
     mpz_init(coeff)
@@ -225,18 +195,10 @@ def chromatic_polynomial(G, return_tree_basis = False):
         mpz_set(c_ZZ.value, coeffs[i])
         coeffs_ZZ.append(c_ZZ)
     f = R(coeffs_ZZ)
-    sage_free(queue)
-    sage_free(chords1)
-    sage_free(chords2)
-    sage_free(parent)
-    sage_free(bfs_reorder)
 
     for i from 0 <= i <= nverts:
         mpz_clear(tot[i])
         mpz_clear(coeffs[i])
-
-    sage_free(tot)
-    sage_free(coeffs)
 
     mpz_clear(coeff)
     mpz_clear(m)
@@ -248,20 +210,11 @@ cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nver
     if num_chords == 0:
         mpz_add_ui(tot[nverts], tot[nverts], 1)
         return 0
-    cdef int *new_chords1 = <int *> sage_malloc(num_chords * sizeof(int))
-    cdef int *new_chords2 = <int *> sage_malloc(num_chords * sizeof(int))
-    cdef int *ins_list1 = <int *> sage_malloc(num_chords * sizeof(int))
-    cdef int *ins_list2 = <int *> sage_malloc(num_chords * sizeof(int))
-    if new_chords1 is NULL or new_chords2 is NULL or ins_list1 is NULL or ins_list2 is NULL:
-        if new_chords1 is not NULL:
-            sage_free(new_chords1)
-        if new_chords2 is not NULL:
-            sage_free(new_chords2)
-        if ins_list1 is not NULL:
-            sage_free(ins_list1)
-        if ins_list2 is not NULL:
-            sage_free(ins_list2)
-        raise RuntimeError("Error allocating memory for chrompoly.")
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef int *new_chords1 = <int *> mem.allocarray(num_chords, sizeof(int))
+    cdef int *new_chords2 = <int *> mem.allocarray(num_chords, sizeof(int))
+    cdef int *ins_list1   = <int *> mem.allocarray(num_chords, sizeof(int))
+    cdef int *ins_list2   = <int *> mem.allocarray(num_chords, sizeof(int))
     cdef int i, j, k, x1, xj, z, num, insnum, parent_checked
     for i from 0 <= i < num_chords:
         # contract chord i, and recurse
@@ -332,18 +285,5 @@ cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nver
                 new_chords2[num] = chords2[j]
                 num += 1
                 j += 1
-        try:
-            contract_and_count(new_chords1, new_chords2, num, nverts - 1, tot, parent)
-        except RuntimeError:
-            sage_free(new_chords1)
-            sage_free(new_chords2)
-            sage_free(ins_list1)
-            sage_free(ins_list2)
-            raise RuntimeError("Error allocating memory for chrompoly.")
+        contract_and_count(new_chords1, new_chords2, num, nverts - 1, tot, parent)
     mpz_add_ui(tot[nverts], tot[nverts], 1)
-    sage_free(new_chords1)
-    sage_free(new_chords2)
-    sage_free(ins_list1)
-    sage_free(ins_list2)
-
-

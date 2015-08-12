@@ -584,7 +584,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             P = SetPartitions()
             n = A.size()
             B = [Set([y+n for y in b]) for b in B] # Shift B by n
-            unions = lambda m: map(lambda x: reduce(lambda a,b: a.union(b), x), m)
+            unions = lambda m: [reduce(lambda a,b: a.union(b), x) for x in m]
             one = self.base_ring().one()
             return self._from_dict({P(unions(m)): one for m in matchings(A, B)},
                                    remove_zeros=False)

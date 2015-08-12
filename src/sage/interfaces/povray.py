@@ -36,11 +36,8 @@ class POVRay:
             return "%s not found" % (pov_file)
 
         outfile = os.path.abspath(os.path.expanduser(outfile))
-        ext = outfile[-4:].lower()
-        try:
-            width = kwargs['W']
-            height = kwargs['H']
-        except KeyError:
+
+        if not('W' in kwargs and 'H' in kwargs):
             return "You must specify a width and height."
 
         cmd = "povray -D +FP +I%s +O%s " % (pov_file, outfile)

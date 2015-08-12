@@ -718,7 +718,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return element_shift(self, -n)
 
-    def is_zero(self):
+    cpdef bint is_zero(self):
         """
         EXAMPLE::
 
@@ -728,7 +728,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return celement_is_zero(&self.x, (<Polynomial_template>self)._cparent)
 
-    def is_one(self):
+    cpdef bint is_one(self):
         """
         EXAMPLE::
 

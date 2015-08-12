@@ -40,7 +40,8 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from subprocess import *
+from subprocess import Popen, PIPE
+
 
 class Gfan:
     """

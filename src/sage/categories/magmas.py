@@ -635,6 +635,24 @@ class Magmas(Category_singleton):
                 """
                 return [Magmas().Unital()]
 
+        class Realizations(RealizationsCategory):
+
+            class ParentMethods:
+
+                @cached_method
+                def one(self):
+                    r"""
+                    Return the unit element of ``self``.
+
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
+                        sage: PvW0 in Magmas().Unital().Realizations()
+                        True
+                        sage: PvW0.one()
+                        1
+                    """
+                    return(self(self.realization_of().a_realization().one()))
+
     class ParentMethods:
 
         def product(self, x, y):
@@ -876,9 +894,9 @@ class Magmas(Category_singleton):
             r"""
             Product of two elements
 
-            INPUT::
+            INPUT:
 
-             - ``self``, ``right`` -- two elements
+            - ``self``, ``right`` -- two elements
 
             This calls the `_mul_` method of ``self``, if it is
             available and the two elements have the same parent.
@@ -908,13 +926,13 @@ class Magmas(Category_singleton):
             """
             Product of two elements
 
-            INPUT::
+            INPUT:
 
-             - ``self``, ``right`` -- two elements with the same parent
+            - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT::
+            OUTPUT:
 
-             - an element of the same parent
+            - an element of the same parent
 
             EXAMPLES::
 
@@ -932,13 +950,13 @@ class Magmas(Category_singleton):
             This is the default implementation of _mul_ if
             ``product`` is implemented in the parent.
 
-            INPUT::
+            INPUT:
 
-             - ``other`` -- an element of the parent of ``self``
+            - ``other`` -- an element of the parent of ``self``
 
-            OUTPUT::
+            OUTPUT:
 
-             - an element of the parent of ``self``
+            - an element of the parent of ``self``
 
             EXAMPLES::
 

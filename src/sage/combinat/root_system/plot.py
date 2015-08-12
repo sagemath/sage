@@ -561,6 +561,7 @@ Enjoy and please post your best pictures on the
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
@@ -741,13 +742,13 @@ class PlotOptions:
         """
         if self.labels:
             if self.dimension <= 2:
-                if not isinstance(label, basestring):
+                if not isinstance(label, six.string_types):
                     label = "$"+str(latex(label))+"$"
                 from sage.plot.text import text
                 return text(label, position, fontsize=15, rgbcolor=rgbcolor)
             elif self.dimension == 3:
                 # LaTeX labels not yet supported in 3D
-                if isinstance(label, basestring):
+                if isinstance(label, six.string_types):
                     label = label.replace("{","").replace("}","").replace("$","").replace("_","")
                 else:
                     label = str(label)

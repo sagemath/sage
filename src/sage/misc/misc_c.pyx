@@ -209,7 +209,7 @@ cpdef iterator_prod(L, z=None):
     # TODO: declaring sub_prods as a list should speed much of this up.
     L = iter(L)
     if z is None:
-        sub_prods = [L.next()] * 10
+        sub_prods = [next(L)] * 10
     else:
         sub_prods = [z] * 10
 
@@ -365,7 +365,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
         if PyGen_Check(x):
             # lazy list, do lazy product
             try:
-                sum = copy(x.next()) if z is None else z + x.next()
+                sum = copy(next(x)) if z is None else z + next(x)
                 for a in x:
                     sum += a
                 return sum

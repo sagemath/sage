@@ -30,7 +30,8 @@ from cpython.sequence cimport *
 
 include 'sage/ext/stdsage.pxi'
 
-from sage.rings.integer  cimport Integer
+from sage.libs.gmp.mpz cimport *
+from sage.rings.integer cimport Integer
 from matrix cimport Matrix
 
 from matrix_modn_sparse cimport Matrix_modn_sparse

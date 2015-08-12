@@ -5,9 +5,10 @@ def metaclass(name, bases):
     """
     Creates a new class in this metaclass
 
-    INPUT::
-     - name: a string
-     - bases: a tuple of classes
+    INPUT:
+
+    - name -- a string
+    - bases -- a tuple of classes
 
     EXAMPLES::
 
@@ -53,7 +54,7 @@ class Metaclass(type):
     """
     def __eq__(self, other):
         print("calling __eq__ defined in Metaclass")
-        return (isinstance(self, type(other))) and (self.reduce_args == other.reduce_args)
+        return (type(self) is type(other)) and (self.reduce_args == other.reduce_args)
 
     def __reduce__(self):
         """

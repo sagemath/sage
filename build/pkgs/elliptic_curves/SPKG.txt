@@ -33,6 +33,9 @@ Includes two databases:
 
 == Changelog ==
 
+=== elliptic_curves-0.8 (Simon Spicer, 2014-10-24) ===
+ * #16773: add more examples of high rank curves
+
 === elliptic_curves-0.7 (R. Andrew Ohana, 2012-05-17) ===
  * #13123: move SAGE_DATA to SAGE_LOCAL/share
 

@@ -185,7 +185,9 @@ def is_debruijn_sequence(seq, k, n):
 from sage.categories.finite_sets import FiniteSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.rings.integer import Integer
+
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
 
 class DeBruijnSequences(UniqueRepresentation, Parent):
     """
@@ -356,5 +358,6 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         .. [1] Rosenfeld, Vladimir Raphael, 2002: Enumerating De Bruijn
           Sequences. *Communications in Math. and in Computer Chem.*
         """
-        from sage.functions.other import factorial
-        return (factorial(self.k) ** (self.k ** (self.n - 1)))/ (self.k**self.n)
+        k = ZZ(self.k)
+        n = ZZ(self.n)
+        return (k.factorial() ** (k ** (n - 1))) // (k**n)

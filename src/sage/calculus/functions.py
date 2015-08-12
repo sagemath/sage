@@ -86,17 +86,17 @@ def wronskian(*args):
             # differentiate the other args
             v = args[-1]
             fs = args[0:-1]
-            row = lambda n: map(lambda f: diff(f, v, n), fs)
+            row = lambda n: [diff(f, v, n) for f in fs]
         else:
             # if the last argument isn't a variable, just run
             # .derivative on everything
             fs = args
-            row = lambda n: map(lambda f: diff(f, n), fs)
+            row = lambda n: [diff(f, n) for f in fs]
         # NOTE: I rewrote the below as two lines to avoid a possible subtle
         # memory management problem on some platforms (only VMware as far
         # as we know?).  See trac #2990.
         # There may still be a real problem that this is just hiding for now.
-        A = matrix(map(row, range(len(fs))))
+        A = matrix([row(_) for _ in range(len(fs))])
         return A.determinant()
         #return matrix(map(row, range(len(fs)))).determinant()
 

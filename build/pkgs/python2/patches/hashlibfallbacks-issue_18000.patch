@@ -1,0 +1,69 @@
+diff -ur src/Lib/test/test_hashlib.py new/Lib/test/test_hashlib.py
+--- a/Lib/test/test_hashlib.py	2013-05-12 04:32:46.000000000 +0100
++++ b/Lib/test/test_hashlib.py	2013-05-18 12:24:04.055336404 +0100
+@@ -21,9 +21,6 @@
+ from test import test_support
+ from test.test_support import _4G, precisionbigmemtest
+ 
+-# Were we compiled --with-pydebug or with #define Py_DEBUG?
+-COMPILED_WITH_PYDEBUG = hasattr(sys, 'gettotalrefcount')
+-
+ 
+ def hexstr(s):
+     import string
+@@ -40,7 +37,7 @@
+                              'sha224', 'SHA224', 'sha256', 'SHA256',
+                              'sha384', 'SHA384', 'sha512', 'SHA512' )
+ 
+-    _warn_on_extension_import = COMPILED_WITH_PYDEBUG
++    _warn_on_extension_import = True
+ 
+     def _conditional_import_module(self, module_name):
+         """Import a module and return a reference to it or None on failure."""
+diff -ur src/setup.py new/setup.py
+--- a/setup.py	2013-05-12 04:32:54.000000000 +0100
++++ b/setup.py	2013-05-18 12:22:04.417057535 +0100
+@@ -29,9 +29,6 @@
+     return sys.platform
+ host_platform = get_platform()
+ 
+-# Were we compiled --with-pydebug or with #define Py_DEBUG?
+-COMPILED_WITH_PYDEBUG = ('--with-pydebug' in sysconfig.get_config_var("CONFIG_ARGS"))
+-
+ # This global variable is used to hold the list of modules to be disabled.
+ disabled_module_list = []
+ 
+@@ -854,21 +851,18 @@
+                 print ("warning: openssl 0x%08x is too old for _hashlib" %
+                        openssl_ver)
+                 missing.append('_hashlib')
+-        if COMPILED_WITH_PYDEBUG or not have_usable_openssl:
+-            # The _sha module implements the SHA1 hash algorithm.
+-            exts.append( Extension('_sha', ['shamodule.c']) )
+-            # The _md5 module implements the RSA Data Security, Inc. MD5
+-            # Message-Digest Algorithm, described in RFC 1321.  The
+-            # necessary files md5.c and md5.h are included here.
+-            exts.append( Extension('_md5',
+-                            sources = ['md5module.c', 'md5.c'],
+-                            depends = ['md5.h']) )
+-
+-        min_sha2_openssl_ver = 0x00908000
+-        if COMPILED_WITH_PYDEBUG or openssl_ver < min_sha2_openssl_ver:
+-            # OpenSSL doesn't do these until 0.9.8 so we'll bring our own hash
+-            exts.append( Extension('_sha256', ['sha256module.c']) )
+-            exts.append( Extension('_sha512', ['sha512module.c']) )
++
++        # We always compile these even when OpenSSL is available (issue #14693).
++        # It's harmless and the object code is tiny (40-50 KB per module,
++        # only loaded when actually used).
++        exts.append( Extension('_sha256', ['sha256module.c'],
++                               depends=['hashlib.h']) )
++        exts.append( Extension('_sha512', ['sha512module.c'],
++                               depends=['hashlib.h']) )
++        exts.append( Extension('_md5', ['md5module.c', 'md5.c'],
++                               depends=['hashlib.h']) )
++        exts.append( Extension('_sha', ['shamodule.c'],
++                               depends=['hashlib.h']) )
+ 
+         # Modules that provide persistent dictionary-like semantics.  You will
+         # probably want to arrange for at least one of them to be available on

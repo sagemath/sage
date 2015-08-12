@@ -263,7 +263,7 @@ class PseudolineArrangement:
             (encoding == "auto" and (len(seq[0]) == len(seq)-1) and max(seq[0]) > 1)):
 
             self._n = len(seq)
-            self._permutations = map(list,seq)
+            self._permutations = [list(_) for _ in seq]
 
             if max(map(max, seq)) != self._n -1 :
                 raise ValueError("Are the lines really numbered from 0 to n-1?")

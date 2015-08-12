@@ -139,7 +139,7 @@ class HypergraphGenerators():
 
         nauty_input +=  " "+str(number_of_vertices) +" "+str(number_of_sets)+" "
 
-        sp = subprocess.Popen("nauty-genbg {0}".format(nauty_input), shell=True,
+        sp = subprocess.Popen("genbg {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True)
 

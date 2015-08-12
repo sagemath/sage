@@ -12,7 +12,7 @@ TESTS::
 
 These are packages in the ``database_gap`` package::
 
-    sage: test_packages(['atlasrep', 'tomlib'])    # optional - database_gap
+    sage: test_packages(['atlasrep', 'tomlib'])    # optional - database_gap gap_packages
       Status   Package    GAP Output
     +--------+----------+------------+
                atlasrep   true

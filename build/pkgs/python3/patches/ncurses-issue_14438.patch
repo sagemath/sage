@@ -1,0 +1,18 @@
+diff -ur src.orig/Include/py_curses.h src/Include/py_curses.h
+--- src.orig/Include/py_curses.h	2012-08-01 10:51:27.075830866 +0200
++++ src/Include/py_curses.h	2012-08-01 11:01:05.311809409 +0200
+@@ -17,6 +17,13 @@
+ #define NCURSES_OPAQUE 0
+ #endif /* __APPLE__ */
+ 
++#ifdef __CYGWIN__
++/* the following define is necessary for Cygwin; without it, the
++   Cygwin-supplied ncurses.h sets NCURSES_OPAQUE to 1, and then Python
++   can't get at the WINDOW flags field. */
++#define NCURSES_INTERNALS
++#endif /* __CYGWIN__ */
++
+ #ifdef __FreeBSD__
+ /*
+ ** On FreeBSD, [n]curses.h and stdlib.h/wchar.h use different guards
+Seulement dans src/Include: py_curses.h.orig

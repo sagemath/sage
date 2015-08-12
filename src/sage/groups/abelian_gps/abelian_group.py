@@ -201,7 +201,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##########################################################################
 
-
+import six
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.unique_representation import UniqueRepresentation
@@ -536,7 +536,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: A.category()
             Category of commutative groups
         """
-        assert isinstance(names, (basestring, tuple))
+        assert isinstance(names, (six.string_types, tuple))
         assert isinstance(generator_orders, tuple)
         assert all(isinstance(order,Integer) for order in generator_orders)
         self._gens_orders = generator_orders

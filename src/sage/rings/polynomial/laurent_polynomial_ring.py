@@ -540,7 +540,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
             from sage.rings.laurent_series_ring import LaurentSeriesRing
             return LaurentSeriesRing(self.base_ring(), name=self._names[0])
         else:
-            raise TypeError, "Cannot complete %s with respect to %s" % (self, p)
+            raise TypeError("Cannot complete %s with respect to %s" % (self, p))
 
 
 

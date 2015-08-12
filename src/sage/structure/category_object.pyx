@@ -281,49 +281,26 @@ cdef class CategoryObject(sage_object.SageObject):
                 self._assign_names(names, ngens=gens.count(), normalize=normalize)
             self._generators[category] = gens
 
-#    cpdef Generators gens(self, category=None):
-#        if category is None:
-#            category = self._categories[0]
-#        try:
-#            return self._generators[category]
-#        except KeyError:
-#            if category == self._categories[0]:
-#                n = self._ngens_()
-#                from sage.rings.infinity import infinity
-#                if n is infinity:
-#                    gens = generators.Generators_naturals(self, category)
-#                else:
-#                    gens = generators.Generators_finite(self, self._ngens_(), None, category)
-#            else:
-#                gens = self._compute_generators_(category)
-#            self._generators[category] = gens
-#            return gens
-#
-#    cpdef gen(self, index=0, category=None):
-#        return self.gens(category)[index]
-#
-#    cpdef ngens(self, category=None):
-#        return self.gens(category).count()
-
     def _ngens_(self):
         return 0
 
     def gens_dict(self):
-         r"""
-         Return a dictionary whose entries are ``{var_name:variable,...}``.
-         """
-         if HAS_DICTIONARY(self):
-            try:
-                if self._gens_dict is not None:
-                    return self._gens_dict
-            except AttributeError:
-                pass
-         v = {}
-         for x in self.gens():
-             v[str(x)] = x
-         if HAS_DICTIONARY(self):
-            self._gens_dict = v
-         return v
+        r"""
+        Return a dictionary whose entries are ``{name:variable,...}``,
+        where ``name`` stands for the variable names of this
+        object (as strings) and ``variable`` stands for the corresponding
+        generators (as elements of this object).
+
+        EXAMPLES::
+
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()
+            sage: B.gens_dict()
+            {'a': a, 'b': b, 'c': c, 'd': d}
+        """
+        cdef dict v = {}
+        for x in self.gens():
+            v[str(x)] = x
+        return v
 
     def gens_dict_recursive(self):
         r"""
@@ -476,11 +453,45 @@ cdef class CategoryObject(sage_object.SageObject):
         return tuple(v)
 
     def variable_names(self):
+        """
+        Return the list of variable names corresponding to the generators.
+
+        OUTPUT: a tuple of strings
+
+        EXAMPLES::
+
+            sage: R.<z,y,a42> = QQ[]
+            sage: R.variable_names()
+            ('z', 'y', 'a42')
+            sage: S = R.quotient_ring(z+y)
+            sage: S.variable_names()
+            ('zbar', 'ybar', 'a42bar')
+
+        ::
+
+            sage: T.<x> = InfinitePolynomialRing(ZZ)
+            sage: T.variable_names()
+            ('x',)
+        """
         if self._names is not None:
             return self._names
-        raise ValueError, "variable names have not yet been set using self._assign_names(...)"
+        raise ValueError("variable names have not yet been set using self._assign_names(...)")
 
     def variable_name(self):
+        """
+        Return the first variable name.
+
+        OUTPUT: a string
+
+        EXAMPLES::
+
+            sage: R.<z,y,a42> = ZZ[]
+            sage: R.variable_name()
+            'z'
+            sage: R.<x> = InfinitePolynomialRing(ZZ)
+            sage: R.variable_name()
+            'x'
+        """
         return self.variable_names()[0]
 
     def __temporarily_change_names(self, names, latex_names):
@@ -492,9 +503,7 @@ cdef class CategoryObject(sage_object.SageObject):
         In an old version, it was impossible to temporarily change
         the names if no names were previously assigned. But if one
         wants to print elements of the quotient of such an "unnamed"
-        ring, an error resulted. That was fixed in trac ticket
-        #11068.
-        ::
+        ring, an error resulted. That was fixed in :trac:`11068`::
 
             sage: MS = MatrixSpace(GF(5),2,2)
             sage: I = MS*[MS.0*MS.1,MS.2+MS.3]*MS
@@ -536,11 +545,11 @@ cdef class CategoryObject(sage_object.SageObject):
         vs = self.variable_names()
         gs = self.gens()
         if scope is None:
-           scope = globals()
+            scope = globals()
         if verbose:
-           print "Defining %s"%(', '.join(vs))
+            print "Defining %s"%(', '.join(vs))
         for v, g in zip(vs, gs):
-           scope[v] = g
+            scope[v] = g
 
     def injvar(self, scope=None, verbose=True):
         """
@@ -665,14 +674,14 @@ cdef class CategoryObject(sage_object.SageObject):
 
         EXAMPLES::
 
-         sage: R, x = PolynomialRing(QQ, 'x', 12).objgens()
-         sage: x
-         (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
-         sage: print R.latex_variable_names ()
-         ['x_{0}', 'x_{1}', 'x_{2}', 'x_{3}', 'x_{4}', 'x_{5}', 'x_{6}', 'x_{7}', 'x_{8}', 'x_{9}', 'x_{10}', 'x_{11}']
-         sage: f = x[0]^3 + 15/3 * x[1]^10
-         sage: print latex(f)
-         5 x_{1}^{10} + x_{0}^{3}
+            sage: R, x = PolynomialRing(QQ, 'x', 12).objgens()
+            sage: x
+            (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
+            sage: print R.latex_variable_names ()
+            ['x_{0}', 'x_{1}', 'x_{2}', 'x_{3}', 'x_{4}', 'x_{5}', 'x_{6}', 'x_{7}', 'x_{8}', 'x_{9}', 'x_{10}', 'x_{11}']
+            sage: f = x[0]^3 + 15/3 * x[1]^10
+            sage: print latex(f)
+            5 x_{1}^{10} + x_{0}^{3}
         """
         from sage.misc.latex import latex, latex_variable_name
         try:
@@ -706,7 +715,6 @@ cdef class CategoryObject(sage_object.SageObject):
         d['_generators'] = self._generators
         d['_category'] = self._category
         d['_base'] = self._base
-        d['_cdata'] = self._cdata
         d['_names'] = self._names
         ###########
         # The _pickle_version ensures that the unpickling for objects created
@@ -739,7 +747,6 @@ cdef class CategoryObject(sage_object.SageObject):
                     else:
                         self._category = self._category.join([self._category,d['_category']])
                 self._base = d['_base']
-                self._cdata = d['_cdata']
                 self._names = d['_names']
                 try:
                     self._generator_orders = d['_generator_orders']
@@ -760,7 +767,7 @@ cdef class CategoryObject(sage_object.SageObject):
                         from sage.structure.generators import Generators_list
                         self._generators = Generators_list(self, d['_gens'], Objects())
                     self._generator_orders = d['_generator_orders'] # this may raise a KeyError, but that's okay.
-                    # We throw away d['_latex_names'] and d['_list'] and d['_gens_dict']
+                    # We throw away d['_latex_names'] and d['_list']
                 except (AttributeError, KeyError):
                     pass
             try:
@@ -791,51 +798,6 @@ cdef class CategoryObject(sage_object.SageObject):
         if self._hash_value == -1:
             self._hash_value = hash(repr(self))
         return self._hash_value
-
-#     #################################################################################
-#     # Morphisms of objects with generators
-#     #################################################################################
-
-
-## COERCE TODO: see categories.MultiplicativeAbelianGroups
-
-# cdef class ParentWithMultiplicativeAbelianGens(Parent):
-#     def generator_orders(self):
-#         if self._generator_orders is not None:
-#             return self._generator_orders
-#         else:
-#             g = []
-#             for x in self.gens():
-#                 g.append(x.multiplicative_order())
-#             self._generator_orders = g
-#             return g
-
-#     def __iter__(self):
-#         """
-#         Return an iterator over the elements in this object.
-#         """
-#         return gens_py.multiplicative_iterator(self)
-
-
-
-# cdef class ParentWithAdditiveAbelianGens(Parent):
-#     def generator_orders(self):
-#         if self._generator_orders is not None:
-#             return self._generator_orders
-#         else:
-#             g = []
-#             for x in self.gens():
-#                 g.append(x.additive_order())
-#             self._generator_orders = g
-#             return g
-
-#     def __iter__(self):
-#         """
-#         Return an iterator over the elements in this object.
-#         """
-#         return gens_py.abelian_iterator(self)
-
-
 
 
 class localvars:

@@ -83,7 +83,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
 from sage.rings.integer import Integer
-from sage.rings.infinity import Infinity
 
 class AbstractSingleCrystalElement(Element):
     r"""
@@ -244,7 +243,10 @@ class TCrystal(Parent, UniqueRepresentation):
             True
         """
         cartan_type = CartanType(cartan_type)
-        La = RootSystem(cartan_type).ambient_space()(weight)
+        F = RootSystem(cartan_type).ambient_space()
+        if F is None:
+            F = RootSystem(cartan_type).weight_space()
+        La = F(weight)
         return super(TCrystal, cls).__classcall__(cls, cartan_type, La)
 
     def __init__(self, cartan_type, weight):
@@ -306,6 +308,28 @@ class TCrystal(Parent, UniqueRepresentation):
             1
         """
         return Integer(1)
+
+    def weight_lattice_realization(self):
+        """
+        Return a realization of the lattice containing the weights
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: La = RootSystem(['C',12]).weight_lattice().fundamental_weights()
+            sage: T = crystals.elementary.T(['C',12], La[9])
+            sage: T.weight_lattice_realization()
+            Ambient space of the Root system of type ['C', 12]
+
+            sage: ct = CartanMatrix([[2, -4], [-5, 2]])
+            sage: La = RootSystem(ct).weight_lattice().fundamental_weights()
+            sage: T = crystals.elementary.T(ct, La[1])
+            sage: T.weight_lattice_realization()
+            Weight space over the Rational Field of the Root system of type
+            [ 2 -4]
+            [-5  2]
+        """
+        return self._weight.parent()
 
     class Element(AbstractSingleCrystalElement):
         r"""
@@ -473,7 +497,10 @@ class RCrystal(Parent, UniqueRepresentation):
             True
         """
         cartan_type = CartanType(cartan_type)
-        La = RootSystem(cartan_type).ambient_space()(weight)
+        F = RootSystem(cartan_type).ambient_space()
+        if F is None:
+            F = RootSystem(cartan_type).weight_space()
+        La = F(weight)
         return super(RCrystal, cls).__classcall__(cls, cartan_type, La)
 
     def __init__(self, cartan_type, weight):
@@ -535,6 +562,28 @@ class RCrystal(Parent, UniqueRepresentation):
             1
         """
         return Integer(1)
+
+    def weight_lattice_realization(self):
+        """
+        Return a realization of the lattice containing the weights
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: La = RootSystem(['C',12]).weight_lattice().fundamental_weights()
+            sage: R = crystals.elementary.R(['C',12], La[9])
+            sage: R.weight_lattice_realization()
+            Ambient space of the Root system of type ['C', 12]
+
+            sage: ct = CartanMatrix([[2, -4], [-5, 2]])
+            sage: La = RootSystem(ct).weight_lattice().fundamental_weights()
+            sage: R = crystals.elementary.R(ct, La[1])
+            sage: R.weight_lattice_realization()
+            Weight space over the Rational Field of the Root system of type
+            [ 2 -4]
+            [-5  2]
+        """
+        return self._weight.parent()
 
     class Element(AbstractSingleCrystalElement):
         r"""
@@ -740,6 +789,19 @@ class ElementaryCrystal(Parent, UniqueRepresentation):
         """
         return self.element_class(self, m)
 
+    def weight_lattice_realization(self):
+        """
+        Return a realization of the lattice containing the weights
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.elementary.Elementary(['A',4, 1], 2)
+            sage: B.weight_lattice_realization()
+            Root lattice of the Root system of type ['A', 4, 1]
+        """
+        return self.cartan_type().root_system().root_lattice()
+
     class Element(Element):
         r"""
         Element of a `B_i` crystal.
@@ -921,7 +983,7 @@ class ElementaryCrystal(Parent, UniqueRepresentation):
                 sage: B(-385).weight()
                 -385*alpha[12]
             """
-            Q = self.parent().cartan_type().root_system().root_lattice()
+            Q = self.parent().weight_lattice_realization()
             return self._m * Q.simple_root(self.parent()._i)
 
 class ComponentCrystal(Parent,UniqueRepresentation):

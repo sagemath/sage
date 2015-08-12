@@ -782,6 +782,7 @@ cdef class Parent(category_object.CategoryObject):
             running ._test_additive_associativity() . . . pass
             running ._test_an_element() . . . pass
             running ._test_associativity() . . . pass
+            running ._test_cardinality() . . . pass
             running ._test_category() . . . pass
             running ._test_characteristic() . . . pass
             running ._test_distributivity() . . . pass
@@ -859,6 +860,7 @@ cdef class Parent(category_object.CategoryObject):
             _test_additive_associativity
             _test_an_element
             _test_associativity
+            _test_cardinality
             _test_category
             _test_characteristic
             _test_distributivity
@@ -1426,13 +1428,12 @@ cdef class Parent(category_object.CategoryObject):
             ...
             NotImplementedError
 
-        Asking for ``list(MyIntegers)`` below will never finish without
-        pressing Ctrl-C.  We let it run for 1 second and then interrupt::
+        Asking for ``list(MyIntegers)`` will also raise an exception::
 
-            sage: alarm(1.0); list(MyIntegers)
+            sage: list(MyIntegers)
             Traceback (most recent call last):
             ...
-            AlarmInterrupt
+            NotImplementedError
 
         """
         try:

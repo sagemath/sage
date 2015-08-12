@@ -451,7 +451,7 @@ Here are examples of all of these conversions::
     ....:             return ty(v)
     ....:         except ValueError:
     ....:             return None
-    ....:     return map(convert_test, all_vals)
+    ....:     return [convert_test(_) for _ in all_vals]
     sage: convert_test_all(float)
     [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(complex)
@@ -2014,7 +2014,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False):
             return x
         return QQbar(x)
 
-    numbers = map(mk_algebraic, numbers)
+    numbers = [mk_algebraic(_) for _ in numbers]
 
     for v in numbers:
         if minimal:

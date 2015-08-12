@@ -14,7 +14,6 @@ Low level part of the interface to Fokko Ducloux's Coxeter 3 library
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 include "decl.pxi"
 
 initConstants()
@@ -1178,7 +1177,7 @@ class CoxGroupIterator(object):
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator # optional - coxeter3
             sage: W = CoxGroup(['A', 2])                                                            # optional - coxeter3
             sage: it = CoxGroupIterator(W)                                                          # optional - coxeter3
-            sage: [it.next() for i in range(W.order())]                                             # optional - coxeter3
+            sage: [next(it) for i in range(W.order())]                                              # optional - coxeter3
             [[], [1], [2], [1, 2], [2, 1], [1, 2, 1]]
         """
         self.group = group
@@ -1209,7 +1208,7 @@ class CoxGroupIterator(object):
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator # optional - coxeter3
             sage: W = CoxGroup(['A', 2])                                                            # optional - coxeter3
             sage: it = CoxGroupIterator(W)                                                          # optional - coxeter3
-            sage: it.next()                                                                         # optional - coxeter3
+            sage: next(it)                                                                          # optional - coxeter3
             []
         """
         if self.n >= self.order:

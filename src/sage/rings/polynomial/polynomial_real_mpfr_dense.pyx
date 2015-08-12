@@ -31,7 +31,7 @@ from cpython cimport PyInt_AS_LONG, PyFloat_AS_DOUBLE
 from sage.structure.parent cimport Parent
 from polynomial_element cimport Polynomial
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
-from sage.rings.integer cimport Integer
+from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.rational cimport Rational
 
 from sage.structure.element cimport Element, ModuleElement, RingElement
@@ -82,10 +82,6 @@ cdef class PolynomialRealDense(Polynomial):
             TypeError: Cannot evaluate symbolic expression to a numeric value.
             sage: sig_on_count()
             0
-            sage: alarm(0.5); PolynomialRealDense(RR['x'], ZZ)  # Will loop forever
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
 
         Test that we don't clean up uninitialized coefficients (#9826)::
 
@@ -241,8 +237,10 @@ cdef class PolynomialRealDense(Polynomial):
                 mpfr_init2(f._coeffs[i], prec)
         return f
 
-    cpdef Py_ssize_t degree(self):
+    def degree(self):
         """
+        Return the degree of the polynomial.
+
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
@@ -250,8 +248,13 @@ cdef class PolynomialRealDense(Polynomial):
             3.00000000000000*x^2 + 2.00000000000000*x + 1.00000000000000
             sage: f.degree()
             2
+
+        TESTS::
+
+            sage: type(f.degree())
+            <type 'sage.rings.integer.Integer'>
         """
-        return self._degree
+        return smallInteger(self._degree)
 
     cpdef Polynomial truncate(self, long n):
         r"""
@@ -566,6 +569,8 @@ cdef class PolynomialRealDense(Polynomial):
     @coerce_binop
     def quo_rem(self, PolynomialRealDense other):
         """
+        Return the quotient with remainder of ``self`` by ``other``.
+
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
@@ -589,9 +594,25 @@ cdef class PolynomialRealDense(Polynomial):
             sage: q, r = f.quo_rem(g)
             sage: g*q + r == f
             True
+
+        TESTS:
+
+        Check that :trac:`18467` is fixed::
+
+            sage: S.<x> = RR[]
+            sage: z = S.zero()
+            sage: z.degree()
+            -1
+            sage: q, r = z.quo_rem(x)
+            sage: q.degree()
+            -1
         """
         if other._degree < 0:
-            raise ZeroDivisionError, "other must be nonzero"
+            raise ZeroDivisionError("other must be nonzero")
+        elif other._degree == 0:
+            return self * ~other[0], self._parent.zero()
+        elif other._degree > self._degree:
+            return self._parent.zero(), self
         cdef mp_rnd_t rnd = self._base_ring.rnd
         cdef PolynomialRealDense q, r
         cdef Py_ssize_t i, j
@@ -616,49 +637,6 @@ cdef class PolynomialRealDense(Polynomial):
         r._normalize()
         return q, r * leading
 
-    @coerce_binop
-    def gcd(self, other):
-        """
-        Returns the gcd of self and other as a monic polynomial. Due to the
-        inherit instability of division in this inexact ring, the results may
-        not be entirely stable.
-
-        EXAMPLES::
-
-            sage: R.<x> = RR[]
-            sage: (x^3).gcd(x^5+1)
-            1.00000000000000
-            sage: (x^3).gcd(x^5+x^2)
-            x^2
-            sage: f = (x+3)^2 * (x-1)
-            sage: g = (x+3)^5
-            sage: f.gcd(g)
-            x^2 + 6.00000000000000*x + 9.00000000000000
-
-        Unless the division is exact (i.e. no rounding occurs) the returned gcd is
-        almost certain to be 1. ::
-
-            sage: f = (x+RR.pi())^2 * (x-1)
-            sage: g = (x+RR.pi())^5
-            sage: f.gcd(g)
-            1.00000000000000
-
-        """
-        aval = self.valuation()
-        a = self >> aval
-        bval = other.valuation()
-        b = other >> bval
-        if b.degree() > a.degree():
-            a, b = b, a
-        while b: # this will be exactly zero when the previous b is degree 0
-            q, r = a.quo_rem(b)
-            a, b = b, r
-        if a.degree() == 0:
-            # make sure gcd of "relatively prime" things is exactly 1
-            return self._parent(1) << min(aval, bval)
-        else:
-            return a * ~a[a.degree()] << min(aval, bval)
-
     def __call__(self, *args, **kwds):
         """
         EXAMPLES::
@@ -674,7 +652,7 @@ cdef class PolynomialRealDense(Polynomial):
             sage: f(RealField(10)(2))
             2.0
             sage: f(pi)
-            pi^2 - 2.00000000000000
+            1.00000000000000*pi^2 - 2.00000000000000
 
 
             sage: f = PolynomialRealDense(RR['x'], range(5))

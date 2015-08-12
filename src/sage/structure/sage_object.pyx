@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 r"""
 Abstract base class for Sage objects
 """
@@ -160,7 +161,12 @@ cdef class SageObject:
         except AttributeError:
             return str(type(self))
         else:
-            return repr_func()
+            result = repr_func()
+            if isinstance(result, unicode):
+                # Py3 compatibility: allow _repr_ to return unicode
+                return result.encode('utf-8')
+            else:
+                return result
 
     def _ascii_art_(self):
         r"""
@@ -174,12 +180,12 @@ cdef class SageObject:
 
         OUTPUT:
 
-        An :class:`~sage.misc.ascii_art.AsciiArt` object, see
-        :mod:`sage.misc.ascii_art` for details.
+        An :class:`~sage.typeset.ascii_art.AsciiArt` object, see
+        :mod:`sage.typeset.ascii_art` for details.
 
         EXAMPLES:
 
-        You can use the :func:`~sage.misc.ascii_art.ascii_art` function
+        You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
             sage: ascii_art(integral(exp(x+x^2)/(x+1), x))
@@ -220,10 +226,74 @@ cdef class SageObject:
             sage: 1._ascii_art_()
             1
             sage: type(_)
-            <class 'sage.misc.ascii_art.AsciiArt'>
+            <class 'sage.typeset.ascii_art.AsciiArt'>
         """
-        from sage.misc.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(repr(self).splitlines())
+
+    def _unicode_art_(self):
+        r"""
+        Return a unicode art representation.
+
+        To implement multi-line unicode art output in a derived class
+        you must override this method. Unlike :meth:`_repr_`, which is
+        sometimes used for the hash key, the output of
+        :meth:`_unicode_art_` may depend on settings and is allowed to
+        change during runtime.
+
+        OUTPUT:
+
+        An :class:`~sage.typeset.unicode_art.UnicodeArt` object, see
+        :mod:`sage.typeset.unicode_art` for details.
+
+        EXAMPLES:
+
+        You can use the :func:`~sage.typeset.unicode_art.unicode_art` function
+        to get the ASCII art representation of any object in Sage::
+
+            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))
+            ⌠
+            ⎮   2
+            ⎮  x  + x
+            ⎮ ℯ
+            ⎮ ─────── dx
+            ⎮  x + 1
+            ⌡
+
+
+        Alternatively, you can use the ``%display ascii_art/simple`` magic to
+        switch all output to ASCII art and back::
+
+            sage: from sage.repl.interpreter import get_test_shell
+            sage: shell = get_test_shell()
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
+            [[1, 2], [3]]
+            sage: shell.run_cell('%display ascii_art')
+            sage: shell.run_cell('tab')
+            1  2
+            3
+            sage: shell.run_cell('Tableaux.global_options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('tab')
+            +---+
+            | 3 |
+            +---+---+
+            | 1 | 2 |
+            +---+---+
+            sage: shell.run_cell('%display plain')
+            sage: shell.run_cell('Tableaux.global_options.reset()')
+            sage: shell.quit()
+
+        TESTS::
+
+            sage: 1._unicode_art_()
+            1
+            sage: type(_)
+            <class 'sage.typeset.unicode_art.UnicodeArt'>
+        """
+        ascii_art = self._ascii_art_()
+        lines = map(unicode, ascii_art)
+        from sage.typeset.unicode_art import UnicodeArt
+        return UnicodeArt(lines)
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -842,7 +912,7 @@ def load(*filename, compress=True, verbose=True):
     is a filename ending in ``.py``, ``.pyx``, ``.sage``, ``.spyx``,
     ``.f``, ``.f90`` or ``.m``, load that file into the current running
     session.
-    
+
     Loaded files are not loaded into their own namespace, i.e., this is
     much more like Python's ``execfile`` than Python's ``import``.
 

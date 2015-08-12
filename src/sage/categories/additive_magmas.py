@@ -683,7 +683,7 @@ class AdditiveMagmas(Category_singleton):
                 Test that ``self.zero()`` is an element of self and
                 is neutral for the addition.
 
-                INPUT::
+                INPUT:
 
                 - ``options`` -- any keyword arguments accepted
                   by :meth:`_tester`

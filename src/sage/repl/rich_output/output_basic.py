@@ -8,7 +8,7 @@ to hold the data for each type of rich output. They all inherit from
 :class:`OutputPlainText`. Some output classes consist of more than one
 data buffer, for example jmol or certain animation formats. The output
 class is independent of user preferences and of the display
-backend. 
+backend.
 
 The display backends can define derived classes to attach
 backend-specific display functionality to, for example how to launch a
@@ -29,7 +29,7 @@ To create new types of output, you must create your own subclass of
     instances. You must never reference any files on the local file
     system, as there is no guarantee that the notebook server and the
     worker process are on the same computer. Or even share a common
-    file system.  
+    file system.
 """
 
 #*****************************************************************************
@@ -79,7 +79,7 @@ class OutputBase(SageObject):
         OUTPUT:
 
         An instance of the :class:`OutputBase` subclass.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_basic import OutputBase
@@ -96,13 +96,14 @@ class OutputPlainText(OutputBase):
     def __init__(self, plain_text):
         """
         Plain Text Output
-        
+
         INPUT:
 
         - ``plain_text`` --
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
-          a string (bytes) can be passed directly which will then be
-          converted into an
+          a bytes (string in Python 2.x) or string (unicode in Python
+          2.x) can be passed directly which will then be converted
+          into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. The
           plain text output.
 
@@ -116,7 +117,11 @@ class OutputPlainText(OutputBase):
             sage: OutputPlainText('foo')
             OutputPlainText container
         """
-        self.text = OutputBuffer(plain_text)        
+        # Internally, all buffers store bytes. Strings/Unicode is always utf-8
+        # encoded.
+        if isinstance(plain_text, unicode):
+            plain_text = plain_text.encode('utf-8')
+        self.text = OutputBuffer(plain_text)
 
     @classmethod
     def example(cls):
@@ -129,7 +134,7 @@ class OutputPlainText(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputPlainText`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputPlainText
@@ -161,7 +166,7 @@ class OutputAsciiArt(OutputBase):
     def __init__(self, ascii_art):
         """
         ASCII Art Output
-        
+
         INPUT:
 
         - ``ascii_art`` --
@@ -177,7 +182,7 @@ class OutputAsciiArt(OutputBase):
             sage: OutputAsciiArt(':-}')
             OutputAsciiArt container
         """
-        self.ascii_art = OutputBuffer(ascii_art)        
+        self.ascii_art = OutputBuffer(ascii_art)
 
     @classmethod
     def example(cls):
@@ -190,7 +195,7 @@ class OutputAsciiArt(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputAsciiArt`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputAsciiArt
@@ -221,6 +226,78 @@ class OutputAsciiArt(OutputBase):
         print(self.ascii_art.get())
 
 
+class OutputUnicodeArt(OutputBase):
+
+    def __init__(self, unicode_art):
+        """
+        Unicode Art Output
+
+        Similar to :class:`OutputAsciiArt` but using the entire
+        unicode range.
+
+        INPUT:
+
+        - ``unicode_art`` --
+          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
+          a string (unicode in Python 2.x) can be passed directly
+          which will then be converted into an
+          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Unicode
+          art rendered into a string.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.output_catalog import OutputUnicodeArt
+            sage: OutputUnicodeArt(u':-}')
+            OutputUnicodeArt container
+        """
+        # Internally, all buffers store bytes. Unicode is always utf-8
+        # encoded.
+        if isinstance(unicode_art, unicode):
+            unicode_art = unicode_art.encode('utf-8')
+        self.unicode_art = OutputBuffer(unicode_art)
+
+    @classmethod
+    def example(cls):
+        r"""
+        Construct a sample unicode art output container
+
+        This static method is meant for doctests, so they can easily
+        construt an example.
+
+        OUTPUT:
+
+        An instance of :class:`OutputUnicodeArt`.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.output_catalog import OutputUnicodeArt
+            sage: OutputUnicodeArt.example()
+            OutputUnicodeArt container
+            sage: OutputUnicodeArt.example().unicode_art.get()
+            '\xe2\x8e\x9b-11   0   1\xe2\x8e\x9e\n\xe2\x8e\x9c  3  -1   0\xe2\x8e\x9f\n\xe2\x8e\x9d -1  -1   0\xe2\x8e\xa0'
+        """
+        return cls(u'⎛-11   0   1⎞\n'
+                   u'⎜  3  -1   0⎟\n'
+                   u'⎝ -1  -1   0⎠')
+
+    def print_to_stdout(self):
+        """
+        Write the data to stdout.
+
+        This is just a convenience method to help with debugging.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.output_catalog import OutputUnicodeArt
+            sage: unicode_art = OutputUnicodeArt.example()
+            sage: unicode_art.print_to_stdout()
+            ⎛-11   0   1⎞
+            ⎜  3  -1   0⎟
+            ⎝ -1  -1   0⎠
+        """
+        print(self.unicode_art.get())
+
+
 class OutputLatex(OutputBase):
 
     def __init__(self, latex):
@@ -228,10 +305,10 @@ class OutputLatex(OutputBase):
         LaTeX Output
 
         .. note::
-        
+
             The LaTeX commands will only use a subset of LaTeX that
             can be displayed by MathJax.
-        
+
         INPUT:
 
         - ``latex`` --
@@ -286,7 +363,7 @@ class OutputLatex(OutputBase):
         OUTPUT:
 
         String.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputLatex
@@ -307,7 +384,7 @@ class OutputLatex(OutputBase):
         OUTPUT:
 
         String.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputLatex
@@ -332,7 +409,7 @@ class OutputLatex(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputLatex`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputLatex

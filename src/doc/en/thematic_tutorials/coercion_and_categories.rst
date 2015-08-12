@@ -122,8 +122,8 @@ This base class provides a lot more methods than a general parent::
      '_coerce_self',
      '_coerce_try',
      '_default_category',
+     '_gcd_univariate_polynomial',
      '_gens',
-     '_gens_dict',
      '_has_coerce_map_from',
      '_ideal_class_',
      '_latex_names',
@@ -132,6 +132,7 @@ This base class provides a lot more methods than a general parent::
      '_pseudo_fraction_field',
      '_random_nonzero_element',
      '_unit_ideal',
+     '_xgcd_univariate_polynomial',
      '_zero_element',
      '_zero_ideal',
      'algebraic_closure',
@@ -468,9 +469,9 @@ And indeed, ``MS2`` has *more* methods than ``MS1``::
 
     sage: import inspect
     sage: len([s for s in dir(MS1) if inspect.ismethod(getattr(MS1,s,None))])
-    57
+    58
     sage: len([s for s in dir(MS2) if inspect.ismethod(getattr(MS2,s,None))])
-    85
+    86
 
 This is because the class of ``MS2`` also inherits from the parent
 class for algebras::
@@ -676,7 +677,7 @@ both ``MyElement`` defined above and of ``P.category().element_class``::
     sage: P.element_class
     <class '__main__.MyFrac_with_category.element_class'>
     sage: type(P.element_class)
-    <class 'sage.structure.dynamic_class.DynamicMetaclass'>
+    <class 'sage.structure.dynamic_class.DynamicInheritComparisonMetaclass'>
     sage: issubclass(P.element_class, MyElement)
     True
     sage: issubclass(P.element_class,P.category().element_class)
@@ -1543,6 +1544,7 @@ Here are the tests that form the test suite of quotient fields::
     ['_test_additive_associativity',
      '_test_an_element',
      '_test_associativity',
+     '_test_cardinality',
      '_test_characteristic',
      '_test_characteristic_fields',
      '_test_distributivity',
@@ -1586,6 +1588,7 @@ Let us see what tests are actually performed::
     running ._test_additive_associativity() . . . pass
     running ._test_an_element() . . . pass
     running ._test_associativity() . . . pass
+    running ._test_cardinality() . . . pass
     running ._test_category() . . . pass
     running ._test_characteristic() . . . pass
     running ._test_characteristic_fields() . . . pass
@@ -1754,6 +1757,7 @@ interesting.
     running ._test_additive_associativity() . . . pass
     running ._test_an_element() . . . pass
     running ._test_associativity() . . . pass
+    running ._test_cardinality() . . . pass
     running ._test_category() . . . pass
     running ._test_characteristic() . . . pass
     running ._test_characteristic_fields() . . . pass

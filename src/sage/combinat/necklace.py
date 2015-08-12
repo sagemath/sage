@@ -261,8 +261,7 @@ class Necklaces_evaluation(CombinatorialClass):
         while not self._content[k]: # == 0
             k = k+1
         for z in _sfc(self._content[k:]):
-            yield map(lambda x: x+1+k, z)
-
+            yield [x+1+k for x in z]
 
 
 ##############################

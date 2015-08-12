@@ -412,27 +412,27 @@ class WeylGroups(Category_singleton):
             EXAMPLES::
 
                 sage: W=WeylGroup(['C',2],prefix="s")
-                sage: r=W.from_reduced_word([1,2,1])
-                sage: r.reflection_to_root()
+                sage: W.from_reduced_word([1,2,1]).reflection_to_root()
                 2*alpha[1] + alpha[2]
-                sage: r=W.from_reduced_word([1,2])
-                sage: r.reflection_to_root()
+                sage: W.from_reduced_word([1,2]).reflection_to_root()
                 Traceback (most recent call last):
                 ...
                 ValueError: s1*s2 is not a reflection
-
+                sage: W.long_element().reflection_to_root()
+                Traceback (most recent call last):
+                ...
+                ValueError: s2*s1*s2*s1 is not a reflection
             """
 
             i = self.first_descent()
             if i is None:
                 raise ValueError("{} is not a reflection".format(self))
             if self == self.parent().simple_reflection(i):
-                from sage.combinat.root_system.root_system import RootSystem
-                return RootSystem(self.parent().cartan_type()).root_lattice().simple_root(i)
-                #return self.parent().domain().simple_root(i)
-            if not self.has_descent(i, side='left'):
+                return self.parent().cartan_type().root_system().root_lattice().simple_root(i)
+            rsi = self.apply_simple_reflection(i)
+            if not rsi.has_descent(i, side='left'):
                 raise ValueError("{} is not a reflection".format(self))
-            return ((self.apply_conjugation_by_simple_reflection(i)).reflection_to_root()).simple_reflection(i)
+            return rsi.apply_simple_reflection(i, side='left').reflection_to_root().simple_reflection(i)
 
         @cached_in_parent_method
         def reflection_to_coroot(self):
@@ -442,27 +442,27 @@ class WeylGroups(Category_singleton):
             EXAMPLES::
 
                 sage: W=WeylGroup(['C',2],prefix="s")
-                sage: r=W.from_reduced_word([1,2,1])
-                sage: r.reflection_to_coroot()
+                sage: W.from_reduced_word([1,2,1]).reflection_to_coroot()
                 alphacheck[1] + alphacheck[2]
-                sage: r=W.from_reduced_word([1,2])
-                sage: r.reflection_to_coroot()
+                sage: W.from_reduced_word([1,2]).reflection_to_coroot()
                 Traceback (most recent call last):
                 ...
                 ValueError: s1*s2 is not a reflection
-
+                sage: W.long_element().reflection_to_coroot()
+                Traceback (most recent call last):
+                ...
+                ValueError: s2*s1*s2*s1 is not a reflection
             """
 
             i = self.first_descent()
             if i is None:
                 raise ValueError("{} is not a reflection".format(self))
             if self == self.parent().simple_reflection(i):
-                from sage.combinat.root_system.root_system import RootSystem
-                return RootSystem(self.parent().cartan_type()).root_lattice().simple_coroot(i)
-                #return self.parent().domain().simple_coroot(i)
-            if not self.has_descent(i, side='left'):
+                return self.parent().cartan_type().root_system().root_lattice().simple_coroot(i)
+            rsi = self.apply_simple_reflection(i)
+            if not rsi.has_descent(i, side='left'):
                 raise ValueError("{} is not a reflection".format(self))
-            return ((self.apply_conjugation_by_simple_reflection(i)).reflection_to_coroot()).simple_reflection(i)
+            return rsi.apply_simple_reflection(i, side='left').reflection_to_coroot().simple_reflection(i)
 
         def inversions(self, side = 'right', inversion_type = 'reflections'):
             """

@@ -39,4 +39,3 @@ def rational_powers_memleak():
     c1 = sum(1 for obj in gc.get_objects())
     # Test that we do not leak an object at each iteration
     return (c1 - c0) >= 1000
-

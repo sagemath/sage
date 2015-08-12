@@ -29,6 +29,7 @@ Classes and functions
 # http://www.gnu.org/licenses/
 ###########################################################################
 
+import six
 from sage.structure.sage_object import SageObject
 
 ###########################################################################
@@ -245,7 +246,7 @@ class Huffman(SageObject):
         # index of each alphabetic symbol
         self._index = None
 
-        if isinstance(source,basestring):
+        if isinstance(source, six.string_types):
             self._build_code(frequency_table(source))
         elif isinstance(source, dict):
             self._build_code(source)
@@ -355,7 +356,7 @@ class Huffman(SageObject):
             'Sage is my most favorite general purpose computer algebra system'
         """
         if self._character_to_code:
-            return "".join(map(lambda x: self._character_to_code[x], string))
+            return "".join((self._character_to_code[x] for x in string))
 
     def decode(self, string):
         r"""

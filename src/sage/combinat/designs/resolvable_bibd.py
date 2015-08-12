@@ -163,9 +163,9 @@ def kirkman_triple_system(v,existence=False):
         sage: classes = kts.is_resolvable(1)[1]
         sage: names = '0123456789abcde'
         sage: to_name = lambda (r,s,t): ' '+names[r]+names[s]+names[t]+' '
-        sage: rows = [join(('Day {}'.format(i) for i in range(1,8)), '   ')]
-        sage: rows.extend(join(map(to_name,row), '   ') for row in zip(*classes))
-        sage: print join(rows,'\n')
+        sage: rows = ['   '.join(('Day {}'.format(i) for i in range(1,8)))]
+        sage: rows.extend('   '.join(map(to_name,row)) for row in zip(*classes))
+        sage: print '\n'.join(rows)
         Day 1   Day 2   Day 3   Day 4   Day 5   Day 6   Day 7
          07e     18e     29e     3ae     4be     5ce     6de
          139     24a     35b     46c     05d     167     028

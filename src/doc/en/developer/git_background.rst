@@ -118,28 +118,20 @@ Using this ``lg`` alias gives you the changelog with a colored ascii graph::
     | |/
 
 
+.. _section-git-tutorials:
+
 
 Tutorials and Summaries
 =======================
 
-* `Github help <http://help.github.com>`_ has an excellent series of
-  how-to guides.
+There are many, many tutorials and command summaries available online.
 
-* The `pro git book <http://git-scm.com/book>`_ is a good in-depth book on git.
-
-* `Github Training <http://training.github.com>`_ has an excellent series
-  of tutorials as well as videos and screencasts.
-
-* A `git cheat sheet <http://github.com/guides/git-cheat-sheet>`_ is a
-  page giving summaries of common commands.
-
-* The `git user manual
-  <http://schacon.github.com/git/user-manual.html>`_.
-
-* The `git tutorial <http://schacon.github.com/git/gittutorial.html>`_.
-
-* `Git ready <http://www.gitready.com/>`_ is a nice series of
-  tutorials.
+Beginner
+--------
+* `Try Git <https://try.github.io/levels/1/challenges/1>`_ is an entry-level
+  tutorial you can do in your browser.  If you are unfamiliar with revision
+  control, you will want to pay close attention to the "Advice" section toward
+  the bottom.
 
 * `Git magic
   <http://www-cs-students.stanford.edu/~blynn/gitmagic/index.html>`_
@@ -153,6 +145,27 @@ Tutorials and Summaries
   <http://matthew-brett.github.com/pydagogue/foundation.html>`_
   expands on the `git parable`_.
 
+* Although it also contains more advanced material about branches and
+  detached head and the like, the visual summaries of merging and branches
+  in `Learn Git Branching <http://pcottle.github.io/learnGitBranching/>`_
+  are really quite helpful.
+
+
+Advanced
+--------
+* `Github help <http://help.github.com>`_ has an excellent series of
+  how-to guides.
+
+* The `pro git book <http://git-scm.com/book>`_ is a good in-depth book on git.
+
+* `Github Training <http://training.github.com>`_ has an excellent series
+  of tutorials as well as videos and screencasts.
+
+* The `git tutorial <http://schacon.github.com/git/gittutorial.html>`_.
+
+* `Git ready <http://www.gitready.com/>`_ is a nice series of
+  tutorials.
+
 * `Fernando Perez' git page
   <http://www.fperez.org/py4science/git.html>`_ contains many links
   and tips.
@@ -163,6 +176,15 @@ Tutorials and Summaries
 * `Git svn crash course <http://git-scm.com/course/svn.html>`_: git
   for those of us used to `subversion
   <http://subversion.tigris.org/>`_
+
+Summaries/Cheat Sheets
+----------------------
+* A `git cheat sheet <http://github.com/guides/git-cheat-sheet>`_ is a
+  page giving summaries of common commands.
+
+* The `git user manual
+  <http://schacon.github.com/git/user-manual.html>`_.
+
 
 
 Git Best Practices

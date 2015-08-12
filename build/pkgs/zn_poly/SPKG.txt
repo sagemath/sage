@@ -42,6 +42,9 @@ the file src/COPYING for details.
    - If everything's fine, i.e., no problems arise, some comments and especial-
      ly some code I currently just commented out can certainly be removed.
      (-leif, 04/2012)
+ * The version number "0.9.p11" is used as a doctest in the function
+   package_versions in sage/misc/packages.py, so if this package gets
+   upgraded, that doctest needs to be changed.
 
 === Patches ===
 

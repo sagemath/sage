@@ -300,8 +300,8 @@ def _equalize_perms(l):
         sage: l
         [[0, 1, 2, 3], [1, 0, 2, 3], [3, 0, 1, 2]]
     """
-    n=max(map(len,l))
-    if n ==0:
+    n = max(map(len,l))
+    if n == 0:
         n = 1
     for p in l:
         p.extend(xrange(len(p),n))
@@ -678,10 +678,12 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
             sage: import sage.modular.arithgroup.arithgroup_perm as ap
             sage: ap.HsuExample10().perm_group()
-            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8)(9,10), (1,4)(2,5,9,10,8)(3,7,6), (1,7,9,10,6)(2,3)(4,5,8), (1,8,3)(2,4,6)(5,7,10)]
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8)(9,10), (1,8,3)(2,4,6)(5,7,10), (1,4)(2,5,9,10,8)(3,7,6), (1,7,9,10,6)(2,3)(4,5,8)]
         """
         from sage.groups.perm_gps.all import PermutationGroup
-        return PermutationGroup([self.S2(), self.S3(), self.L(), self.R()])
+        # we set canonicalize to False as otherwise PermutationGroup changes the
+        # order of the generators.
+        return PermutationGroup([self.S2(), self.S3(), self.L(), self.R()], canonicalize=False)
 
     def index(self):
         r"""
@@ -1520,6 +1522,42 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                 return False
 
             return True
+
+    def surgroups(self):
+        r"""
+        Return an iterator through the non-trivial intermediate groups between
+        `SL(2,\ZZ)` and this finite index group.
+
+        EXAMPLES::
+
+            sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)(5,6)", S3="(1,2,3)(4,5,6)")
+            sage: H = G.surgroups().next()
+            sage: H
+             Arithmetic subgroup with permutations of right cosets
+             S2=(1,2)
+             S3=(1,2,3)
+             L=(1,3)
+             R=(2,3)
+            sage: G.is_subgroup(H)
+            True
+
+        The principal congruence group `\Gamma(3)` has thirteen surgroups::
+
+            sage: G = Gamma(3).as_permutation_group()
+            sage: G.index()
+            24
+            sage: for H in G.surgroups():
+            ....:     print H.index(),
+            ....:     assert G.is_subgroup(H) and H.is_congruence()
+            6 3 4 8 4 8 4 12 4 6 6 8 8
+        """
+        from sage.interfaces.gap import gap
+        P = self.perm_group()._gap_()
+        for b in P.AllBlocks():
+            orbit = P.Orbit(b, gap.OnSets)
+            action = P.Action(orbit, gap.OnSets)
+            S2,S3,L,R = action.GeneratorsOfGroup()
+            yield ArithmeticSubgroup_Permutation(S2=S2, S3=S3, L=L, R=R, check=False)
 
 class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
     r"""

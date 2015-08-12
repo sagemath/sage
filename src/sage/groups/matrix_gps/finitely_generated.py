@@ -120,7 +120,7 @@ def normalize_square_matrices(matrices):
             gens.append(m)
             continue
         if isinstance(m[0], (list, tuple)):
-            m = map(list, m)
+            m = [list(_) for _ in m]
             degree = ZZ(len(m))
         else:
             degree, rem = ZZ(len(m)).sqrtrem()

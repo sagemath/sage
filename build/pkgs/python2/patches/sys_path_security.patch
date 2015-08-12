@@ -1,0 +1,314 @@
+This patch is needed to fix http://trac.sagemath.org/ticket/13579
+It has been reported upstream as a security issue but fear of breaking
+third-party software prevents its inclusion ; see:
+http://bugs.python.org/issue16202
+and
+https://github.com/ipython/ipython/issues/7044
+
+diff -ru src/Python/sysmodule.c b/Python/sysmodule.c
+--- src/Python/sysmodule.c	2012-04-10 01:07:35.000000000 +0200
++++ b/Python/sysmodule.c	2012-10-29 22:18:46.337514322 +0100
+@@ -46,6 +46,10 @@
+ #include <langinfo.h>
+ #endif
+ 
++#ifdef HAVE_SYS_TYPES_H
++#include <sys/types.h>
++#endif
++
+ PyObject *
+ PySys_GetObject(char *name)
+ {
+@@ -1615,93 +1619,86 @@
+     return av;
+ }
+ 
+-void
+-PySys_SetArgvEx(int argc, char **argv, int updatepath)
++/* Prepend the parent directory of filename "arg" to the Python list
++ * "path".  Return 0 normally, return -1 in case of error. */
++static int
++PySys_UpdatePath(PyObject *path, char *arg)
+ {
+ #if defined(HAVE_REALPATH)
+     char fullpath[MAXPATHLEN];
+ #elif defined(MS_WINDOWS) && !defined(MS_WINCE)
+     char fullpath[MAX_PATH];
+ #endif
+-    PyObject *av = makeargvobject(argc, argv);
+-    PyObject *path = PySys_GetObject("path");
+-    if (av == NULL)
+-        Py_FatalError("no mem for sys.argv");
+-    if (PySys_SetObject("argv", av) != 0)
+-        Py_FatalError("can't assign sys.argv");
+-    if (updatepath && path != NULL) {
+-        char *argv0 = argv[0];
++
++    /* Store original "arg" */
++    char *given_arg = arg;
++
++    Py_ssize_t n = 0;  /* Length of arg */
++    if (arg[0] != '\0')
++    {
+         char *p = NULL;
+-        Py_ssize_t n = 0;
+-        PyObject *a;
+ #ifdef HAVE_READLINK
+         char link[MAXPATHLEN+1];
+-        char argv0copy[2*MAXPATHLEN+1];
+-        int nr = 0;
+-        if (argc > 0 && argv0 != NULL && strcmp(argv0, "-c") != 0)
+-            nr = readlink(argv0, link, MAXPATHLEN);
++        char argcopy[2*MAXPATHLEN+1];
++        int nr = readlink(arg, link, MAXPATHLEN);
+         if (nr > 0) {
+             /* It's a symlink */
+             link[nr] = '\0';
+             if (link[0] == SEP)
+-                argv0 = link; /* Link to absolute path */
++                arg = link; /* Link to absolute path */
+             else if (strchr(link, SEP) == NULL)
+                 ; /* Link without path */
+             else {
+-                /* Must join(dirname(argv0), link) */
+-                char *q = strrchr(argv0, SEP);
++                /* Must join(dirname(arg), link) */
++                char *q = strrchr(arg, SEP);
+                 if (q == NULL)
+-                    argv0 = link; /* argv0 without path */
++                    arg = link; /* arg without path */
+                 else {
+                     /* Must make a copy */
+-                    strcpy(argv0copy, argv0);
+-                    q = strrchr(argv0copy, SEP);
++                    strcpy(argcopy, arg);
++                    q = strrchr(argcopy, SEP);
+                     strcpy(q+1, link);
+-                    argv0 = argv0copy;
++                    arg = argcopy;
+                 }
+             }
+         }
+ #endif /* HAVE_READLINK */
+ #if SEP == '\\' /* Special case for MS filename syntax */
+-        if (argc > 0 && argv0 != NULL && strcmp(argv0, "-c") != 0) {
+-            char *q;
++        char *q;
+ #if defined(MS_WINDOWS) && !defined(MS_WINCE)
+-            /* This code here replaces the first element in argv with the full
+-            path that it represents. Under CE, there are no relative paths so
+-            the argument must be the full path anyway. */
+-            char *ptemp;
+-            if (GetFullPathName(argv0,
+-                               sizeof(fullpath),
+-                               fullpath,
+-                               &ptemp)) {
+-                argv0 = fullpath;
+-            }
++        /* This code here replaces the first element in argv with the full
++        path that it represents. Under CE, there are no relative paths so
++        the argument must be the full path anyway. */
++        char *ptemp;
++        if (GetFullPathName(arg,
++                           sizeof(fullpath),
++                           fullpath,
++                           &ptemp)) {
++            arg = fullpath;
++        }
+ #endif
+-            p = strrchr(argv0, SEP);
+-            /* Test for alternate separator */
+-            q = strrchr(p ? p : argv0, '/');
+-            if (q != NULL)
+-                p = q;
+-            if (p != NULL) {
+-                n = p + 1 - argv0;
+-                if (n > 1 && p[-1] != ':')
+-                    n--; /* Drop trailing separator */
+-            }
++        p = strrchr(arg, SEP);
++        /* Test for alternate separator */
++        q = strrchr(p ? p : arg, '/');
++        if (q != NULL)
++            p = q;
++        if (p != NULL) {
++            n = p + 1 - arg;
++            if (n > 1 && p[-1] != ':')
++                n--; /* Drop trailing separator */
+         }
+ #else /* All other filename syntaxes */
+-        if (argc > 0 && argv0 != NULL && strcmp(argv0, "-c") != 0) {
+ #if defined(HAVE_REALPATH)
+-            if (realpath(argv0, fullpath)) {
+-                argv0 = fullpath;
+-            }
+-#endif
+-            p = strrchr(argv0, SEP);
++        if (realpath(arg, fullpath)) {
++            arg = fullpath;
+         }
++#endif
++        p = strrchr(arg, SEP);
+         if (p != NULL) {
+ #ifndef RISCOS
+-            n = p + 1 - argv0;
++            n = p + 1 - arg;
+ #else /* don't include trailing separator */
+-            n = p - argv0;
++            n = p - arg;
+ #endif /* RISCOS */
+ #if SEP == '/' /* Special case for Unix filename syntax */
+             if (n > 1)
+@@ -1709,12 +1706,146 @@
+ #endif /* Unix */
+         }
+ #endif /* All others */
+-        a = PyString_FromStringAndSize(argv0, n);
+-        if (a == NULL)
+-            Py_FatalError("no mem for sys.path insertion");
+-        if (PyList_Insert(path, 0, a) < 0)
+-            Py_FatalError("sys.path.insert(0) failed");
+-        Py_DECREF(a);
++    }
++
++    /* Copy n bytes of arg to parent (the parent directory
++     * to be added to sys.path) */
++    char parent[MAXPATHLEN+1];
++    memcpy(parent, arg, n);
++    parent[n] = '\0';
++
++    /* Do some security checks before adding "parent" to sys.path */
++#ifdef HAVE_STAT
++    struct stat parent_stat;
++    struct stat arg_stat;
++    struct stat program_stat;  /* Python program */
++    char warnmsg[MAXPATHLEN + 400];
++    const char *lecture = "Untrusted users could put files in this "
++        "directory which might then be imported by your Python code. "
++        "As a general precaution from similar exploits, "
++        "you should not execute Python code from this directory";
++    if (stat( (parent[0] != '\0') ? parent : ".", &parent_stat) != 0) {
++        snprintf(warnmsg, sizeof(warnmsg), "not adding '%s' to sys.path since its status cannot be determined", parent);
++        return PyErr_WarnEx(PyExc_RuntimeWarning, warnmsg, 1);
++    }
++    if (!S_ISDIR(parent_stat.st_mode)) {
++        snprintf(warnmsg, sizeof(warnmsg), "not adding '%s' to sys.path since it's not a directory", parent);
++        return PyErr_WarnEx(PyExc_RuntimeWarning, warnmsg, 1);
++    }
++
++    if (given_arg[0] != '\0' && stat(given_arg, &arg_stat) == 0) {
++        /* Only keep group bits if the group is the same as the
++         * group of "parent" (otherwise the group is considered unsafe). */
++        if (arg_stat.st_gid != parent_stat.st_gid)
++            arg_stat.st_mode &= 0707;
++        /* If parent does *not* have the sticky bit set, "arg" is at
++         * least as writable as "parent".  This obviously only applies
++         * if "arg" is an existing file/directory inside "parent", which
++         * is the case here. */
++        if (!(parent_stat.st_mode & S_ISVTX))
++            arg_stat.st_mode |= parent_stat.st_mode;
++    } else {
++        /* given_arg was "" or stat() failed, manually set relevant
++         * stat members to sensible values.  Set the mode to whatever
++         * it would be if we would create a new file, keeping in mind
++         * the current umask. */
++        unsigned int mask = umask(0777); umask(mask);
++        arg_stat.st_mode = 0666 & ~mask;
++        arg_stat.st_uid = 0;
++        /* Only keep group bit if the current group ID is the same as
++         * the group of "parent" */
++        if (getgid() != parent_stat.st_gid)
++            arg_stat.st_mode &= 0707;
++    }
++
++    if (stat(Py_GetProgramFullPath(), &program_stat) == 0) {
++        /* Only keep group bits if the group is the same as the
++         * group of "parent" (otherwise the group is considered unsafe). */
++        if (program_stat.st_gid != parent_stat.st_gid)
++            program_stat.st_mode &= 0707;
++    } else {
++        /* stat() failed, set relevant stat members to safe values. */
++        program_stat.st_mode = 0644;
++        program_stat.st_uid = 0;
++    }
++
++    /* Check permissions, check that the "parent" directory is not
++     * more permissive than the script "arg" or the Python program
++     * "program".  Otherwise adding "parent" to sys.path is a security
++     * risk. */
++    if (parent_stat.st_mode & 0002) {
++        /* (A) "parent" is world-writable */
++        if ((arg_stat.st_mode & 0002) == 0 && (program_stat.st_mode & 0002) == 0) {
++            snprintf(warnmsg, sizeof(warnmsg),
++                "not adding directory '%s' to sys.path since everybody can write to it.\n%s",
++                parent, lecture);
++            return PyErr_WarnEx(PyExc_RuntimeWarning, warnmsg, 1);
++        }
++    } else if (parent_stat.st_mode & 0020) {
++        /* (B) "parent" is group-writable.  Recall that the group
++         * permissions of "arg" and "program" refer to the group owning
++         * "parent". */
++        if ((arg_stat.st_mode & 0022) == 0 && (program_stat.st_mode & 0022) == 0) {
++            snprintf(warnmsg, sizeof(warnmsg),
++                "not adding directory '%s' to sys.path since it's writable by an untrusted group.\n%s",
++                parent, lecture);
++            return PyErr_WarnEx(PyExc_RuntimeWarning, warnmsg, 1);
++        }
++    } else {
++        /* (C) parent is neither group-, neither world-writable.
++         * We are safe if "arg" or "program" is group- or
++         * world-writable or if "parent" is owned by a trusted user:
++         * either the same owner as "arg" or "program",
++         * or root, or the current user. */
++        if (
++          (arg_stat.st_mode & 0022) == 0 &&
++          (program_stat.st_mode & 0022) == 0 &&
++          parent_stat.st_uid != arg_stat.st_uid &&
++          parent_stat.st_uid != program_stat.st_uid &&
++          parent_stat.st_uid != 0 &&
++          parent_stat.st_uid != getuid()) {
++            snprintf(warnmsg, sizeof(warnmsg),
++                "not adding directory '%s' to sys.path since it's not owned by a trusted user.\n%s",
++                parent, lecture);
++            return PyErr_WarnEx(PyExc_RuntimeWarning, warnmsg, 1);
++        }
++    }
++#endif  /* HAVE_STAT */
++
++    PyObject *a = PyString_FromString(parent);
++    if (a == NULL)
++        Py_FatalError("no mem for sys.path insertion");
++    if (PyList_Insert(path, 0, a) < 0)
++        return -1;
++    Py_DECREF(a);
++
++    return 0;
++}
++
++void
++PySys_SetArgvEx(int argc, char **argv, int updatepath)
++{
++    PyObject *av = makeargvobject(argc, argv);
++    PyObject *path = PySys_GetObject("path");
++    if (av == NULL)
++        Py_FatalError("no mem for sys.argv");
++    if (PySys_SetObject("argv", av) != 0)
++        Py_FatalError("can't assign sys.argv");
++
++    if (updatepath && path != NULL) {
++        char *argv0;
++        if (argc <= 0 || argv[0] == NULL || strcmp(argv[0], "-c") == 0) {
++            /* If there is no argv[0] or argv[0] equals "-c", add "" to sys.path */
++            argv0 = "";
++        }
++        else {
++            argv0 = argv[0];
++        }
++        if (PySys_UpdatePath(path, argv0)) {
++            /* No way to signal failure, so print exception and exit */
++            PyErr_PrintEx(0);
++            exit(1);
++        }
+     }
+     Py_DECREF(av);
+ }

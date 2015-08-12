@@ -35,6 +35,9 @@ AUTHORS:
 include "sage/ext/interrupt.pxi"
 include "sage/ext/stdsage.pxi"
 
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
+
 from sage.structure.element cimport Element
 from sage.structure.sage_object cimport rich_to_bool_sgn
 
@@ -1266,13 +1269,33 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         return res
 
 
-    cdef NumberFieldElement conjugate_c(self):
+    cpdef NumberFieldElement galois_conjugate(self):
+        """
+        Return the image of this element under action of the nontrivial
+        element of the Galois group of this field.
+
+        EXAMPLES::
+
+            sage: K.<a> = QuadraticField(23)
+            sage: a.galois_conjugate()
+            -a
+
+            sage: K.<a> = NumberField(x^2 - 5*x + 1)
+            sage: a.galois_conjugate()
+            -a + 5
+            sage: b = 5*a + 1/3
+            sage: b.galois_conjugate()
+            -5*a + 76/3
+            sage: b.norm() ==  b * b.galois_conjugate()
+            True
+            sage: b.trace() ==  b + b.galois_conjugate()
+            True
+        """
         cdef NumberFieldElement_quadratic res = <NumberFieldElement_quadratic>self._new()
         mpz_set(res.a, self.a)
         mpz_neg(res.b, self.b)
         mpz_set(res.denom, self.denom)
         return res
-
 
 #################################################################################
 # We must override everything that makes uses of self.__numerator/__denominator

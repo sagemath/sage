@@ -7,16 +7,6 @@ if [ -z "$SAGE_LOCAL" ] ; then
 fi
 
 cd src
-# For some of the patches, Cygwin also has upstream fixes that are
-# closely related, keep track.  See Trac 11119, for example.
-for patch in ../patches/*.patch; do
-    [ -f "$patch" ] || continue
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
 
 if [ -z "$CFLAG64" ] ; then
     CFLAG64=-m64
@@ -59,6 +49,8 @@ echo "Using CXXFLAGS=$CXXFLAGS"
 echo "Using CPPFLAGS=$CPPFLAGS"
 echo "Using LDFLAGS=$LDFLAGS"
 echo "configure scripts and/or makefiles might override these later"
+echo ""
+echo "Note that the patches were applied by spkg-source"
 echo ""
 
 # export everything. Probably not necessary in most cases.

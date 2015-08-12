@@ -1,10 +1,8 @@
 """
 Vectors with integer mod n entries, with n small.
 
-AUTHOR:
-    -- William Stein (2007)
+EXAMPLES::
 
-EXAMPLES:
     sage: v = vector(Integers(8),[1,2,3,4,5])
     sage: type(v)
     <type 'sage.modules.vector_modn_dense.Vector_modn_dense'>
@@ -37,20 +35,23 @@ EXAMPLES:
     sage: u - v
     (0, 0, 0, 0, 4)
 
-We make a large zero vector:
+We make a large zero vector::
+
     sage: k = Integers(8)^100000; k
     Ambient free module of rank 100000 over Ring of integers modulo 8
     sage: v = k(0)
     sage: v[:10]
     (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-We multiply a vector by a matrix:
+We multiply a vector by a matrix::
+
     sage: a = (GF(97)^5)(range(5))
     sage: m = matrix(GF(97),5,range(25))
     sage: a*m
     (53, 63, 73, 83, 93)
 
-TESTS:
+TESTS::
+
     sage: v = vector(Integers(8), [1,2,3,4,5])
     sage: loads(dumps(v)) == v
     True
@@ -72,14 +73,26 @@ TESTS:
     <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
     sage: ~v[0]
     1482786336
+
+    sage: w = vector(GF(11), [-1,0,0,0])
+    sage: w.set_immutable()
+    sage: isinstance(hash(w), int)
+    True
+
+AUTHOR:
+
+- William Stein (2007)
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
 include 'sage/ext/interrupt.pxi'
 include 'sage/ext/stdsage.pxi'
@@ -175,6 +188,9 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             False
             sage: v == v
             True
+            sage: w = vector(GF(11), [-1,0,0,0])
+            sage: w == w
+            True
         """
         cdef Py_ssize_t i
         cdef mod_int l, r
@@ -186,28 +202,6 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             elif l > r:
                 return 1
         return 0
-
-    def __richcmp__(left, right, int op):
-        """
-        TEST::
-
-            sage: w = vector(GF(11), [-1,0,0,0])
-            sage: w == w
-            True
-        """
-        return (<Element>left)._richcmp(right, op)
-
-    # __hash__ is not properly inherited if comparison is changed
-    def __hash__(self):
-        """
-        TEST::
-
-            sage: w = vector(GF(11), [-1,0,0,0])
-            sage: w.set_immutable()
-            sage: isinstance(hash(w), int)
-            True
-        """
-        return free_module_element.FreeModuleElement.__hash__(self)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """

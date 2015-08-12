@@ -665,12 +665,6 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 return 1
         return 0
 
-    def __richcmp__(left, right, int op):
-        return (<Element>left)._richcmp(right, op)
-
-    def __cmp__(left, right):
-        return (<Element>left)._cmp(right)
-
     def __call__(self, i):
         """
         Returns the image of the integer i under this permutation.

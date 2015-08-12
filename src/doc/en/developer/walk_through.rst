@@ -6,15 +6,16 @@ Sage Development Process
 
 This section is a concise overview of the Sage development process. In
 it, we will see how to make changes to the Sage source code and record
-them in the git revision control system. In the following section on
-:ref:`chapter-git_trac` we will look at communicating these changes
-back to the Sage project.
+them in the git revision control system.
 
-
-We also have a handy `one-page "cheat sheet"
+In the following section on :ref:`chapter-git_trac` we will look at
+communicating these changes back to the Sage project.  We also have a handy
+`one-page "cheat sheet"
 <http://github.com/sagemath/git-trac-command/raw/master/doc/git-cheat-sheet.pdf>`_
 of commonly used git commands that you can print out and leave on your
-desk.
+desk.  We have some :ref:`recommended references and tutorials
+<section-git-tutorials>` as well.
+
 You can alternatively fork and create a pull request at
 `github <http://github.com/sagemath/sage>`_ which will automatically fetch
 your code and open a ticket on our trac server.
@@ -77,7 +78,8 @@ internal git repository::
 This creates a directory named ``sage`` containing the sources for the
 current stable and development releases of Sage.  You will need to
 `compile Sage <http://www.sagemath.org/doc/installation/source.html>`_
-in order to use it.
+in order to use it (if you cloned, you will need to remain on the internet
+for it to download various packages of Sage).
 
 (For the experts, note that the repository at
 `git.sagemath.org <http://git.sagemath.org>`_ is where development

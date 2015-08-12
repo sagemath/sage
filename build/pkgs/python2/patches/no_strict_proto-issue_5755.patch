@@ -1,0 +1,26 @@
+diff -ru src/configure.ac b/configure.ac
+--- src/configure.ac	2013-04-06 16:02:41.000000000 +0200
++++ b/configure.ac	2013-04-11 18:11:17.947929754 +0200
+@@ -1051,9 +1051,6 @@
+ then
+     case $GCC in
+     yes)
+-        if test "$CC" != 'g++' ; then
+-	    STRICT_PROTO="-Wstrict-prototypes"
+-	fi
+         # For gcc 4.x we need to use -fwrapv so lets check if its supported
+         if "$CC" -v --help 2>/dev/null |grep -- -fwrapv > /dev/null; then
+            WRAP="-fwrapv"
+diff -ru src/configure b/configure
+--- src/configure	2013-04-06 16:02:41.000000000 +0200
++++ b/configure	2013-04-11 18:11:25.737930322 +0200
+@@ -5931,9 +5931,6 @@
+ then
+     case $GCC in
+     yes)
+-        if test "$CC" != 'g++' ; then
+-	    STRICT_PROTO="-Wstrict-prototypes"
+-	fi
+         # For gcc 4.x we need to use -fwrapv so lets check if its supported
+         if "$CC" -v --help 2>/dev/null |grep -- -fwrapv > /dev/null; then
+            WRAP="-fwrapv"

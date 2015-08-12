@@ -1617,7 +1617,7 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     drfile = os.path.join(tempdir ,'driver.c')
     fileoutput = os.path.join(tempdir, 'output')
     runmefile = os.path.join(tempdir, 'runme')
-    genfiles_mintides(intfile, drfile, f, map(N, ics), N(initial), N(final), N(delta), N(tolrel),
+    genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics], N(initial), N(final), N(delta), N(tolrel),
                      N(tolabs), fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
                           os.path.join('$SAGE_ROOT','local','lib','libTIDES.a') + ' -lm  -O2 ' +
@@ -1628,10 +1628,7 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     res = outfile.readlines()
     outfile.close()
     for i in range(len(res)):
-        l=res[i]
-        l = l.split(' ')
-        l = filter(lambda a: len(a) > 2, l)
-        res[i] = map(RealField(),l)
+        res[i] = [RealField()(_) for _ in res[i].split(' ') if len(_) > 2]
     shutil.rmtree(tempdir)
     return res
 
@@ -1736,10 +1733,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
     res = outfile.readlines()
     outfile.close()
     for i in range(len(res)):
-        l=res[i]
-        l = l.split(' ')
-        l = filter(lambda a: len(a) > 2, l)
-        res[i] = map(RealField(ceil(digits*log(10,2))),l)
+        res[i] = [RealField(ceil(digits*log(10,2)))(_) for _ in res[i].split(' ') if len(_) > 2]
     shutil.rmtree(tempdir)
     return res
 

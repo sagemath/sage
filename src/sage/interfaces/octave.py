@@ -154,7 +154,6 @@ EXAMPLES::
 
 import os
 from expect import Expect, ExpectElement
-from sage.misc.misc import verbose
 
 
 class Octave(Expect):
@@ -173,7 +172,8 @@ class Octave(Expect):
         'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
     """
 
-    def __init__(self, maxread=100, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None):
+    def __init__(self, maxread=100, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None,
+                 seed=None):
         """
         EXAMPLES::
 
@@ -192,6 +192,26 @@ class Octave(Expect):
                         verbose_start = False,
                         logfile = logfile,
                         eval_using_file_cutoff=100)
+        self._seed = seed
+
+    def set_seed(self, seed=None):
+        """
+        Sets the seed for the random number generator
+        for this octave interpreter.
+
+        EXAMPLES::
+
+            sage: o = Octave() # optional - octave
+            sage: o.set_seed(1) # optional - octave
+            1
+            sage: [o.rand() for i in range(5)] # optional - octave
+            [ 0.134364,  0.847434,  0.763775,  0.255069,  0.495435]
+        """
+        if seed is None:
+            seed = self.rand_seed()
+        self.eval("rand('state',%d)" % seed)
+        self._seed = seed
+        return seed
 
     def __reduce__(self):
         """
@@ -285,6 +305,8 @@ class Octave(Expect):
         Expect._start(self)
         self.eval("page_screen_output=0;")
         self.eval("format none;")
+        # set random seed
+        self.set_seed(self._seed)
 
     def set(self, var, value):
         """
@@ -392,7 +414,6 @@ class Octave(Expect):
         - David Joyner and William Stein
         """
         m = A.nrows()
-        n = A.ncols()
         if m != len(b):
             raise ValueError("dimensions of A and b must be compatible")
         from sage.matrix.all import MatrixSpace
@@ -528,7 +549,6 @@ def reduce_load_Octave():
     return octave
 
 
-import os
 def octave_console():
     """
     Spawn a new Octave command-line session.

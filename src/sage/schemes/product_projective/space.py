@@ -35,9 +35,11 @@ We can also construct the product by specifying the dimensions and the base ring
 # the License, or (at your option) any later version.
 # http://www.gnu.org/licenses/
 #*****************************************************************************
+
+import six
 from sage.misc.cachefunc import cached_method
 
-from sage.rings.all import (PolynomialRing, ZZ, QQ)
+from sage.rings.all import (PolynomialRing, ZZ, QQ, Integer)
 from sage.rings.commutative_ring import is_CommutativeRing
 from sage.rings.polynomial.polydict import ETuple
 
@@ -133,7 +135,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             raise ValueError("Must be a commutative ring")
         from sage.structure.parent_gens import normalize_names
         n_vars=sum(d+1 for d in n)
-        if isinstance(names, basestring):
+        if isinstance(names, six.string_types):
             names = normalize_names(n_vars, names)
         else:
             name_list = list(names)
@@ -205,7 +207,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Multivariate Polynomial Ring in z0, z1, z2, z3 over Rational Field
         """
         assert isinstance(N, (tuple, list))
-        assert all(x.parent() is ZZ for x in N)
+        N = [Integer(n) for n in N]
         assert is_CommutativeRing(R)
         if len(N) < 2:
             raise ValueError("Must be at least two components for a product")

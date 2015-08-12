@@ -1037,7 +1037,7 @@ class IntegrableRepresentation(CategoryObject, UniqueRepresentation):
                 mc = P(self.to_weight(x[0])).monomial_coefficients()
                 contr = sum(fw[sequence[j]]*mc.get(j,0)
                             for j in self._index_set if j != i).coerce_to_sl()
-                if ldict.has_key(contr):
+                if contr in ldict:
                     ldict[contr] += x[1]
                 else:
                     ldict[contr] = x[1]

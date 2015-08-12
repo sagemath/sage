@@ -28,7 +28,7 @@ import sys
 
 include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
+from libc.string cimport memset
 
 from sage.structure.element cimport parent_c
 
@@ -38,7 +38,6 @@ from sage.rings.integer_ring import ZZ
 from sage.misc.all import prod, subsets
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.libs.pari.gen cimport gen
 from sage.libs.pari.all import pari
 
 def cyclotomic_coeffs(nn, sparse=None):

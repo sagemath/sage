@@ -957,7 +957,7 @@ class KleberTree(Parent, UniqueRepresentation):
 
             sage: from sage.combinat.rigged_configurations.kleber_tree import KleberTree
             sage: KT = KleberTree(['D', 4, 1], [[2, 2]])
-            sage: KT.digraph() # optional - dot2tex, graphviz
+            sage: KT.digraph()  # optional - dot2tex graphviz
             Digraph on 3 vertices
         """
         d = {}
@@ -981,7 +981,7 @@ class KleberTree(Parent, UniqueRepresentation):
 
             sage: from sage.combinat.rigged_configurations.kleber_tree import KleberTree
             sage: KT = KleberTree(['D', 4, 1], [[2, 2]])
-            sage: print(KT.plot()) # optional - dot2tex, graphviz
+            sage: print(KT.plot())  # optional - dot2tex graphviz
             Graphics object consisting of 8 graphics primitives
         """
         return self.digraph().plot(edge_labels=True, vertex_size=0, **options)

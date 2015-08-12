@@ -282,7 +282,7 @@ def index_in_saturation(A, proof=True):
     r"""
     The index of A in its saturation.
 
-    INPUT::
+    INPUT:
 
     - ``A`` -- matrix over `\ZZ`
 

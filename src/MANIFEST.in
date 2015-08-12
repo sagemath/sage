@@ -2,7 +2,6 @@ global-include *.c *.cc *.cpp *.h *.hh *.hpp *.inc *.py *.pyx *.pxd *.pxi *.rst 
 
 include MANIFEST.in
 
-include c_lib/SConstruct
 graft   sage/libs/gap/test
 recursive-include sage
 recursive-exclude sage/ext/interpreters *.c *.h *.pyx *.pxd

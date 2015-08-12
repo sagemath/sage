@@ -83,7 +83,7 @@ Sage example in ./linsolve.tex, line 786::
   sage: Z = transpose(A)*A
   sage: C = Z.cholesky()
   sage: R = transpose(A)*b
-  sage: Z.solve_right(R)  # rel tol 1e-14
+  sage: Z.solve_right(R)  # rel tol 1e-13
   (-1.5000000000000044, -0.5000000000000009, 2.750000000000003)
 
 Sage example in ./linsolve.tex, line 822::

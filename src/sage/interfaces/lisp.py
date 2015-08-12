@@ -323,15 +323,6 @@ class Lisp(Expect):
         """
         return LispElement
 
-    def _function_class(self):
-        """
-        EXAMPLES::
-
-            sage: lisp._function_class()
-            <class 'sage.interfaces.lisp.LispFunction'>
-        """
-        return LispFunction
-
     def _function_element_class(self):
         """
         EXAMPLES::

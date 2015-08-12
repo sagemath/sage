@@ -120,7 +120,7 @@ In Sage this can be obtained via::
 
     sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
     sage: G = K.digraph()
-    sage: view(G, tightpage=True) # optional - dot2tex graphviz
+    sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
 
 
 Types `D_n^{(1)}`, `B_n^{(1)}`, `A_{2n-1}^{(2)}`

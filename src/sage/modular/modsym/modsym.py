@@ -117,21 +117,17 @@ def canonical_parameters(group, weight, sign, base_ring):
 
     if isinstance(group, (int, rings.Integer)):
         group = arithgroup.Gamma0(group)
-
     elif isinstance(group, dirichlet.DirichletCharacter):
-        try:
-            eps = group.minimize_base_ring()
-        except NotImplementedError:
-        # TODO -- implement minimize_base_ring over finite fields
-            eps = group
-        G = eps.parent()
-        if eps.is_trivial():
-            group = arithgroup.Gamma0(eps.modulus())
+        if group.is_trivial():
+            group = arithgroup.Gamma0(group.modulus())
         else:
-            group = (eps, G)
-        if base_ring is None: base_ring = eps.base_ring()
+            eps = group.minimize_base_ring()
+            group = (eps, eps.parent())
+            if base_ring is None:
+                base_ring = eps.base_ring()
 
-    if base_ring is None: base_ring = rational_field.RationalField()
+    if base_ring is None:
+        base_ring = rational_field.RationalField()
 
     if not is_CommutativeRing(base_ring):
         raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)

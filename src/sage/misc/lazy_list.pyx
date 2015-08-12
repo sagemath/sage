@@ -23,11 +23,11 @@ EXAMPLES::
     0 -2 -2 0 4 10 18 28 40 54
     sage: i1 = iter(f)
     sage: i2 = iter(f)
-    sage: print i1.next(), i1.next()
+    sage: print next(i1), next(i1)
     0 -2
-    sage: print i2.next(), i2.next()
+    sage: print next(i2), next(i2)
     0 -2
-    sage: print i1.next(), i2.next()
+    sage: print next(i1), next(i2)
     -2 -2
 
 It is possible to prepend a list to a lazy list::
@@ -78,13 +78,13 @@ cdef class lazy_list_iterator(object):
             sage: l = lazy_list(2*i for i in xrange(2**10))
             sage: e1 = iter(l)
             sage: e2 = iter(l)
-            sage: e1.next(), e1.next()
+            sage: next(e1), next(e1)
             (0, 2)
-            sage: e2.next(), e2.next(), e2.next()
+            sage: next(e2), next(e2), next(e2)
             (0, 2, 4)
-            sage: e1.next(), e1.next()
+            sage: next(e1), next(e1)
             (4, 6)
-            sage: e2.next()
+            sage: next(e2)
             6
         """
         if not isinstance(l, lazy_list):
@@ -106,10 +106,10 @@ cdef class lazy_list_iterator(object):
             sage: from itertools import count
             sage: l = lazy_list(count())
             sage: iterator = iter(l)
-            sage: iterator.next()
+            sage: next(iterator)
             0
             sage: iterator2 = loads(dumps(iterator))
-            sage: iterator2.next()
+            sage: next(iterator2)
             1
         """
         return lazy_list_iterator, (self.l, self.pos)
@@ -150,9 +150,9 @@ cdef class lazy_list_iterator(object):
             sage: from sage.misc.lazy_list import lazy_list
             sage: l = lazy_list(p**2-18*2+4 for p in Primes())
             sage: i = iter(l)
-            sage: i.next()    # indirect doctest
+            sage: next(i)    # indirect doctest
             -28
-            sage: i.next()    # indirect doctest
+            sage: next(i)    # indirect doctest
             -23
         """
         self.pos += self.step
@@ -180,11 +180,11 @@ cdef class stopped_lazy_list_iterator(object):
             sage: from itertools import count
             sage: l = lazy_list((i**2-i-1 for i in count()), start=5, stop=15555)
             sage: i1 = iter(l); i2 = iter(l)
-            sage: print i1.next(), i1.next()
+            sage: print next(i1), next(i1)
             19 29
-            sage: print i2.next(), i2.next()
+            sage: print next(i2), next(i2)
             19 29
-            sage: print i1.next(), i2.next()
+            sage: print next(i1), next(i2)
             41 41
         """
         if not isinstance(l, lazy_list):
@@ -243,9 +243,9 @@ cdef class stopped_lazy_list_iterator(object):
             sage: i = iter(L)
             sage: type(i)
             <type 'sage.misc.lazy_list.stopped_lazy_list_iterator'>
-            sage: i.next()  #indirect doctest
+            sage: next(i)  #indirect doctest
             2
-            sage: i.next()  #indirect doctest
+            sage: next(i)  #indirect doctest
             3
         """
         self.pos += self.step
@@ -281,12 +281,12 @@ cdef class lazy_list(object):
         lazy list [8, 10, 12, ...]
 
         sage: x = iter(m)
-        sage: print x.next(), x.next(), x.next()
+        sage: print next(x), next(x), next(x)
         0 1 2
         sage: y = iter(m)
-        sage: print y.next(), y.next(), y.next()
+        sage: print next(y), next(y), next(y)
         0 1 2
-        sage: print x.next(), y.next()
+        sage: print next(x), next(y)
         3 3
         sage: loads(dumps(m))
         lazy list [0, 1, 2, ...]
@@ -534,7 +534,7 @@ cdef class lazy_list(object):
             sage: m = lazy_list(count())
             sage: x = loads(dumps(m))
             sage: y = iter(x)
-            sage: print y.next(), y.next(), y.next()
+            sage: print next(y), next(y), next(y)
             0 1 2
         """
         return lazy_list, (self.iterator, self.cache, self.start, self.stop, self.step)
@@ -558,7 +558,7 @@ cdef class lazy_list(object):
             * -1 : an error occurred
         """
         while PyList_GET_SIZE(self.cache) <= i:
-            PyList_Append(self.cache, self.iterator.next())
+            PyList_Append(self.cache, next(self.iterator))
         return 0
 
     def _fit(self, n):

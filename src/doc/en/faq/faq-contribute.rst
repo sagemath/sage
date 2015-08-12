@@ -4,26 +4,58 @@
 FAQ: Contributing to Sage
 =========================
 
+How can I start contributing to Sage?
+"""""""""""""""""""""""""""""""""""""
 
-How can I get started contributing to Sage?
-"""""""""""""""""""""""""""""""""""""""""""
+The first step 
+is to use Sage and encourage your friends to use Sage. If you find 
+bugs or confusing documentation along the way, please report your 
+problems!
 
-This is a quick guide for anyone who wants to contribute to Sage. It
-is intended especially for anyone who is new to computer
-programming. First, Sage's main programming language is
+Two popular ways to contribute to Sage are to write code and to 
+create documentation or tutorials. Some steps in each direction 
+are described below.
+
+I want to contribute code to Sage. How do I get started?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Take a look at the
+`official development guide <http://www.sagemath.org/doc/developer>`_
+for Sage. At a minimum, the first chapter in that guide is required
+reading for any Sage developer. Also pay special attention to the
+`trac guidelines <http://www.sagemath.org/doc/developer/trac.html>`_.
+You can also join the
+`sage-devel <http://groups.google.com/group/sage-devel>`_
+mailing list or hang around on the
+``#sage-devel`` IRC channel on
+`freenode <http://freenode.net>`_. While you are getting to know 
+the community, grab a copy of the Sage
+source and familiarize yourself with the
+`git <http://git-scm.com>`_ version control system. 
+
+The best way to become familiar with the Sage development process is
+to choose a ticket from the
+`trac server <http://trac.sagemath.org>`_
+and review the proposed changes contained in that ticket. If you want
+to implement something, it is a good practice to discuss your ideas on
+the ``sage-devel`` mailing list first, so that other developers have a
+chance to comment on your ideas/proposals. They are pretty open to new
+ideas, too, as all mathematicians should be.
+
+Sage's main programming language is
 `Python <http://www.python.org>`_.
-Some parts of Sage can be written in other languages, especially the
+Some parts of Sage may be written in other languages, especially the
 components that do the heavy number crunching, but most native
 functionality is done using Python, including "glue code". One of the
 good aspects of Python that Sage inherits is that working code is
-considered more valuable than just fast code. Fast code is valuable,
+considered more valuable than merely fast code. Fast code is valuable,
 but clean, readable code is important. In the mathematics community,
 inaccurate results are unacceptable. Correctness comes before
 optimization. In the following paper
 
 * D. Knuth. Structured Programming with go to Statements.
   *ACM Journal Computing Surveys*, 6(4), 1974.
-
+ 
 Don Knuth observes that: "We should forget about small efficiencies,
 say about 97% of the time: premature optimization is the root of all
 evil."
@@ -36,65 +68,59 @@ and other documents in the
 Another good place to take a look at is
 `Dive Into Python <http://www.diveintopython.net>`_
 by Mark Pilgrim, which may be pretty helpful on some specific topics
-like test-driven development. The book
+such as test-driven development. The book
 `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
 by Steven F. Lott is suitable for anyone who is already comfortable
 with programming.
 
-In the meantime, you can grab your copy of the Sage
-source and familiarize yourself with the
-`git <http://git-scm.com>`_ version control system. Once you are comfortable with Python itself, which is
-pretty fast for basics, you can start using Sage. If you want, you can
-try to learn Python by using Sage, but that is not recommended because
+If you want, you can
+try to learn Python by using Sage. However, 
 it is helpful to know what is pure Python and when Sage is doing its
 "magic". There are many things that work in Python but not in Sage,
-and vice versa.
+and vice versa. Furthermore, even when the syntax is identical, many 
+programming concepts are explained more thoroughly in Python-centered 
+resources than in Sage-centered resources; in the latter, 
+mathematics is usually the priority.
 
-Then take a look at the
-`official development guide <http://www.sagemath.org/doc/developer>`_
-for Sage. At a minimum, the first chapter in that guide is required
-reading for any Sage developer. Also pay special attention to the
-`trac guidelines <http://www.sagemath.org/doc/developer/trac.html>`_.
-You can also join the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
-mailing list and hang around on the
-``#sage-devel`` IRC channel on
-`freenode <http://freenode.net>`_.
+Can I contribute to Sage using SageMathCloud?
+"""""""""""""""""""""""""""""""""""""""""""""
 
-The best way to become familiar with the Sage development process is
-to choose a ticket from the
-`trac server <http://trac.sagemath.org>`_
-and review the proposed changes contained in that ticket. If you want
-to implement something, it is a good practice to discuss your ideas on
-the ``sage-devel`` mailing list first, so that other developers have a
-chance to comment on your ideas/proposals. They are pretty open to new
-ideas, too, like all mathematicians should be.
-
+Absolutely! If you want to write code for Sage or update the 
+official documentation, 
+you will need your own installation of Sage on `SageMathCloud <https://cloud.sagemath.com/>`_. 
+You can find more information about the details of installation in 
+`the SageMathCloud FAQ <https://github.com/sagemath/cloud/wiki/FAQ>`_.
 
 I'm not a programmer. Is there another way I can help out?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Yes. Like any free open source software project, there are numerous
-ways in which you could help out within the Sage community. And
-programming is one of many ways to contribute. If you can speak, read,
-and write in another (natural) language, there are many ways in which
-your contribution would be very valuable to the whole Sage
-community. Say you know Italian. Then you can write a Sage tutorial in
-Italian, or help out with translating the official Sage tutorial to
-Italian. For the graphics designers or artistically creative, you can
-help out with improving the design of the Sage website. Or you can
-cast your critical artistic eyes over the Sage notebook interface and
-find out where it needs improvement.
+Yes. As with any free open source software project, there are numerous
+ways in which you could help out within the Sage community, and
+programming is only one of many ways to contribute. 
 
 Many people like writing technical tutorials. One of the joys of doing
 so is that you also learn something new in the process. At the same
 time, you communicate your knowledge to beginners, a skill which is
 useful in fields other than technical writing itself. A main point
 about technical writing is that you communicate a technical subject to
-beginners, so keep technical jargons to a minimum. Darrell Anderson
+beginners, so keep technical jargon to a minimum. Darrell Anderson
 has written some
 `tips on technical writing <http://humanreadable.nfshost.com/howtos/technical_writing_tips.htm>`_,
-which you are highly recommended to read. The above is a very short
+which we highly recommend.
+
+For the graphic designers or the artistically creative, you can
+help out with improving the design of the Sage website. Or you can
+cast your critical artistic eyes over the interfaces of SageMathCloud 
+or the Sage notebook, and find out where they need improvement.
+
+If you can speak, read,
+and write in another (natural) language, there are many ways in which
+your contribution would be very valuable to the whole Sage
+community. Say you know Italian. Then you can write a Sage tutorial in
+Italian, or help out with translating the official Sage tutorial to
+Italian. 
+
+The above is a very short
 list. There are many, many more ways in which you can help out. Feel
 free to send an email to the
 `sage-devel <http://groups.google.com/group/sage-devel>`_
@@ -217,7 +243,7 @@ Python syntax. The two main differences are handling of integer (see
 also the `afterword`_ for more on the sage preparser), and the
 necessity to import what you need.
 
-- **Handling of integer:** You need to take care of the following
+- **Handling of integers:** You need to take care of the following
   changes:
 
   - Notation for exponentiation: In Python ``**`` means exponentiation

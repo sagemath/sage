@@ -8,13 +8,13 @@ embedding in an ambient vector space and an inner product, which you
 can specify and change.
 
 Create the free module of rank `n` over an arbitrary commutative ring `R`
-using the command \code{FreeModule(R,n)} with a given inner_product_matrix.
+using the command ``FreeModule(R,n)`` with a given inner_product_matrix.
 
 The following example illustrates the creation of both a vector spaces
 and a free module over the integers and a submodule of it.  Use the functions
-\code{FreeModule}, \code{span} and member functions of free modules
-to create free modules.  \emph{Do not use the FreeModule\_xxx constructors
-directly.}
+``FreeModule``, ``span`` and member functions of free modules
+to create free modules.  ''Do not use the ``FreeModule_xxx`` constructors
+directly.''
 
 EXAMPLES::
 
@@ -116,9 +116,9 @@ def FreeQuadraticModule(
 
     .. NOTE::
 
-    In Sage, there is only one dense and one sparse free ambient
-    quadratic module of rank `n` over `R` and given inner product
-    matrix.
+        In Sage it is the case that there is only one dense and one
+        sparse free ambient quadratic module of rank `n` over `R` and given
+        inner product matrix.
 
     EXAMPLES::
 
@@ -1460,9 +1460,9 @@ class FreeQuadraticModule_submodule_with_basis_field(
         [ 1  2  3]
         [ 4  5 19]
 
-        Since this is an embedded vector subspace with a distinguished user
-        basis possibly different than the echelonized basis, the
-        echelon_coordinates() and user coordinates() do not agree:
+    Since this is an embedded vector subspace with a distinguished user
+    basis possibly different than the echelonized basis, the
+    ``echelon_coordinates()`` and user ``coordinates()`` do not agree::
 
         sage: V = QQ^3
         sage: W = V.submodule_with_basis([[1,2,3], [4,5,6]])

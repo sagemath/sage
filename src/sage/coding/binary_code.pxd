@@ -1,6 +1,3 @@
-
-include 'sage/ext/cdefs.pxi'
-
 cdef int *hamming_weights()
 
 ctypedef unsigned int codeword

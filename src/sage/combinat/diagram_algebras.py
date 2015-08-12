@@ -346,6 +346,83 @@ class DiagramAlgebra(CombinatorialFreeModule):
         """
         return identity_set_partition(self._k)
 
+    def _latex_term(self, diagram):
+        r"""
+        Return `\LaTeX` representation of ``diagram`` to draw
+        diagram algebra element in latex using tikz.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: P = PartitionAlgebra(2, x, R)
+            sage: latex(P([[1,2],[-2,-1]])) # indirect doctest               
+            \begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}]
+            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt]
+            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
+            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
+            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
+            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
+            \draw (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
+            \draw (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
+            \end{tikzpicture}
+        """
+        # these allow the view command to work (maybe move them somewhere more appropriate?)
+        from sage.misc.latex import latex
+        latex.add_to_mathjax_avoid_list('tikzpicture')
+        latex.add_package_to_preamble_if_available('tikz')
+        # Define the sign function
+        def sgn(x):
+            if x > 0:
+                return 1
+            if x < 0:
+                return -1
+            return 0
+        l1 = [] #list of blocks
+        l2 = [] #lsit of nodes
+        for i in list(diagram):
+            l1.append(list(i))
+            for j in list(i):
+                l2.append(j)
+        output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
+        for i in l2: #add nodes
+            output = output + "\\node[vertex] (G-%s) at (%s, %s) [shape = circle, draw] {}; \n" % (i, (abs(i)-1)*1.5, sgn(i))
+        for i in l1: #add edges
+            if len(i) > 1:
+                l4 = list(i)
+                posList = []
+                negList = []
+                for i in l4: #sort list so rows are grouped together
+                    if i > 0:
+                        posList.append(i)
+                    elif i < 0:
+                        negList.append(i)
+                posList.sort()
+                negList.sort()
+                l4 = posList + negList
+                l5 = l4[:] #deep copy
+                for j in range(len(l5)):
+                    l5[j-1] = l4[j] #create a permuted list
+                if len(l4) == 2:
+                    l4.pop()
+                    l5.pop() #pops to prevent duplicating edges
+                for j in zip(l4, l5):
+                    xdiff = abs(j[1])-abs(j[0])
+                    y1 = sgn(j[0])
+                    y2 = sgn(j[1])
+                    if y2-y1 == 0 and abs(xdiff) < 5: #if nodes are close to each other on same row
+                        diffCo = (0.5+0.1*(abs(xdiff)-1)) #gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
+                        outVec = (sgn(xdiff)*diffCo, -1*diffCo*y1)
+                        inVec = (-1*diffCo*sgn(xdiff), -1*diffCo*y2)
+                    elif y2-y1 != 0 and abs(xdiff) == 1: #if nodes are close enough curviness looks bad.
+                        outVec = (sgn(xdiff)*0.75, -1*y1)
+                        inVec = (-1*sgn(xdiff)*0.75, -1*y2)
+                    else:
+                        outVec = (sgn(xdiff)*1, -1*y1)
+                        inVec = (-1*sgn(xdiff), -1*y2)
+                    output = output + "\\draw (G-%s) .. controls +%s and +%s .. (G-%s); \n" % (j[0], outVec, inVec,j[1])
+        output = output + "\\end{tikzpicture} \n" #end picture
+        return output
+    
     # The following subclass provides a few additional methods for
     # partition algebra elements.
     class Element(CombinatorialFreeModuleElement):
@@ -388,86 +465,6 @@ class DiagramAlgebra(CombinatorialFreeModule):
                 [{{-2}, {-1}, {1, 2}}, {{-2, -1}, {1, 2}}]
             """
             return self.support()
-
-        def _latex_(self):
-            r"""
-            Return `\LaTeX` representation of ``self`` to draw single
-            diagrams in latex using tikz.
-
-            EXAMPLES::
-
-                sage: R.<x> = ZZ[]
-                sage: P = PartitionAlgebra(2, x, R)
-                sage: latex(P([[1,2],[-2,-1]]))
-                \begin{tikzpicture}[scale = 0.9,thick]
-                \tikzstyle{vertex} = [shape = circle, minimum size = 9pt, inner sep = 1pt]
-                \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
-                \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
-                \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
-                \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
-                \draw (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
-                \draw (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
-                \end{tikzpicture}
-            """
-            # these allow the view command to work (maybe move them somewhere more appropriate?)
-            from sage.misc.latex import latex
-            latex.add_to_mathjax_avoid_list('tikzpicture')
-            latex.add_package_to_preamble_if_available('tikz')
-
-            # Define the sign function
-            def sgn(x):
-                if x > 0:
-                    return 1
-                if x < 0:
-                    return -1
-                return 0
-            diagram = self.diagram()
-            l1 = [] #list of blocks
-            l2 = [] #lsit of nodes
-            for i in list(diagram):
-                l1.append(list(i))
-                for j in list(i):
-                    l2.append(j)
-            #setup beginning of picture
-            output = "\\begin{tikzpicture}[scale = 0.9,thick] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 9pt, inner sep = 1pt] \n"
-            for i in l2: #add nodes
-                output = output + "\\node[vertex] (G-%s) at (%s, %s) [shape = circle, draw] {}; \n" % (i, (abs(i)-1)*1.5, sgn(i))
-            for i in l1: #add edges
-                if (len(i) > 1):
-                    l4 = list(i)
-                    posList = []
-                    negList = []
-                    for i in l4: #sort list so rows are grouped together
-                        if i > 0:
-                            posList.append(i)
-                        elif i < 0:
-                            negList.append(i)
-                    posList.sort()
-                    negList.sort()
-                    l4 = posList + negList
-                    l5 = l4[:] #deep copy
-                    for j in range(len(l5)):
-                        l5[j-1] = l4[j] #create a permuted list
-                    if (len(l4) == 2):
-                        l4.pop()
-                        l5.pop() #pops to prevent duplicating edges
-                    for j in zip(l4, l5):
-                        xdiff = abs(j[1])-abs(j[0])
-                        y1 = sgn(j[0])
-                        y2 = sgn(j[1])
-                        if ((y2-y1) == 0 and abs(xdiff) < 5): #if nodes are close to each other on same row
-                            diffCo = (0.5+0.1*(abs(xdiff)-1)) #gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
-                            outVec = (sgn(xdiff)*diffCo, -1*diffCo*y1)
-                            inVec = (-1*diffCo*sgn(xdiff), -1*diffCo*y2)
-                        elif ((y2-y1) != 0 and abs(xdiff) == 1): #if nodes are close enough curviness looks bad.
-                            outVec = (sgn(xdiff)*0.75, -1*y1)
-                            inVec = (-1*sgn(xdiff)*0.75, -1*y2)
-                        else:
-                            outVec = (sgn(xdiff)*1, -1*y1)
-                            inVec = (-1*sgn(xdiff), -1*y2)
-                        output = output + "\\draw (G-%s) .. controls +%s and +%s .. (G-%s); \n" % (j[0], outVec, inVec,j[1])
-            output = output + "\\end{tikzpicture}" #end picture
-            return output
 
 class PartitionAlgebra(DiagramAlgebra):
     r"""
@@ -1180,7 +1177,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
             """
             Return ``self`` to the `n`-th power.
 
-            INPUT::
+            INPUT:
 
             - ``n`` -- a positive integer
 
@@ -1221,10 +1218,8 @@ def is_planar(sp):
         sage: da.is_planar( da.to_set_partition([[1,-1],[2,-2]]))
         True
     """
-    to_consider = map(list, sp)
-
     #Singletons don't affect planarity
-    to_consider = [x for x in to_consider if len(x) > 1]
+    to_consider = [x for x in (list(_) for _ in sp) if len(x) > 1]
     n = len(to_consider)
 
     for i in range(n):
@@ -1275,7 +1270,7 @@ def is_planar(sp):
                         if row is ap:
                             sr = Set(rng)
                         else:
-                            sr = Set(map(lambda x: -1*x, rng))
+                            sr = Set((-1*x for x in rng))
 
                         sj = Set(to_consider[j])
                         intersection = sr.intersection(sj)
@@ -1426,9 +1421,9 @@ def to_set_partition(l, k=None):
         if l == []:
             return SetPartition([])
         else:
-            k = max( map( lambda x: max( map(abs, x) ), l) )
+            k = max( (max( map(abs, x) ) for x in l) )
 
-    to_be_added = Set( range(1, k+1) + map(lambda x: -1*x, range(1, k+1) ) )
+    to_be_added = Set( list(range(1, k+1)) + [-1*x for x in range(1, k+1)] )
 
     sp = []
     for part in l:
@@ -1521,7 +1516,7 @@ def set_partition_composition(sp1, sp2):
             if len(cc) > 1:
                 total_removed += 1
         else:
-            res.append( Set(map(lambda x: x[0], new_cc)) )
+            res.append( Set((x[0] for x in new_cc)) )
 
     return (SetPartition(Set(res)), total_removed)
 

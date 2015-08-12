@@ -33,7 +33,6 @@ def magma_free_eval(code, strip=True, columns=0):
     """
     import urllib, httplib
     from xml.dom.minidom import parseString
-    from string import join
 
     server = "magma.maths.usyd.edu.au"
     processPath = "/xml/calculator.xml"
@@ -57,7 +56,7 @@ def magma_free_eval(code, strip=True, columns=0):
         for line in lines:
             for textNode in line.childNodes:
                 res.append(textNode.data)
-    res = join(res, "\n")
+    res = "\n".join(res)
 
     class MagmaExpr(str):
         def __repr__(self):

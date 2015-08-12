@@ -135,6 +135,9 @@ from big_oh import O
 from fraction_field import FractionField
 Frac = FractionField
 
+# c-finite sequences
+from cfinite_sequence import CFiniteSequence, CFiniteSequences
+
 # Arithmetic
 from arith import algdep, bernoulli, is_prime, is_prime_power, \
     is_pseudoprime, is_pseudoprime_power, is_pseudoprime_small_power, \

@@ -45,6 +45,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         sage: TestSuite(S).run(verbose = True)
         running ._test_an_element() . . . pass
         running ._test_associativity() . . . pass
+        running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
@@ -179,7 +180,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
         r"""
         The free semigroup.
 
-        INPUT::
+        INPUT:
 
         - ``alphabet`` -- a tuple of strings: the generators of the semigroup
 
@@ -256,7 +257,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
         r"""
         Construct an element of this semigroup from the data ``x``.
 
-        INPUT::
+        INPUT:
 
         - ``x`` -- a string
 
@@ -331,6 +332,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         sage: TestSuite(S).run(verbose = True)
         running ._test_an_element() . . . pass
         running ._test_associativity() . . . pass
+        running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
@@ -421,11 +423,11 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         r"""
         Lift the element ``x`` into the ambient semigroup.
 
-        INPUT::
+        INPUT:
 
         - ``x`` -- an element of ``self``.
 
-        OUTPUT::
+        OUTPUT:
 
         - an element of ``self.ambient()``.
 
@@ -492,11 +494,11 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         r"""
         Returns the retract ``x`` onto an element of this semigroup.
 
-        INPUT::
+        INPUT:
 
         - ``x`` -- an element of the ambient semigroup (``self.ambient()``).
 
-        OUTPUT::
+        OUTPUT:
 
         - an element of ``self``.
 
@@ -552,6 +554,7 @@ class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
               ...
             NotImplementedError: <abstract method retract at ...>
             ------------------------------------------------------------
+            running ._test_cardinality() . . . pass
             running ._test_category() . . . pass
             running ._test_elements() . . .
               Running the test suite of self.an_element()

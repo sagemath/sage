@@ -76,10 +76,10 @@ see the documentation for Parent.
 from cpython.object cimport *
 from libc.string cimport strncmp
 
-cdef add, sub, mul, div, iadd, isub, imul, idiv
+cdef add, sub, mul, div, truediv, iadd, isub, imul, idiv
 import operator
-operator_dict = operator.__dict__
-from operator import add, sub, mul, div, iadd, isub, imul, idiv
+cdef dict operator_dict = operator.__dict__
+from operator import add, sub, mul, div, truediv, iadd, isub, imul, idiv
 
 from sage_object cimport SageObject
 from sage.categories.map cimport Map
@@ -719,7 +719,9 @@ cdef class CoercionModel_cache_maps(CoercionModel):
             <type 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
             sage: f(100)
             2
-            """
+        """
+        if op is truediv:
+            op = div
         self._exceptions_cleared = False
         res = None
         if not isinstance(xp, type) and not isinstance(xp, Parent):
@@ -1035,7 +1037,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
             op_name = op.__name__
             if op_name[0] == 'i':
                 op_name = op_name[1:]
-            mul_method = getattr3(y, '__r%s__'%op_name, None)
+            mul_method = getattr(y, '__r%s__'%op_name, None)
             if mul_method is not None:
                 res = mul_method(x)
                 if res is not None and res is not NotImplemented:
@@ -1612,7 +1614,8 @@ cdef class CoercionModel_cache_maps(CoercionModel):
               From: Integer Ring
               To:   Rational Field
         """
-        #print "looking", R, <int><void *>R, op, S, <int><void *>S
+        if op is truediv:
+            op = div
 
         if isinstance(R, Parent):
             action = (<Parent>R).get_action(S, op, True, r, s)
@@ -1654,7 +1657,6 @@ cdef class CoercionModel_cache_maps(CoercionModel):
                     if a is not None and isinstance(a, RightModuleAction):
                         # We want a new instance so that we don't alter the (potentially cached) original
                         a = RightModuleAction(S, R, s, r)
-                        a.is_inplace = 1
                     if is_inverse: a = ~a
                 return a
             except KeyError:

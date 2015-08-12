@@ -23,6 +23,7 @@ AUTHORS:
 #*****************************************************************************
 
 from cpython.list cimport *
+from sage.libs.gmp.mpz cimport *
 
 
 import sys

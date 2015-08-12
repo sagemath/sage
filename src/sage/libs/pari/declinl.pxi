@@ -3,7 +3,7 @@ Declarations for inline functions from PARI.
 
 This file contains all declarations from headers/pariinl.h from the
 PARI distribution.  All these functions are simple inline functions.
-This file is included by sage/libs/pari/decl.pxi
+This file is included by sage/libs/pari/paridecl.pxd
 
 
 AUTHORS:
@@ -392,3 +392,12 @@ cdef extern from "sage/libs/pari/parisage.h":
     GEN     idealpseudomin_nonscalar(GEN I, GEN G)
     GEN     idealred_elt(GEN nf, GEN I)
     GEN     idealred(GEN nf, GEN I)
+
+    ###################################################################
+    #                                                                 #
+    #                              CLOSURES                           #
+    #                                                                 #
+    ###################################################################
+
+    long    closure_arity(GEN C)
+    long    closure_is_variadic(GEN C)

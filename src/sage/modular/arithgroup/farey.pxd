@@ -26,7 +26,7 @@ cdef extern from 'gmpxx.h':
         mpz_t get_num_mpz_t()
         mpz_t get_den_mpz_t()
 
-cdef extern from 'sl2z.hpp':
+cdef extern from "sage/modular/arithgroup/sl2z.hpp":
     cppclass cpp_SL2Z "SL2Z":
         mpz_class a, b, c, d
         cpp_SL2Z(int, int, int, int)
@@ -36,7 +36,7 @@ cdef extern from 'sl2z.hpp':
         mpz_class c()
         mpz_class d()
 
-cdef extern from 'farey.hpp':
+cdef extern from "sage/modular/arithgroup/farey.hpp":
     cppclass is_element_Gamma0:
         is_element_Gamma0(int)
     cppclass is_element_Gamma1:
@@ -58,7 +58,7 @@ cdef extern from 'farey.hpp':
         size_t nu2()
         size_t nu3()
         object is_element(mpz_t, mpz_t, mpz_t, mpz_t)
-        object word_problem(mpz_t, mpz_t, mpz_t, mpz_t)
+        object word_problem(mpz_t, mpz_t, mpz_t, mpz_t, cpp_SL2Z *)
         size_t get_cusp_class(mpz_t, mpz_t)
         object get_cusps()
         object get_cusp_widths()

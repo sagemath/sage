@@ -81,7 +81,7 @@ class PariArgument(object):
         an iterator over the argument names given by the help string.
         """
         try:
-            n = namesiter.next()
+            n = next(namesiter)
             try:
                 return replacements[n]
             except KeyError:

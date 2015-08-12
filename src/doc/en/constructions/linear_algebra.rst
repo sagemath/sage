@@ -193,7 +193,7 @@ Sage has a full range of functions for computing eigenvalues and both
 left and right eigenvectors and eigenspaces.  If our matrix is :math:`A`,
 then the ``eigenmatrix_right`` (resp. ``eightmatrix_left``) command also
 gives matrices :math:`D` and :math:`P` such that :math:`AP=PD` (resp.
-:math:`PA=PD`.)
+:math:`PA=DP`.)
 
 ::
 

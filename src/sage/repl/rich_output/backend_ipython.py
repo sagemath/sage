@@ -187,7 +187,7 @@ class BackendIPythonCommandline(BackendIPython):
             True
         """
         return set([
-            OutputPlainText, OutputAsciiArt, OutputLatex,
+            OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
             OutputImagePng, OutputImageGif,
             OutputImagePdf, OutputImageDvi,
             OutputSceneJmol, OutputSceneWavefront,
@@ -224,35 +224,49 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': 'Example plain text output'}, {})
+            ({u'text/plain': u'Example plain text output'}, {})
+
+        TESTS:
+
+        We verify that unicode strings work::
+
+            sage: class Foo(sage.structure.sage_object.SageObject):
+            ....:     def _rich_repr_(self, dm):
+            ....:         return dm.types.OutputPlainText(u'Motörhead')
+            sage: from sage.repl.rich_output import get_display_manager
+            sage: dm = get_display_manager()
+            sage: dm.displayhook(Foo())
+            ({u'text/plain': u'Mot\xc3\xb6rhead'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get()}, {})
+            return ({u'text/plain': rich_output.text.get_unicode()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get()}, {})
+            return ({u'text/plain': rich_output.ascii_art.get_unicode()}, {})
+        elif isinstance(rich_output, OutputUnicodeArt):
+            return ({u'text/plain': rich_output.unicode_art.get_unicode()}, {})
         elif isinstance(rich_output, OutputLatex):
-            return ({u'text/plain': rich_output.latex.get()}, {})
+            return ({u'text/plain': rich_output.latex.get_unicode()}, {})
         elif isinstance(rich_output, OutputImagePng):
             msg = self.launch_viewer(
-                rich_output.png.filename(ext='png'), plain_text.text.get())
+                rich_output.png.filename(ext='png'), plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImageGif):
             msg = self.launch_viewer(
-                rich_output.gif.filename(ext='gif'), plain_text.text.get())
+                rich_output.gif.filename(ext='gif'), plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImagePdf):
             msg = self.launch_viewer(
-                rich_output.pdf.filename(ext='pdf'), plain_text.text.get())
+                rich_output.pdf.filename(ext='pdf'), plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImageDvi):
             msg = self.launch_viewer(
-                rich_output.dvi.filename(ext='dvi'), plain_text.text.get())
+                rich_output.dvi.filename(ext='dvi'), plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneJmol):
-            msg = self.launch_jmol(rich_output, plain_text.text.get())
+            msg = self.launch_jmol(rich_output, plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneWavefront):
-            msg = self.launch_sage3d(rich_output, plain_text.text.get())
+            msg = self.launch_sage3d(rich_output, plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         else:
             raise TypeError('rich_output type not supported')
@@ -449,7 +463,7 @@ class BackendIPythonNotebook(BackendIPython):
             False
         """
         return set([
-            OutputPlainText, OutputAsciiArt, OutputLatex,
+            OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
             OutputImagePng, OutputImageJpg,
             OutputImageSvg, OutputImagePdf,
             OutputSceneJmol,
@@ -486,38 +500,40 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': 'Example plain text output'}, {})
+            ({u'text/plain': u'Example plain text output'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get()}, {})
+            return ({u'text/plain': rich_output.text.get_unicode()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get()}, {})
+            return ({u'text/plain': rich_output.ascii_art.get_unicode()}, {})
+        elif isinstance(rich_output, OutputUnicodeArt):
+            return ({u'text/plain': rich_output.unicode_art.get_unicode()}, {})
         elif isinstance(rich_output, OutputLatex):
             return ({u'text/html':  rich_output.mathjax(),
-                     u'text/plain': plain_text.text.get(),
+                     u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputImagePng):
             return ({u'image/png':  rich_output.png.get(),
-                     u'text/plain': plain_text.text.get(),
+                     u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputImageJpg):
             return ({u'image/jpeg':  rich_output.jpg.get(),
-                     u'text/plain':  plain_text.text.get(),
+                     u'text/plain':  plain_text.text.get_unicode(),
             }, {})
 
         elif isinstance(rich_output, OutputImageSvg):
             return ({u'image/svg+xml': rich_output.svg.get(),
-                     u'text/plain':    plain_text.text.get(),
+                     u'text/plain':    plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputImagePdf):
             return ({u'image/png':  rich_output.png.get(),
-                     u'text/plain': plain_text.text.get(),
+                     u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputSceneJmol):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
             return ({u'text/html':  jsmol.iframe(),
-                     u'text/plain': plain_text.text.get(),
+                     u'text/plain': plain_text.text.get_unicode(),
             }, {})            
         else:
             raise TypeError('rich_output type not supported')

@@ -1,18 +1,21 @@
 """
 FLINT Arithmetic Functions
 """
-###########################################################################
+
+#*****************************************************************************
 #       Copyright (C) 2013 Fredrik Johansson <fredrik.johansson@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###########################################################################
+#*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
 
-from fmpz cimport *
-from fmpq cimport *
-from arith cimport *
+from .fmpz cimport *
+from .fmpq cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -47,6 +50,36 @@ def bell_number(unsigned long n):
         sig_off()
 
     return ans
+
+
+def bernoulli_number(unsigned long n):
+    """
+    Return the `n`-th Bernoulli number.
+
+    EXAMPLES::
+
+        sage: from sage.libs.flint.arith import bernoulli_number
+        sage: [bernoulli_number(i) for i in range(10)]
+        [1, -1/2, 1/6, 0, -1/30, 0, 1/42, 0, -1/30, 0]
+        sage: bernoulli_number(10)
+        5/66
+        sage: bernoulli_number(40)
+        -261082718496449122051/13530
+        sage: bernoulli_number(100)
+        -94598037819122125295227433069493721872702841533066936133385696204311395415197247711/33330
+    """
+    cdef fmpq_t ans_fmpq
+    cdef Rational ans = <Rational>Rational.__new__(Rational)
+
+    fmpq_init(ans_fmpq)
+    sig_on()
+    arith_bernoulli_number(ans_fmpq, n)
+    sig_off()
+    fmpq_get_mpq(ans.value, ans_fmpq)
+    fmpq_clear(ans_fmpq)
+
+    return ans
+
 
 def number_of_partitions(unsigned long n):
     """

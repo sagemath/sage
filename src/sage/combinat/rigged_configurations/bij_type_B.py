@@ -266,7 +266,10 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
             max_width = max_width // 2
 
             # Check to see if we need to make the new string quasi-singular
-            max_width = self.ret_rig_con[n-2].insert_cell(max_width)
+            if tableau_height != n-1:
+                max_width = self.ret_rig_con[n-2].insert_cell(max_width)
+            else:
+                max_width = -1
             self._update_vacancy_nums(n - 1)
             self._update_partition_values(n - 1)
 
@@ -394,7 +397,10 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
         max_width = max_width // 2
 
         # We need to do the next partition in order to determine the step at n
-        max_width = self.ret_rig_con[n-2].insert_cell(max_width)
+        if tableau_height != n-1:
+            max_width = self.ret_rig_con[n-2].insert_cell(max_width)
+        else:
+            max_width = -1
 
         self._update_vacancy_nums(n - 1)
         self._update_partition_values(n - 1)

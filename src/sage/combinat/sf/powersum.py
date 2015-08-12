@@ -423,7 +423,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
             """
-            dct = {Partition(map(lambda i: n * i, lam)): coeff
+            dct = {Partition([n * i for i in lam]): coeff
                    for (lam, coeff) in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
@@ -546,7 +546,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             """
             parent = self.parent()
             p_coords_of_self = self.monomial_coefficients().items()
-            dct = {Partition(map(lambda i: i // n, lam)): coeff * (n ** len(lam))
+            dct = {Partition([i // n for i in lam]): coeff * (n ** len(lam))
                    for (lam, coeff) in p_coords_of_self
                    if all( i % n == 0 for i in lam )}
             result_in_p_basis = parent._from_dict(dct)

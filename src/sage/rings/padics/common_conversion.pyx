@@ -28,10 +28,12 @@ AUTHORS:
 
 from cpython.int cimport *
 from sage.ext.stdsage cimport PY_NEW
+from sage.libs.gmp.all cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 import sage.rings.finite_rings.integer_mod
+from sage.libs.pari.types cimport *
 from sage.libs.pari.gen cimport gen as pari_gen
 from sage.rings.infinity import infinity
 
@@ -39,7 +41,6 @@ cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 # The following Integer is used so that the functions here don't need to initialize an mpz_t.
 cdef Integer tmp = PY_NEW(Integer)
 
-include "sage/libs/pari/decl.pxi"
 
 cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
     """

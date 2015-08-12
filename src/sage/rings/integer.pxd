@@ -1,4 +1,4 @@
-from sage.libs.gmp.types cimport mpz_t
+from sage.libs.gmp.types cimport mpz_t, mpz_ptr
 include "sage/libs/ntl/decl.pxi"
 
 from sage.structure.element cimport EuclideanDomainElement, RingElement

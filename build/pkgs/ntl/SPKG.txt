@@ -10,9 +10,6 @@ Website: http://www.shoup.net/ntl/
 == License ==
  * GNU GPLv2+
 
-== SPKG Maintainers ==
- * William Stein
-
 == Upstream Contact ==
  * Victor Shoup - for contact info see http://www.shoup.net/
 
@@ -23,13 +20,3 @@ Website: http://www.shoup.net/ntl/
 == Special Update/Build Instructions ==
  * We generate our own libtool by running the configure in the src/libtool
    directory, see spkg-src for details.
-
-== Patches ==
- * new_singular.patch: modfiy new.h to accomodate Singular.
- * errorcallback.patch: modify tools.c and tools.h to provide an error
-   callback framework (SetErrorCallbackFunction).
- * libtool_flag.patch: modify mfile to enable the build of a shared library
-   on Cygwin
- * make.patch: use `$(MAKE)` instead of `make` in mfile, the Perl script
-   WizardAux and the shell script TestScript.
- * template_fix.patch: fix some lazy template initialization issue in version 6.2.0.

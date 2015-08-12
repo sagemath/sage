@@ -50,11 +50,11 @@ TESTS::
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 
+include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 include "sage/ext/stdsage.pxi"
 include "sage/ext/random.pxi"
 
-from sage.libs.gmp.types cimport mpq_t
 from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_mat cimport *
@@ -86,7 +86,7 @@ from sage.libs.pari.pari_instance cimport PariInstance, INTFRAC_to_mpq
 import sage.libs.pari.pari_instance
 cdef PariInstance pari = sage.libs.pari.pari_instance.pari
 
-include "sage/libs/pari/decl.pxi"
+from sage.libs.pari.paridecl cimport *
 include "sage/libs/pari/pari_err.pxi"
 
 #########################################################

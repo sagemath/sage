@@ -215,7 +215,7 @@ Terminal application.)
 
     sage: maxima.eval('load("plotdf");')
     '".../local/share/maxima/.../share/dynamics/plotdf.lisp"'
-    sage: maxima.eval('plotdf(x+y,[trajectory_at,2,-0.1]); ') #optional
+    sage: maxima.eval('plotdf(x+y,[trajectory_at,2,-0.1]); ')  # not tested
 
 This plots a direction field (the plotdf Maxima package was also
 written by W. Schelter.)
@@ -224,7 +224,7 @@ A 2D plot of several functions:
 
 ::
 
-    sage: maxima.plot2d('[x,x^2,x^3]','[x,-1,1]','[plot_format,openmath]') #optional
+    sage: maxima.plot2d('[x,x^2,x^3]','[x,-1,1]','[plot_format,openmath]')  # not tested
 
 Openmath also does 3D plots of surfaces of the form
 :math:`z=f(x,y)`, as :math:`x` and :math:`y` range over a
@@ -233,7 +233,7 @@ with your mouse:
 
 ::
 
-    sage: maxima.plot3d ("sin(x^2 + y^2)", "[x, -3, 3]", "[y, -3, 3]", # optional
+    sage: maxima.plot3d ("sin(x^2 + y^2)", "[x, -3, 3]", "[y, -3, 3]",  # not tested
     ....:     '[plot_format, openmath]')
 
 By rotating this suitably, you can view the contour plot.

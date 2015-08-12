@@ -536,10 +536,10 @@ class SageInputBuilder:
             return SIE_literal_stringrep(self, repr(x))
 
         if isinstance(x, tuple):
-            return SIE_tuple(self, map(self, x), False)
+            return SIE_tuple(self, [self(_) for _ in x], False)
 
         if isinstance(x, list):
-            return SIE_tuple(self, map(self, x), True)
+            return SIE_tuple(self, [self(_) for _ in x], True)
 
         if isinstance(x, dict):
             return self.dict(x)
@@ -1431,7 +1431,7 @@ class SageInputExpression(object):
             sage: sie(4)
             {call: {atomic:3}({atomic:4})}
         """
-        args = map(self._sie_builder, args)
+        args = [self._sie_builder(_) for _ in args]
         for k in kwargs:
             kwargs[k] = self._sie_builder(kwargs[k])
         return SIE_call(self._sie_builder, self, args, kwargs)
@@ -3460,7 +3460,7 @@ def verify_same(a, b):
     if is_Element(a):
         assert(a.parent() == b.parent())
     else:
-        assert(isinstance(a, type(b)))
+        assert(type(a) is type(b))
     if isinstance(a, float):
         # The IEEE floating-point standard recommends that NaN != NaN
         # Sage doesn't do this for RDF or RR, but Python does for floats.

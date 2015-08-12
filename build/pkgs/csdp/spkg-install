@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined - exiting..."
+    echo >&2 "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+cat LICENSE 
+echo "**************************************************"
+echo "NOTE that csdp's License is NOT GPL-compatible"
+echo "**************************************************"
+
+
+cd src
+
+echo "Configuring csdp..."
+./configure CPPFLAGS=-DNOSHORTS --prefix="$SAGE_LOCAL"
+if [ $? -ne 0 ]; then
+   echo >&2 "Error configuring csdp."
+   exit 1
+fi
+
+echo "Building csdp..."
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building csdp."
+    exit 1
+fi
+
+echo "Installing csdp..."
+$MAKE install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing csdp."
+    exit 1
+fi
+

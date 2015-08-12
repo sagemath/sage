@@ -61,7 +61,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-
+import six
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.misc.cachefunc import cached_method
@@ -108,8 +108,8 @@ class Braid(FinitelyPresentedGroupElement):
         """
         if self.Tietze()==other.Tietze():
             return 0
-        nfself = map(lambda i: i.Tietze(), self.left_normal_form())
-        nfother = map(lambda i: i.Tietze(), other.left_normal_form())
+        nfself = [i.Tietze() for i in self.left_normal_form()]
+        nfother = [i.Tietze() for i in other.left_normal_form()]
         return cmp(nfself, nfother)
 
     __cmp__ = _cmp_
@@ -611,7 +611,7 @@ class Braid(FinitelyPresentedGroupElement):
 
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
         T = TropicalSemiring(IntegerRing())
-        return map(T, coord)
+        return [T(_) for _ in coord]
 
     @cached_method
     def left_normal_form(self):
@@ -641,7 +641,7 @@ class Braid(FinitelyPresentedGroupElement):
         delta = Permutation([n-i for i in range(n)])
         P = self.parent()
         return tuple( [P._permutation_braid(delta).__pow__(a)] +
-                      map(lambda i:P._permutation_braid(i), l) )
+                      [P._permutation_braid(i) for i in l] )
 
     def _left_normal_form_perm_(self):
         """
@@ -679,7 +679,7 @@ class Braid(FinitelyPresentedGroupElement):
                 form.append(Permutation((i, i+1)))
             else:
                 delta = delta+1
-                form = map(lambda a: Delta*a*Delta, form)
+                form = [Delta*a*Delta for a in form]
                 form.append(Delta*Permutation((-i, -i+1)))
         i = j = 0
         while j<len(form):
@@ -1197,7 +1197,7 @@ def BraidGroup(n=None, names='s'):
             n = None
     # derive n from counting names
     if n is None:
-        if isinstance(names, basestring):
+        if isinstance(names, six.string_types):
             n = len(names.split(','))
         else:
             names = list(names)

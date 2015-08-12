@@ -2,7 +2,8 @@
 Miscellaneous module-related functions.
 
 AUTHORS:
-    -- William Stein (2007-11-18)
+
+- William Stein (2007-11-18)
 """
 
 ####################################################################################
@@ -35,7 +36,7 @@ def gram_schmidt(B):
         could be.  Instead, see :meth:`sage.matrix.matrix2.Matrix2.gram_schmidt`
         which is safer and more general-purpose.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: B = [vector([1,2,1/5]), vector([1,2,3]), vector([-1,0,0])]
         sage: from sage.modules.misc import gram_schmidt

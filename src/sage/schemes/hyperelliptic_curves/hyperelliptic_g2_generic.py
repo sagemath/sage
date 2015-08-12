@@ -1,3 +1,6 @@
+"""
+Hyperelliptic curves of genus 2 over a general ring
+"""
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -6,14 +9,20 @@
 
 import hyperelliptic_generic
 import jacobian_g2
-
 import invariants
 
 
 class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_generic):
     def is_odd_degree(self):
         """
-        Returns True if the curve is an odd degree model.
+        Return ``True`` if the curve is an odd degree model.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^5 - x^4 + 3
+            sage: HyperellipticCurve(f).is_odd_degree()
+            True
         """
         f, h = self.hyperelliptic_polynomials()
         df = f.degree()
@@ -27,13 +36,31 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
             return (c0**2 + 4*a0) == 0
 
     def jacobian(self):
+        """
+        Return the Jacobian of the hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^5 - x^4 + 3
+            sage: HyperellipticCurve(f).jacobian()
+            Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - x^4 + 3
+        """
         return jacobian_g2.HyperellipticJacobian_g2(self)
 
     def kummer_morphism(self):
         """
-        Returns the morphism of an odd degree hyperelliptic curve to the Kummer
-        surface of its Jacobian.  (This could be extended to an even degree model
-        if a prescribed embedding in its Jacobian is fixed.)
+        Return the morphism of an odd degree hyperelliptic curve to the Kummer
+        surface of its Jacobian.
+
+        This could be extended to an even degree model
+        if a prescribed embedding in its Jacobian is fixed.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^5 - x^4 + 3
+            sage: HyperellipticCurve(f).kummer_morphism()  # not tested
         """
         try:
             return self._kummer_morphism
@@ -49,9 +76,9 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         r"""
         Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
 
-        SEEALSO::
+        .. SEEALSO::
 
-        .. sage.schemes.hyperelliptic_curves.invariants
+            :meth:`sage.schemes.hyperelliptic_curves.invariants`
 
         EXAMPLES::
 
@@ -85,9 +112,9 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         r"""
         Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
 
-        SEEALSO::
+        .. SEEALSO::
 
-        .. sage.schemes.hyperelliptic_curves.invariants
+            :meth:`sage.schemes.hyperelliptic_curves.invariants`
 
         EXAMPLES::
 
@@ -136,9 +163,9 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         r"""
         Return the three absolute Igusa invariants used by Kohel [K]_.
 
-        SEEALSO::
+        .. SEEALSO::
 
-        .. sage.schemes.hyperelliptic_curves.invariants
+            :meth:`sage.schemes.hyperelliptic_curves.invariants`
 
         EXAMPLES::
 
@@ -157,9 +184,9 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         r"""
         Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
 
-        SEEALSO::
+        .. SEEALSO::
 
-        .. sage.schemes.hyperelliptic_curves.invariants
+            :meth:`sage.schemes.hyperelliptic_curves.invariants`
 
         EXAMPLES::
 
@@ -193,9 +220,9 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         r"""
         Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
 
-        SEEALSO::
+        .. SEEALSO::
 
-        .. sage.schemes.hyperelliptic_curves.invariants
+            :meth:`sage.schemes.hyperelliptic_curves.invariants`
 
         EXAMPLES::
 
@@ -245,9 +272,9 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
         r"""
         Return the three absolute Igusa invariants used by Kohel [K]_.
 
-        SEEALSO::
+        .. SEEALSO::
 
-        .. sage.schemes.hyperelliptic_curves.invariants
+            :meth:`sage.schemes.hyperelliptic_curves.invariants`
 
         EXAMPLES::
 

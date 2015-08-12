@@ -554,7 +554,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima'):
     An example of this summation with Giac::
 
         sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm = 'giac')           # optional - giac
-        -(pi*e^(-2*pi) - pi*e^(2*pi))/(e^(-2*pi) + e^(2*pi) - 2)
+        (pi*e^(2*pi) - pi*e^(-2*pi))/(e^(2*pi) + e^(-2*pi) - 2)
 
     Use Maple as a backend for summation::
 
@@ -889,24 +889,16 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         sage: f = a.minpoly(); f
         x^8 - 40*x^6 + 352*x^4 - 960*x^2 + 576
         sage: f(a)
-        ((((sqrt(5) + sqrt(3) + sqrt(2))^2 - 40)*(sqrt(5) + sqrt(3) + sqrt(2))^2 + 352)*(sqrt(5) + sqrt(3) + sqrt(2))^2 - 960)*(sqrt(5) + sqrt(3) + sqrt(2))^2 + 576
+        (sqrt(5) + sqrt(3) + sqrt(2))^8 - 40*(sqrt(5) + sqrt(3) + sqrt(2))^6 + 352*(sqrt(5) + sqrt(3) + sqrt(2))^4 - 960*(sqrt(5) + sqrt(3) + sqrt(2))^2 + 576
         sage: f(a).expand()
         0
 
-    Here we show use of the ``epsilon`` parameter. That
-    this result is actually exact can be shown using the addition
-    formula for sin, but maxima is unable to see that.
-
     ::
 
-        sage: a = sin(pi/5)
-        sage: a.minpoly(algorithm='numerical')
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: Could not prove minimal polynomial x^4 - 5/4*x^2 + 5/16 (epsilon 0.00000000000000e-1)
-        sage: f = a.minpoly(algorithm='numerical', epsilon=1e-100); f
-        x^4 - 5/4*x^2 + 5/16
-        sage: f(a).numerical_approx(100)
+        sage: a = sin(pi/7)
+        sage: f = a.minpoly(algorithm='numerical'); f
+        x^6 - 7/4*x^4 + 7/8*x^2 - 7/64
+        sage: f(a).horner(a).numerical_approx(100)
         0.00000000000000000000000000000
 
     The degree must be high enough (default tops out at 24).
@@ -921,15 +913,12 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         sage: a.minpoly(algorithm='numerical', bits=100, degree=10)
         x^4 - 10*x^2 + 1
 
-    There is a difference between algorithm='algebraic' and
-    algorithm='numerical'::
+    ::
 
         sage: cos(pi/33).minpoly(algorithm='algebraic')
         x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5 - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024
         sage: cos(pi/33).minpoly(algorithm='numerical')
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: Could not prove minimal polynomial x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5 - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024 (epsilon ...)
+        x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5 - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024
 
     Sometimes it fails, as it must given that some numbers aren't algebraic::
 
@@ -1843,7 +1832,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     cursor = 0
     l = []
     for m in maxima_var.finditer(s):
-        if symtable.has_key(m.group(0)):
+        if m.group(0) in symtable:
             l.append(s[cursor:m.start()])
             l.append(symtable.get(m.group(0)))
             cursor = m.end()

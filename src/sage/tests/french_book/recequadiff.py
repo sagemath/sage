@@ -104,7 +104,7 @@ Sage example in ./recequadiff.tex, line 356::
 
 Sage example in ./recequadiff.tex, line 367::
 
-  sage: solve(ed, y)[0].subs_expr(_C==5).rhs()
+  sage: solve(ed, y)[0].subs(_C==5).rhs()
   Traceback (most recent call last):
   ...
   NameError: name '_C' is not defined
@@ -117,19 +117,19 @@ Sage example in ./recequadiff.tex, line 377::
 Sage example in ./recequadiff.tex, line 384::
 
   sage: c = ed.variables()[0]
-  sage: solve(ed, y)[0].subs_expr(c == 5).rhs()
+  sage: solve(ed, y)[0].subs(c == 5).rhs()
   e^(-sqrt(-2*cos(x) + 10))
 
 Sage example in ./recequadiff.tex, line 396::
 
-  sage: plot(solve(ed, y)[0].subs_expr(c == 2).rhs(), x, -3, 3)
+  sage: plot(solve(ed, y)[0].subs(c == 2).rhs(), x, -3, 3)
   Graphics object consisting of 1 graphics primitive
 
 Sage example in ./recequadiff.tex, line 408::
 
   sage: P = Graphics()
   sage: for k in range(1,20,2):
-  ...       P += plot(solve(ed, y)[0].subs_expr(c==1+k/4).rhs(), x, -3, 3)
+  ...       P += plot(solve(ed, y)[0].subs(c==1+k/4).rhs(), x, -3, 3)
   sage: P
   Graphics object consisting of 11 graphics primitives
 
@@ -138,7 +138,7 @@ Sage example in ./recequadiff.tex, line 426::
   sage: P = Graphics()
   sage: for j in [0,1]:
   ...       for k in range(1,10,2):
-  ...           f = solve(ed,y)[j].subs_expr(c==2+0.25*k).rhs()
+  ...           f = solve(ed,y)[j].subs(c==2+0.25*k).rhs()
   ...           P += plot(f, x, -3, 3)
   sage: P
   Graphics object consisting of 10 graphics primitives
@@ -180,7 +180,7 @@ Sage example in ./recequadiff.tex, line 535::
 
   sage: P = Graphics()
   sage: for k in range(-19,19,2):
-  ...       P += plot(y(x).subs_expr(c == 1/k), x, 0, 3)
+  ...       P += plot(y(x).subs(c == 1/k), x, 0, 3)
   sage: P
   Graphics object consisting of 19 graphics primitives
 

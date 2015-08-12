@@ -48,7 +48,10 @@ and library interfaces to Maxima.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import os, re, sys, subprocess
+import os
+import re
+import sys
+import subprocess
 
 from sage.env import DOT_SAGE
 COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj'%DOT_SAGE
@@ -793,8 +796,8 @@ class MaximaAbstract(Interface):
 
         Here is a torus::
 
-            sage: _ = maxima.eval("expr_1: cos(y)*(10.0+6*cos(x)); expr_2: sin(y)*(10.0+6*cos(x)); expr_3: -6*sin(x);")  # optional
-            sage: maxima.plot3d_parametric(["expr_1","expr_2","expr_3"], ["x","y"],[0,6],[0,6])   # not tested
+            sage: _ = maxima.eval("expr_1: cos(y)*(10.0+6*cos(x)); expr_2: sin(y)*(10.0+6*cos(x)); expr_3: -6*sin(x);")
+            sage: maxima.plot3d_parametric(["expr_1","expr_2","expr_3"], ["x","y"],[0,6],[0,6])  # not tested
 
         Here is a Mobius strip::
 
@@ -961,18 +964,19 @@ class MaximaAbstract(Interface):
             sage: u.parent()
             Number Field in a with defining polynomial x^2 - 13
         """
-        from sage.rings.all import QuadraticField, Integer
+        from sage.rings.all import Integer
+        from sage.rings.number_field.number_field import QuadraticField
         # Take square-free part so sqrt(n) doesn't get simplified
         # further by maxima
         # (The original version of this function would yield wrong answers if
         # n is not squarefree.)
         n = Integer(n).squarefree_part()
         if n < 1:
-            raise ValueError("n (=%s) must be >= 1"%n)
-        s = repr(self('qunit(%s)'%n)).lower()
+            raise ValueError("n (=%s) must be >= 1" % n)
+        s = repr(self('qunit(%s)' % n)).lower()
         r = re.compile('sqrt\(.*\)')
-        s = r.sub('a', s)
         a = QuadraticField(n, 'a').gen()
+        s = r.sub('a', s)
         return eval(s)
 
     def plot_list(self, ptsx, ptsy, options=None):
@@ -1210,7 +1214,7 @@ class MaximaAbstractElement(InterfaceElement):
             [  1   y y^2]
             [  1 1/2 1/4]
 
-        Check if #7661 is fixed::
+        Check if :trac:`7661` is fixed::
 
             sage: var('delta')
             delta

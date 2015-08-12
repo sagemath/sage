@@ -453,6 +453,37 @@ def BubbleSortGraph(n):
         d[''.join(v)] = tmp_dict
     return Graph(d, name="Bubble sort")
 
+def chang_graphs():
+    r"""
+    Return the three Chang graphs.
+
+    Three of the four strongly regular graphs of parameters `(28,12,6,4)` are
+    called the Chang graphs. The fourth is the line graph of `K_8`. For more
+    information about the Chang graphs, see :wikipedia:`Chang_graphs` or
+    http://www.win.tue.nl/~aeb/graphs/Chang.html.
+
+    EXAMPLES::
+
+        sage: chang_graphs = graphs.chang_graphs()
+        sage: four_srg = chang_graphs + [graphs.CompleteGraph(8).line_graph()]
+        sage: for g in four_srg:
+        ....:     print g.is_strongly_regular(parameters=True)
+        (28, 12, 6, 4)
+        (28, 12, 6, 4)
+        (28, 12, 6, 4)
+        (28, 12, 6, 4)
+        sage: from itertools import combinations
+        sage: for g1,g2 in combinations(four_srg,2):
+        ....:     assert not g1.is_isomorphic(g2)
+    """
+    g1 = Graph("[}~~EebhkrRb_~SoLOIiAZ?LBBxDb?bQcggjHKEwoZFAaiZ?Yf[?dxb@@tdWGkwn",
+               loops=False, multiedges=False)
+    g2 = Graph("[~z^UipkkZPr_~Y_LOIiATOLBBxPR@`acoojBBSoWXTaabN?Yts?Yji_QyioClXZ",
+               loops=False, multiedges=False)
+    g3 = Graph("[~~vVMWdKFpV`^UGIaIERQ`\DBxpA@g`CbGRI`AxICNaFM[?fM\?Ytj@CxrGGlYt",
+               loops=False, multiedges=False)
+    return [g1,g2,g3]
+
 def CirculantGraph(n, adjacency):
     r"""
     Returns a circulant graph with n nodes.
@@ -1484,7 +1515,8 @@ def PaleyGraph(q):
     """
     from sage.rings.finite_rings.integer_mod import mod
     from sage.rings.finite_rings.constructor import FiniteField
-    assert q.is_prime_power(), "Parameter q must be a prime power"
+    from sage.rings.arith import is_prime_power
+    assert is_prime_power(q), "Parameter q must be a prime power"
     assert mod(q,4)==1, "Parameter q must be congruent to 1 mod 4"
     g = Graph([FiniteField(q,'a'), lambda i,j: (i-j).is_square()],
     loops=False, name = "Paley graph with parameter %d"%q)
@@ -1933,6 +1965,91 @@ def petersen_family(generate=False):
     return [Graph(x) for x in l]
 
 
+def SierpinskiGasketGraph(n):
+    """
+    Return the Sierpinski Gasket graph of generation `n`.
+
+    All vertices but 3 have valence 4.
+
+    INPUT:
+
+    - `n` -- an integer
+
+    OUTPUT:
+
+    a graph `S_n` with `3 (3^{n-1}+1)/2` vertices and
+    `3^n` edges, closely related to the famous Sierpinski triangle
+    fractal.
+
+    All these graphs have a triangular shape, and three special
+    vertices at top, bottom left and bottom right. These are the only
+    vertices of valence 2, all the other ones having valence 4.
+
+    The graph `S_1` (generation `1`) is a triangle.
+
+    The graph `S_{n+1}` is obtained from the disjoint union of
+    three copies A,B,C of `S_n` by identifying pairs of vertices:
+    the top vertex of A with the bottom left vertex of B,
+    the bottom right vertex of B with the top vertex of C,
+    and the bottom left vertex of C with the bottom right vertex of A.
+
+    .. PLOT::
+
+        sphinx_plot(graphs.SierpinskiGasketGraph(4).plot(vertex_labels=False))
+
+
+    .. SEEALSO::
+
+        There is another familly of graphs called Sierpinski graphs,
+        where all vertices but 3 have valence 3. They are available using
+        ``graphs.HanoiTowerGraph(3, n)``.
+
+    EXAMPLES::
+
+        sage: s4 = graphs.SierpinskiGasketGraph(4); s4
+        Graph on 42 vertices
+        sage: s4.size()
+        81
+        sage: s4.degree_histogram()
+        [0, 0, 3, 0, 39]
+        sage: s4.is_hamiltonian()
+        True
+
+    REFERENCES:
+
+    .. [LLWC] Chien-Hung Lin, Jia-Jie Liu, Yue-Li Wang, William Chung-Kung Yen,
+       *The Hub Number of Sierpinski-Like Graphs*, Theory Comput Syst (2011),
+       vol 49, :doi:`10.1007/s00224-010-9286-3`
+    """
+    from sage.modules.free_module_element import vector
+    from sage.rings.rational_field import QQ
+
+    if n <= 0:
+        raise ValueError('n should be at least 1')
+
+    def next_step(triangle_list):
+        # compute the next subdivision
+        resu = []
+        for a, b, c in triangle_list:
+            ab = (a + b) / 2
+            bc = (b + c) / 2
+            ac = (a + c) / 2
+            resu += [(a, ab, ac), (ab, b, bc), (ac, bc, c)]
+        return resu
+
+    tri_list = [list(vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)])]
+    for k in range(n - 1):
+        tri_list = next_step(tri_list)
+    dg = Graph()
+    dg.add_edges([(tuple(a), tuple(b)) for a, b, c in tri_list])
+    dg.add_edges([(tuple(b), tuple(c)) for a, b, c in tri_list])
+    dg.add_edges([(tuple(c), tuple(a)) for a, b, c in tri_list])
+    dg.set_pos({(x, y): (x + y / 2, y * 3 / 4)
+                for (x, y) in dg.vertices()})
+    dg.relabel()
+    return dg
+
+
 def WheelGraph(n):
     """
     Returns a Wheel graph with n nodes.
@@ -2185,7 +2302,7 @@ def SymplecticGraph(d,q):
 
     V = VectorSpace(F,d)
     PV = list(ProjectiveSpace(d-1,F))
-    G = Graph([map(tuple,PV), lambda x,y:V(x)*(M*V(y)) == 0], loops = False)
+    G = Graph([[tuple(_) for _ in PV], lambda x,y:V(x)*(M*V(y)) == 0], loops = False)
     G.name("Symplectic Graph Sp("+str(d)+","+str(q)+")")
     G.relabel()
     return G
@@ -2275,7 +2392,7 @@ def AffineOrthogonalPolarGraph(d,q,sign="+"):
     V = list(VectorSpace(F,d))
 
     G = Graph()
-    G.add_vertices(map(tuple,V))
+    G.add_vertices([tuple(_) for _ in V])
     for x,y in combinations(V,2):
         if not (x-y)*M*(x-y):
             G.add_edge(tuple(x),tuple(y))

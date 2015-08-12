@@ -1,6 +1,7 @@
+.. _sec-installation-from-binaries:
 
-Pre-built Binary Install
-========================
+Install from Pre-built Binaries
+===============================
 
 Linux and OS X
 --------------

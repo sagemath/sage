@@ -25,8 +25,6 @@ Maxima, Mathematica, Maple, Octave, and Singular::
     twinprime
     sage: mertens
     mertens
-    sage: brun
-    brun
 
 Support for coercion into the various systems means that if, e.g.,
 you want to create `\pi` in Maxima and Singular, you don't
@@ -44,13 +42,13 @@ type the following::
     3.1415926535897932384626433832795028842   # 64-bit
     sage: pari(pi)
     3.14159265358979
-    sage: kash(pi)                    # optional
+    sage: kash(pi)                    # optional - kash
     3.14159265358979323846264338328
-    sage: mathematica(pi)             # optional
+    sage: mathematica(pi)             # optional - mathematica
     Pi
-    sage: maple(pi)                   # optional
+    sage: maple(pi)                   # optional - maple
     Pi
-    sage: octave(pi)                  # optional
+    sage: octave(pi)                  # optional - octave
     3.14159
 
 Arithmetic operations with constants also yield constants, which
@@ -67,7 +65,7 @@ can be coerced into other systems or evaluated.
     sage: gp(a)
     5.316218116357029426750873360              # 32-bit
     5.3162181163570294267508733603616328824    # 64-bit
-    sage: print mathematica(a)                     # optional
+    sage: print mathematica(a)                     # optional - mathematica
      4 E
      --- + Pi
       5
@@ -1079,9 +1077,9 @@ class Khinchin(Constant):
         2.6854520010653062
         sage: khinchin.n(digits=60)
         2.68545200106530644530971483548179569382038229399446295305115
-        sage: m = mathematica(khinchin); m             # optional
+        sage: m = mathematica(khinchin); m             # optional - mathematica
         Khinchin
-        sage: m.N(200)                                 # optional
+        sage: m.N(200)                                 # optional - mathematica
         2.68545200106530644530971483548179569382038229399446295305115234555721885953715200280114117493184769799515346590528809008289767771641096305179253348325966838185231542133211949962603932852204481940961807          # 32-bit
         2.6854520010653064453097148354817956938203822939944629530511523455572188595371520028011411749318476979951534659052880900828976777164109630517925334832596683818523154213321194996260393285220448194096181                # 64-bit
     """
@@ -1271,113 +1269,3 @@ class Glaisher(Constant):
 
 
 glaisher = Glaisher().expression()
-
-
-###############################
-# Limited precision constants #
-###############################
-
-# NOTE: LimitedPrecisionConstant is an *abstract base class*.  It is
-# not instantiated.  It doesn't make sense to pickle and unpickle
-# this, so there is no loads(dumps(...)) doctest below.
-
-class LimitedPrecisionConstant(Constant):
-    def __init__(self, name, value, **kwds):
-        """
-        A class for constants that are only known to a limited
-        precision.
-
-        EXAMPLES::
-
-            sage: from sage.symbolic.constants import LimitedPrecisionConstant
-            sage: a = LimitedPrecisionConstant('a', '1.234567891011121314').expression(); a
-            a
-            sage: RDF(a)
-            1.2345678910111213
-            sage: RealField(200)(a)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: a is only available up to 59 bits
-        """
-        self._value = value
-        self._bits = len(self._value)*3-1 #FIXME
-        Constant.__init__(self, name, **kwds)
-
-    def _mpfr_(self, R):
-        """
-        EXAMPLES::
-
-            sage: RealField(41)(brun)
-            1.90216058310
-            sage: RealField(20000)(brun)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: brun is only available up to 41 bits
-        """
-        if R.precision() <= self._bits:
-            return R(self._value)
-        raise NotImplementedError("%s is only available up to %s bits"%(self.name(), self._bits))
-
-    def _real_double_(self, R):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.constants import LimitedPrecisionConstant
-            sage: a = LimitedPrecisionConstant('a', '1.234567891011121314').expression()
-            sage: RDF(a)
-            1.2345678910111213
-        """
-        if R.precision() <= self._bits:
-            return R(self._value)
-        raise NotImplementedError("%s is only available up to %s bits"%(self.name(), self._bits))
-
-    def __float__(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.constants import LimitedPrecisionConstant
-            sage: a = LimitedPrecisionConstant('a', '1.234567891011121314').expression()
-            sage: float(a)
-            1.2345678910111213
-
-        """
-        if self._bits < 53:
-            raise NotImplementedError("%s is only available up to %s bits"%(self.name(), self._bits))
-        return float(self._value)
-
-class Brun(LimitedPrecisionConstant):
-    """
-    Brun's constant is the sum of reciprocals of odd twin primes.
-
-    It is not known to very high precision; calculating the number
-    using twin primes up to `10^{16}` (Sebah 2002) gives the
-    number `1.9021605831040`.
-
-    EXAMPLES::
-
-        sage: float(brun)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: brun is only available up to 41 bits
-        sage: R = RealField(41); R
-        Real Field with 41 bits of precision
-        sage: R(brun)
-        1.90216058310
-    """
-    def __init__(self, name='brun'):
-        """
-        EXAMPLES::
-
-            sage: loads(dumps(brun))
-            brun
-        """
-        conversions = dict(maxima='brun')
-
-        # digits come from Sloane's tables at http://oeis.org/classic/table?a=65421&fmt=0
-        value = "1.902160583104"
-
-        LimitedPrecisionConstant.__init__(self, name, value,
-                                          conversions=conversions,
-                                          domain='positive')
-
-brun = Brun().expression()

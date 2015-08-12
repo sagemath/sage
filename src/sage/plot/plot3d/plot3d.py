@@ -273,7 +273,7 @@ class _Coordinates(object):
                 }})""".format(x=params[0], y=params[1])
                 return eval(ll,dict(t=t, func=func, dep_var_dummy=dep_var_dummy,
                                     indep_var_dummies=indep_var_dummies))
-            return map(subs_func, transformation)
+            return [subs_func(_) for _ in transformation]
 
     def __repr__(self):
         """

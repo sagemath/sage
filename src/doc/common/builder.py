@@ -738,7 +738,7 @@ class ReferenceSubBuilder(DocBuilder):
         file = open(self.cache_filename(), 'rb')
         try:
             cache = cPickle.load(file)
-        except StandardError:
+        except Exception:
             logger.debug("Cache file '%s' is corrupted; ignoring it..."% filename)
             cache = {}
         else:
@@ -1582,7 +1582,7 @@ if __name__ == '__main__':
     except ValueError:
         help_message_short(parser=parser, error=True)
         sys.exit(1)
-    delete_empty_directories(SAGE_DOC)
+    delete_empty_directories(SAGE_DOC, verbose=False)
 
     # Set up module-wide logging.
     logger = setup_logger(options.verbose, options.color)
@@ -1627,4 +1627,6 @@ if __name__ == '__main__':
     except Exception:
         print_build_error()
         raise
-        
+
+    # Clean up empty directories.
+    delete_empty_directories(SAGE_DOC, verbose=False)

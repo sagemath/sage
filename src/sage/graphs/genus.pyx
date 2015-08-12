@@ -30,9 +30,14 @@ described throughout the file.
 #*****************************************************************************
 #         Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
 #
-# Distributed under the terms of the GNU General Public License (GPL v2+)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from libc.string cimport memcpy
 
 cimport sage.combinat.permutation_cython
 
@@ -43,7 +48,6 @@ from sage.graphs.graph import Graph
 
 
 include "sage/ext/stdsage.pxi"
-include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 
 

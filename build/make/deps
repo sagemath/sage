@@ -1,0 +1,234 @@
+###############################################################################
+# This file ($SAGE_ROOT/build/make/deps) will be copied into
+# $SAGE_ROOT/build/make/Makefile by $SAGE_ROOT/build/make/install
+###############################################################################
+
+# Do not put an explicit path for sage-spkg here, it will be found in $PATH.
+SAGE_SPKG = sage-spkg -f
+PIPE = $(SAGE_ROOT)/build/make/pipestatus
+STARTED = $(SAGE_LOCAL)/etc/sage-started.txt
+
+# Tell make not to look for files with these names:
+.PHONY: all all-sage all-toolchain all-build start \
+	base toolchain toolchain-deps sagelib \
+	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
+	doc-clean clean lib-clean build-clean
+
+# Build everything and start Sage.
+# Note that we put the "doc" target first in the rule below because
+# the doc build takes the most time and should be started as soon as
+# possible.
+all: all-toolchain
+	$(MAKE) doc all-sage
+	$(MAKE) '$(STARTED)'
+
+# Build everything except the documentation
+all-build: all-toolchain
+	$(MAKE) all-sage
+
+
+# Make the 4 preliminary build phases:
+# prereq, base, toolchain, toolchain-deps.
+# During the toolchain build, we export SAGE_BUILD_TOOLCHAIN=yes
+# such that packages can do different things when they are built
+# as prerequisite of GCC.
+all-toolchain:
+	$(MAKE) $(INST)/prereq
+	$(MAKE) base
+	env SAGE_BUILD_TOOLCHAIN=yes $(MAKE) toolchain
+	$(MAKE) toolchain-deps
+
+# All targets except for the base packages
+all-sage: \
+		sagelib \
+		$(STANDARD_PACKAGES) \
+		$(OPTIONAL_INSTALLED_PACKAGES) \
+		$(EXTCODE) \
+		$(SCRIPTS)
+
+# TOOLCHAIN consists of dependencies determined by build/make/install,
+# including for example the GCC package.
+toolchain: $(TOOLCHAIN)
+
+# Build all packages that GCC links against serially, otherwise this
+# leads to race conditions where some library which is used by GCC gets
+# reinstalled. Since system GCCs might use Sage's libraries, we do this
+# unconditionally. We still use the dependency checking from $(MAKE),
+# so this will not trigger useless rebuilds.
+# See #14168 and #14232.
+toolchain-deps:
+	$(MAKE) $(INST)/$(ZLIB)
+	$(MAKE) $(INST)/$(SAGE_MP_LIBRARY)
+	$(MAKE) $(INST)/$(MPFR)
+	$(MAKE) $(INST)/$(MPC)
+	$(MAKE) $(INST)/$(PPL)
+
+# Everything needed to start up Sage using "./sage".  Of course, not
+# every part of Sage will work.  It does not include Maxima for example.
+SAGERUNTIME = sagelib $(SCRIPTS) $(INST)/$(IPYTHON) $(INST)/$(PEXPECT)
+
+
+# Start Sage at least once to check that it works
+# (i.e. when we just installed Sage for the first time).
+start: all-build
+	$(MAKE) '$(STARTED)'
+
+# We make this depend on all standard packages because running
+# sage-starts runs sage-location, which should be run after installing
+# any package.
+$(STARTED): $(STANDARD_PACKAGES)
+	"$(SAGE_LOCAL)/bin/sage-starts"
+
+
+###############################################################################
+# Building the base system
+#
+# This consists of packages which are required for the Sage build system.
+###############################################################################
+base: $(INST)/$(BZIP2) $(INST)/$(PATCH) $(INST)/$(PKGCONF)
+
+$(INST)/prereq: ../../configure
+	@cd ../..; rm -f config.log; ln -s logs/pkgs/config.log config.log; \
+	./configure $$PREREQ_OPTIONS || ( \
+		if [ "x$$SAGE_PORT" = x ]; then \
+			echo "If you would like to try to build Sage anyway (to help porting),"; \
+			echo "export the variable 'SAGE_PORT' to something non-empty."; \
+			exit 1; \
+		else \
+			echo "Since 'SAGE_PORT' is set, we will try to build anyway."; \
+		fi; )
+	touch $@
+
+###############################################################################
+# Building normal packages
+###############################################################################
+
+# List all *build-time* dependencies of the Sage library.  These are,
+# on the one hand, programs needed for the build/install process of the
+# Sage library (e.g. CYTHON, JINJA2), and on the other hand all
+# dependencies for Cython files (e.g. PARI, NTL, SAGE_MP_LIBRARY).
+sagelib: \
+		$(INST)/$(ATLAS) \
+		$(INST)/$(CEPHES) \
+		$(INST)/$(CLIQUER) \
+		$(INST)/$(CYTHON) \
+		$(INST)/$(ECL) \
+		$(INST)/$(ECLIB) \
+		$(INST)/$(ECM) \
+		$(INST)/$(FLINT) \
+		$(INST)/$(LIBFPLLL) \
+		$(INST)/$(LIBGD) \
+		$(INST)/$(GIVARO) \
+		$(INST)/$(GLPK) \
+		$(INST)/$(GSL) \
+		$(INST)/$(IML) \
+		$(INST)/$(JINJA2) \
+		$(INST)/$(LCALC) \
+		$(INST)/$(LRCALC) \
+		$(INST)/$(LIBGAP) \
+		$(INST)/$(LIBPNG) \
+		$(INST)/$(LINBOX) \
+		$(INST)/$(M4RI) \
+		$(INST)/$(M4RIE) \
+		$(INST)/$(MPC) \
+		$(INST)/$(MPFI) \
+		$(INST)/$(MPFR) \
+		$(INST)/$(SAGE_MP_LIBRARY) \
+		$(INST)/$(NTL) \
+		$(INST)/$(NUMPY) \
+		$(INST)/$(PARI) \
+		$(INST)/$(PLANARITY) \
+		$(INST)/$(POLYBORI) \
+		$(INST)/$(PPL) \
+		$(INST)/$(PYNAC) \
+		$(INST)/$(PYTHON) \
+		$(INST)/$(RATPOINTS) \
+		$(INST)/$(READLINE) \
+		$(INST)/$(RW) \
+		$(INST)/$(SINGULAR) \
+		$(INST)/$(SIX) \
+		$(INST)/$(SYMMETRICA) \
+		$(INST)/$(ZN_POLY)
+	if [ -z "$$SAGE_INSTALL_FETCH_ONLY" ]; then \
+		cd $(SAGE_SRC) && source bin/sage-env && \
+		$(PIPE) 'time $(MAKE) sage 2>&1' 'tee -a $(SAGE_LOGS)/sage-$(SAGE_VERSION).log'; \
+	fi
+
+
+###############################################################################
+# Building scripts and extcode
+###############################################################################
+
+# Don't just use "install" since we don't want to change permissions
+$(SAGE_LOCAL)/bin/%: $(SAGE_SRC)/bin/%
+	cp $< $@
+
+# Don't just use "install -D" since we don't want to change permissions.
+# cp won't correctly setup the SAGE_EXTCODE directory structure
+# (unlike install), so we need a mkdir here such that cp can copy into
+# an existing folder.
+$(SAGE_EXTCODE)/%: $(SAGE_SRC)/ext/%
+	@mkdir -p "$(@D)"
+	cp $< $@
+
+
+###############################################################################
+# Building the documentation
+###############################################################################
+
+# You can choose to have the built HTML version of the documentation link to
+# the PDF version. To do so, you need to build both the HTML and PDF versions.
+# To have the HTML version link to the PDF version, do
+#
+# $ ./sage --docbuild all html
+# $ ./sage --docbuild all pdf
+#
+# For more information on the docbuild utility, do
+#
+# $ ./sage --docbuild -H
+
+# Building the documentation has many dependencies, because all
+# documented modules are imported and because we use matplotlib to
+# produce plots.
+DOC_DEPENDENCIES = sagelib $(INST)/$(SPHINX) $(INST)/$(SAGENB) \
+	| $(SAGERUNTIME) $(INST)/$(MAXIMA) $(INST)/$(NETWORKX) \
+	$(INST)/$(SCIPY) $(INST)/$(MATPLOTLIB) $(INST)/$(PILLOW) \
+	$(INST)/$(MATHJAX)
+
+doc: doc-html
+
+doc-html: $(DOC_DEPENDENCIES)
+	cd ../.. && $(PIPE) "./sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+
+# 'doc-html-no-plot': build docs without building the graphics coming
+# from the '.. plot' directive, in case you want to save a few
+# megabytes of disk space. 'doc-clean' is a prerequisite because the
+# presence of graphics is cached in src/doc/output.
+doc-html-no-plot: doc-clean $(DOC_DEPENDENCIES)
+	cd ../.. && $(PIPE) "./sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+
+doc-html-mathjax: $(DOC_DEPENDENCIES)
+	cd ../.. && $(PIPE) "./sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+
+# Keep target 'doc-html-jsmath' for backwards compatibility.
+doc-html-jsmath: doc-html-mathjax
+
+doc-pdf: $(DOC_DEPENDENCIES)
+	cd ../.. && $(PIPE) "./sage --docbuild all pdf $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/docpdf.log"
+
+doc-clean:
+	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
+
+
+###############################################################################
+# Cleaning up
+###############################################################################
+
+clean:
+	@echo "Deleting package build directories..."
+	rm -rf "$(SAGE_LOCAL)/var/tmp/sage/build"
+
+lib-clean:
+	cd "$(SAGE_SRC)" && $(MAKE) clean
+
+build-clean: clean doc-clean lib-clean

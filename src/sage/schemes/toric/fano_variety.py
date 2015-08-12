@@ -1451,7 +1451,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
                     nonstr.append(c)
             F = add_variables(P_Delta.base_ring(), sorted(variables))
             F = get_coercion_model().common_parent(F, *nonstr)
-            coefficients = map(F, coefficients)
+            coefficients = [F(_) for _ in coefficients]
         P_Delta = P_Delta.base_extend(F)
         if len(monomial_points) != len(coefficients):
             raise ValueError("cannot construct equation of the anticanonical"
@@ -1581,7 +1581,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
                         nonstr.append(c)
                 F = add_variables(P_Delta.base_ring(), sorted(variables))
                 F = get_coercion_model().common_parent(F, *nonstr)
-                coefficients[i] = map(F, coefficients[i])
+                coefficients[i] = [F(_) for _ in coefficients[i]]
             P_Delta = P_Delta.base_extend(F)
             if len(monomial_points[i]) != len(coefficients[i]):
                 raise ValueError("cannot construct equation %d of the complete"

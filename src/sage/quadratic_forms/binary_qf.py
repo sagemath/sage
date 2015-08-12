@@ -669,8 +669,7 @@ class BinaryQF(SageObject):
         B = 10
         while True:
             llist = list(Set([self(x,y) for x in srange(-B,B) for y in srange(B)]))
-            llist = [l for l in llist if l.is_prime()]
-            llist.sort()
+            llist = sorted([l for l in llist if l.is_prime()])
             if llist:
                 return llist[0]
             if B >= Bmax:

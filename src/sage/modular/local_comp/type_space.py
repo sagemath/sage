@@ -364,6 +364,15 @@ class TypeSpace(SageObject):
             14
             sage: TypeSpace(g, 7).is_minimal()
             True
+
+        Test that :trac:`13158` is fixed::
+
+            sage: f = Newforms(256,names='a')[0]
+            sage: T = TypeSpace(f,2)
+            sage: g = T.minimal_twist(); g
+            q - a*q^3 + O(q^6)
+            sage: g.level()
+            64
         """
         if self.is_minimal():
             raise ValueError( "Form is already minimal" )
@@ -382,8 +391,9 @@ class TypeSpace(SageObject):
             V = A.submodule(VV, check=False)
 
         D = V.decomposition()[0]
-        if len(D.star_eigenvalues()) == 1:
-            D._set_sign(D.star_eigenvalues()[0])
+        if len(D.star_eigenvalues()) == 2:
+            D = D.sign_submodule(1)
+        D._set_sign(D.star_eigenvalues()[0])
         M = ModularForms(D.group(), D.weight())
         ff = Newform(M, D, names='a')
         return ff
@@ -508,7 +518,7 @@ class TypeSpace(SageObject):
              True
          """
          A = self.t_space.ambient()
-         g = map(ZZ, g)
+         g = [ZZ(_) for _ in g]
          p = self.prime()
          assert g[2] % p == 0
          gg = lift_ramified(g, p, self.u(), self.tame_level())
@@ -575,7 +585,7 @@ class TypeSpace(SageObject):
         gens = self._group_gens()
         gensconj = [[x[0], ainv*x[1], a*x[2], x[3]] for x in gens]
         rgens = [self._rho_s(x) for x in gens]
-        rgensinv = map(operator.inv, rgens)
+        rgensinv = [operator.inv(_) for _ in rgens]
         rgensconj = [self._rho_s(x) for x in gensconj]
 
         rows = []
@@ -655,7 +665,7 @@ class TypeSpace(SageObject):
 
         p = self.prime()
         f = p**self.u()
-        g = map(ZZ, g)
+        g = [ZZ(_) for _ in g]
         d = (g[0]*g[3] - g[2]*g[1])
 
         # g is in S(K_0) (easy case)

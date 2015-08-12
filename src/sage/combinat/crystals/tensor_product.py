@@ -47,6 +47,7 @@ from sage.combinat.tableau import Tableau
 from letters import CrystalOfLetters
 from spins import CrystalOfSpins, CrystalOfSpinsMinus, CrystalOfSpinsPlus
 from sage.misc.flatten import flatten
+from sage.structure.element import get_coercion_model
 
 ##############################################################################
 # Until trunc gets implemented in sage.function.other
@@ -623,7 +624,7 @@ class TensorProductOfCrystals(CrystalOfWords):
          Crystal of generalized Young walls of type ['A', 15, 1],
          Crystal of generalized Young walls of type ['A', 15, 1]]
 
-        sage: La = RootSystem(['A',2,1]).weight_lattice().fundamental_weights()
+        sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
         sage: B = crystals.GeneralizedYoungWalls(2,La[0]+La[1])
         sage: C = crystals.GeneralizedYoungWalls(2,2*La[2])
         sage: D = crystals.GeneralizedYoungWalls(2,3*La[0]+La[2])
@@ -655,12 +656,16 @@ class TensorProductOfCrystals(CrystalOfWords):
 
             sage: C = crystals.Letters(['A',2])
             sage: T = crystals.TensorProduct(C, C)
-            sage: T2 = crystals.TensorProduct(C, C)
+            sage: T2 = crystals.TensorProduct(C, C, cartan_type=['A',2])
             sage: T is T2
             True
             sage: T.category()
             Category of tensor products of classical crystals
 
+            sage: T3 = crystals.TensorProduct(C, C, C)
+            sage: T3p = crystals.TensorProduct(T, C)
+            sage: T3 is T3p
+            True
             sage: B1 = crystals.TensorProduct(T, C)
             sage: B2 = crystals.TensorProduct(C, T)
             sage: B3 = crystals.TensorProduct(C, C, C)
@@ -733,6 +738,11 @@ class TensorProductOfCrystals(CrystalOfWords):
 class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
     """
     Tensor product of crystals with a generating set.
+
+    .. TODO::
+
+        Deprecate this class in favor of using
+        :meth:`~sage.categories.crystals.Crystals.ParentMethods.subcrystal`.
     """
     def __init__(self, crystals, generators, cartan_type):
         """
@@ -769,6 +779,10 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
 class FullTensorProductOfCrystals(TensorProductOfCrystals):
     """
     Full tensor product of crystals.
+
+    .. TODO::
+
+        Merge this into :class:`TensorProductOfCrystals`.
     """
     def __init__(self, crystals, **options):
         """
@@ -843,6 +857,31 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         """
         return self.cartesian_product.cardinality()
 
+    @cached_method
+    def weight_lattice_realization(self):
+        r"""
+        Return the weight lattice realization used to express weights.
+
+        The weight lattice realization is the common parent which all
+        weight lattice realizations of the crystals of ``self`` coerce
+        into.
+
+        EXAMPLES::
+
+            sage: B = crystals.elementary.B(['A',4], 2)
+            sage: B.weight_lattice_realization()
+            Root lattice of the Root system of type ['A', 4]
+            sage: T = crystals.infinity.Tableaux(['A',4])
+            sage: T.weight_lattice_realization()
+            Ambient space of the Root system of type ['A', 4]
+            sage: TP = crystals.TensorProduct(B, T)
+            sage: TP.weight_lattice_realization()
+            Ambient space of the Root system of type ['A', 4]
+        """
+        cm = get_coercion_model()
+        return cm.common_parent(*[crystal.weight_lattice_realization()
+                                  for crystal in self.crystals])
+
 class TensorProductOfCrystalsElement(ImmutableListWithParent):
     r"""
     A class for elements of tensor products of crystals.
@@ -893,7 +932,7 @@ class TensorProductOfCrystalsElement(ImmutableListWithParent):
               3  3  3     2
              -4 -4 -4
         """
-        from sage.misc.ascii_art import ascii_art, AsciiArt
+        from sage.typeset.ascii_art import ascii_art, AsciiArt
         s = ascii_art(self[0])
         s._baseline = s._h // 2
         ret = s
@@ -1032,7 +1071,7 @@ class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         EXAMPLES::
 
-            sage: La = RootSystem(['A',2,1]).weight_lattice().fundamental_weights()
+            sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
             sage: B = crystals.GeneralizedYoungWalls(2,La[0]+La[1])
             sage: T = crystals.TensorProduct(B,B)
             sage: b1 = B.highest_weight_vector().f_string([1,0])
@@ -1089,10 +1128,33 @@ class TensorProductOfCrystalsElement(ImmutableListWithParent):
             sage: t = T(b1, b2)
             sage: [[t._sig(i,k) for k in range(1,len(t)+1)] for i in B.index_set()]
             [[0, -1], [0, 0], [0, 1], [1, 2]]
+
+        TESTS:
+
+        Check that :trac:`18469` is fixed::
+
+            sage: E1 = crystals.elementary.B(['A',2], 1)
+            sage: E2 = crystals.elementary.B(['A',2], 2)
+            sage: T = crystals.TensorProduct(E1, E2)
+            sage: x = T(E1.module_generators[0], E2.module_generators[0]); x
+            [0, 0]
+            sage: [[x._sig(i,k) for k in range(1,3)] for i in T.index_set()]
+            [[-inf, 0], [0, -inf]]
+            sage: x.f(1)
+            [-1, 0]
+            sage: x.e(1)
+            [1, 0]
         """
         if k == 1:
             return self[-1].epsilon(i)
-        return self._sig(i, k-1) + self[-k].epsilon(i) - self[-k+1].phi(i)
+        ep = self[-k].epsilon(i)
+        if ep == float("-inf"):
+            return ep
+
+        P = self[-1].parent().weight_lattice_realization()
+        h = P.simple_coroots()
+        wt = sum(P(self[-j].weight()) for j in range(1, k))
+        return ep - P(wt).scalar(h[i])
 
     def e(self,i):
         r"""
@@ -1137,7 +1199,7 @@ class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         EXAMPLES::
 
-            sage: La = RootSystem(['A',3,1]).weight_lattice().fundamental_weights()
+            sage: La = RootSystem(['A',3,1]).weight_lattice(extended=True).fundamental_weights()
             sage: B = crystals.GeneralizedYoungWalls(3,La[0])
             sage: T = crystals.TensorProduct(B,B,B)
             sage: b1 = B.highest_weight_vector().f_string([0,3])
@@ -1813,8 +1875,7 @@ class CrystalOfTableaux(CrystalOfWords):
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(len(p))])
         if invert:
-            f = lambda x : -x if x == type[1] else x
-            module_generator = map(f, module_generator)
+            module_generator = [(-x if x == type[1] else x) for x in module_generator]
         return self(list=[self.letters(x) for x in module_generator])
 
     def _element_constructor_(self, *args, **options):
@@ -1912,7 +1973,7 @@ class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
                 the_list += col
         else:
             the_list = [i for i in args]
-        TensorProductOfRegularCrystalsElement.__init__(self, parent, map(parent.letters, the_list))
+        TensorProductOfRegularCrystalsElement.__init__(self, parent, [parent.letters(_) for _ in the_list])
 
     def _repr_(self):
         """

@@ -27,37 +27,37 @@ The Macaulay2 interface offers three pieces of functionality:
 
 EXAMPLES::
 
-    sage: print macaulay2('3/5 + 7/11') #optional
+    sage: print macaulay2('3/5 + 7/11') # optional - macaulay2
     68
     --
     55
-    sage: f = macaulay2('f = i -> i^3') #optional
-    sage: f                             #optional
+    sage: f = macaulay2('f = i -> i^3') # optional - macaulay2
+    sage: f                             # optional - macaulay2
     f
-    sage: f(5)                          #optional
+    sage: f(5)                          # optional - macaulay2
     125
 
-    sage: R = macaulay2('ZZ/5[x,y,z]')  #optional
-    sage: print R                       #optional
+    sage: R = macaulay2('ZZ/5[x,y,z]')  # optional - macaulay2
+    sage: print R                       # optional - macaulay2
     ZZ
     --[x..z, Degrees => {3:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]
      5                                                       {GRevLex => {3:1}  }
                                                              {Position => Up    }
-    sage: x = macaulay2('x')            #optional
-    sage: y = macaulay2('y')            #optional
-    sage: print (x+y)^5                 #optional
+    sage: x = macaulay2('x')            # optional - macaulay2
+    sage: y = macaulay2('y')            # optional - macaulay2
+    sage: print (x+y)^5                 # optional - macaulay2
      5    5
     x  + y
-    sage: parent((x+y)^5)               #optional
+    sage: parent((x+y)^5)               # optional - macaulay2
     Macaulay2
 
-    sage: R = macaulay2('QQ[x,y,z,w]')  #optional
-    sage: f = macaulay2('x^4 + 2*x*y^3 + x*y^2*w + x*y*z*w + x*y*w^2 + 2*x*z*w^2 + y^4 + y^3*w + 2*y^2*z*w + z^4 + w^4') #optional
-    sage: print f                       #optional
+    sage: R = macaulay2('QQ[x,y,z,w]')  # optional - macaulay2
+    sage: f = macaulay2('x^4 + 2*x*y^3 + x*y^2*w + x*y*z*w + x*y*w^2 + 2*x*z*w^2 + y^4 + y^3*w + 2*y^2*z*w + z^4 + w^4') # optional - macaulay2
+    sage: print f                       # optional - macaulay2
      4       3    4    4      2     3                2           2         2    4
     x  + 2x*y  + y  + z  + x*y w + y w + x*y*z*w + 2y z*w + x*y*w  + 2x*z*w  + w
-    sage: g = f * macaulay2('x+y^5')    #optional
-    sage: print g.factor()              #optional
+    sage: g = f * macaulay2('x+y^5')    # optional - macaulay2
+    sage: print g.factor()              # optional - macaulay2
       4       3    4    4      2     3                2           2         2    4   5
     (x  + 2x*y  + y  + z  + x*y w + y w + x*y*z*w + 2y z*w + x*y*w  + 2x*z*w  + w )(y  + x)
 
@@ -98,7 +98,8 @@ TODO:
 
 import os
 
-from expect import Expect, ExpectElement, AsciiArtString, ExpectFunction
+from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
+                                    AsciiArtString)
 
 from sage.misc.multireplace import multiple_replace
 
@@ -231,14 +232,14 @@ class Macaulay2(Expect):
             sage: f.write("sage_test = 7;")
             sage: f.close()
             sage: command = macaulay2._read_in_file_command(filename)
-            sage: macaulay2.eval(command)  #optional
-            sage: macaulay2.eval("sage_test")  #optional
+            sage: macaulay2.eval(command)  # optional - macaulay2
+            sage: macaulay2.eval("sage_test")  # optional - macaulay2
             7
             sage: import os
             sage: os.unlink(filename)
             sage: macaulay2._read_in_file_command("test")
             'load "test"'
-            sage: macaulay2(10^10000) == 10^10000  #optional
+            sage: macaulay2(10^10000) == 10^10000  # optional - macaulay2
             True
         """
         return 'load "%s"' % filename
@@ -247,10 +248,10 @@ class Macaulay2(Expect):
         """
         EXAMPLES::
 
-            sage: gb = macaulay2.gb  #optional
-            sage: type(gb)           #optional
+            sage: gb = macaulay2.gb  # optional - macaulay2
+            sage: type(gb)           # optional - macaulay2
             <class 'sage.interfaces.macaulay2.Macaulay2Function'>
-            sage: gb._name           #optional
+            sage: gb._name           # optional - macaulay2
             'gb'
         """
         if attrname[:1] == "_":
@@ -269,7 +270,7 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: macaulay2.eval("2+2") #optional
+            sage: macaulay2.eval("2+2") # optional - macaulay2
             4
         """
         code = code.strip()
@@ -285,7 +286,7 @@ class Macaulay2(Expect):
 
         TEST::
 
-            sage: macaulay2.restart()  # optional
+            sage: macaulay2.restart()  # optional - macaulay2
         """
         # If we allow restart to be called as a function, there will be
         # parasitic output
@@ -297,8 +298,8 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: macaulay2.set("a", "2") #optional
-            sage: macaulay2.get("a")      #optional
+            sage: macaulay2.set("a", "2") # optional - macaulay2
+            sage: macaulay2.get("a")      # optional - macaulay2
             2
         """
         return self.eval("describe %s"%var, strip=True)
@@ -309,8 +310,8 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: macaulay2.set("a", "2")  #optional
-            sage: macaulay2.get("a")       #optional
+            sage: macaulay2.set("a", "2")  # optional - macaulay2
+            sage: macaulay2.get("a")       # optional - macaulay2
             2
         """
         cmd = '%s=%s;'%(var,value)
@@ -403,10 +404,10 @@ class Macaulay2(Expect):
         """
         EXAMPLES::
 
-            sage: R = macaulay2("QQ[x,y]")  #optional
-            sage: x,y = R.gens()            #optional
-            sage: a = (x+y+1)^20            #optional
-            sage: macaulay2.cputime()       #optional random
+            sage: R = macaulay2("QQ[x,y]")  # optional - macaulay2
+            sage: x,y = R.gens()            # optional - macaulay2
+            sage: a = (x+y+1)^20            # optional - macaulay2
+            sage: macaulay2.cputime()       # optional - macaulay2; random
             0.48393700000000001
         """
         _t = float(self.cpuTime().to_sage())
@@ -421,7 +422,7 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: macaulay2.version() #optional
+            sage: macaulay2.version() # optional - macaulay2
             (1, 3, 1)
         """
         s = self.eval("version")
@@ -446,14 +447,14 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: R2 = macaulay2.ring('QQ', '[x, y]'); R2            # optional
+            sage: R2 = macaulay2.ring('QQ', '[x, y]'); R2            # optional - macaulay2
             QQ[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => {MonomialSize => 16}, DegreeRank => 1]
                                                                      {Lex => 2          }
                                                                      {Position => Up    }
-            sage: I = macaulay2.ideal( ('y^2 - x^3', 'x - y') ); I   # optional
+            sage: I = macaulay2.ideal( ('y^2 - x^3', 'x - y') ); I   # optional - macaulay2
                       3    2
             ideal (- x  + y , x - y)
-            sage: J = I^3; J.gb().gens().transpose()                 # optional
+            sage: J = I^3; J.gb().gens().transpose()                 # optional - macaulay2
             {-9} | y9-3y8+3y7-y6             |
             {-7} | xy6-2xy5+xy4-y7+2y6-y5    |
             {-5} | x2y3-x2y2-2xy4+2xy3+y5-y4 |
@@ -489,17 +490,17 @@ class Macaulay2(Expect):
         This is a ring in variables named a through d over the finite field
         of order 7, with graded reverse lex ordering::
 
-            sage: R1 = macaulay2.ring('ZZ/7', '[a..d]', 'GRevLex');  R1  # optional
+            sage: R1 = macaulay2.ring('ZZ/7', '[a..d]', 'GRevLex');  R1  # optional - macaulay2
             ZZ
             --[a..d, Degrees => {4:1}, Heft => {1}, MonomialOrder => {MonomialSize => 16}, DegreeRank => 1]
              7                                                       {GRevLex => {4:1}  }
                                                                      {Position => Up    }
-            sage: R1.char()                                             # optional
+            sage: R1.char()                                             # optional - macaulay2
             7
 
         This is a polynomial ring over the rational numbers::
 
-            sage: R2 = macaulay2.ring('QQ', '[x, y]'); R2               # optional
+            sage: R2 = macaulay2.ring('QQ', '[x, y]'); R2               # optional - macaulay2
             QQ[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => {MonomialSize => 16}, DegreeRank => 1]
                                                                      {Lex => 2          }
                                                                      {Position => Up    }
@@ -515,7 +516,7 @@ class Macaulay2(Expect):
         """
         EXAMPLES::
 
-            sage: macaulay2.help("load")  # optional
+            sage: macaulay2.help("load")  # optional - macaulay2
             load -- read Macaulay2 commands
             *******************************
             ...
@@ -538,13 +539,13 @@ class Macaulay2(Expect):
 
         TESTS::
 
-            sage: names = macaulay2.trait_names() # optional
-            sage: 'ring' in names                 # optional
+            sage: names = macaulay2.trait_names() # optional - macaulay2
+            sage: 'ring' in names                 # optional - macaulay2
             True
-            sage: macaulay2.eval("abcabc = 4")    # optional
+            sage: macaulay2.eval("abcabc = 4")    # optional - macaulay2
             4
-            sage: names = macaulay2.trait_names() # optional
-            sage: "abcabc" in names               # optional
+            sage: names = macaulay2.trait_names() # optional - macaulay2
+            sage: "abcabc" in names               # optional - macaulay2
             True
         """
         # Get all the names from Macaulay2 except numbered outputs like
@@ -566,15 +567,15 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: R = macaulay2("QQ[x,y]")                  #optional
-            sage: P = macaulay2("ZZ/7[symbol x, symbol y]") #optional
-            sage: macaulay2("x").cls()                      #optional
+            sage: R = macaulay2("QQ[x,y]")                  # optional - macaulay2
+            sage: P = macaulay2("ZZ/7[symbol x, symbol y]") # optional - macaulay2
+            sage: macaulay2("x").cls()                      # optional - macaulay2
             ZZ
             --[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]
              7                                                       {GRevLex => {2:1}  }
                                                                      {Position => Up    }
-            sage: macaulay2.use(R)                          #optional
-            sage: macaulay2("x").cls()                      #optional
+            sage: macaulay2.use(R)                          # optional - macaulay2
+            sage: macaulay2("x").cls()                      # optional - macaulay2
             QQ[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]
                                                                      {GRevLex => {2:1}  }
                                                                      {Position => Up    }
@@ -589,10 +590,10 @@ class Macaulay2(Expect):
 
         EXAMPLES::
 
-            sage: l = macaulay2.new_from("MutableList", [1,2,3]) #optional
-            sage: l                                              #optional
+            sage: l = macaulay2.new_from("MutableList", [1,2,3]) # optional - macaulay2
+            sage: l                                              # optional - macaulay2
             MutableList{...3...}
-            sage: list(l)                                        #optional
+            sage: list(l)                                        # optional - macaulay2
             [1, 2, 3]
 
         """
@@ -606,11 +607,11 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: m = macaulay2('matrix {{1,2},{3,4}}') #optional
-            sage: m                                     #optional
+            sage: m = macaulay2('matrix {{1,2},{3,4}}') # optional - macaulay2
+            sage: m                                     # optional - macaulay2
             | 1 2 |
             | 3 4 |
-            sage: latex(m) #optional
+            sage: latex(m) # optional - macaulay2
             \begin{pmatrix}1& {2}\\ {3}& {4}\\ \end{pmatrix}
         """
         s = self.tex().external_string().strip('"').strip('$').replace('\\\\','\\')
@@ -621,8 +622,8 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: l = macaulay2([1,2,3]) #optional
-            sage: list(iter(l))          #optional
+            sage: l = macaulay2([1,2,3]) # optional - macaulay2
+            sage: list(iter(l))          # optional - macaulay2
             [1, 2, 3]
         """
         for i in range(len(self)):  # zero-indexed!
@@ -632,16 +633,16 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: R = macaulay2("QQ[x,y,z]/(x^3-y^3-z^3)") #optional
-            sage: x = macaulay2('x')                       #optional
-            sage: y = macaulay2('y')                       #optional
-            sage: print x+y                                #optional
+            sage: R = macaulay2("QQ[x,y,z]/(x^3-y^3-z^3)") # optional - macaulay2
+            sage: x = macaulay2('x')                       # optional - macaulay2
+            sage: y = macaulay2('y')                       # optional - macaulay2
+            sage: print x+y                                # optional - macaulay2
             x + y
-            sage: print macaulay2("QQ[x,y,z]")             #optional
+            sage: print macaulay2("QQ[x,y,z]")             # optional - macaulay2
             QQ[x..z, Degrees => {3:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]
                                                                      {GRevLex => {3:1}  }
                                                                      {Position => Up    }
-            sage: print macaulay2("QQ[x,y,z]/(x+y+z)")     #optional
+            sage: print macaulay2("QQ[x,y,z]/(x+y+z)")     # optional - macaulay2
             QQ[x, y, z]
             -----------
              x + y + z
@@ -655,8 +656,8 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-           sage: R = macaulay2("QQ[symbol x, symbol y]")  #optional
-           sage: R.external_string()                      #optional
+           sage: R = macaulay2("QQ[symbol x, symbol y]")  # optional - macaulay2
+           sage: R.external_string()                      # optional - macaulay2
            'QQ[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {2:1}, Position => Up}, DegreeRank => 1]'
         """
         P = self._check_valid()
@@ -675,10 +676,10 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: l = macaulay2([1,2,3])  #optional
-            sage: len(l)                  #optional
+            sage: l = macaulay2([1,2,3])  # optional - macaulay2
+            sage: len(l)                  # optional - macaulay2
             3
-            sage: type(_)                 #optional
+            sage: type(_)                 # optional - macaulay2
             <type 'int'>
         """
         self._check_valid()
@@ -688,8 +689,8 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: l = macaulay2([1,2,3])  #optional
-            sage: l[0]                    #optional
+            sage: l = macaulay2([1,2,3])  # optional - macaulay2
+            sage: l[0]                    # optional - macaulay2
             1
         """
         self._check_valid()
@@ -700,9 +701,9 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: l = macaulay2.new_from("MutableList", [1,2,3]) #optional
-            sage: l[0] = 4               #optional
-            sage: list(l)                #optional
+            sage: l = macaulay2.new_from("MutableList", [1,2,3]) # optional - macaulay2
+            sage: l[0] = 4               # optional - macaulay2
+            sage: list(l)                # optional - macaulay2
             [4, 2, 3]
 
         """
@@ -717,11 +718,11 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: R = macaulay2("QQ[x, y]")     #optional
-            sage: x,y = R.gens()                #optional
-            sage: I = macaulay2.ideal(x*y, x+y) #optional
-            sage: gb = macaulay2.gb             #optional
-            sage: gb(I)                         #optional
+            sage: R = macaulay2("QQ[x, y]")     # optional - macaulay2
+            sage: x,y = R.gens()                # optional - macaulay2
+            sage: I = macaulay2.ideal(x*y, x+y) # optional - macaulay2
+            sage: gb = macaulay2.gb             # optional - macaulay2
+            sage: gb(I)                         # optional - macaulay2
             GroebnerBasis[status: done; S-pairs encountered up to degree 1]
         """
         self._check_valid()
@@ -739,22 +740,22 @@ class Macaulay2Element(ExpectElement):
 
         Now make the M2 version of R, so we can coerce elements of R to M2::
 
-            sage: macaulay2(R)                           # optional
+            sage: macaulay2(R)                           # optional - macaulay2
             ZZ
             --[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => {MonomialSize => 16}, DegreeRank => 1]
              7                                                       {GRevLex => {2:1}  }
                                                                      {Position => Up    }
             sage: f = (x^3 + 2*y^2*x)^7; f
             x^21 + 2*x^7*y^14
-            sage: h = macaulay2(f); h                    # optional
+            sage: h = macaulay2(f); h                    # optional - macaulay2
              21     7 14
             x   + 2x y
-            sage: f1 = (x^2 + 2*y*x)                     # optional
-            sage: h1 = macaulay2(f1)                     # optional
-            sage: f2 = (x^3 + 2*y*x)                     # optional
-            sage: h2 = macaulay2(f2)                     # optional
-            sage: u = h // [h1,h2]                       # optional
-            sage: h == u[0]*h1 + u[1]*h2 + (h % [h1,h2]) # optional
+            sage: f1 = (x^2 + 2*y*x)                     # optional - macaulay2
+            sage: h1 = macaulay2(f1)                     # optional - macaulay2
+            sage: f2 = (x^3 + 2*y*x)                     # optional - macaulay2
+            sage: h2 = macaulay2(f2)                     # optional - macaulay2
+            sage: u = h // [h1,h2]                       # optional - macaulay2
+            sage: h == u[0]*h1 + u[1]*h2 + (h % [h1,h2]) # optional - macaulay2
             True
         """
         if isinstance(x, (list, tuple)):
@@ -774,24 +775,24 @@ class Macaulay2Element(ExpectElement):
 
         Now make the M2 version of R, so we can coerce elements of R to M2::
 
-            sage: macaulay2(R)                              # optional
+            sage: macaulay2(R)                              # optional - macaulay2
             ZZ
             --[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => {MonomialSize => 16}, DegreeRank => 1]
              7                                                       {GRevLex => {2:1}  }
                                                                      {Position => Up    }
-            sage: f = (x^3 + 2*y^2*x)^7; f                  # optional
+            sage: f = (x^3 + 2*y^2*x)^7; f                  # optional - macaulay2
             x^21 + 2*x^7*y^14
-            sage: h = macaulay2(f); print h                 # optional
+            sage: h = macaulay2(f); print h                 # optional - macaulay2
              21     7 14
             x   + 2x y
-            sage: f1 = (x^2 + 2*y*x)                        # optional
-            sage: h1 = macaulay2(f1)                        # optional
-            sage: f2 = (x^3 + 2*y*x)                        # optional
-            sage: h2 = macaulay2(f2)                        # optional
-            sage: h % [h1,h2]                               # optional
+            sage: f1 = (x^2 + 2*y*x)                        # optional - macaulay2
+            sage: h1 = macaulay2(f1)                        # optional - macaulay2
+            sage: f2 = (x^3 + 2*y*x)                        # optional - macaulay2
+            sage: h2 = macaulay2(f2)                        # optional - macaulay2
+            sage: h % [h1,h2]                               # optional - macaulay2
             -3x*y
-            sage: u = h // [h1,h2]                          # optional
-            sage: h == u[0]*h1 + u[1]*h2 + (h % [h1,h2])    # optional
+            sage: u = h // [h1,h2]                          # optional - macaulay2
+            sage: h == u[0]*h1 + u[1]*h2 + (h % [h1,h2])    # optional - macaulay2
             True
         """
         if isinstance(x, (list, tuple)):
@@ -805,10 +806,10 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: a = macaulay2(0)  #optional
-            sage: a == 0            #optional
+            sage: a = macaulay2(0)  # optional - macaulay2
+            sage: a == 0            # optional - macaulay2
             True
-            sage: a.__nonzero__()   #optional
+            sage: a.__nonzero__()   # optional - macaulay2
             False
         """
         P = self.parent()
@@ -824,12 +825,12 @@ class Macaulay2Element(ExpectElement):
 
         EXAMPLES::
 
-            sage: R = macaulay2.ring('QQ','(x,y)')               # optional
-            sage: f = macaulay2('x^3 + 3*y^11 + 5')              # optional
-            sage: print f                                        # optional
+            sage: R = macaulay2.ring('QQ','(x,y)')               # optional - macaulay2
+            sage: f = macaulay2('x^3 + 3*y^11 + 5')              # optional - macaulay2
+            sage: print f                                        # optional - macaulay2
              3     11
             x  + 3y   + 5
-            sage: f.sage_polystring()                            # optional
+            sage: f.sage_polystring()                            # optional - macaulay2
             'x**3+3*y**11+5'
         """
         return self.external_string().replace('^','**')
@@ -838,10 +839,10 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: S = macaulay2('QQ[a..d]')                     # optional
-            sage: R = S/macaulay2('a^3+b^3+c^3+d^3')            # optional
-            sage: X = R.Proj()                                  # optional
-            sage: print X.structure_sheaf()                     # optional
+            sage: S = macaulay2('QQ[a..d]')                     # optional - macaulay2
+            sage: R = S/macaulay2('a^3+b^3+c^3+d^3')            # optional - macaulay2
+            sage: X = R.Proj()                                  # optional - macaulay2
+            sage: print X.structure_sheaf()                     # optional - macaulay2
             OO
               sage...
         """
@@ -854,12 +855,12 @@ class Macaulay2Element(ExpectElement):
 
         EXAMPLES::
 
-            sage: R = macaulay2("QQ[x]")            #optional
-            sage: P = macaulay2("ZZ/7[symbol x]")   #optional
-            sage: x, = R.gens()                     #optional
-            sage: a = x^2 + 1                       #optional
-            sage: a = a.substitute(P)               #optional
-            sage: a.to_sage().parent()              #optional
+            sage: R = macaulay2("QQ[x]")            # optional - macaulay2
+            sage: P = macaulay2("ZZ/7[symbol x]")   # optional - macaulay2
+            sage: x, = R.gens()                     # optional - macaulay2
+            sage: a = x^2 + 1                       # optional - macaulay2
+            sage: a = a.substitute(P)               # optional - macaulay2
+            sage: a.to_sage().parent()              # optional - macaulay2
             Univariate Polynomial Ring in x over Finite Field of size 7
 
         """
@@ -879,9 +880,9 @@ class Macaulay2Element(ExpectElement):
 
         TEST::
 
-            sage: a = macaulay2("QQ[x,y]")   # optional
-            sage: traits = a.trait_names()   # optional
-            sage: "generators" in traits     # optional
+            sage: a = macaulay2("QQ[x,y]")   # optional - macaulay2
+            sage: traits = a.trait_names()   # optional - macaulay2
+            sage: "generators" in traits     # optional - macaulay2
             True
         """
         # It is possible, that these are not all possible methods, but
@@ -914,7 +915,7 @@ class Macaulay2Element(ExpectElement):
 
         EXAMPLES::
 
-            sage: macaulay2(ZZ).cls()  #optional
+            sage: macaulay2(ZZ).cls()  # optional - macaulay2
             Ring
 
         """
@@ -927,9 +928,9 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: d = macaulay2.new("MutableHashTable") #optional
-            sage: d["k"] = 4                            #optional
-            sage: d.dot("k")                            #optional
+            sage: d = macaulay2.new("MutableHashTable") # optional - macaulay2
+            sage: d["k"] = 4                            # optional - macaulay2
+            sage: d.dot("k")                            # optional - macaulay2
             4
         """
         parent = self.parent()
@@ -943,10 +944,10 @@ class Macaulay2Element(ExpectElement):
 
         EXAMPLES::
 
-            sage: a = macaulay2("3")     #optional
-            sage: a._operator("+", a)    #optional
+            sage: a = macaulay2("3")     # optional - macaulay2
+            sage: a._operator("+", a)    # optional - macaulay2
             6
-            sage: a._operator("*", a)    #optional
+            sage: a._operator("*", a)    # optional - macaulay2
             9
         """
         parent = self.parent()
@@ -957,8 +958,8 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: a = macaulay2([1,2,3]) #optional
-            sage: a.sharp(0)             #optional
+            sage: a = macaulay2([1,2,3]) # optional - macaulay2
+            sage: a.sharp(0)             # optional - macaulay2
             1
         """
         return self._operator("#", x)
@@ -970,8 +971,8 @@ class Macaulay2Element(ExpectElement):
 
         EXAMPLES::
 
-            sage: a = macaulay2([1,2]).set()  #optional
-            sage: a.starstar(a)               #optional
+            sage: a = macaulay2([1,2]).set()  # optional - macaulay2
+            sage: a.starstar(a)               # optional - macaulay2
             set {(1, 1), (1, 2), (2, 1), (2, 2)}
 
         """
@@ -981,8 +982,8 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: a = macaulay2([1,2,3])  #optional
-            sage: a.underscore(0)         #optional
+            sage: a = macaulay2([1,2,3])  # optional - macaulay2
+            sage: a.underscore(0)         # optional - macaulay2
             1
         """
         return self._operator("_", x)
@@ -994,58 +995,58 @@ class Macaulay2Element(ExpectElement):
         """
         EXAMPLES::
 
-            sage: macaulay2(ZZ).to_sage()      #optional
+            sage: macaulay2(ZZ).to_sage()      # optional - macaulay2
             Integer Ring
-            sage: macaulay2(QQ).to_sage()      #optional
+            sage: macaulay2(QQ).to_sage()      # optional - macaulay2
             Rational Field
 
-            sage: macaulay2(2).to_sage()       #optional
+            sage: macaulay2(2).to_sage()       # optional - macaulay2
             2
-            sage: macaulay2(1/2).to_sage()     #optional
+            sage: macaulay2(1/2).to_sage()     # optional - macaulay2
             1/2
-            sage: macaulay2(2/1).to_sage()     #optional
+            sage: macaulay2(2/1).to_sage()     # optional - macaulay2
             2
-            sage: _.parent()                   #optional
+            sage: _.parent()                   # optional - macaulay2
             Rational Field
-            sage: macaulay2([1,2,3]).to_sage() #optional
+            sage: macaulay2([1,2,3]).to_sage() # optional - macaulay2
             [1, 2, 3]
 
             sage: m = matrix([[1,2],[3,4]])
-            sage: macaulay2(m).to_sage()       #optional
+            sage: macaulay2(m).to_sage()       # optional - macaulay2
             [1 2]
             [3 4]
 
-            sage: macaulay2(QQ['x,y']).to_sage()    #optional
+            sage: macaulay2(QQ['x,y']).to_sage()    # optional - macaulay2
             Multivariate Polynomial Ring in x, y over Rational Field
-            sage: macaulay2(QQ['x']).to_sage()      #optional
+            sage: macaulay2(QQ['x']).to_sage()      # optional - macaulay2
             Univariate Polynomial Ring in x over Rational Field
-            sage: macaulay2(GF(7)['x,y']).to_sage() #optional
+            sage: macaulay2(GF(7)['x,y']).to_sage() # optional - macaulay2
             Multivariate Polynomial Ring in x, y over Finite Field of size 7
 
-            sage: macaulay2(GF(7)).to_sage()       #optional
+            sage: macaulay2(GF(7)).to_sage()       # optional - macaulay2
             Finite Field of size 7
-            sage: macaulay2(GF(49, 'a')).to_sage() #optional
+            sage: macaulay2(GF(49, 'a')).to_sage() # optional - macaulay2
             Finite Field in a of size 7^2
 
             sage: R.<x,y> = QQ[]
-            sage: macaulay2(x^2+y^2+1).to_sage()   #optional
+            sage: macaulay2(x^2+y^2+1).to_sage()   # optional - macaulay2
             x^2 + y^2 + 1
 
-            sage: R = macaulay2("QQ[x,y]")         #optional
-            sage: I = macaulay2("ideal (x,y)")     #optional
-            sage: I.to_sage()                      #optional
+            sage: R = macaulay2("QQ[x,y]")         # optional - macaulay2
+            sage: I = macaulay2("ideal (x,y)")     # optional - macaulay2
+            sage: I.to_sage()                      # optional - macaulay2
             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Rational Field
 
-            sage: X = R/I       #optional
-            sage: X.to_sage()   #optional
+            sage: X = R/I       # optional - macaulay2
+            sage: X.to_sage()   # optional - macaulay2
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x, y)
 
-            sage: R = macaulay2("QQ^2")  #optional
-            sage: R.to_sage()            #optional
+            sage: R = macaulay2("QQ^2")  # optional - macaulay2
+            sage: R.to_sage()            # optional - macaulay2
             Vector space of dimension 2 over Rational Field
 
-            sage: m = macaulay2('"hello"')  #optional
-            sage: m.to_sage()               #optional
+            sage: m = macaulay2('"hello"')  # optional - macaulay2
+            sage: m.to_sage()               # optional - macaulay2
             'hello'
 
         """
@@ -1166,7 +1167,7 @@ class Macaulay2Function(ExpectFunction):
         """
         EXAMPLES::
 
-            sage: print macaulay2.load._sage_doc_()  # optional
+            sage: print macaulay2.load._sage_doc_()  # optional - macaulay2
             load -- read Macaulay2 commands
             *******************************
             ...
@@ -1179,7 +1180,7 @@ class Macaulay2Function(ExpectFunction):
         """
         EXAMPLES::
 
-            sage: print macaulay2.gb._sage_src_() #optional
+            sage: print macaulay2.gb._sage_src_() # optional - macaulay2
             code(methods gb)
             ...
         """
@@ -1197,9 +1198,9 @@ def is_Macaulay2Element(x):
     EXAMPLES::
 
         sage: from sage.interfaces.macaulay2 import is_Macaulay2Element
-        sage: is_Macaulay2Element(2)              #optional
+        sage: is_Macaulay2Element(2)              # optional - macaulay2
         False
-        sage: is_Macaulay2Element(macaulay2(2))   #optional
+        sage: is_Macaulay2Element(macaulay2(2))   # optional - macaulay2
         True
     """
     return isinstance(x, Macaulay2Element)
@@ -1207,7 +1208,6 @@ def is_Macaulay2Element(x):
 # An instance
 macaulay2 = Macaulay2()
 
-import os
 
 def macaulay2_console():
     """

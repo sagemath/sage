@@ -485,7 +485,7 @@ class TableauTuple(CombinatorialElement):
                 if row == 0 and self[c] == []:
                     line += '     -'
                 elif row < len(self[c]):
-                    line += '   '+''.join(map(lambda x: "%3s"%str(x) , self[c][row]))+'   '*(col_len[c]-len(self[c][row]))
+                    line += '   '+''.join(("%3s"%str(x) for x in self[c][row]))+'   '*(col_len[c]-len(self[c][row]))
                 else:
                     line += '   '+'   '*col_len[c]
             diag.append(line)
@@ -502,7 +502,7 @@ class TableauTuple(CombinatorialElement):
              2  3     -     4     -
                             5
         """
-        from sage.misc.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(self._repr_diagram().splitlines())
 
     def _latex_(self):
@@ -2953,7 +2953,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             return self.shape()==t.shape()
         elif t in StandardTableauTuples():
             if all(s in Tableaux() for s in t):
-                return [map(len,s) for s in t]==self.shape()
+                return [[len(_) for _ in s] for s in t]==self.shape()
             else:
                 return list(self.shape())==sum(map(len,t))
         else:

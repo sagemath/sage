@@ -575,47 +575,6 @@ cdef class DenseGraph(CGraph):
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
 ##############################
 
-def random_stress():
-    """
-    Randomly search for mistakes in the code.
-
-    DOCTEST (No output indicates that no errors were found)::
-
-        sage: from sage.graphs.base.dense_graph import random_stress
-        sage: for _ in xrange(400):
-        ...    random_stress()
-
-    """
-    cdef int i, j, k, l, n
-    cdef DenseGraph Gnew
-    num_verts = 10
-    # This code deliberately uses random instead of sage.misc.prandom,
-    # so that every time it is run it does different tests, instead of
-    # doing the same random stress test every time.  (Maybe it should
-    # use sage.misc.random_testing?)
-    from random import randint
-    from sage.graphs.all import DiGraph
-    from sage.misc.misc import uniq
-    Gnew = DenseGraph(num_verts)
-    Gold = DiGraph(num_verts, loops=True, implementation='networkx')
-    for n from 0 <= n < 100:
-        i = randint(0,num_verts-1)
-        j = randint(0,num_verts-1)
-        k = randint(0,num_verts-1)
-        if k != 0:
-            Gold.add_edge(i,j)
-            Gnew.add_arc_unsafe(i,j)
-        else:
-            Gold.delete_edge(i,j)
-            Gnew.del_arc_unsafe(i,j)
-    if Gnew.num_arcs != Gold.size():
-        raise RuntimeError( "NO" )
-    for i from 0 <= i < num_verts:
-        if Gnew.out_degrees[i] != Gold.out_degree(i):
-            raise RuntimeError( "NO" )
-        if Gnew.in_degrees[i] != Gold.in_degree(i):
-            raise RuntimeError( "NO" )
-
 def _test_adjacency_sequence_out():
     """
     Randomly test the method ``DenseGraph.adjacency_sequence_out()``. No output

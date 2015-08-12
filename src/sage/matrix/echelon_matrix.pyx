@@ -84,7 +84,7 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
     Testing options::
 
         sage: it = reduced_echelon_matrix_iterator(GF(4,'z'), 2, 4, copy=False)
-        sage: it.next() is it.next()
+        sage: next(it) is next(it)
         True
         sage: for a in it: pass
 

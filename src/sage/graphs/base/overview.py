@@ -54,12 +54,8 @@ A (di)graph backend is a simpler (di)graph class having only the most elementary
 methods (e.g.: add/remove vertices/edges). Its vertices can be arbitrary
 hashable objects.
 
-The backends defined in Sage are:
-
-- :class:`~sage.graphs.base.c_graph.CGraphBackend` (default)
-
-- :class:`~sage.graphs.base.graph_backends.NetworkXGraphBackend` (a wrapper for
-  `NetworkX <http://networkx.lanl.gov/>`__ graphs)
+The only backend available in Sage is
+:class:`~sage.graphs.base.c_graph.CGraphBackend`.
 
 CGraph and CGraphBackend
 ------------------------

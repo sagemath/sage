@@ -33,7 +33,7 @@ Sage example in ./calculus.tex, line 91::
 Sage example in ./calculus.tex, line 99::
 
     sage: y, z = var('y, z'); f = x^3 + y^2 + z
-    sage: f.subs_expr(x^3 == y^2, z==1)
+    sage: f.subs(x^3 == y^2, z==1)
     2*y^2 + 1
 
 Sage example in ./calculus.tex, line 110::

@@ -157,14 +157,19 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
         TESTS::
 
-            sage: A = AlgebrasWithBasis(QQ).example()
-            sage: a = A.an_element()
-            sage: a
-            2*B[word: ] + 2*B[word: a] + 3*B[word: b]
-            sage: a.__mul__(a)
-            4*B[word: ] + 8*B[word: a] + 4*B[word: aa] + 6*B[word: ab] + 12*B[word: b] + 6*B[word: ba] + 9*B[word: bb]
+            sage: A = AlgebrasWithBasis(QQ).example(); A
+            An example of an algebra with basis: the free algebra
+            on the generators ('a', 'b', 'c') over Rational Field
+            sage: x = A.an_element()
+            sage: x
+            B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
+            sage: x.__mul__(x)
+            B[word: ] + 4*B[word: a] + 4*B[word: aa] + 6*B[word: ab]
+            + 2*B[word: abab] + 6*B[word: b] + 6*B[word: ba]
+            + 2*B[word: bab] + 2*B[word: baba] + 3*B[word: babb]
+            + B[word: babbab] + 9*B[word: bb] + 3*B[word: bbab]
         """
-        __mul__ = Magmas.ElementMethods.__mul__.im_func
+        __mul__ = Magmas.ElementMethods.__mul__.__func__
 
 #        __imul__ = __mul__
 

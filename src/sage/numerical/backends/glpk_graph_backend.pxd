@@ -1,5 +1,4 @@
 cdef extern from *:
-    ctypedef double* const_double_ptr "const double*"
     ctypedef char * const_char_ptr "const char*"
 
 cdef extern from "float.h":

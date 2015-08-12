@@ -1,6 +1,7 @@
 from cpython cimport PyObject
 from libc.stdint cimport uint32_t, uint64_t
 from sage.data_structures.bitset cimport *
+from sage.ext.memory cimport check_calloc
 ctypedef unsigned short ushort
 ctypedef unsigned int uint
 

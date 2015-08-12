@@ -1,7 +1,9 @@
+# distutils: depends = NTL/ZZ.h
+
 from sage.libs.ntl.ntl_lzz_p_decl cimport zz_p_c
 from sage.libs.ntl.ntl_ZZ_decl cimport ZZ_c
 
-cdef extern from "ntl_wrap.h":
+cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     #### zz_pX_c
     ctypedef struct zz_pX_c "struct zz_pX":
         void *rep
@@ -23,16 +25,16 @@ cdef extern from "ntl_wrap.h":
     void zz_pX_divrem "DivRem"(zz_pX_c q, zz_pX_c r, zz_pX_c a, zz_pX_c b)
     void zz_pX_LeftShift "LeftShift"(zz_pX_c x, zz_pX_c a, long b)
     void zz_pX_RightShift "RightShift"(zz_pX_c x, zz_pX_c a, long b)
-    void zz_pX_negate "negate"(zz_pX_c x, zz_pX_c a)
+    void zz_pX_negate "NTL::negate"(zz_pX_c x, zz_pX_c a)
     zz_p_c zz_pX_LeadCoeff "LeadCoeff"(zz_pX_c x)
     zz_p_c zz_pX_ConstTerm "ConstTerm" (zz_pX_c x)
-    void zz_pX_negate "negate"(zz_pX_c x, zz_pX_c a)
+    void zz_pX_negate "NTL::negate"(zz_pX_c x, zz_pX_c a)
     void zz_pX_trunc "trunc"(zz_pX_c x, zz_pX_c a, long n) ## x = a % X^n
     void zz_pX_MulTrunc "MulTrunc"(zz_pX_c x, zz_pX_c a, zz_pX_c b, long n)
     void zz_pX_SqrTrunc "SqrTrunc"(zz_pX_c x, zz_pX_c a, long n)
     void zz_pX_InvTrunc "InvTrunc"(zz_pX_c x, zz_pX_c a, long n)
     void zz_pX_sqr "sqr"(zz_pX_c x, zz_pX_c a)
-    void zz_pX_power "power"(zz_pX_c x, zz_pX_c a, long e)
+    void zz_pX_power "NTL::power"(zz_pX_c x, zz_pX_c a, long e)
     void zz_pX_clear "clear"(zz_pX_c x)
     void zz_pX_SetX "SetX"(zz_pX_c x)
     bint zz_pX_IsX "IsX"(zz_pX_c x)

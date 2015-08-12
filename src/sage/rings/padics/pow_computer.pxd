@@ -1,5 +1,4 @@
-include "sage/ext/cdefs.pxi"
-
+from sage.libs.gmp.types cimport mpz_t, mpz_srcptr
 from sage.structure.sage_object cimport SageObject
 from sage.rings.integer cimport Integer
 

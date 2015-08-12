@@ -1,5 +1,3 @@
-include "sage/ext/cdefs.pxi"
-
 cpdef prime_range(start, stop=*, algorithm=*, bint py_ints=*)
 
 cdef class arith_int:

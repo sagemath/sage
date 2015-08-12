@@ -96,6 +96,7 @@ pillow                      Apache License 2.0
 pip                         MIT License
 pkgconf                     ISC License (equivalent to Simplified BSD)
 pkgconfig                   MIT License
+planarity                   Modified BSD
 polybori                    GPLv2+
 polytopes_db                None (database)
 ppl                         GPLv3+

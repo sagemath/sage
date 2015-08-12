@@ -97,14 +97,14 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     EXAMPLES::
 
         sage: from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
-        sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1]) # optional
+        sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1]) # optional - phc
         []
-        sage: x, y = __lagrange_bounds_phc(3,2,[8,1,2,0,1]) # optional
-        sage: x # optional
+        sage: x, y = __lagrange_bounds_phc(3,2,[8,1,2,0,1]) # optional - phc
+        sage: x # optional - phc
         -1.3333333333333299
-        sage: y < 0.00000001 # optional
+        sage: y < 0.00000001 # optional - phc
         True
-        sage: __lagrange_bounds_phc(3,1,[8,1,2,0,1]) # optional
+        sage: __lagrange_bounds_phc(3,1,[8,1,2,0,1]) # optional - phc
         []
     """
 

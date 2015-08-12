@@ -261,7 +261,7 @@ class FreeMonoid_class(Monoid_class):
             return self.element_class(self, x, check)
         if isinstance(x, FiniteWord_class):
             d = self.gens_dict()
-            return self.prod(map(lambda let: d[let], x))
+            return self.prod([d[let] for let in x])
         if isinstance(x, list):
             return self.element_class(self, x, check)
 

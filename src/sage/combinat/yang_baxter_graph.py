@@ -227,7 +227,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y3.__eq__(Y2)
             False
         """
-        return isinstance(self, type(other)) and self._digraph.__eq__(other._digraph)
+        return type(self) is type(other) and self._digraph.__eq__(other._digraph)
 
     def __ne__(self, other):
         r"""
@@ -775,7 +775,7 @@ class SwapOperator(SageObject):
             sage: s[1] < s[2]
             True
         """
-        if isinstance(self, type(other)):
+        if type(self) is type(other):
             return cmp(self._position, other._position)
         else:
             return cmp(type(self), type(other))

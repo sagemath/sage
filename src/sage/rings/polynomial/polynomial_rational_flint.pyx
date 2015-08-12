@@ -31,7 +31,7 @@ from sage.interfaces.all import singular as singular_default
 
 from sage.libs.pari.gen import gen as pari_gen
 
-from sage.rings.integer cimport Integer
+from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.rational cimport Rational
@@ -74,6 +74,13 @@ cdef class Polynomial_rational_flint(Polynomial):
     Internally, we represent rational polynomial as the quotient of an integer
     polynomial and a positive denominator which is coprime to the content of
     the numerator.
+
+    .. automethod:: _add_
+    .. automethod:: _sub_
+    .. automethod:: _lmul_
+    .. automethod:: _rmul_
+    .. automethod:: _mul_
+    .. automethod:: _mul_trunc_
     """
 
     ###########################################################################
@@ -348,7 +355,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def degree(self):
         """
-        Returns the degree of self.
+        Return the degree of ``self``.
 
         By convention, the degree of the zero polynomial is -1.
 
@@ -361,10 +368,13 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: g = R(0)
             sage: g.degree()
             -1
+
+        TESTS::
+
+            sage: type(f.degree())
+            <type 'sage.rings.integer.Integer'>
         """
-        cdef Integer deg = PY_NEW(Integer)
-        mpz_set_si(deg.value, fmpq_poly_degree(self.__poly))
-        return deg
+        return smallInteger(fmpq_poly_degree(self.__poly))
 
     def __getitem__(self, n):
         """
@@ -654,7 +664,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Comparisons                                                             #
     ###########################################################################
 
-    def is_zero(self):
+    cpdef bint is_zero(self):
         """
         Returns whether or not self is the zero polynomial.
 
@@ -667,7 +677,27 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: R(0).is_zero()
             True
         """
-        return bool(fmpq_poly_is_zero(self.__poly))
+        return fmpq_poly_is_zero(self.__poly)
+
+    cpdef bint is_one(self):
+        r"""
+        Returns whether or not this polynomial is one.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: R([0,1]).is_one()
+            False
+            sage: R([1]).is_one()
+            True
+            sage: R([0]).is_one()
+            False
+            sage: R([-1]).is_one()
+            False
+            sage: R([1,1]).is_one()
+            False
+        """
+        return fmpq_poly_is_one(self.__poly)
 
     def __nonzero__(self):
         """
@@ -991,6 +1021,43 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         if do_sig: sig_str("FLINT exception")
         fmpq_poly_mul(res.__poly, self.__poly, op2.__poly)
+        if do_sig: sig_off()
+        return res
+
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
+        r"""
+        Truncated multiplication.
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ)
+            sage: p1 = 1/2 - 3*x + 2/7*x**3
+            sage: p2 = x + 2/5*x**5 + x**7
+            sage: p1._mul_trunc_(p2, 5)
+            2/7*x^4 - 3*x^2 + 1/2*x
+            sage: (p1*p2).truncate(5)
+            2/7*x^4 - 3*x^2 + 1/2*x
+
+            sage: p1._mul_trunc_(p2, 1)
+            0
+            sage: p1._mul_trunc_(p2, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be > 0
+
+        ALGORITHM:
+
+        Call the FLINT method ``fmpq_poly_mullow``.
+        """
+        cdef Polynomial_rational_flint op2 = <Polynomial_rational_flint> right
+        cdef Polynomial_rational_flint res = self._new()
+        cdef bint do_sig = _do_sig(self.__poly) or _do_sig(op2.__poly)
+
+        if n <= 0:
+            raise ValueError("n must be > 0")
+
+        if do_sig: sig_str("FLINT exception")
+        fmpq_poly_mullow(res.__poly, self.__poly, op2.__poly, n)
         if do_sig: sig_off()
         return res
 
@@ -1475,7 +1542,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 5 of degree 4
 
         You can use KASH to compute Galois groups as well.  The advantage is
-        that KASH can compute Galois groups of fields up to degree 23, whereas
+        that KASH can compute Galois groups of fields up to degree 21, whereas
         PARI only goes to degree 11.  (In my not-so-thorough experiments PARI
         is faster than KASH.)
 
@@ -1486,7 +1553,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 5 of degree 4
 
             sage: f = x^4 - 17*x^3 - 2*x + 1
-            sage: f.galois_group(algorithm='magma')  # optional - magma, database_gap
+            sage: f.galois_group(algorithm='magma')  # optional - magma database_gap
             Transitive group number 5 of degree 4
 
         TESTS:
@@ -1508,9 +1575,9 @@ cdef class Polynomial_rational_flint(Polynomial):
         if self.degree() > 11 and algorithm == 'pari':
             algorithm = 'kash'
 
-        if self.degree() > 23 and algorithm == 'kash':
+        if self.degree() > 21 and algorithm == 'kash':
             raise NotImplementedError("Galois group computation is "
-                "supported for degrees up to 11 using PARI, or up to 23 "
+                "supported for degrees up to 11 using PARI, or up to 21 "
                 "if the optional package KASH is installed.  Try "
                 "algorithm='magma' if you have magma.")
 
@@ -1536,7 +1603,7 @@ cdef class Polynomial_rational_flint(Polynomial):
                     "computation of Galois groups of fields of degree " +
                     "bigger than 11 is not yet implemented.  Try installing " +
                     "the optional free (closed source) KASH package, which " +
-                    "supports degrees up to 23, or use algorithm='magma' if " +
+                    "supports degrees up to 21, or use algorithm='magma' if " +
                     "you have magma.")
 
         elif algorithm == 'magma':

@@ -1,0 +1,285 @@
+diff -ruN check/testgeo check.new/testgeo
+--- a/check/testgeo	2013-02-15 13:47:55.000000000 +0100
++++ b/check/testgeo	2015-03-02 16:32:35.000000000 +0100
+@@ -3,63 +3,63 @@
+ nodisp(print("medianes")) ;
+ assume(Ax=-1) ;
+ assume(Ay=-1) ;
+-A:=point(Ax,Ay) ;
++A:=point(Ax,Ay,display=536870968) ;
+ assume(Bx=0.5) ;
+ assume(By=1) ;
+-B:=point(Bx,By) ;
++B:=point(Bx,By,display=536870968) ;
+ assume(Cx=1) ;
+ assume(Cy=-1) ;
+-C:=point(Cx,Cy) ;
+-triangle(A,B,C) ;
+-a:=median_line(A,B,C) ;
+-b:=median_line(B,C,A) ;
+-c:=median_line(C,A,B) ;
+-M:=head(inter(a,b)) ;
+-N:=head(inter(b,c)) ;
++C:=point(Cx,Cy,display=536870968) ;
++triangle(A,B,C,color=56) ;
++a:=median_line(A,B,C,color=56) ;
++b:=median_line(B,C,A,color=56) ;
++c:=median_line(C,A,B,color=56) ;
++M:=head(inter(a,b,color=56)) ;
++N:=head(inter(b,c,color=56)) ;
+ normal(distance2(M,N)) ;
+ 
+ nodisp(print("mediatrices")) ;
+-a:=perpen_bisector(A,B) ;
+-b:=perpen_bisector(B,C) ;
+-c:=perpen_bisector(C,A) ;
+-M:=head(inter(a,b)) ;
+-N:=head(inter(b,c)) ;
++a:=perpen_bisector(A,B,color=56) ;
++b:=perpen_bisector(B,C,color=56) ;
++c:=perpen_bisector(C,A,color=56) ;
++M:=head(inter(a,b,color=56)) ;
++N:=head(inter(b,c,color=56)) ;
+ normal(distance2(M,N)) ;
+ 
+ nodisp(print("bissectrices")) ;
+-A:=point(0) ;
+-B:=point(1,0) ;
++A:=point(0,display=536870968) ;
++B:=point(1,0,display=536870968) ;
+ assume(x=1.2) ;
+ assume(y=-1) ;
+ 
+-C:=point(x,y) ;
+-triangle(A,B,C) ;
+-a:=bisector(A,B,C) ;
+-b:=bisector(B,C,A) ;
+-c:=bisector(C,A,B) ;
+-M:=head(inter(a,b)) ;
+-N:=head(inter(a,c)) ;
++C:=point(x,y,display=536870968) ;
++triangle(A,B,C,color=56) ;
++a:=bisector(A,B,C,color=56) ;
++b:=bisector(B,C,A,color=56) ;
++c:=bisector(C,A,B,color=56) ;
++M:=head(inter(a,b,color=56)) ;
++N:=head(inter(a,c,color=56)) ;
+ normal(M-N) ;
+ purge(x,y) ;
+ 
+ nodisp(print("Napoleon theorem")) ;
+ assume(a=-1) ;
+ assume(b=-1) ;
+-A:=point(0) ;
+-B:=point(2,0) ;
+-C:=point(a,b) ;
++A:=point(0,display=536870968) ;
++B:=point(2,0,display=536870968) ;
++C:=point(a,b,display=536870968) ;
+ T1:=color(equilateral_triangle(A,B),green) ;
+ T2:=color(equilateral_triangle(B,C),green) ;
+ T3:=color(equilateral_triangle(C,A),green) ;
+ color(circumcircle(T1),green) ;
+ color(circumcircle(T2),green) ;
+ color(circumcircle(T3),green) ;
+-AB:=segment(A,B) ;
+-AC:=segment(A,C) ;
+-CB:=segment(C,B) ;
+-M:=normal(isobarycenter(T1)) ;
+-N:=normal(isobarycenter(T2)) ;
+-O:=normal(isobarycenter(T3)) ;
++AB:=segment(A,B,color=56) ;
++AC:=segment(A,C,color=56) ;
++CB:=segment(C,B,color=56) ;
++M:=display(normal(isobarycenter(T1)),536870968) ;
++N:=display(normal(isobarycenter(T2)),536870968) ;
++O:=display(normal(isobarycenter(T3)),536870968) ;
+ MN:=color(segment(M,N),red) ;
+ NO:=color(segment(N,O),red) ;
+ OM:=color(segment(O,M),red) ;
+@@ -70,18 +70,18 @@
+ nodisp(print("Feuerbach theorem")) ;
+ assume(xa=(1/2)) ;
+ assume(ya=1) ;
+-A:=point(xa,ya) ;
+-B:=point(-1,0) ;
+-AB:=segment(A,B) ;
+-C:=point(1,0) ;
+-AC:=segment(A,C) ;
+-CB:=segment(C,B) ;
+-E:=midpoint(AB) ;
+-F:=midpoint(AC) ;
+-G:=midpoint(CB) ;
+-c:=circumcircle(E,F,G) ;
+-H:=altitude(A,B,C) ;
+-I:=(inter(H,CB))[0] ;
++A:=point(xa,ya,display=536870968) ;
++B:=point(-1,0,display=536870968) ;
++AB:=segment(A,B,color=56) ;
++C:=point(1,0,display=536870968) ;
++AC:=segment(A,C,color=56) ;
++CB:=segment(C,B,color=56) ;
++E:=color(midpoint(AB),56) ;
++F:=color(midpoint(AC),56) ;
++G:=color(midpoint(CB),56) ;
++c:=circumcircle(E,F,G,color=56) ;
++H:=altitude(A,B,C,color=56) ;
++I:=(inter(H,CB,color=56))[0] ;
+ nodisp(print("teste que le pied de la altitude est sur c de 2 facons, doit renvoyer 1 puis 0")) ;
+ is_element(I,c) ;
+ nodisp(O:=center(c)) ;
+@@ -90,7 +90,7 @@
+ normal(l2-rc2) ;
+ nodisp(print("circle incircle de A,B,C, center")) ;
+ nodisp(d:=incircle(A,B,C)) ;
+-P:=center(d) ;
++P:=color(center(d),56) ;
+ OP:=distance2(O,P) ;
+ rd:=radius(d) ;
+ rd2:=normal(rd^2) ;
+@@ -104,17 +104,17 @@
+ yb:=0 ;
+ assume(xc=-1) ;
+ assume(yc=1) ;
+-A:=point(xa,ya) ;
+-B:=point(xb,yb) ;
+-C:=point(xc,yc) ;
+-triangle(A,B,C) ;
+-G:=circumcircle(A,B,C) ;
++A:=point(xa,ya,display=536870968) ;
++B:=point(xb,yb,display=536870968) ;
++C:=point(xc,yc,display=536870968) ;
++triangle(A,B,C,color=56) ;
++G:=circumcircle(A,B,C,color=56) ;
+ assume(x=1) ;
+ assume(y=1) ;
+-M:=point(x,y) ;
+-P:=projection(line(B,C),M) ;
+-Q:=projection(line(C,A),M) ;
+-R:=projection(line(A,B),M) ;
++M:=point(x,y,display=536870968) ;
++P:=projection(line(B,C),M,color=56) ;
++Q:=projection(line(C,A),M,color=56) ;
++R:=projection(line(A,B),M,color=56) ;
+ D1:=factor(numer(im((Q-P)*conj(R-P)))) ;
+ D12:=normal(-D1/yc^2) ;
+ D2:=equation(G) ;
+@@ -124,8 +124,8 @@
+ nodisp(print("Morley theorem")) ;
+ assume(a1=0.3) ;
+ assume(a2=0.4) ;
+-A:=point(0) ;
+-B:=point(1) ;
++A:=point(0,display=536870968) ;
++B:=point(1,display=536870968) ;
+ nodisp(C:=point(texpand((tan(a2*3))/(tan(a1*3)+tan(a2*3))*(1+(i)*tan(a1*3))))) ;
+ nodisp(P:=normal(point(texpand((tan(a2))/(tan(a1)+tan(a2))*(1+(i)*tan(a1)))))) ;
+ nodisp(R:=normal(single_inter(line(0,1+(i)*texpand(tan(2*a1))),line(C,C+1+(i)*texpand(tan(pi/3+2*a1-a2)))))) ;
+diff -ruN check/TP00-sol.cas check.new/TP00-sol.cas
+--- a/check/TP00-sol.cas	2014-07-02 15:06:55.000000000 +0200
++++ b/check/TP00-sol.cas	2015-03-02 15:43:16.000000000 +0100
+@@ -67,7 +67,7 @@
+ a:=exp(2*I*Pi/n);
+ S:=seq(point(a^i,display=point_width_3+blue),i=1..n):
+ /* Un cercle  passe par 3 sommets ssi  il coincide avec le cercle £unite. Donc si l'angle au centre n'est pas multiple de (2IPi/n) c'est bon. */
+-f:=(i,j,k)->if k=1 then segment(a^i,a^j) else seq(arc(a^i,a^j,l/k),l=1..k) fi;
++f:=(i,j,k)->if k=1 then segment(a^i,a^j,color=56) else seq(arc(a^i,a^j,l/k,color=56),l=1..k) fi;
+ G:=[[1,3,1],[1,2,3],[2,4,2],[2,3,1],[3,5,3],[3,4,1],[4,1,2]]:
+ S;seq(f(op(l)),l=G); #op pour enlever les crochets
+ /*  -------------------------------------EXERCICE-----------------------------------------*/
+diff -ruN check/TP00-sol.cas.out1 check.new/TP00-sol.cas.out1
+--- a/check/TP00-sol.cas.out1	2015-02-02 14:47:11.000000000 +0100
++++ b/check/TP00-sol.cas.out1	2015-03-02 15:44:22.000000000 +0100
+@@ -66,7 +66,7 @@
+ 5,
+ (sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4,
+ "Done",
+- (i,j,k)->if k=1 then segment(a^i,a^j); else seq(arc(a^i,a^j,l/k),l=(1 .. k)); 
++ (i,j,k)->if k=1 then segment(a^i,a^j,'color'=56); else seq(arc(a^i,a^j,l/k,'color'=56),l=(1 .. k)); 
+ fi ,
+ "Done",
+ pnt(pnt[(sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^2,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^3,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^4,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^5,1048580]),
+diff -ruN check/TP02-sol.cas check.new/TP02-sol.cas
+--- a/check/TP02-sol.cas	2014-06-26 17:24:46.000000000 +0200
++++ b/check/TP02-sol.cas	2015-03-02 15:38:02.000000000 +0100
+@@ -7,7 +7,7 @@
+ /* premiere methode: On prend la premiere ligne de la transpos\'ee. Seconde methode avec une suite indexee par la liste*/
+  listecondi:=transpose(l)[1];
+  listecondi:=[seq(k[1],k=l)];
+-histogram(classes(listecondi,0,10));
++histogram(classes(listecondi,0,10),color=56);
+  ml:=max(listecondi);# le max de la suite
+  ecart_type(listecondi);#ou bien: stddev donne l'ecart type
+  moyenne(listecondi);
+diff -ruN check/TP09-sol.cas check.new/TP09-sol.cas
+--- a/check/TP09-sol.cas	2014-04-07 11:23:50.000000000 +0200
++++ b/check/TP09-sol.cas	2015-03-02 15:34:47.000000000 +0100
+@@ -26,12 +26,12 @@
+ 8*2+7 mod 7; (8*2+7) mod 7; #Attention mod est prioritaire sous xcas
+ /*  Si a=1, on a x_n=x_0+n.c [m], on fait donc par exemple: c=7,x0=1*/
+ l:=[seq((n*7+1) mod 1001,n=1..100)];
+-histogram(classes(l,0,1001/20)); #C'est tout a fait plat. Trop!
++histogram(classes(l,0,1001/20),color=56); #C'est tout a fait plat. Trop!
+ /*  Remplacer les crochets par des incolades cree un ensemble, ce qui simplifie£ automatiquement les elements egaux  */
+  nops(l);nops({op(l)}); #ils sont tous distincts
+  l:=[seq(rand(1001),n=1..100)];
+- histogram(classes(l,0,1001/5));
+- histogram(classes(l,0,1001/20));  
++ histogram(classes(l,0,1001/5),color=56);
++ histogram(classes(l,0,1001/20),color=56);  
+  nops(l);nops({op(l)});#il y a bien des anniversaires identiques
+ /*  On a en fait 1001^100 suites possibles, et 1001!/901! suites dont£ tous les termes sont distincts.*/
+  1001!/901!/1001.^100;
+@@ -39,30 +39,30 @@
+ for i from 1 to 500  do x:=(a*x+c) mod m; l:=[op(l),x] ; od:
+ l1:=[seq(i mod 10^2,i=l)];
+ l2:=[seq(trunc(i/10^2),i=l)];
+-histogram(classes(l1,0,5));
+-histogram(classes(l2,0,5));
++histogram(classes(l1,0,5),color=56);
++histogram(classes(l2,0,5),color=56);
+ l1:=[seq(i mod 10,i=l)];
+-histogram(classes(l1,0,1));
++histogram(classes(l1,0,1),color=56);
+ /* Si d est un diviseur de m et que $y_n=x_n [d]$, alors $y_{n+1}=ay_n+c [d]$£Donc si d=10^2, les 2 derniers chiffres de x_n ont p\'eriode d'au plus d.*/
+  x:=1; a:=237;c:=54321;m:=10^4-1; l:=[];
+  for i from 1 to 500  do x:=(a*x+c) mod m; l:=[op(l),x] ; od:
+  l1:=[seq(i mod 10^2,i=l)];
+  l2:=[seq(trunc(i/10^2),i=l)];
+- histogram(classes(l1,0,5));
+-histogram(classes(l2,0,5));
++ histogram(classes(l1,0,5),color=56);
++histogram(classes(l2,0,5),color=56);
+  l1:=[seq(i mod 10,i=l)];
+- histogram(classes(l1,0,1));
++ histogram(classes(l1,0,1),color=56);
+  x:=1; a:=237;c:=54321;m:=prevprime(10^4); l:=[];
+  for i from 1 to 500  do x:=(a*x+c) mod m; l:=[op(l),x] ; od:
+  l1:=[seq(i mod 10^2,i=l)];
+  l2:=[seq(trunc(i/10^2),i=l)];
+- histogram(classes(l1,0,5));
+-histogram(classes(l2,0,5));
++ histogram(classes(l1,0,5),color=56);
++histogram(classes(l2,0,5),color=56);
+  l1:=[seq(i mod 10,i=l)];
+- histogram(classes(l1,0,1));
++ histogram(classes(l1,0,1),color=56);
+ x:=1; a:=237;c:=54321;m:=10; l:=[];
+ for i from 1 to 100  do x:=(a*x+c) mod m; l:=[op(l),x] ; od:
+-histogram(classes(l,0,1)); #certaines valeurs ne sont pas atteintes.
++histogram(classes(l,0,1),color=56); #certaines valeurs ne sont pas atteintes.
+  periode:=proc(a)
+  x:=1;p:=1;
+  if (a mod 5 <> 0) then while x>0 do p:=p+1;x:=(a*x+1) mod 125; od; fi;
+diff -ruN check/TP19-sol.cas check.new/TP19-sol.cas
+--- a/check/TP19-sol.cas	2014-04-07 11:23:50.000000000 +0200
++++ b/check/TP19-sol.cas	2015-03-02 15:40:39.000000000 +0100
+@@ -24,7 +24,7 @@
+  dernierfacteury:=quo(resultant(P,C1+t*C2,x),y^3*(y-1)^4,y);
+  yt:=solve(dernierfacteury,y);
+ /* On verifie graphiquement la parametrisation.*/
+- paramplot(xt+I*yt,t=-75..75,tstep=0.01);
++ paramplot(xt+I*yt,t=-75..75,tstep=0.01,color=56);
+ /* ----------------------------Exercice---------------------------------------------*/
+  P:=x^4+x+1;
+ A:=1/d*add(a[i]*x^i,i=0..degree(P)-1);

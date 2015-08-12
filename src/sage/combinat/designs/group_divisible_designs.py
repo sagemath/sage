@@ -215,7 +215,8 @@ class GroupDivisibleDesign(IncidenceStructure):
     - ``points`` -- the underlying set. If ``points`` is an integer `v`, then
       the set is considered to be `\{0, ..., v-1\}`.
 
-    - ``groups`` -- the groups of the design
+    - ``groups`` -- the groups of the design. Set to ``None`` for an automatic
+      guess (this triggers ``check=True`` and can thus cost some time).
 
     - ``blocks`` -- collection of blocks
 
@@ -242,6 +243,14 @@ class GroupDivisibleDesign(IncidenceStructure):
         sage: groups = [range(i*10,(i+1)*10) for i in range(4)]
         sage: GDD = GroupDivisibleDesign(40,groups,TD); GDD
         Group Divisible Design on 40 points of type 10^4
+
+    With unspecified groups::
+
+        sage: D = designs.transversal_design(4,3).relabel(list('abcdefghiklm'),inplace=False).blocks()
+        sage: GDD = GroupDivisibleDesign('abcdefghiklm',None,D)
+        sage: sorted(GDD.groups())
+        [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['k', 'l', 'm']]
+
     """
     def __init__(self, points, groups, blocks, G=None, K=None, lambd=1, check=True, copy=True,**kwds):
         r"""
@@ -266,16 +275,19 @@ class GroupDivisibleDesign(IncidenceStructure):
                                     check=False,
                                     **kwds)
 
-        if copy is False and self._point_to_index is None:
+        if (groups is None or
+            (copy is False and self._point_to_index is None)):
             self._groups = groups
         elif self._point_to_index is None:
             self._groups = [g[:] for g in groups]
         else:
             self._groups = [[self._point_to_index[x] for x in g] for g in groups]
 
-        if check:
-            assert is_group_divisible_design(self._groups,self._blocks,self.num_points(),G,K,lambd,verbose=1)
-
+        if check or groups is None:
+            is_gdd = is_group_divisible_design(self._groups,self._blocks,self.num_points(),G,K,lambd,verbose=1)
+            assert is_gdd
+            if groups is None:
+                self._groups = is_gdd[1]
 
     def groups(self):
         r"""
@@ -324,12 +336,12 @@ class GroupDivisibleDesign(IncidenceStructure):
             sage: GDD = GroupDivisibleDesign(40,groups,TD); GDD
             Group Divisible Design on 40 points of type 10^4
         """
-        from string import join
-        group_sizes = map(len, self._groups)
+
+        group_sizes = [len(_) for _ in self._groups]
 
         gdd_type = ["{}^{}".format(s,group_sizes.count(s))
                     for s in sorted(set(group_sizes))]
-        gdd_type = join(gdd_type,".")
+        gdd_type = ".".join(gdd_type)
 
         if not gdd_type:
             gdd_type = "1^0"

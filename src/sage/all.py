@@ -82,6 +82,7 @@ from time                import sleep
 
 import sage.misc.lazy_import
 from sage.misc.all       import *         # takes a while
+from sage.typeset.all    import *
 from sage.repl.all       import *
 
 from sage.misc.sh import sh
@@ -298,9 +299,6 @@ def _write_started_file():
         True
     """
     started_file = os.path.join(SAGE_LOCAL, 'etc', 'sage-started.txt')
-    # Do nothing if the file already exists
-    if os.path.isfile(started_file):
-        return
 
     # Current time with a resolution of 1 second
     import datetime

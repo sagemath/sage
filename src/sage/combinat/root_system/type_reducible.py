@@ -155,7 +155,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     def __cmp__(self, other):
         """
-        EXAMPLES:::
+        EXAMPLES::
 
             sage: ct1 = CartanType(['A',1],['B',2])
             sage: ct2 = CartanType(['B',2],['A',1])

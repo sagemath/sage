@@ -124,8 +124,9 @@ Methods
 
 
 include 'sage/ext/stdsage.pxi'
-include 'sage/ext/cdefs.pxi'
 include "sage/ext/interrupt.pxi"
+
+from libc.string cimport memset
 
 cdef list id_to_vertices
 cdef dict vertices_to_id
@@ -180,8 +181,6 @@ def rank_decomposition(G, verbose = False):
         from sage.graphs.graph import Graph
         return (0, Graph())
 
-    global num_vertices
-
     cdef int i
 
     if sage_graph_to_matrix(G):
@@ -211,7 +210,7 @@ def rank_decomposition(G, verbose = False):
 
     #Original way of displaying the decomposition
     #print_rank_dec(0x7ffffffful >> (31 - num_vertices), 0)
-    g = mkgraph()
+    g = mkgraph(n)
 
     # Free the memory
     destroy_rw()
@@ -225,14 +224,12 @@ cdef int sage_graph_to_matrix(G):
     global id_to_vertices
     global vertices_to_id
     global adjacency_matrix
-    global slots
     global cslots
 
     id_to_vertices = []
     vertices_to_id = {}
 
-    global num_vertices
-    num_vertices = G.order()
+    cdef int num_vertices = G.order()
 
     cdef int i,j
 
@@ -240,12 +237,7 @@ cdef int sage_graph_to_matrix(G):
     if init_rw_dec(num_vertices):
         # The original code does not completely frees the memory in case of
         # error
-        if cslots != NULL:
-            sage_free(cslots)
-        if slots != NULL:
-            sage_free(slots)
-        if adjacency_matrix != NULL:
-            sage_free(adjacency_matrix)
+        destroy_rw()
         return 1
 
     memset(adjacency_matrix, 0, sizeof(subset_t) * num_vertices)
@@ -300,7 +292,7 @@ cdef void print_rank_dec(subset_t s, int l):
     print_rank_dec(cslots[s], l + 1)
     print_rank_dec(s & ~cslots[s], l + 1)
 
-def mkgraph():
+def mkgraph(int num_vertices):
     r"""
     Returns the graph corresponding the the current rank-decomposition.
 
@@ -314,7 +306,6 @@ def mkgraph():
         (3, Graph on 19 vertices)
     """
     global cslots
-    global num_vertices
     global id_to_vertices
 
     cdef subset_t s

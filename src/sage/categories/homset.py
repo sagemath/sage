@@ -302,7 +302,7 @@ def Hom(X, Y, category=None, check=True):
 
     Those checks are done with the natural idiom ``X in category``,
     and not ``X.category().is_subcategory(category)`` as it used to be
-    before :trac:16275:` (see :trac:`15801` for a real use case)::
+    before :trac:`16275` (see :trac:`15801` for a real use case)::
 
         sage: class PermissiveCategory(Category):
         ....:     def super_categories(self): return [Objects()]

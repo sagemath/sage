@@ -7,6 +7,7 @@ Plane curves
    sage/schemes/plane_curves/constructor
    sage/schemes/plane_curves/affine_curve
    sage/schemes/plane_curves/projective_curve
+   sage/schemes/plane_curves/curve
 
    sage/schemes/plane_conics/constructor
    sage/schemes/plane_conics/con_field
@@ -14,6 +15,17 @@ Plane curves
    sage/schemes/plane_conics/con_rational_field
    sage/schemes/plane_conics/con_finite_field
    sage/schemes/plane_conics/con_prime_finite_field
+
+   sage/schemes/jacobians/abstract_jacobian
+
+Plane quartics
+=========================
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/schemes/plane_quartics/quartic_constructor
+   sage/schemes/plane_quartics/quartic_generic
 
 
 Elliptic curves
@@ -91,6 +103,21 @@ Modularity and `L`-series over `\QQ`.
    sage/schemes/elliptic_curves/heegner
    sage/schemes/elliptic_curves/padic_lseries
 
+To be sorted
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/schemes/elliptic_curves/descent_two_isogeny
+   sage/schemes/elliptic_curves/ell_egros
+   sage/schemes/elliptic_curves/ell_padic_field
+   sage/schemes/elliptic_curves/gp_simon
+   sage/schemes/elliptic_curves/mod5family
+   sage/schemes/elliptic_curves/weierstrass_transform
+
+.. Not included because prove_BSD is bound in ell_rational_field, leading to duplicate citations
+.. sage/schemes/elliptic_curves/BSD
 
 Hyperelliptic curves
 ====================
@@ -99,17 +126,27 @@ Hyperelliptic curves
    :maxdepth: 2
 
    sage/schemes/hyperelliptic_curves/constructor
-   sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field
    sage/schemes/hyperelliptic_curves/hyperelliptic_generic
+   sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_padic_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field
 
    sage/schemes/hyperelliptic_curves/mestre
 
    sage/schemes/hyperelliptic_curves/monsky_washnitzer
+   sage/schemes/hyperelliptic_curves/hypellfrob
 
-   sage/schemes/hyperelliptic_curves/jacobian_g2
    sage/schemes/hyperelliptic_curves/jacobian_generic
+   sage/schemes/hyperelliptic_curves/jacobian_g2
    sage/schemes/hyperelliptic_curves/jacobian_homset
    sage/schemes/hyperelliptic_curves/jacobian_morphism
+
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_generic
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_finite_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_padic_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_rational_field
+   sage/schemes/hyperelliptic_curves/invariants
+   sage/schemes/hyperelliptic_curves/kummer_surface
 
    sage/interfaces/genus2reduction
 

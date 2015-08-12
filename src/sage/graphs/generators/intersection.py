@@ -259,7 +259,7 @@ def PermutationGraph(second_permutation, first_permutation = None):
         vertex_to_index[v] = i+1
 
     from sage.combinat.permutation import Permutation
-    p2 = Permutation(map(lambda x:vertex_to_index[x], second_permutation))
+    p2 = Permutation([vertex_to_index[x] for x in second_permutation])
     p2 = p2.inverse()
 
     g = Graph(name="Permutation graph for "+str(second_permutation))

@@ -150,7 +150,7 @@ solver to play with it::
     5484
     sage: x = T.dlx_solver()                         # long time (10 s)
     sage: x                                          # long time (fast)
-    <sage.combinat.matrices.dancing_links.dancing_linksWrapper object at ...>
+    Dancing links solver for 96 columns and 5484 rows
 
 REFERENCES:
 

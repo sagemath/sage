@@ -1,5 +1,4 @@
 include "decl.pxi"
-include "sage/ext/cdefs.pxi"
 
 from ntl_GF2 cimport ntl_GF2
 

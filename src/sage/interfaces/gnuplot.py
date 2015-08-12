@@ -17,7 +17,8 @@ Interface to the Gnuplot interpreter
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import os, time
+import os
+import time
 from sage.structure.sage_object import SageObject
 
 class Gnuplot(SageObject):
@@ -186,7 +187,7 @@ class Gnuplot(SageObject):
 # An instance
 gnuplot = Gnuplot()
 
-import os
+
 def gnuplot_console():
     os.system('sage-native-execute gnuplot')
 

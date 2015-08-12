@@ -1,5 +1,3 @@
-include 'sage/ext/cdefs.pxi'
-
 from sage.libs.mpfr cimport *
 
 cimport sage.structure.element

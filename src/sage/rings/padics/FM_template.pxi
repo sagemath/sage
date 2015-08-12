@@ -11,7 +11,6 @@ for the functions needed.
 
 The gluing file does the following:
 
-- includes "sage/ext/cdefs.pxi"
 - ctypedef's celement to be the appropriate type (e.g. mpz_t)
 - includes the linkage file
 - includes this template

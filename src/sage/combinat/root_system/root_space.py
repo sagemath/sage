@@ -13,6 +13,7 @@ from sage.rings.all import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
 from root_lattice_realizations import RootLatticeRealizations
 from sage.misc.cachefunc import cached_in_parent_method
+import functools
 
 # TODO: inheriting from ClearCacheOnPickle is a technical detail unrelated to root spaces
 # could we abstract this somewhere higher?
@@ -208,6 +209,29 @@ class RootSpace(ClearCacheOnPickle, CombinatorialFreeModule):
             return self._classical_alpha_0()
         else:
             return self.classical().simple_root(i)
+
+    @cached_method
+    def to_ambient_space_morphism(self):
+        r"""
+        The morphism from ``self`` to its associated ambient space.
+
+        EXAMPLES::
+
+            sage: CartanType(['A',2]).root_system().root_lattice().to_ambient_space_morphism()
+            Generic morphism:
+            From: Root lattice of the Root system of type ['A', 2]
+            To:   Ambient space of the Root system of type ['A', 2]
+
+        """
+        if self.root_system.dual_side:
+            L = self.cartan_type().dual().root_system().ambient_space()
+            basis = L.simple_coroots()
+        else:
+            L = self.cartan_type().root_system().ambient_space()
+            basis = L.simple_roots()
+        def basis_value(basis, i):
+            return basis[i]
+        return self.module_morphism(on_basis = functools.partial(basis_value, basis) , codomain=L)
 
 class RootSpaceElement(CombinatorialFreeModuleElement):
     def scalar(self, lambdacheck):
@@ -421,5 +445,23 @@ class RootSpaceElement(CombinatorialFreeModuleElement):
             self = self - beta.associated_coroot()
         W = self.parent().weyl_group()
         return (W.demazure_product(word)).reduced_word()
+
+    def to_ambient(self):
+        r"""
+        Map ``self`` to the ambient space.
+
+        EXAMPLES::
+
+            sage: alpha = CartanType(['B',2]).root_system().root_lattice().an_element(); alpha
+            2*alpha[1] + 2*alpha[2]
+            sage: alpha.to_ambient()
+            (2, 0)
+            sage: alphavee = CartanType(['B',2]).root_system().coroot_lattice().an_element(); alphavee
+            2*alphacheck[1] + 2*alphacheck[2]
+            sage: alphavee.to_ambient()
+            (2, 2)
+
+        """
+        return self.parent().to_ambient_space_morphism()(self)
 
 RootSpace.Element = RootSpaceElement

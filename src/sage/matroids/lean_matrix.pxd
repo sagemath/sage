@@ -54,6 +54,7 @@ cdef class BinaryMatrix(LeanMatrix):
     cdef inline list row_union(self, object L)   # Not a Sage matrix operation
 
     cdef LeanMatrix matrix_from_rows_and_columns(self, rows, columns)
+    cdef matrix_from_rows_and_columns_reordered(self, rows, columns)
 
     cdef list _character(self, bitset_t x)
     cdef BinaryMatrix _distinguish_by(self, BinaryMatrix P)
@@ -77,7 +78,7 @@ cdef class TernaryMatrix(LeanMatrix):
     cdef inline long row_inner_product(self, long i, long j)   # Not a Sage matrix operation
     cdef void row_subs(self, long x, long y)   # Not a Sage matrix operation
     cdef void _row_negate(self, long x)
-
+    cdef matrix_from_rows_and_columns_reordered(self, rows, columns)
 
 cdef class QuaternaryMatrix(LeanMatrix):
     cdef bitset_t *_M0    # _M0[i] = 1-support of row i
@@ -91,7 +92,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
     cdef inline long row_len(self, long i) except -1   # Not a Sage matrix operation
     cdef inline row_inner_product(self, long i, long j)   # Not a Sage matrix operation
     cdef inline int _row_div(self, long x, object s) except -1
-
+    cdef matrix_from_rows_and_columns_reordered(self, rows, columns)
     cdef void conjugate(self)   # Not a Sage matrix operation
 
 

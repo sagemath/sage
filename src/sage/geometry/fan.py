@@ -680,7 +680,7 @@ def FaceFan(polytope, lattice=None):
             raise interior_point_error
         cones = [ [ v.index() for v in facet.incident() ]
                   for facet in polytope.inequalities() ]
-        rays = map(vector, polytope.vertices())
+        rays = [vector(_) for _ in polytope.vertices()]
         if lattice is None:
             # Since default lattice polytopes are in the M lattice,
             # treat polyhedra as being there as well.
@@ -1147,7 +1147,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: sage_input(fan)
             Fan(cones=[[0, 1], [2]], rays=[(1, 0), (1, 1), (-1, -1)])
        """
-        cones = [map(ZZ, c.ambient_ray_indices()) for c in self.generating_cones()]
+        cones = [[ZZ(_) for _ in c.ambient_ray_indices()] for c in self.generating_cones()]
         rays = [sib(tuple(r)) for r in self.rays()]
         return sib.name('Fan')(cones=cones, rays=rays)
 
@@ -1902,7 +1902,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         if not points:
             return self.cones(dim=0)[0]
         try:
-            rays = map(int, points)
+            rays = [int(_) for _ in points]
             # Got ray indices
             generating_cones = set(range(self.ngenerating_cones()))
             for ray in rays:
@@ -1925,10 +1925,10 @@ class RationalPolyhedralFan(IntegralRayCollection,
         except TypeError:
             # Got points (hopefully)
             try:
-                points = map(self._ambient_space_point, points)
+                points = [self._ambient_space_point(_) for _ in points]
             except TypeError:
                 if len(points) == 1:
-                    points = map(self._ambient_space_point, points[0])
+                    points = [self._ambient_space_point(_) for _ in points[0]]
                 else:
                     raise
             # If we are still here, points are good
@@ -3097,7 +3097,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         # called "primitve collections" such that
         # 1) I is not contained in a face
         # 2) if you remove any one entry j, then I-{j} is contained in a facet
-        facets = map(frozenset, [ c.ambient_ray_indices() for c in self.generating_cones() ])
+        facets = [frozenset(c.ambient_ray_indices()) for c in self.generating_cones()]
         # print "facets = " + str(facets)
         all_points = frozenset( range(0,self.nrays()) )
         d_max = max(map(len,facets))+1

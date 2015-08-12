@@ -239,7 +239,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         b = x.arguments()
 
         # Rule #1
-        if [str(x) for x in a] == [str(x) for x in b]:
+        if [str(y) for y in a] == [str(z) for z in b]:
             return a
 
         # Rule #2
@@ -480,7 +480,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
         if any([type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args]): # avoid importing
             raise NotImplementedError("Numpy arrays are not supported as arguments for symbolic expressions")
 
-        d = dict(zip(map(repr, self.arguments()), args))
+        d = dict(zip([repr(_) for _ in self.arguments()], args))
         d.update(kwds)
         return SR(_the_element.substitute(**d))
 

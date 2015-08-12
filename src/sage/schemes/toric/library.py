@@ -260,7 +260,7 @@ class ToricVarietyFactory(SageObject):
             dict_key = (name, base_ring) + tuple(coordinate_names)
         if dict_key not in self.__dict__:
             polytope = LatticePolytope(rays, lattice=ToricLattice(len(rays[0])))
-            points = map(tuple, polytope.points_pc())
+            points = [tuple(_) for _ in polytope.points_pc()]
             ray2point = [points.index(r) for r in rays]
             charts = [ [ray2point[i] for i in c] for c in cones ]
             self.__dict__[dict_key] = \

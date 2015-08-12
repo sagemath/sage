@@ -210,9 +210,11 @@ class Words_all(InfiniteAbstractCombinatorialClass):
         r"""
         Return an element of self.
 
+        This is a default implementation that returns the empty word.
+
         EXAMPLES::
 
-            sage: W = Words(4)
+            sage: W = Words()
             sage: W.an_element()
             word:
 
@@ -930,6 +932,40 @@ class Words_over_Alphabet(Words_all):
         """
         return "Words over %s"%self._alphabet
 
+    def _an_element_(self):
+        r"""
+        Return an element of self.
+
+        EXAMPLES::
+
+            sage: W = Words(4)
+            sage: W.an_element()
+            word: 212
+
+            sage: W = Words([5, 1, 9]); W
+            Words over {5, 1, 9}
+            sage: W.an_element()
+            word: 151
+
+            sage: W = Words(NN); W
+            Words over Non negative integer semiring
+            sage: W.an_element()
+            word: 101
+
+        TESTS::
+
+            sage: W = Words([1]); W
+            Words over {1}
+            sage: W.an_element()
+            word: 111
+        """
+        some_letters = list(self.alphabet().some_elements())
+        if len(some_letters) == 1:
+            return self([some_letters[0]] * 3)
+        else:
+            a, b = some_letters[:2]
+            return self([b, a, b])
+
     def __contains__(self, x):
         """
         Tests whether self contains x.
@@ -1012,8 +1048,10 @@ class Words_n(Words_all):
         EXAMPLES::
 
             sage: from sage.combinat.words.words import Words_n
-            sage: w = Words_n(3)
-            sage: w == loads(dumps(w))
+            sage: W = Words_n(3)
+            sage: W
+            Words of length 3
+            sage: W == loads(dumps(W))
             True
         """
         self._n = n
@@ -1427,6 +1465,36 @@ class InfiniteWords_over_OrderedAlphabet(Words_over_OrderedAlphabet):
         """
         return "Infinite Words over %s" % self.alphabet()
 
+    def _an_element_(self):
+        r"""
+        Return an element of self.
+
+        EXAMPLES::
+
+            sage: W = Words('ac', finite=False); W
+            Infinite Words over {'a', 'c'}
+            sage: W.an_element()
+            word: accacaaccaacaccacaacaccaaccacaaccaacacca...
+
+            sage: W = Words(NN, finite=False); W
+            Infinite Words over Non negative integer semiring
+            sage: W.an_element()
+            word: 0110100110010110100101100110100110010110...
+
+            sage: W = Words('z', finite=False); W
+            Infinite Words over {'z'}
+            sage: W.an_element()
+            word: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
+        """
+        some_letters = list(self.alphabet().some_elements())
+        if len(some_letters) > 1:
+            from sage.combinat.words.word_generators import words
+            letters = some_letters[:2]
+            return self(words.ThueMorseWord(alphabet=letters))
+        else:
+            letter = some_letters[0]
+            return self(lambda n : letter, length=Infinity)
+
 class FiniteWords_over_OrderedAlphabet(Words_over_OrderedAlphabet):
     def __init__(self, alphabet):
         r"""
@@ -1579,6 +1647,32 @@ class FiniteWords_length_k_over_OrderedAlphabet(FiniteWords_over_OrderedAlphabet
         if word_options['old_repr']:
             return "Words over %s of length %s"%(self.alphabet(), self._length)
         return "Words of length %s over %s"%(self._length, self.alphabet())
+
+    def _an_element_(self):
+        r"""
+        Return an element of self.
+
+        EXAMPLES::
+
+            sage: W = Words(2, 3); W
+            Words of length 3 over {1, 2}
+            sage: W.an_element()
+            word: 121
+
+            sage: W = Words("bac", 7); W
+            Words of length 7 over {'b', 'a', 'c'}
+            sage: W.an_element()
+            word: bacbacb
+
+            sage: W = Words("baczxy", 5); W
+            Words of length 5 over {'b', 'a', 'c', 'z', 'x', 'y'}
+            sage: W.an_element()
+            word: baczx
+        """
+        letters = list(self.alphabet().some_elements())
+        r = self._length % len(letters)
+        q = (self._length - r) / len(letters)
+        return self(letters * int(q) + letters[:r])
 
     def cardinality(self):
         r"""

@@ -154,7 +154,7 @@ fi
 # "version number" of sage-env.  If a different version of sage-env was
 # sourced earlier (when upgrading), we still source the new version.
 # The sage-env version should be increased whenever a newer sage-env is
-# required for upgrading.  Note that build/deps might also need
+# required for upgrading.  Note that build/make/deps might also need
 # to be changed: the packages which need the new sage-env must depend on
 # SAGE_ROOT_REPO (the root repo contains sage-env).
 #
@@ -258,7 +258,7 @@ if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
     SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH 
     SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET 
 fi 
-export PATH="$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
+export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 # We offer a toolchain option, so if $SAGE_LOCAL/toolchain/toolchain-env exists source it.
 # Since the user might do something crazy we do not do any checks, but hope for the best.
@@ -266,8 +266,15 @@ if [ -f $SAGE_LOCAL/toolchain/toolchain-env ]; then
   source $SAGE_LOCAL/toolchain/toolchain-env
 fi
 
+# setting of the variable UNAME (describing the o.s.)
+# On Cygwin the result of `uname` depends on the version of Windows
+# it is running on, e.g. CYGWIN_NT-5.1 on 32 bits Windows XP or
+# CYGWIN_NT-6.1-WOW64 on 64 bits Windows 7.
+# Currently, this information is of no use to us so we discard it.
+export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
+
 # Mac OS X-specific setup
-if [ `uname` = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
     # set MACOSX_DEPLOYMENT_TARGET -- if set incorrectly, this can
     # cause lots of random "Abort trap" issues on OSX. see trac
     # #7095 for an example.
@@ -364,14 +371,19 @@ if [ "$PYTHON_EGG_CACHE" = "" ]; then
     export PYTHON_EGG_CACHE
 fi
 
-if [ -d "$SAGE_ROOT/local/lib/python" ]; then
-    PYTHONPATH="$SAGE_ROOT/local/lib/python"
+if [ -d "$SAGE_LOCAL/lib/python" ]; then
+    PYTHONPATH="$SAGE_LOCAL/lib/python:$SAGE_LOCAL/lib/python/site_packages"
     if [ -n "$SAGE_PATH" ]; then
         PYTHONPATH="$SAGE_PATH:$PYTHONPATH"
     fi
-    PYTHONHOME="$SAGE_ROOT/local"
+    PYTHONHOME="$SAGE_LOCAL"
+    # Set PYTHONNOUSERSITE to avoid picking up non-Sage versions of
+    # Matplotlib, numpy, etc. See http://trac.sagemath.org/ticket/14243
+    # and http://trac.sagemath.org/ticket/18955.
+    PYTHONNOUSERSITE=yes
     export PYTHONPATH
     export PYTHONHOME
+    export PYTHONNOUSERSITE
 fi
 
 if [ -z "${SAGE_ORIG_LD_LIBRARY_PATH_SET}" ]; then
@@ -395,7 +407,7 @@ export LD_LIBRARY_PATH
 
 # The following is needed for OS X (especially for the
 # Singular install).
-if [ `uname` = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
     if [ -z "${SAGE_ORIG_DYLD_LIBRARY_PATH_SET}" ]; then
         SAGE_ORIG_DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH && export SAGE_ORIG_DYLD_LIBRARY_PATH
         SAGE_ORIG_DYLD_LIBRARY_PATH_SET=True && export SAGE_ORIG_DYLD_LIBRARY_PATH_SET
@@ -410,16 +422,44 @@ fi
 # config directory. So we use pkg_resources.
 "$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; pkg_resources.get_distribution("matplotlib").version' 2>/dev/null
 if [ $? -eq 0 ]; then
-    MPLVERSION=`"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; print pkg_resources.get_distribution("matplotlib").version'`
+    MPLVERSION=`"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; print (pkg_resources.get_distribution("matplotlib").version)'`
     MPLCONFIGDIR="$DOT_SAGE/matplotlib-$MPLVERSION"
     export MPLCONFIGDIR
     # The directory is created when Sage starts (see sage.misc.misc).
 fi
 
-# Unset these variables which interfere with R
+# Make sure that a system-wide R installation does not interfere
 unset R_HOME
 unset R_PROFILE
-
+# Do not use the global Makevars.site and ~/.R/Makevars when installing R packages
+# Provide empty files to appease some R packages' installation scripts.
+if [ -d "$SAGE_LOCAL/lib/R/share" ] ; then
+   R_MAKEVARS_SITE="$SAGE_LOCAL/lib/R/share/Makevars.site" && export R_MAKEVARS_SITE
+   if ! [ -f "$R_MAKEVARS_SITE" ] ; then
+       if ! [ -a "$R_MAKEVARS_SITE" ] ; then
+	   echo "## Empty site-wide Makevars file for Sage's R" > "$R_MAKEVARS_SITE"
+       else
+	   >&2 echo "Warning: $R_MAKEVARS_SITE exists and is not a file : trouble ahead..."
+       fi
+   fi
+fi
+if [ -d "$DOT_SAGE" ] ; then
+    if ! [ -d "$DOT_SAGE/R" ] ; then
+	if ! [ -a  "$DOT_SAGE/R" ] ; then
+	    mkdir -p "$DOT_SAGE/R"
+	else
+	    >&2 echo "Warning: $DOT_SAGE/R exists and is not a directory : trouble ahead..."
+	fi
+    fi
+    R_MAKEVARS_USER="$DOT_SAGE/R/Makevars.user" && export R_MAKEVARS_USER
+    if ! [ -f "$R_MAKEVARS_USER" ] ; then
+	if ! [ -a "$R_MAKEVARS_USER" ] ; then
+	    echo "## Empty user-specific Makevars file for Sage's R" > "$R_MAKEVARS_USER"
+	else
+	    >&2 echo "Warning: $R_MAKEVARS_USER exists and is not a file : trouble ahead..."
+	fi
+    fi
+fi
 MAXIMA_PREFIX="$SAGE_ROOT/local" && export MAXIMA_PREFIX
 
 ############ architecture flags
@@ -433,12 +473,6 @@ MAXIMA_PREFIX="$SAGE_ROOT/local" && export MAXIMA_PREFIX
 
 ############ compilation flags
 
-# On Cygwin the result of `uname` depends on the version of Windows
-# it is running on, e.g. CYGWIN_NT-5.1 on 32 bits Windows XP or
-# CYGWIN_NT-6.1-WOW64 on 64 bits Windows 7.
-# Currently, this information is of no use to us so we discard it.
-export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
-
 # Setting Sage-related compilation flags.
 # This could be used in code to make special changes only when
 # code is being built as part of Sage.
@@ -450,7 +484,7 @@ if [ -z "$CC" ]; then
     # default C compiler as some older versions of XCode 4 ship broken
     # versions of GCC which fail to bootstrap GCC-4.6.3.
     # See http://trac.sagemath.org/sage_trac/ticket/12820
-    if [ "$SAGE_BUILD_TOOLCHAIN" = yes ] && [ "$UNAME" = Darwin ] && [ `uname -r | cut -d. -f1` -ge 11 ]; then
+    if [ "$SAGE_BUILD_TOOLCHAIN" = yes ] && [ "$UNAME" = "Darwin" ] && [ "$MACOSX_VERSION" -ge 11 ]; then
         CC=`which clang 2>/dev/null`
         CXX=`which clang++ 2>/dev/null`
     fi

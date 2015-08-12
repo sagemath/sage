@@ -1,5 +1,3 @@
-include "sage/ext/cdefs.pxi"
-
 ctypedef double celement
 
 include "matrix_modn_dense_template_header.pxi"

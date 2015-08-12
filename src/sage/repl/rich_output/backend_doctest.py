@@ -133,7 +133,7 @@ class BackendDoctest(BackendBase):
             True
         """
         return set([
-            OutputPlainText, OutputAsciiArt, OutputLatex,
+            OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
             OutputImagePng, OutputImageGif, OutputImageJpg, 
             OutputImageSvg, OutputImagePdf, OutputImageDvi,
             OutputSceneJmol, OutputSceneCanvas3d, OutputSceneWavefront,
@@ -204,9 +204,10 @@ class BackendDoctest(BackendBase):
             sage: dm.display_immediately(plt)   # indirect doctest
         """
         self.validate(rich_output)
+        types_to_print = [OutputPlainText, OutputAsciiArt, OutputUnicodeArt]
         if isinstance(rich_output, OutputLatex):
             print(rich_output.mathjax(display=False))
-        elif any(isinstance(rich_output, cls) for cls in [OutputPlainText, OutputAsciiArt]):
+        elif any(isinstance(rich_output, cls) for cls in types_to_print):
             rich_output.print_to_stdout()
 
     def validate(self, rich_output):
@@ -249,6 +250,8 @@ class BackendDoctest(BackendBase):
         if isinstance(rich_output, OutputPlainText):
             pass
         elif isinstance(rich_output, OutputAsciiArt):
+            pass
+        elif isinstance(rich_output, OutputUnicodeArt):
             pass
         elif isinstance(rich_output, OutputLatex):
             assert rich_output.mathjax().startswith('<html>')

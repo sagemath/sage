@@ -212,7 +212,7 @@ cdef class FiniteZZsubmodule_iterator:
                 raise StopIteration
         else:
             if self._count == 0 or self._count == self._order:
-                self._other = self._other_ZZ.next()
+                self._other = next(self._other_ZZ)
                 self._cw = < ModuleElement > self._other
                 self._count = 1
             else:
@@ -257,7 +257,7 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
     We test whether we get immutable vectors if immutable=True::
 
         sage: iter = FiniteFieldsubspace_iterator(A, immutable=True)
-        sage: c = iter.next()
+        sage: c = next(iter)
         sage: c.is_immutable()
         True
 
@@ -349,7 +349,7 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
         sage: len(list(FiniteFieldsubspace_projPoint_iterator(A[:2]))) #indirect doctest
         8
         sage: iter = FiniteFieldsubspace_projPoint_iterator(A[:2], immutable=True)
-        sage: iter.next().is_immutable()
+        sage: next(iter).is_immutable()
         True
     """
 
@@ -415,7 +415,7 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
                 else:
                     raise StopIteration
         try:
-            return self._it.next()
+            return next(self._it)
         except StopIteration:
             self._normalized_pos += 1
             if self._normalized_pos == self._basis_length:
@@ -424,7 +424,7 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
                 self._it = FiniteFieldsubspace_iterator(self._basis[:self._normalized_pos],
                                                         self._basis[self._normalized_pos],
                                                         immutable=self._immutable)
-                return self._it.next()
+                return next(self._it)
 
     def __repr__(self):
         """

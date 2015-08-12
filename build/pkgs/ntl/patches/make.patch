@@ -1,3 +1,5 @@
+Use `$(MAKE)` instead of `make` in mfile, the Perl script
+WizardAux and the shell script TestScript.
 --- ntl.orig/src/mfile	2014-10-11 07:33:02.904149666 +1300
 +++ ntl/src/mfile	2014-10-09 22:14:46.730922903 +1300
 @@ -325,11 +325,11 @@
@@ -24,8 +26,8 @@
 -	./MakeDesc
 +	./MakeDesc # generates mach_desc.h
  	mv mach_desc.h ../include/NTL/mach_desc.h
+
  
- # setup2 generates the file GetTime.c
 @@ -358,7 +358,7 @@
  # setup4 runs the wizard
  
@@ -54,11 +56,11 @@
     my $val;
     my $res;
  
--   system("make wntl.a");
-+   system("\$MAKE wntl.a");
+-   system("make wntl.a") and return "999999999999999";
++   system("\$MAKE wntl.a") and return "999999999999999";
     RemoveProg($name);
--   system("make $name");
-+   system("\$MAKE $name");
+-   system("make $name") and return "999999999999999";
++   system("\$MAKE $name") and return "999999999999999";
  
     print "\n*** running $name...";
  

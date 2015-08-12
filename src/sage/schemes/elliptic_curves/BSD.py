@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"Birch and Swinnerton-Dyer formulas"
 #import ell_point
 #import formal_group
 #import ell_torsion
@@ -283,6 +284,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     .. [Kolyvagin] V. A. Kolyvagin. On the structure of Shafarevich-Tate
        groups. Algebraic geometry, 94--121, Lecture Notes in Math., 1479,
        Springer, Berlin, 1991.
+    .. [LawsonWuthrich] T. Lawson and C. Wuthrich, Vanishing of some Galois
+       cohomology groups for elliptic curves, http://arxiv.org/abs/1505.02940
     .. [LumStein] A. Lum, W. Stein. Verification of the Birch and
        Swinnerton-Dyer Conjecture for Elliptic Curves with Complex
        Multiplication (unpublished)
@@ -304,10 +307,19 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: EllipticCurve('11a').prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 5} by Kolyvagin.
-        Kato further implies that #Sha[5] is trivial.
+        Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
+        True for p = 5 by Kolyvagin bound
         []
 
         sage: EllipticCurve('14a').prove_BSD(verbosity=2)
+        p = 2: True by 2-descent
+        True for p not in {2, 3} by Kolyvagin.
+        Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
+        True for p = 3 by Kolyvagin bound
+        []
+
+        sage: E = EllipticCurve("20a1")
+        sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 3} by Kolyvagin.
         Kato further implies that #Sha[3] is trivial.
@@ -317,7 +329,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 3, 5} by Kolyvagin.
-        Kolyvagin's bound for p = 3 applies by Stein et al.
+        Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
         True for p = 3 by Kolyvagin bound
         Remaining primes:
         p = 5: reducible, not surjective, additive, divides a Tamagawa number
@@ -347,7 +359,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 3} by Kolyvagin.
-        Kato further implies that #Sha[3] is trivial.
+        Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
+        True for p = 3 by Kolyvagin bound
         []
 
         sage: E = EllipticCurve('37a')
@@ -666,21 +679,42 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             else:
                 BSD.proof[p] = ['Cha']
             kolyvagin_primes.append(p)
-    # Stein et al.
-    if not BSD.curve.has_cm():
-        L = arith.lcm([F.torsion_order() for F in BSD.curve.isogeny_class()])
-        for p in BSD.primes:
-            if p in kolyvagin_primes or p == 2: continue
-            if L%p != 0:
-                if len(arith.prime_divisors(D_K)) == 1:
-                    if D_K%p == 0: continue
-                if verbosity > 0:
-                    print 'Kolyvagin\'s bound for p = %d applies by Stein et al.'%p
-                kolyvagin_primes.append(p)
-                if p in BSD.proof:
-                    BSD.proof[p].append('Stein et al.')
-                else:
-                    BSD.proof[p] = ['Stein et al.']
+    # Stein et al replaced
+    for p in BSD.primes:
+        # the lemma about the vanishing of H^1 is false in Stein et al for p=5 and 11
+        # here is the correction from Lawson-Wuthrich. Especially Theorem 14 in
+        # [LawsonWuthrich] above.
+        if p in kolyvagin_primes or p == 2 or D_K % p == 0:
+            continue
+        crit_lw = False
+        if p > 11 or p == 7:
+            crit_lw = True
+        elif p == 11:
+            if BSD.N != 121 or BSD.curve.label() != "121c2":
+                crit_lw = True
+        elif galrep.is_irreducible(p):
+            crit_lw = True
+        else:
+            phis = BSD.curve.isogenies_prime_degree(p)
+            if len(phis) != 1:
+                crit_lw = True
+            else:
+                C = phis[0].codomain()
+                if p == 3:
+                    if BSD.curve.torsion_order() % p != 0 and C.torsion_order() % p != 0:
+                        crit_lw = True
+                else:  # p == 5
+                    Et = BSD.curve.quadratic_twist(5)
+                    if Et.torsion_order() % p != 0 and C.torsion_order() % p != 0:
+                        crite_lw = True
+        if crit_lw:
+            if verbosity > 0:
+                print('Kolyvagin\'s bound for p = %d applies by Lawson-Wuthrich' % p)
+            kolyvagin_primes.append(p)
+            if p in BSD.proof:
+                BSD.proof[p].append('Lawson-Wuthrich')
+            else:
+                BSD.proof[p] = ['Lawson-Wuthrich']
     for p in kolyvagin_primes:
         if p in BSD.primes:
             BSD.primes.remove(p)
@@ -797,7 +831,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                     if verbosity > 2:
                         print '    trying max_height =', max_height
                     old_bound = M
-                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_dc)
+                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_hi)
                     if M == -1:
                         max_height += 1
                         continue
@@ -849,7 +883,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                     old_bound = M
                     if p**(BSD.sha_an.ord(p)/2+1) > M or max_height >= 22:
                         break
-                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_dc)
+                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_hi)
                     if M == -1:
                         max_height += 1
                         continue

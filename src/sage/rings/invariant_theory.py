@@ -621,7 +621,7 @@ class AlgebraicForm(FormsBase):
         try:
             polynomial = self._polynomial.homogenize(var)
             R = polynomial.parent()
-            variables = map(R, self._variables[0:-1]) + [R(var)]
+            variables = [R(_) for _ in self._variables[0:-1]] + [R(var)]
         except AttributeError:
             from sage.rings.all import PolynomialRing
             R = PolynomialRing(self._ring.base_ring(), [str(self._ring.gen(0)), str(var)])

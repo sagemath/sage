@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+
+set -e
+
+[ -n "${SAGE_ROOT}" ] || SAGE_ROOT="$(readlink -f $(dirname ${0})/../../../)"
+
+
+# determine the latest version and its download URL.
+DOWNLOAD_URL=$(curl "https://pypi.python.org/pypi?:action=doap&name=matplotlib" \
+               | grep download-page | sed 's/.*http/http/g' | sed s/.gz.*/.gz/g)
+LATEST_VERSION=$(echo ${DOWNLOAD_URL} | sed 's/.*matplotlib-//g' | sed 's/.tar.gz//g')
+
+
+# fetch and unpack latest version
+tar xzf <( curl -L ${DOWNLOAD_URL} )
+
+
+# remove test images
+rm -rf matplotlib-${LATEST_VERSION}/lib/matplotlib/tests/baseline_images/*
+
+
+# repack and cleanup temporary directory
+tar cjf "$SAGE_ROOT/upstream/matplotlib-${LATEST_VERSION}.tar.bz2" matplotlib-${LATEST_VERSION}
+rm -rf matplotlib-${LATEST_VERSION}
+
+
+# update package info
+echo "${LATEST_VERSION}" > "${SAGE_ROOT}/build/pkgs/matplotlib/package-version.txt"
+"$SAGE_ROOT"/sage -sh 'sage-fix-pkg-checksums'
+

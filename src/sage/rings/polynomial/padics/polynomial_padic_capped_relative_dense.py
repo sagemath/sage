@@ -911,7 +911,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_domain, Polynomi
             sage: K = Zp(13, 5)
             sage: R.<t> = K[]
             sage: f = t^3 + K(13, 3) * t
-            sage: f.rescale(2)    # todo: not tested -- in fact, is broken!
+            sage: f.rescale(2)  # not implemented
         """
         negval = False
         try:
@@ -996,13 +996,13 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_domain, Polynomi
             sage: R.<x> = Qp(3,3)[]
             sage: f = 3*x + 7
             sage: g = 5*x + 9
-            sage: f.xgcd(f*g) # not tested - currently we get the incorrect result ((O(3^2))*x^2 + (O(3))*x + (1 + O(3^3)), (3^-2 + 2*3^-1 + O(3))*x, (3^-2 + 3^-1 + O(3)))
+            sage: f.xgcd(f*g)  # known bug
             ((3 + O(3^4))*x + (1 + 2*3 + O(3^3)), (1 + O(3^3)), 0)
 
             sage: R.<x> = Qp(3)[]
             sage: f = 490473657*x + 257392844/729
             sage: g = 225227399/59049*x - 8669753175
-            sage: f.xgcd(f*g) # not tested - currently we get the incorrect result ((O(3^18))*x^2 + (O(3^9))*x + (1 + O(3^20)), (3^-5 + 2*3^-1 + 3 + 2*3^2 + 3^4 + 2*3^6 + 3^7 + 3^8 + 2*3^9 + 2*3^11 + 3^13 + O(3^15))*x, (3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^9 + 3^13 + 2*3^14 + 3^17 + 3^18 + 3^20 + 3^21 + 3^23 + 2*3^24 + O(3^25)))
+            sage: f.xgcd(f*g)  # known bug
             ((3^3 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 2*3^10 + 2*3^11 + 3^12 + 3^13 + 3^15 + 2*3^16 + 3^18 + O(3^23))*x + (2*3^-6 + 2*3^-5 + 3^-3 + 2*3^-2 + 3^-1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 3^11 + O(3^14)), (1 + O(3^20)), 0)
 
         """

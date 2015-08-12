@@ -145,7 +145,7 @@ class Stream_class(SageObject):
             sage: s = Stream(ZZ)
             sage: list(sorted(s.__dict__.iteritems()))
             [('_constant', None),
-             ('_gen', <generator object iterator at 0x...>),
+             ('_gen', <generator object at 0x...>),
              ('_last_index', -1),
              ('_list', []),
              ('end_reached', False)]

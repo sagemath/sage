@@ -958,7 +958,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``base_ring`` -- the base ring for the matrix to be constructed
             - ``action`` -- a bivariate function (default: :func:`operator.mul`)
-            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``side`` -- 'left' or 'right' (default: 'left')
 
             EXAMPLES::
 

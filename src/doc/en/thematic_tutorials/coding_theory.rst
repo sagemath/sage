@@ -59,8 +59,8 @@ call GUAVA:
 
            EXAMPLES:
 
-               sage: C = Hexacode()       # not tested (see trac #17617)
-               sage: C.minimum_distance() # not tested (see trac #17617)
+               sage: C = Hexacode()       # known bug
+               sage: C.minimum_distance() # known bug
                4
 
            """
@@ -84,10 +84,10 @@ call GUAVA:
          sage: C = codes.HammingCode(3,GF(2))
          sage: C.zeta_polynomial()
          2/5*T^2 + 2/5*T + 1/5
-         sage: C = best_known_linear_code(6,3,GF(2)) # not tested (see trac #17617)
-         sage: C.minimum_distance()                  # not tested (see trac #17617)
+         sage: C = best_known_linear_code(6,3,GF(2)) # known bug
+         sage: C.minimum_distance()                  # known bug
          3
-         sage: C.zeta_polynomial()                   # not tested (see trac #17617)
+         sage: C.zeta_polynomial()                   # known bug
          2/5*T^2 + 2/5*T + 1/5
 
 #. ``gen_mat``, ``check_mat``, ``decode``, ``dual_code``,
@@ -108,7 +108,7 @@ call GUAVA:
            sage: C = codes.HammingCode(3,GF(2))
            sage: C.binomial_moment(2)
            0
-           sage: C.binomial_moment(3)    # not tested (see trac #17617)
+           sage: C.binomial_moment(3)    # known bug
            0
            sage: C.binomial_moment(4)    # long time
            35
@@ -116,7 +116,7 @@ call GUAVA:
            sage: MS = MatrixSpace(GF(2),1,7)
            sage: F = GF(2); a = F.gen()
            sage: v1 = [a,a,F(0),a,a,F(0),a]
-           sage: C.decode(v1) # not tested (see trac #17617)
+           sage: C.decode(v1) # known bug
            (1, 0, 0, 1, 1, 0, 1)
 
    Decoding, at the moment, merely uses syndrome decoding via GUAVA.
@@ -136,33 +136,33 @@ call GUAVA:
 
 
            sage: C = codes.HammingCode(3,GF(2))
-           sage: G = C.automorphism_group_binary_code(); G # not tested (see trac #17617)
+           sage: G = C.automorphism_group_binary_code(); G # known bug
            Permutation Group with generators [(2,3)(5,7), (2,5)(3,7),
                               (2,3,7,5)(4,6), (2,4)(6,7), (1,2)(3,4)]
-           sage: G.order() # not tested (see trac #17617)
+           sage: G.order() # known bug
            168
            sage: C = codes.HammingCode(3,GF(2))
-           sage: C.generator_matrix() # not tested (see trac #17617)
+           sage: C.generator_matrix() # known bug
            [1 0 0 1 0 1 0]
            [0 1 0 1 0 1 1]
            [0 0 1 1 0 0 1]
            [0 0 0 0 1 1 1]
-           sage: C.redundancy_matrix() # not tested (see trac #17617)
+           sage: C.redundancy_matrix() # known bug
            [1 1 0]
            [1 1 1]
            [1 0 1]
            [0 1 1]
-           sage: C.standard_form()[0].generator_matrix() # not tested (see trac #17617)
+           sage: C.standard_form()[0].generator_matrix() # known bug
            [1 0 0 0 1 1 0]
            [0 1 0 0 1 1 1]
            [0 0 1 0 1 0 1]
            [0 0 0 1 0 1 1]
            sage: MS = MatrixSpace(GF(2),4,8)
-           sage: G  = MS([[1,0,0,0,1,1,1,0],[0,1,1,1,0,0,0,0],  # not tested (see trac #17617)
-           ....:          [0,0,0,0,0,0,0,1],[0,0,0,0,0,1,0,0]]) # not tested (see trac #17617)
-           sage: C  = codes.LinearCode(G)                       # not tested (see trac #17617)
-           sage: gp = C.automorphism_group_binary_code()        # not tested (see trac #17617)
-           sage: C.module_composition_factors(gp)               # not tested (see trac #17617)
+           sage: G  = MS([[1,0,0,0,1,1,1,0],[0,1,1,1,0,0,0,0],  # known bug
+           ....:          [0,0,0,0,0,0,0,1],[0,0,0,0,0,1,0,0]]) # known bug
+           sage: C  = codes.LinearCode(G)                       # known bug
+           sage: gp = C.automorphism_group_binary_code()        # known bug
+           sage: C.module_composition_factors(gp)               # known bug
            [ rec(
              field := GF(2),
              isMTXModule := true,
@@ -312,8 +312,8 @@ call GUAVA:
           sage: C.assmus_mattson_designs(6)
           0
           sage: X = range(24)#  example 2
-          sage: blocks = [c.support() for c in C if hamming_weight(c)==8] # not tested (see trac #17617)
-          sage: len(blocks)                                               # not tested (see trac #17617)
+          sage: blocks = [c.support() for c in C if hamming_weight(c)==8] # known bug
+          sage: len(blocks)                                               # known bug
           759
 
 
@@ -515,21 +515,21 @@ Python:
 
 
          sage: C = codes.HammingCode(3,GF(2))
-         sage: H = C.parity_check_matrix(); H   # not tested (see trac #17617)
+         sage: H = C.parity_check_matrix(); H   # known bug
          [1 0 0 1 1 0 1]
          [0 1 0 1 0 1 1]
          [0 0 1 1 1 1 0]
-         sage: codes.LinearCodeFromCheckMatrix(H) == C # not tested (see trac #17617)
+         sage: codes.LinearCodeFromCheckMatrix(H) == C # known bug
          True
          sage: C = codes.HammingCode(2,GF(3))
-         sage: H = C.parity_check_matrix(); H                    # not tested (see trac #17617)
+         sage: H = C.parity_check_matrix(); H                    # known bug
          [1 0 2 2]
          [0 1 2 1]
-         sage: codes.LinearCodeFromCheckMatrix(H) == C # not tested (see trac #17617)
+         sage: codes.LinearCodeFromCheckMatrix(H) == C # known bug
          True
          sage: C = codes.RandomLinearCode(10,5,GF(4,"a"))
          sage: H = C.parity_check_matrix()
-         sage: codes.LinearCodeFromCheckMatrix(H) == C # not tested (see trac #17617)
+         sage: codes.LinearCodeFromCheckMatrix(H) == C # known bug
          True
 
 -  ``QuadraticResidueCodeEvenPair``, ``QuadraticResidueCodeOddPair``: Quadratic
@@ -693,8 +693,8 @@ Regarding bounds on coding theory parameters, this module implements:
    ::
 
 
-         sage: L = codes.best_known_linear_code_www(72, 36, GF(2)) # not tested (see trac #17617)
-         sage: print L                                             # not tested (see trac #17617)
+         sage: L = codes.best_known_linear_code_www(72, 36, GF(2)) # known bug
+         sage: print L                                             # known bug
          Construction of a linear code [72,36,15] over GF(2):
          [1]:  [73, 36, 16] Cyclic Linear Code over GF(2)
                CyclicCode of length 73 with generating polynomial x^37 + x^36
@@ -711,7 +711,7 @@ Regarding bounds on coding theory parameters, this module implements:
    ::
 
 
-       sage: print bounds_minimum_distance(10,5,GF(2)) # not tested (see trac #17617)
+       sage: print bounds_minimum_distance(10,5,GF(2)) # known bug
        rec(
          n := 10,
          k := 5,
@@ -747,7 +747,7 @@ Regarding bounds on coding theory parameters, this module implements:
    ::
 
 
-       sage: codesize_upper_bound(10, 3, 2) # not tested (see trac #17617)
+       sage: codesize_upper_bound(10, 3, 2) # known bug
        85
 
    This means that there is a :math:`(10,85,3)` binary (non-linear)
@@ -758,8 +758,8 @@ Regarding bounds on coding theory parameters, this module implements:
    ::
 
 
-       sage: L = best_known_linear_code_www(10, 6, GF(2)) # not tested (see trac #17617)
-       sage: print L                                      # not tested (see trac #17617)
+       sage: L = best_known_linear_code_www(10, 6, GF(2)) # known bug
+       sage: print L                                      # known bug
        Construction of a linear code
        [10,6,3] over GF(2):
        [1]:  [4, 1, 4] Cyclic Linear Code over GF(2)

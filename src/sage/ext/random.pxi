@@ -7,6 +7,7 @@
 cdef int SAGE_RAND_MAX = 2147483647 # 2^31 - 1
 
 
+from sage.libs.gmp.all cimport *
 from sage.misc.randstate cimport randstate, current_randstate
 
 ###########################

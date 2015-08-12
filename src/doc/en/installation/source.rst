@@ -4,6 +4,8 @@
     **This page was last updated in MONTH YEAR (Sage X.Y).**
     ***************************************************************************
 
+.. _sec-installation-from-sources:
+
 Install from Source Code
 ========================
 
@@ -29,6 +31,9 @@ or `check it out with git <https://github.com/sagemath/sage>`_ (see also.
 If you changed your mind, you can also download a
 `binary distribution <http://www.sagemath.org/download.html>`_
 for some operating systems.
+
+.. contents:: Table of contents
+   :depth: 2
 
 Supported platforms
 -------------------
@@ -330,7 +335,7 @@ or similar commands. In addition to the base texlive install you will
 probably need a number of optional texlive packages, for example
 country-specific babel packages for the localized Sage
 documentation. The required texlive packages are listed in
-`SAGE_ROOT/src/ext/texlive/package-list.txt`.
+``SAGE_ROOT/src/ext/texlive/package-list.txt``.
 
 If you don't have either ImageMagick or ffmpeg, you won't be able to
 view animations.
@@ -786,12 +791,6 @@ how it is built:
   You can benefit from this no-plot feature with other make targets by doing
   ``export SAGE_DOCBUILD_OPTS+=' --no-plot'``
 
-- ``make build-serial`` builds the components of Sage serially, rather
-  than in parallel (parallel building is the default).
-  Running ``make build-serial`` is equivalent to setting the environment
-  variable :envvar:`SAGE_PARALLEL_SPKG_BUILD` to "no" -- see below for
-  information about this variable.
-
 - ``make ptest`` and ``make ptestlong``: these run Sage's test suite.
   The first version skips tests that need more than a few seconds to complete
   and those which depend on optional packages or additional software.
@@ -881,14 +880,6 @@ Here are some of the more commonly used variables affecting the build process:
   parallel testing: there we use a default of the number of CPU cores, with a
   maximum of 8 and a minimum of 2).
 
-- :envvar:`SAGE_PARALLEL_SPKG_BUILD` - if set to ``no``, then build spkgs
-  serially rather than in parallel.
-  If this is set to ``no``, then each spkg may still take advantage of the setting
-  of :envvar:`MAKE` to build using multiple jobs, but the spkgs will be built
-  one at a time.
-  Alternatively, run ``make build-serial`` which sets this environment
-  variable for you.
-
 - :envvar:`SAGE_CHECK` - if set to ``yes``, then during the build process,
   and when running ``sage -i <package-name>`` or ``sage -f <package-name>``,
   run the test suite for each package which has one.
@@ -969,15 +960,6 @@ Here are some of the more commonly used variables affecting the build process:
   to ``yes``, profiling support is enabled where possible. Note that
   Python-level profiling is always avaliable; This option enables
   profiling in Cython modules.
-
-- :envvar:`SAGE_SPKG_LIST_FILES` - if set to ``yes``, then enable verbose
-  extraction of tar files, i.e. Sage's spkg files.
-  Since some spkgs contain such a huge number of files that the log files
-  get very large and harder to search (and listing the contained files is
-  usually less valuable), we decided to turn this off by default.
-  This variable affects builds of Sage with ``make`` (and ``sage --upgrade``)
-  as well as the manual installation of individual spkgs with e.g. ``sage -i``
-  or ``sage -f``.
 
 - :envvar:`SAGE_SPKG_INSTALL_DOCS` - if set to ``yes``, then install
   package-specific documentation to
@@ -1418,14 +1400,6 @@ System-wide install
    or ``make ptestlong`` which tests files in parallel using multiple
    processes.
    You can also omit ``long`` to skip tests which take a long time.
-
-Sagetex
-~~~~~~~
-
-To make SageTeX available to your users, see the instructions for
-:ref:`installation in a multiuser environment <sagetex_installation_multiuser>`
-.
-
 
 Some common problems
 --------------------

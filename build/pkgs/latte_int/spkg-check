@@ -16,7 +16,8 @@ fi
 
 export CFLAGS
 
-dirsr="$CUR"/src
+LATTE_VERSION="$(cat ${SAGE_ROOT}/build/pkgs/latte_int/package-version.txt)"
+dirsr="$CUR"/latte-int-${LATTE_VERSION}
 echo "Testing in $dirsr"
 cd "$dirsr"
 $MAKE check

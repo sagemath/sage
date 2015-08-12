@@ -1,5 +1,4 @@
 cdef extern from *:
-    ctypedef double* const_double_ptr "const double*"
     cdef int BINARY = 1
     cdef int REAL = -1
     cdef int INTEGER = 0

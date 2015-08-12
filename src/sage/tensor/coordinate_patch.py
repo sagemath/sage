@@ -78,7 +78,7 @@ class CoordinatePatch(Parent):
         An open subset of Euclidian space with a specific set of
         coordinates. See ``CoordinatePatch`` for details.
 
-        INPUT::
+        INPUT:
 
         - ``coordinates`` -- a set of symbolic variables that serve
         as coordinates on this space.
@@ -86,7 +86,6 @@ class CoordinatePatch(Parent):
         - ``metric`` (default: None) -- a metric tensor on this
         coordinate patch.  Providing anything other than ``None``
         is currently not defined.
-
 
         EXAMPLES::
 

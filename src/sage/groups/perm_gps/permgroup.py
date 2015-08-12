@@ -1321,8 +1321,7 @@ class PermutationGroup_generic(group.FiniteGroup):
             if action == "OnPoints":
                 point = self._domain_to_gap[point]
             else:
-                point = [self._domain_to_gap[x] for x in point]
-                point.sort()
+                point = sorted([self._domain_to_gap[x] for x in point])
         except KeyError as x:
             raise ValueError("{} does not belong to the domain".format(x))
 
@@ -1429,8 +1428,8 @@ class PermutationGroup_generic(group.FiniteGroup):
             [[()], [()], [(), (3,4)], [()]]
             sage: G.strong_generating_system(base_of_group=[3,1,2,4])
             [[(), (3,4)], [()], [()], [()]]
-            sage: G = TransitiveGroup(12,17)                # optional
-            sage: G.strong_generating_system()              # optional
+            sage: G = TransitiveGroup(12,17)                # optional - database_gap
+            sage: G.strong_generating_system()              # optional - database_gap
             [[(), (1,4,11,2)(3,6,5,8)(7,10,9,12), (1,8,3,2)(4,11,10,9)(5,12,7,6), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12), (1,12,7,2)(3,10,9,8)(4,11,6,5), (1,11)(2,8)(3,5)(4,10)(6,12)(7,9), (1,10,11,8)(2,3,12,5)(4,9,6,7), (1,3)(2,8)(4,10)(5,7)(6,12)(9,11), (1,2,3,8)(4,9,10,11)(5,6,7,12), (1,6,7,8)(2,3,4,9)(5,10,11,12), (1,5,9)(3,11,7), (1,9,5)(3,7,11)], [(), (2,6,10)(4,12,8), (2,10,6)(4,8,12)], [()], [()], [()], [()], [()], [()], [()], [()], [()], [()]]
         """
         sgs = []
@@ -3153,8 +3152,7 @@ class PermutationGroup_generic(group.FiniteGroup):
             raise ValueError("%s is not a subgroup of %s" % (S, self))
 
         group = sorted(copy(self.list()))
-        subgroup = [self(s) for s in S.list()]
-        subgroup.sort()
+        subgroup = sorted([self(s) for s in S.list()])
         decomposition = []
         while group:
             rep = group[0]

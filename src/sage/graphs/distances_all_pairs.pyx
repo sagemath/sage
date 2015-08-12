@@ -131,30 +131,38 @@ REFERENCE:
   tight bounds for the diameter of massive graphs. *ACM Journal of Experimental
   Algorithms* 13 (2008) http://dx.doi.org/10.1145/1412228.1455266
 
+.. [TK13] F. W. Takes and W. A. Kosters. Computing the eccentricity distribution
+  of large graphs. *Algorithms* 6:100-118 (2013)
+  http://dx.doi.org/10.3390/a6010100
 
 Functions
 ---------
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
 
 include "sage/data_structures/binary_matrix.pxi"
+from libc.string cimport memset
 from libc.stdint cimport uint64_t, uint32_t, INT32_MAX, UINT32_MAX
 from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
+from sage.ext.memory_allocator cimport MemoryAllocator
 
-from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
+from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph, out_degree
 
 
 cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short * predecessors,
                                         unsigned short * distances,
-                                        int            * eccentricity):
+                                        uint32_t       * eccentricity):
     """
     See the module's documentation.
     """
@@ -163,6 +171,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
 
     cdef list int_to_vertex = gg.vertices()
     cdef int i
+    cdef MemoryAllocator mem = MemoryAllocator()
 
     cdef int n = len(int_to_vertex)
 
@@ -180,9 +189,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     bitset_init(seen, n)
 
     # The list of waiting vertices, the beginning and the end of the list
-    cdef int * waiting_list = <int *> sage_malloc(n*sizeof(int))
-    if waiting_list == NULL:
-        raise MemoryError()
+    cdef int * waiting_list = <int *> mem.allocarray(n, sizeof(int))
     cdef int waiting_beginning = 0
     cdef int waiting_end = 0
 
@@ -192,11 +199,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     cdef uint32_t * end
 
     cdef unsigned short * c_predecessors = predecessors
-    cdef int * c_eccentricity = eccentricity
-    cdef int * c_distances = <int *> sage_malloc( n * sizeof(int))
-    if c_distances == NULL:
-        sage_free(waiting_list)
-        raise MemoryError()
+    cdef int * c_distances = <int *> mem.allocarray(n, sizeof(int))
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors
@@ -265,19 +268,24 @@ cdef inline all_pairs_shortest_path_BFS(gg,
             waiting_beginning += 1
 
         # If not all the vertices have been met
-        for v in range(n):
-            if not bitset_in(seen, v):
+        if bitset_len(seen) < n:
+            bitset_complement(seen, seen)
+            v = bitset_next(seen, 0)
+            while v >= 0:
                 c_distances[v] = INT32_MAX
                 if predecessors != NULL:
                     c_predecessors[v] = -1
+                v = bitset_next(seen, v+1)
+
+            if eccentricity != NULL:
+                eccentricity[source] = UINT32_MAX
+
+        elif eccentricity != NULL:
+            eccentricity[source] = c_distances[waiting_list[n-1]]
+
 
         if predecessors != NULL:
             c_predecessors += n
-
-        if eccentricity != NULL:
-            c_eccentricity[source] = 0
-            for i in range(n):
-                c_eccentricity[source] = c_eccentricity[source] if c_eccentricity[source] >= c_distances[i] else c_distances[i]
 
         if distances != NULL:
             for i in range(n):
@@ -285,9 +293,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
             distances += n
 
     bitset_free(seen)
-    sage_free(waiting_list)
     free_short_digraph(sd)
-    sage_free(c_distances)
 
 ################
 # Predecessors #
@@ -525,7 +531,7 @@ def is_distance_regular(G, parameters = False):
 
     if not G.is_regular():
         return False
-    k = G.degree(G.vertex_iterator().next())
+    k = G.degree(next(G.vertex_iterator()))
 
     # Matrix of distances
     cdef unsigned short * distance_matrix = c_distances_all_pairs(G)
@@ -706,28 +712,116 @@ def distances_and_predecessors_all_pairs(G):
 # Eccentricity #
 ################
 
-cdef int * c_eccentricity(G) except NULL:
+cdef uint32_t * c_eccentricity(G) except NULL:
     r"""
-    Returns the vector of eccentricities in G.
+    Return the vector of eccentricities in G.
 
     The array returned is of length n, and its ith component is the eccentricity
     of the ith vertex in ``G.vertices()``.
     """
     cdef unsigned int n = G.order()
 
-    cdef int * ecc = <int *> sage_malloc(n*sizeof(int))
+    cdef uint32_t * ecc = <uint32_t *> sage_calloc(n, sizeof(uint32_t))
     if ecc == NULL:
         raise MemoryError()
     all_pairs_shortest_path_BFS(G, NULL, NULL, ecc)
 
     return ecc
 
-def eccentricity(G):
+cdef uint32_t * c_eccentricity_bounding(G) except NULL:
     r"""
-    Returns the vector of eccentricities in G.
+    Return the vector of eccentricities in G using the algorithm of [TK13]_.
 
     The array returned is of length n, and its ith component is the eccentricity
     of the ith vertex in ``G.vertices()``.
+
+    The algorithm proposed in [TK13]_ is based on the observation that for all
+    nodes `v,w\in V`, we have `\max(ecc[v]-d(v,w), d(v,w))\leq ecc[w] \leq
+    ecc[v] + d(v,w)`. Also the algorithms iteratively improves upper and lower
+    bounds on the eccentricity of each node until no further improvements can be
+    done. This algorithm offers good running time reduction on scale-free graphs.
+    """
+    if G.is_directed():
+        raise ValueError("The 'bounds' method only works on undirected graphs.")
+
+    # Copying the whole graph to obtain the list of neighbors quicker than by
+    # calling out_neighbors.  This data structure is well documented in the
+    # module sage.graphs.base.static_sparse_graph
+    cdef unsigned int n = G.order()
+    cdef short_digraph sd
+    init_short_digraph(sd, G)
+
+    # allocated some data structures
+    cdef bitset_t seen
+    bitset_init(seen, n)
+    cdef uint32_t * distances = <uint32_t *>sage_malloc(3 * n * sizeof(uint32_t))
+    cdef uint32_t * LB        = <uint32_t *>sage_calloc(n, sizeof(uint32_t))
+    if distances==NULL or LB==NULL:
+        bitset_free(seen)
+        sage_free(LB)
+        sage_free(distances)
+        free_short_digraph(sd)
+        raise MemoryError()
+    cdef uint32_t * waiting_list = distances + n
+    cdef uint32_t * UB           = distances + 2 * n
+    memset(UB, -1, n * sizeof(uint32_t))
+
+    cdef uint32_t v, w, next_v, tmp, cpt = 0
+
+    # The first vertex is the one with largest degree
+    next_v = max((out_degree(sd, v), v) for v in range(n))[1]
+    
+    sig_on()
+    while next_v!=UINT32_MAX:
+
+        v = next_v
+        cpt += 1
+
+        # Compute the exact eccentricity of v
+        LB[v] = simple_BFS(n, sd.neighbors, v, distances, NULL, waiting_list, seen)
+
+        if LB[v]==UINT32_MAX:
+            # The graph is not connected. We set maximum value and exit.
+            for w in range(n):
+                LB[w] = UINT32_MAX
+            break
+
+        # Improve the bounds on the eccentricity of other vertices and select
+        # source of the next BFS
+        next_v = UINT32_MAX
+        for w in range(n):
+            LB[w] = max(LB[w], max(LB[v] - distances[w], distances[w]))
+            UB[w] = min(UB[w], LB[v] + distances[w])
+            if LB[w]==UB[w]:
+                continue
+            elif next_v==UINT32_MAX or (cpt%2==0 and LB[w]<LB[next_v]) or (cpt%2==1 and UB[w]>UB[next_v]):
+                # The next vertex is either the vertex with largest upper bound
+                # or smallest lower bound
+                next_v = w
+
+    sig_off()
+
+    sage_free(distances)
+    bitset_free(seen)
+    free_short_digraph(sd)
+
+    return LB
+
+def eccentricity(G, method="standard"):
+    r"""
+    Return the vector of eccentricities in G.
+
+    The array returned is of length `n`, and its `i`-th component is the
+    eccentricity of the ith vertex in ``G.vertices()``.
+
+    INPUT:
+
+    - ``G`` -- a Graph or a DiGraph.
+
+    - ``method`` -- (default: ``'standard'``) name of the method used to compute
+      the eccentricity of the vertices. Available methods are ``'standard'``
+      which performs a BFS from each vertex and ``'bounds'`` which uses the fast
+      algorithm proposed in [TK13]_ for undirected graphs.
 
     EXAMPLE::
 
@@ -735,22 +829,65 @@ def eccentricity(G):
         sage: g = graphs.PetersenGraph()
         sage: eccentricity(g)
         [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+    TEST:
+
+    All methods are valid::
+
+        sage: from sage.graphs.distances_all_pairs import eccentricity
+        sage: g = graphs.RandomGNP(50,.1)
+        sage: eccentricity(g, method='standard')==eccentricity(g, method='bounds')
+        True
+
+    Case of not (strongly) connected (directed) graph::
+
+        sage: from sage.graphs.distances_all_pairs import eccentricity
+        sage: g = 2*graphs.PathGraph(2)
+        sage: eccentricity(g, method='bounds')
+        [+Infinity, +Infinity, +Infinity, +Infinity]
+        sage: g = digraphs.Path(3)
+        sage: eccentricity(g, method='standard')
+        [2, +Infinity, +Infinity]
+
+    The bounds method is for Graph only::
+
+        sage: from sage.graphs.distances_all_pairs import eccentricity
+        sage: g = digraphs.Circuit(2)
+        sage: eccentricity(g, method='bounds')
+        Traceback (most recent call last):
+        ...
+        ValueError: The 'bounds' method only works on undirected graphs.
+
+    Asking for unknown method::
+
+        sage: from sage.graphs.distances_all_pairs import eccentricity
+        sage: g = graphs.PathGraph(2)
+        sage: eccentricity(g, method='Nice Jazz Festival')
+        Traceback (most recent call last):
+        ...
+        ValueError: Unknown method 'Nice Jazz Festival'. Please contribute.
     """
     from sage.rings.infinity import Infinity
     cdef int n = G.order()
 
+    # Trivial cases
     if n == 0:
         return []
+    elif G.is_directed() and method=='bounds':
+        raise ValueError("The 'bounds' method only works on undirected graphs.")
+    elif not G.is_connected():
+        return [Infinity]*n
 
-    cdef int * ecc = c_eccentricity(G)
+    cdef uint32_t * ecc
+    if method=="bounds":
+        ecc = c_eccentricity_bounding(G)
+    elif method=="standard":
+        ecc = c_eccentricity(G)
+    else:
+        raise ValueError("Unknown method '{}'. Please contribute.".format(method))
 
-    cdef list l_ecc = []
-    cdef int i
-    for i in range(n):
-        if ecc[i] == INT32_MAX:
-            l_ecc.append(Infinity)
-        else:
-            l_ecc.append(ecc[i])
+    from sage.rings.integer import Integer
+    cdef list l_ecc = [Integer(ecc[i]) if ecc[i]!=UINT32_MAX else +Infinity for i in range(n)]
 
     sage_free(ecc)
 
@@ -954,7 +1091,9 @@ cdef tuple diameter_lower_bound_multi_sweep(uint32_t n,
     - ``source`` -- Starting node of the BFS.
 
     """
-    cdef uint32_t LB, tmp, s, m, d, i, j, k
+    # The while loop below might not be entered so we have to make sure that
+    # s and d which are returned are initialized.
+    cdef uint32_t LB, tmp, s = 0, m, d = 0
 
     # Allocate some arrays and a bitset
     cdef bitset_t seen
@@ -1164,11 +1303,12 @@ def diameter(G, method='iFUB', source=None):
 
     EXAMPLES::
 
+        sage: from sage.graphs.distances_all_pairs import diameter
         sage: G = graphs.PetersenGraph()
-        sage: G.diameter(method='iFUB')
+        sage: diameter(G, method='iFUB')
         2
         sage: G = Graph( { 0 : [], 1 : [], 2 : [1] } )
-        sage: G.diameter(method='iFUB')
+        sage: diameter(G, method='iFUB')
         +Infinity
 
 
@@ -1176,21 +1316,21 @@ def diameter(G, method='iFUB', source=None):
     never be negative, we define it to be zero::
 
         sage: G = graphs.EmptyGraph()
-        sage: G.diameter(method='iFUB')
+        sage: diameter(G, method='iFUB')
         0
 
     Comparison of exact methods::
 
         sage: G = graphs.RandomBarabasiAlbert(100, 2)
-        sage: d1 = G.diameter(method='standard')
-        sage: d2 = G.diameter(method='iFUB')
-        sage: d3 = G.diameter(method='iFUB', source=G.random_vertex())
+        sage: d1 = diameter(G, method='standard')
+        sage: d2 = diameter(G, method='iFUB')
+        sage: d3 = diameter(G, method='iFUB', source=G.random_vertex())
         sage: if d1!=d2 or d1!=d3: print "Something goes wrong!"
 
     Comparison of lower bound methods::
 
-        sage: lb2 = G.diameter(method='2sweep')
-        sage: lbm = G.diameter(method='multi-sweep')
+        sage: lb2 = diameter(G, method='2sweep')
+        sage: lbm = diameter(G, method='multi-sweep')
         sage: if not (lb2<=lbm and lbm<=d3): print "Something goes wrong!"
 
     TEST:
@@ -1198,7 +1338,7 @@ def diameter(G, method='iFUB', source=None):
     This was causing a segfault. Fixed in :trac:`17873` ::
 
         sage: G = graphs.PathGraph(1)
-        sage: G.diameter(method='iFUB')
+        sage: diameter(G, method='iFUB')
         0
     """
     cdef int n = G.order()
@@ -1213,7 +1353,7 @@ def diameter(G, method='iFUB', source=None):
         raise ValueError("Unknown method for computing the diameter.")
 
     if source is None:
-        source = G.vertex_iterator().next()
+        source = next(G.vertex_iterator())
     elif not G.has_vertex(source):
         raise ValueError("The specified source is not a vertex of the input Graph.")
 
@@ -1514,6 +1654,7 @@ def floyd_warshall(gg, paths = True, distances = False):
         raise ValueError("The graph backend contains more than "+str(<unsigned short> -1)+" nodes")
 
     # All this just creates two tables prec[n][n] and dist[n][n]
+    cdef MemoryAllocator mem = MemoryAllocator()
     cdef unsigned short * t_prec
     cdef unsigned short * t_dist
     cdef unsigned short ** prec
@@ -1525,13 +1666,8 @@ def floyd_warshall(gg, paths = True, distances = False):
     cdef int w_int
 
     # init dist
-    t_dist = <unsigned short *> sage_malloc(n*n*sizeof(unsigned short))
-    if t_dist == NULL:
-        raise MemoryError()
-    dist = <unsigned short **> sage_malloc(n*sizeof(unsigned short *))
-    if dist == NULL:
-        sage_free(t_dist)
-        raise MemoryError()
+    t_dist = <unsigned short *>   mem.allocarray(n*n, sizeof(unsigned short))
+    dist   = <unsigned short **>  mem.allocarray(n, sizeof(unsigned short *))
     dist[0] = t_dist
     for 1 <= i< n:
         dist[i] = dist[i-1] + n
@@ -1544,17 +1680,8 @@ def floyd_warshall(gg, paths = True, distances = False):
 
     if paths:
         # init prec
-        t_prec = <unsigned short *> sage_malloc(n*n*sizeof(unsigned short))
-        if t_prec == NULL:
-            sage_free(t_dist)
-            sage_free(dist)
-            raise MemoryError()
-        prec = <unsigned short **> sage_malloc(n*sizeof(unsigned short *))
-        if prec == NULL:
-            sage_free(t_dist)
-            sage_free(dist)
-            sage_free(t_prec)
-            raise MemoryError()
+        t_prec = <unsigned short *>  mem.allocarray(n*n, sizeof(unsigned short))
+        prec   = <unsigned short **> mem.allocarray(n, sizeof(unsigned short *))
         prec[0] = t_prec
         for 1 <= i< n:
             prec[i] = prec[i-1] + n
@@ -1609,13 +1736,6 @@ def floyd_warshall(gg, paths = True, distances = False):
                                else Infinity)
         if paths: d_prec[v] = tmp_prec
         if distances: d_dist[v] = tmp_dist
-
-    if paths:
-        sage_free(t_prec)
-        sage_free(prec)
-
-    sage_free(t_dist)
-    sage_free(dist)
 
     if distances and paths:
         return d_dist, d_prec

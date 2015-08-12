@@ -1,0 +1,20 @@
+--- src/Lib/distutils/command/sdist.py.orig	2011-05-20 15:24:44.936515549 +1200
++++ src/Lib/distutils/command/sdist.py	2011-05-20 15:25:54.920519189 +1200
+@@ -336,7 +336,7 @@
+           * the build tree (typically "build")
+           * the release tree itself (only an issue if we ran "sdist"
+             previously with --keep-temp, or it aborted)
+-          * any RCS, CVS, .svn, .hg, .git, .bzr, _darcs directories
++          * any RCS, CVS, .svn, .git, .bzr, _darcs directories
+         """
+         build = self.get_finalized_command('build')
+         base_dir = self.distribution.get_fullname()
+@@ -351,7 +351,7 @@
+         else:
+             seps = '/'
+ 
+-        vcs_dirs = ['RCS', 'CVS', r'\.svn', r'\.hg', r'\.git', r'\.bzr',
++        vcs_dirs = ['RCS', 'CVS', r'\.svn', r'\.git', r'\.bzr',
+                     '_darcs']
+         vcs_ptrn = r'(^|%s)(%s)(%s).*' % (seps, '|'.join(vcs_dirs), seps)
+         self.filelist.exclude_pattern(vcs_ptrn, is_regex=1)

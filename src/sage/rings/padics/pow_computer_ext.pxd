@@ -1,4 +1,3 @@
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 
 from sage.rings.padics.pow_computer cimport PowComputer_class

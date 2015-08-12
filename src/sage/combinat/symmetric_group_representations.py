@@ -384,7 +384,7 @@ class SymmetricGroupRepresentation_generic_class(SageObject):
         for i in range(1,n):
             si = Permutation(range(1,i) + [i+1,i] + range(i+2,n+1))
             transpositions.append(si)
-        repn_matrices = map(self.representation_matrix, transpositions)
+        repn_matrices = [self.representation_matrix(_) for _ in transpositions]
         for (i,si) in enumerate(repn_matrices):
             for (j,sj) in enumerate(repn_matrices):
                 if i == j:
@@ -551,7 +551,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         for (u,w,(i,beta)) in self._yang_baxter_graph._edges_in_bfs():
             # TODO: improve the following
             si = PermutationGroupElement((i,i+1))
-            tableau_dict[w] = Tableau([map(si, row) for row in tableau_dict[u]])
+            tableau_dict[w] = Tableau([[si(_) for _ in row] for row in tableau_dict[u]])
         return tableau_dict
 
     @lazy_attribute

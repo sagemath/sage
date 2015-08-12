@@ -17,7 +17,6 @@ cdef class CategoryObject(SageObject):
     cdef _generators
     cdef _category
     cdef public _base
-    cdef public _cdata
     cdef public _names # will be _printer
     cdef public _factory_data
     cdef object __weakref__

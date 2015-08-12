@@ -1,4 +1,3 @@
-# distutils: libraries = gmp
 """
 Low-level memory allocation functions
 
@@ -32,16 +31,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.libs.gmp.misc cimport mp_set_memory_functions
+include "sage/ext/interrupt.pxi"
 
 cdef extern from "Python.h":
     # Declare as returning void without except value
     void PyErr_Format(object exception, char *format, ...)
-
-cdef extern from "gmp.h":
-    void mp_set_memory_functions(
-        void *(*) (size_t),
-        void *(*) (void *, size_t, size_t),
-        void (*) (void *, size_t))
 
 
 cdef void alloc_error(size_t size) nogil:

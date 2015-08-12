@@ -374,7 +374,7 @@ class Function_polylog(GinacFunction):
 
         TESTS:
 
-        Check if #8459 is fixed::
+        Check if :trac:`8459` is fixed::
 
             sage: t = maxima(polylog(5,x)).sage(); t
             polylog(5, x)

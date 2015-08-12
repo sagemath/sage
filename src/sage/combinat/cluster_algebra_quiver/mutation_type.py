@@ -1193,7 +1193,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 else:
                     cycle.remove(edge)
                     cycle.append( (edge[0],edge[1], 1 ) )
-        r = sum ( map( lambda x: x[2], cycle ) )
+        r = sum ((x[2] for x in cycle))
         r = max ( r, n-r )
         if ret_conn_vert:
             return [ QuiverMutationType( ['A',[r,n-r],1] ), connecting_vertices ]

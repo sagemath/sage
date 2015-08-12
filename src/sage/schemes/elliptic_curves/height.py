@@ -518,8 +518,7 @@ def nonneg_region(f):
         sage: nonneg_region(-x^4-1)
         ()
     """
-    roots = f.roots()
-    roots.sort()
+    roots = sorted(f.roots())
     sign_changes = [r for r,e in roots if e%2 == 1]
     if (f.leading_coefficient() * (-1)**f.degree()) > 0:
         sign_changes = [-infinity] + sign_changes

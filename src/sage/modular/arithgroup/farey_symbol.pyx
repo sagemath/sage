@@ -237,7 +237,7 @@ cdef class Farey:
             [ -3   1]
             [-40  13]
         """
-        gens_dict = {g:i+1 for i,g in enumerate(self.generators())}
+        gens_dict = self._get_dict_of_generators()
         ans = []
         for pm in self.pairing_matrices():
             a, b, c, d = pm.matrix().list()
@@ -245,25 +245,51 @@ cdef class Farey:
             if newval is not None:
                 ans.append(newval)
                 continue
-            newval = gens_dict.get(SL2Z([-a, -b, -c, -d]))
-            if newval is not None:
-                ans.append(newval)
-                continue
             newval = gens_dict.get(SL2Z([d, -b, -c, a]))
-            if newval is not None:
-                ans.append(-newval)
-                continue
-            newval = gens_dict.get(SL2Z([-d, b, c, -a]))
             if newval is not None:
                 ans.append(-newval)
                 continue
             raise RuntimeError("This should have not happened")
         return ans
 
+    @cached_method
+    def _get_dict_of_generators(self):
+        r"""
+        Obtain a dict indexed by the generators.
+
+        OUTPUT:
+
+        A dict of key-value pairs (g,i+1) and (-g,i+1) (the latter one -I belongs to self),
+        where the i-th generator is g.
+
+        EXAMPLES::
+
+            sage: G = Gamma1(30)
+            sage: F = G.farey_symbol()
+            sage: dict_gens = F._get_dict_of_generators()
+            sage: g = F.generators()[5]
+            sage: dict_gens[g] # Note that the answer is 1-based.
+            6
+
+        The dict also contains -g if -I belongs to the arithmetic group::
+
+            sage: G = Gamma0(20)
+            sage: F = G.farey_symbol()
+            sage: dict_gens = F._get_dict_of_generators()
+            sage: E = G([-1,0,0,-1])
+            sage: h = F.generators()[7] * E
+            sage: dict_gens[h]
+            8
+        """
+        ans = {g:i+1 for i,g in enumerate(self.generators())}
+        E = SL2Z([-1,0,0,-1])
+        if E in self.group:
+            ans.update({(g * E):i+1 for i,g in enumerate(self.generators())})
+        return ans
+
     def word_problem(self, M, output = 'standard'):
         r"""
         Solve the word problem (up to sign) using this Farey symbol.
-        See also :meth:`.syllables` and :meth:`.tietze`.
 
         INPUT:
 
@@ -321,6 +347,18 @@ cdef class Farey:
             ))
             sage: F.word_problem(g, output = 'syllables')
             ((3, 1), (10, 2), (8, -1), (5, 1))
+
+        TESTS:
+
+        Check that problem with forgotten generator is fixed::
+
+            sage: G = Gamma0(10)
+            sage: F = G.farey_symbol()
+            sage: g = G([-701,-137,4600,899])
+            sage: g1 = prod(F.generators()[i]**a for i,a in F.word_problem(g, output = 'syllables'))
+            sage: g == g1 or g * G([-1,0,0,-1]) == g1
+            True
+
         """
         if output not in ['standard', 'syllables', 'gens']:
             raise ValueError('Unrecognized output format')
@@ -328,14 +366,26 @@ cdef class Farey:
         cdef Integer b = -M.b()
         cdef Integer c = -M.c()
         cdef Integer d = M.a()
+        cdef cpp_SL2Z *cpp_beta = new cpp_SL2Z(1,0,0,1)
+        E = SL2Z([-1,0,0,-1])
         sig_on()
-        result = self.this_ptr.word_problem(a.value, b.value, c.value, d.value)
+        result = self.this_ptr.word_problem(a.value, b.value, c.value, d.value, cpp_beta)
         sig_off()
-        result.reverse()
+        beta = convert_to_SL2Z(cpp_beta[0])
         V = self.pairing_matrices_to_tietze_index()
-        tietze = tuple(V[o-1] if o > 0 else -V[-o-1] for o in result)
+        tietze = [V[o-1] if o > 0 else -V[-o-1] for o in result]
+        if not beta.is_one() and beta != E: # We need to correct for beta
+            gens_dict = self._get_dict_of_generators()
+            newval = gens_dict.get(beta)
+            if newval is not None:
+                newval = -newval
+            else:
+                newval = gens_dict.get(beta**-1)
+                assert newval is not None
+            tietze.append(newval)
+        tietze.reverse()
         if output == 'standard':
-            return tietze
+            return tuple(tietze)
         from itertools import groupby
         if output == 'syllables':
             return tuple((a-1,len(list(g))) if a > 0 else (-a-1,-len(list(g))) for a,g in groupby(tietze))

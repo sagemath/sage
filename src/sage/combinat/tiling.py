@@ -661,7 +661,7 @@ class Polyomino(SageObject):
             [[0, 0, 0], [1, 2, 1]]
         """
         zipped_coords = zip(*self)
-        return [map(min, zipped_coords), map(max, zipped_coords)]
+        return [[min(_) for _ in zipped_coords], [max(_) for _ in zipped_coords]]
 
     def translated(self, box):
         r"""
@@ -1076,17 +1076,6 @@ class TilingSolver(SageObject):
         If these conditions are not verified, then the problem is not suitable
         in the sense that there are no solution.
 
-        .. NOTE::
-
-            The DLX solver throws a Segmentation Fault when the
-            number of rows is zero::
-
-                sage: from sage.combinat.matrices.dancing_links import dlx_solver
-                sage: rows = []
-                sage: x = dlx_solver(rows)
-                sage: x.search()        # not tested
-                BOOM !!!
-
         EXAMPLES::
 
             sage: from sage.combinat.tiling import TilingSolver, Polyomino
@@ -1320,7 +1309,7 @@ class TilingSolver(SageObject):
             sage: T = TilingSolver([p,q,r], box=(1,1,6))
             sage: x = T.dlx_solver()
             sage: x
-            <sage.combinat.matrices.dancing_links.dancing_linksWrapper object at ...>
+            Dancing links solver for 9 columns and 15 rows
         """
         from sage.combinat.matrices.dancing_links import dlx_solver
         rows = self.rows()
@@ -1674,7 +1663,7 @@ class TilingSolver(SageObject):
         the number of iterations (default value 0, which means to iterate
         forever). To iterate 4 times with half a second between each frame::
 
-            sage: a.show(delay=50, iterations=4) # optional
+            sage: a.show(delay=50, iterations=4)  # optional -- ImageMagick
 
         Limit the number of frames::
 

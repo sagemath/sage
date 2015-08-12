@@ -1211,7 +1211,7 @@ class RationalFunctionField(FunctionField):
             return FunctionFieldElement_rational(self, self._field(x._x))
         try:
             x = self._field(x)
-        except TypeError, Err:
+        except TypeError as Err:
             try:
                 if x.parent() is self.polynomial_ring():
                     return x[0]

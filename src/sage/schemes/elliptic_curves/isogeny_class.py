@@ -25,6 +25,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
+import six
 from sage.structure.sage_object import SageObject
 import constructor
 import sage.databases.cremona
@@ -134,7 +135,6 @@ class IsogenyClass_EC(SageObject):
             if C.is_isomorphic(E):
                 return i
         raise ValueError("%s is not in isogeny class %s" % (C,self))
-        #return self.curves.index(C.minimal_model())
 
     def __cmp__(self, other):
         """
@@ -219,10 +219,10 @@ class IsogenyClass_EC(SageObject):
             sage: C
             Isogeny class of Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in i with defining polynomial x^2 + 1
             sage: C.curves
-            [Elliptic Curve defined by y^2 = x^3 + (-135)*x + (-594) over Number Field in i with defining polynomial x^2 + 1,
-            Elliptic Curve defined by y^2 = x^3 + (-15)*x + 22 over Number Field in i with defining polynomial x^2 + 1,
-            Elliptic Curve defined by y^2 = x^3 + (-27) over Number Field in i with defining polynomial x^2 + 1,
-            Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in i with defining polynomial x^2 + 1]
+            [Elliptic Curve defined by y^2 = x^3 + (-27) over Number Field in i with defining polynomial x^2 + 1,
+            Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in i with defining polynomial x^2 + 1,
+            Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+3)*x + 4*i over Number Field in i with defining polynomial x^2 + 1,
+            Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+33)*x + (-58*i) over Number Field in i with defining polynomial x^2 + 1]
         """
         if self._label:
             return "Elliptic curve isogeny class %s"%(self._label)
@@ -255,7 +255,6 @@ class IsogenyClass_EC(SageObject):
         """
         if not isinstance(x, EllipticCurve_field):
             return False
-        #return x.minimal_model() in self.curves
         return any([x.is_isomorphic(y) for y in self.curves])
 
     @cached_method
@@ -537,9 +536,9 @@ class IsogenyClass_EC(SageObject):
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + 35*x - 28 over Rational Field
         """
-        if order is None or isinstance(order, basestring) and order == self._algorithm:
+        if order is None or isinstance(order, six.string_types) and order == self._algorithm:
             return self
-        if isinstance(order, basestring):
+        if isinstance(order, six.string_types):
             if order == "lmfdb":
                 reordered_curves = sorted(self.curves, key = lambda E: E.a_invariants())
             else:
@@ -599,15 +598,18 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         The curves in the class (sorted)::
 
             sage: [E1.ainvs() for E1 in C]
-            [(0, 0, 0, -135, -594), (0, 0, 0, -15, 22), (0, 0, 0, 0, -27), (0, 0, 0, 0, 1)]
+            [(0, 0, 0, 0, -27),
+            (0, 0, 0, 0, 1),
+            (i + 1, i, i + 1, -i + 3, 4*i),
+            (i + 1, i, i + 1, -i + 33, -58*i)]
 
         The matrix of degrees of cyclic isogenies between curves::
 
             sage: C.matrix()
-            [1 3 2 6]
-            [3 1 6 2]
-            [2 6 1 3]
-            [6 2 3 1]
+            [1 3 6 2]
+            [3 1 2 6]
+            [6 2 1 3]
+            [2 6 3 1]
 
         The array of isogenies themselves is not filled out but only
         contains those used to construct the class, the other entries
@@ -618,12 +620,12 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
 
             sage: isogs = C.isogenies()
             sage: [((i,j),isogs[i][j].degree()) for i in range(4) for j in range(4) if isogs[i][j]!=0]
-            [((0, 1), 3), ((0, 2), 2), ((1, 3), 2), ((2, 3), 3)]
+            [((0, 1), 3), ((2, 1), 2), ((3, 0), 2), ((3, 2), 3)]
             sage: [((i,j),isogs[i][j].x_rational_map()) for i in range(4) for j in range(4) if isogs[i][j]!=0]
-            [((0, 1), (x^3 + 18*x^2 + 297*x + 1512)/(x^2 + 18*x + 81)),
-            ((0, 2), (x^2 + 6*x - 27)/(x + 6)),
-            ((1, 3), (x^2 - 2*x - 3)/(x - 2)),
-            ((2, 3), (x^3 - 108)/x^2)]
+            [((0, 1), (1/9*x^3 - 12)/x^2),
+            ((2, 1), (-1/2*i*x^2 + x)/(x + 3/2*i)),
+            ((3, 0), (-1/2*i*x^2 - x - 4*i)/(x - 5/2*i)),
+            ((3, 2), (1/9*x^3 - 4/3*i*x^2 - 34/3*x + 226/9*i)/(x^2 - 8*i*x - 16))]
 
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([1+i, -i, i, 1, 0])
@@ -632,19 +634,19 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: len(C)
             6
             sage: C.matrix()
-            [ 1  2  6  3  9 18]
-            [ 2  1  3  6 18  9]
-            [ 6  3  1  2  6  3]
-            [ 3  6  2  1  3  6]
-            [ 9 18  6  3  1  2]
-            [18  9  3  6  2  1]
+            [ 1  3  9 18  6  2]
+            [ 3  1  3  6  2  6]
+            [ 9  3  1  2  6 18]
+            [18  6  2  1  3  9]
+            [ 6  2  6  3  1  3]
+            [ 2  6 18  9  3  1]
             sage: [E1.ainvs() for E1 in C]
-            [(i + 1, -i, i, -240*i - 399, 2869*i + 2627),
-            (i + 1, -i, i, -485/2*i - 1581/4, 22751/8*i + 10805/4),
-            (i + 1, -i, i, -125/2*i - 61/4, -1425/8*i + 285/4),
+            [(i + 1, i - 1, i, -i - 1, -i + 1),
+            (i + 1, i - 1, i, 14*i + 4, 7*i + 14),
+            (i + 1, i - 1, i, 59*i + 99, 372*i - 410),
+            (i + 1, -i, i, -240*i - 399, 2869*i + 2627),
             (i + 1, -i, i, -5*i - 4, 2*i + 5),
-            (i + 1, -i, i, 1, 0),
-            (i + 1, -i, i, -5/2*i + 19/4, -33/8*i - 11/4)]
+            (i + 1, -i, i, 1, 0)]
 
         An example with CM by `\sqrt{-5}`::
 
@@ -665,18 +667,10 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             [1 2]
             [2 1]
             sage: [E.ainvs() for E in C]
-            [(0,
-            0,
-            0,
-            -2142429020160*c^2 - 5608955658240,
-            -1803656541954375680*c^2 - 4722034125328875520),
-            (0,
-            0,
-            0,
-            -1688345640960*c^2 - 4420220682240,
-            -2589731225505628160*c^2 - 6780004123216445440)]
-            sage: C.isogenies()[1][0]
-            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-1688345640960*c^2-4420220682240)*x + (-2589731225505628160*c^2-6780004123216445440) over Number Field in c with defining polynomial x^4 + 3*x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + (-34278864322560*c^2-89743290531840)*x + (-115434018685080043520*c^2-302210184021048033280) over Number Field in c with defining polynomial x^4 + 3*x^2 + 1
+            [(0, 0, 0, -25762110*c^2 - 67447215, -154360009760*c^2 - 404119737340),
+            (0, 0, 0, 130763490*c^2 + 342343485, 1391590873420*c^3 + 3643232206680*c)]
+            sage: C.isogenies()[0][1]
+            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + (-25762110*c^2-67447215)*x + (-154360009760*c^2-404119737340) over Number Field in c with defining polynomial x^4 + 3*x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + (130763490*c^2+342343485)*x + (-1391590873420*c^3-3643232206680*c) over Number Field in c with defining polynomial x^4 + 3*x^2 + 1
 
         TESTS::
 
@@ -723,30 +717,25 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: C2._mat
             sage: C2._compute()
             sage: C2._mat
-            [1 3 2 6]
-            [3 1 6 2]
-            [2 6 1 3]
-            [6 2 3 1]
+            [1 3 6 2]
+            [3 1 2 6]
+            [6 2 1 3]
+            [2 6 3 1]
 
             sage: C2._compute(verbose=True)
             possible isogeny degrees: [2, 3] -actual isogeny degrees: {2, 3} -added curve #1 (degree 2)... -added tuple [0, 1, 2]... -added tuple [1, 0, 2]... -added curve #2 (degree 3)... -added tuple [0, 2, 3]... -added tuple [2, 0, 3]...... relevant degrees: [2, 3]... -now completing the isogeny class... -processing curve #1... -added tuple [1, 0, 2]... -added tuple [0, 1, 2]... -added curve #3... -added tuple [1, 3, 3]... -added tuple [3, 1, 3]... -processing curve #2... -added tuple [2, 3, 2]... -added tuple [3, 2, 2]... -added tuple [2, 0, 3]... -added tuple [0, 2, 3]... -processing curve #3... -added tuple [3, 2, 2]... -added tuple [2, 3, 2]... -added tuple [3, 1, 3]... -added tuple [1, 3, 3]...... isogeny class has size 4
-            Sorting permutation = {0: 3, 1: 1, 2: 2, 3: 0}
-            Matrix = [1 3 2 6]
-            [3 1 6 2]
-            [2 6 1 3]
-            [6 2 3 1]
-
+            Sorting permutation = {0: 1, 1: 2, 2: 0, 3: 3}
+            Matrix = [1 3 6 2]
+            [3 1 2 6]
+            [6 2 1 3]
+            [2 6 3 1]
         """
         from sage.schemes.elliptic_curves.ell_curve_isogeny import fill_isogeny_matrix, unfill_isogeny_matrix
         from sage.matrix.all import MatrixSpace
         from sage.sets.set import Set
         self._maps = None
 
-        E = self.E
-        try:
-            E = E.minimal_model()
-        except AttributeError:
-            pass
+        E = self.E.global_minimal_model(semi_global=True)
 
         degs = possible_isogeny_degrees(E)
         if verbose:

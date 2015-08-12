@@ -69,6 +69,7 @@ character-by-character::
 #*****************************************************************************
 
 import os
+import six
 import time
 from sage.repl.load import load, load_wrap
 import sage.env
@@ -200,7 +201,7 @@ def load_attach_path(path=None, replace=False):
     if path is None:
         return search_paths
     else:
-        if isinstance(path, basestring):
+        if isinstance(path, six.string_types):
             path = [path]
         if replace:
             search_paths = path
@@ -444,7 +445,7 @@ def detach(filename):
         ...
         ValueError: file '/dev/null/foobar.sage' is not attached, see attached_files()
     """
-    if isinstance(filename, basestring):
+    if isinstance(filename, six.string_types):
         filelist = [filename]
     else:
         filelist = [str(x) for x in filename]

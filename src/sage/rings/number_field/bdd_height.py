@@ -513,7 +513,7 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
                 new_unit *= fund_units[i]**c[i]
             lll_fund_units.append(new_unit)
         fund_units = lll_fund_units
-        fund_unit_logs = map(log_map, fund_units)
+        fund_unit_logs = [log_map(_) for _ in fund_units]
         unit_prec_test = fund_unit_logs
         try:
             [l.change_ring(QQ) for l in unit_prec_test]

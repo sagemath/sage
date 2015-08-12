@@ -159,7 +159,7 @@ class ArithmeticSubgroup(group.Group):
         """
         # Do not override this function! Derived classes should override
         # _contains_sl2.
-        if isinstance(x, type([])) and len(x) == 4:
+        if isinstance(x, list) and len(x) == 4:
             if not (x[0] in ZZ and x[1] in ZZ and x[2] in ZZ and x[3] in ZZ):
                 return False
             a,b,c,d = map(ZZ, x)

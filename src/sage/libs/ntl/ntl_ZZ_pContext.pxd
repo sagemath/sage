@@ -1,5 +1,4 @@
 include "decl.pxi"
-include "sage/ext/cdefs.pxi"
 
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 

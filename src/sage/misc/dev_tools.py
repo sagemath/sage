@@ -457,7 +457,7 @@ def import_statements(*objects, **kwds):
         LookupError: no object named 'EnumeratedSetFromIterator'
         sage: from sage.misc.dev_tools import load_submodules
         sage: load_submodules(sage.sets)
-        load sage.sets.cartesian_product... succeeded
+        load sage.sets.real_set... succeeded
         load sage.sets.set_from_iterator... succeeded
         sage: import_statements('EnumeratedSetFromIterator')
         from sage.sets.set_from_iterator import EnumeratedSetFromIterator

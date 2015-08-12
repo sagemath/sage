@@ -240,7 +240,7 @@ class GaloisRepresentation(SageObject):
         # isomorphism between rho and rho' unless E
         # is isomorphic to E'
         # Note that rho can not depend on the Weierstrass model
-        if not isinstance(self, type(other)):
+        if type(self) is not type(other):
             return False
         return self._E.is_isomorphic(other._E)
 

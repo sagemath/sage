@@ -37,6 +37,11 @@ TESTS::
     sage: v = vector(QQ, [1,2/5,-3/8,4])
     sage: loads(dumps(v)) == v
     True
+
+    sage: w = vector(QQ, [-1,0,0,0])
+    sage: w.set_immutable()
+    sage: isinstance(hash(w), int)
+    True
 """
 
 ###############################################################################
@@ -162,6 +167,9 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             True
             sage: w > v
             False
+            sage: w = vector(QQ, [-1,0,0,0])
+            sage: w == w
+            True
         """
         cdef Py_ssize_t i
         cdef int c
@@ -172,29 +180,6 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             elif c > 0:
                 return 1
         return 0
-
-    # see sage/structure/element.pyx
-    def __richcmp__(left, right, int op):
-        """
-        TEST::
-
-            sage: w = vector(QQ, [-1,0,0,0])
-            sage: w == w
-            True
-        """
-        return (<Element>left)._richcmp(right, op)
-
-    # __hash__ is not properly inherited if comparison is changed
-    def __hash__(self):
-        """
-        TEST::
-
-            sage: w = vector(QQ, [-1,0,0,0])
-            sage: w.set_immutable()
-            sage: isinstance(hash(w), int)
-            True
-        """
-        return free_module_element.FreeModuleElement.__hash__(self)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """

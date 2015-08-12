@@ -1,5 +1,5 @@
 /*
- * eclsig.c: included from ecl.pyx
+ * eclsig.h: included from ecl.pyx
  *
  * AUTHORS:
  *
@@ -16,14 +16,14 @@ static struct sigaction sage_sigint_handler;
 static struct sigaction sage_sigbus_handler;
 static struct sigaction sage_sigsegv_handler;
 
-inline void set_ecl_signal_handler(void)
+static inline void set_ecl_signal_handler(void)
 {
     sigaction(SIGINT, &ecl_sigint_handler, &sage_sigint_handler);
     sigaction(SIGBUS, &ecl_sigbus_handler, &sage_sigbus_handler);
     sigaction(SIGSEGV, &ecl_sigsegv_handler, &sage_sigsegv_handler);
 }
 
-inline void unset_ecl_signal_handler(void)
+static inline void unset_ecl_signal_handler(void)
 {
     sigaction(SIGINT, &sage_sigint_handler, NULL);
     sigaction(SIGBUS, &sage_sigbus_handler, NULL);
@@ -35,7 +35,7 @@ inline void unset_ecl_signal_handler(void)
 #define ecl_sig_on() \
     (sig_on() && (set_ecl_signal_handler() , 1))
 
-inline void ecl_sig_off(void)
+static inline void ecl_sig_off(void)
 {
     unset_ecl_signal_handler();
     sig_off();

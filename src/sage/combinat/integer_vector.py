@@ -788,7 +788,7 @@ class IntegerVectors_nk(CombinatorialClass):
             return [[self.n]]
 
         res = self._list_rec(self.n, self.k)
-        return map(list, res)
+        return [list(_) for _ in res]
 
 
     def __iter__(self):

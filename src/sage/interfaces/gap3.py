@@ -171,7 +171,7 @@ Common Pitfalls
     ``RequirePackage`` method (note that one can instead use the
     ``load_package`` method)::
 
-        sage: gap3.RequirePackage('"chevie"')             #optional - gap3chevie
+        sage: gap3.RequirePackage('"chevie"')             #optional - gap3 chevie
         W...  to  the  CHEVIE  package, ...
 
 Examples
@@ -179,7 +179,7 @@ Examples
 
 Load a GAP3 package::
 
-    sage: gap3.load_package("chevie")                      #optional - gap3chevie
+    sage: gap3.load_package("chevie")                      #optional - gap3 chevie
     sage: gap3.version() # random                          #optional - gap3
     'lib: v3r4p4 1997/04/18, src: v3r4p0 1994/07/10, sys: usg gcc ansi'
 
@@ -340,7 +340,6 @@ class Gap3(Gap_generic):
             True
             sage: gap3.quit()                              #optional - gap3
         """
-        n = self._session_number
         Expect._start(self)
         # The -p command-line option to GAP3 produces the following
         # funny-looking patterns in the interface. We compile the patterns
@@ -489,8 +488,8 @@ class Gap3(Gap_generic):
         # merge the help text into one string and print it.
         helptext = "".join(helptext).strip()
         if pager is True:
-            import sage.misc.pager
-            pager.pager()(helptext)
+            from sage.misc.pager import pager as pag
+            pag()(helptext)
         else:
             print helptext
 

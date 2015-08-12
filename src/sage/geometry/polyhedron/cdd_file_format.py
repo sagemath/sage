@@ -14,18 +14,22 @@ Generate cdd ``.ext`` / ``.ine`` file format
 
 from misc import _set_to_None_if_empty, _common_length_of, _to_space_separated_string
 
-
-
 #########################################################################
-def cdd_Vrepresentation(cdd_type, vertices, rays, lines):
+def cdd_Vrepresentation(cdd_type, vertices, rays, lines, file_output=None):
     r"""
     Return a string containing the V-representation in cddlib's ext format.
 
-    NOTE:
+    INPUT:
 
-    If there is no vertex given, then the origin will be implicitly
-    added. You cannot write the empty V-representation (which cdd
-    would refuse to process).
+    - ``file_output`` (string; optional) -- a filename to which the
+      representation should be written. If set to ``None`` (default),
+      representation is returned as a string.
+
+    .. NOTE::
+
+        If there is no vertex given, then the origin will be implicitly
+        added. You cannot write the empty V-representation (which cdd would
+        refuse to process).
 
     EXAMPLES::
 
@@ -39,6 +43,12 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines):
           0 1 0
           1 0 0
         end
+
+    TESTS::
+
+        sage: from sage.misc.temporary_file import tmp_filename
+        sage: filename = tmp_filename(ext='.ext')
+        sage: cdd_Vrepresentation('rational', [[0,0]], [[1,0]], [[0,1]], file_output=filename)
     """
     vertices = _set_to_None_if_empty(vertices)
     rays     = _set_to_None_if_empty(rays)
@@ -68,18 +78,36 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines):
         for v in vertices:
             s += ' 1 ' + _to_space_separated_string(v) + '\n'
     s += 'end\n'
-    return s
+
+    if file_output is not None:
+        in_file = open(file_output, 'w')
+        in_file.write(s)
+        in_file.close()
+    else:
+        return s
 
 #########################################################################
-def cdd_Hrepresentation(cdd_type, ieqs, eqns):
+def cdd_Hrepresentation(cdd_type, ieqs, eqns, file_output=None):
     r"""
     Return a string containing the H-representation in cddlib's ine format.
+
+    INPUT:
+
+    - ``file_output`` (string; optional) -- a filename to which the
+      representation should be written. If set to ``None`` (default),
+      representation is returned as a string.
 
     EXAMPLES::
 
         sage: from sage.geometry.polyhedron.cdd_file_format import cdd_Hrepresentation
         sage: cdd_Hrepresentation('rational', None, [[0,1]])
         'H-representation\nlinearity 1 1\nbegin\n 1 2 rational\n 0 1\nend\n'
+
+    TESTS::
+
+        sage: from sage.misc.temporary_file import tmp_filename
+        sage: filename = tmp_filename(ext='.ine')
+        sage: cdd_Hrepresentation('rational', None, [[0,1]], file_output=filename)
     """
     ieqs = _set_to_None_if_empty(ieqs)
     eqns  = _set_to_None_if_empty(eqns)
@@ -102,4 +130,10 @@ def cdd_Hrepresentation(cdd_type, ieqs, eqns):
         for i in ieqs:
             s += ' ' + _to_space_separated_string(i) + '\n'
     s += 'end\n'
-    return s
+
+    if file_output is not None:
+        in_file = open(file_output, 'w')
+        in_file.write(s)
+        in_file.close()
+    else:
+        return s

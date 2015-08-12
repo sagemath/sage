@@ -8,13 +8,6 @@
 from generic_backend cimport GenericBackend
 
 
-#cdef extern from *:
-#    ctypedef double* const_double_ptr "const double*"
-#    ctypedef char * const_char_ptr "const char*"
-
-#cdef extern from "float.h":
-#    cdef double DBL_MAX
-
 cdef extern from "gurobi_c.h":
      ctypedef struct GRBmodel:
          pass

@@ -362,9 +362,10 @@ class QuadraticForm(SageObject):
             basis_of_short_vectors, \
             short_vector_list_up_to_length, \
             short_primitive_vector_list_up_to_length, \
+            _compute_automorphisms, \
+            automorphism_group, \
             automorphisms, \
             number_of_automorphisms, \
-            number_of_automorphisms__souvigner, \
             set_number_of_automorphisms
 
     ## Routines to test the local and global equivalence/isometry of two quadratic forms.

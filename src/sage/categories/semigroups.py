@@ -92,7 +92,7 @@ class Semigroups(CategoryWithAxiom):
             Test associativity for (not necessarily all) elements of this
             semigroup.
 
-            INPUT::
+            INPUT:
 
             - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 

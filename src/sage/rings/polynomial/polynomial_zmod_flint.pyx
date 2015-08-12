@@ -64,6 +64,16 @@ cdef extern from "zn_poly/zn_poly.h":
 from sage.libs.flint.fmpz_poly cimport *
 
 cdef class Polynomial_zmod_flint(Polynomial_template):
+    r"""
+    Polynomial on `\ZZ/n\ZZ` implemented via FLINT.
+
+    .. automethod:: _add_
+    .. automethod:: _sub_
+    .. automethod:: _lmul_
+    .. automethod:: _rmul_
+    .. automethod:: _mul_
+    .. automethod:: _mul_trunc_
+    """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         """
         EXAMPLE::
@@ -249,7 +259,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             x = (<Polynomial_template>self)._parent.gen()
             v = [self[t] for t from start <= t < stop]
 
-            t = self.__class__
+            t = type(self)
             r = <Polynomial_template>t.__new__(t)
             Polynomial_template.__init__(r, (<Polynomial_template>self)._parent, v)
             return r << start
@@ -462,7 +472,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         zn_mod_clear(&zn_mod)
         return r
 
-    cpdef _mul_trunc(self, Polynomial_zmod_flint other, n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
         Return the product of this polynomial and other truncated to the
         given length `n`.
@@ -476,23 +486,24 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
             sage: P.<a>=GF(7)[]
             sage: a = P(range(10)); b = P(range(5, 15))
-            sage: a._mul_trunc(b, 5)
+            sage: a._mul_trunc_(b, 5)
             4*a^4 + 6*a^3 + 2*a^2 + 5*a
 
         TESTS::
 
-            sage: a._mul_trunc(b, 0)
+            sage: a._mul_trunc_(b, 0)
             Traceback (most recent call last):
             ...
             ValueError: length must be > 0
         """
-        cdef Polynomial_zmod_flint res = self._new()
         if n <= 0:
             raise ValueError("length must be > 0")
-        nmod_poly_mullow(&res.x, &self.x, &other.x, n)
+        cdef Polynomial_zmod_flint op2 = <Polynomial_zmod_flint> right
+        cdef Polynomial_zmod_flint res = self._new()
+        nmod_poly_mullow(&res.x, &self.x, &op2.x, n)
         return res
 
-    _mul_short = _mul_trunc
+    _mul_short = _mul_trunc_
 
     cpdef _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
         """
@@ -613,7 +624,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             NotImplementedError: checking irreducibility of polynomials over rings with composite characteristic is not implemented
         """
-        if self.is_zero():
+        if not self:
             return False
         if self.is_unit():
             return False

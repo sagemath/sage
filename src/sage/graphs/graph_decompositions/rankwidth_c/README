@@ -1,9 +1,0 @@
-This program calculates rank-width and rank-decompositions. It is based on ideas from "Computing rank-width exactly" by Sang-il Oum, "Sopra una formula numerica" by Ernesto Pascal, "Generation of a Vector from the Lexicographical Index" by B.P. Buckles and M. Lybanon and "Fast additions on masked integers" by Michael D. Adams and David S. Wise.
-On today's computers it works quite well up to graph sizes of about 28 nodes.
-
-Assuming that libigraph is installed it can be compiled using e.g. "gcc -O2 --std=c99 -pedantic rw.c simplerw.c -ligraph".
-
-It supports a number of input graph formats; there is an example graph included, for which rank-width and rank-decomposition can be calculated using "./a.out --edgelist igrid".
-
-rw.h / rw.c provide a general mechanism for calculating rank-width and rank-decompositions. simplerw.c provides a simple command-line interface.
-

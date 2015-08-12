@@ -8,11 +8,8 @@ fi
 
 cd src/tests/
 
-# Currently (as of version 2.8.7), there are four Python test files:
-# - test_buildexamples.py
-# - test_comparedotparsing.py
+# Currently (as of version 2.9.0), there is one Python test file:
 # - test_dot2tex.py
-# - test_multirender.py
 
 passed=true
 for file in test_*.py; do

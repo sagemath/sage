@@ -204,12 +204,12 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             sage: vig1 == vig2
             False
         """
-        return isinstance(self, type(right)) and  \
-            self._cipher_domain == right._cipher_domain and \
-            self._cipher_codomain == right._cipher_codomain and \
-            self._key_space ==  right._key_space and \
-            self._block_length == right._block_length and \
-            self._period == right._period
+        return (type(self) is type(right) and
+            self._cipher_domain == right._cipher_domain and
+            self._cipher_codomain == right._cipher_codomain and
+            self._key_space ==  right._key_space and
+            self._block_length == right._block_length and
+            self._period == right._period)
 
     def plaintext_space(self):
         r"""

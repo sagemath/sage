@@ -65,13 +65,13 @@ class ModularPolynomialDatabase:
 
         EXAMPLES:
             sage: DBMP = ClassicalModularPolynomialDatabase()  # optional - database_kohel
-            sage: f = DBMP[29]                                 #optional
-            sage: f.degree()                                   #optional
+            sage: f = DBMP[29]                                 # optional - database_kohel
+            sage: f.degree()                                   # optional - database_kohel
             58
-            sage: f.coefficient([28,28])                       #optional
+            sage: f.coefficient([28,28])                       # optional - database_kohel
             400152899204646997840260839128
 
-            sage: DBMP[50]                                     #optional
+            sage: DBMP[50]                                     # optional - database_kohel
             Traceback (most recent call last):
             ...
             RuntimeError: No database entry for modular polynomial of level 50

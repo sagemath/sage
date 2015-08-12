@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+#
+# Script to prepare a GIAC spkg for Sage.  This script is only for the
+# package maintainer, not for building GIAC during a Sage install.
+#
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+# Exit on failure
+set -e
+
+# TODO on the next update: l71 switch from gz to bz2 as wished in #18826
+VERSION="1.2.0"
+VERSIONREV="19"
+
+# The upstream tarball name is: giac"$SOURCEORIG".tar.gz
+SOURCEORIG=_"$VERSION"-"$VERSIONREV"
+
+# The name of the output file without tar.gz or tar.bz2 extension
+OUTPUTFILEBASENAME="$SAGE_DISTFILES"/giac-"$VERSION"."$VERSIONREV"
+
+# Testing if the output file already exist in one of gz or bz2 format:
+if [ -f "$OUTPUTFILEBASENAME".tar.gz -o -f "$OUTPUTFILEBASENAME".tar.bz2 ] ; then
+    echo >&2 "there is already a giac archive of this version"
+    exit 1
+fi
+
+# Build a temporary working dir. (subdir of SAGE_DISTFILES)
+TARGET=$(mktemp -d -p"$SAGE_DISTFILES")
+ORIGDIR=`pwd`
+cd "$TARGET"
+
+# Downloading upstream source
+sage-download-file "http://www-fourier.ujf-grenoble.fr/~parisse/debian/dists/stable/main/source/giac$SOURCEORIG.tar.gz" "giac$SOURCEORIG.tar.gz"
+
+
+# untar upstream source
+tar -xzf giac"$SOURCEORIG".tar.gz
+
+
+# rename top sourcedir
+mv giac-"$VERSION" src
+
+# removing french html doc, but keep keywords, and working makefiles.
+# NB: the french html doc is huge and not GPL.
+# it is freely redistibuable only for non commercial purposes.
+cd src/doc/fr
+rm -rf [^Mkx]*
+rm -rf *.pdf *.eps *.pdf *.png *.cxx *.cas *.jpg *.tex *.stamp *html* cas* *.fig fig*
+# repair the build procedure with a minimal Makefile.am
+echo -e "EXTRA_DIST = xcasmenu xcasex keywords\n\nlocaldocdir = \$(docdir)/fr \n\n\
+dist_localdoc_DATA = xcasmenu xcasex keywords html_mall html_mtt html_vall">Makefile.am
+# copy and adjust a minimal Makefile.in
+cp ../local/Makefile.in ./
+sed -ie 's|localdocdir = $(docdir)/local|localdocdir = $(docdir)/fr|' Makefile.in
+sed -ie 's|doc/local|subdir = doc/fr|g' Makefile.in
+#
+touch html_mall
+touch html_mtt
+touch html_vall
+#
+
+
+# building giac source tarball for the spkg
+cd ../../../
+tar -cz src -f "$OUTPUTFILEBASENAME".tar.gz
+# On the next update don't forget to change to bz2 as wished in #18826
+#tar -cj src -f  -f "$OUTPUTFILEBASENAME".tar.bz2
+
+
+
+# cleaning extracted dir.
+cd ..
+rm -rf "$TARGET"
+
+# going back to starting dir
+cd "$ORIGDIR"

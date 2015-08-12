@@ -155,8 +155,9 @@ from sage.structure.sage_object import SageObject
 from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 from combinat_cython import _stirling_number2
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
 
 
@@ -1246,7 +1247,7 @@ class CombinatorialElement(CombinatorialObject, Element):
         sage: Foo(17)
         17
     """
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     def __init__(self, parent, *args, **kwds):
         """

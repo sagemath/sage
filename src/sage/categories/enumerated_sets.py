@@ -740,12 +740,12 @@ class EnumeratedSets(Category_singleton):
 
                     sage: C = cartesian_product([Permutations(10)]*4)
                     sage: it = iter(C)
-                    sage: it.next()
+                    sage: next(it)
                     ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-                    sage: it.next()
+                    sage: next(it)
                     ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -759,7 +759,7 @@ class EnumeratedSets(Category_singleton):
                     finite. So the following one is fine::
 
                         sage: it = iter(cartesian_product([ZZ, GF(2)]))
-                        sage: [it.next() for _ in range(10)]
+                        sage: [next(it) for _ in range(10)]
                         [(0, 0), (0, 1), (1, 0), (1, 1),
                          (-1, 0), (-1, 1), (2, 0), (2, 1),
                          (-2, 0), (-2, 1)]
@@ -767,7 +767,7 @@ class EnumeratedSets(Category_singleton):
                     But this one is not::
 
                         sage: it = iter(cartesian_product([GF(2), ZZ]))
-                        sage: [it.next() for _ in range(10)]
+                        sage: [next(it) for _ in range(10)]
                         doctest:...: UserWarning: Sage is not able to determine
                         whether the factors of this cartesian product are
                         finite. The lexicographic ordering might not go through

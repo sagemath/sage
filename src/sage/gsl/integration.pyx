@@ -24,7 +24,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/cdefs.pxi'
 include 'sage/ext/interrupt.pxi'
 include 'gsl.pxi'
 

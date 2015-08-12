@@ -324,7 +324,7 @@ class Derangements(Parent, UniqueRepresentation):
             for d in self._iter_der(n-2):
                 for i in xrange(1, n):
                     s = d[:]
-                    s = map(lambda x: x >= i and x+1 or x,s)
+                    s = [x >= i and x+1 or x for x in s]
                     s.insert(i-1, n)
                     yield s + [i]
 

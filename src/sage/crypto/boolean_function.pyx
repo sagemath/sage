@@ -26,8 +26,9 @@ AUTHOR:
 
 """
 
-from sage.structure.sage_object cimport SageObject
+from libc.string cimport memcpy
 
+from sage.structure.sage_object cimport SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.finite_rings.constructor import GF
@@ -1149,7 +1150,7 @@ cdef class BooleanFunctionIterator:
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(1)
             sage: I = B.__iter__()
-            sage: I.next()
+            sage: next(I)
             False
         """
         if self.index == self.last:

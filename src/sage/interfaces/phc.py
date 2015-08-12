@@ -32,15 +32,16 @@ AUTHORS:
 #*****************************************************************************
 
 import os
+import re
+import pexpect
+import random
 
 from sage.misc.all import tmp_filename
 from sage.rings.real_mpfr import RR
 from sage.rings.all import CC
 from sage.rings.integer import Integer
-from sage.plot.plot import *
-import re
+from sage.plot.plot import line, point
 
-import pexpect
 
 def get_solution_dicts(output_file_contents, input_ring, get_failures = True):
     """
@@ -68,17 +69,16 @@ def get_solution_dicts(output_file_contents, input_ring, get_failures = True):
         '25.0'
     """
     output_list = output_file_contents.splitlines()
-    test = 'False'
     solution_dicts = []
     for solution_line in range(len(output_list)-1,-1,-1):
         if output_list[solution_line].find('THE SOLUTIONS') == 0:
             break
     try:
         var_number = int(output_list[solution_line+2].split(' ')[1])
-        sol_number = int(output_list[solution_line+2].split(' ')[0])
+        # sol_number = int(output_list[solution_line+2].split(' ')[0])
     except IndexError:
         var_number = int(output_list[solution_line+1].split(' ')[1])
-        sol_number = int(output_list[solution_line+1].split(' ')[0])
+        # sol_number = int(output_list[solution_line+1].split(' ')[0])
     for i in range(solution_line + 1,len(output_list)):
         if output_list[i].count('the solution for t') == 1:
             if output_list[i-3].count('success') > 0 or get_failures == True:
@@ -118,7 +118,6 @@ def get_classified_solution_dicts(output_file_contents, input_ring, get_failures
         1
     """
     output_list = output_file_contents.splitlines()
-    test = 'False'
     solution_dicts = {}
     solution_types = ['complex', 'real','failure']
     for sol_type in solution_types:
@@ -127,7 +126,7 @@ def get_classified_solution_dicts(output_file_contents, input_ring, get_failures
         if output_list[solution_line].find('THE SOLUTIONS') == 0:
             break
     var_number = int(output_list[solution_line+2].split(' ')[1])
-    sol_number = int(output_list[solution_line+2].split(' ')[0])
+    # sol_number = int(output_list[solution_line+2].split(' ')[0])
     for i in range(solution_line + 1,len(output_list)):
         if output_list[i].count('the solution for t') == 1:
             phc_type = output_list[i+var_number+1].split(' = ')[-1]

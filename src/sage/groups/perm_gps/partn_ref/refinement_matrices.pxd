@@ -1,4 +1,3 @@
-
 #*****************************************************************************
 #      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
@@ -6,7 +5,6 @@
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/cdefs.pxi'
 include 'data_structures_pxd.pxi' # includes bitsets
 
 from sage.rings.integer cimport Integer

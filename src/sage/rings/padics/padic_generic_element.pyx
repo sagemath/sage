@@ -33,6 +33,7 @@ include "sage/ext/stdsage.pxi"
 import sys
 
 cimport sage.rings.padics.local_generic_element
+from sage.libs.gmp.mpz cimport mpz_set_si
 from sage.rings.padics.local_generic_element cimport LocalGenericElement
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational cimport Rational

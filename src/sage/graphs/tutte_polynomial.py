@@ -395,7 +395,7 @@ class VertexOrder(EdgeSelection):
             {1: 4, 2: 3, 3: 2, 4: 0, 6: 1, 7: 5}
         """
         self.order = list(order)
-        self.inverse_order = dict(map(reversed, enumerate(order)))
+        self.inverse_order = dict([reversed(_) for _ in enumerate(order)])
 
     def __call__(self, graph):
         """

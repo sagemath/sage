@@ -876,15 +876,15 @@ cdef class ConnectedTriangulationsIterator(SageObject):
         sage: p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
         sage: from sage.geometry.triangulation.base import ConnectedTriangulationsIterator
         sage: ci = ConnectedTriangulationsIterator(p)
-        sage: ci.next()
+        sage: next(ci)
         (9, 10)
-        sage: ci.next()
+        sage: next(ci)
         (2, 3, 4, 5)
-        sage: ci.next()
+        sage: next(ci)
         (7, 8)
-        sage: ci.next()
+        sage: next(ci)
         (1, 3, 5, 7)
-        sage: ci.next()
+        sage: next(ci)
         Traceback (most recent call last):
         ...
         StopIteration

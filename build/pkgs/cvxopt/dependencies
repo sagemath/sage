@@ -1,0 +1,7 @@
+$(INST)/$(NUMPY) $(INST)/$(ATLAS) $(INST)/$(CEPHES) $(INST)/$(GSL) $(INST)/$(GLPK) | $(INST)/$(MATPLOTLIB)
+
+matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

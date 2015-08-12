@@ -448,22 +448,12 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 AssertionError: 4 != 3
-                sage: class CCls(Example):
-                ...       def cardinality(self):
-                ...           return int(3)
-                sage: CC = CCls()
-                sage: CC._test_enumerated_set_iter_cardinality()
-                Traceback (most recent call last):
-                ...
-                AssertionError: expected a Sage Integer and got 3 of type <type 'int'>
             """
             # isinstance with LazyImported classes is not robust
             from sage.rings.integer import Integer
             tester = self._tester(**options)
             if self.cardinality != self._cardinality_from_iterator:
                 card = self.cardinality()
-                tester.assert_(isinstance(card, Integer),
-                    "expected a Sage Integer and got {} of type {}".format(card,type(card)))
                 if card <= tester._max_runs:
                     tester.assertEqual(card,
                                        self._cardinality_from_iterator())
@@ -511,9 +501,9 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             # Ambiguity resolution between methods inherited from
             # Sets.CartesianProducts and from EnumeratedSets.Finite.
-            random_element = Sets.CartesianProducts.ParentMethods.random_element.im_func
-            cardinality = Sets.CartesianProducts.ParentMethods.cardinality.im_func
-            __iter__ = EnumeratedSets.CartesianProducts.ParentMethods.__iter__.im_func
+            random_element = Sets.CartesianProducts.ParentMethods.random_element.__func__
+            cardinality = Sets.CartesianProducts.ParentMethods.cardinality.__func__
+            __iter__ = EnumeratedSets.CartesianProducts.ParentMethods.__iter__.__func__
 
             def last(self):
                 r"""

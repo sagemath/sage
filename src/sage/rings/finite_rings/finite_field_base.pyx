@@ -70,10 +70,10 @@ cdef class FiniteFieldIterator:
         EXAMPLE::
 
             sage: k = iter(FiniteField(9, 'a', impl='pari_ffelt'))
-            sage: k.next() # indirect doctest
+            sage: next(k) # indirect doctest
             0
         """
-        return self.parent(self.iter.next())
+        return self.parent(next(self.iter))
 
     def __iter__(self):
         """
@@ -354,7 +354,7 @@ cdef class FiniteField(Field):
             sage: k = FiniteField(8, 'a', impl='pari_ffelt')
             sage: i = iter(k); i # indirect doctest
             <sage.rings.finite_rings.finite_field_base.FiniteFieldIterator object at ...>
-            sage: i.next()
+            sage: next(i)
             0
             sage: list(k) # indirect doctest
             [0, 1, a, a + 1, a^2, a^2 + 1, a^2 + a, a^2 + a + 1]
@@ -1426,10 +1426,6 @@ def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""
     Used to unpickle extensions of finite fields. Now superseded (hence no
     doctest), but kept around for backward compatibility.
-
-    EXAMPLES::
-
-        sage: # not tested
     """
     return _type(order, variable_name, modulus, **kwargs)
 
@@ -1437,10 +1433,6 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
     r"""
     Used to unpickle finite prime fields. Now superseded (hence no doctest),
     but kept around for backward compatibility.
-
-    EXAMPLE::
-
-        sage: # not tested
     """
     return _type(order, variable_name, **kwargs)
 

@@ -12,6 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
 from weight_lattice_realizations import WeightLatticeRealizations
+import functools
 
 class WeightSpace(CombinatorialFreeModule):
     r"""
@@ -423,6 +424,29 @@ class WeightSpace(CombinatorialFreeModule):
         else:
             return self.classical().monomial(i)
 
+    @cached_method
+    def to_ambient_space_morphism(self):
+        r"""
+        The morphism from ``self`` to its associated ambient space.
+
+        EXAMPLES::
+
+            sage: CartanType(['A',2]).root_system().weight_lattice().to_ambient_space_morphism()
+            Generic morphism:
+            From: Weight lattice of the Root system of type ['A', 2]
+            To:   Ambient space of the Root system of type ['A', 2]
+
+        .. warning::
+
+            Implemented only for finite Cartan type.
+        """
+        if self.root_system.dual_side:
+            raise TypeError("No implemented map from the coweight space to the ambient space")
+        L = self.cartan_type().root_system().ambient_space()
+        basis = L.fundamental_weights()
+        def basis_value(basis, i):
+            return basis[i]
+        return self.module_morphism(on_basis = functools.partial(basis_value, basis), codomain=L)
 
 class WeightSpaceElement(CombinatorialFreeModuleElement):
 
@@ -509,5 +533,41 @@ class WeightSpaceElement(CombinatorialFreeModuleElement):
 
         """
         return all(self.coefficient(i) >= 0 for i in self.parent().index_set())
+
+    def to_ambient(self):
+        r"""
+        Maps ``self`` to the ambient space.
+
+        EXAMPLES::
+
+            sage: mu = CartanType(['B',2]).root_system().weight_lattice().an_element(); mu
+            2*Lambda[1] + 2*Lambda[2]
+            sage: mu.to_ambient()
+            (3, 1)
+
+        ..warning::
+
+            Only implemented in finite Cartan type.
+            Does not work for coweight lattices because there is no implemented map
+            from the coweight lattice to the ambient space.
+
+        """
+        return self.parent().to_ambient_space_morphism()(self)
+
+    def to_weight_space(self):
+        r"""
+        Map ``self`` to the weight space.
+
+        Since `self.parent()` is the weight space, this map just returns ``self``.
+        This overrides the generic method in `WeightSpaceRealizations`.
+
+        EXAMPLES::
+
+            sage: mu = CartanType(['A',2]).root_system().weight_lattice().an_element(); mu
+            2*Lambda[1] + 2*Lambda[2]
+            sage: mu.to_weight_space()
+            2*Lambda[1] + 2*Lambda[2]
+        """
+        return self
 
 WeightSpace.Element = WeightSpaceElement

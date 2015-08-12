@@ -291,7 +291,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                 sage: C = A.Bases(); C
                 Category of bases of The subset algebra of {1, 2, 3} over Rational Field
                 sage: C.super_categories()
-                [Join of Category of algebras over Rational Field and Category of realizations of magmas,
+                [Join of Category of algebras over Rational Field and Category of realizations of unital magmas,
                  Category of realizations of The subset algebra of {1, 2, 3} over Rational Field,
                  Category of algebras with basis over Rational Field]
             """

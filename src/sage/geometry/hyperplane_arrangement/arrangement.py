@@ -561,7 +561,7 @@ class HyperplaneArrangementElement(Element):
             sage: H(x) == 0
             False
         """
-        assert (isinstance(self, type(other))) and (self.parent() is other.parent()) # guaranteed by framework
+        assert type(self) is type(other) and self.parent() is other.parent()  # guaranteed by framework
         return cmp(self._hyperplanes, other._hyperplanes)
 
     def union(self, other):
@@ -1245,7 +1245,7 @@ class HyperplaneArrangementElement(Element):
             raise ValueError('characteristic must be zero')
         from sage.functions.generalized import sign
         values = [hyperplane(p) for hyperplane in self]
-        signs = vector(ZZ, map(sign, values))
+        signs = vector(ZZ, [sign(_) for _ in values])
         signs.set_immutable()
         return signs
     
@@ -1379,7 +1379,7 @@ class HyperplaneArrangementElement(Element):
                 if len(b_list) == 1:
                     return b_list
                 return [b_list[0], b_list[-1]]
-            b_list_list = map(skip, b_list_list)
+            b_list_list = [skip(_) for _ in b_list_list]
         M = Matroid(groundset=range(len(parallels)), matrix=matrix(A_list).transpose())
         d = self.dimension()
         # vertices are solutions v * lhs = rhs
@@ -2137,7 +2137,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         # process positional arguments
         AA = self.ambient_space()
         try:
-            hyperplanes = map(AA, args)
+            hyperplanes = [AA(_) for _ in args]
         except (TypeError, ValueError, AttributeError):
             if len(args) > 1:
                 raise
@@ -2145,7 +2145,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
             if hasattr(arg, 'Hrepresentation'):
                 hyperplanes = [AA(h) for h in arg.Hrepresentation()]
             else:
-                hyperplanes = map(AA, arg)
+                hyperplanes = [AA(_) for _ in arg]
         hyperplanes = [h.primitive(signed) for h in hyperplanes]
         n = len(hyperplanes)
         hyperplanes = tuple(uniq(hyperplanes))

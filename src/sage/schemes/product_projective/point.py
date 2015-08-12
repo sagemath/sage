@@ -155,7 +155,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: P == Q
             True
         """
-        for i in range(self.codomain().num_components()):
+        for i in range(self.codomain().ambient_space().num_components()):
            if self[i] != other[i]:
                return False
         return True
@@ -181,7 +181,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: P != Q
             True
         """
-        for i in range(self.codomain().num_components()):
+        for i in range(self.codomain().ambient_space().num_components()):
            if self[i] != other[i]:
                return True
         return False

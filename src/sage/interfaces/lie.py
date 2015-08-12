@@ -287,7 +287,7 @@ AUTHORS:
 ##########################################################################
 
 from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, AsciiArtString
-from sage.misc.all import verbose, prod
+from sage.misc.all import prod
 from sage.env import DOT_SAGE, SAGE_LOCAL
 
 
@@ -779,7 +779,7 @@ class LiEElement(ExpectElement):
             [-1.0  9.0  8.0  0.0]
             [ 3.0 -5.0 -2.0  9.0]
         """
-        P = self._check_valid()
+        self._check_valid()
         if self.type() == 'mat':
             m = self.sage()
             if R is not None:
@@ -787,7 +787,6 @@ class LiEElement(ExpectElement):
             return m
         else:
             raise ValueError("not a matrix")
-
 
     def _sage_(self):
         """
@@ -838,7 +837,7 @@ class LiEElement(ExpectElement):
                 xpos = term.find('X')
                 coef = eval(term[:xpos].strip())
                 exps = eval(term[xpos+1:].strip())
-                monomial = prod(map(lambda i: x[i]**exps[i] , range(nvars)))
+                monomial = prod([x[i]**exps[i] for i in range(nvars)])
                 pol += coef * monomial
 
             return pol

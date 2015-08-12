@@ -192,7 +192,7 @@ class DefiniteIntegral(BuiltinFunction):
 
         TESTS:
 
-        Check if #3863 is fixed::
+        Check if :trac:`3863` is fixed::
 
             sage: integrate(x^2.7 * e^(-2.4*x), x, 0, 3).n()
             0.154572952320790

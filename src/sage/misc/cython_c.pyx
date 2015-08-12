@@ -1,9 +1,9 @@
 "On-the-fly generation of compiled extensions"
 
-import sage.misc.misc
-import sage.server.support
+from sage.misc.temporary_file import tmp_filename
+from sage.misc.cython import cython_import_all
 
-def cython(code,
+def cython_compile(code,
           verbose=False, compile_message=False,
           make_c_file_nice=False, use_cache=False):
     """
@@ -58,11 +58,9 @@ def cython(code,
         Need to create a clever caching system so code only gets
         compiled once.
     """
-    tmpfile = sage.misc.temporary_file.tmp_filename(ext=".spyx")
+    tmpfile = tmp_filename(ext=".spyx")
     open(tmpfile,'w').write(code)
-    sage.server.support.cython_import_all(tmpfile, globals(),
-                                         verbose=verbose, compile_message=compile_message,
-                                         use_cache=use_cache,
-                                         create_local_c_file=False)
-
-
+    cython_import_all(tmpfile, globals(),
+                      verbose=verbose, compile_message=compile_message,
+                      use_cache=use_cache,
+                      create_local_c_file=False)

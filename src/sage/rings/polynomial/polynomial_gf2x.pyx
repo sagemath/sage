@@ -89,7 +89,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             x = (<Polynomial_template>self)._parent.gen()
             v = [self[t] for t from start <= t < stop]
 
-            t = self.__class__
+            t = type(self)
             r = <Polynomial_template>t.__new__(t)
             Polynomial_template.__init__(r, (<Polynomial_template>self)._parent, v)
             return r << start

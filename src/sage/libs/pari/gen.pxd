@@ -1,5 +1,4 @@
-include 'decl.pxi'
-
+from .types cimport *
 from sage.structure.element cimport RingElement
 cimport cython
 

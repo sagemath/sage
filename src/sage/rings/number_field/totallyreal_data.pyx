@@ -24,6 +24,7 @@ AUTHORS:
 #*****************************************************************************
 
 
+include "sage/ext/cdefs.pxi"
 include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"
 

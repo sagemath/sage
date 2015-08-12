@@ -1,5 +1,4 @@
-include "sage/ext/cdefs.pxi"
-
+from sage.libs.gmp.types cimport *
 from sage.rings.finite_rings.stdint cimport *
 from sage.rings.finite_rings.element_base cimport FiniteRingElement
 from sage.rings.integer cimport Integer

@@ -1,3 +1,5 @@
+# distutils: depends = NTL/ZZ.h
+
 from sage.libs.ntl.ntl_ZZ_decl cimport ZZ_c
 from sage.libs.ntl.ntl_ZZ_p_decl cimport ZZ_p_c
 from sage.libs.ntl.ntl_ZZ_pContext_decl cimport ZZ_pContext_c
@@ -5,7 +7,7 @@ from sage.libs.ntl.ntl_ZZ_pE_decl cimport ZZ_pE_c
 from sage.libs.ntl.ntl_vec_ZZ_p_decl cimport vec_ZZ_p_c
 from sage.libs.ntl.ntl_vec_ZZ_pE_decl cimport vec_ZZ_pE_c
 
-cdef extern from "ntl_wrap.h":
+cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     #### ZZ_pEX_c
     ctypedef struct ZZ_pEX_c "struct ZZ_pEX":
         void *rep
@@ -17,10 +19,6 @@ cdef extern from "ntl_wrap.h":
     void ZZ_pEX_delete "Delete<ZZ_pEX>"(ZZ_pEX_c *mem)
     void ZZ_pEX_from_str "_from_str<ZZ_pEX>"(ZZ_pEX_c* dest, char* s)
     object ZZ_pEX_to_PyString "_to_PyString<ZZ_pEX>"(ZZ_pEX_c *x)
-    #int ZZ_pEX_equal "_equal<ZZX>"(ZZ_pEX_c x, ZZ_pEX_c y)
-
-    #ZZ_pEX_c* str_to_ZZ_pEX(char* s)
-    #char* ZZ_pEX_to_str(ZZ_pEX_c* x)
 
     long ZZ_pEX_equal "operator=="(ZZ_pEX_c a, ZZ_pEX_c b)
     long ZZ_pEX_IsZero "IsZero"(ZZ_pEX_c a)
@@ -32,14 +30,14 @@ cdef extern from "ntl_wrap.h":
     void ZZ_pEX_sub "sub"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
     void ZZ_pEX_sub_ZZ_p "sub"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
     void ZZ_pEX_sub_ZZ_pE "sub"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
-    void ZZ_pEX_negate "negate"(ZZ_pEX_c x, ZZ_pEX_c a)
+    void ZZ_pEX_negate "NTL::negate"(ZZ_pEX_c x, ZZ_pEX_c a)
 
     void ZZ_pEX_mul "mul"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
     void ZZ_pEX_mul_long "mul"( ZZ_pEX_c x, ZZ_pEX_c a, long b)
     void ZZ_pEX_mul_ZZ_p "mul"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
     void ZZ_pEX_mul_ZZ_pE "mul"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
     void ZZ_pEX_sqr "sqr"( ZZ_pEX_c x, ZZ_pEX_c a)
-    void ZZ_pEX_power "power"( ZZ_pEX_c x, ZZ_pEX_c a, long e)
+    void ZZ_pEX_power "NTL::power"( ZZ_pEX_c x, ZZ_pEX_c a, long e)
 
     void ZZ_pEX_LeftShift "LeftShift"(ZZ_pEX_c x, ZZ_pEX_c a, long n)
     void ZZ_pEX_RightShift "RightShift"(ZZ_pEX_c x, ZZ_pEX_c a, long n)

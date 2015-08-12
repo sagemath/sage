@@ -139,7 +139,7 @@ Todo - Mathematica can do this and gets `\pi^2/15`.
 
 ::
 
-    sage: integrate(log(1+sqrt(1+4*x)/2)/x, x, 0, 1)  # not tested
+    sage: integrate(log(1+sqrt(1+4*x)/2)/x, x, 0, 1)
     Traceback (most recent call last):
     ...
     ValueError: Integral is divergent.

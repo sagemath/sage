@@ -1,5 +1,5 @@
-"""
-Descent on elliptic curves over QQ with a 2-isogeny.
+r"""
+Descent on elliptic curves over `\QQ` with a 2-isogeny.
 """
 
 #*****************************************************************************
@@ -54,7 +54,7 @@ def test_valuation(a, p):
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_valuation as tv
         sage: for i in [1..20]:
-        ...    print '%10s'%factor(i), tv(i,2), tv(i,3), tv(i,5)
+        ....:     print '%10s'%factor(i), tv(i,2), tv(i,3), tv(i,5)
                  1 0 0 0
                  2 1 0 0
                  3 0 1 0
@@ -113,9 +113,9 @@ def test_padic_square(a, p):
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_padic_square as ps
         sage: for i in [1..300]:
-        ...    for p in prime_range(100):
-        ...        if not Qp(p)(i).is_square()==bool(ps(i,p)):
-        ...            print i, p
+        ....:     for p in prime_range(100):
+        ....:          if not Qp(p)(i).is_square()==bool(ps(i,p)):
+        ....:              print i, p
 
     """
     cdef Integer A = Integer(a)
@@ -855,7 +855,8 @@ def test_qpls(a,b,c,d,e,p):
     """
     Testing function for Qp_soluble.
 
-    EXAMPLE:
+    EXAMPLE::
+
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_qpls as tq
         sage: tq(1,2,3,4,5,7)
         1
@@ -919,13 +920,13 @@ def test_els(a,b,c,d,e):
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_els
         sage: from sage.libs.ratpoints import ratpoints
         sage: for _ in range(1000):
-        ...    a,b,c,d,e = randint(1,1000), randint(1,1000), randint(1,1000), randint(1,1000), randint(1,1000)
-        ...    if len(ratpoints([e,d,c,b,a], 1000)) > 0:
-        ...        try:
-        ...            if not test_els(a,b,c,d,e):
-        ...                print "This never happened", a,b,c,d,e
-        ...        except ValueError:
-        ...            continue
+        ....:     a,b,c,d,e = randint(1,1000), randint(1,1000), randint(1,1000), randint(1,1000), randint(1,1000)
+        ....:     if len(ratpoints([e,d,c,b,a], 1000)) > 0:
+        ....:         try:
+        ....:             if not test_els(a,b,c,d,e):
+        ....:                 print "This never happened", a,b,c,d,e
+        ....:         except ValueError:
+        ....:             continue
 
     """
     cdef Integer A,B,C,D,E,Delta

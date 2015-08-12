@@ -1,0 +1,26 @@
+Change <malloc.h> to <stdlib.h>
+
+diff -ru src/c/graphColorVertices.c b/c/graphColorVertices.c
+--- src/c/graphColorVertices.c	2015-05-05 14:20:57.000000000 +0200
++++ b/c/graphColorVertices.c	2015-05-07 11:18:43.927221207 +0200
+@@ -50,7 +50,7 @@
+ #include "graph.h"
+ 
+ #include <string.h>
+-#include <malloc.h>
++#include <stdlib.h>
+ #include <stdio.h>
+ 
+ extern void _FillVisitedFlags(graphP theGraph, int FillValue);
+diff -ru src/c/graphDrawPlanar.c b/c/graphDrawPlanar.c
+--- src/c/graphDrawPlanar.c	2015-05-05 14:20:57.000000000 +0200
++++ b/c/graphDrawPlanar.c	2015-05-07 11:18:30.608065652 +0200
+@@ -50,7 +50,7 @@
+ #include "graph.h"
+ 
+ #include <string.h>
+-#include <malloc.h>
++#include <stdlib.h>
+ #include <stdio.h>
+ 
+ extern void _FillVisitedFlags(graphP theGraph, int FillValue);

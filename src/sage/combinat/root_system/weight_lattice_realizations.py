@@ -634,12 +634,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
             """
             return self.reduced_word_of_alcove_morphism(t.translation)
 
-        #    # This should be in a method to_weight_lattice()
-        #    alphac = self.simple_coroots()
-        #    Lambda = self.fundamental_weights()
-        #    assert( t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set() ) )
-        #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set() )
-
         def _test_reduced_word_of_translation(self, elements=None, **options):
             r"""
             Tests the method :meth:`reduced_word_of_translation`.
@@ -854,14 +848,19 @@ class WeightLatticeRealizations(Category_over_base_ring):
             assert result.level() == level
             return result
 
-
         # Should it be a method of highest_weight?
         def weyl_dimension(self, highest_weight):
-            """
+            r"""
+            Return the dimension of the highest weight representation of highest weight ``highest_weight``.
+
             EXAMPLES::
 
                 sage: RootSystem(['A',3]).ambient_lattice().weyl_dimension([2,1,0,0])
                 20
+                sage: P = RootSystem(['C',2]).weight_lattice()
+                sage: La = P.basis()
+                sage: P.weyl_dimension(La[1]+La[2])
+                16
 
                 sage: type(RootSystem(['A',3]).ambient_lattice().weyl_dimension([2,1,0,0]))
                 <type 'sage.rings.integer.Integer'>
@@ -870,9 +869,10 @@ class WeightLatticeRealizations(Category_over_base_ring):
             if not highest_weight.is_dominant():
                 raise ValueError("the highest weight must be dominant")
             rho = self.rho()
-            n = prod([(rho+highest_weight).dot_product(x) for x in self.positive_roots()])
-            d = prod([ rho.dot_product(x) for x in self.positive_roots()])
+            pr = self.coroot_lattice().positive_roots()
             from sage.rings.integer import Integer
+            n = prod(((rho+highest_weight).scalar(x) for x in pr), Integer(1))
+            d = prod((rho.scalar(x) for x in pr), Integer(1))
             return Integer(n/d)
 
         @lazy_attribute
@@ -1032,3 +1032,42 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
             return sum(cl*sym[iset.index(ml),iset.index(mr)]*cr
                        for ml,cl in self for mr,cr in la)
+
+        #    # This should be in a method to_weight_lattice()
+        #    alphac = self.simple_coroots()
+        #    Lambda = self.fundamental_weights()
+        #    assert( t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set() ) )
+        #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set() )
+
+        def to_weight_space(self, base_ring = None):
+            r"""
+            Map ``self`` to the weight space.
+
+            .. WARNING::
+
+                Implemented for finite Cartan type.
+
+            EXAMPLES::
+
+                sage: b = CartanType(['B',2]).root_system().ambient_space().from_vector(vector([1,-2])); b
+                (1, -2)
+                sage: b.to_weight_space()
+                3*Lambda[1] - 4*Lambda[2]
+                sage: b = CartanType(['B',2]).root_system().ambient_space().from_vector(vector([1/2,0])); b
+                (1/2, 0)
+                sage: b.to_weight_space()
+                1/2*Lambda[1]
+                sage: b.to_weight_space(ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+                sage: b = CartanType(['G',2]).root_system().ambient_space().from_vector(vector([4,-5,1])); b
+                (4, -5, 1)
+                sage: b.to_weight_space()
+                -6*Lambda[1] + 5*Lambda[2]
+            """
+            L = self.parent()
+            if base_ring is None:
+                base_ring = L.base_ring()
+            
+            return L.root_system.weight_space(base_ring).sum_of_terms([i, base_ring(self.scalar(L.simple_coroot(i)))] for i in L.cartan_type().index_set())

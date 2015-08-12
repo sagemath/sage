@@ -20,7 +20,7 @@ comprises the "official" W3C CSS3_ / SVG_ colors.
 For a list of color maps in Sage, evaluate::
 
     sage: sorted(colormaps)
-    ['Accent', 'Accent_r', 'Blues', 'Blues_r', 'BrBG', 'BrBG_r', ...]
+    [u'Accent', u'Accent_r', u'Blues', u'Blues_r', u'BrBG', u'BrBG_r', ...]
 
 These are imported from matplotlib's cm_ module.
 
@@ -35,6 +35,7 @@ These are imported from matplotlib's cm_ module.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import six
 import math
 import collections
 from colorsys import hsv_to_rgb, hls_to_rgb, rgb_to_hsv, rgb_to_hls
@@ -335,7 +336,7 @@ def rgbcolor(c, space='rgb'):
     if isinstance(c, Color):
         return c.rgb()
 
-    if isinstance(c, basestring):
+    if isinstance(c, six.string_types):
         if len(c) > 0 and c[0] == '#':
             # Assume an HTML-like color, e.g., #00ffff or #ab0.
             return html_to_float(c)
@@ -348,7 +349,7 @@ def rgbcolor(c, space='rgb'):
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
             raise ValueError("color list or tuple '%s' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel" % (c, ))
-        c = map(mod_one, list(c))
+        c = [mod_one(_) for _ in list(c)]
         if space == 'rgb':
             return tuple(c)
         elif space == 'hsv':
@@ -652,7 +653,7 @@ class Color(object):
         if isinstance(color, Color):
             color = color._rgb
         if isinstance(color, (list, tuple)) and len(color) == 3:
-            color = map(float, color)
+            color = [float(_) for _ in color]
             return Color(rgbcolor([(1 - fraction) * a + fraction * b
                                    for a, b in zip(self._rgb, color)]))
         raise TypeError("%s must be a Color or float-convertible 3-tuple/list" % (color, ))
@@ -1348,7 +1349,7 @@ def get_cmap(cmap):
     and color names.  For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        ['Accent', 'Accent_r', 'Blues', 'Blues_r', ...]
+        [u'Accent', u'Accent_r', u'Blues', u'Blues_r', ...]
 
     See :func:`rgbcolor` for valid list/tuple element formats.
 
@@ -1393,13 +1394,13 @@ def get_cmap(cmap):
     if isinstance(cmap, Colormap):
         return cmap
 
-    elif isinstance(cmap, basestring):
+    elif isinstance(cmap, six.string_types):
         if not cmap in cm.datad.keys():
             raise RuntimeError("Color map %s not known (type import matplotlib.cm; matplotlib.cm.datad.keys() for valid names)" % cmap)
         return cm.__dict__[cmap]
 
     elif isinstance(cmap, (list, tuple)):
-        cmap = map(rgbcolor, cmap)
+        cmap = [rgbcolor(_) for _ in cmap]
         return ListedColormap(cmap)
 
 
@@ -1409,7 +1410,7 @@ class Colormaps(collections.MutableMapping):
     For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        ['Accent', 'Accent_r', 'Blues', 'Blues_r', ...]
+        [u'Accent', u'Accent_r', u'Blues', u'Blues_r', ...]
     """
     def __init__(self):
         """
@@ -1656,7 +1657,7 @@ class Colormaps(collections.MutableMapping):
             sage: maps = Colormaps()
             sage: count = len(maps)
             sage: maps.popitem()
-            ('Spectral', <matplotlib.colors.LinearSegmentedColormap object at ...>)
+            (u'Spectral', <matplotlib.colors.LinearSegmentedColormap object at ...>)
             sage: count - 1 == len(maps)
             True
         """

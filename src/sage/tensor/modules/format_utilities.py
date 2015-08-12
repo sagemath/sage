@@ -20,6 +20,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+import six
 from sage.structure.sage_object import SageObject
 
 def is_atomic(expression):
@@ -52,7 +53,7 @@ def is_atomic(expression):
         True
 
     """
-    if not isinstance(expression, basestring):
+    if not isinstance(expression, six.string_types):
         raise TypeError("The argument must be a string")
     level = 0
     for n, c in enumerate(expression):
@@ -101,7 +102,7 @@ def is_atomic_wedge_txt(expression):
         True
 
     """
-    if not isinstance(expression, basestring):
+    if not isinstance(expression, six.string_types):
         raise TypeError("The argument must be a string.")
     level = 0
     for n, c in enumerate(expression):
@@ -158,7 +159,7 @@ def is_atomic_wedge_latex(expression):
         False
 
     """
-    if not isinstance(expression, basestring):
+    if not isinstance(expression, six.string_types):
         raise TypeError("The argument must be a string.")
     level = 0
     for n, c in enumerate(expression):

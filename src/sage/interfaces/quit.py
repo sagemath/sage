@@ -29,7 +29,7 @@ def expect_quitall(verbose=False):
         sage: gp('a')
         a
         sage: sage.interfaces.quit.expect_quitall(verbose=True)
-        Exiting spawned PARI/GP interpreter process.
+        Exiting PARI/GP interpreter with PID ... running .../local/bin/gp --fast --emacs --quiet --stacksize 10000000
     """
     for P in expect_objects:
         R = P()
@@ -70,10 +70,9 @@ def kill_spawned_jobs(verbose=False):
     for L in open(file).readlines():
         i = L.find(' ')
         pid = L[:i].strip()
-        cmd = L[i+1:].strip()
         try:
             if verbose:
-                print "Killing spawned job %s"%pid
+                print "Killing spawned job %s" % pid
             os.killpg(int(pid), 9)
         except OSError:
             pass
@@ -115,7 +114,4 @@ def invalidate_all():
     for I in expect_objects:
         I1 = I()
         if I1:
-            I1._expect = None  # Invalidate this interface
-            I1._Expect__initialized = False
-            I1._session_number += 1
-            I1.quit()
+            I1.detach()

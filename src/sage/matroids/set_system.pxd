@@ -24,6 +24,7 @@ cdef class SetSystem:
     cdef long subset_characteristic(self, SetSystem P, long e)
     cdef subsets_partition(self, SetSystem P=*, E=*)
     cdef _distinguish(self, v)
+    cpdef is_connected(self)
 
     cdef initial_partition(self, SetSystem P=*, E=*)
     cpdef _equitable_partition(self, SetSystem P=*, EP=*)

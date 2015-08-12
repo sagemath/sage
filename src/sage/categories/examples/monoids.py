@@ -50,6 +50,7 @@ class FreeMonoid(FreeSemigroup):
         sage: TestSuite(S).run(verbose = True)
         running ._test_an_element() . . . pass
         running ._test_associativity() . . . pass
+        running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
@@ -74,7 +75,7 @@ class FreeMonoid(FreeSemigroup):
         r"""
         The free monoid
 
-        INPUT::
+        INPUT:
 
         - ``alphabet`` -- a tuple of strings: the generators of the monoid
 

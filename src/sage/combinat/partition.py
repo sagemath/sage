@@ -729,7 +729,7 @@ class Partition(CombinatorialElement):
             [        ****  ***  *    **  *   * ]
             [ *****, *   , ** , *  , * , * , * ]
         """
-        from sage.misc.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(self._repr_diagram().splitlines(), baseline=0)
 
     def _repr_list(self):
@@ -3246,7 +3246,7 @@ class Partition(CombinatorialElement):
         lcors = [[0,p[0]-1]]
         nn = len(p)
         if nn == 1:
-            return map(tuple, lcors)
+            return [tuple(_) for _ in lcors]
 
         lcors_index = 0
         for i in range(1, nn):
@@ -3256,7 +3256,7 @@ class Partition(CombinatorialElement):
                 lcors.append([i,p[i]-1])
                 lcors_index += 1
 
-        return map(tuple, lcors)
+        return [tuple(_) for _ in lcors]
 
     inside_corners = corners
     removable_cells = corners     # for compatibility with partition tuples
@@ -4422,7 +4422,7 @@ class Partition(CombinatorialElement):
             # if we know the total length alloted for each of the paths (sizes), and the number
             # of paths for each component. A multinomial picks the ordering of the components where
             # each step is taken.
-                return prod(path_counts)*factorial(sum(sizes))/prod(map(factorial,sizes))
+                return prod(path_counts) * factorial(sum(sizes)) / prod([factorial(_) for _ in sizes])
 
             sizes = [larger_quotients[i].size()-smaller_quotients[i].size() for i in range(k)]
             path_counts = [larger_quotients[i].dimension(smaller_quotients[i]) for i in range(k)]
@@ -4902,6 +4902,14 @@ class Partitions(UniqueRepresentation, Parent):
         [2, 1, 1, 1, 1, 1, 1]
         sage: a
         [4, 3, 2, 1, 1, 1, 1]
+
+    Check that ``inner`` and ``outer`` indeed accept a partition as
+    argument (:trac:`18423`)::
+
+        sage: P = Partitions(5, inner=Partition([2,1]), outer=Partition([3,2])); P
+        Partitions of the integer 5 satisfying constraints inner=[2, 1], outer=[3, 2]
+        sage: P.list()
+        [[3, 2]]
     """
     @staticmethod
     def __classcall_private__(cls, n=None, **kwargs):
@@ -4978,7 +4986,7 @@ class Partitions(UniqueRepresentation, Parent):
                 kwargs['max_length'] = min(len(kwargs['outer']),
                                            kwargs.get('max_length', infinity))
 
-                kwargs['ceiling'] = kwargs['outer']
+                kwargs['ceiling'] = tuple(kwargs['outer'])
                 del kwargs['outer']
 
             if 'inner' in kwargs:
@@ -5647,6 +5655,13 @@ class Partitions_n(Partitions):
             ....:     for Part in map(Partitions, range(10)))
             True
 
+        Check that :trac:`18752` is fixed::
+
+            sage: P = Partitions(5)
+            sage: la = P.random_element_uniform()
+            sage: la.parent() is P
+            True
+
         ALGORITHM:
 
          - It is a python Implementation of RANDPAR, see [nw]_.  The
@@ -5695,7 +5710,7 @@ class Partitions_n(Partitions):
             res.extend([d]*j)
             n = r
         res.sort(reverse=True)
-        return Partition(res)
+        return self.element_class(self, res)
 
     def random_element_plancherel(self):
         r"""
@@ -5720,6 +5735,13 @@ class Partitions_n(Partitions):
             ...       for Part in map(Partitions, range(10)))
             True
 
+        Check that :trac:`18752` is fixed::
+
+            sage: P = Partitions(5)
+            sage: la = P.random_element_plancherel()
+            sage: la.parent() is P
+            True
+
         ALGORITHM:
 
         - insert by Robinson-Schensted a uniform random permutations of n and
@@ -5731,7 +5753,8 @@ class Partitions_n(Partitions):
 
         - Florent Hivert (2009-11-23)
         """
-        return permutation.Permutations(self.n).random_element().left_tableau().shape()
+        T = permutation.Permutations(self.n).random_element().left_tableau()
+        return self.element_class(self, [len(row) for row in T])
 
     def first(self):
         """

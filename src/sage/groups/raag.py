@@ -311,7 +311,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
         if x == 1:
             return self.one()
         verts = self._graph.vertices()
-        x = map(lambda s: [verts.index(s[0]), s[1]], x)
+        x = [ [verts.index(s[0]), s[1]] for s in x]
         return self.element_class(self, self._normal_form(x))
 
     def _normal_form(self, word):
@@ -338,7 +338,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
         pos = 0
         G = self._graph
         v = G.vertices()
-        w = map(list, word) # Make a (2 level) deep copy
+        w = [list(_) for _ in word] # Make a (2 level) deep copy
         while pos < len(w):
             comm_set = [w[pos][0]] # The current set of totally commuting elements
             i = pos + 1
@@ -521,7 +521,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
 
             if n < 0:
                 lst = sum([self._data for i in range(-n)], ()) # Positive product
-                lst = map(lambda x: [x[0], -x[1]], reversed(lst)) # Now invert
+                lst = [ [x[0], -x[1]] for x in reversed(lst)] # Now invert
                 return self.__class__(P, P._normal_form(lst))
 
             lst = sum([self._data for i in range(n)], ())
@@ -540,6 +540,6 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
                 v1^-1*v0^-1*v1^-1*v0^-1
             """
             P = self.parent()
-            lst = map(lambda x: [x[0], -x[1]], reversed(self._data))
+            lst = [ [x[0], -x[1]] for x in reversed(self._data)]
             return self.__class__(P, P._normal_form(lst))
 

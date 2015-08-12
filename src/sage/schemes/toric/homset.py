@@ -106,6 +106,7 @@ coordinates where the codomain is not implemented as a toric variety::
 #*****************************************************************************
 
 
+from sage.categories.finite_fields import FiniteFields
 from sage.rings.all import ZZ
 from sage.rings.morphism import is_RingHomomorphism
 
@@ -362,15 +363,69 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
             sage: next(iter(point_set))
             [0 : 0 : 1]
         """
-        from sage.schemes.toric.points import \
-            NaiveFinitePointEnumerator, InfinitePointEnumerator
+        from sage.schemes.toric.points import NaiveFinitePointEnumerator
         variety = self.codomain()
         if ring is None:
             ring = variety.base_ring()
-        if ring.is_finite():
-            return NaiveFinitePointEnumerator(variety.fan(), ring)
+        return NaiveFinitePointEnumerator(variety.fan(), ring)
+
+    def _finite_field_enumerator(self, finite_field=None):
+        """
+        Fast enumerator for points of the toric variety.
+
+        INPUT:
+
+        - ``finite_field`` -- a finite field (optional; defaults to
+          the base ring of the toric variety). The ring over which the
+          points are considered.
+
+        OUTPUT:
+
+        A
+        :class:`sage.schemes.toric.points.FiniteFieldPointEnumerator`
+        instance that can be used to iterate over the points.
+
+        EXAMPLES::
+
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: next(iter(point_set._finite_field_enumerator()))
+            (0, 0, 1)
+            sage: next(iter(point_set))
+            [0 : 0 : 1]
+        """
+        from sage.schemes.toric.points import FiniteFieldPointEnumerator
+        variety = self.codomain()
+        if finite_field is None:
+            finite_field = variety.base_ring()
+        if not finite_field in FiniteFields():
+            raise ValueError('not a finite field')
+        return FiniteFieldPointEnumerator(variety.fan(), finite_field)
+
+    def _enumerator(self):
+        """
+        Return the most suitable enumerator for points.
+
+        OUTPUT:
+
+        An iterable that yields the coordinates of all points as
+        tuples.
+
+        EXAMPLES::
+
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: point_set._enumerator()
+            <sage.schemes.toric.points.FiniteFieldPointEnumerator object at 0x...>
+        """
+        ring = self.domain().base_ring()
+        if ring in FiniteFields():
+            return self._finite_field_enumerator()
+        elif ring.is_finite():
+            return self._naive_enumerator()
         else:
-            return InfinitePointEnumerator(variety.fan(), ring)
+            from sage.schemes.toric.points import InfinitePointEnumerator
+            return InfinitePointEnumerator(self.codomain().fan(), ring)
 
 
 class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
@@ -464,9 +519,8 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
             sage: V.change_ring(GF(101)).point_set().cardinality()
             1061208
 
-        For non-smooth varieties over finite fields, the points are
-        actually constructed and iterated over. This works but is much
-        slower::
+        For non-smooth varieties over finite fields, the homogeneous
+        rescalings are solved. This is somewhat slower::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
             sage: X = ToricVariety(fan, base_field=GF(7))
@@ -518,7 +572,10 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
                 from sage.rings.infinity import Infinity
                 return Infinity
         if not variety.is_smooth():
-            return super(SchemeHomset_points_toric_field, self).cardinality()
+            try:
+                return self._enumerator().cardinality()
+            except AttributeError:
+                return super(SchemeHomset_points_toric_field, self).cardinality()
         q = variety.base_ring().order()
         n = variety.dimension()
         d = map(len, variety.fan().cones())
@@ -541,11 +598,39 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
             sage: next(iter(point_set))  # syntactic sugar
             [0 : 0 : 1]
         """
-        for pt in self._naive_enumerator():
+        for pt in self._enumerator():
             yield self(pt)
 
 
 class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
+
+    def _enumerator(self):
+        """
+        Return the most suitable enumerator for points.
+
+        OUTPUT:
+
+        An iterable that yields the coordinates of all points as
+        tuples.
+
+        EXAMPLES::
+
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: point_set._enumerator()
+            <sage.schemes.toric.points.FiniteFieldPointEnumerator object at 0x...>
+        """
+        ambient = super(
+            SchemeHomset_points_subscheme_toric_field, self
+        )._enumerator()
+        ring = self.domain().base_ring()
+        if ring in FiniteFields():
+            from sage.schemes.toric.points import FiniteFieldSubschemePointEnumerator
+            Enumerator = FiniteFieldSubschemePointEnumerator
+        else:
+            from sage.schemes.toric.points import NaiveSubschemePointEnumerator
+            Enumerator = NaiveSubschemePointEnumerator
+        return Enumerator(self.codomain().defining_polynomials(), ambient)
 
     def __iter__(self):
         """
@@ -560,18 +645,33 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())
-            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 1 : 2], [1 : 2 : 1], [1 : 3 : 3]]
+            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 2 : 1], [1 : 1 : 2], [1 : 3 : 3]]
             sage: cubic.point_set().cardinality()
             6
         """
-        ambient = super(
-            SchemeHomset_points_subscheme_toric_field, self
-        )._naive_enumerator()
-        X = self.codomain()
-        for p in ambient:
-            try:
-                X._check_satisfies_equations(p)
-            except TypeError:
-                continue
+        for p in self._enumerator():
             yield self(p)
+
+    def cardinality(self):
+        """
+        Return the number of points of the toric variety.
+
+        OUTPUT:
+
+        An integer or infinity. The cardinality of the set of points.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
+            sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
+            sage: list(cubic.point_set())
+            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 2 : 1], [1 : 1 : 2], [1 : 3 : 3]]
+            sage: cubic.point_set().cardinality()
+            6
+        """
+        try:
+            return self._enumerator().cardinality()
+        except AttributeError:
+            return super(SchemeHomset_points_subscheme_toric_field, self).cardinality()
+
             

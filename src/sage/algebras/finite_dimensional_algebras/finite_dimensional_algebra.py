@@ -16,6 +16,8 @@ Finite-Dimensional Algebras
 from finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 from finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
 
+from sage.rings.integer_ring import ZZ
+
 from sage.categories.all import FiniteDimensionalAlgebrasWithBasis
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix import is_Matrix
@@ -317,7 +319,6 @@ class FiniteDimensionalAlgebra(Algebra):
         # Base extension of the multiplication table is done by __init__.
         return FiniteDimensionalAlgebra(F, self.table())
 
-    @cached_method
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -337,9 +338,7 @@ class FiniteDimensionalAlgebra(Algebra):
             1
         """
         n = self.degree()
-        if n == 0:
-            return 1
-        return self.base_ring().cardinality() ** n
+        return ZZ.one() if not n else self.base_ring().cardinality() ** n
 
     def ideal(self, gens=None, given_by_matrix=False):
         """

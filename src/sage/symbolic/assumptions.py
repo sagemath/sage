@@ -155,9 +155,6 @@ class GenericDeclaration(SageObject):
             self._context = maxima.newcontext('context' + maxima._next_var_name())
             try:
                 maxima.eval("declare(%s, %s)" % (self._var._maxima_init_(), self._assumption))
-#            except TypeError, mess:
-#                if 'inconsistent' in str(mess): # note Maxima doesn't tell you if declarations are redundant
-#                    raise ValueError, "Assumption is inconsistent"
             except RuntimeError as mess:
                 if 'inconsistent' in str(mess): # note Maxima doesn't tell you if declarations are redundant
                     raise ValueError("Assumption is inconsistent")
@@ -605,7 +602,6 @@ def _forget_all():
         sage: sin(m*pi).simplify()
         sin(pi*m)
     """
-    from sage.calculus.calculus import maxima
     global _assumptions
     if len(_assumptions) == 0:
         return

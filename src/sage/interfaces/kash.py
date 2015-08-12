@@ -462,7 +462,7 @@ class Kash(Expect):
 
         cmd = "kash3 -b -c -d  "
         if max_workspace_size is not None:
-            cmd += " -a %s"%int(max_workspace)
+            cmd += " -a %s" % int(max_workspace_size)
         Expect.__init__(self,
                         name = 'kash',
                         prompt = 'kash% ',
@@ -696,9 +696,10 @@ kash = Kash()
 def reduce_load_Kash():
     return kash
 
-import os
+
 def kash_console():
     os.system("kash3 ")
+
 
 def kash_version():
     return kash.eval('VERSION')

@@ -89,27 +89,28 @@ TODO:
 - make Matrix_modn_frontend and use it (?)
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2004,2005,2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2007,2008,2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 include 'sage/ext/stdsage.pxi'
-include 'sage/ext/random.pxi'
 
 cimport matrix_dense
+from libc.stdio cimport *
 from sage.structure.element cimport Matrix, Vector
 from sage.structure.element cimport ModuleElement, Element
-
+from sage.libs.gmp.random cimport *
 from sage.misc.functional import log
-
+from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.misc import verbose, get_verbose, cputime
-
 from sage.modules.free_module import VectorSpace
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense
 
@@ -1666,15 +1667,16 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             Z._entries = mzd_stack(Z._entries, self._entries, other._entries)
         return Z
 
-    def submatrix(self, lowr, lowc, nrows , ncols):
+    def submatrix(self, Py_ssize_t row=0, Py_ssize_t col=0,
+                        Py_ssize_t nrows=-1, Py_ssize_t ncols=-1):
         """
-        Return submatrix from the index lowr,lowc (inclusive) with
+        Return submatrix from the index row, col (inclusive) with
         dimension nrows x ncols.
 
         INPUT:
 
-        - lowr -- index of start row
-        - lowc -- index of start column
+        - row -- index of start row
+        - col -- index of start column
         - nrows -- number of rows of submatrix
         - ncols -- number of columns of submatrix
 
@@ -1694,16 +1696,36 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
              True
              sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
              True
+
+        TESTS for handling of default arguments (ticket #18761)::
+
+             sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
+             True
+             sage: A.submatrix(row=100,col=37,nrows=1,ncols=3) == A.submatrix(100,37,1,3)
+             True
         """
         cdef Matrix_mod2_dense A
 
         cdef int highr, highc
 
-        highr = lowr + nrows
-        highc = lowc + ncols
+        if nrows < 0:
+            nrows = self._nrows - row
+            if nrows < 0:
+                nrows = 0
 
-        if nrows <= 0 or ncols <= 0:
-            raise TypeError("Expected nrows, ncols to be > 0, but got %d,%d instead."%(nrows, ncols))
+        if ncols < 0:
+            ncols = self._ncols - col
+            if ncols < 0:
+                ncols = 0
+
+        highr = row + nrows
+        highc = col + ncols
+
+        if row < 0:
+            raise TypeError("Expected row >= 0, but got %d instead."%row)
+
+        if col < 0:
+            raise TypeError("Expected col >= 0, but got %d instead."%col)
 
         if highc > self._entries.ncols:
             raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead."%(highc, self._entries.ncols))
@@ -1711,16 +1733,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if highr > self._entries.nrows:
             raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
 
-        if lowr < 0:
-            raise TypeError("Expected lowr >= 0, but got %d instead."%lowr)
-
-        if lowc < 0:
-            raise TypeError("Expected lowc >= 0, but got %d instead."%lowc)
-
         A = self.new_matrix(nrows = nrows, ncols = ncols)
-        if self._ncols == 0 or self._nrows == 0:
+        if ncols == 0 or nrows == 0:
             return A
-        A._entries = mzd_submatrix(A._entries, self._entries, lowr, lowc, highr, highc)
+        A._entries = mzd_submatrix(A._entries, self._entries, row, col, highr, highc)
         return A
 
     def __reduce__(self):

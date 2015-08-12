@@ -58,7 +58,7 @@ class HyperbolicPolygon(BezierPath):
             sage: print HyperbolicPolygon([0, 1/2, I], {})
             Hyperbolic polygon (0.000000000000000, 0.500000000000000, 1.00000000000000*I)
         """
-        pts = map(CC, pts)
+        pts = [CC(_) for _ in pts]
         self.path = []
         self._hyperbolic_arc(pts[0], pts[1], True)
         for i in range(1, len(pts) - 1):

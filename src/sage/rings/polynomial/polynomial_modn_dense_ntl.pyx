@@ -54,7 +54,6 @@ def make_element(parent, args):
     return parent(*args)
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 
 zz_p_max = NTL_SP_BOUND
 
@@ -584,7 +583,16 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
 
 cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
+    r"""
+    Polynomial on `\ZZ/n\ZZ` implemented via NTL.
 
+    .. automethod:: _add_
+    .. automethod:: _sub_
+    .. automethod:: _lmul_
+    .. automethod:: _rmul_
+    .. automethod:: _mul_
+    .. automethod:: _mul_trunc_
+    """
     def __init__(self, parent, v=None, check=True, is_gen=False, construct=False):
         r"""
         EXAMPLES::
@@ -740,10 +748,10 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef Polynomial_dense_modn_ntl_zz _mul_trunc(self, Polynomial_dense_modn_ntl_zz right, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         r"""
         Return the product of ``self`` and ``right`` truncated to the
-        given length `n`, only return terms of degree less than `n`.
+        given length `n`
 
         EXAMPLES::
 
@@ -752,28 +760,29 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: g = x^2 - 8*x + 16
             sage: f*g
             x^3 + 90*x^2 + 32*x + 68
-            sage: f._mul_trunc(g, 42)
+            sage: f._mul_trunc_(g, 42)
             x^3 + 90*x^2 + 32*x + 68
-            sage: f._mul_trunc(g, 3)
+            sage: f._mul_trunc_(g, 3)
             90*x^2 + 32*x + 68
-            sage: f._mul_trunc(g, 2)
+            sage: f._mul_trunc_(g, 2)
             32*x + 68
-            sage: f._mul_trunc(g, 1)
+            sage: f._mul_trunc_(g, 1)
             68
-            sage: f._mul_trunc(g, 0)
+            sage: f._mul_trunc_(g, 0)
             0
             sage: f = x^2 - 8*x + 16
-            sage: f._mul_trunc(f, 2)
+            sage: f._mul_trunc_(f, 2)
             44*x + 56
         """
+        cdef Polynomial_dense_modn_ntl_zz op2 = <Polynomial_dense_modn_ntl_zz> right
         cdef Polynomial_dense_modn_ntl_zz r = self._new()
-        cdef bint do_sig = zz_pX_deg(self.x) + zz_pX_deg(right.x) > 10000
+        cdef bint do_sig = zz_pX_deg(self.x) + zz_pX_deg(op2.x) > 10000
         if do_sig: sig_on()
         self.c.restore_c()
-        if self is right:
+        if self is op2:
             zz_pX_SqrTrunc(r.x, self.x, n)
         else:
-            zz_pX_MulTrunc(r.x, self.x, right.x, n)
+            zz_pX_MulTrunc(r.x, self.x, op2.x, n)
         if do_sig: sig_off()
         return r
 
@@ -1316,7 +1325,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef Polynomial_dense_modn_ntl_ZZ _mul_trunc(self, Polynomial_dense_modn_ntl_ZZ right, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
         Return the product of ``self`` and ``right`` truncated to the
         given length `n`, only return terms of degree less than `n`.
@@ -1328,28 +1337,29 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: g = x^2 - 8*x + 16
             sage: f*g
             x^3 + 999999999999999999999999999990*x^2 + 32*x + 999999999999999999999999999968
-            sage: f._mul_trunc(g, 42)
+            sage: f._mul_trunc_(g, 42)
             x^3 + 999999999999999999999999999990*x^2 + 32*x + 999999999999999999999999999968
-            sage: f._mul_trunc(g, 3)
+            sage: f._mul_trunc_(g, 3)
             999999999999999999999999999990*x^2 + 32*x + 999999999999999999999999999968
-            sage: f._mul_trunc(g, 2)
+            sage: f._mul_trunc_(g, 2)
             32*x + 999999999999999999999999999968
-            sage: f._mul_trunc(g, 1)
+            sage: f._mul_trunc_(g, 1)
             999999999999999999999999999968
-            sage: f._mul_trunc(g, 0)
+            sage: f._mul_trunc_(g, 0)
             0
             sage: f = x^2 - 8*x + 16
-            sage: f._mul_trunc(f, 2)
+            sage: f._mul_trunc_(f, 2)
             999999999999999999999999999744*x + 256
         """
+        cdef Polynomial_dense_modn_ntl_ZZ op2 = <Polynomial_dense_modn_ntl_ZZ> right
         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e5
+        cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(op2.x)) * self.c.p_bits > 1e5
         if do_sig: sig_on()
         self.c.restore_c()
-        if self is right:
+        if self is op2:
             ZZ_pX_SqrTrunc(r.x, self.x, n)
         else:
-            ZZ_pX_MulTrunc(r.x, self.x, right.x, n)
+            ZZ_pX_MulTrunc(r.x, self.x, op2.x, n)
         if do_sig: sig_off()
         return r
 

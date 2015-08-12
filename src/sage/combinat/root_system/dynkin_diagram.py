@@ -550,6 +550,26 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             G._cartan_type = self._cartan_type.relabel(relabelling)
         return G
 
+    def subtype(self, index_set):
+        """
+        Return a subtype of ``self`` given by ``index_set``.
+
+        A subtype can be considered the Dynkin diagram induced from
+        the Dynkin diagram of ``self`` by ``index_set``.
+
+        EXAMPLES::
+
+            sage: D = DynkinDiagram(['A',6,2]); D
+            O=<=O---O=<=O
+            0   1   2   3
+            BC3~
+            sage: D.subtype([1,2,3])
+            O---O=<=O
+            1   2   3
+            C3
+        """
+        return self.cartan_matrix().subtype(index_set).dynkin_diagram()
+
     def is_finite(self):
         """
         Check if ``self`` corresponds to a finite root system.

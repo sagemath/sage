@@ -13,7 +13,7 @@ shopt -s extglob
 # Remove old sources and download new
 rm -rf src
 if [ -z "$UPSTREAM_SOURCE_TARBALL" ]; then
-    tar xjf <( curl http://www.gap-system.org/pub/gap/gap47/tar.bz2/gap4r7p2_2013_12_01-10_17.tar.bz2 )
+    tar xjf <( curl http://www.gap-system.org/pub/gap/gap47/tar.bz2/gap4r7p8_2015_06_09-20_27.tar.bz2)
 else
     tar xjf "$UPSTREAM_SOURCE_TARBALL"
 fi

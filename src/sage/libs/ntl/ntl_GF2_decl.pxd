@@ -1,4 +1,6 @@
-cdef extern from "ntl_wrap.h":
+# distutils: depends = NTL/ZZ.h
+
+cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     ctypedef struct GF2_c "struct GF2":
         pass
 
@@ -16,8 +18,8 @@ cdef extern from "ntl_wrap.h":
     void GF2_sub "sub"( GF2_c x, GF2_c a, GF2_c b)
     void GF2_mul "mul"( GF2_c x, GF2_c a, GF2_c b)
     void GF2_div "div"( GF2_c x, GF2_c a, GF2_c b)
-    void GF2_negate "negate"(GF2_c x, GF2_c a)
-    void GF2_power "power"(GF2_c t, GF2_c x, long e)
+    void GF2_negate "NTL::negate"(GF2_c x, GF2_c a)
+    void GF2_power "NTL::power"(GF2_c t, GF2_c x, long e)
     long GF2_deg "deg"(GF2_c x)
 
     void GF2_conv_long "conv" (GF2_c x, long i)

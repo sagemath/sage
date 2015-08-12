@@ -34,7 +34,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableArray
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 
@@ -110,7 +110,7 @@ class SetPartition(ClonableArray):
         sage: s.parent()
         Set partitions
     """
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     @staticmethod
     def __classcall_private__(cls, parts, check=True):
@@ -233,7 +233,7 @@ class SetPartition(ClonableArray):
         """
         if not isinstance(y, SetPartition):
             return False
-        return map(sorted, self) < map(sorted, y)
+        return [sorted(_) for _ in self] < [sorted(_) for _ in y]
 
     def __gt__(self, y):
         """
@@ -261,7 +261,7 @@ class SetPartition(ClonableArray):
         """
         if not isinstance(y, SetPartition):
             return False
-        return map(sorted, self) > map(sorted, y)
+        return [sorted(_) for _ in self] > [sorted(_) for _ in y]
 
     def __le__(self, y):
         """
@@ -407,7 +407,7 @@ class SetPartition(ClonableArray):
             sage: S([[1,3],[2,4]])
             {{1, 3}, {2, 4}}
         """
-        return '{' + ', '.join(map(lambda x: '{' + repr(sorted(x))[1:-1] + '}', self)) + '}'
+        return '{' + ', '.join(('{' + repr(sorted(x))[1:-1] + '}' for x in self)) + '}'
 
     def _latex_(self):
         r"""
@@ -543,7 +543,7 @@ class SetPartition(ClonableArray):
             sage: [x.standard_form() for x in SetPartitions(4, [2,2])]
             [[[1, 2], [3, 4]], [[1, 3], [2, 4]], [[1, 4], [2, 3]]]
         """
-        return list(map(list, self))
+        return [list(_) for _ in self]
 
     def apply_permutation(self, p):
         r"""
@@ -581,8 +581,8 @@ class SetPartition(ClonableArray):
         AUTHOR: Florent Hivert
         """
         l = list(self)
-        mins = map(min, l)
-        maxs = map(max, l)
+        mins = [min(_) for _ in l]
+        maxs = [max(_) for _ in l]
 
         for i in range(1, len(l)):
             for j in range(i):
@@ -692,7 +692,7 @@ class SetPartition(ClonableArray):
         """
         if len(self) == 0:
             return self
-        temp = map(list, self)
+        temp = [list(_) for _ in self]
         mins = [min(p) for p in temp]
         over_max = max([max(p) for p in temp]) + 1
         ret = [[] for i in range(len(temp))]
@@ -812,7 +812,7 @@ class SetPartition(ClonableArray):
             sub_parts = [list(self[i-1]) for i in part] # -1 for indexing
             # Standardizing sub_parts (the cur variable not being reset
             # to 1 gives us the offset we want):
-            mins = map(min, sub_parts)
+            mins = [min(_) for _ in sub_parts]
             over_max = max(map(max, sub_parts)) + 1
             temp = [[] for i in range(len(part))]
             while min(mins) != over_max:
@@ -1112,7 +1112,7 @@ class SetPartitions(Parent, UniqueRepresentation):
             if expo[i] != 0:
                 nonzero.append([i, expo[i]])
 
-        taillesblocs = map(lambda x: (x[0])*(x[1]), nonzero)
+        taillesblocs = [(x[0])*(x[1]) for x in nonzero]
 
         blocs = OrderedSetPartitions(self._set, taillesblocs)
 

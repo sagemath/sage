@@ -1,8 +1,7 @@
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 
-import sage.structure.element
 cimport sage.structure.element
+from sage.libs.gmp.types cimport mpz_t
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.element cimport FieldElement, RingElement, ModuleElement

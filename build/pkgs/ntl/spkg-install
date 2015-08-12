@@ -85,8 +85,9 @@ ntl_configure()
     ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
         CXX="$CXX" CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
-        NTL_GMP_LIP=on NTL_GF2X_LIB=on NTL_STD_CXX=on \
-        LIBTOOL="$CUR/src/libtool/libtool"
+        NTL_GMP_LIP=on NTL_GF2X_LIB=on \
+        LIBTOOL="$CUR/src/libtool/libtool"\
+        NTL_LEGACY_SP_MULMOD=on
 
     if [ $? -ne 0 ]; then
         echo >&2 "Error configuring NTL."
@@ -127,6 +128,11 @@ ntl_install()
         echo >&2 "Error installing NTL."
         exit 1
     fi
+
+    # Touch all includes such that dependency checking works properly:
+    # the timestamp of the includes should be *now*, not the time when
+    # the NTL package was created.
+    touch "$SAGE_LOCAL"/include/NTL/*
 }
 
 ntl_patch

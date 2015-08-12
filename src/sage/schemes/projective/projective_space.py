@@ -989,11 +989,11 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
                 iters = [ R.range_by_height(bound) for _ in range(i) ]
             else: # if number field
                 iters = [ R.elements_of_bounded_height(bound, precision=prec) for _ in range(i) ]
-            for x in iters: x.next() # put at zero
+            for x in iters: next(x) # put at zero
             j = 0
             while j < i:
                 try:
-                    P[j] = iters[j].next()
+                    P[j] = next(iters[j])
                     yield self(P)
                     j = 0
                 except StopIteration:
@@ -1001,7 +1001,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
                         iters[j] = R.range_by_height(bound) # reset
                     else: # if number field
                         iters[j] = R.elements_of_bounded_height(bound, precision=prec) # reset
-                    iters[j].next() # put at zero
+                    next(iters[j]) # put at zero
                     P[j] = zero
                     j += 1
             i -= 1

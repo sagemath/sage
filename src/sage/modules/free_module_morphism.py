@@ -490,7 +490,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                 resu=[]
                 for i in seigenvec:
                     V=self.domain().base_extend(i[0].parent())
-                    svectors=Sequence(map(lambda j: V(j * V.basis_matrix()),i[1]), cr=True)
+                    svectors=Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
                     resu.append((i[0],svectors,i[2]))
                 return resu
             else:

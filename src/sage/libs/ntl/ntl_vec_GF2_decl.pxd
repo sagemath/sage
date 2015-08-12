@@ -1,5 +1,8 @@
+# distutils: depends = NTL/ZZ.h
+
 from sage.libs.ntl.ntl_GF2_decl cimport GF2_c
-cdef extern from "ntl_wrap.h":
+
+cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     ctypedef struct vec_GF2_c "struct vec_GF2":
         void (*SetLength)(long n)
         void (*SetMaxLength)(long n)
@@ -35,7 +38,7 @@ cdef extern from "ntl_wrap.h":
     void vec_GF2_add "add"( vec_GF2_c x, vec_GF2_c a, vec_GF2_c b)
     void vec_GF2_sub "sub"( vec_GF2_c x, vec_GF2_c a, vec_GF2_c b)
     void vec_GF2_mul "mul"( vec_GF2_c x, vec_GF2_c a, vec_GF2_c b)
-    void vec_GF2_negate "negate"(vec_GF2_c x, vec_GF2_c a)
+    void vec_GF2_negate "NTL::negate"(vec_GF2_c x, vec_GF2_c a)
     void vec_GF2_InnerProduct "InnerProduct"(GF2_c x, vec_GF2_c a, vec_GF2_c b)
 
     void vec_GF2_conv_long "conv"(vec_GF2_c x, long i)

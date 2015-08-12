@@ -448,40 +448,18 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                 return True
         return False
 
-    def __richcmp__(left, right, int op):
-        """
-        TEST::
-
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-            sage: p = ((2*x+3*y-4*z)^2*(5*y+6*z))
-            sage: p-p.lt()<p    # indirect doctest
-            True
-
-        """
-        return (<Element>left)._richcmp(right, op)
-    def __cmp__(left, right):
-        """
-        TEST::
-
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-            sage: p = ((2*x+3*y-4*z)^2*(5*y+6*z))
-            sage: cmp(p,p-p.lt())    # indirect doctest
-            1
-
-        """
-        return (<Element>left)._cmp(right)
-
     cpdef int _cmp_(self, Element other) except -2:
         """
         Auxiliary method for comparison.
 
-        TEST::
+        TESTS::
 
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: p = ((2*x+3*y-4*z)^2*(5*y+6*z))
-            sage: p-p.lt()<p    # indirect doctest
+            sage: p-p.lt() < p     # indirect doctest
             True
-
+            sage: cmp(p,p-p.lt())  # indirect doctest
+            1
         """
         cdef int c = cmp(type(self),type(other))
         if c: return c

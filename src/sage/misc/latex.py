@@ -1081,10 +1081,8 @@ class Latex(LatexCall):
             sage: latex.eval("\\ZZ[x]", locals(), filename="/path/to/test") # not tested
             ''
             sage: latex.eval("\ThisIsAnInvalidCommand", {}) # optional -- ImageMagick
-            An error
-            ...
-            No pages of output.
-            <BLANKLINE>
+            An error occurred...
+            No pages of output...
         """
         MACROS = latex_extra_preamble()
 

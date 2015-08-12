@@ -49,7 +49,7 @@ A mixed integer linear program can give you an answer:
 
   #. You have to create an instance of :class:`MixedIntegerLinearProgram` and
      -- in our case -- specify that it is a minimization.
-  #. Create an dictionary ``w`` of integer variables ``w`` via ``w =
+  #. Create a dictionary ``w`` of integer variables ``w`` via ``w =
      p.new_variable(integer=True)`` (note that **by default all variables are
      non-negative**, cf :meth:`~MixedIntegerLinearProgram.new_variable`).
   #. Add those three equations as equality constraints via
@@ -220,7 +220,6 @@ AUTHORS:
 #*****************************************************************************
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 
 from copy import copy
 from sage.structure.parent cimport Parent
@@ -637,16 +636,16 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram()
             sage: x = p.new_variable(nonnegative=True)
 
-        It behaves exactly as an usual dictionary would. It can use any key
+        It behaves exactly as a usual dictionary would. It can use any key
         argument you may like, as ``x[5]`` or ``x["b"]``, and has methods
         ``items()`` and ``keys()``.
 
         .. SEEALSO::
 
-            - :meth:`set_min`,:meth:`get_min` -- set/get the lower bound of a
+            - :meth:`set_min`, :meth:`get_min` -- set/get the lower bound of a
               variable. Note that by default, all variables are non-negative.
 
-            - :meth:`set_max`,:meth:`get_max` -- set/get the upper bound of a
+            - :meth:`set_max`, :meth:`get_max` -- set/get the upper bound of a
               variable.
 
         INPUT:
@@ -969,12 +968,18 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
             The polyhedron is built from the variables stored by the LP solver
             (i.e. the output of :meth:`show`). While they usually match the ones
-            created explicitely when defining the LP, a solver like Gurobi has
+            created explicitly when defining the LP, a solver like Gurobi has
             been known to introduce additional variables to store constraints of
             the type ``lower_bound <= linear_function <= upper bound``. You
             should be fine if you did not install Gurobi or if you do not use it
             as a solver, but keep an eye on the number of variables in the
             polyhedron, or on the output of :meth:`show`. Just in case.
+
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.to_linear_program`
+            -- return the :class:`MixedIntegerLinearProgram` object associated
+            with a :func:`Polyhedron` object.
 
         EXAMPLES:
 
@@ -2240,7 +2245,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         The solver parameters are by essence solver-specific, which
         means their meaning heavily depends on the solver used.
 
-        (If you do not know which solver you are using, then you use
+        (If you do not know which solver you are using, then you
         use GLPK).
 
         Aliases:
@@ -2339,7 +2344,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         r"""
         Returns the backend instance used.
 
-        This might be useful when acces to additional functions provided by
+        This might be useful when access to additional functions provided by
         the backend is needed.
 
         EXAMPLE:

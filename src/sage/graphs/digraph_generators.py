@@ -475,7 +475,7 @@ class DiGraphGenerators():
 
         nauty_input +=  " "+str(n) +" "
 
-        sp = subprocess.Popen("nauty-gentourng {0}".format(nauty_input), shell=True,
+        sp = subprocess.Popen("gentourng {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True)
 
@@ -913,7 +913,6 @@ class DiGraphGenerators():
 
         G.name( "Kautz digraph (k=%s, D=%s)"%(k,D) )
         return G
-
 
     def RandomDirectedGN(self, n, kernel=lambda x:x, seed=None):
         """

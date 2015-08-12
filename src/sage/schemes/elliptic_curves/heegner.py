@@ -6177,22 +6177,20 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     If the optional parameter `c` is given, returns the higher Heegner
     point associated to the order of conductor `c`.
 
-    INPUT::
+    INPUT:
 
-        - `D`        -- a Heegner discriminant
+    - `D`        -- a Heegner discriminant
 
-        - `c`        -- (default: 1) conductor, must be coprime to `DN`
+    - `c`        -- (default: 1) conductor, must be coprime to `DN`
 
-        - `f`        -- binary quadratic form or 3-tuple `(A,B,C)` of coefficients
-                        of `AX^2 + BXY + CY^2`
+    - `f`        -- binary quadratic form or 3-tuple `(A,B,C)` of coefficients
+      of `AX^2 + BXY + CY^2`
 
-        - ``check``  -- bool (default: ``True``)
+    - ``check``  -- bool (default: ``True``)
 
+    OUTPUT:
 
-    OUTPUT::
-
-        The Heegner point `y_c`.
-
+    The Heegner point `y_c`.
 
     EXAMPLES::
 

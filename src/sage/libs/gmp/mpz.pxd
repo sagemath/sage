@@ -1,3 +1,5 @@
+# distutils: libraries = gmp
+
 from types cimport *
 from libc.stdio cimport FILE
 

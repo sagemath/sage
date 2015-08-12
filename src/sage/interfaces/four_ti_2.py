@@ -209,7 +209,7 @@ class FourTi2(object):
 
         nrows, ncols = map(ZZ, lines.pop(0).strip().split())
         return matrix(ZZ, nrows, ncols,
-                      [map(ZZ, line.strip().split()) for line in lines
+                      [[ZZ(_) for _ in line.strip().split()] for line in lines
                        if line.strip() != ""])
 
     def _process_input(self, kwds):

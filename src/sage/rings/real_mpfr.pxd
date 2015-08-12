@@ -1,16 +1,11 @@
-cdef extern from "stdlib.h":
-    void free(void *ptr)
-
 from sage.libs.mpfr cimport *
 
-include 'sage/ext/cdefs.pxi'
-include 'sage/libs/pari/decl.pxi'
-
 cimport sage.rings.ring
-import  sage.rings.ring
-
 cimport sage.structure.element
-import  sage.structure.element
+
+cdef extern from "pari/pari.h":
+    ctypedef long* GEN
+
 
 cdef class RealNumber(sage.structure.element.RingElement)  # forward decl
 

@@ -207,7 +207,7 @@ class Fields(CategoryWithAxiom):
 
             INPUT:
 
-                - ``f``, ``g`` -- two polynomials defined over ``self``
+            - ``f``, ``g`` -- two polynomials defined over ``self``
 
             .. NOTE::
 
@@ -367,6 +367,88 @@ class Fields(CategoryWithAxiom):
             """
             from sage.modules.all import FreeModule
             return FreeModule(self, n)
+
+        def _xgcd_univariate_polynomial(self, left, right):
+            r"""
+            Return an extended gcd of ``left`` and ``right``.
+
+            INPUT:
+
+            - ``left``, ``right`` -- two polynomials over this field
+
+            OUTPUT:
+
+            Polynomials ``g``, ``u``, and ``v`` such that ``g`` is a
+            greatest common divisor of ``left and ``right``, and such
+            that ``g = u*left + v*right`` holds.
+
+            .. NOTE::
+
+                This is a helper method for
+                :meth:`sage.rings.polynomial.polynomial_element.Polynomial.xgcd`.
+
+            EXAMPLES::
+
+                sage: P.<x> = QQ[]
+                sage: F = (x^2 + 2)*x^3; G = (x^2+2)*(x-3)
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(F,G)
+                sage: g, u, v
+                (x^2 + 2, 1/27, -1/27*x^2 - 1/9*x - 1/3)
+                sage: u*F + v*G
+                x^2 + 2
+
+            ::
+
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(x,P(0)); g, u, v
+                (x, 1, 0)
+                sage: g == u*x + v*P(0)
+                True
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(P(0),x); g, u, v
+                (x, 0, 1)
+                sage: g == u*P(0) + v*x
+                True
+
+            TESTS:
+
+            We check that the behavior of xgcd with zero elements is
+            compatible with gcd (:trac:`17671`)::
+
+                sage: R.<x> = QQbar[]
+                sage: zero = R.zero()
+                sage: zero.xgcd(2*x)
+                (x, 0, 1/2)
+                sage: (2*x).xgcd(zero)
+                (x, 1/2, 0)
+                sage: zero.xgcd(zero)
+                (0, 0, 0)
+            """
+            R = left.parent()
+            zero = R.zero()
+            one = R.one()
+            if right.is_zero():
+                if left.is_zero():
+                    return (zero, zero, zero)
+                else:
+                    c = left.leading_coefficient()
+                    return (left/c, one/c, zero)
+            elif left.is_zero():
+                c = right.leading_coefficient()
+                return (right/c, zero, one/c)
+
+            # Algorithm 3.2.2 of Cohen, GTM 138
+            A = left
+            B = right
+            U = one
+            G = A
+            V1 = zero
+            V3 = B
+            while not V3.is_zero():
+                Q, R = G.quo_rem(V3)
+                G, U, V1, V3 = V3, V1, U-V1*Q, R
+            V = (G-A*U)//B
+            lc = G.leading_coefficient()
+            return G/lc, U/lc, V/lc
+
 
     class ElementMethods:
         def euclidean_degree(self):

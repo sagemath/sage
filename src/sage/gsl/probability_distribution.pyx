@@ -38,11 +38,8 @@ REFERENCES:
 ##############################################################################
 
 import sage.plot.plot
-include 'sage/ext/cdefs.pxi'
 include 'sage/ext/stdsage.pxi'
 include 'gsl.pxi'
-#cimport sage.rings.real_double
-#import sage.rings.real_double
 import sage.misc.prandom as random
 import sys
 import integration
@@ -378,7 +375,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: zeta = 0
         sage: sigma = 1
         sage: T = RealDistribution('lognormal', [zeta, sigma])
-        sage: T.get_random_element()
+        sage: T.get_random_element()  # abs tol 1e-16
         0.3876433713532701
         sage: T.distribution_function(0)
         0.0

@@ -174,7 +174,8 @@ Python floats.
 #                  http://www.gnu.org/licenses/
 ###########################################################################
 
-import os, re
+import os
+import re
 
 from expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.misc.all import verbose
@@ -237,9 +238,9 @@ class PanAxiom(Expect):
             sage: a.quit()       #optional - axiom
         """
         Expect._start(self)
-        out = self._eval_line(')set functions compile on', reformat=False)
-        out = self._eval_line(')set output length 245', reformat=False)
-        out = self._eval_line(')set message autoload off', reformat=False)
+        self._eval_line(')set functions compile on', reformat=False)
+        self._eval_line(')set output length 245', reformat=False)
+        self._eval_line(')set message autoload off', reformat=False)
 
     def _read_in_file_command(self, filename):
         r"""
@@ -259,7 +260,7 @@ class PanAxiom(Expect):
             sage: f.write('xx := 22;\n')
             sage: f.close()
             sage: axiom.read(filename)    # optional - axiom
-            sage: axiom.get('xx')         #optional
+            sage: axiom.get('xx')         # optional - axiom
             '22'
         """
         if not filename.endswith('.input'):
@@ -354,7 +355,6 @@ class PanAxiom(Expect):
 
             #Process we now need process the commands to strip out things which
             #are not valid Python identifiers.
-            import re
             valid = re.compile('[^a-zA-Z0-9_]+')
             names = [x for x in v if valid.search(x) is None]
 
@@ -461,7 +461,6 @@ class PanAxiom(Expect):
         out = out[i+1:]
         outs = out.split("\n")
         i = 0
-        outline = ''
         for line in outs:
             line = line.rstrip()
             # print "'%s'"%line
@@ -1003,7 +1002,6 @@ def reduce_load_Axiom():
     """
     return axiom
 
-import os
 def axiom_console():
     """
     Spawn a new Axiom command-line session.

@@ -457,7 +457,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: v.__cmp__(w)                                            # optional - coxeter3
                 1
             """
-            if not isinstance(self, type(other)):
+            if type(self) is not type(other):
                 return cmp(type(self), type(other))
             return cmp(list(self), list(other))
 

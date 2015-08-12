@@ -256,7 +256,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             """
             parent = self.parent()
             e_coords_of_self = self.monomial_coefficients().items()
-            dct = {Partition(map(lambda i: i // n, lam)):
+            dct = {Partition([i // n for i in lam]):
                    (-1) ** (sum(lam) - (sum(lam) // n)) * coeff
                    for (lam, coeff) in e_coords_of_self
                    if all( i % n == 0 for i in lam )}

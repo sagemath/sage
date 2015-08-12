@@ -111,10 +111,10 @@ Methods
 include 'sage/data_structures/bitset.pxi'
 
 from sage.matroids.matroid cimport Matroid
-from basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, IntegerMatrix, generic_identity
 from set_system cimport SetSystem
-from utilities import newlabel
+from utilities import newlabel, lift_cross_ratios
 
 from sage.matrix.matrix2 cimport Matrix
 import sage.matrix.constructor
@@ -457,7 +457,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     # representations
 
-    cpdef representation(self, B=None, reduced=False, labels=None, order=None):
+    cpdef representation(self, B=None, reduced=False, labels=None, order=None, lift_map=None):
         """
         Return a matrix representing the matroid.
 
@@ -493,6 +493,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``order`` -- (default: ``None``) an ordering of the groundset
           elements. If provided, the columns (and, in case of a reduced
           representation, rows) will be presented in the given order.
+        - ``lift_map`` -- (default: ``None``) a dictionary containing the cross 
+          ratios of the representing matrix in it's domain. If provided, the 
+          representation will be transformed by mapping its cross ratios according
+          to ``lift_map``.
 
         OUTPUT:
 
@@ -507,7 +511,12 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         ``M._forget()`` is called): either the matrix used as input to create
         the matroid, or a matrix in which the lexicographically least basis
         corresponds to an identity. If only ``order`` is not ``None``, the
-        columns of this matrix will be permuted accordingly.
+        columns of this matrix will be permuted accordingly. 
+        
+        If a ``lift_map`` is provided, then the resulting matrix will be lifted 
+        using the method
+        :func:`lift_cross_ratios() <sage.matroids.utilities.lift_cross_ratios>`
+        See the docstring of this method for further details.
 
         .. NOTE::
 
@@ -578,10 +587,16 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 B = set(B)
                 A = self._basic_representation(B)
             A = A.matrix_from_rows_and_columns(range(A.nrows()), order_idx)
-            if labels:
-                return (A._matrix_(), order)
+            if lift_map is None:
+                if labels:
+                    return (A._matrix_(), order)
+                else:
+                    return A._matrix_()
             else:
-                return A._matrix_()
+                if labels:
+                    return (lift_cross_ratios(A._matrix_(), lift_map), order)
+                else:
+                    return lift_cross_ratios(A._matrix_(), lift_map)
         else:
             if B is None:
                 B = self.basis()
@@ -604,10 +619,16 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     Ci.append(C.index(e))
                     Cl.append(e)
             A = A.matrix_from_rows_and_columns(Ri, Ci)
-            if labels or labels is None:
-                return (A._matrix_(), Rl, Cl)
+            if lift_map is None:
+                if labels or labels is None:
+                    return (A._matrix_(), Rl, Cl)
+                else:
+                    return A._matrix_()
             else:
-                return A._matrix_()
+                if labels or labels is None:
+                    return (lift_cross_ratios(A._matrix_(), lift_map), Rl, Cl)
+                else:
+                    return lift_cross_ratios(A._matrix_(), lift_map)        
 
     cpdef _current_rows_cols(self, B=None):
         """
@@ -2540,7 +2561,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if element in self.groundset():
                 raise ValueError("cannot extend by element already in groundset")
         cochains = self.linear_coextension_cochains(F, cosimple=cosimple, fundamentals=fundamentals)
-        return self._linear_coextensions(element, cochains)
+        return self._linear_coextensions(element, cochains)     
 
     cpdef is_valid(self):
         r"""
@@ -2824,9 +2845,6 @@ cdef class BinaryMatroid(LinearMatroid):
             for r from 0 <= r < self._A.nrows():
                 self._prow[r] = r
 
-        L = []
-        for i from 0 <= i < self._A.ncols():
-            L.append(self._prow[i])
         self._zero = GF2_zero
         self._one = GF2_one
 
@@ -2878,6 +2896,31 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         bitset_copy(C, (<BinaryMatrix>self._A)._M[self._prow[x]])
 
+    cdef __coclosure(self, bitset_t R, bitset_t F):
+        """
+        Bitpacked version of ``coclosure``. 
+        
+        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        The implementation should be more efficient for BinaryMatroid, due to the fact that in this class,
+        __fundamental_cocircuit is much faster than __fundamental_circuit.
+        """
+        bitset_complement(R, F)
+        bitset_difference(self._inside, self._current_basis, R)
+        bitset_difference(self._outside, R, self._current_basis)
+        self.__move(self._inside, self._outside)
+        
+        bitset_copy(R, F)
+        bitset_difference(self._inside, self._current_basis, F)
+        cdef long y = bitset_first(self._inside)
+        while y >= 0:
+            self.__fundamental_cocircuit(self._outside, y)
+            bitset_discard(self._outside, y)
+            if bitset_issubset(self._outside, F):
+                bitset_add(R, y)
+            y = bitset_next(self._inside, y + 1)     
+           
+    
+    
     cdef  __exchange_value(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
@@ -3056,10 +3099,41 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: M1._is_isomorphic(matroids.Wheel(3))
             True
         """
-        if type(other) == BinaryMatroid:
+        if isinstance(other, BinaryMatroid):
             return self.is_field_isomorphic(other)
         else:
             return LinearMatroid._is_isomorphic(self, other)
+
+
+    cpdef _is_isomorphism(self, other, morphism):
+        r"""
+        Test if a given bijection is an isomorphism.
+
+        Version of ``is_isomorphism()`` that does no type checking
+        of ``morphism``.
+
+        INPUT:
+
+        - ``other`` -- A matroid instance.
+        - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
+          the groundset of ``other``
+
+        OUTPUT:
+
+        Boolean.
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Fano() \ ['a']
+            sage: N = matroids.named_matroids.Fano() \ ['b']
+            sage: morphism = {'b':'a', 'c':'c', 'd':'e', 'e':'d', 'f':'f', 'g':'g'}
+            sage: M._is_isomorphism(N, morphism)
+            True
+        """
+        if isinstance(other, BinaryMatroid):
+            return self.is_field_isomorphism(other, morphism)
+        else:
+            return LinearMatroid._is_isomorphism(self, other, morphism)
 
     # invariants
     cpdef _make_invariant(self):
@@ -3417,8 +3491,13 @@ cdef class BinaryMatroid(LinearMatroid):
         self._move_current_basis(contractions, deletions)
         bas = list(self.basis() - contractions)
         R = [self._prow[self._idx[b]] for b in bas]
-        C = [c for c in range(len(self._E)) if self._E[c] not in deletions | contractions]
-        return BinaryMatroid(matrix=(<BinaryMatrix>self._A).matrix_from_rows_and_columns(R, C), groundset=[self._E[c] for c in C], basis=bas)
+        F = self.groundset() - (deletions | contractions)
+        C = [self._idx[f] for f in F]
+        A, C2 = (<BinaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
+        return BinaryMatroid(matrix= A ,
+                             groundset=[self._E[c] for c in C2],
+                             basis=bas,
+                             keep_initial_representation=False)
 
     # graphicness test
     cpdef is_graphic(self):
@@ -3457,9 +3536,9 @@ cdef class BinaryMatroid(LinearMatroid):
         2-separations especially), it is easy to implement.
         """
         global GF2
+        cdef int r, c
         B= self.basis()
-        Bl = [e for e in B]
-        C = [self._cocircuit((self.groundset() - B) | set([e])) for e in Bl]
+        C = [self._fundamental_cocircuit(B,e) for e in B]
 
         c = 1
         col = {}
@@ -3468,36 +3547,27 @@ cdef class BinaryMatroid(LinearMatroid):
                 if e is not f:
                     col[e, f] = c
                     c += 1
-        M = {}
+        M = []
         r = 0
         for e in xrange(len(B)):
             for f in xrange(e):
                 for g in xrange(f):
                     if not C[e].issuperset(C[f] & C[g]):
-                        M[(r, col[e, f])] = 1
-                        M[(r, col[e, g])] = 1
-                        M[(r, 0)] = 0
+                        M.append([col[e,f], col[e,g]])
                         r += 1
                     if not C[f].issuperset(C[e] & C[g]):
-                        M[(r, col[f, e])] = 1
-                        M[(r, col[f, g])] = 1
-                        M[(r, 0)] = 0
+                        M.append([col[f,e], col[f,g]])
                         r += 1
                     if not C[g].issuperset(C[e] & C[f]):
-                        M[(r, col[g, e])] = 1
-                        M[(r, col[g, f])] = 1
-                        M[(r, 0)] = 0
+                        M.append([col[g,e], col[g,f]])
                         r += 1
                     if len(C[e] & C[f] & C[g]) > 0:
-                        M[(r, col[e, f])] = 1
-                        M[(r, col[e, g])] = 1
-                        M[(r, col[f, e])] = 1
-                        M[(r, col[f, g])] = 1
-                        M[(r, col[g, e])] = 1
-                        M[(r, col[g, f])] = 1
-                        M[(r, 0)] = 1
+                        M.append([0,col[e,f], col[e,g], col[f,e], col[f,g], col[g,e], col[g,f]])
                         r += 1
-        m = sage.matrix.constructor.Matrix(GF2, r, c, M)
+        cdef BinaryMatrix m = BinaryMatrix(r,c)
+        for r in range(len(M)):
+            for c in M[r]:
+                m.set(r,c)
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
@@ -3516,6 +3586,66 @@ cdef class BinaryMatroid(LinearMatroid):
 
             sage: M = Matroid(Matrix(GF(2), [[]]))
             sage: M.is_valid()
+            True
+        """
+        return True
+
+    # representability
+
+    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+        r"""
+        Return a binary matroid representing ``self``.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+        - ``verify`` -- Ignored
+
+        OUTPUT:
+
+        A binary matroid.
+
+        ALGORITHM:
+
+        ``self`` is a binary matroid, so just return ``self``.
+
+        .. SEEALSO::
+
+            :meth:`M.binary_matroid() 
+            <sage.matroids.matroid.Matroid.binary_matroid>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.Fano()
+            sage: N.binary_matroid() is N
+            True
+        """
+        return self
+
+    cpdef is_binary(self, randomized_tests=1):
+        r"""
+        Decide if ``self`` is a binary matroid.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+
+        OUTPUT:
+
+        A Boolean.
+
+        ALGORITHM:
+
+        ``self`` is a binary matroid, so just return ``True``.
+
+        .. SEEALSO::
+
+            :meth:`M.is_binary() <sage.matroids.matroid.Matroid.is_binary>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.Fano()
+            sage: N.is_binary()
             True
         """
         return True
@@ -3757,9 +3887,6 @@ cdef class TernaryMatroid(LinearMatroid):
             for r from 0 <= r < self._A.nrows():
                 self._prow[r] = r
 
-        L = []
-        for i from 0 <= i < self._A.ncols():
-            L.append(self._prow[i])
         self._zero = GF3_zero
         self._one = GF3_one
         self._two = GF3_minus_one
@@ -3812,6 +3939,29 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         bitset_copy(C, (<TernaryMatrix>self._A)._M0[self._prow[x]])
 
+    cdef __coclosure(self, bitset_t R, bitset_t F):
+        """
+        Bitpacked version of ``coclosure``. 
+        
+        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        The implementation should be more efficient for TernaryMatroid, due to the fact that in this class,
+        __fundamental_cocircuit is much faster than __fundamental_circuit.
+        """
+        bitset_complement(R, F)
+        bitset_difference(self._inside, self._current_basis, R)
+        bitset_difference(self._outside, R, self._current_basis)
+        self.__move(self._inside, self._outside)
+        
+        bitset_copy(R, F)
+        bitset_difference(self._inside, self._current_basis, F)
+        cdef long y = bitset_first(self._inside)
+        while y >= 0:
+            self.__fundamental_cocircuit(self._outside, y)
+            bitset_discard(self._outside, y)
+            if bitset_issubset(self._outside, F):
+                bitset_add(R, y)
+            y = bitset_next(self._inside, y + 1)
+        
     cdef  __exchange_value(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
@@ -4290,8 +4440,13 @@ cdef class TernaryMatroid(LinearMatroid):
         self._move_current_basis(contractions, deletions)
         bas = list(self.basis() - contractions)
         R = [self._prow[self._idx[b]] for b in bas]
-        C = [c for c in range(len(self._E)) if self._E[c] not in deletions | contractions]
-        return TernaryMatroid(matrix=(<TernaryMatrix>self._A).matrix_from_rows_and_columns(R, C), groundset=[self._E[c] for c in C], basis=bas)
+        F = self.groundset() - (deletions | contractions)
+        C = [self._idx[f] for f in F]
+        A, C2 = (<TernaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
+        return TernaryMatroid(matrix= A ,
+                             groundset=[self._E[c] for c in C2],
+                             basis=bas,
+                             keep_initial_representation=False)
 
     cpdef is_valid(self):
         r"""
@@ -4308,6 +4463,66 @@ cdef class TernaryMatroid(LinearMatroid):
 
             sage: M = Matroid(Matrix(GF(3), [[]]))
             sage: M.is_valid()
+            True
+        """
+        return True
+
+    # representability
+
+    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+        r"""
+        Return a ternary matroid representing ``self``.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+        - ``verify`` -- Ignored
+
+        OUTPUT:
+
+        A binary matroid.
+
+        ALGORITHM:
+
+        ``self`` is a ternary matroid, so just return ``self``.
+
+        .. SEEALSO::
+
+            :meth:`M.ternary_matroid()
+            <sage.matroids.matroid.Matroid.ternary_matroid>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.NonFano()
+            sage: N.ternary_matroid() is N
+            True
+        """
+        return self
+
+    cpdef is_ternary(self, randomized_tests=1):
+        r"""
+        Decide if ``self`` is a binary matroid.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+
+        OUTPUT:
+
+        A Boolean.
+
+        ALGORITHM:
+
+        ``self`` is a ternary matroid, so just return ``True``.
+
+        .. SEEALSO::
+
+            :meth:`M.is_ternary() <sage.matroids.matroid.Matroid.is_ternary>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.NonFano()
+            sage: N.is_ternary()
             True
         """
         return True
@@ -4549,9 +4764,6 @@ cdef class QuaternaryMatroid(LinearMatroid):
             for r from 0 <= r < self._A.nrows():
                 self._prow[r] = r
 
-        L = []
-        for i from 0 <= i < self._A.ncols():
-            L.append(self._prow[i])
         self._zero = (<QuaternaryMatrix>self._A)._zero
         self._one = (<QuaternaryMatrix>self._A)._one
         self._x_zero = (<QuaternaryMatrix>self._A)._x_zero
@@ -4605,6 +4817,29 @@ cdef class QuaternaryMatroid(LinearMatroid):
         Fill bitset `C` with the incidence vector of the `B`-fundamental cocircuit using ``x``. Internal method using packed elements.
         """
         bitset_union(C, (<QuaternaryMatrix>self._A)._M0[self._prow[x]], (<QuaternaryMatrix>self._A)._M1[self._prow[x]])
+    
+    cdef __coclosure(self, bitset_t R, bitset_t F):
+        """
+        Bitpacked version of ``coclosure``. 
+        
+        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        The implementation should be more efficient for QuaternaryMatroid, due to the fact that in this class,
+        __fundamental_cocircuit is much faster than __fundamental_circuit.
+        """
+        bitset_complement(R, F)
+        bitset_difference(self._inside, self._current_basis, R)
+        bitset_difference(self._outside, R, self._current_basis)
+        self.__move(self._inside, self._outside)
+        
+        bitset_copy(R, F)
+        bitset_difference(self._inside, self._current_basis, F)
+        cdef long y = bitset_first(self._inside)
+        while y >= 0:
+            self.__fundamental_cocircuit(self._outside, y)
+            bitset_discard(self._outside, y)
+            if bitset_issubset(self._outside, F):
+                bitset_add(R, y)
+            y = bitset_next(self._inside, y + 1)
 
     cdef  __exchange_value(self, long x, long y):
         r"""
@@ -4977,8 +5212,13 @@ cdef class QuaternaryMatroid(LinearMatroid):
         self._move_current_basis(contractions, deletions)
         bas = list(self.basis() - contractions)
         R = [self._prow[self._idx[b]] for b in bas]
-        C = [c for c in range(len(self._E)) if self._E[c] not in deletions | contractions]
-        return QuaternaryMatroid(matrix=(<QuaternaryMatrix>self._A).matrix_from_rows_and_columns(R, C), groundset=[self._E[c] for c in C], basis=bas)
+        F = self.groundset() - (deletions | contractions)
+        C = [self._idx[f] for f in F]
+        A, C2 = (<QuaternaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
+        return QuaternaryMatroid(matrix= A ,
+                             groundset=[self._E[c] for c in C2],
+                             basis=bas,
+                             keep_initial_representation=False)
 
     cpdef is_valid(self):
         r"""
@@ -5765,6 +6005,128 @@ cdef class RegularMatroid(LinearMatroid):
         M = LinearMatroid(ring=QQ, reduced_matrix=self.representation(self.basis(), True, False))
         CR = M.cross_ratios()
         return CR.issubset(set([1]))
+
+    # representation
+
+    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+        r"""
+        Return a binary matroid representing ``self``.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+        - ``verify`` -- Ignored
+
+        OUTPUT:
+
+        A binary matroid.
+
+        ALGORITHM:
+
+        ``self`` is a regular matroid, so just cast ``self`` to a BinaryMatroid.
+
+        .. SEEALSO::
+
+            :meth:`M.binary_matroid() 
+            <sage.matroids.matroid.Matroid.binary_matroid>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.R10()
+            sage: N.binary_matroid()
+            Binary matroid of rank 5 on 10 elements, type (1, None)
+
+        """
+        A, E = self.representation(B = self.basis(), reduced = False, labels = True)
+        return BinaryMatroid(matrix = A, groundset = E)
+
+    cpdef is_binary(self, randomized_tests=1):
+        r"""
+        Decide if ``self`` is a binary matroid.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+
+        OUTPUT:
+
+        A Boolean.
+
+        ALGORITHM:
+
+        ``self`` is a regular matroid, so just return ``True``.
+
+        .. SEEALSO::
+
+            :meth:`M.is_binary() <sage.matroids.matroid.Matroid.is_binary>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.R10()
+            sage: N.is_binary()
+            True
+        """
+        return True
+
+    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+        r"""
+        Return a ternary matroid representing ``self``.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+        - ``verify`` -- Ignored
+
+        OUTPUT:
+
+        A ternary matroid.
+
+        ALGORITHM:
+
+        ``self`` is a regular matroid, so just cast ``self`` to a TernaryMatroid.
+
+        .. SEEALSO::
+
+            :meth:`M.ternary_matroid()
+            <sage.matroids.matroid.Matroid.ternary_matroid>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.R10()
+            sage: N.ternary_matroid()
+            Ternary matroid of rank 5 on 10 elements, type 4+
+
+        """
+        A, E = self.representation(B = self.basis(), reduced = False, labels = True)
+        return TernaryMatroid(matrix = A, groundset = E)
+
+    cpdef is_ternary(self, randomized_tests=1):
+        r"""
+        Decide if ``self`` is a ternary matroid.
+
+        INPUT:
+
+        - ``randomized_tests`` -- Ignored.
+
+        OUTPUT:
+
+        A Boolean.
+
+        ALGORITHM:
+
+        ``self`` is a regular matroid, so just return ``True``.
+
+        .. SEEALSO::
+
+            :meth:`M.is_ternary() <sage.matroids.matroid.Matroid.is_ternary>`
+
+        EXAMPLES::
+
+            sage: N = matroids.named_matroids.R10()
+            sage: N.is_ternary()
+            True
+        """
+        return True
 
     # Copying, loading, saving
 

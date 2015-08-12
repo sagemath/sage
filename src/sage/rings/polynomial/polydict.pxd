@@ -1,5 +1,3 @@
-include 'sage/ext/cdefs.pxi'
-
 cdef class PolyDict:
     cdef object __repn
     cdef object __zero

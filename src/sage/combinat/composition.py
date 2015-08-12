@@ -40,6 +40,7 @@ from integer_list import IntegerListsLex
 import __builtin__
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 
 class Composition(CombinatorialElement):
@@ -160,7 +161,7 @@ class Composition(CombinatorialElement):
             [ #  #   ##  #     #  ##   ###       ]
             [ #, ##,  #, ###,  #,  ##,   #, #### ]
         """
-        from sage.misc.ascii_art import ascii_art
+        from sage.typeset.ascii_art import ascii_art
         return ascii_art(self.to_skew_partition())
 
     def __setstate__(self, state):
@@ -936,7 +937,7 @@ class Composition(CombinatorialElement):
             ...
             ValueError: composition J (= [2, 1]) does not refine self (= [1, 2])
         """
-        return Compositions()(map(len,self.refinement_splitting(J)))
+        return Compositions()([len(_) for _ in self.refinement_splitting(J)])
 
     def major_index(self):
         """

@@ -76,7 +76,7 @@ Check that Cython source code appears in tracebacks::
     sage: shell = get_test_shell()
     sage: shell.run_cell('1/0')
     ---------------------------------------------------------------------------
-    .../sage/rings/integer_ring.pyx in sage.rings.integer_ring.IntegerRing_class._div (build/cythonized/sage/rings/integer_ring.c:...)()
+    .../sage/rings/integer_ring.pyx in sage.rings.integer_ring.IntegerRing_class._div (.../cythonized/sage/rings/integer_ring.c:...)()
         ...         cdef rational.Rational x = rational.Rational.__new__(rational.Rational)
         ...         if mpz_sgn(right.value) == 0:
         ...             raise ZeroDivisionError('Rational division by zero')
@@ -312,7 +312,7 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
     def quit(self):
         """
         Quit the test shell.
-        
+
         To make the test shell as realistic as possible, we switch to
         the
         :class:`~sage.repl.rich_output.backend_ipython.BackendIPythonCommandline`
@@ -351,7 +351,7 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
             sage: shell.quit()
             sage: from sage.repl.rich_output import get_display_manager
             sage: get_display_manager()
-            The Sage display manager using the doctest backend        
+            The Sage display manager using the doctest backend
         """
         self._display_manager.switch_backend(self._ipython_backend, shell=self)
 
@@ -378,8 +378,8 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
             sage: shell.quit()
         """
         rc = super(SageTestShell, self).run_cell(*args, **kwds)
-    
-        
+
+
 ###################################################################
 # Default configuration
 ###################################################################
@@ -558,8 +558,8 @@ class InterfaceShellTransformer(PrefilterTransformer):
             '2 + sage0 '
             sage: maxima.eval('sage0')
             '3'
-            sage: ift.preparse_imports_from_sage('2 + maxima(a)')
-            '2 +  sage1 '
+            sage: ift.preparse_imports_from_sage('2 + maxima(a)') # maxima calls set_seed on startup which is why 'sage0' will becomes 'sage4' and not just 'sage1'
+            '2 +  sage4 '
             sage: ift.preparse_imports_from_sage('2 + gap(a)')
             '2 + gap(a)'
         """
@@ -654,7 +654,7 @@ def get_test_shell():
     Returns a IPython shell that can be used in testing the functions
     in this module.
 
-    OUTPUT: 
+    OUTPUT:
 
     An IPython shell
 
@@ -735,9 +735,9 @@ class SageTerminalApp(TerminalIPythonApp):
     name = u'Sage'
     crash_handler_class = SageCrashHandler
 
-    test_shell = Bool(False, config=True, 
+    test_shell = Bool(False, config=True,
                       help='Whether the shell is a test shell')
-    shell_class = Type(InteractiveShell, config=True, 
+    shell_class = Type(InteractiveShell, config=True,
                        help='Type of the shell')
 
     def load_config_file(self, *args, **kwds):

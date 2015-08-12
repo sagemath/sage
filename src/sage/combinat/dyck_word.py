@@ -365,7 +365,7 @@ class DyckWord(CombinatorialElement):
             raise ValueError("You have not specified a Dyck word.")
 
         if isinstance(dw, str):
-            l = map(replace_parens, dw)
+            l = [replace_parens(_) for _ in dw]
         else:
             l = dw
 
@@ -606,13 +606,27 @@ class DyckWord(CombinatorialElement):
             [            /\    /\      /\/\    /  \  ]
             [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
         """
-        from sage.misc.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt
         rep = self.parent().global_options['ascii_art']
         if rep == "path":
             ret = self.to_path_string()
         elif rep == "pretty_output":
             ret = self._repr_lattice()
         return AsciiArt(ret.splitlines(), baseline=0)
+
+    def _unicode_art_(self):
+        r"""
+        Return an unicode art representation of this Dyck word.
+
+        EXAMPLES::
+
+            sage: unicode_art(list(DyckWords(3)))
+            ⎡                                   ╱╲   ⎤
+            ⎢            ╱╲    ╱╲      ╱╲╱╲    ╱  ╲  ⎥
+            ⎣ ╱╲╱╲╱╲, ╱╲╱  ╲, ╱  ╲╱╲, ╱    ╲, ╱    ╲ ⎦
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        return UnicodeArt(self.to_path_string(unicode=True).splitlines())
 
     def __str__(self):
         r"""
@@ -631,7 +645,7 @@ class DyckWord(CombinatorialElement):
         else:
             return "".join(map(replace_symbols, [x for x in self]))
 
-    def to_path_string(self):
+    def to_path_string(self, unicode=False):
         r"""
         A path representation of the Dyck word consisting of steps
         ``/`` and ``\`` .
@@ -648,15 +662,25 @@ class DyckWord(CombinatorialElement):
              /\/  \/\/\
             /          \
         """
-        res = [([" "]*len(self)) for _ in range(self.height())]
+        if unicode:
+            import unicodedata
+            space = u' '
+            up    = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT')
+            down  = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT')
+        else:
+            space = ' '
+            up    = '/'
+            down  = '\\'
+
+        res = [([space]*len(self)) for _ in range(self.height())]
         h = 1
         for i, p in enumerate(self):
             if p == open_symbol:
-                res[-h][i] = "/"
+                res[-h][i] = up
                 h += 1
             else:
                 h -= 1
-                res[-h][i] = "\\"
+                res[-h][i] = down
         return "\n".join("".join(l) for l in res)
 
     def pretty_print(self, type=None, labelling=None, underpath=True):

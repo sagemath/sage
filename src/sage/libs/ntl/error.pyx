@@ -4,6 +4,9 @@ NTL error handler
 AUTHOR:
 
 - Jeroen Demeyer (2015-02-15): initial version, see :trac:`17784`
+
+- Jeroen Demeyer (2015-07-09): use standard NTL ``ErrorMsgCallback``,
+  see :trac:`18875`
 """
 
 #*****************************************************************************
@@ -18,8 +21,8 @@ AUTHOR:
 
 
 include "sage/ext/interrupt.pxi"
-from ntl_tools cimport SetErrorCallbackFunction
-from cpython.exc cimport PyErr_SetString
+from ntl_tools cimport ErrorMsgCallback
+
 
 class NTLError(RuntimeError):
     """
@@ -34,9 +37,10 @@ class NTLError(RuntimeError):
         NTLError: DivRem: division by zero
     """
 
-cdef void NTL_error_callback(const char* s, void* context):
-    PyErr_SetString(NTLError, s)
-    sig_error()
+
+cdef void NTL_error_callback(const char* s) except *:
+    raise NTLError(s)
+
 
 def setup_NTL_error_callback():
     """
@@ -47,4 +51,5 @@ def setup_NTL_error_callback():
         sage: from sage.libs.ntl.error import setup_NTL_error_callback
         sage: setup_NTL_error_callback()
     """
-    SetErrorCallbackFunction(NTL_error_callback, NULL)
+    global ErrorMsgCallback
+    ErrorMsgCallback = NTL_error_callback

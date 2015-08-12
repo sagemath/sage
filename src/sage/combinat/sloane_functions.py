@@ -47,16 +47,14 @@ TESTS::
     sage: a == loads(dumps(a))
     True
 
-    We agree with the online database::
+We agree with the online database::
 
-    sage: for t in sloane.trait_names():    # long time; optional -- internet
+    sage: for t in sloane.trait_names():    # long time; optional -- internet; known bug
     ....:     online_list = list(oeis(t).first_terms())
     ....:     L = max(2, len(online_list) // 2)
     ....:     sage_list = sloane.__getattribute__(t).list(L)
     ....:     if online_list[:L] != sage_list:
     ....:         print t, 'seems wrong'
-
-
 
 .. SEEALSO::
 
@@ -344,7 +342,7 @@ class A000001(SloaneSequence):
             2
             sage: a.list(16) #optional database_gap
             [1, 1, 1, 2, 1, 2, 1, 5, 2, 2, 1, 5, 1, 2, 1, 14]
-            sage: a(60)     # optional
+            sage: a(60)  # optional - database_gap
             13
 
         AUTHORS:

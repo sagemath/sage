@@ -1,0 +1,27 @@
+Minimal patch to compile planarity without Nauty
+
+--- a/c/planarityCommandLine.c	2015-05-05 14:20:57.000000000 +0200
++++ b/c/planarityCommandLine.c	2015-05-07 11:05:24.053668256 +0200
+@@ -157,6 +157,7 @@
+ extern unsigned long numErrors;
+ extern unsigned long numOKs;
+ 
++#ifdef HAVE_NAUTY
+ int callNauty(int argc, char *argv[])
+ {
+ 	char command;
+@@ -294,6 +295,14 @@
+ 		return 0;
+ 	}
+ }
++#else
++unsigned long numGraphs, numErrors, numOKs;
++int callNauty(int argc, char *argv[])
++{
++	fprintf(stderr, "Nauty is not installed, aborting\n");
++	exit(1);
++}
++#endif
+ 
+ /****************************************************************************
+  Quick regression test

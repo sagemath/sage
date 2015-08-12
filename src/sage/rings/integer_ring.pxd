@@ -1,8 +1,8 @@
-include "sage/ext/cdefs.pxi"
 include "sage/libs/ntl/decl.pxi"
 
 from ring cimport PrincipalIdealDomain
 from integer cimport Integer
+from sage.libs.gmp.types cimport mpz_t
 
 cdef class IntegerRing_class(PrincipalIdealDomain):
     cdef Integer _coerce_ZZ(self, ZZ_c *z)

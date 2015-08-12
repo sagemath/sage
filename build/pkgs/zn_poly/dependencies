@@ -1,0 +1,8 @@
+$(INST)/$(SAGE_MP_LIBRARY) | $(INST)/$(PYTHON)
+
+zn_poly really does depend on Python, despite this is far from obvious.
+The 'configure' script in zn_poly calls Python to make a 'makefile'.
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

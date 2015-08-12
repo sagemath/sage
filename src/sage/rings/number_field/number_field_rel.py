@@ -1324,7 +1324,7 @@ class NumberField_relative(NumberField_generic):
                 if not self.relative_degree() == other.relative_degree():
                     return False
                 R = PolynomialRing(o_base_field, 'x')
-                F = R(map(base_isom, self.relative_polynomial()))
+                F = R([base_isom(_) for _ in self.relative_polynomial()])
                 return len(F.roots(other)) > 0
             raise ValueError("base_isom is not a homomorphism from self's base_field to other's base_field")
         raise ValueError("other must be a relative number field.")
@@ -2005,7 +2005,7 @@ class NumberField_relative(NumberField_generic):
         aas = L.automorphisms() # absolute automorphisms
 
         a = self_into_L(self.gen())
-        abs_base_gens = map(self_into_L, self.base_field().gens())
+        abs_base_gens = [self_into_L(_) for _ in self.base_field().gens()]
         v = sorted([ self.hom([ L_into_self(aa(a)) ]) for aa in aas if all(aa(g) == g for g in abs_base_gens) ])
         put_natural_embedding_first(v)
         self.__automorphisms = Sequence(v, cr = (v != []), immutable=True,
@@ -2164,7 +2164,7 @@ class NumberField_relative(NumberField_generic):
         to_base = abs_base.structure()[0]
         D, d = nf.rnfdisc(self.pari_relative_polynomial())
         D = map(abs_base, abs_base.pari_zk() * D)
-        D = map(to_base, D)
+        D = [to_base(_) for _ in D]
         return base.ideal(D)
 
     def discriminant(self):

@@ -1025,17 +1025,21 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
 
     def gens_dict(self):
         """
-        Returns a dictionary whose keys are the variable names of this
-        ring as strings and whose values are the corresponding
-        generators.
+        Return a dictionary whose entries are ``{name:variable,...}``,
+        where ``name`` stands for the variable names of this
+        object (as strings) and ``variable`` stands for the corresponding
+        generators (as elements of this object).
 
         EXAMPLES::
 
-            sage: R.<x> = RR[]
+            sage: R.<y,x,a42> = RR[]
             sage: R.gens_dict()
-            {'x': x}
+            {'a42': a42, 'x': x, 'y': y}
         """
-        return dict(zip(self.variable_names(), self.gens()))
+        gens = self.gens()
+        names = self.variable_names()
+        assert len(gens) == len(names)
+        return dict(zip(names, gens))
 
     def parameter(self):
         """

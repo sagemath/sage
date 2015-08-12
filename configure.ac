@@ -620,7 +620,7 @@ fi
 
 
 dnl AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([build/Makefile-auto])
+AC_CONFIG_FILES([build/make/Makefile-auto])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_OUTPUT()

@@ -1,7 +1,9 @@
-diff -druN ntl.orig/src/DoConfig ntl/src/DoConfig
---- ntl.orig/src/DoConfig	2014-08-21 20:06:48.000000000 -0700
-+++ ntl/src/DoConfig	2014-08-26 07:21:25.985701655 -0700
-@@ -22,6 +22,7 @@
+Let libtool build a shared lib on Cygwin.
+
+diff -druN a/src/DoConfig b/src/DoConfig
+--- a/src/DoConfig	2015-05-23 07:44:51.000000000 -0700
++++ b/src/DoConfig	2015-07-03 01:25:35.820272305 -0700
+@@ -39,6 +39,7 @@
  'LDFLAGS'     => '',
  'LDLIBS'      => '-lm',
  'CPPFLAGS'    => '',
@@ -9,10 +11,10 @@ diff -druN ntl.orig/src/DoConfig ntl/src/DoConfig
  
  'DEF_PREFIX'  => '/usr/local',
  
-diff -druN ntl.orig/src/mfile ntl/src/mfile
---- ntl.orig/src/mfile	2014-08-21 20:06:48.000000000 -0700
-+++ ntl/src/mfile	2014-08-26 07:22:53.585710415 -0700
-@@ -40,6 +40,9 @@
+diff -druN a/src/mfile b/src/mfile
+--- a/src/mfile	2015-05-23 07:44:51.000000000 -0700
++++ b/src/mfile	2015-07-03 01:26:13.120365725 -0700
+@@ -36,6 +36,9 @@
  LIBTOOL=@{LIBTOOL}
  # libtool command
  
@@ -22,12 +24,12 @@ diff -druN ntl.orig/src/mfile ntl/src/mfile
  DEF_PREFIX=@{DEF_PREFIX}
  
  PREFIX=@{PREFIX}
-@@ -361,7 +364,7 @@
+@@ -365,7 +368,7 @@
  ntl.a:	$(OBJ) 
  @{LSTAT}	$(AR) $(ARFLAGS) ntl.a $(OBJ) #LSTAT
  @{LSTAT}	- $(RANLIB) ntl.a #LSTAT
--@{LSHAR}	$(LIBTOOL) --mode=link $(LINK) -o libntl.la $(OBJ:.o=.lo) $(GMP_OPT_LIBDIR) $(GMP_OPT_LIB) $(GF2X_OPT_LIBDIR) $(GF2X_OPT_LIB) $(LDLIBS) -rpath $(LIBDIR) -version-info `cat VERSION_INFO` #LSHAR
-+@{LSHAR}	$(LIBTOOL) --mode=link $(LINK) $(LIBTOOL_LINK_FLAGS) -o libntl.la $(OBJ:.o=.lo) $(GMP_OPT_LIBDIR) $(GMP_OPT_LIB) $(GF2X_OPT_LIBDIR) $(GF2X_OPT_LIB) $(LDLIBS) -rpath $(LIBDIR) -version-info `cat VERSION_INFO` #LSHAR
+-@{LSHAR}	$(LIBTOOL) --tag=CXX --mode=link $(LINK) -o libntl.la $(OBJ:.o=.lo) $(GMP_OPT_LIBDIR) $(GMP_OPT_LIB) $(GF2X_OPT_LIBDIR) $(GF2X_OPT_LIB) $(LDLIBS) -rpath $(LIBDIR) -version-info `cat VERSION_INFO` #LSHAR
++@{LSHAR}	$(LIBTOOL) --tag=CXX --mode=link $(LINK) $(LIBTOOL_LINK_FLAGS) -o libntl.la $(OBJ:.o=.lo) $(GMP_OPT_LIBDIR) $(GMP_OPT_LIB) $(GF2X_OPT_LIBDIR) $(GF2X_OPT_LIB) $(LDLIBS) -rpath $(LIBDIR) -version-info `cat VERSION_INFO` #LSHAR
  
  @{LSTAT}LCOMP= #LSTAT
- @{LSHAR}LCOMP=$(LIBTOOL) --mode=compile #LSHAR
+ @{LSHAR}LCOMP=$(LIBTOOL) --tag=CXX --mode=compile #LSHAR

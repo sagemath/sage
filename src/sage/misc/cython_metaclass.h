@@ -12,7 +12,7 @@
 static PyObject* NoneNoneNone;
 
 /* All args flags of a PyMethod */
-#define METH_ALLARGS (METH_OLDARGS|METH_VARARGS|METH_KEYWORDS|METH_NOARGS|METH_O)
+#define METH_ALLARGS (METH_VARARGS|METH_KEYWORDS|METH_NOARGS|METH_O)
 
 /* Given an unbound method "desc" (this is not checked!) with only a
  * single "self" argument, call "desc(self)" without checking "self".

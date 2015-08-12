@@ -13,7 +13,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-include "sage/ext/cdefs.pxi"
 include "sage/ext/interrupt.pxi"
 
 from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI

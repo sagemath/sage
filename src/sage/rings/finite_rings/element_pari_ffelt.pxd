@@ -1,5 +1,4 @@
-include "sage/libs/pari/decl.pxi"
-
+from sage.libs.pari.types cimport GEN
 from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
 
 cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):

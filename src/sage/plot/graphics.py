@@ -2170,7 +2170,7 @@ class Graphics(SageObject):
         10^{15}` to avoid floating point issues in matplotlib.
 
         EXAMPLES::
-        
+
             sage: l = line([(0,0), (1,1)], aspect_ratio=1.0)
             sage: l._limit_output_aspect_ratio(1, 2, 1e19, 3)
             {'xmax': -4999.50000000000,
@@ -2190,7 +2190,7 @@ class Graphics(SageObject):
         if aspect_ratio != 'automatic':
             width = xmax - xmin
             height = ymax - ymin
-            output_aspect = width/height/aspect_ratio
+            output_aspect = abs(width/height/aspect_ratio)
             if output_aspect > 1e15:
                 height = 1e15 * width / aspect_ratio
                 ycenter = (ymax - ymin) / 2
@@ -2221,7 +2221,7 @@ class Graphics(SageObject):
             sage: subplot = Figure().add_subplot(111)
             sage: p._objects[0]._render_on_subplot(subplot)
             sage: p._matplotlib_tick_formatter(subplot, **d)
-            (<matplotlib.axes.AxesSubplot object at ...>,
+            (<matplotlib.axes._subplots.AxesSubplot object at ...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.OldScalarFormatter object at ...>,
@@ -2864,7 +2864,7 @@ class Graphics(SageObject):
             else: # log scale
                 from sage.misc.misc import srange
                 base_inv = 1.0/basex
-                subs = map(float, srange(2*base_inv, 1, base_inv))
+                subs = [float(_) for _ in srange(2*base_inv, 1, base_inv)]
                 subplot.xaxis.set_minor_locator(LogLocator(base=basex,
                                                            subs=subs))
             if isinstance(y_locator, (NullLocator, FixedLocator)):
@@ -2874,7 +2874,7 @@ class Graphics(SageObject):
             else: # log scale
                 from sage.misc.misc import srange
                 base_inv = 1.0/basey
-                subs = map(float, srange(2*base_inv, 1, base_inv))
+                subs = [float(_) for _ in srange(2*base_inv, 1, base_inv)]
                 subplot.yaxis.set_minor_locator(LogLocator(base=basey,
                                                            subs=subs))
 

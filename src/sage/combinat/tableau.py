@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Tableaux
 
@@ -76,7 +77,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableList
 from sage.structure.parent import Parent
-from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.infinity import PlusInfinity
 from sage.rings.arith import factorial
 from sage.rings.integer import Integer
@@ -250,7 +251,7 @@ class Tableau(ClonableList):
         ValueError: A tableau must be a list of iterables.
 
     """
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     @staticmethod
     def __classcall_private__(cls, t):
@@ -276,7 +277,7 @@ class Tableau(ClonableList):
         # We must verify ``t`` is a list of iterables, and also
         # normalize it to be a list of tuples.
         try:
-            t = map(tuple, t)
+            t = [tuple(_) for _ in t]
         except TypeError:
             raise ValueError("A tableau must be a list of iterables.")
 
@@ -322,7 +323,7 @@ class Tableau(ClonableList):
             return
 
         # Normalize t to be a list of tuples.
-        t = map(tuple, t)
+        t = [tuple(_) for _ in t]
 
         ClonableList.__init__(self, parent, t)
         # This dispatches the input verification to the :meth:`check`
@@ -406,7 +407,7 @@ class Tableau(ClonableList):
         """
         # Check that it has partition shape. That's all we require from a
         # general tableau.
-        lens = map(len, self)
+        lens = [len(_) for _ in self]
         for (a, b) in itertools.izip(lens, lens[1:]):
             if a < b:
                 raise ValueError("A tableau must be a list of iterables of weakly decreasing length.")
@@ -443,7 +444,7 @@ class Tableau(ClonableList):
             sage: T._repr_list()
             '[[1, 2, 3], [4, 5]]'
         """
-        return repr(map(list, self))
+        return repr([list(_) for _ in self])
 
     # See #18024. CombinatorialObject provided __str__, though ClonableList
     # doesn't. Emulate the old functionality. Possibly remove when
@@ -467,9 +468,9 @@ class Tableau(ClonableList):
             sage: Tableaux.global_options.reset()
         """
         if self.parent().global_options('convention') == "English":
-            return '\n'.join(["".join(map(lambda x: "%3s"%str(x) , row)) for row in self])
+            return '\n'.join(["".join(("%3s"%str(x) for x in row)) for row in self])
         else:
-            return '\n'.join(["".join(map(lambda x: "%3s"%str(x) , row)) for row in reversed(self)])
+            return '\n'.join(["".join(("%3s"%str(x) for x in row)) for row in reversed(self)])
 
     def _repr_compact(self):
         """
@@ -516,12 +517,31 @@ class Tableau(ClonableList):
             sage: Tableaux.global_options.reset()
         """
         ascii = self.parent().global_options.dispatch(self,'_ascii_art_','ascii_art')
-        from sage.misc.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(ascii.splitlines())
+
+    def _unicode_art_(self):
+        r"""
+        TESTS::
+
+            sage: unicode_art(Tableau([[1,2,3],[4],[5]]))
+            ┌───┬───┬───┐
+            │ 1 │ 2 │ 3 │
+            ├───┼───┴───┘
+            │ 4 │
+            ├───┤
+            │ 5 │
+            └───┘
+            sage: unicode_art(Tableau([]))
+            ┌┐
+            └┘
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        return UnicodeArt(self._ascii_art_table(unicode=True).splitlines())
 
     _ascii_art_repr = _repr_diagram
 
-    def _ascii_art_table(self):
+    def _ascii_art_table(self, unicode=False):
         """
         TESTS:
 
@@ -578,12 +598,57 @@ class Tableau(ClonableList):
             |  1 |  2 | 15 | 7 |
             +----+----+----+---+
             sage: Tableaux.global_options.reset()
+
+        Unicode version::
+
+            sage: t = Tableau([[1,2,15,7],[12,5],[8,10],[9]])
+            sage: print t._ascii_art_table(unicode=True)
+            ┌────┬────┬────┬───┐
+            │ 1  │ 2  │ 15 │ 7 │
+            ├────┼────┼────┴───┘
+            │ 12 │ 5  │
+            ├────┼────┤
+            │ 8  │ 10 │
+            ├────┼────┘
+            │ 9  │
+            └────┘
+            sage: Tableaux().global_options(convention='french')
+            sage: t = Tableau([[1,2,15,7],[12,5],[8,10],[9]])
+            sage: print t._ascii_art_table(unicode=True)
+            ┌────┐
+            │ 9  │
+            ├────┼────┐
+            │ 8  │ 10 │
+            ├────┼────┤
+            │ 12 │ 5  │
+            ├────┼────┼────┬───┐
+            │ 1  │ 2  │ 15 │ 7 │
+            └────┴────┴────┴───┘
+            sage: Tableaux.global_options.reset()
         """
+        if unicode:
+            import unicodedata
+            v  = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
+            h  = unicodedata.lookup('BOX DRAWINGS LIGHT HORIZONTAL')
+            dl = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND LEFT')
+            dr = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND RIGHT')
+            ul = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND LEFT')
+            ur = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND RIGHT')
+            vr = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND RIGHT')
+            vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
+            uh = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND HORIZONTAL')
+            dh = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND HORIZONTAL')
+            vh = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL')
+        else:
+            v = '|'
+            h = '-'
+            dl = dr = ul = ur = vr = vl = uh = dh = vh = '+'
+
         if len(self) == 0:
-            return "++\n++"
+            return dr + dl + '\n' + ur + ul
 
         # Get the widths of the columns
-        str_tab = map(lambda row: map(str, row), self)
+        str_tab = [[str(_) for _ in row] for row in self]
         col_widths = [1]*len(str_tab[0])
         for row in str_tab:
             for i,e in enumerate(row):
@@ -591,22 +656,47 @@ class Tableau(ClonableList):
 
         matr = []  # just the list of lines
         l1 = ""
-        for w in col_widths:
-            l1 += "+--" + '-'*w
-        matr.append(l1 + "+")
-        for row in str_tab:
+        l1 += dr + h*(2+col_widths[0])
+        for w in col_widths[1:]:
+            l1 += dh + h + h + h*w
+        matr.append(l1 + dl)
+        for nrow,row in enumerate(str_tab):
             l1 = ""; l2 = ""
-            for i,e in enumerate(row):
-                l1 += "+--" + '-'*col_widths[i]
-                l2 += "| {:^{width}} ".format(e, width=col_widths[i])
-            l1 += "+"; l2 += "|"
+            n = len(str_tab[nrow+1]) if nrow+1 < len(str_tab) else 0
+            for i,(e,w) in enumerate(zip(row,col_widths)):
+                if i == 0:
+                    if n:
+                        l1 += vr + h*(2+w)
+                    else:
+                        l1 += ur + h*(2+w)
+                elif i <= n:
+                    l1 += vh + h*(2+w)
+                else:
+                    l1 += uh + h*(2+w)
+                if unicode:
+                    l2 += u"{} {:^{width}} ".format(v, e, width=w)
+                else:
+                    l2 += "{} {:^{width}} ".format(v, e, width=w)
+            if i+1 <= n:
+                l1 += vl
+            else:
+                l1 += ul
+            l2 += v
             matr.append(l2)
             matr.append(l1)
 
         if self.parent().global_options('convention') == "English":
             return "\n".join(matr)
         else:
-            return "\n".join(reversed(matr))
+            output = "\n".join(reversed(matr))
+            if unicode:
+                tr = {
+                    ord(dl): ul, ord(dr): ur,
+                    ord(ul): dl, ord(ur): dr,
+                    ord(dh): uh, ord(uh): dh}
+                return output.translate(tr)
+            else:
+                return output
 
     def _ascii_art_compact(self):
         """
@@ -638,7 +728,7 @@ class Tableau(ClonableList):
             T = reversed(self)
 
         # Get the widths of the columns
-        str_tab = map(lambda row: map(str, row), T)
+        str_tab = [[str(_) for _ in row] for row in T]
         col_widths = [1]*len(self[0])
         for row in str_tab:
             for i,e in enumerate(row):
@@ -1335,18 +1425,37 @@ class Tableau(ClonableList):
             sage: all(all(t.bender_knuth_involution(k).bender_knuth_involution(l) == t.bender_knuth_involution(l).bender_knuth_involution(k) for k in range(1,5) for l in range(1,5) if abs(k - l) > 1) for t in T)
             True
 
-        Coxeter relation of the Bender--Knuth involutions (they have the form
-        `(ab)^6 = 1`)::
+        Berenstein and Kirillov [BerKilGGI]_ have shown that
+        `(s_1 s_2)^6 = id` (for tableaux of straight shape)::
 
             sage: p = lambda t, k: t.bender_knuth_involution(k).bender_knuth_involution(k + 1)
-            sage: all(all(p(p(p(p(p(p(t,k),k),k),k),k),k) == t for k in range(1,5)) for t in T)
+            sage: all(p(p(p(p(p(p(t,1),1),1),1),1),1) == t for t in T)
             True
+
+        However, `(s_2 s_3)^6 = id` is false::
+
+            sage: p = lambda t, k: t.bender_knuth_involution(k).bender_knuth_involution(k + 1)
+            sage: t = Tableau([[1,2,2],[3,4]])
+            sage: x = t
+            sage: for i in range(6): x = p(x, 2)
+            sage: x
+            [[1, 2, 3], [2, 4]]
+            sage: x == t
+            False
 
         TESTS::
 
             sage: t = Tableau([])
             sage: t.bender_knuth_involution(3)
             []
+
+        REFERENCES:
+
+        .. [BerKilGGI] A. N. Kirillov, A. D. Berenstein,
+           *Groups generated by involutions, Gelfand--Tsetlin patterns,
+           and combinatorics of Young tableaux*,
+           Algebra i Analiz, 1995, Volume 7, Issue 1, pp. 92--152.
+           http://math.uoregon.edu/~arkadiy/bk1.pdf
         """
         if check and self not in SemistandardTableaux():
             raise ValueError("the tableau must be semistandard")
@@ -1476,6 +1585,60 @@ class Tableau(ClonableList):
         """
         return all(row[i]<row[i+1] for row in self for i in range(len(row)-1))
 
+    def is_row_increasing(self, weak=False):
+        r"""
+        Return ``True`` if the entries in each row are in increasing order,
+        and ``False`` otherwise.
+
+        By default, this checks for strictly increasing rows. Set ``weak``
+        to ``True`` to test for weakly increasing rows.
+
+        EXAMPLES::
+
+            sage: T = Tableau([[1, 1, 3], [1, 2]])
+            sage: T.is_row_increasing(weak=True)
+            True
+            sage: T.is_row_increasing()
+            False
+            sage: Tableau([[2, 1]]).is_row_increasing(weak=True)
+            False
+        """
+        if weak:
+            def test(a, b):
+                return a <= b
+        else:
+            def test(a, b):
+                return a < b
+        return all(test(a, b) for row in self for (a, b) in zip(row, row[1:]))
+
+    def is_column_increasing(self, weak=False):
+        r"""
+        Return ``True`` if the entries in each column are in increasing order,
+        and ``False`` otherwise.
+
+        By default, this checks for strictly increasing columns. Set ``weak``
+        to ``True`` to test for weakly increasing columns.
+
+        EXAMPLES::
+
+            sage: T = Tableau([[1, 1, 3], [1, 2]])
+            sage: T.is_column_increasing(weak=True)
+            True
+            sage: T.is_column_increasing()
+            False
+            sage: Tableau([[2], [1]]).is_column_increasing(weak=True)
+            False
+        """
+        if weak:
+            def test(a, b):
+                return a <= b
+        else:
+            def test(a, b):
+                return a < b
+        def tworow(a, b):
+            return all(test(a[i], b_i) for i, b_i in enumerate(b))
+        return all(tworow(self[r], self[r+1]) for r in range(len(self) - 1))
+
     def is_column_strict(self):
         """
         Return ``True`` if ``self`` is a column strict tableau and ``False``
@@ -1506,6 +1669,29 @@ class Tableau(ClonableList):
         def tworow(a, b):
             return all(a[i] < b_i for i, b_i in enumerate(b))
         return all(tworow(self[r], self[r+1]) for r in range(len(self)-1))
+
+    def is_semistandard(self):
+        r"""
+        Return ``True`` if ``self`` is a semistandard tableau, and ``False``
+        otherwise.
+
+        A tableau is semistandard if its rows weakly increase and its columns
+        strictly increase.
+
+        EXAMPLES::
+
+            sage: Tableau([[1,1],[1,2]]).is_semistandard()
+            False
+            sage: Tableau([[1,2],[1,2]]).is_semistandard()
+            False
+            sage: Tableau([[1,1],[2,2]]).is_semistandard()
+            True
+            sage: Tableau([[1,2],[2,3]]).is_semistandard()
+            True
+            sage: Tableau([[4,1],[3,2]]).is_semistandard()
+            False
+        """
+        return self.is_row_increasing(weak=True) and self.is_column_increasing()
 
     def is_standard(self):
         """
@@ -2131,6 +2317,119 @@ class Tableau(ClonableList):
         for i in w:
             res = res.schensted_insert(i,left=left)
         return res
+
+    def reverse_bump(self, loc):
+        r"""
+        Reverse row bump the entry of ``self`` at the specified
+        location ``loc`` (given as a row index or a
+        corner ``(r, c)`` of the tableau).
+
+        This is the reverse of Schensted's row-insertion algorithm.
+        See Section 1.1, page 8, of Fulton's [Ful1997]_.
+
+        INPUT:
+
+        - ``loc`` -- Can be either of the following:
+
+          - The coordinates ``(r, c)`` of the square to reverse-bump
+            (which must be a corner of the tableau);
+          - The row index ``r`` of this square.
+
+          Note that both ``r`` and ``c`` are `0`-based, i.e., the
+          topmost row and the leftmost column are the `0`-th row
+          and the `0`-th column.
+
+        OUTPUT:
+
+        An ordered pair consisting of:
+
+        1. The resulting (smaller) tableau;
+        2. The entry bumped out at the end of the process.
+
+        .. SEEALSO::
+
+            :meth:`bump`
+
+        EXAMPLES:
+
+        This is the reverse of Schensted's bump::
+
+            sage: T = Tableau([[1, 1, 2, 2, 4], [2, 3, 3], [3, 4], [4]])
+            sage: T.reverse_bump(2)
+            ([[1, 1, 2, 3, 4], [2, 3, 4], [3], [4]], 2)
+            sage: T == T.reverse_bump(2)[0].bump(2)
+            True
+            sage: T.reverse_bump((3, 0))
+            ([[1, 2, 2, 2, 4], [3, 3, 3], [4, 4]], 1)
+
+        Some errors caused by wrong input::
+
+            sage: T.reverse_bump((3, 1))
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid corner
+            sage: T.reverse_bump(4)
+            Traceback (most recent call last):
+            ...
+            IndexError: list index out of range
+            sage: Tableau([[2, 2, 1], [3, 3]]).reverse_bump(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: Reverse bumping is only defined for semistandard tableaux
+
+        Some edge cases::
+
+            sage: Tableau([[1]]).reverse_bump(0)
+            ([], 1)
+            sage: Tableau([[1,1]]).reverse_bump(0)
+            ([[1]], 1)
+            sage: Tableau([]).reverse_bump(0)
+            Traceback (most recent call last):
+            ...
+            IndexError: list index out of range
+
+        .. NOTE::
+
+            Reverse row bumping is only implemented for tableaux with weakly increasing
+            and strictly increasing columns (though the tableau does not need to be an
+            instance of class :class:`SemistandardTableau`).
+
+        """
+        if not (self.is_semistandard()):
+            raise ValueError("Reverse bumping is only defined for semistandard tableaux")
+        try:
+            (r, c) = loc
+            if (r, c) not in self.corners():
+                raise ValueError("invalid corner")
+        except TypeError:
+            r = loc
+            c = len(self[r]) - 1
+
+        # make a copy of self
+        new_t = self.to_list()
+
+        # remove the last entry of row r from the tableau
+        to_move = new_t[r].pop()
+
+        # delete the row if it's now empty
+        if not new_t[r]:
+            new_t.pop()
+
+        from bisect import bisect_left
+
+        for row in reversed(new_t[:r]):
+            # Decide where to insert:
+            # the bisect_left command returns the greatest index such that
+            # every entry to its left is strictly less than to_move
+            c = bisect_left(row, to_move, lo=c) - 1
+
+            # swap it with to_move
+            row[c], to_move = to_move, row[c]
+
+        if isinstance(self, SemistandardTableau):
+            return SemistandardTableau(new_t), to_move
+        return Tableau(new_t), to_move
+
 
     def bump_multiply(left, right):
         """
@@ -3537,8 +3836,6 @@ class SemistandardTableau(Tableau):
         ...
         ValueError: entries must be positive integers
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(self, t):
         r"""
@@ -3672,8 +3969,6 @@ class StandardTableau(SemistandardTableau):
         ...
         ValueError: the entries in each row of a semistandard tableau must be weakly increasing
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(self, t):
         r"""
@@ -3812,7 +4107,7 @@ class StandardTableau(SemistandardTableau):
         #Go through and add n+1 to the end of each
         #of the rows
         for row, _ in outside_corners:
-            new_t = map(list, self)
+            new_t = [list(_) for _ in self]
             if row != len(self):
                 new_t[row] += [n+1]
             else:
@@ -4264,7 +4559,7 @@ class Tableaux(UniqueRepresentation, Parent):
             except TypeError:
                 return False
             # any list of lists of partition shape is a tableau
-            return map(len, x) in _Partitions
+            return [len(_) for _ in x] in _Partitions
         else:
             return False
 
@@ -5044,7 +5339,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
             sage: 1 in SST
             False
         """
-        return SemistandardTableaux.__contains__(self, x) and map(len,x)==self.shape
+        return SemistandardTableaux.__contains__(self, x) and [len(_) for _ in x]==self.shape
 
     def _repr_(self):
         """
@@ -5386,7 +5681,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             sage: SST.cardinality()
             20
         """
-        return SemistandardTableaux.__contains__(self, x) and map(len, x) == self.shape
+        return SemistandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
     def _repr_(self):
         """
@@ -5706,8 +6001,8 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
             True
         """
         from sage.combinat.partition import Partition
-        return x in SemistandardTableaux_shape_weight(Partition(map(len,
-            x)), self.weight)
+        return x in SemistandardTableaux_shape_weight(Partition(
+            [len(_) for _ in x]), self.weight)
 
 ########################
 # Standard Tableaux    #
@@ -6139,7 +6434,7 @@ class StandardTableaux_shape(StandardTableaux):
             sage: 1 in StandardTableaux([2,1,1])
             False
         """
-        return StandardTableaux.__contains__(self, x) and map(len,x) == self.shape
+        return StandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
     def _repr_(self):
         """

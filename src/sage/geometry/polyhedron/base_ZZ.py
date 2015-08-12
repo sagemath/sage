@@ -14,7 +14,6 @@ Base class for polyhedra over `\ZZ`
 
 from sage.rings.all import ZZ, QQ, gcd
 from sage.misc.all import cached_method
-from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from constructor import Polyhedron
 from base import Polyhedron_base
@@ -221,7 +220,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: P = Polyhedron(ieqs=[[1,-1,1,0], [-1,2,-1,0], [1,1,-2,0]], eqns=[[-1,2,-1,-3]], base_ring=ZZ)
 
             sage: p = P.ehrhart_polynomial(maxdet=5, verbose=True)  # optional - latte_int
-            This is LattE integrale 1.7.2
+            This is LattE integrale ...
             ...
             Invocation: count --ehrhart-polynomial '--redundancy-check=none' '--maxdet=5' --cdd ...
             ...
@@ -229,7 +228,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             1/2*t^2 + 3/2*t + 1
 
             sage: p = P.ehrhart_polynomial(dual=True, verbose=True)  # optional - latte_int
-            This is LattE integrale 1.7.2
+            This is LattE integrale ...
             ...
             Invocation: count --ehrhart-polynomial '--redundancy-check=none' --dual --cdd ...
             ...
@@ -237,7 +236,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             1/2*t^2 + 3/2*t + 1
 
             sage: p = P.ehrhart_polynomial(irrational_primal=True, verbose=True)   # optional - latte_int
-            This is LattE integrale 1.7.2
+            This is LattE integrale ...
             ...
             Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-primal --cdd ...
             ...
@@ -245,7 +244,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             1/2*t^2 + 3/2*t + 1
 
             sage: p = P.ehrhart_polynomial(irrational_all_primal=True, verbose=True)  # optional - latte_int
-            This is LattE integrale 1.7.2
+            This is LattE integrale ...
             ...
             Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-all-primal --cdd ...
             sage: p   # optional - latte_int
@@ -256,27 +255,17 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: P.ehrhart_polynomial(bim_bam_boum=19)   # optional - latte_int
             Traceback (most recent call last):
             ...
-            RuntimeError: Something went wrong (see output above) when running:
-            count --ehrhart-polynomial --redundancy-check=none --bim-bam-boum=19 --cdd ...
-
+            RuntimeError: LattE integrale failed with exit code 1 to execute...
         """
-        if not self.is_lattice_polytope():
-            raise ValueError("this must be a lattice polytope")
-
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(QQ, 't')
         if self.is_empty():
             return R.zero()
 
-        from sage.misc.temporary_file import tmp_filename
         from sage.misc.misc import SAGE_TMP
         from subprocess import Popen, PIPE
 
-        in_str = self.cdd_Hrepresentation()
-        in_filename = tmp_filename() + '.ine'
-        in_file = open(in_filename, 'w')
-        in_file.write(self.cdd_Hrepresentation())
-        in_file.close()
+        ine = self.cdd_Hrepresentation()
 
         args = ['count', '--ehrhart-polynomial']
         if 'redundancy_check' not in kwds:
@@ -305,24 +294,30 @@ class Polyhedron_ZZ(Polyhedron_base):
                 args.append('--{}'.format(key))
             else:
                 args.append('--{}={}'.format(key, value))
-        args.append('--cdd')
-        args.append(in_filename)
+        args += ['--cdd', '/dev/stdin']
 
         try:
-            latte_proc = Popen(args, stdin=PIPE, stdout=PIPE, stderr=(None if verbose else PIPE), cwd=str(SAGE_TMP))
+            # The cwd argument is needed because latte
+            # always produces diagnostic output files.
+            latte_proc = Popen(args,
+                               stdin=PIPE, stdout=PIPE,
+                               stderr=(None if verbose else PIPE),
+                               cwd=str(SAGE_TMP))
         except OSError:
-            raise ValueError("The package latte_int must be installed (type "
-                    "'sage -i latte_int') in a console or "
-                    "'install_package('latte_int') at a Sage prompt)!\n")
+            raise ValueError("The package latte_int must be installed "
+                    "(type 'sage -i latte_int' in a console or "
+                    "'install_package('latte_int')' at a Sage prompt)!\n")
 
-        ans, err = latte_proc.communicate()
+        ans, err = latte_proc.communicate(ine)
+        ret_code = latte_proc.poll()
+        if ret_code:
+            if err is None:
+                err = ", see error message above"
+            else:
+                err = ":\n" + err
+            raise RuntimeError("LattE integrale failed with exit code {} to execute {}".format(ret_code, ' '.join(args)) + err.strip())
 
-        try:
-            p = ans.splitlines()[-2]
-        except IndexError:
-            if not verbose:
-                print err
-            raise RuntimeError("Something went wrong (see output above) when running:\n{}".format(' '.join(args)))
+        p = ans.splitlines()[-2]
 
         return R(p)
 

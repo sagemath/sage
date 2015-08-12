@@ -124,7 +124,7 @@ class SixVertexConfiguration(ClonableArray):
             if x == 3:
                 return 1
             return 0
-        return matrix([map(matrix_sign, row) for row in self])
+        return matrix([[matrix_sign(_) for _ in row] for row in self])
 
     def plot(self, color='sign'):
         """
@@ -600,7 +600,7 @@ class SixVertexModel(Parent, UniqueRepresentation):
                         row.append(-1)
                     # Check the right bdry condition since we are at the rightmost entry
                     elif next_left[row[-1]] is not self._bdry_cond[1][i]:
-                        bdry.append(map(lambda x: next_top[x], row))
+                        bdry.append([next_top[x] for x in row])
                         cur.append([-1])
                         left.append([lbd[i+1]])
                         break

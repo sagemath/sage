@@ -321,12 +321,9 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: W.random_element()
             3 + 4*w + 3*w^2 + w^3 + 4*w^4 + w^5 + w^6 + 3*w^7 + w^8 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 4*w^14 + O(w^15)
         """
-        return reduce(lambda x,y: x+y, \
-                      map(lambda a,b: a*b, \
-                          [self.ground_ring().random_element() for _ in \
-                           range(self.modulus().degree())], \
-                          [self.gen()**i for i in \
-                           range(self.modulus().degree())]),
+        return reduce(lambda x,y: x+y,
+                      [self.ground_ring().random_element() * self.gen()**i for i in
+                           range(self.modulus().degree())],
                       0)
 
     #def unit_group(self):

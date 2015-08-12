@@ -1,11 +1,41 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import os, sys, time, errno, platform, subprocess, glob
 from distutils.core import setup
 
-# Make sure stdout doesn't buffer output, otherwise output
-# like "Cythonizing foo.pyx" appears in the wrong order.
-sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+
+def excepthook(*exc):
+    """
+    When an error occurs, display an error message similar to the error
+    messages from ``sage-spkg``.
+
+    In particular, ``build/make/install`` will recognize "sage" as a failed
+    package, see :trac:`16774`.
+    """
+    stars = '*' * 72
+
+    print(stars, file=sys.stderr)
+    import traceback
+    traceback.print_exception(*exc, file=sys.stderr)
+    print(stars, file=sys.stderr)
+    print("Error building the Sage library", file=sys.stderr)
+    print(stars, file=sys.stderr)
+
+    try:
+        logfile = os.path.join(os.environ['SAGE_LOGS'],
+                "sage-%s.log" % os.environ['SAGE_VERSION'])
+    except:
+        pass
+    else:
+        print("Please email sage-devel (http://groups.google.com/group/sage-devel)", file=sys.stderr)
+        print("explaining the problem and including the relevant part of the log file", file=sys.stderr)
+        print("  " + logfile, file=sys.stderr)
+        print("Describe your computer, operating system, etc.", file=sys.stderr)
+        print(stars, file=sys.stderr)
+
+sys.excepthook = excepthook
+
 
 #########################################################
 ### List of Extensions
@@ -14,7 +44,7 @@ sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 ### the same directory as this file
 #########################################################
 
-from module_list import ext_modules
+from module_list import ext_modules, library_order, aliases
 from sage.env import *
 
 #########################################################
@@ -33,15 +63,8 @@ except KeyError:
     compile_result_dir = None
     keep_going = False
 
-SAGE_INC = os.path.join(SAGE_LOCAL, 'include')
-
 # search for dependencies and add to gcc -I<path>
-import numpy
-include_dirs = [SAGE_INC,
-                SAGE_SRC,
-                os.path.join(SAGE_SRC, 'c_lib', 'include'),
-                os.path.join(SAGE_SRC, 'sage', 'ext'),
-                os.path.join(numpy.get_include())]
+include_dirs = sage_include_directories(use_sources=True)
 
 # Manually add -fno-strict-aliasing, which is needed to compile Cython
 # and disappears from the default flags if the user has set CFLAGS.
@@ -89,7 +112,7 @@ class CompileRecorder(object):
             else:
                 res = self._f(*args)
         except Exception as ex:
-            print ex
+            print(ex)
             res = ex
         t = time.time() - t
 
@@ -159,12 +182,6 @@ for m in ext_modules:
         if lib in m.libraries:
             m.depends += lib_headers[lib]
 
-    # Add csage as first library for all Cython extensions.
-    # The order is important, in particular for Cygwin.
-    m.libraries = ['csage'] + m.libraries
-    if m.language == 'c++':
-        m.libraries.append('stdc++')
-
     m.extra_compile_args = m.extra_compile_args + extra_compile_args
     m.extra_link_args = m.extra_link_args + extra_link_args
     m.library_dirs = m.library_dirs + [os.path.join(SAGE_LOCAL, "lib")]
@@ -178,22 +195,28 @@ for m in ext_modules:
 def run_command(cmd):
     """
     INPUT:
-        cmd -- a string; a command to run
 
-    OUTPUT:
-        prints cmd to the console and then runs os.system
+    - ``cmd`` -- a string; a command to run
+
+    OUTPUT: prints ``cmd`` to the console and then runs
+    ``os.system(cmd)``.
     """
-    print cmd
+    print(cmd)
+    sys.stdout.flush()
     return os.system(cmd)
 
-def apply_pair(p):
+def apply_func_progress(p):
     """
-    Given a pair p consisting of a function and a value, apply
-    the function to the value.
+    Given a triple p consisting of a function, value and a string,
+    output the string and apply the function to the value.
+
+    The string could for example be some progress indicator.
 
     This exists solely because we can't pickle an anonymous function
     in execute_list_of_commands_in_parallel below.
     """
+    sys.stdout.write(p[2])
+    sys.stdout.flush()
     return p[0](p[1])
 
 def execute_list_of_commands_in_parallel(command_list, nthreads):
@@ -213,13 +236,20 @@ def execute_list_of_commands_in_parallel(command_list, nthreads):
     WARNING: commands are run roughly in order, but of course successive
     commands may be run at the same time.
     """
+    # Add progress indicator strings to the command_list
+    N = len(command_list)
+    progress_fmt = "[{:%i}/{}] " % len(str(N))
+    for i in range(N):
+        progress = progress_fmt.format(i+1, N)
+        command_list[i] = command_list[i] + (progress,)
+
     from multiprocessing import Pool
     import fpickle_setup #doing this import will allow instancemethods to be pickable
     # map_async handles KeyboardInterrupt correctly if an argument is
     # given to get().  Plain map() and apply_async() do not work
     # correctly, see Trac #16113.
     pool = Pool(nthreads)
-    result = pool.map_async(apply_pair, command_list, 1).get(99999)
+    result = pool.map_async(apply_func_progress, command_list, 1).get(99999)
     pool.close()
     pool.join()
     process_command_results(result)
@@ -228,7 +258,7 @@ def process_command_results(result_values):
     error = None
     for r in result_values:
         if r:
-            print "Error running command, failed with status %s."%r
+            print("Error running command, failed with status %s."%r)
             if not keep_going:
                 sys.exit(1)
             error = r
@@ -270,9 +300,9 @@ def execute_list_of_commands(command_list):
             return "1 %s"%noun
         return "%i %ss"%(n,noun)
 
-    print "Executing %s (using %s)"%(plural(len(command_list),"command"), plural(nthreads,"thread"))
+    print("Executing %s (using %s)"%(plural(len(command_list),"command"), plural(nthreads,"thread")))
     execute_list_of_commands_in_parallel(command_list, nthreads)
-    print "Time to execute %s: %.2f seconds."%(plural(len(command_list),"command"), time.time() - t)
+    print("Time to execute %s: %.2f seconds."%(plural(len(command_list),"command"), time.time() - t))
 
 
 ########################################################################
@@ -295,7 +325,6 @@ def execute_list_of_commands(command_list):
 
 from distutils.command.build_ext import build_ext
 from distutils.dep_util import newer_group
-from types import ListType, TupleType
 from distutils import log
 
 class sage_build_ext(build_ext):
@@ -305,14 +334,14 @@ class sage_build_ext(build_ext):
         from distutils.debug import DEBUG
 
         if DEBUG:
-            print "self.compiler.compiler:"
-            print self.compiler.compiler
-            print "self.compiler.compiler_cxx:"
-            print self.compiler.compiler_cxx # currently not used
-            print "self.compiler.compiler_so:"
-            print self.compiler.compiler_so
-            print "self.compiler.linker_so:"
-            print self.compiler.linker_so
+            print("self.compiler.compiler:")
+            print(self.compiler.compiler)
+            print("self.compiler.compiler_cxx:")
+            print(self.compiler.compiler_cxx) # currently not used
+            print("self.compiler.compiler_so:")
+            print(self.compiler.compiler_so)
+            print("self.compiler.linker_so:")
+            print(self.compiler.linker_so)
             # There are further interesting variables...
 
 
@@ -350,8 +379,8 @@ class sage_build_ext(build_ext):
                         ldso_cmd[i] = "-L"+sage_libdir
 
         if DEBUG:
-            print "self.compiler.linker_so (after fixing library dirs):"
-            print self.compiler.linker_so
+            print("self.compiler.linker_so (after fixing library dirs):")
+            print(self.compiler.linker_so)
 
 
         # First, sanity-check the 'extensions' list
@@ -368,11 +397,11 @@ class sage_build_ext(build_ext):
 
         execute_list_of_commands(compile_commands)
 
-        print "Total time spent compiling C/C++ extensions: %.2f seconds." % (time.time() - t)
+        print("Total time spent compiling C/C++ extensions: %.2f seconds." % (time.time() - t))
 
     def prepare_extension(self, ext):
         sources = ext.sources
-        if sources is None or type(sources) not in (ListType, TupleType):
+        if sources is None or not isinstance(sources, (list, tuple)):
             raise DistutilsSetupError(("in 'ext_modules' option (extension '%s'), " +
                    "'sources' must be present and must be " +
                    "a list of source filenames") % ext.name)
@@ -423,6 +452,15 @@ class sage_build_ext(build_ext):
         else:
             log.info("building '%s' extension", ext.name)
             need_to_compile = True
+
+        # If we need to compile, adjust the given extension
+        if need_to_compile:
+            libs = ext.libraries
+            if ext.language == 'c++' and 'stdc++' not in libs:
+                libs = libs + ['stdc++']
+
+            # Sort libraries according to library_order
+            ext.libraries = sorted(libs, key=lambda x: library_order.get(x, 0))
 
         return need_to_compile, (sources, ext, ext_filename)
 
@@ -539,10 +577,10 @@ def run_cythonize():
     version_file = os.path.join(os.path.dirname(__file__), '.cython_version')
     version_stamp = '\n'.join([
         'cython version: ' + str(Cython.__version__),
-        'embedsignature: True'
+        'NTL dependencies fixed: True',
         'debug: ' + str(debug),
         'profile: ' + str(profile),
-    ])
+    ""])
     if os.path.exists(version_file) and open(version_file).read() == version_stamp:
         force = False
 
@@ -550,8 +588,9 @@ def run_cythonize():
     ext_modules = cythonize(
         ext_modules,
         nthreads=int(os.environ.get('SAGE_NUM_THREADS', 0)),
-        build_dir='build/cythonized',
+        build_dir=SAGE_CYTHONIZED,
         force=force,
+        aliases=aliases,
         compiler_directives={
             'embedsignature': True,
             'profile': profile,
@@ -560,22 +599,24 @@ def run_cythonize():
     open(version_file, 'w').write(version_stamp)
 
 
-print "Updating Cython code...."
+print("Updating Cython code....")
 t = time.time()
 run_cythonize()
-print "Finished Cythonizing, time: %.2f seconds." % (time.time() - t)
+print("Finished Cythonizing, time: %.2f seconds." % (time.time() - t))
 
 
 #########################################################
-### Discovering Python Sources
+### Discovering Sources
 #########################################################
 
-print "Discovering Python source code...."
+print("Discovering Python/Cython source code....")
 t = time.time()
-from sage_setup.find import find_python_sources
+from sage_setup.find import find_python_sources, find_extra_files
 python_packages, python_modules = find_python_sources(
     SAGE_SRC, ['sage', 'sage_setup'])
-print "Discovered Python source, time: %.2f seconds." % (time.time() - t)
+python_data_files = find_extra_files(python_packages,
+    ".", SAGE_CYTHONIZED, SAGE_LIB, ["ntlwrap.cpp"])
+print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
 
 
 #########################################################
@@ -588,7 +629,8 @@ from sage_setup.clean import clean_install_dir
 output_dirs = SITE_PACKAGES + glob.glob(os.path.join(SAGE_SRC, 'build', 'lib*'))
 for output_dir in output_dirs:
     print('- cleaning {0}'.format(output_dir))
-    clean_install_dir(output_dir, python_packages, python_modules, ext_modules)
+    clean_install_dir(output_dir, python_packages, python_modules,
+            ext_modules, python_data_files)
 print('Finished cleaning, time: %.2f seconds.' % (time.time() - t))
 
 
@@ -604,6 +646,7 @@ code = setup(name = 'sage',
       author_email= 'http://groups.google.com/group/sage-support',
       url         = 'http://www.sagemath.org',
       packages    = python_packages,
+      data_files  = python_data_files,
       scripts = [],
       cmdclass = { 'build_ext': sage_build_ext },
       ext_modules = ext_modules)

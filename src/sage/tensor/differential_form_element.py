@@ -552,7 +552,7 @@ class DifferentialForm(AlgebraElement):
             sage: f.diff() == g
             True
         """
-        if isinstance(other, type(self)):
+        if type(other) is type(self):
             if self._degree != other._degree:
                 return False
             else:

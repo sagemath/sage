@@ -17,7 +17,7 @@ AUTHORS:
 from sage.structure.list_clone import ClonableArray, ClonableList
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.combinat.abstract_tree import (AbstractClonableTree,
                                          AbstractLabelledClonableTree)
@@ -172,8 +172,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         sage: tt1.__hash__() == tt2.__hash__()
         False
     """
-
-    __metaclass__ = ClasscallMetaclass
+    __metaclass__ = InheritComparisonClasscallMetaclass
 
     @staticmethod
     def __classcall_private__(cls, *args, **opts):
@@ -1074,7 +1073,7 @@ class OrderedTrees_size(OrderedTrees):
             return
         else:
             for c in Compositions(self._size - 1):
-                for lst in CartesianProduct(*(map(self.__class__, c))):
+                for lst in CartesianProduct(*[self.__class__(_) for _ in c]):
                     yield self._element_constructor_(lst)
 
     @lazy_attribute
@@ -1149,8 +1148,6 @@ class LabelledOrderedTree(AbstractLabelledClonableTree, OrderedTree):
         sage: LabelledOrderedTree([[],[[], []]], label = 3)
         3[None[], None[None[], None[]]]
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, *args, **opts):
         """

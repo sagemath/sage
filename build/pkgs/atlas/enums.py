@@ -198,5 +198,5 @@ def make_check_enums():
     from subprocess import check_output
     output = check_output('make xprint_enums ; ./xprint_enums', shell=True)
     print(output)
-    check_enums(output)
+    check_enums(output.decode('ascii'))
 

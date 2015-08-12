@@ -129,6 +129,7 @@ def data_to_list(out, n, time):
     return v, t, verbose
 
 
+from sage.interfaces.sagespawn import SageSpawn
 import pexpect
 import cleaner
 class qsieve_nonblock:
@@ -164,7 +165,7 @@ class qsieve_nonblock:
         else:
             cmd = 'QuadraticSieve'
         tmpdir()
-        self._p = pexpect.spawn(cmd)
+        self._p = SageSpawn(cmd)
         cleaner.cleaner(self._p.pid, 'QuadraticSieve')
         self._p.sendline(str(self._n)+'\n\n\n')
         self._done = False
@@ -280,9 +281,9 @@ class qsieve_nonblock:
         e = self._p
         try:
             e.expect('xxx', timeout=timeout)
-        except pexpect.TIMEOUT as msg:
+        except pexpect.TIMEOUT:
             pass
-        except pexpect.EOF as msg:
+        except pexpect.EOF:
             pass
             self._done = True
             self._p.close()

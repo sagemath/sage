@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if [ "$SAGE_LOCAL" = "" ]; then
    echo >&2 "SAGE_LOCAL undefined ... exiting";
    echo >&2 "Maybe run 'sage -sh'?"

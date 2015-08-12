@@ -17,7 +17,6 @@ back to Python.
 ########################################################################
 
 include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
 include "sage/ext/python.pxi"
 
 from ginac cimport *

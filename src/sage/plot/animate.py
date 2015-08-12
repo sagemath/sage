@@ -489,22 +489,22 @@ class Animation(SageObject):
 
             sage: g = a.graphics_array(); print g
             Graphics Array of size 2 x 3
-            sage: g.show(figsize=[6,3]) # optional
+            sage: g.show(figsize=[6,3])  # not tested
 
         Specify different arrangement of array and save it with a given file name::
 
             sage: g = a.graphics_array(ncols=2); print g
             Graphics Array of size 2 x 2
             sage: f = tmp_filename(ext='.png')
-            sage: g.save(f) # optional
+            sage: g.save(f)
 
         Frames can be specified as a generator too; it is internally converted to a list::
 
             sage: t = var('t')
             sage: b = animate((plot(sin(c*pi*t)) for c in sxrange(1,2,.2)))
-            sage: g = b.graphics_array(); print g
+            sage: g = b.graphics_array()
+            sage: g
             Graphics Array of size 2 x 3
-            sage: g.show() # optional
         """
         ncols = int(ncols)
         frame_list = list(self._frames)

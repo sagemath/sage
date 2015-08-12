@@ -39,7 +39,9 @@ This adds the following to the main namespace:
         - :func:`setprint() <sage.matroids.utilities.setprint>`
         - :func:`newlabel() <sage.matroids.utilities.newlabel>`
         - :func:`get_nonisomorphic_matroids() <sage.matroids.utilities.get_nonisomorphic_matroids>`
-
+        - :func:`lift_cross_ratios() <sage.matroids.linear_matroid.lift_cross_ratios>`
+        - :func:`lift_map() <sage.matroids.linear_matroid.lift_map>`
+        
 AUTHORS:
 
 - Stefan van Zwam (2013-04-01): initial version
@@ -52,6 +54,6 @@ from rank_matroid import RankMatroid
 from circuit_closures_matroid import CircuitClosuresMatroid
 from basis_matroid import BasisMatroid
 from linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from utilities import setprint, newlabel, get_nonisomorphic_matroids
+from utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
 import lean_matrix
 from extension import LinearSubclasses, MatroidExtensions

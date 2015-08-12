@@ -1,6 +1,3 @@
-include 'sage/ext/cdefs.pxi'
-include 'sage/ext/interrupt.pxi'
-
 include 'gsl.pxi'
 
 

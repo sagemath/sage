@@ -128,7 +128,7 @@ cdef class OperandsWrapper(SageObject):
             if arg.step:
                 step = arg.step
                 if step != arg.step:
-                    raise ValueError, "step value must be an integer"
+                    raise ValueError("step value must be an integer")
             else:
                 step = 1
             return [new_Expression_from_GEx(self._expr._parent,
@@ -139,12 +139,12 @@ cdef class OperandsWrapper(SageObject):
         if isinstance(arg, (list, tuple)):
             # handle nested index
             if len(arg) == 0: # or not all(lambda x: x in ZZ for t in args):
-                raise TypeError, ind_err_msg
+                raise TypeError(ind_err_msg)
             GEx_construct_ex(&cur_ex, self._expr._gobj)
             for x in arg:
                 nops = cur_ex.nops()
                 if nops == 0:
-                    raise TypeError, "expressions containing only a numeric coefficient, constant or symbol have no operands"
+                    raise TypeError("expressions containing only a numeric coefficient, constant or symbol have no operands")
                 ind = normalize_index(x, nops, ind_err_msg)
                 cur_ex = cur_ex.op(ind)
             return new_Expression_from_GEx(self._expr._parent, cur_ex)

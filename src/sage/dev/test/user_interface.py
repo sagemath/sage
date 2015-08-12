@@ -18,6 +18,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+import six
 from getpass import getpass
 
 from sage.dev.cmd_line_interface import CmdLineInterface, INFO
@@ -43,7 +45,7 @@ class DoctestUserInterface(CmdLineInterface, list):
         ...
         RuntimeError: no answers left in DoctestUserInterface for question "Question? ".
     """
-    def _get_input(self, prompt, options=None, default=None, input_func=raw_input):
+    def _get_input(self, prompt, options=None, default=None, input_func=six.moves.input):
         r"""
         Overwrites
         :meth:`sage.dev.cmd_line_interface.CmdLineInterface._get_input` for

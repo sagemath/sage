@@ -488,7 +488,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         m = []
         for row_part in Plist:
             z = basis(self(row_part))
-            m.append( map( lambda col_part: z.coefficient(col_part), Plist ) )
+            m.append( [z.coefficient(col_part) for col_part in Plist] )
         return matrix(m)
 
     def _multiply(self, left, right):
