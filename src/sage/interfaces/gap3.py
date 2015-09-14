@@ -354,6 +354,7 @@ class Gap3(Gap_generic):
         Return the class used for constructing GAP3 elements.
 
         TESTS::
+
             sage: gap3._object_class()
             <class 'sage.interfaces.gap3.GAP3Element'>
         """

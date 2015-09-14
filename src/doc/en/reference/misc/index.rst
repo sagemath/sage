@@ -56,16 +56,6 @@ Lists and Iteration, etc.
    sage/misc/multireplace
    sage/misc/map_threaded
 
-Integer Arithmetic
-~~~~~~~~~~~~~~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/rings/sum_of_squares
-   sage/ext/multi_modular
-   sage/rings/arith
-
 File and OS Access
 ~~~~~~~~~~~~~~~~~~
 

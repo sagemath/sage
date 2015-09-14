@@ -200,6 +200,7 @@ common_gap_functions = [
   'FreeProduct',
   'FreeSemigroup',
   'FrobeniusAutomorphism',
+  'FullRowSpace',
   'GF',
   'GL',
   'GQuotients',

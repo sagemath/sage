@@ -5,6 +5,8 @@ This file gathers together all the tables in Sage.
 
     * CremonaDatabase() - Cremona's tables of elliptic curves and related data.
 
+    * findstat -- The FindStat database (http://www.findstat.org/).
+
     * JonesDatabase() -- returns the John Jones table of number fields
       with bounded ramification and degree <= 6.
 
@@ -78,3 +80,6 @@ from db_class_polynomials import \
 from symbolic_data import SymbolicData
 
 from cunningham_tables import cunningham_prime_factors
+
+lazy_import('sage.databases.findstat', 'findstat')
+

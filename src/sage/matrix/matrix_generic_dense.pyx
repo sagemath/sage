@@ -1,23 +1,8 @@
 """
 Dense Matrices over a general ring
 """
-
-def _convert_dense_entries_to_list(entries):
-    """
-    Create list of entries that define a matrix from a list of vectors.
-
-    EXAMPLES:
-        sage: entries = [vector([1,2,3]), vector([4,5,6])]
-        sage: sage.matrix.matrix_generic_dense._convert_dense_entries_to_list(entries)
-        [1, 2, 3, 4, 5, 6]
-    """
-    e = []
-    for v in entries:
-        e = e+ v.list()
-    copy = False
-    return e
-
 include "sage/ext/interrupt.pxi"
+cimport cython
 from cpython.list cimport *
 from cpython.number cimport *
 from cpython.ref cimport *
@@ -26,6 +11,8 @@ cimport matrix_dense
 import matrix_dense
 
 cimport matrix
+
+from sage.structure.element cimport parent_c
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     r"""
@@ -43,6 +30,16 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         sage: type(A)
         <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
         sage: TestSuite(A).run()
+
+    Test comparisons::
+
+        sage: A = random_matrix(Integers(25)['x'],2)
+        sage: cmp(A,A)
+        0
+        sage: cmp(A,A+1)
+        -1
+        sage: cmp(A+1,A)
+        1
     """
     ########################################################################
     # LEVEL 1 functionality
@@ -60,7 +57,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         TESTS:
 
-        We check that the problem related to Trac #9049 is not an issue any
+        We check that the problem related to :trac:`9049` is not an issue any
         more::
 
             sage: S.<t>=PolynomialRing(QQ)
@@ -73,61 +70,80 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         """
         matrix.Matrix.__init__(self, parent)
 
-        cdef Py_ssize_t i, n
+        cdef Py_ssize_t i,j
+        cdef bint is_list
 
+        R = parent.base_ring()
+        zero = R.zero()
+
+        # determine if entries is a list or a scalar
         if entries is None:
-            entries = 0
-
-        if not isinstance(entries, (list, tuple)):
+            entries = zero
+            is_list = False
+        elif parent_c(entries) is R:
+            is_list = False
+        elif type(entries) is list:
+            # here we do a strong type checking as we potentially want to
+            # assign entries to self._entries without copying it
+            self._entries = entries
+            is_list = True
+        elif isinstance(entries, (list,tuple)):
+            # it is needed to check for list here as for example Sequence
+            # inherits from it but fails the strong type checking above
+            self._entries = list(entries)
+            is_list = True
+            copy = False
+        else:
+            # not sure what entries is at this point... try scalar first
             try:
-                x = parent.base_ring()(entries)
-                is_list = 0
+                entries = R(entries)
+                is_list = False
             except TypeError:
                 try:
-                    entries = list(entries)
-                    is_list = 1
+                    self._entries = list(entries)
+                    is_list = True
+                    copy = False
                 except TypeError:
-                    raise TypeError, "entries must be coercible to a list or the base ring"
+                    raise TypeError("entries must be coercible to a list or the base ring")
 
-        else:
-            is_list = 1
-
+        # now set self._entries
         if is_list:
-
-            if len(entries) != self._nrows * self._ncols:
-                raise TypeError, "entries has the wrong length"
-
-            if not (coerce or copy):
-                self._entries = entries
-            else:
-                self._entries = [None]*(self._nrows*self._ncols)
-                n = len(entries)
-                if coerce:
-                    R = parent.base_ring()
-                    for i from 0 <= i < n:
-                        self._entries[i] = R(entries[i])
-                else:
-                    for i from 0 <= i < n:
-                        self._entries[i] = entries[i]
-
-        else:
-
-            zero = parent.base_ring()(0)
+            if len(self._entries) != self._nrows * self._ncols:
+                raise TypeError("entries has the wrong length")
+            if coerce:
+                self._entries = [R(x) for x in self._entries]
+            elif copy:
+                self._entries = self._entries[:]
+        elif self._nrows == self._ncols:
+            self._entries = [zero]*(self._nrows*self._nrows)
+            for i in range(self._nrows):
+                self._entries[i+self._ncols*i]=entries
+        elif entries == zero:
             self._entries = [zero]*(self._nrows*self._ncols)
+        else:
+            raise TypeError("nonzero scalar matrix must be square")
 
-            if x != zero:
-                if self._nrows != self._ncols:
-                    raise TypeError, "nonzero scalar matrix must be square"
-                for i from 0 <= i < self._nrows:
-                    self._entries[i*self._ncols + i] = x
+    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
+        r"""
+        Return a new dense matrix with no entries set.
+        """
+        cdef Matrix_generic_dense res
+        res = self.__class__.__new__(self.__class__, 0, 0, 0)
+
+        if nrows == self._nrows and ncols == self._ncols:
+            res._parent = self._parent
+        else:
+            res._parent = self.matrix_space(nrows, ncols)
+        res._ncols  = ncols
+        res._nrows  = nrows
+        res._base_ring = self._base_ring
+        return res
 
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
-        Py_DECREF(<object>PyList_GET_ITEM(self._entries, i*self._ncols + j))
-        Py_INCREF(value)
-        PyList_SET_ITEM(self._entries, i*self._ncols + j, value)
+        self._entries[i*self._ncols + j] = value
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
-        return <object>PyList_GET_ITEM(self._entries, i*self._ncols + j)
+        return self._entries[i*self._ncols + j]
 
     def _pickle(self):
         """
@@ -151,19 +167,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             self._entries = data
         else:
             raise RuntimeError, "unknown matrix version"
-
-    def __richcmp__(matrix.Matrix self, right, int op):  # always need for mysterious reasons.
-        """
-        EXAMPLES:
-            sage: A = random_matrix(Integers(25)['x'],2)
-            sage: cmp(A,A)
-            0
-            sage: cmp(A,A+1)
-            -1
-            sage: cmp(A+1,A)
-            1
-        """
-        return self._richcmp(right, op)
 
     def __hash__(self):
         """
@@ -243,17 +246,25 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             ...
             IndexError: polynomials are immutable
         """
-        A = self.__class__(self._parent, self._entries, copy = True, coerce=False)
+        cdef Matrix_generic_dense A
+        A = self._new(self._nrows, self._ncols)
+        A._entries = self._entries[:]
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
         return A
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.overflowcheck(False)
     def _multiply_classical(left, matrix.Matrix _right):
         """
         Multiply the matrices left and right using the classical
         `O(n^3)` algorithm.
 
-        EXAMPLES: We multiply two matrices over a fairly general ring::
+        EXAMPLES:
+
+        We multiply two matrices over a fairly general ring::
+
             sage: R.<x,y> = Integers(8)['x,y']
             sage: a = matrix(R,2,[x,y,x^2,y^2]); a
             [  x   y]
@@ -290,39 +301,29 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
         """
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
-        cdef object v
-        cdef Matrix_generic_dense A, right
-        right = _right
+        cdef Matrix_generic_dense right = _right
 
         if left._ncols != right._nrows:
-            raise IndexError, "Number of columns of left must equal number of rows of other."
+            raise IndexError("Number of columns of left must equal number of rows of other.")
 
         nr = left._nrows
         nc = right._ncols
         snc = left._ncols
 
         R = left.base_ring()
-        P = left.matrix_space(nr, nc)
-        v = PyList_New(left._nrows * right._ncols)
-        zero = R(0)
+        cdef list v = [None] * (left._nrows * right._ncols)
+        zero = R.zero()
         p = 0
-        cdef PyObject *l
-        cdef PyObject *r
-        for i from 0 <= i < nr:
-            for j from 0 <= j < nc:
+        for i in range(nr):
+            for j in range(nc):
                 z = zero
                 m = i*snc
-                for k from 0 <= k < snc:
-                    # The following is really:
-                    #     z = z + left._entries[m + k] * right._entries[k*right._ncols + j]
-                    l = PyList_GET_ITEM(left._entries, m+k)
-                    r = PyList_GET_ITEM(right._entries, k*nc + j)
-                    z = z + PyNumber_Multiply(<object>l, <object>r)
-                Py_INCREF(z); PyList_SET_ITEM(v, p, z)   #   Basically this is "v.append(z)"
-                p = p + 1
+                for k in range(snc):
+                    z += left._entries[m+k]._mul_(right._entries[k*nc+j])
+                v[p] = z
+                p += 1
 
-        A = left.__class__.__new__(left.__class__, 0, 0 ,0)
-        matrix.Matrix.__init__(A, P)
+        cdef Matrix_generic_dense A = left._new(nr, nc)
         A._entries = v
         return A
 
@@ -331,7 +332,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         Return reference to list of entries of self.  For internal use
         only, since this circumvents immutability.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: A = random_matrix(Integers(25)['x'],2); A.set_immutable()
             sage: A._list()[0] = 0
             sage: A._list()[0]
@@ -342,26 +344,9 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     ########################################################################
     # LEVEL 3 functionality (Optional)
     #    * cdef _sub_
-    # x  * __deepcopy__
+    #    * __deepcopy__
     #    * __invert__
     #    * _multiply_classical
     #    * Matrix windows -- only if you need strassen for that base
     #    * Other functions (list them here):
     ########################################################################
-
-    def __deepcopy__(self):
-        """
-        EXAMPLES:
-            sage: R.<x> = QQ[]
-            sage: A = matrix(R, 2, [1,2,x,x^2])
-            sage: B = A.__deepcopy__()
-            sage: A[0,0]._unsafe_mutate(1,2/3)
-            sage: A
-            [2/3*x + 1         2]
-            [        x       x^2]
-            sage: B
-            [  1   2]
-            [  x x^2]
-        """
-        import copy
-        return self.__class__(self._parent, copy.deepcopy(self._entries), copy = False, coerce=False)

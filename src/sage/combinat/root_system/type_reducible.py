@@ -153,6 +153,16 @@ class CartanType(SageObject, CartanType_abstract):
         """
         return " \\times ".join(x._latex_() for x in self.component_types())
 
+    def __hash__(self):
+        r"""
+        EXAMPLES::
+
+            sage: hash(CartanType(['A',1],['B',2]))
+            1110723648           # 32-bit
+            -6896789355307447232 # 64-bit
+        """
+        return hash(repr(self._types))
+
     def __cmp__(self, other):
         """
         EXAMPLES::

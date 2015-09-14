@@ -195,6 +195,7 @@ class ComplexIntervalField_class(ring.Field):
         Initialize ``self``.
 
         EXAMPLES::
+
             sage: ComplexIntervalField()
             Complex Interval Field with 53 bits of precision
             sage: ComplexIntervalField(200)

@@ -1,6 +1,5 @@
 """
 Local and Global Genus Symbols
-
 """
 
 
@@ -75,6 +74,7 @@ def local_genus_symbol(self, p):
     coefficients the p-adic integers) of the following form:
 
         1. If p>2 then return triples of the form [`m`, `n`, `d`] where
+
             `m` = valuation of the component
 
             `n` = rank of A
@@ -82,6 +82,7 @@ def local_genus_symbol(self, p):
             `d` = det(A) in {1,u} for normalized quadratic non-residue u.
 
         2. If p=2 then return quintuples of the form [`m`,`n`,`s`, `d`, `o`] where
+
             `m` = valuation of the component
 
             `n` = rank of A
@@ -103,6 +104,7 @@ def local_genus_symbol(self, p):
         -`p` -- a prime number > 0
 
     OUTPUT:
+
         Returns a Conway-Sloane genus symbol at p, which is an
         instance of the Genus_Symbol_p_adic_ring class.
 

@@ -45,7 +45,7 @@ def BinaryReedMullerCode(r,k):
     order r is a code with length `2^k` and minimum distance `2^k-r`
     (see for example, section 1.10 in [HP]_). By definition, the
     `r^{th}` order binary Reed-Muller code of length `n=2^m`, for
-    `0 \leq r \leq m`, is the set of all vectors `(f(p)\ |\ p \\in GF(2)^m)`,
+    `0 \leq r \leq m`, is the set of all vectors `(f(p)\ |\ p \in GF(2)^m)`,
     where `f` is a multivariate polynomial of degree at most `r`
     in `m` variables.
 

@@ -251,7 +251,7 @@ class PlainPythonRepr(ObjectReprABC):
         a custom representer. Note that it is undesirable to have a
         trailing newline, and if we don't display it you can't fix
         it::
-    
+
             sage: class Newline(object):
             ....:     def __repr__(self):
             ....:         return 'newline\n'

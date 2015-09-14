@@ -30,7 +30,7 @@ from sage.combinat.subset import SubsetsSorted
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
 from sage.combinat.ncsf_qsym.ncsf import NonCommutativeSymmetricFunctions
 
-class DescentAlgebra(Parent, UniqueRepresentation):
+class DescentAlgebra(UniqueRepresentation, Parent):
     r"""
     Solomon's descent algebra.
 

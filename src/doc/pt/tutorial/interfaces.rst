@@ -144,7 +144,7 @@ coisas a respeito dele.
 GAP
 ===
 
-O Sage vem com o GAP 4.4.10 para matemática discreta computacional,
+O Sage vem com o GAP para matemática discreta computacional,
 especialmente teoria de grupos.
 
 Aqui está um exemplo com a função ``IdGroup`` do GAP, a qual usa a
@@ -176,12 +176,11 @@ a interface do GAP da seguinte forma:
     sage: n = G.order(); n
     120
 
-(Para alguns recursos adicionais do GAP, você deve instalar dois
-pacotes opcionais. Digite ``sage -optional`` para uma lista e escolha
-o pacote da forma ``gap\_packages-x.y.z``, então digite ``sage -i
-gap\_packages-x.y.z``. Faça o mesmo para ``database\_gap-x.y.z``.
-Alguns pacotes do GAP sem licensa GPL podem ser obtidos no site do GAP
-[GAPkg]_, e copiados em ``$SAGE_ROOT/local/lib/gap-4.4.10/pkg``.)
+Para algumas funcionalidades do GAP, deve-se instalar dois pacotes
+Sage opcionais. Isso pode ser feito com o comando::
+
+    sage -i gap_packages database_gap
+
 
 Singular
 ========

@@ -1,5 +1,5 @@
-include "../../ext/cdefs.pxi"
-include "../../ext/interrupt.pxi"
+include "sage/ext/stdsage.pxi"
+include "sage/ext/interrupt.pxi"
 
 from sage.rings.fast_arith cimport arith_llong
 cdef arith_llong arith = arith_llong()
@@ -7,14 +7,8 @@ cdef arith_llong arith = arith_llong()
 from sage.rings.all import ZZ, PowerSeriesRing
 from sage.rings.arith import kronecker_symbol
 
-cdef extern from *:
-    double ceil(double)
-    double floor(double)
-    double sqrt(double)
-    void* calloc(long, int)
-    void* malloc(long)
-    void free(void*)
-    void memcpy(void* dst, void* src, long s)
+from libc.math cimport ceil, floor, sqrt
+from libc.string cimport memcpy
 
 
 cpdef to_series(L, var):
@@ -74,7 +68,7 @@ def bqf_theta_series(Q, long bound, var=None):
     a, b, c = Q
     cdef long* terms = bqf_theta_series_c(NULL, bound, a, b, c)
     L = [terms[i] for i from 0 <= i <= bound]
-    free(terms)
+    sage_free(terms)
     return to_series(L, var)
 
 
@@ -88,9 +82,7 @@ cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) e
         raise ValueError("Not positive definite.")
     xmax = <long>ceil(2 * sqrt((c * bound) / <double>(4 * a * c - b * b)))
     if terms == NULL:
-        terms = <long*>calloc((1 + bound), sizeof(long))
-        if terms == NULL:
-            raise MemoryError
+        terms = <long*>check_calloc(1 + bound, sizeof(long))
 
     sig_on()
     for x from -xmax <= x <= xmax:
@@ -156,12 +148,15 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
     cdef long D = b * b - 4 * a * c
     cdef long i, m, n, me, j
     cdef long* con_terms = bqf_theta_series_c(NULL, bound - 1, a, b, c)
-    cdef long* terms = <long*>malloc(sizeof(long) * bound)
-    if terms == NULL:
-        free(con_terms)
-        raise MemoryError
+    cdef long* terms = NULL
+    try:
+        terms = <long*>check_allocarray(bound, sizeof(long))
+    except MemoryError:
+        sage_free(con_terms)
+        raise
     i = 0
     for an in an_list:
+        sig_check()
         con_terms[i] = con_terms[i] / u * an
         i += 1
     sig_on()
@@ -176,7 +171,7 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
                 j += m * m
                 n += 1
     sig_off()
-    L = [terms[i] for i from 0 <= i < bound - 1]
-    free(con_terms)
-    free(terms)
+    L = [terms[i] for i in range(bound - 1)]
+    sage_free(con_terms)
+    sage_free(terms)
     return to_series(L, var)

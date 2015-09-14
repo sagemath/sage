@@ -1411,7 +1411,7 @@ def _label_skew(list_of_cells, sk):
             i += 1
     return skew
 
-class SkewTableaux(Parent, UniqueRepresentation):
+class SkewTableaux(UniqueRepresentation, Parent):
     r"""
     Class of all skew tableaux.
     """

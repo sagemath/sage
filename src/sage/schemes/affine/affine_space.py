@@ -759,6 +759,7 @@ class AffineSpace_field(AffineSpace_generic):
         - an iterator of points in self
 
         EXAMPLES::
+
             sage: A.<x,y> = AffineSpace(QQ,2)
             sage: list(A.points_of_bounded_height(3))
             [(0, 0), (1, 0), (-1, 0), (1/2, 0), (-1/2, 0), (2, 0), (-2, 0), (0, 1),

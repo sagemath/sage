@@ -19,7 +19,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.family import Family
 from sage.combinat.root_system.cartan_type import CartanType
 
-class CartanTypeFolded(SageObject, UniqueRepresentation):
+class CartanTypeFolded(UniqueRepresentation, SageObject):
     r"""
     A Cartan type realized from a (Dynkin) diagram folding.
 
@@ -193,6 +193,8 @@ class CartanTypeFolded(SageObject, UniqueRepresentation):
 
             sage: fct = CartanType(['C',4,1]).as_folding()
             sage: TestSuite(fct).run()
+            sage: hash(fct)  # random
+            42
         """
         self._cartan_type = cartan_type
         self._folding = folding_of

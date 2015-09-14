@@ -40,7 +40,8 @@ from sage.misc.lazy_attribute import lazy_class_attribute
 from cpython.bool cimport *
 from cpython.ref cimport *
 
-cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
+cdef extern from "Python.h":
+    cdef size_t SIZEOF_VOID_P
 
 cdef class WithEqualityById:
     """
@@ -150,15 +151,14 @@ cdef class WithEqualityById:
             sage: hash(a) == object.__hash__(a)
             True
 
+            sage: from sage.misc.fast_methods import WithEqualityById
+            sage: o1 = WithEqualityById()
+            sage: o2 = WithEqualityById()
+            sage: hash(o1) == hash(o2)
+            False
         """
         # This is the default hash function in Python's object.c:
-        cdef long x
-        cdef size_t y = <size_t><void *>self
-        y = (y >> 4) | (y << SIZEOF_VOID_P_SHIFT)
-        x = <long>y
-        if x==-1:
-            x = -2
-        return x
+        return hash_by_id(<void *>self)
 
     def __richcmp__(self, other, int m):
         """

@@ -7,6 +7,7 @@ Counting
 - :ref:`sage.combinat.expnums`
 - :ref:`sage.combinat.q_analogues`, :ref:`sage.combinat.q_bernoulli`
 - :ref:`sage.combinat.binary_recurrence_sequences`
+- :ref:`sage.rings.cfinite_sequence`
 - :ref:`sage.combinat.combinat`
 
 .. TODO::

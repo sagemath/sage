@@ -1,5 +1,5 @@
 r"""
-Continued fraction field
+Finite simple continued fractions
 
 Sage implements the field ``ContinuedFractionField`` (or ``CFF``
 for short) of finite simple continued fractions. This is really

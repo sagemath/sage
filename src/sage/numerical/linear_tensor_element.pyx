@@ -21,9 +21,7 @@ Here is an example of a linear function tensored with a vector space::
 
 from cpython.object cimport *
 
-cdef extern from "limits.h":
-    long LONG_MAX
-
+from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.element cimport ModuleElement, RingElement
 from sage.numerical.linear_functions cimport LinearFunction, is_LinearFunction
 
@@ -357,9 +355,9 @@ cdef class LinearTensor(ModuleElement):
             result[key] = b * coeff
         return self.parent()(result)
 
-    def __richcmp__(left, right, int op):
+    cdef _richcmp(left, right, int op):
         """
-        Override the rich comparison.
+        Create an inequality or equality object.
 
         EXAMPLES::
 
@@ -368,14 +366,8 @@ cdef class LinearTensor(ModuleElement):
             sage: lt1 = x[1] * vector([2,3])
             sage: lt0.__le__(lt1)    # indirect doctest
             (1.0, 2.0)*x_0 <= (2.0, 3.0)*x_1
-        """
-        return (<LinearTensor>left)._richcmp(right, op)
 
-    cdef _richcmp(left, right, int op):
-        """
-        Create a inequality or equality object.
-
-        EXAMPLE::
+        ::
 
             sage: mip.<x> = MixedIntegerLinearProgram()
             sage: from sage.numerical.linear_functions import LinearFunction
@@ -460,20 +452,7 @@ cdef class LinearTensor(ModuleElement):
             sage: d[f] = 3
         """
         # see _cmp_() if you want to change the hash function
-        return id(self) % LONG_MAX
-
-    def __cmp__(left, right):
-        """
-        Part of the comparison framework.
-
-        EXAMPLES::
-
-            sage: p = MixedIntegerLinearProgram()
-            sage: f = p({2 : 5, 3 : 2})
-            sage: cmp(f, f)
-            0
-        """
-        return (<Element>left)._cmp(right)
+        return hash_by_id(<void *> self)
 
     cpdef int _cmp_(left, Element right) except -2:
         """

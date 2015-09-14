@@ -4056,6 +4056,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.is_square() and self.determinant().is_unit()
 
+    is_unit = is_invertible
+
     def is_singular(self):
         r"""
         Returns ``True`` if ``self`` is singular.
@@ -4760,7 +4762,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             MS = self.matrix_space(n, m)
             return MS(X).transpose()
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef ModuleElement _add_(self, ModuleElement _right):
         """
         Add two matrices with the same parent.
 
@@ -4776,13 +4778,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef Py_ssize_t i, j
         cdef Matrix A
+        cdef Matrix right = _right
         A = self.new_matrix()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
-                A.set_unsafe(i,j, self.get_unsafe(i,j) + (<Matrix>right).get_unsafe(i,j))
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                A.set_unsafe(i,j,self.get_unsafe(i,j)._add_(right.get_unsafe(i,j)))
         return A
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef ModuleElement _sub_(self, ModuleElement _right):
         """
         Subtract two matrices with the same parent.
 
@@ -4798,22 +4801,22 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef Py_ssize_t i, j
         cdef Matrix A
+        cdef Matrix right = _right
         A = self.new_matrix()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
-                A.set_unsafe(i,j, self.get_unsafe(i,j) - (<Matrix>right).get_unsafe(i,j))
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                A.set_unsafe(i,j,self.get_unsafe(i,j)._sub_(right.get_unsafe(i,j)))
         return A
-
 
     def __mod__(self, p):
         r"""
         Return matrix mod `p`, returning again a matrix over the
         same base ring.
 
-        .. note::
+        .. NOTE::
 
-           Use ``A.Mod(p)`` to obtain a matrix over the residue class
-           ring modulo `p`.
+           Use :meth:`mod` to obtain a matrix over the residue class ring
+           modulo `p`.
 
         EXAMPLES::
 
@@ -4824,11 +4827,13 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: parent(M % 7)
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
         """
-        cdef Py_ssize_t i
-        v = self.list()
-        for i from 0 <= i < len(v):
-            v[i] = v[i] % p
-        return self.new_matrix(entries = v, copy=False, coerce=True)
+        cdef Py_ssize_t i, j
+        cdef Matrix s = self
+        cdef Matrix A = s.new_matrix()
+        for i in range(A._nrows):
+            for j in range(A._ncols):
+                A[i,j] = s.get_unsafe(i,j) % p
+        return A
 
     def mod(self, p):
         """

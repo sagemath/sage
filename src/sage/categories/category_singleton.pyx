@@ -94,7 +94,7 @@ class Category_singleton(Category):
     This is a subclass of :class:`Category`, with a couple
     optimizations for singleton categories.
 
-    The main purpose is to make the idioms:
+    The main purpose is to make the idioms::
 
         sage: QQ in Fields()
         True
@@ -287,7 +287,7 @@ class Category_singleton(Category):
             sage: MyRingsSingleton()
             Category of my rings singleton
 
-        Instanciating :class:`Category_singleton` triggers an assertion error::
+        Instantiating :class:`Category_singleton` triggers an assertion error::
 
             sage: Category_singleton()
             Traceback (most recent call last):
@@ -319,7 +319,7 @@ class Category_singleton(Category):
         # TODO: find a better way to check that cls is an abstract class
         from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
         assert (cls.__mro__[1] is Category_singleton or cls.__mro__[1] is CategoryWithAxiom_singleton), \
-            "%s is not a direct subclass of %s"%(cls, Category_singleton)
+            "{} is not a direct subclass of {}".format(cls, Category_singleton)
         obj = super(Category_singleton, cls).__classcall__(cls, *args)
         cls._set_classcall(ConstantFunction(obj))
         obj.__class__._set_classcall(ConstantFunction(obj))

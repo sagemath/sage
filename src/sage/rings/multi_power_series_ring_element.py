@@ -1,5 +1,5 @@
 r"""
-Multivariate Power Series.
+Multivariate Power Series
 
 Construct and manipulate multivariate power series (in finitely many
 variables) over a given commutative ring. Multivariate power series

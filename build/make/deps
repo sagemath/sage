@@ -5,14 +5,13 @@
 
 # Do not put an explicit path for sage-spkg here, it will be found in $PATH.
 SAGE_SPKG = sage-spkg -f
-PIPE = $(SAGE_ROOT)/build/make/pipestatus
 STARTED = $(SAGE_LOCAL)/etc/sage-started.txt
 
 # Tell make not to look for files with these names:
 .PHONY: all all-sage all-toolchain all-build start \
 	base toolchain toolchain-deps sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
-	doc-clean clean lib-clean build-clean
+	doc-clean clean sagelib-clean build-clean
 
 # Build everything and start Sage.
 # Note that we put the "doc" target first in the rule below because
@@ -138,7 +137,7 @@ sagelib: \
 		$(INST)/$(NUMPY) \
 		$(INST)/$(PARI) \
 		$(INST)/$(PLANARITY) \
-		$(INST)/$(POLYBORI) \
+		$(INST)/$(BRIAL) \
 		$(INST)/$(PPL) \
 		$(INST)/$(PYNAC) \
 		$(INST)/$(PYTHON) \
@@ -151,7 +150,7 @@ sagelib: \
 		$(INST)/$(ZN_POLY)
 	if [ -z "$$SAGE_INSTALL_FETCH_ONLY" ]; then \
 		cd $(SAGE_SRC) && source bin/sage-env && \
-		$(PIPE) 'time $(MAKE) sage 2>&1' 'tee -a $(SAGE_LOGS)/sage-$(SAGE_VERSION).log'; \
+		sage-logger 'time $(MAKE) sage' '$(SAGE_LOGS)/sage-$(SAGE_VERSION).log'; \
 	fi
 
 
@@ -198,23 +197,23 @@ DOC_DEPENDENCIES = sagelib $(INST)/$(SPHINX) $(INST)/$(SAGENB) \
 doc: doc-html
 
 doc-html: $(DOC_DEPENDENCIES)
-	cd ../.. && $(PIPE) "./sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+	cd ../.. && sage-logger './sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
 
 # 'doc-html-no-plot': build docs without building the graphics coming
 # from the '.. plot' directive, in case you want to save a few
 # megabytes of disk space. 'doc-clean' is a prerequisite because the
 # presence of graphics is cached in src/doc/output.
 doc-html-no-plot: doc-clean $(DOC_DEPENDENCIES)
-	cd ../.. && $(PIPE) "./sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+	cd ../.. && sage-logger './sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
 
 doc-html-mathjax: $(DOC_DEPENDENCIES)
-	cd ../.. && $(PIPE) "./sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+	cd ../.. && sage-logger './sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
 
 # Keep target 'doc-html-jsmath' for backwards compatibility.
 doc-html-jsmath: doc-html-mathjax
 
 doc-pdf: $(DOC_DEPENDENCIES)
-	cd ../.. && $(PIPE) "./sage --docbuild all pdf $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/docpdf.log"
+	cd ../.. && sage-logger './sage --docbuild all pdf $(SAGE_DOCBUILD_OPTS)' logs/docpdf.log
 
 doc-clean:
 	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
@@ -228,7 +227,7 @@ clean:
 	@echo "Deleting package build directories..."
 	rm -rf "$(SAGE_LOCAL)/var/tmp/sage/build"
 
-lib-clean:
+sagelib-clean:
 	cd "$(SAGE_SRC)" && $(MAKE) clean
 
-build-clean: clean doc-clean lib-clean
+build-clean: clean doc-clean sagelib-clean

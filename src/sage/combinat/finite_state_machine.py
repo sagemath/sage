@@ -99,6 +99,7 @@ Properties
     :meth:`~FiniteStateMachine.is_Markov_chain` | Checks for a Markov chain
     :meth:`~FiniteStateMachine.is_monochromatic` | Checks whether the colors of all states are equal
     :meth:`~FiniteStateMachine.asymptotic_moments` | Main terms of expectation and variance of sums of labels
+    :meth:`~FiniteStateMachine.moments_waiting_time` | Moments of the waiting time for first true output
     :meth:`~FiniteStateMachine.epsilon_successors` | Epsilon successors of a state
     :meth:`Automaton.shannon_parry_markov_chain` | Compute Markov chain with Parry measure
 
@@ -111,8 +112,8 @@ Operations
     :delim: |
 
     :meth:`~FiniteStateMachine.disjoint_union` | Disjoint union
-    :meth:`~FiniteStateMachine.concatenation` | Concatenation (not implemented)
-    :meth:`~FiniteStateMachine.Kleene_closure` | Kleene closure (not implemented)
+    :meth:`~FiniteStateMachine.concatenation` | Concatenation
+    :meth:`~FiniteStateMachine.kleene_star` | Kleene star
     :meth:`Automaton.intersection` | Intersection of automata
     :meth:`Transducer.intersection` | Intersection of transducers
     :meth:`Transducer.cartesian_product` | Cartesian product of a transducer with another finite state machine
@@ -125,6 +126,7 @@ Operations
     :meth:`~FiniteStateMachine.transposition` | Transposition (all transitions are reversed)
     :meth:`~FiniteStateMachine.with_final_word_out` | Machine with final output constructed by implicitly reading trailing letters, cf. :meth:`~FiniteStateMachine.construct_final_word_out` for inplace version
     :meth:`Automaton.determinisation` | Determinisation of an automaton
+    :meth:`~FiniteStateMachine.completion` | Completion of a finite state machine
     :meth:`~FiniteStateMachine.process` | Process input
     :meth:`~FiniteStateMachine.__call__` | Process input with shortened output
     :meth:`Automaton.process` | Process input of an automaton (output differs from general case)
@@ -4096,7 +4098,7 @@ class FiniteStateMachine(SageObject):
         TEST:
 
         Check that :trac:`16357` is fixed::
-        
+
             sage: T = Transducer()
             sage: T.format_transition_label_reversed([])
             '\\varepsilon'
@@ -6836,27 +6838,296 @@ class FiniteStateMachine(SageObject):
 
     def concatenation(self, other):
         """
+        Concatenate this finite state machine with another finite
+        state machine.
+
+        INPUT:
+
+        - ``other`` -- a :class:`FiniteStateMachine`.
+
+        OUTPUT:
+
+        A :class:`FiniteStateMachine` of the same type as this finite
+        state machine.
+
+        Assume that both finite state machines are automata. If
+        `\mathcal{L}_1` is the language accepted by this automaton and
+        `\mathcal{L}_2` is the language accepted by the other automaton,
+        then the language accepted by the concatenated automaton is
+        `\{ w_1w_2 \mid w_1\in\mathcal{L}_1, w_2\in\mathcal{L}_2\}` where
+        `w_1w_2` denotes the concatenation of the words `w_1` and `w_2`.
+
+        Assume that both finite state machines are transducers and that
+        this transducer maps words `w_1\in\mathcal{L}_1` to words
+        `f_1(w_1)` and that the other transducer maps words
+        `w_2\in\mathcal{L}_2` to words `f_2(w_2)`. Then the concatenated
+        transducer maps words `w_1w_2` with `w_1\in\mathcal{L}_1` and
+        `w_2\in\mathcal{L}_2` to `f_1(w_1)f_2(w_2)`. Here, `w_1w_2` and
+        `f_1(w_1)f_2(w_2)` again denote concatenation of words.
+
+        The input alphabet is the union of the input alphabets (if
+        possible) and ``None`` otherwise. In the latter case, try
+        calling :meth:`.determine_alphabets`.
+
+        Instead of ``A.concatenation(B)``, the notation ``A * B`` can be
+        used.
+
+        EXAMPLES:
+
+        Concatenation of two automata::
+
+            sage: A = automata.word([0])
+            sage: B = automata.word([1])
+            sage: C = A.concatenation(B)
+            sage: C.transitions()
+            [Transition from (0, 0) to (0, 1): 0|-,
+             Transition from (0, 1) to (1, 0): -|-,
+             Transition from (1, 0) to (1, 1): 1|-]
+            sage: [w
+            ....:  for w in ([0, 0], [0, 1], [1, 0], [1, 1])
+            ....:  if C(w)]
+            [[0, 1]]
+            sage: from sage.combinat.finite_state_machine import (
+            ....:     is_Automaton, is_Transducer)
+            sage: is_Automaton(C)
+            True
+
+        Concatenation of two transducers::
+
+            sage: A = Transducer([(0, 1, 0, 1), (0, 1, 1, 2)],
+            ....:                initial_states=[0],
+            ....:                final_states=[1])
+            sage: B = Transducer([(0, 1, 0, 1), (0, 1, 1, 0)],
+            ....:                initial_states=[0],
+            ....:                final_states=[1])
+            sage: C = A.concatenation(B)
+            sage: C.transitions()
+            [Transition from (0, 0) to (0, 1): 0|1,
+             Transition from (0, 0) to (0, 1): 1|2,
+             Transition from (0, 1) to (1, 0): -|-,
+             Transition from (1, 0) to (1, 1): 0|1,
+             Transition from (1, 0) to (1, 1): 1|0]
+            sage: [(w, C(w)) for w in ([0, 0], [0, 1], [1, 0], [1, 1])]
+            [([0, 0], [1, 1]),
+             ([0, 1], [1, 0]),
+             ([1, 0], [2, 1]),
+             ([1, 1], [2, 0])]
+            sage: is_Transducer(C)
+            True
+
+
+        Alternative notation as multiplication::
+
+            sage: C == A * B
+            True
+
+        Final output words are taken into account::
+
+            sage: A = Transducer([(0, 1, 0, 1)],
+            ....:                initial_states=[0],
+            ....:                final_states=[1])
+            sage: A.state(1).final_word_out = 2
+            sage: B = Transducer([(0, 1, 0, 3)],
+            ....:                initial_states=[0],
+            ....:                final_states=[1])
+            sage: B.state(1).final_word_out = 4
+            sage: C = A * B
+            sage: C([0, 0])
+            [1, 2, 3, 4]
+
+        Handling of the input alphabet::
+
+            sage: A = Automaton([(0, 0, 0)])
+            sage: B = Automaton([(0, 0, 1)], input_alphabet=[1, 2])
+            sage: C = Automaton([(0, 0, 2)], determine_alphabets=False)
+            sage: D = Automaton([(0, 0, [[0, 0]])], input_alphabet=[[0, 0]])
+            sage: A.input_alphabet
+            [0]
+            sage: B.input_alphabet
+            [1, 2]
+            sage: C.input_alphabet is None
+            True
+            sage: D.input_alphabet
+            [[0, 0]]
+            sage: (A * B).input_alphabet
+            [0, 1, 2]
+            sage: (A * C).input_alphabet is None
+            True
+            sage: (A * D).input_alphabet is None
+            True
+
+        .. SEEALSO::
+
+            :meth:`~.disjoint_union`, :meth:`.determine_alphabets`.
+
         TESTS::
 
-            sage: F = FiniteStateMachine([('A', 'A')])
-            sage: FiniteStateMachine().concatenation(F)
+            sage: A = Automaton()
+            sage: F = FiniteStateMachine()
+            sage: A * F
             Traceback (most recent call last):
             ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
-
-    def Kleene_closure(self):
-        """
-        TESTS::
-
-            sage: FiniteStateMachine().Kleene_closure()
+            TypeError: Cannot concatenate finite state machines of
+            different types.
+            sage: F * A
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            TypeError: Cannot concatenate finite state machines of
+            different types.
+            sage: F * 5
+            Traceback (most recent call last):
+            ...
+            TypeError: A finite state machine can only be concatenated
+            with a another finite state machine.
         """
-        raise NotImplementedError
+        if not is_FiniteStateMachine(other):
+            raise TypeError('A finite state machine can only be concatenated '
+                            'with a another finite state machine.')
+        if is_Automaton(other) != is_Automaton(self):
+            raise TypeError('Cannot concatenate finite state machines of '
+                            'different types.')
+
+        result = self.empty_copy()
+        first_states = {}
+        second_states = {}
+        for s in self.iter_states():
+            new_state = s.relabeled((0, s.label()))
+            new_state.final_word_out = None
+            new_state.is_final = False
+            first_states[s] = new_state
+            result.add_state(new_state)
+
+        for s in other.iter_states():
+            new_state = s.relabeled((1, s.label()))
+            new_state.is_initial = False
+            second_states[s] = new_state
+            result.add_state(new_state)
+
+        for t in self.iter_transitions():
+            result.add_transition(first_states[t.from_state],
+                                  first_states[t.to_state],
+                                  t.word_in,
+                                  t.word_out)
+
+        for t in other.iter_transitions():
+            result.add_transition(second_states[t.from_state],
+                                  second_states[t.to_state],
+                                  t.word_in,
+                                  t.word_out)
+
+        for s in self.iter_final_states():
+            first_state = first_states[s]
+            for t in other.iter_initial_states():
+                second_state = second_states[t]
+                result.add_transition(first_state,
+                                      second_state,
+                                      [],
+                                      s.final_word_out)
+
+        try:
+            result.input_alphabet = list(set(self.input_alphabet)
+                                         | set(other.input_alphabet))
+        except TypeError:
+            # e.g. None or unhashable letters
+            result.input_alphabet = None
+
+        return result
+
+    __mul__ = concatenation
+
+
+    def kleene_star(self):
+        r"""
+        Compute the Kleene closure of this finite state machine.
+
+        OUTPUT:
+
+        A :class:`FiniteStateMachine` of the same type as this finite
+        state machine.
+
+        Assume that this finite state machine is an automaton
+        recognizing the language `\mathcal{L}`.  Then the Kleene star
+        recognizes the language `\mathcal{L}^*=\{ w_1\ldots w_n \mid
+        n\ge 0, w_j\in\mathcal{L} \text{ for all } j\}`.
+
+        Assume that this finite state machine is a transducer realizing
+        a function `f` on some alphabet `\mathcal{L}`. Then the Kleene
+        star realizes a function `g` on `\mathcal{L}^*` with
+        `g(w_1\ldots w_n)=f(w_1)\ldots f(w_n)`.
+
+        EXAMPLES:
+
+        Kleene star of an automaton::
+
+            sage: A = automata.word([0, 1])
+            sage: B = A.kleene_star()
+            sage: B.transitions()
+            [Transition from 0 to 1: 0|-,
+             Transition from 2 to 0: -|-,
+             Transition from 1 to 2: 1|-]
+            sage: from sage.combinat.finite_state_machine import (
+            ....:     is_Automaton, is_Transducer)
+            sage: is_Automaton(B)
+            True
+            sage: [w for w in ([], [0, 1], [0, 1, 0], [0, 1, 0, 1], [0, 1, 1, 1])
+            ....:  if B(w)]
+            [[],
+             [0, 1],
+             [0, 1, 0, 1]]
+
+        Kleene star of a transducer::
+
+            sage: T = Transducer([(0, 1, 0, 1), (0, 1, 1, 0)],
+            ....:                initial_states=[0],
+            ....:                final_states=[1])
+            sage: S = T.kleene_star()
+            sage: S.transitions()
+            [Transition from 0 to 1: 0|1,
+             Transition from 0 to 1: 1|0,
+             Transition from 1 to 0: -|-]
+            sage: is_Transducer(S)
+            True
+            sage: for w in ([], [0], [1], [0, 0], [0, 1]):
+            ....:     print w, S.process(w)
+            []     (True, 0, [])
+            [0]    [(True, 0, [1]), (True, 1, [1])]
+            [1]    [(True, 0, [0]), (True, 1, [0])]
+            [0, 0] [(True, 0, [1, 1]), (True, 1, [1, 1])]
+            [0, 1] [(True, 0, [1, 0]), (True, 1, [1, 0])]
+
+        Final output words are taken into account::
+
+            sage: T = Transducer([(0, 1, 0, 1)],
+            ....:                initial_states=[0],
+            ....:                final_states=[1])
+            sage: T.state(1).final_word_out = 2
+            sage: S = T.kleene_star()
+            sage: S.process([0, 0])
+            [(True, 0, [1, 2, 1, 2]), (True, 1, [1, 2, 1, 2])]
+
+        Final output words may lead to undesirable situations if initial
+        states and final states coincide::
+
+            sage: T = Transducer(initial_states=[0], final_states=[0])
+            sage: T.state(0).final_word_out = 1
+            sage: T([])
+            [1]
+            sage: S = T.kleene_star()
+            sage: S([])
+            Traceback (most recent call last):
+            ...
+            RuntimeError: State 0 is in an epsilon cycle (no input), but
+            output is written.
+        """
+        result = deepcopy(self)
+        for initial in result.iter_initial_states():
+            for final in result.iter_final_states():
+                result.add_transition(final, initial, [], final.final_word_out)
+
+        for initial in result.iter_initial_states():
+            initial.is_final = True
+
+        return result
 
 
     def intersection(self, other):
@@ -7896,6 +8167,156 @@ class FiniteStateMachine(SageObject):
         return [self.induced_sub_finite_state_machine([self.state(_) for _ in component])
                 for component in condensation.vertices()
                 if condensation.out_degree(component) == 0]
+
+
+    def completion(self, sink=None):
+        """
+        Return a completion of this finite state machine.
+
+        INPUT:
+
+        - ``sink`` -- either an instance of :class:`FSMState` or a label
+          for the sink (default: ``None``). If ``None``, the least
+          available non-zero integer is used.
+
+        OUTPUT:
+
+        A :class:`FiniteStateMachine` of the same type as this finite
+        state machine.
+
+        The resulting finite state machine is a complete version of this
+        finite state machine.  A finite state machine is considered to
+        be complete if each transition has an input label of length one
+        and for each pair `(q, a)` where `q` is a state and `a` is an
+        element of the input alphabet, there is exactly one transition
+        from `q` with input label `a`.
+
+        If this finite state machine is already complete, a deep copy is
+        returned. Otherwise, a new non-final state (usually called a
+        sink) is created and transitions to this sink are introduced as
+        appropriate.
+
+        EXAMPLES::
+
+            sage: F = FiniteStateMachine([(0, 0, 0, 0),
+            ....:                         (0, 1, 1, 1),
+            ....:                         (1, 1, 0, 0)])
+            sage: F.is_complete()
+            False
+            sage: G1 = F.completion()
+            sage: G1.is_complete()
+            True
+            sage: G1.transitions()
+            [Transition from 0 to 0: 0|0,
+             Transition from 0 to 1: 1|1,
+             Transition from 1 to 1: 0|0,
+             Transition from 1 to 2: 1|-,
+             Transition from 2 to 2: 0|-,
+             Transition from 2 to 2: 1|-]
+            sage: G2 = F.completion('Sink')
+            sage: G2.is_complete()
+            True
+            sage: G2.transitions()
+            [Transition from 0 to 0: 0|0,
+             Transition from 0 to 1: 1|1,
+             Transition from 1 to 1: 0|0,
+             Transition from 1 to 'Sink': 1|-,
+             Transition from 'Sink' to 'Sink': 0|-,
+             Transition from 'Sink' to 'Sink': 1|-]
+            sage: F.completion(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: The finite state machine already contains a state
+            '1'.
+
+        An input alphabet must be given::
+
+            sage: F = FiniteStateMachine([(0, 0, 0, 0),
+            ....:                         (0, 1, 1, 1),
+            ....:                         (1, 1, 0, 0)],
+            ....:                        determine_alphabets=False)
+            sage: F.is_complete()
+            Traceback (most recent call last):
+            ...
+            ValueError: No input alphabet is given. Try calling
+            determine_alphabets().
+
+        Non-deterministic machines are not allowed. ::
+
+            sage: F = FiniteStateMachine([(0, 0, 0, 0), (0, 1, 0, 0)])
+            sage: F.is_complete()
+            False
+            sage: F.completion()
+            Traceback (most recent call last):
+            ...
+            ValueError: The finite state machine must be deterministic.
+            sage: F = FiniteStateMachine([(0, 0, [0, 0], 0)])
+            sage: F.is_complete()
+            False
+            sage: F.completion()
+            Traceback (most recent call last):
+            ...
+            ValueError: The finite state machine must be deterministic.
+
+        .. SEEALSO::
+
+            :meth:`is_complete`, :meth:`split_transitions`,
+            :meth:`determine_alphabets`, :meth:`is_deterministic`
+
+        TESTS:
+
+        Test the use of an :class:`FSMState` as sink::
+
+            sage: F = FiniteStateMachine([(0, 0, 0, 0),
+            ....:                         (0, 1, 1, 1),
+            ....:                         (1, 1, 0, 0)])
+            sage: from sage.combinat.finite_state_machine import FSMState
+            sage: F.completion(FSMState(1))
+            Traceback (most recent call last):
+            ...
+            ValueError: The finite state machine already contains a state
+            '1'.
+            sage: s = FSMState(2)
+            sage: G = F.completion(s)
+            sage: G.state(2) is s
+            True
+        """
+        result = deepcopy(self)
+        if result.is_complete():
+            return result
+        if not result.is_deterministic():
+            raise ValueError(
+                "The finite state machine must be deterministic.")
+
+        if sink is not None:
+            try:
+                s = result.state(sink)
+                raise ValueError("The finite state machine already "
+                                 "contains a state '%s'." % s.label())
+            except LookupError:
+                pass
+        else:
+            sink = 1 + max(itertools.chain(
+                    [-1],
+                    (s.label() for s in result.iter_states()
+                     if s.label() in ZZ)))
+
+        sink_state = result.add_state(sink)
+
+        for state in result.iter_states():
+            for transition in state.transitions:
+                if len(transition.word_in) != 1:
+                    raise ValueError(
+                        "Transitions with input labels of length greater "
+                        "than one are not allowed. Try calling "
+                        "split_transitions().")
+
+            existing = set(transition.word_in[0]
+                           for transition in state.transitions)
+            for missing in set(result.input_alphabet) - existing:
+                result.add_transition(state, sink_state, missing)
+
+        return result
 
 
     # *************************************************************************
@@ -9363,6 +9784,408 @@ class FiniteStateMachine(SageObject):
                 'covariance': c*variable + SR(1).Order()}
 
 
+    def moments_waiting_time(self, test=bool, is_zero=None,
+                             expectation_only=False):
+        ur"""
+        If this finite state machine acts as a Markov chain, return
+        the expectation and variance of the number of steps until
+        first writing ``True``.
+
+        INPUT:
+
+        - ``test`` -- (default: ``bool``) a callable deciding whether
+          an output label is to be considered ``True``. By default, the
+          standard conversion to boolean is used.
+
+        - ``is_zero`` -- (default: ``None``) a callable deciding
+          whether an expression for a probability is zero. By default,
+          checking for zero is simply done by
+          :meth:`~sage.structure.element.Element.is_zero`.  This
+          parameter can be used to provide a more sophisticated check
+          for zero, e.g. in the case of symbolic probabilities, see
+          the examples below. This parameter is passed on to
+          :meth:`is_Markov_chain`. This parameter only affects the
+          input of the Markov chain.
+
+        - ``expectation_only`` -- (default: ``False``) if set, the
+          variance is not computed (in order to save time). By default,
+          the variance is computed.
+
+        OUTPUT:
+
+        A dictionary (if ``expectation_only=False``) consisting of
+
+        - ``expectation``,
+        - ``variance``.
+
+        Otherwise, just the expectation is returned (no dictionary for
+        ``expectation_only=True``).
+
+        Expectation and variance of the number of steps until first
+        writing ``True`` (as determined by the parameter ``test``).
+
+        ALGORITHM:
+
+        Relies on a (classical and easy) probabilistic argument,
+        cf. [FGT1992]_, Eqns. (6) and (7).
+
+        For the variance, see [FHP2015]_, Section 2.
+
+        EXAMPLES:
+
+        #.  The simplest example is to wait for the first `1` in a
+            `0`-`1`-string where both digits appear with probability
+            `1/2`. In fact, the waiting time equals `k` if and only if
+            the string starts with `0^{k-1}1`. This event occurs with
+            probability `2^{-k}`. Therefore, the expected waiting time
+            and the variance are `\sum_{k\ge 1} k2^{-k}=2` and
+            `\sum_{k\ge 1} (k-2)^2 2^{-k}=2`::
+
+                sage: var('k')
+                k
+                sage: sum(k * 2^(-k), k, 1, infinity)
+                2
+                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)
+                2
+
+            We now compute the same expectation and variance by using a
+            Markov chain::
+
+                sage: from sage.combinat.finite_state_machine import (
+                ....:     duplicate_transition_add_input)
+                sage: T = Transducer(
+                ....:     [(0, 0, 1/2, 0), (0, 0, 1/2, 1)],
+                ....:     on_duplicate_transition=\
+                ....:         duplicate_transition_add_input,
+                ....:     initial_states=[0],
+                ....:     final_states=[0])
+                sage: T.moments_waiting_time()
+                {'expectation': 2, 'variance': 2}
+                sage: T.moments_waiting_time(expectation_only=True)
+                2
+
+            In the following, we replace the output ``0`` by ``-1`` and
+            demonstrate the use of the parameter ``test``::
+
+                sage: T.delete_transition((0, 0, 1/2, 0))
+                sage: T.add_transition((0, 0, 1/2, -1))
+                Transition from 0 to 0: 1/2|-1
+                sage: T.moments_waiting_time(test=lambda x: x<0)
+                {'expectation': 2, 'variance': 2}
+
+        #.  Make sure that the transducer is actually a Markov
+            chain. Although this is checked by the code, unexpected
+            behaviour may still occur if the transducer looks like a
+            Markov chain. In the following example, we 'forget' to
+            assign probabilities, but due to a coincidence, all
+            'probabilities' add up to one. Nevertheless, `0` is never
+            written, so the expectation is `1`.
+
+            ::
+
+                sage: T = Transducer([(0, 0, 0, 0), (0, 0, 1, 1)],
+                ....:                on_duplicate_transition=\
+                ....:                    duplicate_transition_add_input,
+                ....:                initial_states=[0],
+                ....:                final_states=[0])
+                sage: T.moments_waiting_time()
+                {'expectation': 1, 'variance': 0}
+
+        #.  If ``True`` is never written, the moments are
+            ``+Infinity``::
+
+                sage: T = Transducer([(0, 0, 1, 0)],
+                ....:                on_duplicate_transition=\
+                ....:                    duplicate_transition_add_input,
+                ....:                initial_states=[0],
+                ....:                final_states=[0])
+                sage: T.moments_waiting_time()
+                {'expectation': +Infinity, 'variance': +Infinity}
+
+        #.  Let `h` and `r` be positive integers. We consider random
+            strings of letters `1`, `\ldots`, `r` where the letter `j`
+            occurs with probability `p_j`. Let `B` be the random
+            variable giving the first position of a block of `h`
+            consecutive identical letters. Then
+
+            .. MATH::
+
+                \begin{aligned}
+                \mathbb{E}(B)&=\frac1{\displaystyle\sum_{i=1}^r
+                \frac1{p_i^{-1}+\cdots+p_i^{-h}}},\\
+                \mathbb{V}(B)&=\frac{\displaystyle\sum_{i=1}^r\biggl(
+                \frac{p_i +p_i^h}{1-p_i^h}
+                - 2h\frac{ p_i^h(1-p_i)}{(1-p_i^h)^2}\biggr)}
+                {\displaystyle\biggl(\sum_{i=1}^r
+                \frac1{p_i^{-1}+\cdots+p_i^{-h}}\biggr)^2}
+                \end{aligned}
+
+            cf. [S1986]_, p. 62, or [FHP2015]_, Theorem 1. We now
+            verify this with a transducer approach.
+
+            ::
+
+                sage: def test(h, r):
+                ....:     R = PolynomialRing(
+                ....:             QQ,
+                ....:             names=['p_%d' % j for j in range(r)])
+                ....:     p = R.gens()
+                ....:     def is_zero(polynomial):
+                ....:         return polynomial in (sum(p) - 1) * R
+                ....:     theory_expectation = 1/(sum(1/sum(p[j]^(-i)
+                ....:                     for i in range(1, h+1))
+                ....:                     for j in range(r)))
+                ....:     theory_variance = sum(
+                ....:         (p[i] + p[i]^h)/(1 - p[i]^h)
+                ....:         - 2*h*p[i]^h * (1 - p[i])/(1 - p[i]^h)^2
+                ....:         for i in range(r)
+                ....:         ) * theory_expectation^2
+                ....:     alphabet = range(r)
+                ....:     counters = [
+                ....:         transducers.CountSubblockOccurrences([j]*h,
+                ....:                     alphabet)
+                ....:         for j in alphabet]
+                ....:     all_counter = counters[0].cartesian_product(
+                ....:         counters[1:])
+                ....:     adder = transducers.add(input_alphabet=[0, 1],
+                ....:         number_of_operands=r)
+                ....:     probabilities = Transducer(
+                ....:        [(0, 0, p[j], j) for j in alphabet],
+                ....:        initial_states=[0],
+                ....:        final_states=[0],
+                ....:        on_duplicate_transition=\
+                ....:            duplicate_transition_add_input)
+                ....:     chain = adder(all_counter(probabilities))
+                ....:     result = chain.moments_waiting_time(
+                ....:        is_zero=is_zero)
+                ....:     return is_zero((result['expectation'] -
+                ....:                theory_expectation).numerator()) \
+                ....:            and \
+                ....:            is_zero((result['variance'] -
+                ....:                 theory_variance).numerator())
+                sage: test(2, 2)
+                True
+                sage: test(2, 3)
+                True
+                sage: test(3, 3)
+                True
+
+        #.  Consider the alphabet `\{0, \ldots, r-1\}`, some `1\le j\le
+            r` and some `h\ge 1`.  For some probabilities `p_0`,
+            `\ldots`, `p_{r-1}`, we consider infinite words where the
+            letters occur independently with the given probabilities.
+            The random variable `B_j` is the first position `n` such
+            that there exist `j` of the `r` letters having an `h`-run.
+            The expectation of `B_j` is given in [FHP2015]_, Theorem 2.
+            Here, we verify this result by using transducers::
+
+                sage: def test(h, r, j):
+                ....:     R = PolynomialRing(
+                ....:             QQ,
+                ....:             names=['p_%d' % i for i in range(r)])
+                ....:     p = R.gens()
+                ....:     def is_zero(polynomial):
+                ....:         return polynomial in (sum(p) - 1) * R
+                ....:     alphabet = range(r)
+                ....:     counters = [
+                ....:         transducers.Wait([0, 1])(
+                ....:             transducers.CountSubblockOccurrences(
+                ....:                 [i]*h,
+                ....:                 alphabet))
+                ....:         for i in alphabet]
+                ....:     all_counter = counters[0].cartesian_product(
+                ....:         counters[1:])
+                ....:     adder = transducers.add(input_alphabet=[0, 1],
+                ....:         number_of_operands=r)
+                ....:     threshold = transducers.map(
+                ....:         f=lambda x: x >= j,
+                ....:         input_alphabet=srange(r+1))
+                ....:     probabilities = Transducer(
+                ....:         [(0, 0, p[i], i) for i in alphabet],
+                ....:         initial_states=[0],
+                ....:         final_states=[0],
+                ....:         on_duplicate_transition=\
+                ....:             duplicate_transition_add_input)
+                ....:     chain = threshold(adder(all_counter(
+                ....:         probabilities)))
+                ....:     result = chain.moments_waiting_time(
+                ....:         is_zero=is_zero,
+                ....:         expectation_only=True)
+                ....:
+                ....:     R_v = PolynomialRing(
+                ....:             QQ,
+                ....:             names=['p_%d' % i for i in range(r)])
+                ....:     v = R_v.gens()
+                ....:     S = 1/(1 - sum(v[i]/(1+v[i])
+                ....:                    for i in range(r)))
+                ....:     alpha = [(p[i] - p[i]^h)/(1 - p[i])
+                ....:              for i in range(r)]
+                ....:     gamma = [p[i]/(1 - p[i]) for i in range(r)]
+                ....:     alphabet_set = set(alphabet)
+                ....:     expectation = 0
+                ....:     for q in range(j):
+                ....:         for M in Subsets(alphabet_set, q):
+                ....:             summand = S
+                ....:             for i in M:
+                ....:                 summand = summand.subs(
+                ....:                     {v[i]: gamma[i]}) -\
+                ....:                     summand.subs({v[i]: alpha[i]})
+                ....:             for i in alphabet_set - set(M):
+                ....:                 summand = summand.subs(
+                ....:                     {v[i]: alpha[i]})
+                ....:             expectation += summand
+                ....:     return is_zero((result - expectation).\
+                ....:             numerator())
+                sage: test(2, 3, 2)
+                True
+
+        REFERENCES:
+
+        .. [FGT1992] Philippe Flajolet, Danièle Gardy, Loÿs Thimonier,
+           *Birthday paradox, coupon collectors, caching algorithms and
+           self-organizing search*, Discrete Appl. Math. 39 (1992),
+           207--229, :doi:`10.1016/0166-218X(92)90177-C`.
+
+        .. [FHP2015] Uta Freiberg, Clemens Heuberger, Helmut Prodinger,
+           *Application of Smirnov Words to Waiting Time Distributions
+           of Runs*, :arxiv:`1503.08096`.
+
+        .. [S1986] Gábor J. Székely, *Paradoxes in Probability Theory
+           and Mathematical Statistics*, D. Reidel Publishing Company.
+
+        TESTS:
+
+        Only Markov chains are acceptable::
+
+            sage: T = transducers.Identity([0, 1, 2])
+            sage: T.moments_waiting_time()
+            Traceback (most recent call last):
+            ...
+            ValueError: Only Markov chains can compute
+            moments_waiting_time.
+
+        There must be a unique initial state::
+
+            sage: T = Transducer([(0, 1, 1, 1), (1, 0, 1, 0)],
+            ....:                on_duplicate_transition=\
+            ....:                    duplicate_transition_add_input)
+            sage: T.moments_waiting_time()
+            Traceback (most recent call last):
+            ...
+            ValueError: Unique initial state is required.
+
+        Using `0` as initial state in this example, a `1` is written in
+        the first step with probability `1`, so the waiting time is
+        always `1`::
+
+            sage: T.state(0).is_initial = True
+            sage: T.moments_waiting_time()
+            {'expectation': 1, 'variance': 0}
+
+        Using both `0` and `1` as initial states again yields an error
+        message::
+
+            sage: T.state(1).is_initial = True
+            sage: T.moments_waiting_time()
+            Traceback (most recent call last):
+            ...
+            ValueError: Unique initial state is required.
+
+        Detection of infinite waiting time for symbolic probabilities::
+
+            sage: R.<p, q> = PolynomialRing(QQ)
+            sage: T = Transducer([(0, 0, p, 0), (0, 0, q, 0)],
+            ....:                initial_states=[0],
+            ....:                on_duplicate_transition=\
+            ....:                    duplicate_transition_add_input)
+            sage: T.moments_waiting_time(
+            ....:     is_zero=lambda e: e in (p + q - 1)*R)
+            {'expectation': +Infinity, 'variance': +Infinity}
+        """
+        from sage.modules.free_module_element import vector
+        from sage.matrix.constructor import identity_matrix
+        from sage.rings.polynomial.polynomial_ring_constructor import\
+            PolynomialRing
+
+        def default_is_zero(expression):
+            return expression.is_zero()
+
+        is_zero_function = default_is_zero
+        if is_zero is not None:
+            is_zero_function = is_zero
+
+        if not self.is_Markov_chain(is_zero):
+            raise ValueError("Only Markov chains can compute "
+                             "moments_waiting_time.")
+
+        if len(self.initial_states()) != 1:
+            raise ValueError("Unique initial state is required.")
+
+        def entry(transition):
+            word_out = transition.word_out
+            if len(word_out) == 0 or (
+                len(word_out) == 1 and not test(word_out[0])):
+                return transition.word_in[0]
+            else:
+                return 0
+
+        relabeled = self.relabeled()
+        n = len(relabeled.states())
+        assert [s.label() for s in relabeled.states()] == range(n)
+        entry_vector = vector(ZZ(s.is_initial)
+                              for s in relabeled.states())
+        exit_vector = vector([1] * n)
+        transition_matrix = relabeled.adjacency_matrix(entry=entry)
+        # transition_matrix is the probability transition matrix
+        # of the part of the transducer before the occurrence of true
+        # output.
+        # We cannot use the input parameter of adjacency_matrix
+        # because we want to check for "true" input in the sense
+        # of python's boolean conversion. So we cannot give
+        # input=[False] as this might lead to strange phenomena.
+        if all(map(is_zero_function,
+                   transition_matrix * exit_vector - exit_vector)):
+            import sage.rings.infinity
+            expectation = sage.rings.infinity.PlusInfinity()
+            variance = sage.rings.infinity.PlusInfinity()
+        else:
+            if expectation_only:
+                system_matrix = identity_matrix(n) - transition_matrix
+                expectation = entry_vector * \
+                    system_matrix.solve_right(exit_vector)
+            else:
+                base_ring = transition_matrix.parent().base_ring()
+                from sage.rings.polynomial.multi_polynomial_ring \
+                    import is_MPolynomialRing
+                if is_MPolynomialRing(base_ring):
+                    # if base_ring is already a multivariate polynomial
+                    # ring, extend it instead of creating a univariate
+                    # polynomial ring over a polynomial ring.  This
+                    # should improve performance.
+                    R = PolynomialRing(
+                        base_ring.base_ring(),
+                        base_ring.variable_names()
+                            + ('Z_waiting_time',))
+                else:
+                    R = PolynomialRing(base_ring, 'Z_waiting_time')
+                Z = R.gens()[-1]
+                system_matrix = identity_matrix(n) - Z * \
+                    transition_matrix
+                G = entry_vector *  system_matrix.solve_right(
+                    exit_vector)
+                expectation = G.subs({Z: 1})
+                variance = 2 * G.derivative(Z).subs({Z: 1}) \
+                    + expectation \
+                    - expectation**2
+
+        if expectation_only:
+            return expectation
+        else:
+            return {'expectation': expectation,
+                    'variance': variance}
+
+
+
     def is_monochromatic(self):
         """
         Checks whether the colors of all states are equal.
@@ -9752,6 +10575,26 @@ class Automaton(FiniteStateMachine):
             [frozenset(['A', 'C'])]
             sage: Ddet.process(list('aaab'))
             (True, frozenset(['A', 'C']))
+
+        Test that :trac:`18992` is fixed::
+
+            sage: A = Automaton([(0, 1, []), (1, 1, 0)],
+            ....:               initial_states=[0], final_states=[1])
+            sage: B = A.determinisation()
+            sage: B.initial_states()
+            [frozenset([0, 1])]
+            sage: B.final_states()
+            [frozenset([0, 1]), frozenset([1])]
+            sage: B.transitions()
+            [Transition from frozenset([0, 1]) to frozenset([1]): 0|-,
+            Transition from frozenset([1]) to frozenset([1]): 0|-]
+            sage: C = B.minimization().relabeled()
+            sage: C.initial_states()
+            [0]
+            sage: C.final_states()
+            [0]
+            sage: C.transitions()
+            [Transition from 0 to 0: 0|-]
         """
         if any(len(t.word_in) > 1 for t in self.iter_transitions()):
             return self.split_transitions().determinisation()
@@ -9786,7 +10629,10 @@ class Automaton(FiniteStateMachine):
             return (frozenset(result), [])
 
         result = self.empty_copy()
-        new_initial_states = [frozenset(self.iter_initial_states())]
+        new_initial_states = [frozenset(set().union(
+                    *(epsilon_successors[s]
+                      for s in self.iter_initial_states()
+                      )))]
         result.add_from_transition_function(set_transition,
                                             initial_states=new_initial_states)
 

@@ -8074,7 +8074,7 @@ cdef class gen(gen_auto):
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^2 - 1/8)
             sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))
-            [x + Mod(-4*a, 8*a^2 - 1), 1; x + Mod(4*a, 8*a^2 - 1), 1]
+            [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
         """
         cdef gen t0 = objtogen(t)
         pari_catch_sig_on()

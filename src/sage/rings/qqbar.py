@@ -3473,7 +3473,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         Return True if this number is a integer
 
         EXAMPLES::
-        
+
             sage: QQbar(2).is_integer()
             True
             sage: QQbar(1/2).is_integer()

@@ -26,6 +26,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.arith import nth_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class Primes(Set_generic, UniqueRepresentation):
     """
     The set of prime numbers.
@@ -125,7 +126,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def __contains__(self, x):
         """
-        Checks whether an object is a prime number.
+        Check whether an object is a prime number.
 
         EXAMPLES::
 
@@ -148,7 +149,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def _an_element_(self):
         """
-        Returns a typical prime number.
+        Return a typical prime number.
 
         EXAMPLES::
 
@@ -160,7 +161,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def first(self):
         """
-        Returns the first prime number.
+        Return the first prime number.
 
         EXAMPLES::
 
@@ -172,7 +173,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def next(self, pr):
         """
-        Returns the next prime number.
+        Return the next prime number.
 
         EXAMPLES::
 
@@ -185,9 +186,10 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def unrank(self, n):
         """
-        Returns the n-th prime number.
+        Return the n-th prime number.
 
         EXAMPLES::
+
             sage: P = Primes()
             sage: P.unrank(0)
             2

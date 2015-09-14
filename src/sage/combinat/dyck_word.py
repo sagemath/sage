@@ -3102,7 +3102,7 @@ class DyckWord_complete(DyckWord):
         return A.from_monotone_triangle(monotone_triangle)
 
 
-class DyckWords(Parent, UniqueRepresentation):
+class DyckWords(UniqueRepresentation, Parent):
     r"""
     Dyck words.
 

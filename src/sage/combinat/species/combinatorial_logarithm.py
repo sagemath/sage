@@ -6,6 +6,7 @@ the 'combinatorial logarithm', defined to be the compositional inverse of
 the species `E^{+}` of nonempty sets:
 
 .. MATH::
+
     \Omega \circ E^{+} = E^{+} \circ \Omega = X.
 
 .. warning::

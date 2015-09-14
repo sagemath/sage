@@ -781,7 +781,7 @@ cdef class CachedFunction(object):
                Return the reduced Groebner basis of this ideal.
             ...
                ALGORITHM: Uses Singular, Magma (if available), Macaulay2 (if
-               available), or a toy implementation.
+               available), Giac (if available), or a toy implementation.
 
         Test that :trac:`15184` is fixed::
 

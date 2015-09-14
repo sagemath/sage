@@ -241,7 +241,17 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: SUK = UnitGroup(K,S=2); SUK
             S-unit group with structure C26 x Z x Z x Z x Z x Z x Z of Cyclotomic Field of order 13 and degree 12 with S = (Fractional ideal (2),)
 
-            """
+        TESTS:
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: K.<a> = NumberField(7/9*x^3 + 7/3*x^2 - 56*x + 123)
+            sage: K.unit_group()
+            Unit group with structure C2 x Z x Z of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
+            sage: UnitGroup(K, S=tuple(K.primes_above(7)))
+            S-unit group with structure C2 x Z x Z x Z of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123 with S = (Fractional ideal (7/225*a^2 - 7/75*a - 42/25),)
+        """
         proof = get_flag(proof, "number_field")
         K = number_field
         pK = K.pari_bnf(proof)
@@ -270,13 +280,13 @@ class UnitGroup(AbelianGroupWithValues_class):
             self.__pS = pS = [P.pari_prime() for P in S]
 
         # compute the fundamental units via pari:
-        fu = [K(u) for u in pK.bnfunit()]
+        fu = [K(u, check=False) for u in pK.bnfunit()]
         self.__nfu = len(fu)
 
         # compute the additional S-unit generators:
         if S:
             self.__S_unit_data = pK.bnfsunit(pS)
-            su = [K(u) for u in self.__S_unit_data[0]]
+            su = [K(u, check=False) for u in self.__S_unit_data[0]]
         else:
             su = []
         self.__nsu = len(su)
@@ -286,7 +296,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         n, z = pK.nfrootsof1()
         n = ZZ(n)
         self.__ntu = n
-        z = K(z)
+        z = K(z, check=False)
 
         # If we replaced z by another torsion generator we would need
         # to allow for this in the dlog function!  So we do not.

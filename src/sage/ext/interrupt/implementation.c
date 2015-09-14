@@ -42,6 +42,7 @@ AUTHORS:
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
+#include <pari/pari.h>
 #include "interrupt/struct_signals.h"
 #include "interrupt/interrupt.h"
 
@@ -110,7 +111,7 @@ static void sage_interrupt_handler(int sig)
 
     if (_signals.sig_on_count > 0)
     {
-        if (!_signals.block_sigint)
+        if (!_signals.block_sigint && !PARI_SIGINT_block)
         {
             /* Raise an exception so Python can see it */
             do_raise_exception(sig);
@@ -132,7 +133,10 @@ static void sage_interrupt_handler(int sig)
      * we store the signal number for later use.  But make sure we
      * don't overwrite a SIGHUP or SIGTERM which we already received. */
     if (_signals.interrupt_received != SIGHUP && _signals.interrupt_received != SIGTERM)
+    {
         _signals.interrupt_received = sig;
+        PARI_SIGINT_pending = sig;
+    }
 }
 
 /* Handler for SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGBUS, SIGSEGV
@@ -239,8 +243,9 @@ static void _sig_on_interrupt_received()
     sigprocmask(SIG_BLOCK, &sigmask_with_sigint, &oldset);
 
     do_raise_exception(_signals.interrupt_received);
-    _signals.interrupt_received = 0;
     _signals.sig_on_count = 0;
+    _signals.interrupt_received = 0;
+    PARI_SIGINT_pending = 0;
 
     sigprocmask(SIG_SETMASK, &oldset, NULL);
 }
@@ -250,8 +255,10 @@ static void _sig_on_interrupt_received()
 static void _sig_on_recover()
 {
     _signals.block_sigint = 0;
+    PARI_SIGINT_block = 0;
     _signals.sig_on_count = 0;
     _signals.interrupt_received = 0;
+    PARI_SIGINT_pending = 0;
 
     /* Reset signal mask */
     sigprocmask(SIG_SETMASK, &default_sigmask, NULL);

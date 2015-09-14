@@ -1,3 +1,7 @@
+"""
+Real intervals with a fixed absolute precision
+"""
+
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.gmp.mpz cimport *

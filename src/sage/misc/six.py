@@ -1,3 +1,7 @@
+"""
+Python 2 and 3 Compatibility
+"""
+
 from six import *
 
 def with_metaclass(meta, *bases):

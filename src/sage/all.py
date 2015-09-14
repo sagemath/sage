@@ -176,8 +176,8 @@ from sage.game_theory.all import *
 lazy_import('sagenb.notebook.notebook_object', 'notebook')
 lazy_import('sagenb.notebook.notebook_object', 'inotebook')
 lazy_import('sagenb.notebook.sage_email', 'email')
-lazy_import('sagenb.notebook.interact', 'interact')
 lazy_import('sage.interacts', 'all', 'interacts')
+lazy_import('sage.interacts.decorator', 'interact')
 from sage.interacts.debugger import debug
 
 from copy import copy, deepcopy

@@ -24,7 +24,7 @@ from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
 
-class AffinizationOfCrystal(Parent, UniqueRepresentation):
+class AffinizationOfCrystal(UniqueRepresentation, Parent):
     r"""
     An affiniziation of a crystal.
 

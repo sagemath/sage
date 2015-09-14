@@ -1308,7 +1308,7 @@ class Composition(CombinatorialElement):
 
 ##############################################################
 
-class Compositions(Parent, UniqueRepresentation):
+class Compositions(UniqueRepresentation, Parent):
     r"""
     Set of integer compositions.
 

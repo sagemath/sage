@@ -1,0 +1,44 @@
+Patch CMake to avoid using faulty system header in OSX 10.10
+
+CMake project files include CoreFoundation/CoreFoundation.h which is a collection 
+of headers one of which is CoreFoundation/CFStream.h. It includes faulty header 
+dispatch/dispatch.h. Since CoreFoundation/CFStream.h is not needed for CMake,
+specific headers needed are included to replace CoreFoundation/CoreFoundation.h
+
+diff -dru src/Source/cmFindProgramCommand.cxx new/Source/cmFindProgramCommand.cxx
+--- src/Source/cmFindProgramCommand.cxx 2015-03-10 20:08:44.000000000 +0530
++++ new/Source/cmFindProgramCommand.cxx 2015-06-17 13:26:32.543667394 +0530
+@@ -14,7 +14,7 @@
+ #include <stdlib.h>
+ 
+ #if defined(__APPLE__)
+-#include <CoreFoundation/CoreFoundation.h>
++#include <CoreFoundation/CFBundle.h>
+ #endif
+ 
+ // cmFindProgramCommand
+diff -dru src/Source/cmXCodeObject.cxx new/Source/cmXCodeObject.cxx
+--- src/Source/cmXCodeObject.cxx        2015-03-10 20:08:44.000000000 +0530
++++ new/Source/cmXCodeObject.cxx        2015-06-17 13:26:37.191667311 +0530
+@@ -12,7 +12,7 @@
+ #include "cmXCodeObject.h"
+ #include "cmSystemTools.h"
+ 
+-#include <CoreFoundation/CoreFoundation.h> // CFUUIDCreate
++#include <CoreFoundation/CFUUID.h> // CFUUIDCreate
+ 
+ //----------------------------------------------------------------------------
+ const char* cmXCodeObject::PBXTypeNames[] = {
+diff -dru src/Source/CPack/OSXScriptLauncher.cxx new/Source/CPack/OSXScriptLauncher.cxx
+--- src/Source/CPack/OSXScriptLauncher.cxx      2015-03-10 20:08:44.000000000 +0530
++++ new/Source/CPack/OSXScriptLauncher.cxx      2015-06-17 13:26:21.575667590 +0530
+@@ -14,7 +14,7 @@
+ #include <cmsys/ios/iostream>
+ #include <cmsys/FStream.hxx>
+ 
+-#include <CoreFoundation/CoreFoundation.h>
++#include <CoreFoundation/CFBundle.h>
+ 
+ // For the PATH_MAX constant
+ #include <sys/syslimits.h>
+

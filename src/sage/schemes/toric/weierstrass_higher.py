@@ -48,7 +48,7 @@ def WeierstrassForm2(polynomial, variables=None, transformation=False):
     See :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
 
     TESTS::
-    
+
         sage: from sage.schemes.toric.weierstrass_higher import WeierstrassForm2
         sage: R.<w,x,y,z> = QQ[]
         sage: quadratic1 = w^2+x^2+y^2

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+Automatic Semigroups
+
 Semigroups defined by generators living in an ambient semigroup and represented by an automaton.
 
 AUTHORS:
@@ -133,11 +135,11 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
          ([], [2], (2, 'left')),
          ([], [2], (2, 'right'))]
         sage: map(sorted, M.j_classes())
-        [[[], [2]], [[1, 1], [1]]]
+        [[[1], [1, 1]], [[], [2]]]
         sage: M.j_classes_of_idempotents()
-        [[[]], [[1, 1]]]
+        [[[1, 1]], [[]]]
         sage: M.j_transversal_of_idempotents()
-        [[], [1, 1]]
+        [[1, 1], []]
 
         sage: map(attrcall('pseudo_order'), M.list())
         [[1, 0], [3, 1], [2, 0], [2, 1]]

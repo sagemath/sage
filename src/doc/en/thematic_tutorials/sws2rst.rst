@@ -21,10 +21,10 @@ using the Mac app and have placed it in your Applications directory.
 * Next, you will need an optional package to parse your worksheet.  Use the
   command::
 
-      sage -i beautifulsoup
+      sage --pip install beautifulsoup4
 
   to install it (or, in the Mac app, use the ``Terminal Session`` advanced
-  menu with ``-i beautifulsoup``).
+  menu with ``--pip install beautifulsoup4``).
 
 * Then we will use the ``sws2rst`` script to turn the worksheet into
   a document in the `ReStructuredText <http://sphinx-doc.org/rest.html>`_

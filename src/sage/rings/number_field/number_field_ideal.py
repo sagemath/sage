@@ -93,7 +93,7 @@ def convert_from_idealprimedec_form(field, ideal):
     deprecation(15767, "convert_from_idealprimedec_form() is deprecated")
 
     p = ZZ(ideal[1])
-    alpha = field(field.pari_zk() * ideal[2])
+    alpha = field(field.pari_zk() * ideal[2], check=False)
     return field.ideal(p, alpha)
 
 def convert_to_idealprimedec_form(field, ideal):
@@ -166,6 +166,15 @@ class NumberFieldIdeal(Ideal_generic):
 
             sage: K.ideal(pari(K).idealprimedec(5)[0])._pari_prime
             [5, [-2, 1]~, 1, 1, [2, -1; 1, 2]]
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: K.<a> = NumberField(2*x^2 - 1/3)
+            sage: I = K.ideal(a); I
+            Fractional ideal (a)
+            sage: I.norm()
+            1/6
         """
         if not isinstance(field, number_field.NumberField_generic):
             raise TypeError("field (=%s) must be a number field."%field)
@@ -178,14 +187,14 @@ class NumberFieldIdeal(Ideal_generic):
             gens = gens[0]
             if gens.type() == "t_MAT":
                 # Assume columns are generators
-                gens = [field(_) for _ in field.pari_zk() * gens]
+                gens = [field(x, check=False) for x in field.pari_zk() * gens]
             elif gens.type() == "t_VEC":
                 # Assume prime ideal form
                 self._pari_prime = gens
                 gens = [ZZ(gens.pr_get_p()), field(gens.pr_get_gen())]
             else:
                 # Assume one element of the field
-                gens = [field(gens)]
+                gens = [field(gens, check=False)]
         if len(gens)==0:
             raise ValueError("gens must have length at least 1 (zero ideal is not a fractional ideal)")
         Ideal_generic.__init__(self, field, gens, coerce)
@@ -461,7 +470,7 @@ class NumberFieldIdeal(Ideal_generic):
             [1/17, 1/17*a, a^2 - 8/17*a - 13/17]
         """
         K = self.number_field()
-        return [K(_) for _ in K.pari_zk() * hnf]
+        return [K(x, check=False) for x in K.pari_zk() * hnf]
 
     def __repr__(self):
         """
@@ -624,12 +633,12 @@ class NumberFieldIdeal(Ideal_generic):
     @cached_method
     def basis(self):
         r"""
-        Return an immutable sequence of elements of this ideal (note:
-        their parent is the number field) that form a basis for this
-        ideal viewed as a `\ZZ` -module.
+        Return a basis for this ideal viewed as a `\ZZ` -module.
 
         OUTPUT:
-            basis -- an immutable sequence.
+
+        An immutable sequence of elements of this ideal (note: their
+        parent is the number field) forming a basis for this ideal.
 
         EXAMPLES::
 
@@ -645,10 +654,16 @@ class NumberFieldIdeal(Ideal_generic):
             Fractional ideal (2/11*z^5 + 2/11*z^4 + 3/11*z^3 + 2/11)
             sage: J.basis()           # warning -- choice of basis can be somewhat random
             [1, z, z^2, 1/11*z^3 + 7/11*z^2 + 6/11*z + 10/11, 1/11*z^4 + 1/11*z^2 + 1/11*z + 7/11, 1/11*z^5 + 1/11*z^4 + 1/11*z^3 + 2/11*z^2 + 8/11*z + 7/11]
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: K.<a> = NumberField(2*x^2 - 1/3)
+            sage: K.ideal(a).basis()
+            [1, a]
         """
         hnf = self.pari_hnf()
         v = self.__elements_from_hnf(hnf)
-        O = self.number_field().maximal_order()
         return Sequence(v, immutable=True)
 
     @cached_method
@@ -1846,6 +1861,17 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
             [(Fractional ideal (19, 1/2*a^2 + a - 17/2), 1), (Fractional ideal (19, 1/2*a^2 - a - 17/2), 1)]
             sage: F.prod()
             Fractional ideal (19)
+
+        TESTS:
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: F.<a> = NumberField(2*x^3 + x + 1)
+            sage: fact = F.factor(2); fact
+            (Fractional ideal (2*a^2 + 1))^2 * (Fractional ideal (-2*a^2))
+            sage: [p[0].norm() for p in fact]
+            [2, 2]
         """
         try:
             return self.__factorization

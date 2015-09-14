@@ -447,6 +447,11 @@ class RootSystem(UniqueRepresentation, SageObject):
             True
             sage: r1 == r2
             False
+
+        Check that they inherit a hash method from ``UniqueRepresentation``::
+
+            sage: hash(r1)  # random
+            42
         """
         if self.__class__ != other.__class__:
             return cmp(self.__class__, other.__class__)

@@ -1,7 +1,7 @@
 from sage.misc.lazy_import import lazy_import
 
 
-from cone import Cone
+from cone import Cone, random_cone
 
 from fan import Fan, FaceFan, NormalFan, Fan2d
 

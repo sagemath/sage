@@ -269,39 +269,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                 mzd_write_bit(self._entries,i,j, R(entries[k]))
                 k = k + 1
 
-    def __richcmp__(Matrix self, right, int op):
-        """
-        Compares ``self`` with ``right``. While equality and
-        inequality are clearly defined, ``<`` and ``>`` are not.  For
-        those first the matrix dimensions of ``self`` and ``right``
-        are compared. If these match then ``<`` means that there is a
-        position smallest (i,j) in ``self`` where ``self[i,j]`` is
-        zero but ``right[i,j]`` is one. This (i,j) is smaller than the
-        (i,j) if ``self`` and ``right`` are exchanged for the
-        comparison.
-
-        INPUT:
-
-        - ``right`` - a matrix
-        - ``op`` - comparison operation
-
-        EXAMPLE::
-
-            sage: A = MatrixSpace(GF(2),3,3).one()
-            sage: B = copy(MatrixSpace(GF(2),3,3).one())
-            sage: B[0,1] = 1
-            sage: A < B
-            True
-
-        TESTS::
-
-            sage: A = matrix(GF(2),2,0)
-            sage: B = matrix(GF(2),2,0)
-            sage: A < B
-            False
-        """
-        return self._richcmp(right, op)
-
     def __hash__(self):
         r"""
         The has of a matrix is computed as `\oplus i*a_i` where the
@@ -1496,6 +1463,31 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         return A
 
     cpdef int _cmp_(self, Element right) except -2:
+        """
+        Compares ``self`` with ``right``. While equality and
+        inequality are clearly defined, ``<`` and ``>`` are not.  For
+        those first the matrix dimensions of ``self`` and ``right``
+        are compared. If these match then ``<`` means that there is a
+        position smallest (i,j) in ``self`` where ``self[i,j]`` is
+        zero but ``right[i,j]`` is one. This (i,j) is smaller than the
+        (i,j) if ``self`` and ``right`` are exchanged for the
+        comparison.
+
+        EXAMPLE::
+
+            sage: A = MatrixSpace(GF(2),3,3).one()
+            sage: B = copy(MatrixSpace(GF(2),3,3).one())
+            sage: B[0,1] = 1
+            sage: A < B
+            True
+
+        TESTS::
+
+            sage: A = matrix(GF(2),2,0)
+            sage: B = matrix(GF(2),2,0)
+            sage: A < B
+            False
+        """
         if self._nrows == 0 or self._ncols == 0:
             return 0
         return mzd_cmp(self._entries, (<Matrix_mod2_dense>right)._entries)

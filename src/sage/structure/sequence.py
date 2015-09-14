@@ -541,6 +541,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
     def append(self, x):
         """
         EXAMPLES::
+
             sage: v = Sequence([1,2,3,4], immutable=True)
             sage: v.append(34)
             Traceback (most recent call last):

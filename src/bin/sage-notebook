@@ -70,7 +70,7 @@ class NotebookIPython(object):
     PREREQUISITE_ERROR = textwrap.dedent("""
     The IPython notebook requires ssl, even if you do not use
     https. Install the openssl development packages in your system and
-    then rebuild Python (sage -f python).
+    then rebuild Python (sage -f python2).
     """)
 
     def __init__(self, argv):

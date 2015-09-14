@@ -507,7 +507,7 @@ class GelfandTsetlinPattern(ClonableArray):
         return (t+1)**(self.number_of_special_entries()) * t**(self.number_of_boxes())
 
 
-class GelfandTsetlinPatterns(Parent, UniqueRepresentation):
+class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
     """
     Gelfand-Tsetlin patterns.
 

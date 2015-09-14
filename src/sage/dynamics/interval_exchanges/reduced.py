@@ -536,6 +536,7 @@ class ReducedPermutationIET(ReducedPermutation, PermutationIET):
         Returns a hash value (does not depends of the alphabet).
 
         TESTS::
+
             sage: p = iet.Permutation([1,2],[1,2], reduced=True)
             sage: q = iet.Permutation([1,2],[2,1], reduced=True)
             sage: r = iet.Permutation([2,1],[1,2], reduced=True)
@@ -969,6 +970,7 @@ class ReducedPermutationLI(ReducedPermutation, PermutationLI):
         Tests difference.
 
         TESTS::
+
             sage: p = iet.GeneralizedPermutation('a b b', 'c c a', reduced = True)
             sage: q = iet.GeneralizedPermutation('b b a', 'c c a', reduced = True)
             sage: r = iet.GeneralizedPermutation('i j j', 'k k i', reduced = True)
@@ -1437,9 +1439,8 @@ class FlippedReducedPermutationIET(
         - ``flips`` - boolean (default: False) if True the output contains
            2-uple of (label, flip)
 
-        EXAMPLES:
+        EXAMPLES::
 
-        ::
             sage: p = iet.Permutation('a b','b a',reduced=True,flips='b')
             sage: p.list(flips=True)
             [[('a', 1), ('b', -1)], [('b', -1), ('a', 1)]]

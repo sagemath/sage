@@ -289,7 +289,7 @@ class SixVertexConfiguration(ClonableArray):
             raise ValueError("there must be 6 energy constants")
         return sum(epsilon[entry] for row in self for entry in row)
 
-class SixVertexModel(Parent, UniqueRepresentation):
+class SixVertexModel(UniqueRepresentation, Parent):
     """
     The six vertex model.
 

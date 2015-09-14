@@ -114,14 +114,17 @@ from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, IntegerMatrix, generic_identity
 from set_system cimport SetSystem
-from utilities import newlabel, lift_cross_ratios
+from utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
+from sage.graphs.spanning_tree import kruskal
+from sage.graphs.graph import Graph
 
 from sage.matrix.matrix2 cimport Matrix
 import sage.matrix.constructor
+from sage.matrix.constructor import matrix
 from copy import copy, deepcopy
 from sage.rings.all import ZZ, QQ, FiniteField, GF
 import itertools
-from itertools import combinations
+from itertools import combinations, product
 
 cdef bint GF2_not_defined = True
 cdef GF2, GF2_one, GF2_zero
@@ -2610,6 +2613,196 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         for x in CR:
             if not x ** (-1) in self.base_ring():
                 return False
+        return True
+
+    # connectivity
+
+    cpdef _is_3connected_shifting(self, certificate=False):
+        r"""
+        Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
+        optionally return a separator as a witness.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+          then return ``True, None`` if the matroid is is 3-connected,
+          and ``False,`` `X` otherwise, where `X` is a `<3`-separation
+
+        OUTPUT:
+
+        boolean, or a tuple ``(boolean, frozenset)``
+
+        ALGORITHM:
+
+        The shifting algorithm
+
+        EXAMPLES::
+
+            sage: matroids.Uniform(2, 3)._is_3connected_shifting()
+            True
+            sage: M = Matroid(ring=QQ, matrix=[[1, 0, 0, 1, 1, 0],
+            ....:                              [0, 1, 0, 1, 2, 0],
+            ....:                              [0, 0, 1, 0, 0, 1]])
+            sage: M._is_3connected_shifting()
+            False
+            sage: N = Matroid(circuit_closures={2: ['abc', 'cdef'],
+            ....:                               3: ['abcdef']},
+            ....:             groundset='abcdef')
+            sage: N._is_3connected_shifting()
+            False
+            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()
+            True
+            sage: M = matroids.named_matroids.R6()
+            sage: M._is_3connected_shifting()
+            False
+            sage: B, X = M._is_3connected_shifting(True)
+            sage: M.connectivity(X)<3
+            True
+        """
+        if not self.is_connected():
+            if certificate:
+                return False, self.components()[0]
+            else:
+                return False
+        if self.rank()>self.size()-self.rank():
+            return self.dual()._is_3connected_shifting(certificate)
+        
+        # the partial matrix
+        M2 = self._reduced_representation()
+        M = M2._matrix_()
+        X, Y = self._current_rows_cols()
+
+        # create mapping between elements and columns
+        dX = dict(zip(range(len(X)),X))
+        dY = dict(zip(range(len(Y)),Y))
+
+        for (x,y) in spanning_forest(M):
+            P_rows=[x]
+            P_cols=[y]
+            Q_rows=[]
+            Q_cols=[]
+            sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
+            if sol:
+                if certificate:
+                    cert = set([])
+                    for x in cert_pair[0]:
+                        cert.add(dX[x])
+                    for y in cert_pair[1]:
+                        cert.add(dY[y])
+                    return False, cert
+                return False
+        if certificate:
+            return True, None
+        return True
+
+    cpdef _is_4connected_shifting(self, certificate=False):
+        r"""
+        Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
+        optionally return a separator as a witness.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+          then return ``True, None`` if the matroid is is 4-connected,
+          and ``False,`` `X` otherwise, where `X` is a `<4`-separation
+
+        OUTPUT:
+
+        boolean, or a tuple ``(boolean, frozenset)``
+
+        ALGORITHM:
+
+        The shifting algorithm
+
+        EXAMPLES::
+
+            sage: M = matroids.Uniform(2, 6)
+            sage: B, X = M._is_4connected_shifting(True)
+            sage: (B, M.connectivity(X)<=3)
+            (False, True)
+            sage: matroids.Uniform(4, 8)._is_4connected_shifting()
+            True
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
+            ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
+            ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
+            ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
+            ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
+            sage: M._is_4connected_shifting()
+            True
+        """
+        if self.rank()>self.size()-self.rank():
+            return self.dual()._is_4connected_shifting(certificate)
+        if not self._is_3connected_shifting():
+            return self._is_3connected_shifting(certificate)
+
+        # the partial matrix
+        M2 = self._reduced_representation()
+        M = M2._matrix_()
+        X, Y = self._current_rows_cols()
+
+        dX = dict(zip(range(len(X)),X))
+        dY = dict(zip(range(len(Y)),Y))
+        n = len(X)
+        m = len(Y)
+
+        sol=False
+        T = spanning_stars(M)
+
+        for (x1,y1) in T:
+            # The whiting out
+            B = copy(M)
+            for (x,y) in product(range(n),range(m)):
+                if (x1!=x and y1!=y):
+                    if(M[x1,y]!=0 and
+                       M[x,y1]!=0 and
+                       M[x,y]!=0):
+                        B[x,y]=0
+            
+            # remove row x1 and y1
+            Xp = range(n)
+            Xp.remove(x1)
+            Yp = range(m)
+            Yp.remove(y1)
+
+            B = B.matrix_from_rows_and_columns(Xp,Yp)
+
+            # produce a spanning forest of B
+            for (x,y) in spanning_forest(B):
+                if x >= x1:
+                    x = x + 1
+                if y >= y1:
+                    y = y + 1
+                # rank 2 matrix and rank 0 matrix
+                P_rows = [x,x1]
+                P_cols = [y,y1]
+                Q_rows = []
+                Q_cols = []
+                # make sure the matrix has rank 2
+                if(M.matrix_from_rows_and_columns(P_rows,P_cols).rank()==2):
+                    sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                    if sol:
+                        break
+                # rank 1 matrix and rank 1 matrix
+                P_rows = [x1]
+                P_cols = [y1]
+                Q_rows = [x]
+                Q_cols = [y]
+                # both matrix have rank 1
+                sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                if sol:
+                    break
+            if sol:
+                if certificate:
+                    (certX, certY) = cert_pair
+                    cert = set([])
+                    for x in certX:
+                        cert.add(dX[x])
+                    for y in certY:
+                        cert.add(dY[y])
+                    return False, cert
+                return False
+        if certificate:
+            return True, None
         return True
 
     # Copying, loading, saving

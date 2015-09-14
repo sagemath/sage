@@ -890,7 +890,7 @@ class AlternatingSignMatrix(Element):
         """
         return self.left_key().to_permutation()
 
-class AlternatingSignMatrices(Parent, UniqueRepresentation):
+class AlternatingSignMatrices(UniqueRepresentation, Parent):
     r"""
     Class of all `n \times n` alternating sign matrices.
 

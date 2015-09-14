@@ -97,7 +97,7 @@ tcl/tk development library. On Ubuntu, this is the command ::
 
 or something along that line. Next, reinstall Sage's Python::
 
-    sage -f python
+    sage -f python2
 
 This will pick up the tcl/tk library automatically. After successfully
 reinstalling Sage's Python, from within the Sage command line interface,

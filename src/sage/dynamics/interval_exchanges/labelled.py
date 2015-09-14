@@ -774,6 +774,7 @@ class LabelledPermutationIET(LabelledPermutation, PermutationIET):
         The order is lexicographic on intervals[0] + intervals[1]
 
         TESTS::
+
             sage: list_of_p2 = []
             sage: p0 = iet.Permutation('1 2', '1 2')
             sage: p1 = iet.Permutation('1 2', '2 1')
@@ -806,6 +807,7 @@ class LabelledPermutationIET(LabelledPermutation, PermutationIET):
         The twin relations of the permutation.
 
         TESTS::
+
             sage: p = iet.Permutation('a b','a b')
             sage: p._twin
             [[0, 1], [0, 1]]
@@ -1123,6 +1125,7 @@ class LabelledPermutationLI(LabelledPermutation, PermutationLI):
         Order is lexicographic on length of intervals and on intervals.
 
         TESTS::
+
             sage: p0 = iet.GeneralizedPermutation('0 0','1 1 2 2')
             sage: p1 = iet.GeneralizedPermutation('0 0','1 2 1 2')
             sage: p2 = iet.GeneralizedPermutation('0 0','1 2 2 1')

@@ -138,6 +138,7 @@ class Sudoku(SageObject):
         Initialize a Sudoku puzzle, determine its size, sanity-check the inputs.
 
         TESTS::
+
             sage: d = Sudoku('1.......2.9.4...5...6...7...5.9.3.......7.......85..4.7.....6...3...9.8...2.....1')
             sage: d == loads(dumps(d))
             True

@@ -176,6 +176,7 @@ cdef extern from "sage/symbolic/ginac_wrap.h":
     unsigned domain_real "GiNaC::domain::real"
     unsigned domain_positive "GiNaC::domain::positive"
     unsigned domain_infinity "GiNaC::domain::infinity"
+    unsigned domain_integer "GiNaC::domain::integer"
 
     # info flags
     unsigned info_real          "GiNaC::info_flags::real"

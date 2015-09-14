@@ -39,9 +39,11 @@ def shimura_mass__maximal(self,):
     but has a small technical restriction when `n` is odd.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number
 
     EXAMPLE::
@@ -62,9 +64,11 @@ def GHY_mass__maximal(self):
     Reference:  See [GHY, Prop 7.4 and 7.5, p121] and [GY, Thrm 10.20, p25].
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number
 
     EXAMPLE::

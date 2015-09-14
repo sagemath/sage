@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+if gcc -lxml2 2>&1 | grep -q 'cannot find -lxml2'; then
+    echo "
+You need libxml2 to run igraph. On Ubuntu and Debian Linux, installing the build-essential and the libxml2-dev packages is sufficient."
+    exit 1
+fi
+
+cd src
+
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring igraph."
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building igraph."
+    exit 1
+fi
+
+$MAKE -j1 install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing igraph."
+    exit 1
+fi

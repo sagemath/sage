@@ -138,17 +138,21 @@ def set_intersphinx_mappings(app):
             not (os.path.exists(refpath) and os.path.exists(invpath)):
         app.config.intersphinx_mapping = {}
         return
+
     app.config.intersphinx_mapping = intersphinx_mapping
 
-    def add(subdoc=''):
-        src = os.path.join(refpath, subdoc) if subdoc else refpath
-        dst = os.path.join(invpath, subdoc, 'objects.inv')
-        app.config.intersphinx_mapping[src] = dst
+    # Add master intersphinx mapping
+    dst = os.path.join(invpath, 'objects.inv')
+    app.config.intersphinx_mapping['sagemath'] = (refpath, dst)
 
-    add()
+    # Add intersphinx mapping for subdirectories
+    # We intentionally do not name these such that these get higher
+    # priority in case of conflicts
     for directory in os.listdir(os.path.join(invpath)):
         if os.path.isdir(os.path.join(invpath, directory)):
-            add(directory)
+            src = os.path.join(refpath, directory)
+            dst = os.path.join(invpath, directory, 'objects.inv')
+            app.config.intersphinx_mapping[src] = dst
 
 
 pythonversion = sys.version.split(' ')[0]

@@ -688,10 +688,7 @@ def distances_and_predecessors_all_pairs(G):
 
         for i in range(n):
 
-            if c_distances[i] == <unsigned short> -1:
-                t_distance[int_to_vertex[i]] = Infinity
-                t_predecessor[int_to_vertex[i]] = None
-            else:
+            if c_distances[i] != <unsigned short> -1:
                 t_distance[int_to_vertex[i]] = c_distances[i]
                 t_predecessor[int_to_vertex[i]] = int_to_vertex[c_predecessor[i]]
 
@@ -1722,18 +1719,19 @@ def floyd_warshall(gg, paths = True, distances = False):
     if paths: d_prec = {}
     if distances: d_dist = {}
     for v_int in gverts:
-        if paths: tmp_prec = {}
-        if distances: tmp_dist = {}
         v = cgb.vertex_label(v_int)
+        if paths: tmp_prec = {v:None}
+        if distances: tmp_dist = {v:0}
         dv = dist[v_int]
         for u_int in gverts:
             u = cgb.vertex_label(u_int)
-            if paths:
-                tmp_prec[u] = (None if v == u
-                               else cgb.vertex_label(prec[v_int][u_int]))
-            if distances:
-                tmp_dist[u] = (dv[u_int] if (dv[u_int] != <unsigned short> -1)
-                               else Infinity)
+            if v != u and dv[u_int] !=  <unsigned short> -1:
+                if paths:
+                    tmp_prec[u] = cgb.vertex_label(prec[v_int][u_int])
+                
+                if distances:
+                    tmp_dist[u] = dv[u_int]
+
         if paths: d_prec[v] = tmp_prec
         if distances: d_dist[v] = tmp_dist
 

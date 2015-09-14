@@ -56,7 +56,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
     """
     cdef _pi            # Pi to 64 bits
     cdef _euler_gamma   # Euler-Mascheroni constant = 0.5772...
-    cdef _N             # The level of the form attached to self
+    cdef _level         # The level of the form attached to self
     cdef _k             # The weight of the form attached to self
     cdef _C1            # = log(N)/2 - log(2*pi)
     cdef _C0            # = C1 - euler_gamma
@@ -119,7 +119,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
             389
 
         """
-        return self._N
+        return self._level
 
     def weight(self):
         r"""
@@ -941,9 +941,9 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         self._k = ZZ(2)
         self._E = E
         if N is not None:
-            self._N = N
+            self._level = N
         else:
-            self._N = E.conductor()
+            self._level = E.conductor()
         # PARI minicurve for computing a_p coefficients
         self._e = E.pari_mincurve()
 
@@ -951,7 +951,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         self._euler_gamma = RDF(euler_gamma)
 
         # These constants feature in most (all?) sums over the L-function's zeros
-        self._C1 = log(RDF(self._N))/2 - log(self._pi*2)
+        self._C1 = log(RDF(self._level))/2 - log(self._pi*2)
         self._C0 = self._C1 - self._euler_gamma
 
         # Number of CPUs to use for computations
@@ -1059,7 +1059,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             p,e = n.perfect_power()
             ap = self._E.ap(p)
             logp = log(RDF(p))
-            if p.divides(self._N):
+            if p.divides(self._level):
                 return - ap**e*logp/n_float
             a,b = ap,2
             # Coefficients for higher powers obey recursion relation
@@ -1181,7 +1181,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         cdef int ap, aq
 
         cdef unsigned long n
-        cdef double N_double = self._N
+        cdef double N_double = self._level
 
         t = twopi*Delta
         expt = c_exp(t)
@@ -1193,7 +1193,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         # Do bad primes first. Add correct contributions and subtract
         # incorrect contribution, since we'll add them back later on.
         if bad_primes is None:
-            bad_primes = self._N.prime_divisors()
+            bad_primes = self._level.prime_divisors()
         bad_primes = [prime for prime in bad_primes if prime<expt]
         for prime in bad_primes:
             n = prime
@@ -1460,7 +1460,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         cdef double npi = self._pi
         cdef double twopi = npi*2
         cdef double eg = self._euler_gamma
-        cdef double N_double = self._N
+        cdef double N_double = self._level
 
         cdef double t, u, w, y, z, expt, bound1, logp, logq
         cdef double thetap, thetaq, sqrtp, sqrtq, p, q
@@ -1479,7 +1479,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         # Do bad primes first. Add correct contributions and subtract
         # incorrect contribution; the latter are added back later on.
         if bad_primes is None:
-            bad_primes = self._N.prime_divisors()
+            bad_primes = self._level.prime_divisors()
         bad_primes = [prime for prime in bad_primes if prime<expt]
         for prime in bad_primes:
             n = prime
@@ -1793,7 +1793,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             verbose("Computing maximum Delta value")
             pi, eg = self._pi, self._euler_gamma
             #1000 is arbitrary - increases Delta for small N
-            max_Delta = (log(RDF(self._N+1000))/2-log(2*pi)-eg)/pi
+            max_Delta = (log(RDF(self._level+1000))/2-log(2*pi)-eg)/pi
             if max_Delta > 2.5:
                 max_Delta = 2.5
                 verbose("Computed max Delta value too big; setting to 2.5")

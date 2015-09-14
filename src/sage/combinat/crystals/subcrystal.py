@@ -33,7 +33,7 @@ from sage.combinat.root_system.cartan_type import CartanType
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 
-class Subcrystal(Parent, UniqueRepresentation):
+class Subcrystal(UniqueRepresentation, Parent):
     """
     A subcrystal `X` of an ambient crystal `Y` is a crystal formed by taking a
     subset of `Y` and whose crystal structure is induced by `Y`.

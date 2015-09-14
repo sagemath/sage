@@ -986,13 +986,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                  - h[4, 2] - h[5, 1] + h[6]
 
             Gessel-Reutenauer functions indexed by partitions::
-            
+
                 sage: h.gessel_reutenauer([2, 1])
                 h[1, 1, 1] - h[2, 1]
                 sage: h.gessel_reutenauer([2, 2])
                 h[1, 1, 1, 1] - 3*h[2, 1, 1] + 2*h[2, 2] + h[3, 1] - h[4]
 
-            The Gessel-Reutenauer functions are Schur-postive::
+            The Gessel-Reutenauer functions are Schur-positive::
 
                 sage: s = Sym.s()
                 sage: s.gessel_reutenauer([2, 1])

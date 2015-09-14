@@ -1,5 +1,5 @@
 r"""
-Special Functions
+Miscellaneous Special Functions
 
 AUTHORS:
 

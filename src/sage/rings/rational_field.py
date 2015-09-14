@@ -956,6 +956,51 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return rational.Rational((1,2))
 
+    def some_elements(self):
+        r"""
+        Return some elements of `\QQ`.
+
+        See :func:`TestSuite` for a typical use case.
+
+        OUTPUT:
+
+        An iterator over 100 elements of `\QQ`.
+
+        EXAMPLES::
+
+            sage: tuple(QQ.some_elements())
+            (1/2, -1/2, 2, -2,
+             0, 1, -1, 42,
+             2/3, -2/3, 3/2, -3/2,
+             4/5, -4/5, 5/4, -5/4,
+             6/7, -6/7, 7/6, -7/6,
+             8/9, -8/9, 9/8, -9/8,
+             10/11, -10/11, 11/10, -11/10,
+             12/13, -12/13, 13/12, -13/12,
+             14/15, -14/15, 15/14, -15/14,
+             16/17, -16/17, 17/16, -17/16,
+             18/19, -18/19, 19/18, -19/18,
+             20/441, -20/441, 441/20, -441/20,
+             22/529, -22/529, 529/22, -529/22,
+             24/625, -24/625, 625/24, -625/24,
+             ...)
+        """
+        yield self.an_element()
+        yield -self.an_element()
+        yield 1/self.an_element()
+        yield -1/self.an_element()
+        yield self(0)
+        yield self(1)
+        yield self(-1)
+        yield self(42)
+        for n in range(1, 24):
+            a = 2*n
+            b = (2*n + 1)**(n//10 + 1)
+            yield rational.Rational((a, b))
+            yield rational.Rational((-a, b))
+            yield rational.Rational((b, a))
+            yield rational.Rational((-b, a))
+
     def random_element(self, num_bound=None, den_bound=None, *args, **kwds):
         """
         Return an random element of `\QQ`.

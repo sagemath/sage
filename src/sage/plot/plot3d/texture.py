@@ -35,6 +35,7 @@ AUTHOR:
 - Robert Bradshaw (2007-07-07) Initial version.
 
 """
+from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 
 from sage.plot.colors import Color
@@ -238,7 +239,7 @@ def parse_color(info, base=None):
         return (float(info*r), float(info*g), float(info*b))
 
 
-class Texture_class(SageObject):
+class Texture_class(WithEqualityById, SageObject):
     r"""
     Construction of a texture.
 
@@ -266,6 +267,9 @@ class Texture_class(SageObject):
 
         sage: Texture(opacity=1/3).opacity
         0.3333333333333333
+
+        sage: hash(Texture()) # random
+        42
     """
     def __init__(self, id, color=(.4, .4, 1), opacity=1, ambient=0.5, diffuse=1, specular=0, shininess=1, name=None, **kwds):
         r"""

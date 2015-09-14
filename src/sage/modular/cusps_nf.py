@@ -638,6 +638,7 @@ class NFCusp(Element):
         String representation of this cusp.
 
         EXAMPLES::
+
             sage: k.<a> = NumberField(x^2 + 1)
             sage: c = NFCusp(k, a, 2); c
             Cusp [a: 2] of Number Field in a with defining polynomial x^2 + 1
@@ -799,9 +800,8 @@ class NFCusp(Element):
             sage: k.<a> = NumberField(x^3 + x + 1)
             sage: kCusps = NFCusps(k)
 
-        Comparing with infinity:
+        Comparing with infinity::
 
-        ::
             sage: c = kCusps((a,2))
             sage: d = kCusps(oo)
             sage: c < d
@@ -809,9 +809,7 @@ class NFCusp(Element):
             sage: kCusps(oo) < d
             False
 
-        Comparison as elements of the number field:
-
-        ::
+        Comparison as elements of the number field::
 
             sage: kCusps(2/3) < kCusps(5/2)
             False

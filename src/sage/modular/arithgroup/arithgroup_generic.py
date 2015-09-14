@@ -1315,6 +1315,7 @@ class ArithmeticSubgroup(group.Group):
         -  ``weight`` - an integer `\geq 2` (default: 2)
 
         EXAMPLES::
+
             sage: Gamma0(11).sturm_bound(2)
             2
             sage: Gamma0(389).sturm_bound(2)

@@ -1,119 +1,85 @@
 """
 Automorphisms of Quadratic Forms
 """
-from sage.interfaces.gp import gp
+
+#*****************************************************************************
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+
+from sage.misc.cachefunc import cached_method
 from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.rings.integer_ring import ZZ
-from sage.misc.mrange import mrange
-from sage.misc.all import cython_lambda
 
 from sage.modules.all import FreeModule
 from sage.modules.free_module_element import vector
 from sage.rings.arith import GCD
-from sage.misc.sage_eval import sage_eval
-from sage.env import SAGE_LOCAL
-
-import tempfile, os
-from random import random
 
 
-def basis_of_short_vectors(self, show_lengths=False, safe_flag=True):
+@cached_method
+def basis_of_short_vectors(self, show_lengths=False, safe_flag=None):
     """
     Return a basis for `ZZ^n` made of vectors with minimal lengths Q(`v`).
 
-    The safe_flag allows us to select whether we want a copy of the
-    output, or the original output.  By default safe_flag = True, so
-    we return a copy of the cached information.  If this is set to
-    False, then the routine is much faster but the return values are
-    vulnerable to being corrupted by the user.
-
-    OUTPUT:
-        a list of vectors, and optionally a list of values for each vector.
+    OUTPUT: a tuple of vectors, and optionally a tuple of values for
+    each vector.
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
         sage: Q.basis_of_short_vectors()
-        [(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)]
+        ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
         sage: Q.basis_of_short_vectors(True)
-        ([(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)], [1, 3, 5, 7])
+        (((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)), (1, 3, 5, 7))
 
+    The returned vectors are immutable::
+
+        sage: v = Q.basis_of_short_vectors()[0]
+        sage: v
+        (1, 0, 0, 0)
+        sage: v[0] = 0
+        Traceback (most recent call last):
+        ...
+        ValueError: vector is immutable; please change a copy instead (use copy())
     """
-    ## Try to use the cached results
-    try:
-        ## Return the appropriate result
-        if show_lengths:
-            if safe_flag:
-                return deep_copy(self.__basis_of_short_vectors), deepcopy(self.__basis_of_short_vectors_lengths)
-            else:
-                return self.__basis_of_short_vectors, self.__basis_of_short_vectors_lengths
-        else:
-            if safe_flag:
-                return deepcopy(self.__basis_of_short_vectors)
-            else:
-                return deepcopy(self.__basis_of_short_vectors)
-    except Exception:
-        pass
-
+    if safe_flag is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(18673, "The safe_flag argument to basis_of_short_vectors() is deprecated and no longer used")
 
     ## Set an upper bound for the number of vectors to consider
     Max_number_of_vectors = 10000
 
-    ## Generate a PARI matrix string for the associated Hessian matrix
-    M_str = str(gp(self.matrix()))
-
+    ## Generate a PARI matrix for the associated Hessian matrix
+    M_pari = self._pari_()
 
     ## Run through all possible minimal lengths to find a spanning set of vectors
     n = self.dim()
-    #MS = MatrixSpace(QQ, n)
     M1 = Matrix([[0]])
     vec_len = 0
     while M1.rank() < n:
-
-        ## DIAGONSTIC
-        #print
-        #print "Starting with vec_len = ", vec_len
-        #print "M_str = ", M_str
-
         vec_len += 1
-        gp_mat = gp.qfminim(M_str, vec_len, Max_number_of_vectors)[3].mattranspose()
-        number_of_vecs = ZZ(gp_mat.matsize()[1])
+        pari_mat = M_pari.qfminim(vec_len, Max_number_of_vectors)[2]
+        number_of_vecs = ZZ(pari_mat.matsize()[1])
         vector_list = []
         for i in range(number_of_vecs):
-            #print "List at", i, ":", list(gp_mat[i+1,])
-            new_vec = vector([ZZ(x)  for x in list(gp_mat[i+1,])])
+            new_vec = vector([ZZ(x) for x in list(pari_mat[i])])
             vector_list.append(new_vec)
-
-
-        ## DIAGNOSTIC
-        #print "number_of_vecs = ", number_of_vecs
-        #print "vector_list = ", vector_list
-
 
         ## Make a matrix from the short vectors
         if len(vector_list) > 0:
             M1 = Matrix(vector_list)
 
-
-        ## DIAGNOSTIC
-        #print "matrix of vectors = \n", M1
-        #print "rank of the matrix = ", M1.rank()
-
-
-
-    #print " vec_len = ", vec_len
-    #print M1
-
-
     ## Organize these vectors by length (and also introduce their negatives)
     max_len = vec_len // 2
-    vector_list_by_length = [[]  for _ in range(max_len + 1)]
+    vector_list_by_length = [[] for _ in range(max_len + 1)]
     for v in vector_list:
         l = self(v)
         vector_list_by_length[l].append(v)
         vector_list_by_length[l].append(vector([-x  for x in v]))
-
 
     ## Make a matrix from the column vectors (in order of ascending length).
     sorted_list = []
@@ -122,30 +88,18 @@ def basis_of_short_vectors(self, show_lengths=False, safe_flag=True):
             sorted_list.append(v)
     sorted_matrix = Matrix(sorted_list).transpose()
 
-
     ## Determine a basis of vectors of minimal length
     pivots = sorted_matrix.pivots()
-    basis = [sorted_matrix.column(i) for i in pivots]
-    pivot_lengths = [self(v)  for v in basis]
-
-
-    ## DIAGNOSTIC
-    #print "basis = ", basis
-    #print "pivot_lengths = ", pivot_lengths
-
-
-    ## Cache the result
-    self.__basis_of_short_vectors = basis
-    self.__basis_of_short_vectors_lenghts = pivot_lengths
-
+    basis = tuple(sorted_matrix.column(i) for i in pivots)
+    for v in basis:
+        v.set_immutable()
 
     ## Return the appropriate result
     if show_lengths:
+        pivot_lengths = tuple(self(v) for v in basis)
         return basis, pivot_lengths
     else:
         return basis
-
-
 
 
 def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
@@ -160,10 +114,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
       only one of the vectors of the pair `[v, -v]` is listed.
 
-    OUTPUT:
-
-    A list of lists of vectors such that entry `[i]` contains all
-    vectors of length `i`.
+    OUTPUT: a list of lists of vectors such that entry ``[i]`` contains
+    all vectors of length `i`.
 
     EXAMPLES::
 
@@ -258,7 +210,6 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
         # In certain trivial cases, PARI can sometimes return longer
         # vectors than requested.
         if length < len_bound:
-            v = parilist[i]
             sagevec = V(list(parilist[i]))
             vec_sorted_list[length].append(sagevec)
             if not up_to_sign_flag :
@@ -269,6 +220,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 
     return vec_sorted_list
 
+
 def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     """
     Return a list of lists of short primitive vectors `v`, sorted by length, with
@@ -278,8 +230,7 @@ def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=Fa
 
     Note:  This processes the PARI/GP output to always give elements of type `ZZ`.
 
-    OUTPUT:
-        a list of lists of vectors.
+    OUTPUT: a list of lists of vectors.
 
     EXAMPLES::
 
@@ -425,6 +376,7 @@ def number_of_automorphisms(self, recompute=None):
     the quadratic form.
 
     OUTPUT:
+
         an integer >= 2.
 
     EXAMPLES::
@@ -450,7 +402,6 @@ def number_of_automorphisms(self, recompute=None):
     except AttributeError:
         self._compute_automorphisms()
         return self.__number_of_automorphisms
-
 
 def set_number_of_automorphisms(self, num_autos):
     """

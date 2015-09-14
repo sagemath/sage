@@ -13,5 +13,8 @@ Standard C helper code for Cython modules
 include "sage/ext/interrupt.pxi"
 
 from sage.ext.stdsage cimport PY_NEW, HAS_DICTIONARY
-from sage.ext.memory cimport sage_free, sage_realloc, sage_malloc, sage_calloc
+from sage.ext.memory cimport (
+        sage_free, sage_realloc, sage_malloc, sage_calloc,
+        check_allocarray, check_reallocarray,
+        check_malloc, check_realloc, check_calloc)
 from sage.ext.memory import init_memory_functions

@@ -6766,6 +6766,76 @@ class FiniteWord_class(Word_class):
         M = FreeMonoid(len(l), l)
         return M(self)
 
+    def is_christoffel(self):
+        r"""
+        Returns True if self is a Christoffel word, and False otherwise.
+
+        The *Christoffel word* of slope `p/q` is obtained from the Cayley 
+        graph of `\ZZ/(p+q)\ZZ` with generator q as follows. If `u 
+        \rightarrow v` is an edge in the Cayley graph, then, `v = u + p 
+        \mod{p+q}`. Let `a`,`b` be the alphabet of `w`. Label the edge 
+        `u \rightarrow v` by `a` if u < v and `b` otherwise. The Christoffel 
+        word is the word obtained by reading the edge labels along the cycle 
+        beginning from 0.
+
+        Equivalently, `w` is a Christoffel word iff `w` is a symmetric 
+        non-empty word and `w[1:n-1]` is a palindrome. 
+
+        See for instance [1]_ and [2]_.
+
+        INPUT:
+
+        ``self`` -- word
+
+        OUTPUT:
+
+        Boolean -- ``True`` if ``self`` is a Christoffel word, 
+        ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: Word('00100101').is_christoffel()
+            True
+            sage: Word('aab').is_christoffel()
+            True
+            sage: Word().is_christoffel()
+            False
+            sage: Word('123123123').is_christoffel()
+            False
+            sage: Word('00100').is_christoffel()
+            False
+            sage: Word('0').is_christoffel()
+            True
+
+        TESTS::
+
+            sage: words.LowerChristoffelWord(5,4).is_christoffel()
+            True
+            sage: words.UpperChristoffelWord(5,4).is_christoffel()
+            True
+            sage: Word('aaaaaaaaa').is_christoffel()
+            False
+
+        REFERENCES:
+
+        .. [1]  Jean Berstel. Sturmian and episturmian words (a survey of
+            some recent results). In S. Bozapalidis and G. Rahonis, editors,
+            CAI 2007,volume 4728 of Lecture Notes in Computer Science, 
+            pages 23-47. Springer-Verlag, 2007.
+        .. [2]  J. Berstel, A. Lauve, C. R., F. Saliola, Combinatorics on
+            words: Christoffel words and repetitions in words, CRM Monograph 
+            Series, 27. American Mathematical Society, Providence, RI, 2009. 
+            xii+147 pp. ISBN: 978-0-8218-4480-9
+
+        """
+        if len(self) == 0 or len(self.letters()) > 2 or (self.is_palindrome() and len(self) > 1):
+            return False
+        elif self.is_symmetric() and self[1:len(self) - 1].is_palindrome():
+            return True
+        else:
+            return False
+
+
 #######################################################################
 
 class CallableFromListOfWords(tuple):

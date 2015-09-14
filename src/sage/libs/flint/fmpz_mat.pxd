@@ -30,3 +30,5 @@ cdef extern from "flint/fmpz_mat.h":
     long fmpz_mat_rank(const fmpz_mat_t A)
     int fmpz_mat_solve(fmpz_mat_t X, fmpz_t den, const fmpz_mat_t A, const fmpz_mat_t B)
     long fmpz_mat_nullspace(fmpz_mat_t B, const fmpz_mat_t A)
+    void fmpz_mat_hnf(fmpz_mat_t H , const fmpz_mat_t A)
+    void fmpz_mat_hnf_transform(fmpz_mat_t H, fmpz_mat_t U, const fmpz_mat_t A)

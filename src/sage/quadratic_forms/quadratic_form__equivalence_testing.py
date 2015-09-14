@@ -1,20 +1,16 @@
 """
 Equivalence Testing
+
+AUTHORS:
+
+- Anna Haensch (2014-12-01): added test for rational isometry
 """
 
-from sage.matrix.constructor import Matrix
-from sage.misc.mrange import mrange
 from sage.rings.arith import hilbert_symbol, prime_divisors, is_prime, valuation, GCD, legendre_symbol
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 from quadratic_form import is_QuadraticForm
-
-
-from sage.env import SAGE_LOCAL
-
-import tempfile, os
-
-from random import random
 
 
 ################################################################################
@@ -22,129 +18,35 @@ from random import random
 ## (For now, we require both forms to be positive definite.)                  ##
 ################################################################################
 
-def is_globally_equivalent__souvigner(self, other, return_transformation=False):
-    """
-    Uses the Souvigner code to compute the number of automorphisms.
-
-    INPUT:
-        a QuadraticForm
-
-    OUTPUT:
-        boolean, and optionally a matrix
-
-    EXAMPLES::
-
-        sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
-        sage: Q1 = QuadraticForm(ZZ, 3, [8, 6, 5, 3, 4, 2])
-        sage: M = Q.is_globally_equivalent__souvigner(Q1, True) ; M   # optional -- souvigner
-        [ 0  0 -1]
-        [ 1  0  0]
-        [-1  1  1]
-        sage: Q1(M) == Q                                              # optional -- souvigner
-        True
-
-    """
-    ## Write an input text file
-    F_filename = '/tmp/tmp_isom_input' + str(random()) + ".txt"
-    F = open(F_filename, 'w')
-    #F = tempfile.NamedTemporaryFile(prefix='tmp_isom_input', suffix=".txt")  ## This failed because it may have hyphens, which are interpreted badly by the Souvigner code.
-    F.write("\n #1 \n")
-
-    ## Write the first form
-    n = self.dim()
-    F.write(str(n) + "x0 \n")      ## Use the lower-triangular form
-    for i in range(n):
-        for j in range(i+1):
-            if i == j:
-                F.write(str(2 * self[i,j]) + " ")
-            else:
-                F.write(str(self[i,j]) + " ")
-        F.write("\n")
-
-    ## Write the second form
-    F.write("\n")
-    n = self.dim()
-    F.write(str(n) + "x0 \n")      ## Use the lower-triangular form
-    for i in range(n):
-        for j in range(i+1):
-            if i == j:
-                F.write(str(2 * other[i,j]) + " ")
-            else:
-                F.write(str(other[i,j]) + " ")
-        F.write("\n")
-    F.flush()
-    #print "Input filename = ", F.name
-    #os.system("less " + F.name)
-
-    ## Call the Souvigner automorphism code
-    souvigner_isom_path = os.path.join(SAGE_LOCAL,'bin','Souvigner_ISOM')
-    G1 = tempfile.NamedTemporaryFile(prefix='tmp_isom_ouput', suffix=".txt")
-    #print "Output filename = ", G1.name
-    #print  "Executing the shell command:   " + souvigner_isom_path + " '" +  F.name + "' > '" + G1.name + "'"
-    os.system(souvigner_isom_path + " '" +  F.name + "' > '" + G1.name +"'")
-
-
-    ## Read the output
-    G2 = open(G1.name, 'r')
-    line = G2.readline()
-    if line.startswith("Error:"):
-        raise RuntimeError("There is a problem using the souvigner code...  " + line)
-    elif line.find("not isomorphic") != -1:     ## Checking if this text appears, if so then they're not isomorphic!
-        return False
-    else:
-        ## Decide whether to read the transformation matrix, and return true
-        if not return_transformation:
-            F.close()
-            G1.close()
-            G2.close()
-            os.system("rm -f " + F_filename)
-            return True
-        else:
-            ## Try to read the isomorphism matrix
-            M = Matrix(ZZ, n, n)
-            for i in range(n):
-                new_row_text = G2.readline().split()
-                #print new_row_text
-                for j in range(n):
-                    M[i,j] = new_row_text[j]
-
-            ## Remove temporary files and return the value
-            F.close()
-            G1.close()
-            G2.close()
-            os.system("rm -f " + F_filename)
-            if return_transformation:
-                return M.transpose()
-            else:
-                return True
-            #return True, M
-
-    ## Raise and error if we're here:
-    raise RuntimeError("Oops! There is a problem...")
-
-
-
-def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_precision='sturm', check_local_equivalence=True):
+def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_precision=None, check_local_equivalence=None):
     """
     Determines if the current quadratic form is equivalent to the
-    given form over ZZ.  If return_matrix is True, then we also return
-    the transformation matrix M so that self(M) == other.
+    given form over ZZ.  If ``return_matrix`` is True, then we return
+    the transformation matrix `M` so that ``self(M) == other``.
 
     INPUT:
-        a QuadraticForm
+
+    - ``self``, ``other`` -- positive definite integral quadratic forms
+
+    - ``return_matrix`` -- (boolean, default ``False``) return
+      the transformation matrix instead of a boolean
 
     OUTPUT:
-        boolean, and optionally a matrix
+
+    - if ``return_matrix`` is ``False``: a boolean
+
+    - if ``return_matrix`` is ``True``: either ``False`` or the
+      transformation matrix
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: M = Matrix(ZZ, 4, 4, [1,2,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
         sage: Q1 = Q(M)
-        sage: Q.(Q1)                                                    # optional -- souvigner
+        sage: Q.is_globally_equivalent_to(Q1)
         True
-        sage: MM = Q.is_globally_equivalent_to(Q1, return_matrix=True)  # optional -- souvigner
-        sage: Q(MM) == Q1                                               # optional -- souvigner
+        sage: MM = Q.is_globally_equivalent_to(Q1, return_matrix=True)
+        sage: Q(MM) == Q1
         True
 
     ::
@@ -152,15 +54,17 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
         sage: Q3 = QuadraticForm(ZZ, 3, [8, 6, 5, 3, 4, 2])
-        sage: Q1.is_globally_equivalent_to(Q2)                          # optional -- souvigner
+        sage: Q1.is_globally_equivalent_to(Q2)
         False
-        sage: Q1.is_globally_equivalent_to(Q3)                          # optional -- souvigner
+        sage: Q1.is_globally_equivalent_to(Q2, return_matrix=True)
+        False
+        sage: Q1.is_globally_equivalent_to(Q3)
         True
-        sage: M = Q1.is_globally_equivalent_to(Q3, True) ; M            # optional -- souvigner
+        sage: M = Q1.is_globally_equivalent_to(Q3, True); M
         [-1 -1  0]
         [ 1  1  1]
         [-1  0  0]
-        sage: Q1(M) == Q3                                               # optional -- souvigner
+        sage: Q1(M) == Q3
         True
 
     ::
@@ -171,68 +75,32 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
         ...
         ValueError: not a definite form in QuadraticForm.is_globally_equivalent_to()
 
+    ALGORITHM: this uses the PARI function ``qfisom()``, implementing
+    an algorithm by Plesken and Souvignier.
     """
-    ## only for definite forms
-    if not self.is_definite():
-        raise ValueError("not a definite form in QuadraticForm.is_globally_equivalent_to()")
+    if check_theta_to_precision is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(19111, "The check_theta_to_precision argument is deprecated and ignored")
+    if check_local_equivalence is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(19111, "The check_local_equivalence argument is deprecated and ignored")
 
     ## Check that other is a QuadraticForm
-    #if not isinstance(other, QuadraticForm):
     if not is_QuadraticForm(other):
-        raise TypeError("Oops!  You must compare two quadratic forms, but the argument is not a quadratic form. =(")
+        raise TypeError("you must compare two quadratic forms, but the argument is not a quadratic form")
 
+    ## only for definite forms
+    if not self.is_definite() or not other.is_definite():
+        raise ValueError("not a definite form in QuadraticForm.is_globally_equivalent_to()")
 
-    ## Now use the Souvigner code by default! =)
-    return other.is_globally_equivalent__souvigner(self, return_matrix)    ## Note: We switch this because the Souvigner code has the opposite mapping convention to us.  (It takes the second argument to the first!)
+    mat = other._pari_().qfisom(self)
+    if not mat:
+        return False
 
-
-
-    ## ----------------------------------  Unused Code below  ---------------------------------------------------------
-
-    ## Check if the forms are locally equivalent
-    if (check_local_equivalence == True):
-        if not self.is_locally_equivalent_to(other):
-            return False
-
-    ## Check that the forms have the same theta function up to the desired precision (this can be set so that it determines the cusp form)
-    if check_theta_to_precision is not None:
-        if self.theta_series(check_theta_to_precision, var_str='', safe_flag=False) != other.theta_series(check_theta_to_precision, var_str='', safe_flag=False):
-            return False
-
-
-    ## Make all possible matrices which give an isomorphism -- can we do this more intelligently?
-    ## ------------------------------------------------------------------------------------------
-
-    ## Find a basis of short vectors for one form, and try to match them with vectors of that length in the other one.
-    basis_for_self, self_lengths = self.basis_of_short_vectors(show_lengths=True)
-    max_len = max(self_lengths)
-    short_vectors_of_other = other.short_vector_list_up_to_length(max_len + 1)
-
-    ## Make the matrix A:e_i |--> v_i to our new basis.
-    A = Matrix(basis_for_self).transpose()
-    Q2 = A.transpose() * self.matrix() * A       ## This is the matrix of 'self' in the new basis
-    Q3 = other.matrix()
-
-    ## Determine all automorphisms
-    n = self.dim()
-    Auto_list = []
-
-    ## DIAGNOSTIC
-    #print "n = " + str(n)
-    #print "pivot_lengths = " + str(pivot_lengths)
-    #print "vector_list_by_length = " + str(vector_list_by_length)
-    #print "length of vector_list_by_length = " + str(len(vector_list_by_length))
-
-    for index_vec in mrange([len(short_vectors_of_other[self_lengths[i]])  for i in range(n)]):
-        M = Matrix([short_vectors_of_other[self_lengths[i]][index_vec[i]]   for i in range(n)]).transpose()
-        if M.transpose() * Q3 * M == Q2:
-            if return_matrix:
-                return A * M.inverse()
-            else:
-                return True
-
-    ## If we got here, then there is no isomorphism
-    return False
+    if return_matrix:
+        return mat.sage()
+    else:
+        return True
 
 
 def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_equivalence_test=False):
@@ -245,16 +113,18 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
     prime, and the dimension and signature at the real place.
 
     INPUT:
-        a QuadraticForm
+
+    a QuadraticForm
 
     OUTPUT:
-        boolean
+
+    boolean
 
     EXAMPLES::
 
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
-        sage: Q1.is_globally_equivalent_to(Q2)                           # optional -- souvigner
+        sage: Q1.is_globally_equivalent_to(Q2)
         False
         sage: Q1.is_locally_equivalent_to(Q2)
         True
@@ -303,10 +173,12 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
     equivalent to that of self.
 
     INPUT:
-        a QuadraticForm
+
+    a QuadraticForm
 
     OUTPUT:
-        boolean
+
+    boolean
 
     EXAMPLES::
 
@@ -450,9 +322,168 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
     else:
         raise TypeError("Oops!  This should not have happened.")
 
+def is_rationally_isometric(self, other):
+    """
+    Determines if two regular quadratic forms over a number field are isometric.
 
+    INPUT:
 
+    a quadratic form
 
+    OUTPUT:
 
+    boolean
 
+    EXAMPLES::
 
+        sage: V=DiagonalQuadraticForm(QQ,[1,1,2])
+        sage: W=DiagonalQuadraticForm(QQ,[2,2,2])
+        sage: V.is_rationally_isometric(W)
+        True
+
+    ::
+
+        sage: K.<a>=NumberField(x^2-3)
+        sage: V=QuadraticForm(K,4,[1,0,0,0,2*a,0,0,a,0,2]);V
+        Quadratic form in 4 variables over Number Field in a with defining polynomial x^2 - 3 with coefficients:
+        [ 1 0 0 0 ]
+        [ * 2*a 0 0 ]
+        [ * * a 0 ]
+        [ * * * 2 ]
+        sage: W=QuadraticForm(K,4,[1,2*a,4,6,3,10,2,1,2,5]);W
+        Quadratic form in 4 variables over Number Field in a with defining polynomial x^2 - 3 with coefficients:
+        [ 1 2*a 4 6 ]
+        [ * 3 10 2 ]
+        [ * * 1 2 ]
+        [ * * * 5 ]
+        sage: V.is_rationally_isometric(W)
+        False
+
+    ::
+
+        sage: K.<a>=NumberField(x^4+2*x+6)
+        sage: V=DiagonalQuadraticForm(K,[a,2,3,2,1]);V
+        Quadratic form in 5 variables over Number Field in a with defining polynomial x^4 + 2*x + 6 with coefficients:
+        [ a 0 0 0 0 ]
+        [ * 2 0 0 0 ]
+        [ * * 3 0 0 ]
+        [ * * * 2 0 ]
+        [ * * * * 1 ]
+        sage: W=DiagonalQuadraticForm(K,[a,a,a,2,1]);W
+        Quadratic form in 5 variables over Number Field in a with defining polynomial x^4 + 2*x + 6 with   coefficients:
+        [ a 0 0 0 0 ]
+        [ * a 0 0 0 ]
+        [ * * a 0 0 ]
+        [ * * * 2 0 ]
+        [ * * * * 1 ]
+        sage: V.is_rationally_isometric(W)
+        False
+
+    ::
+
+        sage: K.<a>=NumberField(x^2-3)
+        sage: V=DiagonalQuadraticForm(K,[-1,a,-2*a])
+        sage: W=DiagonalQuadraticForm(K,[-1,-a,2*a])
+        sage: V.is_rationally_isometric(W)
+        True
+
+    TESTS::
+
+        sage: K.<a>=QuadraticField(3)
+        sage: V=DiagonalQuadraticForm(K,[1,2])
+        sage: W=DiagonalQuadraticForm(K,[1,0])
+        sage: V.is_rationally_isometric(W)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: This only tests regular forms
+
+    Forms must have the same base ring otherwise a `TypeError` is raised::
+
+        sage: K1.<a> = QuadraticField(5)
+        sage: K2.<b> = QuadraticField(7)
+        sage: V = DiagonalQuadraticForm(K1,[1,a])
+        sage: W = DiagonalQuadraticForm(K2,[1,b])
+        sage: V.is_rationally_isometric(W)
+        Traceback (most recent call last):
+        ...
+        TypeError: forms must have the same base ring.
+
+    Forms which have different dimension are not isometric::
+
+        sage: W=DiagonalQuadraticForm(QQ,[1,2])
+        sage: V=DiagonalQuadraticForm(QQ,[1,1,1])
+        sage: V.is_rationally_isometric(W)
+        False
+
+    Forms whose determinants do not differ by a square in the base field are not isometric::
+
+        sage: K.<a>=NumberField(x^2-3)
+        sage: V=DiagonalQuadraticForm(K,[-1,a,-2*a])
+        sage: W=DiagonalQuadraticForm(K,[-1,a,2*a])
+        sage: V.is_rationally_isometric(W)
+        False
+
+    ::
+
+        sage: K.<a> = NumberField(x^5 - x + 2, 'a')
+        sage: Q = QuadraticForm(K,3,[a,1,0,-a**2,-a**3,-1])
+        sage: m = Q.matrix()
+        sage: for _ in range(5):
+        ....:     t = random_matrix(ZZ,3,algorithm='unimodular')
+        ....:     m2 = t*m*t.transpose()
+        ....:     Q2 = QuadraticForm(K, 3, [m2[i,j] / (2 if i==j else 1)
+        ....:                               for i in range(3) for j in range(i,3)])
+        ....:     print Q.is_rationally_isometric(Q2)
+        True
+        True
+        True
+        True
+        True
+
+    """
+
+    if self.Gram_det() == 0 or other.Gram_det() == 0:
+        raise NotImplementedError("This only tests regular forms")
+
+    if self.base_ring() != other.base_ring():
+        raise TypeError("forms must have the same base ring.")
+
+    if self.dim() != other.dim():
+        return False
+
+    if not ((self.Gram_det()*other.Gram_det()).is_square()):
+        return False
+
+    L1=self.Gram_det().support()
+    L2=other.Gram_det().support()
+
+    for p in set().union(L1,L2):
+        if self.hasse_invariant(p) != other.hasse_invariant(p):
+            return False
+
+    if self.base_ring() == QQ:
+        if self.signature() != other.signature():
+            return False
+    else:
+
+        M = self.rational_diagonal_form().Gram_matrix_rational()
+        N = other.rational_diagonal_form().Gram_matrix_rational()
+        K = self.base_ring()
+
+        Mentries = M.diagonal()
+        Nentries = N.diagonal()
+
+        for emb in K.real_embeddings():
+
+            Mpos=0
+            for x in Mentries:
+                Mpos+= emb(x) >= 0
+
+            Npos=0
+            for x in Nentries:
+                Npos+= emb(x) >= 0
+
+            if Npos != Mpos:
+                return False
+
+    return True

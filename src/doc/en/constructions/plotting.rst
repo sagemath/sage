@@ -260,11 +260,7 @@ Other examples are in the Reference Manual.
 gnuplot
 =======
 
-You must have ``gnuplot`` installed to run these commands. This is an
-"experimental package" which, if it isn't installed already on your
-machine, can be (hopefully!) installed by typing
-``./sage -i gnuplot-4.0.0`` on the command line in the Sage home
-directory.
+You must have ``gnuplot`` installed to run these commands.
 
 .. index:: plot; a function
 

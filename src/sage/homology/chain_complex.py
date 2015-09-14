@@ -114,7 +114,7 @@ def ChainComplex(data=None, **kwds):
       indexed.
 
     - ``degree_of_differential`` -- element of grading_group
-       (optional, default ``1``). The degree of the differential.
+      (optional, default ``1``). The degree of the differential.
 
     - ``degree`` -- alias for ``degree_of_differential``.
 
@@ -457,7 +457,7 @@ class Chain_class(ModuleElement):
         of the differentials.
 
         EXAMPLES::
-        
+
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
             sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
             sage: c.is_cycle()
@@ -480,7 +480,7 @@ class Chain_class(ModuleElement):
         the differentials.
 
         EXAMPLES::
-        
+
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
             sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
             sage: c.is_boundary()
@@ -799,7 +799,7 @@ class ChainComplex_class(Parent):
         are returned in sort order.
 
         EXAMPLES::
-        
+
             sage: one = matrix(ZZ, [[1]])
             sage: D = ChainComplex({0: one, 2: one, 6:one})
             sage: ascii_art(D)

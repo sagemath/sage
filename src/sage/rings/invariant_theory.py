@@ -2258,7 +2258,7 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
         The first algebraic form used in the definition.
 
         EXAMPLES::
-        
+
             sage: R.<x,y> = QQ[]
             sage: q0 = invariant_theory.quadratic_form(x^2 + y^2)
             sage: q1 = invariant_theory.quadratic_form(x*y)
@@ -2283,7 +2283,7 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
         The second form used in the definition.
 
         EXAMPLES::
-        
+
             sage: R.<x,y> = QQ[]
             sage: q0 = invariant_theory.quadratic_form(x^2 + y^2)
             sage: q1 = invariant_theory.quadratic_form(x*y)
@@ -2560,7 +2560,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         Return the `\Delta` invariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2579,7 +2579,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         Return the `\Delta'` invariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2627,7 +2627,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         Return the `\Theta` invariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2646,7 +2646,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         Return the `\Theta'` invariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2665,7 +2665,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         Return the `\Phi'` invariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2784,7 +2784,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         The `T`-covariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2806,7 +2806,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         The `T'`-covariant.
 
         EXAMPLES::
-       
+
             sage: R.<x,y,z,t,a0,a1,a2,a3,b0,b1,b2,b3,b4,b5,A0,A1,A2,A3,B0,B1,B2,B3,B4,B5> = QQ[]
             sage: p1 = a0*x^2 + a1*y^2 + a2*z^2 + a3
             sage: p1 += b0*x*y + b1*x*z + b2*x + b3*y*z + b4*y + b5*z
@@ -2867,7 +2867,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         covariants of a quaternary biquadratic.
         
         EXAMPLES::
-  
+
             sage: R.<w,x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2, x*w, y*w, z*w, w^2]
             sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
@@ -3344,7 +3344,7 @@ can then be queried for invariant and covariants. For example,
             <class 'sage.rings.invariant_theory.TwoQuaternaryQuadratics'>
 
         Distance between two spheres [Salmon]_ ::
-        
+
             sage: R.<x,y,z, a,b,c, r1,r2> = QQ[]
             sage: S1 = -r1^2 + x^2 + y^2 + z^2 
             sage: S2 = -r2^2 + (x-a)^2 + (y-b)^2 + (z-c)^2 

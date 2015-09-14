@@ -1088,8 +1088,7 @@ class QuiverMutationType_abstract(UniqueRepresentation,SageObject):
             print '\t- elliptic:         ', self.is_elliptic()
 
 
-class QuiverMutationType_Irreducible(QuiverMutationType_abstract,
-                                     UniqueRepresentation, SageObject):
+class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
     """
     The mutation type for a cluster algebra or a quiver. Should not be
     called directly, but through QuiverMutationType.
@@ -1933,8 +1932,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract,
             return self
 
 
-class QuiverMutationType_Reducible(QuiverMutationType_abstract,
-                                   UniqueRepresentation, SageObject):
+class QuiverMutationType_Reducible(QuiverMutationType_abstract):
     """
     The mutation type for a cluster algebra or a quiver. Should not be
     called directly, but through QuiverMutationType.  Inherits from

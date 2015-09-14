@@ -223,6 +223,7 @@ class pAdicLseries(SageObject):
         Compare self and other.
 
         TESTS::
+
             sage: lp1 = EllipticCurve('11a1').padic_lseries(5)
             sage: lp2 = EllipticCurve('11a1').padic_lseries(7)
             sage: lp3 = EllipticCurve('11a2').padic_lseries(5)
@@ -232,7 +233,6 @@ class pAdicLseries(SageObject):
             False
             sage: lp1 == lp3
             False
-
         """
         c = cmp(type(self), type(other))
         if c:

@@ -1245,7 +1245,7 @@ def row_lengths_aux(skp):
     else:
         return [x[0] - x[1] for x in zip(skp[0], skp[1])]
 
-class SkewPartitions(Parent, UniqueRepresentation):
+class SkewPartitions(UniqueRepresentation, Parent):
     """
     Skew partitions.
 

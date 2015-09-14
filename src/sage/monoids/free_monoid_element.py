@@ -1,5 +1,5 @@
 """
-Monoid Elements
+Elements of Free Monoids
 
 AUTHORS:
 

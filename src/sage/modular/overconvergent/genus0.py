@@ -742,6 +742,7 @@ class OverconvergentModularFormsSpace(Module):
         obviously nonsense.
 
         EXAMPLES::
+
             sage: M = OverconvergentModularForms(3, 0, 1/2)
             sage: MM = M.base_extend(Qp(3))
             sage: R.<q> = Qp(3)[[]]; f = MM(q + O(q^2)); f

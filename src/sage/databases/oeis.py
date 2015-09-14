@@ -156,7 +156,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.unknown import Unknown
 from sage.misc.misc import embedded
-from sage.misc.html import html
+from sage.misc.html import HtmlFragment
 from collections import defaultdict
 from urllib import urlopen, urlencode
 import re
@@ -1430,10 +1430,12 @@ class OEISSequence(SageObject):
             sage: s.links(format='url')[3]
             'http://oeis.org/A000024'
 
-            sage: s.links(format="html")
-            <html><font color='black'>0: Wikipedia, <a href="http://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
+            sage: HTML = s.links(format="html");  HTML
+            0: Wikipedia, <a href="http://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
             1: See. also <a href="http://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>
             ...
+            sage: type(HTML)
+            <class 'sage.misc.html.HtmlFragment'>
         """
         url_absolute = lambda s: re.sub('\"\/', '\"' + oeis_url, s)
         if browse is None:
@@ -1445,7 +1447,7 @@ class OEISSequence(SageObject):
             elif format == 'raw':
                 return FancyTuple(self._fields['H'])
             elif format == 'html':
-                html(FancyTuple([url_absolute(_) for _ in self._fields['H']]))
+                return HtmlFragment(FancyTuple([url_absolute(_) for _ in self._fields['H']]))
             elif format == 'url':
                 url_list = flatten([_urls(url_absolute(string)) for string in self._fields['H']])
                 return FancyTuple(url_list)
@@ -1783,6 +1785,7 @@ class FancyTuple(tuple):
         index of the value in ``self``.
 
         EXAMPLES::
+
             sage: from sage.databases.oeis import FancyTuple
             sage: t = FancyTuple(['zero', 'one', 'two', 'three', 4]) ; t
             0: zero

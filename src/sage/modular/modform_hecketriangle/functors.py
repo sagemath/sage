@@ -206,7 +206,7 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
         else:
             return ambient_space
 
-    def __str__(self):
+    def _repr_(self):
         r"""
         Return the string representation of ``self``.
 
@@ -388,7 +388,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
             merged_functor = self.merge(ConstantFormsSpaceFunctor(self._group))
             return merged_functor(R)
 
-    def __str__(self):
+    def _repr_(self):
         r"""
         Return the string representation of ``self``.
 
@@ -577,7 +577,7 @@ class FormsRingFunctor(ConstructionFunctor):
             merged_functor = self.merge(ConstantFormsSpaceFunctor(self._group))
             return merged_functor(R)
 
-    def __str__(self):
+    def _repr_(self):
         r"""
         Return the string representation of ``self``.
 

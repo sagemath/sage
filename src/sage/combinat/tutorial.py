@@ -914,13 +914,8 @@ or the algebra of `2\times 2` matrices over the finite field
     [0 0]  [1 1]  [1 1]  [1 0]  [0 1]  [1 1]
     [1 1], [1 0], [0 1], [1 1], [1 1], [1 1]
     ]
-
-The command below should return 16, but it is not yet implemented::
-
     sage: C.cardinality()
-    Traceback (most recent call last):
-    ...
-    AttributeError: 'MatrixSpace_with_category' object has no attribute 'cardinality'
+    16
 
 .. topic:: Exercise
 
@@ -1648,7 +1643,7 @@ iterator or non-naive counting::
 
     sage: A = random_matrix(ZZ, 6, 3, x=7)
     sage: L = LatticePolytope(A.rows())
-    sage: L.points_pc()                               # random
+    sage: L.points()                               # random
     M(4, 1, 0),
     M(0, 3, 5),
     M(2, 2, 3),

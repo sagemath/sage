@@ -158,7 +158,7 @@ class VectorPartition(CombinatorialElement):
         """
         return Partition(sorted([vec[i] for vec in self._list], reverse = True))
 
-class VectorPartitions(Parent, UniqueRepresentation):
+class VectorPartitions(UniqueRepresentation, Parent):
     r"""
     Class of all vector partitions of ``vec`` with all parts greater than
     or equal to ``min`` in lexicographic order.

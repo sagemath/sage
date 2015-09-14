@@ -1,4 +1,4 @@
-
+"Evaluation"
 
 def QFEvaluateVector(Q, v):
     """
@@ -8,6 +8,8 @@ def QFEvaluateVector(Q, v):
     matrix is given then the output will be the quadratic form Q'
     which in matrix notation is given by:
 
+    .. math::
+
             Q' = v^t * Q * v.
 
     Note: This is a Python wrapper for the fast evaluation routine
@@ -15,13 +17,16 @@ def QFEvaluateVector(Q, v):
     called more conveniently as Q(M).
 
     INPUT:
-        Q -- QuadraticForm over a base ring R
-        v -- a tuple or list (or column matrix) of Q.dim() elements of R
+
+    - Q -- QuadraticForm over a base ring R
+    - v -- a tuple or list (or column matrix) of Q.dim() elements of R
 
     OUTPUT:
+
         an element of R
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector
         sage: Q = QuadraticForm(ZZ, 4, range(10)); Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
@@ -74,13 +79,16 @@ def QFEvaluateMatrix(Q, M, Q2):
     for now creates circular imports.
 
     INPUT:
-        Q -- QuadraticForm over a base ring R
-        M -- a Q.dim() x Q2.dim() matrix of elements of R
+
+    - Q -- QuadraticForm over a base ring R
+    - M -- a Q.dim() x Q2.dim() matrix of elements of R
 
     OUTPUT:
-        Q2 -- a QuadraticForm over R
 
-    EXAMPLES:
+    - Q2 -- a QuadraticForm over R
+
+    EXAMPLES::
+
         sage: from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateMatrix
         sage: Q = QuadraticForm(ZZ, 4, range(10)); Q
         Quadratic form in 4 variables over Integer Ring with coefficients:

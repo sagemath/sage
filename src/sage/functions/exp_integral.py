@@ -1310,7 +1310,7 @@ class Function_exp_integral(BuiltinFunction):
     The precision for the result is deduced from the precision of the
     input. Convert the input to a higher precision explicitly if a
     result with higher precision is desired::
-        
+
         sage: Ei(RealField(300)(1.1))
         2.16737827956340282358378734233807621497112737591639704719499002090327541763352339357795426
         

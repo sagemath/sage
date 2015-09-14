@@ -103,9 +103,6 @@ Utilities
    sage/structure/dynamic_class
    sage/structure/mutability
 
-   sage/structure/coerce_dict
-   sage/structure/coerce_exceptions
-
 Internals
 ---------
 

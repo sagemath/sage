@@ -130,7 +130,7 @@ of several different types of polynomial rings.
 
 If you want to create a new directory in the Sage library
 ``SAGE_ROOT/src/sage`` (say, ``measure_theory``), that directory
-should contain a file ``__init__.py`` that contains the single line 
+should contain a file ``__init__.py`` that contains the single line
 ``import all`` in addition to whatever
 files you want to add (say, ``borel_measure.py`` and
 ``banach_tarski.py``), and also a file ``all.py`` listing imports from
@@ -181,7 +181,7 @@ The top of each Sage code file should follow this format::
     - YOUR NAME (2005-01-03): initial version
 
     - person (date in ISO year-month-day format): short desc
-    
+
     EXAMPLES::
 
     <Lots and lots of examples>

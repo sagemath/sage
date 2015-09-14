@@ -296,7 +296,17 @@ cdef class SageObject:
         return UnicodeArt(lines)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        r"""
+        Not implemented: mutable objects inherit from this class
+
+        EXAMPLES::
+
+            sage: hash(SageObject())
+            Traceback (most recent call last):
+            ...
+            TypeError: <type 'sage.structure.sage_object.SageObject'> is not hashable
+        """
+        raise TypeError("{} is not hashable".format(type(self)))
 
     def _cache_key(self):
         r"""

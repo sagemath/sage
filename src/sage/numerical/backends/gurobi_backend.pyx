@@ -1117,6 +1117,8 @@ cdef class GurobiBackend(GenericBackend):
 
         if name == "timelimit":
             name = "TimeLimit"
+        elif name.lower() == "logfile":
+            name = "LogFile"
 
         try:
             t = parameters_type[name]

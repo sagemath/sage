@@ -29,8 +29,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 from cpython.list cimport *
+from cpython.object cimport PyObject
 
 import os
 from functools import reduce
@@ -41,6 +41,8 @@ from cStringIO import StringIO
 from sage.misc.misc import sage_makedirs
 from sage.env import SAGE_LOCAL
 from sage.doctest import DOCTEST_MODE
+
+from sage.misc.fast_methods cimport hash_by_id
 
 from sage.modules.free_module_element import vector
 
@@ -78,6 +80,16 @@ cdef class Graphics3d(SageObject):
             {}
         """
         self._extra_kwds = dict()
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.plot.plot3d.base import Graphics3d
+            sage: hash(Graphics3d()) # random
+            140658972348064
+        """
+        return hash_by_id(<void *> self)
 
     def _repr_(self):
         """

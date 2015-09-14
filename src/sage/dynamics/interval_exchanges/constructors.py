@@ -155,9 +155,8 @@ def _two_lists(a):
 
     -- two lists
 
-    TESTS:
+    TESTS::
 
-    ::
         sage: from sage.dynamics.interval_exchanges.constructors import _two_lists
         sage: _two_lists(('a1 a2','b1 b2'))
         [['a1', 'a2'], ['b1', 'b2']]

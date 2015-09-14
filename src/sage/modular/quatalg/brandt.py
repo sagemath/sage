@@ -910,6 +910,7 @@ class BrandtModule_class(AmbientHeckeModule):
             - ``sparse`` -- bool (default: False); whether matrix should be sparse
 
         EXAMPLES::
+
             sage: B = BrandtModule(37)
             sage: t = B._compute_hecke_matrix_directly(2); t
             [1 1 1]
@@ -1225,6 +1226,7 @@ class BrandtModule_class(AmbientHeckeModule):
         Return Brandt series coefficient vectors out to precision *at least* prec.
 
         EXAMPLES::
+
             sage: B = BrandtModule(37, use_cache=False)
             sage: B._brandt_series_vectors(5)
             [[(1/2, 1, 1, 2, 1), (1/2, 0, 1, 1, 3), (1/2, 0, 1, 1, 3)],

@@ -76,7 +76,7 @@ class SagePkgApplication(CmdlineSubcommands):
     
     def run_config(self):
         """
-        Print the configuration
+        config: Print the configuration
 
         $ sage-package config
         Configuration:
@@ -88,7 +88,7 @@ class SagePkgApplication(CmdlineSubcommands):
 
     def run_list(self):
         """
-        Print a list of all available packages
+        list: Print a list of all available packages
 
         $ sage-package list | sort
         4ti2
@@ -103,7 +103,7 @@ class SagePkgApplication(CmdlineSubcommands):
 
     def run_name(self, tarball_filename):
         """
-        Find the package name given a tarball filename
+        name: Find the package name given a tarball filename
     
         $ sage-package name pari-2.8-1564-gdeac36e.tar.gz
         pari
@@ -113,14 +113,36 @@ class SagePkgApplication(CmdlineSubcommands):
 
     def run_tarball(self, package_name):
         """
-        Find the tarball filename given a package name
+        tarball: Find the tarball filename given a package name
     
         $ sage-package tarball pari
         pari-2.8-1564-gdeac36e.tar.gz
         """
         package = Package(package_name)
         print(package.tarball.filename)
-    
+
+    def run_apropos(self, incorrect_name):
+        """
+        apropos: Find up to 5 package names that are close to the given name
+
+        $ sage-package apropos python
+        Did you mean: cython, ipython, python2, python3, patch?
+        """
+        from sage_bootstrap.levenshtein import Levenshtein, DistanceExceeded
+        levenshtein = Levenshtein(5)
+        names = []
+        for pkg in Package.all():
+            try:
+                names.append([levenshtein(pkg.name, incorrect_name), pkg.name])
+            except DistanceExceeded:
+                pass
+        if names:
+            names = sorted(names)[:5]
+            print('Did you mean: {0}?'.format(', '.join(name[1] for name in names)))
+        else:
+            print('There is no package similar to {0}'.format(incorrect_name))
+            print('You can find further packages at http://files.sagemath.org/spkg/')
+
 
 class SageDownloadFileApplication(object):    
     """

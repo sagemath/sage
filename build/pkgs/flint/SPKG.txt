@@ -10,11 +10,6 @@ Website: www.flintlib.org
 
 FLINT is licensed GPL v2+.
 
-== SPKG Maintainers ==
-
- * Fredrik Johansson
- * Jean-Pierre Flori
-
 == Upstream Contact ==
 
  * flint-devel Gougle Group (http://groups.google.co.uk/group/flint-devel)
@@ -25,9 +20,3 @@ FLINT is licensed GPL v2+.
  * MPIR
  * MPFR
  * NTL
-
-== Special Update/Build Instructions ==
-
-=== Patches ===
-  * test_empty_string.patch: fix test for empty string in Makefile.in.
-  * ntl62.patch: do not include multiple times NTL headers.

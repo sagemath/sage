@@ -24,7 +24,11 @@ options can be:
 
 Not all packages are built by default, they are divided into standard,
 optional and experimental ones. Standard packages are built by default
-and have much more stringent quality requirements.
+and have stringent quality requirements. Optional packages are subject
+to the same requirements (although these are tested not as much,
+so in practice they might break more often than standard packages).
+For experimental packages, the bar is much lower: even if there are some
+problems, the package can still be accepted.
 
 The section :ref:`section-directory-structure` describes the structure
 of each individual package in ``SAGE_ROOT/build/pkgs``. In section
@@ -39,7 +43,7 @@ for inclusion in the Sage source code.
 Directory Structure
 ===================
 
-Third-party packages in Sage consists of two parts: 
+Third-party packages in Sage consists of two parts:
 
 #. The tarball as it is distributed by the third party, or as close as
    possible. Valid reasons for modifying the tarball are deleting
@@ -49,7 +53,7 @@ Third-party packages in Sage consists of two parts:
 
 #. The build scripts and associated files are in a subdirectory
    ``SAGE_ROOT/build/pkgs/package``, where you replace ``package``
-   with a lower-case version of the upstream project name. 
+   with a lower-case version of the upstream project name.
 
 As an example, let us consider a hypothetical FoO project. They
 (upstream) distribute a tarball ``foo-1.3.tar.gz`` (that will be
@@ -125,7 +129,7 @@ install it::
         mkdir -p "$SAGE_LOCAL/share/doc/PACKAGE_NAME"
         cp -R doc/* "$SAGE_ROOT/local/share/doc/PACKAGE_NAME"
     fi
-    
+
 
 
 
@@ -159,7 +163,7 @@ contain ``1.3``.
 If the upstream package is taken from some revision other than a stable
 version, you should use the date at which the revision is made, e.g. the
 Singular package ``20090818`` is made with the revision as of
-2009-08-18. 
+2009-08-18.
 
 If you made any changes to the upstream tarball (see
 :ref:`section-directory-structure` for allowable changes) then you
@@ -230,12 +234,12 @@ typical patch file should look like this::
     what the patch does, where you got it from if you did not write it
     yourself, if they are platform specific, if they should be pushed
     upstream, etc...
-  
+
     diff -dru Sphinx-1.2.2/sphinx/ext/autodoc.py.orig Sphinx-1.2.2/sphinx/ext/autodoc.py
     --- Sphinx-1.2.2/sphinx/ext/autodoc.py.orig  2014-03-02 20:38:09.000000000 +1300
     +++ Sphinx-1.2.2/sphinx/ext/autodoc.py  2014-10-19 23:02:09.000000000 +1300
     @@ -1452,6 +1462,7 @@
- 
+
          app.add_config_value('autoclass_content', 'class', True)
          app.add_config_value('autodoc_member_order', 'alphabetic', True)
     +    app.add_config_value('autodoc_builtin_argspec', None, True)
@@ -299,12 +303,16 @@ installation via::
 
 or::
 
-    [user@localhost]$ sage -i -f package_name
+    [user@localhost]$ sage -f package_name
 
 to force a reinstallation. If your package contains a ``spkg-check``
 script (see :ref:`section-spkg-check`) it can be run with::
 
     [user@localhost]$ sage -i -c package_name
+
+or::
+
+    [user@localhost]$ sage -f -c package_name
 
 If all went fine, open a ticket, put a link to the original tarball in
 the ticket and upload a branch with the code under

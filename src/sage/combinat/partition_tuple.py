@@ -1681,9 +1681,9 @@ class PartitionTuples(UniqueRepresentation, Parent):
         Return a generic element.
 
         EXAMPLES::
+
             sage: PartitionTuples().an_element()  # indirect doctest
             ([1, 1, 1, 1], [2, 1, 1], [3, 1], [4])
-
         """
         return PartitionTuple( ([1,1,1,1],[2,1,1],[3,1],[4]) )
 
@@ -1756,9 +1756,9 @@ class PartitionTuples_all(PartitionTuples):
         Return a generic element.
 
         EXAMPLES::
+
             sage: PartitionTuples().an_element()   # indirect doctest
             ([1, 1, 1, 1], [2, 1, 1], [3, 1], [4])
-
         """
         return self.element_class(self,([1,1,1,1],[2,1,1],[3,1],[4]))
 
@@ -1858,9 +1858,9 @@ class PartitionTuples_level(PartitionTuples):
         Return a generic element.
 
         EXAMPLES::
+
             sage: PartitionTuples(level=4).an_element()  # indirect doctest
             ([], [1], [2], [3])
-
         """
         return self.element_class(self, tuple([l] for l in range(self.level()) ))
 
@@ -1874,6 +1874,7 @@ class PartitionTuples_size(PartitionTuples):
         Initializes this class.
 
         EXAMPLES::
+
             sage: PartitionTuples(size=4)
             Partition tuples of size 4
             sage: PartitionTuples(size=6)
@@ -1957,9 +1958,9 @@ class PartitionTuples_size(PartitionTuples):
         Return a generic element.
 
         EXAMPLES::
+
             sage: PartitionTuples(size=4).an_element()  # indirect doctest
             ([1], [1], [1], [1])
-
         """
         return self.element_class(self, tuple([1] for l in range(self.size()) ))
 

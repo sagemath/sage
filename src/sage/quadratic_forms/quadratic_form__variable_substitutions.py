@@ -26,9 +26,11 @@ def swap_variables(self, r, s, in_place = False):
     (replacing the original form if the in_place flag is True).
 
     INPUT:
+
         `r`, `s` -- integers >= 0
 
     OUTPUT:
+
         a QuadraticForm (by default, otherwise none)
 
     EXAMPLES::
@@ -87,11 +89,13 @@ def multiply_variable(self, c, i, in_place = False):
     quadratic form.
 
     INPUT:
+
         `c` -- an element of Q.base_ring()
 
         `i` -- an integer >= 0
 
     OUTPUT:
+
         a QuadraticForm (by default, otherwise none)
 
     EXAMPLES::
@@ -133,11 +137,13 @@ def divide_variable(self, c, i, in_place = False):
     ring.
 
     INPUT:
+
         `c` -- an element of Q.base_ring()
 
         `i` -- an integer >= 0
 
     OUTPUT:
+
         a QuadraticForm (by default, otherwise none)
 
     EXAMPLES::
@@ -178,9 +184,11 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
     to be the field of fractions of the original ring (if necessary).
 
     INPUT:
+
         `c` -- a scalar in the fraction field of the value ring of the form.
 
     OUTPUT:
+
         A quadratic form of the same dimension
 
     EXAMPLES::
@@ -231,9 +239,11 @@ def extract_variables(self, var_indices):
     var_indices, to give a new quadratic form.
 
     INPUT:
+
         var_indices -- a list of integers >= 0
 
     OUTPUT:
+
         a QuadraticForm
 
     EXAMPLES::
@@ -267,11 +277,13 @@ def elementary_substitution(self, c, i, j, in_place = False):     ## CHECK THIS!
     original form if the in_place flag is True).
 
     INPUT:
+
         `c` -- an element of Q.base_ring()
 
         `i`, `j` -- integers >= 0
 
     OUTPUT:
+
         a QuadraticForm (by default, otherwise none)
 
     EXAMPLES::
@@ -351,11 +363,13 @@ def add_symmetric(self, c, i, j, in_place = False):
 
 
     INPUT:
+
         `c` -- an element of Q.base_ring()
 
         `i`, `j` -- integers >= 0
 
     OUTPUT:
+
         a QuadraticForm (by default, otherwise none)
 
     EXAMPLES::

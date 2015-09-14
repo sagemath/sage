@@ -78,7 +78,7 @@ def tdesign_params(t, v, k, L):
 
     EXAMPLES::
 
-        sage: BD = designs.BlockDesign(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
+        sage: BD = BlockDesign(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
         sage: from sage.combinat.designs.block_design import tdesign_params
         sage: tdesign_params(2,7,3,1)
         (2, 7, 7, 3, 3, 1)

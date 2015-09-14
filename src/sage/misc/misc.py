@@ -141,6 +141,7 @@ def SAGE_TMP():
 def SPYX_TMP():
     """
     EXAMPLES::
+
         sage: from sage.misc.misc import SPYX_TMP
         sage: SPYX_TMP
         l'.../temp/.../spyx'
@@ -919,6 +920,7 @@ def compose(f, g):
         3*x + 3
 
     ::
+
         sage: _ = function('f g')
         sage: _ = var ('x')
         sage: compose(f,g)(x)

@@ -972,7 +972,7 @@ class MaximaLib(MaximaAbstract):
         assumption was missing.
         
         EXAMPLES::
-        
+
             sage: from sage.interfaces.maxima_lib import maxima_lib
             sage: maxima_lib._missing_assumption('Is xyz a thing?')
             Traceback (most recent call last):

@@ -383,6 +383,17 @@ class WordMorphism(SageObject):
             codom_alphabet.update(it)
         return Words(sorted(codom_alphabet))
 
+    @cached_method
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: hash(WordMorphism('a->ab,b->ba'))
+            -1651294583         # 32-bit
+            4826519950209531529 # 64-bit
+        """
+        return hash(tuple((k,v) for k,v in self._morph.iteritems())) ^ hash(self._codomain)
+
     def __eq__(self, other):
         r"""
         Returns ``True`` if ``self`` is equal to ``other``.

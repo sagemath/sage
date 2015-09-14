@@ -18,8 +18,8 @@ graphs.
     :meth:`~Graph.graph6_string` | Returns the graph6 representation of the graph as an ASCII string.
     :meth:`~Graph.bipartite_sets` | Returns `(X,Y)` where X and Y are the nodes in each bipartite set of graph.
     :meth:`~Graph.bipartite_color` | Returns a dictionary with vertices as the keys and the color class as the values.
-    :meth:`~Graph.is_directed` | Since graph is undirected, returns False.
-    :meth:`~Graph.join` | Returns the join of self and other.
+    :meth:`~Graph.is_directed` | If ``self`` is undirected, returns False.
+    :meth:`~Graph.join` | Returns the join of ``self`` and ``other``.
 
 
 **Distances:**
@@ -29,7 +29,6 @@ graphs.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~Graph.centrality_closeness` | Returns the closeness centrality (1/average distance to all vertices)
     :meth:`~Graph.centrality_degree` | Returns the degree centrality
 
 
@@ -58,10 +57,10 @@ graphs.
     :meth:`~Graph.is_forest` | Return True if the graph is a forest, i.e. a disjoint union of trees.
     :meth:`~Graph.is_overfull` | Tests whether the current graph is overfull.
     :meth:`~Graph.odd_girth` | Returns the odd girth of ``self``.
-    :meth:`~Graph.is_edge_transitive` | Returns true if self is edge-transitive.
-    :meth:`~Graph.is_arc_transitive` | Returns true if self is arc-transitive.
-    :meth:`~Graph.is_half_transitive` | Returns true if self is a half-transitive graph.
-    :meth:`~Graph.is_semi_symmetric` | Returns true if self is a semi-symmetric graph.
+    :meth:`~Graph.is_edge_transitive` | Returns true if ``self`` is edge-transitive.
+    :meth:`~Graph.is_arc_transitive` | Returns true if ``self`` is arc-transitive.
+    :meth:`~Graph.is_half_transitive` | Returns true if ``self`` is a half-transitive graph.
+    :meth:`~Graph.is_semi_symmetric` | Returns true if ``self`` is a semi-symmetric graph.
 
 **Connectivity, orientations, trees:**
 
@@ -70,7 +69,7 @@ graphs.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~Graph.gomory_hu_tree` | Returns a Gomory-Hu tree of self.
+    :meth:`~Graph.gomory_hu_tree` | Returns a Gomory-Hu tree of ``self``.
     :meth:`~Graph.minimum_outdegree_orientation` | Returns an orientation of ``self`` with the smallest possible maximum outdegree
     :meth:`~Graph.bounded_outdegree_orientation` | Computes an orientation of ``self`` such that every vertex `v` has out-degree less than `b(v)`
     :meth:`~Graph.strong_orientation` | Returns a strongly connected orientation of the current graph.
@@ -86,7 +85,7 @@ graphs.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~Graph.clique_complex` | Returns the clique complex of self
+    :meth:`~Graph.clique_complex` | Returns the clique complex of ``self``
     :meth:`~Graph.cliques_containing_vertex` | Returns the cliques containing each vertex
     :meth:`~Graph.cliques_vertex_clique_number` | Returns a dictionary of sizes of the largest maximal cliques containing each vertex
     :meth:`~Graph.cliques_get_clique_bipartite` | Returns a bipartite graph constructed such that maximal cliques are the right vertices and the left vertices are retained from the given graph
@@ -139,6 +138,9 @@ graphs.
     :meth:`~Graph.maximum_average_degree` | Returns the Maximum Average Degree (MAD).
     :meth:`~Graph.two_factor_petersen` | Returns a decomposition of the graph into 2-factors.
     :meth:`~Graph.ihara_zeta_function_inverse` | Returns the inverse of the zeta function.
+    :meth:`~Graph.seidel_switching` | Returns Seidel switching w.r.t. a subset of vertices.
+    :meth:`~Graph.seidel_adjacency_matrix` | Returns the Seidel adjacency matrix of ``self``.
+    :meth:`~Graph.twograph`  | Returns :class:`two-graph <sage.combinat.designs.twographs.TwoGraph>` of ``self``.
 
 AUTHORS:
 
@@ -336,6 +338,13 @@ examples are covered here.
        sage: g = Graph([(1,3),(3,8),(5,2)])
        sage: g
        Graph on 5 vertices
+
+-  an igraph Graph::
+
+       sage: import igraph                                # optional - python_igraph
+       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)])) # optional - python_igraph
+       sage: g                                            # optional - python_igraph
+       Graph on 4 vertices
 
 Generators
 ----------
@@ -622,9 +631,13 @@ class Graph(GenericGraph):
 
       #.  A Sage adjacency matrix or incidence matrix
 
+      #.  A Sage :meth:`Seidel adjacency matrix <seidel_adjacency_matrix>`
+
       #.  A pygraphviz graph
 
       #.  A NetworkX graph
+
+      #.  An igraph graph (see http://igraph.org/python/)
 
     -  ``pos`` -  a positioning dictionary: for example, the
        spring layout from NetworkX for the 5-cycle is::
@@ -647,8 +660,8 @@ class Graph(GenericGraph):
     -  ``weighted`` - whether graph thinks of itself as
        weighted or not. See ``self.weighted()``
 
-    -  ``format`` - if None, Graph tries to guess- can be
-       several values, including:
+    -  ``format`` - if None, Graph tries to guess; can take
+       a number of values, namely:
 
        -  ``'int'`` - an integer specifying the number of vertices in an
           edge-free graph with vertices labelled from 0 to n-1
@@ -667,6 +680,10 @@ class Graph(GenericGraph):
        -  ``'weighted_adjacency_matrix'`` - a square Sage
           matrix M, with M[i,j] equal to the weight of the single edge {i,j}.
           Given this format, weighted is ignored (assumed True).
+
+       -  ``'seidel_adjacency_matrix'`` - a symmetric Sage matrix M
+          with 0s on the  diagonal, and the other entries -1 or 1,
+          `M[i,j]=-1` indicating that {i,j} is an edge, otherwise `M[i,j]=1`.
 
        -  ``'incidence_matrix'`` - a Sage matrix, with one
           column C for each edge, where if C represents {i, j}, C[i] is -1
@@ -687,6 +704,8 @@ class Graph(GenericGraph):
                behaviour can be overruled by setting the keyword
                ``convert_empty_dict_labels_to_None`` to ``False`` (it is
                ``True`` by default).
+
+       - ``igraph`` - data must be an `igraph <http://igraph.org/>`__ graph.
 
     - ``sparse`` (boolean) -- ``sparse=True`` is an alias for
       ``data_structure="sparse"``, and ``sparse=False`` is an alias for
@@ -921,13 +940,19 @@ class Graph(GenericGraph):
             sage: Graph(M).edges()
             [(0, 1, None)]
 
+    #.  A Seidel adjacency matrix::
+
+          sage: from sage.combinat.matrices.hadamard_matrix import \
+          ....:  regular_symmetric_hadamard_matrix_with_constant_diagonal as rshcd
+          sage: m=rshcd(16,1)- matrix.identity(16)
+          sage: Graph(m,format="seidel_adjacency_matrix").is_strongly_regular(parameters=True)
+          (16, 6, 2, 2)
+
     #. a list of edges, or labelled edges::
 
           sage: g = Graph([(1,3),(3,8),(5,2)])
           sage: g
           Graph on 5 vertices
-
-          ::
 
           sage: g = Graph([(1,2,"Peace"),(7,-9,"and"),(77,2, "Love")])
           sage: g
@@ -949,6 +974,30 @@ class Graph(GenericGraph):
            sage: g = networkx.Graph({0:[1,2,3], 2:[4]})
            sage: DiGraph(g)
            Digraph on 5 vertices
+
+    #. An igraph Graph (see also
+       :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
+
+           sage: import igraph                   # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)]) # optional - python_igraph
+           sage: Graph(g)                        # optional - python_igraph
+           Graph on 3 vertices
+
+       If ``vertex_labels`` is ``True``, the names of the vertices are given by
+       the vertex attribute ``'name'``, if available::
+
+           sage: g = igraph.Graph([(0,1),(0,2)], vertex_attrs={'name':['a','b','c']})  # optional - python_igraph
+           sage: Graph(g).vertices()                                                   # optional - python_igraph
+           ['a', 'b', 'c']
+           sage: g = igraph.Graph([(0,1),(0,2)], vertex_attrs={'label':['a','b','c']}) # optional - python_igraph
+           sage: Graph(g).vertices()                                                   # optional - python_igraph
+           [0, 1, 2]
+
+       If the igraph Graph has edge attributes, they are used as edge labels::
+
+           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
+           sage: Graph(g).edges()                                                               # optional - python_igraph
+           [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
     By default, graphs are mutable and can thus not be used as a dictionary
     key::
@@ -976,6 +1025,27 @@ class Graph(GenericGraph):
         Traceback (most recent call last):
         ...
         ValueError: Unknown input format 'HeyHeyHey'
+
+        sage: Graph(igraph.Graph(directed=True)) # optional - python_igraph
+        Traceback (most recent call last):
+        ...
+        ValueError: An *undirected* igraph graph was expected. To build an directed graph, call the DiGraph constructor.
+
+        sage: m = matrix([[0,-1],[-1,0]])
+        sage: Graph(m,format="seidel_adjacency_matrix")
+        Graph on 2 vertices
+        sage: m[0,1]=1
+        sage: Graph(m,format="seidel_adjacency_matrix")
+        Traceback (most recent call last):
+        ...
+        ValueError: Graph's Seidel adjacency matrix must be symmetric
+
+        sage: m[0,1]=-1; m[1,1]=1
+        sage: Graph(m,format="seidel_adjacency_matrix")
+        Traceback (most recent call last):
+        ...
+        ValueError: Graph's Seidel adjacency matrix must have 0s on the main diagonal
+
     """
     _directed = False
 
@@ -1155,9 +1225,20 @@ class Graph(GenericGraph):
             import networkx
             if isinstance(data, (networkx.DiGraph, networkx.MultiDiGraph)):
                 data = data.to_undirected()
-                format = 'NX'
             elif isinstance(data, (networkx.Graph, networkx.MultiGraph)):
                 format = 'NX'
+
+        if (format is None          and
+            hasattr(data, 'vcount') and
+            hasattr(data, 'get_edgelist')):
+            try:
+                import igraph
+            except ImportError:
+                raise ImportError("The data seems to be a igraph object, but "+
+                                  "igraph is not installed in Sage. To install "+
+                                  "it, run 'sage -i python_igraph'")
+            if format is None and isinstance(data, igraph.Graph):
+                format = 'igraph'
         if format is None and isinstance(data, (int, Integer)):
             format = 'int'
         if format is None and data is None:
@@ -1335,6 +1416,40 @@ class Graph(GenericGraph):
             self.allow_multiple_edges(multiedges, check=False)
             self.add_vertices(range(data.nrows()))
             self.add_edges(positions)
+        elif format == 'seidel_adjacency_matrix':
+            assert is_Matrix(data)
+            if data.base_ring() != ZZ:
+                try:
+                    data = data.change_ring(ZZ)
+                except TypeError:
+                    raise ValueError("Graph's Seidel adjacency matrix must"+
+                                     " have only 0,1,-1 integer entries")
+
+            if data.is_sparse():
+                entries = set(data[i,j] for i,j in data.nonzero_positions())
+            else:
+                entries = set(data.list())
+
+            if any(e <  -1 or e > 1 for e in entries):
+                raise ValueError("Graph's Seidel adjacency matrix must"+
+                                 " have only 0,1,-1 integer entries")
+            if any(i==j for i,j in data.nonzero_positions()):
+                raise ValueError("Graph's Seidel adjacency matrix must"+
+                                 " have 0s on the main diagonal")
+            if not data.is_symmetric():
+                raise ValueError("Graph's Seidel adjacency matrix must"+
+                                 " be symmetric")
+            multiedges = False
+            weighted = False
+            loops = False
+            self.allow_loops(False)
+            self.allow_multiple_edges(False)
+            self.add_vertices(range(data.nrows()))
+            e = []
+            for i,j in data.nonzero_positions():
+               if i <= j and data[i,j] < 0:
+                        e.append((i,j))
+            self.add_edges(e)
         elif format == 'Graph':
             if loops is None:      loops      = data.allows_loops()
             if multiedges is None: multiedges = data.allows_multiple_edges()
@@ -1368,6 +1483,19 @@ class Graph(GenericGraph):
             self.allow_multiple_edges(multiedges, check=False)
             self.add_vertices(data.nodes())
             self.add_edges((u,v,r(l)) for u,v,l in data.edges_iter(data=True))
+        elif format == 'igraph':
+            if data.is_directed():
+                raise ValueError("An *undirected* igraph graph was expected. "+
+                                 "To build an directed graph, call the DiGraph "+
+                                 "constructor.")
+
+            self.add_vertices(range(data.vcount()))
+            self.add_edges([(e.source, e.target, e.attributes()) for e in data.es()])
+
+            if vertex_labels and 'name' in data.vertex_attributes():
+                vs = data.vs()
+                self.relabel({v:vs[v]['name'] for v in self})
+
         elif format == 'rule':
             f = data[1]
             verts = data[0]
@@ -2396,6 +2524,7 @@ class Graph(GenericGraph):
             ...          print "That's not good!"
 
         Asking for an unknown algorithm::
+
             sage: g.is_triangle_free(algorithm='tip top')
             Traceback (most recent call last):
             ...
@@ -4668,7 +4797,7 @@ class Graph(GenericGraph):
 
         .. SEEALSO::
 
-            - :meth:`centrality_closeness`
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.centrality_closeness`
             - :meth:`~sage.graphs.generic_graph.GenericGraph.centrality_betweenness`
 
         EXAMPLES::
@@ -4698,55 +4827,6 @@ class Graph(GenericGraph):
             return {v:self.degree(v)/n_minus_one for v in self}
         else:
             return self.degree(v)/n_minus_one
-
-    def centrality_closeness(self, v=None):
-        r"""
-        Returns the closeness centrality of a vertex.
-
-        The closeness centrality of a vertex `v` is equal to the inverse of [the
-        average distance between `v` and other vertices].
-
-        Measures of the centrality of a vertex within a graph determine the
-        relative importance of that vertex to its graph. 'Closeness
-        centrality may be defined as the total graph-theoretic distance of
-        a given vertex from all other vertices... Closeness is an inverse
-        measure of centrality in that a larger value indicates a less
-        central actor while a smaller value indicates a more central
-        actor,' [Borgatti95]_.
-
-        For more information, see the :wikipedia:`Centraliy`.
-
-        INPUT:
-
-        - ``v`` - a vertex. Set to ``None`` (default) to get a dictionary
-          associating each vertex with its centrality closeness.
-
-        .. SEEALSO::
-
-            - :meth:`centrality_degree`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.centrality_betweenness`
-
-        REFERENCE:
-
-        .. [Borgatti95] Stephen P Borgatti. (1995). Centrality and AIDS.
-          [Online] Available:
-          http://www.analytictech.com/networks/centaids.htm
-
-        EXAMPLES::
-
-            sage: (graphs.ChvatalGraph()).centrality_closeness()
-            {0: 0.61111111111111..., 1: 0.61111111111111..., 2: 0.61111111111111..., 3: 0.61111111111111..., 4: 0.61111111111111..., 5: 0.61111111111111..., 6: 0.61111111111111..., 7: 0.61111111111111..., 8: 0.61111111111111..., 9: 0.61111111111111..., 10: 0.61111111111111..., 11: 0.61111111111111...}
-            sage: D = DiGraph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: D.show(figsize=[2,2])
-            sage: D = D.to_undirected()
-            sage: D.show(figsize=[2,2])
-            sage: D.centrality_closeness()
-            {0: 1.0, 1: 1.0, 2: 0.75, 3: 0.75}
-            sage: D.centrality_closeness(v=1)
-            1.0
-        """
-        import networkx
-        return networkx.closeness_centrality(self.networkx_graph(copy=False), v)
 
     ### Constructors
 
@@ -4834,7 +4914,7 @@ class Graph(GenericGraph):
 
     def join(self, other, verbose_relabel=None, labels="pairs"):
         """
-        Returns the join of self and other.
+        Returns the join of ``self`` and ``other``.
 
         INPUT:
 
@@ -4900,6 +4980,136 @@ class Graph(GenericGraph):
         G.name('%s join %s'%(self.name(), other.name()))
         return G
 
+
+    def seidel_adjacency_matrix(self, vertices=None):
+        r"""
+        Returns the Seidel adjacency matrix of ``self``.
+
+        Returns `J-I-2A`, for `A` the (ordinary)
+        :meth:`adjacency matrix <GenericGraph.adjacency_matrix>` of ``self``,
+        `I` the identity matrix, and `J` the all-1 matrix.
+        It is closely related to :meth:`twograph`.
+
+        The matrix returned is over the integers. If a different ring is
+        desired, use either :meth:`sage.matrix.matrix0.Matrix.change_ring`
+        method or :func:`matrix` function.
+
+        INPUT:
+
+        - ``vertices`` (list) -- the ordering of the vertices defining how they
+          should appear in the matrix. By default, the ordering given by
+          :meth:`GenericGraph.vertices` is used.
+
+        EXAMPLES::
+
+            sage: G = graphs.CycleGraph(5)
+            sage: G = G.disjoint_union(graphs.CompleteGraph(1))
+            sage: G.seidel_adjacency_matrix().minpoly()
+            x^2 - 5
+        """
+
+        return -self.adjacency_matrix(sparse=False, vertices=vertices)+ \
+                  self.complement().adjacency_matrix(sparse=False, \
+                                            vertices=vertices)
+
+    def seidel_switching(self, s, inplace=True):
+        r"""
+        Returns the Seidel switching of ``self`` w.r.t. subset of vertices ``s``.
+
+        Returns the graph obtained by Seidel switching of ``self``
+        with respect to the subset of vertices ``s``. This is the graph
+        given by Seidel adjacency matrix `DSD`, for `S` the Seidel
+        adjacency matrix of ``self``, and `D` the diagonal matrix with -1s
+        at positions corresponding to ``s``, and 1s elsewhere.
+
+        INPUT:
+
+         - ``s`` -- a list of vertices of ``self``
+
+        - ``inplace`` (boolean) -- whether to do the modification inplace, or to
+          return a copy of the graph after switching.
+
+        EXAMPLES::
+
+            sage: G = graphs.CycleGraph(5)
+            sage: G = G.disjoint_union(graphs.CompleteGraph(1))
+            sage: G.seidel_switching([(0,1),(1,0),(0,0)])
+            sage: G.seidel_adjacency_matrix().minpoly()
+            x^2 - 5
+            sage: G.is_connected()
+            True
+
+        TESTS::
+
+            sage: H = G.seidel_switching([1,4,5],inplace=False)
+            sage: G.seidel_switching([1,4,5])
+            sage: G == H
+            True
+        """
+        from itertools import product
+        G = self if inplace else self.copy()
+        boundary = self.edge_boundary(s)
+        G.add_edges(product(s, set(self).difference(s)))
+        G.delete_edges(boundary)
+        if not inplace:
+            return G
+
+    def twograph(self):
+        r"""
+        Returns the two-graph of ``self``
+
+        Returns the :class:`two-graph <sage.combinat.designs.twographs.TwoGraph>`
+        with the triples
+        `T=\{t \in \binom {V}{3} : \left| \binom {t}{2} \cap E \right| \text{odd} \}`
+        where `V` and `E` are vertices and edges of ``self``, respectively.
+
+        EXAMPLES::
+
+            sage: p=graphs.PetersenGraph()
+            sage: p.twograph()
+            Incidence structure with 10 points and 60 blocks
+            sage: p=graphs.chang_graphs()
+            sage: T8 = graphs.CompleteGraph(8).line_graph()
+            sage: C = T8.seidel_switching([(0,1,None),(2,3,None),(4,5,None),(6,7,None)],inplace=False)
+            sage: T8.twograph()==C.twograph()
+            True
+            sage: T8.is_isomorphic(C)
+            False
+
+        TESTS::
+
+            sage: from sage.combinat.designs.twographs import TwoGraph
+            sage: p=graphs.PetersenGraph().twograph()
+            sage: TwoGraph(p, check=True)
+            Incidence structure with 10 points and 60 blocks
+
+        .. SEEALSO::
+
+            - :meth:`~sage.combinat.designs.twographs.TwoGraph.descendant`
+              -- computes the descendant graph of the two-graph of self at a vertex
+
+            - :func:`~sage.combinat.designs.twographs.twograph_descendant`
+              -- ditto, but much faster.
+        """
+        from sage.combinat.designs.twographs import TwoGraph
+        G = self.relabel(inplace=False)
+        T = []
+
+        # Triangles
+        for x,y,z in G.subgraph_search_iterator(Graph({1:[2,3],2:[3]})):
+            if x < y and y < z:
+                T.append([x,y,z])
+
+        # Triples with just one edge
+        for x,y,z in G.subgraph_search_iterator(Graph({1:[2],3:[]}),induced=True):
+            if x < y:
+                T.append([x,y,z])
+
+        T = TwoGraph(T)
+        T.relabel({i:v for i,v in enumerate(self.vertices())})
+
+        return T
+
     ### Visualization
 
     def write_to_eps(self, filename, **options):
@@ -4917,9 +5127,9 @@ class Graph(GenericGraph):
             sage: P.write_to_eps(tmp_filename(ext='.eps'))
 
         It is relatively simple to include this file in a LaTeX
-        document.  ``\usepackagegraphics`` must appear in the
-        preamble, and ``\includegraphics{filename.eps}`` will include
-        the file. To compile the document to ``pdf`` with ``pdflatex``
+        document.  ``\usepackage{graphics}`` must appear in the
+        preamble, and ``\includegraphics{filename}`` will include
+        the file. To compile the document to ``pdf`` with ``pdflatex`` or ``xelatex``
         the file needs first to be converted to ``pdf``, for example
         with ``ps2pdf filename.eps filename.pdf``.
         """
@@ -6566,6 +6776,8 @@ class Graph(GenericGraph):
         :trac:`16475`::
 
             sage: G = graphs.PetersenGraph()
+            sage: for u,v in G.edge_iterator(labels=False):
+            ....:     G.set_edge_label(u, v, 1)
             sage: for u, v in [(0, 1), (0, 4), (0, 5), (1, 2), (1, 6), (3, 4), (5, 7), (5, 8)]:
             ....:     G.set_edge_label(u, v, 2)
             sage: T = G.gomory_hu_tree()

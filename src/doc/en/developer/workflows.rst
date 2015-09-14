@@ -141,7 +141,7 @@ course free to use a different one::
     Unpacking objects: 100% (74/74), done.
     From github.com:github_user_name/sage
     * [new branch]      master     -> github/master
-    
+
 
 Develop
 -------

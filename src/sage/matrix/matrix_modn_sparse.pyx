@@ -127,7 +127,6 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
     # x * __init__
     # x * set_unsafe
     # x * get_unsafe
-    # x * __richcmp__    -- always the same
     ########################################################################
     def __cinit__(self, parent, entries, copy, coerce):
         matrix.Matrix.__init__(self, parent)
@@ -235,8 +234,6 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         n.ivalue = get_entry(&self.rows[i], j)
         return n
 
-    def __richcmp__(matrix.Matrix self, right, int op):  # always need for mysterious reasons.
-        return self._richcmp(right, op)
     def __hash__(self):
         return self._hash()
 

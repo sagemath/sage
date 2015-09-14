@@ -8,6 +8,8 @@
 ###############################################################################
 
 """
+Ideals of non-commutative rings
+
 Generic implementation of one- and two-sided ideals of non-commutative rings.
 
 AUTHOR:

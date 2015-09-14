@@ -1,5 +1,5 @@
 r"""
-Ideals of commutative rings.
+Ideals of commutative rings
 
 Sage provides functionality for computing with ideals. One can create
 an ideal in any commutative or non-commutative ring `R` by giving a

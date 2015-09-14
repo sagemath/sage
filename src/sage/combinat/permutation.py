@@ -4834,7 +4834,7 @@ class Permutation(CombinatorialElement):
 ################################################################
 
 # Base class for permutations
-class Permutations(Parent, UniqueRepresentation):
+class Permutations(UniqueRepresentation, Parent):
     r"""
     Permutations.
 

@@ -672,5 +672,10 @@ Modules
     sage/structure/coerce_actions
     sage/structure/coerce_maps
 
+    sage/categories/pushout
+    sage/categories/action
+
+    sage/structure/coerce_dict
+    sage/structure/coerce_exceptions
 
 .. include:: ../footer.txt

@@ -1,5 +1,5 @@
 """
-Finite Extension Fields implemented via PARI POLMODs (deprecated).
+Finite Extension Fields implemented via PARI POLMODs (deprecated)
 
 AUTHORS:
 

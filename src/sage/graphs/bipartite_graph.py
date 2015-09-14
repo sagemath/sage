@@ -919,9 +919,9 @@ class BipartiteGraph(Graph):
 
         ::
 
-            sage: x = polygen(ZZ)
+            sage: x = polygen(QQ)
             sage: g = BipartiteGraph(graphs.CompleteBipartiteGraph(16, 16))
-            sage: factorial(16)*laguerre(16,x^2) == g.matching_polynomial(algorithm='rook')
+            sage: bool(factorial(16)*laguerre(16,x^2) == g.matching_polynomial(algorithm='rook'))
             True
 
         Compute the matching polynomial of a line with `60` vertices::

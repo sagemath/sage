@@ -2517,6 +2517,16 @@ class CohomologyClass(SageObject):
         """
         self._x = x
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.algebras.commutative_dga import CohomologyClass
+            sage: hash(CohomologyClass(sin)) == hash(sin)
+            True
+        """
+        return hash(self._x)
+
     def _repr_(self):
         """
         EXAMPLES::

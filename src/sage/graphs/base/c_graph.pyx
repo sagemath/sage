@@ -2310,6 +2310,8 @@ cdef class CGraphBackend(GenericGraphBackend):
                         v_obj = self.vertex_label(v)
                         w_obj = self.vertex_label(w)
                         edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj))) if side == 1 else weight_function((w_obj, v_obj, self.get_edge_label(w_obj, v_obj)))
+                        if edge_label < 0:
+                            raise ValueError("The graph contains an edge with negative weight!")
                         heappush(queue, (distance + edge_label, side, v, w))
 
         # No meeting point has been found

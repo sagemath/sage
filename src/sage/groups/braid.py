@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Braid groups
 
@@ -46,6 +47,7 @@ AUTHORS:
 
 - Miguel Angel Marco Buzunariz
 - Volker Braun
+- Søren Fuglede Jørgensen
 - Robert Lipshitz
 - Thierry Monteil: add a ``__hash__`` method consistent with the word
   problem to ensure correct Cayley graph computations.
@@ -64,6 +66,7 @@ AUTHORS:
 import six
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroup, is_FreeGroup
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
@@ -163,6 +166,51 @@ class Braid(FinitelyPresentedGroupElement):
             4
         """
         return self.parent().strands()
+
+    def exponent_sum(self):
+        """
+        Return the exponent sum of the braid.
+
+        OUTPUT:
+
+        Integer.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(5)
+            sage: b = B([1, 4, -3, 2])
+            sage: b.exponent_sum()
+            2
+            sage: b = B([])
+            sage: b.exponent_sum()
+            0
+        """
+        return sum(s.sign() for s in self.Tietze())
+
+    def components_in_closure(self):
+        """
+        Return the number of components of the trace closure of the braid.
+
+        OUTPUT:
+
+        Positive integer.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(5)
+            sage: b = B([1, -3])  # Three disjoint unknots
+            sage: b.components_in_closure()
+            3
+            sage: b = B([1, 2, 3, 4])  # The unknot
+            sage: b.components_in_closure()
+            1
+            sage: B = BraidGroup(4)
+            sage: K11n42 = B([1, -2, 3, -2, 3, -2, -2, -1, 2, -3, -3, 2, 2])
+            sage: K11n42.components_in_closure()
+            1
+        """
+        cycles = self.permutation().to_cycles(singletons=False)
+        return self.strands() - sum(len(c)-1 for c in cycles)
 
     def burau_matrix(self, var='t', reduced=False):
         """
@@ -559,9 +607,110 @@ class Braid(FinitelyPresentedGroupElement):
 
         REFERENCES:
 
-        .. [Bigelow] Bigelow, Stephen J. The Lawrence-Krammer representation. arXiv:math/0204057v1
+        .. [Bigelow] Bigelow, Stephen J. The Lawrence-Krammer representation.
+           :arxiv:`math/0204057v1`
         """
         return self.parent()._LKB_matrix_(self.Tietze(), variab=variables)
+
+    def TL_matrix(self, drain_size, variab=None, sparse=True):
+        r"""
+        Return the matrix representation of the Temperley--Lieb--Jones
+        representation of the braid in a certain basis.
+
+        The basis is given by non-intersecting pairings of `(n+d)` points,
+        where `n` is the number of strands, `d` is given by ``drain_size``,
+        and the pairings satisfy certain rules. See
+        :meth:`~sage.groups.braid.BraidGroup_class.TL_basis_with_drain()`
+        for details.
+
+        We use the convention that the eigenvalues of the standard generators
+        are `1` and `-A^4`, where `A` is a variable of a Laurent
+        polynomial ring.
+
+        When `d = n - 2` and the variables are picked appropriately, the
+        resulting representation is equivalent to the reduced Burau
+        representation.
+
+        INPUT:
+
+        - ``drain_size`` -- integer between 0 and the number of strands
+          (both inclusive)
+
+        - ``variab`` -- variable (default: ``None``); the variable in the
+          entries of the matrices; if ``None``, then use a default variable
+          in `\ZZ[A,A^{-1}]`
+
+        - ``sparse`` -- boolean (default: ``True``); whether or not the
+          result should be given as a sparse matrix
+
+        OUTPUT:
+
+        The matrix of the TL representation of the braid.
+
+        The parameter ``sparse`` can be set to ``False`` if it is
+        expected that the resulting matrix will not be sparse. We
+        currently make no attempt at guessing this.
+
+        EXAMPLES:
+
+        Let us calculate a few examples for `B_4` with `d = 0`::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, -3])
+            sage: b.TL_matrix(0)
+            [1 - A^4   -A^-2]
+            [   -A^6       0]
+            sage: R.<x> = LaurentPolynomialRing(GF(2))
+            sage: b.TL_matrix(0, variab=x)
+            [1 + x^4    x^-2]
+            [    x^6       0]
+            sage: b = B([])
+            sage: b.TL_matrix(0)
+            [1 0]
+            [0 1]
+
+        Test of one of the relations in `B_8`::
+
+            sage: B = BraidGroup(8)
+            sage: d = 0
+            sage: B([4,5,4]).TL_matrix(d) == B([5,4,5]).TL_matrix(d)
+            True
+
+        An element of the kernel of the Burau representation, following
+        [Big99]_::
+
+            sage: B = BraidGroup(6)
+            sage: psi1 = B([4, -5, -2, 1])
+            sage: psi2 = B([-4, 5, 5, 2, -1, -1])
+            sage: w1 = psi1^(-1) * B([3]) * psi1
+            sage: w2 = psi2^(-1) * B([3]) * psi2
+            sage: (w1 * w2 * w1^(-1) * w2^(-1)).TL_matrix(4)
+            [1 0 0 0 0]
+            [0 1 0 0 0]
+            [0 0 1 0 0]
+            [0 0 0 1 0]
+            [0 0 0 0 1]
+
+        REFERENCES:
+
+        .. [Big99] Stephen J. Bigelow. The Burau representation is
+           not faithful for `n = 5`. Geom. Topol., 3:397–404, 1999.
+        .. [JonesNotes] Vaughan Jones. The Jones Polynomial.
+           https://math.berkeley.edu/~vfr/jones.pdf
+        """
+        if variab is None:
+            R = LaurentPolynomialRing(IntegerRing(), 'A')
+        else:
+            R = variab.parent()
+        rep = self.parent().TL_representation(drain_size, variab)
+        M = identity_matrix(R, self.parent().dimension_of_TL_space(drain_size),
+                            sparse=sparse)
+        for i in self.Tietze():
+            if i > 0:
+                M = M*rep[i-1][0]
+            if i < 0:
+                M = M*rep[-i-1][1]
+        return M
 
     def tropical_coordinates(self):
         r"""
@@ -612,6 +761,205 @@ class Braid(FinitelyPresentedGroupElement):
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
         T = TropicalSemiring(IntegerRing())
         return [T(_) for _ in coord]
+
+    def markov_trace(self, variab=None, normalized=True):
+        """
+        Return the Markov trace of the braid.
+
+        The normalization is so that in the underlying braid group
+        representation, the eigenvalues of the standard generators of
+        the braid group are `1` and `-A^4`.
+
+        INPUT:
+
+        - ``variab`` -- variable (default: ``None``); the variable in the
+          resulting polynomial; if ``None``, then use the variable `A`
+          in `\ZZ[A,A^{-1}]`
+
+        - ``normalized`` - boolean (default: ``True``); if specified to be
+          ``False``, return instead a rescaled Laurent polynomial version of
+          the Markov trace
+
+        OUTPUT:
+
+        If ``normalized`` is ``False``, return instead the Markov trace
+        of the braid, normalized by a factor of `(A^2+A^{-2})^n`. The
+        result is then a Laurent polynomial in ``variab``. Otherwise it
+        is a quotient of Laurent polynomials in ``variab``.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, -3])
+            sage: mt = b.markov_trace(); mt
+            A^4/(A^12 + 3*A^8 + 3*A^4 + 1)
+            sage: mt.factor()
+            A^4 * (A^4 + 1)^-3
+
+        We now give the non-normalized Markov trace::
+
+            sage: mt = b.markov_trace(normalized=False); mt
+            A^-4 + 1
+            sage: mt.parent()
+            Univariate Laurent Polynomial Ring in A over Integer Ring
+        """
+        if variab is None:
+            R = LaurentPolynomialRing(IntegerRing(), 'A')
+            A = R.gens()[0]
+            one = IntegerRing().one()
+            quantum_integer = lambda d: R({i: one for i in range(-2*d, 2*d+1, 4)})
+        else:
+            A = variab
+            quantum_integer = lambda d: (A**(2*(d+1))-A**(-2*(d+1))) // (A**2-A**(-2))
+
+        n = self.strands()
+        trace_sum = sum(quantum_integer(d) * self.TL_matrix(d, variab=variab).trace()
+                        for d in range(n+1) if (n+d) % 2 == 0)
+
+        if normalized:
+            delta = A**2 + A**(-2)
+            trace_sum = trace_sum / delta**n
+        return trace_sum
+
+    @lazy_attribute
+    def _jones_polynomial(self):
+        """
+        Cached version of the Jones polynomial in a generic variable
+        with the Skein normalization.
+
+        The computation of the Jones polynomial uses the representation
+        of the braid group on the Temperley--Lieb algebra. We cache the
+        part of the calculation which does not depend on the choices of
+        variables or normalizations.
+
+        .. SEEALSO::
+
+            :meth:`jones_polynomial`
+
+        TESTS::
+
+            sage: B = BraidGroup(9)
+            sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
+            sage: b.jones_polynomial()
+            1
+
+            sage: B = BraidGroup(2)
+            sage: b = B([])
+            sage: b._jones_polynomial
+            -A^-2 - A^2
+            sage: b = B([-1, -1, -1])
+            sage: b._jones_polynomial
+            -A^-16 + A^-12 + A^-4
+        """
+        trace = self.markov_trace(normalized=False)
+        A = trace.parent().gens()[0]
+        D = A**2 + A**(-2)
+        exp_sum = self.exponent_sum()
+        num_comp = self.components_in_closure()
+        return (-1)**(num_comp-1) * A**(2*exp_sum) * trace // D
+
+    def jones_polynomial(self, variab=None, skein_normalization=False):
+        """
+        Return the Jones polynomial of the trace closure of the braid.
+
+        The normalization is so that the unknot has Jones polynomial `1`. If
+        ``skein_normalization`` is ``True``, the variable of the result is
+        replaced by a itself to the power of `4`, so that the result
+        agrees with the conventions of [Lic]_ (which in particular differs
+        slightly from the conventions used otherwise in this class), had
+        one used the conventional Kauffman bracket variable notation directly.
+
+        If ``variab`` is ``None`` return a polynomial in the variable `A`
+        or `t`, depending on the value ``skein_normalization``. In
+        particular, if ``skein_normalization`` is ``False``, return the
+        result in terms of the variable `t`, also used in [Lic]_.
+
+        INPUT:
+
+        - ``variab`` -- variable (default: ``None``); the variable in the
+          resulting polynomial; if unspecified, use either a default variable
+          in `ZZ[A,A^{-1}]` or the variable `t` in the symbolic ring
+
+        - ``skein_normalization`` -- boolean (default: ``False``); determines
+          the variable of the resulting polynomial
+
+        OUTPUT:
+
+        If ``skein_normalization`` if ``False``, this returns an element
+        in the symbolic ring as the Jones polynomial of the closure might
+        have fractional powers when the closure of the braid is not a knot.
+        Otherwise the result is a Laurant polynomial in ``variab``.
+
+        EXAMPLES:
+
+        The unknot::
+
+            sage: B = BraidGroup(9)
+            sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
+            sage: b.jones_polynomial()
+            1
+
+        Two unlinked unknots::
+
+            sage: B = BraidGroup(2)
+            sage: b = B([])
+            sage: b.jones_polynomial()
+            -sqrt(t) - 1/sqrt(t)
+
+        The Hopf link::
+
+            sage: B = BraidGroup(2)
+            sage: b = B([-1,-1])
+            sage: b.jones_polynomial()
+            -1/sqrt(t) - 1/t^(5/2)
+
+        Different representations of the trefoil and one of its mirror::
+
+            sage: B = BraidGroup(2)
+            sage: b = B([-1, -1, -1])
+            sage: b.jones_polynomial(skein_normalization=True)
+            -A^-16 + A^-12 + A^-4
+            sage: b.jones_polynomial()
+            1/t + 1/t^3 - 1/t^4
+            sage: B = BraidGroup(3)
+            sage: b = B([-1, -2, -1, -2])
+            sage: b.jones_polynomial(skein_normalization=True)
+            -A^-16 + A^-12 + A^-4
+            sage: R.<x> = LaurentPolynomialRing(GF(2))
+            sage: b.jones_polynomial(skein_normalization=True, variab=x)
+            x^-16 + x^-12 + x^-4
+            sage: B = BraidGroup(3)
+            sage: b = B([1, 2, 1, 2])
+            sage: b.jones_polynomial(skein_normalization=True)
+            A^4 + A^12 - A^16
+
+        K11n42 (the mirror of the "Kinoshita-Terasaka" knot) and K11n34 (the
+        mirror of the "Conway" knot)::
+
+            sage: B = BraidGroup(4)
+            sage: b11n42 = B([1, -2, 3, -2, 3, -2, -2, -1, 2, -3, -3, 2, 2])
+            sage: b11n34 = B([1, 1, 2, -3, 2, -3, 1, -2, -2, -3, -3])
+            sage: cmp(b11n42.jones_polynomial(), b11n34.jones_polynomial())
+            0
+
+        REFERENCES:
+
+        .. [Lic] William B. Raymond Lickorish. An Introduction to Knot Theory,
+           volume 175 of Graduate Texts in Mathematics. Springer-Verlag,
+           New York, 1997. ISBN 0-387-98254-X
+        """
+        if skein_normalization:
+            if variab is None:
+                return self._jones_polynomial
+            else:
+                return self._jones_polynomial(variab)
+        else:
+            from sage.symbolic.ring import SR
+            from sage.rings.integer_ring import ZZ
+            if variab is None:
+                variab = 't'
+            # We force the result to be in the symbolic ring because of the expand
+            return self._jones_polynomial(SR(variab)**(ZZ(1)/ZZ(4))).expand()
 
     @cached_method
     def left_normal_form(self):
@@ -783,6 +1131,9 @@ class BraidGroup_class(FinitelyPresentedGroup):
                 rels.append(free_group([i, j, -i, -j]))
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
         self._nstrands_ = n+1
+
+        # For caching TL_representation()
+        self._TL_representation_dict = {}
 
     def __reduce__(self):
         """
@@ -1069,6 +1420,356 @@ class BraidGroup_class(FinitelyPresentedGroup):
                 else:
                     A[l.index(Set([j, k])), m] = 1
             return A
+
+    def dimension_of_TL_space(self, drain_size):
+        """
+        Return the dimension of a particular Templerley--Lieb representation
+        summand of ``self``.
+
+        Following the notation of :meth:`TL_basis_with_drain`, the summand
+        is the one corresponding to the number of drains being fixed to be
+        ``drain_size``.
+
+        INPUT:
+
+        - ``drain_size`` -- integer between 0 and the number of strands
+          (both inclusive)
+
+        EXAMPLES:
+
+        Calculation of the dimension of the representation of `B_8`
+        corresponding to having `2` drains::
+
+            sage: B = BraidGroup(8)
+            sage: B.dimension_of_TL_space(2)
+            28
+
+        The direct sum of endomorphism spaces of these vector spaces make up
+        the entire Temperley--Lieb algebra::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: B = BraidGroup(6)
+            sage: dimensions = [B.dimension_of_TL_space(d)**2 for d in [0, 2, 4, 6]]
+            sage: total_dim = sum(dimensions)
+            sage: total_dim == len(list(da.temperley_lieb_diagrams(6)))
+            True
+        """
+        n = self.strands()
+        if drain_size > n:
+            raise ValueError("number of drains must not exceed number of strands")
+        if (n + drain_size) % 2 == 1:
+            raise ValueError("parity of strands and drains must agree")
+
+        m = (n - drain_size) // 2
+        return Integer(n-1).binomial(m) - Integer(n-1).binomial(m - 2)
+
+    def TL_basis_with_drain(self, drain_size):
+        """
+        Return a basis of a summand of the Temperley--Lieb--Jones
+        representation of ``self``.
+
+        The basis elements are given by non-intersecting pairings of `n+d`
+        points in a square with `n` points marked 'on the top' and `d` points
+        'on the bottom' so that every bottom point is paired with a top point.
+        Here, `n` is the number of strands of the braid group, and `d` is
+        specified by ``drain_size``.
+
+        A basis element is specified as a list of integers obtained by
+        considering the pairings as obtained as the 'highest term' of
+        trivalent trees marked by Jones--Wenzl projectors (see e.g. [Wan10]_).
+        In practice, this is a list of non-negative integers whose first
+        element is ``drain_size``, whose last element is `0`, and satisfying
+        that consecutive integers have difference `1`. Moreover, the length
+        of each basis element is `n + 1`.
+
+        Given these rules, the list of lists is constructed recursively
+        in the natural way.
+
+        INPUT:
+
+        - ``drain_size`` -- integer between 0 and the number of strands
+          (both inclusive)
+
+        OUTPUT:
+
+        A list of basis elements, each of which is a list of integers.
+
+        EXAMPLES:
+
+        We calculate the basis for the appropriate vector space for `B_5` when
+        `d = 3`::
+
+            sage: B = BraidGroup(5)
+            sage: B.TL_basis_with_drain(3)
+            [[3, 4, 3, 2, 1, 0],
+             [3, 2, 3, 2, 1, 0],
+             [3, 2, 1, 2, 1, 0],
+             [3, 2, 1, 0, 1, 0]]
+
+        The number of basis elements hopefully correponds to the general
+        formula for the dimension of the representation spaces::
+
+            sage: B = BraidGroup(10)
+            sage: d = 2
+            sage: B.dimension_of_TL_space(d) == len(B.TL_basis_with_drain(d))
+            True
+
+        REFERENCES:
+
+        .. [Wan10] Zhenghan Wang. Tolological quantum computation. Providence,
+           RI: American Mathematical Society (AMS), 2010.
+           ISBN 978-0-8218-4930-9
+        """
+        def fill_out_forest(forest, treesize):
+            # The basis elements are built recursively using this function,
+            # which takes a collection of partial basis elements, given in
+            # terms of trivalent trees (i.e. a 'forest') and extends each of
+            # the trees by one branch.
+            if not forest:
+                raise ValueError("forest has to start with a tree")
+            if forest[0][0] + treesize % 2 == 0:
+                raise ValueError("parity mismatch in forest creation")
+            # Loop over all trees
+            newforest = list(forest)
+            for tree in forest:
+                if len(tree) < treesize:
+                    newtreeup = list(tree)
+                    newtreedown = list(tree)
+                    newforest.remove(tree)  # Cut down the original tree
+                    # Add two greater trees, admissibly. We need to check two
+                    # things to ensure that the tree will eventually define a
+                    # basis elements: that its 'colour' is not too large, and
+                    # that it is positive.
+                    if tree[-1] < treesize - len(tree) + 1:
+                        newtreeup.append(tree[-1] + 1)
+                        newforest.append(newtreeup)
+                    if tree[-1] > 0:
+                        newtreedown.append(tree[-1] - 1)
+                        newforest.append(newtreedown)
+            # Are we there yet?
+            if len(newforest[0]) == treesize:
+                return newforest
+            else:
+                return fill_out_forest(newforest, treesize)
+
+        n = self.strands()
+        if drain_size > n:
+            raise ValueError("number of drains must not exceed number of strands")
+        if (n + drain_size) % 2 == 1:
+            raise ValueError("parity of strands and drains must agree")
+
+        # We can now start the process: all we know is that our basis elements
+        # have a drain size of d, so we use fill_out_forest to build all basis
+        # elements out of this
+        basis = [[drain_size]]
+        forest = fill_out_forest(basis, n-1)
+        for tree in forest:
+            tree.extend([1, 0])
+        return forest
+
+    @cached_method
+    def _TL_action(self, drain_size):
+        """
+        Return a matrix representing the action of cups and caps on
+        Temperley--Lieb diagrams corresponding to ``self``.
+
+        The action space is the space of non-crossing diagrams of `n+d`
+        points, where `n` is the number of strands, and `d` is specified by
+        ``drain_size``. As in :meth:`TL_basis_with_drain`, we put certain
+        constraints on the diagrams.
+
+        We essentially calculate the action of the TL-algebra generators
+        `e_i` on the algebra itself: the action of `e_i` on one of our basis
+        diagrams is itself a basis diagram, and ``auxmat`` will store the
+        index of this new basis diagram.
+
+        In some cases, the new diagram will connect two bottom points which
+        we explicitly disallow (as such a diagram is not one of our basis
+        elements). In this case, the corresponding ``auxmat`` entry will
+        be `-1`.
+
+        This is used in :meth:`TL_representation` and could be included
+        entirely in that method. They are split for purposes of caching.
+
+        INPUT:
+
+        - ``drain_size`` -- integer between 0 and the number of strands
+          (both inclusive)
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: B._TL_action(2)
+            [ 0  0 -1]
+            [ 1  1  1]
+            [-1  2  2]
+            sage: B._TL_action(0)
+            [1 1]
+            [0 0]
+            [1 1]
+            sage: B = BraidGroup(6)
+            sage: B._TL_action(2)
+            [ 1  1  2  3  1  2  3 -1 -1]
+            [ 0  0  5  6  5  5  6  5  6]
+            [ 1  1  1 -1  4  4  8  8  8]
+            [ 5  2  2  2  5  5  5  7  7]
+            [-1 -1  3  3  8  6  6  8  8]
+        """
+        n = self.strands()
+        basis = self.TL_basis_with_drain(drain_size)
+        auxmat = matrix(n-1, len(basis))
+        for i in range(1, n):  # For each of the e_i
+            for v in range(len(basis)):  # For each basis element
+                tree = basis[v]
+                if tree[i-1] < tree[i] and tree[i+1] < tree[i]:
+                    # Here, for instance, we've created an unknot.
+                    auxmat[i-1, v] = v
+                if tree[i-1] > tree[i] and tree[i+1] > tree[i]:
+                    newtree = list(tree)
+                    newtree[i] += 2
+                    auxmat[i-1, v] = basis.index(newtree)
+                if tree[i-1] > tree[i] and tree[i+1] < tree[i]:
+                    newtree = list(tree)
+                    newtree[i-1] -= 2
+                    j = 2
+                    while newtree[i-j] != newtree[i] and i-j >= 0:
+                        newtree[i-j] -= 2
+                        j += 1
+                    if newtree in basis:
+                        auxmat[i-1, v] = basis.index(newtree)
+                    else:
+                        auxmat[i-1, v] = -1
+                if tree[i-1] < tree[i] and tree[i+1] > tree[i]:
+                    newtree = list(tree)
+                    newtree[i+1] -= 2
+                    j = 2
+                    while newtree[i+j] != newtree[i] and i+j <= n:
+                        newtree[i+j] -= 2
+                        j += 1
+                    if newtree in basis:
+                        auxmat[i-1, v] = basis.index(newtree)
+                    else:
+                        auxmat[i-1, v] = -1
+        return auxmat
+
+    def TL_representation(self, drain_size, variab=None):
+        r"""
+        Return representation matrices of the Temperley--Lieb--Jones
+        representation of standard braid group generators and inverses
+        of ``self``.
+
+        The basis is given by non-intersecting pairings of `(n+d)` points,
+        where `n` is the number of strands, and `d` is given by
+        ``drain_size``, and the pairings satisfy certain rules. See
+        :meth:`TL_basis_with_drain()` for details. This basis has
+        the useful property that all resulting entries can be regarded as
+        Laurent polynomials.
+
+        We use the convention that the eigenvalues of the standard generators
+        are `1` and `-A^4`, where `A` is the generator of the Laurent
+        polynomial ring.
+
+        When `d = n - 2` and the variables are picked appropriately, the
+        resulting representation is equivalent to the reduced Burau
+        representation. When `d = n`, the resulting representation is
+        trivial and 1-dimensional.
+
+        INPUT:
+
+        - ``drain_size`` -- integer between 0 and the number of strands
+          (both inclusive)
+        - ``variab`` -- variable (default: ``None``); the variable in the
+          entries of the matrices; if ``None``, then use a default variable
+          in `\ZZ[A,A^{-1}]`
+
+        OUTPUT:
+
+        A list of matrices corresponding to the representations of each
+        of the standard generators and their inverses.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: B.TL_representation(0)
+            [(
+              [   1    0]  [    1     0]
+              [ A^2 -A^4], [ A^-2 -A^-4]
+            ),
+             (
+              [-A^4  A^2]  [-A^-4  A^-2]
+              [   0    1], [    0     1]
+            ),
+             (
+              [   1    0]  [    1     0]
+              [ A^2 -A^4], [ A^-2 -A^-4]
+            )]
+            sage: R.<A> = LaurentPolynomialRing(GF(2))
+            sage: B.TL_representation(0, variab=A)
+            [(
+              [  1   0]  [   1    0]
+              [A^2 A^4], [A^-2 A^-4]
+            ),
+             (
+              [A^4 A^2]  [A^-4 A^-2]
+              [  0   1], [   0    1]
+            ),
+             (
+              [  1   0]  [   1    0]
+              [A^2 A^4], [A^-2 A^-4]
+            )]
+            sage: B = BraidGroup(8)
+            sage: B.TL_representation(8)
+            [([1], [1]),
+             ([1], [1]),
+             ([1], [1]),
+             ([1], [1]),
+             ([1], [1]),
+             ([1], [1]),
+             ([1], [1])]
+        """
+        if variab is None:
+            if drain_size in self._TL_representation_dict:
+                return self._TL_representation_dict[drain_size]
+            R = LaurentPolynomialRing(IntegerRing(), 'A')
+            A = R.gens()[0]
+        else:
+            R = variab.parent()
+            A = variab
+
+        n = self.strands()
+        auxmat = self._TL_action(drain_size)
+        dimension = auxmat.ncols()
+        # The action of the sigma_i is given in terms of the actions of the
+        # e_i which is what auxmat describes. Our choice of normalization means
+        # that \sigma_i acts by the identity + A**2 e_i.
+        rep_matrices = []  # The list which will store the actions of sigma_i
+
+        # Store the respective powers
+        Ap2 = A**2
+        Apm2 = A**(-2)
+        Ap4 = -A**4
+        Apm4 = -A**(-4)
+
+        for i in range(n-1):  # For each \sigma_{i+1}
+            rep_mat_new = identity_matrix(R, dimension, sparse=True)
+            rep_mat_new_inv = identity_matrix(R, dimension, sparse=True)
+            for v in range(dimension):
+                new_mat_entry = auxmat[i, v]
+                if new_mat_entry == v:  # Did we create an unknot?
+                    rep_mat_new[v, v] = Ap4
+                    rep_mat_new_inv[v, v] = Apm4
+                elif new_mat_entry >= 0:
+                    rep_mat_new[new_mat_entry, v] = Ap2
+                    rep_mat_new_inv[new_mat_entry, v] = Apm2
+            rep_matrices.append((rep_mat_new, rep_mat_new_inv))
+
+        if variab is None:  # Cache the result in this case
+            for mat_pair in rep_matrices:
+                mat_pair[0].set_immutable()
+                mat_pair[1].set_immutable()
+            self._TL_representation_dict[drain_size] = rep_matrices
+
+        return rep_matrices
 
     def mapping_class_action(self, F):
         """

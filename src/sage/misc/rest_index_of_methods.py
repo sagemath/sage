@@ -32,6 +32,12 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
       will be filtered out. This can be useful to disable for making indexes of
       e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
 
+    .. WARNING::
+
+        The ReST tables returned by this function use '@' as a delimiter for
+        cells. This can cause trouble if the first sentence in the documentation
+        of a function contains the '@' character.
+
     EXAMPLE::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
@@ -39,9 +45,9 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
-           :delim: |
+           :delim: @
         <BLANKLINE>
-           :func:`~sage.graphs.generators.smallgraphs.PetersenGraph` | The Petersen Graph is a named graph that consists of 10 vertices...
+           :func:`~sage.graphs.generators.smallgraphs.PetersenGraph` @ The Petersen Graph is a named graph that consists of 10 vertices...
 
     The table of a module::
 
@@ -49,9 +55,9 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
-           :delim: |
+           :delim: @
         <BLANKLINE>
-           :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` | Return a ReST table describing a list of functions...
+           :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions...
 
     The table of a class::
 
@@ -59,12 +65,25 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
-           :delim: |
+           :delim: @
         ...
-           :meth:`~sage.graphs.graph.Graph.sparse6_string` | Returns the sparse6 representation of the graph as an ASCII string.
+           :meth:`~sage.graphs.graph.Graph.sparse6_string` @ Returns the sparse6 representation of the graph as an ASCII string.
         ...
 
     TESTS:
+
+    When the first sentence of the docstring spans over several lines::
+
+        sage: def a():
+        ....:     r'''
+        ....:     Here is a very very very long sentence
+        ....:     that spans on several lines.
+        ....:
+        ....:     EXAMP...
+        ....:     '''
+        ....:     print "hey"
+        sage: 'Here is a very very very long sentence that spans on several lines' in gen_rest_table_index([a])
+        True
 
     The inherited methods do not show up::
 
@@ -83,14 +102,14 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
-           :delim: |
+           :delim: @
         <BLANKLINE>
-           :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` | Return a ReST table describing a list of functions...
+           :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions...
         sage: print gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=False)
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
-           :delim: |
+           :delim: @
         <BLANKLINE>
         <BLANKLINE>
 
@@ -118,7 +137,7 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
     s = (".. csv-table::\n"
          "   :class: contentstable\n"
          "   :widths: 30, 70\n"
-         "   :delim: |\n\n")
+         "   :delim: @\n\n")
 
     if sort:
         list_of_entries.sort(key=lambda x:getattr(x,'__name__',''))
@@ -134,12 +153,13 @@ def gen_rest_table_index(list_of_entries, sort=True, only_local_functions=True):
 
         # Descriptions of the method/function
         if e.__doc__:
-            desc = e.__doc__.splitlines()
-            desc = desc[0] if desc[0] else desc[1]
+            desc = e.__doc__.split('\n\n')[0]                       # first paragraph
+            desc = " ".join([x.strip() for x in desc.splitlines()]) # concatenate lines
+            desc = desc.strip()                                     # remove leading spaces
         else:
             desc = "NO DOCSTRING"
 
-        s += "   {} | {}\n".format(link,desc.lstrip())
+        s += "   {} @ {}\n".format(link,desc.lstrip())
 
     return s+'\n'
 

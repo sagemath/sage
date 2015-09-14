@@ -641,7 +641,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         return True
 
 
-class InfinityCrystalOfGeneralizedYoungWalls(Parent,UniqueRepresentation):
+class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
     r"""
     The crystal `\mathcal{Y}(\infty)` of generalized Young walls of
     type `A_n^{(1)}` as defined in [KS10]_.

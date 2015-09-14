@@ -2339,7 +2339,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     Psi[] # Psi[3] + Psi[3] # Psi[]
 
                 TESTS::
-                
+
                     sage: Psi.coproduct_on_generators(0)
                     Traceback (most recent call last):
                     ...

@@ -676,7 +676,7 @@ static void ZZ_pX_conv_modulus(ZZ_pX &fout, const ZZ_pX &fin, const ZZ_pContext 
     fout.normalize();
 }
 
-void ZZ_pEX_conv_modulus(ZZ_pEX &fout, const ZZ_pEX &fin, const ZZ_pContext &modout)
+static void ZZ_pEX_conv_modulus(ZZ_pEX &fout, const ZZ_pEX &fin, const ZZ_pContext &modout)
 {
     // Changes the modulus of fin to modout, and puts the result in fout.
     long i, n, j, m;

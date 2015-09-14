@@ -6830,7 +6830,7 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
 # Partitions Greatest EQ #
 ##########################
 
-class PartitionsGreatestEQ(IntegerListsLex, UniqueRepresentation):
+class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
     """
     The class of all (unordered) "restricted" partitions of the integer `n`
     having its greatest part equal to the integer `k`.

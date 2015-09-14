@@ -60,7 +60,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef linear_coextension_cochains(self, F=*, cosimple=*, fundamentals=*)
     cpdef linear_extensions(self, element=*, F=*, simple=*, fundamentals=*)
     cpdef linear_coextensions(self, element=*, F=*, cosimple=*, fundamentals=*)
-    
+
+    cpdef _is_3connected_shifting(self, certificate=*)
+    cpdef _is_4connected_shifting(self, certificate=*)
+
     cpdef is_valid(self)
 
 cdef class BinaryMatroid(LinearMatroid):

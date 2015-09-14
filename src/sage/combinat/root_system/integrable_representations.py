@@ -20,7 +20,7 @@ from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.weyl_characters import WeylCharacterRing
 
 # TODO: Make this a proper parent and implement actions
-class IntegrableRepresentation(CategoryObject, UniqueRepresentation):
+class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
     r"""
     An irreducible integrable highest weight representation of
     an affine Lie algebra.

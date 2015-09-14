@@ -2495,6 +2495,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         Returns whether x is in self.
 
         EXAMPLES::
+
             sage: R.<i,j,k> = QuaternionAlgebra(-3, -13)
             sage: I = R.ideal([2+i, 3*i, 5*j, j+k])
             sage: 2+i in I

@@ -115,7 +115,7 @@ def DegreeSequenceBipartite(s1 ,s2 ):
     Trac ticket #12155::
 
         sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()
-        complement(): Graph on 7 vertices
+        Graph on 7 vertices
     """
 
     from sage.combinat.integer_vector import gale_ryser_theorem

@@ -152,27 +152,14 @@ from sage.rings.polynomial.all import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
-cimport matrix_generic_dense
+from matrix_generic_dense cimport Matrix_generic_dense
 cimport matrix
 
 cdef maxima
 
 from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
 
-cdef class Matrix_symbolic_dense(matrix_generic_dense.Matrix_generic_dense):
-    def _new_c(self):
-        """
-        Called when creating a new matrix.
-
-        EXAMPLES::
-
-            sage: matrix(SR,0)   # this implicitly calls _new_c
-            []
-        """
-        cdef Matrix_symbolic_dense M = Matrix_symbolic_dense.__new__(Matrix_symbolic_dense, 0, 0, 0)
-        matrix.Matrix.__init__(M, self._parent)
-        return M
-
+cdef class Matrix_symbolic_dense(Matrix_generic_dense):
     def eigenvalues(self):
         """
         Compute the eigenvalues by solving the characteristic

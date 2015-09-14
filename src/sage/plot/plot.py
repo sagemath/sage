@@ -530,6 +530,7 @@ def SelectiveFormatter(formatter, skip_values):
                 Set the locations for the ticks that are not skipped.
 
                 EXAMPLES::
+
                     sage: from sage.plot.plot import SelectiveFormatter
                     sage: import matplotlib.ticker
                     sage: formatter=SelectiveFormatter(matplotlib.ticker.Formatter(),skip_values=[0,200])

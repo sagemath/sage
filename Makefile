@@ -13,13 +13,9 @@ build: all-build
 
 # Defer unknown targets to build/make/Makefile
 %::
-	$(MAKE) configure logs
-	+cd build/make && ./pipestatus \
-		"./install '$@' 2>&1" \
-		"tee -a ../../logs/install.log"
-
-logs:
-	mkdir -p $@
+	$(MAKE) configure
+	+build/bin/sage-logger \
+		"cd build/make && ./install '$@'" logs/install.log
 
 # Preemptively download all standard upstream source tarballs.
 download:
@@ -62,7 +58,7 @@ bootstrap-clean:
 maintainer-clean: distclean bootstrap-clean
 	rm -rf upstream
 
-micro_release: bdist-clean lib-clean
+micro_release: bdist-clean sagelib-clean
 	@echo "Stripping binaries ..."
 	LC_ALL=C find local/lib local/bin -type f -exec strip '{}' ';' 2>&1 | grep -v "File format not recognized" |  grep -v "File truncated" || true
 

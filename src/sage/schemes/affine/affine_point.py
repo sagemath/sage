@@ -252,16 +252,16 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         OUTPUT:
 
         - A point in the projectivization of the codomain of ``self``
-        
+
         EXAMPLES::
-        
+
             sage: A.<x,y> = AffineSpace(ZZ,2)
             sage: Q = A(2,3)
             sage: Q.homogenize(2).dehomogenize(2) == Q
             True
-    
+
             ::
-    
+
             sage: A.<x,y> = AffineSpace(QQ,2)
             sage: Q = A(2,3)
             sage: P = A(0,1)
@@ -432,4 +432,3 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
             index+=1
         I=Orbit.index(P)
         return([I,index-I-1])
-

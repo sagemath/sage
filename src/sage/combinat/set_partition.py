@@ -944,7 +944,7 @@ class SetPartition(ClonableArray):
                 arcs.append((p[i], p[i+1]))
         return arcs
 
-class SetPartitions(Parent, UniqueRepresentation):
+class SetPartitions(UniqueRepresentation, Parent):
     r"""
     An (unordered) partition of a set `S` is a set of pairwise
     disjoint nonempty subsets with union `S`, and is represented

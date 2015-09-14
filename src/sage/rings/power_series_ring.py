@@ -320,7 +320,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         sage: TestSuite(M).run()
 
     .. SEEALSO::
-    
+
         * :func:`sage.misc.defaults.set_series_precision`
     """
     #multivariate case:
@@ -484,7 +484,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, commutative_ring.Commutative
         This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
         Since :trac:`11900`, it is also initialised as such, and since :trac:`14084`
         it is actually initialised as an integral domain::
-    
+
             sage: R.<x> = ZZ[[]]
             sage: R.category()
             Category of integral domains
@@ -927,7 +927,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, commutative_ring.Commutative
         exact.
         
         EXAMPLES::
-        
+
             sage: R.<t> = PowerSeriesRing(ZZ)
             sage: R.is_exact()
             False
@@ -1124,7 +1124,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, commutative_ring.Commutative
         a field.
         
         EXAMPLES::
-        
+
             sage: R.<t> = PowerSeriesRing(ZZ)
             sage: R.is_field()
             False

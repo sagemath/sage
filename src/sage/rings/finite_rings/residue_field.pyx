@@ -1,5 +1,5 @@
 """
-Finite residue fields.
+Finite residue fields
 
 We can take the residue field of maximal ideals in the ring of integers
 of number fields. We can also take the residue field of irreducible

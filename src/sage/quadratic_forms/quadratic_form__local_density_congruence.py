@@ -1,6 +1,5 @@
 """
 Local Density Congruence
-
 """
 
 
@@ -36,11 +35,13 @@ def count_modp_solutions__by_Gauss_sum(self, p, m):
     Densities..." paper.
 
     INPUT:
+
         `p` -- a prime number > 2
 
         `m` -- an integer
 
     OUTPUT:
+
         an integer >= 0
 
     EXAMPLES::
@@ -80,6 +81,7 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
     normal form.
 
     INPUT:
+
         Q -- quadratic form assumed to be diagonal and p-integral
 
         `p` -- a prime number
@@ -89,6 +91,7 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -181,6 +184,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
 
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and 2-integral
 
         `p` -- a prime number
@@ -190,6 +194,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -363,6 +368,7 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and p-integral
 
         `p` -- a prime number
@@ -372,6 +378,7 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -449,6 +456,7 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and `p`-integral
 
         `p` -- a prime number
@@ -458,6 +466,7 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -531,6 +540,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and `p`-integral
 
         `p` -- a prime number
@@ -540,6 +550,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -720,6 +731,7 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 
      INPUT:
+
         Q -- quadratic form assumed to be block diagonal and p-integral
 
         `p` -- a prime number
@@ -729,6 +741,7 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -890,6 +903,7 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
     `m` at `p`, allowing certain congruence conditions mod `p`.
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and p-integral
 
         `p` -- a prime number
@@ -899,6 +913,7 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -950,6 +965,7 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
     allowing certain congruence conditions mod `p`.
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and p-integral
 
         `p` -- a prime number
@@ -959,6 +975,7 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -1022,6 +1039,7 @@ def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
     Note: The following routine is not used internally, but is included for consistency.
 
     INPUT:
+
         Q -- quadratic form assumed to be block diagonal and p-integral
 
         `p` -- a prime number
@@ -1031,6 +1049,7 @@ def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
         Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::

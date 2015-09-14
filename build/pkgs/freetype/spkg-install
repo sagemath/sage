@@ -13,7 +13,8 @@ fi
 
 cd src
 
-GNUMAKE=${MAKE} ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+# Disabling harfbuzz until upstream properly check for suitable version
+GNUMAKE=${MAKE} ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --with-harfbuzz=no
 
 if [ $? -ne 0 ]; then
     exit 1;

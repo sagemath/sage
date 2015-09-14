@@ -910,7 +910,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: t1 = V.birational_toggle(1, t)
                 Traceback (most recent call last):
                 ...
-                ZeroDivisionError: Rational division by zero
+                ZeroDivisionError: rational division by zero
 
             We don't get into zero-division issues in the tropical
             semiring (unless the zero of the tropical semiring appears

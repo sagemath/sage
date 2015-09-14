@@ -103,9 +103,11 @@ class QuadraticFormLocalRepresentationConditions():
         new conditions.
 
         INPUT:
+
             Q -- Quadratic form over ZZ
 
         OUTPUT:
+
             a  QuadraticFormLocalRepresentationConditions object
 
         EXAMPLES::
@@ -212,9 +214,11 @@ class QuadraticFormLocalRepresentationConditions():
         Print the local conditions.
 
         INPUT:
+
             none
 
         OUTPUT:
+
             string
 
         TO DO:  Improve the output for the real numbers, and special output for locally universality.
@@ -258,9 +262,11 @@ class QuadraticFormLocalRepresentationConditions():
         Determines if two sets of local conditions are equal.
 
         INPUT:
+
             right -- a QuadraticFormLocalRepresentationConditions object
 
         OUTPUT:
+
             boolean
 
         EXAMPLES::
@@ -305,9 +311,11 @@ class QuadraticFormLocalRepresentationConditions():
         (or the real squareclasses) at the prime `p`.
 
         INPUT:
+
             `p` -- a positive prime number or "infinity".
 
         OUTPUT:
+
             a list of integers
 
         EXAMPLES::
@@ -334,9 +342,11 @@ class QuadraticFormLocalRepresentationConditions():
         Returns a local representation vector for the (possibly infinite) prime `p`.
 
         INPUT:
+
             `p` -- a positive prime number.  (Is 'infinity' allowed here?)
 
         OUTPUT:
+
             a list of integers
 
         EXAMPLES::
@@ -392,9 +402,11 @@ class QuadraticFormLocalRepresentationConditions():
         Determines if the (integer-valued/rational) quadratic form represents all of `Z_p`.
 
         INPUT:
+
             `p` -- a positive prime number or "infinity".
 
         OUTPUT:
+
             boolean
 
         EXAMPLES::
@@ -439,9 +451,11 @@ class QuadraticFormLocalRepresentationConditions():
         Determines if the quadratic form represents `Z_p` for all finite/non-archimedean primes.
 
         INPUT:
+
             none
 
         OUTPUT:
+
             boolean
 
         EXAMPLES::
@@ -478,9 +492,11 @@ class QuadraticFormLocalRepresentationConditions():
         finite/non-archimedean primes, and represents all real numbers.
 
         INPUT:
+
             none
 
         OUTPUT:
+
             boolean
 
         EXAMPLES::
@@ -533,6 +549,7 @@ class QuadraticFormLocalRepresentationConditions():
             `p` -- a positive prime number or "infinity".
 
         OUTPUT:
+
             boolean
 
         EXAMPLES::
@@ -602,9 +619,11 @@ class QuadraticFormLocalRepresentationConditions():
         places).
 
         INPUT:
+
             `m` -- an integer
 
         OUTPUT:
+
             boolean
 
         EXAMPLES::
@@ -706,9 +725,11 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     and is listed before the other ones.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         A list of 9-element vectors describing the representation
         obstructions at primes dividing the level.
 
@@ -780,9 +801,11 @@ def is_locally_universal_at_prime(self, p):
     Determines if the (integer-valued/rational) quadratic form represents all of `Z_p`.
 
     INPUT:
+
         `p` -- a positive prime number or "infinity".
 
     OUTPUT:
+
         boolean
 
     EXAMPLES::
@@ -826,9 +849,11 @@ def is_locally_universal_at_all_primes(self):
     Determines if the quadratic form represents `Z_p` for all finite/non-archimedean primes.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         boolean
 
     EXAMPLES::
@@ -861,9 +886,11 @@ def is_locally_universal_at_all_places(self):
     finite/non-archimedean primes, and represents all real numbers.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         boolean
 
     EXAMPLES::
@@ -902,6 +929,7 @@ def is_locally_represented_number_at_place(self, m, p):
         `p` -- a prime number > 0 or 'infinity'
 
     OUTPUT:
+
         boolean
 
     EXAMPLES::
@@ -943,9 +971,11 @@ def is_locally_represented_number(self, m):
     Determines if the rational number m is locally represented by the quadratic form.
 
     INPUT:
+
         `m` -- an integer
 
     OUTPUT:
+
         boolean
 
     EXAMPLES::

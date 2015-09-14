@@ -97,6 +97,7 @@ Comprehensive Module list
     sage/combinat/designs/orthogonal_arrays_find_recursive
     sage/combinat/designs/steiner_quadruple_systems
     sage/combinat/designs/subhypergraph_search
+    sage/combinat/designs/twographs
     sage/combinat/diagram_algebras
     sage/combinat/dict_addition
     sage/combinat/dlx
@@ -339,3 +340,4 @@ Comprehensive Module list
     sage/combinat/words/word_options
     sage/combinat/words/words
     sage/combinat/yang_baxter_graph
+    sage/rings/cfinite_sequence

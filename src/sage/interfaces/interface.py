@@ -98,6 +98,7 @@ class Interface(ParentWithBase):
         other than a small positive integer.
 
         EXAMPLES::
+
             from sage.misc.random_testing import random_testing
             sage: from sage.interfaces.interface import Interface
             sage: i = Interface("")

@@ -2195,7 +2195,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             
         Note that you may get unexpected results when calling symbolic expressions
         and not explicitly giving the variables::
-            
+
             sage: (f+maxima.cos(x))(2)
             cos(_SAGE_VAR_x)+sin(2)
             sage: (f+maxima.cos(y))(2)
@@ -2221,7 +2221,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             
         Note that you may get unexpected results when calling symbolic expressions
         and not explicitly giving the variables::
-            
+
             sage: (f-maxima.cos(x))(2)
             sin(2)-cos(_SAGE_VAR_x)
             sage: (f-maxima.cos(y))(2)

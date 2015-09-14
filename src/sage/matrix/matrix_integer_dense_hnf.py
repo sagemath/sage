@@ -1084,7 +1084,7 @@ def hnf(A, include_zero_rows=True, proof=True):
 def hnf_with_transformation(A, proof=True):
     """
     Compute the HNF H of A along with a transformation matrix U
-    such that U*A = H.  Also return the pivots of H.
+    such that U*A = H.
 
     INPUT:
 
@@ -1095,7 +1095,6 @@ def hnf_with_transformation(A, proof=True):
 
     - matrix -- the Hermite normal form H of A
     - U -- a unimodular matrix such that U * A = H
-    - pivots -- the pivot column positions of A
 
     EXAMPLES::
 
@@ -1103,7 +1102,7 @@ def hnf_with_transformation(A, proof=True):
         sage: A = matrix(ZZ, 2, [1, -5, -10, 1, 3, 197]); A
         [  1  -5 -10]
         [  1   3 197]
-        sage: H, U, pivots = matrix_integer_dense_hnf.hnf_with_transformation(A)
+        sage: H, U = matrix_integer_dense_hnf.hnf_with_transformation(A)
         sage: H
         [  1   3 197]
         [  0   8 207]
@@ -1116,10 +1115,10 @@ def hnf_with_transformation(A, proof=True):
     """
     # All we do is augment the input matrix with the identity matrix of the appropriate rank on the right.
     C = A.augment(identity_matrix(ZZ, A.nrows()))
-    H, pivots = hnf(C, include_zero_rows=True, proof=proof)
+    H, _ = hnf(C, include_zero_rows=True, proof=proof)
     U = H.matrix_from_columns(range(A.ncols(), H.ncols()))
     H2 = H.matrix_from_columns(range(A.ncols()))
-    return H2, U, pivots
+    return H2, U
 
 def hnf_with_transformation_tests(n=10, m=5, trials=10):
     """
@@ -1136,11 +1135,11 @@ def hnf_with_transformation_tests(n=10, m=5, trials=10):
     for i in range(trials):
         print i,
         sys.stdout.flush()
-        a = random_matrix(ZZ, n, m)
-        w = hnf_with_transformation(a)
-        assert w[0] == w[1]*a
-        w = hnf_with_transformation(a, proof=False)
-        assert w[0] == w[1]*a
+        A = random_matrix(ZZ, n, m)
+        H, U = hnf_with_transformation(A)
+        assert H == U * A
+        H, U = hnf_with_transformation(A, proof=False)
+        assert H == U * A
 
 
 #################################################################################################

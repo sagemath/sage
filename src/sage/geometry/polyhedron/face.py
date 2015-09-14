@@ -131,6 +131,19 @@ class PolyhedronFace(SageObject):
         self._ambient_Vrepresentation = tuple( polyhedron.Vrepresentation(i) for i in V_indices )
         self._ambient_Hrepresentation = tuple( polyhedron.Hrepresentation(i) for i in H_indices )
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: P = Polyhedron([[0,0],[0,1],[23,3],[9,12]])
+            sage: map(hash, P.faces(1))  # random
+            [2377119663630407734,
+             2377136578164722109,
+             5966674064902575359,
+             4795242501625591634]
+        """
+        return hash((self._polyhedron, self._ambient_Vrepresentation_indices))
+
     def vertex_generator(self):
         """
         Return a generator for the vertices of the face.

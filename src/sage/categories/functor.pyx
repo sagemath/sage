@@ -181,6 +181,17 @@ cdef class Functor(SageObject):
         self.__domain = domain
         self.__codomain = codomain
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.categories.functor import Functor
+            sage: F = Functor(Rings(), Fields())
+            sage: hash(F)  # random
+            42
+        """
+        return hash(self.__domain) ^ hash(self.__codomain)
+
     def __reduce__(self):
         """
         Generic pickling of functors.

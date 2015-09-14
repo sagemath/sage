@@ -759,7 +759,7 @@ class NakajimaAMonomial(NakajimaYMonomial):
         d[(i,kf)] = d.get((i,kf),0) - 1
         return self.__class__(self.parent(), d)
 
-class InfinityCrystalOfNakajimaMonomials(Parent,UniqueRepresentation):
+class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
     r"""
     Let `Y_{i,k}`, for `i \in I` and `k \in \ZZ`, be a commuting set of
     variables, and let `\boldsymbol{1}` be a new variable which commutes with

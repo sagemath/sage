@@ -979,6 +979,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             ]
 
         TESTS::
+
             sage: M = ModularSymbols(1000,2,sign=1).new_subspace().cuspidal_subspace()
             sage: M.decomposition(3, sort_by_basis = True)
             [

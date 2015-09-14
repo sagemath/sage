@@ -224,7 +224,7 @@ class Gamma0_class(GammaH_class):
         Return the subgroups of SL2Z of the form Gamma0(M) that contain this subgroup,
         i.e. those for M a divisor of N.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma0(24).divisor_subgroups()
             [Modular Group SL(2,Z),
@@ -542,19 +542,19 @@ class Gamma0_class(GammaH_class):
 
     def index(self):
         r"""
-        Return the index of self in the full modular group. This is given by
+        Return the index of self in the full modular group.
+
+        This is given by
 
         .. math::
 
             N \prod_{\substack{p \mid N \\ \text{$p$ prime}}}\left(1 + \frac{1}{p}\right).
 
-        EXAMPLE::
+        EXAMPLES::
+
             sage: [Gamma0(n).index() for n in [1..19]]
             [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12, 24, 14, 24, 24, 24, 18, 36, 20]
             sage: Gamma0(32041).index()
             32220
         """
         return prod([p**e + p**(e-1) for (p,e) in self.level().factor()])
-
-
-

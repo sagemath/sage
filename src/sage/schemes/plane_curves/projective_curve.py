@@ -600,7 +600,9 @@ class ProjectiveCurve_prime_finite_field(ProjectiveCurve_finite_field):
 
 
         .. NOTE::
-            Currently this only works over prime field and divisors supported on rational points.
+
+            Currently this only works over prime field and divisors
+            supported on rational points.
         """
         f = self.defining_polynomial()._singular_()
         singular = f.parent()

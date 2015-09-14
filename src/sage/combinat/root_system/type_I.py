@@ -47,6 +47,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         Type `I_p` is of rank 2
 
         EXAMPLES::
+
             sage: CartanType(['I', 5]).rank()
             2
         """
@@ -57,6 +58,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         Type `I_p` is of rank 2
 
         EXAMPLES::
+
             sage: CartanType(['I', 5]).index_set()
             [1, 2]
         """

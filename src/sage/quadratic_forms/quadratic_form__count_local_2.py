@@ -2,7 +2,7 @@
 Counting Congruence Solutions
 
 This file provides more user-friendly Python front-ends to the Cython code in
-:module:`sage.quadratic_forms.count_local`.
+:mod:`sage.quadratic_forms.count_local`.
 """
 ##################################################################
 ## Methods for counting/computing the number of representations ##
@@ -32,22 +32,22 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
         2) `x[i] != 0 (mod p) for all i` in nzvec
 
 
-    REFERENCES: See Hanke's (????) paper "Local Densities and explicit
-        bounds...", p??? for the definitions of the solution types and
-        congruence conditions.
+    REFERENCES:
+
+    See Hanke's (????) paper "Local Densities and explicit bounds...", p??? for
+    the definitions of the solution types and congruence conditions.
 
     INPUT:
-        `p` -- prime number > 0
 
-        `k` -- an integer > 0
-
-        `m` -- an integer (depending only on mod `p^k`)
-
-        zvec, nzvec -- a list of integers in range(self.dim()), or None
+    - `p` -- prime number > 0
+    - `k` -- an integer > 0
+    - `m` -- an integer (depending only on mod `p^k`)
+    - zvec, nzvec -- a list of integers in range(self.dim()), or None
 
     OUTPUT:
-        a list of six integers >= 0 representing the solution types:
-            [All, Good, Zero, Bad, BadI, BadII]
+
+    a list of six integers >= 0 representing the solution types:
+    [All, Good, Zero, Bad, BadI, BadII]
 
 
     EXAMPLES::

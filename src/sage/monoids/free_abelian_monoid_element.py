@@ -1,5 +1,5 @@
 """
-Abelian monoid elements
+Abelian Monoid Elements
 
 AUTHORS:
 

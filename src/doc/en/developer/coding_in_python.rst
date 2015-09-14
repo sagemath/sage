@@ -190,7 +190,7 @@ replacements are made:
 
 - Sage supports a special syntax for generating rings or, more
   generally, parents with named generators::
-     
+
       sage: R.<x,y> = QQ[]
       sage: preparse('R.<x,y> = QQ[]')
       "R = QQ['x, y']; (x, y,) = R._first_ngens(2)"
@@ -203,7 +203,7 @@ replacements are made:
       4
       sage: 87.factor()
       3 * 29
-      
+
 - Raw literals are not preparsed, which can be useful from an
   efficiency point of view. Just like Python ints are denoted by an L,
   in Sage raw integer and floating literals are followed by an "r" (or

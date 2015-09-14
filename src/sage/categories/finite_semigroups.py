@@ -117,7 +117,7 @@ class FiniteSemigroups(CategoryWithAxiom):
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
                 sage: sorted(S.j_transversal_of_idempotents())
-                ['a', 'ab', 'ac', 'acb', 'b', 'c', 'cb']
+                ['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
             """
             def first_idempotent(l):
                 for x in l:

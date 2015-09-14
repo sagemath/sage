@@ -780,6 +780,7 @@ class TermOrder(SageObject):
 
             from sage.matrix.constructor import matrix
             self._matrix = matrix(n,name)  # defined only for matrix term order
+            self._matrix.set_immutable()
             self._weights = name[:n] # the first row of the matrix gives weights
         else:
             raise TypeError("%s is not a valid term order"%(name,))
@@ -790,6 +791,16 @@ class TermOrder(SageObject):
             self._singular_moreblocks += 1
 
         self.__doc__ = description_mapping.get(self._name, "No description available")
+
+    def __hash__(self):
+        r"""
+        A hash function
+
+        EXAMPLE::
+
+            sage: _=hash(TermOrder('lex'))
+        """
+        return hash((self._name, self._blocks, self._weights, self._matrix))
 
     def __copy(self, other):
         """

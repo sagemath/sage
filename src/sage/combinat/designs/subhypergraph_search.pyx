@@ -117,8 +117,9 @@ Methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from libc.stdlib cimport free,malloc,calloc,qsort
+from libc.stdlib cimport qsort
 from libc.stdint cimport uint64_t
+include "sage/ext/stdsage.pxi"
 
 ctypedef struct hypergraph:
     int n
@@ -164,9 +165,9 @@ cdef void h_free(hypergraph h):
     r"""
     Free the hypergraph
     """
-    free(h.names)
-    free(h.set_space)
-    free(h.sets)
+    sage_free(h.names)
+    sage_free(h.set_space)
+    sage_free(h.sets)
     h.names = NULL
     h.set_space = NULL
     h.sets = NULL
@@ -180,9 +181,9 @@ cdef hypergraph h_init(int n,list H):
     h.n          = n
     h.m          = len(H)
     h.limbs      = (n+63)/64 # =ceil(n/64)
-    h.names      = <int *>  malloc(sizeof(int)*n)
-    h.sets       = <uint64_t **> malloc(h.m*sizeof(uint64_t *))
-    h.set_space  = <uint64_t *>  calloc(h.m*(h.limbs+1),sizeof(uint64_t))
+    h.names      = <int *>  sage_malloc(sizeof(int)*n)
+    h.sets       = <uint64_t **> sage_malloc(h.m*sizeof(uint64_t *))
+    h.set_space  = <uint64_t *>  sage_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
 
     # Consistency check
     for S in H:
@@ -369,13 +370,13 @@ cdef class SubHypergraphSearch:
         self.tmp1 = h_init(n1,H1._blocks) # No actual need to fill them,
         self.tmp2 = h_init(n2,H2._blocks) # only allocate the memory
 
-        self.step = <int *> malloc((n2+1)*sizeof(int))
+        self.step = <int *> sage_malloc((n2+1)*sizeof(int))
 
         # all possible traces/induced subgraphs for h2
         #
         # (calloc sets all internal pointers to NULL)
-        self.h2_traces  = <hypergraph *> calloc(n2+1,sizeof(hypergraph))
-        self.h2_induced = <hypergraph *> calloc(n2+1,sizeof(hypergraph))
+        self.h2_traces  = <hypergraph *> sage_calloc(n2+1,sizeof(hypergraph))
+        self.h2_induced = <hypergraph *> sage_calloc(n2+1,sizeof(hypergraph))
 
         if (self.h1.n   == -1 or
             self.h2.n   == -1 or
@@ -418,9 +419,9 @@ cdef class SubHypergraphSearch:
         h_free(self.h2)
         h_free(self.tmp1)
         h_free(self.tmp2)
-        free(self.step)
-        free(self.h2_traces)
-        free(self.h2_induced)
+        sage_free(self.step)
+        sage_free(self.h2_traces)
+        sage_free(self.h2_induced)
 
     def relabel_heuristic(self):
         r"""

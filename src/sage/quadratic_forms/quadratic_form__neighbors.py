@@ -82,6 +82,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     vectors, then return None.
 
     OUTPUT:
+
         vector or None
 
     EXAMPLES::

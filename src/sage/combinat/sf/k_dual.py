@@ -650,6 +650,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
             The set of `k`-bounded partitions of all non-negative integers.
 
             EXAMPLES::
+
                 sage: km = SymmetricFunctions(QQ).kBoundedQuotient(3,t=1).km()
                 sage: km.indices()
                 3-Bounded Partitions

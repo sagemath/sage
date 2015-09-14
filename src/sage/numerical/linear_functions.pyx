@@ -78,9 +78,7 @@ See :trac:`12091` ::
 include "sage/ext/interrupt.pxi"
 from cpython.object cimport *
 
-cdef extern from "limits.h":
-    long LONG_MAX
-
+from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport ModuleElement, Element
 from sage.misc.cachefunc import cached_function
@@ -843,9 +841,9 @@ cdef class LinearFunction(ModuleElement):
         """
         return (left-right).is_zero()
 
-    def __richcmp__(left, right, int op):
+    cdef _richcmp(left, right, int op):
         """
-        Override the rich comparison.
+        Create an inequality or equality object.
 
         EXAMPLES::
 
@@ -853,14 +851,8 @@ cdef class LinearFunction(ModuleElement):
             sage: x = p.new_variable()
             sage: x[0].__le__(x[1])    # indirect doctest
             x_0 <= x_1
-        """
-        return (<LinearFunction>left)._richcmp(right, op)
 
-    cdef _richcmp(left, right, int op):
-        """
-        Create a inequality or equality object.
-
-        EXAMPLE::
+        ::
 
             sage: p = MixedIntegerLinearProgram()
             sage: from sage.numerical.linear_functions import LinearFunction
@@ -912,18 +904,14 @@ cdef class LinearFunction(ModuleElement):
         equality = (op == Py_EQ)
         cdef LinearConstraint  left_constraint = LC(left,  equality=equality)
         cdef LinearConstraint right_constraint = LC(right, equality=equality)
-        if op == Py_LT:
+        if op == Py_EQ or op == Py_LE or op == Py_GE:
+            return PyObject_RichCompare(left_constraint, right_constraint, op)
+        elif op == Py_LT:
             raise ValueError("strict < is not allowed, use <= instead.")
-        elif op == Py_EQ:
-            return left_constraint._richcmp(right_constraint, op)
         elif op == Py_GT:
             raise ValueError("strict > is not allowed, use >= instead.")
-        elif op == Py_LE:
-            return left_constraint._richcmp(right_constraint, op)
         elif op == Py_NE:
             raise ValueError("inequality != is not allowed, use one of <=, ==, >=.")
-        elif op == Py_GE:
-            return left_constraint._richcmp(right_constraint, op)
         else:
             assert(False)   # unreachable
 
@@ -941,20 +929,7 @@ cdef class LinearFunction(ModuleElement):
             sage: d[f] = 3
         """
         # see _cmp_() if you want to change the hash function
-        return id(self) % LONG_MAX
-
-    def __cmp__(left, right):
-        """
-        Part of the comparison framework.
-
-        EXAMPLES::
-
-            sage: p = MixedIntegerLinearProgram()
-            sage: f = p({2 : 5, 3 : 2})
-            sage: cmp(f, f)
-            0
-        """
-        return (<Element>left)._cmp(right)
+        return hash_by_id(<void *> self)
 
     cpdef int _cmp_(left, Element right) except -2:
         """
@@ -1500,9 +1475,9 @@ cdef class LinearConstraint(Element):
         self._chained_comparator_hack_part2()
         return True
 
-    def __richcmp__(left, right, int op):
+    cdef _richcmp(py_left, py_right, int op):
         """
-        Override the rich comparison.
+        Chain (in)equalities
 
         EXAMPLES::
 
@@ -1512,12 +1487,6 @@ cdef class LinearConstraint(Element):
             x_0 <= x_1 <= x_2 <= x_3
             sage: b[0] <= 1 <= b[1] <= 2 <= b[2] <= 3
             x_0 <= 1 <= x_1 <= 2 <= x_2 <= 3
-        """
-        return (<LinearConstraint>left)._richcmp(right, op)
-
-    cdef _richcmp(py_left, py_right, int op):
-        """
-        Chain (in)equalities
         """
         #  print 'richcmp', py_left, ', ', py_right
         LC = py_left.parent()

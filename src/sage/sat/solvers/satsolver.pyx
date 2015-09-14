@@ -86,6 +86,55 @@ cdef class SatSolver:
         """
         raise NotImplementedError
 
+    def read(self, filename):
+        r"""
+        Reads DIMAC files.
+
+        Reads in DIMAC formatted lines (lazily) from a
+        file or file object and adds the corresponding
+        clauses into this solver instance. Note that the
+        DIMACS format is not well specified, see
+        http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html,
+        http://www.satcompetition.org/2009/format-benchmarks2009.html,
+        and http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
+        The differences were summarized in the discussion on
+        the ticket :trac:`16924`. This method assumes the following
+        DIMACS format
+
+        - Any line starting with "c" is a comment
+        - Any line starting with "p" is a header
+        - Any variable 1-n can be used
+        - Every line containing a clause must end with a "0"
+
+        INPUT:
+
+        - ``filename`` - The name of a file as a string or a file object
+
+        EXAMPLE::
+
+            sage: from six import StringIO # for python 2/3 support
+            sage: file_object = StringIO("c A sample .cnf file.\np cnf 3 2\n1 -3 0\n2 3 -1 0 ")
+            sage: from sage.sat.solvers.dimacs import DIMACS
+            sage: solver = DIMACS()
+            sage: solver.read(file_object)
+            sage: solver.clauses()
+            [((1, -3), False, None), ((2, 3, -1), False, None)]
+        """
+        if isinstance(filename,str):
+            file_object = open(filename,"r")
+        else:
+            file_object = filename
+        for line in file_object:
+            if line.startswith("c"):
+                continue # comment
+            if line.startswith("p"):
+                continue # header
+            line = line.split(" ")
+            clause = map(int,[e for e in line if e])
+            clause = clause[:-1] # strip trailing zero
+            self.add_clause(clause)
+
+
     def __call__(self, assumptions=None):
         """
         Solve this instance.

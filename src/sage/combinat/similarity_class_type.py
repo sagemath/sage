@@ -519,7 +519,7 @@ class PrimarySimilarityClassType(Element):
         #p = q.parent()(prod(map(lambda n:fq(n, q = q), self.partition().to_exp()),1))
         #return q**self.centralizer_algebra_dim()*p.substitute(q = q**self.degree())
 
-class PrimarySimilarityClassTypes(Parent, UniqueRepresentation):
+class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
     r"""
     All primary similarity class types of size ``n`` whose degree is greater
     than that of ``min`` or whose degree is that of ``min`` and  whose partition
@@ -933,7 +933,7 @@ class SimilarityClassType(CombinatorialElement):
             q = FractionField(ZZ['q']).gen()
         return prod([PT.statistic(func, q = q) for PT in self])
 
-class SimilarityClassTypes(Parent, UniqueRepresentation):
+class SimilarityClassTypes(UniqueRepresentation, Parent):
     r"""
     Class of all similarity class types of size ``n`` with all primary matrix
     types greater than or equal to the primary matrix type ``min``.

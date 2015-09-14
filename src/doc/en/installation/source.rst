@@ -402,8 +402,8 @@ or similar commands.
 If you installed Sage first, all is not lost. You just need to rebuild
 Sage's Python and any part of Sage relying on it::
 
-    sage -f python  # rebuild Python
-    make            # rebuild components of Sage depending on Python
+    sage -f python2  # rebuild Python
+    make             # rebuild components of Sage depending on Python
 
 after installing the Tcl/Tk development libraries as above.
 
@@ -705,7 +705,7 @@ Starting from a fresh Sage tarball::
 And if you've already built Sage::
 
     ./sage -i openssl
-    ./sage -f python
+    ./sage -f python2
     make ssl
 
 The third line will rebuild all parts of Sage that depend on Python;
@@ -881,7 +881,7 @@ Here are some of the more commonly used variables affecting the build process:
   maximum of 8 and a minimum of 2).
 
 - :envvar:`SAGE_CHECK` - if set to ``yes``, then during the build process,
-  and when running ``sage -i <package-name>`` or ``sage -f <package-name>``,
+  or when installing packages manually,
   run the test suite for each package which has one.
   See also :envvar:`SAGE_CHECK_PACKAGES`.
 

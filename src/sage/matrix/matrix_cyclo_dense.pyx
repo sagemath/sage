@@ -27,20 +27,24 @@ AUTHORS:
    * Craig Citro
 """
 
-######################################################################
-#       Copyright (C) 2008 William Stein
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#*****************************************************************************
+#       Copyright (C) 2008 William Stein <wstein@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-######################################################################
+#*****************************************************************************
+
 
 include "sage/ext/interrupt.pxi"
 include "sage/ext/cdefs.pxi"
-include "sage/ext/random.pxi"
 include "sage/libs/ntl/decl.pxi"
 
 from sage.structure.element cimport ModuleElement, RingElement, Element, Vector
 from sage.misc.randstate cimport randstate, current_randstate
+from sage.libs.gmp.randomize cimport *
 
 from constructor import matrix
 from matrix_space import MatrixSpace
@@ -658,25 +662,6 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         C._matrix = M
         return C
 
-    def __richcmp__(Matrix self, right, int op):
-        """
-        Compare a matrix with something else. This immediately calls
-        a base class _richcmp.
-
-        EXAMPLES::
-
-            sage: W.<z> = CyclotomicField(5)
-            sage: A = matrix(W, 2, 2, [1,z,-z,1+z/2])
-
-        These implicitly call richcmp::
-
-            sage: A == 5
-            False
-            sage: A < 100
-            True
-        """
-        return self._richcmp(right, op)
-
     cdef long _hash(self) except -1:
         """
         Return hash of this matrix.
@@ -731,11 +716,22 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         identical parents.
 
         INPUT:
-            self, right -- matrices with same parent
-        OUTPUT:
-            int; either -1, 0, or 1
 
-        EXAMPLES:
+        - ``self``, ``right`` -- matrices with same parent
+
+        OUTPUT: either -1, 0, or 1
+
+        EXAMPLES::
+
+            sage: W.<z> = CyclotomicField(5)
+            sage: A = matrix(W, 2, 2, [1,z,-z,1+z/2])
+
+        These implicitly call richcmp::
+
+            sage: A == 5
+            False
+            sage: A < 100
+            True
 
         This function is called implicitly when comparisons with matrices
         are done or the cmp function is used.::

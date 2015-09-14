@@ -6266,16 +6266,23 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 13.binomial(2r)
             78
 
-        Check that it can be interrupted::
+        Check that it can be interrupted (:trac:`17852`)::
 
             sage: alarm(0.5); (2^100).binomial(2^22, algorithm='mpir')
             Traceback (most recent call last):
             ...
             AlarmInterrupt
-            sage: alarm(0.5); (2^100).binomial(2^22, algorithm='pari')
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+
+        For PARI, we try 10 interrupts with increasing intervals to
+        check for reliable interrupting, see :trac:`18919`::
+
+            sage: from sage.ext.interrupt import AlarmInterrupt
+            sage: for i in [1..10]:  # long time (5s)
+            ....:     try:
+            ....:         alarm(i/11)
+            ....:         (2^100).binomial(2^22, algorithm='pari')
+            ....:     except AlarmInterrupt:
+            ....:         pass
         """
         cdef Integer x
         cdef Integer mm

@@ -4,10 +4,10 @@
 Sage IPython startup script.
 """
 
-from sage.repl.interpreter import SageTerminalApp
-
-# installs the extra readline commands before the IPython initialization begins.
+# Install extra readline commands before IPython initialization
 from sage.repl.readline_extra_commands import *
+
+from sage.repl.interpreter import SageTerminalApp
 
 app = SageTerminalApp.instance()
 app.initialize()

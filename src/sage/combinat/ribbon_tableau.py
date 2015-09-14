@@ -147,7 +147,7 @@ class RibbonTableau(SkewTableau):
 # Ribbon Tableaux   #
 #####################
 
-class RibbonTableaux(Parent, UniqueRepresentation):
+class RibbonTableaux(UniqueRepresentation, Parent):
     r"""
     Ribbon tableaux.
 
@@ -952,7 +952,7 @@ class MultiSkewTableau(CombinatorialElement):
         return res
 
 
-class MultiSkewTableaux(Parent, UniqueRepresentation):
+class MultiSkewTableaux(UniqueRepresentation, Parent):
     r"""
     Multiskew tableaux.
     """

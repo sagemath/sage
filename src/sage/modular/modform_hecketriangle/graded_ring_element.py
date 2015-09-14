@@ -1722,6 +1722,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation):
         determined by the corresponding Laurent series coefficients.
 
         EXAMPLES::
+
             sage: from sage.modular.modform_hecketriangle.graded_ring import WeakModularFormsRing
             sage: f = WeakModularFormsRing(red_hom=True).j_inv()^3
             sage: f.q_expansion(prec=3)

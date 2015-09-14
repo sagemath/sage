@@ -1,4 +1,6 @@
 """
+Lazy real and complex numbers
+
 These classes are very lazy, in the sense that it doesn't really do anything
 but simply sits between exact rings of characteristic 0 and the real numbers.
 The values are actually computed when they are cast into a field of fixed

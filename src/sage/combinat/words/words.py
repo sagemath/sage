@@ -110,7 +110,6 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
                 return FiniteWords_length_k_over_OrderedAlphabet(alphabet, length)
     raise ValueError("do not know how to make a combinatorial class of words from your input")
 
-from sage.structure.unique_representation import UniqueRepresentation
 class Words_all(InfiniteAbstractCombinatorialClass):
     r"""
     TESTS::

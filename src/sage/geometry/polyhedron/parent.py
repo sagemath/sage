@@ -155,7 +155,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
             sage: p = Polyhedron([(0,0),(1,0),(0,1)])
             sage: n = len(p.parent()._Vertex_pool)
-            sage: p.delete()
+            sage: p._delete()
             sage: len(p.parent()._Vertex_pool) - n
             3
         """

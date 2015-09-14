@@ -444,7 +444,7 @@ filtered_packages_list all | while read PKG_NAME PKG_VERSION PKG_VAR; do
         DEPS=""
     fi
     echo >&5 "\$(INST)/$PKG_VERSION:$DEPS"
-    echo >&5 "	+\$(PIPE) \"\$(SAGE_SPKG) \$($PKG_VAR) 2>&1\" \"tee -a \$(SAGE_LOGS)/\$($PKG_VAR).log\""
+    echo >&5 "	+sage-logger '\$(SAGE_SPKG) \$($PKG_VAR)' '\$(SAGE_LOGS)/\$($PKG_VAR).log'"
     echo >&5
 
     # Add a target with just the bare package name such that

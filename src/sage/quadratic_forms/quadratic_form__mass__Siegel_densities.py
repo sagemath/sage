@@ -139,13 +139,16 @@ def Pall_mass_density_at_odd_prime(self, p):
     representing itself) defined over `ZZ`, at some prime `p>2`.
 
     REFERENCES:
+
         Pall's article "The Weight of a Genus of Positive n-ary Quadratic Forms"
         appearing in Proc. Symp. Pure Math. VIII (1965), pp95--105.
 
     INPUT:
+
         `p` -- a prime number > 2.
 
     OUTPUT:
+
         a rational number.
 
     EXAMPLES::
@@ -204,9 +207,11 @@ def Watson_mass_at_2(self):
     in Mathematika 23 (1976), pp 94--106.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -310,9 +315,11 @@ def Kitaoka_mass_at_2(self):
     Quadratic Forms".
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number > 0
 
     EXAMPLES::
@@ -415,9 +422,11 @@ def mass_at_two_by_counting_mod_power(self, k):
 
 
     INPUT:
+
         k -- an integer >= 1
 
     OUTPUT:
+
         a rational number
 
     EXAMPLE::

@@ -15,6 +15,8 @@ cdef extern from "float.h":
     cdef double DBL_MAX
 
 cdef extern from "glpk.h":
+     ctypedef struct c_glp_tree "glp_tree":
+         pass
      ctypedef struct c_glp_prob "glp_prob":
          pass
      ctypedef struct c_glp_iocp "glp_iocp":
@@ -35,6 +37,8 @@ cdef extern from "glpk.h":
          int out_dly
          int presolve
          int binarize
+         void (*cb_func)(c_glp_tree *T, void *info) # callback function
+         void *cb_info                              # callback function input
      ctypedef struct c_glp_smcp "glp_smcp":
          int msg_lev
          int meth
@@ -121,6 +125,9 @@ cdef extern from "glpk.h":
      double glp_get_obj_coef(c_glp_prob *lp, int)
      int glp_get_obj_dir(c_glp_prob *lp)
      void glp_copy_prob(c_glp_prob *dst, c_glp_prob *src, int names)
+     double glp_ios_mip_gap(c_glp_tree *T)
+     int glp_ios_best_node(c_glp_tree *tree)
+     double glp_ios_node_bound(c_glp_tree *T, int p)
 
      # constants
 
@@ -177,6 +184,7 @@ cdef extern from "glpk.h":
      int GLP_ETMLIM
      int GLP_EOPFS
      int GLP_EODFS
+     int GLP_EMIPGAP
 
      int GLP_UNDEF
      int GLP_OPT
@@ -208,13 +216,21 @@ cdef extern from "glpk.h":
      int GLP_NF      # non-basic free (unbounded) variable
      int GLP_NS      # non-basic fixed variable
 
+# search_tree_data_t:
+#
+# This structure stores the data gathered by the callback function while the
+# search tree is explored.
+ctypedef struct search_tree_data_t:
+    double mip_gap
+    double best_bound
+
 cdef class GLPKBackend(GenericBackend):
     cdef c_glp_prob * lp
     cdef c_glp_iocp * iocp
     cdef c_glp_smcp * smcp
     cdef int simplex_or_intopt
+    cdef search_tree_data_t search_tree_data
     cpdef GLPKBackend copy(self)
-
     cpdef int print_ranges(self, char * filename = *) except -1
     cpdef double get_row_dual(self, int variable)
     cpdef double get_col_dual(self, int variable)

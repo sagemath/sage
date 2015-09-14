@@ -364,7 +364,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         The closure as a new :class:`RealInterval`
 
         EXAMPLES::
-        
+
             sage: RealSet.open(0,1)[0].closure()
             [0, 1]
             sage: RealSet.open(-oo,1)[0].closure()
@@ -385,7 +385,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         The interior as a new :class:`RealInterval`
 
         EXAMPLES::
-        
+
             sage: RealSet.closed(0, 1)[0].interior()
             (0, 1)
             sage: RealSet.open_closed(-oo, 1)[0].interior()
@@ -405,7 +405,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         has a single connected component.
 
         EXAMPLES::
-        
+
             sage: I1 = RealSet.open(0, 1)[0];  I1
             (0, 1)
             sage: I2 = RealSet.closed(1, 2)[0];  I2
@@ -577,7 +577,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         Boolean.
 
         EXAMPLES::
-        
+
             sage: i = RealSet.open_closed(0,2)[0]; i
             (0, 2]
             sage: i.contains(0)
@@ -784,7 +784,7 @@ class RealSet(UniqueRepresentation, Parent):
         The $i$-th connected component as a :class:`RealInterval`.
 
         EXAMPLES::
-        
+
             sage: s = RealSet(RealSet.open_closed(0,1), RealSet.closed_open(2,3))
             sage: s.get_interval(0)
             (0, 1]
@@ -1325,7 +1325,7 @@ class RealSet(UniqueRepresentation, Parent):
         Boolean.
 
         EXAMPLES::
-        
+
             sage: s = RealSet(0,2) + RealSet.unbounded_above_closed(10);  s
             (0, 2) + [10, +oo)
             sage: s.contains(1)
@@ -1357,7 +1357,7 @@ class RealSet(UniqueRepresentation, Parent):
         Boolean.
 
         EXAMPLES::
-        
+
             sage: I = RealSet((1,2))
             sage: J = RealSet((1,3))
             sage: K = RealSet((2,3))
@@ -1433,7 +1433,7 @@ class RealSet(UniqueRepresentation, Parent):
         Boolean.
         
         EXAMPLES::
-        
+
             sage: s1 = RealSet((0, 1), (2, 3))
             sage: s2 = RealSet((1, 2))
             sage: s3 = RealSet.point(3)

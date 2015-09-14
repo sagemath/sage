@@ -8,7 +8,7 @@ This chapter discusses Cython, which is a compiled language based on
 Python.  The major advantage it has over Python is that code can be
 much faster (sometimes orders of magnitude) and can directly call
 C and C++ code.  As Cython is essentially a superset of the Python
-language, one often doesn’t make a distinction between Cython and 
+language, one often doesn’t make a distinction between Cython and
 Python code in Sage (e.g. one talks of the “Sage Python Library”
 and “Python Coding Conventions”).
 

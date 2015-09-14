@@ -31,15 +31,7 @@ Parents, Elements and Categories
 * :doc:`Basic Infrastructure <structure/index>`
 * :doc:`Coercion <coercion/index>`
 * :doc:`Categories <categories/index>`
-
-Standard Algebraic Structures
------------------------------
-
-* :doc:`Monoids <monoids/index>`
-* :doc:`Groups <groups/index>`
-* :doc:`Semirings <semirings/index>`
-* :doc:`Rings <rings/index>`
-* :doc:`Algebras <algebras/index>`
+* :doc:`Base Classes for Rings and Related Objects  <rings/index>`
 
 Standard Rings and Fields
 -------------------------
@@ -47,9 +39,9 @@ Standard Rings and Fields
 * :doc:`Integers, Rationals, etc. <rings_standard/index>`
 * :doc:`Real and Complex Numbers <rings_numerical/index>`
 * :doc:`Finite Rings and Fields <finite_rings/index>`
+* :doc:`Algebraic Numbers <number_fields/index>`
 * :doc:`Polynomials <polynomial_rings/index>`
 * :doc:`Formal Power Series <power_series/index>`
-* :doc:`Algebraic Number Fields <number_fields/index>`
 * :doc:`Function Fields <function_fields/index>`
 * :doc:`p-Adic Numbers <padics/index>`
 * :doc:`Quaternion Algebras <quat_algebras/index>`
@@ -60,6 +52,14 @@ Linear Algebra
 * :doc:`Matrices and Spaces of Matrices <matrices/index>`
 * :doc:`Vectors and Modules <modules/index>`
 * :doc:`Tensors on free modules of finite rank <tensor_free_modules/index>`
+
+Other Algebraic Structures
+--------------------------
+
+* :doc:`Monoids <monoids/index>`
+* :doc:`Groups <groups/index>`
+* :doc:`Semirings <semirings/index>`
+* :doc:`Algebras <algebras/index>`
 
 Discrete Mathematics
 --------------------
@@ -120,7 +120,7 @@ Miscellaneous
 -------------
 
 * :doc:`Cryptography <cryptography/index>`
-* :doc:`Optimization <numerical/index>`
+* :doc:`Numerical Optimization <numerical/index>`
 * :doc:`Databases <databases/index>`
 * :doc:`Games <games/index>`
 

@@ -17,10 +17,11 @@ Plotting primitives
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 from sage.misc.misc import verbose
 
-class GraphicPrimitive(SageObject):
+class GraphicPrimitive(WithEqualityById, SageObject):
     """
     Base class for graphics primitives, e.g., things that knows how to draw
     themselves in 2D.
@@ -34,6 +35,11 @@ class GraphicPrimitive(SageObject):
         Line defined by 2 points
         sage: type(P[0])
         <class 'sage.plot.line.Line'>
+
+    TESTS::
+
+        sage: hash(circle((0,0),1))  # random
+        42
     """
     def __init__(self, options):
         """
@@ -49,6 +55,7 @@ class GraphicPrimitive(SageObject):
             Graphics primitive
         """
         self._options = options
+
 
     def _allowed_options(self):
         """

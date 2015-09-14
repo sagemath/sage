@@ -55,6 +55,15 @@ class Polyhedron_field(Polyhedron_base):
         sage: K.<sqrt3> = NumberField(x^2-3)
         sage: p = Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])
         sage: TestSuite(p).run()
+
+    Check that :trac:`19013` is fixed::
+
+        sage: K.<phi> = NumberField(x^2-x-1, embedding=1.618)
+        sage: P1 = Polyhedron([[0,1],[1,1],[1,-phi+1]])
+        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]])
+        sage: P1.intersection(P2)
+        The empty polyhedron in (Number Field in phi with defining polynomial
+        x^2 - x - 1)^2
     """
     def _is_zero(self, x):
         """

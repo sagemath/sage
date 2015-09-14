@@ -1206,6 +1206,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
         format (also necessary for UniqueRepresentation).
 
         TESTS::
+
             sage: from sage.combinat.crystals.alcove_path import RootsWithHeight
             sage: R = RootsWithHeight(['A',2],[3,2])
             sage: S = RootsWithHeight(CartanType(['A',2]), (3,2))
@@ -1218,7 +1219,6 @@ class RootsWithHeight(UniqueRepresentation, Parent):
             sage: B = RootsWithHeight(La[2])
             sage: B is C
             True
-
         """
         if cartan_type is not None:
             cartan_type, starting_weight = CartanType(starting_weight), cartan_type

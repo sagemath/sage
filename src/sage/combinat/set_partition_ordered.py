@@ -65,7 +65,7 @@ class OrderedSetPartition(ClonableArray):
     function is
     
     .. MATH::
-    
+
         \sum_n {T_n \over n!} x^n = {1 \over 2-e^x}.
 
     (See sequence A000670 in OEIS.)
@@ -191,7 +191,7 @@ class OrderedSetPartition(ClonableArray):
         """
         return Composition([len(_) for _ in self])
 
-class OrderedSetPartitions(Parent, UniqueRepresentation):
+class OrderedSetPartitions(UniqueRepresentation, Parent):
     """
     Return the combinatorial class of ordered set partitions of ``s``.
 

@@ -204,7 +204,7 @@ class WithProof:
         ...
         Traceback (most recent call last):
         ...
-        ZeroDivisionError: Rational division by zero
+        ZeroDivisionError: rational division by zero
         sage: proof.arithmetic()
         True
     """

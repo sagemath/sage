@@ -1,8 +1,9 @@
 r"""
-Common Transducers (Finite State Machines Generators)
+Common Automata and Transducers (Finite State Machines Generators)
 
-Transducers in Sage can be built through the ``transducers``
-object. It contains generators for common finite state machines. For example,
+Automata and Transducers in Sage can be built through the ``automata``
+and ``transducers`` objects, respectively. It contains generators for
+common finite state machines. For example,
 
 ::
 
@@ -10,9 +11,19 @@ object. It contains generators for common finite state machines. For example,
 
 generates an identity transducer on the alphabet `\{0, 1, 2\}`.
 
-To construct transducers manually, you can use the class
-:class:`Transducer`. See :mod:`~sage.combinat.finite_state_machine`
-for more details and a lot of examples.
+To construct automata and transducers manually, you can use the
+classes :class:`Automaton` and :class:`Transducer`, respectively. See
+:mod:`~sage.combinat.finite_state_machine` for more details and a lot
+of examples.
+
+**Automata**
+
+.. csv-table::
+    :class: contentstable
+    :widths: 30, 70
+    :delim: |
+
+    :meth:`~AutomatonGenerators.word` | Return an automaton recognizing the given word.
 
 **Transducers**
 
@@ -47,6 +58,7 @@ AUTHORS:
 - Clemens Heuberger, Daniel Krenn (2014-07-18): transducers Wait, all,
   any
 - Clemens Heuberger (2014-08-10): transducer Recursion
+- Clemens Heuberger (2015-07-31): automaton word
 
 ACKNOWLEDGEMENT:
 
@@ -58,7 +70,7 @@ Functions and methods
 
 """
 #*****************************************************************************
-#       Copyright (C) 2014 Clemens Heuberger <clemens.heuberger@aau.at>
+#       Copyright (C) 2014--2015 Clemens Heuberger <clemens.heuberger@aau.at>
 #                     2014 Daniel Krenn <dev@danielkrenn.at>
 #                     2014 Sara Kropf <sara.kropf@aau.at>
 #
@@ -72,10 +84,78 @@ import collections
 import operator
 from sage.symbolic.operators import add_vararg, mul_vararg
 
-from sage.combinat.finite_state_machine import Transducer
+from sage.combinat.finite_state_machine import Automaton, Transducer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from functools import reduce
+
+class AutomatonGenerators(object):
+    r"""
+    A class consisting of constructors for several common automata.
+
+    A list of all automata in this database is available via tab
+    completion. Type "``automata.``" and then hit tab to see which
+    automata are available.
+
+    The automata currently in this class include:
+
+    - :meth:`~word`
+    """
+
+    def word(self, word, input_alphabet=None):
+        r"""
+        Return an automaton recognizing the given word.
+
+        INPUT:
+
+        - ``word`` -- an iterable.
+
+        - ``input_alphabet`` -- a list or ``None``. If ``None``,
+          then the letters occurring in the word are used.
+
+        OUTPUT:
+
+        An :class:`~Automaton`.
+
+        EXAMPLES::
+
+            sage: A = automata.word([0])
+            sage: A.transitions()
+            [Transition from 0 to 1: 0|-]
+            sage: [A(w) for w in ([], [0], [1])]
+            [False, True, False]
+            sage: A = automata.word([0, 1, 0])
+            sage: A.transitions()
+            [Transition from 0 to 1: 0|-,
+            Transition from 1 to 2: 1|-,
+            Transition from 2 to 3: 0|-]
+            sage: [A(w) for w in ([], [0], [0, 1], [0, 1, 1], [0, 1, 0])]
+            [False, False, False, False, True]
+
+        If the input alphabet is not given, it is derived from the given
+        word. ::
+
+            sage: A.input_alphabet
+            [0, 1]
+            sage: A = automata.word([0, 1, 0], input_alphabet=[0, 1, 2])
+            sage: A.input_alphabet
+            [0, 1, 2]
+
+        TESTS::
+
+            sage: from sage.rings.integer import is_Integer
+            sage: all(is_Integer(s.label()) for s in A.states())
+            True
+        """
+        letters = list(word)
+        length = len(letters)
+        from sage.rings.integer_ring import ZZ
+        return Automaton([(ZZ(i), ZZ(i+1), letter)
+                          for i, letter in enumerate(letters)],
+                         initial_states=[ZZ(0)],
+                         final_states=[ZZ(length)],
+                         input_alphabet=input_alphabet)
+
 
 class TransducerGenerators(object):
     r"""
@@ -1750,5 +1830,6 @@ class TransducerGenerators(object):
         return T
 
 
-# Easy access to the transducer generators from the command line:
+# Easy access to the automaton and transducer generators from the command line:
+automata = AutomatonGenerators()
 transducers = TransducerGenerators()

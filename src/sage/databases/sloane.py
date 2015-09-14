@@ -377,6 +377,7 @@ def parse_sequence(text=''):
     which is now deprecated.
 
     TESTS::
+
         sage: from sage.databases.sloane import parse_sequence
         sage: parse_sequence()
         doctest:...: DeprecationWarning: The function parse_sequence is not used anymore (2012-01-01).

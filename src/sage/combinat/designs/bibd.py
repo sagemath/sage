@@ -395,21 +395,21 @@ def BIBD_from_TD(v,k,existence=False):
         sage: from sage.combinat.designs.bibd import BIBD_from_TD
         sage: BIBD_from_TD(25,5,existence=True)
         True
-        sage: _ = designs.BlockDesign(25,BIBD_from_TD(25,5))
+        sage: _ = BlockDesign(25,BIBD_from_TD(25,5))
 
     Second construction::
 
         sage: from sage.combinat.designs.bibd import BIBD_from_TD
         sage: BIBD_from_TD(21,5,existence=True)
         True
-        sage: _ = designs.BlockDesign(21,BIBD_from_TD(21,5))
+        sage: _ = BlockDesign(21,BIBD_from_TD(21,5))
 
     Third construction::
 
         sage: from sage.combinat.designs.bibd import BIBD_from_TD
         sage: BIBD_from_TD(85,5,existence=True)
         True
-        sage: _ = designs.BlockDesign(85,BIBD_from_TD(85,5))
+        sage: _ = BlockDesign(85,BIBD_from_TD(85,5))
 
     No idea::
 
@@ -1311,8 +1311,8 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             sage: print len(a3), 1 + 2*r
             15 17
             sage: sa3 = set(a3)
-            sage: set(len(sa3.intersection(b)) for b in B.blocks())
-            {0, 1, 2, 3}
+            sage: set(len(sa3.intersection(b)) for b in B.blocks()) == set([0,3])
+            False
             sage: B.trace(a3).is_t_design(3)
             False
 

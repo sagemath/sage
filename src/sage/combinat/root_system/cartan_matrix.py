@@ -715,7 +715,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         - ``compact`` -- if ``True``, check if matrix is compact hyperbolic  
         
         EXAMPLES::
-            
+
             sage: M = CartanMatrix([[2,-2,0],[-2,2,-1],[0,-1,2]])
             sage: M.is_hyperbolic()
             True
@@ -751,7 +751,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         and exactly one negative eigenvalue.
         
         EXAMPLES::
-        
+
             sage: M = CartanMatrix([[2,-3],[-3,2]])
             sage: M.is_lorentzian()
             True
@@ -769,7 +769,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         Return if ``self`` is an indefinite type or ``False`` otherwise.
         
         EXAMPLES::
-        
+
            sage: M = CartanMatrix([[2,-3],[-3,2]])
            sage: M.is_indefinite()
            True
@@ -785,7 +785,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         Return if ``self`` is an indecomposable matrix or ``False`` otherwise.
         
         EXAMPLES::
-        
+
             sage: M = CartanMatrix(['A',5])
             sage: M.is_indecomposable()
             True
@@ -806,7 +806,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         - ``proper`` -- if ``True``, return only proper submatrices 
         
         EXAMPLES::
-        
+
             sage: M = CartanMatrix(['A',2])
             sage: M.principal_submatrices()
             [
@@ -830,7 +830,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         Return a tuple of all indecomposable blocks of ``self``.
         
         EXAMPLES::
-        
+
             sage: M = CartanMatrix(['A',2])
             sage: M.indecomposable_blocks()
             (

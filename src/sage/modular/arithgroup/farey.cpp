@@ -29,8 +29,14 @@
 #include <Python.h>
 
 #include "farey.hpp"
-#include "sage/modular/arithgroup/farey_symbol.h"
 
+// The following functions are defined in farey_symbols.h, but direct inclusion
+// of this file breaks compilation on cygwin, see trac #13336.
+extern "C" long convert_to_long(PyObject *);
+extern "C" PyObject *convert_to_Integer(mpz_class);
+extern "C" PyObject *convert_to_rational(mpq_class);
+extern "C" PyObject *convert_to_cusp(mpq_class);
+extern "C" PyObject *convert_to_SL2Z(SL2Z);
 
 using namespace std;
 

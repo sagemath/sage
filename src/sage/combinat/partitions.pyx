@@ -159,11 +159,6 @@ def ZS1_iterator(int n):
     if n == 0:
         yield []
         return
-    #cdef int *x = <int*>malloc(sizeof(int) *n)
-    #x[0] = n
-    #cdef int i
-    #for i in range(1, n):
-    #    x[i] = 1
     x = [1]*n
     x[0] = n
 
@@ -227,11 +222,6 @@ def ZS1_iterator_nk(int n, int k):
         if k == 1:
             yield [n]
         return
-    #cdef int *x = <int*>malloc(sizeof(int) *n)
-    #x[0] = n
-    #cdef int i
-    #for i in range(1, n):
-    #    x[i] = 1
     x = [1]*k
     x[0] = n
 

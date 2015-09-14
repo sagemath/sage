@@ -24,7 +24,6 @@
 ##############################################################################
 
 include "sage/ext/interrupt.pxi"
-include 'sage/ext/random.pxi'
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -32,6 +31,7 @@ from ntl_GF2E cimport ntl_GF2E
 from ntl_GF2EContext import ntl_GF2EContext
 from ntl_GF2EContext cimport ntl_GF2EContext_class
 from sage.rings.integer cimport Integer
+from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 

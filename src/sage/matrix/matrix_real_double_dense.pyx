@@ -94,7 +94,6 @@ cdef class Matrix_real_double_dense(matrix_double_dense.Matrix_double_dense):
     #   * __init__
     #   * set_unsafe
     #   * get_unsafe
-    #   * __richcmp__    -- always the same
     #   * __hash__       -- always simple
     ########################################################################
     def __cinit__(self, parent, entries, copy, coerce):

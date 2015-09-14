@@ -734,7 +734,7 @@ class RegularCrystals(Category_singleton):
 
             Running with ``verbose=True`` will print warnings when a test fails.
 
-            REFERENCES::
+            REFERENCES:
 
             .. [S2003] John R. Stembridge, A local characterization of
                simply-laced crystals,

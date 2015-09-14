@@ -2538,7 +2538,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: u.cross_product(v)
             Traceback (most recent call last):
             ...
-            ArithmeticError: Cross product only defined for vectors of length three or seven, not (7 and 3)
+            TypeError: Cross product only defined for vectors of length three or seven, not (7 and 3)
 
         REFERENCES:
 
@@ -2568,7 +2568,92 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                            l[0]*r[2] - l[2]*r[0] + l[1]*r[5] - l[5]*r[1] + l[3]*r[4] - l[4]*r[3]])
 
         else:
-            raise ArithmeticError("Cross product only defined for vectors of length three or seven, not (%s and %s)"%(len(l),len(r)))
+            raise TypeError("Cross product only defined for vectors of length three or seven, not (%s and %s)"%(len(l),len(r)))
+
+    def cross_product_matrix(self):
+        r"""
+        Return the matrix which describes a cross product
+        between ``self`` and some other vector.
+
+        This operation is sometimes written using the `hat operator`_.
+        It is only defined for vectors of length 3 or 7.
+        For a vector `v` the cross product matrix `\hat{v}`
+        is a matrix which satisfies `\hat{v} \cdot w = v \times w`
+        and also `w \cdot \hat{v} = w \times v` for all vectors `w`.
+        The basis vectors are assumed to be orthonormal.
+
+        .. _hat operator: http://en.wikipedia.org/wiki/Hat_operator#Cross_product
+
+        OUTPUT:
+
+        The cross product matrix of this vector.
+
+        EXAMPLES::
+
+            sage: v = vector([1, 2, 3])
+            sage: vh = v.cross_product_matrix()
+            sage: vh
+            [ 0 -3  2]
+            [ 3  0 -1]
+            [-2  1  0]
+            sage: w = random_vector(3, x=1, y=100)
+            sage: vh*w == v.cross_product(w)
+            True
+            sage: w*vh == w.cross_product(v)
+            True
+            sage: vh.is_alternating()
+            True
+
+        TESTS::
+
+            sage: F = GF(previous_prime(2^32))
+            sage: v = random_vector(F, 3)
+            sage: w = random_vector(F, 3)
+            sage: vh = v.cross_product_matrix()
+            sage: vh*w == v.cross_product(w)
+            True
+            sage: w*vh == w.cross_product(v)
+            True
+            sage: vh.is_alternating()
+            True
+            sage: v = random_vector(F, 7)
+            sage: w = random_vector(F, 7)
+            sage: vh = v.cross_product_matrix()
+            sage: vh*w == v.cross_product(w)
+            True
+            sage: w*vh == w.cross_product(v)
+            True
+            sage: vh.is_alternating()
+            True
+            sage: random_vector(F, 5).cross_product_matrix()
+            Traceback (most recent call last):
+            ...
+            TypeError: Cross product only defined for vectors of length three or seven, not 5
+        """
+        from sage.matrix.matrix_space import MatrixSpace
+        rank = self.parent().rank()
+        R = self.base_ring()
+        zero = R.zero()
+        if rank == 3:
+            MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
+            s = self.list(copy=False)
+            return MS([
+                [ zero, -s[2],  s[1]],
+                [ s[2],  zero, -s[0]],
+                [-s[1],  s[0],  zero]])
+        elif rank == 7:
+            MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
+            s = self.list(copy=False)
+            return MS([
+                [ zero, -s[3], -s[6],  s[1], -s[5],  s[4],  s[2]],
+                [ s[3],  zero, -s[4], -s[0],  s[2], -s[6],  s[5]],
+                [ s[6],  s[4],  zero, -s[5], -s[1],  s[3], -s[0]],
+                [-s[1],  s[0],  s[5],  zero, -s[6], -s[2],  s[4]],
+                [ s[5], -s[2],  s[1],  s[6],  zero, -s[0], -s[3]],
+                [-s[4],  s[6], -s[3],  s[2],  s[0],  zero, -s[1]],
+                [-s[2], -s[5],  s[0], -s[4],  s[3],  s[1],  zero]])
+        else:
+            raise TypeError("Cross product only defined for vectors of length three or seven, not {}".format(rank))
 
     def pairwise_product(self, right):
         """

@@ -450,7 +450,7 @@ class Polyhedron_ZZ(Polyhedron_base):
                 if fiber_vertices not in fibers:
                     yield fiber
                     fibers.update([fiber_vertices])
-                plane.delete()
+                plane._delete()
 
     def find_translation(self, translated_polyhedron):
         """

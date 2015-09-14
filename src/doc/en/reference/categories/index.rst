@@ -1,47 +1,30 @@
-Category Theory
-===============
+Category Framework
+==================
+
+The Sage Category Framework
+---------------------------
 
 .. toctree::
    :maxdepth: 2
 
    sage/categories/primer
-   sage/categories/tutorial
    sage/categories/category
-   sage/categories/category_types
-   sage/categories/category_singleton
    sage/categories/category_with_axiom
-   sage/categories/map
-   sage/categories/homset
-   sage/categories/morphism
    sage/categories/functor
-   sage/categories/pushout
+   sage/categories/tutorial
 
-Functorial constructions
-========================
+Maps and Morphisms
+------------------
 
 .. toctree::
    :maxdepth: 2
 
-   sage/categories/covariant_functorial_construction
+   sage/categories/map
+   sage/categories/homset
+   sage/categories/morphism
 
-   sage/categories/cartesian_product
-   sage/categories/tensor
-   sage/categories/dual
-   sage/categories/algebra_functor
-
-   sage/categories/subquotients
-   sage/categories/quotients
-   sage/categories/subobjects
-   sage/categories/isomorphic_objects
-
-   sage/categories/homsets
-
-   sage/categories/realizations
-   sage/categories/with_realizations
-
-
-Categories
-==========
+Individual Categories
+---------------------
 
 .. toctree::
    :maxdepth: 2
@@ -158,15 +141,39 @@ Categories
    sage/categories/weyl_groups
 
 Technical Categories
-====================
+~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 2
 
    sage/categories/facade_sets
 
+Functorial constructions
+------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/categories/covariant_functorial_construction
+
+   sage/categories/cartesian_product
+   sage/categories/tensor
+   sage/categories/dual
+   sage/categories/algebra_functor
+
+   sage/categories/subquotients
+   sage/categories/quotients
+   sage/categories/subobjects
+   sage/categories/isomorphic_objects
+
+   sage/categories/homsets
+
+   sage/categories/realizations
+   sage/categories/with_realizations
+
+
 Examples of parents using categories
-=====================================
+-------------------------------------
 
 .. toctree::
    :maxdepth: 2
@@ -193,13 +200,14 @@ Examples of parents using categories
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations
 
-Miscellaneous
-=============
+Internals
+---------
 
 .. toctree::
    :maxdepth: 2
 
-   sage/categories/action
+   sage/categories/category_types
+   sage/categories/category_singleton
    sage/categories/category_cy_helper
    sage/categories/poor_man_map
 

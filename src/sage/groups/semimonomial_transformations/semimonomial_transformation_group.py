@@ -82,7 +82,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
     is defined by
     
     .. math::
-    
+
         (\phi, \pi, \alpha)(\psi, \sigma, \beta) =
         (\phi \cdot \psi^{\pi, \alpha}, \pi\sigma, \alpha \circ \beta)
     

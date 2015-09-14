@@ -907,6 +907,16 @@ class IntegralRayCollection(SageObject,
             sage: Cone([], ZZ^3).dual_lattice()
             Ambient free module of rank 3
             over the principal ideal domain Integer Ring
+
+        TESTS:
+
+        The dual lattice of the dual lattice of a random cone should be
+        the original lattice::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8, max_rays=10)
+            sage: K.dual_lattice().dual() is K.lattice()
+            True
         """
         try:
             return self.lattice().dual()
@@ -1026,6 +1036,162 @@ class IntegralRayCollection(SageObject,
             in 2-d lattice N
         """
         return self._rays if not args else self._rays(*args)
+
+    def codim(self):
+        r"""
+        Return the codimension of ``self``.
+
+        The codimension of a collection of rays (of a cone/fan) is the
+        difference between the dimension of the ambient space and the
+        dimension of the subspace spanned by those rays (of the cone/fan).
+
+        OUTPUT:
+
+        A nonnegative integer representing the codimension of ``self``.
+
+        .. SEEALSO::
+
+            :meth:`dim`, :meth:`lattice_dim`
+
+        EXAMPLES:
+
+        The codimension of the nonnegative orthant is zero, since the
+        span of its generators equals the entire ambient space::
+
+            sage: K = Cone([(1,0,0), (0,1,0), (0,0,1)])
+            sage: K.codim()
+            0
+
+        However, if we remove a ray so that the entire cone is contained
+        within the `x`-`y` plane, then the resulting cone will have
+        codimension one, because the `z`-axis is perpendicular to every
+        element of the cone::
+
+            sage: K = Cone([(1,0,0), (0,1,0)])
+            sage: K.codim()
+            1
+
+        If our cone is all of `\mathbb{R}^{2}`, then its codimension is
+        zero::
+
+            sage: K = Cone([(1,0), (-1,0), (0,1), (0,-1)])
+            sage: K.is_full_space()
+            True
+            sage: K.codim()
+            0
+
+        And if the cone is trivial in any space, then its codimension is
+        equal to the dimension of the ambient space::
+
+            sage: K = Cone([], lattice=ToricLattice(0))
+            sage: K.lattice_dim()
+            0
+            sage: K.codim()
+            0
+
+            sage: K = Cone([(0,)])
+            sage: K.lattice_dim()
+            1
+            sage: K.codim()
+            1
+
+            sage: K = Cone([(0,0)])
+            sage: K.lattice_dim()
+            2
+            sage: K.codim()
+            2
+
+        TESTS:
+
+        The codimension of a cone should be an integer between zero and
+        the dimension of the ambient space, inclusive::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim = 8)
+            sage: c = K.codim()
+            sage: c in ZZ
+            True
+            sage: 0 <= c <= K.lattice_dim()
+            True
+
+        A solid cone should have codimension zero::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim = 8, solid = True)
+            sage: K.codim()
+            0
+
+        The codimension of a cone is equal to the lineality of its dual::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim = 8)
+            sage: K.codim() == K.dual().lineality()
+            True
+        """
+        return (self.lattice_dim() - self.dim())
+
+
+    def span(self, base_ring=None):
+        r"""
+        Return the span of ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: from lattice) the base ring to use
+                           for the generated module.
+
+        OUTPUT:
+
+        A module spanned by the generators of ``self``.
+
+        EXAMPLES:
+
+        The span of a single ray is a one-dimensional sublattice::
+
+            sage: K1 = Cone([(1,)])
+            sage: K1.span()
+            Sublattice <N(1)>
+            sage: K2 = Cone([(1,0)])
+            sage: K2.span()
+            Sublattice <N(1, 0)>
+
+        The span of the nonnegative orthant is the entire ambient lattice::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: K.span() == K.lattice()
+            True
+
+        By specifying a ``base_ring``, we can obtain a vector space::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: K.span(base_ring=QQ)
+            Vector space of degree 3 and dimension 3 over Rational Field
+            Basis matrix:
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+
+        TESTS:
+
+        We can take the span of the trivial cone::
+
+            sage: K = Cone([], ToricLattice(0))
+            sage: K.span()
+            Sublattice <>
+
+        The span of a solid cone is the entire ambient space::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=6, max_rays=8, solid=True)
+            sage: K.span().vector_space() == K.lattice().vector_space()
+            True
+        """
+        L = self.lattice()
+
+        if base_ring is None:
+            base_ring = L.base_ring()
+
+        return L.span(self, base_ring)
 
 
 def classify_cone_2d(ray0, ray1, check=True):
@@ -1892,6 +2058,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: Cone([(1,0),(0,1),(-1,-1)], lattice=N).dual().rays()  # whole space
             Empty collection
             in 2-d lattice M
+
+        TESTS:
+
+        The dual cone of a (random) dual cone is the original cone::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8, max_rays=10)
+            sage: K.dual().dual() is K
+            True
         """
         if "_dual" not in self.__dict__:
             rays = list(self.facet_normals())
@@ -2468,6 +2643,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                     pass
         return PointCollection(normals, M)
 
+    @cached_method
     def facet_of(self):
         r"""
         Return *cones* of the ambient face lattice having ``self`` as a facet.
@@ -2500,12 +2676,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: len(one_cone.facet_of())
             2
         """
-        if "_facet_of" not in self.__dict__:
-            L = self._ambient._face_lattice_function()
-            H = L.hasse_diagram()
-            self._facet_of = self._sort_faces(f
-                    for f in H.neighbors_out(L(self)) if is_Cone(f))
-        return self._facet_of
+        L = self._ambient._face_lattice_function()
+        H = L.hasse_diagram()
+        return self._sort_faces(
+            f for f in H.neighbors_out(L(self)) if is_Cone(f))
 
     def facets(self):
         r"""
@@ -2629,6 +2803,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             False
             sage: cone1.is_equivalent(cone2)
             True
+
+        TESTS:
+
+        A random cone is equivalent to itself::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8, max_rays=10)
+            sage: K.is_equivalent(K)
+            True
+
         """
         if self is other:
             return True
@@ -2670,6 +2854,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: cone = Cone([(2,1,0),(1,2,0)])
             sage: cone.is_face_of(octant)
             False
+
+        TESTS:
+
+        Any cone is a face of itself::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8, max_rays=10)
+            sage: K.is_face_of(K)
+            True
+
         """
         if self.lattice() != cone.lattice():
             return False
@@ -2745,9 +2939,31 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             (1, 0)
             sage: classify_cone_2d(*cone2.rays())
             (3, 2)
+            
+        We check that :trac:`18613` is fixed::
+
+            sage: K = Cone([], ToricLattice(0))
+            sage: K.is_isomorphic(K)
+            True
+            sage: K = Cone([(0,)])
+            sage: K.is_isomorphic(K)
+            True
+            sage: K = Cone([(0,0)])
+
+        A random (strictly convex) cone is isomorphic to itself::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=6, strictly_convex=True)
+            sage: K.is_isomorphic(K)
+            True
         """
-        from sage.geometry.fan import Fan
-        return Fan([self]).is_isomorphic(Fan([other]))
+        if self.is_strictly_convex() and other.is_strictly_convex():
+            from sage.geometry.fan import Fan
+            return Fan([self]).is_isomorphic(Fan([other]))
+        if self.is_strictly_convex() ^ other.is_strictly_convex():
+            return False
+        raise NotImplementedError("isomorphism check for not strictly convex "
+                                  "cones is not implemented")
 
     def is_simplicial(self):
         r"""
@@ -2879,7 +3095,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             See http://trac.sagemath.org/16180 for details.            
             sage: lp
             2-d lattice polytope in 2-d lattice N
-            sage: lp.vertices_pc()
+            sage: lp.vertices()
             N(1, 0),
             N(0, 1),
             N(0, 0)
@@ -2889,7 +3105,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: lp = line.lattice_polytope()
             sage: lp
             1-d lattice polytope in 2-d lattice N
-            sage: lp.vertices_pc()
+            sage: lp.vertices()
             N( 1, 0),
             N(-1, 0)
             in 2-d lattice N
@@ -3935,10 +4151,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         return vector(ZZ, p.get_values(x))
 
-
     def is_solid(self):
         r"""
-        Return whether or not this cone is solid.
+        Check if this cone is solid.
 
         A cone is said to be solid if it has nonempty interior. That
         is, if its extreme rays span the entire ambient space.
@@ -3973,10 +4188,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         """
         return (self.dim() == self.lattice_dim())
 
-
     def is_proper(self):
         r"""
-        Return whether or not this cone is proper.
+        Check if this cone is proper.
 
         A cone is said to be proper if it is closed, convex, solid,
         and contains no lines. This cone is assumed to be closed and
@@ -4019,3 +4233,754 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         """
         return (self.is_strictly_convex() and self.is_solid())
+
+    def is_full_space(self):
+        r"""
+        Check if this cone is equal to its ambient vector space.
+
+        OUTPUT:
+
+        ``True`` if this cone equals its entire ambient vector
+        space and ``False`` otherwise.
+
+        EXAMPLES:
+
+        A single ray in two dimensions is not equal to the entire
+        space::
+
+            sage: K = Cone([(1,0)])
+            sage: K.is_full_space()
+            False
+
+        Neither is the nonnegative orthant::
+
+            sage: K = Cone([(1,0),(0,1)])
+            sage: K.is_full_space()
+            False
+
+        The right half-space contains a vector subspace, but it is
+        still not equal to the entire space::
+
+            sage: K = Cone([(1,0),(-1,0),(0,1)])
+            sage: K.is_full_space()
+            False
+
+        However, if we allow conic combinations of both axes, then
+        the resulting cone is the entire two-dimensional space::
+
+            sage: K = Cone([(1,0),(-1,0),(0,1),(0,-1)])
+            sage: K.is_full_space()
+            True
+
+        """
+        return self.linear_subspace() == self.lattice().vector_space()
+
+    def lineality(self):
+        r"""
+        Return the lineality of this cone.
+
+        The lineality of a cone is the dimension of the largest linear
+        subspace contained in that cone.
+
+        OUTPUT:
+
+        A nonnegative integer; the dimension of the largest subspace
+        contained within this cone.
+
+        REFERENCES:
+
+        .. [Rockafellar] R.T. Rockafellar. Convex Analysis. Princeton
+           University Press, Princeton, 1970.
+
+        EXAMPLES:
+
+        The lineality of the nonnegative orthant is zero, since it clearly
+        contains no lines::
+
+            sage: K = Cone([(1,0,0), (0,1,0), (0,0,1)])
+            sage: K.lineality()
+            0
+
+        However, if we add another ray so that the entire `x`-axis belongs
+        to the cone, then the resulting cone will have lineality one::
+
+            sage: K = Cone([(1,0,0), (-1,0,0), (0,1,0), (0,0,1)])
+            sage: K.lineality()
+            1
+
+        If our cone is all of `\mathbb{R}^{2}`, then its lineality is equal
+        to the dimension of the ambient space (i.e. two)::
+
+            sage: K = Cone([(1,0), (-1,0), (0,1), (0,-1)])
+            sage: K.is_full_space()
+            True
+            sage: K.lineality()
+            2
+            sage: K.lattice_dim()
+            2
+
+        Per the definition, the lineality of the trivial cone in a trivial
+        space is zero::
+
+            sage: K = Cone([], lattice=ToricLattice(0))
+            sage: K.lineality()
+            0
+
+        TESTS:
+
+        The lineality of a cone should be an integer between zero and the
+        dimension of the ambient space, inclusive::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim = 8)
+            sage: l = K.lineality()
+            sage: l in ZZ
+            True
+            sage: 0 <= l <= K.lattice_dim()
+            True
+
+        A strictly convex cone should have lineality zero::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim = 8, strictly_convex = True)
+            sage: K.lineality()
+            0
+        """
+        return self.linear_subspace().dimension()
+
+
+
+def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
+                min_rays=0, max_rays=None, strictly_convex=None, solid=None):
+    r"""
+    Generate a random convex rational polyhedral cone.
+
+    Lower and upper bounds may be provided for both the dimension of the
+    ambient space and the number of generating rays of the cone. If a
+    lower bound is left unspecified, it defaults to zero. Unspecified
+    upper bounds will be chosen randomly, unless you set ``solid``, in
+    which case they are chosen a little more wisely.
+
+    You may specify the ambient ``lattice`` for the returned cone. In
+    that case, the ``min_ambient_dim`` and ``max_ambient_dim``
+    parameters are ignored.
+
+    You may also request that the returned cone be strictly convex (or
+    not). Likewise you may request that it be (non-)solid.
+
+    .. WARNING::
+
+        If you request a large number of rays in a low-dimensional
+        space, you might be waiting for a while. For example, in three
+        dimensions, it is possible to obtain an octagon raised up to height
+        one (all z-coordinates equal to one). But in practice, we usually
+        generate the entire three-dimensional space with six rays before we
+        get to the eight rays needed for an octagon. We therefore have to
+        throw the cone out and start over from scratch. This process repeats
+        until we get lucky.
+
+        We also refrain from "adjusting" the min/max parameters given to
+        us when a (non-)strictly convex or (non-)solid cone is
+        requested. This means that it may take a long time to generate
+        such a cone if the parameters are chosen unwisely.
+
+        For example, you may want to set ``min_rays`` close to
+        ``min_ambient_dim`` if you desire a solid cone. Or, if you desire a
+        non-strictly-convex cone, then they all contain at least two
+        generating rays. So that might be a good candidate for
+        ``min_rays``.
+
+    INPUT:
+
+    * ``lattice`` (default: random) -- A ``ToricLattice`` object in
+      which the returned cone will live. By default a new lattice will
+      be constructed with a randomly-chosen rank (subject to
+      ``min_ambient_dim`` and ``max_ambient_dim``).
+
+    * ``min_ambient_dim`` (default: zero) -- A nonnegative integer
+      representing the minimum dimension of the ambient lattice.
+
+    * ``max_ambient_dim`` (default: random) -- A nonnegative integer
+      representing the maximum dimension of the ambient lattice.
+
+    * ``min_rays`` (default: zero) -- A nonnegative integer representing
+      the minimum number of generating rays of the cone.
+
+    * ``max_rays`` (default: random) -- A nonnegative integer representing
+      the maximum number of generating rays of the cone.
+
+    * ``strictly_convex`` (default: random) -- Whether or not to make the
+      returned cone strictly convex. Specify ``True`` for a strictly convex
+      cone, ``False`` for a non-strictly-convex cone, or ``None`` if you
+      don't care.
+
+    * ``solid`` (defalt: random) -- Whether or not to make the returned
+      cone solid. Specify ``True`` for a solid cone, ``False`` for a
+      non-solid cone, or ``None`` if you don't care.
+
+    OUTPUT:
+
+    A new, randomly generated cone.
+
+    A ``ValueError`` will be thrown under the following conditions:
+
+    * Any of ``min_ambient_dim``, ``max_ambient_dim``, ``min_rays``, or
+      ``max_rays`` are negative.
+
+    * ``max_ambient_dim`` is less than ``min_ambient_dim``.
+
+    * ``max_rays`` is less than ``min_rays``.
+
+    * Both ``max_ambient_dim`` and ``lattice`` are specified.
+
+    * ``min_rays`` is greater than four but ``max_ambient_dim`` is less than
+      three.
+
+    * ``min_rays`` is greater than four but ``lattice`` has dimension
+      less than three.
+
+    * ``min_rays`` is greater than two but ``max_ambient_dim`` is less than
+      two.
+
+    * ``min_rays`` is greater than two but ``lattice`` has dimension less
+      than two.
+
+    * ``min_rays`` is positive but ``max_ambient_dim`` is zero.
+
+    * ``min_rays`` is positive but ``lattice`` has dimension zero.
+
+    * A trivial lattice is supplied and a non-strictly-convex cone
+      is requested.
+
+    * A non-strictly-convex cone is requested but ``max_rays`` is less
+      than two.
+
+    * A solid cone is requested but ``max_rays`` is less than
+      ``min_ambient_dim``.
+
+    * A solid cone is requested but ``max_rays`` is less than the
+      dimension of ``lattice``.
+
+    * A non-solid cone is requested but ``max_ambient_dim`` is zero.
+
+    * A non-solid cone is requested but ``lattice`` has dimension zero.
+
+    * A non-solid cone is requested but ``min_rays`` is so large that
+      it guarantees a solid cone.
+
+    ALGORITHM:
+
+    First, a lattice is determined from ``min_ambient_dim`` and
+    ``max_ambient_dim`` (or from the supplied ``lattice``).
+
+    Then, lattice elements are generated one at a time and added to a
+    cone. This continues until either the cone meets the user's
+    requirements, or the cone is equal to the entire space (at which
+    point it is futile to generate more).
+
+    We check whether or not the resulting cone meets the user's
+    requirements; if it does, it is returned. If not, we throw it away
+    and start over. This process repeats indefinitely until an
+    appropriate cone is generated.
+
+    EXAMPLES:
+
+    Generate a trivial cone in a trivial space::
+
+        sage: set_random_seed()
+        sage: random_cone(max_ambient_dim=0, max_rays=0)
+        0-d cone in 0-d lattice N
+
+    We can predict the ambient dimension when
+    ``min_ambient_dim == max_ambient_dim``::
+
+        sage: set_random_seed()
+        sage: K = random_cone(min_ambient_dim=4, max_ambient_dim=4)
+        sage: K.lattice_dim()
+        4
+
+    Likewise for the number of rays when ``min_rays == max_rays``::
+
+        sage: set_random_seed()
+        sage: K = random_cone(min_rays=3, max_rays=3)
+        sage: K.nrays()
+        3
+
+    If we specify a lattice, then the returned cone will live in it::
+
+        sage: set_random_seed()
+        sage: L = ToricLattice(5, "L")
+        sage: K = random_cone(lattice=L)
+        sage: K.lattice() is L
+        True
+
+    We can also request a strictly convex cone::
+
+        sage: set_random_seed()
+        sage: K = random_cone(max_ambient_dim=8, max_rays=10,
+        ....:                 strictly_convex=True)
+        sage: K.is_strictly_convex()
+        True
+
+    Or one that isn't strictly convex::
+
+        sage: set_random_seed()
+        sage: K = random_cone(min_ambient_dim=5, min_rays=2,
+        ....:                 strictly_convex=False)
+        sage: K.is_strictly_convex()
+        False
+
+    An example with all parameters set::
+
+        sage: set_random_seed()
+        sage: K = random_cone(min_ambient_dim=4, max_ambient_dim=7,
+        ....:                 min_rays=2, max_rays=10,
+        ....:                 strictly_convex=False, solid=True)
+        sage: 4 <= K.lattice_dim() and K.lattice_dim() <= 7
+        True
+        sage: 2 <= K.nrays() and K.nrays() <= 10
+        True
+        sage: K.is_strictly_convex()
+        False
+        sage: K.is_solid()
+        True
+
+    TESTS:
+
+    It's hard to test the output of a random process, but we can at
+    least make sure that we get a cone back.
+
+        sage: set_random_seed()
+        sage: from sage.geometry.cone import is_Cone
+        sage: K = random_cone(max_ambient_dim=6, max_rays=10)
+        sage: is_Cone(K)
+        True
+
+    The upper/lower bounds are respected::
+
+        sage: set_random_seed()
+        sage: K = random_cone(min_ambient_dim=5, max_ambient_dim=8,
+        ....:                 min_rays=3, max_rays=4)
+        sage: 5 <= K.lattice_dim() and K.lattice_dim() <= 8
+        True
+        sage: 3 <= K.nrays() and K.nrays() <= 4
+        True
+
+    Ensure that an exception is raised when either lower bound is greater
+    than its respective upper bound::
+
+        sage: set_random_seed()
+        sage: random_cone(min_ambient_dim=5, max_ambient_dim=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_ambient_dim cannot be less than min_ambient_dim.
+
+        sage: random_cone(min_rays=5, max_rays=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_rays cannot be less than min_rays.
+
+    Or if we specify both ``max_ambient_dim`` and ``lattice``::
+
+        sage: set_random_seed()
+        sage: L = ToricLattice(5, "L")
+        sage: random_cone(lattice=L, max_ambient_dim=10)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_ambient_dim cannot be specified when a lattice is
+        provided.
+
+    If the user requests too many rays in zero, one, or two dimensions,
+    a ``ValueError`` is thrown::
+
+        sage: set_random_seed()
+        sage: random_cone(max_ambient_dim=0, min_rays=1)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in zero dimensions have no generators.
+        Please increase max_ambient_dim to at least 1, or decrease min_rays.
+
+        sage: random_cone(max_ambient_dim=1, min_rays=3)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in zero/one dimensions have two or fewer
+        generators. Please increase max_ambient_dim to at least 2, or decrease
+        min_rays.
+
+        sage: random_cone(max_ambient_dim=2, min_rays=5)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in zero/one/two dimensions have four or fewer
+        generators. Please increase max_ambient_dim to at least 3, or decrease
+        min_rays.
+
+        sage: L = ToricLattice(0)
+        sage: random_cone(lattice=L, min_rays=1)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in the given lattice have no generators.
+        Please decrease min_rays.
+
+        sage: L = ToricLattice(1)
+        sage: random_cone(lattice=L, min_rays=3)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in the given lattice have two or fewer
+        generators. Please decrease min_rays.
+
+        sage: L = ToricLattice(2)
+        sage: random_cone(lattice=L, min_rays=5)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in the given lattice have four or fewer
+        generators. Please decrease min_rays.
+
+    Ensure that we can obtain a cone in three dimensions with a large
+    number (in particular, more than 2*dim) rays::
+
+        sage: set_random_seed()                  # long time
+        sage: K = random_cone(min_ambient_dim=3, # long time
+        ....:                 max_ambient_dim=3, # long time
+        ....:                 min_rays=7)        # long time
+        sage: K.nrays() >= 7                     # long time
+        True
+        sage: K.lattice_dim()                    # long time
+        3
+
+    We need three dimensions to obtain five rays; we should throw out
+    cones in zero/one/two dimensions until we get lucky::
+
+        sage: set_random_seed()
+        sage: K = random_cone(max_ambient_dim=3, min_rays=5)
+        sage: K.nrays() >= 5
+        True
+        sage: K.lattice_dim()
+        3
+
+    It is an error to request a non-strictly-convex trivial cone::
+
+        sage: set_random_seed()
+        sage: L = ToricLattice(0,"L")
+        sage: random_cone(lattice=L, strictly_convex=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in this lattice are strictly convex (trivial).
+
+    Or a non-strictly-convex cone with fewer than two rays::
+
+        sage: set_random_seed()
+        sage: random_cone(max_rays=1, strictly_convex=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones are strictly convex when ``max_rays`` is
+        less than two.
+
+    But fine to ask for a strictly convex trivial cone::
+
+        sage: set_random_seed()
+        sage: L = ToricLattice(0,"L")
+        sage: random_cone(lattice=L, strictly_convex=True)
+        0-d cone in 0-d lattice L
+
+    A ``ValueError`` is thrown if a non-solid cone is requested in a
+    zero-dimensional lattice::
+
+        sage: set_random_seed()
+        sage: L = ToricLattice(0)
+        sage: random_cone(lattice=L, solid=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones in the given lattice are solid.
+
+        sage: random_cone(max_ambient_dim=0, solid=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: all cones are solid when max_ambient_dim is zero.
+
+    A ``ValueError`` is thrown if a solid cone is requested but the
+    maximum number of rays is too few::
+
+        sage: set_random_seed()
+        sage: random_cone(min_ambient_dim=4, max_rays=3, solid=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_rays must be at least min_ambient_dim for a solid cone.
+
+        sage: L = ToricLattice(5)
+        sage: random_cone(lattice=L, max_rays=3, solid=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_rays must be at least 5 for a solid cone in this
+        lattice.
+
+    A ``ValueError`` is thrown if a non-solid cone is requested but
+    ``min_rays`` guarantees a solid cone::
+
+        sage: set_random_seed()
+        sage: random_cone(max_ambient_dim=4, min_rays=10, solid=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: every cone is solid when min_rays > 2*(max_ambient_dim - 1).
+
+        sage: L = ToricLattice(4)
+        sage: random_cone(lattice=L, min_rays=10, solid=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: every cone is solid when min_rays > 2*(d - 1) where d
+        is the dimension of the given lattice.
+
+    """
+
+    # Catch obvious mistakes so that we can generate clear error
+    # messages.
+
+    if min_ambient_dim < 0:
+        raise ValueError('min_ambient_dim must be nonnegative.')
+
+    if min_rays < 0:
+        raise ValueError('min_rays must be nonnegative.')
+
+    if max_ambient_dim is not None:
+        if max_ambient_dim < 0:
+            raise ValueError('max_ambient_dim must be nonnegative.')
+        if (max_ambient_dim < min_ambient_dim):
+            msg = 'max_ambient_dim cannot be less than min_ambient_dim.'
+            raise ValueError(msg)
+        if lattice is not None:
+            msg = 'max_ambient_dim cannot be specified when a lattice is '
+            msg += 'provided.'
+            raise ValueError(msg)
+
+        # The next three checks prevent an infinite loop (a futile
+        # search for more rays) in zero, one, or two dimensions.
+        if min_rays > 4 and max_ambient_dim < 3:
+            msg  = 'all cones in zero/one/two dimensions have four or fewer '
+            msg += 'generators. Please increase max_ambient_dim to at least '
+            msg += '3, or decrease min_rays.'
+            raise ValueError(msg)
+
+        if min_rays > 2 and max_ambient_dim < 2:
+           msg  = 'all cones in zero/one dimensions have two or fewer '
+           msg += 'generators. Please increase max_ambient_dim to at least '
+           msg += '2, or decrease min_rays.'
+           raise ValueError(msg)
+
+        if min_rays > 0 and max_ambient_dim == 0:
+           msg  = 'all cones in zero dimensions have no generators. '
+           msg += 'Please increase max_ambient_dim to at least 1, or '
+           msg += 'decrease min_rays.'
+           raise ValueError(msg)
+
+    if max_rays is not None:
+        if max_rays < 0:
+            raise ValueError('max_rays must be nonnegative.')
+        if (max_rays < min_rays):
+            raise ValueError('max_rays cannot be less than min_rays.')
+
+    # Also perform the "futile search" checks when a lattice is given,
+    # using its dimension rather than max_ambient_dim as the indicator.
+    if lattice is not None:
+        if min_rays > 4 and lattice.dimension() < 3:
+            msg  = 'all cones in the given lattice have four or fewer '
+            msg += 'generators. Please decrease min_rays.'
+            raise ValueError(msg)
+
+        if min_rays > 2 and lattice.dimension() < 2:
+           msg  = 'all cones in the given lattice have two or fewer '
+           msg += 'generators. Please decrease min_rays.'
+           raise ValueError(msg)
+
+        if min_rays > 0 and lattice.dimension() == 0:
+           msg  = 'all cones in the given lattice have no generators. '
+           msg += 'Please decrease min_rays.'
+           raise ValueError(msg)
+
+    # Sanity checks for strictly_convex.
+    if strictly_convex is not None and not strictly_convex:
+        if lattice is not None and lattice.dimension() == 0:
+            msg = 'all cones in this lattice are strictly convex (trivial).'
+            raise ValueError(msg)
+        if max_rays is not None and max_rays < 2:
+            msg  = 'all cones are strictly convex when ``max_rays`` is '
+            msg += 'less than two.'
+            raise ValueError(msg)
+
+    # Sanity checks for solid cones.
+    if solid is not None and solid:
+        # The user wants a solid cone.
+        if lattice is None:
+            if max_rays is not None:
+                if max_rays < min_ambient_dim:
+                    msg = 'max_rays must be at least min_ambient_dim for '
+                    msg += 'a solid cone.'
+                    raise ValueError(msg)
+        else:
+            # Repeat the checks above when a lattice is given.
+            if max_rays is not None and max_rays < lattice.dimension():
+                msg = "max_rays must be at least {0} for a solid cone "
+                msg += "in this lattice."
+                raise ValueError(msg.format(lattice.dimension()))
+
+    # Sanity checks for non-solid cones.
+    if solid is not None and not solid:
+        if lattice is None:
+            if max_ambient_dim is not None and max_ambient_dim == 0:
+                msg = 'all cones are solid when max_ambient_dim is zero.'
+                raise ValueError(msg)
+            if (max_ambient_dim is not None and
+                    min_rays > 2*(max_ambient_dim - 1)):
+                msg = 'every cone is solid when '
+                msg += 'min_rays > 2*(max_ambient_dim - 1).'
+                raise ValueError(msg)
+        else:
+            if lattice.dimension() == 0:
+                msg = 'all cones in the given lattice are solid.'
+                raise ValueError(msg)
+            if  min_rays > 2*(lattice.dimension() - 1):
+                msg = 'every cone is solid when min_rays > 2*(d - 1) '
+                msg += 'where d is the dimension of the given lattice.'
+                raise ValueError(msg)
+
+
+    # Now that we've sanity-checked our parameters, we can massage the
+    # min/maxes for (non-)solid cones. It doesn't violate the user's
+    # expectation to increase a minimum, decrease a maximum, or fix an
+    # "I don't care" parameter.
+    if solid is not None:
+        if solid:
+            # If max_ambient_dim is "I don't care", we can set it so that we
+            # guaranteed to generate a solid cone.
+            if max_rays is not None and max_ambient_dim is None:
+                # We won't make max_ambient_dim less than min_ambient_dim,
+                # since we already checked that
+                # min_ambient_dim <= min_rays = max_ambient_dim.
+                max_ambient_dim = min_rays
+        else:
+            if max_rays is None and max_ambient_dim is not None:
+                # This is an upper limit on the number of rays in a
+                # non-solid cone.
+                max_rays = 2*(max_ambient_dim - 1)
+            if max_rays is None and lattice is not None:
+                # Same thing, except when we're given a lattice.
+                max_rays = 2*(lattice.dimension() - 1)
+
+    def random_min_max(l,u):
+        r"""
+        We need to handle two cases for the upper bounds, and we need
+        to do the same thing for max_ambient_dim/max_rays. So we consolidate
+        the logic here.
+        """
+        if u is None:
+            # The upper bound is unspecified; return a random integer
+            # in [l,infinity).
+            return l + ZZ.random_element().abs()
+        else:
+            # We have an upper bound, and it's greater than or equal
+            # to our lower bound. So we generate a random integer in
+            # [0,u-l], and then add it to l to get something in
+            # [l,u]. To understand the "+1", check the
+            # ZZ.random_element() docs.
+            return l + ZZ.random_element(u - l + 1)
+
+    def is_valid(K):
+        r"""
+        Check if the given cone is valid; that is, if its ambient
+        dimension and number of rays meet the upper and lower bounds
+        provided by the user.
+        """
+        if lattice is None:
+            # We only care about min/max_ambient_dim when no lattice is given.
+            if K.lattice_dim() < min_ambient_dim:
+                return False
+            if (max_ambient_dim is not None and
+                    K.lattice_dim() > max_ambient_dim):
+                return False
+        else:
+            if K.lattice() is not lattice:
+                return False
+        return all([
+            K.nrays() >= min_rays,
+            K.nrays() <= max_rays or max_rays is None,
+            K.is_solid() == solid or solid is None,
+            K.is_strictly_convex() == strictly_convex or strictly_convex is None
+            ])
+
+    # Now we actually compute the thing. To avoid recursion (and the
+    # associated "maximum recustion depth exceeded" error), we loop
+    # until we have a valid cone and occasionally throw everything out
+    # and start over from scratch.
+    while True:
+        L = lattice
+
+        if lattice is None:
+            # No lattice given, make our own.
+            d = random_min_max(min_ambient_dim, max_ambient_dim)
+            L = ToricLattice(d)
+
+        r = random_min_max(min_rays, max_rays)
+
+        # The rays are trickier to generate, since we could generate v and
+        # 2*v as our "two rays." In that case, the resulting cone would
+        # have one generating ray. To avoid such a situation, we start by
+        # generating ``r`` rays where ``r`` is the number we want to end
+        # up with...
+        rays = [L.random_element() for i in range(r)]
+
+        # The lattice parameter is required when no rays are given, so
+        # we pass it in case ``r == 0`` or ``d == 0`` (or ``d == 1``
+        # but we're making a strictly convex cone).
+        K = Cone(rays, lattice=L)
+
+        # Now, some of the rays that we generated were probably redundant,
+        # so we need to come up with more. We can obviously stop if ``K``
+        # becomes the entire ambient vector space.
+        #
+        # We're still not guaranteed to have the correct number of
+        # rays after this! Since we normalize the generators in the
+        # loop above, we can jump from two to four generators by
+        # adding e.g. (1,1) to [(0,1), (0,-1)]. Rather than trying to
+        # mangle what we have, we just start over if we get a cone
+        # that won't work.
+        #
+        while r > K.nrays() and not K.is_full_space():
+            rays.append(L.random_element())
+            K = Cone(rays, lattice=L)
+            rays = list(K.rays()) # Avoid re-normalizing next time around
+
+
+        if strictly_convex is not None:
+            if strictly_convex:
+                if not K.is_strictly_convex():
+                    # The user wants a strictly convex cone, but
+                    # didn't get one. So let's take our rays, and give
+                    # them all either (strictly) positive or negative
+                    # leading coordinates. This makes the resulting
+                    # cone strictly convex. Whether or not those
+                    # coordinates become positive/negative is chosen
+                    # randomly.
+                    from random import choice
+                    pm = choice([-1,1])
+
+                    # rays has immutable elements
+                    from copy import copy
+                    rays = map(copy, rays)
+
+                    for i, ray in enumerate(rays):
+                        rays[i][0] = pm * (ray[0].abs() + 1)
+
+                    K = Cone(rays, lattice=L)
+            else:
+                # The user requested that the cone be NOT strictly
+                # convex. So it should contain some line...
+                if K.is_strictly_convex():
+                    # ...but it doesn't. If K has at least two rays,
+                    # we can just make the second one a multiple of
+                    # the first -- then K will contain a line. If K
+                    # has fewer than two rays, we punt.
+                    if len(rays) >= 2:
+                        rays[1] = -rays[0]
+                        K = Cone(rays, lattice=L)
+
+        if is_valid(K):
+            # Loop if we don't have a valid cone.
+            return K

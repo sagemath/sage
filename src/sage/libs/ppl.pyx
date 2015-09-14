@@ -3010,6 +3010,38 @@ cdef class Polyhedron(_mutable_or_immutable):
         return result
 
 
+    def __hash__(self):
+        r"""
+        Hash value for polyhedra.
+
+        TESTS::
+
+            sage: from sage.libs.ppl import Constraint_System, Variable, C_Polyhedron
+            sage: x = Variable(0)
+            sage: p = C_Polyhedron( 5*x >= 3 )
+            sage: p.set_immutable()
+            sage: hash(p)
+            1
+
+            sage: y = Variable(1)
+            sage: cs = Constraint_System()
+            sage: cs.insert( x >= 0 )
+            sage: cs.insert( y >= 0 )
+            sage: p = C_Polyhedron(cs)
+            sage: p.set_immutable()
+            sage: hash(p)
+            2
+
+            sage: hash(C_Polyhedron(x >= 0))
+            Traceback (most recent call last):
+            ...
+            TypeError: mutable polyhedra are unhashable
+        """
+        if self.is_mutable():
+            raise TypeError("mutable polyhedra are unhashable")
+        # TODO: the hash code from PPL looks like being the dimension!
+        return self.thisptr[0].hash_code()
+
     def __richcmp__(Polyhedron lhs, Polyhedron rhs, op):
         r"""
         Comparison for polyhedra.

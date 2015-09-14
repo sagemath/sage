@@ -100,20 +100,12 @@ Make sure we don't have a new field for every new literal::
 """
 
 #*****************************************************************************
-#
-#   Sage: System for Algebra and Geometry Experimentation
-#
 #       Copyright (C) 2005-2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
@@ -123,10 +115,10 @@ import re
 
 include 'sage/ext/interrupt.pxi'
 include "sage/ext/stdsage.pxi"
-include "sage/ext/random.pxi"
 include 'sage/libs/pari/pari_err.pxi'
 
 from sage.libs.gmp.mpz cimport *
+from sage.misc.randstate cimport randstate, current_randstate
 cimport sage.rings.ring
 
 cimport sage.structure.element

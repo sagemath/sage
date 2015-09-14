@@ -577,7 +577,7 @@ connection to a server running Maple; for hints, type
     def _eval_line_using_file(self, line, *args, **kwargs):
         """
         EXAMPLES::
-        
+
             sage: maple._eval_line_using_file('2+2')  # optional - maple
             '4'
         """

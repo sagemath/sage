@@ -120,6 +120,17 @@ class ChainComplexMorphism(SageObject):
             Chain complex morphism from Chain complex with at most 2 nonzero 
             terms over Integer Ring to Chain complex with at most 1 nonzero terms 
             over Integer Ring
+
+        Check that an error is raised if the matrices are the wrong size::
+
+            sage: C = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
+            sage: D = ChainComplex({0: zero_matrix(ZZ, 0, 2)})
+            sage: Hom(C,D)({0: matrix(1, 2, [1, 1])})  # 1x2 is the wrong size.
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix in degree 0 is not the right size
+            sage: Hom(C,D)({0: matrix(2, 1, [1, 1])})  # 2x1 is right.
+            Chain complex morphism from Chain complex with at most 1 nonzero terms over Integer Ring to Chain complex with at most 1 nonzero terms over Integer Ring
         """
         if not C.base_ring() == D.base_ring():
             raise NotImplementedError('morphisms between chain complexes of different'
@@ -144,10 +155,15 @@ class ChainComplexMorphism(SageObject):
                                                  D.differential(i).ncols(),
                                                  C.differential(i).ncols(), sparse=True)
         if check:
-            # all remaining matrices given must be 0x0
+            # All remaining matrices given must be 0x0.
             if not all(m.ncols() == m.nrows() == 0 for m in initial_matrices.values()):
                 raise ValueError('the remaining matrices are not empty')
-            # check commutativity
+            # Check sizes of matrices.
+            for i in matrices:
+                if (matrices[i].nrows() != D.free_module_rank(i) or
+                    matrices[i].ncols() != C.free_module_rank(i)):
+                    raise ValueError('matrix in degree {} is not the right size'.format(i))
+            # Check commutativity.
             for i in degrees:
                 if i - d not in degrees:
                     if not (C.free_module_rank(i) == D.free_module_rank(i) == 0):
@@ -164,6 +180,42 @@ class ChainComplexMorphism(SageObject):
         self._matrix_dictionary = matrices
         self._domain = C
         self._codomain = D
+
+    def in_degree(self, n):
+        """
+        The matrix representing this morphism in degree n
+
+        INPUT:
+
+        - ``n`` -- degree
+
+        EXAMPLES::
+
+            sage: C = ChainComplex({0: identity_matrix(ZZ, 1)})
+            sage: D = ChainComplex({0: zero_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
+            sage: f = Hom(C,D)({0: identity_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
+            sage: f.in_degree(0)
+            [1]
+
+        Note that if the matrix is not specified in the definition of
+        the map, it is assumed to be zero::
+
+            sage: f.in_degree(2)
+            []
+            sage: f.in_degree(2).nrows(), f.in_degree(2).ncols()
+            (1, 0)
+            sage: C.free_module(2)
+            Ambient free module of rank 0 over the principal ideal domain Integer Ring
+            sage: D.free_module(2)
+            Ambient free module of rank 1 over the principal ideal domain Integer Ring
+        """
+        try:
+            return self._matrix_dictionary[n]
+        except KeyError:
+            from sage.matrix.constructor import zero_matrix
+            rows = self._codomain.free_module_rank(n)
+            cols = self._domain.free_module_rank(n)
+            return zero_matrix(self._domain.base_ring(), rows, cols)
 
     def __neg__(self):
         """
@@ -277,20 +329,46 @@ class ChainComplexMorphism(SageObject):
             [0 0 4 0]
             [0 0 0 4]}
 
+        TESTS:
+
+        Make sure that the product is taken in the correct order
+        (``self * x``, not ``x * self`` -- see :trac:`19065`)::
+
+            sage: C = ChainComplex({0: zero_matrix(ZZ, 0, 2)})
+            sage: D = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
+            sage: f = Hom(C,D)({0: matrix(1, 2, [1, 1])})
+            sage: g = Hom(D,C)({0: matrix(2, 1, [1, 1])})
+            sage: (f*g).in_degree(0)
+            [2]
+
+        Before :trac:`19065`, the following multiplication produced a
+        ``KeyError`` because `f` was not explicitly defined in degree 2::
+
+            sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
+            sage: C1 = ChainComplex({1: zero_matrix(ZZ, 0, 1)})
+            sage: C2 = ChainComplex({2: zero_matrix(ZZ, 0, 1)})
+            sage: f = ChainComplexMorphism({}, C0, C1)
+            sage: g = ChainComplexMorphism({}, C1, C2)
+            sage: g * f
+            Chain complex morphism from Chain complex with at most 1 nonzero terms over Integer Ring to Chain complex with at most 1 nonzero terms over Integer Ring
+            sage: f._matrix_dictionary
+            {0: [], 1: []}
+            sage: g._matrix_dictionary
+            {1: [], 2: []}
         """
-        if not isinstance(x,ChainComplexMorphism) or self._codomain != x._domain:
+        if not isinstance(x,ChainComplexMorphism) or self._domain != x._codomain:
             try:
                 y = self._domain.base_ring()(x)
             except TypeError:
                 raise TypeError("multiplication is not defined")
             f = dict()
-            for i in self._matrix_dictionary.keys():
+            for i in self._matrix_dictionary:
                 f[i] = self._matrix_dictionary[i] * y
             return ChainComplexMorphism(f,self._domain,self._codomain)
         f = dict()
-        for i in self._matrix_dictionary.keys():
-            f[i] = x._matrix_dictionary[i]*self._matrix_dictionary[i]
-        return ChainComplexMorphism(f,self._domain,x._codomain)
+        for i in self._matrix_dictionary:
+            f[i] = self._matrix_dictionary[i]*x.in_degree(i)
+        return ChainComplexMorphism(f,x._domain,self._codomain)
 
     def __rmul__(self,x):
         """

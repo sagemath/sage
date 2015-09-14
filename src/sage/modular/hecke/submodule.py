@@ -166,6 +166,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         other, and -1 otherwise.
 
         EXAMPLES::
+
             sage: M = ModularSymbols(12,6)
             sage: S = sage.modular.hecke.submodule.HeckeSubmodule(M, M.cuspidal_submodule().free_module())
             sage: T = sage.modular.hecke.submodule.HeckeSubmodule(M, M.new_submodule().free_module())

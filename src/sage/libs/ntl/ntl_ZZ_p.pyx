@@ -15,7 +15,6 @@
 
 include "sage/ext/interrupt.pxi"
 include "sage/ext/cdefs.pxi"
-include "sage/ext/random.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -31,6 +30,9 @@ from sage.libs.ntl.convert cimport PyLong_to_ZZ
 
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
+
+from sage.misc.randstate cimport randstate, current_randstate
+
 
 ZZ_sage = IntegerRing()
 

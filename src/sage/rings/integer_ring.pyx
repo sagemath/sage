@@ -45,7 +45,6 @@ other types will also coerce to the integers, when it makes sense.
 include "sage/ext/cdefs.pxi"
 include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"  # ctrl-c interrupt block support
-include "sage/ext/random.pxi"
 
 from cpython.int cimport *
 from cpython.list cimport *
@@ -64,6 +63,7 @@ from sage.structure.parent_gens import ParentWithGens
 from sage.structure.parent cimport Parent
 from sage.structure.sequence import Sequence
 from sage.misc.misc_c import prod
+from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
 cimport integer
 cimport rational
@@ -415,11 +415,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: A._div(12,0)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Rational division by zero
+            ZeroDivisionError: rational division by zero
         """
         cdef rational.Rational x = rational.Rational.__new__(rational.Rational)
         if mpz_sgn(right.value) == 0:
-            raise ZeroDivisionError('Rational division by zero')
+            raise ZeroDivisionError('rational division by zero')
         mpz_set(mpq_numref(x.value), left.value)
         mpz_set(mpq_denref(x.value), right.value)
         mpq_canonicalize(x.value)

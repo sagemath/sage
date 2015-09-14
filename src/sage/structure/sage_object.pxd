@@ -1,10 +1,8 @@
 from libc.stdint cimport uint32_t
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
-
 cdef class SageObject:
     pass
-
 
 cdef inline bint rich_to_bool(int op, int c):
     """
@@ -69,3 +67,6 @@ cdef inline bint rich_to_bool_sgn(int op, int c):
         This is in particular needed for ``mpz_cmp()``.
     """
     return rich_to_bool(op, (c > 0) - (c < 0))
+
+
+

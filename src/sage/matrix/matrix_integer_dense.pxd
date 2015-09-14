@@ -36,7 +36,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):
     cdef int* _hnf_modn_impl(Matrix_integer_dense self, unsigned int det,
             Py_ssize_t nrows, Py_ssize_t ncols) except NULL
 
-    cdef Matrix_integer_dense _new_uninitialized_matrix(self, Py_ssize_t nrows, Py_ssize_t ncols)
+    cdef Matrix_integer_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols)
 
     cdef extract_hnf_from_pari_matrix(self, GEN H, int flag, bint include_zero_rows)
 

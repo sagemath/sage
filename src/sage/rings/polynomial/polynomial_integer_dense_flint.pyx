@@ -1018,6 +1018,58 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return res
 
+    cpdef Polynomial inverse_series_trunc(self, long prec):
+        r"""
+        Return a polynomial approximation of precision ``prec`` of the inverse
+        series of this polynomial.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ)
+            sage: p = 1+x+2*x**2
+            sage: q5 = p.inverse_series_trunc(5)
+            sage: q5
+            -x^4 + 3*x^3 - x^2 - x + 1
+            sage: p*q5
+            -2*x^6 + 5*x^5 + 1
+
+            sage: q100 = p.inverse_series_trunc(100)
+            sage: (q100 * p).truncate(100)
+            1
+
+        TESTS::
+
+            sage: ZZ['x'].zero().inverse_series_trunc(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: constant term is zero
+            sage: ZZ['x'](2).inverse_series_trunc(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: constant term 2 is not a unit
+            sage: x = polygen(ZZ)
+            sage: (x+1).inverse_series_trunc(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the precision must be positive, got 0
+        """
+        if prec <= 0:
+            raise ValueError("the precision must be positive, got {}".format(prec))
+
+        if fmpz_poly_degree(self.__poly) == -1:
+            raise ValueError("constant term is zero")
+        cdef fmpz_t c = fmpz_poly_get_coeff_ptr(self.__poly, 0)
+        if fmpz_cmp_ui(c, 1) and fmpz_cmp_ui(c, -1):
+            raise ValueError("constant term {} is not a unit".format(self[0]))
+
+        cdef Polynomial_integer_dense_flint res = self._new()
+        if prec <= 0:
+            return res
+        sig_on()
+        fmpz_poly_inv_series(res.__poly, self.__poly, prec)
+        sig_off()
+        return res
+
     cpdef _unsafe_mutate(self, long n, value):
         r"""
         Sets coefficient of `x^n` to value.

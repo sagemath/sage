@@ -6,14 +6,14 @@ This file contains some information and tests for the use of
 
 To install gambit as an optional package run (from root of Sage)::
 
-    $ ./sage -i gambit
+    $ sage -i gambit
 
 The `python API documentation for gambit
 <http://www.gambit-project.org/gambit14/pyapi.html>`_ shows various examples
 that can be run easily in IPython. To run the IPython packaged with Sage run
 (from root of Sage)::
 
-    $ ./sage -ipython
+    $ ./sage --ipython
 
 Here is an example that constructs the Prisoner's Dilemma::
 

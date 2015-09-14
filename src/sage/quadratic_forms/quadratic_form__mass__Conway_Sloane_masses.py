@@ -29,10 +29,12 @@ def parity(self, allow_rescaling_flag=True):
     Jordan component, after a possible rescaling.
 
     INPUT:
+
         self -- a quadratic form with base_ring `ZZ`, which we may
                 require to have integer Gram matrix.
 
     OUTPUT:
+
         One of the strings: "even" or "odd"
 
     EXAMPLES::
@@ -166,9 +168,11 @@ def conway_species_list_at_odd_prime(self, p):
     interpret the return value of zero as positive here! =)
 
     INPUT:
+
         a positive prime number
 
     OUTPUT:
+
         a list of integers
 
     EXAMPLES::
@@ -235,6 +239,7 @@ def conway_species_list_at_2(self):
     interpret the return value of zero as positive here! =)
 
     OUTPUT:
+
         a list of integers
 
     EXAMPLES::
@@ -318,9 +323,11 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     leftmost position.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         an integer 0 <= x <= 7
 
     EXAMPLES::
@@ -405,9 +412,11 @@ def conway_diagonal_factor(self, p):
     Computes the diagonal factor of Conway's `p`-mass.
 
     INPUT:
+
         `p` -- a prime number > 0
 
     OUTPUT:
+
         a rational number > 0
 
     EXAMPLES::
@@ -446,9 +455,11 @@ def conway_cross_product_doubled_power(self, p):
     term in Conway's mass formula.
 
     INPUT:
+
         `p` -- a prime number > 0
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -483,9 +494,11 @@ def conway_type_factor(self):
     This is a special factor only present in the mass formula when `p=2`.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number
 
     EXAMPLES::
@@ -508,9 +521,11 @@ def conway_p_mass(self, p):
     Computes Conway's `p`-mass.
 
     INPUT:
+
         `p` -- a prime number > 0
 
     OUTPUT:
+
         a rational number > 0
 
     EXAMPLES::
@@ -539,9 +554,11 @@ def conway_standard_p_mass(self, p):
     Computes the standard (generic) Conway-Sloane `p`-mass.
 
     INPUT:
+
         `p` -- a prime number > 0
 
     OUTPUT:
+
         a rational number > 0
 
     EXAMPLES::
@@ -576,9 +593,11 @@ def conway_standard_mass(self):
     Returns the infinite product of the standard mass factors.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number > 0
 
     EXAMPLES::
@@ -624,9 +643,11 @@ def conway_mass(self):
     Compute the mass by using the Conway-Sloane mass formula.
 
     INPUT:
+
         none
 
     OUTPUT:
+
         a rational number > 0
 
     EXAMPLES::

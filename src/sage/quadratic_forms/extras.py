@@ -1,3 +1,4 @@
+"Quadratic form extras"
 
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix import is_Matrix
@@ -81,12 +82,15 @@ def extend_to_primitive(A_input):
     Author(s): Gonzalo Tornaria and Jonathan Hanke.
 
     INPUT:
-        a matrix, or a list of length n vectors (in the same space)
+
+    a matrix, or a list of length n vectors (in the same space)
 
     OUTPUT:
-        a square matrix, or a list of n vectors (resp.)
 
-    EXAMPLES:
+    a square matrix, or a list of n vectors (resp.)
+
+    EXAMPLES::
+
         sage: A = Matrix(ZZ, 3, 2, range(6))
         sage: extend_to_primitive(A)
         [ 0  1  0]

@@ -149,6 +149,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
                          ``block``:   Same as ``conj`` but the conjugation matrix is specified as well.
 
         EXAMPLES::
+
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(5)
             sage: G.element_repr_method()

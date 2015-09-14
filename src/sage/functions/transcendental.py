@@ -1,5 +1,5 @@
 """
-Transcendental Functions
+Number-Theoretic Functions
 """
 
 #*****************************************************************************

@@ -577,7 +577,6 @@ def run_cythonize():
     version_file = os.path.join(os.path.dirname(__file__), '.cython_version')
     version_stamp = '\n'.join([
         'cython version: ' + str(Cython.__version__),
-        'NTL dependencies fixed: True',
         'debug: ' + str(debug),
         'profile: ' + str(profile),
     ""])

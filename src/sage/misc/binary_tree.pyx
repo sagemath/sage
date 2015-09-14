@@ -1,4 +1,6 @@
 """
+Binary trees
+
 Implements a binary tree in Cython.
 
 AUTHORS:

@@ -178,15 +178,10 @@ die GAP-Schnittstelle aufzurufen:
     sage: n = G.order(); n
     120
 
-(Für einige GAP-Funktionen sollten Sie zwei optionale Sage Pakete
-installieren. Geben Sie ``sage -optional`` ein, um eine Liste zu
-erhalten und  wählen Sie das Paket aus, das etwa so aussieht
-``gap\_packages-x.y.z``.
-Geben Sie dann ``sage -i gap\_packages-x.y.z`` ein. Das gleiche machen
-Sie bitte mit ``database\_gap-x.y.z``.
-Einige nicht-GPL Pakete können installiert
-werden, indem Sie sie von der GAP-Website [GAPkg]_ herunter laden und
-nach ``$SAGE_ROOT/local/lib/gap-4.4.10/pkg`` entpacken.)
+Nach Installation zweier optionaler Sage-Pakete mit folgendem Befehl
+sind weitere GAP-Funktionen verfügbar::
+
+    sage -i gap_packages database_gap
 
 
 Singular

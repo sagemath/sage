@@ -62,6 +62,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
         Returns the string representation of the vector
 
         EXAMPLES::
+
             sage: f(u,v,w) = (2*u+v,u-w,w^2+u)
             sage: f
             (u, v, w) |--> (2*u + v, u - w, w^2 + u)
@@ -84,6 +85,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
         Returns the latex representation of the vector
 
         EXAMPLES::
+
             sage: f(u,v,w) = (2*u+v,u-w,w^2+u)
             sage: f
             (u, v, w) |--> (2*u + v, u - w, w^2 + u)

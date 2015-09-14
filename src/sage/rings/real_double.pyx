@@ -45,7 +45,6 @@ from cpython.float cimport *
 include "sage/ext/python_debug.pxi"
 include 'sage/ext/cdefs.pxi'
 include 'sage/ext/stdsage.pxi'
-include 'sage/ext/random.pxi'
 include 'sage/ext/interrupt.pxi'
 from sage.libs.gsl.all cimport *
 cimport libc.math
@@ -66,6 +65,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
+from sage.misc.randstate cimport randstate, current_randstate
 
 
 def is_RealDoubleField(x):

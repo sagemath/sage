@@ -12,12 +12,13 @@ class MethodDecorator(SageObject):
     def __init__(self, f):
         """
         EXAMPLE::
+
             sage: from sage.misc.method_decorator import MethodDecorator
             sage: class Foo:
-            ...       @MethodDecorator
-            ...       def bar(self, x):
-            ...          return x**2
-            ...
+            ....:     @MethodDecorator
+            ....:     def bar(self, x):
+            ....:         return x**2
+            ....:
             sage: J = Foo()
             sage: J.bar
             <class 'sage.misc.method_decorator.MethodDecorator'>

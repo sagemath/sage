@@ -29,7 +29,7 @@ Configuring Git
 One way or another, ``git`` is what Sage uses for tracking changes.
 So first, open a shell (for instance, Terminal on Mac) and check that
 ``git`` works::
-    
+
     [user@localhost]$ git
     usage: git [--version] [--help] [-C <path>] [-c name=value]
     ...
@@ -37,7 +37,7 @@ So first, open a shell (for instance, Terminal on Mac) and check that
        add        Add file contents to the index
     ...
        tag        Create, list, delete or verify a tag object signed with GPG
-    
+
     'git help -a' and 'git help -g' lists available subcommands and some
     concept guides. See 'git help <command>' or 'git help <concept>'
     to read about a specific subcommand or concept.
@@ -74,7 +74,7 @@ internal git repository::
     Cloning into 'sage'...
     [...]
     Checking connectivity... done.
-    
+
 This creates a directory named ``sage`` containing the sources for the
 current stable and development releases of Sage.  You will need to
 `compile Sage <http://www.sagemath.org/doc/installation/source.html>`_
@@ -127,7 +127,7 @@ you have to use ``git checkout``::
 
 Note that, unless you explicitly upload ("push") a branch to remote
 git repository, the local branch will only be on your computer and not
-visible to anyone else. 
+visible to anyone else.
 
 To avoid typing the new branch name twice you can use the shortcut
 ``git checkout -b my_new_branch`` to create and switch to the new
@@ -177,15 +177,15 @@ changes::
     Changes not staged for commit:
       (use "git add <file>..." to update what will be committed)
       (use "git checkout -- <file>..." to discard changes in working directory)
-    
+
         modified:   some_file.py
         modified:   src/sage/primes/all.py
-    
+
     Untracked files:
       (use "git add <file>..." to include in what will be committed)
-    
+
         src/sage/primes/last_pair.py
-    
+
     no changes added to commit (use "git add" and/or "git commit -a")
 
 To dig deeper into what was changed in the files you can use::

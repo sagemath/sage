@@ -1810,7 +1810,7 @@ def ChvatalGraph():
         2
         4
 
-    TEST:
+    TEST::
 
         sage: import networkx
         sage: G = graphs.ChvatalGraph()
@@ -2647,7 +2647,7 @@ def FruchtGraph():
         'KhCKM?_EGK?L'
         sage: (graphs.FruchtGraph()).show() # long time
 
-    TEST:
+    TEST::
 
         sage: import networkx
         sage: G = graphs.FruchtGraph()
@@ -2896,7 +2896,7 @@ def HeawoodGraph():
         'MhEGHC@AI?_PC@_G_'
         sage: (graphs.HeawoodGraph()).show() # long time
 
-    TEST:
+    TEST::
 
         sage: import networkx
         sage: G = graphs.HeawoodGraph()
@@ -3363,7 +3363,7 @@ def KrackhardtKiteGraph():
         sage: g = graphs.KrackhardtKiteGraph()
         sage: g.show() # long time
 
-    TEST:
+    TEST::
 
         sage: import networkx
         sage: G = graphs.KrackhardtKiteGraph()

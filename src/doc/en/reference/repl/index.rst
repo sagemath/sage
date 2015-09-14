@@ -8,6 +8,8 @@ also be familiar with the documentation for IPython.
 For more details about using the Sage command line, see the Sage
 tutorial.
 
+Running Sage
+------------
 
 .. toctree::
    :maxdepth: 2
@@ -16,13 +18,6 @@ tutorial.
    startup
    environ
    sage/misc/trace
-
-   sage/repl/readline_extra_commands
-   sage/repl/interpreter
-   sage/repl/ipython_extension
-   sage/repl/ipython_kernel/install
-   sage/repl/ipython_kernel/kernel
-
 
 Preparsing
 ----------
@@ -77,6 +72,7 @@ Display Backend Infrastructure
    sage/repl/rich_output/output_basic
    sage/repl/rich_output/output_graphics
    sage/repl/rich_output/output_graphics3d
+   sage/repl/rich_output/output_video
    sage/repl/rich_output/output_catalog
    
    sage/repl/rich_output/backend_base
@@ -93,9 +89,16 @@ Miscellaneous
 
    sage/ext/interactive_constructors_c
 
+   sage/repl/readline_extra_commands
+
+   sage/repl/interpreter
+   sage/repl/ipython_extension
+   sage/repl/ipython_kernel/install
+   sage/repl/ipython_kernel/kernel
+   sage/repl/ipython_tests
+
    sage/repl/display/jsmol_iframe
    sage/repl/image
    sage/repl/inputhook
-   sage/repl/ipython_tests
 
 .. include:: ../footer.txt

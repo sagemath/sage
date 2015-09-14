@@ -86,7 +86,7 @@ class BackendDoctest(BackendBase):
         backend.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.rich_output.backend_doctest import BackendDoctest
             sage: backend = BackendDoctest()
             sage: backend.install()
@@ -104,7 +104,7 @@ class BackendDoctest(BackendBase):
         should never call it by hand.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.rich_output.backend_doctest import BackendDoctest
             sage: backend = BackendDoctest()
             sage: backend.install()
@@ -137,6 +137,9 @@ class BackendDoctest(BackendBase):
             OutputImagePng, OutputImageGif, OutputImageJpg, 
             OutputImageSvg, OutputImagePdf, OutputImageDvi,
             OutputSceneJmol, OutputSceneCanvas3d, OutputSceneWavefront,
+            OutputVideoOgg, OutputVideoWebM, OutputVideoMp4,
+            OutputVideoFlash, OutputVideoMatroska, OutputVideoAvi,
+            OutputVideoWmv, OutputVideoQuicktime,
         ])
 
     def displayhook(self, plain_text, rich_output):
@@ -204,7 +207,7 @@ class BackendDoctest(BackendBase):
             sage: dm.display_immediately(plt)   # indirect doctest
         """
         self.validate(rich_output)
-        types_to_print = [OutputPlainText, OutputAsciiArt, OutputUnicodeArt]
+        types_to_print = [OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputHtml]
         if isinstance(rich_output, OutputLatex):
             print(rich_output.mathjax(display=False))
         elif any(isinstance(rich_output, cls) for cls in types_to_print):
@@ -246,6 +249,14 @@ class BackendDoctest(BackendBase):
             sage: backend.validate(dm.types.OutputSceneJmol.example())
             sage: backend.validate(dm.types.OutputSceneWavefront.example())
             sage: backend.validate(dm.types.OutputSceneCanvas3d.example())
+            sage: backend.validate(dm.types.OutputVideoOgg.example())
+            sage: backend.validate(dm.types.OutputVideoWebM.example())
+            sage: backend.validate(dm.types.OutputVideoMp4.example())
+            sage: backend.validate(dm.types.OutputVideoFlash.example())
+            sage: backend.validate(dm.types.OutputVideoMatroska.example())
+            sage: backend.validate(dm.types.OutputVideoAvi.example())
+            sage: backend.validate(dm.types.OutputVideoWmv.example())
+            sage: backend.validate(dm.types.OutputVideoQuicktime.example())
         """
         if isinstance(rich_output, OutputPlainText):
             pass
@@ -275,5 +286,34 @@ class BackendDoctest(BackendBase):
             assert rich_output.mtl.get().startswith('newmtl ')
         elif isinstance(rich_output, OutputSceneCanvas3d):
             assert rich_output.canvas3d.get().startswith('[{vertices:')
+        elif isinstance(rich_output, OutputVideoOgg):
+            assert rich_output.video.get().startswith('OggS')
+        elif isinstance(rich_output, OutputVideoWebM):
+            data = rich_output.video.get()
+            assert data.startswith('\x1a\x45\xdf\xa3')
+            assert '\x42\x82\x84webm' in data
+        elif isinstance(rich_output, OutputVideoMp4):
+            data = rich_output.video.get()
+            assert data[4:8] == 'ftyp'
+            assert data.startswith('\0\0\0')
+            # See http://www.ftyps.com/
+            ftyps = [data[i:i+4] for i in range(8, ord(data[3]), 4)]
+            del ftyps[1] # version number, not an ftyp
+            expected = ['avc1', 'iso2', 'mp41', 'mp42']
+            assert any(i in ftyps for i in expected)
+        elif isinstance(rich_output, OutputVideoFlash):
+            assert rich_output.video.get().startswith('FLV\x01')
+        elif isinstance(rich_output, OutputVideoMatroska):
+            data = rich_output.video.get()
+            assert data.startswith('\x1a\x45\xdf\xa3')
+            assert '\x42\x82\x88matroska' in data
+        elif isinstance(rich_output, OutputVideoAvi):
+            data = rich_output.video.get()
+            assert data[:4] == 'RIFF' and data[8:12] == 'AVI '
+        elif isinstance(rich_output, OutputVideoWmv):
+            assert rich_output.video.get().startswith('\x30\x26\xb2\x75')
+        elif isinstance(rich_output, OutputVideoQuicktime):
+            data = rich_output.video.get()
+            assert data[4:12] == 'ftypqt  ' or data[4:8] == 'moov'
         else:
             raise TypeError('rich_output type not supported')

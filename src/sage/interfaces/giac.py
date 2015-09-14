@@ -1083,21 +1083,19 @@ class GiacElement(ExpectElement):
 
         INPUT:
 
-
         -  ``var`` - variable
 
         -  ``min`` - default: None
 
         -  ``max`` - default: None
 
-
         Returns the definite integral if xmin is not None, otherwise
         returns an indefinite integral.
 
         EXAMPLES::
-        sage: giac('1/(1+k^2)').sum('k',-oo,+infinity).simplify()     # optional -  giac
-        (pi*exp(pi)^2+pi)/(exp(pi)^2-1)
 
+            sage: giac('1/(1+k^2)').sum('k',-oo,+infinity).simplify()     # optional -  giac
+            (pi*exp(pi)^2+pi)/(exp(pi)^2-1)
         """
         if min is None:
             return giac('sum(%s,%s)'%(self.name(),var))

@@ -443,7 +443,7 @@ class WeightCharacter(Element):
             sage: pAdicWeightSpace(11)(3).one_over_Lvalue()
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Rational division by zero
+            ZeroDivisionError: rational division by zero
             sage: pAdicWeightSpace(11)(0).one_over_Lvalue()
             0
             sage: type(_)

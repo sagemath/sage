@@ -1,2 +1,2 @@
 from anf2cnf import ANF2CNFConverter
-from polybori import CNFEncoder as PolyBoRiCNFEncoder
+from brial.cnf import CNFEncoder as PolyBoRiCNFEncoder

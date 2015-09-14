@@ -15,7 +15,6 @@
 
 include "sage/ext/interrupt.pxi"
 include "sage/ext/stdsage.pxi"
-include "sage/ext/random.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -24,8 +23,9 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
-
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
+from sage.misc.randstate cimport randstate, current_randstate
+from sage.libs.gmp.mpz cimport *
 
 cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_p y

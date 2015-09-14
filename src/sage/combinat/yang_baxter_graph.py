@@ -207,6 +207,21 @@ class YangBaxterGraph_generic(SageObject):
                 digraph.add_edge(u, v, l)
         return digraph
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.yang_baxter_graph import SwapIncreasingOperator
+            sage: ops = [SwapIncreasingOperator(i) for i in range(2)]
+            sage: Y = YangBaxterGraph(root=(1,2,3), operators=ops)
+            sage: hash(Y)
+            1028420699          # 32-bit
+            7656306018247013467 # 64-bit
+        """
+        # TODO: this is ugly but unavoidable: the Yang Baxter graphs are being
+        # used in containers but are mutable.
+        return hash(self._digraph.copy(immutable=True))
+
     def __eq__(self, other):
         r"""
         EXAMPLES::
@@ -371,7 +386,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y.successors(Y.root())
             [(1, 2, 0, 1, 0)]
             sage: Y.successors((1, 2, 0, 1, 0))
-            [(2, 1, 0, 1, 0), (1, 2, 1, 0, 0)]
+            [(1, 2, 1, 0, 0), (2, 1, 0, 1, 0)]
         """
         return [a for (a,b) in self._successors(v)]
 
@@ -758,6 +773,17 @@ class SwapOperator(SageObject):
             True
         """
         self._position = i
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.yang_baxter_graph import SwapOperator
+            sage: s = [SwapOperator(i) for i in range(3)]
+            sage: map(hash, s)
+            [0, 1, 2]
+        """
+        return hash(self._position)
 
     def __cmp__(self, other):
         r"""

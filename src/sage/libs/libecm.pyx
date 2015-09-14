@@ -11,18 +11,21 @@ AUTHORS:
 - Robert L Miller (2008-01-21): library interface (clone of ecmfactor.c)
 
 - Jeroen Demeyer (2012-03-29): signal handling, documentation
+- Paul Zimmermann (2011-05-22) -- added input/output of sigma
 
 EXAMPLES::
 
     sage: from sage.libs.libecm import ecmfactor
     sage: result = ecmfactor(999, 0.00)
-    sage: result in [(True, 27), (True, 37), (True, 999)]
+    sage: result[0] and (result[1] in [27, 37, 999])
     True
     sage: result = ecmfactor(999, 0.00, verbose=True)
     Performing one curve with B1=0
     Found factor in step 1: ...
-    sage: result in [(True, 27), (True, 37), (True, 999)]
+    sage: result[0] and (result[1] in [27, 37, 999])
     True
+    sage: ecmfactor(2^128+1,1000,sigma=227140902)
+    (True, 5704689200685129054721, 227140902)
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Robert Miller
@@ -41,12 +44,16 @@ from sage.rings.integer cimport Integer
 
 cdef extern from "ecm.h":
     ctypedef struct __ecm_param_struct:
-        pass
+        int method
+        mpz_t x
+        mpz_t sigma
     ctypedef __ecm_param_struct ecm_params[1]
     int ecm_factor (mpz_t, mpz_t, double, ecm_params)
+    void ecm_init (ecm_params)
+    void ecm_clear (ecm_params)
     int ECM_NO_FACTOR_FOUND
 
-def ecmfactor(number, double B1, verbose=False):
+def ecmfactor(number, double B1, verbose=False, sigma=0):
     """
     Try to find a factor of a positive integer using ECM (Elliptic Curve Method).
     This function tries one elliptic curve.
@@ -74,7 +81,14 @@ def ecmfactor(number, double B1, verbose=False):
         sage: factor(N)
         2349023 * 79638304766856507377778616296087448490695649
         sage: ecmfactor(N, 2e5)
-        (True, 2349023)
+        (True, 2349023, ...)
+
+    If a factor was found, we can reproduce the factorization with the same
+    sigma value::
+
+        sage: N = 2^167 - 1
+        sage: ecmfactor(N, 2e5, sigma=1473308225)
+        (True, 2349023, 1473308225)
 
     With a smaller B1 bound, we may or may not succeed::
 
@@ -98,7 +112,7 @@ def ecmfactor(number, double B1, verbose=False):
         sage: factor(N)
         359 * 1433 * 1489459109360039866456940197095433721664951999121
         sage: ecmfactor(N, 1e3)  # random
-        (True, 514447)
+        (True, 514447, 3475102204)
 
     We can ask for verbose output::
 
@@ -108,7 +122,7 @@ def ecmfactor(number, double B1, verbose=False):
         sage: ecmfactor(N, 100, verbose=True)
         Performing one curve with B1=100
         Found factor in step 1: 11
-        (True, 11)
+        (True, 11, ...)
         sage: ecmfactor(N/11, 100, verbose=True)
         Performing one curve with B1=100
         Found no factor.
@@ -127,7 +141,7 @@ def ecmfactor(number, double B1, verbose=False):
     Some special cases::
 
         sage: ecmfactor(1, 100)
-        (True, 1)
+        (True, 1, ...)
         sage: ecmfactor(0, 100)
         Traceback (most recent call last):
         ...
@@ -135,10 +149,12 @@ def ecmfactor(number, double B1, verbose=False):
     """
     cdef mpz_t n, f
     cdef int res
-    cdef Integer sage_int_f, sage_int_number
+    cdef Integer sage_int_f, sage_int_number, sage_int_sigma
+    cdef ecm_params q
 
     sage_int_f = Integer(0)
     sage_int_number = Integer(number)
+    sage_int_sigma = Integer(sigma)
 
     if number <= 0:
         raise ValueError("Input number (%s) must be positive"%number)
@@ -150,20 +166,24 @@ def ecmfactor(number, double B1, verbose=False):
     mpz_init(n)
     mpz_set(n, sage_int_number.value)
     mpz_init(f) # For potential factor
+    ecm_init(q)
+    mpz_set(q.sigma,sage_int_sigma.value)
 
-    res = ecm_factor(f, n, B1, NULL)
+    res = ecm_factor(f, n, B1, q)
 
     if res > 0:
         mpz_set(sage_int_f.value, f)
+        mpz_set(sage_int_sigma.value, q.sigma)
 
     mpz_clear(f)
     mpz_clear(n)
+    ecm_clear(q)
     sig_off()
 
     if res > 0:
         if verbose:
             print "Found factor in step %d: %d"%(res,sage_int_f)
-        return (True, sage_int_f)
+        return (True, sage_int_f, sage_int_sigma)
     elif res == ECM_NO_FACTOR_FOUND:
         if verbose:
             print "Found no factor."

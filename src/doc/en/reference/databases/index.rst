@@ -55,6 +55,7 @@ database engine.
    sage/databases/jones
    sage/databases/oeis
    sage/databases/sloane
+   sage/databases/findstat
    sage/databases/conway
    sage/databases/odlyzko
    sage/databases/symbolic_data

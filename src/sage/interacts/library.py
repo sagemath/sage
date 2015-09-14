@@ -497,7 +497,11 @@ def unit_circle(
     C_graph += Cf_point + Cf_line1 + Cf_line2
     G_graph += Gf + Gf_point + Gf_line
 
-    html.table([[r"$\text{Unit Circle}$",r"$\text{Function}$"], [C_graph, G_graph]], header=True)
+    pretty_print(table([
+        [r"$\text{Unit Circle}$", r"$\text{Function}$"],
+        [C_graph, G_graph]
+    ], header=True))
+
 
 @library_interact
 def special_points(
@@ -894,7 +898,7 @@ def newton_method(
         s = [["$n$","$x_n$","$f(x_n)$", "$f(x_n-h)\,f(x_n+h)$"]]
         for i, c in enumerate(midpoints):
             s.append([i+1, c, f(c), (c-h)*f(c+h)])
-        html.table(s,header=True)
+        pretty_print(table(s, header=True))
     else:
         P = plot(f, x, interval, color="blue")
         L = sum(line([(c, 0), (c, f(c))], color="green") for c in midpoints[:-1])
@@ -1008,7 +1012,7 @@ def trapezoid_integration(
             else:
                 j = 2
             s.append([i, xs[i], ys[i],j,N(j*ys[i])])
-        html.table(s,header=True)
+        pretty_print(table(s, header=True))
 
 @library_interact
 def simpson_integration(
@@ -1128,7 +1132,7 @@ def simpson_integration(
                 j = (i+1)%2*(-2)+4
             s.append([i, xs[i], ys[i],j,N(j*ys[i])])
         s.append(['','','','$\sum$','$%s$'%latex(3/dx*approx)])
-        html.table(s,header=True)
+        pretty_print(table(s, header=True))
         html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$'%
              (interval[0], interval[1],dx,latex(3/dx*approx),latex(approx)))
 
@@ -1198,9 +1202,11 @@ def riemann_sum(
     show(plot(func(x),(x,a,b),zorder=5) + rects)
     delka_intervalu=[division[i+1]-division[i] for i in range(n)]
     if list_table:
-        html.table([["$i$","$[x_{i-1},x_i]$","$\eta_i$","$f(\eta_i)$","$x_{i}-x_{i-1}$"]]\
-        +[[i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)],\
-        header=True)
+        pretty_print(table([
+            ["$i$", "$[x_{i-1},x_i]$", "$\eta_i$", "$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
+        ] + [
+            [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
+        ],  header=True))
 
     html('Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ '%
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))

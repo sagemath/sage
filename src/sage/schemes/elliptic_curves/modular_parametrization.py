@@ -68,7 +68,7 @@ class ModularParameterization:
     def __init__(self, E):
         r"""
         EXAMPLES::
-        s
+
             sage: from sage.schemes.elliptic_curves.ell_rational_field import ModularParameterization
             sage: phi = ModularParameterization(EllipticCurve('389a'))
             sage: phi(CC.0/5)
@@ -76,7 +76,6 @@ class ModularParameterization:
 
             sage: phi == loads(dumps(phi))
             True
-
         """
         self._E = E
 

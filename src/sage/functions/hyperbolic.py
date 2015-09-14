@@ -667,6 +667,7 @@ class Function_arccoth(HyperbolicFunction):
     def _derivative_(self, *args, **kwds):
         """
         EXAMPLES::
+
             sage: bool(diff(acoth(x), x) == diff(atanh(x), x))
             True
             sage: diff(acoth(x), x)

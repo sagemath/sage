@@ -225,9 +225,8 @@ The group id database
 =====================
 
 The function ``group_id`` requires that the Small Groups Library of
-E. A. O'Brien, B. Eick, and H. U. Besche be installed (you can do
-this by typing ``./sage -i database_gap-4.4.9`` in the Sage home
-directory).
+E. A. O'Brien, B. Eick, and H. U. Besche be installed.  You can do
+this by typing ``sage -i database_gap`` in the shell.
 
 ::
 

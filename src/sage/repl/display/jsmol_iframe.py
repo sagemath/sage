@@ -249,7 +249,7 @@ class JSMolHtml(SageObject):
         String.
         
         EXAMPLES::
-        
+
             sage: from sage.repl.display.jsmol_iframe import JSMolHtml
             sage: from sage.repl.rich_output.output_graphics3d import OutputSceneJmol
             sage: jmol = JSMolHtml(OutputSceneJmol.example())
@@ -276,7 +276,7 @@ class JSMolHtml(SageObject):
         String
 
         EXAMPLES::
-        
+
             sage: from sage.repl.display.jsmol_iframe import JSMolHtml
             sage: from sage.repl.rich_output.output_graphics3d import OutputSceneJmol
             sage: jmol = JSMolHtml(OutputSceneJmol.example(), width=500, height=300)

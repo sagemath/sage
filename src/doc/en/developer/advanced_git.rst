@@ -131,7 +131,7 @@ operations. Since we want to rewind to before the erroneous *git
 reset* command, we just have to reset back into the future::
 
     [user@localhost sage]$ git reset --hard HEAD@{2}
-    
+
 
 
 .. _section-git-rewriting-history:
@@ -202,7 +202,7 @@ to exclude commit B, otherwise there will be two commits adding
 being merged into Sage. Hence, we first reset the first branch back to
 before B was added::
 
-    [user@localhost]$ git checkout first_branch 
+    [user@localhost]$ git checkout first_branch
     Switched to branch 'first_branch'
     [user@localhost]$ git reset --hard bf817a5
     HEAD is now at bf817a5 added file A
@@ -245,14 +245,14 @@ Now we start by making an identical branch to the first branch::
     [user@localhost]$ git checkout -b second_branch
     Switched to a new branch 'second_branch'
     [user@localhost]$ git rebase -i HEAD~3
-    
+
 This will open an editor with the last 3 (corresponding to ``HEAD~3``)
 commits and instuctions for how to modify them::
 
     pick bf817a5 added file A
     pick 7873447 added file B
     pick 9621dae added file C
-    
+
     # Rebase 5b5588e..9621dae onto 5b5588e
     #
     # Commands:
@@ -270,11 +270,11 @@ commits and instuctions for how to modify them::
     # However, if you remove everything, the rebase will be aborted.
     #
     # Note that empty commits are commented out
-   
+
 To only use commit B, we delete the first and third line. Then save
 and quit your editor, and your branch now consists only of the B commit.
 
 You still have to delete the B commit from the first branch, so you
 would go back (``git checkout first_branch``) and then run the same
 ``git rebase -i`` command and delete the B commit.
- 
+

@@ -258,6 +258,17 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: I = K.ideal((a + 1)*b/2 + 1)
             sage: I.gens_reduced()
             (1/2*b*a + 1/2*b + 1,)
+
+        TESTS:
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: K.<a> = NumberField(2*x^2 - 1/3)
+            sage: L.<b> = K.extension(5*x^2 + 1)
+            sage: P = L.primes_above(2)[0]
+            sage: P.gens_reduced()
+            (2, 15*a*b + 3*a + 1)
         """
         try:
             ## Compute the single generator, if it exists
@@ -265,12 +276,10 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             return self.__reduced_generators
         except AttributeError:
             L = self.number_field()
-            K = L.base_field()
-            R = L.relative_polynomial().parent()
             gens = L.pari_rnf().rnfidealtwoelt(self.pari_rhnf())
-            gens = [ L(R(x.lift().lift())) for x in gens ]
+            gens = [L(x, check=False) for x in gens]
 
-            # pari always returns two elements, even if only one is needed!
+            # PARI always returns two elements, even if only one is needed!
             if gens[1] in L.ideal(gens[0]):
                 gens = gens[:1]
             elif gens[0] in L.ideal(gens[1]):
@@ -380,13 +389,22 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             815730721
             sage: K.ideal(13).absolute_norm()
             815730721
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: K.<a> = NumberField(2*x^2 - 1/3)
+            sage: L.<b> = K.extension(5*x^2 + 1)
+            sage: P = L.primes_above(2)[0]
+            sage: P.relative_norm()
+            Fractional ideal (-6*a + 2)
         """
         L = self.number_field()
         K = L.base_field()
         K_abs = K.absolute_field('a')
         to_K = K_abs.structure()[0]
         hnf = L.pari_rnf().rnfidealnormrel(self.pari_rhnf())
-        return K.ideal([to_K(K_abs(_)) for _ in K.pari_zk() * hnf])
+        return K.ideal([to_K(K_abs(x, check=False)) for x in K.pari_zk() * hnf])
 
     def norm(self):
         """
@@ -487,13 +505,22 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             Fractional ideal (b)
             sage: J.number_field() == F
             True
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported (:trac:`252`)::
+
+            sage: K.<a> = NumberField(2*x^2 - 1/3)
+            sage: L.<b> = K.extension(5*x^2 + 1)
+            sage: P = L.primes_above(2)[0]
+            sage: P.ideal_below()
+            Fractional ideal (-6*a + 2)
         """
         L = self.number_field()
         K = L.base_field()
         K_abs = K.absolute_field('a')
         to_K = K_abs.structure()[0]
         hnf = L.pari_rnf().rnfidealdown(self.pari_rhnf())
-        return K.ideal([to_K(K_abs(_)) for _ in K.pari_zk() * hnf])
+        return K.ideal([to_K(K_abs(x, check=False)) for x in K.pari_zk() * hnf])
 
     def factor(self):
         """

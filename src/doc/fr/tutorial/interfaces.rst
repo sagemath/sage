@@ -146,7 +146,7 @@ GAP
 ===
 
 Pour les mathématiques discrètes effectives et principalement la théorie
-des groupes, Sage utilise GAP 4.4.10.
+des groupes, Sage utilise GAP.
 
 Voici un exemple d'utilisation de la fonction GAP ``IdGroup``, qui
 nécessite une base de données optionnelle de groupes de petit ordre, à
@@ -177,15 +177,12 @@ l'interface GAP comme suit :
     sage: n = G.order(); n
     120
 
-(Certaines fonctionnalités de GAP nécessitent l'installation de deux
-paquets facultatifs. Saisissez ``sage -optional`` pour consulter la
-liste des paquets facultatifs, et choisissez celui dont le nom ressemble
-à ``gap\_packages-x.y.z``, puis installez-le par
-``sage -i gap\_packages-x.y.z``. Faites de même avec
-``database\_gap-x.y.z``. D'autres paquets GAP, non couverts par la
-licence GPL, peuvent être téléchargés depuis le site web de GAP
-[GAPkg]_ et installés en les désarchivant dans
-``$SAGE_ROOT/local/lib/gap-4.4.10/pkg``.)
+Pour utiliser certaines fonctionnalités de GAP,
+vous devez installer deux paquets Sage optionnels.
+Cela peut être fait avec la commande::
+
+    sage -i gap_packages database_gap
+
 
 Singular
 ========

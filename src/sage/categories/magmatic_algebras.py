@@ -137,7 +137,9 @@ class MagmaticAlgebras(Category_over_base_ring):
                     sage: R.<x> = ZZ[]
                     sage: P = PartitionAlgebra(1, x, R)
                     sage: P.algebra_generators()
-                    Finite family {{{-1, 1}}: P[{{-1, 1}}], {{-1}, {1}}: P[{{-1}, {1}}]}
+                    Lazy family (Term map from Partition diagrams of order 1 to
+                     Partition Algebra of rank 1 with parameter x over Univariate Polynomial Ring in x
+                     over Integer Ring(i))_{i in Partition diagrams of order 1} 
                 """
                 return self.basis()
 

@@ -1522,7 +1522,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             1
         """
         if not self:
-            raise ZeroDivisionError("Rational division by 0")
+            raise ZeroDivisionError("rational division by zero")
         if self._x1:
             if self._x1[0] < 0:
                 return -(-self).__invert__()

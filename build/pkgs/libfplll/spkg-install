@@ -58,7 +58,7 @@ export CC
 export CXX
 
 echo "Now configuring libfplll..."
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --includedir="$SAGE_LOCAL/include/fplll"
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
 if [ $? -ne 0 ]; then
     echo "Error configuring libfplll"
     exit 1

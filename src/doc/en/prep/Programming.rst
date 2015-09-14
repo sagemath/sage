@@ -337,18 +337,14 @@ That's it.  This sort of turns the loop around.
 - The notation is easiest if you think of it mathematically; "The set of
   :math:`n^2`, for (all) :math:`n` in the range between 3 and 13."
 
-This is phenomenally useful.  Here is a nice plotting example.
-
-::
+This is phenomenally useful.  Here is a nice plotting example::
 
     sage: plot([x^n for n in [2..6]],(x,0,1))
     Graphics object consisting of 5 graphics primitives
 
 Now we apply it to the example we were doing in the first place.  Notice
 we now have a nice concise description of all determinants of these
-matrices, without the syntax of colon and indentation.
-
-::
+matrices, without the syntax of colon and indentation::
 
     sage: [det(A^i) for i in [0..4]]
     [1, -2, 4, -8, 16]
@@ -361,15 +357,15 @@ Tables
 Finally, getting away from strictly programming, here is a useful tip.
 
 Some of you may be familiar with a way to take such data and put it in
-tabular form from other programs. The ``html.table`` command does this
-for us.
+tabular form from other programs. The ``table`` command does this
+for us::
 
-.. skip
-
-::
-
-    sage: html.table( [ (i,det(A^i)) for i in [0..4] ] )
-    <html>...</html>
+    sage: table( [ (i,det(A^i)) for i in [0..4] ] )
+      0   1
+      1   -2
+      2   4
+      3   -8
+      4   16
 
 Notice that each element of *this* list is two items in parentheses (a
 so\-called *tuple*).
@@ -377,12 +373,17 @@ so\-called *tuple*).
 Even better, we can put a header line on it to make it really clear what
 we are doing, by adding lists. We've seen keywords like ``header=True``
 when doing some of our plotting and limits. What do you think will
-happen if you put dollar signs around the labels in the header?
+happen if you put dollar signs around the labels in the header? ::
 
-::
+    sage: table( [('i', 'det(A^i)')] + [ (i,det(A^i)) for i in [0..4] ], header_row=True)
+      i   det(A^i)
+    +---+----------+
+      0   1
+      1   -2
+      2   4
+      3   -8
+      4   16
 
-    sage: html.table( [('i', 'det(A^i)')] + [ (i,det(A^i)) for i in [0..4] ] , header=True)
-    <html>...</html>
 
 .. _Defs:
 

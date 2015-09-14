@@ -1497,6 +1497,7 @@ class ParametrizedSurface3D(SageObject):
         geodesic equations, used by :meth:`geodesics_numerical`.
 
         EXAMPLES::
+
            sage: p, q = var('p,q', domain='real')
            sage: sphere = ParametrizedSurface3D([cos(q)*cos(p),sin(q)*cos(p),sin(p)],[p,q],'sphere')
            sage: ode = sphere._create_geodesic_ode_system()
@@ -1608,6 +1609,7 @@ class ParametrizedSurface3D(SageObject):
          - ``t`` - curve parameter
 
         EXAMPLES::
+
            sage: p, q = var('p,q', domain='real')
            sage: sphere = ParametrizedSurface3D([cos(q)*cos(p),sin(q)*cos(p),sin(p)],[p,q],'sphere')
            sage: s = var('s')

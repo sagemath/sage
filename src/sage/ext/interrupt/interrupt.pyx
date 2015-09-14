@@ -1,3 +1,5 @@
+# Needed for PARI_SIGINT_block in implementation.c:
+# distutils: libraries = pari gmp
 r"""
 Interrupt and signal handling
 

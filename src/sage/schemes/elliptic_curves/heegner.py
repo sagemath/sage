@@ -3526,6 +3526,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             - 2-tuple of polynomials with floating point coefficients
 
         EXAMPLES::
+
             sage: E = EllipticCurve('37a')
             sage: y = E.heegner_point(-7,3); y
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37

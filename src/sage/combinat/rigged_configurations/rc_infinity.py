@@ -34,7 +34,7 @@ from sage.combinat.rigged_configurations.rigged_configurations import RiggedConf
 from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition
 
 # Note on implementation, this class is used for simply-laced types only
-class InfinityCrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
+class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
     r"""
     Rigged configuration model for `\mathcal{B}(\infty)`.
 

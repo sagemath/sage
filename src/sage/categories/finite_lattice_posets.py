@@ -164,6 +164,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 False
 
             .. seealso::
+
                 :meth:`~sage.categories.finite_posets.FinitePosets.ParentMethods.is_poset_morphism`
             """
             # Note: in a lattice, x <= y iff join(x,y) = y .

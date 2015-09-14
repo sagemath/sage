@@ -756,7 +756,7 @@ class HyperplaneArrangementElement(Element):
             x^2 - 2*x + 1
         
         TESTS::
-          
+
             sage: H.<s,t,u,v> = HyperplaneArrangements(QQ)
             sage: m = matrix([(0, -1, 0, 1, -1), (0, -1, 1, -1, 0), (0, -1, 1, 0, -1),
             ....:   (0, 1, 0, 0, 0), (0, 1, 0, 1, -1), (0, 1, 1, -1, 0), (0, 1, 1, 0, -1)])
@@ -948,7 +948,7 @@ class HyperplaneArrangementElement(Element):
             19
 
         TESTS::
-         
+
             sage: H.<x,y> = HyperplaneArrangements(QQ)
             sage: A = H([(1,1), 0], [(2,3), -1], [(4,5), 3])
             sage: B = A.change_ring(FiniteField(7))
@@ -1944,7 +1944,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
     - ``names`` -- tuple of strings; the variable names
 
     EXAMPLES::
-    
+
         sage: H.<x,y> = HyperplaneArrangements(QQ)
         sage: x
         Hyperplane x + 0*y + 0
@@ -2227,7 +2227,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         Return whether there is a coercion.
    
         TESTS::
-        
+
             sage: L.<x> = HyperplaneArrangements(QQ);  L
             Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
             sage: M.<y> = HyperplaneArrangements(RR);  M

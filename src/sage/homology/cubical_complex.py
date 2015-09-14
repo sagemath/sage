@@ -823,6 +823,21 @@ class CubicalComplex(GenericCellComplex):
         else:
             return -1
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: I1 = cubical_complexes.Cube(1)
+            sage: I2 = cubical_complexes.Cube(1)
+            sage: hash(I1)
+            2025268965           # 32-bit
+            6535457225869567717  # 64-bit
+            sage: hash(I1.product(I1))
+            -117854811           # 32-bit
+            -1640877824464540251 # 64-bit
+        """
+        return hash(frozenset(self._facets))
+
     def is_subcomplex(self, other):
         r"""
         Return True if ``self`` is a subcomplex of ``other``.

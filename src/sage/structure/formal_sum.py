@@ -351,6 +351,7 @@ class FormalSums(UniqueRepresentation, Module):
     def _repr_(self):
         """
         EXAMPLES::
+
             sage: FormalSums(GF(7))
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
             sage: FormalSums(GF(7))._repr_()

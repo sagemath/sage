@@ -1,0 +1,13 @@
+diff --git a/Makefile b/Makefile
+index 4ea5102..2b3385c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -5,7 +5,7 @@
+ # This simply calls qepcad's make, and the master-make for the
+ # extensions.
+ ##################################################################
+-SHELL = /bin/csh
++# SHELL = /bin/csh
+ MAKE       =  make  # You must use gmake, but it may not be
+                     # called gmake on your system, so change this
+ 

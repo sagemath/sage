@@ -16,13 +16,13 @@
 include "sage/ext/interrupt.pxi"
 include "sage/ext/stdsage.pxi"
 include "sage/ext/cdefs.pxi"
-include "sage/ext/random.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.convert cimport PyLong_to_ZZ
+from sage.misc.randstate cimport randstate, current_randstate
 
 ZZ_sage = IntegerRing()
 

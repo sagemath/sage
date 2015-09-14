@@ -769,7 +769,7 @@ def _SQS14():
     EXAMPLE::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import _SQS14
-        sage: sqs14 = designs.IncidenceStructure(_SQS14())
+        sage: sqs14 = IncidenceStructure(_SQS14())
         sage: sqs14.is_t_design(3,14,4,1)
         True
     """
@@ -802,7 +802,7 @@ def _SQS38():
     EXAMPLE::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import _SQS38
-        sage: sqs38 = designs.IncidenceStructure(_SQS38())
+        sage: sqs38 = IncidenceStructure(_SQS38())
         sage: sqs38.is_t_design(3,38,4,1)
         True
     """

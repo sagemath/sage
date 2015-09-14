@@ -73,8 +73,13 @@ cdef class Matrix(matrix1.Matrix):
         """
         return self.solve_right(B)
 
-    def subs(self, in_dict=None, **kwds):
+    def subs(self, *args, **kwds):
         """
+        Substitute values to the variables in that matrix.
+
+        All the arguments are transmitted unchanged to the method ``subs`` of
+        the coefficients.
+
         EXAMPLES::
 
             sage: var('a,b,d,e')
@@ -86,9 +91,37 @@ cdef class Matrix(matrix1.Matrix):
             sage: m.subs(a=b, b=d)
             [b d]
             [d e]
+            sage: m.subs({a: 3, b:2, d:1, e:-1})
+            [ 3  2]
+            [ 1 -1]
+
+        The parent of the newly created matrix might be different from the
+        initial one. It depends on what the method ``.subs`` does on
+        coefficients (see :trac:`19045`)::
+
+            sage: x = polygen(ZZ)
+            sage: m = matrix([[x]])
+            sage: m2 = m.subs(x=2)
+            sage: m2.parent()
+            Full MatrixSpace of 1 by 1 dense matrices over Integer Ring
+            sage: m1 = m.subs(x=RDF(1))
+            sage: m1.parent()
+            Full MatrixSpace of 1 by 1 dense matrices over Real Double Field
+
+        However, sparse matrices remain sparse::
+
+            sage: m = matrix({(3,2): -x, (59,38): x^2+2}, nrows=1000, ncols=1000)
+            sage: m1 = m.subs(x=1)
+            sage: m1.is_sparse()
+            True
         """
-        v = [a.subs(in_dict, **kwds) for a in self.list()]
-        return self.new_matrix(self.nrows(), self.ncols(), v)
+        from sage.matrix.constructor import matrix
+        if self.is_sparse():
+            return matrix({ij: self[ij].subs(*args, **kwds) for ij in self.nonzero_positions()},
+                    nrows=self._nrows, ncols=self._ncols, sparse=True)
+        else:
+            return matrix([a.subs(*args, **kwds) for a in self.list()],
+                        nrows=self._nrows, ncols=self._ncols, sparse=False)
 
     def solve_left(self, B, check=True):
         """
@@ -1006,7 +1039,7 @@ cdef class Matrix(matrix1.Matrix):
 
         These numbers are the coefficients of a modified Laguerre polynomial::
 
-            sage: x = polygen(ZZ)
+            sage: x = polygen(QQ)
             sage: factorial(8) * laguerre(8,-x)
             x^8 + 64*x^7 + 1568*x^6 + 18816*x^5 + 117600*x^4 + 376320*x^3 +
             564480*x^2 + 322560*x + 40320

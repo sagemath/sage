@@ -454,7 +454,7 @@ def default_variable_name(variable):
     - a string with the requested name for current style
     
     EXAMPLES::
-    
+
         sage: sage.numerical.interactive_simplex_method.default_variable_name("primal slack")
         'x'
         sage: sage.numerical.interactive_simplex_method.style('Vanderbei')
@@ -991,7 +991,7 @@ class InteractiveLPProblem(SageObject):
             True
             
         TESTS::
-        
+
             sage: DP.standard_form().objective_name()
             -z
             sage: sage.numerical.interactive_simplex_method.style("Vanderbei")

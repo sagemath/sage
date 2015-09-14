@@ -107,6 +107,8 @@ additional functionality (e.g. linear extensions).
     - :meth:`components() <sage.matroids.matroid.Matroid.components>`
     - :meth:`is_connected() <sage.matroids.matroid.Matroid.is_connected>`
     - :meth:`is_3connected() <sage.matroids.matroid.Matroid.is_3connected>`
+    - :meth:`is_4connected() <sage.matroids.matroid.Matroid.is_4connected>`
+    - :meth:`is_kconnected() <sage.matroids.matroid.Matroid.is_kconnected>`
     - :meth:`connectivity() <sage.matroids.matroid.Matroid.connectivity>`
 
 - Representation
@@ -283,6 +285,7 @@ REFERENCES
 ==========
 
 ..  [BC79] R. E. Bixby, W. H. Cunningham, Matroids, Graphs, and 3-Connectivity. In Graph theory and related topics (Proc. Conf., Univ. Waterloo, Waterloo, ON, 1977), 91-103
+..  [Cunningham86] W. H. Cunningham, Improved Bounds for Matroid Partition and Intersection Algorithms. SIAM Journal on Computing 1986 15:4, 948-957
 ..  [CMO11] C. Chun, D. Mayhew, J. Oxley, A chain theorem for internally 4-connected binary matroids. J. Combin. Theory Ser. B 101 (2011), 141-189.
 ..  [CMO12] C. Chun, D. Mayhew, J. Oxley,  Towards a splitter theorem for internally 4-connected binary matroids. J. Combin. Theory Ser. B 102 (2012), 688-700.
 ..  [GG12] Jim Geelen and Bert Gerards, Characterizing graphic matroids by a system of linear equations, submitted, 2012. Preprint: http://www.gerardsbase.nl/papers/geelen_gerards=testing-graphicness%5B2013%5D.pdf
@@ -296,6 +299,7 @@ REFERENCES
 ..  [PvZ] R. A. Pendavingh, S. H. M. van Zwam, Lifts of matroid 
     representations over partial fields, Journal of Combinatorial Theory, 
     Series B, Volume 100, Issue 1, January 2010, Pages 36-67
+..  [Rajan] A. Rajan, Algorithmic applications of connectivity and related topics in matroid theory. Ph.D. Thesis, Northwestern university, 1987.
 
 AUTHORS:
 
@@ -318,12 +322,14 @@ Methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.sage_object cimport SageObject
-from itertools import combinations, permutations
+from itertools import combinations, permutations, product
 from set_system cimport SetSystem
+from sage.graphs.spanning_tree import kruskal
 from sage.graphs.graph import Graph
+from sage.matrix.constructor import matrix
 from sage.misc.superseded import deprecation
 
-from utilities import newlabel, sanitize_contractions_deletions
+from utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
 from sage.rings.all import ZZ
 from sage.numerical.mip import MixedIntegerLinearProgram
 
@@ -4797,7 +4803,9 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`is_connected`, `is_3connected`
+            :meth:`M.is_connected() <sage.matroids.matroid.Matroid.is_connected>`
+            :meth:`M.is_3connected() <sage.matroids.matroid.Matroid.is_3connected>`
+            :meth:`M.is_4connected() <sage.matroids.matroid.Matroid.is_4connected>`
 
         ALGORITHM:
 
@@ -4923,7 +4931,8 @@ cdef class Matroid(SageObject):
           - ``None`` -- The most appropriate algorithm is chosen automatically.
           - ``"bridges"`` -- Bixby and Cunningham's algorithm, based on bridges [BC79]_.
             Note that this cannot return a separator.
-          - ``"intersection"`` An algorithm based on matroid intersection.
+          - ``"intersection"`` -- An algorithm based on matroid intersection.
+          - ``"shifting"`` -- An algorithm based on the shifting algorithm [Rajan]_.
 
         OUTPUT:
 
@@ -4931,13 +4940,16 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`is_connected`
+            :meth:`M.is_connected() <sage.matroids.matroid.Matroid.is_connected>`
+            :meth:`M.is_4connected() <sage.matroids.matroid.Matroid.is_4connected>`
+            :meth:`M.is_kconnected() <sage.matroids.matroid.Matroid.is_kconnected>`
 
         ALGORITHM:
 
         - Bridges based: The 3-connectivity algorithm from [BC79]_ which runs in `O((r(E))^2|E|)` time.
         - Matroid intersection based: Evaluates the connectivity between `O(|E|^2)` pairs of disjoint
           sets `S`, `T` with `|S| = |T| = 2`.
+        - Shifting algorithm: The shifting algorithm from [Rajan]_ which runs in `O((r(E))^2|E|)` time.
 
         EXAMPLES::
 
@@ -4978,6 +4990,60 @@ cdef class Matroid(SageObject):
             return self._is_3connected_BC(separation)
         if algorithm == "intersection":
             return self._is_3connected_CE(separation)
+        if algorithm == "shifting":
+            return self._is_3connected_shifting(certificate)
+        raise ValueError("Not a valid algorithm.")
+
+    cpdef is_4connected(self, certificate=False, algorithm=None):
+        r"""
+        Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
+        optionally return a separator as a witness.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+          then return ``True, None`` if the matroid is is 4-connected,
+          and ``False,`` `X` otherwise, where `X` is a `<4`-separation
+        - ``algorithm`` -- (default: ``None``); specify which algorithm 
+          to compute 4-connectivity:
+
+          - ``None`` -- The most appropriate algorithm is chosen automatically.
+          - ``"intersection"`` -- an algorithm based on matroid intersection, equivalent
+            to calling ``is_kconnected(4,certificate)``.
+          - ``"shifting"`` -- an algorithm based on the shifting algorithm [Rajan]_.
+
+        OUTPUT:
+
+        boolean, or a tuple ``(boolean, frozenset)``
+
+        .. SEEALSO::
+
+            :meth:`M.is_connected() <sage.matroids.matroid.Matroid.is_connected>`
+            :meth:`M.is_3connected() <sage.matroids.matroid.Matroid.is_3connected>`
+            :meth:`M.is_kconnected() <sage.matroids.matroid.Matroid.is_kconnected>`
+
+        EXAMPLES::
+
+            sage: M = matroids.Uniform(2, 6)
+            sage: B, X = M.is_4connected(True)
+            sage: (B, M.connectivity(X)<=3)
+            (False, True)
+            sage: matroids.Uniform(4, 8).is_4connected()
+            True
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
+            ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
+            ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
+            ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
+            ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
+            sage: M.is_4connected() == M.is_4connected(algorithm="shifting")
+            True
+            sage: M.is_4connected() == M.is_4connected(algorithm="intersection")
+            True
+        """
+        if algorithm == None or algorithm == "intersection":
+            return self.is_kconnected(4, certificate)
+        if algorithm == "shifting":
+            return self._is_4connected_shifting(certificate)
         raise ValueError("Not a valid algorithm.")
 
     cpdef _is_3connected_CE(self, certificate=False):
@@ -5107,6 +5173,341 @@ cdef class Matroid(SageObject):
             return True, None
         else:
             return True
+
+    cpdef _is_3connected_shifting(self, certificate=False):
+        r"""
+        Return ``True`` if the matroid is 3-connected, ``False`` otherwise. It can
+        optionally return a separator as a witness.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+          then return ``True, None`` if the matroid is is 3-connected,
+          and ``False,`` `X` otherwise, where `X` is a `<3`-separation
+
+        OUTPUT:
+
+        boolean, or a tuple ``(boolean, frozenset)``
+
+        ALGORITHM:
+
+        The shifting algorithm
+
+        EXAMPLES::
+
+            sage: matroids.Uniform(2, 3)._is_3connected_shifting()
+            True
+            sage: M = Matroid(ring=QQ, matrix=[[1, 0, 0, 1, 1, 0],
+            ....:                              [0, 1, 0, 1, 2, 0],
+            ....:                              [0, 0, 1, 0, 0, 1]])
+            sage: M._is_3connected_shifting()
+            False
+            sage: N = Matroid(circuit_closures={2: ['abc', 'cdef'],
+            ....:                               3: ['abcdef']},
+            ....:             groundset='abcdef')
+            sage: N._is_3connected_shifting()
+            False
+            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()
+            True
+            sage: M = matroids.named_matroids.R6()
+            sage: M._is_3connected_shifting()
+            False
+            sage: B, X = M._is_3connected_shifting(True)
+            sage: M.connectivity(X)
+            1
+        """
+        if not self.is_connected():
+            if certificate:
+                return False, self.components()[0]
+            else:
+                return False
+        if self.rank()>self.size()-self.rank():
+            return self.dual()._is_3connected_shifting(certificate)
+        X = set(self.basis())
+        Y = set(self.groundset()-X)
+        
+        # Dictionary allow conversion between two representations
+        dX = dict(zip(range(len(X)),X))
+        dY = dict(zip(range(len(Y)),Y))
+        rdX = dict(zip(X,range(len(X))))
+        rdY = dict(zip(Y,range(len(Y))))
+        
+        # the partial matrix
+        M = matrix(len(X),len(Y))
+        for y in Y:
+            for x in (X & self.fundamental_circuit(X,y)):
+                M[rdX[x],rdY[y]]=1
+
+        for (x,y) in spanning_forest(M):
+            P_rows=set([dX[x]])
+            P_cols=set([dY[y]])
+            Q_rows=set([])
+            Q_cols=set([])
+            sol,cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 2)
+            if sol:
+                if certificate:
+                    return False, cert
+                return False
+        if certificate:
+            return True, None
+        return True
+
+    cpdef _is_4connected_shifting(self, certificate=False):
+        r"""
+        Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
+        optionally return a separator as a witness.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+          then return ``True, None`` if the matroid is is 4-connected,
+          and ``False,`` `X` otherwise, where `X` is a `<4`-separation
+
+        OUTPUT:
+
+        boolean, or a tuple ``(boolean, frozenset)``
+
+        ALGORITHM:
+
+        The shifting algorithm
+
+        EXAMPLES::
+
+            sage: M = matroids.Uniform(2, 6)
+            sage: B, X = M._is_4connected_shifting(True)
+            sage: (B, M.connectivity(X)<=3)
+            (False, True)
+            sage: matroids.Uniform(4, 8)._is_4connected_shifting()
+            True
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
+            ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
+            ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
+            ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
+            ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
+            sage: M._is_4connected_shifting()
+            True
+        """
+        if self.rank()>self.size()-self.rank():
+            return self.dual()._is_4connected_shifting(certificate)
+        if not self._is_3connected_shifting():
+            return self._is_3connected_shifting(certificate)
+
+        X = set(self.basis())
+        Y = set(self.groundset()-X)
+        
+        dX = dict(zip(range(len(X)),X))
+        dY = dict(zip(range(len(Y)),Y))
+        rdX = dict(zip(X,range(len(X))))
+        rdY = dict(zip(Y,range(len(Y))))
+
+        # the partial matrix
+        M = matrix(len(X),len(Y))
+        for y in Y:
+            for x in (X & self.fundamental_circuit(X,y)):
+                M[rdX[x],rdY[y]]=1
+        n = len(X)
+        m = len(Y)
+
+        # compute a connected set of stars
+
+        T = spanning_stars(M)
+        for (x1,y1) in T:
+            # The whiting out
+            B = matrix(M)
+            for (x,y) in product(range(n),range(m)):
+                if (x1!=x and y1!=y):
+                    if(M[x1,y]==1 and
+                       M[x,y1]==1 and
+                       M[x,y]==1):
+                        B[x,y]=0
+            
+            # remove row x1 and y1
+            Xp = range(n)
+            Xp.remove(x1)
+            Yp = range(m)
+            Yp.remove(y1)
+            B = B.matrix_from_rows_and_columns(Xp,Yp)
+
+            # produce a spanning forest of B
+            for (x,y) in spanning_forest(B):
+                if x >= x1:
+                    x = x+1
+                if y >= y1:
+                    y = y+1
+                # rank 2 matrix and rank 0 matrix
+                P_rows = set([dX[x],dX[x1]])
+                P_cols = set([dY[y],dY[y1]])
+                Q_rows = set([])
+                Q_cols = set([])
+                sol,cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 3)
+                if sol:
+                    if certificate:
+                        return False, cert
+                    return False
+                # rank 1 matrix and rank 1 matrix
+                P_rows = set([dX[x1]])
+                P_cols = set([dY[y1]])
+                Q_rows = set([dX[x]])
+                Q_cols = set([dY[y]])
+                sol,cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 3)
+                if sol:
+                    if certificate:
+                        return False, cert
+                    return False
+        if certificate:
+            return True, None
+        return True
+
+    cpdef _shifting_all(self, X, P_rows, P_cols, Q_rows, Q_cols, m):
+        r"""
+        Given a basis ``X``. If the submatrix of the partial matrix using rows 
+        `P_rows` columns `P_cols` and submatrix using rows `Q_rows` columns
+        `Q_cols` can be extended to a ``m``-separator, then it returns
+        `True, E`, where `E` is a ``m``-separator. Otherwise it returns
+        `False, None`
+
+        `P_rows` and `Q_rows` must be disjoint subsets of `X`.
+        `P_cols` and `Q_cols` must be disjoint subsets of `Y`.
+
+        Internal version does not verify the above properties hold. 
+
+        INPUT:
+
+        - ``X`` -- A basis
+        - ``P_rows`` -- a set of row indices of the first submatrix
+        - ``P_cols`` -- a set of column indices of the first submatrix
+        - ``Q_rows`` -- a set of row indices of the second submatrix
+        - ``Q_cols`` -- a set of column indices of the second submatrix
+        - ``m`` -- separation size
+
+        OUTPUT:
+
+        - `False, None`  -- if there is no ``m``-separator.
+        - `True, E` -- if there exist a ``m``-separator ``E``.
+
+        EXAMPLES::
+
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
+            ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
+            ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
+            ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
+            ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
+            sage: M._shifting_all(M.basis(),set([0,1]),set([0,1]),set([]),set([]),3)
+            (False, None)
+            sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
+            ....:                                          [1,1,1,1,0],
+            ....:                                          [0,1,1,1,0],
+            ....:                                          [0,0,0,1,1]])
+            sage: M._shifting_all(M.basis(), set([0,1]), set([5,8]), set([]), set([]), 3)[0]
+            True
+
+        """
+        Y = self.groundset()-X
+        for z in (Y - P_cols) - Q_cols:
+            sol,cert = self._shifting(X,P_rows,P_cols|set([z]),Q_rows,Q_cols,m)
+            if sol:
+                return True, cert
+            sol,cert = self._shifting(X,Q_rows,Q_cols,P_rows,P_cols|set([z]),m)
+            if sol:
+                return True, cert
+            sol,cert = self._shifting(X,P_rows,P_cols,Q_rows,Q_cols|set([z]),m)
+            if sol:
+                return True, cert
+            sol,cert = self._shifting(X,Q_rows,Q_cols|set([z]),P_rows,P_cols,m)
+            if sol:
+                return True, cert
+        return False, None
+
+    cpdef _shifting(self, X, X_1, Y_2, X_2, Y_1, m):
+        r"""
+        Given a basis ``X``. If the submatrix of the partial matrix using rows 
+        `X_1` columns `Y_2` and submatrix using rows `X_2` columns
+        `Y_1` can be extended to a ``m``-separator, then it returns
+        `True, E`, where `E` is a ``m``-separator. Otherwise it returns
+        `False, None`
+
+        `X_1` and `X_2` must be disjoint subsets of `X`.
+        `Y_1` and `Y_2` must be disjoint subsets of `Y`.
+
+        Internal version does not verify the above properties hold. 
+
+        INPUT:
+
+        - ``X`` -- A basis
+        - ``X_1`` -- set of row indices of the first submatrix
+        - ``Y_2`` -- set of column indices of the first submatrix
+        - ``X_2`` -- set of row indices of the second submatrix
+        - ``Y_1`` -- set of column indices of the second submatrix
+        - ``m`` -- separation size
+
+        OUTPUT:
+
+        - `False, None`  -- if there is no ``m``-separator.
+        - `True, E` -- if there exist a ``m``-separator ``E``.
+
+        EXAMPLES::
+
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
+            ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
+            ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
+            ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
+            ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
+            sage: M._shifting(M.basis(),set([0,1]),set([0,1]),set([]),set([]),3)
+            (False, None)
+            sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
+            ....:                                          [1,1,1,1,0],
+            ....:                                          [0,1,1,1,0],
+            ....:                                          [0,0,0,1,1]])
+            sage: M._shifting(M.basis(), set([0,1]), set([5,8]), set([]), set([4]), 3)[0]
+            True
+        """
+        
+        X_1 = set(X_1)
+        X_2 = set(X_2)
+        Y_1 = set(Y_1)
+        Y_2 = set(Y_2)
+
+        lX_2 = len(X_2)
+        lY_2 = len(Y_2)
+
+        Y = self.groundset()-X
+        # Returns true if there is a m-separator
+        if (self.rank(Y_2|(X-X_1)) - len(X-X_1) 
+            + self.rank(Y_1|(X-X_2)) - len(X-X_2) != m-1):
+            return False, None
+        if len(X_1|Y_1) < m:
+            return False, None
+        remainX = set(X-(X_1|X_2))
+        remainY = set(Y-(Y_1|Y_2))
+        while True:
+            #rowshifts
+            rowshift = False
+            for x in set(remainX):
+                if(self.rank(Y_1|(X-(X_2|set([x])))) - len(X-(X_2|set([x])))
+                   > self.rank(Y_1|(X-X_2)) - len(X-X_2)):
+                    X_1.add(x)
+                    remainX.remove(x)
+                    rowshift = True
+            #colshifts
+            colshift = False
+            for y in set(remainY):
+                if(self.rank(Y_2|set([y])|(X-X_1)) - len(X-X_1)
+                   > self.rank(Y_2|(X-X_1)) - len(X-X_1)):
+                    Y_1.add(y)
+                    remainY.remove(y)
+                    colshift = True
+            if (colshift==False and rowshift==False):
+                break
+        X_2 = X-X_1
+        Y_2 = Y-Y_1
+        S_2 = X_2|Y_2
+        
+
+        if len(S_2) < m:
+            return False, None
+        if (lX_2==len(X_2) and lY_2==len(Y_2)):
+            return False, None
+        return True, S_2
 
     cpdef _is_3connected_BC(self, certificate=False):
         r"""
@@ -6100,6 +6501,65 @@ cdef class Matroid(SageObject):
                 u = predecessor[u]
                 path.add(u)
             return True, frozenset(path)
+
+    cpdef partition(self):
+        r"""
+        Returns a minimum number of disjoint independent sets that covers the 
+        groundset.
+
+        OUTPUT:
+
+        A list of disjoint independent sets that covers the goundset.
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Block_9_4()
+            sage: P = M.partition()
+            sage: all(map(M.is_independent,P))
+            True
+            sage: set.union(*P)==M.groundset()
+            True
+            sage: sum(map(len,P))==len(M.groundset())
+            True
+
+        ALGORITHM:
+
+        Reduce partition to a matroid intersection between a matroid sum 
+        and a partition matroid. It's known the direct method doesn't gain
+        much advantage over matroid intersection. [Cunningham86]
+        """
+        from sage.matroids.union_matroid import MatroidSum, PartitionMatroid
+        if self.loops():
+            raise ValueError("Cannot partition matroids with loops.")
+
+        # doubling search for minimum independent sets that partitions the groundset
+        n = self.size()
+        r = self.rank()
+        hi = -(-n//r)
+        lo = hi
+        X = set()
+        # doubling step
+        while True:
+            p = PartitionMatroid([[(i,x) for i in range(hi)] for x in self.groundset()])
+            X = MatroidSum([self]*hi).intersection(p)
+            if len(X)==self.size():
+                break
+            lo = hi
+            hi = min(hi*2,n)
+        # binary search step
+        while lo < hi:
+            mid = (lo+hi)//2
+            p = PartitionMatroid([[(i,x) for i in range(mid)] for x in self.groundset()])
+            X = MatroidSum([self]*mid).intersection(p)
+            if len(X)!=self.size() : lo = mid+1
+            else: hi = mid
+
+        partition = {}
+        for (i,x) in X:
+            if not i in partition:
+                partition[i] = set()
+            partition[i].add(x)
+        return partition.values()
 
     # invariants
 

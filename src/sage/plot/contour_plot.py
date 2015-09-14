@@ -910,14 +910,13 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol, border
         Graphics object consisting of 2 graphics primitives
 
     To check that :trac:`18286` is fixed::
+
         sage: x, y = var('x, y')
         sage: region_plot([x == 0], (x, -1, 1), (y, -1, 1))
         Graphics object consisting of 1 graphics primitive
         sage: region_plot([x^2+y^2==1, x<y], (x, -1, 1), (y, -1, 1))
         Graphics object consisting of 1 graphics primitive
-
     """
-
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     from sage.symbolic.expression import is_Expression

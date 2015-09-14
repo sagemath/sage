@@ -647,6 +647,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     - invariant under any permutation of the columns
 
       .. math::
+
           Y(j_1,j_2,j_3,m_1,m_2,m_3)
           =Y(j_3,j_1,j_2,m_3,m_1,m_2)
           =Y(j_2,j_3,j_1,m_2,m_3,m_1)
@@ -657,6 +658,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     - invariant under space inflection, i.e.
 
       .. math::
+
           Y(j_1,j_2,j_3,m_1,m_2,m_3)
           =Y(j_1,j_2,j_3,-m_1,-m_2,-m_3)
 

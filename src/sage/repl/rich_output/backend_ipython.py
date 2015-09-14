@@ -464,6 +464,7 @@ class BackendIPythonNotebook(BackendIPython):
         """
         return set([
             OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+            OutputHtml,
             OutputImagePng, OutputImageJpg,
             OutputImageSvg, OutputImagePdf,
             OutputSceneJmol,
@@ -511,6 +512,10 @@ class BackendIPythonNotebook(BackendIPython):
         elif isinstance(rich_output, OutputLatex):
             return ({u'text/html':  rich_output.mathjax(),
                      u'text/plain': plain_text.text.get_unicode(),
+            }, {})
+        elif isinstance(rich_output, OutputHtml):
+            return ({u'text/html':  rich_output.html.get(),
+                     u'text/plain': plain_text.text.get(),
             }, {})
         elif isinstance(rich_output, OutputImagePng):
             return ({u'image/png':  rich_output.png.get(),

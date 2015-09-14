@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# sage-logger COMMAND LOGFILE
+#
+# Evaluate shell command COMMAND while logging stdout and stderr to
+# LOGFILE. If either the command or the logging failed, return a
+# non-zero exit status.
+#
+# AUTHOR:
+#
+# - Jeroen Demeyer (2015-07-26): initial version based on old pipestatus
+#   script (#18953)
+#
+#*****************************************************************************
+#       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+cmd="$1"
+logfile="$2"
+logdir=`dirname "$logfile"`
+
+mkdir -p "$logdir"
+
+# Redirect stdout and stderr to a subprocess running tee.
+# We trap SIGINT such that SIGINT interrupts the main process being
+# run, not the logging.
+( exec 2>&1; eval "$cmd" ) | ( trap '' SIGINT; tee -a "$logfile" )
+
+pipestatus=(${PIPESTATUS[*]})
+
+if [ ${pipestatus[1]} -ne 0 ]; then
+    exit ${pipestatus[1]}
+else
+    exit ${pipestatus[0]}
+fi

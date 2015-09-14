@@ -197,7 +197,7 @@ def integral_elements_in_box(K, C):
     S = []
 
     try:
-        pts = P.points_pc()
+        pts = P.points()
     except ValueError:
         return []
 

@@ -607,7 +607,7 @@ class ToricPlotter(SageObject):
             
         Let's also check that the truncating polyhedron is functioning
         correctly::
-        
+
             sage: tp = ToricPlotter({"mode": "box"}, 2, quadrant.rays())
             sage: print tp.plot_walls([quadrant])
             Graphics object consisting of 2 graphics primitives

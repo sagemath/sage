@@ -16,15 +16,8 @@ from sage.env import SAGE_DOC
 sys.path.append(SAGE_DOC)
 from common.conf import *
 
-# settings for the intersphinx extension:
-
 ref_src = os.path.join(SAGE_DOC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'output', 'html', 'en', 'reference')
-intersphinx_mapping[ref_out] = None
-
-for doc in os.listdir(ref_src):
-    if os.path.exists(os.path.join(ref_src, doc, 'index.rst')):
-        intersphinx_mapping[os.path.join(ref_out, doc)] = None
 
 # General information about the project.
 project = u"Sage Reference Manual"

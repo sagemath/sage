@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+cd src
+
+python setup.py build
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building python_igraph."
+    exit 1
+fi
+
+python setup.py install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing python_igraph."
+    exit 1
+fi

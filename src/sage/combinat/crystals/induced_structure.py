@@ -27,7 +27,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 
-class InducedCrystal(Parent, UniqueRepresentation):
+class InducedCrystal(UniqueRepresentation, Parent):
     r"""
     A crystal induced from an injection.
 
@@ -396,7 +396,7 @@ class InducedCrystal(Parent, UniqueRepresentation):
             """
             return self.parent()._phi(self.value).weight()
 
-class InducedFromCrystal(Parent, UniqueRepresentation):
+class InducedFromCrystal(UniqueRepresentation, Parent):
     r"""
     A crystal induced from an injection.
 

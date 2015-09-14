@@ -216,7 +216,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             0.33149330543214117 - 0.3174498589684438*I
             
         TESTS::
-        
+
             sage: parent(airy_ai_simple(3).n(algorithm='scipy'))                                          
             Real Field with 53 bits of precision
             sage: airy_ai_simple(3).n(algorithm='scipy', prec=200)
@@ -309,7 +309,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             -0.43249265984180707 + 0.09804785622924324*I
             
         TESTS::
-        
+
             sage: parent(airy_ai_prime(3).n(algorithm='scipy'))                                          
             Real Field with 53 bits of precision
             sage: airy_ai_prime(3).n(algorithm='scipy', prec=200)
@@ -356,7 +356,8 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
     solutions to the Airy differential equation `f''(x) - x f(x) = 0`. It is
     defined by the initial conditions:
 
-    .. math ::
+    .. math::
+
         \operatorname{Ai}(0)=\frac{1}{2^{2/3} \Gamma\left(\frac{2}{3}\right)},
 
         \operatorname{Ai}'(0)=-\frac{1}{2^{1/3}\Gamma\left(\frac{1}{3}\right)}.
@@ -364,6 +365,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
     Another way to define the Airy Ai function is:
 
     .. math::
+
         \operatorname{Ai}(x)=\frac{1}{\pi}\int_0^\infty
         \cos\left(\frac{1}{3}t^3+xt\right) dt.
 
@@ -375,7 +377,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
       `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
       this gives the `n`-fold iterated integral.
 
-    .. math ::
+    .. math::
 
         f_0(z) = \operatorname{Ai}(z)
 
@@ -491,7 +493,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
           `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
           this gives the `n`-fold iterated integral.
 
-        .. math ::
+        .. math::
 
             f_0(z) = \operatorname{Bi}(z)
 
@@ -637,7 +639,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             0.648858208330395 + 0.34495863476804844*I
             
         TESTS::
-        
+
             sage: parent(airy_bi_simple(3).n(algorithm='scipy'))                                          
             Real Field with 53 bits of precision
             sage: airy_bi_simple(3).n(algorithm='scipy', prec=200)
@@ -730,7 +732,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             0.135026646710819 - 0.1288373867812549*I
             
         TESTS::
-        
+
             sage: parent(airy_bi_prime(3).n(algorithm='scipy'))                                          
             Real Field with 53 bits of precision
             sage: airy_bi_prime(3).n(algorithm='scipy', prec=200)
@@ -777,7 +779,8 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
     solutions to the Airy differential equation `f''(x) - x f(x) = 0`. It is
     defined by the initial conditions:
 
-    .. math ::
+    .. math::
+
         \operatorname{Bi}(0)=\frac{1}{3^{1/6} \Gamma\left(\frac{2}{3}\right)},
 
         \operatorname{Bi}'(0)=\frac{3^{1/6}}{ \Gamma\left(\frac{1}{3}\right)}.
@@ -785,6 +788,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
     Another way to define the Airy Bi function is:
 
     .. math::
+
         \operatorname{Bi}(x)=\frac{1}{\pi}\int_0^\infty
         \left[ \exp\left( xt -\frac{t^3}{3} \right)
         +\sin\left(xt + \frac{1}{3}t^3\right) \right ] dt.

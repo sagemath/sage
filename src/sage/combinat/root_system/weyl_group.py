@@ -412,6 +412,7 @@ class WeylGroup_gens(ClearCacheOnPickle, UniqueRepresentation,
         Returns the unit element of the Weyl group
 
         EXAMPLES::
+
             sage: W = WeylGroup(['A',3])
             sage: e = W.one(); e
             [1 0 0 0]
@@ -817,6 +818,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
         Returns the action of self on the vector v.
 
         EXAMPLES::
+
             sage: W = WeylGroup(['A',2])
             sage: s = W.simple_reflections()
             sage: v = W.domain()([1,0,0])

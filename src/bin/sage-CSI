@@ -183,7 +183,7 @@ if __name__ == '__main__':
             break
 
     if fail:
-        print('Install the gdb spkg (sage -f gdb) for enhanced tracebacks.')
+        print('Install the gdb spkg (sage -i gdb) for enhanced tracebacks.')
     else:
         filename = save_backtrace(trace)
         print('Saved trace to {0}'.format(filename))

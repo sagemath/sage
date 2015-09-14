@@ -1350,9 +1350,9 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         generalized level (if `G` is odd). Then:
 
         - if `N` is odd, `G` is congruence if and only if the relation
-        
+
           .. math::
-        
+
             (L R^{-1} L)^2 = (R^2 L^{1/2})^3
 
           holds, where `1/2` is understood as the multiplicative inverse of 2

@@ -57,6 +57,25 @@
 # Avoid surprises with character ranges [a-z] in regular expressions
 export LC_ALL=C
 
+usage()
+{
+cat <<EOF
+Usage: sage -p <options> <package name>
+
+If <package name> is a URL, download and install it. If it is a file
+name, install it. Otherwise, search Sage's list of packages (see
+'sage --package list') for a matching package, and if a match is
+found, install it.
+
+Options:
+   -f: force installation even if the package is already installed
+   -s: do not delete the temporary build directory
+   -c: after installing, run the test suite for the package
+   -d: only download the package
+
+EOF
+}
+
 # error_msg(header, command)
 # This is for printing an error message if something went wrong.
 # The first argument is the header to print, the second argument should
@@ -152,42 +171,34 @@ fi
 # Handle special command-line options
 ##################################################################
 if [ $# -eq 0 ]; then
-    echo "Currently installed packages:"
-    exec ls -1 "$SAGE_SPKG_INST"
+   usage
+   exit 0
 fi
 
-# Options have to come in a specific order,
-# this is ensured by spkg/bin/sage.
+# Parse options
 INFO=0
-if [ "$1" = '--info' ]; then
-    INFO=1
-    shift
-fi
-
 FORCE=0
-if [ "$1" = '-f' ]; then
-    FORCE=1
+while true; do
+    case "$1" in
+        --info)
+            INFO=1;;
+        -f)
+            FORCE=1;;
+        -d)
+            SAGE_INSTALL_FETCH_ONLY=1;;
+        -s)
+            export SAGE_KEEP_BUILT_SPKGS=yes;;
+        -c|--check)
+            SAGE_CHECK_PACKAGES=x  # nonempty, so not set to '!python2' later
+            export SAGE_CHECK=yes;;
+        -*)
+            echo >&2 "Error: unknown option '$1'"
+            exit 2;;
+        *) break;;
+    esac
     shift
-fi
+done
 
-DOWNLOAD_ONLY=0
-if [ "$1" = '-d' ]; then
-    DOWNLOAD_ONLY=1
-    shift
-elif [ -n "$SAGE_INSTALL_FETCH_ONLY" ]; then
-    DOWNLOAD_ONLY=1
-fi
-
-if [ "$1" = '-s' ]; then
-    export SAGE_KEEP_BUILT_SPKGS=yes
-    shift
-fi
-
-if [ "$1" = '-c' ]; then
-    export SAGE_CHECK=yes
-    SAGE_CHECK_PACKAGES=x  # nonempty, so not set to '!python' later
-    shift
-fi
 
 ##################################################################
 # Figure out the package filename, download it if needed.
@@ -202,15 +213,14 @@ fi
 #     path.
 # 2a. <package>-x.y.z, i.e. the name of the package plus the package's
 #     version numbers.
-# 2b. <package>-x.y.z.spkg, i.e. the name of the package in addition to
-#     the version numbers and the ".spkg" extension.
+# 2b. DELETED
 # 3.  <package>, i.e. the name of the package without a version number.
 # 4.  <URL>/<package>-x.y.z.spkg, i.e. the full URL where the package
 #     is hosted.  Any local packages matching <package> are ignored.
 #     The package is only downloaded if it has not yet been installed
 #     (unless -f is given, then it's always downloaded and installed).
 #
-# In cases 2a, 2b and 3 we first look locally inside spkg/* for a
+# In cases 2a and 3 we first look locally inside spkg/* for a
 # matching package.  Otherwise, we try to download it.  In all cases,
 # we reduce to case 1a.
 #
@@ -325,76 +335,10 @@ if [ ! -f "$PKG_SRC" ]; then
         if [ -n "$PKG_HAS_PATH" ]; then
             PKG_URL="$PKG_SRC"
         else
-            # Handle cases 2a and 3, where the package name is something
-            # like "foo" or "foo-1.2.3".
-            MIRROR=$(sage-download-file --print-fastest-mirror)/spkg
-            if [ $? -ne 0 ]; then
-                exit 1
-            fi
-            for repo in optional experimental standard huge archive; do
-                # Download the list of packages.
-                echo ">>> Checking online list of $repo packages."
-                # File inside DOT_SAGE should be writable
-                repolist="${DOT_SAGE}/${repo}.list"
-                sage-download-file --quiet "$MIRROR/$repo/list" $repolist
-                if [ $? -ne 0 ]; then
-                    rm -f $repolist
-                    exit 1
-                fi
-
-                # The contrived sed commands print out either ${PKG_NAME} if
-                # it appears as a complete line or some string starting with
-                # ${PKG_NAME}- whichever occurs first.
-                # Tested with GNU sed, BSD sed (on OS X) and Solaris sed.
-                pkg=`sed -n -f <( echo "/^${PKG_NAME}\$/{p;q;}" && echo "/^${PKG_NAME}-/{p;q;}" ) $repolist`
-                rm -f $repolist
-                if [ -n "$pkg" ]; then
-                    echo ">>> Found $pkg"
-                    PKG_NAME=$pkg
-
-                    # If INFO is set, try downloading only the .txt file
-                    if [ $INFO -eq 1 ]; then
-                        PKG_URL="$MIRROR/$repo/$pkg.txt"
-                        sage-download-file --quiet "$PKG_URL" && exit 0
-                        # If the download failed (for whatever reason),
-                        # fall through and use the .spkg file.
-                    else
-                        # Warn and ask the user if downloading an
-                        # experimental or archive package.
-                        if [ $repo = experimental ]; then
-                            echo # The following message appears twice in this file
-                            echo "=========================== WARNING ==========================="
-                            echo "You are about to download and install an experimental package."
-                            echo "This probably won't work at all for you! There is no guarantee"
-                            echo "that it will build correctly, or behave as expected."
-                            echo "Use at your own risk!"
-                            echo "==============================================================="
-                            ask_download=yes
-                        elif [ $repo = archive ]; then
-                            echo "=========================== WARNING ==========================="
-                            echo "You are about to download and install an archived package."
-                            echo "This means the package is likely to be outdated and it probably"
-                            echo "won't work at all for you! Use at your own risk!"
-                            echo "==============================================================="
-                            ask_download=yes
-                        else
-                            ask_download=no
-                        fi
-
-                        if [ $ask_download = yes ]; then
-                            read -p "Are you sure you want to continue [Y/n]? " answer
-                            case "$answer" in
-                                n*|N*) exit 0;;
-                            esac
-                        fi
-                    fi
-                    PKG_URL="$MIRROR/$repo/$pkg.spkg"
-                    break
-                fi
-            done
-
             if [ -z "$PKG_URL" ]; then
-                echo >&2 "Error: could not find a package matching $PKG_NAME on $MIRROR"
+                echo >&2 "Error: could not find a package matching $PKG_NAME"
+                echo >&2 "       Try 'sage --package list' to see the available packages"
+		echo >&2 "       $(sage-package apropos $PKG_NAME)"
                 exit 1
             fi
 
@@ -453,7 +397,7 @@ if [ -n "$SAGE_SPKG_COPY_UPSTREAM" ]; then
         exit 1
     fi
 fi
-if [ $DOWNLOAD_ONLY -ne 0 ]; then
+if [ -n "$SAGE_INSTALL_FETCH_ONLY" ]; then
     exit 0
 fi
 
@@ -605,7 +549,7 @@ fi
 # Since Python's self-tests seem to fail on all platforms, we disable
 # its test suite by default.
 if [ -z "$SAGE_CHECK_PACKAGES" ]; then
-    SAGE_CHECK_PACKAGES='!python'
+    SAGE_CHECK_PACKAGES='!python2'
 fi
 # Allow spaces, commas, or colons as separator (the documentation suggests commas).
 if echo ",$SAGE_CHECK_PACKAGES," | grep -i "[ ,:]\!$PKG_BASE[ ,:]" > /dev/null ; then

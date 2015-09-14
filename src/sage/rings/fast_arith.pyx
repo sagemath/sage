@@ -1,5 +1,5 @@
 """
-Basic arithmetic with c-integers.
+Basic arithmetic with C integers
 """
 
 #*****************************************************************************

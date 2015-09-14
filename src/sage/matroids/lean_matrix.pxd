@@ -32,6 +32,9 @@ cdef class LeanMatrix:
     cdef LeanMatrix _matrix_times_matrix_(self, LeanMatrix other)
     cdef LeanMatrix matrix_from_rows_and_columns(self, rows, columns)
 
+    cdef shifting_all(self, P_rows, P_cols, Q_rows, Q_cols, int m)
+    cdef shifting(self, U_1, V_2, U_2, V_1, z2, z1, int m)
+
 cdef class GenericMatrix(LeanMatrix):
     cdef _base_ring, _characteristic
     cdef list _entries

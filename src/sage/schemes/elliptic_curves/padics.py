@@ -46,6 +46,7 @@ def __check_padic_hypotheses(self, p):
     is an odd prime of good ordinary reduction.
 
     EXAMPLES::
+
         sage: E = EllipticCurve('11a1')
         sage: from sage.schemes.elliptic_curves.padics import __check_padic_hypotheses
         sage: __check_padic_hypotheses(E,5)

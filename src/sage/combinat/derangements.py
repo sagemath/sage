@@ -70,7 +70,7 @@ class Derangement(CombinatorialElement):
             raise ValueError("Can only convert to a permutation for derangements of [1, 2, ..., n]")
         return Permutation(list(self))
 
-class Derangements(Parent, UniqueRepresentation):
+class Derangements(UniqueRepresentation, Parent):
     r"""
     The class of all derangements of a set or multiset.
 

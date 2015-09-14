@@ -362,37 +362,6 @@ version of Sage (which is the "source" version, not the "binary").
 #. cd ``sage-*`` (we call this ``SAGE_ROOT``) and type ``make``. Now be
    patient because this process make take 2 hours or so.
 
-#. Optional: When the compilation is finished, type on the command
-   line in the Sage home directory:
-
-   ::
-
-       ./sage -i database_jones_numfield
-       ./sage -i database_gap-4.4.8
-       ./sage -i database_cremona_ellcurve-2005.11.03
-       ./sage -i gap_packages-4.4.8_1
-
-   This last package loads the GAP GPL'd packages braid, ctbllib,
-   DESIGN, FactInt, GAPDoc, GRAPE, LAGUNA, SONATA 2.3, and TORIC . It
-   also compiles (automatically) the C programs in GUAVA and GRAPE.
-
-   Other optional packages to install are at
-   http://modular.math.washington.edu/sage/packages/optional/.
-
-   .. index:: installation of packages
-
-   Another way: download packages from
-   http://sage.scipy.org/sage/packages/optional/ and save to the
-   directory ``SAGE_ROOT``. Type
-
-   ::
-
-       /sage -i sage-package.spkg
-
-   for each ``sage-package`` you download (use ``sage -f`` if you are
-   reinstalling.) This might be useful if you have a CD of these
-   packages but no (or a very slow) internet connection.
-
 
 .. index:: Python and Sage
 

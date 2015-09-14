@@ -31,14 +31,6 @@ import homset
 include "sage/ext/stdsage.pxi"
 from sage.structure.element cimport Element
 
-def make_morphism(_class, parent, _dict, _slots):
-    # from element.pyx
-    cdef Morphism mor = _class.__new__(_class)
-    mor._set_parent(parent)
-    mor._update_slots(_slots)
-    if HAS_DICTIONARY(mor):
-        mor.__dict__ = _dict
-    return mor
 
 def is_Morphism(x):
     return isinstance(x, Morphism)

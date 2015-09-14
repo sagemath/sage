@@ -39,7 +39,7 @@ from sage.combinat.rigged_configurations.rigged_configuration_element import (
 from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition
 
 # Note on implementation, this class is used for simply-laced types only
-class CrystalOfRiggedConfigurations(Parent, UniqueRepresentation):
+class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
     r"""
     A highest weight crystal of rigged configurations.
 

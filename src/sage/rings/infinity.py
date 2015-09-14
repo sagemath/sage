@@ -1,5 +1,5 @@
 r"""
-Infinity Rings
+Signed and Unsigned Infinities
 
 The unsigned infinity "ring" is the set of two elements
 

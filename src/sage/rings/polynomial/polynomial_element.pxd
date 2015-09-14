@@ -9,6 +9,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
     cdef char _is_gen
     cdef CompiledPolynomialFunction _compiled
     cpdef Polynomial truncate(self, long n)
+    cpdef Polynomial inverse_series_trunc(self, long prec)
     cdef long _hash_c(self) except -1
     cpdef constant_coefficient(self)
     cpdef Polynomial _new_constant_poly(self, a, Parent P)

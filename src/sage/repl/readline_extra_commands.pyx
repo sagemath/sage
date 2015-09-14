@@ -1,5 +1,5 @@
 r"""
-Extra readline commands
+Extra Readline Commands
 
 The following extra readline commands are available in Sage:
 
@@ -24,7 +24,7 @@ They are intended to replace the ``history-search-backward`` command and the ``h
 provided by the GNU readline library used in Sage.
 
 To bind these commands with keys, insert the relevant lines into the IPython configuration file
-``$DOT_SAGE/ipython-*/profile_sage/ipython_config.py``.  Note that ``$DOT_SAGE`` is ``$HOME/.sage``
+``$DOT_SAGE/ipython-*/profile_default/ipython_config.py``.  Note that ``$DOT_SAGE`` is ``$HOME/.sage``
 by default. For example,
 ::
 

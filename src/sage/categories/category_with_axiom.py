@@ -1381,8 +1381,8 @@ Upcoming features
 
 .. _axioms-algorithmic:
 
-Description of the algorithmic
-==============================
+Algorithms
+==========
 
 Computing joins
 ---------------

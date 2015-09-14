@@ -1212,8 +1212,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         """
         from sage.rings.polynomial.pbori import BooleanPolynomialRing
-        from polybori import gauss_on_polys
-        from polybori.ll import eliminate,ll_encode,ll_red_nf_redsb
+        from brial import gauss_on_polys
+        from brial.ll import eliminate,ll_encode,ll_red_nf_redsb
 
         R = self.ring()
 
@@ -1488,7 +1488,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         R = self.ring()
 
         if isinstance(R, BooleanPolynomialRing):
-            from polybori.interred import interred as inter_red
+            from brial.interred import interred as inter_red
             l = [p for p in self if not p==0]
             l = sorted(inter_red(l, completely=True), reverse=True)
             return PolynomialSequence(l, R, immutable=True)

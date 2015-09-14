@@ -44,7 +44,7 @@ from c_graph cimport CGraphBackend
 from sage.data_structures.bitset cimport FrozenBitset
 from libc.stdint cimport uint32_t
 include 'sage/data_structures/bitset.pxi'
-from libc.stdlib cimport calloc,free
+include "sage/ext/stdsage.pxi"
 
 cdef class StaticSparseCGraph(CGraph):
     """
@@ -67,10 +67,10 @@ cdef class StaticSparseCGraph(CGraph):
             sage: g = StaticSparseCGraph(graphs.PetersenGraph())
         """
         cdef int i, j, tmp
-        has_labels = any(not l is None for _,_,l in G.edge_iterator())
+        has_labels = any(l is not None for _,_,l in G.edge_iterator())
         self._directed = G.is_directed()
 
-        init_short_digraph(self.g, G, edge_labelled = has_labels)
+        init_short_digraph(self.g, G, edge_labelled=has_labels)
         if self._directed:
             init_reverse(self.g_rev,self.g)
 
@@ -78,10 +78,11 @@ cdef class StaticSparseCGraph(CGraph):
         elif not G.has_loops():
             self.number_of_loops = NULL
         else:
-            self.number_of_loops = <int *> calloc(sizeof(int), self.g.n)
-            if self.number_of_loops == NULL:
+            try:
+                self.number_of_loops = <int *>check_calloc(self.g.n, sizeof(int))
+            except MemoryError:
                 free_short_digraph(self.g)
-                raise MemoryError
+                raise
             for i in range(self.g.n):
                 for tmp in range(out_degree(self.g,i)):
                     j = self.g.neighbors[i][tmp]
@@ -105,7 +106,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         bitset_free(self.active_vertices)
         free_short_digraph(self.g)
-        free(self.number_of_loops)
+        sage_free(self.number_of_loops)
         if self.g_rev != NULL:
             free_short_digraph(self.g_rev)
 

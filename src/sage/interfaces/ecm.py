@@ -242,7 +242,7 @@ class ECM(SageObject):
         Interactively interact with the ECM program.
 
         EXAMPLES::
-    
+
             sage: ecm.interact()    # not tested
         """
         print "Enter numbers to run ECM on them."

@@ -14,7 +14,7 @@ echo "[`date +'%Y-%m-%d %H:%M:%S'`] `cat VERSION.txt 2>/dev/null`" | tee -a logs
 # sysadmin.  We use --nodotsage so we don't force a .sage directory
 # in the sysadmin's HOME directory.
 cmd='sage.all._write_started_file(); print "Yes, Sage starts."'
-build/make/pipestatus "./sage --nodotsage -c '$cmd' 2>&1" "tee -a logs/start.log"
+build/bin/sage-logger "./sage --nodotsage -c '$cmd'" logs/start.log
 
 if [ $? -ne 0 ]; then
     echo >&2 "Sage failed to start up."

@@ -597,7 +597,7 @@ class LaurentSeriesRing_generic(commutative_ring.CommutativeRing):
         a field). Otherwise, an error is raised.
         
         EXAMPLES::
-        
+
             sage: R.<t> = LaurentSeriesRing(QQ)
             sage: R.uniformizer()
             t
