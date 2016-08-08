@@ -174,3 +174,178 @@ class kRegularSequences(UniqueRepresentation, Parent):
     def _repr_(self):
         return 'Set of {}-regular sequences over {}'.format(self.k, self.base())
 
+
+    def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None,
+              verbose=False):
+        r"""
+
+        EXAMPLES:
+
+        Binary sum of digits::
+
+            sage: @cached_function
+            ....: def s(n):
+            ....:     if n == 0:
+            ....:         return 0
+            ....:     return s(n//2) + ZZ(is_odd(n))
+            sage: all(s(n) == sum(n.digits(2)) for n in srange(10))
+            True
+            sage: [s(n) for n in srange(10)]
+            [0, 1, 1, 2, 1, 2, 2, 3, 1, 2]
+
+        ::
+
+            sage: from sage.combinat.k_regular_sequence import kRegularSequences
+            sage: Seq2 = kRegularSequences(2, ZZ)
+            sage: S1 = Seq2.guess(s, verbose=True)
+            including f_{1*m+0}
+            M_0: f_{2*m+0} = (1) * X_m
+            including f_{2*m+1}
+            M_1: f_{2*m+1} = (0, 1) * X_m
+            M_0: f_{4*m+1} = (0, 1) * X_m
+            M_1: f_{4*m+3} = (-1, 2) * X_m
+            sage: S1.info()
+            matrices:
+            (
+            [1 0]  [ 0 -1]
+            [0 1], [ 1  2]
+            )
+            initial:
+            (0, 1)
+            selection:
+            (1, 0)
+
+        ::
+
+            sage: C = Seq2((Matrix([[1]]), Matrix([[1]])), vector([1]), vector([1])); C
+            2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+            sage: S2 = Seq2.guess(s, sequence=C)
+            sage: S2.info()
+            matrices:
+            (
+            [1 0]  [1 1]
+            [0 1], [0 1]
+            )
+            initial:
+            (1, 0)
+            selection:
+            (0, 1)
+
+        TESTS::
+
+            sage: Seq2.guess(lambda n: 2, sequence=C).info()
+            matrices:
+            ([1], [1])
+            initial:
+            (1)
+            selection:
+            (2)
+        """
+        from sage.arith.srange import srange, xsrange
+        from sage.matrix.constructor import Matrix
+        from sage.misc.mrange import cantor_product
+        from sage.modules.free_module_element import vector
+
+        k = self.k
+        if n_max is None:
+            n_max = 100
+        if d_max is None:
+            d_max = 10
+        if domain is None:
+            domain = self.base()  # TODO
+        if sequence is None:
+            matrices = [[] for _ in srange(k)]
+            class ES(object):
+                def __getitem__(self, m):
+                    return tuple()
+            sequence = ES()
+        else:
+            matrices = [M.rows() for M in sequence.matrices]
+            sequence = sequence.parent()(sequence.matrices, initial=sequence.initial)
+
+        zero = domain(0)
+        one = domain(1)
+
+        def values(m, lines):
+            return tuple(sequence[m]) + tuple(f(k**t_R * m + r_R) for t_R, r_R, s_R in lines)
+
+        @cached_function(key=lambda lines: len(lines))  # we assume that existing lines are not changed (we allow appending of new lines)
+        def some_inverse_U_matrix(lines):
+            d = len(sequence[0]) + len(lines)
+
+            for m_indices in cantor_product(xsrange(n_max), repeat=d, min_slope=1):
+                U = Matrix(domain, d, d, [values(m, lines) for m in m_indices]).transpose()
+                try:
+                    return U.inverse(), m_indices
+                except ZeroDivisionError:
+                    pass
+            else:
+                raise RuntimeError
+
+        def guess_linear_dependence(t_L, r_L, lines):
+            iU, m_indices = some_inverse_U_matrix(lines)
+            X_L = vector(f(k**t_L * m + r_L) for m in m_indices)
+            return X_L * iU
+
+        def verify_linear_dependence(t_L, r_L, linear_dependence, lines):
+            return all(f(k**t_L * m + r_L) ==
+                       linear_dependence * vector(values(m, lines))
+                       for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
+
+        def find_linear_dependence(t_L, r_L, lines):
+            linear_dependence = guess_linear_dependence(t_L, r_L, lines)
+            if not verify_linear_dependence(t_L, r_L, linear_dependence, lines):
+                raise ValueError
+            return linear_dependence
+
+        selection = None
+        if sequence[0]:
+            try:
+                solution = find_linear_dependence(0, 0, [])
+            except ValueError:
+                pass
+            else:
+                selection = vector(solution)
+
+        to_branch = []
+        lines = []
+        def include(line):
+            to_branch.append(line)
+            lines.append(line)
+            if verbose:
+                t, r, s = line
+                print('including f_{{{}*m+{}}}'.format(k**t, r))
+
+        if selection is None:
+            line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
+            include(line_L)
+            selection = vector((len(sequence[0]) + len(lines)-1)*(zero,) + (one,))
+
+        while to_branch:
+            line_R = to_branch.pop(0)
+            t_R, r_R, s_R = line_R
+            if t_R >= d_max:
+                raise RuntimeError
+
+            t_L = t_R + 1
+            for s_L in srange(k):
+                r_L = k**t_R * s_L + r_R
+                line_L = t_L, r_L, s_L
+
+                try:
+                    solution = find_linear_dependence(t_L, r_L, lines)
+                except ValueError:
+                    include(line_L)
+                    solution = (len(lines)-1)*(zero,) + (one,)
+                if verbose:
+                    # Using sage.misc.misc.verbose also prints all inversions
+                    # in FLINT at level 1; thus not what we want
+                    print('M_{}: f_{{{}*m+{}}} = {} * X_m'.format(s_L, k**t_L, r_L, solution))
+                matrices[s_L].append(solution)
+
+        d = len(sequence[0]) + len(lines)
+        matrices = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M]).transpose()
+                         for M in matrices)
+        initial = vector(values(0, lines))
+        selection = vector(pad_right(tuple(selection), d, zero=zero))
+        return self(matrices, initial, selection)
