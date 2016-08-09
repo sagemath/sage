@@ -336,7 +336,8 @@ class kRegularSequences(UniqueRepresentation, Parent):
             sequence = ES()
         else:
             matrices = [M.rows() for M in sequence.matrices]
-            sequence = sequence.parent()(sequence.matrices, initial=sequence.initial)
+            sequence = sequence.parent()(sequence.matrices,
+                                         initial=sequence.initial)
 
         zero = domain(0)
         one = domain(1)
