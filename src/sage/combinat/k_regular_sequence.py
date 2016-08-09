@@ -52,6 +52,33 @@ def pad_right(T, length, zero=0):
     return T + type(T)(zero for _ in xrange(length - len(T)))
 
 
+def value(D, k):
+    r"""
+    Return the value of the expansion with digits `D` in base `k`, i.e.
+
+    .. MATH::
+
+        \sum_{0\leq j < \operator{len}D} D[j] k^j.
+
+    INPUT:
+
+    - ``D`` -- a tuple or other iterable.
+
+    - ``k`` -- the base.
+
+    OUTPUT:
+
+    An element in the common parent of the base `k` and of the entries
+    of `D`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence import value
+        sage: value(42.digits(7), 7)
+        42
+    """
+    return sum(d * k**j for j, d in enumerate(D))
+
 from sage.structure.element import Element
 
 class kRegularSequence(Element):
