@@ -79,6 +79,54 @@ def value(D, k):
     """
     return sum(d * k**j for j, d in enumerate(D))
 
+
+def split_interlace(n, k, p):
+    r"""
+    Split each digit in the `k`-ary expansion of `n` into `p` parts and
+    return the value of the expansion obtained by each of these parts.
+
+    INPUT:
+
+    - ``n`` -- an integer.
+
+    - ``k`` -- an integer specifying the base.
+
+    - ``p`` -- a positive integer specifying in how many parts
+      the input ``n`` is split. This has to be a divisor of ``k``.
+
+    OUTPUT:
+
+    A tuple of integers.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence import split_interlace
+        sage: [(n, split_interlace(n, 4, 2)) for n in srange(20)]
+        [(0, (0, 0)), (1, (1, 0)), (2, (0, 1)), (3, (1, 1)),
+         (4, (2, 0)), (5, (3, 0)), (6, (2, 1)), (7, (3, 1)),
+         (8, (0, 2)), (9, (1, 2)), (10, (0, 3)), (11, (1, 3)),
+         (12, (2, 2)), (13, (3, 2)), (14, (2, 3)), (15, (3, 3)),
+         (16, (4, 0)), (17, (5, 0)), (18, (4, 1)), (19, (5, 1))]
+        sage: [(n, split_interlace(n, 6, 3)) for n in srange(9)]
+        [(0, (0, 0, 0)), (1, (1, 0, 0)), (2, (0, 1, 0)),
+         (3, (1, 1, 0)), (4, (0, 0, 1)), (5, (1, 0, 1)),
+         (6, (2, 0, 0)), (7, (3, 0, 0)), (8, (2, 1, 0))]
+
+    TESTS::
+
+        sage: split_interlace(42, 4, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: p=3 is not a divisor of k=4.
+    """
+    if k % p != 0:
+        raise ValueError('p={} is not a divisor of k={}.'.format(p, k))
+    ki = k // p
+    return tuple(value(D, ki)
+                 for D in zip(*(d.digits(ki, padto=p)
+                                for d in n.digits(k, padto=1))))
+
+
 from sage.structure.element import Element
 
 class kRegularSequence(Element):
