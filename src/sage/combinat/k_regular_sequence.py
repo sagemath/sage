@@ -37,15 +37,34 @@ Dumas, Example 2::
 import itertools
 from sage.misc.cachefunc import cached_function, cached_method
 
+
 def pad_right(T, length, zero=0):
     r"""
-    TESTS::
+    Pad ``T`` to the right by ``zero``s to have
+    at least the given ``length``.
+
+    INPUT:
+
+    - ``T`` -- A tuple, list or other iterable.
+
+    - ``length`` -- a nonnegative integer.
+
+    - ``zero`` -- (default: ``0``) the elements to pad with.
+
+    OUTPUT:
+
+    An object of the same type as ``T``.
+
+    EXAMPLES::
 
         sage: from sage.combinat.k_regular_sequence import pad_right
         sage: pad_right((1,2,3), 10)
         (1, 2, 3, 0, 0, 0, 0, 0, 0, 0)
         sage: pad_right((1,2,3), 2)
         (1, 2, 3)
+
+    TESTS::
+
         sage: pad_right([1,2,3], 10)
         [1, 2, 3, 0, 0, 0, 0, 0, 0, 0]
     """
