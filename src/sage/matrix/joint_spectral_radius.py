@@ -1,8 +1,47 @@
+r"""
+Joint Spectral Radius
+
+This modules contains algorithms in conjunction with the
+:wikipedia:`joint spectral radius <Joint_spectral_radius>`.
+
+
+Various
+=======
+
+AUTHORS:
+
+- Daniel Krenn (2016)
+
+ACKNOWLEDGEMENT:
+
+- Daniel Krenn is supported by the
+  Austrian Science Fund (FWF): P 24644-N26.
+
+
+Classes and Methods
+===================
+"""
+#*****************************************************************************
+#       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 
 def joint_spectral_radius(S, delta=None, norm=None, ring=None):
     r"""
     Return a lower and upper bound for the joint spectral radius
     of the given matrices.
+
+    INPUT:
+
+    - ``S`` -- an tuple or other iterable of matrices.
+
+    - TODO
 
     TESTS::
 
