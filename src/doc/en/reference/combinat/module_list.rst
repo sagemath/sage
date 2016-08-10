@@ -127,6 +127,7 @@ Comprehensive Module list
     sage/combinat/integer_vector_weighted
     sage/combinat/integer_vectors_mod_permgroup
     sage/combinat/interval_posets
+    sage/combinat/k_regular_sequence
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
     sage/combinat/knutson_tao_puzzles

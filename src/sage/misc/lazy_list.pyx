@@ -85,8 +85,9 @@ Alternatively, you can create the lazy list from an update function::
     sage: w2[:500].list() == w[:500].list()
     True
 
-You can also create extension type inheriting from :class:`lazy_list_generic`
-(with Cython). In that case you would better implement directly the method
+You can also create user-defined classes (Python) and extension types (Cython)
+inheriting from :class:`lazy_list_generic`.
+In that case you would better implement directly the method
 ``_update_cache_up_to``. See the examples in this file with the classes
 :class:`lazy_list_from_iterator` and :class:`lazy_list_from_function`.
 
@@ -205,24 +206,15 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
         ValueError: only one of the arguments 'data' or 'update_function'
         can be used
 
-    Lazy lists created from each other share their cache::
+    Applying :func:`lazy_list` is idempotent. Thus, lazy lists created
+    from each other are unmodified::
 
         sage: C = lazy_list(count())
         sage: C[4]
         4
         sage: D = lazy_list(C)
-        sage: D._info()
-        cache length 5
-        start        0
-        stop         9223372036854775807
-        step         1
-        sage: D[6]
-        6
-        sage: C._info()
-        cache length 7
-        start        0
-        stop         9223372036854775807
-        step         1
+        sage: C is D
+        True
     """
     cdef lazy_list_generic l
 
@@ -282,6 +274,98 @@ def slice_unpickle(master, start, stop, step):
         True
     """
     return master[start:stop:step]
+
+
+def lazy_list_formatter(L, name=None, separator=None, more=None,
+        opening_delimiter=None, closing_delimiter=None,
+        preview=None):
+    r"""
+    Return a string representation of ``L``.
+
+    INPUT:
+
+    - ``L`` -- an object supporting slicing. To be precise, extracting an
+      iterable of the first `n` values via ``iter(L[:n])`` has to be possible.
+
+    - ``name`` -- (default: ``'lazy list'``) a string appearing
+      at first position (i.e., in front of the actual values)
+      in the representation.
+
+    - ``opening_delimiter`` -- (default: ``'['``) a string heading
+      the shown entries.
+
+    - ``closing_delimiter`` -- (default: ``']'``) a string trailing
+      the shown entries
+
+    - ``separator`` -- (default: ``', '``) a string appearing between
+      two entries.
+
+    - ``more`` -- (default: ``'...'``) a string indicating that
+      not all entries of the list are shown.
+
+    - ``preview`` -- (default: ``3``) an integer specifying the number of
+      elements shown in the representation string.
+
+    OUTPUT:
+
+    A string.
+
+    EXAMPLES::
+
+        sage: from sage.misc.lazy_list import lazy_list_formatter
+        sage: lazy_list_formatter(srange(3, 1000, 5), name='list')
+        'list [3, 8, 13, ...]'
+
+    ::
+
+        sage: from sage.misc.lazy_list import lazy_list
+        sage: L = lazy_list(Primes()); L
+        lazy list [2, 3, 5, ...]
+        sage: repr(L) == lazy_list_formatter(L)
+        True
+        sage: lazy_list_formatter(L, name='primes')
+        'primes [2, 3, 5, ...]'
+        sage: lazy_list_formatter(L, opening_delimiter='(', closing_delimiter=')')
+        'lazy list (2, 3, 5, ...)'
+        sage: lazy_list_formatter(L, opening_delimiter='', closing_delimiter='')
+        'lazy list 2, 3, 5, ...'
+        sage: lazy_list_formatter(L, separator='--')
+        'lazy list [2--3--5--...]'
+        sage: lazy_list_formatter(L, more='and more')
+        'lazy list [2, 3, 5, and more]'
+        sage: lazy_list_formatter(L, preview=10)
+        'lazy list [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, ...]'
+        sage: lazy_list_formatter(L, name='primes',
+        ....:                     opening_delimiter='', closing_delimiter='',
+        ....:                     separator=' ', more='->', preview=7)
+        'primes 2 3 5 7 11 13 17 ->'
+    """
+    if name is None:
+        name = 'lazy list'
+    if opening_delimiter is None:
+        opening_delimiter = '['
+    if separator is None:
+        separator = ', '
+    if more is None:
+        more = '...'
+    if closing_delimiter is None:
+        closing_delimiter = ']'
+    if preview is None:
+        preview = 3
+
+    cdef str s = name
+    if s:
+        s += ' '
+    s += opening_delimiter
+    cdef list P = list(L[:preview+1])
+    cdef list E = list('{!r}'.format(e)
+                       for e in P[:preview])
+    if len(P) > preview:
+        E.append(more)
+    s += separator.join(E)
+    s += closing_delimiter
+    return s
+
 
 cdef class lazy_list_generic(object):
     r"""
@@ -468,12 +552,21 @@ cdef class lazy_list_generic(object):
         if not isinstance(self, list):
             raise TypeError("can only add list to lazy_list")
 
-        return lazy_list_from_iterator(iter(other), cache=self[:])
+        cdef lazy_list_from_iterator l = lazy_list_from_iterator.__new__(lazy_list_from_iterator)
+        l.cache = self[:]
+        l.start = 0
+        l.stop = PY_SSIZE_T_MAX
+        l.step = 1
+        l.iterator = iter(other)
+        return l
 
 
     def __repr__(self):
         r"""
         Return a string representation.
+
+        To customize the string representation, the
+        :func:`lazy_list_formatter` can be used.
 
         TESTS::
 
@@ -496,84 +589,7 @@ cdef class lazy_list_generic(object):
             sage: lazy_list([0,1,2,3])
             lazy list [0, 1, 2, ...]
         """
-        return self.str()
-
-
-    def str(self, name=None, separator=None, more=None,
-            opening_delimiter=None, closing_delimiter=None,
-            preview=None):
-        r"""
-        Return a string representation.
-
-        INPUT:
-
-        - ``name`` -- (default: ``'lazy list'``) a string.
-
-        - ``opening_delimiter`` -- (default: ``'['``) a string.
-
-        - ``closing_delimiter`` -- (default: ``']'``) a string.
-
-        - ``separator`` -- (default: ``', '``) a string.
-
-        - ``more`` -- (default: ``'...'``) a string.
-
-        - ``preview`` -- (default: ``3``) an integer specifying the number of
-          elements shown in the representation string.
-
-        OUTPUT:
-
-        A string.
-
-        EXAMPLES::
-
-            sage: from sage.misc.lazy_list import lazy_list
-            sage: L = lazy_list(Primes()); L
-            lazy list [2, 3, 5, ...]
-            sage: repr(L) == L.str()
-            True
-            sage: L.str(name='primes')
-            'primes [2, 3, 5, ...]'
-            sage: L.str(opening_delimiter='(', closing_delimiter=')')
-            'lazy list (2, 3, 5, ...)'
-            sage: L.str(opening_delimiter='', closing_delimiter='')
-            'lazy list 2, 3, 5, ...'
-            sage: L.str(separator='--')
-            'lazy list [2--3--5--...]'
-            sage: L.str(more='and more')
-            'lazy list [2, 3, 5, and more]'
-            sage: L.str(preview=10)
-            'lazy list [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, ...]'
-            sage: L.str(name='primes',
-            ....:       opening_delimiter='', closing_delimiter='',
-            ....:       separator=' ', more='->', preview=7)
-            'primes 2 3 5 7 11 13 17 ->'
-        """
-        if name is None:
-            name = 'lazy list'
-        if opening_delimiter is None:
-            opening_delimiter = '['
-        if separator is None:
-            separator = ', '
-        if more is None:
-            more = '...'
-        if closing_delimiter is None:
-            closing_delimiter = ']'
-        if preview is None:
-            preview = 3
-
-        cdef str s = name
-        if s:
-            s += ' '
-        s += opening_delimiter
-        cdef list P = list(self[:preview+1])
-        cdef list E = list('{!r}'.format(e)
-                           for e in P[:preview])
-        cdef Py_ssize_t num_elts = 1 + (self.stop-self.start-1) / self.step
-        if num_elts > preview:
-            E.append(more)
-        s += separator.join(E)
-        s += closing_delimiter
-        return s
+        return lazy_list_formatter(self)
 
 
     def __reduce__(self):
