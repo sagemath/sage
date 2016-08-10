@@ -304,8 +304,7 @@ class kRegularSequence(Element):
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
-            ....:      initial=vector([0, 1]), selection=vector([1, 0])).info()
+            sage: Seq2.guess(lambda n: sum(n.digits(2))).info()
             matrices:
             (
             [1 0]  [ 0 -1]
@@ -444,8 +443,7 @@ class kRegularSequenceSpace(UniqueRepresentation, Parent):
 
         ::
 
-            sage: from sage.combinat.k_regular_sequence import kRegularSequences
-            sage: Seq2 = kRegularSequences(2, ZZ)
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
             sage: logging.basicConfig(level=logging.INFO)
             sage: S1 = Seq2.guess(s)
