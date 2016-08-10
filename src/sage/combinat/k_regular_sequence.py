@@ -269,8 +269,7 @@ class kRegularSequences(UniqueRepresentation, Parent):
         return 'Set of {}-regular sequences over {}'.format(self.k, self.base())
 
 
-    def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None,
-              verbose=False):
+    def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None):
         r"""
 
         EXAMPLES:
@@ -291,13 +290,15 @@ class kRegularSequences(UniqueRepresentation, Parent):
 
             sage: from sage.combinat.k_regular_sequence import kRegularSequences
             sage: Seq2 = kRegularSequences(2, ZZ)
-            sage: S1 = Seq2.guess(s, verbose=True)
-            including f_{1*m+0}
-            M_0: f_{2*m+0} = (1) * X_m
-            including f_{2*m+1}
-            M_1: f_{2*m+1} = (0, 1) * X_m
-            M_0: f_{4*m+1} = (0, 1) * X_m
-            M_1: f_{4*m+3} = (-1, 2) * X_m
+            sage: import logging
+            sage: logging.basicConfig(level=logging.INFO)
+            sage: S1 = Seq2.guess(s)
+            INFO:...:including f_{1*m+0}
+            INFO:...:M_0: f_{2*m+0} = (1) * X_m
+            INFO:...:including f_{2*m+1}
+            INFO:...:M_1: f_{2*m+1} = (0, 1) * X_m
+            INFO:...:M_0: f_{4*m+1} = (0, 1) * X_m
+            INFO:...:M_1: f_{4*m+3} = (-1, 2) * X_m
             sage: S1.info()
             matrices:
             (
@@ -308,6 +309,7 @@ class kRegularSequences(UniqueRepresentation, Parent):
             (0, 1)
             selection:
             (1, 0)
+            sage: logging.shutdown(); _ = reload(logging)
 
         ::
 
@@ -335,6 +337,9 @@ class kRegularSequences(UniqueRepresentation, Parent):
             selection:
             (2)
         """
+        import logging
+        logger = logging.getLogger(__name__)
+
         from sage.arith.srange import srange, xsrange
         from sage.matrix.constructor import Matrix
         from sage.misc.mrange import cantor_product
@@ -407,9 +412,8 @@ class kRegularSequences(UniqueRepresentation, Parent):
         def include(line):
             to_branch.append(line)
             lines.append(line)
-            if verbose:
-                t, r, s = line
-                print('including f_{{{}*m+{}}}'.format(k**t, r))
+            t, r, s = line
+            logger.info('including f_{%s*m+%s}', k**t, r)
 
         if selection is None:
             line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
@@ -432,10 +436,8 @@ class kRegularSequences(UniqueRepresentation, Parent):
                 except ValueError:
                     include(line_L)
                     solution = (len(lines)-1)*(zero,) + (one,)
-                if verbose:
-                    # Using sage.misc.misc.verbose also prints all inversions
-                    # in FLINT at level 1; thus not what we want
-                    print('M_{}: f_{{{}*m+{}}} = {} * X_m'.format(s_L, k**t_L, r_L, solution))
+                logger.info('M_%s: f_{%s*m+%s} = %s * X_m',
+                            s_L, k**t_L, r_L, solution)
                 matrices[s_L].append(solution)
 
         d = len(sequence[0]) + len(lines)
