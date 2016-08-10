@@ -240,6 +240,11 @@ class kRegularSequence(Element):
             ....:      Matrix([[0, 1]]), Matrix([[1], [0]]),
             ....:      lambda o: o[0, 0], transpose=True)
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
+
+        .. SEEALSO::
+
+            :doc:`k-regular sequence <k_regular_sequence>`,
+            :class:`kRegularSequenceSpace`.
         """
         super(kRegularSequence, self).__init__(parent=parent)
 
@@ -270,7 +275,7 @@ class kRegularSequence(Element):
 
     def _repr_(self):
         r"""
-        Return a representation string of this `k`-regular sequence
+        Return a representation string of this `k`-regular sequence.
 
         OUTPUT:
 
@@ -404,23 +409,83 @@ class kRegularSequenceSpace(UniqueRepresentation, Parent):
 
     Element = kRegularSequence
 
-    def __init__(self, k, base, category=None):
+    @staticmethod
+    def __classcall__(cls, k, universe=None, category=None):
         r"""
+        Normalizes the input in order to ensure a unique
+        representation.
+
+        For more information see :class:`kRegularSequenceSpace`.
+
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2
-            Space of 2-regular sequences over Integer Ring
             sage: Seq2.category()
             Category of sets
+
+        ::
+
+            sage: Seq2 is kRegularSequenceSpace(2)
+            True
         """
+        if universe is None:
+            from sage.rings.integer_ring import ZZ
+            universe = ZZ
+
         from sage.categories.sets_cat import Sets
+        category = category or Sets()
+
+        return super(kRegularSequenceSpace, cls).__classcall__(
+            cls, k, universe, category)
+
+
+    def __init__(self, k, universe, category):
+        r"""
+        The space of `k`-regular Sequences over the given ``universe``.
+
+        INPUT:
+
+        - ``k`` -- an integer at least `2` specifying the base.
+
+        - ``universe`` -- (default: ``None``) a object (e.g. a SageMath parent)
+          in which the entries of a sequence live.
+          If ``None``, then the integer ring `\ZZ` is used.
+
+        - ``category`` -- (default: ``None``) the category of the
+          sequence space. If ``None``, then the category of
+          :class:`~sage.categories.sets_cat.Sets` is used.
+
+        EXAMPLES::
+
+            sage: kRegularSequenceSpace(2, ZZ)
+            Space of 2-regular sequences over Integer Ring
+            sage: kRegularSequenceSpace(3, ZZ)
+            Space of 3-regular sequences over Integer Ring
+
+        .. SEEALSO::
+
+            :doc:`k-regular sequence <k_regular_sequence>`,
+            :class:`kRegularSequence`.
+        """
         self.k = k
+        self.universe = universe
         super(kRegularSequenceSpace, self).__init__(
-            category=category or Sets(), base=base)
+            category=category, base=universe)
 
 
     def _repr_(self):
+        r"""
+        Return a representation string of this `k`-regular sequence space.
+
+        OUTPUT:
+
+        A string
+
+        TESTS::
+
+            sage: repr(kRegularSequenceSpace(2, ZZ))  # indirect doctest
+            'Space of 2-regular sequences over Integer Ring'
+        """
         return 'Space of {}-regular sequences over {}'.format(self.k, self.base())
 
 
