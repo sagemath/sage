@@ -5037,6 +5037,22 @@ cdef class Matrix(Matrix1):
         self.cache('right_kernel', K)
         return K
 
+    def _test_right_kernel(self, **options):
+        """
+        Checks that :meth:`right_kernel` works.
+
+        EXAMPLES::
+
+            sage: a=matrix([[1,2],[3,4]])
+            sage: a._test_right_kernel()
+
+        """
+        tester = self._tester(**options)
+        # At least we'll check that the basis of the kernel kills the matrix
+        V=self.right_kernel()
+        tester.assert_(self.ncols()-self.rank()==V.dimension())
+        tester.assert_((self*V.basis_matrix().transpose()).is_zero())
+
     def left_kernel(self, *args, **kwds):
         r"""
         Returns the left kernel of this matrix, as a vector space or free module.
@@ -5192,6 +5208,22 @@ cdef class Matrix(Matrix1):
         return K
 
     kernel = left_kernel
+
+    def _test_left_kernel(self, **options):
+        """
+        Checks that :meth:`left_kernel` works.
+
+        EXAMPLES::
+
+            sage: a=matrix([[1,2],[3,4]])
+            sage: a._test_left_kernel()
+
+        """
+        tester = self._tester(**options)
+        # At least we'll check that the basis of the kernel kills the matrix
+        V=self.left_kernel()
+        tester.assert_(self.nrows()-self.rank()==V.dimension())
+        tester.assert_((V.basis_matrix()*self).is_zero())
 
     def kernel_on(self, V, poly=None, check=True):
         """
