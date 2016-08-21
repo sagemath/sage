@@ -284,8 +284,7 @@ def lazy_list_formatter(L, name=None, separator=None, more=None,
 
     INPUT:
 
-    - ``L`` -- an object supporting slicing. To be precise, extracting an
-      iterable of the first `n` values via ``iter(L[:n])`` has to be possible.
+    - ``L`` -- an iterable object.
 
     - ``name`` -- (default: ``'lazy list'``) a string appearing
       at first position (i.e., in front of the actual values)
@@ -339,7 +338,15 @@ def lazy_list_formatter(L, name=None, separator=None, more=None,
         ....:                     opening_delimiter='', closing_delimiter='',
         ....:                     separator=' ', more='->', preview=7)
         'primes 2 3 5 7 11 13 17 ->'
+
+    TESTS::
+
+        sage: from itertools import count
+        sage: lazy_list_formatter(count(), name='iterator count')
+        'iterator count [0, 1, 2, ...]'
     """
+    from itertools import islice
+
     if name is None:
         name = 'lazy list'
     if opening_delimiter is None:
@@ -357,7 +364,7 @@ def lazy_list_formatter(L, name=None, separator=None, more=None,
     if s:
         s += ' '
     s += opening_delimiter
-    cdef list P = list(L[:preview+1])
+    cdef list P = list(islice(L, preview+1))
     cdef list E = list('{!r}'.format(e)
                        for e in P[:preview])
     if len(P) > preview:
