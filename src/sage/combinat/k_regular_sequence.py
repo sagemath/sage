@@ -477,16 +477,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             INFO:...:M_1: f_{2*m+1} = (0, 1) * X_m
             INFO:...:M_0: f_{4*m+1} = (0, 1) * X_m
             INFO:...:M_1: f_{4*m+3} = (-1, 2) * X_m
-            sage: S1.info()
-            matrices:
+            sage: S1.mu[0], S1.mu[1], S1.left, S1.right
             (
             [1 0]  [ 0 -1]
-            [0 1], [ 1  2]
+            [0 1], [ 1  2], (0, 1), (1, 0)
             )
-            initial:
-            (0, 1)
-            selection:
-            (1, 0)
             sage: logging.shutdown(); _ = reload(logging)
 
         ::
@@ -494,26 +489,17 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: C = Seq2((Matrix([[1]]), Matrix([[1]])), vector([1]), vector([1])); C
             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
             sage: S2 = Seq2.guess(s, sequence=C)
-            sage: S2.info()
-            matrices:
+            sage: S2.mu[0], S2.mu[1], S2.left, S2.right
             (
             [1 0]  [1 1]
-            [0 1], [0 1]
+            [0 1], [0 1], (1, 0), (0, 1)
             )
-            initial:
-            (1, 0)
-            selection:
-            (0, 1)
 
         TESTS::
 
-            sage: Seq2.guess(lambda n: 2, sequence=C).info()
-            matrices:
-            ([1], [1])
-            initial:
-            (1)
-            selection:
-            (2)
+            sage: S = Seq2.guess(lambda n: 2, sequence=C)
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            ([1], [1], (1), (2))
         """
         import logging
         logger = logging.getLogger(__name__)
@@ -531,15 +517,15 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         if domain is None:
             domain = self.base()  # TODO
         if sequence is None:
-            matrices = [[] for _ in srange(k)]
+            mu = [[] for _ in srange(k)]
             class ES(object):
                 def __getitem__(self, m):
                     return tuple()
             sequence = ES()
         else:
-            matrices = [M.rows() for M in sequence.matrices]
-            sequence = sequence.parent()(sequence.matrices,
-                                         initial=sequence.initial)
+            mu = [M.rows() for M in sequence.mu]
+            sequence = sequence.parent()(sequence.mu,
+                                         left=sequence.left)
 
         zero = domain(0)
         one = domain(1)
@@ -576,14 +562,14 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 raise ValueError
             return linear_dependence
 
-        selection = None
+        right = None
         if sequence[0]:
             try:
                 solution = find_linear_dependence(0, 0, [])
             except ValueError:
                 pass
             else:
-                selection = vector(solution)
+                right = vector(solution)
 
         to_branch = []
         lines = []
@@ -593,10 +579,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             t, r, s = line
             logger.info('including f_{%s*m+%s}', k**t, r)
 
-        if selection is None:
+        if right is None:
             line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
             include(line_L)
-            selection = vector((len(sequence[0]) + len(lines)-1)*(zero,) + (one,))
+            right = vector((len(sequence[0]) + len(lines)-1)*(zero,) + (one,))
 
         while to_branch:
             line_R = to_branch.pop(0)
@@ -616,11 +602,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                     solution = (len(lines)-1)*(zero,) + (one,)
                 logger.info('M_%s: f_{%s*m+%s} = %s * X_m',
                             s_L, k**t_L, r_L, solution)
-                matrices[s_L].append(solution)
+                mu[s_L].append(solution)
 
         d = len(sequence[0]) + len(lines)
-        matrices = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M]).transpose()
-                         for M in matrices)
-        initial = vector(values(0, lines))
-        selection = vector(pad_right(tuple(selection), d, zero=zero))
-        return self(matrices, initial, selection)
+        mu = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M]).transpose()
+                         for M in mu)
+        left = vector(values(0, lines))
+        right = vector(pad_right(tuple(right), d, zero=zero))
+        return self(mu, left, right)
