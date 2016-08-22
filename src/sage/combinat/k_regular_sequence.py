@@ -559,24 +559,21 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             domain = self.base()  # TODO
         if sequence is None:
             mu = [[] for _ in srange(k)]
-            class ES(object):
-                def __getitem__(self, m):
-                    return tuple()
-            sequence = ES()
+            seq = lambda m: tuple()
         else:
             mu = [M.rows() for M in sequence.mu]
-            sequence = sequence.parent()(sequence.mu,
-                                         left=sequence.left)
+            seq = lambda m: sequence.left * sequence._mu_of_word_(
+                self._n_to_index_(m))
 
         zero = domain(0)
         one = domain(1)
 
         def values(m, lines):
-            return tuple(sequence[m]) + tuple(f(k**t_R * m + r_R) for t_R, r_R, s_R in lines)
+            return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R, s_R in lines)
 
         @cached_function(key=lambda lines: len(lines))  # we assume that existing lines are not changed (we allow appending of new lines)
         def some_inverse_U_matrix(lines):
-            d = len(sequence[0]) + len(lines)
+            d = len(seq(0)) + len(lines)
 
             for m_indices in cantor_product(xsrange(n_max), repeat=d, min_slope=1):
                 U = Matrix(domain, d, d, [values(m, lines) for m in m_indices]).transpose()
@@ -604,7 +601,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             return linear_dependence
 
         right = None
-        if sequence[0]:
+        if seq(0):
             try:
                 solution = find_linear_dependence(0, 0, [])
             except ValueError:
@@ -623,7 +620,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         if right is None:
             line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
             include(line_L)
-            right = vector((len(sequence[0]) + len(lines)-1)*(zero,) + (one,))
+            right = vector((len(seq(0)) + len(lines)-1)*(zero,) + (one,))
 
         while to_branch:
             line_R = to_branch.pop(0)
@@ -645,7 +642,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                             s_L, k**t_L, r_L, solution)
                 mu[s_L].append(solution)
 
-        d = len(sequence[0]) + len(lines)
+        d = len(seq(0)) + len(lines)
         mu = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M]).transpose()
                          for M in mu)
         left = vector(values(0, lines))
