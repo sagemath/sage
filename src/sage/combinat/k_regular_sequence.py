@@ -562,6 +562,17 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             [0 1], [0 1], (1, 0), (1, 1)
             )
 
+        The indicator function of the odd integers::
+
+            sage: S = Seq2.guess(lambda n: ZZ(is_odd(n)))
+            sage: S
+            2-regular sequence 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            (
+            [0 0]  [0 1]
+            [0 1], [0 1], (1, 0), (0, 1)
+            )
+
         TESTS::
 
             sage: S = Seq2.guess(lambda n: 2, sequence=C)
