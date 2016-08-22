@@ -6,6 +6,21 @@ found, for example, on the :wikipedia:`k-regular_sequence` or in
 [AS2003]_.
 
 
+.. WARNING::
+
+    As this code is experimental, warnings are thrown when a
+    `k`-regular sequence space is created for the first time in a
+    session (see :class:`sage.misc.superseded.experimental`).
+
+    TESTS::
+
+        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+        doctest:...: FutureWarning: This class/method/function is
+        marked as experimental. It, its functionality or its interface
+        might change without a formal deprecation.
+        See http://trac.sagemath.org/21202 for details.
+
+
 Examples
 ========
 
@@ -307,7 +322,7 @@ class kRegularSequence(RecognizableSeries):
             sage: W = Seq2.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Seq2((M0, M1))
+            sage: S = Seq2((M0, M1), [0, 1], [1, 1])
             sage: S._mu_of_word_(W(0.digits(2))) == M0
             True
             sage: S._mu_of_word_(W(1.digits(2))) == M1
