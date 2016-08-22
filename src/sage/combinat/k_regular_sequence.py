@@ -506,7 +506,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: [s(n) for n in srange(10)]
             [0, 1, 1, 2, 1, 2, 2, 3, 1, 2]
 
-        ::
+        Variant 1::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
@@ -518,29 +518,57 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             INFO:...:M_1: f_{2*m+1} = (0, 1) * X_m
             INFO:...:M_0: f_{4*m+1} = (0, 1) * X_m
             INFO:...:M_1: f_{4*m+3} = (-1, 2) * X_m
+            sage: S1
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
             sage: S1.mu[0], S1.mu[1], S1.left, S1.right
             (
-            [1 0]  [ 0 -1]
-            [0 1], [ 1  2], (0, 1), (1, 0)
+            [1 0]  [ 0  1]
+            [0 1], [-1  2], (1, 0), (0, 1)
             )
             sage: logging.shutdown(); _ = reload(logging)
 
-        ::
+        Variant 2::
 
             sage: C = Seq2((Matrix([[1]]), Matrix([[1]])), vector([1]), vector([1])); C
             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
             sage: S2 = Seq2.guess(s, sequence=C)
+            sage: S2
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
             sage: S2.mu[0], S2.mu[1], S2.left, S2.right
             (
-            [1 0]  [1 1]
-            [0 1], [0 1], (1, 0), (0, 1)
+            [1 0]  [1 0]
+            [0 1], [1 1], (0, 1), (1, 0)
+            )
+
+        The sequence of all natural numbers::
+
+            sage: S = Seq2.guess(lambda n: n)
+            sage: S
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            (
+            [2 0]  [ 0  1]
+            [2 1], [-2  3], (1, 0), (0, 1)
+            )
+
+        The indicator function of the even integers::
+
+            sage: S = Seq2.guess(lambda n: ZZ(is_even(n)))
+            sage: S
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            (
+            [0 1]  [0 0]
+            [0 1], [0 1], (1, 0), (1, 1)
             )
 
         TESTS::
 
             sage: S = Seq2.guess(lambda n: 2, sequence=C)
+            sage: S
+            2-regular sequence 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
             sage: S.mu[0], S.mu[1], S.left, S.right
-            ([1], [1], (1), (2))
+            ([1], [1], (2), (1))
         """
         import logging
         logger = logging.getLogger(__name__)
@@ -600,14 +628,14 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 raise ValueError
             return linear_dependence
 
-        right = None
+        left = None
         if seq(0):
             try:
                 solution = find_linear_dependence(0, 0, [])
             except ValueError:
                 pass
             else:
-                right = vector(solution)
+                left = vector(solution)
 
         to_branch = []
         lines = []
@@ -617,10 +645,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             t, r, s = line
             logger.info('including f_{%s*m+%s}', k**t, r)
 
-        if right is None:
+        if left is None:
             line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
             include(line_L)
-            right = vector((len(seq(0)) + len(lines)-1)*(zero,) + (one,))
+            left = vector((len(seq(0)) + len(lines)-1)*(zero,) + (one,))
 
         while to_branch:
             line_R = to_branch.pop(0)
@@ -643,8 +671,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 mu[s_L].append(solution)
 
         d = len(seq(0)) + len(lines)
-        mu = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M]).transpose()
+        mu = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M])
                          for M in mu)
-        left = vector(values(0, lines))
-        right = vector(pad_right(tuple(right), d, zero=zero))
+        right = vector(values(0, lines))
+        left = vector(pad_right(tuple(left), d, zero=zero))
         return self(mu, left, right)
