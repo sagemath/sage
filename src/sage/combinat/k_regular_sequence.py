@@ -309,7 +309,7 @@ class kRegularSequence(RecognizableSeries):
             sage: S[7]
             3
 
-        TESTS
+        TESTS::
 
             sage: S[-1]
             Traceback (most recent call last):
@@ -330,11 +330,8 @@ class kRegularSequence(RecognizableSeries):
             sage: S._mu_of_word_(W(3.digits(2))) == M1^2
             True
         """
-        from sage.rings.integer_ring import ZZ
-        n = ZZ(n)
-        W = self.parent().indices()
-        w = W(n.digits(self.parent().k))
-        return RecognizableSeries.__getitem__.f(self, w)
+        return RecognizableSeries.__getitem__.f(
+            self, self.parent()._n_to_index_(n))
 
 
     def __iter__(self):
@@ -461,6 +458,35 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             'Space of 2-regular sequences over Integer Ring'
         """
         return 'Space of {}-regular sequences over {}'.format(self.k, self.base())
+
+
+    def _n_to_index_(self, n):
+        r"""
+        Convert `n` to an index usable by the underlying
+        recognizable series.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer.
+
+        OUTPUT:
+
+        A word.
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2._n_to_index_(6)
+            word: 011
+            sage: Seq2._n_to_index_(-1)
+            Traceback (most recent call last):
+            ...
+            OverflowError: can't convert negative value to unsigned char
+        """
+        from sage.rings.integer_ring import ZZ
+        n = ZZ(n)
+        W = self.indices()
+        return W(n.digits(self.k))
 
 
     def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None):
