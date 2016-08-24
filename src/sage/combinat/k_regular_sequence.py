@@ -289,7 +289,7 @@ class kRegularSequence(RecognizableSeries):
 
 
     @cached_method
-    def __getitem__(self, n):
+    def __getitem__(self, n, **kwds):
         r"""
         Return the `n`th entry of this sequence.
 
@@ -330,8 +330,7 @@ class kRegularSequence(RecognizableSeries):
             sage: S._mu_of_word_(W(3.digits(2))) == M1^2
             True
         """
-        return RecognizableSeries.__getitem__.f(
-            self, self.parent()._n_to_index_(n))
+        return self.coefficient_of_word(self.parent()._n_to_index_(n), **kwds)
 
 
     def __iter__(self):
