@@ -899,6 +899,262 @@ class RecognizableSeries(Element):
         return P.element_class(P, mu_prime, left_prime, right_prime)
 
 
+    def dimension(self):
+        r"""
+        Return the dimension of this recognizable series.
+
+        EXAMPLES::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: Rec((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [0, 1]])),
+            ....:     left=vector([0, 1]), right=vector([1, 0])).dimension()
+            2
+        """
+        return self.mu.first().nrows()
+
+
+    def _add_(self, other, minimize=True):
+        r"""
+        Return the sum of this recognizable series and the ``other``
+        recognizable series.
+
+        INPUT:
+
+        - ``other`` -- a :class:`RecognizableSeries` with the same parent
+          as this recognizable series.
+
+        - ``minimize`` -- (default: ``True``) a boolean. If set, then
+          :meth:`minimized` is called after the addition.
+
+        OUTPUT:
+
+        A :class:`RecognizableSeries`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: O = Seq2((Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: O
+            2-regular sequence 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ...
+            sage: I = E + O  # indirect doctest
+            sage: I
+            2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+            sage: I.mu[0], I.mu[1], I.left, I.right
+            ([1], [1], (1), (1))
+        """
+        from sage.modules.free_module_element import vector
+        P = self.parent()
+
+        result = P.element_class(
+            P,
+            dict((a, self.mu[a].block_sum(other.mu[a])) for a in P.alphabet()),
+            vector(tuple(self.left) + tuple(other.left)),
+            vector(tuple(self.right) + tuple(other.right)))
+
+        if minimize:
+            return result.minimized()
+        else:
+            return result
+
+
+    def _neg_(self):
+        r"""
+        Return the additive inverse of this recognizable series.
+
+        OUTPUT:
+
+        A :class:`RecognizableSeries`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: -E
+            2-regular sequence -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, ...
+            sage: Z = E - E
+            sage: Z.mu[0], Z.mu[1], Z.left, Z.right
+            ([], [], (), ())
+        """
+        P = self.parent()
+        return P.element_class(P, self.mu, -self.left, self.right)
+
+
+    def _rmul_(self, other):
+        r"""
+        Multiply this recognizable series from the right
+        by an element ``other`` of its coefficient (semi-)ring.
+
+        INPUT:
+
+        - ``other`` -- an element of the coefficient (semi-)ring.
+
+        OUTPUT:
+
+        A :class:`RecognizableSeries`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: M = E * 2  # indirect doctest
+            sage: M
+            2-regular sequence 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, ...
+            sage: M.mu[0], M.mu[1], M.left, M.right
+            (
+            [0 1]  [0 0]
+            [0 1], [0 1], (1, 0), (2, 2)
+            )
+        """
+        P = self.parent()
+        return P.element_class(P, self.mu, self.left, self.right*other)
+
+
+    def _lmul_(self, other):
+        r"""
+        Multiply this recognizable series from the left
+        by an element ``other`` of its coefficient (semi-)ring.
+
+        INPUT:
+
+        - ``other`` -- an element of the coefficient (semi-)ring.
+
+        OUTPUT:
+
+        A :class:`RecognizableSeries`.
+
+        EXAMPLES:
+
+        The following is not tested, as `MS^i` for integers `i` does
+        not work, thus ``vector([m])`` fails. (See :trac:`21317` for
+        details.)
+        ::
+
+            sage: MS = MatrixSpace(ZZ,2,2)
+            sage: Rec = RecognizableSeriesSpace(MS, [0, 1])
+            sage: m = MS.an_element()
+            sage: S = Rec((Matrix([[m]]), Matrix([[m]])),  # not tested
+            ....:         vector([m]), vector([m]))
+            sage: S  # not tested
+            sage: M = m * S  # not tested indirect doctest
+            sage: M  # not tested
+            2-regular sequence 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, ...
+            sage: M.mu[0], M.mu[1], M.left, M.right  # not tested
+            (
+            [0 1]  [0 0]
+            [0 1], [0 1], (1, 0), (2, 2)
+            )
+        """
+        P = self.parent()
+        return P.element_class(P, self.mu, other*self.left, self.right)
+
+
+    def hadamard_product(self, other, minimize=True):
+        r"""
+        Return the Hadamard product of this recognizable series
+        and the ``other`` recognizable series, i.e., multiply the two
+        series coefficient-wise.
+
+        INPUT:
+
+        - ``other`` -- a :class:`RecognizableSeries` with the same parent
+          as this recognizable series.
+
+        - ``minimize`` -- (default: ``True``) a boolean. If set, then
+          :meth:`minimized` is called after the addition.
+
+        OUTPUT:
+
+        A :class:`RecognizableSeries`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+
+            sage: O = Seq2((Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: O
+            2-regular sequence 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ...
+
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+
+        ::
+
+            sage: CE = C.hadamard_product(E)
+            sage: CE
+            2-regular sequence 0, 0, 2, 0, 4, 0, 6, 0, 8, 0, ...
+            sage: CE.mu[0], CE.mu[1], CE.left, CE.right
+            (
+            [0 1 0]  [ 0  0  0]
+            [0 2 0]  [ 0  0  1]
+            [0 2 1], [ 0 -2  3], (1, 0, 0), (0, 0, 2)
+            )
+
+            sage: Z = E.hadamard_product(O)
+            sage: Z
+            2-regular sequence 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+            sage: Z.mu[0], Z.mu[1], Z.left, Z.right
+            ([], [], (), ())
+
+        TESTS::
+
+            sage: EC = E.hadamard_product(C, minimize=False)
+            sage: EC
+            2-regular sequence 0, 0, 2, 0, 4, 0, 6, 0, 8, 0, ...
+            sage: EC.mu[0], EC.mu[1], EC.left, EC.right
+            (
+            [0 0 2 0]  [ 0  0  0  0]
+            [0 0 2 1]  [ 0  0  0  0]
+            [0 0 2 0]  [ 0  0  0  1]
+            [0 0 2 1], [ 0  0 -2  3], (1, 0, 0, 0), (0, 1, 0, 1)
+            )
+            sage: MEC = EC.minimized()
+            sage: MEC
+            2-regular sequence 0, 0, 2, 0, 4, 0, 6, 0, 8, 0, ...
+            sage: MEC.mu[0], MEC.mu[1], MEC.left, MEC.right
+            (
+            [0 1 0]  [ 0  0  0]
+            [0 2 0]  [ 0  0  1]
+            [0 2 1], [ 0 -2  3], (1, 0, 0), (0, 0, 2)
+            )
+
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+        P = self.parent()
+
+        result = P.element_class(
+            P,
+            dict((a,
+                  Matrix(tuple(
+                      srow.outer_product(orow).list()
+                      for srow in self.mu[a].rows()
+                      for orow in other.mu[a].rows())))
+                 for a in P.alphabet()),
+            vector(self.left.outer_product(other.left).list()),
+            vector(self.right.outer_product(other.right).list()))
+
+        if minimize:
+            return result.minimized()
+        else:
+            return result
+
+
+
 class RecognizableSeriesSpace(UniqueRepresentation, Parent):
     r"""
     The space of recognizable series on the given alphabet and
@@ -987,7 +1243,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
             sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])  # indirect doctest
             sage: Rec.category()
-            Category of sets
+            Category of modules over Integer Ring
             sage: RecognizableSeriesSpace([0, 1], [0, 1])
             Traceback (most recent call last):
             ...
@@ -1029,8 +1285,8 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             raise ValueError(
                 'Coefficients {} are not a semiring.'.format(coefficients))
 
-        from sage.categories.sets_cat import Sets
-        category = category or Sets()
+        from sage.categories.modules import Modules
+        category = category or Modules(coefficients)
 
         return (coefficients, indices, category)
 
@@ -1145,6 +1401,38 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             0
         """
         return self(0)
+
+
+    @cached_method
+    def one_hadamard(self):
+        r"""
+        Return the identity with respect to the
+        :meth:`~RecognizableSeries.hadamard_product`, i.e. the
+        coefficient-wise multiplication.
+
+        OUTPUT:
+
+        A :class:`RecognizableSeries`.
+
+        EXAMPLES::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: Rec.one_hadamard()
+            [] + [0] + [1] + [00] + [01] + [10]
+               + [11] + [000] + [001] + [010] + ...
+
+        TESTS::
+
+            sage: Rec.one_hadamard() is Rec.one_hadamard()
+            True
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+        from sage.rings.integer_ring import ZZ
+
+        one = ZZ(1)
+        return self(dict((a, Matrix([[one]])) for a in self.alphabet()),
+                    vector([one]), vector([one]))
 
 
     def _element_constructor_(self, data,
