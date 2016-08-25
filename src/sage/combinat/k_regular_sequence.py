@@ -579,6 +579,62 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             2-regular sequence 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
             sage: S.mu[0], S.mu[1], S.left, S.right
             ([1], [1], (2), (1))
+
+        ::
+
+            sage: S = Seq2((Matrix([1]), Matrix([2])), vector([1]), vector([1]))
+            sage: S
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq2.guess(lambda n: L[n])
+            sage: G
+            sage: G.mu[0], G.mu[1], G.left, G.right
+
+        ::
+
+            sage: S = Seq2((Matrix([1]), Matrix([3])), vector([1]), vector([1]))
+            sage: S
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq2.guess(lambda n: L[n])
+            sage: G
+            sage: G.mu[0], G.mu[1], G.left, G.right
+
+        ::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            sage: S
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq2.guess(lambda n: L[n])
+            sage: G
+            sage: G.mu[0], G.mu[1], G.left, G.right
+            sage: H = G.minimized()
+            sage: H.mu[0], H.mu[1], H.left, H.right
+
+        ::
+
+            sage: Seq3 = kRegularSequenceSpace(3, QQ)
+            sage: S = Seq3((Matrix([1]), Matrix([3]), Matrix([2])), vector([1]), vector([1]))
+            sage: S
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq3.guess(lambda n: L[n])
+            sage: G
+            sage: G.mu[0], G.mu[1], G.mu[2], G.left, G.right
+
         """
         import logging
         logger = logging.getLogger(__name__)
