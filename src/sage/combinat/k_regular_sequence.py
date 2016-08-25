@@ -900,8 +900,28 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         return W(n.digits(self.k))
 
 
-    def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None):
+    def guess(self, f, n_max=100, max_dimension=10, sequence=None):
         r"""
+        Guess a `k`-regular sequence of `(f(n))_{n\geq0}`.
+
+        INPUT:
+
+        - ``f`` -- a function (callable) which determines the sequence.
+          It takes nonnegative integers as an input.
+
+        - ``n_max`` -- (default: ``100``) a positive integer. The resulting
+          `k`-regular sequence coincides with `f` on the first ``n_max``
+          terms.
+
+        - ``max_dimension`` -- (default: ``10``) a positive integer specifying
+          the maxium dimension which is tried when guessing the sequence.
+
+        - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
+          for bootstrapping this guessing.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`.
 
         EXAMPLES:
 
@@ -991,6 +1011,49 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             2-regular sequence 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
             sage: S.mu[0], S.mu[1], S.left, S.right
             ([1], [1], (2), (1))
+
+        We guess some partial sums sequences::
+
+            sage: S = Seq2((Matrix([1]), Matrix([2])), vector([1]), vector([1]))
+            sage: S
+            2-regular sequence 1, 2, 2, 4, 2, 4, 4, 8, 2, 4, ...
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq2.guess(lambda n: L[n])
+            sage: G
+            2-regular sequence 1, 3, 5, 9, 11, 15, 19, 27, 29, 33, ...
+            sage: G.mu[0], G.mu[1], G.left, G.right
+            (
+            [ 0  1]  [3 0]
+            [-3  4], [3 2], (1, 0), (1, 1)
+            )
+            sage: G == S.partial_sums(include_n=True)
+            True
+
+        ::
+
+            sage: Seq3 = kRegularSequenceSpace(3, QQ)
+            sage: S = Seq3((Matrix([1]), Matrix([3]), Matrix([2])), vector([1]), vector([1]))
+            sage: S
+            3-regular sequence 1, 3, 2, 3, 9, 6, 2, 6, 4, 3, ...
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq3.guess(lambda n: L[n])
+            sage: G
+            3-regular sequence 1, 4, 6, 9, 18, 24, 26, 32, 36, 39, ...
+            sage: G.mu[0], G.mu[1], G.mu[2], G.left, G.right
+            (
+            [ 0  1]  [18/5  2/5]  [ 6  0]
+            [-6  7], [18/5 27/5], [24  2], (1, 0), (1, 1)
+            )
+            sage: G == S.partial_sums(include_n=True)
+            True
         """
         import logging
         logger = logging.getLogger(__name__)
@@ -1001,12 +1064,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         from sage.modules.free_module_element import vector
 
         k = self.k
-        if n_max is None:
-            n_max = 100
-        if d_max is None:
-            d_max = 10
-        if domain is None:
-            domain = self.base()  # TODO
+        domain = self.coefficients()
         if sequence is None:
             mu = [[] for _ in srange(k)]
             seq = lambda m: tuple()
@@ -1075,7 +1133,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         while to_branch:
             line_R = to_branch.pop(0)
             t_R, r_R, s_R = line_R
-            if t_R >= d_max:
+            if t_R >= max_dimension:
                 raise RuntimeError
 
             t_L = t_R + 1
