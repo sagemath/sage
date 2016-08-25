@@ -621,6 +621,9 @@ def cantor_product(*args, **kwds):
     - ``repeat`` -- an optional integer. If it is provided, the input is
       repeated ``repeat`` times.
 
+    Other keyword arguments are passed to
+    :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`.
+
     EXAMPLES::
 
         sage: from sage.misc.mrange import cantor_product
@@ -677,7 +680,13 @@ def cantor_product(*args, **kwds):
         sage: next(cantor_product(count(), toto='hey'))
         Traceback (most recent call last):
         ...
-        TypeError: 'toto' is an invalid keyword argument for this function
+        TypeError: __init__() got an unexpected keyword argument 'toto'
+
+    ::
+
+        sage: list(cantor_product(srange(5), repeat=2, min_slope=1))
+        [(0, 1), (0, 2), (1, 2), (0, 3), (1, 3),
+         (0, 4), (2, 3), (1, 4), (2, 4), (3, 4)]
     """
     from itertools import count
     from sage.combinat.integer_lists import IntegerListsLex
@@ -692,8 +701,6 @@ def cantor_product(*args, **kwds):
         return
     elif repeat < 0:
         raise ValueError("repeat argument cannot be negative")
-    if kwds:
-        raise TypeError("'{}' is an invalid keyword argument for this function".format(next(kwds.iterkeys())))
     mm = m * repeat
 
     for n in count(0):
@@ -710,7 +717,7 @@ def cantor_product(*args, **kwds):
 
         # iterate through what we have
         ceiling = [n if lengths[i] is None else lengths[i]-1 for i in range(m)] * repeat
-        for v in IntegerListsLex(n, length=mm, ceiling=ceiling):
+        for v in IntegerListsLex(n, length=mm, ceiling=ceiling, **kwds):
             yield tuple(data[i%m][v[i]] for i in range(mm))
 
         if all(l is not None for l in lengths) and repeat*sum(l-1 for l in lengths) == n:

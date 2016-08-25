@@ -5,7 +5,8 @@ cdef class lazy_list_generic(object):
 
     cpdef get(self, Py_ssize_t i)
     cpdef int _fit(self, Py_ssize_t n) except -1
-    cdef int update_cache_up_to(self, Py_ssize_t i) except -1
+    cpdef int _update_cache_up_to(self, Py_ssize_t i) except -1
+    cpdef list _get_cache_(self)
 
 cdef class lazy_list_from_iterator(lazy_list_generic):
     cdef object iterator
