@@ -687,6 +687,42 @@ class kRegularSequence(RecognizableSeries):
             [ 0  0  0  1]  [0 0 0 0]
             [ 0  0  0  1], [0 0 0 1], (1, 0, -1, 0), (1, 1, 1, 1)
             )
+
+        In the following the linear representation of `S` is chosen bad, as
+        `\mu(0)` applied on `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+
+        Therefore, building partial sums produces a wrong result::
+
+            sage: H = S.partial_sums(include_n=True, minimize=False)
+            sage: H
+            2-regular sequence 1, 5, 16, 25, 62, 80, 98, 125, 274, 310, ...
+            sage: H = S.partial_sums(minimize=False)
+            sage: H
+            2-regular sequence 0, 2, 10, 16, 50, 62, 80, 98, 250, 274, ...
+
+        We can guess the correct representation::
+
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq2.guess(lambda n: L[n])
+            sage: G
+            2-regular sequence 1, 4, 10, 19, 31, 49, 67, 94, 118, 154, ...
+            sage: G.mu[0], G.mu[1], G.left, G.right
+            (
+            [  0   1   0   0]  [  0   0   1   0]
+            [  0   0   0   1]  [ -5   3   3   0]
+            [ -5   5   1   0]  [ -5   0   6   0]
+            [ 10 -17   0   8], [-30  21  10   0], (1, 0, 0, 0), (1, 1, 4, 1)
+            )
+            sage: G.minimized().dimension() == G.dimension()
+            True
         """
         from sage.matrix.constructor import Matrix
         from sage.matrix.special import zero_matrix
@@ -1051,6 +1087,24 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             )
             sage: G == S.partial_sums(include_n=True)
             True
+
+        In the following the linear representation of `S` is chosen bad, as
+        `\mu(0)` applied on `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+
+        However, we can guess a `2`-regular sequence of dimension `2`::
+
+            sage: T = Seq2.guess(lambda n: S[n])
+            sage: T
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: T.mu[0], T.mu[1], T.left, T.right
+            (
+            [ 0  1]  [3 0]
+            [-2  3], [6 0], (1, 0), (1, 1)
+            )
         """
         import logging
         logger = logging.getLogger(__name__)
