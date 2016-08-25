@@ -96,7 +96,7 @@ Classes and Methods
 
 from sage.combinat.recognizable_series import RecognizableSeries
 from sage.combinat.recognizable_series import RecognizableSeriesSpace
-from sage.misc.cachefunc import cached_method
+from sage.misc.cachefunc import cached_function, cached_method
 from six import iteritems
 
 
@@ -131,6 +131,81 @@ def pad_right(T, length, zero=0):
         [1, 2, 3, 0, 0, 0, 0, 0, 0, 0]
     """
     return T + type(T)(zero for _ in xrange(length - len(T)))
+
+
+def value(D, k):
+    r"""
+    Return the value of the expansion with digits `D` in base `k`, i.e.
+
+    .. MATH::
+
+        \sum_{0\leq j < \operator{len}D} D[j] k^j.
+
+    INPUT:
+
+    - ``D`` -- a tuple or other iterable.
+
+    - ``k`` -- the base.
+
+    OUTPUT:
+
+    An element in the common parent of the base `k` and of the entries
+    of `D`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence import value
+        sage: value(42.digits(7), 7)
+        42
+    """
+    return sum(d * k**j for j, d in enumerate(D))
+
+
+def split_interlace(n, k, p):
+    r"""
+    Split each digit in the `k`-ary expansion of `n` into `p` parts and
+    return the value of the expansion obtained by each of these parts.
+
+    INPUT:
+
+    - ``n`` -- an integer.
+
+    - ``k`` -- an integer specifying the base.
+
+    - ``p`` -- a positive integer specifying in how many parts
+      the input ``n`` is split. This has to be a divisor of ``k``.
+
+    OUTPUT:
+
+    A tuple of integers.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence import split_interlace
+        sage: [(n, split_interlace(n, 4, 2)) for n in srange(20)]
+        [(0, (0, 0)), (1, (1, 0)), (2, (0, 1)), (3, (1, 1)),
+         (4, (2, 0)), (5, (3, 0)), (6, (2, 1)), (7, (3, 1)),
+         (8, (0, 2)), (9, (1, 2)), (10, (0, 3)), (11, (1, 3)),
+         (12, (2, 2)), (13, (3, 2)), (14, (2, 3)), (15, (3, 3)),
+         (16, (4, 0)), (17, (5, 0)), (18, (4, 1)), (19, (5, 1))]
+        sage: [(n, split_interlace(n, 6, 3)) for n in srange(9)]
+        [(0, (0, 0, 0)), (1, (1, 0, 0)), (2, (0, 1, 0)),
+         (3, (1, 1, 0)), (4, (0, 0, 1)), (5, (1, 0, 1)),
+         (6, (2, 0, 0)), (7, (3, 0, 0)), (8, (2, 1, 0))]
+
+    TESTS::
+
+        sage: split_interlace(42, 4, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: p=3 is not a divisor of k=4.
+    """
+    if k % p != 0:
+        raise ValueError('p={} is not a divisor of k={}.'.format(p, k))
+    ki = k // p
+    return tuple(value(D, ki)
+                 for D in zip(*(d.digits(ki, padto=p)
+                                for d in n.digits(k, padto=1))))
 
 
 class kRegularSequence(RecognizableSeries):
@@ -765,3 +840,203 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         n = ZZ(n)
         W = self.indices()
         return W(n.digits(self.k))
+
+
+    def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None):
+        r"""
+
+        EXAMPLES:
+
+        Binary sum of digits::
+
+            sage: @cached_function
+            ....: def s(n):
+            ....:     if n == 0:
+            ....:         return 0
+            ....:     return s(n//2) + ZZ(is_odd(n))
+            sage: all(s(n) == sum(n.digits(2)) for n in srange(10))
+            True
+            sage: [s(n) for n in srange(10)]
+            [0, 1, 1, 2, 1, 2, 2, 3, 1, 2]
+
+        Variant 1::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: import logging
+            sage: logging.basicConfig(level=logging.INFO)
+            sage: S1 = Seq2.guess(s)
+            INFO:...:including f_{1*m+0}
+            INFO:...:M_0: f_{2*m+0} = (1) * X_m
+            INFO:...:including f_{2*m+1}
+            INFO:...:M_1: f_{2*m+1} = (0, 1) * X_m
+            INFO:...:M_0: f_{4*m+1} = (0, 1) * X_m
+            INFO:...:M_1: f_{4*m+3} = (-1, 2) * X_m
+            sage: S1
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+            sage: S1.mu[0], S1.mu[1], S1.left, S1.right
+            (
+            [1 0]  [ 0  1]
+            [0 1], [-1  2], (1, 0), (0, 1)
+            )
+            sage: logging.shutdown(); _ = reload(logging)
+
+        Variant 2::
+
+            sage: C = Seq2((Matrix([[1]]), Matrix([[1]])), vector([1]), vector([1])); C
+            2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+            sage: S2 = Seq2.guess(s, sequence=C)
+            sage: S2
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+            sage: S2.mu[0], S2.mu[1], S2.left, S2.right
+            (
+            [1 0]  [1 0]
+            [0 1], [1 1], (0, 1), (1, 0)
+            )
+
+        The sequence of all natural numbers::
+
+            sage: S = Seq2.guess(lambda n: n)
+            sage: S
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            (
+            [2 0]  [ 0  1]
+            [2 1], [-2  3], (1, 0), (0, 1)
+            )
+
+        The indicator function of the even integers::
+
+            sage: S = Seq2.guess(lambda n: ZZ(is_even(n)))
+            sage: S
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            (
+            [0 1]  [0 0]
+            [0 1], [0 1], (1, 0), (1, 1)
+            )
+
+        The indicator function of the odd integers::
+
+            sage: S = Seq2.guess(lambda n: ZZ(is_odd(n)))
+            sage: S
+            2-regular sequence 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            (
+            [0 0]  [0 1]
+            [0 1], [0 1], (1, 0), (0, 1)
+            )
+
+        TESTS::
+
+            sage: S = Seq2.guess(lambda n: 2, sequence=C)
+            sage: S
+            2-regular sequence 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
+            sage: S.mu[0], S.mu[1], S.left, S.right
+            ([1], [1], (2), (1))
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        from sage.arith.srange import srange, xsrange
+        from sage.matrix.constructor import Matrix
+        from sage.misc.mrange import cantor_product
+        from sage.modules.free_module_element import vector
+
+        k = self.k
+        if n_max is None:
+            n_max = 100
+        if d_max is None:
+            d_max = 10
+        if domain is None:
+            domain = self.base()  # TODO
+        if sequence is None:
+            mu = [[] for _ in srange(k)]
+            seq = lambda m: tuple()
+        else:
+            mu = [M.rows() for M in sequence.mu]
+            seq = lambda m: sequence.left * sequence._mu_of_word_(
+                self._n_to_index_(m))
+
+        zero = domain(0)
+        one = domain(1)
+
+        def values(m, lines):
+            return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R, s_R in lines)
+
+        @cached_function(key=lambda lines: len(lines))  # we assume that existing lines are not changed (we allow appending of new lines)
+        def some_inverse_U_matrix(lines):
+            d = len(seq(0)) + len(lines)
+
+            for m_indices in cantor_product(xsrange(n_max), repeat=d, min_slope=1):
+                U = Matrix(domain, d, d, [values(m, lines) for m in m_indices]).transpose()
+                try:
+                    return U.inverse(), m_indices
+                except ZeroDivisionError:
+                    pass
+            else:
+                raise RuntimeError
+
+        def guess_linear_dependence(t_L, r_L, lines):
+            iU, m_indices = some_inverse_U_matrix(lines)
+            X_L = vector(f(k**t_L * m + r_L) for m in m_indices)
+            return X_L * iU
+
+        def verify_linear_dependence(t_L, r_L, linear_dependence, lines):
+            return all(f(k**t_L * m + r_L) ==
+                       linear_dependence * vector(values(m, lines))
+                       for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
+
+        def find_linear_dependence(t_L, r_L, lines):
+            linear_dependence = guess_linear_dependence(t_L, r_L, lines)
+            if not verify_linear_dependence(t_L, r_L, linear_dependence, lines):
+                raise ValueError
+            return linear_dependence
+
+        left = None
+        if seq(0):
+            try:
+                solution = find_linear_dependence(0, 0, [])
+            except ValueError:
+                pass
+            else:
+                left = vector(solution)
+
+        to_branch = []
+        lines = []
+        def include(line):
+            to_branch.append(line)
+            lines.append(line)
+            t, r, s = line
+            logger.info('including f_{%s*m+%s}', k**t, r)
+
+        if left is None:
+            line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
+            include(line_L)
+            left = vector((len(seq(0)) + len(lines)-1)*(zero,) + (one,))
+
+        while to_branch:
+            line_R = to_branch.pop(0)
+            t_R, r_R, s_R = line_R
+            if t_R >= d_max:
+                raise RuntimeError
+
+            t_L = t_R + 1
+            for s_L in srange(k):
+                r_L = k**t_R * s_L + r_R
+                line_L = t_L, r_L, s_L
+
+                try:
+                    solution = find_linear_dependence(t_L, r_L, lines)
+                except ValueError:
+                    include(line_L)
+                    solution = (len(lines)-1)*(zero,) + (one,)
+                logger.info('M_%s: f_{%s*m+%s} = %s * X_m',
+                            s_L, k**t_L, r_L, solution)
+                mu[s_L].append(solution)
+
+        d = len(seq(0)) + len(lines)
+        mu = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M])
+                         for M in mu)
+        right = vector(values(0, lines))
+        left = vector(pad_right(tuple(left), d, zero=zero))
+        return self(mu, left, right)
