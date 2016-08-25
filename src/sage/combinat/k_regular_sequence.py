@@ -20,6 +20,10 @@ found, for example, on the :wikipedia:`k-regular_sequence` or in
         might change without a formal deprecation.
         See http://trac.sagemath.org/21202 for details.
 
+::
+
+    sage: import logging
+    sage: logging.basicConfig()
 
 Examples
 ========
@@ -898,6 +902,19 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         n = ZZ(n)
         W = self.indices()
         return W(n.digits(self.k))
+
+
+    def _element_constructor_(self, *args, **kwds):
+        element = super(kRegularSequenceSpace, self)._element_constructor_(*args, **kwds)
+
+        from sage.rings.integer_ring import ZZ
+        if element.mu[ZZ(0)] * element.right != element.right:
+            import logging
+            logger = logging.getLogger(__name__)
+            print element.mu[ZZ(0)], element.right, element.mu[ZZ(0)] * element.right
+            logger.warning('mu[0]*right != right')
+
+        return element
 
 
     def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None):
