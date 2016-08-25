@@ -214,7 +214,7 @@ class kRegularSequence(RecognizableSeries):
             sage: W = Seq2.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Seq2((M0, M1), [0, 1], [1, 1])
+            sage: S = Seq2((M0, M1), vector([0, 1]), vector([1, 1]))
             sage: S._mu_of_word_(W(0.digits(2))) == M0
             True
             sage: S._mu_of_word_(W(1.digits(2))) == M1
