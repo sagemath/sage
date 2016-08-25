@@ -292,7 +292,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: Seq2.category()
-            Category of sets
+            Category of modules over Integer Ring
 
         ::
 
