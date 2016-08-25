@@ -295,21 +295,52 @@ class RecognizableSeries(Element):
 
             :doc:`recognizable series <recognizable_series>`,
             :class:`RecognizableSeriesSpace`.
+
+        TESTS::
+
+            sage: M0 = Matrix([[3, 6], [0, 1]])
+            sage: M1 = Matrix([[0, -6], [1, 5]])
+            sage: L = vector([0, 1])
+            sage: R = vector([1, 0])
+            sage: S = Rec((M0, M1), L, R)
+            sage: S.mu[0] is M0, S.mu[1] is M1, S.left is L, S.right is R
+            (False, False, False, False)
+            sage: S.mu[0].is_immutable(), S.mu[1].is_immutable(), S.left.is_immutable(), S.right.is_immutable()
+            (True, True, True, True)
+            sage: M0.set_immutable()
+            sage: M1.set_immutable()
+            sage: L.set_immutable()
+            sage: R.set_immutable()
+            sage: S = Rec((M0, M1), L, R)
+            sage: S.mu[0] is M0, S.mu[1] is M1, S.left is L, S.right is R
+            (True, True, True, True)
         """
         super(RecognizableSeries, self).__init__(parent=parent)
 
+        from copy import copy
         from sage.sets.family import Family
 
         A = self.parent().alphabet()
         if isinstance(mu, (list, tuple)):
             mu = dict(zip(A, mu))
+
+        def immutable(m):
+            if m.is_immutable():
+                return m
+            m = copy(m)
+            m.set_immutable()
+            return m
+
+        if isinstance(mu, dict):
+            mu = dict((a, immutable(M)) for a, M in mu.iteritems())
         mu = Family(mu)
+
         if not mu.is_finite():
             raise NotImplementedError('mu is not a finite family of matrices.')
 
-        self._left_ = left
+        self._left_ = immutable(left)
         self._mu_ = mu
-        self._right_ = right
+        self._right_ = immutable(right)
 
 
     @property
@@ -325,7 +356,7 @@ class RecognizableSeries(Element):
             sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Rec((M0, M1), [0, 1], [1, 1])
+            sage: S = Rec((M0, M1), vector([0, 1]), vector([1, 1]))
             sage: S.mu[0] == M0 and S.mu[1] == M1
             True
         """
@@ -504,12 +535,12 @@ class RecognizableSeries(Element):
             sage: W = Rec.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Rec({W([0]): M0, W([1]): M1}, [0, 1], [1, 1])
+            sage: S = Rec({W([0]): M0, W([1]): M1}, vector([0, 1]), vector([1, 1]))
             sage: S._mu_of_empty_word_()
             [1 0]
             [0 1]
-            sage: I = Matrix([[1, 0], [0, 1]])
-            sage: T = Rec({W([]): I, W([0]): M0, W([1]): M1}, [0, 1], [1, 1])
+            sage: I = Matrix([[1, 0], [0, 1]]); I.set_immutable()
+            sage: T = Rec({W([]): I, W([0]): M0, W([1]): M1}, vector([0, 1]), vector([1, 1]))
             sage: T._mu_of_empty_word_()
             [1 0]
             [0 1]
@@ -543,7 +574,7 @@ class RecognizableSeries(Element):
             sage: W = Rec.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Rec((M0, M1), [0, 1], [1, 1])
+            sage: S = Rec((M0, M1), vector([0, 1]), vector([1, 1]))
             sage: S._mu_of_word_(W([0])) == M0
             True
             sage: S._mu_of_word_(W([1])) == M1
@@ -687,6 +718,108 @@ class RecognizableSeries(Element):
         return True
 
 
+    def __hash__(self):
+        r"""
+        A hash value of this recognizable series.
+
+        TESTS::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: S = Rec((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [0, 1]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]))
+            sage: hash(S)  # random
+            42
+        """
+        return hash((self.mu, self.left, self.right))
+
+
+    def __eq__(self, other):
+        r"""
+        Return whether this recognizable series is equal to ``other``.
+
+        INPUT:
+
+        - ``other`` -- an object.
+
+        OUTPUT:
+
+        A boolean.
+
+        .. NOTE::
+
+            This function uses the coercion model to find a common
+            parent for the two operands.
+
+        EXAMPLES::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: S = Rec((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [0, 1]])),
+            ....:          left=vector([1, 1]), right=vector([1, 0]))
+            sage: S
+            [] + [0] + [1] + [00] + [01] + [10]
+               + [11] + [000] + [001] + [010] + ...
+            sage: Z1 = Rec((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [0, 1]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]))
+            sage: Z1
+            0
+            sage: Z2 = Rec((Matrix([[0, 0], [0, 0]]), Matrix([[0, 0], [0, 0]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]))
+            sage: Z2
+            0
+            sage: S == Z1
+            False
+            sage: S == Z2
+            False
+            sage: Z1 == Z2
+            True
+
+        TESTS::
+
+            sage: S == S
+            True
+            sage: x == None
+            False
+        """
+        if other is None:
+            return False
+        try:
+            return not bool(self - other)
+        except (TypeError, ValueError):
+            return False
+
+
+    def __ne__(self, other):
+        r"""
+        Return whether this recognizable series is equal to ``other``.
+
+        INPUT:
+
+        - ``other`` -- an object.
+
+        OUTPUT:
+
+        A boolean.
+
+        .. NOTE::
+
+            This function uses the coercion model to find a common
+            parent for the two operands.
+
+        EXAMPLES::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: Z1 = Rec((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [0, 1]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]))
+            sage: Z2 = Rec((Matrix([[0, 0], [0, 0]]), Matrix([[0, 0], [0, 0]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]))
+            sage: Z1 != Z2
+            False
+            sage: Z1 != Z1
+            False
+        """
+        return not self == other
+
+
     def transposed(self):
         r"""
         Return the transposed series.
@@ -720,8 +853,17 @@ class RecognizableSeries(Element):
             [3 6]  [ 0 -6]
             [0 1], [ 1  5], (0, 1), (1, 0)
             )
+
+        TESTS::
+
+            sage: T.mu[0].is_immutable(), T.mu[1].is_immutable(), T.left.is_immutable(), T.right.is_immutable()
+            (True, True, True, True)
         """
-        return self.parent()(self.mu.map(lambda M: M.transpose()),
+        def tr(M):
+            T = M.transpose()
+            T.set_immutable()
+            return T
+        return self.parent()(self.mu.map(tr),
                              left=self.right,
                              right=self.left)
 
@@ -1154,6 +1296,20 @@ class RecognizableSeries(Element):
             return result
 
 
+def _pickle_RecognizableSeriesSpace(coefficients, indices, category):
+    r"""
+    Pickle helper.
+
+    TESTS::
+
+        sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+        sage: from sage.combinat.recognizable_series import _pickle_RecognizableSeriesSpace
+        sage: _pickle_RecognizableSeriesSpace(
+        ....:     Rec.coefficients(), Rec.indices(), Rec.category())
+        Space of recognizable series on {0, 1} with coefficients in Integer Ring
+    """
+    return RecognizableSeriesSpace(coefficients, indices=indices, category=category)
+
 
 class RecognizableSeriesSpace(UniqueRepresentation, Parent):
     r"""
@@ -1309,10 +1465,53 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
             sage: RecognizableSeriesSpace(ZZ, [0, 1])
             Space of recognizable series on {0, 1} with coefficients in Integer Ring
+
+        ::
+
+            sage: from itertools import islice
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: TestSuite(Rec).run(  # long time
+            ....:    verbose=True,
+            ....:    elements=tuple(islice(Rec.some_elements(), 4)))
+            running ._test_additive_associativity() . . . pass
+            running ._test_an_element() . . . pass
+            running ._test_cardinality() . . . pass
+            running ._test_category() . . . pass
+            running ._test_elements() . . .
+              Running the test suite of self.an_element()
+              running ._test_category() . . . pass
+              running ._test_eq() . . . pass
+              running ._test_nonzero_equal() . . . pass
+              running ._test_not_implemented_methods() . . . pass
+              running ._test_pickling() . . . pass
+              pass
+            running ._test_elements_eq_reflexive() . . . pass
+            running ._test_elements_eq_symmetric() . . . pass
+            running ._test_elements_eq_transitive() . . . pass
+            running ._test_elements_neq() . . . pass
+            running ._test_eq() . . . pass
+            running ._test_not_implemented_methods() . . . pass
+            running ._test_pickling() . . . pass
+            running ._test_some_elements() . . . pass
+            running ._test_zero() . . . pass
         """
         self._indices_ = indices
         super(RecognizableSeriesSpace, self).__init__(
             category=category, base=coefficients)
+
+
+    def __reduce__(self):
+        r"""
+        Pickling support.
+
+        TESTS::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: loads(dumps(Rec))  # indirect doctest
+            Space of recognizable series on {0, 1} with coefficients in Integer Ring
+        """
+        return _pickle_RecognizableSeriesSpace, \
+            (self.coefficients(), self.indices(), self.category())
 
 
     def alphabet(self):
@@ -1387,6 +1586,77 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                                                 self.coefficients())
 
 
+    def _an_element_(self):
+        r"""
+        Return an element of this recognizable series.
+
+        OUTPUT:
+
+        A :class:`recognizable_series`.
+
+        EXAMPLES::
+
+            sage: RecognizableSeriesSpace(ZZ, [0, 1]).an_element()  # indirect doctest
+            [1] + [01] + [10] + 2*[11] + [001] + [010]
+                + 2*[011] + [100] + 2*[101] + 2*[110] + ...
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+        z = self.coefficients().zero()
+        o = self.coefficients().one()
+        e = self.coefficients().an_element()
+        return self(list(Matrix([[o, z], [i*o, o]])
+                         for i, _ in enumerate(self.alphabet())),
+                    vector([z, e]), right=vector([e, z]))
+
+
+    def some_elements(self):
+        r"""
+        Return some elements of this free module.
+
+        See :class:`TestSuite` for a typical use case.
+
+        OUTPUT:
+
+        An iterator.
+
+        EXAMPLES::
+
+            sage: tuple(RecognizableSeriesSpace(ZZ, [0, 1]).some_elements())
+            ([1] + [01] + [10] + 2*[11] + [001] + [010]
+                 + 2*[011] + [100] + 2*[101] + 2*[110] + ...,
+             [] + [0] + [1] + [00] + [01] + [10]
+                + [11] + [000] + [001] + [010] + ...,
+             0,
+             -2*[] + 2*[0] - 4*[1] - 2*[00] + 4*[01] + 4*[10]
+                   - 8*[11] + 2*[000] - 4*[001] - 4*[010] + ...,
+             [] + [0] + 2*[1] + [00] + 2*[01] + [10]
+                + 4*[11] + [000] + 2*[001] + [010] + ...,
+             2*[] + 5*[0] + 11*[1] + 8*[00] + 14*[01] + 14*[10]
+                  + 20*[11] + 11*[000] + 17*[001] + 17*[010] + ...,
+             ...
+             [] + [0] + 10*[1] + [00] + 10*[01] + [10]
+                + 100*[11] + [000] + 10*[001] + [010] + ...)
+        """
+        from itertools import count, islice
+        from sage.matrix.matrix_space import MatrixSpace
+        from sage.modules.free_module import FreeModule
+        yield self.an_element()
+
+        C = self.coefficients()
+        some_elements_base = iter(C.some_elements())
+        k = len(self.alphabet())
+        for dim in range(1, 11):
+            elements_M = MatrixSpace(C, dim).some_elements()
+            elements_V = FreeModule(C, dim).some_elements()
+            for _ in range(3):
+                mu = list(islice(elements_M, k))
+                LR = list(islice(elements_V, 2))
+                if len(mu) != k or len(LR) != 2:
+                    break
+                yield self(mu, *LR)
+
+
     def zero(self):
         """
         Return the zero of this recognizable series space.
@@ -1456,7 +1726,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Rec((M0, M1), [0, 1], [1, 1])
+            sage: S = Rec((M0, M1), vector([0, 1]), vector([1, 1]))
             sage: Rec(S) is S
             True
 

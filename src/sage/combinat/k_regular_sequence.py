@@ -323,7 +323,7 @@ class kRegularSequence(RecognizableSeries):
             sage: W = Seq2.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Seq2((M0, M1), [0, 1], [1, 1])
+            sage: S = Seq2((M0, M1), vector([0, 1]), vector([1, 1]))
             sage: S._mu_of_word_(W(0.digits(2))) == M0
             True
             sage: S._mu_of_word_(W(1.digits(2))) == M1
@@ -712,6 +712,21 @@ class kRegularSequence(RecognizableSeries):
             return result
 
 
+def _pickle_kRegularSequenceSpace(k, coefficients, category):
+    r"""
+    Pickle helper.
+
+    TESTS::
+
+        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+        sage: from sage.combinat.k_regular_sequence import _pickle_kRegularSequenceSpace
+        sage: _pickle_kRegularSequenceSpace(
+        ....:     Seq2.k, Seq2.coefficients(), Seq2.category())
+        Space of 2-regular sequences over Integer Ring
+    """
+    return kRegularSequenceSpace(k, coefficients, category=category)
+
+
 class kRegularSequenceSpace(RecognizableSeriesSpace):
     r"""
     The space of `k`-regular Sequences over the given ``coefficients``.
@@ -788,6 +803,35 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: kRegularSequenceSpace(3, ZZ)
             Space of 3-regular sequences over Integer Ring
 
+        ::
+
+            sage: from itertools import islice
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: TestSuite(Seq2).run(  # long time
+            ....:    verbose=True,
+            ....:    elements=tuple(islice(Seq2.some_elements(), 4)))
+            running ._test_additive_associativity() . . . pass
+            running ._test_an_element() . . . pass
+            running ._test_cardinality() . . . pass
+            running ._test_category() . . . pass
+            running ._test_elements() . . .
+              Running the test suite of self.an_element()
+              running ._test_category() . . . pass
+              running ._test_eq() . . . pass
+              running ._test_nonzero_equal() . . . pass
+              running ._test_not_implemented_methods() . . . pass
+              running ._test_pickling() . . . pass
+              pass
+            running ._test_elements_eq_reflexive() . . . pass
+            running ._test_elements_eq_symmetric() . . . pass
+            running ._test_elements_eq_transitive() . . . pass
+            running ._test_elements_neq() . . . pass
+            running ._test_eq() . . . pass
+            running ._test_not_implemented_methods() . . . pass
+            running ._test_pickling() . . . pass
+            running ._test_some_elements() . . . pass
+            running ._test_zero() . . . pass
+
         .. SEEALSO::
 
             :doc:`k-regular sequence <k_regular_sequence>`,
@@ -795,6 +839,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         """
         self.k = k
         super(kRegularSequenceSpace, self).__init__(*args, **kwds)
+
+
+    def __reduce__(self):
+        r"""
+        Pickling support.
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: loads(dumps(Seq2))  # indirect doctest
+            Space of 2-regular sequences over Integer Ring
+        """
+        return _pickle_kRegularSequenceSpace, \
+            (self.k, self.coefficients(), self.category())
 
 
     def _repr_(self):
