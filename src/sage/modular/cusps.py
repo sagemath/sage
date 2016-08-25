@@ -27,6 +27,7 @@ EXAMPLES::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.all import Rational, Integer, ZZ, QQ
 
@@ -1066,12 +1067,19 @@ class Cusp(Element):
 
             sage: N = 50; t=3; G = Gamma0(N); C = G.cusps()
             sage: cl = lambda z: exists(C, lambda y:y.is_gamma0_equiv(z, N))[1]
-            sage: for i in range(5): print i, t^i, [cl(alpha.galois_action(t^i,N)) for alpha in C]
-            0 1 [0, 1/25, 1/10, 1/5, 3/10, 2/5, 1/2, 3/5, 7/10, 4/5, 9/10, Infinity]
-            1 3 [0, 1/25, 7/10, 2/5, 1/10, 4/5, 1/2, 1/5, 9/10, 3/5, 3/10, Infinity]
-            2 9 [0, 1/25, 9/10, 4/5, 7/10, 3/5, 1/2, 2/5, 3/10, 1/5, 1/10, Infinity]
-            3 27 [0, 1/25, 3/10, 3/5, 9/10, 1/5, 1/2, 4/5, 1/10, 2/5, 7/10, Infinity]
-            4 81 [0, 1/25, 1/10, 1/5, 3/10, 2/5, 1/2, 3/5, 7/10, 4/5, 9/10, Infinity]
+            sage: for i in range(5):
+            ....:     print((i, t^i))
+            ....:     print([cl(alpha.galois_action(t^i,N)) for alpha in C])
+            (0, 1)
+            [0, 1/25, 1/10, 1/5, 3/10, 2/5, 1/2, 3/5, 7/10, 4/5, 9/10, Infinity]
+            (1, 3)
+            [0, 1/25, 7/10, 2/5, 1/10, 4/5, 1/2, 1/5, 9/10, 3/5, 3/10, Infinity]
+            (2, 9)
+            [0, 1/25, 9/10, 4/5, 7/10, 3/5, 1/2, 2/5, 3/10, 1/5, 1/10, Infinity]
+            (3, 27)
+            [0, 1/25, 3/10, 3/5, 9/10, 1/5, 1/2, 4/5, 1/10, 2/5, 7/10, Infinity]
+            (4, 81)
+            [0, 1/25, 1/10, 1/5, 3/10, 2/5, 1/2, 3/5, 7/10, 4/5, 9/10, Infinity]
 
         TESTS:
 

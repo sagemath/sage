@@ -19,3 +19,8 @@ En algunas Macs tendrías que presionar ``shift-return`` en lugar de ``shift-ent
    tour_assignment
    tour_help
    tour_algebra
+   tour_rings
+   tour_linalg
+   tour_polynomial
+   tour_groups
+   tour_numtheory

@@ -40,6 +40,7 @@ EXAMPLES::
     sage: D1+D2
     (x^2 + 2*x + 2, y + 2*x + 1)
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -54,7 +55,7 @@ from sage.rings.polynomial.polynomial_element import is_Polynomial
 
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.schemes.generic.morphism import is_SchemeMorphism
-from jacobian_morphism import JacobianMorphism_divisor_class_field
+from .jacobian_morphism import JacobianMorphism_divisor_class_field
 
 class JacobianHomset_divisor_classes(SchemeHomset_points):
     def __init__(self, Y, X, **kwds):

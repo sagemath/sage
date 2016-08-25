@@ -1,6 +1,7 @@
 """
 Jacobian of a Hyperelliptic curve of Genus 2
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -8,8 +9,8 @@ Jacobian of a Hyperelliptic curve of Genus 2
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import jacobian_generic
-import kummer_surface
+from . import jacobian_generic
+from . import kummer_surface
 
 # The generic genus 2 curve in Weierstrass form:
 #

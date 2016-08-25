@@ -308,6 +308,7 @@ TESTS::
     sage: loads(dumps(f)) == f
     True
 """
+from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2011 Rob Beezer <beezer@ups.edu>
@@ -327,7 +328,7 @@ TESTS::
 
 import sage.modules.matrix_morphism as matrix_morphism
 import sage.modules.free_module_morphism as free_module_morphism
-import vector_space_homspace
+from . import vector_space_homspace
 from sage.matrix.matrix import is_Matrix
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):

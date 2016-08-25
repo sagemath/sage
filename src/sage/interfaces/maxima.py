@@ -464,6 +464,7 @@ Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import re
@@ -476,10 +477,10 @@ from sage.env import DOT_SAGE, SAGE_LOCAL
 
 ##import sage.rings.all
 
-from expect import (Expect, ExpectElement, FunctionElement,
+from .expect import (Expect, ExpectElement, FunctionElement,
                     ExpectFunction, gc_disabled)
 
-from maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
+from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
                              MaximaAbstractElement,
                              MaximaAbstractFunctionElement,
                              MaximaAbstractElementFunction)

@@ -70,10 +70,11 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import six
-import ring
-import fraction_field_element
+from . import ring
+from . import fraction_field_element
 import sage.misc.latex as latex
 from sage.misc.cachefunc import cached_method
 

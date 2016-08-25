@@ -88,10 +88,11 @@ The crystal `C \otimes T_\mu` is useful when finding subcrystals inside
 irreducible highest weight crystals `B(\lambda)` where `\lambda` is larger than
 `\mu` in the lexicographic order.  For example::
 
-    sage: La = RootSystem("C2").weight_lattice().fundamental_weights()
-    sage: h = RootSystem("C2").weight_lattice().simple_coroots()
-    sage: T = crystals.elementary.T("C2",2*La[1])
-    sage: C = crystals.elementary.Component("C2")
+    sage: P = RootSystem("C2").weight_lattice()
+    sage: La = P.fundamental_weights()
+    sage: h = P.simple_coroots()
+    sage: T = crystals.elementary.T("C2", 2*La[1])
+    sage: C = crystals.elementary.Component(P)
     sage: B = crystals.TensorProduct(C,T)
     sage: b = B(C[0],T[0])
     sage: for i in B.index_set(): print(b.epsilon(i))

@@ -426,7 +426,7 @@ class ode_solver(object):
             if self.function is not None:
                 wrapper.the_function = self.function
             else:
-                raise ValueError, "ODE system not yet defined"
+                raise ValueError("ODE system not yet defined")
             if self.jacobian is None:
                 wrapper.the_jacobian = None
             else:
@@ -434,7 +434,7 @@ class ode_solver(object):
             if self.params==[] and len(inspect.getargspec(wrapper.the_function)[0])==2:
                 wrapper.the_parameters=[]
             elif self.params==[] and len(inspect.getargspec(wrapper.the_function)[0])>2:
-                raise ValueError, "ODE system has a parameter but no parameters specified"
+                raise ValueError("ODE system has a parameter but no parameters specified")
             elif self.params!=[]:
                 wrapper.the_parameters = self.params
             wrapper.y_n = dim
@@ -448,7 +448,7 @@ class ode_solver(object):
 
         y= <double*> sig_malloc(sizeof(double)*(dim))
         if y==NULL:
-            raise MemoryError,"error allocating memory"
+            raise MemoryError("error allocating memory")
         result=[]
         v=[0]*dim
         cdef gsl_odeiv_step_type * T
@@ -473,20 +473,20 @@ class ode_solver(object):
         elif self.algorithm == "bsimp":
             T = gsl_odeiv_step_bsimp
             if not type and self.jacobian is None:
-                raise TypeError,"The jacobian must be provided for the implicit Burlisch-Stoer method"
+                raise TypeError("The jacobian must be provided for the implicit Burlisch-Stoer method")
         elif self.algorithm == "gear1":
             T = gsl_odeiv_step_gear1
         elif self.algorithm == "gear2":
             T = gsl_odeiv_step_gear2
         else:
-            raise TypeError,"algorithm not valid"
+            raise TypeError("algorithm not valid")
 
 
         cdef gsl_odeiv_step * s
         s  = gsl_odeiv_step_alloc (T, dim)
         if s==NULL:
             sig_free(y)
-            raise MemoryError, "error setting up solver"
+            raise MemoryError("error setting up solver")
 
 
         cdef gsl_odeiv_control * c
@@ -508,7 +508,7 @@ class ode_solver(object):
             gsl_odeiv_step_free (s)
             sig_free(y)
             sig_free(scale_abs_array)
-            raise MemoryError, "error setting up solver"
+            raise MemoryError("error setting up solver")
 
 
         cdef gsl_odeiv_evolve * e
@@ -519,7 +519,7 @@ class ode_solver(object):
             gsl_odeiv_step_free (s)
             sig_free(y)
             sig_free(scale_abs_array)
-            raise MemoryError, "error setting up solver"
+            raise MemoryError("error setting up solver")
 
 
         cdef gsl_odeiv_system sys
@@ -548,7 +548,7 @@ class ode_solver(object):
                 gsl_odeiv_step_free (s)
                 sig_free(y)
                 sig_free(scale_abs_array)
-                raise TypeError,"numpoints must be integer"
+                raise TypeError("numpoints must be integer")
             result.append( (self.t_span[0],self.y_0))
             delta = (self.t_span[1]-self.t_span[0])/(1.0*num_points)
             t =self.t_span[0]

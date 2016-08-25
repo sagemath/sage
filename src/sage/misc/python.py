@@ -36,9 +36,9 @@ class Python:
 
         The locals variable is ignored -- it is there only for
         completeness.  It is ignored since otherwise the following
-        won't work::
+        will not work::
 
-            sage: python.eval("def foo():\n return 'foo'\nprint foo()\ndef mumble():\n print 'mumble',foo()\nmumble()", globals())
+            sage: python.eval("def foo():\n   return 'foo'\nprint(foo())\ndef mumble():\n    print('mumble {}'.format(foo()))\nmumble()", globals())
             foo
             mumble foo
             ''

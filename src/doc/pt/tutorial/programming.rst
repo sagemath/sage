@@ -15,8 +15,8 @@ seguinte conteúdo:
 
 ::
 
-    print "Hello World"
-    print 2^3
+    print("Hello World")
+    print(2^3)
 
 Você pode ler e executar o arquivo ``example.sage`` usando o comando
 ``load``.
@@ -59,8 +59,8 @@ contém o seguinte código:
 
 ::
 
-    print "Hello World"
-    print Integer(2)**Integer(3)
+    print("Hello World")
+    print(Integer(2)**Integer(3))
 
 Inteiros literais são encapsulados e ``^`` é substituído por ``**``.
 (Em Python, ``^`` significa "ou exclusivo" e ``**`` significa
@@ -198,11 +198,11 @@ O seguinte script em Sage fatora inteiros, polinômios, etc:
     from sage.all import *
     
     if len(sys.argv) != 2:
-        print "Usage: %s <n>"%sys.argv[0]
-        print "Outputs the prime factorization of n."
+        print("Usage: %s <n>" % sys.argv[0])
+        print("Outputs the prime factorization of n.")
         sys.exit(1)
     
-    print factor(sage_eval(sys.argv[1]))
+    print(factor(sage_eval(sys.argv[1])))
 
 Para usar esse script, sua ``SAGE_ROOT`` precisa estar na sua variável
 PATH. Se o script acima for chamado ``factor``, aqui está um exemplo
@@ -351,7 +351,7 @@ Isso é útil quando se usa "list comprehensions" para construir listas:
 ::
 
     sage: L = [factor(n) for n in range(1, 15)]
-    sage: print L
+    sage: L
     [1, 2, 3, 2^2, 5, 2 * 3, 7, 2^3, 3^2, 2 * 5, 11, 2^2 * 3, 13, 2 * 7]
     sage: L[12]
     13
@@ -373,7 +373,7 @@ começando do :math:`m`-ésimo elemento e terminando no
     sage: L = [factor(n) for n in range(1, 20)]
     sage: L[4:9]
     [5, 2 * 3, 7, 2^3, 3^2]
-    sage: print L[:4]
+    sage: L[:4]
     [1, 2, 3, 2^2]
     sage: L[14:4]
     []
@@ -534,7 +534,7 @@ usando ``Set(...)``. Por exemplo,
     {1, 2/3}
     sage: X.intersection(Y)
     {1}
-    sage: print latex(Y)
+    sage: print(latex(Y))
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring
@@ -705,7 +705,7 @@ o int ``1`` do Python é único, mas o Inteiro ``1`` do Sage não é.
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)
+    sage: int(1) is int(2)/int(2)  # optional - python2
     True
     sage: 1 is 1
     False

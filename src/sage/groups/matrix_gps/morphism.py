@@ -20,6 +20,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.categories.morphism import Morphism
 from sage.misc.latex import latex
@@ -184,7 +185,7 @@ class MatrixGroupMorphism_im_gens(MatrixGroupMorphism):
             sage: F = GF(5); MS = MatrixSpace(F,2,2)
             sage: G = MatrixGroup([MS([1,1,0,1])])
             sage: phi = G.hom(G.gens())
-            sage: print latex(phi)
+            sage: print(latex(phi))
             \left\langle \left(\begin{array}{rr}
             1 & 1 \\
             0 & 1

@@ -21,6 +21,7 @@ EXAMPLE::
     (23.83..., 24.0...)
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
@@ -54,7 +55,7 @@ EXAMPLE::
 #*****************************************************************************/
 
 from sage.rings.all import RealField, RR, ZZ
-from discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
+from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
 
 class DiscreteGaussianDistributionPolynomialSampler(SageObject):

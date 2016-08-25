@@ -7,6 +7,8 @@ for use in doc-strings.
 {INDEX_OF_FUNCTIONS}
 
 """
+from __future__ import print_function
+
 from sage.misc.sageinspect import _extract_embedded_position
 
 def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_functions=True):
@@ -47,7 +49,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
     EXAMPLE::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
-        sage: print gen_rest_table_index([graphs.PetersenGraph])
+        sage: print(gen_rest_table_index([graphs.PetersenGraph]))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -57,7 +59,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
 
     The table of a module::
 
-        sage: print gen_rest_table_index(sage.misc.rest_index_of_methods)
+        sage: print(gen_rest_table_index(sage.misc.rest_index_of_methods))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -72,7 +74,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
 
     The table of a class::
 
-        sage: print gen_rest_table_index(Graph)
+        sage: print(gen_rest_table_index(Graph))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -92,7 +94,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
         ....:
         ....:     EXAMP...
         ....:     '''
-        ....:     print "hey"
+        ....:     print("hey")
         sage: 'Here is a very very very long sentence that spans on several lines' in gen_rest_table_index([a])
         True
 
@@ -109,7 +111,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
     When ``only_local_functions`` is ``False``, we do not include
     ``gen_rest_table_index`` itself::
 
-        sage: print gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=True)
+        sage: print(gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=True))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -121,7 +123,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
            :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
-        sage: print gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=False)
+        sage: print(gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=False))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -308,7 +310,7 @@ def doc_index(name):
         sage: from sage.misc.rest_index_of_methods import doc_index
         sage: @doc_index("Wouhouuuuu")
         ....: def a():
-        ....:     print "Hey"
+        ....:     print("Hey")
         sage: a.doc_index
         'Wouhouuuuu'
     """

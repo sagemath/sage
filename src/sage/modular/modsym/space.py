@@ -5,6 +5,7 @@ Space of modular symbols (base class)
 All the spaces of modular symbols derive from this class. This class is an
 abstract base class.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
@@ -33,12 +34,12 @@ import sage.rings.fast_arith as fast_arith
 from   sage.rings.all import PowerSeriesRing, Integer, O, QQ, ZZ, infinity, Zmod
 from sage.rings.number_field.number_field_base import is_NumberField
 from   sage.structure.all import Sequence, SageObject
-import sage.modular.modsym.ambient
+
 
 from sage.modular.arithgroup.all import Gamma0, is_Gamma0 # for Sturm bound given a character
 from sage.modular.modsym.element import ModularSymbolsElement
 
-import hecke_operator
+from . import hecke_operator
 
 from sage.misc.cachefunc import cached_method
 
@@ -379,7 +380,8 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             sage: ModularSymbols(21,4).cuspidal_submodule().is_ambient()
             False
         """
-        return isinstance(self, sage.modular.modsym.ambient.ModularSymbolsAmbient)
+        from sage.modular.modsym.ambient import ModularSymbolsAmbient
+        return isinstance(self, ModularSymbolsAmbient)
 
     def is_cuspidal(self):
         """

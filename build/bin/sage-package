@@ -38,5 +38,5 @@ except ImportError:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
     import sage_bootstrap
 
-from sage_bootstrap.cmdline import SagePkgApplication
-SagePkgApplication().run()
+from sage_bootstrap.cmdline import run
+run()

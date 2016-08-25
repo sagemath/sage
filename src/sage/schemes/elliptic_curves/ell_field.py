@@ -5,6 +5,7 @@ This module defines the class ``EllipticCurve_field``, based on
 ``EllipticCurve_generic``, for elliptic curves over general fields.
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -14,14 +15,14 @@ This module defines the class ``EllipticCurve_field``, based on
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import ell_generic
+from . import ell_generic
 import sage.rings.all as rings
 from sage.rings.complex_field import is_ComplexField
 from sage.rings.real_mpfr import is_RealField
-from constructor import EllipticCurve
+from .constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 
-from ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic):
 
@@ -837,8 +838,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: phi(E.random_point()) # all points defined over GF(19) are in the kernel
             (0 : 1 : 0)
 
+        Not all polynomials define a finite subgroup (:trac:`6384`)::
 
-            # not all polynomials define a finite subgroup trac #6384
             sage: E = EllipticCurve(GF(31),[1,0,0,1,2])
             sage: phi = E.isogeny([14,27,4,1])
             Traceback (most recent call last):
@@ -847,7 +848,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
 
         An example in which we construct an invalid morphism, which
         illustrates that the check for correctness of the input is not
-        sufficient. (See trac 11578.)::
+        sufficient. (See :trac:`11578`.)::
 
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^2-x-1)
@@ -1004,7 +1005,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
         if F == rings.QQbar:
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")
 
-        from isogeny_small_degree import isogenies_prime_degree
+        from .isogeny_small_degree import isogenies_prime_degree
         if l is None:
             from sage.rings.all import prime_range
             l = prime_range(max_l+1)
@@ -1073,7 +1074,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             ...
             NotImplementedError: Only implemented for isomorphic curves over general fields.
         """
-        from ell_generic import is_EllipticCurve
+        from .ell_generic import is_EllipticCurve
         if not is_EllipticCurve(other):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
@@ -1116,7 +1117,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: E.weierstrass_p(prec=20, algorithm='quadratic')
             z^-2 + 31/15*z^2 + 2501/756*z^4 + 961/675*z^6 + 77531/41580*z^8 + 1202285717/928746000*z^10 + 2403461/2806650*z^12 + 30211462703/43418875500*z^14 + 3539374016033/7723451736000*z^16 + 413306031683977/1289540602350000*z^18 + O(z^20)
         """
-        from ell_wp import weierstrass_p
+        from .ell_wp import weierstrass_p
         return weierstrass_p(self, prec=prec, algorithm=algorithm)
 
     def hasse_invariant(self):

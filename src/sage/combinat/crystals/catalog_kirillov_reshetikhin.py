@@ -10,8 +10,9 @@ We currently have the following models:
 * :func:`RiggedConfigurations
   <sage.combinat.rigged_configurations.rigged_configurations.KirillovReshetikhinCrystal>`
 """
-from kirillov_reshetikhin import KashiwaraNakashimaTableaux
-from kirillov_reshetikhin import KirillovReshetikhinCrystalFromLSPaths as LSPaths
+from __future__ import absolute_import
+
+from .kirillov_reshetikhin import KashiwaraNakashimaTableaux
+from .kirillov_reshetikhin import KirillovReshetikhinCrystalFromLSPaths as LSPaths
 from sage.combinat.rigged_configurations.kr_tableaux import KirillovReshetikhinTableaux
 from sage.combinat.rigged_configurations.rigged_configurations import KirillovReshetikhinCrystal as RiggedConfigurations
-

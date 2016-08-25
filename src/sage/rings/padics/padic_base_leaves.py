@@ -176,6 +176,7 @@ TESTS::
     sage: TestSuite(R).run()
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
@@ -188,15 +189,15 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from generic_nodes import pAdicFieldBaseGeneric, \
+from .generic_nodes import pAdicFieldBaseGeneric, \
                           pAdicCappedRelativeFieldGeneric, \
                           pAdicRingBaseGeneric, \
                           pAdicCappedRelativeRingGeneric, \
                           pAdicFixedModRingGeneric, \
                           pAdicCappedAbsoluteRingGeneric
-from padic_capped_relative_element import pAdicCappedRelativeElement
-from padic_capped_absolute_element import pAdicCappedAbsoluteElement
-from padic_fixed_mod_element import pAdicFixedModElement
+from .padic_capped_relative_element import pAdicCappedRelativeElement
+from .padic_capped_absolute_element import pAdicCappedAbsoluteElement
+from .padic_fixed_mod_element import pAdicFixedModElement
 from sage.rings.integer_ring import ZZ
 
 class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGeneric):

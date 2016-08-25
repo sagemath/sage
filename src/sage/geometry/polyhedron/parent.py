@@ -1,6 +1,7 @@
 r"""
 Parents for Polyhedra
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
@@ -18,7 +19,7 @@ from sage.rings.all import ZZ, QQ, RDF, CommutativeRing
 from sage.categories.fields import Fields
 
 from sage.geometry.polyhedron.base import Polyhedron_base, is_Polyhedron
-from representation import Inequality, Equation, Vertex, Ray, Line
+from .representation import Inequality, Equation, Vertex, Ray, Line
 
 
 def Polyhedra(base_ring, ambient_dim, backend=None):

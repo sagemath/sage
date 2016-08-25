@@ -213,11 +213,11 @@ class Profiler(SageObject):
             ....: except OSError:
             ....:     pass    # not installed
         """
-        potential_names = ['pprof', 'google-pprof']
-        from subprocess import check_output, CalledProcessError
+        potential_names = ['google-pprof', 'pprof']
+        from subprocess import check_output, CalledProcessError, STDOUT
         for name in potential_names:
             try:
-                version = check_output([name, '--version'])
+                version = check_output([name, '--version'], stderr=STDOUT)
             except (CalledProcessError, OSError):
                 continue
             if 'gperftools' not in version:

@@ -270,7 +270,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             if not isinstance(shift, Integer):
                 shift = Integer(shift)
             if mpz_fits_slong_p((<Integer>shift).value) == 0:
-                raise ValueError, "valuation overflow"
+                raise ValueError("valuation overflow")
             s = mpz_get_si((<Integer>shift).value)
         check_ordp(s)
         return self._rshift_c(s)

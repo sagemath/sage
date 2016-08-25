@@ -1,7 +1,15 @@
+# distutils: libraries = GSL_LIBRARIES
+# distutils: library_dirs = GSL_LIBDIR
+# distutils: include_dirs = GSL_INCDIR
+from sage.libs.gsl.types cimport gsl_function
+
+cdef extern from "gsl/gsl_diff.h":
+  int gsl_diff_central ( gsl_function *f, double x,
+                        double *result, double *abserr)
+
+
 from sage.misc.superseded import deprecation
 deprecation(20135, "the module sage.gsl.callback is deprecated")
-
-from sage.libs.gsl.all cimport gsl_function, gsl_diff_central
 
 
 foo = None

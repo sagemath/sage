@@ -38,6 +38,7 @@ Ideals in the equation order of an extension of a rational function field::
     sage: I.intersection(~I)
     Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -307,7 +308,7 @@ def ideal_with_gens_over_base(R, gens):
     # We handle the case of a rational function field separately,
     # since this is the base case and is used, e.g,. internally
     # by the linear algebra Hermite form code.
-    import function_field_order
+    from . import function_field_order
     if isinstance(R, function_field_order.FunctionFieldOrder_rational):
         from sage.modules import free_module_element
         gens = free_module_element.vector(x.element() for x in gens)

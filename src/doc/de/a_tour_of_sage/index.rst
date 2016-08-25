@@ -6,7 +6,7 @@ Ein Rundgang durch Sage
 
 This work is a derivative work, a translation prepared by Bernhard
 Blöchl and Simon King from „A Tour of Sage“ at
-http://www.sagemath.org/doc/a_tour_of_sage/. The current German
+http://doc.sagemath.org/html/en/a_tour_of_sage/. The current German
 translation is licensed under a
 `Creative Commons Attribution-Share Alike 3.0 License`__.
 

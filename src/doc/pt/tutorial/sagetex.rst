@@ -9,7 +9,7 @@ com o Sage em um documento LaTeX. Esse pacote já vem com o Sage. Para
 usá-lo, você precisa "instalá-lo" em seu sistema LaTeX local; aqui
 instalar significa copiar um simples arquivo. Veja :ref:`installation`
 neste tutorial e a seção "Make SageTeX known to TeX" do `Guia de
-instalação do Sage <http://sagemath.org/doc/installation/index.html>`_
+instalação do Sage <http://doc.sagemath.org/html/en/installation/index.html>`_
 (em inglês).
 
 Aqui vai um breve exemplo de como usar o SageTeX. A documentação

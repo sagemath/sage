@@ -5,9 +5,6 @@ if [ "$SAGE_LOCAL" = "" ]; then
     exit 1
 fi
 
-## Saturday night special for the ill-formed R-3.2.4-revised.tar.gz release
-ln -s R-revised src
-
 cd src
 $MAKE check
 if [ $? -ne 0 ]; then

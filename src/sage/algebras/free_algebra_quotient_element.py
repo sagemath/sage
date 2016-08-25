@@ -23,9 +23,8 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.misc.misc import repr_lincomb
-from sage.structure.element import RingElement
+from sage.structure.element import RingElement, AlgebraElement
 from sage.rings.integer import Integer
-from sage.algebras.algebra_element import AlgebraElement
 from sage.modules.free_module_element import FreeModuleElement
 from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.algebras.free_algebra_element import FreeAlgebraElement

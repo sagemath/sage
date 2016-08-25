@@ -125,9 +125,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
-from all import SL2Z
-from arithgroup_generic import ArithmeticSubgroup
+from .all import SL2Z
+from .arithgroup_generic import ArithmeticSubgroup
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import verbose
@@ -440,7 +442,7 @@ def ArithmeticSubgroup_Permutation(
                 L = ~S3 * ~R * S3
             if S2 is None:
                 S2 = ~S3 * R
-    else: # intialize from S2, S3
+    else: # initialize from S2, S3
         if L is None:
             L = ~S3 * ~S2
         if R is None:
@@ -951,7 +953,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         waiting = []
 
         while True:
-            # intialize at j0
+            # initialize at j0
             mapping[j0] = k
             waiting.append(j0)
             k += 1
@@ -1325,7 +1327,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         else:
             N = 2*self.generalised_level()
 
-        from congroup_generic import CongruenceSubgroup_constructor as CS
+        from .congroup_generic import CongruenceSubgroup_constructor as CS
         return CS(N, [x.matrix() for x in self.gens()])
 
     def is_congruence(self):
@@ -1389,13 +1391,13 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: a.is_congruence()
             True
 
-        This example is congruence -- it is `\Gamma_0(3)` in disguise: ::
+        This example is congruence -- it is `\Gamma_0(3)` in disguise::
 
             sage: S2 = SymmetricGroup(4)
             sage: l = S2((2,3,4))
             sage: r = S2((1,3,4))
             sage: G = ArithmeticSubgroup_Permutation(L=l,R=r)
-            sage: print G
+            sage: G
             Arithmetic subgroup with permutations of right cosets
             S2=(1,2)(3,4)
             S3=(1,4,2)
@@ -1546,10 +1548,12 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: G = Gamma(3).as_permutation_group()
             sage: G.index()
             24
+            sage: l = []
             sage: for H in G.surgroups():
-            ....:     print H.index(),
+            ....:     l.append(H.index())
             ....:     assert G.is_subgroup(H) and H.is_congruence()
-            6 3 4 8 4 8 4 12 4 6 6 8 8
+            sage: l
+            [6, 3, 4, 8, 4, 8, 4, 12, 4, 6, 6, 8, 8]
         """
         from sage.interfaces.gap import gap
         P = self.perm_group()._gap_()
@@ -1815,12 +1819,13 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 else:
                     widths.append(len(c))
             else:
+                c2 = len(c) // 2
                 if exp:
-                    if not len(c)/2 in widths:
-                        widths[len(c)/2] = 0
-                    widths[len(c)/2] += 1
+                    if not c2 in widths:
+                        widths[c2] = 0
+                    widths[c2] += 1
                 else:
-                    widths.append(len(c)/2)
+                    widths.append(c2)
 
         if exp:
             return widths
@@ -1882,7 +1887,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         True
 
         sage: G = Gamma0(12).as_permutation_group()
-        sage: print G
+        sage: G
         Arithmetic subgroup of index 24
         sage: G.is_congruence()
         True
@@ -2033,7 +2038,9 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: tree,reps,wreps,gens = G._spanning_tree_kulkarni()
             sage: tree
             Digraph on 4 vertices
-            sage: for m in reps: print m,"\n****"
+            sage: for m in reps:
+            ....:     print(m)
+            ....:     print("\n****")
             [1 0]
             [0 1]
             ****
@@ -2046,7 +2053,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             [1 1]
             [0 1]
             ****
-            sage: for w in wreps: print ','.join(w)
+            sage: for w in wreps: print(','.join(w))
             <BLANKLINE>
             s3
             s3,s3
@@ -2157,7 +2164,9 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: tree,reps,wreps,gens=G._spanning_tree_verrill()
             sage: tree
             Digraph on 4 vertices
-            sage: for m in reps: print m, "\n****"
+            sage: for m in reps:
+            ....:     print(m)
+            ....:     print("\n****")
             [1 0]
             [0 1]
             ****
@@ -2452,24 +2461,24 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         Starting from `\Gamma(4)` we get back `\Gamma(4)`::
 
             sage: G = Gamma(4).as_permutation_group()
-            sage: print G.is_odd(), G.index()
-            True 48
+            sage: G.is_odd(), G.index()
+            (True, 48)
             sage: Ge = G.to_even_subgroup()
             sage: Go = Ge.one_odd_subgroup()
-            sage: print Go.is_odd(), Go.index()
-            True 48
+            sage: Go.is_odd(), Go.index()
+            (True, 48)
             sage: Go == G
             True
 
         Strating from `\Gamma(6)` we get a different group::
 
             sage: G = Gamma(6).as_permutation_group()
-            sage: print G.is_odd(), G.index()
-            True 144
+            sage: G.is_odd(), G.index()
+            (True, 144)
             sage: Ge = G.to_even_subgroup()
             sage: Go = Ge.one_odd_subgroup()
-            sage: print Go.is_odd(), Go.index()
-            True 144
+            sage: Go.is_odd(), Go.index()
+            (True, 144)
             sage: Go == G
             False
 
@@ -2551,7 +2560,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: [G.S2(), G.S3()]
             [(1,2)(3,4)(5,6)(7,8)(9,10), (1,8,3)(2,4,6)(5,7,10)]
             sage: X = G.odd_subgroups()
-            sage: for u in X: print [u.S2(), u.S3()]
+            sage: for u in X: print([u.S2(), u.S3()])
             [(1,2,11,12)(3,4,13,14)(5,6,15,16)(7,8,17,18)(9,10,19,20), (1,8,3,11,18,13)(2,4,6,12,14,16)(5,7,10,15,17,20)(9,19)]
             [(1,2,11,12)(3,4,13,14)(5,6,15,16)(7,8,17,18)(9,10,19,20), (1,18,13,11,8,3)(2,4,6,12,14,16)(5,7,10,15,17,20)(9,19)]
             [(1,2,11,12)(3,4,13,14)(5,6,15,16)(7,8,17,18)(9,10,19,20), (1,8,13,11,18,3)(2,4,6,12,14,16)(5,7,10,15,17,20)(9,19)]

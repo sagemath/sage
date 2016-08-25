@@ -16,6 +16,7 @@ Test of the :mod:`~sage.structure.factory` module
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
 
 from sage.structure.factory import UniqueFactory
 
@@ -47,7 +48,7 @@ class UniqueFactoryTester(UniqueFactory):
             Making object (1, 2, 4)
             <sage.structure.test_factory.A instance at ...>
         """
-        print "Making object", key
+        print("Making object", key)
         return A()
 
 test_factory = UniqueFactoryTester('sage.structure.test_factory.test_factory')

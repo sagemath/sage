@@ -10,7 +10,7 @@
 しかし，ペアレントと型強制の意味について理解しておかないと，Sageにおける環その他の代数構造を有効かつ効率的に利用することができないのである．
 
 以下で試みるのは概念の解説であって，それをどうやって実現するかまでは示すことはできない．
-実装法に関するチュートリアルは `Sage thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_ にある．
+実装法に関するチュートリアルは `Sage thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_ にある．
 
 
 元
@@ -181,7 +181,7 @@ Sageにおけるペアレント構造は，Pythonオブジェクトとして唯�
 Sageにも *型変換* と *型強制* の考えは取り込まれている．
 しかし，Sageでは主たる対象が型ではなくペアレントになっているので，Cの型変換とSageにおける変換を混同しないよう注意していただきたい．
 
-以下の説明はかなり簡略化されているので，詳しい解説と実装情報についてはSageレファレンスマニュアルの型強制に関する節と `thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_ を参照されたい．
+以下の説明はかなり簡略化されているので，詳しい解説と実装情報についてはSageレファレンスマニュアルの型強制に関する節と `thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_ を参照されたい．
 
 *異なる* 環に属する元同士の演算実行については，両極をなす二つの立場がある:
 
@@ -342,7 +342,7 @@ Sageが宗とするのは歩み寄りだ．
 しかし，Sageは最も自然に見える *正準* な共通のペアレントを選択しようとする(ここでは ``QQ['x']``)．
 共通のペアレント候補が複数あってどれも同じく有望そうな場合，Sageは中の一つをランダムに選択するということは *しない* ．
 これは再現性の高い結果を求めるためで，選択の手段については `thematic tutorial
-<http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_
+<http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_
 に解説がある．
 
 

@@ -16,6 +16,14 @@ from sage.misc.banner import banner
 
 class NotebookSageNB(object):
 
+    def print_banner(self):
+        banner()
+        print('Please wait while the old SageNB Notebook server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls([], help=True)
+    
     def cmdline2argspec(self, cmdline_args):
         """
         Convert command line arguments to Python argspec
@@ -54,6 +62,7 @@ class NotebookSageNB(object):
         return tuple(args), kwds
 
     def __init__(self, argv, help=False):
+        self.print_banner()
         self.args, self.kwds = self.cmdline2argspec(argv)
         logger.info('notebook positional arguments = %s', self.args)
         logger.info('notebook keyword arguments = %s', self.kwds)
@@ -73,7 +82,16 @@ class NotebookJupyter(object):
     then rebuild Python (sage -f python2).
     """)
 
+    def print_banner(self):
+        banner()
+        print('Please wait while the Sage Jupyter Notebook server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
     def __init__(self, argv):
+        self.print_banner()
         from sage.repl.ipython_kernel.install import have_prerequisites
         if not have_prerequisites():
             print(self.PREREQUISITE_ERROR)
@@ -81,6 +99,27 @@ class NotebookJupyter(object):
         from notebook.notebookapp import main
         main(argv)
 
+
+class SageNBExport(NotebookJupyter):
+
+    def print_banner(self):
+        banner()
+        print('Please wait while the SageNB export server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['--help'])
+
+    def __init__(self, argv):
+        if argv:
+            SAGENB_EXPORT = 'sagenb-export'
+            os.execvp(SAGENB_EXPORT, [SAGENB_EXPORT] + argv)
+        argv += [
+            "--NotebookApp.server_extensions=['sagenb_export.nbextension']",
+            "--NotebookApp.default_url='/sagenb'",
+        ]
+        super(SageNBExport, self).__init__(argv)
+        
 
 description = \
 """
@@ -118,6 +157,7 @@ notebook_launcher = {
     'sagenb': NotebookSageNB,
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
+    'export': SageNBExport,
 } 
 
 notebook_names = ', '.join(notebook_launcher.keys())
@@ -178,16 +218,10 @@ if __name__ == '__main__':
     if args.option_help:
         if args.notebook == 'default':
             parser.print_help()
-        elif launcher == NotebookSageNB:
-            NotebookSageNB([], help=True)
-        elif launcher == NotebookJupyter:
-            NotebookJupyter(['help'])
         else:
-            parser.print_help()
+            launcher.print_help()
         sys.exit(0)
 
-    banner()
-    print("Please wait while the Sage Notebook server starts...")
     launcher(unknown)
 
 

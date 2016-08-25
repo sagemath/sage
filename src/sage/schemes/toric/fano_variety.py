@@ -152,6 +152,7 @@ implementing them on your own as a patch for inclusion!
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import re
 
@@ -740,7 +741,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         TESTS::
 
             sage: P1xP1 = toric_varieties.P1xP1()
-            sage: print P1xP1._latex_()
+            sage: print(P1xP1._latex_())
             \mathbb{P}_{\Delta^{2}_{14}}
         """
         return r"\mathbb{P}_{%s}" % latex(self.Delta())
@@ -756,7 +757,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         TESTS::
 
             sage: P1xP1 = toric_varieties.P1xP1()
-            sage: print P1xP1._repr_()
+            sage: print(P1xP1._repr_())
             2-d CPR-Fano toric variety covered by 4 affine patches
         """
         return ("%d-d CPR-Fano toric variety covered by %d affine patches"

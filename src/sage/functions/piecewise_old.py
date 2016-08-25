@@ -441,7 +441,7 @@ class PiecewisePolynomial:
         elif mode == "midpoint":
             return self._riemann_sum_helper(N, lambda x0, x1: (x1-x0)*self((x0+x1)/2))
         else:
-            raise ValueError, "invalid mode"
+            raise ValueError("invalid mode")
 
     def riemann_sum(self,N,mode=None):
         """
@@ -496,7 +496,7 @@ class PiecewisePolynomial:
             rsum = self._riemann_sum_helper(N, lambda x0,x1: [[(x0,x1),SR(self((x0+x1)/2))]],
                                             initial=[])
         else:
-            raise ValueError, "invalid mode"
+            raise ValueError("invalid mode")
         return Piecewise(rsum)
 
     def trapezoid(self,N):
@@ -728,7 +728,7 @@ class PiecewisePolynomial:
         for i in range(n):
             if endpts[i] < x0 < endpts[i+1]:
                 return self.functions()[i](x0)
-        raise ValueError,"Value not defined outside of domain."
+        raise ValueError("Value not defined outside of domain.")
 
     def which_function(self,x0):
         """
@@ -749,7 +749,7 @@ class PiecewisePolynomial:
         for (a,b), f in self.list():
             if a <= x0 <= b:
                 return f
-        raise ValueError,"Function not defined outside of domain."
+        raise ValueError("Function not defined outside of domain.")
 
     def default_variable(self):
         r"""
@@ -884,7 +884,7 @@ class PiecewisePolynomial:
 
         TESTS:
 
-        Verify that piecewise integrals of zero work (trac #10841)::
+        Verify that piecewise integrals of zero work (:trac:`10841`)::
 
             sage: f0(x) = 0 
             sage: f = Piecewise([[(0,1),f0]])
@@ -903,7 +903,7 @@ class PiecewisePolynomial:
             return F(b) - F(a)
 
         if a != None or b != None:
-            raise TypeError, 'only one endpoint given'
+            raise TypeError('only one endpoint given')
 
         area = 0 # cumulative definite integral of parts to the left of the current interval
         integrand_pieces = self.list()

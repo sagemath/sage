@@ -49,7 +49,7 @@ def DivisorGroup(scheme, base_ring=None):
     if base_ring is None:
         base_ring = ZZ
 
-    from sage.schemes.plane_curves.curve import Curve_generic
+    from sage.schemes.curves.curve import Curve_generic
     if isinstance(scheme, Curve_generic):
         DG = DivisorGroup_curve(scheme, base_ring)
     else:

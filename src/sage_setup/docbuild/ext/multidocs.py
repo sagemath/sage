@@ -20,7 +20,12 @@
     - the javascript index;
     - the citations.
 """
-import cPickle, os, sys, shutil, re, tempfile
+from six.moves import cPickle
+import os
+import sys
+import shutil
+import re
+import tempfile
 import sphinx
 from sphinx.util.console import bold
 from sage.env import SAGE_DOC

@@ -1,6 +1,6 @@
 # distutils: libraries = gmp
 
-from types cimport *
+from .types cimport *
 from libc.stdio cimport FILE
 
 from libc.stdint cimport intmax_t, uintmax_t

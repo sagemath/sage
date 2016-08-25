@@ -31,6 +31,8 @@ from sage.structure.parent cimport Set_PythonType
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.superseded import deprecated_function_alias
 from sage.structure.element cimport parent_c
+from cpython.object cimport PyObject_RichCompare
+
 
 def unpickle_map(_class, parent, _dict, _slots):
     """
@@ -124,7 +126,7 @@ cdef class Map(Element):
                 parent = Set_PythonType(parent)
             parent = homset.Hom(parent, codomain)
         elif not isinstance(parent, homset.Homset):
-            raise TypeError, "parent (=%s) must be a Homspace"%parent
+            raise TypeError("parent (=%s) must be a Homspace" % parent)
         Element.__init__(self, parent)
         D = parent.domain()
         C = parent.codomain()
@@ -786,7 +788,7 @@ cdef class Map(Element):
             try:
                 x = D(x)
             except (TypeError, NotImplementedError):
-                raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, D)
+                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (x, D))
         else:
             x = converter(x)
         if not args and not kwds:
@@ -806,7 +808,7 @@ cdef class Map(Element):
             ...
             NotImplementedError: <type 'sage.categories.map.Map'>
         """
-        raise NotImplementedError, type(self)
+        raise NotImplementedError(type(self))
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
@@ -824,7 +826,7 @@ cdef class Map(Element):
         if len(args) == 0 and len(kwds) == 0:
             return self(x)
         else:
-            raise NotImplementedError, "_call_with_args not overridden to accept arguments for %s" % type(self)
+            raise NotImplementedError("_call_with_args not overridden to accept arguments for %s" % type(self))
 
     def __mul__(self, right):
         r"""
@@ -897,9 +899,9 @@ cdef class Map(Element):
                       To:   Rational Field
         """
         if not isinstance(right, Map):
-            raise TypeError, "right (=%s) must be a map to multiply it by %s"%(right, self)
+            raise TypeError("right (=%s) must be a map to multiply it by %s" % (right, self))
         if right.codomain() != self.domain():
-            raise TypeError, "self (=%s) domain must equal right (=%s) codomain"%(self, right)
+            raise TypeError("self (=%s) domain must equal right (=%s) codomain" % (self, right))
         return self._composition(right)
 
     def _composition(self, right):
@@ -1136,9 +1138,9 @@ cdef class Map(Element):
             raise ValueError("This map became defunct by garbage collection")
         cdef Map connecting = D._internal_coerce_map_from(new_domain)
         if connecting is None:
-            raise TypeError, "No coercion from %s to %s" % (new_domain, D)
+            raise TypeError("No coercion from %s to %s" % (new_domain, D))
         elif connecting.codomain() is not D:
-            raise RuntimeError, "BUG: coerce_map_from should always return a map to self (%s)" % D
+            raise RuntimeError("BUG: coerce_map_from should always return a map to self (%s)" % D)
         else:
             return self.pre_compose(connecting.__copy__())
 
@@ -1176,9 +1178,9 @@ cdef class Map(Element):
         """
         cdef Map connecting = new_codomain._internal_coerce_map_from(self._codomain)
         if connecting is None:
-            raise TypeError, "No coercion from %s to %s" % (self._codomain, new_codomain)
+            raise TypeError("No coercion from %s to %s" % (self._codomain, new_codomain))
         elif connecting.domain() is not self._codomain:
-            raise RuntimeError, "BUG: coerce_map_from should always return a map from its input (%s)" % new_codomain
+            raise RuntimeError("BUG: coerce_map_from should always return a map from its input (%s)" % new_codomain)
         else:
             return self.post_compose(connecting.__copy__())
 
@@ -1195,7 +1197,7 @@ cdef class Map(Element):
             ...
             NotImplementedError: <type 'sage.categories.map.Map'>
         """
-        raise NotImplementedError, type(self)
+        raise NotImplementedError(type(self))
 
     def is_surjective(self):
         """
@@ -1210,7 +1212,7 @@ cdef class Map(Element):
             ...
             NotImplementedError: <type 'sage.categories.map.Map'>
         """
-        raise NotImplementedError, type(self)
+        raise NotImplementedError(type(self))
 
     def __pow__(Map self, n, dummy):
         """
@@ -1253,7 +1255,7 @@ cdef class Map(Element):
               Defn: z |--> 3/11*a^3 + 4/11*a^2 + 9/11*a - 14/11
         """
         if self.domain() is not self._codomain and n != 1 and n != -1:
-            raise TypeError, "self must be an endomorphism."
+            raise TypeError("self must be an endomorphism.")
         if n == 0:
             from sage.categories.morphism import IdentityMorphism
             return IdentityMorphism(self._parent)
@@ -1586,7 +1588,7 @@ cdef class FormalCompositeMap(Map):
         _slots['__list'] = self.__list
         return Map._extra_slots(self, _slots)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, int op):
         """
         TEST::
 
@@ -1599,11 +1601,17 @@ cdef class FormalCompositeMap(Map):
             sage: m = FormalCompositeMap(H, f, g)
             sage: m == loads(dumps(m))
             True
+
+            sage: m == None
+            False
+            sage: m == 2
+            False
         """
-        c = cmp(type(self), type(other))
-        if c == 0:
-            c = cmp(self.__list, (<FormalCompositeMap>other).__list)
-        return c
+        if type(self) is not type(other):
+            return NotImplemented
+        left = (<FormalCompositeMap>self).__list
+        right = (<FormalCompositeMap>other).__list
+        return PyObject_RichCompare(left, right, op)
 
     def __hash__(self):
         """

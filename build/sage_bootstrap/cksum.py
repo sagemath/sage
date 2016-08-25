@@ -3,6 +3,7 @@ The unix cksum tool
 
 This is a weak checksum, only included for legacy reasons.
 """
+
 import sys
 
 # Fun table, e.g. http://www.nco.ncep.noaa.gov/pmb/codes/nwprod/util/sorc/wgrib2.cd/grib2/wgrib2/crc32.c
@@ -73,9 +74,12 @@ class CksumAlgorithm(object):
 
     def update(self, buffer):
         value = self._value
+        if isinstance(buffer, str):
+            buffer = list(map(ord, list(buffer)))
+        else:
+            buffer = list(buffer)
         for ch in buffer:
-            c = ord(ch)
-            tabidx = (value >> 24) ^ c
+            tabidx = (value >> 24) ^ ch
             value = UNSIGNED((value << 8)) ^ crctab[tabidx]
         self._value = value
         self._length += len(buffer)

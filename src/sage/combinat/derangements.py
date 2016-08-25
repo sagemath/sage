@@ -425,8 +425,10 @@ class Derangements(UniqueRepresentation, Parent):
 
     def _rand_der(self):
         """
-        Produces a random derangement of `[1, 2, \ldots, n]` This is an
-        implementention of the algorithm described by Martinez et. al. in
+        Produces a random derangement of `[1, 2, \ldots, n]`.
+
+        This is an
+        implementation of the algorithm described by Martinez et. al. in
         [Martinez08]_.
 
         EXAMPLES::

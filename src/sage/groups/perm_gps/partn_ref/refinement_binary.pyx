@@ -22,10 +22,13 @@ REFERENCE:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include 'data_structures_pyx.pxi' # includes bitsets
 
 from sage.matrix.matrix import is_Matrix
+from .double_coset cimport double_coset
+
 
 cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
 
@@ -1100,37 +1103,37 @@ def random_tests(num=50, n_max=50, k_max=6, nwords_max=200, perms_per_code=10, d
                     B_n_M[j,B_n_relab[h]] = bitset_check(&B_n.words[j], h)
                     C_n_M[j,C_n_relab[h]] = bitset_check(&C_n.words[j], h)
             if B_M.row_space() != C_M.row_space():
-                print "can_lab error -- B:"
+                print("can_lab error -- B:")
                 for j from 0 <= j < B.dimension:
-                    print bitset_string(&B.basis[j])
-                print perm
+                    print(bitset_string(&B.basis[j]))
+                print(perm)
                 return
             if sorted(B_n_M.rows()) != sorted(C_n_M.rows()):
-                print "can_lab error -- B_n:"
+                print("can_lab error -- B_n:")
                 for j from 0 <= j < B_n.nwords:
-                    print bitset_string(&B_n.words[j])
-                print perm
+                    print(bitset_string(&B_n.words[j]))
+                print(perm)
                 return
             isom = B.is_isomorphic(C)
             if not isom:
-                print "isom -- B:"
+                print("isom -- B:")
                 for j from 0 <= j < B.dimension:
-                    print bitset_string(&B.basis[j])
-                print perm
-                print isom
+                    print(bitset_string(&B.basis[j]))
+                print(perm)
+                print(isom)
                 return
             isom = B_n.is_isomorphic(C_n)
             if not isom:
-                print "isom -- B_n:"
+                print("isom -- B_n:")
                 for j from 0 <= j < B_n.nwords:
-                    print bitset_string(&B_n.words[j])
-                print perm
-                print isom
+                    print(bitset_string(&B_n.words[j]))
+                print(perm)
+                print(isom)
                 return
 
         num_tests += 4*perms_per_code
         num_codes += 2
 
-    print "All passed: %d random tests on %d codes."%(num_tests, num_codes)
+    print("All passed: %d random tests on %d codes." % (num_tests, num_codes))
 
 

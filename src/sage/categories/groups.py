@@ -418,7 +418,7 @@ class Groups(CategoryWithAxiom):
             Arrange an ordering of elements into cosets of a normal
             subgroup close to size `\sqrt{n}`.  Then the quotient
             group structure is often apparent in the table.  See
-            comments on Trac #7555.
+            comments on :trac:`7555`.
 
             AUTHOR:
 

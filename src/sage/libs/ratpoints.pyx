@@ -1,6 +1,7 @@
 r"""
 Hyperelliptic Curve Point Finding, via ratpoints.
 """
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
@@ -60,7 +61,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
 
         sage: from sage.libs.ratpoints import ratpoints
         sage: for x,y,z in ratpoints([1..6], 200):
-        ...    print -1*y^2 + 1*z^6 + 2*x*z^5 + 3*x^2*z^4 + 4*x^3*z^3 + 5*x^4*z^2 + 6*x^5*z
+        ....:     print(-1*y^2 + 1*z^6 + 2*x*z^5 + 3*x^2*z^4 + 4*x^3*z^3 + 5*x^4*z^2 + 6*x^5*z)
         0
         0
         0
@@ -69,7 +70,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
         0
         0
         sage: for x,y,z in ratpoints([1..5], 200):
-        ...    print -1*y^2 + 1*z^4 + 2*x*z^3 + 3*x^2*z^2 + 4*x^3*z + 5*x^4
+        ....:    print(-1*y^2 + 1*z^4 + 2*x*z^3 + 3*x^2*z^2 + 4*x^3*z + 5*x^4)
         0
         0
         0
@@ -80,7 +81,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
         0
 
         sage: for x,y,z in ratpoints([1..200], 1000):
-        ...    print x,y,z
+        ....:    print("{} {} {}".format(x,y,z))
         1 0 0
         0 1 1
         0 -1 1
@@ -226,7 +227,7 @@ cdef int process_exists_only(long x, long z, mpz_t y, void *info0, int *quit):
     cdef Integer YY
     if info_s.verbose:
         YY = Integer(0); mpz_set(YY.value, y)
-        print 'Found point [ %d : %d : %d ], quitting'%(x,YY,z)
+        print('Found point [ %d : %d : %d ], quitting' % (x, YY, z))
     quit[0] = -1
     return 1
 

@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -22,8 +23,8 @@ from sage.algebras.free_algebra import FreeAlgebra
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 
-from constructor import FormsRing, FormsSpace
-from series_constructor import MFSeriesConstructor
+from .constructor import FormsRing, FormsSpace
+from .series_constructor import MFSeriesConstructor
 
 
 # Maybe replace Parent by just SageObject?
@@ -35,10 +36,10 @@ class FormsRing_abstract(Parent):
     instantiate one of the derived classes of this class.
     """
 
-    from graded_ring_element import FormsRingElement
+    from .graded_ring_element import FormsRingElement
     Element = FormsRingElement
 
-    from analytic_type import AnalyticType
+    from .analytic_type import AnalyticType
     AT = AnalyticType()
 
     def __init__(self, group, base_ring, red_hom, n):
@@ -161,7 +162,7 @@ class FormsRing_abstract(Parent):
             ModularFormsRing(n=+Infinity) over Integer Ring
         """
 
-        from graded_ring_element import FormsRingElement
+        from .graded_ring_element import FormsRingElement
         if isinstance(el, FormsRingElement):
             if (self.hecke_n() == infinity and el.hecke_n() == ZZ(3)):
                 el_f = el._reduce_d()._rat
@@ -219,8 +220,8 @@ class FormsRing_abstract(Parent):
             True
         """
 
-        from space import FormsSpace_abstract
-        from functors import _common_subgroup
+        from .space import FormsSpace_abstract
+        from .functors import _common_subgroup
         if (    isinstance(S, FormsRing_abstract)\
             and self._group         == _common_subgroup(self._group, S._group)\
             and self._analytic_type >= S._analytic_type\
@@ -527,7 +528,7 @@ class FormsRing_abstract(Parent):
             (ModularFormsRingFunctor(n=3), BaseFacade(Integer Ring))
         """
 
-        from functors import FormsRingFunctor, BaseFacade
+        from .functors import FormsRingFunctor, BaseFacade
         return FormsRingFunctor(self._analytic_type, self._group, self._red_hom), BaseFacade(self._base_ring)
 
     @cached_method

@@ -52,7 +52,7 @@ polyhedron with the :meth:`PolyhedronFace.as_polyhedron` method::
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.misc.all import cached_method
@@ -299,7 +299,7 @@ class PolyhedronFace(SageObject):
 
             sage: square = polytopes.hypercube(2)
             sage: for face in square.face_lattice():
-            ...       print face.ambient_Hrepresentation()
+            ....:     print(face.ambient_Hrepresentation())
             (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0,
              An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0)
             (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
@@ -340,8 +340,7 @@ class PolyhedronFace(SageObject):
 
             sage: square = polytopes.hypercube(2)
             sage: for fl in square.face_lattice():
-            ...       print fl.ambient_Vrepresentation()
-            ...
+            ....:     print(fl.ambient_Vrepresentation())
             ()
             (A vertex at (-1, -1),)
             (A vertex at (-1, 1),)

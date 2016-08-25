@@ -29,6 +29,7 @@ AUTHORS:
 - David Roe (2008-2-23): created
 - David Loeffler (2009-07-10): cleaned up docstrings
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 David Roe <roed@math.harvard.edu>,
@@ -360,7 +361,7 @@ def _multi_variate(base_ring, names, n, sparse, order):
     # For now, I'm going to use a name mangling with checking method.
     names = normalize_names(n, names)
 
-    from term_order import TermOrder
+    from .term_order import TermOrder
     order = TermOrder(order, n)
 
     if isinstance(names, list):

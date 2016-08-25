@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Crystals
 ========
 
@@ -24,5 +24,3 @@ See also
 - The categories for crystals: :class:`Crystals`, :class:`HighestWeightCrystals`, :class:`FiniteCrystals`, :class:`ClassicalCrystals`, :class:`RegularCrystals` -- The categories for crystals
 - :ref:`sage.combinat.root_system`
 """
-
-import all

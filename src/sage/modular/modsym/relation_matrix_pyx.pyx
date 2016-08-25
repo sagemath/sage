@@ -49,7 +49,7 @@ def sparse_2term_quotient_only_pm1(rels, n):
         [(3, -1), (3, -1), (3, -1), (3, 1), (5, 1), (5, 1)]
     """
     if not isinstance(rels, set):
-        raise TypeError, "rels must be a set"
+        raise TypeError("rels must be a set")
 
     n = int(n)
 
@@ -83,7 +83,7 @@ def sparse_2term_quotient_only_pm1(rels, n):
             x = free[v0[0]]
             free[x] = free[v1[0]]
             if c0 != 1 and c0 != -1:
-                raise ValueError, "coefficients must all be -1 or 1."
+                raise ValueError("coefficients must all be -1 or 1.")
             coef[x] = -c1/c0
             for i in related_to_me[x]:
                 free[i] = free[x]

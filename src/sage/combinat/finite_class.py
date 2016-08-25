@@ -15,7 +15,9 @@ Finite combinatorial classes
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from combinat import CombinatorialClass
+from __future__ import absolute_import
+
+from .combinat import CombinatorialClass
 
 class FiniteCombinatorialClass(CombinatorialClass):
     """

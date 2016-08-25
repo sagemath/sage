@@ -882,7 +882,7 @@ class ImplicitSuffixTree(SageObject):
             for (u,v,label) in tree.edge_iterator():
                 tree.set_edge_label(u, v, label.string_rep())
         if vertex_colors is None:
-            veretex_colors = {'#fec7b8':tree.vertices()}
+            vertex_colors = {'#fec7b8':tree.vertices()}
         return tree.plot(layout=layout, tree_root=tree_root,
                 tree_orientation=tree_orientation,
                 vertex_colors=vertex_colors, edge_labels=edge_labels,

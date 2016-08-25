@@ -209,6 +209,7 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
+from __future__ import absolute_import
 
 # *****************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
@@ -523,7 +524,7 @@ class GenericTerm(sage.structure.element.MultiplicativeGroupElement):
         try:
             zero ** exponent
         except (TypeError, ValueError, ZeroDivisionError) as e:
-            from misc import combine_exceptions
+            from .misc import combine_exceptions
             raise combine_exceptions(
                 ZeroDivisionError('Cannot take %s to exponent %s.' %
                                   (self, exponent)), e)
@@ -571,7 +572,7 @@ class GenericTerm(sage.structure.element.MultiplicativeGroupElement):
         try:
             g = self.growth ** exponent
         except (ValueError, TypeError, ZeroDivisionError) as e:
-            from misc import combine_exceptions
+            from .misc import combine_exceptions
             raise combine_exceptions(
                 ValueError('Cannot take %s to the exponent %s.' % (self, exponent)), e)
 
@@ -1252,7 +1253,7 @@ class GenericTerm(sage.structure.element.MultiplicativeGroupElement):
             > *previous* TypeError: Cannot substitute in the abstract base class
             Generic Term Monoid x^ZZ with (implicit) coefficients in Integer Ring.
         """
-        from misc import substitute_raise_exception
+        from .misc import substitute_raise_exception
         substitute_raise_exception(self, TypeError(
             'Cannot substitute in the abstract '
             'base class %s.' % (self.parent(),)))
@@ -1751,7 +1752,7 @@ class GenericTermMonoid(sage.structure.unique_representation.UniqueRepresentatio
             raise ValueError('No input specified. Cannot continue '
                              'creating an element of %s.' % (self,))
 
-        from misc import combine_exceptions
+        from .misc import combine_exceptions
         if coefficient is not None:
             try:
                 data = self.growth_group(data)
@@ -1826,7 +1827,7 @@ class GenericTermMonoid(sage.structure.unique_representation.UniqueRepresentatio
            (coefficient is None or coefficient.parent() is self.coefficient_ring):
             parent = self
         else:
-            from misc import underlying_class
+            from .misc import underlying_class
             parent = underlying_class(self)(growth.parent(),
                                             coefficient.parent()
                                             if coefficient is not None
@@ -1939,7 +1940,7 @@ class GenericTermMonoid(sage.structure.unique_representation.UniqueRepresentatio
             (x^2, log(x))
         """
         if isinstance(data, str):
-            from misc import split_str_by_op
+            from .misc import split_str_by_op
             return split_str_by_op(data, '*')
 
         try:
@@ -2466,7 +2467,7 @@ class OTerm(GenericTerm):
         try:
             g = self.growth._substitute_(rules)
         except (ArithmeticError, TypeError, ValueError) as e:
-            from misc import substitute_raise_exception
+            from .misc import substitute_raise_exception
             substitute_raise_exception(self, e)
 
         try:
@@ -2479,7 +2480,7 @@ class OTerm(GenericTerm):
         except AttributeError:
             pass
         else:
-            from asymptotic_ring import AsymptoticRing
+            from .asymptotic_ring import AsymptoticRing
             from sage.symbolic.ring import SymbolicRing
 
             if isinstance(P, AsymptoticRing):
@@ -2491,7 +2492,7 @@ class OTerm(GenericTerm):
         try:
             return sage.rings.big_oh.O(g)
         except (ArithmeticError, TypeError, ValueError) as e:
-            from misc import substitute_raise_exception
+            from .misc import substitute_raise_exception
             substitute_raise_exception(self, e)
 
 
@@ -2630,7 +2631,7 @@ class OTermMonoid(GenericTermMonoid):
             try:
                 self.coefficient_ring(coefficient)
             except (TypeError, ValueError) as e:
-                from misc import combine_exceptions
+                from .misc import combine_exceptions
                 raise combine_exceptions(
                     ValueError('Cannot create O(%s) since given coefficient %s '
                                'is not valid in %s.' %
@@ -2911,7 +2912,7 @@ class TermWithCoefficient(GenericTerm):
         try:
             c = self.coefficient ** exponent
         except (TypeError, ValueError, ZeroDivisionError) as e:
-            from misc import combine_exceptions
+            from .misc import combine_exceptions
             raise combine_exceptions(
                 ArithmeticError('Cannot take %s to the exponent %s in %s since its '
                                 'coefficient %s cannot be taken to this exponent.' %
@@ -3764,7 +3765,7 @@ class ExactTerm(TermWithCoefficient):
         try:
             g = self.growth._substitute_(rules)
         except (ArithmeticError, TypeError, ValueError) as e:
-            from misc import substitute_raise_exception
+            from .misc import substitute_raise_exception
             substitute_raise_exception(self, e)
 
         c = self.coefficient
@@ -3772,7 +3773,7 @@ class ExactTerm(TermWithCoefficient):
         try:
             return c * g
         except (ArithmeticError, TypeError, ValueError) as e:
-            from misc import substitute_raise_exception
+            from .misc import substitute_raise_exception
             substitute_raise_exception(self, e)
 
 
@@ -4068,7 +4069,7 @@ class TermMonoidFactory(sage.structure.factory.UniqueFactory):
             ValueError: Integer Ring has to be an asymptotic growth group
         """
         if isinstance(term_monoid, GenericTermMonoid):
-            from misc import underlying_class
+            from .misc import underlying_class
             term_class = underlying_class(term_monoid)
         elif term_monoid == 'O':
             term_class = OTermMonoid
@@ -4088,10 +4089,10 @@ class TermMonoidFactory(sage.structure.factory.UniqueFactory):
             growth_group = asymptotic_ring.growth_group
             coefficient_ring = asymptotic_ring.coefficient_ring
 
-        from growth_group import GenericGrowthGroup
+        from .growth_group import GenericGrowthGroup
         if not isinstance(growth_group, GenericGrowthGroup):
             if isinstance(growth_group, str):
-                from growth_group import GrowthGroup
+                from .growth_group import GrowthGroup
                 growth_group = GrowthGroup(growth_group)
             else:
                 raise ValueError('{} has to be an asymptotic growth '

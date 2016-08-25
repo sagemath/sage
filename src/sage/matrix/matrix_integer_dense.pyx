@@ -147,7 +147,7 @@ fplll_fp_map = {None: None,
                 'xd': 'dpe',
                 'rr': 'mpfr'}
 
-cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
+cdef class Matrix_integer_dense(Matrix_dense):   # dense or sparse
     r"""
     Matrix over the integers, implemented using FLINT.
 
@@ -915,7 +915,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         return M
 
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, RingElement right):
         """
         EXAMPLES::
 
@@ -935,7 +935,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         sig_off()
         return M
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Add two dense matrices over ZZ.
 
@@ -960,7 +960,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         sig_off()
         return M
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Subtract two dense matrices over ZZ.
 
@@ -1094,7 +1094,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         return M
 
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef int _cmp_(self, right) except -2:
         r"""
         Compares self with right, examining entries in lexicographic (row
         major) ordering.
@@ -1127,7 +1127,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         return 0
 
     # TODO: Implement better
-    cdef Vector _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v):
         """
         Returns the vector times matrix product.
 
@@ -1302,7 +1302,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if algorithm == 'linbox':
             g = self._minpoly_linbox(var)
         elif algorithm == 'generic':
-            g = matrix_dense.Matrix_dense.minpoly(self, var)
+            g = Matrix_dense.minpoly(self, var)
         else:
             raise ValueError("no algorithm '%s'"%algorithm)
         self.cache(key, g)
@@ -1331,7 +1331,7 @@ cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if self._nrows != self._ncols:
             raise ArithmeticError("self must be a square matrix")
         if self._nrows <= 1:
-            return matrix_dense.Matrix_dense.charpoly(self, var)
+            return Matrix_dense.charpoly(self, var)
         self._init_linbox()
         if typ == 'minpoly':
             sig_on()

@@ -103,8 +103,8 @@ The payoff to player 2 is given by:
 To compute this in Sage we have::
 
     sage: for ne in battle_of_the_sexes.obtain_nash(algorithm='enumeration'):
-    ....:     print "Utility for {}: ".format(ne)
-    ....:     print vector(ne[0]) * A * vector(ne[1]), vector(ne[0]) * B * vector(ne[1])
+    ....:     print("Utility for {}: ".format(ne))
+    ....:     print("{} {}".format(vector(ne[0]) * A * vector(ne[1]), vector(ne[0]) * B * vector(ne[1])))
     Utility for [(0, 1), (0, 1)]:
     2 3
     Utility for [(3/4, 1/4), (1/4, 3/4)]:
@@ -528,7 +528,7 @@ is evidenced by the various algorithms returning different solutions::
     sage: B = matrix([[3,3],[2,6],[3,1]])
     sage: degenerate_game = NormalFormGame([A,B])
     sage: degenerate_game.obtain_nash(algorithm='lrs') # optional - lrslib
-    [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (2/3, 1/3)], [(1, 0, 0), (1, 0)]]
+    [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (1/2, 3)], [(1, 0, 0), (1, 3)]]
     sage: degenerate_game.obtain_nash(algorithm='LCP') # optional - gambit
     [[(0.0, 0.3333333333, 0.6666666667), (0.3333333333, 0.6666666667)],
      [(1.0, -0.0, 0.0), (0.6666666667, 0.3333333333)],
@@ -602,10 +602,12 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from collections import MutableMapping
 from itertools import product
-from parser import Parser
+from .parser import Parser
 from sage.misc.latex import latex
 from sage.misc.misc import powerset
 from sage.rings.all import QQ
@@ -796,7 +798,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[2, 0], [5, 4]])
             sage: prisoners_dilemma = NormalFormGame([A, B])
             sage: for key in prisoners_dilemma:
-            ....:     print "The strategy pair {} gives utilities {}".format(key, prisoners_dilemma[key])
+            ....:     print("The strategy pair {} gives utilities {}".format(key, prisoners_dilemma[key]))
             The strategy pair (0, 1) gives utilities [5, 0]
             The strategy pair (1, 0) gives utilities [0, 5]
             The strategy pair (0, 0) gives utilities [2, 2]
@@ -1378,7 +1380,10 @@ class NormalFormGame(SageObject, MutableMapping):
             ....:              [-4, 6, -10]])
             sage: biggame = NormalFormGame([p1, p2])
             sage: biggame._solve_lrs() # optional - lrslib
-            [[(0, 1, 0), (1, 0, 0)], [(1/3, 2/3, 0), (0, 1/6, 5/6)], [(1/3, 2/3, 0), (1/7, 0, 6/7)], [(1, 0, 0), (0, 0, 1)]]
+            [[(0, 1, 0), (1, 0, 0)],
+             [(1/3, 2/3, 0), (0, 1/6, 5/6)],
+             [(1/3, 2/3, 0), (1/7, 0, 6/7)],
+             [(1, 0, 0), (0, 0, 1)]]
         """
         from subprocess import PIPE, Popen
         m1, m2 = self.payoff_matrices()
@@ -1388,16 +1393,23 @@ class NormalFormGame(SageObject, MutableMapping):
         game1_str, game2_str = self._Hrepresentation(m1, m2)
 
         g1_name = tmp_filename()
+        with open(g1_name, 'w') as g1_file:
+            g1_file.write(game1_str)
         g2_name = tmp_filename()
-        g1_file = file(g1_name, 'w')
-        g2_file = file(g2_name, 'w')
-        g1_file.write(game1_str)
-        g1_file.close()
-        g2_file.write(game2_str)
-        g2_file.close()
+        with open(g2_name, 'w') as g2_file:
+            g2_file.write(game2_str)
 
-        process = Popen(['nash', g1_name, g2_name], stdout=PIPE)
+        try:
+            process = Popen(['lrsnash', g1_name, g2_name],
+                    stdout=PIPE,
+                    stderr=PIPE)
+        except OSError:
+            from sage.misc.package import PackageNotFoundError
+            raise PackageNotFoundError("lrslib")
+
         lrs_output = [row for row in process.stdout]
+        process.terminate()
+
         nasheq = Parser(lrs_output).format_lrs()
         return sorted(nasheq)
 
@@ -1777,7 +1789,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: A = matrix([[1, 2], [3, 4]])
             sage: B = matrix([[3, 3], [1, 4]])
             sage: C = NormalFormGame([A, B])
-            sage: print C._Hrepresentation(A, B)[0]
+            sage: print(C._Hrepresentation(A, B)[0])
             H-representation
             linearity 1 5
             begin
@@ -1789,7 +1801,7 @@ class NormalFormGame(SageObject, MutableMapping):
             -1 1 1 0
             end
             <BLANKLINE>
-            sage: print C._Hrepresentation(A, B)[1]
+            sage: print(C._Hrepresentation(A, B)[1])
             H-representation
             linearity 1 5
             begin

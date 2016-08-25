@@ -292,7 +292,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
         sage: type(FooBar).__reduce__(FooBar)
         (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
-        sage: import cPickle
+        sage: from six.moves import cPickle
         sage: cPickle.loads(cPickle.dumps(FooBar)) == FooBar
         True
 
@@ -445,12 +445,12 @@ class DynamicInheritComparisonClasscallMetaclass(DynamicMetaclass, InheritCompar
     pass
 
 # This registers the appropriate reduction methods (see Trac #5985)
-import copy_reg
+from six.moves import copyreg
 for M in [DynamicMetaclass,
           DynamicClasscallMetaclass,
           DynamicInheritComparisonMetaclass,
           DynamicInheritComparisonClasscallMetaclass]:
-    copy_reg.pickle(M, M.__reduce__)
+    copyreg.pickle(M, M.__reduce__)
 
 
 class TestClass:

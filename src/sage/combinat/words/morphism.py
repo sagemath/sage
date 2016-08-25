@@ -85,6 +85,8 @@ Many other functionalities...::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 import itertools
 from sage.misc.callable_dict import CallableDict
 from sage.structure.sage_object import SageObject
@@ -564,14 +566,14 @@ class WordMorphism(SageObject):
 
         EXAMPLES::
 
-            sage: print WordMorphism('a->ab,b->ba')
+            sage: print(WordMorphism('a->ab,b->ba'))
             a->ab, b->ba
-            sage: print WordMorphism({0:[0,1],1:[1,0]})
+            sage: print(WordMorphism({0:[0,1],1:[1,0]}))
             0->01, 1->10
 
         The output is sorted to make it unique::
 
-            sage: print WordMorphism('b->ba,a->ab')
+            sage: print(WordMorphism('b->ba,a->ab'))
             a->ab, b->ba
 
         The str method is used for string formatting::
@@ -1875,16 +1877,16 @@ class WordMorphism(SageObject):
         EXAMPLES::
 
             sage: f = WordMorphism('a->ab,b->ba')
-            sage: for w in f.fixed_points(): print w
+            sage: for w in f.fixed_points(): print(w)
             abbabaabbaababbabaababbaabbabaabbaababba...
             baababbaabbabaababbabaabbaababbaabbabaab...
 
             sage: f = WordMorphism('a->ab,b->c,c->a')
-            sage: for w in f.fixed_points(): print w
+            sage: for w in f.fixed_points(): print(w)
             abcaababcabcaabcaababcaababcabcaababcabc...
 
             sage: f = WordMorphism('a->ab,b->cab,c->bcc')
-            sage: for w in f.fixed_points(): print w
+            sage: for w in f.fixed_points(): print(w)
             abcabbccabcabcabbccbccabcabbccabcabbccab...
 
         This shows that ticket :trac:`13668` has been resolved::
@@ -1957,13 +1959,13 @@ class WordMorphism(SageObject):
 
             sage: f = WordMorphism('a->aba,b->baa')
             sage: for p in f.periodic_points():
-            ...      print len(p), ',', p[0]
+            ....:     print("{} , {}".format(len(p), p[0]))
             1 , ababaaababaaabaabaababaaababaaabaabaabab...
             1 , baaabaabaababaaabaababaaabaababaaababaaa...
 
             sage: f = WordMorphism('a->bab,b->aa')
             sage: for p in f.periodic_points():
-            ...       print len(p), ',', p[0]
+            ....:     print("{} , {}".format(len(p), p[0]))
             2 , aababaaaababaababbabaababaababbabaababaa...
             sage: f.fixed_points()
             []

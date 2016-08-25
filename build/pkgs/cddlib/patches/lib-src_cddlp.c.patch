@@ -1,7 +1,7 @@
-diff --git a/src.bak/lib-src/cddlp.c b/src/lib-src/cddlp.c
+diff --git a/lib-src/cddlp.c b/lib-src/cddlp.c
 index 855b197..dd1268b 100644
---- a/src.bak/lib-src/cddlp.c
-+++ b/src/lib-src/cddlp.c
+--- a/lib-src/cddlp.c
++++ b/lib-src/cddlp.c
 @@ -13,6 +13,7 @@
  
  #include "setoper.h"  /* set operation library header (Ver. May 18, 2000 or later) */

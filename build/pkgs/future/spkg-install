@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cd src
+
+python setup.py install
+if [ $? -ne 0 ]; then
+    echo "Error installing future ... exiting"
+    exit 1
+fi

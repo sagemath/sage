@@ -99,4 +99,4 @@ cdef inline binary_matrix_print(binary_matrix_t m):
     for i in range(m.n_rows):
         for j in range(m.n_cols):
             sys.stdout.write("1" if binary_matrix_get(m, i, j) else ".",)
-        print ""
+        print("")

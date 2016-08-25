@@ -1282,7 +1282,7 @@ class HyperplaneArrangementElement(Element):
         A vector of integers.
 
         The `d`-th entry is the number of faces of dimension `d`.  A
-        *face* is is the intersection of a region with a hyperplane of
+        *face* is the intersection of a region with a hyperplane of
         the arrangehment.
 
         EXAMPLES::

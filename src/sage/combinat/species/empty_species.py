@@ -1,6 +1,7 @@
 """
 Empty Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Florent Hivert <Florent.Hivert@univ-rouen,fr>,
 #
@@ -15,9 +16,9 @@ Empty Species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
+from .species import GenericCombinatorialSpecies
 from sage.misc.cachefunc import cached_function
-from series_order import inf
+from .series_order import inf
 from sage.structure.unique_representation import UniqueRepresentation
 
 class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):

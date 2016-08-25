@@ -7,6 +7,7 @@ Branching Rules
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import sage.combinat.root_system.weyl_characters
 from sage.combinat.root_system.root_system import RootSystem
@@ -642,7 +643,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
     These embeddings are described more completely (with references
     to the literature) in the thematic tutorial at:
 
-    http://www.sagemath.org/doc/thematic_tutorials/lie.html
+    http://doc.sagemath.org/html/en/thematic_tutorials/lie.html
 
 
     EXAMPLES::
@@ -1187,18 +1188,20 @@ class BranchingRule(SageObject):
         if self._R.is_compound():
             raise ValueError("Cannot describe branching rule from reducible type")
         if not no_r:
-            print "\n%r"%(self._R.affine().dynkin_diagram())
+            print("\n%r" % self._R.affine().dynkin_diagram())
         if self._S.is_compound():
             for j in range(len(self._S.component_types())):
                 ctype = self._S.component_types()[j]
                 component_rule = self*branching_rule(self._S, ctype,"proj%s"%(j+1))
-                print "\nprojection %d on %s "%(j+1, ctype._repr_(compact=True)),
-                component_rule.describe(verbose=verbose, no_r=True)
+                print("\nprojection %d on %s " % (j+1,
+                                                  ctype._repr_(compact=True)),
+                component_rule.describe(verbose=verbose, no_r=True))
             if not verbose:
-                print "\nfor more detailed information use verbose=True"
+                print("\nfor more detailed information use verbose=True")
         else:
-            print "root restrictions %s => %s:"%(self._R._repr_(compact=True),self._S._repr_(compact=True))
-            print "\n%r\n"%(self._S.dynkin_diagram())
+            print("root restrictions %s => %s:" % (self._R._repr_(compact=True),
+                                                   self._S._repr_(compact=True)))
+            print("\n%r\n" % self._S.dynkin_diagram())
             for j in self._R.affine().index_set():
                 if j == 0:
                     r = -Rspace.highest_root()
@@ -1206,34 +1209,36 @@ class BranchingRule(SageObject):
                     r = Rspace.simple_roots()[j]
                 resr = Sspace(self(list(r.to_vector())))
                 if debug:
-                    print "root %d: r = %s, b(r)=%s"%(j, r, resr)
+                    print("root %d: r = %s, b(r)=%s" % (j, r, resr))
                 done = False
                 if resr == Sspace.zero():
                     done = True
-                    print "%s => (zero)"%j
+                    print("%s => (zero)" % j)
                 else:
                     for s in Sspace.roots():
                         if s == resr:
                             for i in self._S.index_set():
                                 if s == Sspace.simple_root(i):
-                                    print "%s => %s"%(j,i)
+                                    print("%s => %s" % (j, i))
                                     done = True
                                     break
                             if not done:
                                 done = True
                                 if verbose:
-                                    print "%s => root %s"%(j,s)
+                                    print("%s => root %s" % (j, s))
                 if not done:
                     done = True
                     if verbose:
-                        print "%s => weight %s"%(j,resr)
+                        print("%s => weight %s" % (j, resr))
             if verbose:
-                print "\nfundamental weight restrictions %s => %s:"%(self._R._repr_(compact=True),self._S._repr_(compact=True))
+                print("\nfundamental weight restrictions %s => %s:" % (self._R._repr_(compact=True),self._S._repr_(compact=True)))
                 for j in self._R.index_set():
                     resfw = Sspace(self(list(Rspace.fundamental_weight(j).to_vector())))
-                    print "%d => %s"%(j, tuple([resfw.inner_product(a) for a in Sspace.simple_coroots()]))
+                    print("%d => %s" % (j,
+                                        tuple([resfw.inner_product(a)
+                                               for a in Sspace.simple_coroots()])))
             if not no_r and not verbose:
-                print "\nFor more detailed information use verbose=True"
+                print("\nFor more detailed information use verbose=True")
 
     def branch(self, chi, style=None):
         """
@@ -1767,7 +1772,7 @@ def branching_rule(Rtype, Stype, rule="default"):
                 rows.append(nextrow)
         mat = matrix(rows).transpose()
         if rule == "tensor-debug":
-            print mat
+            print(mat)
         return BranchingRule(Rtype, Stype, lambda x : tuple(mat*vector(x)), "tensor")
     elif rule == "symmetric_power":
         if Stype[0] == 'A' and s == 1:
@@ -2204,7 +2209,7 @@ def maximal_subgroups(ct, mode="print_rules"):
         raise ValueError("Argument must be an irreducible classical Cartan Type with rank less than or equal to 8")
     if mode == "print_rules":
         for line in rul:
-            print line
+            print(line)
     elif mode == "get_rule":
         d = {}
         for line in rul:
@@ -2217,4 +2222,3 @@ def maximal_subgroups(ct, mode="print_rules"):
             else:
                 d[k] = br
         return d
-            

@@ -559,6 +559,7 @@ accordingly, for example by inheriting from
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
 
 from sage.misc.cachefunc import weak_cached_function
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
@@ -810,10 +811,10 @@ class CachedRepresentation:
 
         sage: class SomeClass(UniqueRepresentation):
         ....:     def __init__(self, i):
-        ....:         print "creating new instance for argument %s"%i
+        ....:         print("creating new instance for argument %s" % i)
         ....:         self.i = i
         ....:     def __del__(self):
-        ....:         print "deleting instance for argument %s"%self.i
+        ....:         print("deleting instance for argument %s" % self.i)
         ....:
         sage: O = SomeClass(1)
         creating new instance for argument 1
@@ -973,7 +974,7 @@ class CachedRepresentation:
 
         sage: class MyClass(CachedRepresentation):
         ....:     def __init__(self, value):
-        ....:         print "initializing object"
+        ....:         print("initializing object")
         ....:         self.value = value
         ....:
 
@@ -1074,7 +1075,7 @@ class CachedRepresentation:
             sage: class B(A):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls, *args, **kwds):
-            ....:         print "Private B"
+            ....:         print("Private B")
             ....:         return super(B,cls).__classcall__(cls,*args,**kwds)
             sage: class C(B): pass
             sage: a = A(1)
@@ -1263,7 +1264,7 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
         ....:     def __cmp__(self, other):
         ....:         c = cmp(type(self),type(other))
         ....:         if c: return c
-        ....:         print "custom cmp"
+        ....:         print("custom cmp")
         ....:         return cmp(self.value, other.value)
         ....:
 

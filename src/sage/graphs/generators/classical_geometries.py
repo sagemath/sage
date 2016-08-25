@@ -15,7 +15,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ###########################################################################
-
+from __future__ import absolute_import, division
 
 from copy import copy
 from math import sin, cos, pi
@@ -882,7 +882,7 @@ def TaylorTwographDescendantSRG(q, clique_partition=None):
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.modules.free_module_element import free_module_element as vector
     from sage.rings.finite_rings.integer_mod import mod
-    from __builtin__ import sum
+    from six.moves.builtins import sum
     Fq = FiniteField(q**2, 'a')
     PG = map(tuple,ProjectiveSpace(2, Fq))
     def S(x,y):
@@ -1184,14 +1184,14 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     from sage.rings.finite_rings.finite_field_constructor import GF
     from itertools import combinations
 
-    p, k = is_prime_power(q,get_data=True)
-    if k==0 or p!=2:
+    p, k = is_prime_power(q, get_data=True)
+    if k == 0 or p != 2:
         raise ValueError('q must be a power of 2')
 
     if hyperoval_matching is None:
-        hyperoval_matching = map(lambda k: (2*k+1,2*k), xrange(1+q/2))
+        hyperoval_matching = [(2 * k + 1, 2 * k) for k in xrange(1 + q // 2)]
     if field is None:
-        F = GF(q,'a')
+        F = GF(q, 'a')
     else:
         F = field
 
@@ -1199,8 +1199,8 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     G = T2starGeneralizedQuadrangleGraph(q, field=F, dual=True, hyperoval=hyperoval, check_hyperoval=check_hyperoval)
 
     def normalize(v):  # make sure the 1st non-0 coordinate is 1.
-        d=next(x for x in v if x!=F.zero())
-        return vector(map(lambda x: x/d, v))
+        d = next(x for x in v if x != F.zero())
+        return vector([x / d for x in v])
 
     # build the partition into independent sets
     P = map(lambda x: normalize(x[0]-x[1]), G.vertices())

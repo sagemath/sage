@@ -309,7 +309,7 @@ cdef int cmp_128_bits(void * a, void * b) nogil:
 
 cdef int is_induced_admissible64(hypergraph h1,hypergraph * h2_induced,int n,hypergraph tmp1):
     r"""
-    Tests if the hypergrap induced in h1 by 0,...,n-1 is equal to the hypergraph
+    Test if the hypergraph induced in h1 by 0,...,n-1 is equal to the hypergraph
     induced in h2 by 0,...,n-1.
 
     ``h2_induced`` is expected to be a pointer toward the hypergraph induced by

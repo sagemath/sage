@@ -22,6 +22,7 @@ EXAMPLES::
   ((3, 0, -5, 0, -1, -3, 3, 3, -7, 2), (4, 0, 1, -2, -4, -4, 4, 0, 1, -4), (-3, 0, 4, 5, 0, 1, 3, 2, 0, -1))
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
@@ -57,7 +58,7 @@ EXAMPLES::
 from sage.functions.log import exp
 from sage.functions.other import ceil
 from sage.rings.all import RealField, RR, ZZ, QQ
-from discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
+from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module import FreeModule

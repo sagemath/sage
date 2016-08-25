@@ -17,6 +17,9 @@ EXAMPLES::
 
 include 'data_structures_pyx.pxi' # includes bitsets
 
+from .double_coset cimport double_coset
+
+
 def is_isomorphic(self, other):
     r"""
     Return the bijection as a permutation if two lists are isomorphic, return

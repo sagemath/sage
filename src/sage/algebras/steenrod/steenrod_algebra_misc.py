@@ -316,7 +316,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     pair of such when `p` is odd or `generic` is ``True``.  ``precision``
     should be a positive integer.  ``truncation_type`` should be 0 or `\infty`.
     Furthermore, this must be a valid profile, as determined by the
-    funtion :func:`is_valid_profile`.  See also the documentation for
+    function :func:`is_valid_profile`.  See also the documentation for
     the module :mod:`sage.algebras.steenrod.steenrod_algebra` for information
     about profile functions.
 

@@ -1,7 +1,6 @@
 r"""
 List of coset representatives for `\Gamma_H(N)` in `{\rm SL}_2(\ZZ)`
 """
-
 ###########################################################################
 #       Sage: System for Algebra and Geometry Experimentation
 #
@@ -18,9 +17,10 @@ List of coset representatives for `\Gamma_H(N)` in `{\rm SL}_2(\ZZ)`
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
+from __future__ import absolute_import
 
+from . import p1list
 
-import p1list
 
 class GHlist:
     r"""

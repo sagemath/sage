@@ -169,6 +169,7 @@ Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 # imports
 from libc.string cimport memset
@@ -345,7 +346,7 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
                             certificate = [a, b, c, d]
 
                             if verbose:
-                                print 'New lower bound:', ZZ(hh)/2
+                                print('New lower bound:', ZZ(hh)/2)
 
     # Last, we return the computed value and the certificate
     if h_LB != -1:
@@ -372,7 +373,7 @@ def _greedy_dominating_set(H, verbose=False):
             seen.update(H.neighbor_iterator(u))
 
     if verbose:
-        print "Greedy dominating set:", sorted(list(DOM))
+        print("Greedy dominating set:", sorted(list(DOM)))
 
     return DOM
 
@@ -734,13 +735,13 @@ cdef tuple hyperbolicity_BCCM(int N,
                                               &nb_p, nb_pairs_of_length)
 
     if verbose:
-        print "Current 2 connected component has %d vertices and diameter %d" %(N,D)
+        print("Current 2 connected component has %d vertices and diameter %d" %(N,D))
         if far_apart_pairs == NULL:
-            print "Number of pairs: %d" %(nb_p)
-            print "Repartition of pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0]
+            print("Number of pairs: %d" %(nb_p))
+            print("Repartition of pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
         else:
-            print "Number of far-apart pairs: %d\t(%d pairs in total)" %(nb_p, binomial(N, 2))
-            print "Repartition of far-apart pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0]
+            print("Number of far-apart pairs: %d\t(%d pairs in total)" %(nb_p, binomial(N, 2)))
+            print("Repartition of far-apart pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
 
     cdef pair * sorted_pairs = pairs_of_length[0]
 
@@ -829,7 +830,7 @@ cdef tuple hyperbolicity_BCCM(int N,
                             certificate = [a, b, c, d]
 
                             if verbose:
-                                print "New lower bound:",ZZ(hh)/2
+                                print("New lower bound:", ZZ(hh)/2)
 
         # We reset acc_bool
         for v in range(n_acc):
@@ -844,7 +845,7 @@ cdef tuple hyperbolicity_BCCM(int N,
     sig_free(pairs_of_length)
 
     if verbose:
-        print "Visited 4-tuples:", nq
+        print("Visited 4-tuples:", nq)
 
     # Last, we return the computed value and the certificate
     if len(certificate) == 0:
@@ -942,13 +943,13 @@ cdef tuple hyperbolicity_CCL(int N,
                                               &nb_p, nb_pairs_of_length)
 
     if verbose:
-        print "Current 2 connected component has %d vertices and diameter %d" %(N,D)
+        print("Current 2 connected component has %d vertices and diameter %d" %(N,D))
         if far_apart_pairs == NULL:
-            print "Number of pairs: %d" %(nb_p)
-            print "Repartition of pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0]
+            print("Number of pairs: %d" %(nb_p))
+            print("Repartition of pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
         else:
-            print "Number of far-apart pairs: %d\t(%d pairs in total)" %(nb_p, binomial(N, 2))
-            print "Repartition of far-apart pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0]
+            print("Number of far-apart pairs: %d\t(%d pairs in total)" %(nb_p, binomial(N, 2)))
+            print("Repartition of far-apart pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
 
 
     approximation_factor = min(approximation_factor, D)
@@ -985,7 +986,7 @@ cdef tuple hyperbolicity_CCL(int N,
             h_UB = l2
 
             if verbose:
-                print "New upper bound:",ZZ(h_UB)/2
+                print("New upper bound:", ZZ(h_UB) / 2)
 
         # Termination if required approximation is found
         if certificate and ((h_UB <= h*approximation_factor) or (h_UB-h <= additive_gap)):
@@ -1039,7 +1040,7 @@ cdef tuple hyperbolicity_CCL(int N,
                         certificate = [a, b, c, d]
 
                         if verbose:
-                            print "New lower bound:",ZZ(hh)/2
+                            print("New lower bound:", ZZ(hh) / 2)
 
                         # If we cannot improve further, we stop
                         if l2 <= h:
@@ -1218,7 +1219,7 @@ def hyperbolicity(G,
         ....:     d5,_,_ = hyperbolicity(G,algorithm='BCCM')
         ....:     l3,_,u3 = hyperbolicity(G,approximation_factor=2)
         ....:     if (not d1==d2==d3==d4==d5) or l3>d1 or u3<d1:
-        ....:        print "That's not good!"
+        ....:        print("That's not good!")
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: import random
@@ -1235,7 +1236,7 @@ def hyperbolicity(G,
         ....:         d5,_,_ = hyperbolicity(cc, algorithm='BCCM')
         ....:         l3,_,u3 = hyperbolicity(cc, approximation_factor=2)
         ....:         if (not d1==d2==d3==d4==d5) or l3>d1 or u3<d1:
-        ....:             print "Error in graph ", cc.edges()
+        ....:             print("Error in graph ", cc.edges())
 
     The hyperbolicity of a graph is the maximum value over all its biconnected
     components::
@@ -1360,8 +1361,8 @@ def hyperbolicity(G,
         if verbose:
             # we compute the distribution of size of the blocks
             L = [len(V) for V in B]
-            print "Graph with %d blocks" %(len(B))
-            print "Blocks size distribution:", {x:L.count(x) for x in L}
+            print("Graph with %d blocks" %(len(B)))
+            print("Blocks size distribution:", {x:L.count(x) for x in L})
 
         for V in B:
 

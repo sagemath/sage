@@ -110,7 +110,7 @@ cdef mod_int ivalue(IntegerMod_abstract x) except -1:
     elif type(x) is IntegerMod_int64:
         return (<IntegerMod_int64>x).ivalue
     else:
-        raise TypeError, "non-fixed size integer"
+        raise TypeError("non-fixed size integer")
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
@@ -175,7 +175,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __dealloc__(self):
         sig_free(self._entries)
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         EXAMPLES::
 
@@ -256,7 +256,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __reduce__(self):
         return unpickle_v1, (self._parent, self.list(), self._degree, self._p, self._is_mutable)
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
@@ -266,7 +266,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         return z
 
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
@@ -275,7 +275,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._p + self._entries[i] - r._entries[i]) % self._p
         return z
 
-    cpdef Element _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right):
         cdef Py_ssize_t i
         cdef IntegerMod_int n
         cdef Vector_modn_dense r = right
@@ -288,7 +288,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
 
         return n
 
-    cpdef Vector _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right):
         """
         EXAMPLES:
            sage: v = vector(Integers(8), [2,3]); w = vector(Integers(8), [2,5])
@@ -305,7 +305,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._entries[i] * r._entries[i]) % self._p
         return z
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _lmul_(self, RingElement left):
         cdef Vector_modn_dense z
 
         cdef mod_int a = ivalue(left)
@@ -316,10 +316,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._entries[i] * a) % self._p
         return z
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
-        return self._rmul_(right)
-
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         cdef Vector_modn_dense z
         z = self._new_c()
         cdef Py_ssize_t i

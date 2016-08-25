@@ -23,6 +23,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from copy import copy
 from itertools import product
@@ -129,8 +130,7 @@ def bdd_height_iq(K, height_bound):
         sage: from sage.rings.number_field.bdd_height import bdd_height_iq
         sage: K.<a> = NumberField(x^2 + 191)
         sage: for t in bdd_height_iq(K,8):
-        ....:     print exp(2*t.global_height())
-        ....:
+        ....:     print(exp(2*t.global_height()))
         1.00000000000000
         1.00000000000000
         1.00000000000000

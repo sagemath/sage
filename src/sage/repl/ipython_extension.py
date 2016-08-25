@@ -15,6 +15,8 @@ A Sage extension which adds sage-specific features:
 
   - ``%mode`` (like ``%maxima``, etc.)
 
+  - ``%%cython``
+
 * preparsing of input
 
 * loading Sage library
@@ -55,8 +57,9 @@ In contrast, input to the ``%time`` magic command is preparsed::
     2 * 3^3 * 11
     sage: shell.quit()
 """
+from __future__ import absolute_import
 
-from IPython.core.magic import Magics, magics_class, line_magic
+from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 
 from sage.repl.load import load_wrap
 from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
@@ -321,6 +324,38 @@ class SageMagics(Magics):
             except ValueError as err:
                 print(err)  # do not show traceback
 
+    @cell_magic
+    def cython(self, line, cell):
+        """
+        Cython cell magic
+
+        This is syntactic sugar on the
+        :func:`~sage.misc.cython_c.cython` function.
+
+        INPUT:
+
+        - ``line`` -- ignored.
+
+        - ``cell`` -- string. The Cython source code to process.
+
+        OUTPUT:
+
+        None. The Cython code is compiled and loaded.
+
+        EXAMPLES::
+
+            sage: from sage.repl.interpreter import get_test_shell
+            sage: shell = get_test_shell()
+            sage: shell.run_cell('''
+            ....: %%cython
+            ....: def f():
+            ....:     print('test')
+            ....: ''')
+            ....: shell.run_cell('f()')
+        """
+        from sage.misc.cython_c import cython_compile
+        return cython_compile(cell)
+
 
 class SageCustomizations(object):
 
@@ -338,9 +373,6 @@ class SageCustomizations(object):
 
         self.init_inspector()
         self.init_line_transforms()
-
-        import inputhook
-        inputhook.install()
 
         import sage.all # until sage's import hell is fixed
 
@@ -404,7 +436,7 @@ class SageCustomizations(object):
         """
         Set up transforms (like the preparser).
         """
-        from interpreter import (SagePreparseTransformer,
+        from .interpreter import (SagePreparseTransformer,
                                  SagePromptTransformer)
 
         for s in (self.shell.input_splitter, self.shell.input_transformer_manager):

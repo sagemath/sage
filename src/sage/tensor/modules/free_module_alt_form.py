@@ -29,6 +29,7 @@ REFERENCES:
 - Chap. 15 of S. Lang: *Algebra*, 3rd ed., Springer (New York) (2002)
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -617,7 +618,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             True
 
         """
-        from format_utilities import is_atomic
+        from .format_utilities import is_atomic
         if not isinstance(other, FreeModuleAltForm):
             raise TypeError("the second argument for the exterior product " +
                             "must be an alternating form")

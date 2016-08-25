@@ -105,10 +105,7 @@ elif [ "$UNAME" = "SunOS" ]; then
     R_CONFIGURE="--without-ICU $R_CONFIGURE"
 fi
 
-## cd src
-## Saturday night special : quick and dirty fix for the ill-formed
-## R-3.2.4-revised.tar.gz release
-cd R-revised
+cd src
 
 # Apply patches.  See SPKG.txt for information about what each patch
 # does.

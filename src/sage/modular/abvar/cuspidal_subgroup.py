@@ -58,6 +58,7 @@ TESTS::
     sage: loads(dumps(D)) == D
     True
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -69,7 +70,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from finite_subgroup                import FiniteSubgroup
+from .finite_subgroup                import FiniteSubgroup
 from sage.rings.all                 import infinity, QQ, ZZ
 from sage.matrix.all                import matrix
 from sage.modular.arithgroup.all    import is_Gamma0

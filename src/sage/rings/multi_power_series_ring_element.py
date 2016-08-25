@@ -760,10 +760,6 @@ class MPowerSeries(PowerSeries):
         f = left._bg_value * right._bg_value
         return MPowerSeries(left.parent(), f, prec=f.prec())
 
-#    def _rmul_(self, c):
-#        # multivariate power series rings are assumed to be commutative
-#        return self._lmul_(c)
-
     def _lmul_(self, c):
         """
         Multiply ``self`` with ``c`` on the left.

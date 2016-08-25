@@ -378,7 +378,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_neg(f._coeffs[i], self._coeffs[i], rnd)
         return f
 
-    cpdef ModuleElement _add_(left, ModuleElement _right):
+    cpdef _add_(left, _right):
         """
         EXAMPLES::
 
@@ -411,7 +411,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef ModuleElement _sub_(left, ModuleElement _right):
+    cpdef _sub_(left, _right):
         """
         EXAMPLES::
 
@@ -442,10 +442,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef ModuleElement _rmul_(self, RingElement c):
-        return self._lmul_(c)
-
-    cpdef ModuleElement _lmul_(self, RingElement c):
+    cpdef _lmul_(self, RingElement c):
         """
         EXAMPLES::
 
@@ -467,7 +464,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_mul(f._coeffs[i], self._coeffs[i], a.value, rnd)
         return f
 
-    cpdef RingElement _mul_(left, RingElement _right):
+    cpdef _mul_(left, _right):
         """
         Here we use the naive `O(n^2)` algorithm, as asymptotically faster algorithms such
         as Karatsuba can have very inaccurate results due to intermediate rounding errors.

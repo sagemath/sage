@@ -6,6 +6,7 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
@@ -22,10 +23,10 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.all import PolynomialRing
-from sage.schemes.plane_curves.projective_curve import ProjectiveCurve_finite_field
-from con_field import ProjectiveConic_field
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
+from .con_field import ProjectiveConic_field
 
-class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectiveCurve_finite_field):
+class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_finite_field):
     r"""
     Create a projective plane conic curve over a finite field.
     See ``Conic`` for full documentation.

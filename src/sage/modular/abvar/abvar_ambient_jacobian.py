@@ -8,17 +8,18 @@ TESTS::
     sage: loads(dumps(J1(13))) == J1(13)
     True
 """
+from __future__ import absolute_import
 
 import weakref
 from sage.structure.sequence import Sequence
 
-from abvar             import (ModularAbelianVariety_modsym_abstract, ModularAbelianVariety,
+from .abvar             import (ModularAbelianVariety_modsym_abstract, ModularAbelianVariety,
                                simple_factorization_of_modsym_space, modsym_lattices,
                                ModularAbelianVariety_modsym)
 from sage.rings.all    import QQ
 
 from sage.modular.modsym.modsym import ModularSymbols
-import morphism
+from . import morphism
 
 
 _cache = {}

@@ -39,6 +39,7 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import itertools
 
@@ -1760,9 +1761,8 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         EXAMPLES::
 
-            sage: for w in Words('ab').iterate_by_length(3):
-            ....:      print w,
-            aaa aab aba abb baa bab bba bbb
+            sage: [w.string_rep() for w in Words('ab').iterate_by_length(3)]
+            ['aaa', 'aab', 'aba', 'abb', 'baa', 'bab', 'bba', 'bbb']
         """
         return self.finite_words().iterate_by_length(length)
 

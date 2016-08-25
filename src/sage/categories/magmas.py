@@ -1,6 +1,7 @@
 r"""
 Magmas
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -16,9 +17,9 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_singleton
+import sage.categories.coercion_methods
 from sage.categories.sets_cat import Sets
 from sage.categories.realizations import RealizationsCategory
-from sage.structure.element import have_same_parent
 
 class Magmas(Category_singleton):
     """
@@ -307,14 +308,39 @@ class Magmas(Category_singleton):
                 sage: Rings().Distributive.__module__
                 'sage.categories.magmas_and_additive_magmas'
             """
-            from additive_magmas import AdditiveMagmas
+            from .additive_magmas import AdditiveMagmas
             if not self.is_subcategory(AdditiveMagmas()):
                 raise ValueError("The distributive axiom only makes sense on a magma which is simultaneously an additive magma")
-            from magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+            from .magmas_and_additive_magmas import MagmasAndAdditiveMagmas
             return (self & MagmasAndAdditiveMagmas()).Distributive()
+
+        def JTrivial(self):
+            r"""
+            Return the full subcategory of the `J`-trivial objects of ``self``.
+
+            This axiom is in fact only meaningful for
+            :class:`semigroups <Semigroups>`. This stub definition is
+            here as a workaround for :trac:`20515`, in order to define
+            the `J`-trivial axiom as the intersection of the `L` and
+            `R`-trivial axioms.
+
+            .. SEEALSO:: :meth:`Semigroups.SubcategoryMethods.JTrivial`
+
+            TESTS::
+
+                sage: Magmas().JTrivial()
+                Category of j trivial magmas
+                sage: (Semigroups().RTrivial() & Semigroups().LTrivial()) is Semigroups().JTrivial()
+                True
+            """
+            return self._with_axiom('JTrivial')
 
     Associative = LazyImport('sage.categories.semigroups', 'Semigroups', at_startup=True)
     FinitelyGeneratedAsMagma = LazyImport('sage.categories.finitely_generated_magmas', 'FinitelyGeneratedMagmas')
+
+    class JTrivial(CategoryWithAxiom):
+        # Workaround for #20515; see also Magmas.SubcategoryMethods.JTrivial
+        pass
 
     class Algebras(AlgebrasCategory):
 
@@ -502,64 +528,7 @@ class Magmas(Category_singleton):
 
         class ElementMethods:
 
-            def __truediv__(left, right):
-                """
-                Return the result of the division of ``left`` by ``right``, if possible.
-
-                This top-level implementation delegates the work to
-                the ``_div_`` method if ``left`` and ``right`` have
-                the same parent and to coercion otherwise. See the
-                extensive documentation at the top of
-                :ref:`sage.structure.element`.
-
-                .. SEEALSO:: :meth:`_div_`
-
-                EXAMPLES::
-
-                    sage: G = FreeGroup(2)
-                    sage: x0, x1 = G.group_generators()
-                    sage: c1 = cartesian_product([x0, x1])
-                    sage: c2 = cartesian_product([x1, x0])
-                    sage: c1.__div__(c2)
-                    (x0*x1^-1, x1*x0^-1)
-                    sage: c1 / c2
-                    (x0*x1^-1, x1*x0^-1)
-
-                Division supports coercion::
-
-                    sage: C = cartesian_product([G, G])
-                    sage: H = Hom(G, C)
-                    sage: phi = H(lambda g: cartesian_product([g, g]))
-                    sage: phi.register_as_coercion()
-                    sage: x1 / c1
-                    (x1*x0^-1, 1)
-                    sage: c1 / x1
-                    (x0*x1^-1, 1)
-
-                Depending on how the division itself is implemented in
-                :meth:`_div_`, division may fail even when ``right``
-                actually divides ``left``::
-
-                    sage: x = cartesian_product([2, 1])
-                    sage: y = cartesian_product([1, 1])
-                    sage: x / y
-                    (2, 1)
-                    sage: x / x
-                    Traceback (most recent call last):
-                    ...
-                    TypeError: no conversion of this rational to integer
-
-                TESTS::
-
-                    sage: c1.__div__.__module__
-                    'sage.categories.magmas'
-                """
-                from sage.structure.element import have_same_parent
-                if have_same_parent(left, right):
-                    return left._div_(right)
-                from sage.structure.element import get_coercion_model
-                import operator
-                return get_coercion_model().bin_op(left, right, operator.div)
+            __truediv__ = sage.categories.coercion_methods.__truediv__
             __div__ = __truediv__ # For Python2/3 compatibility; see e.g. #18578
 
             def _div_(left, right):
@@ -1009,36 +978,7 @@ class Magmas(Category_singleton):
 
     class ElementMethods:
 
-        def __mul__(self, right):
-            r"""
-            Product of two elements
-
-            INPUT:
-
-            - ``self``, ``right`` -- two elements
-
-            This calls the `_mul_` method of ``self``, if it is
-            available and the two elements have the same parent.
-
-            Otherwise, the job is delegated to the coercion model.
-
-            Do not override; instead implement a ``_mul_`` method in the
-            element class or a ``product`` method in the parent class.
-
-            EXAMPLES::
-
-                sage: S = Semigroups().example("free")
-                sage: x = S('a'); y = S('b')
-                sage: x * y
-                'ab'
-            """
-            if have_same_parent(self, right) and hasattr(self, "_mul_"):
-                return self._mul_(right)
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(self, right, operator.mul)
-
-        __imul__ = __mul__
+        __mul__ = sage.categories.coercion_methods.__mul__
 
         @abstract_method(optional = True)
         def _mul_(self, right):
@@ -1061,31 +1001,7 @@ class Magmas(Category_singleton):
                 'ab'
             """
 
-        def _mul_parent(self, other):
-            r"""
-            Returns the product of the two elements, calculated using
-            the ``product`` method of the parent.
-
-            This is the default implementation of _mul_ if
-            ``product`` is implemented in the parent.
-
-            INPUT:
-
-            - ``other`` -- an element of the parent of ``self``
-
-            OUTPUT:
-
-            - an element of the parent of ``self``
-
-            EXAMPLES::
-
-                sage: S = Semigroups().example("free")
-                sage: x = S('a'); y = S('b')
-                sage: x._mul_parent(y)
-                'ab'
-
-            """
-            return self.parent().product(self, other)
+        _mul_parent = sage.categories.coercion_methods._mul_parent
 
         def is_idempotent(self):
             r"""
@@ -1147,7 +1063,7 @@ class Magmas(Category_singleton):
 
                 sage: TestSuite(C).run()
             """
-            from cartesian_product import cartesian_product
+            from .cartesian_product import cartesian_product
             from sage.rings.integer_ring import ZZ
             from sage.rings.rational_field import QQ
             return cartesian_product([QQ, ZZ, ZZ])

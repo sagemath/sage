@@ -60,7 +60,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
     The Möbius algebra of a lattice.
 
     Let `L` be a lattice. The *Möbius algebra* `M_L` was originally
-    constructed by Solomon and has a natural basis
+    constructed by Solomon [Solomon67]_ and has a natural basis
     `\{ E_x \mid x \in L \}` with multiplication given by
     `E_x \cdot E_y = E_{x \vee y}`. Moreover this has a basis given by
     orthogonal idempotents `\{ I_x \mid x \in L \}` (so
@@ -69,11 +69,22 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
     .. MATH::
 
-        I_x = \sum_{y \leq x} \mu_L(y, x) E_x,
+        I_x = \sum_{x \leq y} \mu_L(x, y) E_y,
 
     where `\mu_L` is the Möbius function of `L`.
 
+    .. NOTE::
+
+        We use the join `\vee` for our multiplication, whereas [Greene73]_
+        and [Etienne98]_ define the Möbius algebra using the meet `\wedge`.
+        This is done for compatibility with :class:`QuantumMoebiusAlgebra`.
+
     REFERENCES:
+
+    .. [Solomon67] Louis Solomon.
+       *The Burnside Algebra of a Finite Group*.
+       Journal of Combinatorial Theory, **2**, 1967.
+       :doi:`10.1016/S0021-9800(67)80064-4`.
 
     .. [Greene73] Curtis Greene.
        *On the Möbius algebra of a partially ordered set*.
@@ -85,6 +96,27 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
        European Journal of Combinatorics, **19**, 1998.
        :doi:`10.1006/eujc.1998.0227`.
     """
+    @staticmethod
+    def __classcall_private__(cls, R, L):
+        """
+        Normalize input to ensure a unique representation.
+
+        TESTS::
+
+            sage: L1 = posets.BooleanLattice(4)
+            sage: L2 = posets.BooleanLattice(4, facade=False)
+            sage: L1 is L2
+            False
+            sage: M1 = L1.moebius_algebra(QQ)
+            sage: M2 = L2.moebius_algebra(QQ)
+            sage: M1 is M2
+            True
+        """
+        # We force the lattice to not be a facade in order to guarantee
+        #   that the ordering of the poset is used (see #21054).
+        L = LatticePoset(L, facade=False)
+        return super(MoebiusAlgebra, cls).__classcall__(cls, R, L)
+
     def __init__(self, R, L):
         """
         Initialize ``self``.
@@ -95,8 +127,6 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             sage: M = L.moebius_algebra(QQ)
             sage: TestSuite(M).run()
         """
-        if not L.is_lattice():
-            raise ValueError("L must be a lattice")
         cat = Algebras(R).Commutative().WithBasis()
         if L in FiniteEnumeratedSets():
             cat = cat.FiniteDimensional()
@@ -140,7 +170,16 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             sage: M = L.moebius_algebra(QQ)
             sage: M.lattice()
             Finite lattice containing 16 elements
+
+        For technical reasons (the defining lattice is forced to be a
+        non-facade lattice), the result is not equal to ``L``::
+
             sage: M.lattice() == L
+            False
+
+        However it is isomorphic::
+
+            sage: M.lattice().is_isomorphic(L)
             True
         """
         return self._lattice
@@ -183,7 +222,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             """
             M = self.realization_of()
             I = M.idempotent()
-            return I.sum_of_monomials(M._lattice.order_ideal([x]))
+            return I.sum_of_monomials(M._lattice.order_filter([x]))
 
         def product_on_basis(self, x, y):
             """
@@ -197,6 +236,14 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
                 E[15]
                 sage: E.product_on_basis(2, 8)
                 E[10]
+
+            TESTS::
+
+                sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)
+                sage: E = M.E()
+                sage: I = M.I()
+                sage: all(I(x)*I(y) == I(x*y) for x in E.basis() for y in E.basis())
+                True
             """
             return self.monomial(self.realization_of()._lattice.join(x, y))
 
@@ -245,12 +292,12 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             E = M.E()
             self.module_morphism(self._to_natural_basis,
                                  codomain=E, category=self.category(),
-                                 triangular='upper', unitriangular=True
+                                 triangular='lower', unitriangular=True
                                  ).register_as_coercion()
 
             E.module_morphism(E._to_idempotent_basis,
                               codomain=self, category=self.category(),
-                              triangular='upper', unitriangular=True
+                              triangular='lower', unitriangular=True
                               ).register_as_coercion()
 
 
@@ -270,7 +317,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             M = self.realization_of()
             N = M.natural()
             moebius = M._lattice.moebius_function
-            return N.sum_of_terms((y, moebius(y,x)) for y in M._lattice.order_ideal([x]))
+            return N.sum_of_terms((y, moebius(x,y)) for y in M._lattice.order_filter([x]))
 
         def product_on_basis(self, x, y):
             """
@@ -284,6 +331,14 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
                 0
                 sage: I.product_on_basis(2, 2)
                 I[2]
+
+            TESTS::
+
+                sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)
+                sage: E = M.E()
+                sage: I = M.I()
+                sage: all(E(x)*E(y) == E(x*y) for x in I.basis() for y in I.basis())
+                True
             """
             if x == y:
                 return self.monomial(x)

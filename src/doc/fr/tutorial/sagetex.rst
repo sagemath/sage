@@ -10,7 +10,7 @@ l'utiliser, vous aurez besoin de l'ajouter à votre installation TeX.
 Cette opération se résume à copier un fichier ; voyez la section
 :ref:`installation` du présent tutoriel ainsi que "Make SageTeX known to
 TeX" dans le guide d'installation de Sage (`Sage installation guide
-<http://sagemath.org/doc/installation/>`_, `ce lien
+<http://doc.sagemath.org/html/en/installation/>`_, `ce lien
 <../../en/installation/index.html>`_ devrait conduire à une copie
 locale) pour plus de détails.
 

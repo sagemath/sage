@@ -17,7 +17,7 @@ Sageでは，任意の代数多様体を定義することができるが，そ�
     sage: C3 = Curve(x^3 + y^3 - 1)
     sage: D = C2 + C3
     sage: D
-    Affine Curve over Rational Field defined by
+    Affine Plane Curve over Rational Field defined by
        x^5 + x^3*y^2 + x^2*y^3 + y^5 - x^3 - y^3 - x^2 - y^2 + 1
     sage: D.irreducible_components()
     [
@@ -81,7 +81,7 @@ Sageでは，3次元射影空間における捻れ3次曲線のトーリック�
 ---------------
 
 Sageの楕円曲線部門にはPARIの楕円曲線機能の大部分が取り込まれており，Cremonaの管理するオンラインデータベースに接続することもできる(これにはデータベースパッケージを追加する必要がある)．
-さらに、Second-descentによって楕円曲線の完全Mordell-Weil群を計算するmwrankの機能が使えるし，SEAアルゴリズムの実行や同種写像全ての計算なども可能だ． 
+さらに、Second-descentによって楕円曲線の完全Mordell-Weil群を計算するmwrankの機能が使えるし，SEAアルゴリズムの実行や同種写像全ての計算なども可能だ．
 :math:`\QQ` 上の曲線群を扱うためのコードは大幅に更新され，Denis Simonによる代数的降下法ソフトウェアも取り込まれている．
 
 
@@ -197,7 +197,7 @@ Sageでは， :math:`j` -不変量を以下のようにして計算する:
 ::
 
     sage: E = EllipticCurve([0,0,1,-1,0])
-    sage: print E.anlist(30)
+    sage: E.anlist(30)
     [0, 1, -2, -3, 2, -2, 6, -1, 0, 6, 4, -5, -6, -2, 2, 6, -4, 0, -12, 0, -4,
      3, 10, 2, 0, -1, 4, -9, -2, 6, -12]
     sage: v = E.anlist(10000)

@@ -165,7 +165,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         if version == 0:
             self._entries = data
         else:
-            raise RuntimeError, "unknown matrix version"
+            raise RuntimeError("unknown matrix version")
 
     def __hash__(self):
         """

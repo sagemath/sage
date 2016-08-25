@@ -24,6 +24,7 @@ using monospace fonts. The difference is that one is restricted to
 #
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
+from __future__ import print_function
 
 import os, sys
 from sage.structure.sage_object import SageObject
@@ -114,7 +115,7 @@ class CharacterArt(SageObject):
             sage: from sage.typeset.ascii_art import AsciiArt
             sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
             sage: for line in p5:
-            ....:     print line
+            ....:     print(line)
               *
              * *
             *****
@@ -261,7 +262,7 @@ class CharacterArt(SageObject):
             sage: p3 = AsciiArt([" * ", "***"])
             sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
             sage: aa = ascii_art([p3, p5])
-            sage: print aa._split_repr_(10)
+            sage: print(aa._split_repr_(10))
             [
             [  *
             [ ***,

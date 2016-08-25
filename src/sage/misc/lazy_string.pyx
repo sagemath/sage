@@ -61,6 +61,7 @@ Note that the function is recomputed each time::
 #THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 #(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+from __future__ import print_function
 
 from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
@@ -104,7 +105,7 @@ def lazy_string(f, *args, **kwargs):
 
         sage: class C:
         ....:     def __repr__(self):
-        ....:         print "determining string representation"
+        ....:         print("determining string representation")
         ....:         return "a test"
         sage: c = C()
         sage: s = lazy_string("this is %s", c)
@@ -177,7 +178,7 @@ cdef class _LazyString(object):
 
         sage: class C:
         ....:     def __repr__(self):
-        ....:         print "determining string representation"
+        ....:         print("determining string representation")
         ....:         return "a test"
         sage: c = C()
         sage: s = _LazyString("this is %s", (c,), {})

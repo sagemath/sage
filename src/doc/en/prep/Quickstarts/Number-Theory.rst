@@ -44,7 +44,7 @@ we loop over a Sage object.
 ::
 
     sage: for a in Integers(11):
-    ....:     print a, a^10
+    ....:     print("{} {}".format(a, a^10))
     0 0
     1 1
     2 1

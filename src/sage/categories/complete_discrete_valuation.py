@@ -1,6 +1,7 @@
 r"""
 Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 """
+from __future__ import absolute_import
 #**************************************************************************
 #  Copyright (C) 2013 Xavier Caruso <xavier.caruso@normalesup.org>
 #
@@ -12,7 +13,7 @@ Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 from sage.misc.abstract_method import abstract_method
 
 from sage.categories.category_singleton import Category_singleton
-from discrete_valuation import DiscreteValuationRings, DiscreteValuationFields
+from .discrete_valuation import DiscreteValuationRings, DiscreteValuationFields
 #from sage.misc.cachefunc import cached_method
 
 class CompleteDiscreteValuationRings(Category_singleton):

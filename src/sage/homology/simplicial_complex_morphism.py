@@ -101,6 +101,8 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.homology.simplicial_complex import Simplex, SimplicialComplex
 from sage.matrix.constructor import matrix, zero_matrix
@@ -157,9 +159,9 @@ class SimplicialComplexMorphism(Morphism):
             False
         """
         if not isinstance(X,SimplicialComplex) or not isinstance(Y,SimplicialComplex):
-            raise ValueError("X and Y must be SimplicialComplexes.")
-        if not set(f.keys()) == X._vertex_set.set():
-            raise ValueError("f must be a dictionary from the vertex set of X to single values in the vertex set of Y.")
+            raise ValueError("X and Y must be SimplicialComplexes")
+        if not set(f.keys()) == set(X._vertex_set):
+            raise ValueError("f must be a dictionary from the vertex set of X to single values in the vertex set of Y")
         dim = X.dimension()
         Y_faces = Y.faces()
         for k in range(dim+1):
@@ -170,7 +172,7 @@ class SimplicialComplexMorphism(Morphism):
                     fi.append(f[j])
                 v = Simplex(set(fi))
             if not v in Y_faces[v.dimension()]:
-                raise ValueError("f must be a dictionary from the vertices of X to the vertices of Y.")
+                raise ValueError("f must be a dictionary from the vertices of X to the vertices of Y")
         self._vertex_dictionary = f
         Morphism.__init__(self, Hom(X,Y,SimplicialComplexes()))
 
@@ -279,11 +281,11 @@ class SimplicialComplexMorphism(Morphism):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Simplex(1)
-            sage: print Hom(S,S).identity()._repr_defn()
+            sage: print(Hom(S,S).identity()._repr_defn())
             0 |--> 0
             1 |--> 1
             sage: T = simplicial_complexes.Torus()
-            sage: print Hom(T,T).identity()._repr_defn()
+            sage: print(Hom(T,T).identity()._repr_defn())
             [0, 1, 2, 3, 4, 5, 6] --> [0, 1, 2, 3, 4, 5, 6]
         """
         vd = self._vertex_dictionary
@@ -315,17 +317,15 @@ class SimplicialComplexMorphism(Morphism):
               From: Chain complex with at most 2 nonzero terms over Integer Ring
               To:   Chain complex with at most 3 nonzero terms over Integer Ring
             sage: a._matrix_dictionary
-            {0: [0 0 0]
-            [0 1 0]
-            [0 0 1]
-            [1 0 0],
-             1: [0 0 0]
-            [0 1 0]
-            [0 0 0]
-            [1 0 0]
-            [0 0 0]
-            [0 0 1],
-             2: []}
+            {0: [1 0 0]
+             [0 1 0]
+             [0 0 1]
+             [0 0 0], 1: [1 0 0]
+             [0 1 0]
+             [0 0 0]
+             [0 0 1]
+             [0 0 0]
+             [0 0 0], 2: []}
             sage: x.associated_chain_complex_morphism(augmented=True)
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Integer Ring
@@ -347,16 +347,15 @@ class SimplicialComplexMorphism(Morphism):
 
             sage: g = {0:1, 1:2, 2:0}
             sage: H(g).associated_chain_complex_morphism()._matrix_dictionary
-            {0: [0 0 0]
+            {0: [0 0 1]
              [1 0 0]
              [0 1 0]
-             [0 0 1], 1: [ 0  0  0]
-             [-1  0  0]
+             [0 0 0], 1: [ 0 -1  0]
+             [ 0  0 -1]
              [ 0  0  0]
-             [ 0  0  1]
+             [ 1  0  0]
              [ 0  0  0]
-             [ 0 -1  0], 2: []}
-
+             [ 0  0  0], 2: []}
             sage: X = SimplicialComplex([[0, 1]], is_mutable=False)
             sage: Hom(X,X)({0:1, 1:0}).associated_chain_complex_morphism()._matrix_dictionary
             {0: [0 1]
@@ -545,7 +544,7 @@ class SimplicialComplexMorphism(Morphism):
             return False
         else:
             f = dict()
-            for i in self.domain()._vertex_set.set():
+            for i in self.domain()._vertex_set:
                 f[i] = i
             if self._vertex_dictionary != f:
                 return False
@@ -680,26 +679,26 @@ class SimplicialComplexMorphism(Morphism):
             sage: h.to_matrix(0) # in degree 0
             [1]
             sage: h.to_matrix(1) # in degree 1
-            [ 2]
-            [-1]
+            [1]
+            [0]
             sage: h.to_matrix()  # the entire homomorphism
-            [ 1| 0]
-            [--+--]
-            [ 0| 2]
-            [ 0|-1]
-            [--+--]
-            [ 0| 0]
+            [1|0]
+            [-+-]
+            [0|1]
+            [0|0]
+            [-+-]
+            [0|0]
 
         We can evaluate it on (co)homology classes::
 
             sage: coh = diag.induced_homology_morphism(QQ, cohomology=True)
             sage: coh.to_matrix(1)
-            [1 1]
+            [1 0]
             sage: x,y = list(T.cohomology_ring(QQ).basis(1))
             sage: coh(x)
             h^{1,0}
             sage: coh(2*x+3*y)
-            5*h^{1,0}
+            2*h^{1,0}
 
         Note that the complexes must be immutable for this to
         work. Many, but not all, complexes are immutable when
@@ -720,5 +719,5 @@ class SimplicialComplexMorphism(Morphism):
             True
             sage: h = Hom(S,S2)({0: 0, 1:1, 2:2}).induced_homology_morphism()
         """
-        from homology_morphism import InducedHomologyMorphism
+        from .homology_morphism import InducedHomologyMorphism
         return InducedHomologyMorphism(self, base_ring, cohomology)

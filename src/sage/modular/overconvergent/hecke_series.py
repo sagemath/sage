@@ -861,7 +861,7 @@ def compute_Wi(k,p,h,hj,E4,E6):
     # call here somehow.
     r = E6**(2*d + b) * E4**a
 
-    prec = E4.prec() # everything gets trucated to this precision
+    prec = E4.prec() # everything gets truncated to this precision
 
     # Construct basis for Wi
     Wi = []

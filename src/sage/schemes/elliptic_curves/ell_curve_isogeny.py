@@ -62,6 +62,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from copy import copy
 
@@ -1172,13 +1173,13 @@ class EllipticCurveIsogeny(Morphism):
 
             sage: E = EllipticCurve(QQ, [0,2,0,1,-1])
             sage: phi = EllipticCurveIsogeny(E, [1])
-            sage: for c in phi: print c
+            sage: for c in phi: print(c)
             x
             y
 
             sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
             sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
-            sage: for c in phi: print c
+            sage: for c in phi: print(c)
             (x^2 + 3)/x
             (x^2*y - 3*y)/x^2
         """
@@ -1480,7 +1481,7 @@ class EllipticCurveIsogeny(Morphism):
             sage: E = EllipticCurve(j=GF(17)(0))
             sage: phi = EllipticCurveIsogeny(E,  E((-1,0)))
 
-        The constructor calls this funcion itself, so the fields it
+        The constructor calls this function itself, so the fields it
         sets are already defined::
 
             sage: phi._EllipticCurveIsogeny__E1

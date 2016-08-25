@@ -191,6 +191,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 from __future__ import print_function
+from __future__ import absolute_import
 
 import inspect
 import sage.matrix.all as matrix
@@ -363,7 +364,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         Previously the above code resulted in a TypeError because the
         dimensions of the matrix were incorrect.
         """
-        from vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism
+        from .vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism
         D = self.domain()
         C = self.codomain()
         from sage.matrix.matrix import is_Matrix

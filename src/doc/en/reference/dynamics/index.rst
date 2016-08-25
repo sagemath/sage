@@ -13,5 +13,6 @@ Discrete dynamics
 .. SEEALSO::
 
     - :mod:`sage.combinat.e_one_star`
+    - :mod:`sage.combinat.constellation`
 
 .. include:: ../footer.txt

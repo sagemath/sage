@@ -1,6 +1,7 @@
 r"""
 Quotients of finite rank free modules over a field.
 """
+from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
@@ -17,7 +18,7 @@ Quotients of finite rank free modules over a field.
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-from free_module import FreeModule_ambient_field
+from .free_module import FreeModule_ambient_field
 
 class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
     """

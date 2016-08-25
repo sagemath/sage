@@ -320,7 +320,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef int r = mzed_read_elem(self._entries, i, j)
         return word_to_poly(r, self._base_ring)
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Return A+B
 
@@ -354,7 +354,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         return A
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         EXAMPLE::
 
@@ -426,7 +426,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cdef Matrix _matrix_times_matrix_(self, Matrix right):
+    cdef _matrix_times_matrix_(self, Matrix right):
         """
         Return A*B
 
@@ -633,7 +633,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, RingElement right):
         """
         Return ``a*B`` for ``a`` an element of the base field.
 
@@ -691,7 +691,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef int _cmp_(self, right) except -2:
         """
         EXAMPLE::
 

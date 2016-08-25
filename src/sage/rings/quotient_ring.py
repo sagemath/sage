@@ -98,6 +98,7 @@ easily::
     True
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -617,7 +618,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         try:
             return self.__cover
         except AttributeError:
-            import morphism
+            from . import morphism
             pi = morphism.RingHomomorphism_cover(self.__R.Hom(self))
             lift = self.lifting_map()
             pi._set_lift(lift)
@@ -683,7 +684,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             return self.__lift
         except AttributeError:
             pass
-        from morphism import RingMap_lift
+        from .morphism import RingMap_lift
         m = RingMap_lift(self, self.__R)
         self.__lift = m
         return m

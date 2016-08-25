@@ -96,7 +96,7 @@ Pythonの数学機能には混乱を招きがちな面があり，SageにはPyth
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)
+       sage: int(2)/int(3)   # optional - python2
        0
 
 -  **長整数:** Python本体は，C言語由来のint型だけではなく任意精度整数をサポートしている．
@@ -122,7 +122,7 @@ Sageプロジェクトに助力いただけるのなら，たいへん有難い�
 
 開発者向けの情報については、SageのWebページをご覧いただきたい．
 優先順位とカテゴリー順に整理されたSage関連プロジェクトの長いリストが見つかるはずだ．
-開発に役立つ情報は `Sage Developer's Guide <http://www.sagemath.org/doc/developer/>`_ にも載っているし，Googleグループ ``sage-devel`` も役立つ．
+開発に役立つ情報は `Sage Developer's Guide <http://doc.sagemath.org/html/en/developer/>`_ にも載っているし，Googleグループ ``sage-devel`` も役立つ．
 
 
 

@@ -26,6 +26,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 
 cdef class GenericSDPBackend:
 
@@ -404,7 +406,7 @@ cdef class GenericSDPBackend:
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
             sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
             sage: p.problem_name("There once was a french fry") # optional - Nonexistent_LP_solver
-            sage: print p.get_problem_name()                        # optional - Nonexistent_LP_solver
+            sage: print(p.get_problem_name())                     # optional - Nonexistent_LP_solver
             There once was a french fry
         """
 

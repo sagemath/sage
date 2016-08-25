@@ -19,4 +19,5 @@ Catalog
 - :ref:`sage.combinat.core`
 - :ref:`sage.combinat.k_tableau`
 - :ref:`sage.combinat.rsk`
+- :ref:`sage.combinat.tableau_residues`
 """

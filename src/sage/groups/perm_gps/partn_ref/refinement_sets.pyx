@@ -25,6 +25,9 @@ REFERENCE:
 
 include 'data_structures_pyx.pxi' # includes bitsets
 
+from .double_coset cimport double_coset
+
+
 def set_stab_py(generators, sett, relab=False):
     r"""
     Compute the setwise stabilizer of a subset of [0..n-1] in a subgroup of S_n.

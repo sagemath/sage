@@ -19,6 +19,7 @@ AUTHORS:
 #
 #                    http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.groups.perm_gps.permgroup import *
 from sage.interfaces.gap import *
@@ -117,7 +118,6 @@ class AbelianGroupMorphism(Morphism):
         # self.codomaininvs = H.gens_orders()
         self.domaingens = genss
         self.codomaingens = imgss
-        #print genss, imgss
         for i in range(len(self.domaingens)):
             if (self.domaingens[i]).order() != (self.codomaingens[i]).order():
                 raise TypeError("Sorry, the orders of the corresponding elements in %s, %s must be equal."%(genss,imgss))
@@ -140,27 +140,21 @@ class AbelianGroupMorphism(Morphism):
         """
         G  = (self.domain())._gap_init_()
         H  = (self.codomain())._gap_init_()
-        # print G,H
         s3 = 'G:=%s; H:=%s'%(G,H)
-        #print s3,"\n"
         gap.eval(s3)
         gensG = self.domain().variable_names()                    ## the Sage group generators
         gensH = self.codomain().variable_names()
-        #print gensG, gensH
         s1 = "gensG := GeneratorsOfGroup(G)"          ## the GAP group generators
         gap.eval(s1)
         s2 = "gensH := GeneratorsOfGroup(H)"
         gap.eval(s2)
         for i in range(len(gensG)):                      ## making the Sage group gens
            cmd = ("%s := gensG["+str(i+1)+"]")%gensG[i]  ## correspond to the Sage group gens
-           #print i,"  \n",cmd
            gap.eval(cmd)
         for i in range(len(gensH)):
            cmd = ("%s := gensH["+str(i+1)+"]")%gensH[i]
-           #print i,"  \n",cmd
            gap.eval(cmd)
         args = str(self.domaingens)+","+ str(self.codomaingens)
-        #print args,"\n"
         gap.eval("phi := GroupHomomorphismByImages(G,H,"+args+")")
         self.gap_hom_string = "phi := GroupHomomorphismByImages(G,H,"+args+")"
         return self.gap_hom_string
@@ -209,8 +203,8 @@ class AbelianGroupMorphism(Morphism):
         G = self.domain()
         gensJ = J.gens()
         for g in gensJ:
-            print g
-            print self(g),"\n"
+            print(g)
+            print(self(g), "\n")
         L = [self(g) for g in gensJ]
         return G.subgroup(L)
 
@@ -234,13 +228,7 @@ class AbelianGroupMorphism(Morphism):
         G = g.parent()
         w = g.word_problem(self.domaingens)
         n = len(w)
-        #print w,g.word_problem(self.domaingens)
         # g.word_problem is faster in general than word_problem(g)
         gens = self.codomaingens
         h = prod([gens[(self.domaingens).index(w[i][0])]**(w[i][1]) for i in range(n)])
         return h
-
-
-
-
-

@@ -84,7 +84,6 @@ def test_packages(packages, only_failures=False):
     return table(rows, header_row=True)
 
 
-
 def all_installed_packages(ignore_dot_gap=False):
     """
     Return list of all installed packages.

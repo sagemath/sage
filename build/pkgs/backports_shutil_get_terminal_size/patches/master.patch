@@ -1,0 +1,69 @@
+Diff between the latest release and the github master
+
+diff -ru backports.shutil_get_terminal_size-1.0.0/backports/shutil_get_terminal_size/get_terminal_size.py backports.shutil_get_terminal_size/backports/shutil_get_terminal_size/get_terminal_size.py
+--- backports.shutil_get_terminal_size-1.0.0/backports/shutil_get_terminal_size/get_terminal_size.py	2014-08-19 01:52:24.000000000 +0200
++++ backports.shutil_get_terminal_size/backports/shutil_get_terminal_size/get_terminal_size.py	2016-05-12 17:59:57.208494332 +0200
+@@ -16,30 +16,30 @@
+ terminal_size = namedtuple("terminal_size", "columns lines")
+ 
+ try:
+-    from ctypes import windll, create_string_buffer
++    from ctypes import windll, create_string_buffer, WinError
+ 
+-    _handles = {
+-        0: windll.kernel32.GetStdHandle(-10),
+-        1: windll.kernel32.GetStdHandle(-11),
+-        2: windll.kernel32.GetStdHandle(-12),
++    _handle_ids = {
++        0: -10,
++        1: -11,
++        2: -12,
+     }
+ 
+     def _get_terminal_size(fd):
+-        columns = lines = 0
+-
+-        try:
+-            handle = _handles[fd]
+-            csbi = create_string_buffer(22)
+-            res = windll.kernel32.GetConsoleScreenBufferInfo(handle, csbi)
+-            if res:
+-                res = struct.unpack("hhhhHhhhhhh", csbi.raw)
+-                left, top, right, bottom = res[5:9]
+-                columns = right - left + 1
+-                lines = bottom - top + 1
+-        except Exception:
+-            pass
+-
+-        return terminal_size(columns, lines)
++        handle = windll.kernel32.GetStdHandle(_handle_ids[fd])
++        if handle == 0:
++            raise OSError('handle cannot be retrieved')
++        if handle == -1:
++            raise WinError()
++        csbi = create_string_buffer(22)
++        res = windll.kernel32.GetConsoleScreenBufferInfo(handle, csbi)
++        if res:
++            res = struct.unpack("hhhhHhhhhhh", csbi.raw)
++            left, top, right, bottom = res[5:9]
++            columns = right - left + 1
++            lines = bottom - top + 1
++            return terminal_size(columns, lines)
++        else:
++            raise WinError()
+ 
+ except ImportError:
+     import fcntl
+@@ -48,9 +48,9 @@
+     def _get_terminal_size(fd):
+         try:
+             res = fcntl.ioctl(fd, termios.TIOCGWINSZ, b"\x00" * 4)
+-            lines, columns = struct.unpack("hh", res)
+-        except Exception:
+-            columns = lines = 0
++        except IOError as e:
++            raise OSError(e)
++        lines, columns = struct.unpack("hh", res)
+ 
+         return terminal_size(columns, lines)
+ 

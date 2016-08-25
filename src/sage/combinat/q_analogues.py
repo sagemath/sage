@@ -405,9 +405,10 @@ def q_multinomial(seq, q=None, binomial_algorithm='auto'):
 
 gaussian_multinomial = q_multinomial
 
+
 def q_catalan_number(n, q=None):
     """
-    Returns the `q`-Catalan number of index `n`.
+    Return the `q`-Catalan number of index `n`.
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
@@ -431,11 +432,18 @@ def q_catalan_number(n, q=None):
         Traceback (most recent call last):
         ...
         ValueError: Argument (-2) must be a nonnegative integer.
+
+    TESTS::
+
+        sage: q_catalan_number(3).parent()
+        Univariate Polynomial Ring in q over Integer Ring
     """
     if n in ZZ and n >= 0:
-        return prod(q_int(j, q) for j in range(n+2, 2*n+1)) / prod(q_int(j, q) for j in range(2,n+1))
+        return (prod(q_int(j, q) for j in range(n + 2, 2 * n + 1)) //
+                prod(q_int(j, q) for j in range(2, n + 1)))
     else:
-        raise ValueError("Argument (%s) must be a nonnegative integer." %n)
+        raise ValueError("Argument (%s) must be a nonnegative integer." % n)
+
 
 def qt_catalan_number(n):
     """

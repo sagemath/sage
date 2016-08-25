@@ -252,6 +252,15 @@ To do that, just add the following line at the end of your file::
 
    BinaryRepetitionCode._registered_encoders["RepetitionGeneratorMatrixEncoder"] = BinaryRepetitionCodeGeneratorMatrixEncoder
 
+.. NOTE::
+
+    In case you are implementing a generic encoder (an encoder which works
+    with any family of linear codes), please add the following statement in
+    ``AbstractLinearCode``'s constructor instead:
+    ``self._registered_encoders["EncName"] = MyGenericEncoder``.
+    This will make it immediately available to any code
+    class which inherits from `AbstractLinearCode`.
+
 Summary of the implementation for encoders
 ------------------------------------------
 
@@ -374,6 +383,16 @@ To do that, just add the following line at the end of your file::
 Also put this line to set ``decoder_type``::
 
    BinaryRepetitionCode._decoder_type = {"hard-decision", "unique"}
+
+
+.. NOTE::
+
+    In case you are implementing a generic decoder (a decoder which works
+    with any family of linear codes), please add the following statement in
+    ``AbstractLinearCode``'s constructor instead:
+    ``self._registered_decoders["DecName"] = MyGenericDecoder``.
+    This will make it immediately available to any code
+    class which inherits from `AbstractLinearCode`.
 
 Summary of the implementation for decoders
 ------------------------------------------

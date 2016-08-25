@@ -1400,7 +1400,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: H.is_surjective()
             True
 
-        This tests if Trac #11552 is fixed. ::
+        This tests if :trac:`11552` is fixed. ::
 
             sage: V = ZZ^2
             sage: m = matrix(ZZ, [[1,2],[0,2]])

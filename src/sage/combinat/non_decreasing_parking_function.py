@@ -30,8 +30,10 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+
 from sage.rings.integer import Integer
-from combinat import (CombinatorialClass, CombinatorialObject,
+from .combinat import (CombinatorialClass, CombinatorialObject,
                       InfiniteAbstractCombinatorialClass, catalan_number)
 from copy import copy
 

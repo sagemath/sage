@@ -1,4 +1,4 @@
-setuptools
+$(PYTHON) | setuptools six
 
 ----------
 All lines of this file are ignored except the first.

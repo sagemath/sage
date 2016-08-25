@@ -52,7 +52,7 @@ degree.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-
+from __future__ import print_function
 
 import random
 
@@ -159,7 +159,7 @@ def string_to_tuples(g):
     from sage.misc.all import sage_eval
 
     if not isinstance(g, str):
-        raise ValueError, "g (= %s) must be a string"%g
+        raise ValueError("g (= %s) must be a string" % g)
     elif g == '()':
         return []
     g = g.replace('\n','').replace(' ', '').replace(')(', '),(').replace(')', ',)')
@@ -265,7 +265,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         True
         sage: g = G.gen(0); g
         (1,2,3)(4,5)
-        sage: print g
+        sage: print(g)
         (1,2,3)(4,5)
         sage: g*g
         (1,3,2)
@@ -424,7 +424,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         We check that :trac:`16678` is fixed::
 
-            sage: Permutations.global_options(display='cycle')
+            sage: Permutations.options.display='cycle'
             sage: p = Permutation((1,2))
             sage: PermutationGroupElement(p)
             (1,2)
@@ -437,7 +437,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         try:
             v = standardize_generator(g, convert_dict)
         except KeyError:
-            raise ValueError, "Invalid permutation vector: %s" % g
+            raise ValueError("Invalid permutation vector: %s" % g)
 
         degree = max([1] + [max(cycle+(1,)) for cycle in v])
         v = from_cycles(degree, v)
@@ -449,11 +449,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         if check and parent.__class__ != SymmetricGroup:
             if not (parent is None or isinstance(parent, PermutationGroup_generic)):
-                raise TypeError, 'parent must be a permutation group'
+                raise TypeError('parent must be a permutation group')
             if parent is not None:
                 P = parent._gap_()
                 if not P.parent()(self.__gap) in P:
-                    raise TypeError, 'permutation %s not in %s'%(g, parent)
+                    raise TypeError('permutation %s not in %s' % (g, parent))
 
         Element.__init__(self, parent)
 
@@ -477,7 +477,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         # rest of the code is assumes that self.perm specifies
         # a valid permutation (else segfaults, infinite loops may occur).
         if not is_valid_permutation(self.perm, vn):
-            raise ValueError, "Invalid permutation vector: %s" % v
+            raise ValueError("Invalid permutation vector: %s" % v)
 
     def __dealloc__(self):
         if self.perm is not NULL and self.perm is not self.perm_buf:
@@ -618,7 +618,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         return self.cycles()[i]
 
-    cpdef int _cmp_(self, Element other) except -2:
+    cpdef int _cmp_(self, other) except -2:
         """
         Compare group elements ``self`` and ``other``.
 
@@ -712,7 +712,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
 
             if not isinstance(i,(list,tuple,str)):
-                raise ValueError, "Must be in the domain or a list, tuple or string."
+                raise ValueError("Must be in the domain or a list, tuple or string.")
 
             permuted = [i[self.perm[j]] for j from 0 <= j < self.n]
             if isinstance(i, tuple):
@@ -827,7 +827,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             left = x
             if is_Polynomial(left):
                 if self != 1:
-                    raise ValueError, "%s does not act on %s"%(self, left.parent())
+                    raise ValueError("%s does not act on %s" % (self,
+                                                                left.parent()))
                 return left
             elif is_MPolynomial(left):
                 R = left.parent()
@@ -835,12 +836,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 try:
                     sigma_x  = [vars[self(i+1)-1] for i in range(R.ngens())]
                 except IndexError:
-                    raise TypeError, "%s does not act on %s"%(self, left.parent())
+                    raise TypeError("%s does not act on %s" % (self,
+                                                               left.parent()))
                 return left(tuple(sigma_x))
             elif is_Matrix(left):
                 return left.with_permuted_rows(self)
 
-    cpdef MonoidElement _mul_(left, MonoidElement _right):
+    cpdef _mul_(left, _right):
         """
         EXAMPLES::
 
@@ -1301,6 +1303,52 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             return '()'
         return ''.join([repr(c) for c in cycles]).replace(', ',',').replace(',)',')')
 
+    def cycle_type(self, singletons=True, as_list=False):
+        r"""
+        Return the partition that gives the cycle type of ``g`` as an element of
+        ``self``.
+
+        INPUT:
+
+        - ``g`` -- an element of the permutation group ``self.parent()``
+        
+        - ``singletons`` -- ``True`` or ``False`` depending on whether on or not
+          trivial cycles should be counted (default: ``True``)
+
+        - ``as_list`` -- ``True`` or ``False`` depending on whether the cycle
+          type should be returned as a ``list`` or as a class:`Partition` 
+          (default: ``False``)
+
+        OUTPUT:
+
+        A class:`Partition`, or `list` if ``is_list`` is ``True``, giving the cycle type of ``g`` 
+
+        If speed is a concern then ``as_list=True`` should be used.
+
+        EXAMPLES::
+
+            sage: G = DihedralGroup(3)
+            sage: [g.cycle_type() for g in G]
+            [[1, 1, 1], [2, 1], [3], [2, 1], [3], [2, 1]]
+            sage: PermutationGroupElement('(1,2,3)(4,5)(6,7,8)').cycle_type()
+            [3, 3, 2]
+            sage: G = SymmetricGroup(3); G('(1,2)').cycle_type()
+            [2, 1]
+            sage: G = SymmetricGroup(4); G('(1,2)').cycle_type()
+            [2, 1, 1]
+            sage: G = SymmetricGroup(4); G('(1,2)').cycle_type(singletons=False)
+            [2]
+            sage: G = SymmetricGroup(4); G('(1,2)').cycle_type(as_list=False)
+            [2, 1, 1]
+        """
+        cycle_type = [len(c) for c in self.cycle_tuples(singletons)]
+        cycle_type.sort(reverse = True)
+        if as_list:
+            return cycle_type
+        else:
+            from sage.combinat.partition import _Partitions
+            return _Partitions(cycle_type)
+
     def has_descent(self, i, side = "right", positive = False):
         """
         INPUT:
@@ -1435,9 +1483,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             for i in range(len(l4)):
                 for j in range(1,len(words)+1):
                     l5[i][0] = l5[i][0].replace("x"+str(j),str(words[j-1]))
-            print "         ",l1
-            print "         ",l5
-        return l1,l2
+            print(l1)
+            print(l5)
+        return l1, l2
 
 cdef class SymmetricGroupElement(PermutationGroupElement):
     """

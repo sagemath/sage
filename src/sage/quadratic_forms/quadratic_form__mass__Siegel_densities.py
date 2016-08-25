@@ -10,7 +10,7 @@ Local Masses and Siegel Densities
 ##  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
 ########################################################################
 # python3
-from __future__ import division
+from __future__ import division, print_function
 
 import copy
 
@@ -195,7 +195,7 @@ def Pall_mass_density_at_odd_prime(self, p):
     p_mass = prod(jordan_mass_list)
     p_mass *= 2**(s-1) * p**nu
 
-    print jordan_list, MJL, jordan_mass_list, p_mass
+    print(jordan_list, MJL, jordan_mass_list, p_mass)
 
     ## Return the result
     return p_mass

@@ -6,13 +6,13 @@ Test file for chapter "Polynômes" ("Polynomials")
 Sage example in ./polynomes.tex, line 55 (in svn rev 1261)::
 
   sage: x = var('x'); p = (2*x+1)*(x+2)*(x^4-1)
-  sage: print p, "est de degré", p.degree(x)
+  sage: print("{} est de degré {}".format(p, p.degree(x)))
   (x^4 - 1)*(2*x + 1)*(x + 2) est de degré 6
 
 Sage example in ./polynomes.tex, line 69::
 
   sage: x = polygen(QQ, 'x'); p = (2*x+1)*(x+2)*(x^4-1)
-  sage: print p, "est de degré", p.degree()
+  sage: print("{} est de degré {}".format(p, p.degree()))
   2*x^6 + 5*x^5 + 2*x^4 - 2*x^2 - 5*x - 2 est de degré 6
 
 Sage example in ./polynomes.tex, line 97::
@@ -124,7 +124,7 @@ Sage example in ./polynomes.tex, line 436::
 Sage example in ./polynomes.tex, line 447::
 
   sage: R.<x> = QQ[]; p = (x^5-1); q = (x^3-1)
-  sage: print "le pgcd est %s = (%s)*p + (%s)*q" % p.xgcd(q)
+  sage: print("le pgcd est %s = (%s)*p + (%s)*q" % p.xgcd(q))
   le pgcd est x - 1 = (-x)*p + (x^3 + 1)*q
 
 Sage example in ./polynomes.tex, line 484::
@@ -142,7 +142,7 @@ Sage example in ./polynomes.tex, line 527::
 Sage example in ./polynomes.tex, line 533::
 
   sage: for A in [QQ, ComplexField(16), GF(5), QQ[sqrt(2)]]:
-  ...       print A, ":"; print A['x'](p).factor()
+  ....:     print("{} :".format(A)); print(A['x'](p).factor())
   Rational Field :
   (54) * (x + 1/3)^2 * (x^2 - 2)
   Complex Field with 16 bits of precision :
@@ -231,9 +231,9 @@ Sage example in ./polynomes.tex, line 907::
 
   sage: R.<x> = QQ[]; r = x^10/((x^2-1)^2*(x^2+3))
   sage: poly, parts = r.partial_fraction_decomposition()
-  sage: print poly
+  sage: poly
   x^4 - x^2 + 6
-  sage: for part in parts: print part.factor()
+  sage: for part in parts: print(part.factor())
   (17/32) * (x - 1)^-1
   (1/16) * (x - 1)^-2
   (-17/32) * (x + 1)^-1
@@ -342,8 +342,8 @@ Sage example in ./polynomes.tex, line 1186::
   sage: S.<x> = PowerSeriesRing(QQ, default_prec=5)
   sage: f = S(1)
   sage: for i in range(5):
-  ...       f = (x*f).exp()
-  ...       print f
+  ....:     f = (x*f).exp()
+  ....:     print(f)
   1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + O(x^5)
   1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + O(x^5)
   1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + O(x^5)
@@ -367,9 +367,9 @@ Sage example in ./polynomes.tex, line 1247::
 
   sage: f = L(1)  # la série paresseuse constante 1
   sage: for i in range(5):
-  ...       f = (x*f).exponential()
-  ...       f.compute_coefficients(5)  # force le calcul des
-  ...       print f                    #   premiers coefficients
+  ....:     f = (x*f).exponential()
+  ....:     f.compute_coefficients(5)  # force le calcul des
+  ....:     print(f)                   #   premiers coefficients
   1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
   1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + 49/30*x^5 + O(x^6)
   1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + 63/10*x^5 + O(x^6)

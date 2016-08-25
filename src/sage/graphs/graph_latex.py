@@ -276,7 +276,7 @@ choices. ::
     ...   )
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random - depends on TeX installation
-    sage: print latex(G)
+    sage: print(latex(G))
     \begin{tikzpicture}
     %
     \useasboundingbox (0,0) rectangle (4.0in,4.0in);
@@ -366,6 +366,7 @@ GraphLatex class and functions
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_function
@@ -581,7 +582,7 @@ class GraphLatex(SageObject):
             sage: opts = g.latex_options()
             sage: opts.set_option('tkz_style', 'Classic')
             sage: opts.set_option('vertex_size', 3.6)
-            sage: print opts._repr_()
+            sage: print(opts._repr_())
             LaTeX options for Petersen graph: {'tkz_style': 'Classic', 'vertex_size': 3.60000000000000}
         """
         return "LaTeX options for %s: %s"%(self._graph, self._options)
@@ -1279,7 +1280,7 @@ class GraphLatex(SageObject):
             sage: check_tkz_graph()  # random - depends on TeX installation
             sage: g = graphs.CompleteGraph(2)
             sage: opts = g.latex_options()
-            sage: print opts.latex()
+            sage: print(opts.latex())
             \begin{tikzpicture}
             %
             \useasboundingbox (0,0) rectangle (5.0cm,5.0cm);
@@ -1315,7 +1316,7 @@ class GraphLatex(SageObject):
             sage: g = digraphs.ButterflyGraph(1)
             sage: from sage.graphs.graph_latex import check_tkz_graph
             sage: check_tkz_graph()  # random - depends on TeX installation
-            sage: print g.latex_options().dot2tex_picture()  # optional - dot2tex graphviz
+            sage: print(g.latex_options().dot2tex_picture())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
               \node (node_3) at (...bp,...bp) [draw,draw=none] {$\left(1, 1\right)$};
@@ -1334,7 +1335,7 @@ class GraphLatex(SageObject):
             sage: G = DiGraph() 
             sage: G.add_edge(3333, 88, 'my_label') 
             sage: G.set_latex_options(edge_labels=True) 
-            sage: print G.latex_options().dot2tex_picture() # optional - dot2tex graphviz 
+            sage: print(G.latex_options().dot2tex_picture()) # optional - dot2tex graphviz 
             \begin{tikzpicture}[>=latex,line join=bevel,] 
             %% 
             \node (node_1) at (...bp,...bp) [draw,draw=none] {$3333$};
@@ -1398,7 +1399,7 @@ class GraphLatex(SageObject):
             sage: g = graphs.CompleteGraph(3)
             sage: opts = g.latex_options()
             sage: g.set_latex_options(tkz_style='Art')
-            sage: print opts.tkz_picture()
+            sage: print(opts.tkz_picture())
             \begin{tikzpicture}
             %
             \GraphInit[vstyle=Art]
@@ -1423,7 +1424,7 @@ class GraphLatex(SageObject):
             sage: g = graphs.CompleteGraph(3)
             sage: opts = g.latex_options()
             sage: g.set_latex_options(tkz_style='Custom')
-            sage: print opts.tkz_picture()
+            sage: print(opts.tkz_picture())
             \begin{tikzpicture}
             %
             \useasboundingbox (0,0) rectangle (5.0cm,5.0cm);
@@ -1464,7 +1465,7 @@ class GraphLatex(SageObject):
             sage: check_tkz_graph()  # random - depends on TeX installation
             sage: g = graphs.PathGraph(3)
             sage: opts = g.latex_options()
-            sage: print opts.tkz_picture()
+            sage: print(opts.tkz_picture())
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -1476,7 +1477,7 @@ class GraphLatex(SageObject):
             sage: check_tkz_graph()  # random - depends on TeX installation
             sage: g = graphs.CompleteGraph(1)
             sage: opts = g.latex_options()
-            sage: print opts.tkz_picture()
+            sage: print(opts.tkz_picture())
             \begin{tikzpicture}
             ...
             \end{tikzpicture}

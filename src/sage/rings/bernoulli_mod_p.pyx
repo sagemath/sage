@@ -134,10 +134,10 @@ def bernoulli_mod_p(int p):
     """
 
     if p <= 2:
-        raise ValueError, "p (=%s) must be a prime >= 3"%p
+        raise ValueError("p (=%s) must be a prime >= 3" % p)
 
     if not sage.arith.all.is_prime(p):
-        raise ValueError, "p (=%s) must be a prime"%p
+        raise ValueError("p (=%s) must be a prime" % p)
 
     cdef int g, gSqr, gInv, gInvSqr, isOdd
 
@@ -303,17 +303,14 @@ def bernoulli_mod_p_single(long p, long k):
 
     """
     if p <= 2:
-        raise ValueError, "p (=%s) must be a prime >= 3"%p
+        raise ValueError("p (=%s) must be a prime >= 3" % p)
 
     if not sage.arith.all.is_prime(p):
-        raise ValueError, "p (=%s) must be a prime"%p
+        raise ValueError("p (=%s) must be a prime" % p)
 
     R = Integers(p)
 
     cdef long x = bernmm_bern_modp(p, k)
     if x == -1:
-        raise ArithmeticError, "B_k is not integral at p"
+        raise ArithmeticError("B_k is not integral at p")
     return x
-
-
-# ============ end of file

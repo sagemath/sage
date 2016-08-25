@@ -17,6 +17,9 @@ Base class for algebra elements
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.superseded import deprecation
+deprecation(21141, "the module sage.algebras.algebra_element is deprecated, import from sage.structure.element instead")
+
 from sage.structure.element import AlgebraElement
 
 def is_AlgebraElement(x):

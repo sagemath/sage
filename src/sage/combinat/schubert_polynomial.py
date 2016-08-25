@@ -15,13 +15,14 @@ Schubert Polynomials
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.combinatorial_algebra import CombinatorialAlgebra
 from sage.categories.all import GradedAlgebrasWithBasis
 from sage.rings.all import Integer, PolynomialRing
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-import permutation
+from . import permutation
 import sage.libs.symmetrica.all as symmetrica
 
 from sage.combinat.permutation import Permutations

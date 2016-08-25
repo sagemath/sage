@@ -35,7 +35,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.factory import UniqueFactory
@@ -289,7 +289,7 @@ class SchemeHomset_generic(HomsetWithBase):
         EXAMPLES::
 
             sage: A = AffineSpace(4, QQ)
-            sage: print A.structure_morphism()._repr_()
+            sage: print(A.structure_morphism()._repr_())
             Scheme morphism:
               From: Affine Space of dimension 4 over Rational Field
               To:   Spectrum of Rational Field

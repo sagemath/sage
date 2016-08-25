@@ -6,7 +6,7 @@
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-cimport parent_old
+from .parent_old cimport Parent as Parent_old
 
-cdef class ParentWithBase(parent_old.Parent):
+cdef class ParentWithBase(Parent_old):
     pass

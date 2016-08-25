@@ -15,8 +15,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import division
+from __future__ import division, print_function
 
 include "algebra_elements.pxi"
 from sage.misc.cachefunc import cached_method
@@ -250,7 +249,8 @@ cdef class PathAlgebraElement(RingElement):
                     L.append(([vertices.index(H.start)], <object>(T.coef)))
                 T = T.nxt
             if len(L) != H.poly.nterms:
-                print "Term count of polynomial is wrong, got",len(L), "expected", H.poly.nterms
+                print("Term count of polynomial is wrong, got", len(L),
+                      "expected", H.poly.nterms)
             L_total.extend(L)
             H = H.nxt
         return L_total
@@ -960,7 +960,7 @@ cdef class PathAlgebraElement(RingElement):
             self._hash = hash(frozenset(self.monomial_coefficients().items()))
         return self._hash
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         Helper for comparison of path algebra elements.
 
@@ -1014,7 +1014,7 @@ cdef class PathAlgebraElement(RingElement):
         return 1
 
     # negation
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         """
         EXAMPLES::
 
@@ -1028,7 +1028,7 @@ cdef class PathAlgebraElement(RingElement):
         return self._new_(homog_poly_neg(self.data))
 
     # addition
-    cpdef ModuleElement _add_(self, ModuleElement other):
+    cpdef _add_(self, other):
         """
         EXAMPLES::
 
@@ -1105,7 +1105,7 @@ cdef class PathAlgebraElement(RingElement):
                     H1 = H1.nxt
                     H2 = H2.nxt
 
-    cpdef ModuleElement _sub_(self, ModuleElement other):
+    cpdef _sub_(self, other):
         """
         EXAMPLES::
 
@@ -1195,7 +1195,7 @@ cdef class PathAlgebraElement(RingElement):
 
 ## (scalar) multiplication
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, RingElement right):
         """
         EXAMPLES::
 
@@ -1226,7 +1226,7 @@ cdef class PathAlgebraElement(RingElement):
             return self._new_(outnxt)
         return self._new_(out)
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _rmul_(self, RingElement left):
         """
         EXAMPLES::
 
@@ -1298,7 +1298,7 @@ cdef class PathAlgebraElement(RingElement):
 
 ## Multiplication in the algebra
 
-    cpdef RingElement _mul_(self, RingElement  other):
+    cpdef _mul_(self, other):
         """
         EXAMPLES::
 

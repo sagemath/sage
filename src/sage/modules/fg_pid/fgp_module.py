@@ -208,13 +208,14 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.modules.module import Module
 from sage.modules.free_module import is_FreeModule
 from sage.structure.all import parent
 from sage.structure.sequence import Sequence
-from fgp_element  import DEBUG, FGP_Element
-from fgp_morphism import FGP_Morphism, FGP_Homset
+from .fgp_element  import DEBUG, FGP_Element
+from .fgp_morphism import FGP_Morphism, FGP_Homset
 from sage.rings.all import Integer, ZZ
 from sage.arith.all import lcm
 from sage.misc.cachefunc import cached_method
@@ -1523,7 +1524,7 @@ class FGP_Module_class(Module):
             sage: len(z)
             24
 
-        We test that the trivial module is handled correctly (cf. trac #6561)::
+        We test that the trivial module is handled correctly (:trac:`6561`)::
 
             sage: A = (ZZ**1)/(ZZ**1); list(A) == [A(0)]
             True

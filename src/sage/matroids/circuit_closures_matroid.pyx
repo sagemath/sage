@@ -355,7 +355,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._circuit_closures
 
-    cpdef _is_isomorphic(self, other):
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -363,11 +363,17 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- A matroid,
+        - optional parameter ``certificate`` -- Boolean.
 
         OUTPUT:
 
-        Boolean.
+        Boolean,
+        and, if certificate = True, a dictionary giving the isomophism or None
+
+        .. NOTE::
+
+            Internal version that does no input checking.
 
         EXAMPLES::
 
@@ -376,12 +382,19 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: M2 = matroids.CompleteGraphic(4)
             sage: M1._is_isomorphic(M2)
             True
+            sage: M1._is_isomorphic(M2, certificate=True)
+            (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
             sage: M1 = CircuitClosuresMatroid(matroids.named_matroids.Fano())
             sage: M2 = matroids.named_matroids.NonFano()
             sage: M1._is_isomorphic(M2)
             False
+            sage: M1._is_isomorphic(M2, certificate=True)
+            (False, None)
+
 
         """
+        if certificate:
+            return self._is_isomorphic(other), self._isomorphism(other)
         N = CircuitClosuresMatroid(other)
         if sorted(self._circuit_closures.keys()) != sorted(N._circuit_closures.keys()):
             return False

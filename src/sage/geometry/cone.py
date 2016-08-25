@@ -91,7 +91,7 @@ of all point collections to be such a matrix.
 
 If you want to do something with each ray of a cone, you can write ::
 
-    sage: for ray in positive_xy: print ray
+    sage: for ray in positive_xy: print(ray)
     N(1, 0, 0)
     N(0, 1, 0)
 
@@ -191,7 +191,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import collections
 import copy
@@ -727,7 +727,7 @@ class IntegralRayCollection(SageObject,
         TESTS::
 
             sage: c = Cone([(1,0), (0,1)])
-            sage: for ray in c: print ray
+            sage: for ray in c: print(ray)
             N(1, 0)
             N(0, 1)
         """
@@ -1805,8 +1805,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: octant = Cone(identity_matrix(3).columns())
             sage: # indirect doctest
             sage: for i, face in enumerate(octant.faces(1)):
-            ...       if face.ray(0) != octant.ray(i):
-            ...           print "Wrong order!"
+            ....:     if face.ray(0) != octant.ray(i):
+            ....:         print("Wrong order!")
         """
         faces = tuple(faces)
         if len(faces) > 1: # Otherwise there is nothing to sort
@@ -2207,7 +2207,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         To see all faces arranged by dimension, you can do this::
 
-            sage: for level in L.level_sets(): print level
+            sage: for level in L.level_sets(): print(level)
             [0-d face of 2-d cone in 2-d lattice N]
             [1-d face of 2-d cone in 2-d lattice N,
              1-d face of 2-d cone in 2-d lattice N]
@@ -2450,7 +2450,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             N(1, 0)
             in 2-d lattice N
 
-        ... or you can see indices of the rays of the orginal cone that
+        ... or you can see indices of the rays of the original cone that
         correspond to the above ray::
 
             sage: face.ambient_ray_indices()
@@ -2502,14 +2502,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: cone = toric_varieties.dP8().fan().generating_cone(0)
             sage: cone
             2-d cone of Rational polyhedral fan in 2-d lattice N
-            sage: for f in cone.facets(): print f.rays()
+            sage: for f in cone.facets(): print(f.rays())
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
             in 2-d lattice N
             sage: len(cone.faces())
             3
-            sage: for f in cone.facets(): print f.rays()
+            sage: for f in cone.facets(): print(f.rays())
             N(1, 1)
             in 2-d lattice N
             N(0, 1)

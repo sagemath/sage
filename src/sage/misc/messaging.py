@@ -11,7 +11,9 @@ AUTHORS:
 
 - Martin Albrecht (2012) - initial implementation
 """
+from __future__ import absolute_import
 pushover_defaults = {"token": "Eql67F14ohOZJ0AtEBJJU7FiLAk8wK"}
+
 
 def pushover(message, **kwds):
     """
@@ -67,9 +69,8 @@ def pushover(message, **kwds):
         You may want to populate ``sage.misc.messaging.pushover_defaults`` with default values such
         as the default user in ``$HOME/.sage/init.sage``.
     """
-    import httplib
-
     # import compatible with py2 and py3
+    from six.moves import http_client as httplib
     from six.moves.urllib.parse import urlencode
 
     request = {"message": message}
@@ -79,5 +80,5 @@ def pushover(message, **kwds):
     conn = httplib.HTTPSConnection("api.pushover.net:443")
     conn.request("POST", "/1/messages.json",
                  urlencode(request),
-                 { "Content-type": "application/x-www-form-urlencoded" })
+                 {"Content-type": "application/x-www-form-urlencoded"})
     return conn.getresponse().status == 200

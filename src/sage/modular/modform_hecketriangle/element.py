@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -16,7 +17,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from graded_ring_element import FormsRingElement
+from .graded_ring_element import FormsRingElement
 
 
 class FormsElement(FormsRingElement):
@@ -74,7 +75,7 @@ class FormsElement(FormsRingElement):
             self._ep      == parent.ep() ):
                 raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
 
-        from subspace import SubSpaceForms
+        from .subspace import SubSpaceForms
         if isinstance(parent, SubSpaceForms) and (parent._module is not None):
             try:
                 self.coordinate_vector()

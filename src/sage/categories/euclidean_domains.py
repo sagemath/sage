@@ -22,6 +22,7 @@ from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import coerce_binop
+from sage.structure.sequence import Sequence
 
 class EuclideanDomains(Category_singleton):
     """
@@ -62,6 +63,76 @@ class EuclideanDomains(Category_singleton):
 
             """
             return True
+
+        def gcd_free_basis(self, elts):
+            r"""
+            Compute a set of coprime elements that can be used to express the
+            elements of ``elts``.
+
+            INPUT:
+
+            - ``elts`` - A sequence of elements of ``self``.
+
+            OUTPUT:
+
+            A GCD-free basis (also called a coprime base) of ``elts``; that is,
+            a set of pairwise relatively prime elements of ``self`` such that
+            any element of ``elts`` can be written as a product of elements of
+            the set.
+
+            ALGORITHM:
+
+            Naive implementation of the algorithm described in Section 4.8 of
+            Bach & Shallit [BachShallit1996]_.
+
+            .. [BachShallit1996] Eric Bach, Jeffrey Shallit.
+                *Algorithmic Number Theory, Vol. 1: Efficient Algorithms*.
+                MIT Press, 1996. ISBN 978-0262024051.
+
+            EXAMPLES::
+
+                sage: ZZ.gcd_free_basis([1])
+                []
+                sage: ZZ.gcd_free_basis([4, 30, 14, 49])
+                [2, 15, 7]
+
+                sage: Pol.<x> = QQ[]
+                sage: Pol.gcd_free_basis([
+                ....:     (x+1)^3*(x+2)^3*(x+3), (x+1)*(x+2)*(x+3),
+                ....:     (x+1)*(x+2)*(x+4)])
+                [x + 3, x + 4, x^2 + 3*x + 2]
+
+            TESTS::
+
+                sage: R.<x> = QQ[]
+                sage: QQ.gcd_free_basis([x+1,x+2])
+                Traceback (most recent call last):
+                ...
+                TypeError: unable to convert x + 1 to an element of Rational Field
+            """
+            def refine(a, b):
+                g = a.gcd(b)
+                if g.is_unit():
+                    return (a, set(), b)
+                l1, s1, r1 = refine(a//g, g)
+                l2, s2, r2 = refine(r1, b//g)
+                s1.update(s2)
+                s1.add(l2)
+                return (l1, s1, r2)
+            elts = Sequence(elts, universe=self)
+            res = set()
+            if len(elts) == 1:
+                res.update(elts)
+            else:
+                r = elts[-1]
+                for t in self.gcd_free_basis(elts[:-1]):
+                    l, s, r = refine(t, r)
+                    res.update(s)
+                    res.add(l)
+                res.add(r)
+            units = [x for x in res if x.is_unit()]
+            res.difference_update(units)
+            return Sequence(res, universe=self, check=False)
 
         def _test_euclidean_degree(self, **options):
             r"""
@@ -200,7 +271,9 @@ class EuclideanDomains(Category_singleton):
 
             - ``other`` -- an element in the same euclidean domain
 
-            OUTPUT
+            OUTPUT:
+
+            a pair of elements
 
             EXAMPLES::
 

@@ -33,7 +33,7 @@ Python modules::
     sage: sage_getfile(sage.misc.sageinspect)
     '.../sageinspect.py'
 
-    sage: print sage_getdoc(sage.misc.sageinspect).lstrip()[:40]
+    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
 
     sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
@@ -106,12 +106,13 @@ By :trac:`9976` and :trac:`14017`, introspection also works for interactively
 defined Cython code, and with rather tricky argument lines::
 
     sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')
-    sage: print sage_getsource(foo)
+    sage: print(sage_getsource(foo))
     def foo(unsigned int x=1, a=')"', b={not (2+1==3):'bar'}, *args, **kwds): return
     sage: sage_getargspec(foo)
     ArgSpec(args=['x', 'a', 'b'], varargs='args', keywords='kwds', defaults=(1, ')"', {False: 'bar'}))
 
 """
+from __future__ import print_function
 
 import ast
 import inspect
@@ -200,7 +201,7 @@ def _extract_embedded_position(docstring):
     The following has been fixed in :trac:`13916`::
 
         sage: cython('''cpdef test_funct(x,y): return''')
-        sage: print open(_extract_embedded_position(inspect.getdoc(test_funct))[1]).read()
+        sage: print(open(_extract_embedded_position(inspect.getdoc(test_funct))[1]).read())
         <BLANKLINE>
         include "cysignals/signals.pxi"  # ctrl-c interrupt block support
         include "stdsage.pxi"
@@ -248,7 +249,7 @@ def _extract_embedded_signature(docstring, name):
 
         sage: from sage.misc.sageinspect import _extract_embedded_signature
         sage: from sage.misc.nested_class import MainClass
-        sage: print _extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[0]
+        sage: print(_extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[0])
         File: sage/misc/nested_class.pyx (starting at line 314)
         ...
         sage: _extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[1]
@@ -813,9 +814,8 @@ def _split_syntactical_unit(s):
         sage: from sage.misc.sageinspect import _split_syntactical_unit
         sage: s = "(Hel) lo_1=[)\"!\" ] '''? {world} '''?"
         sage: while s:
-        ...    u, s = _split_syntactical_unit(s)
-        ...    print u
-        ...
+        ....:     u, s = _split_syntactical_unit(s)
+        ....:     print(u)
         (Hel)
         lo_1
         =
@@ -1352,7 +1352,7 @@ def sage_getargspec(obj):
         ... '    def __call__(self, m,n): return "something"']
         sage: cython('\n'.join(cython_code))
         sage: O = MyClass()
-        sage: print sage.misc.sageinspect.sage_getsource(O)
+        sage: print(sage.misc.sageinspect.sage_getsource(O))
         def foo(x, a=')"', b={(2+1):'bar', not 1:3, 3<<4:5}): return
         sage: sage.misc.sageinspect.sage_getargspec(O)
         ArgSpec(args=['x', 'a', 'b'], varargs=None, keywords=None, defaults=(')"', {False: 3, 48: 5, 3: 'bar'}))
@@ -1362,7 +1362,7 @@ def sage_getargspec(obj):
     ::
 
         sage: cython('def foo(x, a=\'\\\')"\', b={not (2+1==3):\'bar\'}): return')
-        sage: print sage.misc.sageinspect.sage_getsource(foo)
+        sage: print(sage.misc.sageinspect.sage_getsource(foo))
         def foo(x, a='\')"', b={not (2+1==3):'bar'}): return
         <BLANKLINE>
         sage: sage.misc.sageinspect.sage_getargspec(foo)
@@ -1502,52 +1502,6 @@ def sage_getargspec(obj):
     return inspect.ArgSpec(args, varargs, varkw, defaults)
 
 
-_re_address = re.compile(" *at 0x[0-9a-fA-F]+")
-
-def formatvalue_reproducible(obj):
-    """
-    Format the default value for an argspec in a reproducible way: the
-    output should not depend on the system or the Python session.
-
-    INPUT:
-
-    - ``obj`` -- any object
-
-    OUTPUT: a string
-
-    EXAMPLES::
-
-        sage: from sage.misc.sageinspect import formatvalue_reproducible
-        sage: x = object()
-        sage: formatvalue_reproducible(x)
-        '=<object object>'
-        sage: formatvalue_reproducible([object(), object()])
-        '=[<object object>, <object object>]'
-    """
-    s = _re_address.sub("", repr(obj))
-    return "=" + s
-
-
-def sage_formatargspec(*argspec):
-    """
-    Format the argspec in a reproducible way.
-
-    EXAMPLES::
-
-        sage: import inspect
-        sage: from sage.misc.sageinspect import sage_getargspec
-        sage: from sage.misc.sageinspect import sage_formatargspec
-        sage: def foo(f=lambda x:x): pass
-        sage: A = sage_getargspec(foo)
-        sage: print inspect.formatargspec(*A)
-        (f=<function <lambda> at 0x...>)
-        sage: print sage_formatargspec(*A)
-        (f=<function <lambda>>)
-    """
-    s = inspect.formatargspec(*argspec, formatvalue=formatvalue_reproducible)
-    return s
-
-
 def sage_getdef(obj, obj_name=''):
     r"""
     Return the definition header for any callable object.
@@ -1633,7 +1587,7 @@ def _sage_getdoc_unformatted(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import _sage_getdoc_unformatted
-        sage: print _sage_getdoc_unformatted(sage.rings.integer.Integer)
+        sage: print(_sage_getdoc_unformatted(sage.rings.integer.Integer))
         Integer(x=None, base=0)
         File: sage/rings/integer.pyx (starting at line ...)
         <BLANKLINE>
@@ -1716,7 +1670,7 @@ def sage_getdoc_original(obj):
 
     Here is a class that has its own docstring::
 
-        sage: print sage_getdoc_original(sage.rings.integer.Integer)
+        sage: print(sage_getdoc_original(sage.rings.integer.Integer))
         <BLANKLINE>
             The ``Integer`` class represents arbitrary precision
             integers. It derives from the ``Element`` class, so
@@ -1726,7 +1680,7 @@ def sage_getdoc_original(obj):
     Here is a class that does not have its own docstring, so that the
     docstring of the ``__init__`` method is used::
 
-        sage: print sage_getdoc_original(Parent)
+        sage: print(sage_getdoc_original(Parent))
         <BLANKLINE>
         Base class for all parents.
         <BLANKLINE>
@@ -1740,7 +1694,7 @@ def sage_getdoc_original(obj):
         ....:     def __init__(self):
         ....:         '''The __init__ docstring'''
         ....:         pass
-        sage: print sage_getdoc_original(OldStyleClass)
+        sage: print(sage_getdoc_original(OldStyleClass))
         The __init__ docstring
 
     When there is no ``__init__`` method, we just get an empty string::
@@ -1884,7 +1838,7 @@ def _sage_getsourcelines_name_with_dot(object):
 
         sage: C = Rings()
         sage: from sage.misc.sageinspect import sage_getsource
-        sage: print sage_getsource(C.parent_class)  #indirect doctest
+        sage: print(sage_getsource(C.parent_class))  #indirect doctest
         class ParentMethods:
         ...
                 Returns the Lie bracket `[x, y] = x y - y x` of `x` and `y`.
@@ -2043,9 +1997,9 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(obj)
         (['def create_set_partition_function(letter, k):\n',
         ...
-        '    raise ValueError("k must be an integer or an integer + 1/2")\n'], 34)
+        '    raise ValueError("k must be an integer or an integer + 1/2")\n'], 35)
 
-    Here are some cases that were covered in :trac`11298`;
+    Here are some cases that were covered in :trac:`11298`;
     note that line numbers may easily change, and therefore we do
     not test them::
 
@@ -2078,11 +2032,11 @@ def sage_getsourcelines(obj):
         sage: E.__bases__
         (<class sage.misc.nested_class_test.TestNestedParent.Element at ...>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
-        sage: print sage_getsource(E)
+        sage: print(sage_getsource(E))
             class Element:
                 "This is a dummy element class"
                 pass
-        sage: print sage_getsource(P)
+        sage: print(sage_getsource(P))
         class TestNestedParent(UniqueRepresentation, Parent):
             ...
             class Element:
@@ -2310,17 +2264,17 @@ def __internal_tests():
         sage: s = __internal_teststring.strip()
         sage: es = lambda ls, l: ''.join(_extract_source(ls, l)).rstrip()
 
-        sage: print es(s, 3)
+        sage: print(es(s, 3))
         def test1(a, b=2):                         # 3
             if a:                                  # 4
                 return 1                           # 5
             return b                               # 6
 
-        sage: print es(s, 8)
+        sage: print(es(s, 8))
         class test2():                             # 8
             pass                                   # 9
 
-        sage: print es(s, 12)
+        sage: print(es(s, 12))
         def test3(b,                               # 12
                   a=2):                            # 13
             pass # EOF                             # 14

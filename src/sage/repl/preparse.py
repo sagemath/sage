@@ -216,7 +216,7 @@ Behind the scenes what happens is the following::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import os
 import re
@@ -321,9 +321,9 @@ def strip_string_literals(code, state=None):
         '[%(L1)s, %(L2)s, %(L3)s, %(L4)s]'
         sage: literals
         {'L1': "'a'", 'L2': '"b"', 'L3': "'c'", 'L4': '"d\\""'}
-        sage: print s % literals
+        sage: print(s % literals)
         ['a', "b", 'c', "d\""]
-        sage: print strip_string_literals(r'-"\\\""-"\\"-')[0]
+        sage: print(strip_string_literals(r'-"\\\""-"\\"-')[0])
         -%(L1)s-%(L2)s-
 
     Triple-quotes are handled as well::
@@ -331,7 +331,7 @@ def strip_string_literals(code, state=None):
         sage: s, literals, state = strip_string_literals("[a, '''b''', c, '']")
         sage: s
         '[a, %(L1)s, c, %(L2)s]'
-        sage: print s % literals
+        sage: print(s % literals)
         [a, '''b''', c, '']
 
     Comments are substitute too::
@@ -449,8 +449,9 @@ def containing_block(code, ix, delimiters=['()','[]','{}'], require_delim=True):
         sage: s = "factor(next_prime(L[5]+1))"
         sage: s[22]
         '+'
-        sage: start, end = containing_block(s, 22); print start, end
-        17 25
+        sage: start, end = containing_block(s, 22)
+        sage: start, end
+        (17, 25)
         sage: s[start:end]
         '(L[5]+1)'
         sage: s[20]
@@ -585,9 +586,9 @@ def extract_numeric_literals(code):
 
         sage: from sage.repl.preparse import extract_numeric_literals
         sage: code, nums = extract_numeric_literals("1.2 + 5")
-        sage: print code
+        sage: print(code)
         _sage_const_1p2  + _sage_const_5
-        sage: print nums
+        sage: print(nums)
         {'_sage_const_1p2': "RealNumber('1.2')", '_sage_const_5': 'Integer(5)'}
 
         sage: extract_numeric_literals("[1, 1.1, 1e1, -1e-1, 1.]")[0]
@@ -661,9 +662,9 @@ def preparse_numeric_literals(code, extract=False):
         sage: preparse_numeric_literals("0x10.sqrt()")
         'Integer(0x10).sqrt()'
         sage: preparse_numeric_literals('0o100')
-        "Integer('100', 8)"
+        'Integer(0o100)'
         sage: preparse_numeric_literals('0b111001')
-        "Integer('111001', 2)"
+        'Integer(0b111001)'
         sage: preparse_numeric_literals('0xe')
         'Integer(0xe)'
         sage: preparse_numeric_literals('0xEAR')
@@ -720,25 +721,18 @@ def preparse_numeric_literals(code, extract=False):
                     end += 1
                     num += '.'
 
+            num_name = numeric_literal_prefix + num.replace('.', 'p').replace('-', 'n').replace('+', '')
 
-            if len(num)>2 and num[1] in 'oObBxX':
-                # Py3 oct and bin support
-                num_name = numeric_literal_prefix + num
-                if num[1] in 'bB':
-                    num_make = "Integer('%s', 2)" % num[2:]
-                elif num[1] in 'oO':
-                    num_make = "Integer('%s', 8)" % num[2:]
-                else:
-                    num_make = "Integer(%s)" % num
-            elif '.' in num or 'e' in num or 'E' in num or 'J' in postfix:
-                num_name = numeric_literal_prefix + num.replace('.', 'p').replace('-', 'n').replace('+', '')
-                if 'J' in postfix:
-                    num_make = "ComplexNumber(0, '%s')" % num
-                    num_name += 'j'
-                else:
-                    num_make = "RealNumber('%s')" % num
+            if 'J' in postfix:
+                num_make = "ComplexNumber(0, '%s')" % num
+                num_name += 'j'
+            elif len(num) < 2 or num[1] in 'oObBxX':
+                num_make = "Integer(%s)" % num
+            elif '.' in num or 'e' in num or 'E' in num:
+                num_make = "RealNumber('%s')" % num
+            elif num[0] == "0":
+                num_make = "Integer('%s')" % num
             else:
-                num_name = numeric_literal_prefix + num
                 num_make = "Integer(%s)" % num
 
             literals[num_name] = num_make
@@ -1106,7 +1100,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         'a  * BackslashOperator() * b \\'
 
         sage: preparse("time R.<x> = ZZ[]", do_time=True)
-        '__time__=misc.cputime(); __wall__=misc.walltime(); R = ZZ[\'x\']; print "Time: CPU %.2f s, Wall: %.2f s"%(misc.cputime(__time__), misc.walltime(__wall__)); (x,) = R._first_ngens(1)'
+        '__time__=misc.cputime(); __wall__=misc.walltime(); R = ZZ[\'x\']; print("Time: CPU %.2f s, Wall: %.2f s"%(misc.cputime(__time__), misc.walltime(__wall__))); (x,) = R._first_ngens(1)'
     """
     global quote_state
     if reset:
@@ -1177,8 +1171,8 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     if do_time:
         # Time keyword
         L = re.sub(r';time;(\s*)(\S[^;]*)',
-                   r';\1__time__=misc.cputime(); __wall__=misc.walltime(); \2; print ' +
-                        '"Time: CPU %%.2f s, Wall: %%.2f s"%%(misc.cputime(__time__), misc.walltime(__wall__))',
+                   r';\1__time__=misc.cputime(); __wall__=misc.walltime(); \2; print(' +
+                        '"Time: CPU %%.2f s, Wall: %%.2f s"%%(misc.cputime(__time__), misc.walltime(__wall__)))',
                    L)
 
     # Remove extra ;'s
@@ -1222,7 +1216,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         sage: from sage.repl.preparse import preparse_file
         sage: lots_of_numbers = "[%s]" % ", ".join(str(i) for i in range(3000))
         sage: _ = preparse_file(lots_of_numbers)
-        sage: print preparse_file("type(100r), type(100)")
+        sage: print(preparse_file("type(100r), type(100)"))
         _sage_const_100 = Integer(100)
         type(100 ), type(_sage_const_100 )
     """
@@ -1383,10 +1377,11 @@ def _strip_quotes(s):
 
 
 def handle_encoding_declaration(contents, out):
-    r"""Find a PEP 263-style Python encoding declaration in the first or
-    second line of `contents`. If found, output it to `out` and return
-    `contents` without the encoding line; otherwise output a default
-    UTF-8 declaration and return `contents`.
+    r"""
+    Find a PEP 263-style Python encoding declaration in the first or
+    second line of ``contents``. If found, output it to ``out`` and return
+    ``contents`` without the encoding line; otherwise output a default
+    UTF-8 declaration and return ``contents``.
 
     EXAMPLES::
 
@@ -1430,10 +1425,10 @@ def handle_encoding_declaration(contents, out):
 
     Two hash marks are okay; this shows up in SageTeX-generated scripts::
 
-        sage: contents = '## -*- coding: utf-8 -*-\nimport os, sys\nprint x'
+        sage: contents = '## -*- coding: utf-8 -*-\nimport os, sys\nprint(x)'
         sage: handle_encoding_declaration(contents, sys.stdout)
         ## -*- coding: utf-8 -*-
-        'import os, sys\nprint x'
+        'import os, sys\nprint(x)'
 
     When the encoding declaration doesn't match the specification, we
     spit out a default UTF-8 encoding.

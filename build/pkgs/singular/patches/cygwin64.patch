@@ -1,6 +1,6 @@
-diff -druN latest.new/omalloc/configure latest/omalloc/configure
---- latest.new/omalloc/configure	2014-08-06 08:59:15.000000000 -0700
-+++ latest/omalloc/configure	2014-10-21 05:56:10.267081469 -0700
+diff -druN a/latest/omalloc/configure b/latest/omalloc/configure
+--- a/latest/omalloc/configure	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/omalloc/configure	2014-10-21 05:56:10.267081469 -0700
 @@ -2330,8 +2330,12 @@
  int main()
  {
@@ -14,9 +14,9 @@ diff -druN latest.new/omalloc/configure latest/omalloc/configure
     if (i == 1) exit(0);
     else exit(i+1);
  }
-diff -druN latest.new/omalloc/configure.in latest/omalloc/configure.in
---- latest.new/omalloc/configure.in	2014-08-06 08:59:15.000000000 -0700
-+++ latest/omalloc/configure.in	2014-10-21 05:56:10.267081469 -0700
+diff -druN a/latest/omalloc/configure.in b/latest/omalloc/configure.in
+--- a/latest/omalloc/configure.in	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/omalloc/configure.in	2014-10-21 05:56:10.267081469 -0700
 @@ -487,8 +487,12 @@
  int main()
  {
@@ -30,9 +30,9 @@ diff -druN latest.new/omalloc/configure.in latest/omalloc/configure.in
     if (i == 1) exit(0);
     else exit(i+1);
  }
-diff -druN latest.new/Singular/Makefile.in latest/Singular/Makefile.in
---- latest.new/Singular/Makefile.in	2014-08-06 08:59:15.000000000 -0700
-+++ latest/Singular/Makefile.in	2014-10-21 05:56:10.277081490 -0700
+diff -druN a/latest/Singular/Makefile.in b/latest/Singular/Makefile.in
+--- a/latest/Singular/Makefile.in	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/Singular/Makefile.in	2014-10-21 05:56:10.277081490 -0700
 @@ -176,6 +176,13 @@
  LIBSINGULAR_LIBS = -lsingfac -lsingcf -lntl -lreadline @FLINT_LIBS@ -lgmp -lomalloc  -lhtmlhelp
  endif
@@ -47,9 +47,9 @@ diff -druN latest.new/Singular/Makefile.in latest/Singular/Makefile.in
  ifeq ($(SINGUNAME),ix86-SunOS)
  SO_SUFFIX  = so
  MODULE_SUFFIX    = so
-diff -druN latest.new/singuname.sh latest/singuname.sh
---- latest.new/singuname.sh	2014-08-06 08:59:15.000000000 -0700
-+++ latest/singuname.sh	2014-10-21 05:56:10.277081490 -0700
+diff -druN a/latest/singuname.sh b/latest/singuname.sh
+--- a/latest/singuname.sh	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/singuname.sh	2014-10-21 05:56:10.277081490 -0700
 @@ -96,7 +96,12 @@
  elif (echo $uname_m | $egrep "x86_64" > $devnull)
  then

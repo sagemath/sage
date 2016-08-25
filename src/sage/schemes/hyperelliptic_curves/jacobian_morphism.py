@@ -111,6 +111,7 @@ on the Jacobian of this reduction and the order of the Jacobian is
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.all import latex
 
@@ -149,7 +150,7 @@ def cantor_reduction_simple(a, b, f, genus):
     if a2.degree() == a.degree():
         # XXX
         assert a2.degree() == genus+1
-        print "Returning ambiguous form of degree genus+1."
+        print("Returning ambiguous form of degree genus+1.")
         return (a2, b2)
     elif a2.degree() > genus:
         return cantor_reduction_simple(a2, b2, f, genus)
@@ -451,14 +452,14 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: Q = J(0); print latex(Q) # indirect doctest
+            sage: Q = J(0); print(latex(Q)) # indirect doctest
             \left(1\right)
-            sage: Q = J(H.lift_x(F(1))); print latex(Q) # indirect doctest
+            sage: Q = J(H.lift_x(F(1))); print(latex(Q)) # indirect doctest
             \left(x + 6, y + 2 \alpha + 2\right)
 
         ::
 
-            sage: print latex(Q + Q)
+            sage: print(latex(Q + Q))
             \left(x^{2} + 5 x + 1, y + 3 \alpha x + 6 \alpha + 2\right)
         """
         if self.is_zero():

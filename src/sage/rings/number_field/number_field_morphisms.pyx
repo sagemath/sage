@@ -266,7 +266,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
                 self.ambient_field = ambient_field
                 return
         else:
-            raise ValueError, "No consistent embedding of all of %s into %s." % (K, L)
+            raise ValueError("No consistent embedding of all of %s into %s." % (K, L))
 
     def section(self):
         """
@@ -504,10 +504,10 @@ def create_embedding_from_approx(K, gen_image):
                 rel = (f(gen_image) != 0)
                 if (rel is True
                 or (not isinstance(rel, bool) and test_relation_maxima(rel))):
-                    raise ValueError, "%s is not a root of the defining polynomial of %s" % (gen_image, K)
+                    raise ValueError("%s is not a root of the defining polynomial of %s" % (gen_image, K))
         return NumberFieldEmbedding(K, P, gen_image)
     else:
-        raise TypeError, "Embedding (type %s) must be a morphism or element." % type(gen_image)
+        raise TypeError("Embedding (type %s) must be a morphism or element." % type(gen_image))
 
 
 cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
@@ -565,11 +565,11 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         Morphism.__init__(self, K, L)
         from number_field import NumberField_cyclotomic
         if not isinstance(K, NumberField_cyclotomic) or not isinstance(L, NumberField_cyclotomic):
-            raise TypeError, "CyclotomicFieldEmbedding only valid for cyclotomic fields."
+            raise TypeError("CyclotomicFieldEmbedding only valid for cyclotomic fields.")
         Kn = K._n()
         Ln = L._n()
         if not Kn.divides(Ln):
-            raise TypeError, "The zeta_order of the new field must be a multiple of the zeta_order of the original."
+            raise TypeError("The zeta_order of the new field must be a multiple of the zeta_order of the original.")
         self.ratio = L._log_gen(K.coerce_embedding()(K.gen()))
         self._gen_image = L.gen() ** self.ratio
 

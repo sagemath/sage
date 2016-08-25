@@ -109,10 +109,10 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         14
     """
     if N % M != 0:
-        raise ArithmeticError, "M (=%s) must be a divisor of N (=%s)"%(M,N)
+        raise ArithmeticError("M (=%s) must be a divisor of N (=%s)" % (M,N))
 
     if (N/M) % t != 0:
-        raise ArithmeticError, "t (=%s) must be a divisor of N/M (=%s)"%(t,N/M)
+        raise ArithmeticError("t (=%s) must be a divisor of N/M (=%s)"%(t,N/M))
 
     cdef int n, i, j, k, aa, bb, cc, dd, g, Ndivt, halfmax, is_new
     cdef int* R
@@ -210,10 +210,10 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     """
 
     if N % M != 0:
-        raise ArithmeticError, "M (=%s) must be a divisor of N (=%s)"%(M,N)
+        raise ArithmeticError("M (=%s) must be a divisor of N (=%s)" % (M,N))
 
     if (N/M) % t != 0:
-        raise ArithmeticError, "t (=%s) must be a divisor of N/M (=%s)"%(t,N/M)
+        raise ArithmeticError("t (=%s) must be a divisor of N/M (=%s)"%(t,N/M))
 
     cdef int d, g, i, j, k, n, aa, bb, cc, dd, Ndivt, halfmax, is_new
     cdef int* R
@@ -253,7 +253,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         if is_new:
             if k > n:
                 sig_free(R)
-                raise RuntimeError, "bug!!"
+                raise RuntimeError("bug!!")
             R[4*k] = aa
             R[4*k+1] = bb
             R[4*k+2] = cc

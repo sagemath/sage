@@ -14,7 +14,7 @@ Invaluable resources are the Sage wiki
 `http://wiki.sagemath.org/interact <http://wiki.sagemath.org/interact>`_
 (type "sage interact" into Google), `http://interact.sagemath.org <http://interact.sagemath.org>`_
 (a collection of contributed interacts), and the `interact documentation
-<http://www.sagemath.org/doc/reference/notebook/sagenb/notebook/interact.html#sagenb.notebook.interact.interact>`_.
+<http://doc.sagemath.org/html/en/reference/notebook/sagenb/notebook/interact.html#sagenb.notebook.interact.interact>`_.
 
 Start with just one command
 ---------------------------
@@ -214,7 +214,7 @@ interactive control.  Sage has all of the following:
 
 We illustrate some more of these below.
 For complete detail, see the official
-`interact documentation <http://www.sagemath.org/doc/reference/notebook/sagenb/notebook/interact.html#sagenb.notebook.interact.interact>`_.
+`interact documentation <http://doc.sagemath.org/html/en/reference/notebook/sagenb/notebook/interact.html#sagenb.notebook.interact.interact>`_.
 
 .. skip
 
@@ -256,7 +256,7 @@ By default, ranges are sliders that divide the range into 50 steps.
 
     sage: @interact
     sage: def _(n=(1,20)):
-    ....:     print factorial(n)
+    ....:     print(factorial(n))
 
 You can set the step size to get, for example, just integer values.
 
@@ -266,7 +266,7 @@ You can set the step size to get, for example, just integer values.
 
     sage: @interact
     sage: def _(n=slider(1,20, step_size=1)):
-    ....:     print factorial(n)
+    ....:     print(factorial(n))
 
 Or you can explicitly specify the slider values.
 
@@ -276,7 +276,7 @@ Or you can explicitly specify the slider values.
 
     sage: @interact
     sage: def _(n=slider([1..20])):
-    ....:     print factorial(n)
+    ....:     print(factorial(n))
 
 And the slider values don't even have to be numbers!
 
@@ -286,7 +286,7 @@ And the slider values don't even have to be numbers!
 
     sage: @interact
     sage: def _(fun=('function', slider([sin,cos,tan,sec,csc,cot]))):
-    ....:     print fun(4.39293)
+    ....:     print(fun(4.39293))
 
 Matrices are automatically converted to a grid of input boxes.
 
@@ -296,7 +296,7 @@ Matrices are automatically converted to a grid of input boxes.
 
     sage: @interact
     sage: def _(m=('matrix', identity_matrix(2))):
-    ....:     print m.eigenvalues()
+    ....:     print(m.eigenvalues())
 
 Here's how to get vectors from a grid of boxes.
 
@@ -306,7 +306,7 @@ Here's how to get vectors from a grid of boxes.
 
     sage: @interact
     sage: def _(v=('vector', input_grid(1, 3, default=[[1,2,3]], to_value=lambda x: vector(flatten(x))))):
-    ....:     print v.norm()
+    ....:     print(v.norm())
 
 .. _NoUpdate:
 
@@ -329,5 +329,5 @@ button to enable the user to update as soon as he or she is ready.
 
     sage: @interact
     sage: def _(m=('matrix', identity_matrix(2)), auto_update=False):
-    ....:     print m.eigenvalues()
+    ....:     print(m.eigenvalues())
 

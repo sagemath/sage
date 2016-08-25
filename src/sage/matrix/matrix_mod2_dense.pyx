@@ -560,7 +560,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     # def _pickle(self):
     # def _unpickle(self, data, int version):   # use version >= 0
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Matrix addition.
 
@@ -598,7 +598,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         return A
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Matrix addition.
 
@@ -614,7 +614,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         """
         return self._add_(right)
 
-    cdef Vector _matrix_times_vector_(self, Vector v):
+    cdef _matrix_times_vector_(self, Vector v):
         """
         EXAMPLES::
 
@@ -656,7 +656,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             mzd_free(tmp)
         return c
 
-    cdef Matrix _matrix_times_matrix_(self, Matrix right):
+    cdef _matrix_times_matrix_(self, Matrix right):
         """
         Matrix multiplication.
 
@@ -1475,7 +1475,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             A.subdivide(*self.subdivisions())
         return A
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef int _cmp_(self, right) except -2:
         """
         Compares ``self`` with ``right``. While equality and
         inequality are clearly defined, ``<`` and ``>`` are not.  For

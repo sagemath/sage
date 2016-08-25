@@ -21,6 +21,7 @@ Thematic tutorial document tree
    tutorial-objects-and-classes
    functional_programming
    coercion_and_categories
+   tutorial-implementing-algebraic-structures
    cython_interface
    numerical_sage/index
    explicit_methods_in_number_theory/index

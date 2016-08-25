@@ -141,6 +141,7 @@ AUTHOR:
 - Martin Albrecht (2007-05-24): initial version
 - Marshall Hampton (2009-07-08): some doctest additions
 """
+from __future__ import print_function
 
 from sage.misc.misc import get_verbose
 from sage.arith.all import LCM
@@ -218,13 +219,13 @@ def buchberger(F):
             G.add( h )
 
         if get_verbose() >= 1:
-            print "(%s, %s) => %s"%(g1, g2, h)
-            print "G: %s\n"%(G)
-            if h==0:
-                reductions_to_zero +=1
+            print("(%s, %s) => %s" % (g1, g2, h))
+            print("G: %s\n" % G)
+            if h == 0:
+                reductions_to_zero += 1
 
     if get_verbose() >= 1:
-        print "%d reductions to zero."%(reductions_to_zero)
+        print("%d reductions to zero." % reductions_to_zero)
 
     return Sequence(G)
 
@@ -279,13 +280,13 @@ def buchberger_improved(F):
         if h!=0: G,B = update(G,B,h)
 
         if get_verbose() >= 1:
-            print "(%s, %s) => %s"%(g1,g2,h)
-            print "G: %s\n"%(G)
-            if h==0:
-                reductions_to_zero +=1
+            print("(%s, %s) => %s" % (g1, g2, h))
+            print("G: %s\n" % G)
+            if h == 0:
+                reductions_to_zero += 1
 
     if get_verbose() >= 1:
-        print "%d reductions to zero."%(reductions_to_zero)
+        print("%d reductions to zero." % reductions_to_zero)
 
     return Sequence(inter_reduction(G))
 

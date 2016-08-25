@@ -4,7 +4,7 @@
 
 Sageでは，初等的な代数と微積分に関連した多様な演算を実行することができる．
 例として，方程式の解を求める，微分や積分を計算する，ラプラス変換の実行などがあげられる．
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_ には，さらに多様な具体例が盛られている．
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_ には，さらに多様な具体例が盛られている．
 
 
 

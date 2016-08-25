@@ -1,7 +1,7 @@
 Use `$(MAKE)` instead of `make` in mfile, the Perl script
 WizardAux and the shell script TestScript.
---- ntl.orig/src/mfile	2014-10-11 07:33:02.904149666 +1300
-+++ ntl/src/mfile	2014-10-09 22:14:46.730922903 +1300
+--- ntl.orig/ntl/src/mfile	2014-10-11 07:33:02.904149666 +1300
++++ ntl/ntl/src/mfile	2014-10-09 22:14:46.730922903 +1300
 @@ -325,11 +325,11 @@
  # again.
  
@@ -50,8 +50,8 @@ WizardAux and the shell script TestScript.
  
  #################################################################
  #
---- ntl.orig/src/WizardAux	2014-08-27 05:51:43.000000000 +1200
-+++ ntl/src/WizardAux	2014-10-09 22:14:46.730922903 +1300
+--- ntl.orig/ntl/src/WizardAux	2014-08-27 05:51:43.000000000 +1200
++++ ntl/ntl/src/WizardAux	2014-10-09 22:14:46.730922903 +1300
 @@ -47,9 +47,9 @@
     my $val;
     my $res;

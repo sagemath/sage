@@ -94,7 +94,7 @@ but only one generating line::
     sage: strip.faces(1)
     (<0,1>, <0,2>)
     sage: for face in strip.faces(1):
-    ...      print face, '=', face.as_polyhedron().Vrepresentation()
+    ....:      print("{} = {}".format(face, face.as_polyhedron().Vrepresentation()))
     <0,1> = (A line in the direction (0, 1), A vertex at (-1, 0))
     <0,2> = (A line in the direction (0, 1), A vertex at (1, 0))
 
@@ -216,11 +216,13 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.rings.all import QQ, ZZ, RDF, RR
 from sage.misc.decorators import rename_keyword
 
-from misc import _make_listlist, _common_length_of
+from .misc import _make_listlist, _common_length_of
 
 
 #########################################################################

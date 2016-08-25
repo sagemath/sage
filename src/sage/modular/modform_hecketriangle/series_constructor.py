@@ -10,6 +10,7 @@ AUTHORS:
 
    ``J_inv_ZZ`` is the main function used to determine all Fourier expansions.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -29,7 +30,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
-from hecke_triangle_groups import HeckeTriangleGroup
+from .hecke_triangle_groups import HeckeTriangleGroup
 
 
 

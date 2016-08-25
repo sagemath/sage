@@ -634,7 +634,7 @@ cdef class CoxGroup(SageObject):
         """
         Return the Coxeter graph for this Coxeter group.
 
-        OUTPUT:: a Sage graph
+        OUTPUT: a Sage graph
 
         .. NOTE::
 

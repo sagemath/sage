@@ -100,19 +100,3 @@ hold values of any Python type within a given scope:
 The C programming language, which is statically typed, is much
 different; a variable declared to hold an int can only hold an int
 in its scope.
-
-A potential source of confusion in Python is that an integer
-literal that begins with a zero is treated as an octal number,
-i.e., a number in base 8.
-
-::
-
-    sage: 011
-    9
-    sage: 8 + 1
-    9
-    sage: n = 011
-    sage: n.str(8)   # string representation of n in base 8
-    '11'
-
-This is consistent with the C programming language.

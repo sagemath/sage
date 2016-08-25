@@ -140,7 +140,7 @@ Plotting with TikZ pictures is possible::
 
     sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
     sage: s = P.plot_tikz()
-    sage: print s                    #not tested
+    sage: print(s)                    #not tested
     \begin{tikzpicture}
     [x={(-0.216506cm,-0.125000cm)}, y={(0.216506cm,-0.125000cm)}, z={(0.000000cm,0.250000cm)}]
     \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
@@ -180,7 +180,7 @@ which only work in dimension two or three)::
     sage: E
     E_1^*(1->12, 10->1,11, 11->1,12, 12->1, 2->13, 3->14, 4->15, 5->16, 6->17, 7->18, 8->19, 9->1,10)
     sage: P = Patch([Face((0,0,0,0,0,0,0,0,0,0,0,0),t) for t in [1,2,3]])
-    sage: for x in sorted(list(E(P)), key=lambda x : (x.vector(),x.type())): print x
+    sage: for x in sorted(list(E(P)), key=lambda x : (x.vector(),x.type())): print(x)
     [(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 1]*
     [(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 2]*
     [(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 12]*
@@ -520,7 +520,7 @@ class Face(SageObject):
 
     def _plot3d(self, face_contour):
         r"""
-        3D reprensentation of a unit face (Jmol).
+        3D representation of a unit face (Jmol).
 
         INPUT:
 
@@ -1214,7 +1214,7 @@ class Patch(SageObject):
             sage: s = P.plot_tikz()
             sage: len(s)
             602
-            sage: print s       #not tested
+            sage: print(s)       #not tested
             \begin{tikzpicture}
             [x={(-0.216506cm,-0.125000cm)}, y={(0.216506cm,-0.125000cm)}, z={(0.000000cm,0.250000cm)}]
             \definecolor{facecolor}{rgb}{0.000,1.000,0.000}
@@ -1272,7 +1272,7 @@ class Patch(SageObject):
             sage: s = cube.plot_tikz(**options)
             sage: len(s)
             986
-            sage: print s   #not tested
+            sage: print(s)   #not tested
             \begin{tikzpicture}
             [x={(-0.433013cm,-0.250000cm)}, y={(0.433013cm,-0.250000cm)}, z={(0.000000cm,0.500000cm)}]
             \draw[->, thick, black] (0,0,0) -- (1.50000000000000, 0, 0);

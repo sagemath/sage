@@ -8,6 +8,7 @@ AUTHORS:
 - Christian Stump (2010): :trac:`9648` module_morphism's to a wider class
   of codomains
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -38,6 +39,7 @@ lazy_import('sage.modules.with_basis.morphism',
              'DiagonalModuleMorphism',
              'TriangularModuleMorphismByLinearity',
              'TriangularModuleMorphismFromFunction'])
+
 
 class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -1441,7 +1443,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             else:
                 raise ValueError("{} is not a single term".format(self))
 
-        def leading_support(self, cmp=None):
+        def leading_support(self, *args, **kwds):
             r"""
             Return the maximal element of the support of ``self``. Note
             that this may not be the term which actually appears first when
@@ -1460,6 +1462,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 3
                 sage: def cmp(x,y): return y-x
                 sage: x.leading_support(cmp=cmp)
+                doctest:...: DeprecationWarning: the 'cmp' keyword is deprecated, use 'key' instead
+                See http://trac.sagemath.org/21043 for details.
+                1
+
+                sage: def key(x): return -x
+                sage: x.leading_support(key=key)
                 1
 
                 sage: s = SymmetricFunctions(QQ).schur()
@@ -1467,9 +1475,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f.leading_support()
                 [3]
             """
-            return max_cmp(self.support(), cmp)
+            return max_cmp(self.support(), *args, **kwds)
 
-        def leading_item(self, cmp=None):
+        def leading_item(self, *args, **kwds):
             r"""
             Return the pair ``(k, c)`` where
 
@@ -1496,15 +1504,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_item(cmp=cmp)
                 (1, 3)
 
+                sage: def key(x): return -x
+                sage: x.leading_item(key=key)
+                (1, 3)
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.leading_item()
                 ([3], -5)
             """
-            k = self.leading_support(cmp=cmp)
+            k = self.leading_support(*args, **kwds)
             return k, self[k]
 
-        def leading_monomial(self, cmp=None):
+        def leading_monomial(self, *args, **kwds):
             r"""
             Return the leading monomial of ``self``.
 
@@ -1525,14 +1537,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_monomial(cmp=cmp)
                 B[1]
 
+                sage: def key(x): return -x
+                sage: x.leading_monomial(key=key)
+                B[1]
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.leading_monomial()
                 s[3]
             """
-            return self.parent().monomial( self.leading_support(cmp=cmp) )
+            return self.parent().monomial(self.leading_support(*args, **kwds))
 
-        def leading_coefficient(self, cmp=None):
+        def leading_coefficient(self, *args, **kwds):
             r"""
             Returns the leading coefficient of ``self``.
 
@@ -1553,14 +1569,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_coefficient(cmp=cmp)
                 3
 
+                sage: def key(x): return -x
+                sage: x.leading_coefficient(key=key)
+                3
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.leading_coefficient()
                 -5
             """
-            return self.leading_item(cmp=cmp)[1]
+            return self.leading_item(*args, **kwds)[1]
 
-        def leading_term(self, cmp=None):
+        def leading_term(self, *args, **kwds):
             r"""
             Return the leading term of ``self``.
 
@@ -1581,14 +1601,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_term(cmp=cmp)
                 3*B[1]
 
+                sage: def key(x): return -x
+                sage: x.leading_term(key=key)
+                3*B[1]
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.leading_term()
                 -5*s[3]
             """
-            return self.parent().term(*self.leading_item(cmp=cmp))
+            return self.parent().term(*self.leading_item(*args, **kwds))
 
-        def trailing_support(self, cmp=None):
+        def trailing_support(self, *args, **kwds):
             r"""
             Return the minimal element of the support of ``self``. Note
             that this may not be the term which actually appears last when
@@ -1607,6 +1631,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 1
                 sage: def cmp(x,y): return y-x
                 sage: x.trailing_support(cmp=cmp)
+                doctest:...: DeprecationWarning: the 'cmp' keyword is deprecated, use 'key' instead
+                See http://trac.sagemath.org/21043 for details.
+                3
+
+                sage: def key(x): return -x
+                sage: x.trailing_support(key=key)
                 3
 
                 sage: s = SymmetricFunctions(QQ).schur()
@@ -1614,9 +1644,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f.trailing_support()
                 [1]
             """
-            return min_cmp(self.support(), cmp)
+            return min_cmp(self.support(), *args, **kwds)
 
-        def trailing_item(self, cmp=None):
+        def trailing_item(self, *args, **kwds):
             r"""
             Returns the pair ``(c, k)`` where ``c*self.parent().monomial(k)``
             is the trailing term of ``self``.
@@ -1638,15 +1668,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_item(cmp=cmp)
                 (3, 1)
 
+                sage: def key(x): return -x
+                sage: x.trailing_item(key=key)
+                (3, 1)
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.trailing_item()
                 ([1], 2)
             """
-            k = self.trailing_support(cmp=cmp)
+            k = self.trailing_support(*args, **kwds)
             return k, self[k]
 
-        def trailing_monomial(self, cmp=None):
+        def trailing_monomial(self, *args, **kwds):
             r"""
             Return the trailing monomial of ``self``.
 
@@ -1667,14 +1701,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_monomial(cmp=cmp)
                 B[3]
 
+                sage: def key(x): return -x
+                sage: x.trailing_monomial(key=key)
+                B[3]
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.trailing_monomial()
                 s[1]
             """
-            return self.parent().monomial( self.trailing_support(cmp=cmp) )
+            return self.parent().monomial(self.trailing_support(*args, **kwds))
 
-        def trailing_coefficient(self, cmp=None):
+        def trailing_coefficient(self, *args, **kwds):
             r"""
             Return the trailing coefficient of ``self``.
 
@@ -1695,15 +1733,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_coefficient(cmp=cmp)
                 1
 
+                sage: def key(x): return -x
+                sage: x.trailing_coefficient(key=key)
+                1
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.trailing_coefficient()
                 2
             """
+            return self.trailing_item(*args, **kwds)[1]
 
-            return self.trailing_item(cmp=cmp)[1]
-
-        def trailing_term(self, cmp=None):
+        def trailing_term(self, *args, **kwds):
             r"""
             Return the trailing term of ``self``.
 
@@ -1724,12 +1765,16 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_term(cmp=cmp)
                 B[3]
 
+                sage: def key(x): return -x
+                sage: x.trailing_term(key=key)
+                B[3]
+
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
                 sage: f.trailing_term()
                 2*s[1]
             """
-            return self.parent().term( *self.trailing_item(cmp=cmp) )
+            return self.parent().term(*self.trailing_item(*args, **kwds))
 
         def map_coefficients(self, f):
             """
@@ -2047,7 +2092,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: cartesian_product((A, B, A)).an_element()           # indirect doctest
                     2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
                 """
-                from cartesian_product import cartesian_product
+                from .cartesian_product import cartesian_product
                 return cartesian_product([module.an_element() for module in self.modules])
 
     class TensorProducts(TensorProductsCategory):

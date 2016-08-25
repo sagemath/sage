@@ -1,6 +1,7 @@
 r"""
 Semisimple Algebras
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2011-2015 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -11,9 +12,9 @@ Semisimple Algebras
 from sage.misc.bindable_class import BoundClass
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from category_types import Category_over_base_ring
+from .category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from algebras import Algebras
+from .algebras import Algebras
 
 class SemisimpleAlgebras(Category_over_base_ring):
     """

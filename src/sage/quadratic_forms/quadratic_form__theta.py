@@ -10,6 +10,7 @@ AUTHORS:
 - Gonzalo Tornaria (2010-03-23): theta series of degree 2
 
 """
+from __future__ import print_function
 
 from copy import deepcopy
 
@@ -63,7 +64,7 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
         M = -1
 
     if (Max not in ['mod_form']) and (not M >= 0):
-        print Max
+        print(Max)
         raise TypeError("Oops!  Max is not an integer >= 0 or an allowed string.")
 
     if Max == 'mod_form':

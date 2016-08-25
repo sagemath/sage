@@ -154,8 +154,8 @@ obtained (this takes about 10 seconds)::
     ....:    hand = Hands.random_element()
     ....:    if is_flush(hand):
     ....:        nflush += 1
-    sage: print n, nflush                               # random
-    10000 18
+    sage: n, nflush                               # random
+    (10000, 18)
 
 .. topic:: Exercises
 
@@ -731,7 +731,7 @@ richer than simple lists::
 
 For example, they can be represented graphically by a Ferrers diagram::
 
-    sage: print p.ferrers_diagram()
+    sage: print(p.ferrers_diagram())
     ****
     **
     *
@@ -843,7 +843,7 @@ Set partitions::
 Partial orders on a set of `8` elements, up to isomorphism::
 
     sage: C = Posets(8); C
-    Posets containing 8 vertices
+    Posets containing 8 elements
     sage: C.cardinality()
     16999
 
@@ -862,7 +862,8 @@ there are 34 simple graphs with 5 vertices::
 
 Here are those with at most `4` edges::
 
-    sage: show(graphs(5, lambda G: G.size() <= 4))
+    sage: up_to_four_edges = list(graphs(5, lambda G: G.size() <= 4))
+    sage: pretty_print(*up_to_four_edges)
 
 .. image:: ../../media/graphs-5.png
 
@@ -1015,7 +1016,7 @@ the iterator is constructed by ``iter(L)``. In practice, the commands
 comprehensions provide a much pleasanter syntax::
 
     sage: for s in Subsets(3):
-    ....:     print s
+    ....:     print(s)
     {}
     {1}
     {2}
@@ -1167,7 +1168,7 @@ Alternatively, we could construct an iterator on the counter-examples::
 
     ::
 
-        sage: for p in GL(2, 2): print p; print
+        sage: for p in GL(2, 2): print(p); print("")
         [1 0]
         [0 1]
         <BLANKLINE>
@@ -1189,7 +1190,7 @@ Alternatively, we could construct an iterator on the counter-examples::
 
     ::
 
-        sage: for p in Partitions(3): print p   # not tested
+        sage: for p in Partitions(3): print(p)   # not tested
         [3]
         [2, 1]
         [1, 1, 1]
@@ -1197,7 +1198,7 @@ Alternatively, we could construct an iterator on the counter-examples::
 
     ::
 
-        sage: for p in Partitions(): print p    # not tested
+        sage: for p in Partitions(): print(p)    # not tested
         []
         [1]
         [2]
@@ -1207,7 +1208,7 @@ Alternatively, we could construct an iterator on the counter-examples::
 
     ::
 
-        sage: for p in Primes(): print p        # not tested
+        sage: for p in Primes(): print(p)        # not tested
         2
         3
         5
@@ -1223,7 +1224,7 @@ Alternatively, we could construct an iterator on the counter-examples::
 
         sage: counter_examples = (p for p in Primes()
         ....:                    if not is_prime(mersenne(p)))
-        sage: for p in counter_examples: print p   # not tested
+        sage: for p in counter_examples: print(p)   # not tested
         11
         23
         29
@@ -1470,7 +1471,7 @@ which doesn’t prohibit iteration through its elements, though it will be
 necessary to interrupt it at some point::
 
     sage: for p in U:                # not tested
-    ....:     print p
+    ....:     print(p)
     []
     [1]
     [1, 2]

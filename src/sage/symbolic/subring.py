@@ -86,6 +86,7 @@ AUTHORS:
 Classes and Methods
 ===================
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
@@ -97,7 +98,7 @@ Classes and Methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from ring import SymbolicRing, SR
+from .ring import SymbolicRing, SR
 
 
 from sage.structure.factory import UniqueFactory

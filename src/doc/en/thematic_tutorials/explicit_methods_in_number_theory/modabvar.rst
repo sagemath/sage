@@ -74,7 +74,9 @@ abelian variety.
     sage: R = End(A); R
     Endomorphism ring of Simple abelian subvariety 91c(1,91)
     of dimension 2 of J0(91)
-    sage: for x in R.gens(): print x.matrix(),'\n'
+    sage: for x in R.gens():
+    ....:     print(x.matrix())
+    ....:     print("")
     [1 0 0 0]
     [0 1 0 0]
     [0 0 1 0]

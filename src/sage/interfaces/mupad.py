@@ -90,10 +90,11 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #############################################################################
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
-from expect import (Expect, ExpectElement, ExpectFunction,
+from .expect import (Expect, ExpectElement, ExpectFunction,
                     FunctionElement, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 

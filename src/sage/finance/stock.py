@@ -32,6 +32,7 @@ TESTS::
 Classes and methods
 -------------------
 """
+from __future__ import absolute_import
 from sage.misc.superseded import deprecated_function_alias
 from sage.structure.all import Sequence
 from datetime import date
@@ -406,7 +407,7 @@ class Stock:
             [52.1100, 60.9900, 59.0000, 56.0500, 57.2500, ... 83.0500, 85.4900, 84.9000, 82.0000, 81.2500]
         """
 
-        from time_series import TimeSeries
+        from .time_series import TimeSeries
 
         if len(args) != 0:
             return TimeSeries([x.open for x in self.history(*args, **kwds)])
@@ -465,7 +466,7 @@ class Stock:
             [57.7100, 56.9900, 55.5500, 57.3300, 65.9900 ... 84.9900, 84.6000, 83.9500, 80.4900, 72.9900]
         """
 
-        from time_series import TimeSeries
+        from .time_series import TimeSeries
 
         if len(args) != 0:
             return TimeSeries([x.close for x in self.history(*args, **kwds)])

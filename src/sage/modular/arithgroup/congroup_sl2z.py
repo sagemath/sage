@@ -6,6 +6,7 @@ AUTHORS:
 - Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
 """
+from __future__ import absolute_import
 
 ################################################################################
 #
@@ -19,8 +20,8 @@ AUTHORS:
 #
 ################################################################################
 
-from congroup_gamma0 import Gamma0_class
-from arithgroup_element import ArithmeticSubgroupElement
+from .congroup_gamma0 import Gamma0_class
+from .arithgroup_element import ArithmeticSubgroupElement
 from sage.rings.integer_ring import ZZ
 from sage.modular.cusps import Cusp
 from sage.arith.all import gcd

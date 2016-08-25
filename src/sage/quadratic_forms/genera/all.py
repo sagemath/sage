@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
@@ -6,4 +7,4 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from genus import Genus, LocalGenusSymbol, is_GlobalGenus
+from .genus import Genus, LocalGenusSymbol, is_GlobalGenus

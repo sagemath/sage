@@ -12,6 +12,8 @@ REFERENCES:
 Functions
 ---------
 """
+from __future__ import print_function
+
 
 def product(m):
     r"""
@@ -37,7 +39,7 @@ def product(m):
         sage: l = [0,0,0]
         sage: for p,i in product([3,3,3]):
         ....:     l[p] += i
-        ....:     print l
+        ....:     print(l)
         [1, 0, 0]
         [2, 0, 0]
         [2, 1, 0]
@@ -67,7 +69,7 @@ def product(m):
         sage: l = [0,0]
         sage: for i,j in product([2,1]):
         ....:     l[i] += j
-        ....:     print l
+        ....:     print(l)
         [1, 0]
 
     TESTS::
@@ -135,7 +137,7 @@ def combinations(n,t):
         sage: b = [1, 1, 1, 0, 0]
         sage: for i,j in combinations(5,3):
         ....:     b[i] = 0; b[j] = 1
-        ....:     print b
+        ....:     print(b)
         [1, 0, 1, 1, 0]
         [0, 1, 1, 1, 0]
         [1, 1, 0, 1, 0]
@@ -150,7 +152,7 @@ def combinations(n,t):
         sage: for i,j in combinations(4,2):
         ....:     s.remove(i)
         ....:     s.add(j)
-        ....:     print s
+        ....:     print(s)
         set([1, 2])
         set([0, 2])
         set([2, 3])
@@ -164,7 +166,7 @@ def combinations(n,t):
         sage: for _ in xrange(10):
         ....:     i,j = next(c)
         ....:     s.remove(i); s.add(j)
-        ....:     print s
+        ....:     print(s)
         set([0, 1, 3, 4])
         set([1, 2, 3, 4])
         set([0, 2, 3, 4])
@@ -178,8 +180,8 @@ def combinations(n,t):
         sage: for _ in xrange(1000):
         ....:     i,j = next(c)
         ....:     s.remove(i); s.add(j)
-        sage: print s
-        set([0, 4, 13, 14])
+        sage: s
+        {0, 4, 13, 14}
 
     TESTS::
 

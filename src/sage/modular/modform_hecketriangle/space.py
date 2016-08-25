@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -25,8 +26,8 @@ from sage.modules.free_module_element import vector
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
-from hecke_triangle_groups import HeckeTriangleGroup
-from abstract_space import FormsSpace_abstract
+from .hecke_triangle_groups import HeckeTriangleGroup
+from .abstract_space import FormsSpace_abstract
 
 def canonical_parameters(group, base_ring, k, ep, n=None):
     r"""

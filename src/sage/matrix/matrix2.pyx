@@ -47,6 +47,7 @@ from sage.rings.real_mpfr import RealField
 from sage.rings.complex_field import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.misc.derivative import multi_derivative
+from sage.arith.numerical_approx cimport digits_to_bits
 from copy import copy
 
 import sage.modules.free_module
@@ -356,10 +357,10 @@ cdef class Matrix(matrix1.Matrix):
 
         if is_Vector(B):
             if self.nrows() != B.degree():
-                raise ValueError, "number of rows of self must equal degree of B"
+                raise ValueError("number of rows of self must equal degree of B")
         else:
             if self.nrows() != B.nrows():
-                raise ValueError, "number of rows of self must equal number of rows of B"
+                raise ValueError("number of rows of self must equal number of rows of B")
 
         K = self.base_ring()
         if not K.is_integral_domain():
@@ -379,7 +380,7 @@ cdef class Matrix(matrix1.Matrix):
                 if is_Vector(B):
                     return (K ** self.ncols())(ret)
                 return self.matrix_space(self.ncols(), 1)(ret)
-            raise TypeError, "base ring must be an integral domain or a ring of integers mod n"
+            raise TypeError("base ring must be an integral domain or a ring of integers mod n")
         if not K.is_field():
             K = K.fraction_field()
             self = self.change_ring(K)
@@ -518,7 +519,7 @@ cdef class Matrix(matrix1.Matrix):
         if check:
             # Have to check that we actually solved the equation.
             if self*X != B:
-                raise ValueError, "matrix equation has no solutions"
+                raise ValueError("matrix equation has no solutions")
         return X
 
     def prod_of_row_sums(self, cols):
@@ -552,7 +553,7 @@ cdef class Matrix(matrix1.Matrix):
             tmp = []
             for c in cols:
 #               if c<0 or c >= self._ncols:
-#                   raise IndexError, "matrix column index out of range"
+#                   raise IndexError("matrix column index out of range")
                 tmp.append(self.get_unsafe(row, c))
             pr = pr * sum(tmp)
         return pr
@@ -861,7 +862,7 @@ cdef class Matrix(matrix1.Matrix):
         m = self._nrows
         n = self._ncols
         if not m <= n:
-            raise ValueError, "must have m <= n, but m (=%s) and n (=%s)"%(m,n)
+            raise ValueError("must have m <= n, but m (=%s) and n (=%s)"%(m,n))
 
         for r from 1 <= r < m+1:
             lst = _choose(n, r)
@@ -1554,7 +1555,7 @@ cdef class Matrix(matrix1.Matrix):
         from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
 
         if self._nrows != self._ncols:
-            raise ValueError, "self must be a square matrix"
+            raise ValueError("self must be a square matrix")
 
         d = self.fetch('det')
         if not d is None:
@@ -2568,7 +2569,7 @@ cdef class Matrix(matrix1.Matrix):
         """
         K = self.base_ring()
         if not is_NumberField(K):
-            raise ValueError, "_charpoly_over_number_field called with base ring (%s) not a number field" % K
+            raise ValueError("_charpoly_over_number_field called with base ring (%s) not a number field" % K)
 
         paripoly = self._pari_().charpoly()
         return K[var](paripoly)
@@ -2650,12 +2651,12 @@ cdef class Matrix(matrix1.Matrix):
         try:
             d = x[0].denominator()
         except AttributeError:
-            raise TypeError, "denominator not defined for elements of the base ring"
+            raise TypeError("denominator not defined for elements of the base ring")
         try:
             for y in x:
                 d = d.lcm(y.denominator())
         except AttributeError:
-            raise TypeError, "lcm function not defined for elements of the base ring"
+            raise TypeError("lcm function not defined for elements of the base ring")
         return d
 
     def diagonal(self):
@@ -2731,7 +2732,7 @@ cdef class Matrix(matrix1.Matrix):
             34/3
         """
         if self._nrows != self._ncols:
-            raise ValueError, "self must be a square matrix"
+            raise ValueError("self must be a square matrix")
         R = self._base_ring
         cdef Py_ssize_t i
         cdef object s
@@ -2754,7 +2755,7 @@ cdef class Matrix(matrix1.Matrix):
             -1629
         """
         if self._nrows != other._ncols or other._nrows != self._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         s = self._base_ring(0)
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
@@ -2797,7 +2798,7 @@ cdef class Matrix(matrix1.Matrix):
                 H = self.change_ring(K)
                 H.hessenbergize()
             except TypeError as msg:
-                raise TypeError, "%s\nHessenberg form only possible for matrices over a field"%msg
+                raise TypeError("%s\nHessenberg form only possible for matrices over a field"%msg)
         else:
             H = self.__copy__()
             H.hessenbergize()
@@ -2848,10 +2849,10 @@ cdef class Matrix(matrix1.Matrix):
         tm = verbose("Computing Hessenberg Normal Form of %sx%s matrix"%(n,n))
 
         if not self.is_square():
-            raise TypeError, "self must be square"
+            raise TypeError("self must be square")
 
         if not self._base_ring.is_field():
-            raise TypeError, "Hessenbergize only possible for matrices over a field"
+            raise TypeError("Hessenbergize only possible for matrices over a field")
 
         self.check_mutability()
 
@@ -2923,7 +2924,7 @@ cdef class Matrix(matrix1.Matrix):
             Z^3 - 12*Z^2 - 18*Z
         """
         if self._nrows != self._ncols:
-            raise ArithmeticError, "charpoly not defined for non-square matrix."
+            raise ArithmeticError("charpoly not defined for non-square matrix.")
 
         # Replace self by its Hessenberg form
         # (note the entries might now live in the fraction field)
@@ -4751,7 +4752,7 @@ cdef class Matrix(matrix1.Matrix):
                 return X, Y
             return X
         else:
-            raise ValueError, "no algorithm '%s'"%algorithm
+            raise ValueError("no algorithm '%s'"%algorithm)
 
     def _decomposition_spin_generic(self, is_diagonalizable=False):
         r"""
@@ -4768,10 +4769,10 @@ cdef class Matrix(matrix1.Matrix):
         - William Stein
         """
         if not self.is_square():
-            raise ValueError, "self must be a square matrix"
+            raise ValueError("self must be a square matrix")
 
         if not self.base_ring().is_field():
-            raise TypeError, "self must be over a field."
+            raise TypeError("self must be over a field.")
 
         if self.nrows() == 0:
             return decomp_seq([])
@@ -4848,7 +4849,7 @@ cdef class Matrix(matrix1.Matrix):
                         W.rank(), m*g.degree()), level=2, caller_name='generic spin decomp')
                     tries += 1
                     if tries > 1000*m:  # avoid an insanely long infinite loop
-                        raise RuntimeError, "likely bug in decomposition"
+                        raise RuntimeError("likely bug in decomposition")
                 # end if
             #end while
         #end for
@@ -4856,7 +4857,7 @@ cdef class Matrix(matrix1.Matrix):
 
     def _decomposition_using_kernels(self, is_diagonalizable=False, dual=False):
         if not self.is_square():
-            raise ValueError, "self must be a square matrix"
+            raise ValueError("self must be a square matrix")
 
         if self.nrows() == 0:
             return decomp_seq([])
@@ -4967,15 +4968,14 @@ cdef class Matrix(matrix1.Matrix):
             True
         """
         if not sage.modules.free_module.is_FreeModule(M):
-            raise TypeError, "M must be a free module."
+            raise TypeError("M must be a free module.")
         if not self.is_square():
-            raise ArithmeticError, "self must be a square matrix"
+            raise ArithmeticError("self must be a square matrix")
         if M.base_ring() != self.base_ring():
-            raise ArithmeticError, "base rings must be the same, but self is over %s and module is over %s"%(
-                self.base_ring(), M.base_ring())
+            raise ArithmeticError("base rings must be the same, but self is over %s and module is over %s"%(
+                self.base_ring(), M.base_ring()))
         if M.degree() != self.ncols():
-            raise ArithmeticError, \
-               "M must be a subspace of an %s-dimensional space"%self.ncols()
+            raise ArithmeticError("M must be a subspace of an %s-dimensional space" % self.ncols())
 
         time = verbose(t=0)
 
@@ -5058,12 +5058,11 @@ cdef class Matrix(matrix1.Matrix):
             ArithmeticError: subspace is not invariant under matrix
         """
         if not isinstance(V, sage.modules.free_module.FreeModule_generic):
-            raise TypeError, "V must be a free module"
+            raise TypeError("V must be a free module")
         #if V.base_ring() != self.base_ring():
-        #     raise ValueError, "matrix and module must have the same base ring, but matrix is over %s and module is over %s"%(self.base_ring(), V.base_ring())
+        #     raise ValueError("matrix and module must have the same base ring, but matrix is over %s and module is over %s"%(self.base_ring(), V.base_ring()))
         if V.degree() != self.nrows():
-            raise IndexError, "degree of V (=%s) must equal number of rows of self (=%s)"%(\
-                V.degree(), self.nrows())
+            raise IndexError("degree of V (=%s) must equal number of rows of self (=%s)" % (V.degree(), self.nrows()))
         if V.rank() == 0 or V.degree() == 0:
             return self.new_matrix(nrows=0, ncols=0)
 
@@ -5077,7 +5076,7 @@ cdef class Matrix(matrix1.Matrix):
                 # todo optimize so only involves matrix multiplies ?
                 C = [V.coordinate_vector(b*self) for b in V.basis()]
             except ArithmeticError:
-                raise ArithmeticError, "subspace is not invariant under matrix"
+                raise ArithmeticError("subspace is not invariant under matrix")
             return self.new_matrix(n, n, C, sparse=False)
 
     def restrict_domain(self, V):
@@ -5202,7 +5201,7 @@ cdef class Matrix(matrix1.Matrix):
         if v == 0:
             return []
         if not is_FreeModuleElement(v):
-            raise TypeError, "v must be a FreeModuleElement"
+            raise TypeError("v must be a FreeModuleElement")
         VS = v.parent()
         V = VS.span([v])
         w = v
@@ -5245,7 +5244,7 @@ cdef class Matrix(matrix1.Matrix):
         """
         i = int(i); t=int(t)
         if self.nrows() != self.ncols():
-            raise ArithmeticError, "self must be a square matrix"
+            raise ArithmeticError("self must be a square matrix")
         n = self.nrows()
         v = sage.modules.free_module.VectorSpace(self.base_ring(), n).gen(i)
         tm = verbose('computing iterates...')
@@ -5983,7 +5982,7 @@ cdef class Matrix(matrix1.Matrix):
         K = self.base_ring()
         try:
             is_field = K.is_field()
-        except (ValueError,AttributeError):
+        except (ValueError, AttributeError):
             is_field = False
 
         if not is_field:
@@ -5993,8 +5992,8 @@ cdef class Matrix(matrix1.Matrix):
 
         try:
             A = K.algebraic_closure()
-        except (AttributeError,ValueError):
-            raise NotImplementedError("algebraic closure is not implemented for %s"%K)
+        except (AttributeError, ValueError):
+            raise NotImplementedError("algebraic closure is not implemented for %s" % K)
 
         res = []
         for f, e in self.charpoly().change_ring(K).factor():
@@ -6083,7 +6082,7 @@ cdef class Matrix(matrix1.Matrix):
                     try:
                         eigval_conj = eigval.galois_conjugates(QQbar)
                     except AttributeError:
-                        raise NotImplementedError, "eigenvectors are not implemented for matrices with eigenvalues that are not in the fraction field of the base ring or in QQbar"
+                        raise NotImplementedError("eigenvectors are not implemented for matrices with eigenvalues that are not in the fraction field of the base ring or in QQbar")
 
                     for e in eigval_conj:
                         m = hom(eigval.parent(), e.parent(), e)
@@ -6322,7 +6321,7 @@ cdef class Matrix(matrix1.Matrix):
         If the matrix is over a ring, then an equivalent matrix is
         constructed over the fraction field, and then row reduced.
 
-        All arguments are passed on to :meth:``echelon_form``.
+        All arguments are passed on to :meth:`echelon_form`.
 
         .. note::
 
@@ -6468,7 +6467,7 @@ cdef class Matrix(matrix1.Matrix):
         cdef bint transformation = 'transformation' in kwds and kwds['transformation']
         if self._base_ring == ZZ:
             if 'include_zero_rows' in kwds and not kwds['include_zero_rows']:
-                raise ValueError, "cannot echelonize in place and delete zero rows"
+                raise ValueError("cannot echelonize in place and delete zero rows")
             if transformation:
                 d, a = self.dense_matrix().echelon_form(**kwds)
             else:
@@ -6483,7 +6482,7 @@ cdef class Matrix(matrix1.Matrix):
             try:
                 a, d, p = self._echelon_form_PID()
             except TypeError as msg:
-                raise NotImplementedError, "%s\nechelon form over %s not yet implemented"%(msg, self.base_ring())
+                raise NotImplementedError("%s\nechelon form over %s not yet implemented"%(msg, self.base_ring()))
 
             for c from 0 <= c < self.ncols():
                for r from 0 <= r < self.nrows():
@@ -6629,13 +6628,13 @@ cdef class Matrix(matrix1.Matrix):
                 elif algorithm == 'strassen':
                     self._echelon_strassen(cutoff)
                 else:
-                    raise ValueError, "Unknown algorithm '%s'"%algorithm
+                    raise ValueError("Unknown algorithm '%s'" % algorithm)
             else:
                 if not (algorithm in ['classical', 'strassen']):
                     kwds['algorithm'] = algorithm
                 return self._echelonize_ring(**kwds)
         except ArithmeticError as msg:
-            raise NotImplementedError, "%s\nEchelon form not implemented over '%s'."%(msg,self.base_ring())
+            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg,self.base_ring()))
 
     def echelon_form(self, algorithm="default", cutoff=0, **kwds):
         """
@@ -7579,7 +7578,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         M_B = self.as_bipartite_graph()
         N_B = N.as_bipartite_graph()
         if check:
-            truth, perm = N_B.is_isomorphic(M_B, certify=True, edge_labels=True)
+            truth, perm = N_B.is_isomorphic(M_B, certificate=True, edge_labels=True)
             from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
             if perm:
                 s = sorted(perm.items(), key=lambda x:x[0])
@@ -7588,7 +7587,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
                 perm = (PermutationGroupElement(row_perms), PermutationGroupElement(col_perms))
             return truth, perm
         else:
-            return N_B.is_isomorphic(M_B, certify=False, edge_labels=True)
+            return N_B.is_isomorphic(M_B, certificate=False, edge_labels=True)
 
     #####################################################################################
     # Windowed Strassen Matrix Multiplication and Echelon
@@ -7620,15 +7619,15 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             [344 398 452 506]
         """
         if self._ncols != right._nrows:
-            raise ArithmeticError, "Number of columns of self must equal number of rows of right."
+            raise ArithmeticError("Number of columns of self must equal number of rows of right.")
         if not self._base_ring is right.base_ring():
-            raise TypeError, "Base rings must be the same."
+            raise TypeError("Base rings must be the same.")
 
         if cutoff == 0:
             cutoff = self._strassen_default_cutoff(right)
 
         if cutoff <= 0:
-            raise ValueError, "cutoff must be at least 1"
+            raise ValueError("cutoff must be at least 1")
 
         output = self.new_matrix(self._nrows, right._ncols)
         # The following used to be a little faster, but meanwhile
@@ -7669,13 +7668,13 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         self.check_mutability()
 
         if not self._base_ring.is_field():
-            raise ValueError, "Echelon form not defined over this base ring."
+            raise ValueError("Echelon form not defined over this base ring.")
 
         if cutoff == 0:
             cutoff = self._strassen_default_echelon_cutoff()
 
         if cutoff < 1:
-            raise ValueError, "cutoff must be at least 1"
+            raise ValueError("cutoff must be at least 1")
 
         if self._nrows < cutoff or self._ncols < cutoff:
             self._echelon_in_place_classical()
@@ -7727,7 +7726,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             ncols = self._ncols - col
         if check and (row < 0 or col < 0 or row + nrows > self._nrows or \
            col + ncols > self._ncols):
-            raise IndexError, "matrix window index out of range"
+            raise IndexError("matrix window index out of range")
         return matrix_window.MatrixWindow(self, row, col, nrows, ncols)
 
     def set_block(self, row, col, block):
@@ -7961,10 +7960,10 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             if not i and not j:
                 return self[x,y]
             else:
-                raise IndexError, "No such submatrix %s, %s"%(i,j)
+                raise IndexError("No such submatrix %s, %s"%(i,j))
         if x >= self._subdivisions[0][i+1]-self._subdivisions[0][i] or \
            y >= self._subdivisions[1][j+1]-self._subdivisions[1][j]:
-            raise IndexError, "Submatrix %s,%s has no entry %s,%s"%(i,j, x, y)
+            raise IndexError("Submatrix %s,%s has no entry %s,%s"%(i,j, x, y))
         return self[self._subdivisions[0][i] + x , self._subdivisions[1][j] + y]
 
     def _subdivide_on_augment(self, left, right):
@@ -8293,12 +8292,12 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         """
         Return True if this matrix is a scalar matrix.
 
-        INPUT
+        INPUT:
 
         - base_ring element a, which is chosen as self[0][0] if
           a = None
 
-        OUTPUT
+        OUTPUT:
 
         - whether self is a scalar matrix (in fact the scalar matrix
           aI if a is input)
@@ -8784,9 +8783,6 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             sage: ~m
             [  -2    1]
             [ 3/2 -1/2]
-            sage: m.I
-            [  -2    1]
-            [ 3/2 -1/2]
 
         TESTS::
 
@@ -8845,7 +8841,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         """
 
         if self._nrows != self._ncols:
-            raise ValueError, "self must be a square matrix"
+            raise ValueError("self must be a square matrix")
 
         X = self.fetch('adjoint')
         if not X is None:
@@ -9788,7 +9784,9 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         This computation is performed in a naive way using the ranks of powers
         of `A-xI`, where `x` is an eigenvalue of the matrix `A`.  If desired,
         a transformation matrix `P` can be returned, which is such that the
-        Jordan canonical form is given by `P^{-1} A P`.
+        Jordan canonical form is given by `P^{-1} A P`; if the matrix is
+        diagonalizable, this equals to *eigendecomposition* or *spectral
+        decomposition*.
 
         INPUT:
 
@@ -10120,7 +10118,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         from sage.combinat.partition import Partition
 
         if self.ncols() != self.nrows():
-            raise ValueError, "Jordan normal form not implemented for non-square matrices."
+            raise ValueError("Jordan normal form not implemented for non-square matrices.")
 
         # Set ``n`` to the number of rows and handle trivial cases, regardless
         # of the underlying ring.
@@ -11165,7 +11163,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
                 try:
                     L[k, k] = A[k, k].sqrt()
                 except TypeError:
-                    raise ValueError, "The input matrix was not symmetric and positive definite"
+                    raise ValueError("The input matrix was not symmetric and positive definite")
 
                 for s in range(k+1, n):
                     L[s, k] = A[s, k] / L[k, k]
@@ -12932,23 +12930,21 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         if p == 'frob':
             return sum([i**2 for i in A.list()]).sqrt()
 
-    def _numerical_approx(self, prec=None, digits=None, algorithm=None):
+    def numerical_approx(self, prec=None, digits=None, algorithm=None):
         r"""
-        Return a numerical approximation of ``self`` as either
-        a real or complex number with at least the requested number of bits
-        or digits of precision.
+        Return a numerical approximation of ``self`` with ``prec`` bits
+        (or decimal ``digits``) of precision.
 
         INPUT:
 
+        - ``prec`` -- precision in bits
 
-        -  ``prec`` - an integer: the number of bits of
-           precision
+        - ``digits`` -- precision in decimal digits (only used if
+          ``prec`` is not given)
 
-        -  ``digits`` - an integer: digits of precision
+        - ``algorithm`` -- ignored for matrices
 
-
-        OUTPUT: A matrix coerced to a real or complex field with prec bits
-        of precision.
+        OUTPUT: A matrix converted to a real or complex field
 
         EXAMPLES::
 
@@ -13004,25 +13000,15 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             [0.750000000000000 0.800000000000000 0.833333333333333]
             [0.857142857142857 0.875000000000000 0.888888888888889]
             [0.900000000000000 0.909090909090909 0.916666666666667]
-
         """
-
         if prec is None:
-            if digits is None:
-                prec = 53
-            else:
-                prec = int(digits * 3.4) + 2
+            prec = digits_to_bits(digits)
 
         try:
             return self.change_ring(sage.rings.real_mpfr.RealField(prec))
         except TypeError:
             # try to return a complex result
             return self.change_ring(sage.rings.complex_field.ComplexField(prec))
-
-    #This line is added so the doctest are visible
-    numerical_approx=_numerical_approx
-    n=_numerical_approx
-    N=_numerical_approx
 
     def plot(self, *args, **kwds):
         """
@@ -13063,9 +13049,6 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         """
         from sage.plot.plot import matrix_plot
         return matrix_plot(self, *args, **kwds)
-
-    #added this to make doctests visible to users
-    numerical_approx=_numerical_approx
 
     def derivative(self, *args):
         """
@@ -13278,9 +13261,9 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
 
         # data type checks on R
         if not R.is_integral_domain() or not R.is_noetherian():
-            raise TypeError, "Smith form only defined over Noetherian integral domains"
+            raise TypeError("Smith form only defined over Noetherian integral domains")
         if not R.is_exact():
-            raise NotImplementedError, "Smith form over non-exact rings not implemented at present"
+            raise NotImplementedError("Smith form over non-exact rings not implemented at present")
 
         # first clear the first row and column
         u,t,v = _smith_onestep(self)
@@ -13446,11 +13429,11 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
 
         # data type checks on R
         if not R.is_integral_domain():
-            raise TypeError, ( "Generic echelon form only defined over "
-                "integral domains" )
+            raise TypeError("Generic echelon form only defined over "
+                "integral domains")
         if not R.is_exact():
-            raise NotImplementedError, ( "Echelon form over generic non-exact "
-                "rings not implemented at present" )
+            raise NotImplementedError("Echelon form over generic non-exact "
+                "rings not implemented at present")
 
         left_mat, a = _generic_clear_column(self)
         assert left_mat * self == a
@@ -13775,7 +13758,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         If ``transformation`` is ``True``, then the output is a pair of
         matrices.  The first is the form ``Z`` and the second is an invertible
         matrix ``U`` such that ``U.inverse()*self*U`` equals ``Z``.  In other
-        words, the repsentation of ``self`` with respect to the columns
+        words, the representation of ``self`` with respect to the columns
         of ``U`` will be ``Z``.
 
         If subdivide is ``True`` then the matrix returned as the form is
@@ -14509,6 +14492,7 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
         """
         return self.conjugate().transpose()
 
+
     @property
     def I(self):
         r"""
@@ -14521,6 +14505,8 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             ...                   [-1, -2, -2,  0],
             ...                   [-2, -1,  0, -4]])
             sage: A.I
+            doctest:...: DeprecationWarning: The I property on matrices has been deprecated. Please use the inverse() method instead.
+            See http://trac.sagemath.org/20904 for details.
             [ 0  2  1  0]
             [-4 -8 -2  7]
             [ 4  7  1 -7]
@@ -14535,6 +14521,8 @@ explicitly setting the argument to `True` or `False` will avoid this message."""
             ...
             ZeroDivisionError: input matrix must be nonsingular
         """
+        from sage.misc.superseded import deprecation
+        deprecation(20904, "The I property on matrices has been deprecated. Please use the inverse() method instead.")
         return ~self
 
 
@@ -14649,7 +14637,7 @@ def _generic_clear_column(m):
         left_mat[k,0] = -1
         a = left_mat*a
         if left_mat * m != a:
-            raise ArithmeticError, "Something went wrong"
+            raise ArithmeticError("Something went wrong")
 
     # case 2: if there is an entry at position (k,j) such that a_{0,j}
     # does not divide a_{k,j}, then we know that there are c,d in R such
@@ -14669,9 +14657,9 @@ def _generic_clear_column(m):
             try:
                 v = R.ideal(a[0,0], a[k,0]).gens_reduced()
             except Exception as msg:
-                raise ArithmeticError, "%s\nCan't create ideal on %s and %s" % (msg, a[0,0], a[k,0])
+                raise ArithmeticError("%s\nCan't create ideal on %s and %s" % (msg, a[0,0], a[k,0]))
             if len(v) > 1:
-                raise ArithmeticError, "Ideal %s not principal" %  R.ideal(a[0,0], a[k,0])
+                raise ArithmeticError("Ideal %s not principal" % R.ideal(a[0,0], a[k,0]))
             B = v[0]
 
             # now we find c,d, using the fact that c * (a_{0,0}/B) - d *

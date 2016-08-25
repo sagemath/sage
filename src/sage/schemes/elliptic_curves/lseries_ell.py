@@ -231,7 +231,7 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
-            sage: print E.lseries().sympow_derivs(1,16,2)      # not tested -- requires precomputing "sympow('-new_data 2')"
+            sage: print(E.lseries().sympow_derivs(1,16,2))    # not tested -- requires precomputing "sympow('-new_data 2')"
             sympow 1.018 RELEASE  (c) Mark Watkins --- see README and COPYING for details
             Minimal model of curve  is [0,0,1,-1,0]
             At 37: Inertia Group is  C1 MULTIPLICATIVE REDUCTION

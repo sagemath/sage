@@ -41,7 +41,7 @@ from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGro
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_gap
 from sage.rings.all import ZZ, QQ
 from sage.interfaces.gap import gap
-from sage.misc.cachefunc import cached_method, ClearCacheOnPickle
+from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.matrix.constructor import matrix, diagonal_matrix
@@ -196,7 +196,7 @@ def WeylGroup(x, prefix=None):
     return WeylGroup_gens(ct.root_system().root_space(), prefix=prefix)
 
 
-class WeylGroup_gens(ClearCacheOnPickle, UniqueRepresentation,
+class WeylGroup_gens(UniqueRepresentation,
                      FinitelyGeneratedMatrixGroup_gap):
 
     @staticmethod

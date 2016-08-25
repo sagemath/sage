@@ -84,7 +84,7 @@ Als nächstes verifizieren wir ein Beispiel des :math:`3n+1` Problems.
     sage: for i in range(1000):
     ....:     n = 3*odd_part(n) + 1
     ....:     if odd_part(n)==1:
-    ....:         print i
+    ....:         print(i)
     ....:         break
     38
 

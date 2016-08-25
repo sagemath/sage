@@ -211,7 +211,7 @@ cdef class ntl_GF2X(object):
 
         divisible = GF2X_divide(q.x, self.x, (<ntl_GF2X>b).x)
         if not divisible:
-            raise ArithmeticError, "self (=%s) is not divisible by b (=%s)"%(self, b)
+            raise ArithmeticError("self (=%s) is not divisible by b (=%s)" % (self, b))
         return q
 
     def __div__(self, other):

@@ -1,6 +1,7 @@
 """
 Degeneracy maps
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
@@ -20,7 +21,7 @@ Degeneracy maps
 #*****************************************************************************
 
 
-import morphism
+from . import morphism
 
 class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
     """

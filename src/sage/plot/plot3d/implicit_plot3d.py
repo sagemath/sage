@@ -1,7 +1,8 @@
 """
 Implicit Plots
 """
-from implicit_surface import ImplicitSurface
+from __future__ import absolute_import
+from .implicit_surface import ImplicitSurface
 
 
 def implicit_plot3d(f, xrange, yrange, zrange, **kwds):

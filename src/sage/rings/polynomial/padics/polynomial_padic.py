@@ -21,6 +21,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -143,7 +144,8 @@ class Polynomial_padic(Polynomial):
 
             sage: R.<t> = PolynomialRing(Qp(3,3,print_mode='terse',print_pos=False))
             sage: pol = t^8 - 1
-            sage: for p,e in pol.factor(): print e, p
+            sage: for p,e in pol.factor():
+            ....:     print("{} {}".format(e, p))
             1 (1 + O(3^3))*t + (1 + O(3^3))
             1 (1 + O(3^3))*t + (-1 + O(3^3))
             1 (1 + O(3^3))*t^2 + (5 + O(3^3))*t + (-1 + O(3^3))

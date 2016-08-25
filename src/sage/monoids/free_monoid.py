@@ -14,6 +14,7 @@ generators. You can print the generators as arbitrary strings using
 the optional ``names`` argument to the
 ``FreeMonoid`` function.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
@@ -27,9 +28,9 @@ the optional ``names`` argument to the
 
 from sage.rings.integer import Integer
 from sage.structure.category_object import normalize_names
-from free_monoid_element import FreeMonoidElement
+from .free_monoid_element import FreeMonoidElement
 
-from monoid import Monoid_class
+from .monoid import Monoid_class
 
 from sage.combinat.words.finite_word import FiniteWord_class
 

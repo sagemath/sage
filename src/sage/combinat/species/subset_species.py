@@ -1,6 +1,7 @@
 """
 Subset Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -16,10 +17,10 @@ Subset Species
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from species import GenericCombinatorialSpecies
-from set_species import SetSpecies
-from generating_series import _integers_from, factorial_stream
-from structure import GenericSpeciesStructure
+from .species import GenericCombinatorialSpecies
+from .set_species import SetSpecies
+from .generating_series import _integers_from, factorial_stream
+from .structure import GenericSpeciesStructure
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size

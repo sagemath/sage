@@ -6,7 +6,7 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-cd xianyi-OpenBLAS*
+cd src
 
 # Patch sources
 for patch in ../patches/*.patch; do

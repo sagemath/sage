@@ -304,7 +304,7 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     ll_N = <long> N
 
     #if N<=0 or N >= 2**31:
-    #    raise OverflowError, "Modulus is too large (must be < 46340)"
+    #    raise OverflowError("Modulus is too large (must be < 46340)")
     #    return -1
 
     u = u % N
@@ -485,13 +485,13 @@ def p1list(N):
 
     """
     if N <= 0:
-        raise ValueError, "N must be a positive integer"
+        raise ValueError("N must be a positive integer")
     if N <= 46340:
         return p1list_int(N)
     if N <= 2147483647:
         return p1list_llong(N)
     else:
-        raise OverflowError, "p1list not defined for such large N."
+        raise OverflowError("p1list not defined for such large N.")
 
 def p1_normalize(int N, int u, int v):
     r"""
@@ -684,7 +684,7 @@ cdef class P1List:
             self.__list = p1list_llong(N)
             self.__normalize = c_p1_normalize_llong
         else:
-            raise OverflowError, "p1list not defined for such large N."
+            raise OverflowError("p1list not defined for such large N.")
         self.__list.sort()
         self.__end_hash = dict([(x,i) for i, x in enumerate(self.__list[N+1:])])
 
@@ -851,7 +851,7 @@ cdef class P1List:
         elif N <= 2147483647:
             return lift_to_sl2z_llong(c, d, self.__N)
         else:
-            raise OverflowError, "N too large"
+            raise OverflowError("N too large")
 
     def apply_I(self, int i):
         r"""
@@ -1215,7 +1215,7 @@ def lift_to_sl2z_int(int c, int d, int N):
     cdef int z1, z2, g, m
 
     if c == 0 and d == 0:
-        raise AttributeError, "Element (%s, %s) not in P1." % (c,d)
+        raise AttributeError("Element (%s, %s) not in P1." % (c,d))
     g = arith_int.c_xgcd_int(c, d, &z1, &z2)
 
     # We're lucky: z1*c + z2*d = 1.
@@ -1246,7 +1246,7 @@ def lift_to_sl2z_int(int c, int d, int N):
     g = arith_int.c_xgcd_int(c, d, &z1, &z2)
 
     if g != 1:
-        raise ValueError, "input must have gcd 1"
+        raise ValueError("input must have gcd 1")
 
     return [z2, -z1, c, d]
 
@@ -1282,7 +1282,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
     cdef llong z1, z2, g, m
 
     if c == 0 and d == 0:
-        raise AttributeError, "Element (%s, %s) not in P1." % (c,d)
+        raise AttributeError("Element (%s, %s) not in P1." % (c,d))
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
     # We're lucky: z1*c + z2*d = 1.
@@ -1313,7 +1313,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
     if g != 1:
-        raise ValueError, "input must have gcd 1"
+        raise ValueError("input must have gcd 1")
 
     return [z2, -z1, c, d]
 
@@ -1355,7 +1355,7 @@ def lift_to_sl2z(c, d, N):
     elif N <= 2147483647:
         return lift_to_sl2z_llong(c,d,N)
     else:
-        raise NotImplementedError, "N too large"
+        raise NotImplementedError("N too large")
 
 
 def _make_p1list(n):

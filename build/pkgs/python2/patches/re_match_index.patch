@@ -1,0 +1,37 @@
+Fix http://bugs.python.org/issue27177
+diff -ru Python-2.7.10/Lib/test/test_index.py Python-2.7.10-fix-re//Lib/test/test_index.py
+--- Python-2.7.10/Lib/test/test_index.py	2015-05-23 18:09:11.000000000 +0200
++++ Python-2.7.10-fix-re//Lib/test/test_index.py	2016-06-01 15:50:07.274162354 +0200
+@@ -246,6 +246,20 @@
+         self.assertEqual(xrange(1, 20)[n], 6)
+         self.assertEqual(xrange(1, 20).__getitem__(n), 6)
+ 
++class MatchGroupTestCase(unittest.TestCase):
++
++    def test_re_group(self):
++        n = newstyle()
++        n.ind = 0
++        o = oldstyle()
++        o.ind = 1
++
++        import re
++        p = re.compile('(a)(b)')
++        m = p.match('ab')
++        self.assertEqual(m.group(0), m.group(n))
++        self.assertEqual(m.group(1), m.group(o))
++
+ class OverflowTestCase(unittest.TestCase):
+ 
+     def setUp(self):
+diff -ru Python-2.7.10/Modules/_sre.c Python-2.7.10-fix-re//Modules/_sre.c
+--- Python-2.7.10/Modules/_sre.c	2015-05-23 18:09:19.000000000 +0200
++++ Python-2.7.10-fix-re//Modules/_sre.c	2016-06-01 15:50:58.614165047 +0200
+@@ -3303,6 +3303,8 @@
+ 
+     if (PyInt_Check(index) || PyLong_Check(index))
+         return PyInt_AsSsize_t(index);
++    if (PyIndex_Check(index))
++        return PyNumber_AsSsize_t(index, PyExc_IndexError);
+ 
+     i = -1;
+ 

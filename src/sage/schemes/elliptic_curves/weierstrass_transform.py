@@ -43,6 +43,7 @@ EXAMPLES::
     sage: f([0,1,-1])
     (1/3 : -2/3 : 1)
 """
+from __future__ import absolute_import
 
 ##############################################################################
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
@@ -58,7 +59,7 @@ EXAMPLES::
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
 from sage.categories.morphism import Morphism
-from constructor import EllipticCurve
+from .constructor import EllipticCurve
 from sage.categories.homset import Hom
 
 

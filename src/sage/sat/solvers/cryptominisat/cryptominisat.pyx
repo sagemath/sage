@@ -26,6 +26,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 include "cysignals/memory.pxi"
@@ -481,7 +482,7 @@ cdef class CryptoMiniSat(SatSolver):
             sage: cms.add_clause((1,2))                      # optional - cryptominisat
             sage: fn = tmp_filename()                        # optional - cryptominisat
             sage: cms.clauses(fn)                            # optional - cryptominisat
-            sage: print open(fn).read()                      # optional - cryptominisat
+            sage: print(open(fn).read())                     # optional - cryptominisat
             p cnf 2 4
             x2 1 0
             -1 -2 0

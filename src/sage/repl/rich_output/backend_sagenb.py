@@ -135,7 +135,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
             'sage0-size32.jmol'
         """
         import PIL.Image
-        from StringIO import StringIO
+        from six import StringIO
         width, height = PIL.Image.open(StringIO(self.preview_png.get())).size
         ext = '-size{0}.jmol'.format(width)
         return graphics_filename(ext=ext)

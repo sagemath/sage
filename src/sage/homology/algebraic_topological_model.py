@@ -12,6 +12,7 @@ AUTHORS:
 
 - John H. Palmieri (2015-09)
 """
+from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
@@ -29,9 +30,9 @@ from sage.modules.free_module_element import vector
 from sage.modules.free_module import VectorSpace
 from sage.matrix.constructor import matrix, zero_matrix
 from sage.matrix.matrix_space import MatrixSpace
-from chain_complex import ChainComplex
-from chain_complex_morphism import ChainComplexMorphism
-from chain_homotopy import ChainContraction
+from .chain_complex import ChainComplex
+from .chain_complex_morphism import ChainComplexMorphism
+from .chain_homotopy import ChainContraction
 from sage.rings.rational_field import QQ
 
 def algebraic_topological_model(K, base_ring=None):

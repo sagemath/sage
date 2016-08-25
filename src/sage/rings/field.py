@@ -1,6 +1,7 @@
 r"""
 Abstract base class for fields
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -47,8 +48,8 @@ def is_PrimeField(R):
         sage: sage.rings.field.is_PrimeField(GF(7^2,'t'))
         False
     """
-    from finite_rings.finite_field_constructor import is_FiniteField
-    from rational_field import is_RationalField
+    from .finite_rings.finite_field_constructor import is_FiniteField
+    from .rational_field import is_RationalField
 
     if is_RationalField(R):
         return True

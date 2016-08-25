@@ -282,7 +282,7 @@ AUTHORS:
 - Ralf Stephan (2015-)
 
 The original module wrapped some of the orthogonal/special functions
-in the Maxima package "orthopoly" and was was written by Barton
+in the Maxima package "orthopoly" and was written by Barton
 Willis of the University of Nebraska at Kearney.
 
 """
@@ -834,7 +834,6 @@ class Func_chebyshev_T(ChebyshevFunction):
         else:
             return 2*a*b - x, both and 2*b*b - 1
 
-
     def _eval_numpy_(self, n, x):
         """
         Evaluate ``self`` using numpy.
@@ -1264,6 +1263,10 @@ class Func_hermite(GinacFunction):
         sage: w = var('w')
         sage: hermite(3,2*w)
         64*w^3 - 24*w
+        sage: hermite(5,3.1416)
+        5208.69733891963
+        sage: hermite(5,RealField(100)(pi))
+        5208.6167627118104649470287166
 
     Check that :trac:`17192` is fixed::
 
@@ -1420,6 +1423,10 @@ class Func_ultraspherical(GinacFunction):
         ....:     n = ZZ.random_element().abs() + 5
         ....:     a = QQ.random_element().abs() + 5
         ....:     assert ((n+1)*ultraspherical(n+1,a,x) - 2*x*(n+a)*ultraspherical(n,a,x) + (n+2*a-1)*ultraspherical(n-1,a,x)).expand().is_zero()
+        sage: ultraspherical(5,9/10,3.1416)
+        6949.55439044240
+        sage: ultraspherical(5,9/10,RealField(100)(pi))
+        6949.4695419382702451843080687
 
     Check that :trac:`17192` is fixed::
 

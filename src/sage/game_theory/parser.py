@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 class Parser():
     r"""
     A class for parsing the outputs of different algorithms called in other
@@ -23,7 +25,7 @@ class Parser():
             sage: g = NormalFormGame([A])
             sage: raw_string = g._Hrepresentation(A, -A)
             sage: P = Parser(raw_string)
-            sage: print P.raw_string[0]
+            sage: print(P.raw_string[0])
             H-representation
             linearity 1 5
             begin
@@ -36,7 +38,7 @@ class Parser():
             end
             <BLANKLINE>
 
-            sage: print P.raw_string[1]
+            sage: print(P.raw_string[1])
             H-representation
             linearity 1 5
             begin
@@ -56,7 +58,7 @@ class Parser():
             sage: g = NormalFormGame([A,B])
             sage: raw_string = g._Hrepresentation(A, B)
             sage: P = Parser(raw_string)
-            sage: print P.raw_string[0]
+            sage: print(P.raw_string[0])
             H-representation
             linearity 1 3
             begin
@@ -67,7 +69,7 @@ class Parser():
             end
             <BLANKLINE>
 
-            sage: print P.raw_string[1]
+            sage: print(P.raw_string[1])
             H-representation
             linearity 1 3
             begin
@@ -90,7 +92,7 @@ class Parser():
             sage: g = NormalFormGame([A, B])
             sage: raw_string = g._Hrepresentation(A, B)
             sage: P = Parser(raw_string)
-            sage: print P.raw_string[0]
+            sage: print(P.raw_string[0])
             H-representation
             linearity 1 7
             begin
@@ -105,7 +107,7 @@ class Parser():
             end
             <BLANKLINE>
 
-            sage: print P.raw_string[1]
+            sage: print(P.raw_string[1])
             H-representation
             linearity 1 7
             begin
@@ -139,13 +141,13 @@ class Parser():
             sage: game1_str, game2_str = g._Hrepresentation(A, -A)
             sage: g1_name = tmp_filename()
             sage: g2_name = tmp_filename()
-            sage: g1_file = file(g1_name, 'w')
-            sage: g2_file = file(g2_name, 'w')
+            sage: g1_file = open(g1_name, 'w')
+            sage: g2_file = open(g2_name, 'w')
             sage: g1_file.write(game1_str)
             sage: g1_file.close()
             sage: g2_file.write(game2_str)
             sage: g2_file.close()
-            sage: process = Popen(['nash', g1_name, g2_name], stdout=PIPE)  # optional - lrslib
+            sage: process = Popen(['lrsnash', g1_name, g2_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
             sage: lrs_output = [row for row in process.stdout]  # optional - lrslib
 
         The above creates a game, writes the H representation to
@@ -153,7 +155,17 @@ class Parser():
         (here slicing to get rid of some system parameters that get returned)::
 
             sage: lrs_output[5:16]  # optional - lrslib
-            ['\n', '***** 4 4 rational\n', '2  0  1  2 \n', '1  1/2  1/2 -2 \n', '\n', '2  0  1  2 \n', '1  0  1 -2 \n', '\n', '*Number of equilibria found: 2\n', '*Player 1: vertices=3 bases=3 pivots=5\n', '*Player 2: vertices=2 bases=1 pivots=6\n']
+            ['\n',
+             '***** 4 4 rational\n',
+             '2  0  1  2 \n',
+             '1  1/2  1/2 -2 \n',
+             '\n',
+             '2  0  1  2 \n',
+             '1  0  1 -2 \n',
+             '\n',
+             '\n',
+             '*Number of equilibria found: 2\n',
+             '*Player 1: vertices=3 bases=3 pivots=5\n']
 
         The above is pretty messy, here is the output when we put it through
         the parser::
@@ -174,20 +186,37 @@ class Parser():
             sage: game1_str, game2_str = g._Hrepresentation(A, B)
             sage: g1_name = tmp_filename()
             sage: g2_name = tmp_filename()
-            sage: g1_file = file(g1_name, 'w')
-            sage: g2_file = file(g2_name, 'w')
+            sage: g1_file = open(g1_name, 'w')
+            sage: g2_file = open(g2_name, 'w')
             sage: g1_file.write(game1_str)
             sage: g1_file.close()
             sage: g2_file.write(game2_str)
             sage: g2_file.close()
-            sage: process = Popen(['nash', g1_name, g2_name], stdout=PIPE)  # optional - lrslib
+            sage: process = Popen(['lrsnash', g1_name, g2_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
             sage: lrs_output = [row for row in process.stdout]  # optional - lrslib
-            sage: print lrs_output[5:20]  # optional - lrslib
-            ['\n', '***** 5 5 rational\n', '2  0  1/6  5/6  10/3 \n', '2  1/7  0  6/7  23/7 \n', '1  1/3  2/3  0  1 \n', '\n', '2  0  0  1  5 \n', '1  1  0  0  9 \n', '\n', '2  1  0  0  5 \n', '1  0  1  0  6 \n', '\n', '*Number of equilibria found: 4\n', '*Player 1: vertices=6 bases=7 pivots=10\n', '*Player 2: vertices=4 bases=2 pivots=14\n']
+            sage: print(lrs_output[5:20])  # optional - lrslib
+            ['\n',
+             '***** 5 5 rational\n',
+             '2  1/7  0  6/7  23/7 \n',
+             '2  0  1/6  5/6  10/3 \n',
+             '1  1/3  2/3  0  1 \n',
+             '\n',
+             '2  0  0  1  5 \n',
+             '1  1  0  0  9 \n',
+             '\n',
+             '2  1  0  0  5 \n',
+             '1  0  1  0  6 \n',
+             '\n',
+             '\n',
+             '*Number of equilibria found: 4\n',
+             '*Player 1: vertices=6 bases=7 pivots=10\n']
 
             sage: nasheq = Parser(lrs_output).format_lrs()  # optional - lrslib
-            sage: nasheq  # optional - lrslib
-            [[(1/3, 2/3, 0), (0, 1/6, 5/6)], [(1/3, 2/3, 0), (1/7, 0, 6/7)], [(1, 0, 0), (0, 0, 1)], [(0, 1, 0), (1, 0, 0)]]
+            sage: sorted(nasheq)  # optional - lrslib
+            [[(0, 1, 0), (1, 0, 0)],
+             [(1/3, 2/3, 0), (0, 1/6, 5/6)],
+             [(1/3, 2/3, 0), (1/7, 0, 6/7)],
+             [(1, 0, 0), (0, 0, 1)]]
         """
         equilibria = []
         from sage.misc.sage_eval import sage_eval

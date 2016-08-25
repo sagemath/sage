@@ -1,6 +1,7 @@
 """
 Elliptic curves over padic fields
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -20,8 +21,8 @@ Elliptic curves over padic fields
 
 
 import sage.rings.ring as ring
-from ell_field import EllipticCurve_field
-import ell_point
+from .ell_field import EllipticCurve_field
+from . import ell_point
 from sage.rings.all import PolynomialRing
 
 # Elliptic curves are very different than genus > 1 hyperelliptic curves,

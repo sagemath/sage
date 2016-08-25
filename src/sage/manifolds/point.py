@@ -14,9 +14,9 @@ AUTHORS:
 
 REFERENCES:
 
-- [Lee11]_ J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
+- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
   Springer (New York) (2011)
-- [Lee13]_ J.M. Lee : *Introduction to Smooth Manifolds*, 2nd ed.,
+- [Lee13]_ \J.M. Lee : *Introduction to Smooth Manifolds*, 2nd ed.,
   Springer (New York, 2013)
 
 EXAMPLES:
@@ -75,6 +75,7 @@ Points can be compared::
 #*****************************************************************************
 
 from sage.structure.element import Element
+from sage.misc.decorators import options
 
 class ManifoldPoint(Element):
     r"""
@@ -681,4 +682,249 @@ class ManifoldPoint(Element):
 
         """
         return hash(self.parent().manifold())
+
+    @options(size=10, color='black', label_color=None, fontsize=10, label_offset=0.1)
+    def plot(self, chart=None, ambient_coords=None, mapping=None,
+             label=None, parameters=None, **kwds):
+        r"""
+        For real manifolds, plot ``self`` in a Cartesian graph based
+        on the coordinates of some ambient chart.
+
+        The point is drawn in terms of two (2D graphics) or three (3D graphics)
+        coordinates of a given chart, called hereafter the *ambient chart*.
+        The domain of the ambient chart must contain the point, or its image
+        by a continuous manifold map `\Phi`.
+
+        INPUT:
+
+        - ``chart`` -- (default: ``None``) the ambient chart (see above); if
+          ``None``, the ambient chart is set the default chart of
+          ``self.parent()``
+        - ``ambient_coords`` -- (default: ``None``) tuple containing the 2
+          or 3 coordinates of the ambient chart in terms of which the plot
+          is performed; if ``None``, all the coordinates of the ambient
+          chart are considered
+        - ``mapping`` -- (default: ``None``)
+          :class:`~sage.manifolds.continuous_map.ContinuousMap`; continuous
+          manifold map `\Phi` providing the link between the current point
+          `p` and the ambient chart ``chart``: the domain of ``chart`` must
+          contain `\Phi(p)`; if ``None``, the identity map is assumed
+        - ``label`` -- (default: ``None``) label printed next to the point;
+          if ``None``, the point's name is used
+        - ``parameters`` -- (default: ``None``) dictionary giving the numerical
+          values of the parameters that may appear in the point coordinates
+        - ``size`` -- (default: 10) size of the point once drawn as a small
+          disk or sphere
+        - ``color`` -- (default: ``'black'``) color of the point
+        - ``label_color`` -- (default: ``None``) color to print the label;
+          if ``None``, the value of ``color`` is used
+        - ``fontsize`` -- (default: 10) size of the font used to print the
+          label
+        - ``label_offset`` -- (default: 0.1) determines the separation between
+          the point and its label
+
+        OUTPUT:
+
+        - a graphic object, either an instance of
+          :class:`~sage.plot.graphics.Graphics` for a 2D plot (i.e. based on
+          2 coordinates of the ambient chart) or an instance of
+          :class:`~sage.plot.plot3d.base.Graphics3d` for a 3D plot (i.e.
+          based on 3 coordinates of the ambient chart)
+
+        EXAMPLES:
+
+        Drawing a point on a 2-dimensional manifold::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: p = M.point((1,3), name='p')
+            sage: g = p.plot(X)
+            sage: print(g)
+            Graphics object consisting of 2 graphics primitives
+            sage: gX = X.plot(max_range=4) # plot of the coordinate grid
+            sage: g + gX # display of the point atop the coordinate grid
+            Graphics object consisting of 20 graphics primitives
+
+        .. PLOT::
+
+            M = Manifold(2, 'M', structure='topological')
+            X = M.chart('x y'); x,y = X[:]
+            p = M.point((1,3), name='p')
+            g = p.plot(X)
+            gX = X.plot(max_range=4)
+            sphinx_plot(g+gX)
+
+        Actually, since ``X`` is the default chart of the open set in which
+        ``p`` has been defined, it can be skipped in the arguments of
+        ``plot``::
+
+            sage: g = p.plot()
+            sage: g + gX
+            Graphics object consisting of 20 graphics primitives
+
+        Call with some options::
+
+            sage: g = p.plot(chart=X, size=40, color='green', label='$P$',
+            ....:            label_color='blue', fontsize=20, label_offset=0.3)
+            sage: g + gX
+            Graphics object consisting of 20 graphics primitives
+
+        .. PLOT::
+
+            M = Manifold(2, 'M', structure='topological')
+            X = M.chart('x y'); x,y = X[:]
+            p = M.point((1,3), name='p')
+            g = p.plot(chart=X, size=40, color='green', label='$P$', \
+                       label_color='blue', fontsize=20, label_offset=0.3)
+            gX = X.plot(max_range=4)
+            sphinx_plot(g+gX)
+
+        Use of the ``parameters`` option to set a numerical value of some
+        symbolic variable::
+
+            sage: a = var('a')
+            sage: q = M.point((a,2*a), name='q')
+            sage: gq = q.plot(parameters={a:-2}, label_offset=0.2)
+            sage: g + gX + gq
+            Graphics object consisting of 22 graphics primitives
+
+        .. PLOT::
+
+            M = Manifold(2, 'M', structure='topological')
+            X = M.chart('x y'); x,y = X[:]
+            p = M.point((1,3), name='p')
+            g = p.plot(chart=X, size=40, color='green', label='$P$', \
+                       label_color='blue', fontsize=20, label_offset=0.3)
+            var('a')
+            q = M.point((a,2*a), name='q')
+            gq = q.plot(parameters={a:-2}, label_offset=0.2)
+            gX = X.plot(max_range=4)
+            sphinx_plot(g+gX+gq)
+
+        The numerical value is used only for the plot::
+
+            sage: q.coord()
+            (a, 2*a)
+
+        Drawing a point on a 3-dimensional manifold::
+
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: X.<x,y,z> = M.chart()
+            sage: p = M.point((2,1,3), name='p')
+            sage: g = p.plot()
+            sage: print(g)
+            Graphics3d Object
+            sage: gX = X.plot(nb_values=5) # coordinate mesh cube
+            sage: g + gX # display of the point atop the coordinate mesh
+            Graphics3d Object
+
+        Call with some options::
+
+            sage: g = p.plot(chart=X, size=40, color='green', label='P_1',
+            ....:            label_color='blue', fontsize=20, label_offset=0.3)
+            sage: g + gX
+            Graphics3d Object
+
+        An example of plot via a mapping: plot of a point on a 2-sphere viewed
+        in the 3-dimensional space ``M``::
+
+            sage: S2 = Manifold(2, 'S^2', structure='topological')
+            sage: U = S2.open_subset('U') # the open set covered by spherical coord.
+            sage: XS.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
+            sage: p = U.point((pi/4, pi/8), name='p')
+            sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),
+            ....:                           sin(th)*sin(ph), cos(th)]}, name='F')
+            sage: F.display()
+            F: S^2 --> M
+            on U: (th, ph) |--> (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
+            sage: g = p.plot(chart=X, mapping=F)
+            sage: gS2 = XS.plot(chart=X, mapping=F, nb_values=9)
+            sage: g + gS2
+            Graphics3d Object
+
+        Use of the option ``ambient_coords`` for plots on a 4-dimensional
+        manifold::
+
+            sage: M = Manifold(4, 'M', structure='topological')
+            sage: X.<t,x,y,z> = M.chart()
+            sage: p = M.point((1,2,3,4), name='p')
+            sage: g = p.plot(X, ambient_coords=(t,x,y), label_offset=0.4)  # the coordinate z is skipped
+            sage: gX = X.plot(X, ambient_coords=(t,x,y), nb_values=5)  # long time
+            sage: g + gX # 3D plot  # long time
+            Graphics3d Object
+            sage: g = p.plot(X, ambient_coords=(t,y,z), label_offset=0.4)  # the coordinate x is skipped
+            sage: gX = X.plot(X, ambient_coords=(t,y,z), nb_values=5)  # long time
+            sage: g + gX # 3D plot  # long time
+            Graphics3d Object
+            sage: g = p.plot(X, ambient_coords=(y,z), label_offset=0.4)  # the coordinates t and x are skipped
+            sage: gX = X.plot(X, ambient_coords=(y,z))
+            sage: g + gX # 2D plot
+            Graphics object consisting of 20 graphics primitives
+
+        .. PLOT::
+
+            M = Manifold(4, 'M', structure='topological')
+            X = M.chart('t x y z'); t,x,y,z = X[:]
+            p = M.point((1,2,3,4), name='p')
+            g = p.plot(X, ambient_coords=(y,z), label_offset=0.4)
+            gX = X.plot(X, ambient_coords=(y,z))
+            sphinx_plot(g+gX)
+
+        """
+        from sage.plot.point import point2d
+        from sage.plot.text import text
+        from sage.plot.graphics import Graphics
+        from sage.plot.plot3d.shapes2 import point3d, text3d
+        from sage.manifolds.chart import Chart
+        if self._manifold.base_field_type() != 'real':
+            raise NotImplementedError('plot of points on manifolds over fields different'
+                                      ' from the real field is not implemented')
+        # The ambient chart:
+        if chart is None:
+            chart = self.parent().default_chart()
+        elif not isinstance(chart, Chart):
+            raise TypeError("the argument 'chart' must be a coordinate chart")
+        # The effective point to be plotted:
+        if mapping is None:
+            eff_point = self
+        else:
+            eff_point = mapping(self)
+        # The coordinates of the ambient chart used for the plot:
+        if ambient_coords is None:
+            ambient_coords = chart[:]
+        elif not isinstance(ambient_coords, tuple):
+            ambient_coords = tuple(ambient_coords)
+        nca = len(ambient_coords)
+        if nca != 2 and nca != 3:
+            raise TypeError("invalid number of ambient coordinates: {}".format(nca))
+
+        # Extract the kwds options
+        size = kwds['size']
+        color = kwds['color']
+        label_color = kwds['label_color']
+        fontsize = kwds['fontsize']
+        label_offset = kwds['label_offset']
+
+        # The point coordinates:
+        coords = eff_point.coord(chart)
+        xx = chart[:]
+        xp = [coords[xx.index(c)] for c in ambient_coords]
+        if parameters is not None:
+            xps = [coord.substitute(parameters) for coord in xp]
+            xp = xps
+        xlab = [coord + label_offset for coord in xp]
+        if label_color is None:
+            label_color = color
+        resu = Graphics()
+        if nca == 2:
+            if label is None:
+                label = r'$' + self._latex_name + r'$'
+            resu += (point2d(xp, color=color, size=size) +
+                     text(label, xlab, fontsize=fontsize, color=label_color))
+        else:
+            if label is None:
+                label = self._name
+            resu += (point3d(xp, color=color, size=size) +
+                     text3d(label, xlab, fontsize=fontsize, color=label_color))
+        return resu
 

@@ -11,6 +11,7 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 
 - :class:`algebras.Brauer <sage.combinat.diagram_algebras.BrauerAlgebra>`
 - :class:`algebras.Clifford <sage.algebras.clifford_algebra.CliffordAlgebra>`
+- :class:`algebras.Descent <sage.combinat.descent_algebra.DescentAlgebra>`
 - :class:`algebras.DifferentialWeyl
   <sage.algebras.weyl_algebra.DifferentialWeylAlgebra>`
 - :class:`algebras.Exterior <sage.algebras.clifford_algebra.ExteriorAlgebra>`
@@ -67,6 +68,7 @@ lazy_import('sage.algebras.schur_algebra', 'SchurAlgebra', 'Schur')
 lazy_import('sage.algebras.commutative_dga', 'GradedCommutativeAlgebra', 'GradedCommutative')
 lazy_import('sage.algebras.yokonuma_hecke_algebra', 'YokonumaHeckeAlgebra', 'YokonumaHecke')
 lazy_import('sage.combinat.posets.incidence_algebras', 'IncidenceAlgebra', 'Incidence')
+lazy_import('sage.combinat.descent_algebra', 'DescentAlgebra', 'Descent')
 lazy_import('sage.combinat.diagram_algebras', 'BrauerAlgebra', 'Brauer')
 lazy_import('sage.combinat.diagram_algebras', 'PartitionAlgebra', 'Partition')
 lazy_import('sage.combinat.diagram_algebras', 'PlanarAlgebra', 'PlanarPartition')

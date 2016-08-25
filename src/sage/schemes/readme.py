@@ -16,7 +16,7 @@ AUTHORS:
 - William Stein (2006-01-20)
 - Andrey Novoseltsev (2010-09-24): update due to addition of toric varieties.
 
-.. comment seperator
+.. comment separator
 
 - **Scheme:**
   A scheme whose datatype might not be defined in terms

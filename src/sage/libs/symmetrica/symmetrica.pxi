@@ -448,8 +448,8 @@ cdef void late_import():
     import sage.combinat.sf.sf
     SymmetricFunctions = sage.combinat.sf.sf.SymmetricFunctions
 
-    import __builtin__
-    builtinlist = __builtin__.list
+    from six.moves import builtins
+    builtinlist = builtins.list
 
     import sage.rings.polynomial.multi_polynomial_ring
     MPolynomialRing_generic = sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_generic
@@ -470,7 +470,6 @@ cdef void late_import():
 cdef object _py(OP a):
     cdef OBJECTKIND objk
     objk = s_o_k(a)
-    #print objk
     if objk == INTEGER:
         return _py_int(a)
     elif objk == LONGINT:
@@ -511,7 +510,7 @@ cdef object _py(OP a):
         return _py_schubert(a)
     else:
         #println(a)
-        raise NotImplementedError, str(objk)
+        raise NotImplementedError(str(objk))
 
 cdef int _op(object a, OP result) except -1:
     late_import()
@@ -522,7 +521,7 @@ cdef int _op(object a, OP result) except -1:
     elif isinstance(a, Rational):
         _op_fraction(a, result)
     else:
-        raise TypeError, "cannot convert a (= %s) to OP"%a
+        raise TypeError("cannot convert a (= %s) to OP" % a)
 
 def test_integer(object x):
     """
@@ -546,7 +545,7 @@ def test_integer(object x):
         -1267650600228229401496703205376
         sage: for i in range(100):
         ....:     if test_integer(2^i) != 2^i:
-        ....:         print "Failure at", i
+        ....:         print("Failure at {}".format(i))
     """
     cdef OP a = callocobject()
     _op_integer(x, a)
@@ -839,11 +838,11 @@ cdef object _op_polynom(object d, OP res):
     poly_ring = d.parent()
 
     if not isinstance(poly_ring, MPolynomialRing_generic):
-        raise TypeError, "you must pass a multivariate polynomial"
+        raise TypeError("you must pass a multivariate polynomial")
     base_ring = poly_ring.base_ring()
 
     if not ( base_ring == ZZ or base_ring == QQ):
-        raise TypeError, "the base ring must be either ZZ or QQ"
+        raise TypeError("the base ring must be either ZZ or QQ")
 
     cdef OP c = callocobject(), v = callocobject()
     cdef OP pointer = res
@@ -990,7 +989,7 @@ cdef void* _op_schur_general_sf(object f, OP res):
     late_import()
     base_ring = f.parent().base_ring()
     if not ( base_ring is QQ or base_ring is ZZ ):
-        raise ValueError, "the base ring must be either ZZ or QQ"
+        raise ValueError("the base ring must be either ZZ or QQ")
 
     _op_schur_general_dict( f.monomial_coefficients(), res)
 
@@ -1006,7 +1005,7 @@ cdef void* _op_schur_general_dict(object d, OP res):
     n = len(keys)
 
     if n == 0:
-        raise ValueError, "the dictionary must be nonempty"
+        raise ValueError("the dictionary must be nonempty")
 
     b_skn_s( callocobject(), callocobject(), NULL, res)
     _op_partition( keys[0], s_s_s(res))
@@ -1043,7 +1042,7 @@ cdef void* _op_schubert_sp(object f, OP res):
     late_import()
     base_ring = f.parent().base_ring()
     if not ( base_ring is QQ or base_ring is ZZ ):
-        raise ValueError, "the base ring must be either ZZ or QQ"
+        raise ValueError("the base ring must be either ZZ or QQ")
 
     _op_schubert_dict( f.monomial_coefficients(), res)
 
@@ -1058,7 +1057,7 @@ cdef void* _op_schubert_dict(object d, OP res):
     n = len(keys)
 
     if n == 0:
-        raise ValueError, "the dictionary must be nonempty"
+        raise ValueError("the dictionary must be nonempty")
 
     b_skn_sch( callocobject(), callocobject(), NULL, res)
     _op_permutation( keys[0], s_sch_s(res))

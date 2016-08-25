@@ -7,6 +7,8 @@ Subsets satisfying a hereditary property
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
+
 
 def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
     r"""
@@ -92,7 +94,7 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
         []
         sage: list(subsets_with_hereditary_property(lambda x:len(x)<1,range(4)))
         [[]]
-        sage: print list(subsets_with_hereditary_property(lambda x:True,range(2)))
+        sage: list(subsets_with_hereditary_property(lambda x:True,range(2)))
         [[], [0], [1], [0, 1]]
     """
     from sage.data_structures.bitset import Bitset

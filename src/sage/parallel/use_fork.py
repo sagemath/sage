@@ -11,6 +11,7 @@ Parallel iterator built using the ``fork()`` system call
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import, print_function
 
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
@@ -178,12 +179,12 @@ class p_iter_fork:
                             os.unlink(out)
 
                         if output.strip():
-                            print output,
+                            print(output, end="")
 
                         yield (w[0], X)
 
         except Exception as msg:
-            print msg
+            print(msg)
 
         finally:
             # Clean up all temporary files.
@@ -193,12 +194,12 @@ class p_iter_fork:
                 os.rmdir(dir)
             except OSError as msg:
                 if self.verbose:
-                    print msg
+                    print(msg)
 
             # Send "kill -9" signal to workers that are left.
             if len(workers) > 0:
                 if self.verbose:
-                    print "Killing any remaining workers..."
+                    print("Killing any remaining workers...")
                 sys.stdout.flush()
                 for pid in workers.keys():
                     try:
@@ -206,7 +207,7 @@ class p_iter_fork:
                         os.waitpid(pid, 0)
                     except OSError as msg:
                         if self.verbose:
-                            print msg
+                            print(msg)
 
     def _subprocess(self, f, dir, x):
         """
@@ -257,7 +258,7 @@ class p_iter_fork:
 
         except Exception as msg:
             # Important to print this, so it is seen by the caller.
-            print msg
+            print(msg)
         finally:
             sys.stdout.flush()
             os._exit(0)

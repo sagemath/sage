@@ -1,7 +1,8 @@
-from lazy_attribute import lazy_attribute, lazy_class_attribute
-from lazy_import import lazy_import
+from __future__ import absolute_import
+from .lazy_attribute import lazy_attribute, lazy_class_attribute
+from .lazy_import import lazy_import
 
-from misc import (alarm, cancel_alarm,
+from .misc import (alarm, cancel_alarm,
                   ellipsis_range, ellipsis_iter, xsrange, sxrange,
                   BackslashOperator, getitem,
                   cputime, verbose, set_verbose, set_verbose_files,
@@ -17,78 +18,78 @@ from misc import (alarm, cancel_alarm,
 
 lazy_import('sage.arith.srange', 'srange', deprecation=20334)
 
-from banner import version, banner
+from .banner import version, banner
 
-from temporary_file import tmp_dir, tmp_filename
+from .temporary_file import tmp_dir, tmp_filename
 
 from .misc_c import prod, running_total, balanced_sum
 lazy_import('sage.misc.misc_c', ['is_32_bit', 'is_64_bit'], deprecation=17460)
 mul = prod
 add = sum
 
-from dev_tools import runsnake, import_statements
+from .dev_tools import runsnake, import_statements
 
-from html import html
+from .html import html
 
-from table import table
+from .table import table
 
-from sage_timeit_class import timeit
+from .sage_timeit_class import timeit
 
-from edit_module import edit, set_edit_template
+from .edit_module import edit, set_edit_template
 
-from flatten import flatten
+from .flatten import flatten
 
-from map_threaded import map_threaded
+from .map_threaded import map_threaded
 
-from session import load_session, save_session, show_identifiers
+from .session import load_session, save_session, show_identifiers
 
-from remote_file import get_remote_file
+from .remote_file import get_remote_file
 
-from profiler import Profiler
+from .profiler import Profiler
 
-from mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
+from .mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
 
-from fpickle import pickle_function, unpickle_function
+from .fpickle import pickle_function, unpickle_function
 
-from dist import install_scripts
+from .dist import install_scripts
 
-from package import (install_package,
+from .package import (install_package,
         installed_packages, is_package_installed,
         standard_packages, optional_packages, experimental_packages,
         upgrade, package_versions)
 
-from pager import pager
+from .pager import pager
 
 lazy_import('sage.misc.sagedoc', ['browse_sage_doc',
         'search_src', 'search_def', 'search_doc',
         'tutorial', 'reference', 'manual', 'developer',
         'constructions', 'python_help', 'help'])
 
-from classgraph import class_graph
+from .classgraph import class_graph
 
-from reset import reset, restore
+from .reset import reset, restore
 
-from getusage import top, get_memory_usage
+from .getusage import top, get_memory_usage
 
-from mathml import mathml
+from .mathml import mathml
 
-from defaults import (set_default_variable_name,
+from .defaults import (set_default_variable_name,
                         series_precision, set_series_precision)
 
-from sage_eval import sage_eval, sageobj
+from .sage_eval import sage_eval, sageobj
 
-from sage_input import sage_input
+from .sage_input import sage_input
 
 lazy_import("sage.misc.cython", ["cython_lambda", "cython_create_local_so"]) 
 lazy_import("sage.misc.cython_c", "cython_compile", "cython")
 lazy_import("sage.misc.cython_c", "cython_compile", "pyrex", deprecation=9552)
 lazy_import("sage.misc.cython_c", "cython_compile", "sagex", deprecation=9552)
 
-from persist import save, load, dumps, loads, db, db_save
+from .persist import save, load, dumps, loads, db, db_save
 
-from func_persist import func_persist
+from .func_persist import func_persist
 
-from functional import (additive_order,
+from .functional import (additive_order,
                         base_ring,
                         base_field,
                         basis,
@@ -147,27 +148,27 @@ from functional import (additive_order,
                         zero)
 
 
-from latex import LatexExpr, latex, view, pretty_print_default
+from .latex import LatexExpr, latex, view, pretty_print_default
 
-from trace import trace
+from .trace import trace
 
-from constant_function import ConstantFunction
+from .constant_function import ConstantFunction
 
-from cachefunc import CachedFunction, cached_function, cached_method, cached_in_parent_method, disk_cached_function
+from .cachefunc import CachedFunction, cached_function, cached_method, cached_in_parent_method, disk_cached_function
 
-from abstract_method import abstract_method
+from .abstract_method import abstract_method
 
-from randstate import seed, set_random_seed, initial_seed, current_randstate
+from .randstate import seed, set_random_seed, initial_seed, current_randstate
 
-from prandom import *
+from .prandom import *
 
-from sage_unittest import TestSuite
+from .sage_unittest import TestSuite
 
-from explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
+from .explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
 
-from decorators import specialize, sage_wraps, infix_operator
+from .decorators import specialize, sage_wraps, infix_operator
 
-from unknown import Unknown
+from .unknown import Unknown
 
 lazy_import('sage.misc.inline_fortran', 'fortran')
 

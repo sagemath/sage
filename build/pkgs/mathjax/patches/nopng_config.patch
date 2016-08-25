@@ -1,6 +1,6 @@
-diff --git a/src/config/default.js b/src/config/default.js
---- a/src/config/default.js
-+++ b/src/config/default.js
+diff --git a/config/default.js b/config/default.js
+--- a/config/default.js
++++ b/config/default.js
 @@ -693,7 +693,7 @@ MathJax.Hub.Config({
      //  will be required to to download and install either the STIX fonts or the
      //  MathJax TeX fonts.

@@ -95,8 +95,17 @@ class Function_sin(GinacFunction):
             sage: sin(pi*x)
             sin(pi*x)
             sage: forget()
+
+        Check that :trac:`20752` is fixed::
+
+            sage: sin(3*pi+41/42*pi)
+            -sin(1/42*pi)
+            sage: sin(-5*pi+1/42*pi)
+            -sin(1/42*pi)
+            sage: sin(pi-1/42*pi)
+            sin(1/42*pi)
         """
-        GinacFunction.__init__(self, "sin", latex_name=r"\sin",
+        GinacFunction.__init__(self, 'sin', latex_name=r"\sin",
                 conversions=dict(maxima='sin',mathematica='Sin'))
 
 sin = Function_sin()
@@ -135,8 +144,16 @@ class Function_cos(GinacFunction):
             sage: cos(complex(1,1))     # rel tol 1e-15
             (0.8337300251311491-0.9888977057628651j)
 
+        Check that :trac:`20752` is fixed::
+
+            sage: cos(3*pi+41/42*pi)
+            cos(1/42*pi)
+            sage: cos(-5*pi+1/42*pi)
+            -cos(1/42*pi)
+            sage: cos(pi-1/42*pi)
+            -cos(1/42*pi)
         """
-        GinacFunction.__init__(self, "cos", latex_name=r"\cos",
+        GinacFunction.__init__(self, 'cos', latex_name=r"\cos",
                 conversions=dict(maxima='cos',mathematica='Cos'))
 
 cos = Function_cos()
@@ -184,7 +201,7 @@ class Function_tan(GinacFunction):
             sage: tan(2+I).imag().n()
             1.16673625724092
         """
-        GinacFunction.__init__(self, "tan", latex_name=r"\tan")
+        GinacFunction.__init__(self, 'tan', latex_name=r"\tan")
 
 tan = Function_tan()
 
@@ -247,7 +264,7 @@ class Function_cot(GinacFunction):
             sage: cot(1.+I)
             0.217621561854403 - 0.868014142895925*I
         """
-        GinacFunction.__init__(self, "cot", latex_name=r"\cot")
+        GinacFunction.__init__(self, 'cot', latex_name=r"\cot")
 
     def _eval_numpy_(self, x):
         """
@@ -258,7 +275,7 @@ class Function_cot(GinacFunction):
              sage: cot(a)
              array([-0.45765755, -7.01525255,  0.86369115])
         """
-        return 1 / tan(x)
+        return 1.0 / tan(x)
 
 cot = Function_cot()
 
@@ -314,7 +331,7 @@ class Function_sec(GinacFunction):
             sage: sec(complex(1,1))     # rel tol 1e-15
             (0.49833703055518686+0.5910838417210451j)
         """
-        GinacFunction.__init__(self, "sec", latex_name=r"\sec")
+        GinacFunction.__init__(self, 'sec', latex_name=r"\sec")
 
     def _eval_numpy_(self, x):
         """
@@ -380,7 +397,7 @@ class Function_csc(GinacFunction):
             sage: csc(complex(1,1))     # rel tol 1e-15
             (0.6215180171704284-0.30393100162842646j)
         """
-        GinacFunction.__init__(self, "csc", latex_name=r"\csc")
+        GinacFunction.__init__(self, 'csc', latex_name=r"\csc")
 
     def _eval_numpy_(self, x):
         """
@@ -572,7 +589,7 @@ class Function_arctan(GinacFunction):
             sage: arctan(-x).subs(x=-oo)
             1/2*pi
         """
-        GinacFunction.__init__(self, "arctan", latex_name=r'\arctan',
+        GinacFunction.__init__(self, 'arctan', latex_name=r"\arctan",
                 conversions=dict(maxima='atan', sympy='atan'))
 
 arctan = atan = Function_arctan()
@@ -620,7 +637,7 @@ class Function_arccot(GinacFunction):
             0.553574358897045 - 0.402359478108525*I
 
         """
-        GinacFunction.__init__(self, "arccot", latex_name=r'{\rm arccot}',
+        GinacFunction.__init__(self, 'arccot', latex_name=r"\operatorname{arccot}",
                 conversions=dict(maxima='acot', sympy='acot'))
 
     def _eval_numpy_(self, x):
@@ -674,7 +691,7 @@ class Function_arccsc(GinacFunction):
             sage: arccsc(complex(1,1))  # rel tol 1e-15
             (0.45227844715119064-0.5306375309525178j)
         """
-        GinacFunction.__init__(self, "arccsc", latex_name=r'{\rm arccsc}',
+        GinacFunction.__init__(self, 'arccsc', latex_name=r"\operatorname{arccsc}",
                                    conversions=dict(maxima='acsc'))
 
     def _eval_numpy_(self, x):
@@ -730,7 +747,7 @@ class Function_arcsec(GinacFunction):
             sage: arcsec(complex(1,1))  # rel tol 1e-15
             (1.118517879643706+0.5306375309525178j)
         """
-        GinacFunction.__init__(self, "arcsec", latex_name=r'{\rm arcsec}',
+        GinacFunction.__init__(self, 'arcsec', latex_name=r"\operatorname{arcsec}",
                                    conversions=dict(maxima='asec'))
 
     def _eval_numpy_(self, x):
@@ -865,7 +882,7 @@ class Function_arctan2(GinacFunction):
             sage: arctan2(0, I*I)
             pi
         """
-        GinacFunction.__init__(self, "arctan2", nargs=2, latex_name=r'\arctan',
+        GinacFunction.__init__(self, 'arctan2', nargs=2, latex_name=r"\arctan",
                 conversions=dict(maxima='atan2', sympy='atan2'))
 
 arctan2 = atan2 = Function_arctan2()

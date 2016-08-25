@@ -1,5 +1,5 @@
---- app_minkowski.cpp.orig	2011-01-24 06:21:47.000000000 +1300
-+++ app_minkowski.cpp	2012-07-23 11:43:29.172776129 +1200
+--- a/app_minkowski.cpp.orig	2011-01-24 06:21:47.000000000 +1300
++++ b/app_minkowski.cpp	2012-07-23 11:43:29.172776129 +1200
 @@ -64,9 +64,9 @@
      registerOptions();
      optionPartOne.hide();

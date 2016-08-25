@@ -407,7 +407,7 @@ interface to Singular::
         //                  : names    x y
         //        block   2 : ordering C
     sage: f = singular('y^2-x^9-x')
-    sage: print singular.eval("list X1=Adj_div(%s);"%f.name())
+    sage: print(singular.eval("list X1=Adj_div(%s);"%f.name()))
     Computing affine singular points ...
     Computing all points at infinity ...
     Computing affine singular places ...
@@ -416,9 +416,9 @@ interface to Singular::
     Adjunction divisor computed successfully
     <BLANKLINE>
     The genus of the curve is 4
-    sage: print singular.eval("list X2=NSplaces(1,X1);")
+    sage: print(singular.eval("list X2=NSplaces(1,X1);"))
     Computing non-singular affine places of degree 1 ...
-    sage: print singular.eval("list X3=extcurve(1,X2);")
+    sage: print(singular.eval("list X3=extcurve(1,X2);"))
     <BLANKLINE>
     Total number of rational places : 6
     <BLANKLINE>
@@ -428,7 +428,7 @@ interface to Singular::
     ''
     sage: L = singular.eval("POINTS;")
 
-    sage: print L
+    sage: print(L)
     [1]:
        [1]:
           0
@@ -469,7 +469,6 @@ just that.
         """
         Pts=[]
         n=len(L)
-        #print n
         #start block to compute a pt
         L1=L
         while len(L1)>32:
@@ -479,11 +478,9 @@ just that.
             idx=L1.index("     ")
             idx2=L1[idx:].index("\n")
             L2=L1[idx:idx+idx2]
-            #print L2
             pt.append(F(eval(L2)))
             # end block1 to compute pt
             L1=L1[idx+8:] # repeat block 2 more times
-            #print len(L1)
             ## start block2 for compute pt
             idx=L1.index("     ")
             idx2=L1[idx:].index("\n")
@@ -499,7 +496,6 @@ just that.
                 idx2=len(L1[idx:])
             L2=L1[idx:idx+idx2]
             pt.append(F(eval(L2)))
-            #print pt
             # end block3 to compute pt
             #end block to compute a pt
             Pts.append(tuple(pt))  # repeat until no more pts

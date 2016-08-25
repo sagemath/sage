@@ -16,6 +16,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 import math
 
 from sage.plot.all import line
@@ -82,8 +84,8 @@ class SpikeFunction:
                 del v[i+1]
 
         if notify:
-            print "Some overlapping spikes have been deleted."
-            print "You might want to use a smaller value for eps."
+            print("Some overlapping spikes have been deleted.")
+            print("You might want to use a smaller value for eps.")
 
         self.v = v
         self.eps = eps

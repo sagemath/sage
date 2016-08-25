@@ -48,6 +48,7 @@ AUTHORS:
 
 - William Stein
 """
+from __future__ import absolute_import
 
 
 #*****************************************************************************
@@ -67,9 +68,9 @@ AUTHORS:
 
 from sage.rings.all import RDF
 from sage.matrix.constructor import matrix
-from shapes import Box, ColorCube
-from shapes2 import frame3d
-from index_face_set import IndexFaceSet
+from .shapes import Box, ColorCube
+from .shapes2 import frame3d
+from .index_face_set import IndexFaceSet
 
 
 def index_face_set(face_list, point_list, enclosed, **kwds):

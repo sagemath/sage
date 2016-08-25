@@ -3,6 +3,7 @@ Installing shortcut scripts
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
 import os
 
 def install_scripts(directory=None, ignore_existing=False):
@@ -79,7 +80,7 @@ def install_scripts(directory=None, ignore_existing=False):
         # We do this since the intended user of install_scripts
         # will likely be pretty clueless about how to use Sage or
         # its help system.
-        import sagedoc
+        from . import sagedoc
         print(sagedoc.format(install_scripts.__doc__))
         print("USAGE: install_scripts('directory')")
         return

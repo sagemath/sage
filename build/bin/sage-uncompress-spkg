@@ -1,47 +1,23 @@
 #!/usr/bin/env python
 
-# USAGE:
-#
-#   sage-uncompress-spkg PKG [FILE]
-#
-# With a single argument, unpack the file PKG to the current directory.
-#
-# If FILE is specified, extract FILE from PKG and send it to
-# stdout. (This option is present only for backwards compatibility:
-# printing the SPKG.txt file from an old-style spkg.)
+# usage: sage-uncompress-spkg [-h] [-d DIR] PKG [FILE]
+# 
+# positional arguments:
+#   PKG         the archive to extract
+#   FILE        (deprecated) print the contents of the given archive member to
+#               stdout
+# 
+# optional arguments:
+#   -h, --help  show this help message and exit
+#   -d DIR      directory to extract archive contents into
 
-import sys
-import tarfile
-import zipfile
 
-if __name__ == '__main__':
-    filename = sys.argv[1]
-    if tarfile.is_tarfile(filename):
-        # tar file, possibly compressed:
-        archive = tarfile.open(filename, 'r:*')
-        if len(sys.argv) == 2:
-            archive.extractall()
-        else:
-            member = sys.argv[2]
-            if member in archive.getnames():
-                SPKG_TXT = archive.extractfile(member)
-                sys.stdout.write(SPKG_TXT.read())
-                exit(1)
-        archive.close()
-        exit(0)
-    if zipfile.is_zipfile(filename):
-        # zip file:
-        archive = zipfile.ZipFile(filename, 'r')
-        if len(sys.argv) == 2:
-            archive.extractall()
-        else:
-            member = sys.argv[2]
-            if member in archive.namelist():
-                sys.stdout.write(archive.read(member))
-            else:
-                exit(1)
-        archive.close()
-        exit(0)
-    else:
-        print ('Error: Unknown file type: {}'.format(filename))
-        exit(1)
+try:
+    import sage_bootstrap
+except ImportError:
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    import sage_bootstrap
+
+from sage_bootstrap.uncompress.cmdline import run
+run()

@@ -35,6 +35,7 @@ We verify Lagrange's four squares identity::
     sage: (a0^2 + a1^2 + a2^2 + a3^2)*(b0^2 + b1^2 + b2^2 + b3^2) == (a0*b0 - a1*b1 - a2*b2 - a3*b3)^2 + (a0*b1 + a1*b0 + a2*b3 - a3*b2)^2 + (a0*b2 - a1*b3 + a2*b0 + a3*b1)^2 + (a0*b3 + a1*b2 - a2*b1 + a3*b0)^2
     True
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #
@@ -58,11 +59,11 @@ We verify Lagrange's four squares identity::
 from sage.structure.element import CommutativeRingElement, canonical_coercion, coerce_binop
 from sage.misc.all import prod
 import sage.rings.integer
-import polydict
+from . import polydict
 from sage.structure.factorization import Factorization
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
 from sage.structure.sequence import Sequence
-from multi_polynomial import MPolynomial
+from .multi_polynomial import MPolynomial
 from sage.categories.morphism import Morphism
 
 def is_MPolynomial(x):
@@ -1779,12 +1780,34 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.quo_rem(x)
             (x*y + 1.00000000000000, 1.00000000000000)
 
+            sage: R = QQ['a','b']['x','y','z']
+            sage: p1 = R('a + (1+2*b)*x*y + (3-a^2)*z')
+            sage: p2 = R('x-1')
+            sage: p1.quo_rem(p2)
+            ((2*b + 1)*y, (2*b + 1)*y + (-a^2 + 3)*z + a)
+
+            sage: R.<x,y> = Qp(5)[]
+            sage: x.quo_rem(y)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this ring to a Singular ring defined
+
         ALGORITHM: Use Singular.
         """
         R = self.parent()
-        R._singular_().set_ring()
-        X = self._singular_().division(right._singular_())
-        return R(X[1][1,1]), R(X[2][1])
+        try:
+            R._singular_().set_ring()
+        except TypeError:
+            f = self.parent().flattening_morphism()
+            if f.domain() != f.codomain():
+                g = f.section()
+                q,r = f(self).quo_rem(f(right))
+                return g(q), g(r)
+            else:
+                raise
+        else:
+            X = self._singular_().division(right._singular_())
+            return R(X[1][1,1]), R(X[2][1])
 
     def resultant(self, other, variable=None):
         """

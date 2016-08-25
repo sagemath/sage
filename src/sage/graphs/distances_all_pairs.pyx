@@ -148,6 +148,7 @@ Functions
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include "sage/data_structures/binary_matrix.pxi"
 from libc.string cimport memset
@@ -1325,13 +1326,13 @@ def diameter(G, algorithm='iFUB', source=None):
         sage: d1 = diameter(G, algorithm='standard')
         sage: d2 = diameter(G, algorithm='iFUB')
         sage: d3 = diameter(G, algorithm='iFUB', source=G.random_vertex())
-        sage: if d1!=d2 or d1!=d3: print "Something goes wrong!"
+        sage: if d1!=d2 or d1!=d3: print("Something goes wrong!")
 
     Comparison of lower bound algorithms::
 
         sage: lb2 = diameter(G, algorithm='2sweep')
         sage: lbm = diameter(G, algorithm='multi-sweep')
-        sage: if not (lb2<=lbm and lbm<=d3): print "Something goes wrong!"
+        sage: if not (lb2<=lbm and lbm<=d3): print("Something goes wrong!")
 
     TEST:
 
@@ -1595,7 +1596,7 @@ def floyd_warshall(gg, paths = True, distances = False):
 
         sage: g = graphs.Grid2dGraph(2,2)
         sage: from sage.graphs.distances_all_pairs import floyd_warshall
-        sage: print floyd_warshall(g)
+        sage: print(floyd_warshall(g))
         {(0, 1): {(0, 1): None, (1, 0): (0, 0), (0, 0): (0, 1), (1, 1): (0, 1)},
         (1, 0): {(0, 1): (0, 0), (1, 0): None, (0, 0): (1, 0), (1, 1): (1, 0)},
         (0, 0): {(0, 1): (0, 0), (1, 0): (0, 0), (0, 0): None, (1, 1): (0, 1)},

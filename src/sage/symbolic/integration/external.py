@@ -88,9 +88,9 @@ def fricas_integrator(expression, v, a=None, b=None):
         sage: fricas_integrator(cos(x), x)                                      # optional - fricas
         sin(x)
         sage: fricas_integrator(1/(x^2-2), x, 0, 1)                             # optional - fricas
-        1/4*(log(3*sqrt(2) - 4) - log(sqrt(2)))*sqrt(2)
+        1/4*sqrt(2)*(log(3*sqrt(2) - 4) - log(sqrt(2)))
         sage: fricas_integrator(1/(x^2+6), x, -oo, oo)                          # optional - fricas
-        1/6*pi*sqrt(6)
+        1/6*sqrt(6)*pi
     """
     if not isinstance(expression, Expression):
         expression = SR(expression)

@@ -1,7 +1,7 @@
-diff --git a/src.bak/src/Makefile.am b/src/src/Makefile.am
+diff --git a/src/Makefile.am b/src/Makefile.am
 index 17f8625..ad50af2 100644
---- a/src.bak/src/Makefile.am
-+++ b/src/src/Makefile.am
+--- a/src/Makefile.am
++++ b/src/Makefile.am
 @@ -11,7 +11,8 @@ testshoot \
  testcdd2 \
  testlp1 \

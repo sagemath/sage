@@ -15,6 +15,7 @@ Test backwards compatibility::
     See http://trac.sagemath.org/16930 for details.
     Finite Field in a of size 3^2
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2010-2012 David Roe
@@ -146,7 +147,7 @@ class FiniteField_givaro(FiniteField):
         if q >= 1<<16:
             raise ValueError("q must be < 2^16")
 
-        from finite_field_constructor import GF
+        from .finite_field_constructor import GF
         FiniteField.__init__(self, GF(p), name, normalize=False)
 
         self._kwargs['repr'] = repr
@@ -441,7 +442,7 @@ class FiniteField_givaro(FiniteField):
         try:
             return self._prime_subfield
         except AttributeError:
-            from finite_field_constructor import GF
+            from .finite_field_constructor import GF
             self._prime_subfield = GF(self.characteristic())
             return self._prime_subfield
 
@@ -534,7 +535,7 @@ class FiniteField_givaro(FiniteField):
             sage: list(GF(2**2, 'a'))
             [0, a, a + 1, 1]
         """
-        from element_givaro import FiniteField_givaro_iterator
+        from .element_givaro import FiniteField_givaro_iterator
         return FiniteField_givaro_iterator(self._cache)
 
     def a_times_b_plus_c(self, a, b, c):

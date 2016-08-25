@@ -1,6 +1,7 @@
 """
 Monomial symmetric functions
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2010 Anne Schilling <anne at math.ucdavis.edu> (addition)
@@ -18,7 +19,7 @@ Monomial symmetric functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import classical
+from . import classical
 import sage.libs.symmetrica.all as symmetrica
 from sage.rings.integer import Integer
 from sage.combinat.partition import Partition

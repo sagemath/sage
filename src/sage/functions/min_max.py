@@ -33,12 +33,13 @@ This works as expected for more than two entries::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
+from __future__ import absolute_import
 
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 
-from __builtin__ import max as builtin_max, min as builtin_min
+from six.moves.builtins import max as builtin_max, min as builtin_min
 
 class MinMax_base(BuiltinFunction):
     def eval_helper(self, this_f, builtin_f, initial_val, args):

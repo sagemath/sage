@@ -6,6 +6,7 @@ AUTHORS:
 - Peter Bruin (June 2013): initial version, based on
   finite_field_ext_pari.py by William Stein et al.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013 Peter Bruin <peter.bruin@math.uzh.ch>
@@ -17,9 +18,9 @@ AUTHORS:
 #*****************************************************************************
 
 
-from element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from finite_field_base import FiniteField
-from finite_field_constructor import GF
+from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from .finite_field_base import FiniteField
+from .finite_field_constructor import GF
 
 class FiniteField_pari_ffelt(FiniteField):
     """

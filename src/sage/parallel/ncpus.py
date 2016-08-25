@@ -29,8 +29,10 @@ CPU Detection
 
 ######
 # This is from ParallelPython (the pp.py file).
+from __future__ import absolute_import
 
-import os, subprocess
+import os
+import subprocess
 
 def ncpus():
     """

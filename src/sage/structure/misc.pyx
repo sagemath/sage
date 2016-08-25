@@ -80,7 +80,7 @@ cdef class AttributeErrorMessage:
         True
         sage: ElementError
         AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla',)
-        sage: isinstance(ElementError.message, sage.structure.misc.AttributeErrorMessage)
+        sage: isinstance(ElementError.args[0], sage.structure.misc.AttributeErrorMessage)
         True
 
     Hence, if one really needs the error message as a string, then one should

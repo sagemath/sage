@@ -112,19 +112,20 @@ TESTS::
     sage: TestSuite(M).run()
 
 """
+from __future__ import absolute_import
 
-import power_series_poly
-import power_series_mpoly
-import power_series_ring_element
+from . import power_series_poly
+from . import power_series_mpoly
+from . import power_series_ring_element
 
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
-from polynomial.polynomial_ring_constructor import PolynomialRing
-import laurent_series_ring
-import laurent_series_ring_element
-import integer
+from .polynomial.polynomial_ring_constructor import PolynomialRing
+from . import laurent_series_ring
+from . import laurent_series_ring_element
+from . import integer
 from . import ring
-from infinity import infinity
+from .infinity import infinity
 import sage.misc.latex as latex
 from sage.structure.nonexact import Nonexact
 
@@ -879,7 +880,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         if im_gens[0] == 0:
             return True   # this is allowed.
-        from laurent_series_ring import is_LaurentSeriesRing
+        from .laurent_series_ring import is_LaurentSeriesRing
         if is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
             return im_gens[0].valuation() > 0
         return False

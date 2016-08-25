@@ -305,7 +305,7 @@ class LinearExpression(ModuleElement):
         coeffs.set_immutable()
         return self.__class__(self.parent(), coeffs, const)
     
-    def _rmul_(self, scalar):
+    def _lmul_(self, scalar):
         """
         Multiply a linear expression by a scalar.
 
@@ -333,8 +333,6 @@ class LinearExpression(ModuleElement):
         coeffs = scalar * self._coeffs
         coeffs.set_immutable()
         return self.__class__(self.parent(), coeffs, const)
-
-    _lmul_ = _rmul_
         
     def _acted_upon_(self, scalar, self_on_left):
         """

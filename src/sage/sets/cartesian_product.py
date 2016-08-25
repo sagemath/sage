@@ -343,6 +343,19 @@ class CartesianProduct(UniqueRepresentation, Parent):
             """
             return iter(self.value)
 
+        def __len__(self):
+            r"""
+            Return the number of factors in the cartesian product from which ``self`` comes.
+
+            EXAMPLES::
+
+                sage: C = cartesian_product([ZZ, QQ, CC])
+                sage: e = C.random_element()
+                sage: len(e)
+                3
+            """
+            return len(self.value)
+
         def cartesian_factors(self):
             r"""
             Return the tuple of elements that compose this element.

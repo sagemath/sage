@@ -18,7 +18,7 @@ def strict_to_odd_part_symmetrica(part):
     cdef INT i
     for i from 0 <= i < len(part)-1:
         if part[i] == part[i+1]:
-            raise ValueError, "the partition part (= %s) must be strict"%str(part)
+            raise ValueError("the partition part (= %s) must be strict" % str(part))
 
     cdef OP cpart, cres
     anfang()
@@ -48,7 +48,7 @@ def odd_to_strict_part_symmetrica(part):
     cdef INT i
     for i from 0 <= i < len(part):
         if part[i] % 2 == 0:
-            raise ValueError, "the partition part (= %s) must be odd"%str(part)
+            raise ValueError("the partition part (= %s) must be odd" % str(part))
 
     cdef OP cpart, cres
     anfang()

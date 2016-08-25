@@ -13,7 +13,7 @@ To obtain the dual group of a finite Abelian group, use the
     Dual of Abelian Group isomorphic to Z/2Z x Z/3Z x Z/5Z x Z/7Z x Z/8Z
     over Cyclotomic Field of order 840 and degree 192
 
-The elements of the dual group can be evaluated on elements of the orignial group::
+The elements of the dual group can be evaluated on elements of the original group::
 
     sage: a,b,c,d,e = F.gens()
     sage: A,B,C,D,E = Fd.gens()
@@ -53,6 +53,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import operator
 
@@ -233,9 +234,5 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
         if display:
             s = str(g)+" = "+add_strings(["("+str(words[LL2[i]-1])+")^"+str(LL1[i])+"*" for i in range(nn)])
             m = len(s)
-            print "      ",s[:m-1],"\n"
+            print("      ", s[:m-1], "\n")
         return [[words[LL2[i]-1],LL1[i]] for i in range(nn)]
-
-
-
-

@@ -14,6 +14,7 @@ Classes and methods
 -------------------
 
 """
+from __future__ import print_function
 
 include "sage/data_structures/binary_matrix.pxi"
 from sage.misc.cachefunc import cached_method
@@ -99,7 +100,7 @@ cdef class IndependentSets:
         sage: number_of = [0] * g.order()
         sage: for x in IndependentSets(g):
         ....:     number_of[len(x)] += 1
-        sage: print number_of
+        sage: number_of
         [1, 10, 30, 30, 5, 0, 0, 0, 0, 0]
 
     It is also possible to define an an iterator over all independent sets of a
@@ -145,7 +146,7 @@ cdef class IndependentSets:
             sage: def check_matching(G):
             ...       number_of_matchings = sum(map(abs,matching_polynomial(G).coefficients(sparse=False)))
             ...       if number_of_matchings != IndependentSets(G.line_graph()).cardinality():
-            ...           print "Ooooch !"
+            ...           print("Ooooch !")
             sage: for i in range(30):
             ...       check_matching(graphs.RandomGNP(11,.3))
 
@@ -155,14 +156,14 @@ cdef class IndependentSets:
             sage: def check_with_subgraph_search(G):
             ...       IS = set(map(Set,list(IndependentSets(G))))
             ...       if not all(G.subgraph(l).is_independent_set() for l in IS):
-            ...          print "Gloops"
+            ...          print("Gloops")
             ...       alpha = max(map(len,IS))
             ...       IS2 = [Set([x]) for x in range(G.order())] + [Set([])]
             ...       for n in range(2,alpha+1):
             ...           IS2.extend(map(Set,list(G.subgraph_search_iterator(Graph(n), induced = True))))
             ...       if len(IS) != len(set(IS2)):
-            ...          print "Oops"
-            ...          print len(IS), len(set(IS2))
+            ...          print("Oops")
+            ...          print(len(IS), len(set(IS2)))
             sage: for i in range(5):
             ...       check_with_subgraph_search(graphs.RandomGNP(11,.3))
 

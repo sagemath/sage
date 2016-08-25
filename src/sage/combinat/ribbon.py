@@ -15,5 +15,7 @@ Ribbons
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from ribbon_shaped_tableau import RibbonShapedTableau, StandardRibbonShapedTableaux
+from __future__ import absolute_import
+
+from .ribbon_shaped_tableau import RibbonShapedTableau, StandardRibbonShapedTableaux
 

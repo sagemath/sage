@@ -1,6 +1,7 @@
 """
 Hyperelliptic curves over a padic field.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -9,7 +10,7 @@ Hyperelliptic curves over a padic field.
 #*****************************************************************************
 
 
-import hyperelliptic_generic
+from . import hyperelliptic_generic
 
 from sage.rings.all import PowerSeriesRing, PolynomialRing, ZZ, QQ, O, pAdicField, GF, RR, RationalField, Infinity
 from sage.misc.functional import log

@@ -17,12 +17,13 @@ EXAMPLES::
 
     * :func:`sage.misc.defaults.set_series_precision`
 """
+from __future__ import print_function, absolute_import
 
 import weakref
 
-import laurent_series_ring_element
-import power_series_ring
-import polynomial
+from . import laurent_series_ring_element
+
+from . import polynomial
 from . import ring
 
 from sage.libs.pari.all import pari_gen
@@ -166,15 +167,16 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: 1 / (q-q^2)
             q^-1 + 1 + q + q^2 + O(q^3)
         """
+        from .power_series_ring import PowerSeriesRing
         ring.CommutativeRing.__init__(self, base_ring, names=name,
                                                   category=getattr(self, '_default_category', Fields()))
         self._polynomial_ring = polynomial.polynomial_ring_constructor.PolynomialRing(self.base_ring(),
                                                                                       self.variable_name(),
                                                                                       sparse=sparse)
-        self._power_series_ring = power_series_ring.PowerSeriesRing(self.base_ring(),
-                                                                    self.variable_name(),
-                                                                    default_prec=default_prec,
-                                                                    sparse=sparse)
+        self._power_series_ring = PowerSeriesRing(self.base_ring(),
+                                                  self.variable_name(),
+                                                  default_prec=default_prec,
+                                                  sparse=sparse)
 
     def base_extend(self, R):
         """
@@ -279,7 +281,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
 
             sage: R.<u> = LaurentSeriesRing(Qp(5, 10))
             sage: S.<t> = LaurentSeriesRing(RationalField())
-            sage: print R(t + t^2 + O(t^3))
+            sage: R(t + t^2 + O(t^3))
             (1 + O(5^10))*u + (1 + O(5^10))*u^2 + O(u^3)
 
         Note that coercing an element into its own parent just produces
@@ -486,7 +488,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         ## field, since you can always (mathematically!) construct
         ## some power series that doesn't converge.
         ## Note that 0 is not a *ring* homomorphism.
-        from power_series_ring import is_PowerSeriesRing
+        from .power_series_ring import is_PowerSeriesRing
         if is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
             return im_gens[0].valuation() > 0 and codomain.has_coerce_map_from(self.base_ring())
         return False

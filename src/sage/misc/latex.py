@@ -19,6 +19,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 EMBEDDED_MODE = False
 
@@ -60,7 +62,7 @@ import subprocess
 import types
 
 from sage.misc.temporary_file import tmp_dir
-import sage_eval
+from . import sage_eval
 from sage.misc.sage_ostools import have_program
 from sage.misc.cachefunc import cached_function, cached_method
 
@@ -219,9 +221,9 @@ def bool_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import bool_function
-        sage: print bool_function(2==3)
+        sage: print(bool_function(2==3))
         \mathrm{False}
-        sage: print bool_function(3==(2+1))
+        sage: print(bool_function(3==(2+1)))
         \mathrm{True}
     """
     return r"\mathrm{%s}" % bool(x)
@@ -270,7 +272,7 @@ def None_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import None_function
-        sage: print None_function(None)
+        sage: print(None_function(None))
         \mathrm{None}
     """
     assert x is None
@@ -353,7 +355,7 @@ def dict_function(x):
 
         sage: from sage.misc.latex import dict_function
         sage: x,y,z = var('x,y,z')
-        sage: print dict_function({x/2: y^2})
+        sage: print(dict_function({x/2: y^2}))
         \left\{\frac{1}{2} \, x : y^{2}\right\}
         sage: d = {(1,2,x^2): [sin(z^2), y/2]}
         sage: latex(d)
@@ -397,7 +399,7 @@ def float_function(x):
     return latex(RDF(x))
 
 
-latex_table = {types.NoneType: None_function,
+latex_table = {type(None): None_function,
                bool: bool_function,
                dict: dict_function,
                float: float_function,
@@ -406,9 +408,8 @@ latex_table = {types.NoneType: None_function,
                long: str,
                str: str_function,
                tuple: tuple_function,
-               type(None):builtin_constant_function,
-               type(NotImplemented):builtin_constant_function,
-               type(Ellipsis):builtin_constant_function}
+               type(NotImplemented): builtin_constant_function,
+               type(Ellipsis): builtin_constant_function}
 
 
 class LatexExpr(str):
@@ -609,7 +610,7 @@ def latex_extra_preamble():
     EXAMPLES::
 
         sage: from sage.misc.latex import latex_extra_preamble
-        sage: print latex_extra_preamble()
+        sage: print(latex_extra_preamble())
         ...
         <BLANKLINE>
         \newcommand{\ZZ}{\Bold{Z}}
@@ -908,7 +909,7 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print latex([x,2])
+            sage: print(latex([x,2]))
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
@@ -1160,7 +1161,7 @@ class Latex(LatexCall):
         """
         if t is None:
             return _Latex_prefs._option["blackboard_bold"]
-        from latex_macros import sage_configurable_latex_macros
+        from .latex_macros import sage_configurable_latex_macros
         global sage_configurable_latex_macros
         old = _Latex_prefs._option["blackboard_bold"]
         _Latex_prefs._option["blackboard_bold"] = bool(t)
@@ -1738,9 +1739,9 @@ def _latex_file_(objects, title='SAGE', debug=False, \
     This makes sure that latex is called only once on an object::
 
         sage: class blah():
-        ...       def _latex_(x):
-        ...           print "coucou"
-        ...           return "x"
+        ....:     def _latex_(x):
+        ....:         print("coucou")
+        ....:         return "x"
         sage: latex(blah())
         coucou
         x

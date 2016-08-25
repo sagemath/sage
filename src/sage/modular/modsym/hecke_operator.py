@@ -1,6 +1,7 @@
 """
 Sparse action of Hecke operators
 """
+from __future__ import absolute_import
 
 ##########################################################################
 #
@@ -14,7 +15,7 @@ Sparse action of Hecke operators
 
 import sage.modular.hecke.hecke_operator
 from sage.arith.all import is_prime
-import heilbronn
+from . import heilbronn
 
 
 class HeckeOperator(sage.modular.hecke.hecke_operator.HeckeOperator):

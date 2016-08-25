@@ -39,7 +39,7 @@ def foo(*args, **kwds):
     """
     return args, kwds
 
-fuction_map = {
+function_map = {
   'foo': foo,
   'sqrt': math.sqrt,
   'sin': math.sin,

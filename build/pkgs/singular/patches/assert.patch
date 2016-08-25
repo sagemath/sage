@@ -1,6 +1,6 @@
-diff -ru src/factory/assert.h b/factory/assert.h
---- src/factory/assert.h	2012-02-21 20:00:09.000000000 +0100
-+++ b/factory/assert.h	2012-08-01 12:31:09.343379875 +0200
+diff -ru a/latest/factory/assert.h b/latest/factory/assert.h
+--- a/latest/factory/assert.h	2012-02-21 20:00:09.000000000 +0100
++++ b/latest/factory/assert.h	2012-08-01 12:31:09.343379875 +0200
 @@ -128,3 +128,13 @@
  #define PVIRT_CHARCC(msg) = 0
  #endif /* NOASSERT */

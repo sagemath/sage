@@ -19,6 +19,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.all import prod
 
@@ -191,7 +192,7 @@ def mrange_iter(iter_list, typ=list):
         sage: mrange_iter([range(5),range(3),range(0)])
         []
 
-    This example isn't empty, and shouldn't be. See trac #6561.
+    This example is not empty, and should not be. See :trac:`6561`.
 
     ::
 
@@ -242,7 +243,7 @@ class xmrange_iter:
         sage: z = xmrange_iter([range(3),range(2)], tuple);z
         xmrange_iter([[0, 1, 2], [0, 1]], <type 'tuple'>)
         sage: for a in z:
-        ...    print a
+        ....:     print(a)
         (0, 0)
         (0, 1)
         (1, 0)
@@ -279,7 +280,7 @@ class xmrange_iter:
         sage: list(xmrange_iter([xrange(5),xrange(3),xrange(0)]))
         []
 
-    This example isn't empty, and shouldn't be. See trac #6561.
+    This example is not empty, and should not be. See :trac:`6561`.
 
     ::
 
@@ -294,7 +295,7 @@ class xmrange_iter:
         sage: X = ['red', 'apple', 389]
         sage: Y = ['orange', 'horse']
         sage: for i,j in xmrange_iter([X, Y], tuple):
-        ...    print (i, j)
+        ....:     print((i, j))
         ('red', 'orange')
         ('red', 'horse')
         ('apple', 'orange')
@@ -450,7 +451,7 @@ def mrange(sizes, typ=list):
         sage: mrange([5,3,0])
         []
 
-    This example isn't empty, and shouldn't be. See trac #6561.
+    This example is not empty, and should not be. See :trac:`6561`.
 
     ::
 
@@ -499,7 +500,7 @@ class xmrange:
         sage: z = xmrange([3,2], tuple);z
         xmrange([3, 2], <type 'tuple'>)
         sage: for a in z:
-        ...    print a
+        ....:     print(a)
         (0, 0)
         (0, 1)
         (1, 0)
@@ -536,7 +537,7 @@ class xmrange:
         sage: list(xmrange([5,3,0]))
         []
 
-    This example isn't empty, and shouldn't be. See trac #6561.
+    This example is not empty, and should not be. See :trac:`6561`.
 
     ::
 
@@ -551,7 +552,7 @@ class xmrange:
         sage: X = ['red', 'apple', 389]
         sage: Y = ['orange', 'horse']
         sage: for i,j in xmrange([len(X), len(Y)]):
-        ...    print (X[i], Y[j])
+        ....:     print((X[i], Y[j]))
         ('red', 'orange')
         ('red', 'horse')
         ('apple', 'orange')

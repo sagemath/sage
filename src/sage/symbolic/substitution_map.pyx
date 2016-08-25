@@ -18,7 +18,7 @@ back to Python.
 #*****************************************************************************
 
 
-from ginac cimport *
+from .ginac cimport *
 from sage.symbolic.expression cimport *
 
 

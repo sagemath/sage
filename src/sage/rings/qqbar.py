@@ -170,12 +170,12 @@ However, implicit coercion from `\QQ[I]` is not allowed::
 
 We can implicitly coerce from algebraic reals to algebraic numbers::
 
-    sage: a = QQbar(1); print a, a.parent()
-    1 Algebraic Field
-    sage: b = AA(1); print b, b.parent()
-    1 Algebraic Real Field
-    sage: c = a + b; print c, c.parent()
-    2 Algebraic Field
+    sage: a = QQbar(1); a, a.parent()
+    (1, Algebraic Field)
+    sage: b = AA(1); b, b.parent()
+    (1, Algebraic Real Field)
+    sage: c = a + b; c, c.parent()
+    (2, Algebraic Field)
 
 Some computation with radicals::
 
@@ -499,6 +499,9 @@ Verify that :trac:`10981` is fixed::
     sage: P.partial_fraction_decomposition()
     (0, [(-0.3535533905932738?*x + 1/2)/(x^2 - 1.414213562373095?*x + 1), (0.3535533905932738?*x + 1/2)/(x^2 + 1.414213562373095?*x + 1)])
 """
+
+from __future__ import absolute_import, print_function
+
 import itertools
 import operator
 
@@ -519,7 +522,7 @@ from sage.rings.number_field.number_field import NumberField, QuadraticField, Cy
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from sage.arith.all import factor
 from sage.structure.element import generic_power, canonical_coercion
-import infinity
+from . import infinity
 from sage.misc.functional import cyclotomic_polynomial
 
 CC = ComplexField()
@@ -2374,18 +2377,12 @@ class AlgebraicGenerator(SageObject):
         sp = self._field.polynomial()
         op = other._field.polynomial()
         op = QQx(op)
-        # print sp
-        # print op
-        # print self._field.polynomial()
-        # print self._field.polynomial().degree()
         # pari_nf = self._field.pari_nf()
         pari_nf = self.pari_field()
-        # print pari_nf[0]
         factors = list(pari_nf.nffactor(op).lift())[0]
-        # print factors
         x, y = QQxy.gens()
         factors_sage = [QQxy(p) for p in factors]
-        # print factors_sage
+
         def find_fn(p, prec):
             ifield = RealIntervalField(prec)
             if_poly = ifield['x', 'y']
@@ -2395,7 +2392,6 @@ class AlgebraicGenerator(SageObject):
 
         if my_factor.degree(x) == 1 and my_factor.coefficient(x) == 1:
             value = (-my_factor + x).univariate_polynomial(QQy)
-            # print value
             rel = AlgebraicGeneratorRelation(self, QQy_y,
                                              other, value,
                                              self)
@@ -2473,12 +2469,9 @@ class AlgebraicGenerator(SageObject):
         if super is self:
             return self._field.gen()
         for u in self._unions.values():
-            # print self, u.parent
-            # print checked
             if u.parent in checked:
                 continue
             poly = u.parent.super_poly(super, checked)
-            # print poly, u.child1, u.child2
             if poly is None:
                 continue
             if self is u.child1:
@@ -4725,7 +4718,6 @@ class AlgebraicReal(AlgebraicNumber_base):
             return self.sign()
         elif self._value.prec() < 128:
             # OK, we'll try adding precision one more time
-            # print self._value
             self._more_precision()
             return self.sign()
         else:
@@ -5755,10 +5747,6 @@ class ANRoot(ANDescr):
 
             if linfo['sign'] == uinfo['sign']:
                 # Oops...
-                # print self._poly.poly()
-                # print interval_p
-                # print linfo['endpoint'], linfo['value'], linfo['sign']
-                # print uinfo['endpoint'], uinfo['value'], uinfo['sign']
                 raise ValueError("Refining interval that does not bound unique root!")
 
             # Use a simple algorithm:
@@ -6088,7 +6076,7 @@ class ANRoot(ANDescr):
             fld = gen.field()
 
             fpf = self._poly.factors()
-            # print fpf
+
             def find_fn(factor, prec):
                 # XXX
                 ifield = (ComplexIntervalField if self.is_complex() else RealIntervalField)(prec)
@@ -6111,7 +6099,6 @@ class ANRoot(ANDescr):
                 return ip(self_val)
             my_factor = find_zero_result(find_fn, fpf)
 
-            # print my_factor
             assert(my_factor.is_monic())
 
             if my_factor.degree() == 1:
@@ -6125,19 +6112,14 @@ class ANRoot(ANDescr):
 
             pari_nf = gen.pari_field()
 
-            # print pari_nf[0]
             x, y = QQxy.gens()
             my_factor = QQxy['z']([c.polynomial()(y) for c in my_factor])(x)
-            # print my_factor
 
             # XXX much duplicate code with AlgebraicGenerator.union()
 
             # XXX need more caching here
             newpol, self_pol, k = pari_nf.rnfequation(my_factor, 1)
             k = int(k)
-            # print newpol
-            # print self_pol
-            # print k
 
             newpol_sage = QQx(newpol)
             newpol_sage_y = QQy(newpol_sage)

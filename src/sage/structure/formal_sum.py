@@ -63,6 +63,7 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import sage.misc.misc
 import operator
@@ -140,7 +141,7 @@ class FormalSum(ModuleElement):
         """
         EXAMPLES::
 
-            sage: for z in FormalSum([(1,2), (5, 1000), (-3, 7)]): print z
+            sage: for z in FormalSum([(1,2), (5, 1000), (-3, 7)]): print(z)
             (1, 2)
             (-3, 7)
             (5, 1000)

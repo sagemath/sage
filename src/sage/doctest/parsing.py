@@ -22,7 +22,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 import re, sys
 import doctest
@@ -30,7 +31,7 @@ import collections
 from sage.repl.preparse import preparse, strip_string_literals
 from functools import reduce
 
-from external import available_software
+from .external import available_software
 
 float_regex = re.compile('\s*([+-]?\s*((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?)')
 optional_regex = re.compile(r'(long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w)*))')
@@ -96,9 +97,9 @@ def parse_optional_tags(string):
 
     We don't parse inside strings::
 
-        sage: parse_optional_tags("    sage: print '  # long time'")
+        sage: parse_optional_tags("    sage: print('  # long time')")
         set()
-        sage: parse_optional_tags("    sage: print '  # long time'  # not tested")
+        sage: parse_optional_tags("    sage: print('  # long time')  # not tested")
         {'not tested'}
 
     UTF-8 works::
@@ -510,10 +511,10 @@ class SageDocTestParser(doctest.DocTestParser):
 
         You can use continuation lines::
 
-            sage: s = "sage: for i in range(4):\n....:     print i\n....:\n"
+            sage: s = "sage: for i in range(4):\n....:     print(i)\n....:\n"
             sage: ex = DTP2.parse(s)[1]
             sage: ex.source
-            'for i in range(Integer(4)):\n    print i\n'
+            'for i in range(Integer(4)):\n    print(i)\n'
 
         Sage currently accepts backslashes as indicating that the end
         of the current line should be joined to the next line.  This
@@ -523,7 +524,7 @@ class SageDocTestParser(doctest.DocTestParser):
 
             sage: n = 1234\
             ....:     5678
-            sage: print n
+            sage: print(n)
             12345678
             sage: type(n)
             <type 'sage.rings.integer.Integer'>
@@ -532,7 +533,7 @@ class SageDocTestParser(doctest.DocTestParser):
 
             sage: m = 8765\
             4321
-            sage: print m
+            sage: print(m)
             87654321
         """
         # Hack for non-standard backslash line escapes accepted by the current
@@ -620,7 +621,7 @@ class SageOutputChecker(doctest.OutputChecker):
 
         EXAMPLES::
 
-            sage: print 'This is \x1b[1mbold\x1b[0m text'
+            sage: print('This is \x1b[1mbold\x1b[0m text')
             This is <CSI-1m>bold<CSI-0m> text
 
         TESTS::
@@ -785,16 +786,16 @@ class SageOutputChecker(doctest.OutputChecker):
             RuntimeError
             sage: 1  # abs tol 2
             -0.5
-            sage: print "0.9999"    # rel tol 1e-4
+            sage: print("0.9999")    # rel tol 1e-4
             1.0
-            sage: print "1.00001"   # abs tol 1e-5
+            sage: print("1.00001")   # abs tol 1e-5
             1.0
             sage: 0  # rel tol 1
             1
 
         Spaces before numbers or between the sign and number are ignored::
 
-            sage: print "[ - 1, 2]"  # abs tol 1e-10
+            sage: print("[ - 1, 2]")  # abs tol 1e-10
             [-1,2]
         """
         got = self.human_readable_escape_sequences(got)
@@ -860,7 +861,7 @@ class SageOutputChecker(doctest.OutputChecker):
 
         ::
 
-            sage: print OC.output_difference(tenabs,nf,optflag)
+            sage: print(OC.output_difference(tenabs,nf,optflag))
             Expected:
                 10.0
             Got:
@@ -868,7 +869,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 10.0 vs 9.5, tolerance 5e-01 > 1e-01
 
-            sage: print OC.output_difference(tentol,zero,optflag)
+            sage: print(OC.output_difference(tentol,zero,optflag))
             Expected:
                 10.0
             Got:
@@ -876,7 +877,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 10.0 vs 0.0, tolerance 1e+00 > 1e-01
 
-            sage: print OC.output_difference(tentol,eps,optflag)
+            sage: print(OC.output_difference(tentol,eps,optflag))
             Expected:
                 10.0
             Got:
@@ -884,7 +885,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 10.0 vs -0.05, tolerance 1e+00 > 1e-01
 
-            sage: print OC.output_difference(tlist,L,optflag)
+            sage: print(OC.output_difference(tlist,L,optflag))
             Expected:
                 [10.0, 10.0, 10.0, 10.0, 10.0, 10.0]
             Got:
@@ -895,7 +896,7 @@ class SageOutputChecker(doctest.OutputChecker):
 
         TESTS::
 
-            sage: print OC.output_difference(tenabs,zero,optflag)
+            sage: print(OC.output_difference(tenabs,zero,optflag))
             Expected:
                 10.0
             Got:
@@ -903,7 +904,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 10.0 vs 0.0, tolerance 1e+01 > 1e-01
 
-            sage: print OC.output_difference(tenrel,zero,optflag)
+            sage: print(OC.output_difference(tenrel,zero,optflag))
             Expected:
                 10.0
             Got:
@@ -911,7 +912,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 10.0 vs 0.0, tolerance 1e+00 > 1e-01
 
-            sage: print OC.output_difference(tenrel,eps,optflag)
+            sage: print(OC.output_difference(tenrel,eps,optflag))
             Expected:
                 10.0
             Got:
@@ -919,7 +920,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 10.0 vs -0.05, tolerance 1e+00 > 1e-01
 
-            sage: print OC.output_difference(zerotol,ten,optflag)
+            sage: print(OC.output_difference(zerotol,ten,optflag))
             Expected:
                 0.0
             Got:
@@ -927,7 +928,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 0.0 vs 10.05, tolerance 1e+01 > 1e-01
 
-            sage: print OC.output_difference(zeroabs,ten,optflag)
+            sage: print(OC.output_difference(zeroabs,ten,optflag))
             Expected:
                 0.0
             Got:
@@ -935,7 +936,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 0.0 vs 10.05, tolerance 1e+01 > 1e-01
 
-            sage: print OC.output_difference(zerorel,eps,optflag)
+            sage: print(OC.output_difference(zerorel,eps,optflag))
             Expected:
                 0.0
             Got:
@@ -943,7 +944,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Tolerance exceeded:
                 0.0 vs -0.05, tolerance inf > 1e-01
 
-            sage: print OC.output_difference(zerorel,ten,optflag)
+            sage: print(OC.output_difference(zerorel,ten,optflag))
             Expected:
                 0.0
             Got:

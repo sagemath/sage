@@ -1,7 +1,7 @@
 from sage.libs.gsl.wavelet cimport *
-cimport gsl_array
+from .gsl_array cimport GSLDoubleArray
 
 
-cdef class DiscreteWaveletTransform(gsl_array.GSLDoubleArray):
-  cdef gsl_wavelet* wavelet
-  cdef gsl_wavelet_workspace* workspace
+cdef class DiscreteWaveletTransform(GSLDoubleArray):
+    cdef gsl_wavelet* wavelet
+    cdef gsl_wavelet_workspace* workspace

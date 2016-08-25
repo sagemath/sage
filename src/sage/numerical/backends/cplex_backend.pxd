@@ -43,6 +43,9 @@ cdef extern from "cplex.h":
      # Solve LP
      int CPXlpopt (c_cpxlp * env, c_cpxlp * lp)
 
+     # Get solution status
+     int CPXgetstat(c_cpxlp * env, c_cpxlp * lp)
+
      # Solve MILP through filling the solution pool
      int CPXpopulate (c_cpxlp * env, c_cpxlp * lp)
 
@@ -230,6 +233,14 @@ cdef extern from "cpxconst.h":
      # The problem has no solution
      int CPX_NO_SOLN
 
+     # Solution status
+     int CPX_STAT_OPTIMAL
+     int CPX_STAT_INFEASIBLE
+     int CPX_STAT_UNBOUNDED
+     int CPX_STAT_INForUNBD
 
-
+     int CPXMIP_OPTIMAL
+     int CPXMIP_INFEASIBLE
+     int CPXMIP_UNBOUNDED
+     int CPXMIP_INForUNBD
 

@@ -6,6 +6,7 @@ AUTHORS:
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
@@ -16,5 +17,5 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from library import unit_circle
-from library import trigonometric_properties_triangle, special_points
+from .library import unit_circle
+from .library import trigonometric_properties_triangle, special_points

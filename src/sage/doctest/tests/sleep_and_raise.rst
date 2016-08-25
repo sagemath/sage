@@ -1,6 +1,6 @@
 This is a file used to manually test terminal and interrupt handling::
 
-    sage: for i in range(100): print i
+    sage: for i in range(100): print(i)
     0
     1
     2
@@ -103,4 +103,4 @@ This is a file used to manually test terminal and interrupt handling::
     99
     sage: import time
     sage: time.sleep(10)
-    sage: raise RuntimeError
+    sage: raise RuntimeError          # not tested

@@ -18,6 +18,7 @@ Functions
 ---------
 
 """
+from __future__ import absolute_import
 
 def from_graph6(G, g6_string):
     r"""
@@ -37,7 +38,7 @@ def from_graph6(G, g6_string):
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    from generic_graph_pyx import length_and_string_from_graph6, binary_string_from_graph6
+    from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_graph6
 
     if not isinstance(g6_string, str):
         raise ValueError('If input format is graph6, then g6_string must be a string.')
@@ -78,7 +79,7 @@ def from_sparse6(G, g6_string):
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    from generic_graph_pyx import length_and_string_from_graph6, int_to_binary_string
+    from .generic_graph_pyx import length_and_string_from_graph6, int_to_binary_string
     from math import ceil, floor
     from sage.misc.functional import log
     n = g6_string.find('\n')
@@ -130,7 +131,7 @@ def from_dig6(G, dig6_string):
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
     """
-    from generic_graph_pyx import length_and_string_from_graph6, binary_string_from_dig6
+    from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_dig6
     if not isinstance(dig6_string, str):
         raise ValueError('If input format is dig6, then dig6_string must be a string.')
     n = dig6_string.find('\n')

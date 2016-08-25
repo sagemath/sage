@@ -75,6 +75,7 @@ need to spend time and memory four times.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.sage_object cimport SageObject
 
@@ -323,7 +324,7 @@ cdef class PointCollection(SageObject):
         TESTS::
 
             sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
-            sage: for point in c: print point
+            sage: for point in c: print(point)
             N(0, 0, 1)
             N(1, 0, 1)
             N(0, 1, 1)
@@ -472,7 +473,7 @@ cdef class PointCollection(SageObject):
         TESTS::
 
             sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
-            sage: print c._latex_()
+            sage: print(c._latex_())
             \left(\left(0,\,0,\,1\right)_{N}, \left(1,\,0,\,1\right)_{N},
             \left(0,\,1,\,1\right)_{N}, \left(1,\,1,\,1\right)_{N}\right)_{N}
         """
@@ -526,7 +527,7 @@ cdef class PointCollection(SageObject):
         TESTS::
 
             sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
-            sage: print c._repr_()
+            sage: print(c._repr_())
             N(0, 0, 1),
             N(1, 0, 1),
             N(0, 1, 1),

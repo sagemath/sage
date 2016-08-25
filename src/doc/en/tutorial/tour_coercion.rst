@@ -13,7 +13,7 @@ in Sage effectively and efficiently.
 
 Note that we try to explain notions, but we do not show here how to
 implement them. An implementation-oriented tutorial is available as a
-`Sage thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`Sage thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 Elements
 --------
@@ -206,7 +206,7 @@ type conversion in C with conversion in Sage!
 We give here a rather brief account. For a detailed description and
 for information on the implementation, we refer to the section on
 coercion in the reference manual and to the
-`thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 There are two extremal positions concerning the possibility
 of doing arithmetic with elements of *different* rings:
@@ -380,7 +380,7 @@ in our example). If several potential common parents seem equally
 natural, Sage will *not* pick one of them at random, in order to have
 a reliable result. The mechanisms which that choice is based upon is
 explained in the
-`thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 No coercion into a common parent will take place in the following
 example:

@@ -227,8 +227,8 @@ class SagePlainTextFormatter(PlainTextFormatter):
         if DOCTEST_MODE:
             # Just to show that this is never executed in any other doctests in the Sage library
             print('---- calling ipython formatter ----')
-        import StringIO
-        stream = StringIO.StringIO()
+        from six import StringIO
+        stream = StringIO()
         printer = SagePrettyPrinter(
             stream, self.max_width, unicode_to_str(self.newline))
         printer.pretty(obj)

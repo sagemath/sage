@@ -11,6 +11,7 @@ Hecke algebras", which include Hecke operators coprime to the level. Morphisms
 in the category of Hecke modules are not required to commute with the action of
 the full Hecke algebra, only with the anemic algebra.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
@@ -33,8 +34,6 @@ import weakref
 import sage.arith.all as arith
 import sage.rings.infinity
 import sage.misc.latex as latex
-import module
-import hecke_operator
 import sage.rings.commutative_algebra
 from sage.matrix.constructor import matrix
 from sage.arith.all import lcm
@@ -205,6 +204,7 @@ class HeckeAlgebra_base(sage.rings.commutative_algebra.CommutativeAlgebra):
             sage: CuspForms(1, 12).hecke_algebra() # indirect doctest
             Full Hecke algebra acting on Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for Modular Group SL(2,Z) of weight 12 over Rational Field
         """
+        from . import module
         if not module.is_HeckeModule(M):
             raise TypeError("M (=%s) must be a HeckeModule"%M)
         self.__M = M
@@ -292,6 +292,7 @@ class HeckeAlgebra_base(sage.rings.commutative_algebra.CommutativeAlgebra):
             [-3  0]
             [ 0  1]
         """
+        from . import hecke_operator
         try:
             if not isinstance(x, Element):
                 x = self.base_ring()(x)

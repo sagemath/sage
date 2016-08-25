@@ -68,6 +68,8 @@ REFERENCES:
    see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
    page instead.
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
 from copy import copy
 from sage.homology.cell_complex import GenericCellComplex
@@ -80,6 +82,7 @@ from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
+from sage.misc.decorators import rename_keyword
 from functools import total_ordering
 
 @total_ordering
@@ -833,7 +836,7 @@ class CubicalComplex(GenericCellComplex):
 
     Therefore, neither are cones or suspensions.
     """
-    def __init__(self, maximal_faces=[], **kwds):
+    def __init__(self, maximal_faces=[], maximality_check=True):
         r"""
         Define a cubical complex.  See ``CubicalComplex`` for more
         documentation.
@@ -845,8 +848,6 @@ class CubicalComplex(GenericCellComplex):
             sage: X == loads(dumps(X))
             True
         """
-        maximality_check = kwds.get('maximality_check', True)
-
         C = None
         if isinstance(maximal_faces, CubicalComplex):
             C = maximal_faces
@@ -1113,7 +1114,10 @@ class CubicalComplex(GenericCellComplex):
         """
         return set(self.n_cells(n, subcomplex))
 
-    def chain_complex(self, **kwds):
+    @rename_keyword(deprecation=20723, check_diffs='check')
+    def chain_complex(self, subcomplex=None, augmented=False,
+                      verbose=False, check=False, dimensions=None,
+                      base_ring=ZZ, cochain=False):
         r"""
         The chain complex associated to this cubical complex.
 
@@ -1138,10 +1142,10 @@ class CubicalComplex(GenericCellComplex):
         :param verbose: If True, print some messages as the chain
            complex is computed.
         :type verbose: boolean; optional, default False
-        :param check_diffs: If True, make sure that the chain complex
+        :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check_diffs: boolean; optional, default False
+        :type check: boolean; optional, default False
 
         .. note::
 
@@ -1167,14 +1171,6 @@ class CubicalComplex(GenericCellComplex):
             sage: C1.homology(subcomplex=S0)
             {0: 0, 1: Z}
         """
-        augmented = kwds.get('augmented', False)
-        cochain = kwds.get('cochain', False)
-        verbose = kwds.get('verbose', False)
-        check_diffs = kwds.get('check_diffs', False)
-        base_ring = kwds.get('base_ring', ZZ)
-        dimensions = kwds.get('dimensions', None)
-        subcomplex = kwds.get('subcomplex', None)
-
         # initialize subcomplex
         if subcomplex is None:
             subcomplex = CubicalComplex()
@@ -1197,7 +1193,7 @@ class CubicalComplex(GenericCellComplex):
         # now loop from 1 to dimension of the complex
         for dim in range(1,self.dimension()+1):
             if verbose:
-                print "  starting dimension %s" % dim
+                print("  starting dimension %s" % dim)
             if (dim, subcomplex) in self._complex:
                 if cochain:
                     differentials[dim-1] = self._complex[(dim, subcomplex)].transpose().change_ring(base_ring)
@@ -1206,7 +1202,7 @@ class CubicalComplex(GenericCellComplex):
                     differentials[dim] = self._complex[(dim, subcomplex)].change_ring(base_ring)
                     mat = differentials[dim]
                 if verbose:
-                    print "    boundary matrix (cached): it's %s by %s." % (mat.nrows(), mat.ncols())
+                    print("    boundary matrix (cached): it's %s by %s." % (mat.nrows(), mat.ncols()))
             else:
                 # 'current' is the list of cells in dimension n
                 #
@@ -1241,14 +1237,14 @@ class CubicalComplex(GenericCellComplex):
                 else:
                     differentials[dim] = mat.change_ring(base_ring)
                 if verbose:
-                    print "    boundary matrix computed: it's %s by %s." % (mat.nrows(), mat.ncols())
+                    print("    boundary matrix computed: it's %s by %s." % (mat.nrows(), mat.ncols()))
         # finally, return the chain complex
         if cochain:
             return ChainComplex(data=differentials, base_ring=base_ring,
-                                degree=1, check=check_diffs)
+                                degree=1, check=check)
         else:
             return ChainComplex(data=differentials, base_ring=base_ring,
-                                degree=-1, check=check_diffs)
+                                degree=-1, check=check)
 
     def alexander_whitney(self, cube, dim_left):
         r"""
@@ -1656,7 +1652,7 @@ class CubicalComplex(GenericCellComplex):
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
         """
-        from algebraic_topological_model import algebraic_topological_model
+        from .algebraic_topological_model import algebraic_topological_model
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model(self, base_ring)

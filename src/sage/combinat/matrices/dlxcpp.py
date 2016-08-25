@@ -15,11 +15,13 @@ Dancing links C++ wrapper
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 # OneExactCover and AllExactCovers are almost exact copies of the
 # functions with the same name in sage/combinat/dlx.py by Tom Boothby.
 
-from dancing_links import dlx_solver
+from .dancing_links import dlx_solver
 
 def DLXCPP(rows):
     """
@@ -66,7 +68,7 @@ def DLXCPP(rows):
 
     is an exact cover.
 
-    Solutions are given as a list
+    Solutions are given as a list.
 
     EXAMPLES::
 
@@ -74,7 +76,7 @@ def DLXCPP(rows):
         sage: rows+= [[0,2]]
         sage: rows+= [[1]]
         sage: rows+= [[3]]
-        sage: print [ x for x in DLXCPP(rows) ]
+        sage: [x for x in DLXCPP(rows)]
         [[3, 0], [3, 1, 2]]
     """
 
@@ -93,13 +95,13 @@ def AllExactCovers(M):
     EXAMPLES: No exact covers::
 
         sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])
-        sage: print [cover for cover in AllExactCovers(M)]
+        sage: [cover for cover in AllExactCovers(M)]
         []
 
     Two exact covers::
 
         sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])
-        sage: print [cover for cover in AllExactCovers(M)]
+        sage: [cover for cover in AllExactCovers(M)]
         [[(1, 1, 0), (0, 0, 1)], [(1, 0, 1), (0, 1, 0)]]
     """
     rows = []
@@ -120,10 +122,10 @@ def OneExactCover(M):
     EXAMPLES::
 
         sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
-        sage: print OneExactCover(M)
+        sage: print(OneExactCover(M))
         None
         sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
-        sage: print OneExactCover(M)
+        sage: OneExactCover(M)
         [(1, 1, 0), (0, 0, 1)]
     """
 

@@ -182,7 +182,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         B = [[c if c>=0 else 0,  mu,  std if std>0 else eps] for c,mu,std in B]
         if len(B) == 0:
-            raise ValueError, "must specify at least one component of the mixture model"
+            raise ValueError("must specify at least one component of the mixture model")
         cdef double s
         if normalize:
             s = sum([a[0] for a in B])
@@ -232,7 +232,8 @@ cdef class GaussianMixtureDistribution(Distribution):
             IndexError: index out of range
         """
         if i < 0: i += self.param._length//3
-        if i < 0 or i >= self.param._length//3: raise IndexError, "index out of range"
+        if i < 0 or i >= self.param._length//3:
+            raise IndexError("index out of range")
         return self.param._values[3*i], self.param._values[3*i+1], self.param._values[3*i+2]
 
     def __reduce__(self):
@@ -415,7 +416,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         else:
             _n = n
             if _n < 0:
-                raise ValueError, "n must be nonnegative"
+                raise ValueError("n must be nonnegative")
             T = TimeSeries(_n)
             for i in range(_n):
                 T._values[i] = self._sample(rstate)
@@ -444,7 +445,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             accum += self.param._values[3*n]
             if r <= accum:
                 return random_normal(self.param._values[3*n+1], self.param._values[3*n+2], rstate)
-        raise RuntimeError, "invalid probability distribution"
+        raise RuntimeError("invalid probability distribution")
 
     cpdef double prob(self, double x):
         """
@@ -507,7 +508,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         cdef double s, mu
         if m < 0 or m >= self.param._length//3:
-            raise IndexError, "index out of range"
+            raise IndexError("index out of range")
         mu = self.param._values[3*m+1]
         return self.c0._values[m]*exp((x-mu)*(x-mu)*self.c1._values[m])
 

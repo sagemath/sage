@@ -14,8 +14,8 @@
 
 ::
 
-    print "Hello World"
-    print 2^3
+    print("Hello World")
+    print(2^3)
 
 Вы можете прочитать и выполнить ``example.sage`` с помощью команды ``load``.
 
@@ -56,8 +56,8 @@ Sage (т.е. нажмите ``return``), то содержимое ``example.sag
 
 ::
 
-    print "Hello World"
-    print Integer(2)**Integer(3)
+    print("Hello World")
+    print(Integer(2)**Integer(3))
 
 Целые контстанты переведены и ``^`` заменено на ``**``. (В Python ``^``
 означает "исключающее ИЛИ" и ``**`` означает "возведение в степень".)
@@ -165,11 +165,11 @@ C и обработан компилятором C.
     from sage.all import *
 
     if len(sys.argv) != 2:
-        print "Usage: %s <n>"%sys.argv[0]
-        print "Outputs the prime factorization of n."
+        print("Usage: %s <n>" % sys.argv[0])
+        print("Outputs the prime factorization of n.")
         sys.exit(1)
 
-    print factor(sage_eval(sys.argv[1]))
+    print(factor(sage_eval(sys.argv[1])))
 
 Для того, чтобы использовать этот скрипт, ``SAGE_ROOT`` должен быть в PATH.
 Если вышеописанный скрипт называется ``factor``, следующее показывает, как
@@ -312,7 +312,7 @@ Python, сработает нормально.
 ::
 
     sage: L = [factor(n) for n in range(1, 15)]
-    sage: print L
+    sage: L
     [1, 2, 3, 2^2, 5, 2 * 3, 7, 2^3, 3^2, 2 * 5, 11, 2^2 * 3, 13, 2 * 7]
     sage: L[12]
     13
@@ -333,7 +333,7 @@ Python, сработает нормально.
     sage: L = [factor(n) for n in range(1, 20)]
     sage: L[4:9]
     [5, 2 * 3, 7, 2^3, 3^2]
-    sage: print L[:4]
+    sage: L[:4]
     [1, 2, 3, 2^2]
     sage: L[14:4]
     []
@@ -495,7 +495,7 @@ http://docs.python.org/lib/typesmapping.html) произвольным объе�
     {1, 2/3}
     sage: X.intersection(Y)
     {1}
-    sage: print latex(Y)
+    sage: print(latex(Y))
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring

@@ -391,7 +391,7 @@ def slp(M1, pos_dict=None, B=None):
       as keys. While simplifying the matroid, all except one element in a
       parallel class that is also specified in ``pos_dict`` will be retained.
     - ``B`` -- (optional) A basis of M1 that has been chosen for placement on
-      vertics of triangle.
+      vertices of triangle.
 
     OUTPUT:
 

@@ -125,7 +125,7 @@ For a simple linear programming example, if we want to solve
 
 ::
 
-    sage: print sol['x']      # ... below since can get -00 or +00 depending on architecture
+    sage: print(sol['x'])    # ... below since can get -00 or +00 depending on architecture
     [ 1.00e...00]
     [ 1.00e+00]
 

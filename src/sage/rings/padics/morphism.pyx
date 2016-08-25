@@ -292,7 +292,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         codomain = self.codomain()
         return hash((domain,codomain,('Frob',self._power)))
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         Compare left and right
         """ 

@@ -76,12 +76,16 @@ Check that Cython source code appears in tracebacks::
     sage: shell = get_test_shell()
     sage: shell.run_cell('1/0')
     ---------------------------------------------------------------------------
-    .../sage/rings/integer_ring.pyx in sage.rings.integer_ring.IntegerRing_class._div (.../cythonized/sage/rings/integer_ring.c:...)()
-        ...         cdef rational.Rational x = rational.Rational.__new__(rational.Rational)
-        ...         if mpz_sgn(right.value) == 0:
-        ...             raise ZeroDivisionError('rational division by zero')
-        ...         mpz_set(mpq_numref(x.value), left.value)
-        ...         mpz_set(mpq_denref(x.value), right.value)
+    ZeroDivisionError                         Traceback (most recent call last)
+    <ipython-input-...> in <module>()
+    ----> 1 Integer(1)/Integer(0)
+    <BLANKLINE>
+    .../src/sage/rings/integer.pyx in sage.rings.integer.Integer.__div__ (.../cythonized/sage/rings/integer.c:...)()
+       ...          if type(left) is type(right):
+       ...              if mpz_sgn((<Integer>right).value) == 0:
+    -> ...                  raise ZeroDivisionError("rational division by zero")
+       ...              x = <Rational> Rational.__new__(Rational)
+       ...              mpq_div_zz(x.value, (<Integer>left).value, (<Integer>right).value)
     <BLANKLINE>
     ZeroDivisionError: rational division by zero
     sage: shell.quit()
@@ -98,18 +102,15 @@ Check that Cython source code appears in tracebacks::
 #*****************************************************************************
 
 
-import copy
 import os
 import re
-import sys
 from sage.repl.preparse import preparse
+from sage.repl.prompts import SagePrompts, InterfacePrompts
 
-from traitlets.config.loader import Config
 from traitlets import Bool, Type
 
 from sage.env import SAGE_LOCAL
-
-SAGE_EXTENSION = 'sage'
+from sage.repl.configuration import sage_ipython_config, SAGE_EXTENSION
 
 def embedded():
     """
@@ -180,10 +181,6 @@ class SageShellOverride(object):
         """
         Run a system command.
 
-        If the command is not a sage-specific binary, adjust the library
-        paths before calling system commands.  See :trac:`975` for a
-        discussion of running system commands.
-
         This is equivalent to the sage-native-execute shell script.
 
         EXAMPLES::
@@ -196,22 +193,12 @@ class SageShellOverride(object):
             sage: shell.system_raw('true')
             sage: shell.user_ns['_exit_code']
             0
-            sage: shell.system_raw('env | grep "^LD_LIBRARY_PATH=" | grep $SAGE_LOCAL')
-            sage: shell.user_ns['_exit_code']
-            1
             sage: shell.system_raw('R --version')
             R version ...
             sage: shell.user_ns['_exit_code']
             0
             sage: shell.quit()
         """
-        path = os.path.join(SAGE_LOCAL, 'bin',
-                            re.split(r'[\s|;&]', cmd)[0])
-        if not os.access(path, os.X_OK):
-            libraries = 'LD_LIBRARY_PATH="$SAGE_ORIG_LD_LIBRARY_PATH";export LD_LIBRARY_PATH;'
-            if os.uname()[0]=='Darwin':
-                libraries += 'DYLD_LIBRARY_PATH="$SAGE_ORIG_DYLD_LIBRARY_PATH";export DYLD_LIBRARY_PATH;'
-            cmd = libraries+cmd
         return super(SageShellOverride, self).system_raw(cmd)
 
 
@@ -380,31 +367,7 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
         rc = super(SageTestShell, self).run_cell(*args, **kwds)
 
 
-###################################################################
-# Default configuration
-###################################################################
-
-DEFAULT_SAGE_CONFIG = Config(
-    PromptManager = Config(
-        in_template = 'sage: ',
-        in2_template = '....: ',
-        justify = False,
-        out_template = ''),
-    TerminalIPythonApp = Config(
-        display_banner = False,
-        verbose_crash = True,
-        test_shell = False,
-        shell_class = SageTerminalInteractiveShell,
-    ),
-    InteractiveShell = Config(
-        ast_node_interactivity = 'all',
-        colors = 'LightBG' if sys.stdout.isatty() else 'NoColor',
-        confirm_exit = False,
-        separate_in = ''),
-    InteractiveShellApp = Config(extensions=[SAGE_EXTENSION]),
-)
-
-
+    
 ###################################################################
 # Transformers used in the SageInputSplitter
 ###################################################################
@@ -624,19 +587,17 @@ def interface_shell_embed(interface):
         sage: shell = interface_shell_embed(gap)
         sage: shell.run_cell('List( [1..10], IsPrime )')
         [ false, true, true, false, true, false, true, false, false, false ]
-        <IPython.core.interactiveshell.ExecutionResult object at 0x...>
-    """
-    try:
-        cfg = copy.deepcopy(get_ipython().config)
-    except NameError:
-        cfg = copy.deepcopy(DEFAULT_SAGE_CONFIG)
-    cfg.PromptManager['in_template'] = interface.name() + ': '
-    cfg.PromptManager['in2_template'] = len(interface.name())*'.' + ': '
+        <repr(<IPython.core.interactiveshell.ExecutionResult at 0x...>) failed: 
+        AttributeError: type object 'ExecutionResult' has no attribute '__qualname__'>
 
+    Note that the repr error is https://github.com/ipython/ipython/issues/9756
+    """
+    cfg = sage_ipython_config.copy()
     ipshell = InteractiveShellEmbed(config=cfg,
                                     banner1='\n  --> Switching to %s <--\n\n'%interface,
-                                    exit_msg = '\n  --> Exiting back to Sage <--\n')
+                                    exit_msg='\n  --> Exiting back to Sage <--\n')
     ipshell.interface = interface
+    ipshell.prompts = InterfacePrompts(interface.name())
 
     while ipshell.prefilter_manager.transformers:
         ipshell.prefilter_manager.transformers.pop()
@@ -679,7 +640,7 @@ def get_test_shell():
         sage: out + err
         ''
     """
-    config = copy.deepcopy(DEFAULT_SAGE_CONFIG)
+    config = sage_ipython_config.default()
     config.TerminalIPythonApp.test_shell = True
     config.TerminalIPythonApp.shell_class = SageTestShell
     app = SageTerminalApp.instance(config=config)
@@ -731,10 +692,10 @@ class SageTerminalApp(TerminalIPythonApp):
     name = u'Sage'
     crash_handler_class = SageCrashHandler
 
-    test_shell = Bool(False, config=True,
-                      help='Whether the shell is a test shell')
-    shell_class = Type(InteractiveShell, config=True,
-                       help='Type of the shell')
+    test_shell = Bool(False, help='Whether the shell is a test shell')
+    test_shell.tag(config=True)
+    shell_class = Type(InteractiveShell, help='Type of the shell')
+    shell_class.tag(config=True)
 
     def load_config_file(self, *args, **kwds):
         r"""
@@ -758,12 +719,9 @@ class SageTerminalApp(TerminalIPythonApp):
             sage: os.environ['IPYTHONDIR'] = IPYTHONDIR
         """
         super(SageTerminalApp, self).load_config_file(*args, **kwds)
-
-        newconfig = copy.deepcopy(DEFAULT_SAGE_CONFIG)
-
+        newconfig = sage_ipython_config.default()
         # merge in the config loaded from file
         newconfig.merge(self.config)
-
         self.config = newconfig
 
     def init_shell(self):
@@ -777,7 +735,7 @@ class SageTerminalApp(TerminalIPythonApp):
 
         EXAMPLES::
 
-            sage: from sage.repl.interpreter import SageTerminalApp, DEFAULT_SAGE_CONFIG
+            sage: from sage.repl.interpreter import SageTerminalApp
             sage: app = SageTerminalApp.instance()
             sage: app.shell
             <sage.repl.interpreter.SageTestShell object at 0x...>
@@ -786,7 +744,6 @@ class SageTerminalApp(TerminalIPythonApp):
         self.shell = self.shell_class.instance(
             parent=self,
             config=self.config,
-            display_banner=False,
             profile_dir=self.profile_dir,
             ipython_dir=self.ipython_dir)
         self.shell.configurables.append(self)

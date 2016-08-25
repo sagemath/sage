@@ -27,6 +27,7 @@ AUTHORS:
 - chris wuthrich (02/10) - moved from ell_rational_field.py.
 
 """
+from __future__ import absolute_import
 
 ######################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
@@ -43,7 +44,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ######################################################################
 
-import heegner
+from . import heegner
 
 from sage.rings.all import (LaurentSeriesRing, RationalField, ComplexField, QQ)
 import sage.misc.misc as misc

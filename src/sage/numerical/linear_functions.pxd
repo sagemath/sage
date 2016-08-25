@@ -14,11 +14,6 @@ cdef class LinearFunctionsParent_class(Parent):
 cdef class LinearFunction(LinearFunctionOrConstraint):
     cdef dict _f
     cpdef iteritems(self)
-    cpdef ModuleElement _add_(self, ModuleElement b)
-    cpdef ModuleElement _sub_(self, ModuleElement b)
-    cpdef ModuleElement _lmul_(self, RingElement b)
-    cpdef ModuleElement _rmul_(self, RingElement b)
-    cpdef ModuleElement _neg_(self)
     cpdef _acted_upon_(self, x, bint self_on_left)
     cpdef is_zero(self)
     cpdef equals(LinearFunction left, LinearFunction right)

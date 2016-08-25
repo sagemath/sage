@@ -1243,7 +1243,7 @@ Seite der deutschen Version von Sage findet sich hier:
 
 .. [#keywords] http://docs.python.org/2/reference/lexical_analysis.html#keywords
 .. [#tutorial] http://www.sagemath.org/de/html/tutorial/
-.. [#units] http://www.sagemath.org/doc/reference/calculus/sage/symbolic/units.html
-.. [#2dgraphics] http://www.sagemath.org/doc/reference/plotting/index.html
-.. [#scatterplot] http://www.sagemath.org/doc/reference/plotting/sage/plot/scatter_plot.html
+.. [#units] http://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/units.html
+.. [#2dgraphics] http://doc.sagemath.org/html/en/reference/plotting/index.html
+.. [#scatterplot] http://doc.sagemath.org/html/en/reference/plotting/sage/plot/scatter_plot.html
 .. [#listcomp] http://docs.python.org/2/tutorial/datastructures.html#list-comprehensions

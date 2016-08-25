@@ -62,6 +62,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.                       #
 #                 http://www.gnu.org/licenses/                               #
 #****************************************************************************#
+from __future__ import division
 
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix, vector
@@ -468,7 +469,7 @@ class BinaryRecurrenceSequence(SageObject):
                     #otherwise it will divide (p+1)(p-1)
                     else :
                         M = (p+1)*(p-1)
-                        p2fac = list((p+1).factor())        #factor the (p+1) and (p-1) terms seperately and then combine for speed
+                        p2fac = list((p+1).factor())        #factor the (p+1) and (p-1) terms separately and then combine for speed
                         Mfac_dic = {}
                         for i in list(p1fac + p2fac):
                             if i[0] not in Mfac_dic:
@@ -710,9 +711,9 @@ class BinaryRecurrenceSequence(SageObject):
 
                             CongNew = []        #makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
                             M = lcm(M1, modu)
-                            for k in xrange(M/M1):
+                            for k in xrange(M // M1):
                                 for i in cong:
-                                    CongNew.append(k*M1+i)
+                                    CongNew.append(k * M1 + i)
                             cong = set(CongNew)
 
                             M1 = M

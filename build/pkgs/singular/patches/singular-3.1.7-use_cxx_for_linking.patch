@@ -7,9 +7,9 @@ Patch taken from https://raw.githubusercontent.com/cschwan/sage-on-gentoo/master
 Added LIBSINGULAR_LDFLAGS in Trac #19698
 
 
-diff -Naur Singular-3-1-7.orig/Singular/Makefile.in Singular-3-1-7/Singular/Makefile.in
---- Singular-3-1-7.orig/Singular/Makefile.in	2014-11-20 02:06:05.000000000 +1300
-+++ Singular-3-1-7/Singular/Makefile.in	2015-04-30 11:55:25.285611669 +1200
+diff -Naur a/latest/Singular/Makefile.in b/latest/Singular/Makefile.in
+--- a/latest/Singular/Makefile.in	2014-11-20 02:06:05.000000000 +1300
++++ b/latest/Singular/Makefile.in	2015-04-30 11:55:25.285611669 +1200
 @@ -67,7 +67,7 @@
  ##
  @SET_MAKE@
@@ -19,9 +19,9 @@ diff -Naur Singular-3-1-7.orig/Singular/Makefile.in Singular-3-1-7/Singular/Make
  CXX		= @CXX@
  LEX		= sh flexer.sh
 
-diff -Naur Singular-3-1-7.orig/dyn_modules/modgen/Makefile.in Singular-3-1-7/dyn_modules/modgen/Makefile.in
---- Singular-3-1-7.orig/dyn_modules/modgen/Makefile.in	2014-11-20 02:06:05.000000000 +1300
-+++ Singular-3-1-7/dyn_modules/modgen/Makefile.in	2015-04-30 11:55:25.285611669 +1200
+diff -Naur a/latest/dyn_modules/modgen/Makefile.in b/latest/dyn_modules/modgen/Makefile.in
+--- a/latest/dyn_modules/modgen/Makefile.in	2014-11-20 02:06:05.000000000 +1300
++++ b/latest/dyn_modules/modgen/Makefile.in	2015-04-30 11:55:25.285611669 +1200
 @@ -20,7 +20,7 @@
  ##
  @SET_MAKE@
@@ -31,9 +31,9 @@ diff -Naur Singular-3-1-7.orig/dyn_modules/modgen/Makefile.in Singular-3-1-7/dyn
  CXX		= @CXX@
  LEX		= sh ../../Singular/flexer.sh
  PERL		= @PERL@
-diff -Naur Singular-3-1-7.orig/kernel/Makefile.in Singular-3-1-7/kernel/Makefile.in
---- Singular-3-1-7.orig/kernel/Makefile.in	2014-11-20 02:06:05.000000000 +1300
-+++ Singular-3-1-7/kernel/Makefile.in	2015-04-30 11:55:25.285611669 +1200
+diff -Naur a/latest/kernel/Makefile.in b/latest/kernel/Makefile.in
+--- a/latest/kernel/Makefile.in	2014-11-20 02:06:05.000000000 +1300
++++ b/latest/kernel/Makefile.in	2015-04-30 11:55:25.285611669 +1200
 @@ -30,7 +30,7 @@
  ##
  @SET_MAKE@
@@ -43,9 +43,9 @@ diff -Naur Singular-3-1-7.orig/kernel/Makefile.in Singular-3-1-7/kernel/Makefile
  CXX		= @CXX@
  LEX		= @LEX@
  PERL		= @PERL@
-diff -Naur Singular-3-1-7.orig/Singular/configure Singular-3-1-7/Singular/configure
---- Singular-3-1-7.orig/Singular/configure	2015-07-15 10:18:31.000000000 +1200
-+++ Singular-3-1-7/Singular/configure	2015-07-15 10:41:16.000000000 +1200
+diff -Naur a/latest/Singular/configure b/latest/Singular/configure
+--- a/latest/Singular/configure	2015-07-15 10:18:31.000000000 +1200
++++ b/latest/Singular/configure	2015-07-15 10:41:16.000000000 +1200
 @@ -6876,7 +6876,7 @@
  	  	LD_DYN_FLAGS1="-dynamic"
  	  	LD_DYN_FLAGS2="-ldl"

@@ -17,7 +17,6 @@ http://igraph.org/python/
 == Dependencies ==
 
 * python
-* readline
 * igraph
 
 == Special Update/Build Instructions ==

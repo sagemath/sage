@@ -27,7 +27,7 @@ from sage.rings.infinity import Infinity
 
 class AffinizationOfCrystal(UniqueRepresentation, Parent):
     r"""
-    An affiniziation of a crystal.
+    An affinization of a crystal.
 
     Let `\mathfrak{g}` be a Kac-Moody algebra of affine type. The
     affinization of a finite `U_q^{\prime}(\mathfrak{g})`-crystal `B`

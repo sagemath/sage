@@ -1,4 +1,5 @@
 "Global proof preferences"
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
@@ -199,9 +200,8 @@ class WithProof:
 
         sage: proof.arithmetic(True)
         sage: with proof.WithProof('arithmetic',False):    # this would hang "forever" if attempted with proof=True
-        ...      print (10^1000 + 453).is_prime()
-        ...      print 1/0
-        ...
+        ....:      print((10^1000 + 453).is_prime())
+        ....:      print(1/0)
         Traceback (most recent call last):
         ...
         ZeroDivisionError: rational division by zero

@@ -546,7 +546,7 @@ first. We can test isomorphisms between crystals as follows::
     sage: Ctableaux = crystals.Tableaux(['A',3], shape = [1])
     sage: Cletter.digraph().is_isomorphic(Ctableaux.digraph())
     True
-    sage: Cletter.digraph().is_isomorphic(Ctableaux.digraph(), certify = True)
+    sage: Cletter.digraph().is_isomorphic(Ctableaux.digraph(), certificate = True)
     (True, {1: [[1]], 2: [[2]], 3: [[3]], 4: [[4]]})
 
 where in the last step the explicit map between the vertices of the crystals is given.

@@ -24,7 +24,7 @@ cdef int allocate_mpz_vector(mpz_vector* v, Py_ssize_t num_nonzero) except -1:
     cdef Py_ssize_t i
     v.entries = <mpz_t *>sig_malloc(num_nonzero*sizeof(mpz_t))
     if v.entries == NULL:
-        raise MemoryError, "Error allocating memory"
+        raise MemoryError("Error allocating memory")
     for i from 0 <= i < num_nonzero:
         mpz_init(v.entries[i])
     v.positions = <Py_ssize_t*>sig_malloc(num_nonzero*sizeof(Py_ssize_t))
@@ -33,7 +33,7 @@ cdef int allocate_mpz_vector(mpz_vector* v, Py_ssize_t num_nonzero) except -1:
             mpz_clear(v.entries[i])
         sig_free(v.entries)
         v.entries = NULL
-        raise MemoryError, "Error allocating memory"
+        raise MemoryError("Error allocating memory")
     return 0
 
 cdef int mpz_vector_init(mpz_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzero) except -1:
@@ -135,7 +135,7 @@ cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     that *must* have been initialized using mpz_init.
     """
     if n >= v.degree:
-        raise IndexError, "Index (=%s) must be between 0 and %s."%(n, v.degree - 1)
+        raise IndexError("Index (=%s) must be between 0 and %s." % (n, v.degree - 1))
     cdef Py_ssize_t m
     m = binary_search0(v.positions, v.num_nonzero, n)
     if m == -1:
@@ -166,7 +166,7 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
     This would be v[n] = x in Python syntax.
     """
     if n >= v.degree or n < 0:
-        raise IndexError, "Index (=%s) must be between 0 and %s."%(n, v.degree - 1)
+        raise IndexError("Index (=%s) must be between 0 and %s." % (n, v.degree - 1))
     cdef Py_ssize_t i, m, ins
     cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
@@ -252,8 +252,8 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
     Initialize sum and set sum = v + multiple*w.
     """
     if v.degree != w.degree:
-        print "Can't add vectors of degree %s and %s"%(v.degree, w.degree)
-        raise ArithmeticError, "The vectors must have the same degree."
+        print("Can't add vectors of degree %s and %s" % (v.degree, w.degree))
+        raise ArithmeticError("The vectors must have the same degree.")
 
     cdef Py_ssize_t nz, i, j, k, do_multiply
     cdef mpz_vector* z
@@ -366,12 +366,12 @@ cdef int mpz_vector_scalar_multiply(mpz_vector* v, mpz_vector* w, mpz_t scalar) 
         v.entries = <mpz_t*> sig_malloc(w.num_nonzero * sizeof(mpz_t))
         if v.entries == NULL:
             v.positions = NULL
-            raise MemoryError, "error allocating rational sparse vector mpz's"
+            raise MemoryError("error allocating rational sparse vector mpz's")
         v.positions = <Py_ssize_t*> sig_malloc(w.num_nonzero * sizeof(Py_ssize_t))
         if v.positions == NULL:
             sig_free(v.entries)
             v.entries = NULL
-            raise MemoryError, "error allocating rational sparse vector positions"
+            raise MemoryError("error allocating rational sparse vector positions")
         v.num_nonzero = w.num_nonzero
         v.degree = w.degree
         for i from 0 <= i < v.num_nonzero:

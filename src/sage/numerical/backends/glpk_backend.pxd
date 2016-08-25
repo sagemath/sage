@@ -9,7 +9,7 @@
 #*****************************************************************************
 
 from sage.libs.glpk.types cimport glp_prob, glp_iocp, glp_smcp
-from generic_backend cimport GenericBackend
+from .generic_backend cimport GenericBackend
 
 
 # search_tree_data_t:

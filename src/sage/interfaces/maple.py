@@ -235,10 +235,11 @@ loaded.
 #                  http://www.gnu.org/licenses/
 #############################################################################
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
-from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 
 import pexpect
 

@@ -8,6 +8,7 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
@@ -36,12 +37,12 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix import is_Matrix
 
-from sage.schemes.plane_curves.projective_curve import ProjectiveCurve_generic
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
 
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-class ProjectiveConic_field(ProjectiveCurve_generic):
+class ProjectiveConic_field(ProjectivePlaneCurve):
     r"""
     Create a projective plane conic curve over a field.
     See ``Conic`` for full documentation.
@@ -69,7 +70,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
             sage: c = Conic([1, 1, 1]); c
             Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2
         """
-        ProjectiveCurve_generic.__init__(self, A, f)
+        ProjectivePlaneCurve.__init__(self, A, f)
         self._coefficients = [f[(2,0,0)], f[(1,1,0)], f[(1,0,1)],
                                 f[(0,2,0)], f[(0,1,1)], f[(0,0,2)]]
         self._parametrization = None
@@ -119,7 +120,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
             if not S.has_coerce_map_from(B):
                 raise ValueError("No natural map from the base ring of self " \
                                   "(= %s) to S (= %s)" % (self, S))
-            from constructor import Conic
+            from .constructor import Conic
             con = Conic([S(c) for c in self.coefficients()], \
                         self.variable_names())
             if self._rational_point is not None:
@@ -129,7 +130,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
                     # if (and only if) there is no point in the cache.
                     pt = con.point(pt)
             return con
-        return ProjectiveCurve_generic.base_extend(self, S)
+        return ProjectivePlaneCurve.base_extend(self, S)
 
     def cache_point(self, p):
         r"""
@@ -356,7 +357,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
         """
         if names is None:
             names = self.defining_polynomial().parent().variable_names()
-        from constructor import Conic
+        from .constructor import Conic
         D, T = self.diagonal_matrix()
         con = Conic(D, names = names)
         return con, con.hom(T, self), self.hom(T.inverse(), con)
@@ -691,7 +692,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
 
         """
         if is_Matrix(x):
-            from constructor import Conic
+            from .constructor import Conic
             y = x.inverse()
             A = y.transpose()*self.matrix()*y
             im = Conic(A)
@@ -703,7 +704,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
                                  (x, self, Y))
             x = Sequence(x*vector(self.ambient_space().gens()))
             return self.Hom(Y)(x, check = False)
-        return ProjectiveCurve_generic.hom(self, x, Y)
+        return ProjectivePlaneCurve.hom(self, x, Y)
 
     def is_diagonal(self):
         r"""
@@ -930,7 +931,7 @@ class ProjectiveConic_field(ProjectiveCurve_generic):
         """
         if is_Vector(v):
             v = Sequence(v)
-        p = ProjectiveCurve_generic.point(self, v, check=check)
+        p = ProjectivePlaneCurve.point(self, v, check=check)
         if self._rational_point is None:
             self._rational_point = p
         return p

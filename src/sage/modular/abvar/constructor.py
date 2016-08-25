@@ -5,6 +5,7 @@ AUTHORS:
 
 - William Stein (2007-03)
 """
+from __future__ import absolute_import
 
 ###########################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>               #
@@ -18,9 +19,9 @@ from sage.rings.integer import Integer
 
 from sage.modular.arithgroup.all import is_CongruenceSubgroup, Gamma0
 from sage.modular.modsym.space import is_ModularSymbolsSpace
-from abvar_newform import ModularAbelianVariety_newform
+from .abvar_newform import ModularAbelianVariety_newform
 import sage.modular.modform.element
-import abvar
+from . import abvar
 
 _cache = {}
 

@@ -41,7 +41,7 @@ Sage example in ./linsolve.tex, line 422::
 Sage example in ./linsolve.tex, line 433::
 
   sage: v = 3*10^9
-  sage: print "%3.3f"%float(cout/v/3600/24/365)
+  sage: print("%3.3f" % float(cout/v/3600/24/365))
   540.028
 
 Sage example in ./linsolve.tex, line 502::

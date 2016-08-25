@@ -206,12 +206,12 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
     sage: latex.extra_macros('')
     sage: latex.extra_preamble('')
     sage: from sage.misc.latex import latex_extra_preamble
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
     sage: latex.add_macro("\\newcommand{\\foo}{bar}")
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
@@ -235,7 +235,7 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
     sage: latex.add_to_preamble('\\geometry{letterpaper,total={8in,10in}}')
     sage: latex.extra_preamble()
     '\\usepackage{geometry}\\geometry{letterpaper,total={8in,10in}}'
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \usepackage{geometry}\geometry{letterpaper,total={8in,10in}}
     \newcommand{\ZZ}{\Bold{Z}}
     ...

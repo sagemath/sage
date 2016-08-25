@@ -24,7 +24,7 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import sys
 
@@ -124,7 +124,7 @@ def run_tests(bint longtest=False, bint forever=False):
     sig_on()
     error = test(longtest, forever)
     sig_off()
-    print "Done."
+    print("Done.")
     if error:
         return error
 

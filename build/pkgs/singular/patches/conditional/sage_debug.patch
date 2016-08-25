@@ -1,6 +1,6 @@
-diff -druN latest.tmp/kernel/Makefile.in latest/kernel/Makefile.in
---- latest.tmp/kernel/Makefile.in	2014-08-06 08:59:15.000000000 -0700
-+++ latest/kernel/Makefile.in	2014-10-21 02:28:30.420231800 -0700
+diff -druN a/latest/kernel/Makefile.in b/latest/kernel/Makefile.in
+--- a/latest/kernel/Makefile.in	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/kernel/Makefile.in	2014-10-21 02:28:30.420231800 -0700
 @@ -49,7 +49,7 @@
  CXXFLAGS	= @CXXFLAGS@ ${PIPE} 
  CXXTEMPLFLAGS	= @CXXTEMPLFLAGS@
@@ -10,9 +10,9 @@ diff -druN latest.tmp/kernel/Makefile.in latest/kernel/Makefile.in
  LDFLAGS		= @LDFLAGS@
  LD_DYN_FLAGS	= @LD_DYN_FLAGS@
  SFLAGS		= @SFLAGS@
-diff -druN latest.tmp/Singular/configure latest/Singular/configure
---- latest.tmp/Singular/configure	2014-10-21 02:27:51.270156368 -0700
-+++ latest/Singular/configure	2014-10-21 02:33:39.470848773 -0700
+diff -druN a/latest/Singular/configure b/latest/Singular/configure
+--- a/latest/Singular/configure	2014-10-21 02:27:51.270156368 -0700
++++ b/latest/Singular/configure	2014-10-21 02:33:39.470848773 -0700
 @@ -10006,11 +10006,7 @@
  
  NEED_LIBSG="${NEED_LIBS}"
@@ -26,9 +26,9 @@ diff -druN latest.tmp/Singular/configure latest/Singular/configure
  
  
  
-diff -druN latest.tmp/Singular/Makefile.in latest/Singular/Makefile.in
---- latest.tmp/Singular/Makefile.in	2014-10-21 02:26:19.439979752 -0700
-+++ latest/Singular/Makefile.in	2014-10-21 02:31:57.110639474 -0700
+diff -druN a/latest/Singular/Makefile.in b/latest/Singular/Makefile.in
+--- a/latest/Singular/Makefile.in	2014-10-21 02:26:19.439979752 -0700
++++ b/latest/Singular/Makefile.in	2014-10-21 02:31:57.110639474 -0700
 @@ -93,10 +93,10 @@
  CPPFLAGS	= -I${srcdir} -I.. -I@prefix@ @CPPFLAGS@ @PYTHON_CPPFLAGS@ @FLINT_CFLAGS@
  ## -I/usr/include/python2.4 -I/usr/local/include -I../modules/python

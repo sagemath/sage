@@ -10,6 +10,7 @@ Fast word datatype using an array of unsigned char.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 include "cysignals/memory.pxi"
@@ -398,9 +399,8 @@ cdef class WordDatatype_char(WordDatatype):
         EXAMPLES::
 
             sage: W = Words([0,1,2,3])
-            sage: for i in W([0,0,1,0]):  # indirect doctest
-            ....:     print i,
-            0 0 1 0
+            sage: list(W([0,0,1,0]))  # indirect doctest
+            [0, 0, 1, 0]
         """
         cdef size_t i
         for i in range(self._length):
@@ -689,7 +689,8 @@ cdef class WordDatatype_char(WordDatatype):
             sage: L = [[len(w[n:].longest_common_prefix(w[n+fibonacci(i):]))
             ....:      for i in range(5,15)] for n in range(1,1000)]
             sage: for n,l in enumerate(L):
-            ....:     if l.count(0) > 4: print n+1,l
+            ....:     if l.count(0) > 4:
+            ....:         print("{} {}".format(n+1,l))
             375 [0, 13, 0, 34, 0, 89, 0, 233, 0, 233]
             376 [0, 12, 0, 33, 0, 88, 0, 232, 0, 232]
             608 [8, 0, 21, 0, 55, 0, 144, 0, 377, 0]

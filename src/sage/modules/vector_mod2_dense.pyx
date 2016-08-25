@@ -193,7 +193,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         if self._entries:
             mzd_free(self._entries)
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         EXAMPLES::
             sage: v = vector(GF(2), [0,0,0,0])
@@ -263,7 +263,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         return unpickle_v0, (self._parent, self.list(), self._degree, self._is_mutable)
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         EXAMPLE::
 
@@ -278,7 +278,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_add(z._entries, self._entries, (<Vector_mod2_dense>right)._entries)
         return z
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         EXAMPLE::
 
@@ -309,7 +309,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         return res
 
 
-    cpdef Element _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right):
         """
         EXAMPLES::
            sage: VS = VectorSpace(GF(2),3)
@@ -355,7 +355,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         return n
 
-    cpdef Vector _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right):
         """
         EXAMPLE::
 
@@ -375,9 +375,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             z._entries.rows[0][i] = (self._entries.rows[0][i] & r._entries.rows[0][i])
         return z
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _lmul_(self, RingElement left):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS.random_element(); e
@@ -388,6 +388,18 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             (1, 0, 0, 0, 1, 1, 1, 0, 0, 1)
             sage: 2 * e #indirect doctest
             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+        ::
+
+            sage: VS = VectorSpace(GF(2),10)
+            sage: e = VS.random_element(); e
+            (1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
+            sage: e * 0 #indirect doctest
+            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            sage: e * 1
+            (1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
+            sage: e * 2
+            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         """
         cdef IntegerMod_int a
 
@@ -396,24 +408,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         else:
             return self._new_c()
 
-
-    cpdef ModuleElement _lmul_(self, RingElement right):
-        """
-        EXAMPLE::
-
-            sage: VS = VectorSpace(GF(2),10)
-            sage: e = VS.random_element(); e
-            (1, 0, 0, 0, 1, 1, 1, 0, 0, 1)
-            sage: e * 0 #indirect doctest
-            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-            sage: e * 1
-            (1, 0, 0, 0, 1, 1, 1, 0, 0, 1)
-            sage: e * 2
-            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        """
-        return self._rmul_(right)
-
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         """
         EXAMPLE::
 
@@ -423,25 +418,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             True
         """
         return self.__copy__()
-
-    def n(self, *args, **kwargs):
-        """
-        Returns a numerical approximation of ``self`` by calling the
-        :meth:`n()` method on all of its entries.
-
-        EXAMPLES::
-
-            sage: v = vector(GF(2), [1,2,3])
-            sage: v.n()
-            (1.00000000000000, 0.000000000000000, 1.00000000000000)
-            sage: _.parent()
-            Vector space of dimension 3 over Real Field with 53 bits of precision
-            sage: v.n(prec=75)
-            (1.000000000000000000000, 0.0000000000000000000000, 1.000000000000000000000)
-            sage: _.parent()
-            Vector space of dimension 3 over Real Field with 75 bits of precision
-        """
-        return vector( [e.n(*args, **kwargs) for e in self] )
 
     def list(self, copy=True):
         """

@@ -122,7 +122,7 @@ We solve an equation and a system of two equations::
     sage: eqn.Solve('x')                    # optional - mathematica
     {{x -> 3}}
     sage: sys = mathematica('{x^2 - 3y == 3, 2x - y == 1}')  # optional - mathematica
-    sage: print sys                         # optional - mathematica
+    sage: print(sys)                        # optional - mathematica
                2
              {x  - 3 y == 3, 2 x - y == 1}
     sage: sys.Solve('{x, y}')               # optional - mathematica
@@ -137,9 +137,9 @@ in Sage, this does not affect the `c` in Mathematica.
 ::
 
     sage: c = m(5)                          # optional - mathematica
-    sage: print m('b + c x')                # optional - mathematica
+    sage: print(m('b + c x'))               # optional - mathematica
                  b + c x
-    sage: print m('b') + c*m('x')           # optional - mathematica
+    sage: print(m('b') + c*m('x'))          # optional - mathematica
              b + 5 x
 
 The Sage interfaces changes Sage lists into Mathematica lists::
@@ -203,19 +203,19 @@ We factor a polynomial of degree 200 over the integers.
     sage: f
     x^200 + 12*x^101 + 25*x^100 - 85*x^2 + 315*x + 100
     sage: g = mathematica(str(f))            # optional - mathematica
-    sage: print g                            # optional - mathematica
+    sage: print(g)                           # optional - mathematica
                                2       100       101    200
              100 + 315 x - 85 x  + 25 x    + 12 x    + x
     sage: g                                  # optional - mathematica
     100 + 315*x - 85*x^2 + 25*x^100 + 12*x^101 + x^200
-    sage: print g.Factor()                   # optional - mathematica
+    sage: print(g.Factor())                  # optional - mathematica
                           100               100
              (20 - 5 x + x   ) (5 + 17 x + x   )
 
 We can also factor a multivariate polynomial::
 
     sage: f = mathematica('x^6 + (-y - 2)*x^5 + (y^3 + 2*y)*x^4 - y^4*x^3')  # optional - mathematica
-    sage: print f.Factor()                   # optional - mathematica
+    sage: print(f.Factor())                  # optional - mathematica
               3                  2    3
              x  (x - y) (-2 x + x  + y )
 
@@ -256,14 +256,14 @@ first examples test saving and loading to strings.
 ::
 
     sage: x = mathematica(pi/2)     # optional - mathematica
-    sage: print x                   # optional - mathematica
+    sage: print(x)                  # optional - mathematica
              Pi
              --
              2
     sage: loads(dumps(x)) == x      # optional - mathematica
     True
     sage: n = x.N(50)               # optional - mathematica
-    sage: print n                   # optional - mathematica
+    sage: print(n)                  # optional - mathematica
                   1.5707963267948966192313216916397514420985846996876
     sage: loads(dumps(n)) == n      # optional - mathematica
     True
@@ -356,6 +356,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import os
 import re
@@ -414,7 +415,7 @@ class Mathematica(ExtraTabCompletion, Expect):
         return '<<"%s"'%filename
 
     def _keyboard_interrupt(self):
-        print "Interrupting %s..."%self
+        print("Interrupting %s..." % self)
         e = self._expect
         e.sendline(chr(3))  # send ctrl-c
         e.expect('Interrupt> ')
@@ -435,7 +436,7 @@ In order to use the Mathematica interface you need to have Mathematica
 installed and have a script in your PATH called "math" that runs the
 command-line version of Mathematica. Alternatively, you could use a
 remote connection to a server running Mathematica -- for hints, type
-    print mathematica._install_hints_ssh()
+    print(mathematica._install_hints_ssh())
 
 
   (1) You might have to buy Mathematica (http://www.wolfram.com/).
@@ -491,7 +492,7 @@ remote connection to a server running Mathematica -- for hints, type
             return AsciiArtString(s)
 
     #def _keyboard_interrupt(self):
-    #    print "Keyboard interrupt pressed; trying to recover."
+    #    print("Keyboard interrupt pressed; trying to recover.")
     #    E = self.expect()
     #    E.sendline(chr(3))
     #    E.sendline('a')

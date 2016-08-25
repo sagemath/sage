@@ -540,7 +540,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             from sage.misc.latex import latex
             return latex(self._repr_())
 
-    cpdef MonoidElement _mul_(left, MonoidElement right):
+    cpdef _mul_(left, right):
         """
         Multiplication of group elements
 
@@ -561,7 +561,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         P = left.parent()
         return P.element_class(P, left.gap() * right.gap())
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         This method implements comparison.
 
@@ -585,7 +585,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         return cmp((<ElementLibGAP>left)._libgap,
                    (<ElementLibGAP>right)._libgap)
 
-    cpdef MultiplicativeGroupElement _div_(left, MultiplicativeGroupElement right):
+    cpdef _div_(left, right):
         """
         Division of group elements.
 

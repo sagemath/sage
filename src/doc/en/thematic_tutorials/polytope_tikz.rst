@@ -23,7 +23,7 @@ Instructions
 
 To put an image of a 3d-polytope in LaTeX using TikZ and Sage, simply follow the instructions:
 
-- Install `SageTex <http://www.sagemath.org/doc/tutorial/sagetex.html>`_ (optional but recommended!)
+- Install `SageTex <http://doc.sagemath.org/html/en/tutorial/sagetex.html>`_ (optional but recommended!)
 - Put ``\usepackage{tikz}`` in the preamble of your article
 - Open Sage and change the directory to your article's by the command ``cd /path/to/article``
 - Input your polytope, called P for example, to Sage
@@ -168,5 +168,5 @@ in your preamble and use them with a sagesilent in your article:
 
 Then, run pdflatex, execute Sage on the file ``article_name.sagetex.sage`` and run pdflatex again.
 
-For more information on SageTeX, see the tutorial http://www.sagemath.org/doc/tutorial/sagetex.html.
+For more information on SageTeX, see the tutorial http://doc.sagemath.org/html/en/tutorial/sagetex.html.
 

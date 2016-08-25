@@ -1,5 +1,5 @@
-from index_face_set cimport IndexFaceSet
-from transform cimport point_c, face_c
+from .index_face_set cimport IndexFaceSet
+from .transform cimport point_c
 
 cdef class ParametricSurface(IndexFaceSet):
     cdef object f

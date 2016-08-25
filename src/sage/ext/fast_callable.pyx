@@ -446,7 +446,7 @@ def fast_callable(x, domain=None, vars=None,
                         from sage.misc.superseded import deprecation
                         deprecation(5413, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
                     else:
-                        raise ValueError, "List of variables must be specified for symbolic expressions"
+                        raise ValueError("List of variables must be specified for symbolic expressions")
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
             if is_PolynomialRing(x.parent()) or is_MPolynomialRing(x.parent()):
@@ -678,7 +678,7 @@ cdef class ExpressionTreeBuilder:
         try:
             ind = self._vars.index(var_name)
         except ValueError:
-            raise ValueError, "Variable '%s' not found" % var_name
+            raise ValueError("Variable '%s' not found" % var_name)
         return ExpressionVariable(self, ind)
 
     def _var_number(self, n):
@@ -700,7 +700,7 @@ cdef class ExpressionTreeBuilder:
         """
         if 0 <= n < len(self._vars):
             return ExpressionVariable(self, n)
-        raise ValueError, "Variable number %d out of range" % n
+        raise ValueError("Variable number %d out of range" % n)
 
     def call(self, fn, *args):
         r"""
@@ -1704,8 +1704,8 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         sage: def my_sin(x): return sin(x)
         sage: def my_norm(x, y): return x*x + y*y
         sage: def my_sqrt(x):
-        ...       if x < 0: raise ValueError, "sqrt of negative number"
-        ...       return sqrt(x, extend=False)
+        ....:     if x < 0: raise ValueError("sqrt of negative number")
+        ....:     return sqrt(x, extend=False)
         sage: fc = fast_callable(expr, domain=RealField(130))
         sage: fc(0)
         3.1415926535897932384626433832795028842
@@ -1884,7 +1884,7 @@ cpdef generate_code(Expression expr, InstructionStream stream):
             if stream.has_instr('py_call'):
                 stream.instr('py_call', fn, len(ecall._arguments))
             else:
-                raise ValueError, "Unhandled function %s in generate_code" % fn
+                raise ValueError("Unhandled function %s in generate_code" % fn)
         elif isinstance(expr, ExpressionIPow):
             base = expr.base()
             exponent = expr.exponent()
@@ -1903,7 +1903,7 @@ cpdef generate_code(Expression expr, InstructionStream stream):
             else:
                 stream.instr('py_call', IntegerPowerFunction(exponent), 1)
         else:
-            raise ValueError, "Unhandled expression kind %s in generate_code" % type(expr)
+            raise ValueError("Unhandled expression kind %s in generate_code" % type(expr))
 
 cdef class InterpreterMetadata  # forward declaration
 

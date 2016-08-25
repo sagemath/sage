@@ -7,12 +7,10 @@
 
 include 'data_structures_pxd.pxi' # includes bitsets
 
-from sage.rings.integer cimport Integer
-from automorphism_group_canonical_label cimport \
-    get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space, \
-    allocate_agcl_output, deallocate_agcl_output, \
-    allocate_agcl_work_space, deallocate_agcl_work_space
-from double_coset cimport double_coset
+from .automorphism_group_canonical_label cimport (
+    get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space,
+    allocate_agcl_output, deallocate_agcl_output,
+    allocate_agcl_work_space, deallocate_agcl_work_space)
 
 cdef class BinaryCodeStruct:
     cdef bitset_s *alpha_is_wd # single bitset of length nwords + degree

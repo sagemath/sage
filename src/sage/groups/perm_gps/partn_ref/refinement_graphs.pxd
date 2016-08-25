@@ -8,23 +8,18 @@
 include 'data_structures_pxd.pxi' # includes bitsets
 
 from sage.graphs.base.c_graph cimport CGraph
-from sage.graphs.base.sparse_graph cimport SparseGraph
-from sage.graphs.base.dense_graph cimport DenseGraph
-from sage.rings.integer cimport Integer
-from automorphism_group_canonical_label cimport \
-    get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space, \
-    allocate_agcl_output, deallocate_agcl_output, \
-    allocate_agcl_work_space, deallocate_agcl_work_space
-from double_coset cimport double_coset
-from canonical_augmentation cimport iterator, \
-    canonical_generator_data, allocate_cgd, deallocate_cgd, \
-    canonical_generator_next, \
-    setup_canonical_generator, start_canonical_generator
-from refinement_sets cimport subset, free_subset, all_set_children_are_equivalent, \
-    refine_set, compare_sets, generate_child_subsets, apply_subset_aug, \
-    canonical_set_parent, allocate_sgd, deallocate_sgd, allocate_subset_gen, free_subset_gen, \
-    setup_set_gen, subset_generator_next, subset_generator_data, allocate_subset_gen_2
-
+from .automorphism_group_canonical_label cimport (
+    get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space,
+    allocate_agcl_output, deallocate_agcl_output,
+    allocate_agcl_work_space, deallocate_agcl_work_space)
+from .canonical_augmentation cimport (iterator,
+    canonical_generator_data, allocate_cgd, deallocate_cgd,
+    canonical_generator_next,
+    setup_canonical_generator, start_canonical_generator)
+from .refinement_sets cimport (subset, free_subset, all_set_children_are_equivalent,
+    refine_set, compare_sets, generate_child_subsets, apply_subset_aug,
+    canonical_set_parent, allocate_sgd, deallocate_sgd, allocate_subset_gen, free_subset_gen,
+    setup_set_gen, subset_generator_next, subset_generator_data, allocate_subset_gen_2)
 
 
 cdef class GraphStruct:

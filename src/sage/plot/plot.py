@@ -316,8 +316,8 @@ the first few zeros::
 
 .. PLOT::
 
-        g=plot(lambda x:fibonacci(round(x)),(x,1,10))
-        sphinx_plot(g)
+    g=plot(lambda x:fibonacci(round(x)),(x,1,10))
+    sphinx_plot(g)
 
 Many concentric circles shrinking toward the origin::
 
@@ -397,19 +397,19 @@ Cycliclink::
 
     g1 = plot(cos(20*x)*exp(-2*x), 0, 1)
     g2 = plot(2*exp(-30*x) - exp(-3*x), 0, 1)
-    g = graphics_array([g1, g2], 2, 1) #needs a GraphicsArray.plot() method
+    g = graphics_array([g1, g2], 2, 1)
     sphinx_plot(g)
 
 Pi Axis::
 
     sage: g1 = plot(sin(x), 0, 2*pi)
-    sage: g2 = plot(cos(x), 0, 2*pi, linestyle = "--")
+    sage: g2 = plot(cos(x), 0, 2*pi, linestyle="--")
     sage: (g1+g2).show(ticks=pi/6, tick_formatter=pi)  # long time # show their sum, nicely formatted
 
 .. PLOT::
 
     g1 = plot(sin(x), 0, 2*pi, ticks=pi/6, tick_formatter=pi)
-    g2 = plot(cos(x), 0, 2*pi, linestyle = "--", ticks=pi/6, tick_formatter=pi)
+    g2 = plot(cos(x), 0, 2*pi, linestyle="--", ticks=pi/6, tick_formatter=pi)
     sphinx_plot(g1+g2)
 
 An illustration of integration::
@@ -533,6 +533,9 @@ AUTHORS:
 
 - Jeroen Demeyer (2012-04-19): move parts of this file to graphics.py (:trac:`12857`)
 
+- Aaron Lauve (2016-07-13): reworked handling of 'color' when passed
+  a list of functions; now more in-line with other CAS's. Added list functionality
+  to linestyle and legend_label options as well. (:trac:`12962`)
 """
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>
@@ -545,6 +548,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 from functools import reduce
@@ -566,7 +570,7 @@ from sage.ext.fast_eval import fast_float, fast_float_constant, is_fast_float
 
 from sage.misc.decorators import options, rename_keyword
 
-from graphics import Graphics, GraphicsArray
+from .graphics import Graphics, GraphicsArray
 
 #Currently not used - see comment immediately above about
 #figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
@@ -777,9 +781,8 @@ def xydata_from_point_list(points):
 
     return xdata, ydata
 
-@rename_keyword(color='rgbcolor')
-@options(alpha=1, thickness=1, fill=False, fillcolor='automatic', fillalpha=0.5, rgbcolor=(0,0,1), plot_points=200,
-         adaptive_tolerance=0.01, adaptive_recursion=5, detect_poles = False, exclude = None, legend_label=None,
+@options(alpha=1, thickness=1, fill=False, fillcolor='automatic', fillalpha=0.5, plot_points=200,
+         adaptive_tolerance=0.01, adaptive_recursion=5, detect_poles=False, exclude=None, legend_label=None,
          __original_opts=True, aspect_ratio='automatic')
 def plot(funcs, *args, **kwds):
     r"""
@@ -846,16 +849,12 @@ def plot(funcs, *args, **kwds):
     - ``ymax`` - ending y value in the rendered figure. This parameter is passed
       directly to the ``show`` procedure and it could be overwritten.
 
-    - ``color`` - an RGB tuple (r,g,b) with each of r,g,b between 0 and 1,
-      or a color name as a string (e.g., 'purple'), or an HTML color
-      such as '#aaff0b'.
-
     - ``detect_poles`` - (Default: False) If set to True poles are detected.
       If set to "show" vertical asymptotes are drawn.
 
-    - ``legend_color`` - the color of the text for this item in the legend
-
-    - ``legend_label`` - the label for this item in the legend
+    - ``legend_label`` - a (TeX) string serving as the label for `X` in the legend.
+      If `X` is a list, then this option can be a single string, or a list or dictionary
+      with strings as entries/values. If a dictionary, then keys are taken from ``range(len(X))``.
 
     .. note::
 
@@ -869,8 +868,42 @@ def plot(funcs, *args, **kwds):
           keywords can be provided to either this ``plot`` command or to
           the ``show`` command.
 
+        - This function does NOT simply sample equally spaced points
+          between xmin and xmax. Instead it computes equally spaced points
+          and adds small perturbations to them. This reduces the possibility
+          of, e.g., sampling `\sin` only at multiples of `2\pi`, which would
+          yield a very misleading graph.
+
+        - If there is a range of consecutive points where the function has
+          no value, then those points will be excluded from the plot. See
+          the example below on automatic exclusion of points.
+
         - For the other keyword options that the ``plot`` function can
-          take, refer to the method :meth:`~sage.plot.graphics.Graphics.show`.
+          take, refer to the method :meth:`~sage.plot.graphics.Graphics.show`
+          and the further options below.
+
+    COLOR OPTIONS:
+
+    - ``color`` - (Default: 'blue') One of:
+
+      - an RGB tuple (r,g,b) with each of r,g,b between 0 and 1.
+
+      - a color name as a string (e.g., 'purple').
+
+      - an HTML color such as '#aaff0b'.
+
+      - a list or dictionary of colors (valid only if `X` is a list):
+        if a dictionary, keys are taken from ``range(len(X))``;
+        the entries/values of the list/dictonary may be any of the options above.
+
+      - 'automatic' -- maps to default ('blue') if `X` is a single Sage object; and
+        maps to a fixed sequence of regularly spaced colors if `X` is a list.
+
+    - ``legend_color`` - the color of the text for `X` (or each item in `X`) in the legend.
+        Default color is 'black'. Options are as in ``color`` above, except that the choice 'automatic' maps to 'black' if `X` is a single Sage object.
+
+    - ``fillcolor`` - The color of the fill for the plot of `X` (or each item in `X`).
+        Default color is 'gray' if `X` is a single Sage object or if ``color`` is a single color. Otherwise, options are as in ``color`` above.
 
     APPEARANCE OPTIONS:
 
@@ -888,42 +921,51 @@ def plot(funcs, *args, **kwds):
 
     - ``hue`` - The color given as a hue
 
+    LINE OPTIONS:
+
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
     - ``linestyle`` - (default: "-") The style of the line, which is one of
-       - ``"-"`` or ``"solid"``
-       - ``"--"`` or ``"dashed"``
-       - ``"-."`` or ``"dash dot"``
-       - ``":"`` or ``"dotted"``
-       - ``"None"`` or ``" "`` or ``""`` (nothing)
 
-       The linestyle can also be prefixed with a drawing style (e.g., ``"steps--"``)
+      - ``"-"`` or ``"solid"``
+      - ``"--"`` or ``"dashed"``
+      - ``"-."`` or ``"dash dot"``
+      - ``":"`` or ``"dotted"``
+      - ``"None"`` or ``" "`` or ``""`` (nothing)
+      - a list or dictionary (see below)
 
-       - ``"default"`` (connect the points with straight lines)
-       - ``"steps"`` or ``"steps-pre"`` (step function; horizontal
-         line is to the left of point)
-       - ``"steps-mid"`` (step function; points are in the middle of
-         horizontal lines)
-       - ``"steps-post"`` (step function; horizontal line is to the
-         right of point)
+      The linestyle can also be prefixed with a drawing style (e.g., ``"steps--"``)
+
+      - ``"default"`` (connect the points with straight lines)
+      - ``"steps"`` or ``"steps-pre"`` (step function; horizontal
+        line is to the left of point)
+      - ``"steps-mid"`` (step function; points are in the middle of
+        horizontal lines)
+      - ``"steps-post"`` (step function; horizontal line is to the
+        right of point)
+
+      If `X` is a list, then ``linestyle`` may be a list (with entries
+      taken from the strings above) or a dictionary (with keys in ``range(len(X))``
+      and values taken from the strings above).
 
     - ``marker``  - The style of the markers, which is one of
-       - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
-       - ``","`` (pixel), ``"."`` (point)
-       - ``"_"`` (horizontal line), ``"|"`` (vertical line)
-       - ``"o"`` (circle), ``"p"`` (pentagon), ``"s"`` (square), ``"x"`` (x), ``"+"`` (plus), ``"*"`` (star)
-       - ``"D"`` (diamond), ``"d"`` (thin diamond)
-       - ``"H"`` (hexagon), ``"h"`` (alternative hexagon)
-       - ``"<"`` (triangle left), ``">"`` (triangle right), ``"^"`` (triangle up), ``"v"`` (triangle down)
-       - ``"1"`` (tri down), ``"2"`` (tri up), ``"3"`` (tri left), ``"4"`` (tri right)
-       - ``0`` (tick left), ``1`` (tick right), ``2`` (tick up), ``3`` (tick down)
-       - ``4`` (caret left), ``5`` (caret right), ``6`` (caret up), ``7`` (caret down), ``8`` (octagon)
-       - ``"$...$"`` (math TeX string)
-       - ``(numsides, style, angle)`` to create a custom, regular symbol
 
-         - ``numsides`` -- the number of sides
-         - ``style`` -- ``0`` (regular polygon), ``1`` (star shape), ``2`` (asterisk), ``3`` (circle)
-         - ``angle`` -- the angular rotation in degrees
+      - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
+      - ``","`` (pixel), ``"."`` (point)
+      - ``"_"`` (horizontal line), ``"|"`` (vertical line)
+      - ``"o"`` (circle), ``"p"`` (pentagon), ``"s"`` (square), ``"x"`` (x), ``"+"`` (plus), ``"*"`` (star)
+      - ``"D"`` (diamond), ``"d"`` (thin diamond)
+      - ``"H"`` (hexagon), ``"h"`` (alternative hexagon)
+      - ``"<"`` (triangle left), ``">"`` (triangle right), ``"^"`` (triangle up), ``"v"`` (triangle down)
+      - ``"1"`` (tri down), ``"2"`` (tri up), ``"3"`` (tri left), ``"4"`` (tri right)
+      - ``0`` (tick left), ``1`` (tick right), ``2`` (tick up), ``3`` (tick down)
+      - ``4`` (caret left), ``5`` (caret right), ``6`` (caret up), ``7`` (caret down), ``8`` (octagon)
+      - ``"$...$"`` (math TeX string)
+      - ``(numsides, style, angle)`` to create a custom, regular symbol
+
+        - ``numsides`` -- the number of sides
+        - ``style`` -- ``0`` (regular polygon), ``1`` (star shape), ``2`` (asterisk), ``3`` (circle)
+        - ``angle`` -- the angular rotation in degrees
 
     - ``markersize`` - the size of the marker in points
 
@@ -957,24 +999,8 @@ def plot(funcs, *args, **kwds):
         the j-th function in the list.  (But if ``d[i] == j``: Fill the area
         between the i-th function in the list and the horizontal line y = j.)
 
-    - ``fillcolor`` - (default: 'automatic') The color of the fill.
-      Either 'automatic' or a color.
-
     - ``fillalpha`` - (default: 0.5) How transparent the fill is.
       A number between 0 and 1.
-
-    .. note::
-
-        - this function does NOT simply sample equally spaced points
-          between xmin and xmax. Instead it computes equally spaced points
-          and adds small perturbations to them. This reduces the possibility
-          of, e.g., sampling `\sin` only at multiples of `2\pi`, which would
-          yield a very misleading graph.
-
-        - if there is a range of consecutive points where the function has
-          no value, then those points will be excluded from the plot. See
-          the example below on automatic exclusion of points.
-
 
     EXAMPLES:
 
@@ -1041,13 +1067,27 @@ def plot(funcs, *args, **kwds):
     We plot several functions together by passing a list of functions
     as input::
 
-        sage: plot([sin(n*x) for n in [1..4]], (0, pi))
-        Graphics object consisting of 4 graphics primitives
+        sage: plot([x*exp(-n*x^2)/.4 for n in [1..5]], (0, 2), aspect_ratio=.8)
+        Graphics object consisting of 5 graphics primitives
 
     .. PLOT::
 
-        g=plot([sin(n*x) for n in range(1,5)], (0, pi))
+        g = plot([x*exp(-n*x**2)/.4 for n in range(1,6)], (0, 2), aspect_ratio=.8)
         sphinx_plot(g)
+
+    By default, color will change from one primitive to the next.
+    This may be controlled by modifying ``color`` option::
+
+        sage: g1 = plot([x*exp(-n*x^2)/.4 for n in [1..3]], (0, 2), color='blue', aspect_ratio=.8); g1
+        Graphics object consisting of 3 graphics primitives
+        sage: g2 = plot([x*exp(-n*x^2)/.4 for n in [1..3]], (0, 2), color=['red','red','green'], linestyle=['-','--','-.'], aspect_ratio=.8); g2
+        Graphics object consisting of 3 graphics primitives
+
+    .. PLOT::
+
+        g1 = plot([x*exp(-n*x**2)/.4 for n in range(1,4)], (0, 2), color='blue', aspect_ratio=.8)
+        g2 = plot([x*exp(-n*x**2)/.4 for n in range(1,4)], (0, 2), color=['red','red','green'], linestyle=['-','--','-.'], aspect_ratio=.8)
+        sphinx_plot(graphics_array([[g1], [g2]]))
 
     We can also build a plot step by step from an empty plot::
 
@@ -1150,7 +1190,7 @@ def plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = plot(sin,legend_label='$sin$')
+        g = plot(sin,legend_label='sin')
         sphinx_plot(g)
 
     ::
@@ -1198,6 +1238,28 @@ def plot(funcs, *args, **kwds):
 
         g = plot(sin(x), legend_label='$\sin(x)$')
         g.set_legend_options(back_color=(0.9,0.9,0.9), shadow=False)
+        sphinx_plot(g)
+
+    If `X` is a list of Sage objects and ``legend_label`` is 'automatic', then Sage will
+    create labels for each function according to their internal representation::
+
+        sage: plot([sin(x), tan(x), 1-x^2], legend_label='automatic')
+        Graphics object consisting of 3 graphics primitives
+
+    .. PLOT::
+
+        g = plot([sin(x), tan(x), 1-x**2], legend_label='automatic')
+        sphinx_plot(g)
+
+    If ``legend_label`` is any single string other than 'automatic',
+    then it is repeated for all members of `X`::
+
+        sage: plot([sin(x), tan(x)], color='blue', legend_label='trig')
+        Graphics object consisting of 2 graphics primitives
+
+    .. PLOT::
+
+        g = plot([sin(x), tan(x)], color='blue', legend_label='trig')
         sphinx_plot(g)
 
     Note that the independent variable may be omitted if there is no
@@ -1435,60 +1497,81 @@ def plot(funcs, *args, **kwds):
 
     We can detect the poles of a function::
 
-        sage: plot(gamma, (-3, 4), detect_poles = True).show(ymin = -5, ymax = 5)
+        sage: plot(gamma, (-3, 4), detect_poles=True).show(ymin=-5, ymax=5)
 
     .. PLOT::
 
-        g = plot(gamma, (-3, 4), detect_poles = True)
+        g = plot(gamma, (-3, 4), detect_poles=True)
         g.ymin(-5)
         g.ymax(5)
         sphinx_plot(g)
 
     We draw the Gamma-Function with its poles highlighted::
 
-        sage: plot(gamma, (-3, 4), detect_poles = 'show').show(ymin = -5, ymax = 5)
+        sage: plot(gamma, (-3, 4), detect_poles='show').show(ymin=-5, ymax=5)
 
     .. PLOT::
 
-        g = plot(gamma, (-3, 4), detect_poles = 'show')
+        g = plot(gamma, (-3, 4), detect_poles='show')
         g.ymin(-5)
         g.ymax(5)
         sphinx_plot(g)
 
     The basic options for filling a plot::
 
-        sage: p1 = plot(sin(x), -pi, pi, fill = 'axis')
-        sage: p2 = plot(sin(x), -pi, pi, fill = 'min')
-        sage: p3 = plot(sin(x), -pi, pi, fill = 'max')
-        sage: p4 = plot(sin(x), -pi, pi, fill = 0.5)
+        sage: p1 = plot(sin(x), -pi, pi, fill='axis')
+        sage: p2 = plot(sin(x), -pi, pi, fill='min', fillalpha=1)
+        sage: p3 = plot(sin(x), -pi, pi, fill='max')
+        sage: p4 = plot(sin(x), -pi, pi, fill=(1-x)/3, fillcolor='blue', fillalpha=.2)
         sage: graphics_array([[p1, p2], [p3, p4]]).show(frame=True, axes=False) # long time
-
-        sage: plot([sin(x), cos(2*x)*sin(4*x)], -pi, pi, fill = {0: 1}, fillcolor = 'red', fillalpha = 1)
-        Graphics object consisting of 3 graphics primitives
 
     .. PLOT::
 
-        g = plot([sin(x), cos(2*x)*sin(4*x)], -pi, pi, fill = {0: 1}, fillcolor = 'red', fillalpha = 1)
-        sphinx_plot(g)
+        p1 = plot(sin(x), -pi, pi, fill='axis'); print p1
+        p2 = plot(sin(x), -pi, pi, fill='min', fillalpha=1)
+        p3 = plot(sin(x), -pi, pi, fill='max')
+        p4 = plot(sin(x), -pi, pi, fill=(1-x)/3, fillcolor='blue', fillalpha=.2)
+        g = graphics_array([[p1, p2], [p3, p4]])
+        sphinx_plot(g) # Needs to accept options 'frame', 'axes', ...
+
+    The basic options for filling a list of plots::
+
+        sage: (f1, f2) = x*exp(-1*x^2)/.35, x*exp(-2*x^2)/.35
+        sage: p1 = plot([f1, f2], -pi, pi, fill={1: [0]}, fillcolor='blue', fillalpha=.25, color='blue')
+        sage: p2 = plot([f1, f2], -pi, pi, fill={0: x/3, 1:[0]}, color=['blue'])
+        sage: p3 = plot([f1, f2], -pi, pi, fill=[0, [0]], fillcolor=['orange','red'], fillalpha=1, color={1: 'blue'})
+        sage: p4 = plot([f1, f2], (x,-pi, pi), fill=[x/3, 0], fillcolor=['grey'], color=['red', 'blue'])
+        sage: graphics_array([[p1, p2], [p3, p4]]).show(frame=True, axes=False) # long time
+
+    .. PLOT::
+
+        (f1, f2) = x*exp(-1*x**2)/.35, x*exp(-2*x**2)/.35
+        p1 = plot([f1, f2], -pi, pi, fill={1: [0]}, fillcolor='blue', fillalpha=.25, color='blue')
+        p2 = plot([f1, f2], -pi, pi, fill={0: x/3, 1:[0]}, color=['blue'])
+        p3 = plot([f1, f2], -pi, pi, fill=[0, [0]], fillcolor=['orange','red'], fillalpha=1, color={1: 'blue'})
+        p4 = plot([f1, f2], (x,-pi, pi), fill=[x/3, 0], fillcolor=['grey'], color=['red', 'blue'])
+        g = graphics_array([[p1, p2], [p3, p4]])
+        sphinx_plot(g) # Needs to accept options 'frame', 'axes', ...
+
 
     A example about the growth of prime numbers::
 
-        sage: plot(1.13*log(x), 1, 100, fill = lambda x: nth_prime(x)/floor(x), fillcolor = 'red')
+        sage: plot(1.13*log(x), 1, 100, fill=lambda x: nth_prime(x)/floor(x), fillcolor='red')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        sphinx_plot(plot(1.13*log(x), 1, 100, fill = lambda x: nth_prime(x)/floor(x), fillcolor = 'red'))
+        sphinx_plot(plot(1.13*log(x), 1, 100, fill=lambda x: nth_prime(x)/floor(x), fillcolor='red'))
 
     Fill the area between a function and its asymptote::
 
         sage: f = (2*x^3+2*x-1)/((x-2)*(x+1))
-        sage: plot([f, 2*x+2], -7,7, fill = {0: [1]}, fillcolor='#ccc').show(ymin=-20, ymax=20)
+        sage: plot([f, 2*x+2], -7,7, fill={0: [1]}, fillcolor='#ccc').show(ymin=-20, ymax=20)
 
     .. PLOT::
 
         f = (2*x**3+2*x-1)/((x-2)*(x+1))
-        g = plot([f, 2*x+2], -7,7, fill = {0: [1]}, fillcolor='#ccc')
+        g = plot([f, 2*x+2], -7,7, fill={0: [1]}, fillcolor='#ccc')
         g.ymin(-20)
         g.ymax(20)
         sphinx_plot(g)
@@ -1496,38 +1579,32 @@ def plot(funcs, *args, **kwds):
     Fill the area between a list of functions and the x-axis::
 
         sage: def b(n): return lambda x: bessel_J(n, x)
-        sage: plot([b(n) for n in [1..5]], 0, 20, fill = 'axis')
+        sage: plot([b(n) for n in [1..5]], 0, 20, fill='axis')
         Graphics object consisting of 10 graphics primitives
 
     .. PLOT::
 
         def b(n): return lambda x: bessel_J(n, x)
-        g = plot([b(n) for n in range(1,6)], 0, 20, fill = 'axis')
+        g = plot([b(n) for n in range(1,6)], 0, 20, fill='axis')
         sphinx_plot(g)
 
-    Note that to fill between the ith and jth functions, you
-    must use dictionary key-value pairs ``i:[j]``; key-value pairs
+    Note that to fill between the ith and jth functions, you must use
+    the dictionary key-value syntax ``i:[j]``; using key-value pairs
     like ``i:j`` will fill between the ith function and the line y=j::
 
         sage: def b(n): return lambda x: bessel_J(n, x) + 0.5*(n-1)
-        sage: plot([b(c) for c in [1..5]], 0, 40, fill = dict([(i, [i+1]) for i in [0..3]]))
+        sage: plot([b(c) for c in [1..5]], 0, 20, fill={i:[i-1] for i in [1..4]}, color={i:'blue' for i in [1..5]}, aspect_ratio=3, ymax=3);
+        Graphics object consisting of 9 graphics primitives
+        sage: plot([b(c) for c in [1..5]], 0, 20, fill={i:i-1 for i in [1..4]}, color='blue', aspect_ratio=3) # long time
         Graphics object consisting of 9 graphics primitives
 
     .. PLOT::
 
         def b(n): return lambda x: bessel_J(n, x) + 0.5*(n-1)
-        g = plot([b(c) for c in range(1,6)], (0, 40), fill = dict([(i, [i+1]) for i in range(0,4)]))
-        sphinx_plot(g)
-
-    ::
-
-        sage: plot([b(c) for c in [1..5]], 0, 40, fill = dict([(i, i+1) for i in [0..3]])) # long time
-        Graphics object consisting of 9 graphics primitives
-
-    .. PLOT::
-
-        def b(n): return lambda x: bessel_J(n, x) + 0.5*(n-1)
-        g = plot([b(c) for c in range(1,6)], 0, 40, fill = dict([(i, i+1) for i in range(0,4)])) # long time
+        g1 = plot([b(n) for n in range(1,6)], 0, 20, fill={i:[i-1] for i in range(1,5)}, color={i:'blue' for i in range(1,6)}, aspect_ratio=3)
+        g2 = plot([b(n) for n in range(1,6)], 0, 20, fill={i:i-1 for i in range(1,5)}, color='blue', aspect_ratio=3) # long time
+        g1.ymax(3)
+        g = graphics_array([[g1], [g2]])
         sphinx_plot(g)
 
     Extra options will get passed on to :meth:`~sage.plot.graphics.Graphics.show`,
@@ -1625,19 +1702,19 @@ def plot(funcs, *args, **kwds):
 
     A example with excluded values::
 
-        sage: plot(floor(x), (x, 1, 10), exclude = [1..10])
+        sage: plot(floor(x), (x, 1, 10), exclude=[1..10])
         Graphics object consisting of 11 graphics primitives
 
     .. PLOT::
 
-        g = plot(floor(x), (x, 1, 10), exclude = range(1,11))
+        g = plot(floor(x), (x, 1, 10), exclude=range(1,11))
         sphinx_plot(g)
 
     We exclude all points where :class:`~sage.functions.prime_pi.PrimePi`
     makes a jump::
 
         sage: jumps = [n for n in [1..100] if prime_pi(n) != prime_pi(n-1)]
-        sage: plot(lambda x: prime_pi(x), (x, 1, 100), exclude = jumps)
+        sage: plot(lambda x: prime_pi(x), (x, 1, 100), exclude=jumps)
         Graphics object consisting of 26 graphics primitives
 
     .. PLOT::
@@ -1648,31 +1725,31 @@ def plot(funcs, *args, **kwds):
         for n in range(1,101):
             if prime_pi(n) != prime_pi(n-1):
                 jumps.append(n)
-        g = plot(lambda x: prime_pi(x), (x, 1, 100), exclude = jumps)
+        g = plot(lambda x: prime_pi(x), (x, 1, 100), exclude=jumps)
         sphinx_plot(g)
 
     Excluded points can also be given by an equation::
 
         sage: g(x) = x^2-2*x-2
-        sage: plot(1/g(x), (x, -3, 4), exclude = g(x) == 0, ymin = -5, ymax = 5) # long time
+        sage: plot(1/g(x), (x, -3, 4), exclude=g(x)==0, ymin=-5, ymax=5) # long time
         Graphics object consisting of 3 graphics primitives
 
     .. PLOT::
 
         def g(x): return x**2-2*x-2
-        G = plot(1/g(x), (x, -3, 4), exclude = g(x) == 0, ymin = -5, ymax = 5)
+        G = plot(1/g(x), (x, -3, 4), exclude=g(x)==0, ymin=-5, ymax=5)
         sphinx_plot(G)
 
     ``exclude`` and ``detect_poles`` can be used together::
 
         sage: f(x) = (floor(x)+0.5) / (1-(x-0.5)^2)
-        sage: plot(f, (x, -3.5, 3.5), detect_poles = 'show', exclude = [-3..3], ymin = -5, ymax = 5)
+        sage: plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=[-3..3], ymin=-5, ymax=5)
         Graphics object consisting of 12 graphics primitives
 
     .. PLOT::
 
         def f(x): return (floor(x)+0.5) / (1-(x-0.5)**2)
-        g = plot(f, (x, -3.5, 3.5), detect_poles = 'show', exclude = range(-3,4), ymin = -5, ymax = 5)
+        g = plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=range(-3,4), ymin=-5, ymax=5)
         sphinx_plot(g)
 
     Regions in which the plot has no values are automatically excluded. The
@@ -1815,6 +1892,10 @@ def plot(funcs, *args, **kwds):
         sage: plot(x, x, 0, 1, legend_label=label)
         Graphics object consisting of 1 graphics primitive
     """
+    if 'color' in kwds and 'rgbcolor' in kwds:
+        raise ValueError('only one of color or rgbcolor should be specified')
+    elif 'color' in kwds:
+        kwds['rgbcolor'] = kwds.pop('color', (0,0,1)) # take blue as default ``rgbcolor``
     G_kwds = Graphics._extract_kwds_for_show(kwds, ignore=['xmin', 'xmax'])
 
     original_opts = kwds.pop('__original_opts', {})
@@ -1922,10 +2003,15 @@ def _plot(funcs, xrange, parametric=False,
         1
         sage: len((p1+p2).matplotlib().axes[0].legend().texts)
         2
-        sage: q1 = plot([sin(x), tan(x)], legend_label='trig')
-        sage: len((q1).matplotlib().axes[0].legend().texts) # used to raise AttributeError
-        1
+        sage: q1 = plot([sin(x), tan(x)], color='blue', legend_label='trig')
+        sage: len(q1.matplotlib().axes[0].legend().texts)
+        2
         sage: q1
+        Graphics object consisting of 2 graphics primitives
+        sage: q2 = plot([sin(x), tan(x)], legend_label={1:'tan'})
+        sage: len(q2.matplotlib().axes[0].legend().texts)
+        2
+        sage: q2
         Graphics object consisting of 2 graphics primitives
 
     ::
@@ -1945,54 +2031,162 @@ def _plot(funcs, xrange, parametric=False,
         Graphics object consisting of 1 graphics primitive
 
     """
-
+    from sage.plot.colors import Color
     from sage.plot.misc import setup_for_eval_on_grid
     if funcs == []:
         return Graphics()
+    orig_funcs = funcs # keep the original functions (for use in legend labels)
     excluded_points = []
     funcs, ranges = setup_for_eval_on_grid(funcs, [xrange], options['plot_points'])
     xmin, xmax, delta = ranges[0]
     xrange=ranges[0][:2]
-    #parametric_plot will be a list or tuple of two functions (f,g)
-    #and will plotted as (f(x), g(x)) for all x in the given range
+    # parametric_plot will be a list or tuple of two functions (f,g)
+    # and will plotted as (f(x), g(x)) for all x in the given range
     if parametric:
         f, g = funcs
-    #or we have only a single function to be plotted:
+    # or we have only a single function to be plotted:
     else:
         f = funcs
 
-    #check to see if funcs is a list of functions that will
-    #be all plotted together.
+    # Keep ``rgbcolor`` option 'automatic' only for lists of functions.
+    # Otherwise, let the plot color be 'blue'.
+    if parametric or not isinstance(funcs, (list, tuple)):
+        if 'rgbcolor' in options.keys() and options['rgbcolor'] == 'automatic':
+            options['rgbcolor'] = (0, 0, 1) # default color for a single curve.
+
+    # Check to see if funcs is a list of functions that will be all plotted together.
     if isinstance(funcs, (list, tuple)) and not parametric:
-        from sage.plot.colors import rainbow
-        rainbow_colors = rainbow(len(funcs))
+        from sage.rings.integer import Integer
+        def golden_rainbow(i,lightness=0.4):
+            # note: sage's "blue" has hue-saturation-lightness values (2/3, 1, 1/2).
+            g = golden_ratio_conjugate = 0.61803398875
+            return Color((0.66666666666666 + i*g) % 1, 1, lightness, space='hsl')
+
+        default_line_styles = ("-", "--", "-.", ":")*len(funcs)
 
         G = Graphics()
         for i, h in enumerate(funcs):
-            if isinstance(fill, dict):
-                if i in fill:
-                    fill_entry = fill[i]
-                    if isinstance(fill_entry, list):
-                        if fill_entry[0] < len(funcs):
-                            fill_temp = funcs[fill_entry[0]]
-                        else:
-                            fill_temp = None
-                    else:
-                        fill_temp = fill_entry
-                else:
-                    fill_temp = None
-            else:
-                fill_temp = fill
-
             options_temp = options.copy()
-            fillcolor_temp = options_temp.pop('fillcolor', 'automatic')
-            if i >= 1:
-                legend_label=options_temp.pop('legend_label', None) # legend_label popped so the label isn't repeated for nothing
-            if fillcolor_temp == 'automatic':
-                fillcolor_temp = rainbow_colors[i]
+            color_temp = options_temp.pop('rgbcolor', 'automatic')
+            fill_temp = options_temp.pop('fill', fill)
+            fillcolor_temp = options_temp.pop('fillcolor', 'automatic') # perhaps the 2nd argument should be ``options_temp['color']``
+            linestyle_temp = options_temp.pop('linestyle', None)
+            legend_label_temp = options_temp.pop('legend_label', None)
+            legend_color_temp = options_temp.pop('legend_color', None)
 
-            G += plot(h, xrange, polar = polar, fill = fill_temp, \
-                      fillcolor = fillcolor_temp, **options_temp)
+            # passed more than one color directive?
+            one_plot_color = False
+            if isinstance(color_temp, dict):
+                if i in color_temp:
+                    color_entry = color_temp[i]
+                else:
+                    color_entry = golden_rainbow(i)
+            elif isinstance(color_temp, (list, tuple)) and isinstance(color_temp[0], (str, list, tuple)):
+                if i < len(color_temp):
+                    color_entry = color_temp[i]
+                else:
+                    color_entry = golden_rainbow(i)
+            elif color_temp == 'automatic':
+                color_entry = golden_rainbow(i)
+            else:
+                # assume a single color was assigned for all plots
+                one_plot_color = True
+                color_entry = color_temp
+
+            # passed more than one fill directive?
+            if isinstance(fill_temp, dict):
+                if i in fill_temp:
+                    fill_entry_listQ = fill_temp[i]
+                    if isinstance(fill_entry_listQ, list):
+                        if fill_entry_listQ[0] < len(funcs):
+                            fill_entry = funcs[fill_entry_listQ[0]]
+                        else:
+                            fill_entry = False
+                    else:
+                        fill_entry = fill_entry_listQ
+                else:
+                    fill_entry = False
+            elif isinstance(fill_temp, (list, tuple)):
+                if i < len(fill_temp):
+                    fill_entry_listQ = fill_temp[i]
+                    if isinstance(fill_entry_listQ, list):
+                        if fill_entry_listQ[0] < len(funcs):
+                            fill_entry = funcs[fill_entry_listQ[0]]
+                        else:
+                            fill_entry = False
+                    else:
+                        fill_entry = fill_entry_listQ
+                else:
+                    fill_entry = False
+            else:
+                fill_entry = fill_temp
+
+            # passed more than one fillcolor directive?
+            fillcolor_entry = 'gray' # the default choice
+            if isinstance(fillcolor_temp, dict):
+                if i in fillcolor_temp:
+                    fillcolor_entry = fillcolor_temp[i]
+                else:
+                    fillcolor_entry = golden_rainbow(i,0.85)
+            elif isinstance(fillcolor_temp, (list, tuple)):
+                if i < len(fillcolor_temp):
+                    fillcolor_entry = fillcolor_temp[i]
+                else:
+                    fillcolor_entry = golden_rainbow(i,0.85)
+            elif fillcolor_temp == 'automatic':
+                # check that we haven't overwritten automatic multi-colors in color_temp
+                if len(funcs) > 1 and not one_plot_color:
+                    fillcolor_entry = golden_rainbow(i,0.85)
+            elif fillcolor_temp is not None:
+                fillcolor_entry = fillcolor_temp
+
+            # passed more than one linestyle directive?
+            if isinstance(linestyle_temp, dict):
+                if i in linestyle_temp:
+                    linestyle_entry = linestyle_temp[i]
+                else:
+                    linestyle_entry = default_line_styles[i]
+            elif isinstance(linestyle_temp, (list, tuple)):
+                if i < len(linestyle_temp):
+                    linestyle_entry = linestyle_temp[i]
+                else:
+                    linestyle_entry = default_line_styles[i]
+            elif linestyle_temp == 'automatic':
+                linestyle_entry = default_line_styles[i]
+            elif linestyle_temp == None:
+                linestyle_entry = 'solid'
+            else:
+                linestyle_entry = linestyle_temp
+
+            # passed more than one legend_label directive?
+            legend_label_entry = orig_funcs[i].__repr__() # the 'automatic' choice
+            if isinstance(legend_label_temp, dict):
+                if i in legend_label_temp:
+                    legend_label_entry = legend_label_temp[i]
+            elif isinstance(legend_label_temp, (list, tuple)):
+                if i < len(legend_label_temp):
+                    legend_label_entry = legend_label_temp[i]
+            elif legend_label_temp is not 'automatic':
+                # assume it is None or str.
+                legend_label_entry = legend_label_temp
+
+            # passed more than one legend_color directive?
+            legend_color_entry = 'black'  # the default choice
+            if isinstance(legend_color_temp, dict):
+                if i in legend_color_temp:
+                    legend_color_entry = legend_color_temp[i]
+            elif isinstance(legend_color_temp, (list, tuple)) and isinstance(legend_color_temp[0], (str, list, tuple)):
+                if i < len(legend_color_temp):
+                    legend_color_entry = legend_color_temp[i]
+            elif legend_color_temp == 'automatic':
+                if len(funcs)>1:
+                    legend_color_entry = golden_rainbow(i)
+            elif legend_color_temp is not None:
+                legend_color_entry = legend_color_temp
+
+            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry, \
+                      rgbcolor=color_entry, linestyle=linestyle_entry, \
+                      legend_label=legend_label_entry, legend_color=legend_color_entry, **options_temp)
         return G
 
     adaptive_tolerance = options.pop('adaptive_tolerance')
@@ -2260,23 +2454,23 @@ def parametric_plot(funcs, *args, **kwargs):
 
     ::
 
-        sage: parametric_plot((t, t^2), (t, -4, 4), fill = True)
+        sage: parametric_plot((t, t^2), (t, -4, 4), fill=True)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
         t =var('t')
-        g = parametric_plot((t, t**2), (t, -4, 4), fill = True)
+        g = parametric_plot((t, t**2), (t, -4, 4), fill=True)
         sphinx_plot(g)
 
     A filled Hypotrochoid::
 
-        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill = True)
+        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill = True)
+        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
         sphinx_plot(g)
 
     ::
@@ -2471,12 +2665,12 @@ def polar_plot(funcs, *args, **kwds):
 
     A filled spiral::
 
-        sage: polar_plot(sqrt, 0, 2 * pi, fill = True)
+        sage: polar_plot(sqrt, 0, 2 * pi, fill=True)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        g = polar_plot(sqrt, 0, 2 * pi, fill = True)
+        g = polar_plot(sqrt, 0, 2 * pi, fill=True)
         sphinx_plot(g)
 
     Fill the area between two functions::
@@ -2491,22 +2685,22 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between several spirals::
 
-        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill = {0: [1], 2: [3], 4: [5]})
+        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill={0: [1], 2: [3], 4: [5]})
         Graphics object consisting of 9 graphics primitives
 
     .. PLOT::
 
-        g = polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill = {0: [1], 2: [3], 4: [5]})
+        g = polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill={0: [1], 2: [3], 4: [5]})
         sphinx_plot(g)
 
     Exclude points at discontinuities::
 
-        sage: polar_plot(log(floor(x)), (x, 1, 4*pi), exclude = [1..12])
+        sage: polar_plot(log(floor(x)), (x, 1, 4*pi), exclude=[1..12])
         Graphics object consisting of 12 graphics primitives
 
     .. PLOT::
 
-        g = polar_plot(log(floor(x)), (x, 1, 4*pi), exclude = range(1,13))
+        g = polar_plot(log(floor(x)), (x, 1, 4*pi), exclude=range(1,13))
         sphinx_plot(g)
 
     """
@@ -2957,8 +3151,10 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
 
     .. PLOT::
 
-        #g = list_plot_loglog(zip(xl, yl), base=2.1) # long time # with base 2.1 on both axes
-        #sphinx_plot(g)
+        yl = [5**k for k in range(10)]
+        xl = [2**k for k in range(10)]
+        g = list_plot_loglog(zip(xl, yl), base=2.1) # long time # with base 2.1 on both axes
+        sphinx_plot(g)
 
     ::
 
@@ -3528,7 +3724,7 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01, adaptive_recursion=5
     else:
         return []
 
-def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adaptive_recursion=5, randomize = True, initial_points = None):
+def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adaptive_recursion=5, randomize=True, initial_points=None):
     r"""
     Calculate plot points for a function f in the interval xrange.  The
     adaptive refinement algorithm is also automatically invoked with a
@@ -3568,7 +3764,7 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adap
         [(0.0, 0.0), (3.141592653589793, 1.2246...e-16)]
 
         sage: from sage.plot.plot import generate_plot_points
-        sage: generate_plot_points(lambda x: x^2, (0, 6), plot_points=2, adaptive_recursion=0, initial_points = [1,2,3])
+        sage: generate_plot_points(lambda x: x^2, (0, 6), plot_points=2, adaptive_recursion=0, initial_points=[1,2,3])
         [(0.0, 0.0), (1.0, 1.0), (2.0, 4.0), (3.0, 9.0), (6.0, 36.0)]
 
         sage: generate_plot_points(sin(x).function(x), (-pi, pi), randomize=False)
@@ -3693,15 +3889,15 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adap
     return data
 
 #Lovely cruft to keep the pickle jar working
-from line import line, line2d, Line as GraphicPrimitive_Line
-from arrow import arrow, Arrow as GraphicPrimitive_Arrow
-from bar_chart import bar_chart, BarChart as GraphicPrimitive_BarChart
-from disk import disk, Disk as GraphicPrimitive_Disk
-from point import point, points, point2d, Point as GraphicPrimitive_Point
-from matrix_plot import matrix_plot, MatrixPlot as GraphicPrimitive_MatrixPlot
-from plot_field import plot_vector_field, plot_slope_field, PlotField as GraphicPrimitive_PlotField
-from text import text, Text as GraphicPrimitive_Text
-from polygon import polygon, Polygon as GraphicPrimitive_Polygon
-from circle import circle, Circle as GraphicPrimtive_Circle
-from contour_plot import contour_plot, implicit_plot, ContourPlot as GraphicPrimitive_ContourPlot
+from .line import line, line2d, Line as GraphicPrimitive_Line
+from .arrow import arrow, Arrow as GraphicPrimitive_Arrow
+from .bar_chart import bar_chart, BarChart as GraphicPrimitive_BarChart
+from .disk import disk, Disk as GraphicPrimitive_Disk
+from .point import point, points, point2d, Point as GraphicPrimitive_Point
+from .matrix_plot import matrix_plot, MatrixPlot as GraphicPrimitive_MatrixPlot
+from .plot_field import plot_vector_field, plot_slope_field, PlotField as GraphicPrimitive_PlotField
+from .text import text, Text as GraphicPrimitive_Text
+from .polygon import polygon, Polygon as GraphicPrimitive_Polygon
+from .circle import circle, Circle as GraphicPrimtive_Circle
+from .contour_plot import contour_plot, implicit_plot, ContourPlot as GraphicPrimitive_ContourPlot
 

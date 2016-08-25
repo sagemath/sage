@@ -1,5 +1,5 @@
---- /home/jonathan/Documents/jmol-12.3.27.p0/src/jmol/jmol
-+++ /home/jonathan/Documents/jmol-12.3.27.p0/patches/jmol
+--- a/jmol
++++ b/jmol
 @@ -1,16 +1,17 @@
  #!/bin/sh
 +#JMOL_HOME=`dirname "$0"`

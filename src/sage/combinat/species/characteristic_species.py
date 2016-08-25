@@ -1,6 +1,7 @@
 """
 Characteristic Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,10 +16,10 @@ Characteristic Species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from generating_series import factorial_stream
-from structure import GenericSpeciesStructure
-from set_species import SetSpecies
+from .species import GenericCombinatorialSpecies
+from .generating_series import factorial_stream
+from .structure import GenericSpeciesStructure
+from .set_species import SetSpecies
 from sage.misc.cachefunc import cached_function
 from sage.structure.unique_representation import UniqueRepresentation
 

@@ -9,7 +9,7 @@ Some common posets can be accessed through the ``posets.<tab>`` object::
 Moreover, the set of all posets of order `n` is represented by ``Posets(n)``::
 
     sage: Posets(5)
-    Posets containing 5 vertices
+    Posets containing 5 elements
 
 **Catalog of common posets:**
 
@@ -39,6 +39,7 @@ Moreover, the set of all posets of order `n` is represented by ``Posets(n)``::
     :meth:`~Posets.SymmetricGroupWeakOrderPoset` | The poset of permutations of `\{ 1, 2, \ldots, n \}` with respect to the weak order.
     :meth:`~Posets.TamariLattice` | Return the Tamari lattice.
     :meth:`~Posets.TetrahedralPoset` | Return the Tetrahedral poset with `n-1` layers based on the input colors.
+    :meth:`~Posets.UpDownPoset` | Return the up-down poset on `n` elements.
     :meth:`~Posets.YoungDiagramPoset` | Return the poset of cells in the Young diagram of a partition.
     :meth:`~Posets.YoungsLattice` | Return Young's Lattice up to rank `n`.
     :meth:`~Posets.YoungsLatticePrincipalOrderIdeal` | Return the principal order ideal of the partition `lam` in Young's Lattice.
@@ -61,6 +62,7 @@ Constructions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
@@ -89,11 +91,11 @@ class Posets(object):
         sage: Posets()
         Category of posets
 
-    The enumerated set of all posets on `3` vertices, up to an
+    The enumerated set of all posets on `3` elements, up to an
     isomorphism::
 
         sage: Posets(3)
-        Posets containing 3 vertices
+        Posets containing 3 elements
 
     .. seealso:: :class:`~sage.categories.posets.Posets`, :class:`FinitePosets`, :func:`Poset`
 
@@ -116,7 +118,7 @@ class Posets(object):
             sage: Posets()
             Category of posets
             sage: Posets(4)
-            Posets containing 4 vertices
+            Posets containing 4 elements
         """
         if n is None:
             return sage.categories.posets.Posets()
@@ -129,9 +131,15 @@ class Posets(object):
         return FinitePosets_n(n)
 
     @staticmethod
-    def BooleanLattice(n):
+    def BooleanLattice(n, facade=None):
         """
-        Returns the Boolean lattice containing `2^n` elements.
+        Return the Boolean lattice containing `2^n` elements.
+
+        - ``n`` (an integer) -- number of elements will be `2^n`
+        - ``facade`` (boolean) -- whether to make the returned poset a
+          facade poset (see :mod:`sage.categories.facade_sets`); the
+          default behaviour is the same as the default behaviour of
+          the :func:`~sage.combinat.posets.posets.Poset` constructor
 
         EXAMPLES::
 
@@ -149,12 +157,18 @@ class Posets(object):
         if n==1:
             return LatticePoset( ([0,1], [[0,1]]) )
         return LatticePoset([[Integer(x|(1<<y)) for y in range(0,n) if x&(1<<y)==0] for
-            x in range(0,2**n)])
+                             x in range(0,2**n)], facade=facade)
 
     @staticmethod
-    def ChainPoset(n):
+    def ChainPoset(n, facade=None):
         """
-        Returns a chain (a totally ordered poset) containing ``n`` elements.
+        Return a chain (a totally ordered poset) containing ``n`` elements.
+
+        - ``n`` (an integer) -- number of elements.
+        - ``facade`` (boolean) -- whether to make the returned poset a
+          facade poset (see :mod:`sage.categories.facade_sets`); the
+          default behaviour is the same as the default behaviour of
+          the :func:`~sage.combinat.posets.posets.Poset` constructor
 
         EXAMPLES::
 
@@ -168,7 +182,7 @@ class Posets(object):
             sage: for i in range(5):
             ....:     for j in range(5):
             ....:         if C.covers(C(i),C(j)) and j != i+1:
-            ....:             print "TEST FAILED"
+            ....:             print("TEST FAILED")
 
         Check that :trac:`8422` is solved::
 
@@ -189,13 +203,22 @@ class Posets(object):
             raise TypeError("number of elements must be an integer, not {0}".format(n))
         if n < 0:
             raise ValueError("number of elements must be non-negative, not {0}".format(n))
-        return LatticePoset((range(n), [[x,x+1] for x in range(n-1)]))
+        return LatticePoset((range(n), [[x,x+1] for x in range(n-1)]),
+                            facade=facade)
 
     @staticmethod
-    def AntichainPoset(n):
+    def AntichainPoset(n, facade=None):
         """
-        Returns an antichain (a poset with no comparable elements)
+        Return an antichain (a poset with no comparable elements)
         containing `n` elements.
+
+        INPUT:
+
+        - ``n`` (an integer) -- number of elements
+        - ``facade`` (boolean) -- whether to make the returned poset a
+          facade poset (see :mod:`sage.categories.facade_sets`); the
+          default behaviour is the same as the default behaviour of
+          the :func:`~sage.combinat.posets.posets.Poset` constructor
 
         EXAMPLES::
 
@@ -207,7 +230,7 @@ class Posets(object):
             sage: for i in range(5):
             ....:     for j in range(5):
             ....:         if A.covers(A(i),A(j)):
-            ....:             print "TEST FAILED"
+            ....:             print("TEST FAILED")
 
         TESTS:
 
@@ -230,12 +253,12 @@ class Posets(object):
             raise TypeError("number of elements must be an integer, not {0}".format(n))
         if n < 0:
             raise ValueError("number of elements must be non-negative, not {0}".format(n))
-        return Poset((range(n), []))
+        return Poset((range(n), []), facade=facade)
 
     @staticmethod
-    def PentagonPoset(facade = None):
+    def PentagonPoset(facade=None):
         """
-        Returns the Pentagon poset.
+        Return the Pentagon poset.
 
         INPUT:
 
@@ -574,7 +597,7 @@ class Posets(object):
         return LatticePoset((S, S.is_less_than))
 
     @staticmethod
-    def SSTPoset(s,f=None):
+    def SSTPoset(s, f=None):
         """
         The poset on semistandard tableaux of shape ``s`` and largest
         entry ``f`` that is ordered by componentwise comparison of the
@@ -955,6 +978,61 @@ class Posets(object):
                               for s in W}
 
         return Poset({s: s.absolute_covers() for s in W}, element_labels)
+
+    @staticmethod
+    def UpDownPoset(n, m=1):
+        r"""
+        Return the up-down poset on `n` elements where every `(m+1)`
+        step is down and the rest are up.
+
+        The case where `m=1` is sometimes referred to as the zig-zag poset
+        or the fence.
+
+        INPUT:
+    
+        - ``n`` - nonnegative integer, number of elements in the poset
+        - ``m`` - nonnegative integer (default 1), how frequently down
+          steps occur
+
+        OUTPUT:
+
+        The partially ordered set on `\{ 0, 1, \ldots, n-1 \}`
+        where `i` covers `i+1` if `m` divides `i+1`, and `i+1` covers `i`
+        otherwise.
+
+        EXAMPLES::
+
+            sage: P = Posets.UpDownPoset(7, 2); P
+            Finite poset containing 7 elements
+            sage: sorted(P.cover_relations())
+            [[0, 1], [1, 2], [3, 2], [3, 4], [4, 5], [6, 5]]
+
+        Fibonacci numbers as the number of antichains of a poset::
+
+            sage: [len(Posets.UpDownPoset(n).antichains().list()) for n in range(0, 6)]
+            [1, 2, 3, 5, 8, 13]
+
+        TESTS::
+
+            sage: P = Posets.UpDownPoset(0); P
+            Finite poset containing 0 elements
+        """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {0}".format(n))
+        if n < 0:
+            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        try:
+            m = Integer(m)
+        except TypeError:
+            raise TypeError("parameter m must be an integer, not {0}".format(m))
+        if m < 1:
+            raise ValueError("parameter m must be positive, not {0}".format(m))
+
+        covers = [[i, i + 1] if (i + 1) % (m + 1) else [i + 1, i]
+                  for i in range(n - 1)]
+        return Poset((range(n), covers), cover_relations=True)
 
     @staticmethod
     def YoungDiagramPoset(lam):

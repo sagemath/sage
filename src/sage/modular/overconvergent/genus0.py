@@ -125,7 +125,7 @@ We compute the eigenfunctions of a 4x4 truncation:
 
     sage: efuncs = M.eigenfunctions(4)
     sage: for i in [1..3]:
-    ...       print efuncs[i].q_expansion(prec=4).change_ring(Qp(3,prec=20))
+    ....:     print(efuncs[i].q_expansion(prec=4).change_ring(Qp(3,prec=20)))
     (1 + O(3^20))*q + (2*3 + 3^15 + 3^16 + 3^17 + 2*3^19 + 2*3^20 + O(3^21))*q^2 + (2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 3^17 + 2*3^18 + 2*3^19 + 3^21 + 3^22 + O(3^23))*q^3 + O(q^4)
     (1 + O(3^20))*q + (3 + 2*3^2 + 3^3 + 3^4 + 3^12 + 3^13 + 2*3^14 + 3^15 + 2*3^17 + 3^18 + 3^19 + 3^20 + O(3^21))*q^2 + (3^7 + 3^13 + 2*3^14 + 2*3^15 + 3^16 + 3^17 + 2*3^18 + 3^20 + 2*3^21 + 2*3^22 + 2*3^23 + 2*3^25 + O(3^27))*q^3 + O(q^4)
     (1 + O(3^20))*q + (2*3 + 3^3 + 2*3^4 + 3^6 + 2*3^8 + 3^9 + 3^10 + 2*3^11 + 2*3^13 + 3^16 + 3^18 + 3^19 + 3^20 + O(3^21))*q^2 + (3^9 + 2*3^12 + 3^15 + 3^17 + 3^18 + 3^19 + 3^20 + 2*3^22 + 2*3^23 + 2*3^27 + 2*3^28 + O(3^29))*q^3 + O(q^4)
@@ -172,7 +172,8 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.matrix.all        import matrix, MatrixSpace, diagonal_matrix
 from sage.misc.misc         import verbose
@@ -189,7 +190,7 @@ from sage.plot.plot         import plot
 from sage.rings.all         import (O, Infinity, ZZ, QQ, pAdicField, PolynomialRing, PowerSeriesRing, is_pAdicField)
 import weakref
 
-from weightspace import WeightSpace_constructor as WeightSpace, WeightCharacter
+from .weightspace import WeightSpace_constructor as WeightSpace, WeightCharacter
 __ocmfdict = {}
 
 ####################
@@ -999,7 +1000,7 @@ class OverconvergentModularFormsSpace(Module):
         elif is_pAdicField(self.base_ring()):
             slopelist=self.cps_u(n).truncate().newton_slopes()
         else:
-            print "slopes are only defined for base field QQ or a p-adic field"
+            print("slopes are only defined for base field QQ or a p-adic field")
         return [-i for i in slopelist]
 
     def eigenfunctions(self, n, F = None, exact_arith=True):
@@ -1050,7 +1051,6 @@ class OverconvergentModularFormsSpace(Module):
         for (r, d) in eigenvalues:
             v = r.valuation()
             if d != 1:
-                #print "Warning: Root occurs with multiplicity"
                 continue
 
             mr = (m._pari_() - r._pari_())
@@ -1191,13 +1191,11 @@ class OverconvergentModularFormsSpace(Module):
                 fi = fi*self._uniformiser
             SmiH = f_ring(coeffs)
             assert SmiH.degree() == self.prime() + 1
-            # print "Smithline's H_p is: ",SmiH, " = ",SmiH.factor()
             xyring = PolynomialRing(self.base_ring(), ["x","y"], 2)
             x,y = xyring.gens()
             cc = self.prime() ** (-12/(self.prime() - 1))
             bigI = x*SmiH(y*cc)- y*cc*SmiH(x)
             smallI = xyring(bigI / (x - cc*y))
-            # print "Smithline's I_p is: ", smallI
             r = matrix(ZZ, self.prime(), self.prime())
             for i in xrange(self.prime()):
                 for j in xrange(self.prime()):

@@ -61,6 +61,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import operator
 
@@ -256,7 +257,7 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
 
         TESTS::
 
-            sage: print CDF._latex_()
+            sage: print(CDF._latex_())
             \Bold{C}
         """
         return r"\Bold{C}"
@@ -493,7 +494,7 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
             1.0*I
         """
         if n != 0:
-            raise ValueError, "only 1 generator"
+            raise ValueError("only 1 generator")
         return I
 
     def ngens(self):
@@ -601,10 +602,10 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
         try:
            n = Integer(n)
         except TypeError:
-           raise ValueError, "n must be a positive integer"
+           raise ValueError("n must be a positive integer")
 
         if n<1:
-           raise ValueError, "n must be a positive integer"
+           raise ValueError("n must be a positive integer")
 
         if n == 1:
             x = self(1)
@@ -794,7 +795,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return hash(complex(self))
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         We order the complex numbers in dictionary order by real parts then
         imaginary parts.
@@ -866,7 +867,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         if n >= 0 and n <= 1:
             return self._complex.dat[n]
-        raise IndexError, "index n must be 0 or 1"
+        raise IndexError("index n must be 0 or 1")
 
     def _magma_init_(self, magma):
         r"""
@@ -914,7 +915,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: int(abs(CDF(1,1)))
             1
         """
-        raise TypeError, "can't convert complex to int; use int(abs(z))"
+        raise TypeError("can't convert complex to int; use int(abs(z))")
 
     def __long__(self):
         """
@@ -929,7 +930,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: long(abs(CDF(1,1)))
             1L
         """
-        raise TypeError, "can't convert complex to long; use long(abs(z))"
+        raise TypeError("can't convert complex to long; use long(abs(z))")
 
     def __float__(self):
         """
@@ -1010,28 +1011,28 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: print CDF(0, 2/3)
+            sage: print(CDF(0, 2/3))
             0.666666666667*I
             sage: a = CDF(2,-3)
-            sage: print a  # indirect doctest
+            sage: print(a)  # indirect doctest
             2.0 - 3.0*I
-            sage: print a^2
+            sage: print(a^2)
             -5.0 - 12.0*I
-            sage: print 1/CDF(0,0)
+            sage: print(1/CDF(0,0))
             NaN + NaN*I
-            sage: print CDF(oo,1)
+            sage: print(CDF(oo,1))
             +infinity + 1.0*I
-            sage: print CDF(1,oo)
+            sage: print(CDF(1,oo))
             1.0 + +infinity*I
-            sage: print CDF(1,-oo)
+            sage: print(CDF(1,-oo))
             1.0 - +infinity*I
-            sage: print CC(CDF(1,-oo))
+            sage: print(CC(CDF(1,-oo)))
             1.00000000000000 - +infinity*I
-            sage: print CDF(oo,oo)
+            sage: print(CDF(oo,oo))
             +infinity + +infinity*I
-            sage: print CC(CDF(oo,oo))
+            sage: print(CC(CDF(oo,oo)))
             +infinity + +infinity*I
-            sage: print CDF(0)
+            sage: print(CDF(0))
             0.0
         """
         cdef double x = self._complex.dat[0]
@@ -1154,7 +1155,7 @@ cdef class ComplexDoubleElement(FieldElement):
     # Arithmetic
     #######################################################################
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Add ``self`` and ``right``.
 
@@ -1166,7 +1167,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self._new_c(gsl_complex_add(self._complex,
                                            (<ComplexDoubleElement>right)._complex))
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Subtract ``self`` and ``right``.
 
@@ -1178,7 +1179,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self._new_c(gsl_complex_sub(self._complex,
                                 (<ComplexDoubleElement>right)._complex))
 
-    cpdef RingElement _mul_(self, RingElement right):
+    cpdef _mul_(self, right):
         """
         Multiply ``self`` and ``right``.
 
@@ -1190,7 +1191,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self._new_c(gsl_complex_mul(self._complex,
                        (<ComplexDoubleElement>right)._complex))
 
-    cpdef RingElement _div_(self, RingElement right):
+    cpdef _div_(self, right):
         """
         Divide ``self`` by ``right``.
 
@@ -1224,7 +1225,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return self._new_c(gsl_complex_inverse(self._complex))
 
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         """
         This function returns the negative of the complex number `z`:
 
@@ -1613,7 +1614,7 @@ cdef class ComplexDoubleElement(FieldElement):
         EXAMPLES::
 
             sage: a = CDF(1,1); b = CDF(2,3)
-            sage: a._pow_(b)
+            sage: a._pow_(b)   # rel tol 5e-16
             -0.163450932107355 + 0.09600498360894891*I
         """
         return self._new_c(gsl_complex_pow(self._complex, a._complex))
@@ -1629,7 +1630,7 @@ cdef class ComplexDoubleElement(FieldElement):
         EXAMPLES::
 
             sage: a = CDF(1,1); b = CDF(2,3)
-            sage: c = a^b; c # indirect doctest
+            sage: c = a^b; c  # rel tol 5e-16, indirect doctest
             -0.163450932107355 + 0.09600498360894891*I
             sage: c^(1/b) # rel tol 2e-16
             1.0 + 1.0*I
@@ -2187,7 +2188,7 @@ cdef class ComplexDoubleElement(FieldElement):
         cdef GEN a, b, c, y, t
 
         if self._complex.dat[1] <= 0:
-            raise ValueError, "value must be in the upper half plane"
+            raise ValueError("value must be in the upper half plane")
 
         if self._complex.dat[1] > 100000 and not omit_frac:
             # To the precision of doubles for such large imaginary
@@ -2291,7 +2292,7 @@ cdef class ComplexDoubleElement(FieldElement):
                 a, b = a1, b1
 
         else:
-            raise ValueError, "agm algorithm must be one of 'pari', 'optimal', 'principal'"
+            raise ValueError("agm algorithm must be one of 'pari', 'optimal', 'principal'")
 
     def dilog(self):
         r"""

@@ -1,6 +1,5 @@
-from hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
-from hom_finite_field cimport FiniteFieldHomomorphism_generic
-from hom_finite_field cimport FrobeniusEndomorphism_finite_field
+from .hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
+    FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field)
 
 
 cdef class SectionFiniteFieldHomomorphism_prime(SectionFiniteFieldHomomorphism_generic):

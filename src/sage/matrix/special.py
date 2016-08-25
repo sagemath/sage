@@ -11,7 +11,8 @@ Constructors for special matrices
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 import sage.rings.all as rings
 from sage.rings.ring import is_Ring
@@ -20,7 +21,7 @@ from sage.modules.free_module_element import vector
 from sage.structure.element import is_Vector
 from sage.rings.all import ZZ, QQ
 from sage.misc.misc_c import running_total
-from matrix import is_Matrix
+from .matrix import is_Matrix
 from copy import copy
 from .constructor import matrix
 
@@ -201,8 +202,8 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', *args, **kwds)
 
         Matrices generated are not uniformly distributed. For unimodular
         matrices over finite field this function does not even generate
-        all of them: for example ``Matrix.random(GF(3), 2)`` never
-        generates ``[[2,0],[0,2]]``. This function is made for
+        all of them: for example ``Matrix.random(GF(3), 2, algorithm='unimodular')``
+        never generates ``[[2,0],[0,2]]``. This function is made for
         teaching purposes.
 
     .. warning::
@@ -675,7 +676,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: A = diagonal_matrix(ZZ, entries); A
         Traceback (most recent call last):
         ...
-        TypeError: Cannot convert non-integral float to integer
+        TypeError: unable to convert 4.1 to an element of Integer Ring
 
     By default returned matrices have a sparse implementation.  This can be changed
     when using any of the formats.  ::
@@ -814,6 +815,31 @@ def identity_matrix(ring, n=0, sparse=False):
         ring = rings.ZZ
     return matrix_space.MatrixSpace(ring, n, n, sparse)(1)
 
+@matrix_method
+def lehmer(ring, n=0):
+    r"""
+    Return the `n \times n` Lehmer matrix.
+
+    The default ring is the rationals.
+
+    Element `(i, j)` in the Lehmer matrix is
+    `min(i, j)/max(i, j)`.
+
+    See :wikipedia:`Lehmer_matrix`.
+
+    EXAMPLES::
+
+        sage: matrix.lehmer(3)
+        [  1 1/2 1/3]
+        [1/2   1 2/3]
+        [1/3 2/3   1]
+    """
+    from sage.sets.integer_range import IntegerRange
+
+    if isinstance(ring, (int, long, rings.Integer)):
+        n = ring
+        ring = rings.QQ
+    return matrix_space.MatrixSpace(ring, n, n).matrix([[min(i, j)/max(i, j) for i in IntegerRange(1, n+1)] for j in IntegerRange(1, n+1)])
 
 @matrix_method
 def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
@@ -1831,7 +1857,7 @@ def block_matrix(*args, **kwds):
     if len(args) == 0:
         args = [[]]
     if len(args) > 1:
-        print args
+        print(args)
         raise TypeError("invalid block_matrix invocation")
 
     sub_matrices = args[0]
@@ -1880,7 +1906,6 @@ def block_matrix(*args, **kwds):
             if ncols is None:
                 if n.is_square():
                     import warnings
-                    warnings.resetwarnings()
                     warnings.warn("invocation of block_matrix with just a list whose length is a perfect square is deprecated. See the documentation for details.", DeprecationWarning, stacklevel=2)
                     nrows = ncols = n.sqrt()
                 else:
@@ -2719,7 +2744,7 @@ def random_subspaces_matrix(parent, rank=None):
         [  0   0   0   0   0   0   0   0   0   1   0   0   3   1]
         [  0   0   0   0   0   0   0   0   0   0   1  -3  -4   2]
 
-    Check that we fixed Trac #10543 (echelon forms should be immutable)::
+    Check that we fixed :trac:`10543` (echelon forms should be immutable)::
 
         sage: B_expanded.is_immutable()
         True

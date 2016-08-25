@@ -8,10 +8,9 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from glpk_backend cimport GLPKBackend
+from .glpk_backend cimport GLPKBackend
 
 cdef class GLPKExactBackend(GLPKBackend):
-
     cpdef int add_variable(self, lower_bound=*, upper_bound=*, binary=*, continuous=*, integer=*, obj=*, name=*) except -1
     cpdef int add_variables(self, int, lower_bound=*, upper_bound=*, binary=*, continuous=*, integer=*, obj=*, names=*) except -1
     cpdef set_variable_type(self, int variable, int vtype)

@@ -78,8 +78,6 @@ AUTHORS:
 # computer; Tachyon would only allocate memory proportional to the
 # output size.)
 
-from cStringIO import StringIO
-
 cimport numpy as np
 import numpy as np
 

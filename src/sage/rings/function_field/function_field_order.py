@@ -30,6 +30,7 @@ Equation orders in extensions of rational function fields::
     sage: x/y in O
     True
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -166,7 +167,7 @@ class FunctionFieldOrder(IntegralDomain):
             sage: y^2 in I
             False
         """
-        from function_field_ideal import ideal_with_gens_over_base
+        from .function_field_ideal import ideal_with_gens_over_base
         return ideal_with_gens_over_base(self, [self(a) for a in gens])
 
     def ideal(self, *gens):
@@ -208,7 +209,7 @@ class FunctionFieldOrder(IntegralDomain):
                     gens = gens.gens()
                 else:
                     gens = [gens]
-        from function_field_ideal import ideal_with_gens
+        from .function_field_ideal import ideal_with_gens
         return ideal_with_gens(self, gens)
 
 class FunctionFieldOrder_basis(FunctionFieldOrder):
@@ -426,7 +427,7 @@ class FunctionFieldOrder_rational(PrincipalIdealDomain, FunctionFieldOrder):
                     gens = gens.gens()
                 else:
                     gens = (gens,)
-        from function_field_ideal import ideal_with_gens
+        from .function_field_ideal import ideal_with_gens
         return ideal_with_gens(self, gens)
 
     def _repr_(self):
@@ -485,5 +486,5 @@ class FunctionFieldOrder_rational(PrincipalIdealDomain, FunctionFieldOrder):
             if not f.denominator() in self.fraction_field().constant_base_field():
                 raise TypeError("%r is not an element of %r"%(f,self))
             f = f.element()
-        from function_field_element import FunctionFieldElement_rational
+        from .function_field_element import FunctionFieldElement_rational
         return FunctionFieldElement_rational(self, self._ring(f))

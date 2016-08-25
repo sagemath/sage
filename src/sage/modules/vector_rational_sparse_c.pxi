@@ -31,7 +31,7 @@ cdef int allocate_mpq_vector(mpq_vector* v, Py_ssize_t num_nonzero) except -1:
     cdef Py_ssize_t i
     v.entries = <mpq_t *> sig_malloc(num_nonzero*sizeof(mpq_t))
     if v.entries == NULL:
-        raise MemoryError, "Error allocating memory"
+        raise MemoryError("Error allocating memory")
     for i from 0 <= i < num_nonzero:
         mpq_init(v.entries[i])
     v.positions = <Py_ssize_t*>sig_malloc(num_nonzero*sizeof(Py_ssize_t))
@@ -40,7 +40,7 @@ cdef int allocate_mpq_vector(mpq_vector* v, Py_ssize_t num_nonzero) except -1:
             mpq_clear(v.entries[i])
         sig_free(v.entries)
         v.entries = NULL
-        raise MemoryError, "Error allocating memory"
+        raise MemoryError("Error allocating memory")
     return 0
 
 cdef int mpq_vector_init(mpq_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzero) except -1:
@@ -144,7 +144,7 @@ cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     that *must* have been initialized using mpq_init.
     """
     if n >= v.degree:
-        raise IndexError, "Index must be between 0 and %s."%(v.degree - 1)
+        raise IndexError("Index must be between 0 and %s." % (v.degree - 1))
     cdef Py_ssize_t m
     m = binary_search0(v.positions, v.num_nonzero, n)
     if m == -1:
@@ -175,7 +175,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
     This would be v[n] = x in Python syntax.
     """
     if n >= v.degree or n < 0:
-        raise IndexError, "Index must be between 0 and the degree minus 1."
+        raise IndexError("Index must be between 0 and the degree minus 1.")
     cdef Py_ssize_t i, m, ins
     cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
@@ -261,8 +261,8 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
     Initialize sum and set sum = v + multiple*w.
     """
     if v.degree != w.degree:
-        print "Can't add vectors of degree %s and %s"%(v.degree, w.degree)
-        raise ArithmeticError, "The vectors must have the same degree."
+        print("Can't add vectors of degree %s and %s"%(v.degree, w.degree))
+        raise ArithmeticError("The vectors must have the same degree.")
 
     cdef Py_ssize_t nz, i, j, k, do_multiply
     cdef mpq_vector* z
@@ -375,12 +375,12 @@ cdef int mpq_vector_scalar_multiply(mpq_vector* v, mpq_vector* w, mpq_t scalar) 
         v.entries = <mpq_t*> sig_malloc(w.num_nonzero * sizeof(mpq_t))
         if v.entries == NULL:
             v.positions = NULL
-            raise MemoryError, "error allocating rational sparse vector mpq's"
+            raise MemoryError("error allocating rational sparse vector mpq's")
         v.positions = <Py_ssize_t*> sig_malloc(w.num_nonzero * sizeof(Py_ssize_t))
         if v.positions == NULL:
             sig_free(v.entries)
             v.entries = NULL
-            raise MemoryError, "error allocating rational sparse vector positions"
+            raise MemoryError("error allocating rational sparse vector positions")
         v.num_nonzero = w.num_nonzero
         v.degree = w.degree
         for i from 0 <= i < v.num_nonzero:

@@ -15,8 +15,8 @@ Nous décrivons maintenant la manière de charger dans Sage des programmes
 
 ::
 
-    print "Hello World"
-    print 2^3
+    print("Hello World")
+    print(2^3)
 
 Nous pouvons lire et exécuter le contenu du fichier ``example.sage``
 en utilisant la commande ``load``.
@@ -60,8 +60,8 @@ nom ``example.sage.py``. Elle contient le code suivant :
 
 ::
 
-    print "Hello World"
-    print Integer(2)**Integer(3)
+    print("Hello World")
+    print(Integer(2)**Integer(3))
 
 On voit que les littéraux entiers ont été encapsulés et que le ``^`` a
 été remplacé par ``**`` (en effet, en Python, ``^`` représente le ou
@@ -179,11 +179,11 @@ entiers, des polynômes, etc. :
     from sage.all import *
 
     if len(sys.argv) != 2:
-        print "Usage: %s <n>"%sys.argv[0]
-        print "Outputs the prime factorization of n."
+        print("Usage: %s <n>" % sys.argv[0])
+        print("Outputs the prime factorization of n.")
         sys.exit(1)
 
-    print factor(sage_eval(sys.argv[1]))
+    print(factor(sage_eval(sys.argv[1])))
 
 Pour utiliser ce script, votre répertoire ``SAGE_ROOT`` doit apparaître
 dans la variable d'environnement PATH. Supposons que le script ci-dessus
@@ -335,7 +335,7 @@ Cela est utile pour construire des listes par compréhension :
 ::
 
     sage: L = [factor(n) for n in range(1, 15)]
-    sage: print L
+    sage: L
     [1, 2, 3, 2^2, 5, 2 * 3, 7, 2^3, 3^2, 2 * 5, 11, 2^2 * 3, 13, 2 * 7]
     sage: L[12]
     13
@@ -355,7 +355,7 @@ formée des éléments d'indices :math:`m` à :math:`n-1` inclus :
     sage: L = [factor(n) for n in range(1, 20)]
     sage: L[4:9]
     [5, 2 * 3, 7, 2^3, 3^2]
-    sage: print L[:4]
+    sage: L[:4]
     [1, 2, 3, 2^2]
     sage: L[14:4]
     []
@@ -527,7 +527,7 @@ supplémentaires utiles à Sage. Pour créer un ensemble Sage, on utilise
     {1, 2/3}
     sage: X.intersection(Y)
     {1}
-    sage: print latex(Y)
+    sage: print(latex(Y))
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring

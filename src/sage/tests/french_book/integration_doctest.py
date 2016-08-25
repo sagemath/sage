@@ -68,13 +68,13 @@ Sage example in ./integration.tex, line 417::
 Sage example in ./integration.tex, line 430::
 
     sage: sage.calculus.calculus.nintegral(sin(sin(x)), x, 0, 1)
-    (0.430606103120690..., 4.780688102287053...e-15, 21, 0)
+    (0.430606103120690..., 4.78068810228705...e-15, 21, 0)
 
 Sage example in ./integration.tex, line 436::
 
     sage: g(x) = sin(sin(x))
     sage: g.nintegral(x, 0, 1)
-    (0.430606103120690..., 4.780688102287053...e-15, 21, 0)
+    (0.430606103120690..., 4.78068810228705...e-15, 21, 0)
 
 Sage example in ./integration.tex, line 465::
 

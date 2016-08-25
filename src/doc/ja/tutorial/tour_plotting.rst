@@ -11,7 +11,7 @@ Sageを使って2次元および3次元のグラフを作成することがで�
 
 Sageの2次元プロット機能を使うと，円，直線，多辺形の描画はもちろん，
 直交座標系における関数のプロット，極座標プロット、等高線プロット，ベクトル場プロットを行うことができる．
-以下では、その具体例を見ていくことにしよう．さらにSageによるプロットの具体例を見たければ， :ref:`section-systems` 節と :ref:`section-maxima` 節，および `Sage Constructions <http://www.sagemath.org/doc/constructions/>`_ を参照してほしい．
+以下では、その具体例を見ていくことにしよう．さらにSageによるプロットの具体例を見たければ， :ref:`section-systems` 節と :ref:`section-maxima` 節，および `Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_ を参照してほしい．
 
 次のコマンドは原点を中心とした半径1の黄色い円を描く:
 ::

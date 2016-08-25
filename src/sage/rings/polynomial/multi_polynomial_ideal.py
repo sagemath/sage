@@ -232,6 +232,7 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.interfaces.all import (singular as singular_default,
                                  macaulay2 as macaulay2_default,
@@ -412,10 +413,9 @@ class MPolynomialIdeal_magma_repr:
             else:
                 mgb = mself.GroebnerBasis()
 
-
         if prot == "sage":
-            print
-            print "Highest degree reached during computation: %2d."%log_parser.max_deg
+            print("")
+            print("Highest degree reached during computation: %2d." % log_parser.max_deg)
 
         # TODO: rewrite this to be much more sophisticated in multi-level nested cases.
         mgb = [str(mgb[i+1]) for i in range(len(mgb))]
@@ -1445,8 +1445,8 @@ class MPolynomialIdeal_singular_repr(
                 raise TypeError("algorithm '%s' unknown"%algorithm)
         self.__gb_singular = S
         if prot == "sage":
-            print
-            print "Highest degree reached during computation: %2d."%log_parser.max_deg
+            print("")
+            print("Highest degree reached during computation: %2d." % log_parser.max_deg)
         return S
 
     @require_field
@@ -3366,7 +3366,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         return groebner_fan.GroebnerFan(self, is_groebner_basis=is_groebner_basis,
                                         symmetry=symmetry, verbose=verbose)
 
-    @cached_method
+    @cached_method(do_pickle=True)
     def groebner_basis(self, algorithm='', deg_bound=None, mult_bound=None, prot=False, *args, **kwds):
         r"""
         Return the reduced Groebner basis of this ideal.

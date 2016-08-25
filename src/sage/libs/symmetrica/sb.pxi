@@ -26,9 +26,9 @@ cdef object _check_schubert(object a, OP ca):
             _op_schubert_sp(a, ca)
             return min([max(i.reduced_word()+[0]) for i in a.support()])
         else:
-            raise ValueError, "a must be a Schubert polynomial over ZZ or QQ"
+            raise ValueError("a must be a Schubert polynomial over ZZ or QQ")
     else:
-        raise TypeError, "a must be a permutation or a Schubert polynomial"
+        raise TypeError("a must be a permutation or a Schubert polynomial")
 
 
 def mult_schubert_schubert_symmetrica(a, b):
@@ -109,12 +109,12 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
 
     if not is_MPolynomial(a):
         freeall(ca); freeall(cres)
-        raise TypeError, "a (= %s) must be a multivariate polynomial"
+        raise TypeError("a (= %s) must be a multivariate polynomial")
     else:
         br = a.parent().base_ring()
         if br != QQ and br != ZZ:
             freeall(ca); freeall(cres)
-            raise ValueError, "a's base ring must be either ZZ or QQ"
+            raise ValueError("a's base ring must be either ZZ or QQ")
         else:
             _op_polynom(a, ca)
 
@@ -191,7 +191,7 @@ def divdiff_perm_schubert_symmetrica(perm, a):
 
     if perm not in Permutations():
         freeall(ca); freeall(cperm); freeall(cres)
-        raise TypeError, "perm must be a permutation"
+        raise TypeError("perm must be a permutation")
     else:
         perm = Permutation(perm)
         rw = perm.reduced_word()
@@ -200,7 +200,7 @@ def divdiff_perm_schubert_symmetrica(perm, a):
 
     if max_perm > max_a:
         freeall(ca); freeall(cperm); freeall(cres)
-        raise ValueError, r"cannot apply \delta_{%s} to a (= %s)"%(perm, a)
+        raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (perm, a))
 
     sig_on()
     divdiff_perm_schubert(cperm, ca, cres)
@@ -273,13 +273,13 @@ def divdiff_schubert_symmetrica(i, a):
 
     if not isinstance(i, (int, Integer)):
         freeall(ca); freeall(ci); freeall(cres)
-        raise TypeError, "i must be an integer"
+        raise TypeError("i must be an integer")
     else:
         _op_integer(i, ci)
 
     if i > max_a:
         freeall(ca); freeall(ci); freeall(cres)
-        raise ValueError, r"cannot apply \delta_{%s} to a (= %s)"%(i, a)
+        raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (i, a))
 
     sig_on()
     divdiff_schubert(ci, ca, cres)

@@ -4,6 +4,7 @@ Root systems
 
 See :ref:`sage.combinat.root_system` for an overview.
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                               Justin Walker <justin at mac.com>
@@ -17,11 +18,11 @@ See :ref:`sage.combinat.root_system` for an overview.
 # Design largely inspired from MuPAD-Combinat
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from cartan_type import CartanType
+from .cartan_type import CartanType
 from sage.rings.all import ZZ, QQ
 from sage.misc.all import cached_method
-from root_space import RootSpace
-from weight_space import WeightSpace
+from .root_space import RootSpace
+from .weight_space import WeightSpace
 
 class RootSystem(UniqueRepresentation, SageObject):
     r"""
@@ -669,7 +670,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         root or weight lattice (and dually).
 
         There is no mechanical way to define the ambient space just
-        from the Cartan matrix. Instead is is constructed from hard
+        from the Cartan matrix. Instead it is constructed from hard
         coded type by type data, according to the usual Bourbaki
         conventions. Such data is provided for all the finite
         (crystallographic) types. From this data, ambient spaces can be

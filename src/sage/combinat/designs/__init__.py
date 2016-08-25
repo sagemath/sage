@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Combinatorial Designs and Incidence Structures
 ==============================================
 

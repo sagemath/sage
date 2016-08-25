@@ -11,6 +11,8 @@ AUTHOR:
 
 - John H. Palmieri
 """
+from __future__ import print_function
+
 import re
 
 _have_chomp = {}
@@ -166,16 +168,16 @@ class CHomP:
             original_complex = complex
             complex = edge.product(complex)
             if verbose:
-                print "Cubical complex"
+                print("Cubical complex")
         elif isinstance(complex, SimplicialComplex):
             simplicial = True
             if verbose:
-                print "Simplicial complex"
+                print("Simplicial complex")
         else:
             chain = True
             base_ring = kwds.get('base_ring', complex.base_ring())
             if verbose:
-                print "Chain complex over %s" % base_ring
+                print("Chain complex over %s" % base_ring)
 
         if base_ring == QQ:
             raise ValueError("CHomP doesn't compute over the rationals, only over Z or F_p.")
@@ -235,11 +237,11 @@ class CHomP:
         else:
             subfile = ''
         if verbose:
-            print "Popen called with arguments",
-            print [program, datafile, subfile] + extra_opts
-            print
-            print "CHomP output:"
-            print
+            print("Popen called with arguments", end="")
+            print([program, datafile, subfile] + extra_opts)
+            print("")
+            print("CHomP output:")
+            print("")
         # output = Popen([program, datafile, subfile, extra_opts],
         cmd = [program, datafile]
         if subfile:
@@ -248,14 +250,14 @@ class CHomP:
             cmd.extend(extra_opts)
         output = Popen(cmd, stdout=PIPE).communicate()[0]
         if verbose:
-            print output
-            print "End of CHomP output"
-            print
+            print(output)
+            print("End of CHomP output")
+            print("")
         if generators:
             gens = open(genfile, 'r').read()
             if verbose:
-                print "Generators:"
-                print gens
+                print("Generators:")
+                print(gens)
         #
         #    process output
         #
@@ -277,7 +279,7 @@ class CHomP:
         #
         for m in h.finditer(output):
             if verbose:
-                print m.groups()
+                print(m.groups())
             # dim is the dimension of the homology group
             dim = int(m.group(1))
             # hom_str is the right side of the equation "H_n = Z^r + Z_k + ..."
@@ -297,7 +299,7 @@ class CHomP:
                 if mod_p:
                     rk = rk if rk != 0 else 1
                     if verbose:
-                        print "dimension = %s, rank of homology = %s" % (dim, rk)
+                        print("dimension = %s, rank of homology = %s" % (dim, rk))
                     hom = VectorSpace(base_ring, rk)
                 else:
                     n = rk
@@ -308,7 +310,7 @@ class CHomP:
                     for i in range(rk):
                         invts.append(0)
                     if verbose:
-                        print "dimension = %s, number of factors = %s, invariants = %s" %(dim, n, invts)
+                        print("dimension = %s, number of factors = %s, invariants = %s" % (dim, n, invts))
                     hom = HomologyGroup(n, ZZ, invts)
 
             #
@@ -318,7 +320,7 @@ class CHomP:
                 if cubical:
                     g = process_generators_cubical(gens, dim)
                     if verbose:
-                        print "raw generators: %s" % g
+                        print("raw generators: %s" % g)
                     if g:
                         module = CombinatorialFreeModule(base_ring,
                                                          original_complex.n_cells(dim),
@@ -335,7 +337,7 @@ class CHomP:
                 elif simplicial:
                     g = process_generators_simplicial(gens, dim, complex)
                     if verbose:
-                        print "raw generators: %s" % gens
+                        print("raw generators: %s" % gens)
                     if g:
                         module = CombinatorialFreeModule(base_ring,
                                                          complex.n_cells(dim),
@@ -357,7 +359,7 @@ class CHomP:
                 elif chain:
                     g = process_generators_chain(gens, dim, base_ring)
                     if verbose:
-                        print "raw generators: %s" % gens
+                        print("raw generators: %s" % gens)
                 if g:
                     if not mod_p:
                         # sort generators to match up with corresponding invariant
@@ -417,7 +419,7 @@ class CHomP:
             HOMCUBES, ver. ... Copyright (C) ... by Pawel Pilarczyk...
         """
         from subprocess import Popen, PIPE
-        print Popen([program, '-h'], stdout=PIPE).communicate()[0]
+        print(Popen([program, '-h'], stdout=PIPE).communicate()[0])
 
 def homsimpl(complex=None, subcomplex=None, **kwds):
     r"""
@@ -495,6 +497,8 @@ def homcubes(complex=None, subcomplex=None, **kwds):
 
     :param complex: a cubical complex
     :param subcomplex: a subcomplex of ``complex`` or None (the default)
+    :param base_ring: ring over which to perform computations -- must be `\ZZ` or `\GF{p}`.
+    :type base_ring: ring; optional, default `\ZZ`
     :param generators: if True, also return list of generators
     :type generators: boolean; optional, default False
     :param verbose: if True, print helpful messages as the computation progresses

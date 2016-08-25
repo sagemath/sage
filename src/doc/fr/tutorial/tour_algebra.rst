@@ -4,7 +4,7 @@ Algèbre de base et calcul infinitésimal
 Sage peut accomplir divers calculs d'algèbre et d'analyse de base : par
 exemple, trouver les solutions d'équations, dériver, intégrer, calculer
 des transformées de Laplace. Voir la documentation
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_
 pour plus d'exemples.
 
 Résolution d'équations

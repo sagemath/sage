@@ -65,6 +65,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 
@@ -191,7 +192,7 @@ cdef class Ring(ParentWithGens):
             ...
             NotImplementedError: object does not support iteration
         """
-        raise NotImplementedError, "object does not support iteration"
+        raise NotImplementedError("object does not support iteration")
 
     def __len__(self):
         r"""
@@ -209,7 +210,7 @@ cdef class Ring(ParentWithGens):
         """
         if self.is_finite():
             return self.cardinality()
-        raise NotImplementedError, 'len() of an infinite set'
+        raise NotImplementedError('len() of an infinite set')
 
     def __xor__(self, n):
         r"""
@@ -238,7 +239,7 @@ cdef class Ring(ParentWithGens):
         """
         if R.has_coerce_map_from(self):
             return R
-        raise TypeError, 'no base extension defined'
+        raise TypeError('no base extension defined')
 
     def category(self):
         """
@@ -390,7 +391,6 @@ cdef class Ring(ParentWithGens):
             gens = [self.zero()]
 
         if coerce:
-            #print [type(g) for g in gens]
             gens = [self(g) for g in gens]
         if isinstance(self, PrincipalIdealDomain):
             # Use GCD algorithm to obtain a principal ideal
@@ -454,7 +454,7 @@ cdef class Ring(ParentWithGens):
             elif side=='right':
                 return self.ideal(x,side='twosided')
             else: # duck typing failed
-                raise TypeError, "Don't know how to transform %s into an ideal of %s"%(x,self)
+                raise TypeError("Don't know how to transform %s into an ideal of %s" % (x, self))
         else: # the sides are switched because this is a Cython / extension class
             if x.is_commutative():
                 return x.ideal(self)
@@ -472,7 +472,7 @@ cdef class Ring(ParentWithGens):
             elif side=='left':
                 return x.ideal(self,side='twosided')
             else:
-                raise TypeError, "Don't know how to transform %s into an ideal of %s"%(self,x)
+                raise TypeError("Don't know how to transform %s into an ideal of %s" % (self, x))
 
     def _ideal_class_(self, n=0):
         r"""
@@ -794,7 +794,7 @@ cdef class Ring(ParentWithGens):
             return False
 
         if proof:
-            raise NotImplementedError, "No way to prove that %s is an integral domain!"%self
+            raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
         else:
             return False
 
@@ -1276,9 +1276,9 @@ cdef class CommutativeRing(Ring):
         """
         try:
             if not base_ring.is_commutative():
-                raise TypeError, "base ring %s is no commutative ring"%base_ring
+                raise TypeError("base ring %s is no commutative ring" % base_ring)
         except AttributeError:
-            raise TypeError, "base ring %s is no commutative ring"%base_ring
+            raise TypeError("base ring %s is no commutative ring" % base_ring)
         # This is a low-level class. For performance, we trust that
         # the category is fine, if it is provided. If it isn't, we use
         # the category of commutative rings.
@@ -1306,7 +1306,7 @@ cdef class CommutativeRing(Ring):
             pass
 
         if not self.is_integral_domain():
-            raise TypeError, "self must be an integral domain."
+            raise TypeError("self must be an integral domain.")
 
         if self.__fraction_field is not None:
             return self.__fraction_field
@@ -1448,7 +1448,7 @@ cdef class CommutativeRing(Ring):
             self.__ideal_monoid = M
             return M
 
-    def extension(self, poly, name=None, names=None, embedding=None):
+    def extension(self, poly, name=None, names=None, embedding=None, structure=None):
         """
         Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
 
@@ -1485,7 +1485,7 @@ cdef class CommutativeRing(Ring):
             try:
                 poly = poly.polynomial(self)
             except (AttributeError, TypeError):
-                raise TypeError, "polynomial (=%s) must be a polynomial."%repr(poly)
+                raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
         if not names is None:
             name = names
         if isinstance(name, tuple):
@@ -1493,7 +1493,9 @@ cdef class CommutativeRing(Ring):
         if name is None:
             name = str(poly.parent().gen(0))
         if embedding is not None:
-            raise NotImplementedError, "ring extension with prescripted embedding is not implemented"
+            raise NotImplementedError("ring extension with prescripted embedding is not implemented")
+        if structure is not None:
+            raise NotImplementedError("ring extension with additional structure is not implemented")
         R = self[name]
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)
@@ -1676,7 +1678,7 @@ cdef class IntegralDomain(CommutativeRing):
         if self.is_finite():
             return True
         if proof:
-            raise NotImplementedError, "unable to determine whether or not is a field."
+            raise NotImplementedError("unable to determine whether or not is a field.")
         else:
             return False
 
@@ -1907,7 +1909,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = NumberField(x^2 - 2, 'a')
             sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)
-            sage: print f; print g
+            sage: print(f); print(g)
             x^2 - 2
             x^3 - a*x^2 - 2*x + 2*a
             sage: f in R
@@ -2217,7 +2219,7 @@ cdef class Field(PrincipalIdealDomain):
             ...
             NotImplementedError: Algebraic closures of general fields not implemented.
         """
-        raise NotImplementedError, "Algebraic closures of general fields not implemented."
+        raise NotImplementedError("Algebraic closures of general fields not implemented.")
 
     def _gcd_univariate_polynomial(self, a, b):
         """
@@ -2449,9 +2451,9 @@ cdef class CommutativeAlgebra(CommutativeRing):
         # TODO: use the idiom base_ring in CommutativeRings()
         try:
             if not base_ring.is_commutative():
-                raise TypeError, "base ring must be a commutative ring"
+                raise TypeError("base ring must be a commutative ring")
         except (AttributeError, NotImplementedError):
-            raise TypeError, "base ring must be a commutative ring"
+            raise TypeError("base ring must be a commutative ring")
         # This is a low-level class. For performance, we trust that
         # the category is fine, if it is provided. If it isn't, we use
         # the category of commutative algebras.

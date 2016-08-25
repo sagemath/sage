@@ -34,6 +34,8 @@ This module implements two classes
 Classes and methods
 -------------------
 """
+from __future__ import print_function
+
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
                                                    init_reverse,
                                                    out_degree,
@@ -490,13 +492,13 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: print g.get_edge_label(0,1)
+            sage: print(g.get_edge_label(0,1))
             None
-            sage: print g.get_edge_label(0,"Hey")
+            sage: print(g.get_edge_label(0,"Hey"))
             Traceback (most recent call last):
             ...
             LookupError: One of the two vertices does not belong to the graph
-            sage: print g.get_edge_label(0,7)
+            sage: print(g.get_edge_label(0,7))
             Traceback (most recent call last):
             ...
             LookupError: The edge does not exist
@@ -1094,10 +1096,10 @@ def _run_it_on_static_instead(f):
         sage: from sage.graphs.base.static_sparse_backend import _run_it_on_static_instead
         sage: @_run_it_on_static_instead
         ....: def new_graph_method(g):
-        ....:    print "My backend is of type", g._backend
+        ....:    print("My backend is of type {}".format(g._backend))
         sage: Graph.new_graph_method = new_graph_method
         sage: g = Graph(5)
-        sage: print "My backend is of type", g._backend
+        sage: print("My backend is of type {}".format(g._backend))
         My backend is of type <type 'sage.graphs.base.sparse_graph.SparseGraphBackend'>
         sage: g.new_graph_method()
         My backend is of type <type 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>

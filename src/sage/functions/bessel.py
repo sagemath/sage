@@ -1,9 +1,9 @@
 r"""
 Bessel Functions
 
-This module provides symbolic Bessel Functions. These functions use the
-`mpmath library`_ for numerical evaluation and Maxima, GiNaC, Pynac for
-symbolics.
+This module provides symbolic Bessel and Hankel functions, and their
+spherical versions. These functions use the `mpmath library`_ for numerical
+evaluation and Maxima, GiNaC, Pynac for symbolics.
 
 The main objects which are exported from this module are:
 
@@ -13,8 +13,14 @@ The main objects which are exported from this module are:
  * :meth:`bessel_K(n, x) <Function_Bessel_K>` -- The Bessel K function
  * :meth:`Bessel(...) <Bessel>`   -- A factory function for producing Bessel functions of
    various kinds and orders
+ * :meth:`hankel1(nu, z) <Function_Hankel1>`  -- The Hankel function of the first kind
+ * :meth:`hankel2(nu, z) <Function_Hankel2>`  -- The Hankel function of the second kind
  * :meth:`struve_H(nu, z) <Function_Struve_H>`  -- The Struve function
  * :meth:`struve_L(nu, z) <Function_Struve_L>`  -- The modified Struve function
+ * :meth:`spherical_bessel_J(n, z) <SphericalBesselJ>` -- The Spherical Bessel J function
+ * :meth:`spherical_bessel_Y(n, z) <SphericalBesselY>` -- The Spherical Bessel J function
+ * :meth:`spherical_hankel1(n, z) <SphericalHankel1>` -- The Spherical Hankel function of the first kind
+ * :meth:`spherical_hankel2(n, z) <SphericalHankel2>` -- The Spherical Hankel function of the second kind
 
 -  Bessel functions, first defined by the Swiss mathematician
    Daniel Bernoulli and named after Friedrich Bessel, are canonical
@@ -92,6 +98,26 @@ The main objects which are exported from this module are:
    kind; they are also two linearly independent solutions of Bessel's
    differential equation. They are named for Hermann Hankel.
 
+-  When solving for separable solutions of Laplace's equation in
+   spherical coordinates, the radial equation has the form:
+
+   .. math::
+
+         x^2 \frac{d^2 y}{dx^2} + 2x \frac{dy}{dx} + [x^2 - n(n+1)]y = 0.
+
+   The spherical Bessel functions `j_n` and `y_n`,
+   are two linearly independent solutions to this equation. They are
+   related to the ordinary Bessel functions `J_n` and
+   `Y_n` by:
+
+   .. math::
+
+         j_n(x) = \sqrt{\frac{\pi}{2x}} J_{n+1/2}(x),
+
+   .. math::
+
+         y_n(x) = \sqrt{\frac{\pi}{2x}} Y_{n+1/2}(x) = (-1)^{n+1} \sqrt{\frac{\pi}{2x}} J_{-n-1/2}(x).
+
 EXAMPLES:
 
     Evaluate the Bessel J function symbolically and numerically::
@@ -99,7 +125,7 @@ EXAMPLES:
         sage: bessel_J(0, x)
         bessel_J(0, x)
         sage: bessel_J(0, 0)
-        bessel_J(0, 0)
+        1
         sage: bessel_J(0, x).diff(x)
         -1/2*bessel_J(1, x) + 1/2*bessel_J(-1, x)
 
@@ -148,16 +174,15 @@ EXAMPLES:
 
 AUTHORS:
 
-    - Benjamin Jones (2012-12-27): initial version
-
     - Some of the documentation here has been adapted from David Joyner's
       original documentation of Sage's special functions module (2006).
-
 
 REFERENCES:
 
 .. [AS-Bessel] \F. W. J. Olver: 9. Bessel Functions of Integer Order, in Abramowitz and Stegun: Handbook of Mathematical Functions
     http://people.math.sfu.ca/~cbm/aands/page_355.htm
+.. [AS-Spherical] \H. A. Antosiewicz: 10. Bessel Functions of Fractional Order, in Abramowitz and Stegun: Handbook of Mathematical Functions
+    http://people.math.sfu.ca/~cbm/aands/page_435.htm
 .. [AS-Struve] \M. Abramowitz: 12. Struve Functions and Related Functions, in Abramowitz and Stegun: Handbook of Mathematical Functions
    http://people.math.sfu.ca/~cbm/aands/page_495.htm
 .. [DLMF-Bessel] \F. W. J. Olver and L. C. Maximon: 10. Bessel Functions, in NIST Digital Library of Mathematical Functions
@@ -183,6 +208,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.functions.other import sqrt
 from sage.functions.log import exp
@@ -192,16 +218,18 @@ from sage.misc.latex import latex
 from sage.rings.all import RR, Integer
 from sage.structure.element import parent, get_coercion_model
 from sage.symbolic.constants import pi
+from sage.symbolic.ring import SR
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 
 # remove after deprecation period
 from sage.calculus.calculus import maxima
-from sage.functions.other import real, imag
+from sage.functions.trig import sin, cos
+from sage.functions.other import real, imag, sqrt
 from sage.misc.sage_eval import sage_eval
 from sage.rings.real_mpfr import RealField
 from sage.plot.plot import plot
-from sage.rings.all import ZZ
+from sage.rings.all import ZZ, QQ
 
 
 class Function_Bessel_J(BuiltinFunction):
@@ -314,6 +342,39 @@ class Function_Bessel_J(BuiltinFunction):
                                                   maxima='bessel_j',
                                                   sympy='besselj'))
 
+    def _eval_(self, n, x):
+        """
+        EXAMPLES::
+
+            sage: n = var('n')
+            sage: bessel_J(0, 0)
+            1
+            sage: bessel_J(I, 0)
+            bessel_J(I, 0)
+            sage: bessel_J(5/2, 0)
+            0
+            sage: bessel_J(-5/2, 0)
+            Infinity
+            sage: bessel_J(1/2, x)
+            sqrt(2)*sqrt(1/(pi*x))*sin(x)
+            sage: bessel_J(-1/2, x)
+            sqrt(2)*sqrt(1/(pi*x))*cos(x)
+            sage: bessel_J(n, 0)
+            bessel_J(n, 0)
+        """
+        from sage.rings.infinity import unsigned_infinity
+        if not isinstance(x, Expression) and x == 0:
+            if n == 0:
+                return ZZ(1)
+            elif n.real() > 0 or n in ZZ:
+                return ZZ(0)
+            elif n.real() < 0:
+                return unsigned_infinity
+        if n == QQ(1)/2:
+            return sqrt(2/pi/x) * sin(x)
+        elif n == QQ(-1)/2:
+            return sqrt(2/pi/x) * cos(x)
+
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
         EXAMPLES::
@@ -334,7 +395,7 @@ class Function_Bessel_J(BuiltinFunction):
             ....:     b = bessel_J(R(n), a)
             ....:     bb = R(bessel_J(n, aa))
             ....:     if b != bb:
-            ....:         print n, b-bb
+            ....:         print((n, b-bb))
         """
         if parent is not None:
             x = parent(x)
@@ -376,9 +437,9 @@ class Function_Bessel_J(BuiltinFunction):
         EXAMPLES::
 
             sage: latex(bessel_J(1, x))
-            \operatorname{J_{1}}(x)
+            J_{1}(x)
         """
-        return r"\operatorname{J_{%s}}(%s)" % (latex(n), latex(z))
+        return r"J_{%s}(%s)" % (latex(n), latex(z))
 
 bessel_J = Function_Bessel_J()
 
@@ -494,6 +555,30 @@ class Function_Bessel_Y(BuiltinFunction):
                                                   maxima='bessel_y',
                                                   sympy='bessely'))
 
+    def _eval_(self, n, x):
+        """
+        EXAMPLES::
+
+            sage: bessel_Y(1, 0)
+            Infinity
+            sage: bessel_Y(I,0)
+            bessel_Y(I, 0)
+            sage: bessel_Y(1/2, x)
+            -sqrt(2)*sqrt(1/(pi*x))*cos(x)
+            sage: bessel_Y(-1/2, x)
+            sqrt(2)*sqrt(1/(pi*x))*sin(x)
+        """
+        from sage.rings.infinity import infinity, unsigned_infinity
+        if not isinstance(x, Expression) and x == 0:
+            if n == 0:
+                return -infinity
+            elif n.real() > 0 or n.real() < 0:
+                return unsigned_infinity
+        if n == QQ(1)/2:
+            return -sqrt(2/pi/x) * cos(x)
+        elif n == QQ(-1)/2:
+            return sqrt(2/pi/x) * sin(x)
+
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
         EXAMPLES::
@@ -514,7 +599,7 @@ class Function_Bessel_Y(BuiltinFunction):
             ....:     b = bessel_Y(R(n), a)
             ....:     bb = R(bessel_Y(n, aa))
             ....:     if b != bb:
-            ....:         print n, b-bb
+            ....:         print((n, b-bb))
         """
         if parent is not None:
             x = parent(x)
@@ -555,9 +640,9 @@ class Function_Bessel_Y(BuiltinFunction):
         EXAMPLES::
 
             sage: latex(bessel_Y(1, x))
-            \operatorname{Y_{1}}(x)
+            Y_{1}(x)
         """
-        return r"\operatorname{Y_{%s}}(%s)" % (latex(n), latex(z))
+        return r"Y_{%s}(%s)" % (latex(n), latex(z))
 
 bessel_Y = Function_Bessel_Y()
 
@@ -671,26 +756,42 @@ class Function_Bessel_I(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: y=var('y')
-            sage: bessel_I(y,x)
+            sage: n,y = var('n,y')
+            sage: bessel_I(y, x)
             bessel_I(y, x)
-            sage: bessel_I(0.0, 1.0)
-            1.26606587775201
+            sage: bessel_I(0, 0)
+            1
+            sage: bessel_I(7/2, 0)
+            0
+            sage: bessel_I(-7/2, 0)
+            Infinity
             sage: bessel_I(1/2, 1)
             sqrt(2)*sinh(1)/sqrt(pi)
             sage: bessel_I(-1/2, pi)
             sqrt(2)*cosh(pi)/pi
+            sage: bessel_I(n, 0)
+            bessel_I(n, 0)
         """
-        # special identities
-        if n == Integer(1) / Integer(2):
+        from sage.rings.infinity import unsigned_infinity
+        if not isinstance(x, Expression) and x == 0:
+            if n == 0:
+                return ZZ(1)
+            elif n.real() > 0 or n in ZZ:
+                return ZZ(0)
+            elif n.real() < 0:
+                return unsigned_infinity
+        if n == QQ(1)/2:
             return sqrt(2 / (pi * x)) * sinh(x)
-        elif n == -Integer(1) / Integer(2):
+        elif n == -QQ(1)/2:
             return sqrt(2 / (pi * x)) * cosh(x)
+
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
         EXAMPLES::
 
+            sage: bessel_I(0.0, 1.0)
+            1.26606587775201
             sage: bessel_I(1,3).n(digits=20)
             3.9533702174026093965
         """
@@ -725,9 +826,9 @@ class Function_Bessel_I(BuiltinFunction):
         EXAMPLES::
 
             sage: latex(bessel_I(1, x))
-            \operatorname{I_{1}}(x)
+            I_{1}(x)
         """
-        return r"\operatorname{I_{%s}}(%s)" % (latex(n), latex(z))
+        return r"I_{%s}(%s)" % (latex(n), latex(z))
 
 bessel_I = Function_Bessel_I()
 
@@ -766,9 +867,9 @@ class Function_Bessel_K(BuiltinFunction):
         -1/2*bessel_K(3, x) - 1/2*bessel_K(1, x)
 
         sage: bessel_K(1/2, x)
-        bessel_K(1/2, x)
+        sqrt(1/2)*sqrt(pi)*e^(-x)/sqrt(x)
         sage: bessel_K(1/2, -1)
-        bessel_K(1/2, -1)
+        -I*sqrt(1/2)*sqrt(pi)*e
         sage: bessel_K(1/2, 1)
         sqrt(1/2)*sqrt(pi)*e^(-1)
 
@@ -814,7 +915,7 @@ class Function_Bessel_K(BuiltinFunction):
     For a fixed imaginary order and increasing, real, second component the
     value of Bessel K is exponentially decaying::
 
-        sage: for x in [10, 20, 50, 100, 200]: print bessel_K(5*I, x).n()
+        sage: for x in [10, 20, 50, 100, 200]: print(bessel_K(5*I, x).n())
         5.27812176514912e-6
         3.11005908421801e-10
         2.66182488515423e-23 - 8.59622057747552e-58*I
@@ -852,16 +953,23 @@ class Function_Bessel_K(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: bessel_K(1,0)
-            bessel_K(1, 0)
-            sage: bessel_K(1.0, 0.0)
-            +infinity
-            sage: bessel_K(-1, 1).n(128)
-            0.60190723019723457473754000153561733926
+            sage: n = var('n')
+            sage: bessel_K(1, 0)
+            Infinity
+            sage: bessel_K(1/2, x)
+            sqrt(1/2)*sqrt(pi)*e^(-x)/sqrt(x)
+            sage: bessel_K(n, 0)
+            bessel_K(n, 0)
         """
-        # special identity
-        if n == Integer(1) / Integer(2) and x > 0:
+        from sage.rings.infinity import unsigned_infinity
+        if not isinstance(x, Expression) and x == 0:
+            if n == 0:
+                return infinity
+            elif n.real() > 0 or n.real() < 0:
+                return unsigned_infinity
+        if n == QQ(1)/2 or n == -QQ(1)/2 and x > 0:
             return sqrt(pi / 2) * exp(-x) * x ** (-Integer(1) / Integer(2))
+
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
@@ -869,6 +977,8 @@ class Function_Bessel_K(BuiltinFunction):
 
             sage: bessel_K(0.0, 1.0)
             0.421024438240708
+            sage: bessel_K(-1, 1).n(128)
+            0.60190723019723457473754000153561733926
             sage: bessel_K(0, RealField(128)(1))
             0.42102443824070833333562737921260903614
         """
@@ -902,9 +1012,9 @@ class Function_Bessel_K(BuiltinFunction):
         EXAMPLES::
 
             sage: latex(bessel_K(1, x))
-            \operatorname{K_{1}}(x)
+            K_{1}(x)
         """
-        return r"\operatorname{K_{%s}}(%s)" % (latex(n), latex(z))
+        return r"K_{%s}(%s)" % (latex(n), latex(z))
 
 bessel_K = Function_Bessel_K()
 
@@ -1309,3 +1419,612 @@ class Function_Struve_L(BuiltinFunction):
         return r"L_{{%s}}({%s})" % (a, z)
 
 struve_L = Function_Struve_L()
+
+
+class Function_Hankel1(BuiltinFunction):
+    r"""
+    The Hankel function of the first kind
+
+    DEFINITION:
+
+    .. math::
+
+        H_\nu^{(1)}(z) = J_{\nu}(z) + iY_{\nu}(z)
+
+    EXAMPLES::
+
+        sage: hankel1(3, x)
+        hankel1(3, x)
+        sage: hankel1(3, 4.)
+        0.430171473875622 - 0.182022115953485*I
+        sage: latex(hankel1(3, x))
+        H_{3}^{(1)}\left(x\right)
+        sage: hankel1(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12
+        0.309062682819597 - 0.512591541605233*I
+        sage: hankel1(3, 3.)
+        0.309062722255252 - 0.538541616105032*I
+
+    REFERENCES:
+
+    - [AS-Bessel]_ see 9.1.6
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: hankel1(3, x)._sympy_()
+            hankel1(3, x)
+        """
+        BuiltinFunction.__init__(self, 'hankel1', nargs=2,
+                                 conversions=dict(maple='HankelH1',
+                                                  mathematica='HankelH1',
+                                                  maxima='hankel1',
+                                                  sympy='hankel1'))
+
+    def _evalf_(self, nu, z, parent, algorithm=None):
+        r"""
+        TESTS::
+
+            sage: hankel1(3, 3).n(100)
+            0.30906272225525164361826019495 - 0.53854161610503161800470390534*I
+            sage: hankel1(I, I).n()
+            -0.886357449263715*I
+        """
+        from mpmath import hankel1
+        return mpmath_utils.call(hankel1, nu, z, parent=parent)
+
+    def _latex_(self):
+        r"""
+        TESTS::
+
+            sage: latex(hankel1)
+            H_{\nu}^{(1)}
+        """
+        return r'H_{\nu}^{(1)}'
+
+    def _print_latex_(self, nu, z):
+        r"""
+        TESTS::
+
+            sage: latex(hankel1(3, x))
+            H_{3}^{(1)}\left(x\right)
+        """
+        return r"H_{{{}}}^{{(1)}}\left({}\right)".format(latex(nu), latex(z))
+
+    def _derivative_(self, nu, z, diff_param):
+        r"""
+        TESTS::
+
+            sage: y = var('y')
+            sage: hankel1(x, y).diff(y)
+            x*hankel1(x, y)/y - hankel1(x + 1, y)
+        """
+        if diff_param == 1:
+            return (nu * hankel1(nu, z)) / z - hankel1(nu + 1, z)
+        else:
+            raise NotImplementedError('derivative with respect to order')
+
+hankel1 = Function_Hankel1()
+
+
+class Function_Hankel2(BuiltinFunction):
+    r"""
+    The Hankel function of the second kind
+
+    DEFINITION:
+
+    .. math::
+
+        H_\nu^{(2)}(z) = J_{\nu}(z) - iY_{\nu}(z)
+
+    EXAMPLES::
+
+        sage: hankel2(3, x)
+        hankel2(3, x)
+        sage: hankel2(3, 4.)
+        0.430171473875622 + 0.182022115953485*I
+        sage: latex(hankel2(3, x))
+        H_{3}^{(2)}\left(x\right)
+        sage: hankel2(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12
+        0.309062682819597 + 0.512591541605234*I
+        sage: hankel2(3, 3.)
+        0.309062722255252 + 0.538541616105032*I
+
+    REFERENCES:
+
+    - [AS-Bessel]_ see 9.1.6
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: hankel2(3, x)._sympy_()
+            hankel2(3, x)
+        """
+        BuiltinFunction.__init__(self, 'hankel2', nargs=2,
+                                 conversions=dict(maple='HankelH2',
+                                                  mathematica='HankelH2',
+                                                  maxima='hankel2',
+                                                  sympy='hankel2'))
+
+    def _evalf_(self, nu, z, parent, algorithm=None):
+        r"""
+        TESTS::
+
+            sage: hankel2(3, 3).n(100)
+            0.30906272225525164361826019495 + 0.53854161610503161800470390534*I
+            sage: hankel2(I, I).n()
+            0.790274862674015 + 0.444006335520019*I
+        """
+        from mpmath import hankel2
+        return mpmath_utils.call(hankel2, nu, z, parent=parent)
+
+    def _latex_(self):
+        r"""
+        TESTS::
+
+            sage: latex(hankel2)
+            H_{\nu}^{(2)}
+        """
+        return r'H_{\nu}^{(2)}'
+
+    def _print_latex_(self, nu, z):
+        r"""
+        TESTS::
+
+            sage: latex(hankel2(3, x))
+            H_{3}^{(2)}\left(x\right)
+        """
+        return r"H_{{{}}}^{{(2)}}\left({}\right)".format(latex(nu), latex(z))
+
+    def _derivative_(self, nu, z, diff_param):
+        r"""
+        TESTS::
+
+            sage: y = var('y')
+            sage: hankel2(x, y).diff(y)
+            -1/2*hankel2(x + 1, y) + 1/2*hankel2(x - 1, y)
+        """
+        if diff_param == 1:
+            return (Integer(1) / 2) * (hankel2(nu - 1, z) - hankel2(nu + 1, z))
+        else:
+            raise NotImplementedError('derivative with respect to order')
+
+hankel2 = Function_Hankel2()
+
+
+class SphericalBesselJ(BuiltinFunction):
+    r"""
+    The spherical Bessel function of the first kind
+
+    DEFINITION:
+
+    .. math::
+
+        j_n(z) = \sqrt{\frac{\pi}{2z}} \,J_{n + \frac{1}{2}}(z)
+
+    EXAMPLES::
+
+        sage: spherical_bessel_J(3, x)
+        spherical_bessel_J(3, x)
+        sage: spherical_bessel_J(3 + 0.2 * I, 3)
+        0.150770999183897 - 0.0260662466510632*I
+        sage: spherical_bessel_J(3, x).series(x == 2, 10).subs(x=3).n()
+        0.152051648665037
+        sage: spherical_bessel_J(3, 3.)
+        0.152051662030533
+        sage: spherical_bessel_J(2.,3.)      # rel tol 1e-10
+        0.2986374970757335
+        sage: spherical_bessel_J(4, x).simplify()
+        -((45/x^2 - 105/x^4 - 1)*sin(x) + 5*(21/x^2 - 2)*cos(x)/x)/x
+        sage: integrate(spherical_bessel_J(1,x)^2,(x,0,oo))
+        1/6*pi
+        sage: latex(spherical_bessel_J(4, x))
+        j_{4}\left(x\right)
+
+    REFERENCES:
+
+    - [AS-Spherical]_
+
+    - [DLMF-Bessel]_
+
+    - [WP-Bessel]_
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: spherical_bessel_J(3, x)._sympy_()
+            jn(3, x)
+        """
+        BuiltinFunction.__init__(self, 'spherical_bessel_J', nargs=2,
+                                 conversions=dict(mathematica=
+                                                  'SphericalBesselJ',
+                                                  maxima='spherical_bessel_j',
+                                                  sympy='jn'))
+
+    def _evalf_(self, n, z, parent, algorithm=None):
+        r"""
+        TESTS::
+
+            sage: spherical_bessel_J(3, 3).n(100)
+            0.15205166203053329097480571600
+            sage: spherical_bessel_J(I, I).n()
+            0.215520585196889 - 0.282308805801851*I
+        """
+        return mpmath_utils.call(spherical_bessel_f, 'besselj', n, z,
+                                 parent=parent)
+
+    def _latex_(self):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_bessel_J)
+            j_n
+        """
+        return r'j_n'
+
+    def _print_latex_(self, n, z):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_bessel_J(4, x))
+            j_{4}\left(x\right)
+        """
+        return r"j_{{{}}}\left({}\right)".format(latex(n), latex(z))
+
+    def _derivative_(self, n, z, diff_param):
+        r"""
+        TESTS::
+
+            sage: y = var('y')
+            sage: spherical_bessel_J(x, y).diff(y)
+            -(x + 1)*spherical_bessel_J(x, y)/y + spherical_bessel_J(x - 1, y)
+        """
+        if SR(n).is_numeric() and not SR(n).is_integer():
+            raise NotImplementedError('derivative of spherical function with noninteger index')
+        if diff_param == 1:
+            return (spherical_bessel_J(n - 1, z) -
+                    ((n + 1) / z) * spherical_bessel_J(n, z))
+        else:
+            raise NotImplementedError('derivative with respect to order')
+
+spherical_bessel_J = SphericalBesselJ()
+
+
+class SphericalBesselY(BuiltinFunction):
+    r"""
+    The spherical Bessel function of the second kind
+
+    DEFINITION:
+
+    .. math::
+
+        y_n(z) = \sqrt{\frac{\pi}{2z}} \,Y_{n + \frac{1}{2}}(z)
+
+    EXAMPLES::
+
+        sage: spherical_bessel_Y(3, x)
+        spherical_bessel_Y(3, x)
+        sage: spherical_bessel_Y(3 + 0.2 * I, 3)
+        -0.505215297588210 - 0.0508835883281404*I
+        sage: spherical_bessel_Y(-3, x).simplify()
+        ((3/x^2 - 1)*sin(x) - 3*cos(x)/x)/x
+        sage: spherical_bessel_Y(3 + 2 * I, 5 - 0.2 * I)
+        -0.270205813266440 - 0.615994702714957*I
+        sage: integrate(spherical_bessel_Y(0, x), x)
+        -1/2*Ei(I*x) - 1/2*Ei(-I*x)
+        sage: integrate(spherical_bessel_Y(1,x)^2,(x,0,oo))
+        -1/6*pi
+        sage: latex(spherical_bessel_Y(0, x))
+        y_{0}\left(x\right)
+
+    REFERENCES:
+
+    - [AS-Spherical]_
+
+    - [DLMF-Bessel]_
+
+    - [WP-Bessel]_
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: spherical_bessel_Y(3, x)._sympy_()
+            yn(3, x)
+        """
+        BuiltinFunction.__init__(self, 'spherical_bessel_Y', nargs=2,
+                                 conversions=dict(mathematica=
+                                                  'SphericalBesselY',
+                                                  maxima='spherical_bessel_y',
+                                                  sympy='yn'))
+
+    def _evalf_(self, n, z, parent, algorithm=None):
+        r"""
+        TESTS::
+
+            sage: spherical_bessel_Y(3, 3).n(100)
+            -0.50802305570981460285684870920
+            sage: spherical_bessel_Y(I, I).n()
+            -0.174225389805399 + 1.36247234140312*I
+        """
+        return mpmath_utils.call(spherical_bessel_f, 'bessely', n, z,
+                                 parent=parent)
+
+    def _latex_(self):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_bessel_Y)
+            y_n
+        """
+        return r'y_n'
+
+    def _print_latex_(self, n, z):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_bessel_Y(4, x))
+            y_{4}\left(x\right)
+        """
+        return r"y_{{{}}}\left({}\right)".format(latex(n), latex(z))
+
+    def _derivative_(self, n, z, diff_param):
+        r"""
+        TESTS::
+
+            sage: y = var('y')
+            sage: spherical_bessel_Y(x, y).diff(y)
+            -1/2*spherical_bessel_Y(x, y)/y -...
+            1/2*spherical_bessel_Y(x + 1, y) + 1/2*spherical_bessel_Y(x - 1, y)
+        """
+        if SR(n).is_numeric() and not SR(n).is_integer():
+            raise NotImplementedError('derivative of spherical function with noninteger index')
+        if diff_param == 1:
+            return (-spherical_bessel_Y(n, z) / (2 * z) +
+                    (spherical_bessel_Y(n - 1, z) -
+                     spherical_bessel_Y(n + 1, z)) / 2)
+        else:
+            raise NotImplementedError('derivative with respect to order')
+
+spherical_bessel_Y = SphericalBesselY()
+
+
+class SphericalHankel1(BuiltinFunction):
+    r"""
+    The spherical Hankel function of the first kind
+
+    DEFINITION:
+
+    .. math::
+
+        h_n^{(1)}(z) = \sqrt{\frac{\pi}{2z}} \,H_{n + \frac{1}{2}}^{(1)}(z)
+
+    EXAMPLES::
+
+        sage: spherical_hankel1(3, x)
+        spherical_hankel1(3, x)
+        sage: spherical_hankel1(3 + 0.2 * I, 3)
+        0.201654587512037 - 0.531281544239273*I
+        sage: spherical_hankel1(1, x).simplify()
+        -(x + I)*e^(I*x)/x^2
+        sage: spherical_hankel1(3 + 2 * I, 5 - 0.2 * I)
+        1.25375216869913 - 0.518011435921789*I
+        sage: integrate(spherical_hankel1(3, x), x)
+        Ei(I*x) - 6*gamma(-1, -I*x) - 15*gamma(-2, -I*x) - 15*gamma(-3, -I*x)
+        sage: latex(spherical_hankel1(3, x))
+        h_{3}^{(1)}\left(x\right)
+
+    REFERENCES:
+
+    - [AS-Spherical]_
+
+    - [DLMF-Bessel]_
+
+    - [WP-Bessel]_
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: spherical_hankel1
+            spherical_hankel1
+        """
+        BuiltinFunction.__init__(self, 'spherical_hankel1', nargs=2,
+                                 conversions=dict(mathematica=
+                                                  'SphericalHankelH1',
+                                                  maxima='spherical_hankel1'))
+
+    def _evalf_(self, n, z, parent, algorithm=None):
+        r"""
+        TESTS::
+
+            sage: spherical_hankel1(3, 3).n(100)
+            0.15205166203053329097480571600 - 0.50802305570981460285684870920*I
+            sage: spherical_hankel1(I, I).n()
+            -1.14695175620623 - 0.456534195607250*I
+        """
+        return mpmath_utils.call(spherical_bessel_f, 'hankel1', n, z,
+                                 parent=parent)
+
+    def _latex_(self):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_hankel1)
+            h_n^{(1)}
+        """
+        return r'h_n^{(1)}'
+
+    def _print_latex_(self, n, z):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_hankel1(4, x))
+            h_{4}^{(1)}\left(x\right)
+        """
+        return r"h_{{{}}}^{{(1)}}\left({}\right)".format(latex(n), latex(z))
+
+    def _derivative_(self, n, z, diff_param):
+        r"""
+        TESTS::
+
+            sage: y = var('y')
+            sage: spherical_hankel1(x, y).diff(y)
+            -1/2*spherical_hankel1(x, y)/y -...
+            1/2*spherical_hankel1(x + 1, y) + 1/2*spherical_hankel1(x - 1, y)
+        """
+        if SR(n).is_numeric() and not SR(n).is_integer():
+            raise NotImplementedError('derivative of spherical function with noninteger index')
+        if diff_param == 1:
+            return (-spherical_hankel1(n, z) / (2 * z) +
+                    (spherical_hankel1(n - 1, z) -
+                     spherical_hankel1(n + 1, z)) / 2)
+        else:
+            raise NotImplementedError('derivative with respect to order')
+
+spherical_hankel1 = SphericalHankel1()
+
+
+class SphericalHankel2(BuiltinFunction):
+    r"""
+    The spherical Hankel function of the second kind
+
+    DEFINITION:
+
+    .. math::
+
+        h_n^{(2)}(z) = \sqrt{\frac{\pi}{2z}} \,H_{n + \frac{1}{2}}^{(2)}(z)
+
+    EXAMPLES::
+
+        sage: spherical_hankel2(3, x)
+        spherical_hankel2(3, x)
+        sage: spherical_hankel2(3 + 0.2 * I, 3)
+        0.0998874108557565 + 0.479149050937147*I
+        sage: spherical_hankel2(1, x).simplify()
+        -(x - I)*e^(-I*x)/x^2
+        sage: spherical_hankel2(2,i).simplify()
+        -e
+        sage: spherical_hankel2(2,x).simplify()
+        (-I*x^2 - 3*x + 3*I)*e^(-I*x)/x^3
+        sage: spherical_hankel2(3 + 2*I, 5 - 0.2*I)
+        0.0217627632692163 + 0.0224001906110906*I
+        sage: integrate(spherical_hankel2(3, x), x)
+        Ei(-I*x) - 6*gamma(-1, I*x) - 15*gamma(-2, I*x) - 15*gamma(-3, I*x)
+        sage: latex(spherical_hankel2(3, x))
+        h_{3}^{(2)}\left(x\right)
+
+    REFERENCES:
+
+    - [AS-Spherical]_
+
+    - [DLMF-Bessel]_
+
+    - [WP-Bessel]_
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: spherical_hankel2
+            spherical_hankel2
+        """
+        BuiltinFunction.__init__(self, 'spherical_hankel2', nargs=2,
+                                 conversions=dict(mathematica=
+                                                  'SphericalHankelH2',
+                                                  maxima='spherical_hankel2'))
+
+    def _evalf_(self, n, z, parent, algorithm=None):
+        r"""
+        TESTS::
+
+            sage: spherical_hankel2(3, 3).n(100)
+            0.15205166203053329097480571600 + 0.50802305570981460285684870920*I
+            sage: spherical_hankel2(I, I).n()
+            1.57799292660001 - 0.108083415996452*I
+        """
+        return mpmath_utils.call(spherical_bessel_f, 'hankel2', n, z,
+                                 parent=parent)
+
+    def _latex_(self):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_hankel2)
+            h_n^{(2)}
+        """
+        return r'h_n^{(2)}'
+
+    def _print_latex_(self, n, z):
+        r"""
+        TESTS::
+
+            sage: latex(spherical_hankel2(4, x))
+            h_{4}^{(2)}\left(x\right)
+        """
+        return r"h_{{{}}}^{{(2)}}\left({}\right)".format(latex(n), latex(z))
+
+    def _derivative_(self, n, z, diff_param):
+        r"""
+        TESTS::
+
+            sage: y = var('y')
+            sage: spherical_hankel2(x, y).diff(y)
+            -1/2*spherical_hankel2(x, y)/y -...
+            1/2*spherical_hankel2(x + 1, y) + 1/2*spherical_hankel2(x - 1, y)
+            sage: spherical_hankel2(x, y).diff(x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: derivative with respect to order
+            sage: spherical_hankel2(3/2, y).diff(y)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: derivative of spherical function with noninteger index
+        """
+        if SR(n).is_numeric() and not SR(n).is_integer():
+            raise NotImplementedError('derivative of spherical function with noninteger index')
+        if diff_param == 1:
+            return (-spherical_hankel2(n, z) / (2 * z) +
+                    (spherical_hankel2(n - 1, z) -
+                     spherical_hankel2(n + 1, z)) / 2)
+        else:
+            raise NotImplementedError('derivative with respect to order')
+
+spherical_hankel2 = SphericalHankel2()
+
+
+def spherical_bessel_f(F, n, z):
+    r"""
+    Numerically evaluate the spherical version, `f`, of the Bessel function `F`
+    by computing `f_n(z) = \sqrt{\frac{1}{2}\pi/z} F_{n + \frac{1}{2}}(z)`.
+    According to Abramowitz & Stegun, this identity holds for the Bessel
+    functions `J`, `Y`, `K`, `I`, `H^{(1)}`, and `H^{(2)}`.
+
+    EXAMPLES::
+
+        sage: from sage.functions.bessel import spherical_bessel_f
+        sage: spherical_bessel_f('besselj', 3, 4)
+        mpf('0.22924385795503024')
+        sage: spherical_bessel_f('hankel1', 3, 4)
+        mpc(real='0.22924385795503024', imag='-0.21864196590306359')
+    """
+    from mpmath import mp
+    ctx = mp
+    prec = ctx.prec
+    try:
+        n = ctx.convert(n)
+        z = ctx.convert(z)
+        ctx.prec += 10
+        Fz = getattr(ctx, F)(n + 0.5, z)
+        hpi = 0.5 * ctx.pi()
+        ctx.prec += 10
+        hpioz = hpi / z
+        ctx.prec += 10
+        sqrthpioz = ctx.sqrt(hpioz)
+        ctx.prec += 10
+        return sqrthpioz * Fz
+    finally:
+        ctx.prec = prec
+

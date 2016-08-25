@@ -64,6 +64,12 @@ aliases = dict(
 )
 
 #########################################################
+### C++11 workaround https://trac.sagemath.org/ticket/20926
+#########################################################
+
+nocxx11_args = ['-std=c++98']
+
+#########################################################
 ### M4RI flags
 #########################################################
 
@@ -109,8 +115,8 @@ library_order_list = [
 ] + gsl_libs + [
     "pari", "flint", "ratpoints", "ecl", "glpk", "ppl",
     "arb", "fplll", "mpfi", "mpfr", "mpc", "gmp", "gmpxx",
-    "polybori",
-    "polybori_groebner",
+    "brial",
+    "brial_groebner",
     "m4rie",
 ] + m4ri_libs + [
     "zn_poly", "gap",
@@ -591,6 +597,18 @@ ext_modules = [
     Extension('sage.libs.gmp.rational_reconstruction',
               sources = ['sage/libs/gmp/rational_reconstruction.pyx']),
 
+    OptionalExtension('sage.libs.braiding',
+                      sources = ["sage/libs/braiding.pyx"],
+                      libraries = ["braiding"],
+                      package="libbraiding",
+                      language = 'c++'),
+
+
+    OptionalExtension('sage.libs.homfly',
+                      sources = ["sage/libs/homfly.pyx"],
+                      libraries = ["homfly", "gc"],
+                      package="libhomfly"),
+
     Extension('sage.libs.linbox.linbox',
               sources = ['sage/libs/linbox/linbox.pyx'],
               libraries = ['linboxsage', 'ntl', 'iml', 'linbox',
@@ -618,8 +636,10 @@ ext_modules = [
               sources = ["sage/libs/lrcalc/lrcalc.pyx"]),
 
     Extension('sage.libs.pari.closure',
-              sources = ["sage/libs/pari/closure.pyx"],
-              libraries = ['pari', 'gmp']),
+              sources = ["sage/libs/pari/closure.pyx"]),
+
+    Extension('sage.libs.pari.convert',
+              sources = ["sage/libs/pari/convert.pyx"]),
 
     Extension('sage.libs.pari.gen',
               sources = ["sage/libs/pari/gen.pyx"]),
@@ -708,6 +728,7 @@ ext_modules = [
     ###################################
 
     Extension('*', ["sage/libs/eclib/*.pyx"]),
+
 
     ################################
     ##
@@ -926,7 +947,7 @@ ext_modules = [
               libraries = ['ntl', 'linbox', 'givaro', 'mpfr', 'gmpxx', 'gmp'] + cblas_libs,
               library_dirs = cblas_library_dirs,
               include_dirs = cblas_include_dirs,
-              extra_compile_args = ['-DDISABLE_COMMENTATOR'] + givaro_extra_compile_args),
+              extra_compile_args = nocxx11_args + ['-DDISABLE_COMMENTATOR'] + givaro_extra_compile_args),
 
     Extension('sage.matrix.matrix_modn_dense_double',
               sources = ['sage/matrix/matrix_modn_dense_double.pyx'],
@@ -934,7 +955,7 @@ ext_modules = [
               libraries = ['ntl', 'linbox', 'givaro', 'mpfr', 'gmpxx', 'gmp'] + cblas_libs,
               library_dirs = cblas_library_dirs,
               include_dirs = cblas_include_dirs,
-              extra_compile_args = ["-D_XPG6", "-DDISABLE_COMMENTATOR"]
+              extra_compile_args = nocxx11_args + ["-D_XPG6", "-DDISABLE_COMMENTATOR"]
                     + m4ri_extra_compile_args + givaro_extra_compile_args),
 
     Extension('sage.matrix.matrix_modn_sparse',
@@ -1053,6 +1074,11 @@ ext_modules = [
 
     Extension('sage.modular.modsym.p1list',
               sources = ['sage/modular/modsym/p1list.pyx']),
+
+    Extension('sage.modular.pollack_stevens.dist',
+              sources = ['sage/modular/pollack_stevens/dist.pyx'],
+              libraries = ['flint','gmp','zn_poly'],
+              extra_compile_args=['-std=c99', '-D_XPG6']),
 
     ################################
     ##
@@ -1612,7 +1638,7 @@ ext_modules = [
 
     Extension('sage.rings.polynomial.pbori',
               sources = ['sage/rings/polynomial/pbori.pyx'],
-              libraries=['polybori', 'polybori_groebner'] + m4ri_libs + png_libs,
+              libraries=['brial', 'brial_groebner'] + m4ri_libs + png_libs,
               library_dirs = m4ri_library_dirs + png_library_dirs,
               include_dirs = m4ri_include_dirs + png_include_dirs,
               depends = [SAGE_INC + "/polybori/" + hd + ".h" for hd in ["polybori", "config"] ] +

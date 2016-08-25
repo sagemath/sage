@@ -76,6 +76,8 @@ REFERENCES:
 # Compare with PPL if the base ring is QQ. Can be left enabled since
 # we don't use the Python fallback for polyhedra over QQ unless you
 # construct one by hand.
+from __future__ import division, absolute_import
+
 VERIFY_RESULT = True
 
 import itertools
@@ -217,11 +219,11 @@ class DoubleDescriptionPair:
         from sage.matrix.constructor import matrix
         s = ascii_art('Double description pair (A, R) defined by')
         A = ascii_art(matrix(self.A))
-        A._baseline = (len(self.A) / 2)
+        A._baseline = (len(self.A) // 2)
         A = ascii_art('A = ') + A
         R = ascii_art(matrix(self.R).transpose())
         if len(self.R) > 0:
-            R._baseline = (len(self.R[0]) / 2)
+            R._baseline = (len(self.R[0]) // 2)
         else:
             R._baseline = 0
         R = ascii_art('R = ') + R

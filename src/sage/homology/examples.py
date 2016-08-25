@@ -25,6 +25,7 @@ All of these examples are accessible by typing
 - :func:`BrucknerGrunbaumSphere`
 - :func:`ChessboardComplex`
 - :func:`ComplexProjectivePlane`
+- :func:`DunceHat`
 - :func:`K3Surface`
 - :func:`KleinBottle`
 - :func:`MatchingComplex`
@@ -36,11 +37,14 @@ All of these examples are accessible by typing
 - :func:`RandomTwoSphere`
 - :func:`RealProjectivePlane`
 - :func:`RealProjectiveSpace`
+- :func:`RudinBall`
+- :func:`ShiftedComplex`
 - :func:`Simplex`
 - :func:`Sphere`
 - :func:`SumComplex`
 - :func:`SurfaceOfGenus`
 - :func:`Torus`
+- :func:`ZieglerBall`
 
 You can also get a list by typing ``simplicial_complexes.`` and hitting the
 TAB key.
@@ -1512,6 +1516,156 @@ def RandomTwoSphere(n):
                  for v, w in zip(L, L[1:] + [L[0]]) if u < v and u < w]
 
     return SimplicialComplex(triangles, maximality_check=False)
+
+def ShiftedComplex(generators):
+    r"""
+    Return the smallest shifted simplicial complex containing ``generators``
+    as faces.
+
+    Let `V` be a set of vertices equipped with a total order.  The
+    'componentwise partial ordering' on k-subsets of `V` is defined as
+    follows: if `A = \{a_1 < \cdots < a_k\}` and `B = \{b_1 < \cdots < b_k\}`,
+    then `A \leq_C B` iff `a_i \leq b_i` for all `i`.  A simplicial complex
+    `X` on vertex set `[n]` is *shifted* if its faces form an order ideal
+    under the componentwise partial ordering, i.e., if `B \in X` and
+    `A \leq_C B` then `A \in X`.  Shifted complexes of dimension 1 are also
+    known as threshold graphs.
+
+    .. NOTE::
+
+        This method assumes that `V` consists of positive integers
+        with the natural ordering.
+
+    INPUT:
+
+    - ``generators`` -- a list of generators of the order ideal, which may
+      be lists, tuples or simplices
+
+    EXAMPLES::
+
+        sage: X = simplicial_complexes.ShiftedComplex([ Simplex([1,6]), (2,4), [8] ])
+        sage: X.facets()
+        {(2, 4), (7,), (1, 2), (1, 5), (1, 4), (8,), (2, 3), (1, 6), (1, 3)}
+        sage: X = simplicial_complexes.ShiftedComplex([ [2,3,5] ])
+        sage: X.facets()
+        {(1, 3, 4), (1, 3, 5), (2, 3, 5), (1, 2, 3), (2, 3, 4), (1, 2, 5), (1, 2, 4)}
+        sage: X = simplicial_complexes.ShiftedComplex([ [1,3,5], [2,6] ])
+        sage: X.facets()
+        {(1, 3, 4), (1, 3, 5), (1, 6), (2, 6), (1, 2, 3), (1, 2, 5), (1, 2, 4)}
+    """
+    from sage.combinat.partition import Partitions
+    Facets = []
+    for G in generators:
+        G = list(reversed(sorted(G)))
+        L = len(G)
+        for k in range(L * (L+1) // 2, sum(G) + 1):
+            for P in Partitions(k, length=L, max_slope=-1, outer=G):
+                Facets.append( list(reversed(P)) )
+    return SimplicialComplex(Facets)
+
+def RudinBall():
+    r"""
+    Return the non-shellable ball constructed by Rudin.
+
+    This complex is a non-shellable triangulation of the 3-ball
+    with 14 vertices and 41 facets, constructed by Rudin in
+    [Ru1958]_.
+
+    EXAMPLES::
+
+        sage: R = simplicial_complexes.RudinBall(); R
+        Rudin ball
+        sage: R.f_vector()
+        [1, 14, 66, 94, 41]
+        sage: R.homology()
+        {0: 0, 1: 0, 2: 0, 3: 0}
+        sage: R.is_cohen_macaulay()
+        True
+
+    REFERENCES:
+
+    .. [Ru1958] \M. E. Rudin.
+       *An unshellable triangulation of a tetrahedron*.
+       Bull. Amer. Math. Soc. 64 (1958), 90-91.
+    """
+    return UniqueSimplicialComplex(
+        [[1,9,2,5], [1,10,2,5], [1,10,5,11], [1,10,7,11], [1,13,5,11],
+         [1,13,7,11], [2,10,3,6], [2,11,3,6], [2,11,6,12], [2,11,8,12],
+         [2,14,6,12], [2,14,8,12], [3,11,4,7], [3,12,4,7], [3,12,5,9],
+         [3,12,7,9], [3,13,5,9], [3,13,7,9], [4,9,1,8], [4,9,6,10],
+         [4,9,8,10], [4,12,1,8], [4,14,6,10], [4,14,8,10], [9,10,2,5],
+         [9,10,2,6], [9,10,5,11], [9,10,11,12], [9,13,5,11], [10,11,3,6],
+         [10,11,3,7], [10,11,6,12], [10,14,6,12], [11,12,4,7], [11,12,4,8],
+         [11,12,7,9], [11,13,7,9], [12,9,1,5], [12,9,1,8], [12,9,8,10],
+         [12,14,8,10]],
+        name="Rudin ball"
+    )
+
+def ZieglerBall():
+    r"""
+    Return the non-shellable ball constructed by Ziegler.
+
+    This complex is a non-shellable triangulation of the 3-ball
+    with 10 vertices and 21 facets, constructed by Ziegler in
+    [Zi1998]_ and the smallest such complex known.
+
+    EXAMPLES::
+
+        sage: Z = simplicial_complexes.ZieglerBall(); Z
+        Ziegler ball
+        sage: Z.f_vector()
+        [1, 10, 38, 50, 21]
+        sage: Z.homology()
+        {0: 0, 1: 0, 2: 0, 3: 0}
+        sage: Z.is_cohen_macaulay()
+        True
+
+    REFERENCES:
+
+    .. [Zi1998] G. Ziegler.
+       *Shelling polyhedral 3-balls and 4-polytopes*.
+       Discrete Comput. Geom. 19 (1998), 159-174.
+    """
+
+    return UniqueSimplicialComplex(
+       [[1,2,3,4], [1,2,5,6], [1,5,6,9], [2,5,6,0], [3,6,7,8], [4,5,7,8],
+        [2,3,6,7], [1,6,2,9], [2,6,7,0], [3,2,4,8], [4,1,3,7], [3,4,7,8],
+        [1,2,4,9], [2,7,3,0], [3,2,6,8], [4,1,5,7], [4,1,8,5], [1,4,8,9],
+        [2,3,1,0], [1,8,5,9], [2,1,5,0]],
+       name="Ziegler ball"
+    )
+
+def DunceHat():
+    r"""
+    Return the minimal triangulation of the dunce hat given by Hachimori
+    [Ha2016]_.
+
+    This is a standard example of a space that is contractible
+    but not collapsible.
+
+    EXAMPLES::
+
+        sage: D = simplicial_complexes.DunceHat(); D
+        Minimal triangulation of the dunce hat
+        sage: D.f_vector()
+        [1, 8, 24, 17]
+        sage: D.homology()
+        {0: 0, 1: 0, 2: 0}
+        sage: D.is_cohen_macaulay()
+        True
+
+    REFERENCES:
+
+    .. [Ha2016] M. Hachimori.
+       http://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html
+    """
+
+    return UniqueSimplicialComplex(
+       [[1,3,5], [2,3,5], [2,4,5], [1,2,4], [1,3,4], [3,4,8],
+        [1,2,8], [1,7,8], [1,2,7], [2,3,7], [3,6,7], [1,3,6],
+        [1,5,6], [4,5,6], [4,6,8], [6,7,8], [2,3,8]],
+       name="Minimal triangulation of the dunce hat"
+    )
 
 
 # For taking care of old pickles

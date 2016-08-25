@@ -1,10 +1,13 @@
 r"""
 S-Boxes and Their Algebraic Representations
 """
+from __future__ import print_function
 
-from sage.misc.cachefunc import cached_method
 from sage.combinat.integer_vector import IntegerVectors
+from sage.crypto.boolean_function import BooleanFunction
 from sage.matrix.constructor import Matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.functional import is_even
 from sage.misc.misc_c import prod as mul
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.element_base import is_FiniteFieldElement
@@ -14,7 +17,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.sage_object import SageObject
-from sage.crypto.boolean_function import BooleanFunction
 
 class SBox(SageObject):
     r"""
@@ -60,6 +62,12 @@ class SBox(SageObject):
         sage: S
         (6, 5, 2, 9, 4, 7, 3, 12, 14, 15, 10, 0, 8, 1, 13, 11)
 
+    AUTHORS:
+
+    - Rusydi H. Makarim (2016-03-31) : added more functions to determine related cryptographic properties
+    - Yann Laigle-Chapuy (2009-07-01): improve linear and difference matrix computation
+    - Martin R. Albrecht (2008-03-12): initial implementation
+
     REFERENCES:
 
     .. [Heys02] \H. Heys *A Tutorial on Linear and Differential
@@ -71,6 +79,11 @@ class SBox(SageObject):
       Ultra-Lightweight Block Cipher*; in Proceedings of CHES 2007;
       LNCS 7427; pp. 450-466; Springer Verlag 2007; available at
       http://www.crypto.rub.de/imperia/md/content/texte/publications/conferences/present_ches2007.pdf
+
+    .. [CDL15] \A. Canteaut, Sebastien Duval, Gaetan Leurent *Construction
+      of Lightweight S-Boxes using Feistel and MISTY Structures*; in
+      Proceedings of SAC 2015; LNCS 9566; pp. 373-393; Springer-Verlag
+      2015; available at http://eprint.iacr.org/2015/711.pdf
     """
 
     def __init__(self, *args,  **kwargs):
@@ -355,7 +368,7 @@ class SBox(SageObject):
         return self(X)
 
     def is_permutation(self):
-        """
+        r"""
         Return ``True`` if this S-Box is a permutation.
 
         EXAMPLE::
@@ -490,7 +503,7 @@ class SBox(SageObject):
         According to this matrix the first bit of the input is equal
         to the third bit of the output 6 out of 8 times::
 
-            sage: for i in srange(8): print S.to_bits(i)[0] == S.to_bits(S(i))[2]
+            sage: for i in srange(8): print(S.to_bits(i)[0] == S.to_bits(S(i))[2])
             False
             True
             True
@@ -849,7 +862,7 @@ class SBox(SageObject):
 
         We can convert this representation to the DIMACS format::
 
-            sage: print S.cnf(format='dimacs')
+            sage: print(S.cnf(format='dimacs'))
             p cnf 4 8
             1 2 -3 0
             1 2 4 0
@@ -862,7 +875,7 @@ class SBox(SageObject):
 
         For concatenation we can strip the header::
 
-            sage: print S.cnf(format='dimacs_headless')
+            sage: print(S.cnf(format='dimacs_headless'))
             1 2 -3 0
             1 2 4 0
             1 -2 3 0
@@ -875,7 +888,7 @@ class SBox(SageObject):
         This might be helpful in combination with the ``xi`` and
         ``yi`` parameter to assign indices manually::
 
-            sage: print S.cnf(xi=[10,20],yi=[30,40], format='dimacs_headless')
+            sage: print(S.cnf(xi=[10,20],yi=[30,40], format='dimacs_headless'))
             10 20 -30 0
             10 20 40 0
             10 -20 30 0
@@ -1040,6 +1053,18 @@ class SBox(SageObject):
         """
         m = self.m
         return (1 << (m-1)) - self.maximal_linear_bias_absolute()
+
+    def linearity(self):
+        """
+        Return the linearity of this S-Box.
+
+        EXAMPLES::
+
+            sage: S = mq.SR(1, 4, 4, 8).sbox()
+            sage: S.linearity()
+            32
+        """
+        return self.maximal_linear_bias_absolute() << 1
 
     def is_apn(self):
         r"""
@@ -1241,7 +1266,7 @@ class SBox(SageObject):
         return ret
 
     def is_balanced(self):
-        """
+        r"""
         Return ``True`` if this S-Box is balanced.
 
         An S-Box is balanced if all its component functions are balanced.
@@ -1278,10 +1303,10 @@ class SBox(SageObject):
 
         m = self.m
 
-        if m & 1 == 0:
-            raise TypeError("almost bent function only defined for an odd size S-Box")
+        if is_even(m):
+            return False
 
-        return (self.nonlinearity() == (1<<(m-1)) - (1<<((m-1)>>1)))
+        return self.nonlinearity() == 2**(m-1) - 2**((m-1)/2)
 
     def fixed_points(self):
         """
@@ -1318,7 +1343,7 @@ class SBox(SageObject):
         return SBox([L.index(i) for i in xrange(1<<m)], big_endian=self._big_endian)
 
     def is_monomial_function(self):
-        """
+        r"""
         Return ``True`` if this S-Box is a monomial/power function.
 
         EXAMPLES::
@@ -1336,3 +1361,189 @@ class SBox(SageObject):
             x^6
         """
         return self.interpolation_polynomial().is_monomial()
+
+    def is_plateaued(self):
+        r"""
+        Return ``True`` if this S-Box is plateaued, i.e. for all nonzero
+        `b \in \mathbb{F}_2^n` the Boolean function `b \cdot S(x)`
+        is plateaued.
+
+        EXAMPLES::
+
+            sage: S = mq.SBox(0, 3, 1, 2, 4, 6, 7, 5)
+            sage: S.is_plateaued()
+            True
+        """
+        n = self.n
+
+        for b in xrange(1, 1<<n):
+            bS = self.component_function(b)
+            if not bS.is_plateaued():
+                return False
+        return True
+
+    def is_bent(self):
+        r"""
+        Return ``True`` if this S-Box is bent, i.e. its nonlinearity
+        is equal to `2^{m-1} - 2^{m/2 - 1}` where `m` is the input size
+        of the S-Box.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(2**2, 'a')[]
+            sage: base = R.base_ring()
+            sage: a = base.gen()
+            sage: G = a * x^2 + 1
+            sage: S = mq.SBox([G(x * y**(14)) for x in sorted(base) for y in sorted(base)])
+            sage: S.is_bent()
+            True
+            sage: S.nonlinearity()
+            6
+            sage: S.linear_approximation_matrix()
+            [ 8 -2  2 -2]
+            [ 0 -2  2 -2]
+            [ 0 -2  2 -2]
+            [ 0 -2  2 -2]
+            [ 0 -2  2 -2]
+            [ 0 -2 -2  2]
+            [ 0  2  2  2]
+            [ 0  2 -2 -2]
+            [ 0 -2  2 -2]
+            [ 0  2 -2 -2]
+            [ 0 -2 -2  2]
+            [ 0  2  2  2]
+            [ 0 -2  2 -2]
+            [ 0  2  2  2]
+            [ 0  2 -2 -2]
+            [ 0 -2 -2  2]
+        """
+        m = self.m
+        n = self.n
+
+        if not is_even(m) or n > m/2:
+            return False
+
+        return self.nonlinearity() == 2**(m-1) - 2**(m/2 - 1)
+
+    def is_involution(self):
+        r"""
+        Return ``True`` if this S-Box is an involution, i.e. the inverse S-Box
+        is equal itself.
+
+        EXAMPLES::
+
+            sage: S = mq.SBox([x**254 for x in sorted(GF(2**8))])
+            sage: S.is_involution()
+            True
+        """
+        return self == self.inverse()
+
+def feistel_construction(*args):
+    r"""
+    Return an S-Box constructed by Feistel structure using smaller S-Boxes in
+    ``args``. The number of round in the construction is equal to the number of
+    S-Boxes provided as input. For more results concerning the differential
+    uniformity and the nonlinearity of S-Boxes constructed by Feistel structures
+    see [CDL15]_ .
+
+    INPUT:
+
+    - ``args`` - a finite iterable mq.SBox objects
+
+    EXAMPLES:
+
+    Suppose we construct an `8 \times 8` S-Box with 3-round Feistel construction
+    from the S-Box of PRESENT::
+
+        sage: from sage.crypto.mq.sbox import feistel_construction
+        sage: s = mq.SBox(12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2)
+        sage: S = feistel_construction(s, s, s)
+
+    The properties of the constructed S-Box can be easily examined::
+
+        sage: S.nonlinearity()
+        96
+        sage: S.differential_branch_number()
+        2
+        sage: S.linear_branch_number()
+        2
+    """
+    if len(args) == 1:
+        if isinstance(args[0], SBox):
+            sboxes = [args[0]]
+        else:
+            sboxes = args[0]
+    elif len(args) > 1:
+        sboxes = args
+    else:
+        raise TypeError("No input provided")
+
+    for sb in sboxes:
+        if not isinstance(sb, SBox):
+            raise TypeError("All input must be an instance of mq.SBox object")
+
+    b = sboxes[0].m
+    m = 2*b
+
+    def substitute(x):
+        mask = (1<<b) - 1
+        xl = (x>>b) & mask
+        xr = x & mask
+        for sb in sboxes:
+            xl, xr = sb(xl) ^ xr, xl
+        return (xl<<b) | xr
+
+    return SBox([substitute(i) for i in xrange(1<<m)])
+
+def misty_construction(*args):
+    r"""
+    Return an S-Box constructed by MISTY structure using smaller S-Boxes in
+    ``args``. The number of round in the construction is equal to the number of
+    S-Boxes provided as input. For further result related to the nonlinearity
+    and differential uniformity of the constructed S-Box one may consult [CDL15]_.
+
+    INPUT:
+
+    - ``args`` - a finite iterable mq.SBox objects
+
+    EXAMPLES:
+
+    We construct an `8 \times 8` S-Box using 3-round MISTY structure with the following
+    `4 \times 4` S-Boxes `S1, S2, S3` (see Example 2 in [CDL15]_)::
+
+        sage: S1 = mq.SBox([0x4,0x0,0x1,0xF,0x2,0xB,0x6,0x7,0x3,0x9,0xA,0x5,0xC,0xD,0xE,0x8])
+        sage: S2 = mq.SBox([0x0,0x0,0x0,0x1,0x0,0xA,0x8,0x3,0x0,0x8,0x2,0xB,0x4,0x6,0xE,0xD])
+        sage: S3 = mq.SBox([0x0,0x7,0xB,0xD,0x4,0x1,0xB,0xF,0x1,0x2,0xC,0xE,0xD,0xC,0x5,0x5])
+        sage: from sage.crypto.mq.sbox import misty_construction
+        sage: S = misty_construction(S1, S2, S3)
+        sage: S.differential_uniformity()
+        8
+        sage: S.linearity()
+        64
+    """
+    if len(args) == 1:
+        if isinstance(args[0], SBox):
+            sboxes = [args[0]]
+        else:
+            sboxes = args[0]
+    elif len(args) > 1:
+        sboxes = args
+    else:
+        raise TypeError("No input provided")
+
+    for sb in sboxes:
+        if not isinstance(sb, SBox):
+            raise TypeError("All input must be an instance of mq.SBox object")
+
+    b = sboxes[0].m
+    m = 2*b
+
+    def substitute(x):
+        mask = (1<<b) - 1
+        xl = (x>>b) & mask
+        xr = x & mask
+        for sb in sboxes:
+            xl, xr = sb(xr) ^ xl, xl
+        return (xl<<b) | xr
+
+    return SBox([substitute(i) for i in xrange(1<<m)])

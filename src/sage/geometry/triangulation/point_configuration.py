@@ -47,6 +47,15 @@ A 2-dimensional point configuration::
     A point configuration in QQ^2 consisting of 5 points. The
     triangulations of this point configuration are assumed to
     be connected, not necessarily fine, not necessarily regular.
+
+.. PLOT::
+    :width: 300 px
+
+    p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
+    sphinx_plot(p.plot(axes=False))
+
+A triangulation of it::
+
     sage: t = p.triangulate()  # a single triangulation
     sage: t
     (<1,3,4>, <2,3,4>)
@@ -60,6 +69,16 @@ A 2-dimensional point configuration::
     [(1, 3, 4), (2, 3, 4)]
     sage: t.plot(axes=False)
     Graphics object consisting of 12 graphics primitives
+
+.. PLOT::
+    :width: 300 px
+
+    p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
+    t = p.triangulate()
+    sphinx_plot(t.plot(axes=False))
+
+List triangulations of it::
+
     sage: list( p.triangulations() )
     [(<1,3,4>, <2,3,4>),
      (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>),
@@ -81,6 +100,14 @@ A 3-dimensional point configuration::
     sage: triang = points.triangulate()
     sage: triang.plot(axes=False)
     Graphics3d Object
+
+.. PLOT::
+    :width: 300 px
+
+    p = [[0,-1,-1],[0,0,1],[0,1,0], [1,-1,-1],[1,0,1],[1,1,0]]
+    points = PointConfiguration(p)
+    triang = points.triangulate()
+    sphinx_plot(triang.plot(axes=False))
 
 The standard example of a non-regular triangulation (requires TOPCOM)::
 
@@ -116,17 +143,14 @@ removed before passing the data to TOPCOM which cannot handle it::
 
 REFERENCES:
 
-    .. [TOPCOM]
-       J. Rambau,
-       TOPCOM <http://www.rambau.wm.uni-bayreuth.de/TOPCOM/>.
+.. [TOPCOM] J. Rambau,
+   TOPCOM <http://www.rambau.wm.uni-bayreuth.de/TOPCOM/>.
 
-    .. [GKZ]
-       Gel'fand, I. M.; Kapranov, M. M.; and Zelevinsky, A. V.
-       "Discriminants, Resultants and Multidimensional Determinants" Birkhauser 1994.
+.. [GKZ] Gelfand, I. M.; Kapranov, M. M.; and Zelevinsky, A. V.
+   "Discriminants, Resultants and Multidimensional Determinants" Birkhauser 1994
 
-    .. [PUNTOS]
-       Jesus A. De Loera
-       http://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000
+.. [PUNTOS] Jesus A. De Loera
+   http://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000
 
 AUTHORS:
 
@@ -166,6 +190,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Element
@@ -611,16 +636,16 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         assert proc.readline().strip() == ''
 
         if verbose:
-            print "#### TOPCOM input ####"
-            print "# " + executable
-            print "# " + input_string
+            print("#### TOPCOM input ####")
+            print("# " + executable)
+            print("# " + input_string)
             sys.stdout.flush()
 
         proc.send(input_string)
         proc.send('X\nX\n')
 
         if verbose:
-            print "#### TOPCOM output ####"
+            print("#### TOPCOM output ####")
             sys.stdout.flush()
 
         while True:
@@ -628,12 +653,12 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 line = proc.readline().strip()
             except pexpect.TIMEOUT:
                 if verbose:
-                    print '# Still runnnig '+str(executable)
+                    print('# Still runnnig ' + str(executable))
                 continue
             if len(line)==0: # EOF
                 break;
             if verbose:
-                print "# " + line
+                print("# " + line)
                 sys.stdout.flush()
 
             try:
@@ -643,7 +668,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 raise StopIteration
 
         if verbose:
-            print "#######################"
+            print("#######################")
             sys.stdout.flush()
 
 
@@ -1978,7 +2003,6 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             new_facets = set()
             for facet in visible_facets:
                 simplex = frozenset(list(facet) + [point])
-                # print 'simplex', simplex
                 simplices.append(simplex)
                 for facet in facets_of_simplex(simplex):
                     if facet in visible_facets: continue
@@ -2034,3 +2058,21 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 pass
         m = matrix([ (1,) + p.affine() for p in points])
         return m.left_kernel().matrix()
+
+    def plot(self, **kwds):
+        r"""
+        Produce a graphical representation of the point configuration.
+
+        EXAMPLES::
+
+            sage: p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
+            sage: p.plot(axes=False)
+            Graphics object consisting of 5 graphics primitives
+
+        .. PLOT::
+            :width: 300 px
+
+            p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
+            sphinx_plot(p.plot(axes=False))
+        """
+        return self.element_class([], parent=self, check=False).plot(**kwds)

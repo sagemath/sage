@@ -1,4 +1,5 @@
 "Cremona modular symbols"
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 
@@ -175,7 +176,7 @@ cdef class ModularSymbols:
             sage: M = CremonaModularSymbols(37)
             sage: t = M.hecke_matrix(2); t
             5 x 5 Cremona matrix over Rational Field
-            sage: print t.str()
+            sage: print(t.str())
             [ 3  0  0  0  0]
             [-1 -1  1  1  0]
             [ 0  0 -1  0  1]
@@ -183,7 +184,7 @@ cdef class ModularSymbols:
             [ 0  0  1  0 -1]
             sage: t.charpoly().factor()
             (x - 3) * x^2 * (x + 2)^2
-            sage: print M.hecke_matrix(2, dual=True).str()
+            sage: print(M.hecke_matrix(2, dual=True).str())
             [ 3 -1  0 -1  0]
             [ 0 -1  0  1  0]
             [ 0  1 -1  0  1]

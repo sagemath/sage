@@ -15,6 +15,7 @@ TESTS:
     sage: import sage.tests.benchmark
 
 """
+from __future__ import print_function
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
 import sage.libs.linbox.linbox as linbox
@@ -83,10 +84,11 @@ class Benchmark:
         """
         if sort:
             systems.sort()
-        print '\n\n\n' + str(self)
+        print('\n\n\n' + str(self))
         #print "Timeout: %s seconds"%timeout
-        print '  %-12s%-12s%-12s%-12s%-12s%15s'%('System', 'min',
-                                         'avg', 'max', 'trials', 'cpu or wall')
+        print('  %-12s%-12s%-12s%-12s%-12s%15s' % ('System', 'min',
+                                                   'avg', 'max',
+                                                   'trials', 'cpu or wall'))
         if systems is None:
             systems = STD_SYSTEMS
             if optional:
@@ -112,14 +114,14 @@ class Benchmark:
                     s += '%15fw'%t
                 else:
                     s += '%15fc'%t
-                print s
+                print(s)
             except AlarmInterrupt:
-                print '%-12sinterrupted (timeout: %s seconds wall time)'%(
-                    S, timeout)
+                print('%-12sinterrupted (timeout: %s seconds wall time)' %
+                      (S, timeout))
             except AttributeError:
                 pass
             except Exception as msg:
-                print msg
+                print(msg)
 
     bench = run
 

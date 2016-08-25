@@ -71,7 +71,7 @@ cdef class Generators(SageObject):
     cpdef list(self):
         try:
             if not self._index_set.is_finite():
-                raise ValueError, "index set must be finite to compute list"
+                raise ValueError("index set must be finite to compute list")
         except AttributeError:
             pass
         return [self.get_from_index(i) for i in self.index_set()]
@@ -80,7 +80,7 @@ cdef class Generators(SageObject):
         if not isinstance(self._obj, Generators):
             return "Set of generators of %s"%(self.obj())
         else:
-            raise RuntimeError, "Set of generators of a generators object"
+            raise RuntimeError("Set of generators of a generators object")
 
 cdef class Generators_finite(Generators):
     def __init__(self, obj, n, index_set, category):
@@ -143,7 +143,7 @@ cdef class Generators_list(Generators_finite):
         try:
             return self._List[i]
         except IndexError:
-            raise IndexError, "No such generator: %s must be less than %s" % (i, len(self._List))
+            raise IndexError("No such generator: %s must be less than %s" % (i, len(self._List)))
 
     def __iter__(self):
         """
@@ -213,39 +213,39 @@ cdef class Generators_none(Generators):
 
     cpdef get_from_index(self, i):
         if self._category is None:
-            raise ValueError, "this object does not have generators"
+            raise ValueError("this object does not have generators")
         else:
-            raise ValueError, "this object does not have generators in that category"
+            raise ValueError("this object does not have generators in that category")
 
     def __contains__(self, x):
         if self._category is None:
-            raise ValueError, "this object does not have generators"
+            raise ValueError("this object does not have generators")
         else:
-            raise ValueError, "this object does not have generators in that category"
+            raise ValueError("this object does not have generators in that category")
 
     def __iter__(self):
         if self._category is None:
-            raise ValueError, "this object does not have generators"
+            raise ValueError("this object does not have generators")
         else:
-            raise ValueError, "this object does not have generators in that category"
+            raise ValueError("this object does not have generators in that category")
 
     cpdef index_set(self):
         if self._category is None:
-            raise ValueError, "this object does not have generators"
+            raise ValueError("this object does not have generators")
         else:
-            raise ValueError, "this object does not have generators in that category"
+            raise ValueError("this object does not have generators in that category")
 
     cpdef count(self):
         if self._category is None:
-            raise ValueError, "this object does not have generators"
+            raise ValueError("this object does not have generators")
         else:
-            raise ValueError, "this object does not have generators in that category"
+            raise ValueError("this object does not have generators in that category")
 
     cpdef list(self):
         if self._category is None:
-            raise ValueError, "this object does not have generators"
+            raise ValueError("this object does not have generators")
         else:
-            raise ValueError, "this object does not have generators in that category"
+            raise ValueError("this object does not have generators in that category")
 
 
 

@@ -15,5 +15,6 @@ The ``channels`` object may be used to access the codes that Sage can build.
         sage: from sage.coding.channels_catalog import *
 
 """
+from __future__ import absolute_import
 
-from channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel, QarySymmetricChannel)
+from .channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel, QarySymmetricChannel)

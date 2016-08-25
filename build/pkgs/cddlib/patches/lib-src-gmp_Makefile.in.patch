@@ -1,7 +1,7 @@
-diff --git a/src.bak/lib-src-gmp/Makefile.in b/src/lib-src-gmp/Makefile.in
+diff --git a/lib-src-gmp/Makefile.in b/lib-src-gmp/Makefile.in
 index 4ab9342..93ff335 100644
---- a/src.bak/lib-src-gmp/Makefile.in
-+++ b/src/lib-src-gmp/Makefile.in
+--- a/lib-src-gmp/Makefile.in
++++ b/lib-src-gmp/Makefile.in
 @@ -54,7 +54,7 @@
  libcddgmp_la_LIBADD =
  am_libcddgmp_la_OBJECTS = cddcore.lo cddlp.lo cddmp.lo cddio.lo \

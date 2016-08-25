@@ -1,6 +1,6 @@
-diff -ru src/Singular/sing_win.cc c/Singular/sing_win.cc
---- src/Singular/sing_win.cc	2012-07-10 12:00:15.000000000 +0200
-+++ c/Singular/sing_win.cc	2012-08-01 12:31:32.753384989 +0200
+diff -ru a/latest/Singular/sing_win.cc b/latest/Singular/sing_win.cc
+--- a/latest/Singular/sing_win.cc	2012-07-10 12:00:15.000000000 +0200
++++ b/latest/Singular/sing_win.cc	2012-08-01 12:31:32.753384989 +0200
 @@ -37,7 +37,12 @@
     link.pszMsgTitle =  NULL ;
     link.pszWindow =    NULL ;

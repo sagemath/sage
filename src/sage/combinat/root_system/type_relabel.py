@@ -7,6 +7,7 @@ Root system data for relabelled Cartan types
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -200,7 +201,7 @@ class CartanType(cartan_type.CartanType_decorator):
         """
         # Special case for type D_4^3
         if self._type.dual().type() == 'G' and self._type.is_affine() \
-                and self.global_options("notation") == "Kac":
+                and self.options("notation") == "Kac":
             if compact:
                 return 'D4^3'
             return "['D', 4, 3]"
@@ -219,25 +220,25 @@ class CartanType(cartan_type.CartanType_decorator):
         A more compact, but potentially confusing, representation can
         be obtained using the ``latex_relabel`` global option::
 
-            sage: CartanType.global_options['latex_relabel'] = False
+            sage: CartanType.options['latex_relabel'] = False
             sage: latex(ct)
             A_{4}
-            sage: CartanType.global_options['latex_relabel'] = True
+            sage: CartanType.options['latex_relabel'] = True
 
         Kac's notations are implemented::
 
-            sage: CartanType.global_options['notation'] = 'Kac'
+            sage: CartanType.options['notation'] = 'Kac'
             sage: latex(CartanType(['D',4,3]))
             D_4^{(3)}
-            sage: CartanType.global_options.reset()
+            sage: CartanType.options._reset()
         """
         from sage.misc.latex import latex
         # Special case for type D_4^{(3)}
         if self._type.dual().type() == 'G' and self._type.is_affine() \
-                and self.global_options("notation") == "Kac":
+                and self.options("notation") == "Kac":
             return 'D_4^{(3)}'
         ret = self._type._latex_()
-        if self.global_options('latex_relabel'):
+        if self.options('latex_relabel'):
             ret += " \\text{ relabelled by } " + latex(self._relabelling)
         return ret
 
@@ -247,7 +248,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: print CartanType(['A',4]).relabel(lambda x: (x+1)%4+1)._latex_dynkin_diagram()
+            sage: print(CartanType(['A',4]).relabel(lambda x: (x+1)%4+1)._latex_dynkin_diagram())
             \draw (0 cm,0) -- (6 cm,0);
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$3$};
             \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
@@ -263,17 +264,17 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: print CartanType(["G", 2]).relabel({1:2,2:1}).ascii_art()
+            sage: print(CartanType(["G", 2]).relabel({1:2,2:1}).ascii_art())
               3
             O=<=O
             2   1
-            sage: print CartanType(["B", 3, 1]).relabel([1,3,2,0]).ascii_art()
+            sage: print(CartanType(["B", 3, 1]).relabel([1,3,2,0]).ascii_art())
                 O 1
                 |
                 |
             O---O=>=O
             3   2   0
-            sage: print CartanType(["F", 4, 1]).relabel(lambda n: 4-n).ascii_art()
+            sage: print(CartanType(["F", 4, 1]).relabel(lambda n: 4-n).ascii_art())
             O---O---O=>=O---O
             4   3   2   1   0
         """

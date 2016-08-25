@@ -129,7 +129,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
                 mpz_clear(self._entries[i])
             sig_free(self._entries)
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         EXAMPLES::
 
@@ -213,7 +213,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
     def __reduce__(self):
         return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         cdef Vector_integer_dense z, r
         r = right
         z = self._new_c()
@@ -224,7 +224,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         return z
 
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         cdef Vector_integer_dense z, r
         r = right
         z = self._new_c()
@@ -234,7 +234,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_sub(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef Element _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right):
         """
         Dot product of dense vectors over the integers.
 
@@ -259,7 +259,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         mpz_clear(t)
         return z
 
-    cpdef Vector _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right):
         """
         EXAMPLES::
 
@@ -276,7 +276,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _rmul_(self, RingElement left):
         cdef Vector_integer_dense z
         cdef Integer a
         a = left
@@ -287,7 +287,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, RingElement right):
         cdef Vector_integer_dense z
         cdef Integer a
         a = right
@@ -298,7 +298,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         cdef Vector_integer_dense z
         z = self._new_c()
         cdef Py_ssize_t i

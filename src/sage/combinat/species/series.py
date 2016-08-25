@@ -28,8 +28,10 @@ http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatse9.html.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from stream import Stream, Stream_class
-from series_order import  bounded_decrement, increment, inf, unk
+from __future__ import absolute_import
+
+from .stream import Stream, Stream_class
+from .series_order import  bounded_decrement, increment, inf, unk
 from sage.rings.all import Integer
 from sage.misc.all import prod
 from functools import partial
@@ -37,10 +39,9 @@ from sage.misc.misc import repr_lincomb, is_iterator
 from sage.misc.superseded import deprecated_function_alias
 
 from sage.algebras.algebra import Algebra
-from sage.algebras.algebra_element import AlgebraElement
 import sage.structure.parent_base
 from sage.categories.all import Rings
-from sage.structure.element import Element, parent
+from sage.structure.element import Element, parent, AlgebraElement
 
 class LazyPowerSeriesRing(Algebra):
     def __init__(self, R, element_class = None, names=None):
@@ -1618,13 +1619,13 @@ class LazyPowerSeries(AlgebraElement):
             sage: a.restricted(min=2, max=6).coefficients(10)
             [0, 0, 1, 1, 1, 1, 0, 0, 0, 0]
         """
-        import __builtin__
+        from six.moves import builtins
         if ((min is None and max is None) or
             (max is None and self.get_aorder() >= min)):
             return self
 
         return self._new(partial(self._restricted_gen, min, max),
-                         lambda ao: __builtin__.max(ao, min), self)
+                         lambda ao: builtins.max(ao, min), self)
 
     def _restricted_gen(self, mn, mx, ao):
         """

@@ -11,11 +11,12 @@ TESTS::
     sage: loads(dumps(v)) == v
     True
 """
+from __future__ import absolute_import
 ###############################################################################
 #       Copyright (C) 2008 Jason Grout <jason-sage@creativetrax.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from vector_real_double_dense import Vector_real_double_dense
+from .vector_real_double_dense import Vector_real_double_dense
 
 RealDoubleVectorSpaceElement = Vector_real_double_dense

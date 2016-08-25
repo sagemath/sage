@@ -7,6 +7,7 @@ AUTHORS:
 - John Cremona (Jan 2008): isomorphisms, automorphisms and twists
   in all characteristics
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #   Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -25,7 +26,7 @@ AUTHORS:
 
 
 from sage.categories.morphism import Morphism
-from constructor import EllipticCurve
+from .constructor import EllipticCurve
 from sage.categories.homset import Hom
 
 class baseWI:
@@ -269,7 +270,7 @@ def isomorphisms(E,F,JustOne=False):
         []
         sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a1'),JustOne=True)
     """
-    from ell_generic import is_EllipticCurve
+    from .ell_generic import is_EllipticCurve
     if not is_EllipticCurve(E) or not is_EllipticCurve(F):
         raise ValueError("arguments are not elliptic curves")
     K = E.base_ring()
@@ -417,7 +418,7 @@ class WeierstrassIsomorphism(baseWI, Morphism):
             sage: w._domain_curve==E
             True
         """
-        from ell_generic import is_EllipticCurve
+        from .ell_generic import is_EllipticCurve
 
         if E is not None:
             if not is_EllipticCurve(E):

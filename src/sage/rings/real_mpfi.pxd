@@ -4,9 +4,8 @@ cimport sage.rings.ring
 
 from sage.structure.element cimport RingElement
 
-from rational cimport Rational
-
-cimport real_mpfr
+from .rational cimport Rational
+from .real_mpfr cimport RealField_class
 
 cdef class RealIntervalFieldElement(RingElement)  # forward decl
 
@@ -27,9 +26,9 @@ cdef class RealIntervalField_class(sage.rings.ring.Field):
     # gives the impression that the upper and lower bounds are not
     # equal, even though they really are).  Neither of these is very
     # satisfying, but I have chosen the latter for now.
-    cdef real_mpfr.RealField_class __lower_field
-    cdef real_mpfr.RealField_class __middle_field
-    cdef real_mpfr.RealField_class __upper_field
+    cdef RealField_class __lower_field
+    cdef RealField_class __middle_field
+    cdef RealField_class __upper_field
     cdef inline RealIntervalFieldElement _new(self):
         """Return a new real interval with parent ``self``."""
         return RealIntervalFieldElement.__new__(RealIntervalFieldElement, self)

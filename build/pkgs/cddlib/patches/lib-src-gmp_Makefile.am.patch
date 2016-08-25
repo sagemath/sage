@@ -1,7 +1,7 @@
-diff --git a/src.bak/lib-src-gmp/Makefile.am b/src/lib-src-gmp/Makefile.am
+diff --git a/lib-src-gmp/Makefile.am b/lib-src-gmp/Makefile.am
 index b3ab11a..a9673b8 100644
---- a/src.bak/lib-src-gmp/Makefile.am
-+++ b/src/lib-src-gmp/Makefile.am
+--- a/lib-src-gmp/Makefile.am
++++ b/lib-src-gmp/Makefile.am
 @@ -13,7 +13,8 @@ cddmp_f.c \
  cddio_f.c \
  cddlib_f.c \

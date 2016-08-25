@@ -13,6 +13,7 @@ TESTS::
     sage: loads(dumps(v)) == v
     True
 """
+from __future__ import absolute_import
 
 ###############################################################################
 #       Copyright (C) 2008 Jason Grout <jason-sage@creativetrax.com>
@@ -20,6 +21,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-from vector_complex_double_dense import Vector_complex_double_dense
+from .vector_complex_double_dense import Vector_complex_double_dense
 
 ComplexDoubleVectorSpaceElement = Vector_complex_double_dense

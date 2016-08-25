@@ -1,6 +1,7 @@
 r"""
 Right modules
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #
@@ -8,7 +9,7 @@ Right modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_over_base_ring
+from .category_types import Category_over_base_ring
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 
 ##?class RightModules(Category_over_base_rng):

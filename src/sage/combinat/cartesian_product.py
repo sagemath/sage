@@ -15,13 +15,15 @@ Cartesian Products
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from inspect import isgenerator
 import sage.misc.prandom as rnd
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
-from combinat import CombinatorialClass
-from ranker import unrank
+from .combinat import CombinatorialClass
+from .ranker import unrank
 from sage.rings.infinity import infinity
+
 
 def CartesianProduct(*iters):
     """

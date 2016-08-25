@@ -46,8 +46,9 @@ EOF
 # Rebuild the Sage library for the change in version.py to take effect
 "$SAGE_ROOT/sage" -b
 
-# Update Sage version file
-echo "SageMath version $SAGE_VERSION, Release Date: $SAGE_RELEASE_DATE" \
+# Update the simplified Sage banner
+"$SAGE_ROOT/sage" --python -c \
+    "import sage.misc.banner; sage.misc.banner.banner(full=False)" \
     > "$SAGE_ROOT/VERSION.txt"
 
 # Update Sage version file for shell scripts in SAGE_SRC/bin/sage-version.sh
@@ -60,7 +61,7 @@ EOF
 
 # Update the Sage banner
 "$SAGE_ROOT/sage" --python -c \
-    "import sage.misc.banner; sage.misc.banner.banner()" \
+    "import sage.misc.banner; sage.misc.banner.banner(full=True)" \
     > "$SAGE_SRC/bin/sage-banner"
 
 # Regenerate auto-generated files tarball

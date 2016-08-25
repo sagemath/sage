@@ -1,5 +1,5 @@
---- src/unix/Make-arch	2011-03-13 07:01:07.000000000 -0400
-+++ patches/Make-arch	2011-06-22 12:32:58.000000000 -0400
+--- a/unix/Make-arch	2011-03-13 11:01:07.000000000 +0000
++++ b/unix/Make-arch	2016-07-04 15:29:30.502923000 +0000
 @@ -7,7 +7,8 @@
  
  # Some machines don't have/need ranlib, in their case, use 'touch'
@@ -20,7 +20,7 @@
  	@echo "          aix-64-thr - IBM AIX 5.x      POSIX Threads, 64-bit "
  	@echo "             aix-mpi - IBM AIX 5.x (SP) MPI                   "
  	@echo "        asci-red-mpi - Intel ASCI Red   MPI                   "
-@@ -32,6 +34,7 @@
+@@ -32,11 +34,12 @@
  	@echo "        cray-t3e-mpi - Cray T3E         MPI                   "
  	@echo "        cray-xt3-mpi - Cray XT3         MPI                   "
  	@echo "  compaq-alphasc-mpi - Lemieux at PSC   MPI                   "
@@ -28,14 +28,34 @@
  	@echo "            hpux-thr - HP/UX 11.x       POSIX Threads         "
  	@echo "       hpux-ia64-thr - HP-UX IA-64, HP C, POSIX Threads       "
  	@echo "           irix6-thr - SGI IRIX 6.5.x   POSIX Threads         "
-@@ -52,6 +55,7 @@
- 	@echo "         solaris-mpi - Sun Solaris 9/10 MPI (MPICH)           " 
- 	@echo "         solaris-lam - Sun Solaris 9/10 MPI (OSC LAM)         " 
- 	@echo "         solaris-thr - Sun Solaris 9/10 UI/Sun Threads        " 
+ 	@echo "        irix6-64-thr - SGI IRIX 6.5.x   POSIX Threads, 64-bit "
+-	@echo "   linux-beowulf-mpi - Scyld Linux MPI                        " 
++	@echo "   linux-beowulf-mpi - Scyld Linux MPI                        "
+ 	@echo " linux-alpha-ccc-qsw - Linux Alpha, Compaq C, MPI, QSWnet     "
+ 	@echo "           linux-lam - Linux            MPI (OSC LAM)         "
+ 	@echo "        linux-lam-64 - Linux AMD64/EM64T, MPI, 64-bit         "
+@@ -48,13 +51,14 @@
+ 	@echo "linux-ia64-thr-sgicc - Linux IA-64, SGI Pro64 Compilers       "
+ 	@echo "          macosx-thr - MacOS X PowerPC, POSIX Threads         "
+ 	@echo "      macosx-x86-thr - MacOS X Intel x86, POSIX Threads       "
+-	@echo "   solaris-ultra-hpc - Sun Solaris 9/10 ClusterTools 4.0 MPI  " 
+-	@echo "         solaris-mpi - Sun Solaris 9/10 MPI (MPICH)           " 
+-	@echo "         solaris-lam - Sun Solaris 9/10 MPI (OSC LAM)         " 
+-	@echo "         solaris-thr - Sun Solaris 9/10 UI/Sun Threads        " 
+-	@echo "   solaris-ultra-thr - Sun Solaris 9/10 UI/Sun Threads, US-1/2" 
+-	@echo "  solaris-ultra3-thr - Sun Solaris 9/10 UI/Sun Threads, US-III" 
+-	@echo "      solaris-64-thr - Sun Solaris 9/10 UI/Sun Threads, 64-bit" 
++	@echo "   solaris-ultra-hpc - Sun Solaris 9/10 ClusterTools 4.0 MPI  "
++	@echo "         solaris-mpi - Sun Solaris 9/10 MPI (MPICH)           "
++	@echo "         solaris-lam - Sun Solaris 9/10 MPI (OSC LAM)         "
++	@echo "         solaris-thr - Sun Solaris 9/10 UI/Sun Threads        "
 +	@echo "solaris-pthreads-gcc-64-bit - 64-bit (should work on SPARC or x64)"
- 	@echo "   solaris-ultra-thr - Sun Solaris 9/10 UI/Sun Threads, US-1/2" 
- 	@echo "  solaris-ultra3-thr - Sun Solaris 9/10 UI/Sun Threads, US-III" 
- 	@echo "      solaris-64-thr - Sun Solaris 9/10 UI/Sun Threads, 64-bit" 
++	@echo "   solaris-ultra-thr - Sun Solaris 9/10 UI/Sun Threads, US-1/2"
++	@echo "  solaris-ultra3-thr - Sun Solaris 9/10 UI/Sun Threads, US-III"
++	@echo "      solaris-64-thr - Sun Solaris 9/10 UI/Sun Threads, 64-bit"
+ 	@echo "--------------------------------------------------------------"
+ 	@echo "            Hybrid Parallel Versions                          "
+ 	@echo ""
 @@ -63,9 +67,11 @@
  	@echo "--------------------------------------------------------------"
  	@echo "              Sequential Versions                             "
@@ -50,7 +70,72 @@
  	@echo "            irix6 - SGI Irix 6.x                            "
  	@echo "            linux - Linux                                   "
  	@echo "         linux-64 - Linux, AMD64/EM64T, GCC 3.x, 64-bit     "
-@@ -296,9 +302,7 @@
+@@ -102,7 +108,7 @@
+ 	@echo "Consult the README file in this directory for further info. "
+ 
+ ##
+-## Intel ASCI Red (Janus) using MPI.  
++## Intel ASCI Red (Janus) using MPI.
+ ## No pthreads on ASCI Red yet.  I didn't bother with the cop() stuff
+ ##
+ asci-red-mpi:
+@@ -118,7 +124,7 @@
+ 
+ ##
+ ## IBM Blue Gene/L Parallel Supercomputer
+-## 
++##
+ ## NOTE: strip breaks bluegene executables, they are dynamically re-linked
+ ##       at runtime, so we must use /bin/true rather than strip
+ ##
+@@ -137,7 +143,7 @@
+ ## Cray Parallel Vector Processor Machines Using Threads
+ ##
+ ## Tested on J90s, but should work on almost any of the Cray PVP systems.
+-## Note: This code is not currently vectorized, and you may be better 
++## Note: This code is not currently vectorized, and you may be better
+ ##       off running on a fast workstation, or even better, on a T3E!!!
+ ##
+ cray-thr:
+@@ -228,7 +234,7 @@
+ ##
+ ## Architecture flags for the Intel Paragon XP/S Supercomputer using MPI
+ ## for message passing.  NX is no longer supported by this software.
+-## Configurations supporting systems with MP-3 nodes are listed, 
++## Configurations supporting systems with MP-3 nodes are listed,
+ ## Concurrent I/O is used by default.
+ ##
+ 
+@@ -264,8 +270,8 @@
+ 
+ 
+ ##
+-## Architecture flags for the Intel iPSC/860 Multicomputer using MPI 
+-## for message passing.  NX is no longer supported by this software. 
++## Architecture flags for the Intel iPSC/860 Multicomputer using MPI
++## for message passing.  NX is no longer supported by this software.
+ ## Tested with the mpich distribution from Argonne National Labs
+ ##
+ 
+@@ -277,7 +283,7 @@
+ 	"AR = ar860" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip860" \
+-	"LIBS = -L. -L$(MPILIB)/intelnx/ch_nx -ltachyon -lmpi $(MISCLIB) -lm"   	
++	"LIBS = -L. -L$(MPILIB)/intelnx/ch_nx -ltachyon -lmpi $(MISCLIB) -lm"
+ 
+ ipsc860-mpi-debug:
+ 	$(MAKE) all \
+@@ -287,7 +293,7 @@
+ 	"AR = ar860" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = touch " \
+-	"LIBS = -L. -L$(MPILIB)/intelnx/ch_nx -ltachyon -lmpi $(MISCLIB) -lm"   	
++	"LIBS = -L. -L$(MPILIB)/intelnx/ch_nx -ltachyon -lmpi $(MISCLIB) -lm"
+ 
+ 
+ ##
+@@ -296,22 +302,18 @@
  tru64-alpha:
  	$(MAKE) all \
  	"ARCH = tru64-alpha" \
@@ -60,7 +145,11 @@
  	"ARFLAGS = r" \
  	"STRIP = strip" \
  	"LIBS = -non_shared -om -L. -ltachyon $(MISCLIB) -lm"
-@@ -309,9 +313,7 @@
+ 
+ ##
+-## OSF1 / Digital Unix 4.0b on Alpha processors with POSIX Threads 
++## OSF1 / Digital Unix 4.0b on Alpha processors with POSIX Threads
+ ##
  tru64-alpha-thr:
  	$(MAKE) all \
  	"ARCH = tru64-alpha-thr" \
@@ -80,6 +169,24 @@
  	"ARFLAGS = r" \
  	"STRIP = strip" \
  	"LIBS = -L. -ltachyon $(TRU64_GLX_LIBS) $(MISCLIB) -lm"
+@@ -448,7 +448,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon -lmpi $(MISCLIB) -lm -lsocket -lnsl" 
++	"LIBS = -L. -ltachyon -lmpi $(MISCLIB) -lm -lsocket -lnsl"
+ 
+ solaris-mpi:
+ 	$(MAKE) all \
+@@ -458,7 +458,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -L$(MPILIB)/solaris/ch_p4 -ltachyon -lmpi $(MISCLIB) -lm -lsocket -lnsl" 
++	"LIBS = -L. -L$(MPILIB)/solaris/ch_p4 -ltachyon -lmpi $(MISCLIB) -lm -lsocket -lnsl"
+ 
+ solaris-thr:
+ 	$(MAKE) all \
 @@ -473,9 +473,15 @@
  solaris-pthreads-gcc:
  	$(MAKE) all \
@@ -98,6 +205,15 @@
  	"ARFLAGS = r" \
  	"STRIP = strip" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread"
+@@ -618,7 +624,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon -lmpi $(MISCLIB) $(SOLARIS_GLX_LIBS) $(MISCLIB) -lm -lsocket -lnsl" 
++	"LIBS = -L. -ltachyon -lmpi $(MISCLIB) $(SOLARIS_GLX_LIBS) $(MISCLIB) -lm -lsocket -lnsl"
+ 
+ solaris-ultra-pthreads-ogl:
+ 	$(MAKE) all \
 @@ -643,9 +649,7 @@
  solaris-gcc-thr:
  	$(MAKE) all \
@@ -118,12 +234,66 @@
  	"ARFLAGS = r" \
  	"STRIP = touch" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lsocket $(X11LIB) -lthread"
+@@ -701,7 +703,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -L$(MPILIB)/IRIX/ch_p4 -ltachyon -lmpi $(MISCLIB) -lm" 
++	"LIBS = -L. -L$(MPILIB)/IRIX/ch_p4 -ltachyon -lmpi $(MISCLIB) -lm"
+ 
+ irix5:
+ 	$(MAKE) all \
+@@ -710,7 +712,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon $(MISCLIB) -lm" 
++	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
+ 
+ irix6:
+ 	$(MAKE) all \
+@@ -719,7 +721,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon $(MISCLIB) -lm" 
++	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
+ 
+ irix6-purify:
+ 	$(MAKE) all \
+@@ -738,7 +740,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread" 
++	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread"
+ 
+ irix6-thr:
+ 	$(MAKE) all \
+@@ -747,7 +749,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread" 
++	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread"
+ 
+ irix6-thr-purify:
+ 	$(MAKE) all \
+@@ -766,7 +768,7 @@
+ 	"AR = ar" \
+ 	"ARFLAGS = r" \
+ 	"STRIP = strip" \
+-	"LIBS = -L. -ltachyon $(IRIX_GLX_LIBS) $(MISCLIB) -lm -lpthread" 
++	"LIBS = -L. -ltachyon $(IRIX_GLX_LIBS) $(MISCLIB) -lm -lpthread"
+ 
+ 
+ ##
 @@ -776,6 +778,8 @@
  ## available yet, since access to a thread capable test machine is needed
  ## for implementation.  These configurations require xlc.
  ##
 +## The AIX and HP-UX target for generic compilers (e.g. gcc) have not been
-+## properly tested. 
++## properly tested.
  
  
  aix:
@@ -131,9 +301,9 @@
  	"STRIP = strip" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
  
-+# The aix-generic target has not been tested. 
++# The aix-generic target has not been tested.
 +# It should work with gcc and perhaps other
-+# compilers, as the compiler name is not 
++# compilers, as the compiler name is not
 +# hard-coded. As long as CFLAGS are set properly
 +# it should work both 32-bit and 64-bit.
 +aix-generic:
@@ -151,12 +321,12 @@
  	"STRIP = strip" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread"
  
-+# The aix-generic-thr target has not been tested. 
++# The aix-generic-thr target has not been tested.
 +# It should work with gcc and perhaps other
-+# compilers, as the compiler name is not 
++# compilers, as the compiler name is not
 +# hard-coded. As long as CFLAGS are set properly
 +# it should work both 32-bit and 64-bit.
-+aix-generic-thr: 
++aix-generic-thr:
 +	$(MAKE) all \
 +	"ARCH = aix-generic-thr" \
 +	"CFLAGS = $(CFLAGS) -DAIX $(MISCFLAGS) -DTHR -D_REENTRANT" \
@@ -171,9 +341,9 @@
  	"STRIP = strip" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
  
-+# The hpux-generic target has not been tested. 
++# The hpux-generic target has not been tested.
 +# It should work with gcc and perhaps other
-+# compilers, as the compiler name is not 
++# compilers, as the compiler name is not
 +# hard-coded. As long as CFLAGS are set properly
 +# it should work both 32-bit and 64-bit.
 +hpux-generic:
@@ -184,9 +354,9 @@
 +	"STRIP = strip" \
 +	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
 +
-+# The hpux-generic-thr target has not been tested. 
++# The hpux-generic-thr target has not been tested.
 +# It should work with gcc and perhaps other
-+# compilers, as the compiler name is not 
++# compilers, as the compiler name is not
 +# hard-coded. As long as CFLAGS are set properly
 +# it should work both 32-bit and 64-bit.
 +hpux-generic-thr:
@@ -413,7 +583,7 @@
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm -lpthread"
  
  
-@@ -1081,12 +1094,9 @@
+@@ -1081,17 +1094,14 @@
  linux-p4:
  	$(MAKE) all \
  	"ARCH = linux-p4" \
@@ -426,6 +596,13 @@
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
  
  # Linux x86, on Intel P4 using Intel C 8.0
+-#	"CFLAGS = -axN -fast -ansi_alias -DLinux $(MISCFLAGS)" 
+-#	"CFLAGS = -restrict -O3 -tpp7 -vec_report3 -xiMKW -ip -unroll -static -DLinux $(MISCFLAGS)" 
++#	"CFLAGS = -axN -fast -ansi_alias -DLinux $(MISCFLAGS)"
++#	"CFLAGS = -restrict -O3 -tpp7 -vec_report3 -xiMKW -ip -unroll -static -DLinux $(MISCFLAGS)"
+ linux-p4-icc:
+ 	$(MAKE) all \
+ 	"ARCH = linux-p4-icc" \
 @@ -1119,23 +1129,17 @@
  linux-athlon:
  	$(MAKE) all \
@@ -542,7 +719,8 @@
 -	"RANLIB = ranlib" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
  
- # Linux PPC using gcc 
+-# Linux PPC using gcc 
++# Linux PPC using gcc
  linux-ppc:
  	$(MAKE) all \
  	"ARCH = linux-ppc" \
@@ -554,7 +732,8 @@
 -	"RANLIB = ranlib" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
  
- # Linux PPC using gcc 
+-# Linux PPC using gcc 
++# Linux PPC using gcc
  linux-ps2:
  	$(MAKE) all \
  	"ARCH = linux-ps2" \
@@ -566,7 +745,8 @@
 -	"RANLIB = ranlib" \
  	"LIBS = -L. -ltachyon $(MISCLIB) -lm"
  
- # Linux Alpha using gcc 
+-# Linux Alpha using gcc 
++# Linux Alpha using gcc
  linux-alpha:
  	$(MAKE) all \
  	"ARCH = linux-alpha" \
@@ -617,3 +797,39 @@
  	"ARFLAGS = r" \
  	"STRIP = strip" \
  	"LIBS = -ltachyon -lmpi $(MISCLIB) -lm "
+@@ -1432,7 +1399,7 @@
+ ## CSPI PowerPC Based Multicomputers Running VXWORKS
+ ## This configuration works for the machine at MPI Software Technologies
+ ## Uses MSTI MPI/Pro for message passing.
+-## 
++##
+ cspi-ppc-mpi:
+ 	$(MAKE) all \
+ 	"ARCH = cspi-ppc-mpi" \
+@@ -1448,7 +1415,7 @@
+ ## Mercury PowerPC Based Multicomputers Running MCOS
+ ## This configuration works for the machine at MPI Software Technologies
+ ## Uses MSTI MPI/Pro for message passing.
+-## 
++##
+ mercury-ppc-mpi:
+ 	$(MAKE) all \
+ 	"ARCH = mercury-ppc-mpi" \
+@@ -1469,7 +1436,7 @@
+ 	"ARFLAGS = -r" \
+ 	"STRIP = /bin/touch" \
+ 	"LIBS = -L. -L/opt/MPIPro/lib ../compile/mercury-ppc-mpi-rtvi/libmgf.a ../compile/mercury-ppc-mpi-rtvi/libray.a $(RTVILIB) -lmpi.appc"
+-	@echo "Note: Remember to link ray.ppc -> ray before your first run."	
++	@echo "Note: Remember to link ray.ppc -> ray before your first run."
+ 	@echo "      Also, copy your machines file into your CWD."
+ 
+ ##
+@@ -1490,7 +1457,7 @@
+ ## Mercury i860 Based Multicomputers Running MCOS
+ ## This configuration works for the machine at MPI Software Technologies
+ ## Uses MSTI MPI/Pro for message passing.
+-## 
++##
+ mercury-i860-mpi:
+ 	$(MAKE) all \
+ 	"ARCH = mercury-i860-mpi" \

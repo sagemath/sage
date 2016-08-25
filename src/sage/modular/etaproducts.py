@@ -20,13 +20,13 @@ AUTHOR:
 - David Loeffler (2008-08-22): initial version
 """
 
-#*****************************************************************************
+#****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #                     2008 David Loeffler <d.loeffler.01@cantab.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -900,7 +900,8 @@ def eta_poly_relations(eta_elements, degree, labels=['x1','x2'], verbose=False):
         Highest possible degree of a term = 15
         Trying all coefficients from q^-12 to q^15 inclusive
         No polynomial relation of order 3 valid for 28 terms
-        Check: Trying all coefficients from q^-12 to q^20 inclusive
+        Check:
+        Trying all coefficients from q^-12 to q^20 inclusive
         No polynomial relation of order 3 valid for 33 terms
 
     ::
@@ -910,7 +911,8 @@ def eta_poly_relations(eta_elements, degree, labels=['x1','x2'], verbose=False):
         Lowest order of a term at infinity = -16
         Highest possible degree of a term = 20
         Trying all coefficients from q^-16 to q^20 inclusive
-        Check: Trying all coefficients from q^-16 to q^25 inclusive
+        Check:
+        Trying all coefficients from q^-16 to q^25 inclusive
         [x1^3*x2 - 13*x1^3 - 4*x1^2*x2 - 4*x1*x2 - x2^2 + x2]
     """
     if len(eta_elements) > 2:
@@ -918,16 +920,20 @@ def eta_poly_relations(eta_elements, degree, labels=['x1','x2'], verbose=False):
 
     eta1, eta2 = eta_elements
 
-    if verbose: print "Trying to find a relation of degree %s" % degree
+    if verbose:
+        print("Trying to find a relation of degree %s" % degree)
     inf = CuspFamily(eta1.level(), 1)
     loterm = -(min([0, eta1.order_at_cusp(inf)]) + min([0,eta2.order_at_cusp(inf)]))*degree
-    if verbose: print "Lowest order of a term at infinity = %s" % -loterm
+    if verbose:
+        print("Lowest order of a term at infinity = %s" % -loterm)
 
     maxdeg = sum([eta1.degree(), eta2.degree()])*degree
-    if verbose: print "Highest possible degree of a term = %s" % maxdeg
+    if verbose:
+        print("Highest possible degree of a term = %s" % maxdeg)
     m = loterm + maxdeg + 1
     oldgrob = _eta_relations_helper(eta1, eta2, degree, m, labels, verbose)
-    if verbose: print "Check:",
+    if verbose:
+        print("Check:")
     newgrob = _eta_relations_helper(eta1, eta2, degree, m+5, labels, verbose)
     if oldgrob != newgrob:
         if verbose:
@@ -968,7 +974,8 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     inf = CuspFamily(eta1.level(), 1)
 
     pole_at_infinity = -(min([0, eta1.order_at_cusp(inf)]) + min([0,eta2.order_at_cusp(inf)]))*degree
-    if verbose: print "Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1)
+    if verbose:
+        print("Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1))
 
     rows = []
     for j in xrange(qexp_terms):
@@ -980,15 +987,14 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     M = matrix(rows)
     V = M.right_kernel()
     if V.dimension() == 0:
-        if verbose: print "No polynomial relation of order %s valid for %s terms" % (degree, qexp_terms)
+        if verbose:
+            print("No polynomial relation of order %s valid for %s terms" % (degree, qexp_terms))
         return None
     if V.dimension() >= 1:
-        #print "Found relation: "
         R = PolynomialRing(QQ, 2, labels)
         x,y = R.gens()
         relations = []
         for c in V.basis():
             relations.append(sum( [ c[v] * x**indices[v][0] * y**indices[v][1] for v in xrange(len(indices))]))
-            #print relations[-1], " = 0"
         id = R.ideal(relations)
         return id.groebner_basis()

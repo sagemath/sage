@@ -67,6 +67,10 @@ AUTHORS:
 
 - Chris Wuthrich (April 2009) -- reformat docstrings
 
+- Aly Deines, Chris Wuthrich, Jeaninne Van Order (2016-03): Added
+  functionality that tests the Skinner-Urban condition.
+
+
 """
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -705,10 +709,71 @@ class Sha(SageObject):
         self.__an_padic[(p,prec)] = shan
         return shan
 
+    def p_primary_order(self, p):
+        """
+        Return the order of the `p`-primary part of the Tate-Shafarevich
+        group.
+
+        This uses the result of Skinner and Urban [SU]_ on the
+        main conjecture in Iwasawa theory. In particular the elliptic
+        curve must have good ordinary reduction at `p`, the residual
+        Galois representation must be surjective. Furthermore there must
+        be an auxiliary prime `\ell` dividing the conductor of the curve
+        exactly once such that the residual representation is ramified
+        at `p`.
+
+        INPUT:
+
+        - `p` -- an odd prime
+
+        OUTPUT:
+
+        - `e` -- a non-negative integer such that `p^e` is the
+          order of the `p`-primary order if the conditions are satisfied
+          and raises a ``ValueError`` otherwise.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve("389a1")  # rank 2
+            sage: E.sha().p_primary_order(5)
+            0
+            sage: E = EllipticCurve("11a1")
+            sage: E.sha().p_primary_order(7)
+            0
+            sage: E.sha().p_primary_order(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: The order is not provably known using Skinner-Urban.
+            Try running p_primary_bound to get a bound.
+
+        REFERENCES:
+
+        .. [SU] Christopher Skinner and Eric Urban,
+           The Iwasawa main conjectures for GL2.
+           Invent. Math. 195 (2014), no. 1, 1-277.
+        """
+        E = self.E
+        # does not work if p = 2
+        if p == 2:
+            raise ValueError("{} is not an odd prime".format(p))
+        if (E.is_ordinary(p) and
+            E.conductor() % p != 0 and
+            E.galois_representation().is_surjective(p)):
+            N = E.conductor()
+            fac = N.factor()
+            # the auxiliary prime will be one dividing the conductor
+            if all(E.tate_curve(ell).parameter().valuation() % p == 0
+                   for (ell, e) in fac if e == 1):
+                raise ValueError("The order is not provably known using Skinner-Urban.\n" +
+                                 "Try running p_primary_bound to get a bound.")
+        else:
+             raise ValueError("The order is not provably known using Skinner-Urban.\n" +
+                              "Try running p_primary_bound to get a bound.")
+        return self.p_primary_bound(p)
 
     def p_primary_bound(self, p):
         r"""
-        Returns a provable upper bound for the order of the
+        Return a provable upper bound for the order of the
         `p`-primary part `Sha(E)(p)` of the Tate-Shafarevich group.
 
         INPUT:
@@ -725,7 +790,12 @@ class Sha(SageObject):
         for curves of rank > 1.
 
         Note also that this bound is sharp if one assumes the main conjecture
-        of Iwasawa theory of elliptic curves (and this is known in certain cases).
+        of Iwasawa theory of elliptic curves. One may use the method
+        ``p_primary_order`` for checking if the extra conditions hold under
+        which the main conjecture is known by the work of Skinner and Urban.
+        This then returns the provable `p`-primary part of the Tate-Shafarevich
+        group,
+
 
         Currently the algorithm is only implemented when the following
         conditions are verified:

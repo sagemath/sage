@@ -11,7 +11,7 @@ Stopgaps
 ########################################################################
 
 import warnings
-from warnings import warn, resetwarnings
+
 
 from sage.doctest import DOCTEST_MODE
 cdef bint ENABLED = not DOCTEST_MODE
@@ -48,6 +48,8 @@ class StopgapWarning(Warning):
     """
     pass
 
+warnings.filterwarnings('always', category=StopgapWarning)
+
 cdef set _stopgap_cache = set([])
 
 def stopgap(message, int ticket_no):
@@ -80,8 +82,7 @@ def stopgap(message, int ticket_no):
     def my_format(message, category, filename, lineno, line=None):
         return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno, "*"*80, message, "*"*80)
     warnings.formatwarning = my_format
-    resetwarnings()
     message = message + "\nThis issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/%s."%ticket_no
-    warn(StopgapWarning(message), stacklevel=2)
+    warnings.warn(StopgapWarning(message), stacklevel=2)
     warnings.formatwarning = old_format
     _stopgap_cache.add(ticket_no)

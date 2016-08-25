@@ -103,6 +103,7 @@ EXAMPLES::
     sage: a.plot(hyperplane_labels=True,label_colors=['red','green','black'])
     Graphics3d Object
 """
+from __future__ import print_function
 
 from copy import copy
 from colorsys import hsv_to_rgb
@@ -154,7 +155,7 @@ def plot(hyperplane_arrangement, **kwds):
         raise NotImplementedError('must be a field of characteristic 0')
     elif dim == 4:
         if not hyperplane_arrangement.is_essential():
-            print 'Displaying the essentialization.'
+            print('Displaying the essentialization.')
             hyperplane_arrangement = hyperplane_arrangement.essentialization()
     elif dim not in [1,2,3]: # revise to handle 4d
         return # silently

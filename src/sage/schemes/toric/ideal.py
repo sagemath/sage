@@ -152,7 +152,7 @@ AUTHORS:
 #   * Implement the Di Biase & Urbanke algorithm
 #   * Implement the Conti & Traverso algorithm (for educational purposes)
 #   * Cythonize the Buchberger algorithm for toric ideals
-#   * Use the (multiple) weighted homegeneity during Groebner basis computations
+#   * Use the (multiple) weighted homogeneity during Groebner basis computations
 
 
 

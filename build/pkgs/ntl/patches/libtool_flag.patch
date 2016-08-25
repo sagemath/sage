@@ -1,8 +1,8 @@
 Let libtool build a shared lib on Cygwin.
 
-diff -druN a/src/DoConfig b/src/DoConfig
---- a/src/DoConfig	2015-05-23 07:44:51.000000000 -0700
-+++ b/src/DoConfig	2015-07-03 01:25:35.820272305 -0700
+diff -druN a/ntl/src/DoConfig b/ntl/src/DoConfig
+--- a/ntl/src/DoConfig	2015-05-23 07:44:51.000000000 -0700
++++ b/ntl/src/DoConfig	2015-07-03 01:25:35.820272305 -0700
 @@ -39,6 +39,7 @@
  'LDFLAGS'     => '',
  'LDLIBS'      => '-lm',
@@ -11,9 +11,9 @@ diff -druN a/src/DoConfig b/src/DoConfig
  
  'DEF_PREFIX'  => '/usr/local',
  
-diff -druN a/src/mfile b/src/mfile
---- a/src/mfile	2015-05-23 07:44:51.000000000 -0700
-+++ b/src/mfile	2015-07-03 01:26:13.120365725 -0700
+diff -druN a/ntl/src/mfile b/ntl/src/mfile
+--- a/ntl/src/mfile	2015-05-23 07:44:51.000000000 -0700
++++ b/ntl/src/mfile	2015-07-03 01:26:13.120365725 -0700
 @@ -36,6 +36,9 @@
  LIBTOOL=@{LIBTOOL}
  # libtool command

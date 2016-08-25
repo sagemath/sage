@@ -63,6 +63,8 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
 import copy
 from sage.rings.integer import GCD_list
@@ -1124,7 +1126,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: P = LatticePolytope_PPL((1,0,0), (0,1,0), (0,0,1), (-1,-1,-1))
             sage: for p in P.sub_polytope_generator():
-            ....:     print p.vertices()
+            ....:     print(p.vertices())
             ((0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0))
             ((-1, -1, -1), (0, 0, 0), (0, 1, 0), (1, 0, 0))
             ((-1, -1, -1), (0, 0, 0), (0, 0, 1), (1, 0, 0))
@@ -1167,7 +1169,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: sub.vertices()
             ((0, 1), (3, 0), (0, 3), (1, 0))
         """
-        from ppl_lattice_polygon import sub_reflexive_polygons
+        from .ppl_lattice_polygon import sub_reflexive_polygons
         from sage.geometry.polyhedron.lattice_euclidean_group_element import \
             LatticePolytopesNotIsomorphicError, LatticePolytopeNoEmbeddingError
         for p, ambient in sub_reflexive_polygons():

@@ -737,7 +737,7 @@ newest_version() {
 # PKG_NAME PKG_VERSION PKG_VAR
 #
 
-[
+changequote(<,>)
 filtered_packages_list() {
     # for each package in pkgs/
     for DIR in $SAGE_ROOT/build/pkgs/*; do
@@ -747,8 +747,11 @@ filtered_packages_list() {
         if [ -f "$PKG_TYPE_FILE" ]; then
             PKG_TYPE=`cat $PKG_TYPE_FILE`
         else
-            echo >&2 "\"$PKG_TYPE_FILE\" is missing."
-            exit 1
+            # exit won't necessarily exit 'configure', so signal an error this way, too:
+            echo INVALID
+            changequote([,])
+            AC_MSG_ERROR(["$PKG_TYPE_FILE" is missing.])
+            changequote(<,>)
         fi
 
         # Check consistency of 'DIR/type' file
@@ -758,8 +761,11 @@ filtered_packages_list() {
            [ "$PKG_TYPE" != "experimental" ] && \
            [ "$PKG_TYPE" != "script" ] && \
            [ "$PKG_TYPE" != "pip" ]; then
-            echo >&2 "The content of \"$PKG_TYPE_FILE\" must be 'base', 'standard', 'optional', 'experimental', 'script', or 'pip'"
-            exit 1
+            # exit won't necessarily exit 'configure', so signal an error this way, too:
+            echo INVALID
+            changequote([,])
+            AC_MSG_ERROR([The content of "$PKG_TYPE_FILE" must be 'base', 'standard', 'optional', 'experimental', 'script', or 'pip'])
+            changequote(<,>)
         fi
 
         PKG_NAME=$(basename $DIR)
@@ -788,12 +794,15 @@ filtered_packages_list() {
         fi
     done
 }
-]
+changequote([,])
 
 echo >&7
 echo >&7 '# Files to track installation of packages'
 filtered_packages_list all | while read PKG_NAME PKG_VERSION PKG_VAR; do
-    if test "$PKG_NAME" != "$PKG_VERSION"; then
+    if test "$PKG_NAME" = INVALID; then
+        # filtered_packages_list signals an error (already reported there)
+        exit 1 # this doesn't leave 'configure' (yet)
+    elif test "$PKG_NAME" != "$PKG_VERSION"; then
         # If $need_to_install_{PKG_NAME} is set to no, then set $PKG_VAR
         # to some dummy file to skip the installation. Note that an
         # explicit "./sage -i PKG_NAME" will still install the package.
@@ -806,7 +815,7 @@ filtered_packages_list all | while read PKG_NAME PKG_VERSION PKG_VAR; do
             AC_MSG_RESULT([    $PKG_VERSION not installed (configure check)])
         fi
     fi
-done
+done || exit 1
 
 echo >&7
 echo >&7
@@ -815,26 +824,38 @@ echo >&7
 echo >&7 '# All standard packages'
 echo >&7 'STANDARD_PACKAGES = \'
 filtered_packages_list standard | while read PKG_NAME PKG_VERSION PKG_VAR; do
+    if test "$PKG_NAME" = INVALID; then
+        # filtered_packages_list signals an error (already reported there)
+        exit 1 # this doesn't leave 'configure' (yet)
+    fi
     echo >&7 "    \$($PKG_VAR) \\"
-done
+done || exit 1
 echo >&7
 echo >&7
 
 echo >&7 '# All optional installed packages (triggers the auto-update)'
 echo >&7 'OPTIONAL_INSTALLED_PACKAGES = \'
 filtered_packages_list optional | while read PKG_NAME PKG_VERSION PKG_VAR; do
+    if test "$PKG_NAME" = INVALID; then
+        # filtered_packages_list signals an error (already reported there)
+        exit 1 # this doesn't leave 'configure' (yet)
+    fi
     if [ -f $SAGE_SPKG_INST/$PKG_NAME-* ]; then
         echo >&7 "    \$($PKG_VAR) \\"
     fi;
-done
+done || exit 1
 echo >&7
 echo >&7
 
 echo >&7 '# All packages which should be downloaded'
 echo >&7 'SDIST_PACKAGES = \'
 filtered_packages_list sdist | while read PKG_NAME PKG_VERSION PKG_VAR; do
+    if test "$PKG_NAME" = INVALID; then
+        # filtered_packages_list signals an error (already reported there)
+        exit 1 # this doesn't leave 'configure' (yet)
+    fi
     echo >&7 "    \$(INST)/$PKG_VERSION \\"
-done
+done || exit 1
 echo >&7
 echo >&7
 
@@ -888,6 +909,10 @@ EOF
 # Add a Makefile target corresponding to a given package
 filtered_packages_list all | {
 while read PKG_NAME PKG_VERSION PKG_VAR; do
+    if test "$PKG_NAME" = INVALID; then
+        # filtered_packages_list signals an error (already reported there)
+        exit 1 # this doesn't leave 'configure' (yet)
+    fi
     DEP_FILE="$SAGE_ROOT/build/pkgs/$PKG_NAME/dependencies"
     TYPE=`cat "$SAGE_ROOT/build/pkgs/$PKG_NAME/type"`
     if [ -f "$DEP_FILE" ]; then
@@ -909,7 +934,7 @@ while read PKG_NAME PKG_VERSION PKG_VAR; do
     if [ "$TYPE" = pip ]; then
         # Special rules using PIP
         echo >&7 "$PKG_NAME:$DEPS"
-        echo >&7 "	sage-logger 'sage --pip install $PKG_NAME' \$(SAGE_LOGS)/$PKG_NAME.log"
+        echo >&7 "	sage-logger -p 'sage --pip install $PKG_NAME' \$(SAGE_LOGS)/$PKG_NAME.log"
         echo >&7
 
         # Add a target to remove the "installed" file for "sage -f"
@@ -921,7 +946,7 @@ while read PKG_NAME PKG_VERSION PKG_VAR; do
         echo >&7 "$PKG_NAME:$DEPS"
         echo >&7 "	cd '$SAGE_ROOT' && \\"
         echo >&7 "	    source '$SAGE_ROOT/src/bin/sage-env' && \\"
-        echo >&7 "	    sage-logger '$SAGE_ROOT/build/pkgs/$PKG_NAME/spkg-install' \$(SAGE_LOGS)/$PKG_NAME.log"
+        echo >&7 "	    sage-logger -p '$SAGE_ROOT/build/pkgs/$PKG_NAME/spkg-install' \$(SAGE_LOGS)/$PKG_NAME.log"
         echo >&7
 
         # Just run the spkg-uninstall script if it exists
@@ -933,7 +958,7 @@ while read PKG_NAME PKG_VERSION PKG_VAR; do
     else
         # Normal Sage packages
         echo >&7 "\$(INST)/$PKG_VERSION:$DEPS"
-        echo >&7 "	+sage-logger '\$(SAGE_SPKG) $PKG_VERSION' '\$(SAGE_LOGS)/$PKG_VERSION.log'"
+        echo >&7 "	+sage-logger -p '\$(SAGE_SPKG) $PKG_VERSION' '\$(SAGE_LOGS)/$PKG_VERSION.log'"
         echo >&7
 
         # Add a target with just the bare package name for "sage -i"
@@ -947,7 +972,7 @@ while read PKG_NAME PKG_VERSION PKG_VAR; do
     fi
 
     PHONY="$PHONY $PKG_NAME"
-done
+done || exit 1
 echo >&7 ".PHONY:$PHONY"
 }
 

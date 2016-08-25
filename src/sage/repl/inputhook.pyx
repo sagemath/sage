@@ -27,7 +27,7 @@ cdef extern from 'intrcheck.h':
 
 from cpython.exc cimport PyErr_SetInterrupt
 
-from sage.repl.attach import reload_attached_files_if_modified
+import sage.repl.attach
 
 
 cdef int c_sage_inputhook() nogil except -1:
@@ -66,6 +66,34 @@ def uninstall():
     PyOS_InputHook = NULL
 
 
+def is_installed():
+    r"""
+    Test whether the Sage input hook is installed
+
+    This is only for doctesting purposes
+
+    EXAMPLES::
+
+        sage: from sage.repl.inputhook import is_installed
+        sage: is_installed()
+        False
+
+    The Sage input hook is only installed while files are attached::
+
+        sage: tmp = tmp_filename(ext='.py')
+        sage: f = open(tmp, 'w'); f.write('a = 2\n'); f.close()
+        sage: from sage.repl.attach import attach, detach
+        sage: attach(tmp)
+        sage: is_installed()
+        True
+        sage: detach(tmp)
+        sage: is_installed()
+        False
+    """
+    global PyOS_InputHook
+    return (PyOS_InputHook == c_sage_inputhook)
+
+
 def sage_inputhook():
     r"""
     The input hook.
@@ -100,7 +128,7 @@ def sage_inputhook():
         []
         sage: shell.quit()
     """
-    reload_attached_files_if_modified()
+    sage.repl.attach.reload_attached_files_if_modified()
     return 0
 
 

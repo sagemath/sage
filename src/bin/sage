@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 help_banner() {
-    grep -v 'Type' "$SAGE_LOCAL/bin/sage-banner"
+    sage_banner | grep -v 'Type'
     echo
 }
 
@@ -24,7 +24,7 @@ usage() {
     echo "  -maxima [...]       -- run Sage's Maxima with given arguments"
     echo "  -mwrank [...]       -- run Sage's mwrank with given arguments"
     echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
-    echo "                         'default', 'sagenb', and 'jupyter')"
+    echo "                         'default', 'sagenb', 'jupyter', and 'export')"
     echo "  -n, --notebook      -- shortcut for --notebook=default"
     echo "  -optional           -- list all optional packages that can be installed"
     echo "  -python [...]       -- run the Python interpreter"
@@ -107,6 +107,9 @@ usage_advanced() {
     echo "                         (not installed currently, run sage -i macaulay2)"
     echo "  -maxima [...]       -- run Sage's Maxima with given arguments"
     echo "  -mwrank [...]       -- run Sage's mwrank with given arguments"
+    echo "  -polymake [...]     -- run Sage's Polymake with given arguments"
+    command -v polymake &>/dev/null || \
+    echo "                         (not installed currently, run sage -i polymake)"
     echo "  -python [...]       -- run the Python interpreter"
     echo "  -R [...]            -- run Sage's R with given arguments"
     echo "  -scons [...]        -- run Sage's scons"
@@ -364,12 +367,8 @@ sage_setup() {
         exit 1
     fi
 
-    # Display the startup banner
-    if [ "$SAGE_BANNER" = "bare" ]; then
-        cat "$SAGE_ROOT/VERSION.txt"
-    elif [ "$SAGE_BANNER" != "no" ]; then
-        cat "$SAGE_LOCAL/bin/sage-banner"
-    fi
+    # Display the startup banner (unless SAGE_BANNER is explictly "no")
+    sage_banner
 
     maybe_sage_location
 
@@ -464,6 +463,11 @@ fi
 if [ "$1" = '-gp' -o "$1" = '--gp' ]; then
     shift
     exec gp "$@"
+fi
+
+if [ "$1" = '-polymake' -o "$1" = '--polymake' ]; then
+    shift
+    exec polymake "$@"
 fi
 
 if [ "$1" = '-singular' -o "$1" = '--singular' ]; then
@@ -989,11 +993,6 @@ fi
 if [ "$1" = '-gthread' -o "$1" = '-qthread' -o "$1" = '-q4thread' -o "$1" = '-wthread' -o "$1" = '-pylab' ]; then
     # Intentionally no "shift" here
     interactive_sage "$@"
-fi
-
-if [ "$1" = '-dev' -o "$1" = "--dev" ]; then
-    shift
-    exec sage-dev "$@"
 fi
 
 if [ $# -ge 1 ]; then

@@ -1,0 +1,29 @@
+From 702bcd9003dbb90fb2ff33ddbe4e01229207bd63 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Tue, 26 Jul 2016 11:32:35 -0700
+Subject: [PATCH 1/5] Add dependency of libscip on liblpi*
+
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 6181eb4..27fb1ec 100644
+--- a/Makefile
++++ b/Makefile
+@@ -945,10 +945,10 @@ endif
+ makesciplibfile: preprocess
+ 		@$(MAKE) $(SCIPLIBFILE)
+ 
+-$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) | $(LIBDIR) $(LIBOBJSUBDIRS)
++$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) | $(LIBDIR) $(LIBOBJSUBDIRS)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+-		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES)
++		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(LPILIBFILE)
+ ifneq ($(RANLIB),)
+ 		$(RANLIB) $@
+ endif
+-- 
+2.7.4 (Apple Git-66)
+

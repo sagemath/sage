@@ -9,7 +9,10 @@ Root system data for type D
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-import ambient_space
+from __future__ import print_function
+from __future__ import absolute_import
+
+from . import ambient_space
 
 class AmbientSpace(ambient_space.AmbientSpace):
     def dimension(self):
@@ -123,7 +126,7 @@ from sage.structure.sage_object import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
 
 from sage.misc.cachefunc import cached_method
-from cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
+from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
 class CartanType(CartanType_standard_finite, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -263,7 +266,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             sage: sorted(d.edges())
             []
         """
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
         n = self.n
         if n >= 3:
@@ -278,7 +281,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: print CartanType(['D',4])._latex_dynkin_diagram()
+            sage: print(CartanType(['D',4])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (2 cm,0);
             \draw (2 cm,0) -- (4 cm,0.7 cm);
             \draw (2 cm,0) -- (4 cm,-0.7 cm);
@@ -311,25 +314,25 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: print CartanType(['D',3]).ascii_art()
+            sage: print(CartanType(['D',3]).ascii_art())
             O 3
             |
             |
             O---O
             1   2
-            sage: print CartanType(['D',4]).ascii_art()
+            sage: print(CartanType(['D',4]).ascii_art())
                 O 4
                 |
                 |
             O---O---O
             1   2   3
-            sage: print CartanType(['D',4]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['D',4]).ascii_art(label = lambda x: x+2))
                 O 6
                 |
                 |
             O---O---O
             3   4   5
-            sage: print CartanType(['D',6]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['D',6]).ascii_art(label = lambda x: x+2))
                         O 8
                         |
                         |

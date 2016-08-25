@@ -1,6 +1,7 @@
 """
 A single element of an ambient space of modular symbols
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
@@ -110,7 +111,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             TypeError: x does not coerce to an element of this Hecke module
         """
         if check:
-            from space import ModularSymbolsSpace
+            from .space import ModularSymbolsSpace
             if not isinstance(parent, ModularSymbolsSpace):
                 raise TypeError("parent (= %s) must be a space of modular symbols" % parent)
             if not isinstance(x, sage.modules.free_module_element.FreeModuleElement):

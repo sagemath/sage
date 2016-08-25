@@ -100,7 +100,7 @@ class DLXMatrix:
             sage: ones+= [[4,[4]]]
             sage: DLXM = DLXMatrix(ones,[4])
             sage: for C in DLXM:
-            ...      print C
+            ....:      print(C)
             [4, 1]
             [4, 2, 3]
 
@@ -149,7 +149,7 @@ class DLXMatrix:
 
             sage: from sage.combinat.dlx import *
             sage: M = DLXMatrix([[1,[1]]])
-            sage: print M.__iter__() is M
+            sage: M.__iter__() is M
             True
         """
 
@@ -173,7 +173,7 @@ class DLXMatrix:
             ...       count += DLX._nodes[c][COUNT]
             ...       for d in DLX._walknodes(c,DOWN):
             ...           count -= 1
-            sage: print count
+            sage: count
             0
         """
         nodetable=self._nodes
@@ -218,7 +218,7 @@ class DLXMatrix:
             ...               raise RuntimeError("Linked list inconsistent.")
             ...           d = DLX._nodes[d][DOWN]
             ...       c = DLX._nodes[c][RIGHT]
-            sage: print fullcount
+            sage: fullcount
             6
         """
         if initialsolution is None:
@@ -298,11 +298,11 @@ class DLXMatrix:
             sage: M._covercolumn(one)
             sage: two = M._nodes[ROOTNODE][RIGHT]
             sage: three = M._nodes[two][RIGHT]
-            sage: print M._nodes[three][RIGHT] == ROOTNODE
+            sage: M._nodes[three][RIGHT] == ROOTNODE
             True
-            sage: print M._nodes[two][COUNT]
+            sage: M._nodes[two][COUNT]
             1
-            sage: print M._nodes[three][COUNT]
+            sage: M._nodes[three][COUNT]
             0
         """
 
@@ -342,9 +342,9 @@ class DLXMatrix:
             sage: M._covercolumn(one)
             sage: two = M._nodes[ROOTNODE][RIGHT]
             sage: M._uncovercolumn(one)
-            sage: print M._nodes[two][LEFT] == one
+            sage: M._nodes[two][LEFT] == one
             True
-            sage: print M._nodes[two][COUNT]
+            sage: M._nodes[two][COUNT]
             2
         """
         nodetable = self._nodes
@@ -404,20 +404,20 @@ class DLXMatrix:
             sage: from sage.combinat.dlx import *
             sage: M = DLXMatrix([[1,[1,2]],[2,[2,3]],[3,[1,3]]])
             sage: while 1:
-            ...     try:
-            ...         C = next(M)
-            ...     except StopIteration:
-            ...         print "StopIteration"
-            ...         break
-            ...     print C
+            ....:     try:
+            ....:         C = next(M)
+            ....:     except StopIteration:
+            ....:         print("StopIteration")
+            ....:         break
+            ....:     print(C)
             StopIteration
             sage: M = DLXMatrix([[1,[1,2]],[2,[2,3]],[3,[3]]])
             sage: for C in M:
-            ...       print C
+            ....:       print(C)
             [1, 3]
             sage: M = DLXMatrix([[1,[1]],[2,[2,3]],[3,[2]],[4,[3]]])
             sage: for C in M:
-            ...       print C
+            ....:       print(C)
             [1, 2]
             [1, 3, 4]
         """
@@ -474,10 +474,10 @@ def AllExactCovers(M):
 
         sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
         sage: for cover in AllExactCovers(M):
-        ...       print cover
+        ....:     print(cover)
         sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
         sage: for cover in AllExactCovers(M):
-        ...       print cover
+        ....:     print(cover)
         [(1, 1, 0), (0, 0, 1)]
         [(1, 0, 1), (0, 1, 0)]
     """
@@ -501,10 +501,10 @@ def OneExactCover(M):
     EXAMPLES::
 
         sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
-        sage: print OneExactCover(M)
+        sage: print(OneExactCover(M))
         None
         sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
-        sage: print OneExactCover(M)
+        sage: OneExactCover(M)
         [(1, 1, 0), (0, 0, 1)]
     """
 

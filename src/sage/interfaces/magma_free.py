@@ -35,7 +35,7 @@ def magma_free_eval(code, strip=True, columns=0):
     """
     # import compatible with py2 and py3
     from six.moves.urllib.parse import urlencode
-    import httplib
+    from six.moves import http_client as httplib
     from xml.dom.minidom import parseString
 
     server = "magma.maths.usyd.edu.au"
@@ -44,7 +44,8 @@ def magma_free_eval(code, strip=True, columns=0):
     refererUrl = "http://%s%s" % ( server, refererPath)
     code = "SetColumns(%s);\n"%columns + code
     params = urlencode({'input':code})
-    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept":"Accept: text/html, application/xml, application/xhtml+xml", "Referer": refererUrl}
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "Accept: text/html, application/xml, application/xhtml+xml", "Referer": refererUrl}
     conn = httplib.HTTPConnection(server)
     conn.request("POST", processPath, params, headers)
     response = conn.getresponse()
@@ -66,6 +67,7 @@ def magma_free_eval(code, strip=True, columns=0):
         def __repr__(self):
             return str(self)
     return MagmaExpr(res)
+
 
 class MagmaFree:
     """

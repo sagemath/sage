@@ -14,6 +14,7 @@ REFERENCES:
    Adv. Stud. Pure Math., vol. 28, Kinokuniya, Tokyo, 2000, pp 155-220
    arXiv:math/9809122v3 [math.q-alg]
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -30,7 +31,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.unique_representation import UniqueRepresentation
-import sfa
+from . import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
 import sage.combinat.skew_partition
 from sage.rings.all import ZZ

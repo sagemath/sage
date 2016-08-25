@@ -19,6 +19,7 @@ TESTS::
     sage: loads(dumps(f)) == f
     True
 """
+from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
@@ -42,10 +43,10 @@ TESTS::
 
 import sage.misc.misc as misc
 import sage.modules.free_module as free_module
-import matrix_morphism
+from . import matrix_morphism
 from sage.structure.sequence import Sequence
 
-import free_module_homspace
+from . import free_module_homspace
 
 def is_FreeModuleMorphism(x):
     """
@@ -379,7 +380,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: f.preimage_representative(vector(ZZ, [10, 20]))
             (0, 0, 10)
         """
-        from free_module_element import vector
+        from .free_module_element import vector
         x = self.codomain()(x)
         A = self.matrix()
         R = self.base_ring()

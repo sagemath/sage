@@ -1,6 +1,7 @@
 """
 Composition species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,9 +16,9 @@ Composition species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from structure import GenericSpeciesStructure
-from partition_species import PartitionSpecies
+from .species import GenericCombinatorialSpecies
+from .structure import GenericSpeciesStructure
+from .partition_species import PartitionSpecies
 from sage.misc.cachefunc import cached_function
 from sage.structure.unique_representation import UniqueRepresentation
 

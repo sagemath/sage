@@ -17,8 +17,8 @@ familiar and most standard ones, and all of the others are defined
 in terms of one of these. The bases are described in the
 documentation for the function
 :func:`steenrod_algebra_basis`; also see the papers by
-Monks [M] and Wood [W] for more information about them. For
-commutator bases, see the preprint by Palmieri and Zhang [PZ].
+Monks [M1998]_ and Wood [W1998]_ for more information about them. For
+commutator bases, see the preprint by Palmieri and Zhang [PZ2008]_.
 
 - 'milnor': Milnor basis.
 
@@ -107,16 +107,17 @@ method for :class:`SteenrodAlgebra_generic
 
 REFERENCES:
 
-- [M] K. G. Monks, "Change of basis, monomial relations, and
-  `P^s_t` bases for the Steenrod algebra," J. Pure Appl.
-  Algebra 125 (1998), no. 1-3, 235-260.
+.. [M1998] \K. G. Monks, "Change of basis, monomial relations, and
+   `P^s_t` bases for the Steenrod algebra," J. Pure Appl.
+   Algebra 125 (1998), no. 1-3, 235-260.
 
-- [PZ] J. H. Palmieri and J. J. Zhang, "Commutators in the Steenrod
-  algebra," preprint (2008)
+.. [PZ2008] \J. H. Palmieri and J. J. Zhang, "Commutators in the Steenrod
+   algebra," preprint (2008)
 
-- [W] R. M. W. Wood, "Problems in the Steenrod algebra," Bull. London
-  Math. Soc. 30 (1998), no. 5, 449-517.
+.. [W1998] \R. M. W. Wood, "Problems in the Steenrod algebra," Bull. London
+   Math. Soc. 30 (1998), no. 5, 449-517.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
@@ -176,7 +177,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
     """
     from sage.matrix.constructor import matrix
     from sage.rings.all import GF
-    from steenrod_algebra import SteenrodAlgebra
+    from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
         generic = False if p==2 else True
     if n == 0:
@@ -342,7 +343,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
         sage: steenrod_algebra_basis(5,'pst-rlex')
         (((0, 1), (2, 1)), ((1, 1), (0, 2)))
     """
-    from steenrod_algebra_misc import get_basis_name
+    from .steenrod_algebra_misc import get_basis_name
     try:
         if n < 0 or int(n) != n:
             return ()
@@ -1153,10 +1154,10 @@ def steenrod_basis_error_check(dim, p, **kwds):
         milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,generic=generic))
         for B in bases:
             if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,generic=generic)):
-                print "problem with milnor/" + B + " in dimension ", i
+                print("problem with milnor/{} in dimension {}".format(B, i))
             mat = convert_to_milnor_matrix.f(i,B,p,generic=generic)
             if mat.nrows() != 0 and not mat.is_invertible():
-                print "%s invertibility problem in dim %s at p=%s" % (B, i, p)
+                print("%s invertibility problem in dim %s at p=%s" % (B, i, p))
 
     misc.verbose("done checking, no profiles")
 
@@ -1173,6 +1174,6 @@ def steenrod_basis_error_check(dim, p, **kwds):
             milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,profile=pro,generic=generic))
             for B in bases:
                 if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,profile=pro,generic=generic)):
-                    print "problem with milnor/%s in dimension %s with profile %s"%(B, i, pro)
+                    print("problem with milnor/%s in dimension %s with profile %s" % (B, i, pro))
 
     misc.verbose("done checking with profiles")

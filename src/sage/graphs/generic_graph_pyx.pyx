@@ -16,6 +16,7 @@ AUTHORS:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 include 'sage/ext/cdefs.pxi'
@@ -569,7 +570,7 @@ cdef class SubgraphSearch:
             sage: h = graphs.PathGraph(3)
             sage: S = SubgraphSearch(g, h)
             sage: for p in S:
-            ...      print p
+            ....:     print(p)
             [0, 1, 2]
             [1, 2, 3]
             [2, 1, 0]

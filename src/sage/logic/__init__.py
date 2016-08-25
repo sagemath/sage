@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # This is the init file for logic.
 
-import all
+from . import all

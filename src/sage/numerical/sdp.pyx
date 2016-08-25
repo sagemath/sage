@@ -70,7 +70,7 @@ The following example shows all these steps::
     0: ...
     ...
     Optimal solution found.
-    sage: print 'Objective Value:', round(opt,3)
+    sage: print('Objective Value: {}'.format(round(opt,3)))
     Objective Value: 3.0
     sage: map(lambda x: round(x,3), p.get_values(x).itervalues())
     [-1.0, 2.0]
@@ -208,6 +208,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
@@ -384,7 +385,7 @@ cdef class SemidefiniteProgram(SageObject):
              sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
              sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
              sage: p.add_constraint(b1*x[0] + b2*x[1] <= a1)
-             sage: print p
+             sage: print(p)
              Semidefinite Program ( maximization, 2 variables, 3 constraints )
          """
          cdef GenericSDPBackend b = self._backend
@@ -624,29 +625,31 @@ cdef class SemidefiniteProgram(SageObject):
             varid_name[i] = s if s else 'x_'+str(i)
 
         ##### Sense and objective function
-        print ("Maximization:" if b.is_maximization() else "Minimization:")
-        print " ",
+        print("Maximization:" if b.is_maximization() else "Minimization:")
+        print(" ", end=" ")
         first = True
         for 0<= i< b.ncols():
             c = b.objective_coefficient(i)
             if c == 0:
                 continue
-            print (("+ " if (not first and c>0) else "") +
+            print((("+ " if (not first and c>0) else "") +
                    ("" if c == 1 else ("- " if c == -1 else str(c)+" ")) + varid_name[i]
-                   ),
+                   ), end=" ")
             first = False
-        if b.obj_constant_term > self._backend.zero(): print "+", b.obj_constant_term
-        elif b.obj_constant_term < self._backend.zero(): print "-", -b.obj_constant_term
-        print
+        if b.obj_constant_term > self._backend.zero():
+            print("+ {}".format(b.obj_constant_term))
+        elif b.obj_constant_term < self._backend.zero():
+            print("- {}".format(-b.obj_constant_term))
+        print("\n")
 
         ##### Constraints
-        print "Constraints:"
+        print("Constraints:")
         for 0<= i < b.nrows():
             indices, values = b.row(i)
-            print " ",
+            print(" ", end=" ")
             # Constraint's name
             if b.row_name(i):
-                print b.row_name(i)+":",
+                print(b.row_name(i)+":", end=" ")
             first = True
             l = sorted(zip(indices,values))
             l.reverse()
@@ -658,18 +661,19 @@ cdef class SemidefiniteProgram(SageObject):
             for j, c in l:
                 if c == 0:
                     continue
-                print (("+ " if (not first) else "") +
+                print((("+ " if (not first) else "") +
                         ( str(repr(c).replace('\n',"")  )  )+varid_name[j]),
+                      end=" ")
                 first = False
-            print ("<= "),
-            print repr(-last_value).replace('\n',"")
+            print(("<= "), end=" ")
+            print(repr(-last_value).replace('\n',""))
 
         ##### Variables
-        print "Variables:"
-        print ("  "),
+        print("Variables:")
+        print("  ", end=" ")
         for 0<= i < b.ncols()-1:
-            print (str(varid_name[i]) + ", "),
-        print (str(varid_name[b.ncols()-1]) ),
+            print(str(varid_name[i]) + ", ", end=" ")
+        print(str(varid_name[b.ncols()-1]), end=" ")
 
 
     def get_values(self, *lists):
@@ -1173,7 +1177,7 @@ class SDPSolverException(RuntimeError):
 
         sage: from sage.numerical.sdp import SDPSolverException
         sage: e = SDPSolverException("Error")
-        sage: print e
+        sage: print(e)
         Error
     """
     pass

@@ -7,6 +7,7 @@ AUTHORS:
 
 - David Roe
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
@@ -19,7 +20,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from padic_extension_generic import pAdicExtensionGeneric
+from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.infinity import infinity
 from sage.misc.latex import latex
 from sage.rings.integer import Integer

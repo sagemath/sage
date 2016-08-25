@@ -255,12 +255,12 @@ class multiples:
 
         sage: E=EllipticCurve('389a1')
         sage: P=E(-1,1)
-        sage: for Q in multiples(P,5): print Q, Q.height()/P.height()
-        (0 : 1 : 0) 0.000000000000000
-        (-1 : 1 : 1) 1.00000000000000
-        (10/9 : -35/27 : 1) 4.00000000000000
-        (26/361 : -5720/6859 : 1) 9.00000000000000
-        (47503/16641 : 9862190/2146689 : 1) 16.0000000000000
+        sage: for Q in multiples(P,5): print((Q, Q.height()/P.height()))
+        ((0 : 1 : 0), 0.000000000000000)
+        ((-1 : 1 : 1), 1.00000000000000)
+        ((10/9 : -35/27 : 1), 4.00000000000000)
+        ((26/361 : -5720/6859 : 1), 9.00000000000000)
+        ((47503/16641 : 9862190/2146689 : 1), 16.0000000000000)
 
         sage: R.<x>=ZZ[]
         sage: list(multiples(x,5))
@@ -271,14 +271,14 @@ class multiples:
         [(0, 0), (1, x), (2, 2*x), (3, 3*x), (4, 4*x)]
         sage: list(multiples(x,5,indexed=True,operation='*'))
         [(0, 1), (1, x), (2, x^2), (3, x^3), (4, x^4)]
-        sage: for i,y in multiples(x,5,indexed=True): print "%s  times %s = %s"%(i,x,y)
+        sage: for i,y in multiples(x,5,indexed=True): print("%s  times %s = %s"%(i,x,y))
         0  times x = 0
         1  times x = x
         2  times x = 2*x
         3  times x = 3*x
         4  times x = 4*x
 
-        sage: for i,n in multiples(3,5,indexed=True,operation='*'):  print "3 to the power %s = %s"%(i,n)
+        sage: for i,n in multiples(3,5,indexed=True,operation='*'):  print("3 to the power %s = %s" % (i,n))
         3 to the power 0 = 1
         3 to the power 1 = 3
         3 to the power 2 = 9
@@ -560,7 +560,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
         ....:     try:
         ....:          discrete_log_rho(I(123456),I(1),operation='+')
         ....:     except Exception:
-        ....:          print "FAILURE"
+        ....:          print("FAILURE")
         sage: test()  # random failure
         FAILURE
 

@@ -1,6 +1,6 @@
-diff -ruN a/kernel/kutil.cc b/kernel/kutil.cc
---- a/kernel/kutil.cc	2012-02-22 16:00:05.000000000 +0100
-+++ b/kernel/kutil.cc	2012-12-21 11:08:42.117513571 +0100
+diff -ruN a/latest/kernel/kutil.cc b/latest/kernel/kutil.cc
+--- a/latest/kernel/kutil.cc	2012-02-22 16:00:05.000000000 +0100
++++ b/latest/kernel/kutil.cc	2012-12-21 11:08:42.117513571 +0100
 @@ -662,7 +662,9 @@
            return dReportError("pNext(%c[%d].max) != NULL", TN, i);
  
@@ -11,9 +11,9 @@ diff -ruN a/kernel/kutil.cc b/kernel/kutil.cc
  #if KDEBUG > 0
          if (! sloppy_max)
          {
-diff -ruN a/kernel/pDebug.cc b/kernel/pDebug.cc
---- a/kernel/pDebug.cc	2012-07-10 12:00:15.000000000 +0200
-+++ b/kernel/pDebug.cc	2012-12-21 11:08:42.127513707 +0100
+diff -ruN a/latest/kernel/pDebug.cc b/latest/kernel/pDebug.cc
+--- a/latest/kernel/pDebug.cc	2012-07-10 12:00:15.000000000 +0200
++++ b/latest/kernel/pDebug.cc	2012-12-21 11:08:42.127513707 +0100
 @@ -221,8 +221,10 @@
  
    #ifndef OM_NDEBUG
@@ -36,9 +36,9 @@ diff -ruN a/kernel/pDebug.cc b/kernel/pDebug.cc
      #endif
      // number/coef check
      pPolyAssumeReturnMsg(p->coef != NULL || (n_GetChar(r) >= 2), "NULL coef",p,r);
-diff -ruN a/omalloc/Makefile.in b/omalloc/Makefile.in
---- a/omalloc/Makefile.in	1970-01-01 01:00:00.000000000 +0100
-+++ b/omalloc/Makefile.in	2012-12-21 11:17:12.767512898 +0100
+diff -ruN a/latest/omalloc/Makefile.in b/latest/omalloc/Makefile.in
+--- a/latest/omalloc/Makefile.in	1970-01-01 01:00:00.000000000 +0100
++++ b/latest/omalloc/Makefile.in	2012-12-21 11:17:12.767512898 +0100
 @@ -0,0 +1,69 @@
 +#################################################################
 +###
@@ -109,9 +109,9 @@ diff -ruN a/omalloc/Makefile.in b/omalloc/Makefile.in
 +
 +clean:
 +	rm -f *.o *.a
-diff -ruN a/omalloc/mylimits.h b/omalloc/mylimits.h
---- a/omalloc/mylimits.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/omalloc/mylimits.h	2012-12-21 11:08:42.137513466 +0100
+diff -ruN a/latest/omalloc/mylimits.h b/latest/omalloc/mylimits.h
+--- a/latest/omalloc/mylimits.h	1970-01-01 01:00:00.000000000 +0100
++++ b/latest/omalloc/mylimits.h	2012-12-21 11:08:42.137513466 +0100
 @@ -0,0 +1,15 @@
 +/* -*-c++-*- */
 +/*******************************************************************
@@ -128,9 +128,9 @@ diff -ruN a/omalloc/mylimits.h b/omalloc/mylimits.h
 +*/
 +
 +#include <limits.h>
-diff -ruN a/omalloc/omFindExec.c b/omalloc/omFindExec.c
---- a/omalloc/omFindExec.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/omalloc/omFindExec.c	2012-12-21 11:08:42.137513466 +0100
+diff -ruN a/latest/omalloc/omFindExec.c b/latest/omalloc/omFindExec.c
+--- a/latest/omalloc/omFindExec.c	1970-01-01 01:00:00.000000000 +0100
++++ b/latest/omalloc/omFindExec.c	2012-12-21 11:08:42.137513466 +0100
 @@ -0,0 +1,226 @@
 +/*******************************************************************
 + *  File:    omFindExec.c
@@ -358,20 +358,20 @@ diff -ruN a/omalloc/omFindExec.c b/omalloc/omFindExec.c
 +struct omInfo_s om_Info; /* dummy */
 +struct omOpts_s om_Opts; /* dummy */
 +
-diff -ruN a/omalloc/omGetPageSize.h b/omalloc/omGetPageSize.h
---- a/omalloc/omGetPageSize.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/omalloc/omGetPageSize.h	2012-12-21 11:27:51.537512976 +0100
+diff -ruN a/latest/omalloc/omGetPageSize.h b/latest/omalloc/omGetPageSize.h
+--- a/latest/omalloc/omGetPageSize.h	1970-01-01 01:00:00.000000000 +0100
++++ b/latest/omalloc/omGetPageSize.h	2012-12-21 11:27:51.537512976 +0100
 @@ -0,0 +1,2 @@
 +/* Dummy value for configure */
 +#define omalloc_getpagesize 4096
-diff -ruN a/omalloc/om_Alloc.c b/omalloc/om_Alloc.c
---- a/omalloc/om_Alloc.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/omalloc/om_Alloc.c	2012-12-21 11:23:30.467512481 +0100
+diff -ruN a/latest/omalloc/om_Alloc.c b/latest/omalloc/om_Alloc.c
+--- a/latest/omalloc/om_Alloc.c	1970-01-01 01:00:00.000000000 +0100
++++ b/latest/omalloc/om_Alloc.c	2012-12-21 11:23:30.467512481 +0100
 @@ -0,0 +1 @@
 +/* Stub file to please configure */
-diff -ruN a/omalloc/omalloc.h b/omalloc/omalloc.h
---- a/omalloc/omalloc.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/omalloc/omalloc.h	2012-12-21 11:08:42.137513466 +0100
+diff -ruN a/latest/omalloc/omalloc.h b/latest/omalloc/omalloc.h
+--- a/latest/omalloc/omalloc.h	1970-01-01 01:00:00.000000000 +0100
++++ b/latest/omalloc/omalloc.h	2012-12-21 11:08:42.137513466 +0100
 @@ -0,0 +1,235 @@
 +#ifndef XMEMORY_H
 +#define XMEMORY_H

@@ -46,8 +46,9 @@ TODO:
   implementation -- some fiddly adjustments will be needed in order to be able
   to pass extra arguments to the subquotient's init method.
 """
+from __future__ import absolute_import
 
-import additive_abelian_group as addgp
+from . import additive_abelian_group as addgp
 from sage.rings.all import ZZ
 from sage.misc.misc import verbose
 from sage.categories.morphism import Morphism

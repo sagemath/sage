@@ -11,7 +11,7 @@ AUTHORS:
 - Rudi Pendavingh, Stefan van Zwam (2013-06-06): added functions map, lex_cmp,
   pickle, unpickle
 - Jeroen Demeyer (2014-09-05): use mpn_* functions from MPIR in the
-  implementation (:trac`13352` and :trac:`16937`)
+  implementation (:trac:`13352` and :trac:`16937`)
 - Simon King (2014-10-28): ``bitset_rshift`` and ``bitset_lshift`` respecting
   the size of the given bitsets (:trac:`15820`)
 """

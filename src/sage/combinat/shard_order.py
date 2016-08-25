@@ -54,6 +54,18 @@ class ShardPosetElement(tuple):
         sage: Permutation(list(e0)) == p0
         True
     """
+    def __new__(cls, p):
+        r"""
+        Initialization of the underlying tuple
+
+        TESTS::
+
+            sage: from sage.combinat.shard_order import ShardPosetElement
+            sage: ShardPosetElement(Permutation([1,3,4,2]))
+            (1, 3, 4, 2)
+        """
+        return tuple.__new__(cls, p)
+
     def __init__(self, p):
         r"""
         INPUT:
@@ -66,8 +78,11 @@ class ShardPosetElement(tuple):
             sage: p0 = Permutation([1,3,4,2])
             sage: e0 = ShardPosetElement(p0); e0
             (1, 3, 4, 2)
+            sage: e0.dpg
+            Transitive closure of : Digraph on 3 vertices
+            sage: e0.spg
+            Digraph on 3 vertices
         """
-        tuple.__init__(self, p)
         self.runs = p.decreasing_runs(as_tuple=True)
         self.run_indices = [None] * (len(p) + 1)
         for i, bloc in enumerate(self.runs):

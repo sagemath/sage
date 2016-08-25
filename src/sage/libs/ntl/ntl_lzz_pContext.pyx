@@ -46,7 +46,7 @@ cdef class ntl_zz_pContext_class(object):
 
     def __cinit__(self, long v):
         if v > NTL_SP_BOUND:
-            raise ValueError, "Modulus (=%s) is too big"%v
+            raise ValueError("Modulus (=%s) is too big" % v)
         self.x = zz_pContext_c(v)
         zz_pContextDict[repr(v)] = self
         self.p = v
@@ -106,7 +106,7 @@ def ntl_zz_pContext( v ):
         ValueError: Modulus (=10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) is too big
     """
     if v > NTL_SP_BOUND:
-        raise ValueError, "Modulus (=%s) is too big"%v
+        raise ValueError("Modulus (=%s) is too big" % v)
     if isinstance(v, Integer):
         v = mpz_get_si((<Integer>v).value)
     try:

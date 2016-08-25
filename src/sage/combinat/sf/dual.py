@@ -1,6 +1,7 @@
 """
 Generic dual bases symmetric functions
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -21,7 +22,7 @@ from sage.categories.homset import Hom
 from sage.matrix.all import matrix
 import sage.combinat.partition
 from sage.combinat.dict_addition import dict_linear_combination
-import classical
+from . import classical
 
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
@@ -262,7 +263,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         """
         Representation of ``self``.
 
-        OUPUT
+        OUTPUT:
 
         - a string description of ``self``
 

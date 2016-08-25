@@ -8,6 +8,7 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
@@ -45,12 +46,12 @@ from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.structure.all import Sequence
 from sage.structure.element import is_Matrix
 
-from con_field import ProjectiveConic_field
-from con_finite_field import ProjectiveConic_finite_field
-from con_prime_finite_field import ProjectiveConic_prime_finite_field
-from con_number_field import ProjectiveConic_number_field
-from con_rational_field import ProjectiveConic_rational_field
-from con_rational_function_field import ProjectiveConic_rational_function_field
+from .con_field import ProjectiveConic_field
+from .con_finite_field import ProjectiveConic_finite_field
+from .con_prime_finite_field import ProjectiveConic_prime_finite_field
+from .con_number_field import ProjectiveConic_number_field
+from .con_rational_field import ProjectiveConic_rational_field
+from .con_rational_function_field import ProjectiveConic_rational_function_field
 
 def Conic(base_field, F=None, names=None, unique=True):
     r"""

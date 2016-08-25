@@ -1,5 +1,5 @@
 from sage.data_structures.bitset cimport bitset_t
-from basis_matroid cimport BasisMatroid
+from .basis_matroid cimport BasisMatroid
 
 cdef class CutNode:
     cdef LinearSubclasses _MC

@@ -18,6 +18,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.numerical.mip import MIPSolverException
 from sage.numerical.interactive_simplex_method import InteractiveLPProblem, default_variable_name
@@ -257,55 +258,6 @@ cdef class InteractiveLPBackend:
         self.lp = InteractiveLPProblem(A, b, c, x,
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
-        return self.ncols() - 1
-
-    cpdef int add_variables(self, int n, lower_bound=0, upper_bound=None, binary=False, continuous=True, integer=False, obj=None, names=None) except -1:
-        """
-        Add ``n`` variables.
-
-        This amounts to adding new columns to the matrix. By default,
-        the variables are both nonnegative and real.
-
-        In this backend, variables are always continuous (real).
-        If integer variables are requested via the parameters
-        ``binary`` and ``integer``, an error will be raised.
-
-        INPUT:
-
-        - ``n`` - the number of new variables (must be > 0)
-
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
-
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
-
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
-
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
-
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
-
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0)
-
-        - ``names`` - optional list of names (default: ``None``)
-
-        OUTPUT: The index of the variable created last.
-
-        EXAMPLE::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "InteractiveLP")
-            sage: p.ncols()
-            0
-            sage: p.add_variables(5)
-            4
-            sage: p.ncols()
-            5
-            sage: p.add_variables(2, names=['a','b'])
-            6
-        """
-        for i in range(n):
-            self.add_variable(lower_bound, upper_bound, binary, continuous, integer, obj,
-                              None if names is None else names[i])
         return self.ncols() - 1
 
     cpdef  set_variable_type(self, int variable, int vtype):
@@ -647,37 +599,6 @@ cdef class InteractiveLPBackend:
         """
         self.add_variable(coefficients = zip(indices, coeffs))
 
-    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None):
-        """
-        Add constraints.
-
-        INPUT:
-
-        - ``number`` (integer) -- the number of constraints to add.
-
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
-
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
-
-        - ``names`` - an optional list of names (default: ``None``)
-
-        EXAMPLE::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "InteractiveLP")
-            sage: p.add_variables(5)
-            4
-            sage: p.add_linear_constraints(5, 0, None)
-            sage: p.row(4)
-            ([], [])
-            sage: p.row_bounds(4)
-            (0, None)
-        """
-        for i in range(number):
-            self.add_linear_constraint(zip(range(self.ncols()),[0]*(self.ncols())),
-                                       lower_bound, upper_bound,
-                                       name=None if names is None else names[i])
-
     cpdef int solve(self) except -1:
         """
         Solve the problem.
@@ -839,7 +760,7 @@ cdef class InteractiveLPBackend:
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "InteractiveLP")
             sage: p.problem_name("There_once_was_a_french_fry")
-            sage: print p.problem_name()
+            sage: print(p.problem_name())
             There_once_was_a_french_fry
         """
         if name == NULL:

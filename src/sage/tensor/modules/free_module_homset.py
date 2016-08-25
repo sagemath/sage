@@ -15,6 +15,7 @@ REFERENCES:
 - Chap. 3 of S. Lang : *Algebra*, 3rd ed., Springer (New York) (2002)
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -64,9 +65,9 @@ class FreeModuleHomset(Homset):
         sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
         sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
         sage: H = Hom(M,N) ; H
-        Set of Morphisms from Rank-3 free module M over the Integer Ring to
-         Rank-2 free module N over the Integer Ring in Category of modules
-         over Integer Ring
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-2 free module N over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
         sage: type(H)
         <class 'sage.tensor.modules.free_module_homset.FreeModuleHomset_with_category_with_equality_by_id'>
         sage: H.category()
@@ -124,8 +125,8 @@ class FreeModuleHomset(Homset):
 
         sage: End(M)
         Set of Morphisms from Rank-3 free module M over the Integer Ring
-         to Rank-3 free module M over the Integer Ring in Category of modules
-         over Integer Ring
+         to Rank-3 free module M over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
 
     ``End(M)`` is actually identical to ``Hom(M,M)``::
 
@@ -203,15 +204,16 @@ class FreeModuleHomset(Homset):
             sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
             sage: FreeModuleHomset(M, N)
             Set of Morphisms from Rank-3 free module M over the Integer Ring
-             to Rank-2 free module N over the Integer Ring in Category of
-             modules over Integer Ring
+             to Rank-2 free module N over the Integer Ring
+             in Category of finite dimensional modules over Integer Ring
+
             sage: H = FreeModuleHomset(M, N, name='L(M,N)',
             ....:                      latex_name=r'\mathcal{L}(M,N)')
             sage: latex(H)
             \mathcal{L}(M,N)
 
         """
-        from finite_rank_free_module import FiniteRankFreeModule
+        from .finite_rank_free_module import FiniteRankFreeModule
         if not isinstance(fmodule1, FiniteRankFreeModule):
             raise TypeError("fmodule1 = {} is not an ".format(fmodule1) +
                             "instance of FiniteRankFreeModule")
@@ -512,7 +514,9 @@ class FreeModuleHomset(Homset):
             sage: M.identity_map().parent()
             General linear group of the Rank-3 free module M over the Integer Ring
             sage: H.one().parent()
-            Set of Morphisms from Rank-3 free module M over the Integer Ring to Rank-3 free module M over the Integer Ring in Category of modules over Integer Ring
+            Set of Morphisms from Rank-3 free module M over the Integer Ring
+             to Rank-3 free module M over the Integer Ring
+             in Category of finite dimensional modules over Integer Ring
             sage: H.one() == H(M.identity_map())
             True
 

@@ -103,7 +103,7 @@ def stationary_gaussian_simulation(s, N, n=1):
     """
     N = Integer(N)
     if N < 1:
-        raise ValueError, "N must be positive"
+        raise ValueError("N must be positive")
 
     if not isinstance(s, TimeSeries):
         s = TimeSeries(s)
@@ -126,7 +126,7 @@ def stationary_gaussian_simulation(s, N, n=1):
 
     # Verify the nonnegativity condition.
     if a.min() < 0:
-        raise NotImplementedError, "Stationary Gaussian simulation only implemented when Fourier transform is nonnegative"
+        raise NotImplementedError("Stationary Gaussian simulation only implemented when Fourier transform is nonnegative")
 
     sims = []
     cdef Py_ssize_t i, k, iN = N
@@ -189,12 +189,12 @@ def fractional_gaussian_noise_simulation(double H, double sigma2, N, n=1):
     the ``stationary_gaussian_simulation()`` function.
     """
     if H <= 0 or H >= 1:
-        raise ValueError, "H must satisfy 0 < H < 1"
+        raise ValueError("H must satisfy 0 < H < 1")
     if sigma2 <= 0:
-        raise ValueError, "sigma2 must be positive"
+        raise ValueError("sigma2 must be positive")
     N = Integer(N)
     if N < 1:
-        raise ValueError, "N must be positive"
+        raise ValueError("N must be positive")
     cdef TimeSeries s = TimeSeries(N+1)
     s._values[0] = sigma2
     cdef Py_ssize_t k
@@ -291,14 +291,14 @@ def multifractal_cascade_random_walk_simulation(double T,
     *Continuous cascade models for asset returns* for details.
     """
     if ell <= 0:
-        raise ValueError, "ell must be positive"
+        raise ValueError("ell must be positive")
     if T <= ell:
-        raise ValueError, "T must be > ell"
+        raise ValueError("T must be > ell")
     if lambda2 <= 0:
-        raise ValueError, "lambda2 must be positive"
+        raise ValueError("lambda2 must be positive")
     N = Integer(N)
     if N < 1:
-        raise ValueError, "N must be positive"
+        raise ValueError("N must be positive")
 
     # Compute the mean of the Gaussian stationary process omega.
     # See page 3 of Bacry, Kozhemyak, Muzy, 2008 -- "Log-Normal

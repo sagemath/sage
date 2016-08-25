@@ -17,7 +17,7 @@ die Kurven als irreduzible Komponenten der Vereinigung zurück erhalten.
     sage: C3 = Curve(x^3 + y^3 - 1)
     sage: D = C2 + C3
     sage: D
-    Affine Curve over Rational Field defined by
+    Affine Plane Curve over Rational Field defined by
        x^5 + x^3*y^2 + x^2*y^3 + y^5 - x^3 - y^3 - x^2 - y^2 + 1
     sage: D.irreducible_components()
     [
@@ -209,7 +209,7 @@ Die Berechnung benutzt die PARI C-Bibliothek:
 ::
 
     sage: E = EllipticCurve([0,0,1,-1,0])
-    sage: print E.anlist(30)
+    sage: E.anlist(30)
     [0, 1, -2, -3, 2, -2, 6, -1, 0, 6, 4, -5, -6, -2, 2, 6, -4, 0, -12, 0, -4,
      3, 10, 2, 0, -1, 4, -9, -2, 6, -12]
     sage: v = E.anlist(10000)

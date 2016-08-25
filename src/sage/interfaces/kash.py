@@ -429,8 +429,10 @@ unlike for the other interfaces.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
-from expect import Expect, ExpectElement
+from .expect import Expect, ExpectElement
 import os
 
 class Kash(Expect):
@@ -581,7 +583,7 @@ class Kash(Expect):
             sage: X = kash.help('IntegerRing')   # optional -- kash
 
         There is one entry in X for each item found in the documentation
-        for this function: If you type ``print X[0]`` you will
+        for this function: If you type ``print(X[0])`` you will
         get help on about the first one, printed nicely to the screen.
 
         AUTHORS:
@@ -589,15 +591,15 @@ class Kash(Expect):
         - Sebastion Pauli (2006-02-04): during Sage coding sprint
         """
         if name is None:
-            print '\nTo use KASH help enter kash.help(s). '
-            print 'The syntax of the string s is given below.\n'
-            print self.eval('?')
+            print('\nTo use KASH help enter kash.help(s). ')
+            print('The syntax of the string s is given below.\n')
+            print(self.eval('?'))
             return
         name = str(name)
         if name[0] == '?':
-            print self.eval(name)
+            print(self.eval(name))
         else:
-            print self.eval('?%s'%name)
+            print(self.eval('?%s' % name))
 
     def _doc(self, V):
         if V.lstrip()[:11] == 'No matches.':

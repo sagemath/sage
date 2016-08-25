@@ -36,11 +36,12 @@ Extract and then delete the contained jsmol.zip
 $ unzip jsmol.zip
 $ rm jsmol.zip
 
-Delete unnecessary (?) files in subdirectories
+Delete unnecessary subdirectories, see http://wiki.jmol.org/index.php/Jmol_JavaScript_Object#In_detail
 
-$ rm -rf jsmol/data jsmol/php
+$ cd jsmol
+$ rm -rf data flot images inchi jcse jsme
 
 Tar up the remaining files
 
-$ cd ..
+$ cd ../..
 $ tar cjf jmol-14.2.4_2014.08.03.tar.bz2 jmol-14.2.4_2014.08.03/

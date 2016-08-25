@@ -77,6 +77,7 @@ REFERENCES:
 
 - Stein, "Modular Forms, a computational approach." AMS (2007).
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
@@ -114,8 +115,8 @@ from sage.modular.modsym.manin_symbol import ManinSymbol
 import sage.rings.all as rings
 import sage.arith.all as arith
 
-import ambient
-import element
+
+from . import element
 
 
 class BoundarySpaceElement(hecke.HeckeModuleElement):
@@ -557,6 +558,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             ...
             TypeError: Coercion of 7 (of type <type 'sage.rings.integer.Integer'>) into Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(15) of weight 2 and over Rational Field not (yet) defined.
         """
+        from .ambient import ModularSymbolsAmbient
         if isinstance(x, int) and x == 0:
             return BoundarySpaceElement(self, {})
 
@@ -568,7 +570,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
         elif element.is_ModularSymbolsElement(x):
             M = x.parent()
-            if not isinstance(M, ambient.ModularSymbolsAmbient):
+            if not isinstance(M, ModularSymbolsAmbient):
                 raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient"%x)
             if M.level() != self.level():
                 raise TypeError("x (=%s) must have level %s but has level %s"%(

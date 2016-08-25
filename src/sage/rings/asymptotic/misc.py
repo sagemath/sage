@@ -26,8 +26,10 @@ Functions, Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
-import sage
+import sage   # WHAT !!!
 
 
 def repr_short_to_parent(s):
@@ -296,7 +298,7 @@ def repr_op(left, op, right=None, latex=False):
 
     ::
 
-        sage: print repr_op(r'\frac{1}{2}', '^', 'c', latex=True)
+        sage: print(repr_op(r'\frac{1}{2}', '^', 'c', latex=True))
         \left(\frac{1}{2}\right)^c
     """
     left = str(left)
@@ -620,7 +622,7 @@ class NotImplementedOZero(NotImplementedError):
             NotImplementedOZero: The error term in the result is O(0)
             which means 0 for sufficiently large m.
         """
-        from asymptotic_ring import AsymptoticRing
+        from .asymptotic_ring import AsymptoticRing
         if isinstance(data, AsymptoticRing) or var is not None:
             if var is None:
                 var = ', '.join(str(g) for g in data.gens())

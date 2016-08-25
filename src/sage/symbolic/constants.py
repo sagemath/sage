@@ -65,7 +65,7 @@ can be coerced into other systems or evaluated.
     sage: gp(a)
     5.316218116357029426750873360              # 32-bit
     5.3162181163570294267508733603616328824    # 64-bit
-    sage: print mathematica(a)                     # optional - mathematica
+    sage: print(mathematica(a))                  # optional - mathematica
      4 E
      --- + Pi
       5
@@ -214,6 +214,9 @@ Check that :trac:`8237` is fixed::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
+from __future__ import print_function
+from __future__ import absolute_import
+
 import math
 from functools import partial
 from sage.rings.infinity import (infinity, minus_infinity,
@@ -230,7 +233,7 @@ sage.symbolic.pynac.register_symbol(infinity, {'maxima':'inf'})
 sage.symbolic.pynac.register_symbol(minus_infinity, {'maxima':'minf'})
 sage.symbolic.pynac.register_symbol(unsigned_infinity, {'maxima':'infinity'})
 
-from pynac import I
+from .pynac import I
 sage.symbolic.pynac.register_symbol(I, {'mathematica':'I'})
 
 

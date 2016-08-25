@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -29,7 +30,7 @@ from sage.structure.all import parent
 
 from sage.misc.cachefunc import cached_method
 
-from abstract_ring import FormsRing_abstract
+from .abstract_ring import FormsRing_abstract
 
 
 class FormsSpace_abstract(FormsRing_abstract):
@@ -40,7 +41,7 @@ class FormsSpace_abstract(FormsRing_abstract):
     instantiate one of the derived classes of this class.
     """
 
-    from element import FormsElement
+    from .element import FormsElement
     Element = FormsElement
 
     def __init__(self, group, base_ring, k, ep, n):
@@ -233,7 +234,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             True
         """
 
-        from graded_ring_element import FormsRingElement
+        from .graded_ring_element import FormsRingElement
         if isinstance(el, FormsRingElement):
             if (self.hecke_n() == infinity and el.hecke_n() == ZZ(3)):
                 el_f = el._reduce_d()._rat
@@ -320,8 +321,8 @@ class FormsSpace_abstract(FormsRing_abstract):
             True
         """
 
-        from space import ZeroForm
-        from subspace import SubSpaceForms
+        from .space import ZeroForm
+        from .subspace import SubSpaceForms
         if   (  isinstance(S, ZeroForm)):
             return True
         elif (  isinstance(S, SubSpaceForms)\
@@ -475,7 +476,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             Subspace of dimension 2 of ModularForms(n=3, k=24, ep=1) over Integer Ring
         """
 
-        from subspace import SubSpaceForms
+        from .subspace import SubSpaceForms
         return SubSpaceForms(self, basis)
 
     def change_ring(self, new_base_ring):
@@ -508,7 +509,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             (FormsSubSpaceFunctor with 1 generator for the ModularFormsFunctor(n=3, k=12, ep=1), BaseFacade(Integer Ring))
         """
 
-        from functors import FormsSubSpaceFunctor, FormsSpaceFunctor, BaseFacade
+        from .functors import FormsSubSpaceFunctor, FormsSpaceFunctor, BaseFacade
         ambient_space_functor = FormsSpaceFunctor(self._analytic_type, self._group, self._weight, self._ep)
 
         if (self.is_ambient()):

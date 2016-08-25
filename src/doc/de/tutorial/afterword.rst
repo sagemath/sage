@@ -101,7 +101,7 @@ sein, also verhält sich Sage an manchen Stellen anders als Python.
        '3^2'
 
 -  **Integerdivision:** Der Pythonaudruck ``2/3`` verhält sich nicht
-   so, wie es Mathematiker erwarten würden. In Python wird, falls ``m`` und
+   so, wie es Mathematiker erwarten würden. In Python 2 wird, falls ``m`` und
    ``n`` Integer sind, auch ``m/n`` als Integer behandelt, es ist
    nämlich der Quotient von ``m`` geteilt durch ``n``. Daher ist
    ``2/3=0``.  Es wurde in der Pythoncommunity darüber geredet, ob in
@@ -121,7 +121,7 @@ sein, also verhält sich Sage an manchen Stellen anders als Python.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)
+       sage: int(2)/int(3)    # optional - python2
        0
 
 -  **Große ganze Zahlen:** Python besitzt von Hause aus Unterstützung
@@ -160,7 +160,7 @@ zur Sage-Dokumention oder zum Berichten von Fehlern reichen.
 Schauen Sie sich die Sage-Webseite an um Informationen für Entwickler
 zu erhalten; neben anderen Dingen können Sie eine lange Liste nach
 Priorität und Kategorie geordneter, zu Sage gehörender Projekte finden.
-Auch der `Sage Developer's Guide <http://www.sagemath.org/doc/developer/>`_
+Auch der `Sage Developer's Guide <http://doc.sagemath.org/html/en/developer/>`_
 beinhaltet hilfreiche Informationen, und Sie können der ``sage-devel``
 Google-Group beitreten.
 

@@ -29,8 +29,9 @@ EXAMPLES: We illustrate each of the calculus functional functions.
     sage: inverse_laplace( e^a/(a-1), x, a)
     ilt(e^a/(a - 1), x, a)
 """
+from __future__ import absolute_import
 
-from calculus import SR
+from .calculus import SR
 from sage.symbolic.expression import Expression
 
 def simplify(f):

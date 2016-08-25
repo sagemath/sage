@@ -1,5 +1,5 @@
---- src/CONFIG/src/Makefile	2012-06-23 17:27:27.000000000 +0100
-+++ new/CONFIG/src/Makefile	2012-06-24 03:05:52.043151077 +0100
+--- src/ATLAS/CONFIG/src/Makefile	2012-06-23 17:27:27.000000000 +0100
++++ new/ATLAS/CONFIG/src/Makefile	2012-06-24 03:05:52.043151077 +0100
 @@ -580,6 +580,6 @@
  confclean: $(CLEANdep)
  	rm -f *core* *.o config?.out

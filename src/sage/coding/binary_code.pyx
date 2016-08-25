@@ -36,9 +36,11 @@ AUTHOR:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*******************************************************************************
+from __future__ import print_function
 
 include 'sage/ext/cdefs.pxi'
 from cpython.mem cimport *
+from cpython.object cimport PyObject_RichCompare
 include "cysignals/memory.pxi"
 from sage.structure.element import is_Matrix
 from sage.misc.misc import cputime
@@ -215,7 +217,7 @@ def test_word_perms(t_limit=5.0):
         for j from 0 <= j < n:
             cw3 += (<codeword>word2[j]) << (<codeword>j)
         if cw3 != cw2:
-            print "ERROR1"
+            print("ERROR1")
         dealloc_word_perm(g)
         # 1b. test create_array_word_perm
         gg = S.random_element()
@@ -230,7 +232,7 @@ def test_word_perms(t_limit=5.0):
         for j from 0 <= j < n:
             cw3 += (<codeword>word2[j]) << (<codeword>j)
         if cw3 != cw2:
-            print "ERROR1b"
+            print("ERROR1b")
         dealloc_word_perm(g)
         # 2. test create_comp_word_perm
         gg = S.random_element()
@@ -246,7 +248,7 @@ def test_word_perms(t_limit=5.0):
         for j from 0 <= j < n:
             cw3 += (<codeword>word2[j]) << (<codeword>j)
         if cw3 != cw2:
-            print "ERROR2"
+            print("ERROR2")
         dealloc_word_perm(g)
         dealloc_word_perm(h)
         dealloc_word_perm(i)
@@ -258,14 +260,14 @@ def test_word_perms(t_limit=5.0):
         cw2 = permute_word_by_wp(g, cw1)
         cw2 = permute_word_by_wp(h, cw2)
         if cw1 != cw2:
-            print "ERROR3a"
+            print("ERROR3a")
         cw2 = permute_word_by_wp(h, cw1)
         cw2 = permute_word_by_wp(g, cw2)
         if cw1 != cw2:
-            print "ERROR3b"
+            print("ERROR3b")
         cw2 = permute_word_by_wp(i, cw1)
         if cw1 != cw2:
-            print "ERROR3c"
+            print("ERROR3c")
         dealloc_word_perm(g)
         dealloc_word_perm(h)
         dealloc_word_perm(i)
@@ -554,15 +556,15 @@ def test_expand_to_ortho_basis(B=None):
     if not isinstance(B, BinaryCode):
         raise TypeError()
     C = B
-    print "INPUT CODE:"
-    print C
-    print "Expanding to the basis of an orthogonal complement..."
+    print("INPUT CODE:")
+    print(C)
+    print("Expanding to the basis of an orthogonal complement...")
     output = expand_to_ortho_basis(C, C.ncols)
-    print "Basis:"
+    print("Basis:")
     while output[k]:
         k += 1
     for i from 0 <= i < k:
-        print ''.join(reversed(Integer(output[i]).binary().zfill(C.ncols)))
+        print(''.join(reversed(Integer(output[i]).binary().zfill(C.ncols))))
     sig_free(output)
 
 cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
@@ -828,7 +830,7 @@ cdef class BinaryCode:
         """
         return BinaryCode, (self.matrix(),)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, int op):
         """
         Comparison of BinaryCodes.
 
@@ -840,9 +842,10 @@ cdef class BinaryCode:
             sage: C = BinaryCode(B.matrix())
             sage: B == C
             True
-
         """
-        return cmp(self.matrix(), other.matrix())
+        if type(self) is not type(other):
+            return NotImplemented
+        return PyObject_RichCompare(self.matrix(), other.matrix(), op)
 
     def matrix(self):
         """
@@ -884,7 +887,7 @@ cdef class BinaryCode:
             sage: C = BinaryCode(B, 60)
             sage: D = BinaryCode(C, 240)
             sage: E = BinaryCode(D, 85)
-            sage: B.print_data() # random - actually "print P.print_data()"
+            sage: B.print_data() # random - actually "print(P.print_data())"
             ncols: 4
             nrows: 1
             nwords: 2
@@ -894,7 +897,7 @@ cdef class BinaryCode:
             words:
             0000
             1111
-            sage: C.print_data() # random - actually "print P.print_data()"
+            sage: C.print_data() # random - actually "print(P.print_data())"
             ncols: 6
             nrows: 2
             nwords: 4
@@ -907,7 +910,7 @@ cdef class BinaryCode:
             111100
             001111
             110011
-            sage: D.print_data() # random - actually "print P.print_data()"
+            sage: D.print_data() # random - actually "print(P.print_data())"
             ncols: 8
             nrows: 3
             nwords: 8
@@ -925,7 +928,7 @@ cdef class BinaryCode:
             11111111
             00110011
             11000011
-            sage: E.print_data() # random - actually "print P.print_data()"
+            sage: E.print_data() # random - actually "print(P.print_data())"
             ncols: 8
             nrows: 4
             nwords: 16
@@ -1356,7 +1359,6 @@ cdef class OrbitPartition:
         return self.wd_find(word)
 
     cdef int wd_find(self, int word):
-#        print 'wd_find', word
         if self.wd_parent[word] == word:
             return word
         else:
@@ -1392,7 +1394,6 @@ cdef class OrbitPartition:
         self.wd_union(x, y)
 
     cdef void wd_union(self, int x, int y):
-#        print 'wd_union', x, y
         cdef int x_root, y_root
         x_root = self.wd_find(x)
         y_root = self.wd_find(y)
@@ -1432,7 +1433,6 @@ cdef class OrbitPartition:
         return self.col_find(col)
 
     cdef int col_find(self, int col):
-#        print 'col_find', col
         if self.col_parent[col] == col:
             return col
         else:
@@ -1468,7 +1468,6 @@ cdef class OrbitPartition:
         self.col_union(x, y)
 
     cdef void col_union(self, int x, int y):
-#        print 'col_union', x, y
         cdef int x_root, y_root
         x_root = self.col_find(x)
         y_root = self.col_find(y)
@@ -1536,9 +1535,6 @@ cdef class OrbitPartition:
         cdef int j, gamma_j_root, return_value = 0
         cdef int *self_wd_parent = self.wd_parent
         cdef int *self_col_parent = self.col_parent
-#        print 'merge_perm'
-#        print 'col_gamma:', [col_gamma[i] for i from 0 <= i < self.ncols]
-#        print 'wd_gamma:', [wd_gamma[i] for i from 0 <= i < self.nwords]
         for i from 0 <= i < self.nwords:
             gamma_i_root = self.wd_find(wd_gamma[i])
             if gamma_i_root != i:
@@ -1676,7 +1672,7 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(2, 6)
-            sage: print P.print_data()
+            sage: print(P.print_data())
             nwords:4
             nrows:2
             ncols:6
@@ -2143,7 +2139,6 @@ cdef class PartitionStack:
 #            if self_col_lvls[j] <= k: break
 #            j += 1
 #        # j now points to the last element of the cell
-##        print "fsnt:", location, j-location+1
 #        i = self.radix - j - 1                 # the cell is represented in binary, reading from the right:
 #        cell = (~0 << location) ^ (~0 << j+1)  # <-------            self.radix               ----->
 #        return cell                            # [0]*(radix-j-1) + [1]*(j-location+1) + [0]*location
@@ -2728,28 +2723,18 @@ cdef class PartitionStack:
         cdef int *self_col_lvls = self.col_lvls
         cdef int *self_col_ents = self.col_ents
         while not self.is_discrete(k) and m < alpha_length:
-#            print "m:", m
-#            print "alpha:", ','.join(['w'+str(alpha[i]^flag) if alpha[i]&flag else 'c'+str(alpha[i]) for i from 0 <= i < alpha_length])
-#            print self
             invariant += 1
             j = 0
             if alpha[m] & flag:
-#                print 'word'
                 while j < self_ncols:
-#                    print 'j', j
-#                    print self
                     i = j; s = 0
                     invariant += 8
                     while True:
-#                        print 'col_i', self_col_ents[i]
-#                        print 'alpha[m]^flag', alpha[m]^flag
                         self_col_degs[i-j] = self.col_degree(CG, self_col_ents[i], alpha[m]^flag, k)
-#                        print 'deg', self_col_degs[i-j]
                         if s == 0 and self_col_degs[i-j] != self_col_degs[0]: s = 1
                         i += 1
                         if self_col_lvls[i-1] <= k: break
                     if s:
-#                        print 's'
                         invariant += 8
                         t = self.sort_cols(j, k)
                         invariant += t
@@ -2771,16 +2756,11 @@ cdef class PartitionStack:
                         invariant += (i-j)
                     j = i
             else:
-#                print 'col'
                 while j < self.nwords:
-#                    print 'j', j
-#                    print self
                     i = j; s = 0
                     invariant += 64
                     while True:
-#                        print 'i', i
                         self_wd_degs[i-j] = self.wd_degree(CG, self_wd_ents[i], alpha[m], k, ham_wts)
-#                        print 'deg', self_wd_degs[i-j]
                         if s == 0 and self_wd_degs[i-j] != self_wd_degs[0]: s = 1
                         i += 1
                         if self_wd_lvls[i-1] <= k: break
@@ -2930,12 +2910,12 @@ cdef class PartitionStack:
         """
         cdef int i, j
         if self.basis_locations:
-            print "basis_locations:"
+            print("basis_locations:")
             j = 1
             while (1 << j) < self.nwords:
                 j += 1
             for i from 0 <= i < j:
-                print self.basis_locations[i]
+                print(self.basis_locations[i])
 
     def _find_basis(self):
         """
@@ -3386,66 +3366,6 @@ cdef class BinaryCodeClassifier:
 
         state = 1
         while state != -1:
-            if False:
-                print '-----'
-                print "k:", k
-                print "h:", h
-            if False:
-                if k != -1:
-                    if v[k]&nu.flag:
-                        print "v[k]: word ", v[k]^nu.flag
-                    else:
-                        print "v[k]: col ", v[k]
-                    if tvc&nu.flag:
-                        print "tvc- wd", tvc^nu.flag
-                    else:
-                        print "tvc- col", tvc
-                    if W[self.Phi_size * k]:
-                        print "W[k]: cols", Integer(W[self.Phi_size * k]).binary()
-                    else:
-                        j = nwords/self.radix
-                        if nwords%self.radix:
-                            j += 1
-                        L = ''
-                        for i from 0 <= i < j:
-                            if i == j - 1:
-                                jj = nwords%self.radix
-                                if jj == 0:
-                                    jj = self.radix
-                            else:
-                                jj = self.radix
-                            for ii from 0 <= ii < jj:
-                                if W[self.Phi_size * k + 1 + i] & (1 << ii):
-                                    L += '1'
-                                else:
-                                    L += '0'
-                        print "W[k]: words", L#[Integer(W[self.Phi_size * k + 1 + i]).binary() for i from 0 <= i < j]
-            if False:
-                print 'nu'
-                print nu
-                if tvc&nu.flag:
-                    print 'tvc is word', tvc^nu.flag
-                else:
-                    print 'tvc is col', tvc
-                if v[k]&nu.flag:
-                    print 'v[k] is word', v[k]^nu.flag
-                else:
-                    print 'v[k] is col', v[k]
-            if False:
-                if h != -1:
-                    print 'zeta'
-                    print zeta
-                    print 'rho'
-                    print rho
-                print "hzf:", hzf__h_zeta
-                print "aut_gp_index", self.aut_gp_index
-                print 'hh', hh
-                print 'ht', ht
-                print 'hzf__h_zeta', hzf__h_zeta
-                print 'qzb', qzb
-            if False:
-                print '-----'
-                print "state:", state
 
             if state == 1: # Entry point: once only
                 alpha[0] = 0
@@ -3519,10 +3439,7 @@ cdef class BinaryCodeClassifier:
 
             elif state == 6: # at this stage, there is no reason to continue downward, so backtrack
                 j = k
-#                print 'current k', j
-#                print 'ht', ht
-#                print 'hzb__h_rho', hzb__h_rho
-#                print 'hh', hh
+
                 # return to the longest ancestor nu[i] of nu that could have a
                 # descendant equivalent to zeta or could improve on rho.
                 # All terminal nodes descending from nu[hh] are known to be
@@ -3568,8 +3485,7 @@ cdef class BinaryCodeClassifier:
                 if k < hzf__h_zeta: state = 8; continue
 
                 nu.get_permutation(zeta, word_gamma, col_gamma)
-#                print "gamma:", str([[word_gamma[i] for i from 0 <= i < nwords], [col_gamma[i] for i from 0 <= i < ncols]]).replace(' ','')
-#                print Theta
+
                 # if C^gamma == C, the permutation is an automorphism, goto 10
                 if C.is_automorphism(col_gamma, word_gamma):
                     state = 10
@@ -3594,8 +3510,7 @@ cdef class BinaryCodeClassifier:
 
                 # if C(nu) == C(rho), get the automorphism and goto 10
                 rho.get_permutation(nu, word_gamma, col_gamma)
-#                print "gamma:", str([[word_gamma[i] for i from 0 <= i < nwords], [col_gamma[i] for i from 0 <= i < ncols]]).replace(' ','')
-#                print Theta
+
                 state = 10
 
             elif state == 9: # nu is a better guess at the canonical label than rho
@@ -3713,8 +3628,6 @@ cdef class BinaryCodeClassifier:
                 tvc = 0
                 jj = self.Phi_size*k
                 if W[jj]:
-#                    print 'W[jj]', W[jj]
-#                    print tvc
                     while not (1 << tvc) & W[jj]:
                         tvc += 1
                 else:
@@ -3728,20 +3641,14 @@ cdef class BinaryCodeClassifier:
                 state = 14
 
             elif state == 14: # see if there are any more splits to make from this level of zeta (see state 17)
-#                print Theta
                 if v[k]&nu.flag == tvc&nu.flag:
                     if tvc&nu.flag:
- #                       print 'v[k] is word', v[k]^nu.flag
-  #                      print 'tvc is word', tvc^nu.flag
                         if Theta.wd_find(v[k]^nu.flag) == Theta.wd_find(tvc^nu.flag):
                             index += 1
-   #                         print 'index', index
                     else:
-    #                    print 'v[k] is col', v[k]
-     #                   print 'tvc is col', tvc
                         if Theta.col_find(v[k]) == Theta.col_find(tvc):
                             index += 1
-      #                      print 'index', index
+
                             # keep tabs on how many elements are in the same cell of Theta as tvc
                 # find the next split
                 jj = self.Phi_size*k
@@ -3770,10 +3677,6 @@ cdef class BinaryCodeClassifier:
                         # there is no new split at this level
                         state = 16; continue
                     # new split column better be a minimal representative in Theta, or wasted effort
-#                    print 'checking whether v[k] is a minimum cell rep of theta'
-#                    print 'Theta.col_find(v[k]) = ', Theta.col_find(v[k])
-#                    print 'Theta.col_min_cell_rep(^)', Theta.col_min_cell_rep[Theta.col_find(v[k])]
-#                    print 'v[k]', v[k]
                     if Theta.col_min_cell_rep[Theta.col_find(v[k])] == v[k]:
                         state = 15
                     else:
@@ -3806,7 +3709,6 @@ cdef class BinaryCodeClassifier:
                         j += ham_wts[iii & 65535] + ham_wts[(iii >> 16) & 65535]
                         i += 1
                 if j == index and ht == k + 1: ht = k
-#                print "POINT A, index =", index
                 self.aut_gp_size *= index
                 # (POINT A)
                 index = 0
@@ -3980,7 +3882,7 @@ cdef class BinaryCodeClassifier:
             ....:   s = 'n=%2d : '%n
             ....:   for k in range(1,7):
             ....:       s += '%3d '%len([C for C in L if C.length() == n and C.dimension() == k])
-            ....:   print s
+            ....:   print(s)
             n= 0 :   0   0   0   0   0   0
             n= 1 :   0   0   0   0   0   0
             n= 2 :   0   0   0   0   0   0
@@ -4023,8 +3925,6 @@ cdef class BinaryCodeClassifier:
         B.put_in_std_form()
         ortho_basis = expand_to_ortho_basis(B, n) # modifies B!
 
-#        print 'parent:'
-#        print B
         aut_gp_gens, labeling, size, base = self._aut_gp_and_can_label(B)
         B_can_lab = <codeword *> sig_malloc(B.nrows * sizeof(codeword))
         can_lab = create_word_perm(labeling[:B.ncols])
@@ -4060,10 +3960,6 @@ cdef class BinaryCodeClassifier:
         num_gens = len(aut_gp_gens)
         base_size = len(base)
 
-#        print 'gens:'
-#        for g in aut_gp_gens:
-#            print g
-
         parent_generators = <WordPermutation **> sig_malloc( len(aut_gp_gens) * sizeof(WordPermutation*) )
         temp_basis = <codeword *> sig_malloc( self.radix * sizeof(codeword) )
 
@@ -4080,15 +3976,6 @@ cdef class BinaryCodeClassifier:
         while ortho_basis[j]:
             word ^= ortho_basis[j]
             j += 1
-
-#        print "ortho_basis:"
-#        for i from 0 <= i < k:
-#            print ''.join(reversed(Integer(ortho_basis[i]).binary().zfill(n)))
-#        print '-'
-#        for i from k <= i < j:
-#            print ''.join(reversed(Integer(ortho_basis[i]).binary().zfill(n)))
-#        print 'word:'
-#        print ''.join(reversed(Integer(word).binary().zfill(n)))
 
         log_2_radix = 0
         while ((<codeword>1) << log_2_radix) < self.radix:
@@ -4111,36 +3998,22 @@ cdef class BinaryCodeClassifier:
         k_gate = (<codeword>1 << k) - 1
         nonzero_gate = ( (<codeword>1 << (n-B.ncols)) - 1 ) << B.ncols
         radix_gate = (((<codeword>1) << log_2_radix) - 1)
-#        print 'gate:', ''.join(reversed(Integer(gate).binary().zfill(n)))
-#        print 'gate:', ''.join(reversed(Integer(nonzero_gate).binary().zfill(n)))
+
         while True:
-#            print '    while True'
-#            print '    ' + ''.join(reversed(Integer(word).binary().zfill(n)))
             if nonzero_gate & word == nonzero_gate and \
               (ham_wts[word & 65535] + ham_wts[(word >> 16) & 65535])%d == 0:
-#                print ''.join(reversed(Integer(word).binary().zfill(n)))
                 temp = (word >> B.nrows) & ((<codeword>1 << k) - 1)
-#                print "if not orbit_checks[temp >> log_2_radix] & ((<codeword>1) << (temp & radix_gate)):"
-#                print temp >> log_2_radix
-#                print temp & radix_gate
                 if not orbit_checks[temp >> log_2_radix] & ((<codeword>1) << (temp & radix_gate)):
                     B_aug = BinaryCode(B, word)
-#                    print 'child:'
-#                    print B_aug
-#                    print 'canonically labeling child'
                     aug_aut_gp_gens, aug_labeling, aug_size, aug_base = self._aut_gp_and_can_label(B_aug)
-#                    print 'done canonically labeling child'
+
                     # check if (B, B_aug) ~ (m(B_aug), B_aug)
 
                     can_lab = create_word_perm(aug_labeling[:n])
-#                    print 'relabeling:'
-#                    print [self.labeling[j] for j from 0 <= j < n]
+
                     can_lab_inv = create_inv_word_perm(can_lab)
                     for j from 0 <= j < B_aug.nrows:
                         temp_basis[j] = permute_word_by_wp(can_lab, B_aug.basis[j])
-#                    print 'temp_basis:'
-#                    for j from 0 <= j < B_aug.nrows:
-#                        print ''.join(reversed(Integer(temp_basis[j]).binary().zfill(n)))
 
                     # row reduce to get canonical label
                     i = 0
@@ -4164,10 +4037,8 @@ cdef class BinaryCodeClassifier:
                         i += 1
                     # done row reduction
 
-#                    print 'temp_basis:'
                     for j from 0 <= j < B.nrows:
                         temp_basis[j] = permute_word_by_wp(can_lab_inv, temp_basis[j])
-#                        print ''.join(reversed(Integer(temp_basis[j]).binary().zfill(n)))
                     from sage.matrix.constructor import matrix
                     from sage.rings.all import ZZ
                     from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroupElement
@@ -4179,40 +4050,30 @@ cdef class BinaryCodeClassifier:
                             r.append((((<codeword>1)<<j)&temp_basis[i])>>j)
                         rs.append(r)
                     m = BinaryCode(matrix(ZZ, rs))
-#                    print 'm:'
-#                    print m
+
                     m_aut_gp_gens, m_labeling, m_size, m_base = self._aut_gp_and_can_label(m)
                     from sage.arith.all import factorial
                     if True:#size*factorial(n-B.ncols) == m_size:
-#                        print 'in if'
-#                        print 'm_aut_gp_gens:', m_aut_gp_gens
+
                         if len(m_aut_gp_gens) == 0:
                             aut_m = PermutationGroup([()])
                         else:
                             aut_m = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in m_aut_gp_gens])
-#                        print 'aut_m:', aut_m
-#                        print 'aug_aut_gp_gens:', aug_aut_gp_gens
+
                         if len(aug_aut_gp_gens) == 0:
                             aut_B_aug = PermutationGroup([()])
                         else:
                             aut_B_aug = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens])
-#                        print 'aut_B_aug:', aut_B_aug
                         H = aut_m._gap_(gap).Intersection2(aut_B_aug._gap_(gap))
-#                        print 'H:', H
                         rt_transversal = list(gap('List(RightTransversal( %s,%s ));'\
                           %(str(aut_B_aug.__interface[gap]),str(H))))
-#                        print 'rt_transversal:', rt_transversal
                         rt_transversal = [PermutationGroupElement(g) for g in rt_transversal if str(g) != '()']
                         rt_transversal = [[a-1 for a in g.domain()] for g in rt_transversal]
                         rt_transversal = [g + range(len(g), n) for g in rt_transversal]
                         rt_transversal.append(range(n))
-#                        print 'rt_transversal:', rt_transversal
                         bingo2 = 0
                         for coset_rep in rt_transversal:
-#                            print 'coset_rep:'
-#                            print coset_rep
                             hwp = create_word_perm(coset_rep)
-                            #hwp = create_inv_word_perm(gwp) # since we want a left transversal
                             #dealloc_word_perm(gwp)
                             bingo2 = 1
                             for j from 0 <= j < B.nrows:
@@ -4232,31 +4093,22 @@ cdef class BinaryCodeClassifier:
                                 for j from 0 <= j < B_aug.nrows:
                                     M[j,i] = B_aug.is_one(1 << j, i)
                             output.append(M)
-#                            print "ACCEPT"
                     dealloc_word_perm(can_lab)
                     dealloc_word_perm(can_lab_inv)
                 #...
-#                    print '    orbit_checks:'
-#                    for temp from 0 <= temp < ((<codeword>1) << orb_chx_size):
-#                        print '    ' + ''.join(reversed(Integer(orbit_checks[temp]).binary().zfill(n)))
+
                     orbits = [word]
                     j = 0
                     while j < len(orbits):
                         for i from 0 <= i < len(aut_gp_gens):
-#                            print '        i', i
                             temp = <codeword> orbits[j]
                             temp = permute_word_by_wp(parent_generators[i], temp)
-#                            print '        temp:', ''.join(reversed(Integer(temp).binary().zfill(n)))
                             temp ^= B.words[temp & gate]
-#                            print '        temp:', ''.join(reversed(Integer(temp).binary().zfill(n)))
                             if temp not in orbits:
                                 orbits.append(temp)
                         j += 1
                     for temp in orbits:
                         temp = (temp >> B.nrows) & k_gate
-#                        print '        temp:', temp
-#                        print '        ', temp >> log_2_radix
-#                        print '        ', ((<codeword>1) << (temp & radix_gate))
                         orbit_checks[temp >> log_2_radix] |= ((<codeword>1) << (temp & radix_gate))
 
 

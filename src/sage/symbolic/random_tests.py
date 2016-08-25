@@ -1,5 +1,5 @@
 """
-Randomized tests of GiNaC / PyNaC.
+Randomized tests of GiNaC / PyNaC
 """
 
 ###############################################################################
@@ -10,6 +10,7 @@ Randomized tests of GiNaC / PyNaC.
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
+from __future__ import print_function
 
 
 from sage.misc.prandom import randint, random
@@ -228,7 +229,7 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
         nodes_per_child = random_integer_vector(n_spare_nodes, n_children)
         children = [random_expr_helper(n+1, internal, leaves, verbose) for n in nodes_per_child]
         if verbose:
-            print "About to apply %r to %r" % (r[1], children)
+            print("About to apply %r to %r" % (r[1], children))
         return r[1](*children)
 
 def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,

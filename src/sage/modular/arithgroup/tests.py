@@ -12,8 +12,10 @@ Testing Arithmetic subgroup
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
-from arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
+from .arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
 from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 
@@ -152,9 +154,8 @@ class Test:
             test_random
             ...
         """
-
-        print "test_%s"%name
-        Test.__dict__["test_%s"%name](self)
+        print("test_%s" % name)
+        Test.__dict__["test_%s" % name](self)
 
     def random(self, seconds=0):
         """
@@ -202,7 +203,7 @@ class Test:
                 s += " (will stop after about %s seconds)"%seconds
             t = cputime()
             self._do(name)
-            print "\ttime=%s\telapsed=%s"%(cputime(t),cputime(total))
+            print("\ttime=%s\telapsed=%s" % (cputime(t), cputime(total)))
             n += 1
 
     def test_random(self):
@@ -217,7 +218,7 @@ class Test:
         """
         tests = [a for a in Test.__dict__.keys() if a[:5] == "test_" and a != "test_random"]
         name = prandom.choice(tests)
-        print "Doing random test %s"%name
+        print("Doing random test %s" % name)
         Test.__dict__[name](self)
 
     def test_relabel(self):
@@ -264,13 +265,13 @@ class Test:
             GG.relabel()
 
             for elt in ['_S2','_S3','_L','_R']:
-                if getattr(G,elt) != getattr(GG,elt):
-                    print "s2 = %s" %str(s2)
-                    print "s3 = %s" %str(s3)
-                    print "ss2 = %s" %str(ss2)
-                    print "ss3 = %s" %str(ss3)
-                    print "pp = %s" %str(pp)
-                    raise AssertionError("%s does not coincide" %elt)
+                if getattr(G, elt) != getattr(GG, elt):
+                    print("s2 = %s" % str(s2))
+                    print("s3 = %s" % str(s3))
+                    print("ss2 = %s" % str(ss2))
+                    print("ss3 = %s" % str(ss3))
+                    print("pp = %s" % str(pp))
+                    raise AssertionError("%s does not coincide" % elt)
 
     def test_congruence_groups(self):
         r"""
@@ -345,8 +346,8 @@ class Test:
             sage: Test().test_spanning_trees() #random
         """
         from sage.all import prod
-        from all import SL2Z
-        from arithgroup_perm import S2m,S3m,Lm
+        from .all import SL2Z
+        from .arithgroup_perm import S2m,S3m,Lm
 
         G = random_even_arithgroup(self.index)
 
@@ -383,8 +384,8 @@ class Test:
             sage: from sage.modular.arithgroup.tests import Test
             sage: Test().test_todd_coxeter() #random
         """
-        from all import SL2Z
-        from arithgroup_perm import S2m,S3m,Lm,Rm
+        from .all import SL2Z
+        from .arithgroup_perm import S2m,S3m,Lm,Rm
 
         G = random_even_arithgroup(self.index)
 

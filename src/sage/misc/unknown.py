@@ -5,9 +5,12 @@ AUTHORS:
 
 - Florent Hivert (2010): initial version.
 """
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+
+
 class UnknownClass(UniqueRepresentation, SageObject):
     """
     TESTS::
@@ -21,12 +24,12 @@ class UnknownClass(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: l = [False, Unknown, True]
-            sage: for a in l: print ([a and b for b in l])
+            sage: for a in l: print([a and b for b in l])
             [False, False, False]
             [Unknown, Unknown, Unknown]
             [False, Unknown, True]
 
-            sage: for a in l: print ([a or b  for b in l])
+            sage: for a in l: print([a or b  for b in l])
             [False, Unknown, True]
             [False, Unknown, True]
             [True, True, True]
@@ -136,12 +139,12 @@ class UnknownClass(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: l = [False, Unknown, True]
-            sage: for a in l: print ([a < b for b in l])
+            sage: for a in l: print([a < b for b in l])
             [False, True, True]
             [False, False, True]
             [False, False, False]
 
-            sage: for a in l: print ([a <= b for b in l])
+            sage: for a in l: print([a <= b for b in l])
             [True, True, True]
             [False, True, True]
             [False, False, True]

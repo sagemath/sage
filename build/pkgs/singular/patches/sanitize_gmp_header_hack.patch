@@ -1,18 +1,18 @@
-diff -Naur Singular-3-1-5.orig/factory/gen_cf_gmp.cc Singular-3-1-5/factory/gen_cf_gmp.cc
---- Singular-3-1-5.orig/factory/gen_cf_gmp.cc	2009-11-02 11:12:22.000000000 +0100
-+++ Singular-3-1-5/factory/gen_cf_gmp.cc	1970-01-01 01:00:00.000000000 +0100
+diff -Naur a/latest/factory/gen_cf_gmp.cc b/latest/factory/gen_cf_gmp.cc
+--- a/latest/factory/gen_cf_gmp.cc	2009-11-02 11:12:22.000000000 +0100
++++ b/latest/factory/gen_cf_gmp.cc	1970-01-01 01:00:00.000000000 +0100
 @@ -1 +0,0 @@
 -#include <gmp.h>
-diff -Naur Singular-3-1-5.orig/factory/gen_cf_gmp.template Singular-3-1-5/factory/gen_cf_gmp.template
---- Singular-3-1-5.orig/factory/gen_cf_gmp.template	2009-11-02 11:12:22.000000000 +0100
-+++ Singular-3-1-5/factory/gen_cf_gmp.template	1970-01-01 01:00:00.000000000 +0100
+diff -Naur a/latest/factory/gen_cf_gmp.template b/latest/factory/gen_cf_gmp.template
+--- a/latest/factory/gen_cf_gmp.template	2009-11-02 11:12:22.000000000 +0100
++++ b/latest/factory/gen_cf_gmp.template	1970-01-01 01:00:00.000000000 +0100
 @@ -1,3 +0,0 @@
 -GMP_H=`echo $GMP_H_T| sed -e 's/^.*gmp.cc//' -e 's/ .$//'`
 -echo generating cf_gmp.h from $GMP_H
 -cat $GMP_H | grep -v __GMP_DECLSPEC_XX |grep -v std::FILE > cf_gmp.h
-diff -Naur Singular-3-1-5.orig/factory/GNUmakefile.in Singular-3-1-5/factory/GNUmakefile.in
---- Singular-3-1-5.orig/factory/GNUmakefile.in	2012-05-11 16:00:15.000000000 +0200
-+++ Singular-3-1-5/factory/GNUmakefile.in	2013-06-24 23:08:48.317324421 +0200
+diff -Naur a/latest/factory/GNUmakefile.in b/latest/factory/GNUmakefile.in
+--- a/latest/factory/GNUmakefile.in	2012-05-11 16:00:15.000000000 +0200
++++ b/latest/factory/GNUmakefile.in	2013-06-24 23:08:48.317324421 +0200
 @@ -61,6 +61,9 @@
  MKINSTALLDIRS =	@FACTORY_MKINSTALLDIRS@
  MAKEHEADER =	@FACTORY_MAKEHEADER@

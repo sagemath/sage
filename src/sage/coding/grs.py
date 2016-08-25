@@ -19,6 +19,7 @@ This file contains the following elements:
     - :class:`GRSErrorErasureDecoder`, a decoder which corrects both errors and erasures
     - :class:`GRSKeyEquationSyndromeDecoder`, a decoder which corrects errors using the key equation on syndrome polynomials
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
@@ -38,11 +39,9 @@ from sage.modules.free_module import VectorSpace
 from sage.rings.integer import Integer
 from sage.misc.cachefunc import cached_method
 from copy import copy
-from linear_code import (AbstractLinearCode,
-                         LinearCodeSyndromeDecoder,
-                         LinearCodeNearestNeighborDecoder)
-from encoder import Encoder
-from decoder import Decoder, DecodingError
+from .linear_code import AbstractLinearCode
+from .encoder import Encoder
+from .decoder import Decoder, DecodingError
 from sage.rings.arith import xgcd
 from sage.misc.misc_c import prod
 from sage.functions.other import binomial, floor, sqrt
@@ -450,6 +449,35 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         for i in range(n + 1 - d):
             w_en += wd[i + d] * x ** (i + d)
         return w_en
+
+    def _punctured_form(self, points):
+        r"""
+        Returns a representation of self as a
+        :class:`GeneralizedReedSolomonCode` punctured in ``points``.
+
+        INPUT:
+
+        - ``points`` -- a set of positions where to puncture ``self``
+
+        EXAMPLES::
+
+            sage: C_grs = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
+            sage: C_grs._punctured_form({4, 3})
+            [38, 12, 27] Generalized Reed-Solomon Code over Finite Field of size 59
+        """
+        if not isinstance(points, (Integer, int, set)):
+            raise TypeError("points must be either a Sage Integer, a Python int, or a set")
+        alphas = list(self.evaluation_points())
+        col_mults = list(self.column_multipliers())
+        n = self.length()
+        punctured_alphas = []
+        punctured_col_mults = []
+        punctured_alphas = [alphas[i] for i in range(n) if i not in points]
+        punctured_col_mults = [col_mults[i] for i in range(n) if i not in points]
+        G = self.generator_matrix()
+        G = G.delete_columns(list(points))
+        dimension = G.rank()
+        return GeneralizedReedSolomonCode(punctured_alphas, dimension, punctured_col_mults)
 
     def decode_to_message(self, r):
         r"""
@@ -2117,9 +2145,6 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
 GeneralizedReedSolomonCode._registered_encoders["EvaluationVector"] = GRSEvaluationVectorEncoder
 GeneralizedReedSolomonCode._registered_encoders["EvaluationPolynomial"] = GRSEvaluationPolynomialEncoder
-
-GeneralizedReedSolomonCode._registered_decoders["Syndrome"] = LinearCodeSyndromeDecoder
-GeneralizedReedSolomonCode._registered_decoders["NearestNeighbor"] = LinearCodeNearestNeighborDecoder
 
 GeneralizedReedSolomonCode._registered_decoders["BerlekampWelch"] = GRSBerlekampWelchDecoder
 GRSBerlekampWelchDecoder._decoder_type = {"hard-decision", "unique", "always-succeed"}

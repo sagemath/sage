@@ -87,11 +87,13 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.misc.all import prod
 from sage.misc.all import xmrange
 from sage.rings.all import QQ
-from constructor import EllipticCurve, EllipticCurve_from_j
+from .constructor import EllipticCurve, EllipticCurve_from_j
 
 
 def is_possible_j(j, S=[]):
@@ -122,13 +124,55 @@ def is_possible_j(j, S=[]):
             and (j-1728).prime_to_S_part(S).abs().is_square())
 
 
+def curve_key(E1):
+    r"""
+    Comparison key for elliptic curves over `\QQ`.
+
+    The key is a tuple:
+
+    - if the curve is in the database: (conductor, 0, label, number)
+
+    - otherwise: (conductor, 1, a_invariants)
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_egros import curve_key
+        sage: E = EllipticCurve_from_j(1728)
+        sage: curve_key(E)
+        (32, 0, 0, 2)
+        sage: E = EllipticCurve_from_j(1729)
+        sage: curve_key(E)
+        (2989441, 1, (1, 0, 0, -36, -1))
+    """
+    try:
+        from sage.databases.cremona import parse_cremona_label, class_to_int
+        N, l, k = parse_cremona_label(E1.label())
+        return (N, 0, class_to_int(l), k)
+    except RuntimeError:
+        return (E1.conductor(), 1, E1.ainvs())
+
+
 def curve_cmp(E1, E2):
     r"""
     Comparison function for elliptic curves over `\QQ`.
 
     Order by label if in the database, else first by conductor, then
     by c_invariants.
+
+    Deprecated, please use instead `curve_key`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_egros import curve_cmp
+        sage: E1 = EllipticCurve_from_j(1728)
+        sage: E2 = EllipticCurve_from_j(1729)
+        sage: curve_cmp(E1,E2)
+        doctest:...: DeprecationWarning: Please use 'curve_key' instead.
+        See http://trac.sagemath.org/21142 for details.
+        -1
     """
+    from sage.misc.superseded import deprecation
+    deprecation(21142, "Please use 'curve_key' instead.")
     t = cmp(E1.conductor(), E2.conductor())
     if t:
         return t
@@ -189,7 +233,7 @@ def egros_from_j_1728(S=[]):
         Eu = EllipticCurve([0,0,0,u,0]).minimal_model()
         if Eu.has_good_reduction_outside_S(S):
             Elist += [Eu]
-    Elist.sort(cmp=curve_cmp)
+    Elist.sort(key=curve_key)
     return Elist
 
 
@@ -237,7 +281,7 @@ def egros_from_j_0(S=[]):
         Eu = EllipticCurve([0,0,0,0,u]).minimal_model()
         if Eu.has_good_reduction_outside_S(S):
             Elist += [Eu]
-    Elist.sort(cmp=curve_cmp)
+    Elist.sort(key=curve_key)
     return Elist
 
 
@@ -293,7 +337,7 @@ def egros_from_j(j,S=[]):
         if Eu.has_good_reduction_outside_S(S):
             Elist += [Eu]
 
-    Elist.sort(cmp=curve_cmp)
+    Elist.sort(key=curve_key)
     return Elist
 
 
@@ -338,7 +382,7 @@ def egros_from_jlist(jlist,S=[]):
         (0, 0, 1, 0, -61)]
     """
     elist = sum([egros_from_j(j,S) for j in jlist],[])
-    elist.sort(cmp=curve_cmp)
+    elist.sort(key=curve_key)
     return elist
 
 
@@ -404,16 +448,16 @@ def egros_get_j(S=[], proof=None, verbose=False):
     nw = 6**len(S) * 2
 
     if verbose:
-        print "Finding possible j invariants for S = ",S
-        print "Using ", nw, " twists of base curve"
+        print("Finding possible j invariants for S = ", S)
+        print("Using ", nw, " twists of base curve")
         sys.stdout.flush()
 
     for ei in xmrange([6]*len(S) + [2]):
         w = prod([p**e for p,e in zip(reversed(SS),ei)],QQ(1))
         wcount+=1
         if verbose:
-            print "Curve #",wcount, "/",nw,":";
-            print "w = ",w,"=",w.factor()
+            print("Curve #", wcount, "/", nw, ":")
+            print("w = ", w, "=", w.factor())
             sys.stdout.flush()
         a6 = -1728*w
         d2 = 0
@@ -432,17 +476,17 @@ def egros_get_j(S=[], proof=None, verbose=False):
         try:
             pts = E23.S_integral_points(S,proof=proof)
         except RuntimeError:
-            pts=[]
-            print "Failed to find S-integral points on ",E23.ainvs()
+            pts = []
+            print("Failed to find S-integral points on ", E23.ainvs())
             if proof:
                 if verbose:
-                    print "--trying again with proof=False"
+                    print("--trying again with proof=False")
                     sys.stdout.flush()
                 pts = E23.S_integral_points(S,proof=False)
                 if verbose:
-                    print "--done"
+                    print("--done")
         if verbose:
-            print len(pts), " S-integral points: ",pts
+            print(len(pts), " S-integral points: ", pts)
             sys.stdout.flush()
         for P in pts:
             P = urst(P)
@@ -453,11 +497,11 @@ def egros_get_j(S=[], proof=None, verbose=False):
             if is_possible_j(j,S):
                 if not j in jlist:
                     if verbose:
-                        print "Adding possible j = ",j
+                        print("Adding possible j = ", j)
                         sys.stdout.flush()
                     jlist += [j]
             else:
                 if True: #verbose:
-                    print "Discarding illegal j = ",j
+                    print("Discarding illegal j = ", j)
                     sys.stdout.flush()
     return sorted(jlist, key=lambda j: j.height())

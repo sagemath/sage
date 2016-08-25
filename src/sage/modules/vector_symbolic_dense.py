@@ -44,6 +44,7 @@ Test pickling/unpickling::
     True
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Joris Vankerschaver (jv@caltech.edu)
@@ -54,7 +55,7 @@ Test pickling/unpickling::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import free_module_element
+from . import free_module_element
 from sage.symbolic.all import Expression
 
 

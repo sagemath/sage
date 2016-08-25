@@ -15,6 +15,8 @@ Miscellaneous
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.misc.all import prod
 
 class DoublyLinkedList():
@@ -237,7 +239,7 @@ class IterableFunctionCall:
 
     This does not work::
 
-        sage: for z in f: print z
+        sage: for z in f: print(z)
         Traceback (most recent call last):
         ...
         TypeError: 'function' object is not iterable
@@ -247,7 +249,7 @@ class IterableFunctionCall:
 
         sage: from sage.combinat.misc import IterableFunctionCall
         sage: g = IterableFunctionCall(f)
-        sage: for z in g: print z
+        sage: for z in g: print(z)
         a
         b
 
@@ -257,7 +259,7 @@ class IterableFunctionCall:
 
         sage: def f(n, m): yield 'a' * n; yield 'b' * m; yield 'foo'
         sage: g = IterableFunctionCall(f, 2, 3)
-        sage: for z in g: print z
+        sage: for z in g: print(z)
         aa
         bbb
         foo

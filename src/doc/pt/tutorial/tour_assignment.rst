@@ -100,19 +100,3 @@ variável pode possuir valores de qualquer tipo em determinado escopo:
 A linguagem de programação C, que é de tipagem estática , é muito
 diferente; uma variável que foi declarada como int pode apenas
 armazenar um int em seu escopo.
-
-Uma potencial fonte de confusão em Python é que um inteiro literal que
-começa com zero é tratado como um número octal, isto é, um número na
-base 8.
-
-::
-
-    sage: 011
-    9
-    sage: 8 + 1
-    9
-    sage: n = 011
-    sage: n.str(8)   # string representation of n in base 8
-    '11'
-
-Isso é consistente com a linguagem de programação C.

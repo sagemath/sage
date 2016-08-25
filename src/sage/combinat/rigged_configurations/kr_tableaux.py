@@ -38,6 +38,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 # This contains both the parent and element classes. These should be split if
 #   the classes grow larger.
@@ -341,7 +342,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         - ``weight`` -- the weight
         - ``classical_weight`` -- the classical weight
 
-        If no arugments are specified, then return the unique module generator
+        If no arguments are specified, then return the unique module generator
         of classical weight `s \Lambda_r`.
 
         EXAMPLES::
@@ -1082,7 +1083,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
 
             sage: KRT = crystals.KirillovReshetikhin(['A',4,1], 2, 2, model='KR')
             sage: elt = KRT(2,1,4,3)
-            sage: print elt._repr_diagram()
+            sage: print(elt._repr_diagram())
               1  3
               2  4
         """

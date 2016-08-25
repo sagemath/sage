@@ -17,8 +17,9 @@ The basic command syntax is as follows::
     ======================================================================
 """
 from __future__ import print_function
+from __future__ import absolute_import
 
-from constructor import random_matrix, Matrix
+from .constructor import random_matrix, Matrix
 from sage.rings.all import ZZ, QQ, GF
 from sage.misc.misc import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm

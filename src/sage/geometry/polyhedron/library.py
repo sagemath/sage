@@ -58,6 +58,7 @@ REFERENCES:
     "A Polyhedron Full of Surprises",
     Mathematics Magazine 85 (2012), no. 5, 334-342.
 """
+from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2008 Marshall Hampton <hamptonio@gmail.com>
@@ -76,7 +77,7 @@ from sage.combinat.permutation import Permutations
 from sage.groups.perm_gps.permgroup_named import AlternatingGroup
 from sage.misc.decorators import rename_keyword
 from sage.misc.superseded import deprecated_function_alias
-from constructor import Polyhedron
+from .constructor import Polyhedron
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.associahedron import Associahedron
 
@@ -240,8 +241,8 @@ class Polytopes():
             sage: b3 = polytopes.Birkhoff_polytope(3)
             sage: b3.f_vector()
             (1, 6, 15, 18, 9, 1)
-            sage: print b3.ambient_dim(), b3.dim()
-            9 4
+            sage: b3.ambient_dim(), b3.dim()
+            (9, 4)
             sage: b3.is_lattice_polytope()
             True
             sage: p3 = b3.ehrhart_polynomial()     # optional - latte_int
@@ -253,8 +254,8 @@ class Polytopes():
             [6, 21, 55, 120]
 
             sage: b4 = polytopes.Birkhoff_polytope(4)
-            sage: print b4.n_vertices(), b4.ambient_dim(), b4.dim()
-            24 16 9
+            sage: b4.n_vertices(), b4.ambient_dim(), b4.dim()
+            (24, 16, 9)
         """
         from itertools import permutations
         verts = []
@@ -1339,7 +1340,7 @@ class Polytopes():
             sage: p24.f_vector()
             (1, 24, 96, 96, 24, 1)
             sage: v = next(p24.vertex_generator())
-            sage: for adj in v.neighbors(): print adj
+            sage: for adj in v.neighbors(): print(adj)
             A vertex at (-1/2, -1/2, -1/2, 1/2)
             A vertex at (-1/2, -1/2, 1/2, -1/2)
             A vertex at (-1, 0, 0, 0)

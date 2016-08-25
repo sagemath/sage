@@ -171,8 +171,6 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
         """
         __mul__ = Magmas.ElementMethods.__mul__.__func__
 
-#        __imul__ = __mul__
-
     class WithBasis(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:

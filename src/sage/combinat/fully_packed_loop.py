@@ -2,7 +2,7 @@ r"""
 Fully packed loops
 """
 # python3
-from __future__ import division
+from __future__ import division, print_function
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -686,7 +686,7 @@ class FullyPackedLoop(Element):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: print fpl.plot().description()
+            sage: print(fpl.plot().description())
             Line defined by 2 points:       [(-1.0, 1.0), (0.0, 1.0)]
             Line defined by 2 points:       [(0.0, 0.0), (0.0, -1.0)]
             Line defined by 2 points:       [(0.0, 0.0), (1.0, 0.0)]
@@ -795,7 +795,7 @@ class FullyPackedLoop(Element):
             sage: A = AlternatingSignMatrix([[0, 1, 0, 0], [1, -1, 0, 1], \
             [0, 1, 0, 0],[0, 0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: print fpl.plot().description()
+            sage: print(fpl.plot().description())
             Line defined by 2 points:       [(-1.0, 0.0), (0.0, 0.0)]
             Line defined by 2 points:       [(-1.0, 2.0), (0.0, 2.0)]
             Line defined by 2 points:       [(0.0, 1.0), (0.0, 0.0)]

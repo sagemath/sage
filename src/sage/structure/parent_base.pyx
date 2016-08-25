@@ -17,7 +17,7 @@ from coerce_exceptions import CoercionException
 
 cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:
-        raise RuntimeError, "%s still using old coercion framework" % p
+        raise RuntimeError("%s still using old coercion framework" % p)
 
 
 # TODO: Unpickled parents with base sometimes have their base set to None.
@@ -51,7 +51,7 @@ def is_ParentWithBase(x):
     """
     return isinstance(x, ParentWithBase)
 
-cdef class ParentWithBase(parent_old.Parent):
+cdef class ParentWithBase(Parent_old):
     """
     This class is being deprecated, see parent.Parent for the new model.
     """
@@ -60,7 +60,7 @@ cdef class ParentWithBase(parent_old.Parent):
 #        print type(self), "base", base, coerce_from
 #        if base != self and not base in coerce_from:
 #            coerce_from.append(base)
-        parent_old.Parent.__init__(self, coerce_from=coerce_from, actions=actions, embeddings=embeddings, category=category)
+        Parent_old.__init__(self, coerce_from=coerce_from, actions=actions, embeddings=embeddings, category=category)
         self._base = base
 
     cdef _coerce_c_impl(self,x):
@@ -68,7 +68,7 @@ cdef class ParentWithBase(parent_old.Parent):
        if not self._base is self:
            return self._coerce_try(x,(self._base))
        else:
-           raise TypeError, "No canonical coercion found."
+           raise TypeError("No canonical coercion found.")
 
 ##     def x__reduce__(self):
 ##         if HAS_DICTIONARY(self):
@@ -83,5 +83,5 @@ cdef class ParentWithBase(parent_old.Parent):
     # Derived class *must* define base_extend.
     def base_extend(self, X):
         check_old_coerce(self)
-        raise CoercionException, "BUG: the base_extend method must be defined for '%s' (class '%s')"%(
-            self, type(self))
+        raise CoercionException("BUG: the base_extend method must be defined for '%s' (class '%s')" %
+                                (self, type(self)))

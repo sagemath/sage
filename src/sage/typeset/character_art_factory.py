@@ -69,7 +69,7 @@ class CharacterArtFactory(SageObject):
 
     def build(self, obj):
         r"""
-        Construct a character art reprensentation
+        Construct a character art representation
 
         INPUT:
 

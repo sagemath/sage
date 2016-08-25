@@ -87,7 +87,7 @@ cdef class FiniteFieldIterator:
             sage: K.<a> = GF(5^9)
             sage: for x in K:
             ....:     if x == a+3: break
-            ....:     print x
+            ....:     print(x)
             0
             1
             2
@@ -602,7 +602,7 @@ cdef class FiniteField(Field):
             n = sage.rings.integer.Integer(n)
             m = z.multiplicative_order()
             if m % n != 0:
-                raise ValueError, "No %sth root of unity in self"%n
+                raise ValueError("No %sth root of unity in self" % n)
             return z**(m // n)
 
     def multiplicative_generator(self):
@@ -1282,7 +1282,7 @@ cdef class FiniteField(Field):
             if isinstance(name, str):
                 name = {m: name + str(m) for m in divisors}
             elif not isinstance(name, dict):
-                raise ValueError, "name must be None, a string or a dictionary indexed by divisors of the degree"
+                raise ValueError("name must be None, a string or a dictionary indexed by divisors of the degree")
             return [self.subfields(m, name=name[m])[0] for m in divisors]
 
     @cached_method

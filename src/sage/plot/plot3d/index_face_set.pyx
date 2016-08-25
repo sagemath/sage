@@ -367,7 +367,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             self.vcount = ix
         sig_free(point_map)
 
-    def _seperate_creases(self, threshold):
+    def _separate_creases(self, threshold):
         """
         Some rendering engines Gouraud shading, which is great for smooth
         surfaces but looks bad if one actually has a polyhedron.
@@ -1004,7 +1004,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         cdef Py_ssize_t i
         cdef point_c res
 
-        self._seperate_creases(render_params.crease_threshold)
+        self._separate_creases(render_params.crease_threshold)
 
         sig_on()
         if transform is None:

@@ -2,6 +2,7 @@ r"""
 Type ``groups.affine.<tab>`` to access examples
 of groups implemented as affine groups.
 """
+from __future__ import absolute_import
 
 # groups imported here will be available
 # via  groups.affine.<tab>
@@ -12,5 +13,5 @@ of groups implemented as affine groups.
 # entry to the list in the module-level
 # docstring of groups/groups_catalog.py
 
-from affine_group import AffineGroup as Affine
-from euclidean_group import EuclideanGroup as Euclidean
+from .affine_group import AffineGroup as Affine
+from .euclidean_group import EuclideanGroup as Euclidean

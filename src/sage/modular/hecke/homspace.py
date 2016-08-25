@@ -1,6 +1,7 @@
 r"""
 Hom spaces between Hecke modules
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -18,8 +19,8 @@ Hom spaces between Hecke modules
 #*****************************************************************************
 
 import sage.categories.homset
-import morphism
-import module
+from . import morphism
+from . import module
 
 def is_HeckeModuleHomspace(x):
     r"""

@@ -1,6 +1,7 @@
 """
 Classical Ciphers
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -10,7 +11,7 @@ Classical Ciphers
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cipher import SymmetricKeyCipher
+from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 from sage.modules.free_module import FreeModule
 

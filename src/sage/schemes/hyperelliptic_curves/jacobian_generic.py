@@ -7,11 +7,13 @@ Jacobian of a General Hyperelliptic Curve
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.rings.all import Integer
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
-import jacobian_homset
-import jacobian_morphism
+from . import jacobian_homset
+from . import jacobian_morphism
 
 class HyperellipticJacobian_generic(Jacobian_generic):
     """
@@ -77,11 +79,11 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         (u^2, v + 1)
         (u, v + 1)
         (1)
-        sage: Q1 = J(K)(P1); print "%s -> %s"%( P1, Q1 )
+        sage: Q1 = J(K)(P1); print("%s -> %s"%( P1, Q1 ))
         (0 : 1 : 1) -> (u, v - 1)
-        sage: Q2 = J(K)(P2); print "%s -> %s"%( P2, Q2 )
+        sage: Q2 = J(K)(P2); print("%s -> %s"%( P2, Q2 ))
         (2 : 4*t - 1 : 1) -> (u - 2, v - 4*t + 1)
-        sage: Q3 = J(K)(P3); print "%s -> %s"%( P3, Q3 )
+        sage: Q3 = J(K)(P3); print("%s -> %s"%( P3, Q3 ))
         (-1/2 : 7/8*t + 1/4 : 1) -> (u + 1/2, v - 7/8*t - 1/4)
         sage: R.<x> = PolynomialRing(K)
         sage: Q4 = J(K)([x^2-t,R(1)])

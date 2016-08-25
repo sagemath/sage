@@ -55,7 +55,7 @@ We agree with the online database::
     ....:     L = max(2, len(online_list) // 2)
     ....:     sage_list = sloane.__getattribute__(t).list(L)
     ....:     if online_list[:L] != sage_list:
-    ....:         print t, 'seems wrong'
+    ....:         print('{} seems wrong'.format(t))
 
 .. SEEALSO::
 
@@ -122,13 +122,14 @@ AUTHORS:
 ########################################################################
 
 # just used for handy .load, .save, etc.
+from __future__ import print_function, absolute_import
 
 import inspect
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.rings.integer_ring import ZZ
 from sage.functions.all import prime_pi
-import partition
+from . import partition
 from sage.rings.integer import Integer as Integer_class
 
 Integer = ZZ
@@ -370,10 +371,9 @@ class A000001(SloaneSequence):
         if n <= 50:
             return self._small[n-1]
         try:
-            return Integer(gap.gap.eval('NumberSmallGroups(%s)'%n))
+            return Integer(gap.gap.eval('NumberSmallGroups(%s)' % n))
         except Exception:  # help, don't know what to do here? Jaap
-            print "Install database_gap first. See optional packages"
-
+            print("Install database_gap first. See optional packages.")
 
 
 class A000027(SloaneSequence):

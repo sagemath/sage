@@ -1,4 +1,4 @@
-from free_module_element cimport FreeModuleElement
+from .free_module_element cimport FreeModuleElement
 from sage.libs.gmp.types cimport mpz_t
 
 cdef class Vector_integer_dense(FreeModuleElement):

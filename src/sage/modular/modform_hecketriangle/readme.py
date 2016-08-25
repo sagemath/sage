@@ -216,14 +216,14 @@ Hecke triangle groups and elements:
       sage: G = HeckeTriangleGroup(n=7)
       sage: A = -G.V(2)*G.V(3)^(-2)
 
-      sage: print A.string_repr("default")
+      sage: print(A.string_repr("default"))
       [               lam         -lam^2 + 1]
       [       2*lam^2 - 1 -2*lam^2 - lam + 2]
-      sage: print A.string_repr("basic")
+      sage: print(A.string_repr("basic"))
       S*T^(-2)*S*T^(-1)*S*T^(-1)
-      sage: print A.string_repr("block")
+      sage: print(A.string_repr("block"))
       -(-S*T^(-1)*S) * (V(3)) * (-S*T^(-1)*S)^(-1)
-      sage: print A.string_repr("conj")
+      sage: print(A.string_repr("conj"))
       [-V(3)]
       sage: A.trace()
       -2*lam^2 + 2
@@ -552,7 +552,7 @@ Hecke triangle groups and elements:
       sage: uniq([v.is_reduced() for v in R])    # long time
       [True]
       sage: R = G.simple_elements(7*G.lam() + 6)
-      sage: for v in R: print v.string_repr("default")
+      sage: for v in R: print(v.string_repr("default"))
       [lam + 2     lam]
       [    lam       1]
       [      1     lam]

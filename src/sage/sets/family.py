@@ -1069,7 +1069,7 @@ class LazyFamily(AbstractFamily):
         """
         f = self.function
         # This should be done once for all by registering
-        # sage.misc.fpickle.pickle_function to copy_reg
+        # sage.misc.fpickle.pickle_function to copyreg
         if isinstance(f, type(Family)): # TODO: where is the python `function` type?
             from sage.misc.fpickle import pickle_function
             f = pickle_function(f)

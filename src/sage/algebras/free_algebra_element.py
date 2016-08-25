@@ -37,7 +37,7 @@ from __future__ import print_function
 from sage.misc.misc import repr_lincomb
 from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.combinat.free_module import CombinatorialFreeModuleElement
-from sage.algebras.algebra_element import AlgebraElement
+from sage.structure.element import AlgebraElement
 
 # We need to have AlgebraElement first to avoid a segfault...
 class FreeAlgebraElement(AlgebraElement, CombinatorialFreeModuleElement):

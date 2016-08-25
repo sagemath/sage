@@ -75,7 +75,7 @@ Given such "automatic" fans, you may wonder what are their rays and cones::
 
 The last output is not very illuminating. Let's try to improve it::
 
-    sage: for cone in fan1: print cone.rays()
+    sage: for cone in fan1: print(cone.rays())
     M(1, 0,  0),
     M(0, 1,  0),
     M(0, 0, -1)
@@ -111,7 +111,7 @@ The last output is not very illuminating. Let's try to improve it::
 
 You can also do ::
 
-    sage: for cone in fan1: print cone.ambient_ray_indices()
+    sage: for cone in fan1: print(cone.ambient_ray_indices())
     (0, 1, 5)
     (1, 3, 5)
     (0, 4, 5)
@@ -230,7 +230,7 @@ inclusion!)
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import collections
 import warnings
@@ -620,7 +620,7 @@ def FaceFan(polytope, lattice=None):
         M(-1,  0),
         M( 0, -1)
         in 2-d lattice M
-        sage: for cone in P1xP1: print cone.rays()
+        sage: for cone in P1xP1: print(cone.rays())
         M(1,  0),
         M(0, -1)
         in 2-d lattice M
@@ -726,7 +726,7 @@ def NormalFan(polytope, lattice=None):
         N( 0, -1),
         N(-1,  0)
         in 2-d lattice N
-        sage: for cone in P1xP1: print cone.rays()
+        sage: for cone in P1xP1: print(cone.rays())
         N( 0, -1),
         N(-1,  0)
         in 2-d lattice N
@@ -1285,7 +1285,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: f = Fan(cones=[(0,1), (1,2)],
             ...           rays=[(1,0), (0,1), (-1, 0)],
             ...           check=False)
-            sage: for cone in f: print cone.rays()
+            sage: for cone in f: print(cone.rays())
             N(1, 0),
             N(0, 1)
             in 2-d lattice N
@@ -1345,7 +1345,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             N( 1, 0),
             N(-1, 0)
             in 2-d lattice N
-            sage: for cone in fan: print cone.ambient_ray_indices()
+            sage: for cone in fan: print(cone.ambient_ray_indices())
             (0, 1)
             (2,)
             sage: L = fan.cone_lattice() # indirect doctest
@@ -1808,7 +1808,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             N(0, 1),
             N(1, 1)
             in 2-d lattice N
-            sage: for cone in new_fan: print cone.ambient_ray_indices()
+            sage: for cone in new_fan: print(cone.ambient_ray_indices())
             (0, 2)
             (1, 2)
 
@@ -2004,7 +2004,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             N( 1, 0),
             N(-1, 0)
             in 2-d lattice N
-            sage: for cone in fan: print cone.ambient_ray_indices()
+            sage: for cone in fan: print(cone.ambient_ray_indices())
             (0, 1)
             (2,)
             sage: L = fan.cone_lattice()
@@ -2016,7 +2016,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         largest face, you should be a little bit careful with this last
         element::
 
-            sage: for face in L: print face.ambient_ray_indices()
+            sage: for face in L: print(face.ambient_ray_indices())
             Traceback (most recent call last):
             ...
             AttributeError: 'RationalPolyhedralFan'
@@ -2027,7 +2027,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         For example, you can do ::
 
             sage: for l in L.level_sets()[:-1]:
-            ...       print [f.ambient_ray_indices() for f in l]
+            ....:     print([f.ambient_ray_indices() for f in l])
             [()]
             [(0,), (1,), (2,)]
             [(0, 1)]
@@ -2039,7 +2039,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: fan = toric_varieties.P1xP1().fan()
             sage: L = fan.cone_lattice()
             sage: for l in L.level_sets()[:-1]:
-            ...       print [f.ambient_ray_indices() for f in l]
+            ....:     print([f.ambient_ray_indices() for f in l])
             [()]
             [(0,), (1,), (2,), (3,)]
             [(0, 2), (1, 2), (0, 3), (1, 3)]
@@ -2940,7 +2940,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
 
         TESTS:
 
-        We check that Trac #11902 is fixed::
+        We check that :trac:`11902` is fixed::
 
             sage: fan = toric_varieties.P2().fan()
             sage: fan.subdivide(new_rays=[(0,0)])
@@ -3114,7 +3114,6 @@ class RationalPolyhedralFan(IntegralRayCollection,
         # 1) I is not contained in a face
         # 2) if you remove any one entry j, then I-{j} is contained in a facet
         facets = [frozenset(c.ambient_ray_indices()) for c in self.generating_cones()]
-        # print "facets = " + str(facets)
         all_points = frozenset( range(0,self.nrays()) )
         d_max = max(map(len,facets))+1
         SR = []
@@ -3130,7 +3129,6 @@ class RationalPolyhedralFan(IntegralRayCollection,
                             continue
                         else:
                             checked.add(I)
-                        # print "Trying " + str(I)
 
                         if is_not_facet(I) and is_in_SR(I):
                             SR.append(I)

@@ -62,6 +62,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###########################################################################
+from __future__ import print_function
 
 from sage.rings.infinity import infinity
 from sage.structure.category_object import normalize_names
@@ -162,7 +163,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
             sage: F = AbelianGroup(3,[5,64,729], names=list("abc"))
             sage: Fd = F.dual_group(base_ring=CC)
-            sage: print Fd
+            sage: print(Fd)
             DualAbelianGroup( AbelianGroup ( 3, (5, 64, 729) ) )
         """
         s = "DualAbelianGroup( AbelianGroup ( %s, %s ) )"%(self.ngens(), self.gens_orders())

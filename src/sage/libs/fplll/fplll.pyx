@@ -24,7 +24,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 
@@ -533,9 +533,9 @@ cdef class FP_LLL:
         if r:
             if r in (RED_BKZ_LOOPS_LIMIT, RED_BKZ_TIME_LIMIT):
                 if verbose:
-                    print str(getRedStatusStr(r))
+                    print(str(getRedStatusStr(r)))
             else:
-                raise RuntimeError( str(getRedStatusStr(r)) )
+                raise RuntimeError(str(getRedStatusStr(r)))
 
 
     def HKZ(self):

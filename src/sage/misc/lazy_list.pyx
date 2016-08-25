@@ -19,16 +19,16 @@ EXAMPLES::
     [41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83]
 
     sage: f = lazy_list((i**2-3*i for i in xrange(10)))
-    sage: for i in f: print i,
+    sage: print(" ".join(str(i) for i in f))
     0 -2 -2 0 4 10 18 28 40 54
     sage: i1 = iter(f)
     sage: i2 = iter(f)
-    sage: print next(i1), next(i1)
-    0 -2
-    sage: print next(i2), next(i2)
-    0 -2
-    sage: print next(i1), next(i2)
-    -2 -2
+    sage: [next(i1), next(i1)]
+    [0, -2]
+    sage: [next(i2), next(i2)]
+    [0, -2]
+    sage: [next(i1), next(i2)]
+    [-2, -2]
 
 It is possible to prepend a list to a lazy list::
 
@@ -103,6 +103,7 @@ Classes and Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 cdef extern from "Python.h":
     Py_ssize_t PY_SSIZE_T_MAX
@@ -396,7 +397,7 @@ cdef class lazy_list_generic(object):
         have a list that you want to wrap (without copy) into a lazy list.
         See in the example below.
 
-        INPUT::
+        INPUT:
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
           there is no copy.
@@ -529,10 +530,10 @@ cdef class lazy_list_generic(object):
             stop         21474838
             step         4
         """
-        print "cache length", len(self.cache)
-        print "start       ", self.start
-        print "stop        ", self.stop
-        print "step        ", self.step
+        print("cache length", len(self.cache))
+        print("start       ", self.start)
+        print("stop        ", self.stop)
+        print("step        ", self.step)
 
 
     def __add__(self, other):
@@ -610,7 +611,7 @@ cdef class lazy_list_generic(object):
             sage: m = lazy_list(count())
             sage: x = loads(dumps(m))
             sage: y = iter(x)
-            sage: print next(y), next(y), next(y)
+            sage: print("{} {} {}".format(next(y), next(y), next(y)))
             0 1 2
             sage: m2 = m[3::2]
             sage: loads(dumps(m2))
@@ -783,16 +784,16 @@ cdef class lazy_list_generic(object):
             sage: from sage.misc.lazy_list import lazy_list
             sage: f = lazy_list(iter([1,2,3]))
             sage: f0 = f[0:]
-            sage: print f.get(0), f.get(1), f.get(2)
-            1 2 3
+            sage: [f.get(0), f.get(1), f.get(2)]
+            [1, 2, 3]
             sage: f1 = f[1:]
-            sage: print f1.get(0), f1.get(1)
-            2 3
+            sage: [f1.get(0), f1.get(1)]
+            [2, 3]
             sage: f2 = f[2:]
-            sage: print f2.get(0)
+            sage: f2.get(0)
             3
             sage: f3 = f[3:]
-            sage: print f3.get(0)
+            sage: f3.get(0)
             Traceback (most recent call last):
             ...
             IndexError: lazy list index out of range
@@ -986,13 +987,13 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
         lazy list [8, 10, 12, ...]
 
         sage: x = iter(m)
-        sage: print next(x), next(x), next(x)
-        0 1 2
+        sage: [next(x), next(x), next(x)]
+        [0, 1, 2]
         sage: y = iter(m)
-        sage: print next(y), next(y), next(y)
-        0 1 2
-        sage: print next(x), next(y)
-        3 3
+        sage: [next(y), next(y), next(y)]
+        [0, 1, 2]
+        sage: [next(x), next(y)]
+        [3, 3]
         sage: loads(dumps(m))
         lazy list [0, 1, 2, ...]
     """
@@ -1239,7 +1240,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
             sage: loads(dumps(l))   # not tested (works in console though)
             lazy list [False, False, True, ...]
 
-            sage: def say_hey(cache): print "hey"
+            sage: def say_hey(cache): print("hey")
             sage: l = lazy_list(update_function=say_hey, initial_values=range(10))
             sage: l._fit(10)
             hey

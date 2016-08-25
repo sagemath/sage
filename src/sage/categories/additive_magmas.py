@@ -17,6 +17,7 @@ from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.homsets import HomsetsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
+import sage.categories.coercion_methods
 from sage.categories.sets_cat import Sets
 from sage.structure.element import have_same_parent
 
@@ -389,49 +390,8 @@ class AdditiveMagmas(Category_singleton):
 
     class ElementMethods:
 
-        # This could eventually be moved to SageObject
-        def __add__(self, right):
-            r"""
-            Return the sum of ``self`` and ``right``.
-
-            This calls the `_add_` method of ``self``, if it is
-            available and the two elements have the same parent.
-
-            Otherwise, the job is delegated to the coercion model.
-
-            Do not override; instead implement an ``_add_`` method in the
-            element class or a ``summation`` method in the parent class.
-
-            EXAMPLES::
-
-                sage: F = CommutativeAdditiveSemigroups().example()
-                sage: (a,b,c,d) = F.additive_semigroup_generators()
-                sage: a + b
-                a + b
-            """
-            if have_same_parent(self, right) and hasattr(self, "_add_"):
-                return self._add_(right)
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(self, right, operator.add)
-
-        def __radd__(self, left):
-            r"""
-            Handles the sum of two elements, when the left hand side
-            needs to be coerced first.
-
-            EXAMPLES::
-
-                sage: F = CommutativeAdditiveSemigroups().example()
-                sage: (a,b,c,d) = F.additive_semigroup_generators()
-                sage: a.__radd__(b)
-                a + b
-            """
-            if have_same_parent(left, self) and hasattr(left, "_add_"):
-                return left._add_(self)
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(left, self, operator.add)
+        __add__ = sage.categories.coercion_methods.__add__
+        __radd__ = sage.categories.coercion_methods.__radd__
 
         @abstract_method(optional = True)
         def _add_(self, right):

@@ -87,6 +87,7 @@ AUTHORS:
 Methods
 =======
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
@@ -107,12 +108,12 @@ import sage.matrix.matrix
 from sage.rings.all import ZZ, QQ, FiniteField, GF
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from minor_matroid import MinorMatroid
-from dual_matroid import DualMatroid
-from rank_matroid import RankMatroid
-from circuit_closures_matroid import CircuitClosuresMatroid
-from basis_matroid import BasisMatroid
-from linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from .minor_matroid import MinorMatroid
+from .dual_matroid import DualMatroid
+from .rank_matroid import RankMatroid
+from .circuit_closures_matroid import CircuitClosuresMatroid
+from .basis_matroid import BasisMatroid
+from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
 import sage.matroids.utilities
 from networkx import NetworkXError
 

@@ -531,7 +531,7 @@ TESTS:
 Check the qepcad configuration file::
 
     sage: open('%s/default.qepcadrc'%SAGE_LOCAL).readlines()[-1]
-    'SINGULAR .../local/bin\n'
+    'SINGULAR .../bin\n'
 
 Tests related to the not tested examples (nondeterministic order of atoms)::
 
@@ -603,6 +603,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.env import SAGE_LOCAL
 import pexpect
@@ -614,7 +616,7 @@ from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
 from sage.interfaces.tab_completion import ExtraTabCompletion
 
-from expect import Expect, ExpectFunction, AsciiArtString
+from .expect import Expect, ExpectFunction, AsciiArtString
 
 def _qepcad_atoms(formula):
     r"""
@@ -1625,7 +1627,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         qe.assume(assume)
     if interact:
         if solution is not None:
-            print "WARNING: 'solution=' is ignored for interactive use"
+            print("WARNING: 'solution=' is ignored for interactive use")
         return qe
     else:
         qe.go()

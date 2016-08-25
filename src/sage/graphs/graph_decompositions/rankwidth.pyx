@@ -121,7 +121,7 @@ Methods
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
@@ -191,7 +191,7 @@ def rank_decomposition(G, verbose = False):
     for 0 <= i < n+1:
 
         if verbose:
-            print "Calculating for subsets of size ", i, "/",(n+1)
+            print("Calculating for subsets of size ", i, "/", n + 1)
 
         # We want to properly deal with exceptions, in particular
         # KeyboardInterrupt. Whatever happens, when this code fails the memory
@@ -284,9 +284,9 @@ cdef void print_rank_dec(subset_t s, int l):
     """
     global cslots
 
-    print ('\t'*l),
+    print('\t' * l, end="")
 
-    print "cslot: ", <unsigned int> s
+    print("cslot: ", <unsigned int> s)
     if cslots[s] == 0:
         return
     print_rank_dec(cslots[s], l + 1)

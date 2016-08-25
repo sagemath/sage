@@ -14,6 +14,7 @@ methods elsewhere.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 
 class TallListFormatter(object):
@@ -74,8 +75,8 @@ class TallListFormatter(object):
         TESTS::
 
             sage: from sage.repl.display.util import format_list
-            sage: print format_list.try_format(
-            ....:        [matrix([[1, 2, 3, 4], [5, 6, 7, 8]]) for i in xrange(7)])
+            sage: print(format_list.try_format(
+            ....:        [matrix([[1, 2, 3, 4], [5, 6, 7, 8]]) for i in xrange(7)]))
             [
             [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]
             [5 6 7 8], [5 6 7 8], [5 6 7 8], [5 6 7 8], [5 6 7 8], [5 6 7 8],

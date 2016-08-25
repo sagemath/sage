@@ -20,7 +20,7 @@ With the object ``DegreeSequences(n)``, one can :
     * List all the possible degree sequences of length `n`::
 
         sage: for seq in DegreeSequences(4):
-        ...       print seq
+        ....:     print(seq)
         [0, 0, 0, 0]
         [1, 1, 0, 0]
         [2, 1, 1, 0]
@@ -225,9 +225,9 @@ The sequences produced by random graphs *are* degree sequences::
     sage: n = 30
     sage: DS = DegreeSequences(30)
     sage: for i in range(10):
-    ...      g = graphs.RandomGNP(n,.2)
-    ...      if not g.degree_sequence() in DS:
-    ...          print "Something is very wrong !"
+    ....:     g = graphs.RandomGNP(n,.2)
+    ....:     if not g.degree_sequence() in DS:
+    ....:         print("Something is very wrong !")
 
 Checking that we indeed enumerate *all* the degree sequences for `n=5`::
 

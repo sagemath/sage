@@ -14,7 +14,7 @@ Sage может строить двумерные и трехмерные гра
 Некоторые примеры будут показаны ниже. Для более исчерпывающей информации
 по построению графиков см. :ref:`section-systems` и :ref:`section-maxima`,
 а также документацию
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_.
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_.
 
 Данная команда построит желтую окружность радиуса 1 с центром в начале:
 

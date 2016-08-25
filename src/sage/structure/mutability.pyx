@@ -11,6 +11,7 @@ Mutability Cython Implementation
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ##########################################################################
+from __future__ import print_function
 
 
 cdef class Mutability:
@@ -20,11 +21,11 @@ cdef class Mutability:
 
     def _require_mutable(self):
         if self._is_immutable:
-            raise ValueError, "object is immutable; please change a copy instead."
+            raise ValueError("object is immutable; please change a copy instead.")
 
     cdef _require_mutable_cdef(self):
         if self._is_immutable:
-            raise ValueError, "object is immutable; please change a copy instead."
+            raise ValueError("object is immutable; please change a copy instead.")
 
     def set_immutable(self):
         """
@@ -107,7 +108,7 @@ def require_mutable(f):
         ...
         ValueError: <type 'instance'> instance is immutable, <function change at ...> must not be called
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print sage_getdoc(a.change)
+        sage: print(sage_getdoc(a.change))
         change self
 
     AUTHORS:
@@ -153,7 +154,7 @@ def require_immutable(f):
         ...
         ValueError: <type 'instance'> instance is immutable, <function change at ...> must not be called
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print sage_getdoc(a.__hash__)
+        sage: print(sage_getdoc(a.__hash__))
         implement hash
 
     AUTHORS:

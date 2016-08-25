@@ -72,7 +72,7 @@ ex g_series_var(const ex& e) {
     if (is_a<pseries>(e)) {
         return (ex_to<pseries>(e)).get_var();
     }
-    return NULL;
+    return 0;
 }
 
 relational::operators relational_operator(const ex& e) {

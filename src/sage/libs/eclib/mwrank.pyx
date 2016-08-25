@@ -6,7 +6,7 @@ EXAMPLES::
     sage: from sage.libs.eclib.mwrank import _Curvedata, _mw
     sage: c = _Curvedata(1,2,3,4,5)
 
-    sage: print c
+    sage: print(c)
     [1,2,3,4,5]
     b2 = 9       b4 = 11         b6 = 29         b8 = 35
     c4 = -183           c6 = -3429
@@ -18,6 +18,7 @@ EXAMPLES::
     sage: t
     [[1:2:1]]
 """
+from __future__ import print_function
 
 import os
 import sys
@@ -915,7 +916,8 @@ cdef class _mw:
             sage: E = _Curvedata(0,0,1,-19569,-4064513) # 873c1
             sage: EQ = _mw(E)
             sage: EQ = _mw(E)
-            sage: for i in [1..11]: print i, EQ.search(i), EQ
+            sage: for i in [1..11]:
+            ....:     print("{} {} {}".format(i, EQ.search(i), EQ))
             1 None []
             2 None []
             3 None []

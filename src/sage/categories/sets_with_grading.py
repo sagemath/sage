@@ -1,6 +1,7 @@
 r"""
 Sets With a Grading
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2010-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -10,7 +11,7 @@ Sets With a Grading
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
-from category_types import Category
+from .category_types import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers

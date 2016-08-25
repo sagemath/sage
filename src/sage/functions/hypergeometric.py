@@ -125,6 +125,26 @@ Arbitrary level of nesting for conversions::
     x),), (3,), x)
     sage: nest(lambda y: hypergeometric([y], [], x), 3, 1)._mathematica_init_()
     'HypergeometricPFQ[{HypergeometricPFQ[{HypergeometricPFQ[{1},{},x]},...
+
+The confluent hypergeometric functions can arise as solutions to second-order
+differential equations (example from `here <http://ask.sagemath.org/question/
+1168/how-can-one-use-maxima-kummer-confluent-functions>`_)::
+
+    sage: m = var('m')
+    sage: y = function('y')(x)
+    sage: desolve(diff(y, x, 2) + 2*x*diff(y, x) - 4*m*y, y,
+    ....:         contrib_ode=true, ivar=x)
+    [y(x) == _K1*hypergeometric_M(-m, 1/2, -x^2) +...
+     _K2*hypergeometric_U(-m, 1/2, -x^2)]
+
+Series expansions of confluent hypergeometric functions::
+
+    sage: hypergeometric_M(2, 2, x).series(x, 3)
+    1 + 1*x + 1/2*x^2 + Order(x^3)
+    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n()
+    0.403652637676806
+    sage: hypergeometric_U(2, 2, 1).n()
+    0.403652637676806
 """
 
 #*****************************************************************************
@@ -145,7 +165,7 @@ from sage.rings.infinity import Infinity
 from sage.arith.all import binomial, rising_factorial, factorial
 from sage.functions.other import sqrt, gamma, real_part
 from sage.functions.log import exp, log
-from sage.functions.trig import cos, sin
+from sage.functions.trig import sin
 from sage.functions.hyperbolic import cosh, sinh
 from sage.functions.other import erf
 from sage.symbolic.constants import pi
@@ -351,7 +371,7 @@ class Hypergeometric(BuiltinFunction):
         return (t * derivative(z, diff_param) *
                 hypergeometric([c + 1 for c in a], [c + 1 for c in b], z))
 
-    class EvaluationMethods:
+    class EvaluationMethods(object):
         def _fast_float_(cls, self, *args):
             """
             Do not support the old ``fast_float``.
@@ -835,7 +855,7 @@ def closed_form(hyp):
 
             def _2f1(a, b, c, z):
                 """
-                Evaluation of 2F1(a, b, c, z), assuming a, b, c positive
+                Evaluation of 2F1(a, b; c; z), assuming a, b, c positive
                 integers or half-integers
                 """
                 if b == c:
@@ -891,3 +911,209 @@ def closed_form(hyp):
                     pass
         return hyp
     return sum([coeff * _closed_form(pfq) for coeff, pfq in new._deflated()])
+
+class Hypergeometric_M(BuiltinFunction):
+    r"""
+    The confluent hypergeometric function of the first kind,
+    `y = M(a,b,z)`, is defined to be the solution to Kummer's differential
+    equation
+
+    .. math::
+
+             zy'' + (b-z)y' - ay = 0.
+
+    This is not the same as Kummer's `U`-hypergeometric function, though it
+    satisfies the same DE that `M` does.
+
+    .. warning::
+
+       In the literature, both are called "Kummer confluent
+       hypergeometric" functions.
+
+    EXAMPLES::
+
+        sage: hypergeometric_M(1, 1, 1)
+        hypergeometric_M(1, 1, 1)
+        sage: hypergeometric_M(1, 1, 1.)
+        2.71828182845905
+        sage: hypergeometric_M(1, 1, 1).n(70)
+        2.7182818284590452354
+        sage: hypergeometric_M(1, 1, 1).simplify_hypergeometric()
+        e
+        sage: hypergeometric_M(1, 1/2, x).simplify_hypergeometric()
+        (-I*sqrt(pi)*x*erf(I*sqrt(-x))*e^x + sqrt(-x))/sqrt(-x)
+        sage: hypergeometric_M(1, 3/2, 1).simplify_hypergeometric()
+        1/2*sqrt(pi)*erf(1)*e
+    """
+    def __init__(self):
+        """
+        TESTS::
+        
+            sage: maxima(hypergeometric_M(1,1,x))
+            kummer_m(1,1,_SAGE_VAR_x)
+            sage: latex(hypergeometric_M(1,1,x))
+            M\left(1, 1, x\right)
+        """
+        BuiltinFunction.__init__(self, 'hypergeometric_M', nargs=3,
+                                 conversions={'mathematica':
+                                              'Hypergeometric1F1',
+                                              'maxima': 'kummer_m'},
+                                 latex_name='M')
+
+    def _eval_(self, a, b, z, **kwargs):
+        """
+        TESTS::
+        
+            sage: (a,b)=var('a,b')
+            sage: hypergeometric_M(a,b,0)
+            1
+        """
+        if not isinstance(z, Expression) and z == 0:
+            return Integer(1)
+        return
+
+    def _evalf_(self, a, b, z, parent, algorithm=None):
+        """
+        TESTS::
+        
+            sage: hypergeometric_M(1,1,1).n()
+            2.71828182845905
+        """
+        from mpmath import hyp1f1
+        return mpmath_utils.call(hyp1f1, a, b, z, parent=parent)
+
+    def _derivative_(self, a, b, z, diff_param):
+        """
+        TESTS::
+        
+            sage: diff(hypergeometric_M(1,1,x),x,3)
+            hypergeometric_M(4, 4, x)
+            sage: diff(hypergeometric_M(x,1,1),x,3)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: derivative of hypergeometric function with respect to parameters
+        """
+        if diff_param == 2:
+            return (a / b) * hypergeometric_M(a + 1, b + 1, z)
+        raise NotImplementedError('derivative of hypergeometric function '
+                                  'with respect to parameters')
+
+    class EvaluationMethods:
+        def generalized(cls, self, a, b, z):
+            """
+            Return as a generalized hypergeometric function
+
+            EXAMPLES::
+
+                sage: a, b, z = var('a b z')
+                sage: hypergeometric_M(a, b, z).generalized()
+                hypergeometric((a,), (b,), z)
+
+            """
+            return hypergeometric([a], [b], z)
+
+hypergeometric_M = Hypergeometric_M()
+
+class Hypergeometric_U(BuiltinFunction):
+    r"""
+    The confluent hypergeometric function of the second kind,
+    `y = U(a,b,z)`, is defined to be the solution to Kummer's differential
+    equation
+
+    .. math::
+
+             zy'' + (b-z)y' - ay = 0.
+
+    This satisfies `U(a,b,z) \sim z^{-a}`, as
+    `z\rightarrow \infty`, and is sometimes denoted
+    `z^{-a}{}_2F_0(a,1+a-b;;-1/z)`. This is not the same as Kummer's
+    `M`-hypergeometric function, denoted sometimes as
+    `_1F_1(\alpha,\beta,z)`, though it satisfies the same DE that
+    `U` does.
+
+    .. warning::
+
+       In the literature, both are called "Kummer confluent
+       hypergeometric" functions.
+
+    EXAMPLES::
+
+        sage: hypergeometric_U(1, 1, 1)
+        hypergeometric_U(1, 1, 1)
+        sage: hypergeometric_U(1, 1, 1.)
+        0.596347362323194
+        sage: hypergeometric_U(1, 1, 1).n(70)
+        0.59634736232319407434
+        sage: hypergeometric_U(10^4, 1/3, 1).n()
+        6.60377008885811e-35745
+        sage: hypergeometric_U(2 + I, 2, 1).n()
+        0.183481989942099 - 0.458685959185190*I
+        sage: hypergeometric_U(1, 3, x).simplify_hypergeometric()
+        (x + 1)/x^2
+        sage: hypergeometric_U(1, 2, 2).simplify_hypergeometric()
+        1/2
+
+    """
+    def __init__(self):
+        """
+        TESTS::
+        
+            sage: maxima(hypergeometric_U(1,1,x))
+            kummer_u(1,1,_SAGE_VAR_x)
+            sage: latex(hypergeometric_U(1,1,x))
+            U\left(1, 1, x\right)
+        """
+        BuiltinFunction.__init__(self, 'hypergeometric_U', nargs=3,
+                                 conversions={'mathematica':
+                                              'HypergeometricU',
+                                              'maxima': 'kummer_u'},
+                                 latex_name='U')
+
+    def _eval_(self, a, b, z, **kwargs):
+        return
+
+    def _evalf_(self, a, b, z, parent, algorithm=None):
+        """
+        TESTS::
+        
+            sage: hypergeometric_U(1,1,1).n()
+            0.596347362323194
+        """
+        from mpmath import hyperu
+        return mpmath_utils.call(hyperu, a, b, z, parent=parent)
+
+    def _derivative_(self, a, b, z, diff_param):
+        """
+        TESTS::
+        
+            sage: diff(hypergeometric_U(1,1,x),x,3)
+            -6*hypergeometric_U(4, 4, x)
+            sage: diff(hypergeometric_U(x,1,1),x,3)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: derivative of hypergeometric function with respect to parameters
+        """
+        if diff_param == 2:
+            return -a * hypergeometric_U(a + 1, b + 1, z)
+        raise NotImplementedError('derivative of hypergeometric function '
+                                  'with respect to parameters')
+
+    class EvaluationMethods:
+        def generalized(cls, self, a, b, z):
+            """
+            Return in terms of the generalized hypergeometric function
+
+            EXAMPLES::
+
+                sage: a, b, z = var('a b z')
+                sage: hypergeometric_U(a, b, z).generalized()
+                z^(-a)*hypergeometric((a, a - b + 1), (), -1/z)
+                sage: hypergeometric_U(1, 3, 1/2).generalized()
+                2*hypergeometric((1, -1), (), -2)
+                sage: hypergeometric_U(3, I, 2).generalized()
+                1/8*hypergeometric((3, -I + 4), (), -1/2)
+
+            """
+            return z ** (-a) * hypergeometric([a, a - b + 1], [], -z ** (-1))
+
+hypergeometric_U = Hypergeometric_U()

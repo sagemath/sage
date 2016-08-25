@@ -31,10 +31,10 @@ human-readable and allow others to update the database easiest.
          C = self_dual_codes_binary(n); m = len(C.keys())
          for i in range(m):
              C0 = C["%s"%n]["%s"%i]["code"]
-             print n, '  ',i, '    ',C["%s"%n]["%s"%i]["spectrum"] == C0.spectrum()
-             print C0 == C0.dual_code()
+             print([n,i,C["%s"%n]["%s"%i]["spectrum"] == C0.spectrum()])
+             print(C0 == C0.dual_code())
              G = C0.automorphism_group_binary_code()
-             print C["%s"%n]["%s"%i]["order autgp"] == G.order()
+             print(C["%s" % n]["%s" % i]["order autgp"] == G.order())
 
 - To check if the "Riemann hypothesis" holds, run the following
   code::
@@ -47,7 +47,7 @@ human-readable and allow others to update the database easiest.
              C0 = C["%s"%n]["%s"%i]["code"]
              if C0.minimum_distance()>2:
                  f = R(C0.sd_zeta_polynomial())
-                 print n,i,[z[0].abs() for z in f.roots()]
+                 print([n,i,[z[0].abs() for z in f.roots()]])
 
 
 You should get lists of numbers equal to 0.707106781186548.
@@ -87,6 +87,8 @@ REFERENCES:
   "A classification of self-orthogonal codes over GF(2)", Discrete
   Math 3 (1972) 209-246.
 """
+from __future__ import print_function
+
 from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.matrix_space import MatrixSpace

@@ -297,7 +297,7 @@ Let us see how one can explore this::
 
     sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12, GF(59).list()[1:41])
     sage: C.encoders_available()
-    ['EvaluationPolynomial', 'EvaluationVector']
+    ['EvaluationPolynomial', 'EvaluationVector', 'Systematic']
     sage: C.decoders_available()
     ['Syndrome',
      'NearestNeighbor',

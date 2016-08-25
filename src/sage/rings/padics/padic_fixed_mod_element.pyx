@@ -282,9 +282,9 @@ cdef class pAdicFixedModElement(FMElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if absprec > self.precision_absolute():
-            raise PrecisionError, "Not enough precision known in order to compute residue."
+            raise PrecisionError("Not enough precision known in order to compute residue.")
         elif absprec < 0:
-            raise ValueError, "Cannot reduce modulo a negative power of p."
+            raise ValueError("Cannot reduce modulo a negative power of p.")
         cdef long aprec = mpz_get_ui((<Integer>absprec).value)
         modulus = PY_NEW(Integer)
         mpz_set(modulus.value, self.prime_pow.pow_mpz_t_tmp(aprec))

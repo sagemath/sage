@@ -42,6 +42,7 @@ structure morphisms::
     True
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -213,7 +214,7 @@ class NameChange(NumberFieldStructureFromUniqueField):
               To:   Number Field in a with defining polynomial x^4 + x^3 + x^2 + x + 1)
 
         """
-        import maps
+        from . import maps
         return maps.NameChangeMap(field, self.other), maps.NameChangeMap(self.other, field)
 
 class AbsoluteFromRelative(NumberFieldStructureFromUniqueField):
@@ -254,7 +255,7 @@ class AbsoluteFromRelative(NumberFieldStructureFromUniqueField):
               To:   Number Field in c with defining polynomial x^4 - 10*x^2 + 1)
 
         """
-        import maps
+        from . import maps
         return maps.MapAbsoluteToRelativeNumberField(field, self.other), maps.MapRelativeToAbsoluteNumberField(self.other, field)
 
 class RelativeFromAbsolute(NumberFieldStructureFromUniqueField):

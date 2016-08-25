@@ -87,6 +87,7 @@ AUTHORS:
 
 - Oscar Lazo, William Cauchois, Jason Grout (2009-2010): Adding coordinate transformations
 """
+from __future__ import absolute_import
 
 
 #TODO:
@@ -108,12 +109,12 @@ AUTHORS:
 #*****************************************************************************
 
 
-from tri_plot import TrianglePlot
-from index_face_set import IndexFaceSet
-from shapes import arrow3d
-from base import Graphics3dGroup
+from .tri_plot import TrianglePlot
+from .index_face_set import IndexFaceSet
+from .shapes import arrow3d
+from .base import Graphics3dGroup
 from sage.plot.colors import rainbow
-from texture import Texture
+from .texture import Texture
 
 from sage.ext.fast_eval import fast_float_arg
 
@@ -737,7 +738,7 @@ class TrivialTriangleFactory:
         """
         return [a,b,c]
 
-import parametric_plot3d
+from . import parametric_plot3d
 def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     """
     INPUT:

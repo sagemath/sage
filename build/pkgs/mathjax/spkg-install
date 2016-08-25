@@ -8,9 +8,10 @@ if [ -z "$SAGE_SHARE" ]; then
     exit 1
 fi
 
+cd src
 
 # Apply all patches
-for patch in patches/*.patch; do
+for patch in ../patches/*.patch; do
     [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
     echo "Applying $patch"
     patch -p1 <"$patch"
@@ -20,6 +21,7 @@ for patch in patches/*.patch; do
     fi
 done
 
+cd ..
 
 # Move mathjax to its final destination.
 TARGET="${SAGE_SHARE}/mathjax"

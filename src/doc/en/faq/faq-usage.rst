@@ -19,12 +19,6 @@ You can try out Sage without downloading anything:
 * **Sage cell:** A "one-off" version of Sage, available for doing one
   computation at a time. http://sagecell.sagemath.org/
 
-* **Sagenb:** Some public Sage notebook servers allow you to create a free
-  account.
-
-  If you log in, you will be working on a free, browser-based Sage notebook 
-  server that will work identically to the one you get within Sage. 
-
 To download a **pre-built binary** Sage distribution, visit
 http://sagemath.org/download.html and click on the link for the binary for your
 operating system.
@@ -366,9 +360,9 @@ As a third alternative, use the raw suffix::
     array([  7.5,  10.5])
 
 You can also disable the preprocessor in your code via
-``preparse(False)``. You can may start IPython alone from the command
+``preparser(False)``. You can start IPython alone from the command
 line ``sage -ipython`` which does not pre-load anything
-Sage-specific. Or switching the Notebook language to "Python".
+Sage-specific. Or switch the Notebook language to "Python".
 
 
 How do I save an object so I don't have to compute it each time I open a worksheet?
@@ -513,17 +507,6 @@ On Ubuntu, try disabling "Power Manager" via ::
 under the "Startup Programs" or using ``cpufreq-set`` via the command
 line.
 
-
-Sage fails with the error message "restore segment prot after reloc: Permission denied". What is wrong?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The problem is related to SELinux. See this page for some tips to fix
-this:
-http://www.ittvis.com/services/techtip.asp?ttid=3092.
-We are currently tracking this issue at
-`ticket #480 <http://www.sagetrac.org/sage_trac/ticket/480>`_.
-
-
 When I start Sage, SELinux complains that "/path/to/libpari-gmp.so.2" requires text-relocation. How can I fix it?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -545,11 +528,7 @@ by typing ``make build`` in a terminal.
 How do I run sage in daemon mode, i.e. as a service?
 """"""""""""""""""""""""""""""""""""""""""""""""""""
 
-We currently do not have a ready-to-go solution. There are several
-possibilities. Use ``screen``, ``nohup`` or ``disown``. We are
-tracking the issue at
-`ticket #381 <http://www.sagetrac.org/sage_trac/ticket/381>`_
-so stay tuned.
+There are several possibilities. Use ``screen``, ``nohup`` or ``disown``.
 
 
 The show command for plotting 3-D objects does not work.
@@ -609,22 +588,22 @@ libraries. Here is a small example::
     # Construct a finite field of order 11.
     cdef sage.rings.finite_field_givaro.FiniteField_givaro K
     K = sage.rings.finite_field_givaro.FiniteField_givaro(11)
-    print "K is a", type(K)
-    print "K cardinality =", K.cardinality()
+    print("K is a {}".format(type(K)))
+    print("K cardinality = {}".format(K.cardinality()))
     # Construct two values in the field:
     cdef sage.rings.finite_field_givaro.FiniteField_givaroElement x
     cdef sage.rings.finite_field_givaro.FiniteField_givaroElement y
     x = K(3)
     y = K(6)
-    print "x is a", type(x)
-    print "x =", x
-    print "y =", y
-    print "x has multiplicative order =", x.multiplicative_order()
-    print "y has multiplicative order =", y.multiplicative_order()
-    print "x*y =", x*y
+    print("x is a {}".format(type(x)))
+    print("x = {}".format(x))
+    print("y = {}".format(y))
+    print("x has multiplicative order = {}".format(x.multiplicative_order()))
+    print("y has multiplicative order = {}".format(y.multiplicative_order()))
+    print("x*y = {}".format(x * y))
     # Show that x behaves like a finite field element:
     for i in range(1, x.multiplicative_order() + 1):
-        print i, x**i
+        print("{} {}".format(i, x**i))
     assert x*(1/x) == K.one()
 
 To find out more, type ::

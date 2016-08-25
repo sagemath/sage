@@ -1032,7 +1032,7 @@ def rational_function_coerce(rational_function, sigma, S_polys):
 
     INPUT:
 
-    - ``rational_funtion``-- rational function with coefficients in `R`.
+    - ``rational_function``-- rational function with coefficients in `R`.
 
     - ``sigma`` -- a ring homomorphism sigma: `R` -> ``S_polys``.
 

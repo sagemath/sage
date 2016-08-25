@@ -5,7 +5,7 @@ if [ "$SAGE_LOCAL" = "" ]; then
     exit 1
 fi
 
-cd xianyi-OpenBLAS*
+cd src
 
 $MAKE tests
 if [ $? -ne 0 ]; then

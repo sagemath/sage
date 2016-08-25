@@ -93,8 +93,8 @@ class ObjectReprABC(object):
             'Error: ObjectReprABC.__call__ is abstract'
         """
         from sage.repl.display.pretty_print import SagePrettyPrinter
-        import StringIO
-        stream = StringIO.StringIO()
+        from six import StringIO
+        stream = StringIO()
         p = SagePrettyPrinter(stream, 79, '\n')
         ok = self(obj, p, False)
         if ok:
@@ -119,8 +119,7 @@ class SomeIPythonRepr(ObjectReprABC):
         .. automethod:: __call__
         """
         type_repr = _type_pprinters.copy()
-        del type_repr[types.TypeType]
-        del type_repr[types.ClassType]
+        del type_repr[type]
         del type_repr[types.BuiltinFunctionType]
         del type_repr[types.FunctionType]
         del type_repr[str]

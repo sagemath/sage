@@ -53,10 +53,30 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
             sage: TestSuite(A).run(elements=[x*y+z])
         """
         I = IndexedFreeAbelianMonoid(['x', 'y', 'z'], prefix='U')
-        gen_cmp = lambda x,y: cmp((-len(x), x.to_word_list()), (-len(y), y.to_word_list()))
-        CombinatorialFreeModule.__init__(self, base_ring, I, bracket=False, prefix='',
-                                         generator_cmp=gen_cmp,
+
+        CombinatorialFreeModule.__init__(self, base_ring, I, bracket=False,
+                                         prefix='',
+                                         sorting_key=self._sort_key,
                                          category=FilteredAlgebrasWithBasis(base_ring))
+
+    def _sort_key(self, x):
+        """
+        Return the key used to sort the terms.
+
+        INPUT:
+
+        - ``x`` -- a basis index (here an element in a free Abelian monoid)
+
+        EXAMPLES::
+
+            sage: A = AlgebrasWithBasis(QQ).Filtered().example()
+            sage: S = A.an_element().support(); S
+            [U['x']^2*U['y']^2*U['z']^3, U['x'], 1, U['y']]
+            sage: [A._sort_key(m) for m in S]
+            [(-7, ['x', 'x', 'y', 'y', 'z', 'z', 'z']), (-1, ['x']),
+            (0, []), (-1, ['y'])]
+        """
+        return (-len(x), x.to_word_list())
 
     def _repr_(self):
         """

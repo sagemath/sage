@@ -9,7 +9,6 @@ AUTHORS:
 
 - Dmitrii V. (Dima) Pasechnik (2012-10): initial implementation. Minor fixes (2015)
 """
-
 #*****************************************************************************
 #       Copyright (C) 2012 Dima Pasechnik <dimpase@gmail.com>
 #
@@ -19,6 +18,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 def Krawtchouk(n,q,l,x,check=True):
     """
@@ -217,7 +217,7 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
     try:
         bd=p.solve()
     except MIPSolverException as exc:
-        print "Solver exception:", exc
+        print("Solver exception: {}".format(exc))
         if return_data:
             return A,p,False
         return False
@@ -312,7 +312,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0,
       kk += 1
 
    if q_base**kk != q:
-      print "Wrong q_base=", q_base, " for q=", q, kk
+      print("Wrong q_base=", q_base, " for q=", q, kk)
       return False
 
    # this implementation assumes that our LP solver to be unable to do a hot
@@ -329,7 +329,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0,
       try:
         bd=p.solve()
       except MIPSolverException as exc:
-        print "Solver exception:", exc
+        print("Solver exception:", exc)
         if return_data:
            return A,p,False
         return False

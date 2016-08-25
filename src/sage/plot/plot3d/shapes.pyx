@@ -40,38 +40,24 @@ EXAMPLES::
 
 """
 
-
 #*****************************************************************************
-#      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
+#       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-cdef extern from "math.h":
-    double sqrt(double)
-    double sin(double)
-    double cos(double)
-    double tan(double)
-    double asin(double)
-    double acos(double)
-    double atan(double)
-    double M_PI
-
-
-from sage.rings.real_double  import RDF
+from libc.math cimport sqrt, sin, cos, tan, asin, acos, atan, M_PI
+from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.plot.misc import rename_keyword
-from base import Graphics3dGroup, Graphics3d
+from .base import Graphics3dGroup, Graphics3d
+from .index_face_set cimport IndexFaceSet, PrimitiveObject
+from .transform cimport point_c
+
 
 # Helper function to check that Box input is right
 def validate_frame_size(size):

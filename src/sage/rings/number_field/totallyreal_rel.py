@@ -83,7 +83,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function, absolute_import
 
 from sage.arith.all import binomial, gcd, divisors
 from sage.rings.integer import Integer
@@ -95,7 +95,8 @@ from sage.rings.number_field.totallyreal import weed_fields, odlyzko_bound_total
 from sage.libs.pari.all import pari
 from sage.rings.all import ZZ, QQ
 
-import math, sys
+import math
+import sys
 
 
 def integral_elements_in_box(K, C):
@@ -389,7 +390,7 @@ class tr_data_rel:
                 return
             else:
                 if verbose:
-                    print "  finished"
+                    print("  finished")
 
                 # Already reached maximum, so "carry the 1" to find the next value of k.
                 k += 1
@@ -419,10 +420,10 @@ class tr_data_rel:
             # Recall k == -1 means all coefficients are good to go.
             while k >= 0 and (not haltk or k >= haltk):
                 if verbose:
-                    print k, ":",
-                    for i in range(0,self.m+1):
-                        print self.a[i],
-                    print ""
+                    print(k, ":", end="")
+                    for i in range(self.m + 1):
+                        print(self.a[i], end="")
+                    print("")
 
                 if k == m-2:
                     # We only know the value of a[n-1], the trace.
@@ -434,12 +435,12 @@ class tr_data_rel:
                     # Check for trivially empty.
                     if bl > br:
                         if verbose:
-                            print " ", br, ">", bl
+                            print(" ", br, ">", bl)
                         maxoutflag = 1
                         break
 
                     if verbose >= 2:
-                        print "  bl, br:", bl, br
+                        print("  bl, br:", bl, br)
 
                     # Enumerate all elements of Z_F with T_2 <= br
                     T2s = []
@@ -449,7 +450,7 @@ class tr_data_rel:
                         if tre[0] <= bl and tre[1] >= br:
                             trace_elts_found = True
                             if verbose >= 2:
-                                print "  found copy!"
+                                print("  found copy!")
                             for theta in tre[2]:
                                 if theta.trace() >= bl and theta.trace() <= br:
                                     T2s.append(theta)
@@ -470,12 +471,12 @@ class tr_data_rel:
                                 am2s.append(am2)
 
                     if verbose >= 2:
-                        print "  am2s:", am2s
+                        print("  am2s:", am2s)
 
                     # If none survive, break!
                     if len(am2s) == 0:
                         if verbose:
-                            print "  finished"
+                            print("  finished")
                         maxoutflag = 1
                         break
 
@@ -491,7 +492,7 @@ class tr_data_rel:
                     self.gnk[k] = [0, (m-1)*self.a[m-1], m*(m-1)/2]
 
                     if verbose >= 2:
-                        print "  betak:", self.beta[k]
+                        print("  betak:", self.beta[k])
                 else:
                     # Compute the roots of the derivative.
                     self.gnk[k+1][0] = self.a[k+1]
@@ -503,7 +504,7 @@ class tr_data_rel:
                             self.beta[k][i].sort()
                     except TypeError:
                         if verbose:
-                            print "  betak:", self.beta[k]
+                            print("  betak:", self.beta[k])
                         maxoutflag = True
                         break
 
@@ -516,7 +517,7 @@ class tr_data_rel:
                             df = self.Fx(self.gnk[k+2])
                             if gcd(f,df) != 1:
                                 if verbose:
-                                    print "  gnk has multiple factor!"
+                                    print("  gnk has multiple factor!")
                                 maxoutflag = True
                                 break
                     if maxoutflag:
@@ -536,7 +537,7 @@ class tr_data_rel:
                     self.beta[k] = [[self.b_lower[i]] + self.beta[k][i] + [self.b_upper[i]] for i in range(len(self.beta[k]))]
 
                     if verbose >= 2:
-                        print "  betak:", self.beta[k]
+                        print("  betak:", self.beta[k])
 
                     # Compute next g_(m-(k+1)), k times the formal integral of g_(m-k).
                     self.gnk[k] = [self.F.primitive_element()*0] + [self.gnk[k+1][i-1]*(k+1)/i for i in range(1,m-k+1)]
@@ -547,8 +548,8 @@ class tr_data_rel:
                     mk = m-(k+1)
 
                     if verbose >= 2:
-                        print "  gnk:", self.gnk[k]
-                        print "  gnks:", gnks
+                        print("  gnk:", self.gnk[k])
+                        print("  gnks:", gnks)
 
                     # Compute upper and lower bounds which guarantee one retains
                     # a polynomial with all real roots.
@@ -570,13 +571,13 @@ class tr_data_rel:
                                        abs(numpy.polyval(gnkm1s[j], betak[j][mk-2*i])*eps_global)) for j in range(self.d)]
 
                     if verbose >= 2:
-                        print "  akmin:", akmin
-                        print "  akmax:", akmax
+                        print("  akmin:", akmin)
+                        print("  akmax:", akmax)
 
                     for i in range(self.d):
                         if akmin[i] > akmax[i]:
                             if verbose:
-                                print " ", akmin[i], ">", akmax[i]
+                                print(" ", akmin[i], ">", akmax[i])
                             maxoutflag = 1
                             break
                     if maxoutflag:
@@ -595,10 +596,10 @@ class tr_data_rel:
                                 pass
 
                     if verbose:
-                        print "  amaxvals[k]:", self.amaxvals[k]
+                        print("  amaxvals[k]:", self.amaxvals[k])
                     if len(self.amaxvals[k]) == 0:
                         if verbose:
-                            print "  finished"
+                            print("  finished")
                         maxoutflag = True
                         break
                     self.a[k] = self.amaxvals[k].pop()
@@ -765,7 +766,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
     while f_out[m] != 0:
         counts[0] += 1
         if verbose:
-            print "==>", f_out,
+            print("==>", f_out, end="")
 
         f_str = ''
         for i in range(len(f_out)):
@@ -788,7 +789,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
 
                     if d <= B:
                         if verbose:
-                            print "has discriminant", d,
+                            print("has discriminant", d, end="")
 
                         # Find a minimal lattice element
                         counts[3] += 1
@@ -797,26 +798,26 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
                         # Check if K is contained in the list.
                         if (d, ng) in S:
                             if verbose:
-                                print "but is not new"
+                                print("but is not new")
                         else:
                             if verbose:
-                                print "and is new!"
+                                print("and is new!")
                             S[(d, ng)] = Fx(f_out)
                     else:
                         if verbose:
-                            print "has discriminant", abs(d), "> B"
+                            print("has discriminant", abs(d), "> B")
                 else:
                     if verbose:
-                        print "is not absolutely irreducible"
+                        print("is not absolutely irreducible")
             else:
                 if verbose:
-                    print "has discriminant", abs(d), "with no large enough square divisor"
+                    print("has discriminant", abs(d), "with no large enough square divisor")
         else:
             if verbose:
                 if d == 0:
-                    print "is not squarefree"
+                    print("is not squarefree")
                 else:
-                    print "is not totally real"
+                    print("is not totally real")
         if verbose == 2:
             T.incr(f_out,verbose=verbose)
         else:
@@ -863,14 +864,14 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
 
     # Output.
     if verbose:
-        print "="*80
-        print "Polynomials tested: {}".format(counts[0])
-        print ( "Polynomials with discriminant with large enough square"
-                " divisor: {}".format(counts[1]))
-        print "Irreducible polynomials: {}".format(counts[2])
-        print "Polynomials with nfdisc <= B: {}".format(counts[3])
+        print("=" * 80)
+        print("Polynomials tested: {}".format(counts[0]))
+        print("Polynomials with discriminant with large enough square"
+              " divisor: {}".format(counts[1]))
+        print("Irreducible polynomials: {}".format(counts[2]))
+        print("Polynomials with nfdisc <= B: {}".format(counts[3]))
         for i in range(len(S)):
-            print S[i]
+            print(S[i])
         if isinstance(verbose, str):
             fsock.close()
         sys.stdout = saveout
@@ -958,8 +959,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
             Sds = enumerate_totallyreal_fields_prim(d, int(math.floor((1.*B)**(1.*d/n))), verbose=verbose)
             for i in range(len(Sds)):
                 if verbose:
-                    print "="*80
-                    print "Taking F =", Sds[i][1]
+                    print("=" * 80)
+                    print("Taking F =", Sds[i][1])
                 F = NumberField(ZZx(Sds[i][1]), 't')
                 T = enumerate_totallyreal_fields_rel(F, n/d, B, verbose=verbose, return_seqs=return_seqs)
                 if return_seqs:
@@ -984,14 +985,14 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
             fsock = open(verbose, 'w')
             sys.stdout = fsock
         # Else, print to screen
-        print "="*80
-        print "Polynomials tested: {}".format(counts[0])
-        print ( "Polynomials with discriminant with large enough square"
-                " divisor: {}".format(counts[1]))
-        print "Irreducible polynomials: {}".format(counts[2])
-        print "Polynomials with nfdisc <= B: {}".format(counts[3])
+        print("=" * 80)
+        print("Polynomials tested: {}".format(counts[0]))
+        print("Polynomials with discriminant with large enough square"
+              " divisor: {}".format(counts[1]))
+        print("Irreducible polynomials: {}".format(counts[2]))
+        print("Polynomials with nfdisc <= B: {}".format(counts[3]))
         for i in range(len(S)):
-            print S[i]
+            print(S[i])
         if isinstance(verbose, str):
             fsock.close()
         sys.stdout = saveout

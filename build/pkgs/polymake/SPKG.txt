@@ -1,0 +1,62 @@
+= Polymake =
+
+== Description ==
+
+polymake is open source software for research in polyhedral
+geometry. It deals with polytopes, polyhedra and fans as
+well as simplicial complexes, matroids, graphs, tropical
+hypersurfaces, and other objects. Supported platforms
+include various flavors of Linux, Free BSD and Mac OS.
+
+== License ==
+
+ * GPL v3
+
+== Upstream Contact ==
+
+ * https://polymake.org/
+
+== Dependencies ==
+
+Polymake needs a working installation of Perl, including its shared
+library and some modules (XML::Writer XML::LibXML XML::LibXSLT).
+These are not provided by a Sage package.  Sage does install the
+Term::Readline::Gnu module, however, when you install polymake.
+
+On Ubuntu, use:
+ sudo apt-get install libxml-libxslt-perl libxml-writer-perl libxml2-dev libperl-dev libncurses-dev
+
+On Fedora 23, use:
+ sudo yum install perl-ExtUtils-Embed
+
+On Mac OS X, all modules (except for Term::Readline::Gnu) appear to be
+standard.
+
+
+Several Sage packages should be installed before installing the
+polymake package to give a more featureful Polymake installation:
+ sage -i 4ti2 latte_int topcom
+
+Also this old-style Sage package can be installed for a more
+featureful Polymake installation:
+ sage -p qhull
+
+Software that would need to be installed manually (no Sage package
+ available) for a more featureful Polymake installation:
+ azove,
+ porta,
+ vinci,
+ SplitsTree4,
+ bliss (needs Debian patches; can't use the existing old-style Sage package)
+
+Information on missing Polymake prerequisites after installing
+polymake:
+ $ sage -sh
+ (sage-sh) $ polymake
+ polytope> show_unconfigured;
+
+== Debugging polymake install problems ==
+
+# apt-get install libdevel-trace-perl
+$ cd src
+$ perl -d:Trace support/configure.pl

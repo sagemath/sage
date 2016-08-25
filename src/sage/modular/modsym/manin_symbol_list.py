@@ -16,6 +16,7 @@ different types.  The hierarchy is as follows:
   - :class:`ManinSymbolList_character`
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
@@ -45,7 +46,7 @@ from sage.structure.parent import Parent
 from sage.structure.sage_object import register_unpickle_override
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
-from apply import apply_to_monomial
+from .apply import apply_to_monomial
 
 from sage.modular.modsym.manin_symbol import ManinSymbol
 

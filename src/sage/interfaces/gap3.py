@@ -12,7 +12,7 @@ AUTHORS:
 
     The experimental package for GAP3 is Jean Michel's pre-packaged GAP3,
     which is a minimal GAP3 distribution containing packages that have
-    no equivalent in GAP4, see :trac:20107 and also 
+    no equivalent in GAP4, see :trac:`20107` and also 
 
         https://webusers.imj-prg.fr/~jean.michel/gap3/
 
@@ -575,7 +575,7 @@ class Gap3(Gap_generic):
     have GAP3 installed, or because it is not configured correctly.
 
     - If you do not have GAP3 installed, then you must either install
-      the optional package, see :trac:20107, or you download and
+      the optional package, see :trac:`20107`, or you download and
       install it yourself.
       Here are two other ways to obtain GAP3:
 

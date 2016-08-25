@@ -7,6 +7,7 @@ AUTHORS:
 
 - David Roe
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
@@ -20,7 +21,7 @@ AUTHORS:
 #*****************************************************************************
 
 
-from padic_extension_generic import pAdicExtensionGeneric
+from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.finite_rings.finite_field_constructor import GF
 
 class UnramifiedExtensionGeneric(pAdicExtensionGeneric):

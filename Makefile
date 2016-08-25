@@ -130,22 +130,12 @@ configure: configure.ac src/bin/sage-version.sh m4/*.m4
 	./bootstrap -d
 
 install:
-	echo "Experimental use only!"
-	if [ "$(DESTDIR)" = "" ]; then \
-		echo >&2 "Set the environment variable DESTDIR to the install path."; \
-		exit 1; \
-	fi
-	# Make sure we remove only an existing directory. If $(DESTDIR)/sage is
-	# a file instead of a directory then the mkdir statement later will fail
-	if [ -d "$(DESTDIR)"/sage ]; then \
-		rm -rf "$(DESTDIR)"/sage; \
-	fi
-	mkdir -p "$(DESTDIR)"/sage
-	mkdir -p "$(DESTDIR)"/bin
-	cp -Rp * "$(DESTDIR)"/sage
-	rm -f "$(DESTDIR)"/bin/sage
-	ln -s ../sage/sage "$(DESTDIR)"/bin/sage
-	"$(DESTDIR)"/bin/sage -c # Run sage-location
+	@echo "******************************************************************"
+	@echo "The '$@' target is no longer supported:"
+	@echo "either build SageMath in-place or use the binary packaging scripts"
+	@echo "from https://github.com/sagemath/binary-pkg"
+	@echo "******************************************************************"
+	@exit 1
 
 
 .PHONY: default build install micro_release \

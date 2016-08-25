@@ -6,7 +6,7 @@ if [ "$SAGE_LOCAL" = "" ]; then
    exit 1
 fi
 
-cd nauty*
+cd src
 
 # runalltests doesn't exit with a zero status.
 # So we check $fails instead.

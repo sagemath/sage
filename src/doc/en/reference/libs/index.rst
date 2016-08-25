@@ -49,10 +49,11 @@ to be aware of the modules described in this chapter.
    sage/libs/ntl/all
    sage/libs/libecm
    sage/libs/lrcalc/lrcalc
-   sage/libs/pari/handle_error
    sage/libs/pari/gen
    sage/libs/pari/pari_instance
    sage/libs/pari/closure
+   sage/libs/pari/convert
+   sage/libs/pari/handle_error
    sage/rings/pari_ring
    sage/libs/fplll/fplll
    sage/libs/readline
@@ -72,6 +73,6 @@ to be aware of the modules described in this chapter.
 
 .. Cannot be imported independently of mpmath: sage/libs/mpmath/ext_main sage/libs/mpmath/ext_impl sage/libs/mpmath/ext_libmp
 
-.. Modules depending on optional packages: sage/libs/coxeter3/coxeter sage/libs/coxeter3/coxeter_group sage/libs/fes
+.. Modules depending on optional packages: sage/libs/coxeter3/coxeter sage/libs/coxeter3/coxeter_group sage/libs/fes sage/libs/homfly sage/libs/braiding
 
 .. include:: ../footer.txt

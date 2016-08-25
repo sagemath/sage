@@ -19,6 +19,7 @@ TESTS::
     sage: loads(dumps(A)) == A
     True
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -33,10 +34,10 @@ TESTS::
 from sage.categories.all        import ModularAbelianVarieties
 from sage.structure.sequence    import Sequence, Sequence_generic
 from sage.structure.parent_base import ParentWithBase
-from morphism                   import HeckeOperator, Morphism, DegeneracyMap
-from torsion_subgroup           import RationalTorsionSubgroup, QQbarTorsionSubgroup
-from finite_subgroup            import (FiniteSubgroup_lattice, FiniteSubgroup, TorsionPoint)
-from cuspidal_subgroup          import CuspidalSubgroup, RationalCuspidalSubgroup, RationalCuspSubgroup
+from .morphism                   import HeckeOperator, Morphism, DegeneracyMap
+from .torsion_subgroup           import RationalTorsionSubgroup, QQbarTorsionSubgroup
+from .finite_subgroup            import (FiniteSubgroup_lattice, FiniteSubgroup, TorsionPoint)
+from .cuspidal_subgroup          import CuspidalSubgroup, RationalCuspidalSubgroup, RationalCuspSubgroup
 from sage.rings.all import ZZ, QQ, QQbar, Integer
 from sage.arith.all import LCM, divisors, prime_range, next_prime
 from sage.rings.ring import is_Ring
@@ -52,9 +53,9 @@ from sage.misc.all              import prod
 
 from copy import copy
 
-import homology
-import homspace
-import lseries
+
+from . import homspace
+from . import lseries
 
 def is_ModularAbelianVariety(x):
     """
@@ -517,7 +518,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 if not (self.lattice().matrix() * mat).is_zero():
                     break
 
-        from constructor import AbelianVariety
+        from .constructor import AbelianVariety
         Af = AbelianVariety(self.newform_label())
         H = A.Hom(Af.ambient_variety())
         m = H(Morphism(H, mat))
@@ -2036,6 +2037,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             sage: J0(389).homology(ZZ)
             Integral Homology of Abelian variety J0(389) of dimension 32
         """
+        from . import homology
         try:
             return self._homology[base_ring]
         except AttributeError:
@@ -2924,7 +2926,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             else:
                 # Decompose each ambient modular symbols factor.
                 #X = [ModularAbelianVariety_modsym(ModularSymbols(G,sign=0).cuspidal_submodule()) for G in self.groups()]
-                from abvar_ambient_jacobian import ModAbVar_ambient_jacobian_class
+                from .abvar_ambient_jacobian import ModAbVar_ambient_jacobian_class
                 X = [ModAbVar_ambient_jacobian_class(G) for G in self.groups()]
                 E = [A.decomposition(simple=simple, bound=bound) for A in X]
                 i = 0
@@ -4741,4 +4743,3 @@ def modsym_lattices(M, factors):
         A.echelonize()
         D.append(tuple(list(factors[i]) + [A.row_module()]))
     return Sequence(D, cr=True)
-

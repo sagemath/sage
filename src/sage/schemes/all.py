@@ -1,6 +1,7 @@
 """
 all.py -- export of schemes to Sage
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #
@@ -20,25 +21,25 @@ all.py -- export of schemes to Sage
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from jacobians.all import *
+from .jacobians.all import *
 
-from hyperelliptic_curves.all import *
+from .hyperelliptic_curves.all import *
 
-from plane_curves.all import *
+from .curves.all import *
 
-from plane_conics.all import *
+from .plane_conics.all import *
 
-from elliptic_curves.all import *
+from .elliptic_curves.all import *
 
-from plane_quartics.all import *
+from .plane_quartics.all import *
 
-from generic.all import *
+from .generic.all import *
 
-from toric.all import *
+from .toric.all import *
 
-from affine.all import *
+from .affine.all import *
 
-from projective.all import *
+from .projective.all import *
 
-from product_projective.all import *
+from .product_projective.all import *
 

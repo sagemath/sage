@@ -19,6 +19,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.monoids.string_monoid import BinaryStrings
 from sage.arith.all import is_prime, lcm, primes, random_prime
@@ -374,7 +375,7 @@ def carmichael_lambda(n):
         ...
         ValueError: Input n must be a positive integer.
 
-    Bug reported in trac #8283::
+    Bug reported in :trac:`8283`::
 
         sage: from sage.crypto.util import carmichael_lambda
         sage: type(carmichael_lambda(16))
@@ -448,10 +449,9 @@ def has_blum_prime(lbound, ubound):
         sage: has_blum_prime(4, 100)
         True
         sage: for n in xrange(4, 100):
-        ...       if is_blum_prime(n):
-        ...           print n
-        ...           break
-        ...
+        ....:     if is_blum_prime(n):
+        ....:         print(n)
+        ....:         break
         7
         sage: has_blum_prime(24, 28)
         False

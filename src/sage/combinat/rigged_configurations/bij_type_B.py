@@ -34,6 +34,7 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
@@ -104,7 +105,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                 from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition
 
                 if verbose:
-                    print "===================="
+                    print("====================")
                     if len(self.cur_path) == 0:
                         print(repr([])) # Special case for displaying when the rightmost factor is a spinor
                     else:

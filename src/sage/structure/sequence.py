@@ -76,10 +76,11 @@ TESTS::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ##########################################################################
-
+from __future__ import print_function
 
 from sage.misc.latex import list_function as list_latex_function
 import sage.structure.sage_object
+import sage.structure.coerce
 
 #from mutability import Mutability #we cannot inherit from Mutability and list at the same time
 
@@ -215,6 +216,13 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
         [1, 2, 1, 3]
         sage: v.universe()
         Finite Field of size 5
+
+    TESTS::
+
+        sage: Sequence(["a"], universe=ZZ)
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert a to an element of Integer Ring
     """
     from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 
@@ -228,41 +236,29 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
         x = x.gens()
 
     if universe is None:
-        if not isinstance(x, (list, tuple)):
-            x = list(x)
-            #raise TypeError("x must be a list or tuple")
+        orig_x = x
+        x = list(x) # make a copy even if x is a list, we're going to change it
 
         if len(x) == 0:
             import sage.categories.all
             universe = sage.categories.all.Objects()
         else:
-            import sage.structure.element as coerce
-            y = x
-            x = list(x)   # make a copy, or we'd change the type of the elements of x, which would be bad.
+            import sage.structure.element
             if use_sage_types:
                 # convert any Python built-in numerical types to Sage objects
-                from sage.rings.integer_ring import ZZ
-                from sage.rings.real_double import RDF
-                from sage.rings.complex_double import CDF
-                for i in range(len(x)):
-                    if isinstance(x[i], int) or isinstance(x[i], long):
-                        x[i] = ZZ(x[i])
-                    elif isinstance(x[i], float):
-                        x[i] = RDF(x[i])
-                    elif isinstance(x[i], complex):
-                        x[i] = CDF(x[i])
+                x = [sage.structure.coerce.py_scalar_to_element(e) for e in x]
             # start the pairwise coercion
             for i in range(len(x)-1):
                 try:
-                    x[i], x[i+1] = coerce.canonical_coercion(x[i],x[i+1])
+                    x[i], x[i+1] = sage.structure.element.canonical_coercion(x[i],x[i+1])
                 except TypeError:
                     import sage.categories.all
                     universe = sage.categories.all.Objects()
-                    x = list(y)
+                    x = list(orig_x)
                     check = False  # no point
                     break
             if universe is None:   # no type errors raised.
-                universe = coerce.parent(x[len(x)-1])
+                universe = sage.structure.element.parent(x[len(x)-1])
 
     from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
     from sage.rings.polynomial.pbori import BooleanMonomialMonoid
@@ -454,7 +450,13 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         self.__universe = universe
         if check:
-            x = [universe(t) for t in x]
+            x = list(x)
+            for i in xrange(len(x)):
+                try:
+                    x[i] = universe(x[i])
+                except TypeError:
+                    raise TypeError("unable to convert {} to an element of {}"
+                                    .format(x[i], universe))
         list.__init__(self, x)
         self._is_immutable = immutable
 
@@ -672,7 +674,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
             sage: Sequence([1,2/3,-2/5])._repr_()
             '[1, 2/3, -2/5]'
-            sage: print Sequence([1,2/3,-2/5], cr=True)._repr_()
+            sage: print(Sequence([1,2/3,-2/5], cr=True)._repr_())
             [
             1,
             2/3,
@@ -706,7 +708,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             '[1, 2, 3]'
             sage: repr(s)
             '[1, 2, 3]'
-            sage: print s
+            sage: print(s)
             [1, 2, 3]
             sage: s = Sequence([1,2,3], cr=True)
             sage: str(s)

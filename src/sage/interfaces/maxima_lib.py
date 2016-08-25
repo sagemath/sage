@@ -49,6 +49,25 @@ which is anyway set to raise an error::
     Traceback (most recent call last):
     ...
     RuntimeError: Maxima interface in library mode can only be instantiated once
+
+Changed besselexpand to true in init_code -- automatically simplify bessel functions to trig functions when appropriate when true. Examples:
+
+For some infinite sums, a closed expression can be found. By default, "maxima" is used for that::
+
+    sage: x,n,k = var("x","n","k")
+    sage: sum((-x)^n/(factorial(n)*factorial(n+3/2)),n,0,oo)
+    -1/2*(2*x*cos(2*sqrt(x)) - sqrt(x)*sin(2*sqrt(x)))/(sqrt(pi)*x^2)
+
+Maxima has some flags that affect how the result gets simplified(By default, besselexpand was set to false in Maxima)::
+
+    sage: maxima_calculus("besselexpand:false")
+    false
+    sage: x,n,k = var("x","n","k")
+    sage: sum((-x)^n/(factorial(n)*factorial(n+3/2)),n,0,oo)
+    bessel_J(3/2, 2*sqrt(x))/x^(3/4)
+    sage: maxima_calculus("besselexpand:true")
+    true
+
 """
 
 #*****************************************************************************
@@ -65,12 +84,14 @@ which is anyway set to raise an error::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.symbolic.ring import SR
 
 from sage.libs.ecl import EclObject, ecl_eval
 
-from maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
+from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
   MaximaAbstractElement, MaximaAbstractFunctionElement,
   MaximaAbstractElementFunction)
 
@@ -139,9 +160,11 @@ ecl_eval("(setf *standard-output* *dev-null*)")
 ## Default options set in Maxima
 # display2d -- no ascii art output
 # keepfloat -- don't automatically convert floats to rationals
-init_code = ['display2d : false', 'domain : complex', 'keepfloat : true',
+
+init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'keepfloat : true',
             'load(to_poly_solve)', 'load(simplify_sum)',
             'load(abs_integrate)', 'load(diag)']
+
 
 # Turn off the prompt labels, since computing them *very
 # dramatically* slows down the maxima interpret after a while.
@@ -856,6 +879,7 @@ class MaximaLib(MaximaAbstract):
             Traceback (most recent call last):
             ...
             RuntimeError: ECL says: Error executing code in Maxima: Zero to negative power computed.
+
         """
         try:
             return max_to_sr(maxima_eval([[max_ratsimp],[[max_simplify_sum],([max_sum],[sr_to_max(SR(a)) for a in args])]]));
@@ -1104,7 +1128,7 @@ class MaximaLibElement(MaximaAbstractElement):
         # if ever want to dedent, see
         # http://mail.python.org/pipermail/python-list/2006-December/420033.html
         if onscreen:
-            print s
+            print(s)
         else:
             return s
 

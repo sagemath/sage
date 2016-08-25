@@ -1,25 +1,13 @@
 r"""
 Brandt Modules
 
-AUTHORS:
-
-- Jon Bober
-
-- Alia Hamieh
-
-- Victoria de Quehen
-
-- William Stein
-
-- Gonzalo Tornaria
-
 Introduction
 ============
 
 This tutorial outlines the construction of Brandt modules in Sage. The
 importance of this construction is that it provides us with a method
 to compute modular forms on `\Gamma_0(N)` as outlined in Pizer's paper
-[Pi]. In fact there exists a non-canonical Hecke algebra isomorphism
+[Pizer]_. In fact there exists a non-canonical Hecke algebra isomorphism
 between the Brandt modules and a certain subspace of
 `S_{2}(\Gamma_0(pM))` which contains all the newforms.
 
@@ -65,10 +53,10 @@ defined in a similar fashion.)
 The right order of `I` is defined to be the set of elements in `A`
 which fix `I` under right multiplication.
 
-right_order (R, basis) returns the right ideal of `I` in `R` given a
+``right_order(R, basis)`` returns the right ideal of `I` in `R` given a
 basis for the right ideal `I` contained in the maximal order `R.`
 
-ideal_classes(self) returns a tuple of all right ideal classes in self
+``ideal_classes(self)`` returns a tuple of all right ideal classes in self
 which, for the purpose of constructing the Brandt module B(p,M), is
 taken to be an Eichler order of level M.
 
@@ -77,17 +65,17 @@ depends on the construction of a Hecke module defined as a free
 abelian group on right ideal classes of a quaternion algebra with the
 following action
 
-.. math:
+.. MATH::
 
-    T_n[I]=\sum_{\phi} [J]
+    T_n[I] = \sum_{\phi} [J]
 
 where `(n,pM)=1` and the sum is over cyclic `\mathcal{O}`-module
-homomorphisms `\phi :I\rightarrow J ` of degree `n` up to isomorphism
+homomorphisms `\phi :I\rightarrow J` of degree `n` up to isomorphism
 of `J`. Equivalently one can sum over the inclusions of the submodules
 `J \rightarrow n^{-1}I`. The rough idea is to start with the trivial
 ideal class containing the order `\mathcal{O}` itself. Using the
-method cyclic_submodules(self, I, p) one computes `T_p([\mathcal{O}])`
-for some prime integer $p$ not dividing the level of the order
+method ``cyclic_submodules(self, I, p)`` one computes `T_p([\mathcal{O}])`
+for some prime integer `p` not dividing the level of the order
 `\mathcal{O}`. Apply this method repeatedly and test for equivalence
 among resulting ideals. A theorem of Serre asserts that one gets a
 complete set of ideal class representatives after a finite number of
@@ -97,7 +85,7 @@ One can prove that two ideals `I` and `J` are equivalent if and only
 if there exists an element `\alpha \in I \overline{J}` such
 `N(\alpha)=N(I)N(J)`.
 
-is_equivalent(I,J) returns true if `I` and `J` are equivalent. This
+``is_equivalent(I,J)`` returns true if `I` and `J` are equivalent. This
 method first compares the theta series of `I` and `J`. If they are the
 same, it computes the theta series of the lattice `I\overline(J)`. It
 returns true if the `n^{th}` coefficient of this series is nonzero
@@ -106,11 +94,11 @@ where `n=N(J)N(I)`.
 The theta series of a lattice `L` over the quaternion algebra `A` is
 defined as
 
-.. math:
+.. MATH::
 
     \theta_L(q)=\sum_{x \in L} q^{\frac{N(x)}{N(L)}}
 
-L.theta_series(T,q) returns a power series representing `\theta_L(q)`
+``L.theta_series(T,q)`` returns a power series representing `\theta_L(q)`
 up to a precision of `\mathcal{O}(q^{T+1})`.
 
 
@@ -121,25 +109,22 @@ The Hecke structure defined on the Brandt module is given by the
 Brandt matrices which can be computed using the definition of the
 Hecke operators given earlier.
 
-hecke_matrix_from_defn (self,n) returns the matrix of the nth Hecke
+``hecke_matrix_from_defn(self,n)`` returns the matrix of the nth Hecke
 operator `B_{0}(n)` acting on self, computed directly from the
 definition.
 
 However, one can efficiently compute Brandt matrices using theta
-series. In fact, let {`I_{1},.....,I_{h}`} be a set of right
+series. In fact, let `\{I_{1},.....,I_{h}\}` be a set of right
 `\mathcal{O}`-ideal class representatives. The (i,j) entry in the
 Brandt matrix `B_{0}(n)` is the product of the `n^{th}` coefficient in
 the theta series of the lattice `I_{i}\overline{I_{j}}` and the first
 coefficient in the theta series of the lattice
 `I_{i}\overline{I_{i}}`.
 
-compute_hecke_matrix_brandt(self,n) returns the nth Hecke matrix,
+``compute_hecke_matrix_brandt(self,n)`` returns the nth Hecke matrix,
 computed using theta series.
 
-Example
--------
-
-::
+EXAMPLES::
 
     sage: B = BrandtModule(23)
 
@@ -160,18 +145,17 @@ Example
     [          1/6 + O(q^3)     1/6 + q^2 + O(q^3)       1/6 + q + O(q^3)]
 
 
+REFERENCES:
 
-References
-----------
+.. [Pizer] Arnold Pizer, *An Algorithm for Computing Modular Forms on* `\Gamma_{0}(N)`
 
-- [Pi] Arnold Pizer, *An Algorithm for Computing Modular Forms on* `\Gamma_{0}(N)`
-
-- [Ko] David Kohel, *Hecke Module Structure of Quaternions*
+.. [Kohel] David Kohel, *Hecke Module Structure of Quaternions*
 
 
 Further Examples
 ----------------
-We decompose a Brandt module over both `\ZZ` and `\QQ`.::
+
+We decompose a Brandt module over both `\ZZ` and `\QQ`. ::
 
     sage: B = BrandtModule(43, base_ring=ZZ); B
     Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring
@@ -193,6 +177,13 @@ We decompose a Brandt module over both `\ZZ` and `\QQ`.::
     sage: B.decomposition()[2].basis()
     ((1, 0, -1/2, -1/2), (0, 1, -1/2, -1/2))
 
+AUTHORS:
+
+- Jon Bober
+- Alia Hamieh
+- Victoria de Quehen
+- William Stein
+- Gonzalo Tornaria
 """
 
 #*****************************************************************************
@@ -204,7 +195,7 @@ We decompose a Brandt module over both `\ZZ` and `\QQ`.::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 # imports
 from sage.misc.all import prod, verbose
@@ -217,7 +208,6 @@ from sage.arith.all import gcd, factor, prime_divisors, kronecker, next_prime, l
 from sage.modular.hecke.all import (AmbientHeckeModule, HeckeSubmodule, HeckeModuleElement)
 from sage.modular.dirichlet import TrivialCharacter
 from sage.matrix.all  import MatrixSpace, matrix
-from sage.rings.rational_field import is_RationalField
 from sage.misc.mrange import cartesian_product_iterator
 
 from sage.misc.cachefunc import cached_method
@@ -229,17 +219,19 @@ cache = {}
 def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
     """
     Return the Brandt module of given weight associated to the prime
-    power p^r and integer M, where p and M are coprime.
+    power `p^r` and integer `M`, where `p` and `M` are coprime.
 
     INPUT:
-        - N -- a product of primes with odd exponents
-        - M -- an integer coprime to q (default: 1)
-        - weight -- an integer that is at least 2 (default: 2)
-        - base_ring -- the base ring (default: QQ)
-        - use_cache -- whether to use the cache (default: True)
+
+    - `N` -- a product of primes with odd exponents
+    - `M` -- an integer coprime to `q` (default: 1)
+    - ``weight`` -- an integer that is at least 2 (default: 2)
+    - ``base_ring`` -- the base ring (default: ``QQ``)
+    - ``use_cache`` -- whether to use the cache (default: ``True``)
 
     OUTPUT:
-        - a Brandt module
+
+    a Brandt module
 
     EXAMPLES::
 
@@ -256,8 +248,8 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
         sage: BrandtModule(11, base_ring=QQbar)
         Brandt module of dimension 2 of level 11 of weight 2 over Algebraic Field
 
-    The use_cache option determines whether the Brandt module returned
-    by this function is cached.::
+    The ``use_cache`` option determines whether the Brandt module returned
+    by this function is cached::
 
         sage: BrandtModule(37) is BrandtModule(37)
         True
@@ -266,7 +258,7 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
 
     TESTS:
 
-    Note that N and M must be coprime::
+    Note that `N` and `M` must be coprime::
 
         sage: BrandtModule(3,15)
         Traceback (most recent call last):
@@ -309,19 +301,21 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
     return B
 
 def class_number(p, r, M):
-    """
-    Return the class number of an order of level N = p^r*M in the
-    quaternion algebra over QQ ramified precisely at p and infinity.
+    r"""
+    Return the class number of an order of level `N = p^r M` in the
+    quaternion algebra over `\QQ` ramified precisely at `p` and infinity.
 
-    This is an implementation of Theorem 1.12 of [Pizer, 1980].
+    This is an implementation of Theorem 1.12 of [Pizer]_.
 
     INPUT:
-        - p -- a prime
-        - r -- an odd positive integer (default: 1)
-        - M -- an integer coprime to q (default: 1)
+
+    - `p` -- a prime
+    - `r` -- an odd positive integer (default: 1)
+    - `M` -- an integer coprime to `q` (default: 1)
 
     OUTPUT:
-        Integer
+
+    Integer
 
     EXAMPLES::
 
@@ -345,15 +339,17 @@ def class_number(p, r, M):
 def maximal_order(A):
     """
     Return a maximal order in the quaternion algebra ramified
-    at p and infinity.
+    at `p` and infinity.
 
-    This is an implementation of Proposition 5.2 of [Pizer, 1980].
+    This is an implementation of Proposition 5.2 of [Pizer]_.
 
     INPUT:
-        - A -- quaternion algebra ramified precisely at p and infinity
+
+    - `A` -- quaternion algebra ramified precisely at `p` and infinity
 
     OUTPUT:
-        - a maximal order in A
+
+    a maximal order in `A`
 
     EXAMPLES::
 
@@ -370,14 +366,16 @@ def maximal_order(A):
 
 def basis_for_left_ideal(R, gens):
     """
-    Return a basis for the left ideal of R with given generators.
+    Return a basis for the left ideal of `R` with given generators.
 
     INPUT:
-        - R -- quaternion order
-        - gens -- list of elements of R
+
+    - `R` -- quaternion order
+    - ``gens`` -- list of elements of `R`
 
     OUTPUT:
-        - list of four elements of R
+
+    list of four elements of `R`
 
     EXAMPLES::
 
@@ -392,19 +390,21 @@ def basis_for_left_ideal(R, gens):
 
 def right_order(R, basis):
     """
-    Given a basis for a left ideal I, return the right order in the
-    quaternion order R of elements such that I*x is contained in I.
+    Given a basis for a left ideal `I`, return the right order in the
+    quaternion order `R` of elements `x` such that `I x` is contained in `I`.
 
     INPUT:
-        - R -- order in quaternion algebra
-        - basis -- basis for an ideal I
+
+    - `R` -- order in quaternion algebra
+    - ``basis`` -- basis for an ideal `I`
 
     OUTPUT:
-        - order in quaternion algebra
+
+    order in quaternion algebra
 
     EXAMPLES:
 
-    We do a consistency check with the ideal equal to a maximal order.::
+    We do a consistency check with the ideal equal to a maximal order::
 
         sage: B = BrandtModule(17); basis = sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), B.maximal_order().basis())
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
@@ -454,10 +454,11 @@ class BrandtModule_class(AmbientHeckeModule):
     def __init__(self, N, M, weight, base_ring):
         """
         INPUT:
-            - N -- ramification number (coprime to M)
-            - M -- auxiliary level
-            - weight -- integer 2
-            - base_ring -- the base ring
+
+        - N -- ramification number (coprime to M)
+        - M -- auxiliary level
+        - weight -- integer 2
+        - base_ring -- the base ring
 
         EXAMPLES::
 
@@ -485,6 +486,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         return BrandtSubmodule
 
+    @cached_method
     def free_module(self):
         """
         Return the underlying free module of the Brandt module.
@@ -495,15 +497,11 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B.free_module()
             Vector space of dimension 325196 over Rational Field
         """
-        try: return self.__free_module
-        except AttributeError: pass
-        V = self.base_ring()**self.dimension()
-        self.__free_module = V
-        return V
+        return self.base_ring() ** self.dimension()
 
     def N(self):
         """
-        Return ramification level N.
+        Return ramification level `N`.
 
         EXAMPLES::
 
@@ -512,10 +510,9 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         return self.__N
 
-
     def M(self):
         """
-        Return the auxiliary level (prime to p part) of the quaternion
+        Return the auxiliary level (prime to `p` part) of the quaternion
         order used to compute this Brandt module.
 
         EXAMPLES::
@@ -527,14 +524,16 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def character(self):
         r"""
-        The character of this space. Always trivial.
+        The character of this space.
+
+        Always trivial.
 
         EXAMPLE::
 
             sage: BrandtModule(11,5).character()
             Dirichlet character modulo 55 of conductor 1 mapping 12 |--> 1, 46 |--> 1
         """
-        return TrivialCharacter(self.__N*self.__M)
+        return TrivialCharacter(self.__N * self.__M)
 
     def _repr_(self):
         """
@@ -568,10 +567,11 @@ class BrandtModule_class(AmbientHeckeModule):
         else:
             return cmp( (self.__M, self.__N, self.weight(), self.base_ring()), (other.__M, other.__N, other.weight(), other.base_ring()))
 
+    @cached_method
     def quaternion_algebra(self):
-        """
-        Return the quaternion algebra A over QQ ramified precisely at
-        p and infinity used to compute this Brandt module.
+        r"""
+        Return the quaternion algebra `A` over `\QQ` ramified precisely at
+        `p` and infinity used to compute this Brandt module.
 
         EXAMPLES::
 
@@ -586,27 +586,26 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(17).quaternion_algebra()
             Quaternion Algebra (-17, -3) with base ring Rational Field
         """
-        try:
-            return self.__quaternion_algebra
-        except AttributeError:
-            pass
         p = self.N()
         assert p.is_prime(), "we have only implemented the prime case"
         if p == 2:
-            QA = -1; QB = -1
-        elif p%4 == 3:
-            QA = -1; QB = -p
-        elif p%8 == 5:
-            QA = -2; QB = -p
-        elif p%8 == 1:
+            QA = -1
+            QB = -1
+        elif p % 4 == 3:
+            QA = -1
+            QB = -p
+        elif p % 8 == 5:
+            QA = -2
+            QB = -p
+        elif p % 8 == 1:
             q = 3
-            while q%4 != 3 or kronecker(p, q) != -1:
+            while q % 4 != 3 or kronecker(p, q) != -1:
                 q = next_prime(q)
-            QA = -p; QB = -q
-        A = QuaternionAlgebra(QQ, QA, QB)
-        self.__quaternion_algebra = A
-        return A
+            QA = -p
+            QB = -q
+        return QuaternionAlgebra(QQ, QA, QB)
 
+    @cached_method
     def maximal_order(self):
         """
         Return a maximal order in the quaternion algebra associated to this Brandt module.
@@ -618,15 +617,13 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(17).maximal_order() is BrandtModule(17).maximal_order()
             True
         """
-        try: return self.__maximal_order
-        except AttributeError: pass
-        R = maximal_order(self.quaternion_algebra())
-        self.__maximal_order = R
-        return R
+        return maximal_order(self.quaternion_algebra())
 
+    @cached_method
     def order_of_level_N(self):
         """
-        Return Eichler order of level N = p^(2*r+1)*M in the quaternion algebra.
+        Return Eichler order of level `N = p^{2 r + 1} M` in the
+        quaternion algebra.
 
         EXAMPLES::
 
@@ -637,11 +634,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(7,3*17).order_of_level_N()
             Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j + 35*k, 1/2*i + 65/2*k, j + 19*k, 51*k)
         """
-        try: return self.__order_of_level_N
-        except AttributeError: pass
-        R = quaternion_order_with_given_level(self.quaternion_algebra(), self.level())
-        self.__order_of_level_N = R
-        return R
+        return quaternion_order_with_given_level(self.quaternion_algebra(), self.level())
 
     #@cached_method
     def cyclic_submodules(self, I, p):
@@ -653,12 +646,14 @@ class BrandtModule_class(AmbientHeckeModule):
         We emphasize again that `J` is rescaled to be integral.
 
         INPUT:
-            I -- ideal I in R = self.order_of_level_N()
-            p -- prime p coprime to self.level()
+
+        - `I` -- ideal I in R = self.order_of_level_N()
+        - `p` -- prime `p` coprime to self.level()
 
         OUTPUT:
-            list of the p+1 fractional right R-ideals that contain I
-            such that J/I is GF(p) x GF(p).
+
+        list of the `p+1` fractional right R-ideals that contain I
+        such that J/I is GF(p) x GF(p).
 
         EXAMPLES::
 
@@ -726,7 +721,8 @@ class BrandtModule_class(AmbientHeckeModule):
                     if e and (d/e).valuation(p) == 0:
                         S = A.quaternion_order(v)
                         break
-                if S is not None: break
+                if S is not None:
+                    break
             self.__cyclic_submodules[p] = (alpha, beta)
 
         # right multiplication by X changes something to be written
@@ -785,31 +781,31 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def hecke_matrix(self, n, algorithm='default', sparse=False, B=None):
         """
-        Return the matrix of the n-th Hecke operator.
+        Return the matrix of the `n`-th Hecke operator.
 
         INPUT:
 
-            - `n` -- integer
+        - `n` -- integer
 
-            - ``algorithm`` -- string (default: 'default')
+        - ``algorithm`` -- string (default: 'default')
 
-                   - 'default' -- let Sage guess which algorithm is best
+           - 'default' -- let Sage guess which algorithm is best
 
-                   - 'direct' -- use cyclic subideals (generally much
-                     better when you want few Hecke operators and the
-                     dimension is very large); uses 'theta' if n divides
-                     the level.
+           - 'direct' -- use cyclic subideals (generally much
+             better when you want few Hecke operators and the
+             dimension is very large); uses 'theta' if n divides
+             the level.
 
-                   - 'brandt' -- use Brandt matrices (generally much
-                     better when you want many Hecke operators and the
-                     dimension is very small; bad when the dimension
-                     is large)
+           - 'brandt' -- use Brandt matrices (generally much
+             better when you want many Hecke operators and the
+             dimension is very small; bad when the dimension
+             is large)
 
-            - ``sparse`` -- bool (default: False)
+        - ``sparse`` -- bool (default: ``False``)
 
-            - `B` -- integer or None (default: None); in direct algorithm,
-              use theta series to this precision as an initial check for
-              equality of ideal classes.
+        - `B` -- integer or ``None`` (default: ``None``); in direct
+          algorithm, use theta series to this precision as an initial
+          check for equality of ideal classes.
 
         EXAMPLES::
 
@@ -862,13 +858,13 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-            - `p` -- prime number
+        - `p` -- prime number
 
-            - `B` -- integer or None (default: None); in direct algorithm,
-              use theta series to this precision as an initial check for
-              equality of ideal classes.
+        - `B` -- integer or None (default: None); in direct algorithm,
+          use theta series to this precision as an initial check for
+          equality of ideal classes.
 
-            - ``sparse`` -- bool (default: False); whether matrix should be sparse
+        - ``sparse`` -- bool (default: False); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -894,9 +890,9 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-            - `n` -- integer, coprime to level
+        - `n` -- integer, coprime to level
 
-            - ``sparse`` -- bool (default: False); whether matrix should be sparse
+        - ``sparse`` -- bool (default: False); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -924,7 +920,7 @@ class BrandtModule_class(AmbientHeckeModule):
             [0 0 1]
             [0 1 0]
 
-        An example where the Hecke operator isn't symmetric.::
+        An example where the Hecke operator isn't symmetric::
 
             sage: B = BrandtModule(43)
             sage: B._compute_hecke_matrix_directly(2)
@@ -1001,11 +997,11 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-           - `B` -- positive integer, precision of theta series vectors
+        - `B` -- positive integer, precision of theta series vectors
 
         OUTPUT:
 
-           - dictionary
+        dictionary
 
         EXAMPLES::
 
@@ -1045,8 +1041,9 @@ class BrandtModule_class(AmbientHeckeModule):
         quickly be computed, for `m<2n+20`.
 
         INPUT:
-            - n -- integer, coprime to level
-            - sparse -- bool (default: False); whether matrix should be sparse
+
+        - n -- integer, coprime to level
+        - sparse -- bool (default: False); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1096,13 +1093,15 @@ class BrandtModule_class(AmbientHeckeModule):
             p = next_prime(p)
         return p
 
+    @cached_method
     def right_ideals(self, B=None):
         """
         Return sorted tuple of representatives for the equivalence
-        classes of right ideals in self.
+        classes of right ideals in ``self``.
 
         OUTPUT:
-            - sorted tuple of fractional ideals
+
+        sorted tuple of fractional ideals
 
         EXAMPLES::
 
@@ -1120,9 +1119,6 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: prod(not Is[i].is_equivalent(Is[j]) for i in range(n) for j in range(i))
             1
         """
-        try: return self.__right_ideals
-        except AttributeError: pass
-
         p = self._smallest_good_prime()
         R = self.order_of_level_N()
         I = R.unit_ideal()
@@ -1165,12 +1161,11 @@ class BrandtModule_class(AmbientHeckeModule):
                             return ideals
                         got_something_new = True
             new_ideals = list(newly_computed_ideals)
-        ideals = tuple(sorted(ideals))
-        self.__right_ideals = ideals
-        return ideals
 
+        return tuple(sorted(ideals))
 
-    def _ideal_products(self):
+    @cached_method
+    def _ideal_products(self, diagonal_only=False):
         """
         Return all products of right ideals, which are used in computing
         the Brandt matrices.
@@ -1178,9 +1173,14 @@ class BrandtModule_class(AmbientHeckeModule):
         This function is used internally by the Brandt matrices
         algorithms.
 
+        INPUT:
+
+        - ``diagonal_only`` -- bool (default: ``False``) if ``True`` returns
+          only the diagonal ideal products
+
         OUTPUT:
 
-        - list of ideals
+        list of ideals
 
         EXAMPLES::
 
@@ -1192,22 +1192,28 @@ class BrandtModule_class(AmbientHeckeModule):
              [Fractional ideal (8 + 24*j + 24*k, 4*i + 24*j + 4*k, 32*j, 32*k),
               Fractional ideal (8 + 4*i + 16*j + 28*k, 8*i + 16*j + 8*k, 32*j, 64*k),
               Fractional ideal (16 + 16*j + 16*k, 4*i + 24*j + 4*k, 32*j + 32*k, 64*k)]]
+            sage: B._ideal_products(diagonal_only=True)
+            [Fractional ideal (8 + 8*j + 8*k, 4*i + 8*j + 4*k, 16*j, 16*k),
+             Fractional ideal (16 + 16*j + 48*k, 4*i + 8*j + 36*k, 32*j + 32*k, 64*k),
+             Fractional ideal (16 + 16*j + 16*k, 4*i + 24*j + 4*k, 32*j + 32*k, 64*k)]
         """
-        try:
-            return self.__ideal_products
-        except AttributeError:
-            pass
-
         L = self.right_ideals()
         n = len(L)
-        if n == 0:
+        if not n:
             return matrix(self.base_ring()[['q']], 0)
 
-        # 1. Compute the theta series
+        # 1. Compute the diagonal
+        D = [I.multiply_by_conjugate(I) for I in L]
+
+        if diagonal_only:
+            return D
+
+        # 2. Compute the rest of the products
         P = []
         for i in range(n):
-            P.append([L[i].multiply_by_conjugate(L[j]) for j in range(i+1)])
-        self.__ideal_products = P
+            v = [L[i].multiply_by_conjugate(L[j]) for j in range(i)]
+            v.append(D[i])
+            P.append(v)
         return P
 
     def _brandt_series_vectors(self, prec=None):
@@ -1223,7 +1229,7 @@ class BrandtModule_class(AmbientHeckeModule):
              [(1/2, 0, 1, 1, 3), (1/2, 0, 2, 3, 1), (1/2, 1, 0, 0, 3)]]
 
         If you have computed to higher precision and ask for a lower
-        precision, the higher precision is still returned.::
+        precision, the higher precision is still returned::
 
             sage: B._brandt_series_vectors(2)
             [[(1/2, 1, 1, 2, 1), (1/2, 0, 1, 1, 3), (1/2, 0, 1, 1, 3)],
@@ -1248,7 +1254,8 @@ class BrandtModule_class(AmbientHeckeModule):
         except AttributeError: pass
 
         # 1. Compute the theta series
-        theta = [[I.theta_series_vector(prec) for I in x] for x in self._ideal_products()]
+        theta = [[I.theta_series_vector(prec) for I in x]
+                 for x in self._ideal_products()]
 
         # 2. Compute the number e_j
         e = [theta[j][j][1] for j in range(n)]
@@ -1268,16 +1275,20 @@ class BrandtModule_class(AmbientHeckeModule):
     def brandt_series(self, prec, var='q'):
         r"""
         Return matrix of power series `\sum T_n q^n` to the given
-        precision.  Note that the Hecke operators in this series are
+        precision.
+
+        Note that the Hecke operators in this series are
         always over `\QQ`, even if the base ring of this Brandt module
         is not `\QQ`.
 
         INPUT:
-            - prec -- positive intege
-            - var -- string (default: `q`)
+
+        - ``prec`` -- positive integer
+        - ``var`` -- string (default: `q`)
 
         OUTPUT:
-            matrix of power series with coefficients in `\QQ`
+
+        matrix of power series with coefficients in `\QQ`
 
         EXAMPLES::
 
@@ -1290,7 +1301,7 @@ class BrandtModule_class(AmbientHeckeModule):
             [  1/6 + 2*q^2 + 2*q^3 + 2*q^4 + O(q^5)         1/6 + q + q^3 + 4*q^4 + O(q^5)]
 
 
-        Asking for a smaller precision works.::
+        Asking for a smaller precision works::
 
             sage: B.brandt_series(3)
             [1/4 + q + q^2 + O(q^3)   1/4 + 3*q^2 + O(q^3)]
@@ -1304,9 +1315,10 @@ class BrandtModule_class(AmbientHeckeModule):
         n = len(A[0])
         return matrix(R, n, n, [[R(x.list()[:prec],prec) for x in Y] for Y in A])
 
+    @cached_method
     def eisenstein_subspace(self):
         """
-        Return the 1-dimensional subspace of self on which the Hecke
+        Return the 1-dimensional subspace of ``self`` on which the Hecke
         operators `T_p` act as `p+1` for `p` coprime to the level.
 
         NOTE: This function assumes that the base field has
@@ -1325,9 +1337,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(7,10,base_ring=ZZ).eisenstein_subspace().basis()
             ((2, 2, 2, 1, 2, 2, 1, 2, 2, 2),)
         """
-        try: return self.__eisenstein_subspace
-        except AttributeError: pass
-        if self.base_ring().characteristic() != 0:
+        if self.base_ring().characteristic():
             raise ValueError("characteristic must be 0")
         # cut down until we get a 1-d space using Hecke operators T_p
         # with p coprime to the level.
@@ -1335,30 +1345,33 @@ class BrandtModule_class(AmbientHeckeModule):
         p = Integer(2)
         N = self.level()
         while V.dimension() >= 2:
-            while N%p == 0:
+            while N % p == 0:
                 p = p.next_prime()
-            A = V.T(p) - (p+1)
+            A = V.T(p) - (p + 1)
             V = A.kernel()
-        self.__eisenstein_subspace = V
         return V
 
     def is_cuspidal(self):
         r"""
-        Returns whether self is cuspidal, i.e. has no Eisenstein part.
+        Returns whether ``self`` is cuspidal, i.e. has no Eisenstein part.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: B = BrandtModule(3, 4)
             sage: B.is_cuspidal()
             False
             sage: B.eisenstein_subspace()
             Brandt module of dimension 1 of level 3*4 of weight 2 over Rational Field
         """
-        return self.eisenstein_subspace().dimension() == 0
+        return not self.eisenstein_subspace().dimension()
 
+    @cached_method
     def monodromy_weights(self):
         r"""
         Return the weights for the monodromy pairing on this Brandt
-        module.  The weights are associated to each ideal class in our
+        module.
+
+        The weights are associated to each ideal class in our
         fixed choice of basis. The weight of an ideal class `[I]` is
         half the number of units of the right order `I`.
 
@@ -1376,20 +1389,26 @@ class BrandtModule_class(AmbientHeckeModule):
             (1, 1, 1, 2, 1, 1, 2, 1, 1, 1)
             sage: BrandtModule(5,13).monodromy_weights()
             (1, 3, 1, 1, 1, 3)
+            sage: BrandtModule(2).monodromy_weights()
+            (12,)
+            sage: BrandtModule(2,7).monodromy_weights()
+            (3, 3)
         """
-        try: return self.__monodromy_weights
-        except AttributeError: pass
-        e = self.eisenstein_subspace().basis()[0].element()
-        if e.base_ring() != QQ:
-            e = e.change_ring(QQ)
-        # Normalize e by making all entries integral so that the common gcd is 1.
-        e = e * e.denominator()
-        # then divide by the LCM.
-        e = e / lcm(list(e))
-        # Then the denominators are the monodromy weights.
-        w = tuple([z.denominator() for z in e])
-        self.__monodromy_weights = w
-        return w
+        # Before normalization,
+        #
+        #     theta(R) = 1 + e*q + ....
+        #
+        # where e is the number of units in the order R.
+        #
+        # Since the theta series may be normalized as
+        #
+        #     c * theta(R) = a[0] + a[1]*q + ...
+        #
+        # we recover e = a[1]/a[0] regardless of normalization.
+        orders = self._ideal_products(diagonal_only=True)
+        thetas = (R.theta_series_vector(2) for R in orders)
+        return tuple(a[1] / a[0] / 2 for a in thetas)
+
 
 def quaternion_order_with_given_level(A, level):
     """
@@ -1397,9 +1416,11 @@ def quaternion_order_with_given_level(A, level):
     (Implemented only when the base field is the rational numbers.)
 
     INPUT:
-        level -- The level of the order to be returned. Currently this is only implemented
-                 when the level is divisible by at most one power of a prime that
-                 ramifies in this quaternion algebra.
+
+    - ``level`` -- The level of the order to be returned. Currently this
+      is only implemented when the level is divisible by at
+      most one power of a prime that ramifies in this
+      quaternion algebra.
 
     EXAMPLES::
 
@@ -1410,11 +1431,10 @@ def quaternion_order_with_given_level(A, level):
         sage: M = maximal_order(A)
         sage: L = O.free_module()
         sage: N = M.free_module()
-        sage: print L.index_in(N) == level/5  #check that the order has the right index in the maximal order
+        sage: L.index_in(N) == level/5  #check that the order has the right index in the maximal order
         True
     """
-
-    if not is_RationalField(A.base_ring()):
+    if A.base_ring() is not QQ:
         raise NotImplementedError("base field must be rational numbers")
 
     from sage.modular.quatalg.brandt import maximal_order
@@ -1455,6 +1475,7 @@ def quaternion_order_with_given_level(A, level):
 
     return O
 
+
 class BrandtSubmodule(HeckeSubmodule):
     def _repr_(self):
         """
@@ -1465,7 +1486,7 @@ class BrandtSubmodule(HeckeSubmodule):
             sage: BrandtModule(11)[0]._repr_()
             'Subspace of dimension 1 of Brandt module of dimension 2 of level 11 of weight 2 over Rational Field'
         """
-        return "Subspace of dimension %s of %s"%(self.dimension(), self.ambient_module())
+        return "Subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
 
 class BrandtModuleElement(HeckeModuleElement):
@@ -1508,10 +1529,9 @@ class BrandtModuleElement(HeckeModuleElement):
             if c: return c
         return cmp(self.element(), other.element())
 
-
     def monodromy_pairing(self, x):
         """
-        Return the monodromy pairing of self and x.
+        Return the monodromy pairing of ``self`` and ``x``.
 
         EXAMPLES::
 
@@ -1520,16 +1540,26 @@ class BrandtModuleElement(HeckeModuleElement):
             (1, 3, 1, 1, 1, 3)
             sage: (B.0 + B.1).monodromy_pairing(B.0 + B.1)
             4
+
+        TESTS:
+
+        One check for :trac:`12866`::
+
+            sage: Br = BrandtModule(2,7)
+            sage: g1, g2 = Br.basis()
+            sage: g = g1 - g2
+            sage: g.monodromy_pairing(g)
+            6
         """
         B = self.parent()
         w = B.monodromy_weights()
         x = B(x).element()
         v = self.element()
-        return sum(x[i]*v[i]*w[i] for i in range(len(v)))
+        return sum(x[i] * v[i] * w[i] for i in range(len(v)))
 
     def __mul__(self, right):
         """
-        Return the monodromy pairing of self and right.
+        Return the monodromy pairing of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -1547,7 +1577,7 @@ class BrandtModuleElement(HeckeModuleElement):
 
     def _add_(self, right):
         """
-        Return sum of self and right.
+        Return the sum of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -1559,6 +1589,8 @@ class BrandtModuleElement(HeckeModuleElement):
 
     def _sub_(self, right):
         """
+        Return the difference of ``self`` and ``right``.
+
         EXAMPLES::
 
             sage: B = BrandtModule(11)
@@ -1569,6 +1601,8 @@ class BrandtModuleElement(HeckeModuleElement):
 
     def _neg_(self):
         """
+        Return the opposite of ``self``.
+
         EXAMPLES::
 
             sage: B = BrandtModule(11)
@@ -1584,12 +1618,16 @@ class BrandtModuleElement(HeckeModuleElement):
 def benchmark_magma(levels, silent=False):
     """
     INPUT:
-        - levels -- list of pairs (p,M) where p is a prime not dividing M
-        - silent -- bool, default False; if True suppress printing during computation
+
+    - ``levels`` -- list of pairs `(p,M)` where `p` is a prime not
+      dividing `M`
+    - ``silent`` -- bool, default ``False``; if ``True`` suppress
+      printing during computation
 
     OUTPUT:
-        - list of 4-tuples ('magma', p, M, tm), where tm is the
-          CPU time in seconds to compute T2 using Magma
+
+    list of 4-tuples ('magma', p, M, tm), where tm is the
+    CPU time in seconds to compute T2 using Magma
 
     EXAMPLES::
 
@@ -1611,19 +1649,25 @@ def benchmark_magma(levels, silent=False):
         magma.eval('HeckeOperator(BrandtModule(%s, %s),2)'%(p,M))
         tm = magma.cputime(t)
         v = ('magma', p, M, tm)
-        if not silent: print v
+        if not silent:
+            print(v)
         ans.append(v)
     return ans
+
 
 def benchmark_sage(levels, silent=False):
     """
     INPUT:
-        - levels -- list of pairs (p,M) where p is a prime not dividing M
-        - silent -- bool, default False; if True suppress printing during computation
+
+    - ``levels`` -- list of pairs `(p,M)` where `p` is a prime
+      not dividing `M`
+    - ``silent`` -- bool, default ``False``; if ``True`` suppress
+      printing during computation
 
     OUTPUT:
-        - list of 4-tuples ('sage', p, M, tm), where tm is the
-          CPU time in seconds to compute T2 using Sage
+
+    list of 4-tuples ('sage', p, M, tm), where tm is the
+    CPU time in seconds to compute T2 using Sage
 
     EXAMPLES::
 
@@ -1645,7 +1689,7 @@ def benchmark_sage(levels, silent=False):
         B = BrandtModule(p,M,use_cache=False).hecke_matrix(2)
         tm = cputime(t)
         v = ('sage', p, M, tm)
-        if not silent: print v
+        if not silent:
+            print(v)
         ans.append(v)
     return ans
-

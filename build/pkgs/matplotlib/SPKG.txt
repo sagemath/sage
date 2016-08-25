@@ -53,7 +53,7 @@ The matplotlib mailing lists: see http://sourceforge.net/projects/matplotlib
    matplotlib versions 0.99.3 and 1.0.0.  Sage reads the version
    number VER by running
 
-      python -c 'import matplotlib; print matplotlib.__version__'
+      python -c 'import matplotlib; print(matplotlib.__version__)'
 
    Note that at the end of the install process for matplotlib, the
    spkg-install file prints a message showing what MPLCONFIGDIR will

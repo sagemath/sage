@@ -44,6 +44,8 @@ REFERENCES:
 Functions
 ---------
 """
+from __future__ import print_function
+
 from sage.misc.cachefunc import cached_function
 from orthogonal_arrays import orthogonal_array
 from sage.rings.integer cimport Integer, smallInteger
@@ -89,7 +91,7 @@ def find_recursive_construction(k, n):
         ....:         f,args = find_recursive_construction(k,n)
         ....:         OA = f(*args)
         ....:         assert is_orthogonal_array(OA,k,n,2,verbose=True)
-        sage: print count
+        sage: count
         56
     """
     assert k > 3
@@ -528,7 +530,7 @@ cpdef find_thwart_lemma_3_5(int k,int N):
         sage: kn = ((10,1046), (10,1048), (10,1059), (11,1524),
         ....:       (11,2164), (12,3362), (12,3992),  (12,3994))
         sage: for k,n in kn:
-        ....:     print k,n,find_thwart_lemma_3_5(k,n)[1]
+        ....:     print("{} {} {}".format(k,n,find_thwart_lemma_3_5(k,n)[1]))
         10 1046 (10, 13, 79, 9, 1, 0, 9, False)
         10 1048 (10, 13, 79, 9, 1, 0, 11, False)
         10 1059 (10, 13, 80, 9, 1, 0, 9, False)
@@ -822,7 +824,7 @@ def int_as_sum(int value, list S, int k_max):
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import int_as_sum
         sage: D = int_as_sum(21,[5,12],100)
         sage: for k in range(20,40):
-        ....:     print k, int_as_sum(k,[5,12],100)
+        ....:     print("{} {}".format(k, int_as_sum(k,[5,12],100)))
         20 (5, 5, 5, 5)
         21 None
         22 (12, 5, 5)

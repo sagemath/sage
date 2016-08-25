@@ -1,6 +1,7 @@
 """
 Hyperelliptic curve constructor
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -10,14 +11,14 @@ Hyperelliptic curve constructor
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
-from hyperelliptic_generic import HyperellipticCurve_generic
-from hyperelliptic_finite_field import HyperellipticCurve_finite_field
-from hyperelliptic_rational_field import HyperellipticCurve_rational_field
-from hyperelliptic_padic_field import HyperellipticCurve_padic_field
-from hyperelliptic_g2_generic import HyperellipticCurve_g2_generic
-from hyperelliptic_g2_finite_field import HyperellipticCurve_g2_finite_field
-from hyperelliptic_g2_rational_field import HyperellipticCurve_g2_rational_field
-from hyperelliptic_g2_padic_field import HyperellipticCurve_g2_padic_field
+from .hyperelliptic_generic import HyperellipticCurve_generic
+from .hyperelliptic_finite_field import HyperellipticCurve_finite_field
+from .hyperelliptic_rational_field import HyperellipticCurve_rational_field
+from .hyperelliptic_padic_field import HyperellipticCurve_padic_field
+from .hyperelliptic_g2_generic import HyperellipticCurve_g2_generic
+from .hyperelliptic_g2_finite_field import HyperellipticCurve_g2_finite_field
+from .hyperelliptic_g2_rational_field import HyperellipticCurve_g2_rational_field
+from .hyperelliptic_g2_padic_field import HyperellipticCurve_g2_padic_field
 
 from sage.rings.padics.all import is_pAdicField
 

@@ -23,6 +23,7 @@ functions from this definition.
     sage: s2([2,1])^2
     s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -39,7 +40,7 @@ functions from this definition.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sfa
+from . import sfa
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 

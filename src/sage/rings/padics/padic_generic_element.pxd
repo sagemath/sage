@@ -39,5 +39,3 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
     cpdef abs(self, prec=*)
     cpdef bint _is_base_elt(self, p) except -1
-
-    cpdef RingElement _floordiv_(self, RingElement right)

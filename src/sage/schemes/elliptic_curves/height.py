@@ -42,6 +42,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
 
 import numpy
 import math, bisect
@@ -1574,7 +1575,6 @@ class EllipticCurveCanonicalHeight:
             if abs_only:
                 approx = abs(approx)
             approx += eps(err, abs_only)
-    #        print "fk_approx", approx
 
             # refine using an estimate that's better near the pole
             z_bound = abs(z).upper()
@@ -1715,7 +1715,7 @@ class EllipticCurveCanonicalHeight:
 
         # First try and prove a negative result (cheap).
         if verbose:
-            print "trying to prove negative result..."
+            print("trying to prove negative result...")
         intersection = None
         for B, n in sorted(zip(bounds, ZZ.range(1, k+1))):
             T = PeriodicRegion(CDF(1), CDF(tau), vals < B, full=not use_half)
@@ -1732,7 +1732,7 @@ class EllipticCurveCanonicalHeight:
 
         # Now try to prove a positive result.
         if verbose:
-            print "trying to prove positive result..."
+            print("trying to prove positive result...")
         intersection = None
         for B, n in sorted(zip(bounds, ZZ.range(1, k+1))):
 
@@ -1755,7 +1755,7 @@ class EllipticCurveCanonicalHeight:
             # This step here is the bottleneck.
             while not T.verify(check_line):
                 if verbose:
-                    print "bad"
+                    print("bad")
                 T = T.expand()
             if intersection is None:
                 intersection = T
@@ -1838,7 +1838,7 @@ class EllipticCurveCanonicalHeight:
         for n in ZZ.range(1, N+1):
             b = self.B(n, mu)
             if verbose:
-                print "B_%s(%s) = %s" % (n, mu, b)
+                print("B_%s(%s) = %s" % (n, mu, b))
             if b < 1:
                return True
             Bk.append(b)
@@ -1937,7 +1937,7 @@ class EllipticCurveCanonicalHeight:
         eps = 2.0
         while eps > tol+1:
             if verbose:
-                print "height bound in [%s, %s]" % (mu, mu*eps)
+                print("height bound in [%s, %s]" % (mu, mu * eps))
             eps = math.sqrt(eps)
             if test(mu*eps, n_max, False):
                 mu = mu*eps

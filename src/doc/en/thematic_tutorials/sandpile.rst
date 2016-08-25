@@ -834,7 +834,7 @@ first presented.  This internal format is returned by  ``dict()``::
    into the designated sink.  If the sink has out-edges, these will be ignored
    for the purposes of sandpile calculations (but not calculations on divisors).
 
-Code for checking whether a given vertex is a sink: ::
+Code for checking whether a given vertex is a sink::
 
     sage: S = Sandpile({0:[], 1:[0, 3, 4], 2:[0, 3, 5], 3: [2, 5], 4: [1, 3], 5: [2, 3]},0)
     sage: [S.distance(v,0) for v in S.vertices()] # 0 is a sink
@@ -1706,42 +1706,42 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(4)
     sage: m = s.markov_chain([0,0,0])
-    sage: m.next()          # random
+    sage: next(m)          # random
     {1: 0, 2: 0, 3: 0}
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 1, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 2, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 2, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 2, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [2, 2, 1]
     sage: m = s.markov_chain(s.zero_div(), [0.1,0.1,0.1,0.7])
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 1, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 1, 2]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 2]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 3]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 4]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 3, 4]
 
 .. NOTE::
@@ -2339,7 +2339,7 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(3)
     sage: a = s.stable_configs()
-    sage: a.next()
+    sage: next(a)
     {1: 0, 2: 0}
     sage: [i.values() for i in a]
     [[0, 1], [1, 0], [1, 1]]
@@ -4973,7 +4973,7 @@ Documentation for each method is available through the Sage online help system:
 
 Enter ``Sandpile.help()``, ``SandpileConfig.help()``, and ``SandpileDivisor.help()`` for lists of available Sandpile-specific methods. 
 
-General Sage documentation can be found at http://sagemath.org/doc/.
+General Sage documentation can be found at http://doc.sagemath.org/html/en/.
 
 Contact
 -------

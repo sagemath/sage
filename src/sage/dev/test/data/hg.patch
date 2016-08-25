@@ -1,8 +1,0 @@
-# HG changeset patch
-# User David Roe <roed@math.harvard.edu>
-# Date 1330866523 28800
-# Node ID 264dcd0442d217ff8762bcc068fbb6fc12cf5367
-# Parent  05fca316b08fe56c8eec85151d9a6dde6f435d46
-#12555: fixed modulus templates
-
-diff --git a/sage/rings/padics/FM_template.pxi b/sage/rings/padics/FM_template.pxi

@@ -212,7 +212,7 @@ Java:
 ::
 
     sage: for i in range(3):
-    ....:     print i
+    ....:     print(i)
     0
     1
     2
@@ -222,7 +222,7 @@ The first line below is like ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ....:     print i
+    ....:     print(i)
     2
     3
     4
@@ -233,7 +233,7 @@ The third argument controls the step, so the following is like
 ::
 
     sage: for i in range(1,6,2):
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -246,7 +246,7 @@ and make a table of squares and cubes.
 ::
 
     sage: for i in range(5):
-    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print('%6s %6s %6s' % (i, i^2, i^3))
          0      0      0
          1      1      1
          2      4      8

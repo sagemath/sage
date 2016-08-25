@@ -21,12 +21,12 @@ than the minimal valuation at that prime; we provide a function to
 return such a model.
 
 The implementation of this functionality is based on work of Kraus
-[Kraus] which gives a local condition for when a pair of number field
+[Kraus]_ which gives a local condition for when a pair of number field
 elements \(c_4\), \(c_6\) belong to a Weierstrass model which is
 integral at a prime \(P\), together with a global version. Only primes
 dividing 2 or 3 are hard to deal with. In order to compute the
 corresponding integral model one then needs to combine together the
-local transformations implicit in [Kraus] into a single global one.
+local transformations implicit in [Kraus]_ into a single global one.
 
 Various utility functions relating to the testing and use of Kraus's
 conditions are included here.
@@ -37,9 +37,9 @@ AUTHORS:
 
 REFERENCES:
 
-- [Kraus] Kraus, Alain, Quelques remarques a propos des invariants
-  \(c_4\), \(c_6\) et \(\Delta\) d'une courbe elliptique, Acta
-  Arith. 54 (1989), 75-80.
+.. [Kraus] Kraus, Alain, Quelques remarques à propos des invariants
+   \(c_4\), \(c_6\) et \(\Delta\) d'une courbe elliptique, Acta
+   Arith. 54 (1989), 75-80.
 """
 
 ##############################################################################
@@ -57,6 +57,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
 
 from sage.all import prod
 from sage.rings.all import RealField, RR
@@ -475,11 +476,11 @@ def test_a1a3_global(c4,c6,a1,a3, debug=False):
     E = c4c6_model(c4,c6).rst_transform(a1**2/12,a1/2,a3/2)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print "wrong c-invariants"
+            print("wrong c-invariants")
         return False
     if not all([E.is_local_integral_model(P) for P in c4.parent().primes_above(2)]):
         if debug:
-            print "not integral at all primes above 2"
+            print("not integral at all primes above 2")
         return False
     return E
 

@@ -149,7 +149,7 @@ sagelib: \
 		$(EXTCODE)
 	if [ -z "$$SAGE_INSTALL_FETCH_ONLY" ]; then \
 		cd $(SAGE_SRC) && source bin/sage-env && \
-		sage-logger 'time $(MAKE) sage' '$(SAGE_LOGS)/sagelib-$(SAGE_VERSION).log'; \
+		sage-logger -p 'time $(MAKE) sage' '$(SAGE_LOGS)/sagelib-$(SAGE_VERSION).log'; \
 	fi
 
 
@@ -192,28 +192,28 @@ DOC_DEPENDENCIES = sagelib $(inst_sphinx) $(inst_sagenb) \
 	| $(SAGERUNTIME) $(inst_maxima) $(inst_networkx) $(inst_scipy) \
 	$(inst_matplotlib) $(inst_pillow) $(inst_mathjax) $(inst_mpmath) \
 	$(inst_ipykernel) $(inst_jupyter_client) $(inst_conway_polynomials) \
-	$(inst_tachyon)
+	$(inst_tachyon) $(inst_jmol)
 
 doc: doc-html
 
 doc-html: $(DOC_DEPENDENCIES)
-	cd ../.. && sage-logger './sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
+	cd ../.. && sage-logger -p './sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
 
 # 'doc-html-no-plot': build docs without building the graphics coming
 # from the '.. plot' directive, in case you want to save a few
 # megabytes of disk space. 'doc-clean' is a prerequisite because the
 # presence of graphics is cached in src/doc/output.
 doc-html-no-plot: doc-clean $(DOC_DEPENDENCIES)
-	cd ../.. && sage-logger './sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
+	cd ../.. && sage-logger -p './sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
 
 doc-html-mathjax: $(DOC_DEPENDENCIES)
-	cd ../.. && sage-logger './sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
+	cd ../.. && sage-logger -p './sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
 
 # Keep target 'doc-html-jsmath' for backwards compatibility.
 doc-html-jsmath: doc-html-mathjax
 
 doc-pdf: $(DOC_DEPENDENCIES)
-	cd ../.. && sage-logger './sage --docbuild all pdf $(SAGE_DOCBUILD_OPTS)' logs/docpdf.log
+	cd ../.. && sage-logger -p './sage --docbuild all pdf $(SAGE_DOCBUILD_OPTS)' logs/docpdf.log
 
 doc-clean: doc-src-clean doc-output-clean
 

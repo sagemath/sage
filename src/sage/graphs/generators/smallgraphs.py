@@ -14,7 +14,8 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 # import from Sage library
 from sage.graphs.graph import Graph
@@ -345,8 +346,8 @@ def WellsGraph():
       Distance-Regular Graphs,
       Springer, 1989.
     """
-    from platonic_solids import DodecahedralGraph
-    from basic import CompleteBipartiteGraph
+    from .platonic_solids import DodecahedralGraph
+    from .basic import CompleteBipartiteGraph
 
     # Following the construction from the book "Distance-regular graphs"
     dodecahedron = DodecahedralGraph()
@@ -360,7 +361,7 @@ def WellsGraph():
 
     # Computing the isomorphism between the two
     b = b.line_graph(labels = False)
-    _, labels = distance3.is_isomorphic(b, certify = True)
+    _, labels = distance3.is_isomorphic(b, certificate=True)
 
     # The relabeling that the books claims to exist.
     for v,new_name in labels.items():
@@ -674,7 +675,7 @@ def HallJankoGraph(from_string=True):
         ....:     nv = set(g.neighbors(v))
         ....:     nv.discard(0)
         ....:     if len(nu & nv) != expected:
-        ....:         print "Something is wrong here!!!"
+        ....:         print("Something is wrong here!!!")
         ....:         break
 
     Some other properties that we know how to check::
@@ -1951,9 +1952,8 @@ def DejterGraph():
     from sage.coding.hamming_code import HammingCode
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-    from string import join
     g = CubeGraph(7)
-    g.delete_vertices([join(map(str,x),"")
+    g.delete_vertices(["".join(map(str, x))
                        for x in HammingCode(FiniteField(2), 3)])
     g.name("Dejter Graph")
     return g

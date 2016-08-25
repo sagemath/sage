@@ -6,7 +6,8 @@ solves its instance using :class:`MixedIntegerLinearProgram`. Its performance
 can be expected to be slower than when using
 :class:`~sage.sat.solvers.cryptominisat.cryptominisat.CryptoMiniSat`.
 """
-from satsolver import SatSolver
+from __future__ import absolute_import
+from .satsolver import SatSolver
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 
 class SatLP(SatSolver):

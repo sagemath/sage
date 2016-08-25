@@ -179,11 +179,11 @@ cdef class PowComputer_class(SageObject):
         cdef Integer ans
         if _n < 0:
             if mpz_fits_ulong_p((<Integer>-_n).value) == 0:
-                raise ValueError, "result too big"
+                raise ValueError("result too big")
             return ~self.pow_Integer(mpz_get_ui((<Integer>-_n).value))
         else:
             if mpz_fits_ulong_p(_n.value) == 0:
-                raise ValueError, "result too big"
+                raise ValueError("result too big")
             return self.pow_Integer(mpz_get_ui(_n.value))
 
     cdef mpz_srcptr pow_mpz_t_tmp(self, unsigned long n):
@@ -558,11 +558,11 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
         81
     """
     if cache_limit < 0:
-        raise ValueError, "cache_limit must be non-negative."
+        raise ValueError("cache_limit must be non-negative.")
     if prec_cap < 0:
-        raise ValueError, "prec_cap must be non-negative."
+        raise ValueError("prec_cap must be non-negative.")
     if mpz_cmp_si((<Integer>prec_cap).value, maxpreccap) >= 0:
-        raise ValueError, "cannot create p-adic parents with precision cap larger than (1 << (sizeof(long)*8 - 2))"
+        raise ValueError("cannot create p-adic parents with precision cap larger than (1 << (sizeof(long)*8 - 2))")
 
     key = (m, cache_limit, prec_cap, in_field, prec_type)
     if key in pow_comp_cache:

@@ -2,13 +2,13 @@ from sage.libs.gmp.types cimport *
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_mat cimport *
 
-cimport matrix_dense
+from .matrix_dense cimport Matrix_dense
 from sage.rings.integer cimport Integer
 from sage.ext.mod_int cimport *
 
 ctypedef long* GEN
 
-cdef class Matrix_integer_dense(matrix_dense.Matrix_dense):
+cdef class Matrix_integer_dense(Matrix_dense):
     cdef fmpz_mat_t _matrix  # Always initialized in __cinit__
     cdef bint _initialized_mpz
     cdef mpz_t * _entries    # Only used if _initialized_mpz

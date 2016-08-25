@@ -1,6 +1,6 @@
 from sage.libs.gmp.types cimport mpz_t
 from sage.rings.integer cimport Integer
-from number_field_element cimport NumberFieldElement, NumberFieldElement_absolute
+from .number_field_element cimport NumberFieldElement, NumberFieldElement_absolute
 
 
 cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):

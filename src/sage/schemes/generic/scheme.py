@@ -1167,7 +1167,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
             sage: A1.hom([2,r],A1_emb)
             Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
-              To:   Affine Curve over Rational Field defined by p - 2
+              To:   Affine Plane Curve over Rational Field defined by p - 2
               Defn: Defined on coordinates by sending (r) to
                     (2, r)
         """

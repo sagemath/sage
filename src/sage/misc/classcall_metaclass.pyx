@@ -19,6 +19,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from cpython.object cimport *
 from cpython.type cimport type as pytype
@@ -196,13 +197,13 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             ...       __metaclass__ = ClasscallMetaclass
             ...       @staticmethod
             ...       def __classcall__(cls):
-            ...           print "calling classcall"
+            ...           print("calling classcall")
             ...           return type.__call__(cls)
             ...       def __new__(cls):
-            ...           print "calling new"
+            ...           print("calling new")
             ...           return super(Foo, cls).__new__(cls)
             ...       def __init__(self):
-            ...           print "calling init"
+            ...           print("calling init")
             sage: Foo()
             calling classcall
             calling new
@@ -224,7 +225,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             ...       __metaclass__ = ClasscallMetaclass
             ...       @staticmethod
             ...       def __classcall_private__(cls):
-            ...           print "calling private classcall"
+            ...           print("calling private classcall")
             ...           return type.__call__(cls)
             ...
             sage: FooNoInherits()
@@ -243,11 +244,11 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             ...       __metaclass__ = ClasscallMetaclass
             ...       @staticmethod
             ...       def __classcall_private__(cls):
-            ...           print "calling private classcall"
+            ...           print("calling private classcall")
             ...           return type.__call__(cls)
             ...       @staticmethod
             ...       def __classcall__(cls):
-            ...           print "calling classcall with %s"%cls
+            ...           print("calling classcall with %s" % cls)
             ...           return type.__call__(cls)
             ...
             sage: Foo2()
@@ -341,7 +342,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         delegating it to ``cls.__classget__(Outer, obj, owner)`` if available.
         Otherwise, ``obj.cls`` results in ``cls``, as usual.
 
-        Similarily, a class binding as in ``Outer.cls`` is delegated
+        Similarly, a class binding as in ``Outer.cls`` is delegated
         to ``cls.__classget__(Outer, None, owner)`` if available and
         to ``cls`` if not.
 
@@ -371,8 +372,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             ...           __metaclass__ = ClasscallMetaclass
             ...           @staticmethod
             ...           def __classget__(cls, instance, owner):
-            ...               print "calling __classget__(%s, %s, %s)"%(
-            ...                          cls, instance, owner)
+            ...               print("calling __classget__(%s, %s, %s)" % (
+            ...                          cls, instance, owner))
             ...               if instance is None:
             ...                   return cls
             ...               return functools.partial(cls, instance)

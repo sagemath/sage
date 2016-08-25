@@ -1,5 +1,9 @@
+"""
+Symbolic variables
+"""
 from sage.symbolic.function_factory import function as new_function
 from sage.symbolic.ring import SR
+
 
 def var(*args, **kwds):
     r"""

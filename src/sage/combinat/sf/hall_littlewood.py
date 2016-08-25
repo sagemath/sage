@@ -9,6 +9,7 @@ REFERENCES:
    The Clarendon Press, Oxford University Press, New York, 1995, With contributions
    by A. Zelevinsky, Oxford Science Publications.
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
@@ -26,7 +27,7 @@ REFERENCES:
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.libs.symmetrica.all import hall_littlewood
-import sfa
+from . import sfa
 import sage.combinat.partition
 from sage.matrix.all import matrix
 from sage.categories.morphism import SetMorphism

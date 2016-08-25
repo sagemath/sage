@@ -118,6 +118,7 @@ Note that the letterplace implementation can only be used if the corresponding
     NotImplementedError: The letterplace implementation is not available for the free algebra you requested
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
@@ -472,7 +473,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         """
         return self.__ngens <= 1 and self.base_ring().is_commutative()
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Two free algebras are considered the same if they have the same
         base ring, number of generators and variable names, and the same
@@ -500,14 +501,14 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
         """
         if not isinstance(other, FreeAlgebra_generic):
-            return -1
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        c = cmp(self.__ngens, other.ngens())
-        if c: return c
-        c = cmp(self.variable_names(), other.variable_names())
-        if c: return c
-        return 0
+            return False
+        if self.base_ring() != other.base_ring():
+            return False
+        if self.__ngens != other.ngens():
+            return False
+        if self.variable_names() != other.variable_names():
+            return False
+        return True
 
     def _repr_(self):
         """
@@ -781,7 +782,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         """
         if mats is None:
             return super(FreeAlgebra_generic, self).quotient(mons, names)
-        import free_algebra_quotient
+        from . import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
     quo = quotient

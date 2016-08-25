@@ -3,7 +3,7 @@
 
 Sage может осуществлять вычисления такие, как поиск решений уравнений,
 дифференцирование, интегрирование и преобразования Лапласа. См.
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_ ,
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_ ,
 где содержатся примеры.
 
 Решение уравнений

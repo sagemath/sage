@@ -175,16 +175,16 @@ or
 
 Here's another way, working more directly with GAP::
 
-    sage: print gap.eval("G := AlternatingGroup( 5 )")
+    sage: print(gap.eval("G := AlternatingGroup( 5 )"))
     Alt( [ 1 .. 5 ] )
-    sage: print gap.eval("normal := NormalSubgroups( G )")
+    sage: print(gap.eval("normal := NormalSubgroups( G )"))
     [ Group(()), Alt( [ 1 .. 5 ] ) ]
     sage: G = gap.new("DihedralGroup( 10 )")
     sage: G.NormalSubgroups()
     [ Group( <identity> of ... ), Group( [ f2 ] ), Group( [ f1, f2 ] ) ]
-    sage: print gap.eval("G := SymmetricGroup( 4 )")
+    sage: print(gap.eval("G := SymmetricGroup( 4 )"))
     Sym( [ 1 .. 4 ] )
-    sage: print gap.eval("normal := NormalSubgroups( G );")
+    sage: print(gap.eval("normal := NormalSubgroups( G );"))
     [ Group(()), Group([ (1,4)(2,3), (1,3)(2,4) ]), Group([ (2,4,3), (1,4)
       (2,3), (1,3)(2,4) ]), Sym( [ 1 .. 4 ] ) ]
 
