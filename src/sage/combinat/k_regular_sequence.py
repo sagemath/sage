@@ -900,8 +900,28 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         return W(n.digits(self.k))
 
 
-    def guess(self, f, n_max=None, d_max=None, domain=None, sequence=None):
+    def guess(self, f, n_max=100, max_dimension=10, sequence=None):
         r"""
+        Guess a `k`-regular sequence of `(f(n))_{n\geq0}`.
+
+        INPUT:
+
+        - ``f`` -- a function (callable) which determines the sequence.
+          It takes nonnegative integers as an input.
+
+        - ``n_max`` -- (default: ``100``) a positive integer. The resulting
+          `k`-regular sequence coincides with `f` on the first ``n_max``
+          terms.
+
+        - ``max_dimension`` -- (default: ``10``) a positive integer specifying
+          the maxium dimension which is tried when guessing the sequence.
+
+        - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
+          for bootstrapping this guessing.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`.
 
         EXAMPLES:
 
@@ -1044,12 +1064,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         from sage.modules.free_module_element import vector
 
         k = self.k
-        if n_max is None:
-            n_max = 100
-        if d_max is None:
-            d_max = 10
-        if domain is None:
-            domain = self.base()  # TODO
+        domain = self.coefficients()
         if sequence is None:
             mu = [[] for _ in srange(k)]
             seq = lambda m: tuple()
@@ -1118,7 +1133,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         while to_branch:
             line_R = to_branch.pop(0)
             t_R, r_R, s_R = line_R
-            if t_R >= d_max:
+            if t_R >= max_dimension:
                 raise RuntimeError
 
             t_L = t_R + 1
