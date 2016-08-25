@@ -1,6 +1,7 @@
 """
 Root system data for type H
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
@@ -8,7 +9,7 @@ Root system data for type H
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cartan_type import CartanType_standard_finite, CartanType_simple
+from .cartan_type import CartanType_standard_finite, CartanType_simple
 class CartanType(CartanType_standard_finite, CartanType_simple):
     def __init__(self, n):
         """

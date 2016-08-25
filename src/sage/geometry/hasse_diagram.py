@@ -15,7 +15,7 @@ lattice of a polyhedron.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 
 
@@ -108,7 +108,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
         ...                       atom_to_coatoms, coatom_to_atoms)
         sage: L
         Finite poset containing 8 elements with distinguished linear extension
-        sage: for level in L.level_sets(): print level
+        sage: for level in L.level_sets(): print(level)
         [((), (0, 1, 2))]
         [((0,), (0, 1)), ((1,), (0, 2)), ((2,), (1, 2))]
         [((0, 1), (0,)), ((0, 2), (1,)), ((1, 2), (2,))]

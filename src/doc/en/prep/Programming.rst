@@ -659,7 +659,7 @@ conditionals ("if" clauses) before.
     sage: B = matrix([[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,0,0]])
     sage: for i in range(5): # all integers from 0 to 4, remember
     ....:     if B^i==0: # We ask if the power is the zero matrix
-    ....:         print i
+    ....:         print(i)
     4
 
 We use the double equals sign to test for equality, because ``=``
@@ -718,14 +718,14 @@ not have :math:`I=\sqrt{-1}`, decimal points, or division.
 
 ::
 
-    sage: print parent(a)
+    sage: parent(a)
     Integer Ring
-    sage: print parent(b)
+    sage: parent(b)
     Rational Field
-    sage: print parent(c)
+    sage: parent(c)
     Real Field with 53 bits of precision
-    sage: print parent(d)
+    sage: parent(d)
     Symbolic Ring
-    sage: print parent(e)
+    sage: parent(e)
     Symbolic Ring
 

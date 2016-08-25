@@ -65,7 +65,7 @@ cdef class Matrix_dense(matrix.Matrix):
         if not x is None: return x
 
         if not self._is_immutable:
-            raise TypeError, "mutable matrices are unhashable"
+            raise TypeError("mutable matrices are unhashable")
 
         v = self._list()
         cdef Py_ssize_t i
@@ -99,9 +99,9 @@ cdef class Matrix_dense(matrix.Matrix):
                     self.set_unsafe(i, j, data[k])
                     k = k + 1
         else:
-            raise RuntimeError, "unknown matrix version (=%s)"%version
+            raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef int _cmp_(self, right) except -2:
         """
         EXAMPLES::
 

@@ -250,7 +250,8 @@ create the number field :math:`\QQ(\zeta_n)`.
 
     sage: CyclotomicField(7)
     Cyclotomic Field of order 7 and degree 6
-    sage: for n in [2..15]: print n, CyclotomicField(n).class_number()
+    sage: for n in [2..15]:
+    ....:     print("{} {}".format(n, CyclotomicField(n).class_number()))
     2 1
     3 1
     ...

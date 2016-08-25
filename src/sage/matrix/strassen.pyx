@@ -307,7 +307,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     - Robert Bradshaw
     """
     if cutoff < 1:
-        raise ValueError, "cutoff must be at least 1"
+        raise ValueError("cutoff must be at least 1")
     sig_on()
     strassen_echelon_c(A, cutoff, A._matrix._strassen_default_cutoff(A._matrix))
     sig_off()

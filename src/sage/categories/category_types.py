@@ -4,6 +4,7 @@ Specific category classes
 This is placed in a separate file from categories.py to avoid circular imports
 (as morphisms must be very low in the hierarchy with the new coercion model).
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu> and
@@ -16,7 +17,7 @@ This is placed in a separate file from categories.py to avoid circular imports
 
 from sage.misc.latex import latex
 from sage.misc.unknown import Unknown
-from category import JoinCategory, Category, CategoryWithParameters
+from .category import JoinCategory, Category, CategoryWithParameters
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.objects', 'Objects')
 
@@ -168,8 +169,8 @@ class Category_over_base(CategoryWithParameters):
         """
         tester = self._tester(**options)
         from sage.categories.category_singleton import Category_singleton
-        from bimodules import Bimodules
-        from schemes import Schemes
+        from .bimodules import Bimodules
+        from .schemes import Schemes
         for cat in self.super_categories():
             tester.assert_(isinstance(cat, (Category_singleton, Category_over_base,
                                             Bimodules, Schemes)),

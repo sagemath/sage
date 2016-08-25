@@ -1,6 +1,7 @@
 """
 Hecke Operators on `q`-expansions
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
@@ -19,7 +20,7 @@ from sage.arith.all import divisors, gcd
 from sage.rings.power_series_ring_element import is_PowerSeries
 
 from sage.matrix.all import matrix, MatrixSpace
-from element import is_ModularFormElement
+from .element import is_ModularFormElement
 
 def hecke_operator_on_qexp(f, n, k, eps = None,
                            prec=None, check=True, _return_list=False):

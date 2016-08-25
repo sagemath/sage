@@ -176,6 +176,7 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
     -2
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -1788,7 +1789,7 @@ class FreeModuleTensor(ModuleElement):
              [[[0, -6], [6, 0]], [[0, 15], [-15, 0]]]]
 
         """
-        from format_utilities import format_mul_txt, format_mul_latex
+        from .format_utilities import format_mul_txt, format_mul_latex
         if isinstance(other, FreeModuleTensor):
             basis = self.common_basis(other)
             if basis is None:

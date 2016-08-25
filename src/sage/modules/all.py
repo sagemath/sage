@@ -12,18 +12,17 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from free_module import FreeModule, VectorSpace, span
+from .free_module import FreeModule, VectorSpace, span
 
-from free_quadratic_module import (FreeQuadraticModule, QuadraticSpace,
+from .free_quadratic_module import (FreeQuadraticModule, QuadraticSpace,
                                    InnerProductSpace)
 
-from free_module_element import (vector, free_module_element, zero_vector,
+from .free_module_element import (vector, free_module_element, zero_vector,
                                  random_vector)
 
-from module_element import ModuleElement
-
-from vector_space_morphism import linear_transformation
+from .vector_space_morphism import linear_transformation
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.modules",
@@ -32,4 +31,3 @@ lazy_import("sage.modules",
 
 lazy_import('sage.modules.filtered_vector_space', 'FilteredVectorSpace')
 lazy_import('sage.modules.multi_filtered_vector_space', 'MultiFilteredVectorSpace')
-

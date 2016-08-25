@@ -15,8 +15,8 @@ content:
 
 ::
 
-    print "Hello World"
-    print 2^3
+    print("Hello World")
+    print(2^3)
 
 You can read in and execute ``example.sage`` file using the ``load``
 command.
@@ -59,8 +59,8 @@ code:
 
 ::
 
-    print "Hello World"
-    print Integer(2)**Integer(3)
+    print("Hello World")
+    print(Integer(2)**Integer(3))
 
 Integer literals are wrapped and the ``^`` is replaced by a ``**``.
 (In Python ``^`` means "exclusive or" and ``**`` means
@@ -171,11 +171,11 @@ etc:
     from sage.all import *
 
     if len(sys.argv) != 2:
-        print "Usage: %s <n>"%sys.argv[0]
-        print "Outputs the prime factorization of n."
+        print("Usage: %s <n>" % sys.argv[0])
+        print("Outputs the prime factorization of n.")
         sys.exit(1)
 
-    print factor(sage_eval(sys.argv[1]))
+    print(factor(sage_eval(sys.argv[1])))
 
 In order to use this script, your ``SAGE_ROOT`` must be in your PATH.
 If the above script is called ``factor``, here is an example usage:
@@ -323,7 +323,7 @@ This is useful when using list comprehensions to construct lists:
 ::
 
     sage: L = [factor(n) for n in range(1, 15)]
-    sage: print L
+    sage: L
     [1, 2, 3, 2^2, 5, 2 * 3, 7, 2^3, 3^2, 2 * 5, 11, 2^2 * 3, 13, 2 * 7]
     sage: L[12]
     13
@@ -345,7 +345,7 @@ starting at the :math:`m^{th}` element and stopping at the
     sage: L = [factor(n) for n in range(1, 20)]
     sage: L[4:9]
     [5, 2 * 3, 7, 2^3, 3^2]
-    sage: print L[:4]
+    sage: L[:4]
     [1, 2, 3, 2^2]
     sage: L[14:4]
     []
@@ -511,7 +511,7 @@ example,
     {1, 2/3}
     sage: X.intersection(Y)
     {1}
-    sage: print latex(Y)
+    sage: print(latex(Y))
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring
@@ -684,7 +684,7 @@ the Python int ``1`` is unique, but the Sage Integer ``1`` is not:
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)
+    sage: int(1) is int(2)/int(2)   # optional - python2
     True
     sage: 1 is 1
     False

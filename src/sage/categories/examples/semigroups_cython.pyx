@@ -6,6 +6,8 @@ from sage.structure.element cimport Element
 from sage.categories.all import Category, Semigroups
 from sage.misc.cachefunc import cached_method
 from sage.categories.examples.semigroups import LeftZeroSemigroup as LeftZeroSemigroupPython
+from cpython.object cimport PyObject_RichCompare
+
 
 cdef class IdempotentSemigroupsElementMethods:
     def _pow_(self, i):
@@ -84,7 +86,7 @@ cdef class LeftZeroSemigroupElement(Element):
         """
         return LeftZeroSemigroupElement, (self._parent, self._value)
 
-    def __cmp__(LeftZeroSemigroupElement self, LeftZeroSemigroupElement other):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -95,7 +97,9 @@ cdef class LeftZeroSemigroupElement(Element):
             sage: S(3) == S(2)
             False
         """
-        return cmp(self._value, other._value)
+        left = (<LeftZeroSemigroupElement>self)._value
+        right = (<LeftZeroSemigroupElement>other)._value
+        return PyObject_RichCompare(left, right, op)
 
     # Apparently, python looks for __mul__, __pow__, ... in the
     # class of self rather than in self itself. No big deal, since

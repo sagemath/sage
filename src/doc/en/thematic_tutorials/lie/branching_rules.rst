@@ -124,7 +124,8 @@ just returns a list, which can be coerced into `\hbox{Lie}(U)^*`.
 ::
 
     sage: b = branching_rule("A3","C2","symmetric")
-    sage: for r in RootSystem("A3").ambient_space().simple_roots(): print r, b(r)
+    sage: for r in RootSystem("A3").ambient_space().simple_roots():
+    ....:     print("{} {}".format(r, b(r)))
     (1, -1, 0, 0) [1, -1]
     (0, 1, -1, 0) [0, 2]
     (0, 0, 1, -1) [1, -1]
@@ -714,8 +715,7 @@ by other methods::
     sage: ad.frobenius_schur_indicator()
     1
     sage: for r in D7.fundamental_weights():  # long time (1.29s)
-    ....:    print D7(r).branch(G2, rule=branching_rule_from_plethysm(ad, "D7"))
-    ....:
+    ....:    print(D7(r).branch(G2, rule=branching_rule_from_plethysm(ad, "D7")))
     G2(0,1)
     G2(0,1) + G2(3,0)
     G2(0,0) + G2(2,0) + G2(3,0) + G2(0,2) + G2(4,0)

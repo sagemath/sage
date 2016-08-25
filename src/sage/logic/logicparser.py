@@ -75,7 +75,6 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
     sage: logicparser.tree_parse(r, polish = True)
     ['|', ['~', ['~', 'a']], 'b']
 """
-
 #*****************************************************************************
 #       Copyright (C) 2007 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
@@ -85,10 +84,10 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import string
-import propcalc
-import boolformula
+
 
 __symbols = '()&|~<->^'
 __op_list = ['~', '&', '|', '^', '->', '<->']
@@ -210,7 +209,7 @@ def get_trees(*statements):
     - Paul Scurek (2013-08-06)
     """
     trees = []
-
+    from . import boolformula
     for statement in statements:
         if not isinstance(statement, boolformula.BooleanFormula):
             try:
@@ -220,6 +219,7 @@ def get_trees(*statements):
         else:
             trees.append(statement.full_tree())
     return trees
+
 
 def recover_formula(prefix_tree):
     r"""
@@ -328,14 +328,14 @@ def recover_formula_internal(prefix_tree):
     - Paul Scurek (2013-08-06)
     """
     formula = ''
-
+    from .propcalc import formula as propcalc_formula
     if len(prefix_tree) == 3:
         bool_formula = '(' + prefix_tree[1] + prefix_tree[0] + prefix_tree[2] + ')'
     else:
         bool_formula = ''.join(prefix_tree)
 
     try:
-        bool_formula = propcalc.formula(bool_formula)
+        bool_formula = propcalc_formula(bool_formula)
     except (SyntaxError, NameError):
         raise SyntaxError
 

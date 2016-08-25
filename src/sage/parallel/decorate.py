@@ -1,15 +1,15 @@
 r"""
 Decorate interface for parallel computation
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import types
 
 from sage.rings.all import Integer
 
-from reference import parallel_iter as p_iter_reference
-from use_fork import p_iter_fork
-import multiprocessing_sage
+from .reference import parallel_iter as p_iter_reference
+from .use_fork import p_iter_fork
+from . import multiprocessing_sage
 
 
 def normalize_input(a):
@@ -72,7 +72,7 @@ class Parallel:
             p_iter, ncpus = 'fork', p_iter
 
         if ncpus is None:
-            from ncpus import ncpus as compute_ncpus
+            from .ncpus import ncpus as compute_ncpus
             ncpus = compute_ncpus()
 
         if p_iter == 'fork':

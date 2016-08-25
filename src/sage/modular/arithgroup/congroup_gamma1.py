@@ -2,6 +2,7 @@
 r"""
 Congruence Subgroup `\Gamma_1(N)`
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,7 @@ Congruence Subgroup `\Gamma_1(N)`
 from sage.misc.cachefunc import cached_method
 
 from sage.misc.all import prod
-from congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
+from .congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
 from sage.rings.all import ZZ
 from sage.arith.all import euler_phi as phi, moebius, divisors
 from sage.modular.dirichlet import DirichletGroup
@@ -64,7 +65,7 @@ def Gamma1_constructor(N):
         True
     """
     if N == 1 or N == 2:
-        from congroup_gamma0 import Gamma0_constructor
+        from .congroup_gamma0 import Gamma0_constructor
         return Gamma0_constructor(N)
     try:
         return _gamma1_cache[N]
@@ -226,7 +227,7 @@ class Gamma1_class(GammaH_class):
             return self.farey_symbol().generators()
         elif algorithm=="todd-coxeter":
             from sage.modular.modsym.g1list import G1list
-            from congroup import generators_helper
+            from .congroup import generators_helper
             level = self.level()
             gen_list = generators_helper(G1list(level), level)
             return [self(g, check=False) for g in gen_list]
@@ -409,17 +410,17 @@ class Gamma1_class(GammaH_class):
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
 
-        Via Cohen--Oesterle: ::
+        Via Cohen--Oesterle::
 
             sage: Gamma1(7*43).dimension_cusp_forms(2, eps)
             28
 
-        Via Quer's method: ::
+        Via Quer's method::
 
             sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm="Quer")
             28
 
-        Some more examples: ::
+        Some more examples::
 
             sage: G.<eps> = DirichletGroup(9)
             sage: [Gamma1(9).dimension_cusp_forms(k, eps) for k in [1..10]]
@@ -427,7 +428,7 @@ class Gamma1_class(GammaH_class):
             sage: [Gamma1(9).dimension_cusp_forms(k, eps^2) for k in [1..10]]
             [0, 0, 0, 2, 0, 4, 0, 6, 0, 8]
         """
-        from all import Gamma0
+        from .all import Gamma0
 
         # first deal with special cases
 
@@ -505,21 +506,21 @@ class Gamma1_class(GammaH_class):
 
         EXAMPLES:
 
-        The following two computations use different algorithms: ::
+        The following two computations use different algorithms::
 
             sage: [Gamma1(36).dimension_eis(1,eps) for eps in DirichletGroup(36)]
             [0, 4, 3, 0, 0, 2, 6, 0, 0, 2, 3, 0]
             sage: [Gamma1(36).dimension_eis(1,eps,algorithm="Quer") for eps in DirichletGroup(36)]
             [0, 4, 3, 0, 0, 2, 6, 0, 0, 2, 3, 0]
 
-        So do these: ::
+        So do these::
 
             sage: [Gamma1(48).dimension_eis(3,eps) for eps in DirichletGroup(48)]
             [0, 12, 0, 4, 0, 8, 0, 4, 12, 0, 4, 0, 8, 0, 4, 0]
             sage: [Gamma1(48).dimension_eis(3,eps,algorithm="Quer") for eps in DirichletGroup(48)]
             [0, 12, 0, 4, 0, 8, 0, 4, 12, 0, 4, 0, 8, 0, 4, 0]
         """
-        from all import Gamma0
+        from .all import Gamma0
 
         # first deal with special cases
 
@@ -623,10 +624,10 @@ class Gamma1_class(GammaH_class):
         eps = DirichletGroup(N, eps.base_ring())(eps)
 
         if eps.is_trivial():
-            from all import Gamma0
+            from .all import Gamma0
             return Gamma0(N).dimension_new_cusp_forms(k, p)
 
-        from congroup_gammaH import mumu
+        from .congroup_gammaH import mumu
 
         if p == 0 or N%p != 0 or eps.conductor().valuation(p) == N.valuation(p):
             D = [eps.conductor()*d for d in divisors(N//eps.conductor())]

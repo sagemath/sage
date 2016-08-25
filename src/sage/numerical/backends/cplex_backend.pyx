@@ -206,6 +206,9 @@ cdef class CPLEXBackend(GenericBackend):
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
 
+        cdef int numcols_before
+        numcols_before = CPXgetnumcols(self.env, self.lp)
+
         cdef int status
         status = CPXnewcols(self.env, self.lp, number, NULL, NULL, NULL, NULL, NULL)
         check(status)
@@ -216,24 +219,24 @@ cdef class CPLEXBackend(GenericBackend):
         cdef int i, j
 
         for 0<= i < number:
+            j = numcols_before + i
+
             if lower_bound != 0.0:
-                self.variable_lower_bound(n - i, lower_bound)
+                self.variable_lower_bound(j, lower_bound)
             if upper_bound is not None:
-                self.variable_upper_bound(n - i, upper_bound)
+                self.variable_upper_bound(j, upper_bound)
 
             if binary:
-                self.set_variable_type(n - i,0)
+                self.set_variable_type(j, 0)
             elif integer:
-                self.set_variable_type(n - i,1)
+                self.set_variable_type(j, 1)
 
             if names:
-                j = n - i
                 c_name = names[i]
                 status = CPXchgcolname(self.env, self.lp, 1, &j, &c_name)
                 check(status)
 
             if c_coeff:
-                j = n - i
                 status = CPXchgobj(self.env, self.lp, 1, &j, &c_coeff)
                 check(status)
 
@@ -354,7 +357,7 @@ cdef class CPLEXBackend(GenericBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver # optional - CPLEX
             sage: p = get_solver(solver = "CPLEX")   # optional - CPLEX
             sage: p.problem_name("There once was a french fry") # optional - CPLEX
-            sage: print p.problem_name()                        # optional - CPLEX
+            sage: print(p.problem_name())                       # optional - CPLEX
             There once was a french fry
         """
 
@@ -798,7 +801,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list constains the
+        - ``indices`` (list of integers) -- this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
@@ -886,7 +889,7 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p.solve()                                                      # optional - CPLEX
             Traceback (most recent call last):
             ...
-            MIPSolverException: CPLEX: The primal has no feasible solution
+            MIPSolverException: CPLEX: The problem is infeasible or unbounded
         """
         cdef int status
         cdef int ptype
@@ -903,16 +906,27 @@ cdef class CPLEXBackend(GenericBackend):
 
         check(status)
 
+        stat = CPXgetstat(self.env, self.lp)
+        if stat == CPX_STAT_OPTIMAL or stat == CPXMIP_OPTIMAL:
+            return 0
+        elif stat == CPX_STAT_INFEASIBLE or stat == CPXMIP_INFEASIBLE:
+            raise MIPSolverException("CPLEX: The problem has no feasible solution")
+        elif stat == CPX_STAT_UNBOUNDED or stat == CPXMIP_UNBOUNDED:
+            raise MIPSolverException("CPLEX: The problem is unbounded")
+        elif stat == CPX_STAT_INForUNBD or stat == CPXMIP_INForUNBD:
+            raise MIPSolverException("CPLEX: The problem is infeasible or unbounded")
+        else:
+            # TODO: Many more stats to be handled.
+            pass
+
+        # No exception should be raised when CPX_STAT_ABORT_... or CPXMIP_ABORT_...
+        # This is so that when a time limit etc. is reached, we obtain meaningful information.
+
         status = CPXsolninfo(self.env, self.lp, &solnmethod_p, &solntype_p, &pfeasind_p, &dfeasind_p)
         check(status)
 
-        if solntype_p == CPX_NO_SOLN:
-            if not pfeasind_p:
-                raise MIPSolverException("CPLEX: The primal has no feasible solution")
-            elif not dfeasind_p:
-                raise MIPSolverException("CPLEX: The problem is unbounded")
-            else:
-                raise MIPSolverException("CPLEX: No solution has been found, but no idea why")
+        if solntype_p == CPX_NO_SOLN or not pfeasind_p:
+            raise MIPSolverException("CPLEX: No solution known to be primal feasible is available")
 
         return 0
 
@@ -1020,8 +1034,6 @@ cdef class CPLEXBackend(GenericBackend):
             2.0
             sage: pb = p.get_backend()                                 # optional - CPLEX
             sage: pb.get_objective_value()                             # optional - CPLEX
-            2.0
-            sage: pb.get_best_objective_value()                        # optional - CPLEX
             2.0
             sage: pb.get_relative_objective_gap()                      # optional - CPLEX
             0.0
@@ -1534,7 +1546,7 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p.solve()                                            # optional - CPLEX
             2.0
             sage: with open(filename,'r') as f:                        # optional - CPLEX
-            ....:     print f.read()                                   # optional - CPLEX
+            ....:     print(f.read())                                  # optional - CPLEX
             Found incumbent of value ...
             Reduced MIP has 5 rows, 5 columns, and 10 nonzeros.
             ...

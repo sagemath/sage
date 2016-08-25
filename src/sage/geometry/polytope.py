@@ -33,7 +33,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-
+from __future__ import print_function
 
 from sage.misc.all import SAGE_TMP, tmp_filename
 from sage.rings.all import Integer, QQ
@@ -60,7 +60,7 @@ class Polytope(SageObject):
 
     EXAMPLES::
 
-        sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])   # optional - polymake
+        sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])   # not tested
 
     .. note::
 
@@ -102,15 +102,14 @@ class Polytope(SageObject):
         stdin, stdout, stderr = os.popen3(cmd)
         stdin.close()
         err = stderr.read()
-        if len(err) > 0:
+        if len(err):
             raise RuntimeError(err)
-        print stdout.read(), err
+        print(stdout.read(), err)
         S = polymake.from_data(open(output_file).read())
         os.unlink(infile1)
         os.unlink(infile2)
         os.unlink(output_file)
         return S
-
 
     def data(self):
         return self.__data
@@ -153,8 +152,8 @@ class Polytope(SageObject):
 
         EXAMPLES::
 
-            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])   # optional - polymake
-            sage: P.facets()                            # optional - polymake
+            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])   # not tested
+            sage: P.facets()                            # not tested
             [(0, 0, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0), (1, 0, 0, -1), (1, 0, -1, 0), (1, -1, 0, 0)]
         """
         try:
@@ -178,8 +177,8 @@ class Polytope(SageObject):
 
         EXAMPLES::
 
-            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])     # optional - polymake
-            sage: P.vertices()                            # optional - polymake
+            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])     # not tested
+            sage: P.vertices()                            # not tested
             [(1, 0, 0, 0), (1, 0, 0, 1), (1, 0, 1, 0), (1, 0, 1, 1), (1, 1, 0, 0), (1, 1, 0, 1), (1, 1, 1, 0), (1, 1, 1, 1)]
         """
         try:
@@ -220,8 +219,8 @@ class Polytope(SageObject):
 
         EXAMPLES::
 
-            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])        # optional - polymake
-            sage: P.is_simple()                              # optional - polymake
+            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])        # not tested
+            sage: P.is_simple()                              # not tested
             True
 
         AUTHORS:
@@ -243,8 +242,8 @@ class Polytope(SageObject):
         """
         EXAMPLES::
 
-            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])     # optional - polymake
-            sage: P.n_facets()                            # optional - polymake
+            sage: P = polymake.convex_hull([[1,0,0,0], [1,0,0,1], [1,0,1,0], [1,0,1,1],  [1,1,0,0], [1,1,0,1], [1,1,1,0], [1,1,1,1]])     # not tested
+            sage: P.n_facets()                            # not tested
             6
         """
         try:
@@ -306,7 +305,7 @@ class Polymake:
 
         EXAMPLES::
 
-            sage: polymake.cell24()            # optional - polymake
+            sage: polymake.cell24()            # not tested
             The 24-cell
         """
         return self.__make('24-cell %s'%tmp_file,
@@ -322,14 +321,14 @@ class Polymake:
             sage: a = [[1] + list(v) for v in e]
             sage: a
             [[1, 3, 0, 0], [1, 0, 3, 0], [1, 1, 1, 1], [1, 0, 0, 3]]
-            sage: n = polymake.convex_hull(a)       # optional - polymake
-            sage: n                                 # optional - polymake
+            sage: n = polymake.convex_hull(a)       # not tested
+            sage: n                                 # not tested
             Convex hull of points [[1, 0, 0, 3], [1, 0, 3, 0], [1, 1, 1, 1], [1, 3, 0, 0]]
-            sage: n.facets()                        # optional - polymake
+            sage: n.facets()                        # not tested
             [(0, 1, 0, 0), (3, -1, -1, 0), (0, 0, 1, 0)]
-            sage: n.is_simple()                     # optional - polymake
+            sage: n.is_simple()                     # not tested
             True
-            sage: n.graph()                         # optional - polymake
+            sage: n.graph()                         # not tested
             'GRAPH\n{1 2}\n{0 2}\n{0 1}\n\n'
         """
         f = 'POINTS\n'

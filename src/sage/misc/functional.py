@@ -21,6 +21,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import sage.misc.latex
 import sage.interfaces.expect
@@ -34,9 +35,7 @@ import sage.rings.real_mpfr
 import sage.rings.complex_field
 import sage.rings.integer
 
-import __builtin__
-
-LOG_TEN_TWO_PLUS_EPSILON = 3.321928094887363 # a small overestimate of log(10,2)
+from six.moves import builtins
 
 ##############################################################################
 # There are many functions on elements of a ring, which mathematicians
@@ -1093,36 +1092,31 @@ def numerator(x):
         return x
     return x.numerator()
 
-# Following is the top-level numerical_approx function.
-# Implement a ._numerical_approx(prec, digits, algorithm) method for your
-# objects to enable the three top-level functions and three methods
 
 def numerical_approx(x, prec=None, digits=None, algorithm=None):
     r"""
-    Returns a numerical approximation of an object ``x`` with at
-    least ``prec`` bits (or decimal ``digits``) of precision.
+    Return a numerical approximation of ``self`` with ``prec`` bits
+    (or decimal ``digits``) of precision.
+
+    No guarantee is made about the accuracy of the result.
 
     .. note::
 
-       Both upper case ``N`` and lower case ``n`` are aliases for
-       :func:`numerical_approx`, and all three may be used as
-       methods.
+       Lower case :func:`n` is an alias for :func:`numerical_approx`
+       and may be used as a method.
 
     INPUT:
 
-    -  ``x`` - an object that has a numerical_approx
-       method, or can be coerced into a real or complex field
-    -  ``prec`` (optional) - an integer (bits of
-       precision)
-    -  ``digits`` (optional) - an integer (digits of
-       precision)
-    -  ``algorithm`` (optional) - a string specifying
-       the algorithm to use for functions that implement
-       more than one
+    - ``prec`` -- precision in bits
 
-    If neither the ``prec`` or ``digits`` are specified,
-    the default is 53 bits of precision.  If both are
-    specified, then ``prec`` is used.
+    - ``digits`` -- precision in decimal digits (only used if
+      ``prec`` is not given)
+
+    - ``algorithm`` -- which algorithm to use to compute this
+      approximation (the accepted algorithms depend on the object)
+
+    If neither ``prec`` nor ``digits`` is given, the default
+    precision is 53 bits (roughly 16 digits).
 
     EXAMPLES::
 
@@ -1147,16 +1141,14 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: numerical_approx(9)
         9.00000000000000
 
-    You can also usually use method notation.  ::
+    You can also usually use method notation::
 
         sage: (pi^2 + e).n()
-        12.5878862295484
-        sage: (pi^2 + e).N()
         12.5878862295484
         sage: (pi^2 + e).numerical_approx()
         12.5878862295484
 
-    Vectors and matrices may also have their entries approximated.  ::
+    Vectors and matrices may also have their entries approximated::
 
         sage: v = vector(RDF, [1,2,3])
         sage: v.n()
@@ -1291,56 +1283,19 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         0.000000000000000
     """
     if prec is None:
-        if digits is None:
-            prec = 53
-        else:
-            prec = int((digits+1) * LOG_TEN_TWO_PLUS_EPSILON) + 1
+        from sage.arith.numerical_approx import digits_to_bits
+        prec = digits_to_bits(digits)
     try:
-        return x._numerical_approx(prec, algorithm=algorithm)
+        n = x.numerical_approx
     except AttributeError:
-        pass
-
-    from sage.structure.element import parent
-    B = parent(x)
-
-    RR = sage.rings.real_mpfr.RealField(prec)
-    map = RR.coerce_map_from(B)
-    if map is not None:
-        return map(x)
-    CC = sage.rings.complex_field.ComplexField(prec)
-    map = CC.coerce_map_from(B)
-    if map is not None:
-        return map(x)
-
-    # Coercion didn't work: there are 3 possibilities:
-    # (1) There is a coercion possible to a lower precision
-    # (2) There is a conversion but no coercion
-    # (3) The type doesn't convert at all
-
-    # Figure out input precision to check for case (1)
-    try:
-        inprec = x.prec()
-    except AttributeError:
-        if prec > 53 and CDF.has_coerce_map_from(B):
-            # If we can coerce to CDF, assume input precision was 53 bits
-            inprec = 53
-        else:
-            # Otherwise, assume precision wasn't the issue
-            inprec = prec
-
-    if prec > inprec:
-        raise TypeError("cannot approximate to a precision of %s bits, use at most %s bits" % (prec, inprec))
-
-    # The issue is not precision, try conversion instead
-    try:
-        return RR(x)
-    except (TypeError, ValueError):
-        pass
-    return CC(x)
-
+        from sage.arith.numerical_approx import numerical_approx_generic
+        return numerical_approx_generic(x, prec)
+    else:
+        return n(prec, algorithm=algorithm)
 
 n = numerical_approx
 N = numerical_approx
+
 
 def objgens(x):
     """
@@ -1478,16 +1433,16 @@ def round(x, ndigits=0):
        This is currently slower than the builtin round function, since
        it does more work - i.e., allocating an RDF element and
        initializing it. To access the builtin version do
-       ``import __builtin__; __builtin__.round``.
+       ``from six.moves import builtins; builtins.round``.
     """
     try:
         if ndigits:
-            return RealDoubleElement(__builtin__.round(x, ndigits))
+            return RealDoubleElement(builtins.round(x, ndigits))
         else:
             try:
                 return x.round()
             except AttributeError:
-                return RealDoubleElement(__builtin__.round(x, 0))
+                return RealDoubleElement(builtins.round(x, 0))
     except ArithmeticError:
         if not isinstance(x, RealDoubleElement):
             return round(RDF(x), ndigits)

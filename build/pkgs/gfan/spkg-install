@@ -27,20 +27,23 @@ else
     unset CXXFLAG64 # Might come from the "global" environment.
 fi
 
+# C++11 workaround https://trac.sagemath.org/ticket/20926
+CXXFLAGS="$CXXFLAGS -std=c++98"
+
 export CC CXX CFLAGS CXXFLAGS LDFLAGS
 
 cd src
 
 # Patch the Makefile so it can build in Sage:
 echo "Copying a revised Makefile, to improve portability..."
-patch -p0 <../patches/Makefile.patch
+patch -p1 <../patches/Makefile.patch
 if [[ $? -ne 0 ]]; then
     echo >&2 "Error: Patch to improve portability did not copy correctly."
     exit 1
 fi
 
 echo "Copying patched file to fix an issue with GCC 4.7.0..."
-patch -p0 <../patches/app_minkowski.cpp.patch
+patch -p1 <../patches/app_minkowski.cpp.patch
 if [[ $? -ne 0 ]]; then
     echo >&2 "Error: Patch to fix GCC 4.7.0 issue did not copy correctly."
     exit 1

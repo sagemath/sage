@@ -153,6 +153,7 @@ TEST::
 Classes
 -------
 """
+from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 
@@ -415,7 +416,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: sr = mq.SR(allow_zero_inversions=True,gf2=True,order='block')
             sage: F,s = sr.polynomial_system()
-            sage: print F.ring().repr_long()
+            sage: print(F.ring().repr_long())
             Polynomial Ring
              Base Ring : Finite Field of size 2
                   Size : 20 Variables

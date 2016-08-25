@@ -1,6 +1,7 @@
 """
 Finite Fields.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2010 David Roe <roed@math.harvard.edu>
@@ -18,6 +19,6 @@ Finite Fields.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from finite_field_constructor import FiniteField
-from conway_polynomials import conway_polynomial, exists_conway_polynomial
+from .finite_field_constructor import FiniteField
+from .conway_polynomials import conway_polynomial, exists_conway_polynomial
 GF = FiniteField

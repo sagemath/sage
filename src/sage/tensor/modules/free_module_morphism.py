@@ -76,9 +76,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
         sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
         sage: e = M.basis('e') ; f = N.basis('f')
         sage: H = Hom(M,N) ; H
-        Set of Morphisms from Rank-3 free module M over the Integer Ring to
-         Rank-2 free module N over the Integer Ring in Category of modules
-         over Integer Ring
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-2 free module N over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
         sage: phi = H([[2,-1,3], [1,0,-4]], name='phi', latex_name=r'\phi') ; phi
         Generic morphism:
           From: Rank-3 free module M over the Integer Ring
@@ -169,9 +169,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
         sage: Id = End(M).one() ; Id
         Identity endomorphism of Rank-3 free module M over the Integer Ring
         sage: Id.parent()
-        Set of Morphisms from Rank-3 free module M over the Integer Ring to
-         Rank-3 free module M over the Integer Ring in Category of modules
-         over Integer Ring
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-3 free module M over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
         sage: Id.parent() is End(M)
         True
 
@@ -681,9 +681,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
         return self.__class__(self.parent(), resu_mat, bases=bases,
                               name=resu_name, latex_name=resu_latex_name)
 
-    def _rmul_(self, scalar):
+    def _lmul_(self, scalar):
         r"""
-        Multiplication on the left by ``scalar``.
+        Multiplication by ``scalar``.
 
         INPUT:
 
@@ -702,16 +702,15 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: e = M.basis('e') ; f = N.basis('f')
             sage: phi = M.hom(N, [[-1,2,0], [5,1,2]], name='phi',
             ....:             latex_name=r'\phi')
-            sage: s = phi._rmul_(7) ; s
+            sage: s = phi._lmul_(7) ; s
             Generic morphism:
               From: Rank-3 free module M over the Integer Ring
               To:   Rank-2 free module N over the Integer Ring
             sage: s.matrix(e,f)
             [-7 14  0]
             [35  7 14]
-            sage: s == 7*phi  # indirect doctest
+            sage: s == 7 * phi
             True
-
         """
         resu = self.__class__(self.parent(), 0)  # 0 = provisory value
         for bases, mat in self._matrices.iteritems():

@@ -3,6 +3,9 @@ This module contains Cython code for a backtracking algorithm to solve Sudoku pu
 
 Once Cython implements closures and the ``yield`` keyword is possible, this can be moved into the ``sage.games.sudoku`` module, as part of the ``Sudoku.backtrack`` method, and this module can be banned.
 """
+from __future__ import print_function
+
+
 def backtrack_all(n, puzzle):
     r"""
     A routine to compute all the solutions to a Sudoku puzzle.
@@ -25,7 +28,7 @@ def backtrack_all(n, puzzle):
 
         sage: from sage.games.sudoku_backtrack import backtrack_all
         sage: c = [0, 0, 0, 0, 1, 0, 9, 0, 0, 8, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 3, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 2, 0, 4, 0, 0, 0, 0, 0, 0, 0, 5, 8, 0, 6, 0, 0, 0, 0, 1, 3, 0, 7, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0]
-        sage: print backtrack_all(3, c)
+        sage: print(backtrack_all(3, c))
         [[6, 5, 4, 3, 1, 2, 9, 8, 7, 8, 3, 1, 4, 7, 9, 5, 2, 6, 2, 9, 7, 6, 8, 5, 4, 1, 3, 4, 7, 2, 5, 3, 8, 6, 9, 1, 3, 8, 5, 1, 9, 6, 2, 7, 4, 9, 1, 6, 7, 2, 4, 3, 5, 8, 5, 6, 8, 9, 4, 7, 1, 3, 2, 7, 4, 3, 2, 5, 1, 8, 6, 9, 1, 2, 9, 8, 6, 3, 7, 4, 5]]
 
     ALGORITHM:

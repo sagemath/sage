@@ -36,6 +36,7 @@ This means that, among the trees on `4` nodes, one has a
 single internal node, three have two internal nodes, and one has
 three internal nodes.
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -50,7 +51,7 @@ three internal nodes.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
+from .generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
 from sage.rings.all import QQ
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -155,8 +156,8 @@ class GenericCombinatorialSpecies(SageObject):
         of the data needed to create this object during the unpickling
         process. It returns an (\*args, \*\*kwds) tuple which is to be
         passed into the constructor for the class of this species. Any
-        subclass should define a _state_info list for any arguments which
-        need to be passed in in the constructor.
+        subclass should define a ``_state_info`` list for any arguments which
+        need to be passed in the constructor.
 
         EXAMPLES::
 
@@ -259,7 +260,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F.structures([1,2]).list()
             [[1, 2], [2, 1], [1, 2], [2, 1]]
         """
-        from sum_species import SumSpecies
+        from .sum_species import SumSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return SumSpecies(self, g)
@@ -276,7 +277,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F = P * P; F
             Product of (Permutation species) and (Permutation species)
         """
-        from product_species import ProductSpecies
+        from .product_species import ProductSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return ProductSpecies(self, g)
@@ -291,7 +292,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: S(S)
             Composition of (Set species) and (Set species)
         """
-        from composition_species import CompositionSpecies
+        from .composition_species import CompositionSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return CompositionSpecies(self, g)
@@ -312,7 +313,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: G.isotype_generating_series().coefficients(5)
             [1, 1, 2, 4, 11]
         """
-        from functorial_composition_species import FunctorialCompositionSpecies
+        from .functorial_composition_species import FunctorialCompositionSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return FunctorialCompositionSpecies(self, g)
@@ -695,7 +696,7 @@ class GenericCombinatorialSpecies(SageObject):
 
         ::
 
-            sage: g_c, labels = g.canonical_label(certify=True)
+            sage: g_c, labels = g.canonical_label(certificate=True)
             sage: g.relabel()
             sage: g_r = g.canonical_label()
             sage: g_c == g_r

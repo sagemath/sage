@@ -143,7 +143,7 @@ def fan_isomorphism_generator(fan1, fan2):
 
     graph1 = fan1.vertex_graph()
     graph2 = fan2.vertex_graph()
-    graph_iso = graph1.is_isomorphic(graph2, edge_labels=True, certify=True)
+    graph_iso = graph1.is_isomorphic(graph2, edge_labels=True, certificate=True)
     if not graph_iso[0]:
         return
     graph_iso = graph_iso[1]

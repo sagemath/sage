@@ -1,6 +1,8 @@
 """
 Interface to Bill Hart's Quadratic Sieve
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
@@ -88,7 +90,7 @@ def qsieve_block(n, time, verbose=False):
     out = os.popen('echo "%s" | %s QuadraticSieve 2>&1'%(n,t)).read()
     z = data_to_list(out, n, time=time)
     if verbose:
-        print z[-1]
+        print(z[-1])
     return z[:2]
 
 def data_to_list(out, n, time):
@@ -131,7 +133,7 @@ def data_to_list(out, n, time):
 
 from sage.interfaces.sagespawn import SageSpawn
 import pexpect
-import cleaner
+from . import cleaner
 class qsieve_nonblock:
     """
     A non-blocking version of Hart's quadratic sieve.

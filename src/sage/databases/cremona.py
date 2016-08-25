@@ -46,12 +46,13 @@ while the full version has the layout::
 #*****************************************************************************
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 from sage.misc.prandom import randint
 
 import sage.schemes.elliptic_curves.constructor as elliptic
-from sql_db import SQLDatabase, verify_column
+from .sql_db import SQLDatabase, verify_column
 from sage.misc.package import is_package_installed
 from sage.env import SAGE_SHARE
 from sage.misc.all import walltime
@@ -430,9 +431,10 @@ def split_code(key):
         sage: cremona.split_code('ba2')
         ('ba', '2')
     """
-    cu = re.split("[a-z]*",key)[1]
-    cl =  re.split("[0-9]*",key)[0]
-    return (cl,cu)
+    cu = re.split("[a-z]*", key)[1]
+    cl =  re.split("[0-9]*", key)[0]
+    return (cl, cu)
+
 
 def class_to_int(k):
     """
@@ -451,11 +453,12 @@ def class_to_int(k):
     """
     kk = [string.ascii_lowercase.index(ch) for ch in list(k)]
     kk.reverse()
-    return sum([kk[i]*26**i for i in range(len(kk))])
+    return sum([kk[i] * 26 ** i for i in range(len(kk))])
 
-def cmp_code(key1,key2):
+
+def sort_key(key1):
     """
-    Comparison function for curve id strings.
+    Comparison key for curve id strings.
 
     .. note::
 
@@ -463,20 +466,14 @@ def cmp_code(key1,key2):
 
     EXAMPLES::
 
-        sage: import sage.databases.cremona as cremona
-        sage: cremona.cmp_code('ba1','z1')
-        1
-
-    By contrast::
-
-        sage: cmp('ba1','z1')
-        -1
+        sage: from sage.databases.cremona import sort_key
+        sage: l = ['ba1', 'z1']
+        sage: sorted(l, key=sort_key)
+        ['z1', 'ba1']
     """
-    cl1,cu1 = split_code(key1)
-    cl2,cu2 = split_code(key2)
-    d = class_to_int(cl1)-class_to_int(cl2)
-    if d!=0:  return d
-    return cmp(cu1,cu2)
+    cl1, cu1 = split_code(key1)
+    return (class_to_int(cl1), cu1)
+
 
 def cremona_to_lmfdb(cremona_label, CDB=None):
     """
@@ -1015,11 +1012,11 @@ class MiniCremonaDatabase(SQLDatabase):
              [[[0, 0, 1, -4, -18], 1, 1]],
              [[[0, 1, 1, -10, 18], 1, 1]]]
         """
-        conductor=int(conductor)
+        conductor = int(conductor)
         classes = []
         A = self.allcurves(conductor)
         K = A.keys()
-        K.sort(cmp_code)
+        K.sort(key=sort_key)
         for k in K:
             v = A[k]
             # test if not first curve in class

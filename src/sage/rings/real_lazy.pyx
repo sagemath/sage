@@ -111,7 +111,7 @@ cdef class LazyField(Field):
         elif name == 'I' and self == CLF:
             return LazyConstant(self, name)
         else:
-            raise AttributeError, name
+            raise AttributeError(name)
 
     cpdef _coerce_map_from_(self, R):
         r"""
@@ -194,7 +194,7 @@ cdef class LazyField(Field):
             sage: RLF.interval_field() # indirect doctest
             Real Interval Field with 53 bits of precision
         """
-        raise NotImplementedError, "subclasses must override this method"
+        raise NotImplementedError("subclasses must override this method")
 
 
 class RealLazyField_class(LazyField):
@@ -301,7 +301,7 @@ class RealLazyField_class(LazyField):
         if i == 0:
             return self(Integer(1))
         else:
-            raise ValueError, "RLF has only one generator."
+            raise ValueError("RLF has only one generator.")
 
     def _repr_(self):
         """
@@ -447,7 +447,7 @@ class ComplexLazyField_class(LazyField):
             from sage.rings.complex_double import CDF
             return LazyAlgebraic(self, [1, 0, 1], CDF.gen())
         else:
-            raise ValueError, "CLF has only one generator."
+            raise ValueError("CLF has only one generator.")
 
     def construction(self):
         """
@@ -545,7 +545,7 @@ cdef int get_new_prec(R, int depth) except -1:
 
 cdef class LazyFieldElement(FieldElement):
 
-    cpdef ModuleElement _add_(left, ModuleElement right):
+    cpdef _add_(left, right):
         """
         Add ``left`` with ``right``.
 
@@ -561,7 +561,7 @@ cdef class LazyFieldElement(FieldElement):
                 pass
         return left._new_binop(left, right, add)
 
-    cpdef ModuleElement _sub_(left, ModuleElement right):
+    cpdef _sub_(left, right):
         """
         Subtract ``right`` from ``left``.
 
@@ -577,7 +577,7 @@ cdef class LazyFieldElement(FieldElement):
                 pass
         return left._new_binop(left, right, sub)
 
-    cpdef RingElement _mul_(left, RingElement right):
+    cpdef _mul_(left, right):
         """
         Mutliply ``left`` with ``right``.
 
@@ -593,7 +593,7 @@ cdef class LazyFieldElement(FieldElement):
                 pass
         return left._new_binop(left, right, mul)
 
-    cpdef RingElement _div_(left, RingElement right):
+    cpdef _div_(left, right):
         """
         Divide ``left`` by ``right``.
 
@@ -657,7 +657,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         return self._new_unop(self, inv)
 
-    cpdef int _cmp_(self, Element other) except -2:
+    cpdef int _cmp_(self, other) except -2:
         """
         If things are being wrapped, tries to compare values. That failing, it
         tries to compare intervals, which may return a false negative.
@@ -1324,7 +1324,7 @@ cdef class LazyNamedUnop(LazyUnop):
         """
         LazyUnop.__init__(self, parent, arg, op)
         if extra_args is not None and not isinstance(extra_args, tuple):
-            raise TypeError, "extra args must be a tuple"
+            raise TypeError("extra args must be a tuple")
         self._extra_args = extra_args
 
     cpdef eval(self, R):
@@ -1493,7 +1493,7 @@ cdef class LazyConstant(LazyFieldElement):
                 if I*I < 0:
                     return I
                 else:
-                    raise TypeError, "The complex constant I is not in this real field."
+                    raise TypeError("The complex constant I is not in this real field.")
         f = getattr(R, self._name)
         if self._extra_args is None:
             return f()
@@ -1582,7 +1582,7 @@ cdef class LazyAlgebraic(LazyFieldElement):
         if isinstance(parent, RealLazyField_class):
             from sage.rings.real_double import RDF
             if len(self._poly.roots(RDF)) == 0:
-                raise ValueError, "%s has no real roots" % self._poly
+                raise ValueError("%s has no real roots" % self._poly)
             approx = (RR if prec == 0 else RealField(prec))(approx)
         else:
             approx = (CC if prec == 0 else ComplexField(prec))(approx)

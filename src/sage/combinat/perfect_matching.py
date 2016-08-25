@@ -51,7 +51,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 # python3
-from __future__ import division
+from __future__ import division, print_function
 
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -255,7 +255,7 @@ class PerfectMatching(ElementWrapper):
         Above we added ``random`` since warnings might be displayed
         once. The second time, there should be no warnings::
 
-            sage: print P._latex_()  # optional - dot2tex
+            sage: print(P._latex_())  # optional - dot2tex
             \begin{tikzpicture}
             ...
             \end{tikzpicture}

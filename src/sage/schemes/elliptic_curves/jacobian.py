@@ -111,7 +111,7 @@ def Jacobian(X, **kwds):
     from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
     if is_MPolynomial(X):
         if morphism:
-            from sage.schemes.plane_curves.constructor import Curve
+            from sage.schemes.curves.constructor import Curve
             return Jacobian_of_equation(X, curve=Curve(X), **kwds)
         else:
             return Jacobian_of_equation(X, **kwds)
@@ -192,7 +192,7 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
 
         sage: h = Jacobian(f, curve=Curve(f));  h
         Scheme morphism:
-          From: Projective Curve over Rational Field defined by a^3 + b^3 + 60*c^3
+          From: Projective Plane Curve over Rational Field defined by a^3 + b^3 + 60*c^3
           To:   Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
           Defn: Defined on coordinates by sending (a : b : c) to
                 (-216000*a^4*b^4*c - 12960000*a^4*b*c^4 - 12960000*a*b^4*c^4 :

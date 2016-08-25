@@ -133,7 +133,7 @@ class CombinatorialAlgebraElementOld(CombinatorialFreeModule.Element):
 
             sage: s = sage.combinat.combinatorial_algebra.TestAlgebra(QQ)
             sage: a = 2 + s([3,2,1])
-            sage: print a.__repr__()
+            sage: print(a.__repr__())
             2*s[] + s[3, 2, 1]
         """
         v = sorted(self._monomial_coefficients.items())

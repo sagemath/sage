@@ -58,16 +58,16 @@ def OptionalExtension(*args, **kwds):
 
         sage: from sage_setup.optional_extension import OptionalExtension
         sage: ext = OptionalExtension("foo", ["foo.c"], condition=False)
-        sage: print ext.__class__
+        sage: print(ext.__class__)
         sage_setup.optional_extension.CythonizeExtension
         sage: ext = OptionalExtension("foo", ["foo.c"], condition=True)
-        sage: print ext.__class__
+        sage: print(ext.__class__)
         distutils.extension.Extension
         sage: ext = OptionalExtension("foo", ["foo.c"], package="no_such_package")
-        sage: print ext.__class__
+        sage: print(ext.__class__)
         sage_setup.optional_extension.CythonizeExtension
         sage: ext = OptionalExtension("foo", ["foo.c"], package="pari")
-        sage: print ext.__class__
+        sage: print(ext.__class__)
         distutils.extension.Extension
     """
     try:

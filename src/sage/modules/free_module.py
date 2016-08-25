@@ -136,13 +136,13 @@ AUTHORS:
 
 - David Kohel (2007, 2008)
 
-- Niles Johnson (2010-08): Trac #3893: ``random_element()`` should pass on ``*args`` and ``**kwds``.
+- Niles Johnson (2010-08): (:trac:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
 - Simon King (2010-12):
-  Trac #8800: Fixing a bug in ``denominator()``.
+  :trac:`8800` : Fixing a bug in ``denominator()``.
 
 - Simon King (2010-12), Peter Bruin (June 2014):
-  Trac #10513: New coercion model and category framework.
+  :trac:`10513` : New coercion model and category framework.
 
 """
 
@@ -161,9 +161,9 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-import free_module_element
+from . import free_module_element
 import sage.matrix.matrix_space
 import sage.misc.latex as latex
 
@@ -346,7 +346,7 @@ class FreeModuleFactory(UniqueFactory):
         base_ring, rank, sparse, inner_product_matrix = key
 
         if inner_product_matrix is not None:
-            from free_quadratic_module import FreeQuadraticModule
+            from .free_quadratic_module import FreeQuadraticModule
             return FreeQuadraticModule(base_ring, rank, inner_product_matrix=inner_product_matrix, sparse=sparse)
 
         if not isinstance(sparse,bool):
@@ -626,7 +626,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
 
 def is_FreeModule(M):
     """
-    Return True if M inherits from from FreeModule_generic.
+    Return True if M inherits from FreeModule_generic.
 
     EXAMPLES::
 
@@ -773,7 +773,7 @@ done from the right side.""")
     # Should there be a category for free modules accepting it as hom space?
     # See similar method for FreeModule_generic_field class
     def _Hom_(self, Y, category):
-        from free_module_homspace import FreeModuleHomspace
+        from .free_module_homspace import FreeModuleHomspace
         return FreeModuleHomspace(self, Y, category)
 
     def dense_module(self):
@@ -1924,7 +1924,7 @@ done from the right side.""")
             (0, 0)
         """
         # Do *not* cache this -- it must be computed fresh each time, since
-        # it is is used by __call__ to make a new copy of the 0 element.
+        # it is used by __call__ to make a new copy of the 0 element.
 
         return self.element_class(self, 0)
 
@@ -2774,7 +2774,7 @@ class FreeModule_generic_pid(FreeModule_generic):
         if base_ring is None or base_ring == self.base_ring():
             try:
                 if self.is_dense():
-                    from free_module_integer import FreeModule_submodule_with_basis_integer
+                    from .free_module_integer import FreeModule_submodule_with_basis_integer
                     return FreeModule_submodule_with_basis_integer(self.ambient_module(),
                                                                    basis=basis, check=check,
                                                                    already_echelonized=already_echelonized,
@@ -2986,7 +2986,7 @@ class FreeModule_generic_pid(FreeModule_generic):
             except (TypeError, ArithmeticError):
                 raise ArithmeticError("sub must be a subspace of self")
         if self.base_ring() == sage.rings.integer_ring.ZZ:
-            from fg_pid.fgp_module import FGP_Module
+            from .fg_pid.fgp_module import FGP_Module
             return FGP_Module(self, sub, check=False)
         else:
             raise NotImplementedError("quotients of modules over rings other than fields or ZZ is not fully implemented")
@@ -3077,9 +3077,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
               (quotient fields and metric spaces)
         """
         if Y.base_ring().is_field():
-            import vector_space_homspace
+            from . import vector_space_homspace
             return vector_space_homspace.VectorSpaceHomspace(self, Y, category)
-        import free_module_homspace
+        from . import free_module_homspace
         return free_module_homspace.FreeModuleHomspace(self, Y, category)
 
     def scale(self, other):
@@ -3896,7 +3896,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             except (TypeError, ArithmeticError):
                 raise ArithmeticError("sub must be a subspace of self")
         A, L = self.__quotient_matrices(sub)
-        import quotient_module
+        from . import quotient_module
         return quotient_module.FreeModule_ambient_field_quotient(self, sub, A, L)
 
     def __quotient_matrices(self, sub):
@@ -4473,7 +4473,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         if self.base_ring() is R:
             return self
-        from free_quadratic_module import is_FreeQuadraticModule
+        from .free_quadratic_module import is_FreeQuadraticModule
         if is_FreeQuadraticModule(self):
             return FreeModule(R, self.rank(), inner_product_matrix=self.inner_product_matrix())
         else:
@@ -5355,7 +5355,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: M < V
             False
 
-        We test that trac 5525 is fixed::
+        We test that :trac:`5525` is fixed::
 
             sage: A = (QQ^1).span([[1/3]],ZZ); B = (QQ^1).span([[1]],ZZ);
             sage: A.intersection(B)
@@ -6742,16 +6742,16 @@ def element_class(R, is_sparse):
     import sage.modules.vector_complex_double_dense
 
     if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
-        from vector_integer_dense import Vector_integer_dense
+        from .vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
     elif sage.rings.rational_field.is_RationalField(R) and not is_sparse:
-        from vector_rational_dense import Vector_rational_dense
+        from .vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
     elif sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R) and not is_sparse:
-        from vector_mod2_dense import Vector_mod2_dense
+        from .vector_mod2_dense import Vector_mod2_dense
         if R.order() == 2:
             return Vector_mod2_dense
-        from vector_modn_dense import Vector_modn_dense, MAX_MODULUS
+        from .vector_modn_dense import Vector_modn_dense, MAX_MODULUS
         if R.order() < MAX_MODULUS:
             return Vector_modn_dense
         else:

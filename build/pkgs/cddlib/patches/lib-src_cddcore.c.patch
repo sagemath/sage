@@ -1,7 +1,7 @@
-diff --git a/src.bak/lib-src/cddcore.c b/src/lib-src/cddcore.c
+diff --git a/lib-src/cddcore.c b/lib-src/cddcore.c
 index 9644788..a029bc3 100644
---- a/src.bak/lib-src/cddcore.c
-+++ b/src/lib-src/cddcore.c
+--- a/lib-src/cddcore.c
++++ b/lib-src/cddcore.c
 @@ -17,6 +17,7 @@
  #include <time.h>
  #include <math.h>

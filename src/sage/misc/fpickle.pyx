@@ -3,8 +3,11 @@ Function pickling
 
 REFERENCE: The python cookbook.
 """
+from __future__ import absolute_import
 
-import types, copy_reg, cPickle
+import types
+from six.moves import copyreg
+from six.moves import cPickle
 
 def code_ctor(*args):
     """
@@ -35,7 +38,7 @@ def reduce_code(co):
                        co.co_varnames, co.co_filename, co.co_name,
                        co.co_firstlineno, co.co_lnotab)
 
-copy_reg.pickle(types.CodeType, reduce_code)
+copyreg.pickle(types.CodeType, reduce_code)
 
 def pickle_function(func):
     """
@@ -94,7 +97,7 @@ def call_pickled_function(fpargs):
 # import of twisted.persisted.styles takes a long time and we do not use
 # most functionality it provides
 def pickleMethod(method):
-    'support function for copy_reg to pickle method refs'
+    'support function for copyreg to pickle method refs'
     return unpickleMethod, (method.__func__.__name__,
                              method.__self__,
                              method.im_class)
@@ -102,7 +105,7 @@ def pickleMethod(method):
 def unpickleMethod(im_name,
                     __self__,
                     im_class):
-    'support function for copy_reg to unpickle method refs'
+    'support function for copyreg to unpickle method refs'
     try:
         unbound = getattr(im_class,im_name)
         if __self__ is None:
@@ -122,22 +125,22 @@ def unpickleMethod(im_name,
                                  __self__)
         return bound
 
-copy_reg.pickle(types.MethodType,
+copyreg.pickle(types.MethodType,
                 pickleMethod,
                 unpickleMethod)
 
 oldModules = {}
 
 def pickleModule(module):
-    'support function for copy_reg to pickle module refs'
+    'support function for copyreg to pickle module refs'
     return unpickleModule, (module.__name__,)
 
 def unpickleModule(name):
-    'support function for copy_reg to unpickle module refs'
+    'support function for copyreg to unpickle module refs'
     if name in oldModules:
         name = oldModules[name]
     return __import__(name,{},{},'x')
 
-copy_reg.pickle(types.ModuleType,
-                pickleModule,
-                unpickleModule)
+copyreg.pickle(types.ModuleType,
+               pickleModule,
+               unpickleModule)

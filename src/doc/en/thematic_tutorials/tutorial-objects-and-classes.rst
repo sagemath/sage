@@ -532,7 +532,7 @@ Summary
 
         sage: class Spoon(AbstractDish):
         ....:     def __init__(self):
-        ....:         print "Building a spoon"
+        ....:         print("Building a spoon")
         ....:         super(Spoon, self).__init__()
         ....:     def __repr__(self):
         ....:         return "A %s spoon"%self.state()

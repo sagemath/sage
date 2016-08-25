@@ -20,6 +20,9 @@ For more details see http://www.mathematik.uni-osnabrueck.de/normaliz/
 
 == Dependencies ==
 
+ * GMP/MPIR
+ * boost
+
 == Special Update/Build Instructions ==
 
 * Normaliz is now distributed as .zip archive.

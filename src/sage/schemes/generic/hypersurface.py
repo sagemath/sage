@@ -7,6 +7,7 @@ AUTHORS:
 - David Kohel <kohel@maths.usyd.edu.au> (2005-12-08)
 - Alex Ghitza <aghitza@alum.mit.edu> (2009-04-17)
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -19,7 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
-from algebraic_scheme import AlgebraicScheme_subscheme_projective, AlgebraicScheme_subscheme_affine
+from .algebraic_scheme import AlgebraicScheme_subscheme_projective, AlgebraicScheme_subscheme_affine
 
 def is_Hypersurface(self):
     """

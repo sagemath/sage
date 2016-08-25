@@ -18,6 +18,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import, print_function
 
 from sage.structure.factory import UniqueFactory
 from sage.rings.integer import Integer
@@ -26,10 +27,11 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.structure.element import is_Element
-from padic_base_leaves import pAdicRingCappedRelative, \
-                              pAdicRingCappedAbsolute, \
-                              pAdicRingFixedMod, \
-                              pAdicFieldCappedRelative
+from .padic_base_leaves import (pAdicRingCappedRelative,
+                                pAdicRingCappedAbsolute,
+                                pAdicRingFixedMod,
+                                pAdicFieldCappedRelative)
+from . import padic_printing
 
 ######################################################
 # ext_table --
@@ -37,7 +39,7 @@ from padic_base_leaves import pAdicRingCappedRelative, \
 # factory when it finds a given class in the ground ring of the tower.
 ######################################################
 
-from padic_extension_leaves import *
+from .padic_extension_leaves import *
 from functools import reduce
 #This imports all of the classes used in the ext_table below.
 
@@ -153,7 +155,7 @@ def get_key_base(p, prec, type, print_mode, halt, names, ram_name, print_pos, pr
     elif type == 'lazy':
         key = (p, prec, halt, print_mode, name, print_pos, print_sep, tuple(print_alphabet), print_max_terms)
     else:
-        print type
+        print(type)
         raise ValueError("type must be %s or lazy"%(", ".join(valid_non_lazy_types)))
     return key
 
@@ -166,7 +168,7 @@ def get_key_base(p, prec, type, print_mode, halt, names, ram_name, print_pos, pr
 #
 #######################################################################################################
 
-import padic_printing
+
 padic_field_cache = {}
 DEFAULT_PREC = Integer(20)
 DEFAULT_HALT = Integer(40)
@@ -2272,7 +2274,7 @@ class pAdicExtension_class(UniqueFactory):
                 names = str(names)
         else:
             modulus = premodulus
-        #print type(base)
+
         # We now decide on the extension class: unramified, Eisenstein, two-step or general
         if unram or is_unramified(modulus):
             if unram_name is None:
@@ -2356,7 +2358,7 @@ class pAdicExtension_class(UniqueFactory):
                 ram_name = names + '_p'
             names = (names, res_name, unram_name, ram_name)
             polytype = 'p'
-        #print "polytype = %s"%polytype
+
         if polytype == 'u' or polytype == 'e':
             if polytype == 'e':
                 implementation = "NTL" # for testing - FLINT ramified extensions not implemented yet

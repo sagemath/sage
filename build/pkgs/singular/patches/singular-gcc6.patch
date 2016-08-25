@@ -1,0 +1,32 @@
+diff -up a/latest/kernel/mod_raw.cc b/latest/kernel/mod_raw.cc
+--- a/latest/kernel/mod_raw.cc	2014-08-06 09:59:15.000000000 -0600
++++ b/latest/kernel/mod_raw.cc	2016-02-15 21:53:02.950149126 -0700
+@@ -38,8 +38,8 @@ char* si_bultin_libs[]={ SI_FOREACH_BUIL
+ 
+ lib_types type_of_LIB(char *newlib, char *libnamebuf)
+ {
+-  const char mach_o[]={0xfe,0xed,0xfa,0xce,0};
+-  const char mach_o_module[]={0xce,0xfa,0xed,0xfe,0};
++  const unsigned char mach_o[]={0xfe,0xed,0xfa,0xce,0};
++  const unsigned char mach_o_module[]={0xce,0xfa,0xed,0xfe,0};
+   int i=0;
+   while(si_bultin_libs[i]!=NULL)
+   {
+@@ -90,7 +90,7 @@ lib_types type_of_LIB(char *newlib, char
+     goto lib_type_end;
+   }
+ 
+-  if( (strncmp(buf, &mach_o[0], 4)==0)) /* generic Mach-O module */
++  if( (strncmp(buf, (const char *)mach_o, 4)==0)) /* generic Mach-O module */
+   {
+     LT = LT_MACH_O;
+     //omFree(newlib);
+@@ -98,7 +98,7 @@ lib_types type_of_LIB(char *newlib, char
+     goto lib_type_end;
+   }
+ 
+-  if( (strncmp(buf, &mach_o_module[0], 4)==0)) /* Mach-O bundle */
++  if( (strncmp(buf, (const char *)mach_o_module, 4)==0)) /* Mach-O bundle */
+   {
+     LT = LT_MACH_O;
+     //omFree(newlib);

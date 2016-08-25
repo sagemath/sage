@@ -13,7 +13,7 @@ Sage.
 
 Nous allons voir ici ce que ces notions signifient, mais pas comment les mettre
 en œuvre pour implémenter une nouvelle structure algébrique. Un tutorial
-thématique couvrant ce point est disponible `ici <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+thématique couvrant ce point est disponible `ici <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 Éléments
 --------
@@ -205,7 +205,7 @@ les conversions en Sage avec les conversions de type du C !
 
 Nous nous limitons ici à une brève présentation, et renvoyons le lecteur à la
 section du manuel de référence consacrée aux coercitions ainsi qu'au
-`tutoriel <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_
+`tutoriel <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_
 spécifique pour plus de détails.
 
 On peut adopter deux positions extrêmes sur les opérations arithmétiques entre
@@ -377,7 +377,7 @@ fractions de ``ZZ['x']``. Cependant, Sage tente de choisir un parent commun
 fonctionne de façon fiable, Sage ne se contente *pas* de prendre n'importe
 lequel lorsque plusieurs candidats semblent aussi naturels les uns que les
 autres. La manière dont le choix est fait est décrite dans le `tutoriel
-<http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_
+<http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_
 spécifique déjà mentionné.
 
 Dans l'exemple suivant, il n'y a pas de coercition vers un parent commun :

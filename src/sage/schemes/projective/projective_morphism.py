@@ -25,6 +25,7 @@ AUTHORS:
 
 - Ben Hutz (2015-11): iteration of subschemes
 
+
 """
 
 #*****************************************************************************
@@ -38,6 +39,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.calculus.functions import jacobian
 from sage.categories.number_fields import NumberFields
@@ -78,8 +81,12 @@ from sage.ext.fast_callable import fast_callable
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.schemes.projective.projective_morphism_helper import _fast_possible_periods
 import sys
+from sage.sets.set import Set
+from sage.combinat.permutation import Arrangements
+from sage.combinat.subset import Subsets
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
+from sage.rings.number_field.number_field import NumberField
 
 class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
     r"""
@@ -107,8 +114,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         sage: H = C.Hom(E)
         sage: H([zbar,xbar-ybar,-(xbar+ybar)/80])
         Scheme morphism:
-          From: Projective Curve over Rational Field defined by x^3 + y^3 + 60*z^3
-          To:   Projective Curve over Rational Field defined by -x^3 + y^2*z + 6400/3*z^3
+          From: Projective Plane Curve over Rational Field defined by x^3 + y^3 + 60*z^3
+          To:   Projective Plane Curve over Rational Field defined by -x^3 + y^2*z + 6400/3*z^3
           Defn: Defined on coordinates by sending (x : y : z) to
                 (z : x - y : -1/80*x - 1/80*y)
 
@@ -614,6 +621,18 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x : y : z) to
                     (2*y^2 : y^2 : z^2)
 
+        ::
+
+            sage: R.<a,b> = QQ[]
+            sage: P.<x,y,z> = ProjectiveSpace(R, 2)
+            sage: H = End(P)
+            sage: f = H([a*(x*z+y^2)*x^2, a*b*(x*z+y^2)*y^2, a*(x*z+y^2)*z^2])
+            sage: f.normalize_coordinates(); f
+            Scheme endomorphism of Projective Space of dimension 2 over Multivariate
+            Polynomial Ring in a, b over Rational Field
+              Defn: Defined on coordinates by sending (x : y : z) to
+                    (x^2 : b*y^2 : z^2)
+
         .. NOTE:: gcd raises an error if the base_ring does not support gcds.
         """
         GCD = gcd(self[0], self[1])
@@ -865,7 +884,25 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             Multivariate Polynomial Ring in x, y over Fraction Field of Univariate Polynomial
             Ring in t over Number Field in v with defining polynomial x^2 - 33
 
-        This one still does not work, some function fields still return Symoblic Ring elements::
+        ::
+
+            sage: P.<x, y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(P)
+            sage: f = H([x^3-y^3*2, y^3])
+            sage: f.dynatomic_polynomial(1).parent()
+            Multivariate Polynomial Ring in x, y over Rational Field
+
+        ::
+
+            sage: P.<x, y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(P)
+            sage: f = H([x^2 + y^2, y^2])
+            sage: f.dynatomic_polynomial(0)
+            0
+            sage: f.dynatomic_polynomial([0,0])
+            0
+
+        Some rings still return Symoblic Ring elements::
 
             sage: S.<t> = FunctionField(CC)
             sage: P.<x,y> = ProjectiveSpace(S,1)
@@ -882,8 +919,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<u,v> = ProjectiveSpace(FractionField(S),1)
             sage: H = End(P)
             sage: f = H([u^2 + S(x^2)*v^2, v^2])
-            sage: f.dynatomic_polynomial([1,1])
+            sage: dyn = f.dynatomic_polynomial([1,1]); dyn
             v^3*xbar^2 + u^2*v + u*v^2
+            sage: dyn.parent()
+            Symbolic Ring
        """
         if self.domain().ngens() > 2:
             raise TypeError("does not make sense in dimension >1")
@@ -893,24 +932,22 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         y = self.domain().gen(1)
         f0, f1 = F0, F1 = self._polys
         PHI = self.base_ring().one()
+        m = period[0]
         n = period[1]
-        if period[0] != 0:
-            m = period[0]
+        if m == 0:
+            if n == 0:
+                return self[0].parent().zero()
+            elif n == 1:
+                return y*F0 - x*F1
+        for d in range(1, n):
+            if n % d == 0:
+                PHI = PHI * ((y*F0 - x*F1)**moebius(n//d))
+            F0, F1 = f0(F0, F1), f1(F0, F1)
+        PHI = PHI * (y*F0 - x*F1)
+        if m != 0:
             fm = self.nth_iterate_map(m)
             fm1 = self.nth_iterate_map(m - 1)
-            for d in range(1, n):
-                if n % d == 0:
-                    PHI = PHI * ((y*F0 - x*F1) ** moebius(n/d))
-                F0, F1 = f0(F0, F1), f1(F0, F1)
-            PHI = PHI * (y*F0 - x*F1)
-            if m != 0:
-                PHI = PHI(fm._polys)/ PHI(fm1._polys )
-        else:
-            for d in range(1, n):
-                if n % d == 0:
-                    PHI = PHI * ((y*F0 - x*F1) ** moebius(n//d))
-                F0, F1 = f0(F0, F1), f1(F0, F1)
-            PHI = PHI * (y*F0 - x*F1)
+            PHI = PHI(fm._polys)/ PHI(fm1._polys)
         try:
             QR = PHI.numerator().quo_rem(PHI.denominator())
             if not QR[1]:
@@ -1000,14 +1037,28 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
               -y^2 + x*z
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^4 : x^2*z^2 : z^4)
-        """
-        E = self.domain()
-        if E is not self.codomain():
-            raise TypeError("domain and Codomain of function not equal")
 
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: P2.<u,v,w> = ProjectiveSpace(QQ, 2)
+            sage: H = Hom(P, P2)
+            sage: f = H([x^2, y^2, x^2-y^2])
+            sage: f.nth_iterate_map(1)
+            Scheme morphism:
+              From: Projective Space of dimension 1 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 : y^2 : x^2 - y^2)
+        """
         D = int(n)
         if D < 0:
             raise TypeError("iterate number must be a positive integer")
+        if D == 1:
+            return self
+        if not self.is_endomorphism():
+            raise TypeError("map is not an endomorphism")
+
         N = self.codomain().ambient_space().dimension_relative() + 1
         F = list(self._polys)
         Coord_ring = self.codomain().coordinate_ring()
@@ -1022,7 +1073,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             if D > 1: #avoid extra iterate
                 F = [F[j](*F) for j in range(N)] #'square'
             D >>= 1
-        return End(E)(PHI)
+        return End(self.domain())(PHI)
 
     def nth_iterate(self, P, n, **kwds):
         r"""
@@ -1521,7 +1572,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: H = Hom(P,P)
             sage: f = H([1/3*x^2+1/2*y^2, y^2])
-            sage: print f.primes_of_bad_reduction()
+            sage: f.primes_of_bad_reduction()
             [2, 3]
 
         ::
@@ -1668,8 +1719,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = Hom(P,P)
             sage: f = H([x^2+y^2, y^2])
             sage: f.conjugate(matrix([[2,0], [0,1/2]]))
-            Scheme endomorphism of Projective Space of dimension 1 over Multivariate
-            Polynomial Ring in x, y over Rational Field
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (2*x^2 + 1/8*y^2 : 1/2*y^2)
 
@@ -1681,9 +1731,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = Hom(P,P)
             sage: f = H([1/3*x^2+1/2*y^2, y^2])
             sage: f.conjugate(matrix([[i,0], [0,-i]]))
-            Scheme endomorphism of Projective Space of dimension 1 over Multivariate
-            Polynomial Ring in x, y over Number Field in i with defining polynomial
-            x^2 + 1
+            Scheme endomorphism of Projective Space of dimension 1 over Number Field in i with defining polynomial x^2 + 1
               Defn: Defined on coordinates by sending (x : y) to
                     ((1/3*i)*x^2 + (1/2*i)*y^2 : (-i)*y^2)
         """
@@ -1701,7 +1749,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             except TypeError: #no longer defined over same ring
                 R = R.change_ring(M.base_ring())
                 F = [R(f) for f in F]
-                PS = self.codomain().change_ring(R)
+                PS = self.codomain().change_ring(M.base_ring())
             H = Hom(PS, PS)
             return(H(F))
         else:
@@ -1980,8 +2028,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def height_difference_bound(self, prec=None):
         r"""
-        Returns an upper bound on the different bewtween the canonical height of a point with
-        respect to this map and the absolute height of the point.
+        Return an upper bound on the different between the canonical
+        height of a point with respect to this map and the absolute
+        height of the point.
 
         This map must be a morphism.
 
@@ -2459,7 +2508,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if self.degree() == 1:
             raise NotImplementedError("minimality is only for degree 2 or higher")
 
-        from endPN_minimal_model import affine_minimal
+        from .endPN_minimal_model import affine_minimal
         return(affine_minimal(self, False , prime_list , True))
 
     def minimal_model(self, return_transformation=False, prime_list=None):
@@ -2572,14 +2621,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if self.degree() == 1:
             raise NotImplementedError("minimality is only for degree 2 or higher")
 
-        from endPN_minimal_model import affine_minimal
+        from .endPN_minimal_model import affine_minimal
         return(affine_minimal(self, return_transformation, prime_list, False))
 
     def automorphism_group(self, **kwds):
         r"""
         Calculates the subgroup of `PGL2` that is the automorphism group of this map.
 
-        Dimension 1 only. The automorphism group is the set of `PGL(2)` elements that fix this map
+        The automorphism group is the set of `PGL(2)` elements that fix this map
         under conjugation.
 
         INPUT:
@@ -2659,22 +2708,47 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             [1 0]  [0 2]  [-1  0]  [ 0 -2]
             [0 1], [2 0], [ 0  1], [ 2  0]
             ]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x**2 + x*z, y**2, z**2])
+            sage: f.automorphism_group() # long test
+            [
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            ]
+
+        ::
+
+            sage: K.<w> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: D6 = H([y^2,x^2])
+            sage: D6.automorphism_group()
+            [
+            [1 0]  [0 w]  [0 1]  [w 0]  [-w - 1      0]  [     0 -w - 1]
+            [0 1], [1 0], [1 0], [0 1], [     0      1], [     1      0]
+            ]
         """
 
         alg = kwds.get('algorithm', None)
         p = kwds.get('starting_prime', 5)
         return_functions = kwds.get('return_functions', False)
         iso_type = kwds.get('iso_type', False)
-
         if self.domain().dimension_relative() != 1:
-            raise NotImplementedError("must be dimension 1")
+            return self.conjugating_set(self)
+        if self.base_ring() != QQ  and self.base_ring != ZZ:
+            return self.conjugating_set(self)
         f = self.dehomogenize(1)
         R = PolynomialRing(f.base_ring(),'x')
         if is_FractionFieldElement(f[0]):
             F = (f[0].numerator().univariate_polynomial(R))/f[0].denominator().univariate_polynomial(R)
         else:
             F = f[0].univariate_polynomial(R)
-        from endPN_automorphism_group import automorphism_group_QQ_CRT, automorphism_group_QQ_fixedpoints
+        from .endPN_automorphism_group import automorphism_group_QQ_CRT, automorphism_group_QQ_fixedpoints
         if alg is None:
             if self.degree() <= 12:
                 return(automorphism_group_QQ_fixedpoints(F, return_functions, iso_type))
@@ -2723,6 +2797,77 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         J = jacobian(self.defining_polynomials(),dom.gens())
         return(R.ideal(J.minors(N)))
 
+    def critical_subscheme(self):
+        r"""
+        Returns the critical subscheme of this endomorphism defined over the base ring of this map.
+
+
+        OUTPUT: the critical subscheme of the endomorphism.
+
+        Examples::
+
+            sage: set_verbose(None)
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^3-2*x*y^2 + 2*y^3, y^3])
+            sage: f.critical_subscheme()
+            Closed subscheme of Projective Space of dimension 1 over Rational Field
+            defined by:
+            9*x^2*y^2 - 6*y^4
+
+        ::
+
+            sage: set_verbose(None)
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([2*x^2-y^2, x*y])
+            sage: f.critical_subscheme()
+            Closed subscheme of Projective Space of dimension 1 over Rational Field
+            defined by:
+            4*x^2 + 2*y^2
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([2*x^2-y^2, x*y, z^2])
+            sage: f.critical_subscheme()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field
+            defined by:
+            8*x^2*z + 4*y^2*z
+
+        ::
+
+            sage: P.<x,y,z,w> = ProjectiveSpace(GF(81),3)
+            sage: H = End(P)
+            sage: g = H([x^3+y^3, y^3+z^3, z^3+x^3, w^3])
+            sage: g.critical_subscheme()
+            Closed subscheme of Projective Space of dimension 3 over Finite Field in
+            z4 of size 3^4 defined by:
+              0
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2,x*y])
+            sage: f.critical_subscheme()
+            Traceback (most recent call last):
+            ...
+            TypeError: the function is not a morphism
+        """
+        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        PS = self.domain()
+        if not is_ProjectiveSpace(PS):
+            raise NotImplementedError("not implemented for subschemes")
+        if not self.is_endomorphism():
+            raise NotImplementedError("must be an endomorphism")
+        if not self.is_morphism():
+            raise TypeError("the function is not a morphism")
+        wr = self.wronskian_ideal()
+        crit_subscheme = self.codomain().subscheme(wr)
+        return crit_subscheme
+
     def critical_points(self, R=None):
         r"""
         Returns the critical points of this endomorphism defined over the ring ``R``
@@ -2759,21 +2904,15 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
         PS = self.domain()
-        if not is_ProjectiveSpace(PS):
-            raise NotImplementedError("not implemented for subschemes")
-        if not self.is_endomorphism():
-            raise NotImplementedError("must be an endomorphism")
         if PS.dimension_relative() > 1:
             raise NotImplementedError("use .wronskian_ideal() for dimension > 1")
-
         if R is None:
             F = self
         else:
             F = self.change_ring(R)
         P = F.codomain()
-        wr = F.wronskian_ideal()
-        X = P.subscheme(wr)
-        crit_points = X.rational_points()
+        X = F.critical_subscheme()
+        crit_points = [P(Q) for Q in X.rational_points()]
         return crit_points
 
     def is_postcritically_finite(self, err=0.01, embedding=None):
@@ -3049,12 +3188,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = Hom(P,P)
             sage: f = H([x^2+z^2, y^2+x^2, z^2+y^2])
             sage: f.periodic_points(1)
-            [(-s^5 + 3*s^4 - 5*s^3 + 4*s^2 - 3*s + 1 : s^5 - 2*s^4 + 3*s^3 - 3*s^2 + 4*s - 1 : 1),
-            (2*s^5 - 6*s^4 + 9*s^3 - 8*s^2 + 7*s - 4 : 2*s^5 - 5*s^4 + 7*s^3 - 5*s^2 + 6*s - 2 : 1),
-            (-2*s^5 + 4*s^4 - 5*s^3 + 3*s^2 - 4*s : -2*s^5 + 5*s^4 - 7*s^3 + 6*s^2 - 7*s + 3 : 1),
+            [(-2*s^5 + 4*s^4 - 5*s^3 + 3*s^2 - 4*s : -2*s^5 + 5*s^4 - 7*s^3 + 6*s^2 - 7*s + 3 : 1),
             (-s^5 + 3*s^4 - 4*s^3 + 4*s^2 - 4*s + 2 : -s^5 + 2*s^4 - 2*s^3 + s^2 - s : 1),
-            (s^5 - 2*s^4 + 2*s^3 + s : s^5 - 3*s^4 + 4*s^3 - 3*s^2 + 2*s - 1 : 1), (1 : 1 : 1),
-            (s^5 - 2*s^4 + 3*s^3 - 3*s^2 + 3*s - 1 : -s^5 + 3*s^4 - 5*s^3 + 4*s^2 - 4*s + 2 : 1)]
+            (2*s^5 - 6*s^4 + 9*s^3 - 8*s^2 + 7*s - 4 : 2*s^5 - 5*s^4 + 7*s^3 - 5*s^2 + 6*s - 2 : 1),
+            (s^5 - 2*s^4 + 2*s^3 + s : s^5 - 3*s^4 + 4*s^3 - 3*s^2 + 2*s - 1 : 1),
+            (s^5 - 2*s^4 + 3*s^3 - 3*s^2 + 3*s - 1 : -s^5 + 3*s^4 - 5*s^3 + 4*s^2 - 4*s + 2 : 1), (1 : 1 : 1),
+            (-s^5 + 3*s^4 - 5*s^3 + 4*s^2 - 3*s + 1 : s^5 - 2*s^4 + 3*s^3 - 3*s^2 + 4*s - 1 : 1)]
 
         ::
 
@@ -3133,7 +3272,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if not f.is_morphism():
             # if not, the variety is not dimension 0 and
             # can cannot construct the cyclegraph due to
-            #indeterminancies
+            #indeterminacies
             raise NotImplementedError("must be a projective morphism")
         PS = f.codomain()
         if algorithm == 'variety':
@@ -3143,7 +3282,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 F = f.nth_iterate_map(n)
                 L = [F[i]*R.gen(j) - F[j]*R.gen(i) for i in range(0,N) for j in range(i+1, N)]
                 X = PS.subscheme(L)
-                points = X.rational_points()
+                points = [PS(Q) for Q in X.rational_points()]
 
                 if not minimal:
                     return points
@@ -3180,7 +3319,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 raise TypeError("ring must be finite to generate cyclegraph")
         else:
             raise ValueError("algorithm must be either 'variety' or 'cyclegraph'")
-
 
     def multiplier_spectra(self, n, formal=True, embedding=None):
         r"""
@@ -3247,6 +3385,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2 - 7/4*y^2, y^2])
             sage: f.multiplier_spectra(3)
             [1, 1]
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + y^2, x*y])
+            sage: f.sigma_invariants(1)
+            [3, 3, 1]
         """
         PS = self.domain()
         n = Integer(n)
@@ -3257,7 +3403,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if not is_ProjectiveSpace(PS):
             raise NotImplementedError("not implemented for subschemes")
         if (PS.dimension_relative() > 1):
-            raise NonImplementedError("only implemented for dimension 1")
+            raise NotImplementedError("only implemented for dimension 1")
         if not self.is_endomorphism():
             raise TypeError("self must be an endomorphism")
         if not PS.base_ring() in NumberFields() and not PS.base_ring() is QQbar:
@@ -3285,7 +3431,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 phix = Kx.hom(phi,QQbarx)
                 F = phix(F)
 
-        other_roots = F([(f.domain().gens()[0]),1]).univariate_polynomial().roots(ring=QQbar)
+        other_roots = F.parent()(F([(f.domain().gens()[0]),1])).univariate_polynomial().roots(ring=QQbar)
 
         points = []
 
@@ -3336,9 +3482,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         - ``embedding`` - embedding of the base field into `\QQbar`
 
-        OUTPUT:
-
-        - a list of `\QQbar` elements.
+        OUTPUT: a list of elements in the base ring.
 
         EXAMPLES::
 
@@ -3361,7 +3505,17 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = End(P)
             sage: f = H([x^2 - 5/4*y^2, y^2])
             sage: f.sigma_invariants(2, False, embedding=K.embeddings(QQbar)[0])
-            [13.00000000000000?, 11.00000000000000?, -25.00000000000000?, 0]
+            [13, 11, -25, 0]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: H = End(P)
+            sage: f = H([x^2, y^2, z^2])
+            sage: f.sigma_invariants(1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for dimension 1
         """
         polys = []
 
@@ -3370,10 +3524,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         e = SymmetricFunctions(QQbar).e()
 
         N = len(multipliers)
+        R = self.base_ring()
         for i in range(0,N):
-            polys.append(e([i+1]).expand(N)(multipliers))
+            polys.append(R(e([i+1]).expand(N)(multipliers)))
         return polys
-
 
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
 
@@ -3658,7 +3812,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([u^2 + v^2,v^2])
             sage: f.rational_periodic_points()
-            [(w : 1), (-w + 1 : 1), (1 : 0)]
+            [(w : 1), (1 : 0), (-w + 1 : 1)]
 
         ::
 
@@ -3770,23 +3924,22 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         else:
             raise TypeError("base field must be an absolute number field")
 
-    def rational_preimages(self, Q):
+    def rational_preimages(self, Q, k=1):
         r"""
-        Determine all of the rational first preimages of ``Q`` by this map.
+        Determine all of the rational `k`-th preimages of ``Q`` by this map.
 
-        Given a rational point `Q` in the domain of this map, return all the rational points `P`
-        in the domain with `self(P)==Q`. In other words, the set of first preimages of `Q`.
-        The map must be defined over number fields and be an endomorphism.
+        Given a rational point ``Q`` in the domain of this map, return all the rational points ``P``
+        in the domain with `f^k(P)==Q`. In other words, the set of `k`-th preimages of ``Q``.
+        The map must be defined over a number field and be an endomorphism for `k > 1`.
 
-        In ``Q`` is a subscheme, the return the subscheme that maps to ``Q`` by this map.
-        In particular, `f^{-1}(V(h_1,\ldots,h_t)) = V(h_1 \circ f, \ldots, h_t \circ f)`.
-
-        ALGORITHM:
-            points: Use elimination via groebner bases to find the rational pre-images
+        If ``Q`` is a subscheme, then return the subscheme that maps to ``Q`` by this map.
+        In particular, `f^{-k}(V(h_1,\ldots,h_t)) = V(h_1 \circ f^k, \ldots, h_t \circ f^k)`.
 
         INPUT:
 
         - ``Q`` - a rational point or subscheme in the domain of this map.
+
+        - ``k`` - positive integer.
 
         OUTPUT:
 
@@ -3794,42 +3947,44 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         Examples::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([16*x^2 - 29*y^2, 16*y^2])
-            sage: f.rational_preimages(P(-1,4))
-            [(5/4 : 1), (-5/4 : 1)]
+            sage: f.rational_preimages(P(-1, 4))
+            [(-5/4 : 1), (5/4 : 1)]
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
-            sage: f = H([76*x^2 - 180*x*y + 45*y^2 + 14*x*z + 45*y*z - 90*z^2, 67*x^2 - 180*x*y - 157*x*z + 90*y*z, -90*z^2])
-            sage: f.rational_preimages(P(-9,-4,1))
+            sage: f = H([76*x^2 - 180*x*y + 45*y^2 + 14*x*z + 45*y*z\
+            - 90*z^2, 67*x^2 - 180*x*y - 157*x*z + 90*y*z, -90*z^2])
+            sage: f.rational_preimages(P(-9, -4, 1))
             [(0 : 4 : 1)]
 
         A non-periodic example ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([x^2 + y^2, 2*x*y])
-            sage: f.rational_preimages(P(17,15))
-            [(5/3 : 1), (3/5 : 1)]
+            sage: f.rational_preimages(P(17, 15))
+            [(3/5 : 1), (5/3 : 1)]
 
         ::
 
-            sage: P.<x,y,z,w> = ProjectiveSpace(QQ,3)
+            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: H = End(P)
-            sage: f = H([x^2 - 2*y*w - 3*w^2, -2*x^2 + y^2 - 2*x*z + 4*y*w + 3*w^2, x^2 - y^2 + 2*x*z + z^2 - 2*y*w - w^2, w^2])
-            sage: f.rational_preimages(P(0,-1,0,1))
+            sage: f = H([x^2 - 2*y*w - 3*w^2, -2*x^2 + y^2 - 2*x*z\
+            + 4*y*w + 3*w^2, x^2 - y^2 + 2*x*z + z^2 - 2*y*w - w^2, w^2])
+            sage: f.rational_preimages(P(0, -1, 0, 1))
             []
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([x^2 + y^2, 2*x*y])
-            sage: f.rational_preimages([CC.0,1])
+            sage: f.rational_preimages([CC.0, 1])
             Traceback (most recent call last):
             ...
             TypeError: point must be in codomain of self
@@ -3838,30 +3993,30 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
             sage: z = QQ['z'].0
             sage: K.<a> = NumberField(z^2 - 2);
-            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: H = End(P)
             sage: f = H([x^2 + y^2, y^2])
-            sage: f.rational_preimages(P(3,1))
-            [(a : 1), (-a : 1)]
+            sage: f.rational_preimages(P(3, 1))
+            [(-a : 1), (a : 1)]
 
         ::
 
             sage: z = QQ['z'].0
             sage: K.<a> = NumberField(z^2 - 2);
-            sage: P.<x,y,z> = ProjectiveSpace(K,2)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: X = P.subscheme([x^2 - z^2])
-            sage: H = Hom(X,X)
+            sage: H = End(X)
             sage: f= H([x^2 - z^2, a*y^2, z^2 - x^2])
-            sage: f.rational_preimages(X([1,2,-1]))
+            sage: f.rational_preimages(X([1, 2, -1]))
             []
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([x^2 - z^2])
-            sage: H = Hom(X,X)
+            sage: H = End(X)
             sage: f= H([x^2-z^2, y^2, z^2-x^2])
-            sage: f.rational_preimages(X([0,1,0]))
+            sage: f.rational_preimages(X([0, 1, 0]))
             Traceback (most recent call last):
             ...
             NotImplementedError: subschemes as preimages not implemented
@@ -3875,81 +4030,60 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             Closed subscheme of Projective Space of dimension 1 over Rational Field
             defined by:
               x^2 - y^2
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(P)
+            sage: f = H([x^2 - 29/16*y^2, y^2])
+            sage: f.rational_preimages(P(5/4, 1), k=4)
+            [(-3/4 : 1), (3/4 : 1), (-7/4 : 1), (7/4 : 1)]
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: P2.<u,v,w> = ProjectiveSpace(QQ, 2)
+            sage: H = Hom(P, P2)
+            sage: f = H([x^2, y^2, x^2-y^2])
+            sage: f.rational_preimages(P2(1, 1, 0))
+            [(-1 : 1), (1 : 1)]
         """
+        k = ZZ(k)
+        if k <= 0:
+            raise ValueError("k (=%s) must be a positive integer"%(k))
         #first check if subscheme
         from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme_projective
         if isinstance(Q, AlgebraicScheme_subscheme_projective):
-            return(Q.preimage(self))
+            return(Q.preimage(self, k))
 
         #else assume a point
         BR = self.base_ring()
-        if not self.is_endomorphism():
-            raise NotImplementedError("must be an endomorphism of projective space")
-        if (Q in self.codomain()) == False:
+        if k > 1 and not self.is_endomorphism():
+            raise TypeError("must be an endomorphism of projective space")
+        if not Q in self.codomain():
             raise TypeError("point must be in codomain of self")
         if isinstance(BR.base_ring(),(ComplexField_class, RealField_class,RealIntervalField_class, ComplexIntervalField_class)):
             raise NotImplementedError("not implemented over precision fields")
-        Dom = self.domain()
         PS = self.domain().ambient_space()
-        R = PS.coordinate_ring()
         N = PS.dimension_relative()
-        #need a lexicographic ordering for elimination
-        R = PolynomialRing(R.base_ring(), N + 1, R.gens(), order='lex')
-        BR = R.base_ring()
-        I = list(self.domain().defining_polynomials())
-        preimages = set()
-        for i in range(N + 1):
-            for j in range(i + 1, N + 1):
-                I.append(Q[i] * self[j] - Q[j] * self[i])
-        I = I * R
-        if I.dimension() > 1:
-            raise NotImplementedError("subschemes as preimages not implemented")
-        I0 = R.ideal(0)
-        #Determine the points through elimination
-        #This is much faster than using the I.variety() function on each affine chart.
-        for k in range(N + 1):
-            #create the elimination ideal for the kth affine patch
-            G = I.substitute({R.gen(k):1}).groebner_basis()
-            if G != [1]:
-                P = {}
-                #keep track that we know the kth coordinate is 1
-                P.update({R.gen(k):1})
-                points = [P]
-                #work backwards from solving each equation for the possible
-                #values of the next coordiante
-                for i in range(len(G) - 1, -1, -1):
-                    new_points = []
-                    good = 0
-                    for P in points:
-                        #subsitute in our dictionary entry that has the values
-                        #of coordinates known so far. This results in a single
-                        #variable polynomial (by elimination)
-                        L = G[i].substitute(P)
-                        if L != 0:
-                            L = L.factor()
-                            #the linear factors give the possible rational values of
-                            #this coordinate
-                            for pol, pow in L:
-                                if pol.degree() == 1 and len(pol.variables()) == 1:
-                                    good = 1
-                                    r = pol.variables()[0]
-                                    varindex = R.gens().index(r)
-                                    #add this coordinates information to
-                                    #each dictionary entry
-                                    P.update({R.gen(varindex):-BR(pol.coefficient({r:0})) / BR(pol.coefficient({r:1}))})
-                                    new_points.append(copy(P))
-                    if good:
-                        points = new_points
-                #the dictionary entries now have values for all coordinates
-                #they are the rational solutions to the equations
-                #make them into projective points
-                for i in range(len(points)):
-                    if len(points[i]) == N + 1 and I.subs(points[i]) == I0:
-                        S = Dom([points[i][R.gen(j)] for j in range(N + 1)])
-                        S.normalize_coordinates()
-                        if not all([g(tuple(S)) == 0 for g in self]):
-                            preimages.add(S)
-        return(list(preimages))
+        L = [Q]
+        for n in range(k):
+            L2 = []
+            for P in L:
+                I = list(self.domain().defining_polynomials())
+                for i in range(N+1):
+                    for j in range(i+1, N+1):
+                        I.append(P[i]*self[j] - P[j]*self[i])
+                X = PS.subscheme(I)
+                if X.dimension() > 0:
+                    raise NotImplementedError("subschemes as preimages not implemented")
+                preimages = []
+                for T in X.rational_points():
+                    if not all([g(tuple(T)) == 0 for g in self]):
+                        preimages.append(PS(T))
+                L2 = L2 + preimages
+            L = L2
+        return L
 
     def all_rational_preimages(self, points):
         r"""
@@ -4003,10 +4137,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([16*x^2 - 29*y^2, 16*y^2])
             sage: f.all_rational_preimages([P(16*w^2 - 29,16)])
-            [(-w^2 + 21/16 : 1), (-w^2 - w + 33/16 : 1), (w + 1/2 : 1), (-w^2 - w +
-            25/16 : 1), (w^2 - 29/16 : 1), (w^2 - 21/16 : 1), (w^2 + w - 25/16 : 1),
-            (-w - 1/2 : 1), (w : 1), (-w : 1), (-w^2 + 29/16 : 1), (w^2 + w - 33/16
-            : 1)]
+            [(w^2 + w - 25/16 : 1), (-w - 1/2 : 1), (w^2 - 29/16 : 1), (-w : 1), (w + 1/2 : 1), (w^2 - 21/16 : 1),
+            (w : 1), (-w^2 + 21/16 : 1), (-w^2 - w + 25/16 : 1), (w^2 + w - 33/16 : 1), (-w^2 + 29/16 : 1),
+            (-w^2 - w + 33/16 : 1)]
 
         ::
 
@@ -4299,9 +4432,18 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2 - 29/16*y^2, y^2])
             sage: P = PS([w,1])
             sage: f.connected_rational_component(P)
-            [(w : 1), (w^2 - 29/16 : 1), (-w^2 - w + 25/16 : 1), (w^2 + w - 25/16 : 1),
-            (-w : 1), (-w^2 + 29/16 : 1), (-w - 1/2 : 1), (w + 1/2 : 1), (w^2 - 21/16 : 1),
-            (-w^2 + 21/16 : 1), (-w^2 - w + 33/16 : 1), (w^2 + w - 33/16 : 1)]
+            [(w : 1),
+             (w^2 - 29/16 : 1),
+             (w^2 + w - 25/16 : 1),
+             (-w^2 - w + 25/16 : 1),
+             (-w : 1),
+             (w + 1/2 : 1),
+             (-w - 1/2 : 1),
+             (-w^2 + 29/16 : 1),
+             (-w^2 + 21/16 : 1),
+             (w^2 - 21/16 : 1),
+             (w^2 + w - 33/16 : 1),
+             (-w^2 - w + 33/16 : 1)]
 
         ::
 
@@ -4310,10 +4452,21 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2 - 21/16*z^2, y^2-2*z^2, z^2])
             sage: P = PS([17/16,7/4,1])
             sage: f.connected_rational_component(P,3)
-            [(17/16 : 7/4 : 1), (-47/256 : 17/16 : 1), (-83807/65536 : -223/256 : 1), (17/16 : -7/4 : 1),
-            (-17/16 : -7/4 : 1), (-17/16 : 7/4 : 1), (1386468673/4294967296 : -81343/65536 : 1),
-            (47/256 : -17/16 : 1), (47/256 : 17/16 : 1), (-47/256 : -17/16 : 1), (-1/2 : -1/2 : 1),
-            (-1/2 : 1/2 : 1), (1/2 : 1/2 : 1), (1/2 : -1/2 : 1)]
+            [(17/16 : 7/4 : 1),
+             (-47/256 : 17/16 : 1),
+             (-83807/65536 : -223/256 : 1),
+             (-17/16 : -7/4 : 1),
+             (-17/16 : 7/4 : 1),
+             (17/16 : -7/4 : 1),
+             (1386468673/4294967296 : -81343/65536 : 1),
+             (-47/256 : -17/16 : 1),
+             (47/256 : -17/16 : 1),
+             (47/256 : 17/16 : 1),
+             (-1/2 : -1/2 : 1),
+             (-1/2 : 1/2 : 1),
+             (1/2 : -1/2 : 1),
+             (1/2 : 1/2 : 1)]
+
         """
         points = [[],[]] # list of points and a list of their corresponding levels
         points[0].append(P)
@@ -4408,6 +4561,759 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             F.append(G)
         return(H(F))
 
+    def conjugating_set(self, other):
+        r"""
+        Returns the set of elements in PGL that conjugates one map to the other.
+
+        Given two nonconstant rational functions of equal degree determine to see if there is an element of PGL that
+        conjugates one rational function to another. It does this by taking the fixed points of one map and mapping
+        them to all unique permutations of the fixed points of the other map. If there are not enough fixed points the
+        function compares the mapping between rational preimages of fixed points and the rational preimages of the preimages of
+        fixed points until there are enough points; such that there are `n+2` points with all `n+1` subsets linearly independent.
+
+        ALGORITHM:
+        
+        Implementing invariant set algorithim from the paper [FMV]_. Given that the set of  `n` th preimages of fixed points is
+        invariant under conjugation find all elements of PGL that take one set to another.
+
+        INPUT: Two nonconstant rational functions of same degree.
+
+        OUTPUT: Set of conjugating `n+1` by `n+1` matrices.
+
+        AUTHORS:
+        
+        - Original algorithm written by Xander Faber, Michelle Manes, Bianca Viray [FMV]_.
+        
+        - Implimented by Rebecca Lauren Miller, as part of GSOC 2016.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - 2*y^2, y^2])
+            sage: m = matrix(QQbar, 2, 2, [-1, 3, 2, 1])
+            sage: g = f.conjugate(m)
+            sage: f.conjugating_set(g)
+            [
+            [-1  3]
+            [ 2  1]
+            ]
+
+        ::
+
+            sage: K.<w> = QuadraticField(-1)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + y^2, x*y])
+            sage: m = matrix(K, 2, 2, [1, 1, 2, 1])
+            sage: g = f.conjugate(m)
+            sage: f.conjugating_set(g) # long test
+            [
+            [1 1]  [-1 -1]
+            [2 1], [ 2  1]
+            ]
+
+        ::
+
+            sage: K.<i> = QuadraticField(-1)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: D8 = H([y^3, x^3])
+            sage: D8.conjugating_set(D8) # long test
+            [
+            [1 0]  [0 1]  [ 0 -i]  [i 0]  [ 0 -1]  [-1  0]  [-i  0]  [0 i]
+            [0 1], [1 0], [ 1  0], [0 1], [ 1  0], [ 0  1], [ 0  1], [1 0]
+            ]
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: D8 = H([y^2, x^2])
+            sage: D8.conjugating_set(D8)
+            Traceback (most recent call last):
+            ...
+            ValueError: not enough rational preimages
+
+        ::
+        
+            sage: P.<x,y> = ProjectiveSpace(GF(7),1)
+            sage: H = End(P)
+            sage: D6 = H([y^2, x^2])
+            sage: D6.conjugating_set(D6)
+            [
+            [1 0]  [0 1]  [0 2]  [4 0]  [2 0]  [0 4]
+            [0 1], [1 0], [1 0], [0 1], [0 1], [1 0]
+            ]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x^2 + x*z, y^2, z^2])
+            sage: f.conjugating_set(f) # long test
+            [
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            ]
+        """
+        f = copy(self)
+        g = copy(other)
+        try:
+            f.normalize_coordinates()
+            g.normalize_coordinates()
+        except (ValueError):
+            pass
+        if f.degree() != g.degree():# checks that maps are of equal degree
+            return []
+        n = f.domain().dimension_relative()
+        L = Set(f.periodic_points(1))
+        K = Set(g.periodic_points(1))
+        if len(L) != len(K):  # checks maps have the same number of fixed points
+            return []
+        d = len(L)
+        r = f.domain().base_ring()
+        more = True
+        if d >= n+2: # need at least n+2 points
+            for i in Subsets(L, n+2):# makes sure all n+1 subsets are linearly independent
+                Ml = matrix(r, [list(s) for s in i])
+                if not any([j == 0 for j in Ml.minors(n+1)]):
+                    Tf = list(i)
+                    more= False
+                    break
+        while more:
+            Tl = [Q for i in L for Q in f.rational_preimages(i)] #  finds preimages of fixed points
+            Tk = [Q for i in K for Q in g.rational_preimages(i)]
+            if len(Tl) != len(Tk):
+                return []
+            L = L.union(Set(Tl))
+            K = K.union(Set(Tk))
+            if d == len(L): # if no new preimages then not enough points
+                raise ValueError("not enough rational preimages")
+            d = len(L)
+            if d >= n+2: # makes sure all n+1 subsets are linearly independent
+                for i in Subsets(L, n+2):
+                    Ml = matrix(r, [list(s) for s in i])
+                    if not any([j == 0 for j in Ml.minors(n+1)]):
+                        more = False
+                        Tf = list(i)
+                        break
+        Conj = []
+        for i in Arrangements(K,(n+2)): # try all possible conjugations between invariant sets
+            try: # need all n+1 subsets linearly independenet
+                s = f.domain().point_transformation_matrix(i,Tf)# finds elements of PGL that maps one map to another
+                if self.conjugate(s) == other:
+                    Conj.append(s)
+            except (ValueError):
+                pass
+        return Conj
+
+    def is_conjugate(self, other):
+        r"""
+        Returns whether or not two maps are conjugate.
+
+        ALGORITHM:
+
+        Implementing invariant set algorithim from the paper [FMV]_. Given that the set of `n` th preimages is
+        invariant under conjugation this function finds whether two maps are conjugate.
+
+        INPUT: Two nonconstant rational functions of same degree.
+
+        OUTPUT: Boolean.
+
+        AUTHORS:
+
+        - Original algorithm written by Xander Faber, Michelle Manes, Bianca Viray [FMV]_.
+
+        - Implimented by Rebecca Lauren Miller as part of GSOC 2016.
+
+        EXAMPLES::
+
+            sage: K.<w> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: D8 = H([y^2, x^2])
+            sage: D8.is_conjugate(D8)
+            True
+
+        ::
+
+            sage: set_verbose(None)
+            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + x*y,y^2])
+            sage: m = matrix(QQbar, 2, 2, [1, 1, 2, 1])
+            sage: g = f.conjugate(m)
+            sage: f.is_conjugate(g) # long test
+            True
+            
+        ::
+        
+            sage: P.<x,y> = ProjectiveSpace(GF(5),1)
+            sage: H = End(P)
+            sage: f = H([x^3 + x*y^2,y^3])
+            sage: m = matrix(GF(5), 2, 2, [1, 3, 2, 9])
+            sage: g = f.conjugate(m)
+            sage: f.is_conjugate(g)
+            True
+            
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + x*y,y^2])
+            sage: g = H([x^3 + x^2*y, y^3])
+            sage: f.is_conjugate(g) 
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + x*y, y^2])
+            sage: g = H([x^2 - 2*y^2, y^2])
+            sage: f.is_conjugate(g)
+            False
+        """
+        f = copy(self)
+        g = copy(other)
+        try:
+            f.normalize_coordinates()
+            g.normalize_coordinates()
+        except (ValueError):
+            pass
+        if f.degree() != g.degree(): # checks that maps are of equal degree
+            return False
+        n = f.domain().dimension_relative()
+        L = Set(f.periodic_points(1))
+        K = Set(g.periodic_points(1))
+        if len(L) != len(K): # checks maps have the same number of fixed points
+            return False
+        d = len(L)
+        r = f.domain().base_ring()
+        more = True
+        if d >= n+2: # need at least n+2 points
+            for i in Subsets(L, n+2): # makes sure all n+1 subsets are linearly independent
+                Ml = matrix(r, [list(s) for s in i])
+                if not any([j == 0 for j in Ml.minors(n+1)]):
+                    Tf = list(i)
+                    more = False
+                    break
+        while more:
+            Tl = [Q for i in L for Q in f.rational_preimages(i)] # finds preimages of fixed points
+            Tk = [Q for i in K for Q in g.rational_preimages(i)]
+            if len(Tl) != len(Tk):
+                return False
+            L = L.union(Set(Tl))
+            K = K.union(Set(Tk))
+            if d == len(L):# if no new preimages then not enough points
+                raise ValueError("not enough rational preimages")
+            d = len(L)
+            if d >= n+2: # makes sure all n+1 subsets are linearly independent
+                for i in Subsets(L, n+2): # checks at least n+1 are linearly independent
+                    Ml = matrix(r, [list(s) for s in i])
+                    if not any([j == 0 for j in Ml.minors(n+1)]):
+                        more = False
+                        Tf = list(i)
+                        break
+        Conj = []
+        for i in Arrangements(K,n+2):# try all possible conjugations between invariant sets
+            try: # need all n+1 subsets linearly independenet
+                s = f.domain().point_transformation_matrix(i,Tf) # finds elements of PGL that maps one map to another
+                if self.conjugate(s) == other:
+                    return True
+            except (ValueError):
+                pass
+        return False
+
+    def is_polynomial(self):
+        r"""
+        Checks to see if the function has a totally ramified fixed point.
+
+        The function must be defined over an absolute number field or a
+        finite field.
+
+        OUTPUT: Boolean
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: K.<w> = QuadraticField(7)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: f = H([x**2 + 2*x*y - 5*y**2, 2*x*y])
+            sage: f.is_polynomial()
+            False
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<w> = QuadraticField(7)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: f = H([x**2 - 7*x*y, 2*y**2])
+            sage: m = matrix(K, 2, 2, [w, 1, 0, 1])
+            sage: f = f.conjugate(m)
+            sage: f.is_polynomial()
+            True
+
+        ::
+
+            sage: K.<w> = QuadraticField(4/27)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: S = P.coordinate_ring()
+            sage: f = H([x**3 + w*y^3,x*y**2])
+            sage: f.is_polynomial()
+            False
+
+        ::
+
+            sage: K = GF(3**2, prefix='w')
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x**2 + K.gen()*y**2, x*y])
+            sage: f.is_polynomial()
+            False
+
+        ::
+
+            sage: PS.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(PS)
+            sage: f = H([6*x^2+12*x*y+7*y^2, 12*x*y + 42*y^2])
+            sage: f.is_polynomial()
+            False
+        """
+        if self.codomain().dimension_relative() != 1:
+            raise NotImplementedError("space must have dimension equal to 1")
+        K = self.base_ring()
+        if not K in FiniteFields() and (not K in _NumberFields or not K.is_absolute()):
+            raise NotImplementedError("must be over an absolute number field or finite field")
+        if K in FiniteFields():
+            q = K.characteristic()
+            deg = K.degree()
+            var = K.variable_name()
+        g = self
+        #get polynomial defining fixed points
+        G = self.dehomogenize(1).dynatomic_polynomial(1)
+        # see if infty = (1,0) is fixed
+        if G.degree() <= g.degree():
+            #check if infty is totally ramified
+            if len((g[1]).factor()) == 1:
+                return True
+        #otherwise we need to create the tower of extensions
+        #which contain the fixed points. We do
+        #this successively so we can exit early if
+        #we find one and not go all the way to the splitting field
+        i = 0 #field index
+        if G.degree() != 0:
+            G = G.polynomial(G.variable(0))
+        while G.degree() != 0:
+            Y = G.factor()
+            R = G.parent()
+            u = G
+            for p,e in Y:
+                if p.degree() == 1:
+                    if len((g[0]*p[1] + g[1]*p[0]).factor()) == 1:
+                        return True
+                    G = R(G/p) # we already checked this root
+                else:
+                    u = p #need to extend to get these roots
+            if G.degree() != 0:
+                #create the next extension
+                if K == QQ:
+                    L = NumberField(u, 't'+str(i))
+                    i += 1
+                    phi = K.embeddings(L)[0]
+                    K = L
+                elif K in FiniteFields():
+                    deg = deg*G.degree()
+                    K = GF(q**(deg), prefix=var)
+                else:
+                    L = K.extension(u, 't'+str(i))
+                    i += 1
+                    phi1 = K.embeddings(L)[0]
+                    K = L
+                    L = K.absolute_field('t'+str(i))
+                    i += 1
+                    phi = K.embeddings(L)[0]*phi1
+                    K = L
+                if K in FiniteFields():
+                    G = G.change_ring(K)
+                    g = g.change_ring(K)
+                else:
+                    G = G.change_ring(phi)
+                    g = g.change_ring(phi)
+        return False
+
+    def normal_form(self, return_conjugation=False):
+        r"""
+        Returns a normal form for the map in the moduli space of dynamical systems.
+
+        Currently implemented only for polynomials. The totally ramified fixed point is
+        moved to infinity and the map is conjugated to the form
+        `x^n + a_{n-2}x^{n-2} + \cdots + a_{0}`. Note that for finite fields
+        we can only remove the `(n-1)`-st term when the characteristic
+        does not divide `n`.
+
+        INPUT:
+
+        - ``return_conjugation`` -- Boolean - True returns conjugatation element of PGL.
+          along with the embedding into the new field. Default: False. (optional)
+
+        OUTPUT:
+
+        - :class:`SchemeMorphism_polynomial`
+
+        - Element of PGL as a matrix. (optional)
+
+        - Field embedding. (option)
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(P)
+            sage: f = H([x^2 + 2*x*y - 5*x^2, 2*x*y])
+            sage: f.normal_form()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: map is not a polynomial
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<w> = NumberField(x^2 - 5)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x^2 + w*x*y, y^2])
+            sage: g,m,psi = f.normal_form(return_conjugation = True);m
+            [     1 -1/2*w]
+            [     0      1]
+            sage: f.change_ring(psi).conjugate(m) == g
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = End(P)
+            sage: f = H([13*x^2 + 4*x*y + 3*y^2, 5*y^2])
+            sage: f.normal_form()
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (5*x^2 + 9*y^2 : 5*y^2)
+
+        ::
+
+            sage: K = GF(3^3, prefix = 'w')
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: H = End(P)
+            sage: f = H([x^3 + 2*x^2*y + 2*x*y^2 + K.gen()*y^3, y^3])
+            sage: f.normal_form()
+            Scheme endomorphism of Projective Space of dimension 1 over Finite Field
+            in w3 of size 3^3
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^3 + x^2*y + x*y^2 + (-w3)*y^3 : y^3)
+        """
+        #defines the field of fixed points
+        if self.codomain().dimension_relative() != 1:
+            raise NotImplementedError("space must have dimension equal to 1")
+        K = self.base_ring()
+        if not K in FiniteFields() and (not K in _NumberFields or not K.is_absolute()):
+            raise NotImplementedError("must be over an absolute number field or finite field")
+        if K in FiniteFields():
+            q = K.characteristic()
+            deg = K.degree()
+            var = K.variable_name()
+        else:
+            psi = K.hom([K.gen()]) #identity hom for return_embedding
+        g = self
+        G = self.dehomogenize(1).dynatomic_polynomial(1)
+        done = False
+        bad = True
+        #check infty = (1,0) is fixed
+        if G.degree() <= g.degree():
+            #check infty totally ramified
+            if len((g[1]).factor()) == 1:
+                T = self.domain()(1,0)
+                bad = False
+                done = True
+                m = matrix(K, 2, 2, [1,0,0,1])
+        #otherwise we need to create the tower of extensions
+        #which contain the fixed points. We do
+        #this successively so we can early exit if
+        #we find one and not go all the way to the splitting field
+        i = 0
+        if G.degree() != 0:
+            G = G.polynomial(G.variable(0))
+        else:
+            #no other fixed points
+            raise NotImplementedError("map is not a polynomial")
+        #check other fixed points
+        while not done:
+            Y = G.factor()
+            R = G.parent()
+            done = True
+            for p,e in Y:
+                if p.degree() == 1:
+                    if len((g[0]*p[1] + g[1]*p[0]).factor()) == 1:
+                        T = self.domain()(-p[0], p[1])
+                        bad = False
+                        done = True
+                        break # bc only 1 totally ramified fixed pt
+                    G = R(G/p)
+                else:
+                    done = False
+                    u = p
+            if not done:
+                #extend
+                if K == QQ:
+                    L = NumberField(u, 't'+str(i))
+                    i += 1
+                    phi = K.embeddings(L)[0]
+                    psi = phi*psi
+                    K = L
+                elif K in FiniteFields():
+                    deg = deg*G.degree()
+                    K = GF(q**(deg), prefix=var)
+                else:
+                    L = K.extension(u, 't'+str(i))
+                    i += 1
+                    phi1 = K.embeddings(L)[0]
+                    K = L
+                    L = K.absolute_field('t'+str(i))
+                    i += 1
+                    phi = K.embeddings(L)[0]*phi1
+                    psi = phi*psi
+                    K = L
+                #switch to the new field
+                if K in FiniteFields():
+                    G = G.change_ring(K)
+                    g = g.change_ring(K)
+                else:
+                    G = G.change_ring(phi)
+                    g = g.change_ring(phi)
+        if bad:
+            raise NotImplementedError("map is not a polynomial")
+        #conjugate to normal form
+        Q = T.codomain()
+        #moved totally ramified fixed point to infty
+        target = [T, Q(T[0]+1, 1), Q(T[0]+2, 1)]
+        source = [Q(1, 0), Q(0, 1), Q(1, 1)]
+        m = Q.point_transformation_matrix(source, target)
+        N = g.base_ring()
+        d = g.degree()
+        gc = g.conjugate(m)
+        #make monic
+        R = PolynomialRing(N, 'z')
+        v = N(gc[1].coefficient([0,d])/gc[0].coefficient([d,0]))
+        #need a (d-1)-st root to make monic
+        u = R.gen(0)**(d-1) - v
+        if d != 2 and u.is_irreducible():
+            #we need to extend again
+            if N in FiniteFields():
+                deg = deg*(d-1)
+                M = GF(q**(deg), prefix=var)
+            else:
+                L = N.extension(u,'t'+str(i))
+                i += 1
+                phi1 = N.embeddings(L)[0]
+                M = L.absolute_field('t'+str(i))
+                phi = L.embeddings(M)[0]*phi1
+                psi = phi*psi
+            if M in FiniteFields():
+                gc = gc.change_ring(M)
+            else:
+                gc = gc.change_ring(phi)
+            m = matrix(M, 2, 2, [phi(s) for t in list(m) for s in t])
+            rv = phi(v).nth_root(d-1)
+        else: #root is already in the field
+            M = N
+            rv = v.nth_root(d-1)
+        mc = matrix(M, 2, 2, [rv,0,0,1])
+        gcc = gc.conjugate(mc)
+        if not (M in FiniteFields() and q.divides(d)):
+            #remove 2nd order term
+            mc2 = matrix(M, 2, 2, [1, M((-gcc[0].coefficient([d-1, 1]) \
+                /(d*gcc[1].coefficient([0, d]))).constant_coefficient()), 0, 1])
+        else:
+            mc2 = mc.parent().one()
+        gccc = gcc.conjugate(mc2)
+        if return_conjugation:
+            if M in FiniteFields():
+                return gccc, m*mc*mc2
+            else:
+                return gccc, m*mc*mc2, psi
+        return gccc
+
+    def indeterminacy_locus(self):
+        r"""
+        Return the indeterminacy locus of this map.
+
+        Only for rational maps on projective space defined over a field. 
+        The indeterminacy locus is the set of points in projective space at which all of the defining polynomials of the rational map simultaneously vanish.
+
+        OUTPUT:
+
+        - subscheme of the domain of the map.  The empty subscheme is returned as the vanishing 
+          of the coordinate functions of the domain.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x*z-y*z, x^2-y^2, z^2])
+            sage: f.indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+                x*z - y*z,
+                x^2 - y^2,
+                z^2
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x^2, y^2, z^2])
+            sage: f.indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field
+            defined by:
+                x,
+                y,
+                z
+
+        ::
+
+            sage: P1.<x,y,z> = ProjectiveSpace(RR,2)
+            sage: P2.<t,u,v,w> = ProjectiveSpace(RR,3)
+            sage: H = Hom(P1,P2)
+            sage: h = H([y^3*z^3, x^3*z^3, y^3*z^3, x^2*y^2*z^2])
+            sage: h.indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Real Field with
+            53 bits of precision defined by:
+              y^3*z^3,
+              x^3*z^3,
+              y^3*z^3,
+              x^2*y^2*z^2
+
+        If defining polynomials are not normalized, output scheme will not be normalized::
+
+            sage: P.<x,y,z>=ProjectiveSpace(QQ,2)
+            sage: H=End(P)
+            sage: f=H([x*x^2,x*y^2,x*z^2])
+            sage: f.indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field
+            defined by:
+              x^3,
+              x*y^2,
+              x*z^2
+        """
+        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        dom = self.domain()
+        if not is_ProjectiveSpace(dom):
+            raise NotImplementedError("not implemented for subschemes")
+        defPolys = self.defining_polynomials()
+        locus = dom.subscheme(defPolys)
+        if locus.dimension() < 0:
+            locus = dom.subscheme(dom.gens())
+        return locus 
+
+    def indeterminacy_points(self, F=None):
+        r"""
+        Return the indeterminacy locus of this map defined over ``F``.
+
+        Only for rational maps on projective space. Returns the set of points in projective space at which all of the defining polynomials of the rational map simultaneously vanish.
+
+        INPUT:
+
+        - ``F`` - a field (optional).
+
+        OUTPUT:
+
+        - indeterminacy points of the map defined over ``F``, provided the indeterminacy scheme is 0-dimensional.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x*z-y*z, x^2-y^2, z^2])
+            sage: f.indeterminacy_points()
+            [(-1 : 1 : 0), (1 : 1 : 0)]
+
+        ::
+
+            sage: P1.<x,y,z> = ProjectiveSpace(RR,2)
+            sage: P2.<t,u,v,w> = ProjectiveSpace(RR,3)
+            sage: H = Hom(P1,P2)
+            sage: h = H([x+y, y, z+y, y])
+            sage: h.indeterminacy_points()
+            []
+            sage: g = H([y^3*z^3, x^3*z^3, y^3*z^3, x^2*y^2*z^2])
+            sage: g.indeterminacy_points()
+            Traceback (most recent call last):
+            ...
+            ValueError: indeterminacy scheme is not dimension 0
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x^2+y^2, x*z, x^2+y^2])
+            sage: f.indeterminacy_points()
+            [(0 : 0 : 1)]
+            sage: R.<t> = QQ[]
+            sage: K.<a> = NumberField(t^2+1)
+            sage: f.indeterminacy_points(F=K)
+            [(-a : 1 : 0), (0 : 0 : 1), (a : 1 : 0)]
+            sage: set_verbose(None)
+            sage: f.indeterminacy_points(F=QQbar)
+            [(-1*I : 1 : 0), (0 : 0 : 1), (1*I : 1 : 0)]
+
+        ::
+
+            sage: set_verbose(None)
+            sage: K.<t>=FunctionField(QQ)
+            sage: P.<x,y,z>=ProjectiveSpace(K,2)
+            sage: H=End(P)
+            sage: f=H([x^2-t^2*y^2,y^2-z^2,x^2-t^2*z^2])
+            sage: f.indeterminacy_points()
+            [(-t : -1 : 1), (-t : 1 : 1), (t : -1 : 1), (t : 1 : 1)]
+
+        ::
+
+            sage: set_verbose(None)
+            sage: P.<x,y,z>=ProjectiveSpace(Qp(3),2)
+            sage: H=End(P)
+            sage: f=H([x^2-7*y^2,y^2-z^2,x^2-7*z^2])
+            sage: f.indeterminacy_points()
+            [(2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15 +
+            2*3^16 + 3^18 + O(3^20) : 1 + O(3^20) : 1 + O(3^20)),
+            (2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15 +
+            2*3^16 + 3^18 + O(3^20) : 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 +
+            2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 +
+            2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + O(3^20) : 1 +
+            O(3^20)),
+             (1 + 3 + 3^2 + 2*3^4 + 2*3^7 + 3^8 + 3^9 + 2*3^10 + 2*3^12 + 2*3^13 +
+            2*3^14 + 3^15 + 2*3^17 + 3^18 + 2*3^19 + O(3^20) : 1 + O(3^20) : 1 +
+            O(3^20)),
+             (1 + 3 + 3^2 + 2*3^4 + 2*3^7 + 3^8 + 3^9 + 2*3^10 + 2*3^12 + 2*3^13 +
+            2*3^14 + 3^15 + 2*3^17 + 3^18 + 2*3^19 + O(3^20) : 2 + 2*3 + 2*3^2 +
+            2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11
+            + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19
+            + O(3^20) : 1 + O(3^20))]
+        """
+        if F is None:
+            fcn = self
+        else:
+            if not F.is_field():
+                raise NotImplementedError("indeterminacy points only implemented for fields")
+            fcn = self.change_ring(F)
+        indScheme = fcn.indeterminacy_locus()
+        if indScheme.dimension() > 0:
+            raise ValueError("indeterminacy scheme is not dimension 0")
+        # Other error checking is in indeterminacy_locus
+        indPoints = indScheme.rational_points()
+        return indPoints
+
 class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_polynomial_projective_space_field):
 
     def _fast_eval(self, x):
@@ -4424,7 +5330,7 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
         """
         if self._is_prime_finite_field:
             p = self.base_ring().characteristic()
-            P = [f(*x) % p for f in self._fastpolys]
+            P = [Integer(f(*x)) % p for f in self._fastpolys]
         else:
             P = [f(*x) for f in self._fastpolys]
         return P
@@ -4612,7 +5518,7 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
 
         AUTHORS:
 
-        - Original algorithm written by Xander Faber, Michelle Manes, Bianca Viray\
+        - Original algorithm written by Xander Faber, Michelle Manes, Bianca Viray
 
         - Modified by Joao Alberto de Faria, Ben Hutz, Bianca Thompson
 
@@ -4673,5 +5579,7 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
             F = (f[0].numerator().polynomial(z))/f[0].denominator().polynomial(z)
         else:
             F = f[0].numerator().polynomial(z)
-        from endPN_automorphism_group import automorphism_group_FF
+        from .endPN_automorphism_group import automorphism_group_FF
         return(automorphism_group_FF(F, absolute, iso_type, return_functions))
+
+

@@ -33,11 +33,6 @@ such that the coefficient corresponing to a word `w\in A^*` equals
         marked as experimental. It, its functionality or its interface
         might change without a formal deprecation.
         See http://trac.sagemath.org/21202 for details.
-        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-        doctest:...: FutureWarning: This class/method/function is
-        marked as experimental. It, its functionality or its interface
-        might change without a formal deprecation.
-        See http://trac.sagemath.org/21202 for details.
 
 
 Various
@@ -45,7 +40,7 @@ Various
 
 .. SEEALSO::
 
-    :doc:`sage/combinat/k_regular_sequence`,
+    :mod:`k-regular sequence <sage.combinat.k_regular_sequence>`,
     :doc:`sage/rings/cfinite_sequence`,
     :doc:`sage/combinat/binary_recurrence_sequences`.
 

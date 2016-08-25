@@ -33,6 +33,7 @@ REFERENCES:
    Special edition in honor of Christophe Reutenauer 60 birthday, International
    Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -53,7 +54,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
-import sfa
+from . import sfa
 from sage.combinat.partition import Partition, Partitions_n, _Partitions
 from sage.combinat.skew_partition import SkewPartitions
 from sage.matrix.all import MatrixSpace

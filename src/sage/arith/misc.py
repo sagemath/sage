@@ -13,7 +13,7 @@ Miscellaneous arithmetic functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import math
 
@@ -931,7 +931,7 @@ def primes(start, stop=None, proof=None):
     EXAMPLES::
 
         sage: for p in primes(5,10):
-        ....:     print p
+        ....:     print(p)
         5
         7
         sage: list(primes(13))
@@ -953,7 +953,7 @@ def primes(start, stop=None, proof=None):
         True
         sage: for p in primes(10, infinity):
         ....:     if p > 20: break
-        ....:     print p
+        ....:     print(p)
         11
         13
         17
@@ -3687,7 +3687,7 @@ def primitive_root(n, check=True):
         5
         sage: primitive_root(25)
         2
-        sage: print [primitive_root(p) for p in primes(100)]
+        sage: print([primitive_root(p) for p in primes(100)])
         [1, 2, 2, 3, 2, 2, 3, 2, 5, 2, 3, 2, 6, 3, 5, 2, 2, 2, 2, 7, 5, 3, 2, 3, 5]
         sage: primitive_root(8)
         Traceback (most recent call last):
@@ -4239,6 +4239,7 @@ def hilbert_conductor(a, b):
 def hilbert_conductor_inverse(d):
     """
     Finds a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
+
     The quaternion algebra `(a,b)` over `\QQ` will then have (reduced)
     discriminant `d`.
 
@@ -4276,7 +4277,7 @@ def hilbert_conductor_inverse(d):
         sage: for i in xrange(100):
         ....:     d = ZZ.random_element(2**32).squarefree_part()
         ....:     if hilbert_conductor(*hilbert_conductor_inverse(d)) != d:
-        ....:         print "hilbert_conductor_inverse failed for d =", d
+        ....:         print("hilbert_conductor_inverse failed for d = {}".format(d))
     """
     Z = ZZ
     d = Z(d)
@@ -5269,7 +5270,7 @@ def dedekind_sum(p, q, algorithm='default'):
 
     Several small values::
 
-        sage: for q in range(10): print [dedekind_sum(p,q) for p in range(q+1)]
+        sage: for q in range(10): print([dedekind_sum(p,q) for p in range(q+1)])
         [0]
         [0, 0]
         [0, 0, 0]

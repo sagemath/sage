@@ -18,9 +18,8 @@ import logging
 log = logging.getLogger()
 
 from sage_bootstrap.env import SAGE_DISTFILES
-from sage_bootstrap.download import Download
+from sage_bootstrap.download import Download, MirrorList
 from sage_bootstrap.package import Package
-from sage_bootstrap.mirror_list import MirrorList
 
 
 class ChecksumError(Exception):

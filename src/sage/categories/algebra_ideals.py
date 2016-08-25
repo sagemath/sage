@@ -1,6 +1,7 @@
 r"""
 AlgebraIdeals
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -10,8 +11,8 @@ AlgebraIdeals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_ideal
-from algebra_modules import AlgebraModules
+from .category_types import Category_ideal
+from .algebra_modules import AlgebraModules
 
 class AlgebraIdeals(Category_ideal):
     """

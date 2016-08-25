@@ -9,13 +9,14 @@ Space of homomorphisms between two rings
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from sage.categories.homset import HomsetWithBase
 from sage.categories.rings import Rings
 _Rings = Rings()
 
-import morphism
-import quotient_ring
+from . import morphism
+from . import quotient_ring
 
 def is_RingHomset(H):
     """

@@ -17,10 +17,11 @@ Interface to mwrank
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import weakref
-from expect import Expect
+from .expect import Expect
 
 instances={}
 def Mwrank(options="", server=None, server_tmpdir=None):

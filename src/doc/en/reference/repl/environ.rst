@@ -31,13 +31,6 @@ Installation Guide for more about those.)
   command to run a web browser, but if this doesn't seem to work on
   your machine, set this variable to the appropriate command.
 
-- :envvar:`SAGE_ORIG_LD_LIBRARY_PATH_SET` -- set this to something
-  non-empty to force Sage to set the :envvar:`LD_LIBRARY_PATH` before
-  executing system commands.
-
-- :envvar:`SAGE_ORIG_DYLD_LIBRARY_PATH_SET` -- similar, but only used
-  on Mac OS X to set the :envvar:`DYLD_LIBRARY_PATH`.
-
 - :envvar:`SAGE_CBLAS` -- used in the file
   :file:`SAGE_ROOT/src/sage/misc/cython.py`.  Set this to the
   base name of the BLAS library file on your system if you want to

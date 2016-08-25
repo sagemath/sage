@@ -1,6 +1,7 @@
 """
 Weight lattices and weight spaces
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -11,7 +12,7 @@ Weight lattices and weight spaces
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
-from weight_lattice_realizations import WeightLatticeRealizations
+from .weight_lattice_realizations import WeightLatticeRealizations
 import functools
 
 class WeightSpace(CombinatorialFreeModule):

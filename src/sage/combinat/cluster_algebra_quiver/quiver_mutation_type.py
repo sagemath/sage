@@ -16,7 +16,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 # python3
-from __future__ import division
+from __future__ import division, print_function
+from __future__ import absolute_import
 
 from sage.structure.sage_object import SageObject
 from copy import copy
@@ -825,7 +826,7 @@ class QuiverMutationType_abstract(UniqueRepresentation,SageObject):
             sage: mut_type.standard_quiver()
             Quiver on 12 vertices of type [ ['A', 3], ['B', 3], ['X', 6] ]
         """
-        from quiver import ClusterQuiver
+        from .quiver import ClusterQuiver
         Q = ClusterQuiver(self._digraph)
         Q._mutation_type = self
         return Q
@@ -1080,15 +1081,17 @@ class QuiverMutationType_abstract(UniqueRepresentation,SageObject):
                 - affine:            False
                 - elliptic:          False
         """
-        print self, 'has rank', self.rank(), 'and the following properties:'
-        print '\t- irreducible:      ', self.is_irreducible()
-        print '\t- mutation finite:  ', self.is_mutation_finite()
-        print '\t- simply-laced:     ', self.is_simply_laced()
-        print '\t- skew-symmetric:   ', self.is_skew_symmetric()
-        print '\t- finite:           ', self.is_finite()
+        txt = '{} has rank {} and the following properties:'
+        print(txt.format(self, self.rank()))
+        s = "\t- {} {}"
+        print(s.format('irreducible:      ', self.is_irreducible()))
+        print(s.format('mutation finite:  ', self.is_mutation_finite()))
+        print(s.format('simply-laced:     ', self.is_simply_laced()))
+        print(s.format('skew-symmetric:   ', self.is_skew_symmetric()))
+        print(s.format('finite:           ', self.is_finite()))
         if self.is_irreducible():
-            print '\t- affine:           ', self.is_affine()
-            print '\t- elliptic:         ', self.is_elliptic()
+            print(s.format('affine:           ', self.is_affine()))
+            print(s.format('elliptic:         ', self.is_elliptic()))
 
 
 class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
@@ -1733,7 +1736,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                 if n % 2 == 1:
                     a += binomial( n+1, (n+1)//2 )
                 if n % 3 == 0:
-                    a += 2 * binomial( 2*n/3, n/3 )
+                    a += 2 * binomial( 2*n//3, n//3 )
                 return a // (n+3)
             # the formula is taken from Bastian, Prellberg, Rubey, Stump
             elif self.is_affine():
@@ -1744,14 +1747,14 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                 f = Euler_Phi()
                 if i == j:
                     return ( binomial( 2*i,i ) +
-                             sum( f(k) * binomial(2*i/k,i/k)**2
+                             sum( f(k) * binomial(2*i//k,i//k)**2
                                   for k in [k for k in i.divisors()
-                                            if k in j.divisors()] ) / n ) / 4
+                                            if k in j.divisors()] ) // n ) // 4
                 else:
-                    return sum( f(k) * binomial(2*i/k,i/k) *
-                                binomial(2*j/k,j/k)
+                    return sum( f(k) * binomial(2*i//k,i//k) *
+                                binomial(2*j//k,j//k)
                                 for k in [k for k in i.divisors()
-                                          if k in j.divisors()] ) / ( 2 * n )
+                                          if k in j.divisors()] ) // ( 2 * n )
 
         # types B and C (finite and affine)
         elif self._letter in ['B', 'C']:
@@ -1763,21 +1766,21 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
 
         elif self._letter in ['BB','CC']:
             # these two formulas are not yet proven
-            print Warning("Warning: This method uses a formula "
-                          "which has not been proved correct.")
+            print(Warning("Warning: This method uses a formula "
+                          "which has not been proved correct."))
             if self.is_affine():
                 if self._twist == 1:
                     n = self._rank - 1
                     if n%2==1:
                         return binomial( 2*n-1, n-1 )
                     else:
-                        return binomial( 2*n-1, n-1 ) + binomial( n-1, n/2 -1 )
+                        return binomial( 2*n-1, n-1 ) + binomial( n-1, n//2 -1 )
 
         # type BC (affine)
         elif self._letter == 'BC':
             # this formula is not yet proven
-            print Warning("Warning: This method uses a formula "
-                          "which has not been proved correct.")
+            print(Warning("Warning: This method uses a formula "
+                          "which has not been proved correct."))
             if self.is_affine():
                 if self._twist == 1:
                     n = self._rank - 1
@@ -1786,8 +1789,8 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
         # types BD and CD (affine)
         elif self._letter in ['BD','CD']:
             # this formula is not yet proven
-            print Warning("Warning: This method uses a formula "
-                          "which has not been proved correct.")
+            print(Warning("Warning: This method uses a formula "
+                          "which has not been proved correct."))
             if self.is_affine():
                 if self._twist == 1:
                     n = self._rank - 2
@@ -1810,12 +1813,12 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                 if n == 2:
                     return 9
                 else:
-                    print Warning ("Warning: This method uses a formula "
-                                   "which has not been proved correct.")
+                    print(Warning ("Warning: This method uses a formula "
+                                   "which has not been proved correct."))
                     if n%2==1:
                         return 2*binomial(2*n,n)
                     else:
-                        return 2*binomial(2*n,n) + binomial(n,n/2)
+                        return 2*binomial(2*n,n) + binomial(n, n//2)
 
         # the exceptional types are hard-coded
         # type E (finite, affine and elliptic)
@@ -1875,7 +1878,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
 
         # otherwise the size is returned to be unknown
         else:
-            print "Size unknown"
+            print("Size unknown")
             return NotImplemented
 
     def dual(self):
@@ -2060,7 +2063,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
 
             sizes = [ x.class_size() for x in components ]
             if NotImplemented in sizes:
-                print "Size unknown"
+                print("Size unknown")
                 return NotImplemented
             else:
                 return prod( [binomial(sizes[i]+multiplicities[i]-1,
@@ -2092,7 +2095,7 @@ def _construct_classical_mutation_classes(n):
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _construct_classical_mutation_classes
         sage: rank_2_classes = _construct_classical_mutation_classes(2) # long time
         sage: for mut_class in sorted(rank_2_classes.keys(),key=str): # long time
-        ....:   print mut_class, rank_2_classes[mut_class]
+        ....:   print("{} {}".format(mut_class, rank_2_classes[mut_class]))
         ('A', (1, 1), 1) [('AO', (((0, 1), (2, -2)),))]
         ('A', 2) [('AO', ())]
         ('B', 2) [('AO', (((0, 1), (1, -2)),)), ('AO', (((0, 1), (2, -1)),))]
@@ -2149,7 +2152,7 @@ def _construct_exceptional_mutation_classes(n):
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _construct_exceptional_mutation_classes
         sage: rank_3_exceptional = _construct_exceptional_mutation_classes(3) # long time
         sage: for mut_class in sorted(rank_3_exceptional.keys(), key=str): # long time
-        ....:   print mut_class, rank_3_exceptional[mut_class]
+        ....:   print("{} {}".format(mut_class, rank_3_exceptional[mut_class]))
         ('G', 2, -1) [('BH?', (((1, 2), (1, -3)),)),
         ('BGO', (((2, 1), (3, -1)),)), ('BW?', (((0, 1), (3, -1)),)),
         ('BP?', (((0, 1), (1, -3)),)),
@@ -2236,7 +2239,7 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
         sage: save_quiver_data(2,up_to=False, verbose=False) # indirect doctest
     """
     import os.path
-    import cPickle
+    from six.moves import cPickle
     data = {}
     possible_types = ['Classical', 'ClassicalExceptional', 'Exceptional']
     if types not in possible_types:
@@ -2258,8 +2261,8 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
         cPickle.dump(data, f)
     if verbose:
         keys = sorted(data.keys(),key=str)
-        print "\nThe following types are saved to file", types_file,"and will now be used to determine quiver mutation types:"
-        print keys
+        print("\nThe following types are saved to file", types_file,"and will now be used to determine quiver mutation types:")
+        print(keys)
 
 
 def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):

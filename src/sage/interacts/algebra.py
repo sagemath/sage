@@ -6,6 +6,7 @@ AUTHORS:
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
@@ -17,4 +18,4 @@ AUTHORS:
 #*****************************************************************************
 
 
-from library import polar_prime_spiral
+from .library import polar_prime_spiral

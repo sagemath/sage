@@ -31,7 +31,7 @@ ECLTARBALL="$SAGE_DISTFILES/ecl-$ECLVERSION.tar.bz2"
 rm -rf ecl-*
 
 # Download and extract upstream tarball
-sage-download-file https://common-lisp.net/project/ecl/files/release/$ECLVERSION/ecl-$ECLVERSION.tgz |tar xz
+sage-download-file https://common-lisp.net/project/ecl/static/files/release/ecl-$ECLVERSION.tgz |tar xz
 cd ecl-$ECLVERSION
 
 # Some patches are applied here, if they need to be applied before
@@ -44,7 +44,7 @@ for patch in ../patches/src/*.patch; do
 done
 
 # Remove unneeded files to save space
-rm -r msvc src/gc-unstable src/gmp/ src/libffi
+rm -r msvc src/gmp/ src/libffi
 
 # Run autotools
 cd src

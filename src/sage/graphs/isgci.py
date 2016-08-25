@@ -277,10 +277,10 @@ result ::
     sage: p = d.shortest_path(perfect_id, bip_id)
     sage: len(p) - 1
     2
-    sage: print p                  # random
+    sage: print(p)                  # random
     ['gc_56', 'gc_76', 'gc_69']
     sage: for c in p:
-    ...      print graph_classes.get_class(c)
+    ....:     print(graph_classes.get_class(c))
     perfect graphs
     ...
     bipartite graphs
@@ -369,6 +369,7 @@ AUTHORS:
 Methods
 -------
 """
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
@@ -637,21 +638,19 @@ class GraphClass(SageObject, CachedRepresentation):
         classes = GraphClasses().classes()
         cls = classes[self._gc_id]
 
-        print "Class of graphs : "+self._name
-        print "-"*(len(self._name)+18)
+        print("Class of graphs : "+self._name)
+        print("-" * (len(self._name)+18))
 
         for key, value in cls.iteritems():
             if value != "" and key != "problem":
-                print "{0:30} : ".format(key),
-                print value
+                print("{:30} : {}".format(key, value))
 
-        print "\nProblems :"
-        print "-"*11
+        print("\nProblems :")
+        print("-" * 11)
 
         for pbname,data in sorted(cls["problem"].items()):
             if "complexity" in data:
-                print "{0:30} : ".format(pbname),
-                print data["complexity"]
+                print("{:30} : {}".format(pbname, data["complexity"]))
 
 from sage.misc.cachefunc import cached_method
 
@@ -890,7 +889,7 @@ class GraphClasses(UniqueRepresentation):
 
         self._download_db()
 
-        print "Database downloaded"
+        print("Database downloaded")
 
         self.classes.clear_cache()
         self.inclusions.clear_cache()
@@ -985,8 +984,8 @@ class GraphClasses(UniqueRepresentation):
             MAX[key] = min(length, MAX_LEN)
 
         # Head of the table
-        print ("{0:"+str(MAX["id"])+"} | {1:"+str(MAX["name"])+"} | {2:"+str(MAX["type"])+"} | {3:"+str(MAX["smallgraph"])+"}").format("id", "name", "type", "smallgraph")
-        print "-"*(sum(MAX.values())+9)
+        print(("{0:"+str(MAX["id"])+"} | {1:"+str(MAX["name"])+"} | {2:"+str(MAX["type"])+"} | {3:"+str(MAX["smallgraph"])+"}").format("id", "name", "type", "smallgraph"))
+        print("-" * (sum(MAX.values())+9))
 
         # Entries
         for entry in classes_list:
@@ -994,7 +993,7 @@ class GraphClasses(UniqueRepresentation):
             name = entry.get("name","")
             type = entry.get("type","")
             smallgraph = entry.get("smallgraph","")
-            print ("{0:"+str(MAX["id"])+"} | {1:"+str(MAX["name"])+"} | {2:"+str(MAX["type"])+"} | ").format(ID, name[:MAX_LEN], type[:MAX_LEN])+str(smallgraph)[:MAX_LEN]
+            print(("{0:"+str(MAX["id"])+"} | {1:"+str(MAX["name"])+"} | {2:"+str(MAX["type"])+"} | ").format(ID, name[:MAX_LEN], type[:MAX_LEN])+str(smallgraph)[:MAX_LEN])
 
 def _XML_to_dict(root):
     r"""

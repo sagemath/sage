@@ -34,7 +34,7 @@ Sage example in ./float.tex, line 154::
 
 Sage example in ./float.tex, line 168::
 
-    sage: x = 1.0; print type(x)
+    sage: x = 1.0; print(type(x))
     <type 'sage.rings.real_mpfr.RealLiteral'>
     sage: x.prec()
     53
@@ -136,7 +136,7 @@ Sage example in ./float.tex, line 410::
 Sage example in ./float.tex, line 431::
 
     sage: x = RDF(1/3)
-    sage: for i in range(1,100): x = 4*x-1; print x
+    sage: for i in range(1,100): x = 4*x-1; print(x)
     0.333333333333
     0.333333333333
     0.333333333333
@@ -154,7 +154,7 @@ Sage example in ./float.tex, line 431::
 Sage example in ./float.tex, line 461::
 
     sage: x = RDF(1/2)
-    sage: for i in range(1,100): x = 3*x-1; print x
+    sage: for i in range(1,100): x = 3*x-1; print(x)
     0.5
     0.5
     0.5
@@ -203,7 +203,7 @@ Sage example in ./float.tex, line 608::
     sage: y0 = RDF(10^13); delta0 = RDF(1); a = RDF(1-10^(-8)); n = 100000
     sage: ii = iter(y0,delta0,a,n)
     sage: s = exact(10^13,1,1-10^(-8),n)
-    sage: print "exact - sommation classique:", s-ii # abs tol 0.1
+    sage: print("exact - sommation classique: {}".format(s-ii)) # abs tol 0.1
     exact - sommation classique: -45.5
 
 Sage example in ./float.tex, line 618::
@@ -220,7 +220,7 @@ Sage example in ./float.tex, line 618::
 Sage example in ./float.tex, line 662::
 
     sage: c = sumcomp(y0,delta0,RDF(0.0),n,a)
-    sage: print "exact-sommation compensee:", s-c
+    sage: print("exact-sommation compensee: {}".format(s-c))
     exact-sommation compensee: 0.0
 
 Sage example in ./float.tex, line 681::

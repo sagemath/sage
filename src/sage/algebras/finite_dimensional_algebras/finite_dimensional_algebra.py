@@ -1,6 +1,7 @@
 """
 Finite-Dimensional Algebras
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2011 Johan Bosman <johan.g.bosman@gmail.com>
@@ -13,8 +14,8 @@ Finite-Dimensional Algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
-from finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
+from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
+from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
 
 from sage.rings.integer_ring import ZZ
 

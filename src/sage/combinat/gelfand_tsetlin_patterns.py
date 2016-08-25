@@ -36,6 +36,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.list_clone import ClonableArray
@@ -189,7 +190,7 @@ class GelfandTsetlinPattern(ClonableArray):
         EXAMPLES::
 
             sage: G = GelfandTsetlinPatterns()
-            sage: print G([[3,2,1],[2,1],[1]])._repr_diagram()
+            sage: print(G([[3,2,1],[2,1],[1]])._repr_diagram())
               3     2     1
                  2     1
                     1
@@ -214,7 +215,7 @@ class GelfandTsetlinPattern(ClonableArray):
                  2     1
                     1
         """
-        print self._repr_diagram()
+        print(self._repr_diagram())
 
     def _latex_(self):
         r"""

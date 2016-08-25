@@ -37,14 +37,14 @@ the option ``truncate=False``.
 
 ::
 
-    sage: print ring('1').nextabove()
+    sage: print(ring('1').nextabove())
     1.2
 
 ::
 
-    sage: print ring('1').nextabove().str(truncate=False)
+    sage: print(ring('1').nextabove().str(truncate=False))
     1.2
-    sage: print ring('1').nextbelow().str(truncate=False)
+    sage: print(ring('1').nextbelow().str(truncate=False))
     0.88
 
 Let's change our precision.
@@ -52,9 +52,9 @@ Let's change our precision.
 ::
 
     sage: ring=RealField(20)
-    sage: print ring('1').nextabove().str(truncate=False)
+    sage: print(ring('1').nextabove().str(truncate=False))
     1.0000019
-    sage: print ring('1').nextbelow().str(truncate=False)
+    sage: print(ring('1').nextbelow().str(truncate=False))
     0.99999905
 
 You can also specify the rounding mode.
@@ -257,7 +257,7 @@ above.
 The question mark notation means that the number is contained in the
 interval found by incrementing and decrementing the last digit of the
 number.  See the `documentation for real interval fields
-<http://www.sagemath.org/doc/reference/sage/rings/real_mpfi.html>`_ for
+<http://doc.sagemath.org/html/en/reference/sage/rings/real_mpfi.html>`_ for
 details.  In the above case, Sage is saying that 1/9 is somewhere
 between 0.111 and 0.113.  Below, we see that ``1/a`` is somewhere
 between 8.9 and 9.1.
@@ -272,7 +272,7 @@ print out the interval.
 
 ::
 
-    sage: print (1/a).str(style='brackets')
+    sage: print((1/a).str(style='brackets'))
     [8.9843 .. 9.0157]
 
 Included Software

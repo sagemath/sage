@@ -644,7 +644,6 @@ class CoxeterGroups(Category_singleton):
                         tester.assertEquals(set([pi[i](w), opi[i](w)]),
                                             set([w, w.apply_simple_reflection(i, side = side)]))
 
-
         def _test_has_descent(self, **options):
             """
             Runs sanity checks on the method
@@ -680,6 +679,28 @@ class CoxeterGroups(Category_singleton):
                     tester.assert_((s[i]*s[j]).has_descent(j, side = 'right'))
                     tester.assertEquals((s[i]*s[j]).has_descent(j, side = 'left' ), u == v)
                     tester.assertEquals((s[i]*s[j]).has_descent(i, side = 'right'), u == v)
+
+        def _test_descents(self, **options):
+            """
+            Run sanity checks on the method
+            :meth:`CoxeterGroups.ElementMethods.descents` of the
+            elements of ``self``.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroups().example()
+                sage: W._test_descents()
+            """
+            tester = self._tester(**options)
+            s = self.simple_reflections()
+            tester.assertEqual(len(self.one().descents(side='right')), 0)
+            tester.assertEqual(len(self.one().descents(side='left')), 0)
+            for i in self.index_set():
+                si = s[i]
+                tester.assertEqual([i], si.descents(side='left'))
+                tester.assertEqual([i], si.descents(side='right'))
+                tester.assertNotIn(i, si.descents(positive=True, side='left'))
+                tester.assertNotIn(i, si.descents(positive=True, side='right'))
 
     class ElementMethods:
         def has_descent(self, i, side = 'right', positive=False):

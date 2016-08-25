@@ -55,9 +55,11 @@ REFERENCES:
 .. [EZ] \S. Eilenberg and J. Zilber, "Semi-Simplicial Complexes and Singular
         Homology", Ann. Math. (2) 51 (1950), 499-513.
 """
+from __future__ import absolute_import
 
 from copy import copy
-from sage.homology.cell_complex import GenericCellComplex, Chains
+from sage.homology.cell_complex import GenericCellComplex
+from sage.homology.chains import Chains, Cochains
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix
@@ -66,6 +68,7 @@ from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
 from sage.arith.all import binomial
 from sage.misc.cachefunc import cached_method
+from sage.misc.decorators import rename_keyword
 
 class DeltaComplex(GenericCellComplex):
     r"""
@@ -242,7 +245,7 @@ class DeltaComplex(GenericCellComplex):
     Type ``delta_complexes.`` and then hit the TAB key to get the
     full list.
     """
-    def __init__(self, data=None, **kwds):
+    def __init__(self, data=None, check_validity=True):
         r"""
         Define a `\Delta`-complex.  See :class:`DeltaComplex` for more
         documentation.
@@ -288,9 +291,6 @@ class DeltaComplex(GenericCellComplex):
                 new_data[d].append(bdry_list)
             return bdry_list
 
-        # process kwds
-        check_validity = kwds.get('check_validity', True)
-        # done with kwds
         new_data = {-1: ((),)}  # add the empty cell
         if data is None:
             pass
@@ -578,7 +578,10 @@ class DeltaComplex(GenericCellComplex):
             cells[-1] = (None,)
         return cells
 
-    def chain_complex(self, **kwds):
+    @rename_keyword(deprecation=20723, check_diffs='check')
+    def chain_complex(self, subcomplex=None, augmented=False,
+                      verbose=False, check=False, dimensions=None,
+                      base_ring=ZZ, cochain=False):
         r"""
         The chain complex associated to this `\Delta`-complex.
 
@@ -603,10 +606,10 @@ class DeltaComplex(GenericCellComplex):
         :param verbose: If True, print some messages as the chain
            complex is computed.
         :type verbose: boolean; optional, default False
-        :param check_diffs: If True, make sure that the chain complex
+        :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check_diffs: boolean; optional, default False
+        :type check: boolean; optional, default False
 
         .. note::
 
@@ -638,14 +641,6 @@ class DeltaComplex(GenericCellComplex):
             sage: T.homology(subcomplex=A)
             {0: 0, 1: 0, 2: Z}
         """
-        augmented = kwds.get('augmented', False)
-        cochain = kwds.get('cochain', False)
-        verbose = kwds.get('verbose', False)
-        check_diffs = kwds.get('check_diffs', False)
-        base_ring = kwds.get('base_ring', ZZ)
-        dimensions = kwds.get('dimensions', None)
-        subcomplex = kwds.get('subcomplex', None)
-
         if subcomplex is not None:
             # relative chain complex, so don't augment the chain complex
             augmented = False
@@ -695,9 +690,11 @@ class DeltaComplex(GenericCellComplex):
             cochain_diffs = {}
             for dim in differentials:
                 cochain_diffs[dim-1] = differentials[dim].transpose()
-            return ChainComplex(data=cochain_diffs, degree=1, **kwds)
+            return ChainComplex(data=cochain_diffs, degree=1,
+                                base_ring=base_ring, check=check)
         else:
-            return ChainComplex(data=differentials, degree=-1, **kwds)
+            return ChainComplex(data=differentials, degree=-1,
+                                base_ring=base_ring, check=check)
 
     def alexander_whitney(self, cell, dim_left):
         r"""
@@ -1536,7 +1533,11 @@ class DeltaComplex(GenericCellComplex):
             sage: list(T.n_chains(1, QQ, cochains=True).basis())
             [\chi_(0, (0, 0)), \chi_(1, (0, 0)), \chi_(2, (0, 0))]
         """
-        return Chains(tuple(enumerate(self.n_cells(n))), base_ring, cochains)
+        n_cells = tuple(enumerate(self.n_cells(n)))
+        if cochains:
+            return Cochains(self, n, n_cells, base_ring)
+        else:
+            return Chains(self, n, n_cells, base_ring)
 
     # the second barycentric subdivision is a simplicial complex.  implement this somehow?
 #     def simplicial_complex(self):
@@ -1599,7 +1600,7 @@ class DeltaComplex(GenericCellComplex):
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
         """
-        from algebraic_topological_model import algebraic_topological_model_delta_complex
+        from .algebraic_topological_model import algebraic_topological_model_delta_complex
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model_delta_complex(self, base_ring)

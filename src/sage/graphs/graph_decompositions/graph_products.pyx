@@ -328,7 +328,7 @@ def is_cartesian_product(g, certificate = False, relabeling = False):
         answer = answer.cartesian_product(factors[i])
 
     # Checking that the resulting graph is indeed isomorphic to what we have.
-    isiso, dictt = g.is_isomorphic(answer, certify = True)
+    isiso, dictt = g.is_isomorphic(answer, certificate=True)
     if not isiso:
         raise ValueError("Something weird happened during the algorithm... "+
                          "Please report the bug and give us the graph instance"+

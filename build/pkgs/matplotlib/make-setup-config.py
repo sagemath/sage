@@ -1,4 +1,4 @@
-import ConfigParser
+from six.moves import configparser as ConfigParser
 import os
 
 config = ConfigParser.SafeConfigParser()
@@ -14,17 +14,17 @@ config.set('directories', 'basedirlist', os.environ['SAGE_LOCAL'])
 # will not even try, even if we could.  See trac #5301.
 #####################################################################
 
-print "NOTE: Set SAGE_MATPLOTLIB_GUI to anything but 'no' to try to build the Matplotlib GUI."
+print("NOTE: Set SAGE_MATPLOTLIB_GUI to anything but 'no' to try to build the Matplotlib GUI.")
 
 graphical_backend='False'
 if os.environ.get('SAGE_MATPLOTLIB_GUI', 'no').lower() != 'no':
     graphical_backend = 'auto'
 
-if graphical_backend=='auto':
-    print "Building graphical backends.  WARNING: This may causing some annoying and confusing behavior"
-    print "when using Sage + pylab, at least on OS X."
+if graphical_backend == 'auto':
+    print("Building graphical backends.  WARNING: This may causing some annoying and confusing behavior")
+    print("when using Sage + pylab, at least on OS X.")
 else:
-    print "Not building any matplotlib graphical backends."
+    print("Not building any matplotlib graphical backends.")
 
 config.add_section('gui_support')
 for backend in ('gtk', 'gtkagg', 'tkagg', 'wxagg', 'macosx', 'windowing'):

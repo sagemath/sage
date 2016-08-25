@@ -53,6 +53,7 @@ AUTHORS:
 - Vincent Delecroix (November 2013): additional methods
 
 """
+from __future__ import print_function
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
@@ -98,6 +99,57 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         self._level = n
         FieldElement.__init__(self, parent)
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: F = GF(2).algebraic_closure()
+            sage: hash(F.zero())
+            0
+            sage: hash(F.one())
+            1
+            sage: z1 = F.gen(1)
+            sage: z2 = F.gen(2)
+            sage: z3 = F.gen(3)
+            sage: z4 = F.gen(4)
+
+            sage: hash(z2) == hash(z3+z2-z3)
+            True
+            sage: hash(F.zero()) == hash(z3+z2-z3-z2)
+            True
+
+            sage: X = [z4**i for i in range(2**4-1)]
+            sage: X.append(F.zero())
+            sage: X.extend([z3, z3**2, z3*z4])
+            sage: assert len(X) == len(set(hash(x) for x in X))
+
+            sage: F = GF(3).algebraic_closure()
+            sage: z1 = F.gen(1)
+            sage: z2 = F.gen(2)
+            sage: z3 = F.gen(3)
+            sage: z4 = F.gen(4)
+
+            sage: hash(z2) == hash(z3+z2-z3)
+            True
+
+            sage: X = [z4**i for i in range(3**4-1)]
+            sage: X.append(F.zero())
+            sage: X.extend([z3, z3**2, z3*z4])
+            sage: assert len(X) == len(set(hash(x) for x in X))
+
+        Check that :trac:`19956` is fixed::
+
+            sage: R.<x,y> = GF(2).algebraic_closure()[]
+            sage: x.resultant(y)
+            -y
+        """
+        #TODO: this is *very* slow
+        #NOTE: the hash of a generator (e.g. z2, z3, ...) is always the
+        # characterisitc! In particular its hash value is not compatible with
+        # sections.
+        F,x,_ = self.as_finite_field_element(minimal=True)
+        return hash(x) + 1500007*(F.degree()-1)
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -124,6 +176,19 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         """
         x, y = self.parent()._to_common_subfield(self, right)
         return cmp(x, y)
+
+    def __pow__(self, exp):
+        r"""
+        TESTS::
+
+            sage: F2 = GF(2).algebraic_closure()
+            sage: z12 = F2.gen(3*4)
+            sage: z12**3
+            z12^3
+            sage: z12**13
+            z12^8 + z12^7 + z12^6 + z12^4 + z12^2 + z12
+        """
+        return self.__class__(self.parent(), self._value ** exp)
 
     def _add_(self, right):
         """
@@ -1016,7 +1081,7 @@ class AlgebraicClosureFiniteField_pseudo_conway(AlgebraicClosureFiniteField_gene
         TESTS::
 
             sage: F = GF(5).algebraic_closure(implementation='pseudo_conway')
-            sage: print F.__class__.__name__
+            sage: print(F.__class__.__name__)
             AlgebraicClosureFiniteField_pseudo_conway_with_category
             sage: TestSuite(F).run(skip=['_test_elements', '_test_pickling'])
 

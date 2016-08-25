@@ -1,8 +1,8 @@
 Fix Singular include directory paths for use with Sage
 See http://trac.sagemath.org/ticket/20386
 
---- a/kernel/Makefile.in	2016-04-11 10:21:06.310672691 +0200
-+++ b/kernel/Makefile.in	2016-04-11 10:52:11.049904340 +0200
+--- a/latest/kernel/Makefile.in	2016-04-11 10:21:06.310672691 +0200
++++ b/latest/kernel/Makefile.in	2016-04-11 10:52:11.049904340 +0200
 @@ -274,7 +274,7 @@
  install-libsingular: install
  	-${MKINSTALLDIRS} ${includedir}

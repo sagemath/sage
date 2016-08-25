@@ -103,7 +103,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
     ``A`` is a module (actually a free module) over `\ZZ`::
 
         sage: A.category()
-        Category of modules over Integer Ring
+        Category of finite dimensional modules over Integer Ring
         sage: A in Modules(ZZ)
         True
         sage: A.rank()

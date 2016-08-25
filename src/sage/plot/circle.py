@@ -1,6 +1,7 @@
 """
 Circles
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
@@ -17,7 +18,7 @@ Circles
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from primitive import GraphicPrimitive
+from .primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 from math import sin, cos, pi
@@ -213,10 +214,10 @@ class Circle(GraphicPrimitive):
         xdata = [x+r*cos(t*dt) for t in range(n+1)]
         ydata = [y+r*sin(t*dt) for t in range(n+1)]
         if fill:
-            from polygon import Polygon
+            from .polygon import Polygon
             return Polygon(xdata, ydata, options).plot3d(z)
         else:
-            from line import Line
+            from .line import Line
             return Line(xdata, ydata, options).plot3d().translate((0,0,z))
 
 @rename_keyword(color='rgbcolor')

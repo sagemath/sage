@@ -27,7 +27,7 @@ REFERENCES:
 .. [Hanani60] Haim Hanani,
   On quadruple systems,
   pages 145--157, vol. 12,
-  Canadadian Journal of Mathematics,
+  Canadian Journal of Mathematics,
   1960
   http://cms.math.ca/cjm/v12/cjm1960v12.0145-0157.pdf
 
@@ -73,6 +73,8 @@ require, i.e. `SQS_{14}` and `SQS_{38}` as well as the systems of pairs
 Functions
 ---------
 """
+from __future__ import print_function
+
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 
@@ -92,7 +94,7 @@ def two_n(B):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
-        ....:             print "Something is wrong !"
+        ....:             print("Something is wrong !")
 
     """
     n = B.num_points()
@@ -129,7 +131,7 @@ def three_n_minus_two(B):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1):
-        ....:             print "Something is wrong !"
+        ....:             print("Something is wrong !")
     """
     n = B.num_points()
     A = n-1
@@ -184,7 +186,7 @@ def three_n_minus_eight(B):
         ....:     if (n%12) == 2:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
-        ....:             print "Something is wrong !"
+        ....:             print("Something is wrong !")
 
     """
     n = B.num_points()
@@ -247,7 +249,7 @@ def three_n_minus_four(B):
         ....:     if n%12 == 10:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
-        ....:             print "Something is wrong !"
+        ....:             print("Something is wrong !")
 
     """
     n = B.num_points()
@@ -311,7 +313,7 @@ def four_n_minus_six(B):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
-        ....:             print "Something is wrong !"
+        ....:             print("Something is wrong !")
 
     """
     n = B.num_points()
@@ -386,7 +388,7 @@ def twelve_n_minus_ten(B):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
-        ....:             print "Something is wrong !"
+        ....:             print("Something is wrong !")
 
     """
     n = B.num_points()

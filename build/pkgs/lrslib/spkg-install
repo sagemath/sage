@@ -17,15 +17,17 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-$MAKE all-static
+./configure --prefix=$SAGE_LOCAL
+
+$MAKE
 if [ $? -ne 0 ]; then
-   echo "Error building lrs"
+   echo "Error building lrslib"
    exit 1
 fi
 
-$MAKE install-static
+$MAKE install
 if [ $? -ne 0 ]; then
-   echo "Error installing lrs"
+   echo "Error installing lrslib"
    exit 1
 fi
 

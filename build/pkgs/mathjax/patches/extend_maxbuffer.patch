@@ -1,6 +1,6 @@
-diff --git a/src/config/TeX-AMS_HTML-full.js b/src/config/TeX-AMS_HTML-full.js
---- a/src/config/TeX-AMS_HTML-full.js
-+++ b/src/config/TeX-AMS_HTML-full.js
+diff --git a/config/TeX-AMS_HTML-full.js b/config/TeX-AMS_HTML-full.js
+--- a/config/TeX-AMS_HTML-full.js
++++ b/config/TeX-AMS_HTML-full.js
 @@ -34,4 +34,12 @@ MathJax.Ajax.Preloading(
  );
  

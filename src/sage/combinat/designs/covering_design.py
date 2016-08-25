@@ -42,6 +42,7 @@ Classes and methods
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
@@ -100,14 +101,14 @@ def trivial_covering_design(v,k,t):
     EXAMPLE::
 
         sage: C = trivial_covering_design(8,3,1)
-        sage: print C
+        sage: print(C)
         C(8,3,1) = 3
         Method: Trivial
         0   1   2
         0   6   7
         3   4   5
         sage: C = trivial_covering_design(5,3,2)
-        sage: print C
+        sage: print(C)
         4 <= C(5,3,2) <= 10
         Method: Trivial
         0   1   2
@@ -187,7 +188,7 @@ class CoveringDesign(SageObject):
         EXAMPLES::
 
             sage: C=CoveringDesign(5,4,3,4,range(5),[[0,1,2,3],[0,1,2,4],[0,1,3,4],[0,2,3,4]],4, 'Lexicographic Covering')
-            sage: print C
+            sage: print(C)
             C(5,4,3) = 4
             Method: Lexicographic Covering
             0   1   2   3
@@ -247,7 +248,7 @@ class CoveringDesign(SageObject):
         EXAMPLES::
 
             sage: C=CoveringDesign(7,3,2,7,range(7),[[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5], [1, 4, 6], [2, 3, 6], [2, 4, 5]],0, 'Projective Plane')
-            sage: print C
+            sage: print(C)
             C(7,3,2) = 7
             Method: Projective Plane
             0   1   2
@@ -470,7 +471,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
 
         sage: from sage.combinat.designs.covering_design import best_known_covering_design_www
         sage: C = best_known_covering_design_www(7, 3, 2)   # optional - internet
-        sage: print C                                       # optional - internet
+        sage: print(C)                                     # optional - internet
         C(7,3,2) = 7
         Method: lex covering
         Submitted on: 1996-12-01 00:00:00
@@ -498,7 +499,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
 
     url = "http://www.ccrwest.org/cover/get_cover.php"+param
     if verbose:
-        print "Looking up the bounds at %s" % url
+        print("Looking up the bounds at %s" % url)
     f = urlopen(url)
     s = f.read()
     f.close()

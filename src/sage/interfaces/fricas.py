@@ -81,7 +81,7 @@ FriCAS would print out.
 
 ::
 
-    sage: print fricas.eval('factor(x^5 - y^5)')   # optional - fricas
+    sage: print(fricas.eval('factor(x^5 - y^5)'))   # optional - fricas
                4      3    2 2    3     4
     - (y - x)(y  + x y  + x y  + x y + x )    Type: Factored(Polynomial(Integer))
 
@@ -152,7 +152,10 @@ Python floats.
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from axiom import PanAxiom, PanAxiomElement, PanAxiomFunctionElement, PanAxiomExpectFunction
+from __future__ import print_function
+from __future__ import absolute_import
+
+from .axiom import PanAxiom, PanAxiomElement, PanAxiomFunctionElement, PanAxiomExpectFunction
 
 
 class FriCAS(PanAxiom):

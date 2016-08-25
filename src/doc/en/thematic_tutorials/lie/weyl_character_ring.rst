@@ -273,7 +273,8 @@ odd spin groups::
     ....:
     sage: spinrepn(3)
     B3(1/2,1/2,1/2)
-    sage: for r in [1..4]: print r, spinrepn(r).frobenius_schur_indicator()
+    sage: for r in [1..4]:
+    ....:     print("{} {}".format(r, spinrepn(r).frobenius_schur_indicator()))
     1 -1
     2 -1
     3 1

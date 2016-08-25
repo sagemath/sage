@@ -184,6 +184,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include 'sage/groups/perm_gps/partn_ref/data_structures_pyx.pxi'
 
@@ -897,8 +898,8 @@ cdef class PartitionRefinement_generic:
             latex.add_to_preamble("\\usepackage{tikz-qtree}")
             view(self._latex_debug_string, engine="pdflatex", title=title)
         else:
-            print "sorry, no debug output was written. " + \
-            "Set BACKTRACK_WITHLATEX_DEBUG to True if interested in this information"
+            print("sorry, no debug output was written. " +
+                  "Set BACKTRACK_WITHLATEX_DEBUG to True if interested in this information")
 
     cdef void _init_latex(self):
         r"""

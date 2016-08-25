@@ -1,7 +1,7 @@
-diff --git a/src.bak/src/Makefile.in b/src/src/Makefile.in
+diff --git a/src/Makefile.in b/src/Makefile.in
 index 8385e4d..b9f6a26 100644
---- a/src.bak/src/Makefile.in
-+++ b/src/src/Makefile.in
+--- a/src/Makefile.in
++++ b/src/Makefile.in
 @@ -36,7 +36,7 @@ bin_PROGRAMS = scdd$(EXEEXT) lcdd$(EXEEXT) redcheck$(EXEEXT) \
  	fourier$(EXEEXT) projection$(EXEEXT) adjacency$(EXEEXT) \
  	allfaces$(EXEEXT) testcdd1$(EXEEXT) testshoot$(EXEEXT) \

@@ -20,7 +20,7 @@ from sage.categories.covariant_functorial_construction import RegressiveCovarian
 
 def WithRealizations(self):
     """
-    Returns the category of parents in ``self`` endowed with multiple realizations
+    Return the category of parents in ``self`` endowed with multiple realizations.
 
     INPUT:
 
@@ -28,13 +28,27 @@ def WithRealizations(self):
 
     .. SEEALSO::
 
-        - the documentation and code
+        - The documentation and code
           (:mod:`sage.categories.examples.with_realizations`) of
           ``Sets().WithRealizations().example()`` for more on how to use and
           implement a parent with several realizations.
 
-        - :mod:`sage.categories.realizations`
+        - Various use cases:
 
+          - :class:`SymmetricFunctions`
+          - :class:`QuasiSymmetricFunctions`
+          - :class:`NonCommutativeSymmetricFunctions`
+          - :class:`SymmetricFunctionsNonCommutingVariables`
+          - :class:`DescentAlgebra`
+          - :class:`algebras.Moebius`
+          - :class:`IwahoriHeckeAlgebra`
+          - :class:`ExtendedAffineWeylGroup`
+
+        - The `Implementing Algebraic Structures
+          <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_
+          thematic tutorial.
+
+        - :mod:`sage.categories.realizations`
 
     .. NOTE:: this *function* is actually inserted as a *method* in the class
        :class:`~sage.categories.category.Category` (see
@@ -97,6 +111,79 @@ def WithRealizations(self):
          The subset algebra of {1, 2, 3} over Rational Field in the In basis,
          The subset algebra of {1, 2, 3} over Rational Field in the Out basis]
 
+    Instead of manually defining the shorthands ``F``, ``In``, and
+    ``Out``, as above one can just do::
+
+        sage: A.inject_shorthands()
+        Injecting F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
+        doctest:...: RuntimeWarning: redefining global value `F`
+        Injecting In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
+        doctest:...: RuntimeWarning: redefining global value `In`
+        Injecting Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
+        doctest:...: RuntimeWarning: redefining global value `Out`
+
+    .. RUBRIC:: Rationale
+
+    Besides some goodies described below, the role of `A` is threefold:
+
+    - To provide, as illustrated above, a single entry point for the
+      algebra as a whole: documentation, access to its properties and
+      different realizations, etc.
+
+    - To provide a natural location for the initialization of the
+      bases and the coercions between, and other methods that are
+      common to all bases.
+
+    - To let other objects refer to `A` while allowing elements to be
+      represented in any of the realizations.
+
+    We now illustrate this second point by defining the polynomial
+    ring with coefficients in `A`::
+
+        sage: P = A['x']; P
+        Univariate Polynomial Ring in x over The subset algebra of {1, 2, 3} over Rational Field
+        sage: x = P.gen()
+
+    In the following examples, the coefficients turn out to be all
+    represented in the `F` basis::
+
+        sage: P.one()
+        F[{}]
+        sage: (P.an_element() + 1)^2
+        F[{}]*x^2 + 2*F[{}]*x + F[{}]
+
+    However we can create a polynomial with mixed coefficients, and
+    compute with it::
+
+        sage: p = P([1, In[{1}], Out[{2}] ]); p
+        Out[{2}]*x^2 + In[{1}]*x + F[{}]
+        sage: p^2
+        Out[{2}]*x^4
+        + (-8*In[{}] + 4*In[{1}] + 8*In[{2}] + 4*In[{3}] - 4*In[{1, 2}] - 2*In[{1, 3}] - 4*In[{2, 3}] + 2*In[{1, 2, 3}])*x^3
+        + (F[{}] + 3*F[{1}] + 2*F[{2}] - 2*F[{1, 2}] - 2*F[{2, 3}] + 2*F[{1, 2, 3}])*x^2
+        + (2*F[{}] + 2*F[{1}])*x
+        + F[{}]
+
+    Note how each coefficient involves a single basis which need not
+    be that of the other coefficients. Which basis is used depends on
+    how coercion happened during mixed arithmetic and needs not be
+    deterministic.
+
+    One can easily coerce all coefficient to a given basis with::
+
+        sage: p.map_coefficients(In)
+        (-4*In[{}] + 2*In[{1}] + 4*In[{2}] + 2*In[{3}] - 2*In[{1, 2}] - In[{1, 3}] - 2*In[{2, 3}] + In[{1, 2, 3}])*x^2 + In[{1}]*x + In[{}]
+
+    Alas, the natural notation for constructing such polynomials does
+    not yet work::
+
+        sage: In[{1}] * x
+        Traceback (most recent call last):
+        ...
+        TypeError: unsupported operand parent(s) for '*': 'The subset algebra of {1, 2, 3} over Rational Field in the In basis' and 'Univariate Polynomial Ring in x over The subset algebra of {1, 2, 3} over Rational Field'
+
+    .. RUBRIC:: The category of realizations of `A`
+
     The set of all realizations of `A`, together with the coercion morphisms
     is a category (whose class inherits from
     :class:`~sage.categories.realizations.Category_realization_of_parent`)::
@@ -119,7 +206,7 @@ def WithRealizations(self):
     MuPAD-Combinat. They provide support tools for handling the
     different realizations and the morphisms between them.
 
-    Typically, ``FiniteDimensionalVectorSpaces(QQ).WithRealizations()``
+    Typically, ``VectorSpaces(QQ).FiniteDimensional().WithRealizations()``
     will eventually be in charge, whenever a coercion `\phi: A\mapsto B` is
     registered, to register `\phi^{-1}` as coercion `B \mapsto A`
     if there is none defined yet. To achieve this,
@@ -142,7 +229,7 @@ def WithRealizations(self):
     .. NOTE::
 
         For ``C`` a category, ``C.WithRealizations()`` in fact calls
-        ``sage.categories.with_realizations.Realizations(C)``. The
+        ``sage.categories.with_realizations.WithRealizations(C)``. The
         later is responsible for building the hierarchy of the
         categories with realizations in parallel to that of their base
         categories, optimizing away those categories that do not
@@ -178,7 +265,6 @@ def WithRealizations(self):
         [Join of Category of hopf algebras over Rational Field
              and Category of graded algebras over Rational Field]
         sage: TestSuite(Semigroups().WithRealizations()).run()
-
     """
     return WithRealizationsCategory.category_of(self)
 

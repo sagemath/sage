@@ -1,6 +1,7 @@
 """
 Symmetric functions, with their multiple realizations
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2009-2012 Jason Bandlow <jbandlow@gmail.com>
@@ -28,15 +29,15 @@ from sage.combinat.partition import Partitions
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.rational_field import QQ
 
-import schur
-import monomial
-import powersum
-import elementary
-import homogeneous
-import hall_littlewood
-import jack
-import macdonald
-import llt
+from . import schur
+from . import monomial
+from . import powersum
+from . import elementary
+from . import homogeneous
+from . import hall_littlewood
+from . import jack
+from . import macdonald
+from . import llt
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
     r"""
@@ -939,7 +940,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(QQ).witt(coerce_h=False, coerce_e=True, coerce_p=True)
             Symmetric Functions over Rational Field in the Witt basis
         """
-        import witt
+        from . import witt
         return witt.SymmetricFunctionAlgebra_witt(self, coerce_h=coerce_h, coerce_e=coerce_e, coerce_p=coerce_p)
     w = witt
     # Currently needed by sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
@@ -984,7 +985,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             ....:   for rho in Partitions(5)]))
             [4, 2, 0, 1, -1, 0, -1]
         """
-        from character import irreducible_character_basis
+        from .character import irreducible_character_basis
         return irreducible_character_basis(self, 'st')
     st = irreducible_symmetric_group_character
 
@@ -1039,7 +1040,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: [ht([1]).eval_at_permutation_roots(rho) for rho in Partitions(5)]
             [0, 1, 0, 2, 1, 3, 5]
         """
-        from character import character_basis
+        from .character import character_basis
         return character_basis(self, self.h(), "induced trivial character", 'ht')
     ht = induced_trivial_character
 
@@ -1139,7 +1140,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(QQ).symplectic()
             Symmetric Functions over Rational Field in the symplectic basis
         """
-        import symplectic
+        from . import symplectic
         return symplectic.SymmetricFunctionAlgebra_symplectic(self)
     sp = symplectic
 
@@ -1154,7 +1155,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(QQ).orthogonal()
             Symmetric Functions over Rational Field in the orthogonal basis
         """
-        import orthogonal
+        from . import orthogonal
         return orthogonal.SymmetricFunctionAlgebra_orthogonal(self)
     o = orthogonal
 

@@ -21,6 +21,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from cpython.list cimport *
 from sage.libs.gmp.mpz cimport *
@@ -86,13 +87,13 @@ class pAdicPrinterDefaults(SageObject):
         self._mode = mode
         self._pos = bool(pos)
         if not -1 <= max_ram_terms <= sys.maxsize:
-            raise ValueError, "max_ram_terms must be positive and fit in a long"
+            raise ValueError("max_ram_terms must be positive and fit in a long")
         self._max_ram_terms = int(max_ram_terms)
         if not -1 <= max_unram_terms <= sys.maxsize:
-            raise ValueError, "max_unram_terms must be positive and fit in a long"
+            raise ValueError("max_unram_terms must be positive and fit in a long")
         self._max_unram_terms = int(max_unram_terms)
         if not -1 <= max_terse_terms <= sys.maxsize:
-            raise ValueError, "max_terse_terms must be positive and fit in a long"
+            raise ValueError("max_terse_terms must be positive and fit in a long")
         self._max_terse_terms = int(max_terse_terms)
         self._sep = sep
         if alphabet is None:
@@ -139,7 +140,7 @@ class pAdicPrinterDefaults(SageObject):
             if mode in ['val-unit','series','terse','digits','bars']:
                 self._mode = mode
             else:
-                raise ValueError, "invalid printing mode"
+                raise ValueError("invalid printing mode")
 
     def allow_negatives(self, neg = None):
         """
@@ -393,14 +394,14 @@ cdef class pAdicPrinter_class(SageObject):
             self.mode = terse
         elif mode == 'digits':
             if len(self.alphabet) < self.prime_pow.prime or (not self.base and ring.inertia_degree() != 1):
-                raise ValueError, "digits printing mode only usable for totally ramified extensions with p at most the length of the alphabet (default 62).  Try using print_mode = 'bars' instead."
+                raise ValueError("digits printing mode only usable for totally ramified extensions with p at most the length of the alphabet (default 62).  Try using print_mode = 'bars' instead.")
             else:
                 self.mode = digits
                 self.pos = True
         elif mode == 'bars':
             self.mode = bars
         else:
-            raise ValueError, "printing mode must be one of 'val-unit', 'series', 'terse', 'digits' or 'bars'"
+            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'digits' or 'bars'")
         if ram_name is None:
             self.ram_name = ring._uniformizer_print()
         else:
@@ -420,19 +421,19 @@ cdef class pAdicPrinter_class(SageObject):
         if max_ram_terms is not None:
             self.max_ram_terms = max_ram_terms
             if self.max_ram_terms < -1:
-                raise ValueError, "max_ram_terms must be positive and fit in a long"
+                raise ValueError("max_ram_terms must be positive and fit in a long")
         else:
             self.max_ram_terms = _printer_defaults._max_ram_terms
         if max_unram_terms is not None:
             self.max_unram_terms = max_unram_terms
             if self.max_unram_terms < -1:
-                raise ValueError, "max_unram_terms must be positive and fit in a long"
+                raise ValueError("max_unram_terms must be positive and fit in a long")
         else:
             self.max_unram_terms = _printer_defaults._max_unram_terms
         if max_terse_terms is not None:
             self.max_terse_terms = max_terse_terms
             if self.max_terse_terms < -1:
-                raise ValueError, "max_terse_terms must be positive and fit in a long"
+                raise ValueError("max_terse_terms must be positive and fit in a long")
         else:
             self.max_terse_terms = _printer_defaults._max_terse_terms
 
@@ -809,7 +810,7 @@ cdef class pAdicPrinter_class(SageObject):
         elif mode == 'bars':
             _mode = bars
         else:
-            raise ValueError, "printing mode must be one of 'val-unit', 'series', 'terse', 'bars', or 'digits'"
+            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'bars', or 'digits'")
         if pos is None:
             _pos = self.pos
         else:
@@ -828,13 +829,13 @@ cdef class pAdicPrinter_class(SageObject):
 
             sage: R = Zp(7,4,'capped-rel','val-unit'); a = R(364); a #indirect doctest
             7 * 52 + O(7^5)
-            sage: print a.str('terse')
+            sage: print(a.str('terse'))
             364 + O(7^5)
-            sage: print a.str('series')
+            sage: print(a.str('series'))
             3*7 + 7^3 + O(7^5)
             sage: K = Qp(7,4,'capped-rel','val-unit'); a = K(364); a
             7 * 52 + O(7^5)
-            sage: print a.str('series')
+            sage: print(a.str('series'))
             3*7 + 7^3 + O(7^5)
             sage: padic_printing.sep('')
             sage: K = Qp(7, print_mode='digits')
@@ -1067,10 +1068,10 @@ cdef class pAdicPrinter_class(SageObject):
                 val = elt.valuation_c()
                 # since elt was not supposed to be zero, this should give a non-empty list.
                 if len(L) == 0:
-                    raise RuntimeError, "repr_spec called on zero"
+                    raise RuntimeError("repr_spec called on zero")
                 if isinstance(L[0], list): # unramified part to the extension
                     if self.unram_name is None:
-                        raise RuntimeError, "need to have specified a name for the unramified variable"
+                        raise RuntimeError("need to have specified a name for the unramified variable")
                     L, ellipsis = self._truncate_list(L, self.max_ram_terms, [])
                     for i from 0 <= i < len(L):
                         term = self._print_unram_term(L[i], do_latex, self.unram_name, self.max_unram_terms, 0, 0)

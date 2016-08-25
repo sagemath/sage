@@ -4,13 +4,12 @@ Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
+from __future__ import print_function
 
 from power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from infinity import infinity, is_Infinite
 from sage.libs.all import PariError
-from power_series_ring_element import is_PowerSeries
-import rational_field
 from sage.misc.superseded import deprecated_function_alias
 
 cdef class PowerSeries_poly(PowerSeries):
@@ -276,7 +275,7 @@ cdef class PowerSeries_poly(PowerSeries):
             name = P.variable_name()
             if name in kwds: # a keyword specifies the power series generator
                 if len(x) > 0:
-                    raise ValueError, "must not specify %s keyword and positional argument" % name
+                    raise ValueError("must not specify %s keyword and positional argument" % name)
                 a = self(kwds[name])
                 del kwds[name]
                 try:
@@ -322,7 +321,7 @@ cdef class PowerSeries_poly(PowerSeries):
             return self[0]
 
         if t <= 0:
-            raise ValueError, "Can only substitute elements of positive valuation"
+            raise ValueError("Can only substitute elements of positive valuation")
 
         if not Q.has_coerce_map_from(P.base_ring()):
             from sage.structure.element import canonical_coercion
@@ -330,7 +329,7 @@ cdef class PowerSeries_poly(PowerSeries):
                 R = canonical_coercion(P.base_ring()(0), Q.base_ring()(0))[0].parent()
                 self = self.change_ring(R)
             except TypeError:
-                raise ValueError, "Cannot substitute this value"
+                raise ValueError("Cannot substitute this value")
 
         r = (self - self[0]).valuation()
         if r == s:                 # self is constant + O(x^s)
@@ -449,8 +448,8 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: R.<t> = QQ[[]]
             sage: f = t + 17/5*t^3 + 2*t^4 + O(t^5)
-            sage: for a in f: print a,
-            0 1 0 17/5 2
+            sage: [a for a in f]
+            [0, 1, 0, 17/5, 2]
         """
         return iter(self.__f)
 
@@ -468,7 +467,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef ModuleElement _add_(self, ModuleElement right_m):
+    cpdef _add_(self, right_m):
         """
         EXAMPLES::
 
@@ -499,7 +498,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f + right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef ModuleElement _sub_(self, ModuleElement right_m):
+    cpdef _sub_(self, right_m):
         """
         Return the difference of two power series.
 
@@ -514,7 +513,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f - right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef RingElement _mul_(self, RingElement right_r):
+    cpdef _mul_(self, right_r):
         """
         Return the product of two power series.
 
@@ -530,7 +529,7 @@ cdef class PowerSeries_poly(PowerSeries):
                                 prec = prec,
                                 check = True)  # check, since truncation may be needed
 
-    cpdef ModuleElement _rmul_(self, RingElement c):
+    cpdef _rmul_(self, RingElement c):
         """
         Multiply self on the right by a scalar.
 
@@ -543,7 +542,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
 
-    cpdef ModuleElement _lmul_(self, RingElement c):
+    cpdef _lmul_(self, RingElement c):
         """
         Multiply self on the left by a scalar.
 
@@ -555,34 +554,6 @@ cdef class PowerSeries_poly(PowerSeries):
             2 + 6*t^4 + O(t^120)
         """
         return PowerSeries_poly(self._parent, c * self.__f, self._prec, check=False)
-
-    def __floordiv__(self, denom):
-        """
-        EXAMPLES::
-
-            sage: R.<t> = ZZ[[]] ; f = t**10-1 ; g = 1+t+t^7 ; h = f.add_bigoh(20)
-            sage: f // g
-            -1 + t - t^2 + t^3 - t^4 + t^5 - t^6 + 2*t^7 - 3*t^8 + 4*t^9 - 4*t^10 + 5*t^11 - 6*t^12 + 7*t^13 - 9*t^14 + 12*t^15 - 16*t^16 + 20*t^17 - 25*t^18 + 31*t^19 + O(t^20)
-            sage: (f // g) * g
-            -1 + t^10 + O(t^20)
-            sage: g // h
-            -1 - t - t^7 - t^10 - t^11 - t^17 + O(t^20)
-            sage: (g // h) * h
-            1 + t + t^7 + O(t^20)
-            sage: h // g
-            -1 + t - t^2 + t^3 - t^4 + t^5 - t^6 + 2*t^7 - 3*t^8 + 4*t^9 - 4*t^10 + 5*t^11 - 6*t^12 + 7*t^13 - 9*t^14 + 12*t^15 - 16*t^16 + 20*t^17 - 25*t^18 + 31*t^19 + O(t^20)
-            sage: (h // g) * g
-            -1 + t^10 + O(t^20)
-        """
-        try:
-            return PowerSeries.__div__(self, denom)
-        except (PariError, ZeroDivisionError) as e: # PariError to general?
-            if is_PowerSeries(denom) and denom.degree() == 0 and denom[0] in self._parent.base_ring():
-                denom = denom[0]
-            elif not denom in self._parent.base_ring():
-                raise ZeroDivisionError, e
-            return PowerSeries_poly(self._parent,
-                                             self.__f // denom, self._prec)
 
     def __lshift__(PowerSeries_poly self, n):
         """

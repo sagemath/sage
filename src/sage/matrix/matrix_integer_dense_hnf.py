@@ -5,6 +5,7 @@ AUTHORS:
 
 - Clement Pernet and William Stein (2008-02-07): initial version
 """
+from __future__ import print_function
 
 from copy import copy
 
@@ -1134,7 +1135,7 @@ def hnf_with_transformation_tests(n=10, m=5, trials=10):
     """
     import sys
     for i in range(trials):
-        print i,
+        print(i, end=" ")
         sys.stdout.flush()
         A = random_matrix(ZZ, n, m)
         H, U = hnf_with_transformation(A)
@@ -1163,7 +1164,8 @@ def benchmark_hnf(nrange, bits=4):
         t = cputime()
         h,_ = hnf(a, proof=False)
         tm = cputime(t)
-        print '%s,'%(('sage', n, bits, tm),)
+        print('%s,' % (('sage', n, bits, tm),))
+
 
 def benchmark_magma_hnf(nrange, bits=4):
     """
@@ -1181,7 +1183,7 @@ def benchmark_magma_hnf(nrange, bits=4):
         t = magma.cputime()
         h = a.EchelonForm()
         tm = magma.cputime(t)
-        print '%s,'%(('magma', n, bits, tm),)
+        print('%s,' % (('magma', n, bits, tm),))
 
 
 global sanity
@@ -1231,46 +1233,44 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2, check_using_magma
         for i,a in enumerate(v):
             global sanity
             sanity = a
-            print i,
+            print(i, end=" ")
             sys.stdout.flush()
             if check_using_magma:
                 if magma(hnf(a)[0]) != magma(a).EchelonForm():
-                    print "bug computing hnf of a matrix"
-                    print 'a = matrix(ZZ, %s, %s, %s)'%(a.nrows(), a.ncols(), a.list())
+                    print("bug computing hnf of a matrix")
+                    print('a = matrix(ZZ, %s, %s, %s)' % (a.nrows(), a.ncols(),
+                                                          a.list()))
                     return
             else:
                 if hnf(a)[0] != a.echelon_form(algorithm = 'pari'):
-                    print "bug computing hnf of a matrix"
-                    print 'a = matrix(ZZ, %s, %s, %s)'%(a.nrows(), a.ncols(), a.list())
+                    print("bug computing hnf of a matrix")
+                    print('a = matrix(ZZ, %s, %s, %s)' % (a.nrows(), a.ncols(),
+                                                          a.list()))
                     return
-        print " (done)"
+        print(" (done)")
 
-    print "small %s x %s"%(n,m)
+    print("small %s x %s" % (n, m))
     __do_check([random_matrix(ZZ, n, m, x=-1,y=1) for _ in range(times)])
-    print "big %s x %s"%(n,m)
+    print("big %s x %s" % (n, m))
     __do_check([random_matrix(ZZ, n, m, x=-2^32,y=2^32) for _ in range(times)])
 
-    print "small %s x %s"%(m,n)
+    print("small %s x %s" % (m, n))
     __do_check([random_matrix(ZZ, m, n, x=-1,y=1) for _ in range(times)])
-    print "big %s x %s"%(m,n)
+    print("big %s x %s" % (m, n))
     __do_check([random_matrix(ZZ, m, n, x=-2^32,y=2^32) for _ in range(times)])
 
-    print "sparse %s x %s"%(n,m)
+    print("sparse %s x %s" % (n, m))
     __do_check([random_matrix(ZZ, n, m, density=0.1) for _ in range(times)])
-    print "sparse %s x %s"%(m,n)
+    print("sparse %s x %s" % (m, n))
     __do_check([random_matrix(ZZ, m, n, density=0.1) for _ in range(times)])
 
-    print "ill conditioned -- 1000*A -- %s x %s"%(n,m)
+    print("ill conditioned -- 1000*A -- %s x %s" % (n, m))
     __do_check([1000*random_matrix(ZZ, n, m, x=-1,y=1) for _ in range(times)])
 
-    print "ill conditioned -- 1000*A but one row -- %s x %s"%(n,m)
+    print("ill conditioned -- 1000*A but one row -- %s x %s" % (n, m))
     v = []
     for _ in range(times):
         a = 1000*random_matrix(ZZ, n, m, x=-1,y=1)
         a[a.nrows()-1] = a[a.nrows()-1]/1000
         v.append(a)
     __do_check(v)
-
-
-
-

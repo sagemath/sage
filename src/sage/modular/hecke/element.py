@@ -23,7 +23,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sage.modules.module_element
+from sage.structure.element import ModuleElement
 
 def is_HeckeModuleElement(x):
     """
@@ -38,7 +38,7 @@ def is_HeckeModuleElement(x):
     """
     return isinstance(x, HeckeModuleElement)
 
-class HeckeModuleElement(sage.modules.module_element.ModuleElement):
+class HeckeModuleElement(ModuleElement):
     """
     Element of a Hecke module.
     """
@@ -65,7 +65,7 @@ class HeckeModuleElement(sage.modules.module_element.ModuleElement):
             sage: loads(dumps(v)) == v
             True
         """
-        sage.modules.module_element.ModuleElement.__init__(self, parent)
+        ModuleElement.__init__(self, parent)
         if x is not None:
             self.__element = x
 

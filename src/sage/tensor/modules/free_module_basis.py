@@ -17,6 +17,7 @@ REFERENCES:
 - Chap. 3 of S. Lang : *Algebra*, 3rd ed., Springer (New York) (2002)
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -27,10 +28,114 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.sage_object import SageObject
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
-class FreeModuleBasis(UniqueRepresentation, SageObject):
+class Basis_abstract(UniqueRepresentation, SageObject):
+    """
+    Abstract base class for (dual) bases of free modules.
+    """
+    def __init__(self, fmodule, symbol, latex_symbol, latex_name):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e._fmodule is M
+            True
+        """
+        self._symbol = symbol
+        self._latex_symbol = latex_symbol
+        self._latex_name = latex_name
+        self._fmodule = fmodule
+
+    def __iter__(self):
+        r"""
+        Return the list of basis elements of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: list(e)
+            [Element e_0 of the Rank-3 free module M over the Integer Ring,
+             Element e_1 of the Rank-3 free module M over the Integer Ring,
+             Element e_2 of the Rank-3 free module M over the Integer Ring]
+            sage: ed = e.dual_basis()
+            sage: list(ed)
+            [Linear form e^0 on the Rank-3 free module M over the Integer Ring,
+             Linear form e^1 on the Rank-3 free module M over the Integer Ring,
+             Linear form e^2 on the Rank-3 free module M over the Integer Ring]
+        """
+        for i in range(self._fmodule._rank):
+            yield self[i]
+
+    def __len__(self):
+        r"""
+        Return the basis length, i.e. the rank of the free module.
+
+        NB: the method ``__len__()`` is required for the basis to act as a
+        "frame" in the class :class:`~sage.tensor.modules.comp.Components`.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e.__len__()
+            3
+            sage: len(e)
+            3
+        """
+        return self._fmodule._rank
+
+    def _latex_(self):
+        r"""
+        Return a LaTeX representation of ``self``.
+
+        EXAMPLES::
+
+            sage: FiniteRankFreeModule._clear_cache_() # for doctests only
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e._latex_()
+            '\\left(e_0,e_1,e_2\\right)'
+            sage: latex(e)
+            \left(e_0,e_1,e_2\right)
+            sage: f = M.basis('eps', latex_symbol=r'\epsilon')
+            sage: f._latex_()
+            '\\left(\\epsilon_0,\\epsilon_1,\\epsilon_2\\right)'
+            sage: latex(f)
+            \left(\epsilon_0,\epsilon_1,\epsilon_2\right)
+
+        ::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: f = e.dual_basis()
+            sage: f._latex_()
+            '\\left(e^0,e^1,e^2\\right)'
+
+        """
+        return self._latex_name
+
+    def free_module(self):
+        """
+        Return the free module of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M', start_index=1)
+            sage: e = M.basis('e')
+            sage: e.free_module() is M
+            True
+        """
+        return self._fmodule
+
+
+class FreeModuleBasis(Basis_abstract):
     r"""
     Basis of a free module over a commutative ring `R`.
 
@@ -119,15 +224,15 @@ class FreeModuleBasis(UniqueRepresentation, SageObject):
             sage: TestSuite(e).run()
 
         """
-        self._fmodule = fmodule
         if latex_symbol is None:
             latex_symbol = symbol
         self._name = "(" + \
           ",".join([symbol + "_" + str(i) for i in fmodule.irange()]) +")"
-        self._latex_name = r"\left(" + ",".join([latex_symbol + "_" + str(i)
+        latex_name = r"\left(" + ",".join([latex_symbol + "_" + str(i)
                                        for i in fmodule.irange()]) + r"\right)"
-        self._symbol = symbol
-        self._latex_symbol = latex_symbol
+
+        Basis_abstract.__init__(self, fmodule, symbol, latex_symbol, latex_name)
+
         # The basis is added to the module list of bases
         for other in fmodule._known_bases:
             if symbol == other._symbol:
@@ -270,28 +375,6 @@ class FreeModuleBasis(UniqueRepresentation, SageObject):
         """
         return self._dual_basis
 
-    def _latex_(self):
-        r"""
-        LaTeX representation of the object.
-
-        EXAMPLES::
-
-            sage: FiniteRankFreeModule._clear_cache_() # for doctests only
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: e = M.basis('e')
-            sage: e._latex_()
-            '\\left(e_0,e_1,e_2\\right)'
-            sage: latex(e)
-            \left(e_0,e_1,e_2\right)
-            sage: f = M.basis('eps', latex_symbol=r'\epsilon')
-            sage: f._latex_()
-            '\\left(\\epsilon_0,\\epsilon_1,\\epsilon_2\\right)'
-            sage: latex(f)
-            \left(\epsilon_0,\epsilon_1,\epsilon_2\right)
-
-        """
-        return self._latex_name
-
     def __getitem__(self, index):
         r"""
         Return the basis element corresponding to the given index ``index``.
@@ -332,25 +415,6 @@ class FreeModuleBasis(UniqueRepresentation, SageObject):
                               str(i+si) + " not in [" + str(si) + "," +
                               str(n-1+si) + "]")
         return self._vec[i]
-
-    def __len__(self):
-        r"""
-        Return the basis length, i.e. the rank of the free module.
-
-        NB: the method ``__len__()`` is required for the basis to act as a
-        "frame" in the class :class:`~sage.tensor.modules.comp.Components`.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: e = M.basis('e')
-            sage: e.__len__()
-            3
-            sage: len(e)
-            3
-
-        """
-        return self._fmodule._rank
 
     def new_basis(self, change_of_basis, symbol, latex_symbol=None):
         r"""
@@ -396,7 +460,7 @@ class FreeModuleBasis(UniqueRepresentation, SageObject):
             e_2 = -2/5 f_1 + 1/5 f_2
 
         """
-        from free_module_automorphism import FreeModuleAutomorphism
+        from .free_module_automorphism import FreeModuleAutomorphism
         if not isinstance(change_of_basis, FreeModuleAutomorphism):
             raise TypeError("the argument change_of_basis must be some " +
                             "instance of FreeModuleAutomorphism")
@@ -441,10 +505,9 @@ class FreeModuleBasis(UniqueRepresentation, SageObject):
         #
         return the_new_basis
 
-
 #******************************************************************************
 
-class FreeModuleCoBasis(UniqueRepresentation, SageObject):
+class FreeModuleCoBasis(Basis_abstract):
     r"""
     Dual basis of a free module over a commutative ring.
 
@@ -497,14 +560,16 @@ class FreeModuleCoBasis(UniqueRepresentation, SageObject):
 
         """
         self._basis = basis
-        self._fmodule = basis._fmodule
         self._name = "(" + \
-          ",".join([symbol + "^" + str(i) for i in self._fmodule.irange()]) +")"
+          ",".join([symbol + "^" + str(i) for i in basis._fmodule.irange()]) +")"
         if latex_symbol is None:
             latex_symbol = symbol
-        self._latex_name = r"\left(" + \
+        latex_name = r"\left(" + \
           ",".join([latex_symbol + "^" + str(i)
-                    for i in self._fmodule.irange()]) + r"\right)"
+                    for i in basis._fmodule.irange()]) + r"\right)"
+
+        Basis_abstract.__init__(self, basis._fmodule, symbol, latex_symbol, latex_name)
+
         # The individual linear forms:
         vl = list()
         for i in self._fmodule.irange():
@@ -532,21 +597,6 @@ class FreeModuleCoBasis(UniqueRepresentation, SageObject):
 
         """
         return "Dual basis {} on the {}".format(self._name, self._fmodule)
-
-    def _latex_(self):
-        r"""
-        Return a LaTeX representation of ``self``.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: e = M.basis('e')
-            sage: f = e.dual_basis()
-            sage: f._latex_()
-            '\\left(e^0,e^1,e^2\\right)'
-
-        """
-        return self._latex_name
 
     def __getitem__(self, index):
         r"""
@@ -586,3 +636,4 @@ class FreeModuleCoBasis(UniqueRepresentation, SageObject):
             raise IndexError("out of range: {} not in [{},{}]".format(i+si,
                                                                    si, n-1+si))
         return self._form[i]
+

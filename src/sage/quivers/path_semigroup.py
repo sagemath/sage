@@ -18,6 +18,8 @@ Path Semigroups
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 import six
 from sage.rings.integer import Integer
@@ -30,8 +32,8 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from paths import QuiverPath
-from representation import QuiverRep
+from .paths import QuiverPath
+from .representation import QuiverRep
 
 #########################
 # Some auxiliary function to create generating functions to count paths.
@@ -575,7 +577,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: counter = 0
             sage: for p in P:
             ....:     counter += 1
-            ....:     print p
+            ....:     print(p)
             ....:     if counter==20:
             ....:         break
             e_1

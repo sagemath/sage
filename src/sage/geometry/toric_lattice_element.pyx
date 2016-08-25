@@ -316,7 +316,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # We need to override this function to prohibit default behaviour.
     # It seems to be called when right is in the same lattice as self, which
     # is wrong from our point of view.
-    cpdef Element _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right):
         """
         Raise a ``TypeError`` exception.
 

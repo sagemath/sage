@@ -6,6 +6,7 @@ AUTHORS:
 - Johan S. R. Nielsen, original implementation (see [Nielsen]_ for details)
 - David Lucas, ported the original implementation in Sage
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
@@ -379,7 +380,7 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
         sage: gs_interpolation_lee_osullivan(points, tau, params, wy)
         x^3*y + 2*x^3 - x^2*y + 5*x^2 + 5*x*y - 5*x + 2*y - 4
     """
-    from utils import apply_shifts, remove_shifts, leading_term
+    from .utils import apply_shifts, remove_shifts, leading_term
     s, l = parameters[0], parameters[1]
     F = points[0][0].parent()
     M = lee_osullivan_module(points, (s,l), wy)

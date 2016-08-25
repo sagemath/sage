@@ -16,12 +16,12 @@ AUTHORS:
 
 include 'data_structures_pxd.pxi' # includes bitsets
 
-from automorphism_group_canonical_label cimport \
-    get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space, \
-    allocate_agcl_output, deallocate_agcl_output, \
-    allocate_agcl_work_space, deallocate_agcl_work_space
-from double_coset cimport double_coset, \
-    dc_work_space, allocate_dc_work_space, deallocate_dc_work_space
+from .automorphism_group_canonical_label cimport (
+    get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space,
+    allocate_agcl_output, deallocate_agcl_output,
+    allocate_agcl_work_space, deallocate_agcl_work_space)
+from .double_coset cimport (double_coset,
+    dc_work_space, allocate_dc_work_space, deallocate_dc_work_space)
 
 
 cdef struct iterator:

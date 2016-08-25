@@ -212,7 +212,7 @@ i++)`` em C++ ou Java:
 ::
 
     sage: for i in range(3):
-    ....:     print i
+    ....:     print(i)
     0
     1
     2
@@ -222,7 +222,7 @@ A primeira linha abaixo é equivalente a ``for(i=2; i<5; i++)``.
 ::
 
     sage: for i in range(2,5):
-    ....:     print i
+    ....:     print(i)
     2
     3
     4
@@ -233,7 +233,7 @@ a ``for(i=1; i<6; i+=2)``.
 ::
 
     sage: for i in range(1,6,2):
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -247,7 +247,7 @@ alguns números.
 ::
 
     sage: for i in range(5):
-    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print('%6s %6s %6s' % (i, i^2, i^3))
          0      0      0
          1      1      1
          2      4      8

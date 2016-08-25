@@ -72,6 +72,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##########################################################################
+from __future__ import print_function
 
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.plot.all import polygon, line, text
@@ -215,7 +216,7 @@ class IndexedSequence(SageObject):
             sage: s
             Indexed sequence: [0, 1, 2]
              indexed by [0, 1, 2]
-            sage: print s
+            sage: print(s)
             Indexed sequence: [0, 1, 2]
              indexed by [0, 1, 2]
             sage: I = GF(3)
@@ -482,7 +483,7 @@ class IndexedSequence(SageObject):
             b = T+[E(0) for i in range(2*M)]
         N = max(M,N)
         c = [sum([a[i]*b[j-i] for i in range(N)]) for j in range(2*N-1)]
-        #print [[b[j-i] for i in range(N)] for j in range(N)]
+        #print([[b[j-i] for i in range(N)] for j in range(N)])
         return c
 
     def convolution_periodic(self, other):

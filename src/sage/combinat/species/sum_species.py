@@ -1,6 +1,7 @@
 """
 Sum species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,8 +16,8 @@ Sum species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from structure import SpeciesStructureWrapper
+from .species import GenericCombinatorialSpecies
+from .structure import SpeciesStructureWrapper
 from sage.structure.unique_representation import UniqueRepresentation
 
 

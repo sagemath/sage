@@ -51,14 +51,17 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from cpython.object cimport PyObject_RichCompare
 
-import os, cPickle as pickle, operator
+import os
+from six.moves import cPickle as pickle
+import operator
 import inspect
-import sageinspect
+from . import sageinspect
 
-from lazy_import_cache import get_cache_file
+from .lazy_import_cache import get_cache_file
 
 cdef binop(op, left, right):
     if isinstance(left, LazyImport):

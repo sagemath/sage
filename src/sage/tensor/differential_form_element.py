@@ -25,8 +25,7 @@ from __future__ import print_function
 
 
 from sage.symbolic.ring import SR
-from sage.structure.element import RingElement
-from sage.algebras.algebra_element import AlgebraElement
+from sage.structure.element import RingElement, AlgebraElement
 from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutation
 

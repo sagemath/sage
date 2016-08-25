@@ -22,6 +22,7 @@ EXAMPLES::
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -33,7 +34,7 @@ EXAMPLES::
 #*****************************************************************************
 
 
-from number_field_ideal import NumberFieldFractionalIdeal
+from .number_field_ideal import NumberFieldFractionalIdeal
 from sage.structure.factorization import Factorization
 from sage.structure.proof.proof import get_flag
 

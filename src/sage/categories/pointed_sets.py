@@ -1,6 +1,7 @@
 r"""
 Pointed sets
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
@@ -11,7 +12,7 @@ Pointed sets
 #******************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
-from sets_cat import Sets
+from .sets_cat import Sets
 
 class PointedSets(Category_singleton):
     """

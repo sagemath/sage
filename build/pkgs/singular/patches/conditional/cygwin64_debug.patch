@@ -1,6 +1,6 @@
-diff -druN latest.tmp/Singular/Makefile.in latest/Singular/Makefile.in
---- latest.tmp/Singular/Makefile.in	2014-08-06 08:59:15.000000000 -0700
-+++ latest/Singular/Makefile.in	2014-10-21 02:24:21.709753895 -0700
+diff -druN a/latest/Singular/Makefile.in b/latest/Singular/Makefile.in
+--- a/latest/Singular/Makefile.in	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/Singular/Makefile.in	2014-10-21 02:24:21.709753895 -0700
 @@ -169,6 +169,13 @@
  LIBSINGULAR_FLAGS = -shared -single_module
  endif
@@ -15,9 +15,9 @@ diff -druN latest.tmp/Singular/Makefile.in latest/Singular/Makefile.in
  ifeq ($(SINGUNAME),ix86-Win)
  SO_SUFFIX = dll
  MODULE_SUFFIX    = dll
-diff -druN latest.tmp/singuname.sh latest/singuname.sh
---- latest.tmp/singuname.sh	2014-08-06 08:59:15.000000000 -0700
-+++ latest/singuname.sh	2014-10-21 02:24:21.709753895 -0700
+diff -druN a/latest/singuname.sh b/latest/singuname.sh
+--- a/latest/singuname.sh	2014-08-06 08:59:15.000000000 -0700
++++ b/latest/singuname.sh	2014-10-21 02:24:21.709753895 -0700
 @@ -96,7 +96,12 @@
  elif (echo $uname_m | $egrep "x86_64" > $devnull)
  then

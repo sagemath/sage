@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Combinatorics
 =============
 
@@ -43,9 +43,5 @@ Related topics
 - :ref:`sage.graphs`
 
 """
-#import demo
-#import demo_short
-#import demo_algebraic_combinatorics
-#import tutorial_enumerated_sets
-import quickref
-import tutorial
+from . import quickref
+from . import tutorial

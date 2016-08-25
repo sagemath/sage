@@ -39,6 +39,7 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from subprocess import Popen, PIPE
 
@@ -57,8 +58,8 @@ class Gfan:
             cmd = cmd.split(' ')
 
         if verbose:
-            print "gfan command:\n%s"%cmd
-            print "gfan input:\n%s"%I
+            print("gfan command:\n%s" % cmd)
+            print("gfan input:\n%s" % I)
 
         gfan_processes = Popen(cmd,stdin = PIPE, stdout=PIPE, stderr=PIPE)
         ans, err = gfan_processes.communicate(input = I)

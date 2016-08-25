@@ -15,15 +15,17 @@ REFERENCE:
        Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,
        San Francisco (1994), pp. 138-147.
 """
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2008 Jonathan Bober and Emily Kirkman
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
+from __future__ import absolute_import
 
 from sage.sets.set import Set
-from all import DiGraph
+from .all import DiGraph
+
 
 def _triangulate(g, comb_emb):
     """
@@ -88,18 +90,18 @@ def _triangulate(g, comb_emb):
     # At this point we know that the graph is connected, has at least 3 vertices, and
     # that it is not the graph o--o--o. This is where the real work starts.
 
-    faces = g.faces(comb_emb)        # We start by finding all of the faces of this embedding.
+    faces = g.faces(comb_emb)
+    # We start by finding all of the faces of this embedding.
 
-    edges_added = []                        # The list of edges that we add to the graph.
-                                            # This will be returned at the end.
-
+    edges_added = []   # The list of edges that we add to the graph.
+    # This will be returned at the end.
 
     for face in faces:
         new_face = []
         if len(face) < 3:
-            raise RuntimeError('Triangulate method created face %s with < 3 edges.'%face)
+            raise RuntimeError('Triangulate method created face %s with < 3 edges.' % face)
         if len(face) == 3:
-            continue # This face is already triangulated
+            continue  # This face is already triangulated
         elif len(face) == 4:  # In this special case just add diagonal edge to square
             new_face = (face[1][1], face[0][0])
             if g.has_edge(new_face):
@@ -109,24 +111,25 @@ def _triangulate(g, comb_emb):
         else:
             N = len(face)
             i = 0
-            while i < N-1:
-                new_edge = (face[i+1][1], face[i][0])  # new_edge is from third vertex in face to first
-                if g.has_edge(new_edge) or new_edge[0] == new_edge[1]: # check for repeats
-                    new_face.append(face[i]) # if repeated, keep first edge in face instead
-                    if i == N - 2:           # if we are two from the end, found a triangle already
+            while i < N - 1:
+                new_edge = (face[i + 1][1], face[i][0])  # new_edge is from third vertex in face to first
+                if g.has_edge(new_edge) or new_edge[0] == new_edge[1]:  # check for repeats
+                    new_face.append(face[i])  # if repeated, keep first edge in face instead
+                    if i == N - 2:   # if we are two from the end, found a triangle already
                         break
-                    i = i + 1
+                    i += 1
                     continue
 
                 g.add_edge(new_edge)
                 edges_added.append(new_edge)
                 new_face.append((new_edge[1], new_edge[0]))
-                i = i + 2
+                i += 2
             if i != N:
                 new_face.append(face[-1])
             faces.append(new_face)
 
     return edges_added
+
 
 def _normal_label(g, comb_emb, external_face):
     r"""
@@ -176,19 +179,20 @@ def _normal_label(g, comb_emb, external_face):
 
     labels = {}
 
-    external_vertices = sorted([external_face[0][0], external_face[1][0], external_face[2][0]])
-    v1,v2,v3 = external_vertices
+    external_vertices = sorted([external_face[0][0],
+                                external_face[1][0],
+                                external_face[2][0]])
+    v1, v2, v3 = external_vertices
     v1_neighbors = Set(g.neighbors(v1))
 
     neighbor_count = {}
     for v in g.vertices():
         neighbor_count[v] = 0
     for v in g.neighbors(v1):
-        neighbor_count[v] = len(v1_neighbors.intersection( Set(g.neighbors(v))))
-
+        neighbor_count[v] = len(v1_neighbors.intersection(Set(g.neighbors(v))))
 
     for v in v1_neighbors:
-        if v in [v1,v2,v3]:
+        if v in [v1, v2, v3]:
             continue
         if neighbor_count[v] == 2:
             contractible.append(v)
@@ -199,55 +203,57 @@ def _normal_label(g, comb_emb, external_face):
         try:
             v = contractible.pop()
         except Exception:
-            raise RuntimeError('Contractible list is empty but graph still has %d vertices.  (Expected 3.)'%g.order())
+            raise RuntimeError('Contractible list is empty but graph still has %d vertices.  (Expected 3.)' % g.order())
 
             break
         # going to contract v
         v_neighbors = Set(g.neighbors(v))
-        contracted.append( (v, v_neighbors, v_neighbors - v1_neighbors - Set([v1])) )
+        contracted.append((v, v_neighbors,
+                           v_neighbors - v1_neighbors - Set([v1])))
         g.delete_vertex(v)
         v1_neighbors -= Set([v])
         for w in v_neighbors - v1_neighbors - Set([v1]):
             # adding edge (v1, w)
-            g.add_edge( (v1, w) )
+            g.add_edge((v1, w))
         if g.order() == 3:
             break
         v1_neighbors += v_neighbors - Set([v1])
         contractible = []
         for w in g.neighbors(v1):
-            if(len(v1_neighbors.intersection( Set(g.neighbors(w))))) == 2 and w not in [v1, v2, v3]:
+            if(len(v1_neighbors.intersection(Set(g.neighbors(w))))) == 2 and w not in [v1, v2, v3]:
                 contractible.append(w)
-
 
     # expansion phase:
 
-    v1, v2, v3 = g.vertices() #always in sorted order
+    v1, v2, v3 = g.vertices()  # always in sorted order
 
-    labels[v1] = {(v2,v3):1}
-    labels[v2] = {(v1,v3):2}
-    labels[v3] = {(v1,v2):3}
+    labels[v1] = {(v2, v3): 1}
+    labels[v2] = {(v1, v3): 2}
+    labels[v3] = {(v1, v2): 3}
 
-    while len(contracted) > 0:
+    while len(contracted):
         v, new_neighbors, neighbors_to_delete = contracted.pop()
         # going to add back vertex v
         labels[v] = {}
 
         for w in neighbors_to_delete:
-            g.delete_edge((v1,w))
+            g.delete_edge((v1, w))
 
         if len(neighbors_to_delete) == 0:
             # we are adding v into the face new_neighbors
             w1, w2, w3 = sorted(new_neighbors)
 
-            labels[v] = {(w1, w2): labels[w3].pop((w1,w2)), (w2,w3) : labels[w1].pop((w2,w3)), (w1,w3) : labels[w2].pop((w1,w3))}
-            labels[w1][tuple(sorted((w2,v)))] = labels[v][(w2,w3)]
-            labels[w1][tuple(sorted((w3,v)))] = labels[v][(w2,w3)]
+            labels[v] = {(w1, w2): labels[w3].pop((w1, w2)),
+                         (w2, w3): labels[w1].pop((w2, w3)),
+                         (w1, w3): labels[w2].pop((w1, w3))}
+            labels[w1][tuple(sorted((w2, v)))] = labels[v][(w2, w3)]
+            labels[w1][tuple(sorted((w3, v)))] = labels[v][(w2, w3)]
 
-            labels[w2][tuple(sorted((w1,v)))] = labels[v][(w1,w3)]
-            labels[w2][tuple(sorted((w3,v)))] = labels[v][(w1,w3)]
+            labels[w2][tuple(sorted((w1, v)))] = labels[v][(w1, w3)]
+            labels[w2][tuple(sorted((w3, v)))] = labels[v][(w1, w3)]
 
-            labels[w3][tuple(sorted((w1,v)))] = labels[v][(w1,w2)]
-            labels[w3][tuple(sorted((w2,v)))] = labels[v][(w1,w2)]
+            labels[w3][tuple(sorted((w1, v)))] = labels[v][(w1, w2)]
+            labels[w3][tuple(sorted((w2, v)))] = labels[v][(w1, w2)]
         else:
             new_neighbors_set = Set(new_neighbors)
             angles_out_of_v1 = set()
@@ -261,8 +267,8 @@ def _normal_label(g, comb_emb, external_face):
             l.sort()
             i = 0
             while i < len(l):
-                if l[i] == l[i+1]:
-                    i = i + 2
+                if l[i] == l[i + 1]:
+                    i += 2
                 else:
                     break
 
@@ -289,38 +295,38 @@ def _normal_label(g, comb_emb, external_face):
                 bottom_label = 3
             i = 0
             while i < len(w) - 1:
-                labels[v][ tuple(sorted((w[i],w[i+1]))) ] = 1
-                labels[w[i]][ tuple(sorted( (w[i+1], v) )) ] = top_label
-                labels[w[i+1]][ tuple(sorted( (w[i], v) )) ] = bottom_label
-                i = i + 1
+                labels[v][tuple(sorted((w[i], w[i + 1])))] = 1
+                labels[w[i]][tuple(sorted((w[i + 1], v)))] = top_label
+                labels[w[i + 1]][tuple(sorted((w[i], v)))] = bottom_label
+                i += 1
 
-            labels[v][tuple(sorted( (v1, w[0])))] = bottom_label
-            labels[v][tuple(sorted( (v1, w[-1])))] = top_label
+            labels[v][tuple(sorted((v1, w[0])))] = bottom_label
+            labels[v][tuple(sorted((v1, w[-1])))] = top_label
 
+            labels[w[0]][tuple(sorted((v1, v)))] = top_label
+            labels[w[-1]][tuple(sorted((v1, v)))] = bottom_label
+            labels[v1][tuple(sorted((w[0], v)))] = 1
+            labels[v1][tuple(sorted((w[-1], v)))] = 1
 
-            labels[w[0]][tuple(sorted((v1,v)))] = top_label
-            labels[w[-1]][tuple(sorted((v1,v)))] = bottom_label
-            labels[v1][tuple(sorted( (w[0],v) ))] = 1
-            labels[v1][tuple(sorted( (w[-1],v) ))] = 1
-
-            #delete all the extra labels
+            # delete all the extra labels
 
             for angle in angle_set:
-                labels[v1].pop( angle )
+                labels[v1].pop(angle)
 
-            labels[w[0]].pop( tuple (sorted( (v1, w[1]) ) ))
-            labels[w[-1]].pop( tuple (sorted( (v1, w[-2]) ) ))
+            labels[w[0]].pop(tuple(sorted((v1, w[1]))))
+            labels[w[-1]].pop(tuple(sorted((v1, w[-2]))))
 
             i = 1
             while i < len(w) - 1:
-                labels[w[i]].pop(tuple(sorted( (v1, w[i+1]))))
-                labels[w[i]].pop(tuple(sorted( (v1, w[i-1]))))
-                i = i + 1
+                labels[w[i]].pop(tuple(sorted((v1, w[i + 1]))))
+                labels[w[i]].pop(tuple(sorted((v1, w[i - 1]))))
+                i += 1
 
         for w in new_neighbors:
-            g.add_edge((v,w))
+            g.add_edge((v, w))
 
-    return labels, (v1,v2,v3)
+    return labels, (v1, v2, v3)
+
 
 def _realizer(g, x, example=False):
     """
@@ -380,14 +386,15 @@ def _realizer(g, x, example=False):
 
     tree_nodes = {}
     for v in g:
-        tree_nodes[v] = [TreeNode(label = v, children = []), TreeNode(label = v, children = []), TreeNode(label = v, children = [])]
-
+        tree_nodes[v] = [TreeNode(label=v, children=[]),
+                         TreeNode(label=v, children=[]),
+                         TreeNode(label=v, children=[])]
 
     for v in g:
         ones = []
         twos = []
         threes = []
-        l = [ones,twos,threes]
+        l = [ones, twos, threes]
         for angle, value in normal_labeling[v].items():
             l[value - 1] += list(angle)
 
@@ -397,32 +404,33 @@ def _realizer(g, x, example=False):
 
         i = 0
         while i < len(ones) - 1:
-            if ones[i] == ones[i+1]:
-                realizer.add_edge( (ones[i], v), label=1)
+            if ones[i] == ones[i + 1]:
+                realizer.add_edge((ones[i], v), label=1)
                 tree_nodes[v][0].append_child(tree_nodes[ones[i]][0])
-                i = i + 1
-            i = i + 1
+                i += 1
+            i += 1
         i = 0
         while i < len(twos) - 1:
-            if twos[i] == twos[i+1]:
-                realizer.add_edge( (twos[i], v), label=2)
+            if twos[i] == twos[i + 1]:
+                realizer.add_edge((twos[i], v), label=2)
                 tree_nodes[v][1].append_child(tree_nodes[twos[i]][1])
-                i = i + 1
-            i = i + 1
+                i += 1
+            i += 1
         i = 0
         while i < len(threes) - 1:
-            if threes[i] == threes[i+1]:
-                realizer.add_edge( (threes[i], v), label=3)
+            if threes[i] == threes[i + 1]:
+                realizer.add_edge((threes[i], v), label=3)
                 tree_nodes[v][2].append_child(tree_nodes[threes[i]][2])
-                i = i + 1
-            i = i + 1
+                i += 1
+            i += 1
 
     _compute_coordinates(realizer, (tree_nodes, (v1, v2, v3)))
 
     if example:
         realizer.show(talk=True, edge_labels=True)
 
-    return tree_nodes, (v1,v2,v3)
+    return tree_nodes, (v1, v2, v3)
+
 
 def _compute_coordinates(g, x):
     r"""
@@ -475,7 +483,7 @@ def _compute_coordinates(g, x):
     t2.compute_depth_of_self_and_children()
     t3.compute_depth_of_self_and_children()
 
-    coordinates = {} # the dict to pass to g.set_pos()
+    coordinates = {}  # the dict to pass to g.set_pos()
 
     # Setting coordinates for external vertices
     coordinates[t1.label] = [g.order() - 2, 1]
@@ -483,11 +491,11 @@ def _compute_coordinates(g, x):
     coordinates[t3.label] = [1, 0]
 
     for v in g.vertices():
-        if v not in [t1.label,t2.label,t3.label]:
+        if v not in [t1.label, t2.label, t3.label]:
             # Computing coordinates for v
-            r = list((0,0,0))
+            r = list((0, 0, 0))
 
-            for i in [0,1,2]:
+            for i in [0, 1, 2]:
                 # Computing size of region i:
 
                 # Tracing up tree (i + 1) % 3
@@ -513,15 +521,16 @@ def _compute_coordinates(g, x):
                 r[i] -= q
 
                 # Subtracting
-                q = tree_nodes[v][(i-1)%3].depth
+                q = tree_nodes[v][(i - 1) % 3].depth
                 r[i] -= q
 
             if sum(r) != g.order() - 1:
-                raise RuntimeError("Computing coordinates failed: vertex %s's coordinates sum to %s.  Expected %s"%(v,sum(r),g.order()-1))
+                raise RuntimeError("Computing coordinates failed: vertex %s's coordinates sum to %s.  Expected %s" % (v, sum(r), g.order() - 1))
 
             coordinates[v] = r[:-1]
 
-    g.set_pos(coordinates) # Setting _pos attribute to store coordinates
+    g.set_pos(coordinates)  # Setting _pos attribute to store coordinates
+
 
 class TreeNode():
     """
@@ -554,7 +563,7 @@ class TreeNode():
         sage: tn3.depth
         2
     """
-    def __init__(self, parent = None, children = None, label = None):
+    def __init__(self, parent=None, children=None, label=None):
         """
         INPUT:
 
@@ -671,3 +680,167 @@ class TreeNode():
             return
         self.children.append(child)
         child.parent = self
+
+
+def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
+    """
+    Return the minimal Schnyder wood of a planar rooted triangulation.
+
+    INPUT:
+
+    - graph -- a planar triangulation, given by a graph with an embedding.
+
+    - root_edge -- a pair of vertices (default is from ``'a'`` to ``'b'``)
+      The third boundary vertex is then determined using the orientation and
+      will be labelled ``'c'``.
+
+    - minimal -- boolean (default ``True``), whether to return a
+      minimal or a maximal Schnyder wood.
+
+    - check -- boolean (default ``True``), whether to check if the input
+      is a planar triangulation
+
+    OUTPUT:
+
+    a planar graph, with edges oriented and colored. The three outer
+    edges of the initial graph are removed.
+
+    The algorithm is taken from [Brehm2000]_ (section 4.2).
+
+    EXAMPLES::
+
+        sage: from sage.graphs.schnyder import minimal_schnyder_wood
+        sage: g = Graph([(0,'a'),(0,'b'),(0,'c'),('a','b'),('b','c'),
+        ....:  ('c','a')], format='list_of_edges')
+        sage: g.set_embedding({'a':['b',0,'c'],'b':['c',0,'a'],
+        ....:  'c':['a',0,'b'],0:['a','b','c']})
+        sage: newg = minimal_schnyder_wood(g)
+        sage: newg.edges()
+        [(0, 'a', 'green'), (0, 'b', 'blue'), (0, 'c', 'red')]
+        sage: newg.plot(color_by_label={'red':'red','blue':'blue',
+        ....:  'green':'green',None:'black'})
+        Graphics object consisting of 8 graphics primitives
+
+    A larger example::
+
+        sage: g = Graph([(0,'a'),(0,2),(0,1),(0,'c'),('a','c'),('a',2),
+        ....: ('a','b'),(1,2),(1,'c'),(2,'b'),(1,'b'),('b','c')], format='list_of_edges')
+        sage: g.set_embedding({'a':['b',2,0,'c'],'b':['c',1,2,'a'],
+        ....: 'c':['a',0,1,'b'],0:['a',2,1,'c'],1:['b','c',0,2],2:['a','b',1,0]})
+        sage: newg = minimal_schnyder_wood(g)
+        sage: sorted(newg.edges(), key=lambda e:(str(e[0]),str(e[1])))
+        [(0, 2, 'blue'),
+         (0, 'a', 'green'),
+         (0, 'c', 'red'),
+         (1, 0, 'green'),
+         (1, 'b', 'blue'),
+         (1, 'c', 'red'),
+         (2, 1, 'red'),
+         (2, 'a', 'green'),
+         (2, 'b', 'blue')]
+        sage: newg2 = minimal_schnyder_wood(g, minimal=False)
+        sage: sorted(newg2.edges(), key=lambda e:(str(e[0]),str(e[1])))
+        [(0, 1, 'blue'),
+         (0, 'a', 'green'),
+         (0, 'c', 'red'),
+         (1, 2, 'green'),
+         (1, 'b', 'blue'),
+         (1, 'c', 'red'),
+         (2, 0, 'red'),
+         (2, 'a', 'green'),
+         (2, 'b', 'blue')]
+
+    TESTS::
+
+        sage: minimal_schnyder_wood(graphs.RandomTriangulation(5))
+        Digraph on 5 vertices
+        sage: minimal_schnyder_wood(graphs.CompleteGraph(5))
+        Traceback (most recent call last):
+        ...
+        ValueError: not a planar graph
+        sage: minimal_schnyder_wood(graphs.WheelGraph(5))
+        Traceback (most recent call last):
+        ...
+        ValueError: not a triangulation
+        sage: minimal_schnyder_wood(graphs.OctahedralGraph(),root_edge=(0,5))
+        Traceback (most recent call last):
+        ...
+        ValueError: not a valid root edge
+
+    REFERENCES:
+
+    .. [Brehm2000] Enno Brehm, *3-Orientations and Schnyder
+       3-Tree-Decompositions*, 2000
+    """
+    if root_edge is None:
+        a = 'a'
+        b = 'b'
+    else:
+        a, b = root_edge
+
+    if check:
+        if not graph.is_planar():
+            raise ValueError('not a planar graph')
+        if not all(len(u) == 3 for u in graph.faces()):
+            raise ValueError('not a triangulation')
+        if not(a in graph.neighbors(b)):
+            raise ValueError('not a valid root edge')
+        
+    new_g = DiGraph()
+    emb = graph.get_embedding()
+
+    # finding the third outer vertex c
+    emb_b = emb[b]
+    idx_a = emb_b.index(a)
+    c = emb_b[(idx_a + 1) % len(emb_b)]
+
+    # initialisation
+    for i in emb[c]:
+        if i != a and i != b:
+            new_g.add_edge((i, 'c', 'red'))
+
+    path = list(emb[c])
+    idxa = path.index(a)
+    path = path[idxa:] + path[:idxa]
+    neighbors_in_path = {i: len([u for u in graph.neighbors(i) if u in path])
+                         for i in graph}
+    removable_nodes = [u for u in path if neighbors_in_path[u] == 2 and
+                       u != a and u != b]
+
+    # iterated path shortening
+    while len(path) > 2:
+        if minimal:
+            v = removable_nodes[-1]   # node to be removed from path
+        else:
+            v = removable_nodes[0]   # node to be removed from path
+        idx_v = path.index(v)
+        left = path[idx_v - 1]
+        new_g.add_edge((v, left, 'green'))
+        right = path[idx_v + 1]
+        new_g.add_edge((v, right, 'blue'))
+        neighbors_v = emb[v]
+        idx_left = neighbors_v.index(left)
+        neighbors_v = neighbors_v[idx_left:] + neighbors_v[:idx_left]
+        idx_right = neighbors_v.index(right)
+        inside = neighbors_v[1:idx_right]
+        new_g.add_edges([(w, v, 'red') for w in inside])
+        path = path[:idx_v] + inside + path[idx_v + 1:]
+        # updating the table of neighbors_in_path
+        for w in inside:
+            for x in graph.neighbors(w):
+                neighbors_in_path[x] += 1
+        for x in graph.neighbors(v):
+            neighbors_in_path[x] -= 1
+        # updating removable nodes
+        removable_nodes = [u for u in path if neighbors_in_path[u] == 2 and
+                           u != a and u != b]
+
+    def relabel(w):
+        return 'c' if w == c else w
+
+    emb = {relabel(v): [relabel(u) for u in emb[v] if not(u in [a, b, c] and
+                                                          v in [a, b, c])]
+           for v in graph}
+
+    new_g.set_embedding(emb)
+    return new_g

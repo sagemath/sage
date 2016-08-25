@@ -1,7 +1,7 @@
 from sage.structure.element cimport Element
-from morphism cimport Morphism
-from map cimport Map
-from functor cimport Functor
+from .morphism cimport Morphism
+from .map cimport Map
+from .functor cimport Functor
 
 cdef class Action(Functor):
     cdef G

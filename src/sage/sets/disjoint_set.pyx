@@ -126,7 +126,7 @@ def DisjointSet(arg):
     """
     if isinstance(arg, (Integer, int)):
         if arg < 0:
-            raise ValueError, 'arg (=%s) must be a non negative integer'%arg
+            raise ValueError('arg (=%s) must be a non negative integer' % arg)
         return DisjointSet_of_integers(arg)
     else:
         return DisjointSet_of_hashables(arg)
@@ -466,7 +466,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         """
         card = self.cardinality()
         if i < 0 or i>= card:
-            raise ValueError, 'i(=%s) must be between 0 and %s'%(i, card-1)
+            raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
         return OP_find(self._nodes, i)
 
     def union(self, int i, int j):

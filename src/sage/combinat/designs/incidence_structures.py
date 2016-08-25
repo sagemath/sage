@@ -38,7 +38,7 @@ Methods
 #    the License, or (at your option) any later version.                   #
 #                    http://www.gnu.org/licenses/                          #
 #***************************************************************************
-
+from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 
@@ -407,7 +407,7 @@ class IncidenceStructure(object):
             g = Graph()
             n = self.num_points()
             g.add_edges((i+n,x) for i,b in enumerate(self._blocks) for x in b)
-            canonical_label = g.canonical_label([range(n),range(n,n+self.num_blocks())],certify=True)[1]
+            canonical_label = g.canonical_label([range(n),range(n,n+self.num_blocks())],certificate=True)[1]
             canonical_label = [canonical_label[x] for x in range(n)]
             self._canonical_label = canonical_label
 
@@ -1285,15 +1285,15 @@ class IncidenceStructure(object):
 
             sage: TD=designs.transversal_design(5,5)
             sage: TD.relabel({i:chr(97+i) for i in range(25)})
-            sage: print TD.ground_set()
+            sage: TD.ground_set()
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y']
-            sage: print TD.blocks()[:3]
+            sage: TD.blocks()[:3]
             [['a', 'f', 'k', 'p', 'u'], ['a', 'g', 'm', 's', 'y'], ['a', 'h', 'o', 'q', 'x']]
 
         Relabel to integer points::
 
             sage: TD.relabel()
-            sage: print TD.blocks()[:3]
+            sage: TD.blocks()[:3]
             [[0, 5, 10, 15, 20], [0, 6, 12, 18, 24], [0, 7, 14, 16, 23]]
 
         TESTS:
@@ -1306,7 +1306,7 @@ class IncidenceStructure(object):
             sage: from itertools import permutations
             sage: for p in permutations([0,1,2,3,4]):
             ....:     J = I.relabel(p,inplace=False)
-            ....:     if I == J: print p
+            ....:     if I == J: print(p)
             (0, 1, 2, 3, 4)
             (0, 1, 4, 3, 2)
 
@@ -1680,7 +1680,7 @@ class IncidenceStructure(object):
         g = self.incidence_graph()
         if g.diameter() > 4:
             if verbose:
-                print "Some point is at distance >3 from some block."
+                print("Some point is at distance >3 from some block.")
             return False
 
         # There is a unique projection of a point on a line. Thus, the girth of
@@ -1688,11 +1688,11 @@ class IncidenceStructure(object):
         girth = g.girth()
         if girth == 4:
             if verbose:
-                print "Two blocks intersect on >1 points."
+                print("Two blocks intersect on >1 points.")
             return False
         elif girth == 6:
             if verbose:
-                print "Some point has two projections on some line."
+                print("Some point has two projections on some line.")
             return False
 
         if parameters:
@@ -1733,13 +1733,13 @@ class IncidenceStructure(object):
             Incidence structure with 4 points and 3 blocks
             sage: D.dual()
             Incidence structure with 3 points and 4 blocks
-            sage: print D.dual(algorithm="gap")       # optional - gap_packages
+            sage: print(D.dual(algorithm="gap"))       # optional - gap_packages
             Incidence structure with 3 points and 4 blocks
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
             sage: BD = IncidenceStructure(7, blocks, name="FanoPlane");
             sage: BD
             Incidence structure with 7 points and 7 blocks
-            sage: print BD.dual(algorithm="gap")         # optional - gap_packages
+            sage: print(BD.dual(algorithm="gap"))         # optional - gap_packages
             Incidence structure with 7 points and 7 blocks
             sage: BD.dual()
             Incidence structure with 7 points and 7 blocks

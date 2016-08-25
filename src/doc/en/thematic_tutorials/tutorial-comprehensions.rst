@@ -328,7 +328,7 @@ one may iterate through their elements::
     sage: all( p in P for p in P )
     True
 
-    sage: for p in GL(2, 2): print p; print
+    sage: for p in GL(2, 2): print(p); print("")
     [1 0]
     [0 1]
     <BLANKLINE>
@@ -348,7 +348,7 @@ one may iterate through their elements::
     [1 1]
     <BLANKLINE>
 
-    sage: for p in Partitions(3): print p
+    sage: for p in Partitions(3): print(p)
     [3]
     [2, 1]
     [1, 1, 1]
@@ -358,13 +358,13 @@ one may iterate through their elements::
 
 Beware of infinite loops::
 
-    sage: for p in Partitions(): print p           # not tested
+    sage: for p in Partitions(): print(p)          # not tested
 
 .. skip
 
 ::
 
-    sage: for p in Primes(): print p               # not tested
+    sage: for p in Primes(): print(p)              # not tested
 
 Infinite loops can nevertheless be very useful::
 

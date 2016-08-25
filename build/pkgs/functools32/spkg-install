@@ -6,6 +6,11 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
+if [ -x "$SAGE_LOCAL/bin/python3" ]; then
+    echo "Skipping functools32 since it is not necessary on Python 3"
+    exit 0
+fi
+
 cd src
 
 python setup.py install

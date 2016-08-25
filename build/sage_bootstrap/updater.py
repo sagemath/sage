@@ -25,29 +25,17 @@ from sage_bootstrap.download import Download
 
 
 
-class PackageUpdater(object):
+class ChecksumUpdater(object):
 
-    def __init__(self, package_name, new_version):
+    def __init__(self, package_name):
         self.__package = None
         self.package_name = package_name
-        self._update_version(new_version)
-
-    def _update_version(self, new_version):
-        old = Package(self.package_name)
-        package_version_txt = os.path.join(old.path, 'package-version.txt')
-        with open(package_version_txt, 'w') as f:
-            f.write(new_version.strip() + '\n')
-
+    
     @property
     def package(self):
         if self.__package is None:
             self.__package = Package(self.package_name)
         return self.__package
-        
-    def download_upstream(self, download_url):
-        tarball = self.package.tarball
-        print('Downloading tarball to {0}'.format(tarball.upstream_fqn))
-        Download(download_url, tarball.upstream_fqn).run()
 
     def fix_checksum(self):
         checksums_ini = os.path.join(self.package.path, 'checksums.ini')
@@ -64,3 +52,22 @@ class PackageUpdater(object):
             ''   # newline at end
         ]
         return '\n'.join(result)
+
+    
+class PackageUpdater(ChecksumUpdater):
+
+    def __init__(self, package_name, new_version):
+        super(PackageUpdater, self).__init__(package_name)
+        self._update_version(new_version)
+
+    def _update_version(self, new_version):
+        old = Package(self.package_name)
+        package_version_txt = os.path.join(old.path, 'package-version.txt')
+        with open(package_version_txt, 'w') as f:
+            f.write(new_version.strip() + '\n')
+        
+    def download_upstream(self, download_url):
+        tarball = self.package.tarball
+        print('Downloading tarball to {0}'.format(tarball.upstream_fqn))
+        Download(download_url, tarball.upstream_fqn).run()
+

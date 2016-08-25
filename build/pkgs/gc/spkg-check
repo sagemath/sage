@@ -6,7 +6,7 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-cd gc-*
+cd src
 
 if [ "$SAGE_DEBUG" = "yes" ]; then
     export CFLAGS="-O0 -g $CFLAGS"

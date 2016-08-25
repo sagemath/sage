@@ -68,6 +68,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.element cimport MultiplicativeGroupElement, Element, MonoidElement, Matrix
 from sage.structure.parent cimport Parent
@@ -237,7 +238,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
             except TypeError:
                 return None
 
-    cpdef int _cmp_(self, Element other) except -2:
+    cpdef int _cmp_(self, other) except -2:
         """
         EXAMPLES::
 
@@ -301,7 +302,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         return self._matrix
 
-    cpdef MonoidElement _mul_(self, MonoidElement other):
+    cpdef _mul_(self, other):
         """
         Return the product of ``self`` and`` other``, which must
         have identical parents.
@@ -491,7 +492,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             sage: gens = [MS([[1,0],[0,1]]),MS([[1,1],[0,1]])]
             sage: G = MatrixGroup(gens)
             sage: g = G([[1, 1], [0, 1]])
-            sage: print g._latex_()
+            sage: print(g._latex_())
             \left(\begin{array}{rr}
             1 & 1 \\
             0 & 1
@@ -523,7 +524,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             except TypeError:
                 return None
 
-    cpdef int _cmp_(self, Element other) except -2:
+    cpdef int _cmp_(self, other) except -2:
         """
         EXAMPLES::
 

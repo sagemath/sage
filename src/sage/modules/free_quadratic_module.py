@@ -67,6 +67,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import weakref
 
@@ -75,7 +76,7 @@ import sage.misc.latex as latex
 import sage.rings.ring as ring
 import sage.rings.integer
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-import free_module
+from . import free_module
 
 ###############################################################################
 #

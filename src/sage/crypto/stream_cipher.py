@@ -1,6 +1,7 @@
 """
 Stream Ciphers
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
@@ -9,8 +10,8 @@ Stream Ciphers
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from lfsr import lfsr_sequence
-from cipher import SymmetricKeyCipher
+from .lfsr import lfsr_sequence
+from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 
 class LFSRCipher(SymmetricKeyCipher):

@@ -48,6 +48,7 @@ AUTHORS:
 
 - Simon King (2013-02): added examples
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>, William Stein <wstein@gmail.com>
@@ -65,7 +66,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.category import Category
-import morphism
+from . import morphism
 from sage.structure.parent import Parent, Set_generic
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.dynamic_class import dynamic_class

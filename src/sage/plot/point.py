@@ -459,6 +459,10 @@ def point2d(points, **options):
         sage: point([CC(I), CC(I+1), CC(2+2*I)], pointsize=100)
         Graphics object consisting of 1 graphics primitive
 
+    TESTS::
+
+       sage: point2d(iter([]))
+       Graphics object consisting of 0 graphics primitives
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics

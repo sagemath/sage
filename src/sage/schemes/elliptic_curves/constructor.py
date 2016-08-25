@@ -7,6 +7,7 @@ AUTHORS:
 
 - John Cremona (2008-01): EllipticCurve(j) fixed for all cases
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -445,21 +446,21 @@ class EllipticCurveFactory(UniqueFactory):
         R, x = key
 
         if R is rings.QQ:
-            from ell_rational_field import EllipticCurve_rational_field
+            from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
         elif is_NumberField(R):
-            from ell_number_field import EllipticCurve_number_field
+            from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
         elif rings.is_pAdicField(R):
-            from ell_padic_field import EllipticCurve_padic_field
+            from .ell_padic_field import EllipticCurve_padic_field
             return EllipticCurve_padic_field(R, x)
         elif is_FiniteField(R) or (is_IntegerModRing(R) and R.characteristic().is_prime()):
-            from ell_finite_field import EllipticCurve_finite_field
+            from .ell_finite_field import EllipticCurve_finite_field
             return EllipticCurve_finite_field(R, x)
         elif R in _Fields:
-            from ell_field import EllipticCurve_field
+            from .ell_field import EllipticCurve_field
             return EllipticCurve_field(R, x)
-        from ell_generic import EllipticCurve_generic
+        from .ell_generic import EllipticCurve_generic
         return EllipticCurve_generic(R, x)
 
 
@@ -1263,5 +1264,5 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
         3^5,
         2^6 * 3^2]
     """
-    from ell_egros import (egros_from_jlist, egros_get_j)
+    from .ell_egros import (egros_from_jlist, egros_get_j)
     return egros_from_jlist(egros_get_j(S, proof=proof, verbose=verbose), S)

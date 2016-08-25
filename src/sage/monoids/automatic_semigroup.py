@@ -18,6 +18,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.all import cached_method
 from sage.categories.semigroups import Semigroups
@@ -865,15 +866,15 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 sage: R = IntegerModRing(15)
                 sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())
                 sage: M.construct()
-                sage: for m in M: print m, m.reduced_word()
-                1  []
-                3  [1]
-                5  [2]
-                9  [1, 1]
-                0  [1, 2]
-                10 [2, 2]
-                12 [1, 1, 1]
-                6  [1, 1, 1, 1]
+                sage: for m in M: print((m, m.reduced_word()))
+                (1, [])
+                (3, [1])
+                (5, [2])
+                (9, [1, 1])
+                (0, [1, 2])
+                (10, [2, 2])
+                (12, [1, 1, 1])
+                (6, [1, 1, 1, 1])
 
             TESTS:
 

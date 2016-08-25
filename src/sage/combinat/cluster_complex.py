@@ -273,7 +273,7 @@ class ClusterComplex(SubwordComplex):
         """
         name = self.__custom_name
         name += ( ' of type %s with %s vertices and %s facets'
-                  % (self.cartan_type(), self.vertices().dimension() + 1,
+                  % (self.cartan_type(), len(self.vertices()),
                      len(self._facets)) )
         return name
 

@@ -53,7 +53,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.structure.all import SageObject
 from sage.rings.all import QQ, ZZ
@@ -356,7 +356,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``i`` -- integer. The filtration degree.
 
-        OUPUT:
+        OUTPUT:
 
         Let the cone be spanned by the rays `\sigma=\langle r_1,\dots,
         r_k\rangle`. This method returns the intersection
@@ -451,7 +451,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUPUT:
+        OUTPUT:
 
         The subspace `E^\sigma(m)`
 
@@ -494,7 +494,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUPUT:
+        OUTPUT:
 
         The subspace `E_\sigma(m)`
 
@@ -658,10 +658,8 @@ class KlyachkoBundle_class(SageObject):
                         d = zero_matrix(F, E_tau.dimension(), E_sigma.dimension())
                     d_V_row.append(d)
                 d_V.append(d_V_row)
-            # print dim, ':\n', d_V, '\n'
             d_V = block_matrix(d_V, ring=F)
             CV.append(d_V)
-            # print dim, ': ', d_V.nrows(), 'x', d_V.ncols(), '\n', d_V
         from sage.homology.chain_complex import ChainComplex
         return ChainComplex(CV, base_ring=self.base_ring())
 
@@ -705,14 +703,14 @@ class KlyachkoBundle_class(SageObject):
             sage: for i,j in cartesian_product((range(-2,3), range(-2,3))):
             ....:       HH = V.cohomology(weight=(i,j), dim=True)
             ....:       if HH.is_zero(): continue
-            ....:       print 'H^*i(P^2, TP^2)_M('+str(i)+','+str(j)+') =', HH
-            H^*i(P^2, TP^2)_M(-1,0) = (1, 0, 0)
-            H^*i(P^2, TP^2)_M(-1,1) = (1, 0, 0)
-            H^*i(P^2, TP^2)_M(0,-1) = (1, 0, 0)
-            H^*i(P^2, TP^2)_M(0,0)  = (2, 0, 0)
-            H^*i(P^2, TP^2)_M(0,1)  = (1, 0, 0)
-            H^*i(P^2, TP^2)_M(1,-1) = (1, 0, 0)
-            H^*i(P^2, TP^2)_M(1,0)  = (1, 0, 0)
+            ....:       print('H^*i(P^2, TP^2)_M({}, {}) = {}'.format(i,j,HH))
+            H^*i(P^2, TP^2)_M(-1, 0) = (1, 0, 0)
+            H^*i(P^2, TP^2)_M(-1, 1) = (1, 0, 0)
+            H^*i(P^2, TP^2)_M(0, -1) = (1, 0, 0)
+            H^*i(P^2, TP^2)_M(0, 0) = (2, 0, 0)
+            H^*i(P^2, TP^2)_M(0, 1) = (1, 0, 0)
+            H^*i(P^2, TP^2)_M(1, -1) = (1, 0, 0)
+            H^*i(P^2, TP^2)_M(1, 0) = (1, 0, 0)
         """
         from sage.modules.all import FreeModule
         if weight is None:

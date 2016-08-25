@@ -228,7 +228,7 @@ where `(a_{ij})` is a Cartan matrix.  Then
     `C = (c_{ij})_{i\neq j}` satisfying the condition `c_{ij}+c_{ji}=1`.
     This choice has been made in Sage such that `c_{ij} = 1` if
     `i < j` and `c_{ij} = 0` if `i>j`, but other choices may be used if
-    deliberately stated at the intialization of the crystal::
+    deliberately stated at the initialization of the crystal::
 
         sage: c = Matrix([[0,0,1],[1,0,0],[0,1,0]])
         sage: La = RootSystem(['C',3]).weight_lattice().fundamental_weights()
@@ -295,13 +295,14 @@ label (or rigging).  A crystal structure was defined on these objects in
 [Schilling2006]_, then later extended to work as a model for `B(\infty)`.
 See [SalisburyScrimshaw2015]_ for more information::
 
-    sage: RiggedConfigurations.global_options(display="horizontal")
+    sage: RiggedConfigurations.options(display="horizontal")
     sage: RC = crystals.infinity.RiggedConfigurations(['C',3,1])
     sage: nu = RC.highest_weight_vector().f_string([0,1,2,3,2,1,0]); nu
     -2[ ]-1   2[ ][ ]1   0[ ][ ]0   0[ ]0
     -2[ ]-1
     sage: nu.weight()
     -2*Lambda[0] + 2*Lambda[1] - 2*delta
+    sage: RiggedConfigurations.options._reset()
 
 We can check this crystal is isomorphic to the crystal above using Nakajima
 monomials::

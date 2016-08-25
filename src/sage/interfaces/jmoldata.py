@@ -18,6 +18,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
@@ -121,7 +122,7 @@ class JmolData(SageObject):
             sage: script = "load =1lcd;display DNA;moveto 0.0 { -473 -713 -518 59.94} 100.0 0.0 0.0 {21.17 26.72 27.295} 27.544636 {0.0 0.0 0.0} -25.287832 64.8414 0.0;"
             sage: testfile = tmp_filename(ext="DNA.png")
             sage: JData.export_image(targetfile=testfile,datafile=script,image_type="PNG")  # optional -- java internet
-            sage: print os.path.exists(testfile)  # optional -- java internet
+            sage: print(os.path.exists(testfile)) # optional -- java internet
             True
 
         Use Jmol to save an image of a 3-D object created in Sage.
@@ -143,7 +144,7 @@ class JmolData(SageObject):
             sage: script = 'set defaultdirectory "{0}"\n script SCRIPT\n'.format(archive_native)
             sage: testfile = os.path.join(SAGE_TMP, "testimage.png")
             sage: JData.export_image(targetfile=testfile, datafile=script, image_type="PNG") # optional -- java
-            sage: print os.path.exists(testfile) # optional -- java
+            sage: print(os.path.exists(testfile)) # optional -- java
             True
         """
         # Set up paths, file names and scripts

@@ -19,6 +19,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.ext.stdsage cimport PY_NEW
 include "sage/ext/cdefs.pxi"
@@ -215,7 +216,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         if ZZ_IsOne(leftover):
             return val
         else:
-            raise ValueError, "context must be a power of the appropriate prime"
+            raise ValueError("context must be a power of the appropriate prime")
 
     cdef ext_p_list_precs(self, bint pos, long prec):
         """
@@ -285,7 +286,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         #cdef ntl_ZZ_pContext_class cup = self.prime_pow.get_context(self.prime_pow.prec_cap + (<PowComputer_ZZ_pX_FM_Eis>self.prime_pow).low_length)
         #cdef ntl_ZZ_pX printer = ntl_ZZ_pX([],cup)
         #printer.x = ((<PowComputer_ZZ_pX_FM_Eis>self.prime_pow).low_shifter[0]).val()
-        #print printer
+        #print(printer)
 
         if self.prime_pow.e == 1:
             for j from 0 <= j < self.prime_pow.prec_cap:
@@ -311,7 +312,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             ZZ_DivRem_long(halfp, halfp, 2)
             i = 0
             while True:
-                #print shifter._ntl_rep()
                 # It's important that one doesn't normalize in between shifting (for capped relative elements):
                 # _const_term doesn't normalize and thus we pick up the zeros
                 # since we're throwing away leading zeros, it doesn't matter if we start normalized or not.
@@ -607,15 +607,14 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
     cdef long aprec
     cdef ntl_ZZ py_tmp
     if not isinstance(L, list):
-        raise TypeError, "L must be a list"
-    #print "before find_val_aprec"
+        raise TypeError("L must be a list")
     min_val, min_aprec, total_type = find_val_aprec(elt.prime_pow, L)
     #return "a","b","c"
     if total_type == two:
         # all integers
         return [ntl_ZZ(a) for a in L], zero, None
     if min_val < 0 and not elt.prime_pow.in_field:
-        raise ValueError, "negative valuation"
+        raise ValueError("negative valuation")
     if total_type == one:
         # rationals and integers
         py_tmp = ntl_ZZ.__new__(ntl_ZZ)
@@ -732,7 +731,6 @@ cdef find_val_aprec(PowComputer_ext pp, L):
     min_aprec = big
     total_type = two # we begin by defaulting to the list elements being integers
     for i from 0 <= i < len(L):
-        #print "before get_val_prec"
         cur_val, cur_aprec, cur_type = get_val_prec(pp, L[i])
         #return "a","b","c"
         # proc_type == 0 indicates something with finite precision
@@ -833,35 +831,25 @@ cdef get_val_prec(PowComputer_ext pp, a):
     See _test_get_val_prec for more details.
     """
     cdef ntl_ZZ py_tmp
-    #print "pre Integer check"
     if isinstance(a, Integer):
         if a == 0:
             return (big, big, two)
         return (a.valuation(pp.prime), big, two)
-    #print "pre ntl_ZZ check"
     if isinstance(a, ntl_ZZ):
         if ZZ_IsZero((<ntl_ZZ>a).x):
             return (big, big, two)
         py_tmp = ntl_ZZ.__new__(ntl_ZZ)
         py_tmp.x = pp.pow_ZZ_tmp(1)[0]
         return (Integer(a.valuation(py_tmp)), big, two)
-    #print "pre int/long check"
     if isinstance(a, (int, long)):
-        #print a, type(a)
-        #print pp
-        #print pp.prime
-        #print big, type(big)
-        #print two, type(two)
         if a == 0:
             return (big, big, two)
         return (Integer(a).valuation(pp.prime), big, two)
-    #print "pre Rational check"
     if isinstance(a, Rational):
         if a == 0:
             return (big, big, one)
         val = a.valuation(pp.prime)
         return (val, big, one)
-    #print "pre padic-base check"
     if isinstance(a, pAdicGenericElement) and a._is_base_elt(pp.prime):
         if a.parent().prime() == pp.prime:
             if a._is_exact_zero():
@@ -869,11 +857,10 @@ cdef get_val_prec(PowComputer_ext pp, a):
             val = a.valuation()
             return (val if val < zero else zero, a.precision_absolute(), zero)
         else:
-            raise TypeError, "primes must match"
+            raise TypeError("primes must match")
     cdef mpz_t leftover
     cdef long long_val
     cdef Integer Integer_val
-    #print "pre IntegerMod check"
     if is_IntegerMod(a):
         mpz_init(leftover)
         long_val = mpz_remove(leftover, (<Integer>a.modulus()).value, pp.prime.value)
@@ -885,9 +872,8 @@ cdef get_val_prec(PowComputer_ext pp, a):
             return (zero, Integer_val, zero)
         else:
             mpz_clear(leftover)
-            raise TypeError, "modulus must be a positive power of the appropriate prime"
+            raise TypeError("modulus must be a positive power of the appropriate prime")
     cdef ZZ_c leftover_z
-    #print "pre ntl_ZZ_p check"
     if isinstance(a, ntl_ZZ_p):
         long_val = ZZ_remove(leftover_z, (<ntl_ZZ_p>a).c.p.x, pp.pow_ZZ_tmp(1)[0])
         if long_val > 0 and ZZ_IsOne(leftover_z):
@@ -896,13 +882,11 @@ cdef get_val_prec(PowComputer_ext pp, a):
             # Since we're guaranteed to be in type 0, we don't care about computing the actual valuation
             return (zero, Integer_val, zero)
         else:
-            print long_val
+            print(long_val)
             py_tmp = ntl_ZZ.__new__(ntl_ZZ)
             py_tmp.x = (<ntl_ZZ_p>a).c.p.x
-            print py_tmp
+            print(py_tmp)
             py_tmp.x = leftover_z
-            print py_tmp
-            raise TypeError, "modulus must be a positive power of the appropriate prime"
-    raise TypeError, "unsupported type for list element: %s"%(type(a))
-
-
+            print(py_tmp)
+            raise TypeError("modulus must be a positive power of the appropriate prime")
+    raise TypeError("unsupported type for list element: %s" % type(a))

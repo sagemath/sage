@@ -28,6 +28,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 from math import isnan
@@ -37,7 +38,7 @@ from sage.misc.temporary_file import tmp_filename
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 from sage.misc.decorators import suboptions
-from colors import rgbcolor
+from .colors import rgbcolor
 
 ALLOWED_EXTENSIONS = ['.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg']
 DEFAULT_DPI = 100
@@ -2302,7 +2303,7 @@ class Graphics(WithEqualityById, SageObject):
             else:
                 x_formatter = OldScalarFormatter()
         elif x_formatter in SR:
-            from misc import _multiple_of_constant
+            from .misc import _multiple_of_constant
             x_const = x_formatter
             x_formatter = FuncFormatter(lambda n,pos:
                                         _multiple_of_constant(n,pos,x_const))
@@ -2328,7 +2329,7 @@ class Graphics(WithEqualityById, SageObject):
             else:
                 y_formatter = OldScalarFormatter()
         elif y_formatter in SR:
-            from misc import _multiple_of_constant
+            from .misc import _multiple_of_constant
             y_const = y_formatter
             y_formatter = FuncFormatter(lambda n,pos:
                                         _multiple_of_constant(n,pos,y_const))

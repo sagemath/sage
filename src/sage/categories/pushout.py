@@ -1,9 +1,12 @@
 """
 Coercion via Construction Functors
 """
+from __future__ import print_function
+from __future__ import absolute_import
+
 import six
 from sage.misc.lazy_import import lazy_import
-from functor import Functor, IdentityFunctor_generic
+from .functor import Functor, IdentityFunctor_generic
 
 lazy_import('sage.categories.commutative_additive_groups', 'CommutativeAdditiveGroups')
 lazy_import('sage.categories.commutative_rings', 'CommutativeRings')
@@ -771,7 +774,7 @@ class PolynomialFunctor(ConstructionFunctor):
             True
 
         """
-        from rings import Rings
+        from .rings import Rings
         Functor.__init__(self, Rings(), Rings())
         self.var = var
         self.multi_variate = multi_variate
@@ -2669,35 +2672,39 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         sage: F = K.construction()[0]
         sage: O = F(ZZ); O
         Relative Order in Number Field in a with defining polynomial x^3 + x^2 + 1 over its base field
-
-    Unfortunately, the relative number field is not a unique parent::
-
         sage: O.ambient() is K
-        False
-        sage: O.ambient() == K
         True
 
     """
     rank = 3
 
-    def __init__(self, polys, names, embeddings, cyclotomic=None, **kwds):
+    def __init__(self, polys, names, embeddings=None, structures=None,
+                 cyclotomic=None, **kwds):
         """
         INPUT:
 
-        - ``polys``: a list of polynomials (or of integers, for
+        - ``polys`` -- list of polynomials (or of integers, for
           finite fields and unramified local extensions)
-        - ``names``: a list of strings of the same length as the
+
+        - ``names`` -- list of strings of the same length as the
           list ``polys``
-        - ``embeddings``: a list of approximate complex values,
-          determining an embedding of the generators into the
+
+        - ``embeddings`` -- (optional) list of approximate complex
+          values, determining an embedding of the generators into the
           complex field, or ``None`` for each generator whose
           embedding is not prescribed.
-        - ``cyclotomic``: optional integer. If it is provided,
-          application of the functor to the rational field yields
-          a cyclotomic field, rather than just a number field.
-        - ``**kwds``: further keywords; when the functor is applied to
-          a ring `R`, these are passed to the ``extension()`` method
-          of `R`.
+
+        - ``structures`` -- (optional) list of structural morphisms of
+          number fields; see
+          :class:`~sage.rings.number_field.structure.NumberFieldStructure`.
+
+        - ``cyclotomic`` -- (optional) integer. If it is provided,
+          application of the functor to the rational field yields a
+          cyclotomic field, rather than just a number field.
+
+        - ``**kwds`` -- further keywords; when the functor is applied
+          to a ring `R`, these are passed to the ``extension()``
+          method of `R`.
 
         REMARK:
 
@@ -2752,15 +2759,38 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             sage: F(ZZ)
             Maximal Order in Cyclotomic Field of order 8 and degree 4
 
+        The data stored in this construction includes structural
+        morphisms of number fields (see :trac:`20826`)::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = NumberField(x^2 - 3)
+            sage: L0.<b> = K.change_names()
+            sage: L0.structure()
+            (Isomorphism given by variable name change map:
+               From: Number Field in b with defining polynomial x^2 - 3
+               To:   Number Field in a with defining polynomial x^2 - 3,
+             Isomorphism given by variable name change map:
+               From: Number Field in a with defining polynomial x^2 - 3
+               To:   Number Field in b with defining polynomial x^2 - 3)
+            sage: L1 = (b*x).parent().base_ring()
+            sage: L1 is L0
+            True
+
         """
         Functor.__init__(self, Rings(), Rings())
-        if not (isinstance(polys,(list,tuple)) and isinstance(names,(list,tuple)) and isinstance(embeddings,(list,tuple))):
+        if not (isinstance(polys, (list, tuple)) and isinstance(names, (list, tuple))):
             raise ValueError("Arguments must be lists or tuples")
-        if not (len(names)==len(polys)==len(embeddings)):
-            raise ValueError("The three arguments must be of the same length")
+        n = len(polys)
+        if embeddings is None:
+            embeddings = [None] * n
+        if structures is None:
+            structures = [None] * n
+        if not (len(names) == len(embeddings) == len(structures) == n):
+            raise ValueError("All arguments must be of the same length")
         self.polys = list(polys)
         self.names = list(names)
         self.embeddings = list(embeddings)
+        self.structures = list(structures)
         self.cyclotomic = int(cyclotomic) if cyclotomic is not None else None
         self.kwds = kwds
 
@@ -2795,8 +2825,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             if R==ZZ:
                 return CyclotomicField(self.cyclotomic).maximal_order()
         if len(self.polys) == 1:
-            return R.extension(self.polys[0], names=self.names[0], embedding=self.embeddings[0], **self.kwds)
-        return R.extension(self.polys, names=self.names, embedding=self.embeddings)
+            return R.extension(self.polys[0], names=self.names[0], embedding=self.embeddings[0],
+                               structure=self.structures[0], **self.kwds)
+        return R.extension(self.polys, names=self.names, embedding=self.embeddings,
+                           structure=self.structures, **self.kwds)
 
     def __cmp__(self, other):
         """
@@ -2807,12 +2839,9 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             sage: F == loads(dumps(F))
             True
         """
-        c = cmp(type(self), type(other))
-        if c == 0:
-            c = cmp(self.polys, other.polys)
-        if c == 0:
-            c = cmp(self.embeddings, other.embeddings)
-        return c
+        return (cmp(type(self), type(other))
+                or cmp((self.polys, self.embeddings, self.structures),
+                       (other.polys, other.embeddings, other.structures)))
 
     def merge(self,other):
         """
@@ -2941,8 +2970,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         # integers to encode degrees of extensions.
         from sage.rings.integer import Integer
         if (isinstance(self.polys[0], Integer) and isinstance(other.polys[0], Integer)
-            and self.embeddings == [None] and other.embeddings == [None] and self.kwds == other.kwds):
-            return AlgebraicExtensionFunctor([self.polys[0].lcm(other.polys[0])], [None], [None], **self.kwds)
+            and self.embeddings == other.embeddings == [None]
+            and self.structures == other.structures == [None]
+            and self.kwds == other.kwds):
+            return AlgebraicExtensionFunctor([self.polys[0].lcm(other.polys[0])], [None], **self.kwds)
 
     def __mul__(self, other):
         """
@@ -2969,7 +3000,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             if set(self.names).intersection(other.names):
                 raise CoercionException("Overlapping names (%s,%s)" % (self.names, other.names))
             return AlgebraicExtensionFunctor(self.polys + other.polys, self.names + other.names,
-                                             self.embeddings + other.embeddings, **self.kwds)
+                                             self.embeddings + other.embeddings,
+                                             self.structures + other.structures, **self.kwds)
         elif isinstance(other, CompositeConstructionFunctor) \
               and isinstance(other.all[-1], AlgebraicExtensionFunctor):
             return CompositeConstructionFunctor(other.all[:-1], self * other.all[-1])
@@ -2997,10 +3029,12 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             sage: L[-1](QQ)
             Number Field in a1 with defining polynomial x^2 - 3
         """
-        if len(self.polys)==1:
+        n = len(self.polys)
+        if n == 1:
             return [self]
-        return [AlgebraicExtensionFunctor([self.polys[i]], [self.names[i]], [self.embeddings[i]], **self.kwds)
-                for i in xrange(len(self.polys))]
+        return [AlgebraicExtensionFunctor([self.polys[i]], [self.names[i]], [self.embeddings[i]],
+                                          [self.structures[i]], **self.kwds)
+                for i in xrange(n)]
 
 class AlgebraicClosureFunctor(ConstructionFunctor):
     """
@@ -3694,7 +3728,6 @@ def pushout(R, S):
     try:
 
         while len(Rc) > 0 or len(Sc) > 0:
-            # print Z
             # if we are out of functors in either tower, there is no ambiguity
             if len(Sc) == 0:
                 all = apply_from(Rc)
@@ -3874,13 +3907,12 @@ def pushout_lattice(R, S):
                         lattice[i+1,j+1] = Rc[i](lattice[i,j+1])
                         Sc[j] = None # force us to use pre-applied Sc[i]
             except (AttributeError, NameError):
-                # print i, j
                 # pp(lattice)
                 for i in range(100):
                     for j in range(100):
                         try:
                             R = lattice[i,j]
-                            print i, j, R
+                            print(i, j, R)
                         except KeyError:
                             break
                 raise CoercionException("%s does not support %s" % (lattice[i,j], 'F'))
@@ -3929,7 +3961,7 @@ def pushout_lattice(R, S):
 ##         for j in range(100):
 ##             try:
 ##                 R = lattice[i,j]
-##                 print i, j, R
+##                 print(i, j, R)
 ##             except KeyError:
 ##                 break
 

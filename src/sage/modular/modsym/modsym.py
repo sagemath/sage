@@ -21,9 +21,9 @@ over a bigger field. In each case we also decompose the space using
 ::
 
     sage: M = ModularSymbols(23,2,base_ring=QQ)
-    sage: print M.T(2).charpoly('x').factor()
+    sage: M.T(2).charpoly('x').factor()
     (x - 3) * (x^2 + x - 1)^2
-    sage: print M.decomposition(2)
+    sage: M.decomposition(2)
     [
     Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Rational Field,
     Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Rational Field
@@ -32,9 +32,9 @@ over a bigger field. In each case we also decompose the space using
 ::
 
     sage: M = ModularSymbols(23,2,base_ring=QuadraticField(5, 'sqrt5'))
-    sage: print M.T(2).charpoly('x').factor()
+    sage: M.T(2).charpoly('x').factor()
     (x - 3) * (x - 1/2*sqrt5 + 1/2)^2 * (x + 1/2*sqrt5 + 1/2)^2
-    sage: print M.decomposition(2)
+    sage: M.decomposition(2)
     [
     Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5 with defining polynomial x^2 - 5,
     Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5 with defining polynomial x^2 - 5,
@@ -78,10 +78,11 @@ This test catches a tricky corner case for spaces with character::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 import weakref
 
-import ambient
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 import sage.rings.rational_field as rational_field
@@ -331,6 +332,7 @@ def ModularSymbols(group  = 1,
         sage: M is ModularSymbols(11,use_cache=False)
         False
     """
+    from . import ambient
     key = canonical_parameters(group, weight, sign, base_ring)
 
     if use_cache and key in _cache:

@@ -283,7 +283,7 @@ class PiecewiseFunction(BuiltinFunction):
         raise NotImplementedError
 
 
-    class EvaluationMethods:
+    class EvaluationMethods(object):
 
         def expression_at(cls, self, parameters, variable, point):
             """
@@ -777,7 +777,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             TESTS:
 
-            Verify that piecewise integrals of zero work (trac #10841)::
+            Verify that piecewise integrals of zero work (:trac:`10841`)::
 
                 sage: f0(x) = 0
                 sage: f = piecewise([[[0,1],f0]])

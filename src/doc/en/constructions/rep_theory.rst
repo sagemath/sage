@@ -30,7 +30,7 @@ pexpect interface to the GAP command ``CharacterTable``.
     [ 1  1 -1 -1  1]
     [ 2  0  0  0 -2]
     sage: CT = gap(G).CharacterTable()
-    sage: print gap.eval("Display(%s)"%CT.name())
+    sage: print(gap.eval("Display(%s)"%CT.name()))
     CT1
     <BLANKLINE>
      2  3  2  2  2  3
@@ -59,7 +59,7 @@ Here is another example:
     'Group([ (1,2)(3,4), (1,2,3) ])'
     sage: gap.eval("T := CharacterTable(G)")
     'CharacterTable( Alt( [ 1 .. 4 ] ) )'
-    sage: print gap.eval("Display(T)")
+    sage: print(gap.eval("Display(T)"))
     CT2
     <BLANKLINE>
          2  2  .  .  2
@@ -84,12 +84,12 @@ Python command. This makes the output look much nicer.
 
 ::
 
-    sage: print gap.eval("irr := Irr(G)")
+    sage: print(gap.eval("irr := Irr(G)"))
     [ Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ), 
       Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] ), 
       Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3), E(3)^2, 1 ] ), 
       Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, 0, 0, -1 ] ) ]
-    sage: print gap.eval("Display(irr)")
+    sage: print(gap.eval("Display(irr)"))
     [ [       1,       1,       1,       1 ],
       [       1,  E(3)^2,    E(3),       1 ],
       [       1,    E(3),  E(3)^2,       1 ],
@@ -168,9 +168,9 @@ The example below using the GAP interface illustrates the syntax.
 
 ::
 
-    sage: print gap.eval("G := Group((1,2)(3,4),(1,2,3))")
+    sage: print(gap.eval("G := Group((1,2)(3,4),(1,2,3))"))
     Group([ (1,2)(3,4), (1,2,3) ])
-    sage: print gap.eval("irr := IrreducibleRepresentations(G,GF(7))")   # random arch. dependent output
+    sage: print(gap.eval("irr := IrreducibleRepresentations(G,GF(7))"))   # random arch. dependent output
     [ [ (1,2)(3,4), (1,2,3) ] -> [ [ [ Z(7)^0 ] ], [ [ Z(7)^4 ] ] ],
       [ (1,2)(3,4), (1,2,3) ] -> [ [ [ Z(7)^0 ] ], [ [ Z(7)^2 ] ] ],
       [ (1,2)(3,4), (1,2,3) ] -> [ [ [ Z(7)^0 ] ], [ [ Z(7)^0 ] ] ],
@@ -181,14 +181,14 @@ The example below using the GAP interface illustrates the syntax.
             [ Z(7)^0, 0*Z(7), 0*Z(7) ] ] ] ]
     sage: gap.eval("brvals := List(irr,chi->List(ConjugacyClasses(G),c->BrauerCharacterValue(Image(chi,Representative(c)))))")
     ''
-    sage: print gap.eval("Display(brvals)")              # random architecture dependent output
+    sage: print(gap.eval("Display(brvals)"))              # random architecture dependent output
     [ [       1,       1,  E(3)^2,    E(3) ],
       [       1,       1,    E(3),  E(3)^2 ],
       [       1,       1,       1,       1 ],
       [       3,      -1,       0,       0 ] ]
-    sage: print gap.eval("T := CharacterTable(G)")
+    sage: print(gap.eval("T := CharacterTable(G)"))
     CharacterTable( Alt( [ 1 .. 4 ] ) )
-    sage: print gap.eval("Display(T)")
+    sage: print(gap.eval("Display(T)"))
     CT3
     <BLANKLINE>
          2  2  .  .  2

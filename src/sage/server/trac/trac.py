@@ -4,7 +4,10 @@ Sage Trac Server
 This module configures and launches a Trac server, if an optional
 package (e.g., trac-x.y.z.spkg) is installed.
 """
-import os, sys
+from __future__ import print_function
+
+import os
+import sys
 
 from sage.env import SAGE_LIB, SAGE_LOCAL
 from sage.misc.viewer import browser
@@ -111,24 +114,24 @@ def trac(directory = 'sage_trac', port = 10000, address = 'localhost',
 
     passwd = os.path.join(directory, 'conf/passwd')
     if not os.path.exists(passwd) or len(open(passwd).read()) < 2:
-        print "*" * 80
-        print "Create new accounts with the htdigest command (part of Apache):"
-        print "\nTo add a new user with name username:"
-        print "    cd %s" % os.path.abspath(os.path.join(directory, 'conf'))
-        print "    htdigest passwd %s <username>" % address
-        print "\nTo grant full admin permissions to a user:"
-        print "    %s %s permission add <username> TRAC_ADMIN" % (os.path.join(SAGE_LOCAL, 'bin','trac-admin'), os.path.abspath(directory))
-        print "\nThen restart the trac server."
-        print "*" * 80
-        open(passwd,'w').close()
+        print("*" * 80)
+        print("Create new accounts with the htdigest command (part of Apache):")
+        print("\nTo add a new user with name username:")
+        print("    cd %s" % os.path.abspath(os.path.join(directory, 'conf')))
+        print("    htdigest passwd %s <username>" % address)
+        print("\nTo grant full admin permissions to a user:")
+        print("    %s %s permission add <username> TRAC_ADMIN" % (os.path.join(SAGE_LOCAL, 'bin','trac-admin'), os.path.abspath(directory)))
+        print("\nThen restart the trac server.")
+        print("*" * 80)
+        open(passwd, 'w').close()
 
-    print "Open your web browser to " + url
-    print "Starting a Trac server..."
+    print("Open your web browser to " + url)
+    print("Starting a Trac server...")
 
     if auto_reload:
         options += ' --auto-reload '
 
     cmd ='tracd %s --port %s --hostname %s --auth *,%s,%s "%s" ' % (options, port, address, passwd, address, directory)
 
-    print cmd
+    print(cmd)
     os.system(cmd)

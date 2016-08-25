@@ -252,7 +252,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 1568::
   sage: H = Mac.H()
   sage: s = Sym.schur()
   sage: for la in Partitions(3):
-  ....:     print "H", la, "=", s(H(la))
+  ....:     print("H {} = {}".format(la, s(H(la))))
   H [3] = q^3*s[1, 1, 1] + (q^2+q)*s[2, 1] + s[3]
   H [2, 1] = q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3]
   H [1, 1, 1] = s[1, 1, 1] + (t^2+t)*s[2, 1] + t^3*s[3]
@@ -264,7 +264,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 1581::
   sage: H = Mac.H()
   sage: s = Sym.schur()
   sage: for la in Partitions(3):
-  ....:    print "H",la, "=", s(H(la))
+  ....:     print("H {} = {}".format(la, s(H(la))))
   H [3] = s[3]
   H [2, 1] = s[2, 1] + t*s[3]
   H [1, 1, 1] = s[1, 1, 1] + (t^2+t)*s[2, 1] + t^3*s[3]
@@ -279,7 +279,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 1596::
   sage: H = Mac.H()
   sage: s = Sym.schur()
   sage: for la in Partitions(3):
-  ....:    print "H",la, "=", s(H(la))
+  ....:     print("H {} = {}".format(la, s(H(la))))
   H [3] = q^3*s[1, 1, 1] + (q^2+q)*s[2, 1] + s[3]
   H [2, 1] = q*s[1, 1, 1] + s[2, 1]
   H [1, 1, 1] = s[1, 1, 1]
@@ -361,8 +361,8 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2382::
     [3, 2, 1]
     sage: for mu in Partitions(la.size(), max_part = 3):
     ....:     T = WeakTableaux(k, c, mu)
-    ....:     print "weight", mu
-    ....:     print T.list()
+    ....:     print("weight {}".format(mu))
+    ....:     print(T.list())
     ....:
     weight [3, 3]
     []
@@ -387,8 +387,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2487::
     sage: ks = Sym.kschur(3,t=1)
     sage: h = Sym.homogeneous()
     sage: for mu in Partitions(7, max_part =3):
-    ....:     print h(ks(mu))
-    ....:
+    ....:     print(h(ks(mu)))
     h[3, 3, 1]
     h[3, 2, 2] - h[3, 3, 1]
     h[3, 2, 1, 1] - h[3, 2, 2]
@@ -424,10 +423,9 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2658::
     sage: weight = Partition([4,3,1])
     sage: for la in Partitions(weight.size(), max_part = k):
     ....:     if la.dominates(weight):
-    ....:         print la
+    ....:         print(la)
     ....:         T = WeakTableaux(k, la, weight, representation = 'bounded')
-    ....:         print T.list()
-    ....:
+    ....:         print(T.list())
     [6, 2]
     [[[1, 1, 1, 1, 2, 2], [2, 3]]]
     [6, 1, 1]
@@ -476,7 +474,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2810::
 
     sage: c = Partition([3,2,1]).to_core(3)
     sage: for p in sorted(f.support()):   # Sorted for consistant doctest ordering
-    ....:   print p, SkewPartition([p.to_core(3).to_partition(),c.to_partition()])
+    ....:   print("{} {}".format(p, SkewPartition([p.to_core(3).to_partition(),c.to_partition()])))
     ....:
     [3, 1, 1, 1, 1] [[5, 2, 1, 1, 1], [5, 2, 1]]
     [3, 2, 1, 1] [[6, 3, 1, 1], [5, 2, 1]]
@@ -580,7 +578,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 4055::
 
     sage: t = var('t')
     sage: for mu in Partitions(5):
-    ....:     print mu, sum(t^T.spin() for T in StrongTableaux(3,[4,1,1],mu))
+    ....:     print("{} {}".format(mu, sum(t^T.spin() for T in StrongTableaux(3,[4,1,1],mu))))
     [5] 0
     [4, 1] t
     [3, 2] t
@@ -793,4 +791,3 @@ sage: G2 = SymQ3.AffineGrothendieckPolynomial([2],6)
 sage: (G1*G2).lift().scalar(Kks3[3,1])
 -1
 """
-

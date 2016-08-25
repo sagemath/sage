@@ -289,6 +289,9 @@ cdef extern from "gap/plist.h":
 
 cdef extern from "gap/lists.h":
     void libGAP_UNB_LIST(libGAP_Obj list, int pos)
+    bint libGAP_IS_LIST(libGAP_Obj lst)
+    int libGAP_LEN_LIST(libGAP_Obj lst)
+    libGAP_Obj libGAP_ELM_LIST(libGAP_Obj lst, int pos)
 
 cdef extern from "gap/listfunc.h":
     void libGAP_AddList(libGAP_Obj list, libGAP_Obj obj)

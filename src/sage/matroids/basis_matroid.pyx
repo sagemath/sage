@@ -978,7 +978,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             False
         """
         if not isinstance(other, BasisMatroid):
-            return BasisExchangeMatroid._is_isomorphic(self, other)
+            return self.isomorphism(BasisMatroid(other))
         if self is other:
             return {e:e for e in self.groundset()}
         if len(self) != len(other):
@@ -1027,17 +1027,19 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         return self.nonbases()._isomorphism(other.nonbases(), PS, PO)
         
-    cpdef _is_isomorphic(self, other):
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Return if this matroid is isomorphic to the given matroid.
 
         INPUT:
 
-        - ``other`` -- a matroid.
+        - ``other`` -- A matroid,
+        - optional parameter ``certificate`` -- Boolean.
 
         OUTPUT:
 
-        Boolean.
+        Boolean,
+        and, if certificate = True, a dictionary giving the isomophism or None
 
         .. NOTE::
 
@@ -1050,7 +1052,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: N = BasisMatroid(matroids.named_matroids.Fano())
             sage: M._is_isomorphic(N)
             False
+            sage: M._is_isomorphic(N, certificate=True)
+            (False, None)
         """
+        if certificate:
+            return self._is_isomorphic(other), self._isomorphism(other)
         if not isinstance(other, BasisMatroid):
             return BasisExchangeMatroid._is_isomorphic(self, other)
         if self is other:

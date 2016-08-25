@@ -72,6 +72,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 import sqlite3 as sqlite
 import os
 import re
@@ -1077,7 +1079,7 @@ class SQLDatabase(SageObject):
             sage: replace_with_filepath = tmp_dir() + 'test.db'
             sage: SD = SQLDatabase(replace_with_filepath, False)
             sage: SD.create_table('simon', {'n':{'sql':'INTEGER', 'index':True}})
-            sage: print SD
+            sage: print(SD)
             table simon:
                 column n: index: True; unique: False; primary_key: False;
                     sql: INTEGER;

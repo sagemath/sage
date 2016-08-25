@@ -27,7 +27,7 @@ Combinatorial objects::
 
 Constructions and Species::
 
-    sage: for (p, s) in cartesian_product([P,S]): print p, s # not tested
+    sage: for (p, s) in cartesian_product([P,S]): print((p, s)) # not tested
     sage: DisjointUnionEnumeratedSets(Family(lambda n: IntegerVectors(n, 3), NonNegativeIntegers))  # not tested
 
 Words::

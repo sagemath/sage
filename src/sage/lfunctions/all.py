@@ -1,7 +1,9 @@
-from dokchitser import Dokchitser
+from __future__ import absolute_import
 
-from lcalc import lcalc
+from .dokchitser import Dokchitser
 
-from sympow import sympow
+from .lcalc import lcalc
 
-from zero_sums import LFunctionZeroSum
+from .sympow import sympow
+
+from .zero_sums import LFunctionZeroSum

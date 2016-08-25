@@ -55,6 +55,7 @@ from __future__ import division
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 cimport generators
 cimport sage_object
@@ -173,7 +174,7 @@ cdef class CategoryObject(sage_object.SageObject):
         """
         if category is None:
             if debug.bad_parent_warnings:
-                print "No category for %s" % type(self)
+                print("No category for %s" % type(self))
             category = guess_category(self) # so generators don't crash
         elif isinstance(category, (list, tuple)):
             category = Category.join(category)
@@ -260,7 +261,7 @@ cdef class CategoryObject(sage_object.SageObject):
 
     def _populate_generators_(self, gens=None, names=None, normalize = True, category=None):
         if category in self._generators:
-            raise ValueError, "Generators cannot be changed after object creation."
+            raise ValueError("Generators cannot be changed after object creation.")
         if category is None:
             category = self._category
         from sage.structure.sequence import Sequence
@@ -464,13 +465,13 @@ cdef class CategoryObject(sage_object.SageObject):
                     ngens = self.ngens()
             names = normalize_names(ngens, names)
         if self._names is not None and names != self._names:
-            raise ValueError, 'variable names cannot be changed after object creation.'
+            raise ValueError('variable names cannot be changed after object creation.')
         if isinstance(names, str):
             names = (names, )  # make it a tuple
         elif isinstance(names, list):
             names = tuple(names)
         elif not isinstance(names, tuple):
-            raise TypeError, "names must be a tuple of strings"
+            raise TypeError("names must be a tuple of strings")
         self._names = names
 
     def normalize_names(self, ngens, names):
@@ -581,7 +582,7 @@ cdef class CategoryObject(sage_object.SageObject):
         if scope is None:
             scope = globals()
         if verbose:
-            print "Defining %s"%(', '.join(vs))
+            print("Defining %s" % (', '.join(vs)))
         for v, g in zip(vs, gs):
             scope[v] = g
 
@@ -711,10 +712,10 @@ cdef class CategoryObject(sage_object.SageObject):
             sage: R, x = PolynomialRing(QQ, 'x', 12).objgens()
             sage: x
             (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
-            sage: print R.latex_variable_names ()
+            sage: R.latex_variable_names ()
             ['x_{0}', 'x_{1}', 'x_{2}', 'x_{3}', 'x_{4}', 'x_{5}', 'x_{6}', 'x_{7}', 'x_{8}', 'x_{9}', 'x_{10}', 'x_{11}']
             sage: f = x[0]^3 + 15/3 * x[1]^10
-            sage: print latex(f)
+            sage: print(latex(f))
             5 x_{1}^{10} + x_{0}^{3}
         """
         from sage.misc.latex import latex, latex_variable_name
@@ -1059,8 +1060,7 @@ class localvars:
 
        sage: R.<x,y> = PolynomialRing(QQ,2)
        sage: with localvars(R, 'z,w'):
-       ...       print x^3 + y^3 - x*y
-       ...
+       ....:     print(x^3 + y^3 - x*y)
        z^3 + w^3 - z*w
 
     NOTES: I wrote this because it was needed to print elements of the quotient

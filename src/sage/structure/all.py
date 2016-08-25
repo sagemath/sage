@@ -1,31 +1,32 @@
-from factorization import Factorization
+from __future__ import absolute_import
+from .factorization import Factorization
 
-from sequence      import Sequence, seq
+from .sequence      import Sequence, seq
 
-from unique_representation import UniqueRepresentation
+from .unique_representation import UniqueRepresentation
 
-from sage_object   import SageObject
+from .sage_object   import SageObject
 
-from element import (
+from .element import (
     canonical_coercion,
     get_coercion_model,
     coercion_traceback,
     parent
     )
 
-from parent      import Parent
+from .parent      import Parent
 
-from parent_base import ParentWithBase
+from .parent_base import ParentWithBase
 
-from parent_gens import (ParentWithGens,
+from .parent_gens import (ParentWithGens,
                          ParentWithAdditiveAbelianGens,
                          ParentWithMultiplicativeAbelianGens,
                          localvars)
 
-import proof.all as proof
+from .proof import all as proof
 
-from formal_sum  import FormalSums, FormalSum
+from .formal_sum  import FormalSums, FormalSum
 
-from mutability  import Mutability
+from .mutability  import Mutability
 
-from element_wrapper import ElementWrapper
+from .element_wrapper import ElementWrapper

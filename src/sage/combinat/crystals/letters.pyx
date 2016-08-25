@@ -24,6 +24,8 @@ from sage.structure.element cimport Element
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.combinat.root_system.cartan_type import CartanType
+from sage.rings.integer import Integer
+
 
 def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
     r"""
@@ -412,7 +414,7 @@ cdef class Letter(Element):
         """
         return self.value
 
-    cpdef _richcmp_(left, Element right, int op):
+    cpdef _richcmp_(left, right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
@@ -534,7 +536,7 @@ cdef class EmptyLetter(Element):
         """
         return hash(self.value)
 
-    cpdef _richcmp_(left, Element right, int op):
+    cpdef _richcmp_(left, right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
@@ -1307,7 +1309,7 @@ cdef class LetterTuple(Element):
         """
         return hash(self.value)
 
-    cpdef _richcmp_(left, Element right, int op):
+    cpdef _richcmp_(left, right, int op):
         """
         Check comparison between ``left`` and ``right`` based on ``op``
 
@@ -1487,8 +1489,8 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
              (-1/2, -1/2, -1/2, -1/2, -1/2, -1/6, -1/6, 1/6),
              (-1, 0, 0, 0, 0, 1/3, 1/3, -1/3)]
         """
-        R=self._parent.weight_lattice_realization().fundamental_weights()
-        return sum(cmp(i,0)*R[abs(i)] for i in self.value)
+        R = self._parent.weight_lattice_realization().fundamental_weights()
+        return sum(Integer(i).sign() * R[abs(i)] for i in self.value)
 
     cpdef LetterTuple e(self, int i):
         r"""
@@ -1888,8 +1890,8 @@ cdef class Crystal_of_letters_type_E7_element(LetterTuple):
             (-1/2, -1/2, -1/2, -1/2, -1/2, -1/2, 0, 0), (-1, 0, 0, 0, 0, 0, 1/2,
             -1/2)]
         """
-        R=self._parent.weight_lattice_realization().fundamental_weights()
-        return sum(cmp(i,0)*R[abs(i)] for i in self.value)
+        R = self._parent.weight_lattice_realization().fundamental_weights()
+        return sum(Integer(i).sign() * R[abs(i)] for i in self.value)
 
     cpdef LetterTuple e(self, int i):
         r"""

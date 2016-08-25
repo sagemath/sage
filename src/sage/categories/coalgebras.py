@@ -1,6 +1,7 @@
 r"""
 Coalgebras
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -9,7 +10,7 @@ Coalgebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_over_base_ring
+from .category_types import Category_over_base_ring
 from sage.categories.all import Modules
 from sage.categories.tensor import TensorProductsCategory, tensor
 from sage.categories.dual import DualObjectsCategory

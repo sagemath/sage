@@ -49,6 +49,7 @@ and library interfaces to Maxima.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import re
@@ -64,7 +65,7 @@ import sage.server.support
 
 ##import sage.rings.all
 
-from interface import (Interface, InterfaceElement, InterfaceFunctionElement,
+from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
   InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 
@@ -249,7 +250,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima.demo('cf') # not tested
-            read and interpret file: .../local/share/maxima/5.34.1/demo/cf.dem
+            read and interpret file: .../share/maxima/5.34.1/demo/cf.dem
 
             At the '_' prompt, type ';' and <enter> to get next demonstration.
             frac1:cf([1,2,3,4])
@@ -1518,7 +1519,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         EXAMPLES::
 
             sage: maxima('exp(-sqrt(x))').nintegral('x',0,1)
-            (0.5284822353142306, 4.16331413788384...e-11, 231, 0)
+            (0.5284822353142306, 0.41633141378838...e-10, 231, 0)
 
         Note that GP also does numerical integration, and can do so to very
         high precision very quickly::
@@ -1879,22 +1880,30 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         return self.partfrac(var)
 
-    def _operation(self, operation, right):
+    def _operation(self, operation, other=None):
         r"""
-        Return the result of "self operation right" in Maxima.
+        Return the result of applying the binary operation
+        ``operation`` on the arguments ``self`` and ``other``, or the
+        unary operation on ``self`` if ``other`` is not given.
+
+        This is a utility function which factors out much of the
+        commonality used in the arithmetic operations for interface
+        elements.
 
         INPUT:
 
-        - ``operation`` - string; operator
+        - ``operation`` -- a string representing the operation
+          being performed. For example, '*', or '1/'.
 
-        - ``right`` - Maxima object; right operand
+        - ``other`` -- the other operand. If ``other`` is ``None``,
+          then the operation is assumed to be unary rather than binary.
 
         OUTPUT: Maxima object
 
-        Note that right's parent should already be Maxima since this should
+        Note that other's parent should already be Maxima since this should
         be called after coercion has been performed.
 
-        If right is a ``MaximaFunction``, then we convert
+        If other is a ``MaximaFunction``, then we convert
         ``self`` to a ``MaximaFunction`` that takes
         no arguments, and let the
         ``MaximaFunction._operation`` code handle everything
@@ -1908,12 +1917,15 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         P = self._check_valid()
 
-        if isinstance(right, P._object_function_class()):
+        if other is None:
+            cmd = '%s %s'%(operation, self._name)
+        elif isinstance(other, P._object_function_class()):
             fself = P.function('', repr(self))
-            return fself._operation(operation, right)
-
+            return fself._operation(operation, other)
+        else:
+            cmd = '%s %s %s'%(self._name, operation, other._name)
         try:
-            return P.new('%s %s %s'%(self._name, operation, right._name))
+            return P.new(cmd)
         except Exception as msg:
             raise TypeError(msg)
 
@@ -2174,159 +2186,6 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             defn = "(%s)%s(%s)"%(self.definition(), operation, repr(f))
 
         return P.function(args,P.eval(defn))
-
-    def _add_(self, f):
-        """
-        This Maxima function as left summand.
-
-        EXAMPLES::
-
-            sage: x,y = var('x,y')
-            sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima.function('x','-cos(x)')
-            sage: f+g
-            sin(x)-cos(x)
-            sage: f+3
-            sin(x)+3
-
-        The Maxima variable ``x`` is different from the Sage symbolic variable::
-
-            sage: (f+maxima.cos(x))
-            cos(_SAGE_VAR_x)+sin(x)
-            sage: (f+maxima.cos(y))
-            cos(_SAGE_VAR_y)+sin(x)
-            
-        Note that you may get unexpected results when calling symbolic expressions
-        and not explicitly giving the variables::
-
-            sage: (f+maxima.cos(x))(2)
-            cos(_SAGE_VAR_x)+sin(2)
-            sage: (f+maxima.cos(y))(2)
-            cos(_SAGE_VAR_y)+sin(2)
-        """
-        return self._operation("+", f)
-
-    def _sub_(self, f):
-        r"""
-        This Maxima function as minuend.
-
-        EXAMPLES::
-
-            sage: x,y = var('x,y')
-            sage: f = maxima.function('x','sin(x)')
-            
-        The Maxima variable ``x`` is different from the Sage symbolic variable::
-
-            sage: (f-maxima.cos(x))
-            sin(x)-cos(_SAGE_VAR_x)
-            sage: (f-maxima.cos(y))
-            sin(x)-cos(_SAGE_VAR_y)
-            
-        Note that you may get unexpected results when calling symbolic expressions
-        and not explicitly giving the variables::
-
-            sage: (f-maxima.cos(x))(2)
-            sin(2)-cos(_SAGE_VAR_x)
-            sage: (f-maxima.cos(y))(2)
-            sin(2)-cos(_SAGE_VAR_y)
-        """
-        return self._operation("-", f)
-
-    def _mul_(self, f):
-        r"""
-        This Maxima function as left factor.
-
-        EXAMPLES::
-
-            sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)') # not a function!
-            sage: f*g
-            -cos(x)*sin(x)
-            sage: _(2)
-            -cos(2)*sin(2)
-
-        ::
-
-            sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
-            sage: g*f
-            -cos(x)*sin(x)
-            sage: _(2)
-            -cos(2)*sin(2)
-            sage: 2*f
-            2*sin(x)
-        """
-        return self._operation("*", f)
-
-    def _div_(self, f):
-        r"""
-        This Maxima function as dividend.
-
-        EXAMPLES::
-
-            sage: f=maxima.function('x','sin(x)')
-            sage: g=maxima('-cos(x)')
-            sage: f/g
-            -sin(x)/cos(x)
-            sage: _(2)
-            -sin(2)/cos(2)
-
-        ::
-
-            sage: f=maxima.function('x','sin(x)')
-            sage: g=maxima('-cos(x)')
-            sage: g/f
-            -cos(x)/sin(x)
-            sage: _(2)
-            -cos(2)/sin(2)
-            sage: 2/f
-            2/sin(x)
-        """
-        return self._operation("/", f)
-
-    def __neg__(self):
-        r"""
-        Additive inverse of this Maxima function.
-
-        EXAMPLES::
-
-            sage: f=maxima.function('x','sin(x)')
-            sage: -f
-            -sin(x)
-        """
-        return self._operation('-')
-
-    def __inv__(self):
-        r"""
-        Multiplicative inverse of this Maxima function.
-
-        EXAMPLES::
-
-            sage: f = maxima.function('x','sin(x)')
-            sage: ~f
-            1/sin(x)
-        """
-        return self._operation('1/')
-
-    def __pow__(self,f):
-        r"""
-        This Maxima function raised to some power.
-
-        EXAMPLES::
-
-            sage: f=maxima.function('x','sin(x)')
-            sage: g=maxima('-cos(x)')
-            sage: f^g
-            1/sin(x)^cos(x)
-
-        ::
-
-            sage: f=maxima.function('x','sin(x)')
-            sage: g=maxima('-cos(x)') # not a function
-            sage: g^f
-            (-cos(x))^sin(x)
-        """
-        return self._operation("^", f)
 
 
 def reduce_load_MaximaAbstract_function(parent, defn, args, latex):

@@ -24,22 +24,23 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import math
-import shapes
+from . import shapes
 
-from base import PrimitiveObject, point_list_bounding_box
+from .base import PrimitiveObject, point_list_bounding_box
 
 from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.misc.decorators import options, rename_keyword
 from sage.arith.srange import srange
 
-from texture import Texture
+from .texture import Texture
 
 TACHYON_PIXEL = 1/200.0
 
-from shapes import Text, Sphere
+from .shapes import Text, Sphere
 
 from sage.structure.element import is_Vector
 
@@ -225,7 +226,7 @@ def bezier3d(path, **options):
         sage: curve
         Graphics3d Object
     """
-    import parametric_plot3d as P3D
+    from . import parametric_plot3d as P3D
     from sage.modules.free_module_element import vector
     from sage.symbolic.ring import SR
 
@@ -765,7 +766,7 @@ class Point(PrimitiveObject):
         """
         T = render_params.transform
         if T is None:
-            import transform
+            from . import transform
             T = transform.Transformation()
         render_params.push_transform(~T)
         S = shapes.Sphere(self.size / 200.0).translate(T(self.loc))
@@ -924,7 +925,7 @@ class Line(PrimitiveObject):
         """
         T = render_params.transform
         if T is None:
-            import transform
+            from . import transform
             T = transform.Transformation()
         render_params.push_transform(~T)
         L = line3d([T(P) for P in self.points], radius=self.thickness / 200.0, arrow_head=self.arrow_head, texture=self.texture)

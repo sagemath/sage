@@ -1,6 +1,7 @@
 r"""
 Modules
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -15,10 +16,11 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.homsets import HomsetsCategory
-from category import Category, JoinCategory
-from category_types import Category_module, Category_over_base_ring
+from .category import Category, JoinCategory
+from .category_types import Category_module, Category_over_base_ring
+import sage.categories.coercion_methods
 from sage.categories.tensor import TensorProductsCategory, tensor
-from dual import DualObjectsCategory
+from .dual import DualObjectsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.sets_cat import Sets
 from sage.categories.bimodules import Bimodules
@@ -147,7 +149,7 @@ class Modules(Category_module):
         if dispatch:
             if base_ring in _Fields or (isinstance(base_ring, Category)
                                         and base_ring.is_subcategory(_Fields)):
-                from vector_spaces import VectorSpaces
+                from .vector_spaces import VectorSpaces
                 return VectorSpaces(base_ring, check=False)
         result = super(Modules, cls).__classcall__(cls, base_ring)
         result._reduction[2]['dispatch'] = False
@@ -528,36 +530,8 @@ class Modules(Category_module):
 
     class ElementMethods:
 
-        def __mul__(left, right):
-            """
-            TESTS::
-
-                sage: F = CombinatorialFreeModule(QQ, ["a", "b"])
-                sage: x = F.monomial("a")
-                sage: x * int(2)
-                2*B['a']
-
-            TODO: make a better unit test once Modules().example() is implemented
-            """
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(left, right, operator.mul)
-
-        def __rmul__(right, left):
-            """
-            TESTS::
-
-                sage: F = CombinatorialFreeModule(QQ, ["a", "b"])
-                sage: x = F.monomial("a")
-                sage: int(2) * x
-                2*B['a']
-
-            TODO: make a better unit test once Modules().example() is implemented
-            """
-            from sage.structure.element import get_coercion_model
-            import operator
-            return get_coercion_model().bin_op(left, right, operator.mul)
-
+        __mul__ = sage.categories.coercion_methods.Modules__mul__
+        __rmul__ = sage.categories.coercion_methods.Modules__rmul__
 
     class Homsets(HomsetsCategory):
         r"""
@@ -665,7 +639,7 @@ class Modules(Category_module):
                     sage: End(ZZ^3) in Algebras(ZZ)
                     True
                 """
-                from magmatic_algebras import MagmaticAlgebras
+                from .magmatic_algebras import MagmaticAlgebras
                 return [MagmaticAlgebras(self.base_category().base_ring())]
 
     class CartesianProducts(CartesianProductsCategory):

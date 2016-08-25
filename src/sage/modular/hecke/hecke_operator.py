@@ -1,6 +1,7 @@
 """
 Hecke operators
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
@@ -19,13 +20,13 @@ Hecke operators
 
 
 
-import sage.algebras.algebra_element
+from sage.structure.element import AlgebraElement
 from sage.categories.homset import End
 import sage.arith.all as arith
 from   sage.rings.integer import Integer
 
-import algebra
-import morphism
+from . import algebra
+from . import morphism
 
 
 def is_HeckeOperator(x):
@@ -58,7 +59,7 @@ def is_HeckeAlgebraElement(x):
     """
     return isinstance(x, HeckeAlgebraElement)
 
-class HeckeAlgebraElement(sage.algebras.algebra_element.AlgebraElement):
+class HeckeAlgebraElement(AlgebraElement):
     r"""
     Base class for elements of Hecke algebras.
     """
@@ -74,7 +75,7 @@ class HeckeAlgebraElement(sage.algebras.algebra_element.AlgebraElement):
         """
         if not algebra.is_HeckeAlgebra(parent):
             raise TypeError("parent (=%s) must be a Hecke algebra"%parent)
-        sage.algebras.algebra_element.AlgebraElement.__init__(self, parent)
+        AlgebraElement.__init__(self, parent)
 
     def domain(self):
         r"""

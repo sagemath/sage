@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+die () {
+    echo "$@" 1>&2
+    exit 1
+}
+
+cd src
+
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+more_configure_options=
+
+if [ `uname` = Darwin ]; then
+    more_configure_options="$more_configure_options --without-fink"
+    # Setting the following variable changes the output of "perl
+    # -MExtUtils::Embed -e ldopts" and "perl -MExtUtils::Embed -e ccflags"
+    # so that they do not contain -arch flags.
+    export ARCHFLAGS=
+fi
+
+./configure --without-java \
+            --without-javaview \
+            --prefix="$SAGE_LOCAL" \
+            --exec-prefix="$SAGE_LOCAL" \
+            --includedir="$SAGE_LOCAL"/include \
+            --bindir="$SAGE_LOCAL"/bin \
+            --libdir="$SAGE_LOCAL"/lib \
+	    $more_configure_options || die "Error configuring Polymake"
+make || die "Error building polymake"
+# Remove old stuff. Polymake loads whatever it finds in
+# its installation directory.
+rm -Rf $SAGE_LOCAL/lib/polymake
+make install || die "Error installing polymake"
+# Reconfigure Polymake's rules.
+# This modifies ~/.polymake/customize.pl
+echo "exit;" | polymake --reconfigure - || die "Error calling 'polymake --reconfigure'"

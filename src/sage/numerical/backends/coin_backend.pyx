@@ -17,6 +17,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
+from __future__ import print_function
+
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
 
@@ -485,41 +487,6 @@ cdef class CoinBackend(GenericBackend):
         self.si.deleteRows(m,rows)
         sig_free(rows)
 
-    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names = None):
-        """
-        Add ``'number`` linear constraints.
-
-        INPUT:
-
-        - ``number`` (integer) -- the number of constraints to add.
-
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
-
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
-
-        - ``names`` - an optional list of names (default: ``None``)
-
-        EXAMPLE::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Coin")        # optional - cbc
-            sage: p.add_variables(5)                     # optional - cbc
-            4
-            sage: p.add_linear_constraints(5, None, 2)   # optional - cbc
-            sage: p.row(4)                               # optional - cbc
-            ([], [])
-            sage: p.row_bounds(4)                        # optional - cbc
-            (None, 2.0)
-            sage: p.add_linear_constraints(2, None, 2, names=['foo','bar']) # optional - cbc
-            sage: p.row_name(6)                          # optional - cbc
-            'bar'
-        """
-
-        cdef int i
-        for 0<= i<number:
-            self.add_linear_constraint([],lower_bound, upper_bound, name = (names[i] if names else None))
-
-
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name = None):
         """
         Add a linear constraint.
@@ -733,7 +700,7 @@ cdef class CoinBackend(GenericBackend):
             c_indices[i] = indices[i]
             c_values[i] = coeffs[i]
 
-        self.si.addCol (1, c_indices, c_values, 0, self.si.getInfinity(), 0)
+        self.si.addCol (n, c_indices, c_values, 0, self.si.getInfinity(), 0)
 
         self.col_names.append("")
 
@@ -1154,7 +1121,7 @@ cdef class CoinBackend(GenericBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "Coin")   # optional - cbc
             sage: p.problem_name("There once was a french fry") # optional - cbc
-            sage: print p.problem_name()                        # optional - cbc
+            sage: print(p.problem_name())                       # optional - cbc
             There once was a french fry
         """
         if name == NULL:
@@ -1179,7 +1146,7 @@ cdef class CoinBackend(GenericBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "Coin")                                     # optional - cbc
             sage: p.add_linear_constraints(1, 2, None, names=['Empty constraint 1'])  # optional - cbc
-            sage: print p.row_name(0)                                                 # optional - cbc
+            sage: print(p.row_name(0))                                                # optional - cbc
             Empty constraint 1
         """
         if self.row_names is not None:
@@ -1201,7 +1168,7 @@ cdef class CoinBackend(GenericBackend):
             sage: p = get_solver(solver = "Coin")          # optional - cbc
             sage: p.add_variable(name='I am a variable')   # optional - cbc
             0
-            sage: print p.col_name(0)                      # optional - cbc
+            sage: print(p.col_name(0))                     # optional - cbc
             I am a variable
         """
         if self.col_names is not None:

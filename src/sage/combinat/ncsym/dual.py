@@ -129,18 +129,11 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                 sage: w = SymmetricFunctionsNonCommutingVariables(QQ).dual().w()
                 sage: TestSuite(w).run()
             """
-            def lt_set_part(A, B):
-                A = sorted(map(sorted, A))
-                B = sorted(map(sorted, B))
-                for i in range(len(A)):
-                    if A[i] > B[i]:
-                        return 1
-                    elif A[i] < B[i]:
-                        return -1
-                return 0
+            def key_func_set_part(A):
+                return sorted(map(sorted, A))
             CombinatorialFreeModule.__init__(self, NCSymD.base_ring(), SetPartitions(),
                                              prefix='w', bracket=False,
-                                             monomial_cmp=lt_set_part,
+                                             sorting_key=key_func_set_part,
                                              category=NCSymDualBases(NCSymD))
 
         @lazy_attribute

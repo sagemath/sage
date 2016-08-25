@@ -5,7 +5,7 @@ O Sage pode realizar diversos cálculos em álgebra elementar e cálculo
 diferencial e integral: por exemplo, encontrar soluções de equações,
 diferenciar, integrar, e calcular a transformada de Laplace. Veja a
 documentação em `Sage Constructions
-<http://www.sagemath.org/doc/constructions/>`_ para mais exemplos.
+<http://doc.sagemath.org/html/en/constructions/>`_ para mais exemplos.
 
 Resolvendo equações
 -------------------

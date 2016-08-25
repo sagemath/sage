@@ -20,6 +20,7 @@ NOTES:
 The official source for Frobby is <http://www.broune.com/frobby>,
 which also has documentation and papers describing the algorithms used.
 """
+from __future__ import print_function
 
 from subprocess import Popen, PIPE
 from sage.misc.misc_c import prod
@@ -69,17 +70,17 @@ class Frobby:
             command += ('-' + option.strip()).split()
 
         if verbose:
-            print "Frobby action: ", action
-            print "Frobby options: ", repr(options)
-            print "Frobby command: ", repr(command)
-            print "Frobby input:\n", input
+            print("Frobby action: ", action)
+            print("Frobby options: ", repr(options))
+            print("Frobby command: ", repr(command))
+            print("Frobby input:\n", input)
 
         process = Popen(command, stdin = PIPE, stdout = PIPE, stderr = PIPE)
         output, err = process.communicate(input = input)
 
         if verbose:
-            print "Frobby output:\n", output
-            print "Frobby error:\n", err
+            print("Frobby output:\n", output)
+            print("Frobby error:\n", err)
         if process.poll() != 0:
             raise RuntimeError("Frobby reported an error:\n" + err)
 

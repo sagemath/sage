@@ -1,4 +1,4 @@
-from free_module_element cimport FreeModuleElement
+from .free_module_element cimport FreeModuleElement
 from sage.libs.gmp.types cimport mpq_t
 
 cdef class Vector_rational_dense(FreeModuleElement):

@@ -21,7 +21,7 @@ rings but rather quotients of them (see module
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.structure.category_object import normalize_names
 from sage.structure.element import is_Element
@@ -133,14 +133,13 @@ def PolynomialRing(base_ring, arg1=None, arg2=None,
         However, you can very easily change the names within a ``with`` block::
 
             sage: with localvars(R, ['z','w']):
-            ...     print f
-            ...
+            ....:     print(f)
             z^2 - 2*w^2
 
         After the ``with`` block the names revert to what they were before.
         ::
 
-            sage: print f
+            sage: print(f)
             x^2 - 2*y^2
 
     SQUARE BRACKETS NOTATION: You can alternatively create a single or

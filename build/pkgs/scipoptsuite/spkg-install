@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting"
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+SPKGDIR=`pwd`
+
+cd src
+
+SRC=`pwd`
+
+CFLAGS="$CFLAGS -I$SAGE_LOCAL/include -L$SAGE_LOCAL/lib"
+
+if [ "x$SAGE_DEBUG" = "xyes" ]; then
+    CFLAGS="$CFLAGS -O0 -ggdb"
+fi
+
+ARCH=`uname -m`
+if [ x"$ARCH" = x"i386" -o x"$ARCH" = x"i486" -o x"$ARCH" = x"i586" -o x"$ARCH" = x"i686" ]; then
+  ARCH="x86"
+fi
+
+OS=`uname -s | tr '[:upper:]' '[:lower:]'`
+
+SOPLEX_TARBALL=`find . -name "soplex-*.tgz"`
+
+if [ -z $SOPLEX_TARBALL ]; then
+    echo "Could not find SoPlex tarball in the scipoptsuite tarball.  Something is wrong."
+    exit 1;
+fi
+
+# Remove existing directories
+find . -name "soplex-*" -type d | xargs rm -rf
+
+tar xvfz $SOPLEX_TARBALL;
+
+if [ $? -ne 0 ]; then
+    echo "Error unpacking SOPLEX."
+    exit 1
+fi
+
+SOPLEX_DIR=`find . -name "soplex-*" -type d`
+SOPLEX_DIR=`basename $SOPLEX_DIR`
+SOPLEX_VERSION=`echo "$SOPLEX_DIR" | sed -e "s/.*-//"`
+
+SCIP_TARBALL=`find . -name "scip-*.tgz"`
+
+if [ -z $SCIP_TARBALL ]; then
+    echo "Could not find SCIP tarball in the scipoptsuite tarball.  Something is wrong."
+    exit 1;
+fi
+
+# Remove existing directories
+find . -name "scip-*" -type d | xargs rm -rf
+
+tar xfz $SCIP_TARBALL;
+
+if [ $? -ne 0 ]; then
+    echo "Error unpacking SCIP."
+    exit 1
+fi
+
+SCIP_DIR=`find . -name "scip-*" -type d`
+SCIP_DIR=`basename $SCIP_DIR`
+SCIP_VERSION=`echo "$SCIP_DIR" | sed -e "s/.*-//"`
+
+
+# Apply patches to SCIP.
+cd $SCIP_DIR
+for patch in $SPKGDIR/patches/scip/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+echo "Compiling SoPlex"
+
+#OPT=opt
+# The compiler flags that come with "OPT=opt" on Mac OS X lead to a segfault in SCIP during a call to Soplex. ("stack_not_16_byte_aligned_error")
+OPT=dbg
+# instead supply some of our own optimization flags
+CFLAGS="$CFLAGS -O3"
+CXXFLAGS="$CXXFLAGS -O3"
+
+arg_LIBBUILDFLAGS=UNUSED=
+
+if [ `uname` = 'Darwin' ] ; then
+    SHAREDLIBEXT="dylib"
+    # regarding "-undefined dynamic_lookup" see https://trac.macports.org/ticket/44596
+    arg_LIBBUILDFLAGS=LIBBUILDFLAGS="$LDFLAGS -dynamiclib -undefined dynamic_lookup -flat_namespace -install_name $SAGE_LOCAL/lib/libsoplex-$SOPLEX_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT -lgmp -lz"
+else
+    SHAREDLIBEXT="so"
+    arg_LIBBUILDFLAGS=LIBBUILDFLAGS="$LDFLAGS -shared -Wl,-soname=$SAGE_LOCAL/lib/libsoplex-$SOPLEX_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+fi
+
+cd $SRC/$SOPLEX_DIR
+## The Makefile in soplex 2.2.1 forgets to add the library dependencies
+## "-lgmp -lz", causing the link to fail on Mac OS X.
+LIBBUILDFLAGS="-lgmp -lz -lreadline"
+$MAKE VERBOSE=true OPT=$OPT ZLIB=true READLINE=true SHARED=true USRCFLAGS="$CFLAGS" USRCXXFLAGS="$CXXFLAGS" USRLDFLAGS="$LDFLAGS" "$arg_LIBBUILDFLAGS" SHAREDLIBEXT="$SHAREDLIBEXT"  INSTALLDIR="$SAGE_LOCAL" install
+
+if [ $? -ne 0 ]; then
+    echo "Error building SOPLEX."
+    exit 1
+fi
+
+# Soplex 'make install' installs 3 copies of the library instead of making symlinks. Overwrite.
+# Use -PR to copy symlink as symlink
+cp -PR lib/*.$SHAREDLIBEXT "$SAGE_LOCAL"/lib
+
+echo "Preparing SCIP ./lib symbolic links"
+
+# this is necessary, otherwise scip asks for directories (see the "touch" commands below)
+cd $SRC/$SCIP_DIR
+mkdir lib
+cd lib
+
+ln -sv $SRC/$SOPLEX_DIR/lib/libsoplex-$SOPLEX_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT libsoplex.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT
+ln -sv $SRC/$SOPLEX_DIR/src/ spxinc
+touch libsoplex.$OS.$ARCH.gnu.$OPT.a
+
+echo "Compiling SCIP"
+
+if [ `uname` = 'Darwin' ] ; then
+    # regarding "-undefined dynamic_lookup" see https://trac.macports.org/ticket/44596
+    arg_LIBBUILDFLAGS=LIBBUILDFLAGS="$LDFLAGS -dynamiclib -undefined dynamic_lookup -flat_namespace"
+    SCIP_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    OBJSCIP_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libobjscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    LPI_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/liblpispx-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    NLPI_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libnlpi.cppad-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+else
+    SCIP_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    OBJSCIP_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libobjscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    LPI_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/liblpispx-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    NLPI_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libnlpi.cppad-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+fi
+
+cd $SRC/$SCIP_DIR
+# for clp add the option LPS=clp
+## added -rpath.  Abusing LIBBUILD_o is of course a hack. 
+$MAKE OPT=$OPT LPSOPT=$OPT VERBOSE=true SHARED=true ZIMPL=false GMP=true ZLIB=true READLINE=true \
+     USRCFLAGS="$CFLAGS" USRCXXFLAGS="$CXXFLAGS" USRLDFLAGS="$LDFLAGS" \
+     LIBBUILD_o="-Wl,-rpath,$SAGE_LOCAL/lib -lgmp -lz -lreadline -o " \
+     "$arg_LIBBUILDFLAGS" \
+     SCIP_LIBBUILDFLAGS=$SCIP_LIBBUILDFLAGS \
+     OBJSCIP_LIBBUILDFLAGS=$OBJSCIP_LIBBUILDFLAGS \
+     LPI_LIBBUILDFLAGS=$LPI_LIBBUILDFLAGS \
+     NLPI_LIBBUILDFLAGS=$NLPI_LIBBUILDFLAGS \
+     SHAREDLIBEXT="$SHAREDLIBEXT" INSTALLDIR="$SAGE_LOCAL" LINKRPATH="" install
+if [ $? -ne 0 ]; then
+    echo "Error building/installing SCIP."
+    exit 1
+fi
+
+# Also install libscip under the name libscipopt.  The scipoptsuite
+# Makefile target "scipoptlib" builds this library as a flat library
+# containing all of Soplex and SCIP.  Since we got the library
+# dependencies right, for us it's the same as libscip.
+( cd $SAGE_LOCAL/lib && rm -f libscipopt* && ln -sv libscip.$SHAREDLIBEXT libscipopt.$SHAREDLIBEXT )
+
+echo "Checking that SCIP starts"
+# (Could use -q to get rid of banner.)
+# We use -s /dev/null so that a faulty user parameter file does not cause an error
+$SAGE_LOCAL/bin/scip -s /dev/null -c quit
+
+if [ $? -ne 0 ]; then
+    echo "SCIP build completed but the scip executable does not work."
+    exit 1
+fi
+
+# Unfortunately, since the scip binary does not link against libscip,
+# we cannot know whether libscip has been built correctly.
+
+echo "finished building SCIP with SoPlex"

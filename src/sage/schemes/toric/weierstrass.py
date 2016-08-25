@@ -154,6 +154,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function
 
 from sage.misc.all import prod
 from sage.rings.infinity import Infinity
@@ -478,7 +479,7 @@ def WeierstrassForm(polynomial, variables=None, transformation=False):
         sage: for P in ReflexivePolytopes(2):
         ....:     S = ToricVariety(FaceFan(P))
         ....:     p = sum((-S.K()).sections_monomials())
-        ....:     print WeierstrassForm(p)
+        ....:     print(WeierstrassForm(p))
         (-25/48, -1475/864)
         (-97/48, 17/864)
         (-25/48, -611/864)

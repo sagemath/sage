@@ -25,12 +25,16 @@ REFERENCE:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from libc.string cimport memcmp
 include 'data_structures_pyx.pxi' # includes bitsets
 
 from sage.misc.misc import uniq
 from sage.matrix.constructor import Matrix
+from .refinement_binary cimport NonlinearBinaryCodeStruct, refine_by_bip_degree
+from .double_coset cimport double_coset
+
 
 cdef class MatrixStruct:
 
@@ -107,16 +111,16 @@ cdef class MatrixStruct:
             4
 
         """
-        print self.matrix
-        print
+        print(self.matrix)
+        print("")
         cdef int i,j=0
         cdef NonlinearBinaryCodeStruct S_temp
         for S in self.symbol_structs:
             S_temp = <NonlinearBinaryCodeStruct>S
             for i from 0 <= i < S_temp.nwords:
-                print bitset_string(&S_temp.words[i])
-            print self.symbols[j]
-            print
+                print(bitset_string(&S_temp.words[i]))
+            print(self.symbols[j])
+            print("")
             j += 1
 
     def run(self, partition=None):
@@ -125,10 +129,13 @@ cdef class MatrixStruct:
         storing results to self.
 
         INPUT:
-        partition -- an optional list of lists partition of the columns.
-            default is the unit partition.
 
-        EXAMPLES:
+        partition -- an optional list of lists partition of the columns.
+
+        Default is the unit partition.
+
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
@@ -172,7 +179,10 @@ cdef class MatrixStruct:
         order and a base for which the list of generators is a strong generating
         set.
 
-        EXAMPLE: (For more examples, see self.run())
+        For more examples, see self.run().
+
+        EXAMPLE::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
@@ -197,7 +207,10 @@ cdef class MatrixStruct:
         """
         Returns a canonical relabeling (in list permutation format).
 
-        EXAMPLES: (For more examples, see self.run())
+        For more examples, see self.run().
+
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
@@ -214,7 +227,8 @@ cdef class MatrixStruct:
         """
         Calculate whether self is isomorphic to other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
             sage: M = MatrixStruct(Matrix(GF(11), [[1,2,3,0,0,0],[0,0,0,1,2,3]]))
             sage: N = MatrixStruct(Matrix(GF(11), [[0,1,0,2,0,3],[1,0,2,0,3,0]]))
@@ -354,24 +368,21 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
             N_C = matrix(GF(nsymbols), sorted(N_C.rows()))
 
             if M_C != N_C:
-                print "M:"
-                print M.matrix.str()
-                print "perm:"
-                print perm
+                print("M:")
+                print(M.matrix.str())
+                print("perm:")
+                print(perm)
                 return
 
             isom = M.is_isomorphic(N)
             if not isom:
-                print "isom FAILURE: M:"
-                print M.matrix.str()
-                print "isom FAILURE: N:"
-                print N.matrix.str()
+                print("isom FAILURE: M:")
+                print(M.matrix.str())
+                print("isom FAILURE: N:")
+                print(N.matrix.str())
                 return
 
         num_tests += perms_per_matrix
         num_matrices += 2
-    print "All passed: %d random tests on %d matrices."%(num_tests, num_matrices)
-
-
-
-
+    print("All passed: %d random tests on %d matrices." %
+          (num_tests, num_matrices))

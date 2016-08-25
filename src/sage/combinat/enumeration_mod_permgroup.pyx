@@ -94,7 +94,7 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
 
     Two instances `v_1, v_2` of :class:`~sage.structure.list_clone.ClonableIntArray`
 
-    OUPUT:
+    OUTPUT:
 
     ``-1,0,1``, depending on whether `v_1` is lexicographically smaller, equal, or
     greater than `v_2`.

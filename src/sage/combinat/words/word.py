@@ -10,6 +10,7 @@ AUTHORS:
 - Franco Saliola
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
 #                          Amy Glen <amy.glen@gmail.com>,
@@ -26,10 +27,10 @@ from sage.combinat.words.word_char import WordDatatype_char
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.infinite_word import InfiniteWord_class
-from word_datatypes import (WordDatatype_str,
+from .word_datatypes import (WordDatatype_str,
                             WordDatatype_list,
                             WordDatatype_tuple)
-from word_infinite_datatypes import (
+from .word_infinite_datatypes import (
                             WordDatatype_iter_with_caching,
                             WordDatatype_iter,
                             WordDatatype_callable_with_caching,
@@ -203,7 +204,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
         raise ValueError("Invalid input. Must be a pair of tableaux")
 
     # Create the parent object
-    from words import Words
+    from .words import Words
     parent = Words(alphabet)
 
     return parent(data=data, length=length, datatype=datatype, caching=caching)

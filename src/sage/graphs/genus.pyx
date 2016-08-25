@@ -36,6 +36,7 @@ described throughout the file.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from libc.string cimport memcpy
 
@@ -201,7 +202,7 @@ cdef class simple_connected_genus_backtracker:
 
         if self.got_memory() == 0:
             # dealloc is NULL-safe and frees everything that did get alloc'd
-            raise MemoryError, "Error allocating memory for graph genus a"
+            raise MemoryError("Error allocating memory for graph genus a")
 
         w = <int *>sig_malloc((self.num_verts + self.num_darts) * sizeof(int))
         self.vertex_darts[0] = w
@@ -210,11 +211,11 @@ cdef class simple_connected_genus_backtracker:
 
         if w == NULL or s == NULL:
             # dealloc is NULL-safe and frees everything that did get alloc'd
-            raise MemoryError, "Error allocating memory for graph genus b"
+            raise MemoryError("Error allocating memory for graph genus b")
 
         for v in range(self.num_verts):
             if not G.has_vertex(v):
-                raise ValueError, "Please relabel G so vertices are 0, ..., n-1"
+                raise ValueError("Please relabel G so vertices are 0, ..., n-1")
 
             dv = G.in_degrees[v]
             self.degree[v] = 0
@@ -256,18 +257,18 @@ cdef class simple_connected_genus_backtracker:
 #   good for debugging
 #    def dump(self):
 #        cdef int v, j
-#        print "vertex darts:",
+#        print("vertex darts:", end="")
 #        for v in range(self.num_verts):
-#            print '(',
+#            print('(', end="")
 #            for j in range(self.degree[v] + 1):
-#                print self.vertex_darts[v][j],
-#            print ')',
-#        print "\n"
+#                print(self.vertex_darts[v][j], end="")
+#            print(')', end="")
+#        print("\n")
 
-#        print "face map: [",
+#        print("face map: [", end="")
 #        for v in range(self.num_darts):
-#            print self.face_map[v],
-#        print ']'
+#            print(self.face_map[v], end="")
+#        print(']')
 
 
     cdef inline void freeze_face(self):
@@ -688,9 +689,9 @@ def simple_connected_graph_genus(G, set_embedding = False, check = True, minimal
         sage: genus(G)
         1
 
-    REFERENCS::
+    REFERENCES:
 
-        [1] http://www.springerlink.com/content/0776127h0r7548v7/
+    [1] http://www.springerlink.com/content/0776127h0r7548v7/
 
     """
     cdef int style, cutoff
@@ -701,7 +702,7 @@ def simple_connected_graph_genus(G, set_embedding = False, check = True, minimal
     else:
         if check:
             if not G.is_connected():
-                raise ValueError, "Cannot compute the genus of a disconnected graph"
+                raise ValueError("Cannot compute the genus of a disconnected graph")
 
             if G.is_directed() or G.has_multiple_edges() or G.has_loops():
                 G = G.to_simple()

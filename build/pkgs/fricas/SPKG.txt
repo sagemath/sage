@@ -14,7 +14,8 @@ http://fricas.sourceforge.net/
 
 == Dependencies ==
 
-Put a bulleted list of dependencies here:
+ * ecl
 
-* ecl
+== Special Update/Build Instructions ==
 
+ * uffi.patch: see #21209 for details.

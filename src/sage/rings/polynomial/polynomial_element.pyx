@@ -19,6 +19,8 @@ AUTHORS:
 
 -  Simon King (2013-10): Implement copying of :class:`PolynomialBaseringInjection`.
 
+-  Kiran Kedlaya (2016-03): Added root counting.
+
 TESTS::
 
     sage: R.<x> = ZZ[]
@@ -38,7 +40,7 @@ TESTS::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 cdef is_FractionField, is_RealField, is_ComplexField
 cdef ZZ, QQ, RR, CC, RDF, CDF
@@ -76,13 +78,13 @@ from sage.rings.complex_double import is_ComplexDoubleField, CDF
 from sage.rings.real_mpfi import is_RealIntervalField
 
 from sage.structure.element import generic_power
-from sage.structure.element cimport parent_c as parent, have_same_parent_c
-from sage.structure.element cimport (Element, RingElement,
-        ModuleElement, MonoidElement, coercion_model)
+from sage.structure.element cimport (parent, have_same_parent,
+        Element, RingElement, coercion_model)
 
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
-from sage.rings.integer cimport smallInteger
+from sage.rings.integer cimport Integer, smallInteger
+from sage.libs.gmp.mpz cimport *
 from sage.rings.fraction_field import is_FractionField
 from sage.rings.padics.generic_nodes import is_pAdicRing, is_pAdicField
 
@@ -95,7 +97,6 @@ from sage.arith.all import (sort_complex_numbers_for_display,
 
 import polynomial_fateman
 
-from sage.rings.integer cimport Integer
 from sage.rings.ideal import is_Ideal
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -177,6 +178,7 @@ cdef void late_import():
     import sage.rings.complex_interval_field
     is_ComplexIntervalField = sage.rings.complex_interval_field.is_ComplexIntervalField
 
+
 cdef class Polynomial(CommutativeAlgebraElement):
     """
     A polynomial.
@@ -249,7 +251,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                   v[i] = z
           return v
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         r"""
         Add two polynomials.
 
@@ -278,7 +280,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         low = [x[i] + y[i] for i in range(min)]
         return self._parent(low + high)
 
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         return self._parent([-x for x in self.list()])
 
     cpdef bint is_zero(self):
@@ -362,7 +364,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 return point(z, *args, **kwds)
         raise NotImplementedError("plotting of polynomials over %s not implemented"%R)
 
-    cpdef ModuleElement _lmul_(self, RingElement left):
+    cpdef _lmul_(self, RingElement left):
         """
         Multiply self on the left by a scalar.
 
@@ -382,7 +384,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             return self.parent().zero()
         return self.parent()(left) * self
 
-    cpdef ModuleElement _rmul_(self, RingElement right):
+    cpdef _rmul_(self, RingElement right):
         """
         Multiply self on the right by a scalar.
 
@@ -876,7 +878,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 expr *= x
         return expr
 
-    cpdef int _cmp_(self, Element other) except -2:
+    cpdef int _cmp_(self, other) except -2:
         """
         Compare the two polynomials self and other.
 
@@ -1018,6 +1020,13 @@ cdef class Polynomial(CommutativeAlgebraElement):
         raise NotImplementedError
 
     def __iter__(self):
+        """
+        EXAMPLE::
+
+            sage: P = PolynomialRing(ZZ, 'x')([1,2,3])
+            sage: [y for y in iter(P)]
+            [1, 2, 3]
+        """
         return iter(self.list())
 
     def _cache_key(self):
@@ -1113,11 +1122,25 @@ cdef class Polynomial(CommutativeAlgebraElement):
         return result
 
     def __float__(self):
-         if self.degree() > 0:
-             raise TypeError("cannot coerce nonconstant polynomial to float")
-         return float(self[0])
+        """
+        EXAMPLE::
+
+            sage: P = PolynomialRing(ZZ, 'x')([1])
+            sage: float(P)
+            1.0
+        """
+        if self.degree() > 0:
+            raise TypeError("cannot coerce nonconstant polynomial to float")
+        return float(self[0])
 
     def __int__(self):
+        """
+        EXAMPLE::
+
+            sage: P = PolynomialRing(ZZ, 'x')([3])
+            sage: int(P)
+            3
+        """
         if self.degree() > 0:
             raise TypeError("cannot coerce nonconstant polynomial to int")
         return int(self[0])
@@ -1460,7 +1483,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             raise TypeError("cannot coerce nonconstant polynomial to long")
         return long(self[0])
 
-    cpdef RingElement _mul_(self, RingElement right):
+    cpdef _mul_(self, right):
         """
         EXAMPLES::
 
@@ -1537,6 +1560,31 @@ cdef class Polynomial(CommutativeAlgebraElement):
             implement a generic truncated Karatsuba and use it here.
         """
         return (self.truncate(n) * right.truncate(n)).truncate(n)
+
+    def multiplication_trunc(self, other, n):
+        r"""
+        Truncated multiplication
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: (x^10 + 5*x^5 + x^2 - 3).multiplication_trunc(x^7 - 3*x^3 + 1, 11)
+            x^10 + x^9 - 15*x^8 - 3*x^7 + 2*x^5 + 9*x^3 + x^2 - 3
+
+        Check that coercion is working::
+
+            sage: R2 = QQ['x']
+            sage: x2 = R2.gen()
+            sage: p1 = (x^3 + 1).multiplication_trunc(x2^3 - 2, 5); p1
+            -x^3 - 2
+            sage: p2 = (x2^3 + 1).multiplication_trunc(x^3 - 2, 5); p2
+            -x^3 - 2
+            sage: parent(p1) == parent(p2) == R2
+            True
+        """
+        if not have_same_parent(self, other):
+            self, other = coercion_model.canonical_coercion(self, other)
+        return self._mul_trunc_(other, pyobject_to_long(n))
 
     def square(self):
         """
@@ -1758,7 +1806,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             if self.degree() < 0:
                 return ring(0)
             if self.degree() == 0:
-                raise ValueError, "no roots A %s"%self
+                raise ValueError("no roots A %s" % self)
             if not assume_squarefree:
                 SFD = self.squarefree_decomposition()
                 SFD.sort()
@@ -1779,7 +1827,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 if not (self.base_ring().is_field() and self.base_ring().is_finite()):
                     raise NotImplementedError
                 if ring.characteristic() != self.base_ring().characteristic():
-                    raise ValueError, "ring must be an extension of the base ring"
+                    raise ValueError("ring must be an extension of the base ring")
                 if not (ring.is_field() and ring.is_finite()):
                     raise NotImplementedError
                 allowed_deg_mult = Integer(ring.factored_order()[0][1]) # generally it will be the quotient of this by the degree of the base ring.
@@ -1790,7 +1838,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     self = self.gcd(xq-x)
                     degree = -1
                     if self.degree() == 0:
-                        raise ValueError, "no roots B %s"%self
+                        raise ValueError("no roots B %s" % self)
                 else:
                     xq = x
                     d = Integer(0)
@@ -1816,7 +1864,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                             break
                     if degree is None:
                         if allowed_deg_mult == 1:
-                            raise ValueError, "no roots C %s"%self
+                            raise ValueError("no roots C %s" % self)
                         xq = x
                         d = Integer(0)
                         while True:
@@ -1838,7 +1886,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                                 degree = -d
                                 break
             if degree == 0:
-                raise ValueError, "degree should be nonzero"
+                raise ValueError("degree should be nonzero")
             R = self.parent()
             x = R.gen()
             if degree > 0:
@@ -1848,7 +1896,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     e = self.degree()
                     if 2*d > e:
                         if degree != e:
-                            raise ValueError, "no roots D %s"%self
+                            raise ValueError("no roots D %s" % self)
                         break
                     d = d+1
                     xq = pow(xq,q,self)
@@ -1860,7 +1908,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 if d == degree:
                     self = self.gcd(xq-x)
                     if self.degree() == 0:
-                        raise ValueError, "no roots E %s"%self
+                        raise ValueError("no roots E %s" % self)
             else:
                 degree = -degree
             if ring is None:
@@ -1875,7 +1923,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 try:
                     return self.roots(ring, multiplicities=False)[0] # is there something better to do here?
                 except IndexError:
-                    raise ValueError, "no roots F %s"%self
+                    raise ValueError("no roots F %s" % self)
             if q % 2 == 0:
                 while True:
                     T = R.random_element(2*degree-1)
@@ -2056,6 +2104,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
             ....:     for R in [R1, R2, R3, R3]:
             ....:         a = R.random_element()
             ....:         assert a^d == generic_power(a,d)
+
+        Test the powering modulo ``x^n`` (calling :meth:`power_trunc`)::
+
+            sage: R.<x> = GF(3)[]
+            sage: pow(x + 1, 51, x^7)
+            x^6 + 2*x^3 + 1
+
+            sage: S.<y> = QQ[]
+            sage: R.<x> = S[]
+            sage: pow(y*x+1, 51, x^7)
+            18009460*y^6*x^6 + 2349060*y^5*x^5 + ... + 51*y*x + 1
         """
         if type(right) is not Integer:
             try:
@@ -2068,6 +2127,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if right < 0:
             return (~self)**(-right)
         if modulus:
+            if right > 0 and \
+               parent(modulus) == self.parent() and \
+               modulus.number_of_terms() == 1 and \
+               modulus.leading_coefficient().is_one():
+                return self.power_trunc(right, modulus.degree())
             return power_mod(self, right, modulus)
         if (<Polynomial>self).is_gen():   # special case x**n should be faster!
             P = self.parent()
@@ -2105,6 +2169,92 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 return ret
 
         return generic_power(self,right)
+
+    def power_trunc(self, n, prec):
+        r"""
+        Truncated ``n``-th power of this polynomial up to precision ``prec``
+
+        INPUT:
+
+        - ``n`` -- (non-negative integer) power to be taken
+
+        - ``prec`` -- (integer) the precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: (3*x^2 - 2*x + 1).power_trunc(5, 8)
+            -1800*x^7 + 1590*x^6 - 1052*x^5 + 530*x^4 - 200*x^3 + 55*x^2 - 10*x + 1
+            sage: ((3*x^2 - 2*x + 1)^5).truncate(8)
+            -1800*x^7 + 1590*x^6 - 1052*x^5 + 530*x^4 - 200*x^3 + 55*x^2 - 10*x + 1
+
+            sage: S.<y> = R[]
+            sage: (x+y).power_trunc(5,5)
+            5*x*y^4 + 10*x^2*y^3 + 10*x^3*y^2 + 5*x^4*y + x^5
+            sage: ((x+y)^5).truncate(5)
+            5*x*y^4 + 10*x^2*y^3 + 10*x^3*y^2 + 5*x^4*y + x^5
+
+            sage: R.<x> = GF(3)[]
+            sage: p = x^2 - x + 1
+            sage: q = p.power_trunc(80, 20)
+            sage: q
+            x^19 + x^18 + ... + 2*x^4 + 2*x^3 + x + 1
+            sage: (p^80).truncate(20) == q
+            True
+
+            sage: R.<x> = GF(7)[]
+            sage: p = (x^2 + x + 1).power_trunc(2^100, 100)
+            sage: p
+            2*x^99 + x^98 + x^95 + 2*x^94 + ... + 3*x^2 + 2*x + 1
+
+            sage: for i in range(100):
+            ....:    q1 = (x^2 + x + 1).power_trunc(2^100 + i, 100)
+            ....:    q2 = p * (x^2 + x + 1).power_trunc(i, 100)
+            ....:    q2 = q2.truncate(100)
+            ....:    assert q1 == q2, "i = {}".format(i)
+
+        TESTS::
+
+            sage: x = polygen(QQ)
+            sage: (3*x-5).power_trunc(2^200, 0)
+            0
+            sage: x.power_trunc(-1, 10)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be a non-negative integer
+            sage: R.<y> = QQ['x']
+            sage: y.power_trunc(2**32-1, 2)
+            0
+            sage: y.power_trunc(2**64-1, 2)
+            0
+        """
+        cdef Integer ZZn = ZZ(n)
+        if mpz_fits_ulong_p(ZZn.value):
+            return self._power_trunc(mpz_get_ui(ZZn.value), prec)
+        return generic_power_trunc(self, ZZn, pyobject_to_long(prec))
+
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
+        r"""
+        Truncated ``n``-th power of this polynomial up to precision ``prec``
+
+        This method is overriden for certain subclasses when a library function
+        is available.
+
+        INPUT:
+
+        - ``n`` -- (non-negative integer) power to be taken
+
+        - ``prec`` -- (integer) the precision
+
+        TESTS::
+
+            sage: R.<x> = QQ['y'][]
+            sage: for p in [R.one(), x, x+1, x-1, x^2 - 1]:
+            ....:     for n in range(0, 20):
+            ....:         for prec in [1, 2, 3, 10]:
+            ....:             assert p._power_trunc(n, prec) == (p**n).truncate(prec)
+        """
+        return generic_power_trunc(self, Integer(n), prec)
 
     def _pow(self, right):
         # TODO: fit __pow__ into the arithmetic structure
@@ -2341,7 +2491,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         """
         raise IndexError("polynomials are immutable")
 
-    cpdef RingElement _floordiv_(self, RingElement right):
+    cpdef _floordiv_(self, right):
         """
         Quotient of division of self by other. This is denoted //.
 
@@ -2577,7 +2727,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         .. math::
 
-                            (aX + b) (cX + d) = acX^2 + ((a+b)(c+d)-ac-bd)X + bd
+            (aX + b) (cX + d) = acX^2 + ((a+b)(c+d)-ac-bd)X + bd
 
 
         where ac=a\*c and bd=b\*d, which requires three multiplications
@@ -2586,14 +2736,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         .. math::
 
-               f = a X^e + b   \text{ and }   g = c X^e + d
+            f = a X^e + b   \text{ and }   g = c X^e + d
 
 
         and use the identity
 
         .. math::
 
-               (aX^e + b) (cX^e + d) = ac X^{2e} +((a+b)(c+d) - ac - bd)X^e + bd
+            (aX^e + b) (cX^e + d) = ac X^{2e} +((a+b)(c+d) - ac - bd)X^e + bd
 
 
         to recursively compute `fg`.
@@ -5539,16 +5689,19 @@ cdef class Polynomial(CommutativeAlgebraElement):
         v = ','.join([a._magma_init_(magma) for a in self.list()])
         return '%s![%s]'%(R.name(), v)
 
-    def _gap_init_(self):
-        return repr(self)
-
-    def _gap_(self, G):
+    def _gap_(self, gap):
         """
+        Return this polynomial in GAP.
+
+        INPUT:
+
+        - ``gap`` -- a GAP or libgap instance
+
         EXAMPLES::
 
             sage: R.<y> = ZZ[]
             sage: f = y^3 - 17*y + 5
-            sage: g = gap(f); g
+            sage: g = gap(f); g   # indirect doctest
             y^3-17*y+5
             sage: f._gap_init_()
             'y^3 - 17*y + 5'
@@ -5559,23 +5712,40 @@ cdef class Polynomial(CommutativeAlgebraElement):
             y^3-17*y+5
             sage: gap(z^2 + z)
             z^2+z
+            sage: libgap(z^2 + z)
+            z^2+z
 
-        We coerce a polynomial with coefficients in a finite field::
+        Coefficients in a finite field::
 
             sage: R.<y> = GF(7)[]
             sage: f = y^3 - 17*y + 5
             sage: g = gap(f); g
             y^3+Z(7)^4*y+Z(7)^5
+            sage: h = libgap(f); h
+            y^3+Z(7)^4*y+Z(7)^5
             sage: g.Factors()
+            [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
+            sage: h.Factors()
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
             sage: f.factor()
             (y + 5) * (y + 1)^2
         """
-        if G is None:
-            import sage.interfaces.gap
-            G = sage.interfaces.gap.gap
-        self.parent()._gap_(G)
-        return G(self._gap_init_())
+        R = gap(self.parent())
+        var = list(R.IndeterminatesOfPolynomialRing())[0]
+        return self(var)
+
+    def _libgap_(self):
+        r"""
+        TESTS::
+
+            sage: R.<x> = ZZ[]
+            sage: libgap(-x^3 + 3*x)   # indirect doctest
+            -x^3+3*x
+            sage: libgap(R.zero())     # indirect doctest
+            0
+        """
+        from sage.libs.gap.libgap import libgap
+        return self._gap_(libgap)
 
     ######################################################################
 
@@ -5688,6 +5858,239 @@ cdef class Polynomial(CommutativeAlgebraElement):
             return self.parent().base_ring()(res)
         except (TypeError, ValueError, PariError, NotImplementedError):
             return self.sylvester_matrix(other).det()
+
+    def composed_op(p1, p2, op, algorithm=None, monic=False):
+        r"""
+        Return the composed sum, difference, product or quotient of this
+        polynomial with another one.
+
+        In the case of two monic polynomials `p_1` and `p_2` over an integral
+        domain, the composed sum, difference, etc. are given by
+
+        .. MATH::
+
+            \prod_{p_1(a)=p_2(b)=0}(x - (a \ast b)), \qquad
+            \ast ∈ \{ +, -, ×, / \}
+
+        where the roots `a` and `b` are to be considered in the algebraic
+        closure of the fraction field of the coefficients and counted with
+        multiplicities. If the polynomials are not monic this quantity is
+        multiplied by `\\alpha_1^{deg(p_2)} \\alpha_2^{deg(p_1)}` where
+        `\\alpha_1` and `\\alpha_2` are the leading coefficients of `p_1` and
+        `p_2` respectively.
+
+        INPUT:
+
+        - ``p2`` -- univariate polynomial belonging to the same polynomial ring
+          as this polynomial
+
+        - ``op`` -- ``operator.OP`` where ``OP=add`` or ``sub`` or ``mul`` or
+          ``div``.
+
+        - ``algorithm`` -- can be "resultant" or "BFSS";
+          by default the former is used when the polynomials have few nonzero
+          coefficients and small degrees or if the base ring is not `\ZZ` or
+          `\QQ`. Otherwise the latter is used.
+
+        - ``monic`` -- whether to return a monic polynomial. If ``True`` the
+          coefficients of the result belong to the fraction field of the
+          coefficients.
+
+        ALGORITHM:
+
+        The computation is straightforward using resultants. Indeed for the
+        composed sum it would be `Res_y(p1(x-y), p2(y))`. However, the method
+        from [BFSS]_ using series expansions is asymptotically much faster.
+
+        Note that the algorithm ``BFSS`` with polynomials with coefficients in
+        `\ZZ` needs to perform operations over `\QQ`.
+
+        .. TODO::
+
+           - The [BFSS]_ algorithm has been implemented here only in the case of
+             polynomials over rationals. For other rings of zero characteristic
+             (or if the characteristic is larger than the product of the degrees),
+             one needs to implement a generic method ``_exp_series``. In the
+             general case of non-zero characteristic there is an alternative
+             algorithm in the same paper.
+
+           - The Newton series computation can be done much more efficiently!
+             See [BFSS]_.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ)
+            sage: p1 = x^2 - 1
+            sage: p2 = x^4 - 1
+            sage: p1.composed_op(p2, operator.add)
+            x^8 - 4*x^6 + 4*x^4 - 16*x^2
+            sage: p1.composed_op(p2, operator.mul)
+            x^8 - 2*x^4 + 1
+            sage: p1.composed_op(p2, operator.div)
+            x^8 - 2*x^4 + 1
+
+        This function works over any field. However for base rings other than
+        `\ZZ` and `\QQ` only the resultant algorithm is available::
+
+            sage: x = polygen(QQbar)
+            sage: p1 = x**2 - AA(2).sqrt()
+            sage: p2 = x**3 - AA(3).sqrt()
+            sage: r1 = p1.roots(multiplicities=False)
+            sage: r2 = p2.roots(multiplicities=False)
+            sage: p = p1.composed_op(p2, operator.add)
+            sage: p
+            1.000000000000000?*x^6 - 4.242640687119285?*x^4 -
+            3.464101615137755?*x^3 + 6.000000000000000?*x^2 -
+            14.69693845669907?*x + 0.1715728752538099?
+            sage: all(p(x+y).is_zero() for x in r1 for y in r2)
+            True
+
+            sage: x = polygen(GF(2))
+            sage: p1 = x**2 + x - 1
+            sage: p2 = x**3 + x - 1
+            sage: p_add = p1.composed_op(p2, operator.add)
+            sage: p_add
+            x^6 + x^5 + x^3 + x^2 + 1
+            sage: p_mul = p1.composed_op(p2, operator.mul)
+            sage: p_mul
+            x^6 + x^4 + x^2 + x + 1
+            sage: p_div = p1.composed_op(p2, operator.div)
+            sage: p_div
+            x^6 + x^5 + x^4 + x^2 + 1
+
+            sage: K = GF(2**6, 'a')
+            sage: r1 = p1.roots(K, multiplicities=False)
+            sage: r2 = p2.roots(K, multiplicities=False)
+            sage: all(p_add(x1+x2).is_zero() for x1 in r1 for x2 in r2)
+            True
+            sage: all(p_mul(x1*x2).is_zero() for x1 in r1 for x2 in r2)
+            True
+            sage: all(p_div(x1/x2).is_zero() for x1 in r1 for x2 in r2)
+            True
+
+        TESTS::
+
+            sage: y = polygen(ZZ)
+            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:
+            ....:   for p2 in [5*y^2 - 7, -3*y - 1]:
+            ....:     for monic in [True,False]:
+            ....:       for op in [operator.add, operator.sub, operator.mul, operator.div]:
+            ....:         pr = p1.composed_op(p2, operator.add, "resultant", monic=monic)
+            ....:         pb = p1.composed_op(p2, operator.add, "BFSS", monic=monic)
+            ....:         assert pr == pb and parent(pr) is parent(pb)
+
+        REFERENCES:
+
+        .. [BFSS] A. Bostan, P. Flajolet, B. Salvy and E. Schost,
+           "Fast Computation of special resultants",
+           Journal of Symbolic Computation 41 (2006), 1-29
+        """
+        cdef long j
+        cdef long prec
+
+        if op not in (operator.add, operator.sub, operator.mul, operator.div):
+            raise ValueError("op must be operator.OP where OP=add, sub, mul or div")
+
+        if not isinstance(p2, Polynomial):
+            raise TypeError("p2 must be a polynomial")
+        p1, p2 = coercion_model.canonical_coercion(p1, p2)
+        K = p1.parent()
+        assert is_PolynomialRing(p1.parent())
+        S = K.base_ring()
+        Sf = S.fraction_field()
+
+        cdef long d1 = p1.degree()
+        cdef long d2 = p2.degree()
+        if d1 <= 0 or d2 <= 0:
+            raise ValueError('the polynomials must have positive degree')
+
+        if op is operator.div and p2.valuation() > 0:
+            raise ZeroDivisionError('p2 must have zero valuation')
+        if algorithm is None:
+            # choose the algorithm observing that the "resultant" one
+            # is fast when there are few terms and the degrees are not high
+            N = 7
+            if Sf is not QQ or (d1 <= N and d2 <= N):
+                algorithm = "resultant"
+            else:
+                c = d1*sum(bool(p1[i]) for i in range(d1 + 1))*\
+                    d2*sum(bool(p2[i]) for i in range(d2 + 1))
+                if c <= N**4:
+                    algorithm = "resultant"
+                else:
+                    algorithm = "BFSS"
+
+        if algorithm == "resultant":
+            R = K['x', 'y']
+            x = R.gen(0)
+            y = R.gen(1)
+            if op is operator.add:
+                lp = p1(x - y)
+            elif op is operator.sub:
+                lp = p1(x + y)
+            elif op is operator.mul:
+                lp = p1(x).homogenize(y)
+            else:
+                lp = p1(x * y)
+            q = p2(y).resultant(lp, y).univariate_polynomial(K)
+            return q.monic() if monic else q
+
+        elif algorithm == "BFSS":
+            if Sf is not QQ:
+                raise ValueError("BFSS algorithm is available only for the base ring ZZ or QQ")
+            if op is operator.sub:
+                p2 = p2(-K.gen())
+            elif op is operator.div:
+                p2 = p2.reverse()
+            # the computation below needs must be done in the fraction field
+            # even though the result would have the same ring
+            if Sf is not S:
+                K = K.change_ring(Sf)
+                p1 = p1.change_ring(Sf)
+                p2 = p2.change_ring(Sf)
+            prec = d1*d2 + 1
+            np1 = p1.reverse().inverse_series_trunc(prec)
+            np1 = np1._mul_trunc_(p1.derivative().reverse(), prec)
+            np2 = p2.reverse().inverse_series_trunc(prec)
+            np2 = np2._mul_trunc_(p2.derivative().reverse(), prec)
+            if op in (operator.add, operator.sub):
+                # compute np1e and np2e, the Hadamard products of respectively
+                # np1 and np2 with the exponential series. That is
+                #  a0 + a1 x + a2 x^2 + ...
+                #  ->
+                #  a0 + a1/1! x + a2/2! x^2 + ...
+                fj = Sf.one()
+                a1, a2 = [np1[0]], [np2[0]]
+                for j in range(1, prec):
+                    fj = fj*j
+                    a1.append(np1[j] / fj)
+                    a2.append(np2[j] / fj)
+                np1e = K(a1)
+                np2e = K(a2)
+
+                # recover the polynomial from its Newton series
+                np3e = np1e*np2e
+                fj = -Sf.one()
+                a3 = [Sf.zero()]
+                for j in range(1, prec):
+                    a3.append(np3e[j] * fj)
+                    fj = fj*j
+                np = K(a3)
+                q = np
+            else:
+                np = K([-np1[j]*np2[j] for j in range(1, prec)])
+                q = np.integral()
+
+            q = q._exp_series(prec).reverse()
+            q = q.shift(prec - q.degree() - 1)
+            if monic:
+                return q
+            else:
+                return (p1.leading_coefficient()**p2.degree() *
+                        p2.leading_coefficient()**p1.degree() * q).change_ring(S)
+
+        else:
+            raise ValueError('algorithm must be "resultant" or "BFSS"')
 
     def discriminant(self):
         r"""
@@ -5840,8 +6243,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
         Return polynomial but with the coefficients reversed.
 
         If an optional degree argument is given the coefficient list will be
-        truncated or zero padded as necessary and the reverse polynomial will
-        have the specified degree.
+        truncated or zero padded as necessary before reversing it. Assuming
+        that the constant coefficient of ``self`` is nonzero, the reverse
+        polynomial will have the specified degree.
 
         EXAMPLES::
 
@@ -5861,11 +6265,16 @@ cdef class Polynomial(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             ValueError: degree argument must be a non-negative integer, got 1.5
+
+            sage: f.reverse(0)
+            -3*x
+            sage: f
+            y^3 + x*y - 3*x
         """
-        v = list(self.list())
+        v = self.list()
 
         cdef unsigned long d
-        if degree:
+        if degree is not None:
             d = degree
             if d != degree:
                 raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
@@ -6235,7 +6644,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             ....:     for algo in (None, 'pari', 'numpy'):
             ....:         rts = f.roots(ring=fld_out, multiplicities=False)
             ....:         if fld_in == fld_out and algo is None:
-            ....:             print fld_in, rts
+            ....:             print("{} {}".format(fld_in, rts))
             ....:         for rt in rts:
             ....:             assert(abs(f2(rt)) <= 1e-10)
             ....:             assert(rt.parent() == fld_out)
@@ -6773,6 +7182,134 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         return self.roots(ring=CC, multiplicities=False)
 
+    def number_of_roots_in_interval(self, a=None, b=None):
+        r"""
+        Return the number of roots of this polynomial in the interval 
+        [a,b], counted without multiplicity. The endpoints a, b default to
+        -Infinity, Infinity (which are also valid input values).
+
+        Calls the PARI routine polsturm. Note that as of version 2.8, PARI
+        includes the left endpoint of the interval (and no longer uses
+        Sturm's algorithm on exact inputs). polsturm requires a polynomial
+        with real coefficients; in case PARI returns an error, we try again
+        after taking the GCD of `self` with its complex conjugate.
+        
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
+            sage: pol.number_of_roots_in_interval(1, 2)
+            2
+            sage: pol.number_of_roots_in_interval(1.01, 2)
+            1
+            sage: pol.number_of_roots_in_interval(None, 2)
+            2
+            sage: pol.number_of_roots_in_interval(1, Infinity)
+            3
+            sage: pol.number_of_roots_in_interval()
+            3
+            sage: pol = (x-1)*(x-2)*(x-3)
+            sage: pol2 = pol.change_ring(CC)
+            sage: pol2.number_of_roots_in_interval()
+            3
+            sage: R.<x> = PolynomialRing(CC)
+            sage: pol = (x-1)*(x-CC(I))
+            sage: pol.number_of_roots_in_interval(0,2)
+            1
+
+        TESTS::
+        
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
+            sage: pol.number_of_roots_in_interval(1, 2)
+            2
+            sage: pol = chebyshev_T(5,x)
+            sage: pol.number_of_roots_in_interval(-1,2)
+            5
+            sage: pol.number_of_roots_in_interval(0,2)
+            3
+
+        """
+        pol = self // self.gcd(self.derivative()) #squarefree part
+        if a is None:
+            a1 = -infinity.infinity
+        else:
+            a1 = a
+        if b is None:
+            b1 = infinity.infinity
+        else:
+            b1 = b
+        try:
+            return(pari(pol).polsturm([a1,b1]))
+        except PariError:
+            # Take GCD with the conjugate, to extract the maximum factor
+            # with real coefficients.
+            pol2 = pol.gcd(pol.map_coefficients(lambda z: z.conjugate()))
+            return(pari(pol2).polsturm([a1,b1]))
+
+    def number_of_real_roots(self):
+        r"""
+        Return the number of real roots of this polynomial, counted
+        without multiplicity. 
+        
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
+            sage: pol.number_of_real_roots()
+            3
+            sage: pol = (x-1)*(x-2)*(x-3)
+            sage: pol2 = pol.change_ring(CC)
+            sage: pol2.number_of_real_roots()
+            3
+            sage: R.<x> = PolynomialRing(CC)
+            sage: pol = (x-1)*(x-CC(I))
+            sage: pol.number_of_real_roots()
+            1
+        """
+        return self.number_of_roots_in_interval()
+
+    def all_roots_in_interval(self, a=None, b=None):
+        r"""
+        Return True if the roots of this polynomial are all real and 
+        contained in the given interval.
+    
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
+            sage: pol.all_roots_in_interval(1, 3)
+            True
+            sage: pol.all_roots_in_interval(1.01, 3)
+            False
+            sage: pol = chebyshev_T(5,x)
+            sage: pol.all_roots_in_interval(-1,1)
+            True        
+            sage: pol = chebyshev_T(5,x/2)
+            sage: pol.all_roots_in_interval(-1,1)
+            False
+            sage: pol.all_roots_in_interval()
+            True
+        """
+        pol = self // self.gcd(self.derivative())
+        return(pol.number_of_roots_in_interval(a,b) == pol.degree())
+
+    def is_real_rooted(self):
+        r"""
+        Return True if the roots of this polynomial are all real.
+    
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: pol = chebyshev_T(5, x)
+            sage: pol.is_real_rooted()
+            True
+            sage: pol = x^2 + 1
+            sage: pol.is_real_rooted()
+            False
+        """
+        return self.all_roots_in_interval()
+
     def variable_name(self):
         """
         Return name of variable used in this polynomial as a string.
@@ -7104,9 +7641,25 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 return self._parent(self.coefficients(sparse=False)[-int(n):], check=False)
 
     def __lshift__(self, k):
+        """
+        EXAMPLE::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x + 2
+            sage: f << 3
+            x^4 + 2*x^3
+        """
         return self.shift(k)
 
     def __rshift__(self, k):
+        """
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x^4 + 2*x^3
+            sage: f >> 3
+            x + 2
+        """
         return self.shift(-k)
 
     cpdef Polynomial truncate(self, long n):
@@ -7840,7 +8393,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         if isinstance(var, int) or isinstance(var, Integer):
             if var:
-                raise TypeError, "Variable index %d must be < 1."%var
+                raise TypeError("Variable index %d must be < 1." % var)
             else:
                 return sum(self.coefficients())*x**self.degree()
 
@@ -7868,6 +8421,206 @@ cdef class Polynomial(CommutativeAlgebraElement):
             False
         """
         return len(self.exponents()) < 2
+
+    def nth_root(self, n):
+        r"""
+        Return a `n`-th root of this polynomial.
+
+        This is computed using Newton method in the ring of power series. This
+        method works only when the base ring is an integral domain. Morever, for
+        polynomial whose coefficient of lower degree is different from 1, the
+        elements of the base ring should have a method ``nth_root`` implemented.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: a = 27 * (x+3)**6 * (x+5)**3
+            sage: a.nth_root(3)
+            3*x^3 + 33*x^2 + 117*x + 135
+
+            sage: b = 25 * (x^2 + x + 1)
+            sage: b.nth_root(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 2nd power
+            sage: R(0).nth_root(3)
+            0
+            sage: R.<x> = QQ[]
+            sage: a = 1/4 * (x/7 + 3/2)^2 * (x/2 + 5/3)^4
+            sage: a.nth_root(2)
+            1/56*x^3 + 103/336*x^2 + 365/252*x + 25/12
+
+            sage: K.<sqrt2> = QuadraticField(2)
+            sage: R.<x> = K[]
+            sage: a = (x + sqrt2)^3 * ((1+sqrt2)*x - 1/sqrt2)^6
+            sage: b = a.nth_root(3); b
+            (2*sqrt2 + 3)*x^3 + (2*sqrt2 + 2)*x^2 + (-2*sqrt2 - 3/2)*x + 1/2*sqrt2
+            sage: b^3 == a
+            True
+
+            sage: R.<x> = QQbar[]
+            sage: p = x**3 + QQbar(2).sqrt() * x - QQbar(3).sqrt()
+            sage: r = (p**5).nth_root(5)
+            sage: r * p[0] == p * r[0]
+            True
+            sage: p = (x+1)^20 + x^20
+            sage: p.nth_root(20)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 20th power
+
+            sage: z = GF(4).gen()
+            sage: R.<x> = GF(4)[]
+            sage: p = z*x**4 + 2*x - 1
+            sage: r = (p**15).nth_root(15)
+            sage: r * p[0] == p * r[0]
+            True
+            sage: ((x+1)**2).nth_root(2)
+            x + 1
+            sage: ((x+1)**4).nth_root(4)
+            x + 1
+            sage: ((x+1)**12).nth_root(12)
+            x + 1
+            sage: (x^4 + x^3 + 1).nth_root(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 2nd power
+            sage: p = (x+1)^17 + x^17
+            sage: r = p.nth_root(17)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 17th power
+
+            sage: R1.<x> = QQ[]
+            sage: R2.<y> = R1[]
+            sage: R3.<z> = R2[]
+            sage: (((y**2+x)*z^2 + x*y*z + 2*x)**3).nth_root(3)
+            (y^2 + x)*z^2 + x*y*z + 2*x
+            sage: ((x+y+z)**5).nth_root(5)
+            z + y + x
+
+        Here we consider a base ring without ``nth_root`` method. The third
+        example with a non-trivial coefficient of lowest degree raises an error::
+
+            sage: R.<x> = QQ[]
+            sage: R2 = R.quotient(x**2 + 1)
+            sage: x = R2.gen()
+            sage: R3.<y> = R2[]
+            sage: (y**2 - 2*y + 1).nth_root(2)
+            -y + 1
+            sage: (y**3).nth_root(3)
+            y
+            sage: (y**2 + x).nth_root(2)
+            Traceback (most recent call last):
+            ...
+            AttributeError: ... has no attribute 'nth_root'
+
+        TESTS::
+
+            sage: R.<x> = ZZ[]
+            sage: (x^12).nth_root(6)
+            x^2
+            sage: parent(R.one().nth_root(3))
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: p = (x+1)**20 + x^20
+            sage: p.nth_root(20)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 20th power
+            sage: (x^3 - 1).nth_root(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 2nd power
+            sage: (x^3 - 1).nth_root(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 2nd power
+
+            sage: Zmod(4)['x'].one().nth_root(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: n-th root of polynomials over rings with zero divisors
+            not implemented
+
+        Some random tests::
+
+            sage: for R in [QQ['x'], GF(4)['x']]:
+            ....:     for _ in range(30):
+            ....:         p = R.random_element(degree=randint(10,20))
+            ....:         n = ZZ.random_element(2,20)
+            ....:         r = (p**n).nth_root(n)
+            ....:         assert r.parent() is R, "R={}\nn={}\np={}".format(R,n,p)
+            ....:         pl = p.leading_coefficient()
+            ....:         rl = r.leading_coefficient()
+            ....:         assert p == r * pl/rl, "R={}\np={}\nr={}".format(R,p,r)
+        """
+        cdef Integer c, cc, e, m
+        cdef Polynomial p, q, qi, r
+
+        R = self.base_ring()
+        if R not in sage.categories.integral_domains.IntegralDomains():
+            raise ValueError("n-th root of polynomials over rings with zero divisors not implemented")
+
+        m = ZZ.coerce(n)
+        if m <= 0:
+            raise ValueError("n (={}) must be positive".format(m))
+        elif m.is_one() or self.is_zero() or self.is_one():
+            return self
+        elif self.degree() % m:
+            raise ValueError("not a %s power"%m.ordinal_str())
+        elif self[0].is_zero():
+            # p = x^k q
+            # p^(1/n) = x^(k/n) q^(1/n)
+            i = self.valuation()
+            if i%m:
+                raise ValueError("not a %s power"%m.ordinal_str())
+            S = self.parent()
+            return S.gen()**(i//m) * (self>>i).nth_root(m)
+        else:
+            c = R.characteristic()
+            if c and not n%c:
+                # characteristic divides n
+                e = m.valuation(c)
+                cc = c**e
+                ans = {}
+                for i in range(self.degree()+1):
+                    if self[i]:
+                        if i%cc:
+                            raise ValueError("not a %s power"%m.ordinal_str())
+                        ans[i//cc] = self[i].nth_root(cc)
+                p = self.parent()(ans)
+                m = m // cc
+                if m.is_one():
+                    return p
+            else:
+                p = self
+
+            # beginning of Newton method
+            Sorig = p.parent()
+            if p[0].is_one():
+                q = Sorig.one()
+            else:
+                q = Sorig(p[0].nth_root(m))
+
+            R = R.fraction_field()
+            p = p.change_ring(R)
+            q = q.change_ring(R)
+
+            from sage.misc.misc import newton_method_sizes
+            x = p.parent().gen()
+            for i in newton_method_sizes(p.degree()//m+1):
+                qi = q._power_trunc(m-1, i).inverse_series_trunc(i)
+                q = ((m-1) * q + qi._mul_trunc_(p,i)) / m
+
+                # NOTE: if we knew that p was a n-th power we could remove the check
+                # below and just return q after the whole loop
+                r = q**m - p
+                if not r:
+                    return Sorig(q)
+                elif not r.truncate(i).is_zero():
+                    raise ValueError("not a %s power"%m.ordinal_str())
+            raise ValueError("not a %s power"%m.ordinal_str())
+
 
 # ----------------- inner functions -------------
 # Cython can't handle function definitions inside other function
@@ -8331,7 +9084,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             ...
             AttributeError: type object 'int' has no attribute 'base_ring'
         """
-        if have_same_parent_c(self, right):
+        if have_same_parent(self, right):
             return (<Polynomial_generic_dense>self)._floordiv_(<Polynomial_generic_dense>right)
         P = parent(self)
         d = P.base_ring()(right)
@@ -8339,7 +9092,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         res.__normalize()
         return res
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         r"""
         Add two polynomials.
 
@@ -8370,7 +9123,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         else:
             return self._new_c(low + high, self._parent)
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         cdef Polynomial_generic_dense res
         cdef Py_ssize_t check=0, i, min
         x = (<Polynomial_generic_dense>self).__coeffs
@@ -8391,7 +9144,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         else:
             return self._new_c(low + high, self._parent)
 
-    cpdef ModuleElement _rmul_(self, RingElement c):
+    cpdef _rmul_(self, RingElement c):
         if len(self.__coeffs) == 0:
             return self
         if c._parent is not (<Element>self.__coeffs[0])._parent:
@@ -8403,7 +9156,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         res.__normalize()
         return res
 
-    cpdef ModuleElement _lmul_(self, RingElement c):
+    cpdef _lmul_(self, RingElement c):
         if len(self.__coeffs) == 0:
             return self
         if c._parent is not (<Element>self.__coeffs[0])._parent:
@@ -8669,6 +9422,85 @@ def universal_discriminant(n):
     pr2 = PolynomialRing(pr1, 'x')
     p = pr2(list(pr1.gens()))
     return (1 - (n&2))*p.resultant(p.derivative())//pr1.gen(n)
+
+cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
+    r"""
+    Generic truncated power algorithm
+
+    INPUT:
+
+    - ``p`` - a polynomial
+
+    - ``n`` - an integer (of type :class:`sage.rings.integer.Integer`)
+
+    - ``prec`` - a precision (should fit into a C long)
+
+    TESTS:
+
+    Comparison with flint for polynomials over integers and finite field::
+
+        sage: from sage.rings.polynomial.polynomial_element import generic_power_trunc
+
+        sage: for S in [ZZ, GF(3)]:
+        ....:     R = PolynomialRing(S, 'x')
+        ....:     for _ in range(100):
+        ....:         p = R.random_element()
+        ....:         n = ZZ.random_element(0, 100)
+        ....:         prec = ZZ.random_element(0, 100)
+        ....:         assert p.power_trunc(n, prec) == generic_power_trunc(p, n, prec), "p = {} n = {} prec = {}".format(p, n, prec)
+    """
+    if mpz_sgn(n.value) < 0:
+        raise ValueError("n must be a non-negative integer")
+    elif prec <= 0:
+        return p._parent.zero()
+
+    if mpz_cmp_ui(n.value, 4) < 0:
+        # These cases will probably be called often
+        # and don't benefit from the code below
+        if mpz_cmp_ui(n.value, 0) == 0:
+            return p.parent().one()
+        elif mpz_cmp_ui(n.value, 1) == 0:
+            return p.truncate(prec)
+        elif mpz_cmp_ui(n.value, 2) == 0:
+            return p._mul_trunc_(p, prec)
+        elif mpz_cmp_ui(n.value, 3) == 0:
+            return p._mul_trunc_(p, prec)._mul_trunc_(p, prec)
+
+    # check for idempotence, and store the result otherwise
+    cdef Polynomial a = p.truncate(prec)
+    cdef Polynomial aa = a._mul_trunc_(a, prec)
+    if aa == a:
+        return a
+
+    # since we've computed a^2, let's start squaring there
+    # so, let's keep the least-significant bit around, just
+    # in case.
+    cdef int mul_to_do = mpz_tstbit(n.value, 0)
+    cdef mp_bitcnt_t i = 1
+    cdef mp_bitcnt_t size = mpz_sizeinbase(n.value, 2)
+
+    # One multiplication can be saved by starting with
+    # the second-smallest power needed rather than with 1
+    # we've already squared a, so let's start there.
+    cdef Polynomial apow = aa
+    while not mpz_tstbit(n.value, i):
+        apow = apow._mul_trunc_(apow, prec)
+        i += 1
+    cdef Polynomial power = apow
+    i += 1
+
+    # now multiply that least-significant bit in...
+    if mul_to_do:
+        power = power._mul_trunc_(a, prec)
+
+    # and this is straight from the book.
+    while i < size:
+        apow = apow._mul_trunc_(apow, prec)
+        if mpz_tstbit(n.value, i):
+            power = power._mul_trunc_(apow, prec)
+        i += 1
+
+    return power
 
 
 cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):

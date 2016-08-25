@@ -21,7 +21,7 @@ discussion of loading JSMol.
 
 import os
 import zipfile
-from StringIO import StringIO
+from six import StringIO
 
 from sage.env import SAGE_LOCAL
 from sage.structure.sage_object import SageObject

@@ -53,7 +53,6 @@ from sage.functions.other import gamma
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
 from sage.rings.rational import Rational as R
-from sage.functions.special import meval
 from sage.calculus.functional import derivative
 
 

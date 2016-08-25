@@ -38,7 +38,7 @@ for patch in ../patches/*.patch; do
     if echo "$patch" | grep 'Makefile.am.patch$' > /dev/null; then
         continue
     fi
-    patch -p2 < "$patch" ||
+    patch -p1 < "$patch" ||
       die "Error patching cddlib"
 done
 

@@ -1,6 +1,7 @@
 r"""
 Hopf algebras
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                     Nicolas M. Thiery <nthiery at users.sf.net>
@@ -9,8 +10,8 @@ Hopf algebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 from sage.misc.lazy_import import LazyImport
-from category import Category
-from category_types import Category_over_base_ring
+from .category import Category
+from .category_types import Category_over_base_ring
 from sage.categories.bialgebras import Bialgebras
 from sage.categories.tensor import TensorProductsCategory # tensor
 from sage.categories.realizations import RealizationsCategory

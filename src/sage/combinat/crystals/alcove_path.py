@@ -20,6 +20,7 @@ Nicolas Thiery.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -99,7 +100,8 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         ....:     })
         sage: G.is_isomorphic(GG)
         True
-        sage: for (u,v,i) in G.edges(): print (u.integer_sequence() , v.integer_sequence(), i)
+        sage: for (u,v,i) in G.edges():
+        ....:     print((u.integer_sequence() , v.integer_sequence(), i))
         ([], [0], 2)
         ([0], [0, 8], 1)
         ([0, 1], [0, 1, 7], 2)
@@ -1119,8 +1121,8 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             M = Integer(m)/2 - Integer(1)/2
 
 
-        # boolian determining when to move a folding in KR case
-        KR_test = finite_cartan_type and i==0
+        # boolean determining when to move a folding in KR case
+        KR_test = finite_cartan_type and i == 0
         KR_test = KR_test and M > 1
 
         # In the KR case, we return a value other than None when
@@ -1594,7 +1596,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
     if (G.is_isomorphic(GT) != True):
         return False
     else:
-        print "G2 example passed."
+        print("G2 example passed.")
 
     # Some examples from Hong--Kang:
 
@@ -1620,7 +1622,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
     if (G.is_isomorphic(GT) != True):
         return False
     else:
-        print "C3 example passed."
+        print("C3 example passed.")
 
     # type B, fig. 8.1 pg. 172
     C = clss(['B',3],[2,0,0])
@@ -1658,7 +1660,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
     if (G.is_isomorphic(GT) != True):
         return False
     else:
-        print "B3 example 1 passed."
+        print("B3 example 1 passed.")
 
     C = clss(['B',3],[0,1,0])
     G = C.digraph()
@@ -1689,7 +1691,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
     if (G.is_isomorphic(GT) != True):
         return False
     else:
-        print "B3 example 2 passed."
+        print("B3 example 2 passed.")
 
     # type B, fig. 8.3 pg. 174
 
@@ -1724,14 +1726,14 @@ def compare_graphs(g1, g2, node1, node2):
         for o2 in g2.outgoing_edges( node2 ):
             if o2[2] == out_edge[2]:
                 if matched:
-                    print "ERROR:  Two edges with the same label for ", out_edge, " exist."
+                    print("ERROR:  Two edges with the same label for ", out_edge, " exist.")
                     return False
                 matched = True
                 result = compare_graphs(g1, g2, out_edge[1], o2[1])
                 if not result:
                     return False
         if not matched:
-            print "ERROR:  No matching edge for ", out_edge, "."
+            print("ERROR:  No matching edge for ", out_edge, ".")
             return False
     return True
 
@@ -1760,26 +1762,26 @@ def _test_against_tableaux(R, N, k, clss=CrystalOfAlcovePaths):
     from sage.combinat.crystals.tensor_product import CrystalOfTableaux
     shapes = Partitions(k).list()
     for shape in shapes:
-        print "** Shape ", shape
+        print("** Shape ", shape)
         T = CrystalOfTableaux(R, shape = shape)
         ct = len(T.list())
-        print "  T has ", ct, " nodes."
+        print("  T has ", ct, " nodes.")
         #T.digraph().show(edge_labels=True)
         H = T.digraph()
         weight = T.module_generators[0].weight()
         w = [ weight.scalar(RootSystem(R).ambient_space().simple_coroot(i)) for i in range(1,N+1) ]
-        print "  C weight ", w
+        print("  C weight ", w)
 
         C = clss(R , w)
 
         cc = len(C.list())
         #C.digraph().show(edge_labels=True)
         G = C.digraph()
-        print "  C has ", cc, " nodes."
+        print("  C has ", cc, " nodes.")
         if cc != ct:
-            print "FAIL: number of nodes differ.", cc, ct
+            print("FAIL: number of nodes differ.", cc, ct)
             return
-        print "  Compare graphs: ", compare_graphs(G, H, C(()), H.vertices()[0])
+        print("  Compare graphs: ", compare_graphs(G, H, C(()), H.vertices()[0]))
 
 def _test_with_lspaths_crystal(cartan_type, weight, depth=10):
     r"""

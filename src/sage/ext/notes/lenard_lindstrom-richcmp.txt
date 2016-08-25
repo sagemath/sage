@@ -13,7 +13,7 @@ comparisons. So your comparison function should look like something
 like this:
 
       def __richcmp__(x, y, case):
-          print "__richcmp__"
+          print("__richcmp__")
           cdef Base self, other
           try:
               self = x

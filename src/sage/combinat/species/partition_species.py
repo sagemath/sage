@@ -1,6 +1,7 @@
 """
 Partition Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -16,11 +17,11 @@ Partition Species
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from species import GenericCombinatorialSpecies
-from generating_series import _integers_from, factorial_stream
-from subset_species import SubsetSpeciesStructure
-from set_species import SetSpecies
-from structure import GenericSpeciesStructure
+from .species import GenericCombinatorialSpecies
+from .generating_series import _integers_from, factorial_stream
+from .subset_species import SubsetSpeciesStructure
+from .set_species import SetSpecies
+from .structure import GenericSpeciesStructure
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_function

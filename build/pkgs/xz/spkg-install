@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+cd src/
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
+./configure --prefix=$SAGE_LOCAL
+
+$MAKE
+if [ $? -ne 0 ]; then
+   echo "Error building xz"
+   exit 1
+fi
+
+$MAKE install
+if [ $? -ne 0 ]; then
+   echo "Error installing xz"
+   exit 1
+fi
+

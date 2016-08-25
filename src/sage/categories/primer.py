@@ -922,17 +922,31 @@ to use Sage's introspection tools to recover where it's implemented::
     sage: x.__pow__.__module__
     'sage.categories.semigroups'
 
-``__mul__`` is a default implementation from the :class:`Magmas`
+``__mul__`` is a generic method provided by the :class:`Magmas`
 category (a *magma* is a set with an inner law `*`, not necessarily
-associative)::
+associative). If the two arguments are in the same parent, it will
+call the method ``_mul_``, and otherwise let the :mod:`coercion model
+<sage.structure.coerce>` try to discover how to do the
+multiplication::
 
-    sage: x.__mul__.__module__
-    'sage.categories.magmas'
+    sage: x.__mul__??                           # not tested
 
-It delegates the work to the parent (following the advice: if you do
-not know what to do, ask your parent)::
+Since it is a speed critical method, it is implemented in Cython
+in a separate file::
 
-    sage: x.__mul__??                             # not tested
+    sage: x._mul_.__module__
+    'sage.categories.coercion_methods'
+
+``_mul_`` is a default implementation, also provided by the
+:class:`Magmas` category, that delegates the work to the method
+``product`` of the parent (following the advice: if you do not know
+what to do, ask your parent); it's also a speed critical method::
+
+    sage: x._mul_??                             # not tested
+    sage: x._mul_.__module__
+    'sage.categories.coercion_methods'
+    sage: x._mul_.im_func is Magmas.ElementMethods._mul_parent.im_func
+    True
 
 ``product`` is a mathematical method implemented by the parent::
 

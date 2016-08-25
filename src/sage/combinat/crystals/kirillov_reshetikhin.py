@@ -21,7 +21,7 @@ Kirillov-Reshetikhin Crystals
 # library is heavily inspired from MuPAD-Combinat.
 #****************************************************************************
 # python3
-from __future__ import division
+from __future__ import division, print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
@@ -684,7 +684,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
             sage: K2 = crystals.KirillovReshetikhin(['A',2,1],2,1)
             sage: T1 = crystals.TensorProduct(K1,K2)
             sage: T2 = crystals.TensorProduct(K2,K1)
-            sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels = True, certify = True) #todo: not implemented (see #10904 and #10549)
+            sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels = True, certificate = True) #todo: not implemented (see #10904 and #10549)
             (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]], [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
             [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]], [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
             [[1], [2]]]: [[[1], [2]], [[1]]], [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
@@ -743,6 +743,66 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
         """
         return self.classical_decomposition().q_dimension(q, prec, use_product)
 
+    @cached_method
+    def local_energy_function(self, B):
+        r"""
+        Return the local energy function of ``self`` and ``B``.
+
+        See
+        :class:`~sage.combinat.crystals.tensor_product.LocalEnergyFunction`
+        for a definition.
+
+        EXAMPLES::
+
+            sage: K = crystals.KirillovReshetikhin(['A',6,2], 2,1)
+            sage: Kp = crystals.KirillovReshetikhin(['A',6,2], 1,1)
+            sage: H = K.local_energy_function(Kp); H
+            Local energy function of
+             Kirillov-Reshetikhin crystal of type ['BC', 3, 2] with (r,s)=(2,1)
+            tensor
+             Kirillov-Reshetikhin crystal of type ['BC', 3, 2] with (r,s)=(1,1)
+        """
+        from sage.combinat.crystals.tensor_product import LocalEnergyFunction
+        return LocalEnergyFunction(self, B)
+
+    @cached_method
+    def b_sharp(self):
+        r"""
+        Return the element `b^{\sharp}` of ``self``.
+
+        Let `B` be a KR crystal. The element `b^{\sharp}` is the unique
+        element such that `\varphi(b^{\sharp}) = \ell \Lambda_0` with
+        `\ell = \min \{ \langle c, \varphi(b) \mid b \in B \}`.
+
+        EXAMPLES::
+
+            sage: K = crystals.KirillovReshetikhin(['A',6,2], 2,1)
+            sage: K.b_sharp()
+            []
+            sage: K.b_sharp().Phi()
+            Lambda[0]
+
+            sage: K = crystals.KirillovReshetikhin(['C',3,1], 1,3)
+            sage: K.b_sharp()
+            [[-1]]
+            sage: K.b_sharp().Phi()
+            2*Lambda[0]
+
+            sage: K = crystals.KirillovReshetikhin(['D',6,2], 2,2)
+            sage: K.b_sharp() # long time
+            []
+            sage: K.b_sharp().Phi() # long time
+            2*Lambda[0]
+        """
+        ell = float('inf')
+        bsharp = None
+        for b in self:
+            phi = b.Phi()
+            if phi.support() == [0] and phi[0] < ell:
+                bsharp = b
+                ell = phi[0]
+        return bsharp
+
 class KirillovReshetikhinGenericCrystalElement(AffineCrystalFromClassicalElement):
     """
     Abstract class for all Kirillov-Reshetikhin crystal elements.
@@ -754,7 +814,7 @@ class KirillovReshetikhinGenericCrystalElement(AffineCrystalFromClassicalElement
         EXAMPLES::
 
             sage: C = crystals.KirillovReshetikhin(['D',4,1], 2,1)
-            sage: print C(2,1)._repr_diagram()
+            sage: print(C(2,1)._repr_diagram())
               1
               2
         """
@@ -833,6 +893,47 @@ class KirillovReshetikhinGenericCrystalElement(AffineCrystalFromClassicalElement
         """
         li = self.lift().lusztig_involution()
         return self.parent().retract(li)
+
+    @cached_method
+    def energy_function(self):
+        r"""
+        Return the energy function of ``self``.
+
+        Let `B` be a KR crystal. Let `b^{\sharp}` denote the unique
+        element such that `\varphi(b^{\sharp}) = \ell \Lambda_0` with
+        `\ell = \min \{ \langle c, \varphi(b) \mid b \in B \}`. Let
+        `u_B` denote the maximal element of `B`. The *energy* of
+        `b \in B` is given by
+
+        .. MATH::
+
+            D(b) = H(b \otimes b^{\sharp}) - H(u_B \otimes b^{\sharp}),
+
+        where `H` is the :meth:`local energy function
+        <sage.categories.affine_derived_crystals.KirillovReshetikhinCrystals.ParentMethods.local_energy_function>`.
+
+        EXAMPLES::
+
+            sage: K = crystals.KirillovReshetikhin(['D',4,1], 2,1)
+            sage: for x in K:
+            ....:    if x.is_highest_weight([1,2,3,4]):
+            ....:        x, x.energy_function()
+            ([], 1)
+            ([[1], [2]], 0)
+
+            sage: K = crystals.KirillovReshetikhin(['D',4,3], 1,2)
+            sage: for x in K:
+            ....:    if x.is_highest_weight([1,2]):
+            ....:        x, x.energy_function()
+            ([], 2)
+            ([[1]], 1)
+            ([[1, 1]], 0)
+        """
+        B = self.parent()
+        bsharp = B.b_sharp()
+        T = B.tensor(B)
+        H = B.local_energy_function(B)
+        return H(T(self, bsharp)) - H(T(B.module_generator(), bsharp))
 
 KirillovReshetikhinGenericCrystal.Element = KirillovReshetikhinGenericCrystalElement
 
@@ -1512,7 +1613,7 @@ class KR_type_C(KirillovReshetikhinGenericCrystal):
         list = []
         s = self.s()
         r = self.r()
-        m = s // 2
+        m = s//2
         for i in range(m+1):
             for la in IntegerVectors(m-i, min_length=r, max_length=r):
                 list.append(PMDiagram([[j,j] for j in la]+[[s-2*m+2*i]]))
@@ -1769,7 +1870,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
         list = []
         s = self.s()
         r = self.r()
-        m = s // 2
+        m = s//2
         for i in range(m+1):
             for la in IntegerVectors(m-i, min_length=r, max_length=r):
                 list.append(PMDiagram([[j,j] for j in la]+[[s-2*m+2*i]]))
@@ -1862,7 +1963,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
 class KR_type_A2Element(KirillovReshetikhinGenericCrystalElement):
     r"""
     Class for the elements in the Kirillov-Reshetikhin crystals `B^{r,s}` of type `A_{2n}^{(2)}` for `r<n`
-    with underlying classcial algebra `B_n`.
+    with underlying classical algebra `B_n`.
 
     EXAMPLES::
 
@@ -2716,7 +2817,7 @@ class KR_type_Dn_twisted(KirillovReshetikhinGenericCrystal):
         """
         s = self.s()
         if is_even(s):
-            s = s // 2
+            s = s//2
         else:
             s = s/2
         return CrystalOfTableaux(self.cartan_type().classical(), shape = [s]*self.r() )
@@ -3128,7 +3229,7 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
             sage: T = KR.classical_decomposition()
             sage: HW = [t for t in T if t.is_highest_weight([2,3,4])]
             sage: for t in HW:
-            ....:     print t, prom[t]
+            ....:     print("{} {}".format(t, prom[t]))
             [4, 3, 2, 1] [-1, 4, 3, 2]
             [4, -4, 3, 2] [-4, 4, 3, 2]
             [-1, -4, 3, 2] [-4, 3, 2, 1]
@@ -3138,7 +3239,7 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
             sage: T = KR.classical_decomposition()
             sage: HW = [t for t in T if t.is_highest_weight([2,3,4])]
             sage: for t in HW:
-            ....:     print t, prom[t]
+            ....:     print("{} {}".format(t, prom[t]))
             [++++, []] [-+++, []]
             [-++-, []] [+++-, []]
         """
@@ -3192,7 +3293,7 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
             sage: T = K.classical_decomposition()
             sage: promotion = K.promotion()
             sage: for t in T:
-            ....:     print t, promotion(t)
+            ....:     print("{} {}".format(t, promotion(t)))
             [+++-, []] [-++-, []]
             [++-+, []] [-+-+, []]
             [+-++, []] [--++, []]
@@ -3612,13 +3713,13 @@ class PMDiagram(CombinatorialObject):
 
             sage: from sage.combinat.crystals.kirillov_reshetikhin import PMDiagram
             sage: pm = PMDiagram([[1,0],[0,1],[2,0],[0,0],[0]])
-            sage: print pm._repr_diagram()
+            sage: print(pm._repr_diagram())
             .  .  .  +
             .  .  -  -
             +  +
             -  -
             sage: pm = PMDiagram([[0,2], [0,0], [0]])
-            sage: print pm._repr_diagram()
+            sage: print(pm._repr_diagram())
         """
         t = []
         ish = self.inner_shape() + [0]*self.n
@@ -3626,7 +3727,9 @@ class PMDiagram(CombinatorialObject):
         osh = self.outer_shape() + [0]*self.n
         for i in range(self.n):
             t.append(['.']*ish[i]+['+']*(msh[i]-ish[i])+['-']*(osh[i]-msh[i]))
-        t=[i for i in t if i!= []]
+        t = [i for i in t if i!= []]
+        if not t:
+            return ''
         return Tableau(t)._repr_diagram()
 
     def pp(self):
@@ -3741,7 +3844,7 @@ class PMDiagram(CombinatorialObject):
         """
         n = self.n
         heights = []
-        for i in range((n+1)//2):
+        for i in range((n + 1) // 2):
             heights += [n-2*i]*((self.outer_shape()+[0]*n)[n-2*i-1]-(self.intermediate_shape()+[0]*n)[n-2*i-1])
         return heights
 
@@ -3823,7 +3926,7 @@ def horizontal_dominoes_removed(r, s):
         [[], [2], [2, 2], [2, 2, 2]]
     """
     list = [ [y for y in x] + [0 for i in range(r-x.length())] for x in partitions_in_box(r, s//2) ]
-    two = lambda x : 2*(x-s//2) + s
+    two = lambda x : 2 * (x - s // 2) + s
     return [Partition([two(y) for y in x]) for x in list]
 
 #####################################################################

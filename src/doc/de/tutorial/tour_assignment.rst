@@ -102,18 +102,3 @@ beliebigen Python-Typs innerhalb eines Sichtbarkeitsbereich aufnehmen.
 Die Programmiersprache C, welche statisch typisiert ist, unterscheidet
 sich hierzu stark; eine Variable, die dazu deklariert ist eine Ganzzahl (int)
 aufzunehmen, kann in ihrem Sichtbarkeitsbereich auch nur ganze Zahlen aufnehmen.
-
-Für Verwirrung in Python sorgt häufig, dass Integer Literale, die mit
-Null beginnen als Oktalzahl, d.h. als Zahl zur Basis 8, behandelt werden.
-
-::
-
-    sage: 011
-    9
-    sage: 8 + 1
-    9
-    sage: n = 011
-    sage: n.str(8)   # Darstellung von n als String zur Basis 8
-    '11'
-
-Dies ist konsistent mit der Programmiersprache C.

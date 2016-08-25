@@ -59,7 +59,7 @@ Sage example in ./programmation.tex, line 237::
 Sage example in ./programmation.tex, line 276::
 
   sage: for k in [1..5]:
-  ....:    print 7*k  # bloc qui contient une seule instruction
+  ....:    print(7*k)  # bloc qui contient une seule instruction
   7
   14
   21
@@ -256,28 +256,28 @@ Sage example in ./programmation.tex, line 1243::
 
 Sage example in ./programmation.tex, line 1257::
 
-  sage: print 2^2, 3^3, 4^4 ; print 5^5, 6^6
+  sage: print 2^2, 3^3, 4^4 ; print 5^5, 6^6  # not tested - python2
   4 27 256
   3125 46656
 
 Sage example in ./programmation.tex, line 1265::
 
-  sage: for k in [1..10]: print '+', k,
+  sage: for k in [1..10]: print '+', k,  # not tested - python2
   + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10
 
 Sage example in ./programmation.tex, line 1273::
 
-  sage: print 10, 0.5 ; print 10+0.5 ; print 10.0, 5
+  sage: print 10, 0.5 ; print(10+0.5) ; print 10.0, 5  # not tested - python2
   10 0.500000000000000
   10.5000000000000
   10.0000000000000 5
-  sage: print 10+0, 5 ; print str(10)+str(0.5)
+  sage: print 10+0, 5 ; print(str(10)+str(0.5))  # not tested - python2
   10 5
   100.500000000000000
 
 Sage example in ./programmation.tex, line 1294::
 
-  sage: for k in [1..6]: print '%2d^4 = %4d' % (k, k^4)
+  sage: for k in [1..6]: print('%2d^4 = %4d' % (k, k^4))
    1^4 =    1
    2^4 =   16
    3^4 =   81
@@ -508,7 +508,7 @@ Sage example in ./programmation.tex, line 1835::
 
   sage: L = [[2, 2, 5], [2, 3, 4], [3, 2, 4], [3, 3, 3],\
   ....: [1, 1, 2], [1, 2, 7]]
-  sage: L.sort (cmp = alpha) ; L
+  sage: L.sort (cmp = alpha) ; L    # optional - python2
   [[1, 1, 2], [1, 2, 7], [2, 2, 5], [2, 3, 4], [3, 2, 4], [3, 3, 3]]
 
 Sage example in ./programmation.tex, line 1856::
@@ -582,7 +582,7 @@ Sage example in ./programmation.tex, line 2001::
 
   sage: S = 'Ceci est une chaîne de caractères.'; S
   'Ceci est une cha\xc3\xaene de caract\xc3\xa8res.'
-  sage: print S
+  sage: print(S)
   Ceci est une chaîne de caractères.
 
 Sage example in ./programmation.tex, line 2026::

@@ -1,5 +1,5 @@
 r"""
-Benchmarks.
+Benchmarks
 
 Tests that will take a long time if something is wrong, but be very
 quick otherwise.  See http://wiki.sagemath.org/symbench.  The

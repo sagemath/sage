@@ -86,6 +86,7 @@ Functions and methods
 #  the License, or (at your option) any later version.
 #                http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import collections
 import operator
@@ -1025,7 +1026,7 @@ class TransducerGenerators(object):
             sage: G
             Transducer with 3 states
             sage: for v in srange(0, 10):
-            ....:     print v, G(v.digits(base=2))
+            ....:     print("{} {}".format(v, G(v.digits(base=2))))
             0 []
             1 [1]
             2 [1, 1]
@@ -1564,7 +1565,7 @@ class TransducerGenerators(object):
                  Transition from (1, 0) to (1, 1): 0|-,
                  Transition from (1, 0) to (1, 0): 1|0]
                 sage: for s in T.iter_states():
-                ....:     print s, s.final_word_out
+                ....:     print("{} {}".format(s, s.final_word_out))
                 (0, 0) []
                 (1, 1) [1, 0]
                 (1, 0) [1, 0]
@@ -1654,7 +1655,7 @@ class TransducerGenerators(object):
                  Transition from (2, 1) to (1, 1): 0|1,
                  Transition from (2, 1) to (2, 1): 1|-]
                 sage: for s in T.iter_states():
-                ....:     print s, s.final_word_out
+                ....:     print("{} {}".format(s, s.final_word_out))
                 (0, 0) []
                 (0, 1) []
                 (1, 1) [2]
@@ -1682,7 +1683,7 @@ class TransducerGenerators(object):
                 ....:     f(0) == 2],
                 ....:     2, f, n)
                 sage: for t in T.transitions():
-                ....:     print [x.parent() for x in t.word_out]
+                ....:     print([x.parent() for x in t.word_out])
                 []
                 [Integer Ring]
                 sage: [x.parent() for x in T.states()[0].final_word_out]
@@ -1697,7 +1698,7 @@ class TransducerGenerators(object):
                 ....:     f(0) == 2],
                 ....:     2, f, n, output_rings=[])
                 sage: for t in T.transitions():
-                ....:     print [x.parent() for x in t.word_out]
+                ....:     print([x.parent() for x in t.word_out])
                 []
                 [Symbolic Ring]
                 sage: [x.parent() for x in T.states()[0].final_word_out]
@@ -1711,7 +1712,7 @@ class TransducerGenerators(object):
                 ....:     f(0) == 0],
                 ....:     2, f, n, output_rings=[GF(5)])
                 sage: for t in T.transitions():
-                ....:     print [x.parent() for x in t.word_out]
+                ....:     print([x.parent() for x in t.word_out])
                 []
                 [Finite Field of size 5]
 

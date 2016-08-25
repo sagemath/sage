@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Sage categories quickref
 ------------------------
 
@@ -26,4 +26,4 @@ Todo: put the quickref in quickref.py, and only some pointers here?
 
 """
 
-import primer
+from . import primer

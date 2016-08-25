@@ -64,7 +64,8 @@ Test deprecation::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 __doc_exclude=["cached_attribute", "cached_class_attribute", "lazy_prop",
                "generic_cmp", "to_gmp_hex", "todo",
@@ -74,7 +75,7 @@ __doc_exclude=["cached_attribute", "cached_class_attribute", "lazy_prop",
 from warnings import warn
 import os, stat, sys, signal, time, resource, math
 import sage.misc.prandom as random
-from lazy_string import lazy_string
+from .lazy_string import lazy_string
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.arith.srange', ('xsrange', 'srange', 'ellipsis_range', 'ellipsis_iter'), deprecation=20094)
@@ -134,12 +135,18 @@ def sage_makedirs(dir):
 
 sage_makedirs(DOT_SAGE)
 
-_mode = os.stat(DOT_SAGE)[stat.ST_MODE]
-_desired_mode = 0o40700     # drwx------
-if _mode != _desired_mode:
-    print("Setting permissions of DOT_SAGE directory so only you can read and write it.")
-    # Change mode of DOT_SAGE.
-    os.chmod(DOT_SAGE, _desired_mode)
+if hasattr(os, 'chmod'):
+    _mode = os.stat(DOT_SAGE)[stat.ST_MODE]
+    _desired_mode = 0o40700     # drwx------
+    if _mode != _desired_mode:
+        # On Cygwin, if the sage directory is not in a filesystem mounted with
+        # 'acl' support, setting the permissions may fail silently, so only
+        # print the message after we've changed the permissions and confirmed
+        # that the change succeeded
+        os.chmod(DOT_SAGE, _desired_mode)
+        if os.stat(DOT_SAGE)[stat.ST_MODE] == _desired_mode:
+            print("Setting permissions of DOT_SAGE directory so only you "
+                  "can read and write it.")
 
 
 #################################################
@@ -1242,12 +1249,14 @@ def powerset(X):
     Iterating over the power set of an infinite set is also allowed::
 
         sage: i = 0
+        sage: L = []
         sage: for x in powerset(ZZ):
-        ...    if i > 10:
-        ...       break
-        ...    else:
-        ...       i += 1
-        ...    print x,
+        ....:     if i > 10:
+        ....:         break
+        ....:     else:
+        ....:         i += 1
+        ....:     L.append(x)
+        sage: print(" ".join(str(x) for x in L))
         [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
 
     You may also use subsets as an alias for powerset::

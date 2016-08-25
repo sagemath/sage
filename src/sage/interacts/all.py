@@ -6,6 +6,7 @@ AUTHORS:
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
@@ -17,9 +18,9 @@ AUTHORS:
 #*****************************************************************************
 
 
-import calculus
-import geometry
-import statistics
-import fractals
-import algebra
-from library import demo
+from . import calculus
+from . import geometry
+from . import statistics
+from . import fractals
+from . import algebra
+from .library import demo

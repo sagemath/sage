@@ -1,3 +1,1 @@
-from lattice import gen_lattice
-
-import all
+from .lattice import gen_lattice

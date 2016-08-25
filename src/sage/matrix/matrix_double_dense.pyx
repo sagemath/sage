@@ -67,7 +67,7 @@ scipy=None
 cnumpy.import_array()
 
 
-cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
+cdef class Matrix_double_dense(Matrix_dense):
     """
     Base class for matrices over the Real Double Field and the Complex
     Double Field.  These are supposed to be fast matrix operations
@@ -102,7 +102,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         """
         Set up a new matrix
         """
-        matrix_dense.Matrix_dense.__init__(self,parent)
+        Matrix_dense.__init__(self,parent)
         return
 
     def __create_matrix__(self):
@@ -317,7 +317,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
     # LEVEL 2 functionality
     #   * def _pickle
     #   * def _unpickle
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Add two matrices together.
 
@@ -340,7 +340,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         M._matrix_numpy = _left._matrix_numpy + _right._matrix_numpy
         return M
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Return self - right
 
@@ -2466,7 +2466,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: A.is_unitary(algorithm='orthonormal')
             False
 
-        The QR decoposition will produce a unitary matrix as Q and the
+        The QR decomposition will produce a unitary matrix as Q and the
         SVD decomposition will create two unitary matrices, U and V. ::
 
             sage: A = matrix(CDF, [[   1 - I,   -3*I,  -2 + I,        1, -2 + 3*I],
@@ -3581,7 +3581,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             posdef = self.fetch(cache_str)
         return posdef
 
-    cdef Vector _vector_times_matrix_(self,Vector v):
+    cdef _vector_times_matrix_(self,Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self._row_ambient_module().zero_vector()
         global numpy
@@ -3594,7 +3594,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
-    cdef Vector _matrix_times_vector_(self,Vector v):
+    cdef _matrix_times_vector_(self,Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self._column_ambient_module().zero_vector()
 
@@ -3671,7 +3671,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
         if dtype is None or self._numpy_dtype == np.dtype(dtype):
             return self._matrix_numpy.copy()
         else:
-            return matrix_dense.Matrix_dense.numpy(self, dtype=dtype)
+            return Matrix_dense.numpy(self, dtype=dtype)
 
     def _replace_self_with_numpy(self,numpy_matrix):
         """
@@ -3758,7 +3758,7 @@ cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
             sage: A=matrix(CDF, 2, [1,2+I,3*I,4]); A
             [        1.0 2.0 + 1.0*I]
             [      3.0*I         4.0]
-            sage: A.exp()  # tol 1e-14
+            sage: A.exp()  # tol 1.1e-14
             [-19.614602953804912 + 12.517743846762578*I   3.7949636449582176 + 28.88379930658099*I]
             [ -32.383580980922254 + 21.88423595789845*I   2.269633004093535 + 44.901324827684824*I]
 

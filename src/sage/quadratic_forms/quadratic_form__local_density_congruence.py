@@ -8,6 +8,7 @@ Local Density Congruence
 ## by a quadratic form at a prime (possibly subject to additional
 ## congruence conditions).
 ##########################################################################
+from __future__ import print_function
 
 from copy import deepcopy
 
@@ -438,7 +439,6 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
         return self.local_good_density_congruence_odd(p, m, Zvec, NZvec)
 
     if (p == 2):
-        #print "\n Using the (p=2) Local_Good_Density_Even routine! \n"
         return self.local_good_density_congruence_even(m, Zvec, NZvec)
 
     raise RuntimeError("\n Error in Local_Good_Density: The 'prime' p = " + str(p) + " is < 2. \n")
@@ -671,8 +671,8 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     ## Check that the form is primitive...                     WHY DO WE NEED TO DO THIS?!?
     if (S0 == []):
-        print " Using Q = " + str(self)
-        print " and p = " + str(p)
+        print(" Using Q = " + str(self))
+        print(" and p = " + str(p))
         raise RuntimeError("Oops! The form is not primitive!")
 
 
@@ -847,8 +847,8 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     ## Check that the form is primitive...                     WHY IS THIS NECESSARY?
     if (S0 == []):
-        print " Using Q = " + str(self)
-        print " and p = " + str(p)
+        print(" Using Q = " + str(self))
+        print(" and p = " + str(p))
         raise RuntimeError("Oops! The form is not primitive!")
 
 

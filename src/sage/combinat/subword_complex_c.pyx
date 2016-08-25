@@ -18,6 +18,15 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     EXAMPLES::
 
         sage: from sage.combinat.subword_complex_c import _flip_c
+        sage: W = ReflectionGroup(['A',2])                              # optional - gap3
+        sage: w = W.from_reduced_word([1,2,1])                          # optional - gap3
+        sage: SC = SubwordComplex([1,2,1,2,1], w)                       # optional - gap3
+        sage: F = SC([0, 1])                                            # optional - gap3
+        sage: _flip_c(W, set([0,1]), F._extended_root_configuration_indices(), 1)   # optional - gap3
+        4
+        sage: _flip_c(W, set([0,1]), F._extended_root_configuration_indices(), 0)   # optional - gap3
+        3
+
         sage: W = CoxeterGroup(['A',2])
         sage: w = W.from_reduced_word([1,2,1])
         sage: SC = SubwordComplex([1,2,1,2,1], w)
@@ -30,7 +39,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     cdef int r, nr_ref, r_minus, j, k
     cdef list R
     r = extended_root_conf_indices[i]
-    nr_ref = len(W.long_element(as_word=True))
+    nr_ref = W.number_of_reflections()
     r_minus = (r + nr_ref) % (2 * nr_ref)  # get the negative root -r
     j = i
     for k in xrange(len(extended_root_conf_indices)):

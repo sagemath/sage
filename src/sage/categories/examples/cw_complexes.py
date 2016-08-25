@@ -115,7 +115,7 @@ class Surface(UniqueRepresentation, Parent):
 
         def _repr_(self):
             """
-            Return a string represention of ``self``.
+            Return a string representation of ``self``.
 
             EXAMPLES::
 

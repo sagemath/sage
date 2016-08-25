@@ -48,7 +48,7 @@ hyperplanes are.  Luckily Sage will take care of that for us.
 ::
 
     sage: for q in P1.Hrepresentation():
-    ....:    print q
+    ....:    print(q)
     An inequality (-4, 1) x + 12 >= 0
     An inequality (1, 7) x + 26 >= 0
     An inequality (1, 0) x + 5 >= 0
@@ -82,7 +82,7 @@ vertex list, which can be done in two ways:
 ::
 
     sage: for q in P1.Vrepresentation():
-    ....:    print q
+    ....:    print(q)
     A vertex at (-5, -3)
     A vertex at (-5, 2)
     A vertex at (4, 4)

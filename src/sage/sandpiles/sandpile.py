@@ -317,8 +317,8 @@ Working with sandpile divisors::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
-from string import join
 from collections import Counter
 from copy import deepcopy
 from inspect import getdoc
@@ -371,7 +371,7 @@ class Sandpile(DiGraph):
             sage: S.version()
             Sage Sandpiles Version 2.4
         """
-        print 'Sage Sandpiles Version 2.4'
+        print('Sage Sandpiles Version 2.4')
 
     @staticmethod
     def help(verbose=True):
@@ -472,16 +472,16 @@ class Sandpile(DiGraph):
                         s = s.split('?')[0]
                         s = detex(s).strip() + '?'
                 methods.append([i,s])
-        print 'For detailed help with any method FOO listed below,'
-        print 'enter "Sandpile.FOO?" or enter "S.FOO?" for any Sandpile S.'
-        print ''
+        print('For detailed help with any method FOO listed below,')
+        print('enter "Sandpile.FOO?" or enter "S.FOO?" for any Sandpile S.')
+        print('')
         mlen = max([len(i[0]) for i in methods])
         if verbose:
             for i in methods:
-                print i[0].ljust(mlen), '--', i[1]
+                print(i[0].ljust(mlen), '--', i[1])
         else:
             for i in methods:
-                print i[0]
+                print(i[0])
 
     def __init__(self, g, sink=None):
         r"""
@@ -2728,7 +2728,7 @@ class Sandpile(DiGraph):
             [1, 6, 9, 4]
         """
         if verbose:
-            print singular.eval('print(betti(%s),"betti")'%self._singular_resolution.name())
+            print(singular.eval('print(betti(%s),"betti")' % self._singular_resolution.name()))
         else:
             return self._betti
 
@@ -2953,23 +2953,23 @@ class SandpileConfig(dict):
                         s = s.split('?')[0]
                         s = detex(s).strip() + '?'
                 methods.append([i,s])
-        print 'Shortcuts for SandpileConfig operations:'
-        print '~c    -- stabilize'
-        print 'c & d -- add and stabilize'
-        print 'c * c -- add and find equivalent recurrent'
-        print 'c^k   -- add k times and find equivalent recurrent'
-        print '         (taking inverse if k is negative)'
-        print
-        print 'For detailed help with any method FOO listed below,'
-        print 'enter "SandpileConfig.FOO?" or enter "c.FOO?" for any SandpileConfig c.'
-        print ''
+        print('Shortcuts for SandpileConfig operations:')
+        print('~c    -- stabilize')
+        print('c & d -- add and stabilize')
+        print('c * c -- add and find equivalent recurrent')
+        print('c^k   -- add k times and find equivalent recurrent')
+        print('         (taking inverse if k is negative)')
+        print("")
+        print('For detailed help with any method FOO listed below,')
+        print('enter "SandpileConfig.FOO?" or enter "c.FOO?" for any SandpileConfig c.')
+        print('')
         mlen = max([len(i[0]) for i in methods])
         if verbose:
             for i in methods:
-                print i[0].ljust(mlen), '--', i[1]
+                print(i[0].ljust(mlen), '--', i[1])
         else:
             for i in methods:
-                print i[0]
+                print(i[0])
 
     def __init__(self, S, c):
         r"""
@@ -4307,16 +4307,16 @@ class SandpileDivisor(dict):
                         s = s.split('?')[0]
                         s = detex(s).strip() + '?'
                 methods.append([i,s])
-        print 'For detailed help with any method FOO listed below,'
-        print 'enter "SandpileDivisor.FOO?" or enter "D.FOO?" for any SandpileDivisor D.'
-        print ''
+        print('For detailed help with any method FOO listed below,')
+        print('enter "SandpileDivisor.FOO?" or enter "D.FOO?" for any SandpileDivisor D.')
+        print('')
         mlen = max([len(i[0]) for i in methods])
         if verbose:
             for i in methods:
-                print i[0].ljust(mlen), '--', i[1]
+                print(i[0].ljust(mlen), '--', i[1])
         else:
             for i in methods:
-                print i[0]
+                print(i[0])
 
     def __init__(self, S, D):
         r"""
@@ -5233,11 +5233,11 @@ class SandpileDivisor(dict):
             # process the results
             zhom_file = open(lin_sys_zhom,'r')
         except IOError:
-            print """
+            print("""
                  **********************************
                  *** This method requires 4ti2. ***
                  **********************************
-            """
+            """)
             return
         ## first, the cone generators (the homogeneous points)
         a = zhom_file.read()
@@ -5644,7 +5644,7 @@ class SandpileDivisor(dict):
             while True:
                 r += 1
                 if verbose:
-                    print r
+                    print(r)
                 new_level = []
                 for v in level:
                     for i in range(n):
@@ -6299,13 +6299,13 @@ def sandlib(selector=None):
                   },
     }
     if selector is None:
-        print
-        print '  Sandpiles in the sandlib:'
+        print('')
+        print('  Sandpiles in the sandlib:')
         for i in sandpiles:
-            print '    ', i, ':', sandpiles[i]['description']
-        print
+            print('    ', i, ':', sandpiles[i]['description'])
+        print("")
     elif selector not in sandpiles.keys():
-        print selector, 'is not in the sandlib.'
+        print(selector, 'is not in the sandlib.')
     else:
         return Sandpile(sandpiles[selector]['graph'], 0)
 
@@ -6994,7 +6994,7 @@ def firing_vector(S, D, E):
         w = vector(E.values())
         return tuple(S.laplacian().solve_left(v-w))
     except ValueError:
-        print "Error. Are the divisors linearly equivalent?"
+        print("Error. Are the divisors linearly equivalent?")
         return
 
 def min_cycles(G, v):

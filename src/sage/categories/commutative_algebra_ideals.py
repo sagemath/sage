@@ -1,6 +1,7 @@
 r"""
 Commutative algebra ideals
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -10,8 +11,8 @@ Commutative algebra ideals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from category_types import Category_ideal, Category_in_ambient
-from algebra_ideals import AlgebraIdeals
+from .category_types import Category_ideal, Category_in_ambient
+from .algebra_ideals import AlgebraIdeals
 
 class CommutativeAlgebraIdeals(Category_ideal):
     """

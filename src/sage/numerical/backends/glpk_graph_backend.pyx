@@ -68,6 +68,7 @@ Classes and methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.graph cimport *
@@ -583,8 +584,8 @@ cdef class GLPKGraphBackend(object):
             sage: gbe.vertices()
             ['A', 'B']
             sage: for ed in gbe.edges():
-            ...       print ed[0], ed[1], ed[2]['cap'], ed[2]['cost'], ed[2]['low']
-            A B 10.0 5.0 0.0
+            ....:       print((ed[0], ed[1], ed[2]['cap'], ed[2]['cost'], ed[2]['low']))
+            ('A', 'B', 10.0, 5.0, 0.0)
             sage: gbe.add_edge("B", "C", {"low":0.0, "cap":10.0, "cost":'5'})
             Traceback (most recent call last):
             ...
@@ -637,9 +638,9 @@ cdef class GLPKGraphBackend(object):
             sage: edges.append(("B", "C"))
             sage: gbe.add_edges(edges)
             sage: for ed in gbe.edges():
-            ...       print ed[0], ed[1], ed[2]['cap'], ed[2]['cost'], ed[2]['low']
-            A B 10.0 5.0 0.0
-            B C 0.0 0.0 0.0
+            ....:     print((ed[0], ed[1], ed[2]['cap'], ed[2]['cost'], ed[2]['low']))
+            ('A', 'B', 10.0, 5.0, 0.0)
+            ('B', 'C', 0.0, 0.0, 0.0)
             sage: edges = [("C", "D", {"low":0.0, "cap":10.0, "cost":5})]
             sage: edges.append(("C", "E", 5))
             sage: gbe.add_edges(edges)
@@ -647,10 +648,10 @@ cdef class GLPKGraphBackend(object):
             ...
             TypeError: Argument 'params' has incorrect type ...
             sage: for ed in gbe.edges():
-            ...       print ed[0], ed[1], ed[2]['cap'], ed[2]['cost'], ed[2]['low']
-            A B 10.0 5.0 0.0
-            B C 0.0 0.0 0.0
-            C D 10.0 5.0 0.0
+            ....:     print((ed[0], ed[1], ed[2]['cap'], ed[2]['cost'], ed[2]['low']))
+            ('A', 'B', 10.0, 5.0, 0.0)
+            ('B', 'C', 0.0, 0.0, 0.0)
+            ('C', 'D', 10.0, 5.0, 0.0)
         """
         for ed in edges:
             self.add_edge(*ed)
@@ -742,8 +743,8 @@ cdef class GLPKGraphBackend(object):
             sage: edges = [("A", "B"), ("A", "C"), ("B", "C")]
             sage: gbe.add_edges(edges)
             sage: ed = gbe.get_edge("A", "B")
-            sage: print ed[0], ed[1], ed[2]['x']
-            A B 0.0
+            sage: ed[0], ed[1], ed[2]['x']
+            ('A', 'B', 0.0)
             sage: gbe.get_edge("A", "F") is None
             True
         """
@@ -782,9 +783,9 @@ cdef class GLPKGraphBackend(object):
             sage: edges.append(("B", "C"))
             sage: gbe.add_edges(edges)
             sage: for ed in gbe.edges():
-            ...       print ed[0], ed[1], ed[2]['cost']
-            A B 5.0
-            B C 0.0
+            ....:     print((ed[0], ed[1], ed[2]['cost']))
+            ('A', 'B', 5.0)
+            ('B', 'C', 0.0)
         """
 
         cdef int i = 1
@@ -931,8 +932,8 @@ cdef class GLPKGraphBackend(object):
             sage: gbe.add_edges(edges)
             sage: gbe.delete_edge("A", "B")
             sage: gbe.delete_edge("B", "C", {"low":0.0, "cap":10.0, "cost":20})
-            sage: print gbe.edges()[0][0], gbe.edges()[0][1], gbe.edges()[0][2]['cost']
-            B C 1.0
+            sage: gbe.edges()[0][0], gbe.edges()[0][1], gbe.edges()[0][2]['cost']
+            ('B', 'C', 1.0)
         """
 
         cdef int i = self._find_vertex(u)
@@ -1006,8 +1007,8 @@ cdef class GLPKGraphBackend(object):
             sage: gbe.delete_edges(edges[1:])
             sage: len(gbe.edges())
             1
-            sage: print gbe.edges()[0][0], gbe.edges()[0][1], gbe.edges()[0][2]['cap']
-            A B 10.0
+            sage: gbe.edges()[0][0], gbe.edges()[0][1], gbe.edges()[0][2]['cap']
+            ('A', 'B', 10.0)
         """
 
         for edge in edges:
@@ -1157,7 +1158,7 @@ cdef class GLPKGraphBackend(object):
             sage: gbe.mincost_okalg()
             1020.0
             sage: for ed in gbe.edges():
-            ...       print ed[0], "->", ed[1], ed[2]["x"]
+            ....:     print("{} -> {} {}".format(ed[0], ed[1], ed[2]["x"]))
             0 -> 6 0.0
             0 -> 5 25.0
             0 -> 4 10.0
@@ -1339,8 +1340,8 @@ cdef class GLPKGraphBackend(object):
             sage: gbe.cpp()
             7.0
             sage: v = gbe.get_vertex('1')
-            sage: print 1, v["rhs"], v["es"], v["ls"] # abs tol 1e-6
-            1 1.0 0.0 2.0
+            sage: 1, v["rhs"], v["es"], v["ls"] # abs tol 1e-6
+            (1, 1.0, 0.0, 2.0)
         """
 
         return glp_cpp(self.graph, 0, 2 * sizeof(double),

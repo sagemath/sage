@@ -52,6 +52,8 @@ An example in characteristic `7`::
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.structure.all import Sequence
 
@@ -62,10 +64,10 @@ import sage.modular.dirichlet as dirichlet
 import sage.rings.all as rings
 from sage.rings.power_series_ring_element import is_PowerSeries
 
-import defaults
-import element
-import hecke_operator_on_qexp
-import submodule
+from .element import ModularFormElement, Newform
+from . import defaults
+from . import hecke_operator_on_qexp
+
 
 import sage.modular.modform.constructor
 
@@ -95,8 +97,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     """
     A generic space of modular forms.
     """
-
-    Element = element.ModularFormElement
+    Element = ModularFormElement
 
     def __init__(self, group, weight, character, base_ring, category=None):
         r"""
@@ -127,7 +128,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         global WARN
         if WARN:
-            print "Modular forms -- under development -- do not trust yet."
+            print("Modular forms -- under development -- do not trust yet.")
             WARN=False
         if not arithgroup.is_CongruenceSubgroup(group):
             raise TypeError("group (=%s) must be a congruence subgroup"%group)
@@ -309,7 +310,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         A space of forms with no particular character (hence None is
         returned)::
 
-            sage: print ModularForms(Gamma1(11),2).character()
+            sage: print(ModularForms(Gamma1(11),2).character())
             None
 
         If the level is one then the character is trivial.
@@ -708,7 +709,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                 tries += 1
                 current_prec += d
             if tries > 5:
-                print "WARNING: possible bug in q_expansion_basis for modular forms space %s"%self
+                print("WARNING: possible bug in q_expansion_basis for modular forms space %s" % self)
         B = Sequence(B, immutable=True, cr=True)
         self.__q_expansion_basis = (current_prec, B)
         if current_prec == prec:
@@ -1116,7 +1117,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             else:
                 raise TypeError("q-expansion needed to at least precision %s" % W.degree())
 
-        if isinstance(x, element.ModularFormElement):
+        if isinstance(x, ModularFormElement):
             x = x.element()
 
         return self.element_class(self, self.free_module()(x, check))
@@ -1188,12 +1189,13 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: N.span_of_basis( N.basis() )
             Modular Forms subspace of dimension 5 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(6) of weight 4 over Rational Field
         """
+        from .submodule import ModularFormsSubmoduleWithBasis
         W = self._q_expansion_module()
         F = self.free_module()
         prec = W.degree()
         C = [F.linear_combination_of_basis(W.coordinates(f.padded_list(prec))) for f in B]
         S = F.span_of_basis(C)
-        return submodule.ModularFormsSubmoduleWithBasis(self.ambient(), S)
+        return ModularFormsSubmoduleWithBasis(self.ambient(), S)
 
     span = span_of_basis
 
@@ -1415,10 +1417,10 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: CuspForms(Gamma0(144), 3).sturm_bound()
             73
 
-        REFERENCE:
+        REFERENCES:
 
-        - [Sturm] J. Sturm, On the congruence of modular forms, Number theory
-          (New York, 1984-1985), Springer, Berlin, 1987, pp. 275-280.
+        .. [Sturm] \J. Sturm, On the congruence of modular forms, Number theory
+           (New York, 1984-1985), Springer, Berlin, 1987, pp. 275-280.
 
         NOTE:
 
@@ -1677,7 +1679,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             # In this case, we don't need a variable name, so insert
             # something to get passed along below
             names = 'a'
-        return [ element.Newform(self, factors[i], names=(names+str(i)) )
+        return [ Newform(self, factors[i], names=(names+str(i)) )
                  for i in range(len(factors)) ]
 
     def eisenstein_submodule(self):

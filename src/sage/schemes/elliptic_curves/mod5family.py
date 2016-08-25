@@ -6,6 +6,7 @@ AUTHORS:
 - Alice Silverberg and Karl Rubin (original PARI/GP version)
 - William Stein -- Sage version.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,7 @@ AUTHORS:
 
 from sage.rings.all import PolynomialRing, QQ, FractionField
 from sage.arith.all import lcm
-from constructor import EllipticCurve
+from .constructor import EllipticCurve
 
 
 def mod5family(a, b):

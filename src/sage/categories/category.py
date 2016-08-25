@@ -69,7 +69,7 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
     Any object of a category should be an instance of
     :class:`~sage.structure.category_object.CategoryObject`.
 
-    For backward compatibilty this is not yet enforced::
+    For backward compatibility this is not yet enforced::
 
         sage: class A:
         ....:   def category(self):
@@ -85,6 +85,7 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
         sage: v.category()
         Category of elements of Vector space of dimension 3 over Rational Field
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu> and
@@ -2029,7 +2030,7 @@ class Category(UniqueRepresentation, SageObject):
             return (self,)
         if axiom in self.__class__.__base__.__dict__:
             # self implements this axiom
-            from category_with_axiom import CategoryWithAxiom
+            from .category_with_axiom import CategoryWithAxiom
             if inspect.isclass(axiom_attribute) and issubclass(axiom_attribute, CategoryWithAxiom):
                 return (axiom_attribute(self),)
             warn(("Expecting {}.{} to be a subclass of CategoryWithAxiom to"
@@ -2447,7 +2448,7 @@ class Category(UniqueRepresentation, SageObject):
                 return []
             else:
                 # Since Objects() is the top category, it is the neutral element of join
-                from objects import Objects
+                from .objects import Objects
                 return Objects()
         elif len(categories) == 1:
             category = categories[0]
@@ -2501,7 +2502,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: VectorSpaces(QQ).category()
             Category of objects
         """
-        from objects import Objects
+        from .objects import Objects
         return Objects()
 
     def example(self, *args, **keywords):

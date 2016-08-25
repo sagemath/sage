@@ -15,7 +15,7 @@ They can be obtained as a subsequence of the *cyclic* De Bruijn sequence of
 parameters `k=2` and `n=3`::
 
     sage: seq = DeBruijnSequences(2,3).an_element()
-    sage: print Word(seq).string_rep()
+    sage: print(Word(seq).string_rep())
     00010111
     sage: shift = lambda i: [(i+j)%2**3 for j in range(3)]
     sage: for i in range(2**3):
@@ -43,11 +43,11 @@ TESTS:
 Checking the sequences generated are indeed valid::
 
     sage: for n in range(1, 7):
-    ...      for k in range(1, 7):
-    ...         D = DeBruijnSequences(k, n)
-    ...         if not D.an_element() in D:
-    ...             print "Something's dead wrong (n=%s, k=%s)!" %(n,k)
-    ...             break
+    ....:    for k in range(1, 7):
+    ....:       D = DeBruijnSequences(k, n)
+    ....:       if not D.an_element() in D:
+    ....:           print("Something's dead wrong (n=%s, k=%s)!" %(n,k))
+    ....:           break
 
 AUTHOR:
 
@@ -213,7 +213,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
     Obtaining a De Bruijn sequence::
 
         sage: seq = DeBruijnSequences(2, 3).an_element()
-        sage: print seq
+        sage: seq
         [0, 0, 0, 1, 0, 1, 1, 1]
 
     Testing whether it is indeed one::

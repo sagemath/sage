@@ -476,7 +476,7 @@ That's all there is to it. Now we can test it out:
     sage: R.coerce(1/4)
     Traceback (click to the left for traceback)
     ...
-    TypeError: no cannonical coercion from Rational Field to Integer Ring localized at [2]
+    TypeError: no canonical coercion from Rational Field to Integer Ring localized at [2]
 
     sage: R(1/2) + R(3/4)
     LocalElt(5/4)

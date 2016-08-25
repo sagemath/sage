@@ -20,6 +20,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
 def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),print_vector=False,show_curve=False,**kwds):
@@ -180,7 +181,7 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
         v=(R*cos(phi+phase)+x0,y,R*sin(phi+phase)+z0)
 
     if print_vector:
-        print v
+        print(v)
     if show_curve:
         curveplot=parametric_plot3d((x,y,z),trange,thickness=2,rgbcolor=(1,0,0))
         return parametric_plot3d(v,trange,phirange,**kwds)+curveplot

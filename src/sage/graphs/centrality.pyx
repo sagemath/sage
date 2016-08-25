@@ -14,6 +14,8 @@ This module is meant for all functions related to centrality in networks.
 Functions
 ---------
 """
+from __future__ import print_function
+
 include "sage/data_structures/bitset.pxi"
 include "cysignals/signals.pxi"
 
@@ -349,11 +351,11 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
     Then, for each vertex ``v``, we set ``reachL[v]=L(C)``, where ``C`` is
     the strongly connected component containing ``v``.
 
-    INPUT
+    INPUT:
 
     ``g`` (short_digraph): the input graph;
 
-    OUTPUT
+    OUTPUT:
 
     ``reachL``, ``reachU``: two arrays that should be allocated outside
     this function and that should have size at least ``g.n``. At the end,
@@ -800,13 +802,13 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
                     break
                 kth = max(kth, farness[topk[i]])
         if verbose >= 3 or (verbose == 2 and nvis % 1000 == 0):
-            print "Visit {} from {}:".format(nvis, x)
-            print "    Lower bound: {}".format(1 / kth)
-            print "    Perf. ratio: {}".format(visited / (nvis * <double> (sd.neighbors[sd.n]-sd.edges)))
+            print("Visit {} from {}:".format(nvis, x))
+            print("    Lower bound: {}".format(1 / kth))
+            print("    Perf. ratio: {}".format(visited / (nvis * <double> (sd.neighbors[sd.n]-sd.edges))))
     sig_off()
 
     if verbose > 0:
-        print "Final performance ratio: {}".format(visited / (n * <double> (sd.neighbors[sd.n]-sd.edges)))
+        print("Final performance ratio: {}".format(visited / (n * <double> (sd.neighbors[sd.n]-sd.edges))))
 
     cdef list V = G.vertices()
     return sorted([(1.0/farness[v], V[v]) for v in topk[:k] if v != -1], reverse=True)

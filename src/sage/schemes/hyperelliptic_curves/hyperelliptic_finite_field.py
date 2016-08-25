@@ -21,6 +21,7 @@ EXAMPLES::
     sage: C._points_fast_sqrt()
     [(0 : 1 : 0), (a + 1 : a : 1), (a + 1 : a + 1 : 1), (2 : a + 1 : 1), (2*a : 2*a + 2 : 1), (2*a : 2*a : 1), (1 : a + 1 : 1)]
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -46,7 +47,7 @@ EXAMPLES::
 from sage.rings.all import ZZ, RR, QQ, GF
 from sage.arith.all import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
-import hyperelliptic_generic
+from . import hyperelliptic_generic
 from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import identity_matrix, matrix
@@ -1116,6 +1117,25 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H = HyperellipticCurve(x^5+a*x^2+1, x+a+1)
             sage: H.count_points(6)
             [2, 24, 74, 256, 1082, 4272]
+
+        TESTS:
+
+        Check for :trac:`19122`::
+
+            sage: x = polygen(GF(19), 'x')
+            sage: f = 15*x^4 + 7*x^3 + 3*x^2 + 7*x + 18
+            sage: HyperellipticCurve(f).cardinality_exhaustive(1)
+            19
+
+        Points at infinity on general curves of genus 1 are counted
+        correctly (see :trac:`21195`)::
+
+            sage: S.<z> = PolynomialRing(ZZ)
+            sage: C = HyperellipticCurve(-z^2 + z, z^2)
+            sage: C.base_extend(GF(2)).count_points_exhaustive()
+            [5]
+            sage: C.base_extend(GF(3)).count_points_exhaustive()
+            [5]
         """
         K = self.base_ring()
         g = self.genus()
@@ -1123,66 +1143,58 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         if g == 0:
             # here is the projective line
-            return K.cardinality()**n + 1
+            return K.cardinality() ** n + 1
 
         f, h = self.hyperelliptic_polynomials()
         a = 0
 
-        # begin with points at infinity (on the smooth model)
-        if g == 1:
-            # elliptic curves always have one smooth point at infinity
-            a += 1
-        else:
-            # g > 1
-            # solve y^2 + y*h[g+1] == f[2*g+2], i.e., y^2 + r*y - s == 0
-            s = f[2*g+2]
-            r = h[g+1]
-            if K.characteristic() == 2:
-                if r == 0:
-                    # one unique solution
-                    a += 1
-                elif n % 2 == 0 or (s/r**2).trace() == 0:
-                    # artin-schreier equation t^2 + t = s/r^2
-                    # it always has a solution in extensions of even degree
-                    a += 2
-            else:
-                # compute the usual discriminant
-                d = r**2 + 4*s
-                if d == 0:
-                    a += 1
-                elif n % 2 == 0 or d.is_square():
-                    a += 2
-
-        # affine points
         if n == 1:
             # the base field
             L = K
             fext = f
             hext = h
         else:
-            # extension of the prime field
+            # extension of the base field
             from sage.categories.homset import Hom
             L = GF(K.cardinality()**n, names='z')
             P = L['t']
             emb = Hom(K, L)[0]
             fext = P([emb(c) for c in f])
-
             hext = P([emb(c) for c in h])
 
+        # We solve equations of the form y^2 + r*y - s == 0.
+        # For the points at infinity (on the smooth model),
+        # solve y^2 + h[g+1]*y == f[2*g+2].
+        # For the affine points with given x-coordinate,
+        # solve y^2 + h(x)*y == f(x).
+
         if K.characteristic() == 2:
+            # points at infinity
+            r = h[g+1]
+            if not r:
+                a += 1
+            elif n % 2 == 0 or (f[2*g+2]/r**2).trace() == 0:
+                # Artin-Schreier equation t^2 + t = s/r^2
+                # always has a solution in extensions of even degree
+                a += 2
+            # affine points
             for x in L:
-                s = fext(x)
                 r = hext(x)
-                if r == 0:
+                if not r:
                     a += 1
-                elif (s/r**2).trace() == 0:
+                elif (fext(x)/r**2).trace() == 0:
                     a += 2
         else:
+            # points at infinity
+            d = h[g+1]**2 + 4*f[2*g+2]
+            if not d:
+                a += 1
+            elif n % 2 == 0 or d.is_square():
+                a += 2
+            # affine points
             for x in L:
-                s = fext(x)
-                r = hext(x)
-                d = r**2 + 4*s
-                if d.is_zero():
+                d = hext(x)**2 + 4*fext(x)
+                if not d:
                     a += 1
                 elif d.is_square():
                     a += 2

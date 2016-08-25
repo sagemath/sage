@@ -83,15 +83,22 @@ to the develop branch (latest development release)::
     [user@localhost sage]$ git checkout develop
 
 You will then need to `compile Sage
-<http://www.sagemath.org/doc/installation/source.html>`_ in order to use it (if
+<http://doc.sagemath.org/html/en/installation/source.html>`_ in order to use it. If
 you cloned, you will need to remain on the internet for it to download various
-packages of Sage).
+packages of Sage::
 
     [user@localhost sage]$ make
 
-(For the experts, note that the repository at
+.. NOTE::
+
+    Mac OS X allows changing directories without using exact capitalization.
+    Beware of this convenience when compiling for OS X. Ignoring exact
+    capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
+    errors for dependencies requiring exact capitalization in path names.
+
+For the experts, note that the repository at
 `git.sagemath.org <http://git.sagemath.org>`_ is where development
-actually takes place .)
+actually takes place.
 
 
 .. _section-walkthrough-branch:
@@ -223,7 +230,7 @@ fast. If you made changes to
     [user@localhost sage]$ make
 
 as if you were `installing Sage from scratch
-<http://www.sagemath.org/doc/installation/source.html>`_.
+<http://doc.sagemath.org/html/en/installation/source.html>`_.
 However, this time only packages which were changed (or which depend
 on a changed package) will be recompiled,
 so it shoud be much faster than compiling Sage

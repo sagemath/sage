@@ -33,7 +33,7 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import itertools
 from copy import copy
@@ -332,7 +332,7 @@ class NaiveFinitePointEnumerator(object):
 
             sage: ne = toric_varieties.dP6(base_ring=GF(11)).point_set()._naive_enumerator()
             sage: for cone in ne.cone_iter(): 
-            ....:     print cone.ambient_ray_indices()
+            ....:     print(cone.ambient_ray_indices())
             (0, 1)
             (1, 2)
             (2, 3)
@@ -405,7 +405,7 @@ class NaiveFinitePointEnumerator(object):
 
         Iterator over points.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: ni = toric_varieties.P2(base_ring=GF(2)).point_set()._naive_enumerator()
             sage: list(ni)
@@ -707,7 +707,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         Iterator over points.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: point_set = toric_varieties.P2(base_ring=GF(2)).point_set()
             sage: ffe = point_set._finite_field_enumerator()

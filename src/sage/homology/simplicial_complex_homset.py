@@ -138,9 +138,9 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
             raise TypeError("diagonal morphism is only defined for Hom(X,XxX)")
         f = {}
         if rename_vertices:
-            f = {i: "L{0}R{0}".format(i) for i in self._domain.vertices().set()}
+            f = {i: "L{0}R{0}".format(i) for i in self._domain.vertices()}
         else:
-            f = {i: (i,i) for i in self._domain.vertices().set()}
+            f = {i: (i,i) for i in self._domain.vertices()}
         return SimplicialComplexMorphism(f, self._domain, X)
 
     def identity(self):
@@ -164,7 +164,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         """
         if not self.is_endomorphism_set():
             raise TypeError("identity map is only defined for endomorphism sets")
-        f = {i:i for i in self._domain.vertices().set()}
+        f = {i: i for i in self._domain.vertices()}
         return SimplicialComplexMorphism(f, self._domain, self._codomain)
 
     def an_element(self):
@@ -183,14 +183,14 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
               To:   Minimal triangulation of the 5-sphere
               Defn: [0, 1, 2, 3, 4, 5, 6, 7] --> [0, 0, 0, 0, 0, 0, 0, 0]
         """
-        X_vertices = self._domain.vertices().set()
+        X_vertices = self._domain.vertices()
         try:
-            i = next(iter(self._codomain.vertices().set()))
+            i = next(iter(self._codomain.vertices()))
         except StopIteration:
             if not X_vertices:
                 return {}
             else:
                 raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
-        f = {x:i for x in X_vertices}
+        f = {x: i for x in X_vertices}
         return SimplicialComplexMorphism(f, self._domain, self._codomain)
 

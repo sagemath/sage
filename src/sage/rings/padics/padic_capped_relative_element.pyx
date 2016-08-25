@@ -240,7 +240,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
             95367431640624
          """
         if self.ordp < 0:
-            raise ValueError, "Cannot form an integer out of a p-adic field element with negative valuation"
+            raise ValueError("Cannot form an integer out of a p-adic field element with negative valuation")
         return self.lift_c()
 
     def residue(self, absprec=1):

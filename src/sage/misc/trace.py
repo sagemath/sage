@@ -1,6 +1,8 @@
 """
 Interactively tracing execution of a command
 """
+from __future__ import print_function
+
 
 def trace(code, preparse=True):
     r"""
@@ -51,7 +53,8 @@ def trace(code, preparse=True):
 
         sage: import pexpect
         sage: s = pexpect.spawn('sage')
-        sage: _ = s.sendline("trace('print factor(10)'); print 3+97")
+        sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")
+        sage: _ = s.expect('ipdb>', timeout=90)
         sage: _ = s.sendline("s"); _ = s.sendline("c");
         sage: _ = s.expect('100', timeout=90)
 
@@ -60,7 +63,7 @@ def trace(code, preparse=True):
 
     ::
 
-        sage: print s.before[s.before.find('--'):]
+        sage: print(s.before[s.before.find('--'):])
         --...
         ipdb> c
         2 * 5
@@ -68,7 +71,7 @@ def trace(code, preparse=True):
     We test what happens in notebook embedded mode::
 
         sage: sage.plot.plot.EMBEDDED_MODE = True
-        sage: trace('print factor(10)')
+        sage: trace('print(factor(10))')
         Traceback (most recent call last):
         ...
         NotImplementedError: the trace command is not implemented in the Sage notebook; you must use the command line.

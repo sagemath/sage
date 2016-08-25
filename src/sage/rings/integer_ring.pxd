@@ -1,5 +1,5 @@
-from ring cimport PrincipalIdealDomain
-from integer cimport Integer
+from .ring cimport PrincipalIdealDomain
+from .integer cimport Integer
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.ntl.types cimport ZZ_c
 

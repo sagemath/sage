@@ -1,0 +1,5 @@
+= backports.shutil_get_terminal_size =
+
+== Description ==
+
+A backport of the get_terminal_size function from Python 3.3's shutil.

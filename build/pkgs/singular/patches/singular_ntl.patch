@@ -7,10 +7,10 @@ Subject: [PATCH] Fixing incompatibility with NTL8
  factory/NTLconvert.cc | 13 ++++++++++---
  1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/factory/NTLconvert.cc b/factory/NTLconvert.cc
+diff --git a/latest/factory/NTLconvert.cc b/latest/factory/NTLconvert.cc
 index 41ce9b2..e32093d 100644
---- a/factory/NTLconvert.cc
-+++ b/factory/NTLconvert.cc
+--- a/latest/factory/NTLconvert.cc
++++ b/latest/factory/NTLconvert.cc
 @@ -30,6 +30,7 @@
  #include <NTL/GF2EXFactoring.h>
  #include <NTL/tools.h>

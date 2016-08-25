@@ -58,6 +58,8 @@ REFERENCES:
   available at
   http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
 import string
 import pexpect
@@ -67,8 +69,8 @@ from sage.misc.sage_eval import sage_eval
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.gfan import gfan
-from multi_polynomial_ideal import is_MPolynomialIdeal
-from polynomial_ring_constructor import PolynomialRing
+from .multi_polynomial_ideal import is_MPolynomialIdeal
+from .polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -688,7 +690,7 @@ class TropicalPrevariety(PolyhedralFan):
             sage: PF = GF.tropical_intersection()
             sage: pfi = PF.initial_form_systems()
             sage: for q in pfi:
-            ...     print q.initial_forms()
+            ....:     print(q.initial_forms())
             [y^2 - 1, y^2 - 2, y^2 - 3]
             [x^2 - 1, x^2 - 2, x^2 - 3]
             [x^2 + 2*x*y + y^2, x^2 + 2*x*y + y^2, x^2 + 2*x*y + y^2]
@@ -813,7 +815,7 @@ class GroebnerFan(SageObject):
         self.__is_groebner_basis = is_groebner_basis
         self.__symmetry = symmetry
         if symmetry:
-            print "WARNING! Symmetry option not yet implemented!!"
+            print("WARNING! Symmetry option not yet implemented!!")
         self.__verbose = verbose
         if not is_MPolynomialIdeal(I):
             raise TypeError("I must be a multivariate polynomial ideal")
@@ -1059,8 +1061,6 @@ class GroebnerFan(SageObject):
                 G = G.split(']')[1]
             G = G.replace('{{','').replace('}}','').split('},{')
             S = self.__ring
-            #print G
-            #print [([f for f in G[i].split()], G[i]) for i in range(len(G))]
             X = [ReducedGroebnerBasis(self, [S(f) for f in G[i].split(',')], G[i]) for i in range(len(G))]
             self.__reduced_groebner_bases = X
             return X
@@ -1274,7 +1274,7 @@ class GroebnerFan(SageObject):
         """
         S = self.__ring
         if S.ngens() < 3:
-            print "For 2-D fan rendering the polynomial ring must have 3 variables (or more, which are ignored)."
+            print("For 2-D fan rendering the polynomial ring must have 3 variables (or more, which are ignored).")
             raise NotImplementedError
         cmd = 'render'
         if shift:
@@ -1418,11 +1418,11 @@ class GroebnerFan(SageObject):
                     try:
                         edges.append([tpoints[i],tpoints[j]])
                     except Exception:
-                        print adj
-                        print 'tpoints: ' + str(tpoints)
-                        print 'fpoints: ' + str(fpoints)
-                        print adjacent_vertex
-                        print polyhedral_data.ieqs()
+                        print(adj)
+                        print('tpoints: ' + str(tpoints))
+                        print('fpoints: ' + str(fpoints))
+                        print(adjacent_vertex)
+                        print(polyhedral_data.ieqs())
                         raise RuntimeError(adj)
         return edges
 
@@ -1455,7 +1455,7 @@ class GroebnerFan(SageObject):
         """
         S = self.__ring
         if S.ngens() != 4:
-            print "For 3-D fan rendering the polynomial ring must have 4 variables"
+            print("For 3-D fan rendering the polynomial ring must have 4 variables")
             raise NotImplementedError
         g_cones = [q.groebner_cone() for q in self.reduced_groebner_bases()]
         g_cones_facets = [q.facets() for q in g_cones]
@@ -1465,9 +1465,9 @@ class GroebnerFan(SageObject):
         #This is really just for debugging
         if verbose:
             for x in cone_info:
-                print x.inequalities() + ([1,1,0,0,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1])
-                print x.equations()
-                print ""
+                print(x.inequalities() + ([1,1,0,0,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1]))
+                print(x.equations())
+                print()
         cone_info = [Polyhedron(ieqs = x.inequalities() +
                                 ([1,1,0,0,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1]),
                                 eqns = x.equations()) for x in cone_info]
@@ -1476,7 +1476,7 @@ class GroebnerFan(SageObject):
             try:
                 cone_lines = self._4d_to_3d(cone_data)
             except Exception:
-                print cone_data._rays
+                print(cone_data._rays)
                 raise RuntimeError
             for a_line in cone_lines:
                 all_lines.append(a_line)
@@ -1628,7 +1628,7 @@ class GroebnerFan(SageObject):
         S = self.__ring
         B = B.replace('\n','')
         B = B.replace('{','').replace('}','').split(',')
-        if verbose: print S, B
+        if verbose: print(S, B)
         X = [S(f) for f in B]
         self.__tropical_basis = X
         return X
@@ -1640,7 +1640,7 @@ class GroebnerFan(SageObject):
 
         EXAMPLES::
 
-            sage: print "This is not easily doc-testable; please write a good one!"
+            sage: print("This is not easily doc-testable; please write a good one!")
             This is not easily doc-testable; please write a good one!
         """
         self[0].interactive(*args, **kwds)
@@ -1848,16 +1848,16 @@ class ReducedGroebnerBasis(SageObject, list):
             cmd += ' -W'
         cmd += self.__groebner_fan._gfan_mod()
         E = pexpect.spawn(cmd)
-        print "Initializing gfan interactive mode"
+        print("Initializing gfan interactive mode")
         #E.sendline(self._gfan_ideal())
         E.sendline(self.__gfan_gens)
-        print "*"*45
-        print "*     Press control-C to return to Sage     *"
-        print "*"*45
+        print("*" * 45)
+        print("*     Press control-C to return to Sage     *")
+        print("*" * 45)
         try:
             E.interact()
         except OSError:
-            print "Returning to Sage."
+            print("Returning to Sage.")
 
     def groebner_cone(self, restrict=False):
         """

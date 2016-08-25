@@ -58,7 +58,7 @@ DIMACS-base solvers can also be used to write DIMACS files::
     sage: solver.add_clause( ( 1,  2, -3) )
     sage: _ = solver.write()
     sage: for line in open(fn).readlines():
-    ....:    print line,
+    ....:    print(line)
     p cnf 3 2
     1 2 3 0
     1 2 -3 0
@@ -72,7 +72,7 @@ Alternatively, there is :meth:`sage.sat.solvers.dimacs.DIMACS.clauses`::
     sage: solver.add_clause( ( 1,  2, -3) )
     sage: solver.clauses(fn)
     sage: for line in open(fn).readlines():
-    ....:    print line,
+    ....:    print(line)
     p cnf 3 2
     1 2 3 0
     1 2 -3 0
@@ -106,7 +106,7 @@ Conjunctive Normal Form::
     sage: e = CNFEncoder(solver, B)
     sage: e.clauses_sparse(a*b + a + 1)
     sage: _ = solver.write()
-    sage: print open(fn).read()
+    sage: print(open(fn).read())
     p cnf 3 2
     1 0
     -2 0

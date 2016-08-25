@@ -26,8 +26,10 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import absolute_import, print_function
 
 import os
+
 from sage.structure.sage_object import SageObject
 from sage.misc.all import pager
 import sage.rings.all
@@ -247,7 +249,7 @@ class LCalc(SageObject):
                 x0,y0,x1,y1 = a.split()
                 w.append((CC(x0,y0), CC(x1,y1)))
             except ValueError:
-                print 'lcalc: ', a
+                print('lcalc: {}'.format(a))
         return w
 
     def twist_values(self, s, dmin, dmax, L=''):

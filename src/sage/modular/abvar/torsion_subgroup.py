@@ -44,9 +44,9 @@ factor.
 ::
 
     sage: for N in range(1,38):
-    ...    for A in J0(N).new_subvariety().decomposition():
-    ...        T = A.rational_torsion_subgroup()
-    ...        print '%-5s%-5s%-5s%-5s'%(N, A.dimension(), T.divisor_of_order(), T.multiple_of_order())
+    ....:    for A in J0(N).new_subvariety().decomposition():
+    ....:        T = A.rational_torsion_subgroup()
+    ....:        print('%-5s%-5s%-5s%-5s'%(N, A.dimension(), T.divisor_of_order(), T.multiple_of_order()))
     11   1    5    5
     14   1    6    6
     15   1    8    8
@@ -87,10 +87,12 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module            import Module
-from finite_subgroup                import FiniteSubgroup
+from .finite_subgroup                import FiniteSubgroup
 from sage.rings.all                 import ZZ
 from sage.sets.primes               import Primes
 from sage.modular.arithgroup.all    import is_Gamma0

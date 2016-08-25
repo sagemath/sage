@@ -50,15 +50,16 @@ Functions
 ---------
 """
 # python3
-from __future__ import division
+from __future__ import division, print_function
+from __future__ import absolute_import
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from design_catalog import transversal_design
-from block_design import BlockDesign
+from .design_catalog import transversal_design
+from .block_design import BlockDesign
 from sage.arith.all import binomial, is_prime_power
-from group_divisible_designs import GroupDivisibleDesign
-from designs_pyx import is_pairwise_balanced_design
+from .group_divisible_designs import GroupDivisibleDesign
+from .designs_pyx import is_pairwise_balanced_design
 
 def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
     r"""
@@ -217,8 +218,8 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
             return v%20 == 1 or v%20 == 5
         return BalancedIncompleteBlockDesign(v, v_5_1_BIBD(v), copy=False)
 
-    from difference_family import difference_family
-    from database import BIBD_constructions
+    from .difference_family import difference_family
+    from .database import BIBD_constructions
 
     if (v,k,1) in BIBD_constructions:
         if existence:
@@ -236,7 +237,7 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
     if v == (k-1)**2+k and is_prime_power(k-1):
         if existence:
             return True
-        from block_design import projective_plane
+        from .block_design import projective_plane
         return BalancedIncompleteBlockDesign(v, projective_plane(k-1),copy=False)
     if difference_family(v,k,existence=True):
         if existence:
@@ -244,11 +245,11 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
         G,D = difference_family(v,k)
         return BalancedIncompleteBlockDesign(v, BIBD_from_difference_family(G,D,check=False), copy=False)
     if use_LJCR:
-        from covering_design import best_known_covering_design_www
+        from .covering_design import best_known_covering_design_www
         B = best_known_covering_design_www(v,k,2)
 
         # Is it a BIBD or just a good covering ?
-        expected_n_of_blocks = binomial(v,2)/binomial(k,2)
+        expected_n_of_blocks = binomial(v,2)//binomial(k,2)
         if B.low_bd() > expected_n_of_blocks:
             if existence:
                 return False
@@ -524,7 +525,7 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
 
         sage: G = Zmod(21)
         sage: D = [[0,1,4,14,16]]
-        sage: print sorted(G(x-y) for x in D[0] for y in D[0] if x != y)
+        sage: sorted(G(x-y) for x in D[0] for y in D[0] if x != y)
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 
         sage: from sage.combinat.designs.bibd import BIBD_from_difference_family
@@ -551,7 +552,7 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
          [19, 20, 2, 12, 14],
          [20, 0, 3, 13, 15]]
     """
-    from difference_family import group_law, block_stabilizer
+    from .difference_family import group_law, block_stabilizer
     identity, mul, inv = group_law(G)
     bibd = []
     Gset = set(G)
@@ -633,14 +634,14 @@ def v_4_1_BIBD(v, check=True):
     # Step 1. Base cases.
     if v == 13:
         # note: this construction can also be obtained from difference_family
-        from block_design import projective_plane
+        from .block_design import projective_plane
         return projective_plane(3)._blocks
     if v == 16:
-        from block_design import AffineGeometryDesign
+        from .block_design import AffineGeometryDesign
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
         return AffineGeometryDesign(2,1,FiniteField(4,'x'))._blocks
     if v == 25 or v == 37:
-        from difference_family import difference_family
+        from .difference_family import difference_family
         G,D = difference_family(v,4)
         return BIBD_from_difference_family(G,D,check=False)
     if v == 28:
@@ -972,7 +973,7 @@ def v_5_1_BIBD(v, check=True):
         bibd = BIBD_5q_5_for_q_prime_power(v//5)
     # Lemma 28
     elif v in [21,41,61,81,141,161,281]:
-        from difference_family import difference_family
+        from .difference_family import difference_family
         G,D = difference_family(v,5)
         bibd = BIBD_from_difference_family(G, D, check=False)
     # Lemma 29
@@ -1021,7 +1022,7 @@ def _get_r_s_t_u(v):
         sage: _get_r_s_t_u(25)
         (6, 0, 1, 1)
     """
-    r = int((v-1)//4)
+    r = int((v-1)/4)
     s = r//150
     x = r%150
 
@@ -1061,7 +1062,7 @@ def PBD_from_TD(k,t,u):
         True
 
     """
-    from orthogonal_arrays import transversal_design
+    from .orthogonal_arrays import transversal_design
     TD = transversal_design(k+bool(u),t, check=False)
     TD = [[x for x in X if x<k*t+u] for X in TD]
     for i in range(k):
@@ -1414,8 +1415,8 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             sage: B = designs.balanced_incomplete_block_design(25, 4)
             sage: a2 = B.arc(2)
             sage: r = (25-1)//(4-1)
-            sage: print len(a2), 1 + r
-            8 9
+            sage: len(a2), 1 + r
+            (8, 9)
             sage: sa2 = set(a2)
             sage: set(len(sa2.intersection(b)) for b in B.blocks())
             {0, 1, 2}
@@ -1423,8 +1424,8 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             False
 
             sage: a3 = B.arc(3)
-            sage: print len(a3), 1 + 2*r
-            15 17
+            sage: len(a3), 1 + 2*r
+            (15, 17)
             sage: sa3 = set(a3)
             sage: set(len(sa3.intersection(b)) for b in B.blocks()) == set([0,3])
             False

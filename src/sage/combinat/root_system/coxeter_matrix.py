@@ -1127,7 +1127,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         for ct in test:
             ct = CoxeterType(ct)
             T = ct.coxeter_graph()
-            iso, match = T.is_isomorphic(S, certify=True, edge_labels=True)
+            iso, match = T.is_isomorphic(S, certificate=True, edge_labels=True)
             if iso:
                 types.append(ct.relabel(match))
                 found = True

@@ -58,6 +58,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
 
 from sage.groups.group import Group
 from sage.rings.all import ZZ
@@ -658,7 +659,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         gap.eval("MCFs := MTX.CompositionFactors( M )")
         N = eval(gap.eval("Length(MCFs)"))
         if algorithm == "verbose":
-            print gap.eval('MCFs')+"\n"
+            print(gap.eval('MCFs') + "\n")
         L = []
         for i in range(1,N+1):
             gap.eval("MCF := MCFs[%s]"%i)

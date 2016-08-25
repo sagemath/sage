@@ -8,6 +8,7 @@ doctests to use a different random seed; but we also want to be able
 to reproduce the problems when debugging.  This module provides a
 decorator to help write random testers that meet these goals.
 """
+from __future__ import print_function
 
 from functools import wraps
 
@@ -87,11 +88,11 @@ def random_testing(fn):
 
         sage: from sage.misc.random_testing import random_testing
         sage: def foo(verbose=False):
-        ...       'oh look, a docstring'
-        ...       n = ZZ.random_element(2^50)
-        ...       if verbose:
-        ...           print "Random value: %s" % n
-        ...       assert(n == 49681376900427)
+        ....:     'oh look, a docstring'
+        ....:     n = ZZ.random_element(2^50)
+        ....:     if verbose:
+        ....:         print("Random value: %s" % n)
+        ....:     assert(n == 49681376900427)
         sage: foo = random_testing(foo)
         sage: foo(seed=0, verbose=True)
         Random value: 49681376900427

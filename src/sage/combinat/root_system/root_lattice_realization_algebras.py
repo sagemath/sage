@@ -10,6 +10,8 @@ Group algebras of root lattice realizations
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 import functools, operator
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_import import lazy_import
@@ -310,7 +312,6 @@ class Algebras(AlgebrasCategory):
                         # Demazure operators are not defined in this case
                         continue
                     x = self.monomial(weight)
-                    #print x,i
                     result = pi[i](x)
                     tester.assertEqual(result * (self.one()-emalphai),
                                        x - emalphai * x.map_support(s[i]))
@@ -783,10 +784,10 @@ class Algebras(AlgebrasCategory):
             The following results have not been checked::
 
                 sage: for x in some_weights:
-                ....:     print x, ": ", f(x)
-                (1, 0, 0, 0) :  q1*B[(1, 0, 0, 0)]
-                (1, 1, 0, 0) :  q1*B[(1, 1, 0, 0)]
-                (1, 1, 1, 0) :  q1*B[(1, 1, 1, 0)]
+                ....:     print("{} : {}".format(x, f(x)))
+                (1, 0, 0, 0) : q1*B[(1, 0, 0, 0)]
+                (1, 1, 0, 0) : q1*B[(1, 1, 0, 0)]
+                (1, 1, 1, 0) : q1*B[(1, 1, 1, 0)]
 
             Some examples for type `B_2^{(1)}` dual::
 

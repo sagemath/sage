@@ -1,6 +1,6 @@
-diff -ru src/IntegerProgramming/Makefile.in b/IntegerProgramming/Makefile.in
---- src/IntegerProgramming/Makefile.in	2012-06-19 11:00:05.000000000 +0200
-+++ b/IntegerProgramming/Makefile.in	2012-07-12 17:00:42.253780191 +0200
+diff -ru a/latest/IntegerProgramming/Makefile.in b/latest/IntegerProgramming/Makefile.in
+--- a/latest/IntegerProgramming/Makefile.in	2012-06-19 11:00:05.000000000 +0200
++++ b/latest/IntegerProgramming/Makefile.in	2012-07-12 17:00:42.253780191 +0200
 @@ -64,11 +64,11 @@
  
  install install-libsingular: $(MAIN1) $(MAIN2) $(MAIN3) $(MAIN4) $(LLL)

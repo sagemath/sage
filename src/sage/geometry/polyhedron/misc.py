@@ -72,7 +72,7 @@ def _make_listlist(x):
 
     - ``x`` -- ``None`` or an iterable of iterables.
 
-    OUTPUT
+    OUTPUT:
 
     A list of lists.
 

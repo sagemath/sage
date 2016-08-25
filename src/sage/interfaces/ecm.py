@@ -35,7 +35,7 @@ seed, but currently there is no facility to do so.
 #   the License, or (at your option) any later version.
 #                   http://www.gnu.org/licenses/
 ###############################################################################
-
+from __future__ import print_function
 
 import os
 import re
@@ -245,8 +245,8 @@ class ECM(SageObject):
 
             sage: ecm.interact()    # not tested
         """
-        print "Enter numbers to run ECM on them."
-        print "Press control-C to exit."
+        print("Enter numbers to run ECM on them.")
+        print("Press control-C to exit.")
         os.system(self._cmd)
 
     # Recommended settings from
@@ -772,7 +772,7 @@ class ECM(SageObject):
         print('offset', offset)
         curve_count = curve_count_table.split()[offset]
         time = time_table.split()[offset]
-        print 'Expected curves: {0}, Expected time: {1}'.format(curve_count, time)
+        print('Expected curves: {0}, Expected time: {1}'.format(curve_count, time))
 
     def _validate(self, n):
         """

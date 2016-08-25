@@ -7,14 +7,15 @@ Symmetric Group Algebra
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function, absolute_import
+
 from sage.misc.cachefunc import cached_method
-from combinatorial_algebra import CombinatorialAlgebra
-from free_module import CombinatorialFreeModule
+from .combinatorial_algebra import CombinatorialAlgebra
+from .free_module import CombinatorialFreeModule
 from sage.categories.weyl_groups import WeylGroups
-from sage.combinat.permutation import (Permutation, Permutations,
-     from_permutation_group_element, PermutationOptions)
-import partition
-from tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
+from sage.combinat.permutation import Permutation, Permutations, from_permutation_group_element
+from . import partition
+from .tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
 from sage.interfaces.all import gap
 from sage.rings.all import QQ, PolynomialRing
 from sage.arith.all import factorial
@@ -24,8 +25,6 @@ from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 import itertools
 from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
-
-permutation_options = PermutationOptions
 
 # TODO: Remove this function and replace it with the class
 # TODO: Create parents for other bases (such as the seminormal basis)
@@ -157,8 +156,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
         to "in such a way that multiplication is associative with
         permutations acting on integers from the right", but can be
         changed to the opposite order at runtime by setting the global
-        variable ``Permutations.global_options['mult']`` (see
-        :meth:`sage.combinat.permutation.Permutations.global_options` ).
+        variable ``Permutations.options['mult']`` (see
+        :meth:`sage.combinat.permutation.Permutations.options` ).
         On the other hand, the semantics of multiplication in symmetric
         group algebras with index set ``SymmetricGroup(n)`` does not
         depend on this global variable. (This has the awkward
@@ -2207,8 +2206,8 @@ def seminormal_test(n):
             #Lemma 3.2.12 (ii)
             value = e(tab)*epsilon(tab,1)*e(tab) - e(tab)*(kappa(part))
             if value != 0:
-                print value
-                raise ValueError("3.2.12.2 - %s"%tab)
+                print(value)
+                raise ValueError("3.2.12.2 - %s" % tab)
 
             for tab2 in StandardTableaux(part):
                 #3.2.8 (i)
@@ -2284,7 +2283,7 @@ def HeckeAlgebraSymmetricGroupT(R, n, q=None):
         The multiplication on the Hecke algebra of the symmetric group
         does *not* follow the global option ``mult`` of the
         :class:`Permutations` class (see
-        :meth:`~sage.combinat.permutation.Permutations.global_options`).
+        :meth:`~sage.combinat.permutation.Permutations.options`).
         It is always as defined above. It does not match the default
         option (``mult=l2r``) of the symmetric group algebra!
 
@@ -2422,7 +2421,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
         # This used to be perm_i = t_i * perm. I have changed it to
         # perm_i = t_i.right_action_product(perm) because it would
         # otherwise cause TestSuite(H3) to fail when
-        # Permutations.global_options(mult) would be set to "r2l".
+        # Permutations.options(mult) would be set to "r2l".
         # -- Darij, 19 Nov 2013
 
         if perm[i-1] < perm[i]:

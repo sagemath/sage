@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sage.misc.lazy_import import lazy_import
 
 lazy_import("sage.coding.code_constructions", ["permutation_action",
@@ -40,6 +42,6 @@ lazy_import("sage.coding.delsarte_bounds", ["Krawtchouk", "Kravchuk",
             "delsarte_bound_hamming_space",
             "delsarte_bound_additive_hamming_space"])
 
-from sd_codes import self_dual_codes_binary
+from .sd_codes import self_dual_codes_binary
 lazy_import('sage.coding', 'codes_catalog', 'codes')
 lazy_import('sage.coding', 'channels_catalog', 'channels')

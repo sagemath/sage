@@ -6,7 +6,8 @@ die () {
 }
 
 # patching
-cd LiE/
+cd src
+
 chmod -R a+rX .
 patch -p1 <../patches/00-string.h.patch &&
 patch -p1 <../patches/01-libs.patch &&
@@ -26,10 +27,10 @@ $MAKE CC="$CC" || die "Error building LiE. Did you install bison?"
 # "install" the LiE package by moving over the complete build
 # directory to $SAGE_LOCAL/lib/lie
 cd ..
-sed -e "s'$PWD/LiE'$SAGE_LOCAL/lib/LiE'" LiE/lie > LiE/lie~
-mv LiE/lie~ LiE/lie
-chmod +x LiE/lie
+sed -e "s'$PWD/LiE'$SAGE_LOCAL/lib/LiE'" src/lie > src/lie~
+mv src/lie~ src/lie
+chmod +x src/lie
 rm -rf "$SAGE_LOCAL"/lib/lie # clean up old versions
 rm -rf "$SAGE_LOCAL"/bin/lie "$SAGE_LOCAL"/lib/LiE
-mv LiE/lie "$SAGE_LOCAL"/bin/
-mv LiE/ "$SAGE_LOCAL"/lib/LiE
+mv src/lie "$SAGE_LOCAL"/bin/
+mv src/ "$SAGE_LOCAL"/lib/LiE

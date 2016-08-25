@@ -1,4 +1,4 @@
-from function_mangling cimport ArgumentFixer
+from .function_mangling cimport ArgumentFixer
 
 cpdef dict_key(o)
 cpdef cache_key(o)
@@ -15,6 +15,7 @@ cdef class CachedFunction(object):
     cdef fix_args_kwds(self, tuple args, dict kwds)
     cdef empty_key
     cdef key
+    cdef bint do_pickle
 
 cdef class CachedMethod(object):
     cdef str _cache_name
@@ -22,7 +23,10 @@ cdef class CachedMethod(object):
     cdef public str __module__
     cdef CachedFunction _cachedfunc
     cdef Py_ssize_t nargs
-    cpdef dict _get_instance_cache(self, inst)
+    cpdef _get_instance_cache(self, inst)
+
+cdef class CacheDict(dict):
+    pass
 
 cdef class CachedInParentMethod(CachedMethod):
     pass

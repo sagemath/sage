@@ -31,9 +31,8 @@ Literaturverzeichnis
 ..  [Py] The Python language, http://www.python.org/
     Reference Manual, http://docs.python.org/ref/ref.html/.
 
-..  [PyDev] Guido, Some Guys, and a Mailing List: How Python is
-    Developed,
-    http://www.python.org/dev/dev_intro.html/.
+..  [PyDev] Python Developer's Guide
+    https://docs.python.org/devguide/.
 
 ..  [Pyr] Pyrex, http://www.cosc.canterbury.ac.nz/~greg/python/Pyrex/.
 

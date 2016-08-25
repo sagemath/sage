@@ -19,6 +19,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     cdef bint is_square_c(self) except -2
     cpdef bint is_one(self)
     cpdef bint is_unit(self)
+    cpdef _floordiv_(self, other)
 
 cdef class IntegerMod_gmp(IntegerMod_abstract):
     cdef mpz_t value

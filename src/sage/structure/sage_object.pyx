@@ -3,16 +3,15 @@ r"""
 Abstract base class for Sage objects
 """
 
-import cPickle
+from __future__ import absolute_import, print_function
+
+from six.moves import cPickle
 import os
 import sys
-from cStringIO import StringIO
+from six.moves import cStringIO as StringIO
 from sage.misc.sage_unittest import TestSuite
 
 sys_modules = sys.modules
-
-from sage.misc.lazy_import import LazyImport
-have_same_parent = LazyImport('sage.structure.element', 'have_same_parent', deprecation=17533)
 
 # change to import zlib to use zlib instead; but this
 # slows down loading any data stored in the other format
@@ -26,36 +25,10 @@ op_NE = Py_NE   # operator !=
 op_GT = Py_GT   # operator >
 op_GE = Py_GE   # operator >=
 
-def py_rich_to_bool(op, c):
-    r"""
-    Return ``True`` or ``False`` for a rich comparison, given the result of an
-    ordinary comparison.
 
-    Do not use this function from Cython. Instead, call ``rich_to_bool`` or
-    ``rich_to_bool_sgn`` defined in ``sage_object.pxd``.
+from sage.misc.superseded import deprecated_function_alias
+py_rich_to_bool = deprecated_function_alias(21128, rich_to_bool)
 
-    INPUT:
-
-    - ``op`` -- a rich comparison operation (e.g. ``op_EQ``)
-
-    - ``c`` -- the result of an ordinary comparison, i.e. an integer.
-
-    EXAMPLES::
-
-        sage: from sage.structure.sage_object import (py_rich_to_bool,
-        ....:    op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE)
-        sage: for op in (op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE):
-        ....:     for c in (-1,0,1):
-        ....:         print py_rich_to_bool(op, c),
-        ....:     print
-        True False False
-        True True False
-        False True False
-        True False True
-        False False True
-        False True True
-    """
-    return rich_to_bool_sgn(op, c)
 
 cdef process(s):
     if s[-5:] != '.sobj':
@@ -134,7 +107,7 @@ cdef class SageObject:
             try:
                 self.__custom_name = str(x)
             except AttributeError:
-                raise NotImplementedError, "object does not support renaming: %s"%self
+                raise NotImplementedError("object does not support renaming: %s" % self)
 
     def reset_name(self):
         """
@@ -247,7 +220,7 @@ cdef class SageObject:
             sage: shell.run_cell('tab')
             1  2
             3
-            sage: shell.run_cell('Tableaux.global_options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
             sage: shell.run_cell('tab')
             +---+
             | 3 |
@@ -255,7 +228,7 @@ cdef class SageObject:
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.global_options.reset()')
+            sage: shell.run_cell('Tableaux.options._reset()')
             sage: shell.quit()
 
         TESTS::
@@ -309,7 +282,7 @@ cdef class SageObject:
             sage: shell.run_cell('tab')
             1  2
             3
-            sage: shell.run_cell('Tableaux.global_options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
             sage: shell.run_cell('tab')
             +---+
             | 3 |
@@ -317,7 +290,7 @@ cdef class SageObject:
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.global_options.reset()')
+            sage: shell.run_cell('Tableaux.options._reset()')
             sage: shell.quit()
 
         TESTS::
@@ -411,34 +384,9 @@ cdef class SageObject:
         else:
             assert False, "_cache_key() must not be called for hashable elements"
 
-    #############################################################################
+    ##########################################################################
     # DATABASE Related code
-    #############################################################################
-
-    def version(self):
-        r"""
-        The version of Sage.
-
-        Call this to save the version of Sage in this object.
-        If you then save and load this object it will know in what
-        version of Sage it was created.
-
-        This only works on Python classes that derive from SageObject.
-
-        TESTS::
-
-            sage: v = DiGraph().version()
-            doctest:... DeprecationWarning: version() is deprecated.
-            See http://trac.sagemath.org/2536 for details.
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(2536, 'version() is deprecated.')
-        try:
-            return self.__version
-        except AttributeError:
-            import sage.version
-            self.__version = sage.version.version
-            return self.__version
+    ##########################################################################
 
     def save(self, filename=None, compress=True):
         """
@@ -455,7 +403,7 @@ cdef class SageObject:
             try:
                 filename = self._default_filename
             except AttributeError:
-                raise RuntimeError, "no default filename, so it must be specified"
+                raise RuntimeError("no default filename, so it must be specified")
         filename = process(filename)
         try:
             self._default_filename = filename
@@ -628,14 +576,21 @@ cdef class SageObject:
 
         """
         tester = self._tester(**options)
-        for name in dir(self):
-            try:
-                getattr(self, name)
-            except NotImplementedError:
-                # It would be best to make sure that this NotImplementedError was triggered by AbstractMethod
-                tester.fail("Not implemented method: %s"%name)
-            except Exception:
-                pass
+        try:
+            # Disable warnings for the duration of the test
+            import warnings
+            warnings.filterwarnings('ignore')
+            for name in dir(self):
+                try:
+                    getattr(self, name)
+                except NotImplementedError:
+                    # It would be best to make sure that this NotImplementedError was triggered by AbstractMethod
+                    tester.fail("Not implemented method: %s"%name)
+                except Exception:
+                    pass
+        finally: 
+            # Restore warnings
+            warnings.filters.pop(0)
 
     def _test_pickling(self, **options):
         """
@@ -703,8 +658,7 @@ cdef class SageObject:
             try:
                 s = self._interface_init_(I)
             except Exception:
-                raise NotImplementedError, "coercion of object %s to %s not implemented:\n%s\n%s"%\
-                  (repr(self), I)
+                raise NotImplementedError("coercion of object %s to %s not implemented:\n%s\n%s" % (repr(self), I))
         X = I(s)
         if c:
             try:
@@ -981,7 +935,7 @@ def load(*filename, compress=True, verbose=True):
     We test loading a file or multiple files or even mixing loading files and objects::
 
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hello world'")
+        sage: open(t,'w').write("print('hello world')")
         sage: load(t)
         hello world
         sage: load(t,t)
@@ -1074,7 +1028,7 @@ def save(obj, filename=None, compress=True, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: allowed file extensions for images are '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
-        sage: print load(objfile)
+        sage: print(load(objfile))
         Graphics object consisting of 2 graphics primitives
         sage: save("A python string", os.path.join(SAGE_TMP, 'test'))
         sage: load(objfile)
@@ -1119,7 +1073,7 @@ def dumps(obj, compress=True):
 
         sage: a = 2/3
         sage: s = dumps(a)
-        sage: print len(s)
+        sage: len(s)
         49
         sage: loads(s)
         2/3
@@ -1391,7 +1345,7 @@ def loads(s, compress=True):
         UnpicklingError: invalid load key, 'x'.
     """
     if not isinstance(s, str):
-        raise TypeError, "s must be a string"
+        raise TypeError("s must be a string")
     if compress:
         try:
             s = comp.decompress(s)
@@ -1562,7 +1516,7 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
 
     If you want to find *lots* of little issues in Sage then try the following::
 
-        sage: print "x"; sage.structure.sage_object.unpickle_all(run_test_suite = True) # todo: not tested
+        sage: sage.structure.sage_object.unpickle_all(run_test_suite = True) # todo: not tested
 
     This runs :class:`TestSuite` tests on all objects in the Sage pickle
     jar. Some of those objects seem to unpickle properly, but do not
@@ -1615,9 +1569,9 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
             except Exception:
                 j += 1
                 if run_test_suite:
-                    print " * unpickle failure: TestSuite(load('%s')).run()"%os.path.join(dir,A)
+                    print(" * unpickle failure: TestSuite(load('%s')).run()" % os.path.join(dir, A))
                 else:
-                    print " * unpickle failure: load('%s')"%os.path.join(dir,A)
+                    print(" * unpickle failure: load('%s')" % os.path.join(dir, A))
                 from traceback import print_exc
                 print_exc()
                 failed.append(A)
@@ -1625,17 +1579,17 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
                     tracebacks.append(sys.exc_info())
 
     if len(failed) > 0:
-        print "Failed:\n%s"%('\n'.join(failed))
+        print("Failed:\n%s" % ('\n'.join(failed)))
         if pickle_jar:
             # if we are checking the pickle_jar then print a message to alert the
             # user about what to do to fix unpickling errors
-            print '-'*70
-            print """** This error is probably due to an old pickle failing to unpickle.
+            print('-' * 70)
+            print("""** This error is probably due to an old pickle failing to unpickle.
 ** See sage.structure.sage_object.register_unpickle_override for
 ** how to override the default unpickling methods for (old) pickles.
-** NOTE: pickles should never be removed from the pickle_jar! """
-            print '-'*70
-    print "Successfully unpickled %s objects."%i
-    print "Failed to unpickle %s objects."%j
+** NOTE: pickles should never be removed from the pickle_jar! """)
+            print('-' * 70)
+    print("Successfully unpickled %s objects." % i)
+    print("Failed to unpickle %s objects." % j)
     if debug:
         return tracebacks

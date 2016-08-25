@@ -25,6 +25,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
 from copy import copy
@@ -377,9 +379,9 @@ def decorator_defaults(func):
         sage: from sage.misc.decorators import decorator_defaults
         sage: @decorator_defaults
         ... def my_decorator(f,*args,**kwds):
-        ...     print kwds
-        ...     print args
-        ...     print f.__name__
+        ...     print(kwds)
+        ...     print(args)
+        ...     print(f.__name__)
         ...
         sage: @my_decorator
         ... def my_fun(a,b):
@@ -436,7 +438,7 @@ class suboptions(object):
         EXAMPLES::
 
             sage: from sage.misc.decorators import suboptions
-            sage: def f(*args, **kwds): print list(sorted(kwds.items()))
+            sage: def f(*args, **kwds): print(list(sorted(kwds.items())))
             sage: f = suboptions('arrow', size=2)(f)
             sage: f(size=2)
             [('arrow_options', {'size': 2}), ('size', 2)]
@@ -514,7 +516,8 @@ class options(object):
 
             sage: from sage.misc.decorators import options
             sage: o = options(rgbcolor=(0,0,1))
-            sage: def f(*args, **kwds): print args, list(sorted(kwds.items()))
+            sage: def f(*args, **kwds):
+            ....:     print("{} {}".format(args, list(sorted(kwds.items()))))
             sage: f1 = o(f)
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f1)
@@ -529,7 +532,8 @@ class options(object):
 
             sage: from sage.misc.decorators import options
             sage: o = options(rgbcolor=(0,0,1))
-            sage: def f(*args, **kwds): print args, list(sorted(kwds.items()))
+            sage: def f(*args, **kwds):
+            ....:     print("{} {}".format(args, list(sorted(kwds.items()))))
             sage: f1 = o(f)
             sage: f1()
             () [('rgbcolor', (0, 0, 1))]
@@ -568,7 +572,8 @@ class options(object):
 
                 sage: from sage.misc.decorators import options
                 sage: o = options(rgbcolor=(0,0,1))
-                sage: def f(*args, **kwds): print args, list(sorted(kwds.items()))
+                sage: def f(*args, **kwds):
+                ....:     print("{} {}".format(args, list(sorted(kwds.items()))))
                 sage: f = o(f)
                 sage: f.options['rgbcolor']=(1,1,1)
                 sage: f.defaults()
@@ -584,7 +589,8 @@ class options(object):
 
                 sage: from sage.misc.decorators import options
                 sage: o = options(rgbcolor=(0,0,1))
-                sage: def f(*args, **kwds): print args, list(sorted(kwds.items()))
+                sage: def f(*args, **kwds):
+                ....:     print("{} {}".format(args, list(sorted(kwds.items()))))
                 sage: f = o(f)
                 sage: f.options
                 {'rgbcolor': (0, 0, 1)}
@@ -654,7 +660,6 @@ class rename_keyword(object):
         """
         assert deprecated is None, 'Use @rename_keyword(deprecation=<trac_number>, ...)'
         self.renames = renames
-        self.renames = renames
         self.deprecation = deprecation
 
     def __call__(self, func):
@@ -665,7 +670,8 @@ class rename_keyword(object):
 
             sage: from sage.misc.decorators import rename_keyword
             sage: r = rename_keyword(color='rgbcolor')
-            sage: def f(*args, **kwds): print args, kwds
+            sage: def f(*args, **kwds):
+            ....:     print("{} {}".format(args, kwds))
             sage: f = r(f)
             sage: f()
             () {}
@@ -679,7 +685,8 @@ class rename_keyword(object):
         We can also deprecate the renamed keyword::
 
             sage: r = rename_keyword(deprecation=13109, deprecated_option='new_option')
-            sage: def f(*args, **kwds): print args, kwds
+            sage: def f(*args, **kwds):
+            ....:     print("{} {}".format(args, kwds))
             sage: f = r(f)
             sage: f()
             () {}
@@ -730,8 +737,8 @@ class specialize:
         sage: f(5)
         10
         sage: @specialize("Bon Voyage")
-        ... def greet(greeting, name):
-        ...    print "{0}, {1}!".format(greeting, name)
+        ....: def greet(greeting, name):
+        ....:     print("{0}, {1}!".format(greeting, name))
         sage: greet("Monsieur Jean Valjean")
         Bon Voyage, Monsieur Jean Valjean!
         sage: greet(name = 'Javert')

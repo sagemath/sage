@@ -65,6 +65,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from libc.stdint cimport uint64_t
 
@@ -109,7 +110,7 @@ cdef int report_solution(void *_state, uint64_t i):
     cdef object state = <object> _state
     state.sols.append(i)
     if state.verbose:
-        print "fes: solution {0} / {1} found : {2:x}".format(len(state.sols), state.max_sols, i)
+        print("fes: solution {0} / {1} found : {2:x}".format(len(state.sols), state.max_sols, i))
     if (state.max_sols > 0 and state.max_sols >= len(state.sols)):
         return 1  #stop the library
     return 0 # keep going
@@ -286,7 +287,7 @@ def find_coordinate_change(As, max_tries=64):
             while not S.is_invertible():
                 S.randomize()
             Bs = [ S.T*M*S for M in As ]
-            print "trying again..."
+            print("trying again...")
     raise ValueError("Could not find suitable coordinate change")
 
 
@@ -333,8 +334,6 @@ def prepare_polynomials(f):
 
     monomials_in_s = list( s.monomials() )
     monomials_in_s.sort(reverse=True)
-
-#   print "fes interface: killing monomials ", monomials_in_s[:excess]
 
     m = matrix(R.base_ring(), [ [ g.monomial_coefficient(m) for m in monomials_in_s[:excess] ] for g in s ])
     # now find the linear combinations of the equations that kills the first `excess` monomials in all but `excess` equations

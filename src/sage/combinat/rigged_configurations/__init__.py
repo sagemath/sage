@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Rigged Configurations
 =====================
 

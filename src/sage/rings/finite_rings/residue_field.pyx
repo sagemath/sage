@@ -303,12 +303,12 @@ class ResidueFieldFactory(UniqueFactory):
                 #    p = p.parent().ring_of_integers().ideal(p)
                 # will eventually support other function fields here.
                 else:
-                    raise ValueError, "p must be an ideal or element of a number field or function field."
+                    raise ValueError("p must be an ideal or element of a number field or function field.")
             if not p.is_prime():
-                raise ValueError, "p (%s) must be prime"%p
+                raise ValueError("p (%s) must be prime" % p)
             if is_PolynomialRing(p.ring()):
                 if not p.ring().base_ring().is_finite():
-                    raise ValueError, "residue fields only supported for polynomial rings over finite fields"
+                    raise ValueError("residue fields only supported for polynomial rings over finite fields")
                 if not p.ring().base_ring().is_prime_field():
                     # neither of these will work over non-prime fields quite yet.  We should use relative finite field extensions.
                     raise NotImplementedError
@@ -357,7 +357,7 @@ class ResidueFieldFactory(UniqueFactory):
                 elif impl is None or impl == 'pari':
                     return ResidueFiniteField_pari_ffelt(p, characteristic, names, f, None, None, None)
                 else:
-                    raise ValueError, "unrecognized finite field type"
+                    raise ValueError("unrecognized finite field type")
 
         # Should generalize to allowing residue fields of relative extensions to be extensions of finite fields.
         if is_NumberFieldIdeal(p):
@@ -416,7 +416,7 @@ class ResidueFieldFactory(UniqueFactory):
             elif impl is None or impl == 'pari':
                 return ResidueFiniteField_pari_ffelt(p, characteristic, names, f, to_vs, to_order, PB)
             else:
-                raise ValueError, "unrecognized finite field type"
+                raise ValueError("unrecognized finite field type")
 
 ResidueField = ResidueFieldFactory("ResidueField")
 
@@ -555,7 +555,7 @@ class ResidueField_generic(Field):
             try:
                 x = K(x)
             except (TypeError, ValueError):
-                raise TypeError, "cannot coerce %s"%type(x)
+                raise TypeError("cannot coerce %s" % type(x))
         return self(x)
 
     def _coerce_map_from_(self, R):
@@ -960,7 +960,7 @@ cdef class ReductionMap(Map):
             try:
                 return FiniteField_prime_modn._element_constructor_(self._F, x)
             except ZeroDivisionError:
-                raise ZeroDivisionError, "Cannot reduce rational %s modulo %s: it has negative valuation"%(x,p.gen())
+                raise ZeroDivisionError("Cannot reduce rational %s modulo %s: it has negative valuation" % (x, p.gen()))
         elif is_FractionField(self._K):
             p = p.gen()
             if p.degree() == 1:
@@ -983,7 +983,7 @@ cdef class ReductionMap(Map):
         if vnx > vdx:
             return self(0)
         if vnx < vdx:
-            raise ZeroDivisionError, "Cannot reduce field element %s modulo %s: it has negative valuation"%(x,p)
+            raise ZeroDivisionError("Cannot reduce field element %s modulo %s: it has negative valuation" % (x, p))
 
         a = self._K.uniformizer(p,'negative') ** vnx
         nx /= a
@@ -991,7 +991,7 @@ cdef class ReductionMap(Map):
         # Assertions for debugging!
         # assert nx.valuation(p) == 0 and dx.valuation(p) == 0 and x == nx/dx
         # assert nx.is_integral() and dx.is_integral()
-        # print "nx = ",nx,"; dx = ",dx, ": recursing"
+        # print("nx = ",nx,"; dx = ",dx, ": recursing")
 
         # NB at this point nx and dx are in the ring of integers and
         # both are p-units.  Recursion is now safe, since integral

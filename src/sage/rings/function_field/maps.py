@@ -29,6 +29,7 @@ EXAMPLES::
     ...
     ValueError: invalid morphism
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011-2014 Julian Rueth <julian.rueth@gmail.com>
@@ -69,7 +70,7 @@ class FunctionFieldDerivation(Map):
             sage: d = K.derivation() # indirect doctest
 
         """
-        from function_field import is_FunctionField
+        from .function_field import is_FunctionField
         if not is_FunctionField(K):
             raise ValueError("K must be a function field")
         self.__field = K
@@ -139,7 +140,7 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
             sage: d = K.derivation() # indirect doctest
 
         """
-        from function_field import is_RationalFunctionField
+        from .function_field import is_RationalFunctionField
         if not is_RationalFunctionField(K):
             raise ValueError("K must be a rational function field")
         if u.parent() is not K:

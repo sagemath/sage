@@ -11,6 +11,7 @@ AUTHORS:
     - __cmp__(self, other): __eq__ is provided by UniqueRepresentation
       and seems to do as good a job (all test pass)
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
@@ -21,7 +22,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.all import ZZ
-from set import Set_generic
+from .set import Set_generic
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.arith.all import nth_prime
 from sage.structure.unique_representation import UniqueRepresentation

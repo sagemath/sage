@@ -7,10 +7,13 @@ Root system data for affine Cartan types
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.free_module import CombinatorialFreeModule
-from weight_lattice_realizations import WeightLatticeRealizations
+from .weight_lattice_realizations import WeightLatticeRealizations
 
 class AmbientSpace(CombinatorialFreeModule):
     r"""
@@ -78,11 +81,11 @@ class AmbientSpace(CombinatorialFreeModule):
     Systematic checks on all affine types::
 
         sage: for ct in CartanType.samples(affine=True, crystallographic=True):
-        ...       if ct.classical().root_system().ambient_space() is not None:
-        ...           print ct
-        ...           L = ct.root_system().ambient_space()
-        ...           assert L
-        ...           TestSuite(L).run()
+        ....:     if ct.classical().root_system().ambient_space() is not None:
+        ....:         print(ct)
+        ....:         L = ct.root_system().ambient_space()
+        ....:         assert L
+        ....:         TestSuite(L).run()
         ['A', 1, 1]
         ['A', 5, 1]
         ['B', 1, 1]

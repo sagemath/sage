@@ -76,7 +76,7 @@ cdef class MatrixWindow:
 
     def set(MatrixWindow self, MatrixWindow src):
         if self._matrix._parent.base_ring() is not src._matrix._parent.base_ring():
-            raise TypeError, "Parents must be equal."
+            raise TypeError("Parents must be equal.")
         self.set_to(src)
 
     cpdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
@@ -90,11 +90,11 @@ cdef class MatrixWindow:
         if isinstance(ij, tuple):
             # ij is a tuple, so we get i and j efficiently, construct corresponding integer entry.
             if PyTuple_Size(ij) != 2:
-                raise IndexError, "index must be an integer or pair of integers"
+                raise IndexError("index must be an integer or pair of integers")
             i = <object> PyTuple_GET_ITEM(ij, 0)
             j = <object> PyTuple_GET_ITEM(ij, 1)
             if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
-                raise IndexError, "matrix index out of range"
+                raise IndexError("matrix index out of range")
             self.set_unsafe(i, j, x)
         else:
             # If ij is not a tuple, coerce to an integer and set the row.
@@ -109,11 +109,11 @@ cdef class MatrixWindow:
         if isinstance(ij, tuple):
             # ij is a tuple, so we get i and j efficiently, construct corresponding integer entry.
             if PyTuple_Size(ij) != 2:
-                raise IndexError, "index must be an integer or pair of integers"
+                raise IndexError("index must be an integer or pair of integers")
             i = <object> PyTuple_GET_ITEM(ij, 0)
             j = <object> PyTuple_GET_ITEM(ij, 1)
             if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
-                raise IndexError, "matrix index out of range"
+                raise IndexError("matrix index out of range")
             return self.get_unsafe(i, j)
         else:
             # If ij is not a tuple, coerce to an integer and get the row.
@@ -149,7 +149,7 @@ cdef class MatrixWindow:
         """
         cdef Py_ssize_t i, j
         if self._nrows != A._nrows or self._ncols != A._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
                 self.set_unsafe(i, j, A.get_unsafe(i, j))
@@ -165,7 +165,7 @@ cdef class MatrixWindow:
     cpdef add(MatrixWindow self, MatrixWindow A):
         cdef Py_ssize_t i, j
         if self._nrows != A._nrows or self._ncols != A._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
                 self.set_unsafe(i, j, self.get_unsafe(i, j) + A.get_unsafe(i, j))
@@ -173,7 +173,7 @@ cdef class MatrixWindow:
     cpdef subtract(MatrixWindow self, MatrixWindow A):
         cdef Py_ssize_t i, j
         if self._nrows != A._nrows or self._ncols != A._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
                 self.set_unsafe(i, j, self.get_unsafe(i, j) - A.get_unsafe(i, j))
@@ -181,9 +181,9 @@ cdef class MatrixWindow:
     cpdef set_to_sum(MatrixWindow self, MatrixWindow A, MatrixWindow B):
         cdef Py_ssize_t i, j
         if self._nrows != A._nrows or self._ncols != A._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         if self._nrows != B._nrows or self._ncols != B._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
                 self.set_unsafe(i, j, A.get_unsafe(i, j) + B.get_unsafe(i, j))
@@ -197,7 +197,7 @@ cdef class MatrixWindow:
     cpdef set_to_prod(MatrixWindow self, MatrixWindow A, MatrixWindow B):
         cdef Py_ssize_t i, j, k
         if A._ncols != B._nrows or self._nrows != A._nrows or self._ncols != B._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < A._nrows:
             for j from 0 <= j < B._ncols:
                 s = self._zero()
@@ -208,7 +208,7 @@ cdef class MatrixWindow:
     cpdef add_prod(MatrixWindow self, MatrixWindow A, MatrixWindow B):
         cdef Py_ssize_t i, j, k
         if A._ncols != B._nrows or self._nrows != A._nrows or self._ncols != B._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < A._nrows:
             for j from 0 <= j < B._ncols:
                 s = self.get_unsafe(i, j)
@@ -219,7 +219,7 @@ cdef class MatrixWindow:
     cpdef subtract_prod(MatrixWindow self, MatrixWindow A, MatrixWindow B):
         cdef Py_ssize_t i, j, k
         if A._ncols != B._nrows or self._nrows != A._nrows or self._ncols != B._ncols:
-            raise ArithmeticError, "incompatible dimensions"
+            raise ArithmeticError("incompatible dimensions")
         for i from 0 <= i < A._nrows:
             for j from 0 <= j < B._ncols:
                 s = self.get_unsafe(i, j)

@@ -32,6 +32,7 @@ The disk cache files are stored by default in the subdirectory
 ``func_persist`` of the current working directory,
 with one file for each evaluation of the function.
 """
+from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -43,7 +44,7 @@ with one file for each evaluation of the function.
 
 import inspect, os
 
-import persist
+from . import persist
 
 class func_persist:
     r"""

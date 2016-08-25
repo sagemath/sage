@@ -10,11 +10,12 @@ Parallel Iterator built using Python's multiprocessing module
 #
 #                  http://www.gnu.org/licenses/
 ################################################################################
+from __future__ import absolute_import
 
 from multiprocessing import Pool
 from functools import partial
 from sage.misc.fpickle import pickle_function, call_pickled_function
-import ncpus
+from . import ncpus
 
 def pyprocessing(processes=0):
     """

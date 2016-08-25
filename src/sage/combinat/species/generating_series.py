@@ -66,6 +66,7 @@ REFERENCES:
 .. [BLL-Intro] Francois Bergeron, Gilbert Labelle, and Pierre Leroux.
    "Introduction to the Theory of Species of Structures", March 14, 2008.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>
@@ -77,8 +78,8 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from series import LazyPowerSeriesRing, LazyPowerSeries
-from stream import Stream, _integers_from
+from .series import LazyPowerSeriesRing, LazyPowerSeries
+from .stream import Stream, _integers_from
 from sage.rings.all import Integer, RationalField
 from sage.arith.all import moebius, gcd, lcm, divisors
 from sage.combinat.partition import Partition, Partitions
@@ -92,7 +93,7 @@ def OrdinaryGeneratingSeriesRing(R):
     """
     Return the ring of ordinary generating series over ``R``.
 
-    Note that is is just a
+    Note that it is just a
     :class:`LazyPowerSeriesRing` whose elements have
     some extra methods.
 
@@ -167,7 +168,7 @@ def ExponentialGeneratingSeriesRing(R):
     """
     Return the ring of exponential generating series over ``R``.
 
-    Note that is is just a
+    Note that it is just a
     :class:`LazyPowerSeriesRing` whose elements have
     some extra methods.
 
@@ -337,7 +338,7 @@ def CycleIndexSeriesRing(R):
     difficult to implement in Sage, as it would be an element
     of a power series ring in infinitely many variables.
 
-    Note that is is just a :class:`LazyPowerSeriesRing` (whose base
+    Note that it is just a :class:`LazyPowerSeriesRing` (whose base
     ring is `\Lambda`) whose elements have some extra methods.
 
     EXAMPLES::

@@ -82,6 +82,7 @@ class CurveArrow(GraphicPrimitive):
              'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.',
              respectively."),
              ('rgbcolor', 'The color as an RGB tuple.'),
+             ('thickness', 'The thickness of the arrow.'),
              ('width', 'The width of the shaft of the arrow, in points.'),
              ('zorder', '2-d only: The layer level in which to draw')]
         """
@@ -92,6 +93,7 @@ class CurveArrow(GraphicPrimitive):
                 'legend_color':'The color of the legend text.',
                 'arrowstyle': 'todo',
                 'arrowsize':'The size of the arrowhead',
+                'thickness':'The thickness of the arrow.',
                 'zorder':'2-d only: The layer level in which to draw',
                 'head':'2-d only: Which end of the path to draw the head (one of 0 (start), 1 (end) or 2 (both)',
                 'linestyle':"2d only: The style of the line, which is one of "
@@ -217,6 +219,7 @@ class Arrow(GraphicPrimitive):
              'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.',
              respectively."),
              ('rgbcolor', 'The color as an RGB tuple.'),
+             ('thickness', 'The thickness of the arrow.'),
              ('width', 'The width of the shaft of the arrow, in points.'),
              ('zorder', '2-d only: The layer level in which to draw')]
         """
@@ -225,6 +228,7 @@ class Arrow(GraphicPrimitive):
                 'hue':'The color given as a hue.',
                 'arrowshorten':'The length in points to shorten the arrow.',
                 'arrowsize':'The size of the arrowhead',
+                'thickness':'The thickness of the arrow.',
                 'legend_label':'The label for this item in the legend.',
                 'legend_color':'The color of the legend text.',
                 'zorder':'2-d only: The layer level in which to draw',

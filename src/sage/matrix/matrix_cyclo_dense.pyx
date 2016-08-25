@@ -189,7 +189,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         # This could also be made much faster.
         if z is not None:
             if self._nrows != self._ncols:
-                raise TypeError, "nonzero scalar matrix must be square"
+                raise TypeError("nonzero scalar matrix must be square")
             for i in range(self._nrows):
                 self.set_unsafe(i,i,z)
 
@@ -348,7 +348,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         cdef ZZ_c coeff
 
         if self._matrix is None:
-            raise ValueError, "matrix entries not yet initialized"
+            raise ValueError("matrix entries not yet initialized")
 
         c = i * self._ncols + j
         mpz_init(tmp)
@@ -452,7 +452,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
             self._matrix = Matrix_rational_dense(MatrixSpace(QQ, self._degree, self._nrows*self._ncols), None, False, False)
             self._matrix._unpickle(*data)  # data is (data, matrix_QQ_version)
         else:
-            raise RuntimeError, "unknown matrix version (=%s)"%version
+            raise RuntimeError("unknown matrix version (=%s)" % version)
 
     ########################################################################
     # LEVEL 2 functionality
@@ -469,7 +469,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
     ########################################################################
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Return the sum of two dense cyclotomic matrices.
 
@@ -497,7 +497,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         A._matrix = self._matrix + (<Matrix_cyclo_dense>right)._matrix
         return A
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Return the difference of two dense cyclotomic matrices.
 
@@ -524,7 +524,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         A._matrix = self._matrix - (<Matrix_cyclo_dense>right)._matrix
         return A
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, RingElement right):
         """
         Multiply a dense cyclotomic matrix by a scalar.
 
@@ -566,7 +566,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
             A._matrix = T * self._matrix
         return A
 
-    cdef baseMatrix _matrix_times_matrix_(self, baseMatrix right):
+    cdef _matrix_times_matrix_(self, baseMatrix right):
         """
         Return the product of two cyclotomic dense matrices.
 
@@ -638,7 +638,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         while prod <= bound:
             while (n >= 2 and p % n != 1) or denom_self % p == 0 or denom_right % p == 0:
                 if p == 2:
-                    raise RuntimeError, "we ran out of primes in matrix multiplication."
+                    raise RuntimeError("we ran out of primes in matrix multiplication.")
                 p = previous_prime(p)
             prod *= p
             Amodp, _ = self._reductions(p)
@@ -706,9 +706,9 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         if self._is_immutable:
             return self._hash()
         else:
-            raise TypeError, "mutable matrices are unhashable"
+            raise TypeError("mutable matrices are unhashable")
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef int _cmp_(self, right) except -2:
         """
         Implements comparison of two cyclotomic matrices with
         identical parents.
@@ -1156,7 +1156,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         # should we even bother with this check, or just say in
         # the docstring that we assume it's square?
         if self._nrows != self._ncols:
-            raise ArithmeticError, "self must be a square matrix"
+            raise ArithmeticError("self must be a square matrix")
 
         if self.is_zero():
             return 1
@@ -1253,7 +1253,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
             return f.change_variable_name(var)
 
         if self.nrows() != self.ncols():
-            raise TypeError, "self must be square"
+            raise TypeError("self must be square")
 
         if self.is_zero():
             R = PolynomialRing(self.base_ring(), name=var)
@@ -1274,7 +1274,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         elif algorithm == 'hessenberg':
             f = self._charpoly_hessenberg(var)
         else:
-            raise ValueError, "unknown algorithm '%s'"%algorithm
+            raise ValueError("unknown algorithm '%s'" % algorithm)
         self.cache(key, f)
         return f
 
@@ -1370,7 +1370,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         while prod <= bound:
             while (n >= 2  and p % n != 1) or denom % p == 0:
                 if p == 2:
-                    raise RuntimeError, "we ran out of primes in multimodular charpoly algorithm."
+                    raise RuntimeError("we ran out of primes in multimodular charpoly algorithm.")
                 p = previous_prime(p)
 
             X = A._charpoly_mod(p)
@@ -1513,7 +1513,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         aa = [a for a, _ in phi.change_ring(F).roots()]
         n = K.degree()
         if len(aa) != n:
-            raise ValueError, "the prime p (=%s) must split completely but doesn't"%p
+            raise ValueError("the prime p (=%s) must split completely but doesn't" % p)
         T = matrix(F, n)
         for i in range(n):
             a = aa[i]
@@ -1602,7 +1602,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         elif algorithm == 'classical':
             E = (self*self.denominator())._echelon_classical()
         else:
-            raise ValueError, "unknown algorithm '%s'"%algorithm
+            raise ValueError("unknown algorithm '%s'" % algorithm)
 
         self.cache(key, E)
         return E
@@ -1816,7 +1816,7 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
             # This should only occur when p divides the denominator
             # of the echelon form of self.
             if ech.pivots() != pivot_ls:
-                raise ValueError, "echelon form mod %s not defined"%p
+                raise ValueError("echelon form mod %s not defined" % p)
 
             ech_ls.append(ech)
 

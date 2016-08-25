@@ -62,7 +62,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         elif self.parent().is_capped_absolute():
             self._set_from_ZZX_abs(poly, (<PowComputer_class>self.parent().prime_pow).prec_cap)
         else:
-            raise RuntimeError, "_set_from_ZZX should have been overridden"
+            raise RuntimeError("_set_from_ZZX should have been overridden")
 
     cdef int _set_from_ZZX_rel(self, ZZX_c poly, long relprec) except -1:
         """
@@ -98,7 +98,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if self.parent().is_fixed_mod():
             self._set_from_ZZX(poly)
         else:
-            raise RuntimeError, "_set_from_ZZX_both should have been overridden"
+            raise RuntimeError("_set_from_ZZX_both should have been overridden")
 
     cdef int _set_from_ZZ_pX(self, ZZ_pX_c* poly, ntl_ZZ_pContext_class ctx) except -1:
         """
@@ -113,7 +113,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         elif self.parent().is_capped_absolute():
             self._set_from_ZZ_pX_abs(poly, ctx, (<PowComputer_class>self.parent().prime_pow).prec_cap)
         else:
-            raise RuntimeError, "_set_from_ZZ_pX should have been overridden"
+            raise RuntimeError("_set_from_ZZ_pX should have been overridden")
 
     cdef int _set_from_ZZ_pX_rel(self, ZZ_pX_c* poly, ntl_ZZ_pContext_class ctx, long relprec) except -1:
         """
@@ -148,7 +148,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if self.parent().is_fixed_mod():
             self._set_from_ZZ_pX(poly, ctx)
         else:
-            raise RuntimeError, "_set_from_ZZ_pX_both should have been overridden"
+            raise RuntimeError("_set_from_ZZ_pX_both should have been overridden")
 
     cdef int _set_from_ZZ_pE(self, ZZ_pE_c* poly, ntl_ZZ_pEContext_class ctx) except -1:
         """
@@ -161,7 +161,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         elif self.parent().is_capped_absolute():
             self._set_from_ZZ_pE_abs(poly, ctx, (<PowComputer_class>self.parent().prime_pow).prec_cap)
         else:
-            raise RuntimeError, "_set_from_ZZ_pE should have been overridden"
+            raise RuntimeError("_set_from_ZZ_pE should have been overridden")
 
     cdef int _set_from_ZZ_pE_rel(self, ZZ_pE_c* poly, ntl_ZZ_pEContext_class ctx, long relprec) except -1:
         """
@@ -197,7 +197,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if self.parent().is_fixed_mod():
             self._set_from_ZZ_pE(poly, ctx)
         else:
-            raise RuntimeError, "_set_from_ZZ_pE_both should have been overridden"
+            raise RuntimeError("_set_from_ZZ_pE_both should have been overridden")
 
     cdef int _set_from_ZZ_pEX(self, ZZ_pEX_c* poly, ntl_ZZ_pEContext_class ctx) except -1:
         """
@@ -212,7 +212,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         elif self.parent().is_capped_absolute():
             self._set_from_ZZ_pEX_abs(poly, ctx, (<PowComputer_class>self.parent().prime_pow).prec_cap)
         else:
-            raise RuntimeError, "_set_from_ZZ_pEX should have been overridden"
+            raise RuntimeError("_set_from_ZZ_pEX should have been overridden")
 
     cdef int _set_from_ZZ_pEX_rel(self, ZZ_pEX_c* poly, ntl_ZZ_pEContext_class ctx, long relprec) except -1:
         """
@@ -248,7 +248,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if self.parent().is_fixed_mod():
             self._set_from_ZZ_pEX(poly, ctx)
         else:
-            raise RuntimeError, "_set_from_ZZ_pEX_both should have been overridden"
+            raise RuntimeError("_set_from_ZZ_pEX_both should have been overridden")
 
     cdef long _check_ZZ_pContext(self, ntl_ZZ_pContext_class ctx) except -1:
         raise NotImplementedError
@@ -422,7 +422,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         AUTHORS:
 
-        - Julian Rueth (2012-10-18): intial version
+        - Julian Rueth (2012-10-18): initial version
 
         EXAMPLES:
 

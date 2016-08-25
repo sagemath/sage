@@ -86,7 +86,7 @@ Sageの ``sigma(n,k)`` 関数は， ``n`` の商の :math:`k` 乗の和を計算
     sage: for i in range(1000):
     ....:     n = 3 * odd_part(n) + 1
     ....:     if odd_part(n) == 1:
-    ....:         print i
+    ....:         print(i)
     ....:         break
     38
 

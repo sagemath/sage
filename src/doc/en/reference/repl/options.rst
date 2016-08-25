@@ -17,7 +17,7 @@ Command-line options for Sage
 - ``-v``, ``--version`` -- print the Sage version
 - ``--advanced`` -- print (essentially this) list of Sage options
 - ``-c cmd`` -- evaluate ``cmd`` as sage code.  For example, ``sage
-  -c 'print factor(35)'`` will print "5 * 7".
+  -c 'print(factor(35))'`` will print "5 * 7".
 
 .. rubric:: Running Sage, other options
 

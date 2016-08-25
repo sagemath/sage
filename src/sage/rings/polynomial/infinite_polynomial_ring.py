@@ -689,7 +689,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         CommutativeRing.__init__(self, R, category=CommutativeAlgebras(R))
 
         # some tools to analyse polynomial string representations.
-        self._identify_variable = lambda x,y:(-self._names.index(x),int(y))
+        self._identify_variable = lambda x, y: (-self._names.index(x), int(y))
         self._find_maxshift = re.compile('_([0-9]+)')  # findall yields stringrep of the shifts
         self._find_variables = re.compile('[a-zA-Z0-9]+_[0-9]+')
         self._find_varpowers = re.compile('([a-zA-Z0-9]+)_([0-9]+)\^?([0-9]*)') # findall yields triple "generator_name", "index", "exponent"
@@ -703,7 +703,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             VarList = [names[0]+'_0',names[0]+'_1']
         else:
             VarList = [X+'_0' for X in names]
-        VarList.sort(cmp=self.varname_cmp, reverse=True)
+        VarList.sort(key=self.varname_key, reverse=True)
         self._minP = PolynomialRing(R, len(VarList), VarList)
         self._populate_coercion_lists_()
 
@@ -915,7 +915,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
                         # was impossible, it *must* have
                         # variables
                         # This tests admissibility on the fly:
-                        VarList.sort(cmp=self.varname_cmp,reverse=True)
+                        VarList.sort(key=self.varname_key, reverse=True)
                     except ValueError:
                         raise ValueError("Can't convert %s into an element of %s - variables aren't admissible"%(x,self))
                     xmaxind = max([int(v.split('_')[1]) for v in VarList])
@@ -948,7 +948,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             # was impossible, it *must* have
             # variables
             # This tests admissibility on the fly:
-            VarList.sort(cmp=self.varname_cmp,reverse=True)
+            VarList.sort(key=self.varname_key, reverse=True)
         except ValueError:
             raise ValueError("Can't convert %s into an element of %s - variables aren't admissible"%(x,self))
 
@@ -967,7 +967,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
                 ind+=1
             VarList.append(self._names[0]+'_'+str(ind))
         try:
-            VarList.sort(cmp=self.varname_cmp,reverse=True)
+            VarList.sort(key=self.varname_key, reverse=True)
         except ValueError:
             raise ValueError("Can't convert %s into an element of %s; the variables aren't admissible"%(x,self))
 
@@ -1098,42 +1098,88 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         return False
 
     ## Auxiliary function for variable comparison
-    def varname_cmp(self,x,y):
+    def varname_cmp(self, x, y):
         """
         Comparison of two variable names.
-
+ 
         INPUT:
-
+ 
         ``x,y`` -- two strings of the form ``a+'_'+str(n)``, where a is the
-        name of a generator, and n is an integer
-
+         name of a generator, and n is an integer
+ 
         RETURN:
-
+ 
         -1,0,1 if x<y, x==y, x>y, respectively
-
+ 
         THEORY:
-
+ 
         The order is defined as follows:
-          x<y `\\iff` the string ``x.split('_')[0]`` is later in the list of
-          generator names of self than ``y.split('_')[0]``, or
-          (``x.split('_')[0]==y.split('_')[0]`` and
-          ``int(x.split('_')[1])<int(y.split('_')[1])``)
-
+        x<y `\\iff` the string ``x.split('_')[0]`` is later in the list of
+        generator names of self than ``y.split('_')[0]``, or
+        (``x.split('_')[0]==y.split('_')[0]`` and
+        ``int(x.split('_')[1])<int(y.split('_')[1])``)
+ 
         EXAMPLES::
-
+ 
             sage: X.<alpha,beta> = InfinitePolynomialRing(ZZ)
             sage: X.varname_cmp('alpha_1','beta_10')
-            1
+            doctest:...: DeprecationWarning: varname_cmp has been replaced by varname_key.
+            See http://trac.sagemath.org/21035 for details.
+             1
             sage: X.varname_cmp('beta_1','alpha_10')
             -1
             sage: X.varname_cmp('alpha_1','alpha_10')
             -1
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(21035, "varname_cmp has been replaced by varname_key.")
+        try:
+            return cmp(self._identify_variable(*x.split('_',1)),self._identify_variable(*y.split('_', 1)))
+        except (KeyError, ValueError, TypeError):
+            raise ValueError("%s or %s is not a valid variable name" % (x, y))
+ 
+    def varname_key(self, x):
+        """
+        Key for comparison of variable names.
 
+        INPUT:
+
+        ``x`` -- a string of the form ``a+'_'+str(n)``, where a is the
+        name of a generator, and n is an integer
+
+        RETURN:
+
+        a key used to sort the variables
+
+        THEORY:
+
+        The order is defined as follows:
+
+        x<y `\\iff` the string ``x.split('_')[0]`` is later in the list of
+        generator names of self than ``y.split('_')[0]``, or
+        (``x.split('_')[0]==y.split('_')[0]`` and
+        ``int(x.split('_')[1])<int(y.split('_')[1])``)
+
+        EXAMPLES::
+
+            sage: X.<alpha,beta> = InfinitePolynomialRing(ZZ)
+            sage: X.varname_key('alpha_1')
+            (0, 1)
+            sage: X.varname_key('beta_10')
+            (-1, 10)
+            sage: X.varname_key('beta_1')
+            (-1, 1)
+            sage: X.varname_key('alpha_10')
+            (0, 10)
+            sage: X.varname_key('alpha_1')
+            (0, 1)
+            sage: X.varname_key('alpha_10')
+            (0, 10)
         """
         try:
-            return cmp(self._identify_variable(*x.split('_',1)),self._identify_variable(*y.split('_',1)))
+            return self._identify_variable(*x.split('_', 1))
         except (KeyError, ValueError, TypeError):
-            raise ValueError("%s or %s is not a valid variable name"%(x,y))
+            raise ValueError("%s is not a valid variable name" % x)
 
     def ngens(self):
         """
@@ -1418,7 +1464,7 @@ class InfinitePolynomialGen(SageObject):
             except OverflowError:
                 raise IndexError("Variable index is too big - consider using the sparse implementation")
             names = reduce(operator.add, names)
-            names.sort(cmp=P.varname_cmp,reverse=True)
+            names.sort(key=P.varname_key, reverse=True)
             #Create the new polynomial ring
             P._P = PolynomialRing(P.base_ring(), names, order = P._order)
             ##Get the generators
@@ -1433,7 +1479,7 @@ class InfinitePolynomialGen(SageObject):
             names = [self._name+'_0',self._name+'_1']
         else:
             names = [self._name+'_0',self._name+'_'+str(i)]
-        names.sort(cmp=P.varname_cmp,reverse=True)
+        names.sort(key=P.varname_key, reverse=True)
         Pol = PolynomialRing(P.base_ring(), names, order=P._order)
         #return InfinitePolynomial_sparse(P, Pol.gen(names.index(self._name+'_'+str(i))))
         self._output[i] = InfinitePolynomial_sparse(P, Pol.gen(names.index(self._name+'_'+str(i))))

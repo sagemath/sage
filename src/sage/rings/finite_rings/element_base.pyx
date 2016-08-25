@@ -210,7 +210,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         #vector(foo) might pass in ZZ
         if isinstance(reverse, Parent):
-            raise TypeError, "Base field is fixed to prime subfield."
+            raise TypeError("Base field is fixed to prime subfield.")
 
         k = self.parent()
 
@@ -405,7 +405,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self._pari_().charpoly('x').lift())
         else:
-            raise ValueError, "unknown algorithm '%s'"%algorithm
+            raise ValueError("unknown algorithm '%s'" % algorithm)
 
     def norm(self):
         """

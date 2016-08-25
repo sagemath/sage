@@ -1,7 +1,7 @@
-diff --git a/src.bak/lib-src/Makefile.in b/src/lib-src/Makefile.in
+diff --git a/lib-src/Makefile.in b/lib-src/Makefile.in
 index bd3c2b5..ccf4a6c 100644
---- a/src.bak/lib-src/Makefile.in
-+++ b/src/lib-src/Makefile.in
+--- a/lib-src/Makefile.in
++++ b/lib-src/Makefile.in
 @@ -53,7 +53,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
  LTLIBRARIES = $(lib_LTLIBRARIES)
  libcdd_la_LIBADD =

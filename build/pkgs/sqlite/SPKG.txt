@@ -19,5 +19,4 @@ Public Domain
 
 == Special Update/Build Instructions ==
 
-* The autoconf version of sqlite was used and the archive was recompressed
-  so that it fits with Sage's version naming scheme.
+* Use the autoconf version of sqlite.

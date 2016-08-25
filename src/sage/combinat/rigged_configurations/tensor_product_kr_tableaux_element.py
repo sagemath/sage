@@ -23,6 +23,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
@@ -166,16 +167,16 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         EXAMPLES::
 
             sage: TPKRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A',4,1], [[2,2],[3,1],[3,3]])
-            sage: print TPKRT.module_generators[0]._repr_diagram()
+            sage: print(TPKRT.module_generators[0]._repr_diagram())
               1  1 (X)   1 (X)   1  1  1
               2  2       2       2  2  2
                          3       3  3  3
-            sage: Partitions.global_options(convention='French')
-            sage: print TPKRT.module_generators[0]._repr_diagram()
+            sage: Partitions.options(convention='French')
+            sage: print(TPKRT.module_generators[0]._repr_diagram())
               2  2 (X)   3 (X)   3  3  3
               1  1       2       2  2  2
                          1       1  1  1
-            sage: Partitions.global_options.reset()
+            sage: Partitions.options._reset()
         """
         comp = [crys._repr_diagram().splitlines() for crys in self]
         num_comp = len(comp) # number of components

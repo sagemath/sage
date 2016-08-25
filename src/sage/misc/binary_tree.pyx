@@ -7,6 +7,7 @@ AUTHORS:
 
 - Tom Boothby (2007-02-15).  Initial version free for any use (public domain).
 """
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
@@ -355,7 +356,7 @@ cdef class BinaryTree:
             sage: t.insert(3,'d')
             sage: t.insert(5,'f')
             sage: while not t.is_empty():
-            ...    print t.pop_max()
+            ....:     print(t.pop_max())
             f
             e
             d
@@ -395,7 +396,7 @@ cdef class BinaryTree:
             sage: t.insert(3,'d')
             sage: t.insert(5,'f')
             sage: while not t.is_empty():
-            ...    print t.pop_min()
+            ....:     print(t.pop_min())
             a
             b
             c

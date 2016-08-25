@@ -1,6 +1,7 @@
 """
 Weight lattice realizations
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -24,7 +25,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.all import prod
 from sage.categories.category_types import Category_over_base_ring
 from sage.combinat.family import Family
-from root_lattice_realizations import RootLatticeRealizations
+from .root_lattice_realizations import RootLatticeRealizations
 
 class WeightLatticeRealizations(Category_over_base_ring):
     r"""
@@ -215,7 +216,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 :meth:`_test_weight_lattice_realization`.
             """
             from sage.rings.all import ZZ
-            from weight_space import WeightSpace
+            from .weight_space import WeightSpace
             K = self.base_ring()
             # If self is the root lattice or the root space, we don't want
             # to register its trivial embedding into itself. This builds

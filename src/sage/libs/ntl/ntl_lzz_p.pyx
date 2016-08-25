@@ -77,7 +77,7 @@ cdef class ntl_zz_p(object):
             2
         """
         if modulus is None:
-            raise ValueError, "You must specify a modulus."
+            raise ValueError("You must specify a modulus.")
 
         if isinstance(modulus, Integer):
             p_sage = modulus
@@ -90,22 +90,19 @@ cdef class ntl_zz_p(object):
             if (self.c.p == (<IntegerMod_int>a).__modulus.int32): ## this is slow
                 self.x = (<IntegerMod_int>a).ivalue
             else:
-                raise ValueError, \
-                      "Mismatched modulus for converting to zz_p."
+                raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_int64):
             if (self.c.p == (<IntegerMod_int64>a).__modulus.int64): ## this is slow
                 self.x = (<IntegerMod_int64>a).ivalue
             else:
-                raise ValueError, \
-                      "Mismatched modulus for converting to zz_p."
+                raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_gmp):
             if (p_sage == (<IntegerMod_gmp>a).__modulus.sageInteger): ## this is slow
                 self.x = mpz_get_si((<IntegerMod_gmp>a).value)
             else:
-                raise ValueError, \
-                      "Mismatched modulus for converting to zz_p."
+                raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, Integer):
             self.x = mpz_get_si((<Integer>a).value)%self.c.p
@@ -145,7 +142,7 @@ cdef class ntl_zz_p(object):
             try:
                 modulus = int(modulus)
             except Exception:
-                raise ValueError, "%s is not a valid modulus."%modulus
+                raise ValueError("%s is not a valid modulus." % modulus)
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
 
         ## now that we've determined the modulus, set that modulus.
@@ -197,7 +194,7 @@ cdef class ntl_zz_p(object):
         if not isinstance(other, ntl_zz_p):
             other = ntl_zz_p(other, modulus=self.c)
         elif self.c is not (<ntl_zz_p>other).c:
-            raise ValueError, "arithmetic operands must have the same modulus."
+            raise ValueError("arithmetic operands must have the same modulus.")
         self.c.restore_c()
         y = self._new()
         zz_p_add(y.x, self.x, (<ntl_zz_p>other).x)
@@ -213,7 +210,7 @@ cdef class ntl_zz_p(object):
         if not isinstance(other, ntl_zz_p):
             other = ntl_zz_p(other, modulus=self.c)
         elif self.c is not (<ntl_zz_p>other).c:
-            raise ValueError, "arithmetic operands must have the same modulus."
+            raise ValueError("arithmetic operands must have the same modulus.")
         self.c.restore_c()
         y = self._new()
         zz_p_sub(y.x, self.x, (<ntl_zz_p>other).x)
@@ -229,7 +226,7 @@ cdef class ntl_zz_p(object):
         if not isinstance(other, ntl_zz_p):
             other = ntl_zz_p(other, modulus=self.c)
         elif self.c is not (<ntl_zz_p>other).c:
-            raise ValueError, "arithmetic operands must have the same modulus."
+            raise ValueError("arithmetic operands must have the same modulus.")
         y = self._new()
         self.c.restore_c()
         zz_p_mul(y.x, self.x, (<ntl_zz_p>other).x)
@@ -245,7 +242,7 @@ cdef class ntl_zz_p(object):
         if not isinstance(other, ntl_zz_p):
             other = ntl_zz_p(other, modulus=self.c)
         elif self.c is not (<ntl_zz_p>other).c:
-            raise ValueError, "arithmetic operands must have the same modulus."
+            raise ValueError("arithmetic operands must have the same modulus.")
         q = self._new()
         self.c.restore_c()
         sig_on()
@@ -272,7 +269,7 @@ cdef class ntl_zz_p(object):
         cdef ntl_zz_p y
         if self.is_zero():
             if n == 0:
-                raise ArithmeticError, "0^0 is undefined."
+                raise ArithmeticError("0^0 is undefined.")
             elif n < 0:
                 raise ZeroDivisionError
             else:

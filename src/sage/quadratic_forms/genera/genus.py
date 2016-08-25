@@ -8,6 +8,7 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.all import prod
 from sage.arith.all import LCM
@@ -743,8 +744,8 @@ def split_odd(A):
             B = C*A*C.transpose()
     even, j = is_even_matrix(B)
     if even:
-        print "B:"
-        print B
+        print("B:")
+        print(B)
         raise RuntimeError("The matrix A does not admit a non-even splitting.")
     return u, B
 
@@ -844,8 +845,8 @@ def two_adic_symbol(A, val):
         # d0 = ZZ(A_8.determinant()) # no determinant over Z/8Z
         d0 = ZZ(R_8(MatrixSpace(ZZ,n)(A_8).determinant()))
         if d0 == 0:    ## SANITY CHECK: The mod 8 determinant shouldn't be zero.
-            print "A:"
-            print A
+            print("A:")
+            print(A)
             assert False
         even, i = is_even_matrix(A_2)    ## Determine whether the matrix is even or odd.
         if even:
@@ -866,8 +867,8 @@ def two_adic_symbol(A, val):
         # d0 = A_8.det() # no determinant over Z/8Z
         d0 = ZZ(R_8(MatrixSpace(ZZ,n0,n0)(A_8).determinant()))
         if d0 == 0:
-            print "A:"
-            print A_new
+            print("A:")
+            print(A_new)
             assert False
         even, i = is_even_matrix(A_new)
         if even:

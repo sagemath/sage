@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 import mpmath
 
 # Patch mpmath to use Cythonized functions
-import utils as _utils
+from . import utils as _utils
 
 # Also import internal functions
 from mpmath.libmp import *
@@ -10,7 +11,7 @@ from mpmath.libmp import *
 from mpmath import *
 
 # Utilities
-from utils import call, mpmath_to_sage, sage_to_mpmath
+from .utils import call, mpmath_to_sage, sage_to_mpmath
 
 # Use mpmath internal functions for constants, to avoid unnecessary overhead
 _constants_funcs = {

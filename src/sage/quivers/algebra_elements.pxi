@@ -764,7 +764,7 @@ cdef inline void term_iadd(path_term_t *T1, path_term_t *T2):
 # Change P inplace to P+T. It is assumed that initially the terms of P are
 # decreasingly sorted wrt. cmp_terms, and then it is guaranteed that they
 # are decreasingly sorted wrt. cmp_terms after adding T.
-# The adddition is "destructive" for T, which means that one MUST NOT
+# The addition is "destructive" for T, which means that one MUST NOT
 # call term_free(T) after the addition!
 cdef bint poly_iadd_term_d(path_poly_t *P, path_term_t *T, path_order_t cmp_terms) except -1:
     if P.lead == NULL:
@@ -860,7 +860,8 @@ cdef bint poly_iadd_d(path_poly_t *P1, path_poly_t *P2, path_order_t cmp_terms) 
             return 1
         elif T2 == NULL:
             if P2.nterms != 0:
-                print "term counting of second summand was wrong!",P2.nterms
+                print("term counting of second summand was wrong! " +
+                      str(P2.nterms))
             P2.lead = NULL
             return 1
         c = cmp_terms(T1.mon, T2.mon)

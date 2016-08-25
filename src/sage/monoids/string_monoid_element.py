@@ -12,6 +12,7 @@ These are special classes of free monoid elements with distinct printing.
 The internal representation of elements does not use the exponential
 compression of FreeMonoid elements (a feature), and could be packed into words.
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -24,8 +25,7 @@ compression of FreeMonoid elements (a feature), and could be packed into words.
 # import operator
 from sage.rings.integer import Integer
 from sage.rings.all import RealField
-from free_monoid_element import FreeMonoidElement
-import string_monoid
+from .free_monoid_element import FreeMonoidElement
 
 def is_StringMonoidElement(x):
     r"""
@@ -35,30 +35,35 @@ def is_StringMonoidElement(x):
 def is_AlphabeticStringMonoidElement(x):
     r"""
     """
+    from .string_monoid import AlphabeticStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), string_monoid.AlphabeticStringMonoid)
+           isinstance(x.parent(), AlphabeticStringMonoid)
 
 def is_BinaryStringMonoidElement(x):
     r"""
     """
+    from .string_monoid import BinaryStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), string_monoid.BinaryStringMonoid)
+           isinstance(x.parent(), BinaryStringMonoid)
 
 def is_OctalStringMonoidElement(x):
     r"""
     """
+    from .string_monoid import OctalStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), string_monoid.OctalStringMonoid)
+           isinstance(x.parent(), OctalStringMonoid)
 
 def is_HexadecimalStringMonoidElement(x):
     r"""
     """
+    from .string_monoid import HexadecimalStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), string_monoid.HexadecimalStringMonoid)
+           isinstance(x.parent(), HexadecimalStringMonoid)
 
 def is_Radix64StringMonoidElement(x):
     r"""
     """
+    from .string_monoid import Radix64StringMonoid
     return isinstance(x, StringMonoidElement) and \
            isinstance(x.parent(), string_monoid.Radix64StringMonoid)
 
@@ -283,10 +288,13 @@ class StringMonoidElement(FreeMonoidElement):
             'A..Za..z'
         """
         S = self.parent()
-        if isinstance(S, string_monoid.AlphabeticStringMonoid):
+        from .string_monoid import (AlphabeticStringMonoid,
+                                    BinaryStringMonoid,
+                                    HexadecimalStringMonoid)
+        if isinstance(S, AlphabeticStringMonoid):
             return ''.join([ chr(65+i) for i in self._element_list ])
         n = len(self)
-        if isinstance(S, string_monoid.HexadecimalStringMonoid):
+        if isinstance(S, HexadecimalStringMonoid):
             if not n % 2 == 0:
                 "String %s must have even length to determine a byte character string." % str(self)
             s = []
@@ -299,7 +307,7 @@ class StringMonoidElement(FreeMonoidElement):
                     c = chr(16*x[m]+x[m+1])
                 s.append(c)
             return ''.join(s)
-        if isinstance(S, string_monoid.BinaryStringMonoid):
+        if isinstance(S, BinaryStringMonoid):
             if not n % 8 == 0:
                 "String %s must have even length 0 mod 8 to determine a byte character string." % str(self)
             pows = [ 2**i for i in range(8) ]

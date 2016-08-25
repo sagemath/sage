@@ -7,8 +7,10 @@ Root system data for (untwisted) type A affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
-from cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
+from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self, n):
         """
@@ -97,7 +99,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             sage: sorted(a.edges())
             [(0, 1, 2), (1, 0, 2)]
         """
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         n = self.n
         g = DynkinDiagram_class(self)
 
@@ -117,7 +119,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: print CartanType(['A',4,1])._latex_dynkin_diagram()
+            sage: print(CartanType(['A',4,1])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (6 cm,0);
             \draw (0 cm,0) -- (3.0 cm, 1.2 cm);
             \draw (3.0 cm, 1.2 cm) -- (6 cm, 0);
@@ -154,7 +156,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: print CartanType(['A',3,1]).ascii_art()
+            sage: print(CartanType(['A',3,1]).ascii_art())
             0
             O-------+
             |       |
@@ -162,7 +164,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             O---O---O
             1   2   3
 
-            sage: print CartanType(['A',5,1]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['A',5,1]).ascii_art(label = lambda x: x+2))
             2
             O---------------+
             |               |
@@ -170,11 +172,11 @@ class CartanType(CartanType_standard_untwisted_affine):
             O---O---O---O---O
             3   4   5   6   7
 
-            sage: print CartanType(['A',1,1]).ascii_art()
+            sage: print(CartanType(['A',1,1]).ascii_art())
             O<=>O
             0   1
 
-            sage: print CartanType(['A',1,1]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['A',1,1]).ascii_art(label = lambda x: x+2))
             O<=>O
             2   3
         """

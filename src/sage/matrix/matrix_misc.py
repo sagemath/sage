@@ -53,7 +53,7 @@ def row_reduced_form(M,transformation=False):
 
     EXAMPLES:
 
-    The fuction expects matrices over the rational function field, but
+    The function expects matrices over the rational function field, but
     other examples below show how one can provide matrices over the ring
     of polynomials (whose quotient field is the rational function field).
 

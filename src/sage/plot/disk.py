@@ -18,6 +18,7 @@ Disks
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
@@ -229,10 +230,10 @@ class Disk(GraphicPrimitive):
         xdata.append(x)
         ydata.append(y)
         if fill:
-            from polygon import Polygon
+            from .polygon import Polygon
             return Polygon(xdata, ydata, options).plot3d(z)
         else:
-            from line import Line
+            from .line import Line
             return Line(xdata, ydata, options).plot3d().translate((0,0,z))
 
 @rename_keyword(color='rgbcolor')

@@ -36,6 +36,7 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include 'sage/ext/cdefs.pxi'
 include "cysignals/signals.pxi"
@@ -160,7 +161,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
         raise ValueError("Input number (%s) must be positive"%number)
 
     if verbose:
-        print "Performing one curve with B1=%1.0f"%B1
+        print("Performing one curve with B1=%1.0f" % B1)
 
     sig_on()
     mpz_init(n)
@@ -182,11 +183,11 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     if res > 0:
         if verbose:
-            print "Found factor in step %d: %d"%(res,sage_int_f)
+            print("Found factor in step %d: %d" % (res,sage_int_f))
         return (True, sage_int_f, sage_int_sigma)
     elif res == ECM_NO_FACTOR_FOUND:
         if verbose:
-            print "Found no factor."
+            print("Found no factor.")
         return (False, None)
     else:
         raise RuntimeError( "ECM lib error" )

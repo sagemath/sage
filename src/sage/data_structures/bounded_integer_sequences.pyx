@@ -106,6 +106,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 include 'sage/data_structures/bitset.pxi'
@@ -1250,7 +1251,7 @@ cdef class BoundedIntegerSequence:
             sage: T = BoundedIntegerSequence(21, [2,7,2,3,0,0,0,0,0,0,0,1])
             sage: (X+S).maximal_overlap(T)
             <2, 7, 2, 3, 0, 0, 0, 0, 0, 0, 0>
-            sage: print (X+S).maximal_overlap(BoundedIntegerSequence(21, [2,7,2,3,0,0,0,0,0,1]))
+            sage: print((X+S).maximal_overlap(BoundedIntegerSequence(21, [2,7,2,3,0,0,0,0,0,1])))
             None
             sage: (X+S).maximal_overlap(BoundedIntegerSequence(21, [0,0]))
             <0, 0>

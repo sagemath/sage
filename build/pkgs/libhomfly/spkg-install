@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+cd src
+
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring libhomfly."
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building libhomfly."
+    exit 1
+fi
+
+$MAKE -j1 install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing libhomfly."
+    exit 1
+fi

@@ -130,7 +130,7 @@ avoid a common crossing of three lines by adding a random noise to `b`::
 
     sage: n = 20
     sage: l = zip(Subsets(20*n,n).random_element(), [randint(0,20*n)+random() for i in range(n)])
-    sage: print l[:5]                            # not tested
+    sage: print(l[:5])                            # not tested
     [(96, 278.0130613051349), (74, 332.92512282478714), (13, 155.65820951249867), (209, 34.753946221755307), (147, 193.51376457741441)]
     sage: l.sort()
 
@@ -146,7 +146,7 @@ And finally build the line arrangement::
 
     sage: from sage.geometry.pseudolines import PseudolineArrangement
     sage: p = PseudolineArrangement(permutations)
-    sage: print p
+    sage: print(p)
     Arrangement of pseudolines of size 20
     sage: p.show(figsize=[20,8])
 
@@ -171,6 +171,7 @@ Methods
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
 
 from copy import deepcopy
 

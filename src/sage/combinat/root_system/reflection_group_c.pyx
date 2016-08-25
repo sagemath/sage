@@ -398,7 +398,7 @@ cpdef list reduced_word_c(W,w):
     """
     cdef tuple S = tuple(W.simple_reflections())
     cdef int n = len(S)
-    cdef int N = W._number_of_reflections
+    cdef int N = W.number_of_reflections()
     cdef int fdes = 0
     cdef list word = []
 

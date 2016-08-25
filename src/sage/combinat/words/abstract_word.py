@@ -30,6 +30,8 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.word_options import word_options
 from itertools import islice, izip, groupby
@@ -105,12 +107,12 @@ class Word_class(SageObject):
 
         With the print statement::
 
-            sage: print w
+            sage: print(w)
             0123401234012340123401234012340123401234...
 
-        Truncation is done for possibily infinite words::
+        Truncation is done for possibly infinite words::
 
-            sage: print w
+            sage: print(w)
             0123401234012340123401234012340123401234...
         """
         global word_options

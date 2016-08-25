@@ -130,7 +130,7 @@ cdef class CompiledPolynomialFunction:
             return temp
         except TypeError as msg:
             self._dag.reset()
-            raise TypeError, msg
+            raise TypeError(msg)
 
     cdef object _parse_structure(CompiledPolynomialFunction self):
         """

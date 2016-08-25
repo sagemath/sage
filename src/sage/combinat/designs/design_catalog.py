@@ -72,6 +72,7 @@ REFERENCES:
 .. [1] La Jolla Covering Repository,
   http://www.ccrwest.org/cover.html
 """
+from __future__ import absolute_import
 from sage.combinat.designs.block_design import (BlockDesign,
                                                 ProjectiveGeometryDesign,
                                                 DesarguesianProjectivePlaneDesign,
@@ -83,7 +84,7 @@ from sage.combinat.designs.block_design import (BlockDesign,
                                                 HughesPlane,
                                                 CremonaRichmondConfiguration)
 
-from database import HigmanSimsDesign
+from .database import HigmanSimsDesign
 
 from sage.combinat.designs.steiner_quadruple_systems import steiner_quadruple_system
 
@@ -95,7 +96,7 @@ from sage.combinat.designs.orthogonal_arrays import transversal_design, incomple
 
 
 from sage.combinat.designs.difference_family import difference_family
-from difference_matrices import difference_matrix
+from .difference_matrices import difference_matrix
 
 from sage.misc.superseded import deprecated_callable_import
 deprecated_callable_import(19096,
@@ -110,7 +111,7 @@ from sage.combinat.designs.bibd import balanced_incomplete_block_design, steiner
 from sage.combinat.designs.resolvable_bibd import resolvable_balanced_incomplete_block_design, kirkman_triple_system
 from sage.combinat.designs.group_divisible_designs import group_divisible_design
 
-from orthogonal_arrays import OAMainFunctions as orthogonal_arrays
+from .orthogonal_arrays import OAMainFunctions as orthogonal_arrays
 
 # When this deprecated function is removed, remove the handling of k=None in the
 # function orthogonal_arrays.orthogonal_array()

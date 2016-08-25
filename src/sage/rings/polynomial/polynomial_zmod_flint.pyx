@@ -62,6 +62,7 @@ cdef extern from "zn_poly/zn_poly.h":
     cdef void zn_array_mul(unsigned long* res, unsigned long* op1, size_t n1, unsigned long* op2, size_t n2, zn_mod_struct *mod)
 
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.nmod_poly cimport *
 
 cdef class Polynomial_zmod_flint(Polynomial_template):
     r"""
@@ -496,7 +497,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short = _mul_trunc_
 
-    cpdef _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
+    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
         """
         Return the product of this polynomial and other ignoring the least
         significant `n` terms of the result which may be set to anything.
@@ -532,6 +533,43 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         return res
 
     _mul_short_opposite = _mul_trunc_opposite
+
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
+        r"""
+        TESTS::
+
+            sage: R.<x> = GF(5)[]
+            sage: (x+3).power_trunc(30, 10)
+            3*x^5 + 4
+            sage: (x^4 - x + 1).power_trunc(88, 20)
+            2*x^19 + 3*x^18 + 3*x^17 + 3*x^16 + ... + 3*x^2 + 2*x + 1
+
+        For high powers, the generic method is called::
+
+            sage: (x^2 + 1).power_trunc(2^100, 10)
+            x^2 + 1
+            sage: (x^2 + 1).power_trunc(2^100+1, 10)
+            x^4 + 2*x^2 + 1
+            sage: (x^2 + 1).power_trunc(2^100+2, 10)
+            x^6 + 3*x^4 + 3*x^2 + 1
+            sage: (x^2 + 1).power_trunc(2^100+3, 10)
+            x^8 + 4*x^6 + x^4 + 4*x^2 + 1
+
+        Check boundary values::
+
+            sage: x._power_trunc(2, -1)
+            0
+            sage: parent(_) is R
+            True
+        """
+        if prec <= 0:
+            # NOTE: flint crashes if prec < 0
+            return self._parent.zero()
+
+        cdef Polynomial_zmod_flint ans
+        ans = self._new()
+        nmod_poly_pow_trunc(&ans.x, &self.x, n, prec)
+        return ans
 
     cpdef rational_reconstruct(self, m, n_deg=0, d_deg=0):
         """

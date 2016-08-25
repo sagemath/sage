@@ -19,7 +19,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import os
 import tempfile
@@ -35,7 +35,7 @@ def delete_tmpfiles():
     separate session of Sage::
 
         sage: from sage.tests.cmdline import test_executable
-        sage: child_SAGE_TMP, err, ret = test_executable(["sage", "-c", "print SAGE_TMP"])
+        sage: child_SAGE_TMP, err, ret = test_executable(["sage", "-c", "print(SAGE_TMP)"])
         sage: err, ret
         ('', 0)
         sage: os.path.exists(child_SAGE_TMP)  # indirect doctest
@@ -150,7 +150,7 @@ def tmp_filename(name="tmp_", ext=""):
 def graphics_filename(ext='.png'):
     """
     Deprecated SageNB graphics filename
-    
+
     You should just use :meth:`tmp_filename`.
 
     When run from the Sage notebook, return the next available canonical
@@ -171,7 +171,7 @@ def graphics_filename(ext='.png'):
     EXAMPLES::
 
         sage: from sage.misc.temporary_file import graphics_filename
-        sage: print graphics_filename()  # random, typical filename for sagenb
+        sage: print(graphics_filename())  # random, typical filename for sagenb
         sage0.png
 
     TESTS:
@@ -342,9 +342,9 @@ class atomic_write:
             sage: link_to_target = os.path.join(tmp_dir(), "templink")
             sage: os.symlink("/foobar", link_to_target)
             sage: aw = atomic_write(link_to_target)
-            sage: print aw.target
+            sage: print(aw.target)
             /foobar
-            sage: print aw.tmpdir
+            sage: print(aw.tmpdir)
             /
         """
         self.target = os.path.realpath(target_filename)

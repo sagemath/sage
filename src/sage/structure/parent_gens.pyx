@@ -75,6 +75,7 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 include 'sage/ext/stdsage.pxi'
 
@@ -92,7 +93,7 @@ normalize_names = LazyImport("sage.structure.category_object",
 
 cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:
-        raise RuntimeError, "%s still using old coercion framework" % p
+        raise RuntimeError("%s still using old coercion framework" % p)
 
 def is_ParentWithGens(x):
     """
@@ -176,7 +177,7 @@ def is_ParentWithMultiplicativeAbelianGens(x):
 ##         new_object.__dict__ = _dict
 ##     return new_object
 
-cdef class ParentWithGens(parent_base.ParentWithBase):
+cdef class ParentWithGens(ParentWithBase):
     # Derived class *must* call __init__ and set the base!
     def __init__(self, base, names=None, normalize=True, category = None):
         """
@@ -194,8 +195,7 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
         self._has_coerce_map_from = MonoDict(23)
         self._assign_names(names=names, normalize=normalize)
 
-        # Why does not this call ParentWithBase.__init__ ?
-        parent_base.ParentWithBase.__init__(self, base, category=category)
+        ParentWithBase.__init__(self, base, category=category)
         #if category is not None:
         #    self._init_category_(category)
 
@@ -216,12 +216,12 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
     # Derived class *must* define ngens method.
     def ngens(self):
         check_old_coerce(self)
-        raise NotImplementedError, "Number of generators not known."
+        raise NotImplementedError("Number of generators not known.")
 
     # Derived class *must* define gen method.
     def gen(self, i=0):
         check_old_coerce(self)
-        raise NotImplementedError, "i-th generator not known."
+        raise NotImplementedError("i-th generator not known.")
 
     def gens(self):
        """
@@ -271,11 +271,11 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
         if normalize:
             names = category_object.normalize_names(self.ngens(), names)
         if self._names is not None and names != self._names:
-            raise ValueError, 'variable names cannot be changed after object creation.'
+            raise ValueError('variable names cannot be changed after object creation.')
         if isinstance(names, str):
             names = (names, )  # make it a tuple
         elif not isinstance(names, tuple):
-            raise TypeError, "names must be a tuple of strings"
+            raise TypeError("names must be a tuple of strings")
         self._names = names
 
     #################################################################################
@@ -485,8 +485,7 @@ cdef class localvars:
 
         sage: R.<x,y> = PolynomialRing(QQ,2)
         sage: with localvars(R, 'z,w'):
-        ...       print x^3 + y^3 - x*y
-        ...
+        ....:     print(x^3 + y^3 - x*y)
         z^3 + w^3 - z*w
 
     .. note::

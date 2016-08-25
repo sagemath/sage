@@ -12,6 +12,7 @@ cardinality).
 In the following code, sets are represented as integers, where the ith bit is
 set if element i belongs to the set.
 """
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 include 'sage/ext/cdefs.pxi'
@@ -79,8 +80,8 @@ cdef class FastDigraph:
         cdef int i,j
         for 0<= i<self.n:
             for 0<= j <self.n:
-                print ((self.graph[i]>>j)&1),
-            print ""
+                print(((self.graph[i]>>j)&1), end="")
+            print("")
 
 cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
     r"""
@@ -129,9 +130,9 @@ def test_popcount():
    # While the last 32 bits of i are not equal to 0
    while (i & ((1<<32) - 1)) :
        if popcount32(i) != slow_popcount32(i):
-           print "Error for i = ", str(i)
-           print "Result with popcount32 : "+str(popcount32(i))
-           print "Result with slow_popcount32 : "+str(slow_popcount32(i))
+           print("Error for i = ", str(i))
+           print("Result with popcount32 : " + str(popcount32(i)))
+           print("Result with slow_popcount32 : " + str(slow_popcount32(i)))
        i += 1
 
 

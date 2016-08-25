@@ -116,7 +116,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 import math
 
@@ -133,12 +134,12 @@ import sage.groups.generic as generic
 from sage.libs.pari.pari_instance import pari, prec_words_to_bits
 from sage.structure.sequence import Sequence
 
-from sage.schemes.plane_curves.projective_curve import Hasse_bounds
+from sage.schemes.curves.projective_curve import Hasse_bounds
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_abelian_variety_field)
 from sage.schemes.generic.morphism import is_SchemeMorphism
 
-from constructor import EllipticCurve
+from .constructor import EllipticCurve
 from sage.misc.superseded import deprecated_function_alias
 
 oo = rings.infinity       # infinity
@@ -2466,7 +2467,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: def naive_height(P):
             ...       return log(RR(max(abs(P[0].numerator()), abs(P[0].denominator()))))
             sage: for n in [1..10]:
-            ...       print naive_height(2^n*P)/4^n
+            ....:     print(naive_height(2^n*P)/4^n)
             0.000000000000000
             0.0433216987849966
             0.0502949347635656
@@ -3304,7 +3305,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             raise ValueError('p must be prime')
         debug = False  # True
         if debug:
-            print "P=", self, "; p=", p, " with precision ", absprec
+            print("P=", self, "; p=", p, " with precision ", absprec)
         E = self.curve()
         Q_p = Qp(p, absprec)
         if self.has_finite_order():
@@ -3319,24 +3320,24 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 absprec *= 2
                 Q_p = Qp(p, absprec)
         if debug:
-            print "x,y=", (x, y)
+            print("x,y=", (x, y))
         f = 1   # f will be such that f*P is in the formal group E^1(Q_p)
         if x.valuation() >= 0:   # P is not in E^1
             if not self.has_good_reduction(p):   # P is not in E^0
                 n = E.tamagawa_exponent(p)   # n*P has good reduction at p
                 if debug:
-                    print "Tamagawa exponent = =", n
+                    print("Tamagawa exponent = =", n)
                 f = n
                 P = n*P   # lies in E^0
                 if debug:
-                    print "P=", P
+                    print("P=", P)
                 try:
                     x, y = P.xy()
                 except ZeroDivisionError:
                     raise ValueError("Insufficient precision in "
                                      "p-adic_elliptic_logarithm()")
                 if debug:
-                    print "x,y=", (x, y)
+                    print("x,y=", (x, y))
             if x.valuation() >= 0:   # P is still not in E^1
                 t = E.local_data(p).bad_reduction_type()
                 if t is None:
@@ -3344,7 +3345,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 else:
                     m = p - t
                 if debug:
-                    print "mod p exponent = =", m
+                    print("mod p exponent = =", m)
                     # now m*(n*P) reduces to the identity mod p, so is
                     # in E^1(Q_p)
                 f *= m
@@ -3355,8 +3356,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                     raise ValueError("Insufficient precision in "
                                      "p-adic_elliptic_logarithm()")
                 if debug:
-                    print "f=", f
-                    print "x,y=", (x, y)
+                    print("f=", f)
+                    print("x,y=", (x, y))
         vx = x.valuation()
         vy = y.valuation()
         v = vx-vy
@@ -3369,7 +3370,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             raise ValueError("Insufficient precision in "
                              "p-adic_elliptic_logarithm()")
         if debug:
-            print "t=", t, ", with valuation ", v
+            print("t=", t, ", with valuation ", v)
         phi = Ep.formal().log(prec=1+absprec//v)
         return phi(t)/f
 
@@ -3544,7 +3545,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             return Integer(1)
         E = self.curve()
         K = E.base_ring()
-        from sage.schemes.plane_curves.projective_curve import Hasse_bounds
+        from sage.schemes.curves.projective_curve import Hasse_bounds
         bounds = Hasse_bounds(K.order())
 
         try:

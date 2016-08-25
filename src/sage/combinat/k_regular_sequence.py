@@ -61,7 +61,7 @@ Various
 
 .. SEEALSO::
 
-    :doc:`sage/combinat/recognizable_series`,
+    :mod:`recognizable series <sage.combinat.recognizable_series>`,
     :doc:`sage/rings/cfinite_sequence`,
     :doc:`sage/combinat/binary_recurrence_sequences`.
 

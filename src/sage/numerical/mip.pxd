@@ -30,11 +30,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
 cdef class MIPVariable(Element):
     cdef MixedIntegerLinearProgram _p
-    cdef int _dim
     cdef dict _dict
     cdef int _vtype
     cdef str _name
-    cdef bint _hasname
     cdef object _lower_bound
     cdef object _upper_bound
     cdef _matrix_rmul_impl(self, m)

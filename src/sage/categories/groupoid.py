@@ -1,6 +1,7 @@
 r"""
 Groupoid
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
@@ -11,7 +12,7 @@ Groupoid
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
-from sets_cat import Sets
+from .sets_cat import Sets
 
 class Groupoid(CategoryWithParameters):
     """

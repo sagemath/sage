@@ -119,7 +119,7 @@ def kranztafel_symmetrica(a, b):
        [-1 -1  1  1  1]
        sage: b
        [2, 2, 1, 2, 1]
-       sage: for m in c: print m
+       sage: for m in c: print(m)
        ...
        [0 0]
        [0 1]

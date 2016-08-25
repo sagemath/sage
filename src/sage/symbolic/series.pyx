@@ -93,7 +93,7 @@ Check that :trac:`20088` is fixed::
 #                   http://www.gnu.org/licenses/
 ########################################################################
 
-from ginac cimport *
+from .ginac cimport *
 from sage.symbolic.expression cimport Expression, new_Expression_from_GEx
 
 cdef class SymbolicSeries(Expression):

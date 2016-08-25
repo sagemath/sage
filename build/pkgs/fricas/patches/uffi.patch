@@ -1,0 +1,51 @@
+--- a/lisp/fricas-lisp.lisp
++++ b/lisp/fricas-lisp.lisp
+@@ -556,10 +556,10 @@ with this hack and will try to convince the GCL crowd to fix this.
+                     (dolist (el strs)
+                         (setf wrapper `(FFI:WITH-CSTRING ,el ,wrapper)))
+                     (setf wrapper `(defun ,name ,largs ,wrapper))
+-                    `(progn (uffi:def-function (,c-name ,sym)
++                    `(progn (ffi:def-function (,c-name ,sym)
+                                 ,fargs :returning ,l-ret)
+                             ,wrapper))
+-                `(uffi:def-function (,c-name ,name)
++                `(ffi:def-function (,c-name ,name)
+                      ,fargs :returning ,l-ret)))))
+ 
+ (defmacro fricas-foreign-call (name c-name return-type &rest arguments)
+@@ -788,14 +788,14 @@ with this hack and will try to convince the GCL crowd to fix this.
+ #+:ecl
+ (progn
+ 
+-(uffi:def-function ("sock_get_string_buf" sock_get_string_buf_wrapper)
++(ffi:def-function ("sock_get_string_buf" sock_get_string_buf_wrapper)
+                    ((purpose :int) (buf (:array :unsigned-char 10000)) (len :int))
+                    :returning :void)
+ 
+ (defun |sockGetStringFrom| (purpose)
+-    (uffi:with-foreign-object (buf '(:array :unsigned-char 10000))
++    (ffi:with-foreign-object (buf '(:array :unsigned-char 10000))
+         (sock_get_string_buf_wrapper purpose buf 10000)
+-        (uffi:convert-from-foreign-string buf)))
++        (ffi:convert-from-foreign-string buf)))
+ 
+ )
+ 
+@@ -825,7 +825,7 @@ with this hack and will try to convince the GCL crowd to fix this.
+   (LISP::defentry |makedir| (LISP::string)         (LISP::int "makedir")))
+ 
+ #+:ecl
+-(uffi:def-function ("directoryp" raw_file_kind)
++(ffi:def-function ("directoryp" raw_file_kind)
+                    ((arg :cstring))
+                    :returning :int)
+ #+:ecl
+@@ -834,7 +834,7 @@ with this hack and will try to convince the GCL crowd to fix this.
+            (raw_file_kind cname)))
+ 
+ #+:ecl
+-(uffi:def-function ("makedir" raw_makedir)
++(ffi:def-function ("makedir" raw_makedir)
+                    ((arg :cstring))
+                    :returning :int)
+ 

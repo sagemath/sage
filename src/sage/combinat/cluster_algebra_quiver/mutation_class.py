@@ -20,6 +20,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import *
 from sage.graphs.generic_graph import graph_isom_equivalent_non_edge_labeled_graph
@@ -169,7 +171,7 @@ def _dg_canonical_form( dg, n, m ):
         partition = [ vertices ]
     partition_add, edges = _graph_without_edge_labels(dg,vertices)
     partition += partition_add
-    automorphism_group, obsolete, iso = search_tree(dg, partition=partition, lab=True, dig=True, certify=True)
+    automorphism_group, obsolete, iso = search_tree(dg, partition=partition, lab=True, dig=True, certificate=True)
     orbits = get_orbits( automorphism_group, n+m )
     orbits = [ [ iso[i] for i in orbit] for orbit in orbits ]
     for v in iso.keys():
@@ -240,7 +242,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
         dc += ' ' * (5-len(dc))
         nr = str(len(dig6s))
         nr += ' ' * (10-len(nr))
-        print "Depth: %s found: %s Time: %.2f s"%(dc,nr,timer2-timer)
+        print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2 - timer))
 
     while gets_bigger and depth_counter < depth:
         gets_bigger = False
@@ -287,7 +289,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
             dc += ' ' * (5-len(dc))
             nr = str(len(dig6s))
             nr += ' ' * (10-len(nr))
-            print "Depth: %s found: %s Time: %.2f s"%(dc,nr,timer2-timer)
+            print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2 - timer))
 
 def _digraph_to_dig6( dg, hashable=False ):
     """
@@ -477,36 +479,36 @@ def _is_valid_digraph_edge_set( edges, frozen=0 ):
 
         # checks if the digraph contains loops
         if dg.has_loops():
-            print "The given digraph or edge list contains loops."
+            print("The given digraph or edge list contains loops.")
             return False
 
         # checks if the digraph contains oriented 2-cycles
         if _has_two_cycles( dg ):
-            print "The given digraph or edge list contains oriented 2-cycles."
+            print("The given digraph or edge list contains oriented 2-cycles.")
             return False
 
         # checks if all edge labels are 'None', positive integers or tuples of positive integers
         if not all( i is None or ( i in ZZ and i > 0 ) or ( isinstance(i, tuple) and len(i) == 2 and i[0] in ZZ and i[1] in ZZ ) for i in dg.edge_labels() ):
-            print "The given digraph has edge labels which are not integral or integral 2-tuples."
+            print("The given digraph has edge labels which are not integral or integral 2-tuples.")
             return False
 
         # checks if all edge labels for multiple edges are 'None' or positive integers
         if dg.has_multiple_edges():
             for e in set( dg.multiple_edges(labels=False) ):
                 if not all( i is None or ( i in ZZ and i > 0 ) for i in dg.edge_label( e[0], e[1] ) ):
-                    print "The given digraph or edge list contains multiple edges with non-integral labels."
+                    print("The given digraph or edge list contains multiple edges with non-integral labels.")
                     return False
 
         n = dg.order() - frozen
         if n < 0:
-            print "The number of frozen variables is larger than the number of vertices."
+            print("The number of frozen variables is larger than the number of vertices.")
             return False
 
         if [ e for e in dg.edges(labels=False) if e[0] >= n] != []:
-            print "The given digraph or edge list contains edges within the frozen vertices."
+            print("The given digraph or edge list contains edges within the frozen vertices.")
             return False
 
         return True
     except Exception:
-        print "Could not even build a digraph from the input data."
+        print("Could not even build a digraph from the input data.")
         return False

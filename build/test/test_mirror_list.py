@@ -18,7 +18,7 @@ import unittest
 import tempfile
 
 from .capture import CapturedLog
-from sage_bootstrap.mirror_list import MirrorList
+from sage_bootstrap.download.mirror_list import MirrorList
 
 
 
@@ -31,4 +31,8 @@ class MirrorListTestCase(unittest.TestCase):
         if len(msg) > 0:
             self.assertEqual(msg[0], ('INFO', 'Downloading the Sage mirror list'))
         self.assertTrue(len(ml.mirrors) >= 0)
-        self.assertTrue(ml.fastest.startswith('http://'))
+        self.assertTrue(
+            ml.fastest.startswith('http://') or
+            ml.fastest.startswith('https://') or
+            ml.fastest.startswith('ftp://')
+        )

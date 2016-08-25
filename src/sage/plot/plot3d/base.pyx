@@ -37,7 +37,7 @@ import os
 from functools import reduce
 from random import randint
 import zipfile
-from cStringIO import StringIO
+from six.moves import cStringIO as StringIO
 
 from sage.misc.misc import sage_makedirs
 from sage.env import SAGE_LOCAL
@@ -1517,22 +1517,18 @@ end_scene""" % (render_params.antialiasing,
             scene = self._rich_repr_jmol(**kwds)
             scene.jmol.save(filename)
         elif ext == '.x3d':
-            outfile = file(filename, 'w')
-            outfile.write(self.x3d())
-            outfile.close()
+            with open(filename, 'w') as outfile:
+                outfile.write(self.x3d())
         elif ext == '.stl':
-            outfile = file(filename, 'w')
-            outfile.write(self.stl_ascii_string())
-            outfile.close()
+            with open(filename, 'w') as outfile:
+                outfile.write(self.stl_ascii_string())
         elif ext == '.amf':
             # todo : zip the output file ?
-            outfile = file(filename, 'w')
-            outfile.write(self.amf_ascii_string())
-            outfile.close()
+            with open(filename, 'w') as outfile:
+                outfile.write(self.amf_ascii_string())
         elif ext == '.ply':
-            outfile = file(filename, 'w')
-            outfile.write(self.ply_ascii_string())
-            outfile.close()
+            with open(filename, 'w') as outfile:
+                outfile.write(self.ply_ascii_string())
         else:
             raise ValueError('filetype {} not supported by save()'.format(ext))
 

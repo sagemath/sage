@@ -7,13 +7,14 @@ AUTHORS:
 
 - William Stein (2007-08)
 """
+from __future__ import absolute_import
 
 from sage.matrix.all import MatrixSpace
 from sage.modular.dirichlet import DirichletGroup
 
-import constructor
+from . import constructor
 
-from theta import theta2_qexp, theta_qexp
+from .theta import theta2_qexp, theta_qexp
 from copy import copy
 
 def half_integral_weight_modform_basis(chi, k, prec):

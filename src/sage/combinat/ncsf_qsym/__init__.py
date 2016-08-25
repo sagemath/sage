@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Non-Commutative Symmetric Functions and Quasi-Symmetric Functions
 =================================================================
 

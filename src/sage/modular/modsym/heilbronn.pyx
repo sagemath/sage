@@ -313,7 +313,7 @@ cdef class HeilbronnCremona(Heilbronn):
             [-1, 0, 1, -3]]
         """
         if p <= 1 or not sage.arith.all.is_prime(p):
-            raise ValueError, "p must be >= 2 and prime"
+            raise ValueError("p must be >= 2 and prime")
         self.p = p
         self._initialize_list()
 
@@ -414,7 +414,7 @@ cdef class HeilbronnMerel(Heilbronn):
             [3, 2, 0, 1]]
         """
         if n <= 0:
-            raise ValueError, "n (=%s) must be >= 1"%n
+            raise ValueError("n (=%s) must be >= 1" % n)
         self.n = n
         self._initialize_list()
 
@@ -666,7 +666,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     K = chi.base_ring()
 
     if K == QQ:
-        raise TypeError, "character must not be trivial or quadratic"
+        raise TypeError("character must not be trivial or quadratic")
 
     if R.base_ring() != K:
         R = R.change_ring(K)
@@ -762,7 +762,7 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     cdef p1list.P1List P1 = p1list.P1List(N)
     from sage.rings.all import QQ
     if chi.base_ring() != QQ:
-        raise TypeError, "character must takes values in QQ"
+        raise TypeError("character must takes values in QQ")
 
     # Create a zero dense matrix over QQ with len(indices) rows
     # and #P^1(N) columns.

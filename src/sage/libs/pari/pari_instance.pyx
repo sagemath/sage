@@ -1080,8 +1080,7 @@ cdef class PariInstance(PariInstance_auto):
         self.set_real_precision(old_prec)
         return x
 
-
-    cdef long get_var(self, v):
+    cdef long get_var(self, v) except -2:
         """
         Convert ``v`` into a PARI variable number.
 
@@ -1126,6 +1125,17 @@ cdef class PariInstance(PariInstance_auto):
             Traceback (most recent call last):
             ...
             PariError: incorrect priority in gtopoly: variable x <= xx
+
+        TESTS:
+
+        The following example caused Sage to crash before
+        :trac:`20630`::
+
+            sage: R.<theta> = QQ[]
+            sage: K.<a> = NumberField(theta^2 + 1)
+            sage: K.galois_group(type='pari')
+            Galois group PARI group [2, -1, 1, "S2"] of degree 2 of the Number Field in a with defining polynomial theta^2 + 1
+
         """
         if v is None:
             return -1
@@ -1141,7 +1151,10 @@ cdef class PariInstance(PariInstance_auto):
         if v == -1:
             return -1
         cdef bytes s = bytes(v)
-        return fetch_user_var(s)
+        sig_on()
+        varno = fetch_user_var(s)
+        sig_off()
+        return varno
 
     ############################################################
     # Initialization
@@ -1575,18 +1588,7 @@ cdef class PariInstance(PariInstance_auto):
             sage: x = polygen(QQ)
             sage: pari.genus2red([-5*x^5, x^3 - 2*x^2 - 2*x + 1])
             [1416875, [2, -1; 5, 4; 2267, 1], x^6 - 240*x^4 - 2550*x^3 - 11400*x^2 - 24100*x - 19855, [[2, [2, [Mod(1, 2)]], []], [5, [1, []], ["[V] page 156", [3]]], [2267, [2, [Mod(432, 2267)]], ["[I{1-0-0}] page 170", []]]]]
-
-        This is the old deprecated syntax::
-
-            sage: pari.genus2red(x^3 - 2*x^2 - 2*x + 1, -5*x^5)
-            doctest:...: DeprecationWarning: The 2-argument version of genus2red() is deprecated, use genus2red(P) or genus2red([P,Q]) instead
-            See http://trac.sagemath.org/16997 for details.
-            [1416875, [2, -1; 5, 4; 2267, 1], x^6 - 240*x^4 - 2550*x^3 - 11400*x^2 - 24100*x - 19855, [[2, [2, [Mod(1, 2)]], []], [5, [1, []], ["[V] page 156", [3]]], [2267, [2, [Mod(432, 2267)]], ["[I{1-0-0}] page 170", []]]]]
         """
-        if P0 is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(16997, 'The 2-argument version of genus2red() is deprecated, use genus2red(P) or genus2red([P,Q]) instead')
-            P = [P0, P]
         cdef gen t0 = objtogen(P)
         sig_on()
         return self.new_gen(genus2red(t0.g, NULL))

@@ -1,19 +1,21 @@
-from calculus import maxima as maxima_calculus
-from calculus import (laplace, inverse_laplace,
+from __future__ import absolute_import
+
+from .calculus import maxima as maxima_calculus
+from .calculus import (laplace, inverse_laplace,
                       limit, lim)
 
-from functional import (diff, derivative,
+from .functional import (diff, derivative,
                         expand,
                         taylor, simplify)
 
-from functions import (wronskian,jacobian)
+from .functions import (wronskian,jacobian)
 
-from desolvers import (desolve, desolve_laplace, desolve_system,
+from .desolvers import (desolve, desolve_laplace, desolve_system,
                        eulers_method, eulers_method_2x2,
                        eulers_method_2x2_plot, desolve_rk4, desolve_system_rk4,
                        desolve_odeint, desolve_mintides, desolve_tides_mpfr)
 
-from var import (var, function, clear_vars)
+from .var import (var, function, clear_vars)
 
 # We lazy_import the following modules since they import numpy which slows down sage startup
 from sage.misc.lazy_import import lazy_import
@@ -95,4 +97,4 @@ def symbolic_expression(x):
     else:
         return SR(x)
 
-import desolvers
+from . import desolvers

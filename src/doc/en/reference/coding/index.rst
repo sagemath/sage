@@ -24,17 +24,21 @@ Linear codes and related constructions
 .. toctree::
    :maxdepth: 1
 
-   sage/coding/binary_code
+   sage/coding/linear_code
    sage/coding/grs
    sage/coding/hamming_code
    sage/coding/guruswami_sudan/gs_decoder
    sage/coding/guruswami_sudan/interpolation
    sage/coding/guruswami_sudan/rootfinding
    sage/coding/guruswami_sudan/utils
-   sage/coding/linear_code
+   sage/coding/subfield_subcode
    sage/coding/code_constructions
+   sage/coding/punctured_code
+   sage/coding/extended_code
    sage/coding/sd_codes
    sage/coding/guava
+   sage/coding/binary_code
+   sage/coding/reed_muller_code
 
 Bounds on codes
 ---------------
@@ -69,5 +73,13 @@ Canonical forms
 
    sage/coding/codecan/codecan
    sage/coding/codecan/autgroup_can_label
+
+Other tools
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/coding/relative_finite_field_extension
 
 .. include:: ../footer.txt

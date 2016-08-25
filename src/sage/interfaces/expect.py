@@ -39,14 +39,15 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import sys
 import weakref
 import time
 import gc
-import quit
-import cleaner
+from . import quit
+from . import cleaner
 import six
 from random import randrange
 

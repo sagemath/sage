@@ -242,7 +242,7 @@ def slimgb_libsingular(I):
 
     if r.OrdSgn!=1 :
         id_Delete(&i, r)
-        raise TypeError, "ordering must be global for slimgb"
+        raise TypeError("ordering must be global for slimgb")
 
     if i.rank < idRankFreeModule(i, r):
         id_Delete(&i, r)

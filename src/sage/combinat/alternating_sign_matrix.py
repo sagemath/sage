@@ -1197,6 +1197,37 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         return self.element_class(self, self._matrix_space.identity_matrix())
 
+    def random_element(self):
+        r"""
+        Return a uniformly random alternating sign matrix.
+
+        EXAMPLES::
+
+            sage: AlternatingSignMatrices(7).random_element()  # random
+            [ 0  0  0  0  1  0  0]
+            [ 0  0  1  0 -1  0  1]
+            [ 0  0  0  0  1  0  0]
+            [ 0  1 -1  0  0  1  0]
+            [ 1 -1  1  0  0  0  0]
+            [ 0  0  0  1  0  0  0]
+            [ 0  1  0  0  0  0  0]
+            sage: a = AlternatingSignMatrices(5).random_element()
+            sage: bool(a.number_negative_ones()) or a.is_permutation()
+            True
+
+        This is done using a modified version of Propp and Wilson's "coupling
+        from the past" algorithm. It creates a uniformly random Gelfand-Tsetlin
+        triangle with top row `[n, n-1, \ldots 2, 1]`, and then converts it to
+        an alternating sign matrix.
+        """
+        from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatterns
+        n = self._n
+        toprow = [n-i for i in range(n)]
+        gt = GelfandTsetlinPatterns(top_row = toprow, strict = True)
+        randomgt = gt.random_element()
+        A = AlternatingSignMatrices(n)
+        return A.from_monotone_triangle(randomgt)
+
     def from_monotone_triangle(self, triangle):
         r"""
         Return an alternating sign matrix from a monotone triangle.

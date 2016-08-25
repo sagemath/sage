@@ -264,8 +264,9 @@ AUTHORS:
 #
 ##########################################################################
 from __future__ import print_function
+from __future__ import absolute_import
 
-from expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.env import DOT_SAGE
 import re
 import six

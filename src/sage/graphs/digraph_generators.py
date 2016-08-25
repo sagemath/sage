@@ -59,6 +59,7 @@ Functions and methods
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ################################################################################
+from __future__ import print_function
 
 from   math import sin, cos, pi
 from sage.misc.randstate import current_randstate
@@ -144,8 +145,7 @@ class DiGraphGenerators():
     ::
 
         sage: for D in digraphs(2, augment='vertices'):
-        ...    print D
-        ...
+        ....:     print(D)
         Digraph on 0 vertices
         Digraph on 1 vertex
         Digraph on 2 vertices
@@ -155,8 +155,7 @@ class DiGraphGenerators():
     Note that we can also get digraphs with underlying Cython implementation::
 
         sage: for D in digraphs(2, augment='vertices', implementation='c_graph'):
-        ...    print D
-        ...
+        ....:     print(D)
         Digraph on 0 vertices
         Digraph on 1 vertex
         Digraph on 2 vertices
@@ -168,7 +167,7 @@ class DiGraphGenerators():
     ::
 
         sage: for D in digraphs(3):
-        ...    print D
+        ....:     print(D)
         Digraph on 3 vertices
         Digraph on 3 vertices
         ...
@@ -206,7 +205,7 @@ class DiGraphGenerators():
     ::
 
         sage: for i in range(0, 5):
-        ...    print len(list(digraphs(i)))
+        ....:     print(len(list(digraphs(i))))
         1
         1
         3
@@ -456,7 +455,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: for g in digraphs.tournaments_nauty(4):
-            ....:    print g.edges(labels = False)
+            ....:     print(g.edges(labels = False))
             [(1, 0), (2, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
             [(1, 0), (1, 3), (2, 0), (2, 1), (3, 0), (3, 2)]
             [(0, 2), (1, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
@@ -733,7 +732,7 @@ class DiGraphGenerators():
         EXAMPLE::
 
             sage: GB = digraphs.GeneralizedDeBruijn(8, 2)
-            sage: GB.is_isomorphic(digraphs.DeBruijn(2, 3), certify = True)
+            sage: GB.is_isomorphic(digraphs.DeBruijn(2, 3), certificate = True)
             (True, {0: '000', 1: '001', 2: '010', 3: '011', 4: '100', 5: '101', 6: '110', 7: '111'})
 
         TESTS:
@@ -801,11 +800,11 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: II = digraphs.ImaseItoh(8, 2)
-            sage: II.is_isomorphic(digraphs.DeBruijn(2, 3), certify = True)
+            sage: II.is_isomorphic(digraphs.DeBruijn(2, 3), certificate = True)
             (True, {0: '010', 1: '011', 2: '000', 3: '001', 4: '110', 5: '111', 6: '100', 7: '101'})
 
             sage: II = digraphs.ImaseItoh(12, 2)
-            sage: II.is_isomorphic(digraphs.Kautz(2, 3), certify = True)
+            sage: II.is_isomorphic(digraphs.Kautz(2, 3), certificate = True)
             (True, {0: '010', 1: '012', 2: '021', 3: '020', 4: '202', 5: '201', 6: '210', 7: '212', 8: '121', 9: '120', 10: '102', 11: '101'})
 
 
@@ -884,7 +883,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: K = digraphs.Kautz(2, 3)
-            sage: K.is_isomorphic(digraphs.ImaseItoh(12, 2), certify = True)
+            sage: K.is_isomorphic(digraphs.ImaseItoh(12, 2), certificate = True)
             (True,
              {'010': 0,
               '012': 1,
@@ -1358,8 +1357,7 @@ class DiGraphGenerators():
         ::
 
             sage: for D in digraphs(2, augment='vertices'):
-            ...    print D
-            ...
+            ....:     print(D)
             Digraph on 0 vertices
             Digraph on 1 vertex
             Digraph on 2 vertices
@@ -1371,7 +1369,7 @@ class DiGraphGenerators():
         ::
 
             sage: for D in digraphs(3):
-            ...    print D
+            ....:     print(D)
             Digraph on 3 vertices
             Digraph on 3 vertices
             ...

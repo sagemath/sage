@@ -47,7 +47,7 @@ cdef class IncreasingArray(ClonableArray):
         cdef int i
         for i in range(len(self)-1):
             if self._getitem(i) > self._getitem(i+1):
-                raise ValueError, "array is not increasing"
+                raise ValueError("array is not increasing")
 
 
 class IncreasingArrays(UniqueRepresentation, Parent):
@@ -165,7 +165,7 @@ cdef class IncreasingIntArray(ClonableIntArray):
             return
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
-                raise ValueError, "array is not increasing"
+                raise ValueError("array is not increasing")
 
 class IncreasingIntArrays(IncreasingArrays):
     """
@@ -229,7 +229,7 @@ cdef class SortedList(NormalizedClonableList):
         """
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
-                raise ValueError, "list is not strictly increasing"
+                raise ValueError("list is not strictly increasing")
 
 class SortedLists(IncreasingLists):
     """

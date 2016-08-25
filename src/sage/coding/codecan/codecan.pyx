@@ -835,16 +835,15 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         # finally compare the new column with the best candidate
         if self._is_candidate_initialized:
-            cmp_res = cmp(self._matrix.column(pos), self._best_candidate.column(
-                self._inner_min_order_best[ len(self._fixed_minimized) ]))
-            if cmp_res > 0:
+            A = self._matrix.column(pos)
+            B = self._best_candidate.column(
+                self._inner_min_order_best[len(self._fixed_minimized)])
+            if B < A:
                 return False
-            if cmp_res < 0:
+            if A < B:
                 # the next leaf will become the next candidate
                 self._is_candidate_initialized = False
         return True
-
-
 
     cdef bint _refine(self, bint *part_changed,
                       bint inner_group_changed, bint first_step):

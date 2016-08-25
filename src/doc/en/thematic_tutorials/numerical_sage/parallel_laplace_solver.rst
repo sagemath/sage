@@ -115,8 +115,8 @@ this with the solver we wrote in the section on f2py.
         sol=numpy.array(recvbuf)
         sol.shape=(num_points,num_points)
     ##Write your own code to do something with the solution
-        print num_iter
-        print sol
+        print(num_iter)
+        print(sol)
 
 For small grid sizes this will be slower than a straightforward
 serial implementation, this is because there is overhead from the

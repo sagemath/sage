@@ -1,6 +1,7 @@
 r"""
 Six Vertex Model
 """
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -146,7 +147,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(2, boundary_conditions='ice')
-            sage: print M[0].plot().description()
+            sage: print(M[0].plot().description())
             Arrow from (-1.0,0.0) to (0.0,0.0)
             Arrow from (-1.0,1.0) to (0.0,1.0)
             Arrow from (0.0,0.0) to (0.0,-1.0)

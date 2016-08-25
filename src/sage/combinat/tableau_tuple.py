@@ -52,11 +52,11 @@ EXAMPLES::
 
     sage: TableauTuple([[1,2,3],[4,5]])
     [[1, 2, 3], [4, 5]]
-    sage: t=TableauTuple([ [[6,7],[8,9]],[[1,2,3],[4,5]] ]); t
+    sage: t = TableauTuple([ [[6,7],[8,9]],[[1,2,3],[4,5]] ]); t
     ([[6, 7], [8, 9]], [[1, 2, 3], [4, 5]])
     sage: t.pp()
-         6  7     1  2  3
-         8  9     4  5
+      6  7     1  2  3
+      8  9     4  5
     sage: t(0,0,1)
     7
     sage: t(1,0,1)
@@ -170,6 +170,8 @@ Parent classes:
 * :class:`StandardTableauTuples_size`
 * :class:`StandardTableauTuples_level_size`
 * :class:`StandardTableauTuples_shape`
+* :class:`StandardTableaux_residue`
+* :class:`StandardTableaux_residue_shape`
 
 .. SEEALSO::
 
@@ -179,6 +181,7 @@ Parent classes:
     * :class:`StandardTableaux`
     * :class:`Partitions`
     * :class:`PartitionTuples`
+    * :class:`ResidueSequence`
 
 .. TODO::
 
@@ -198,7 +201,7 @@ REFERENCES:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2012 Andrew Mathas <andrew dot mathas at sydney dot edu dot au>
+#       Copyright (C) 2012,2016 Andrew Mathas <andrew dot mathas at sydney dot edu dot au>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -206,6 +209,7 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function, absolute_import
 
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word
@@ -229,7 +233,7 @@ from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
-import permutation
+from . import permutation
 
 #--------------------------------------------------
 # Tableau tuple - element class
@@ -282,7 +286,7 @@ class TableauTuple(CombinatorialElement):
 
     EXAMPLES::
 
-        sage: t = TableauTuple([ [[6,9,10],[11]],[[1,2,3],[4,5]],[[7],[8]] ]); t
+        sage: t = TableauTuple([ [[6,9,10],[11]], [[1,2,3],[4,5]], [[7],[8]] ]); t
         ([[6, 9, 10], [11]], [[1, 2, 3], [4, 5]], [[7], [8]])
         sage: t.level()
         3
@@ -293,8 +297,8 @@ class TableauTuple(CombinatorialElement):
         sage: t.is_standard()
         True
         sage: t.pp() # pretty print
-        6  9 10     1  2  3     7
-        11          4  5        8
+          6  9 10     1  2  3     7
+         11           4  5        8
         sage: t.category()
         Category of elements of Tableau tuples
         sage: t.parent()
@@ -427,7 +431,7 @@ class TableauTuple(CombinatorialElement):
             sage: TableauTuple([[],[],[],[]])
             ([], [], [], [])
         """
-        return self.parent().global_options.dispatch(self,'_repr_','display')
+        return self.parent().options._dispatch(self,'_repr_','display')
 
     def _repr_list(self):
         """
@@ -459,48 +463,55 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: print TableauTuple([[[2,3]],[[1]],[[4],[5]],[]])._repr_diagram()
-                 2  3     1     4   -
-                                5
-            sage: print TableauTuple([[[2,3]],[],[[4],[5]],[]])._repr_diagram()
-                 2  3     -     4   -
-                                5
-            sage: TableauTuples.global_options(convention='French')
-            sage: print TableauTuple([[[2,3]],[[1]],[[4],[5]],[]])._repr_diagram()
-                                5
-                 2  3     1     4   -
-            sage: print TableauTuple([[[2,3]],[],[[4],[5]],[]])._repr_diagram()
-                                5
-                 2  3     -     4   -
-            sage: TableauTuples.global_options.reset()
+            sage: print(TableauTuple([[[2,3]],[[1]],[[4],[5]],[]])._repr_diagram())
+              2  3     1     4     -
+                             5
+            sage: print(TableauTuple([[[2,3]],[],[[4],[5]],[]])._repr_diagram())
+              2  3     -     4     -
+                             5
+            sage: TableauTuples.options(convention='French')
+            sage: print(TableauTuple([[[2,3]],[[1]],[[4],[5]],[]])._repr_diagram())
+                             5      
+              2  3     1     4     -
+            sage: print(TableauTuple([[[2,3]],[],[[4],[5]],[]])._repr_diagram())
+                             5
+              2  3     -     4     -
+            sage: TableauTuples.options._reset()
+
+        TESTS:
+
+        Check that :trac:`20768` is fixed::
+
+            sage: T = TableauTuple([[[1,2,1],[1],[12345]], [], [[1523,1,2],[1,12341,-2]]])
+            sage: T.pp()
+                 1  2  1     -    1523     1  2
+                 1                   1 12341 -2
+             12345
         """
-        col_len = [len(t)>0 and len(t[0]) or 1 for t in self]  # columns per component
-        row_max = max(len(t) for t in self)                    # maximum row length
-        # There should be a fancier list compression for this but I couldn't get
-        # one to work in the cases where a component was the empty partition
-        diag = []
-        for row in xrange(row_max):
-            line=''
-            for c in range(len(self)):
-                if row == 0 and self[c] == []:
-                    line += '     -'
-                elif row < len(self[c]):
-                    line += '   '+''.join(("%3s"%str(x) for x in self[c][row]))+'   '*(col_len[c]-len(self[c][row]))
-                else:
-                    line += '   '+'   '*col_len[c]
-            diag.append(line)
-        if TableauTuples.global_options('convention') == "English":
-            return '\n'.join(map(str,diag))
+        str_tt = [T._repr_diagram().split('\n') for T in self]
+        if TableauTuples.options('convention') == "French":
+            for T_str in str_tt:
+                T_str.reverse()
+        widths = [len(T_str[0]) for T_str in str_tt]
+        num_cols = max(len(T_str) for T_str in str_tt)
+
+        diag = ['   '.join(' ' * widths[j] if i >= len(T_str) else
+                           "{:<{width}}".format(T_str[i], width=widths[j])
+                           for j,T_str in enumerate(str_tt))
+                for i in range(num_cols)]
+
+        if TableauTuples.options('convention') == "English":
+            return '\n'.join(diag)
         else:
-            return '\n'.join(map(str,diag[::-1]))
+            return '\n'.join(diag[::-1])
 
     def _ascii_art_(self):
         """
         TESTS::
 
             sage: ascii_art(TableauTuple([[[2,3]],[],[[4],[5]],[]]))
-             2  3     -     4     -
-                            5
+              2  3     -     4     -
+                             5
         """
         from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(self._repr_diagram().splitlines())
@@ -522,7 +533,7 @@ class TableauTuple(CombinatorialElement):
             \lr{6}&\lr{7}\\\cline{1-2}
             \end{array}$}
             } \Bigg)
-            sage: TableauTuples.global_options(convention="french")
+            sage: TableauTuples.options(convention="french")
             sage: latex(t)    # indirect doctest
             \Bigg( {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
             \raisebox{-.6ex}{$\begin{array}[t]{*{2}c}\cline{1-1}
@@ -533,9 +544,9 @@ class TableauTuple(CombinatorialElement):
             \lr{4}&\lr{5}\\\cline{1-2}
             \end{array}$}
             } \Bigg)
-            sage: TableauTuples.global_options.reset()
+            sage: TableauTuples.options._reset()
         """
-        return self.parent().global_options.dispatch(self,'_latex_','latex')
+        return self.parent().options._dispatch(self,'_latex_','latex')
 
     _latex_list = _repr_list
 
@@ -546,7 +557,7 @@ class TableauTuple(CombinatorialElement):
         EXAMPLES::
 
             sage: t = TableauTuple([ [[1,2],[3]], [], [[4,5],[6,7]] ])
-            sage: print t._latex_diagram()
+            sage: print(t._latex_diagram())
             \Bigg( {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
             \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
             \lr{1}&\lr{2}\\\cline{1-2}
@@ -557,7 +568,7 @@ class TableauTuple(CombinatorialElement):
             \end{array}$}
             } \Bigg)
         """
-        from output import tex_from_array_tuple
+        from .output import tex_from_array_tuple
         return r'\Bigg( %s \Bigg)' % tex_from_array_tuple(self)
 
 
@@ -670,11 +681,13 @@ class TableauTuple(CombinatorialElement):
         return self.shape().size()
 
     def conjugate(self):
-        """
-        Returns the conjugate of the tableau tuple ``self``. That is, the
-        :class:`TableauTuple` obtained from ``self`` by reversing the order of
-        the components and conjugating each component -- that is, swapping the
-        rows and columns of the all of :class:`Tableau` in ``self`` (see
+        r"""
+        Return the conjugate of the tableau tuple ``self``.
+
+        The conjugate tableau tuple `T'` is the :class:`TableauTuple`
+        obtained from `T` by reversing the order of the components and
+        conjugating each component -- that is, swapping the rows and
+        columns of the all of :class:`Tableau` in `T` (see
         :meth:`sage.combinat.tableau.Tableau.conjugate`).
 
         EXAMPLES::
@@ -682,8 +695,15 @@ class TableauTuple(CombinatorialElement):
             sage: TableauTuple([[[1,2],[3,4]],[[5,6,7],[8]],[[9,10],[11],[12]]]).conjugate()
             ([[9, 11, 12], [10]], [[5, 8], [6], [7]], [[1, 3], [2, 4]])
         """
-        return TableauTuple(t.conjugate() for t in reversed(self))
-
+        conj = [t.conjugate() for t in reversed(self)]
+        # attempt to return a tableau of the same type
+        try:
+            return self.parent()(conj)
+        except StandardError:
+            try:
+                return self.parent().element_class(self.parent(), conj)
+            except StandardError:
+                return Tableau(conj)
 
     def pp(self):
         """
@@ -692,28 +712,28 @@ class TableauTuple(CombinatorialElement):
         EXAMPLES::
 
             sage: TableauTuple([ [[1,2,3],[4,5]], [[1,2,3],[4,5]] ]).pp()
-                1  2  3     1  2  3
-                4  5        4  5
+              1  2  3     1  2  3
+              4  5        4  5
             sage: TableauTuple([ [[1,2],[3],[4]],[],[[6,7,8],[10,11],[12],[13]]]).pp()
-                1  2   -     6  7  8
-                3           10 11
-                4           12
+              1  2     -     6  7  8
+              3             10 11
+              4             12
                             13
             sage: t = TableauTuple([ [[1,2,3],[4,5],[6],[9]], [[1,2,3],[4,5,8]], [[11,12,13],[14]] ])
             sage: t.pp()
-                1  2  3     1  2  3    11 12 13
-                4  5        4  5  8    14
-                6
-                9
-            sage: TableauTuples.global_options(convention="french")
+              1  2  3     1  2  3    11 12 13
+              4  5        4  5  8    14
+              6
+              9
+            sage: TableauTuples.options(convention="french")
             sage: t.pp()
-                 9
-                 6
-                 4  5        4  5  8    14
-                 1  2  3     1  2  3    11 12 13
-            sage: TableauTuples.global_options.reset()
+              9
+              6
+              4  5        4  5  8    14
+              1  2  3     1  2  3    11 12 13
+            sage: TableauTuples.options._reset()
         """
-        print self._repr_diagram()
+        print(self._repr_diagram())
 
     def to_word_by_row(self):
         """
@@ -767,7 +787,7 @@ class TableauTuple(CombinatorialElement):
 
     def entries(self):
         """
-        Returns a sorted list of all entries of ``self``, in the order
+        Return a sorted list of all entries of ``self``, in the order
         obtained by reading across the rows.
 
         EXAMPLES::
@@ -781,7 +801,7 @@ class TableauTuple(CombinatorialElement):
 
     def entry(self, l, r, c):
         """
-        Returns the entry of the  cell ``(l, r, c)`` in ``self``.
+        Return the entry of the  cell ``(l, r, c)`` in ``self``.
 
         A cell is a tuple ``(l, r, c)`` of coordinates, where ``l`` is the
         component index, ``r`` is the row index, and ``c`` is the column index.
@@ -821,6 +841,34 @@ class TableauTuple(CombinatorialElement):
         """
         return all(t.is_row_strict() for t in self)
 
+    def first_row_descent(self): 
+        r""" 
+        Return the first cell of ``self`` that is not row standard.
+
+        Cells are ordered left to right along the rows and then top to
+        bottom. That is, the cell minimal `(k,r,c)` such that the entry in
+        position `(k,r,c)` is bigger than the entry in position `(k,r,c+1)`.
+        If there is no such cell then ``None`` is returned - in this
+        case the tableau is row strict.
+
+        OUTPUT:
+
+        The cell corresponding to the first row descent or ``None``
+        if the tableau is row strict.
+
+        EXAMPLES::
+
+            sage: TableauTuple([[[5,6,7],[1,2]],[[1,3,2],[4]]]).first_row_descent()
+            (1, 0, 1)
+            sage: TableauTuple([[[1,2,3],[4]],[[6,7,8],[1,2,3]],[[1,11]]]).first_row_descent() is None
+            True
+        """
+        for k in xrange(len(self)):
+            cell = self[k].first_row_descent()
+            if cell is not None:
+                return (k, cell[0], cell[1])
+        return None
+
     def is_column_strict(self):
         """
         Return ``True`` if the tableau ``self`` is column strict and ``False``
@@ -844,9 +892,37 @@ class TableauTuple(CombinatorialElement):
         """
         return all(t.is_column_strict() for t in self)
 
+    def first_column_descent(self):
+        r"""
+        Return the first cell of ``self`` is not column standard. 
+
+        Cells are ordered left to right along the rows and then top to
+        bottom. That is, return the cell `(k,r,c)` with `(k,r,c)` minimal
+        such that the entry in position `(k,r,c)` is bigger than the entry
+        in position `(k,r,c+1)`. If there is no such cell then ``None``
+        is returned - in this case the tableau is column strict.
+
+        OUTPUT:
+
+        The cell corresponding to the first column descent or ``None``
+        if the tableau is column strict.
+
+        EXAMPLES::
+
+            sage: TableauTuple([[[3,5,6],[2,4,5]],[[1,4,5],[2,3]]]).first_column_descent()
+            (0, 0, 0)
+            sage: Tableau([[[1,2,3],[4]],[[5,6,7],[8,9]]]).first_column_descent() is None
+            True
+        """
+        for k in xrange(len(self)):
+            cell=self[k].first_column_descent()
+            if cell is not None:
+                return (k,cell[0],cell[1])
+        return None
+
     def is_standard(self):
         r"""
-        Returns ``True`` if the tableau ``self`` is a standard tableau and
+        Return ``True`` if the tableau ``self`` is a standard tableau and
         ``False`` otherwise.
 
         A tableau tuple is *standard* if it is row standard, column standard
@@ -869,9 +945,63 @@ class TableauTuple(CombinatorialElement):
         entries=sorted(self.entries())
         return entries==range(1,self.size()+1) and self.is_row_strict() and self.is_column_strict()
 
+    def reduced_row_word(self):
+        r"""
+        Return the lexicographically minimal reduced expression for the
+        permutation that maps the :meth:`initial_tableau` to ``self``.
+
+        This reduced expression is a minimal length coset representative for the
+        corresponding Young subgroup.  In one line notation, the permutation is
+        obtained by concatenating the rows of the tableau from top to bottom in
+        each component, and then left to right along the components.
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[1,2],[3]],[[4,5,6],[7,8],[9]]]).reduced_row_word()
+            []
+            sage: StandardTableauTuple([[[1,2],[3]],[[4,5,6],[7,9],[8]]]).reduced_row_word()
+            [8]
+            sage: StandardTableauTuple([[[1,2],[3]],[[4,5,7],[6,9],[8]]]).reduced_row_word()
+            [6, 8]
+            sage: StandardTableauTuple([[[1,2],[3]],[[4,5,8],[6,9],[7]]]).reduced_row_word()
+            [6, 8, 7]
+            sage: StandardTableauTuple([[[1,2],[3]],[[4,5,9],[6,8],[7]]]).reduced_row_word()
+            [6, 7, 8, 7]
+            sage: StandardTableauTuple([[[7,9],[8]],[[1,3,5],[2,6],[4]]]).reduced_row_word()
+            [2, 3, 2, 1, 4, 3, 2, 5, 4, 3, 6, 5, 4, 3, 2, 7, 6, 5, 8, 7, 6, 5, 4]
+        """
+        from sage.combinat.permutation import Permutation
+        return Permutation(list(self.entries())).inverse().reduced_word_lexmin()
+
+    def reduced_column_word(self):
+        r"""
+        Return the lexicographically minimal reduced expression for the
+        permutation that maps the :meth:`initial_column_tableau` to ``self``.
+
+        This reduced expression is a minimal length coset representative for the
+        corresponding Young subgroup.  In one line notation, the permutation is
+        obtained by concatenating the rows of the tableau from top to bottom in
+        each component, and then left to right along the components.
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[7,9],[8]],[[1,4,6],[2,5],[3]]]).reduced_column_word()
+            []
+            sage: StandardTableauTuple([[[7,9],[8]],[[1,3,6],[2,5],[4]]]).reduced_column_word()
+            [3]
+            sage: StandardTableauTuple([[[6,9],[8]],[[1,3,7],[2,5],[4]]]).reduced_column_word()
+            [3, 6]
+            sage: StandardTableauTuple([[[6,8],[9]],[[1,3,7],[2,5],[4]]]).reduced_column_word()
+            [3, 6, 8]
+            sage: StandardTableauTuple([[[5,8],[9]],[[1,3,7],[2,6],[4]]]).reduced_column_word()
+            [3, 6, 5, 8]
+        """
+        from sage.combinat.permutation import Permutation
+        return Permutation(list(self.conjugate().entries())).inverse().reduced_word_lexmin()
+
     def cells_containing(self, m):
         r"""
-        Returns the list of cells in which the letter ``m`` appears in the
+        Return the list of cells in which the letter ``m`` appears in the
         tableau ``self``.
 
         The list is ordered with cells appearing from left to right.
@@ -1014,28 +1144,28 @@ class TableauTuple(CombinatorialElement):
         EXAMPLES::
 
             sage: s=StandardTableauTuple([ [[3,4,7],[6,8]], [[9,13],[12]], [[1,5],[2,11],[10]] ]); s.pp()
-                 3  4  7     9 13     1  5
-                 6  8       12        2 11
-                                     10
+              3  4  7     9 13     1  5
+              6  8       12        2 11
+                                  10
             sage: t=s.add_entry( (0,0,3),14); t.pp(); t.category()
-                 3  4  7 14     9 13     1  5
-                 6  8          12        2 11
-                                        10
+              3  4  7 14     9 13     1  5
+              6  8          12        2 11
+                                     10
             Category of elements of Standard tableau tuples
             sage: t=s.add_entry( (0,0,3),15); t.pp(); t.category()
-                 3  4  7 15     9 13     1  5
-                 6  8          12        2 11
-                                        10
+              3  4  7 15     9 13     1  5
+              6  8          12        2 11
+                                     10
             Category of elements of Tableau tuples
             sage: t=s.add_entry( (1,1,1),14); t.pp(); t.category()
-                 3  4  7     9 13     1  5
-                 6  8       12 14     2 11
-                                     10
+              3  4  7     9 13     1  5
+              6  8       12 14     2 11
+                                  10
             Category of elements of Standard tableau tuples
             sage: t=s.add_entry( (2,1,1),14); t.pp(); t.category()
-                 3  4  7     9 13     1  5
-                 6  8       12        2 14
-                                     10
+              3  4  7     9 13     1  5
+              6  8       12        2 14
+                                  10
             Category of elements of Tableau tuples
             sage: t=s.add_entry( (2,1,2),14); t.pp(); t.category()
             Traceback (most recent call last):
@@ -1050,7 +1180,7 @@ class TableauTuple(CombinatorialElement):
         except IndexError:
             if (k,r,c) in self.shape().addable_cells():
                 # add (k,r,c) is an addable cell the following should work
-                # so we do not need to trap anyting
+                # so we do not need to trap anything
                 if r==len(tab[k]):
                     tab[k].append([])
 
@@ -1147,6 +1277,106 @@ class TableauTuple(CombinatorialElement):
         except ValueError:
             return TableauTuples()([[[w[entry-1] for entry in row] for row in t] for t in self])
 
+    def content(self, k, multicharge):
+        r"""
+        Return the content ``k`` in ``self``.
+
+        The content of `k` in a standard tableau. That is, if
+        `k` appears in row `r` and column `c` of the tableau, then
+        we return `c - r + a_k`, where the multicharge is
+        `(a_1, a_2, \ldots, a_l)` and `l` is the level of the tableau.
+
+        The multicharge determines the dominant weight
+
+        .. MATH::
+
+            \Lambda = \sum_{i=1}^l \Lambda_{a_i}
+
+        of the affine special linear group. In the combinatorics, the
+        muticharge simply offsets the contents in each component so that
+        the cell `(k, r, c)` has content `a_k + c - r`.
+
+        INPUT:
+
+        - ``k`` -- an integer in `\{1, 2, \ldots, n\}`
+        - ``multicharge`` -- a sequence of integers of length `l`
+
+        Here `l` is the :meth:`~TableauTuple.level` and `n` is the
+        :meth:`~TableauTuple.size` of ``self``.
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(3,[0,0])
+            -1
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(3,[0,1])
+            0
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(3,[0,2])
+            1
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(6,[0,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: 6 must be contained in the tableaux
+        """
+        for l, tableau in enumerate(self):
+            for r,row in enumerate(tableau):
+                try:
+                    return multicharge[l] - r + row.index(k)
+                except ValueError:
+                    ValueError
+        raise ValueError('%s must be contained in the tableaux' % k)
+
+    def residue(self, k, e, multicharge):
+        r"""
+        Return the *residue* of the integer ``k`` in the tableau ``self``.
+
+        The *residue* of `k` is `c - r + a_k` in `\ZZ / e\ZZ`, where `k`
+        appears in row `r` and column `c` of the tableau and
+        the multicharge is `(a_1, a_2, \ldots, a_l)`.
+
+        The multicharge determines the dominant weight
+
+        .. MATH::
+
+            \sum_{i=1}^l \Lambda_{a_i}
+
+        for the affine special linear group. In the combinatorics, it simply
+        offsets the contents in each component so that the cell `(k, 0, 0)`
+        has content `a_k`.
+
+        INPUT:
+
+        - ``k`` -- an integer in `\{1, 2, \ldots, n\}`
+        - ``e`` -- an integer in `\{0, 2, 3, 4, 5, \ldots\}`
+        - ``multicharge`` -- a list of integers of length `l`
+
+        Here `l` is the :meth:`~TableauTuple.level` and `n` is the
+        :meth:`~TableauTuple.size` of ``self``.
+
+        OUTPUT:
+
+        The residue of ``k`` in a standard tableau. That is,
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue(1, 3,[0,0])
+            0
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue(1, 3,[0,1])
+            1
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue(1, 3,[0,2])
+            2
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue(6, 3,[0,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: 6 must be contained in the tableaux
+        """
+        for l, tableau in enumerate(self):
+            for r, row in enumerate(tableau):
+                try:
+                    return IntegerModRing(e)(multicharge[l] - r + row.index(k))
+                except ValueError:
+                    pass
+        raise ValueError('%s must be contained in the tableaux' % k)
+
 
 #--------------------------------------------------
 # Standard tableau tuple - element class
@@ -1180,7 +1410,7 @@ class StandardTableauTuple(TableauTuple):
         tableaux: the longer rows are displayed on top.  As with
         :class:`PartitionTuple`, in sage the cells, or nodes, of partition
         tuples are 0-based. For example, the (lexicographically) first cell in
-        any non-empty partition tuple is `[0,0,0]`. Further, the coorindates
+        any non-empty partition tuple is `[0,0,0]`. Further, the coordinates
         ``[k,r,c]`` in a :class:`TableauTuple` refer to the component, row and
         column indices, respectively.
 
@@ -1200,13 +1430,13 @@ class StandardTableauTuple(TableauTuple):
         sage: t = StandardTableauTuple([[[4,5],[7]],[[1,2,3],[6,8]],[[9]]]); t
         ([[4, 5], [7]], [[1, 2, 3], [6, 8]], [[9]])
         sage: t.pp()
-         4  5     1  2  3     9
-         7        6  8
+          4  5     1  2  3     9
+          7        6  8
         sage: t.shape()
         ([2, 1], [3, 2], [1])
-        sage: t[0].pp() # pretty print
-        4 5
-        7
+        sage: t[0].pp()  # pretty print
+          4  5
+          7
         sage: t.is_standard()
         True
         sage: t[0].is_standard()
@@ -1302,8 +1532,6 @@ class StandardTableauTuple(TableauTuple):
 
         raise ValueError( '%s is not a standard tableau tuple' % t )
 
-
-
     def __init__(self, parent, t):
         r"""
         Initializes a standard tableau tuple.
@@ -1377,59 +1605,164 @@ class StandardTableauTuple(TableauTuple):
                     pass
         raise ValueError( '%s must be contained in the tableaux' % k )
 
-    def content(self, k, multicharge):
+    def residue_sequence(self, e, multicharge):
         r"""
-        Return the content ``k`` in ``self``.
-
-        The content of `k` in a standard tableau. That is, if
-        `k` appears in row `r` and column `c` of the tableau then we
-        return `c-r` + ``multicharge[k]``.
-
-        The ``multicharge`` = `[m_1, \ldots, m_l]` determines the dominant
-        weight
-
-        .. MATH::
-
-            \Lambda = \sum_{i=1}^l \Lambda_{a_i}
-
-        of the affine special linear group. In the combinatorics, the
-        ``muticharge`` simply offsets the contents in each component so that
-        the cell `(k, r, c)` has content `a_k+c-r`.
+        Return the :class:`sage.combinat.tableau_residues.ResidueSequence`
+        of the tableau ``self``.
 
         INPUT:
 
-        - ``k`` -- An integer with `1 \leq k \leq n`
+        - ``e`` -- integer in `\{0, 2, 3, 4, 5, \ldots\}`
+        - ``multicharge`` -- a sequence of integers of length equal
+          to the level/length of ``self``
 
-        - ``multicharge`` -- a sequence of integers of length `l`.
+        OUTPUT:
 
-        Here `l` is the :meth:`~TableauTuple.level` and `n` is the
-        :meth:`~TableauTuple.size` of ``self``.
+        The :class:`residue sequence
+        <sage.combinat.tableau_residues.ResidueSequence>` of the tableau.
 
         EXAMPLES::
 
-            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(3,[0,0])
-            -1
-            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(3,[0,1])
-            0
-            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(3,[0,2])
-            1
-            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).content(6,[0,2])
-            Traceback (most recent call last):
-            ...
-            ValueError: 6 must be contained in the tableaux
-
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue_sequence(3,[0,0])
+            3-residue sequence (0,1,2,0,0) with multicharge (0,0)
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue_sequence(3,[0,1])
+            3-residue sequence (1,2,0,1,0) with multicharge (0,1)
+            sage: StandardTableauTuple([[[5]],[[1,2],[3,4]]]).residue_sequence(3,[0,2])
+            3-residue sequence (2,0,1,2,0) with multicharge (0,2)
         """
-        for l in range(len(self)):
-            for row in range(len(self[l])):
-                try:
-                    return multicharge[l]-row+self[l][row].index(k)
-                except ValueError:
-                    ValueError
-        raise ValueError( '%s must be contained in the tableaux' % k )
+        res = [0] * self.size()
+        for (k,r,c) in self.shape().cells():
+            res[self[k][r][c]-1] = multicharge[k] - r + c
+        from sage.combinat.tableau_residues import ResidueSequence
+        return ResidueSequence(e, multicharge, res, check=False)
+
+    def degree(self, e, multicharge):
+        r"""
+        Return the Brundan-Kleshchev-Wang [BKW11]_ degree of the standard
+        tableau ``self``.
+
+        The *degree* of a tableau ix an integer that is defined recursively by
+        successively stripping off the number `k`, for `k = n, n-1, \ldots, 1`,
+        and at stage adding the count of the number of addable cell of the same
+        residue minus the number of removable cells of them same residue as `k`
+        and that are below `k` in the diagram.
+
+        Note that even though this degree function was defined by
+        Brundan-Kleshchev-Wang [BKW11]_ the underlying combinatorics is much
+        older, going back at least to Misra and Miwa.
+
+        The degrees of the tableau `T` gives the degree of the homogeneous
+        basis element of the graded Specht module which is indexed by `T`.
+
+        INPUT:
+
+        - ``e`` -- the *quantum characteristic* ``e``
+        - ``multicharge`` -- (default: ``[0]``) the multicharge
+
+        OUTPUT:
+
+        The degree of the tableau ``self``, which is an integer.
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[1]], [], []]).degree(0,(0,0,0))
+            2
+            sage: StandardTableauTuple([[],[[1]], []]).degree(0,(0,0,0))
+            1
+            sage: StandardTableauTuple([[], [], [[1]]]).degree(0,(0,0,0))
+            0
+            sage: StandardTableauTuple([[[1]],[[2]], []]).degree(0,(0,0,0))
+            3
+            sage: StandardTableauTuple([[[1]], [], [[2]]]).degree(0,(0,0,0))
+            2
+            sage: StandardTableauTuple([[],[[1]], [[2]]]).degree(0,(0,0,0))
+            1
+            sage: StandardTableauTuple([[[2]],[[1]], []]).degree(0,(0,0,0))
+            1
+            sage: StandardTableauTuple([[[2]], [], [[1]]]).degree(0,(0,0,0))
+            0
+            sage: StandardTableauTuple([[],[[2]], [[1]]]).degree(0,(0,0,0))
+            -1
+        """
+        shape = self.shape()
+        deg = shape._initial_degree(e,multicharge)
+        res = shape.initial_tableau().residue_sequence(e, multicharge)
+        for r in self.reduced_row_word():
+            if res[r] == res[r+1]:
+                deg -= 2
+            elif res[r] == res[r+1] + 1 or res[r] == res[r+1] - 1:
+                deg += (e == 2 and 2 or 1)
+            res = res.swap_residues(r, r+1)
+        return deg
+
+    def codegree(self, e, multicharge):
+        r"""
+        Return the Brundan-Kleshchev-Wang [BKW11]_ codegree of the standard
+        tableau ``self``.
+
+        The *codegree* of a tableau is an integer that is defined
+        recursively by successively stripping off the number `k`, for
+        `k = n, n-1, \ldots, 1` and at stage adding the number of addable
+        cell of the same residue minus the number of removable cells of
+        the same residue as `k` and which are above `k` in the diagram.
+
+        The codegree of the tableau ``self`` gives the degree of  "dual"
+        homogeneous basis element of the graded Specht module which is
+        indexed by ``self``.
+
+        INPUT:
+
+        - ``e`` -- the *quantum characteristic*
+        - ``multicharge`` -- the multicharge
+
+        OUTPUT:
+
+        The codegree of the tableau ``self``, which is an integer.
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[1]], [], []]).codegree(0,(0,0,0))
+            0
+            sage: StandardTableauTuple([[],[[1]], []]).codegree(0,(0,0,0))
+            1
+            sage: StandardTableauTuple([[], [], [[1]]]).codegree(0,(0,0,0))
+            2
+            sage: StandardTableauTuple([[[1]],[[2]], []]).codegree(0,(0,0,0))
+            -1
+            sage: StandardTableauTuple([[[1]], [], [[2]]]).codegree(0,(0,0,0))
+            0
+            sage: StandardTableauTuple([[],[[1]], [[2]]]).codegree(0,(0,0,0))
+            1
+            sage: StandardTableauTuple([[[2]],[[1]], []]).codegree(0,(0,0,0))
+            1
+            sage: StandardTableauTuple([[[2]], [], [[1]]]).codegree(0,(0,0,0))
+            2
+            sage: StandardTableauTuple([[],[[2]], [[1]]]).codegree(0,(0,0,0))
+            3
+
+        REFERENCES:
+
+        - [BKW11]_ J. Brundan, A. Kleshchev, and W. Wang,
+          *Graded Specht modules*,
+          J. Reine Angew. Math., 655 (2011), 61-87.
+        """
+        if not self:  # the trivial case
+            return 0
+
+        conj_shape = self.shape().conjugate()
+        codeg = conj_shape._initial_degree(e,tuple(-r for r in multicharge))
+        res = self.shape().initial_column_tableau().residue_sequence(e, multicharge)
+        for r in self.reduced_column_word():
+            if res[r] == res[r+1]:
+                codeg -= 2
+            elif res[r] == res[r+1] + 1 or res[r] == res[r+1] - 1:
+                codeg += (e == 2 and 2 or 1)
+            res = res.swap_residues(r, r+1)
+        return codeg
 
     def dominates(self, t):
         """
-        Returns ``True`` if the tableau (tuple) ``self`` dominates the
+        Return ``True`` if the tableau (tuple) ``self`` dominates the
         tableau ``t``. The two tableaux do not need to be of the same shape.
 
         EXAMPLES::
@@ -1635,7 +1968,7 @@ class TableauTuples(UniqueRepresentation, Parent):
     """
     Element = TableauTuple
     level_one_parent_class = Tableaux_all  # used in element_constructor
-    global_options=Tableaux.global_options
+    options=Tableaux.options
 
     @staticmethod
     def __classcall_private__(cls, level=None, size=None):
@@ -1799,7 +2132,7 @@ class TableauTuples(UniqueRepresentation, Parent):
     def size(self):
         """
         Return the ``size`` of a tableau tuple in  ``self``, or ``None`` if
-        different tableau tuples in ``self`` can have sifferent sizes. The
+        different tableau tuples in ``self`` can have different sizes. The
         ``size`` of a tableau tuple is just the size of the underlying
         :class:`PartitionTuple`.
 
@@ -2155,9 +2488,9 @@ class StandardTableauTuples(TableauTuples):
     - ``shape`` -- A list or a partition tuple specifying the :meth:`shape` of
       the standard tableau tuples
 
-    It is not necessary to use the keywords. If they are not used then then
-    first integer argument specifies the :meth:`~TableauTuples.level` and the
-    second the :meth:`~TableauTuples.size` of the tableau tuples.
+    It is not necessary to use the keywords. If they are not used then the first
+    integer argument specifies the :meth:`~TableauTuples.level` and the second
+    the :meth:`~TableauTuples.size` of the tableau tuples.
 
     OUTPUT:
 
@@ -2272,6 +2605,12 @@ class StandardTableauTuples(TableauTuples):
             Traceback (most recent call last):
             ...
             ValueError: the shape must be a partition tuple
+
+            sage: P = PartitionTuples()
+            sage: pt = P([[1]]); pt
+            ([1])
+            sage: StandardTableauTuples(pt)
+            Standard tableaux of shape [1]
         """
         from sage.combinat.partition_tuple import PartitionTuple
 
@@ -2329,7 +2668,10 @@ class StandardTableauTuples(TableauTuples):
                 raise ValueError('the shape and size must agree')
 
         # now that the inputs appear to make sense, return the appropriate class
-        if level is not None and level<=1:
+        if level is not None and level <= 1:
+            from sage.combinat.partition_tuple import PartitionTuple
+            if isinstance(shape, PartitionTuple):
+                shape = shape[0]
             if shape is not None:
                 return StandardTableaux_shape(shape)
             elif size is not None:
@@ -3053,7 +3395,9 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             inserting t_1,..,t_n in order into the rows of mu, from left to right
             in each component and then left to right along the components.
             """
-            return self.element_class(self, [ [tab[clen[c]:clen[c+1]][cclen[c][r]:cclen[c][r+1]] for r in range(len(mu[c]))] for c in range(len(mu)) ])
+            return self.element_class(self, [ [tab[clen[c]:clen[c+1]][cclen[c][r]:cclen[c][r+1]]
+                                               for r in range(len(mu[c]))]
+                                              for c in range(len(mu)) ])
 
         # We're now ready to start generating the tableaux. Here's the first one:
         initial_tableau=tableau_from_list(tab)
@@ -3097,7 +3441,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             c=component[tab.index(r)]
             while c>0:
                 comp=[m for m in tab[clen[c-1]:clen[c]] if m<r and cols[m]>cols[r]]
-                if comp==[]: c-=1
+                if not comp: c-=1
                 else:
                     return comp[-1]
 
@@ -3141,9 +3485,9 @@ class StandardTableauTuples_shape(StandardTableauTuples):
 
         EXAMPLES::
 
-            sage: t=StandardTableauTuples([[2],[2,2]]).last().pp()
-                5  6     1  3
-                         2  4
+            sage: StandardTableauTuples([[2],[2,2]]).last().pp()
+              5  6     1  3
+                       2  4
         """
         return StandardTableauTuples(self.shape().conjugate()).first().conjugate()
 
@@ -3238,3 +3582,282 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         # Just to be safe we check that tab is standard and has shape mu by
         # using the class StandardTableauTuples(mu) to construct the tableau
         return self.element_class(self,tab)
+
+class StandardTableaux_residue(StandardTableauTuples):
+    r"""
+    Class of all standard tableau tuples with a fixed residue sequence.
+
+    Implicitly, this also specifies the quantum characteristic, multicharge
+    and hence the level and size of the tableaux.
+
+    .. NOTE::
+
+        This class is not intended to be called directly, but rather,
+        it is accessed through the standard tableaux.
+
+    EXAMPLES::
+    
+        sage: StandardTableau([[1,2,3],[4,5]]).residue_sequence(2).standard_tableaux()
+        Standard tableaux with 2-residue sequence (0,1,0,1,0) and multicharge (0)
+        sage: StandardTableau([[1,2,3],[4,5]]).residue_sequence(3).standard_tableaux()
+        Standard tableaux with 3-residue sequence (0,1,2,2,0) and multicharge (0)
+        sage: StandardTableauTuple([[[5,6],[7]],[[1,2,3],[4]]]).residue_sequence(2,(0,0)).standard_tableaux()
+        Standard tableaux with 2-residue sequence (0,1,0,1,0,1,1) and multicharge (0,0)
+        sage: StandardTableauTuple([[[5,6],[7]],[[1,2,3],[4]]]).residue_sequence(3,(0,1)).standard_tableaux()
+        Standard tableaux with 3-residue sequence (1,2,0,0,0,1,2) and multicharge (0,1)
+    """
+    def __init__(self, residue):
+        r"""
+        Initialize ``self``.
+
+        .. NOTE::
+
+            Input is not checked; please use :class:`StandardTableauTuples`
+            to ensure the options are properly parsed.
+
+        EXAMPLES::
+
+            sage: T = StandardTableau([[1,2,3],[4,5]]).residue_sequence(3).standard_tableaux()
+            sage: TestSuite(T).run()
+            sage: T = StandardTableauTuple([[[6],[7]],[[1,2,3],[4,5]]]).residue_sequence(2,(0,0)).standard_tableaux()
+            sage: TestSuite(T).run()
+        """
+        super(StandardTableaux_residue, self).__init__(category=FiniteEnumeratedSets())
+        self._residue=residue
+        self._quantum_characteristic=residue.quantum_characteristic()
+        self._multicharge=residue.multicharge()
+        self._level=residue.level()
+        self._size=residue.size()
+
+    def __contains__(self, t):
+        """
+        Check containment of ``t`` in ``self``.
+
+        EXAMPLES::
+
+            sage: tabs = StandardTableauTuple([[[1,2],[3]],[[4,5]]]).residue_sequence(3,(0,1)).standard_tableaux()
+            sage: tabs
+            Standard tableaux with 3-residue sequence (0,1,2,1,2) and multicharge (0,1)
+            sage: [[[1,2],[3]],[[4,5]]] in tabs
+            True
+            sage: [[[1,2],[3]],[[4,5]]] in tabs
+            True
+            sage: [[[1,2],[4,5]],[[3]]] in tabs
+            False
+        """
+        if not isinstance(t, self.element_class):
+            try:
+                t = StandardTableauTuple(t)
+            except ValueError:
+                return False
+
+        return (t.residue_sequence(self._quantum_characteristic,self._multicharge)
+                == self._residue)
+
+    def _repr_(self):
+        """
+        Return the string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: StandardTableauTuple([[[1,2],[3]],[[4,5]]]).residue_sequence(3,(0,1)).standard_tableaux()
+            Standard tableaux with 3-residue sequence (0,1,2,1,2) and multicharge (0,1)
+        """
+        return 'Standard tableaux with {}'.format(self._residue.__str__('and'))
+
+    def __iter__(self):
+        r"""
+        Iterate through ``self``.
+
+        We construct this sequence of tableaux recursively. is easier (and
+        more useful for applications to graded Specht modules).
+
+        EXAMPLES::
+
+            sage: R = StandardTableauTuple([[[1,2],[5]],[[3,4]]]).residue_sequence(3, (0,1))
+            sage: list(R.standard_tableaux())
+            [([[1, 2, 4], [5]], [[3]]),
+             ([[1, 2, 4]], [[3, 5]]),
+             ([[1, 2, 5], [4]], [[3]]),
+             ([[1, 2], [4]], [[3, 5]]),
+             ([[1, 2, 5]], [[3, 4]]),
+             ([[1, 2], [5]], [[3, 4]]),
+             ([[1, 3, 4], [5]], [[2]]),
+             ([[1, 3, 4]], [[2, 5]]),
+             ([[1, 3, 5], [4]], [[2]]),
+             ([[1, 3], [4]], [[2, 5]]),
+             ([[1, 3, 5]], [[2, 4]]),
+             ([[1, 3], [5]], [[2, 4]])]
+
+            sage: R = StandardTableauTuple([[[1,4],[2]],[[3]]]).residue_sequence(3,(0,1))
+            sage: R.standard_tableaux().list()
+            [([[1, 3], [2], [4]], []),
+             ([[1, 3], [2]], [[4]]),
+             ([[1, 4], [2], [3]], []),
+             ([[1], [2], [3]], [[4]]),
+             ([[1, 4], [2]], [[3]]),
+             ([[1], [2], [4]], [[3]])]
+        """
+        if self._size == 0:
+            yield StandardTableauTuple([[] for l in range(self._level)])  # the empty tableaux
+        else:
+            for t in StandardTableaux_residue(self._residue.restrict(self._size-1)):
+                for cell in t.shape().addable_cells():
+                    if self._residue[self._size] == self._residue.parent().cell_residue(*cell):
+                        # a cell of the right residue
+                        yield t.add_entry(cell,self._size)
+        # all done!
+        return
+
+    def an_element(self):
+        r"""
+        Return a particular element of ``self``.
+
+        EXAMPLES::
+
+            sage: T = StandardTableau([[1,2],[3]]).residue_sequence(3,(0,1)).standard_tableaux()
+            sage: T.an_element()
+            ([[1, 2, 3]], [])
+        """
+        # the tableaux class may be empty so we trap a ValueError
+        try:
+            return self[0]
+        except ValueError:
+            return None
+
+class StandardTableaux_residue_shape(StandardTableauTuples):
+    """
+    All standard tableau tuples with a fixed residue and shape.
+
+    INPUT:
+
+    - ``shape`` -- the shape of the partitions or partition tuples
+    - ``residue`` -- the residue sequence of the label
+
+    EXAMPLES::
+
+        sage: res = StandardTableauTuple([[[1,3],[6]],[[2,7],[4],[5]]]).residue_sequence(3,(0,0))
+        sage: tabs = res.standard_tableaux([[2,1],[2,1,1]])
+        sage: tabs
+        Standard (2,1|2,1^2)-tableaux with 3-residue sequence (0,0,1,2,1,2,1) and multicharge (0,0)
+        sage: tabs.shape()
+        ([2, 1], [2, 1, 1])
+        sage: tabs.level()
+        2
+        sage: tabs.cardinality()
+        12
+        sage: tabs.list()
+        [([[2, 7], [6]], [[1, 3], [4], [5]]),
+         ([[1, 7], [6]], [[2, 3], [4], [5]]),
+         ([[2, 3], [6]], [[1, 7], [4], [5]]),
+         ([[1, 3], [6]], [[2, 7], [4], [5]]),
+         ([[2, 5], [6]], [[1, 3], [4], [7]]),
+         ([[1, 5], [6]], [[2, 3], [4], [7]]),
+         ([[2, 3], [6]], [[1, 5], [4], [7]]),
+         ([[1, 3], [6]], [[2, 5], [4], [7]]),
+         ([[2, 5], [4]], [[1, 3], [6], [7]]),
+         ([[1, 5], [4]], [[2, 3], [6], [7]]),
+         ([[2, 3], [4]], [[1, 5], [6], [7]]),
+         ([[1, 3], [4]], [[2, 5], [6], [7]])]
+    """
+
+    def __init__(self, residue, shape):
+        r"""
+        Initialize ``self``.
+
+        .. NOTE::
+
+            Input is not checked; please use :class:`StandardTableauTuples`
+            to ensure the options are properly parsed.
+
+        TESTS::
+
+            sage: res = StandardTableauTuple([[[1,3],[6]],[[2,7],[4],[5]]]).residue_sequence(3,(0,0))
+            sage: tabs = res.standard_tableaux([[2,1],[2,1,1]])
+            sage: TestSuite(tabs).run()
+        """
+        super(StandardTableaux_residue_shape, self).__init__(category = FiniteEnumeratedSets())
+        self._quantum_characteristic=residue.quantum_characteristic()
+        self._level=residue.level()
+        self._multicharge=residue.multicharge()
+        self._residue=residue
+        self._shape=shape
+        self._size=residue.size()
+
+    def __contains__(self, t):
+        """
+        Check containment of ``t`` in ``self``.
+
+        EXAMPLES::
+
+            sage: tabs=StandardTableauTuple([[[1,3]],[[2],[4]]]).residue_sequence(3,(0,1)).standard_tableaux([[2],[1,1]])
+            sage: [ [[1,2,3,4]], [[]] ] in tabs
+            False
+            sage: ([[1, 2]], [[3], [4]]) in tabs
+            True
+        """
+        if not isinstance(t, self.element_class):
+            try:
+                t = StandardTableauTuple(t)
+            except ValueError:
+                return False
+        return (t.shape() == self._shape
+                 and t.residue_sequence(self._quantum_characteristic,self._multicharge)
+                      == self._residue)
+
+    def _repr_(self):
+        """
+        Return the string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: StandardTableau([[1,3],[2,4]]).residue_sequence(3).standard_tableaux([2,2])
+            Standard (2^2)-tableaux with 3-residue sequence (0,2,1,0) and multicharge (0)
+        """
+        return 'Standard ({})-tableaux with {}'.format(self._shape._repr_compact_high(),
+                                                       self._residue.__str__('and'))
+
+    def __iter__(self):
+        r"""
+        Iterate through ``self``.
+
+        We construct this sequence of tableaux recursively, as it is easier
+        (and more useful for applications to graded Specht modules).
+
+        EXAMPLES::
+
+            sage: StandardTableau([[1,3],[2,4]]).residue_sequence(3).standard_tableaux([2,2])[:]
+            [[[1, 3], [2, 4]]]
+        """
+        if self._size == 0:
+            yield StandardTableauTuple([[] for l in range(self._level)])  # the empty tableaux
+
+        else:
+            for cell in self._shape.removable_cells():
+                if self._residue[self._size] == self._residue.parent().cell_residue(*cell):
+                    # a cell of the right residue
+                    for t in StandardTableaux_residue_shape(self._residue.restrict(self._size-1),
+                                                            self._shape.remove_cell(*cell)):
+                        yield t.add_entry(cell,self._size)
+        # all done!
+        return
+
+    def an_element(self):
+        r"""
+        Return a particular element of ``self``.
+
+        EXAMPLES::
+
+            sage: T = StandardTableau([[1,3],[2]]).residue_sequence(3).standard_tableaux([2,1])
+            sage: T.an_element()
+            [[1, 3], [2]]
+        """
+        # the tableaux class may be empty so we trap a ValueError
+        try:
+            return self[0]
+        except ValueError:
+            return None
+
+# Deprecations from trac:18555. July 2016
+from sage.misc.superseded import deprecated_function_alias
+TableauTuples.global_options=deprecated_function_alias(18555, Tableaux.options)

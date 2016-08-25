@@ -69,7 +69,5 @@ class AssociativeAlgebras(CategoryWithAxiom_over_base_ring):
         """
         __mul__ = Magmas.ElementMethods.__mul__.__func__
 
-#        __imul__ = __mul__
-
 
     Unital = LazyImport('sage.categories.algebras', 'Algebras', at_startup=True)

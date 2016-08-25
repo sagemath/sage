@@ -11,6 +11,7 @@ sums the contents of a numpy array
 ::
 
     sage: from scipy import weave
+    doctest:...: DeprecationWarning: `scipy.weave` is deprecated, use `weave` instead!
     sage: from scipy.weave import converters
 
 ::

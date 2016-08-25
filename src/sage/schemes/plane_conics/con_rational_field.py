@@ -8,6 +8,7 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
@@ -35,7 +36,7 @@ from sage.matrix.constructor import Matrix
 
 from sage.quadratic_forms.qfsolve import qfsolve, qfparam
 
-from con_number_field import ProjectiveConic_number_field
+from .con_number_field import ProjectiveConic_number_field
 
 from sage.structure.element import is_InfinityElement
 

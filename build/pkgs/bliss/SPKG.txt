@@ -1,4 +1,4 @@
-= bliss 0.72 =
+= bliss 0.73+debian-1 =
 
 == Description ==
 
@@ -15,13 +15,12 @@ Bliss is currently being maintained by Tommi Junttila and Petteri Kaski.
 
 http://www.tcs.tkk.fi/Software/bliss/index.html
 
+We apply patches generated from https://github.com/mkoeppe/bliss
+(branch apply_debian_patches) as our upstream.  This tracks the
+patches from the Debian package, adding an autotools build system
+and adjusting the include file locations.
+
 == Dependencies ==
 
 None
 
-== Patches ==
-
-There is one patch to be applied that affects the code for computing
-automorphism groups of Digraphs. See http://trac.sagemath.org/ticket/17464#comment:33
-
-The patch will be removed once the author of bliss makes a new release.

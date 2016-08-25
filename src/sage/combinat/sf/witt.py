@@ -1,6 +1,7 @@
 """
 Witt symmetric functions
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -17,7 +18,7 @@ Witt symmetric functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-import multiplicative
+from . import multiplicative
 from sage.matrix.all import matrix
 
 class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -28,7 +29,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     denoted by `(x_{\lambda})` in [HazWitt1]_, section 9.63, and by
     `(q_{\lambda})` in [DoranIV1996]_. We will denote this basis by
     `(w_{\lambda})` (which is precisely how it is denoted in
-    [GriRei2014]_, Exercise 2.76(d)). It is a multiplicative basis
+    [GriRei2014]_, Exercise 2.79(d)). It is a multiplicative basis
     (meaning that `w_{\emptyset} = 1` and that every partition
     `\lambda` satisfies
     `w_{\lambda} = w_{\lambda_1} w_{\lambda_2} w_{\lambda_3} \cdots`,

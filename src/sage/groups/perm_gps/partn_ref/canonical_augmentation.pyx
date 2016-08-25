@@ -81,7 +81,7 @@ D. ``generate_children``:
     The ``next`` function must check ``mem_err[0]`` before proceeding. If it is
     nonzero then the function should deallocate the iterator right away and
     return NULL to end the iteration. This ensures that the canonical
-    augmenatation software will finish iterating over the objects found before
+    augmentation software will finish iterating over the objects found before
     finishing, and the ``mem_err`` attribute of the ``canonical_generator_data``
     will reflect this.
 

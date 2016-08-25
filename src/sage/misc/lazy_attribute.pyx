@@ -21,6 +21,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 cdef class _lazy_attribute(object):
     """
@@ -85,9 +86,9 @@ cdef class _lazy_attribute(object):
             sage: g = lazy_attribute(banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner():\n'
+            'def banner(full=None):\n'
             sage: lines
-            82
+            87
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -169,7 +170,7 @@ class lazy_attribute(_lazy_attribute):
         ....:
         ....:     @lazy_attribute
         ....:     def x(self):
-        ....:         print "calculating x in A"
+        ....:         print("calculating x in A")
         ....:         return self.a + 1
         ....:
 
@@ -230,10 +231,10 @@ class lazy_attribute(_lazy_attribute):
         ....:     @lazy_attribute
         ....:     def x(self):
         ....:         if hasattr(self, "y"):
-        ....:             print "calculating x from y in B"
+        ....:             print("calculating x from y in B")
         ....:             return self.y
         ....:         else:
-        ....:             print "y not there; B does not define x"
+        ....:             print("y not there; B does not define x")
         ....:             return NotImplemented
         ....:
         sage: b = B()
@@ -266,10 +267,10 @@ class lazy_attribute(_lazy_attribute):
         ....:     @lazy_attribute
         ....:     def x(self, existence_only=False):
         ....:         if existence_only:
-        ....:             print "testing for x existence"
+        ....:             print("testing for x existence")
         ....:             return True
         ....:         else:
-        ....:             print "calculating x in A"
+        ....:             print("calculating x in A")
         ....:             return 3
         ....:
         sage: a = A()
@@ -289,13 +290,13 @@ class lazy_attribute(_lazy_attribute):
         ....:     def x(self, existence_only=False):
         ....:         if hasattr(self, "y"):
         ....:             if existence_only:
-        ....:                 print "testing for x existence in B"
+        ....:                 print("testing for x existence in B")
         ....:                 return True
         ....:             else:
-        ....:                 print "calculating x from y in B"
+        ....:                 print("calculating x from y in B")
         ....:                 return self.y
         ....:         else:
-        ....:             print "y not there; B does not define x"
+        ....:             print("y not there; B does not define x")
         ....:             return NotImplemented
         ....:
         sage: b = B()
@@ -340,7 +341,7 @@ class lazy_attribute(_lazy_attribute):
         sage: class A:
         ....:     @property
         ....:     def x(self):
-        ....:         print "calculating x"
+        ....:         print("calculating x")
         ....:         return 3
         ....:
         sage: a = A()
@@ -356,7 +357,7 @@ class lazy_attribute(_lazy_attribute):
         sage: class A (object):
         ....:     @property
         ....:     def x(self):
-        ....:         print "calculating x"
+        ....:         print("calculating x")
         ....:         return 3
         ....:
         sage: a = A()
@@ -385,7 +386,7 @@ class lazy_attribute(_lazy_attribute):
         ....:
         ....:     @lazy_attribute
         ....:     def x(self):
-        ....:         print "calculating x"
+        ....:         print("calculating x")
         ....:         return self.a + 1
         ....:
         sage: a = A()
@@ -412,10 +413,10 @@ class lazy_attribute(_lazy_attribute):
         ....:     @lazy_attribute
         ....:     def x(self):
         ....:         if hasattr(self, "y"):
-        ....:             print "calculating x from y in B"
+        ....:             print("calculating x from y in B")
         ....:             return self.y
         ....:         else:
-        ....:             print "y not there; B does not define x"
+        ....:             print("y not there; B does not define x")
         ....:             return NotImplemented
         ....:
         sage: b = B()
@@ -465,7 +466,7 @@ class lazy_attribute(_lazy_attribute):
 
         sage: class descriptor(object):
         ....:     def __get__(self, obj, cls):
-        ....:         print cls
+        ....:         print(cls)
         ....:         return 1
         sage: class A(object):
         ....:     x = descriptor()
@@ -618,7 +619,7 @@ class lazy_class_attribute(lazy_attribute):
         sage: class Cl(object):
         ....:     @lazy_class_attribute
         ....:     def x(cls):
-        ....:          print "computing x"
+        ....:          print("computing x")
         ....:          return 1
         sage: Cl.x
         computing x
@@ -638,7 +639,7 @@ class lazy_class_attribute(lazy_attribute):
         sage: class Cl1(object):
         ....:     @lazy_class_attribute
         ....:     def x(cls):
-        ....:          print "computing x"
+        ....:          print("computing x")
         ....:          return 1
         sage: Cl1().x
         computing x
@@ -654,11 +655,11 @@ class lazy_class_attribute(lazy_attribute):
             sage: class A(object):
             ....:     @lazy_class_attribute
             ....:     def x(cls):
-            ....:          print "computing x"
+            ....:          print("computing x")
             ....:          return str(cls)
             ....:     @lazy_class_attribute
             ....:     def y(cls):
-            ....:          print "computing y"
+            ....:          print("computing y")
             ....:          return str(cls)
             sage: class B(A):
             ....:     pass

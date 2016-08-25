@@ -5,7 +5,5 @@
 # will leads to a crash.
 
 unset LIBRARY_PATH
-unset LD_LIBRARY_PATH
-unset DYLD_LIBRARY_PATH
 
 open "$@"

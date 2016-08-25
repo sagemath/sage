@@ -46,33 +46,35 @@ Functorial constructions:
 * :class:`DirectSum <sage.combinat.crystals.direct_sum.DirectSumOfCrystals>`
 * :class:`TensorProduct <sage.combinat.crystals.tensor_product.TensorProductOfCrystals>`
 """
-from letters import CrystalOfLetters as Letters
-from spins import CrystalOfSpins as Spins
-from spins import CrystalOfSpinsPlus as SpinsPlus
-from spins import CrystalOfSpinsMinus as SpinsMinus
-from tensor_product import CrystalOfTableaux as Tableaux
-from fast_crystals import FastCrystal as FastRankTwo
-from affine import AffineCrystalFromClassical as AffineFromClassical
-from affine import AffineCrystalFromClassicalAndPromotion as AffineFromClassicalAndPromotion
-from affine_factorization import AffineFactorizationCrystal as AffineFactorization
+from __future__ import absolute_import
+
+from .letters import CrystalOfLetters as Letters
+from .spins import CrystalOfSpins as Spins
+from .spins import CrystalOfSpinsPlus as SpinsPlus
+from .spins import CrystalOfSpinsMinus as SpinsMinus
+from .tensor_product import CrystalOfTableaux as Tableaux
+from .fast_crystals import FastCrystal as FastRankTwo
+from .affine import AffineCrystalFromClassical as AffineFromClassical
+from .affine import AffineCrystalFromClassicalAndPromotion as AffineFromClassicalAndPromotion
+from .affine_factorization import AffineFactorizationCrystal as AffineFactorization
 from sage.combinat.crystals.affinization import AffinizationOfCrystal as AffinizationOf
-from highest_weight_crystals import HighestWeightCrystal as HighestWeight
-from alcove_path import CrystalOfAlcovePaths as AlcovePaths
-from littelmann_path import CrystalOfLSPaths as LSPaths
-from littelmann_path import CrystalOfProjectedLevelZeroLSPaths as ProjectedLevelZeroLSPaths
-from kyoto_path_model import KyotoPathModel
-from generalized_young_walls import CrystalOfGeneralizedYoungWalls as GeneralizedYoungWalls
-from monomial_crystals import CrystalOfNakajimaMonomials as NakajimaMonomials
+from .highest_weight_crystals import HighestWeightCrystal as HighestWeight
+from .alcove_path import CrystalOfAlcovePaths as AlcovePaths
+from .littelmann_path import CrystalOfLSPaths as LSPaths
+from .littelmann_path import CrystalOfProjectedLevelZeroLSPaths as ProjectedLevelZeroLSPaths
+from .kyoto_path_model import KyotoPathModel
+from .generalized_young_walls import CrystalOfGeneralizedYoungWalls as GeneralizedYoungWalls
+from .monomial_crystals import CrystalOfNakajimaMonomials as NakajimaMonomials
 from sage.combinat.rigged_configurations.tensor_product_kr_tableaux import TensorProductOfKirillovReshetikhinTableaux
 from sage.combinat.crystals.kirillov_reshetikhin import KirillovReshetikhinCrystal as KirillovReshetikhin
 from sage.combinat.rigged_configurations.rc_crystal import CrystalOfRiggedConfigurations as RiggedConfigurations
 
 from sage.combinat.crystals.induced_structure import InducedCrystal as Induced
 
-from tensor_product import TensorProductOfCrystals as TensorProduct
-from direct_sum import DirectSumOfCrystals as DirectSum
+from .tensor_product import TensorProductOfCrystals as TensorProduct
+from .direct_sum import DirectSumOfCrystals as DirectSum
 
-import catalog_kirillov_reshetikhin as kirillov_reshetikhin
-import catalog_infinity_crystals as infinity
-import catalog_elementary_crystals as elementary
+from . import catalog_kirillov_reshetikhin as kirillov_reshetikhin
+from . import catalog_infinity_crystals as infinity
+from . import catalog_elementary_crystals as elementary
 

@@ -1,4 +1,4 @@
-from ginac cimport *
+from .ginac cimport *
 
 from sage.symbolic.expression cimport Expression
 from sage.structure.sage_object cimport SageObject

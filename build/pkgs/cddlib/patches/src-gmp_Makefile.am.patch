@@ -1,7 +1,7 @@
-diff --git a/src.bak/src-gmp/Makefile.am b/src/src-gmp/Makefile.am
+diff --git a/src-gmp/Makefile.am b/src-gmp/Makefile.am
 index e4dbb86..e579d71 100644
---- a/src.bak/src-gmp/Makefile.am
-+++ b/src/src-gmp/Makefile.am
+--- a/src-gmp/Makefile.am
++++ b/src-gmp/Makefile.am
 @@ -11,7 +11,8 @@
  testcdd2_gmp \
  testlp1_gmp \

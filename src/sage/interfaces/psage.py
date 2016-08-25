@@ -39,10 +39,13 @@ finished::
      23^2 * 47 * 89 * 178481 * 4103188409 * 199957736328435366769577 * 44667711762797798403039426178361,
      9623 * 68492481833 * 23579543011798993222850893929565870383844167873851502677311057483194673]
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
-import os, time
+import os
+import time
 
-from sage0 import Sage, SageElement
+from .sage0 import Sage, SageElement
 from pexpect import ExceptionPexpect
 
 number = 0
@@ -90,13 +93,13 @@ class PSage(Sage):
         return open(self.__tmp).read() == '__locked__'
 
     def __del__(self):
-        print "deleting"
+        print("deleting")
         for x in os.listdir(self.__tmp_dir):
             os.remove('%s/%s'%(self.__tmp_dir, x))
         os.removedirs(self.__tmp_dir)
         if not (self._expect is None):
             cmd = 'kill -9 %s'%self._expect.pid
-            print cmd
+            print(cmd)
             os.system(cmd)
         Sage.__del__(self)
 
@@ -124,7 +127,7 @@ class PSage(Sage):
         Get the value of the variable var.
         """
         try:
-            return self.eval('print %s'%var)
+            return self.eval('print(%s)' % var)
         except ExceptionPexpect:
             return "<<currently executing code>>"
 

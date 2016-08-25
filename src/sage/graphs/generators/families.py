@@ -14,7 +14,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ###########################################################################
-
+from __future__ import print_function
 
 from copy import copy
 from math import sin, cos, pi
@@ -87,7 +87,7 @@ def KneserGraph(n,k):
     EXAMPLE::
 
         sage: KG=graphs.KneserGraph(5,2)
-        sage: print KG.vertices()
+        sage: print(KG.vertices())
         [{4, 5}, {1, 3}, {2, 5}, {2, 3}, {3, 4}, {3, 5}, {1, 4}, {1, 5}, {1, 2}, {2, 4}]
         sage: P=graphs.PetersenGraph()
         sage: P.is_isomorphic(KG)
@@ -465,7 +465,7 @@ def chang_graphs():
         sage: T8 = K8.line_graph()
         sage: four_srg = chang_graphs + [T8]
         sage: for g in four_srg:
-        ....:     print g.is_strongly_regular(parameters=True)
+        ....:     print(g.is_strongly_regular(parameters=True))
         (28, 12, 6, 4)
         (28, 12, 6, 4)
         (28, 12, 6, 4)
@@ -1141,9 +1141,9 @@ def HararyGraph( k, n ):
 
         sage: n=10
         sage: for k in range(2,n):
-        ...       g = graphs.HararyGraph(k,n)
-        ...       if k != g.vertex_connectivity():
-        ...          print "Connectivity of Harary graphs not satisfied."
+        ....:     g = graphs.HararyGraph(k,n)
+        ....:     if k != g.vertex_connectivity():
+        ....:        print("Connectivity of Harary graphs not satisfied.")
     """
     if k < 2:
         raise ValueError("Connectivity parameter k should be at least 2.")
@@ -1547,7 +1547,7 @@ def OddGraph(n):
     EXAMPLE::
 
         sage: OG=graphs.OddGraph(3)
-        sage: print OG.vertices()
+        sage: print(OG.vertices())
         [{4, 5}, {1, 3}, {2, 5}, {2, 3}, {3, 4}, {3, 5}, {1, 4}, {1, 5}, {1, 2}, {2, 4}]
         sage: P=graphs.PetersenGraph()
         sage: P.is_isomorphic(OG)
@@ -2313,7 +2313,7 @@ def trees(vertices):
 
         sage: tree_iterator = graphs.trees(7)
         sage: for T in tree_iterator:
-        ...     print T.degree_sequence()
+        ....:     print(T.degree_sequence())
         [2, 2, 2, 2, 2, 1, 1]
         [3, 2, 2, 2, 1, 1, 1]
         [3, 2, 2, 2, 1, 1, 1]

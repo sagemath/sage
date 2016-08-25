@@ -16,6 +16,7 @@ TESTS::
     sage: TestSuite(L).run()
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2012 Jan Poeschko <jan@poeschko.com>
@@ -730,7 +731,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         B = self.reduced_basis
 
-        from diamond_cutting import calculate_voronoi_cell
+        from .diamond_cutting import calculate_voronoi_cell
         return calculate_voronoi_cell(B, radius=radius)
 
     def voronoi_relevant_vectors(self):

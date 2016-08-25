@@ -324,7 +324,7 @@ class InfinitePolynomial_sparse(RingElement):
                 if hasattr(arg._p,'variables'):
                     V.extend([str(x) for x in arg._p.variables()])
         V=list(set(V))
-        V.sort(cmp=self.parent().varname_cmp,reverse=True)
+        V.sort(key=self.parent().varname_key, reverse=True)
         if V:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self._p.base_ring(),V,order=self.parent()._order)
@@ -514,7 +514,7 @@ class InfinitePolynomial_sparse(RingElement):
         ## We can now assume that self._p and x._p actually are polynomials,
         ## hence, their parent is not simply the underlying ring.
         VarList = list(set(self._p.parent().variable_names()).union(set(x._p.parent().variable_names())))
-        VarList.sort(cmp=self.parent().varname_cmp,reverse=True)
+        VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
@@ -538,7 +538,7 @@ class InfinitePolynomial_sparse(RingElement):
         ## We can now assume that self._p and x._p actually are polynomials,
         ## hence, their parent is not just the underlying ring.
         VarList = list(set(self._p.parent().variable_names()).union(set(x._p.parent().variable_names())))
-        VarList.sort(cmp=self.parent().varname_cmp,reverse=True)
+        VarList.sort(key=self.parent().varname_key,reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
@@ -653,7 +653,7 @@ class InfinitePolynomial_sparse(RingElement):
         ## We can now assume that self._p and x._p actually are polynomials,
         ## hence, their parent is not just the underlying ring.
         VarList = list(set(self._p.parent().variable_names()).union(x._p.parent().variable_names()))
-        VarList.sort(cmp=self.parent().varname_cmp,reverse=True)
+        VarList.sort(key=self.parent().varname_key,reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self._p.base_ring(),VarList, order=self.parent()._order)
@@ -699,7 +699,7 @@ class InfinitePolynomial_sparse(RingElement):
                 return self
             copyVars = copy.copy(newVars)
             newVars = list(set(list(self._p.parent().variable_names())+newVars))
-            newVars.sort(cmp=self.parent().varname_cmp, reverse=True)
+            newVars.sort(key=self.parent().varname_key, reverse=True)
             if newVars == list(self._p.parent().variable_names()):
                 newR = self._p.parent()
             else:
@@ -741,7 +741,7 @@ class InfinitePolynomial_sparse(RingElement):
             sage: c > d # indirect doctest
             True
 
-        TESTS::
+        TESTS:
 
         A classical and an infinite sparse polynomial ring. Note that
         the Sage coercion system allows comparison only if a common
@@ -780,7 +780,7 @@ class InfinitePolynomial_sparse(RingElement):
         if (hasattr(R1,'has_coerce_map_from') and R1.has_coerce_map_from(R2)) or (hasattr(R2,'has_coerce_map_from') and R2.has_coerce_map_from(R1)):
             return cmp(self._p, x._p)
         VarList = list(set(self._p.parent().variable_names()).union(x._p.parent().variable_names()))
-        VarList.sort(cmp=self.parent().varname_cmp,reverse=True)
+        VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
@@ -1123,7 +1123,7 @@ class InfinitePolynomial_sparse(RingElement):
                 if hasattr(monomial._p,'variables'):
                     VarList.extend([str(X) for X in monomial._p.variables()])
                 VarList = list(set(VarList))
-                VarList.sort(cmp=self.parent().varname_cmp,reverse=True)
+                VarList.sort(key=self.parent().varname_key, reverse=True)
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 if len(VarList)==1:
                     R = PolynomialRing(self._p.base_ring(),VarList+['xx'],order=self.parent()._order)

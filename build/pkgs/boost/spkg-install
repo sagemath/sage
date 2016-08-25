@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+cd src
+
+echo "Running boost bootstrap"
+./bootstrap.sh
+if [[ $? -ne 0 ]]; then
+    echo >&2 "Failed to bootstrap boost."
+    exit 1
+fi
+
+echo "Building boost"
+# By default this is populated by a system value.
+# If the boost build system (b2, bjam and associated files under /usr/share/boost-build)
+# has been installed system wide it can cause interference.
+# The build will fail purely and simply without much of an explanation.
+# see http://trac.sagemath.org/ticket/20776 for details.
+export BOOST_BUILD_PATH="${SAGE_LOCAL}"/share/boost-build
+./b2
+if [[ $? -ne 0 ]]; then
+    echo >&2 "Failed to build boost."
+    exit 1
+fi
+
+echo "Clean out old boost headers and libraries"
+rm -rf "$SAGE_LOCAL"/include/boost
+rm -rf "$SAGE_LOCAL"/lib/libboost*
+
+echo "Installing boost"
+./b2 install --prefix="$SAGE_LOCAL"
+if [[ $? -ne 0 ]]; then
+    echo >&2 "Failed to install boost."
+    exit 1
+fi
+

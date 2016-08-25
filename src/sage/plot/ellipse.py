@@ -16,8 +16,9 @@ Ellipses
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
-from primitive import GraphicPrimitive
+from .primitive import GraphicPrimitive
 from sage.plot.misc import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 from math import sin, cos, sqrt, pi, fmod

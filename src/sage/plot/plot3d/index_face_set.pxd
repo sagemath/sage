@@ -1,6 +1,5 @@
-from sage.plot.plot3d.base cimport PrimitiveObject
-
-from transform cimport point_c, face_c, color_c
+from .base cimport PrimitiveObject
+from .transform cimport point_c, face_c, color_c
 
 cdef class IndexFaceSet(PrimitiveObject):
     cdef bint enclosed

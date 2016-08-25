@@ -48,7 +48,7 @@ form `(d, \lambda)`.
 For `2 \times 2` matrices there are four types::
 
     sage: for tau in SimilarityClassTypes(2):
-    ....:    print tau
+    ....:    print(tau)
     [[1, [1]], [1, [1]]]
     [[1, [2]]]
     [[1, [1, 1]]]
@@ -174,6 +174,7 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from operator import mul
 from itertools import chain, product
@@ -575,7 +576,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
 
         sage: PTC = PrimarySimilarityClassTypes(2)
         sage: for PT in PTC:
-        ....:     print PT
+        ....:     print(PT)
         [1, [2]]
         [1, [1, 1]]
         [2, [1]]
@@ -587,7 +588,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
 
         sage: PTC = PrimarySimilarityClassTypes(2, min = PrimarySimilarityClassType(1, [1, 1]))
         sage: for PT in PTC:
-        ....:     print PT
+        ....:     print(PT)
         [1, [1, 1]]
         [2, [1]]
     """
@@ -986,7 +987,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
 
         sage: M = SimilarityClassTypes(2)
         sage: for tau in M:
-        ....:     print tau
+        ....:     print(tau)
         [[1, [1]], [1, [1]]]
         [[1, [2]]]
         [[1, [1, 1]]]
@@ -1000,7 +1001,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
 
         sage: M = SimilarityClassTypes(2, min = [1, [1, 1]])
         sage: for tau in M:
-        ....:     print tau
+        ....:     print(tau)
         [[1, [1, 1]]]
         [[2, [1]]]
     """

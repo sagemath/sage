@@ -36,7 +36,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 from libc.string cimport memcpy
@@ -421,7 +421,7 @@ cdef class PolyDict:
 
             sage: R2.<a> = QQ[]
             sage: R3.<xi, x> = R2[]
-            sage: print latex(xi*x)
+            sage: print(latex(xi*x))
             \xi x
         """
         n = len(vars)

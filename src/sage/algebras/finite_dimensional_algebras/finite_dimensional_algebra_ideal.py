@@ -1,6 +1,7 @@
 """
 Ideals of Finite Algebras
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2011 Johan Bosman <johan.g.bosman@gmail.com>
@@ -12,7 +13,7 @@ Ideals of Finite Algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
+from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix import is_Matrix

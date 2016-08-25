@@ -4,6 +4,8 @@ Modules
 .. toctree::
    :maxdepth: 2
 
+   sage/modules/tutorial_free_modules
+
    sage/modules/module
    sage/modules/free_module
    sage/modules/free_module_integer

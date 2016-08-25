@@ -244,7 +244,7 @@ cdef class arith_int:
         cdef int g, s, t
         g = self.c_xgcd_int(a,m, &s, &t)
         if g != 1:
-            raise ArithmeticError, "The inverse of %s modulo %s is not defined."%(a,m)
+            raise ArithmeticError("The inverse of %s modulo %s is not defined." % (a, m))
         s = s % m
         if s < 0:
             s = s + m

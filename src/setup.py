@@ -75,13 +75,12 @@ DEVEL = False
 if DEVEL:
     extra_compile_args.append('-ggdb')
 
-# Work around GCC-4.8.0 bug which miscompiles some sig_on() statements,
-# as witnessed by a doctest in sage/libs/gap/element.pyx if the
-# compiler flag -Og is used. See also
+# Work around GCC-4.8 bug which miscompiles some sig_on() statements:
 # * http://trac.sagemath.org/sage_trac/ticket/14460
+# * http://trac.sagemath.org/sage_trac/ticket/20226
 # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56982
 if subprocess.call("""$CC --version | grep -i 'gcc.* 4[.]8' >/dev/null """, shell=True) == 0:
-    extra_compile_args.append('-fno-tree-dominator-opts')
+    extra_compile_args.append('-fno-tree-copyrename')
 
 #########################################################
 ### Testing related stuff
@@ -407,8 +406,8 @@ class sage_build_ext(build_ext):
             # ignore build-lib -- put the compiled extension into
             # the source tree along with pure Python modules
 
-            modpath = string.split(fullname, '.')
-            package = string.join(modpath[0:-1], '.')
+            modpath = fullname.split('.')
+            package = '.'.join(modpath[0:-1])
             base = modpath[-1]
 
             build_py = self.get_finalized_command('build_py')
@@ -610,6 +609,11 @@ python_packages, python_modules = find_python_sources(
     SAGE_SRC, ['sage', 'sage_setup'])
 python_data_files = find_extra_files(python_packages,
     ".", SAGE_CYTHONIZED, SAGE_LIB, ["ntlwrap.cpp"])
+
+log.info('python_packages = {0}'.format(python_packages))
+log.info('python_modules = {0}'.format(python_modules))
+log.info('python_data_files = {0}'.format(python_data_files))
+
 print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
 
 

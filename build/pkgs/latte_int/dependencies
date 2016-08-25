@@ -1,0 +1,5 @@
+$(MP_LIBRARY) ntl 4ti2 cddlib
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

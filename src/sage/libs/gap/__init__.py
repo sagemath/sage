@@ -1,2 +1,3 @@
+from __future__ import absolute_import
 # libgap
-import all
+from . import all

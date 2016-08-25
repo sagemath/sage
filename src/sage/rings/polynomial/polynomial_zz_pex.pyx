@@ -193,12 +193,15 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         K = self._parent.base_ring()
         return [K(ZZ_pE_c_to_list(ZZ_pEX_coeff(self.x, i))) for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _lmul_(self, RingElement left):
         """
-        EXAMPLE::
+        EXAMPLES::
+
             sage: K.<a>=GF(next_prime(2**60)**3)
             sage: R.<x> = PolynomialRing(K,implementation='NTL')
             sage: (2*a+1)*x # indirect doctest
+            (2*a + 1)*x
+            sage: x*(2*a+1) # indirect doctest
             (2*a + 1)*x
         """
         cdef ntl_ZZ_pE d
@@ -367,7 +370,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             raise ValueError("unknown algorithm")
         return res != 0
 
-    cpdef int _cmp_(left,Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         EXAMPLE::
 

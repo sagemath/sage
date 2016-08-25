@@ -6,6 +6,7 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
@@ -31,7 +32,7 @@ from sage.rings.morphism import is_RingHomomorphism
 from sage.rings.real_mpfi import is_RealIntervalField
 from sage.rings.complex_interval_field import is_ComplexIntervalField
 
-from con_field import ProjectiveConic_field
+from .con_field import ProjectiveConic_field
 
 class ProjectiveConic_number_field(ProjectiveConic_field):
     r"""

@@ -74,7 +74,7 @@ As you see, it was necessary to insert two new rays (to prevent "upper" and
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 import operator
 
@@ -495,7 +495,7 @@ class FanMorphism(FreeModuleMorphism):
             [0 1]
             Domain fan: Rational polyhedral fan in 2-d lattice N
             Codomain fan: Rational polyhedral fan in 2-d lattice N
-            sage: print fm._latex_()
+            sage: print(fm._latex_())
             \left(\begin{array}{rr}
             1 & 0 \\
             0 & 1
@@ -560,7 +560,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: quadrant = Fan([quadrant])
             sage: quadrant_bl = quadrant.subdivide([(1,1)])
             sage: fm = FanMorphism(identity_matrix(2), quadrant_bl, quadrant)
-            sage: print fm._repr_()
+            sage: print(fm._repr_())
             Fan morphism defined by the matrix
             [1 0]
             [0 1]
@@ -644,7 +644,7 @@ class FanMorphism(FreeModuleMorphism):
             into the support of
             Rational polyhedral fan in 2-d lattice N!
 
-        We check that Trac #10943 is fixed::
+        We check that :trac:`10943` is fixed::
 
             sage: Sigma = Fan(rays=[(1,1,0), (1,-1,0)], cones=[(0,1)])
             sage: Sigma_prime = FaceFan(lattice_polytope.cross_polytope(3))
@@ -674,11 +674,11 @@ class FanMorphism(FreeModuleMorphism):
         lattice_dim = self.domain().dimension()
         if verbose:
             start = walltime()
-            print "Placing ray images",
+            print("Placing ray images", end=" ")
         # Figure out where 1-dimensional cones (i.e. rays) are mapped.
         RISGIS = self._RISGIS()
         if verbose:
-            print "(%.3f ms)" % walltime(start)
+            print("(%.3f ms)" % walltime(start))
         # Subdivide cones that require it.
         chambers = None # preimages of codomain cones, computed if necessary
         new_cones = []
@@ -693,17 +693,17 @@ class FanMorphism(FreeModuleMorphism):
             if chambers is None:
                 if verbose:
                     start = walltime()
-                    print "Computing chambers",
+                    print("Computing chambers", end=" ")
                 chambers, cone_to_chamber = self._chambers()
                 if verbose:
-                    print "(%.3f ms)" % walltime(start)
-                    print ("Number of domain cones: %d.\n"
-                           "Number of chambers: %d." %
-                           (domain_fan.ngenerating_cones(), len(chambers)))
+                    print("(%.3f ms)" % walltime(start))
+                    print("Number of domain cones: %d.\n"
+                          "Number of chambers: %d." %
+                          (domain_fan.ngenerating_cones(), len(chambers)))
             # Subdivide domain_cone.
             if verbose:
                 start = walltime()
-                print "Cone %d sits in chambers" % cone_index,
+                print("Cone %d sits in chambers" % cone_index, end=" ")
             # It seems that there is no quick way to determine which chambers
             # do NOT intersect this domain cone, so we go over all of them.
             parts = []
@@ -720,7 +720,7 @@ class FanMorphism(FreeModuleMorphism):
                     not any(part.is_equivalent(new_part) for part in parts)):
                     parts.append(new_part)
                     if verbose:
-                        print chamber_index,
+                        print(chamber_index, end=" ")
             if check:
                 # Check if the subdivision is complete, i.e. there are no
                 # missing pieces of domain_cone. To do this, we construct a
@@ -729,9 +729,9 @@ class FanMorphism(FreeModuleMorphism):
                 # original cone. In any case we know that we are constructing
                 # a valid fan, so passing check=False to Fan(...) is OK.
                 if verbose:
-                    print "(%.3f ms)" % walltime(start)
+                    print("(%.3f ms)" % walltime(start))
                     start = walltime()
-                    print "Checking for missing pieces",
+                    print("Checking for missing pieces", end=" ")
                 cone_subdivision = Fan(parts, check=False)
                 for cone in cone_subdivision(dim - 1):
                     if len(cone.star_generators()) == 1:
@@ -740,7 +740,7 @@ class FanMorphism(FreeModuleMorphism):
                             self._support_error()
             new_cones.extend(parts)
             if verbose:
-                print "(%.3f ms)" % walltime(start)
+                print("(%.3f ms)" % walltime(start))
         if len(new_cones) > domain_fan.ngenerating_cones():
             # Construct a new fan keeping old rays in the same order
             new_rays = list(domain_fan.rays())
@@ -1309,7 +1309,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example on Trac 11200 works as expected::
+        We check that reviewer's example on :trac:`11200` works as expected::
 
             sage: P1 = toric_varieties.P1()
             sage: A1 = toric_varieties.A1()
@@ -1573,7 +1573,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example from Trac #9972 is handled correctly::
+        We check that reviewer's example from :trac:`9972` is handled correctly::
 
             sage: N1 = ToricLattice(1)
             sage: N2 = ToricLattice(2)
@@ -1910,7 +1910,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: Bl = A2.subdivide([(1,1)])
             sage: f = FanMorphism(identity_matrix(2), Bl, A2)
             sage: for c1 in Bl(1):
-            ...       print f.relative_star_generators(c1)
+            ....:     print(f.relative_star_generators(c1))
             (1-d cone of Rational polyhedral fan in 2-d lattice N,)
             (1-d cone of Rational polyhedral fan in 2-d lattice N,)
             (2-d cone of Rational polyhedral fan in 2-d lattice N,

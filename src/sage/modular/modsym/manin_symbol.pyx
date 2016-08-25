@@ -199,7 +199,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef int _cmp_(self, right) except -2:
         """
         Comparison function for ManinSymbols.
 

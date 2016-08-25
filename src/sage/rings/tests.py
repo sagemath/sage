@@ -14,6 +14,7 @@ TESTS::
     RuntimeError: exponent must be at most 9223372036854775807     # 64-bit
     RuntimeError: exponent must be at most 2147483647              # 32-bit
 """
+from __future__ import print_function
 
 import sage.misc.prandom as random
 
@@ -269,11 +270,12 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     r = random_rings(level)
     i = 0
     for R in r:
-        print "survived %s tests (memory usage = %s)"%(i, get_memory_usage())
+        print("survived %s tests (memory usage = %s)" %
+              (i, get_memory_usage()))
         i += 1
-        print R
-        print R.random_element()
-        print "----"
+        print(R)
+        print(R.random_element())
+        print("----")
         if i >= trials:
             return
 
@@ -314,12 +316,13 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     """
     i = 0
     for x in random_rings(level):
-        print "survived %s tests (memory usage = %s)"%(i, get_memory_usage())
+        print("survived %s tests (memory usage = %s)" %
+              (i, get_memory_usage()))
         i += 1
-        print x
+        print(x)
         a = x.random_element(); b = x.random_element()
-        print a, b
-        print a*b+a-b+1
+        print(a, b)
+        print(a*b+a-b+1)
         if i >= trials:
             return
 
@@ -372,12 +375,12 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
     threshold = randint(0, min(maxdeg1,maxdeg2))
     R = PolynomialRing(base_ring, 'x')
     if verbose:
-        print "test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold)
+        print("test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold))
     for i in range(numtests):
         f = R.random_element(randint(0, maxdeg1), *base_ring_random_elt_args)
         g = R.random_element(randint(0, maxdeg2), *base_ring_random_elt_args)
         if verbose:
-            print "  ({})*({})".format(f, g)
+            print("  ({})*({})".format(f, g))
         if ref_mul(f, g) -  f._mul_karatsuba(g, threshold) != 0:
             raise ValueError("Multiplication failed")
     return

@@ -46,7 +46,7 @@ cdef class ntl_GF2EX(object):
             [[1] [0 1]]
         """
         if modulus is None:
-            raise ValueError, "You must specify a modulus when creating a GF2E."
+            raise ValueError("You must specify a modulus when creating a GF2E.")
 
         s = str(x)
         sig_on()

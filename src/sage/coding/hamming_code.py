@@ -10,6 +10,7 @@ REFERENCES:
 
     .. [R] Introduction to Coding Theory, Ron Roth, Cambridge University Press, 2006
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
@@ -21,10 +22,8 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from linear_code import (AbstractLinearCode,
-                         LinearCodeParityCheckEncoder,
-                         LinearCodeSyndromeDecoder,
-                         LinearCodeNearestNeighborDecoder)
+from .linear_code import (AbstractLinearCode,
+                         LinearCodeParityCheckEncoder)
 from sage.matrix.matrix_space import MatrixSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.rings.integer import Integer
@@ -81,7 +80,7 @@ class HammingCode(AbstractLinearCode):
 
         q = base_field.order()
         length = Integer((q ** order - 1) / (q - 1))
-        super(HammingCode, self).__init__(base_field, length, "ParityCheck", "Syndrome")
+        super(HammingCode, self).__init__(base_field, length, "Systematic", "Syndrome")
         self._dimension = length - order
 
     def __eq__(self, other):
@@ -170,8 +169,7 @@ class HammingCode(AbstractLinearCode):
         """
         return 3
 
+
 ####################### registration ###############################
 
 HammingCode._registered_encoders["ParityCheck"] = LinearCodeParityCheckEncoder
-HammingCode._registered_decoders["Syndrome"] = LinearCodeSyndromeDecoder
-HammingCode._registered_decoders["NearestNeighbor"] = LinearCodeNearestNeighborDecoder

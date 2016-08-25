@@ -47,6 +47,13 @@ if [ "$SAGE64" = yes ]; then
     LDFLAGS="$LDFLAGS $CFLAG64"
 fi
 
+# C++11 workaround https://trac.sagemath.org/ticket/20926
+if [ "$UNAME" = CYGWIN ]; then
+    # Special case for Cygwin https://trac.sagemath.org/ticket/21185
+    CXXFLAGS="$CXXFLAGS -std=gnu++98"
+else
+    CXXFLAGS="$CXXFLAGS -std=c++98"
+fi
 
 ###############################################################################
 # Configure, build and install LinBox:

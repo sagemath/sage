@@ -82,20 +82,42 @@ class IntegerFactorization(Factorization):
             super(IntegerFactorization, self).__init__(x,
                 unit=unit, cr=cr, sort=sort, simplify=simplify)
 
-    def __sort__(self, _cmp=None):
+    def __sort__(self, _cmp=None, key=None):
         """
         Sort the factors in this factorization.
 
         INPUT:
 
-        - ``_cmp`` - (default: None) comparison function
+        - ``_cmp`` - (default: ``None``) comparison function
+        - ``key`` - (default: ``None``) comparison key
 
         EXAMPLES::
 
             sage: F = factor(15)
+            sage: F.sort(key = lambda x: -x[0])
+            sage: F
+            5 * 3
+
+        TESTS:
+
+        Using ``_cmp`` is deprecated::
+
+            sage: F = factor(15)
             sage: F.sort(_cmp = lambda x,y: -cmp(x,y))
+            doctest:...: DeprecationWarning: Please use 'key' to sort.
+            See http://trac.sagemath.org/21145 for details.
             sage: F
             5 * 3
         """
-        self.__x.sort(_cmp)
-
+        if _cmp is not None:
+            from functools import cmp_to_key
+            from sage.misc.superseded import deprecation
+            deprecation(21145, "Please use 'key' to sort.")
+            self.__x.sort(key=cmp_to_key(_cmp))
+            return
+        elif 'key' is not None:
+            self.__x.sort(key=key)
+            return
+        else:
+            self.__x.sort()
+            return

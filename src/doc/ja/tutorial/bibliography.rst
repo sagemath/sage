@@ -31,9 +31,8 @@ Bibliography
     Reference Manual http://docs.python.org/ref/ref.html.
     日本Pythonユーザ会のサイト http://www.python.jp/ で日本語版ドキュメントが公開されている．感謝．
 
-..  [PyDev] Guido, Some Guys, and a Mailing List: How Python is
-    Developed,
-    http://www.python.org/dev/dev_intro.html.
+..  [PyDev] Python Developer's Guide
+    https://docs.python.org/devguide/.
 
 ..  [Pyr] Pyrex,
     http://www.cosc.canterbury.ac.nz/~greg/python/Pyrex/.

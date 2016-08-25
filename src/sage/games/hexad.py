@@ -77,6 +77,7 @@ Some details are also online at:  http://www.permutationpuzzles.org/hexad/
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.infinity import infinity
 from sage.matrix.matrix_space import MatrixSpace
@@ -243,9 +244,9 @@ class Minimog(object):
         EXAMPLES::
 
             sage: M = Minimog(type="modulo11")
-            sage: print M
+            sage: print(M)
             Minimog of type modulo11 associated to
-             [        0         3 +Infinity         2]
+            [        0         3 +Infinity         2]
             [        5         9         8        10]
             [        4         1         6         7]
 
@@ -713,7 +714,6 @@ class Minimog(object):
                 print("      This is a hexad. \n      There is no winning move, so make a random legal move.")
                 return L0
             y = list(set(h) - (L - set([x])))[0]
-            #print x,y,h
             if y < x:
                 return str(x) + ' --> ' + str(y) + ". The total went from " + str(total) + " to " + str(total - x + y) + "."
         print("This is a hexad. \n There is no winning move, so make a random legal move.")

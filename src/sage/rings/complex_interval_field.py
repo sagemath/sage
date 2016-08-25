@@ -32,14 +32,15 @@ heavily modified:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-import complex_double
-import ring
-import integer
+from . import complex_double
+from . import ring
+from . import integer
 import weakref
-import real_mpfi
-import complex_interval
-import complex_field
+from . import real_mpfi
+from . import complex_interval
+from . import complex_field
 from sage.misc.sage_eval import sage_eval
 
 from sage.structure.parent_gens import ParentWithGens
@@ -622,7 +623,7 @@ class ComplexIntervalField_class(ring.Field):
             sage: CIF.zeta(5)
             0.309016994374948? + 0.9510565162951536?*I
         """
-        from integer import Integer
+        from .integer import Integer
         n = Integer(n)
         if n == 1:
             x = self(1)

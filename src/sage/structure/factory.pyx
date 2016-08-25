@@ -54,7 +54,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import types, copy_reg
+import types
 
 from sage_object cimport SageObject
 
@@ -718,7 +718,7 @@ def generic_factory_reduce(self, proto):
         True
     """
     if self._factory_data is None:
-        raise NotImplementedError, "__reduce__ not implemented for %s" % type(self)
+        raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
 

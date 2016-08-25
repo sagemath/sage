@@ -7,6 +7,7 @@ AUTHORS:
 
 - David Roe
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
@@ -19,8 +20,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from padic_generic import pAdicGeneric
-from padic_base_generic import pAdicBaseGeneric
+from .padic_generic import pAdicGeneric
+from .padic_base_generic import pAdicBaseGeneric
 from functools import reduce
 
 class pAdicExtensionGeneric(pAdicGeneric):

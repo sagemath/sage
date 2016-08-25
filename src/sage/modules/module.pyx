@@ -20,7 +20,7 @@ A minimal example of a module::
     ....:     def __init__(self, parent, x):
     ....:         self.x = x
     ....:         sage.structure.element.ModuleElement.__init__(self, parent=parent)
-    ....:     def _rmul_(self, c):
+    ....:     def _lmul_(self, c):
     ....:         return self.parent()(c*self.x)
     ....:     def _add_(self, other):
     ....:         return self.parent()(self.x + other.x)

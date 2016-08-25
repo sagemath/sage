@@ -129,7 +129,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             r"""
             Return the empty composition.
 
-            OUTPUT
+            OUTPUT:
 
             - The empty composition.
 

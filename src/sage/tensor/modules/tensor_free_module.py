@@ -50,6 +50,7 @@ REFERENCES:
 - Chap. 16 of S. Lang: *Algebra*, 3rd ed., Springer (New York) (2002)
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -125,7 +126,7 @@ class TensorFreeModule(FiniteRankFreeModule):
     ``T`` is a module (actually a free module) over `\ZZ`::
 
         sage: T.category()
-        Category of modules over Integer Ring
+        Category of finite dimensional modules over Integer Ring
         sage: T in Modules(ZZ)
         True
         sage: T.rank()
@@ -282,9 +283,9 @@ class TensorFreeModule(FiniteRankFreeModule):
         Free module of type-(1,1) tensors on the Rank-3 free module M over the
          Integer Ring
         sage: End(M)
-        Set of Morphisms from Rank-3 free module M over the Integer Ring to
-         Rank-3 free module M over the Integer Ring in Category of modules
-         over Integer Ring
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-3 free module M over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
         sage: T11.has_coerce_map_from(End(M))
         True
         sage: End(M).has_coerce_map_from(T11)
@@ -557,9 +558,9 @@ class TensorFreeModule(FiniteRankFreeModule):
             False
 
         """
-        from free_module_homset import FreeModuleHomset
-        from ext_pow_free_module import ExtPowerFreeModule
-        from free_module_linear_group import FreeModuleLinearGroup
+        from .free_module_homset import FreeModuleHomset
+        from .ext_pow_free_module import ExtPowerFreeModule
+        from .free_module_linear_group import FreeModuleLinearGroup
         if isinstance(other, FreeModuleHomset):
             # Coercion of an endomorphism to a type-(1,1) tensor:
             if self._tensor_type == (1,1):

@@ -29,6 +29,7 @@ We test coercion in a particularly complicated situation::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.polynomial.polynomial_element import Polynomial, Polynomial_generic_dense, Polynomial_generic_dense_inexact
 from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
@@ -1339,7 +1340,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: F.prod() == f
             True
             sage: for (f,_) in F:
-            ....:     print f.newton_slopes()
+            ....:     print(f.newton_slopes())
             [-1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
             [0, 0, 0]
             [1]

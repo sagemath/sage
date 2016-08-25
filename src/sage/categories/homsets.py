@@ -2,6 +2,7 @@
 r"""
 Homset categories
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -262,7 +263,7 @@ class Homsets(Category_singleton):
             sage: Homsets()
             Category of homsets
         """
-        from sets_cat import Sets
+        from .sets_cat import Sets
         return [Sets()]
 
     class SubcategoryMethods:
@@ -308,5 +309,5 @@ class Homsets(Category_singleton):
                 sage: Homsets().Endset().extra_super_categories()
                 [Category of monoids]
             """
-            from monoids import Monoids
+            from .monoids import Monoids
             return [Monoids()]

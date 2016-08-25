@@ -368,7 +368,7 @@ information. You can use the existing functions of Sage as templates.
       REFERENCES:
 
       .. [SC] Conventions for coding in sage.
-         http://www.sagemath.org/doc/developer/conventions.html.
+         http://doc.sagemath.org/html/en/developer/conventions.html.
 
   When abbreviating the first name of an author, be sure to put a
   backslash in front of it. This ensures that the letter (``C.``
@@ -711,8 +711,11 @@ written.
 
       sage: for n in srange(1,10):
       ....:     if n.is_prime():
-      ....:         print n,
-      2 3 5 7
+      ....:         print(n)
+      2
+      3
+      5
+      7
 
 - **Split long lines:** You may want to split long lines of code with a
   backslash. Note: this syntax is non-standard and may be removed in the
@@ -815,7 +818,7 @@ framework. Here is a comprehensive list:
   doctest with tolerance contains several numbers, each of them is checked
   individually::
 
-      sage: print "The sum of 1 and 1 equals 5"  # abs tol 1
+      sage: print("The sum of 1 and 1 equals 5")  # abs tol 1
       The sum of 2 and 2 equals 4
       sage: e^(i*pi/4).n() # rel tol 1e-1
       0.7 + 0.7*I

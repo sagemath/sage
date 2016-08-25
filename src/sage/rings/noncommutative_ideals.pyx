@@ -229,7 +229,7 @@ class Ideal_nc(Ideal_generic):
 
         """
         if side not in ['left','right','twosided']:
-            raise ValueError, "Ideals are left, right or twosided, but not %s"%side
+            raise ValueError("Ideals are left, right or twosided, but not %s" % side)
         self.__side = side
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
 
@@ -351,4 +351,4 @@ class Ideal_nc(Ideal_generic):
                 if other.side()=='left':
                     return other
                 return other.ring().ideal(other.gens(),side='twosided')
-        raise NotImplementedError, "Can not multiply non-commutative ideals."
+        raise NotImplementedError("Can not multiply non-commutative ideals.")

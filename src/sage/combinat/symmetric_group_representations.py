@@ -27,6 +27,8 @@ Representations of the Symmetric Group
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.symbolic.ring import SR
 from sage.functions.all import sqrt
 from sage.combinat.combinat import CombinatorialClass
@@ -484,7 +486,7 @@ class SymmetricGroupRepresentations_class(CombinatorialClass):
         EXAMPLES::
 
             sage: orth = SymmetricGroupRepresentations(3, "orthogonal")
-            sage: for x in orth: print x
+            sage: for x in orth: print(x)
             Orthogonal representation of the symmetric group corresponding to [3]
             Orthogonal representation of the symmetric group corresponding to [2, 1]
             Orthogonal representation of the symmetric group corresponding to [1, 1, 1]

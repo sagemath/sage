@@ -12,6 +12,7 @@ cell complexes.
    :maxdepth: 2
 
    sage/homology/chain_complex
+   sage/homology/chains
    sage/homology/chain_complex_morphism
    sage/homology/chain_homotopy
    sage/homology/chain_complex_homspace

@@ -268,6 +268,7 @@ Authors
 Methods
 -------
 """
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
@@ -551,7 +552,7 @@ def vertex_separation(G, algorithm = "BAB", cut_off=None, upper_bound=None, verb
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
         sage: D = digraphs.Path(8)
-        sage: print vertex_separation(D)
+        sage: print(vertex_separation(D))
         (0, [7, 6, 5, 4, 3, 2, 1, 0])
         sage: D = DiGraph( random_DAG(30) )
         sage: vs,L = vertex_separation(D); vs
@@ -559,12 +560,12 @@ def vertex_separation(G, algorithm = "BAB", cut_off=None, upper_bound=None, verb
         sage: K4 = DiGraph( graphs.CompleteGraph(4) )
         sage: D = K4+K4
         sage: D.add_edge(0, 4)
-        sage: print vertex_separation(D)
+        sage: print(vertex_separation(D))
         (3, [4, 5, 6, 7, 0, 1, 2, 3])
         sage: D = K4+K4+K4
         sage: D.add_edge(0, 4)
         sage: D.add_edge(0, 8)
-        sage: print vertex_separation(D)
+        sage: print(vertex_separation(D))
         (3, [8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3])
 
     TESTS:
@@ -732,7 +733,7 @@ def vertex_separation_exp(G, verbose = False):
     cdef FastDigraph g = FastDigraph(G)
 
     if verbose:
-        print "Memory allocation"
+        print("Memory allocation")
         g.print_adjacency_matrix()
 
     sig_on()
@@ -749,14 +750,14 @@ def vertex_separation_exp(G, verbose = False):
     cdef int i,j , k
     for k in range(g.n):
         if verbose:
-            print "Looking for a strategy of cost", str(k)
+            print("Looking for a strategy of cost", str(k))
 
         if exists(g, neighborhoods, 0, k) <= k:
             break
 
     if verbose:
-        print "... Found !"
-        print "Now computing the ordering"
+        print("... Found !")
+        print("Now computing the ordering")
 
     cdef list order = find_order(g, neighborhoods, k)
 
@@ -1093,7 +1094,7 @@ def vertex_separation_MILP(G, integrality = False, solver = None, verbosity = 0)
         ...       ve, le = vertex_separation.vertex_separation(G)
         ...       vm, lm = vertex_separation.vertex_separation_MILP(G)
         ...       if ve != vm:
-        ...          print "The solution is not optimal!"
+        ...          print("The solution is not optimal!")
 
     Comparison with different values of the integrality parameter::
 
@@ -1103,7 +1104,7 @@ def vertex_separation_MILP(G, integrality = False, solver = None, verbosity = 0)
         ....:     va, la = vertex_separation.vertex_separation_MILP(G, integrality=False)
         ....:     vb, lb = vertex_separation.vertex_separation_MILP(G, integrality=True)
         ....:     if va != vb:
-        ....:        print "The integrality parameter changes the result!"
+        ....:        print("The integrality parameter changes the result!")
 
     Giving anything else than a Graph or a DiGraph::
 
@@ -1429,7 +1430,7 @@ def vertex_separation_BAB(G,
 
     finally:
         if verbose:
-            print 'Stored prefixes: {}'.format(len(prefix_storage))
+            print('Stored prefixes: {}'.format(len(prefix_storage)))
         sig_free(prefix)
         sig_free(positions)
         binary_matrix_free(H)
@@ -1522,7 +1523,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
             for i in range(n):
                 best_seq[i] = prefix[i]
             if verbose:
-                print "New upper bound: {}".format(current_cost)
+                print("New upper bound: {}".format(current_cost))
 
         return current_cost
 
@@ -1586,7 +1587,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
             for i in range(n):
                 best_seq[i] = prefix[i]
             if verbose:
-                print "New upper bound: {}".format(current_cost)
+                print("New upper bound: {}".format(current_cost))
 
         return current_cost
 

@@ -15,7 +15,7 @@ représentations de champs de vecteurs. Nous présentons quelques exemples
 de ces objets ici. Pour plus d'exemples de graphiques avec Sage, on
 consultera :ref:`section-systems`, :ref:`section-maxima` et aussi la
 documentation
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_
 
 La commande suivante produit un cercle jaune de rayon 1 centré à l'origine :
 

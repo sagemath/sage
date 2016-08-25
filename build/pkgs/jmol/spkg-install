@@ -14,6 +14,19 @@ if [ ! -d "$SPKGDIR"/patches ]; then
    exit 1
 fi
 
+cd "$SPKGDIR/src"
+
+# Apply all patches
+for patch in ../patches/*.patch; do
+    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
+    echo "Applying $patch"
+    patch -p1 <"$patch"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error applying '$patch'"
+        exit 1
+    fi
+done
+
 #pure javascript for web and java applet in separate /share/jsmol directory.
 if [ ! -d "$SAGE_LOCAL"/share/jsmol ]; then
     echo "Directory "$SAGE_LOCAL"/share/jsmol does not exist.  Creating directory..."
@@ -25,7 +38,7 @@ else
 fi
 
 echo "Installing the JSmol files..."
-cp -r "$SPKGDIR"/src/jsmol/* "$SAGE_LOCAL"/share/jsmol/
+cp -r jsmol/* "$SAGE_LOCAL"/share/jsmol/
 if [ $? -ne 0 ]; then
    echo "Error installing jmol files. Exiting."
    exit 1
@@ -42,23 +55,23 @@ else
 fi
 
 # Jsmol is stuck inside the jmol directory, remove
-rm -r "$SPKGDIR"/src/jsmol
+rm -r "jsmol"
 if [ $? -ne 0 ]; then
    echo "Error removing the contained jsmol files. Exiting."
    exit 1
 fi
 
 echo "Installing the Jmol files..."
-cp -r "$SPKGDIR"/src/* "$SAGE_LOCAL"/share/jmol/
+cp -r * "$SAGE_LOCAL"/share/jmol/
 if [ $? -ne 0 ]; then
    echo "Error installing jmol files. Exiting."
    exit 1
 fi
 
-echo "Overwriting the Jmol launcher..."
-cp -f "$SPKGDIR"/patches/jmol "$SAGE_LOCAL"/bin/jmol && chmod ugo+x "$SAGE_LOCAL"/bin/jmol
+echo "Install the Jmol launcher to bin/..."
+cp -f jmol "$SAGE_LOCAL"/bin/jmol && chmod ugo+x "$SAGE_LOCAL"/bin/jmol
 if [ $? -ne 0 ]; then
-   echo "Error overwriting the jmol launcher. Exiting."
+   echo "Error installing the jmol launcher. Exiting."
    exit 1
 fi
 

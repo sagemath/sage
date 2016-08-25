@@ -1,6 +1,7 @@
 r"""
 Algebras With Basis
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -15,7 +16,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.categories.tensor import TensorProductsCategory, tensor
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from unital_algebras import UnitalAlgebras
+from .unital_algebras import UnitalAlgebras
 
 class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """

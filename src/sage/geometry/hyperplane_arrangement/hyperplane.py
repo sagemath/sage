@@ -343,7 +343,7 @@ class Hyperplane(LinearExpression):
 
         Coordinate vector of the projection of ``point`` with respect
         to the basis of :meth:`linear_part`. In particular, the length
-        of this vector is is one less than the ambient space
+        of this vector is one less than the ambient space
         dimension.
 
         EXAMPLES::

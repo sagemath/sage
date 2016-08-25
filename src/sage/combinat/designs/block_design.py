@@ -53,12 +53,14 @@ Functions and methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.arith.all import binomial, integer_floor, is_prime_power
-from incidence_structures import IncidenceStructure
+from .incidence_structures import IncidenceStructure
 from sage.misc.decorators import rename_keyword
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.categories.sets_cat import EmptySetError
@@ -334,10 +336,10 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     # the line at infinity "z = 0"
     blcks.append(range(n2,n2+n+1))
     if check:
-        from designs_pyx import is_projective_plane
+        from .designs_pyx import is_projective_plane
         if not is_projective_plane(blcks):
             raise RuntimeError('There is a problem in the function DesarguesianProjectivePlane')
-    from bibd import BalancedIncompleteBlockDesign
+    from .bibd import BalancedIncompleteBlockDesign
     B = BalancedIncompleteBlockDesign(n2+n+1, blcks, check=check)
 
     if point_coordinates:
@@ -580,7 +582,7 @@ def HughesPlane(q2, check=True):
             for i in range(q2 + q):
                 l = [A*j for j in l]
                 blcks.append([relabel[normalize_hughes_plane_point(p,q)] for p in l])
-    from bibd import BalancedIncompleteBlockDesign
+    from .bibd import BalancedIncompleteBlockDesign
     return BalancedIncompleteBlockDesign(q2**2+q2+1, blcks, check=check)
 
 def projective_plane_to_OA(pplane, pt=None, check=True):
@@ -627,7 +629,7 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
         sage: _ = projective_plane_to_OA(pp, pt=3)
         sage: _ = projective_plane_to_OA(pp, pt=7)
     """
-    from bibd import _relabel_bibd
+    from .bibd import _relabel_bibd
     pplane = pplane.blocks()
     n = len(pplane[0]) - 1
 
@@ -643,7 +645,7 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
     assert len(OA) == n**2, "pplane is not a projective plane"
 
     if check:
-        from designs_pyx import is_orthogonal_array
+        from .designs_pyx import is_orthogonal_array
         is_orthogonal_array(OA,n+1,n,2)
 
     return OA
@@ -845,7 +847,7 @@ def WittDesign(n):
         (True, (2, 9, 3, 1))
         sage: BD                             # optional - gap_packages (design package)
         Incidence structure with 9 points and 12 blocks
-        sage: print BD                       # optional - gap_packages (design package)
+        sage: print(BD)                      # optional - gap_packages (design package)
         Incidence structure with 9 points and 12 blocks
     """
     from sage.interfaces.gap import gap, GapElement
@@ -868,7 +870,7 @@ def HadamardDesign(n):
 
         sage: designs.HadamardDesign(7)
         Incidence structure with 7 points and 7 blocks
-        sage: print designs.HadamardDesign(7)
+        sage: print(designs.HadamardDesign(7))
         Incidence structure with 7 points and 7 blocks
 
     For example, the Hadamard 2-design with `n = 11` is a design whose parameters are 2-(11, 5, 2).

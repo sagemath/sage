@@ -14,11 +14,11 @@ cdef int allocate_c_vector_modint(c_vector_modint* v, Py_ssize_t num_nonzero) ex
     """
     v.entries = <int*>sig_malloc(num_nonzero*sizeof(int))
     if v.entries == NULL:
-        raise MemoryError, "Error allocating memory"
+        raise MemoryError("Error allocating memory")
     v.positions = <Py_ssize_t*>sig_malloc(num_nonzero*sizeof(Py_ssize_t))
     if v.positions == NULL:
         sig_free(v.entries)
-        raise MemoryError, "Error allocating memory"
+        raise MemoryError("Error allocating memory")
     return 0
 
 cdef int init_c_vector_modint(c_vector_modint* v, int p, Py_ssize_t degree,
@@ -27,10 +27,10 @@ cdef int init_c_vector_modint(c_vector_modint* v, int p, Py_ssize_t degree,
     Initialize a c_vector_modint.
     """
     if (allocate_c_vector_modint(v, num_nonzero) == -1):
-        raise MemoryError, "Error allocating memory for sparse vector."
+        raise MemoryError("Error allocating memory for sparse vector.")
     if p > 46340:
         clear_c_vector_modint(v)
-        raise OverflowError, "The prime must be <= 46340."
+        raise OverflowError("The prime must be <= 46340.")
     v.num_nonzero = num_nonzero
     v.degree = degree
     v.p = p

@@ -26,6 +26,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function, absolute_import
 
 import sage.misc.prandom as rnd
 import itertools
@@ -41,7 +42,7 @@ from sage.sets.set import Set, Set_object_enumerated
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-import combination
+from . import combination
 
 ZZ_0 = ZZ.zero()
 
@@ -1140,7 +1141,7 @@ class SubMultiset_sk(SubMultiset_s):
             sage: l = [1,1,1,1,2,2,3]
             sage: for k in xrange(len(l)):
             ....:    S = Subsets(l,k,submultiset=True)
-            ....:    print S.generating_serie(x) == S.cardinality()*x**k
+            ....:    print(S.generating_serie(x) == S.cardinality()*x**k)
             True
             True
             True

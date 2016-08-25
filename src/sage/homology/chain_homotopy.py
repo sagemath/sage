@@ -47,6 +47,7 @@ REFERENCES:
    Representations in Pattern Recognition, Lecture Notes in
    Computer Science, volume 5534, pp. 314-3232, Springer, Berlin (2009).
 """
+from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
@@ -458,7 +459,7 @@ class ChainContraction(ChainHomotopy):
             ValueError: not an algebraic gradient vector field
         """
         from sage.matrix.constructor import identity_matrix
-        from chain_complex_morphism import ChainComplexMorphism
+        from .chain_complex_morphism import ChainComplexMorphism
 
         if not (pi.domain() == iota.codomain()
                 and pi.codomain() == iota.domain()):
@@ -547,8 +548,8 @@ class ChainContraction(ChainHomotopy):
 
             sage: phi.iota().in_degree(2)
             [-1]
-            [-1]
             [ 1]
+            [-1]
             [ 1]
         """
         return self._iota
@@ -584,8 +585,8 @@ class ChainContraction(ChainHomotopy):
             [1]
             sage: phi.iota().in_degree(2)
             [-1]
-            [-1]
             [ 1]
+            [-1]
             [ 1]
             sage: phi.dual().iota().in_degree(2)
             [0]

@@ -13,6 +13,7 @@ subgroup. This space is the key to computing the isomorphism class of the local
 component of the newform at `p`.
 
 """
+from __future__ import absolute_import
 
 import operator
 from sage.misc.misc import verbose, cputime
@@ -27,7 +28,7 @@ from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method, cached_function
 
-from liftings import lift_gen_to_gamma1, lift_ramified
+from .liftings import lift_gen_to_gamma1, lift_ramified
 
 @cached_function
 def example_type_space(example_no = 0):

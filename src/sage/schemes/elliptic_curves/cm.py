@@ -475,7 +475,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         D = Integer(D)
         if is_fundamental_discriminant(D):
             h_D = D.class_number(proof)
-            # For each fundamental discrimant D, loop through the f's such
+            # For each fundamental discriminant D, loop through the f's such
             # that h(D*f^2) could possibly be <= hmax.  As explained to me by Cremona,
             # we have h(D*f^2) >= (1/c)*h(D)*phi_D(f) >= (1/c)*h(D)*euler_phi(f), where
             # phi_D(f) is like euler_phi(f) but the factor (1-1/p) is replaced

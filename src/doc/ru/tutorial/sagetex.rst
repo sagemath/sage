@@ -7,7 +7,7 @@
 "установить" его в локальную систему TeX (под "установкой" подразумевается
 копирование одного файла). См. :ref:`installation`, а также раздел "Make
 SageTeX known to TeX" `Руководства по установке Sage
-<http://sagemath.org/doc/installation/index.html>`_ (`данная ссылка
+<http://doc.sagemath.org/html/en/installation/index.html>`_ (`данная ссылка
 <../installation/index.html>`_ ведет к локальному размещению копии руководства
 по установке).
 

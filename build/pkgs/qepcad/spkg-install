@@ -7,7 +7,7 @@ if [ "$SAGE_LOCAL" = "" ]; then
 fi
 
 
-cd qesource
+cd src
 
 # Apply patches.
 echo 'Patching qepcad'

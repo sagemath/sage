@@ -4,7 +4,7 @@ Basic Algebra and Calculus
 Sage can perform various computations related to basic algebra and
 calculus: for example, finding solutions to equations,
 differentiation, integration, and Laplace transforms. See the
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_
 documentation for more examples.
 
 In all these examples, it is important to note that the variables in the

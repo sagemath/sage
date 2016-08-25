@@ -5,11 +5,11 @@ Test consistency between modular forms and modular symbols Eisenstein
 series charpolys, which are computed in completely separate ways. ::
 
     sage: for N in range(25,33):
-    ...    m = ModularForms(N)
-    ...    e = m.eisenstein_subspace()
-    ...    f = e.hecke_polynomial(2)
-    ...    g = ModularSymbols(N).eisenstein_submodule().hecke_polynomial(2)
-    ...    print N, f == g
+    ....:    m = ModularForms(N)
+    ....:    e = m.eisenstein_subspace()
+    ....:    f = e.hecke_polynomial(2)
+    ....:    g = ModularSymbols(N).eisenstein_submodule().hecke_polynomial(2)
+    ....:    print("{} {}".format(N, f == g))
     25 True
     26 True
     27 True
@@ -22,12 +22,12 @@ series charpolys, which are computed in completely separate ways. ::
 Another similar consistency check::
 
     sage: for N in range(1,26):
-    ...    eps = (N > 2 and DirichletGroup(N,QQ).0) or N
-    ...    m = ModularForms(eps)
-    ...    e = m.eisenstein_subspace()
-    ...    f = e.hecke_polynomial(2)
-    ...    g = ModularSymbols(eps).eisenstein_submodule().hecke_polynomial(2)
-    ...    print N, f == g
+    ....:    eps = (N > 2 and DirichletGroup(N,QQ).0) or N
+    ....:    m = ModularForms(eps)
+    ....:    e = m.eisenstein_subspace()
+    ....:    f = e.hecke_polynomial(2)
+    ....:    g = ModularSymbols(eps).eisenstein_submodule().hecke_polynomial(2)
+    ....:    print("{} {}".format(N, f == g))
     1 True
     2 True
     3 True
@@ -54,7 +54,7 @@ Another similar consistency check::
     24 True
     25 True
 
-We check that bug #8541 (traced to a linear algebra problem) is fixed::
+We check that bug :trac:`8541` (traced to a linear algebra problem) is fixed::
 
     sage: f = CuspForms(DirichletGroup(5).0,5).0
     sage: f[15]

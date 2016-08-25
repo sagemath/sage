@@ -329,7 +329,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     # x  * _dict -- copy of the sparse dictionary of underlying elements
     ########################################################################
 
-    cpdef ModuleElement _add_(self, ModuleElement _other):
+    cpdef _add_(self, _other):
         """
         EXAMPLES::
 
@@ -553,7 +553,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 ##         """
 ##         R = set(rows)
 ##         if not R.issubset(set(xrange(self.nrows()))):
-##             raise ArithmeticError, "Invalid rows."
+##             raise ArithmeticError("Invalid rows.")
 ##         X = []
 ##         i = 0
 ##         for j in xrange(self.nrows()):

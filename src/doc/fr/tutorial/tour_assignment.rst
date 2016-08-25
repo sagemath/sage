@@ -104,19 +104,3 @@ sein d'une même portée :
 Le langage de programmation C, qui est statiquement typé, est bien
 différent : une fois déclarée de type int, une variable ne peut contenir
 que des int au sein de sa portée.
-
-Un entier Python dont l'écriture commence par un zéro peut susciter des
-confusions : il est considéré comme un nombre octal, c'est-à-dire un
-nombre en base huit.
-
-::
-
-    sage: 011
-    9
-    sage: 8 + 1
-    9
-    sage: n = 011
-    sage: n.str(8)   # écriture en base 8 de n, sous forme de chaîne
-    '11'
-
-Ceci est cohérent avec le langage de programmation C.

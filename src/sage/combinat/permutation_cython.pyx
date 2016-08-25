@@ -27,6 +27,7 @@ speed, we provide a class that wraps our struct.
 #  Unfit for any purpose.
 #
 #  Copyright 2010, Tom Boothby
+from __future__ import print_function
 
 include "cysignals/memory.pxi"
 from cpython.list cimport *
@@ -58,7 +59,7 @@ cdef void reset_swap(int n, int *c, int *o):
 
 cdef int next_swap(int n, int *c, int *o):
     """
-    Here's the traslation of Algorithm P.  We've modified
+    Here's the translation of Algorithm P.  We've modified
     it to
 
        a) work on zero-indexed lists
@@ -136,9 +137,9 @@ def permutation_iterator_transposition_list(int n):
         sage: Q = [1,2,3,4]
         sage: L = [copy(Q)]
         sage: for t in permutation_iterator_transposition_list(3):
-        ...      Q[t], Q[t+1] = Q[t+1], Q[t]
-        ...      L.append(copy(Q))
-        sage: print L
+        ....:     Q[t], Q[t+1] = Q[t+1], Q[t]
+        ....:     L.append(copy(Q))
+        sage: print(L)
         [[1, 2, 3, 4], [1, 3, 2, 4], [3, 1, 2, 4], [3, 2, 1, 4], [2, 3, 1, 4], [2, 1, 3, 4]]
 
     """

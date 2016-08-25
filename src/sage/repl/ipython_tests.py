@@ -100,6 +100,12 @@ Next, test the pinfo2 magic for Cython code::
     ...
     File:   .../sage/tests/stl_vector.pyx
     Type:   type
+
+Test that there are no warnings being ignored internally::
+
+    sage: import warnings
+    sage: warnings.simplefilter('error');  get_test_shell()
+    <sage.repl.interpreter.SageTestShell object at 0x...>
 '''
 
 

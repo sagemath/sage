@@ -68,7 +68,7 @@ Sageを自分のコンピュータへインストールする手順について�
    ファイルを入手したら展開して ``sage`` コマンドを実行するだけで出来上がりだ．
 
 #. SageTeXパッケージを使いたいのならば(SageTeXはSageの処理結果をLaTeX文書に埋め込み可能にしてくれる)，使用すべきTeXディストリビューションをSageTeXに教えてやる必要がある．
-   設定法については， `Sage installation guide <http://www.sagemath.org/doc/>`_ 中の "Make SageTeX known to TeX" を参照してほしい(ローカルシステム上の `ここ <../../en/installation/index.html>`_ にもインストールガイドがある)．
+   設定法については， `Sage installation guide <http://doc.sagemath.org/html/en/>`_ 中の "Make SageTeX known to TeX" を参照してほしい(ローカルシステム上の `ここ <../../en/installation/index.html>`_ にもインストールガイドがある)．
    手順はごく簡単で，環境変数を一つ設定するか，あるいはTeX配下のディレクトリにファイルを1個コピーしてやるだけである．
 
 

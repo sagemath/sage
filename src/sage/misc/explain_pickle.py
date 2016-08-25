@@ -154,6 +154,7 @@ old pickles to work).
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
+from __future__ import absolute_import
 
 from pickletools import genops
 
@@ -1196,7 +1197,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from copy_reg import *
+            sage: from six.moves.copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
             sage: test_pickle(EmptyNewstyleClass())
@@ -1223,7 +1224,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from copy_reg import *
+            sage: from six.moves.copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 31415)
             sage: test_pickle(EmptyNewstyleClass())
@@ -1250,7 +1251,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from copy_reg import *
+            sage: from six.moves.copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 27182818)
             sage: test_pickle(EmptyNewstyleClass())
@@ -2411,8 +2412,8 @@ def unpickle_newobj(klass, args):
 
     pers_load = lambda id: pers[int(id)]
 
-    from cStringIO import StringIO
-    import cPickle
+    from six.moves import cStringIO as StringIO
+    from six.moves import cPickle
     unp = cPickle.Unpickler(StringIO(pickle))
     unp.persistent_load = pers_load
     return unp.load()
@@ -2489,13 +2490,13 @@ def unpickle_extension(code):
 
     EXAMPLES::
 
-        sage: from copy_reg import *
+        sage: from six.moves.copyreg import *
         sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
         sage: unpickle_extension(42)
         <class 'sage.misc.explain_pickle.EmptyNewstyleClass'>
         sage: remove_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
     """
-    from copy_reg import _inverted_registry, _extension_cache
+    from six.moves.copyreg import _inverted_registry, _extension_cache
     # copied from .get_extension() in pickle.py
     nil = []
     obj = _extension_cache.get(code, nil)
@@ -2601,13 +2602,16 @@ def test_pickle(p, verbose_eval=False, pedantic=False, args=()):
     global unpickle_persistent_loader
     unpickle_persistent_loader = pers_load
 
-    if verbose_eval: print("evaluating explain_pickle in_current_sage=True:")
+    if verbose_eval:
+        print("evaluating explain_pickle in_current_sage=True:")
     current_res = sage_eval(current, preparse=False)
-    if verbose_eval: print("evaluating explain_pickle in_current_sage=False:")
+    if verbose_eval:
+        print("evaluating explain_pickle in_current_sage=False:")
     generic_res = sage_eval(generic, preparse=False)
-    if verbose_eval: print("loading pickle with cPickle:")
-    from cStringIO import StringIO
-    import cPickle
+    if verbose_eval:
+        print("loading pickle with cPickle:")
+    from six.moves import cStringIO as StringIO
+    from six.moves import cPickle
     unp = cPickle.Unpickler(StringIO(p))
     unp.persistent_load = pers_load
     unp.find_global = unpickle_global

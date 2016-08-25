@@ -1,0 +1,55 @@
+= Frobby =
+
+== Description ==
+The software package Frobby provides a number of computations on
+monomial ideals. The current main feature is the socle of a monomial
+ideal, which is largely equivalent to computing the maximal standard
+monomials, the Alexander dual or the irreducible decomposition.
+
+Operations on monomial ideals are much faster than algorithms designed
+for ideals in general, which is what makes a specialized library for
+these operations on monomial ideals useful.
+
+== License ==
+ * GPL version 2.0 or later
+
+== Maintainers ==
+ * Bjarke Hammersholt Roune (www.broune.com)
+
+== Upstream Contact ==
+ * Bjarke Hammersholt Roune (www.broune.com)
+
+== Dependencies ==
+ * GMP built with support for C++
+
+== Special Update/Build instructions ==
+Download Frobby at www.broune.com/ and then type "make spkg VER=blah" which wil create an spkg
+named frobby-VER.spkg in bin/. The files related to doing this is in the sage/ sub-directory of the
+Frobby source distribution.
+
+== Changelog ==
+
+=== frobby-0.9.0.p2 (Dima Pasechnik, Jun 30, 2016) ===
+ * convertion to new-style package
+ * integration of Macaulay2 patches
+ * fix linking (rpath)
+
+=== frobby-0.9.0.p1 (Dima Pasechnik, Sept 7, 2013) ===
+ * added <unistd.h> for getpid() 
+
+=== frobby-0.9.0 (Mike Hansen, May 24th, 2012) ===
+ * #13007: Update to 0.9.0.
+ * Add a patch to the Makefile so that the build succeeds with SAGE_CHECK="yes"
+
+=== frobby-0.7.6 (Bjarke Hammersholt Roune, May 20th, 2008) ===
+ * Move to Frobby 0.7.6 with Makefile improvements by Michale Abshoff.
+
+=== frobby-0.7.5.p1 (Michael Abshoff, May 19th, 2008) ===
+ * fix the main Makefile to set include and library directories correctly when some env variables are defined
+
+=== frobby-0.7.5.p0 (Michael Abshoff, May 19th, 2008) ===
+ * various cleanups, i.e. repo, .hgignore, missing SPKG.txt sections
+ * move all sources into src
+
+=== frobby-0.7.5 (Bjarke Hammersholt Roune) ===
+ * initial version

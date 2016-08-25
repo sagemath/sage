@@ -15,6 +15,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.functions.other import floor
@@ -126,12 +127,12 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         if (s*x).length() < x.length():
             ret = self.R(s*x,s*y)
             if self._trace:
-                print "  R(%s,%s)=%s"%(x, y, ret)
+                print("  R(%s,%s)=%s" % (x, y, ret))
             return ret
         else:
             ret = (self._q-1)*self.R(s*x,y)+self._q*self.R(s*x,s*y)
             if self._trace:
-                print "  R(%s,%s)=%s"%(x, y, ret)
+                print("  R(%s,%s)=%s" % (x, y, ret))
             return ret
 
     @cached_method
@@ -167,12 +168,12 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         if (x * s).length() < x.length():
             ret = self.R_tilde(x * s, y * s)
             if self._trace:
-                print " R_tilde(%s,%s)=%s" % (x, y, ret)
+                print(" R_tilde(%s,%s)=%s" % (x, y, ret))
             return ret
         else:
             ret = self.R_tilde(x * s, y * s) + self._q * self.R_tilde(x, y * s)
             if self._trace:
-                print " R_tilde(%s,%s)=%s" % (x, y, ret)
+                print(" R_tilde(%s,%s)=%s" % (x, y, ret))
             return ret
 
     @cached_method
@@ -218,6 +219,5 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         tr = floor((y.length()-x.length()+1)/2)
         ret = p.truncate(tr)
         if self._trace:
-            print "    P({},{})={}".format(x, y, ret)
+            print("    P({},{})={}".format(x, y, ret))
         return ret
-

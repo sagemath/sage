@@ -13,7 +13,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.libs.gmp.types cimport __mpz_struct
 from sage.libs.gmp.mpz cimport mpz_init_set_ui, mpz_init_set
@@ -153,7 +153,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if base_ring.characteristic() <= 2147483647:
             characteristic = base_ring.characteristic()
         else:
-            raise TypeError, "Characteristic p must be <= 2147483647."
+            raise TypeError("Characteristic p must be <= 2147483647.")
 
     elif isinstance(base_ring, RationalField):
         characteristic = 0
@@ -168,12 +168,12 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if base_ring.characteristic() <= 2147483647:
             characteristic = -base_ring.characteristic() # note the negative characteristic
         else:
-            raise TypeError, "characteristic must be <= 2147483647."
+            raise TypeError("characteristic must be <= 2147483647.")
         # TODO: This is lazy, it should only call Singular stuff not MPolynomial stuff
         try:
             k = PolynomialRing(base_ring.prime_subfield(), 1, [base_ring.variable_name()], 'lex')
         except TypeError:
-            raise TypeError, "The multivariate polynomial ring in a single variable %s in lex order over %s is supposed to be of type %s"%(base_ring.variable_name(), base_ring,MPolynomialRing_libsingular)
+            raise TypeError("The multivariate polynomial ring in a single variable %s in lex order over %s is supposed to be of type %s" % (base_ring.variable_name(), base_ring,MPolynomialRing_libsingular))
         minpoly = base_ring.polynomial()(k.gen())
         is_extension = True
 
@@ -182,7 +182,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         try:
             k = PolynomialRing(RationalField(), 1, [base_ring.variable_name()], 'lex')
         except TypeError:
-            raise TypeError, "The multivariate polynomial ring in a single variable %s in lex order over Rational Field is supposed to be of type %s"%(base_ring.variable_name(), MPolynomialRing_libsingular)
+            raise TypeError("The multivariate polynomial ring in a single variable %s in lex order over Rational Field is supposed to be of type %s" % (base_ring.variable_name(), MPolynomialRing_libsingular))
         minpoly = base_ring.polynomial()(k.gen())
         is_extension = True
 
@@ -216,7 +216,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             try:
                 characteristic = ch
             except OverflowError:
-                raise NotImplementedError("Characteristic %d too big."%ch)
+                raise NotImplementedError("Characteristic %d too big." % ch)
             ringtype = 2
             ringflaga = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
             mpz_init_set_ui(ringflaga, characteristic)
@@ -521,7 +521,7 @@ cdef void singular_ring_delete(ring *doomed):
         sage: _ = gc.collect()
     """
     if doomed==NULL:
-        print 'singular_ring_delete(ring*) called with NULL pointer.'
+        print('singular_ring_delete(ring*) called with NULL pointer.')
         # this function is typically called in __deallocate__, so we can't raise an exception
         import traceback
         traceback.print_stack()
@@ -579,7 +579,6 @@ cpdef poison_currRing(frame, event, arg):
         <built-in function poison_currRing>
         sage: sys.settrace(previous_trace_func)  # switch it off again
     """
-    #print "poisoning currRing"
     global currRing
     currRing = <ring*>NULL
     return poison_currRing
@@ -601,7 +600,7 @@ cpdef print_currRing():
         DEBUG: currRing == 0x0
     """
     cdef size_t addr = <size_t>currRing
-    print "DEBUG: currRing == "+str(hex(addr))
+    print("DEBUG: currRing == " + str(hex(addr)))
 
 def currRing_wrapper():
     """

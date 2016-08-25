@@ -15,6 +15,7 @@ some utility functions for this purpose.
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function
 
 
 # TODO: this module is a clear candidate for cythonizing. Need to
@@ -85,14 +86,14 @@ def dhsw_snf(mat, verbose=False):
     add_to_rank = 0
     zero_cols = 0
     if verbose:
-        print "old matrix: %s by %s" % (rows, cols)
+        print("old matrix: %s by %s" % (rows, cols))
     # leading_positions: dictionary of lists indexed by row: if first
     # nonzero entry in column c is in row r, then leading_positions[r]
     # should contain c
     leading_positions = {}
     # pass 1:
     if verbose:
-        print "starting pass 1"
+        print("starting pass 1")
     for j in range(cols):
         # new_col is a matrix with one column: sparse matrices seem to
         # be less buggy than sparse vectors (#5184, #5185), and
@@ -134,7 +135,7 @@ def dhsw_snf(mat, verbose=False):
     zero_cols = 0
     new_mat = new_mat.matrix_from_columns(range(cols))
     if verbose:
-        print "starting pass 2"
+        print("starting pass 2")
     keep_columns = range(cols)
     check_leading = True
     while check_leading:
@@ -180,7 +181,7 @@ def dhsw_snf(mat, verbose=False):
         leading_positions = new_leading
     # pass 3: get rid of columns which start with 1 or -1
     if verbose:
-        print "starting pass 3"
+        print("starting pass 3")
     max_leading = 1
     for i in leading_positions:
         j = leading_positions[i][0]
@@ -197,14 +198,14 @@ def dhsw_snf(mat, verbose=False):
     if max_leading != 1:
         new_mat = new_mat.matrix_from_columns(keep_columns)
         if verbose:
-            print "new matrix: %s by %s" % (new_mat.nrows(), new_mat.ncols())
+            print("new matrix: %s by %s" % (new_mat.nrows(), new_mat.ncols()))
         if new_mat.is_sparse():
             ed = [1]*add_to_rank + new_mat.dense_matrix().elementary_divisors()
         else:
             ed = [1]*add_to_rank + new_mat.elementary_divisors()
     else:
         if verbose:
-            print "new matrix: all pivots are 1 or -1"
+            print("new matrix: all pivots are 1 or -1")
         ed = [1]*add_to_rank
 
     if len(ed) < rows:

@@ -335,7 +335,7 @@ cdef class Morphism(Map):
             definition = repr(self)
         return hash((domain, codomain, definition))
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         if left is right: return 0
         domain = left.domain()
         c = cmp(domain, right.domain())
@@ -416,9 +416,9 @@ cdef class SetMorphism(Morphism):
         """
         INPUT:
 
-         - ``parent`` -- a Homset
-         - ``function`` -- a Python function that takes elements
-           of the domain as input and returns elements of the domain.
+        - ``parent`` -- a Homset
+        - ``function`` -- a Python function that takes elements
+          of the domain as input and returns elements of the domain.
 
         EXAMPLES::
 
@@ -439,7 +439,7 @@ cdef class SetMorphism(Morphism):
         """
         INPUT:
 
-         - ``x`` -- an element of ``self.domain()``
+        - ``x`` -- an element of ``self.domain()``
 
         Returns the result of ``self`` applied on ``x``.
 
@@ -476,13 +476,13 @@ cdef class SetMorphism(Morphism):
         try:
             return self._function(x, *args, **kwds)
         except Exception:
-            raise TypeError("Underlying map %s does not accept additional arguments"%type(self._function))
+            raise TypeError("Underlying map %s does not accept additional arguments" % type(self._function))
 
     cdef dict _extra_slots(self, dict _slots):
         """
         INPUT:
 
-         - ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         Extends the dictionary with extra slots for this class.
 
@@ -553,9 +553,10 @@ cdef class SetMorphism(Morphism):
     def __richcmp__(self, right, int op):
         """
         INPUT:
-         - ``self``  -- SetMorphism
-         - ``right`` -- any object
-         - ``op``    -- integer
+
+        - ``self``  -- SetMorphism
+        - ``right`` -- any object
+        - ``op``    -- integer
 
         EXAMPLES::
 

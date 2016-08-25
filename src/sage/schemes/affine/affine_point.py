@@ -348,6 +348,71 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
                 newP += p(t)
         return(WR(newP))
 
+    def intersection_multiplicity(self, X):
+        r"""
+        Return the intersection multiplicity of the codomain of this point and ``X`` at this point.
+
+        This uses the intersection_multiplicity implementations for projective/affine subschemes. This
+        point must be a point on an affine subscheme.
+
+        INPUT:
+
+        - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point.
+
+        OUTPUT: Integer.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(17), 2)
+            sage: X = A.subscheme([y^2 - x^3 + 2*x^2 - x])
+            sage: Y = A.subscheme([y - 2*x + 2])
+            sage: Q1 = Y([1,0])
+            sage: Q1.intersection_multiplicity(X)
+            2
+            sage: Q2 = X([4,6])
+            sage: Q2.intersection_multiplicity(Y)
+            1
+
+        ::
+
+            sage: A.<x,y,z,w> = AffineSpace(QQ, 4)
+            sage: X = A.subscheme([x^2 - y*z^2, z - 2*w^2])
+            sage: Q = A([2,1,2,-1])
+            sage: Q.intersection_multiplicity(X)
+            Traceback (most recent call last):
+            ...
+            TypeError: this point must be a point on an affine subscheme
+        """
+        from sage.schemes.affine.affine_space import is_AffineSpace
+        if is_AffineSpace(self.codomain()):
+            raise TypeError("this point must be a point on an affine subscheme")
+        return self.codomain().intersection_multiplicity(X, self)
+
+    def multiplicity(self):
+        r"""
+        Return the multiplicity of this point on its codomain.
+
+        Uses the subscheme multiplicity implementation. This point must be a point on an
+        affine subscheme.
+
+        OUTPUT: an integer.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: X = A.subscheme([y^2 - x^7*z])
+            sage: Q1 = X([1,1,1])
+            sage: Q1.multiplicity()
+            1
+            sage: Q2 = X([0,0,2])
+            sage: Q2.multiplicity()
+            2
+        """
+        from sage.schemes.affine.affine_space import is_AffineSpace
+        if is_AffineSpace(self.codomain()):
+            raise TypeError("this point must be a point on an affine subscheme")
+        return self.codomain().multiplicity(self)
+
 class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field):
 
     def __hash__(self):

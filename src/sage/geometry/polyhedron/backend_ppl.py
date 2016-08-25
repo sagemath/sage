@@ -1,6 +1,7 @@
 """
 The PPL (Parma Polyhedra Library) backend for polyhedral computations
 """
+from __future__ import absolute_import
 
 from sage.rings.all import ZZ, QQ
 from sage.rings.integer import LCM_list
@@ -11,9 +12,9 @@ from sage.libs.ppl import (
     Variable, Linear_Expression,
     line, ray, point )
 
-from base import Polyhedron_base
-from base_QQ import Polyhedron_QQ
-from base_ZZ import Polyhedron_ZZ
+from .base import Polyhedron_base
+from .base_QQ import Polyhedron_QQ
+from .base_ZZ import Polyhedron_ZZ
 
 
 #########################################################################

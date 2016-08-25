@@ -86,13 +86,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import print_function
+from __future__ import absolute_import
 
 # standard Python libraries
 import re
 
 # Sage library
-from ring import SR
-from expression import Expression
+from .ring import SR
+from .expression import Expression
 from sage.interfaces.tab_completion import ExtraTabCompletion
 
 ###############################################################################

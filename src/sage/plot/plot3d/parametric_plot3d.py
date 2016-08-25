@@ -2,9 +2,10 @@
 """
 Parametric Plots
 """
+from __future__ import absolute_import
 
-from parametric_surface import ParametricSurface
-from shapes2 import line3d
+from .parametric_surface import ParametricSurface
+from .shapes2 import line3d
 from sage.arith.srange import xsrange, srange
 from sage.structure.element import is_Vector
 

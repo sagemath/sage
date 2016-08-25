@@ -43,7 +43,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 import math
 
@@ -65,11 +66,11 @@ from sage.misc.fast_methods import WithEqualityById
 import sage.schemes.projective.projective_space as projective_space
 from sage.schemes.projective.projective_homset import SchemeHomset_points_abelian_variety_field
 
-import ell_point
-import ell_torsion
-import constructor
-import formal_group
-import weierstrass_morphism as wm
+from . import ell_point
+from . import ell_torsion
+from . import constructor
+from . import formal_group
+from . import weierstrass_morphism as wm
 
 
 sqrt = math.sqrt
@@ -78,7 +79,7 @@ exp = math.exp
 oo = rings.infinity       # infinity
 O = rings.O         # big oh
 
-import sage.schemes.plane_curves.projective_curve as plane_curve
+import sage.schemes.curves.projective_curve as plane_curve
 
 def is_EllipticCurve(x):
     r"""
@@ -95,7 +96,7 @@ def is_EllipticCurve(x):
     """
     return isinstance(x, EllipticCurve_generic)
 
-class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectiveCurve_generic):
+class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
     r"""
     Elliptic curve over a generic base ring.
 
@@ -153,7 +154,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectiveCurve_generi
         a1, a2, a3, a4, a6 = ainvs
         f = y**2*z + (a1*x + a3*z)*y*z \
             - (x**3 + a2*x**2*z + a4*x*z**2 + a6*z**3)
-        plane_curve.ProjectiveCurve_generic.__init__(self, PP, f)
+        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f)
 
         # See #1975: we deliberately set the class to
         # EllipticCurvePoint_finite_field for finite rings, so that we
@@ -548,7 +549,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectiveCurve_generi
                     return self._reduce_point(args[0], characteristic)
             args = tuple(args[0])
 
-        return plane_curve.ProjectiveCurve_generic.__call__(self, *args, **kwds)
+        return plane_curve.ProjectivePlaneCurve.__call__(self, *args, **kwds)
 
     def _reduce_point(self, R, p):
         r"""
@@ -2392,17 +2393,17 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectiveCurve_generi
         EXAMPLES::
 
             sage: E = EllipticCurve([1,2,3,4,5])
-            sage: print E
+            sage: E
             Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
             sage: F = E.short_weierstrass_model()
-            sage: print F
+            sage: F
             Elliptic Curve defined by y^2  = x^3 + 4941*x + 185166 over Rational Field
             sage: E.is_isomorphic(F)
             True
             sage: F = E.short_weierstrass_model(complete_cube=False)
-            sage: print F
+            sage: F
             Elliptic Curve defined by y^2  = x^3 + 9*x^2 + 88*x + 464 over Rational Field
-            sage: print E.is_isomorphic(F)
+            sage: E.is_isomorphic(F)
             True
 
         ::
@@ -2428,7 +2429,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectiveCurve_generi
             sage: E.short_weierstrass_model(complete_cube=False).is_isomorphic(E)
             True
         """
-        import constructor
+        from . import constructor
         K = self.base_ring()
 
         # any curve of the form y^2 = x^3 +.. is singular in characteristic 2
@@ -2728,7 +2729,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectiveCurve_generi
 
         TESTS:
 
-        This shows that the bug at trac #4937 is fixed::
+        This shows that the bug at :trac:`4937` is fixed::
 
             sage: a=804515977734860566494239770982282063895480484302363715494873
             sage: b=584772221603632866665682322899297141793188252000674256662071

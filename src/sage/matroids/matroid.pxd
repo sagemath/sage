@@ -103,15 +103,15 @@ cdef class Matroid(SageObject):
     cpdef no_broken_circuits_sets(self, ordering=*)
 
     # isomorphism
-    cpdef is_isomorphic(self, other)
-    cpdef _is_isomorphic(self, other)
+    cpdef is_isomorphic(self, other, certificate=*)
+    cpdef _is_isomorphic(self, other, certificate=*)
     cpdef isomorphism(self, other)
     cpdef _isomorphism(self, other)
     cpdef equals(self, other)
     cpdef is_isomorphism(self, other, morphism)
     cpdef _is_isomorphism(self, other, morphism)
 
-    # minors, dual, trucation
+    # minors, dual, truncation
     cpdef minor(self, contractions=*, deletions=*)
     cpdef contract(self, X)
     cpdef delete(self, X)
@@ -171,6 +171,8 @@ cdef class Matroid(SageObject):
     # optimization
     cpdef max_weight_independent(self, X=*, weights=*)
     cpdef max_weight_coindependent(self, X=*, weights=*)
+    cpdef is_max_weight_independent_generic(self, X=*, weights=*)
+    cpdef is_max_weight_coindependent_generic(self, X=*, weights=*)
     cpdef intersection(self, other, weights=*)
     cpdef _intersection(self, other, weights)
     cpdef _intersection_augmentation(self, other, weights, Y)

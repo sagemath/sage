@@ -1,2 +1,3 @@
-from quartic_constructor import QuarticCurve
+from __future__ import absolute_import
+from .quartic_constructor import QuarticCurve
 

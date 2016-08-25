@@ -82,6 +82,7 @@ NOTE:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.all      import Integer
 from sage.interfaces.all import gap
@@ -1984,7 +1985,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
     We write the cardinality of all transitive groups of degree 5::
 
         sage: for G in TransitiveGroups(5):    # optional - database_gap
-        ...       print G.cardinality()
+        ....:     print(G.cardinality())
         5
         10
         20
@@ -2381,7 +2382,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
     We write the cardinality of all primitive groups of degree 5::
 
         sage: for G in PrimitiveGroups(5):    # optional - database_gap
-        ...       print G.cardinality()
+        ....:     print(G.cardinality())
         5
         10
         20
@@ -2581,7 +2582,7 @@ class PGL(PermutationGroup_plg):
 
             sage: G = PGL(2,3); G
             Permutation Group with generators [(3,4), (1,2,4)]
-            sage: print G
+            sage: print(G)
             The projective general linear group of degree 2 over Finite Field of size 3
             sage: G.base_ring()
             Finite Field of size 3
@@ -2614,7 +2615,7 @@ class PGL(PermutationGroup_plg):
 
             sage: G = PGL(2,3); G
             Permutation Group with generators [(3,4), (1,2,4)]
-            sage: print G
+            sage: print(G)
             The projective general linear group of degree 2 over Finite Field of size 3
         """
         return "The projective general linear group of degree %s over %s"%(self._n, self.base_ring())
@@ -2646,7 +2647,7 @@ class PSL(PermutationGroup_plg):
             12
             sage: G.base_ring()
             Finite Field of size 3
-            sage: print G
+            sage: print(G)
             The projective special linear group of degree 2 over Finite Field of size 3
 
         We create two groups over nontrivial finite fields::
@@ -2700,7 +2701,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,3)
-            sage: print G
+            sage: print(G)
             The projective special linear group of degree 2 over Finite Field of size 3
         """
         return "The projective special linear group of degree %s over %s"%(self._n, self.base_ring())
@@ -2825,7 +2826,7 @@ class PSp(PermutationGroup_plg):
             Permutation Group with generators [(3,4)(6,7)(9,10)(12,13)(17,20)(18,21)(19,22)(23,32)(24,33)(25,34)(26,38)(27,39)(28,40)(29,35)(30,36)(31,37), (1,5,14,17,27,22,19,36,3)(2,6,32)(4,7,23,20,37,13,16,26,40)(8,24,29,30,39,10,33,11,34)(9,15,35)(12,25,38)(21,28,31)]
             sage: G.order()
             25920
-            sage: print G
+            sage: print(G)
             The projective symplectic linear group of degree 4 over Finite Field of size 3
             sage: G.base_ring()
             Finite Field of size 3
@@ -2854,7 +2855,7 @@ class PSp(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSp(4,3)
-            sage: print G
+            sage: print(G)
             The projective symplectic linear group of degree 4 over Finite Field of size 3
         """
         return "The projective symplectic linear group of degree %s over %s"%(self._n, self.base_ring())
@@ -3003,7 +3004,7 @@ class SuzukiGroup(PermutationGroup_unique):
             sage: SuzukiGroup(8)
             Permutation Group with generators [(1,2)(3,10)(4,42)(5,18)(6,50)(7,26)(8,58)(9,34)(12,28)(13,45)(14,44)(15,23)(16,31)(17,21)(19,39)(20,38)(22,25)(24,61)(27,60)(29,65)(30,55)(32,33)(35,52)(36,49)(37,59)(40,54)(41,62)(43,53)(46,48)(47,56)(51,63)(57,64),
             (1,28,10,44)(3,50,11,42)(4,43,53,64)(5,9,39,52)(6,36,63,13)(7,51,60,57)(8,33,37,16)(12,24,55,29)(14,30,48,47)(15,19,61,54)(17,59,22,62)(18,23,34,31)(20,38,49,25)(21,26,45,58)(27,32,41,65)(35,46,40,56)]
-            sage: print SuzukiGroup(8)
+            sage: print(SuzukiGroup(8))
             The Suzuki group over Finite Field in a of size 2^3
 
             sage: G = SuzukiGroup(32, name='alpha')
@@ -3048,7 +3049,7 @@ class SuzukiGroup(PermutationGroup_unique):
         EXAMPLES::
 
             sage: G = SuzukiGroup(32, name='alpha')
-            sage: print G
+            sage: print(G)
             The Suzuki group over Finite Field in alpha of size 2^5
 
         """

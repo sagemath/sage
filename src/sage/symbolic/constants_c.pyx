@@ -10,10 +10,12 @@ Wrapper around Pynac's constants
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
+from __future__ import absolute_import
+
 from sage.symbolic.expression cimport Expression, new_Expression_from_GEx
 from sage.symbolic.ring import SR
 
-from ginac cimport *
+from .ginac cimport *
 
 cdef extern from "pynac/constant.h":
     pass

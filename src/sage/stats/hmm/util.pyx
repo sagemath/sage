@@ -165,8 +165,7 @@ cdef class HMM_Util:
             # Set to 0 negative rows and make sure sum of entries in each
             # row is 1.
             if len(T) != N*N:
-                raise ValueError, "number of entries of transition matrix A must be the square of the number of entries of pi"
+                raise ValueError("number of entries of transition matrix A must be the square of the number of entries of pi")
             for i in range(N):
                 self.normalize_probability_TimeSeries(T, i*N, (i+1)*N)
         return T
-

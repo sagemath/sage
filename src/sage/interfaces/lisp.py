@@ -40,6 +40,7 @@ AUTHORS:
     -- William Stein (first version)
     -- William Stein (2007-06-20): significant improvements.
 """
+from __future__ import absolute_import
 
 ##########################################################################
 #
@@ -53,7 +54,7 @@ AUTHORS:
 
 import random
 
-from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 from sage.structure.element import RingElement, parent
 
 class Lisp(Expect):

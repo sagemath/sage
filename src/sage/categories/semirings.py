@@ -1,6 +1,7 @@
 r"""
 Semirngs
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
@@ -9,7 +10,7 @@ Semirngs
 #******************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+from .magmas_and_additive_magmas import MagmasAndAdditiveMagmas
 
 class Semirings(CategoryWithAxiom):
     """

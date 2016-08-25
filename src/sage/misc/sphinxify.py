@@ -16,6 +16,7 @@ AUTHORS:
 #
 # Distributed under the terms of the BSD License
 #*****************************************************************************
+from __future__ import absolute_import, print_function
 
 import os
 import re
@@ -90,8 +91,8 @@ def sphinxify(docstring, format='html'):
     sys.path = old_sys_path
 
     # We need to remove "_" from __builtin__ that the gettext module installs
-    import __builtin__
-    __builtin__.__dict__.pop('_', None)
+    from six.moves import builtins
+    builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
         output = open(output_name, 'r').read()
@@ -109,7 +110,7 @@ def sphinxify(docstring, format='html'):
         # Remove spurious \(, \), \[, \].
         output = output.replace('\\(', '').replace('\\)', '').replace('\\[', '').replace('\\]', '')
     else:
-        print "BUG -- Sphinx error"
+        print("BUG -- Sphinx error")
         if format == 'html':
             output = '<pre class="introspection">%s</pre>' % docstring
         else:
@@ -123,10 +124,10 @@ def sphinxify(docstring, format='html'):
 if __name__ == '__main__':
     import sys
     if len(sys.argv) == 2:
-        print sphinxify(sys.argv[1])
+        print(sphinxify(sys.argv[1]))
     else:
-        print """Usage:
+        print("""Usage:
 %s 'docstring'
 
 docstring -- docstring to be processed
-"""
+""")

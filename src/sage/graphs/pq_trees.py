@@ -113,6 +113,7 @@ Methods and functions
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL) #
 #                         http://www.gnu.org/licenses/                         #
 ################################################################################
+from __future__ import print_function
 
 # Constants, to make the code more readable
 
@@ -177,7 +178,7 @@ def reorder_sets(sets):
         sage: ordered = reorder_sets(seq)
         sage: if not 0 in ordered[0]:
         ...      ordered = ordered.reverse()
-        sage: print ordered
+        sage: print(ordered)
         [{0, 1, 2}, {1, 2, 3}, {2, 3, 4}, {3, 4, 5}, {4, 5, 6}, {5, 6, 7}, {8, 6, 7}, {8, 9, 7}, {8, 9, 10}, {9, 10, 11}, {10, 11, 12}, {11, 12, 13}, {12, 13, 14}, {13, 14, 15}]
     """
     if len(sets) <= 2:
@@ -277,7 +278,7 @@ class PQ:
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
             sage: for i in p:
-            ...      print i
+            ....:     print(i)
             {1, 2}
             {2, 3}
             ('P', [{2, 4}, {8, 2}, {9, 2}])
@@ -327,7 +328,7 @@ class PQ:
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
-            sage: print p
+            sage: print(p)
             ('Q', [{1, 2}, {2, 3}, ('P', [{2, 4}, {8, 2}, {9, 2}])])
         """
         return str((("P" if isinstance(self,P) else "Q"),self._children))
@@ -486,7 +487,7 @@ class P(PQ):
             sage: p = P([[0,3], [1,2], [2,3], [2,4], [4,0],[2,8], [2,9]])
             sage: p.set_contiguous(0)
             (1, True)
-            sage: print p
+            sage: print(p)
             ('P', [{1, 2}, {2, 3}, {2, 4}, {8, 2}, {9, 2}, ('P', [{0, 3}, {0, 4}])])
 
         Impossible situation::
@@ -707,7 +708,7 @@ class P(PQ):
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = P([[2,4], [1,2], [0,8], [0,5]])
             sage: for o in p.orderings():
-            ....:    print o
+            ....:    print(o)
             ({2, 4}, {1, 2}, {0, 8}, {0, 5})
             ({2, 4}, {1, 2}, {0, 5}, {0, 8})
             ({2, 4}, {0, 8}, {1, 2}, {0, 5})
@@ -767,7 +768,7 @@ class Q(PQ):
             sage: q = Q([[2,3], Q([[3,0],[3,1]]), Q([[4,0],[4,5]])])
             sage: q.set_contiguous(0)
             (1, False)
-            sage: print q
+            sage: print(q)
             ('Q', [{2, 3}, {1, 3}, {0, 3}, {0, 4}, {4, 5}])
 
         Impossible situation::
@@ -1041,7 +1042,7 @@ class Q(PQ):
             sage: from sage.graphs.pq_trees import P, Q
             sage: q = Q([[2,4], [1,2], [0,8], [0,5]])
             sage: for o in q.orderings():
-            ....:    print o
+            ....:    print(o)
             ({2, 4}, {1, 2}, {0, 8}, {0, 5})
             ({0, 5}, {0, 8}, {1, 2}, {2, 4})
         """

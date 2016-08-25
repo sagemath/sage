@@ -37,6 +37,9 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
+
 from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.misc.all import cached_method
@@ -46,6 +49,7 @@ from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMuta
 from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part, _digraph_mutate, _matrix_to_digraph, _dg_canonical_form, _mutation_class_iter, _digraph_to_dig6, _dig6_to_matrix
 from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type, _mutation_type_from_data, is_mutation_finite
 
+from sage.misc.decorators import rename_keyword
 
 class ClusterQuiver(SageObject):
     """
@@ -200,7 +204,7 @@ class ClusterQuiver(SageObject):
         # constructs a quiver from a mutation type
         if type( data ) in [QuiverMutationType_Irreducible,QuiverMutationType_Reducible]:
             if frozen is not None:
-                print 'The input data is a quiver, therefore the additional parameter frozen is ignored.'
+                print('The input data is a quiver, therefore the additional parameter frozen is ignored.')
 
             mutation_type = data
             self.__init__( mutation_type.standard_quiver() )
@@ -209,7 +213,7 @@ class ClusterQuiver(SageObject):
         # NOTE: for now, any string representing a *reducible type* is coerced into the standard quiver, but there is now more flexibility in how to input a connected (irreducible) quiver.
         elif type( data ) in [list,tuple] and ( isinstance(data[0], str) or all(type( comp ) in [list,tuple] and isinstance(comp[0], str) for comp in data) ):
             if frozen is not None:
-                print 'The input data is a quiver, therefore the additional parameter frozen is ignored.'
+                print('The input data is a quiver, therefore the additional parameter frozen is ignored.')
             mutation_type = QuiverMutationType( data )
 
             # The command QuiverMutationType_Irreducible (which is not imported globally) already creates the desired digraph as long as we bypass the mutation type checking of QuiverMutationType and format the input appropriately.  Thus we handle several special cases this way.
@@ -262,7 +266,7 @@ class ClusterQuiver(SageObject):
         # constructs a quiver from a quiver
         elif isinstance(data, ClusterQuiver):
             if frozen is not None:
-                print 'The input data is a quiver, therefore the additional parameter frozen is ignored.'
+                print('The input data is a quiver, therefore the additional parameter frozen is ignored.')
 
             self._M = copy(data._M)
             self._M.set_immutable()
@@ -278,7 +282,7 @@ class ClusterQuiver(SageObject):
             if not _principal_part(data).is_skew_symmetrizable( positive=True ):
                 raise ValueError('The principal part of the matrix data must be skew-symmetrizable.')
             if frozen is not None:
-                print 'The input data is a matrix, therefore the additional parameter frozen is ignored.'
+                print('The input data is a matrix, therefore the additional parameter frozen is ignored.')
 
             self._M = copy(data).sparse_matrix()
             self._M.set_immutable()
@@ -969,14 +973,15 @@ class ClusterQuiver(SageObject):
         """
         return self._m
 
-    def canonical_label( self, certify=False ):
+    @rename_keyword(deprecation=21111, certify='certificate')
+    def canonical_label( self, certificate=False ):
         """
         Returns the canonical labelling of ``self``, see
         :meth:`sage.graphs.graph.GenericGraph.canonical_label`.
 
         INPUT:
 
-        - ``certify`` -- (default: False) if True, the dictionary from ``self.vertices()`` to the vertices of the returned quiver is returned as well.
+        - ``certificate`` -- (default: False) if True, the dictionary from ``self.vertices()`` to the vertices of the returned quiver is returned as well.
 
         EXAMPLES::
 
@@ -986,7 +991,7 @@ class ClusterQuiver(SageObject):
             sage: T = Q.canonical_label(); T.digraph().edges()
             [(0, 3, (1, -1)), (1, 2, (1, -1)), (1, 3, (1, -1))]
 
-            sage: T,iso = Q.canonical_label(certify=True); T.digraph().edges(); iso
+            sage: T,iso = Q.canonical_label(certificate=True); T.digraph().edges(); iso
             [(0, 3, (1, -1)), (1, 2, (1, -1)), (1, 3, (1, -1))]
             {0: 0, 1: 3, 2: 1, 3: 2}
 
@@ -996,8 +1001,16 @@ class ClusterQuiver(SageObject):
             sage: Q.canonical_label()
             Quiver on 3 vertices of type [ ['A', 1], ['B', 2] ]
 
-            sage: Q.canonical_label(certify=True)
+            sage: Q.canonical_label(certificate=True)
             (Quiver on 3 vertices of type [ ['A', 1], ['B', 2] ], {0: 1, 1: 2, 2: 0})
+
+        TESTS::
+
+            sage: Q = ClusterQuiver(['A',4])
+            sage: _,iso = Q.canonical_label(certify=True); iso
+            doctest:...: DeprecationWarning: use the option 'certificate' instead of 'certify'
+            See http://trac.sagemath.org/21111 for details.
+            {0: 0, 1: 3, 2: 1, 3: 2}
         """
         n = self._n
         m = self._m
@@ -1018,7 +1031,7 @@ class ClusterQuiver(SageObject):
                 for i in range( len( CC_new ) ):
                     Q._mutation_type.append( copy( self._mutation_type.irreducible_components()[ comp_iso[i] ] ) )
                 Q._mutation_type = QuiverMutationType( Q._mutation_type )
-        if certify:
+        if certificate:
             return Q, iso
         else:
             return Q
@@ -1457,14 +1470,14 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['A',3])
             sage: it = Q.mutation_class_iter()
-            sage: for T in it: print T
+            sage: for T in it: print(T)
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
 
             sage: it = Q.mutation_class_iter(depth=1)
-            sage: for T in it: print T
+            sage: for T in it: print(T)
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
@@ -1476,14 +1489,14 @@ class ClusterQuiver(SageObject):
             Depth: 2     found: 4          Time: ... s
 
             sage: it = Q.mutation_class_iter(return_paths=True)
-            sage: for T in it: print T
+            sage: for T in it: print(T)
             (Quiver on 3 vertices of type ['A', 3], [])
             (Quiver on 3 vertices of type ['A', 3], [1])
             (Quiver on 3 vertices of type ['A', 3], [0])
             (Quiver on 3 vertices of type ['A', 3], [0, 1])
 
             sage: it = Q.mutation_class_iter(up_to_equivalence=False)
-            sage: for T in it: print T
+            sage: for T in it: print(T)
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
@@ -1500,7 +1513,7 @@ class ClusterQuiver(SageObject):
             Quiver on 3 vertices of type ['A', 3]
 
             sage: it = Q.mutation_class_iter(return_paths=True,up_to_equivalence=False)
-            sage: for T in it: print T
+            sage: for T in it: print(T)
             (Quiver on 3 vertices of type ['A', 3], [])
             (Quiver on 3 vertices of type ['A', 3], [2])
             (Quiver on 3 vertices of type ['A', 3], [1])
@@ -1518,7 +1531,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['A',3])
             sage: it = Q.mutation_class_iter(data_type='path')
-            sage: for T in it: print T
+            sage: for T in it: print(T)
             []
             [1]
             [0]
@@ -1583,14 +1596,14 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['A',3])
             sage: Ts = Q.mutation_class()
-            sage: for T in Ts: print T
+            sage: for T in Ts: print(T)
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
 
             sage: Ts = Q.mutation_class(depth=1)
-            sage: for T in Ts: print T
+            sage: for T in Ts: print(T)
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
@@ -1601,14 +1614,14 @@ class ClusterQuiver(SageObject):
             Depth: 2     found: 4          Time: ... s
 
             sage: Ts = Q.mutation_class(return_paths=True)
-            sage: for T in Ts: print T
+            sage: for T in Ts: print(T)
             (Quiver on 3 vertices of type ['A', 3], [])
             (Quiver on 3 vertices of type ['A', 3], [1])
             (Quiver on 3 vertices of type ['A', 3], [0])
             (Quiver on 3 vertices of type ['A', 3], [0, 1])
 
             sage: Ts = Q.mutation_class(up_to_equivalence=False)
-            sage: for T in Ts: print T
+            sage: for T in Ts: print(T)
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
             Quiver on 3 vertices of type ['A', 3]
@@ -1625,7 +1638,7 @@ class ClusterQuiver(SageObject):
             Quiver on 3 vertices of type ['A', 3]
 
             sage: Ts = Q.mutation_class(return_paths=True,up_to_equivalence=False)
-            sage: for T in Ts: print T
+            sage: for T in Ts: print(T)
             (Quiver on 3 vertices of type ['A', 3], [])
             (Quiver on 3 vertices of type ['A', 3], [2])
             (Quiver on 3 vertices of type ['A', 3], [1])
@@ -1849,7 +1862,7 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only makes sense for quivers of finite type
         """
-        from cluster_seed import ClusterSeed
+        from .cluster_seed import ClusterSeed
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
@@ -1897,7 +1910,7 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only supported for quivers of finite type
         """
-        from cluster_seed import ClusterSeed
+        from .cluster_seed import ClusterSeed
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 

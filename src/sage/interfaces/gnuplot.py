@@ -16,6 +16,7 @@ Interface to the Gnuplot interpreter
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import os
 import time
@@ -88,9 +89,9 @@ class Gnuplot(SageObject):
                     file += '.eps'
                 self('set terminal postscript eps enhanced')
             #self("set output '%s'"%file)
-            tmp = 'gnuplot_tmp%s'%file[-4:]
-            self("set output '%s'"%tmp)
-            print "Saving plot to %s"%file
+            tmp = 'gnuplot_tmp%s' % file[-4:]
+            self("set output '%s'" % tmp)
+            print("Saving plot to %s" % file)
             self(cmd)
             time.sleep(0.1)
             os.system('mv %s %s 2>/dev/null'%(tmp, file))

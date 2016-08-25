@@ -1,6 +1,7 @@
 """
 Hyperelliptic curves over the rationals
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -8,7 +9,7 @@ Hyperelliptic curves over the rationals
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import hyperelliptic_generic
+from . import hyperelliptic_generic
 from sage.rings.padics.all import is_pAdicField, is_pAdicRing, pAdicField
 
 class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve_generic):
@@ -17,7 +18,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
 
         # BUG: should get this method from HyperellipticCurve_generic
         def my_chage_ring(self, R):
-            from constructor import HyperellipticCurve
+            from .constructor import HyperellipticCurve
             f, h = self._hyperelliptic_polynomials
             y = self._printing_ring.gen()
             x = self._printing_ring.base_ring().gen()

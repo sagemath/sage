@@ -17,7 +17,14 @@ from sage_bootstrap.cksum import CksumAlgorithm
 
 class CksumTestCase(unittest.TestCase):
 
-    def test_cksum(self):
+    def test_cksum_bytes(self):
+        cksum = CksumAlgorithm()
+        cksum.update(b'The quick brown fox jumps over the lazy dog\n')
+        self.assertEqual(cksum.hexdigest(), '2382472371')
+
+    def test_cksum_string(self):
         cksum = CksumAlgorithm()
         cksum.update('The quick brown fox jumps over the lazy dog\n')
         self.assertEqual(cksum.hexdigest(), '2382472371')
+        
+        

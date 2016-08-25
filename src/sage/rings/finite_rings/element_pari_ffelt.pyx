@@ -193,6 +193,20 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         """
         Initialise ``self`` to an FFELT constructed from the Sage
         object `x`.
+
+        TESTS:
+
+        Conversion of elements of the underlying vector space works in
+        large characteristic (see :trac:`21186`)::
+
+            sage: p = 13189065031705623239
+            sage: Fq = FiniteField(p^3, "a")
+            sage: Fq_X = PolynomialRing(Fq, "x")
+            sage: pol = Fq_X("x^9 + 13189065031705622723*x^7 + 13189065031705622723*x^6 + 9288*x^5 + 18576*x^4 + 13189065031705590731*x^3 + 13189065031705497851*x^2 + 13189065031705497851*x + 13189065031705581443")
+            sage: R = [r[0] for r in pol.roots()]
+            sage: prod(Fq_X.gen() - r for r in R) == pol
+            True
+
         """
         cdef GEN f, g, result, x_GEN
         cdef long i, n, t
@@ -279,7 +293,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                 f = cgetg(n + 2, t_VECSMALL)
                 set_gel(f, 1, gmael(g, 2, 1))
                 for i in xrange(n):
-                    f[i + 2] = x[i]
+                    set_uel(f, i + 2, x[i])
                 if t == t_FF_F2xq:
                     f = Flx_to_F2x(f)
             else:
@@ -383,7 +397,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         x.construct(self.val)
         return x
 
-    cpdef int _cmp_(FiniteFieldElement_pari_ffelt self, Element other) except -2:
+    cpdef int _cmp_(self, other) except -2:
         """
         Comparison of finite field elements.
 
@@ -443,7 +457,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_off()
         return r
 
-    cpdef ModuleElement _add_(FiniteFieldElement_pari_ffelt self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Addition.
 
@@ -459,7 +473,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef ModuleElement _sub_(FiniteFieldElement_pari_ffelt self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Subtraction.
 
@@ -475,7 +489,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef RingElement _mul_(FiniteFieldElement_pari_ffelt self, RingElement right):
+    cpdef _mul_(self, right):
         """
         Multiplication.
 
@@ -491,7 +505,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef RingElement _div_(FiniteFieldElement_pari_ffelt self, RingElement right):
+    cpdef _div_(self, right):
         """
         Division.
 
@@ -756,8 +770,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: F = FiniteField(7^2, 'a', impl='pari_ffelt')
             sage: F(2).sqrt()
             4
-            sage: F(3).sqrt()
-            5*a + 1
+            sage: F(3).sqrt() in (2*F.gen() + 6, 5*F.gen() + 1)
+            True
             sage: F(3).sqrt()**2
             3
             sage: F(4).sqrt(all=True)

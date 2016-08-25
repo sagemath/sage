@@ -1,9 +1,10 @@
 """
 Base class for polyhedra over `\QQ`
 """
+from __future__ import absolute_import
 
 from sage.rings.all import QQ
-from base import Polyhedron_base
+from .base import Polyhedron_base
 
 
 class Polyhedron_QQ(Polyhedron_base):

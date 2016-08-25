@@ -7,6 +7,7 @@ Bindable classes
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import functools
 from sage.misc.nested_class import NestedClassMetaclass
@@ -32,14 +33,14 @@ class BindableClass(object):
         ...
         ...       class Inner:
         ...           def __init__(self, *args):
-        ...               print args
+        ...               print(args)
         ...
         ...       def f(self, *args):
-        ...           print self, args
+        ...           print("{} {}".format(self, args))
         ...
         ...       @staticmethod
         ...       def f_static(*args):
-        ...           print args
+        ...           print(args)
         ...
         sage: outer = Outer()
 
@@ -84,7 +85,7 @@ class BindableClass(object):
         ...       class Inner(BindableClass):
         ...           " some documentation "
         ...           def __init__(self, outer, *args):
-        ...               print outer, args
+        ...               print("{} {}".format(outer, args))
 
     Calling ``Outer.Inner`` returns the (unbound) class as usual::
 

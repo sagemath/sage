@@ -1065,6 +1065,28 @@ p-adic functions::
 
 Elliptic curves::
 
+    sage: e = pari([0,1,0,1,0]).ellinit(); e
+    [0, 1, 0, 1, 0, 4, 2, 0, -1, -32, 224, -48, 2048/3, Vecsmall([1]), [Vecsmall([64, -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+
+    sage: pari([0,1/2,0,-3/4,0]).ellinit()
+    [0, 1/2, 0, -3/4, 0, 2, -3/2, 0, -9/16, 40, -116, 117/4, 256000/117, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+    sage: pari([0,0.5,0,-0.75,0]).ellinit()
+    [0, 0.500000000000000, 0, -0.750000000000000, 0, 2.00000000000000, -1.50000000000000, 0, -0.562500000000000, 40.0000000000000, -116.000000000000, 29.2500000000000, 2188.03418803419, Vecsmall([0]), [Vecsmall([64, 1])], [0, 0, 0, 0]]
+    sage: pari([0,I,0,1,0]).ellinit()
+    [0, I, 0, 1, 0, 4*I, 2, 0, -1, -64, 352*I, -80, 16384/5, Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
+    sage: x = SR.symbol('x')
+    sage: pari([0,x,0,2*x,1]).ellinit()
+    [0, x, 0, 2*x, 1, 4*x, 4*x, 4, -4*x^2 + 4*x, 16*x^2 - 96*x, -64*x^3 + 576*x^2 - 864, 64*x^4 - 576*x^3 + 576*x^2 - 432, (256*x^6 - 4608*x^5 + 27648*x^4 - 55296*x^3)/(4*x^4 - 36*x^3 + 36*x^2 - 27), Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
+
+    sage: e = pari([0,1,1,-2,0]).ellinit()
+    sage: e.ellheight([1,0])
+    0.476711659343740
+    sage: e.ellheight([1,0], precision=128).sage()
+    0.47671165934373953737948605888465305945902294218            # 32-bit
+    0.476711659343739537379486058884653059459022942211150879336  # 64-bit
+    sage: e.ellheight([1, 0], [-1, 1])
+    0.418188984498861
+
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: x = pari([1,0])
     sage: e.ellisoncurve([1,4])
@@ -1184,9 +1206,9 @@ Elliptic curves::
     sage: e.elllseries(2.1)
     0.402838047956645
     sage: e.elllseries(1, precision=128)
-    6.21952537507477 E-39
+    3.19632265064095 E-40
     sage: e.elllseries(1, precision=256)
-    2.95993347819786 E-77
+    8.68747983667209 E-79
     sage: e.elllseries(-2)
     0
     sage: e.elllseries(2.1, A=1.1)
@@ -1602,4 +1624,17 @@ General number fields::
     Traceback (most recent call last):
     ...
     PariError: domain error in quadray: isfundamental(D) = 0
+
+    sage: x = SR.symbol('x')
+    sage: F = NumberField(x^3-2,'alpha')
+    sage: F._pari_()[0].nfdisc()
+    -108
+    sage: G = NumberField(x^5-11,'beta')
+    sage: G._pari_()[0].nfdisc()
+    45753125
+    sage: f = x^3-2
+    sage: f._pari_()
+    x^3 - 2
+    sage: f._pari_().nfdisc()
+    -108
 """

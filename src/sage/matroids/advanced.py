@@ -46,14 +46,15 @@ AUTHORS:
 
 - Stefan van Zwam (2013-04-01): initial version
 """
+from __future__ import absolute_import
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from minor_matroid import MinorMatroid
-from dual_matroid import DualMatroid
-from rank_matroid import RankMatroid
-from circuit_closures_matroid import CircuitClosuresMatroid
-from basis_matroid import BasisMatroid
-from linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
-import lean_matrix
-from extension import LinearSubclasses, MatroidExtensions
+from .minor_matroid import MinorMatroid
+from .dual_matroid import DualMatroid
+from .rank_matroid import RankMatroid
+from .circuit_closures_matroid import CircuitClosuresMatroid
+from .basis_matroid import BasisMatroid
+from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from .utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
+from . import lean_matrix
+from .extension import LinearSubclasses, MatroidExtensions

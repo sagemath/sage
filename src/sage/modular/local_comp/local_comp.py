@@ -21,6 +21,7 @@ AUTHORS:
 - David Loeffler
 - Jared Weinstein
 """
+from __future__ import absolute_import
 
 import operator
 from sage.structure.sage_object     import SageObject
@@ -31,8 +32,8 @@ from sage.misc.cachefunc            import cached_method
 from sage.misc.abstract_method      import abstract_method
 from sage.structure.sequence        import Sequence
 
-from type_space                     import TypeSpace
-from smoothchar                     import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
+from .type_space                     import TypeSpace
+from .smoothchar                     import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
 
 def LocalComponent(f, p, twist_factor=None):
     r"""

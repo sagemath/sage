@@ -39,6 +39,9 @@ Authors:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
@@ -53,9 +56,9 @@ from sage.misc.misc import uniq
 from sage.functions.generalized import sgn
 from sage.misc.flatten import flatten
 from sage.combinat.skew_partition import SkewPartition
-from sage.combinat.tableau import TableauOptions
+from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Composition
-import cartesian_product
+from . import cartesian_product
 import copy
 
 def WeakTableau(t, k, inner_shape = [], representation = "core"):
@@ -423,9 +426,9 @@ class WeakTableau_abstract(ClonableList):
             [s2*s0, s3*s2]
         """
         if self.parent()._representation in ['core', 'bounded']:
-            print self._repr_diagram()
+            print(self._repr_diagram())
         else:
-            print self
+            print(self)
 
     def __hash__(self):
         r"""
@@ -479,7 +482,7 @@ class WeakTableau_abstract(ClonableList):
             return "%s"%x
         if self.parent()._representation in ['core', 'bounded']:
             t = [[chi(x) for x in row] for row in self]
-            from output import tex_from_array
+            from .output import tex_from_array
             return tex_from_array(t)
         else:
             return "["+"".join(self[i]._latex_()+',' for i in range(len(self)-1))+self[len(self)-1]._latex_()+"]"
@@ -747,7 +750,7 @@ class WeakTableau_core(WeakTableau_abstract):
         EXAMPLES::
 
             sage: t = WeakTableau([[None, None, 2, 3, 4], [1, 4], [2]], 3)
-            sage: print t._repr_diagram()
+            sage: print(t._repr_diagram())
             .  .  2  3  4
             1  4
             2
@@ -1458,12 +1461,12 @@ class WeakTableau_bounded(WeakTableau_abstract):
         EXAMPLES::
 
             sage: t = WeakTableau([[None, None, 1], [2, 4], [3]], 3, representation = 'bounded')
-            sage: print t._repr_diagram()
+            sage: print(t._repr_diagram())
             .  .  1
             2  4
             3
             sage: t = WeakTableau([[1,1,1],[2,2],[3]], 3, representation = 'bounded')
-            sage: print t._repr_diagram()
+            sage: print(t._repr_diagram())
             1  1  1
             2  2
             3
@@ -2680,20 +2683,20 @@ class StrongTableau(ClonableList):
             sage: T = StrongTableau([[-1,-2,3],[-3]],2)
             sage: T
             [[-1, -2, 3], [-3]]
-            sage: Tableaux.global_options(display="diagram")
+            sage: Tableaux.options(display="diagram")
             sage: T
              -1 -2  3
              -3
-            sage: Tableaux.global_options(convention="French")
+            sage: Tableaux.options(convention="French")
             sage: T
              -3
              -1 -2  3
-            sage: Tableaux.global_options(display="compact")
+            sage: Tableaux.options(display="compact")
             sage: T
             -1,-2,3/-3
-            sage: Tableaux.global_options(display="list",convention="English")
+            sage: Tableaux.options(display="list",convention="English")
         """
-        return self.parent().global_options.dispatch(self, '_repr_', 'display')
+        return self.parent().options._dispatch(self, '_repr_', 'display')
 
     def cell_of_marked_head(self, v):
         r"""
@@ -3288,7 +3291,7 @@ class StrongTableau(ClonableList):
               3
               3
               3
-            sage: Tableaux.global_options(convention="French")
+            sage: Tableaux.options(convention="French")
             sage: T.pp()
               3
               3
@@ -3298,9 +3301,9 @@ class StrongTableau(ClonableList):
              -1 -2
               .  .
               .  . -1 -2
-            sage: Tableaux.global_options(convention="English")
+            sage: Tableaux.options(convention="English")
         """
-        print self._repr_diagram()
+        print(self._repr_diagram())
 
     def outer_shape( self ):
         r"""
@@ -3606,7 +3609,7 @@ class StrongTableau(ClonableList):
         EXAMPLES::
 
             sage: T = StrongTableau( [[None, -1, -2, 3], [2, -3]], 2, weight=[2,1] )
-            sage: Tableaux.global_options(convention = "English")
+            sage: Tableaux.options(convention = "English")
             sage: latex(T)
             {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
             \raisebox{-.6ex}{$\begin{array}[b]{*{4}c}\cline{1-4}
@@ -3614,7 +3617,7 @@ class StrongTableau(ClonableList):
             \lr{1}&\lr{2^\ast}\\\cline{1-2}
             \end{array}$}
             }
-            sage: Tableaux.global_options(convention = "French")
+            sage: Tableaux.options(convention = "French")
             sage: latex(T)
             {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
             \raisebox{-.6ex}{$\begin{array}[t]{*{4}c}\cline{1-2}
@@ -3633,7 +3636,7 @@ class StrongTableau(ClonableList):
                 return s
             return "%s"%x
         T = [[chi(x) for x in row] for row in self.to_list()]
-        from output import tex_from_array
+        from .output import tex_from_array
         return tex_from_array(T)
 
     def restrict( self, r ):
@@ -3991,7 +3994,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         s +="%sand of weight %s"%(" ",self._weight)
         return s
 
-    global_options = TableauOptions
+    options = Tableaux.options
 
     def an_element(self):
         r"""
@@ -4646,3 +4649,7 @@ def intermediate_shapes(t):
     for i in range(len(t.weight())+1):
         shapes += [ t.restrict(i).outer_shape()]
     return shapes
+
+# Deprecations from trac:18555. July 2016
+from sage.misc.superseded import deprecated_function_alias
+StrongTableaux.global_options = deprecated_function_alias(18555, StrongTableaux.options)

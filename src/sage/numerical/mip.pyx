@@ -90,10 +90,10 @@ The following example shows all these steps::
       x_1 is an integer variable (min=-oo, max=+oo)
       x_2 is an integer variable (min=-oo, max=+oo)
       x_3 is an integer variable (min=-oo, max=+oo)
-    sage: print 'Objective Value:', p.solve()
+    sage: print('Objective Value: {}'.format(p.solve()))
     Objective Value: 2.0
     sage: for i, v in p.get_values(w).iteritems():
-    ....:     print 'w_%s = %s' % (i, int(round(v)))
+    ....:     print('w_%s = %s' % (i, int(round(v))))
     w_0 = 15
     w_1 = 10
     w_2 = 3
@@ -115,26 +115,24 @@ Different backends compute with different base fields, for example::
     sage: 0.5 + 3/2*x[1]
     1/2 + 3/2*x_0
 
+More about MIP variables
+------------------------
 
-Linear Variables and Expressions
---------------------------------
+The underlying MILP backends always work with matrices
+where each column corresponds to a linear variable.  The
+variable corresponding to the `i`-th column (counting from 0)
+is displayed as ``x_i``.
 
-The underlying linear programming backends always work with matrices
-where each column corresponds to a linear variable. These variables
-can be accessed using the :meth:`MixedIntegerLinearProgram.gen` method
-or by calling with a dictionary variable index to coefficient::
+:class:`MixedIntegerLinearProgram` maintains a dynamic mapping
+from the arbitrary keys indexing the components of :class:`MIPVariable`
+objects to the backend variables (indexed by nonnegative integers).
+Backend variables are created when a component of a :class:`MIPVariable`
+is accessed.
 
-    sage: mip = MixedIntegerLinearProgram(solver='GLPK')
-    sage: 5 + mip.gen(0) + 2*mip.gen(1)
-    5 + x_0 + 2*x_1
-    sage: mip({-1:5, 0:1, 1:2})
-    5 + x_0 + 2*x_1
-
-However, this alone is often not convenient to construct a linear
-program. To make your code more readable, you can construct
+To make your code more readable, you can construct one or several
 :class:`MIPVariable` objects that can be arbitrarily named and
-indexed. Internally, this is then translated back to the `x_i`
-variables. For example::
+indexed. This can be done by calling :meth:`new_variable` several times,
+or by the following special syntax::
 
     sage: mip.<a,b> = MixedIntegerLinearProgram(solver='GLPK')
     sage: a
@@ -159,6 +157,17 @@ also allowed::
       a[(4, 'string', Rational Field)] = x_2 is a continuous variable (min=-oo, max=+oo)
       b[2] = x_3 is a continuous variable (min=-oo, max=+oo)
 
+The default MIP variable
+------------------------
+
+As a special shortcut, it is not necessary to call :meth:`new_variable`.
+A :class:`MixedIntegerLinearProgram` has a default :class:`MIPVariable`,
+whose components are obtained by using the syntax ``mip[key]``, where
+`key` is an arbitrary key::
+
+    sage: mip = MixedIntegerLinearProgram(solver='GLPK')
+    sage: 5 + mip[2] + 2*mip[7]
+    5 + x_0 + 2*x_1
 
 Index of functions and methods
 ------------------------------
@@ -176,6 +185,7 @@ also implements the :class:`MIPSolverException` exception, as well as the
     :meth:`~MixedIntegerLinearProgram.base_ring`                 | Return the base ring
     :meth:`~MixedIntegerLinearProgram.best_known_objective_bound`| Return the value of the currently best known bound
     :meth:`~MixedIntegerLinearProgram.constraints`               | Returns a list of constraints, as 3-tuples
+    :meth:`~MixedIntegerLinearProgram.default_variable`          | Return the default ``MIPVariable`` of `self`.
     :meth:`~MixedIntegerLinearProgram.get_backend`               | Returns the backend instance used
     :meth:`~MixedIntegerLinearProgram.get_max`                   | Returns the maximum value of a variable
     :meth:`~MixedIntegerLinearProgram.get_min`                   | Returns the minimum value of a variable
@@ -186,7 +196,7 @@ also implements the :class:`MIPSolverException` exception, as well as the
     :meth:`~MixedIntegerLinearProgram.is_integer`                | Tests whether the variable is an integer
     :meth:`~MixedIntegerLinearProgram.is_real`                   | Tests whether the variable is real
     :meth:`~MixedIntegerLinearProgram.linear_constraints_parent` | Return the parent for all linear constraints
-    :meth:`~MixedIntegerLinearProgram.linear_function`           | Construct a new linear function
+    :meth:`~MixedIntegerLinearProgram.linear_function`           | Construct a new linear function (deprecated)
     :meth:`~MixedIntegerLinearProgram.linear_functions_parent`   | Return the parent for all linear functions
     :meth:`~MixedIntegerLinearProgram.new_variable`              | Returns an instance of ``MIPVariable`` associated
     :meth:`~MixedIntegerLinearProgram.number_of_constraints`     | Returns the number of constraints assigned so far
@@ -221,7 +231,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from copy import copy
 from sage.structure.parent cimport Parent
@@ -493,10 +503,19 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         Construct a new linear function
 
+        .. warning::
+
+            This method is deprecated.  The variables appearing in
+            the linear function are not created in the backend.
+            Build linear functions from the components of
+            :class:`MIPVariable` objects instead; see
+            :meth:`new_variable`.
+
         EXAMPLES::
 
              sage: p = MixedIntegerLinearProgram(solver='GLPK')
              sage: p.linear_function({1:3, 4:5})
+             doctest:...: DeprecationWarning:...linear_function...deprecated...
              3*x_1 + 5*x_4
 
         This is equivalent to::
@@ -504,6 +523,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p({1:3, 4:5})
             3*x_1 + 5*x_4
         """
+        from sage.misc.superseded import deprecation
+        deprecation(20602, 'MixedIntegerLinearProgram.linear_function, __call__, and gen are deprecated. If p is a MixedIntegerLinearProgram instance, please use p[i] to get component i of the default MIP variable; use p.sum to build linear functions.')
         parent = self.linear_functions_parent()
         return parent(x)
 
@@ -518,7 +539,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
              sage: p = MixedIntegerLinearProgram(solver='GLPK')
              sage: v = p.new_variable(nonnegative=True)
              sage: p.add_constraint(v[1] + v[2], max=2)
-             sage: print p
+             sage: print(p)
              Mixed Integer Program ( maximization, 2 variables, 1 constraints )
          """
          cdef GenericBackend b = self._backend
@@ -545,27 +566,37 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: q = copy(p)
             sage: q.number_of_constraints()
             1
+
+        TESTS:
+
+        Test that the default MIP variables are independent after copying::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: p[0]
+            x_0
+            sage: q = copy(p)
+            sage: q[0]
+            x_0
+            sage: q[1]
+            x_1
+            sage: p.number_of_variables()
+            1
+            sage: q.number_of_variables()
+            2
         """
         def copying_solver(**kwdargs):
             return (<GenericBackend> self._backend).copy()
 
         cdef MixedIntegerLinearProgram p = \
             MixedIntegerLinearProgram(solver=copying_solver)
-        try:
-            p._variables = copy(self._variables)
-        except AttributeError:
-            pass
 
-        try:
-            p._default_mipvariable = self._default_mipvariable
-        except AttributeError:
-            pass
+        p._variables = copy(self._variables)
 
-        try:
-            p._check_redundant = self._check_redundant
-            p._constraints = copy(self._constraints)
-        except AttributeError:
-            pass
+        if self._default_mipvariable is not None:
+            p._default_mipvariable = self._default_mipvariable.copy_for_mip(p)
+
+        p._check_redundant = self._check_redundant
+        p._constraints = copy(self._constraints)
 
         return p
 
@@ -601,13 +632,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
     def __getitem__(self, v):
         r"""
         Returns the symbolic variable corresponding to the key
-        from a default dictionary.
+        from the default :class:`MIPVariable` instance.
 
-        It returns the element asked, and otherwise creates it.
-        If necessary, it also creates the default dictionary.
+        It returns the element asked, creating it if necessary.
+        If necessary, it also creates the default :class:`MIPVariable` instance.
 
-        This method lets the user define LinearProgram without having to
-        define independent dictionaries when it is not necessary for him.
+        See :meth:`new_variable` for a way to have separate :class:`MIPVariable`s
+        each of which have their own key space.
 
         EXAMPLE::
 
@@ -616,12 +647,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p['x']
             x_0
         """
-
-        try:
-            return self._default_mipvariable[v]
-        except TypeError:
-            self._default_mipvariable = self.new_variable()
-            return self._default_mipvariable[v]
+        return self.default_variable()[v]
 
     def base_ring(self):
         """
@@ -670,7 +696,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     def new_variable(self, real=False, binary=False, integer=False, nonnegative=False, name=""):
         r"""
-        Return a new MIPVariable
+        Return a new :class:`MIPVariable` instance.
 
         A new variable ``x`` is defined by::
 
@@ -719,13 +745,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         By default, variables are unbounded::
 
-            sage: print p.get_min(x0)
+            sage: print(p.get_min(x0))
             None
-            sage: print p.get_max(x0)
+            sage: print(p.get_max(x0))
             None
 
-         To define two dictionaries of variables, the first being
-         of real type, and the second of integer type ::
+        To define two dictionaries of variables, the first being
+        of real type, and the second of integer type ::
 
             sage: x = p.new_variable(real=True, nonnegative=True)
             sage: y = p.new_variable(integer=True, nonnegative=True)
@@ -795,11 +821,25 @@ cdef class MixedIntegerLinearProgram(SageObject):
                       lower_bound=0 if (nonnegative or binary) else None,
                       upper_bound=1 if binary else None)
 
+    def default_variable(self):
+        """
+        Return the default :class:`MIPVariable` of `self`.
+
+        EXAMPLE::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: p.default_variable()
+            MIPVariable of dimension 1
+        """
+        if self._default_mipvariable is None:
+            self._default_mipvariable = self.new_variable()
+        return self._default_mipvariable
+
     def _first_ngens(self, n):
         """
-        Construct the first `n` MIPVariables.
+        Construct the first `n` :class:`MIPVariable`s.
 
-        This method is used for the generater syntax (see below). You
+        This method is used for the generator syntax (see below). You
         probably shouldn't use it for anything else.
 
         INPUT:
@@ -808,8 +848,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         OUTPUT:
 
-        A tuple of not necessarily positive :class:`MIPVariable`
-        instances.
+        A tuple of :class:`MIPVariable` instances.
+        They are created as free continuous variables.
 
         EXAMPLES::
 
@@ -830,6 +870,12 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         Return the linear variable `x_i`.
         
+        .. warning::
+
+            This method is deprecated.  The variable is not created
+            in the backend if it does not exist, and most methods
+            do not accept this variable as valid input.
+
         EXAMPLE::
 
             sage: mip = MixedIntegerLinearProgram(solver='GLPK')
@@ -838,6 +884,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: [mip.gen(i) for i in range(10)]
             [x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9]
         """
+        from sage.misc.superseded import deprecation
+        deprecation(20602, 'MixedIntegerLinearProgram.linear_function, __call__, and gen are deprecated. If p is a MixedIntegerLinearProgram instance, please use p[i] to get component i of the default MIP variable; use p.sum to build linear functions.')
         return self.linear_functions_parent().gen(i)
 
     cpdef int number_of_constraints(self):
@@ -1187,59 +1235,62 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef int i, j
         cdef GenericBackend b = self._backend
 
-        # inv_variables associates a MIPVariable object to an id
-        inv_variables = {}
-        for (v, id) in self._variables.iteritems():
-            inv_variables[id]=v
-
         # varid_name associates variables id to names
         varid_name = {}
+        varid_explainer = {}
         for 0<= i < b.ncols():
             s = b.col_name(i)
-            varid_name[i] = s if s else 'x_'+str(i)
+            default_name = str(self.linear_functions_parent()({i: 1}))
+            if s and s != default_name:
+                varid_name[i] = s
+                varid_explainer[i] = '{0} = {1}'.format(s, default_name)
+            else:
+                varid_explainer[i] = varid_name[i] = default_name
 
         ##### Sense and objective function
-        print ("Maximization:" if b.is_maximization() else "Minimization:")
-        print " ",
+        print("Maximization:" if b.is_maximization() else "Minimization:")
+        print(" ", end=" ")
         first = True
         for 0<= i< b.ncols():
             c = b.objective_coefficient(i)
             if c == 0:
                 continue
-            print (("+ " if (not first and c>0) else "") +
+            print((("+ " if (not first and c>0) else "") +
                    ("" if c == 1 else ("- " if c == -1 else str(c)+" "))+varid_name[i]
-                   ),
+                   ), end=" ")
             first = False
         d = b.objective_constant_term()
-        if d > self._backend.zero(): print "+", d,
-        elif d < self._backend.zero(): print "-", -d,
-        print
+        if d > self._backend.zero():
+            print("+ {} ".format(d))
+        elif d < self._backend.zero():
+            print("- {} ".format(-d))
+        print("\n")
 
         ##### Constraints
-        print "Constraints:"
+        print("Constraints:")
         for 0<= i < b.nrows():
             indices, values = b.row(i)
             lb, ub = b.row_bounds(i)
-            print " ",
+            print(" ", end=" ")
             # Constraint's name
             if b.row_name(i):
-                print b.row_name(i)+":",
+                print(b.row_name(i)+":", end=" ")
             # Lower bound
             if lb is not None:
-                print str(lb)+" <=",
+                print(str(lb)+" <=", end=" ")
             first = True
             for j, c in sorted(zip(indices, values)):
                 if c == 0:
                     continue
-                print (("+ " if (not first and c>0) else "") +
+                print((("+ " if (not first and c>0) else "") +
                        ("" if c == 1 else ("- " if c == -1 else (str(c) + " " if first and c < 0 else ("- " + str(abs(c)) + " " if c < 0 else str(c) + " "))))+varid_name[j]
-                       ),
+                       ), end=" ")
                 first = False
             # Upper bound
-            print ("<= "+str(ub) if ub is not None else "")
+            print("<= "+str(ub) if ub is not None else "")
 
         ##### Variables
-        print "Variables:"
+        print("Variables:")
         for 0<= i < b.ncols():
             if b.is_variable_integer(i):
                 var_type = 'an integer'
@@ -1247,10 +1298,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 var_type = 'a boolean'
             else:
                 var_type = 'a continuous'
-            if varid_name[i] == str(self.gen(i)):
-                name = varid_name[i]
-            else:
-                name = '{0} = {1}'.format(varid_name[i], self.gen(i))
+            name = varid_explainer[i]
             lb, ub = b.col_bounds(i)
             print('  {0} is {1} variable (min={2}, max={3})'.format(
                 name, var_type, 
@@ -2243,7 +2291,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         r"""
         Sets the maximum value of a variable.
 
-        INPUT
+        INPUT:
 
         - ``v`` -- a variable.
 
@@ -2726,7 +2774,7 @@ class MIPSolverException(RuntimeError):
         sage: e = MIPSolverException("Error")
         sage: e
         MIPSolverException('Error',)
-        sage: print e
+        sage: print(e)
         Error
 
     TESTS:
@@ -2814,6 +2862,50 @@ cdef class MIPVariable(Element):
         self._upper_bound = upper_bound
         self._name = name
 
+    def __copy__(self):
+        r"""
+        Returns a copy of ``self``.
+
+        EXAMPLE::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: pv = p.new_variable(nonnegative=True)
+            sage: pv[0]
+            x_0
+            sage: pvc = copy(pv)
+            sage: pvc[0]
+            x_0
+            sage: pv[1]
+            x_1
+            sage: pvc[1]
+            x_2
+            sage: p.number_of_variables()
+            3
+        """
+        return self.copy_for_mip(self.mip())
+
+    def __deepcopy__(self, memo={}):
+        r"""
+        Returns a copy of ``self``.
+
+        EXAMPLE::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: pv = p.new_variable(nonnegative=True)
+            sage: pv[0]
+            x_0
+            sage: pvc = deepcopy(pv)
+            sage: pvc[0]
+            x_0
+            sage: pv[1]
+            x_1
+            sage: pvc[1]
+            x_2
+            sage: p.number_of_variables()
+            3
+        """
+        return self.copy_for_mip(self.mip())
+
     def __getitem__(self, i):
         r"""
         Returns the symbolic variable corresponding to the key.
@@ -2841,11 +2933,45 @@ cdef class MIPVariable(Element):
             integer=False,
             obj=zero,
             name=name)
-        v = self._p.linear_function({j : 1})
+        v = self._p.linear_functions_parent()({j : 1})
         self._p._variables[v] = j
         self._p._backend.set_variable_type(j, self._vtype)
         self._dict[i] = v
         return v
+
+    def copy_for_mip(self, mip):
+        r"""
+        Returns a copy of ``self`` suitable for a new :class:`MixedIntegerLinearProgram`
+        instance ``mip``.
+
+        For this to make sense, ``mip`` should have been obtained as a copy of
+        ``self.mip()``.
+
+        EXAMPLE::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: pv = p.new_variable(nonnegative=True)
+            sage: pv[0]
+            x_0
+            sage: q = copy(p)
+            sage: qv = pv.copy_for_mip(q)
+            sage: pv[77]
+            x_1
+            sage: p.number_of_variables()
+            2
+            sage: q.number_of_variables()
+            1
+            sage: qv[33]
+            x_1
+            sage: p.number_of_variables()
+            2
+            sage: q.number_of_variables()
+            2
+        """
+        cdef MIPVariable cp = type(self)(self.parent(), mip, self._vtype,
+                                         self._name, self._lower_bound, self._upper_bound)
+        cp._dict = copy(self._dict)
+        return cp
 
     def set_min(self, min):
         r"""
@@ -2869,9 +2995,21 @@ cdef class MIPVariable(Element):
             4
             sage: p.get_min(v[0])
             4.0
+
+        TESTS:
+
+        Test that :trac:`20462` is fixed::
+
+            sage: p.<x,y> = MixedIntegerLinearProgram()
+            sage: x[0], y[0]
+            (x_0, x_1)
+            sage: x.set_min(42)
+            sage: p.get_min(y[0]) is None
+            True
+
         """
         self._lower_bound = min
-        for v in self._p._variables:
+        for v in self._dict.values():
             self._p.set_min(v,min)
 
     def set_max(self, max):
@@ -2894,9 +3032,20 @@ cdef class MIPVariable(Element):
             4
             sage: p.get_max(v[0])
             4.0
+
+        TESTS:
+
+        Test that :trac:`20462` is fixed::
+
+            sage: p.<x,y> = MixedIntegerLinearProgram()
+            sage: x[0], y[0]
+            (x_0, x_1)
+            sage: x.set_max(42)
+            sage: p.get_max(y[0]) is None
+            True
         """
         self._upper_bound = max
-        for v in self._p._variables:
+        for v in self._dict.values():
             self._p.set_max(v,max)
 
     def _repr_(self):

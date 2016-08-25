@@ -62,21 +62,21 @@ EXAMPLES:
 Construction of a stratum from a list of singularity degrees::
 
     sage: a = AbelianStratum(1,1)
-    sage: print a
+    sage: a
     H(1, 1)
-    sage: print a.genus()
+    sage: a.genus()
     2
-    sage: print a.nintervals()
+    sage: a.nintervals()
     5
 
 ::
 
     sage: a = AbelianStratum(4,3,2,1)
-    sage: print a
+    sage: a
     H(4, 3, 2, 1)
-    sage: print a.genus()
+    sage: a.genus()
     6
-    sage: print a.nintervals()
+    sage: a.nintervals()
     15
 
 By convention, the degrees are always written in decreasing order::
@@ -108,7 +108,7 @@ Get a list of strata with constraints on genus or on the number of intervals
 of a representative::
 
     sage: for a in AbelianStrata(genus=3):
-    ....:     print a
+    ....:     print(a)
     H(4)
     H(3, 1)
     H(2, 2)
@@ -118,7 +118,7 @@ of a representative::
 ::
 
     sage: for a in AbelianStrata(nintervals=5):
-    ....:     print a
+    ....:     print(a)
     H^out(0, 2)
     H^out(2, 0)
     H^out(1, 1)
@@ -127,7 +127,7 @@ of a representative::
 ::
 
     sage: for a in AbelianStrata(genus=2, nintervals=5):
-    ....:     print a
+    ....:     print(a)
     H^out(0, 2)
     H^out(2, 0)
     H^out(1, 1)
@@ -135,17 +135,18 @@ of a representative::
 Obtains the connected components of a stratum::
 
     sage: a = AbelianStratum(0)
-    sage: print a.connected_components()
+    sage: a.connected_components()
     [H_hyp(0)]
 
 ::
 
     sage: a = AbelianStratum(6)
     sage: cc = a.connected_components()
-    sage: print cc
+    sage: cc
     [H_hyp(6), H_odd(6), H_even(6)]
     sage: for c in cc:
-    ....:     print c, "\n", c.representative(alphabet=range(1,9))
+    ....:     print(c)
+    ....:     print(c.representative(alphabet=range(1,9)))
     H_hyp(6)
     1 2 3 4 5 6 7 8
     8 7 6 5 4 3 2 1
@@ -159,10 +160,10 @@ Obtains the connected components of a stratum::
 ::
 
     sage: a = AbelianStratum(1, 1, 1, 1)
-    sage: print a.connected_components()
+    sage: a.connected_components()
     [H_c(1, 1, 1, 1)]
     sage: c = a.connected_components()[0]
-    sage: print c.representative(alphabet="abcdefghi")
+    sage: print(c.representative(alphabet="abcdefghi"))
     a b c d e f g h i
     e d c f i h g b a
 
@@ -171,30 +172,30 @@ corresponds to the first singularity degree::
 
     sage: a = AbelianStratum(4, 2, marked_separatrix='out')
     sage: b = AbelianStratum(2, 4, marked_separatrix='out')
-    sage: print a == b
+    sage: a == b
     False
-    sage: print a, ":", a.connected_components()
-    H^out(4, 2) : [H_odd^out(4, 2), H_even^out(4, 2)]
-    sage: print b, ":", b.connected_components()
-    H^out(2, 4) : [H_odd^out(2, 4), H_even^out(2, 4)]
+    sage: a, a.connected_components()
+    (H^out(4, 2), [H_odd^out(4, 2), H_even^out(4, 2)])
+    sage: b, b.connected_components()
+    (H^out(2, 4), [H_odd^out(2, 4), H_even^out(2, 4)])
     sage: a_odd, a_even = a.connected_components()
     sage: b_odd, b_even = b.connected_components()
 
 The representatives are hence different::
 
-    sage: print a_odd.representative(alphabet=range(1,10))
+    sage: a_odd.representative(alphabet=range(1,10))
     1 2 3 4 5 6 7 8 9
     4 3 6 5 7 9 8 2 1
-    sage: print b_odd.representative(alphabet=range(1,10))
+    sage: b_odd.representative(alphabet=range(1,10))
     1 2 3 4 5 6 7 8 9
     4 3 5 7 6 9 8 2 1
 
 ::
 
-    sage: print a_even.representative(alphabet=range(1,10))
+    sage: a_even.representative(alphabet=range(1,10))
     1 2 3 4 5 6 7 8 9
     6 5 4 3 7 9 8 2 1
-    sage: print b_even.representative(alphabet=range(1,10))
+    sage: b_even.representative(alphabet=range(1,10))
     1 2 3 4 5 6 7 8 9
     7 6 5 4 3 9 8 2 1
 
@@ -205,10 +206,10 @@ Rauzy diagrams from the classification of strata::
     sage: l = sum([stratum.connected_components() for stratum in a], [])
     sage: n = map(lambda x: x.rauzy_diagram().cardinality(), l)
     sage: for c,i in zip(l,n):
-    ....:     print c, ":", i
+    ....:     print("{} : {}".format(c, i))
     H_hyp^out(2) : 7
     H_hyp^out(0, 0, 0) : 6
-    sage: print sum(n)
+    sage: sum(n)
     13
 
 ::
@@ -217,12 +218,12 @@ Rauzy diagrams from the classification of strata::
     sage: l = sum([stratum.connected_components() for stratum in a], [])
     sage: n = map(lambda x: x.rauzy_diagram().cardinality(), l)
     sage: for c,i in zip(l,n):
-    ....:     print c, ":", i
+    ....:     print("{} : {}".format(c, i))
     H_hyp^out(0, 2) : 11
     H_hyp^out(2, 0) : 35
     H_hyp^out(1, 1) : 15
     H_hyp^out(0, 0, 0, 0) : 10
-    sage: print sum(n)
+    sage: sum(n)
     71
 
 ::
@@ -231,7 +232,7 @@ Rauzy diagrams from the classification of strata::
     sage: l = sum([stratum.connected_components() for stratum in a], [])
     sage: n = map(lambda x: x.rauzy_diagram().cardinality(), l)
     sage: for c,i in zip(l,n):
-    ....:     print c, ":", i
+    ....:     print("{} : {}".format(c, i))
     H_hyp^out(4) : 31
     H_odd^out(4) : 134
     H_hyp^out(0, 2, 0) : 66
@@ -239,7 +240,7 @@ Rauzy diagrams from the classification of strata::
     H_hyp^out(0, 1, 1) : 20
     H_hyp^out(1, 1, 0) : 90
     H_hyp^out(0, 0, 0, 0, 0) : 15
-    sage: print sum(n)
+    sage: sum(n)
     461
 """
 #*****************************************************************************
@@ -248,6 +249,7 @@ Rauzy diagrams from the classification of strata::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
@@ -276,18 +278,18 @@ def AbelianStrata(genus=None, nintervals=None, marked_separatrix=None):
 
     Abelian strata with a given genus::
 
-        sage: for s in AbelianStrata(genus=1): print s
+        sage: for s in AbelianStrata(genus=1): print(s)
         H(0)
 
     ::
 
-        sage: for s in AbelianStrata(genus=2): print s
+        sage: for s in AbelianStrata(genus=2): print(s)
         H(2)
         H(1, 1)
 
     ::
 
-        sage: for s in AbelianStrata(genus=3): print s
+        sage: for s in AbelianStrata(genus=3): print(s)
         H(4)
         H(3, 1)
         H(2, 2)
@@ -296,7 +298,7 @@ def AbelianStrata(genus=None, nintervals=None, marked_separatrix=None):
 
     ::
 
-        sage: for s in AbelianStrata(genus=4): print s
+        sage: for s in AbelianStrata(genus=4): print(s)
         H(6)
         H(5, 1)
         H(4, 2)
@@ -311,23 +313,23 @@ def AbelianStrata(genus=None, nintervals=None, marked_separatrix=None):
 
     Abelian strata with a given number of intervals::
 
-        sage: for s in AbelianStrata(nintervals=2): print s
+        sage: for s in AbelianStrata(nintervals=2): print(s)
         H^out(0)
 
     ::
 
-        sage: for s in AbelianStrata(nintervals=3): print s
+        sage: for s in AbelianStrata(nintervals=3): print(s)
         H^out(0, 0)
 
     ::
 
-        sage: for s in AbelianStrata(nintervals=4): print s
+        sage: for s in AbelianStrata(nintervals=4): print(s)
         H^out(2)
         H^out(0, 0, 0)
 
     ::
 
-        sage: for s in AbelianStrata(nintervals=5): print s
+        sage: for s in AbelianStrata(nintervals=5): print(s)
         H^out(0, 2)
         H^out(2, 0)
         H^out(1, 1)
@@ -335,12 +337,12 @@ def AbelianStrata(genus=None, nintervals=None, marked_separatrix=None):
 
     Abelian strata with both constraints::
 
-        sage: for s in AbelianStrata(genus=2, nintervals=4): print s
+        sage: for s in AbelianStrata(genus=2, nintervals=4): print(s)
         H^out(2)
 
     ::
 
-        sage: for s in AbelianStrata(genus=5, nintervals=12): print s
+        sage: for s in AbelianStrata(genus=5, nintervals=12): print(s)
         H^out(8, 0, 0)
         H^out(0, 8, 0)
         H^out(0, 7, 1)
@@ -524,7 +526,7 @@ class AbelianStrata_d(CombinatorialClass):
         r"""
         TESTS::
 
-            sage: for a in AbelianStrata(nintervals=4): print a
+            sage: for a in AbelianStrata(nintervals=4): print(a)
             H^out(2)
             H^out(0, 0, 0)
         """
@@ -692,7 +694,7 @@ class AbelianStratum(SageObject):
     Creation of an Abelian stratum and get its connected components::
 
         sage: a = AbelianStratum(2, 2)
-        sage: print a
+        sage: a
         H(2, 2)
         sage: a.connected_components()
         [H_hyp(2, 2), H_odd(2, 2)]
@@ -702,10 +704,10 @@ class AbelianStratum(SageObject):
     ::
 
         sage: a = AbelianStratum(4,2,marked_separatrix='in')
-        sage: print a
+        sage: a
         H^in(4, 2)
         sage: b = AbelianStratum(2,4,marked_separatrix='in')
-        sage: print b
+        sage: b
         H^in(2, 4)
         sage: a == b
         False
@@ -713,10 +715,10 @@ class AbelianStratum(SageObject):
     ::
 
         sage: a = AbelianStratum(4,2,marked_separatrix='out')
-        sage: print a
+        sage: a
         H^out(4, 2)
         sage: b = AbelianStratum(2,4,marked_separatrix='out')
-        sage: print b
+        sage: b
         H^out(2, 4)
         sage: a == b
         False
@@ -725,16 +727,16 @@ class AbelianStratum(SageObject):
 
         sage: a = AbelianStratum(2,2)
         sage: a_hyp, a_odd = a.connected_components()
-        sage: print a_hyp.representative()
+        sage: a_hyp.representative()
         1 2 3 4 5 6 7
         7 6 5 4 3 2 1
-        sage: print a_odd.representative()
+        sage: a_odd.representative()
         0 1 2 3 4 5 6
         3 2 4 6 5 1 0
 
     You can choose the alphabet::
 
-        sage: print a_odd.representative(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        sage: a_odd.representative(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ")
         A B C D E F G
         D C E G F B A
 
@@ -1259,10 +1261,10 @@ class ConnectedComponentOfAbelianStratum(SageObject):
         ::
 
             sage: c = AbelianStratum(1,1,1,1).connected_components()[0]
-            sage: print c
+            sage: c
             H_c(1, 1, 1, 1)
             sage: p = c.representative(alphabet=range(9))
-            sage: print p
+            sage: p
             0 1 2 3 4 5 6 7 8
             4 3 2 5 8 7 6 1 0
             sage: p.connected_component()
@@ -1677,14 +1679,14 @@ class OddConnectedComponentOfAbelianStratum(CCA):
         ::
 
             sage: a = AbelianStratum(6).connected_components()[1]
-            sage: print a.representative(alphabet=range(8))
+            sage: a.representative(alphabet=range(8))
             0 1 2 3 4 5 6 7
             3 2 5 4 7 6 1 0
 
         ::
 
             sage: a = AbelianStratum(4,4).connected_components()[1]
-            sage: print a.representative(alphabet=range(11))
+            sage: a.representative(alphabet=range(11))
             0 1 2 3 4 5 6 7 8 9 10
             3 2 5 4 6 8 7 10 9 1 0
         """

@@ -45,9 +45,12 @@ REFERENCES:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ################################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
-import graph
-import os,re
+from . import graph
+import os
+import re
 from sage.rings.integer import Integer
 from sqlite3 import dbapi2 as sqlite # if anyone would like to explain why dbapi2...
 from sage.databases.sql_db import SQLDatabase, SQLQuery
@@ -485,7 +488,7 @@ class GraphQuery(GenericGraphQuery):
 
             sage: Q = GraphQuery(display_cols=['graph6'],num_vertices=7, diameter=5)
             sage: for g in Q:
-            ...     print g.graph6_string()
+            ....:     print(g.graph6_string())
             F?`po
             F?gqg
             F@?]O
@@ -498,8 +501,8 @@ class GraphQuery(GenericGraphQuery):
             sage: Q = GraphQuery(display_cols=['graph6'],num_vertices=7, diameter=5)
             sage: it = iter(Q)
             sage: while True:
-            ...     try: print next(it).graph6_string()
-            ...     except StopIteration: break
+            ....:     try: print(next(it).graph6_string())
+            ....:     except StopIteration: break
             F?`po
             F?gqg
             F@?]O
@@ -912,7 +915,7 @@ class GraphDatabase(SQLDatabase):
 
         s = 'def _(%s):'%','.join(boxes)
         t = """
-        print '<html><h2>Query Results:</h2></html>'
+        print('<html><h2>Query Results:</h2></html>')
         GraphQuery(display_cols=%s,%s).show(with_picture=True)
         """%tuple([display,','.join(params)])
         s += '\t'+'\n\t'.join(t.split('\n'))+'\n'
@@ -1060,7 +1063,7 @@ class GraphDatabase(SQLDatabase):
             <html>...</html>
         """
         from sagenb.notebook.interact import interact
-        print '<html><h1>Interactive Graph Query</h1></html>'
+        print('<html><h1>Interactive Graph Query</h1></html>')
         f = self._gen_interact_func(display=display_cols,**kwds)
         interact(f)
 

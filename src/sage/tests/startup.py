@@ -14,6 +14,6 @@ not work. Instead, we test this by starting a new Python process::
 
     sage: from sage.tests.cmdline import test_executable
     sage: cmd = "from sage.all import *\nprint('IPython' in sys.modules)\n"
-    sage: print test_executable(["sage", "--python"], cmd)[0]  # long time
+    sage: print(test_executable(["sage", "--python"], cmd)[0])  # long time
     False
 """

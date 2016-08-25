@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+cd src/
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+$MAKE check
+if [ $? -ne 0 ]; then
+   echo "Error in testing xz"
+   exit 1
+fi
+

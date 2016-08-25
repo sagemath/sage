@@ -40,7 +40,7 @@ email to ``sage-trac-account@googlegroups.com`` containing:
 * and reason for needing a trac account
 
 Your trac account also grants you access to the `sage wiki
-<wiki.sagemath.org>`_. Make sure you understand the review process, and the
+<https://wiki.sagemath.org>`_. Make sure you understand the review process, and the
 procedures for opening and closing tickets before making changes. The remainder
 of this chapter contains various guidelines on using the trac server.
 

@@ -19,7 +19,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -177,7 +177,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
 
         sage: VP = VectorPartitions([2, 2])
         sage: for vecpar in VP:
-        ....:     print vecpar
+        ....:     print(vecpar)
         [[0, 1], [0, 1], [1, 0], [1, 0]]
         [[0, 1], [0, 1], [2, 0]]
         [[0, 1], [1, 0], [1, 1]]
@@ -194,7 +194,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
 
         sage: VP = VectorPartitions([2, 2], min = [1, 0])
         sage: for vecpar in VP:
-        ....:     print vecpar
+        ....:     print(vecpar)
         [[1, 0], [1, 2]]
         [[1, 1], [1, 1]]
         [[2, 2]]

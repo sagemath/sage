@@ -1,3 +1,4 @@
+from __future__ import print_function
 from sage.sets.family import Family
 from sage.combinat.integer_lists import IntegerListsLex
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -18,7 +19,7 @@ def IntegerListsNN(**kwds):
         Disjoint union of Lazy family (<lambda>(i))_{i in Non negative integer semiring}
         sage: it = iter(L)
         sage: for _ in range(20):
-        ....:     print next(it)
+        ....:     print(next(it))
         []
         [1]
         [2]

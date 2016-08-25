@@ -769,7 +769,8 @@ def CompleteGraphic(n):
         sage: M.is_valid()
         True
     """
-    M = Matroid(groundset=range(n * (n - 1) / 2), graph=graphs.CompleteGraph(n))
+    M = Matroid(groundset=range((n * (n - 1)) // 2),
+                graph=graphs.CompleteGraph(n))
     M.rename('M(K' + str(n) + '): ' + repr(M))
     return M
 

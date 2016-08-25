@@ -70,7 +70,7 @@ sage: k = euler_phi(n); k
 sage: [Mod(x,n)^k for x in range(n) if gcd(x,n) == 1]
 [1, 1, 1, 1, 1, 1, 1, 1]
 sage: for n in range(1,10):
-...    print n, factorial(n-1) % n, -1 % n
+....:     print("{} {} {}".format(n, factorial(n-1) % n, -1 % n))
 1 0 0
 2 1 1
 3 2 2
@@ -108,8 +108,8 @@ sage: n = 95468093486093450983409583409850934850938459083
 sage: is_prime(n)
 False
 sage: for p in primes(100):
-...   if is_prime(2^p - 1):
-...       print p, 2^p - 1
+....:     if is_prime(2^p - 1):
+....:         print("{} {}".format(p, 2^p - 1))
 2 3
 3 7
 5 31
@@ -132,7 +132,7 @@ sage: # Check primality of 2^next_prime(1000)-1
 sage: is_prime_lucas_lehmer(next_prime(1000))
 False
 sage: for p in primes(20):
-...    print p, primitive_root(p)
+....:     print("{} {}".format(p, primitive_root(p)))
 2 1
 3 2
 5 2
@@ -308,7 +308,7 @@ sage: def kr(a, p):
 ...    else:
 ...       return -1
 sage: for a in range(1,5):
-...    print a, kr(a,5)
+....:     print("{} {}".format(a, kr(a,5)))
 1 1
 2 -1
 3 -1
@@ -317,16 +317,16 @@ sage: p = 726377359
 sage: Mod(3, p)^((p-1)//2)
 726377358
 sage: def gauss(a, p):
-...    # make the list of numbers reduced modulo p
-...    v = [(n*a)%p for n in range(1, (p-1)//2 + 1)]
-...    # normalize them to be in the range -p/2 to p/2
-...    v = [(x if (x < p/2) else x - p) for x in v]
-...    # sort and print the resulting numbers
-...    v.sort()
-...    print v
-...    # count the number that are negative
-...    num_neg = len([x for x in v if x < 0])
-...    return (-1)^num_neg
+....:     # make the list of numbers reduced modulo p
+....:     v = [(n*a)%p for n in range(1, (p-1)//2 + 1)]
+....:     # normalize them to be in the range -p/2 to p/2
+....:     v = [(x if (x < p/2) else x - p) for x in v]
+....:     # sort and print the resulting numbers
+....:     v.sort()
+....:     print(v)
+....:     # count the number that are negative
+....:     num_neg = len([x for x in v if x < 0])
+....:     return (-1)^num_neg
 sage: gauss(2, 13)
 [-5, -3, -1, 2, 4, 6]
 -1
@@ -413,12 +413,10 @@ sage: c = continued_fraction(pi); c
 [3; 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 2, 1, 1, 2, 2, 2, 2, ...]
 sage: [c.convergent(i) for i in xrange(5)]
 [3, 22/7, 333/106, 355/113, 103993/33102]
-sage: for n in range(-1, 13):
-....:     print c.p(n)*c.q(n-1) - c.q(n)*c.p(n-1),
-1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1
-sage: for n in range(13):
-....:     print c.p(n)*c.q(n-2) - c.q(n)*c.p(n-2),
-3 -7 15 -1 292 -1 1 -1 2 -1 3 -1 14
+sage: [c.p(n)*c.q(n-1) - c.q(n)*c.p(n-1) for n in range(-1, 13)]
+[1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1]
+sage: [c.p(n)*c.q(n-2) - c.q(n)*c.p(n-2) for n in range(13)]
+[3, -7, 15, -1, 292, -1, 1, -1, 2, -1, 3, -1, 14]
 sage: c = continued_fraction([1,2,3,4,5])
 sage: c.convergents()
 [1, 3/2, 10/7, 43/30, 225/157]

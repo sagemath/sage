@@ -26,10 +26,11 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function, absolute_import, division
 
 import itertools
-import misc
-from __builtin__ import list as builtinlist
+from . import misc
+from six.moves.builtins import list as builtinlist
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.combinat.combinat import CombinatorialClass
 from sage.rings.integer import Integer
@@ -95,8 +96,8 @@ def is_gale_ryser(r,s):
     generic-sounding) term ''realizable sequence''.
     """
 
-    # The sequences only contan non-negative integers
-    if [x for x in r if x<0] or [x for x in s if x<0]:
+    # The sequences only contain non-negative integers
+    if [x for x in r if x < 0] or [x for x in s if x < 0]:
         return False
 
     # builds the corresponding partitions, i.e.
@@ -187,7 +188,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
             sage: from sage.combinat.integer_vector import gale_ryser_theorem
             sage: p1 = [2,2,1]
             sage: p2 = [2,2,1]
-            sage: print gale_ryser_theorem(p1, p2)     # not tested
+            sage: print(gale_ryser_theorem(p1, p2))     # not tested
             [1 1 0]
             [1 0 1]
             [0 1 0]
@@ -223,7 +224,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
             [0 0 0 0 0 0]
             sage: p1 = [3,3,2,1]
             sage: p2 = [3,2,2,1,1]
-            sage: print gale_ryser_theorem(p1, p2, algorithm="gale")  # not tested
+            sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested
             [1 1 1 0 0]
             [1 1 0 0 1]
             [1 0 1 0 0]
@@ -264,8 +265,8 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
             ....:     ss1 = sorted(map(lambda x : sum(x) , m.rows()), reverse = True)
             ....:     ss2 = sorted(map(lambda x : sum(x) , m.columns()), reverse = True)
             ....:     if ((ss1 != s1) or (ss2 != s2)):
-            ....:         print "Algorithm %s failed with this input:" % algorithm
-            ....:         print s1, s2
+            ....:         print("Algorithm %s failed with this input:" % algorithm)
+            ....:         print(s1, s2)
 
             sage: for algorithm in ["gale", "ryser"]:                        # long time
             ....:     for i in range(50):                                    # long time
@@ -1013,7 +1014,7 @@ class IntegerVectors_nkconstraints(IntegerListsLex):
                     return binomial(self.n+self.k-1,self.n)
                 else: #do by inclusion / exclusion on the number
                       #i of parts greater than m
-                    return sum( [(-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1)*binomial(self.k,i) for i in range(0, self.n/(m+1)+1)])
+                    return sum( [(-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1)*binomial(self.k,i) for i in range(self.n // (m+1)+1)])
             else:
                 return super(IntegerVectors_nkconstraints, self).cardinality()
 

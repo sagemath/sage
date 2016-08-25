@@ -173,10 +173,6 @@ package. In this script, you may make the following assumptions:
 - The environment variable ``SAGE_LOCAL`` points to the
   ``SAGE_ROOT/local`` directory of the Sage installation.
 
-- The environment variables ``LD_LIBRARY_PATH`` and
-  ``DYLD_LIBRARY_PATH`` both have ``SAGE_ROOT/local/lib`` at the
-  front.
-
 The ``spkg-install`` script should copy your files to the appropriate
 place after doing any build that is necessary.  Here is a template::
 

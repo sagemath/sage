@@ -63,6 +63,7 @@ AUTHORS:
 Methods
 =======
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
@@ -74,8 +75,8 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from matroid import Matroid
-from utilities import sanitize_contractions_deletions, setprint_s
+from .matroid import Matroid
+from .utilities import sanitize_contractions_deletions, setprint_s
 
 
 class MinorMatroid(Matroid):

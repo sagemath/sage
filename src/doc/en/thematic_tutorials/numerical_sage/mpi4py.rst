@@ -183,7 +183,7 @@ collects them into a new matrix.
     v=v*v
     recvbuf=comm.gather(v,root)
     if comm.rank==0:
-        print numpy.array(recvbuf)
+        print(numpy.array(recvbuf))
 
 There is also a broadcast command that sends a single object to
 every process. Consider the following small extension. This is the
@@ -198,7 +198,7 @@ the string "done", which is printed out.
     v=v*v
     recvbuf=MPI.COMM_WORLD.gather(v,root)
     if MPI.COMM_WORLD.rank==0:
-        print numpy.array(recvbuf)
+        print(numpy.array(recvbuf))
 
     if MPI.COMM_WORLD.rank==0:
         sendbuf="done"

@@ -9,6 +9,7 @@ Library interface to Embeddable Common Lisp (ECL)
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 #This version of the library interface prefers to convert ECL integers and
 #rationals to SAGE types Integer and Rational. These parts could easily be
@@ -419,8 +420,8 @@ def print_objects():
     c = list_of_objects
     while True:
         s = si_coerce_to_base_string(cl_write_to_string(1,cl_car(c)))
-        print ecl_base_string_pointer_safe(s)
-        c=cl_cadr(c)
+        print(ecl_base_string_pointer_safe(s))
+        c = cl_cadr(c)
         if c == Cnil:
             break
 

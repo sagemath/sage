@@ -143,7 +143,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
     @staticmethod
     def __classcall_private__(cls, R, n=None, names=None):
         """
-        Standardize input to ensure a unqiue representation.
+        Standardize input to ensure a unique representation.
 
         TESTS::
 

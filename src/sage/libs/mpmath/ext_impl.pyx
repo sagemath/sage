@@ -16,6 +16,7 @@ See if :trac:`15118` is fixed::
     ...
     ZeroDivisionError
 """
+from __future__ import print_function
 
 include "cysignals/signals.pxi"
 include "sage/ext/stdsage.pxi"
@@ -1449,9 +1450,9 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
 
         sage: from sage.libs.mpmath.ext_impl import cos_sin_fixed
         sage: c, s = cos_sin_fixed(1<<53, 53)
-        sage: print float(c) / 2^53
+        sage: print(float(c) / 2^53)
         0.540302305868
-        sage: print float(s) / 2^53
+        sage: print(float(s) / 2^53)
         0.841470984808
 
     """
@@ -1500,9 +1501,9 @@ def log_int_fixed(n, long prec, ln2=None):
     EXAMPLES::
 
         sage: from sage.libs.mpmath.ext_impl import log_int_fixed
-        sage: print float(log_int_fixed(5, 53)) / 2^53
+        sage: print(float(log_int_fixed(5, 53)) / 2^53)
         1.60943791243
-        sage: print float(log_int_fixed(5, 53)) / 2^53   # exercise cache
+        sage: print(float(log_int_fixed(5, 53)) / 2^53)   # exercise cache
         1.60943791243
 
     """

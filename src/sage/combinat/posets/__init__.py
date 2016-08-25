@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Posets
 
 Common posets can be accessed through ``posets.<tab>`` and are listed in the
@@ -31,5 +31,3 @@ If you are looking for Poset-related :ref:`categories
 :class:`~sage.categories.finite_lattice_posets.FiniteLatticePosets`.
 
   """
-
-import all

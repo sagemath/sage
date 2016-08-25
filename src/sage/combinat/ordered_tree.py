@@ -6,6 +6,7 @@ AUTHORS:
 - Florent Hivert (2010-2011): initial revision
 - Frederic Chapoton (2010): contributed some methods
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
@@ -610,9 +611,6 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         subtree, and then sorting the subtrees according to the value
         of the :meth:`sort_key` method.
 
-        See also :meth:`dendrog_normalize` for an alternative
-        that works for unlabelled trees.
-
         Consider the quotient map `\pi` that sends a planar rooted tree to
         the associated unordered rooted tree. Normalization is the
         composite `s \circ \pi`, where `s` is a section of `\pi`.
@@ -656,6 +654,8 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         dendrographical order; return `0` if they are equal;
         return `1` if ``other`` is smaller.
 
+        .. NOTE:: This is deprecated.
+
         The dendrographical order is a total order on the set of
         unlabelled ordered rooted trees; it is defined recursively
         as follows: An ordered rooted tree `T` with children
@@ -696,6 +696,10 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: tg = OT([[[], []], [[], []]])
             sage: l = [ta, tb, tc, td, te, tf, tg]
             sage: [l[i].dendrog_cmp(l[j]) for i in range(7) for j in range(7)]
+            doctest:...: DeprecationWarning: Please use 'sort_key' to sort.
+            See http://trac.sagemath.org/21148 for details.
+            doctest:...: DeprecationWarning: Please use 'sort_key' to sort.
+            See http://trac.sagemath.org/21148 for details.
             [0, -1, -1, -1, -1, -1, -1,
              1, 0, -1, -1, 1, 1, 1,
              1, 1, 0, -1, 1, 1, 1,
@@ -704,6 +708,9 @@ class OrderedTree(AbstractClonableTree, ClonableList):
              1, -1, -1, -1, 1, 0, 1,
              1, -1, -1, -1, 1, -1, 0]
         """
+        from sage.misc.superseded import deprecation
+        deprecation(21148, "Please use 'sort_key' to sort.")
+
         if len(self) < len(other):
             return -1
         if len(self) > len(other):
@@ -726,6 +733,8 @@ class OrderedTree(AbstractClonableTree, ClonableList):
           then ``self`` is modified and nothing returned; otherwise
           the normalized tree is returned
 
+        .. NOTE:: This is deprecated.
+
         The normalized tree of an unlabelled ordered rooted tree
         `t` with respect to the dendrographical order is an
         unlabelled ordered rooted tree defined recursively
@@ -744,6 +753,12 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: ta = OT([[],[[]]])
             sage: tb = OT([[[]],[]])
             sage: ta.dendrog_normalize() == tb.dendrog_normalize()
+            doctest:...: DeprecationWarning: Please use 'sort_key' to sort.
+            See http://trac.sagemath.org/21148 for details.
+            doctest:...: DeprecationWarning: Please use 'sort_key' to sort.
+            See http://trac.sagemath.org/21148 for details.
+            doctest:...: DeprecationWarning: Please use 'sort_key' to sort.
+            See http://trac.sagemath.org/21148 for details.
             True
             sage: ta == tb
             False
@@ -756,10 +771,15 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: ta = OT([[],[[]]])
             sage: tb = OT([[[]],[]])
             sage: ta.dendrog_normalize(inplace=True); ta
+            doctest:...: DeprecationWarning: Please use 'sort_key' to sort.
+            See http://trac.sagemath.org/21148 for details.
             [[], [[]]]
             sage: tb.dendrog_normalize(inplace=True); tb
             [[], [[]]]
         """
+        from sage.misc.superseded import deprecation
+        deprecation(21148, "Please use 'sort_key' to sort.")
+        
         def dendrog_cmp(a, b):
             return a.dendrog_cmp(b)
         if not inplace:
@@ -1022,7 +1042,7 @@ class OrderedTrees_size(OrderedTrees):
         if self._size == 0:
             return Integer(0)
         else:
-            from combinat import catalan_number
+            from .combinat import catalan_number
             return catalan_number(self._size - 1)
 
     def random_element(self):

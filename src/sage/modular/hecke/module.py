@@ -11,6 +11,8 @@ Hecke modules
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 import sage.rings.all
 import sage.arith.all as arith
@@ -22,9 +24,9 @@ from sage.structure.parent import Parent
 
 import sage.misc.prandom as random
 
-import algebra
-import element
-import hecke_operator
+from . import algebra
+from . import element
+from . import hecke_operator
 
 from sage.modules.all import FreeModule
 
@@ -1120,8 +1122,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         EXAMPLE::
 
-            sage: ModularSymbols(14).cuspidal_subspace().simple_factors()[1].dual_eigenvector()
-            (0, 1, 0, 0, 0)
+            sage: SF = ModularSymbols(14).cuspidal_subspace().simple_factors()
+            sage: sorted([u.dual_eigenvector() for u in SF])
+            [(0, 1, 0, 0, 0), (1, 0, -3, 2, -1)]
         """
         # TODO -- optimize by computing the answer for i not None in terms
         # of the answer for a given i if known !!
@@ -1710,10 +1713,10 @@ class HeckeModule_free_module(HeckeModule_generic):
         Next we define a function that does the above::
 
             sage: def b(N,k=2):
-            ...    t=cputime()
-            ...    S = ModularSymbols(N,k,sign=-1).cuspidal_submodule().new_submodule()
-            ...    for A in S.decomposition():
-            ...        print N, A.system_of_eigenvalues(5)
+            ....:    t=cputime()
+            ....:    S = ModularSymbols(N,k,sign=-1).cuspidal_submodule().new_submodule()
+            ....:    for A in S.decomposition():
+            ....:        print("{} {}".format(N, A.system_of_eigenvalues(5)))
 
         ::
 

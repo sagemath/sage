@@ -275,7 +275,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
                                     codomain=self.ambient(),
                                     triangular="lower",
                                     unitriangular=self._unitriangular,
-                                    cmp=self.ambient().get_order_cmp(),
+                                    key=self.ambient().get_order_key(),
                                     inverse_on_support="compute")
 
     @lazy_attribute

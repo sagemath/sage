@@ -299,7 +299,7 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         ....:                                                  doctest_file=fname))
         4711
         sage: with open(fname) as f:
-        ....:     for line in f.readlines(): print '|{}'.format(line),
+        ....:     for line in f.readlines(): sys.stdout.write('|{}'.format(line))
         |        sage: p = get_solver(solver='GLPK')
         |        sage: p.add_variable(obj=42, name='Helloooooo')
         |        0
@@ -326,7 +326,7 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         ....:                                                 test_method='something'))
         4711
         sage: with open(fname) as f:
-        ....:     for line in f.readlines(): print '|{}'.format(line),
+        ....:     for line in f.readlines(): sys.stdout.write('|{}'.format(line))
         |
         |    @classmethod
         |    def _test_something(cls, tester=None, **options):

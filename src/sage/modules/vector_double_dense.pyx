@@ -271,7 +271,7 @@ cdef class Vector_double_dense(FreeModuleElement):
                                                 numpy.PyArray_GETPTR1(self._vector_numpy, i)))
 
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
         Add two vectors together.
 
@@ -291,7 +291,7 @@ cdef class Vector_double_dense(FreeModuleElement):
 
         return self._new(_left._vector_numpy + _right._vector_numpy)
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
         Return self - right
 
@@ -311,7 +311,7 @@ cdef class Vector_double_dense(FreeModuleElement):
 
         return self._new(_left._vector_numpy - _right._vector_numpy)
 
-    cpdef Element _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right):
         """
         Dot product of self and right.
 
@@ -335,7 +335,7 @@ cdef class Vector_double_dense(FreeModuleElement):
 
         return self._sage_dtype(numpy.dot(_left._vector_numpy, _right._vector_numpy))
 
-    cpdef Vector _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right):
         """
         Return the component-wise product of self and right.
 
@@ -358,7 +358,7 @@ cdef class Vector_double_dense(FreeModuleElement):
 
         return self._new(_left._vector_numpy * _right._vector_numpy)
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _rmul_(self, RingElement left):
         """
         Multiply a scalar and vector
 
@@ -375,7 +375,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         return self._new(self._python_dtype(left)*self._vector_numpy)
 
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, RingElement right):
         """
         Multiply a scalar and vector
 

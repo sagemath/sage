@@ -36,6 +36,7 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
 
 import re
 from copy import deepcopy
@@ -232,8 +233,8 @@ class GeneralizedYoungWall(CombinatorialElement):
             if row == []:
                 wall += '|'
             print(wall.rjust(2*self.cols+1))
-        if self.data==[]:
-            print '0'
+        if self.data == []:
+            print('0')
 
     def content(self):
         r"""
@@ -487,7 +488,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             0
         """
         if i not in self.index_set():
-            raise ValueError("i must in in the index set")
+            raise ValueError("i must be in the index set")
         eps = 0
         while True:
             self = self.e(i)

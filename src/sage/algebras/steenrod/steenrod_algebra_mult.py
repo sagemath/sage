@@ -11,7 +11,7 @@ AUTHORS:
 
 .. rubric:: Milnor multiplication, `p=2`
 
-See Milnor's paper [Mil] for proofs, etc.
+See Milnor's paper [Mil]_ for proofs, etc.
 
 To multiply Milnor basis elements $\text{Sq}(r_1, r_2, ...)$ and
 $\text{Sq}(s_1, s_2,...)$ at the prime 2, form all possible matrices
@@ -64,7 +64,7 @@ the dictionary altogether).
 
 .. rubric:: Milnor multiplication, odd primes
 
-As for the `p=2` case, see Milnor's paper [Mil] for proofs.
+As for the `p=2` case, see Milnor's paper [Mil]_ for proofs.
 
 Fix an odd prime $p$.  There are three steps to multiply Milnor basis
 elements $Q_{f_1} Q_{f_2} ... \mathcal{P}(q_1, q_2, ...)$ and
@@ -192,15 +192,6 @@ practice, one should use the cached version,
 ``make_mono_admissible``), which converts a product of Steenrod
 squares or pth power operations and Bocksteins into a dictionary
 representing a sum of admissible monomials.
-
-REFERENCES:
-
-- [Mil] J. W. Milnor, "The Steenrod algebra and its dual", Ann. of Math.
-  (2) 67 (1958), 150--171.
-
-- [SE] N. E. Steenrod, "Cohomology operations (Lectures by
-  N. E. Steenrod written and revised by D. B. A.  Epstein)". Annals of
-  Mathematics Studies, No. 50, 1962, Princeton University Press.
 """
 
 #*****************************************************************************

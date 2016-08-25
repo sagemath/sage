@@ -30,6 +30,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
@@ -37,8 +38,9 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.list_clone import ClonableArray
 from sage.misc.lazy_attribute import lazy_attribute
-import __builtin__
+from six.moves import builtins
 from sage.misc.stopgap import stopgap
+
 
 def first(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
     """
@@ -418,7 +420,7 @@ def iterator(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
     succ = lambda x: next(x, min_length, max_length, floor, ceiling, min_slope, max_slope)
 
     #Handle the case where n is a list of integers
-    if isinstance(n, __builtin__.list):
+    if isinstance(n, builtins.list):
         for i in range(n[0], min(n[1]+1,upper_bound(min_length, max_length, floor, ceiling, min_slope, max_slope))):
             for el in iterator(i, min_length, max_length, floor, ceiling, min_slope, max_slope):
                 yield el
@@ -911,7 +913,7 @@ class IntegerListsLex(Parent):
                 # Is ``floor`` an iterable?
                 # Not ``floor[:]`` because we want ``self.floor_list``
                 #    mutable, and applying [:] to a tuple gives a tuple.
-                self.floor_list = __builtin__.list(floor)
+                self.floor_list = builtins.list(floor)
                 # Make sure the floor list will make the list satisfy the constraints
                 if min_slope != float('-inf'):
                     for i in range(1, len(self.floor_list)):
@@ -930,7 +932,7 @@ class IntegerListsLex(Parent):
         else:
             try:
                 # Is ``ceiling`` an iterable?
-                self.ceiling_list = __builtin__.list(ceiling)
+                self.ceiling_list = builtins.list(ceiling)
                 # Make sure the ceiling list will make the list satisfy the constraints
                 if max_slope != float('+inf'):
                     for i in range(1, len(self.ceiling_list)):
@@ -1182,6 +1184,6 @@ class IntegerListsLex(Parent):
             sage: all(v in C for v in C)
             True
         """
-        if isinstance(v, self.element_class) or isinstance(v, __builtin__.list):
+        if isinstance(v, self.element_class) or isinstance(v, builtins.list):
             return is_a(v, *(self.build_args())) and sum(v) in self.n_range
         return False

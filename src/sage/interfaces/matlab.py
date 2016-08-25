@@ -146,10 +146,12 @@ language works). Use square brackets or the set function::
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
-from expect import Expect, ExpectElement
+from .expect import Expect, ExpectElement
 
 
 #import sage.matrix.matrix_space
@@ -163,7 +165,7 @@ class Matlab(Expect):
         sage: a = matlab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional - matlab
         sage: b = matlab('[ 1; 3; 13]')                         # optional - matlab
         sage: c = a * b                                         # optional - matlab
-        sage: print c                                           # optional - matlab
+        sage: print(c)                                          # optional - matlab
             30
            122
            505
@@ -213,7 +215,7 @@ class Matlab(Expect):
                   http://www.mathworks.com/
 
         You might have to buy MATLAB or get away with setting up a remote connection to a server running Maple. Type
-   print matlab._install_hints_ssh()
+   print(matlab._install_hints_ssh())
 for hints on how to do that).
         """
 
@@ -235,7 +237,7 @@ for hints on how to do that).
 #    def set_via_file(self, var_name, x):
 #        t = self._temp_file(var_name)
 #        open(t,'w').write(x)
-#        print 'load "%s" %s'%(t, var_name)
+#        print('load "%s" %s'%(t, var_name))
 #        self.eval('load "%s" %s'%(t, var_name))
 #        #os.unlink(t)
 

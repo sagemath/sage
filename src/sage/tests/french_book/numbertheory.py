@@ -3,24 +3,24 @@ Test file for Chapter Number Theory.
 """
 
 r"""
-sage: a=IntegerModRing(15)(3); b=IntegerModRing(17)(3); print a, b
-3 3
+sage: a=IntegerModRing(15)(3); b=IntegerModRing(17)(3); a, b
+(3, 3)
 sage: a == b
 False
 sage: R=a.base_ring(); R
 Ring of integers modulo 15
 sage: R.characteristic()
 15
-sage: print a+a, a-17, a*a+1, a^3
-6 1 10 12
+sage: a+a, a-17, a*a+1, a^3
+(6, 1, 10, 12)
 sage: 1/(a+1)
 4
 sage: 1/a
 Traceback (most recent call last):
 ...
 ZeroDivisionError: Inverse does not exist.
-sage: z=lift(a); y=ZZ(a); print y, type(y), y==z
-3 <type 'sage.rings.integer.Integer'> True
+sage: z=lift(a); y=ZZ(a); y, type(y), y==z
+(3, <type 'sage.rings.integer.Integer'>, True)
 sage: [Mod(x,15).additive_order() for x in range(0,15)]
 [1, 15, 15, 5, 15, 3, 5, 15, 15, 5, 3, 15, 5, 15, 15]
 sage: [[x,Mod(x,15).multiplicative_order()] for x in range(1,15) if gcd(x,15)==1]

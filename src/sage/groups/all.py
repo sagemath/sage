@@ -1,17 +1,18 @@
+from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
-from pari_group import PariGroup
+from .pari_group import PariGroup
 
-from matrix_gps.all import *
-from abelian_gps.all import *
+from .matrix_gps.all import *
+from .abelian_gps.all import *
 
-from perm_gps.all import *
+from .perm_gps.all import *
 
-from generic import *
+from .generic import *
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 
-from additive_abelian.all import *
+from .additive_abelian.all import *
 
 lazy_import('sage.groups.conjugacy_classes', ['ConjugacyClass', 'ConjugacyClassGAP'])
 

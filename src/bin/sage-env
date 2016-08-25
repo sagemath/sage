@@ -146,6 +146,18 @@ if [ "$SAGE_ROOT" != "$NEW_SAGE_ROOT" -a -n "$SAGE_ROOT" ]; then
     echo >&2 "New SAGE_ROOT=$NEW_SAGE_ROOT"
 fi
 
+# Display the Sage startup banner, used in src/bin/sage
+sage_banner() {
+    if [ "$SAGE_BANNER" = "bare" ]; then
+        cat "$SAGE_ROOT/VERSION.txt"
+    elif [ "$SAGE_BANNER" != "no" ]; then
+        # This file sage-banner is not yet available during the build
+        # of Sage, so we ignore errors from cat.
+        cat "$SAGE_LOCAL/bin/sage-banner" 2>/dev/null
+    fi
+}
+
+
 # Don't execute the commands more than once for the same version of
 # sage-env.  Check this after checking the validity of SAGE_ROOT, but
 # before modifying its value.
@@ -440,6 +452,8 @@ if [ -d "$DOT_SAGE" ] ; then
     fi
 fi
 MAXIMA_PREFIX="$SAGE_ROOT/local" && export MAXIMA_PREFIX
+
+PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 
 ############ architecture flags
 

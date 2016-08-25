@@ -263,9 +263,9 @@ Sage example in ./nonlinear.tex, line 805::
     ....:         niter += 1
     ....:         u, v, w = v, w, next(series)
     ....:         if check(u, v, w, prec):
-    ....:             print 'After {0} iterations: {1}'.format(niter, w)
+    ....:             print('After {0} iterations: {1}'.format(niter, w))
     ....:             return
-    ....:     print 'Failed after {0} iterations'.format(maxit)
+    ....:     print('Failed after {0} iterations'.format(maxit))
 
 Sage example in ./nonlinear.tex, line 837::
 

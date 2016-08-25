@@ -99,7 +99,7 @@ modification::
 
     sage: with el.clone() as elc2:
     ....:     elc2[1] = 12
-    ....:     print elc2
+    ....:     print(elc2)
     ....:     elc2[2] = 25
     [1, 12, 8]
     sage: elc2
@@ -140,7 +140,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 include "sage/ext/stdsage.pxi"
 include "cysignals/memory.pxi"
@@ -228,7 +228,7 @@ cdef class ClonableElement(Element):
         ....:          return "(x=%s, y=%s)"%(self._x, self._y)
         ....:      def check(self):
         ....:          if self._x >= self._y:
-        ....:              raise ValueError, "Incorrectly ordered pair"
+        ....:              raise ValueError("Incorrectly ordered pair")
         ....:      def get_x(self): return self._x
         ....:      def get_y(self): return self._y
         ....:      def set_x(self, v): self._require_mutable(); self._x = v
@@ -307,7 +307,7 @@ cdef class ClonableElement(Element):
             ValueError: object is immutable; please change a copy instead.
         """
         if self._is_immutable:
-            raise ValueError, "object is immutable; please change a copy instead."
+            raise ValueError("object is immutable; please change a copy instead.")
 
     cpdef bint is_mutable(self):
         """
@@ -325,7 +325,7 @@ cdef class ClonableElement(Element):
             sage: copy(el).is_mutable()
             True
             sage: with el.clone() as el1:
-            ....:      print [el.is_mutable(), el1.is_mutable()]
+            ....:      print([el.is_mutable(), el1.is_mutable()])
             [False, True]
         """
         return not self._is_immutable
@@ -346,7 +346,7 @@ cdef class ClonableElement(Element):
             sage: copy(el).is_immutable()
             False
             sage: with el.clone() as el1:
-            ....:      print [el.is_immutable(), el1.is_immutable()]
+            ....:      print([el.is_immutable(), el1.is_immutable()])
             [True, False]
         """
         return self._is_immutable
@@ -411,7 +411,7 @@ cdef class ClonableElement(Element):
         """
         if self._hash == 0:
             if not self._is_immutable:
-                raise ValueError, "cannot hash a mutable object."
+                raise ValueError("cannot hash a mutable object.")
             else:
                 self._hash = self._hash_()
         return self._hash
@@ -817,13 +817,13 @@ cdef class ClonableArray(ClonableElement):
         """
         if self._hash == 0:
             if not self._is_immutable:
-                raise ValueError, "cannot hash a mutable object."
+                raise ValueError("cannot hash a mutable object.")
             else:
                 self._hash = self._hash_()
         return self._hash
 
     # See protocol in comment in sage/structure/element.pyx
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         TESTS::
 
@@ -1112,12 +1112,12 @@ cdef class ClonableList(ClonableArray):
             ...
             ValueError: object is immutable; please change a copy instead.
             sage: with el.clone() as elc:
-            ....:      print elc.pop()
+            ....:      print(elc.pop())
             9
             sage: elc
             [1, 4, 5, 8]
             sage: with el.clone() as elc:
-            ....:      print elc.pop(2)
+            ....:      print(elc.pop(2))
             5
             sage: elc
             [1, 4, 8, 9]
@@ -1273,7 +1273,7 @@ cdef class ClonableIntArray(ClonableElement):
         self._parent = parent
 
         if self._list is not NULL:
-            raise ValueError, "resizing is forbidden"
+            raise ValueError("resizing is forbidden")
         self._alloc_(len(lst))
         for i from 0 <= i < self._len:
             self._list[i] = lst[i]
@@ -1427,7 +1427,6 @@ cdef class ClonableIntArray(ClonableElement):
         cdef int start, stop, step, keyi
         cdef list res
         cdef slice keysl
-        # print key
         if isinstance(key, slice):
             keysl = <slice> key
             start, stop, step = keysl.indices(self._len)
@@ -1436,13 +1435,12 @@ cdef class ClonableIntArray(ClonableElement):
                 res.append(self._getitem(i))
             return res
         keyi = <int> key
-        # print key, key, self._len, self._len+keyi
         if keyi < 0:
             keyi += self._len
         if 0 <= keyi < self._len:
             return self._list[keyi]
         else:
-            raise IndexError, "list index out of range"
+            raise IndexError("list index out of range")
 
     def __setitem__(self, int key, value):
         """
@@ -1466,7 +1464,7 @@ cdef class ClonableIntArray(ClonableElement):
             self._require_mutable()
             self._list[key] = value
         else:
-            raise IndexError, "list index out of range"
+            raise IndexError("list index out of range")
 
     cpdef object _getitem(self, int key):
         """
@@ -1484,7 +1482,7 @@ cdef class ClonableIntArray(ClonableElement):
         if 0 <= key < self._len:
             return self._list[key]
         else:
-            raise IndexError, "list index out of range"
+            raise IndexError("list index out of range")
 
     cpdef _setitem(self, int key, value):
         """
@@ -1509,7 +1507,7 @@ cdef class ClonableIntArray(ClonableElement):
             self._require_mutable()
             self._list[key] = value
         else:
-            raise IndexError, "list index out of range"
+            raise IndexError("list index out of range")
 
     def __contains__(self, int item):
         """
@@ -1547,7 +1545,7 @@ cdef class ClonableIntArray(ClonableElement):
         for i from 0 <= i < self._len:
             if item == self._list[i]:
                 return i
-        raise ValueError, "list.index(x): x not in list"
+        raise ValueError("list.index(x): x not in list")
 
 
     # __hash__ is not properly inherited if comparison is changed
@@ -1569,13 +1567,13 @@ cdef class ClonableIntArray(ClonableElement):
         """
         if self._hash == 0:
             if not self._is_immutable:
-                raise ValueError, "cannot hash a mutable object."
+                raise ValueError("cannot hash a mutable object.")
             else:
                 self._hash = self._hash_()
         return self._hash
 
     # See protocol in comment in sage/structure/element.pyx
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef int _cmp_(left, right) except -2:
         """
         TESTS::
 

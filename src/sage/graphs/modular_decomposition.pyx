@@ -56,7 +56,7 @@ cpdef modular_decomposition(g):
 
     .. NOTE::
 
-        As this fuction could be used by efficient C routines, the
+        As this function could be used by efficient C routines, the
         vertices returned are not labels but identifiants from ``[0,
         ..., g.order()-1]``
 

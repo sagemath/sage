@@ -20,7 +20,7 @@ EXAMPLES::
     [1, 2, 3, 1, 2, 3, 1, 2, 1]
 
     sage: S = SubwordComplex(Q,W.w0)                                    # optional - gap3
-    sage: for F in S: print F, F.root_configuration()                   # optional - gap3
+    sage: for F in S: print("{} {}".format(F, F.root_configuration()))                 # optional - gap3
     (0, 1, 2) [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     (0, 1, 8) [(1, 0, 0), (0, 1, 0), (0, 0, -1)]
     (0, 2, 6) [(1, 0, 0), (0, 1, 1), (0, -1, 0)]
@@ -49,7 +49,7 @@ Testing that the implementation also works with CoxeterGroup::
 
 The root configuration works::
 
-    sage: for F in S: print F, F.root_configuration()
+    sage: for F in S: print("{} {}".format(F, F.root_configuration()))
     (0, 1, 2) [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     (0, 1, 8) [(1, 0, 0), (0, 1, 0), (0, 0, -1)]
     (0, 2, 6) [(1, 0, 0), (0, 1, 1), (0, -1, 0)]
@@ -112,7 +112,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 # python3
-from __future__ import division
+from __future__ import division, print_function
 
 from copy import copy
 from sage.misc.cachefunc import cached_method
@@ -1371,7 +1371,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: W = ReflectionGroup(['A',2])                          # optional - gap3
             sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
             sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: for I in SC: print I                                  # optional - gap3
+            sage: for I in SC: print(I)                                 # optional - gap3
             (0, 1)
             (0, 4)
             (1, 2)
@@ -1381,7 +1381,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: W = CoxeterGroup(['A',2])
             sage: w = W.from_reduced_word([1,2,1])
             sage: SC = SubwordComplex([1,2,1,2,1], w)
-            sage: for I in SC: print I
+            sage: for I in SC: print(I)
             (0, 1)
             (0, 4)
             (1, 2)
@@ -1592,7 +1592,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
             sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
             sage: kappa = SC.kappa_preimages()                          # optional - gap3
-            sage: for F in SC: print F, [w.reduced_word() for w in kappa[F]]    # optional - gap3
+            sage: for F in SC: print("{} {}".format(F, [w.reduced_word() for w in kappa[F]]))    # optional - gap3
             (0, 1) [[]]
             (0, 4) [[2], [2, 1]]
             (1, 2) [[1]]
@@ -1603,7 +1603,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: w = W.from_reduced_word([1,2,1])
             sage: SC = SubwordComplex([1,2,1,2,1], w)
             sage: kappa = SC.kappa_preimages()
-            sage: for F in SC: print F, [w.reduced_word() for w in kappa[F]]
+            sage: for F in SC: print("{} {}".format(F, [w.reduced_word() for w in kappa[F]]))
             (0, 1) [[]]
             (0, 4) [[2], [2, 1]]
             (1, 2) [[1]]
@@ -1867,7 +1867,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         - I, J -- two facets
 
-        OUTPUT
+        OUTPUT:
 
         a set of facets
 

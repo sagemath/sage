@@ -95,7 +95,7 @@ You can also work with matrices in LiE. ::
          ,[-1, 9, 8,0]
          ,[ 3,-5,-2,9]
          ]
-    sage: print lie.eval('*'+m._name) # optional - lie
+    sage: print(lie.eval('*'+m._name))  # optional - lie
          [[1,12,-1, 3]
          ,[0, 4, 9,-5]
          ,[3,-4, 8,-2]
@@ -189,7 +189,7 @@ do not show up when using tab-completion. ::
 LiE's help can be accessed through lie.help('functionname') where
 functionname is the function you want to receive help for. ::
 
-   sage: print lie.help('diagram') # optional - lie
+   sage: print(lie.help('diagram'))  # optional - lie
    diagram(g).   Prints the Dynkin diagram of g, also indicating
       the type of each simple component printed, and labeling the nodes as
       done by Bourbaki (for the second and further simple components the
@@ -285,8 +285,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
-from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, AsciiArtString
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, AsciiArtString
 from sage.misc.all import prod
 from sage.env import DOT_SAGE, SAGE_LOCAL
 from sage.interfaces.tab_completion import ExtraTabCompletion

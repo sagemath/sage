@@ -50,6 +50,7 @@ TESTS::
     (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,
     (x, y, z))
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -356,7 +357,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             sage: P('pi')
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce pi (<class 'sage.symbolic.constants.Pi'>) to Rational
+            TypeError: unable to convert pi to a rational
 
         Check that it is possible to convert strings to iterated
         polynomial rings (see :trac:`13327`)::
@@ -409,7 +410,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         except TypeError:
             pass
 
-        from multi_polynomial_libsingular import MPolynomial_libsingular
+        from .multi_polynomial_libsingular import MPolynomial_libsingular
 
         if isinstance(x, MPolynomial_polydict):
             P = x.parent()

@@ -6,6 +6,8 @@ This module implements the design methods that need to be somewhat efficient.
 Functions
 ---------
 """
+from __future__ import print_function
+
 include "sage/data_structures/bitset.pxi"
 include "cysignals/memory.pxi"
 
@@ -89,14 +91,14 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
     for R in OA:
         if len(R) != k:
             if verbose:
-                print {"OA"   : "Some row does not have length "+str(k),
-                       "MOLS" : "The number of squares is not "+str(k-2)}[terminology]
+                print({"OA"   : "Some row does not have length "+str(k),
+                       "MOLS" : "The number of squares is not "+str(k-2)}[terminology])
             return False
 
     if len(OA) != n2:
         if verbose:
-            print {"OA"   : "The number of rows is {} instead of {}^2={}".format(len(OA),n,n2),
-                   "MOLS" : "All squares do not have dimension n^2={}^2".format(n)}[terminology]
+            print({"OA"   : "The number of rows is {} instead of {}^2={}".format(len(OA),n,n2),
+                   "MOLS" : "All squares do not have dimension n^2={}^2".format(n)}[terminology])
         return False
 
     if n == 0:
@@ -119,8 +121,8 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
         for j,x in enumerate(R):
             if x < 0 or x >= n:
                 if verbose:
-                    print {"OA"   : "{} is not in the interval [0..{}]".format(x,n-1),
-                           "MOLS" : "Entry {} was expected to be in the interval [0..{}]".format(x,n-1)}[terminology]
+                    print({"OA"   : "{} is not in the interval [0..{}]".format(x,n-1),
+                           "MOLS" : "Entry {} was expected to be in the interval [0..{}]".format(x,n-1)}[terminology])
                 sig_free(OAc)
                 return False
             OAc[j*n2+i] = x
@@ -141,8 +143,8 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
                 sig_free(OAc)
                 bitset_free(seen)
                 if verbose:
-                    print {"OA"   : "Columns {} and {} are not orthogonal".format(i,j),
-                           "MOLS" : "Squares {} and {} are not orthogonal".format(i,j)}[terminology]
+                    print({"OA"   : "Columns {} and {} are not orthogonal".format(i,j),
+                           "MOLS" : "Squares {} and {} are not orthogonal".format(i,j)}[terminology])
                 return False
 
     sig_free(OAc)
@@ -227,7 +229,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
 
     if v < 0 or lambd < 0:
         if verbose:
-            print "v={} and lambda={} must be non-negative integers".format(v,l)
+            print("v={} and lambda={} must be non-negative integers".format(v,l))
         return False
 
     # Block sizes are element of K
@@ -236,7 +238,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         for b in blocks:
             if not len(b) in K:
                 if verbose:
-                    print "a block has size {} while K={}".format(len(b),list(K))
+                    print("a block has size {} while K={}".format(len(b),list(K)))
                 return False
 
     # Check that "groups" consists of disjoints sets whose union has length n
@@ -244,14 +246,14 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         (sum(len(g) for g in groups) != n or
          len(set().union(*groups)) != n)):
         if verbose:
-            print "groups is not a partition of [0,...,{}]".format(n-1)
+            print("groups is not a partition of [0,...,{}]".format(n-1))
         return False
 
     # Checks that the blocks are indeed sets and do not repeat elements
     for b in blocks:
         if len(b) != len(set(b)):
             if verbose:
-                print "The following block has repeated elements: {}".format(b)
+                print("The following block has repeated elements: {}".format(b))
             return False
 
     # Check that the groups/blocks belong to [0,...,n-1]
@@ -264,7 +266,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
                 i = -1
             if i < 0 or i >= n:
                 if verbose:
-                    print "{} does not belong to [0,...,{}]".format(x,n-1)
+                    print("{} does not belong to [0,...,{}]".format(x, n-1))
                 return False
 
     cdef unsigned short * matrix = <unsigned short *> sig_calloc(n*n,sizeof(unsigned short))
@@ -297,7 +299,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         for g in groups:
             if not len(g) in G:
                 if verbose:
-                    print "a group has size {} while G={}".format(len(g),list(G))
+                    print("a group has size {} while G={}".format(len(g),list(G)))
                 sig_free(matrix)
                 return False
 
@@ -310,7 +312,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
                 jj = g[j]
                 if matrix[ii*n+jj] != 0:
                     if verbose:
-                        print "the pair ({},{}) belongs to a group but appears in some block".format(ii,jj)
+                        print("the pair ({},{}) belongs to a group but appears in some block".format(ii, jj))
                     sig_free(matrix)
                     return False
 
@@ -323,7 +325,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         for j in range(i+1,n):
             if matrix[i*n+j] != l:
                 if verbose:
-                    print "the pair ({},{}) has been seen {} times but lambda={}".format(i,j,matrix[i*n+j],l)
+                    print("the pair ({},{}) has been seen {} times but lambda={}".format(i,j,matrix[i*n+j],l))
                 sig_free(matrix)
                 return False
 
@@ -442,12 +444,12 @@ def is_projective_plane(blocks, verbose=False):
     """
     if not blocks:
         if verbose:
-            print 'There is no block.'
+            print('There is no block.')
         return False
     k = len(blocks[0])-1
     if k < 2:
         if verbose:
-            print 'First block has less than 3 points.'
+            print('First block has less than 3 points.')
         return False
     v = k**2 + k + 1
     return is_group_divisible_design([[i] for i in range(v)],
@@ -608,14 +610,14 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
     # Height of the matrix
     if lmbda*(n-1+2*u)+mu != M_nrows:
         if verbose:
-            print "The matrix has {} rows instead of lambda(|G|-1+2u)+mu={}({}-1+2.{})+{}={}".format(M_nrows,lmbda,n,u,mu,lmbda*(n-1+2*u)+mu)
+            print("The matrix has {} rows instead of lambda(|G|-1+2u)+mu={}({}-1+2.{})+{}={}".format(M_nrows,lmbda,n,u,mu,lmbda*(n-1+2*u)+mu))
         return False
 
     # Width of the matrix
     for R in M:
         if len(R)!=k:
             if verbose:
-                print "The matrix has {} columns but k={}".format(len(R),k)
+                print("The matrix has {} columns but k={}".format(len(R),k))
             return False
 
     # When |G|=0
@@ -673,7 +675,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
                 if M_c[i*k+j] == n:
                     if bit:
                         if verbose:
-                            print "Row {} contains more than one empty entry".format(i)
+                            print("Row {} contains more than one empty entry".format(i))
                         sig_free(x_minus_y_data)
                         sig_free(x_minus_y)
                         sig_free(G_seen)
@@ -689,8 +691,8 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
                     ii += 1
             if ii!=lmbda*u:
                 if verbose:
-                    print ("Column {} contains {} empty entries instead of the expected "
-                           "lambda.u={}.{}={}".format(j,ii,lmbda,u,lmbda*u))
+                    print("Column {} contains {} empty entries instead of the expected "
+                          "lambda.u={}.{}={}".format(j, ii, lmbda, u, lmbda*u))
                 sig_free(x_minus_y_data)
                 sig_free(x_minus_y)
                 sig_free(G_seen)
@@ -706,8 +708,8 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
             if G_seen[0] != mu: # Bad number of 0
                 if verbose:
-                    print ("Columns {} and {} generate 0 exactly {} times "
-                           "instead of the expected mu(={})".format(i,j,G_seen[0],mu))
+                    print("Columns {} and {} generate 0 exactly {} times "
+                          "instead of the expected mu(={})".format(i,j,G_seen[0],mu))
                 sig_free(x_minus_y_data)
                 sig_free(x_minus_y)
                 sig_free(G_seen)
@@ -717,7 +719,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
             for ii in range(1,n): # bad number of g_ii\in G
                 if G_seen[ii] != lmbda:
                     if verbose:
-                        print ("Columns {} and {} do not generate all elements of G "
+                        print("Columns {} and {} do not generate all elements of G "
                          "exactly lambda(={}) times. The element {} appeared {} "
                          "times as a difference.".format(i,j,lmbda,int_to_group[ii],G_seen[ii]))
                     sig_free(x_minus_y_data)

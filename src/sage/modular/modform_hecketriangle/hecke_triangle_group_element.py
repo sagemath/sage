@@ -15,6 +15,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
@@ -421,10 +422,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             sage: G = HeckeTriangleGroup(n=infinity)
             sage: el = G.S()*G.T(3)*G.S()*G.T(-2)
-            sage: print el.string_repr()
+            sage: print(el.string_repr())
             [ -1   4]
             [  6 -25]
-            sage: print el.string_repr(method="basic")
+            sage: print(el.string_repr(method="basic"))
             S*T^3*S*T^(-2)
         """
         if   method == "default":
@@ -1165,32 +1166,32 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(n=7)
-            sage: print G.T().reduce().string_repr("basic")
+            sage: print(G.T().reduce().string_repr("basic"))
             S*T^(-1)*S*T^(-1)*S*T*S
             sage: G.T().reduce().is_reduced(require_hyperbolic=False)
             True
-            sage: print G.V(2).acton(-G.T(-3)).reduce().string_repr("basic")
+            sage: print(G.V(2).acton(-G.T(-3)).reduce().string_repr("basic"))
             -T*S*T^(-1)*S*T^(-1)
-            sage: print G.V(2).acton(-G.T(-3)).reduce(primitive=False).string_repr("basic")
+            sage: print(G.V(2).acton(-G.T(-3)).reduce(primitive=False).string_repr("basic"))
             T*S*T^(-3)*S*T^(-1)
-            sage: print (-G.V(2)).reduce().string_repr("basic")
+            sage: print((-G.V(2)).reduce().string_repr("basic"))
             T^2*S
             sage: (-G.V(2)).reduce().is_reduced()
             True
-            sage: print (-G.V(2)^3*G.V(6)^2*G.V(3)).reduce().string_repr("block")
+            sage: print((-G.V(2)^3*G.V(6)^2*G.V(3)).reduce().string_repr("block"))
             (-S*T^(-1)) * (V(2)^3*V(6)^2*V(3)) * (-S*T^(-1))^(-1)
             sage: (-G.V(2)^3*G.V(6)^2*G.V(3)).reduce().is_reduced()
             True
 
-            sage: print (-G.I()).reduce().string_repr("block")
+            sage: print((-G.I()).reduce().string_repr("block"))
             1
-            sage: print G.U().reduce().string_repr("block")
+            sage: print(G.U().reduce().string_repr("block"))
             U
-            sage: print (-G.S()).reduce().string_repr("block")
+            sage: print((-G.S()).reduce().string_repr("block"))
             S
-            sage: print (G.V(2)*G.V(3)).acton(G.U()^6).reduce().string_repr("block")
+            sage: print((G.V(2)*G.V(3)).acton(G.U()^6).reduce().string_repr("block"))
             U
-            sage: print (G.V(2)*G.V(3)).acton(G.U()^6).reduce(primitive=False).string_repr("block")
+            sage: print((G.V(2)*G.V(3)).acton(G.U()^6).reduce(primitive=False).string_repr("block"))
             -U^(-1)
         """
         if self.parent().n() == infinity:
@@ -2734,7 +2735,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: G = HeckeTriangleGroup(8)
             sage: z = i
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:
-            ....:     print "A={}: ".format(A.string_repr("conj"))
+            ....:     print("A={}: ".format(A.string_repr("conj")))
             ....:     num_linking_number(A, z, G.n())
             ....:     A.linking_number()
             A=[S]:
@@ -2756,7 +2757,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: z = - 2.3 + 3.1*i
             sage: B = G.I()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:
-            ....:     print "A={}: ".format(A.string_repr("conj"))
+            ....:     print("A={}: ".format(A.string_repr("conj")))
             ....:     num_linking_number(B.acton(A), z, G.n(), prec=100, num_prec=1000).n(53)
             ....:     B.acton(A).linking_number()
             A=[S]:
@@ -2778,7 +2779,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: z = - 2.3 + 3.1*i
             sage: B = G.U()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:    # long time
-            ....:     print "A={}: ".format(A.string_repr("conj"))
+            ....:     print("A={}: ".format(A.string_repr("conj")))
             ....:     num_linking_number(B.acton(A), z, G.n(), prec=200, num_prec=5000).n(53)
             ....:     B.acton(A).linking_number()
             A=[S]:

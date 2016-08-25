@@ -4,7 +4,9 @@ This is needed in setup.py only and not installed anywhere, thus is not
 a library file. It solves the issue from #11874.
 """
 
-import types, copy_reg, copy
+import types
+from six.moves import copyreg
+import copy
 
 
 # The following four methods are taken from twisted.persisted.styles
@@ -12,7 +14,7 @@ import types, copy_reg, copy
 # chicken vs egg issue, as we cannot use sage.misc.fpickle in
 # setup.py of sage-***.spkg
 def pickleMethod(method):
-    'support function for copy_reg to pickle method refs'
+    'support function for copyreg to pickle method refs'
     return unpickleMethod, (method.im_func.__name__,
                              method.im_self,
                              method.im_class)
@@ -20,7 +22,7 @@ def pickleMethod(method):
 def unpickleMethod(im_name,
                     im_self,
                     im_class):
-    'support function for copy_reg to unpickle method refs'
+    'support function for copyreg to unpickle method refs'
     try:
         unbound = getattr(im_class,im_name)
         if im_self is None:
@@ -40,22 +42,22 @@ def unpickleMethod(im_name,
                                  im_self)
         return bound
 
-copy_reg.pickle(types.MethodType,
+copyreg.pickle(types.MethodType,
                 pickleMethod,
                 unpickleMethod)
 
 oldModules = {}
 
 def pickleModule(module):
-    'support function for copy_reg to pickle module refs'
+    'support function for copyreg to pickle module refs'
     return unpickleModule, (module.__name__,)
 
 def unpickleModule(name):
-    'support function for copy_reg to unpickle module refs'
-    if oldModules.has_key(name):
+    'support function for copyreg to unpickle module refs'
+    if name in oldModules:
         name = oldModules[name]
     return __import__(name,{},{},'x')
 
-copy_reg.pickle(types.ModuleType,
-                pickleModule,
-                unpickleModule)
+copyreg.pickle(types.ModuleType,
+               pickleModule,
+               unpickleModule)

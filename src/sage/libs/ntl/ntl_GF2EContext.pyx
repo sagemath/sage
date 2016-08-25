@@ -107,7 +107,7 @@ def ntl_GF2EContext( v ):
     """
     v = ntl_GF2X(v)
     if (GF2X_deg((<ntl_GF2X>v).x) < 1):
-        raise ValueError, "%s is not a valid modulus."%v
+        raise ValueError("%s is not a valid modulus." % v)
     key = hash(v)
     if key in GF2EContextDict:
         context = GF2EContextDict[key]()

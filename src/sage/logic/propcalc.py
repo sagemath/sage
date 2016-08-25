@@ -129,6 +129,7 @@ It is an error to create a formula with bad syntax::
     ...
     NameError: invalid variable name 9b: identifiers must begin with a letter and contain only alphanumerics and underscores
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
@@ -143,8 +144,8 @@ It is an error to create a formula with bad syntax::
 ### TODO:
 ### converts (cnf) returns w/o change
 
-import boolformula
-import logicparser
+from . import boolformula
+from . import logicparser
 
 
 def formula(s):

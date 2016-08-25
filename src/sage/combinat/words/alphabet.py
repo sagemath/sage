@@ -31,6 +31,8 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.categories.sets_cat import Sets
 
 from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
@@ -105,7 +107,7 @@ def build_alphabet(data=None, names=None, name=None):
         {0, 1, 2}
         sage: F = build_alphabet('abc'); F
         {'a', 'b', 'c'}
-        sage: print type(F).__name__
+        sage: print(type(F).__name__)
         TotallyOrderedFiniteSet_with_category
 
     If an integer and a set is given, then it constructs a

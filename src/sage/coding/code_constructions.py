@@ -150,13 +150,15 @@ Functions
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.misc.all import prod
-from linear_code import LinearCodeFromVectorSpace, LinearCode
+from .linear_code import LinearCodeFromVectorSpace, LinearCode
 from sage.modules.free_module import span
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.sequence import Sequence, Sequence_generic
@@ -215,11 +217,11 @@ def is_a_splitting(S1, S2, n, return_automorphism=False):
         sage: for P in SetPartitions(6,[3,3]):
         ....:     res,aut= is_a_splitting(P[0],P[1],7,return_automorphism=True)
         ....:     if res:
-        ....:         print aut, P[0], P[1]
-        6 {1, 2, 3} {4, 5, 6}
-        3 {1, 2, 4} {3, 5, 6}
-        6 {1, 3, 5} {2, 4, 6}
-        6 {1, 4, 5} {2, 3, 6}
+        ....:         print((aut, P[0], P[1]))
+        (6, {1, 2, 3}, {4, 5, 6})
+        (3, {1, 2, 4}, {3, 5, 6})
+        (6, {1, 3, 5}, {2, 4, 6})
+        (6, {1, 4, 5}, {2, 3, 6})
 
     We illustrate now how to find idempotents in quotient rings::
 
@@ -539,7 +541,7 @@ def BCHCode(n,delta,F,b=0):
     for coset in R.cyclotomic_cosets(q, range(b,b+delta-1)):
         L1.extend(P((a**j).minpoly()) for j in coset)
     g = P(LCM(L1))
-    #print cosets, "\n", g, "\n", (x**n-1).factor(), "\n", L1, "\n", g.divides(x**n-1)
+
     if not(g.divides(x**n-1)):
         raise ValueError("BCH codes does not exist with the given input.")
     return CyclicCodeFromGeneratingPolynomial(n,g)
@@ -859,12 +861,12 @@ def ExtendedQuadraticResidueCode(n,F):
         sage: C1 = codes.QuadraticResidueCode(7,GF(2))
         sage: C2 = C1.extended_code()
         sage: C3 = codes.ExtendedQuadraticResidueCode(7,GF(2)); C3
-        Linear code of length 8, dimension 4 over Finite Field of size 2
+        Extended code coming from Linear code of length 7, dimension 4 over Finite Field of size 2
         sage: C2 == C3
         True
         sage: C = codes.ExtendedQuadraticResidueCode(17,GF(2))
         sage: C
-        Linear code of length 18, dimension 9 over Finite Field of size 2
+        Extended code coming from Linear code of length 17, dimension 9 over Finite Field of size 2
         sage: C3 = codes.QuadraticResidueCodeOddPair(7,GF(2))[0]
         sage: C3x = C3.extended_code()
         sage: C4 = codes.ExtendedQuadraticResidueCode(7,GF(2))
@@ -935,7 +937,7 @@ def LinearCodeFromCheckMatrix(H):
         [0 1 1 0 0 1 1]
         [0 0 0 1 1 1 1]
         sage: Gh = codes.LinearCodeFromCheckMatrix(H).generator_matrix()
-        sage: Gc = C.generator_matrix_systematic()
+        sage: Gc = C.systematic_generator_matrix()
         sage: Gh == Gc
         True
         sage: C = codes.HammingCode(GF(3), 2)
@@ -943,7 +945,7 @@ def LinearCodeFromCheckMatrix(H):
         [1 0 1 1]
         [0 1 1 2]
         sage: Gh = codes.LinearCodeFromCheckMatrix(H).generator_matrix()
-        sage: Gc = C.generator_matrix_systematic()
+        sage: Gc = C.systematic_generator_matrix()
         sage: Gh == Gc
         True
         sage: C = codes.RandomLinearCode(10,5,GF(4,"a"))
@@ -1093,14 +1095,10 @@ def QuadraticResidueCodeOddPair(n,F):
         sage: C2x.spectrum(); C1x.spectrum()
         [1, 0, 0, 0, 0, 0, 102, 0, 153, 0, 153, 0, 102, 0, 0, 0, 0, 0, 1]
         [1, 0, 0, 0, 0, 0, 102, 0, 153, 0, 153, 0, 102, 0, 0, 0, 0, 0, 1]
-        sage: C2x == C1x.dual_code()
-        True
         sage: C3 = codes.QuadraticResidueCodeOddPair(7,GF(2))[0]
         sage: C3x = C3.extended_code()
         sage: C3x.spectrum()
         [1, 0, 0, 0, 14, 0, 0, 0, 1]
-        sage: C3x.is_self_dual()
-        True
 
     This is consistent with Theorem 6.6.14 in [HP]_.
 

@@ -85,15 +85,16 @@ Another colored example::
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
 
-include "point_c.pxi"
-
 from math import cos, sin
 from sage.rings.all import RDF
 
-from base import RenderParams
+from .base import RenderParams
+from .transform cimport point_c, face_c
 from sage.ext.fast_eval cimport FastDoubleFunc
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
-from sage.ext.fast_eval import fast_float
+
+include "point_c.pxi"
+
 
 cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b):
     if point_c_eq(vs[f.vertices[a]], vs[f.vertices[b]]):

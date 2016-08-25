@@ -56,7 +56,7 @@ Instalación
 ============
 
 Si no tienes instalado Sage en tu computador y sólo quieres
-probar algunos comandos, usa la versión en linea en http://www.sagenb.org.
+probar algunos comandos, usa la versión en linea en http://cloud.sagemath.com
 
 Mira la Guía De Instalación Para Sage en la sección de documentación de la
 página web principal de [Sage]_ para obtener instrucciones sobre cómo instalar

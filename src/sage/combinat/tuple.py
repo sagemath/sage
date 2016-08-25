@@ -15,13 +15,14 @@ Tuples
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-
-from combinat import CombinatorialClass
+from .combinat import CombinatorialClass
 from sage.interfaces.all import gap
 from sage.rings.all import ZZ
 
-def Tuples(S,k):
+
+def Tuples(S, k):
     """
     Returns the combinatorial class of ordered tuples of S of length
     k.

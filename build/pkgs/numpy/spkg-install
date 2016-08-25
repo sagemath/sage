@@ -24,12 +24,7 @@ fi
 cd src
 
 # Apply patches.
-patches="../patches/*.patch"
-if [ $UNAME = "CYGWIN" ]; then
-    echo "CYGWIN: Patching numpy/linalg/setup.py"
-    patches="$patches ../patches/cygwin-lapack_lite-setup.py.diff"
-fi
-for patch in $patches; do
+for patch in ../patches/*.patch; do
     [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
     patch -p1 <"$patch"
     if [ $? -ne 0 ]; then
@@ -64,7 +59,10 @@ rm -rf "$SAGE_LOCAL/lib/python/site-packages/numpy"
 # Program around a bug in SciPY's distutils.
 unset CFLAGS
 
-python setup.py install ${NUMPY_FCONFIG}
+python setup.py install \
+       --single-version-externally-managed \
+       --record /dev/null \
+       ${NUMPY_FCONFIG}
 
 # Touch all includes such that dependency checking works properly:
 # the timestamp of the includes should be *now*, not the time when

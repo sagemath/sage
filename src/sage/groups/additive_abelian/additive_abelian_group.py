@@ -284,7 +284,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
             return "Trivial group"
         return " + ".join("Z" if j == +oo else "Z/%s"%j for j in invs)
 
-    def _module_constructor(self, cover, relations):
+    def _module_constructor(self, cover, relations, check=True):
         r"""
         Construct quotients of groups.
 
@@ -294,7 +294,9 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
         - ``relations`` -- the relations as submodule of ``cover``.
 
-        EXAMPLE::
+        - ``check`` -- ignored, present for compatibility with ``fg_pid`` code.
+
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([0, 4, 2]); G
             Additive abelian group isomorphic to Z + Z/4 + Z/2
@@ -304,6 +306,15 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
             Additive abelian group isomorphic to Z/2 + Z
             sage: G._module_constructor(G.cover(),H.cover()+G.relations())
             Additive abelian group isomorphic to Z/2 + Z
+
+        TESTS:
+
+        Check that :trac:`21027` is fixed::
+
+            sage: G = AdditiveAbelianGroup([2,2,2])
+            sage: phi = G.hom([G.0, G.0, G.0])
+            sage: phi.image()
+            Additive abelian group isomorphic to Z/2
         """
         return AdditiveAbelianGroup_class(cover, relations)
 

@@ -316,10 +316,10 @@ corresponding to the cones of the domain fan::
 
     sage: fm = phi_d.fan_morphism()
     sage: for c in flatten(phi_d.domain().fan().cones()):
-    ...       fc, m = phi_d.fiber_component(c, multiplicity=True)
-    ...       print "{} |-> {} ({} rays, multiplicity {}) over {}".format(
-    ...         c.ambient_ray_indices(), fc, fc.fan().nrays(),
-    ...         m, fm.image_cone(c).ambient_ray_indices())
+    ....:     fc, m = phi_d.fiber_component(c, multiplicity=True)
+    ....:     print("{} |-> {} ({} rays, multiplicity {}) over {}".format(
+    ....:       c.ambient_ray_indices(), fc, fc.fan().nrays(),
+    ....:       m, fm.image_cone(c).ambient_ray_indices()))
     () |-> 1-d affine toric variety (0 rays, multiplicity 2) over ()
     (0,) |-> 1-d affine toric variety (0 rays, multiplicity 1) over (0,)
     (1,) |-> 2-d affine toric variety (2 rays, multiplicity 1) over (0, 1)
@@ -336,9 +336,9 @@ affine line. An alternative perspective is provided by cones of the codomain
 fan::
 
     sage: for c in flatten(phi_d.codomain().fan().cones()):
-    ...       print "{} connected components over {}, each with {} irreducible components.".format(
-    ...         fm.index(c), c.ambient_ray_indices(),
-    ...         len(fm.primitive_preimage_cones(c)))
+    ....:     print("{} connected components over {}, each with {} irreducible components.".format(
+    ....:       fm.index(c), c.ambient_ray_indices(),
+    ....:       len(fm.primitive_preimage_cones(c))))
     2 connected components over (), each with 1 irreducible components.
     1 connected components over (0,), each with 1 irreducible components.
     None connected components over (1,), each with 0 irreducible components.
@@ -366,7 +366,7 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 # For now, the scheme morphism base class cannot derive from Morphism
 # since this would clash with elliptic curves. So we derive only on
@@ -1491,7 +1491,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             (2-d toric variety covered by 4 affine patches, 1)
 
             sage: for primitive_cone in primitive_cones:
-            ...       print fibration.fiber_component(primitive_cone)
+            ....:     print(fibration.fiber_component(primitive_cone))
             2-d toric variety covered by 4 affine patches
             2-d toric variety covered by 3 affine patches
             2-d toric variety covered by 3 affine patches
@@ -1948,7 +1948,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             sage: fc = fibration.fiber_component(primitive_cone)
             sage: f = fc.embedding_morphism()
             sage: for r in fc.fan().rays():
-            ...       print r, f._image_ray_multiplicity(r)
+            ....:     print("{} {}".format(r, f._image_ray_multiplicity(r)))
             N(0, 1) (5, 1)
             N(1, -3) (9, 2)
             N(-1, 2) (11, 1)

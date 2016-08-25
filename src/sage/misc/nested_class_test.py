@@ -44,6 +44,7 @@ alternative is to use ClasscallMetaclass as metaclass::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
 
 __all__ = [] # Don't document any parents
 
@@ -212,7 +213,7 @@ class TestNestedParent(UniqueRepresentation, Parent):
         sage: E.__bases__
         (<class sage.misc.nested_class_test.TestNestedParent.Element at ...>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
-        sage: print sage_getsource(E)
+        sage: print(sage_getsource(E))
             class Element:
                 "This is a dummy element class"
                 pass

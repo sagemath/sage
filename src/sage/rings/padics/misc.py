@@ -21,9 +21,10 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from __builtin__ import min as python_min
-from __builtin__ import max as python_max
+from six.moves.builtins import min as python_min
+from six.moves.builtins import max as python_max
 from sage.rings.infinity import infinity
 
 def min(*L):

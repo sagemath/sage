@@ -166,9 +166,9 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     cdef Fmpz_poly res = Fmpz_poly.__new__(Fmpz_poly)
 
     if k%2 or k < 2:
-        raise ValueError, "k (=%s) must be an even positive integer"%k
+        raise ValueError("k (=%s) must be an even positive integer" % k)
     if prec < 0:
-        raise ValueError, "prec (=%s) must be an even nonnegative integer"%prec
+        raise ValueError("prec (=%s) must be an even nonnegative integer" % prec)
     if (prec == 0):
         return Fmpz_poly.__new__(Fmpz_poly)
 

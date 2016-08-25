@@ -1,10 +1,16 @@
 from libc.stdint cimport uint32_t
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+# Export this for use by Python modules
+cdef extern from "Python.h":
+    cpdef richcmp "PyObject_RichCompare"(object, object, int)
+
+
 cdef class SageObject:
     pass
 
-cdef inline bint rich_to_bool(int op, int c):
+
+cpdef inline bint rich_to_bool(int op, int c):
     """
     Return the corresponding ``True`` or ``False`` value for a rich
     comparison, given the result of an ordinary comparison.
@@ -24,6 +30,20 @@ cdef inline bint rich_to_bool(int op, int c):
 
     EXAMPLES::
 
+        sage: from sage.structure.sage_object import (rich_to_bool,
+        ....:    op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE)
+        sage: for op in (op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE):
+        ....:     for c in (-1,0,1):
+        ....:         print(rich_to_bool(op, c))
+        True False False
+        True True False
+        False True False
+        True False True
+        False False True
+        False True True
+
+    Indirect tests using integers::
+
         sage: 0 < 5, 5 < 5, 5 < -8
         (True, False, False)
         sage: 0 <= 5, 5 <= 5, 5 <= -8
@@ -36,6 +56,14 @@ cdef inline bint rich_to_bool(int op, int c):
         (False, True, False)
         sage: 0 != 5, 5 != 5, 5 != -8
         (True, False, True)
+
+    TESTS::
+
+        sage: from sage.structure.sage_object import py_rich_to_bool
+        sage: py_rich_to_bool(op_EQ, 0)
+        doctest:...: DeprecationWarning: py_rich_to_bool is deprecated. Please use sage.structure.sage_object.rich_to_bool instead.
+        See http://trac.sagemath.org/21128 for details.
+        True
     """
     # op is a value in [0,5], c a value in [-1,1]. We implement this
     # function very efficienly using a bitfield. Note that the masking
@@ -57,7 +85,7 @@ cdef inline bint rich_to_bool(int op, int c):
     return (bits >> (shift & 31)) & 1
 
 
-cdef inline bint rich_to_bool_sgn(int op, int c):
+cpdef inline bint rich_to_bool_sgn(int op, int c):
     """
     Same as ``rich_to_bool``, but allow any `c < 0` and `c > 0`
     instead of only `-1` and `1`.
@@ -67,6 +95,3 @@ cdef inline bint rich_to_bool_sgn(int op, int c):
         This is in particular needed for ``mpz_cmp()``.
     """
     return rich_to_bool(op, (c > 0) - (c < 0))
-
-
-

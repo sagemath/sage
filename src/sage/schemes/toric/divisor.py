@@ -250,7 +250,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
 
         TESTS::
 
-            sage: print toric_varieties.P2().toric_divisor_group()._latex_()
+            sage: print(toric_varieties.P2().toric_divisor_group()._latex_())
             \mathrm{Div_T}\left(\mathbb{P}_{\Delta^{2}_{15}}, \Bold{Z}\right)
         """
         return (r"\mathrm{Div_T}\left(%s, %s\right)"
@@ -1556,8 +1556,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         OUTPUT:
 
-        - :class:`simplicial complex
-        <sage.homology.simplicial_complex.SimplicialComplex>`.
+        - :class:`simplicial complex <sage.homology.simplicial_complex.SimplicialComplex>`.
 
         EXAMPLES::
 
@@ -1606,7 +1605,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: D._sheaf_cohomology( SimplicialComplex([[1,2],[2,3],[3,1]]) )
             (0, 0, 1)
 
-        A more complicated example to test that trac #10731 is fixed::
+        A more complicated example to test that :trac:`10731` is fixed::
 
             sage: cell24 = Polyhedron(vertices=[
             ...    (1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1),(1,-1,-1,1),(0,0,-1,1),
@@ -1646,10 +1645,10 @@ class ToricDivisor_generic(Divisor_generic):
 
         ALGORITHM:
 
-        See :meth:`cohomology` and note that every `d`-tuple
-        (`d`=dimension of the variety) of rays determines one vertex
-        in the chamber decomposition if none of the hyperplanes are
-        parallel.
+        See :meth:`cohomology` and note that every `d`-tuple (where
+        `d` is the dimension of the variety) of rays determines one
+        vertex in the chamber decomposition if none of the hyperplanes
+        are parallel.
 
         EXAMPLES::
 
@@ -2020,7 +2019,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
 
             sage: P2 = toric_varieties.P2()
             sage: from sage.schemes.toric.divisor import ToricRationalDivisorClassGroup
-            sage: print ToricRationalDivisorClassGroup(P2)._latex_()
+            sage: print(ToricRationalDivisorClassGroup(P2)._latex_())
             \mathop{Cl}_{\QQ}\left(\mathbb{P}_{\Delta^{2}_{15}}\right)
         """
         return '\\mathop{Cl}_{\\QQ}\\left('+self._variety._latex_()+'\\right)'
@@ -2116,7 +2115,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
 
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: L = P1xP1.Kaehler_cone().lattice()
-            sage: print L._repr_()
+            sage: print(L._repr_())
             Basis lattice of The toric rational divisor class group of a
             2-d CPR-Fano toric variety covered by 4 affine patches
         """
@@ -2134,7 +2133,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
 
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: L = P1xP1.Kaehler_cone().lattice()
-            sage: print L._latex_()
+            sage: print(L._latex_())
             \text{Basis lattice of }
             \mathop{Cl}_{\QQ}\left(\mathbb{P}_{\Delta^{2}_{14}}\right)
         """

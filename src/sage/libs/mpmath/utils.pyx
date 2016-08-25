@@ -3,6 +3,7 @@ Utilities for Sage-mpmath interaction
 
 Also patches some mpmath functions for speed
 """
+from __future__ import print_function
 
 from sage.ext.stdsage cimport PY_NEW
 
@@ -296,13 +297,13 @@ def sage_to_mpmath(x, prec):
 
         sage: import sage.libs.mpmath.all as a
         sage: a.mp.dps = 15
-        sage: print a.sage_to_mpmath(2/3, 53)
+        sage: print(a.sage_to_mpmath(2/3, 53))
         0.666666666666667
-        sage: print a.sage_to_mpmath(2./3, 53)
+        sage: print(a.sage_to_mpmath(2./3, 53))
         0.666666666666667
-        sage: print a.sage_to_mpmath(3+4*I, 53)
+        sage: print(a.sage_to_mpmath(3+4*I, 53))
         (3.0 + 4.0j)
-        sage: print a.sage_to_mpmath(1+pi, 53)
+        sage: print(a.sage_to_mpmath(1+pi, 53))
         4.14159265358979
         sage: a.sage_to_mpmath(infinity, 53)
         mpf('+inf')

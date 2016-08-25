@@ -19,7 +19,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.numerical.mip import MIPSolverException
@@ -338,7 +338,7 @@ cdef class GLPKBackend(GenericBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
             sage: p.problem_name("There once was a french fry")
-            sage: print p.problem_name()
+            sage: print(p.problem_name())
             There once was a french fry
         """
         cdef char * n
@@ -1923,7 +1923,7 @@ cdef class GLPKBackend(GenericBackend):
         elif name == simplex_or_intopt:
             if value is None: return self.simplex_or_intopt
             if not value in (simplex_only,intopt_only,simplex_then_intopt,exact_simplex_only):
-                raise MIPSolverException, "GLPK: invalid value for simplex_or_intopt; see documentation"
+                raise MIPSolverException("GLPK: invalid value for simplex_or_intopt; see documentation")
             self.simplex_or_intopt = value
 
         elif name == msg_lev_simplex:
@@ -2287,8 +2287,8 @@ cdef class GLPKBackend(GenericBackend):
             if res == 0:
                 with open(fname) as f:
                     for line in f:
-                        print line,
-                print
+                        print(line, end=" ")
+                print("\n")
 
         return res
 

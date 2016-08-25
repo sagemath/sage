@@ -1,9 +1,9 @@
 from sage.libs.gmp.types cimport *
-cimport matrix_dense
+from .matrix_dense cimport Matrix_dense
 from sage.rings.integer cimport Integer
 from sage.ext.mod_int cimport *
 
-cdef class Matrix_rational_dense(matrix_dense.Matrix_dense):
+cdef class Matrix_rational_dense(Matrix_dense):
 
     cdef mpq_t tmp
     cdef mpq_t *_entries

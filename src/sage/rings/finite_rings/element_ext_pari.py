@@ -26,7 +26,7 @@ polynomial, i.e., we verify compatibility condition.
     sage: conway(c) == 0
     True
 """
-
+from __future__ import absolute_import
 
 import operator
 
@@ -36,7 +36,7 @@ from sage.rings.integer import Integer
 from sage.libs.pari.all import pari, pari_gen
 from sage.rings.finite_rings.element_base import FinitePolyExtElement
 import sage.rings.finite_rings.integer_mod as integer_mod
-from element_base import is_FiniteFieldElement
+from .element_base import is_FiniteFieldElement
 from sage.modules.free_module_element import FreeModuleElement
 from sage.structure.dynamic_class import dynamic_class
 from sage.categories.finite_fields import FiniteFields
@@ -534,7 +534,7 @@ class FiniteField_ext_pariElement(FinitePolyExtElement):
             sage: int(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce PARI a to an Integer
+            TypeError: unable to convert PARI object a of type t_POL to an integer
         """
         try:
             return int(self.__value.lift().lift())

@@ -405,7 +405,7 @@ sage: e(2)
 2
 sage: e(5)
 0
-sage: print [e(n) for n in range(15)]
+sage: [e(n) for n in range(15)]
 [0, 1, 2, 0, 4, 0, 0, 2, 3, 0, 0, 1, 0, 3, 4]
 sage: G = DirichletGroup(5)
 sage: e = G.0
@@ -432,8 +432,7 @@ q + (-zeta6 + 3)*q^2 + (zeta6 + 2)*q^3 + (-3*zeta6 + 6)*q^4 + 4*q^5 + O(q^6)
 ]
 sage: e = E.eisenstein_series()
 sage: for e in E.eisenstein_series():
-...       print e.parameters()
-...
+....:     print(e.parameters())
 (Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, 13)
 (Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta6, 1)
 (Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta6, Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, 1)

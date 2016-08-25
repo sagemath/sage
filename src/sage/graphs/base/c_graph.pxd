@@ -6,7 +6,7 @@
 #**************************************************************************
 
 from sage.data_structures.bitset cimport bitset_t
-from graph_backends cimport GenericGraphBackend
+from .graph_backends cimport GenericGraphBackend
 
 cdef class CGraph:
     cdef int num_verts

@@ -13,7 +13,8 @@ Base class for polyhedra
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division
+from __future__ import division, print_function
+from __future__ import absolute_import
 
 import itertools
 import six
@@ -30,7 +31,7 @@ from sage.functions.other import sqrt, floor, ceil
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.graphs.graph import Graph
 
-from constructor import Polyhedron
+from .constructor import Polyhedron
 
 
 #########################################################################
@@ -571,7 +572,7 @@ class Polyhedron_base(Element):
         TESTS::
 
             sage: for p in square.plot():
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             blue Point set defined by 4 point(s)
             blue Line defined by 2 points
             blue Line defined by 2 points
@@ -580,18 +581,18 @@ class Polyhedron_base(Element):
             green Polygon defined by 4 points
 
             sage: for p in line.plot():
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             blue Point set defined by 2 point(s)
             green Line defined by 2 points
 
             sage: for p in point.plot():
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             green Point set defined by 1 point(s)
 
         Draw the lines in red and nothing else::
 
             sage: for p in square.plot(point=False, line='red', polygon=False):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
             red Line defined by 2 points
             red Line defined by 2 points
@@ -600,30 +601,30 @@ class Polyhedron_base(Element):
         Draw vertices in red, no lines, and a blue polygon::
 
             sage: for p in square.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 4 point(s)
             (0, 0, 1) Polygon defined by 4 points
 
             sage: for p in line.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 2 point(s)
 
             sage: for p in point.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
         Draw in red without wireframe::
 
             sage: for p in square.plot(wireframe=False, fill="red"):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Polygon defined by 4 points
 
             sage: for p in line.plot(wireframe=False, fill="red"):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
 
             sage: for p in point.plot(wireframe=False, fill="red"):
-            ...       print p.options()['rgbcolor'], p
+            ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
         The ``projection_direction`` option::
@@ -838,7 +839,7 @@ class Polyhedron_base(Element):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(2)
-            sage: print p.cdd_Hrepresentation()
+            sage: print(p.cdd_Hrepresentation())
             H-representation
             begin
              4 3 rational
@@ -856,7 +857,7 @@ class Polyhedron_base(Element):
             ...
             TypeError: The base ring must be ZZ, QQ, or RDF
         """
-        from cdd_file_format import cdd_Hrepresentation
+        from .cdd_file_format import cdd_Hrepresentation
         try:
             cdd_type = self._cdd_type
         except AttributeError:
@@ -907,7 +908,7 @@ class Polyhedron_base(Element):
         EXAMPLES::
 
             sage: q = Polyhedron(vertices = [[1,1],[0,0],[1,0],[0,1]])
-            sage: print q.cdd_Vrepresentation()
+            sage: print(q.cdd_Vrepresentation())
             V-representation
             begin
              4 3 rational
@@ -917,7 +918,7 @@ class Polyhedron_base(Element):
              1 1 1
             end
         """
-        from cdd_file_format import cdd_Vrepresentation
+        from .cdd_file_format import cdd_Vrepresentation
         try:
             cdd_type = self._cdd_type
         except AttributeError:
@@ -1145,7 +1146,7 @@ class Polyhedron_base(Element):
 
     def Hrepresentation(self, index=None):
         """
-        Return the objects of the H-representaton. Each entry is
+        Return the objects of the H-representation. Each entry is
         either an inequality or a equation.
 
         INPUT:
@@ -1455,7 +1456,7 @@ class Polyhedron_base(Element):
             sage: next(v_gen)   # the third vertex
             A vertex at (1, 1)
             sage: try: next(v_gen)   # there are only three vertices
-            ... except StopIteration: print "STOP"
+            ....: except StopIteration: print("STOP")
             STOP
             sage: type(v_gen)
             <type 'generator'>
@@ -1650,7 +1651,7 @@ class Polyhedron_base(Element):
             sage: p = Polyhedron(vertices=[[1,0],[0,1]], rays=[[1,0],[0,1]])
             sage: [ e for e in p.bounded_edges() ]
             [(A vertex at (0, 1), A vertex at (1, 0))]
-            sage: for e in p.bounded_edges(): print e
+            sage: for e in p.bounded_edges(): print(e)
             (A vertex at (0, 1), A vertex at (1, 0))
         """
         obj = self.Vrepresentation()
@@ -1725,7 +1726,7 @@ class Polyhedron_base(Element):
             sage: simplex.ambient_dim()
             4
 
-        The empty set is a special case (Trac #12193)::
+        The empty set is a special case (:trac:`12193`)::
 
             sage: P1=Polyhedron(vertices=[[1,0,0],[0,1,0],[0,0,1]])
             sage: P2=Polyhedron(vertices=[[2,0,0],[0,2,0],[0,0,2]])
@@ -1867,7 +1868,7 @@ class Polyhedron_base(Element):
 
             sage: P = Polyhedron(vertices=[(0, 1), (1, 0), (3, 0), (4, 1)])
             sage: for v in P.Vrep_generator():
-            ...      print P.adjacency_matrix().row(v.index()), v
+            ....:     print("{} {}".format(P.adjacency_matrix().row(v.index()), v))
             (0, 1, 0, 1) A vertex at (0, 1)
             (1, 0, 1, 0) A vertex at (1, 0)
             (0, 1, 0, 1) A vertex at (3, 0)
@@ -1878,9 +1879,9 @@ class Polyhedron_base(Element):
         V-representation objects::
 
             sage: P = Polyhedron(vertices=[(0, 1), (1, 0), (3, 0), (4, 1)],
-            ...                  rays=[(0,1)])
+            ....:                rays=[(0,1)])
             sage: for v in P.Vrep_generator():
-            ...       print P.adjacency_matrix().row(v.index()), v
+            ....:       print("{} {}".format(P.adjacency_matrix().row(v.index()), v))
             (0, 1, 0, 0, 1) A ray in the direction (0, 1)
             (1, 0, 1, 0, 0) A vertex at (0, 1)
             (0, 1, 0, 1, 0) A vertex at (1, 0)
@@ -1893,9 +1894,9 @@ class Polyhedron_base(Element):
         rays). The two rays are not adjacent to each other::
 
             sage: P = Polyhedron(vertices=[(0, 1), (1, 0), (3, 0), (4, 1)],
-            ...                  rays=[(0,1), (1,1)])
+            ....:                rays=[(0,1), (1,1)])
             sage: for v in P.Vrep_generator():
-            ...       print P.adjacency_matrix().row(v.index()), v
+            ....:     print("{} {}".format(P.adjacency_matrix().row(v.index()), v))
             (0, 1, 0, 0, 0) A ray in the direction (0, 1)
             (1, 0, 1, 0, 0) A vertex at (0, 1)
             (0, 1, 0, 0, 1) A vertex at (1, 0)
@@ -3032,7 +3033,7 @@ class Polyhedron_base(Element):
         INPUT:
 
         - ``Vindices`` -- a tuple of integers. The indices of the
-          V-represenation objects that span the face.
+          V-representation objects that span the face.
 
         - ``Hindices`` -- a tuple of integers. The indices of the
           H-representation objects that hold as equalities on the
@@ -3158,8 +3159,8 @@ class Polyhedron_base(Element):
             sage: polytopes.hypercube(2).face_lattice().plot()
             Graphics object consisting of 27 graphics primitives
             sage: level_sets = polytopes.cross_polytope(2).face_lattice().level_sets()
-            sage: print level_sets[0], level_sets[-1]
-            [<>] [<0,1,2,3>]
+            sage: level_sets[0], level_sets[-1]
+            ([<>], [<0,1,2,3>])
 
         Various degenerate polyhedra::
 
@@ -3492,7 +3493,7 @@ class Polyhedron_base(Element):
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 5 vertices
             sage: egyptian_pyramid.n_vertices()
             5
-            sage: for v in egyptian_pyramid.vertex_generator(): print v
+            sage: for v in egyptian_pyramid.vertex_generator(): print(v)
             A vertex at (0, -1, -1)
             A vertex at (0, -1, 1)
             A vertex at (0, 1, -1)
@@ -3581,7 +3582,7 @@ class Polyhedron_base(Element):
             sage: proj
             The projection of a polyhedron into 3 dimensions
         """
-        from plot import Projection
+        from .plot import Projection
         self.projection = Projection(self)
         return self.projection
 
@@ -3702,13 +3703,13 @@ class Polyhedron_base(Element):
         in_file = open(in_filename, 'w')
         in_file.write(in_str)
         in_file.close()
-        if verbose: print in_str
+        if verbose: print(in_str)
 
         lrs_procs = Popen(['lrs',in_filename],
                           stdin = PIPE, stdout=PIPE, stderr=PIPE)
         ans, err = lrs_procs.communicate()
         if verbose:
-            print ans
+            print(ans)
         # FIXME: check err
 
         for a_line in ans.splitlines():

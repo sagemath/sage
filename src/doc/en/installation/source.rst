@@ -27,7 +27,7 @@ and recompile the modified parts.
 
 `Download the Sage source code <http://www.sagemath.org/download-source.html>`_
 or `check it out with git <https://github.com/sagemath/sage>`_ (see also.
-`the developers guide <http://www.sagemath.org/doc/developer/manual_git.html#section-git-checkout>`_).
+`the developers guide <http://doc.sagemath.org/html/en/developer/manual_git.html#section-git-checkout>`_).
 If you changed your mind, you can also download a
 `binary distribution <http://www.sagemath.org/download.html>`_
 for some operating systems.
@@ -429,6 +429,7 @@ If
 
 does not raise an ``ImportError``, then it worked.
 
+.. _build-from-source-step-by-step:
 
 Step-by-step installation procedure
 -----------------------------------
@@ -445,7 +446,7 @@ several of Sage's components will not build if there are spaces in the path.
 Running Sage from a directory with spaces in its name will also fail.
 
 #. Go to http://www.sagemath.org/download-source.html, select a mirror,
-   and download the file :file:`sage-x.y.z.tar`.
+   and download the file :file:`sage-x.y.tar`.
 
    This tarfile contains the source code for Sage and the source for all
    programs on which Sage depends.
@@ -463,13 +464,13 @@ Running Sage from a directory with spaces in its name will also fail.
 
 #. Extract the tarfile::
 
-       tar xvf sage-x.y.z.tar
+       tar xvf sage-x.y.tar
 
-   This creates a directory :file:`sage-x.y.z`.
+   This creates a directory :file:`sage-x.y`.
 
 #. Change into that directory::
 
-       cd sage-x.y.z
+       cd sage-x.y
 
    This is Sage's home directory.
    It is also referred to as :envvar:`SAGE_ROOT` or the top level Sage
@@ -500,11 +501,17 @@ Running Sage from a directory with spaces in its name will also fail.
        MAKE='make -jNUM' make
 
    to tell the ``make`` program to run ``NUM`` jobs in parallel when building
-   Sage.
-   This compiles Sage and all its dependencies.
+   Sage. This compiles Sage and all its dependencies.
+
+   .. NOTE::
+
+      Mac OS X allows changing directories without using exact capitalization.
+      Beware of this convenience when compiling for OS X. Ignoring exact
+      capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
+      errors for dependencies requiring exact capitalization in path names.
 
    Note that you do not need to be logged in as root, since no files are
-   changed outside of the :file:`sage-x.y.z` directory.
+   changed outside of the :file:`sage-x.y` directory.
    In fact, **it is inadvisable to build Sage as root**, as the root account
    should only be used when absolutely necessary and mistyped commands can have
    serious consequences if you are logged in as root.
@@ -618,7 +625,7 @@ Running Sage from a directory with spaces in its name will also fail.
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
      directory in your :envvar:`PATH`) to :file:`$SAGE_ROOT/sage`::
 
-         ln -s /path/to/sage-x.y.z/sage /usr/local/bin/sage
+         ln -s /path/to/sage-x.y/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
@@ -1223,13 +1230,6 @@ Sage uses the following environment variables when it runs:
   run a web browser, but if this doesn't seem to work on your machine, set this
   variable to the appropriate command.
 
-- :envvar:`SAGE_ORIG_LD_LIBRARY_PATH_SET` - set this to something non-empty to
-  force Sage to set the :envvar:`LD_LIBRARY_PATH` variable before executing
-  system commands.
-
-- :envvar:`SAGE_ORIG_DYLD_LIBRARY_PATH_SET` - similar, but only used on OS X to
-  set the :envvar:`DYLD_LIBRARY_PATH` variable.
-
 - :envvar:`SAGE_CBLAS` - used in the file
   :file:`SAGE_ROOT/src/sage/misc/cython.py`.
   Set this to the base name of the BLAS library file on your system if you want
@@ -1263,9 +1263,9 @@ Variables dealing with doctesting:
   :func:`unpickle_all` in
   :file:`$SAGE_ROOT/src/sage/structure/sage_object.pyx`, online
   `here (picklejar)
-  <http://sagemath.org/doc/reference/sage/structure/sage_object.html#sage.structure.sage_object.picklejar>`_
+  <http://doc.sagemath.org/html/en/reference/sage/structure/sage_object.html#sage.structure.sage_object.picklejar>`_
   and `here (unpickle_all)
-  <http://sagemath.org/doc/reference/sage/structure/sage_object.html#sage.structure.sage_object.unpickle_all>`_.
+  <http://doc.sagemath.org/html/en/reference/sage/structure/sage_object.html#sage.structure.sage_object.unpickle_all>`_.
 
 - :envvar:`SAGE_TEST_GLOBAL_ITER`, :envvar:`SAGE_TEST_ITER`: these can
   be used instead of passing the flags ``--global-iterations`` and
@@ -1317,20 +1317,30 @@ a single copy of Sage in a multi-user computer network.
 System-wide install
 ~~~~~~~~~~~~~~~~~~~
 
-#. After building Sage, you may optionally copy or move the entire build tree
-   to :file:`/usr/local` or another location.
-   If you do this, then you must run ``./sage`` once so that various hardcoded
-   locations get updated.
-   For this reason, it might be easier to simply build Sage in its final
-   location.
+In the instructions below, we assume that ``/path/to/sage-x.y`` is
+the directory where you want to install Sage.
+
+#. First of all, extract the Sage source tarball in ``/path/to``
+   (this will create the directory ``/path/to/sage-x.y``).
+   After extracting, you can change the directory name if you do not
+   like ``sage-x.y``.
+
+#. Change the ownership of the ``/path/to/sage-x.y`` directory tree
+   to your normal user account (as opposed to ``root``). This is because
+   Sage will refuse to compile as ``root``. ::
+
+       chown -R user:group /path/to/sage-x.y
+
+#. Using your normal user account, build Sage.
+   See the :ref:`build-from-source-step-by-step` above.
 
 #. Make a symbolic link to the ``sage`` script in :file:`/usr/local/bin`::
 
-       ln -s /path/to/sage-x.y.z/sage /usr/local/bin/sage
+       ln -s /path/to/sage-x.y/sage /usr/local/bin/sage
 
    Alternatively, copy the Sage script::
 
-       cp /path/to/sage-x.y.z/sage /usr/local/bin/sage
+       cp /path/to/sage-x.y/sage /usr/local/bin/sage
 
    If you do this, make sure you edit the line::
 
@@ -1344,11 +1354,6 @@ System-wide install
    (note that you have to change ``<SAGE_ROOT>`` above!).
    It is recommended not to edit the original ``sage`` script, only the copy at
    :file:`/usr/local/bin/sage`.
-
-#. Make sure that all files in the Sage tree are readable by all
-   (note that you have to change ``<SAGE_ROOT>`` below!)::
-
-       chmod a+rX -R <SAGE_ROOT>
 
 #. Optionally, you can test Sage by running::
 
@@ -1402,4 +1407,4 @@ would be appropriate if you have a Core i3/5/7 processor with AVX support.
 
 
 
-**This page was last updated in December 2014 (Sage 6.5).**
+**This page was last updated in July 2016 (Sage 7.3).**

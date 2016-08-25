@@ -29,6 +29,12 @@ debugger.
 
 include 'data_structures_pyx.pxi' # includes bitsets
 
+from .automorphism_group_canonical_label cimport (
+    get_aut_gp_and_can_lab, aut_gp_and_can_lab,
+    allocate_agcl_output, deallocate_agcl_output)
+from .double_coset cimport double_coset
+
+
 cdef class PythonPartitionStack:
     """
     Instances of this class wrap a (Cython) PartitionStack.

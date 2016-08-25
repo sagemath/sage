@@ -1,4 +1,4 @@
-$(PYTHON) jinja2 tornado pyzmq pickleshare simplegeneric traitlets
+$(PYTHON) jinja2 tornado pyzmq pickleshare simplegeneric traitlets | backports_shutil_get_terminal_size wcwidth prompt_toolkit
 
 ----------
 All lines of this file are ignored except the first.

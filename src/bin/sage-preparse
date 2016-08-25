@@ -7,6 +7,7 @@ AUTHOR:
     -- William Stein (2008): fix trac #2391 and document the code.
     -- Dan Drake (2009): fix trac #5052
     -- Dan Drake (2010-12-08): fix trac #10440
+    -- Johan S. R. Nielsen (2015-11-06): fix trac #17019
 """
 
 import os, sys, re
@@ -117,24 +118,30 @@ def do_preparse(f, files_before=[]):
             coding = line + '\n'
             F = '\n'.join(lines[:num] + lines[(num+1):])
 
-    # Preparse it
-    G = preparse_file(F)
+    # It is ** critical ** that all the preparser-stuff we put into
+    # the file are put after the module docstring, since
+    # otherwise the docstring will not be understood by Python.
+    i = find_position_right_after_module_docstring(F)
+    header, body = F[:i] , F[i:]
+    # Preparse the body
+    body = preparse_file(body)
 
     # Check for load/attach commands.
-    G = do_load_and_attach(G, f, files_before)
+    body = do_load_and_attach(body, f, files_before)
 
-
-    # Put the Sage library include along with a autogen message in the file.
-    # It is ** critical ** that we put this after the mdoule docstring, since
-    # otherwise the module docstring will disappear.
-    insert = '%s%s\nfrom sage.all_cmdline import *   # import sage library\n'%(AUTOGEN_MSG, f)
-    i = find_position_right_after_module_docstring(G)
-    G = coding + G[:i] + insert + G[i:]
+    # The Sage library include line along with a autogen message
+    sage_incl = '%s%s\nfrom sage.all_cmdline import *   # import sage library\n'%(AUTOGEN_MSG, f)
 
     # Finally, write out the result.  We use atomic_write to avoid
     # race conditions (for example, the file will never be half written).
     with atomic_write(fname) as f:
-        f.write(G)
+        f.write(coding)
+        f.write(header)
+        f.write('\n')
+        f.write(sage_incl)
+        f.write('\n')
+        f.write(body)
+        f.write('\n')
 
 def find_position_right_after_module_docstring(G):
     """
@@ -161,6 +168,7 @@ def find_position_right_after_module_docstring(G):
     if i >= len(v):
         # No module docstring --- entire file is commented out
         return 0
+
     # Now v[i] contains the first line of the first statement in the file.
     # Is it a docstring?
     n = v[i].lstrip()

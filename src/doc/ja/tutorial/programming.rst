@@ -14,8 +14,8 @@ Sageファイルの読み込みと結合
 
 ::
 
-    print "Hello World"
-    print 2^3
+    print("Hello World")
+    print(2^3)
 
 ``example.sage`` ファイルを読み込んで実行するには， ``load`` コマンド を使う．
 
@@ -49,8 +49,8 @@ Sageファイルの読み込みと結合
 
 ::
 
-    print "Hello World"
-    print Integer(2)**Integer(3)
+    print("Hello World")
+    print(Integer(2)**Integer(3))
 
 たしかに整数リテラルはラップされ， ``^`` は ``**`` に置換されている．(Pythonでは ``^`` は「排他的論理和」， ``**`` は「べき乗」を意味する．)
 
@@ -146,11 +146,11 @@ Cythonソースファイルから生成されたC言語コードをコンパイ�
     from sage.all import *
 
     if len(sys.argv) != 2:
-        print "Usage: %s <n>"%sys.argv[0]
-        print "Outputs the prime factorization of n."
+        print("Usage: %s <n>" % sys.argv[0])
+        print("Outputs the prime factorization of n.")
         sys.exit(1)
 
-    print factor(sage_eval(sys.argv[1]))
+    print(factor(sage_eval(sys.argv[1])))
 
 このスクリプトを実行するには， ``SAGE_ROOT`` をPATHに含めておかなければならない．
 スクリプト名を ``factor`` とすると，実行は以下のような具合になる:
@@ -301,7 +301,7 @@ SageのIntegerクラスが使えるのは言うまでもない(Rationalクラス
 ::
 
     sage: L = [factor(n) for n in range(1, 15)]
-    sage: print L
+    sage: L
     [1, 2, 3, 2^2, 5, 2 * 3, 7, 2^3, 3^2, 2 * 5, 11, 2^2 * 3, 13, 2 * 7]
     sage: L[12]
     13
@@ -325,7 +325,7 @@ SageのIntegerクラスが使えるのは言うまでもない(Rationalクラス
     sage: L = [factor(n) for n in range(1, 20)]
     sage: L[4:9]
     [5, 2 * 3, 7, 2^3, 3^2]
-    sage: print L[:4]
+    sage: L[:4]
     [1, 2, 3, 2^2]
     sage: L[14:4]
     []
@@ -490,7 +490,7 @@ Pythonには集合(set)型が組込まれている．
     {1, 2/3}
     sage: X.intersection(Y)
     {1}
-    sage: print latex(Y)
+    sage: print(latex(Y))
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring
@@ -507,11 +507,11 @@ Pythonには集合(set)型が組込まれている．
 ::
 
     sage: v = (n^2 for n in xrange(10000000))
-    sage: v.next()
+    sage: next(v)
     0
-    sage: v.next()
+    sage: next(v)
     1
-    sage: v.next()
+    sage: next(v)
     4
 
 今度は，素数 :math:`p` から :math:`4p+1` の形の素数に関するイテレータを作り，最初の数個を見てみることにする．
@@ -522,11 +522,11 @@ Pythonには集合(set)型が組込まれている．
     sage: w = (4*p + 1 for p in Primes() if is_prime(4*p+1))
     sage: w         # 次の行の 0xb0853d6c はランダムに生成された16進数
     <generator object <genexpr> at ...>
-    sage: w.next()
+    sage: next(w)
     13
-    sage: w.next()
+    sage: next(w)
     29
-    sage: w.next()
+    sage: next(w)
     53
 
 有限体，整数など，ある種の環にはイテレータが付随している:
@@ -536,11 +536,11 @@ Pythonには集合(set)型が組込まれている．
     sage: [x for x in GF(7)]
     [0, 1, 2, 3, 4, 5, 6]
     sage: W = ((x,y) for x in ZZ for y in ZZ)
-    sage: W.next()
+    sage: next(W)
     (0, 0)
-    sage: W.next()
+    sage: next(W)
     (0, 1)
-    sage: W.next()
+    sage: next(W)
     (0, -1)
 
 
@@ -661,7 +661,7 @@ Sageにおける異種オブジェクト間の比較演算では，まず対象�
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)
+    sage: int(1) is int(2)/int(2)  # optional - python2
     True
     sage: 1 is 1
     False

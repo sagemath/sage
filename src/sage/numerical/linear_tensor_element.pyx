@@ -261,7 +261,7 @@ cdef class LinearTensor(ModuleElement):
             s += ']'
         return s
 
-    cpdef ModuleElement _add_(self, ModuleElement b):
+    cpdef _add_(self, b):
         r"""
         Return sum.
 
@@ -285,7 +285,7 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) + coeff
         return self.parent()(result)
 
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         r"""
         Return the negative.
 
@@ -305,7 +305,7 @@ cdef class LinearTensor(ModuleElement):
             result[key] = -coeff
         return self.parent()(result)
 
-    cpdef ModuleElement _sub_(self, ModuleElement b):
+    cpdef _sub_(self, b):
         r"""
         Return difference.
 
@@ -331,9 +331,9 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) - coeff
         return self.parent()(result)
 
-    cpdef ModuleElement _rmul_(self, RingElement b):
+    cpdef _lmul_(self, RingElement b):
         r"""
-        Return right multiplication by scalar.
+        Return multiplication by scalar.
 
         INPUT:
 
@@ -445,38 +445,46 @@ cdef class LinearTensor(ModuleElement):
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram()
-            sage: f = p({2 : 5, 3 : 2})
-            sage: f.__hash__()   # random output
+            sage: lt0 = p[0] * vector([1,2])
+            sage: lt0.__hash__()   # random output
             103987752
             sage: d = {}
-            sage: d[f] = 3
+            sage: d[lt0] = 3
         """
         # see _cmp_() if you want to change the hash function
         return hash_by_id(<void *> self)
 
-    cpdef int _cmp_(left, Element right) except -2:
+    def __cmp__(left, right):
         """
         Implement comparison of two linear functions.
 
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram()
-            sage: f = p({2 : 5, 3 : 2})
+            sage: f = p[0] * vector([1,2])
+            sage: v0 = vector([0, 0])
+            sage: v1 = vector([1, 1])
             sage: cmp(f, f)
             0
-            sage: abs(cmp(f, f+0))     # since we are comparing by id()
+            sage: abs(cmp(f, f+v0))     # since we are comparing by id()
             1
-            sage: abs(cmp(f, f+1))
+            sage: abs(cmp(f, f+v1))
             1
             sage: len(set([f, f]))
             1
-            sage: len(set([f, f+0]))
+            sage: len(set([f, f+v0]))
             2
-            sage: len(set([f, f+1]))
+            sage: len(set([f, f+v1]))
             2
         """
         # Note: if you want to implement smarter comparison, you also
         # need to change __hash__(). The comparison function must
         # satisfy cmp(x,y)==0 => hash(x)==hash(y)
-        return cmp(id(left), id(right))
+        if left is right:
+            return 0
+        if <size_t><void*>left < <size_t><void*>right:
+            return -1
+        else:
+            return 1
+
 

@@ -88,7 +88,7 @@ class EnumeratedSetFromIterator(Parent):
 
     - ``category`` -- (default: ``None``) an optional category for that
       enumerated set. If you know that your iterator will stop after a finite
-      number of steps you should set it as :class:`FiniteEnumeratedSets`, conversly if
+      number of steps you should set it as :class:`FiniteEnumeratedSets`, conversely if
       you know that your iterator will run over and over you should set it as
       :class:`InfiniteEnumeratedSets`.
 

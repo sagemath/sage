@@ -1,6 +1,7 @@
 """
 Ambient Hecke modules
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
@@ -19,9 +20,9 @@ Ambient Hecke modules
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import degenmap
-import module
-import submodule
+from . import degenmap
+from . import module
+from . import submodule
 
 import sage.modules.all
 

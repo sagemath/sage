@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting"
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+cd src
+
+echo "Now running the SCIP test suite..."
+# Do the tests with the installed version of SCIP.
+# (The uninstalled ones do not work because we did not adjust their library dependencies.)
+$MAKE check OPT=dbg MAINFILE=$SAGE_LOCAL/bin/scip
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: The SCIP test suite failed."
+    exit 1
+fi
+echo "Review the above table regarding the outcome of the SCIP test suite."

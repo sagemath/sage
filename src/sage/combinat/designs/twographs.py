@@ -55,6 +55,8 @@ This module's functions are the following :
 Methods
 ---------
 """
+from __future__ import absolute_import
+
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 from itertools import combinations
 
@@ -246,7 +248,7 @@ def is_twograph(T):
         return bool(v_to_blocks[x] & v_to_blocks[y] & v_to_blocks[z])
 
     # Check that every quadruple contains an even number of triples
-    from __builtin__ import sum
+    from six.moves.builtins import sum
     for quad in combinations(range(T.num_points()),4):
         if sum(map(has_triple,combinations(quad,3))) % 2 == 1:
             return False

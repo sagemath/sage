@@ -1,1 +1,5 @@
-gap database_gap
+gap | database_gap $(SAGERUNTIME)
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

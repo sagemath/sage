@@ -1,4 +1,4 @@
-from free_module_element cimport FreeModuleElement
+from .free_module_element cimport FreeModuleElement
 cimport numpy
 
 cdef class Vector_double_dense(FreeModuleElement):

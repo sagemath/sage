@@ -430,6 +430,10 @@ class TriangularModuleMorphism(ModuleMorphism):
 
     - ``cmp`` -- a comparison function on `J`
       (default: the usual comparison function on `J`)
+      This is deprecated since :trac:`21043`, see below.
+
+    - ``key`` -- a comparison key on `J`
+      (default: the usual comparison of elements of `J`)
 
     - ``inverse_on_support`` -- a function `J \to I\cup \{None\}`
       implementing `r` (default: the identity function).
@@ -504,14 +508,14 @@ class TriangularModuleMorphism(ModuleMorphism):
         sage: phi(phi.preimage(x[2]))
         B[2]
 
-    Using the ``cmp`` keyword, we can use triangularity even if
+    Using the ``key`` keyword, we can use triangularity even if
     the map becomes triangular only after a permutation of the basis::
 
         sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X"); x = X.basis()
         sage: def ut(i): return (x[1] + x[2] if i == 1 else x[2] + (x[3] if i == 3 else 0))
         sage: perm = [0, 2, 1, 3]
         sage: phi = X.module_morphism(ut, triangular="upper", codomain=X,
-        ....:                         cmp=lambda a, b: cmp(perm[a], perm[b]))
+        ....:                         key=lambda a: perm[a])
         sage: [phi(x[i]) for i in range(1, 4)]
         [B[1] + B[2], B[2], B[2] + B[3]]
         sage: [phi.preimage(x[i]) for i in range(1, 4)]
@@ -521,7 +525,7 @@ class TriangularModuleMorphism(ModuleMorphism):
 
         sage: def lt(i): return (x[1] + x[2] + x[3] if i == 2 else x[i])
         sage: phi = X.module_morphism(lt, triangular="lower", codomain=X,
-        ....:                         cmp=lambda a, b: cmp(perm[a], perm[b]))
+        ....:                         key=lambda a: perm[a])
         sage: [phi(x[i]) for i in range(1, 4)]
         [B[1], B[1] + B[2] + B[3], B[3]]
         sage: [phi.preimage(x[i]) for i in range(1, 4)]
@@ -591,25 +595,26 @@ class TriangularModuleMorphism(ModuleMorphism):
         3 2 B[1] + B[2] + B[3]
         4 3 B[1] + B[2] + B[3] + B[4]
 
-    The ``inverse_on_basis`` and ``cmp`` keywords can be combined::
+    The ``inverse_on_basis`` and ``key`` keywords can be combined::
 
-        sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X"); x = X.basis()
+        sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+        sage: x = X.basis()
         sage: def ut(i):
         ....:     return (2*x[2] + 3*x[3] if i == 1
         ....:             else x[1] + x[2] + x[3] if i == 2
         ....:             else 4*x[2])
         sage: def perm(i):
         ....:     return (2 if i == 1 else 3 if i == 2 else 1)
-        sage: perverse_cmp = lambda a, b: cmp((a-2) % 3, (b-2) % 3)
+        sage: perverse_key = lambda a: (a - 2) % 3
         sage: phi = X.module_morphism(ut, triangular="upper", codomain=X,
-        ....:                         inverse_on_support=perm, cmp=perverse_cmp)
+        ....:                         inverse_on_support=perm, key=perverse_key)
         sage: [phi(x[i]) for i in range(1, 4)]
         [2*B[2] + 3*B[3], B[1] + B[2] + B[3], 4*B[2]]
         sage: [phi.preimage(x[i]) for i in range(1, 4)]
         [-1/3*B[1] + B[2] - 1/12*B[3], 1/4*B[3], 1/3*B[1] - 1/6*B[3]]
     """
     def __init__(self, triangular="upper", unitriangular=False,
-                 cmp=None, inverse=None, inverse_on_support=identity, invertible=None):
+                 cmp=None, key=None, inverse=None, inverse_on_support=identity, invertible=None):
         """
         TESTS::
 
@@ -646,17 +651,25 @@ class TriangularModuleMorphism(ModuleMorphism):
             ...
             TypeError: expected string or Unicode object, NoneType found
         """
+        if cmp is not None:
+            deprecation(21043, "the 'cmp' keyword is deprecated, use 'key' instead")
+            self._key_kwds = dict(cmp=cmp)
+        elif key is not None:
+            self._key_kwds = dict(key=key)
+        else:
+            self._key_kwds = dict()
+
         if triangular is True:
             deprecation(8678, "module_morphism(..., triangular=True) is deprecated; "
                         "please use triangular='lower'.")
             triangular = "lower"
+
         if triangular == "upper":
-            self._dominant_item = attrcall("leading_item",  cmp)
+            self._dominant_item = attrcall("leading_item", **self._key_kwds)
         else:
-            self._dominant_item = attrcall("trailing_item", cmp)
+            self._dominant_item = attrcall("trailing_item", **self._key_kwds)
         # We store those two just be able to pass them down to the inverse function
         self._triangular = triangular
-        self._cmp = cmp
 
         domain = self.domain()
         codomain = self.codomain()
@@ -805,9 +818,9 @@ class TriangularModuleMorphism(ModuleMorphism):
                 domain=self.codomain(),
                 on_basis=self._invert_on_basis,
                 codomain=self.domain(), category=self.category_for(),
-                unitriangular=self._unitriangular,  triangular=self._triangular,
-                cmp=self._cmp, inverse=self,
-                inverse_on_support=retract_dom, invertible = self._invertible)
+                unitriangular=self._unitriangular, triangular=self._triangular,
+                inverse=self, inverse_on_support=retract_dom,
+                invertible=self._invertible, **self._key_kwds)
         else:
             return SetMorphism(Hom(self.codomain(), self.domain(),
                                    SetsWithPartialMaps()),

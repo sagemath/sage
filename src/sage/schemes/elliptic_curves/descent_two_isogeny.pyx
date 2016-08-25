@@ -8,6 +8,7 @@ Descent on elliptic curves over `\QQ` with a 2-isogeny.
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.rings.all import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
@@ -54,7 +55,7 @@ def test_valuation(a, p):
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_valuation as tv
         sage: for i in [1..20]:
-        ....:     print '%10s'%factor(i), tv(i,2), tv(i,3), tv(i,5)
+        ....:     print('{:>10} {} {} {}'.format(factor(i), tv(i,2), tv(i,3), tv(i,5)))
                  1 0 0 0
                  2 1 0 0
                  3 0 1 0
@@ -115,7 +116,7 @@ def test_padic_square(a, p):
         sage: for i in [1..300]:
         ....:     for p in prime_range(100):
         ....:          if not Qp(p)(i).is_square()==bool(ps(i,p)):
-        ....:              print i, p
+        ....:              print(i, p)
 
     """
     cdef Integer A = Integer(a)
@@ -924,7 +925,7 @@ def test_els(a,b,c,d,e):
         ....:     if len(ratpoints([e,d,c,b,a], 1000)) > 0:
         ....:         try:
         ....:             if not test_els(a,b,c,d,e):
-        ....:                 print "This never happened", a,b,c,d,e
+        ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
 
@@ -989,8 +990,6 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
         n_primes += 1
     mpz_init_set_ui(n_divisors, ui1)
     mpz_mul_2exp(n_divisors, n_divisors, n_primes)
-#    if verbosity > 3:
-#        print '\nDivisors of d which may lead to RR-soluble quartics:', p_div_d
 
     mpz_init_set_ui(j, ui0)
     if not selmer_only:
@@ -1003,12 +1002,12 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
                 mpz_mul(coeffs[4], coeffs[4], p_div_d_mpz[i])
         if verbosity > 3:
             a_Int = Integer(0); mpz_set(a_Int.value, coeffs[4])
-            print '\nSquarefree divisor:', a_Int
+            print('\nSquarefree divisor:', a_Int)
         mpz_divexact(coeffs[0], d_mpz, coeffs[4])
         found_global_points = 0
         if not selmer_only:
             if verbose:
-                print "\nCalling ratpoints for small point search"
+                print("\nCalling ratpoints for small point search")
             for i from 0 <= i <= 4:
                 mpz_set(coeffs_ratp[i], coeffs[i])
             sig_on()
@@ -1019,11 +1018,11 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
                     a_Int = Integer(0); mpz_set(a_Int.value, coeffs[4])
                     c_Int = Integer(0); mpz_set(c_Int.value, coeffs[2])
                     e_Int = Integer(0); mpz_set(e_Int.value, coeffs[0])
-                    print 'Found small global point, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int)
+                    print('Found small global point, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int))
                 mpz_add_ui(n1, n1, ui1)
                 mpz_add_ui(n2, n2, ui1)
             if verbose:
-                print "\nDone calling ratpoints for small point search"
+                print("\nDone calling ratpoints for small point search")
         if not found_global_points:
             # Test whether the quartic is everywhere locally soluble:
             els = 1
@@ -1036,11 +1035,11 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
                     a_Int = Integer(0); mpz_set(a_Int.value, coeffs[4])
                     c_Int = Integer(0); mpz_set(c_Int.value, coeffs[2])
                     e_Int = Integer(0); mpz_set(e_Int.value, coeffs[0])
-                    print 'ELS without small global points, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int)
+                    print('ELS without small global points, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int))
                 mpz_add_ui(n2, n2, ui1)
                 if not selmer_only:
                     if verbose:
-                        print "\nCalling ratpoints for large point search"
+                        print("\nCalling ratpoints for large point search")
                     for i from 0 <= i <= 4:
                         mpz_set(coeffs_ratp[i], coeffs[i])
                     sig_on()
@@ -1048,10 +1047,10 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
                     sig_off()
                     if found_global_points:
                         if verbosity > 2:
-                            print '  -- Found large global point.'
+                            print('  -- Found large global point.')
                         mpz_add_ui(n1, n1, ui1)
                     if verbose:
-                        print "\nDone calling ratpoints for large point search"
+                        print("\nDone calling ratpoints for large point search")
         mpz_add_ui(j, j, ui1)
     if not selmer_only:
         for i from 0 <= i <= 4:
@@ -1152,9 +1151,9 @@ def two_descent_by_two_isogeny(E,
     cdef list x_list
     assert E.torsion_order()%2==0, 'Need rational two-torsion for isogeny descent.'
     if verbosity > 0:
-        print '\n2-isogeny'
+        print('\n2-isogeny')
         if verbosity > 1:
-            print '\nchanging coordinates'
+            print('\nchanging coordinates')
     a1 = Integer(E.a1())
     a2 = Integer(E.a2())
     a3 = Integer(E.a3())
@@ -1267,9 +1266,9 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
     if verbosity > 1:
         c_prime = -2*c
         d_prime = c*c-4*d
-        print '\nnew curve is y^2 == x( x^2 + (%d)x + (%d) )'%(int(c),int(d))
-        print 'new isogenous curve is' + \
-               ' y^2 == x( x^2 + (%d)x + (%d) )'%(int(c_prime),int(d_prime))
+        print('\nnew curve is y^2 == x( x^2 + (%d)x + (%d) )'%(int(c),int(d)))
+        print('new isogenous curve is' +
+              ' y^2 == x( x^2 + (%d)x + (%d) )'%(int(c_prime),int(d_prime)))
 
     n1 = Integer(0); n2 = Integer(0)
     n1_prime = Integer(0); n2_prime = Integer(0)
@@ -1285,17 +1284,17 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
     sig_free(p_list_mpz)
 
     if verbosity > 0:
-        print "\nResults:"
-        print n1, "<= #E(Q)/phi'(E'(Q)) <=", n2
-        print n1_prime, "<= #E'(Q)/phi(E(Q)) <=", n2_prime
-        print "#Sel^(phi')(E'/Q) =", n2
-        print "#Sel^(phi)(E/Q) =", n2_prime
-        print "1 <= #Sha(E'/Q)[phi'] <=", n2/n1
-        print "1 <= #Sha(E/Q)[phi] <=", n2_prime/n1_prime
-        print "1 <= #Sha(E/Q)[2], #Sha(E'/Q)[2] <=", (n2_prime/n1_prime)*(n2/n1)
+        print("\nResults:")
+        print(n1, "<= #E(Q)/phi'(E'(Q)) <=", n2)
+        print(n1_prime, "<= #E'(Q)/phi(E(Q)) <=", n2_prime)
+        print("#Sel^(phi')(E'/Q) =", n2)
+        print("#Sel^(phi)(E/Q) =", n2_prime)
+        print("1 <= #Sha(E'/Q)[phi'] <=", n2/n1)
+        print("1 <= #Sha(E/Q)[phi] <=", n2_prime/n1_prime)
+        print("1 <= #Sha(E/Q)[2], #Sha(E'/Q)[2] <=", (n2_prime/n1_prime)*(n2/n1))
         a = Integer(n1*n1_prime).log(Integer(2))
         e = Integer(n2*n2_prime).log(Integer(2))
-        print a - 2, "<= rank of E(Q) = rank of E'(Q) <=", e - 2
+        print(a - 2, "<= rank of E(Q) = rank of E'(Q) <=", e - 2)
 
     return n1, n2, n1_prime, n2_prime
 

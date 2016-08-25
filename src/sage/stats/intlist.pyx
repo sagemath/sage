@@ -234,9 +234,9 @@ cdef class IntList:
             if j < 0:
                 j += self._length
                 if j < 0:
-                    raise IndexError, "IntList index out of range"
+                    raise IndexError("IntList index out of range")
             elif j >= self._length:
-                raise IndexError, "IntList index out of range"
+                raise IndexError("IntList index out of range")
             return self._values[j]
 
     def __setitem__(self, Py_ssize_t i, int x):
@@ -267,9 +267,9 @@ cdef class IntList:
         if i < 0:
             i += self._length
             if i < 0:
-                raise IndexError, "index out of range"
+                raise IndexError("index out of range")
         elif i >= self._length:
-            raise IndexError, "index out of range"
+            raise IndexError("index out of range")
         self._values[i] = x
 
     def __reduce__(self):
@@ -398,9 +398,9 @@ cdef class IntList:
             [-2, 3, 5, 1, 1, 17]
         """
         if not isinstance(right, IntList):
-            raise TypeError, "right operand must be an int list"
+            raise TypeError("right operand must be an int list")
         if not isinstance(left, IntList):
-            raise TypeError, "left operand must be an int list"
+            raise TypeError("left operand must be an int list")
         cdef IntList R = right
         cdef IntList L = left
         cdef IntList t = new_int_list(L._length + R._length)
@@ -433,7 +433,7 @@ cdef class IntList:
             (-4, 1)
         """
         if self._length == 0:
-            raise ValueError, "min() arg is an empty sequence"
+            raise ValueError("min() arg is an empty sequence")
         cdef Py_ssize_t i, j
         cdef int s = self._values[0]
         j = 0
@@ -470,7 +470,7 @@ cdef class IntList:
             (3, 2)
         """
         if self._length == 0:
-            raise ValueError, "max() arg is an empty sequence"
+            raise ValueError("max() arg is an empty sequence")
         cdef Py_ssize_t i, j = 0
         cdef int s = self._values[0]
         for i in range(1,self._length):
@@ -547,7 +547,7 @@ cdef IntList new_int_list(Py_ssize_t length):
         - an IntList.
     """
     if length < 0:
-        raise ValueError, "length must be nonnegative"
+        raise ValueError("length must be nonnegative")
     cdef IntList t = IntList.__new__(IntList)
     t._length = length
     t._values = <int*> sig_malloc(sizeof(int)*length)

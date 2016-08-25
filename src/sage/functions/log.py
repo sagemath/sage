@@ -344,23 +344,35 @@ class Function_polylog(GinacFunction):
     def __init__(self):
         r"""
         The polylog function
-        `\text{Li}_n(z) = \sum_{k=1}^{\infty} z^k / k^n`.
+        `\text{Li}_s(z) = \sum_{k=1}^{\infty} z^k / k^s`.
 
-        INPUT:
-
-        -  ``n`` - object
-        -  ``z`` - object
+        This definition is valid for arbitrary complex order `s` and for
+        all complex arguments `z` with `|z| < 1`; it can be extended to
+        `|z| \ge 1` by the process of analytic continuation. So the
+        function may have a discontinuity at `z=1` which can cause a
+        `NaN` value returned for floating point arguments.
 
         EXAMPLES::
 
+            sage: polylog(2.7, 0)
+            0
+            sage: polylog(2, 1)
+            1/6*pi^2
+            sage: polylog(2, -1)
+            -1/12*pi^2
+            sage: polylog(3, -1)
+            -3/4*zeta(3)
+            sage: polylog(2, I)
+            I*catalan - 1/48*pi^2
+            sage: polylog(4, 1/2)
+            polylog(4, 1/2)
+            sage: polylog(4, 0.5)
+            0.517479061673899
+
             sage: polylog(1, x)
             -log(-x + 1)
-            sage: polylog(2,1)
-            1/6*pi^2
             sage: polylog(2,x^2+1)
             polylog(2, x^2 + 1)
-            sage: polylog(4,0.5)
-            polylog(4, 0.500000000000000)
 
             sage: f = polylog(4, 1); f
             1/90*pi^4
@@ -393,7 +405,16 @@ class Function_polylog(GinacFunction):
             sage: t.operator() == polylog
             True
             sage: t.subs(x=.5).n()
-            0.508400579242269
+            0.50840057924226...
+
+        Check if :trac:`18386` is fixed::
+
+            sage: polylog(2.0, 1)
+            1.64493406684823
+            sage: polylog(2, 1.0)
+            NaN - NaN*I
+            sage: polylog(2.0, 1.0)
+            NaN - NaN*I
         """
         GinacFunction.__init__(self, "polylog", nargs=2)
 
@@ -866,7 +887,7 @@ class Function_exp_polar(BuiltinFunction):
             sage: exp_polar(-5.0 + 8.0*I).n()
             Traceback (most recent call last):
             ...
-            TypeError: cannot evaluate symbolic expression numerically
+            ValueError: invalid attempt to numerically evaluate exp_polar()
 
         """
         from sage.functions.other import imag
@@ -875,7 +896,7 @@ class Function_exp_polar(BuiltinFunction):
             and bool(-const_pi < imag(z) <= const_pi)):
             return exp(z)
         else:
-            return exp_polar(z)
+            raise ValueError("invalid attempt to numerically evaluate exp_polar()")
 
     def _eval_(self, z):
         """

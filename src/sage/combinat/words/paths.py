@@ -58,9 +58,6 @@ use ``help(p)``::
     ...
     Methods inherited from FiniteWordPath_all:
     ...
-    This only works on Python classes that derive from SageObject.
-    ...
-    See http://trac.sagemath.org/2536 for details.
 
 Since p is a finite word, many functions from the word library are available::
 
@@ -170,9 +167,10 @@ REFERENCES:
 - [5] http://en.wikipedia.org/wiki/Dyck_word
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud bergeron <abergeron@gmail.coms>,
-#       Copyrigth (C) 2009 Sebastien Labbe <slabqc@gmail.com>,
+#       Copyright (C) 2009 Sebastien Labbe <slabqc@gmail.com>,
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -191,12 +189,12 @@ from sage.combinat.words.alphabet import build_alphabet
 from sage.plot.all import arrow, line, polygon, point, Graphics
 from sage.modules.free_module_element import vector
 from sage.rings.all import ZZ, RR, QuadraticField
-from word_datatypes import (WordDatatype_str,
+from .word_datatypes import (WordDatatype_str,
                             WordDatatype_list,
                             WordDatatype_tuple)
                             #WordDatatype_cpp_basic_string)
 
-from word_infinite_datatypes import (
+from .word_infinite_datatypes import (
                             WordDatatype_iter_with_caching,
                             WordDatatype_iter,
                             WordDatatype_callable_with_caching,

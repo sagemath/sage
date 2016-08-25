@@ -24,11 +24,12 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
+from __future__ import absolute_import
 
 import random
 
-import modsym
+from . import modsym
 import sage.modular.dirichlet as dirichlet
 import sage.modular.arithgroup.all as arithgroup
 from sage.misc.misc import cputime
@@ -105,15 +106,15 @@ class Test:
         else:
             which = random.randrange(0,3)
         if which == 0:
-            print "gamma0"
+            print("gamma0")
             M = self._modular_symbols_space_gamma0()
         elif which == 1:
-            print "gamma1"
+            print("gamma1")
             M = self._modular_symbols_space_gamma1()
         else:
-            print "character"
+            print("character")
             M = self._modular_symbols_space_character()
-        print "\t",M
+        print("\t", M)
         return M
 
     def _level_weight_sign(self):
@@ -129,8 +130,8 @@ class Test:
         """
         level = random.choice(self.levels)
         weight = random.choice(self.weights)
-        sign = random.choice([-1,0,1])
-        print "level = %s, weight = %s, sign = %s"%(level,weight,sign)
+        sign = random.choice([-1, 0, 1])
+        print("level = %s, weight = %s, sign = %s" % (level, weight, sign))
         return level, weight, sign
 
     def _modular_symbols_space_gamma0(self):
@@ -193,8 +194,8 @@ class Test:
             test_random
             ...
         """
-        print "test_%s"%name
-        Test.__dict__["test_%s"%name](self)
+        print("test_%s" % name)
+        Test.__dict__["test_%s" % name](self)
 
     #################################################################
     # The tests
@@ -234,7 +235,7 @@ class Test:
                 s += " (will stop after about %s seconds)"%seconds
             t = cputime()
             self._do(name)
-            print "\ttime=%s\telapsed=%s"%(cputime(t),cputime(total))
+            print("\ttime=%s\telapsed=%s" % (cputime(t), cputime(total)))
             n += 1
 
     def test_cs_dimension(self):
@@ -330,6 +331,5 @@ class Test:
         """
         tests = [a for a in Test.__dict__.keys() if a[:5] == "test_" and a != "test_random"]
         name = random.choice(tests)
-        print "Doing random test %s"%name
+        print("Doing random test %s" % name)
         Test.__dict__[name](self)
-

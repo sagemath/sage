@@ -7,8 +7,7 @@ if [ "$SAGE_LOCAL" = "" ]; then
 fi
 
 
-LATTE_VERSION="$(cat ${SAGE_ROOT}/build/pkgs/latte_int/package-version.txt)"
-cd "latte-int-${LATTE_VERSION}"
+cd src
 
 
 #CFLAGS="-I $SAGE_LOCAL/include -L$SAGE_LOCAL/lib $CFLAGS"

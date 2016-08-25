@@ -431,13 +431,13 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         cmp_lu = cmp(self._lower, other._upper)
         cmp_ul = cmp(self._upper, other._lower)
-        # self is seperated and below other
+        # self is separated and below other
         if cmp_ul == -1:
             return False
         # self is adjacent and below other 
         if cmp_ul == 0:
             return self._upper_closed or other._lower_closed
-        # self is seperated and above other
+        # self is separated and above other
         if cmp_lu == +1:
             return False
         # self is adjacent and above other 

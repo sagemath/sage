@@ -4,6 +4,7 @@ Morphisms between finitely generated modules over a PID
 AUTHOR:
 - William Stein, 2009
 """
+from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
@@ -21,7 +22,7 @@ AUTHOR:
 ####################################################################################
 
 from sage.categories.morphism import Morphism, is_Morphism
-import fgp_module
+from .fgp_module import DEBUG
 
 
 class FGP_Morphism(Morphism):
@@ -193,7 +194,7 @@ class FGP_Morphism(Morphism):
         """
         if not isinstance(right, FGP_Morphism):  # todo: implement using coercion model
             right = self.parent()(right)
-        return FGP_Morphism(self.parent(), self._phi + right._phi, check=fgp_module.DEBUG)
+        return FGP_Morphism(self.parent(), self._phi + right._phi, check=DEBUG)
 
     def __sub__(self, right):
         """
@@ -206,7 +207,7 @@ class FGP_Morphism(Morphism):
         """
         if not isinstance(right, FGP_Morphism):  # todo: implement using coercion model
             right = self.parent()(right)
-        return FGP_Morphism(self.parent(), self._phi - right._phi, check=fgp_module.DEBUG)
+        return FGP_Morphism(self.parent(), self._phi - right._phi, check=DEBUG)
 
     def __neg__(self):
         """
@@ -217,7 +218,7 @@ class FGP_Morphism(Morphism):
             sage: -phi
             Morphism from module over Integer Ring with invariants (4, 12) to module with invariants (4, 12) that sends the generators to [(2, 0), (0, 11)]
         """
-        return FGP_Morphism(self.parent(), -self._phi, check=fgp_module.DEBUG)
+        return FGP_Morphism(self.parent(), -self._phi, check=DEBUG)
 
     def __call__(self, x):
         """
@@ -273,7 +274,7 @@ class FGP_Morphism(Morphism):
             sage: phi(4*Q.1) == phi(x)
             True
         """
-        from fgp_module import is_FGP_Module
+        from .fgp_module import is_FGP_Module
         if is_FGP_Module(x):
             if not x.is_submodule(self.domain()):
                 raise ValueError("x must be a submodule or element of the domain")
@@ -318,7 +319,7 @@ class FGP_Morphism(Morphism):
         V = self._phi.inverse_image(self.codomain().W())
         D = self.domain()
         V = D.W() + V
-        return D._module_constructor(V, D.W(), check=fgp_module.DEBUG)
+        return D._module_constructor(V, D.W(), check=DEBUG)
 
     def inverse_image(self, A):
         """
@@ -351,7 +352,7 @@ class FGP_Morphism(Morphism):
             ...
             ValueError: A must be a submodule of the codomain
         """
-        from fgp_module import is_FGP_Module
+        from .fgp_module import is_FGP_Module
         if not is_FGP_Module(A):
             raise TypeError("A must be a finitely generated quotient module")
         if not A.is_submodule(self.codomain()):
@@ -359,7 +360,7 @@ class FGP_Morphism(Morphism):
         V = self._phi.inverse_image(A.V())
         D = self.domain()
         V = D.W() + V
-        return D._module_constructor(V, D.W(), check=fgp_module.DEBUG)
+        return D._module_constructor(V, D.W(), check=DEBUG)
 
     def image(self):
         """
@@ -377,7 +378,7 @@ class FGP_Morphism(Morphism):
         """
         V = self._phi.image() + self.codomain().W()
         W = V.intersection(self.codomain().W())
-        return self.codomain()._module_constructor(V, W, check=fgp_module.DEBUG)
+        return self.codomain()._module_constructor(V, W, check=DEBUG)
 
     def lift(self, x):
         """

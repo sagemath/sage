@@ -1,6 +1,7 @@
 r"""
 PARI Groups
 """
+from __future__ import absolute_import
 
 from sage.groups.old import Group
 from sage.libs.all import pari_gen
@@ -64,7 +65,7 @@ class PariGroup(Group):
     def permutation_group(self):
         if self.__degree is None:
             raise NotImplementedError
-        import perm_gps.permgroup_named
-        return perm_gps.permgroup_named.TransitiveGroup(self.__degree, self.__x[2])
+        from .perm_gps import permgroup_named
+        return permgroup_named.TransitiveGroup(self.__degree, self.__x[2])
 
     _permgroup_ = permutation_group

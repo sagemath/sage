@@ -103,7 +103,7 @@ Axiom would print out.
 
 ::
 
-    sage: print axiom.eval('factor(x^5 - y^5)')   #optional - axiom
+    sage: print(axiom.eval('factor(x^5 - y^5)'))   # optional - axiom
                4      3    2 2    3     4
     - (y - x)(y  + x y  + x y  + x y + x )
     Type: Factored Polynomial Integer
@@ -175,11 +175,13 @@ Python floats.
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import re
 
-from expect import Expect, ExpectElement, FunctionElement, ExpectFunction
+from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.misc.all import verbose
 from sage.env import DOT_SAGE
 from pexpect import EOF
@@ -350,9 +352,9 @@ class PanAxiom(ExtraTabCompletion, Expect):
                 except IOError:
                     pass
             if verbose:
-                print "\nBuilding %s command completion list (this takes"%(self)
-                print "a few seconds only the first time you do it)."
-                print "To force rebuild later, delete %s."%self._COMMANDS_CACHE
+                print("\nBuilding %s command completion list (this takes" % self)
+                print("a few seconds only the first time you do it).")
+                print("To force rebuild later, delete %s." % self._COMMANDS_CACHE)
             v = self._commands()
 
             #Process we now need process the commands to strip out things which
@@ -418,19 +420,19 @@ class PanAxiom(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
-            sage: print axiom._eval_line('2+2')  #optional - axiom
+            sage: print(axiom._eval_line('2+2'))  # optional - axiom
               4
                                                        Type: PositiveInteger
             sage: fricas._eval_line(")set output algebra off")  #optional - fricas
             ''
             sage: fricas._eval_line(")set output tex on")  #optional - fricas
             ''
-            sage: print fricas._eval_line("2+2")  #optional - fricas
+            sage: print(fricas._eval_line("2+2"))  # optional - fricas
             $$
             4 
-            \leqno(11)
+            \leqno(3)
             $$
-                                                       Type: PositiveInteger
+                                                                                                                                                                                                                                    Type: PositiveInteger
             sage: fricas._eval_line(")set output tex off")  #optional - fricas
             ''
             sage: fricas._eval_line(")set output algebra on")  #optional - fricas
@@ -479,7 +481,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         i = 0
         for line in outs:
             line = line.rstrip()
-            # print "'%s'"%line
             if line[:4] == '   (':
                 i = line.find('(')
                 i += line[i:].find(')')+1
@@ -831,8 +832,14 @@ class PanAxiomElement(ExpectElement):
             sage: gp(axiom(1/2))    #optional - axiom
             1/2
 
-            sage: fricas(1/2).sage() #optional - fricas
+            sage: fricas(1).sage()          #optional - fricas
+            1
+            sage: fricas(-1).sage()         #optional - fricas
+            -1
+            sage: fricas(1/2).sage()        #optional - fricas
             1/2
+            sage: fricas(x^2/(x-1)).sage()  #optional - fricas
+            x^2/(x - 1)
 
         DoubleFloat's in Axiom are converted to be in RDF in Sage.
 
@@ -891,12 +898,17 @@ class PanAxiomElement(ExpectElement):
         elif type == "DoubleFloat":
             from sage.rings.all import RDF
             return RDF(repr(self))
+        elif type in ["PositiveInteger", "Integer"]:
+            from sage.rings.all import ZZ
+            return ZZ(repr(self))
         elif type.startswith('Polynomial'):
             from sage.rings.all import PolynomialRing
             base_ring = P(type.lstrip('Polynomial '))._sage_domain()
             vars = str(self.variables())[1:-1]
             R = PolynomialRing(base_ring, vars)
             return R(self.unparsed_input_form())
+        elif type.startswith('Fraction'):
+            return self.numer().sage()/self.denom().sage()
 
          #If all else fails, try using the unparsed input form
         try:

@@ -25,6 +25,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import string
 
@@ -107,8 +108,8 @@ class SymbolicLogic:
         statement = [toks, vars, vars_order]
         try:                           #verify the syntax
              eval(toks)
-        except(KeyError, RuntimeError):
-            print 'Malformed Statement'
+        except (KeyError, RuntimeError):
+            print('Malformed Statement')
             return []
         return statement
 
@@ -245,8 +246,8 @@ class SymbolicLogic:
                 s += ' '
             s += '| '
             line += s
-        print line
-        print len(line) * '-'
+        print(line)
+        print(len(line) * '-')
         for row in table:
             line = s = ""
             i = 0
@@ -262,8 +263,8 @@ class SymbolicLogic:
                 s += '| '
                 line += s
                 i += 1
-            print line
-        print
+            print(line)
+        print("")
 
     def combine(self, statement1, statement2):
         r"""
@@ -876,7 +877,7 @@ def tokenize(s, toks):
                 if tok not in vars_order:
                     vars_order.append(tok)
             else:
-                print 'Invalid variable name: ', tok
+                print('Invalid variable name: ', tok)
                 toks = []
 
     toks.append('CPAREN')

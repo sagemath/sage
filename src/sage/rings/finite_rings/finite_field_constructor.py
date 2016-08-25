@@ -90,7 +90,7 @@ Finite Fields support iteration, starting with 0.
 ::
 
     sage: k = GF(9, 'a')
-    sage: for i,x in enumerate(k):  print i,x
+    sage: for i,x in enumerate(k):  print("{} {}".format(i, x))
     0 0
     1 a
     2 a + 1
@@ -101,7 +101,7 @@ Finite Fields support iteration, starting with 0.
     7 a + 2
     8 1
     sage: for a in GF(5):
-    ...    print a
+    ....:     print(a)
     0
     1
     2
@@ -165,6 +165,8 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 import random
 
@@ -180,7 +182,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 # We don't late import this because this means trouble with the Givaro library
 # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
 # TODO: figure out why
-from finite_field_givaro import FiniteField_givaro
+from .finite_field_givaro import FiniteField_givaro
 
 import sage.interfaces.gap
 
@@ -616,7 +618,7 @@ class FiniteFieldFactory(UniqueFactory):
         if impl == 'modn':
             if n != 1:
                 raise ValueError("the 'modn' implementation requires a prime order")
-            from finite_field_prime_modn import FiniteField_prime_modn
+            from .finite_field_prime_modn import FiniteField_prime_modn
             # Using a check option here is probably a worthwhile
             # compromise since this constructor is simple and used a
             # huge amount.
@@ -634,17 +636,17 @@ class FiniteFieldFactory(UniqueFactory):
                     elem_cache = kwds.get('elem_cache', order < 500)
                     K = FiniteField_givaro(order, name, modulus, repr=repr, cache=elem_cache)
                 elif impl == 'ntl':
-                    from finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+                    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
                     K = FiniteField_ntl_gf2e(order, name, modulus)
                 elif impl == 'pari_ffelt':
-                    from finite_field_pari_ffelt import FiniteField_pari_ffelt
+                    from .finite_field_pari_ffelt import FiniteField_pari_ffelt
                     K = FiniteField_pari_ffelt(p, modulus, name)
                 elif (impl == 'pari_mod'
                       or impl == 'pari'):    # for unpickling old pickles
                     # This implementation is deprecated, a warning will
                     # be given when this field is created.
                     # See http://trac.sagemath.org/ticket/17297
-                    from finite_field_ext_pari import FiniteField_ext_pari
+                    from .finite_field_ext_pari import FiniteField_ext_pari
                     K = FiniteField_ext_pari(order, name, modulus)
                 else:
                     raise ValueError("no such finite field implementation: %r" % impl)
@@ -675,7 +677,7 @@ def is_PrimeFiniteField(x):
         sage: is_PrimeFiniteField(GF(next_prime(10^90,proof=False)))
         True
     """
-    from finite_field_prime_modn import FiniteField_prime_modn
+    from .finite_field_prime_modn import FiniteField_prime_modn
     from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
     return isinstance(x, FiniteField_prime_modn) or \

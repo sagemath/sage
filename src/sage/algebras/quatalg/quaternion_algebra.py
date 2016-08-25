@@ -32,6 +32,7 @@ Pickling test::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from __future__ import absolute_import
 
 from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor,
         factor, gcd, lcm, kronecker_symbol, valuation)
@@ -57,8 +58,8 @@ from sage.modules.free_module_element import vector
 
 from operator import itemgetter
 
-import quaternion_algebra_element
-import quaternion_algebra_cython
+from . import quaternion_algebra_element
+from . import quaternion_algebra_cython
 
 from sage.modular.modsym.p1list import P1List
 

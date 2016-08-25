@@ -25,8 +25,7 @@ It prints in a nice factored form::
     sage: F
     -1 * 3^2 * 5
 
-There is an underlying list representation, \emph{which ignores the
-unit part}::
+There is an underlying list representation, which ignores the unit part::
 
     sage: list(F)
     [(3, 2), (5, 1)]
@@ -638,27 +637,35 @@ class Factorization(SageObject):
         if repeat:
             self.simplify()
 
-    def sort(self, _cmp=None):
+    def sort(self, _cmp=None, key=None):
         r"""
         Sort the factors in this factorization.
 
         INPUT:
 
-        - ``_cmp`` - (default: None) comparison function
+        - ``_cmp`` - (default: ``None``) comparison function (deprecated)
+        - ``key`` - (default: ``None``) comparison key
 
         OUTPUT:
 
-        - changes this factorization to be sorted
+        - changes this factorization to be sorted (inplace)
 
-        If _cmp is None, we determine the comparison function as
-        follows: If the prime in the first factor has a dimension
+        If ``_cmp`` is ``None``, we use a comparison key.
+
+        If ``key`` is ``None``, we determine the comparison key as
+        follows:
+
+        If the prime in the first factor has a dimension
         method, then we sort based first on *dimension* then on
-        the exponent.  If there is no dimension method, we next
+        the exponent.
+
+        If there is no dimension method, we next
         attempt to sort based on a degree method, in which case, we
         sort based first on *degree*, then exponent to break ties
         when two factors have the same degree, and if those match
-        break ties based on the actual prime itself.  If there is no
-        degree method, we sort based on dimension.
+        break ties based on the actual prime itself.
+
+        Otherwise, we sort according to the prime itself.
 
         EXAMPLES:
 
@@ -668,52 +675,62 @@ class Factorization(SageObject):
             sage: F = factor(x^3 + 1); F
             (x + 1) * (x^2 - x + 1)
 
-        Then we sort it but using the negated version of the standard
-        Python cmp function::
+        We sort it by decreasing degree::
 
-            sage: F.sort(_cmp = lambda x,y: -cmp(x,y))
+            sage: F.sort(key=lambda x:(-x[0].degree(), x))
+            sage: F
+            (x^2 - x + 1) * (x + 1)
+
+        TESTS:
+
+        We sort it using the negated version of the
+        Python cmp function (using ``_cmp`` is deprecated)::
+
+            sage: F.sort(_cmp=lambda x,y: -cmp(x,y))
+            doctest:...: DeprecationWarning: Please use 'key' to sort.
+            See http://trac.sagemath.org/21145 for details.
             sage: F
             (x^2 - x + 1) * (x + 1)
         """
         if len(self) == 0:
             return
-        if _cmp is None:
+
+        if _cmp is not None:
+            from functools import cmp_to_key
+            from sage.misc.superseded import deprecation
+            deprecation(21145, "Please use 'key' to sort.")
+            self.__x.sort(key=cmp_to_key(_cmp))
+            return
+
+        if key is not None:
+            self.__x.sort(key=key)
+            return
+
+        a = self.__x[0][0]
+        sort_key = None
+        if hasattr(a, 'dimension'):
             try:
-                a = self.__x[0][0].dimension()
-                def _cmp(f,g):
-                    """
-                    This is used internally for comparing.  (indirect doctest)
+                a.dimension()
 
-                    EXAMPLES::
+                def sort_key(f):
+                    return (f[0].dimension(), f[1], f[0])
+            except (AttributeError, NotImplementedError, TypeError):
+                pass
+        elif hasattr(a, 'degree'):
+            try:
+                a.degree()
 
-                        sage: factor(6)
-                        2 * 3
-                    """
-                    try:
-                        return cmp((f[0].dimension(), f[1]), (g[0].dimension(),g[1]))
-                    except (AttributeError, NotImplementedError):
-                        return cmp((f[0],f[1]), (g[0], g[1]))
-            except (AttributeError, NotImplementedError):
-                try:
-                    a = self.__x[0][0].degree()
-                    def _cmp(f,g):
-                        """
-                        This is used internally for comparing.  (indirect doctest)
+                def sort_key(f):
+                    return (f[0].degree(), f[1], f[0])
+            except (AttributeError, NotImplementedError, TypeError):
+                pass
 
-                        EXAMPLES::
+        if sort_key is None:
 
-                            sage: factor(6)
-                            2 * 3
-                        """
-                        try:
-                            return cmp((f[0].degree(),f[1],f[0]), (g[0].degree(),g[1],g[0]))
-                        except (AttributeError, NotImplementedError):
-                            return cmp(f[0], g[0])
-                except (AttributeError, NotImplementedError, TypeError):  # TypeError in case degree must take an argument, e.g., for symbolic expressions it has to.
-                    self.__x.sort()
-                    return
+            def sort_key(f):
+                return f[0]
 
-        self.__x.sort(_cmp)
+        self.__x.sort(key=sort_key)
 
     def unit(self):
         r"""

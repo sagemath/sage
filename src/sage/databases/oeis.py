@@ -147,6 +147,8 @@ Classes and methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -553,7 +555,7 @@ class OEIS:
                 '%D A999999 Lewis Carroll, The Hunting of the Snark.\n'
                 '%D A999999 Deep Thought, The Answer to the Ultimate Question of Life, The Universe, and Everything.\n'
                 '%H A999999 Wikipedia, <a href="http://en.wikipedia.org/wiki/42_(number)">42 (number)</a>\n'
-                '%H A999999 See. also <a href="http://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>\n'
+                '%H A999999 See. also <a href="https://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>\n'
                 '%H A999999 Do not confuse with the sequence <a href="/A000042">A000042</a> or the sequence <a href="/A000024">A000024</a>\n'
                 '%H A999999 The string http://42.com is not a link.\n'
                 '%F A999999 For n big enough, s(n+1) - s(n) = 0.\n'
@@ -716,7 +718,7 @@ class OEISSequence(SageObject):
             sage: f = oeis(45) ; f                      # optional -- internet
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
 
-            sage: print f.raw_entry()                   # optional -- internet
+            sage: print(f.raw_entry())                  # optional -- internet
             %I A000045 M0692 N0256
             %S A000045 0,1,1,2,3,5,8,13,21,34,55,89,144,...
             %T A000045 10946,17711,28657,46368,...
@@ -1272,7 +1274,7 @@ class OEISSequence(SageObject):
             A085823: Numbers in which all substrings are primes.
 
             sage: for i in p:                           # optional -- internet
-            ....:     print i
+            ....:     print(i)
             2
             3
             5
@@ -1306,7 +1308,7 @@ class OEISSequence(SageObject):
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
 
             sage: for i in f:                           # optional -- internet
-            ....:     print i
+            ....:     print(i)
             Traceback (most recent call last):
             ...
             LookupError: Future values not provided by OEIS.
@@ -1322,7 +1324,7 @@ class OEISSequence(SageObject):
 
             sage: for i in s:
             ....:     if i == -1:
-            ....:         print i
+            ....:         print(i)
             ....:         break
             -1
 
@@ -1464,7 +1466,7 @@ class OEISSequence(SageObject):
 
             sage: HTML = s.links(format="html");  HTML
             0: Wikipedia, <a href="http://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
-            1: See. also <a href="http://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>
+            1: See. also <a href="https://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>
             ...
             sage: type(HTML)
             <class 'sage.misc.html.HtmlFragment'>
@@ -1735,14 +1737,14 @@ class OEISSequence(SageObject):
                   'programs', 'keywords', 'offsets', 'url', 'old_IDs',
                   'author', 'extensions_or_errors']:
             if embedded() and s == 'links':
-                print re.sub('_', ' ', s).upper()
+                print(re.sub('_', ' ', s).upper())
                 getattr(self, s)()
-                print '\n'
+                print('\n')
             else:
                 result = getattr(self, s)()
                 if result != '' and result != ('',) and result != ():
-                    print re.sub('_', ' ', s).upper()
-                    print str(result) + '\n'
+                    print(re.sub('_', ' ', s).upper())
+                    print(str(result) + '\n')
 
     def programs(self, language='other'):
         r"""

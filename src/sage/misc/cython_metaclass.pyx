@@ -70,7 +70,7 @@ EXAMPLES::
     ....:     def __getmetaclass__(_):
     ....:         class MyMetaclass(type):
     ....:             def __init__(*args):
-    ....:                 print "Calling MyMetaclass.__init__{}".format(args)
+    ....:                 print("Calling MyMetaclass.__init__{}".format(args))
     ....:         return MyMetaclass
     ....:
     ....: cdef class MyDerivedType(MyCustomType):

@@ -598,7 +598,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         A tuple of integers (and plus infinity) in ascending
         order. The last entry is plus infinity if and only if the
-        flitration is not separating (see :meth:`is_separating`).
+        filtration is not separating (see :meth:`is_separating`).
 
         EXAMPLES::
 

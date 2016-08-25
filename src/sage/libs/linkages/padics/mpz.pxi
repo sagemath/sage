@@ -67,7 +67,7 @@ cdef inline int ccmp(mpz_t a, mpz_t b, long prec, bint reduce_a, bint reduce_b, 
     - ``reduce_b`` -- a bint, whether b needs to be reduced.
     - ``prime_pow`` -- the PowComputer for the ring.
 
-    OUPUT:
+    OUTPUT:
 
     - If neither a nor be needs to be reduced, returns
       -1 (`a < b`), 0 (`a = b`) or 1 (`a > b`)

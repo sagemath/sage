@@ -10,6 +10,7 @@ Utility functions for libGAP
 #   the License, or (at your option) any later version.
 #                   http://www.gnu.org/licenses/
 ###############################################################################
+from __future__ import print_function
 
 from sage.env import SAGE_LOCAL
 from libc.stdint cimport uintptr_t
@@ -159,7 +160,7 @@ def gap_root():
     gapdir = os.path.join(SAGE_LOCAL, 'gap', 'latest')
     if os.path.exists(gapdir):
         return gapdir
-    print 'The gap-4.5.5.spkg (or later) seems to be not installed!'
+    print('The gap-4.5.5.spkg (or later) seems to be not installed!')
     gap_sh = open(os.path.join(SAGE_LOCAL, 'bin', 'gap')).read().splitlines()
     gapdir = filter(lambda dir:dir.strip().startswith('GAP_DIR'), gap_sh)[0]
     gapdir = gapdir.split('"')[1]
@@ -362,7 +363,7 @@ cdef inline void DEBUG_CHECK(libGAP_Obj obj):
     libGAP_CheckMasterPointers()
     libgap_exit()
     if obj == NULL:
-        print 'DEBUG_CHECK: Null pointer!'
+        print('DEBUG_CHECK: Null pointer!')
 
 
 
@@ -479,10 +480,10 @@ def command(command_string):
         if libGAP_ReadEvalResult:
             libGAP_ViewObjHandler(libGAP_ReadEvalResult)
             s = libgap_get_output()
-            print 'Output follows...'
-            print s.strip()
+            print('Output follows...')
+            print(s.strip())
         else:
-            print 'No output.'
+            print('No output.')
 
     finally:
         libgap_exit()

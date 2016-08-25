@@ -69,8 +69,8 @@ Sage example in ./mpoly.tex, line 202::
 
 Sage example in ./mpoly.tex, line 209::
 
-  sage: print "total={d}    (en x)={dx}    partiels={ds}"\
-  ...     .format(d=p.degree(), dx=p.degree(x), ds=p.degrees())
+  sage: print("total={d}    (en x)={dx}    partiels={ds}"
+  ....:       .format(d=p.degree(), dx=p.degree(x), ds=p.degrees()))
   total=4    (en x)=3    partiels=(3, 2, 1)
 
 Sage example in ./mpoly.tex, line 255::

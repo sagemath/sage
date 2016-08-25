@@ -16,6 +16,7 @@ Regular Crystals
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
+from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
@@ -761,7 +762,7 @@ class RegularCrystals(Category_singleton):
                     #Test axioms P3 and P4.
                     if not triple[0]==triple[1]+triple[2] or triple[1]>0 or triple[2]>0:
                         if verbose:
-                            print 'Warning: Failed axiom P3 or P4 at vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i,j)
+                            print('Warning: Failed axiom P3 or P4 at vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i, j))
                             goodness=False
                         else:
                             tester.fail()
@@ -769,7 +770,7 @@ class RegularCrystals(Category_singleton):
                         #check E_i E_j(x)= E_j E_i(x)
                         if self.e(i).e(j)!=self.e(j).e(i) or self.e(i).e(j).stembridgeDel_rise(j, i)!=0:
                             if verbose:
-                                print 'Warning: Failed axiom P5 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i,j)
+                                print('Warning: Failed axiom P5 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i, j))
                                 goodness=False
                             else:
                                 tester.fail()
@@ -781,7 +782,7 @@ class RegularCrystals(Category_singleton):
                         b=y2.stembridgeDel_rise(i, j)
                         if y1!=y2 or a!=-1 or b!=-1:
                             if verbose:
-                                print 'Warning: Failed axiom P6 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i,j)
+                                print('Warning: Failed axiom P6 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i, j))
                                 goodness=False
                             else:
                                 tester.fail()

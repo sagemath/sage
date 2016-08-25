@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -23,8 +24,8 @@ from sage.categories.all import CommutativeAlgebras
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
-from hecke_triangle_groups import HeckeTriangleGroup
-from abstract_ring import FormsRing_abstract
+from .hecke_triangle_groups import HeckeTriangleGroup
+from .abstract_ring import FormsRing_abstract
 
 
 def canonical_parameters(group, base_ring, red_hom, n=None):
