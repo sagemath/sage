@@ -863,9 +863,11 @@ class RecognizableSeries(Element):
             T = M.transpose()
             T.set_immutable()
             return T
-        return self.parent()(self.mu.map(tr),
-                             left=self.right,
-                             right=self.left)
+
+        P = self.parent()
+        return P.element_class(P, self.mu.map(tr),
+                               left=self.right,
+                               right=self.left)
 
 
     @cached_method
