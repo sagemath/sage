@@ -44,24 +44,25 @@ TESTS::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import math
 
 import sage.rings.real_double
 import sage.rings.complex_double
 
-from matrix cimport Matrix
+from .matrix cimport Matrix
 from sage.structure.element cimport ModuleElement,Vector
-from constructor import matrix
+from .constructor import matrix
 from sage.modules.free_module_element import vector
 cimport sage.structure.element
-from matrix_space import MatrixSpace
+from .matrix_space import MatrixSpace
 from sage.misc.decorators import rename_keyword
 
 cimport numpy as cnumpy
 
-numpy=None
-scipy=None
+numpy = None
+scipy = None
 
 # This is for the Numpy C API to work
 cnumpy.import_array()

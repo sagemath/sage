@@ -8,3 +8,4 @@ cdef extern from "flint/arith.h":
     void arith_euler_number ( fmpz_t res , ulong n )
     void arith_number_of_partitions(fmpz_t x, ulong n)
     void arith_dedekind_sum(fmpq_t, fmpz_t, fmpz_t)
+    void arith_harmonic_number(fmpq_t, unsigned long n)

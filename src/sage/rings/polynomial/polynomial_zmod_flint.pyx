@@ -729,7 +729,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         Return this polynomial divided by its leading coefficient.
 
-        Raises ValueError if the leading cofficient is not invertible in the
+        Raises ValueError if the leading coefficient is not invertible in the
         base ring.
 
         EXAMPLES::

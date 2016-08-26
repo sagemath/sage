@@ -14,7 +14,7 @@ all multilinear maps
 that vanish whenever any of two of their arguments are equal.
 Note that `\Lambda^1(M^*) = M^*` (the dual of `M`).
 
-`\Lambda^p(M^*)` is a free module of rank `\left({n\atop p}\right)` over `R`,
+`\Lambda^p(M^*)` is a free module of rank `\binom{n}{p}` over `R`,
 where `n` is the rank of `M`.
 Accordingly, exterior powers of free modules are implemented by a class,
 :class:`ExtPowerFreeModule`, which inherits from the class
@@ -62,7 +62,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
     that vanish whenever any of two of their arguments are equal.
     Note that `\Lambda^1(M^*) = M^*` (the dual of `M`).
 
-    `\Lambda^p(M^*)` is a free module of rank `\left({n\atop p}\right)` over
+    `\Lambda^p(M^*)` is a free module of rank `\binom{n}{p}` over
     `R`, where `n` is the rank of `M`.
     Accordingly, the class :class:`ExtPowerFreeModule` inherits from the class
     :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.

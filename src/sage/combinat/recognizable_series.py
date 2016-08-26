@@ -41,8 +41,8 @@ Various
 .. SEEALSO::
 
     :mod:`k-regular sequence <sage.combinat.k_regular_sequence>`,
-    :doc:`sage/rings/cfinite_sequence`,
-    :doc:`sage/combinat/binary_recurrence_sequences`.
+    :mod:`sage.rings.cfinite_sequence`,
+    :mod:`sage.combinat.binary_recurrence_sequences`.
 
 REFERENCES:
 
@@ -1068,7 +1068,7 @@ class RecognizableSeries(Element):
           as this recognizable series.
 
         - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the addition.
+          :meth:`minimized` is called after the operation.
 
         OUTPUT:
 
@@ -1211,7 +1211,7 @@ class RecognizableSeries(Element):
           as this recognizable series.
 
         - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the addition.
+          :meth:`minimized` is called after the operation.
 
         OUTPUT:
 

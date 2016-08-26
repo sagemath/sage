@@ -3295,7 +3295,7 @@ cdef bint _may_cache_none(x, y, tag) except -1:
     # with the only exception of the path from y to x.
     # See #12969.
     cdef EltPair P
-    for P in _coerce_test_dict.iterkeys():
+    for P in _coerce_test_dict:
         if (P.y is y) and (P.x is not x) and (P.tag is tag):
             return 0
     return 1

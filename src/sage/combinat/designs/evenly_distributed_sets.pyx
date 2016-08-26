@@ -15,7 +15,7 @@ might want to update this database with more values.
 Classes and methods
 -------------------
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 cimport cython
 
@@ -311,7 +311,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         xe = self.K.multiplicative_generator() ** (self.e)
         df = [[xe**j*b for b in B] for j in range((self.q-1)/(2*self.e))]
         if check:
-            from difference_family import is_difference_family
+            from .difference_family import is_difference_family
             if not is_difference_family(self.K, df, self.q, self.k, 1):
                 raise RuntimeError("a wrong evenly distributed set was "
                         "produced by the Sage library for the parameters:\n"

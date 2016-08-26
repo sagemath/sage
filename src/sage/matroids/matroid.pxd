@@ -33,7 +33,7 @@ cdef class Matroid(SageObject):
     cpdef _is_coclosed(self, X)
 
     cpdef _minor(self, contractions, deletions)
-    cpdef _has_minor(self, N)
+    cpdef _has_minor(self, N, bint certificate=*)
     cpdef _line_length(self, F)
     cpdef _extension(self, element, hyperplanes)
 
@@ -118,7 +118,7 @@ cdef class Matroid(SageObject):
     cpdef _backslash_(self, X)
     cpdef dual(self)
     cpdef truncation(self)
-    cpdef has_minor(self, N)
+    cpdef has_minor(self, N, bint certificate=*)
     cpdef has_line_minor(self, k, hyperlines=*)
     cpdef _has_line_minor(self, k, hyperlines)
 
@@ -163,9 +163,9 @@ cdef class Matroid(SageObject):
     cpdef is_k_closed(self, int k)
 
     # matroid chordality
-    cpdef _is_circuit_chordal(self, frozenset C)
-    cpdef is_circuit_chordal(self, C)
-    cpdef is_chordal(self, k1=*, k2=*)
+    cpdef _is_circuit_chordal(self, frozenset C, bint certificate=*)
+    cpdef is_circuit_chordal(self, C, bint certificate=*)
+    cpdef is_chordal(self, k1=*, k2=*, bint certificate=*)
     cpdef chordality(self)
 
     # optimization

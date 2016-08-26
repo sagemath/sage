@@ -658,7 +658,7 @@ def _exceptionals(E, L, patience=1000):
 
         unexc = [] # Primes we discover are unexceptional go here.
 
-        for l in D.iterkeys():
+        for l in D:
             tr = GF(l)(trace)
             det = GF(l)(determinant)
             disc = GF(l)(discriminant)
@@ -699,7 +699,7 @@ def _exceptionals(E, L, patience=1000):
         if (D == {}) or (patience == 0):
             break
 
-    for l in D.iterkeys():
+    for l in D:
         output.append(l)
 
     output.sort()

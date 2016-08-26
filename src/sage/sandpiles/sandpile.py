@@ -453,7 +453,7 @@ class Sandpile(DiGraph):
         # latter occurs, something should be changed.
         from sage.misc.sagedoc import detex
         methods = []
-        for i in sorted(Sandpile.__dict__.keys()):
+        for i in sorted(Sandpile.__dict__):
             if i[0]!='_':
                 s = eval('getdoc(Sandpile.' + i +')')
                 period = s.find('.')
@@ -2934,7 +2934,7 @@ class SandpileConfig(dict):
         # latter occurs, something should be changed.
         from sage.misc.sagedoc import detex
         methods = []
-        for i in sorted(SandpileConfig.__dict__.keys()):
+        for i in sorted(SandpileConfig.__dict__):
             if i[0]!='_':
                 s = eval('getdoc(SandpileConfig.' + i +')')
                 period = s.find('.')
@@ -3057,7 +3057,7 @@ class SandpileConfig(dict):
             In the example, above, changing the value of ``c`` at some vertex makes
             a call to setitem, which resets some of the stored variables for ``c``.
         """
-        if key in self.keys():
+        if key in self:
             dict.__setitem__(self,key,item)
             S = self._sandpile
             V = self._vertices
@@ -3754,7 +3754,7 @@ class SandpileConfig(dict):
             sage: c.support()
             [1, 2]
         """
-        return [i for i in self.keys() if self[i] !=0]
+        return [i for i in self if self[i] !=0]
 
 
     def add_random(self, distrib=None):
@@ -4288,7 +4288,7 @@ class SandpileDivisor(dict):
         # latter occurs, something should be changed.
         from sage.misc.sagedoc import detex
         methods = []
-        for i in sorted(SandpileDivisor.__dict__.keys()):
+        for i in sorted(SandpileDivisor.__dict__):
             if i[0]!='_':
                 s = eval('getdoc(SandpileDivisor.' + i +')')
                 period = s.find('.')
@@ -4408,7 +4408,7 @@ class SandpileDivisor(dict):
             In the example, above, changing the value of `D` at some vertex makes
             a call to setitem, which resets some of the stored variables for `D`.
         """
-        if key in self.keys():
+        if key in self:
             dict.__setitem__(self,key,item)
             S = self._sandpile
             V = self._vertices
@@ -5920,7 +5920,7 @@ class SandpileDivisor(dict):
             sage: S.vertices()
             [0, 1, 2, 3]
         """
-        return [i for i in self.keys() if self[i] !=0]
+        return [i for i in self if self[i] !=0]
 
     def _set_Dcomplex(self):
         r"""
@@ -6304,7 +6304,7 @@ def sandlib(selector=None):
         for i in sandpiles:
             print('    ', i, ':', sandpiles[i]['description'])
         print("")
-    elif selector not in sandpiles.keys():
+    elif selector not in sandpiles:
         print(selector, 'is not in the sandlib.')
     else:
         return Sandpile(sandpiles[selector]['graph'], 0)
@@ -6504,7 +6504,7 @@ def aztec_sandpile(n):
             aztec_sandpile[(-half-i,half+j)] = {}
             aztec_sandpile[(half+i,-half-j)] = {}
             aztec_sandpile[(-half-i,-half-j)] = {}
-    non_sinks = aztec_sandpile.keys()
+    non_sinks = list(aztec_sandpile)
     aztec_sandpile['sink'] = {}
     for vert in non_sinks:
         weight = abs(vert[0]) + abs(vert[1])
@@ -6513,13 +6513,13 @@ def aztec_sandpile(n):
         if weight < n:
             aztec_sandpile[vert] = {(x+1,y):1, (x,y+1):1, (x-1,y):1, (x,y-1):1}
         else:
-            if (x+1,y) in aztec_sandpile.keys():
+            if (x+1,y) in aztec_sandpile:
                 aztec_sandpile[vert][(x+1,y)] = 1
-            if (x,y+1) in aztec_sandpile.keys():
+            if (x,y+1) in aztec_sandpile:
                 aztec_sandpile[vert][(x,y+1)] = 1
-            if (x-1,y) in aztec_sandpile.keys():
+            if (x-1,y) in aztec_sandpile:
                 aztec_sandpile[vert][(x-1,y)] = 1
-            if (x,y-1) in aztec_sandpile.keys():
+            if (x,y-1) in aztec_sandpile:
                 aztec_sandpile[vert][(x,y-1)] = 1
             if len(aztec_sandpile[vert]) < 4:
                 out_degree = 4 - len(aztec_sandpile[vert])
@@ -7022,7 +7022,7 @@ def min_cycles(G, v):
     """
     pr = G.neighbors_in(v)
     sp = G.shortest_paths(v)
-    return [sp[i] for i in pr if i in sp.keys()]
+    return [sp[i] for i in pr if i in sp]
 
 def wilmes_algorithm(M):
     r"""

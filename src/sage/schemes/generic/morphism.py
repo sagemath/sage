@@ -1421,6 +1421,18 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             Scheme endomorphism of Affine Space of dimension 2 over Algebraic Field
               Defn: Defined on coordinates by sending (x, y) to
                     (1.122462048309373?*x/y, y + 1)
+
+        ::
+
+            sage: K.<a> = QuadraticField(-1)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: H = End(A)
+            sage: phi = H([x/y, y])
+            sage: emb = K.embeddings(QQbar)[0]
+            sage: phi.change_ring(emb)
+            Scheme endomorphism of Affine Space of dimension 2 over Algebraic Field
+              Defn: Defined on coordinates by sending (x, y) to
+                    (x/y, y)
         """
         K = self.codomain().base_ring()
         T = self.domain().change_ring(R)
@@ -1432,7 +1444,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         if isinstance(R, Morphism):
             if R.domain() == self.base_ring():
-                R = self.coordinate_ring().hom(R, T.ambient_space().coordinate_ring())
+                R = self.domain().ambient_space().coordinate_ring().hom(R, T.ambient_space().coordinate_ring())
         G = []
         for f in self:
             if isinstance(f, FractionFieldElement):

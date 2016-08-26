@@ -40,6 +40,8 @@ Methods
 #***************************************************************************
 from __future__ import print_function
 
+from six import itervalues
+
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.all import ZZ
@@ -879,7 +881,7 @@ class IncidenceStructure(object):
         In a Steiner triple system, all pairs have degree 1::
 
             sage: S13 = designs.steiner_triple_system(13)
-            sage: all(v == 1 for v in S13.degrees(2).itervalues())
+            sage: all(v == 1 for v in S13.degrees(2).values())
             True
         """
         if size is None:
@@ -1899,7 +1901,7 @@ class IncidenceStructure(object):
             False
         """
         if self._classes is None:
-            degrees = set(self.degrees().itervalues())
+            degrees = set(itervalues(self.degrees()))
             if len(degrees) != 1:
                 self._classes = False
             else:

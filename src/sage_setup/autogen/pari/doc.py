@@ -9,7 +9,8 @@ import subprocess
 from six import unichr
 
 
-leading_ws = re.compile("^ +", re.MULTILINE)
+leading_ws = re.compile("^( +)", re.MULTILINE)
+trailing_ws = re.compile("( +)$", re.MULTILINE)
 double_space = re.compile("  +")
 
 end_space = re.compile(r"(@\[end[a-z]*\])([A-Za-z])")
@@ -37,7 +38,8 @@ escape_mid = re.compile(r"^(\S.*)[|]", re.MULTILINE)
 escape_percent = re.compile(r"^(\S.*)[%]", re.MULTILINE)
 escape_hash = re.compile(r"^(\S.*)[#]", re.MULTILINE)
 
-label_link = re.compile(r"(Section *)?\[@\[startbold\]Label: *(se:)?([^@]*)@\[endbold\]\]")
+label_define = re.compile(r"@\[label [a-zA-Z0-9:]*\]")
+label_ref = re.compile(r"(Section *)?@\[startref\](se:)?([^@]*)@\[endref\]")
 
 
 def sub_loop(regex, repl, text):
@@ -92,6 +94,10 @@ def raw_to_rest(doc):
         Traceback (most recent call last):
         ...
         SyntaxError: @ found: @[invalid]
+
+        sage: s = '@3@[startbold]*@[endbold] snip @[dollar]0@[dollar]\ndividing @[dollar]#E@[dollar].'
+        sage: raw_to_rest(s)
+        u'- snip :math:`0`\n  dividing :math:`\\#E`.'
     """
     doc = doc.decode("utf-8")
 
@@ -113,8 +119,9 @@ def raw_to_rest(doc):
     doc = doc.replace("@[uuml]", "ü")
     doc = doc.replace("\\'{a}", "á")
 
-    # Remove leading whitespace from every line
+    # Remove leading and trailing whitespace from every line
     doc = leading_ws.sub("", doc)
+    doc = trailing_ws.sub("", doc)
 
     # Remove multiple spaces
     doc = double_space.sub(" ", doc)
@@ -123,13 +130,18 @@ def raw_to_rest(doc):
     # insert a non-breaking space
     doc = end_space.sub("\\1" + unichr(0xa0) + "\\2", doc)
 
-    # Remove links
-    doc = label_link.sub("``\\3`` (in the PARI manual)", doc)
+    # Fix labels and references
+    doc = label_define.sub("", doc)
+    doc = label_ref.sub("``\\3`` (in the PARI manual)", doc)
 
     # Bullet items
     doc = doc.replace("@3@[startbold]*@[endbold] ", "@BULLET  ")
     doc = sub_loop(bullet_loop, "\\1  \\3", doc)
     doc = doc.replace("@BULLET  ", "- ")
+
+    # Add =VOID= in front of all leading whitespace (which was
+    # intentionally added) to avoid confusion with verbatim blocks.
+    doc = leading_ws.sub(r"=VOID=\1", doc)
 
     # Verbatim blocks
     doc = begin_verb.sub("::\n\n@0", doc)
@@ -160,6 +172,9 @@ def raw_to_rest(doc):
     doc = doc.replace("@[cbr]", "}")
     doc = doc.replace("@[startword]", "\\")
     doc = doc.replace("@[endword]", "")
+    # (special rules for Hom and Frob, see trac ticket 21005)
+    doc = doc.replace("@[startlword]Hom@[endlword]", "\\text{Hom}")
+    doc = doc.replace("@[startlword]Frob@[endlword]", "\\text{Frob}")
     doc = doc.replace("@[startlword]", "\\")
     doc = doc.replace("@[endlword]", "")
     doc = doc.replace("@[startbi]", "\\mathbb{")
@@ -184,6 +199,7 @@ def raw_to_rest(doc):
     doc = doc.replace("=MID=", r"\|")
     doc = doc.replace("=PERCENT=", r"\%")
     doc = doc.replace("=HASH=", r"\#")
+    doc = doc.replace("=VOID=", "")
 
     # Handle DISPLAYMATH
     doc = doc.replace("@[endDISPLAYMATH]", "\n\n")
@@ -238,7 +254,7 @@ def get_raw_doc(function):
 
         sage: from sage_setup.autogen.pari.doc import get_raw_doc
         sage: get_raw_doc("cos")
-        '@[startbold]cos@[dollar](x)@[dollar]:@[endbold]\n\n\n\nCosine of @[dollar]x@[dollar].\n\n\nThe library syntax is @[startcode]GEN @[startbold]gcos@[endbold](GEN x, long prec)@[endcode].\n\n\n'
+        '@[startbold]cos@[dollar](x)@[dollar]:@[endbold]\n\n@[label se:cos]\nCosine of @[dollar]x@[dollar].\n\n\nThe library syntax is @[startcode]GEN @[startbold]gcos@[endbold](GEN x, long prec)@[endcode].\n\n\n'
         sage: get_raw_doc("abcde")
         Traceback (most recent call last):
         ...
@@ -274,7 +290,7 @@ def get_rest_doc(function):
         <BLANKLINE>
         .. MATH::
         <BLANKLINE>
-            f(x) = \exp(-i\Pi/24).\eta((x+1)/2)/\eta(x) {such that}
+            f(x) = \exp(-i\pi/24).\eta((x+1)/2)/\eta(x) {such that}
             j = (f^{24}-16)^3/f^{24},
         <BLANKLINE>
         where :math:`j` is the elliptic :math:`j`-invariant (see the function :literal:`ellj`).
@@ -294,14 +310,16 @@ def get_rest_doc(function):
         <BLANKLINE>
         Note the identities :math:`f^8 = f_1^8+f_2^8` and :math:`ff_1f_2 = \sqrt2`.
 
+
     ::
 
         sage: print(get_rest_doc("ellap"))
         Let :math:`E` be an :literal:`ell` structure as output by :literal:`ellinit`, defined over
-        :math:`\mathbb{Q}` or a finite field :math:`\mathbb{F}_q`. The argument :math:`p` is best left omitted if the
-        curve is defined over a finite field, and must be a prime number otherwise.
-        This function computes the trace of Frobenius :math:`t` for the elliptic curve :math:`E`,
-        defined by the equation :math:`\#E(\mathbb{F}_q) = q+1 - t`.
+        a number field or a finite field :math:`\mathbb{F}_q`. The argument :math:`p` is best left
+        omitted if the curve is defined over a finite field, and must be a prime
+        number or a maximal ideal otherwise. This function computes the trace of
+        Frobenius :math:`t` for the elliptic curve :math:`E`, defined by the equation :math:`\#E(\mathbb{F}_q)
+        = q+1 - t` (for primes of good reduction).
         <BLANKLINE>
         When the characteristic of the finite field is large, the availability of
         the :literal:`seadata` package will speed the computation.
@@ -337,6 +355,38 @@ def get_rest_doc(function):
             ? E = ellinit([a+1,a], Fq); \\ y^2 = x^3 + (a+1)x + a, defined over F_q
             ? ellap(E)
             %8 = -3
+        <BLANKLINE>
+        If the curve is defined over a more general number field than :math:`\mathbb{Q}`,
+        the maximal ideal :math:`p` must be explicitly given in :literal:`idealprimedec`
+        format. If :math:`p` is above :math:`2` or :math:`3`, the function currently assumes (without
+        checking) that the given model is locally minimal at :math:`p`. There is no
+        restriction at other primes.
+        <BLANKLINE>
+        ::
+        <BLANKLINE>
+            ? K = nfinit(a^2+1); E = ellinit([1+a,0,1,0,0], K);
+            ? fa = idealfactor(K, E.disc)
+            %2 =
+            [ [5, [-2, 1]~, 1, 1, [2, -1; 1, 2]] 1]
+        <BLANKLINE>
+            [[13, [5, 1]~, 1, 1, [-5, -1; 1, -5]] 2]
+            ? ellap(E, fa[1,1])
+            %3 = -1 \\ non-split multiplicative reduction
+            ? ellap(E, fa[2,1])
+            %4 = 1 \\ split multiplicative reduction
+            ? P17 = idealprimedec(K,17)[1];
+            ? ellap(E, P17)
+            %6 = 6 \\ good reduction
+            ? E2 = ellchangecurve(E, [17,0,0,0]);
+            ? ellap(E2, P17)
+            %8 = 6 \\ same, starting from a non-miminal model
+        <BLANKLINE>
+            ? P3 = idealprimedec(K,3)[1];
+            ? E3 = ellchangecurve(E, [3,0,0,0]);
+            ? ellap(E, P3) \\ OK: E is minimal at P3
+            %11 = -2
+            ? ellap(E3, P3) \\ junk: E3 is not minimal at P3 | 3
+            %12 = 0
         <BLANKLINE>
         :strong:`Algorithms used.` If :math:`E/\mathbb{F}_q` has CM by a principal imaginary
         quadratic order we use a fast explicit formula (involving essentially

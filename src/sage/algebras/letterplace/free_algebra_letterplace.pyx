@@ -833,7 +833,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         if not D:
             return self.zero()
         cdef int l
-        for e in D.iterkeys():
+        for e in D:
             l = len(e)
             break
         cdef dict out = {}

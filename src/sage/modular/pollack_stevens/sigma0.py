@@ -417,7 +417,7 @@ class Sigma0_class(Parent):
 
     def _coerce_map_from_(self, other):
         r"""
-        Find out wheter other coerces into self.
+        Find out whether ``other`` coerces into ``self``.
 
         The *only* thing that coerces canonically into `\Sigma_0` is another
         `\Sigma_0`. It is *very bad* if integers are allowed to coerce in, as

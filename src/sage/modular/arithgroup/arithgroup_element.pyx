@@ -13,6 +13,7 @@ Elements of Arithmetic Subgroups
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
+from __future__ import absolute_import
 
 from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
 from sage.rings.all import ZZ
@@ -21,7 +22,8 @@ from sage.modular.cusps import Cusp
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 
-M2Z = MatrixSpace(ZZ,2)
+M2Z = MatrixSpace(ZZ, 2)
+
 
 cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
     r"""
@@ -78,7 +80,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             True
         """
         if check:
-            from all import is_ArithmeticSubgroup
+            from .arithgroup_generic import is_ArithmeticSubgroup
             if not is_ArithmeticSubgroup(parent):
                 raise TypeError("parent (= %s) must be an arithmetic subgroup"%parent)
 
@@ -106,7 +108,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x = matrix(ZZ,2,[1,1,0,1])
             sage: unpickle_build(si, (Gamma0(13), {'_ArithmeticSubgroupElement__x': x}))
         """
-        from all import SL2Z
+        from .congroup_sl2z import SL2Z
         oldparent, kwdict = state
         self._set_parent(SL2Z)
         if '_ArithmeticSubgroupElement__x' in kwdict:
@@ -424,7 +426,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             [0 1]
             ))
         """
-        from all import SL2Z
+        from .congroup_sl2z import SL2Z
         return SL2Z, (self.__x,)
 
     def multiplicative_order(self):

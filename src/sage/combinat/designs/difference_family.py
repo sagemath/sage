@@ -51,6 +51,8 @@ Functions
 from __future__ import division, print_function
 from __future__ import absolute_import
 
+from six import itervalues
+
 from sage.misc.cachefunc import cached_method
 
 from sage.categories.sets_cat import EmptySetError
@@ -285,7 +287,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
                 where[gg].add(i)
                 tmp_counter[gg] += 1
 
-        if sum(tmp_counter.itervalues()) != k*(k-1):
+        if sum(itervalues(tmp_counter)) != k * (k - 1):
             if verbose:
                 print("repeated element in the {}-th block {}".format(i,d))
             return False
@@ -472,7 +474,7 @@ def df_q_6_1(K, existence=False, check=True):
 def radical_difference_set(K, k, l=1, existence=False, check=True):
     r"""
     Return a difference set made of a cyclotomic coset in the finite field
-    ``K`` and with paramters ``k`` and ``l``.
+    ``K`` and with parameters ``k`` and ``l``.
 
     Most of these difference sets appear in chapter VI.18.48 of the Handbook of
     combinatorial designs.

@@ -227,14 +227,19 @@ Here is the analogue of list slicing::
     sage: list(itertools.islice(Permutations(3), 1, 4))
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
-The functions :func:`map` and :func:`filter` also have an analogue::
+The behaviour of the functions :func:`map` and :func:`filter` has
+changed between Python 2 and Python 3. In Python 3, they return an
+iterator. If you want to use this new behaviour in Python 2, and keep
+your code compatible with Python3, you can use the compatibility
+library ``six`` as follows::
 
-    sage: list(itertools.imap(lambda z: z.cycle_type(), Permutations(3)))
+    sage: from six.moves import map
+    sage: list(map(lambda z: z.cycle_type(), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
-    sage: list(itertools.ifilter(lambda z: z.has_pattern([1,2]), Permutations(3)))
+    sage: from six.moves import filter
+    sage: list(filter(lambda z: z.has_pattern([1,2]), Permutations(3)))
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
-
 
 .. TOPIC:: Exercises
 

@@ -628,9 +628,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         if self._constructed:
             return iter(self._elements)
         else:
-            return self._iter_concurent()
+            return self._iter_concurrent()
 
-    def _iter_concurent(self):
+    def _iter_concurrent(self):
         """
         We need to take special care since several iterators may run
         concurrently.

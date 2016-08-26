@@ -417,7 +417,7 @@ def catalan_number(n):
 
     .. MATH::
 
-        C_n = \frac{1}{n+1}{2n\choose n} = \frac{(2n)!}{(n+1)!\,n!}
+        C_n = \frac{1}{n+1}\binom{2n}{n} = \frac{(2n)!}{(n+1)!\,n!}
         \qquad\mbox{ for }\quad n\ge 0.
 
 
@@ -943,7 +943,7 @@ class CombinatorialObject(SageObject):
         .. WARNING::
 
             :class:`CombinatorialObject` must come **before** :class:`Element`
-            for this to work becuase :class:`Element` is ahead of
+            for this to work because :class:`Element` is ahead of
             :class:`CombinatorialObject` in the MRO (method resolution
             order)::
 
@@ -1140,7 +1140,7 @@ class CombinatorialObject(SageObject):
         .. WARNING::
 
             :class:`CombinatorialObject` must come **before** :class:`Element`
-            for this to work becuase :class:`Element` is ahead of
+            for this to work because :class:`Element` is ahead of
             :class:`CombinatorialObject` in the MRO (method resolution
             order)::
 

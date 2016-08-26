@@ -1189,6 +1189,32 @@ class Newform(ModularForm_abstract):
         """
         return self.__hecke_eigenvalue_field
 
+    def coefficient(self, n):
+        """
+        Return the coefficient of `q^n` in the power series of self.
+
+        INPUT:
+
+        - ``n`` - a positive integer
+
+        OUTPUT:
+
+        - the coefficient of `q^n` in the power series of self.
+
+        EXAMPLES::
+
+            sage: f = Newforms(11)[0]; f
+            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
+            sage: f.coefficient(100)
+            -8
+
+            sage: g = Newforms(23, names='a')[0]; g
+            q + a0*q^2 + (-2*a0 - 1)*q^3 + (-a0 - 1)*q^4 + 2*a0*q^5 + O(q^6)
+            sage: g.coefficient(3)
+            -2*a0 - 1
+        """
+        return self.modular_symbols(1).eigenvalue(n, self._name())
+
     def _compute(self, X):
         """
         Compute the coefficients of `q^n` of the power series of self,

@@ -1,4 +1,8 @@
-from matroid cimport Matroid
+from __future__ import absolute_import
+
+from .matroid cimport Matroid
+
+
 cdef class MatroidUnion(Matroid):
     r"""
     Matroid Union.

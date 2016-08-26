@@ -1167,13 +1167,13 @@ Elliptic curves::
     [0, 1, [1, 0, 0, 0], 1]
     sage: e = pari(EllipticCurve('27a3').a_invariants()).ellinit()
     sage: e.elllocalred(3)
-    [3, 2, [1, -1, 0, 1], 1]
+    [3, 2, [1, 0, 0, 0], 1]
     sage: e = pari(EllipticCurve('24a4').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [3, 3, [1, 1, 0, 1], 2]
+    [3, 3, [1, 0, 0, 0], 2]
     sage: e = pari(EllipticCurve('20a2').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [2, 4, [1, 1, 0, 1], 3]
+    [2, 4, [1, 0, 0, 0], 3]
     sage: e = pari(EllipticCurve('11a2').a_invariants()).ellinit()
     sage: e.elllocalred(11)
     [1, 5, [1, 0, 0, 0], 1]
@@ -1185,22 +1185,22 @@ Elliptic curves::
     [1, 10, [1, 0, 0, 0], 2]
     sage: e = pari(EllipticCurve('32a3').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [5, -1, [1, 1, 1, 0], 1]
+    [5, -1, [1, 0, 0, 0], 1]
     sage: e = pari(EllipticCurve('24a5').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [3, -2, [1, 2, 1, 4], 1]
+    [3, -2, [1, 0, 0, 0], 1]
     sage: e = pari(EllipticCurve('24a2').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [3, -3, [1, 2, 1, 4], 2]
+    [3, -3, [1, 0, 0, 0], 2]
     sage: e = pari(EllipticCurve('20a1').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [2, -4, [1, 0, 1, 2], 3]
+    [2, -4, [1, 0, 0, 0], 3]
     sage: e = pari(EllipticCurve('24a1').a_invariants()).ellinit()
     sage: e.elllocalred(2)
-    [3, -5, [1, 0, 1, 2], 4]
+    [3, -5, [1, 0, 0, 0], 4]
     sage: e = pari(EllipticCurve('90c2').a_invariants()).ellinit()
     sage: e.elllocalred(3)
-    [2, -10, [1, 96, 1, 316], 4]
+    [2, -10, [1, 0, 0, 0], 4]
 
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: e.elllseries(2.1)

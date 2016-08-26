@@ -28,7 +28,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from cpython.list cimport *
 from cpython.object cimport PyObject
@@ -49,8 +49,8 @@ from sage.modules.free_module_element import vector
 
 from sage.rings.real_double import RDF
 from sage.misc.temporary_file import tmp_filename
-from texture import Texture, is_Texture
-from transform cimport Transformation, point_c, face_c
+from .texture import Texture, is_Texture
+from .transform cimport Transformation, point_c, face_c
 include "point_c.pxi"
 
 from sage.interfaces.tachyon import tachyon_rt
@@ -1196,7 +1196,7 @@ end_scene""" % (render_params.antialiasing,
         T = [xyz_min[i] - a_min[i] for i in range(3)]
         X = X.translate(T)
         if frame:
-            from shapes2 import frame3d, frame_labels
+            from .shapes2 import frame3d, frame_labels
             F = frame3d(xyz_min, xyz_max, opacity=0.5, color=(0,0,0), thickness=thickness)
             if labels:
                 F += frame_labels(xyz_min, xyz_max, a_min_orig, a_max_orig)
@@ -1205,7 +1205,7 @@ end_scene""" % (render_params.antialiasing,
 
         if axes:
             # draw axes
-            from shapes import arrow3d
+            from .shapes import arrow3d
             A = (arrow3d((min(0,a_min[0]),0, 0), (max(0,a_max[0]), 0,0),
                              thickness, color="blue"),
                  arrow3d((0,min(0,a_min[1]), 0), (0, max(0,a_max[1]), 0),
@@ -1232,7 +1232,7 @@ end_scene""" % (render_params.antialiasing,
 
         # Remove all of the keys that are viewing options, since the remaining
         # kwds might be passed on.
-        for key_to_remove in SHOW_DEFAULTS.keys():
+        for key_to_remove in SHOW_DEFAULTS:
             kwds.pop(key_to_remove, None)
 
         # deal with any aspect_ratio instances passed from the default options to plot

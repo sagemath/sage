@@ -201,7 +201,7 @@ class p_iter_fork:
                 if self.verbose:
                     print("Killing any remaining workers...")
                 sys.stdout.flush()
-                for pid in workers.keys():
+                for pid in workers:
                     try:
                         os.kill(pid, signal.SIGKILL)
                         os.waitpid(pid, 0)

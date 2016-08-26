@@ -363,7 +363,7 @@ class pAdicLseries(SageObject):
 def log_gamma_binomial(p, gamma, z, n, M):
     r"""
     Return the list of coefficients in the power series
-    expansion (up to precision `M`) of `{\log_p(z)/\log_p(\gamma) \choose n}`
+    expansion (up to precision `M`) of `\binom{\log_p(z)/\log_p(\gamma)}{n}`
 
     INPUT:
 
@@ -376,7 +376,7 @@ def log_gamma_binomial(p, gamma, z, n, M):
     OUTPUT:
 
     The list of coefficients in the power series expansion of
-    `{\log_p(z)/\log_p(\gamma) \choose n}`
+    `\binom{\log_p(z)/\log_p(\gamma)}{n}`
 
     EXAMPLES::
 

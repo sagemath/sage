@@ -1,0 +1,26 @@
+Make sure the assembly routines use the appropriate calling convention
+for Windows in Cygwin as well.  See https://trac.sagemath.org/ticket/21223
+diff -ruN a/configure.in b/configure.in
+--- a/configure.in	2016-08-11 13:51:46.869520300 +0200
++++ b/configure.in	2016-08-11 13:52:46.240830400 +0200
+@@ -256,7 +256,7 @@
+   GMP_ASM_TYPE 
+ 
+   case $host in
+-    *-*-mingw32) GMP_DEFINE([WINDOWS64_ABI], 1)
++    *-*-mingw32|*cygwin*) GMP_DEFINE([WINDOWS64_ABI], 1)
+                  AC_DEFINE([WINDOWS64_ABI], 1,[Define to 1 if x86_64 mulredc*() functions should be called with Windows ABI]);;
+     *) ;;
+   esac
+diff -ruN a/configure b/configure
+--- a/configure	2016-08-11 13:51:46.936572300 +0200
++++ b/configure	2016-08-11 13:53:31.281801500 +0200
+@@ -12957,7 +12957,7 @@
+ 
+ 
+   case $host in
+-    *-*-mingw32)
++    *-*-mingw32|*cygwin*)
+ echo 'define(<WINDOWS64_ABI>, <1>)' >>$gmp_tmpconfigm4
+ 
+ 

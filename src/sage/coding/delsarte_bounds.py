@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Delsarte, a.k.a. Linear Programming (LP), upper bounds
 
@@ -18,18 +19,27 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, division
 
-def Krawtchouk(n,q,l,x,check=True):
-    """
+
+
+def Krawtchouk(n, q, l, x, check=True):
+    r"""
     Compute ``K^{n,q}_l(x)``, the Krawtchouk (a.k.a. Kravchuk) polynomial.
 
-    See :wikipedia:`Kravchuk_polynomials`; It is defined by the generating function
-    `(1+(q-1)z)^{n-x}(1-z)^x=\sum_{l} K^{n,q}_l(x)z^l` and is equal to
+    See :wikipedia:`Kravchuk_polynomials`.
+
+    It is defined by the generating function
 
     .. math::
 
-        K^{n,q}_l(x)=\sum_{j=0}^l (-1)^j(q-1)^{(l-j)}{x \choose j}{n-x \choose l-j},
+        (1+(q-1)z)^{n-x}(1-z)^x=\sum_{l} K^{n,q}_l(x)z^l
+
+    and is equal to
+
+    .. math::
+
+        K^{n,q}_l(x)=\sum_{j=0}^l (-1)^j (q-1)^{(l-j)} \binom{x}{j} \binom{n-x}{l-j},
 
     INPUT:
 
@@ -37,8 +47,9 @@ def Krawtchouk(n,q,l,x,check=True):
 
     - ``l`` -- a nonnegative integer
 
-    - ``check`` -- check the input for correctness. ``True`` by default. Otherwise, pass it
-      as it is. Use ``check=False`` at your own risk.
+    - ``check`` -- check the input for correctness. ``True`` by
+      default. Otherwise, pass it as it is. Use ``check=False`` at
+      your own risk.
 
     EXAMPLES::
 
@@ -56,7 +67,7 @@ def Krawtchouk(n,q,l,x,check=True):
         sage: Krawtchouk(int(3),int(2),int(3),int(3))
         -1
         sage: Krawtchouk(int(3),int(2),int(3),int(3),check=False)
-        -5
+        -1.0
         sage: Kravchuk(24,2,5,4)
         2224
 
@@ -140,7 +151,8 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger,  solver, maxc = 0):
 
 def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isinteger=False):
     """
-    Find the Delsarte bound [1]_ on codes in Hamming space ``H_q^n`` of minimal distance ``d``
+    Find the Delsarte bound [1]_ on codes in Hamming space ``H_q^n``
+    of minimal distance ``d``
 
 
     INPUT:
@@ -151,16 +163,20 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
 
     - ``q`` -- the size of the alphabet
 
-    - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``, where ``W`` is
-        a weights vector,  and ``LP`` the Delsarte upper bound LP; both of them are Sage LP
-        data.  ``W`` need not be a weight distribution of a code.
+    - ``return_data`` -- if ``True``, return a triple
+      ``(W,LP,bound)``, where ``W`` is a weights vector, and ``LP``
+      the Delsarte upper bound LP; both of them are Sage LP data.
+      ``W`` need not be a weight distribution of a code.
 
-    - ``solver`` -- the LP/ILP solver to be used. Defaults to ``PPL``. It is arbitrary
-        precision, thus there will be no rounding errors. With other solvers
-        (see :class:`MixedIntegerLinearProgram` for the list), you are on your own!
+    - ``solver`` -- the LP/ILP solver to be used. Defaults to
+      ``PPL``. It is arbitrary precision, thus there will be no
+      rounding errors. With other solvers (see
+      :class:`MixedIntegerLinearProgram` for the list), you are on
+      your own!
 
-    - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP), rather
-        that an LP solver. Can be very slow if set to ``True``.
+    - ``isinteger`` -- if ``True``, uses an integer programming solver
+      (ILP), rather that an LP solver. Can be very slow if set to
+      ``True``.
 
     EXAMPLES:
 
@@ -208,8 +224,6 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
 
     .. [1] \P. Delsarte, An algebraic approach to the association schemes of coding theory,
            Philips Res. Rep., Suppl., vol. 10, 1973.
-
-
 
     """
     from sage.numerical.mip import MIPSolverException
@@ -287,7 +301,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0,
        sage: delsarte_bound_additive_hamming_space(11,3,4,q_base=2)
        16
 
-   Such a d_star is not possible::
+   Such a ``d_star`` is not possible::
 
        sage: delsarte_bound_additive_hamming_space(11,3,4,d_star=9)
        Solver exception: PPL : There is no feasible solution

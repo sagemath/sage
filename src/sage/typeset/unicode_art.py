@@ -115,14 +115,10 @@ def unicode_art(*obj, **kwds):
     """
     separator = kwds.pop('sep', empty_unicode_art)
     if kwds:
-        raise ValueError('unknown keyword arguments: {0}'.format(kwds.keys()))
+        raise ValueError('unknown keyword arguments: {0}'.format(list(kwds)))
     if len(obj) == 1:
         return _unicode_art_factory.build(obj[0])
     if not isinstance(separator, UnicodeArt):
         separator = _unicode_art_factory.build(separator)
     obj = map(_unicode_art_factory.build, obj)
     return _unicode_art_factory.concatenate(obj, separator, empty_unicode_art)
-
-
-
-

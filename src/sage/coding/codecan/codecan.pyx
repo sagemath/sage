@@ -297,7 +297,7 @@ cdef class InnerGroup:
                     factor = d.get(self.get_rep(i))
                     if factor and not factor.is_zero():
                         m.rescale_row(i, factor)
-                for i in d.iterkeys():
+                for i in d:
                     first_nz_rep = self.join_rows(first_nz_rep, i)
                 # rescale the already fixed part by column multiplications
                 for col in fixed_minimized_cols:

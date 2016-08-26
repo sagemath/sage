@@ -326,15 +326,17 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+
 from sage.structure.sage_object cimport SageObject
 from itertools import combinations, permutations, product
-from set_system cimport SetSystem
+from .set_system cimport SetSystem
 from sage.graphs.spanning_tree import kruskal
 from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 from sage.misc.superseded import deprecation
 
-from utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
+from .utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
 from sage.rings.all import ZZ
 from sage.numerical.mip import MixedIntegerLinearProgram
 
@@ -1098,20 +1100,24 @@ cdef class Matroid(SageObject):
             {'e', 'f', 'g', 'h'}, {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'}},
             4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
-        import minor_matroid
+        from . import minor_matroid
         return minor_matroid.MinorMatroid(self, contractions, deletions)
 
-    cpdef _has_minor(self, N):
+    cpdef _has_minor(self, N, bint certificate=False):
         """
-        Test if matroid has the specified minor.
+        Test if matroid has the specified minor,
+        and optionally return frozensets ``X`` and ``Y`` so that ``N`` is isomorphic to ``self.minor(X, Y)``.
 
         INPUT:
 
-        - ``N`` -- An instance of a ``Matroid`` object.
+        - ``N`` -- An instance of a ``Matroid`` object,
+        - ``certificate`` -- Boolean (Defalt: ``False``) If ``True``, returns
+          ``True, (X, Y, dic) where ``N`` is isomorphic to ``self.minor(X, Y)``,
+          and ``dic`` is an isomorphism between ``N`` and ``self.minor(X, Y)``.
 
         OUTPUT:
 
-        Boolean.
+        boolean or tuple.
 
         EXAMPLES::
 
@@ -1120,6 +1126,9 @@ cdef class Matroid(SageObject):
             False
             sage: M._has_minor(matroids.Uniform(2, 4))
             True
+            sage: M._has_minor(matroids.Uniform(2, 4), certificate=True)
+            (True, (frozenset({'a', 'c'}), frozenset({'b', 'e'}),
+                {0: 'h', 1: 'd', 2: 'g', 3: 'f'}))
 
         .. TODO::
 
@@ -1127,17 +1136,25 @@ cdef class Matroid(SageObject):
             See [Hlineny]_ p.1219 for hints to that end.
         """
         if self is N:
+            if certificate:
+               return True, (frozenset(), frozenset(), {x: x for x in self.groundset()})
             return True
         rd = self.full_rank() - N.full_rank()
         cd = self.full_corank() - N.full_corank()
         if rd < 0 or cd < 0:
+            if certificate:
+                return False, None
             return False
         YY = self.dual().independent_r_sets(cd)
         for X in self.independent_r_sets(rd):
             for Y in YY:
                 if X.isdisjoint(Y):
                     if N._is_isomorphic(self._minor(contractions=X, deletions=Y)):
+                        if certificate:
+                            return True, (X, Y, N._isomorphism(self._minor(contractions=X, deletions=Y)))
                         return True
+        if certificate:
+            return False, None
         return False
 
     cpdef _line_length(self, F):
@@ -1194,7 +1211,7 @@ cdef class Matroid(SageObject):
             sage: [sorted(C) for C in N.circuits() if len(C) == 3]
             [[0, 1, 6]]
         """
-        import basis_matroid
+        from . import basis_matroid
         return basis_matroid.BasisMatroid(self)._extension(element, hyperplanes)
 
     # ** user-facing methods **
@@ -3454,8 +3471,8 @@ cdef class Matroid(SageObject):
             sage: M._is_isomorphism(N, morphism)
             True
         """
-        import basis_exchange_matroid
-        import basis_matroid
+        from . import basis_exchange_matroid
+        from . import basis_matroid
         sf = basis_matroid.BasisMatroid(self)
         if not isinstance(other, basis_exchange_matroid.BasisExchangeMatroid):
             ot = basis_matroid.BasisMatroid(other)
@@ -3530,7 +3547,7 @@ cdef class Matroid(SageObject):
             sage: M1 == M3  # indirect doctest
             True
         """
-        import basis_matroid
+        from . import basis_matroid
         if op in [0, 1, 4, 5]:  # <, <=, >, >=
             return NotImplemented
         if left.__class__ != right.__class__:
@@ -3866,7 +3883,7 @@ cdef class Matroid(SageObject):
             {'a', 'e', 'i'}, {'b', 'd', 'i'}, {'g', 'h', 'i'}},
             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}'
         """
-        import dual_matroid
+        from . import dual_matroid
         return dual_matroid.DualMatroid(self)
 
     cpdef truncation(self):
@@ -3900,17 +3917,21 @@ cdef class Matroid(SageObject):
         return self._extension(l, [])._minor(contractions=frozenset([l]),
                                              deletions=frozenset([]))
 
-    cpdef has_minor(self, N):
+    cpdef has_minor(self, N, bint certificate=False):
         """
-        Check if ``self`` has a minor isomorphic to ``N``.
+        Check if ``self`` has a minor isomorphic to ``N``,
+        and optionally return frozensets ``X`` and ``Y`` so that ``N`` is isomorphic to ``self.minor(X, Y)``.
 
         INPUT:
 
-        - ``N`` -- A matroid.
+        - ``N`` -- An instance of a ``Matroid`` object,
+        - ``certificate`` -- Boolean (Defalt: ``False``) If ``True``, returns
+          ``True, (X, Y, dic) where ``N`` is isomorphic to ``self.minor(X, Y)``,
+          and ``dic`` is an isomorphism between ``N`` and ``self.minor(X, Y)``.
 
         OUTPUT:
 
-        Boolean.
+        boolean or tuple.
 
         .. SEEALSO::
 
@@ -3929,10 +3950,19 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.NonFano().has_minor(M)
             True
+            sage: matroids.named_matroids.NonFano().has_minor(M, certificate=True)
+            (True, (frozenset(), frozenset({'g'}),
+                {0: 'b', 1: 'c', 2: 'a', 3: 'd', 4: 'e', 5: 'f'}))
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.has_minor(M, True)
+            (True,
+             (frozenset(),
+              frozenset(),
+              {'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g'}))
         """
         if not isinstance(N, Matroid):
             raise ValueError("N must be a matroid.")
-        return self._has_minor(N)
+        return self._has_minor(N, certificate)
 
     cpdef has_line_minor(self, k, hyperlines=None):
         """
@@ -4323,7 +4353,7 @@ cdef class Matroid(SageObject):
             sage: len(list(M.linear_subclasses(line_length=5)))
             44
         """
-        import extension
+        from . import extension
         return extension.LinearSubclasses(self, line_length=line_length, subsets=subsets)
 
     cpdef extensions(self, element=None, line_length=None, subsets=None):
@@ -4382,7 +4412,7 @@ cdef class Matroid(SageObject):
             5
 
         """
-        import extension
+        from . import extension
         if element is None:
             element = newlabel(self.groundset())
         else:
@@ -6138,9 +6168,21 @@ cdef class Matroid(SageObject):
 
     # matroid chordality
 
-    cpdef _is_circuit_chordal(self, frozenset C):
+    cpdef _is_circuit_chordal(self, frozenset C, bint certificate=False):
         """
         Check if the circuit ``C`` has a chord.
+
+        INPUT:
+
+        - ``C`` -- a circuit
+        - ``certificate`` -- (default: ``False``) a boolean, if ``True``
+          return ``True, (x, Ax, Bx)``, where ``x`` is a chord and ``Ax`` and
+          ``Bx`` are circuits whose union is the elements of ``C``
+          together with ``x``, if ``False`` return ``False, None``
+
+        OUTPUT:
+
+        - boolean or tuple
 
         EXAMPLES::
 
@@ -6150,8 +6192,12 @@ cdef class Matroid(SageObject):
             sage: M = matroids.named_matroids.Fano()
             sage: M._is_circuit_chordal(frozenset(['b','c','d']))
             False
+            sage: M._is_circuit_chordal(frozenset(['b','c','d']), certificate=True)
+            (False, None)
             sage: M._is_circuit_chordal(frozenset(['a','b','d','e']))
             True
+            sage: M._is_circuit_chordal(frozenset(['a','b','d','e']), certificate=True)
+            (True, ('c', frozenset({'b', 'c', 'd'}), frozenset({'a', 'c', 'e'})))
         """
         cdef set X
         cdef frozenset Ax, Bx
@@ -6165,10 +6211,14 @@ cdef class Matroid(SageObject):
             if not self._is_independent(Bx):
                 # If x is spanned by C, then A+x is the unique circuit in C-e+x;
                 #    so x is a chord iff the complementary B is a circuit.
+                if certificate:
+                    return True, (x, frozenset(Ax), frozenset(Bx))
                 return True
+        if certificate:
+            return False, None
         return False
 
-    cpdef is_circuit_chordal(self, C):
+    cpdef is_circuit_chordal(self, C, bint certificate=False):
         r"""
         Check if the circuit ``C`` has a chord.
 
@@ -6176,19 +6226,35 @@ cdef class Matroid(SageObject):
         exists sets `A, B` such that `C = A \sqcup B` and `A + x` and
         `B + x` are circuits.
 
+        INPUT:
+
+        - ``C`` -- a circuit
+        - ``certificate`` -- (default: ``False``) a boolean, if ``True``
+          return ``True, (x, Ax, Bx)``, where ``x`` is a chord and ``Ax`` and
+          ``Bx`` are circuits whose union is the elements of ``C``
+          together with ``x``, if ``False`` return ``False, None``
+
+        OUTPUT:
+
+        - boolean or tuple
+
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
             sage: M.is_circuit_chordal(['b','c','d'])
             False
+            sage: M.is_circuit_chordal(['b','c','d'], certificate=True)
+            (False, None)
             sage: M.is_circuit_chordal(['a','b','d','e'])
             True
+            sage: M.is_circuit_chordal(['a','b','d','e'], certificate=True)
+            (True, ('c', frozenset({'b', 'c', 'd'}), frozenset({'a', 'c', 'e'})))
         """
         if not self.is_circuit(C):
             raise ValueError("input C is not a circuit")
-        return self._is_circuit_chordal(frozenset(C))
+        return self._is_circuit_chordal(frozenset(C), certificate)
 
-    cpdef is_chordal(self, k1=4, k2=None):
+    cpdef is_chordal(self, k1=4, k2=None, bint certificate=False):
         r"""
         Return if a matroid is ``[k1, k2]``-chordal.
 
@@ -6203,6 +6269,13 @@ cdef class Matroid(SageObject):
         - ``k1`` -- (optional) the integer `k_1`
         - ``k2`` -- (optional) the integer `k_2`; if not specified,
           then this method returns if ``self`` is `k_1`-chordal
+        - ``certificate`` -- (default: ``False``) boolean;  if
+          ``True`` return ``True, C``, where ``C`` is a non
+          ``k1`` ``k2`` circuit
+
+        Output:
+
+        - boolean or tuple
 
         .. SEEALSO::
 
@@ -6221,6 +6294,8 @@ cdef class Matroid(SageObject):
             [False, False, False, False, True, True]
             sage: M.is_chordal(4, 5)
             False
+            sage: M.is_chordal(4, 5, certificate=True)
+            (False, frozenset({'a', 'b', 'e', 'f', 'g'}))
         """
         cdef frozenset C
         if k2 is None:
@@ -6229,6 +6304,8 @@ cdef class Matroid(SageObject):
             if len(C) < k1 or len(C) > k2:
                 continue
             if not self._is_circuit_chordal(C):
+                if certificate:
+                    return False, frozenset(C)
                 return False
         return True
 
@@ -7499,7 +7576,7 @@ cdef class Matroid(SageObject):
             sage: G.show()
 
         """
-        import matroids_plot_helpers
+        from . import matroids_plot_helpers
         if pos_method == 1  and pos_dict != None:
         # check sanity of pos_dict and add it to cached info if sane
             if matroids_plot_helpers.posdict_is_sane(self, pos_dict) == True: 
@@ -7605,8 +7682,8 @@ cdef class Matroid(SageObject):
         if self.rank() > 3:
             raise NotImplementedError
         # check sanity of pos_dict and add it to cached info if sane
-        if(pos_dict!=None):
-            import matroids_plot_helpers
+        if pos_dict is not None:
+            from . import matroids_plot_helpers
             if matroids_plot_helpers.posdict_is_sane(self,pos_dict) ==True:
                 self._cached_info={'plot_positions':pos_dict,'lineorders':lineorders}
         return
@@ -7639,4 +7716,3 @@ cdef class Matroid(SageObject):
         """
         from sage.homology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.no_broken_circuits_sets(ordering))
-

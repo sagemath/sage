@@ -29,6 +29,8 @@ limitations and lack of robustness w.r.t. input.
 #*****************************************************************************
 from __future__ import print_function
 
+from builtins import object
+
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.cachefunc import cached_method
 from sage.combinat.integer_lists.base cimport IntegerListsBackend
@@ -1285,7 +1287,7 @@ class IntegerListsLexIter(object):
             self._current_sum -= self._current_list[-1]
             self._current_list.pop()
 
-    def next(self):
+    def __next__(self):
         r"""
         Return the next element in the iteration.
 

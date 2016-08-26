@@ -65,12 +65,15 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from matroid cimport Matroid
-from set_system cimport SetSystem
-from utilities import setprint_s
+from __future__ import absolute_import
+
+from .matroid cimport Matroid
+from .set_system cimport SetSystem
+from .utilities import setprint_s
+
 
 cdef class CircuitClosuresMatroid(Matroid):
-    """
+    r"""
     A general matroid `M` is characterized by its rank `r(M)` and the set of
     pairs
 
@@ -78,7 +81,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
     As each independent set of size `k` is in at most one closure(`C`) of rank
     `k`, and each closure(`C`) of rank `k` contains at least `k + 1`
-    independent sets of size `k`, there are at most `{n \choose k}/(k + 1)`
+    independent sets of size `k`, there are at most `\binom{n}{k}/(k + 1)`
     such closures-of-circuits of rank `k`. Each closure(`C`) takes `O(n)` bits
     to store, giving an upper bound of `O(2^n)` on the space complexity of the
     entire matroid.
@@ -156,7 +159,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         else:
             self._groundset = frozenset(groundset)
             self._circuit_closures = {}
-            for k in circuit_closures.iterkeys():
+            for k in circuit_closures:
                 self._circuit_closures[k] = frozenset([frozenset(X) for X in circuit_closures[k]])
         self._matroid_rank = self.rank(self._groundset)
 

@@ -55,6 +55,8 @@ REFERENCES:
 #*****************************************************************************
 from __future__ import print_function
 
+from six import itervalues
+
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix, block_matrix, block_diagonal_matrix, diagonal_matrix
@@ -296,8 +298,8 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
 
     prod = (M*M.transpose()).dict()
     if (len(prod) != n or
-        set(prod.itervalues()) != {n} or
-        any( (i,i) not in prod for i in range(n) )):
+        set(itervalues(prod)) != {n} or
+        any((i, i) not in prod for i in range(n))):
         if verbose:
             print("The product M*M.transpose() is not equal to nI")
         return False
