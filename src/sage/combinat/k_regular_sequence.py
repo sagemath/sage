@@ -252,6 +252,9 @@ class kRegularSequence(RecognizableSeries):
             are switched.
             (This is done by calling :meth:`~sage.combinat.recognizable_series.RecognizableSeries.transposed`.)
 
+        - ``heal`` -- (default: ``False``) a boolean. If set, then
+          :meth:`healed` is called at the end of creating the element.
+
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
@@ -1067,15 +1070,34 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
 
     def _element_constructor_(self, *args, **kwds):
-        element = super(kRegularSequenceSpace, self)._element_constructor_(*args, **kwds)
+        r"""
+        Return a `k`-regular sequence.
 
-        from sage.rings.integer_ring import ZZ
-        if element.mu[ZZ(0)] * element.right != element.right:
+        See :class:`kRegularSequenceSpace` for details.
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
+            ....:      heal=True)
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+        """
+        heal = kwds.pop('heal', False)
+        element = super(kRegularSequenceSpace, self)._element_constructor_(*args, **kwds)
+        if heal:
+            element = element.healed()
+        elif not element.is_healthy():
             import logging
             logger = logging.getLogger(__name__)
-            print element.mu[ZZ(0)], element.right, element.mu[ZZ(0)] * element.right
-            logger.warning('mu[0]*right != right')
-
+            logger.warning('Unhealthy sequence: mu[0]*right != right. '
+                           'Results might be wrong. '
+                           'Use heal=True or method .healed() '
+                           'for correcting this.')
         return element
 
 
