@@ -863,9 +863,11 @@ class RecognizableSeries(Element):
             T = M.transpose()
             T.set_immutable()
             return T
-        return self.parent()(self.mu.map(tr),
-                             left=self.right,
-                             right=self.left)
+
+        P = self.parent()
+        return P.element_class(P, self.mu.map(tr),
+                               left=self.right,
+                               right=self.left)
 
 
     @cached_method
@@ -1655,22 +1657,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 if len(mu) != k or len(LR) != 2:
                     break
                 yield self(mu, *LR)
-
-
-    def zero(self):
-        """
-        Return the zero of this recognizable series space.
-
-        This can be removed once this recognizable series space is
-        at least an additive magma.
-
-        EXAMPLES::
-
-            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
-            sage: Rec.zero()
-            0
-        """
-        return self(0)
 
 
     @cached_method

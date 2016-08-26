@@ -20,6 +20,10 @@ found, for example, on the :wikipedia:`k-regular_sequence` or in
         might change without a formal deprecation.
         See http://trac.sagemath.org/21202 for details.
 
+::
+
+    sage: import logging
+    sage: logging.basicConfig()
 
 Examples
 ========
@@ -248,6 +252,9 @@ class kRegularSequence(RecognizableSeries):
             are switched.
             (This is done by calling :meth:`~sage.combinat.recognizable_series.RecognizableSeries.transposed`.)
 
+        - ``heal`` -- (default: ``False``) a boolean. If set, then
+          :meth:`healed` is called at the end of creating the element.
+
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
@@ -357,6 +364,132 @@ class kRegularSequence(RecognizableSeries):
         """
         from itertools import count
         return iter(self[n] for n in count())
+
+
+    @cached_method
+    def is_healthy(self):
+        r"""
+        Return whether this `k`-regular sequence satisfies
+        `\mu[0] \mathit{right} = \mathit{right}`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: S.is_healthy()
+            False
+
+        ::
+
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C.is_healthy()
+            True
+        """
+        from sage.rings.integer_ring import ZZ
+        return (self.mu[ZZ(0)] * self.right) == self.right
+
+
+    @cached_method
+    def healed(self, minimize=True):
+        r"""
+        Return a `k`-regular sequence that satisfies
+        `\mu[0] \mathit{right} = \mathit{right}`.
+
+        INPUT:
+
+        - ``minimize`` -- (default: ``True``) a boolean. If set, then
+          :meth:`minimized` is called after the operation.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+
+        The following linear representation of `S` is chosen bad (is
+        unhealty, see :meth:`is_healthy`), as `\mu(0)` applied on
+        `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: S.is_healthy()
+            False
+
+        However, we can heal the sequence `S`::
+
+            sage: H = S.healed()
+            sage: H
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: H.mu[0], H.mu[1], H.left, H.right
+            (
+            [ 0  1]  [3 0]
+            [-2  3], [6 0], (1, 0), (1, 1)
+            )
+            sage: H.is_healthy()
+            True
+
+        TESTS::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: H = S.healed(minimize=False)
+            sage: H.mu[0], H.mu[1], H.left, H.right
+            (
+            [1 0]  [0 0]
+            [0 2], [3 3], (1, 1), (1, 0)
+            )
+            sage: H.is_healthy()
+            True
+
+        ::
+
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C.is_healthy()
+            True
+            sage: C.healed() is C
+            True
+        """
+        if self.is_healthy():
+            return self
+
+        from sage.matrix.special import zero_matrix, identity_matrix
+        from sage.modules.free_module_element import vector
+
+        P = self.parent()
+        dim = self.dimension()
+        Z = zero_matrix(dim)
+        I = identity_matrix(dim)
+
+        itA = iter(P.alphabet())
+        z = next(itA)
+        mu = {z: I.augment(Z).stack(Z.augment(self.mu[z]))}
+        mu.update((r, Z.augment(Z).stack(self.mu[r].augment(self.mu[r])))
+                  for r in itA)
+
+        result = P.element_class(
+            P, mu,
+            vector(2*tuple(self.left)),
+            vector(tuple(self.right) + dim*(0,)))
+
+        if minimize:
+            return result.minimized()
+        else:
+            return result
 
 
     def subsequence(self, a, b, minimize=True):
@@ -481,6 +614,29 @@ class kRegularSequence(RecognizableSeries):
             Traceback (most recent call last):
             ...
             ValueError: a=-1 is not nonnegative.
+
+        The following linear representation of `S` is chosen bad (is
+        unhealty, see :meth:`is_healthy`), as `\mu(0)` applied on
+        `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+
+        This leads to the wrong result
+        ::
+
+            sage: S.subsequence(1, -4)
+            2-regular sequence 0, 0, 0, 0, 8, 12, 12, 18, 24, 36, ...
+
+        We get the correct result by
+        ::
+
+            sage: S.healed().subsequence(1, -4)
+            2-regular sequence 0, 0, 0, 0, 1, 3, 6, 9, 12, 18, ...
         """
         from sage.rings.integer_ring import ZZ
         zero = ZZ(0)
@@ -668,8 +824,57 @@ class kRegularSequence(RecognizableSeries):
             sage: C.partial_sums(include_n=True)
             2-regular sequence 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, ...
 
+        The following linear representation of `S` is chosen bad (is
+        unhealty, see :meth:`is_healthy`), as `\mu(0)` applied on
+        `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+
+        Therefore, building partial sums produces a wrong result::
+
+            sage: H = S.partial_sums(include_n=True, minimize=False)
+            sage: H
+            2-regular sequence 1, 5, 16, 25, 62, 80, 98, 125, 274, 310, ...
+            sage: H = S.partial_sums(minimize=False)
+            sage: H
+            2-regular sequence 0, 2, 10, 16, 50, 62, 80, 98, 250, 274, ...
+
+        We can :meth:`~kRegularSequenceSpace.guess` the correct representation::
+
+            sage: from itertools import islice
+            sage: L = []; ps = 0
+            sage: for s in islice(S, 110):
+            ....:     ps += s
+            ....:     L.append(ps)
+            sage: G = Seq2.guess(lambda n: L[n])
+            sage: G
+            2-regular sequence 1, 4, 10, 19, 31, 49, 67, 94, 118, 154, ...
+            sage: G.mu[0], G.mu[1], G.left, G.right
+            (
+            [  0   1   0   0]  [  0   0   1   0]
+            [  0   0   0   1]  [ -5   3   3   0]
+            [ -5   5   1   0]  [ -5   0   6   0]
+            [ 10 -17   0   8], [-30  21  10   0], (1, 0, 0, 0), (1, 1, 4, 1)
+            )
+            sage: G.minimized().dimension() == G.dimension()
+            True
+
+        Or we heal the sequence `S` first::
+
+            sage: S.healed().partial_sums(include_n=True, minimize=False)
+            2-regular sequence 1, 4, 10, 19, 31, 49, 67, 94, 118, 154, ...
+            sage: S.healed().partial_sums(minimize=False)
+            2-regular sequence 0, 1, 4, 10, 19, 31, 49, 67, 94, 118, ...
+
         TESTS::
 
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
             sage: E.mu[0], E.mu[1], E.left, E.right
             (
             [0 1]  [0 0]
@@ -900,6 +1105,38 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         return W(n.digits(self.k))
 
 
+    def _element_constructor_(self, *args, **kwds):
+        r"""
+        Return a `k`-regular sequence.
+
+        See :class:`kRegularSequenceSpace` for details.
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
+            ....:      heal=True)
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+        """
+        heal = kwds.pop('heal', False)
+        element = super(kRegularSequenceSpace, self)._element_constructor_(*args, **kwds)
+        if heal:
+            element = element.healed()
+        elif not element.is_healthy():
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning('Unhealthy sequence: mu[0]*right != right. '
+                           'Results might be wrong. '
+                           'Use heal=True or method .healed() '
+                           'for correcting this.')
+        return element
+
+
     def guess(self, f, n_max=100, max_dimension=10, sequence=None):
         r"""
         Guess a `k`-regular sequence of `(f(n))_{n\geq0}`.
@@ -941,7 +1178,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
-            sage: logging.basicConfig(level=logging.INFO)
+            sage: logging.getLogger().setLevel(logging.INFO)
             sage: S1 = Seq2.guess(s)
             INFO:...:including f_{1*m+0}
             INFO:...:M_0: f_{2*m+0} = (1) * X_m
@@ -956,7 +1193,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             [1 0]  [ 0  1]
             [0 1], [-1  2], (1, 0), (0, 1)
             )
-            sage: logging.shutdown(); _ = reload(logging)
+            sage: logging.getLogger().setLevel(logging.WARN)
 
         Variant 2::
 
@@ -1004,6 +1241,33 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             [0 1], [0 1], (1, 0), (0, 1)
             )
 
+        The following linear representation of `S` is chosen bad (is
+        unhealty, see :meth:`is_healthy`), as `\mu(0)` applied on
+        `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: S.is_healthy()
+            False
+
+        However, we can :meth:`~kRegularSequenceSpace.guess` a `2`-regular sequence of dimension `2`::
+
+            sage: G = Seq2.guess(lambda n: S[n])
+            sage: G
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: G.mu[0], G.mu[1], G.left, G.right
+            (
+            [ 0  1]  [3 0]
+            [-2  3], [6 0], (1, 0), (1, 1)
+            )
+
+            sage: G == S.healed()
+            True
+
         TESTS::
 
             sage: S = Seq2.guess(lambda n: 2, sequence=C)
@@ -1012,7 +1276,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: S.mu[0], S.mu[1], S.left, S.right
             ([1], [1], (2), (1))
 
-        We guess some partial sums sequences::
+        We :meth:`~kRegularSequenceSpace.guess` some partial sums sequences::
 
             sage: S = Seq2((Matrix([1]), Matrix([2])), vector([1]), vector([1]))
             sage: S
