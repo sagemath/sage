@@ -450,7 +450,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             self._n = self._cartan_type.n + 1
         else:
             self._general_linear = False
-        for option in print_options.keys():
+        for option in print_options:
             if option == 'translation':
                 self._prefixt = print_options['translation']
             elif option == 'fundamental':

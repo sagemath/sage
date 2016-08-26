@@ -190,7 +190,7 @@ struct _dgs_disc_gauss_mp_t;
 typedef struct _dgs_disc_gauss_dp_t {
 
   /**
-     The width paramter `σ`, i.e. samples are accepted with probability
+     The width parameter `σ`, i.e. samples are accepted with probability
      proportional to `\exp(-(x-c)²/(2σ²))`
   */
 
@@ -410,7 +410,7 @@ void dgs_disc_gauss_dp_clear(dgs_disc_gauss_dp_t *self);
 typedef struct _dgs_disc_gauss_mp_t {
 
   /**
-      The width paramter `σ`, i.e. samples are accepted with probability
+      The width parameter `σ`, i.e. samples are accepted with probability
       proportional to `\exp(-(x-c)²/(2σ²))`
    */
 

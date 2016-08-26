@@ -98,9 +98,9 @@ def load(filename, globals, attach=False):
         sage: t = tmp_filename(ext='.py')
         sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
         sage: z = 1
-        sage: sage.repl.load.load(t, globals())
+        sage: sage.repl.load.load(t, globals())  # optional - python2
         hi 0
-        sage: z
+        sage: z  # optional - python2
         -1
 
     A ``.sage`` file *is* preparsed::

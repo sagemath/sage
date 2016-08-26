@@ -1109,7 +1109,7 @@ class CachedRepresentation:
                 cache = C.__classcall__.cache
             except AttributeError:
                 pass
-        for k in cache.iterkeys():
+        for k in cache:
             if issubclass(k[0][0],cls):
                 del_list.append(k)
         for k in del_list:

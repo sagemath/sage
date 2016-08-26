@@ -3,10 +3,11 @@ The ``timeit`` command
 
 This uses the function :func:`~sage.misc.sage_timeit.sage_timeit`.
 """
+from __future__ import absolute_import
 
 # This is here in Cython so we can get the interpreter globals
 
-import sage_timeit
+from . import sage_timeit
 
 
 class SageTimeit:

@@ -1891,6 +1891,16 @@ def plot(funcs, *args, **kwds):
         sage: label = '$' + latex(hello) + '$'
         sage: plot(x, x, 0, 1, legend_label=label)
         Graphics object consisting of 1 graphics primitive
+
+    Extra keywords should be saved if object has a plot method, :trac:`20924`::
+
+        sage: G = graphs.PetersenGraph()
+        sage: p = G.plot()
+        sage: p.aspect_ratio()
+        1.0
+        sage: pp = plot(G)
+        sage: pp.aspect_ratio()
+        1.0
     """
     if 'color' in kwds and 'rgbcolor' in kwds:
         raise ValueError('only one of color or rgbcolor should be specified')
@@ -1908,6 +1918,12 @@ def plot(funcs, *args, **kwds):
 
     if hasattr(funcs, 'plot'):
         G = funcs.plot(*args, **original_opts)
+
+        # If we have extra keywords already set, then update them
+        for ext in G._extra_kwds:
+            if ext in G_kwds:
+                G_kwds[ext] = G._extra_kwds[ext]
+
     # if we are using the generic plotting method
     else:
         n = len(args)

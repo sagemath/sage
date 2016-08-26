@@ -695,7 +695,7 @@ Sage example in ./programmation.tex, line 2354::
 
   sage: D = {'a0':'b0', 'a1':'b1', 'a2':'b2', 'a3':'b0',\
   ....: 'a4':'b3', 'a5':'b3'}
-  sage: E  = Set(D.keys()) ; Imf = Set(D.values())
+  sage: E  = Set(D) ; Imf = Set(D.values())
   sage: Imf == Set(map (lambda t:D[t], E))     # est équivalent
   True
 

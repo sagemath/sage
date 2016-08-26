@@ -1236,7 +1236,7 @@ def frobenius_expansion_by_series(Q, p, M):
 
     .. math::
 
-         F0 = \sum_{k=0}^{M-2} {-1/2 \choose k} p x^{p-1} E^k T^{(M-2-k)p}
+         F0 = \sum_{k=0}^{M-2} \binom{-1/2}{k} p x^{p-1} E^k T^{(M-2-k)p}
 
     and
 

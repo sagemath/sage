@@ -967,7 +967,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             \longrightarrow R
 
         that vanish whenever any of two of their arguments are equal.
-        `\Lambda^p(M^*)` is a free module of rank `\left({n\atop p}\right)`
+        `\Lambda^p(M^*)` is a free module of rank `\binom{n}{p}`
         over the same ring as `M`, where `n` is the rank of `M`.
 
         INPUT:

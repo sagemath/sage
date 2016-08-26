@@ -110,8 +110,8 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
 
 cdef bint is_supercategory_of_done(new_cat, dict done):
     # This is a helper function. It replaces the closure
-    #   any(cat.is_subcategory(new_cat) for cat in done.iterkeys())
-    for cat in done.iterkeys():
+    # any(cat.is_subcategory(new_cat) for cat in done)
+    for cat in done:
         if cat.is_subcategory(new_cat):
             return True
     return False
@@ -193,7 +193,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
                     new_axioms.add(axiom)
 
         # Mark old categories with new axioms as todo
-        for category in done.iterkeys():
+        for category in done:
             for axiom in new_axioms:
                 todo.add( (category, axiom) )
         for new_cat in new_cats:
@@ -205,7 +205,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
             for axiom in axiomsS.difference(axs):
                 todo.add( (new_cat, axiom) )
 
-    return _sort_uniq(done.iterkeys())
+    return _sort_uniq(done)
 
 
 #############################################

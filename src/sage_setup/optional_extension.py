@@ -19,7 +19,9 @@ package which must be installed.
 
 
 from distutils.extension import Extension
-from sage.misc.package import is_package_installed
+from sage.misc.package import is_package_installed, list_packages
+
+all_packages = list_packages(local=True)
 
 
 class CythonizeExtension(Extension):
@@ -52,7 +54,7 @@ def OptionalExtension(*args, **kwds):
     - ``condition`` -- (boolean) the actual condition
 
     - ``package`` -- (string) the condition is that this package is
-      installed (only used if ``condition`` is not given)
+      installed and up-to-date (only used if ``condition`` is not given)
 
     EXAMPLES::
 
@@ -74,7 +76,13 @@ def OptionalExtension(*args, **kwds):
         condition = kwds.pop("condition")
     except KeyError:
         pkg = kwds.pop("package")
-        condition = is_package_installed(pkg)
+        try:
+            pkginfo = all_packages[pkg]
+        except KeyError:
+            # Might be an installed old-style package
+            condition = is_package_installed(pkg)
+        else:
+            condition = (pkginfo["installed_version"] == pkginfo["remote_version"])
 
     if condition:
         return Extension(*args, **kwds)

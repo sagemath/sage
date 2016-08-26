@@ -108,15 +108,15 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 include 'sage/data_structures/bitset.pxi'
 
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
-from lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, IntegerMatrix, generic_identity
-from set_system cimport SetSystem
-from utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
+from .lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, IntegerMatrix, generic_identity
+from .set_system cimport SetSystem
+from .utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
 from sage.graphs.spanning_tree import kruskal
 from sage.graphs.graph import Graph
 

@@ -57,6 +57,7 @@ from .integer import Integer
 ZZ = None
 
 from sage.structure.parent_gens import ParentWithGens
+from sage.structure.sequence import Sequence
 import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
 
@@ -590,6 +591,25 @@ class RationalField(Singleton, number_field_base.NumberField):
         if K.characteristic() != 0:
             raise ValueError("no embeddings of the rational field into K.")
         return [self.hom(K)]
+
+    def automorphisms(self):
+        r"""
+        Return all Galois automorphisms of ``self``.
+
+        OUTPUT:
+
+        - a sequence containing just the identity morphism
+
+        EXAMPLES::
+
+            sage: QQ.automorphisms()
+            [
+            Ring endomorphism of Rational Field
+              Defn: 1 |--> 1
+            ]
+        """
+        return Sequence([self.hom(1, self)], cr=True, immutable=False,
+                        check=False)
 
     def places(self, all_complex=False, prec=None):
         r"""

@@ -155,7 +155,7 @@ from __future__ import absolute_import
 
 import os
 from .expect import Expect, ExpectElement
-
+from sage.misc.misc import verbose
 
 class Octave(Expect):
     r"""
@@ -173,18 +173,27 @@ class Octave(Expect):
         'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
     """
 
-    def __init__(self, maxread=None, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None,
-                 seed=None):
+    def __init__(self, maxread=None, script_subdirectory=None, logfile=None,
+            server=None, server_tmpdir=None, seed=None, command=None):
         """
         EXAMPLES::
 
             sage: octave == loads(dumps(octave))
             True
         """
+        if command is None:
+            import os
+            command = os.getenv('SAGE_OCTAVE_COMMAND') or 'octave-cli'
+        if server is None:
+            import os
+            server = os.getenv('SAGE_OCTAVE_SERVER') or None
         Expect.__init__(self,
                         name = 'octave',
-                        prompt = '>',
-                        command = "sage-native-execute octave --no-line-editing --silent",
+                        # We want the prompt sequence to be unique to avoid confusion with syntax error messages containing >>>
+                        prompt = 'octave\:\d+> ',
+                        # We don't want any pagination of output
+                        command = command + " --no-line-editing --silent --eval 'PS2(PS1());more off' --persist",
+                        maxread = maxread,
                         server = server,
                         server_tmpdir = server_tmpdir,
                         script_subdirectory = script_subdirectory,
@@ -255,22 +264,69 @@ class Octave(Expect):
         from Sage.   You can read all about Octave at
                 http://www.gnu.org/software/octave/
 
-        LINUX / WINDOWS (colinux):
-           Do apt-get install octave as root on your machine
-           (or, in Windows, in the colinux console).
+        LINUX:
+           Do apt-get install octave as root on your machine (Ubuntu/Debian).
+           Other Linux systems have octave too.
 
         OS X:
-           * This website has links to binaries for OS X PowerPC
-             and OS X Intel builds of the latest version of Octave:
-                     http://hpc.sourceforge.net/
-             Once you get the tarball from there, go to the / directory
-             and type
-                     tar zxvf octave-intel-bin.tar.gz
-             to extract it to usr/local/...   Make sure /usr/local/bin
-             is in your PATH.  Then type "octave" and verify that
-             octave starts up.
+           * This website has details on OS X builds of Octave:
+                    http://wiki.octave.org/Octave_for_MacOS_X
            * Darwin ports and fink have Octave as well.
         """
+
+    def _eval_line(self, line, reformat=True, allow_use_file=False,
+                   wait_for_prompt=True, restart_if_needed=False):
+        """
+        EXAMPLES::
+
+            sage: print(octave._eval_line('2+2'))  #optional - octave
+              ans =  4
+        """
+        from pexpect.exceptions import EOF
+        if not wait_for_prompt:
+            return Expect._eval_line(self, line)
+        if line == '':
+            return ''
+        if self._expect is None:
+            self._start()
+        if allow_use_file and len(line)>3000:
+            return self._eval_line_using_file(line)
+        try:
+            E = self._expect
+            # debug
+            # self._synchronize(cmd='1+%s\n')
+            verbose("in = '%s'"%line,level=3)
+            E.sendline(line)
+            E.expect(self._prompt)
+            out = E.before
+            # debug
+            verbose("out = '%s'"%out,level=3)
+        except EOF:
+            if self._quit_string() in line:
+                return ''
+        except KeyboardInterrupt:
+            self._keyboard_interrupt()
+        try:
+            if reformat:
+                if 'syntax error' in out:
+                    raise SyntaxError(out)
+            out = "\n".join(out.splitlines()[1:])
+            return out
+        except NameError:
+            return ''
+
+    def _keyboard_interrupt(self):
+        print("CntrlC: Interrupting %s..."%self)
+        if self._restart_on_ctrlc:
+            try:
+                self._expect.close(force=1)
+            except pexpect.ExceptionPexpect as msg:
+                raise RuntimeError( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
+            self._start()
+            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)"%self)
+        else:
+            self._expect.send('\003') # control-c
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
 
     def quit(self, verbose=False):
         """
@@ -349,7 +405,7 @@ class Octave(Expect):
         """
         cmd = '%s=%s;'%(var,value)
         out = self.eval(cmd)
-        if out.find("error") != -1:
+        if out.find("error") != -1 or out.find("Error") != -1:
             raise TypeError("Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
@@ -410,10 +466,14 @@ class Octave(Expect):
 
         EXAMPLES::
 
-            sage: octave.version()   # optional - octave; random output depending on version
-            '2.1.73'
+            sage: v = octave.version()   # optional - octave
+            sage: v                      # optional - octave; random
+            '2.13.7'
+
+            sage: import re
+            sage: assert re.match("\d+\.\d+\.\d+", v)  is not None # optional - octave
         """
-        return octave_version()
+        return str(self("version")).strip()
 
     def solve_linear_system(self, A, b):
         r"""
@@ -623,8 +683,11 @@ class OctaveElement(ExpectElement):
             sage: matrix(ZZ, A)                 # optional - octave
             [1 2]
             [3 4]
+            sage: A = octave('[1,2;3,4.5]')     # optional - octave
+            sage: matrix(RR, A)                 # optional - octave
+            [1.00000000000000 2.00000000000000]
+            [3.00000000000000 4.50000000000000]
         """
-        oc = self.parent()
         if not self.ismatrix():
             raise TypeError('not an octave matrix')
         if R is None:
@@ -778,16 +841,21 @@ def octave_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%octave magics instead.')
-    os.system('octave')
+    os.system('octave-cli')
 
 
 def octave_version():
     """
-    Return the version of Octave installed.
+    DEPRECATED: Return the version of Octave installed.
 
     EXAMPLES::
 
-        sage: octave_version()    # optional - octave; and output is random
-        '2.9.12'
+        sage: octave_version()    # optional - octave
+        doctest:...: DeprecationWarning: This has been deprecated. Use
+        octave.version() instead
+        See http://trac.sagemath.org/21135 for details.
+        '...'
     """
-    return str(octave('version')).strip()
+    from sage.misc.superseded import deprecation
+    deprecation(21135, "This has been deprecated. Use octave.version() instead")
+    return octave.version()

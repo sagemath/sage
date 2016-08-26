@@ -1,0 +1,16 @@
+On Cygwin some of the scripts in $R_HOME/bin can fail to be recognized
+as executable, because they do no contain a shebang line and, depending
+on the ACL settings in the Cygwin mount, may not have an executable flag
+either.  This results in the scripts not being run properly.  It's fine
+to just check that they exist.  See https://trac.sagemath.org/ticket/20655
+--- a/src/scripts/Rcmd.in	2016-05-24 17:54:31.786568400 +0200
++++ b/src/scripts/Rcmd.in	2016-05-24 17:54:55.402067200 +0200
+@@ -50,7 +50,7 @@
+     exit 1
+     ;;
+   *)
+-    if test -x "${R_HOME}/bin/${1}"; then
++    if test -f "${R_HOME}/bin/${1}"; then
+       cmd="${R_HOME}/bin/${1}"
+     else
+       cmd="${1}"

@@ -38,7 +38,7 @@ method :meth:`realloc <sage.graphs.base.c_graph.CGraph.realloc>`.
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #**************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 include "sage/data_structures/bitset.pxi"
 
@@ -1846,7 +1846,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         cdef int i
         if verts is None:
-            S = set(self.vertex_ints.iterkeys())
+            S = set(self.vertex_ints)
             for i in range((<CGraph>self._cg).active_vertices.size):
                 if (i not in self.vertex_labels and
                     bitset_in((<CGraph>self._cg).active_vertices, i)):

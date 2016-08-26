@@ -1038,7 +1038,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         # Some basis in which ``self`` has a representation is picked at
         # random and the test is performed on the images of the basis
         # elements:
-        basis = self._matrices.keys()[0][0]
+        basis = list(self._matrices)[0][0]
         for i in fmodule.irange():
             if self(basis[i]) != basis[i]:
                 return False

@@ -1733,7 +1733,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 TESTS::
 
-                    sage: C.is_finite.im_func is sage.categories.sets_cat.Sets.Infinite.ParentMethods.is_finite.im_func
+                    sage: from six import get_method_function as gmf
+                    sage: gmf(C.is_finite) is gmf(sage.categories.sets_cat.Sets.Infinite.ParentMethods.is_finite)
                     True
                 """
                 return False

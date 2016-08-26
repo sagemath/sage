@@ -2,13 +2,15 @@
 Stopgaps
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2012 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-########################################################################
+#*****************************************************************************
 
 import warnings
 
@@ -32,10 +34,8 @@ def set_state(bint mode):
         sage: sage.misc.stopgap.set_state(True)
         sage: sage.misc.stopgap.stopgap("Displays something.", 123456)
         doctest:...:
-        ********************************************************************************
-        Displays something.
+        StopgapWarning: Displays something.
         This issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/123456.
-        ********************************************************************************
         sage: sage.misc.stopgap.set_state(False)
     """
     global ENABLED
@@ -67,11 +67,9 @@ def stopgap(message, int ticket_no):
         sage: import sage.misc.stopgap
         sage: sage.misc.stopgap.set_state(True)
         sage: sage.misc.stopgap.stopgap("Computation of heights on elliptic curves over number fields can return very imprecise results.", 12509)
-        doctest:...:
-        ********************************************************************************
-        Computation of heights on elliptic curves over number fields can return very imprecise results.
+        doctest:...
+        StopgapWarning: Computation of heights on elliptic curves over number fields can return very imprecise results.
         This issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/12509.
-        ********************************************************************************
         sage: sage.misc.stopgap.stopgap("This is not printed", 12509)
         sage: sage.misc.stopgap.set_state(False)  # so rest of doctesting fine
     """

@@ -286,8 +286,8 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         if is_PolynomialRing(base_ring):
             self._Karatsuba_threshold = 0
         else:
-            from sage.matrix.matrix_space import is_MatrixSpace
-            if is_MatrixSpace(base_ring):
+            from sage.matrix.matrix_space import MatrixSpace
+            if isinstance(base_ring, MatrixSpace):
                 self._Karatsuba_threshold = 0
             else:
                 self._Karatsuba_threshold = 8

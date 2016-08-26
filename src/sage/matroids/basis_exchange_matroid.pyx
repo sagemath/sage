@@ -37,12 +37,16 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+
 include 'sage/data_structures/bitset.pxi'
 
-from matroid cimport Matroid
-from set_system cimport SetSystem
+from .matroid cimport Matroid
+from .set_system cimport SetSystem
+
 from copy import copy
 from itertools import combinations, permutations
+
 
 cdef class BasisExchangeMatroid(Matroid):
     r"""

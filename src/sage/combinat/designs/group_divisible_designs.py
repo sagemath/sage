@@ -22,7 +22,7 @@ following functions are available:
 Functions
 ---------
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -182,10 +182,11 @@ def GDD_4_2(q,existence=False,check=True):
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
     G = GF(q,'x')
     w = G.primitive_element()
-    e = w**((q-1)/3)
+    e = w**((q - 1) // 3)
 
     # A first parallel class is defined. G acts on it, which yields all others.
-    first_class = [[(0,0),(1,w**i),(1,e*w**i),(1,e*e*w**i)] for i in range((q-1)/6)]
+    first_class = [[(0,0),(1,w**i),(1,e*w**i),(1,e*e*w**i)]
+                   for i in range((q - 1) // 6)]
 
     label = {p:i for i,p in enumerate(G)}
     classes = [[[2*label[x[1]+g]+(x[0]+j)%2 for x in S]

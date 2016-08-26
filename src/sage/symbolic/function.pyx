@@ -13,6 +13,7 @@ Classes for symbolic functions
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import division
 
 from .ginac cimport *
 
@@ -704,7 +705,7 @@ cdef class Function(SageObject):
             sage: import numpy
             sage: a = numpy.arange(5)
             sage: csc(a)
-            doctest:...: RuntimeWarning: divide by zero encountered in divide
+            doctest:...: RuntimeWarning: divide by zero encountered in ...divide
             array([        inf,  1.18839511,  1.09975017,  7.0861674 , -1.32134871])
 
             sage: factorial(a)

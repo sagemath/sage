@@ -676,7 +676,7 @@ class pAdicLseries(SageObject):
         except AttributeError:
             self.__series = {}
         except KeyError:
-            for _n, _prec, _D, _eta in self.__series.keys():
+            for _n, _prec, _D, _eta in self.__series:
                 if _n == n and _D == D and _eta == eta and _prec >= prec:
                     return self.__series[(_n,_prec,_D,_eta)].add_bigoh(prec)
         return None

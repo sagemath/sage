@@ -107,7 +107,7 @@ Hecke triangle groups and elements:
   An element can be represented in several ways:
 
   - As a matrix over the base ring (default)
-  - As a product of the generatos ``S`` and ``T``
+  - As a product of the generators ``S`` and ``T``
   - As a product of basic blocks conjugated by some element
 
   EXAMPLES::

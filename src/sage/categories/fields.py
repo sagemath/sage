@@ -235,7 +235,7 @@ class Fields(CategoryWithAxiom):
                 x
 
             """
-            ret = EuclideanDomains().ElementMethods().gcd(f,g)
+            ret = EuclideanDomains().element_class.gcd(f,g)
             c = ret.leading_coefficient()
             if c.is_unit():
                 return (1/c)*ret

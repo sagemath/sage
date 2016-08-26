@@ -71,13 +71,15 @@ AUTHORS:
 
 REFERENCES:
 
-.. [GK82] Greene, Daniel H.; Knuth, Donald E. (1982), "2.1.1 Constant
+.. [GK82] Daniel H. Greene and Donald E. (1982), "2.1.1 Constant
    coefficients - A) Homogeneous equations", Mathematics for the Analysis
    of Algorithms (2nd ed.), Birkhauser, p. 17.
+.. [KP11] Manuel Kauers and Peter Paule. The Concrete Tetrahedron.
+   Springer-Verlag, 2011.
 .. [SZ94] Bruno Salvy and Paul Zimmermann. - Gfun: a Maple package for
    the manipulation of generating and holonomic functions in one variable.
    - Acm transactions on mathematical software, 20.2:163-177, 1994.
-.. [Z11] Zeilberger, Doron. "The C-finite ansatz." The Ramanujan Journal
+.. [Z11] Doron Zeilberger. "The C-finite ansatz." The Ramanujan Journal
    (2011): 1-10.
 """
 
@@ -764,6 +766,95 @@ class CFiniteSequence(FieldElement):
         R = LaurentSeriesRing(QQ, 'x', default_prec=n)
         return R(self.ogf())
 
+    def closed_form(self, n = 'n'):
+        """
+        Return a symbolic expression in ``n``, which equals the n-th term of
+        the sequence.
+
+        It is a well-known property of C-finite sequences ``a_n`` that they
+        have a closed form of the type:
+
+        .. MATH::
+
+            a_n = \sum_{i=1}^d c_i(n) \cdot r_i^n,
+
+        where ``r_i`` are the roots of the characteristic equation and
+        ``c_i(n)`` is a polynomial (whose degree equals the multiplicity of
+        ``r_i`` minus one).  This is a natural generalization of Binet's
+        formula for Fibonacci numbers.  See, for instance, [KP, Theorem 4.1].
+
+        Note that if the o.g.f. has a polynomial part, that is, if the
+        numerator degree is not strictly less than the denominator degree,
+        then this closed form holds only when ``n`` exceeds the degree of that
+        polynomial part.  In that case, the returned expression will differ
+        from the sequence for small ``n``.
+
+        EXAMPLES::
+
+            sage: CFiniteSequence(1/(1-x)).closed_form()
+            1
+            sage: CFiniteSequence(x^2/(1-x)).closed_form()
+            1
+            sage: CFiniteSequence(1/(1-x^2)).closed_form()
+            1/2*(-1)^n + 1/2
+            sage: CFiniteSequence(1/(1+x^3)).closed_form()
+            1/3*(-1)^n + 1/3*(1/2*I*sqrt(3) + 1/2)^n + 1/3*(-1/2*I*sqrt(3) + 1/2)^n
+            sage: CFiniteSequence(1/(1-x)/(1-2*x)/(1-3*x)).closed_form()
+            9/2*3^n - 4*2^n + 1/2
+
+        Binet's formula for the Fibonacci numbers::
+
+            sage: CFiniteSequence(x/(1-x-x^2)).closed_form()
+            1/5*sqrt(5)*(1/2*sqrt(5) + 1/2)^n - 1/5*sqrt(5)*(-1/2*sqrt(5) + 1/2)^n
+            sage: [_.subs(n=k).full_simplify() for k in range(6)]
+            [0, 1, 1, 2, 3, 5]
+
+            sage: CFiniteSequence((4*x+3)/(1-2*x-5*x^2)).closed_form()
+            1/12*(sqrt(6) + 1)^n*(7*sqrt(6) + 18) - 1/12*(-sqrt(6) + 1)^n*(7*sqrt(6) - 18)
+
+        Examples with multiple roots::
+
+            sage: CFiniteSequence(x*(x^2+4*x+1)/(1-x)^5).closed_form()
+            1/4*n^4 + 1/2*n^3 + 1/4*n^2
+            sage: CFiniteSequence((1+2*x-x^2)/(1-x)^4/(1+x)^2).closed_form()
+            1/12*n^3 - 1/8*(-1)^n*(n + 1) + 3/4*n^2 + 43/24*n + 9/8
+            sage: CFiniteSequence(1/(1-x)^3/(1-2*x)^4).closed_form()
+            4/3*(n^3 - 3*n^2 + 20*n - 36)*2^n + 1/2*n^2 + 19/2*n + 49
+            sage: CFiniteSequence((x/(1-x-x^2))^2).closed_form()
+            1/25*(5*n - sqrt(5))*(1/2*sqrt(5) + 1/2)^n + 1/25*(5*n + sqrt(5))*(-1/2*sqrt(5) + 1/2)^n
+        """
+        from sage.arith.all import binomial
+        from sage.rings.qqbar import QQbar
+
+        from sage.symbolic.ring import SR
+        n = SR(n)
+        expr = SR(0)
+
+        R = FractionField(PolynomialRing(QQbar, self.parent().variable_name()))
+        ogf = R(self.ogf())
+
+        __, parts = ogf.partial_fraction_decomposition(decompose_powers=False)
+        for part in parts:
+            denom = part.denominator().factor()
+            denom_base, denom_exp = denom[0]
+
+            # denominator is of the form (x+b)^{m+1}
+            m = denom_exp - 1
+            b = denom_base.constant_coefficient()
+            # check that the partial fraction decomposition was indeed done correctly
+            # (that is, there is only one factor, of degree 1, and monic)
+            assert len(denom) == 1 and len(denom_base.list()) == 2 and denom_base.list()[1] == 1 and denom.unit() == 1
+
+            r = SR((-1/b).radical_expression())
+            c = SR(0)
+            for (k, a) in enumerate(part.numerator().list()):
+                a = QQbar(a)
+                c += binomial(n+m-k,m) * SR(((-1)**k*a*b**(k-m-1)).radical_expression())
+
+            expr += c.expand() * r**n
+
+        return expr
+
 
 class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
     r"""
@@ -1149,6 +1240,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
                 return 0
             else:
                 return CFiniteSequence(num / den)
+
 """
 .. TODO::
 

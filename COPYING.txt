@@ -801,7 +801,7 @@ at the notice in config.guess or ltmain.sh.)
 
 The atomic_ops library contains some code that is covered by the GNU General
 Public License, but is not needed by, nor linked into the collector library.
-It is included here only becuase the atomic_ops distribution is, for
+It is included here only because the atomic_ops distribution is, for
 simplicity, included in its entirety.
 
 ================================================================================

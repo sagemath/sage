@@ -641,8 +641,8 @@ Symmetric powers
 ----------------
 
 The `k`-th symmetric and exterior power homomorphisms map
-`GL(n) \to GL \left({n+k-1 \choose k} \right)` and
-`GL \left({n \choose k} \right)`. The corresponding branching rules
+`GL(n) \to GL \left(\binom{n+k-1}{k} \right)` and
+`GL \left(\binom{n}{k} \right)`. The corresponding branching rules
 are not implemented but a special case is. The `k`-th symmetric power
 homomorphism `SL(2) \to GL(k+1)` has its image inside of `SO(2r+1)` if
 `k = 2r` and inside of `Sp(2r)` if `k = 2r-1`. Hence there are

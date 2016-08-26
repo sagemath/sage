@@ -42,8 +42,14 @@ indexing set for the basis in each example below?
     B[1.00000000000000*I]
     sage: F = CombinatorialFreeModule(ZZ, Partitions(NonNegativeIntegers(), max_part=3)); F.an_element()
     2*B[[]] + 2*B[[1]] + 3*B[[2]]
-    sage: F = CombinatorialFreeModule(ZZ, ['spam', 'eggs', 42]); F.an_element()
-    3*B[42] + 2*B['eggs'] + 2*B['spam']
+    sage: F = CombinatorialFreeModule(ZZ, ['spam', 'eggs', '42']); F.an_element()
+    3*B['42'] + 2*B['eggs'] + 2*B['spam']
+
+Note that we use '42' (and not the number 42) in order to ensure that
+all objects are comparable in a deterministic way, which allows the
+elements to be printed in a predictable manner. It is not mandatory
+that indices have such a stable ordering, but if they do not, then the
+elements may be displayed in some random order.
 
 Lists are not hashable, and thus cannot be used to index the basis;
 instead one can use tuples::

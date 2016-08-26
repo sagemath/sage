@@ -628,7 +628,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
     def __classcall__(cls, X, k, prec=None, basis_matrix=None, base_field=None):
         r"""
         Represent a space of Gamma invariant harmonic
-        cocycles valued in a cofficient module.
+        cocycles valued in a coefficient module.
 
         INPUT:
 

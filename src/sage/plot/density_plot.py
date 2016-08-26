@@ -173,7 +173,10 @@ def density_plot(f, xrange, yrange, **options):
     - ``plot_points`` -- integer (default: 25); number of points to plot
       in each direction of the grid
 
-    - ``cmap`` -- a colormap (type ``cmap_help()`` for more information).
+    - ``cmap`` -- a colormap (default: ``'gray'``), the name of
+      a predefined colormap, a list of colors or an instance of a matplotlib
+      Colormap. Type: ``import matplotlib.cm; matplotlib.cm.datad.keys()``
+      for available colormap names.
 
     - ``interpolation`` -- string (default: ``'catrom'``), the interpolation
       method to use: ``'bilinear'``, ``'bicubic'``, ``'spline16'``,

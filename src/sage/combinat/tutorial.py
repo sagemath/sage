@@ -1242,6 +1242,9 @@ are in the ``itertools`` library, which can be imported by::
 
     sage: import itertools
 
+The behaviour of this library has changed a lot between Python 2 and
+Python 3. What follows is mostly written for Python 2.
+
 We will demonstrate some applications, taking as a starting point the
 permutations of `3`::
 
@@ -1255,23 +1258,25 @@ We can list the elements of a set by numbering them::
     [(0, [1, 2, 3]), (1, [1, 3, 2]), (2, [2, 1, 3]),
      (3, [2, 3, 1]), (4, [3, 1, 2]), (5, [3, 2, 1])]
 
-select only the elements in positions 2, 3, and 4 (analogue of
+or select only the elements in positions 2, 3, and 4 (analogue of
 ``l[1:4]``)::
 
     sage: import itertools
     sage: list(itertools.islice(Permutations(3), 1, 4))
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
-apply a function to all the elements::
+The itertools methods ``imap`` and ``ifilter`` have been renamed to
+``map`` and ``filter`` in Python 3. You should rather avoid using them,
+as follows.
 
-    sage: list(itertools.imap(lambda z: z.cycle_type(),
-    ....:                     Permutations(3)))
+To apply a function to all the elements, one can do::
+
+    sage: [z.cycle_type() for z in Permutations(3)]
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
-or select the elements satisfying a certain condition::
+and similarly to select the elements satisfying a certain condition::
 
-    sage: list(itertools.ifilter(lambda z: z.has_pattern([1,2]),
-    ....:                        Permutations(3)))
+    sage: [z for z in Permutations(3) if z.has_pattern([1,2])]
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 
 In all these situations, ``attrcall`` can be an advantageous alternative

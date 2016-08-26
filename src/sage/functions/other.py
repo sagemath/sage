@@ -686,6 +686,74 @@ class Function_Order(GinacFunction):
 
 Function_Order()
 
+class Function_frac(BuiltinFunction):
+    def __init__(self):
+        r"""
+        The fractional part function `\{x\}`.
+
+        ``frac(x)`` is defined as `\{x\} = x - \lfloor x\rfloor`.
+
+        EXAMPLES::
+
+            sage: frac(5.4)
+            0.400000000000000
+            sage: type(frac(5.4))
+            <type 'sage.rings.real_mpfr.RealNumber'>
+            sage: frac(456/123)
+            29/41
+            sage: var('x')
+            x
+            sage: a = frac(5.4 + x); a
+            frac(x + 5.40000000000000)
+            sage: frac(cos(8)/cos(2))
+            cos(8)/cos(2)
+            sage: latex(frac(x))
+            \operatorname{frac}\left(x\right)
+
+        Test pickling::
+
+            sage: loads(dumps(floor))
+            floor
+        """
+        BuiltinFunction.__init__(self, "frac",
+                                 conversions=dict(sympy='frac'),
+                                 latex_name=r"\operatorname{frac}")
+
+    def _evalf_(self, x, **kwds):
+        """
+        EXAMPLES::
+
+            sage: frac(pi).n()
+            0.141592653589793
+            sage: frac(pi).n(200)
+            0.14159265358979323846264338327950288419716939937510582097494
+        """
+        return x - floor(x)
+
+    def _eval_(self, x):
+        """
+        EXAMPLES::
+
+            sage: frac(x).subs(x==7.5)
+            0.500000000000000
+            sage: frac(x)
+            frac(x)
+        """
+        try:
+            return x - x.floor()
+        except AttributeError:
+            if isinstance(x, (int, long)):
+                return Integer(0)
+            elif isinstance(x, (float, complex)):
+                return x - Integer(int(math.floor(x)))
+            elif isinstance(x, sage.symbolic.expression.Expression):
+                ret = floor(x)
+                if not hasattr(ret, "operator") or not ret.operator() == floor:
+                    return x - ret
+        return None
+
+frac = Function_frac()
+
 
 class Function_gamma(GinacFunction):
     def __init__(self):
@@ -1609,6 +1677,12 @@ class Function_factorial(GinacFunction):
             sage: y = var('y')
             sage: (factorial(x) == y).solve(x)
             [factorial(x) == y]
+
+        Check that :trac:`16166` is fixed::
+
+            sage: RBF=RealBallField(53)
+            sage: factorial(RBF(4.2))
+            [32.5780960503313 +/- 6.71e-14]
 
         Test pickling::
 

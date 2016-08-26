@@ -91,7 +91,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
                 G_in = copy(G_in)
                 to = G_in.relabel(return_map=True)
                 frm = {}
-                for v in to.iterkeys():
+                for v in to:
                     frm[to[v]] = v
                 if first:
                     partition = [[to[v] for v in cell] for cell in partn]
@@ -382,7 +382,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
             frm = {}
-            for v in to.iterkeys():
+            for v in to:
                 frm[to[v]] = v
             partition = [[to[v] for v in cell] for cell in partition]
         else:
@@ -459,7 +459,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     return_tuple = [list_of_gens]
     if dict_rep:
         ddd = {}
-        for v in frm.iterkeys():
+        for v in frm:
             ddd[frm[v]] = v if v != 0 else n
         return_tuple.append(ddd)
     if lab:

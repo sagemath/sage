@@ -1079,6 +1079,26 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         self.__modular_symbol_space[typ] = M
         return M
 
+    def abelian_variety(self):
+        r"""
+        Return self as a modular abelian variety.
+
+        OUTPUT:
+
+        - a modular abelian variety
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('11a')
+            sage: E.abelian_variety()
+            Abelian variety J0(11) of dimension 1
+
+            sage: E = EllipticCurve('33a')
+            sage: E.abelian_variety()
+            Abelian subvariety of dimension 1 of J0(33)
+        """
+        return self.modular_symbol_space(sign=0).abelian_variety()
+
     def _modular_symbol_normalize(self, sign, use_eclib, normalize, implementation):
         r"""
         Normalize parameters for :meth:`modular_symbol`.

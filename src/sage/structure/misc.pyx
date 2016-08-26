@@ -323,8 +323,7 @@ def dir_with_other_class(self, cls):
     # attributes coming from subclasses of A will be ignored
     ret.update(dir(self.__class__))
     if hasattr(self, "__dict__"):
-        ret.update(self.__dict__.keys())
+        ret.update(list(self.__dict__))
     if not isinstance(self, cls):
         ret.update(dir(cls))
     return sorted(ret)
-

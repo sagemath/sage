@@ -910,6 +910,58 @@ done from the right side.""")
         except ValueError:
             return self(0)
 
+    def some_elements(self):
+        r"""
+        Return some elements of this free module.
+
+        See :class:`TestSuite` for a typical use case.
+
+        OUTPUT:
+
+        An iterator.
+
+        EXAMPLES::
+
+            sage: F = FreeModule(ZZ, 2)
+            sage: tuple(F.some_elements())
+            ((1, 0),
+             (1, 1),
+             (0, 1),
+             (-1, 2),
+             (-2, 3),
+             ...
+             (-49, 50))
+
+            sage: F = FreeModule(QQ, 3)
+            sage: tuple(F.some_elements())
+            ((1, 0, 0),
+             (1/2, 1/2, 1/2),
+             (1/2, -1/2, 2),
+             (-2, 0, 1),
+             (-1, 42, 2/3),
+             (-2/3, 3/2, -3/2),
+             (4/5, -4/5, 5/4),
+             ...
+             (46/103823, -46/103823, 103823/46))
+
+            sage: F = FreeModule(SR, 2)
+            sage: tuple(F.some_elements())
+            ((1, 0), (some_variable, some_variable))
+        """
+        from itertools import islice
+        yield self.an_element()
+        yield self.base().an_element() * sum(self.gens())
+        some_elements_base = iter(self.base().some_elements())
+        n = self.degree()
+        while True:
+            L = list(islice(some_elements_base, n))
+            if len(L) != n:
+                return
+            try:
+                yield self(L)
+            except TypeError, ValueError:
+                pass
+
     def _element_constructor_(self, x, coerce=True, copy=True, check=True):
         r"""
         Create an element of this free module from ``x``.

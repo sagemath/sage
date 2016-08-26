@@ -57,13 +57,14 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from functor cimport Functor
-from morphism cimport Morphism
-from map cimport Map
+from .functor cimport Functor
+from .morphism cimport Morphism
+from .map cimport Map
 from sage.structure.parent cimport Parent
 
-import homset
+from . import homset
 import sage.structure.element
 from weakref import ref
 from sage.misc.constant_function import ConstantFunction
@@ -79,7 +80,7 @@ cdef inline category(x):
 cdef class Action(Functor):
 
     def __init__(self, G, S, bint is_left = 1, op=None):
-        from groupoid import Groupoid
+        from .groupoid import Groupoid
         Functor.__init__(self, Groupoid(G), category(S))
         self.G = G
         self.US = ref(S)

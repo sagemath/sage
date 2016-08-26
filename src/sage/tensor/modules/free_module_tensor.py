@@ -1008,7 +1008,7 @@ class FreeModuleTensor(ModuleElement):
 
             sage: f =  M.basis('f')
             sage: t.set_comp(f)[0,1] = 4
-            sage: t._components.keys() # the components w.r.t. basis e have been deleted
+            sage: list(t._components) # the components w.r.t. basis e have been deleted
             [Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring]
             sage: t.display(f)
             t = 4 f_0*f^1
@@ -1021,7 +1021,7 @@ class FreeModuleTensor(ModuleElement):
             sage: M.set_change_of_basis(e, f, a)
             sage: t.display(e)
             t = -4 e_1*e^2
-            sage: t._components.keys()  # random output (dictionary keys)
+            sage: sorted(t._components)  # random output (dictionary keys)
             [Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring,
              Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring]
 
@@ -1087,7 +1087,7 @@ class FreeModuleTensor(ModuleElement):
 
         The components w.r.t. basis e have been kept::
 
-            sage: t._components.keys() # # random output (dictionary keys)
+            sage: sorted(t._components) # # random output (dictionary keys)
             [Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring,
              Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring]
             sage: t.display(f)
@@ -1124,21 +1124,21 @@ class FreeModuleTensor(ModuleElement):
             sage: u = M([2,1,-5])
             sage: f = M.basis('f')
             sage: u.add_comp(f)[:] = [0,4,2]
-            sage: u._components.keys() # random output (dictionary keys)
+            sage: sorted(u._components) # random output (dictionary keys)
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring,
              Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
             sage: u.del_other_comp(f)
-            sage: u._components.keys()
+            sage: list(u._components)
             [Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
 
         Let us restore the components w.r.t. e and delete those w.r.t. f::
 
             sage: u.add_comp(e)[:] = [2,1,-5]
-            sage: u._components.keys()  # random output (dictionary keys)
+            sage: sorted(u._components)  # random output (dictionary keys)
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring,
              Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
             sage: u.del_other_comp()  # default argument: basis = e
-            sage: u._components.keys()
+            sage: list(u._components)
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring]
 
         """
@@ -1342,9 +1342,9 @@ class FreeModuleTensor(ModuleElement):
         on different bases and no connection between these bases have
         been set::
 
-            sage: u._components.keys()
+            sage: list(u._components)
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring]
-            sage: v._components.keys()
+            sage: list(v._components)
             [Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
 
         Linking bases ``e`` and ``f`` changes the result::
@@ -1357,7 +1357,7 @@ class FreeModuleTensor(ModuleElement):
 
         Indeed, v is now known in basis e::
 
-            sage: v._components.keys() # random output (dictionary keys)
+            sage: sorted(v._components) # random output (dictionary keys)
             [Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring,
              Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring]
 
@@ -2332,9 +2332,9 @@ class FreeModuleTensor(ModuleElement):
             [ 7  6 -4]
             [ 3 -1 -2]
             sage: b.del_other_comp(h)  # deletes components w.r.t. basis e
-            sage: b._components.keys()  # indeed:
+            sage: list(b._components)  # indeed:
             [Basis (h_0,h_1,h_2) on the Rank-3 free module M over the Integer Ring]
-            sage: a._components.keys()  # while a is known only in basis e:
+            sage: list(a._components)  # while a is known only in basis e:
             [Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring]
             sage: s1 = a.contract(1, b, 1) ; s1  # yet the computation is possible
             Type-(1,2) tensor on the Rank-3 free module M over the Integer Ring
