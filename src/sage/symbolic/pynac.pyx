@@ -1368,7 +1368,7 @@ cdef object py_factorial(object x) except +:
     try:
         x_in_ZZ = ZZ(x)
         coercion_success = True
-    except TypeError:
+    except (TypeError, ValueError):
         coercion_success = False
 
     if coercion_success and x_in_ZZ >= 0:

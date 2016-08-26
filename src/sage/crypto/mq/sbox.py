@@ -1,7 +1,7 @@
 r"""
 S-Boxes and Their Algebraic Representations
 """
-from __future__ import print_function
+from __future__ import print_function, division
 
 from sage.combinat.integer_vector import IntegerVectors
 from sage.crypto.boolean_function import BooleanFunction
@@ -1306,7 +1306,7 @@ class SBox(SageObject):
         if is_even(m):
             return False
 
-        return self.nonlinearity() == 2**(m-1) - 2**((m-1)/2)
+        return self.nonlinearity() == 2**(m-1) - 2**((m-1)//2)
 
     def fixed_points(self):
         """
@@ -1420,10 +1420,10 @@ class SBox(SageObject):
         m = self.m
         n = self.n
 
-        if not is_even(m) or n > m/2:
+        if not is_even(m) or n > m//2:
             return False
 
-        return self.nonlinearity() == 2**(m-1) - 2**(m/2 - 1)
+        return self.nonlinearity() == 2**(m-1) - 2**(m//2 - 1)
 
     def is_involution(self):
         r"""

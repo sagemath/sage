@@ -1383,36 +1383,40 @@ class HasseDiagram(DiGraph):
         result.pop() # Remove the top element.
         return result
 
-    def is_complemented_lattice(self):
-        r"""
-        Return ``True`` if ``self`` is the Hasse diagram of a
-        complemented lattice, and ``False`` otherwise.
+    def is_complemented(self):
+        """
+        Return an element of the lattice that has no complement.
+
+        If the lattice is complemented, return ``None``.
 
         EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram({0:[1, 2, 3], 1:[4], 2:[4], 3:[4]})
-            sage: H.is_complemented_lattice()
-            True
 
             sage: H = HasseDiagram({0:[1, 2], 1:[3], 2:[3], 3:[4]})
-            sage: H.is_complemented_lattice()
-            False
+            sage: H.is_complemented()
+            1
+
+            sage: H = HasseDiagram({0:[1, 2, 3], 1:[4], 2:[4], 3:[4]})
+            sage: H.is_complemented() is None
+            True
         """
-        from itertools import izip
-        try:
-            mt = self.meet_matrix()
-            jn = self.join_matrix()
-        except ValueError:
-            return False
-        n = self.cardinality() - 1
-        for row1, row2 in izip(mt, jn):
-            for c1, c2 in izip(row1, row2):
-                if c1 == 0 and c2 == n:
+        mt = self.meet_matrix()
+        jn = self.join_matrix()
+        top = self.cardinality() - 1
+        has_complement = [False] * top
+
+        for i in xrange(1, top):
+            if has_complement[i]:
+                continue
+            for j in xrange(top, 0, -1):
+                if jn[i, j] == top and mt[i, j] == 0:
+                    has_complement[j] = True
                     break
             else:
-                return False
-        return True
+                return i
+
+        return None
 
     def complements(self):
         r"""

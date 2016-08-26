@@ -202,7 +202,7 @@ class PollackStevensModularSymbolspace(Module):
         else:
             self.Element = PSModularSymbolElement_dist
         self._sign = sign
-        # should distingish between Gamma0 and Gamma1...
+        # should distinguish between Gamma0 and Gamma1...
         self._source = ManinRelations(group.level())
 
         # Register the action of 2x2 matrices on self.
@@ -626,7 +626,7 @@ class PollackStevensModularSymbolspace(Module):
 
         .. WARNING::
 
-        This isn't really an element of the space becuase it doesn't satisfy
+        This is not really an element of the space because it does not satisfy
         the Manin relations.
 
         EXAMPLES::
@@ -647,7 +647,7 @@ class PollackStevensModularSymbolspace(Module):
 
     def random_element(self, M=None):
         r"""
-        Return a random overcovergent modular symbol in this space with `M` moments
+        Return a random overconvergent modular symbol in this space with `M` moments
 
         INPUT:
 

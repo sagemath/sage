@@ -1027,7 +1027,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         EXAMPLES:
 
         The greatest common divisor is either zero or a power of the
-        uniformizing paramter::
+        uniformizing parameter::
 
             sage: R = Zp(3)
             sage: R.zero().xgcd(R.zero())

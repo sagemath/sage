@@ -13,9 +13,9 @@ multiplication algorithms.
 #
 #                  http://www.gnu.org/licenses/
 ################################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-from matrix_window cimport MatrixWindow
+from .matrix_window cimport MatrixWindow
 
 include "cysignals/signals.pxi"
 

@@ -125,35 +125,38 @@ def init_sage():
     stringPict.terminal_width = lambda self:0
 
 
-def warning_function(file):
+def showwarning_with_traceback(message, category, filename, lineno, file=sys.stdout, line=None):
     r"""
-    Creates a function that prints warnings to the given file.
+    Displays a warning message with a traceback.
 
-    INPUT:
+    INPUT: see :func:`warnings.showwarning`.
 
-    - ``file`` -- an open file handle.
-
-    OUTPUT:
-
-    - a function that prings warnings to the given file.
+    OUTPUT: None
 
     EXAMPLES::
 
-        sage: from sage.doctest.forker import warning_function
-        sage: import tempfile
-        sage: F = tempfile.TemporaryFile()
-        sage: wrn = warning_function(F)
-        sage: wrn("bad stuff", UserWarning, "myfile.py", 0)
-        sage: F.seek(0)
-        sage: F.read()
-        'doctest:...: UserWarning: bad stuff\n'
+        sage: from sage.doctest.forker import showwarning_with_traceback
+        sage: showwarning_with_traceback("bad stuff", UserWarning, "myfile.py", 0)
+        doctest:warning
+          ...
+          File "<doctest sage.doctest.forker.showwarning_with_traceback[1]>", line 1, in <module>
+            showwarning_with_traceback("bad stuff", UserWarning, "myfile.py", Integer(0))
+        :
+        UserWarning: bad stuff
     """
-    def doctest_showwarning(message, category, filename, lineno, file=file, line=None):
-        try:
-            file.write(warnings.formatwarning(message, category, 'doctest', lineno, line))
-        except IOError:
-            pass # the file (probably stdout) is invalid
-    return doctest_showwarning
+    # Get traceback to display in warning
+    tb = traceback.extract_stack()
+    tb = tb[:-1]  # Drop this stack frame for showwarning_with_traceback()
+
+    # Format warning
+    lines = ["doctest:warning\n"]  # Match historical warning messages in doctests
+    lines.extend(traceback.format_list(tb))
+    lines.append(":\n")            # Match historical warning messages in doctests
+    lines.extend(traceback.format_exception_only(category, message))
+    try:
+        file.writelines(lines)
+    except IOError:
+        pass # the file is invalid
 
 
 class SageSpoofInOut(SageObject):
@@ -605,7 +608,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         self.setters = {}
         randstate.set_random_seed(long(0))
-        warnings.showwarning = warning_function(sys.stdout)
+        warnings.showwarning = showwarning_with_traceback
         self.running_doctest_digest = hashlib.md5()
         self.test = test
         if compileflags is None:

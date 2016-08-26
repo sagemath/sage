@@ -10,11 +10,11 @@ Utility functions for libGAP
 #   the License, or (at your option) any later version.
 #                   http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from sage.env import SAGE_LOCAL
 from libc.stdint cimport uintptr_t
-from element cimport *
+from .element cimport *
 
 
 ############################################################################
@@ -134,7 +134,7 @@ cdef void gasman_callback():
     Callback before each GAP garbage collection
     """
     global owned_objects_refcount
-    for obj in owned_objects_refcount.iterkeys():
+    for obj in owned_objects_refcount:
         libGAP_MARK_BAG((<ObjWrapper>obj).value)
 
 

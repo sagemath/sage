@@ -137,7 +137,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
         sage: implicit_plot3d(x^2 + y ^2 + z^2 +sin(4*x) + sin(4*y) + sin(4*z) -1, (x, -2, 2), (y, -2, 2), (z, -2, 2))
         Graphics3d Object
 
-    A klein bottle::
+    A Klein bottle::
 
         sage: implicit_plot3d((x^2+y^2+z^2+2*y-1)*((x^2+y^2+z^2-2*y-1)^2-8*z^2)+16*x*z*(x^2+y^2+z^2-2*y-1), (x, -3, 3), (y, -3.1, 3.1), (z, -4, 4))
         Graphics3d Object

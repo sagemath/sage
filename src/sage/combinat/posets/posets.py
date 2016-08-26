@@ -63,6 +63,7 @@ List of Poset methods
     :meth:`~FinitePoset.width` | Return the number of elements in a longest antichain of the poset.
     :meth:`~FinitePoset.relations_number` | Return the number of relations in the poset.
     :meth:`~FinitePoset.dimension` | Return the dimension of the poset.
+    :meth:`~FinitePoset.jump_number` | Return the jump number of the poset.
     :meth:`~FinitePoset.has_bottom` | Return ``True`` if the poset has a unique minimal element.
     :meth:`~FinitePoset.has_top` | Return ``True`` if the poset has a unique maximal element.
     :meth:`~FinitePoset.is_bounded` | Return ``True`` if the poset has both unique minimal and unique maximal element.
@@ -242,6 +243,8 @@ Classes and functions
 #*****************************************************************************
 # python3
 from __future__ import division, print_function, absolute_import
+
+from six import itervalues
 
 import copy
 from sage.misc.cachefunc import cached_method
@@ -1757,7 +1760,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                                for (element, label) in element_labels.items())
             graph = graph.relabel(relabeling, inplace = False)
             if heights is not None:
-                for key in heights.keys():
+                for key in heights:
                     heights[key] = [relabeling[i] for i in heights[key]]
 
         if cover_labels is not None:
@@ -2918,6 +2921,76 @@ class FinitePoset(UniqueRepresentation, Parent):
             return [[self._list[i] for i in l]
                     for l in linear_extensions]
         return k
+
+    def jump_number(self, certificate=False):
+        """
+        Return the jump number of the poset.
+
+        A *jump* in a linear extension `[e_1, \ldots, e_n]` of a poset `P`
+        is a pair `(e_i, e_{i+1})` so that `e_{i+1}` does not cover `e_i`
+        in `P`. The jump number of a poset is the minimal number of jumps
+        in linear extensions of a poset.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) Whether to return
+          a certificate
+
+        OUTPUT:
+
+        - If ``certificate=True`` return a pair `(n, l)` where
+          `n` is the jump number and `l` is a linear extension
+          with `n` jumps. If ``certificate=False`` return only
+          the jump number.
+
+        EXAMPLES::
+
+            sage: B3 = Posets.BooleanLattice(3)
+            sage: B3.jump_number()
+            3
+
+            sage: N = Poset({1: [3, 4], 2: [3]})
+            sage: N.jump_number(certificate=True)
+            (1, [1, 4, 2, 3])
+
+        REFERENCES:
+
+        .. [BIANCO] L. Bianco, P. Dell‘Olmo, S. Giordani
+           An Optimal Algorithm to Find the Jump Number of Partially Ordered Sets
+           Computational Optimization and Applications,
+           1997, Volume 8, Issue 2, pp 197--210,
+           :doi:`10.1023/A:1008625405476`
+
+        TESTS::
+
+            sage: E = Poset()
+            sage: E.jump_number(certificate=True)
+            (0, [])
+
+            sage: C4 = Posets.ChainPoset(4)
+            sage: A4 = Posets.AntichainPoset(4)
+            sage: C4.jump_number()
+            0
+            sage: A4.jump_number()
+            3
+        """
+        H = self._hasse_diagram
+        jumps_min = H.order()  # = "Infinity"
+
+        for lin_ext in H.topological_sort_generator():
+            jumpcount = 0
+            for a, b in zip(lin_ext, lin_ext[1:]):
+                if not H.has_edge(a, b):
+                    jumpcount += 1
+                    if jumpcount >= jumps_min:
+                        break
+            else:
+                jumps_min = jumpcount
+                best_le = lin_ext
+
+        if certificate:
+            return (jumps_min, [self._vertex_to_element(v) for v in best_le])
+        return jumps_min
 
     def rank_function(self):
         r"""
@@ -4503,11 +4576,16 @@ class FinitePoset(UniqueRepresentation, Parent):
                            elements=elements, category=self.category(),
                            facade=self._is_facade)
 
-    def canonical_label(self):
+    def canonical_label(self, algorithm=None):
         """
         Return the unique poset on the labels `\{0, \ldots, n-1\}` (where `n`
         is the number of elements in the poset) that is isomorphic to this
         poset and invariant in the isomorphism class.
+
+        INPUT:
+
+        - ``algorithm``, a string or ``None`` -- a parameter forwarded
+          to underlying graph function to select the algorithm to use
 
         .. SEEALSO::
 
@@ -4552,8 +4630,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: Poset().canonical_label()  # Test the empty poset
             Finite poset containing 0 elements
+
+            sage: D2 = Posets.DiamondPoset(4).canonical_label(algorithm='bliss')  # optional: bliss
+            sage: B2 = Posets.BooleanLattice(2).canonical_label(algorithm='bliss')  # optional: bliss
+            sage: D2 == B2  # optional: bliss
+            True
         """
-        canonical_label = self._hasse_diagram.canonical_label(certificate=True)[1]
+        canonical_label = self._hasse_diagram.canonical_label(certificate=True,
+                                                              algorithm=algorithm)[1]
         canonical_label = {self._elements[v]:i for v,i in canonical_label.iteritems()}
         return self.relabel(canonical_label)
 
@@ -5921,8 +6005,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             d = {}
             for y in self.upper_covers(x):
                 for c in self.upper_covers(y):
-                    d[c] = d.get(c,0) + 1
-            if not all( y < 3 for y in d.itervalues() ):
+                    d[c] = d.get(c, 0) + 1
+            if not all(y < 3 for y in itervalues(d)):
                 return False
         return True
 
@@ -6775,7 +6859,7 @@ def _ford_fulkerson_chronicle(G, s, t, a):
         # X: list of vertices of G' reachable from s, along with
         # the shortest paths from s to them.
         X = Gprime.shortest_paths(s)
-        if t in X.keys():
+        if t in X:
             # Step MC2a in Britz-Fomin, Algorithm 7.2.
             shortest_path = X[t]
             shortest_path_in_edges = zip(shortest_path[:-1],shortest_path[1:])

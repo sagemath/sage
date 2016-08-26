@@ -666,8 +666,9 @@ class FormsSpace_abstract(FormsRing_abstract):
     def weight_parameters(self):
         r"""
         Check whether ``self`` has a valid weight and multiplier.
+
         If not then an exception is raised. Otherwise the two weight
-        paramters corresponding to the weight and multiplier of ``self``
+        parameters corresponding to the weight and multiplier of ``self``
         are returned.
 
         The weight parameters are e.g. used to calculate dimensions

@@ -1162,7 +1162,7 @@ class OEISSequence(SageObject):
 
     def __call__(self, k):
         r"""
-        Returns the element of the sequence ``self`` whith index ``k``.
+        Return the element of the sequence ``self`` with index ``k``.
 
         INPUT:
 

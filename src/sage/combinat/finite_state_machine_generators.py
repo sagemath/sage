@@ -1977,7 +1977,7 @@ class TransducerGenerators(object):
              if carry >= 0},
             multiedges=False)
 
-        initial_values_set = set(initial_values.iterkeys())
+        initial_values_set = set(initial_values)
 
         missing_initial_values = required_initial_values.difference(
             initial_values_set)

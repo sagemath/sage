@@ -1094,7 +1094,7 @@ class Factorization(SageObject):
             d1 = dict(self)
             d2 = dict(other)
             s = {}
-            for a in set(d1.keys()).union(set(d2.keys())):
+            for a in set(d1).union(set(d2)):
                 s[a] = d1.get(a,0) + d2.get(a,0)
             return Factorization(list(s.iteritems()), unit=self.unit()*other.unit())
         else:
@@ -1245,7 +1245,7 @@ class Factorization(SageObject):
             d1 = dict(self)
             d2 = dict(other)
             s = {}
-            for a in set(d1.keys()).intersection(set(d2.keys())):
+            for a in set(d1).intersection(set(d2)):
                 s[a] = min(d1[a],d2[a])
             return Factorization(list(s.iteritems()))
         else:
@@ -1287,7 +1287,7 @@ class Factorization(SageObject):
             d1 = dict(self)
             d2 = dict(other)
             s = {}
-            for a in set(d1.keys()).union(set(d2.keys())):
+            for a in set(d1).union(set(d2)):
                 s[a] = max(d1.get(a,0),d2.get(a,0))
             return Factorization(list(s.iteritems()))
         else:

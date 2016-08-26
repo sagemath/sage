@@ -59,11 +59,11 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
 
 import operator
 
-from matrix_space import MatrixSpace, is_MatrixSpace
+from .matrix_space import MatrixSpace, is_MatrixSpace
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.structure.element cimport coercion_model
 

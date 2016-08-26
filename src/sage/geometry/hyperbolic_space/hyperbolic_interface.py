@@ -40,7 +40,6 @@ EXAMPLES::
     sage: HyperbolicPlane().PD().get_point(1/2 + I/2)
     Point in PD 1/2*I + 1/2
 """
-
 #***********************************************************************
 #
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
@@ -52,6 +51,8 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #***********************************************************************
+from __future__ import division
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.misc.abstract_method import abstract_method
@@ -203,5 +204,5 @@ class HyperbolicModels(Category_realization_of_parent):
                 sage: H.HM().an_element()
                 Point in HM (0, 0, 1)
             """
-            return self(self.realization_of().PD().get_point(0))
-
+            from sage.rings.integer_ring import ZZ
+            return self(self.realization_of().PD().get_point(ZZ.zero()))

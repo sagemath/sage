@@ -54,8 +54,11 @@ Classes and methods
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*******************************************************************************
-from c_graph cimport CGraphBackend
-from c_graph cimport CGraph
+from __future__ import absolute_import
+
+from .c_graph cimport CGraphBackend
+from .c_graph cimport CGraph
+
 
 cdef class GenericGraphBackend(SageObject):
     """
@@ -670,9 +673,9 @@ cdef class GenericGraphBackend(SageObject):
             sage: loads(dumps(gi)) == gi
             True
         """
-        from static_sparse_backend import StaticSparseBackend
-        from sparse_graph import SparseGraphBackend
-        from dense_graph import DenseGraphBackend
+        from .static_sparse_backend import StaticSparseBackend
+        from .sparse_graph import SparseGraphBackend
+        from .dense_graph import DenseGraphBackend
 
         # implementation, data_structure, multiedges, directed, loops
         if isinstance(self, CGraphBackend):

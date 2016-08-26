@@ -414,7 +414,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     EXAMPLES::
 
         sage: v = sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(3)
-        sage: v.keys()
+        sage: list(v)
         [1, 2, 3]
         sage: v[1]
         [(-3, 3), (-3, 2), (-3, 1), (-4, 2), (-4, 1), (-7, 2), (-7, 1), (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
@@ -423,7 +423,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         sage: v[3]
         [(-3, 9), (-3, 6), (-11, 2), (-19, 2), (-23, 2), (-23, 1), (-31, 2), (-31, 1), (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2), (-211, 1), (-283, 1), (-307, 1), (-331, 1), (-379, 1), (-499, 1), (-547, 1), (-643, 1), (-883, 1), (-907, 1)]
         sage: v = sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(8, proof=False)
-        sage: [len(v[h]) for h in v.keys()]
+        sage: [len(v[h]) for h in v]
         [13, 29, 25, 84, 29, 101, 38, 208]
 
     Find all class numbers for discriminant up to 50::
@@ -528,14 +528,14 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
                         T[h] = [z]
                 f += 1
 
-    for h in T.keys():
+    for h in T:
         T[h] = list(reversed(T[h]))
 
     if fund_count is not None:
         # Double check that we found the right number of fundamental
         # discriminants; we might as well, since Watkins provides this
         # data.
-        for h in T.keys():
+        for h in T:
             if len([D for D,f in T[h] if f==1]) != fund_count[h]:
                 raise RuntimeError("number of discriminants inconsistent with Watkins's table")
 

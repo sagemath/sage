@@ -319,7 +319,7 @@ the matching, which is a linear constraint. We will be solving:
 
 .. MATH::
     \text{Max: } & \sum_{e \in E(G)} m_e\\
-    \text{Such that: } & \forall v, \sum_{e \in E(G) \atop v \sim e} m_e \leq 1
+    \text{Such that: } & \forall v, \sum_{\substack{e \in E(G) \\ v \sim e}} m_e \leq 1
 
 Let us write the Sage code of this MILP::
 
@@ -385,7 +385,7 @@ following LP
 
 .. MATH::
     \text{Max: } & \sum_{sv \in G} f_{sv}\\
-    \text{Such that: } & \forall v \in G, {v \neq s \atop v \neq t}, \sum_{vu \in G} f_{vu} - \sum_{uv \in G} f_{uv} = 0\\
+    \text{Such that: } & \forall v \in G, {\substack{v \neq s \\ v \neq t}}, \sum_{vu \in G} f_{vu} - \sum_{uv \in G} f_{uv} = 0\\
     & \forall uv \in G, f_{uv} \leq 1\\
 
 We will solve the flow problem on an orientation of Chvatal's

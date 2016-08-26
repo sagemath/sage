@@ -25,7 +25,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, division
 
 import string
 
@@ -388,12 +388,13 @@ def get_bit(x, c):
              b = 'False'
          else:
              b = 'True'
-         x /= 2
+         x = x // 2
          bits.append(b)
     if c > len(bits) - 1:
         return 'False'
     else:
         return bits[c]
+
 
 def eval(toks):
     r"""

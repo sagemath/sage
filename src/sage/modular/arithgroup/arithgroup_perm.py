@@ -726,7 +726,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         The implementation of modular subgroup by action of generators on cosets
         depends on the choice of a numbering. This function provides
-        canonical labels in the sense that two equal subgroups whith different
+        canonical labels in the sense that two equal subgroups with different
         labels are relabeled the same way. The default implementation relabels
         the group itself. If you want to get a relabeled copy of your modular
         subgroup, put to ``False`` the option ``inplace``.
@@ -740,7 +740,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         construct a canonical representative of a transitive subgroup in its
         conjugacy class in the full symmetric group.
 
-        1. The identity is still numbered `0` and set the curent vertex to be
+        1. The identity is still numbered `0` and set the current vertex to be
         the identity.
 
         2. Number the cycle of `S3` the current vertex belongs to: if the

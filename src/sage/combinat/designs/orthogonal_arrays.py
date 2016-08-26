@@ -58,6 +58,8 @@ Functions
 from __future__ import print_function
 from __future__ import absolute_import
 
+from six import itervalues
+
 from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
@@ -1705,7 +1707,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
                 Hij = set([(Y[i] - Y[j]) * v for v in H])
                 for s in range(2 * G_card):
                     g_to_col_indices[B[i][s] - B[j][s]].append(s)
-                for s1,s2 in g_to_col_indices.itervalues():
+                for s1, s2 in itervalues(g_to_col_indices):
                     v1 = A[i][s1][1] - A[j][s1][1]
                     v2 = A[i][s2][1] - A[j][s2][1]
 

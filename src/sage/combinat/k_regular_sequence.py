@@ -62,8 +62,8 @@ Various
 .. SEEALSO::
 
     :mod:`recognizable series <sage.combinat.recognizable_series>`,
-    :doc:`sage/rings/cfinite_sequence`,
-    :doc:`sage/combinat/binary_recurrence_sequences`.
+    :mod:`sage.rings.cfinite_sequence`,
+    :mod:`sage.combinat.binary_recurrence_sequences`.
 
 REFERENCES:
 
@@ -375,7 +375,7 @@ class kRegularSequence(RecognizableSeries):
           of all `c_j(an+b_j)`.
 
         - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the addition.
+          :meth:`minimized` is called after the operation.
 
         OUTPUT:
 
@@ -557,7 +557,7 @@ class kRegularSequence(RecognizableSeries):
         INPUT:
 
         - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the addition.
+          :meth:`minimized` is called after the operation.
 
         OUTPUT:
 
@@ -597,7 +597,7 @@ class kRegularSequence(RecognizableSeries):
         INPUT:
 
         - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the addition.
+          :meth:`minimized` is called after the operation.
 
         OUTPUT:
 
@@ -638,7 +638,7 @@ class kRegularSequence(RecognizableSeries):
           to index `n` (included).
 
         - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the addition.
+          :meth:`minimized` is called after the operation.
 
         OUTPUT:
 

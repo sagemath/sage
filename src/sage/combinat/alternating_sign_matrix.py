@@ -30,6 +30,8 @@ AUTHORS:
 # python3
 from __future__ import division
 
+from six import itervalues
+
 import itertools
 import copy
 from sage.misc.classcall_metaclass import ClasscallMetaclass
@@ -1416,10 +1418,9 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             sage: P.is_lattice()
             True
         """
-        (mts, rels) = MonotoneTriangles(self._n)._lattice_initializer()
-        bij = dict((t, self.from_monotone_triangle(t)) for t in mts)
-        asms, rels = bij.itervalues(), [(bij[a], bij[b]) for (a,b) in rels]
-        return (asms, rels)
+        mts, rels = MonotoneTriangles(self._n)._lattice_initializer()
+        bij = {t: self.from_monotone_triangle(t) for t in mts}
+        return (itervalues(bij), [(bij[a], bij[b]) for (a, b) in rels])
 
     def cover_relations(self):
         r"""

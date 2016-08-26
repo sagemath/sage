@@ -27,6 +27,7 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
@@ -41,7 +42,7 @@ from sage.libs.gmp.mpz cimport *
 
 cdef uint64_t arg_to_uint64(x, str s1, str s2) except -1:
     if not isinstance(x, Integer):
-        from other import floor
+        from .other import floor
         x = Integer(floor(x))
     if mpz_sgn((<Integer>x).value) <= 0:
         return 0ull

@@ -248,13 +248,10 @@ def ascii_art(*obj, **kwds):
     """
     separator = kwds.pop('sep', empty_ascii_art)
     if kwds:
-        raise ValueError('unknown keyword arguments: {0}'.format(kwds.keys()))
+        raise ValueError('unknown keyword arguments: {0}'.format(list(kwds)))
     if len(obj) == 1:
         return _ascii_art_factory.build(obj[0])
     if not isinstance(separator, AsciiArt):
         separator = _ascii_art_factory.build(separator)
     obj = map(_ascii_art_factory.build, obj)
     return _ascii_art_factory.concatenate(obj, separator, empty_ascii_art)
-
-
-

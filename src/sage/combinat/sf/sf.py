@@ -1433,7 +1433,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         from sage.combinat.sf.classical import conversion_functions
 
-        for (basis1_name, basis2_name) in conversion_functions.keys():
+        for (basis1_name, basis2_name) in conversion_functions:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
             on_basis = SymmetricaConversionOnBasis(t = conversion_functions[basis1_name,basis2_name], domain = basis1, codomain = basis2)

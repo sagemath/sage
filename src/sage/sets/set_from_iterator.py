@@ -67,10 +67,11 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import EmptySetError
-from itertools import izip_longest
+
 import os
 from sage.misc.function_mangling import ArgumentFixer
 from sage.misc.lazy_list import lazy_list
+
 
 class EnumeratedSetFromIterator(Parent):
     """

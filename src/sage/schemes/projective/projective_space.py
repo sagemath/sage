@@ -453,7 +453,7 @@ class ProjectiveSpace_ring(AmbientSpace):
 
         OUTPUT:
 
-        A matrix of size `{m-1+n \choose n}` x `{d+n \choose n}` where n is the
+        A matrix of size `\binom{m-1+n}{n}` x `\binom{d+n}{n}` where n is the
         relative dimension of self. The base ring of the matrix is a ring that
         contains the base ring of self and the coefficients of the given point.
 

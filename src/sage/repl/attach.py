@@ -398,7 +398,7 @@ def attached_files():
         True
     """
     global attached
-    return list(sorted(attached.keys()))
+    return sorted(attached)
 
 
 def detach(filename):

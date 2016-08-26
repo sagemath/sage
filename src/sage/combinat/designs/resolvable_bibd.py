@@ -47,8 +47,7 @@ References:
 Functions
 ---------
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import, division
 
 from sage.arith.all import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
@@ -119,7 +118,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
     if k==2:
         if existence:
             return True
-        classes = [[[(c+i)%(v-1),(c+v-i)%(v-1)] for i in range(1,v//2)]
+        classes = [[[(c+i)%(v-1),(c+v-i)%(v-1)] for i in range(1, v//2)]
                    for c in range(v-1)]
         for i,classs in enumerate(classes):
             classs.append([v-1,i])
@@ -211,7 +210,7 @@ def kirkman_triple_system(v,existence=False):
         q = (v-1)//2
         K = GF(q,'x')
         a = K.primitive_element()
-        t = (q-1)/6
+        t = (q - 1) // 6
 
         # m is the solution of a^m=(a^t+1)/2
         from sage.groups.generic import discrete_log
@@ -252,7 +251,7 @@ def kirkman_triple_system(v,existence=False):
         q = v//3
         K = GF(q,'x')
         a = K.primitive_element()
-        t = (q-1)/6
+        t = (q - 1) // 6
         A0 = [(0,0),(0,1),(0,2)]
         B  = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
               for i in range(t)]
@@ -333,7 +332,7 @@ def kirkman_triple_system(v,existence=False):
             B.pop(0)
 
         # Pasting the KTS(n') without {x,x',\infty} blocks
-        classes = [[] for i in range((v-1)/2)]
+        classes = [[] for i in range((v-1) // 2)]
         gdd = {4:gdd4, 7: gdd7}
         for B in PBD_4_7((v-1)//2,check=False):
             for i,classs in enumerate(gdd[len(B)]):
@@ -622,10 +621,10 @@ def PBD_4_7(v,check=True, existence=False):
 
         return PBD_4_7_from_Y(GDD,check=check)
 
-    elif v%6 == 1 and GDD_4_2((v-1)/6,existence=True):
+    elif v % 6 == 1 and GDD_4_2((v - 1) // 6, existence=True):
         # VII.5.17 from [BJL99]
-        gdd = GDD_4_2((v-1)/6)
-        return PBD_4_7_from_Y(gdd,check=check)
+        gdd = GDD_4_2((v - 1) // 6)
+        return PBD_4_7_from_Y(gdd, check=check)
 
     elif v == 202:
         # IV.4.5.p from [BJL99]
@@ -647,8 +646,8 @@ def PBD_4_7(v,check=True, existence=False):
         # construction on the truncated transversal design (which is a GDD).
         #
         # We write vv = 4g+u while satisfying the hypotheses.
-        vv = (v-1)/3
-        for g in range((vv+5-1)//5,vv//4+1):
+        vv = (v - 1) // 3
+        for g in range((vv + 5 - 1) // 5, vv // 4 + 1):
             u = vv-4*g
             if (orthogonal_array(5,g,existence=True) and
                 PBD_4_7(3*g+1,existence=True)        and
