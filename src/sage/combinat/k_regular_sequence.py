@@ -363,6 +363,132 @@ class kRegularSequence(RecognizableSeries):
         return iter(self[n] for n in count())
 
 
+    @cached_method
+    def is_healthy(self):
+        r"""
+        Return whether this `k`-regular sequence satisfies
+        `\mu[0] \mathit{right} = \mathit{right}`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: S.is_healthy()
+            False
+
+        ::
+
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C.is_healthy()
+            True
+        """
+        from sage.rings.integer_ring import ZZ
+        return (self.mu[ZZ(0)] * self.right) == self.right
+
+
+    @cached_method
+    def healed(self, minimize=True):
+        r"""
+        Return a `k`-regular sequence that satisfies
+        `\mu[0] \mathit{right} = \mathit{right}`.
+
+        INPUT:
+
+        - ``minimize`` -- (default: ``True``) a boolean. If set, then
+          :meth:`minimized` is called after the operation.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+
+        The following linear representation of `S` is chosen bad (is
+        unhealty, see :meth:`is_healthy`), as `\mu(0)` applied on
+        `\mathit{right}` does not equal `\mathit{right}`::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: S.is_healthy()
+            False
+
+        However, we can heal the sequence `S`::
+
+            sage: H = S.healed()
+            sage: H
+            2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
+            sage: H.mu[0], H.mu[1], H.left, H.right
+            (
+            [ 0  1]  [3 0]
+            [-2  3], [6 0], (1, 0), (1, 1)
+            )
+            sage: H.is_healthy()
+            True
+
+        TESTS::
+
+            sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: H = S.healed(minimize=False)
+            sage: H.mu[0], H.mu[1], H.left, H.right
+            (
+            [1 0]  [0 0]
+            [0 2], [3 3], (1, 1), (1, 0)
+            )
+            sage: H.is_healthy()
+            True
+
+        ::
+
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C.is_healthy()
+            True
+            sage: C.healed() is C
+            True
+        """
+        if self.is_healthy():
+            return self
+
+        from sage.matrix.special import zero_matrix, identity_matrix
+        from sage.modules.free_module_element import vector
+
+        P = self.parent()
+        dim = self.dimension()
+        Z = zero_matrix(dim)
+        I = identity_matrix(dim)
+
+        itA = iter(P.alphabet())
+        z = next(itA)
+        mu = {z: I.augment(Z).stack(Z.augment(self.mu[z]))}
+        mu.update((r, Z.augment(Z).stack(self.mu[r].augment(self.mu[r])))
+                  for r in itA)
+
+        result = P.element_class(
+            P, mu,
+            vector(2*tuple(self.left)),
+            vector(tuple(self.right) + dim*(0,)))
+
+        if minimize:
+            return result.minimized()
+        else:
+            return result
+
+
     def subsequence(self, a, b, minimize=True):
         r"""
         Return the subsequence with indices `an+b` of this
