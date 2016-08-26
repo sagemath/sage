@@ -1100,7 +1100,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
-            sage: logging.basicConfig(level=logging.INFO)
+            sage: logging.getLogger().setLevel(logging.INFO)
             sage: S1 = Seq2.guess(s)
             INFO:...:including f_{1*m+0}
             INFO:...:M_0: f_{2*m+0} = (1) * X_m
@@ -1115,7 +1115,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             [1 0]  [ 0  1]
             [0 1], [-1  2], (1, 0), (0, 1)
             )
-            sage: logging.shutdown(); _ = reload(logging)
+            sage: logging.getLogger().setLevel(logging.WARN)
 
         Variant 2::
 
