@@ -644,16 +644,17 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         are systematically defined (and mathematically meaningful) for
         algebras.
 
-        Conversions between distinct free modules are not allowed any
-        more::
+        Coercions between free modules with the same indices but whose
+        base rings have a coercion map is allowed::
 
             sage: F = CombinatorialFreeModule(ZZ, ["a", "b"]);      F.rename("F")
             sage: G = CombinatorialFreeModule(QQ, ["a", "b"]);      G.rename("G")
-            sage: H = CombinatorialFreeModule(ZZ, ["a", "b", "c"]); H.rename("H")
             sage: G(F.monomial("a"))
-            Traceback (most recent call last):
-            ...
-            TypeError: do not know how to make x (= B['a']) an element of self (=G)
+            B['a']
+
+        Otherwise, there is no conversion between distinct free modules::
+
+            sage: H = CombinatorialFreeModule(ZZ, ["a", "b", "c"]); H.rename("H")
             sage: H(F.monomial("a"))
             Traceback (most recent call last):
             ...
@@ -675,11 +676,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: pp(a)
             1/4*p[1, 1] # p[1, 1] + 1/4*p[1, 1] # p[2] + 1/4*p[2] # p[1, 1] + 1/4*p[2] # p[2]
 
-        Extensions of the ground ring should probably be reintroduced
+        General extensions of the ground ring should probably be reintroduced
         at some point, but via coercions, and with stronger sanity
         checks (ensuring that the codomain is really obtained by
         extending the scalar of the domain; checking that they share
         the same class is not sufficient).
+
 
         TESTS:
 
@@ -780,6 +782,33 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         B = self.basis()
         it = iter(self._indices)
         return tuple(B[next(it)] for i in range(n))
+
+    def _coerce_map_from_(self, R):
+        """
+        Return ``True`` if there is a coerce map from ``R`` into ``self``.
+
+        There exists a coercion map from:
+
+        - a free module whose base ring coerces into the base ring of ``self``
+
+        EXAMPLES::
+
+            sage: C = CombinatorialFreeModule(ZZ, Set([1,2]))
+            sage: CQ = CombinatorialFreeModule(QQ, Set([1,2]))
+            sage: CQ.has_coerce_map_from(C)
+            True
+            sage: c = C.monomial(2)
+            sage: cq = CQ(c); cq
+            B[2]
+            sage: cq.leading_coefficient().parent()
+            Rational Field
+        """
+        if (isinstance(R, CombinatorialFreeModule)
+                and R._indices == self._indices
+                and self.base_ring().has_coerce_map_from(R.base_ring())):
+            return lambda parent, x: self._from_dict(x._monomial_coefficients,
+                                                     coerce=True, remove_zeros=False)
+        return super(CombinatorialFreeModule, self)._coerce_map_from_(R)
 
     def dimension(self):
         """
