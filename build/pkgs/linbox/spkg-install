@@ -48,20 +48,29 @@ if [ "$SAGE64" = yes ]; then
 fi
 
 # C++11 workaround https://trac.sagemath.org/ticket/20926
-if [ "$UNAME" = CYGWIN ]; then
-    # Special case for Cygwin https://trac.sagemath.org/ticket/21185
-    CXXFLAGS="$CXXFLAGS -std=gnu++98"
-else
-    CXXFLAGS="$CXXFLAGS -std=c++98"
-fi
+# Since https://trac.sagemath.org/ticket/17635 linbox passes a -std=gnu++11 flag, so we no longer need to add it
+# if [ "$UNAME" = CYGWIN ]; then
+     # Special case for Cygwin https://trac.sagemath.org/ticket/21185
+#     CXXFLAGS="$CXXFLAGS -std=gnu++98"
+# else
+#     CXXFLAGS="$CXXFLAGS -std=c++98"
+#fi
 
 ###############################################################################
 # Configure, build and install LinBox:
 ###############################################################################
 
+# If SAGE_FAT_BINARY is set, disable dependency that be discovered on the building system.
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    LINBOX_CONFIGURE="--without-ocl $LINBOX_CONFIGURE"
+fi
+
+# We disable openmp because of build failures, see
+# http://trac.sagemath.org/ticket/17635#comment:67
 ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-            --with-default="$SAGE_LOCAL" \
-            --enable-sage --enable-optimization --disable-static
+            --with-all="$SAGE_LOCAL" \
+            --enable-sage --disable-static --disable-openmp \
+            $LINBOX_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring LinBox."
     exit 1

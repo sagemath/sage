@@ -21,20 +21,8 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-python setup.py build
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building IPython."
-    exit 1
-fi
+$PIP_INSTALL .
 
-echo "Removing old version of IPython..."
-rm -rf "$SAGE_LOCAL/lib/python/site-packages/IPython"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error deleting previous version"
-    exit 1
-fi
-
-python setup.py install
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing IPython"
     exit 1

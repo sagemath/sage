@@ -72,7 +72,7 @@ The following example shows all these steps::
     Optimal solution found.
     sage: print('Objective Value: {}'.format(round(opt,3)))
     Objective Value: 3.0
-    sage: map(lambda x: round(x,3), p.get_values(x).itervalues())
+    sage: [round(x,3) for x in p.get_values(x).values()]
     [-1.0, 2.0]
     sage: p.show()
     Maximization:

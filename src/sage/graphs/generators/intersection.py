@@ -16,6 +16,8 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 ###########################################################################
 from __future__ import print_function
 
+from six import itervalues
+
 # import from Sage library
 from sage.graphs.graph import Graph
 
@@ -545,8 +547,8 @@ def IntersectionGraph(S):
 
     g = Graph(name="Intersection Graph")
     g.add_vertices(S)
-    for clique in ground_set_to_sets.itervalues():
-        g.add_edges((u,v) for u,v in combinations(clique,2))
+    for clique in itervalues(ground_set_to_sets):
+        g.add_edges((u, v) for u, v in combinations(clique, 2))
 
     return g
 

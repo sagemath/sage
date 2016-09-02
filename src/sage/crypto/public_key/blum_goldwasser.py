@@ -113,7 +113,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         ([[0, 0, 1, 0], [0, 0, 0, 0], [1, 1, 0, 0], [1, 1, 1, 0], [0, 1, 0, 0]], 139680)
         sage: M = bg.decrypt(C, prikey); M
         [[1, 0, 0, 1], [1, 1, 0, 0], [0, 0, 0, 1], [0, 0, 0, 0], [1, 1, 0, 0]]
-        sage: M = "".join(map(lambda x: str(x), flatten(M))); M
+        sage: M = "".join(str(x) for x in flatten(M)); M
         '10011100000100001100'
         sage: M == P
         True

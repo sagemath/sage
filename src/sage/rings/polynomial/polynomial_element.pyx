@@ -3918,6 +3918,19 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if self.degree() == 0:
             return Factorization([], unit=self[0])
 
+        # Use multivariate implementations for polynomials over polynomial rings
+        variables = self._parent.variable_names_recursive()
+        if len(variables) > 1:
+            base = self._parent._mpoly_base_ring()
+            ring = PolynomialRing(base, variables)
+            if ring._has_singular:
+                try:
+                    d = self._mpoly_dict_recursive()
+                    F = ring(d).factor(**kwargs)
+                    return Factorization([(self._parent(f),m) for (f,m) in F], unit = F.unit())
+                except NotImplementedError:
+                    pass
+
         R = self.parent().base_ring()
         if hasattr(R, '_factor_univariate_polynomial'):
             return R._factor_univariate_polynomial(self, **kwargs)
@@ -6291,7 +6304,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         return self.parent()(v)
 
-    def roots(self, ring=None, multiplicities=True, algorithm=None):
+    def roots(self, ring=None, multiplicities=True, algorithm=None, **kwds):
         """
         Return the roots of this polynomial (by default, in the base ring
         of this polynomial).
@@ -6873,7 +6886,10 @@ cdef class Polynomial(CommutativeAlgebraElement):
         """
         K = self.parent().base_ring()
         if hasattr(K, '_roots_univariate_polynomial'):
-            return K._roots_univariate_polynomial(self, ring=ring, multiplicities=multiplicities, algorithm=algorithm)
+            return K._roots_univariate_polynomial(self, ring=ring, multiplicities=multiplicities, algorithm=algorithm, **kwds)
+
+        if kwds:
+            raise TypeError("roots() got unexpected keyword argument(s): {}".format(kwds.keys()))
 
         L = K if ring is None else ring
 
@@ -8620,7 +8636,6 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 elif not r.truncate(i).is_zero():
                     raise ValueError("not a %s power"%m.ordinal_str())
             raise ValueError("not a %s power"%m.ordinal_str())
-
 
 # ----------------- inner functions -------------
 # Cython can't handle function definitions inside other function

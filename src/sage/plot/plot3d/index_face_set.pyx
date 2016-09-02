@@ -31,6 +31,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import itervalues
 
 include "cysignals/signals.pxi"
 include "cysignals/memory.pxi"
@@ -1118,7 +1119,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             if face.n == 0: # skip unused vertices
                 continue
             face.vertices = &dual.face_indices[ix]
-            ff, next_ = next(dd.itervalues())
+            ff, next_ = next(itervalues(dd))
             face.vertices[0] = ff
             for j from 1 <= j < face.n:
                 ff, next_ = dd[next_]

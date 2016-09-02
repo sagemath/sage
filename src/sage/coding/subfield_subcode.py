@@ -48,7 +48,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     EXAMPLES::
 
-        sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+        sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
         sage: codes.SubfieldSubcode(C, GF(4, 'a'))
         doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
         See http://trac.sagemath.org/20284 for details.
@@ -63,7 +63,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         ``subfield`` has to be a finite field, otherwise an error is raised::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, RR)
             Traceback (most recent call last):
             ...
@@ -72,7 +72,7 @@ class SubfieldSubcode(AbstractLinearCode):
         ``subfield`` has to be a subfield of ``original_code``'s base field,
         otherwise an error is raised::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(8, 'a'))
             Traceback (most recent call last):
             ...
@@ -105,7 +105,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs1 = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs2 = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs1 == Cs2
@@ -121,7 +121,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs
             Subfield subcode over Finite Field in a of size 2^2 coming from Linear code of length 7, dimension 3 over Finite Field in aa of size 2^4
@@ -135,7 +135,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: latex(Cs)
             \textnormal{Subfield subcode over \Bold{F}_{2^{2}} coming from }[7, 3]\textnormal{ Linear code over }\Bold{F}_{2^{4}}
@@ -156,7 +156,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs.dimension_upper_bound()
             3
@@ -169,7 +169,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs.dimension_lower_bound()
             -1
@@ -186,7 +186,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs.original_code()
             Linear code of length 7, dimension 3 over Finite Field in aa of size 2^4
@@ -200,7 +200,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: C = codes.RandomLinearCode(7, 3, GF(16, 'aa'))
+            sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs.embedding()
             Relative field extension between Finite Field in aa of size 2^4 and Finite Field in a of size 2^2

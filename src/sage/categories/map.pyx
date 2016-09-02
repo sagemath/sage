@@ -1413,6 +1413,23 @@ cdef class Section(Map):
         """
         return "Section"
 
+    def inverse(self):
+        """
+        Return inverse of ``self``.
+
+        TEST::
+
+            sage: from sage.categories.map import Section
+            sage: R.<x,y> = QQ[]
+            sage: f = R.hom([x+y, x-y], R)
+            sage: sf = Section(f)
+            sage: sf.inverse()
+            Ring endomorphism of Multivariate Polynomial Ring in x, y over Rational Field
+              Defn: x |--> x + y
+                    y |--> x - y
+        """
+        return self._inverse
+
 cdef class FormalCompositeMap(Map):
     """
     Formal composite maps.

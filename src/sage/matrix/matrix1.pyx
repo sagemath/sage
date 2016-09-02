@@ -810,7 +810,7 @@ cdef class Matrix(matrix0.Matrix):
 
             sage: m = Mat(ZZ,3,3)(range(9))
             sage: v = m.dense_columns()
-            sage: map(lambda x: x.is_mutable(), v)
+            sage: [x.is_mutable() for x in v]
             [False, False, False]
         """
         x = self.fetch('dense_columns')
@@ -822,7 +822,8 @@ cdef class Matrix(matrix0.Matrix):
         C = [A.column(i) for i in range(self._ncols)]
 
         # Make the vectors immutable since we are caching them
-        map(lambda x: x.set_immutable(), C)
+        for x in C:
+            x.set_immutable()
 
         # cache result
         self.cache('dense_columns', C)
@@ -863,7 +864,7 @@ cdef class Matrix(matrix0.Matrix):
 
             sage: m = Mat(ZZ,3,3)(range(9))
             sage: v = m.dense_rows()
-            sage: map(lambda x: x.is_mutable(), v)
+            sage: [x.is_mutable() for x in v]
             [False, False, False]
         """
         x = self.fetch('dense_rows')
@@ -876,7 +877,8 @@ cdef class Matrix(matrix0.Matrix):
         R = [A.row(i) for i in range(self._nrows)]
 
         # Make the vectors immutable since we are caching them
-        map(lambda x: x.set_immutable(), R)
+        for x in R:
+            x.set_immutable()
 
         # cache result
         self.cache('dense_rows', R)
@@ -919,7 +921,7 @@ cdef class Matrix(matrix0.Matrix):
 
             sage: m = Mat(ZZ,3,3,sparse=True)(range(9))
             sage: v = m.sparse_columns()
-            sage: map(lambda x: x.is_mutable(), v)
+            sage: [x.is_mutable() for x in v]
             [False, False, False]
         """
         x = self.fetch('sparse_columns')
@@ -952,7 +954,8 @@ cdef class Matrix(matrix0.Matrix):
                 C.append(F(0))
 
         # Make the vectors immutable since we are caching them
-        map(lambda x: x.set_immutable(), C)
+        for x in C:
+            x.set_immutable()
 
         # cache and return result
         self.cache('sparse_columns', C)
@@ -1000,7 +1003,7 @@ cdef class Matrix(matrix0.Matrix):
 
             sage: m = Mat(ZZ,3,3,sparse=True)(range(9))
             sage: v = m.sparse_rows()
-            sage: map(lambda x: x.is_mutable(), v)
+            sage: [x.is_mutable() for x in v]
             [False, False, False]
         """
         x = self.fetch('sparse_rows')
@@ -1033,7 +1036,8 @@ cdef class Matrix(matrix0.Matrix):
                 R.append(F(0))
 
         # Make the vectors immutable since we are caching them
-        map(lambda x: x.set_immutable(), R)
+        for x in R:
+            x.set_immutable()
 
         # cache and return result
         self.cache('sparse_rows', R)

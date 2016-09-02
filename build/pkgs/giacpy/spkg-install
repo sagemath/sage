@@ -13,14 +13,7 @@ fi
 
 cd src
 
-
-# It is very important that we have SAGE_LOCAL set, otherwise this
-# might potentially delete stuff in /lib
-echo "Deleting $SAGE_LOCAL/lib/python/site-packages/giacpy*"
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/giacpy*
-
-
-sage setup.py install
+$PIP_INSTALL .
 
 if [ $? -ne 0 ]; then
     exit 1

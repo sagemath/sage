@@ -19,10 +19,7 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-# Remove old copies of Cython
-rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/Cython*
-
-python setup.py install
+$PIP_INSTALL .
 
 if [ $? -ne 0 ]; then
     echo "Error installing Cython"

@@ -1681,7 +1681,7 @@ class Graphics(WithEqualityById, SageObject):
         Logarithmic scale can be used for various kinds of plots. Here are
         some examples.::
 
-            sage: G = list_plot(map(lambda i: 10**i, range(10))) # long time
+            sage: G = list_plot([10**i for i in range(10)]) # long time
             sage: G.show(scale='semilogy') # long time
 
         ::

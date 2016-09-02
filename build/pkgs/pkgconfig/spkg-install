@@ -11,7 +11,7 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-python setup.py install
+$PIP_INSTALL .
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing pkgconfig."
     exit 1

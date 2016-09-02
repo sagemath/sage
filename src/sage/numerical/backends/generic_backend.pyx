@@ -321,7 +321,7 @@ cdef class GenericBackend:
             sage: p.add_variables(5)                                 # optional - Nonexistent_LP_solver
             4
             sage: p.set_objective([1, 1, 2, 1, 3])                   # optional - Nonexistent_LP_solver
-            sage: map(lambda x :p.objective_coefficient(x), range(5))  # optional - Nonexistent_LP_solver
+            sage: [p.objective_coefficient(x) for x in range(5)]  # optional - Nonexistent_LP_solver
             [1.0, 1.0, 2.0, 1.0, 3.0]
 
         Constants in the objective function are respected::

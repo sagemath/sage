@@ -1646,6 +1646,56 @@ class HasseDiagram(DiGraph):
         for i_want_python3_yield_from in recursive_fit(start, start_unbinded):
             yield i_want_python3_yield_from
 
+    def find_nonsemimodular_pair(self, upper):
+        """
+        Return pair of elements showing the lattice is not modular.
+
+        INPUT:
+
+        - upper, a Boolean -- if ``True``, test wheter the lattice is
+          upper semimodular; otherwise test whether the lattice is
+          lower semimodular.
+
+        OUTPUT:
+
+        ``None``, if the lattice is semimodular. Pair `(a, b)` violating
+        semimodularity otherwise.
+
+        EXAMPLES::
+    
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0:[1, 2], 1:[3, 4], 2:[4, 5], 3:[6], 4:[6], 5:[6]})
+            sage: H.find_nonsemimodular_pair(upper=True) is None
+            True
+            sage: H.find_nonsemimodular_pair(upper=False)
+            (5, 3)
+
+            sage: H_ = HasseDiagram(H.reverse().relabel(lambda x: 6-x, inplace=False))
+            sage: H_.find_nonsemimodular_pair(upper=True)
+            (3, 1)
+            sage: H_.find_nonsemimodular_pair(upper=False) is None
+            True
+        """
+        if upper:
+            neighbors = self.neighbors_out
+        else:
+            neighbors = self.neighbors_in
+
+        n = self.order()
+        for e in range(n):
+            covers = neighbors(e)
+            covers_len = len(covers)
+            if covers_len < 2:
+                continue
+            for a_i in range(covers_len):
+                a = covers[a_i]
+                covers_a = neighbors(a)
+                for b_i in range(a_i):
+                    b = covers[b_i]
+                    if not any(j in covers_a for j in neighbors(b)):
+                        return (a, b)
+        return None
+
     def antichains_iterator(self):
         r"""
         Return an iterator over the antichains of the poset.

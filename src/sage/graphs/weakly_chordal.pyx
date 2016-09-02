@@ -169,7 +169,8 @@ def is_long_hole_free(g, certificate=False):
 
                         # Return the answer, and relabel it on-the-fly with the
                         # vertices' real name
-                        return False, map(lambda x:id_label[x],C[min(u,v): max(u,v)+1])
+                        return False, [id_label[x]
+                                       for x in C[min(u, v): max(u, v) + 1]]
 
                     else:
                         return False, None
@@ -338,7 +339,8 @@ def is_long_antihole_free(g, certificate = False):
 
                         # Return the answer, and relabel it on-the-fly with the
                         # vertices' real name
-                        return False, map(lambda x:id_label[x],C[min(u,v): max(u,v)+1])
+                        return False, [id_label[x]
+                                       for x in C[min(u, v): max(u, v) + 1]]
 
                     else:
                         return False, []

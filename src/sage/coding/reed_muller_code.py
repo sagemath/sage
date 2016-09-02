@@ -568,7 +568,7 @@ class ReedMullerVectorEncoder(Encoder):
 
         If ``code`` is not a Reed-Muller code, an error is raised::
 
-            sage: C  = codes.RandomLinearCode(10, 4, GF(11))
+            sage: C  = codes.random_linear_code(GF(11), 10, 4)
             sage: codes.encoders.ReedMullerVectorEncoder(C)
             Traceback (most recent call last):
             ...
@@ -743,7 +743,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         If ``code`` is not a Reed-Muller code, an error is raised::
 
-            sage: C  = codes.RandomLinearCode(10, 4, GF(11))
+            sage: C  = codes.random_linear_code(GF(11), 10, 4)
             sage: codes.encoders.ReedMullerPolynomialEncoder(C)
             Traceback (most recent call last):
             ...

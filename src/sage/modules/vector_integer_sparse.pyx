@@ -4,14 +4,12 @@
 #
 #############################################################
 
-# You must do this in the file that uses this code
-#     include 'binary_search.pxi'
-
-include 'vector_integer_sparse_h.pxi'
-
 from sage.libs.gmp.mpz cimport *
+from sage.data_structures.binary_search cimport *
 from sage.rings.integer cimport Integer
 
+
+include "cysignals/memory.pxi"
 
 cdef int allocate_mpz_vector(mpz_vector* v, Py_ssize_t num_nonzero) except -1:
     """

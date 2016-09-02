@@ -117,6 +117,13 @@ class LLT_class(UniqueRepresentation):
             True
             sage: L3p != SymmetricFunctions(QQ).llt(3,t=1)
             True
+
+            sage: Sym = SymmetricFunctions(QQ['t'])
+            sage: ks3 = Sym.kschur(3)
+            sage: llt3 = Sym.llt(3)
+            sage: f = llt3.cospin([[1],[2,1],[1,1]]).omega()
+            sage: ks3(f)
+            ks3[2, 2, 1, 1] + ks3[2, 2, 2] + t*ks3[3, 1, 1, 1] + t^2*ks3[3, 2, 1]
         """
         self._k = k
         self._sym = Sym
@@ -126,7 +133,7 @@ class LLT_class(UniqueRepresentation):
         if str(t) !='t':
             self._name_suffix += " with t=%s"%self.t
         self._name += self._name_suffix+" over %s"%self._sym.base_ring()
-        self._m = sage.combinat.sf.sf.SymmetricFunctions(QQt).monomial()
+        self._m = Sym.monomial()
 
     def __repr__(self):
         r"""

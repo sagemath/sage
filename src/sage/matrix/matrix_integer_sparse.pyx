@@ -21,11 +21,10 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-include 'sage/modules/binary_search.pxi'
-include 'sage/modules/vector_integer_sparse_h.pxi'
-include 'sage/modules/vector_integer_sparse_c.pxi'
-include 'sage/modules/vector_modn_sparse_h.pxi'
-include 'sage/modules/vector_modn_sparse_c.pxi'
+from sage.data_structures.binary_search cimport *
+from sage.modules.vector_integer_sparse cimport *
+from sage.modules.vector_modn_sparse cimport *
+
 from cpython.sequence cimport *
 
 include "cysignals/memory.pxi"

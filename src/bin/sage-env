@@ -583,6 +583,11 @@ if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
 fi
 
+if [ "$UNAME" = "Darwin" ]; then
+    # Trac #21175 - export empty ARCHFLAGS for the benefit of Perl modules
+    ARCHFLAGS="" && export ARCHFLAGS
+fi
+
 if [ "$CP" = "" ]; then
     CP="cp"  && export CP
 fi
@@ -644,6 +649,16 @@ if [ "${MAKEFLAGS-__unset__}" != "__unset__" ]; then
     MAKE=`echo "$MAKE" | sed 's/ .*//'`
 fi
 export MAKE
+
+# Default arguments for all packages installed with `pip install`
+# --ignore-installed : Force pip to re-install package even if it thinks it's
+#                      already installed (for which it sometimes gets false
+#                      positives for partially-installed packages).
+# --verbose          : Display the output when running setup.py.
+# --no-deps          : Don't install runtime dependencies from PyPI.
+# --no-index         : Don't look at the package index.
+#                      This also disables pip's version self-check.
+export PIP_INSTALL="pip install --ignore-installed --verbose --no-deps --no-index"
 
 # When building documentation, use MathJax by default. To turn it off,
 # set SAGE_DOC_MATHJAX to be "no" or "False".

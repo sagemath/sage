@@ -7529,7 +7529,7 @@ class NumberField_absolute(NumberField_generic):
         Test that caching works::
 
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: K.order(a) is K.order(a)
+            sage: K.order(a) is K.order(a)      # indirect doctest
             True
 
         Keywords have no influence on the caching::
@@ -9042,6 +9042,23 @@ class NumberField_cyclotomic(NumberField_absolute):
         self._init_embedding_approx()
 
     def construction(self):
+        """
+        Return data defining a functorial construction of ``self``.
+
+        EXAMPLES::
+
+            sage: F, R = CyclotomicField(5).construction()
+            sage: R
+            Rational Field
+            sage: F.polys
+            [x^4 + x^3 + x^2 + x + 1]
+            sage: F.names
+            ['zeta5']
+            sage: F.embeddings
+            [0.309016994374948? + 0.951056516295154?*I]
+            sage: F.structures
+            [None]
+        """
         F,R = NumberField_generic.construction(self)
         F.cyclotomic = self.__n
         return F,R

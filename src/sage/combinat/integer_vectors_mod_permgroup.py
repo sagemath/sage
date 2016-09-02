@@ -11,7 +11,6 @@ Integer vectors modulo the action of a permutation group
 #*****************************************************************************
 from __future__ import print_function
 
-from itertools import imap
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.semirings.all import NN
 

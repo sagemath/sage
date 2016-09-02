@@ -21,12 +21,10 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-include 'sage/modules/binary_search.pxi'
+from sage.data_structures.binary_search cimport *
+from sage.modules.vector_integer_sparse cimport *
+from sage.modules.vector_rational_sparse cimport *
 
-include 'sage/modules/vector_integer_sparse_h.pxi'
-include 'sage/modules/vector_integer_sparse_c.pxi'
-include 'sage/modules/vector_rational_sparse_h.pxi'
-include 'sage/modules/vector_rational_sparse_c.pxi'
 include 'sage/ext/stdsage.pxi'
 include "cysignals/signals.pxi"
 from cpython.sequence cimport *
@@ -34,6 +32,9 @@ from cpython.sequence cimport *
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
 from matrix cimport Matrix
+
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

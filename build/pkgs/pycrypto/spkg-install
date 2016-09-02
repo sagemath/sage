@@ -45,7 +45,8 @@ fi
 
 CFLAGS="-I$SAGE_LOCAL/include -L$SAGE_LOCAL/lib $CFLAGS"
 
-python setup.py install
+$PIP_INSTALL .
+
 if [ $? -ne 0 ]; then
     echo >&2 "Error: Failed to install PyCrypto."
     exit 1

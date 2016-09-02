@@ -543,8 +543,8 @@ class StandardBracketedLyndonWords_nk(UniqueRepresentation, Parent):
              [2, [2, 3]],
              [[2, 3], 3]]
         """
-        from itertools import imap
-        return imap(standard_bracketing, self._lyndon)
+        from builtins import map
+        return map(standard_bracketing, self._lyndon)
 
 def standard_bracketing(lw):
     """

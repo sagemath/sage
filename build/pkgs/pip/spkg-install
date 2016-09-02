@@ -12,4 +12,7 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-python setup.py install
+# pip can install itself!
+# need to use --upgrade or else pip, which is importing itself, will think
+# itself is already installed
+python -m $PIP_INSTALL --upgrade .

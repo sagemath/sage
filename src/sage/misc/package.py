@@ -21,7 +21,7 @@ command inside Sage::
 
     sage: from sage.misc.package import list_packages
     sage: pkgs = list_packages(local=True)
-    sage: sorted(pkgs.keys())
+    sage: sorted(pkgs.keys())  # random
     ['4ti2',
      'alabaster',
      'arb',
@@ -145,7 +145,7 @@ def pip_installed_packages():
         '...'
     """
     proc = subprocess.Popen(["pip", "list"], stdout=subprocess.PIPE)
-    stdout = proc.communicate()[0]
+    stdout = str(proc.communicate()[0])
     return dict((name.lower(), version) for name,version in PIP_VERSION.findall(stdout))
 
 def list_packages(*pkg_types, **opts):
@@ -176,7 +176,7 @@ def list_packages(*pkg_types, **opts):
 
         sage: from sage.misc.package import list_packages
         sage: L = list_packages('standard')
-        sage: sorted(L.keys())
+        sage: sorted(L.keys())  # random
         ['alabaster',
          'arb',
          'atlas',

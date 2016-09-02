@@ -48,6 +48,7 @@ Disjoint set of hashables objects::
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import itervalues
 
 include '../groups/perm_gps/partn_ref/data_structures_pyx.pxi'
 
@@ -159,7 +160,7 @@ cdef class DisjointSet_class(SageObject):
             '{{0}, {1}, {2, 4}, {3}}'
         """
         res = []
-        for l in self.root_to_elements_dict().itervalues():
+        for l in itervalues(self.root_to_elements_dict()):
             l.sort()
             res.append('{%s}'% ', '.join(itertools.imap(repr, l)))
         res.sort()
@@ -180,7 +181,7 @@ cdef class DisjointSet_class(SageObject):
             sage: sorted(d)
             [['a'], ['b'], ['c']]
         """
-        return self.root_to_elements_dict().itervalues()
+        return itervalues(self.root_to_elements_dict())
 
     def __cmp__(self, other):
         r"""

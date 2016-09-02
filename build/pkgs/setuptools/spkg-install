@@ -8,6 +8,8 @@ fi
 
 # distribute doesn't allow itself to be replaced by setuptools
 # so we manually have to delete it
+# (pip actually can uninstall setuptools but we may not have pip
+# install yet)
 rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/setuptools*
 rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/distribute*
 
@@ -26,4 +28,5 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-python setup.py install
+# Prevent setuptools from installing itself with easy_install
+python setup.py install --single-version-externally-managed --record=/dev/null

@@ -1521,7 +1521,7 @@ cdef class Matroid(SageObject):
             [1, 2]
 
             sage: Q = RootSystem(['D',4]).root_lattice()
-            sage: m = matrix(map(lambda x: x.to_vector(), Q.positive_roots()))
+            sage: m = matrix([x.to_vector() for x in Q.positive_roots()])
             sage: m = m.transpose(); m
             [1 0 0 0 1 0 0 0 1 1 1 1]
             [0 1 0 0 1 1 1 1 1 1 1 2]
@@ -2021,7 +2021,7 @@ cdef class Matroid(SageObject):
             True
 
             sage: Q = RootSystem(['D',4]).root_lattice()
-            sage: m = matrix(map(lambda x: x.to_vector(), Q.positive_roots()))
+            sage: m = matrix([x.to_vector() for x in Q.positive_roots()])
             sage: m = m.transpose(); m
             [1 0 0 0 1 0 0 0 1 1 1 1]
             [0 1 0 0 1 1 1 1 1 1 1 2]
@@ -6143,7 +6143,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: PR = RootSystem(['A',4]).root_lattice().positive_roots()
-            sage: m = matrix(map(lambda x: x.to_vector(), PR)).transpose()
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()
             sage: M = Matroid(m)
             sage: M.is_k_closed(3)
             True
@@ -6151,7 +6151,7 @@ cdef class Matroid(SageObject):
             True
 
             sage: PR = RootSystem(['D',4]).root_lattice().positive_roots()
-            sage: m = matrix(map(lambda x: x.to_vector(), PR)).transpose()
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()
             sage: M = Matroid(m)
             sage: M.is_k_closed(3)
             False

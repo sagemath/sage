@@ -699,7 +699,7 @@ Sage example in ./sol/calculus.tex, line 365::
     sage: i = vector([1, 0, 0])
     sage: S = (r1 - r3) * R2 + (r3 - r2) * R1 +   (r2 - r1) * R3
     sage: V =  S + e * i.cross_product(D)
-    sage: map(lambda x:x.simplify_full(), V)
+    sage: [x.simplify_full() for x in V]
     [0, 0, 0]
 
 Sage example in ./sol/calculus.tex, line 390::
@@ -707,7 +707,7 @@ Sage example in ./sol/calculus.tex, line 390::
     sage: N = r3 * R1.cross_product(R2) + r1 * R2.cross_product(R3)\
     ....:   + r2 * R3.cross_product(R1)
     sage: W =  p * S + e * i.cross_product(N)
-    sage: print(map(lambda x:x.simplify_full(), W))
+    sage: [x.simplify_full() for x in W]
     [0, 0, 0]
 
 Sage example in ./sol/calculus.tex, line 409::

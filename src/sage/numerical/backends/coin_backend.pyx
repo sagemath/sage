@@ -351,7 +351,7 @@ cdef class CoinBackend(GenericBackend):
             sage: p.add_variables(5)                                 # optional - cbc
             4
             sage: p.set_objective([1, 1, 2, 1, 3])                   # optional - cbc
-            sage: map(lambda x :p.objective_coefficient(x), range(5))  # optional - cbc
+            sage: [p.objective_coefficient(x) for x in range(5)]  # optional - cbc
             [1.0, 1.0, 2.0, 1.0, 3.0]
 
         Constants in the objective function are respected::

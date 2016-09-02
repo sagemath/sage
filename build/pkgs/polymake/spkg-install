@@ -20,10 +20,6 @@ more_configure_options=
 
 if [ `uname` = Darwin ]; then
     more_configure_options="$more_configure_options --without-fink"
-    # Setting the following variable changes the output of "perl
-    # -MExtUtils::Embed -e ldopts" and "perl -MExtUtils::Embed -e ccflags"
-    # so that they do not contain -arch flags.
-    export ARCHFLAGS=
 fi
 
 ./configure --without-java \

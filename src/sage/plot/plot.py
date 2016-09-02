@@ -444,8 +444,8 @@ NUMERICAL PLOTTING:
 Sage includes Matplotlib, which provides 2D plotting with an interface
 that is a likely very familiar to people doing numerical
 computation.
-You can use `plt.clf()` to clear the current image frame
-and `plt.close()` to close it.
+You can use ``plt.clf()`` to clear the current image frame
+and ``plt.close()`` to close it.
 For example,
 
 ::
@@ -3232,7 +3232,7 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
         ::
 
             sage: yl = [2**k for k in range(12)]
-            sage: list_plot_semilogx(yl) # plot is empty because of `(0,1)`
+            sage: list_plot_semilogx(yl) # plot empty due to (0,1)
             Graphics object consisting of 1 graphics primitive
 
         We remove `(0,1)` to fix this.::

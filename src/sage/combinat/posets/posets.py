@@ -105,6 +105,7 @@ List of Poset methods
     :meth:`~FinitePoset.with_bounds` | Return the poset with bottom and top element adjoined.
     :meth:`~FinitePoset.dual` | Return the dual of the poset.
     :meth:`~FinitePoset.completion_by_cuts` | Return the Dedekind-MacNeille completion of the poset.
+    :meth:`~FinitePoset.intervals_poset` | Return the poset of intervals of the poset.
     :meth:`~FinitePoset.connected_components` | Return the connected components of the poset as subposets.
     :meth:`~FinitePoset.ordinal_summands` | Return the ordinal summands of the poset.
     :meth:`~FinitePoset.subposet` | Return the subposet containing elements with partial order induced by this poset.
@@ -1954,6 +1955,67 @@ class FinitePoset(UniqueRepresentation, Parent):
         return list(self.relations_iterator())
 
     intervals = deprecated_function_alias(19360, relations)
+
+    def intervals_poset(self):
+        """
+        Return the natural partial order on the set of intervals of the poset.
+
+        OUTPUT:
+
+        a finite poset
+
+        The poset of intervals of a poset `P` has the set of intervals `[x,y]`
+        in `P` as elements, endowed with the order relation defined by
+        `[x_1,y_1] \leq [x_2,y_2]` if and only if `x_1 \leq x_2` and
+        `y_1 \leq y_2`.
+
+        This is also called `P` to the power *2*, meaning
+        the poset of poset-morphisms from the 2-chain to `P`.
+
+        If `P` is a lattice, the result is also a lattice.
+
+        EXAMPLES::
+
+            sage: P = Poset({0:[1]})
+            sage: P.intervals_poset()
+            Finite poset containing 3 elements
+
+            sage: P = posets.PentagonPoset()
+            sage: P.intervals_poset()
+            Finite lattice containing 13 elements
+
+        TESTS::
+
+            sage: P = Poset({})
+            sage: P.intervals_poset()
+            Finite poset containing 0 elements
+
+            sage: P = Poset({0:[]})
+            sage: P.intervals_poset()
+            Finite poset containing 1 elements
+
+            sage: P = Poset({0:[], 1:[]})
+            sage: P.intervals_poset().is_isomorphic(P)
+            True
+        """
+        from sage.combinat.posets.lattices import (LatticePoset,
+                                                   FiniteLatticePoset)
+        if isinstance(self, FiniteLatticePoset):
+            constructor = LatticePoset
+        else:
+            constructor = Poset
+
+        ints = [tuple(u) for u in self.relations()]
+
+        covers = []
+        for (a, b) in ints:
+            covers.extend([[(a, b), (a, bb)] for bb in self.upper_covers(b)])
+            if a != b:
+                covers.extend([[(a, b), (aa, b)] for aa in self.upper_covers(a)
+                               if self.le(aa, b)])
+
+        dg = DiGraph([ints, covers], format="vertices_and_edges")
+        return constructor(dg, cover_relations=True)
 
     def relations_iterator(self, strict=False):
         r"""

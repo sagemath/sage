@@ -23,6 +23,7 @@ cdef extern from "limits.h":
 
 import os
 
+from libc.stdint cimport int64_t
 from sage.libs.singular.decl cimport intvec
 from sage.libs.singular.decl cimport SR_HDL, SR_INT, SR_TO_INT
 from sage.libs.singular.decl cimport singular_options, singular_verbose_options
@@ -156,7 +157,7 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
     order = cache.objectptr.cardinality() - 1
 
     while z:
-        c = cache.objectptr.initi(c, <long>napGetCoeff(z))
+        c = cache.objectptr.initi(c, <int64_t>napGetCoeff(z))
         e = napGetExpFrom(z,1, _ring)
         if e == 0:
             ret = cache.objectptr.add(ret, c, ret)

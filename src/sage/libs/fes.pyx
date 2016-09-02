@@ -313,7 +313,7 @@ def prepare_polynomials(f):
                + sum( [K.random_element() * R.gen(i)  for i in range(n) ] ) \
                + K.random_element() for l in range(n) ]                        # optional - FES
         sage: g = prepare_polynomials(f)                                       # optional - FES
-        sage: map(lambda x:x.lm(), g)                                          # optional - FES, random
+        sage: [x.lm() for x in g]                                          # optional - FES, random
         0
     """
     if f == []:

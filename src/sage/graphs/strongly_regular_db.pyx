@@ -1788,9 +1788,9 @@ def _H_3_cayley_graph(L):
     G = FinitelyPresentedGroup(G,rels)
     x,y,z = G.gens()
     H = G.as_permutation_group()
-    L = map(lambda x:map(int,x),L)
-    x,y,z=(H.gen(0),H.gen(1),H.gen(2))
-    L = [H(x**xx*y**yy*z**zz) for xx,yy,zz in L]
+    L = [[int(u) for u in x] for x in L]
+    x, y, z = (H.gen(0), H.gen(1), H.gen(2))
+    L = [H(x**xx*y**yy*z**zz) for xx, yy, zz in L]
     return Graph(H.cayley_graph(generators=L, simple=True))
 
 def SRG_100_44_18_20():

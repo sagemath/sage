@@ -11,4 +11,4 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-python setup.py install
+$PIP_INSTALL .

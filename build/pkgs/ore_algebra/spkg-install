@@ -7,9 +7,9 @@ if [ -z "$SAGE_LOCAL" ]; then
 fi
 
 cd src
-export PYTHONPATH="."
 echo "building ore_algebra"
-python setup.py install
+
+$PIP_INSTALL .
 
 if [ $? -ne 0 ]; then
     echo >&2 "Error building ore_algebra"

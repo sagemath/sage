@@ -1,1 +1,1 @@
-pari jupyter_core | cython
+$(PYTHON) pari jupyter_core | pip cython

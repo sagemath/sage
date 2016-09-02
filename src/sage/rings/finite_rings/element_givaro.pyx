@@ -59,8 +59,9 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 from sage.rings.ring cimport Ring
 from element_ext_pari import FiniteField_ext_pariElement
-from element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.sage_object cimport SageObject
+from sage.structure.element cimport Element, ModuleElement, RingElement
 import operator
 import sage.arith.all
 import finite_field_constructor as finite_field
@@ -350,6 +351,14 @@ cdef class Cache_givaro(SageObject):
             sage: k(-2^100)
             2
 
+        Check coercion of incompatible fields::
+
+            sage: x=GF(7).random_element()
+            sage: k(x)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to coerce from a finite field other than the prime subfield
+
         For more examples, see
         ``finite_field_givaro.FiniteField_givaro._element_constructor_``
         """
@@ -375,17 +384,17 @@ cdef class Cache_givaro(SageObject):
              isinstance(e, Integer) or \
              isinstance(e, long) or is_IntegerMod(e):
             try:
-                e_int = e
-            except OverflowError:
                 e_int = e % self.characteristic()
-            res = self.objectptr.initi(res, e_int)
-
+                res = self.objectptr.initi(res, e_int)
+            except ArithmeticError:
+                raise TypeError("unable to coerce from a finite field other than the prime subfield")
         elif e is None:
             e_int = 0
-            res = self.objectptr.initi(res,e_int)
+            res = self.objectptr.initi(res, e_int)
 
         elif isinstance(e, float):
-            res = self.objectptr.initd(res,e)
+            e_int = int(e) % self.characteristic()
+            res = self.objectptr.initd(res, e_int)
 
         elif isinstance(e, str):
             return self.parent(eval(e.replace("^","**"),self.parent.gens_dict()))
@@ -395,8 +404,8 @@ cdef class Cache_givaro(SageObject):
                 raise TypeError("e.parent must match self.vector_space")
             ret = self._zero_element
             for i in range(len(e)):
-                e_entry = e[i] % self.characteristic()
-                res = self.objectptr.initi(res, int(e_entry))
+                e_int = e[i] % self.characteristic()
+                res = self.objectptr.initi(res, e_int)
                 to_add = make_FiniteField_givaroElement(self, res)
                 ret = ret + to_add*self.parent.gen()**i
             return ret
@@ -435,8 +444,8 @@ cdef class Cache_givaro(SageObject):
                 raise ValueError("list is too long")
             ret = self._zero_element
             for i in range(len(e)):
-                e_entry = e[i] % self.characteristic()
-                res = self.objectptr.initi(res, int(e_entry))
+                e_int = e[i] % self.characteristic()
+                res = self.objectptr.initi(res, e_int)
                 to_add = make_FiniteField_givaroElement(self, res)
                 ret = ret + to_add*self.parent.gen()**i
             return ret
@@ -573,19 +582,17 @@ cdef class Cache_givaro(SageObject):
         cdef int ret = k.zero
         cdef int a = k.indeterminate()
         cdef int at = k.one
-        cdef unsigned int ch = k.characteristic()
-        cdef int _n, t, i
+        cdef int ch = k.characteristic()
+        cdef int t, i
 
         if n<0 or n>k.cardinality():
             raise TypeError("n must be between 0 and self.order()")
 
-        _n = n
-
         for i from 0 <= i < k.exponent():
-            t = k.initi(t, _n%ch)
+            t = k.initi(t, n % ch)
             ret = k.axpy(ret, t, at, ret)
             at = k.mul(at,at,a)
-            _n = _n/ch
+            n //= ch
         return make_FiniteField_givaroElement(self, ret)
 
     def _element_repr(self, FiniteField_givaroElement e):

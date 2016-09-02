@@ -1509,6 +1509,42 @@ class PolynomialRing_commutative(PolynomialRing_general, commutative_algebra.Com
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
         return DifferentialWeylAlgebra(self)
 
+    def _roots_univariate_polynomial(self, p, ring=None, multiplicities=True, algorithm=None, degree_bound=None):
+        """
+        Return the list of roots of ``p``.
+
+        INPUT:
+
+        - ``p`` -- the polynomial whose roots are computed
+        - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
+        - ``multiplicities`` -- bool (default: True): if ``True``, return a list of pairs ``(root, multiplicity)``; if ``False`` return a list of roots
+        - ``algorithm`` -- ignored (TODO: remove)
+        - ``degree_bound``-- if not ``None``, return only roots of degree at most ``degree_bound``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: S.<y> = R[]
+            sage: p = y^3 + (-x^2 - 3)*y^2 + (2*x^3 - x^2 + 3)*y - x^4 + 2*x^2 - 1
+            sage: p.roots()
+            [(x^2 - 2*x + 1, 1), (x + 1, 2)]
+            sage: p.roots(multiplicities=False)
+            [x^2 - 2*x + 1, x + 1]
+            sage: p.roots(degree_bound=1)
+            [(x + 1, 2)]
+        """
+        if ring is not None and ring is not self:
+            p = p.change_ring(ring)
+            return p.roots(multiplicities, algorithm, degree_bound)
+        roots = p._roots_from_factorization(p.factor(), multiplicities)
+        if degree_bound is not None:
+            if multiplicities:
+                roots = [(r,m) for (r,m) in roots if r.degree() <= degree_bound]
+            else:
+                roots = [r for r in roots if r.degree() <= degree_bound]
+        return roots
+
+
 class PolynomialRing_integral_domain(PolynomialRing_commutative, ring.IntegralDomain):
     def __init__(self, base_ring, name="x", sparse=False, implementation=None,
             element_class=None, category=None):
@@ -1704,7 +1740,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
         """
         to_base_ring = self.base_ring()
-        points = map(lambda x: map(to_base_ring, x), points)
+        points = [map(to_base_ring, x) for x in points]
         n = len(points)
         F = [[points[i][1]] for i in xrange(n)]
         for i in xrange(1, n):
@@ -2053,6 +2089,142 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
                     return f
         else:
             raise ValueError("no such algorithm for finding an irreducible polynomial: %s" % algorithm)
+
+    def _roth_ruckenstein(self, p, degree_bound, precision):
+        r"""
+        Returns all polynomials which are a solution to the, possibly modular,
+        root-finding problem.
+
+        This is the core of Roth-Ruckenstein's algorithm where all conversions,
+        checks and parent-extraction have been done.
+
+        INPUT:
+
+        - ``p`` -- a nonzero polynomial over ``F[x][y]``. The polynomial ``p``
+          should be first truncated to ``precision``
+
+        - ``degree_bound`` -- a bound on the degree of the roots of ``p`` that
+          the algorithm computes
+
+        - ``precision`` -- a non-negative integer or `None`. If given, it is the
+          sought precision for modular roots of `p`. Otherwise, the algorithm
+          computes unconditional roots.
+
+        OUTPUT:
+
+        - a list containing all `F[x]` roots of `p(y)`, possibly modular. If
+        ``precision`` is given, the algorithm returns a list of pairs `(f, h)`,
+        where `f` is a polynomial and `h` is a non-negative integer such that
+        `p(f + x^{h}*g) \equiv 0 \mod x^{d}` for any `g \in F[x]`, where `d` is
+        ``precision``.
+
+        EXAMPLES::
+
+            sage: F = GF(17)
+            sage: Px.<x> = F[]
+            sage: Pxy.<y> = Px[]
+            sage: p = (y - (x**2 + x + 1)) * (y**2 - x + 1) * (y - (x**3 + 4*x + 16))
+            sage: Px._roth_ruckenstein(p, 3, None)
+            [x^3 + 4*x + 16, x^2 + x + 1]
+            sage: Px._roth_ruckenstein(p, 2, None)
+            [x^2 + x + 1]
+            sage: Px._roth_ruckenstein(p, 1, 2)
+            [(4*x + 16, 2), (2*x + 13, 2), (15*x + 4, 2), (x + 1, 2)]
+        """
+        def roth_rec(p, lam, k, g):
+            r"""
+            Recursive core method for Roth-Ruckenstein algorithm.
+
+            INPUT:
+
+            - ``p`` -- the current value of the polynomial
+            - ``lam`` -- is the power of x whose coefficient is being computed
+            - ``k`` -- the remaining precision to handle (if ``precision`` is given)
+            - ``g`` -- the root being computed
+            """
+            if precision and k <= 0:
+                solutions.append((g, lam))
+                return
+            val = min(c.valuation() for c in p)
+            if precision:
+                k = k - val
+            T = p.map_coefficients(lambda c:c.shift(-val))
+            Ty = T.map_coefficients(lambda c:c[0]).change_ring(F)
+            if Ty.is_zero() or (precision and k <= 0):
+                if precision:
+                    solutions.append((g, lam))
+                else:
+                    solutions.append(g)
+                return
+            roots = Ty.roots(multiplicities=False)
+            for gamma in roots:
+                g_new = g + gamma*x**lam
+                if lam < degree_bound:
+                    Tg = T(x*y + gamma)
+                    roth_rec(Tg , lam+1, k, g_new)
+                else:
+                    if precision:
+                        solutions.append((g_new, lam+1))
+                    elif p(gamma).is_zero():
+                        solutions.append(g_new)
+            return
+
+        x = self.gen()
+        y = p.parent().gen()
+        F = self.base_ring()
+        solutions = []
+        g = self.zero()
+
+        roth_rec(p, 0, precision, g)
+        return solutions
+
+    def _roots_univariate_polynomial(self, p, ring=None, multiplicities=False, algorithm=None, degree_bound=None):
+        """
+        Return the list of roots of ``p``.
+
+        INPUT:
+
+        - ``p`` -- the polynomial whose roots are computed
+        - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
+        - ``multiplicities`` -- bool (default: True): currently, only roots
+          without multiplicities are computed.
+        - ``algorithm`` -- the algorithm to use; currently, the only supported
+          algorithm is ``"Roth-Ruckenstein"``
+        - ``degree_bound``-- if not ``None``, return only roots of degree at
+          most ``degree_bound``
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: S.<y> = R[]
+            sage: p = y^2 + (12*x^2 + x + 11)*y + x^3 + 12*x^2 + 12*x + 1
+            sage: p.roots(multiplicities=False)
+            [x^2 + 11*x + 1, x + 1]
+            sage: p.roots(multiplicities=False, degree_bound=1)
+            [x + 1]
+        """
+        if multiplicities:
+            raise NotImplementedError("Use multiplicities=False")
+
+#        Q = p.list()
+
+        if degree_bound is None:
+            l = p.degree()
+            dl = p[l].degree()
+            degree_bound = max((p[i].degree() - dl)//(l - i) for i in range(l) if p[i])
+
+        if algorithm is None:
+            algorithm = "Roth-Ruckenstein"
+
+        if algorithm == "Roth-Ruckenstein":
+            return self._roth_ruckenstein(p, degree_bound, None)
+
+        elif algorithm == "Alekhnovich":
+            raise NotImplementedError("Alekhnovich algorithm is not implemented yet")
+
+        else:
+            raise ValueError("unknown algorithm '{}'".format(algorithm))
+
 
 
 class PolynomialRing_cdvr(PolynomialRing_integral_domain):
@@ -2484,7 +2656,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             x^33 + x^10 + 1
 
         In degree 1::
-        
+
             sage: GF(97)['x'].irreducible_element(1)
             x + 96
             sage: GF(97)['x'].irreducible_element(1, algorithm="conway")

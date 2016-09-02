@@ -814,18 +814,33 @@ class DiGraph(GenericGraph):
     ### Formats
     def dig6_string(self):
         """
-        Returns the dig6 representation of the digraph as an ASCII string.
-        Valid for single (no multiple edges) digraphs on 0 to 262143
-        vertices.
+        Return the dig6 representation of the digraph as an ASCII string.
+
+        This is only valid for single (no multiple edges) digraphs
+        on at most `2^{18}-1=262143` vertices.
+
+        .. NOTE::
+
+            As the dig6 format only handles graphs with vertex set
+            `\{0,...,n-1\}`, a :meth:`relabelled copy
+            <sage.graphs.generic_graph.GenericGraph.relabel>` will
+            be encoded, if necessary.
+
+        .. SEEALSO::
+
+            * :meth:`~sage.graphs.graph.Graph.graph6_string` --
+              a similar string format for undirected graphs
 
         EXAMPLES::
 
-            sage: D = DiGraph()
+            sage: D = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [0]})
             sage: D.dig6_string()
+            'CW`_'
+
+        TESTS::
+
+            sage: DiGraph().dig6_string()
             '?'
-            sage: D.add_edge(0,1)
-            sage: D.dig6_string()
-            'AO'
         """
         n = self.order()
         if n > 262143:

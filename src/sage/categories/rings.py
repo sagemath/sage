@@ -737,6 +737,13 @@ class Rings(CategoryWithAxiom):
                 sage: GF(17)['a']['b']
                 Univariate Polynomial Ring in b over Univariate Polynomial Ring in a over Finite Field of size 17
 
+            We can create skew polynomial rings::
+
+                sage: k.<t> = GF(5^3)
+                sage: Frob = k.frobenius_endomorphism()
+                sage: k['x',Frob]
+                Skew Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
+
             We can also create power series rings by using double brackets::
 
                 sage: QQ[['t']]
@@ -848,6 +855,12 @@ class Rings(CategoryWithAxiom):
                     elts = normalize_arg(arg)
                 from sage.rings.power_series_ring import PowerSeriesRing
                 return PowerSeriesRing(self, elts)
+
+            if isinstance(arg, tuple):
+                from sage.categories.morphism import Morphism
+                if len(arg) == 2 and isinstance(arg[1], Morphism):
+                   from sage.rings.polynomial.skew_polynomial_ring_constructor import SkewPolynomialRing
+                   return SkewPolynomialRing(self, arg[1], names=arg[0])
 
             # 2. Otherwise, if all specified elements are algebraic, try to
             #    return an algebraic extension

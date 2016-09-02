@@ -304,7 +304,8 @@ def is_cartesian_product(g, certificate = False, relabeling = False):
                 h.add_edge(r(u,v),r(uu,vv))
 
     # Gathering the connected components, relabeling the vertices on-the-fly
-    edges = map(lambda x:map(lambda y : (t[y[0]],t[y[1]]),x),h.connected_components())
+    edges = [[(t[y[0]], t[y[1]]) for y in x]
+             for x in h.connected_components()]
 
     #Print the graph, distinguishing the edges according to their color classes
     #

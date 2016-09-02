@@ -2795,8 +2795,8 @@ class RauzyDiagram(SageObject):
             a b c d
             d c b a
         """
-        from itertools import imap
-        return imap(
+        from builtins import map
+        return map(
             lambda x: self._vertex_to_permutation(x),
             self._succ.keys())
 

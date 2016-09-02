@@ -393,10 +393,10 @@ class LazyPowerSeriesRing(Algebra):
         """
         EXAMPLES::
 
-            sage: from itertools import imap
+            sage: from builtins import map
             sage: from sage.combinat.species.stream import _integers_from
             sage: L = LazyPowerSeriesRing(QQ)
-            sage: g = imap(lambda i: L([1]+[0]*i+[1]), _integers_from(0))
+            sage: g = map(lambda i: L([1]+[0]*i+[1]), _integers_from(0))
             sage: g2 = L._product_generator_gen(g)
             sage: [next(g2) for i in range(10)]
             [1, 1, 2, 4, 7, 12, 20, 33, 53, 84]

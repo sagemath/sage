@@ -27,6 +27,18 @@ lapack_libs = list(lapack_pc['libraries'])
 lapack_library_dirs = list(lapack_pc['library_dirs'])
 lapack_include_dirs = list(lapack_pc['include_dirs'])
 
+# FFLAS-FFPACK
+fflas_ffpack_pc = pkgconfig.parse('fflas-ffpack')
+fflas_ffpack_libs = list(fflas_ffpack_pc['libraries'])
+fflas_ffpack_library_dirs = list(fflas_ffpack_pc['library_dirs'])
+fflas_ffpack_cflags = pkgconfig.cflags('fflas-ffpack').split()
+
+# Givaro
+givaro_pc = pkgconfig.parse('givaro')
+givaro_libs = list(givaro_pc['libraries'])
+givaro_library_dirs = list(givaro_pc['library_dirs'])
+givaro_cflags = pkgconfig.cflags('givaro').split()
+
 # GNU Scientific Library
 # Note we replace the built-in gslcblas with the above cblas
 gsl_pc = pkgconfig.parse('gsl')
@@ -39,6 +51,12 @@ gd_pc = pkgconfig.parse('gdlib')
 gd_libs = list(gd_pc['libraries'])
 gd_library_dirs = list(gd_pc['library_dirs'])
 gd_include_dirs = list(gd_pc['include_dirs'])
+
+# LinBox
+linbox_pc = pkgconfig.parse('linbox')
+linbox_libs = list(linbox_pc['libraries'])
+linbox_library_dirs = list(linbox_pc['library_dirs'])
+linbox_cflags = pkgconfig.cflags('linbox').split()
 
 # PNG image library
 png_pc = pkgconfig.parse('libpng')
@@ -58,9 +76,18 @@ zlib_include_dirs = list(zlib_pc['include_dirs'])
 #########################################################
 
 aliases = dict(
+    FFLASFFPACK_CFLAGS=fflas_ffpack_cflags,
+    FFLASFFPACK_LIBRARIES=fflas_ffpack_libs,
+    FFLASFFPACK_LIBDIR=fflas_ffpack_library_dirs,
+    GIVARO_CFLAGS=givaro_cflags,
+    GIVARO_LIBRARIES=givaro_libs,
+    GIVARO_LIBDIR=givaro_library_dirs,
     GSL_LIBRARIES=gsl_libs,
     GSL_LIBDIR=gsl_library_dirs,
     GSL_INCDIR=gsl_include_dirs,
+    LINBOX_CFLAGS=linbox_cflags,
+    LINBOX_LIBRARIES=linbox_libs,
+    LINBOX_LIBDIR=linbox_library_dirs,
 )
 
 #########################################################
@@ -91,12 +118,6 @@ except ValueError:
 singular_libs = ['singular', 'flint', 'ntl', 'gmpxx', 'gmp', 'readline', 'm']
 
 #########################################################
-### Givaro flags
-#########################################################
-
-givaro_extra_compile_args =['-D__STDC_LIMIT_MACROS']
-
-#########################################################
 ### Library order
 #########################################################
 
@@ -111,8 +132,7 @@ givaro_extra_compile_args =['-D__STDC_LIMIT_MACROS']
 # at the very end of the list.
 library_order_list = [
     "singular", "ec", "ecm",
-    "linboxsage", "ntl", "iml", "linbox", "givaro",
-] + gsl_libs + [
+] + linbox_libs  + gsl_libs + [
     "pari", "flint", "ratpoints", "ecl", "glpk", "ppl",
     "arb", "fplll", "mpfi", "mpfr", "mpc", "gmp", "gmpxx",
     "brial",
@@ -609,15 +629,10 @@ ext_modules = [
                       libraries = ["homfly", "gc"],
                       package="libhomfly"),
 
-    Extension('sage.libs.linbox.linbox',
-              sources = ['sage/libs/linbox/linbox.pyx'],
-              libraries = ['linboxsage', 'ntl', 'iml', 'linbox',
-                           'givaro', 'mpfr', 'gmp', 'gmpxx'] + cblas_libs,
-              language = 'c++',
-              library_dirs = cblas_library_dirs,
-              include_dirs = cblas_include_dirs,
-              extra_compile_args = givaro_extra_compile_args,
-              depends = [os.path.join(SAGE_INC, 'givaro', 'givconfig.h')]),
+ #    Extension('sage.libs.linbox.linbox',
+ #             sources = ['sage/libs/linbox/linbox.pyx']),
+
+    Extension('*',['sage/libs/linbox/*.pyx']),
 
     Extension('sage.libs.lcalc.lcalc_Lfunction',
               sources = ['sage/libs/lcalc/lcalc_Lfunction.pyx'],
@@ -665,9 +680,8 @@ ext_modules = [
 
     Extension('sage.libs.singular.singular',
               sources = ['sage/libs/singular/singular.pyx'],
-              libraries = ['givaro'] + singular_libs,
-              language="c++",
-              extra_compile_args = givaro_extra_compile_args),
+              libraries = singular_libs,
+              language="c++"),
 
     Extension('sage.libs.singular.polynomial',
               sources = ['sage/libs/singular/polynomial.pyx'],
@@ -687,8 +701,7 @@ ext_modules = [
     Extension('sage.libs.singular.function',
               sources = ['sage/libs/singular/function.pyx'],
               libraries = singular_libs,
-              language="c++",
-              extra_compile_args = givaro_extra_compile_args),
+              language="c++"),
 
     Extension('sage.libs.singular.option',
               sources = ['sage/libs/singular/option.pyx'],
@@ -944,19 +957,17 @@ ext_modules = [
     Extension('sage.matrix.matrix_modn_dense_float',
               sources = ['sage/matrix/matrix_modn_dense_float.pyx'],
               language="c++",
-              libraries = ['ntl', 'linbox', 'givaro', 'mpfr', 'gmpxx', 'gmp'] + cblas_libs,
+              libraries = linbox_libs + cblas_libs,
               library_dirs = cblas_library_dirs,
-              include_dirs = cblas_include_dirs,
-              extra_compile_args = nocxx11_args + ['-DDISABLE_COMMENTATOR'] + givaro_extra_compile_args),
+              include_dirs = cblas_include_dirs),
 
     Extension('sage.matrix.matrix_modn_dense_double',
               sources = ['sage/matrix/matrix_modn_dense_double.pyx'],
               language="c++",
-              libraries = ['ntl', 'linbox', 'givaro', 'mpfr', 'gmpxx', 'gmp'] + cblas_libs,
+              libraries = linbox_libs + cblas_libs,
               library_dirs = cblas_library_dirs,
               include_dirs = cblas_include_dirs,
-              extra_compile_args = nocxx11_args + ["-D_XPG6", "-DDISABLE_COMMENTATOR"]
-                    + m4ri_extra_compile_args + givaro_extra_compile_args),
+              extra_compile_args = ["-D_XPG6"]),
 
     Extension('sage.matrix.matrix_modn_sparse',
               sources = ['sage/matrix/matrix_modn_sparse.pyx']),
@@ -1085,6 +1096,15 @@ ext_modules = [
     ## sage.modules
     ##
     ################################
+
+    Extension('sage.modules.vector_rational_sparse',
+              sources = ['sage/modules/vector_rational_sparse.pyx']),
+
+    Extension('sage.modules.vector_integer_sparse',
+              sources = ['sage/modules/vector_integer_sparse.pyx']),
+
+    Extension('sage.modules.vector_modn_sparse',
+              sources = ['sage/modules/vector_modn_sparse.pyx']),
 
     Extension('sage.modules.finite_submodule_iter',
               sources = ['sage/modules/finite_submodule_iter.pyx']),
@@ -1400,8 +1420,7 @@ ext_modules = [
     Extension('sage.rings.finite_rings.element_givaro',
               sources = ["sage/rings/finite_rings/element_givaro.pyx"],
               libraries = ['givaro', 'ntl', 'gmpxx', 'gmp', 'm'],
-              language='c++',
-              extra_compile_args = givaro_extra_compile_args),
+              language='c++'),
 
     Extension('sage.rings.finite_rings.element_ntl_gf2e',
               sources = ['sage/rings/finite_rings/element_ntl_gf2e.pyx'],
@@ -1421,8 +1440,7 @@ ext_modules = [
               sources = ["sage/rings/finite_rings/hom_finite_field_givaro.pyx"],
               # this order is needed to compile under windows.
               libraries = ['givaro', 'ntl', 'gmpxx', 'gmp', 'm'],
-              language='c++',
-              extra_compile_args = givaro_extra_compile_args),
+              language='c++'),
 
     ################################
     ##
@@ -1574,8 +1592,7 @@ ext_modules = [
     Extension('sage.rings.polynomial.plural',
               sources = ['sage/rings/polynomial/plural.pyx'],
               libraries = ['m', 'readline', 'singular', 'givaro', 'gmpxx', 'gmp'],
-              language="c++",
-              extra_compile_args = givaro_extra_compile_args),
+              language="c++"),
 
     Extension('sage.rings.polynomial.multi_polynomial_libsingular',
               sources = ['sage/rings/polynomial/multi_polynomial_libsingular.pyx'],
@@ -1660,6 +1677,9 @@ ext_modules = [
 
     Extension('sage.rings.polynomial.symmetric_reduction',
               sources = ['sage/rings/polynomial/symmetric_reduction.pyx']),
+
+    Extension('sage.rings.polynomial.skew_polynomial_element',
+              sources = ['sage/rings/polynomial/skew_polynomial_element.pyx']),
 
 
     ################################

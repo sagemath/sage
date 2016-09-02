@@ -248,6 +248,7 @@ In case of symmetries, only non-redundant components are stored::
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 from __future__ import print_function
+from six import itervalues
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -1120,7 +1121,7 @@ class Components(SageObject):
         # any zero value
         # In other words, the full method should be
         #   return self.comp == {}
-        for val in self._comp.itervalues():
+        for val in itervalues(self._comp):
             if val != 0:
                 return False
         return True
@@ -2306,7 +2307,7 @@ class Components(SageObject):
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = map(lambda x: x-1, perm.domain())
+                perm_action = [x - 1 for x in perm.domain()]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
@@ -2457,7 +2458,7 @@ class Components(SageObject):
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = map(lambda x: x-1, perm.domain())
+                perm_action = [x - 1 for x in perm.domain()]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
@@ -3920,7 +3921,7 @@ class CompWithSym(Components):
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = map(lambda x: x-1, perm.domain())
+                perm_action = [x - 1 for x in perm.domain()]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
@@ -4184,7 +4185,7 @@ class CompWithSym(Components):
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = map(lambda x: x-1, perm.domain())
+                perm_action = [x - 1 for x in perm.domain()]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]

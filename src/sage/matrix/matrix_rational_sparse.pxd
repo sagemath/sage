@@ -1,5 +1,5 @@
 from sage.libs.gmp.types cimport mpz_t
-include 'sage/modules/vector_rational_sparse_h.pxi'
+from sage.modules.vector_rational_sparse cimport mpq_vector
 from .matrix_sparse cimport Matrix_sparse
 
 

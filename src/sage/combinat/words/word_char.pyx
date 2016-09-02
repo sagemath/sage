@@ -1,5 +1,5 @@
 r"""
-Fast word datatype using an array of unsigned char.
+Fast word datatype using an array of unsigned char
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>

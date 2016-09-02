@@ -6,9 +6,6 @@ if [ "$SAGE_LOCAL" = "" ]; then
    exit 1
 fi
 
-#Remove old version
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/Pygments-*
-
 #Install new version
 cd src
 
@@ -22,7 +19,8 @@ for p in ../patches/*.patch; do
     fi
 done
 
-python setup.py install
+$PIP_INSTALL .
+
 if [ $? -ne 0 ]; then
    echo "Error installing Pygments."
    exit 1

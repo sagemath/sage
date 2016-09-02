@@ -83,6 +83,29 @@ Finite word as the image under a morphism::
     sage: m(0, order=3)
     word: 4000445044504450400044504450445044500550...
 
+.. NOTE::
+
+    The following two finite words have the same string representation::
+
+        sage: w = Word('010120')
+        sage: z = Word([0, 1, 0, 1, 2, 0])
+        sage: w
+        word: 010120
+        sage: z
+        word: 010120
+
+    but are not equal::
+
+        sage: w == z
+        False
+
+    Indeed, w and z are defined on different alphabets::
+
+        sage: w[2]
+        '0'
+        sage: z[2]
+        0
+
 ========================
 Functions and algorithms
 ========================

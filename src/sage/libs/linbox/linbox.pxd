@@ -1,9 +1,10 @@
+# distutils: extra_compile_args = LINBOX_CFLAGS
+# distutils: libraries = LINBOX_LIBRARIES
+# distutils: library_dirs = LINBOX_LIBDIR
 # distutils: language = c++ 
-# distutils: extra_compile_args = -std=c++98 
 
 from sage.libs.gmp.types cimport mpz_t
-
-include 'sage/modules/vector_modn_sparse_h.pxi'
+from sage.modules.vector_modn_sparse cimport *
 
 from sage.matrix.matrix_integer_dense cimport mod_int
 

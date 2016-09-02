@@ -78,7 +78,9 @@ TESTS::
 include "sage/ext/cdefs.pxi"
 include "cysignals/signals.pxi"
 include "cysignals/memory.pxi"
-include 'sage/modules/vector_modn_sparse_c.pxi'
+
+from sage.modules.vector_modn_sparse cimport *
+
 from cpython.sequence cimport *
 
 cimport matrix
@@ -97,9 +99,9 @@ from sage.structure.element import is_Vector
 
 cimport sage.structure.element
 
-include 'sage/modules/binary_search.pxi'
-include 'sage/modules/vector_integer_sparse_h.pxi'
-include 'sage/modules/vector_integer_sparse_c.pxi'
+from sage.data_structures.binary_search cimport *
+from sage.modules.vector_integer_sparse cimport *
+
 from matrix_integer_sparse cimport Matrix_integer_sparse
 from sage.misc.decorators import rename_keyword
 

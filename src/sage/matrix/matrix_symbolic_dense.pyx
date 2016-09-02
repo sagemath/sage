@@ -700,6 +700,28 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         M = self.parent()
         return M([expr.simplify_full() for expr in self])
 
+    def canonicalize_radical(self):
+        r"""
+        Choose a canonical branch of each entrie of ``self`` by calling
+        :meth:`Expression.canonicalize_radical()` componentwise.
+
+        EXAMPLES::
+
+            sage: var('x','y')
+            (x, y)
+            sage: l1 = [sqrt(2)*sqrt(3)*sqrt(6) , log(x*y)]
+            sage: l2 = [sin(x/(x^2 + x)) , 1]
+            sage: m = matrix([l1, l2])
+            sage: m
+            [sqrt(6)*sqrt(3)*sqrt(2)                log(x*y)]
+            [       sin(x/(x^2 + x))                       1]
+            sage: m.canonicalize_radical()
+            [              6 log(x) + log(y)]
+            [ sin(1/(x + 1))               1]
+        """
+        M = self.parent()
+        return M([expr.canonicalize_radical() for expr in self])
+        
     def factor(self):
         """
         Operates point-wise on each element.

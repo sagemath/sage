@@ -6,7 +6,8 @@
 #############################################################################
 
 include "cysignals/memory.pxi"
-include 'vector_modn_sparse_h.pxi'
+
+from sage.modules.vector_modn_sparse cimport c_vector_modint
 
 cdef int allocate_c_vector_modint(c_vector_modint* v, Py_ssize_t num_nonzero) except -1:
     """

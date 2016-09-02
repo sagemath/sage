@@ -1,6 +1,6 @@
 # coding=utf-8
 r"""
-A collection of constructors of common words
+Common words
 
 AUTHORS:
 

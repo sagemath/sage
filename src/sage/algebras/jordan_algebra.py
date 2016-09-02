@@ -713,7 +713,8 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         """
         R = self.base_ring()
         ret = (self.element_class(self, R.one(), self._M.zero()),)
-        ret += tuple(map(lambda x: self.element_class(self, R.zero(), x), self._M.basis()))
+        ret += tuple(self.element_class(self, R.zero(), x)
+                     for x in self._M.basis())
         return Family(ret)
 
     algebra_generators = basis

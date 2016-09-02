@@ -36,6 +36,8 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from six import itervalues
+
 from sage.structure.element import CommutativeAlgebraElement
 from sage.symbolic.expression import Expression
 from sage.manifolds.coord_func import CoordFunction
@@ -690,7 +692,7 @@ class ScalarField(CommutativeAlgebraElement):
             # undefined scalar field
             return True
         iszero = True
-        for funct in self._express.itervalues():
+        for funct in itervalues(self._express):
             iszero = iszero and funct.is_zero()
         self._is_zero = iszero
         return not iszero

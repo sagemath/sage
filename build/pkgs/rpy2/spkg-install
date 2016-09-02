@@ -18,4 +18,4 @@ done
 
 export RHOMES="$SAGE_LOCAL"/lib/R
 
-python setup.py install
+$PIP_INSTALL .

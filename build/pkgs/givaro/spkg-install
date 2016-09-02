@@ -47,6 +47,7 @@ fi
 $MAKE
 if [ $? -ne 0 ]; then
     echo >&2 "Error building givaro"
+    exit 1
 fi
 
 $MAKE install

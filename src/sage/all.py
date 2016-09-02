@@ -330,7 +330,7 @@ import warnings
 warnings.filters.remove(('ignore', None, DeprecationWarning, None, 0))
 # Ignore all deprecations from IPython etc.
 warnings.filterwarnings('ignore',
-    module='.*(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|storemagic)')
+    module='.*(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic)')
 # but not those that have OUR deprecation warnings
 warnings.filterwarnings('default',
     '[\s\S]*See http://trac.sagemath.org/[0-9]* for details.')

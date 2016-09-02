@@ -18,7 +18,8 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-python setup.py install
+$PIP_INSTALL .
+
 if [ $? -ne 0 ]; then
     echo "Error installing pyparsing ... exiting"
     exit 1

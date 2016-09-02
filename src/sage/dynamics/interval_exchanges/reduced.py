@@ -413,7 +413,7 @@ def ReducedPermutationsIET_iterator(
         a b c
         c b a
     """
-    from itertools import imap
+    from builtins import map
     from six.moves import filter
     from sage.combinat.permutation import Permutations
 
@@ -429,7 +429,7 @@ def ReducedPermutationsIET_iterator(
         a0 = range(1,nintervals+1)
         f = lambda x: ReducedPermutationIET([a0,list(x)],
             alphabet=alphabet)
-        return imap(f, Permutations(nintervals))
+        return map(f, Permutations(nintervals))
     else:
         return filter(lambda x: x.is_irreducible(),
         ReducedPermutationsIET_iterator(nintervals,False,alphabet))

@@ -1,4 +1,4 @@
-$(PYTHON) jupyter_core
+$(PYTHON) jupyter_core | pip
 
 ----------
 All lines of this file are ignored except the first.

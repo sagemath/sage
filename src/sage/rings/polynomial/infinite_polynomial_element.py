@@ -1136,7 +1136,7 @@ class InfinitePolynomial_sparse(RingElement):
                     res = R(self._p).coefficient(R(monomial._p))
         elif isinstance(monomial, dict):
             if monomial:
-                I = monomial.iterkeys()
+                I = iter(monomial)
                 K = next(I)
                 del monomial[K]
                 res = self.coefficient(K).coefficient(monomial)

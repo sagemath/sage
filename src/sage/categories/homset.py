@@ -30,9 +30,9 @@ overwritten::
     sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
     sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
     sage: len(L)
-    2
+    1
     sage: L
-    [Finite Field of size 2, Finite Field of size 199]
+    [Finite Field of size 199]
 
 AUTHORS:
 
@@ -134,8 +134,8 @@ def Hom(X, Y, category=None, check=True):
         624
         sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
         sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
-        sage: len(L), L[0], L[len(L)-1]
-        (2, Finite Field of size 2, Finite Field of size 997)
+        sage: len(L), L[0]
+        (1, Finite Field of size 997)
 
     To illustrate the choice of the category, we consider the
     following parents as running examples::

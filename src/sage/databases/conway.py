@@ -19,6 +19,8 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from six import itervalues
+
 import collections, os
 from sage.env import SAGE_SHARE
 
@@ -163,7 +165,7 @@ class ConwayPolynomials(collections.Mapping):
             return self._len
         except AttributeError:
             pass
-        self._len = sum(len(a) for a in self._store.itervalues())
+        self._len = sum(len(a) for a in itervalues(self._store))
         return self._len
 
     def __iter__(self):

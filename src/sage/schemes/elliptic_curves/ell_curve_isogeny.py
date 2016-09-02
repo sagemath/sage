@@ -63,6 +63,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import itervalues
 
 from copy import copy
 
@@ -2080,12 +2081,12 @@ class EllipticCurveIsogeny(Morphism):
         a3 = self.__E1.a3()
 
         # next iterate over the 2torsion points of the kernel
-        for Qvalues in ker_2tor.itervalues():
+        for Qvalues in itervalues(ker_2tor):
             (tX, tY) = self.__velu_sum_helper(Qvalues, a1, a3, xP, yP)
             X = X + tX
             Y = Y + tY
 
-        for Qvalues in ker_non2tor.itervalues():
+        for Qvalues in itervalues(ker_non2tor):
             (tX, tY) = self.__velu_sum_helper(Qvalues, a1, a3, xP, yP)
             X = X + tX
             Y = Y + tY
@@ -2151,11 +2152,11 @@ class EllipticCurveIsogeny(Morphism):
 
         psi = poly_ring(1)
 
-        for Qvalues in self.__kernel_2tor.itervalues():
+        for Qvalues in itervalues(self.__kernel_2tor):
             xQ = invX(x=Qvalues[0])
             psi = psi*(x - xQ)
 
-        for Qvalues in self.__kernel_non2tor.itervalues():
+        for Qvalues in itervalues(self.__kernel_non2tor):
             xQ = invX(x=Qvalues[0])
             psi = psi*(x - xQ)
 

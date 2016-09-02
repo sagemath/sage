@@ -34,10 +34,6 @@ UMFPACK="None"; export UMFPACK
 # (Currently SWIG gets invoked by scipy when building the umfpack interface,
 # which is bad.)
 
-
-# Remove previous installation (if any):
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/scipy
-
 cd src/
 
 # Apply patches (if any):
@@ -50,15 +46,9 @@ for patch in ../patches/*.patch; do
     fi
 done
 
-# Build:
-python setup.py build
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building scipy."
-    exit 1
-fi
-
 # Install:
-python setup.py install
+$PIP_INSTALL .
+
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing scipy."
     exit 1

@@ -17,7 +17,6 @@ REFERENCES:
 - Chap. 3 of S. Lang : *Algebra*, 3rd ed., Springer (New York) (2002)
 
 """
-from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -27,6 +26,8 @@ from __future__ import absolute_import
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import absolute_import
+from six import itervalues
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
@@ -256,12 +257,12 @@ class FreeModuleBasis(Basis_abstract):
         # elements of all tensor modules constructed up to now (including the
         # base module itself, since it is considered as a type-(1,0) tensor
         # module)
-        for t in fmodule._tensor_modules.itervalues():
+        for t in itervalues(fmodule._tensor_modules):
             t._zero_element._components[self] = t._zero_element._new_comp(self)
                                # (since new components are initialized to zero)
         # Initialization of the components w.r.t the current basis of the zero
         # elements of all exterior powers constructed up to now
-        for t in fmodule._dual_exterior_powers.itervalues():
+        for t in itervalues(fmodule._dual_exterior_powers):
             t._zero_element._components[self] = t._zero_element._new_comp(self)
                                # (since new components are initialized to zero)
         # The dual basis:

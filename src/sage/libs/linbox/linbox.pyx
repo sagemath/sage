@@ -14,8 +14,6 @@ from sage.misc.misc import verbose, get_verbose, cputime, UNAME
 ## Sparse matrices modulo p.
 ##########################################################################
 
-include 'sage/modules/vector_modn_sparse_c.pxi'
-
 cdef extern from "linbox/linbox-sage.h":
     ctypedef struct vector_uint "std::vector<unsigned int>":
         void (*push_back)(unsigned int)
