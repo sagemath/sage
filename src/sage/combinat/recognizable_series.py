@@ -1612,11 +1612,15 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                     vector([z, e]), right=vector([e, z]))
 
 
-    def some_elements(self):
+    def some_elements(self, **kwds):
         r"""
         Return some elements of this free module.
 
         See :class:`TestSuite` for a typical use case.
+
+        INPUT:
+
+        - ``kwds`` are passed on to the element constructor.
 
         OUTPUT:
 
@@ -1656,7 +1660,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 LR = list(islice(elements_V, 2))
                 if len(mu) != k or len(LR) != 2:
                     break
-                yield self(mu, *LR)
+                yield self(mu, *LR, **kwds)
 
 
     @cached_method
