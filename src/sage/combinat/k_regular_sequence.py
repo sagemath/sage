@@ -1105,6 +1105,31 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         return W(n.digits(self.k))
 
 
+    def some_elements(self):
+        r"""
+        Return some elements of this `k`-regular sequence.
+
+        See :class:`TestSuite` for a typical use case.
+
+        OUTPUT:
+
+        An iterator.
+
+        EXAMPLES::
+
+            sage: tuple(kRegularSequenceSpace(2, ZZ).some_elements())
+            (2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...,
+             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...,
+             2-regular sequence 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...,
+             2-regular sequence -2, -4, 4, -8, -4, 8, 8, -16, 4, -8, ...,
+             2-regular sequence 1, 2, 2, 4, 2, 2, 4, 8, 2, 2, ...,
+             2-regular sequence 2, 11, 14, 20, 17, 23, 23, 29, 20, 26, ...,
+             ...
+             2-regular sequence 1, 10, 10, 100, 10, 10, 100, 1000, 10, 10, ...)
+        """
+        return super(kRegularSequenceSpace, self).some_elements(heal=True)
+
+
     def _element_constructor_(self, *args, **kwds):
         r"""
         Return a `k`-regular sequence.
