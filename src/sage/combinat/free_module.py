@@ -644,13 +644,15 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         are systematically defined (and mathematically meaningful) for
         algebras.
 
-        Coercions between free modules with the same indices but whose
-        base rings have a coercion map is allowed::
+        A coercion between free modules with the same indices exists
+        whenever a coercion map is defined between their base rings::
 
             sage: F = CombinatorialFreeModule(ZZ, ["a", "b"]);      F.rename("F")
             sage: G = CombinatorialFreeModule(QQ, ["a", "b"]);      G.rename("G")
             sage: G(F.monomial("a"))
             B['a']
+            sage: G(-3*F.monomial("a"))
+            -3*B['a']
 
         Otherwise, there is no conversion between distinct free modules::
 
@@ -785,11 +787,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     def _coerce_map_from_(self, R):
         """
-        Return ``True`` if there is a coerce map from ``R`` into ``self``.
+        Return ``True`` if there is a coercion map from ``R`` into ``self``.
 
         There exists a coercion map from:
 
-        - a free module whose base ring coerces into the base ring of ``self``
+        - a free module whose base ring coerces into the base ring of
+          ``self``, and which has the same indices as ``self``
 
         EXAMPLES::
 
@@ -802,12 +805,23 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             B[2]
             sage: cq.leading_coefficient().parent()
             Rational Field
+            sage: C.has_coerce_map_from(CQ)
+            False
+
+            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))
+            sage: CF2.has_coerce_map_from(C)
+            True
+            sage: c = C.monomial(1)
+            sage: CF2(2*c)
+            0
+            sage: CF2(3*c)
+            B[1]
         """
         if (isinstance(R, CombinatorialFreeModule)
                 and R._indices == self._indices
                 and self.base_ring().has_coerce_map_from(R.base_ring())):
             return lambda parent, x: self._from_dict(x._monomial_coefficients,
-                                                     coerce=True, remove_zeros=False)
+                                                     coerce=True, remove_zeros=True)
         return super(CombinatorialFreeModule, self)._coerce_map_from_(R)
 
     def dimension(self):
