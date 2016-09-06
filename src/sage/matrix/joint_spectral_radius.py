@@ -100,7 +100,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         sage: joint_spectral_radius((A0, A1), delta=RIF(0.2))
         (1, 1.200000000000000?)
     """
-    from itertools import count
+    #from itertools import count
     from sage.arith.srange import srange
     from sage.misc.misc_c import prod
 
@@ -109,6 +109,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
 
     S = tuple(S)
     if ring is None:
+        from sage.rings.real_mpfi import RIF
         ring = RIF
     R = ring
     if delta is None:
@@ -121,7 +122,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         return max(R(abs(v)) for v in M.eigenvalues())
 
     def pp(X, j):
-        return Rnorm(prod(X[:j]))^(1/R(j))
+        return Rnorm(prod(X[:j]))**(1/R(j))
 
     def p(X):
         return min(pp(X, j) for j in srange(1, len(X)+1))
@@ -132,7 +133,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
     ell = 0
 
     for mm in srange(2, 1000):  #count(1):
-        m = ZZ(mm)
+        m = mm   # TODO; m = ZZ(mm)
 
         prepreT = tuple((X + (M,), pX)
                         for X, pX in T for M in S)
@@ -142,7 +143,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         ell = max(ell, len(T))
         if T:
             alpha = max(alpha,
-                        max(rho(prod(Y))^(1/R(m)) for Y, pY in T))
+                        max(rho(prod(Y))**(1/R(m)) for Y, pY in T))
             beta = min(beta,
                        max(alpha + delta,
                            max(pY for Y, pY in T)))
