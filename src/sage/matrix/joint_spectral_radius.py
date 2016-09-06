@@ -32,7 +32,8 @@ Functions
 #*****************************************************************************
 
 
-def joint_spectral_radius(S, delta=None, norm=None, ring=None):
+def joint_spectral_radius(S, delta=None, norm=None,
+                          ring=None, max_iterations=None):
     r"""
     Return a lower and upper bound for the joint spectral radius
     of the given matrices.
@@ -41,7 +42,20 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
 
     - ``S`` -- an tuple or other iterable of matrices.
 
-    - TODO
+    - ``delta`` -- (default: ``0.2``) a real specifying the size
+      of the returned interval.
+
+    - ``norm`` -- (default: the `2`-norm) a function mapping a matrix ``M``
+      to ``norm(M)``
+
+    - ``ring`` -- (default: :mod:`RIF <sage.rings.real_mpfi>`) a
+      real interval field.
+
+    - ``max_iterations`` -- (default: ``1000``) a positive integer.
+
+    OUTPUT:
+
+    A :mod:`real interval field element <sage.rings.real_mpfi>`.
 
     TESTS::
 
@@ -57,11 +71,28 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         ....:     (Matrix([[3, 0],  [1, 3]]) / 5,
         ....:      Matrix([[3, -3], [0, -1]]) / 5),
         ....:     delta=RIF(0.0001))
-        INFO:sage.matrix.joint_spectral_radius:lower bound: 0.659678908955284?
-        INFO:sage.matrix.joint_spectral_radius:upper bound: 0.659778908955284?
-        INFO:sage.matrix.joint_spectral_radius:iterations m: 48
-        INFO:sage.matrix.joint_spectral_radius:max size of T_m: 21
+        INFO:...:lower bound: 0.659678908955284?
+        INFO:...:upper bound: 0.659778908955284?
+        INFO:...:iterations m: 48
+        INFO:...:max size of T_m: 21
         0.6597?
+
+        sage: logger.setLevel(logging.DEBUG)
+        sage: joint_spectral_radius(  # long time
+        ....:     (Matrix([[3, 0],  [1, 3]]) / 5,
+        ....:      Matrix([[3, -3], [0, -1]]) / 5),
+        ....:     delta=RIF(0.01))
+        DEBUG:...:m=2, alpha=0.6000000000000000?, beta=0.70827625302982189?, len(T)=4
+        DEBUG:...:m=3, alpha=0.6000000000000000?, beta=0.706734263510838?, len(T)=6
+        DEBUG:...:m=4, alpha=0.6000000000000000?, beta=0.704390998023197?, len(T)=8
+        ...
+        DEBUG:...:m=16, alpha=0.659678908955284?, beta=0.6707696905811751?, len(T)=1
+        DEBUG:...:m=17, alpha=0.659678908955284?, beta=0.669678908955284?, len(T)=0
+        INFO:...:lower bound: 0.659678908955284?
+        INFO:...:upper bound: 0.669678908955284?
+        INFO:...:iterations m: 17
+        INFO:...:max size of T_m: 15
+        0.66?
 
     ::
 
