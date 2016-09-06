@@ -42,7 +42,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
 
     - ``S`` -- an tuple or other iterable of matrices.
 
-    - ``delta`` -- (default: ``0.2``) a real specifying the size
+    - ``delta`` -- (default: ``0.1``) a real specifying the size
       of the returned interval.
 
     - ``norm`` -- (default: the `2`-norm) a function mapping a matrix ``M``
@@ -144,7 +144,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
         ring = RIF
     R = ring
     if delta is None:
-        delta = R(0.2)
+        delta = R(0.1)
     if norm is None:
         norm = lambda M: M.norm(2)
     Rnorm = lambda M: R(norm(M))
