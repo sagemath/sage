@@ -18,8 +18,8 @@ ACKNOWLEDGEMENT:
   Austrian Science Fund (FWF): P 24644-N26.
 
 
-Classes and Methods
-===================
+Functions
+=========
 """
 #*****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
