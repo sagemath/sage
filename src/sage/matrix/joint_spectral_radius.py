@@ -101,7 +101,6 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
         '[1.0000000000000000 .. 1.2000000000000002]'
     """
-    #from itertools import count
     from sage.arith.srange import srange
     from sage.misc.misc_c import prod
 
@@ -118,6 +117,8 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
     if norm is None:
         norm = lambda M: M.norm(2)
     Rnorm = lambda M: R(norm(M))
+    if max_iterations is None:
+        max_iterations = 1000
 
     def rho(M):
         return max(R(abs(v)) for v in M.eigenvalues())
@@ -133,8 +134,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
     beta = max(pX for X, pX in T)  # pX equals Rnorm(M) here
     ell = 0
 
-    for mm in srange(2, 1000):  #count(1):
-        m = mm   # TODO; m = ZZ(mm)
+    for m in srange(2, max_iterations):
 
         prepreT = tuple((X + (M,), pX)
                         for X, pX in T for M in S)
@@ -156,6 +156,9 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
 
         if not T:
             break
+
+    else:
+        logger.warn('Stopping, since maximum number of iterations reached.')
 
     logger.info('lower bound: %s', alpha)
     logger.info('upper bound: %s', beta)
