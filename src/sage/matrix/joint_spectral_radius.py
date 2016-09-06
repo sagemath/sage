@@ -47,7 +47,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
 
         sage: import logging
         sage: logging.basicConfig()
-        sage: logger = logging.getLogger()
+        sage: logger = logging.getLogger('sage.matrix.joint_spectral_radius')
         sage: logger.setLevel(logging.INFO)
 
     Gripenberg, Section 4 (result is between `0.6596789`
@@ -57,11 +57,11 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         ....:     (Matrix([[3, 0],  [1, 3]]) / 5,
         ....:      Matrix([[3, -3], [0, -1]]) / 5),
         ....:     delta=RIF(0.0001))
-        verbose 1 (joint_spectral_radius) lower bound: 0.659678908955284?
-        verbose 1 (joint_spectral_radius) upper bound: 0.659778908955284?
-        verbose 1 (joint_spectral_radius) iterations m: 48
-        verbose 1 (joint_spectral_radius) max size of T_m: 21
-        (0.659678908955284?, 0.659778908955284?)
+        INFO:sage.matrix.joint_spectral_radius:lower bound: 0.659678908955284?
+        INFO:sage.matrix.joint_spectral_radius:upper bound: 0.659778908955284?
+        INFO:sage.matrix.joint_spectral_radius:iterations m: 48
+        INFO:sage.matrix.joint_spectral_radius:max size of T_m: 21
+        0.6597?
 
     ::
 
@@ -74,21 +74,22 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         sage: A2 = Matrix([[0, 0, 0], [1, 1, 0],  [0, 0, 1]])
         sage: A3 = Matrix([[0, 0, 0], [0, 0, 0],  [1, -1, 1]])
         sage: joint_spectral_radius((A0, A1, A2, A3),  # long time
-        ....:     delta=RIF(0.1))
-        (1, 1.200000000000000?)
+        ....:     delta=RIF(0.1)).str(style='brackets')
+        '[1.0000000000000000 .. 1.1000000000000001]'
 
     Dumas, Example 4 (result is `1`)::
 
         sage: A0 = Matrix([[1, 1/2, 0], [0, 1/2, 0], [0, 1/2, 1]])
         sage: A1 = Matrix([[1/2, 0, 0], [1/2, 1, 0], [1/2, 0, 1]])
-        sage: joint_spectral_radius((A0, A1), delta=RIF(0.2))
+        sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
+        '[1.0000000000000000 .. 1.2000000000000002]'
 
     Dumas, Example 5 (result is `3\sqrt{2}=4.24\dots`)::
 
         sage: A0 = Matrix([[1, 0], [0, 1]])
         sage: A1 = Matrix([[3, -3], [3, 3]])
-        sage: joint_spectral_radius((A0, A1), delta=RIF(0.2))
-        (4.242640687119285?, 4.2426406871192848?)
+        sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
+        '[4.2426406871192847 .. 4.2426406871192848]'
 
     Dumas, Example 6 (result is `1`)::
 
@@ -97,8 +98,8 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         sage: Z = zero_matrix(2, 2)
         sage: A0 = block_matrix([[B1, Z], [Z, B0]])
         sage: A1 = block_matrix([[Z, Z], [B0, B1]])
-        sage: joint_spectral_radius((A0, A1), delta=RIF(0.2))
-        (1, 1.200000000000000?)
+        sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
+        '[1.0000000000000000 .. 1.2000000000000002]'
     """
     #from itertools import count
     from sage.arith.srange import srange
@@ -161,8 +162,7 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
     logger.info('iterations m: %s', m)
     logger.info('max size of T_m: %s', ell)
 
-    print "beta-alpha <= delta", beta - alpha, delta  # TODO
-    return (alpha, beta)
+    return R(alpha, beta)
 
 #def test():
 #    A0 = Matrix([[1,1,1], [0,0,0], [0,0,0]])
