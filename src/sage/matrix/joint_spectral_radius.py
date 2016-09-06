@@ -57,7 +57,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
 
     A :mod:`real interval field element <sage.rings.real_mpfi>`.
 
-    TESTS::
+    EXAMPLES::
 
         sage: import logging
         sage: logging.basicConfig()
@@ -131,6 +131,18 @@ def joint_spectral_radius(S, delta=None, norm=None,
         sage: A1 = block_matrix([[Z, Z], [B0, B1]])
         sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
         '[1.0000000000000000 .. 1.2000000000000002]'
+
+    TESTS::
+
+        sage: A0 = Matrix([[1, 1, 1], [0, 0, 0],  [0, 0, 0]])
+        sage: A1 = Matrix([[1, 0, 0], [0, 1, -1], [0, 0, 0]])
+        sage: A2 = Matrix([[0, 0, 0], [1, 1, 0],  [0, 0, 1]])
+        sage: A3 = Matrix([[0, 0, 0], [0, 0, 0],  [1, -1, 1]])
+        sage: joint_spectral_radius((A0, A1, A2, A3),
+        ....:     delta=RIF(0.1), max_iterations=5).str(style='brackets')
+        WARNING:sage.matrix.joint_spectral_radius:Stopping since
+        maximum number of iterations reached.
+        '[1.0000000000000000 .. 1.1472026904398774]'
     """
     from sage.arith.srange import srange
     from sage.misc.misc_c import prod
@@ -189,7 +201,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
             break
 
     else:
-        logger.warn('Stopping, since maximum number of iterations reached.')
+        logger.warn('Stopping since maximum number of iterations reached.')
 
     logger.info('lower bound: %s', alpha)
     logger.info('upper bound: %s', beta)
