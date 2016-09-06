@@ -45,7 +45,10 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
 
     TESTS::
 
-        sage: set_verbose(1)
+        sage: import logging
+        sage: logging.basicConfig()
+        sage: logger = logging.getLogger()
+        sage: logger.setLevel(logging.INFO)
 
     Gripenberg, Section 4 (result is between `0.6596789`
     and `0.6596924`)::
@@ -59,6 +62,10 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         verbose 1 (joint_spectral_radius) iterations m: 48
         verbose 1 (joint_spectral_radius) max size of T_m: 21
         (0.659678908955284?, 0.659778908955284?)
+
+    ::
+
+        sage: logger.setLevel(logging.WARNING)
 
     Dumas, Example 3 (result is `1`)::
 
@@ -94,8 +101,11 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         (1, 1.200000000000000?)
     """
     from itertools import count
-    vlevel = get_verbose()
-    set_verbose(0)
+    from sage.arith.srange import srange
+    from sage.misc.misc_c import prod
+
+    import logging
+    logger = logging.getLogger(__name__)
 
     S = tuple(S)
     if ring is None:
@@ -139,19 +149,16 @@ def joint_spectral_radius(S, delta=None, norm=None, ring=None):
         else:
             beta = min(beta, alpha + delta)
 
-        set_verbose(vlevel)
-        verbose('m={}, alpha={}, beta={}, len(T)={}'.format(
-            m, alpha, beta, len(T)), level=2)
-        set_verbose(0)
+        logger.debug('m=%s, alpha=%s, beta=%s, len(T)=%s',
+                     m, alpha, beta, len(T))
 
         if not T:
             break
 
-    set_verbose(vlevel)
-    verbose('lower bound: {}'.format(alpha), level=1)
-    verbose('upper bound: {}'.format(beta), level=1)
-    verbose('iterations m: {}'.format(m), level=1)
-    verbose('max size of T_m: {}'.format(ell), level=1)
+    logger.info('lower bound: %s', alpha)
+    logger.info('upper bound: %s', beta)
+    logger.info('iterations m: %s', m)
+    logger.info('max size of T_m: %s', ell)
 
     print "beta-alpha <= delta", beta - alpha, delta  # TODO
     return (alpha, beta)
