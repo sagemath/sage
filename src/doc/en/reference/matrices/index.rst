@@ -108,5 +108,6 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/symplectic_basis
 
    sage/matrix/benchmark
+   sage/matrix/joint_spectral_radius
 
 .. include:: ../footer.txt
