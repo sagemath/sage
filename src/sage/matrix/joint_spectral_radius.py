@@ -226,12 +226,3 @@ def joint_spectral_radius(S, delta=None, norm=None,
     logger.info('max size of T_m: %s', ell)
 
     return R(alpha, beta)
-
-#def test():
-#    A0 = Matrix([[1,1,1], [0,0,0], [0,0,0]])
-#    A1 = Matrix([[1,0,0], [0,1,-1], [0,0,0]])
-#    A2 = Matrix([[0,0,0], [1,1,0], [0,0,1]])
-#    A3 = Matrix([[0,0,0], [0,0,0], [1,-1,1]])
-#    print joint_spectral_radius([A0, A1, A2, A3])
-
-#test()
