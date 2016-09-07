@@ -8,6 +8,19 @@ This modules contains algorithms in conjunction with the
 Various
 =======
 
+REFERENCES:
+
+.. [Dumas2013] Philippe Dumas,
+   *Joint spectral radius, dilation equations, and asymptotic behavior
+   of radix-rational sequences*,
+   Linear Algebra and its Applications 438 (2013), 2107-2126,
+   :doi:`10.1016/j.laa.2012.10.013`.
+
+.. [Gripenberg1996] Gustaf Gripenberg,
+   *Computing the joint spectral radius*,
+   Linear Algebra and its Applications 234 (1996), 43-60,
+   :doi:`10.1016/0024-3795(94)00082-4`.
+
 AUTHORS:
 
 - Daniel Krenn (2016)
@@ -57,6 +70,10 @@ def joint_spectral_radius(S, delta=None, norm=None,
 
     A :mod:`real interval field element <sage.rings.real_mpfi>`.
 
+    ALGORITHM:
+
+    This function implements the algorithm presented in [Gripenberg1996]_.
+
     EXAMPLES::
 
         sage: import logging
@@ -64,7 +81,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
         sage: logger = logging.getLogger('sage.matrix.joint_spectral_radius')
         sage: logger.setLevel(logging.INFO)
 
-    Gripenberg, Section 4 (result is between `0.6596789`
+    Example of [Gripenberg1996]_, Section 4 (result is between `0.6596789`
     and `0.6596924`)::
 
         sage: joint_spectral_radius(  # long time
@@ -98,7 +115,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
 
         sage: logger.setLevel(logging.WARNING)
 
-    Dumas, Example 3 (result is `1`)::
+    [Dumas2013]_, Example 3 (result is `1`)::
 
         sage: A0 = Matrix([[1, 1, 1], [0, 0, 0],  [0, 0, 0]])
         sage: A1 = Matrix([[1, 0, 0], [0, 1, -1], [0, 0, 0]])
@@ -108,21 +125,21 @@ def joint_spectral_radius(S, delta=None, norm=None,
         ....:     delta=RIF(0.1)).str(style='brackets')
         '[1.0000000000000000 .. 1.1000000000000001]'
 
-    Dumas, Example 4 (result is `1`)::
+    [Dumas2013]_, Example 4 (result is `1`)::
 
         sage: A0 = Matrix([[1, 1/2, 0], [0, 1/2, 0], [0, 1/2, 1]])
         sage: A1 = Matrix([[1/2, 0, 0], [1/2, 1, 0], [1/2, 0, 1]])
         sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
         '[1.0000000000000000 .. 1.2000000000000002]'
 
-    Dumas, Example 5 (result is `3\sqrt{2}=4.24\dots`)::
+    [Dumas2013]_, Example 5 (result is `3\sqrt{2}=4.24\dots`)::
 
         sage: A0 = Matrix([[1, 0], [0, 1]])
         sage: A1 = Matrix([[3, -3], [3, 3]])
         sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).str(style='brackets')
         '[4.2426406871192847 .. 4.2426406871192848]'
 
-    Dumas, Example 6 (result is `1`)::
+    [Dumas2013]_, Example 6 (result is `1`)::
 
         sage: B0 = Matrix([[1/2, 0], [1/2, 1]])
         sage: B1 = Matrix([[1/2, 0], [-1/2, 1]])
