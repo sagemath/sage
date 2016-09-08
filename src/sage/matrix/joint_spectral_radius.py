@@ -180,6 +180,14 @@ def joint_spectral_radius(S, delta=None, norm=None,
     if max_iterations is None:
         max_iterations = 1000
 
+    def max(m):
+        m = list(m)
+        return m[0].max(*m[1:])
+
+    def min(m):
+        m = list(m)
+        return m[0].min(*m[1:])
+
     def rho(M):
         return max(R(abs(v)) for v in M.eigenvalues())
 
@@ -198,18 +206,19 @@ def joint_spectral_radius(S, delta=None, norm=None,
 
         prepreT = tuple((X + (M,), pX)
                         for X, pX in T for M in S)
-        preT = tuple((X, min(pX, pp(X, len(X)))) for X, pX in prepreT)
+        preT = tuple((X, min([pX, pp(X, len(X))])) for X, pX in prepreT)
         T = tuple((X, pX) for X, pX in preT if pX > alpha + delta)
 
-        ell = max(ell, len(T))
+        if len(T) > ell:
+            ell = len(T)
         if T:
-            alpha = max(alpha,
-                        max(rho(prod(Y))**(1/R(m)) for Y, pY in T))
-            beta = min(beta,
-                       max(alpha + delta,
-                           max(pY for Y, pY in T)))
+            alpha = max([alpha,
+                         max(rho(prod(Y))**(1/R(m)) for Y, pY in T)])
+            beta = min([beta,
+                        max([alpha + delta,
+                             max(pY for Y, pY in T)])])
         else:
-            beta = min(beta, alpha + delta)
+            beta = min([beta, alpha + delta])
 
         logger.debug('m=%s, alpha=%s, beta=%s, len(T)=%s',
                      m, alpha, beta, len(T))
