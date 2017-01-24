@@ -178,10 +178,10 @@ class CoxeterType(SageObject):
                                             ['E', 6], ['E', 7], ['E', 8], ['F', 4],
                                             ['H', 3], ['H', 4], ['I', 10]]]
 
-        affine = [CoxeterType(t)  for t in ['A', 2, 1], ['B', 5, 1],
+        affine = [CoxeterType(t)  for t in [['A', 2, 1], ['B', 5, 1],
                                            ['C', 5, 1], ['D', 5, 1], ['E', 6, 1],
                                            ['E', 7, 1], ['E', 8, 1], ['F', 4, 1],
-                                           ['G', 2, 1], ['A', 1, 1]]
+                                           ['G', 2, 1], ['A', 1, 1]]]
 
         return finite + affine
 

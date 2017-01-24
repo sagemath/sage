@@ -63,7 +63,7 @@ def hall_polynomial(nu, mu, la, q=None):
     If `\lambda = (1^r)` and
     `\lvert \nu \rvert = \lvert \mu \rvert + \lvert \lambda \rvert`,
     then we compute `P^{\nu}_{\mu,\lambda}` as follows (cf. Example 2.4
-    in [Schiffmann]_):
+    in [Sch2006]_):
 
     First, write `\nu = (1^{l_1}, 2^{l_2}, \ldots, n^{l_n})`, and
     define a sequence `r = r_0 \geq r_1 \geq \cdots \geq r_n` such that

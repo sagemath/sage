@@ -23,6 +23,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.rings.all import QQ, ZZ
+from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux
@@ -406,7 +407,7 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
         """
         # Strip zeros for graph_implementation_rec
         wt = [i for i in self._weight if i != 0]
-        return graph_implementation_rec(self._shape, wt, self._length, count_rec)[0]
+        return Integer(graph_implementation_rec(self._shape, wt, self._length, count_rec)[0])
 
 def insertion_tableau(skp, perm, evaluation, tableau, length):
     """

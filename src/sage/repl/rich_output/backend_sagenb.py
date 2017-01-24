@@ -77,7 +77,7 @@ from sage.repl.rich_output.output_video import OutputVideoBase
 
 def world_readable(filename):
     """
-    All SageNB temporary files must be world-writeable.
+    All SageNB temporary files must be world-readable.
     
     Discussion of this design choice can be found at :trac:`17743`.
 
@@ -278,6 +278,16 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
         world_readable(self.scene_zip_filename())
 
 
+IFRAME_TEMPLATE = \
+"""
+<iframe src="{html}" 
+        width="{width}"
+        height="{height}"
+        style="border: 0;">
+</iframe>
+"""
+
+
 class BackendSageNB(BackendBase):
 
     def _repr_(self):
@@ -324,7 +334,7 @@ class BackendSageNB(BackendBase):
             OutputHtml,
             OutputImagePng, OutputImageGif, OutputImageJpg,
             OutputImagePdf, OutputImageSvg,
-            SageNbOutputSceneJmol,
+            SageNbOutputSceneJmol, OutputSceneThreejs,
             OutputSceneCanvas3d,
             OutputVideoOgg, OutputVideoWebM, OutputVideoMp4,
         ])
@@ -380,12 +390,23 @@ class BackendSageNB(BackendBase):
             self.embed_image(rich_output.svg, '.svg')
         elif isinstance(rich_output, OutputSceneJmol):
             rich_output.embed()
+        elif isinstance(rich_output, OutputSceneThreejs):
+            filename = graphics_filename(ext='.html')
+            rich_output.html.save_as(filename)
+            world_readable(filename)
+            iframe = IFRAME_TEMPLATE.format(
+                html='cell://' + filename,
+                width=700,
+                height=400,
+            )
+            from pretty_print import pretty_print
+            pretty_print(html(iframe))
         elif isinstance(rich_output, OutputSceneCanvas3d):
             self.embed_image(rich_output.canvas3d, '.canvas3d')
         elif isinstance(rich_output, OutputVideoBase):
             self.embed_video(rich_output)
         else:
-            raise TypeError('rich_output type not supported, got {0}'.format(rich_output))
+            raise TypeError('rich_output type not supported, got {}'.format(rich_output))
 
     def embed_image(self, output_buffer, file_ext):
         """

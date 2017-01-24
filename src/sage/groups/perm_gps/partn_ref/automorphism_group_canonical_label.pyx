@@ -229,28 +229,28 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
         sage: gens = [[1,2,3,0]]
         sage: reps = []
         sage: for p in SymmetricGroup(4):
-        ...     p = [p(i)-1 for i in range(1,5)]
-        ...     r = coset_rep(p, gens)
-        ...     if r not in reps:
-        ...         reps.append(r)
+        ....:   p = [p(i)-1 for i in range(1,5)]
+        ....:   r = coset_rep(p, gens)
+        ....:   if r not in reps:
+        ....:       reps.append(r)
         sage: len(reps)
         6
         sage: gens = [[1,0,2,3],[0,1,3,2]]
         sage: reps = []
         sage: for p in SymmetricGroup(4):
-        ...     p = [p(i)-1 for i in range(1,5)]
-        ...     r = coset_rep(p, gens)
-        ...     if r not in reps:
-        ...         reps.append(r)
+        ....:   p = [p(i)-1 for i in range(1,5)]
+        ....:   r = coset_rep(p, gens)
+        ....:   if r not in reps:
+        ....:       reps.append(r)
         sage: len(reps)
         6
         sage: gens = [[1,2,0,3]]
         sage: reps = []
         sage: for p in SymmetricGroup(4):
-        ...     p = [p(i)-1 for i in range(1,5)]
-        ...     r = coset_rep(p, gens)
-        ...     if r not in reps:
-        ...         reps.append(r)
+        ....:   p = [p(i)-1 for i in range(1,5)]
+        ....:   r = coset_rep(p, gens)
+        ....:   if r not in reps:
+        ....:       reps.append(r)
         sage: len(reps)
         8
 

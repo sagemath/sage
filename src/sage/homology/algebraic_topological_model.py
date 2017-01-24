@@ -50,7 +50,7 @@ def algebraic_topological_model(K, base_ring=None):
     - chain contraction ``phi``
     - chain complex `M`
 
-    This construction appears in a paper by Pilarczyk and Réal [PR]_.
+    This construction appears in a paper by Pilarczyk and Réal [PR2015]_.
     Given a cell complex `K` and a field `F`, there is a chain complex
     `C` associated to `K` with coefficients in `F`. The *algebraic
     topological model* for `K` is a chain complex `M` with trivial
@@ -74,7 +74,7 @@ def algebraic_topological_model(K, base_ring=None):
 
     Given an algebraic topological model for `K`, it is then easy to
     compute cup products and cohomology operations on the cohomology
-    of `K`, as described in [G-DR03]_ and [PR]_.
+    of `K`, as described in [GDR2003]_ and [PR2015]_.
 
     Implementation details: the cell complex `K` must have an
     :meth:`~sage.homology.cell_complex.GenericCellComplex.n_cells`

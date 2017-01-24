@@ -43,7 +43,6 @@ from .integer_lists import IntegerListsLex
 from six.moves import builtins
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 
 class Composition(CombinatorialElement):
@@ -1086,10 +1085,10 @@ class Composition(CombinatorialElement):
 
             sage: n = 8
             sage: all(Composition(from_subset=(S, n)).to_subset() == S \
-            ...       for S in Subsets(n-1))
+            ....:     for S in Subsets(n-1))
             True
             sage: all(Composition(from_subset=(I.to_subset(), n)) == I \
-            ...       for I in Compositions(n))
+            ....:     for I in Compositions(n))
             True
         """
         from sage.sets.set import Set
@@ -1594,7 +1593,7 @@ class Compositions(UniqueRepresentation, Parent):
                     raise ValueError("n must be an integer")
             else:
                 # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
-                kwargs['name'] = "Compositions of the integer %s satisfying constraints %s"%(n, ", ".join( ["%s=%s"%(key, kwargs[key]) for key in sorted(kwargs.keys())] ))
+                kwargs['name'] = "Compositions of the integer %s satisfying constraints %s"%(n, ", ".join( ["%s=%s"%(key, kwargs[key]) for key in sorted(kwargs)] ))
                 kwargs['element_class'] = Composition
                 if 'min_part' not in kwargs:
                     kwargs['min_part'] = 1
@@ -1964,7 +1963,7 @@ class Compositions_n(Compositions):
 
         TESTS::
 
-            sage: all([Compositions(10).random_element() in Compositions(10) for i in range(20)])
+            sage: all(Compositions(10).random_element() in Compositions(10) for i in range(20))
             True
         """
         from sage.misc.prandom import choice
@@ -1997,7 +1996,7 @@ def composition_iterator_fast(n):
         sage: L = list(composition_iterator_fast(4)); L
         [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
         sage: type(L[0])
-        <type 'list'>
+        <... 'list'>
     """
     # Special cases
     if n < 0:

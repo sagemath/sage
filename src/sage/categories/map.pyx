@@ -154,8 +154,7 @@ cdef class Map(Element):
 
             sage: phi = QQ['x']._internal_coerce_map_from(ZZ)
             sage: phi.domain
-            <weakref at ...; to 'sage.rings.integer_ring.IntegerRing_class'
-            at ... (JoinCategory.parent_class)>
+            <weakref at ...; to 'sage.rings.integer_ring.IntegerRing_class' at ...>
             sage: type(phi)
             <type 'sage.categories.map.FormalCompositeMap'>
             sage: psi = copy(phi)   # indirect doctest

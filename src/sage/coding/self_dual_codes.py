@@ -70,7 +70,7 @@ having block form `G = (I, A)`, where
 SD codes not of this form will be called (for the purpose of
 documenting the code below) "exceptional". Except when n is
 "small", most sd codes are exceptional (based on a counting
-argument and table 9.1 in the Huffman+Pless [HP], page 347).
+argument and table 9.1 in the Huffman+Pless [HP2003], page 347).
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -80,7 +80,7 @@ AUTHORS:
 
 REFERENCES:
 
-- [HP] W. C. Huffman, V. Pless, Fundamentals of
+- [HP2003] W. C. Huffman, V. Pless, Fundamentals of
   Error-Correcting Codes, Cambridge Univ. Press, 2003.
 
 - [P] V. Pless,
@@ -224,7 +224,7 @@ def self_dual_binary_codes(n):
     22, 22, 30, 30, 42, 42, 56, 56, 77, 77, 101, 101, 135, 135, 176,
     176, 231] These numbers grow too slowly to account for all the sd
     codes (see Huffman+Pless' Table 9.1, referenced above). In fact, in
-    Table 9.10 of [HP], the number B_n of inequivalent sd binary codes
+    Table 9.10 of [HP2003], the number B_n of inequivalent sd binary codes
     of length n is given::
 
         n   2 4 6 8 10 12 14 16 18 20 22 24  26  28  30
@@ -340,7 +340,7 @@ def self_dual_binary_codes(n):
 
     if n == 14:
         # all of these are Type I; one has a unique lowest weight codeword
-        # (there are 4 total inequiv sd codes of n = 14, by Table 9.10 [HP])
+        # (there are 4 total inequiv sd codes of n = 14, by Table 9.10 [HP2003])
         # [14,0]:
         genmat = _I2(n).augment(_I2(n))
         # G = PermutationGroup( ["(7,14)", "(6,7)(13,14)", "(5,6)(12,13)", "(4,5)(11,12)",\

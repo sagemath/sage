@@ -30,8 +30,9 @@ called.
 Functions
 ---------
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
+from builtins import zip
 
 from .orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
 
@@ -91,7 +92,7 @@ def construction_3_3(k,n,m,i,explain_construction=False):
     OA = [B[:k]+[0 if x == 0 else None for x in B[k:]] for B in OA]
 
     OA = wilson_construction(OA,k,n,m,[1]*i,check=False)[:-i]
-    matrix = [range(m)+range(n*m,n*m+i)]*k
+    matrix = [list(range(m)) + list(range(n*m, n*m+i))] * k
     OA.extend(OA_relabel(orthogonal_array(k,m+i),k,m+i,matrix=matrix))
     assert is_orthogonal_array(OA,k,n*m+i)
     return OA
@@ -119,7 +120,7 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
     - ``k,n,m,r,s`` (integers) -- we assume that `s<n` and `1\leq r,s`
 
       The following designs must be available: `OA(k,n)`, `OA(k,m)`,
-      `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,s)`. Additionnally, it requires either a
+      `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,s)`. Additionally, it requires either a
       `OA(k,m+r)` or a `OA(k,m+r+1)`.
 
     - ``explain_construction`` (boolean) -- return a string describing
@@ -157,7 +158,7 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
     master_design = orthogonal_array(k+r+1,n)
 
     # Defines the first k+r columns of the matrix of labels
-    matrix = [range(n)]*k + [[None]*n]*(r) + [[None]*n]
+    matrix = [list(range(n))] * k + [[None]*n]*(r) + [[None]*n]
     B0 = master_design[0]
     for i in range(k,k+r):
         matrix[i][B0[i]] = 0
@@ -268,7 +269,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     for i,x in enumerate(group_k_3):
         r3[x] = i
 
-    OA = OA_relabel(master_design, k+3,q, matrix=[range(q)]*k+[r1,r2,r3])
+    OA = OA_relabel(master_design, k+3,q, matrix=[list(range(q))]*k+[r1,r2,r3])
     OA = wilson_construction(OA,k,q,m,[r,s,t], check=False)
     return OA
 
@@ -529,7 +530,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     # delete points.
     #
     # TD.extend([range(i*q,(i+1)*q) for i in range(x)])
-    TD.extend([range(i*q,(i+1)*q)+[p2] for i in range(x,q)])
+    TD.extend([list(range(i*q,(i+1)*q))+[p2] for i in range(x,q)])
 
     points_to_delete = set([i*q+j for i in range(x) for j in range(1,q)]+[i*q for i in range(x,q)])
     points_to_keep = set(range(q**2+2))-points_to_delete
@@ -702,7 +703,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     # Adding the first two trivial columns
     OA.insert(0,[j for i in range(n) for j in range(n)])
     OA.insert(0,[i for i in range(n) for j in range(n)])
-    OA=sorted(zip(*OA))
+    OA = sorted(zip(*OA))
 
     # Moves the first three columns to the end
     OA = [list(B[3:]+B[:3]) for B in OA]
@@ -713,11 +714,11 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     assert n-len(third_complement) >= c
 
     # The keepers
-    first_set  = range(a)
-    second_set = range(b)
+    first_set  = list(range(a))
+    second_set = list(range(b))
     third_set  = [x for x in range(n) if x not in third_complement][:c]
 
-    last_sets  = [first_set,second_set,third_set]
+    last_sets  = [first_set, second_set, third_set]
 
     if complement:
         last_sets = [set(range(n)).difference(s) for s in last_sets]
@@ -987,8 +988,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
       Rolf S. Rees,
       Journal of Combinatorial Designs 1.1 (1993): 15-26.
     """
-    from itertools import izip
-    assert n1<=n2 and n2<=n3
+    assert n1 <= n2 and n2 <= n3
 
     if explain_construction:
         return ("Three-factor product with n={}.{}.{} from:\n"+
@@ -1054,7 +1054,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
                 assert max(shift) < g1
 
                 for B1 in OA1:
-                    copy_of_OA1.append([x2*g1+(x1+sh)%g1 for sh,x1,x2 in izip(shift,B1,B2)])
+                    copy_of_OA1.append([x2*g1+(x1+sh)%g1 for sh,x1,x2 in zip(shift,B1,B2)])
 
                 copies_of_OA1.append(copy_of_OA1)
 
@@ -1062,7 +1062,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
                 for i,x2 in enumerate(B2):
                     count[i][x2] += 1
 
-            new_parallel_classes.extend([list(_) for _ in izip(*copies_of_OA1)])
+            new_parallel_classes.extend([list(_) for _ in zip(*copies_of_OA1)])
 
         # New g1-parallel classes, each one built from the product of a parallel
         # class with a OA1
@@ -1072,7 +1072,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
             disjoint_copies_of_OA1 = []
             for B2 in classs2:
                 for B1 in OA1:
-                    disjoint_copies_of_OA1.append([x2*g1+x1 for x1,x2 in izip(B1,B2)])
+                    disjoint_copies_of_OA1.append([x2*g1+x1 for x1,x2 in zip(B1,B2)])
             new_g1_parallel_classes.append(disjoint_copies_of_OA1)
 
         # Check our stuff before we return it
@@ -1080,7 +1080,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
             profile = [i for i in range(g2*g1) for _ in range(g1)]
             for classs in new_g1_parallel_classes:
                 assert_c_partition(classs,k,g2*g1,g1)
-            profile = range(g2*g1)
+            profile = list(range(g2*g1))
             for classs in new_parallel_classes:
                 assert_c_partition(classs,k,g2*g1,1)
 
@@ -1163,7 +1163,7 @@ def _reorder_matrix(matrix):
         sage: all(set(M2[i][0] for i in range(N)) == set(range(N)) for i in range(k))
         True
 
-        sage: M =[range(10)]*10
+        sage: M =[list(range(10))]*10
         sage: N = k = 10
         sage: M2 = _reorder_matrix(M)
         sage: all(set(M2[i][0] for i in range(N)) == set(range(N)) for i in range(k))
@@ -1187,7 +1187,7 @@ def _reorder_matrix(matrix):
         matrix.append(col)
         g.delete_edges(matching)
 
-    return zip(*matrix)
+    return list(zip(*matrix))
 
 def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construction=False):
     r"""

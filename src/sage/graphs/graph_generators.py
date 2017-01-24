@@ -15,8 +15,8 @@ To get a path with 4 vertices, and the house graph::
 More interestingly, one can get the list of all graphs that Sage knows how to
 build by typing ``graphs.`` in Sage and then hitting tab.
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
 
 # This method appends a list of methods to the doc as a 3xN table.
 
@@ -129,6 +129,7 @@ __append_to_doc(
      "HoffmanSingletonGraph",
      "HoltGraph",
      "HortonGraph",
+     "IoninKharaghani765Graph",
      "JankoKharaghaniGraph",
      "JankoKharaghaniTonchevGraph",
      "KittellGraph",
@@ -217,6 +218,7 @@ __append_to_doc(
      "line_graph_forbidden_subgraphs",
      "MathonPseudocyclicMergingGraph",
      "MathonPseudocyclicStronglyRegularGraph",
+     "MuzychukS6Graph",
      "MycielskiGraph",
      "MycielskiStep",
      "NKStarGraph",
@@ -612,7 +614,7 @@ class GraphGenerators():
 
     ::
 
-        sage: for i in range(0, 7):
+        sage: for i in range(7):
         ....:     print(len(list(graphs(i))))
         1
         1
@@ -761,9 +763,9 @@ class GraphGenerators():
             g = Graph(vertices, loops=loops, implementation=implementation, sparse=sparse)
             gens = []
             for i in range(vertices-1):
-                gen = range(i)
+                gen = list(range(i))
                 gen.append(i+1); gen.append(i)
-                gen += range(i+2, vertices)
+                gen += list(range(i + 2, vertices))
                 gens.append(gen)
             for gg in canaug_traverse_edge(g, gens, property, loops=loops, implementation=implementation, sparse=sparse):
                 if extra_property(gg):
@@ -970,10 +972,10 @@ class GraphGenerators():
         Laplacian) on five vertices::
 
             sage: def DinverseA(g):
-            ...     A=g.adjacency_matrix().change_ring(QQ)
-            ...     for i in range(g.order()):
-            ...         A.rescale_row(i, 1/len(A.nonzero_positions_in_row(i)))
-            ...     return A
+            ....:   A=g.adjacency_matrix().change_ring(QQ)
+            ....:   for i in range(g.order()):
+            ....:       A.rescale_row(i, 1/len(A.nonzero_positions_in_row(i)))
+            ....:   return A
             sage: g=graphs.cospectral_graphs(5, matrix_function=DinverseA, graphs=lambda g: min(g.degree())>0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Dlg', 'Ds_']]
@@ -1920,6 +1922,7 @@ class GraphGenerators():
     HoffmanSingletonGraph    = staticmethod(sage.graphs.generators.smallgraphs.HoffmanSingletonGraph)
     HoltGraph                = staticmethod(sage.graphs.generators.smallgraphs.HoltGraph)
     HortonGraph              = staticmethod(sage.graphs.generators.smallgraphs.HortonGraph)
+    IoninKharaghani765Graph  = staticmethod(sage.graphs.generators.smallgraphs.IoninKharaghani765Graph)
     JankoKharaghaniGraph     = staticmethod(sage.graphs.generators.smallgraphs.JankoKharaghaniGraph)
     JankoKharaghaniTonchevGraph  = staticmethod(sage.graphs.generators.smallgraphs.JankoKharaghaniTonchevGraph)
     KittellGraph             = staticmethod(sage.graphs.generators.smallgraphs.KittellGraph)
@@ -1997,6 +2000,7 @@ class GraphGenerators():
     line_graph_forbidden_subgraphs = staticmethod(sage.graphs.generators.families.line_graph_forbidden_subgraphs)
     MathonPseudocyclicMergingGraph = staticmethod(sage.graphs.generators.families.MathonPseudocyclicMergingGraph)
     MathonPseudocyclicStronglyRegularGraph = staticmethod(sage.graphs.generators.families.MathonPseudocyclicStronglyRegularGraph)
+    MuzychukS6Graph        = staticmethod(sage.graphs.generators.families.MuzychukS6Graph)
     MycielskiGraph         = staticmethod(sage.graphs.generators.families.MycielskiGraph)
     MycielskiStep          = staticmethod(sage.graphs.generators.families.MycielskiStep)
     NKStarGraph            = staticmethod(sage.graphs.generators.families.NKStarGraph)
@@ -2172,9 +2176,9 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
 
         # union-find C(g) under Aut(g)
         for gen in aut_gens:
-            for i in xrange(len(children)):
+            for i in range(len(children)):
                 k = 0
-                for j in xrange(possibilities):
+                for j in range(possibilities):
                     if (1 << j)&i:
                         if dig and j >= n:
                             k += (1 << (gen[j-n]+n))
@@ -2268,14 +2272,14 @@ def check_aut(aut_gens, cut_vert, n):
         [[1, 0, 3, 2], [1, 2, 3, 0]]
     """
     from copy import copy
-    perm = range(n+1)
+    perm = list(range(n + 1))
     seen_perms = [perm]
     unchecked_perms = [perm]
     while len(unchecked_perms) != 0:
         perm = unchecked_perms.pop(0)
         for gen in aut_gens:
             new_perm = copy(perm)
-            for i in xrange(len(perm)):
+            for i in range(len(perm)):
                 new_perm[i] = gen[perm[i]]
             if new_perm not in seen_perms:
                 seen_perms.append(new_perm)
@@ -2348,22 +2352,22 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, implemen
         # build a list representing C(g) - the edge to be added
         # is one of max_size choices
         if dig:
-            children = [[(j,i) for i in xrange(n)] for j in xrange(n)]
+            children = [[(j,i) for i in range(n)] for j in range(n)]
         else:
-            children = [[(j,i) for i in xrange(j)] for j in xrange(n)]
+            children = [[(j,i) for i in range(j)] for j in range(n)]
         # union-find C(g) under Aut(g)
-        orbits = range(n)
+        orbits = list(range(n))
         for gen in aut_gens:
-            for iii in xrange(n):
+            for iii in range(n):
                 if orbits[gen[iii]] != orbits[iii]:
                     temp = orbits[gen[iii]]
-                    for jjj in xrange(n):
+                    for jjj in range(n):
                         if orbits[jjj] == temp:
                             orbits[jjj] = orbits[iii]
                 if dig:
-                    jjj_range = range(iii) + range(iii+1, n)
+                    jjj_range = list(range(iii)) + list(range(iii + 1, n))
                 else:
-                    jjj_range = xrange(iii) # iii > jjj
+                    jjj_range = list(range(iii))  # iii > jjj
                 for jjj in jjj_range:
                     i, j = iii, jjj
                     if dig:
@@ -2405,15 +2409,15 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, implemen
         roots = []
         for i in range(n):
             if dig:
-                j_range = range(i) + range(i+1, n)
+                j_range = list(range(i)) + list(range(i + 1, n))
             else:
-                j_range = range(i)
+                j_range = list(range(i))
             for j in j_range:
                 if children[i][j] == (i, j):
                     roots.append((i,j))
         if loops:
             seen = []
-            for i in xrange(n):
+            for i in range(n):
                 if orbits[i] not in seen:
                     roots.append((i,i))
                     seen.append(orbits[i])
@@ -2427,7 +2431,7 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, implemen
                 continue
             z_aut_gens, _, canonical_relabeling = search_tree(z, [z.vertices()], certificate=True, dig=(dig or loops))
             relabel_inverse = [0]*n
-            for ii in xrange(n):
+            for ii in range(n):
                 relabel_inverse[canonical_relabeling[ii]] = ii
             z_can = z.relabel(canonical_relabeling, inplace=False)
             cut_edge_can = z_can.edges(labels=False, sort=True)[-1]
@@ -2472,14 +2476,14 @@ def check_aut_edge(aut_gens, cut_edge, i, j, n, dig=False):
         [[1, 0, 3, 2], [1, 2, 3, 0]]
     """
     from copy import copy
-    perm = range(n)
+    perm = list(range(n))
     seen_perms = [perm]
     unchecked_perms = [perm]
     while len(unchecked_perms) != 0:
         perm = unchecked_perms.pop(0)
         for gen in aut_gens:
             new_perm = copy(perm)
-            for ii in xrange(n):
+            for ii in range(n):
                 new_perm[ii] = gen[perm[ii]]
             if new_perm not in seen_perms:
                 seen_perms.append(new_perm)

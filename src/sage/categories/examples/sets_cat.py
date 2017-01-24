@@ -64,6 +64,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -73,6 +74,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -354,6 +356,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -362,6 +365,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -483,7 +487,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
             sage: P.category()
             Category of sets
             sage: P(13) == 13
-            False
+            True
             sage: ZZ(P(13)) == 13
             True
             sage: P(13) + 1 == 14
@@ -494,8 +498,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         from sage.categories.homset import Hom
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
         self._populate_coercion_lists_(embedding=self.mor)
-
-
 
     def _repr_(self):
         """
@@ -637,6 +639,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -646,6 +649,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass

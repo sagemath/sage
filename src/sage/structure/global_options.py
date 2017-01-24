@@ -135,7 +135,7 @@ illustrated by an example::
 
 I all of the examples above the options are contructed with  single call to
 :class:`GlobalOptions`, however, it is also possible to construct the options
-dynnamically using the :meth:`GlobalOptions._add_to_options` methods.
+dynamically using the :meth:`GlobalOptions._add_to_options` methods.
 
 For more details see :class:`GlobalOptions`.
 

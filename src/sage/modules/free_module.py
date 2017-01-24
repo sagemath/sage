@@ -687,22 +687,19 @@ class FreeModule_generic(Module):
             Ambient free module of rank 3 over the integral domain Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
 
             sage: FreeModule(GF(7),3).category()
-            Category of finite dimensional vector spaces with basis over
-             (finite fields and subquotients of monoids and quotients of semigroups)
+            Category of finite enumerated finite dimensional vector spaces with basis over
+             (finite enumerated fields and subquotients of monoids and quotients of semigroups)
             sage: V = QQ^4; V.category()
             Category of finite dimensional vector spaces with basis over
              (quotient fields and metric spaces)
             sage: V = GF(5)**20; V.category()
-            Category of finite dimensional vector spaces with basis over
-             (finite fields and subquotients of monoids
-              and quotients of semigroups)
+            Category of finite enumerated finite dimensional vector spaces with basis over (finite enumerated fields and subquotients of monoids and quotients of semigroups)
             sage: FreeModule(ZZ,3).category()
             Category of finite dimensional modules with basis over
              (euclidean domains and infinite enumerated sets
               and metric spaces)
             sage: (QQ^0).category()
-            Category of finite dimensional vector spaces with basis
-             over (quotient fields and metric spaces)
+            Category of finite enumerated finite dimensional vector spaces with basis over (quotient fields and metric spaces)
 
         TESTS::
 
@@ -744,6 +741,11 @@ done from the right side.""")
         if category is None:
             from sage.categories.all import FreeModules
             category = FreeModules(base_ring.category()).FiniteDimensional()
+            try:
+                if base_ring.is_finite() or rank == 0:
+                    category = category.Enumerated().Finite()
+            except:
+                pass
 
         super(FreeModule_generic, self).__init__(base_ring, category=category)
         self.__coordinate_ring = coordinate_ring
@@ -959,7 +961,7 @@ done from the right side.""")
                 return
             try:
                 yield self(L)
-            except TypeError, ValueError:
+            except (TypeError, ValueError):
                 pass
 
     def _element_constructor_(self, x, coerce=True, copy=True, check=True):
@@ -1397,7 +1399,7 @@ done from the right side.""")
         Returns a list `c` such that if `B` is the basis
         for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -1839,21 +1841,6 @@ done from the right side.""")
             True
         """
         return self.__is_sparse
-
-    def list(self):
-        """
-        Return a list of all elements of ``self``.
-
-        EXAMPLES::
-
-            sage: (GF(3)^2).list()
-            [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
-            sage: (ZZ^2).list()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: since it is infinite, cannot list Ambient free module of rank 2 over the principal ideal domain Integer Ring
-        """
-        return self._list_from_iterator_cached()
 
     def ngens(self):
         """
@@ -3931,7 +3918,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: Q(V.0 + V.1)
             (0)
 
-        We illustrate the the base rings must be the same::
+        We illustrate that the base rings must be the same::
 
             sage: (QQ^2)/(ZZ^2)
             Traceback (most recent call last):
@@ -4570,7 +4557,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         Returns a vector `c` such that if `B` is the basis for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -4883,7 +4870,7 @@ class FreeModule_ambient_domain(FreeModule_ambient):
 
         Returns a vector `c` such that if `B` is the basis for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -5555,7 +5542,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         Returns a list `c` such that if `B` is the basis
         for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -5996,7 +5983,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         Returns a vector `c` such that if `B` is the basis for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -6054,7 +6041,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         Returns a list `c` such that if `B` is the echelonized basis
         for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -6205,7 +6192,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
 
         Returns a list `c` such that if `B` is the basis for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -6602,7 +6589,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
 
         Returns a list `c` such that if `B` is the basis for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 
@@ -6665,7 +6652,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
 
         Returns a list `c` such that if `B` is the basis for self, then
 
-        .. math::
+        .. MATH::
 
             \\sum c_i B_i = v.
 

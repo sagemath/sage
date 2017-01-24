@@ -8,16 +8,16 @@ fi
 
 cd src
 
-# Patch sources
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+# See #22021 for issues with multithreading
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_THREAD=0"
 
+# OpenBLAS does not build on 32bit Haswell. Upstream suggests to pass BINARY=32 to default to NEHALEM kernels
+# See https://github.com/xianyi/OpenBLAS/issues/657
+# Right now this affect all 32bit CPUs.
+if [ `python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
+    echo >&2 "Building a 32bit version of OpenBLAS."
+    OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE BINARY=32"
+fi
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
     OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE DEBUG=1"
@@ -30,7 +30,7 @@ fi
 
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
 
-$MAKE $OPENBLAS_CONFIGURE
+$MAKE libs netlib shared $OPENBLAS_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error building OpenBLAS"
     exit 1

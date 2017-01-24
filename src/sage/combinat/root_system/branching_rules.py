@@ -1987,7 +1987,7 @@ def maximal_subgroups(ct, mode="print_rules"):
         A1xC2:branching_rule("D4","C1xC2","tensor")*branching_rule("C1xC2","A1xC2",[branching_rule("C1","A1","isomorphic"),"identity"])
         A1xA1xA1xA1:branching_rule("D4","D2xD2","orthogonal_sum")*branching_rule("D2xD2","A1xA1xA1xA1",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])
 
-    .. seealso: :meth:`~sage.combinat.root_sytem.weyl_characters.WeylCharacterRing.ParentMethods.maximal_subgroups`
+    .. seealso: :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.ParentMethods.maximal_subgroups`
 
     """
 

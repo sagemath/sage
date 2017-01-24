@@ -40,7 +40,7 @@ class PariReturn(object):
         """
         Return code to return from the Cython wrapper.
         """
-        s  = "        pari_instance.clear_stack()\n"
+        s  = "        clear_stack()\n"
         s += "        return {name}\n"
         return s.format(name=self.name)
 
@@ -49,7 +49,7 @@ class PariReturnGEN(PariReturn):
     def ctype(self):
         return "GEN"
     def return_code(self):
-        s = "        return pari_instance.new_gen({name})\n"
+        s = "        return new_gen({name})\n"
         return s.format(name=self.name)
 
 class PariReturnInt(PariReturn):
@@ -70,7 +70,7 @@ class PariReturnVoid(PariReturn):
     def assign_code(self, value):
         return "        {value}\n".format(value=value)
     def return_code(self):
-        s = "        pari_instance.clear_stack()\n"
+        s = "        clear_stack()\n"
         return s
 
 

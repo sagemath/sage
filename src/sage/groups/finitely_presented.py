@@ -148,6 +148,50 @@ from sage.rings.integer_ring import IntegerRing
 from sage.functions.generalized import sign
 from sage.matrix.constructor import matrix
 from sage.groups.generic import structure_description
+from sage.categories.morphism import SetMorphism
+
+
+class GroupMorphismWithGensImages(SetMorphism):
+    r"""
+    Class used for morphisms from finitely presented groups to
+    other groups. It just adds the images of the generators at the
+    end of the representation.
+    
+    EXAMPLES::
+    
+        sage: F = FreeGroup(3)
+        sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
+        sage: H = AlternatingGroup(3)
+        sage: HS = G.Hom(H)
+        sage: from sage.groups.finitely_presented import GroupMorphismWithGensImages
+        sage: GroupMorphismWithGensImages(HS, lambda a: H.one())
+        Generic morphism:
+        From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+        To:   Alternating group of order 3!/2 as a permutation group
+        Defn: x0 |--> ()
+              x1 |--> ()
+              x2 |--> ()
+
+    """
+    def _repr_defn(self):
+        r"""
+        Return the part of the representation that includes the images of the generators.
+        
+        EXAMPLES::
+        
+            sage: F = FreeGroup(3)
+            sage: G = F / [F([1,2,3,1,2,3]),F([1,1,1])]
+            sage: H = AlternatingGroup(3)
+            sage: HS = G.Hom(H)
+            sage: from sage.groups.finitely_presented import GroupMorphismWithGensImages
+            sage: f = GroupMorphismWithGensImages(HS, lambda a: H.one())
+            sage: f._repr_defn()
+            'x0 |--> ()\nx1 |--> ()\nx2 |--> ()'
+
+        """
+        D = self.domain()
+        return '\n'.join(['%s |--> %s'%(i, self(i)) for\
+                       i in D.gens()])
 
 class FinitelyPresentedGroupElement(FreeGroupElement):
     """
@@ -571,7 +615,7 @@ class RewritingSystem(object):
 
     def rules(self):
         """
-        Return the rules that form the rewritig system.
+        Return the rules that form the rewriting system.
 
         OUTPUT:
 
@@ -662,7 +706,7 @@ class RewritingSystem(object):
         system into a confluent one.
 
         Note that this method does not return any object, just changes the
-        rewriting sytem internally.
+        rewriting system internally.
 
         .. WARNING:
 
@@ -980,7 +1024,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Calls GAP function ``DirectProduct``, which returns the direct
         product of a list of groups of any representation.
 
-        From [JohnsonPG90]_ (pg 45, proposition 4): If `G`, `H` are groups
+        From [Joh1990]_ (pg 45, proposition 4): If `G`, `H` are groups
         presented by `\langle X \mid R \rangle` and `\langle Y \mid S \rangle`
         respectively, then their direct product has the presentation
         `\langle X, Y \mid R, S, [X, Y] \rangle` where `[X, Y]` denotes the
@@ -1064,11 +1108,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         AUTHORS:
 
         - Davis Shurbert (2013-07-20): initial version
-
-        REFERENCES:
-
-        .. [JohnsonPG90] \D.L. Johnson. *Presentations of Groups*.
-           Cambridge University Press. (1990).
         """
         from sage.groups.free_group import FreeGroup, _lexi_gen
 
@@ -1331,6 +1370,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Generic morphism:
               From: Finitely presented group < a, b, c | a*b*c, a*b^2, c*b*c^-2 >
               To:   Finitely presented group < b |  >
+              Defn: a |--> b^-2
+                    b |--> b
+                    c |--> b
             sage: I(a)
             b^-2
             sage: I(b)
@@ -1346,6 +1388,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Generic morphism:
               From: Finitely presented group < x | x >
               To:   Finitely presented group <  |  >
+              Defn: x |--> 1
 
         ALGORITHM:
 
@@ -1355,7 +1398,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         domain = self
         codomain = wrap_FpGroup(I.Range())
         phi = lambda x: codomain(I.ImageElm(x.gap()))
-        return self.hom(phi, codomain)
+        HS = self.Hom(codomain)
+        return GroupMorphismWithGensImages(HS, phi)
 
     def simplified(self):
         """
@@ -1380,7 +1424,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
             sage: G.<e0, e1, e2, e3, e4, e5, e6, e7, e8, e9> = FreeGroup()
             sage: rels = [e6, e5, e3, e9, e4*e7^-1*e6, e9*e7^-1*e0,
-            ...           e0*e1^-1*e2, e5*e1^-1*e8, e4*e3^-1*e8, e2]
+            ....:         e0*e1^-1*e2, e5*e1^-1*e8, e4*e3^-1*e8, e2]
             sage: H = G.quotient(rels);  H
             Finitely presented group < e0, e1, e2, e3, e4, e5, e6, e7, e8, e9 |
             e6, e5, e3, e9, e4*e7^-1*e6, e9*e7^-1*e0, e0*e1^-1*e2, e5*e1^-1*e8, e4*e3^-1*e8, e2 >
@@ -1388,6 +1432,62 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
+    
+    def epimorphisms(self, H):
+        r"""
+        Return the epimorphisms from `self` to `H`, up to automorphism of `H`.
+        
+        INPUT:
+        
+        - `H` -- Another group
+        
+        EXAMPLES::
+        
+            sage: F = FreeGroup(3)
+            sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
+            sage: H = AlternatingGroup(3)
+            sage: G.epimorphisms(H)
+            [Generic morphism:
+            From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+            To:   Alternating group of order 3!/2 as a permutation group
+            Defn: x0 |--> ()
+                  x1 |--> (1,2,3)
+                  x2 |--> (1,3,2), Generic morphism:
+            From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+            To:   Alternating group of order 3!/2 as a permutation group
+            Defn: x0 |--> (1,2,3)
+                  x1 |--> ()
+                  x2 |--> (1,3,2), Generic morphism:
+            From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+            To:   Alternating group of order 3!/2 as a permutation group
+            Defn: x0 |--> (1,2,3)
+                  x1 |--> (1,2,3)
+                  x2 |--> (1,2,3), Generic morphism:
+            From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+            To:   Alternating group of order 3!/2 as a permutation group
+            Defn: x0 |--> (1,2,3)
+                  x1 |--> (1,3,2)
+                  x2 |--> ()]
+        
+        ALGORITHM:
+        
+        Uses libgap's GQuotients function.
+        """
+        from sage.misc.misc_c import prod
+        from sage.functions.generalized import sign
+        HomSpace = self.Hom(H)
+        Gg = libgap(self)
+        Hg = libgap(H)
+        gquotients = Gg.GQuotients(Hg)
+        res = []
+        # the following closure is needed to attach a specific value of quo to
+        # each function in the different morphisms
+        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
+        for quo in gquotients:
+            tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
+            fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
+            res.append(fhom)
+        return res
 
     def alexander_matrix(self, im_gens = None):
         """

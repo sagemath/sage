@@ -7,9 +7,9 @@ AUTHORS:
 
 - Robert Bradshaw (2010-05-30): added is_finite()
 
-- Julian Rueth (2011-06-08, 2011-09-14, 2014-06-23, 2014-06-24): fixed hom(),
-  extension(); use @cached_method; added derivation(); added support for
-  relative vector spaces
+- Julian Rueth (2011-06-08, 2011-09-14, 2014-06-23, 2014-06-24, 2016-11-13):
+  fixed hom(), extension(); use @cached_method; added derivation(); added
+  support for relative vector spaces; fixed conversion to base fields
 
 - Maarten Derickx (2011-09-11): added doctests
 
@@ -60,7 +60,7 @@ TESTS::
     sage: TestSuite(M).run()  # long time (52s on sage.math, 2012)
 
 The following two test suites do not pass ``_test_elements`` yet since
-``R.an_element()`` has a ``_test_category`` method wich it should not have.
+``R.an_element()`` has a ``_test_category`` method which it should not have.
 It is not the fault of the function field code so this will
 be fixed in another ticket::
 
@@ -71,7 +71,7 @@ from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
-#       Copyright (C) 2011-2014 Julian Rueth <julian.rueth@gmail.com>
+#       Copyright (C) 2011-2016 Julian Rueth <julian.rueth@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -117,6 +117,26 @@ class FunctionField(Field):
         sage: isinstance(K, sage.rings.function_field.function_field.FunctionField)
         True
     """
+    def __init__(self, base_field, names, category = CAT):
+        r"""
+        TESTS::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: from sage.rings.function_field.function_field import FunctionField
+            sage: isinstance(K, FunctionField)
+            True
+
+        """
+        Field.__init__(self, base_field, names=names, category=category)
+
+        # allow conversion into the constant base field
+        from sage.categories.homset import Hom
+        from .maps import FunctionFieldConversionToConstantBaseField
+        to_constant_base_field = FunctionFieldConversionToConstantBaseField(Hom(self, self.constant_base_field()))
+        # the conversion map must not keep this field alive if that is the only reference to it
+        to_constant_base_field._make_weak_references()
+        self.constant_base_field().register_conversion(to_constant_base_field)
+
     def is_perfect(self):
         r"""
         Return whether this field is perfect, i.e., its characteristic is `p=0`
@@ -326,6 +346,26 @@ class FunctionField(Field):
             return True
         return False
 
+    def _convert_map_from_(self, R):
+        r"""
+        Return a conversion from ``R`` to this function field or ``None`` if
+        none exists.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)
+            sage: K(L(x)) # indirect doctest
+            x
+        
+        """
+        if isinstance(R, FunctionField_polymod):
+            base_conversion = self.convert_map_from(R.base_field())
+            if base_conversion is not None:
+                from sage.categories.morphism import SetMorphism
+                return base_conversion * SetMorphism(R.Hom(R.base_field()), R._to_base_field)
+
     def _intermediate_fields(self, base):
         r"""
         Return the fields which lie in between ``base`` and this field in the
@@ -500,8 +540,7 @@ class FunctionField_polymod(FunctionField):
         self._base_field = base_field
         self._polynomial = polynomial
 
-        Field.__init__(self, base_field,
-                                names=names, category = category)
+        FunctionField.__init__(self, base_field, names=names, category = category)
 
         self._hash = hash(polynomial)
         self._ring = self._polynomial.parent()
@@ -538,6 +577,82 @@ class FunctionField_polymod(FunctionField):
 
         """
         return self._hash
+
+    def _to_base_field(self, f):
+        r"""
+        Return ``f`` as an element of the :meth:`base_field`.
+
+        INPUT:
+
+        - ``f`` -- an element of this function field which lies in the base
+          field.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: L._to_base_field(L(x))
+            x
+            sage: L._to_base_field(y)
+            Traceback (most recent call last):
+            ...
+            ValueError: y is not an element of the base field
+
+        TESTS:
+
+        Verify that :trac:`21872` has been resolved::
+
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+
+            sage: M(1) in QQ
+            True
+            sage: M(y) in L
+            True
+            sage: M(x) in K
+            True
+            sage: z in K
+            False
+
+        """
+        K = self.base_field()
+        if f.element().is_constant():
+            return K(f.element())
+        raise ValueError("%r is not an element of the base field"%(f,))
+
+    def _to_constant_base_field(self, f):
+        r"""
+        Return ``f`` as an element of the :meth:`constant_base_field`.
+
+        INPUT:
+
+        - ``f`` -- an element of this rational function field which is a
+          constant
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: L._to_constant_base_field(L(1))
+            1
+            sage: L._to_constant_base_field(y)
+            Traceback (most recent call last):
+            ...
+            ValueError: y is not an element of the base field
+
+        TESTS:
+
+        Verify that :trac:`21872` has been resolved::
+
+            sage: L(1) in QQ
+            True
+            sage: y in QQ
+            False
+
+        """
+        return self.base_field()._to_constant_base_field(self._to_base_field(f))
 
     def monic_integral_model(self, names):
         """
@@ -1216,10 +1331,10 @@ class RationalFunctionField(FunctionField):
             raise TypeError("constant_field must be a field")
         self._element_class = element_class
         self._element_init_pass_parent = False
-        Field.__init__(self, self, names=names, category = category)
+        self._constant_field = constant_field
+        FunctionField.__init__(self, self, names=names, category = category)
         R = constant_field[names[0]]
         self._hash = hash((constant_field, names))
-        self._constant_field = constant_field
         self._ring = R
         self._field = R.fraction_field()
         self._populate_coercion_lists_(coerce_list=[self._field])
@@ -1321,6 +1436,42 @@ class RationalFunctionField(FunctionField):
                 pass
             raise Err
         return FunctionFieldElement_rational(self, x)
+
+    def _to_constant_base_field(self, f):
+        r"""
+        Return ``f`` as an element of the :meth:`constant_base_field`.
+
+        INPUT:
+
+        - ``f`` -- an element of this rational function field which is a
+          constant of the underlying rational function field.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: K._to_constant_base_field(K(1))
+            1
+            sage: K._to_constant_base_field(K(x))
+            Traceback (most recent call last):
+            ...
+            ValueError: only constants can be converted into the constant base field but x is not a constant
+
+        TESTS:
+
+        Verify that :trac:`21872` has been resolved::
+
+            sage: K(1) in QQ
+            True
+            sage: x in QQ
+            False
+
+        """
+        K = self.constant_base_field()
+        if f.denominator() in K and f.numerator() in K:
+            # When K is not exact, f.denominator() might not be an exact 1, so
+            # we need to divide explicitly to get the correct precision
+            return K(f.numerator()) / K(f.denominator())
+        raise ValueError("only constants can be converted into the constant base field but %r is not a constant"%(f,))
 
     def _to_bivariate_polynomial(self, f):
         """

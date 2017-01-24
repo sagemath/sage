@@ -212,7 +212,7 @@ def SO(n, R, e=None, var='a'):
     Return the special orthogonal group.
 
     The special orthogonal group `GO(n,R)` consists of all `n\times n`
-    matrices with determint one over the ring `R` preserving an
+    matrices with determinant one over the ring `R` preserving an
     `n`-ary positive definite quadratic form. In cases where there are
     muliple non-isomorphic quadratic forms, additional data needs to
     be specified to disambiguate.

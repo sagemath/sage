@@ -85,7 +85,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             r"""
             Return the longest element of ``self``.
 
-            This attribute is deprecated.
+            This attribute is deprecated, use :meth:`long_element` instead.
 
             EXAMPLES::
 
@@ -153,9 +153,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                     w = w.apply_simple_reflection(i)
 
         @cached_method
-        def bruhat_poset(self, facade = False):
+        def bruhat_poset(self, facade=False):
             """
-            Returns the Bruhat poset of ``self``.
+            Return the Bruhat poset of ``self``.
+
+            .. SEEALSO::
+
+                :meth:`bhz_poset`, :meth:`shard_poset`, :meth:`weak_poset`
 
             EXAMPLES::
 
@@ -207,7 +211,120 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.combinat.posets.posets import Poset
             covers = tuple([u, v] for v in self for u in v.bruhat_lower_covers() )
-            return Poset((self, covers), cover_relations = True, facade=facade)
+            return Poset((self, covers), cover_relations=True, facade=facade)
+
+        def shard_poset(self, side='right'):
+            """
+            Return the shard intersection order attached to `W`.
+
+            This is a lattice structure on `W`, introduced in [Reading]_. It
+            contains the noncrossing partition lattice, as the induced lattice
+            on the subset of `c`-sortable elements.
+
+            The partial order is given by simultaneous inclusion of inversion sets
+            and subgroups attached to every element.
+
+            The precise description used here can be found in [StThWi]_.
+
+            Another implementation for the symmetric groups is
+            available as :func:`~sage.combinat.shard_order.shard_poset`.
+
+            .. SEEALSO::
+
+                :meth:`bhz_poset`, :meth:`bruhat_poset`, :meth:`weak_poset`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
+                sage: SH = W.shard_poset(); SH
+                Finite lattice containing 24 elements
+                sage: SH.is_graded()
+                True
+                sage: SH.characteristic_polynomial()
+                q^3 - 11*q^2 + 23*q - 13
+                sage: SH.f_polynomial()
+                34*q^3 + 22*q^2 + q
+
+            REFERENCES:
+
+            .. [Reading] Nathan Reading, *Noncrossing partitions and the shard
+               intersection order*, DMTCS Proceedings of FPSAC 2009, 745--756
+
+            .. [StThWi] Christian Stump, Hugh Thomas and Nathan Williams,
+               *Cataland: why the fuss?*, :arxiv:`1503.00710`
+            """
+            from sage.combinat.posets.lattices import LatticePoset
+            data = {w: (frozenset(u.lift()
+                                  for u in w.covered_reflections_subgroup()),
+                        frozenset((~w).inversions_as_reflections()))
+                    for w in self}
+
+            def shard_comparison(u, v):
+                Gu, Nu = data[u]
+                Gv, Nv = data[v]
+                return Gu.issubset(Gv) and Nu.issubset(Nv)
+
+            return LatticePoset([self, shard_comparison])
+
+        def bhz_poset(self):
+            r"""
+            Return the Bergeron-Hohlweg-Zabrocki partial order on the Coxeter
+            group.
+
+            This is a partial order on the elements of a finite
+            Coxeter group `W`, which is distinct from the Bruhat
+            order, the weak order and the shard intersection order. It
+            was defined in [BHZ05]_.
+
+            This partial order is not a lattice, as there is no unique
+            maximal element. It can be succintly defined as follows.
+
+            Let `u` and `v` be two elements of the Coxeter group `W`. Let
+            `S(u)` be the support of `u`. Then `u \leq v` if and only
+            if `v_{S(u)} = u` (here `v = v^I v_I` denotes the usual
+            parabolic decomposition with respect to the standard parabolic
+            subgroup `W_I`).
+
+            .. SEEALSO::
+
+                :meth:`bruhat_poset`, :meth:`shard_poset`, :meth:`weak_poset`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
+                sage: P = W.bhz_poset(); P
+                Finite poset containing 24 elements
+                sage: P.relations_number()
+                103
+                sage: P.chain_polynomial()
+                34*q^4 + 90*q^3 + 79*q^2 + 24*q + 1
+                sage: len(P.maximal_elements())
+                13
+
+            REFERENCE:
+
+            .. [BHZ05] \N. Bergeron, C. Hohlweg, and M. Zabrocki, *Posets
+               related to the Connectivity Set of Coxeter Groups*.
+               :arxiv:`math/0509271v3`
+            """
+            from sage.graphs.digraph import DiGraph
+            from sage.combinat.posets.posets import Poset
+
+            def covered_by(ux, vy):
+                u, iu, Su = ux
+                v, iv, Sv = vy
+                if len(Sv) != len(Su) + 1:
+                    return False
+                if not all(u in Sv for u in Su):
+                    return False
+                return all((v * iu).has_descent(x, positive=True) for x in Su)
+
+            vertices = [(u, u.inverse(),
+                         tuple(set(u.reduced_word_reverse_iterator())))
+                        for u in self]
+            dg = DiGraph([vertices, covered_by])
+            dg.relabel(lambda x: x[0])
+            return Poset(dg, cover_relations=True)
 
         def degrees(self):
             """
@@ -296,6 +413,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             this poset, `u` is smaller than `v` if some reduced word
             of `u` is a right (resp. left) factor of some reduced word
             of `v`.
+
+            .. SEEALSO::
+
+                :meth:`bhz_poset`, :meth:`bruhat_poset`, :meth:`shard_poset`
 
             EXAMPLES::
 
@@ -695,3 +816,29 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             G.add_edges([v,vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
             return G
 
+        def covered_reflections_subgroup(self):
+            """
+            Return the subgroup of `W` generated by the conjugates by `w`
+            of the simple reflections indexed by right descents of `w`.
+
+            This is used to compute the shard intersection order on `W`.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
+                sage: len(W.long_element().covered_reflections_subgroup())
+                24
+                sage: s = W.simple_reflection(1)
+                sage: Gs = s.covered_reflections_subgroup()
+                sage: len(Gs)
+                2
+                sage: s in [u.lift() for u in Gs]
+                True
+                sage: len(W.one().covered_reflections_subgroup())
+                1
+            """
+            W = self.parent()
+            winv = ~self
+            cov_down = [self * W.simple_reflection(i) * winv
+                        for i in self.descents(side='right')]
+            return W.submonoid(cov_down)

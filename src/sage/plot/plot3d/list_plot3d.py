@@ -2,6 +2,8 @@
 List Plots
 """
 from __future__ import absolute_import
+from six.moves import range
+
 from sage.matrix.matrix import is_Matrix
 from sage.matrix.all import matrix
 from sage.rings.all import RDF
@@ -128,8 +130,8 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
 
         sage: l = []
         sage: for i in range(6):
-        ...      for j in range(6):
-        ...         l.append((float(i*pi/5), float(j*pi/5), m[i, j]))
+        ....:     for j in range(6):
+        ....:         l.append((float(i*pi/5), float(j*pi/5), m[i, j]))
         sage: list_plot3d(l, texture='yellow')
         Graphics3d Object
 
@@ -137,8 +139,8 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
 
         sage: l = []
         sage: for i in range(-5, 5):
-        ...    for j in range(-5, 5):
-        ...      l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
+        ....:     for j in range(-5, 5):
+        ....:         l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
         sage: list_plot3d(l, interpolation_type='nn', texture='yellow', num_points=100)
         Graphics3d Object
 
@@ -184,8 +186,8 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
             return list_plot3d_matrix(v, texture=texture, **kwds)
         else:
             l = []
-            for i in xrange(v.nrows()):
-                for j in xrange(v.ncols()):
+            for i in range(v.nrows()):
+                for j in range(v.ncols()):
                     l.append((i, j, v[i, j]))
             return list_plot3d_tuples(l, interpolation_type, texture, **kwds)
 
@@ -250,7 +252,8 @@ def list_plot3d_matrix(m, texture, **kwds):
     """
     from .parametric_surface import ParametricSurface
     f = lambda i,j: (i, j, float(m[int(i), int(j)]))
-    G = ParametricSurface(f, (range(m.nrows()), range(m.ncols())), texture=texture, **kwds)
+    G = ParametricSurface(f, (list(range(m.nrows())), list(range(m.ncols()))),
+                          texture=texture, **kwds)
     G._set_extra_kwds(kwds)
     return G
 

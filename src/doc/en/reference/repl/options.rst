@@ -49,8 +49,10 @@ Command-line options for Sage
 
 .. rubric:: Running the notebook
 
-- ``-n``, ``--notebook`` -- start the Sage notebook, passing all
-  remaining arguments to the 'notebook' command in Sage
+- ``-n [...]``, ``--notebook=[...]`` -- start the notebook, valid options
+  are ``default``, ``sagenb``, ``jupyter`` and ``export`` (see the
+  output of ``sage --notebook --help`` for more details and examples of
+  how to pass optional arguments)
 - ``-bn [...]``, ``--build-and-notebook [...]`` -- build the Sage
   library (as by running ``sage -b``) then start the Sage notebook
 - ``--inotebook [...]`` -- start the *insecure* Sage notebook

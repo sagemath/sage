@@ -61,7 +61,7 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
@@ -136,11 +136,11 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         order = TermOrder(order,n)
         MPolynomialRing_generic.__init__(self, base_ring, n, names, order)
         # Construct the generators
-        v = [0 for _ in xrange(n)]
+        v = [0] * n
         one = base_ring(1);
         self._gens = []
         C = self._poly_class()
-        for i in xrange(n):
+        for i in range(n):
             v[i] = 1  # int's!
             self._gens.append(C(self, {tuple(v):one}))
             v[i] = 0
@@ -514,7 +514,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             # with highest priority, and the x[i] are expressions
             # in the remaining variables.
             v = self.gens_dict_recursive()[str(x.variable())]
-            return sum(self(x[i]) * v**i for i in xrange(x.poldegree() + 1))
+            return sum(self(x[i]) * v ** i for i in range(x.poldegree() + 1))
 
         if isinstance(x, dict):
             return MPolynomial_polydict(self, x)

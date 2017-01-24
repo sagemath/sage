@@ -860,9 +860,7 @@ cdef class P1List:
 
         INPUT:
 
-
         -  ``i`` - integer (the index of the element to act on).
-
 
         EXAMPLES::
 
@@ -876,13 +874,10 @@ cdef class P1List:
             sage: L.normalize(-1,9)
             (1, 111)
 
-        ::
+        This operation is an involution::
 
-            This operation is an involution::
-
-            sage: all([L.apply_I(L.apply_I(i))==i for i in xrange(len(L))])
+            sage: all(L.apply_I(L.apply_I(i)) == i for i in range(len(L)))
             True
-
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
@@ -912,13 +907,10 @@ cdef class P1List:
             sage: L.normalize(-9,1)
             (3, 13)
 
-        ::
+        This operation is an involution::
 
-            This operation is an involution::
-
-            sage: all([L.apply_S(L.apply_S(i))==i for i in xrange(len(L))])
+            sage: all(L.apply_S(L.apply_S(i)) == i for i in range(len(L)))
             True
-
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
@@ -948,13 +940,10 @@ cdef class P1List:
             sage: L.normalize(9,-10)
             (3, 10)
 
-        ::
+        This operation has order three::
 
-            This operation has order three::
-
-            sage: all([L.apply_T(L.apply_T(L.apply_T(i)))==i for i in xrange(len(L))])
+            sage: all(L.apply_T(L.apply_T(L.apply_T(i))) == i for i in range(len(L)))
             True
-
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
@@ -1091,7 +1080,7 @@ cdef class P1List:
             sage: type(L)
             <type 'sage.modular.modsym.p1list.P1List'>
             sage: type(L.list())
-            <type 'list'>
+            <... 'list'>
         """
         return self.__list
 

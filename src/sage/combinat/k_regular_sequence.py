@@ -97,9 +97,10 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from sage.combinat.recognizable_series import RecognizableSeries
-from sage.combinat.recognizable_series import RecognizableSeriesSpace
+from .recognizable_series import RecognizableSeries
+from .recognizable_series import RecognizableSeriesSpace
 from sage.misc.cachefunc import cached_function, cached_method
 from six import iteritems
 
@@ -134,7 +135,7 @@ def pad_right(T, length, zero=0):
         sage: pad_right([1,2,3], 10)
         [1, 2, 3, 0, 0, 0, 0, 0, 0, 0]
     """
-    return T + type(T)(zero for _ in xrange(length - len(T)))
+    return T + type(T)(zero for _ in range(length - len(T)))
 
 
 def value(D, k):
@@ -1023,6 +1024,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
               Running the test suite of self.an_element()
               running ._test_category() . . . pass
               running ._test_eq() . . . pass
+              running ._test_new() . . . pass
               running ._test_nonzero_equal() . . . pass
               running ._test_not_implemented_methods() . . . pass
               running ._test_pickling() . . . pass
@@ -1032,6 +1034,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             running ._test_elements_eq_transitive() . . . pass
             running ._test_elements_neq() . . . pass
             running ._test_eq() . . . pass
+            running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
             running ._test_some_elements() . . . pass
@@ -1103,6 +1106,31 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         n = ZZ(n)
         W = self.indices()
         return W(n.digits(self.k))
+
+
+    def some_elements(self):
+        r"""
+        Return some elements of this `k`-regular sequence.
+
+        See :class:`TestSuite` for a typical use case.
+
+        OUTPUT:
+
+        An iterator.
+
+        EXAMPLES::
+
+            sage: tuple(kRegularSequenceSpace(2, ZZ).some_elements())
+            (2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...,
+             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...,
+             2-regular sequence 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...,
+             2-regular sequence -2, -4, 4, -8, -4, 8, 8, -16, 4, -8, ...,
+             2-regular sequence 1, 2, 2, 4, 2, 2, 4, 8, 2, 2, ...,
+             2-regular sequence 2, 11, 14, 20, 17, 23, 23, 29, 20, 26, ...,
+             ...
+             2-regular sequence 1, 10, 10, 100, 10, 10, 100, 1000, 10, 10, ...)
+        """
+        return super(kRegularSequenceSpace, self).some_elements(heal=True)
 
 
     def _element_constructor_(self, *args, **kwds):

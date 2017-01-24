@@ -139,6 +139,7 @@ Check that :trac:`5562` has been fixed::
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 from sage.structure.element import Element
 from sage.structure.category_object import check_default_category
@@ -240,12 +241,12 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
 
             sage: category(ZZ['x'])
             Join of Category of unique factorization domains
-                and Category of commutative algebras over
-                        (euclidean domains and infinite enumerated sets and metric spaces)
+             and Category of commutative algebras over
+              (euclidean domains and infinite enumerated sets and metric spaces)
             sage: category(GF(7)['x'])
-            Join of Category of euclidean domains and
-                    Category of commutative algebras over (finite fields and
-                        subquotients of monoids and quotients of semigroups)
+            Join of Category of euclidean domains
+             and Category of commutative algebras over
+              (finite enumerated fields and subquotients of monoids and quotients of semigroups)
 
         TESTS:
 
@@ -298,7 +299,8 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
                 (self.base_ring(), self.variable_name(), None, self.is_sparse()))
 
 
-    def _element_constructor_(self, x=None, check=True, is_gen = False, construct=False, **kwds):
+    def _element_constructor_(self, x=None, check=True, is_gen=False,
+                              construct=False, **kwds):
         r"""
         Convert ``x`` into this univariate polynomial ring,
         possibly non-canonically.
@@ -361,6 +363,13 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
 
         TESTS:
 
+        Python 3 range is allowed::
+
+            sage: from six.moves import range
+            sage: R = PolynomialRing(ZZ,'x')
+            sage: R(range(4))
+            3*x^3 + 2*x^2 + x
+
         This shows that the issue at :trac:`4106` is fixed::
 
             sage: x = var('x')
@@ -392,8 +401,11 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
             x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5
         """
         C = self.element_class
-        if isinstance(x, list):
-            return C(self, x, check=check, is_gen=False,construct=construct)
+        if isinstance(x, (list, tuple)):
+            return C(self, x, check=check, is_gen=False, construct=construct)
+        if isinstance(x, range):
+            return C(self, list(x), check=check, is_gen=False,
+                     construct=construct)
         if isinstance(x, Element):
             P = x.parent()
             if P is self:
@@ -1124,7 +1136,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
             sage: S.krull_dimension()
             2
             sage: for n in range(10):
-            ...    S = PolynomialRing(S,'w')
+            ....:  S = PolynomialRing(S,'w')
             sage: S.krull_dimension()
             12
         """
@@ -1180,7 +1192,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         Note that the zero polynomial has degree ``-1``, so if you want to
         consider it set the minimum degree to ``-1``::
 
-            sage: any(R.random_element(degree=(-1,2),x=-1,y=1) == R.zero() for _ in xrange(100))
+            sage: any(R.random_element(degree=(-1,2),x=-1,y=1) == R.zero() for _ in range(100))
             True
 
         TESTS::
@@ -1198,7 +1210,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         Check that :trac:`16682` is fixed::
 
             sage: R = PolynomialRing(GF(2), 'z')
-            sage: for _ in xrange(100):
+            sage: for _ in range(100):
             ....:     d = randint(-1,20)
             ....:     P = R.random_element(degree=d)
             ....:     assert P.degree() == d, "problem with {} which has not degree {}".format(P,d)
@@ -1221,7 +1233,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         if degree[0] <= -2:
             raise ValueError("degree should be an integer greater or equal than -1")
 
-        p = self([R.random_element(*args,**kwds) for _ in xrange(degree[1]+1)])
+        p = self([R.random_element(*args,**kwds) for _ in range(degree[1]+1)])
 
         if p.degree() < degree[0]:
             p += R._random_nonzero_element() * self.gen()**randint(degree[0],degree[1])
@@ -1243,7 +1255,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         """
         Refer to monics() for full documentation.
         """
-        for degree in xrange(max_degree + 1):
+        for degree in range(max_degree + 1):
             for m in self._monics_degree( degree ):
                 yield m
 
@@ -1621,6 +1633,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             x^100000000000000000000
         """
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+        import sage.rings.complex_arb
 
         if not element_class:
             if sparse:
@@ -1637,6 +1650,9 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
                     element_class = Polynomial_relative_number_field_dense
             elif is_RealField(base_ring):
                 element_class = PolynomialRealDense
+            elif isinstance(base_ring, sage.rings.complex_arb.ComplexBallField):
+                from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
+                element_class = Polynomial_complex_arb
             else:
                 element_class = polynomial_element_generic.Polynomial_generic_dense_field
 
@@ -1682,7 +1698,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         These are the coefficients `F_{0,0}, F_{1,1}, \dots, `F_{n,n}`
         in the base ring of ``self`` such that
 
-        .. math::
+        .. MATH::
 
             P_n(x) = \sum_{i=0}^n F_{i,i} \prod_{j=0}^{i-1} (x - x_j)
 
@@ -1742,16 +1758,16 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         to_base_ring = self.base_ring()
         points = [map(to_base_ring, x) for x in points]
         n = len(points)
-        F = [[points[i][1]] for i in xrange(n)]
-        for i in xrange(1, n):
-            for j in xrange(1, i+1):
+        F = [[points[i][1]] for i in range(n)]
+        for i in range(1, n):
+            for j in range(1, i+1):
                 numer = F[i][j-1] - F[i-1][j-1]
                 denom = points[i][0] - points[i-j][0]
                 F[i].append(numer / denom)
         if full_table:
             return F
         else:
-            return [F[i][i] for i in xrange(n)]
+            return [F[i][i] for i in range(n)]
 
     def lagrange_polynomial(self, points, algorithm="divided_difference", previous_row=None):
         r"""
@@ -1921,7 +1937,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
             F = self.divided_difference(points)
             P = self.coerce(F[n-1])
-            for i in xrange(n-2, -1, -1):
+            for i in range(n-2, -1, -1):
                 P *= (var - points[i][0])
                 P += F[i]
             return P
@@ -1930,9 +1946,9 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             # polynomial by means of divided difference. This is slow
             # compared to that above, which is in nested form.
 #             P = 0
-#             for i in xrange(n):
+#             for i in range(n):
 #                 prod = 1
-#                 for j in xrange(i):
+#                 for j in range(i):
 #                     prod *= (var - points[j][0])
 #                 P += (F[i] * prod)
 #             return P
@@ -1948,9 +1964,9 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             # and Q keeps track of the current row
             P = previous_row + [None] * (N - M) # use results of previous computation if available
             Q = [None] * N
-            for i in xrange(M, N):
+            for i in range(M, N):
                 Q[0] = self.coerce(points[i][1])  # start populating the current row
-                for j in xrange(1, 1 + i):
+                for j in range(1, 1 + i):
                     numer = (var - points[i - j][0]) * Q[j - 1] - (var - points[i][0]) * P[j - 1]
                     denom = points[i][0] - points[i - j][0]
                     Q[j] = numer / denom

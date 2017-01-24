@@ -27,9 +27,8 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-
+from __future__ import print_function, absolute_import
+from six.moves import range
 from sage.misc.randstate import current_randstate
 
 from sage.schemes.curves.projective_curve import Hasse_bounds
@@ -154,13 +153,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         H0=[self(0)]
         if ngens == 0:    # trivial group
             return H0
-        for m in range(1,ni[0]): H0.append(H0[-1]+pts[0])
+        for m in range(1,ni[0]):
+            H0.append(H0[-1]+pts[0])
         if ngens == 1:    # cyclic group
             return H0
 
         # else noncyclic group
         H1=[self(0)]
-        for m in range(1,ni[1]): H1.append(H1[-1]+pts[1])
+        for m in range(1,ni[1]):
+            H1.append(H1[-1]+pts[1])
         return [P+Q for P in H0 for Q in H1]
 
     def points(self):
@@ -264,13 +265,13 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         except TypeError:
             raise TypeError("n must be a positive integer")
 
-        if n<1:
+        if n < 1:
             raise ValueError("n must be a positive integer")
 
-        if n==1:
+        if n == 1:
             return self.cardinality()
-        else:
-            return [ self.cardinality(extension_degree=i) for  i in range(1,n+1)]
+
+        return [self.cardinality(extension_degree=i) for i in range(1, n + 1)]
 
     def random_element(self):
         """
@@ -1378,10 +1379,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: E = EllipticCurve('389a')
             sage: for p in [5927, 2297, 1571, 1709, 3851, 127, 3253, 5783, 3499, 4817]:
-            ...       G = E.change_ring(GF(p)).abelian_group()
+            ....:     G = E.change_ring(GF(p)).abelian_group()
             sage: for p in prime_range(10000):  # long time (19s on sage.math, 2011)
-            ...       if p != 389:
-            ...           G = E.change_ring(GF(p)).abelian_group()
+            ....:     if p != 389:
+            ....:         G = E.change_ring(GF(p)).abelian_group()
 
         This tests that the bug reported in :trac:`3926` has been fixed::
 
@@ -1962,7 +1963,7 @@ def supersingular_j_polynomial(p):
     from sage.misc.all import prod
     m=(p-1)//2
     X,T = PolynomialRing(GF(p),2,names=['X','T']).gens()
-    H = sum([binomial(m,i)**2 * T**i for i in xrange(m+1)])
+    H = sum(binomial(m, i) ** 2 * T ** i for i in range(m + 1))
     F = T**2 * (T-1)**2 * X - 256*(T**2-T+1)**3
     R = F.resultant(H,T)
     R =  prod([fi for fi,e in R([J,0]).factor()])

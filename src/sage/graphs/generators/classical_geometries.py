@@ -16,6 +16,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                         http://www.gnu.org/licenses/
 ###########################################################################
 from __future__ import absolute_import, division
+from six.moves import range
 
 from copy import copy
 from math import sin, cos, pi
@@ -88,7 +89,7 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         from sage.libs.gap.libgap import libgap
         G = _polar_graph(d, q, libgap.SymplecticGroup(d, q))
 
-    elif algorithm == None:    # faster for small (q<4) fields
+    elif algorithm is None:    # faster for small (q<4) fields
         from sage.modules.free_module import VectorSpace
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.matrix.constructor import identity_matrix, block_matrix, zero_matrix
@@ -131,7 +132,7 @@ def AffineOrthogonalPolarGraph(d,q,sign="+"):
 
     INPUT:
 
-    - ``d`` (integer) -- ``d`` must be even if ``sign != None``, and odd
+    - ``d`` (integer) -- ``d`` must be even if ``sign is not None``, and odd
       otherwise.
 
     - ``q`` (integer) -- a power of a prime number, as `F_q` must exist.
@@ -581,7 +582,7 @@ def _polar_graph(m, q, g, intersection_size=None):
     sp = [libgap.Elements(libgap.Basis(x))[0] for x in libgap.Elements(s.Subspaces(1))]
     h = libgap.Set(map(lambda x: libgap.Position(V, x), sp)) # indices of the points in s
     L = libgap.Orbit(gp, h, libgap.OnSets) # orbit on these subspaces
-    if intersection_size == None:
+    if intersection_size is None:
         G = Graph()
         for x in L: # every pair of points in the subspace is adjacent to each other in G
             G.add_edges(combinations(x, 2))
@@ -631,14 +632,14 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
         from sage.libs.gap.libgap import libgap
         G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q))
 
-    elif algorithm == None: # slow on large examples
+    elif algorithm is None: # slow on large examples
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.modules.free_module_element import free_module_element as vector
         Fq = FiniteField(q**2, 'a')
         PG = map(vector, ProjectiveSpace(m - 1, Fq))
         map(lambda x: x.set_immutable(), PG)
-        def P(x,y):
-            return sum(map(lambda j: x[j]*y[m-1-j]**q, xrange(m)))==0
+        def P(x, y):
+            return sum(x[j] * y[m - 1 - j] ** q for j in range(m)) == 0
 
         V = filter(lambda x: P(x,x), PG)
         G = Graph([V,lambda x,y:  # bottleneck is here, of course:
@@ -865,7 +866,7 @@ def TaylorTwographDescendantSRG(q, clique_partition=None):
     TESTS::
 
         sage: g,l,_=graphs.TaylorTwographDescendantSRG(3,clique_partition=True)
-        sage: all(map(lambda x: g.is_clique(x), l))
+        sage: all(g.is_clique(x) for x in l)
         True
         sage: graphs.TaylorTwographDescendantSRG(4)
         Traceback (most recent call last):
@@ -885,8 +886,9 @@ def TaylorTwographDescendantSRG(q, clique_partition=None):
     from six.moves.builtins import sum
     Fq = FiniteField(q**2, 'a')
     PG = map(tuple,ProjectiveSpace(2, Fq))
-    def S(x,y):
-        return sum(map(lambda j: x[j]*y[2-j]**q, xrange(3)))
+
+    def S(x, y):
+        return sum(x[j] * y[2 - j] ** q for j in range(3))
 
     V = filter(lambda x: S(x,x)==0, PG) # the points of the unital
     v0 = V[0]
@@ -1046,7 +1048,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     supplying your own hyperoval::
 
         sage: F=GF(4,'b')
-        sage: O=[vector(F,(0,0,0,1)),vector(F,(0,0,1,0))]+map(lambda x: vector(F, (0,1,x^2,x)),F)
+        sage: O=[vector(F,(0,0,0,1)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: g=graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F); g
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1055,12 +1057,12 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     TESTS::
 
         sage: F=GF(4,'b') # repeating a point...
-        sage: O=[vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+map(lambda x: vector(F, (0,1,x^2,x)),F)
+        sage: O=[vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval size
-        sage: O=[vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+map(lambda x: vector(F, (0,1,x^2,x)),F)
+        sage: O=[vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
@@ -1112,14 +1114,14 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     the graph of `T_2^*(q)^*`, constructed by
     :func:`~sage.graphs.graph_generators.GraphGenerators.T2starGeneralizedQuadrangleGraph`,
     by redefining adjacencies in the way specified by an arbitrary ``hyperoval_matching``
-    of the the points (i.e. partitioning into size two parts) of ``hyperoval`` defining
+    of the points (i.e. partitioning into size two parts) of ``hyperoval`` defining
     `T_2^*(q)^*`.
 
     While [BvL84]_ gives the construction in geometric terms, it can be formulated,
     and is implemented, in graph-theoretic ones, of re-adjusting the edges.
     Namely, `G=T_2^*(q)^*` has a partition
     into `q+2` independent sets `I_k` of size `q^2` each. Each vertex in `I_j` is
-    adajcent to `q` vertices from `I_k`. Each `I_k` is paired to some `I_{k'}`,
+    adjacent to `q` vertices from `I_k`. Each `I_k` is paired to some `I_{k'}`,
     according to ``hyperoval_matching``. One adds edges `(s,t)` for `s,t \in I_k` whenever
     `s` and `t` are adjacent to some `u \in I_{k'}`, and removes all the edges
     between `I_k` and `I_{k'}`.
@@ -1163,12 +1165,12 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     TESTS::
 
         sage: F=GF(4,'b') # repeating a point...
-        sage: O=[vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+map(lambda x: vector(F, (0,1,x^2,x)),F)
+        sage: O=[vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.HaemersGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval size
-        sage: O=[vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+map(lambda x: vector(F, (0,1,x^2,x)),F)
+        sage: O=[vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.HaemersGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
@@ -1189,7 +1191,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         raise ValueError('q must be a power of 2')
 
     if hyperoval_matching is None:
-        hyperoval_matching = [(2 * k + 1, 2 * k) for k in xrange(1 + q // 2)]
+        hyperoval_matching = [(2 * k + 1, 2 * k) for k in range(1 + q // 2)]
     if field is None:
         F = GF(q, 'a')
     else:
@@ -1206,7 +1208,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     P = map(lambda x: normalize(x[0]-x[1]), G.vertices())
     O = list(set(map(tuple,P)))
     I_ks = {x:[] for x in range(q+2)} # the partition into I_k's
-    for i in xrange(len(P)):
+    for i in range(len(P)):
         I_ks[O.index(tuple(P[i]))].append(i)
 
     # perform the adjustment of the edges, as described.

@@ -3,6 +3,8 @@ Catalog Of Crystal Models For `B(\infty)`
 
 We currently have the following models:
 
+* :class:`AlcovePaths
+  <sage.combinat.crystals.alcove_path.InfinityCrystalOfAlcovePaths>`
 * :class:`GeneralizedYoungWalls
   <sage.combinat.crystals.generalized_young_walls.InfinityCrystalOfGeneralizedYoungWalls>`
 * :class:`LSPaths <sage.combinat.crystals.littelmann_path.InfinityCrystalOfLSPaths>`
@@ -22,3 +24,5 @@ from .infinity_crystals import InfinityCrystalOfTableaux as Tableaux
 from sage.combinat.crystals.polyhedral_realization import InfinityCrystalAsPolyhedralRealization as PolyhedralRealization
 from sage.combinat.crystals.star_crystal import StarCrystal as Star
 from sage.combinat.crystals.littelmann_path import InfinityCrystalOfLSPaths as LSPaths
+from sage.combinat.crystals.alcove_path import InfinityCrystalOfAlcovePaths as AlcovePaths
+

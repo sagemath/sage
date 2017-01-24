@@ -788,7 +788,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
         def idempotent(self, la):
             """
-            Return the idemponent corresponding to the partition ``la``
+            Return the idempotent corresponding to the partition ``la``
             of `n`.
 
             EXAMPLES::

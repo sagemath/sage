@@ -144,6 +144,7 @@ Interfaces
 General Information
 ===================
 
+* :doc:`References <references/index>`
 * :doc:`History and License <history_and_license/index>`
 * :ref:`genindex`
 * :ref:`modindex`

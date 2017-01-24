@@ -126,7 +126,7 @@ Since Python and C++ syntax are not always compatible, there are
 necessarily some differences. The main ones are:
 
 * The :class:`Linear_Expression` also accepts an iterable as input for
-  the homogeneous cooefficients.
+  the homogeneous coefficients.
 
 * :class:`Polyhedron` and its subclasses as well as
   :class:`Generator_System` and :class:`Constraint_System` can be set
@@ -2525,7 +2525,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         This method assigns the intersection to ``self`` and does not
         return anything.
 
-        Raises a ``ValueError`` if ``self`` and and ``y`` are
+        Raises a ``ValueError`` if ``self`` and ``y`` are
         topology-incompatible or dimension-incompatible.
 
         EXAMPLES::
@@ -2575,7 +2575,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         This method assigns the poly-hull to ``self`` and does not
         return anything.
 
-        Raises a ``ValueError`` if ``self`` and and ``y`` are
+        Raises a ``ValueError`` if ``self`` and ``y`` are
         topology-incompatible or dimension-incompatible.
 
         EXAMPLES::
@@ -2640,7 +2640,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         This method assigns the poly-difference to ``self`` and does
         not return anything.
 
-        Raises a ``ValueError`` if ``self`` and and ``y`` are
+        Raises a ``ValueError`` if ``self`` and ``y`` are
         topology-incompatible or dimension-incompatible.
 
         EXAMPLES::
@@ -2868,7 +2868,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         r"""
         Assign to ``self`` the concatenation of ``self`` and ``y``.
 
-        This functions returns the Cartiesian product of ``self`` and
+        This function returns the Cartesian product of ``self`` and
         ``y``.
 
         Viewing a polyhedron as a set of tuples (its points), it is
@@ -6893,8 +6893,8 @@ cdef class Poly_Con_Relation(object):
         sage: from sage.matrix.constructor import matrix
         sage: m = matrix(5,5)
         sage: for i, rel_i in enumerate(rels):
-        ...       for j, rel_j in enumerate(rels):
-        ...           m[i,j] = rel_i.implies(rel_j)
+        ....:     for j, rel_j in enumerate(rels):
+        ....:         m[i,j] = rel_i.implies(rel_j)
         sage: m
         [1 0 0 0 0]
         [1 1 0 0 0]

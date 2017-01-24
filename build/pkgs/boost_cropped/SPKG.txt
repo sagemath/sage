@@ -27,7 +27,7 @@ None
 === boost_cropped-1.58.0 (Emmanuel Charpentier, November 13th, 2015) ===
  * Updated to boost_1_58_0/boost
  * Created spkg-src
- 
+
 === boost_cropped-1.52.0 (Timo Kluck, February 26th, 2013) ===
  * Drop sage patches; take all upstream headers
 

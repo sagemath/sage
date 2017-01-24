@@ -253,7 +253,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         Check that polynomial evaluation works when using logarithmic
         representation of finite field elements (:trac:`16383`)::
 
-            sage: for i in xrange(10):
+            sage: for i in range(10):
             ....:     F = FiniteField(random_prime(15) ** ZZ.random_element(2, 5), 'a', repr='log')
             ....:     b = F.random_element()
             ....:     P = PolynomialRing(F, 'x')

@@ -1590,7 +1590,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         as follows::
 
             sage: ret, G = elt.to_tensor_product_of_kirillov_reshetikhin_tableaux(build_graph=True)
-            sage: view(G, tightpage=True) # not tested
+            sage: view(G) # not tested
         """
         from sage.combinat.rigged_configurations.bijection import RCToKRTBijection
         bij = RCToKRTBijection(self)
@@ -1644,7 +1644,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         as follows::
 
             sage: ret, G = elt.to_tensor_product_of_kirillov_reshetikhin_crystals(build_graph=True)
-            sage: view(G, tightpage=True) # not tested
+            sage: view(G) # not tested
         """
         if build_graph:
             kr_tab, G = self.to_tensor_product_of_kirillov_reshetikhin_tableaux(display_steps, build_graph)

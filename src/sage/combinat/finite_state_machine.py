@@ -930,11 +930,15 @@ Methods
 #*****************************************************************************
 from __future__ import print_function
 
+from builtins import zip
+from six.moves import range
+
 from six import itervalues
+from six.moves import zip_longest
 
 import collections
 import itertools
-from six.moves import zip_longest
+
 import sage
 
 
@@ -1971,7 +1975,7 @@ class FSMState(sage.structure.sage_object.SageObject):
                 left.initial_probability == right.initial_probability)
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True.
 
@@ -1986,10 +1990,13 @@ class FSMState(sage.structure.sage_object.SageObject):
         TESTS::
 
             sage: from sage.combinat.finite_state_machine import FSMState
-            sage: FSMState('A').__nonzero__()
+            sage: bool(FSMState('A'))
             True
         """
         return True  # A state cannot be zero (see __init__)
+
+
+    __nonzero__ = __bool__
 
 
     def _epsilon_successors_(self, fsm=None):
@@ -2498,7 +2505,7 @@ class FSMTransition(sage.structure.sage_object.SageObject):
         return (not (left == right))
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True.
 
@@ -2513,10 +2520,12 @@ class FSMTransition(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import FSMTransition
-            sage: FSMTransition('A', 'B', 0).__nonzero__()
+            sage: bool(FSMTransition('A', 'B', 0))
             True
         """
         return True  # A transition cannot be zero (see __init__)
+
+    __nonzero__ = __bool__
 
 
 #*****************************************************************************
@@ -3883,7 +3892,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             (1, 0, 1, 1, 0, 1, 0, 1, 1, 0)
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
             ....:               automatic_output_type=False))
-            <type 'list'>
+            <... 'list'>
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
             ....:               automatic_output_type=True))
             <type 'tuple'>
@@ -3914,7 +3923,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
     #*************************************************************************
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True if the finite state machine consists of at least
         one state.
@@ -3929,10 +3938,13 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         TESTS::
 
-            sage: FiniteStateMachine().__nonzero__()
+            sage: bool(FiniteStateMachine())
             False
         """
         return len(self._states_) > 0
+
+
+    __nonzero__ = __bool__
 
 
     def __eq__(left, right):
@@ -4406,7 +4418,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T.default_format_transition_label(iter([]))
             '\\varepsilon'
         """
-        result = " ".join(itertools.imap(self.format_letter, word))
+        result = " ".join(self.format_letter(u) for u in word)
         if result:
             return result
         else:
@@ -9099,7 +9111,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             if not first_letters:
                 return tuple()
             first_item = first_letters.pop()
-            if all([item == first_item for item in first_letters]):
+            if all(item == first_item for item in first_letters):
                 return (first_item,)
             return tuple()
 
@@ -10076,7 +10088,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
             sage: A = Automaton([(j, j+1, 0) for j in range(3)],
             ....:               initial_states=[0],
-            ....:               final_states=range(3))
+            ....:               final_states=list(range(3)))
             sage: A.number_of_words()
             1/2*0^(n - 2)*(n - 1)*n + 0^(n - 1)*n + 0^n
 
@@ -10584,7 +10596,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
     def moments_waiting_time(self, test=bool, is_zero=None,
                              expectation_only=False):
-        ur"""
+        r"""
         If this finite state machine acts as a Markov chain, return
         the expectation and variance of the number of steps until
         first writing ``True``.
@@ -10738,7 +10750,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 ....:         - 2*h*p[i]^h * (1 - p[i])/(1 - p[i]^h)^2
                 ....:         for i in range(r)
                 ....:         ) * theory_expectation^2
-                ....:     alphabet = range(r)
+                ....:     alphabet = list(range(r))
                 ....:     counters = [
                 ....:         transducers.CountSubblockOccurrences([j]*h,
                 ....:                     alphabet)
@@ -10784,7 +10796,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 ....:     p = R.gens()
                 ....:     def is_zero(polynomial):
                 ....:         return polynomial in (sum(p) - 1) * R
-                ....:     alphabet = range(r)
+                ....:     alphabet = list(range(r))
                 ....:     counters = [
                 ....:         transducers.Wait([0, 1])(
                 ....:             transducers.CountSubblockOccurrences(
@@ -10929,7 +10941,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         relabeled = self.relabeled()
         n = len(relabeled.states())
-        assert [s.label() for s in relabeled.states()] == range(n)
+        assert [s.label() for s in relabeled.states()] == list(range(n))
         from sage.rings.integer_ring import ZZ
         entry_vector = vector(ZZ(s.is_initial)
                               for s in relabeled.states())
@@ -13323,7 +13335,7 @@ class _FSMTapeCache_(sage.structure.sage_object.SageObject):
         """
         if not len(tape) == len(position) == len(tape_ended):
             raise TypeError('The lengths of the inputs do not match')
-        if sorted(p[1] for p in position) != range(len(tape)):
+        if sorted(p[1] for p in position) != list(range(len(tape))):
             raise TypeError('Tape position %s wrong.' % (position,))
         self.position = position
         self.tape = tape
@@ -13769,12 +13781,12 @@ class _FSMTapeCache_(sage.structure.sage_object.SageObject):
 
         if self.is_multitape:
             increments = tuple(length(word) for word in
-                               itertools.izip(*transition.word_in))
+                               zip(*transition.word_in))
         else:
             increments = (length(transition.word_in),)
 
         for track_number, (track_cache, inc) in \
-                enumerate(itertools.izip(self.cache, increments)):
+                enumerate(zip(self.cache, increments)):
             for _ in range(inc):
                 if not track_cache:
                     if not self.read(track_number)[0]:
@@ -14108,7 +14120,7 @@ def wordoftuples_to_tupleofwords(wordoftuples):
     def remove_empty_letters(word):
         return [letter for letter in word if letter is not None]
     return tuple(remove_empty_letters(word)
-                 for word in itertools.izip(*wordoftuples))
+                 for word in zip(*wordoftuples))
 
 
 #*****************************************************************************
@@ -14879,7 +14891,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
                      for _ in range(len(next_transitions) - 1)])
 
             # process transitions
-            for transition, (tape, out) in itertools.izip(next_transitions, new_currents):
+            for transition, (tape, out) in zip(next_transitions, new_currents):
                 if hasattr(transition, 'hook'):
                     transition.hook(transition, self)
                 write_word(out, transition.word_out)
@@ -15441,7 +15453,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
         if max_length is None:
             kwargs['input_tape'] = itertools.count()
         else:
-            kwargs['input_tape'] = iter(0 for _ in xrange(max_length))
+            kwargs['input_tape'] = iter(0 for _ in range(max_length))
         self.TapeCache = _FSMTapeCacheDetectAll_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False

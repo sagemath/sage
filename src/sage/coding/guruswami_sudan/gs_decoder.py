@@ -1,17 +1,15 @@
 r"""
-Guruswami-Sudan decoder for Generalized Reed-Solomon codes
+Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
 REFERENCES:
 
-    .. [GS99] Venkatesan Guruswami and Madhu Sudan, Improved Decoding of
-       Reed-Solomon Codes and Algebraic-Geometric Codes, 1999
+- [GS1999]_
 
-    .. [N13] Johan S. R. Nielsen, List Decoding of Algebraic Codes, Ph.D.
-       Thesis, Technical University of Denmark, 2013
+- [Nie2013]_
 
 AUTHORS:
 
-- Johan S. R. Nielsen, original implementation (see [Nielsen]_ for details)
+- Johan S. R. Nielsen, original implementation (see [Nie]_ for details)
 - David Lucas, ported the original implementation in Sage
 """
 
@@ -111,7 +109,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     The Guruswami-Sudan algorithm is a polynomial time algorithm to decode
     beyond half the minimum distance of the code. It can decode up to the
     Johnson radius which is `n - \sqrt(n(n-d))`, where `n, d` is the length,
-    respectively minimum distance of the RS code. See [GS99] for more details.
+    respectively minimum distance of the RS code. See [GS1999]_ for more details.
     It is a list-decoder meaning that it returns a list of all closest codewords
     or their corresponding message polynomials. Note that the output of the
     ``decode_to_code`` and ``decode_to_message`` methods are therefore lists.
@@ -184,13 +182,13 @@ class GRSGuruswamiSudanDecoder(Decoder):
         sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 97)
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     One can specify multiplicity and list size instead of ``tau``::
 
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2))
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     One can pass a method as ``root_finder`` (works also for ``interpolation_alg``)::
 
@@ -198,7 +196,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         sage: rf = roth_ruckenstein_root_finder
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2), root_finder = rf)
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     If one wants to use the native Sage algorithms for the root finding step,
     one can directly pass the string given in the ``Input`` block of this class.
@@ -207,13 +205,13 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2), root_finder="RothRuckenstein")
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     Actually, we can construct the decoder from ``C`` directly::
 
         sage: D = C.decoder("GuruswamiSudan", tau = 97)
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
     """
 
     ####################### static methods ###############################
@@ -273,7 +271,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         # We start with l=1 and check if a satisfiable s can be chosen. We keep
         # increasing l by 1 until this is the case. The governing equation is
         #   s*(s+1)/2 * n < (l+1)*s*(n-tau) - l*(l+1)/2*(k-1)
-        # See [GS99]
+        # See [GS1999]_
         def try_l(l):
             (mins,maxs) = solve_degree2_to_integer_range(n, n-2*(l+1)*(n-tau), (k-1)*l*(l+1))
             if maxs > 0 and maxs >= mins:
@@ -390,7 +388,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         for the provided ``tau``, but arise from easily-evaluated closed
         expressions and are very good approximations of the best ones.
 
-        See [N13]_ pages 53-54, proposition 3.11 for details.
+        See [Nie2013]_ pages 53-54, proposition 3.11 for details.
 
         INPUT:
 
@@ -458,7 +456,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         Returns whether input parameters satisfy the governing equation of
         Guruswami-Sudan.
 
-        See [N13]_ page 49, definition 3.3 and proposition 3.4 for details.
+        See [Nie2013]_ page 49, definition 3.3 and proposition 3.4 for details.
 
         INPUT:
 
@@ -604,7 +602,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
             sage: D
-            Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+            Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
         """
         return "Guruswami-Sudan decoder for %s decoding %s errors with parameters %s" % (self.code(), self.decoding_radius(), (self.multiplicity(), self.list_size()))
 
@@ -617,7 +615,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
             sage: latex(D)
-            \textnormal{Guruswami-Sudan decoder for } [250, 70, 181] \textnormal{ Generalized Reed-Solomon Code over } \Bold{F}_{251}\textnormal{ decoding }97\textnormal{ errors with parameters }(1, 2)
+            \textnormal{Guruswami-Sudan decoder for } [250, 70, 181] \textnormal{ Reed-Solomon Code over } \Bold{F}_{251}\textnormal{ decoding }97\textnormal{ errors with parameters }(1, 2)
         """
         return "\\textnormal{Guruswami-Sudan decoder for } %s\\textnormal{ decoding }%s\\textnormal{ errors with parameters }%s" % (self.code()._latex_(), self.decoding_radius(), (self.multiplicity(), self.list_size()))
 

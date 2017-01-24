@@ -96,7 +96,7 @@ this example `\mu=[3,2,1]` and `\nu=[2,1]`. Specifying a third entry
 .. todo:: use this library in the :class:`SymmetricFunctions` code, to
     make it easy to apply it to linear combinations of Schur functions.
 
-.. seealso::
+.. SEEALSO::
 
     - :func:`lrcoef`
     
@@ -408,7 +408,7 @@ def lrcoef(outer, inner1, inner2):
 
     - ``inner2`` -- a partition.
 
-    .. note::
+    .. NOTE::
 
        This function converts its inputs into :func:`Partition`'s.  If
        you don't need these checks and your inputs are valid, then you
@@ -658,7 +658,7 @@ def lrskew(outer, inner, weight=None, maxrows=0):
 
         sage: from sage.libs.lrcalc.lrcalc import lrskew
         sage: for st in lrskew([3,2,1],[2]):
-        ...       st.pp()
+        ....:     st.pp()
         .  .  1
         1  1
         2
@@ -670,7 +670,7 @@ def lrskew(outer, inner, weight=None, maxrows=0):
         3
 
         sage: for st in lrskew([3,2,1],[2], maxrows=2):
-        ...       st.pp()
+        ....:     st.pp()
         .  .  1
         1  1
         2

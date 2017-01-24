@@ -12,6 +12,7 @@ in a subprocess call to sphinx, see :func:`builder_helper`.
 
 from __future__ import absolute_import
 from __future__ import print_function
+from six.moves import range
 
 import logging, optparse, os, shutil, subprocess, sys, re
 
@@ -239,6 +240,37 @@ class DocBuilder(object):
     # import the customized builder for object.inv files
     inventory = builder_helper('inventory')
 
+
+if NUM_THREADS > 1:
+    def build_many(target, args):
+        from multiprocessing import Pool
+        pool = Pool(NUM_THREADS, maxtasksperchild=1)
+        # map_async handles KeyboardInterrupt correctly. Plain map and
+        # apply_async does not, so don't use it.
+        x = pool.map_async(target, args, 1)
+        try:
+            ret = x.get(99999)
+            pool.close()
+            pool.join()
+        except Exception:
+            pool.terminate()
+            if ABORT_ON_ERROR:
+                raise
+        return ret
+else:
+    def build_many(target, args):
+        results = []
+
+        for arg in args:
+            try:
+                results.append(target(arg))
+            except Exception:
+                if ABORT_ON_ERROR:
+                    raise
+
+        return results
+
+
 ##########################################
 #      Parallel Building Ref Manual      #
 ##########################################
@@ -288,20 +320,8 @@ class AllBuilder(object):
             getattr(get_builder(document), name)(*args, **kwds)
 
         # build the other documents in parallel
-        from multiprocessing import Pool
-        pool = Pool(NUM_THREADS, maxtasksperchild=1)
         L = [(doc, name, kwds) + args for doc in others]
-        # map_async handles KeyboardInterrupt correctly. Plain map and
-        # apply_async does not, so don't use it.
-        x = pool.map_async(build_other_doc, L, 1)
-        try:
-            x.get(99999)
-            pool.close()
-            pool.join()
-        except Exception:
-            pool.terminate()
-            if ABORT_ON_ERROR:
-                raise
+        build_many(build_other_doc, L)
         logger.warning("Elapsed time: %.1f seconds."%(time.time()-start))
         logger.warning("Done building the documentation!")
 
@@ -486,19 +506,8 @@ class ReferenceBuilder(AllBuilder):
             if not os.path.exists(refdir):
                 continue
             output_dir = self._output_dir(format, lang)
-            from multiprocessing import Pool
-            pool = Pool(NUM_THREADS, maxtasksperchild=1)
             L = [(doc, lang, format, kwds) + args for doc in self.get_all_documents(refdir)]
-            # (See comment in AllBuilder._wrapper about using map instead of apply.)
-            x = pool.map_async(build_ref_doc, L, 1)
-            try:
-                x.get(99999)
-                pool.close()
-                pool.join()
-            except Exception:
-                pool.terminate()
-                if ABORT_ON_ERROR:
-                    raise
+            build_many(build_ref_doc, L)
             # The html refman must be build at the end to ensure correct
             # merging of indexes and inventories.
             # Sphinx is run here in the current process (not in a
@@ -1214,7 +1223,7 @@ def format_columns(lst, align='<', cols=None, indent=4, pad=3, width=80):
         import math
         cols = math.trunc((width - indent) / size)
     s = " " * indent
-    for i in xrange(len(lst)):
+    for i in range(len(lst)):
         if i != 0 and i % cols == 0:
             s += "\n" + " " * indent
         s += "{0:{1}{2}}".format(lst[i], align, size)
@@ -1514,7 +1523,7 @@ def setup_logger(verbose=1, color=True):
     colors = ['darkblue', 'darkred', 'brown', 'reset']
     styles = ['reset', 'reset', 'reset', 'reset']
     format_debug = ""
-    for i in xrange(len(fields)):
+    for i in range(len(fields)):
         format_debug += c.colorize(styles[i], c.colorize(colors[i], fields[i]))
         if i != len(fields):
             format_debug += " "
@@ -1569,6 +1578,32 @@ class IntersphinxCache:
             return i
 
 
+def patch_domain_init():
+    """
+    Applies a monkey-patch to the __init__ method of the Domain class in
+    Sphinx, in order to work around a bug.
+
+    See https://trac.sagemath.org/ticket/21044 as well as
+    https://github.com/sphinx-doc/sphinx/pull/2816 for details about that
+    bug.
+    """
+
+    from sphinx.domains import Domain
+    import copy
+
+    orig_init = Domain.__init__
+
+    def __init__(self, *args, **kwargs):
+        orig_init(self, *args, **kwargs)
+
+        # Replace the original initial_data class attribute with a new
+        # deep-copy of itself, since the bug will cause the original
+        # initial_data to be modified in-place
+        self.__class__.initial_data = copy.deepcopy(self.initial_data)
+
+    Domain.__init__ = __init__
+
+
 def main():
     # Parse the command-line.
     parser = setup_parser()
@@ -1617,6 +1652,8 @@ def main():
         os.environ['SAGE_SKIP_TESTS_BLOCKS'] = 'True'
 
     ABORT_ON_ERROR = not options.keep_going
+
+    patch_domain_init()
 
     # Delete empty directories. This is needed in particular for empty
     # directories due to "git checkout" which never deletes empty

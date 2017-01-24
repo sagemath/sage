@@ -50,13 +50,6 @@ The following constructions are available
     :meth:`~sage.geometry.polyhedron.library.Polytopes.truncated_tetrahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.truncated_octahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.twenty_four_cell`
-
-REFERENCES:
-
-..  [Fetter2012]
-    Hans L. Fetter,
-    "A Polyhedron Full of Surprises",
-    Mathematics Magazine 85 (2012), no. 5, 334-342.
 """
 from __future__ import absolute_import
 
@@ -143,7 +136,7 @@ def project_points(*points):
 
     Check that it is (almost) an isometry::
 
-        sage: V = map(vector, IntegerVectors(n=5,length=3))
+        sage: V = list(map(vector, IntegerVectors(n=5,length=3)))
         sage: P = project_points(*V)
         sage: for i in range(21):
         ....:     for j in range(21):
@@ -754,7 +747,7 @@ class Polytopes():
         off all the permutations of `(0, \pm 1, \pm 2)`. For more
         information, see the :wikipedia:`Truncated_octahedron`.
 
-        This is also know as the permutohedron of dimension 3.
+        This is also known as the permutohedron of dimension 3.
 
         EXAMPLES::
 
@@ -1111,7 +1104,7 @@ class Polytopes():
 
         The Kirkman icosahedron is a 3-polytope with integer coordinates: `(\pm
         9, \pm 6, \pm 6)`, `(\pm 12, \pm 4, 0)`, `(0, \pm 12, \pm 8)`, `(\pm 6,
-        0, \pm 12)`. See [Fetter2012]_ for more information.
+        0, \pm 12)`. See [Fe2012]_ for more information.
 
         EXAMPLES::
 

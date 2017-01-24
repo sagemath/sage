@@ -1,6 +1,8 @@
+# cython: old_style_globals=True
 """
 Symbolic variables
 """
+
 from sage.symbolic.function_factory import function as new_function
 from sage.symbolic.ring import SR
 
@@ -22,7 +24,7 @@ def var(*args, **kwds):
     - ``kwds`` -- keyword arguments can be given to specify domain and
       custom latex_name for variables. See EXAMPLES for usage.
 
-    .. note::
+    .. NOTE::
 
        The new variable is both returned and automatically injected
        into the global namespace. If you need a symbolic variable in
@@ -173,7 +175,7 @@ def function(s, *args, **kwds):
                 Ex: f = function('f', print_latex_func=my_latex_print)
                 See EXAMPLES for an explicit usage.
 
-    .. note::
+    .. NOTE::
 
        The new function is both returned and automatically injected
        into the global namespace.  If you use this function in library
@@ -201,7 +203,7 @@ def function(s, *args, **kwds):
         sage: g.diff(y)
         (x, y) |--> 1/2*cos(1/2*y)
         sage: k = g.diff(x); k
-        (x, y) |--> 2*supersin(x)*D[0](supersin)(x)
+        (x, y) |--> 2*supersin(x)*diff(supersin(x), x)
 
     Custom typesetting of symbolic functions in LaTeX, either using latex_name
     keyword::
@@ -275,7 +277,7 @@ def clear_vars():
     """
     G = globals()
     from sage.symbolic.ring import is_SymbolicVariable
-    for i in range(65,65+26) + range(97,97+26):
+    for i in list(range(65, 65 + 26)) + list(range(97, 97 + 26)):
         if chr(i) in G and is_SymbolicVariable(G[chr(i)]):
             # We check to see if there is a corresponding pyobject
             # associated with the expression.  This will work for
@@ -285,6 +287,3 @@ def clear_vars():
                 G[chr(i)].pyobject()
             except TypeError:
                 del G[chr(i)]
-
-
-

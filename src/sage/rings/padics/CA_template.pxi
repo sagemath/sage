@@ -1173,7 +1173,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism_coercion):
 cdef class pAdicConvert_CA_ZZ(RingMap):
     """
     The map from a capped absolute ring back to the ring of integers that
-    returns the the smallest non-negative integer approximation to its input
+    returns the smallest non-negative integer approximation to its input
     which is accurate up to the precision.
 
     Raises a ``ValueError`` if the input is not in the closure of the image of

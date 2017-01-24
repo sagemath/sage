@@ -436,8 +436,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         """
         Disable ``__len__()`` from :class:`Parent` :trac:`12955`.
 
-        Because Python assumes ``__len__()`` is fast and we can't
-        have a fast default implmentation.
+        Because Python assumes ``__len__()`` is fast and we cannot
+        have a fast default implementation.
 
         EXAMPLES::
 

@@ -42,6 +42,7 @@ Groups
    sage/groups/matrix_gps/finitely_generated
    sage/groups/matrix_gps/morphism
    sage/groups/matrix_gps/homset
+   sage/groups/matrix_gps/binary_dihedral
    sage/groups/matrix_gps/coxeter_group
    sage/groups/matrix_gps/linear
    sage/groups/matrix_gps/orthogonal

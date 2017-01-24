@@ -313,7 +313,7 @@ class Fields(CategoryWithAxiom):
             - ``f`` -- a univariate non-zero polynomial over this field
 
             ALGORITHM: For rings of characteristic zero, we use the algorithm
-            descriped in [Yun]_. Other fields may provide their own
+            descriped in [Yun1976]_. Other fields may provide their own
             implementation by overriding this method.
 
             EXAMPLES::
@@ -331,13 +331,6 @@ class Fields(CategoryWithAxiom):
                 sage: f = QQbar['x'](1)
                 sage: f.squarefree_decomposition()
                 1
-
-            REFERENCES:
-
-            .. [Yun] Yun, David YY. On square-free decomposition algorithms.
-               In Proceedings of the third ACM symposium on Symbolic and algebraic
-               computation, pp. 26-35. ACM, 1976.
-
             """
             from sage.structure.factorization import Factorization
             if f.degree() == 0:

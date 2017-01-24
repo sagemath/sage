@@ -68,7 +68,7 @@ def get_key_base(p, prec, type, print_mode, halt, names, ram_name, print_pos, pr
     """
     This implements create_key for Zp and Qp: moving it here prevents code duplication.
 
-    It fills in unspececified values and checks for contradictions in the input.  It also standardizes irrelevant options so that duplicate parents aren't created.
+    It fills in unspecified values and checks for contradictions in the input.  It also standardizes irrelevant options so that duplicate parents are not created.
 
     EXAMPLES::
 
@@ -1525,7 +1525,7 @@ Zp = Zp_class("Zp")
 # Zq -- unramified extensions
 ######################################################
 
-def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
+def Zq(q, prec = DEFAULT_PREC, type = 'capped-rel', modulus = None, names=None,
           print_mode=None, halt = DEFAULT_HALT, ram_name = None, res_name = None, print_pos = None,
        print_sep = None, print_max_ram_terms = None,
        print_max_unram_terms = None, print_max_terse_terms = None, check = True, implementation = 'FLINT'):
@@ -1597,7 +1597,7 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
     TYPES AND PRECISION:
 
     There are two types of precision for a `p`-adic element.  The first
-    is relative precision, which gives the number of known `p`-adic
+    is relative precision (default), which gives the number of known `p`-adic
     digits::
 
         sage: R.<a> = Zq(25, 20, 'capped-rel', print_mode='series'); b = 25*a; b
@@ -1762,18 +1762,18 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
         sage: S.<b> = Zq(9, print_mode='series', print_pos=False); (1+2*b)^4
         -1 - b*3 - 3^2 + (b + 1)*3^3 + O(3^20)
         sage: -3*(1+2*b)^4
-        3 + b*3^2 + 3^3 + (-b - 1)*3^4 + O(3^20)
+        3 + b*3^2 + 3^3 + (-b - 1)*3^4 + O(3^21)
 
     *ram_name* controls how the prime is printed.::
 
         sage: T.<d> = Zq(9, print_mode='series', ram_name='p'); 3*(1+2*d)^4
-        2*p + (2*d + 2)*p^2 + (2*d + 1)*p^3 + O(p^20)
+        2*p + (2*d + 2)*p^2 + (2*d + 1)*p^3 + O(p^21)
 
     *print_max_ram_terms* limits the number of powers of `p` that
     appear.::
 
         sage: U.<e> = Zq(9, print_mode='series', print_max_ram_terms=4); repr(-3*(1+2*e)^4)
-        '3 + e*3^2 + 3^3 + (2*e + 2)*3^4 + ... + O(3^20)'
+        '3 + e*3^2 + 3^3 + (2*e + 2)*3^4 + ... + O(3^21)'
 
     *print_max_unram_terms* limits the number of terms that appear in a
     coefficient of a power of `p`.::
@@ -1815,15 +1815,15 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
 
         sage: A.<x> = Zp(next_prime(10^6), print_mode='val-unit')[]
         sage: T.<a> = Zq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p', modulus=x^3+385831*x^2+106556*x+321036); b = (next_prime(10^6)^2*(a^2 + a - 4)^4); b
-        p^2 * (90732455187 + 713749771767*a + 579958835561*a^2) + O(p^4)
+        p^2 * (87996187118837557387483 + 246348888344392418464080*a + 1353538653775332610349*a^2) + O(p^6)
         sage: b * (a^2 + a - 4)^-4
-        p^2 * 1 + O(p^4)
+        p^2 * 1 + O(p^6)
 
     *print_max_terse_terms* controls how many terms of the polynomial
     appear in the unit part.::
 
         sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3); b = (17*(a^3-a+14)^6); b
-        17 * (772941 + 717522*a + 870707*a^2 + ...) + O(17^6)
+        17 * (12131797 + 12076378*a + 10809706*a^2 + ...) + O(17^7)
 
     *print_sep*, *print_max_ram_terms* and *print_max_unram_terms* have no effect.
 
@@ -1839,7 +1839,7 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
         sage: (a+5)^177
         68210977979428 + 90313850704069*a + 73948093055069*a^2 + O(5^20)
         sage: (a/5+1)^177
-        10990518995053/5^177 + 14019905391569/5^177*a + 16727634070694/5^177*a^2 + O(5^-158)
+        68210977979428/5^177 + 90313850704069/5^177*a + 73948093055069/5^177*a^2 + O(5^-157)
 
     Note that in this last computation, you get one fewer `p`-adic digit
     than one might expect.  This is because ``R`` is capped absolute, and
@@ -1850,7 +1850,7 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
     in the denominator.::
 
         sage: 5*a + a^2/25
-        5*a + 1/5^2*a^2 + O(5^16)
+        5*a + 1/5^2*a^2 + O(5^18)
 
     *print_pos* controls whether to use a balanced representation or
     not.::
@@ -1979,7 +1979,7 @@ def Zq(q, prec = DEFAULT_PREC, type = 'capped-abs', modulus = None, names=None,
     TESTS::
 
         sage: R = Zq([(5,3)], names="alpha"); R
-        Unramified Extension of 5-adic Ring with capped absolute precision 20 in alpha defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
+        Unramified Extension of 5-adic Ring with capped relative precision 20 in alpha defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
         sage: Zq((5, 3), names="alpha") is R
         True
         sage: Zq(125.factor(), names="alpha") is R

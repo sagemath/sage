@@ -45,8 +45,8 @@ source version-list
 # Extract upstream autotools tarball
 cd "$SAGE_ROOT"
 PKG=autotools-`cat build/pkgs/autotools/package-version.txt`
-mkdir -p local/var/tmp/sage
-cd "$SAGE_ROOT/local/var/tmp/sage"
+mkdir -p "$SAGE_LOCAL/tmp/sage"
+cd "$SAGE_LOCAL/tmp/sage"
 tar xjf "$SAGE_ROOT/upstream/$PKG.tar.bz2"
 cd $PKG
 
@@ -141,6 +141,11 @@ write_make_rules() {
                 ac_ver=`( echo 2.59; autoconf --trace='AC_PREREQ:$1' configure.ac ) | latest_version`
             fi
 
+            # Automake 1.10 thinks it only needs autoconf 2.59, when in fact it needs 2.60.  Fix it up.
+            if [ $p = automake ] && [ $v = 1.10 ]; then
+                ac_ver=2.60
+            fi
+
             # Minimum required version of libtool.
             # Empty by default.
             lt_ver=`( autoconf --trace='LT_PREREQ:$1' configure.ac ) | latest_version`
@@ -178,6 +183,17 @@ write_make_rules() {
         echo "$p-$v/.tarball-version: $prevextract"
         echo -e "\t( cd \$(SRC)/$p && git archive --format=tar --prefix=$p-$v/ $tag ) | tar xf -"
         echo -e "\techo $v >$p-$v/.tarball-version"
+        if [ $p = libtool -a ! -f .serial ] ; then
+            # The file .serial would be generated at "make dist" time.  It is used in ltversion.m4.
+            # If .serial is missing, ltmversion.m4 will be malformed, causing the following warning
+            # when the user uses autoreconf.
+            #   m4/ltversion.m4:12: warning: ill-formed serial number 'ltversion.m4',
+            #                                expecting a version string with only digits and dots
+            # See Trac #21047.
+            # Since we don't do "make dist" but rather build from a repository check-out, we have to
+            # supply the .serial file ourselves.  The following recipe is from libtool's Makefile.am.
+            echo -e "\techo $( git log --pretty=oneline | wc -l | sed 's|[\t ]||g ' ) > $p-$v/.serial"
+        fi
         echo
 
         echo "\$(SAGE_LOCAL)/$p-$v: $p-$v/.tarball-version $deps"
@@ -185,13 +201,11 @@ write_make_rules() {
         [ -z "$lt_ver" ] || echo -e "\texport LIBTOOL_VERSION=$lt_ver ; \\\\"
         [ -z "$ac_ver" ] || echo -e "\texport AUTOCONF_VERSION=$ac_ver ; \\\\"
         [ -z "$am_ver" ] || echo -e "\texport AUTOMAKE_VERSION=$am_ver ; \\\\"
-sed 's/^/\t/;' <<EOF
-cd $p-$v && ${bootstrap}\\
-    ./configure --prefix="\$(SAGE_LOCAL)/$p-$v" && \\
-    \$\$MAKE && \$\$MAKE install
-# Remove all files except for the .* files
-[ "\$\$SAGE_KEEP_BUILT_SPKGS" = yes ] || rm -rf $p-$v/*
-EOF
+        echo -e "\tcd $p-$v && ${bootstrap}\\\\"
+        echo -e "\t    ./configure --prefix=\"\$(SAGE_LOCAL)/$p-$v\" && \\\\"
+        echo -e "\t    \$\$MAKE && \$\$MAKE install"
+        echo -e "\t# Remove all files except for the .* files"
+        echo -e "\t[ \"\$\$SAGE_KEEP_BUILT_SPKGS\" = yes ] || rm -rf $p-$v/*"
         echo
 
         prevextract="$p-$v/.tarball-version"
@@ -209,5 +223,5 @@ write_make_rules autoconf $autoconf_versions
 write_make_rules automake $automake_versions
 write_make_rules libtool $libtool_versions
 
-cd "$SAGE_ROOT/local/var/tmp/sage"
+cd "$SAGE_LOCAL/tmp/sage"
 rm -rf $PKG

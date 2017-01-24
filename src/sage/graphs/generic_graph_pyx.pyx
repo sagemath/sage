@@ -423,7 +423,7 @@ def length_and_string_from_graph6(s):
     else: # only first byte is N
         o = ord(s[0])
         if o > 126 or o < 63:
-            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
+            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in xrange(63, 127)))
         n = o - 63
         s = s[1:]
     return n, s
@@ -454,7 +454,7 @@ def binary_string_from_graph6(s, n):
     for i from 0 <= i < len(s):
         o = ord(s[i])
         if o > 126 or o < 63:
-            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
+            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in xrange(63, 127)))
         a = int_to_binary_string(o-63)
         l.append( '0'*(6-len(a)) + a )
     m = "".join(l)
@@ -484,7 +484,7 @@ def binary_string_from_dig6(s, n):
     for i from 0 <= i < len(s):
         o = ord(s[i])
         if o > 126 or o < 63:
-            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
+            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in xrange(63, 127)))
         a = int_to_binary_string(o-63)
         l.append( '0'*(6-len(a)) + a )
     m = "".join(l)
@@ -738,14 +738,14 @@ cdef class SubgraphSearch:
 
         # line_h_out[i] represents the adjacency sequence of vertex i
         # in h relative to vertices 0, 1, ..., i-1
-        for i in range(self.nh):
+        for i in xrange(self.nh):
             self.line_h_out[i] = self.line_h_out[0]+i*self.nh
             self.h.adjacency_sequence_out(i, self.vertices, i, self.line_h_out[i])
 
         # Similarly in the opposite direction (only useful if the
         # graphs are directed)
         if self.directed:
-            for i in range(self.nh):
+            for i in xrange(self.nh):
                 self.line_h_in[i] = self.line_h_in[0]+i*self.nh
                 self.h.adjacency_sequence_in(i, self.vertices, i, self.line_h_in[i])
 
@@ -808,7 +808,8 @@ cdef class SubgraphSearch:
                 # We have found our copy !!!
                 if self.active == self.nh-1:
                     sig_off()
-                    return [self.g_vertices[self.stack[l]] for l in xrange(self.nh)]
+                    return [self.g_vertices[self.stack[l]]
+                            for l in xrange(self.nh)]
 
                 # We are still missing several vertices ...
                 else:
@@ -1300,10 +1301,10 @@ cpdef tuple find_hamiltonian( G, long max_iter=100000, long reset_bound=30000, l
         if not g.has_arc( u, v ):
             good = False
             break
-    if good == False:
-        raise RuntimeError( 'Vertices %d and %d are consecutive in the cycle but are not ajacent.'%(u,v) )
+    if good is False:
+        raise RuntimeError('Vertices %d and %d are consecutive in the cycle but are not adjacent.' % (u, v))
     if not find_path and not g.has_arc( path[0], path[n-1] ):
-        raise RuntimeError( 'Vertices %d and %d are not ajacent.'%(path[0],path[n-1]) )
+        raise RuntimeError('Vertices %d and %d are not adjacent.' % (path[0], path[n-1]))
     for 0 <= u < n:
         member[ u ]=False
 

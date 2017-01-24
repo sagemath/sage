@@ -107,7 +107,7 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.is_discrete()
             False
-            sage: [P.set_level(i,0) for i in xrange(7)]
+            sage: [P.set_level(i,0) for i in range(7)]
             [None, None, None, None, None, None, None]
             sage: P.is_discrete()
             True
@@ -359,11 +359,11 @@ class PythonObjectWrapper:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
             sage: def acae(a,b):
-            ...    return 0
+            ....:  return 0
             sage: def rari(a,b,c):
-            ...    return 0
+            ....:  return 0
             sage: def cs(a,b,c,d,e):
-            ...    return 0
+            ....:  return 0
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
             sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # implicit doctest
             sage: P.obj
@@ -447,11 +447,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import aut_gp_and_can_lab_python
         sage: def acae(a,b):
-        ...    return 0
+        ....:  return 0
         sage: def rari(a,b,c):
-        ...    return 0
+        ....:  return 0
         sage: def cs(a,b,c,d,e):
-        ...    return 0
+        ....:  return 0
         sage: aut_gp_and_can_lab_python(None, [[0,1,2,3],[4,5]], 6, acae, rari, cs, True, True, True)
         ([[0, 1, 3, 2, 4, 5],
           [0, 2, 1, 3, 4, 5],
@@ -529,19 +529,19 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import double_coset_python
         sage: def acae(a,b):
-        ...    return 0
+        ....:     return 0
         sage: def rari(a,b,c):
-        ...    return 0
+        ....:     return 0
         sage: def cs(a,b,c,d,e):
-        ...    return 0
+        ....:     return 0
         sage: double_coset_python(None, None, [[0,1,2,3],[4,5]], [2,3,1,5,0,4], 6, acae, rari, cs)
         [1, 2, 3, 5, 0, 4]
 
         sage: def compare_lists(p1,p2,l1,l2,deg):
-        ...    for i in xrange(len(l1)):
-        ...        j = cmp(l1[p1[i]], l2[p2[i]])
-        ...        if j != 0: return j
-        ...    return 0
+        ....:     for i in range(len(l1)):
+        ....:         j = cmp(l1[p1[i]], l2[p2[i]])
+        ....:         if j != 0: return j
+        ....:     return 0
 
         sage: double_coset_python([0,0,1], [1,0,0], [[0,1,2]], [0,1,2], 3, acae, rari, compare_lists)
         [1, 2, 0]

@@ -9,6 +9,8 @@ AUTHOR:
 - William Stein (2012)
 """
 from __future__ import print_function
+from six.moves import range
+
 # Below all tests are done using sage0, which is a pexpect interface
 # to Sage itself.  This allows us to test exploring a stack traceback
 # using the doctest framework.
@@ -70,13 +72,15 @@ class Debug:
             sage: sage0('sage.interacts.debugger.Debug()')
             <sage.interacts.debugger.Debug instance at 0x...>
         """
-        import inspect, sys, traceback
+        import inspect
+        import sys
+        import traceback
         try:
-            tb=sys.last_traceback
+            tb = sys.last_traceback
             #we strip off the 5 outermost frames, since those relate only to
             #the notebook, not user code
-            for i in xrange(5):
-                tb=tb.tb_next
+            for i in range(5):
+                tb = tb.tb_next
             self._stack = inspect.getinnerframes(tb)
         except AttributeError:
             raise RuntimeError("no traceback has been produced; nothing to debug")

@@ -51,6 +51,7 @@ AUTHOR:
 TESTS::
 
     sage: TestSuite(sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense).run(verbose=True)
+    running ._test_new() . . . pass
     running ._test_pickling() . . . pass
 
 TODO:
@@ -60,10 +61,8 @@ TODO:
 
 REFERENCES:
 
-.. [BB09] Tomas J. Boothby and Robert W. Bradshaw. *Bitslicing
-   and the Method of Four Russians Over Larger Finite Fields* .
-   arXiv:0901.1413v1, 2009.
-   http://arxiv.org/abs/0901.1413
+- [BB2009]_
+
 """
 
 #*****************************************************************************
@@ -409,7 +408,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A*B == A._multiply_classical(B)
             True
 
-        .. note::
+        .. NOTE::
 
             This function is very slow. Use ``*`` operator instead.
         """
@@ -539,7 +538,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         The idea behind Karatsuba multiplication for matrices over
         `\GF{p^n}` is to treat these matrices as polynomials with
         coefficients of matrices over `\GF{p}`. Then, Karatsuba-style
-        formulas can be used to perform multiplication, cf. [BB09]_.
+        formulas can be used to perform multiplication, cf. [BB2009]_.
 
         INPUT:
 
@@ -1403,10 +1402,23 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             True
             sage: f(*s) == A
             True
+
+        See :trac:`21669`::
+
+            sage: all(f(*s) == B
+            ....:     for r,c in [(0,0),(0,1),(1,0)]
+            ....:     for B in [Matrix(GF(4, 'a'), r,c)]
+            ....:     for f,s in [B.__reduce__()])
+            True
         """
         from sage.matrix.matrix_space import MatrixSpace
 
         cdef Matrix_mod2_dense A
+        cdef int r,c
+
+        r, c = self.nrows(), self.ncols()
+        if r == 0 or c == 0:
+            return unpickle_matrix_gf2e_dense_v0, (None, self.base_ring(), r, c)
         MS = MatrixSpace(GF(2), self._entries.x.nrows, self._entries.x.ncols)
         A = Matrix_mod2_dense.__new__(Matrix_mod2_dense, MS, 0, 0, 0, alloc = False)
         A._entries = mzd_copy( NULL, self._entries.x)
@@ -1621,5 +1633,6 @@ def unpickle_matrix_gf2e_dense_v0(Matrix_mod2_dense a, base_ring, nrows, ncols):
 
     MS = MatrixSpace(base_ring, nrows, ncols)
     cdef Matrix_gf2e_dense A  = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, MS, 0, 0, 0)
-    mzd_copy(A._entries.x, a._entries)
+    if nrows != 0 and ncols != 0:
+        mzd_copy(A._entries.x, a._entries)
     return A

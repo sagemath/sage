@@ -2,7 +2,7 @@
 
 == Description ==
 
-lrslib implements the linear reverse search algorithm of Avis and Fukuda. 
+lrslib implements the linear reverse search algorithm of Avis and Fukuda.
 
 See the homepage (http://cgm.cs.mcgill.ca/~avis/C/lrs.html) for details.
 

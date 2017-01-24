@@ -277,7 +277,7 @@ cdef class CGraph:
             sage: G.verts()
             [0, 1, 2]
             sage: for i in range(10):
-            ...       _ = G.add_vertex(-1);
+            ....:     _ = G.add_vertex(-1);
             ...
             sage: G.verts()
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -289,7 +289,7 @@ cdef class CGraph:
             sage: G.verts()
             [0, 1, 2]
             sage: for i in range(12):
-            ...       _ = G.add_vertex(-1);
+            ....:     _ = G.add_vertex(-1);
             ...
             sage: G.verts()
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -466,8 +466,8 @@ cdef class CGraph:
             sage: G.add_arc(1, 2)
             sage: G.add_arc(2, 0)
             sage: G.del_vertex(1)
-            sage: for i in xrange(3):
-            ....:     for j in xrange(3):
+            sage: for i in range(3):
+            ....:     for j in range(3):
             ....:         if G.has_arc(i, j):
             ....:             print("{} {}".format(i,j))
             0 2
@@ -1345,10 +1345,10 @@ cdef class CGraphBackend(GenericGraphBackend):
         Ensure that ticket :trac:`8395` is fixed. ::
 
             sage: def my_add_edges(G, m, n):
-            ...       for i in range(m):
-            ...           u = randint(0, n)
-            ...           v = randint(0, n)
-            ...           G.add_edge(u, v)
+            ....:     for i in range(m):
+            ....:         u = randint(0, n)
+            ....:         v = randint(0, n)
+            ....:         G.add_edge(u, v)
             sage: G = Graph({1:[1]}); G
             Looped graph on 1 vertex
             sage: G.edges(labels=False)
@@ -2221,7 +2221,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             sage: G = Graph(graphs.PetersenGraph(), implementation="c_graph")
             sage: for (u,v) in G.edges(labels=None):
-            ...      G.set_edge_label(u,v,1)
+            ....:    G.set_edge_label(u,v,1)
             sage: G.shortest_path(0, 1, by_weight=True)
             [0, 1]
             sage: G = DiGraph([(1,2,{'weight':1}), (1,3,{'weight':5}), (2,3,{'weight':1})])
@@ -2508,15 +2508,15 @@ cdef class CGraphBackend(GenericGraphBackend):
         Visiting German cities using depth-first search::
 
             sage: G = Graph({"Mannheim": ["Frankfurt","Karlsruhe"],
-            ...   "Frankfurt": ["Mannheim","Wurzburg","Kassel"],
-            ...   "Kassel": ["Frankfurt","Munchen"],
-            ...   "Munchen": ["Kassel","Nurnberg","Augsburg"],
-            ...   "Augsburg": ["Munchen","Karlsruhe"],
-            ...   "Karlsruhe": ["Mannheim","Augsburg"],
-            ...   "Wurzburg": ["Frankfurt","Erfurt","Nurnberg"],
-            ...   "Nurnberg": ["Wurzburg","Stuttgart","Munchen"],
-            ...   "Stuttgart": ["Nurnberg"],
-            ...   "Erfurt": ["Wurzburg"]}, implementation="c_graph")
+            ....: "Frankfurt": ["Mannheim","Wurzburg","Kassel"],
+            ....: "Kassel": ["Frankfurt","Munchen"],
+            ....: "Munchen": ["Kassel","Nurnberg","Augsburg"],
+            ....: "Augsburg": ["Munchen","Karlsruhe"],
+            ....: "Karlsruhe": ["Mannheim","Augsburg"],
+            ....: "Wurzburg": ["Frankfurt","Erfurt","Nurnberg"],
+            ....: "Nurnberg": ["Wurzburg","Stuttgart","Munchen"],
+            ....: "Stuttgart": ["Nurnberg"],
+            ....: "Erfurt": ["Wurzburg"]}, implementation="c_graph")
             sage: list(G.depth_first_search("Frankfurt"))
             ['Frankfurt', 'Wurzburg', 'Nurnberg', 'Munchen', 'Kassel', 'Augsburg', 'Karlsruhe', 'Mannheim', 'Stuttgart', 'Erfurt']
         """
@@ -2591,15 +2591,15 @@ cdef class CGraphBackend(GenericGraphBackend):
         Visiting German cities using breadth-first search::
 
             sage: G = Graph({"Mannheim": ["Frankfurt","Karlsruhe"],
-            ...   "Frankfurt": ["Mannheim","Wurzburg","Kassel"],
-            ...   "Kassel": ["Frankfurt","Munchen"],
-            ...   "Munchen": ["Kassel","Nurnberg","Augsburg"],
-            ...   "Augsburg": ["Munchen","Karlsruhe"],
-            ...   "Karlsruhe": ["Mannheim","Augsburg"],
-            ...   "Wurzburg": ["Frankfurt","Erfurt","Nurnberg"],
-            ...   "Nurnberg": ["Wurzburg","Stuttgart","Munchen"],
-            ...   "Stuttgart": ["Nurnberg"],
-            ...   "Erfurt": ["Wurzburg"]}, implementation="c_graph")
+            ....: "Frankfurt": ["Mannheim","Wurzburg","Kassel"],
+            ....: "Kassel": ["Frankfurt","Munchen"],
+            ....: "Munchen": ["Kassel","Nurnberg","Augsburg"],
+            ....: "Augsburg": ["Munchen","Karlsruhe"],
+            ....: "Karlsruhe": ["Mannheim","Augsburg"],
+            ....: "Wurzburg": ["Frankfurt","Erfurt","Nurnberg"],
+            ....: "Nurnberg": ["Wurzburg","Stuttgart","Munchen"],
+            ....: "Stuttgart": ["Nurnberg"],
+            ....: "Erfurt": ["Wurzburg"]}, implementation="c_graph")
             sage: list(G.breadth_first_search("Frankfurt"))
             ['Frankfurt', 'Mannheim', 'Kassel', 'Wurzburg', 'Karlsruhe', 'Munchen', 'Erfurt', 'Nurnberg', 'Augsburg', 'Stuttgart']
         """
@@ -2793,13 +2793,13 @@ cdef class CGraphBackend(GenericGraphBackend):
         Checking acyclic graphs are indeed acyclic ::
 
             sage: def random_acyclic(n, p):
-            ...    g = graphs.RandomGNP(n, p)
-            ...    h = DiGraph()
-            ...    h.add_edges([ ((u,v) if u<v else (v,u)) for u,v,_ in g.edges() ])
-            ...    return h
+            ....:  g = graphs.RandomGNP(n, p)
+            ....:  h = DiGraph()
+            ....:  h.add_edges([ ((u,v) if u<v else (v,u)) for u,v,_ in g.edges() ])
+            ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ...        for i in range(50))                              # long time
+            ....:      for i in range(50))                              # long time
             True
         """
         if not self._directed:

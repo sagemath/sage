@@ -927,13 +927,13 @@ class DiGraph(GenericGraph):
         Checking acyclic graphs are indeed acyclic ::
 
             sage: def random_acyclic(n, p):
-            ...    g = graphs.RandomGNP(n, p)
-            ...    h = DiGraph()
-            ...    h.add_edges([ ((u,v) if u<v else (v,u)) for u,v,_ in g.edges() ])
-            ...    return h
+            ....:  g = graphs.RandomGNP(n, p)
+            ....:  h = DiGraph()
+            ....:  h.add_edges([ ((u,v) if u<v else (v,u)) for u,v,_ in g.edges() ])
+            ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ...        for i in range(50))                              # long time
+            ....:      for i in range(50))                              # long time
             True
 
         TESTS:
@@ -1872,8 +1872,8 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph ([(0,1,'A'),(1,0,'B'),(1,2,'C')])
             sage: re = D.reverse_edges( [ (0,1), (1,2) ],
-            ...                         inplace = False,
-            ...                         multiedges = True)
+            ....:                       inplace = False,
+            ....:                       multiedges = True)
             sage: re.edges()
             [(1, 0, 'A'), (1, 0, 'B'), (2, 1, 'C')]
             sage: D.edges()
@@ -2729,7 +2729,7 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7],
-            ...     5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
+            ....:   5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
             sage: D.plot(layout='circular').show()
             sage: D.topological_sort()
             [4, 5, 6, 9, 0, 1, 2, 3, 7, 8, 10]
@@ -2767,7 +2767,7 @@ class DiGraph(GenericGraph):
 
               sage: import networkx
               sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7],
-              ...     5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
+              ....:   5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
               sage: N = D.networkx_graph()
               sage: networkx.topological_sort(N)
               [4, 5, 6, 9, 0, 1, 2, 3, 7, 8, 10]

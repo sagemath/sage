@@ -32,8 +32,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
         a \circ (b \circ c) = a \circ (b \circ c) + a \circ (c \circ b).
 
-    Zinbiel algebras were first introduced by Loday as the Koszul
-    dual to Leibniz algebras (hence the name coined by Lemaire).
+    Zinbiel algebras were first introduced by Loday (see [Lod1995]_ and
+    [LV2012]_) as the Koszul dual to Leibniz algebras (hence the name
+    coined by Lemaire).
 
     Zinbiel algebras are divided power algebras, in that for
 
@@ -132,13 +133,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
     - :wikipedia:`Zinbiel_algebra`
 
-    .. [Loday95] Jean-Louis Loday.
-       *Cup-product for Leibniz cohomology and dual Leibniz algebras*.
-       Math. Scand., pp. 189--196 (1995).
-       http://www.math.uiuc.edu/K-theory/0015/cup_product.pdf
-    .. [LV12] Jean-Louis Loday and Bruno Vallette. *Algebraic Operads*.
-       Springer-Verlag Berlin Heidelberg (2012).
-       :doi:`10.1007/978-3-642-30362-3`.
+    - [Lod1995]_
+
+    - [LV2012]_
     """
     @staticmethod
     def __classcall_private__(cls, R, n=None, names=None):

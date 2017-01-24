@@ -1176,7 +1176,7 @@ class Genus_Symbol_p_adic_ring(object):
             sage: G3.symbol_tuple_list()
             [[0, 3, 1], [1, 1, -1]]
             sage: type(G3.symbol_tuple_list())
-            <type 'list'>
+            <... 'list'>
 
             sage: A = DiagonalQuadraticForm(ZZ, [1,2,3,4]).Hessian_matrix()
             sage: p = 2
@@ -1185,7 +1185,7 @@ class Genus_Symbol_p_adic_ring(object):
             sage: G2.symbol_tuple_list()
             [[1, 2, 3, 1, 4], [2, 1, 1, 1, 1], [3, 1, 1, 1, 1]]
             sage: type(G2.symbol_tuple_list())
-            <type 'list'>
+            <... 'list'>
 
         """
         return self._symbol

@@ -440,8 +440,8 @@ cdef class FiniteField(Field):
 
         - ``f`` -- a univariate non-zero polynomial over this field
 
-        ALGORITHM; [Coh]_, algorithm 3.4.2 which is basically the algorithm in
-        [Yun]_ with special treatment for powers divisible by `p`.
+        ALGORITHM; [Coh1993]_, algorithm 3.4.2 which is basically the algorithm in
+        [Yun1976]_ with special treatment for powers divisible by `p`.
 
         EXAMPLES::
 
@@ -470,16 +470,6 @@ cdef class FiniteField(Field):
             ....:                 if i == j: continue
             ....:                 assert gcd(F[i][0], F[j][0]) == 1
             ....:
-
-        REFERENCES:
-
-        .. [Coh] \H. Cohen, A Course in Computational Algebraic Number
-           Theory.  Springer-Verlag, 1993.
-
-        .. [Yun] Yun, David YY. On square-free decomposition algorithms.
-           In Proceedings of the third ACM symposium on Symbolic and algebraic
-           computation, pp. 26-35. ACM, 1976.
-
         """
         from sage.structure.factorization import Factorization
         if f.degree() == 0:

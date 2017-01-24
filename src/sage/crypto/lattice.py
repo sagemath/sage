@@ -37,14 +37,14 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     - ``type`` -- one of the following strings
         - ``'modular'`` (default) -- A class of lattices for which
           asymptotic worst-case to average-case connections hold. For
-          more refer to [A96]_.
+          more refer to [Aj1996]_.
         - ``'random'`` -- Special case of modular (n=1). A dense class
           of lattice used for testing basis reduction algorithms
-          proposed by Goldstein and Mayer [GM02]_.
+          proposed by Goldstein and Mayer [GM2002]_.
         - ``'ideal'`` -- Special case of modular. Allows for a more
-          compact representation proposed by [LM06]_.
+          compact representation proposed by [LM2006]_.
         - ``'cyclotomic'`` -- Special case of ideal. Allows for
-          efficient processing proposed by [LM06]_.
+          efficient processing proposed by [LM2006]_.
     - ``n`` -- Determinant size, primal:`det(L) = q^n`, dual:`det(L) = q^{m-n}`.
       For ideal lattices this is also the degree of the quotient polynomial.
     - ``m`` -- Lattice dimension, `L \subseteq Z^m`.
@@ -53,7 +53,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     - ``quotient`` -- For the type ideal, this determines the quotient
       polynomial. Ignored for all other types.
     - ``dual`` -- Set this flag if you want a basis for `q-dual(L)`, for example
-      for Regev's LWE bases [R05]_.
+      for Regev's LWE bases [Reg2005]_.
     - ``ntl`` -- Set this flag if you want the lattice basis in NTL readable
       format.
     - ``lattice`` -- Set this flag if you want a
@@ -131,7 +131,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 2  3  3  4  0  0  0  1]
 
     Dual modular bases are related to Regev's famous public-key
-    encryption [R05]_::
+    encryption [Reg2005]_::
 
         sage: sage.crypto.gen_lattice(type='modular', m=10, seed=42, dual=True)
         [ 0  0  0  0  0  0  0  0  0 11]
@@ -212,24 +212,6 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 0  0 -1  3  0  0  0 -1 -1 -1]
         [ 0 -1  0 -1  2  0 -1  0  0  2]
         [ 0  1  1  0  1  1 -2  1 -1 -2]
-
-    REFERENCES:
-
-    .. [A96] Miklos Ajtai.
-      Generating hard instances of lattice problems (extended abstract).
-      STOC, pp. 99--108, ACM, 1996.
-
-    .. [GM02] Daniel Goldstein and Andrew Mayer.
-      On the equidistribution of Hecke points.
-      Forum Mathematicum, 15:2, pp. 165--189, De Gruyter, 2003.
-
-    .. [LM06] Vadim Lyubashevsky and Daniele Micciancio.
-      Generalized compact knapsacks are collision resistant.
-      ICALP, pp. 144--155, Springer, 2006.
-
-    .. [R05] Oded Regev.
-      On lattices, learning with errors, random linear codes, and cryptography.
-      STOC, pp. 84--93, ACM, 2005.
     """
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from sage.matrix.constructor import identity_matrix, block_matrix

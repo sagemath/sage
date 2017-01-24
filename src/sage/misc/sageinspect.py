@@ -112,7 +112,8 @@ defined Cython code, and with rather tricky argument lines::
     ArgSpec(args=['x', 'a', 'b'], varargs='args', keywords='kwds', defaults=(1, ')"', {False: 'bar'}))
 
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+from six.moves import range
 
 import ast
 import inspect
@@ -159,7 +160,7 @@ def isclassinstance(obj):
         False
         sage: class mymetaclass(type): pass
         sage: class myclass2:
-        ...       __metaclass__ = mymetaclass
+        ....:     __metaclass__ = mymetaclass
         sage: isclassinstance(myclass2)
         False
     """
@@ -1283,7 +1284,7 @@ def sage_getargspec(obj):
 
         sage: from sage.misc.sageinspect import sage_getargspec
         sage: def f(x, y, z=1, t=2, *args, **keywords):
-        ...       pass
+        ....:     pass
         sage: sage_getargspec(f)
         ArgSpec(args=['x', 'y', 'z', 't'], varargs='args', keywords='keywords', defaults=(1, 2))
 
@@ -1294,13 +1295,12 @@ def sage_getargspec(obj):
         sage: sage_getargspec(factor)
         ArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'], varargs=None, keywords='kwds', defaults=(None, False, 'pari', 0))
 
-
     In the case of a class or a class instance, the ``ArgSpec`` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
 
         sage: P.<x,y> = QQ[]
         sage: sage_getargspec(P)
-        ArgSpec(args=['self', 'x'], varargs='args', keywords='kwds', defaults=(0,))
+        ArgSpec(args=['base_ring', 'n', 'names', 'order'], varargs=None, keywords=None, defaults=('degrevlex',))
         sage: sage_getargspec(P.__class__)
         ArgSpec(args=['self', 'x'], varargs='args', keywords='kwds', defaults=(0,))
 
@@ -1324,8 +1324,8 @@ def sage_getargspec(obj):
     If a ``functools.partial`` instance is involved, we see no other meaningful solution
     than to return the argspec of the underlying function::
 
-        sage: def f(a,b,c,d=1): return a+b+c+d
-        ...
+        sage: def f(a,b,c,d=1):
+        ....:     return a+b+c+d
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
         sage: sage_getargspec(f1)
@@ -1346,10 +1346,10 @@ def sage_getargspec(obj):
     Here is a more difficult one::
 
         sage: cython_code = [
-        ... 'cdef class MyClass:',
-        ... '    def _sage_src_(self):',
-        ... '        return "def foo(x, a=\\\')\\\"\\\', b={(2+1):\\\'bar\\\', not 1:3, 3<<4:5}): return\\n"',
-        ... '    def __call__(self, m,n): return "something"']
+        ....: 'cdef class MyClass:',
+        ....: '    def _sage_src_(self):',
+        ....: '        return "def foo(x, a=\\\')\\\"\\\', b={(2+1):\\\'bar\\\', not 1:3, 3<<4:5}): return\\n"',
+        ....: '    def __call__(self, m,n): return "something"']
         sage: cython('\n'.join(cython_code))
         sage: O = MyClass()
         sage: print(sage.misc.sageinspect.sage_getsource(O))
@@ -1436,7 +1436,10 @@ def sage_getargspec(obj):
         pass
     # If we are lucky, the function signature is embedded in the docstring.
     docstring = _sage_getdoc_unformatted(obj)
-    name = obj.__name__ if hasattr(obj,'__name__') else type(obj).__name__
+    try:
+        name = obj.__name__
+    except AttributeError:
+        name = type(obj).__name__
     argspec = _extract_embedded_signature(docstring, name)[1]
     if argspec is not None:
         return argspec
@@ -1980,9 +1983,19 @@ def sage_getsourcelines(obj):
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
         sage: sage_getsourcelines(matrix)[1]
-        27
+        26
         sage: sage_getsourcelines(matrix)[0][0][6:]
         'MatrixFactory(object):\n'
+
+    Some classes customize this using a ``_sage_src_lines_`` method,
+    which gives the source lines of a class instance, but not the class
+    itself. We demonstrate this for :class:`CachedFunction`::
+
+        sage: cachedfib = cached_function(fibonacci)
+        sage: sage_getsourcelines(cachedfib)[0][0]
+        'def fibonacci(n, algorithm="pari"):\n'
+        sage: sage_getsourcelines(type(cachedfib))[0][0]
+         'cdef class CachedFunction(object):\n'
 
     TESTS::
 
@@ -1997,7 +2010,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(obj)
         (['def create_set_partition_function(letter, k):\n',
         ...
-        '    raise ValueError("k must be an integer or an integer + 1/2")\n'], 35)
+        '    raise ValueError("k must be an integer or an integer + 1/2")\n'], 36)
 
     Here are some cases that were covered in :trac:`11298`;
     note that line numbers may easily change, and therefore we do
@@ -2051,7 +2064,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(HC)
         (['    class Homsets(HomsetsCategory):\n', ...], ...)
 
-    Testing against a bug that has occured during work on #11768::
+    Testing against a bug that has occured during work on :trac:`11768`::
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
@@ -2071,18 +2084,27 @@ def sage_getsourcelines(obj):
     - Simon King: If a class has no docstring then let the class
       definition be found starting from the ``__init__`` method.
     - Simon King: Get source lines for dynamic classes.
-
     """
-
+    # First try the method _sage_src_lines_(), which is meant to give
+    # the source lines of an object (not of its type!).
     try:
-        return obj._sage_src_lines_()
+        sage_src_lines = obj._sage_src_lines_
     except AttributeError:
         pass
-    except TypeError:
-        # That happes for instances of dynamic classes
-        return sage_getsourcelines(obj.__class__)
+    else:
+        try:
+            return sage_src_lines()
+        except (NotImplementedError, TypeError):
+            # NotImplementedError can be raised by _sage_src_lines_()
+            # to indicate that it didn't find the source lines.
+            #
+            # TypeError can happen when obj is a type and
+            # obj._sage_src_lines_ is an unbound method. In this case,
+            # we don't want to use _sage_src_lines_(), we just want to
+            # get the source of the type itself.
+            pass
 
-    # Check if we deal with instance
+    # Check if we deal with an instance
     if isclassinstance(obj):
         if isinstance(obj,functools.partial):
             return sage_getsourcelines(obj.func)
@@ -2143,7 +2165,7 @@ def sage_getsourcelines(obj):
     if first_line.lstrip().startswith('def ') and "__init__" in first_line and obj.__name__!='__init__':
         ignore = False
         double_quote = None
-        for lnb in xrange(lineno,0,-1):
+        for lnb in range(lineno, 0, -1):
             new_first_line = source_lines[lnb-1]
             nfl_strip = new_first_line.lstrip()
             if nfl_strip.startswith('"""'):

@@ -183,33 +183,33 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
 
         sage: from sage.combinat.designs.designs_pyx import is_group_divisible_design
         sage: TD = designs.transversal_design(4,10)
-        sage: groups = [range(i*10,(i+1)*10) for i in range(4)]
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
         sage: is_group_divisible_design(groups,TD,40,lambd=1)
         True
 
     TESTS::
 
         sage: TD = designs.transversal_design(4,10)
-        sage: groups = [range(i*10,(i+1)*10) for i in range(4)]
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
         sage: is_group_divisible_design(groups,TD,40,lambd=2,verbose=True)
         the pair (0,10) has been seen 1 times but lambda=2
         False
         sage: is_group_divisible_design([[1,2],[3,4]],[[1,2]],40,lambd=1,verbose=True)
         groups is not a partition of [0,...,39]
         False
-        sage: is_group_divisible_design([range(40)],[[1,2]],40,lambd=1,verbose=True)
+        sage: is_group_divisible_design([list(range(40))],[[1,2]],40,lambd=1,verbose=True)
         the pair (1,2) belongs to a group but appears in some block
         False
-        sage: is_group_divisible_design([range(40)],[[2,2]],40,lambd=1,verbose=True)
+        sage: is_group_divisible_design([list(range(40))],[[2,2]],40,lambd=1,verbose=True)
         The following block has repeated elements: [2, 2]
         False
-        sage: is_group_divisible_design([range(40)],[["e",2]],40,lambd=1,verbose=True)
+        sage: is_group_divisible_design([list(range(40))],[["e",2]],40,lambd=1,verbose=True)
         e does not belong to [0,...,39]
         False
-        sage: is_group_divisible_design([range(40)],[range(40)],40,G=[5],lambd=1,verbose=True)
+        sage: is_group_divisible_design([list(range(40))],[list(range(40))],40,G=[5],lambd=1,verbose=True)
         a group has size 40 while G=[5]
         False
-        sage: is_group_divisible_design([range(40)],[["e",2]],40,K=[1],lambd=1,verbose=True)
+        sage: is_group_divisible_design([list(range(40))],[["e",2]],40,K=[1],lambd=1,verbose=True)
         a block has size 2 while K=[1]
         False
 
@@ -361,7 +361,7 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
         sage: is_pairwise_balanced_design(sts,9,[3],1)
         True
         sage: TD = designs.transversal_design(4,10).blocks()
-        sage: groups = [range(i*10,(i+1)*10) for i in range(4)]
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
         sage: is_pairwise_balanced_design(TD+groups,40,[4,10],1,verbose=True)
         True
 
@@ -494,7 +494,7 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
         ....:      [0, 2, 4, 1, 3, 3, 0, 2, 4, 1]]
         sage: G = GF(5)
         sage: B = [[G(b) for b in R] for R in B]
-        sage: is_difference_matrix(zip(*B),G,3,2)
+        sage: is_difference_matrix(list(zip(*B)),G,3,2)
         True
 
     Bad input::
@@ -567,7 +567,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
         ....:      [0, 2, 4, 1, 3, 3, 0, 2, 4, 1]]
         sage: G = GF(5)
         sage: B = [[G(b) for b in R] for R in B]
-        sage: is_quasi_difference_matrix(zip(*B),G,3,2,2,0)
+        sage: is_quasi_difference_matrix(list(zip(*B)),G,3,2,2,0)
         True
 
     A quasi-difference matrix from the database::

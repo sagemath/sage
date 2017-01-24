@@ -22,7 +22,7 @@ AUTHORS:
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE
 
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, coercion_model
 from copy import copy
 
 cdef class ElementWrapper(Element):
@@ -111,11 +111,6 @@ cdef class ElementWrapper(Element):
         Element.__init__(self, parent=parent)
         self.value = value
 
-    # When self is an extension type without a __dict__ attribute,
-    # this prevents self.__dict__ to return whatever crap obtained by
-    # lookup through the categories ...
-    __dict__ = {}
-
     def __getstate__(self):
         """
         Return a tuple describing the state of your object.
@@ -138,7 +133,12 @@ cdef class ElementWrapper(Element):
             sage: a.__getstate__() == (P, {'value': 1, 'x': 2})
             True
         """
-        d = self.__dict__.copy()
+        try:
+            d = self.__dict__
+        except AttributeError:
+            d = {}
+        else:
+            d = d.copy()
         d['value'] = self.value
         return (self._parent, d)
 
@@ -253,7 +253,7 @@ cdef class ElementWrapper(Element):
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
         Default implementation of ``self == other``: two elements are
-        equal if they have the same class, same parent, and same value.
+        equal if they have equal parents and equal values.
 
         Default implementation of ``self < other``: two elements are
         always incomparable.
@@ -263,6 +263,33 @@ cdef class ElementWrapper(Element):
             Another option would be to not define ``__lt__``, but
             given the current implementation of SageObject, sorted(...)
             would break.
+
+        TESTS:
+
+        Check that elements of equal-but-not-identical parents compare
+        properly (see :trac:`19488`)::
+
+            sage: from sage.misc.nested_class_test import TestParent4
+            sage: P = TestParent4()
+            sage: Q = TestParent4()
+            sage: P == Q
+            True
+            sage: P is Q
+            False
+            sage: x = P.an_element(); x
+            '_an_element_'
+            sage: y = Q.an_element(); y
+            '_an_element_'
+            sage: x == y
+            True
+        """
+        if isinstance(right, ElementWrapper) and left.parent() == right.parent():
+            return left._richcmp_(right, op)
+        return coercion_model.richcmp(left, right, op)
+
+    cpdef _richcmp_(left, right, int op):
+        """
+        Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
         TESTS:
 
@@ -308,20 +335,16 @@ cdef class ElementWrapper(Element):
             sage: parent = DummyParent("A parent")
             sage: x = ElementWrapper(parent, 1)
             sage: y = ElementWrapper(parent, 2)
-            sage: x.__lt__(x), x.__lt__(y), y.__lt__(x), x.__lt__(1)
-            (False, False, False, False)
-            sage: x < x, x < y, y < x, x < 1
-            (False, False, False, False)
+            sage: x.__lt__(x), x.__lt__(y), y.__lt__(x)
+            (False, False, False)
+            sage: x < x, x < y, y < x
+            (False, False, False)
             sage: sorted([x,y])
             [1, 2]
             sage: sorted([y,x])
             [2, 1]
         """
-        cdef ElementWrapper self
-        self = left
-        if self.__class__ != right.__class__ \
-                or self._parent != (<ElementWrapper>right)._parent:
-            return op == Py_NE
+        cdef ElementWrapper self = left
         if op == Py_EQ or op == Py_LE or op == Py_GE:
             return self.value == (<ElementWrapper>right).value
         if op == Py_NE:

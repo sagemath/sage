@@ -89,6 +89,7 @@ def gen_html_code(G,
                   vertex_labels=True,
                   edge_labels=False,
                   vertex_partition=[],
+                  vertex_colors=None,
                   edge_partition=[],
                   force_spring_layout=False,
                   charge=-120,
@@ -117,6 +118,11 @@ def gen_html_code(G,
     - ``vertex_partition`` -- a list of lists representing a partition of the
       vertex set. Vertices are then colored in the graph according to the
       partition. Set to ``[]`` by default.
+
+    - ``vertex_colors`` -- a dictionary representing a partition of
+      the vertex set. Keys are colors (ignored) and values are lists of
+      vertices. Vertices are then colored in the graph according to the
+      partition. Set to ``None`` by default.
 
     - ``edge_partition`` -- same as ``vertex_partition``, with edges
       instead. Set to ``[]`` by default.
@@ -192,6 +198,8 @@ def gen_html_code(G,
     v_to_id = {v: i for i, v in enumerate(G.vertices())}
 
     # Vertex colors
+    if vertex_colors is not None:
+        vertex_partition = list(vertex_colors.values())
     color = {i: len(vertex_partition) for i in range(G.order())}
     for i, l in enumerate(vertex_partition):
         for v in l:

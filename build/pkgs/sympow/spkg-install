@@ -23,22 +23,6 @@ fi
 
 
 #######################################################################
-# Apply all patches
-#######################################################################
-cd src
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-# Back to top level
-cd ..
-
-
-#######################################################################
 # Fix FPU precision
 #######################################################################
 # SYMPOW really needs doubles to have *exactly* 53 bits precision,
@@ -186,7 +170,7 @@ for file in *.txt; do
     fi
 done
 
-# Create sympow script in $SAGE_ROOT/local/bin
+# Create sympow script in $SAGE_LOCAL/bin
 SCRIPT="$SAGE_LOCAL/bin/sympow"
 
 cat >"$SCRIPT" <<'EOF'

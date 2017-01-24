@@ -921,7 +921,7 @@ def spectral_radius(G, prec=1e-10):
     A much larger example::
 
         sage: G = DiGraph(100000)
-        sage: r = range(100000)
+        sage: r = list(range(100000))
         sage: while not G.is_strongly_connected():
         ....:     shuffle(r)
         ....:     G.add_edges(enumerate(r))

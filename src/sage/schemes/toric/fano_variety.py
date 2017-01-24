@@ -74,7 +74,7 @@ Its anticanonical "hypersurface" is a one-dimensional Calabi-Yau
 manifold::
 
     sage: P2.anticanonical_hypersurface(
-    ...         monomial_points="all")
+    ....:       monomial_points="all")
     Closed subscheme of 2-d CPR-Fano toric variety
     covered by 3 affine patches defined by:
       a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2
@@ -86,7 +86,7 @@ In many cases it is sufficient to work with the "simplified polynomial
 moduli space" of anticanonical hypersurfaces::
 
     sage: P2.anticanonical_hypersurface(
-    ...         monomial_points="simplified")
+    ....:       monomial_points="simplified")
     Closed subscheme of 2-d CPR-Fano toric variety
     covered by 3 affine patches defined by:
       a0*z0^3 + a1*z1^3 + a6*z0*z1*z2 + a2*z2^3
@@ -95,9 +95,9 @@ The mirror family to these hypersurfaces lives inside the Fano toric
 variety obtained using ``simplex`` as ``Delta`` instead of ``Delta_polar``::
 
     sage: FTV = CPRFanoToricVariety(Delta=simplex,
-    ...         coordinate_points="all")
+    ....:       coordinate_points="all")
     sage: FTV.anticanonical_hypersurface(
-    ...         monomial_points="simplified")
+    ....:       monomial_points="simplified")
     Closed subscheme of 2-d CPR-Fano toric variety
     covered by 9 affine patches defined by:
       a2*z2^3*z3^2*z4*z5^2*z8
@@ -111,9 +111,9 @@ corresponding to the interior points of facets - they are singular
 points which do not lie on a generic anticanonical hypersurface::
 
     sage: FTV = CPRFanoToricVariety(Delta=simplex,
-    ...         coordinate_points="all but facets")
+    ....:       coordinate_points="all but facets")
     sage: FTV.anticanonical_hypersurface(
-    ...         monomial_points="simplified")
+    ....:       monomial_points="simplified")
     Closed subscheme of 2-d CPR-Fano toric variety
     covered by 3 affine patches defined by:
       a0*z0^3 + a1*z1^3 + a3*z0*z1*z2 + a2*z2^3
@@ -201,7 +201,7 @@ def is_CPRFanoToricVariety(x):
     EXAMPLES::
 
         sage: from sage.schemes.toric.fano_variety import (
-        ...     is_CPRFanoToricVariety)
+        ....:   is_CPRFanoToricVariety)
         sage: is_CPRFanoToricVariety(1)
         False
         sage: FTV = toric_varieties.P2()
@@ -364,7 +364,7 @@ def CPRFanoToricVariety(Delta=None,
         (z0, z1, z2, z3)
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,8])
+        ....:       coordinate_points=[0,1,2,3,8])
         sage: FTV.fan().rays()
         N(-1,  1),
         N( 1,  1),
@@ -376,8 +376,8 @@ def CPRFanoToricVariety(Delta=None,
         (z0, z1, z2, z3, z8)
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[8,0,2,1,3],
-        ...         coordinate_names="x+")
+        ....:       coordinate_points=[8,0,2,1,3],
+        ....:       coordinate_names="x+")
         sage: FTV.fan().rays()
         N( 1,  0),
         N(-1,  1),
@@ -389,8 +389,8 @@ def CPRFanoToricVariety(Delta=None,
         (x8, x0, x2, x1, x3)
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points="all",
-        ...         coordinate_names="x y Z+")
+        ....:       coordinate_points="all",
+        ....:       coordinate_names="x y Z+")
         sage: FTV.fan().rays()
         N(-1,  1),
         N( 1,  1),
@@ -413,9 +413,9 @@ def CPRFanoToricVariety(Delta=None,
     you want::
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points="all",
-        ...         coordinate_names="x y Z+",
-        ...         coordinate_name_indices=range(8))
+        ....:       coordinate_points="all",
+        ....:       coordinate_names="x y Z+",
+        ....:       coordinate_name_indices=list(range(8)))
         sage: FTV.gens()
         (x, y, Z2, Z3, Z4, Z5, Z6, Z7)
 
@@ -425,9 +425,9 @@ def CPRFanoToricVariety(Delta=None,
     much "automatic" ones::
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points="all",
-        ...         coordinate_names="x Z+",
-        ...         coordinate_name_indices=range(8))
+        ....:       coordinate_points="all",
+        ....:       coordinate_names="x Z+",
+        ....:       coordinate_name_indices=list(range(8)))
         sage: FTV.gens()
         (x, Z1, Z2, Z3, Z4, Z5, Z6, Z7)
 
@@ -435,16 +435,16 @@ def CPRFanoToricVariety(Delta=None,
     accordingly::
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points="all",
-        ...         coordinate_names="x Z+",
-        ...         coordinate_name_indices=[0] + range(7))
+        ....:       coordinate_points="all",
+        ....:       coordinate_names="x Z+",
+        ....:       coordinate_name_indices=[0] + list(range(7)))
         sage: FTV.gens()
         (x, Z0, Z1, Z2, Z3, Z4, Z5, Z6)
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points="all",
-        ...         coordinate_names="x y Z+",
-        ...         coordinate_name_indices=[0]*2 + range(6))
+        ....:       coordinate_points="all",
+        ....:       coordinate_names="x y Z+",
+        ....:       coordinate_name_indices=[0]*2 + list(range(6)))
         sage: FTV.gens()
         (x, y, Z0, Z1, Z2, Z3, Z4, Z5)
 
@@ -459,8 +459,8 @@ def CPRFanoToricVariety(Delta=None,
     (these charts actually form exactly the face fan of our square) ::
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,4],
-        ...         charts=charts)
+        ....:       coordinate_points=[0,1,2,3,4],
+        ....:       charts=charts)
         sage: FTV.fan().rays()
         N(-1,  1),
         N( 1,  1),
@@ -475,8 +475,8 @@ def CPRFanoToricVariety(Delta=None,
 
         sage: bad_charts = charts + [(2,0)]
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,4],
-        ...         charts=bad_charts)
+        ....:       coordinate_points=[0,1,2,3,4],
+        ....:       charts=bad_charts)
         Traceback (most recent call last):
         ...
         ValueError: you have provided 5 cones, but only 4 of them are maximal!
@@ -488,9 +488,9 @@ def CPRFanoToricVariety(Delta=None,
     especially important when you try to speed up your code::
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,4],
-        ...         charts=bad_charts,
-        ...         check=False)
+        ....:       coordinate_points=[0,1,2,3,4],
+        ....:       charts=bad_charts,
+        ....:       check=False)
         Traceback (most recent call last):
         ...
         IndexError: list assignment index out of range
@@ -504,8 +504,8 @@ def CPRFanoToricVariety(Delta=None,
 
         sage: bad_charts = charts + [(0,3)]
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,4],
-        ...         charts=bad_charts)
+        ....:       coordinate_points=[0,1,2,3,4],
+        ....:       charts=bad_charts)
         Traceback (most recent call last):
         ...
         ValueError: (0, 3) does not form a chart of a subdivision of
@@ -513,14 +513,14 @@ def CPRFanoToricVariety(Delta=None,
 
         sage: bad_charts = charts[:-1]
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,4],
-        ...         charts=bad_charts)
+        ....:       coordinate_points=[0,1,2,3,4],
+        ....:       charts=bad_charts)
         Traceback (most recent call last):
         ...
         ValueError: given charts do not form a complete fan!
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[1,2,3,4])
+        ....:       coordinate_points=[1,2,3,4])
         Traceback (most recent call last):
         ...
         ValueError: all 4 vertices of Delta_polar
@@ -528,7 +528,7 @@ def CPRFanoToricVariety(Delta=None,
         Got: [1, 2, 3, 4]
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,0,1,2,3,4])
+        ....:       coordinate_points=[0,0,1,2,3,4])
         Traceback (most recent call last):
         ...
         ValueError: no repetitions are
@@ -536,7 +536,7 @@ def CPRFanoToricVariety(Delta=None,
         Got: [0, 0, 1, 2, 3, 4]
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ...         coordinate_points=[0,1,2,3,6])
+        ....:       coordinate_points=[0,1,2,3,6])
         Traceback (most recent call last):
         ...
         ValueError: the origin (point #6)
@@ -702,7 +702,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
     TESTS::
 
         sage: P1xP1 = CPRFanoToricVariety(
-        ...       Delta_polar=lattice_polytope.cross_polytope(2))
+        ....:     Delta_polar=lattice_polytope.cross_polytope(2))
         sage: P1xP1
         2-d CPR-Fano toric variety covered by 4 affine patches
     """
@@ -717,7 +717,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         TESTS::
 
             sage: P1xP1 = CPRFanoToricVariety(
-            ...       Delta_polar=lattice_polytope.cross_polytope(2))
+            ....:     Delta_polar=lattice_polytope.cross_polytope(2))
             sage: P1xP1
             2-d CPR-Fano toric variety covered by 4 affine patches
         """
@@ -824,7 +824,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         manifold::
 
             sage: P2.anticanonical_hypersurface(
-            ...         monomial_points="all")
+            ....:       monomial_points="all")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2
@@ -836,7 +836,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         moduli space" of anticanonical hypersurfaces::
 
             sage: P2.anticanonical_hypersurface(
-            ...         monomial_points="simplified")
+            ....:       monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a0*z0^3 + a1*z1^3 + a6*z0*z1*z2 + a2*z2^3
@@ -846,9 +846,9 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         ``Delta_polar``::
 
             sage: FTV = CPRFanoToricVariety(Delta=simplex,
-            ...         coordinate_points="all")
+            ....:       coordinate_points="all")
             sage: FTV.anticanonical_hypersurface(
-            ...         monomial_points="simplified")
+            ....:       monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 9 affine patches defined by:
               a2*z2^3*z3^2*z4*z5^2*z8
@@ -862,9 +862,9 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         points which do not lie on a generic anticanonical hypersurface::
 
             sage: FTV = CPRFanoToricVariety(Delta=simplex,
-            ...         coordinate_points="all but facets")
+            ....:       coordinate_points="all but facets")
             sage: FTV.anticanonical_hypersurface(
-            ...         monomial_points="simplified")
+            ....:       monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a0*z0^3 + a1*z1^3 + a3*z0*z1*z2 + a2*z2^3
@@ -878,7 +878,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         own names ::
 
             sage: FTV.anticanonical_hypersurface(
-            ...         coefficient_names="a b c d")
+            ....:       coefficient_names="a b c d")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a*z0^3 + b*z1^3 + d*z0*z1*z2 + c*z2^3
@@ -886,7 +886,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         or give concrete coefficients ::
 
             sage: FTV.anticanonical_hypersurface(
-            ...         coefficients=[1, 2, 3, 4])
+            ....:       coefficients=[1, 2, 3, 4])
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               z0^3 + 2*z1^3 + 4*z0*z1*z2 + 3*z2^3
@@ -894,7 +894,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         or even mix numerical coefficients with some expressions ::
 
             sage: H = FTV.anticanonical_hypersurface(
-            ...     coefficients=[0, "t", "1/t", "psi/(psi^2 + phi)"])
+            ....:   coefficients=[0, "t", "1/t", "psi/(psi^2 + phi)"])
             sage: H
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
@@ -981,7 +981,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             sage: diamond = lattice_polytope.cross_polytope(2)
             sage: FTV = CPRFanoToricVariety(diamond,
-            ...         coordinate_points=[0,1,2,3,8])
+            ....:       coordinate_points=[0,1,2,3,8])
             sage: FTV.coordinate_points()
             (0, 1, 2, 3, 8)
             sage: FTV.gens()
@@ -1004,14 +1004,14 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: diamond = lattice_polytope.cross_polytope(2)
             sage: square = diamond.polar()
             sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-            ...         coordinate_points=[0,1,2,3,8])
+            ....:       coordinate_points=[0,1,2,3,8])
             sage: FTV.coordinate_points()
             (0, 1, 2, 3, 8)
             sage: FTV.gens()
             (z0, z1, z2, z3, z8)
 
             sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-            ...         coordinate_points="all")
+            ....:       coordinate_points="all")
             sage: FTV.coordinate_points()
             (0, 1, 2, 3, 4, 5, 7, 8)
             sage: FTV.gens()
@@ -1165,8 +1165,8 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         instead of using default generic names::
 
             sage: X.nef_complete_intersection(np,  # long time
-            ...         monomial_points="vertices",
-            ...         coefficients=[("a", "a^2", "a/e", "c_i"), range(1,6)])
+            ....:       monomial_points="vertices",
+            ....:       coefficients=[("a", "a^2", "a/e", "c_i"), list(range(1,6))])
             Closed subscheme of 3-d CPR-Fano toric variety
             covered by 10 affine patches defined by:
               a/e*z1*z4^2*z5^2*z7^3 + a^2*z2*z4*z5*z6*z7^2*z8^2
@@ -1178,7 +1178,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         intersections in a completely resolved ambient toric variety::
 
             sage: X = CPRFanoToricVariety(Delta_polar=p,  # long time
-            ...                      coordinate_points="all")
+            ....:                    coordinate_points="all")
             sage: X.nef_complete_intersection(np)  # long time
             Closed subscheme of 3-d CPR-Fano toric variety
             covered by 22 affine patches defined by:
@@ -1402,7 +1402,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             sage: F = GF(5^2, "a")
             sage: X = P1xP1.change_ring(F)
             sage: X.anticanonical_hypersurface(monomial_points="all",
-            ...                     coefficients=[1]*X.Delta().npoints())
+            ....:                   coefficients=[1]*X.Delta().npoints())
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 4 affine patches defined by:
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y

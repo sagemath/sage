@@ -150,7 +150,7 @@ cdef class NumberField(Field):
         modulo principal fractional ideals to an integral ideal of
         norm at most B.
 
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`~bach_bound`
 
@@ -224,7 +224,7 @@ cdef class NumberField(Field):
         that every integral ideal is equivalent modulo principal
         fractional ideals to an integral ideal of norm at most B.
 
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`~minkowski_bound`
 

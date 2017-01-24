@@ -129,8 +129,8 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
 
 from sage.matrix.all import matrix
 from sage.rings.all import ZZ
@@ -1710,7 +1710,7 @@ def tau1(T1, T2, cells_map):
     r"""
     The definition of `\tau_1` is
 
-    .. math::
+    .. MATH::
 
        \tau_1 : T1 \rightarrow T1 \\
        \tau_1 = \beta_2^{-1} \beta_3
@@ -1761,7 +1761,7 @@ def tau2(T1, T2, cells_map):
     r"""
     The definition of `\tau_2` is
 
-    .. math::
+    .. MATH::
 
        \tau_2 : T1 \rightarrow T1 \\
        \tau_2 = \beta_3^{-1} \beta_1
@@ -1812,7 +1812,7 @@ def tau3(T1, T2, cells_map):
     r"""
     The definition of `\tau_3` is
 
-    .. math::
+    .. MATH::
 
        \tau_3 : T1 \rightarrow T1 \\
        \tau_3 = \beta_1^{-1} \beta_2
@@ -2358,7 +2358,7 @@ def alternating_group_bitrade_generators(m):
 
     a = tuple(range(1, 2*m+1 + 1))
 
-    b = tuple(range(m+1, 0, -1) + range(2*m+2, 3*m+1 + 1))
+    b = tuple(range(m + 1, 0, -1)) + tuple(range(2*m+2, 3*m+1 + 1))
 
     a = PermutationGroupElement(a)
     b = PermutationGroupElement(b)

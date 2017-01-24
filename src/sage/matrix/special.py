@@ -13,6 +13,7 @@ Constructors for special matrices
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 import sage.rings.all as rings
 from sage.rings.ring import is_Ring
@@ -333,7 +334,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', *args, **kwds)
         [    1  -1/4     0     0]
 
         sage: A = random_matrix(QQ, 3, 10, num_bound = 99, den_bound = 99)
-        sage: positives = map(abs, A.list())
+        sage: positives = list(map(abs, A.list()))
         sage: matrix(QQ, 3, 10, positives)
         [61/18 47/41  1/22   1/2 75/68   6/7     1   1/2 72/41   7/3]
         [33/13   9/2 40/21 45/46 17/22     1 70/79 97/71  7/24  12/5]
@@ -770,7 +771,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # If nentries < nrows, diagonal is effectively padded with zeros at end
     w = {}
     for i in range(len(v)):
-        w[(i,i)] = v[i]
+        w[(i, i)] = v[i]
 
     # Ship ring, matrix size, dictionary to matrix constructor
     if ring is None:
@@ -2083,9 +2084,9 @@ def jordan_block(eigenvalue, size, sparse=False):
     if size < 0:
         msg = "size of Jordan block must be non-negative, not {0}"
         raise ValueError(msg.format(size))
-    block = diagonal_matrix([eigenvalue]*size, sparse=sparse)
-    for i in xrange(size-1):
-        block[i,i+1]=1
+    block = diagonal_matrix([eigenvalue] * size, sparse=sparse)
+    for i in range(size - 1):
+        block[i, i + 1] = 1
     return block
 
 
@@ -2650,7 +2651,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
                         tries += 1
                         # Range for scalar multiples determined experimentally.
                     if max(map(abs,matrix_copy.list())) < upper_bound:
-                    # Continue if the the largest entry after a row operation is within the bound.
+                    # Continue if the largest entry after a row operation is within the bound.
                         matrix=matrix_copy
                         row_index+=1
                         tries = 0
@@ -2714,7 +2715,7 @@ def random_subspaces_matrix(parent, rank=None):
     original matrix with the equal row dimension identity matrix.  The
     resulting matrix is then put in reduced row-echelon form and the
     subspaces can then be determined by analyzing subdivisions of this
-    matrix. See the four subspaces routine in [BEEZER]_ for more. ::
+    matrix. See the four subspaces routine in [Bee]_ for more. ::
 
         sage: from sage.matrix.constructor import random_subspaces_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 6, 8)
@@ -2826,11 +2827,6 @@ def random_subspaces_matrix(parent, rank=None):
         Traceback (most recent call last):
         ...
         ValueError: matrices must have rank zero or greater.
-
-    REFERENCES:
-
-        .. [BEEZER] `A First Course in Linear Algebra <http://linear.ups.edu/>`_.
-           Robert A. Beezer, accessed 15 July 2010.
 
     AUTHOR:
 
@@ -3302,7 +3298,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
     dim = len(v)
     v = vector(v)
     m = identity_matrix(dim, sparse=True)
-    L = range(i-1, -1, -1) + range(dim-1,i,-1)
+    L = list(range(i - 1, -1, -1)) + list(range(dim - 1, i, -1))
     for i in L:
         rot = ith_to_zero_rotation_matrix(v, i, ring=ring)
         v = rot * v

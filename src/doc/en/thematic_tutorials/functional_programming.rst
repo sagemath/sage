@@ -380,12 +380,7 @@ there is a built-in function that satisfies your requirement. The
 module
 `itertools <http://docs.python.org/library/itertools.html>`_
 has numerous built-in functions to efficiently process sequences of
-items. The functions ``filter``, ``map`` and ``zip`` have their
-counterparts in ``itertools`` as
-`itertools.ifilter <http://docs.python.org/library/itertools.html#itertools.ifilter>`_,
-`itertools.imap <http://docs.python.org/library/itertools.html#itertools.imap>`_
-and
-`itertools.izip <http://docs.python.org/library/itertools.html#itertools.izip>`_.
+items.
 
 Another useful resource for functional programming in Python is the
 `Functional Programming HOWTO <http://docs.python.org/howto/functional.html>`_

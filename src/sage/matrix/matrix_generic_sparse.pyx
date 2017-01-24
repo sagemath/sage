@@ -471,7 +471,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         cdef list v = self.fetch('nonzero_positions_by_column')
         if v is None:
             v = self._entries.keys()
-            v.sort(_cmp_backward)
+            v.sort(key=lambda x: (x[1], x[0]))
             self.cache('nonzero_positions_by_column', v)
         if copy:
             return v[:]
@@ -641,27 +641,3 @@ def Matrix_sparse_from_rows(X):
             entries[(i,j)] = x
     M = matrix_space.MatrixSpace(R, len(X), ncols, sparse=True)
     return M(entries, coerce=False, copy=False)
-
-def _cmp_backward(x, y):  # todo: speed up via Python/C API
-    r"""
-    TESTS::
-
-        sage: from sage.matrix.matrix_generic_sparse import _cmp_backward
-        sage: l0 = [(-1,-1), (0,0), (1,0), (-1,1), (0,1), (1,1), (-1,2)]
-        sage: l = l0[:]
-        sage: for _ in range(10):
-        ....:   shuffle(l)
-        ....:   l.sort(_cmp_backward)
-        ....:   assert l0 == l
-    """
-    # compare two 2-tuples, but in reverse order, i.e., second entry than first
-    cdef Py_ssize_t i,j
-    i = x[1]
-    j = y[1]
-    if i < j:
-        return -1
-    elif i > j:
-        return 1
-    i = x[0]
-    j = y[0]
-    return i-j

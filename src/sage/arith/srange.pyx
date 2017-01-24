@@ -208,7 +208,7 @@ def srange(*args, **kwds):
 
     OUTPUT: a list
 
-    .. note::
+    .. NOTE::
 
        This function is called ``srange`` to distinguish
        it from the built-in Python ``range`` command.  The s

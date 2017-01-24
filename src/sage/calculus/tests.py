@@ -97,7 +97,7 @@ from some Mathematica docs::
     sage: derivative(x^n, x, 3)
     (n - 1)*(n - 2)*n*x^(n - 3)
     sage: derivative( function('f')(x), x)
-    D[0](f)(x)
+    diff(f(x), x)
     sage: diff( 2*x*f(x^2), x)
     4*x^2*D[0](f)(x^2) + 2*f(x^2)
     sage: integrate( 1/(x^4 - a^4), x)
@@ -105,7 +105,7 @@ from some Mathematica docs::
     sage: expand(integrate(log(1-x^2), x))
     x*log(-x^2 + 1) - 2*x + log(x + 1) - log(x - 1)
     sage: integrate(log(1-x^2)/x, x)
-    1/2*log(x^2)*log(-x^2 + 1) + 1/2*polylog(2, -x^2 + 1)
+    1/2*log(x^2)*log(-x^2 + 1) + 1/2*dilog(-x^2 + 1)
     sage: integrate(exp(1-x^2),x)
     1/2*sqrt(pi)*erf(x)*e
     sage: integrate(sin(x^2),x)
@@ -165,16 +165,16 @@ Maple documentation::
     sage: f = function('f'); f
     f
     sage: diff(f(x), x)
-    D[0](f)(x)
+    diff(f(x), x)
     sage: diff(f(x,y), x, y)
-    D[0, 1](f)(x, y)
+    diff(f(x, y), x, y)
     sage: diff(f(x,y), x, y) - diff(f(x,y), y, x)
     0
     sage: g = function('g')
     sage: var('x y z')
     (x, y, z)
     sage: diff(g(x,y,z), x,z,z)
-    D[0, 2, 2](g)(x, y, z)
+    diff(g(x, y, z), x, z, z)
     sage: integrate(sin(x), x)
     -cos(x)
     sage: integrate(sin(x), x, 0, pi)
@@ -208,11 +208,11 @@ We verify several standard differentiation rules::
     sage: function('f, g')
     (f, g)
     sage: diff(f(t)*g(t),t)
-    g(t)*D[0](f)(t) + f(t)*D[0](g)(t)
+    g(t)*diff(f(t), t) + f(t)*diff(g(t), t)
     sage: diff(f(t)/g(t), t)
-    D[0](f)(t)/g(t) - f(t)*D[0](g)(t)/g(t)^2
+    diff(f(t), t)/g(t) - f(t)*diff(g(t), t)/g(t)^2
     sage: diff(f(t) + g(t), t)
-    D[0](f)(t) + D[0](g)(t)
+    diff(f(t), t) + diff(g(t), t)
     sage: diff(c*f(t), t)
-    c*D[0](f)(t)
+    c*diff(f(t), t)
 """

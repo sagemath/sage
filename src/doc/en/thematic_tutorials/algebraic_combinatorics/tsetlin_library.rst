@@ -148,7 +148,7 @@ The stationary distribution is the eigenvector of eigenvalues `1=x_0+x_1+x_2`. D
         `0,1,\cdots,n-1`, and to represent each state in the Markov chain by a permutation
         of the set `\{0,\dots,n-1\}` as a tuple. Construct the state space `\Omega_n` as::
 
-            sage: map(tuple, Permutations(range(3)))
+            sage: list(map(tuple, Permutations(range(3))))
             [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
 
     #.  Write a function ``transition_operator(sigma, i)`` which implements the operator

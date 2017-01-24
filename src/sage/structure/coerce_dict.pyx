@@ -47,7 +47,7 @@ from cpython.object cimport *
 from cpython.list cimport PyList_New
 from cpython.mem cimport *
 from cpython.weakref cimport PyWeakref_GetObject
-from cpython.string cimport PyString_FromString
+from cpython.bytes cimport PyBytes_FromString
 from cpython cimport Py_XINCREF, Py_XDECREF
 from libc.string cimport memset
 from weakref import KeyedRef, ref
@@ -75,7 +75,7 @@ cdef extern from "pyx_visit.h":
 #must be a unique sentinel. We could reuse the "dummy" sentinel
 #that is defined in python's dictobject.c
 
-cdef object dummy_object = PyString_FromString("dummy")
+cdef object dummy_object = PyBytes_FromString(b"dummy")
 cdef PyObject* dummy = <PyObject*><void *>dummy_object
 
 cdef struct mono_cell:

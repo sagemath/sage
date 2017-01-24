@@ -107,7 +107,7 @@ def format_error(message):
         import traceback
         traceback.print_exc(file=sys.stderr)
         sys.stderr.write(stars)
-    except:
+    except BaseException:
         pass
     sys.stderr.write(message)
     sys.stderr.write(stars)

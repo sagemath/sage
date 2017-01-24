@@ -315,7 +315,7 @@ class Gamma1_class(GammaH_class):
         r"""
         Return the index of self in the full modular group. This is given by the formula
 
-        .. math::
+        .. MATH::
 
             N^2 \prod_{\substack{p \mid N \\ \text{$p$ prime}}} \left( 1 - \frac{1}{p^2}\right).
 

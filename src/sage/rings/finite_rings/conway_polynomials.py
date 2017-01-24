@@ -10,6 +10,8 @@ AUTHORS:
 - Peter Bruin
 """
 from __future__ import absolute_import
+from six.moves import range
+
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -318,7 +320,7 @@ def _find_pow_of_frobenius(p, n, x, y):
 
     """
     from .integer_mod import mod
-    for i in xrange(n):
+    for i in range(n):
         if x == y: break
         y = y**p
     else:

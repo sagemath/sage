@@ -108,7 +108,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(10)
+            sage: J = list(range(10))
             sage: A = [1/10 for j in J]
             sage: s = IndexedSequence(A,J)
             sage: s
@@ -151,7 +151,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(10)
+            sage: J = list(range(10))
             sage: A = [1/10 for j in J]
             sage: s = IndexedSequence(A,J)
             sage: s.dict()
@@ -165,7 +165,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(10)
+            sage: J = list(range(10))
             sage: A = [1/10 for j in J]
             sage: s = IndexedSequence(A,J)
             sage: s.list()
@@ -182,7 +182,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(10)
+            sage: J = list(range(10))
             sage: A = [1/10 for j in J]
             sage: s = IndexedSequence(A,J)
             sage: s.base_ring()
@@ -196,7 +196,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(10)
+            sage: J = list(range(10))
             sage: A = [1/10 for j in J]
             sage: s = IndexedSequence(A,J)
             sage: s.index_object()
@@ -211,7 +211,7 @@ class IndexedSequence(SageObject):
         EXAMPLES::
 
             sage: A = [ZZ(i) for i in range(3)]
-            sage: I = range(3)
+            sage: I = list(range(3))
             sage: s = IndexedSequence(A,I)
             sage: s
             Indexed sequence: [0, 1, 2]
@@ -240,7 +240,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(3)
+            sage: J = list(range(3))
             sage: A = [ZZ(i^2)+1 for i in J]
             sage: s = IndexedSequence(A,J)
             sage: P = s.plot_histogram()
@@ -263,7 +263,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: I = range(3)
+            sage: I = list(range(3))
             sage: A = [ZZ(i^2)+1 for i in I]
             sage: s = IndexedSequence(A,I)
             sage: P = s.plot()
@@ -281,7 +281,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(6)
+            sage: J = list(range(6))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: s.dft(lambda x:x^2)
@@ -306,7 +306,7 @@ class IndexedSequence(SageObject):
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
             Indexed sequence: [21.0000000000000, -2.99999999999997 - 1.73205080756885*I, -2.99999999999999 + 1.73205080756888*I, -9.00000000000000 + 0.0000000000000485744257349999*I, -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I, -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
                 indexed by Cyclic group of order 6 as a permutation group
-            sage: p = 7; J = range(p); A = [kronecker_symbol(j,p) for j in J]
+            sage: p = 7; J = list(range(p)); A = [kronecker_symbol(j,p) for j in J]
             sage: s = IndexedSequence(A,J)
             sage: Fs = s.dft()
             sage: c = Fs.list()[1]; [x/c for x in Fs.list()]; s.list()
@@ -346,12 +346,12 @@ class IndexedSequence(SageObject):
                   for chid in Gd]
         elif not(J[0] in ZZ) and G.is_finite() and F == ZZ or (F.is_field() and F.base_ring()==QQ):
             ## assumes J is the list of conj class representatives of a
-            ## PermuationGroup(...) or Matrixgroup(...)
+            ## PermutationGroup(...) or Matrixgroup(...)
             chi = G.character_table()
             FT = [sum([S[i]*chi[i,j] for i in range(N)]) for j in range(N)]
         else:
             raise ValueError("list elements must be in QQ(zeta_"+str(N)+")")
-        return IndexedSequence(FT,J)
+        return IndexedSequence(FT, J)
 
     def idft(self):
         """
@@ -359,7 +359,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: fs = s.dft(); fs
@@ -387,7 +387,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [exp(-2*pi*i*I/5) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: s.dct()
@@ -409,7 +409,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: I = CC.0; pi = CC(pi)
             sage: A = [exp(-2*pi*i*I/5) for i in J]
             sage: s = IndexedSequence(A,J)
@@ -450,7 +450,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [ZZ(1) for i in J]
             sage: B = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
@@ -509,7 +509,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: I = range(5)
+            sage: I = list(range(5))
             sage: A = [ZZ(1) for i in I]
             sage: B = [ZZ(1) for i in I]
             sage: s = IndexedSequence(A,I)
@@ -544,13 +544,13 @@ class IndexedSequence(SageObject):
         c = [sum([a[i]*b[(j-i)%N] for i in range(N)]) for j in range(2*N-1)]
         return c
 
-    def __mul__(self,other):
+    def __mul__(self, other):
         """
         Implements scalar multiplication (on the right).
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: s.base_ring()
@@ -561,11 +561,8 @@ class IndexedSequence(SageObject):
             Rational Field
         """
         S = self.list()
-        J = range(len(self.index_object()))
-        #if not(other in F):
-        #    raise TypeError,"The base rings must be consistent"
-        S1 = [S[i]*other for i in J]
-        return IndexedSequence(S1,self.index_object())
+        S1 = [S[i] * other for i in range(len(self.index_object()))]
+        return IndexedSequence(S1, self.index_object())
 
     def __eq__(self,other):
         """
@@ -573,7 +570,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: t = s*(1/3)
@@ -616,7 +613,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [RR(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: t = s.fft(); t
@@ -648,7 +645,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(5)
+            sage: J = list(range(5))
             sage: A = [RR(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: t = s.fft(); t
@@ -681,7 +678,7 @@ class IndexedSequence(SageObject):
 
         INPUT:
 
-        - ``other`` -- the the name of the type of wavelet; valid choices are:
+        - ``other`` -- the name of the type of wavelet; valid choices are:
 
           * ``'daubechies'``
           * ``'daubechies_centered'``
@@ -704,7 +701,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(8)
+            sage: J = list(range(8))
             sage: A = [RR(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: t = s.dwt()
@@ -767,7 +764,7 @@ class IndexedSequence(SageObject):
 
         EXAMPLES::
 
-            sage: J = range(8)
+            sage: J = list(range(8))
             sage: A = [RR(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: t = s.dwt()
@@ -779,7 +776,7 @@ class IndexedSequence(SageObject):
                 indexed by [0, 1, 2, 3, 4, 5, 6, 7]
             sage: t.idwt() == s
             True
-            sage: J = range(16)
+            sage: J = list(range(16))
             sage: A = [RR(1) for i in J]
             sage: s = IndexedSequence(A,J)
             sage: t = s.dwt("bspline", 103)

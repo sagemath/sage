@@ -1,7 +1,7 @@
 r"""
 Automorphism groups and canonical labels.
 
-For details see section 3 of [Feu13]_.
+For details see section 3 of [Feu2013]_.
 
 Definitions
 ###########
@@ -169,11 +169,7 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Feu13] Feulner, Thomas, "Eine kanonische Form
-           zur Darstellung aequivalenter Codes --
-           Computergestuetzte Berechnung und ihre Anwendung
-           in der Codierungstheorie, Kryptographie und Geometrie --",
-           Dissertation, University of Bayreuth, 2013.
+- [Feu2013]_
 """
 
 #*****************************************************************************

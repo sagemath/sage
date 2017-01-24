@@ -1551,7 +1551,7 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     INPUT:
 
     - ``f`` -- symbolic function. Its first argument will be the independent
-      variable. Its output should be de derivatives of the deppendent variables.
+      variable. Its output should be de derivatives of the dependent variables.
 
     - ``ics`` -- a list or tuple with the initial conditions.
 
@@ -1620,9 +1620,9 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics], N(initial), N(final), N(delta), N(tolrel),
                      N(tolabs), fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
-                          os.path.join('$SAGE_ROOT','local','lib','libTIDES.a') + ' $LDFLAGS '
-                          + os.path.join('-L$SAGE_ROOT','local','lib ') +' -lm  -O2 ' +
-                          os.path.join('-I$SAGE_ROOT','local','include '),
+                          os.path.join('$SAGE_LOCAL','lib','libTIDES.a') + ' $LDFLAGS '
+                          + os.path.join('-L$SAGE_LOCAL','lib ') +' -lm  -O2 ' +
+                          os.path.join('-I$SAGE_LOCAL','include '),
                           shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outfile = open(fileoutput)
@@ -1637,12 +1637,12 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
 def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16, digits=50):
     r"""
     Solve numerically a system of first order differential equations using the
-    taylor series integrator in arbitrary precission implemented in tides.
+    taylor series integrator in arbitrary precision implemented in tides.
 
     INPUT:
 
     - ``f`` -- symbolic function. Its first argument will be the independent
-      variable. Its output should be de derivatives of the deppendent variables.
+      variable. Its output should be de derivatives of the dependent variables.
 
     - ``ics`` -- a list or tuple with the initial conditions.
 
@@ -1656,7 +1656,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
 
     - ``tolabs`` -- the absolute tolerance for the method.
 
-    - ``digits`` -- the digits of precission used in the computation.
+    - ``digits`` -- the digits of precision used in the computation.
 
 
     OUTPUT:
@@ -1667,7 +1667,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
     EXAMPLES:
 
     We integrate the Lorenz equations with Salztman values for the parameters
-    along 10 periodic orbits with 100 digits of precission::
+    along 10 periodic orbits with 100 digits of precision::
 
         sage: var('t,x,y,z')
         (t, x, y, z)
@@ -1726,9 +1726,9 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
     genfiles_mpfr(intfile, drfile, f, ics, initial, final, delta, [], [],
                       digits, tolrel, tolabs, fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
-                          os.path.join('$SAGE_ROOT','local','lib','libTIDES.a') + ' $LDFLAGS '
-                          + os.path.join('-L$SAGE_ROOT','local','lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
-                          os.path.join('-I$SAGE_ROOT','local','include ') ,
+                          os.path.join('$SAGE_LOCAL','lib','libTIDES.a') + ' $LDFLAGS '
+                          + os.path.join('-L$SAGE_LOCAL','lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
+                          os.path.join('-I$SAGE_LOCAL','include ') ,
                           shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outfile = open(fileoutput)

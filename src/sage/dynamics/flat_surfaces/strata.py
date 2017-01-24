@@ -11,42 +11,25 @@ a stratum (which corresponds to the SAGE object
 :class:`~sage.dynamics.flat_surfaces.strata.AbelianStratum`).
 
 The work for Abelian differentials was done by Maxim Kontsevich and Anton
-Zorich in [KonZor03]_ and for quadratic differentials by Erwan Lanneau in
-[Lan08]_. Zorich gave an algorithm to pass from a connected component of a
+Zorich in [KZ2003]_ and for quadratic differentials by Erwan Lanneau in
+[Lan2008]_. Zorich gave an algorithm to pass from a connected component of a
 stratum to the associated Rauzy class (for both interval exchange
-transformations and linear involutions) in [Zor08]_ and is implemented for
+transformations and linear involutions) in [Zor2008]_ and is implemented for
 Abelian stratum at different level (approximately one for each component):
 
 - for connected stratum :meth:`~ConnectedComponentOfAbelianStratum.representative`
-- for hyperellitic component :meth:`~HypConnectedComponentOfAbelianStratum.representative`
+- for hyperelliptic component :meth:`~HypConnectedComponentOfAbelianStratum.representative`
 - for non hyperelliptic component, the algorithm is the same as for connected
   component
 - for odd component :meth:`~OddConnectedComponentOfAbelianStratum.representative`
 - for even component :meth:`~EvenConnectedComponentOfAbelianStratum.representative`
 
 The inverse operation (pass from an interval exchange transformation to
-the connected component) is partially written in [KonZor03]_ and
+the connected component) is partially written in [KZ2003]_ and
 simply named here
 :meth:`~sage.dynamics.interval_exchanges.template.PermutationIET.connected_component`.
 
-All the code here was first available on Mathematica [ZS]_.
-
-REFERENCES:
-
-.. [KonZor03] \M. Kontsevich, A. Zorich "Connected components of the moduli space
-   of Abelian differentials with prescripebd singularities" Invent. math. 153,
-   631-678 (2003)
-
-.. [Lan08] \E. Lanneau "Connected components of the strata of the moduli spaces
-   of quadratic differentials", Annales sci. de l'ENS, serie 4, fascicule 1,
-   41, 1-56 (2008)
-
-.. [Zor08] \A. Zorich "Explicit Jenkins-Strebel representatives of all strata of
-   Abelian and quadratic differentials", Journal of Modern Dynamics, vol. 2,
-   no 1, 139-185 (2008) (http://www.math.psu.edu/jmd)
-
-.. [ZS] Anton Zorich, "Generalized Permutation software"
-   (http://perso.univ-rennes1.fr/anton.zorich/Software/software_en.html)
+All the code here was first available on Mathematica [Zor]_.
 
 .. NOTE::
 
@@ -258,7 +241,6 @@ from sage.combinat.combinat import InfiniteAbstractCombinatorialClass
 from sage.combinat.partition import Partitions
 
 from sage.rings.integer import Integer
-from sage.rings.rational import Rational
 
 
 def AbelianStrata(genus=None, nintervals=None, marked_separatrix=None):
@@ -1242,7 +1224,7 @@ class ConnectedComponentOfAbelianStratum(SageObject):
         Returns the Zorich representative of this connected component.
 
         Zorich constructs explicitely interval exchange
-        transformations for each stratum in [Zor08]_.
+        transformations for each stratum in [Zor2008]_.
 
         INPUT:
 
@@ -1407,21 +1389,17 @@ class ConnectedComponentOfAbelianStratum(SageObject):
             sage: c2_hyp != c2_odd
             True
             sage: c1 == True
-            Traceback (most recent call last):
-            ...
-            TypeError: other must be a connected component
+            False
         """
-        if not isinstance(other, CCA):
-            raise TypeError("other must be a connected component")
+        if not isinstance(other, CCA) or type(self) != type(other):
+            return NotImplemented
 
-        if type(self) is type(other):
-            if self._parent._zeroes > other._parent._zeroes:
-                return 1
-            elif self._parent._zeroes < other._parent._zeroes:
-                return -1
-            return 0
+        if self._parent._zeroes < other._parent._zeroes:
+            return 1
+        elif self._parent._zeroes > other._parent._zeroes:
+            return -1
+        return 0
 
-        return cmp(type(self), type(other))
 
 CCA = ConnectedComponentOfAbelianStratum
 
@@ -1441,7 +1419,7 @@ class HypConnectedComponentOfAbelianStratum(CCA):
         Returns the Zorich representative of this connected component.
 
         Zorich constructs explicitely interval exchange
-        transformations for each stratum in [Zor08]_.
+        transformations for each stratum in [Zor2008]_.
 
         INPUT:
 
@@ -1584,7 +1562,7 @@ class EvenConnectedComponentOfAbelianStratum(CCA):
         Returns the Zorich representative of this connected component.
 
         Zorich constructs explicitely interval exchange
-        transformations for each stratum in [Zor08]_.
+        transformations for each stratum in [Zor2008]_.
 
         EXAMPLES:
 
@@ -1672,7 +1650,7 @@ class OddConnectedComponentOfAbelianStratum(CCA):
         Returns the Zorich representative of this connected component.
 
         Zorich constructs explicitely interval exchange
-        transformations for each stratum in [Zor08]_.
+        transformations for each stratum in [Zor2008]_.
 
         EXAMPLES:
 

@@ -18,7 +18,7 @@ class AffineWeylGroups(Category_singleton):
 
     .. todo:: add a description of this category
 
-    .. seealso::
+    .. SEEALSO::
 
         - :wikipedia:`Affine_weyl_group`
         - :class:`WeylGroups`, :class:`WeylGroup`

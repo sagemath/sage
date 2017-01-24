@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 from .factorization import Factorization
 
 from .sequence      import Sequence, seq
@@ -18,10 +19,7 @@ from .parent      import Parent
 
 from .parent_base import ParentWithBase
 
-from .parent_gens import (ParentWithGens,
-                         ParentWithAdditiveAbelianGens,
-                         ParentWithMultiplicativeAbelianGens,
-                         localvars)
+from .parent_gens import ParentWithGens, localvars
 
 from .proof import all as proof
 

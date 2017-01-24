@@ -12,12 +12,7 @@ Finite dimensional algebras with basis
 
 REFERENCES:
 
-..  [CR62] Curtis, Charles W.; Reiner, Irving
-    "Representation theory of finite groups and associative
-    algebras."
-    Pure and Applied Mathematics, Vol. XI Interscience Publishers, a
-    division of John Wiley & Sons, New York-London 1962
-    pp 545--547
+- [CR1962]_
 """
 #*****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -35,7 +30,6 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.algebras import Algebras
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.matrix.constructor import Matrix
-from sage.functions.other import sqrt
 
 class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
@@ -74,18 +68,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                This implementation handles algebras over fields of
                characteristic zero (using Dixon's lemma) or fields of
                characteristic `p` in which we can compute `x^{1/p}`
-               [FR85]_, [Eb89]_.
-
-            REFERENCES:
-
-            .. [Eb89] Eberly, Wayne. "Computations for algebras and group
-               representations". Ph.D. Thesis, University of Toronto, 1989.
-               http://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf
-
-            .. [FR85] Friedl, Katalin, and Lajos Rónyai. "Polynomial time
-               solutions of some problems of computational algebra". Proceedings
-               of the seventeenth annual ACM symposium on Theory of computing.
-               ACM, 1985.
+               [FR1985]_, [Eb1989]_.
 
             OUTPUT:
 
@@ -476,7 +459,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             `f_k` by idempotent lifting of `(1-f) g (1-f)`, where `g`
             is any lift of `\overline{e_k}` and `f=\sum_{i<k} f_i`.
 
-            See [CR62]_ for correctness and termination proofs.
+            See [CR1962]_ for correctness and termination proofs.
 
             .. SEEALSO::
 
@@ -499,10 +482,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A = Z12.algebra(QQ)
                 sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
                 sage: sorted(idempotents, key=str)
-                [-1/2*B[3] + 1/2*B[9],
-                 -1/2*B[8] + 1/2*B[4],
-                 -B[0] + 1/2*B[3] + 1/2*B[9],
-                 -B[0] + 1/2*B[4] + 1/2*B[8],
+                [-1/2*B[8] + 1/2*B[4],
+                 -B[0] + 1/2*B[8] + 1/2*B[4],
+                 -B[0] + 1/2*B[9] + 1/2*B[3],
+                 1/2*B[9] - 1/2*B[3],
                  1/4*B[1] + 1/2*B[3] + 1/4*B[5] - 1/4*B[7] - 1/2*B[9] - 1/4*B[11],
                  1/4*B[1] + 1/4*B[11] - 1/4*B[5] - 1/4*B[7],
                  1/4*B[1] - 1/2*B[4] - 1/4*B[5] + 1/4*B[7] + 1/2*B[8] - 1/4*B[11],
@@ -565,7 +548,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Iterate the formula `1 - (1 - x^2)^2` until having an
             idempotent.
 
-            See [CR62]_ for correctness and termination proofs.
+            See [CR1962]_ for correctness and termination proofs.
 
             EXAMPLES::
 
@@ -709,7 +692,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             A_quo = self.semisimple_quotient()
             idempotents_quo = A_quo.central_orthogonal_idempotents()
             # Dimension of simple modules
-            dim_simples = [sqrt(A_quo.principal_ideal(e).dimension())
+            dim_simples = [A_quo.principal_ideal(e).dimension().sqrt()
                           for e in idempotents_quo]
             # Orthogonal idempotents
             idempotents = self.orthogonal_idempotents_central_mod_radical()

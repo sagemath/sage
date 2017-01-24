@@ -43,7 +43,7 @@ Functions
 #*****************************************************************************
 from __future__ import print_function
 
-from sage.env import SAGE_ROOT
+from sage.env import SAGE_ROOT, SAGE_PKGS
 
 import json
 import os
@@ -59,11 +59,12 @@ except ImportError:
 
 DEFAULT_PYPI = 'https://pypi.python.org/pypi'
 PIP_VERSION = re.compile("^([^\s]+) \(([^\s]+)\)$", re.MULTILINE)
-SAGE_PKGS = os.path.join(SAGE_ROOT, "build", "pkgs")
 
 def pkgname_split(name):
     r"""
-    Split a pkgname to 'name,version'
+    Split a pkgname into a list of strings, 'name, version'.
+
+    For some packages, the version string might be empty.
 
     EXAMPLES::
 
@@ -81,12 +82,11 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
 
     - ``pkg`` -- the package
 
-    - ``pypi_url`` -- an optional Python package repository to use (default is the
-      standard PyPI url)
+    - ``pypi_url`` -- (string, default: standard PyPI url) an optional Python
+      package repository to use
 
-    - ``ignore_URLError`` -- if set to ``True`` than no error is raised if the
-      connection fails and the function returns ``None`` (set to ``False`` by
-      default).
+    - ``ignore_URLError`` -- (default: ``False``) if set to ``True`` then no
+      error is raised if the connection fails and the function returns ``None``
 
     EXAMPLES:
 
@@ -131,7 +131,7 @@ def pip_installed_packages():
     r"""
     Return a dictionary `name->version` of installed pip packages.
 
-    This command return *all* pip installed packages. Not only Sage packages.
+    This command returns *all* pip-installed packages. Not only Sage packages.
 
     EXAMPLES::
 
@@ -144,7 +144,7 @@ def pip_installed_packages():
         sage: d['beautifulsoup']   # optional - beautifulsoup
         '...'
     """
-    proc = subprocess.Popen(["pip", "list"], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["pip", "list", "--no-index"], stdout=subprocess.PIPE)
     stdout = str(proc.communicate()[0])
     return dict((name.lower(), version) for name,version in PIP_VERSION.findall(stdout))
 
@@ -155,22 +155,26 @@ def list_packages(*pkg_types, **opts):
     The keys are package names and values are dictionaries with the following
     keys:
 
-    - 'type': either 'standard', 'optional', 'experimental' or 'pip'
-    - 'installed': boolean
-    - 'installed_version': None or string
-    - 'remote_version': string
+    - ``'type'``: either ``'standard'``, ``'optional'``, ``'experimental'`` or ``'pip'``
+    - ``'installed'``: boolean
+    - ``'installed_version'``: ``None`` or a string
+    - ``'remote_version'``: string
 
     INPUT:
 
-    - ``pkg_types`` - (optional) a sublist of 'standard', 'optional', 'experimental' or
-      'pip'. If provided, list only the package with this given type otherwise
-      list all packages.
+    - ``pkg_types`` -- (optional) a sublist of ``'standard'``, ``'optional'``,
+      ``'experimental'`` or ``'pip'``.  If provided, list only the packages with the
+      given type(s), otherwise list all packages.
 
-    - ``local`` - if set to ``False`` then do not consult remote upstream version
-      of packages (only applicable for 'pip' type)
+    - ``local`` -- (optional, default: ``False``) if set to ``True``, then do not
+      consult remote (PyPI) repositories for package versions (only applicable for
+      ``'pip'`` type)
 
-    - ``ignore_URLError`` -- if set to ``True`` than connection error will be
-      ignored (set to ``False`` by default)
+    - ``exclude_pip`` -- (optional, default: ``False``) if set to ``True``, then
+      pip packages are not considered.
+
+    - ``ignore_URLError`` -- (default: ``False``) if set to ``True``, then
+      connection errors will be ignored
 
     EXAMPLES::
 
@@ -179,7 +183,7 @@ def list_packages(*pkg_types, **opts):
         sage: sorted(L.keys())  # random
         ['alabaster',
          'arb',
-         'atlas',
+         'babel',
          ...
          'zn_poly',
          'zope_interface']
@@ -202,18 +206,25 @@ def list_packages(*pkg_types, **opts):
          'installed_version': ...,
          'remote_version': u'...',
          'type': 'pip'}
+
+    Check the option ``exclude_pip``::
+
+        sage: list_packages('pip', exclude_pip=True)
+        {}
     """
     if not pkg_types:
         pkg_types = ('standard', 'optional', 'experimental', 'pip')
     elif any(pkg_type not in ('standard', 'optional', 'experimental', 'pip') for pkg_type in pkg_types):
-        raise ValueError("pkg_type must be one of 'standard', 'optional', 'experimental', 'pip'")
+        raise ValueError("Each pkg_type must be one of 'standard', 'optional', 'experimental', 'pip'")
 
-    installed = installed_packages()
 
     local = opts.pop('local', False)
     ignore_URLError = opts.pop('ignore_URLError', False)
+    exclude_pip = opts.pop('exclude_pip', False)
     if opts:
         raise ValueError("{} are not valid options".format(sorted(opts)))
+
+    installed = installed_packages(exclude_pip)
 
     pkgs = {}
     for p in os.listdir(SAGE_PKGS):
@@ -233,6 +244,8 @@ def list_packages(*pkg_types, **opts):
         pkg['installed'] = pkg['installed_version'] is not None
 
         if pkg['type'] == 'pip':
+            if exclude_pip:
+                continue
             if not local:
                 pkg['remote_version'] = pip_remote_version(p, ignore_URLError=ignore_URLError)
             else:
@@ -249,53 +262,42 @@ def list_packages(*pkg_types, **opts):
 
     return pkgs
 
-def install_package(package=None, force=None):
-    """
-    This function is obsolete. Run ``sage -i PKGNAME`` from a shell
-    to install a package. Use the function :func:`installed_packages`
-    to list all installed packages.
 
-    TESTS::
-
-        sage: install_package()
-        doctest:...: DeprecationWarning: use installed_packages() to list all installed packages
-        See http://trac.sagemath.org/16759 for details.
-        [...'arb...'python...]
-        sage: install_package("autotools")
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: installing Sage packages using 'install_package()' is obsolete.
-        Run 'sage -i autotools' from a shell prompt instead
-    """
-    if package is not None:
-        # deprecation(16759, ...)
-        raise NotImplementedError("installing Sage packages using 'install_package()' is obsolete.\nRun 'sage -i {}' from a shell prompt instead".format(package))
-
-    from sage.misc.superseded import deprecation
-    deprecation(16759, "use installed_packages() to list all installed packages")
-    return sorted(installed_packages())
-
-def installed_packages():
+def installed_packages(exclude_pip=True):
     """
     Return a dictionary of all installed packages, with version numbers.
+
+    INPUT:
+
+    - ``exclude_pip`` -- (optional, default: ``True``) whether "pip" packages
+      are excluded from the list
 
     EXAMPLES::
 
         sage: installed_packages()
         {...'arb': ...'pynac': ...}
 
-    .. seealso::
+    .. SEEALSO::
 
         :func:`list_packages`
     """
     from sage.env import SAGE_SPKG_INST
     installed = dict(pkgname_split(pkgname) for pkgname in os.listdir(SAGE_SPKG_INST))
-    installed.update(pip_installed_packages())
+    if not exclude_pip:
+        installed.update(pip_installed_packages())
     return installed
 
-def is_package_installed(package):
+def is_package_installed(package, exclude_pip=True):
     """
-    Return true if ``package`` is installed.
+    Return whether (any version of) ``package`` is installed.
+
+    INPUT:
+
+    - ``package`` -- the name of the package
+
+    - ``exclude_pip`` -- (optional, default: ``True``) whether to consider pip
+      type packages
+
 
     EXAMPLES::
 
@@ -307,10 +309,16 @@ def is_package_installed(package):
         sage: is_package_installed('matplotli')
         False
 
-    Otherwise, installing "pillow" will cause this function to think
+    Otherwise, installing "pillow" would cause this function to think
     that "pil" is installed, for example.
+
+    Check that the option ``exclude_pip`` is turned on by default::
+
+        sage: from sage.misc.package import list_packages
+        sage: for pkg in list_packages('pip', local=True):
+        ....:     assert not is_package_installed(pkg)
     """
-    return any(p.split('-')[0] == package for p in installed_packages())
+    return any(p.split('-')[0] == package for p in installed_packages(exclude_pip))
 
 def package_versions(package_type, local=False):
     r"""
@@ -320,10 +328,10 @@ def package_versions(package_type, local=False):
 
     INPUT:
 
-    - ``package_type`` (string) -- one of `"standard"`, `"optional"` or
-      `"experimental"`
+    - ``package_type`` -- (string) one of ``"standard"``, ``"optional"`` or
+      ``"experimental"``
 
-    - ``local`` (boolean) -- only query local data (no internet needed)
+    - ``local`` -- (boolean, default: ``False``) only query local data (no internet needed)
 
     For packages of the given type, return a dictionary whose entries
     are of the form ``'package': (installed, latest)``, where
@@ -331,7 +339,7 @@ def package_versions(package_type, local=False):
     installed) and ``latest`` is the latest available version. If the
     package has a directory in ``SAGE_ROOT/build/pkgs/``, then
     ``latest`` is determined by the file ``package-version.txt`` in
-    that directory.  If ``local`` is False, then Sage's servers are
+    that directory.  If ``local`` is ``False``, then Sage's servers are
     queried for package information.
 
     EXAMPLES::
@@ -354,9 +362,9 @@ def standard_packages():
 
     OUTPUT:
 
-    -  installed standard packages (as a list)
+    - installed standard packages (as a list)
 
-    -  NOT installed standard packages (as a list)
+    - NOT installed standard packages (as a list)
 
     Run ``sage -i package_name`` from a shell to install a given
     package or ``sage -f package_name`` to re-install it.
@@ -382,9 +390,9 @@ def optional_packages():
 
     OUTPUT:
 
-    -  installed optional packages (as a list)
+    - installed optional packages (as a list)
 
-    -  NOT installed optional packages (as a list)
+    - NOT installed optional packages (as a list)
 
     Run ``sage -i package_name`` from a shell to install a given
     package or ``sage -f package_name`` to re-install it.
@@ -419,9 +427,9 @@ def experimental_packages():
 
     OUTPUT:
 
-    -  installed experimental packages (as a list)
+    - installed experimental packages (as a list)
 
-    -  NOT installed experimental packages (as a list)
+    - NOT installed experimental packages (as a list)
 
     Run ``sage -i package_name`` from a shell to install a given
     package or ``sage -f package_name`` to re-install it.
@@ -435,20 +443,6 @@ def experimental_packages():
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
 
-def upgrade():
-    """
-    Obsolete function, run 'sage --upgrade' from a shell prompt instead.
-
-    TESTS::
-
-        sage: upgrade()
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: upgrading Sage using 'upgrade()' is obsolete.
-        Run 'sage --upgrade' from a shell prompt instead
-    """
-    # deprecation(16759, ..)
-    raise NotImplementedError("upgrading Sage using 'upgrade()' is obsolete.\nRun 'sage --upgrade' from a shell prompt instead")
 
 class PackageNotFoundError(RuntimeError):
     """
@@ -459,7 +453,7 @@ class PackageNotFoundError(RuntimeError):
     This exception should be raised with a single argument, namely
     the name of the package.
 
-    When an ``PackageNotFoundError`` is raised, this means one of the
+    When a ``PackageNotFoundError`` is raised, this means one of the
     following:
 
     - The required optional package is not installed.

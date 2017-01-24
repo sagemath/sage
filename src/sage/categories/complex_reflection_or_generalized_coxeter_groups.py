@@ -83,7 +83,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
         sage: C = ComplexReflectionOrGeneralizedCoxeterGroups(); C
         Category of complex reflection or generalized coxeter groups
         sage: C.super_categories()
-        [Category of finitely generated groups]
+        [Category of finitely generated enumerated groups]
 
         sage: C.required_methods()
         {'element': {'optional': ['reflection_length'],
@@ -682,7 +682,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: s[0]*s[2]*s[0]*s[1]
                 (0, 3, 1, 2)
 
-            We now experiment with the the different values for
+            We now experiment with the different values for
             ``word_type`` for the colored symmetric group::
 
                 sage: W = ColoredPermutations(1,4)

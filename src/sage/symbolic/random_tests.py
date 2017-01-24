@@ -17,7 +17,7 @@ from sage.misc.prandom import randint, random
 import operator
 from sage.rings.all import QQ
 from sage.symbolic.ring import SR
-import sage.symbolic.pynac
+from sage.libs.pynac.pynac import symbol_table
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
@@ -50,7 +50,7 @@ def _mk_full_functions():
     random_expr will fail as well.  That's OK; just fix the doctest
     to match the new output.
     """
-    items = sorted(sage.symbolic.pynac.symbol_table['functions'].items())
+    items = sorted(symbol_table['functions'].items())
     return [(1.0, f, f.number_of_arguments())
             for (name, f) in items
             if hasattr(f, 'number_of_arguments') and
@@ -398,12 +398,13 @@ def test_symbolic_expression_order(repetitions=100):
         return randint(-100,100)/randint(1,100)
 
     def make_random_expr():
+        from sage.symbolic.random_tests import random_expr, fast_nodes
         while True:
             try:
-                return sage.symbolic.random_tests.random_expr(
+                return random_expr(
                     rnd_length, nvars=nvars, ncoeffs=ncoeffs, var_frac=var_frac,
                     nullary_frac=nullary_frac, coeff_generator=coeff_generator,
-                    internal=sage.symbolic.random_tests.fast_nodes)
+                    internal=fast_nodes)
             except (ZeroDivisionError, ValueError):
                 pass
 

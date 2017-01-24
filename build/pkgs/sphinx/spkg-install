@@ -19,14 +19,6 @@ CUR=`pwd`
 
 cd src
 
-# Apply patches
-echo "Patching Sphinx..."
-for p in ../patches/*.patch; do
-    patch -p1 <"$p"
-    success "Error applying patch \"$p\""
-done
-echo
-
 # Install new version
 echo "Installing Sphinx..."
 $PIP_INSTALL .

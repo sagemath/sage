@@ -35,7 +35,7 @@ class PositiveIntegers(IntegerRangeInfinite):
         sage: PP.list()
         Traceback (most recent call last):
         ...
-        NotImplementedError: infinite list
+        NotImplementedError: cannot list an infinite set
         sage: it = iter(PP)
         sage: (next(it), next(it), next(it), next(it), next(it))
         (1, 2, 3, 4, 5)

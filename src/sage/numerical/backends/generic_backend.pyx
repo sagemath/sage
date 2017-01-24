@@ -255,6 +255,28 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
+    @classmethod
+    def _test_sense(cls, tester=None, **options):
+        """
+        Run tests on `set_sense` and `is_maximization`.
+
+        TEST::
+
+            sage: from sage.numerical.backends.generic_backend import GenericBackend
+            sage: p = GenericBackend()
+            sage: p._test_sense()                              # optional - Nonexistent_LP_solver
+            Exception NotImplementedError ...
+
+        """
+        p = cls()                         # fresh instance of the backend
+        if tester is None:
+            tester = p._tester(**options)
+        tester.assertEqual(p.is_maximization(), True)
+        tester.assertIsNone(p.set_sense(-1))
+        tester.assertEqual(p.is_maximization(), False)
+        tester.assertIsNone(p.set_sense(1))
+        tester.assertEqual(p.is_maximization(), True)
+
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
         Set or get the coefficient of a variable in the objective

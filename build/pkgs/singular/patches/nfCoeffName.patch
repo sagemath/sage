@@ -1,0 +1,37 @@
+From 61e85543ff6e6160d3d8c6b8fba50eb327f41679 Mon Sep 17 00:00:00 2001
+From: Hans Schoenemann <hannes@mathematik.uni-kl.de>
+Date: Mon, 5 Dec 2016 10:13:42 +0100
+Subject: [PATCH] add: nfCoeffString (ffields.cc)
+
+---
+ libpolys/coeffs/ffields.cc | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/libpolys/coeffs/ffields.cc b/libpolys/coeffs/ffields.cc
+index b43162b..885dac6 100644
+--- a/libpolys/coeffs/ffields.cc
++++ b/libpolys/coeffs/ffields.cc
+@@ -826,6 +826,15 @@ static char* nfCoeffString(const coeffs r)
+   return s;
+ }
+ 
++static char nfCoeffName_buf[32];
++static char* nfCoeffName(const coeffs r)
++{
++  const char *p=n_ParameterNames(r)[0];
++  nfCoeffName_buf[31]='\0';
++  snprintf(nfCoeffName_buf,31,"ZZ/%ds[%s]",r->m_nfCharQ,p);
++  return nfCoeffName_buf;
++}
++
+ static number nfRandom(siRandProc p,number ,number, const coeffs cf)
+ {
+   return (number)(long)(p() %(cf->m_nfCharQ+1));
+@@ -840,6 +849,7 @@ BOOLEAN nfInitChar(coeffs r,  void * parameter)
+   r->cfKillChar=nfKillChar;
+   r->nCoeffIsEqual=nfCoeffIsEqual;
+   r->cfCoeffString=nfCoeffString;
++  r->cfCoeffName=nfCoeffName;
+ 
+   r->cfMult  = nfMult;
+   r->cfSub   = nfSub;

@@ -63,7 +63,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 from sage.structure.parent_base import ParentWithBase
 from sage.structure.element import Element
 from sage.modular.dirichlet import DirichletGroup, trivial_character
@@ -355,7 +355,7 @@ class WeightCharacter(Element):
         if not self.is_even():
             raise ValueError("Eisenstein series not defined for odd weight-characters")
         q = ring.gen()
-        s = ring(1) + 2*self.one_over_Lvalue() * sum([sum([self(d)/d for d in divisors(n)]) * q**n for n in xrange(1, prec)])
+        s = ring(1) + 2*self.one_over_Lvalue() * sum(sum(self(d)/d for d in divisors(n)) * q**n for n in range(1, prec))
         return s.add_bigoh(prec)
 
     def values_on_gens(self):

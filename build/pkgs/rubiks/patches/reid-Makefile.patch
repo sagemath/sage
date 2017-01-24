@@ -1,9 +1,9 @@
---- patches/reid-Makefile	Tue Sep 29 00:08:41 2009
-+++ src/reid/Makefile	Fri Apr 25 07:11:40 2008
-@@ -1,5 +1,6 @@
+--- a/reid/Makefile	2016-07-04 13:37:19.218923000 +0000
++++ b/reid/Makefile	2016-07-04 13:46:28.070923000 +0000
+@@ -1,6 +1,5 @@
  all: optimal twist
  
-+CFLAGS=-O2 -g
+-CFLAGS=-O2 -g
  
  clean:
  	rm -f *.o

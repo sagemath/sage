@@ -65,6 +65,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from six.moves import range
 import itertools
 
 from sage.misc.lazy_attribute import lazy_attribute
@@ -145,7 +146,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     lines_str = ''
 
     # Getting children string
-    for i in xrange(nb_children):
+    for i in range(nb_children):
         if i == half and nb_children % 2 == 0:
             pos[0] = start[0]
             start[0] += hspace

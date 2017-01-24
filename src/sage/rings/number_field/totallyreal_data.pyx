@@ -54,7 +54,7 @@ def hermite_constant(n):
     The nth Hermite constant (typically denoted `\gamma_n`), is defined
     to be
 
-    .. math::
+    .. MATH::
 
         \max_L \min_{0 \neq x \in L} ||x||^2
 
@@ -125,7 +125,7 @@ cdef double eval_seq_as_poly(int *f, int n, double x):
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
-    .. math::
+    .. MATH::
 
         f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
@@ -145,7 +145,7 @@ cdef double newton(int *f, int *df, int n, double x0, double eps):
     root.
     The sequence a corresponds to the polynomial f with
 
-    .. math::
+    .. MATH::
 
         f(x) = x^n + a[n-1]*x^(n-1) + ... + a[0].
 
@@ -360,7 +360,7 @@ cdef int eval_seq_as_poly_int(int *f, int n, int x):
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
-    .. math::
+    .. MATH::
 
         f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """

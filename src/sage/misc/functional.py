@@ -22,11 +22,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+from six.moves import range
+from six.moves import builtins
 
 import sage.misc.latex
 import sage.interfaces.expect
 import sage.interfaces.mathematica
-
 
 from sage.rings.complex_double import CDF
 from sage.rings.real_double import RDF, RealDoubleElement
@@ -34,8 +35,6 @@ from sage.rings.real_double import RDF, RealDoubleElement
 import sage.rings.real_mpfr
 import sage.rings.complex_field
 import sage.rings.integer
-
-from six.moves import builtins
 
 ##############################################################################
 # There are many functions on elements of a ring, which mathematicians
@@ -304,7 +303,7 @@ def eta(x):
 
     The `\eta` function is
 
-    .. math::
+    .. MATH::
 
                     \eta(z) = e^{\pi i z / 12} \prod_{n=1}^{\infty}(1-e^{2\pi inz})
 
@@ -421,6 +420,8 @@ def symbolic_sum(expression, *args, **kwds):
 
       - ``'giac'`` - (optional) use Giac
 
+      - ``'sympy'`` - use SymPy
+
     EXAMPLES::
 
         sage: k, n = var('k,n')
@@ -447,15 +448,15 @@ def symbolic_sum(expression, *args, **kwds):
         In particular, this does not work::
 
             sage: n = var('n')
-            sage: list=[1,2,3,4,5]
-            sage: sum(list[n],n,0,3)
+            sage: mylist = [1,2,3,4,5]
+            sage: sum(mylist[n], n, 0, 3)
             Traceback (most recent call last):
             ...
             TypeError: unable to convert n to an integer
             
         Use python ``sum()`` instead::
 
-            sage: sum(list[n] for n in range(4))
+            sage: sum(mylist[n] for n in range(4))
             10
             
         Also, only a limited number of functions are recognized in symbolic sums::
@@ -698,7 +699,7 @@ def interval(a, b):
         sage: 4 in I
         False
     """
-    return range(a,b+1)
+    return list(range(a, b + 1))
 
 def xinterval(a, b):
     r"""
@@ -713,7 +714,7 @@ def xinterval(a, b):
         sage: 6 in I
         False
     """
-    return xrange(a, b+1)
+    return range(a, b + 1)
 
 def is_commutative(x):
     """
@@ -1321,26 +1322,6 @@ def objgen(x):
     """
     return x.objgen()
 
-def one(R):
-    """
-    Returns the one element of the ring R.
-
-    EXAMPLES::
-
-        sage: one(RR)
-        doctest:...: DeprecationWarning: one(R) is deprecated, use R.one() or R(1) instead
-        See http://trac.sagemath.org/17158 for details.
-        1.00000000000000
-        sage: R.<x> = PolynomialRing(QQ)
-        sage: one(R)*x == x
-        True
-        sage: one(R) in R
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(17158, 'one(R) is deprecated, use R.one() or R(1) instead')
-    return R(1)
-
 def order(x):
     """
     Returns the order of x. If x is a ring or module element, this is
@@ -1554,24 +1535,3 @@ def transpose(x):
         [3 6 9]
     """
     return x.transpose()
-
-
-def zero(R):
-    """
-    Returns the zero element of the ring R.
-
-    EXAMPLES::
-
-        sage: zero(RR)
-        doctest:...: DeprecationWarning: zero(R) is deprecated, use R.zero() or R(0) instead
-        See http://trac.sagemath.org/17158 for details.
-        0.000000000000000
-        sage: R.<x> = PolynomialRing(QQ)
-        sage: zero(R) in R
-        True
-        sage: zero(R)*x == zero(R)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(17158, 'zero(R) is deprecated, use R.zero() or R(0) instead')
-    return R(0)

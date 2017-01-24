@@ -14,6 +14,7 @@ component of the newform at `p`.
 
 """
 from __future__ import absolute_import
+from six.moves import range
 
 import operator
 from sage.misc.misc import verbose, cputime
@@ -593,7 +594,7 @@ class TypeSpace(SageObject):
         MS = rgens[0].parent()
         for m in MS.basis():
             rows.append([])
-            for i in xrange(len(gens)):
+            for i in range(len(gens)):
                 rows[-1] += (m - rgensinv[i] * m * rgensconj[i]).list()
         S = matrix(rows).left_kernel()
         return [MS(u.list()) for u in S.gens()]
@@ -622,7 +623,7 @@ class TypeSpace(SageObject):
         v = self.eigensymbol_subspace().gen(0)
         w = V.submodule_with_basis([m * v for m in mats]).coordinates(v) #v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
         self._a = a
-        self._amat = sum([mats[i] * w[i] for i in xrange(len(mats))])
+        self._amat = sum([mats[i] * w[i] for i in range(len(mats))])
 
     def rho(self, g):
         r"""

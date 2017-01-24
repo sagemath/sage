@@ -11,7 +11,7 @@
        $SAGE_LOCAL/share/giac/doc/en/cascmd_en/index.html
 
   * -Author's website with debian, ubuntu, macosx, windows package:
-    	http://www-fourier.ujf-grenoble.fr/~parisse/giac.html
+            http://www-fourier.ujf-grenoble.fr/~parisse/giac.html
     -The Freebsd port is math/giacxcas
 
 == Licence ==

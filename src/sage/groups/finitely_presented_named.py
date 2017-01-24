@@ -5,7 +5,7 @@ Construct groups of small order and "named" groups as quotients of free groups. 
 groups are available through tab completion by typing ``groups.presentation.<tab>``
 or by importing the required methods. Tab completion is made available through
 Sage's :ref:`group catalog <sage.groups.groups_catalog>`. Some examples are engineered
-from entries in [THOMAS-WOODS]_.
+from entries in [TW1980]_.
 
 Groups available as finite presentations:
 
@@ -421,3 +421,40 @@ def KleinFourPresentation():
     F = FreeGroup(['a','b'])
     rls = F([1])**2, F([2])**2, F([-1])*F([-2])*F([1])*F([2])
     return FinitelyPresentedGroup(F, rls)
+
+def BinaryDihedralPresentation(n):
+    r"""
+    Build a binary dihedral group of order `4n` as a finitely presented group.
+
+    The binary dihedral group `BD_n` has the following presentation
+    (note that there is a typo in [Sun]_):
+
+    .. MATH::
+
+        BD_n = \langle x, y, z | x^2 = y^2 = z^n = x y z \rangle.
+
+    INPUT:
+
+    - ``n`` -- the value `n`
+
+    OUTPUT:
+
+    The binary dihedral group of order `4n` as finite presentation.
+
+    EXAMPLES::
+
+        sage: groups.presentation.BinaryDihedral(9)
+        Finitely presented group < x, y, z | x^-2*y^2, x^-2*z^9, x^-1*y*z >
+
+    TESTS::
+
+        sage: for n in range(3, 9):
+        ....:     P = groups.presentation.BinaryDihedral(n)
+        ....:     M = groups.matrix.BinaryDihedral(n)
+        ....:     assert P.is_isomorphic(M)
+    """
+    F = FreeGroup('x,y,z')
+    x,y,z = F.gens()
+    rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
+    return FinitelyPresentedGroup(F, rls)
+

@@ -118,8 +118,6 @@ Note that the letterplace implementation can only be used if the corresponding
     NotImplementedError: The letterplace implementation is not available for the free algebra you requested
 
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #  Copyright (C) 2005,2006 William Stein <wstein@gmail.com>
@@ -128,8 +126,10 @@ from __future__ import absolute_import
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
+from six.moves import range
 import six
+
 from sage.categories.rings import Rings
 
 from sage.monoids.free_monoid import FreeMonoid
@@ -348,7 +348,7 @@ def is_FreeAlgebra(x):
         True
         sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace'))
         True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace', degrees=range(1,11)))
+        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace', degrees=list(range(1,11))))
         True
 
     """
@@ -528,6 +528,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         return "Free Algebra on {} generators {} over {}".format(
             self.__ngens, self.gens(), self.base_ring())
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: F = FreeAlgebra(QQ,3,'x')
+            sage: latex(F)
+            \Bold{Q}\langle x_{0}, x_{1}, x_{2}\rangle
+            sage: F = FreeAlgebra(ZZ['q'], 3, 'a,b,c')
+            sage: latex(F)
+            \Bold{Z}[q]\langle a, b, c\rangle
+        """
+        from sage.misc.latex import latex
+        return "{}\\langle {}\\rangle".format(latex(self.base_ring()),
+                                              ', '.join(self.latex_variable_names()))
+
     def _element_constructor_(self, x):
         """
         Convert ``x`` into ``self``.
@@ -592,7 +609,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                 M = self._indices
                 def exp_to_monomial(T):
                     out = []
-                    for i in xrange(len(T)):
+                    for i in range(len(T)):
                         if T[i]:
                             out.append((i%ngens,T[i]))
                     return M(out)
@@ -851,8 +868,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         n = self.__ngens
         cmat = Matrix(base_ring, n)
         dmat = Matrix(self, n)
-        for i in xrange(n):
-            for j in xrange(i+1,n):
+        for i in range(n):
+            for j in range(i + 1, n):
                 cmat[i,j] = 1
         for (to_commute,commuted) in relations.iteritems():
             #This is dirty, coercion is broken

@@ -19,6 +19,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+
 from cpython cimport *
 
 import sage.modules.free_module
@@ -169,20 +170,20 @@ cdef class Matrix(matrix0.Matrix):
         EXAMPLES::
 
             sage: M = matrix(ZZ,2,range(4))
-            sage: giac(M)                              # optional - giac
+            sage: giac(M)
             [[0,1],[2,3]]
 
         ::
 
             sage: M = matrix(QQ,3,[1,2,3,4/3,5/3,6/4,7,8,9])
-            sage: giac(M)                                      # optional - giac
+            sage: giac(M)
             [[1,2,3],[4/3,5/3,3/2],[7,8,9]]
 
         ::
 
             sage: P.<x> = ZZ[]
             sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
-            sage: giac(M)                             # optional - giac
+            sage: giac(M)
             [[-9*x^2-2*x+2,x-1],[x^2+8*x,-3*x^2+5]]
         """
         s = str(self.rows()).replace('(','[').replace(')',']')
@@ -1677,7 +1678,9 @@ cdef class Matrix(matrix0.Matrix):
             [5 4]
             [0 7]
         """
-        if not (isinstance(columns, list) or isinstance(columns, tuple)):
+        if isinstance(columns, xrange):
+            columns = list(columns)
+        elif not isinstance(columns, (list, tuple)):
             raise TypeError("columns (=%s) must be a list of integers" % columns)
         cdef Matrix A
         cdef Py_ssize_t ncols,k,r
@@ -1746,7 +1749,9 @@ cdef class Matrix(matrix0.Matrix):
         AUTHORS:
             - Wai Yan Pong (2012-03-05)
         """
-        if not (isinstance(dcols, list) or isinstance(dcols, tuple)):
+        if isinstance(dcols, xrange):
+            dcols = list(dcols)
+        elif not isinstance(dcols, (list, tuple)):
             raise TypeError("The argument must be a list or a tuple, not {l}".format(l=dcols))
         cdef list cols, diff_cols
 
@@ -1773,7 +1778,9 @@ cdef class Matrix(matrix0.Matrix):
             [6 7 0]
             [3 4 5]
         """
-        if not (isinstance(rows, list) or isinstance(rows, tuple)):
+        if isinstance(rows, xrange):
+            rows = list(rows)
+        elif not isinstance(rows, (list, tuple)):
             raise TypeError("rows must be a list of integers")
         cdef Matrix A
         cdef Py_ssize_t nrows,k,c
@@ -1788,7 +1795,6 @@ cdef class Matrix(matrix0.Matrix):
                 A.set_unsafe(k,c, self.get_unsafe(rows[i],c))
             k += 1
         return A
-
 
     def delete_rows(self, drows, check=True):
         """
@@ -1842,7 +1848,9 @@ cdef class Matrix(matrix0.Matrix):
         AUTHORS:
             - Wai Yan Pong (2012-03-05)
         """
-        if not (isinstance(drows, list) or isinstance(drows, tuple)):
+        if isinstance(drows, xrange):
+            drows = list(drows)
+        elif not isinstance(drows, (list, tuple)):
             raise TypeError("The argument must be a list or a tuple, not {l}".format(l=drows))
         cdef list rows, diff_rows
 
@@ -1893,9 +1901,14 @@ cdef class Matrix(matrix0.Matrix):
 
         - Didier Deshommes: some Pyrex speedups implemented
         """
-        if not isinstance(rows, list):
+        if isinstance(rows, xrange):
+            rows = list(rows)
+        elif not isinstance(rows, list):
             raise TypeError("rows must be a list of integers")
-        if not isinstance(columns, list):
+
+        if isinstance(columns, xrange):
+            columns = list(columns)
+        elif not isinstance(columns, list):
             raise TypeError("columns must be a list of integers")
 
         cdef Matrix A
@@ -2137,7 +2150,7 @@ cdef class Matrix(matrix0.Matrix):
         If this matrix is sparse, return a dense matrix with the same
         entries. If this matrix is dense, return this matrix (not a copy).
 
-        .. note::
+        .. NOTE::
 
            The definition of "dense" and "sparse" in Sage have nothing to
            do with the number of nonzero entries. Sparse and dense are
@@ -2204,7 +2217,7 @@ cdef class Matrix(matrix0.Matrix):
         entries. If this matrix is sparse, return this matrix (not a
         copy).
 
-        .. note::
+        .. NOTE::
 
            The definition of "dense" and "sparse" in Sage have nothing
            to do with the number of nonzero entries. Sparse and dense are

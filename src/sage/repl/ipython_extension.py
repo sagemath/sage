@@ -141,10 +141,9 @@ class SageMagics(Magics):
         Note that the doctests are never really at the command prompt, so
         we call the input hook manually::
 
-            sage: shell.run_cell('from sage.repl.inputhook import sage_inputhook')
-            sage: shell.run_cell('sage_inputhook()')
+            sage: shell.run_cell('from sage.repl.attach import reload_attached_files_if_modified')
+            sage: shell.run_cell('reload_attached_files_if_modified()')
             ### reloading attached file run_cell.py modified at ... ###
-            0
 
             sage: shell.run_cell('a')
             3

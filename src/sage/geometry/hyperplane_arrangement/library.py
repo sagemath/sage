@@ -137,9 +137,7 @@ class HyperplaneArrangementLibrary(object):
 
         REFERENCES:
 
-        ..  [BigraphicalArrangements] \S. Hopkins, D. Perkinson.
-            "Bigraphical Arrangements".
-            :arxiv:`1212.4398`
+        - [HP2016]_
         """
         n = G.num_verts()
         if A is None:  # default to G-semiorder arrangement
@@ -399,9 +397,7 @@ class HyperplaneArrangementLibrary(object):
 
         REFERENCES:
 
-        ..  [AR] \D. Armstrong, B. Rhoades
-            "The Shi arrangement and the Ish arrangement"
-            :arxiv:`1009.1655`
+        - [AR2012]_
         """
         H = make_parent(K, n, names)
         x = H.gens()

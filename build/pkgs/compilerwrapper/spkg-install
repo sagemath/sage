@@ -7,9 +7,9 @@ if [ -z "$SAGE_LOCAL" ]; then
 fi
 
 # remove wrapper if it is already installed
-rm -f $SAGE_LOCAL/bin/gcc 
+rm -f $SAGE_LOCAL/bin/gcc
 rm -f $SAGE_LOCAL/bin/cc
-rm -f $SAGE_LOCAL/bin/c89 
+rm -f $SAGE_LOCAL/bin/c89
 rm -f $SAGE_LOCAL/bin/c99
 rm -f $SAGE_LOCAL/bin/c++
 rm -f $SAGE_LOCAL/bin/g++
@@ -22,9 +22,9 @@ LD_FILENAME=`src/scripts/find_executable.sh --LD --exclude="$SAGE_LOCAL/bin"`
 GFORTRAN_FILENAME=`src/scripts/find_executable.sh --exclude="$SAGE_LOCAL/bin" gfortran`
 
 echo "Setting up the compiler/binutils wrapper"
-echo "Real location of compiler: $CC_PATH" 
-echo "Real linker: $LD_FILENAME" 
-echo "Real fortran: $GFORTRAN_FILENAME" 
+echo "Real location of compiler: $CC_PATH"
+echo "Real linker: $LD_FILENAME"
+echo "Real fortran: $GFORTRAN_FILENAME"
 
 cd src
 ./configure --prefix="$SAGE_LOCAL" \

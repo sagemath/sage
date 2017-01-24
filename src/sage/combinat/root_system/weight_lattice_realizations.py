@@ -52,7 +52,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
     lattice; on the other hand, the embedding of the simple roots is
     given for free.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`~sage.combinat.root_system.root_system.RootSystem`
         - :class:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations`
@@ -168,7 +168,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
           """
           Returns whether this is a realization of the extended weight lattice
 
-          .. seealso:: :class:`sage.combinat.root_system.weight_space.WeightSpace`
+          .. SEEALSO:: :class:`sage.combinat.root_system.weight_space.WeightSpace`
 
           EXAMPLES::
 
@@ -241,7 +241,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             - embeddings from the weight lattice and weight space
             - rho, highest_root, ...
 
-            .. seealso:: :class:`TestSuite`
+            .. SEEALSO:: :class:`TestSuite`
 
             EXAMPLES::
 
@@ -391,7 +391,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             of the extended affine Weyl group admits a unique
             decomposition of the form:
 
-            .. math:: f = d w ,
+            .. MATH:: f = d w ,
 
             where `w` is in the Weyl group, and `d` is a function which
             maps the fundamental alcove to itself. As `d` permutes the
@@ -720,7 +720,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             `y_k` is obtained recursively from `y_{k-1}` by applying the
             following reflection:
 
-            .. math::
+            .. MATH::
 
                   y_k = s_{w_{k-1} \alpha_{i_k}} y_{k-1}
 

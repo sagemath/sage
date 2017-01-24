@@ -147,11 +147,11 @@ cdef class PowerSeries_poly(PowerSeries):
         EXAMPLES::
 
             sage: R.<t> = GF(11)[[]]
-            sage: (1 + t + O(t^18)).__nonzero__()
+            sage: bool(1 + t + O(t^18))
             True
-            sage: R(0).__nonzero__()
+            sage: bool(R(0))
             False
-            sage: O(t^18).__nonzero__()
+            sage: bool(O(t^18))
             False
         """
         return not not self.__f
@@ -1167,13 +1167,7 @@ cdef class PowerSeries_poly(PowerSeries):
         poly = self.polynomial()
         pex = SR(poly)
         var = SR.var(self.variable())
-        if not isinstance(self.prec(), PlusInfinity):
-            # GiNaC does not allow manual addition of bigoh,
-            # so we use a trick.
-            pex += var**(self.prec()+1)
-            return pex.series(var, self.prec())
-        else:
-            return pex.series(var, max(poly.exponents())+1)
+        return pex.series(var, self.prec())
 
 
 def make_powerseries_poly_v0(parent,  f, prec, is_gen):

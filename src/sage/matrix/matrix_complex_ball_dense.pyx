@@ -229,7 +229,7 @@ cdef class Matrix_complex_ball_dense(matrix_dense.Matrix_dense):
         list, so the following also works::
 
             sage: v = reversed(range(4)); type(v)
-            <type 'listreverseiterator'>
+            <... 'listreverseiterator'>
             sage: A(v)
             [3.000000000000000 2.000000000000000]
             [1.000000000000000                 0]

@@ -16,6 +16,8 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 from .generating_series import _integers_from
@@ -180,7 +182,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: P._canonical_rep_from_partition(P._default_structure_class, ["a","b","c"], [2,1])
             ['b', 'a', 'c']
         """
-        indices = range(1, len(labels)+1)
+        indices = list(range(1, len(labels) + 1))
         breaks = [sum(p[:i]) for i in range(len(p)+1)]
         cycles = tuple(tuple(indices[breaks[i]:breaks[i+1]]) for i in range(len(p)))
         perm = list(Permutation(cycles))
@@ -223,7 +225,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         r"""
         The cycle index series for the species of permutations is given by
 
-        .. math::
+        .. MATH::
 
              \prod{n=1}^\infty \frac{1}{1-x_n}.
 

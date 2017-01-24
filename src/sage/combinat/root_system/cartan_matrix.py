@@ -23,6 +23,8 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix import is_Matrix
@@ -843,7 +845,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             [[], [2], [2]]
             
         """
-        iset = range(self.ncols());
+        iset = list(range(self.ncols()))
         ret = []
         for l in powerset(iset):
             if not proper or (proper and l != iset):
@@ -904,10 +906,10 @@ def is_generalized_cartan_matrix(M):
     if not M.is_square():
         return False
     n = M.ncols()
-    for i in xrange(n):
+    for i in range(n):
         if M[i,i] != 2:
             return False
-        for j in xrange(i+1, n):
+        for j in range(i+1, n):
             if M[i,j] > 0 or M[j,i] > 0:
                 return False
             elif M[i,j] == 0 and M[j,i] != 0:

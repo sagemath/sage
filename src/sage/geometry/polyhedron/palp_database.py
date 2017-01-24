@@ -70,7 +70,7 @@ class PALPreader(SageObject):
         sage: next(iter(PALPreader(2, output='list')))
         [[1, 0], [0, 1], [-1, -1]]
         sage: type(_)
-        <type 'list'>
+        <... 'list'>
 
         sage: next(iter(PALPreader(2, output='Polyhedron')))
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
@@ -107,8 +107,8 @@ class PALPreader(SageObject):
             self._data_basename = data_basename
         else:
             import os
-            from sage.env import SAGE_SHARE
-            self._data_basename = os.path.join(SAGE_SHARE, 'reflexive_polytopes',
+            from sage.env import POLYTOPE_DATA_DIR
+            self._data_basename = os.path.join(POLYTOPE_DATA_DIR,
                                                'Full'+str(dim)+'d', 'zzdb')
             info = self._data_basename + '.info'
             if not os.path.exists(info):
@@ -436,8 +436,8 @@ class Reflexive4dHodge(PALPreader):
         dim = 4
         if data_basename is None:
             import os
-            from sage.env import SAGE_SHARE
-            data_basename = os.path.join(SAGE_SHARE, 'reflexive_polytopes',
+            from sage.env import POLYTOPE_DATA_DIR
+            data_basename = os.path.join(POLYTOPE_DATA_DIR,
                                          'Hodge4d', 'all')
             info = data_basename + '.vinfo'
             if not os.path.exists(info):

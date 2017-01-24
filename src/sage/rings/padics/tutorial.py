@@ -53,7 +53,7 @@ different types of `p`-adics.
 We can think of `p`-adics in two ways. First, as a
 projective limit of finite groups:
 
-.. math::
+.. MATH::
 
     \mathbb{Z}_p = \lim_{\leftarrow n} \mathbb{Z}/p^n\mathbb{Z}.
 
@@ -82,13 +82,13 @@ is the non-negative integer `n`.
 In the second representation, we can achieve the same thing by
 truncating a series
 
-.. math::
+.. MATH::
 
       a_0 + a_1 p + a_2 p^2 + \cdots
 
 at `p^n`, yielding
 
-.. math::
+.. MATH::
 
      a_0 + a_1 p + \cdots + a_{n-1} p^{n-1} + O(p^n).
 
@@ -310,7 +310,7 @@ In addition to requiring a prime power as the first argument,
 One can specify this name as follows::
 
     sage: R.<c> = Zq(125, prec = 20); R
-    Unramified Extension of 5-adic Ring with capped absolute precision 20
+    Unramified Extension of 5-adic Ring with capped relative precision 20
     in c defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
 
 Eisenstein Extensions

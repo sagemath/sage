@@ -15,15 +15,6 @@ export CFLAGS
 
 cd src/
 
-# Apply patches
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 
 build()
 {

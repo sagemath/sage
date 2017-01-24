@@ -30,6 +30,7 @@ We test coercion in a particularly complicated situation::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.rings.polynomial.polynomial_element import Polynomial, Polynomial_generic_dense, Polynomial_generic_dense_inexact
 from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
@@ -153,7 +154,8 @@ class Polynomial_generic_sparse(Polynomial):
         if sparse:
           return [c[1] for c in sorted(self.__coeffs.iteritems())]
         else:
-          return [self.__coeffs[i] if i in self.__coeffs else 0 for i in xrange(self.degree() + 1)]
+          return [self.__coeffs[i] if i in self.__coeffs else 0
+                  for i in range(self.degree() + 1)]
 
     def exponents(self):
         """
@@ -201,7 +203,7 @@ class Polynomial_generic_sparse(Polynomial):
         _derivative(var) is called recursively for each coefficient of
         this polynomial.
 
-        .. seealso:: :meth:`.derivative`
+        .. SEEALSO:: :meth:`.derivative`
 
         EXAMPLES::
 

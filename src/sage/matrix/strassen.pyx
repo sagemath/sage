@@ -603,7 +603,7 @@ class int_range:
             sage: I.intervals()
             [(4, 3), (20, 4)]
             sage: type(I.intervals())
-            <type 'list'>
+            <... 'list'>
         """
         return self._intervals
 

@@ -7,14 +7,14 @@ die () {
 
 [ -n "$SAGE_LOCAL" ] || die "SAGE_LOCAL undefined, maybe run \`sage -sh\`?"
 
-# Normaly for a 64-bit build, the -m64 option is added to 
-# gcc, but other compilers will not accept that, so 
+# Normally for a 64-bit build, the -m64 option is added to
+# gcc, but other compilers will not accept that, so
 # allow it to be configured as something different if need
-# be. 
+# be.
 
-if [ -z $CFLAG64 ] ; then 
+if [ -z $CFLAG64 ] ; then
     CFLAG64=-m64
-fi 
+fi
 
 if [ "x$SAGE64" = xyes ]; then
     echo "64 bit build of cddlib"
@@ -31,16 +31,6 @@ cp ../patches/random.{c,h} lib-src-gmp/
 # Required by sage.geometry.polyhedron
 cp ../patches/cdd_both_reps.c src/
 cp ../patches/cdd_both_reps.c src-gmp/cdd_both_reps.c
-
-# apply patch files
-for patch in ../patches/*.patch; do
-    # skip patches that aren't needed at build time
-    if echo "$patch" | grep 'Makefile.am.patch$' > /dev/null; then
-        continue
-    fi
-    patch -p1 < "$patch" ||
-      die "Error patching cddlib"
-done
 
 # Use newer version of config.guess and config.sub (see Trac #19718)
 cp "$SAGE_ROOT"/config/config.* .

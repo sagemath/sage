@@ -10,16 +10,6 @@ rm -f "$SAGE_LOCAL/bin/sqlite3"
 
 cd src
 
-# Apply patches
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 # Use newer version of config.guess and config.sub (see Trac #19711)
 cp "$SAGE_ROOT"/config/config.* .
 

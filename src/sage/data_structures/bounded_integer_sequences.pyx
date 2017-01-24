@@ -39,7 +39,7 @@ cimported in Cython modules:
 
   Hash value for ``S``.
 
-- ``cdef inline int biseq_cmp(biseq_t S1, biseq_t S2)``
+- ``cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op)``
 
   Comparison of ``S1`` and ``S2``. This takes into account the bound, the
   length, and the list of items of the two sequences.
@@ -115,6 +115,7 @@ from cpython.int cimport PyInt_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
 from sage.libs.gmp.mpn cimport mpn_rshift, mpn_lshift, mpn_copyi, mpn_ior_n, mpn_zero, mpn_copyd, mpn_cmp
 from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
 
 cimport cython
 
@@ -203,14 +204,12 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
 cdef inline Py_hash_t biseq_hash(biseq_t S):
     return S.itembitsize*(<Py_hash_t>1073807360)+bitset_hash(S.data)
 
-cdef inline int biseq_cmp(biseq_t S1, biseq_t S2):
-    cdef int c = cmp(S1.itembitsize, S2.itembitsize)
-    if c:
-        return c
-    c = cmp(S1.length, S2.length)
-    if c:
-        return c
-    return bitset_cmp(S1.data, S2.data)
+cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op):
+    if S1.itembitsize != S2.itembitsize:
+        return richcmp_not_equal(S1.itembitsize, S2.itembitsize, op)
+    if S1.length != S2.length:
+        return richcmp_not_equal(S1.length, S2.length, op)
+    return rich_to_bool(op, bitset_cmp(S1.data, S2.data))
 
 #
 # Arithmetics
@@ -871,7 +870,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS::
 
-            sage: S = BoundedIntegerSequence(10^8, range(9))
+            sage: S = BoundedIntegerSequence(10^8, list(range(9)))
             sage: S[-1]
             8
             sage: S[8]
@@ -1266,7 +1265,7 @@ cdef class BoundedIntegerSequence:
             return None
         return self[i:]
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison of bounded integer sequences
 
@@ -1318,19 +1317,14 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence right
         cdef BoundedIntegerSequence left
-        if other is None:
-            return 1
-        if self is None:
-            return -1
+        if other is None or self is None:
+            return NotImplemented
         try:
             right = other
-        except TypeError:
-            return -1
-        try:
             left = self
         except TypeError:
-            return 1
-        return biseq_cmp(left.data, right.data)
+            return NotImplemented
+        return biseq_richcmp(left.data, right.data, op)
 
     def __hash__(self):
         """

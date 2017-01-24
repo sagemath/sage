@@ -49,7 +49,7 @@ def runsnake(command):
     :func:`runsnake` further assumes that the system wide Python is
     installed in ``/usr/bin/python``.
 
-    .. seealso::
+    .. SEEALSO::
 
         - `The runsnake website <http://www.vrplumber.com/programming/runsnakerun/>`_
         - ``%prun``
@@ -424,13 +424,10 @@ def import_statements(*objects, **kwds):
         from sage.misc.dev_tools import import_statement_string
 
     Sometimes objects are imported as an alias (from XXX import YYY as ZZZ) or
-    are affected (XXX = YYY) and the function might dectect it::
+    are affected (XXX = YYY) and the function might detect it::
 
         sage: import_statements('FareySymbol')
         from sage.modular.arithgroup.farey_symbol import Farey as FareySymbol
-
-        sage: import_statements('sum')
-        from sage.misc.functional import symbolic_sum as sum
 
         sage: import_statements('power')
         from sage.structure.element import generic_power as power

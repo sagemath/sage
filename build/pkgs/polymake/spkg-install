@@ -7,15 +7,6 @@ die () {
 
 cd src
 
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 more_configure_options=
 
 if [ `uname` = Darwin ]; then
@@ -29,7 +20,7 @@ fi
             --includedir="$SAGE_LOCAL"/include \
             --bindir="$SAGE_LOCAL"/bin \
             --libdir="$SAGE_LOCAL"/lib \
-	    $more_configure_options || die "Error configuring Polymake"
+            $more_configure_options || die "Error configuring Polymake"
 make || die "Error building polymake"
 # Remove old stuff. Polymake loads whatever it finds in
 # its installation directory.

@@ -221,6 +221,8 @@ def is_cartesian_product(g, certificate = False, relabeling = False):
         False
     """
     g._scream_if_not_simple()
+    if g.is_directed():
+        raise NotImplementedError("recognition of Cartesian product is not implemented for directed graphs")
     if relabeling:
         certificate = True
 

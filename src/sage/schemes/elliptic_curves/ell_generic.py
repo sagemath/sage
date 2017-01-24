@@ -385,7 +385,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             0
 
             sage: 2*w
-            (-2*pi + (2*pi - 3*pi^2 + 10)^2/(-40*pi + 4*pi^3 - 4*pi^2 - 79) + 1 : (3*pi - (2*pi - 3*pi^2 + 10)^2/(-40*pi + 4*pi^3 - 4*pi^2 - 79) - 1)*(2*pi - 3*pi^2 + 10)/sqrt(-40*pi + 4*pi^3 - 4*pi^2 - 79) + 1/2*sqrt(-40*pi + 4*pi^3 - 4*pi^2 - 79) - 1/2 : 1)
+            (-2*pi - (2*pi - 3*pi^2 + 10)^2/(40*pi - 4*pi^3 + 4*pi^2 + 79) + 1 : (3*pi + (2*pi - 3*pi^2 + 10)^2/(40*pi - 4*pi^3 + 4*pi^2 + 79) - 1)*(2*pi - 3*pi^2 + 10)/sqrt(-40*pi + 4*pi^3 - 4*pi^2 - 79) + 1/2*sqrt(-40*pi + 4*pi^3 - 4*pi^2 - 79) - 1/2 : 1)
 
             sage: x, y, z = 2*w; temp = ((y^2 + y) - (x^3 - x^2 - 10*x - 20))
 
@@ -1473,7 +1473,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
            This function is intended for internal use; users should use
            :meth:`division_polynomial`.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`multiple_x_numerator`
            :meth:`multiple_x_denominator`
@@ -1570,7 +1570,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         5-torsion points of `E`::
 
             sage: for x in x_coords:
-            ...       assert X.lift_x(x).order() == 5
+            ....:     assert X.lift_x(x).order() == 5
 
         The roots of the polynomial are the `x`-coordinates of the points `P`
         such that `mP=0` but `2P\not=0`::
@@ -1829,7 +1829,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         elliptic curves. Journal of the London Mathematical Society, 70(1),
         23-40.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`_multiple_x_denominator`
 
@@ -1924,7 +1924,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - David Harvey (2006-09-24)
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`multiple_x_numerator`
 
@@ -2350,7 +2350,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Return a new Weierstrass model of self under the standard transformation `(u,r,s,t)`
 
-        .. math::
+        .. MATH::
 
              (x,y) \mapsto (x',y') = (u^2x + r , u^3y + su^2x + t).
 
@@ -2861,7 +2861,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         Returns a pair of polynomials `g(x)`, `h(x)` such that this elliptic
         curve can be defined by the standard hyperelliptic equation
 
-        .. math::
+        .. MATH::
 
             y^2 + h(x)y = g(x).
 
@@ -2889,7 +2889,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve([RR(0), RR(0), RR(1), RR(-1), RR(0)])
             sage: e = E.pari_curve()
             sage: type(e)
-            <type 'sage.libs.pari.gen.gen'>
+            <type 'sage.libs.cypari2.gen.gen'>
             sage: e.type()
             't_VEC'
             sage: e.disc()

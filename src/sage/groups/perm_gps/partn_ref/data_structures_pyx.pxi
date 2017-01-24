@@ -28,10 +28,12 @@ REFERENCES:
 
 from libc.math cimport log, ceil
 from libc.string cimport memcpy, memset
+from libc.stdlib cimport rand
 
 include 'sage/data_structures/bitset.pxi'
 
 from sage.libs.gmp.mpz cimport *
+from sage.libs.flint.ulong_extras cimport n_is_prime
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.rings.integer cimport Integer
 from sage.groups.perm_gps.partn_ref2.refinement_generic cimport PartitionRefinement_generic
@@ -551,7 +553,7 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
     nonsingletons_ptr[0] = nonsingletons
     return count
 
-cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x):
+cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
     """
     Find the cell containing x, store its entries to b and return the location
     of the beginning of the cell.
@@ -562,6 +564,8 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x):
         if PS.entries[i] == x:
             location = i
             break
+    else:
+        raise ValueError("element not found")
     while location > 0 and PS.levels[location-1] > PS.depth:
         location -= 1
     i = 0
@@ -601,10 +605,10 @@ cdef list PS_singletons(PartitionStack * part):
 cdef inline bint stacks_are_equivalent(PartitionStack *PS1, PartitionStack *PS2):
     cdef int i, j, depth = min(PS1.depth, PS2.depth)
     for i from 0 <= i < PS1.degree:
-        j = cmp(PS1.levels[i], PS2.levels[i])
-        if j == 0: continue
-        if ( (j < 0 and PS1.levels[i] <= depth and PS2.levels[i] > depth)
-            or (j > 0 and PS2.levels[i] <= depth and PS1.levels[i] > depth) ):
+        if PS1.levels[i] == PS2.levels[i]:
+            continue
+        elif ((PS1.levels[i] <= depth < PS2.levels[i])
+            or (PS2.levels[i] <= depth < PS1.levels[i])):
             return 0
     return 1
 
@@ -1590,20 +1594,20 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: from sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label import SC_test_list_perms
         sage: limit = 10^7
         sage: def test_Sn_on_m_points(n, m, gap, contains):
-        ...     perm1 = [1,0] + range(m)[2:]
-        ...     perm2 = [(i+1)%n for i in range( n )] + range(m)[n:]
-        ...     SC_test_list_perms([perm1, perm2], m, limit, gap, 0, contains)
+        ....:     perm1 = [1,0] + list(range(2, m))
+        ....:     perm2 = [(i+1)%n for i in range( n )] + list(range(n,m))
+        ....:     SC_test_list_perms([perm1, perm2], m, limit, gap, 0, contains)
         sage: for i in range(2,9):
-        ...     test_Sn_on_m_points(i,i,1,0)
+        ....:     test_Sn_on_m_points(i,i,1,0)
         sage: for i in range(2,9):
-        ...     test_Sn_on_m_points(i,i,0,1)
+        ....:     test_Sn_on_m_points(i,i,0,1)
         sage: for i in range(2,9):           # long time
-        ...     test_Sn_on_m_points(i,i,1,1) # long time
+        ....:     test_Sn_on_m_points(i,i,1,1) # long time
         sage: test_Sn_on_m_points(8,8,1,1)
         sage: def test_stab_chain_fns_1(n, gap, contains):
-        ...     perm1 = sum([[2*i+1,2*i] for i in range(n)], [])
-        ...     perm2 = [(i+1)%(2*n) for i in range( 2*n)]
-        ...     SC_test_list_perms([perm1, perm2], 2*n, limit, gap, 0, contains)
+        ....:     perm1 = sum([[2*i+1,2*i] for i in range(n)], [])
+        ....:     perm2 = [(i+1)%(2*n) for i in range( 2*n)]
+        ....:     SC_test_list_perms([perm1, perm2], 2*n, limit, gap, 0, contains)
         sage: for n in range(1,11):
         ...     test_stab_chain_fns_1(n, 1, 0)
         sage: for n in range(1,11):
@@ -1636,12 +1640,12 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ...     test_stab_chain_fns_3(n, 1, 1) # long time
         sage: test_stab_chain_fns_3(20, 1, 1)
         sage: def test_stab_chain_fns_4(n, g, gap, contains):
-        ...     perms = []
-        ...     for _ in range(g):
-        ...         perm = range(n)
-        ...         shuffle(perm)
-        ...         perms.append(perm)
-        ...     SC_test_list_perms(perms, n, limit, gap, 0, contains)
+        ....:     perms = []
+        ....:     for _ in range(g):
+        ....:         perm = list(range(n))
+        ....:         shuffle(perm)
+        ....:         perms.append(perm)
+        ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
         sage: for n in range(4,9):                # long time
         ...     test_stab_chain_fns_4(n, 1, 1, 0) # long time
         ...     test_stab_chain_fns_4(n, 2, 1, 0) # long time
@@ -1661,31 +1665,31 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ...     test_stab_chain_fns_4(n, 3, 1, 1) # long time
         sage: test_stab_chain_fns_4(8, 2, 1, 1)
         sage: def test_stab_chain_fns_5(n, gap, contains):
-        ...     perms = []
-        ...     m = n//3
-        ...     perm1 = range(2*m)
-        ...     shuffle(perm1)
-        ...     perm1 += range(2*m,n)
-        ...     perm2 = range(m,n)
-        ...     shuffle(perm2)
-        ...     perm2 = range(m) + perm2
-        ...     SC_test_list_perms([perm1, perm2], n, limit, gap, 0, contains)
+        ....:     perms = []
+        ....:     m = n//3
+        ....:     perm1 = list(range(2*m))
+        ....:     shuffle(perm1)
+        ....:     perm1 += range(2*m,n)
+        ....:     perm2 = range(m,n)
+        ....:     shuffle(perm2)
+        ....:     perm2 = range(m) + perm2
+        ....:     SC_test_list_perms([perm1, perm2], n, limit, gap, 0, contains)
         sage: for n in [4..9]:                     # long time
         ...     for _ in range(2):                 # long time
         ...         test_stab_chain_fns_5(n, 1, 0) # long time
         sage: for n in [4..8]:                     # long time
         ...     test_stab_chain_fns_5(n, 0, 1)     # long time
         sage: for n in [4..9]:                     # long time
-        ...     test_stab_chain_fns_5(n, 1, 1)     # long time
+        ....:     test_stab_chain_fns_5(n, 1, 1)     # long time
         sage: def random_perm(x):
-        ...     shuffle(x)
-        ...     return x
+        ....:     shuffle(x)
+        ....:     return x
         sage: def test_stab_chain_fns_6(m,n,k, gap, contains):
-        ...     perms = []
-        ...     for i in range(k):
-        ...         perm = sum([random_perm(range(i*(n//m),min(n,(i+1)*(n//m)))) for i in range(m)], [])
-        ...         perms.append(perm)
-        ...     SC_test_list_perms(perms, m*(n//m), limit, gap, 0, contains)
+        ....:     perms = []
+        ....:     for i in range(k):
+        ....:         perm = sum([random_perm(list(range(i*(n//m),min(n,(i+1)*(n//m))))) for i in range(m)], [])
+        ....:         perms.append(perm)
+        ....:     SC_test_list_perms(perms, m*(n//m), limit, gap, 0, contains)
         sage: for m in range(2,9):                         # long time
         ...     for n in range(m,3*m):                     # long time
         ...         for k in range(1,3):                   # long time
@@ -1700,25 +1704,25 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: test_stab_chain_fns_6(4,40,3, 1, 1)
         sage: test_stab_chain_fns_6(4,40,2, 1, 1)
         sage: def test_stab_chain_fns_7(n, cop, gap, contains):
-        ...     perms = []
-        ...     for i in range(0,n//2,2):
-        ...         p = range(n)
-        ...         p[i] = i+1
-        ...         p[i+1] = i
-        ...     if cop:
-        ...         perms.append([c for c in p])
-        ...     else:
-        ...         perms.append(p)
-        ...     SC_test_list_perms(perms, n, limit, gap, 0, contains)
+        ....:     perms = []
+        ....:     for i in range(0,n//2,2):
+        ....:         p = list(range(n))
+        ....:         p[i] = i+1
+        ....:         p[i+1] = i
+        ....:     if cop:
+        ....:         perms.append([c for c in p])
+        ....:     else:
+        ....:         perms.append(p)
+        ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
         sage: for n in [6..14]:
-        ...     test_stab_chain_fns_7(n, 1, 1, 0)
-        ...     test_stab_chain_fns_7(n, 0, 1, 0)
+        ....:     test_stab_chain_fns_7(n, 1, 1, 0)
+        ....:     test_stab_chain_fns_7(n, 0, 1, 0)
         sage: for n in [6..30]:
-        ...     test_stab_chain_fns_7(n, 1, 0, 1)
-        ...     test_stab_chain_fns_7(n, 0, 0, 1)
+        ....:     test_stab_chain_fns_7(n, 1, 0, 1)
+        ....:     test_stab_chain_fns_7(n, 0, 0, 1)
         sage: for n in [6..14]:                   # long time
-        ...     test_stab_chain_fns_7(n, 1, 1, 1) # long time
-        ...     test_stab_chain_fns_7(n, 0, 1, 1) # long time
+        ....:     test_stab_chain_fns_7(n, 1, 1, 1) # long time
+        ....:     test_stab_chain_fns_7(n, 0, 1, 1) # long time
         sage: test_stab_chain_fns_7(20, 1, 1, 1)
         sage: test_stab_chain_fns_7(20, 0, 1, 1)
 
@@ -1929,7 +1933,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
                         print('element {}'.format(permy))
                         print('GAP says it is an element, SC_contains(modify=1) does not')
                         raise AssertionError
-                    permy = range(1,n+1)
+                    permy = list(xrange(1, n + 1))
                     shuffle(permy)
                     gap_says = (PermutationGroupElement(permy) in G)
                     for j from 0 <= j < n:

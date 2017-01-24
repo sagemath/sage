@@ -87,15 +87,12 @@ from operator import add, sub, mul, div, truediv, iadd, isub, imul, idiv
 
 from .sage_object cimport SageObject, rich_to_bool
 from .parent cimport Set_PythonType, Parent_richcmp_element_without_coercion
-from .element cimport arith_error_message, parent_c, Element
+from .element cimport bin_op_exception, parent_c, Element
 from .coerce_actions import LeftModuleAction, RightModuleAction, IntegerMulAction
 from .coerce_exceptions import CoercionException
 from sage.categories.map cimport Map
 from sage.categories.morphism import IdentityMorphism
 from sage.categories.action cimport Action, InverseAction, PrecomposedAction
-
-from sage.misc.lazy_import import LazyImport
-parent = LazyImport('sage.structure.all', 'parent', deprecation=17533)
 
 import traceback
 
@@ -406,7 +403,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
             sage: f, g = cm.coercion_maps(QQ, int)
             sage: f, g = cm.coercion_maps(ZZ, int)
 
-        .. note::
+        .. NOTE::
 
             In practice 4 would be a really bad number to choose, but
             it makes the hashing deterministic.
@@ -461,8 +458,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
         reference to the coercion maps in this case::
 
             sage: left_morphism_ref
-            <weakref at ...; to 'sage.rings.rational.Z_to_Q' at ...
-            (RingHomset_generic_with_category._abstract_element_class)>
+            <weakref at ...; to 'sage.rings.rational.Z_to_Q' at ...>
 
         Moreover, the weakly referenced coercion map uses only a weak
         reference to the codomain::
@@ -475,7 +471,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
 
         To get an actual valid map, we simply copy the weakly referenced
         coercion map::
-                
+
             sage: print(copy(left_morphism_ref()))
             Natural morphism:
               From: Integer Ring
@@ -739,7 +735,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
             Result lives in Univariate Polynomial Ring in x over Rational Field
             Univariate Polynomial Ring in x over Rational Field
 
-        .. note::
+        .. NOTE::
 
            This function is accurate only in so far as analyse is kept
            in sync with the :meth:`bin_op` and
@@ -980,7 +976,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
 
         - ``op`` - a python function taking 2 arguments
 
-          .. note::
+          .. NOTE::
 
              op is often an arithmetic operation, but need not be so.
 
@@ -1108,7 +1104,7 @@ cdef class CoercionModel_cache_maps(CoercionModel):
 
         # We should really include the underlying error.
         # This causes so much headache.
-        raise TypeError(arith_error_message(x,y,op))
+        raise bin_op_exception(op, x, y)
 
     cpdef canonical_coercion(self, x, y):
         r"""
@@ -1769,8 +1765,13 @@ cdef class CoercionModel_cache_maps(CoercionModel):
 
         if op is div:
             # Division on right is the same acting on right by inverse, if it is so defined.
-            right_mul = self.get_action(R, S, mul)
-            if right_mul and not right_mul.is_left():
+            right_mul = None
+            try:
+                right_mul = self.get_action(R, S, mul)
+            except NotImplementedError:
+                self._record_exception()
+
+            if right_mul is not None and not right_mul.is_left():
                 try:
                     action = ~right_mul
                     if action.right_domain() != S:
@@ -1781,11 +1782,18 @@ cdef class CoercionModel_cache_maps(CoercionModel):
                     self._record_exception()
 
             # It's possible an action is defined on the fraction field itself.
-            if hasattr(S, '_pseudo_fraction_field'):
+            try:
                 K = S._pseudo_fraction_field()
+            except AttributeError:
+                pass
+            else:
                 if K is not S:
-                    right_mul = self.get_action(R, K, mul)
-                    if right_mul and not right_mul.is_left():
+                    try:
+                        right_mul = self.get_action(R, K, mul)
+                    except NotImplementedError:
+                        self._record_exception()
+
+                    if right_mul is not None and not right_mul.is_left():
                         try:
                             return PrecomposedAction(~right_mul, None, K.coerce_map_from(S))
                         except TypeError: # action may not be invertible

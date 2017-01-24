@@ -7,12 +7,7 @@ block designs. The module also provides the related I/O operations for
 reading/writing ext-rep files or data. The parsing is based on expat.
 
 This is a modified form of the module ext_rep.py (version 0.8)
-written by Peter Dobcsanyi [D2009]_ peter@designtheory.org.
-
-REFERENCES:
-
-.. [D2009] \P. Dobcsanyi et al. DesignTheory.org
-   http://designtheory.org/database/
+written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 .. TODO::
 

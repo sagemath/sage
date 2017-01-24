@@ -307,7 +307,7 @@ class LazyPowerSeriesRing(Algebra):
 
     def _sum_gen(self, series_list):
         """
-        Returns a generator for the coefficients of the sum the the lazy
+        Return a generator for the coefficients of the sum of the lazy
         power series in series_list.
 
         INPUT:
@@ -351,8 +351,8 @@ class LazyPowerSeriesRing(Algebra):
             sage: L = LazyPowerSeriesRing(QQ)
             sage: s = L([1])
             sage: def f():
-            ...       while True:
-            ...           yield s
+            ....:     while True:
+            ....:         yield s
             sage: g = L._sum_generator_gen(f())
             sage: [next(g) for i in range(10)]
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -380,8 +380,8 @@ class LazyPowerSeriesRing(Algebra):
 
             sage: s = L([1])
             sage: def g():
-            ...       while True:
-            ...           yield s
+            ....:     while True:
+            ....:         yield s
             sage: t = L.sum_generator(g())
             sage: t.coefficients(9)
             [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -429,8 +429,8 @@ class LazyPowerSeriesRing(Algebra):
             sage: s6 = L([1,0,0,0,0,0,1,0])
             sage: s = [s1, s2, s3, s4, s5, s6]
             sage: def g():
-            ...       for a in s:
-            ...           yield a
+            ....:     for a in s:
+            ....:         yield a
             sage: p = L.product_generator(g())
             sage: p.coefficients(26)
             [1, 1, 1, 2, 2, 3, 4, 4, 4, 5, 5, 5, 5, 4, 4, 4, 3, 2, 2, 1, 1, 1, 0, 0, 0, 0]
@@ -438,38 +438,34 @@ class LazyPowerSeriesRing(Algebra):
         ::
 
             sage: def m(n):
-            ...       yield 1
-            ...       while True:
-            ...           for i in range(n-1):
-            ...               yield 0
-            ...           yield 1
-            ...
+            ....:     yield 1
+            ....:     while True:
+            ....:         for i in range(n-1):
+            ....:             yield 0
+            ....:         yield 1
             sage: def s(n):
-            ...       q = 1/n
-            ...       yield 0
-            ...       while True:
-            ...           for i in range(n-1):
-            ...               yield 0
-            ...           yield q
-            ...
+            ....:     q = 1/n
+            ....:     yield 0
+            ....:     while True:
+            ....:         for i in range(n-1):
+            ....:             yield 0
+            ....:         yield q
 
         ::
 
             sage: def lhs_gen():
-            ...       n = 1
-            ...       while True:
-            ...           yield L(m(n))
-            ...           n += 1
-            ...
+            ....:     n = 1
+            ....:     while True:
+            ....:         yield L(m(n))
+            ....:         n += 1
 
         ::
 
             sage: def rhs_gen():
-            ...       n = 1
-            ...       while True:
-            ...           yield L(s(n))
-            ...           n += 1
-            ...
+            ....:     n = 1
+            ....:     while True:
+            ....:         yield L(s(n))
+            ....:         n += 1
             sage: lhs = L.product_generator(lhs_gen())
             sage: rhs = L.sum_generator(rhs_gen()).exponential()
             sage: lhs.coefficients(10)
@@ -1557,14 +1553,14 @@ class LazyPowerSeries(AlgebraElement):
         TESTS::
 
             sage: def inv_factorial():
-            ...       q = 1
-            ...       yield 0
-            ...       yield q
-            ...       n = 2
-            ...       while True:
-            ...           q = q / n
-            ...           yield q
-            ...           n += 1
+            ....:     q = 1
+            ....:     yield 0
+            ....:     yield q
+            ....:     n = 2
+            ....:     while True:
+            ....:         q = q / n
+            ....:         yield q
+            ....:         n += 1
             sage: L = LazyPowerSeriesRing(QQ)
             sage: f = L(inv_factorial()) #e^(x)-1
             sage: u = f.exponential()

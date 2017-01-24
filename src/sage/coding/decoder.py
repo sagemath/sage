@@ -48,6 +48,51 @@ class Decoder(SageObject):
       methods. You should implement ``_repr_`` and ``_latex_`` methods in the subclass.
     """
 
+    @classmethod
+    def decoder_type(cls):
+        r"""
+        Returns the set of types of ``self``. These types describe the nature of ``self``
+        and its decoding algorithm.
+
+        This method can be called on both an uninstantiated decoder class,
+        or on an instance of a decoder class.
+
+        EXAMPLES:
+
+        We call it on a class::
+
+            sage: codes.decoders.LinearCodeSyndromeDecoder.decoder_type()
+            {'dynamic', 'hard-decision', 'unique'}
+
+        We can also call it on a instance of a Decoder class::
+
+            sage: G = Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 1, 1]])
+            sage: C = LinearCode(G)
+            sage: D = C.decoder()
+            sage: D.decoder_type()
+            {'complete', 'hard-decision', 'might-error', 'unique'}
+        """
+        return cls._decoder_type
+
+    def _instance_decoder_type(self):
+        r"""
+        Returns the set if types of ``self``.
+        These types describe the nature of ``self`` and its decoding algorithm.
+
+        This method is used as a copy of :meth:`decoder_type` when instantiating a
+        class, so the returned set of types will be the one specific to the instance,
+        and no longer the one for the uninstantiated class.
+
+        EXAMPLES::
+
+            sage: G = Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 1, 1]])
+            sage: C = LinearCode(G)
+            sage: D = C.decoder()
+            sage: D._instance_decoder_type()
+            {'complete', 'hard-decision', 'might-error', 'unique'}
+        """
+        return self._decoder_type
+
     def __init__(self, code, input_space, connected_encoder_name):
         r"""
         Initializes mandatory parameters for :class:`Decoder` objects.
@@ -88,10 +133,11 @@ class Decoder(SageObject):
             sage: D.input_space()
             Vector space of dimension 4 over Finite Field of size 2
             sage: D.connected_encoder()
-            Generator matrix-based encoder for Linear code of length 4, dimension 2 over Finite Field of size 2
+            Generator matrix-based encoder for [4, 2] linear code over GF(2)
             sage: D.code()
-            Linear code of length 4, dimension 2 over Finite Field of size 2
+            [4, 2] linear code over GF(2)
         """
+        self.decoder_type = self._instance_decoder_type
         self._code = code
         self._input_space = input_space
         self._connected_encoder_name = connected_encoder_name
@@ -135,20 +181,7 @@ class Decoder(SageObject):
         """
         return not self == other
 
-    def decoder_type(self):
-        r"""
-        Returns the set of types of ``self``. These types describe the nature of ``self``
-        and its decoding algorithm.
 
-        EXAMPLES::
-
-            sage: G = Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 1, 1]])
-            sage: C = LinearCode(G)
-            sage: D = C.decoder()
-            sage: D.decoder_type()
-            {'complete', 'hard-decision', 'might-error', 'unique'}
-        """
-        return self._decoder_type
 
     def decode_to_code(self, r):
         r"""
@@ -195,7 +228,7 @@ class Decoder(SageObject):
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.connected_encoder()
-            Generator matrix-based encoder for Linear code of length 7, dimension 4 over Finite Field of size 2
+            Generator matrix-based encoder for [7, 4] linear code over GF(2)
         """
         return self.code().encoder(encoder_name=self._connected_encoder_name)
 
@@ -237,7 +270,7 @@ class Decoder(SageObject):
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.code()
-            Linear code of length 7, dimension 4 over Finite Field of size 2
+            [7, 4] linear code over GF(2)
         """
         return self._code
 

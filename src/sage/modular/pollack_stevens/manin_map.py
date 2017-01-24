@@ -45,6 +45,7 @@ EXAMPLES::
 from __future__ import print_function
 from __future__ import absolute_import
 from six import itervalues
+from six.moves import range
 
 from sage.rings.continued_fraction import convergents
 from sage.misc.misc import verbose
@@ -100,7 +101,7 @@ def unimod_matrices_to_infty(r, s):
     # Computes the continued fraction convergents of r/s
     v = [M2Z([1, L[0].numerator(), 0, L[0].denominator()])]
     # Initializes the list of matrices
-    for j in range(0, len(L) - 1):
+    for j in range(len(L) - 1):
         a = L[j].numerator()
         c = L[j].denominator()
         b = L[j + 1].numerator()
@@ -153,7 +154,7 @@ def unimod_matrices_from_infty(r, s):
         # Initializes the list of matrices
         # the function contfrac_q in https://github.com/williamstein/psage/blob/master/psage/modform/rational/modular_symbol_map.pyx
         # is very, very relevant to massively optimizing this.
-        for j in range(0, len(L) - 1):
+        for j in range(len(L) - 1):
             a = L[j].numerator()
             c = L[j].denominator()
             b = L[j + 1].numerator()
@@ -229,7 +230,7 @@ class ManinMap(object):
             if isinstance(defining_data, (list, tuple)):
                 if len(defining_data) != manin_relations.ngens():
                     raise ValueError("length of defining data must be the same as number of Manin generators")
-                for i in xrange(len(defining_data)):
+                for i in range(len(defining_data)):
                     self._dict[manin_relations.gen(i)] = codomain(defining_data[i])
             elif isinstance(defining_data, dict):
                 for g in manin_relations.gens():

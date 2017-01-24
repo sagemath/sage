@@ -22,6 +22,8 @@ AUTHORS:
 - David Joyner (2005-11-13)
 
 - David Kohel (2006-01)
+
+- Grayson Jorgenson (2016-8)
 """
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -34,10 +36,12 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import absolute_import
 
+from sage.arith.misc import binomial
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
-from sage.categories.number_fields import NumberFields
+from copy import copy
 from sage.categories.homset import Hom, End
+from sage.categories.number_fields import NumberFields
 from sage.interfaces.all import singular
 import sage.libs.singular
 
@@ -725,9 +729,9 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
             (Affine Plane Curve over Number Field in a0 with defining polynomial y^4 - 4*y^2 + 16 defined by
             24*x^2*ss1^3 + 24*ss1^3 + (a0^3 - 8*a0),
              Affine Plane Curve over Number Field in a0 with defining polynomial y^4 - 4*y^2 + 16 defined by
-             24*s1^2*ss0 + (a0^3 - 8*a0)*ss0^2 + (6*a0^3)*s1,
+             24*s1^2*ss0 + (a0^3 - 8*a0)*ss0^2 + (-6*a0^3)*s1,
              Affine Plane Curve over Number Field in a0 with defining polynomial y^4 - 4*y^2 + 16 defined by
-             8*y^2*s0^4 + (-4*a0^3)*y*s0^3 - 32*s0^2 + (a0^3 - 8*a0)*y)
+             8*y^2*s0^4 + (4*a0^3)*y*s0^3 - 32*s0^2 + (a0^3 - 8*a0)*y)
 
         ::
 
@@ -1257,7 +1261,7 @@ class AffinePlaneCurve(AffineCurve):
         # nonzero terms
         return min([g.degree() for g in f.monomials()])
 
-    def tangents(self, P):
+    def tangents(self, P, factor=True):
         r"""
         Return the tangents of this affine plane curve at the point ``P``.
 
@@ -1267,11 +1271,30 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point on this curve.
 
+        - ``factor`` -- (default: True) whether to attempt computing the polynomials of the individual tangent
+          lines over the base field of this curve, or to just return the polynomial corresponding to the union
+          of the tangent lines (which requires fewer computations).
+
         OUTPUT:
 
         - a list of polynomials in the coordinate ring of the ambient space of this curve.
 
         EXAMPLES::
+
+            sage: set_verbose(-1)
+            sage: A.<x,y> = AffineSpace(QQbar, 2)
+            sage: C = Curve([x^5*y^3 + 2*x^4*y^4 + x^3*y^5 + 3*x^4*y^3 + 6*x^3*y^4 + 3*x^2*y^5\
+            + 3*x^3*y^3 + 6*x^2*y^4 + 3*x*y^5 + x^5 + 10*x^4*y + 40*x^3*y^2 + 81*x^2*y^3 + 82*x*y^4\
+            + 33*y^5], A)
+            sage: Q = A([0,0])
+            sage: C.tangents(Q)
+            [x + 3.425299577684700?*y, x + (1.949159013086856? + 1.179307909383728?*I)*y,
+            x + (1.949159013086856? - 1.179307909383728?*I)*y, x + (1.338191198070795? + 0.2560234251008043?*I)*y,
+            x + (1.338191198070795? - 0.2560234251008043?*I)*y]
+            sage: C.tangents(Q, factor=False)
+            [120*x^5 + 1200*x^4*y + 4800*x^3*y^2 + 9720*x^2*y^3 + 9840*x*y^4 + 3960*y^5]
+
+        ::
 
             sage: R.<a> = QQ[]
             sage: K.<b> = NumberField(a^2 - 3)
@@ -1301,13 +1324,45 @@ class AffinePlaneCurve(AffineCurve):
             Rational Field defined by -x^4 + 2*x^2 + x*y)
         """
         r = self.multiplicity(P)
-        f = self.defining_polynomials()[0]
+        f = self.defining_polynomial()
+        # move P to (0,0)
         vars = self.ambient_space().gens()
-        deriv = [f.derivative(vars[0],i).derivative(vars[1],r-i)(list(P)) for i in range(r+1)]
-        from sage.arith.misc import binomial
-        T = sum([binomial(r,i)*deriv[i]*(vars[0] - P[0])**i*(vars[1] - P[1])**(r-i) for i in range(r+1)])
-        fact = T.factor()
-        return [l[0] for l in fact]
+        coords = [vars[0] + P[0], vars[1] + P[1]]
+        f = f(coords)
+        coords = [vars[0] - P[0], vars[1] - P[1]] # coords to change back with
+        deriv = [f.derivative(vars[0],i).derivative(vars[1], r-i)([0,0]) for i in range(r+1)]
+        T = sum([binomial(r,i)*deriv[i]*(vars[0])**i*(vars[1])**(r-i) for i in range(r+1)])
+        if not factor:
+            return [T(coords)]
+        if self.base_ring() == QQbar:
+            fact = []
+            # first add tangents corresponding to vars[0], vars[1] if they divide T
+            t = min([e[0] for e in T.exponents()])
+            # vars[0] divides T
+            if t > 0:
+                fact.append(vars[0])
+                # divide T by that power of vars[0]
+                T = self.ambient_space().coordinate_ring()(dict([((v[0] - t,v[1]), h) for (v,h) in T.dict().items()]))
+            t = min([e[1] for e in T.exponents()])
+            # vars[1] divides T
+            if t > 0:
+                fact.append(vars[1])
+                # divide T by that power of vars[1]
+                T = self.ambient_space().coordinate_ring()(dict([((v[0],v[1] - t), h) for (v,h) in T.dict().items()]))
+            # T is homogeneous in var[0], var[1] if nonconstant, so dehomogenize
+            if not T in self.base_ring():
+                if T.degree(vars[0]) > 0:
+                    T = T(vars[0], 1)
+                    roots = T.univariate_polynomial().roots()
+                    fact.extend([vars[0] - roots[i][0]*vars[1] for i in range(len(roots))])
+                else:
+                    T = T(1, vars[1])
+                    roots = T.univariate_polynomial().roots()
+                    fact.extend([vars[1] - roots[i][0]*vars[0] for i in range(len(roots))])
+            return [f(coords) for f in fact]
+        else:
+            fact = T.factor()
+            return [l[0](coords) for l in fact]
 
     def is_ordinary_singularity(self, P):
         r"""
@@ -1358,14 +1413,14 @@ class AffinePlaneCurve(AffineCurve):
         if r < 2:
             raise TypeError("(=%s) is not a singular point of (=%s)"%(P,self))
 
-        T = self.tangents(P)
+        T = self.tangents(P, factor=False)[0]
+        vars = self.ambient_space().gens()
 
-        # when there is a tangent of higher multiplicity
-        if len(T) < r:
-            return False
-
-        # otherwise they are distinct
-        return True
+        # use resultants to determine if there is a higher multiplicity tangent
+        if T.degree(vars[0]) > 0:
+            return T.resultant(T.derivative(vars[0]), vars[0]) != 0
+        else:
+            return T.resultant(T.derivative(vars[1]), vars[1]) != 0
 
     def rational_parameterization(self):
         r"""
@@ -1416,7 +1471,7 @@ class AffinePlaneCurve(AffineCurve):
               To:   Affine Plane Curve over Number Field in a with defining
             polynomial a^2 + 7 defined by x^2 + y^2 + 7
               Defn: Defined on coordinates by sending (t) to
-                    (((7*a)*t^2 + (a))/(-7*t^2 + 1), (-14*t)/(-7*t^2 + 1))
+                    ((-7*t^2 + 7)/((-a)*t^2 + (-a)), 14*t/((-a)*t^2 + (-a)))
         """
         para = self.projective_closure(i=0).rational_parameterization().defining_polynomials()
         # these polynomials are homogeneous in two indeterminants, so dehomogenize wrt one of the variables

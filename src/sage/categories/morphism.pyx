@@ -29,7 +29,7 @@ import operator
 import homset
 
 from sage.structure.element cimport Element
-
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
 
 def is_Morphism(x):
     return isinstance(x, Morphism)
@@ -335,20 +335,29 @@ cdef class Morphism(Map):
             definition = repr(self)
         return hash((domain, codomain, definition))
 
-    cpdef int _cmp_(left, right) except -2:
-        if left is right: return 0
-        domain = left.domain()
-        c = cmp(domain, right.domain())
-        if c: return c
-        c = cmp(left.codomain(), right.codomain())
-        if c: return c
+    cpdef _richcmp_(left, right, int op):
+        if left is right:
+            return rich_to_bool(op, 0)
+        if not isinstance(right, Morphism):
+            return NotImplemented
+        ldomain = left.domain()
+        rdomain = right.domain()
+        if ldomain != rdomain:
+            return richcmp_not_equal(ldomain, rdomain, op)
+        lcodomain = left.codomain()
+        rcodomain = right.codomain()
+        if lcodomain != rcodomain:
+            return richcmp_not_equal(lcodomain, rcodomain, op)
         try:
-            gens = domain.gens()
+            gens = ldomain.gens()
             for x in gens:
-                c = cmp(left(x), right(x))
-                if c: return c
+                lx = left(x)
+                rx = right(x)
+                if lx != rx:
+                    return richcmp_not_equal(lx, rx, op)
+            return rich_to_bool(op, 0)
         except (AttributeError, NotImplementedError):
-            raise NotImplementedError("comparison not implemented for %r"%type(left))
+            return NotImplemented
 
 
 cdef class FormalCoercionMorphism(Morphism):

@@ -452,7 +452,7 @@ class DocTestReporter(SageObject):
 
     def finalize(self):
         """
-        Print out the postcript that summarizes the doctests that were run.
+        Print out the postscript that summarizes the doctests that were run.
 
         EXAMPLES:
 

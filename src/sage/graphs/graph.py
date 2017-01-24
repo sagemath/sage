@@ -417,6 +417,7 @@ Methods
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 from copy import copy
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1748,6 +1749,252 @@ class Graph(GenericGraph):
                     return (False, cycle)
 
     @doc_index("Graph properties")
+    def is_apex(self):
+        """
+        Test if the graph is apex.
+
+        A graph is apex if it can be made planar by the removal of a single
+        vertex. The deleted vertex is called ``an apex`` of the graph, and a
+        graph may have more than one apex. For instance, in the minimal
+        nonplanar graphs `K_5` or `K_{3,3}`, every vertex is an apex. The apex
+        graphs include graphs that are themselves planar, in which case again
+        every vertex is an apex. The null graph is also counted as an apex graph
+        even though it has no vertex to remove.  If the graph is not connected,
+        we say that it is apex if it has at most one non planar connected
+        component and that this component is apex.  See :wikipedia:`the
+        wikipedia article on Apex graph <Apex_graph>` for more information.
+
+        .. SEEALSO::
+
+          - :meth:`~Graph.apex_vertices`
+          - :meth:`~sage.graphs.generic_graph.GenericGraph.is_planar`
+
+        EXAMPLES:
+
+        `K_5` and `K_{3,3}` are apex graphs, and each of their vertices is an
+        apex::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.is_apex()
+            True
+            sage: G = graphs.CompleteBipartiteGraph(3,3)
+            sage: G.is_apex()
+            True
+
+        The Petersen graph is not apex::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_apex()
+            False
+
+        A graph is apex if all its connected components are apex, but at most
+        one is not planar::
+
+            sage: M = graphs.Grid2dGraph(3,3)
+            sage: K5 = graphs.CompleteGraph(5)
+            sage: (M+K5).is_apex()
+            True
+            sage: (M+K5+K5).is_apex()
+            False
+
+        TESTS:
+
+        The null graph is apex::
+
+            sage: G = Graph()
+            sage: G.is_apex()
+            True
+
+        The graph might be mutable or immutable::
+
+            sage: G = Graph(M+K5, immutable=True)
+            sage: G.is_apex()
+            True
+        """
+        # Easy cases: null graph, subgraphs of K_5 and K_3,3
+        if self.order() <= 5 or ( self.order() <= 6 and self.is_bipartite() ):
+            return True
+
+        return len(self.apex_vertices(k=1)) > 0
+
+    @doc_index("Graph properties")
+    def apex_vertices(self, k=None):
+        """
+        Return the list of apex vertices.
+
+        A graph is apex if it can be made planar by the removal of a single
+        vertex. The deleted vertex is called ``an apex`` of the graph, and a
+        graph may have more than one apex. For instance, in the minimal
+        nonplanar graphs `K_5` or `K_{3,3}`, every vertex is an apex. The apex
+        graphs include graphs that are themselves planar, in which case again
+        every vertex is an apex. The null graph is also counted as an apex graph
+        even though it has no vertex to remove.  If the graph is not connected,
+        we say that it is apex if it has at most one non planar connected
+        component and that this component is apex.  See :wikipedia:`the
+        wikipedia article on Apex graph <Apex_graph>` for more information.
+
+        .. SEEALSO::
+
+          - :meth:`~Graph.is_apex`
+          - :meth:`~sage.graphs.generic_graph.GenericGraph.is_planar`
+
+        INPUT:
+
+        - ``k`` -- when set to ``None``, the method returns the list of all apex
+          of the graph, possibly empty if the graph is not apex. When set to a
+          positive integer, the method ends as soon as `k` apex vertices are
+          found.
+
+        OUTPUT:
+
+        By default, the method returns the list of all apex of the graph. When
+        parameter ``k`` is set to a positive integer, the returned list is
+        bounded to `k` apex vertices.
+
+        EXAMPLES:
+
+        `K_5` and `K_{3,3}` are apex graphs, and each of their vertices is an
+        apex::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.apex_vertices()
+            [0, 1, 2, 3, 4]
+            sage: G = graphs.CompleteBipartiteGraph(3,3)
+            sage: G.is_apex()
+            True
+            sage: G.apex_vertices()
+            [0, 1, 2, 3, 4, 5]
+            sage: G.apex_vertices(k=3)
+            [0, 1, 2]
+
+        A `4\\times 4`-grid is apex and each of its vertices is an apex. When
+        adding a universal vertex, the resulting graph is apex and the universal
+        vertex is the unique apex vertex ::
+
+            sage: G = graphs.Grid2dGraph(4,4)
+            sage: G.apex_vertices() == G.vertices()
+            True
+            sage: G.add_edges([('universal',v) for v in G.vertex_iterator()])
+            sage: G.apex_vertices()
+            ['universal']
+
+        The Petersen graph is not apex::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.apex_vertices()
+            []
+
+        A graph is apex if all its connected components are apex, but at most
+        one is not planar::
+
+            sage: M = graphs.Grid2dGraph(3,3)
+            sage: K5 = graphs.CompleteGraph(5)
+            sage: (M+K5).apex_vertices()
+            [9, 10, 11, 12, 13]
+            sage: (M+K5+K5).apex_vertices()
+            []
+
+        Neighbors of an apex of degree 2 are apex::
+
+            sage: G = graphs.Grid2dGraph(5,5)
+            sage: G.add_path([(1,1),'x',(3,3)])
+            sage: G.is_planar()
+            False
+            sage: G.degree('x')
+            2
+            sage: G.apex_vertices()
+            ['x', (2, 2), (3, 3), (1, 1)]
+
+
+        TESTS:
+
+        The null graph is apex although it has no apex vertex::
+
+            sage: G = Graph()
+            sage: G.apex_vertices()
+            []
+
+        Parameter ``k`` cannot be a negative integer::
+
+            sage: G.apex_vertices(k=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: parameter k must be a non negative integer
+
+        The graph might be mutable or immutable::
+
+            sage: G = Graph(M+K5, immutable=True)
+            sage: G.apex_vertices()
+            [9, 10, 11, 12, 13]
+        """
+        if k is None:
+            k = self.order()
+        elif k < 0 :
+            raise ValueError("parameter k must be a non negative integer")
+
+        # Easy cases: null graph, subgraphs of K_5 and K_3,3
+        if self.order() <= 5 or ( self.order() <= 6 and self.is_bipartite() ):
+            return self.vertices()[:k]
+
+
+        if not self.is_connected():
+            # We search for its non planar connected components. If it has more
+            # than one such component, the graph is not apex. It is apex if
+            # either it has no such component, in which case the graph is
+            # planar, or if its unique non planar component is apex.
+
+            P = [H for H in self.connected_components_subgraphs() if not H.is_planar()]
+            if not P: # The graph is planar
+                return self.vertices()[:k]
+            elif len(P) > 1:
+                return []
+            else:
+                # We proceed with the non planar component
+                H = Graph(P[0].edges(labels=0), immutable=False, loops=False, multiedges=False) if P[0].is_immutable() else P[0]
+
+        elif self.is_planar():
+            # A planar graph is apex.
+            return self.vertices()[:k]
+
+        else:
+            # We make a basic copy of the graph since we will modify it
+            H = Graph(self.edges(labels=0), immutable=False, loops=False, multiedges=False)
+
+
+        # General case: basic implementation
+        #
+        # Test for each vertex if the its removal makes the graph planar.
+        # Obviously, we don't test vertices of degree one. Furthermore, if a
+        # vertex of degree 2 is an apex, its neighbors also are. So we start
+        # with vertices of degree 2.
+        V = sorted([(d,u) for u,d in H.degree(labels=True).iteritems() if d > 1])
+        apex = set()
+        for deg,u in V:
+
+            if u in apex: # True if neighbor of an apex of degree 2
+                if deg == 2:
+                    # We ensure that its neighbors are known apex
+                    apex.update(H.neighbors(u))
+                    if len(apex) >= k:
+                        return list(apex)[:k]
+                continue
+
+            E = H.edges_incident(u, labels=0)
+            H.delete_vertex(u)
+            if H.is_planar():
+                apex.add(u)
+                if deg == 2:
+                    # The neighbors of an apex of degree 2 also are
+                    apex.update(self.neighbors(u))
+
+                if len(apex) >= k:
+                    return list(apex)[:k]
+
+            H.add_edges(E)
+
+        return list(apex)
+
+    @doc_index("Graph properties")
     def is_overfull(self):
         r"""
         Tests whether the current graph is overfull.
@@ -1796,13 +2043,13 @@ class Graph(GenericGraph):
         are not overfull::
 
             sage: def check_overfull_Kn_even(n):
-            ...       i = 0
-            ...       while i <= n:
-            ...           if graphs.CompleteGraph(i).is_overfull():
-            ...               print("A complete graph of even order cannot be overfull.")
-            ...               return
-            ...           i += 2
-            ...       print("Complete graphs of even order up to %s are not overfull." % n)
+            ....:     i = 0
+            ....:     while i <= n:
+            ....:         if graphs.CompleteGraph(i).is_overfull():
+            ....:             print("A complete graph of even order cannot be overfull.")
+            ....:             return
+            ....:         i += 2
+            ....:     print("Complete graphs of even order up to %s are not overfull." % n)
             ...
             sage: check_overfull_Kn_even(100)  # long time
             Complete graphs of even order up to 100 are not overfull.
@@ -1818,13 +2065,13 @@ class Graph(GenericGraph):
         are overfull::
 
             sage: def check_overfull_Kn_odd(n):
-            ...       i = 3
-            ...       while i <= n:
-            ...           if not graphs.CompleteGraph(i).is_overfull():
-            ...               print("A complete graph of odd order > 1 must be overfull.")
-            ...               return
-            ...           i += 2
-            ...       print("Complete graphs of odd order > 1 up to %s are overfull." % n)
+            ....:     i = 3
+            ....:     while i <= n:
+            ....:         if not graphs.CompleteGraph(i).is_overfull():
+            ....:             print("A complete graph of odd order > 1 must be overfull.")
+            ....:             return
+            ....:         i += 2
+            ....:     print("Complete graphs of odd order > 1 up to %s are overfull." % n)
             ...
             sage: check_overfull_Kn_odd(100)  # long time
             Complete graphs of odd order > 1 up to 100 are overfull.
@@ -1892,12 +2139,12 @@ class Graph(GenericGraph):
         cycle::
 
             sage: if not g.is_forest():
-            ...      cycle = g.is_even_hole_free(certificate = True)
-            ...      if cycle.order() % 2 == 1:
-            ...          print("Error !")
-            ...      if not cycle.is_isomorphic(
-            ...             graphs.CycleGraph(cycle.order())):
-            ...          print("Error !")
+            ....:    cycle = g.is_even_hole_free(certificate = True)
+            ....:    if cycle.order() % 2 == 1:
+            ....:        print("Error !")
+            ....:    if not cycle.is_isomorphic(
+            ....:           graphs.CycleGraph(cycle.order())):
+            ....:        print("Error !")
             ...
             sage: print("Everything is Fine !")
             Everything is Fine !
@@ -1915,7 +2162,7 @@ class Graph(GenericGraph):
         Making sure there are no other counter-examples around ::
 
             sage: t = lambda x : (Graph(x).is_forest() or
-            ...         isinstance(Graph(x).is_even_hole_free(certificate = True),Graph))
+            ....:       isinstance(Graph(x).is_even_hole_free(certificate = True),Graph))
             sage: all( t(graphs.RandomBipartite(10,10,.5)) for i in range(100) )
             True
 
@@ -2132,7 +2379,7 @@ class Graph(GenericGraph):
 
           - ``'bitset'`` -- encodes adjacencies into bitsets and uses fast
             bitset operations to test if the input graph contains a
-            triangle. This method is generaly faster than stantard matrix
+            triangle. This method is generally faster than standard matrix
             multiplication.
 
         EXAMPLE:
@@ -2163,12 +2410,12 @@ class Graph(GenericGraph):
 
         Comparison of algorithms::
 
-            sage: for i in xrange(10): # long test
-            ...       G = graphs.RandomBarabasiAlbert(50,2)
-            ...       bm = G.is_triangle_free(algorithm='matrix')
-            ...       bb = G.is_triangle_free(algorithm='bitset')
-            ...       if bm != bb:
-            ...          print("That's not good!")
+            sage: for i in range(10): # long test
+            ....:     G = graphs.RandomBarabasiAlbert(50,2)
+            ....:     bm = G.is_triangle_free(algorithm='matrix')
+            ....:     bb = G.is_triangle_free(algorithm='bitset')
+            ....:     if bm != bb:
+            ....:        print("That's not good!")
 
         Asking for an unknown algorithm::
 
@@ -2248,7 +2495,7 @@ class Graph(GenericGraph):
             sage: g = graphs.CompleteGraph(10)
             sage: sets = Subsets(Set(range(10)))
             sage: for i in range(10, 25):
-            ...      g.add_edges([(i,k) for k in sets.random_element()])
+            ....:    g.add_edges([(i,k) for k in sets.random_element()])
             sage: g.is_split()
             True
 
@@ -2635,12 +2882,12 @@ class Graph(GenericGraph):
             sage: Graph(':FgGE@I@GxGs', loops=False, multiedges=False).is_perfect()
             False
             sage: g = Graph({0: [2, 3, 4, 5],
-            ...              1: [3, 4, 5, 6],
-            ...              2: [0, 4, 5, 6],
-            ...              3: [0, 1, 5, 6],
-            ...              4: [0, 1, 2, 6],
-            ...              5: [0, 1, 2, 3],
-            ...              6: [1, 2, 3, 4]})
+            ....:            1: [3, 4, 5, 6],
+            ....:            2: [0, 4, 5, 6],
+            ....:            3: [0, 1, 5, 6],
+            ....:            4: [0, 1, 2, 6],
+            ....:            5: [0, 1, 2, 3],
+            ....:            6: [1, 2, 3, 4]})
             sage: g.is_perfect()
             False
 
@@ -2751,7 +2998,7 @@ class Graph(GenericGraph):
         ch = ((self.am()).charpoly()).coefficients(sparse=False)
         n = self.order()
 
-        for i in xrange(n-1,-1,-2):
+        for i in range(n-1,-1,-2):
             if ch[i] != 0:
                 return n-i
 
@@ -3076,7 +3323,7 @@ class Graph(GenericGraph):
 
         The same goes for the CubeGraph in any dimension ::
 
-            sage: all(len(graphs.CubeGraph(i).strong_orientation().strongly_connected_components()) == 1 for i in xrange(2,6))
+            sage: all(len(graphs.CubeGraph(i).strong_orientation().strongly_connected_components()) == 1 for i in range(2,6))
             True
 
         A multigraph also has a strong orientation ::
@@ -3322,23 +3569,23 @@ class Graph(GenericGraph):
         While this is not::
 
             sage: try:
-            ...      g.bounded_outdegree_orientation(ceil(mad/2-1))
-            ...      print("Error")
+            ....:    g.bounded_outdegree_orientation(ceil(mad/2-1))
+            ....:    print("Error")
             ... except ValueError:
-            ...       pass
+            ....:     pass
 
         TESTS:
 
         As previously for random graphs, but more intensively::
 
-            sage: for i in xrange(30):      # long time (up to 6s on sage.math, 2012)
-            ...       g = graphs.RandomGNP(40, .4)
-            ...       b = lambda v : ceil(g.degree(v)/2)
-            ...       D = g.bounded_outdegree_orientation(b)
-            ...       if not (
-            ...            all( D.out_degree(v) <= b(v) for v in g ) or
-            ...            D.size() != g.size()):
-            ...           print("Something wrong happened")
+            sage: for i in range(30):      # long time (up to 6s on sage.math, 2012)
+            ....:     g = graphs.RandomGNP(40, .4)
+            ....:     b = lambda v : ceil(g.degree(v)/2)
+            ....:     D = g.bounded_outdegree_orientation(b)
+            ....:     if not (
+            ....:          all( D.out_degree(v) <= b(v) for v in g ) or
+            ....:          D.size() != g.size()):
+            ....:         print("Something wrong happened")
 
         """
         self._scream_if_not_simple()
@@ -3403,6 +3650,118 @@ class Graph(GenericGraph):
 
         return D
 
+    @doc_index("Connectivity, orientations, trees")
+    def orientations(self, implementation='c_graph', data_structure=None, sparse=None):
+        r"""
+        Return an iterator over orientations of ``self``.
+
+        An *orientation* of an undirected graph is a directed
+        graph such that every edge is assigned a direction.
+        Hence there are `2^s` oriented digraphs for a simple
+        graph with `s` edges.
+
+        INPUT:
+
+        - ``data_structure`` -- one of ``"sparse"``, ``"static_sparse"``, or
+          ``"dense"``; see the documentation of :class:`Graph` or
+          :class:`DiGraph`; default is the data structure of ``self``
+
+        - ``sparse`` -- (optional) boolean; ``sparse=True`` is an alias for
+          ``data_structure="sparse"``, and ``sparse=False`` is an alias for
+          ``data_structure="dense"``
+
+        .. WARNING::
+
+            This always considers mutliple edges of graphs as
+            distinguishable, and hence, may have repeated digraphs.
+
+        EXAMPLES::
+
+            sage: G = Graph([[1,2,3], [(1, 2, 'a'), (1, 3, 'b')]], format='vertices_and_edges')
+            sage: it = G.orientations()
+            sage: D = next(it)
+            sage: D.edges()
+            [(1, 2, 'a'), (1, 3, 'b')]
+            sage: D = next(it)
+            sage: D.edges()
+            [(1, 2, 'a'), (3, 1, 'b')]
+
+        TESTS::
+
+            sage: G = Graph()
+            sage: D = [g for g in G.orientations()]
+            sage: len(D)
+            1
+            sage: D[0]
+            Digraph on 0 vertices
+
+            sage: G = Graph(5)
+            sage: it = G.orientations()
+            sage: D = next(it)
+            sage: D.size()
+            0
+
+            sage: G = Graph([[1,2,'a'], [1,2,'b']], multiedges=True)
+            sage: len(list(G.orientations()))
+            4
+
+            sage: G = Graph([[1,2], [1,1]], loops=True)
+            sage: len(list(G.orientations()))
+            2
+
+            sage: G = Graph([[1,2],[2,3]])
+            sage: next(G.orientations())
+            Digraph on 3 vertices
+            sage: G = graphs.PetersenGraph()
+            sage: next(G.orientations())
+            An orientation of Petersen graph: Digraph on 10 vertices
+        """
+        if sparse is not None:
+            if data_structure is not None:
+                raise ValueError("cannot specify both 'sparse' and 'data_structure'")
+            data_structure = "sparse" if sparse else "dense"
+        if data_structure is None:
+            from sage.graphs.base.dense_graph import DenseGraphBackend
+            from sage.graphs.base.sparse_graph import SparseGraphBackend
+            if isinstance(self._backend, DenseGraphBackend):
+                data_structure = "dense"
+            elif isinstance(self._backend, SparseGraphBackend):
+                data_structure = "sparse"
+            else:
+                data_structure = "static_sparse"
+
+        name = self.name()
+        if name != '':
+            name = 'An orientation of ' + name
+
+        if self.num_edges() == 0:
+            D = DiGraph(name=name,
+                        pos=self._pos,
+                        multiedges=self.allows_multiple_edges(),
+                        loops=self.allows_loops(),
+                        implementation=implementation,
+                        data_structure=data_structure)
+            if hasattr(self, '_embedding'):
+                D._embedding = copy(self._embedding)
+            yield D
+            return
+
+        from itertools import product
+        E = [[(u,v,label), (v,u,label)] if u != v else [(u,v,label)]
+             for u,v,label in self.edges()]
+        verts = self.vertices()
+        for edges in product(*E):
+            D = DiGraph(data=[verts, edges],
+                        format='vertices_and_edges',
+                        name=name,
+                        pos=self._pos,
+                        multiedges=self.allows_multiple_edges(),
+                        loops=self.allows_loops(),
+                        implementation=implementation,
+                        data_structure=data_structure)
+            if hasattr(self, '_embedding'):
+                D._embedding = copy(self._embedding)
+            yield D
 
     ### Coloring
 
@@ -3508,18 +3867,18 @@ class Graph(GenericGraph):
 
         A complete multipartite graph with k parts has chromatic number k::
 
-            sage: all(graphs.CompleteMultipartiteGraph([5]*i).chromatic_number() == i for i in xrange(2,5))
+            sage: all(graphs.CompleteMultipartiteGraph([5]*i).chromatic_number() == i for i in range(2,5))
             True
 
         The complete graph has the largest chromatic number from all the graphs
         of order n. Namely its chromatic number is n::
 
-            sage: all(graphs.CompleteGraph(i).chromatic_number() == i for i in xrange(10))
+            sage: all(graphs.CompleteGraph(i).chromatic_number() == i for i in range(10))
             True
 
         The Kneser graph with parameters (n,2) for n > 3 has chromatic number n-2::
 
-            sage: all(graphs.KneserGraph(i,2).chromatic_number() == i-2 for i in xrange(4,6))
+            sage: all(graphs.KneserGraph(i,2).chromatic_number() == i-2 for i in range(4,6))
             True
 
         A snark has chromatic index 4 hence its line graph has chromatic number 4::
@@ -3828,7 +4187,7 @@ class Graph(GenericGraph):
 
         As an optimization problem, it can be expressed as:
 
-        .. math::
+        .. MATH::
 
             \mbox{Maximize : }&\sum_{e\in G.edges()} w_e b_e\\
             \mbox{Such that : }&\forall v \in G, \sum_{(u,v)\in G.edges()} b_{(u,v)}\leq 1\\
@@ -4294,7 +4653,7 @@ class Graph(GenericGraph):
         r"""
         Returns an independent set of representatives.
 
-        Given a graph `G` and and a family `F=\{F_i:i\in [1,...,k]\}` of
+        Given a graph `G` and a family `F=\{F_i:i\in [1,...,k]\}` of
         subsets of ``g.vertices()``, an Independent Set of Representatives
         (ISR) is an assignation of a vertex `v_i\in F_i` to each set `F_i`
         such that `v_i != v_j` if `i<j` (they are representatives) and the
@@ -4344,14 +4703,14 @@ class Graph(GenericGraph):
 
             sage: g = 3 * graphs.PetersenGraph()
             sage: n = g.order()/3
-            sage: f = [[i,i+n,i+2*n] for i in xrange(n)]
+            sage: f = [[i,i+n,i+2*n] for i in range(n)]
             sage: isr = g.independent_set_of_representatives(f)
             sage: c = [floor(i/n) for i in isr]
             sage: color_classes = [[],[],[]]
             sage: for v,i in enumerate(c):
-            ...     color_classes[i].append(v)
+            ....:   color_classes[i].append(v)
             sage: for classs in color_classes:
-            ...     g.subgraph(classs).size() == 0
+            ....:   g.subgraph(classs).size() == 0
             True
             True
             True
@@ -5154,7 +5513,7 @@ class Graph(GenericGraph):
             for v in G:
 
                 # The flow balance depends on whether the vertex v is
-                # a representant of h1 or h2 in G, or a reprensentant
+                # a representant of h1 or h2 in G, or a representant
                 # of none
 
                 p.add_constraint( flow_balance((h1,h2),v) == v_repr[h1,v] - v_repr[h2,v] )
@@ -5436,17 +5795,17 @@ class Graph(GenericGraph):
 
         By definition the clique number of a complete graph is its order::
 
-            sage: all(graphs.CompleteGraph(i).clique_number() == i for i in xrange(1,15))
+            sage: all(graphs.CompleteGraph(i).clique_number() == i for i in range(1,15))
             True
 
         A non-empty graph without edges has a clique number of 1::
 
-            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1 for i in xrange(1,15))
+            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1 for i in range(1,15))
             True
 
         A complete multipartite graph with k parts has clique number k::
 
-            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i for i in xrange(1,6))
+            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i for i in range(1,6))
             True
 
         TESTS::
@@ -5455,9 +5814,9 @@ class Graph(GenericGraph):
             sage: g.clique_number(algorithm="MILP")
             2
             sage: for i in range(10):                                            # optional - mcqd
-            ...       g = graphs.RandomGNP(15,.5)                                # optional - mcqd
-            ...       if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
-            ...           print("This is dead wrong !")                          # optional - mcqd
+            ....:     g = graphs.RandomGNP(15,.5)                                # optional - mcqd
+            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
+            ....:         print("This is dead wrong !")                          # optional - mcqd
         """
         self._scream_if_not_simple(allow_loops=False)
         if algorithm=="Cliquer":
@@ -5765,34 +6124,34 @@ class Graph(GenericGraph):
         The cardinality of the vertex cover is unchanged when reduction rules are used. First for trees::
 
            sage: for i in range(20):
-           ...       g = graphs.RandomTree(20)
-           ...       vc1_set = g.vertex_cover()
-           ...       vc1 = len(vc1_set)
-           ...       vc2 = g.vertex_cover(value_only = True, reduction_rules = False)
-           ...       if vc1 != vc2:
-           ...           print("Error :", vc1, vc2)
-           ...           print("With reduction rules :", vc1)
-           ...           print("Without reduction rules :", vc2)
-           ...           break
-           ...       g.delete_vertices(vc1_set)
-           ...       if g.size() != 0:
-           ...           print("This thing is not a vertex cover !")
+           ....:     g = graphs.RandomTree(20)
+           ....:     vc1_set = g.vertex_cover()
+           ....:     vc1 = len(vc1_set)
+           ....:     vc2 = g.vertex_cover(value_only = True, reduction_rules = False)
+           ....:     if vc1 != vc2:
+           ....:         print("Error :", vc1, vc2)
+           ....:         print("With reduction rules :", vc1)
+           ....:         print("Without reduction rules :", vc2)
+           ....:         break
+           ....:     g.delete_vertices(vc1_set)
+           ....:     if g.size() != 0:
+           ....:         print("This thing is not a vertex cover !")
 
         Then for random GNP graphs::
 
            sage: for i in range(20):
-           ...       g = graphs.RandomGNP(50,4/50)
-           ...       vc1_set = g.vertex_cover()
-           ...       vc1 = len(vc1_set)
-           ...       vc2 = g.vertex_cover(value_only = True, reduction_rules = False)
-           ...       if vc1 != vc2:
-           ...           print("Error :", vc1, vc2)
-           ...           print("With reduction rules :", vc1)
-           ...           print("Without reduction rules :", vc2)
-           ...           break
-           ...       g.delete_vertices(vc1_set)
-           ...       if g.size() != 0:
-           ...           print("This thing is not a vertex cover !")
+           ....:     g = graphs.RandomGNP(50,4/50)
+           ....:     vc1_set = g.vertex_cover()
+           ....:     vc1 = len(vc1_set)
+           ....:     vc2 = g.vertex_cover(value_only = True, reduction_rules = False)
+           ....:     if vc1 != vc2:
+           ....:         print("Error :", vc1, vc2)
+           ....:         print("With reduction rules :", vc1)
+           ....:         print("Without reduction rules :", vc2)
+           ....:         break
+           ....:     g.delete_vertices(vc1_set)
+           ....:     if g.size() != 0:
+           ....:         print("This thing is not a vertex cover !")
 
         Testing mcqd::
 

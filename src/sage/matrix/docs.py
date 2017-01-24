@@ -23,7 +23,7 @@ EXAMPLES:
 
 We create the `2\times 3` matrix
 
-.. math::
+.. MATH::
 
         \left(\begin{matrix} 1&2&3\\4&5&6 \end{matrix}\right)
 

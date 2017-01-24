@@ -53,6 +53,7 @@ TESTS::
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 
@@ -720,18 +721,18 @@ class ReducedPermutationIET(ReducedPermutation, PermutationIET):
             sage: s_t = q.rauzy_move_relabel('t')
             sage: s_t
             WordMorphism: a->a, b->b, c->c, d->d
-            sage: map(s_t, p_t[0]) == map(Word, q_t[0])
+            sage: list(map(s_t, p_t[0])) == list(map(Word, q_t[0]))
             True
-            sage: map(s_t, p_t[1]) == map(Word, q_t[1])
+            sage: list(map(s_t, p_t[1])) == list(map(Word, q_t[1]))
             True
             sage: p_b = p.rauzy_move('b')
             sage: q_b = q.rauzy_move('b')
             sage: s_b = q.rauzy_move_relabel('b')
             sage: s_b
             WordMorphism: a->a, b->d, c->b, d->c
-            sage: map(s_b, q_b[0]) == map(Word, p_b[0])
+            sage: list(map(s_b, q_b[0])) == list(map(Word, p_b[0]))
             True
-            sage: map(s_b, q_b[1]) == map(Word, p_b[1])
+            sage: list(map(s_b, q_b[1])) == list(map(Word, p_b[1]))
             True
         """
         from sage.dynamics.interval_exchanges.labelled import LabelledPermutationIET
@@ -1114,7 +1115,7 @@ class ReducedPermutationLI(ReducedPermutation, PermutationLI):
         self._twin = [self._twin[1], self._twin[0]]
 
         for interval in (0,1):
-            for j in xrange(self.length(interval)):
+            for j in range(self.length(interval)):
                 self._twin[interval][j] = (1-self._twin[interval][j][0],
                     self._twin[interval][j][1])
 

@@ -27,7 +27,7 @@ If we don't want this, we can create an option context, which disables
 this::
 
     sage: with opt_ctx(red_tail=False, red_sb=False):
-    ...      std(I)[-1]
+    ....:    std(I)[-1]
     d^2*e^6 + 8*c^3 + ...
 
 However, this does not affect the global state::
@@ -48,7 +48,7 @@ change the global state::
 Assigning values within an option context, only affects this context::
 
     sage: with opt_ctx:
-    ...      opt['red_tail'] = False
+    ....:    opt['red_tail'] = False
 
     sage: opt['red_tail']
     True
@@ -206,8 +206,8 @@ cdef class LibSingularOptions_abstract:
             sage: opt['redTail']
             True
             sage: with opt_ctx:
-            ...      opt['redTail'] = False
-            ...      opt['redTail']
+            ....:    opt['redTail'] = False
+            ....:    opt['redTail']
             False
             sage: opt['red_tail']
             True
@@ -611,7 +611,7 @@ cdef class LibSingularOptionsContext:
             sage: opt['redTail']
             True
             sage: with opt_ctx(redTail=False):
-            ...     opt['redTail']
+            ....:   opt['redTail']
             False
         """
         self.bck.append(self.opt.global_options[0])
@@ -631,7 +631,7 @@ cdef class LibSingularOptionsContext:
             sage: opt['redTail']
             True
             sage: with opt_ctx(redTail=False):
-            ...     opt['redTail']
+            ....:   opt['redTail']
             False
         """
         new = self.__class__(self.opt, **kwds)
@@ -645,7 +645,7 @@ cdef class LibSingularOptionsContext:
             sage: opt['redTail']
             True
             sage: with opt_ctx(redTail=False):
-            ...     opt['redTail']
+            ....:   opt['redTail']
             False
         """
         self.opt.global_options[0] = self.bck.pop()

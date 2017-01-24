@@ -3,7 +3,7 @@ Guruswami-Sudan utility methods
 
 AUTHORS:
 
-- Johan S. R. Nielsen, original implementation (see [Nielsen]_ for details)
+- Johan S. R. Nielsen, original implementation (see [Nie]_ for details)
 - David Lucas, ported the original implementation in Sage
 """
 

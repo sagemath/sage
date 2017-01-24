@@ -106,7 +106,7 @@ def init_sage():
     import sage.all_cmdline
     sage.interfaces.quit.invalidate_all()
 
-    # Use the rich output backend for doctest 
+    # Use the rich output backend for doctest
     from sage.repl.rich_output import get_display_manager
     dm = get_display_manager()
     from sage.repl.rich_output.backend_doctest import BackendDoctest
@@ -1411,11 +1411,13 @@ class DocTestDispatcher(SageObject):
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
             self.controller.log(heading)
-            outtmpfile = tempfile.TemporaryFile()
-            result = DocTestTask(source)(self.controller.options,
-                    outtmpfile, self.controller.logger)
-            outtmpfile.seek(0)
-            output = outtmpfile.read()
+
+            with tempfile.TemporaryFile() as outtmpfile:
+                result = DocTestTask(source)(self.controller.options,
+                        outtmpfile, self.controller.logger)
+                outtmpfile.seek(0)
+                output = outtmpfile.read()
+
             self.controller.reporter.report(source, False, 0, result, output)
 
     def parallel_dispatch(self):
@@ -1484,7 +1486,7 @@ class DocTestDispatcher(SageObject):
         # Logger
         log = self.controller.log
 
-        from sage.ext.pselect import PSelecter
+        from cysignals.pselect import PSelecter
         try:
             # Block SIGCHLD and SIGINT except during the pselect() call
             with PSelecter([signal.SIGCHLD, signal.SIGINT]) as sel:
@@ -1968,7 +1970,7 @@ class DocTestWorker(multiprocessing.Process):
         We set up the worker to start by blocking ``SIGHUP``, such that
         killing will fail initially::
 
-            sage: from sage.ext.pselect import PSelecter
+            sage: from cysignals.pselect import PSelecter
             sage: import signal
             sage: def block_hup():
             ....:     # We never __exit__()
@@ -2066,7 +2068,7 @@ class DocTestTask(object):
         OUTPUT:
 
         - ``(doctests, result_dict)`` where ``doctests`` is the number of
-          doctests and and ``result_dict`` is a dictionary annotated with
+          doctests and ``result_dict`` is a dictionary annotated with
           timings and error information.
 
         - Also put ``(doctests, result_dict)`` onto the ``result_queue``

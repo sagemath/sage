@@ -69,7 +69,7 @@ class Scheme(Parent):
       of the ring will be used as base.
 
     - ``category`` -- the category (optional). Will be automatically
-      construted by default.
+      constructed by default.
 
     EXAMPLES::
 

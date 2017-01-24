@@ -9,7 +9,7 @@ export GIT_TEST_HTTPD=false
 cd src
 
 echo "Testing git..."
-$MAKE test 
+$MAKE test
 if [ $? -ne 0 ]; then
     echo >&2 "Error running git's test suite."
     exit 1

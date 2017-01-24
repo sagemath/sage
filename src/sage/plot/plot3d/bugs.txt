@@ -70,8 +70,6 @@ Jmol bugs:
    We should draw axis and allow for aspect ratios.
  * Invalid color doesn't yield an error message, e.g., Icosahedron(texture="yello")
  * color --> rgbcolor
- * In parametricsurface:
-        except:       # TODO -- this would catch control-C,etc. -- FIX THIS TO CATCH WHAT IS RAISED!!!!
  * Observation:
       jmol embedded applets *crash* when more than 10 or so appear in
       a page... unless I make them all small (e.g. 50 pixels) in which

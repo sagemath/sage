@@ -1,4 +1,4 @@
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_t
+from sage.libs.flint.types cimport fmpz_poly_t
 from sage.libs.ntl.types cimport ZZX_c
 from sage.libs.mpfr cimport mpfr_t
 from sage.libs.mpfi cimport mpfi_t

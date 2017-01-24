@@ -74,7 +74,7 @@ class BackendDoctest(BackendBase):
 
     def install(self, **kwds):
         """
-        Switch to the the doctest backend
+        Switch to the doctest backend.
 
         This method is being called from within
         :meth:`~sage.repl.rich_output.display_manager.DisplayManager.switch_backend`. You

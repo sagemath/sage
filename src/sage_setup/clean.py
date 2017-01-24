@@ -75,7 +75,7 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
         sage: python_packages, python_modules = find_python_sources(
         ....:     SAGE_SRC, ['sage', 'sage_setup'])
         sage: extra_files = find_extra_files(python_packages, SAGE_SRC,
-        ....:     SAGE_CYTHONIZED, SAGE_LIB, ["ntlwrap.cpp"])
+        ....:     SAGE_CYTHONIZED, ["ntlwrap.cpp"])
         sage: from sage_setup.clean import _find_stale_files
 
     TODO: move ``module_list.py`` into ``sage_setup`` and also check
@@ -119,9 +119,6 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
     # Convert data_files to a set
     installed_files = set()
     for dir, files in data_files:
-        dir = os.path.relpath(dir, site_packages)
-        if dir.startswith("."):  # dir is not inside site_packages
-            continue
         for f in files:
             installed_files.add(os.path.join(dir, os.path.basename(f)))
 

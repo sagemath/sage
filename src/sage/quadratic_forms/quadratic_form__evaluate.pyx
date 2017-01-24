@@ -8,7 +8,7 @@ def QFEvaluateVector(Q, v):
     matrix is given then the output will be the quadratic form Q'
     which in matrix notation is given by:
 
-    .. math::
+    .. MATH::
 
             Q' = v^t * Q * v.
 

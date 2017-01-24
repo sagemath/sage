@@ -226,7 +226,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         sage: DeBruijnSequences(2, 3).cardinality()
         2
 
-    .. note::
+    .. NOTE::
 
        This function only generates one De Bruijn sequence (the smallest
        lexicographically). Support for generating all possible ones may be

@@ -2,7 +2,7 @@
 """
 `p`-adic distributions spaces
 
-This module implements p-adic distributions, a p-adic Banach
+This module implements p-adic distributions, a `p`-adic Banach
 space dual to locally analytic functions on a disc.
 
 EXAMPLES::
@@ -10,6 +10,13 @@ EXAMPLES::
     sage: D = OverconvergentDistributions(5, 7, 15)
     sage: v = D([7,14,21,28,35]); v
     (7 + O(7^5), 2*7 + O(7^4), 3*7 + O(7^3), 4*7 + O(7^2), O(7))
+
+REFERENCES:
+
+.. [PS] Overconvergent modular symbols and p-adic L-functions
+   Robert Pollack, Glenn Stevens
+   Annales Scientifiques de l'Ecole Normale Superieure, serie 4, 44 fascicule 1 (2011), 1--42.
+
 """
 
 #*****************************************************************************
@@ -22,6 +29,7 @@ EXAMPLES::
 #*****************************************************************************
 from __future__ import print_function
 from sage.structure.sage_object import SageObject
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -122,10 +130,8 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
 cdef class Dist(ModuleElement):
     r"""
-        The main `p`-adic distribution class, implemented as per the paper
-        'Overconvergent Modular Symbols and p-adic L-functions' by Pollack
-        & Stevens
-    """ ## mm TODO reference
+        The main `p`-adic distribution class, implemented as per the paper [PS]__.
+    """
     def moment(self, n):
         r"""
         Return the `n`-th moment.
@@ -515,7 +521,7 @@ cdef class Dist(ModuleElement):
                 pass
         return alpha
 
-    cpdef int _cmp_(_left, _right) except -2:
+    cpdef _richcmp_(_left, _right, int op):
         r"""
         Comparison.
 
@@ -548,21 +554,24 @@ cdef class Dist(ModuleElement):
         if left.ordp > right.ordp:
             shift = p ** (left.ordp - right.ordp)
             for i in range(rprec):
-                c = cmp(shift * left._unscaled_moment(i), right._unscaled_moment(i))
-                if c:
-                    return c
+                lx = shift * left._unscaled_moment(i)
+                rx = right._unscaled_moment(i)
+                if lx != rx:
+                    return richcmp_not_equal(lx, rx, op)
         elif left.ordp < right.ordp:
             shift = p ** (right.ordp - left.ordp)
             for i in range(rprec):
-                c = cmp(left._unscaled_moment(i), shift * right._unscaled_moment(i))
-                if c:
-                    return c
+                lx = left._unscaled_moment(i)
+                rx = shift * right._unscaled_moment(i)
+                if lx != rx:
+                    return richcmp_not_equal(lx, rx, op)
         else:
             for i in range(rprec):
-                c = cmp(left.moment(i), right.moment(i))
-                if c:
-                    return c
-        return 0
+                lx = left.moment(i)
+                rx = right.moment(i)
+                if lx != rx:
+                    return richcmp_not_equal(lx, rx, op)
+        return rich_to_bool(op, 0)
 
     def diagonal_valuation(self, p=None):
         """
@@ -840,7 +849,12 @@ cdef class Dist_vector(Dist):
 
         - A distribution with no moments.  The moments are then filled
           in by the calling function.
-        """## mm TODO EXAMPLES
+
+        EXAMPLES::
+
+            sage: D = OverconvergentDistributions(3,5,4) # indirect doctest
+            sage: v = D([1,1,1])
+        """
         cdef Dist_vector ans = PY_NEW(Dist_vector)
         ans._parent = self._parent
         return ans
@@ -895,20 +909,45 @@ cdef class Dist_vector(Dist):
     cdef long _relprec(self):
         """
         Return the number of moments.
-        """ ##mm TODO EXMPLES
+
+        EXAMPLES::
+
+            sage: D = Symk(4)
+            sage: d = D([1,2,3,4,5]); e = D([2,3,4,5,6])
+            sage: d == e # indirect doctest
+            False
+
+        """
         return len(self._moments)
 
     cdef _unscaled_moment(self, long n):
         r"""
         Return the `n`-th moment, unscaled by the overall power of `p`
         stored in ``self.ordp``.
-        """ ##mm TODO EXMPLES
+
+        EXAMPLES::
+
+            sage: D = OverconvergentDistributions(4,3,5)
+            sage: d = D([3,3,3,3,3])
+            sage: d.moment(2) # indirect doctest
+            3 + O(3^3)
+        """
         return self._moments[n]
 
     cdef Dist_vector _addsub(self, Dist_vector right, bint negate):
         r"""
         Common code for the sum and the difference of two distributions
-        """ ##mm TODO
+
+        EXAMPLES::
+
+            sage: D = Symk(2)
+            sage: u = D([1,2,3]); v = D([4,5,6])
+            sage: u + v # indirect doctest
+            (5, 7, 9)
+            sage: u - v # indirect doctest
+            (-3, -3, -3)
+
+        """
         cdef Dist_vector ans = self._new_c()
         cdef long aprec = min(self.ordp + len(self._moments), right.ordp + len(right._moments))
         ans.ordp = min(self.ordp, right.ordp)
@@ -918,7 +957,7 @@ cdef class Dist_vector(Dist):
         R = V.base_ring()
         smoments = self._moments
         rmoments = right._moments
-        # we truncate if the moments are too long; extend by zero if too short
+        # We truncate if the moments are too long; extend by zero if too short
         if smoments.parent() is not V:
             vec = smoments.list(copy=False)[:rprec] + ([R(0)] * (rprec - len(smoments)) if rprec > len(smoments) else [])
             smoments = V(vec)
@@ -1055,7 +1094,7 @@ cdef class Dist_vector(Dist):
 
         OUTPUT:
 
-        - this distribtion, after normalizing.
+        - this distribution, after normalizing.
 
         .. WARNING::
 
@@ -1129,7 +1168,7 @@ cdef class Dist_vector(Dist):
         r"""
         Solve the difference equation. `self = v | \Delta`, where `\Delta = [1, 1; 0, 1] - 1`.
 
-        See Theorem 4.5 and Lemma 4.4 of [PS].
+        See Theorem 4.5 and Lemma 4.4 of [PS]_.
 
         OUTPUT:
 
@@ -1586,7 +1625,7 @@ cdef class Dist_vector(Dist):
 
 cdef class WeightKAction(Action):
     r"""
-    ## mm TODO
+    Encode the action of the monoid `\Sigma_0(N)` on the space of distributions.
 
     INPUT:
 

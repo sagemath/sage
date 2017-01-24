@@ -411,7 +411,7 @@ class ClassGroup(AbelianGroupWithValues_class):
         sage: G = K.class_group(); G
         Class group of order 3 with structure C3 of Number Field in a with defining polynomial x^2 + 23
         sage: G.category()
-        Category of finite commutative groups
+        Category of finite enumerated commutative groups
 
     Note the distinction between abstract generators, their ideal, and
     exponents::

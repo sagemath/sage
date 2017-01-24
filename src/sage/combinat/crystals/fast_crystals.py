@@ -25,6 +25,7 @@ from sage.structure.parent import Parent
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.structure.element import Element, parent
 from sage.combinat.root_system.cartan_type import CartanType
+from sage.structure.sage_object import richcmp
 
 
 class FastCrystal(UniqueRepresentation, Parent):
@@ -374,7 +375,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             return hash(self.value)
 
-        def __cmp__(self, other):
+        def _richcmp_(self, other, op):
             """
             EXAMPLES::
 
@@ -406,10 +407,7 @@ class FastCrystal(UniqueRepresentation, Parent):
                 sage: C(1) <= C(1)
                 True
             """
-            if parent(self) is parent(other):
-                return cmp(self.value, other.value)
-            else:
-                return cmp(parent(self), parent(other))
+            return richcmp(self.value, other.value, op)
 
         def e(self, i):
             """

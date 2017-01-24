@@ -19,6 +19,8 @@ AUTHORS:
 from __future__ import division, print_function
 from __future__ import absolute_import
 
+from six.moves import range
+
 from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1400,7 +1402,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                     self._graph.add_edges( [(0,1,2),(1,2,None)] )
                 else:
                     self._digraph.add_edge( self._rank - 2, 0 )
-                    for i in xrange(self._rank-2):
+                    for i in range(self._rank-2):
                         if i < ( 2 * self._bi_rank[0] ) and i%2 == 0:
                             self._digraph.add_edge(i+1,i)
                         else:
@@ -1592,7 +1594,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                 self._info['simply_laced'] = True
                 self._info['skew_symmetric'] = True
                 r,p,q = rank
-                for i in xrange(q-1):
+                for i in range(q-1):
                     if i == 0:
                         self._graph.add_edge(0,1)
                         self._graph.add_edge(0,r)
@@ -1618,7 +1620,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                 level = 0
                 while level < rank:
                     nr = rank*level-sum(range(level))
-                    for i in xrange(nr,nr+rank-level-1):
+                    for i in range(nr,nr+rank-level-1):
                         self._digraph.add_edge(i,i+1)
                         self._digraph.add_edge(i+rank-level,i)
                         self._digraph.add_edge(i+1,i+rank-level)
@@ -1997,7 +1999,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
         # _description is as for CartanType
         self._description = "[ "
         comps = self.irreducible_components()
-        for i in xrange(len(comps)):
+        for i in range(len(comps)):
             if i > 0: self._description += ", "
             self._description += comps[i]._description
         self._description += " ]"

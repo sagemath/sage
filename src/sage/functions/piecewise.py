@@ -572,7 +572,8 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: bool(h == f)
                 True
             """
-            result = [(domain, func) for domain,func in parameters if func<>0]
+            result = [(domain, func) for domain,func in parameters
+                      if func != 0]
             return piecewise(result, var=variable)
 
         def pieces(cls, self, parameters, variable):
@@ -1147,7 +1148,7 @@ class PiecewiseFunction(BuiltinFunction):
             r"""
             Returns the partial sum
 
-            .. math::
+            .. MATH::
 
                f(x) \sim \frac{a_0}{2} + \sum_{n=1}^N [a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],
 

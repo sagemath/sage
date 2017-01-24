@@ -56,10 +56,7 @@ Classes and methods
 #*******************************************************************************
 from __future__ import absolute_import
 
-from .c_graph cimport CGraphBackend
-from .c_graph cimport CGraph
-
-from six import itervalues
+from .c_graph cimport CGraphBackend, CGraph
 
 
 cdef class GenericGraphBackend(SageObject):
@@ -687,7 +684,7 @@ cdef class GenericGraphBackend(SageObject):
             elif isinstance(self,DenseGraphBackend):
                 data_structure = "dense"
             elif isinstance(self,StaticSparseBackend):
-                implementaton = "static_sparse"
+                implementation = "static_sparse"
             else:
                 raise Exception
             multiedges = (<CGraphBackend> self)._multiple_edges
@@ -1228,6 +1225,7 @@ class NetworkXGraphBackend(GenericGraphBackend):
             ...
             NetworkXError: Edge (1,2) requested via get_edge_label does not exist.
         """
+        cdef dict E
         try:
             E = self._nxg.edge[u][v]
         except KeyError:
@@ -1235,7 +1233,7 @@ class NetworkXGraphBackend(GenericGraphBackend):
             raise NetworkXError("Edge (%s,%s) requested via get_edge_label does not exist."%(u,v))
 
         if self._nxg.is_multigraph():
-            return [ e.get('weight',None) for e in itervalues(E) ]
+            return [ e.get('weight',None) for e in E.itervalues() ]
         else:
             return E.get('weight',None)
 
@@ -1261,11 +1259,12 @@ class NetworkXGraphBackend(GenericGraphBackend):
             return False
         if l is None:
             return True
+        cdef dict E = self._nxg.adj[u][v]
         if self._nxg.is_multigraph():
             return any(e.get('weight', None) == l
-                       for e in itervalues(self._nxg.adj[u][v]))
+                       for e in E.itervalues())
         else:
-            return any(e == l for e in itervalues(self._nxg.adj[u][v]))
+            return any(e == l for e in E.itervalues())
 
     def has_vertex(self, v):
         """

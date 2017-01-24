@@ -708,16 +708,16 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
         else:
             raise TypeError("mutable matrices are unhashable")
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
-        Implements comparison of two cyclotomic matrices with
+        Implement comparison of two cyclotomic matrices with
         identical parents.
 
         INPUT:
 
         - ``self``, ``right`` -- matrices with same parent
 
-        OUTPUT: either -1, 0, or 1
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -732,18 +732,18 @@ cdef class Matrix_cyclo_dense(matrix_dense.Matrix_dense):
             True
 
         This function is called implicitly when comparisons with matrices
-        are done or the cmp function is used.::
+        are done::
 
             sage: W.<z> = CyclotomicField(5)
             sage: A = matrix(W, 2, 2, [1,2/3*z+z^2,-z,1+z/2])
-            sage: cmp(A,A)
-            0
-            sage: cmp(A,2*A)
-            -1
-            sage: cmp(2*A,A)
-            1
+            sage: A == A
+            True
+            sage: A < 2*A
+            True
+            sage: A >= 2*A
+            False
         """
-        return self._matrix._cmp_((<Matrix_cyclo_dense>right)._matrix)
+        return self._matrix._richcmp_((<Matrix_cyclo_dense>right)._matrix, op)
 
     def __copy__(self):
         """

@@ -16,6 +16,8 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from .species import GenericCombinatorialSpecies
 from .generating_series import factorial_stream
 from .structure import GenericSpeciesStructure
@@ -56,7 +58,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
             {'a', 'b', 'c'}
         """
         P = self.parent()
-        rng = range(1, P._n+1)
+        rng = list(range(1, P._n + 1))
         return CharacteristicSpeciesStructure(P, self._labels, rng)
 
 

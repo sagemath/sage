@@ -157,7 +157,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.power_series_ring_element import PowerSeries
-
+from sage.structure.sage_object import richcmp
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.power_series_ring import is_PowerSeriesRing
 
@@ -220,7 +220,7 @@ class MPowerSeries(PowerSeries):
     #
     # _mul_prec : works just fine
     #
-    # __nonzero__ : works just fine
+    # __bool__ : works just fine
     #
     """
     Multivariate power series; these are the elements of Multivariate Power
@@ -659,7 +659,7 @@ class MPowerSeries(PowerSeries):
             raise NotImplementedError("Multiplicative inverse of multivariate power series currently implemented only if constant coefficient is a unit.")
 
     ## comparisons
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare ``self`` to ``other``.
 
@@ -691,8 +691,7 @@ class MPowerSeries(PowerSeries):
             sage: f < 2*f
             True
         """
-        return cmp(self._bg_value,other._bg_value)
-
+        return richcmp(self._bg_value, other._bg_value, op)
 
     ## arithmetic
     def _add_(left, right):
@@ -1690,9 +1689,9 @@ class MPowerSeries(PowerSeries):
             sage: aa.is_gen()
             False
             sage: aa.integral(aa)
-            -2*a^2
+            3*a^2
             sage: aa.integral(a)
-            -2*a^2
+            3*a^2
         """
         P = self.parent()
         R = P.base_ring()

@@ -183,6 +183,18 @@ class FiniteFieldHomset(RingHomset_generic):
         self.__order = n
         return n
 
+    def __len__(self):
+        """
+        Return the number of elements of ``self``.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(25)
+            sage: len(End(K))
+            2
+        """
+        return self.order()
+
     def list(self):
         """
         Return a list of all the elements in this set of field homomorphisms.

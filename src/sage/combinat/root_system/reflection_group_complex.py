@@ -300,14 +300,14 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                                           canonicalize=False,
                                           category=category)
 
-        l_set = range(1, len(self.gens())+1)
+        l_set = list(range(1, len(self.gens()) + 1))
         if self._index_set is None:
             self._index_set = tuple(l_set)
         else:
             if len(self._index_set) != len(l_set):
                 raise ValueError("the given index set (= %s) does not have the right size"%self._index_set.values())
         self._index_set_inverse = {i: ii for ii,i in enumerate(self._index_set)}
-        Nstar_set = range(1,self.number_of_reflection_hyperplanes()+1)
+        Nstar_set = list(range(1, self.number_of_reflection_hyperplanes() + 1))
         if self._hyperplane_index_set is None:
             self._hyperplane_index_set = tuple(Nstar_set)
         else:
@@ -315,7 +315,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 raise ValueError("the given hyperplane index set (= %s) does not have the right size"%self._index_set.values())
         self._hyperplane_index_set_inverse = {i: ii for ii,i in enumerate(self._hyperplane_index_set)}
 
-        N_set = range(1, self.number_of_reflections()+1)
+        N_set = list(range(1, self.number_of_reflections() + 1))
         if self._reflection_index_set is None:
             self._reflection_index_set = tuple(N_set)
         else:
@@ -1018,7 +1018,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: W = ReflectionGroup((3,1,2))                          # optional - gap3
             sage: reflection_eigenvalues = W.reflection_eigenvalues_family()    # optional - gap3
-            sage: for elt in sorted(reflection_eigenvalues):     # optional - gap3
+            sage: for elt in sorted(reflection_eigenvalues.keys()):     # optional - gap3
             ....:     print('%s %s'%(elt, reflection_eigenvalues[elt])) # optional - gap3
             () [0, 0]
             (1,3,9)(2,4,10)(6,11,17)(8,12,18)(14,19,23)(15,16,20)(21,22,24) [1/3, 0]
@@ -1032,7 +1032,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: W = ReflectionGroup(23)                               # optional - gap3
             sage: reflection_eigenvalues = W.reflection_eigenvalues_family()    # optional - gap3
-            sage: for elt in sorted(reflection_eigenvalues):     # optional - gap3
+            sage: for elt in sorted(reflection_eigenvalues.keys()):     # optional - gap3
             ....:     print('%s %s'%(elt, reflection_eigenvalues[elt])) # optional - gap3
             () [0, 0, 0]
             (1,8,4)(2,21,3)(5,10,11)(6,18,17)(7,9,12)(13,14,15)(16,23,19)(20,25,26)(22,24,27)(28,29,30) [1/3, 2/3, 0]
@@ -1348,8 +1348,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 I[i] = I[i].replace('x%s'%j,'*x[%s]'%j)
             I[i] = I[i].replace("+*","+").replace("-*","-").replace("ER(5)","*(E(5)-E(5)**2-E(5)**3+E(5)**4)").lstrip("*")
         # sage_eval is used since eval kills the rational entries!
-        I = [ sage_eval(p, locals={'x':x}) for p in I ]
-        return tuple(sorted(I,lambda f,g: cmp(f.degree(),g.degree())))
+        I = [sage_eval(p, locals={'x': x}) for p in I]
+        return tuple(sorted(I, key=lambda f: f.degree()))
 
     def cartan_matrix(self):
         r"""
@@ -1501,7 +1501,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         C = self.cartan_matrix()
         if not self.is_well_generated():
-            indep_inds = sorted(self._index_set_inverse[key] for key in self.independent_roots())
+            indep_inds = sorted(self._index_set_inverse[key]
+                                for key in self.independent_roots().keys())
             C = C.matrix_from_rows_and_columns(indep_inds,indep_inds)
 
         for j in range(n):
@@ -1947,9 +1948,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             """
             W = self.parent()
             if W._reflection_representation is None:
-                Delta = W.independent_roots()
                 Phi = W.roots()
-                inds = [W._index_set_inverse[i] for i in W.independent_roots()]
+                inds = [W._index_set_inverse[i] for i in W.independent_roots().keys()]
                 M = Matrix([Phi[self(i+1)-1] for i in inds])
                 mat = W.base_change_matrix() * M
             else:
@@ -2055,7 +2055,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
                 sage: W = ReflectionGroup(4)                 # optional - gap3
                 sage: N = len(W.roots())                     # optional - gap3
-                sage: all(sorted([w.action_on_root_indices(i) for i in range(N)]) == range(N) for w in W)   # optional - gap3
+                sage: all(sorted([w.action_on_root_indices(i) for i in range(N)]) == list(range(N)) for w in W)   # optional - gap3
                 True
             """
             return self(i + 1) - 1
@@ -2548,7 +2548,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
             try:
                 chain = next(iter)
             except StopIteration:
-                chain = range(m + 1)
+                chain = list(range(m + 1))
         return NCm
 
     # TODO: lift to ComplexReflectionGroups.Finite

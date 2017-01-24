@@ -13,7 +13,7 @@ export CFLAGS
 ./configure --prefix=$SAGE_LOCAL --with-gmp=$SAGE_LOCAL --with-glpk=$SAGE_LOCAL --enable-shared=yes --enable-static=no
 
 $MAKE
-$MAKE install
+$SAGE_SUDO $MAKE install
 
 if [ $? -ne 0 ]; then
    echo "Error building 4ti2"

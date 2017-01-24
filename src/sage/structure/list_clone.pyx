@@ -3,7 +3,7 @@ Elements, Array and Lists With Clone Protocol
 
 This module defines several classes which are subclasses of
 :class:`Element<sage.structure.element.Element>` and which roughly implement
-the "prototype" design pattern (see [Pro]_, [GOF]_). Those classes are
+the "prototype" design pattern (see [Prototype_pattern]_, [GHJV1994]_). Those classes are
 intended to be used to model *mathematical* objects, which are by essence
 immutable. However, in many occasions, one wants to construct the
 data-structure encoding of a new mathematical object by small modifications of
@@ -30,7 +30,7 @@ and its subclasses:
 - :class:`NormalizedClonableList` for lists of objects with a normalization method;
 - :class:`ClonableIntArray` for arrays of int.
 
-.. seealso:: The following parents from :mod:`sage.structure.list_clone_demo`
+.. SEEALSO:: The following parents from :mod:`sage.structure.list_clone_demo`
     demonstrate how to use them:
 
     - ``IncreasingArrays()`` (see
@@ -123,12 +123,8 @@ Finally, as an alternative to the ``with`` syntax one can use::
 
 REFERENCES:
 
-    .. [Pro] Prototype pattern
-       http://en.wikipedia.org/wiki/Prototype_pattern
-
-    .. [GOF] Design Patterns: Elements of Reusable Object-Oriented
-       Software. E. Gamma; R. Helm; R. Johnson; J. Vlissides (1994).
-       Addison-Wesley. ISBN 0-201-63361-2.
+- [Prototype_pattern]_
+- [GHJV1994]_
 
 AUTHORS:
 
@@ -151,6 +147,7 @@ from cpython.ref cimport *
 import sage
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
+from sage.structure.sage_object cimport richcmp
 
 ############################################################################
 ###                         Basic clone elements                         ###
@@ -160,7 +157,7 @@ cdef class ClonableElement(Element):
     Abstract class for elements with clone protocol
 
     This class is a subclass of :class:`Element<sage.structure.element.Element>`
-    and implements the "prototype" design pattern (see [Pro]_, [GOF]_). The role
+    and implements the "prototype" design pattern (see [Prototype_pattern]_, [GHJV1994]_). The role
     of this class is:
 
     - to manage copy and mutability and hashing of elements
@@ -234,7 +231,7 @@ cdef class ClonableElement(Element):
         ....:      def set_x(self, v): self._require_mutable(); self._x = v
         ....:      def set_y(self, v): self._require_mutable(); self._y = v
 
-    .. note:: we don't need to define ``__copy__`` since it is properly
+    .. NOTE:: we don't need to define ``__copy__`` since it is properly
        inherited from :class:`Element<sage.structure.element.Element>`.
 
     We now demonstrate the behavior. Let's create an ``IntPair``::
@@ -457,7 +454,7 @@ cdef class ClonableElement(Element):
         """
         Implement the self guarding clone protocol.
 
-        .. note:: The input argument are required by the ``with`` protocol but
+        .. NOTE:: The input argument are required by the ``with`` protocol but
            are ignored.
 
         TESTS::
@@ -505,7 +502,7 @@ cdef class ClonableArray(ClonableElement):
     - ``immutable`` -- a boolean telling wether the created element is
       immutable (defaults to ``True``)
 
-    .. seealso:: :class:`~sage.structure.list_clone_demo.IncreasingArray` for
+    .. SEEALSO:: :class:`~sage.structure.list_clone_demo.IncreasingArray` for
                  an example of usage.
 
     EXAMPLES::
@@ -646,7 +643,7 @@ cdef class ClonableArray(ClonableElement):
             sage: IncreasingArrays()([1,2,3])[:]
             [1, 2, 3]
             sage: type(IncreasingArrays()([1,2,3])[:])
-            <type 'list'>
+            <... 'list'>
         """
         if isinstance(key, slice):
             self._list[key.start:key.stop:key.step]
@@ -823,7 +820,7 @@ cdef class ClonableArray(ClonableElement):
         return self._hash
 
     # See protocol in comment in sage/structure/element.pyx
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         TESTS::
 
@@ -844,7 +841,7 @@ cdef class ClonableArray(ClonableElement):
             (False, True, True)
         """
         cdef ClonableArray rgt = <ClonableArray>right
-        return cmp(left._list, rgt._list)
+        return richcmp(left._list, rgt._list, op)
 
     cpdef ClonableArray __copy__(self):
         """
@@ -949,10 +946,10 @@ cdef class ClonableArray(ClonableElement):
                  self._needs_check, self._is_immutable, dic))
 
 
-##### Needed for unpikling #####
+##### Needed for unpickling #####
 def _make_array_clone(clas, parent, list, needs_check, is_immutable, dic):
     """
-    Helpler to unpikle :class:`list_clone` instances.
+    Helpler to unpickle :class:`list_clone` instances.
 
     TESTS::
 
@@ -1000,7 +997,7 @@ cdef class ClonableList(ClonableArray):
     implement the clone protocol. See :class:`ClonableElement` for details
     about clone protocol.
 
-    .. seealso:: :class:`~sage.structure.list_clone_demo.IncreasingList` for
+    .. SEEALSO:: :class:`~sage.structure.list_clone_demo.IncreasingList` for
                  an example of usage.
     """
     cpdef append(self, el):
@@ -1229,7 +1226,7 @@ cdef class ClonableIntArray(ClonableElement):
     - ``immutable`` -- a boolean telling wether the created element is
       immutable (defaults to ``True``)
 
-    .. seealso:: :class:`~sage.structure.list_clone_demo.IncreasingIntArray`
+    .. SEEALSO:: :class:`~sage.structure.list_clone_demo.IncreasingIntArray`
                  for an example of usage.
     """
     def __cinit__(self):
@@ -1361,9 +1358,9 @@ cdef class ClonableIntArray(ClonableElement):
 
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
             sage: I = IncreasingIntArrays()(range(5))
-            sage: I == range(5)
+            sage: I == list(range(5))
             False
-            sage: list(I) == range(5)  # indirect doctest
+            sage: list(I) == list(range(5))  # indirect doctest
             True
         """
         return iter(self.list())
@@ -1376,12 +1373,12 @@ cdef class ClonableIntArray(ClonableElement):
 
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
             sage: I = IncreasingIntArrays()(range(5))
-            sage: I == range(5)
+            sage: I == list(range(5))
             False
-            sage: I.list() == range(5)
+            sage: I.list() == list(range(5))
             True
             sage: I = IncreasingIntArrays()(range(1000))
-            sage: I.list() == range(1000)
+            sage: I.list() == list(range(1000))
             True
         """
         cdef int i
@@ -1418,7 +1415,7 @@ cdef class ClonableIntArray(ClonableElement):
             sage: el[1:3]
             [2, 3]
             sage: type(el[:])
-            <type 'list'>
+            <... 'list'>
             sage: list(el)
             [1, 2, 3]
             sage: it = iter(el); next(it), next(it)
@@ -1730,10 +1727,10 @@ cdef class ClonableIntArray(ClonableElement):
                  self._needs_check, self._is_immutable, dic))
 
 
-##### Needed for unpikling #####
+##### Needed for unpickling #####
 def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
     """
-    Helpler to unpikle :class:`list_clone` instances.
+    Helpler to unpickle :class:`list_clone` instances.
 
     TESTS::
 
@@ -1774,7 +1771,7 @@ cdef class NormalizedClonableList(ClonableList):
     This is a subclass of :class:`ClonableList` which call a method
     :meth:`normalize` at creation and after any modification of its instance.
 
-    .. seealso:: :class:`~sage.structure.list_clone_demo.SortedList` for an
+    .. SEEALSO:: :class:`~sage.structure.list_clone_demo.SortedList` for an
                  example of usage.
 
     EXAMPLES:

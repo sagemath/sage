@@ -443,10 +443,9 @@ class ExpressionNice(Expression):
     The standard Pynac display of partial derivatives::
 
         sage: fun
-        y*(z - D[1](h)(y, z))^2 + x*D[0, 1](f)(x, y)
+        y*(z - diff(h(y, z), z))^2 + x*diff(f(x, y), x, y)
         sage: latex(fun)
-        y {\left(z - D[1]\left(h\right)\left(y, z\right)\right)}^{2}
-         + x D[0, 1]\left(f\right)\left(x, y\right)
+        y {\left(z - \frac{\partial}{\partial z}h\left(y, z\right)\right)}^{2} + x \frac{\partial^{2}}{\partial x\partial y}f\left(x, y\right)
 
     With :class:`ExpressionNice`, the Pynac notation ``D[...]`` is replaced
     by textbook-like notation::
@@ -464,7 +463,7 @@ class ExpressionNice(Expression):
         sage: g = function('g')(x, f)  # the second variable is the function f
         sage: fun = (g.diff(x))*x - x^2*f.diff(x,y)
         sage: fun
-        -x^2*D[0, 1](f)(x, y) + (D[0](f)(x, y)*D[1](g)(x, f(x, y)) + D[0](g)(x, f(x, y)))*x
+        -x^2*diff(f(x, y), x, y) + (diff(f(x, y), x)*D[1](g)(x, f(x, y)) + D[0](g)(x, f(x, y)))*x
         sage: ExpressionNice(fun)
         -x^2*d^2(f)/dxdy + (d(f)/dx*d(g)/d(f(x, y)) + d(g)/dx)*x
         sage: latex(ExpressionNice(fun))
@@ -479,7 +478,7 @@ class ExpressionNice(Expression):
 
         sage: fun = f.diff(x,x,y,y,x)*x
         sage: fun
-        x*D[0, 0, 0, 1, 1](f)(x, y)
+        x*diff(f(x, y), x, x, x, y, y)
         sage: ExpressionNice(fun)
         x*d^5(f)/dx^3dy^2
         sage: latex(ExpressionNice(fun))
@@ -490,7 +489,7 @@ class ExpressionNice(Expression):
 
         sage: fun = f.diff(y)^2
         sage: fun
-        D[1](f)(x, y)^2
+        diff(f(x, y), y)^2
         sage: ExpressionNice(fun)
         (d(f)/dy)^2
         sage: latex(ExpressionNice(fun))
@@ -523,7 +522,7 @@ class ExpressionNice(Expression):
             sage: f = function('f')(x)
             sage: df = f.diff(x)
             sage: df
-            D[0](f)(x)
+            diff(f(x), x)
             sage: from sage.manifolds.utilities import ExpressionNice
             sage: df_nice = ExpressionNice(df)
             sage: df_nice
@@ -548,7 +547,7 @@ class ExpressionNice(Expression):
             sage: k = h.diff(z)
             sage: fun = x*g + y*(k-z)^2
             sage: fun
-            y*(z - D[1](h)(y, z))^2 + x*D[0, 1](f)(x, y)
+            y*(z - diff(h(y, z), z))^2 + x*diff(f(x, y), x, y)
             sage: from sage.manifolds.utilities import ExpressionNice
             sage: ExpressionNice(fun)
             y*(z - d(h)/dz)^2 + x*d^2(f)/dxdy
@@ -625,7 +624,7 @@ class ExpressionNice(Expression):
             sage: k = h.diff(z)
             sage: fun = x*g + y*(k-z)^2
             sage: fun
-            y*(z - D[1](h)(y, z))^2 + x*D[0, 1](f)(x, y)
+            y*(z - diff(h(y, z), z))^2 + x*diff(f(x, y), x, y)
             sage: from sage.manifolds.utilities import ExpressionNice
             sage: ExpressionNice(fun)
             y*(z - d(h)/dz)^2 + x*d^2(f)/dxdy
@@ -743,7 +742,7 @@ def _list_derivatives(ex, list_d, exponent=0):
         sage: list_d = []
         sage: _list_derivatives(df, list_d)
         sage: list_d
-        [(D[0](f_x)(x), 'f_x', {\cal F}, [0], [x], 2)]
+        [(diff(f_x(x), x), 'f_x', {\cal F}, [0], [x], 2)]
 
     """
     op = ex.operator()
@@ -891,3 +890,64 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     graph += text3d('  ' + zlabel, (xmin1, ymin1, z1), **kwds)
     return graph
 
+def exterior_derivative(form):
+    r"""
+    Exterior derivative of a differential form.
+
+    INPUT:
+
+    - ``form`` -- a differential form; this must an instance of either
+
+      * :class:`~sage.manifolds.differentiable.scalarfield.DiffScalarField`
+        for a 0-form (scalar field)
+      * :class:`~sage.manifolds.differentiable.diff_form.DiffFormParal` for
+        a `p`-form (`p\geq 1`) on a parallelizable manifold
+      * :class:`~sage.manifolds.differentiable.diff_form.DiffForm` for a
+        a `p`-form (`p\geq 1`) on a non-parallelizable manifold
+
+    OUTPUT:
+
+    - the `(p+1)`-form that is the exterior derivative of ``form``
+
+    EXAMPLES:
+
+    Exterior derivative of a scalar field (0-form)::
+
+        sage: from sage.manifolds.utilities import exterior_derivative
+        sage: M = Manifold(3, 'M')
+        sage: X.<x,y,z> = M.chart()
+        sage: f = M.scalar_field({X: x+y^2+z^3}, name='f')
+        sage: df = exterior_derivative(f); df
+        1-form df on the 3-dimensional differentiable manifold M
+        sage: df.display()
+        df = dx + 2*y dy + 3*z^2 dz
+
+    An alias is ``xder``::
+
+        sage: from sage.manifolds.utilities import xder
+        sage: df == xder(f)
+        True
+
+    Exterior derivative of a 1-form::
+
+        sage: a = M.one_form(name='a')
+        sage: a[:] = [x+y*z, x-y*z, x*y*z]
+        sage: da = xder(a); da
+        2-form da on the 3-dimensional differentiable manifold M
+        sage: da.display()
+        da = (-z + 1) dx/\dy + (y*z - y) dx/\dz + (x*z + y) dy/\dz
+        sage: dda = xder(da); dda
+        3-form dda on the 3-dimensional differentiable manifold M
+        sage: dda.display()
+        dda = 0
+
+    .. SEEALSO::
+
+        :class:`sage.manifolds.differentiable.diff_form.DiffFormParal.exterior_derivative`
+        or :class:`sage.manifolds.differentiable.diff_form.DiffForm.exterior_derivative`
+        for more examples.
+
+    """
+    return form.exterior_derivative()
+
+xder = exterior_derivative

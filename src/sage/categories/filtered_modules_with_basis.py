@@ -160,7 +160,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 sage: A.basis(4)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: infinite list
+                NotImplementedError: infinite set
 
             Without arguments, the full basis is returned::
 

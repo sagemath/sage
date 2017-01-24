@@ -6,6 +6,7 @@ AUTHORS:
 - Vincent Delacroix, Travis Scrimshaw (2014-11-23)
 """
 from __future__ import print_function
+from six.moves import range
 
 from sage.groups.conjugacy_classes import ConjugacyClass, ConjugacyClassGAP
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -348,5 +349,5 @@ def conjugacy_class_iterator(part, S=None):
         rests = [t[1:] for t in s]
         iterator = tuple(itertools.permutations(r) for r in rests)
         for r in itertools.product(*iterator):
-            yield [(firsts[i],)+r[i] for i in xrange(m)]
+            yield [(firsts[i],) + r[i] for i in range(m)]
 

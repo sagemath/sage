@@ -21,7 +21,7 @@ $(SAGE_LOCAL)/bin/help2man: $(SRC)/help2man-1.46.4 $(SAGE_LOCAL)/bin/makeinfo
 ########################################################################
 
 # Extract sources from git repository serially
-autoconf-2.13.rc1/.tarball-version: 
+autoconf-2.13.rc1/.tarball-version:
 	( cd $(SRC)/autoconf && git archive --format=tar --prefix=autoconf-2.13.rc1/ autoconf-2-13-rc1 ) | tar xf -
 	echo 2.13.rc1 >autoconf-2.13.rc1/.tarball-version
 
@@ -696,6 +696,7 @@ automake-all: $(SAGE_LOCAL)/automake-1.9 $(SAGE_LOCAL)/automake-1.9.1 $(SAGE_LOC
 libtool-1.5.20/.tarball-version: automake-1.14.1/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-1.5.20/ release-1-5-20 ) | tar xf -
 	echo 1.5.20 >libtool-1.5.20/.tarball-version
+	echo 1886 > libtool-1.5.20/.serial
 
 $(SAGE_LOCAL)/libtool-1.5.20: libtool-1.5.20/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.59 $(SAGE_LOCAL)/automake-1.9.6
 	export MAKE='$(MAKE) -j1' ; \
@@ -711,6 +712,7 @@ $(SAGE_LOCAL)/libtool-1.5.20: libtool-1.5.20/.tarball-version $(SAGE_LOCAL)/bin/
 libtool-1.5.22/.tarball-version: libtool-1.5.20/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-1.5.22/ release-1-5-22 ) | tar xf -
 	echo 1.5.22 >libtool-1.5.22/.tarball-version
+	echo 1965 > libtool-1.5.22/.serial
 
 $(SAGE_LOCAL)/libtool-1.5.22: libtool-1.5.22/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.59 $(SAGE_LOCAL)/automake-1.9.6
 	export MAKE='$(MAKE) -j1' ; \
@@ -726,6 +728,7 @@ $(SAGE_LOCAL)/libtool-1.5.22: libtool-1.5.22/.tarball-version $(SAGE_LOCAL)/bin/
 libtool-1.5.24/.tarball-version: libtool-1.5.22/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-1.5.24/ release-1-5-24 ) | tar xf -
 	echo 1.5.24 >libtool-1.5.24/.tarball-version
+	echo 2056 > libtool-1.5.24/.serial
 
 $(SAGE_LOCAL)/libtool-1.5.24: libtool-1.5.24/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.59 $(SAGE_LOCAL)/automake-1.9.6
 	export MAKE='$(MAKE) -j1' ; \
@@ -741,6 +744,7 @@ $(SAGE_LOCAL)/libtool-1.5.24: libtool-1.5.24/.tarball-version $(SAGE_LOCAL)/bin/
 libtool-1.5.26/.tarball-version: libtool-1.5.24/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-1.5.26/ release-1-5-26 ) | tar xf -
 	echo 1.5.26 >libtool-1.5.26/.tarball-version
+	echo 2093 > libtool-1.5.26/.serial
 
 $(SAGE_LOCAL)/libtool-1.5.26: libtool-1.5.26/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.59 $(SAGE_LOCAL)/automake-1.9.6
 	export MAKE='$(MAKE) -j1' ; \
@@ -756,6 +760,7 @@ $(SAGE_LOCAL)/libtool-1.5.26: libtool-1.5.26/.tarball-version $(SAGE_LOCAL)/bin/
 libtool-2.2.4/.tarball-version: libtool-1.5.26/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.2.4/ v2.2.4 ) | tar xf -
 	echo 2.2.4 >libtool-2.2.4/.tarball-version
+	echo 3070 > libtool-2.2.4/.serial
 
 $(SAGE_LOCAL)/libtool-2.2.4: libtool-2.2.4/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.59 $(SAGE_LOCAL)/automake-1.9.6
 	export MAKE='$(MAKE) -j1' ; \
@@ -771,6 +776,7 @@ $(SAGE_LOCAL)/libtool-2.2.4: libtool-2.2.4/.tarball-version $(SAGE_LOCAL)/bin/m4
 libtool-2.2.6/.tarball-version: libtool-2.2.4/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.2.6/ v2.2.6 ) | tar xf -
 	echo 2.2.6 >libtool-2.2.6/.tarball-version
+	echo 3117 > libtool-2.2.6/.serial
 
 $(SAGE_LOCAL)/libtool-2.2.6: libtool-2.2.6/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.60 $(SAGE_LOCAL)/automake-1.10.1
 	export MAKE='$(MAKE) -j1' ; \
@@ -786,6 +792,7 @@ $(SAGE_LOCAL)/libtool-2.2.6: libtool-2.2.6/.tarball-version $(SAGE_LOCAL)/bin/m4
 libtool-2.2.6b/.tarball-version: libtool-2.2.6/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.2.6b/ v2.2.6b ) | tar xf -
 	echo 2.2.6b >libtool-2.2.6b/.tarball-version
+	echo 3123 > libtool-2.2.6b/.serial
 
 $(SAGE_LOCAL)/libtool-2.2.6b: libtool-2.2.6b/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/autoconf-2.60 $(SAGE_LOCAL)/automake-1.10.1
 	export MAKE='$(MAKE) -j1' ; \
@@ -801,6 +808,7 @@ $(SAGE_LOCAL)/libtool-2.2.6b: libtool-2.2.6b/.tarball-version $(SAGE_LOCAL)/bin/
 libtool-2.2.8/.tarball-version: libtool-2.2.6b/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.2.8/ v2.2.8 ) | tar xf -
 	echo 2.2.8 >libtool-2.2.8/.tarball-version
+	echo 3328 > libtool-2.2.8/.serial
 
 $(SAGE_LOCAL)/libtool-2.2.8: libtool-2.2.8/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/bin/help2man $(SAGE_LOCAL)/autoconf-2.62 $(SAGE_LOCAL)/automake-1.10.1
 	export MAKE='$(MAKE) -j1' ; \
@@ -816,6 +824,7 @@ $(SAGE_LOCAL)/libtool-2.2.8: libtool-2.2.8/.tarball-version $(SAGE_LOCAL)/bin/m4
 libtool-2.2.10/.tarball-version: libtool-2.2.8/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.2.10/ v2.2.10 ) | tar xf -
 	echo 2.2.10 >libtool-2.2.10/.tarball-version
+	echo 3349 > libtool-2.2.10/.serial
 
 $(SAGE_LOCAL)/libtool-2.2.10: libtool-2.2.10/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/bin/help2man $(SAGE_LOCAL)/autoconf-2.62 $(SAGE_LOCAL)/automake-1.10.1
 	export MAKE='$(MAKE) -j1' ; \
@@ -831,6 +840,7 @@ $(SAGE_LOCAL)/libtool-2.2.10: libtool-2.2.10/.tarball-version $(SAGE_LOCAL)/bin/
 libtool-2.4/.tarball-version: libtool-2.2.10/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.4/ v2.4 ) | tar xf -
 	echo 2.4 >libtool-2.4/.tarball-version
+	echo 3560 > libtool-2.4/.serial
 
 $(SAGE_LOCAL)/libtool-2.4: libtool-2.4/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/bin/help2man $(SAGE_LOCAL)/autoconf-2.62 $(SAGE_LOCAL)/automake-1.11.1
 	export MAKE='$(MAKE) -j1' ; \
@@ -846,6 +856,7 @@ $(SAGE_LOCAL)/libtool-2.4: libtool-2.4/.tarball-version $(SAGE_LOCAL)/bin/m4 $(S
 libtool-2.4.2/.tarball-version: libtool-2.4/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.4.2/ v2.4.2 ) | tar xf -
 	echo 2.4.2 >libtool-2.4.2/.tarball-version
+	echo 3620 > libtool-2.4.2/.serial
 
 $(SAGE_LOCAL)/libtool-2.4.2: libtool-2.4.2/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/bin/help2man $(SAGE_LOCAL)/autoconf-2.62 $(SAGE_LOCAL)/automake-1.11.1
 	export MAKE='$(MAKE) -j1' ; \
@@ -861,6 +872,7 @@ $(SAGE_LOCAL)/libtool-2.4.2: libtool-2.4.2/.tarball-version $(SAGE_LOCAL)/bin/m4
 libtool-2.4.3/.tarball-version: libtool-2.4.2/.tarball-version
 	( cd $(SRC)/libtool && git archive --format=tar --prefix=libtool-2.4.3/ v2.4.3 ) | tar xf -
 	echo 2.4.3 >libtool-2.4.3/.tarball-version
+	echo 4105 > libtool-2.4.3/.serial
 
 $(SAGE_LOCAL)/libtool-2.4.3: libtool-2.4.3/.tarball-version $(SAGE_LOCAL)/bin/m4 $(SAGE_LOCAL)/bin/makeinfo $(SAGE_LOCAL)/bin/help2man $(SAGE_LOCAL)/autoconf-2.62 $(SAGE_LOCAL)/automake-1.11.1
 	export MAKE='$(MAKE) -j1' ; \

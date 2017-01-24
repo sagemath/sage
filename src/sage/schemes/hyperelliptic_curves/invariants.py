@@ -57,7 +57,7 @@ def differential_operator(f, g, k):
 
     This is defined by Mestre on p 315 [M]_:
 
-    .. math::
+    .. MATH::
 
         (f g)_k = \frac{(m - k)! (n - k)!}{m! n!} \left(
         \frac{\partial f}{\partial x} \frac{\partial g}{\partial y} -
@@ -125,7 +125,7 @@ def Ueberschiebung(f, g, k):
 
     This is defined by Mestre on page 315 [M]_:
 
-    .. math::
+    .. MATH::
 
         (f g)_k = \frac{(m - k)! (n - k)!}{m! n!} \left(
         \frac{\partial f}{\partial x} \frac{\partial g}{\partial y} -

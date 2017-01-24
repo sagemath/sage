@@ -38,4 +38,4 @@ List patches that need to be applied and what they do
 
  * SPKG.txt added
  * adapted to new git workflow
- 
+

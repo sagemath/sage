@@ -274,8 +274,8 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sage: GD = DenseGraph(20)
         sage: GS = SparseGraph(20)
         sage: for i,j,_ in G.edge_iterator():
-        ...    GD.add_arc(i,j); GD.add_arc(j,i)
-        ...    GS.add_arc(i,j); GS.add_arc(j,i)
+        ....:  GD.add_arc(i,j); GD.add_arc(j,i)
+        ....:  GS.add_arc(i,j); GS.add_arc(j,i)
         sage: Pi=[range(20)]
         sage: a,b = st(G, Pi)
         sage: asp,bsp = st(GS, Pi)
@@ -745,16 +745,16 @@ def all_labeled_graphs(n):
         sage: Glist = {}
         sage: Giso  = {}
         sage: for n in [1..5]:  # long time (4s on sage.math, 2011)
-        ...    Glist[n] = all_labeled_graphs(n)
-        ...    Giso[n] = []
-        ...    for g in Glist[n]:
-        ...        a, b = st(g, [range(n)])
-        ...        inn = False
-        ...        for gi in Giso[n]:
-        ...            if b == gi:
-        ...                inn = True
-        ...        if not inn:
-        ...            Giso[n].append(b)
+        ....:  Glist[n] = all_labeled_graphs(n)
+        ....:  Giso[n] = []
+        ....:  for g in Glist[n]:
+        ....:      a, b = st(g, [range(n)])
+        ....:      inn = False
+        ....:      for gi in Giso[n]:
+        ....:          if b == gi:
+        ....:              inn = True
+        ....:      if not inn:
+        ....:          Giso[n].append(b)
         sage: for n in Giso:  # long time
         ....:    print("{} {}".format(n, len(Giso[n])))
         1 1
@@ -1548,7 +1548,7 @@ def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = F
     ::
 
         sage: for n in [0..7]:
-        ...     generate_dense_graphs_vert_addition(n)
+        ....:   generate_dense_graphs_vert_addition(n)
         1
         2
         4

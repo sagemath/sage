@@ -445,7 +445,7 @@ def call(func, *args, **kwargs):
         return y
     try:
         return parent(y)
-    except TypeError, error:
+    except TypeError as error:
         try:
             return parent.complex_field()(y)
         except AttributeError:

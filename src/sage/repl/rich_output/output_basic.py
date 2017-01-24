@@ -74,7 +74,7 @@ class OutputBase(SageObject):
         Construct a sample instance
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 
@@ -129,7 +129,7 @@ class OutputPlainText(OutputBase):
         Construct a sample plain text output container
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 
@@ -190,7 +190,7 @@ class OutputAsciiArt(OutputBase):
         Construct a sample ascii art output container
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 
@@ -262,7 +262,7 @@ class OutputUnicodeArt(OutputBase):
         Construct a sample unicode art output container
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 
@@ -404,7 +404,7 @@ class OutputLatex(OutputBase):
         Construct a sample LaTeX output container
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 

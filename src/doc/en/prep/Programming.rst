@@ -270,7 +270,7 @@ powers of the original matrix come in the same order as the list.
 Python.)
 
 For the curious: this is better, but still not perfect.  It would be
-best to find a quicker way to write the the possible values for
+best to find a quicker way to write the possible values for
 :math:`i`.  There are two ways to do this in Sage.
 
 ::

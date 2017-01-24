@@ -269,7 +269,7 @@ def to_graphics_array(graph_list, **kwds):
 
         sage: glist = []
         sage: for _ in range(10):
-        ...       glist.append(graphs.RandomLobster(41, .3, .4))
+        ....:     glist.append(graphs.RandomLobster(41, .3, .4))
         sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)
         Graphics Array of size 3 x 4
     """

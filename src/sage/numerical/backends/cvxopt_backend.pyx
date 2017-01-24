@@ -387,12 +387,12 @@ cdef class CVXOPTBackend(GenericBackend):
             sage: p = get_solver(solver = "CVXOPT")
             sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2.0, 2.0)
             sage: p.row(0)
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)
             (2.00000000000000, 2.00000000000000)
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 1.0, 1.0, name='foo')
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 1.0, 1.0, name='foo')
             sage: p.row_name(-1)
             'foo'
         """
@@ -724,7 +724,7 @@ cdef class CVXOPTBackend(GenericBackend):
             sage: p = get_solver(solver = "CVXOPT")
             sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
             sage: p.row(0)
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)
@@ -761,7 +761,7 @@ cdef class CVXOPTBackend(GenericBackend):
             sage: p = get_solver(solver = "CVXOPT")
             sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
             sage: p.row(0)
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)

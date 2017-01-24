@@ -8,7 +8,7 @@ various parts or sub-sequences. These kind of polynomial sequences
 which naturally split into parts arise naturally for example in
 algebraic cryptanalysis of symmetric cryptographic primitives. The
 most prominent examples of these systems are: the small scale variants
-of the AES [CMR05]_ (cf. :func:`sage.crypto.mq.sr.SR`) and Flurry/Curry [BPW06]_. By
+of the AES [CMR2005]_ (cf. :func:`sage.crypto.mq.sr.SR`) and Flurry/Curry [BPW06]_. By
 default, a polynomial sequence has exactly one part.
 
 AUTHORS:
@@ -150,14 +150,11 @@ TEST::
    in Topics in Cryptology -- CT RSA'06; LNCS 3860; pp. 313--331; Springer Verlag 2006;
    pre-print available at http://eprint.iacr.org/2005/200
 
-.. [CMR05] C. Cid, S. Murphy, M. Robshaw Small Scale Variants of the AES;
-   in Proceedings of Fast Software Encryption 2005; LNCS 3557;
-   Springer Verlag 2005; available at http://www.isg.rhul.ac.uk/~sean/smallAES-fse05.pdf
-
 Classes
 -------
 """
 from __future__ import print_function
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 
@@ -922,7 +919,7 @@ class PolynomialSequence_generic(Sequence_generic):
         g = self.connection_graph()
         C = sorted(g.connected_components())
 
-        P = [[] for _ in xrange(len(C))]
+        P = [[] for _ in range(len(C))]
         for f in self:
             for i,c in enumerate(C):
                 if len(set(f.variables()).difference(c)) == 0:

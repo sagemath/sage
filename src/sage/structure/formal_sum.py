@@ -264,7 +264,7 @@ class FormalSum(ModuleElement):
         """
         return self.__class__([(s*c, x) for (c, x) in self], check=False, parent=self.parent())
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -275,12 +275,14 @@ class FormalSum(ModuleElement):
             sage: bool(FormalSums(QQ)(1))
             True
         """
-        if len(self._data) == 0:
+        if not len(self._data):
             return False
         for c, _ in self._data:
             if not c.is_zero():
                 return True
         return False
+
+    __nonzero__ = __bool__
 
     def reduce(self):
         """

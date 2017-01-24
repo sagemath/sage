@@ -8,23 +8,8 @@ fi
 
 cd src/
 
-# Apply fixes to upstream source
-echo "Applying patches..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    echo "Using $patch"
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 # Use newer version of config.guess and config.sub (see Trac #19713)
 cp "$SAGE_ROOT"/config/config.* .
-
-# The following prevents autotools to regenerate its files.
-touch aclocal.m4 configure Makefile.in config.h.in
 
 # Note: The following doesn't work with spaces in `$SAGE_LOCAL`, but we don't
 #       support that anyway, since many upstream packages don't.

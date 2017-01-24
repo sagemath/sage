@@ -2,6 +2,7 @@
 r"""
 Databases and accessors of online databases for coding theory
 """
+from six.moves import range
 
 #Don't put any global imports here since this module is accessible as sage.codes.databases.<tab>
 
@@ -30,7 +31,7 @@ def best_linear_code_in_guava(n, k, F):
     EXAMPLES::
 
         sage: codes.databases.best_linear_code_in_guava(10,5,GF(2))    # long time; optional - gap_packages (Guava package)
-        Linear code of length 10, dimension 5 over Finite Field of size 2
+        [10, 5] linear code over GF(2)
         sage: gap.eval("C:=BestKnownLinearCode(10,5,GF(2))")           # long time; optional - gap_packages (Guava package)
         'a linear [10,5,4]2..4 shortened code'
 
@@ -40,6 +41,7 @@ def best_linear_code_in_guava(n, k, F):
     for further details.
     """
     from sage.interfaces.all import gap
+    gap.load_package("guava")
     q = F.order()
     C = gap("BestKnownLinearCode(%s,%s,GF(%s))"%(n,k,q))
     from .linear_code import LinearCode
@@ -106,6 +108,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBoundExplanation := ... )
     """
     from sage.interfaces.all import gap
+    gap.load_package("guava")
     q = F.order()
     gap.eval("data := BoundsMinimumDistance(%s,%s,GF(%s))"%(n,k,q))
     Ldata = gap.eval("Display(data)")
@@ -215,26 +218,26 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3):
         ....:    print(B)
-        Linear code of length 2, dimension 1 over Finite Field of size 2
-        Linear code of length 4, dimension 2 over Finite Field of size 2
-        Linear code of length 6, dimension 3 over Finite Field of size 2
-        Linear code of length 4, dimension 1 over Finite Field of size 2
-        Linear code of length 6, dimension 2 over Finite Field of size 2
-        Linear code of length 6, dimension 2 over Finite Field of size 2
-        Linear code of length 7, dimension 3 over Finite Field of size 2
-        Linear code of length 6, dimension 1 over Finite Field of size 2
+        [2, 1] linear code over GF(2)
+        [4, 2] linear code over GF(2)
+        [6, 3] linear code over GF(2)
+        [4, 1] linear code over GF(2)
+        [6, 2] linear code over GF(2)
+        [6, 2] linear code over GF(2)
+        [7, 3] linear code over GF(2)
+        [6, 1] linear code over GF(2)
 
     Generate all doubly-even codes of length up to 7 and dimension up
     to 3::
 
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3,4):
         ....:    print(B); print(B.generator_matrix())
-        Linear code of length 4, dimension 1 over Finite Field of size 2
+        [4, 1] linear code over GF(2)
         [1 1 1 1]
-        Linear code of length 6, dimension 2 over Finite Field of size 2
+        [6, 2] linear code over GF(2)
         [1 1 1 1 0 0]
         [0 1 0 1 1 1]
-        Linear code of length 7, dimension 3 over Finite Field of size 2
+        [7, 3] linear code over GF(2)
         [1 0 1 1 0 1 0]
         [0 1 0 1 1 1 0]
         [0 0 1 0 1 1 1]
@@ -244,9 +247,9 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,2,4):
         ....:    print(B); print(B.generator_matrix())
-        Linear code of length 4, dimension 1 over Finite Field of size 2
+        [4, 1] linear code over GF(2)
         [1 1 1 1]
-        Linear code of length 6, dimension 2 over Finite Field of size 2
+        [6, 2] linear code over GF(2)
         [1 1 1 1 0 0]
         [0 1 0 1 1 1]
 
@@ -255,12 +258,12 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
         sage: for B in codes.databases.self_orthogonal_binary_codes(8, 4, equal=True):
         ....:     print(B); print(B.generator_matrix())
-        Linear code of length 8, dimension 4 over Finite Field of size 2
+        [8, 4] linear code over GF(2)
         [1 0 0 1 0 0 0 0]
         [0 1 0 0 1 0 0 0]
         [0 0 1 0 0 1 0 0]
         [0 0 0 0 0 0 1 1]
-        Linear code of length 8, dimension 4 over Finite Field of size 2
+        [8, 4] linear code over GF(2)
         [1 0 0 1 1 0 1 0]
         [0 1 0 1 1 1 0 0]
         [0 0 1 0 1 1 1 0]
@@ -295,7 +298,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     if BC is None:
         BC = BinaryCodeClassifier()
     if parent is None:
-        for j in xrange(d, n+1, d):
+        for j in range(d, n+1, d):
             M = Matrix(FiniteField(2), [[1]*j])
             if in_test(M):
                 for N in self_orthogonal_binary_codes(n, k, d, M, BC, in_test=in_test):
@@ -305,7 +308,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
         if out_test(C): yield C
         if k == parent.nrows():
             return
-        for nn in xrange(parent.ncols()+1, n+1):
+        for nn in range(parent.ncols()+1, n+1):
             if in_test(parent):
                 for child in BC.generate_children(BinaryCode(parent), nn, d):
                     for N in self_orthogonal_binary_codes(n, k, d, child, BC, in_test=in_test):

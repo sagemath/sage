@@ -16,7 +16,7 @@ include "sage/ext/cdefs.pxi"
 
 from sage.ext.mod_int cimport *
 from sage.libs.mpfr cimport *
-from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
+from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 
 from sage.data_structures.binary_search cimport *
 from sage.modules.vector_integer_sparse cimport *

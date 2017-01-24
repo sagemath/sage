@@ -1,0 +1,170 @@
+commit bce6fb9c22e2150ccff95b68034f1a09fe06f59c
+Author: Jeroen Demeyer <jdemeyer@cage.ugent.be>
+Date:   Fri Sep 23 22:01:46 2016 +0200
+
+    Use PROT_NONE for unused virtual stack memory
+
+diff --git a/config/has_mmap.c b/config/has_mmap.c
+index 87d93cf..fa79053 100644
+--- a/config/has_mmap.c
++++ b/config/has_mmap.c
+@@ -3,15 +3,12 @@
+ #ifndef MAP_ANONYMOUS
+ #define MAP_ANONYMOUS MAP_ANON
+ #endif
+-#ifndef MAP_NORESERVE
+-#define MAP_NORESERVE 0
+-#endif
+ int main(void)
+ {
+   size_t size = sysconf(_SC_PAGE_SIZE)*1000;
+   void *b = mmap(NULL, size, PROT_READ|PROT_WRITE,
+-                             MAP_PRIVATE|MAP_ANONYMOUS|MAP_NORESERVE,-1,0);
+-  madvise(b, size, MADV_DONTNEED);
++                             MAP_PRIVATE|MAP_ANONYMOUS,-1,0);
++  mmap(b, size, PROT_NONE, MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS,-1,0);
+   munmap(b, size);
+   return 0;
+ }
+diff --git a/src/language/init.c b/src/language/init.c
+index 439e279..be87a79 100644
+--- a/src/language/init.c
++++ b/src/language/init.c
+@@ -624,14 +624,11 @@ pari_add_defaults_module(entree *ep)
+ #ifndef MAP_ANONYMOUS
+ #define MAP_ANONYMOUS MAP_ANON
+ #endif
+-#ifndef MAP_NORESERVE
+-#define MAP_NORESERVE 0
+-#endif
+ static void *
+ pari_mainstack_malloc(size_t size)
+ {
+   void *b = mmap(NULL, size, PROT_READ|PROT_WRITE,
+-                             MAP_PRIVATE|MAP_ANONYMOUS|MAP_NORESERVE,-1,0);
++                             MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+   return (b == MAP_FAILED) ? NULL: b;
+ }
+ 
+@@ -641,10 +638,39 @@ pari_mainstack_mfree(void *s, size_t size)
+   munmap(s, size);
+ }
+ 
+-static void
+-pari_mainstack_mreset(void *s, size_t size)
++/* Set actual stack size to the given size. This sets st->size and
++ * st->bot. If not enough system memory is available, this can fail.
++ * Return 1 if successful, 0 if failed (in that case, st->size is not
++ * changed) */
++static int
++pari_mainstack_setsize(struct pari_mainstack *st, size_t size)
+ {
+-  madvise(s, size, MADV_DONTNEED);
++  pari_sp newbot = st->top - size;
++  /* Align newbot to pagesize */
++  pari_sp alignbot = newbot & ~(pari_sp)(PARI_STACK_ALIGN - 1);
++  /* Commit (make available) the virtual memory on the stack. */
++  if (mprotect((void*)alignbot, st->top - alignbot, PROT_READ|PROT_WRITE))
++  {
++    /* Making the memory available did not work: limit vsize to the
++     * current actual stack size. */
++    st->vsize = st->size;
++    pari_warn(warnstack, st->vsize);
++    return 0;
++  }
++  /* Overwrite the existing mapping (MAP_FIXED) to discard it completely.
++   * Using PROT_NONE means that the memory is completely freed and that
++   * the kernel should not commit memory for it.
++   *
++   * NOTE: remapping with MAP_FIXED and PROT_NONE is not the same as
++   * calling mprotect(..., PROT_NONE) because the latter will keep the
++   * memory committed (this is in particular relevant on Linux with
++   * vm.overcommit = 2). This remains true even when calling
++   * madvise(..., MADV_DONTNEED). */
++  mmap((void*)st->vbot, alignbot - st->vbot, PROT_NONE,
++       MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
++  st->bot = newbot;
++  st->size = size;
++  return 1;
+ }
+ 
+ #else
+@@ -658,8 +684,13 @@ pari_mainstack_malloc(size_t s)
+ static void
+ pari_mainstack_mfree(void *s, size_t size) { (void) size; free(s); }
+ 
+-static void
+-pari_mainstack_mreset(void *s, size_t size) { (void) s; (void) size; }
++static int
++pari_mainstack_setsize(struct pari_mainstack *st, size_t size)
++{
++  st->bot = st->top - size;
++  st->size = size;
++  return 1;
++}
+ 
+ #endif
+ 
+@@ -688,9 +719,12 @@ pari_mainstack_alloc(struct pari_mainstack *st, size_t rsize, size_t vsize)
+   }
+   st->vsize = vsize ? s: 0;
+   st->rsize = minuu(rsize, s);
+-  st->size = st->rsize;
+   st->top = st->vbot+s;
+-  st->bot = st->top - st->size;
++  if (!pari_mainstack_setsize(st, st->rsize))
++  {
++    /* This should never happen since we only decrease the allocated space */
++    pari_err(e_MEM);
++  }
+   st->memused = 0;
+ }
+ 
+@@ -699,7 +733,7 @@ pari_mainstack_free(struct pari_mainstack *st)
+ {
+   pari_mainstack_mfree((void*)st->vbot, st->vsize ? st->vsize : fix_size(st->rsize));
+   st->top = st->bot = st->vbot = 0;
+-  st->size = st->vsize =0;
++  st->size = st->vsize = 0;
+ }
+ 
+ static void
+@@ -768,27 +802,28 @@ paristack_resize(ulong newsize)
+   if (!newsize)
+     newsize = pari_mainstack->size << 1;
+   newsize = maxuu(minuu(newsize, vsize), pari_mainstack->size);
+-  pari_mainstack->size = newsize;
+-  pari_mainstack->bot = pari_mainstack->top - pari_mainstack->size;
+-  pari_warn(warner,"increasing stack size to %lu",newsize);
++  if (pari_mainstack_setsize(pari_mainstack, newsize))
++  {
++    pari_warn(warner, "increasing stack size to %lu", pari_mainstack->size);
++  }
+ }
+ 
+ void
+ parivstack_reset(void)
+ {
+-  pari_mainstack->size = pari_mainstack->rsize;
+-  pari_mainstack->bot = pari_mainstack->top - pari_mainstack->size;
+-  pari_mainstack_mreset((void *)pari_mainstack->vbot,
+-                        pari_mainstack->bot-pari_mainstack->vbot);
++  pari_mainstack_setsize(pari_mainstack, pari_mainstack->rsize);
+ }
+ 
+ void
+ new_chunk_resize(size_t x)
+ {
+-  if (pari_mainstack->vsize==0
+-    || x > (avma-pari_mainstack->vbot) / sizeof(long)) pari_err(e_STACK);
+-  while (x > (avma-pari_mainstack->bot) / sizeof(long))
++  pari_sp bot;
++  while (bot = pari_mainstack->bot, x > (avma - bot) / sizeof(long))
++  {
+     paristack_resize(0);
++    /* We did not manage to increase memory => error */
++    if (pari_mainstack->bot == bot) pari_err(e_STACK);
++  }
+ }
+ 
+ /*********************************************************************/

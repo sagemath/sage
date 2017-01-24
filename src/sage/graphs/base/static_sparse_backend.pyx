@@ -400,7 +400,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: G = graphs.OddGraph(4)
             sage: d = G.diameter()
-            sage: H = G.distance_graph(range(d+1))
+            sage: H = G.distance_graph(list(range(d+1)))
             sage: HI = Graph(H,data_structure="static_sparse")
             sage: HI.size() == len(HI.edges())
             True

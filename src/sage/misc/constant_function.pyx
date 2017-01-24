@@ -7,8 +7,9 @@ Constant functions
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from sage.structure.sage_object cimport SageObject, richcmp
 
-from sage.structure.sage_object cimport SageObject
+
 cdef class ConstantFunction(SageObject):
     """
     A class for function objects implementing constant functions.
@@ -102,7 +103,7 @@ cdef class ConstantFunction(SageObject):
         """
         return self._value
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -115,7 +116,7 @@ cdef class ConstantFunction(SageObject):
             sage: ConstantFunction(True) == ConstantFunction(1)  # argl!
             True
         """
-        cdef int c = cmp(self.__class__, other.__class__)
-        if c:
-            return c
-        return cmp(self._value, (<ConstantFunction>other)._value)
+        if not isinstance(other, ConstantFunction):
+            return NotImplemented
+        return richcmp((<ConstantFunction>self)._value,
+                       (<ConstantFunction>other)._value, op)

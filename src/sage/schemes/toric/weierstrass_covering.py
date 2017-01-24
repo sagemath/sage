@@ -18,7 +18,7 @@ the weighted projective space `\mathbb{P}^2[2,3,1]` with homogeneous
 coordinates `[X:Y:Z] = [\lambda^2 X, \lambda^3 Y, \lambda Z]`. The
 homogenized Weierstrass equation is
 
-.. math::
+.. MATH::
 
     Y^2 = X^3 + f X Z^4 + g Z^6
 
@@ -150,7 +150,7 @@ def WeierstrassMap(polynomial, variables=None):
     toric hypersurface to its Weierstrass form in
     `\mathbb{P}^2[2,3,1]`. That is, the triple satisfies
 
-    .. math::
+    .. MATH::
 
         Y^2 = X^3 + f X Z^4 + g Z^6
 
@@ -288,7 +288,7 @@ def WeierstrassMap_P2(polynomial, variables=None):
     Input/output is the same as :func:`WeierstrassMap`, except that
     the input polynomial must be a cubic in `\mathbb{P}^2`,
 
-    .. math::
+    .. MATH::
 
         \begin{split}
           p(x,y) =&\;
@@ -401,7 +401,7 @@ def WeierstrassMap_P2_112(polynomial, variables=None):
     the input polynomial must be a standard anticanonical hypersurface
     in weighted projective space `\mathbb{P}^2[1,1,2]`:
 
-    .. math::
+    .. MATH::
 
         \begin{split}
           p(x,y) =&\;

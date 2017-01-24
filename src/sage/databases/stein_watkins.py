@@ -19,7 +19,7 @@ time, using the command
 This database covers a wide range of conductors, but unlike the
 :mod:`Cremona database <sage.databases.cremona>`, this database need not list
 all curves of a given conductor. It lists the curves whose coefficients are not
-"too large" (see [SteinWatkins]_).
+"too large" (see [SW2002]_).
 
 
 -  The command ``SteinWatkinsAllData(n)`` returns an iterator over the curves
@@ -115,11 +115,7 @@ prime conductor::
 
 REFERENCE:
 
-.. [SteinWatkins] William Stein and Mark Watkins, *A database of elliptic
-   curves---first report*. In *Algorithmic number theory (ANTS V), Sydney,
-   2002*, Lecture Notes in Computer Science 2369, Springer, 2002, p267--275.
-   http://modular.math.washington.edu/papers/stein-watkins/
-
+- [SW2002]_
 """
 
 #*****************************************************************************
@@ -138,6 +134,7 @@ REFERENCE:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 import bz2
 import os
@@ -241,8 +238,10 @@ class SteinWatkinsAllData:
                 C.curves.append([eval(w[0]), w[1], w[2], w[3]])
         yield C
 
-    def next(self):
+    def __next__(self):
         return next(self._iter)
+
+    next = __next__
 
     def __getitem__(self, N):
         """
@@ -351,7 +350,7 @@ def ecdb_num_curves(max_level=200000):
     i = 0
     N = 1
     d = SteinWatkinsAllData(i)
-    v = [int(0) for _ in xrange(max_level+1)]
+    v = [int(0) for _ in range(max_level + 1)]
     while True:
         try:
             C = next(d)

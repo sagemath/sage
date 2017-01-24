@@ -8,14 +8,12 @@ die () {
 [ -n "$SAGE_LOCAL" ] || die 'Error: $SAGE_LOCAL not set. Source sage-env or run this script from `sage -sh`.'
 
 cd src
-patch -p1 < ../patches/no_static_stuff.patch || die "Error: Couldn't apply patch."
 
-export CXXFLAGS="-I$SAGE_LOCAL/include $CXXFLAGS $LDFLAGS"
-cd source
-$MAKE || die "Error building Normaliz."
+# Disable features that require packages SCIP and CoCoA, for which we don't have packages (yet).
+./configure --disable-scip --disable-nmzintegrate --prefix=$SAGE_LOCAL || die "Error configuring normaliz"
+$MAKE || die "Error building normaliz"
+$MAKE install || die "Error installing normaliz"
 
-cp -pf normaliz "$SAGE_LOCAL/bin/" || die "Error installing Normaliz."
-
-cd ../Singular
+cd Singular || die "Normaliz distribution has no Singular subdirectory"
 cp -pf normaliz.lib "$SAGE_LOCAL/share/singular/" || die "Error installing normaliz.lib for Singular."
 

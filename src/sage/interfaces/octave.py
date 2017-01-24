@@ -568,7 +568,7 @@ class Octave(Expect):
         same graph (the `t`-axis is the horizontal axis) of the
         system of ODEs
 
-        .. math::
+        .. MATH::
 
                        x' = x+y, x(0) = 1;\qquad y' = x-y, y(0) = -1,                     \quad\text{for}\quad 0 < t < 2.
         """
@@ -635,7 +635,7 @@ class OctaveElement(ExpectElement):
         else:
             raise TypeError("no Sage ring associated to this element.")
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Test whether this element is nonzero.
 
@@ -658,6 +658,8 @@ class OctaveElement(ExpectElement):
             True
         """
         return str(self) != ' [](0x0)' and any(x != '0' for x in str(self).split())
+
+    __nonzero__ = __bool__
 
     def _matrix_(self, R=None):
         r"""

@@ -1,5 +1,5 @@
---- a/lisp/fricas-lisp.lisp
-+++ b/lisp/fricas-lisp.lisp
+--- a/src/lisp/fricas-lisp.lisp
++++ b/src/lisp/fricas-lisp.lisp
 @@ -556,10 +556,10 @@ with this hack and will try to convince the GCL crowd to fix this.
                      (dolist (el strs)
                          (setf wrapper `(FFI:WITH-CSTRING ,el ,wrapper)))

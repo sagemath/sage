@@ -329,6 +329,7 @@ AUTHORS:
 
 """
 from __future__ import print_function
+from six.moves import range
 
 import operator
 
@@ -742,7 +743,7 @@ def solve(f, *args, **kwds):
         TypeError:  The first argument must be a symbolic expression or a list of symbolic expressions.
 
     Test if the empty list is returned, too, when (a list of)
-    dictionaries (is) are requested (#8553)::
+    dictionaries (is) are requested (:trac:`8553`)::
 
         sage: solve([SR(0)==1],x)
         []
@@ -755,7 +756,7 @@ def solve(f, *args, **kwds):
         sage: solve((x==1,x==-1),x,solution_dict=0)
         []
 
-    Relaxed form, suggested by Mike Hansen (#8553)::
+    Relaxed form, suggested by Mike Hansen (:trac:`8553`)::
 
         sage: solve([x^2-1],x,solution_dict=-1)
         [{x: -1}, {x: 1}]
@@ -1088,7 +1089,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
 
     TESTS:
 
-    Confirm we can reproduce the first few terms of OEIS A187719::
+    Confirm we can reproduce the first few terms of :oeis:`A187719`::
 
         sage: from sage.symbolic.relation import _solve_mod_prime_power
         sage: [sorted(_solve_mod_prime_power([x^2==41], 10, i, [x]))[0][0] for i in [1..13]]
@@ -1102,15 +1103,15 @@ def _solve_mod_prime_power(eqns, p, m, vars):
 
     mrunning = 1
     ans = []
-    for mi in xrange(m):
+    for mi in range(m):
         mrunning *= p
         R = Integers(mrunning)
         S = PolynomialRing(R, len(vars), vars)
         eqns_mod = [S(eq) for eq in eqns]
         if mi == 0:
-            possibles = cartesian_product_iterator([xrange(len(R)) for _ in xrange(len(vars))])
+            possibles = cartesian_product_iterator([range(len(R)) for _ in range(len(vars))])
         else:
-            shifts = cartesian_product_iterator([xrange(p) for _ in xrange(len(vars))])
+            shifts = cartesian_product_iterator([range(p) for _ in range(len(vars))])
             pairs = cartesian_product_iterator([shifts, ans])
             possibles = (tuple(vector(t)+vector(shift)*(mrunning//p)) for shift, t in pairs)
         ans = list(t for t in possibles if all(e(*t) == 0 for e in eqns_mod))
@@ -1166,7 +1167,7 @@ def solve_ineq_univar(ineq):
 
 def solve_ineq_fourier(ineq,vars=None):
     """
-    Solves sytem of inequalities using Maxima and fourier elimination
+    Solves system of inequalities using Maxima and Fourier elimination
 
     Can be used for system of linear inequalities and for some types
     of nonlinear inequalities. For examples see the section EXAMPLES
@@ -1177,7 +1178,7 @@ def solve_ineq_fourier(ineq,vars=None):
 
     - ``ineq`` - list with system of inequalities
 
-    - ``vars`` - optionally list with variables for fourier elimination.
+    - ``vars`` - optionally list with variables for Fourier elimination.
 
     OUTPUT:
 
@@ -1242,7 +1243,7 @@ def solve_ineq(ineq, vars=None):
     Solves inequalities and systems of inequalities using Maxima.
     Switches between rational inequalities
     (sage.symbolic.relation.solve_ineq_rational)
-    and fourier elimination (sage.symbolic.relation.solve_ineq_fouried).
+    and Fourier elimination (sage.symbolic.relation.solve_ineq_fouried).
     See the documentation of these functions for more details.
 
     INPUT:
@@ -1262,7 +1263,7 @@ def solve_ineq(ineq, vars=None):
       for a big gallery of problems covered by this algorithm.
 
     - ``vars`` - optional parameter with list of variables. This list
-      is used only if fourier elimination is used. If omitted or if
+      is used only if Fourier elimination is used. If omitted or if
       rational inequality is solved, then variables are determined
       automatically.
 

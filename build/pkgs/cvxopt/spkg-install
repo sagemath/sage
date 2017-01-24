@@ -8,15 +8,6 @@ fi
 
 cd src
 
-# Apply patches.
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 # Normally for a 64-bit build the -m64 option is added to
 # gcc, but other compilers will not accept that, so
 # allow it to be configured as something different if need

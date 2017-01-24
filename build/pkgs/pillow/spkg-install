@@ -8,16 +8,6 @@ fi
 
 cd src
 
-# PATCH
-for patch in ../patches/*.patch; do
-    [ -f "$patch" ] || continue
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error: Patch \"$patch\" failed to apply."
-        exit 1
-    fi
-done
-
 # Delete old version
 site_packages="$SAGE_LOCAL/lib/python/site-packages"
 rm -rf "$site_packages"/PIL "$site_packages"/PIL-*.egg* "$site_packages"/Pillow-*.egg*

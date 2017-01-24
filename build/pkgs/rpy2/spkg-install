@@ -10,12 +10,6 @@ set -e
 
 cd src
 
-# Apply patches.
-# See SPKG.txt for information about what each patch does.
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-done
-
 export RHOMES="$SAGE_LOCAL"/lib/R
 
 $PIP_INSTALL .

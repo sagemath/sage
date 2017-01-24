@@ -1,3 +1,5 @@
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2015 Michele Borassi michele.borassi@imtlucca.it
 #

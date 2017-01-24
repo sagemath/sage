@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 r"""
 `p`-adic `L`-series attached to overconvergent eigensymbols
-""" ## mm TODO
+
+An overconvergent eigensymbol gives rise to a `p`-adic `L`-series,
+which is essentially defined as the evaluation of the eigensymbol at the
+path `0 \rightarrow \infty`. The resulting distribution on `\ZZ_p` can be restricted
+to `\ZZ_p^\times`, thus giving the measure attached to the sought `p`-adic `L`-series.
+All this is carefully explained in [PS]_.
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
@@ -31,7 +38,7 @@ class pAdicLseries(SageObject):
     INPUT:
 
     - ``symb`` -- an overconvergent eigensymbol
-    - ``gamma`` -- topological generator of `1 + pZ_p` (default: `1+p` or 5 if `p=2`)
+    - ``gamma`` -- topological generator of `1 + p\ZZ_p` (default: `1+p` or 5 if `p=2`)
     - ``quadratic_twist`` -- conductor of quadratic twist `\chi` (default: 1)
     - ``precision`` -- if None (default) is specified, the correct precision bound is
       computed and the answer is returned modulo that accuracy
@@ -44,7 +51,7 @@ class pAdicLseries(SageObject):
         sage: L = E.padic_lseries(p, implementation="pollackstevens", precision=prec) # long time
         sage: L[1]                # long time
         1 + 4*5 + 2*5^2 + O(5^3)
-        sage: L.series(prec,3)    # long time
+        sage: L.series(3)    # long time
         O(5^4) + (1 + 4*5 + 2*5^2 + O(5^3))*T + (3 + O(5^2))*T^2 + O(T^3)
 
     ::
@@ -54,7 +61,7 @@ class pAdicLseries(SageObject):
         sage: phi = E.pollack_stevens_modular_symbol()
         sage: Phi = phi.p_stabilize_and_lift(3, 4) # long time
         sage: L = pAdicLseries(Phi)                # long time
-        sage: L.series(prec, 4)                    # long time
+        sage: L.series(4)                          # long time
         2*3 + O(3^4) + (3 + O(3^2))*T + (2 + O(3))*T^2 + O(3^0)*T^3 + O(T^4)
 
     An example of a `p`-adic `L`-series associated to a modular
@@ -91,7 +98,7 @@ class pAdicLseries(SageObject):
             sage: prec = 3
             sage: Phi = phi.lift(p, prec,eigensymbol=True) # long time
             sage: L = pAdicLseries(Phi)                    # long time
-            sage: L.series(3, prec=3)                      # long time
+            sage: L.series(3)                              # long time
             O(11^3) + (2 + 5*11 + O(11^2))*T + (10 + O(11))*T^2 + O(T^3)
 
             sage: TestSuite(L).run()                       # long time
@@ -239,15 +246,13 @@ class pAdicLseries(SageObject):
         """
         return "%s-adic L-series of %s" % (self.prime(), self.symbol())
 
-    def series(self, n, prec=5):
+    def series(self, prec=5):
         r"""
-        Return the `n`-th approximation to the `p`-adic `L`-series
+        Return the ``prec``-th approximation to the `p`-adic `L`-series
         associated to self, as a power series in `T` (corresponding to
         `\gamma-1` with `\gamma` the chosen generator of `1+p\ZZ_p`).
 
         INPUT:
-
-        - ``n`` -- ## mm TODO
 
         - ``prec`` -- (default 5) is the precision of the power series
 
@@ -257,17 +262,17 @@ class pAdicLseries(SageObject):
             sage: p = 3
             sage: prec = 6
             sage: L = E.padic_lseries(p,implementation="pollackstevens",precision=prec) # long time
-            sage: L.series(prec, 4)          # long time
+            sage: L.series(4)          # long time
             2*3 + 3^4 + 3^5 + O(3^6) + (2*3 + 3^2 + O(3^4))*T + (2*3 + O(3^2))*T^2 + (3 + O(3^2))*T^3 + O(T^4)
 
             sage: E = EllipticCurve("15a3")
             sage: L = E.padic_lseries(5,implementation="pollackstevens",precision=15)  # long time
-            sage: L.series(10, 3)            # long time
+            sage: L.series(3)            # long time
             O(5^15) + (2 + 4*5^2 + 3*5^3 + 5^5 + 2*5^6 + 3*5^7 + 3*5^8 + 2*5^9 + 2*5^10 + 3*5^11 + 5^12 + O(5^13))*T + (4*5 + 4*5^3 + 3*5^4 + 4*5^5 + 3*5^6 + 2*5^7 + 5^8 + 4*5^9 + 3*5^10 + O(5^11))*T^2 + O(T^3)
 
             sage: E = EllipticCurve("79a1")
             sage: L = E.padic_lseries(2,implementation="pollackstevens",precision=10) # not tested
-            sage: L.series(10, 4)  # not tested
+            sage: L.series(4)  # not tested
             O(2^9) + (2^3 + O(2^4))*T + O(2^0)*T^2 + (O(2^-3))*T^3 + O(T^4)
         """
         p = self.prime()
@@ -275,22 +280,23 @@ class pAdicLseries(SageObject):
         K = pAdicField(p, M)
         R = PowerSeriesRing(K, names='T')
         T = R.gens()[0]
-        R.set_default_prec(n)
-        return (sum(self[i] * T ** i for i in range(prec))).add_bigoh(prec)
+        return R([self[i] for i in range(prec)]).add_bigoh(prec)
 
     def interpolation_factor(self, ap, chip=1, psi=None):
         r"""
         Return the interpolation factor associated to self.
         This is the `p`-adic multiplier that which appears in
-        the interpolation formula of the `p`-adic `L`-function.
+        the interpolation formula of the `p`-adic `L`-function. It
+        has the form `(1-\alpha_p^{-1})^2`, where `\alpha_p` is the
+        unit root of `X^2 - \psi(a_p) \chi(p) X + p`.
 
         INPUT:
 
-        - ``ap`` -- ## mm TODO
+        - ``ap`` -- the eigenvalue of the Up operator
 
-        - ``chip`` --
+        - ``chip`` -- the value of the nebentype at p (default: 1)
 
-        - ``psi`` --
+        - ``psi`` -- a twisting character (default: None)
 
         OUTPUT: a `p`-adic number
 

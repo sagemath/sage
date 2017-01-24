@@ -20,6 +20,8 @@ from __future__ import division, print_function
 include "algebra_elements.pxi"
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import repr_lincomb
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
+
 
 cdef class PathAlgebraElement(RingElement):
     """
@@ -960,7 +962,7 @@ cdef class PathAlgebraElement(RingElement):
             self._hash = hash(frozenset(self.monomial_coefficients().items()))
         return self._hash
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         Helper for comparison of path algebra elements.
 
@@ -996,22 +998,28 @@ cdef class PathAlgebraElement(RingElement):
         cdef path_homog_poly_t *H2 = other.data
         cdef int c
         while H1 != NULL and H2 != NULL:
-            c = cmp(H1.start, H2.start)
-            if c != 0:
-                return c
-            c = cmp(H1.end, H2.end)
-            if c != 0:
-                return c
-            c = poly_cmp(H1.poly, H2.poly, self.cmp_terms)
-            if c != 0:
-                return c
+            v1 = H1.start
+            v2 = H2.start
+            if v1 != v2:
+                return richcmp_not_equal(v1, v2, op)
+
+            v1 = H1.end
+            v2 = H2.end
+            if v1 != v2:
+                return richcmp_not_equal(v1, v2, op)
+
+            w1 = H1.poly
+            w2 = H2.poly
+            if w1 != w2:
+                return poly_richcmp(H1.poly, H2.poly, self.cmp_terms, op)
+
             H1 = H1.nxt
             H2 = H2.nxt
         if H1 == NULL:
             if H2 == NULL:
-                return 0
-            return -1
-        return 1
+                return rich_to_bool(op, 0)
+            return rich_to_bool(op, -1)
+        return rich_to_bool(op, 1)
 
     # negation
     cpdef _neg_(self):

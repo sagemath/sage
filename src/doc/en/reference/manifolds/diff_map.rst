@@ -1,5 +1,5 @@
-Differentiable Maps
-===================
+Differentiable Maps and Curves
+==============================
 
 .. toctree::
    :maxdepth: 2
@@ -7,3 +7,5 @@ Differentiable Maps
    sage/manifolds/differentiable/manifold_homset
 
    sage/manifolds/differentiable/diff_map
+
+   sage/manifolds/differentiable/curve

@@ -75,9 +75,10 @@ usage_advanced() {
     ####  |.....................--.|...................................................|
     echo "Running the notebook:"
     echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
-    echo "                         'default', 'sagenb', and 'jupyter'). See the output"
-    echo "                         of sage --notebook --help for more details and"
-    echo "                         examples of how to pass optional arguments"
+    echo "                         'default', 'sagenb', 'jupyter' and 'export')."
+    echo "                         See the output of sage --notebook --help"
+    echo "                         for more details and examples of how to pass"
+    echo "                         optional arguments"
     echo "  -bn, -build-and-notebook [...] -- build the Sage library then start"
     echo "                         the Sage notebook"
     echo "  -inotebook [...]    -- start the *insecure* Sage notebook (deprecated)"
@@ -134,6 +135,12 @@ usage_advanced() {
     echo "                                 if they are already installed"
     echo "                           -s -- do not delete the temporary build directories"
     echo "                                 after a successful build"
+    echo "                           -y -- reply yes to prompts about experimental"
+    echo "                                 and old-style packages; warning: there"
+    echo "                                 is no guarantee that these packages will"
+    echo "                                 build correctly; use at your own risk"
+    echo "                           -n -- reply no to prompts about experimental"
+    echo "                                 and old-style packages"
     echo "  -p [opts] [packages]-- install the given Sage packages, without dependency"
     echo "                         checking and with support for old-style spkgs."
     echo "                         Options are -c, -d and -s with the same meaning as"
@@ -425,15 +432,15 @@ fi
 #####################################################################
 
 if [ "$1" = '-dumpversion' -o "$1" = '--dumpversion' ]; then
-	. "$SAGE_LOCAL"/bin/sage-version.sh
-	echo ${SAGE_VERSION}
-	exit 0
+        . "$SAGE_LOCAL"/bin/sage-version.sh
+        echo ${SAGE_VERSION}
+        exit 0
 fi
 
 if [ "$1" = '-v' -o "$1" = '-version' -o "$1" = '--version' ]; then
-	. "$SAGE_LOCAL"/bin/sage-version.sh
-	echo "SageMath version ${SAGE_VERSION}, Release Date: ${SAGE_RELEASE_DATE}"
-	exit 0
+        . "$SAGE_LOCAL"/bin/sage-version.sh
+        echo "SageMath version ${SAGE_VERSION}, Release Date: ${SAGE_RELEASE_DATE}"
+        exit 0
 fi
 
 if [ "$1" = '-root'  -o "$1" = '--root' ]; then
@@ -472,7 +479,7 @@ fi
 
 if [ "$1" = '-singular' -o "$1" = '--singular' ]; then
     shift
-    exec singular "$@"
+    exec Singular "$@"
 fi
 
 if [ "$1" = '-sqlite3' -o "$1" = '--sqlite3' ]; then
@@ -532,7 +539,7 @@ fi
 
 if [ "$1" = '-pip' -o "$1" = '--pip' ]; then
     shift
-    exec pip "$@"
+    exec pip-lock "$@"
 fi
 
 if [ "$1" = '-fix-pkg-checksums' -o "$1" = '--fix-pkg-checksums' ]; then
@@ -939,7 +946,9 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
         gdb -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
             -args python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
     else
-        cygdb "$SAGE_SRC/build" "$SAGE_SRC/sage" \
+        # Location of cython_debug directory
+        cygdb_dir="$SAGE_SRC/build/cythonized"
+        cygdb "$cygdb_dir" "$SAGE_SRC/sage" \
             -- -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
             -args python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
     fi

@@ -61,7 +61,7 @@ mehr referenziert wird. Die Objekte haben außerdem verschiedene Typen:
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'sage.libs.pari.gen.gen'>
+    <type 'sage.libs.cypari2.gen.gen'>
 
 Welche Variante sollten Sie also nutzen? Das kommt darauf an was
 Sie tun. Die GP-Schnittstelle kann alles was ein normales
@@ -98,7 +98,7 @@ Zuerst erstellen wir eine PARI-Liste aus einer Python-Liste.
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'sage.libs.pari.gen.gen'>
+    <type 'sage.libs.cypari2.gen.gen'>
 
 Jedes PARI-Objekt ist vom Typ ``py_pari.gen``. Den PARI Typ des vorliegenden
 Objekts können Sie mit der ``type`` Unterfunktion herausfinden.
@@ -197,6 +197,7 @@ Sages Singular-Schnittstelle (ohne die ``....:``):
 
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
+    polynomial ring, over a field, global ordering
     //   characteristic : 0
     //   number of vars : 2
     //        block   1 : ordering dp

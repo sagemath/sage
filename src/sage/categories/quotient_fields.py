@@ -584,7 +584,7 @@ class QuotientFields(Category_singleton):
             documentation for the global derivative() function for more
             details.
 
-            .. seealso::
+            .. SEEALSO::
 
                :meth:`_derivative`
 
@@ -626,7 +626,7 @@ class QuotientFields(Category_singleton):
 
             - Derivative of ``self`` with respect to ``var``
 
-            .. seealso::
+            .. SEEALSO::
 
                :meth:`derivative`
 

@@ -19,6 +19,7 @@ from .circle import circle
 from .ellipse import ellipse
 from .contour_plot import contour_plot, implicit_plot, region_plot
 from .density_plot import density_plot
+from .streamline_plot import streamline_plot
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.complex_plot",["complex_plot"])

@@ -49,13 +49,7 @@ Cylic benchmark::
 
 REFERENCES:
 
- .. [BCCCNSY10] Charles Bouillaguet, Hsieh-Chung Chen, Chen-Mou Cheng,
-    Tung Chou, Ruben Niederhagen, Adi Shamir, and Bo-Yin Yang.
-    *Fast exhaustive search for polynomial systems in GF(2)*.
-    In Stefan Mangard and François-Xavier Standaert, editors,
-    CHES, volume 6225 of Lecture Notes in Computer Science, pages 203–218.
-    Springer, 2010. pre-print available at http://eprint.iacr.org/2010/313.pdf
-
+- [BCCCNSY2010]_
 """
 #*****************************************************************************
 #  Copyright (C) 2012 Charles Bouillaguet <charles.bouillaguet@lifl.fr>

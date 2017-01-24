@@ -58,6 +58,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+from six.moves import range
 
 from .combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
@@ -750,7 +751,7 @@ class DyckWord(CombinatorialElement):
             | x  . . . . . . . . . . . . . . .
             |  . . . . . . . . . . . . . . . .
 
-            sage: DyckWord(area_sequence=[0,1,1,2,3,2,3,3,2,0,1,1,2,3,4,2,3]).pretty_print(labelling=range(17),underpath=False)
+            sage: DyckWord(area_sequence=[0,1,1,2,3,2,3,3,2,0,1,1,2,3,4,2,3]).pretty_print(labelling=list(range(17)),underpath=False)
                                        _______
                                       | x x x  16
                                  _____| x x  . 15
@@ -1183,7 +1184,7 @@ class DyckWord(CombinatorialElement):
             sage: DyckWord([1,1,0,1,0,1,0,0]).valleys()
             [2, 4]
         """
-        return [i for i in xrange(len(self)-1)
+        return [i for i in range(len(self)-1)
                 if self[i] == close_symbol and self[i+1] == open_symbol]
 
     def number_of_valleys(self):
@@ -1248,7 +1249,7 @@ class DyckWord(CombinatorialElement):
             sage: DyckWord([1, 0, 1, 0]).positions_of_double_rises()
             []
         """
-        return [i for i in xrange(len(self)-1)
+        return [i for i in range(len(self)-1)
                 if self[i] == self[i+1] == open_symbol]
 
     def number_of_double_rises(self):
@@ -1284,7 +1285,7 @@ class DyckWord(CombinatorialElement):
             [4]
         """
         h = self.heights()
-        return [i for i in xrange(2, len(h), 2) if h[i] == 0]
+        return [i for i in range(2, len(h), 2) if h[i] == 0]
 
     def touch_points(self):
         r"""
@@ -1742,7 +1743,7 @@ class DyckWord_complete(DyckWord):
             sage: DyckWord([1,1,1,0,0,0]).list_parking_functions()
             Permutations of the multi-set [1, 1, 1]
             sage: DyckWord([1,0,1,0,1,0]).list_parking_functions()
-            Permutations of the set [1, 2, 3]
+            Standard permutations of 3
         """
         alist = self.to_area_sequence()
         return Permutations([i - alist[i]+1 for i in range(len(alist))])
@@ -1843,7 +1844,8 @@ class DyckWord_complete(DyckWord):
         if n == 0:
             return (Tableau([]), Tableau([]))
         elif self.height() == n:
-            return (Tableau([range(1, n + 1)]), Tableau([range(1, n + 1)]))
+            T = Tableau([list(range(1, n + 1))])
+            return (T, T)
         else:
             left = [[], []]
             right = [[], []]
@@ -2047,7 +2049,7 @@ class DyckWord_complete(DyckWord):
         area = self.to_area_sequence()
         area.append(0)
         pi = []
-        values = range(1, n+1)
+        values = list(range(1, n + 1))
         for i in range(n):
             if area[n-i-1]+1 > area[n-i]:
                 pi.append(n-i-area[n-i-1])
@@ -2315,7 +2317,7 @@ class DyckWord_complete(DyckWord):
            Combinatorics Vol 12(1) (2005) N16.
         """
         n = self.number_of_open_symbols()
-        l = range(n + 2)  # from 0 to n + 1
+        l = list(range(n + 2))  # from 0 to n + 1
         edges = []
         coheight = n - 1
         for letter in self[1:-1]:
@@ -3649,7 +3651,7 @@ class CompleteDyckWords(DyckWords):
                              "the number of cells between the Dyck path "
                              "and the diagonal.")
         dyck_word = []
-        for i in xrange(len(code)):
+        for i in range(len(code)):
             if i > 0:
                 dyck_word.extend([close_symbol]*(code[i-1]-code[i]+1))
             dyck_word.append(open_symbol)
@@ -3866,9 +3868,9 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
 
             sage: DyckWords(4).cardinality()
             14
-            sage: ns = range(9)
+            sage: ns = list(range(9))
             sage: dws = [DyckWords(n) for n in ns]
-            sage: all([dw.cardinality() == len(dw.list()) for dw in dws])
+            sage: all(dw.cardinality() == len(dw.list()) for dw in dws)
             True
         """
         return catalan_number(self.k1)
@@ -3986,7 +3988,7 @@ def is_area_sequence(seq):
     if seq == []:
         return True
     return seq[0] == 0 and all(0 <= seq[i+1] and seq[i+1] <= seq[i]+1
-                               for i in xrange(len(seq)-1))
+                               for i in range(len(seq)-1))
 
 
 def is_a(obj, k1=None, k2=None):

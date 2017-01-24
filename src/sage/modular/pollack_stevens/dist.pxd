@@ -2,12 +2,6 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport ModuleElement
 from sage.categories.action cimport Action
 from sage.rings.padics.pow_computer cimport PowComputer_class
-#from sage.libs.flint.ulong_extras cimport *
-
-#cdef extern from "../../../ext/multi_modular.h":
-#    ctypedef unsigned long mod_int
-#    mod_int MOD_INT_MAX
-
 
 
 cdef class Dist(ModuleElement):

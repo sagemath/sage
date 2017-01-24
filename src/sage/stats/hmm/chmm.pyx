@@ -3,7 +3,7 @@ Continuous Emission Hidden Markov Models
 
 AUTHOR:
 
-   - William Stein, 2010-03
+- William Stein, 2010-03
 """
 
 #############################################################################
@@ -14,6 +14,8 @@ AUTHOR:
 #############################################################################
 
 include "cysignals/signals.pxi"
+
+from cpython.object cimport PyObject_RichCompare
 
 from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
 cdef double sqrt2pi = sqrt(2*M_PI)
@@ -208,7 +210,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         self.B = TimeSeries(B)
         self.probability_init()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Compare self and other, which must both be GaussianHiddenMarkovModel's.
 
@@ -226,8 +228,9 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             False
         """
         if not isinstance(other, GaussianHiddenMarkovModel):
-            raise ValueError
-        return cmp(self.__reduce__()[1], other.__reduce__()[1])
+            return NotImplemented
+        return PyObject_RichCompare(self.__reduce__()[1],
+                                    other.__reduce__()[1], op)
 
     def __getitem__(self, Py_ssize_t i):
         """
@@ -1115,7 +1118,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
                (self.A, self.B, self.pi, self.mixture)
 
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Compare self and other, which must both be GaussianMixtureHiddenMarkovModel's.
 
@@ -1133,8 +1136,9 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             False
         """
         if not isinstance(other, GaussianMixtureHiddenMarkovModel):
-            raise ValueError
-        return cmp(self.__reduce__()[1], other.__reduce__()[1])
+            return NotImplemented
+        return PyObject_RichCompare(self.__reduce__()[1],
+                                    other.__reduce__()[1], op)
 
     def __getitem__(self, Py_ssize_t i):
         """

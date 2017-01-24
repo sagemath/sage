@@ -1,0 +1,45 @@
+# Patch for https://trac.sagemath.org/ticket/22049
+# In newlib (an hence Cygwin) all the defines needed from xlocale.h are in
+# locale.h
+
+commit 154b2c19f392817a936aea0190e276f8228cb489
+Author: Erik M. Bray <erik.bray@lri.fr>
+Date:   Mon Dec 12 13:07:16 2016 +0100
+
+    BUG: xlocale.h is not available in newlib--all the defines used here from
+    xlocale.h are instead found in locale.h
+    
+    Added a feature check for xlocale.h, with fallback to locale.h if it is
+    missing.
+
+diff --git a/numpy/core/setup_common.py b/numpy/core/setup_common.py
+index ba7521e..a1729e6 100644
+--- a/numpy/core/setup_common.py
++++ b/numpy/core/setup_common.py
+@@ -113,6 +113,7 @@ OPTIONAL_HEADERS = [
+                 "xmmintrin.h",  # SSE
+                 "emmintrin.h",  # SSE2
+                 "features.h",  # for glibc version linux
++                "xlocale.h"  # see GH#8367
+ ]
+ 
+ # optional gcc compiler builtins and their call arguments and optional a
+diff --git a/numpy/core/src/multiarray/numpyos.c b/numpy/core/src/multiarray/numpyos.c
+index 450ec40..84617ea 100644
+--- a/numpy/core/src/multiarray/numpyos.c
++++ b/numpy/core/src/multiarray/numpyos.c
+@@ -15,7 +15,13 @@
+ 
+ #ifdef HAVE_STRTOLD_L
+ #include <stdlib.h>
+-#include <xlocale.h>
++#ifdef HAVE_XLOCALE_H
++    /*
++     * the defines from xlocale.h are included in locale.h on some sytems;
++     * see gh-8367
++     */
++    #include <xlocale.h>
++#endif
+ #endif
+ 
+ 

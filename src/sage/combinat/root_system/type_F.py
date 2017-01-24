@@ -12,6 +12,8 @@ Root system data for type F
 from __future__ import print_function
 from __future__ import absolute_import
 
+from six.moves import range
+
 from . import ambient_space
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import ZZ
@@ -70,7 +72,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         EXAMPLES::
 
             sage: e = RootSystem(['F',4]).ambient_space()
-            sage: [ e.root(i,j,p2=1) for i in xrange(e.n) for j in xrange(i+1,e.n) ]
+            sage: [ e.root(i,j,p2=1) for i in range(e.n) for j in range(i+1,e.n) ]
             [(1, -1, 0, 0), (1, 0, -1, 0), (1, 0, 0, -1), (0, 1, -1, 0), (0, 1, 0, -1), (0, 0, 1, -1)]
         """
         if i == j or j is None:
@@ -178,9 +180,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         v = ZZ(1)/ZZ(2)
         if not hasattr(self, 'PosRoots'):
-            self.PosRoots = ([ self.monomial(i) for i in xrange(self.n) ] +
-                            [ self.root(i,j,p2=0) for i in xrange(self.n) for j in xrange(i+1,self.n) ] +
-                            [ self.root(i,j,p2=1) for i in xrange(self.n) for j in xrange(i+1,self.n) ] +
+            self.PosRoots = ([ self.monomial(i) for i in range(self.n) ] +
+                            [ self.root(i,j,p2=0) for i in range(self.n) for j in range(i+1,self.n) ] +
+                            [ self.root(i,j,p2=1) for i in range(self.n) for j in range(i+1,self.n) ] +
                             [ v*self.root(0,1,2,3,0,p2,p3,p4) for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] ])
         return self.PosRoots
 

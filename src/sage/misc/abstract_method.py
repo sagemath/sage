@@ -34,15 +34,15 @@ def abstract_method(f = None, optional = False):
 
         sage: class A(object):
         ...
-        ...       @abstract_method
-        ...       def my_method(self):
-        ...           '''
-        ...           The method :meth:`my_method` computes my_method
+        ....:     @abstract_method
+        ....:     def my_method(self):
+        ....:         '''
+        ....:         The method :meth:`my_method` computes my_method
         ...
-        ...           EXAMPLES::
+        ....:         EXAMPLES::
         ...
-        ...           '''
-        ...           pass
+        ....:         '''
+        ....:         pass
         ...
         sage: A.my_method
         <abstract method my_method at ...>
@@ -61,15 +61,15 @@ def abstract_method(f = None, optional = False):
 
         sage: class A(object):
         ...
-        ...       @abstract_method(optional = True)
-        ...       def my_method(self):
-        ...           '''
-        ...           The method :meth:`my_method` computes my_method
+        ....:     @abstract_method(optional = True)
+        ....:     def my_method(self):
+        ....:         '''
+        ....:         The method :meth:`my_method` computes my_method
         ...
-        ...           EXAMPLES::
+        ....:         EXAMPLES::
         ...
-        ...           '''
-        ...           pass
+        ....:         '''
+        ....:         pass
         ...
 
         sage: A.my_method
@@ -145,8 +145,8 @@ class AbstractMethod(object):
         EXAMPLES::
 
             sage: def f(x):
-            ...       "doc of f"
-            ...       return 1
+            ....:     "doc of f"
+            ....:     return 1
             ...
             sage: x = abstract_method(f); x
             <abstract method f at ...>
@@ -227,11 +227,11 @@ class AbstractMethod(object):
         EXAMPLES::
 
             sage: class AbstractClass:
-            ...       @abstract_method
-            ...       def required(): pass
+            ....:     @abstract_method
+            ....:     def required(): pass
             ...
-            ...       @abstract_method(optional = True)
-            ...       def optional(): pass
+            ....:     @abstract_method(optional = True)
+            ....:     def optional(): pass
             sage: AbstractClass.required.is_optional()
             False
             sage: AbstractClass.optional.is_optional()
@@ -246,17 +246,17 @@ def abstract_methods_of_class(cls):
     EXAMPLES::
 
         sage: class AbstractClass:
-        ...       @abstract_method
-        ...       def required1(): pass
+        ....:     @abstract_method
+        ....:     def required1(): pass
         ...
-        ...       @abstract_method(optional = True)
-        ...       def optional2(): pass
+        ....:     @abstract_method(optional = True)
+        ....:     def optional2(): pass
         ...
-        ...       @abstract_method(optional = True)
-        ...       def optional1(): pass
+        ....:     @abstract_method(optional = True)
+        ....:     def optional1(): pass
         ...
-        ...       @abstract_method
-        ...       def required2(): pass
+        ....:     @abstract_method
+        ....:     def required2(): pass
         ...
         sage: sage.misc.abstract_method.abstract_methods_of_class(AbstractClass)
         {'optional': ['optional1', 'optional2'],

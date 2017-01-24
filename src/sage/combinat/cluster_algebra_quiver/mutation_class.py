@@ -21,6 +21,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import *
@@ -146,7 +147,7 @@ def _matrix_to_digraph( M ):
         elif i >= n:
             dg._backend.add_edge(j,i,(-a,-b),True)
     if dg.order() < M.nrows():
-        for i in [ index for index in xrange(M.nrows()) if index not in dg ]:
+        for i in [ index for index in range(M.nrows()) if index not in dg ]:
             dg.add_vertex(i)
     return dg
 
@@ -229,7 +230,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
         orbits = [ orbit[0] for orbit in orbits ]
         dig6s[dig6] = [ orbits, [], iso_inv ]
     else:
-        dig6s[dig6] = [ range(n), [] ]
+        dig6s[dig6] = [list(range(n)), [] ]
     if return_dig6:
         yield (dig6, [])
     else:
@@ -274,7 +275,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
                             history = dig6s[key][1] + [i_history]
                             dig6s[dig6_new] = [orbits,history,iso_history]
                         else:
-                            orbits = range(n)
+                            orbits = list(range(n))
                             del orbits[i_new]
                             history = dig6s[key][1] + [i_new]
                             dig6s[dig6_new] = [orbits,history]
@@ -418,7 +419,7 @@ def _graph_without_edge_labels(dg,vertices):
             edge_labels.pop(i)
         else:
             i += 1
-    edge_partition = [[] for _ in xrange(len(edge_labels))]
+    edge_partition = [[] for _ in range(len(edge_labels))]
     i = 0
     new_vertices = []
     for u,v,l in edges:

@@ -190,7 +190,7 @@ class BackendIPythonCommandline(BackendIPython):
             OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
             OutputImagePng, OutputImageGif,
             OutputImagePdf, OutputImageDvi,
-            OutputSceneJmol, OutputSceneWavefront,
+            OutputSceneJmol, OutputSceneWavefront, OutputSceneThreejs,
         ])
 
     def displayhook(self, plain_text, rich_output):
@@ -267,6 +267,10 @@ class BackendIPythonCommandline(BackendIPython):
             return ({u'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneWavefront):
             msg = self.launch_sage3d(rich_output, plain_text.text.get_unicode())
+            return ({u'text/plain': msg}, {})
+        elif isinstance(rich_output, OutputSceneThreejs):
+            msg = self.launch_viewer(
+                rich_output.html.filename(ext='html'), plain_text.text.get_unicode())
             return ({u'text/plain': msg}, {})
         else:
             raise TypeError('rich_output type not supported')
@@ -391,6 +395,17 @@ class BackendIPythonCommandline(BackendIPython):
             True
         """
         return True
+
+
+IFRAME_TEMPLATE = \
+"""
+<iframe srcdoc="{escaped_html}" 
+        width="{width}"
+        height="{height}"
+        style="border: 0;">
+</iframe>
+"""
+
     
 class BackendIPythonNotebook(BackendIPython):
     """
@@ -454,7 +469,7 @@ class BackendIPythonNotebook(BackendIPython):
             OutputHtml,
             OutputImagePng, OutputImageJpg,
             OutputImageSvg, OutputImagePdf,
-            OutputSceneJmol,
+            OutputSceneJmol, OutputSceneThreejs,
         ])
 
     def displayhook(self, plain_text, rich_output):
@@ -512,7 +527,6 @@ class BackendIPythonNotebook(BackendIPython):
             return ({u'image/jpeg':  rich_output.jpg.get(),
                      u'text/plain':  plain_text.text.get_unicode(),
             }, {})
-
         elif isinstance(rich_output, OutputImageSvg):
             return ({u'image/svg+xml': rich_output.svg.get(),
                      u'text/plain':    plain_text.text.get_unicode(),
@@ -525,6 +539,16 @@ class BackendIPythonNotebook(BackendIPython):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
             return ({u'text/html':  jsmol.iframe(),
+                     u'text/plain': plain_text.text.get_unicode(),
+            }, {})            
+        elif isinstance(rich_output, OutputSceneThreejs):
+            escaped_html = rich_output.html.get().replace('"', '&quot;')
+            iframe = IFRAME_TEMPLATE.format(
+                escaped_html=escaped_html,
+                width='100%',
+                height=400,
+            )
+            return ({u'text/html':  iframe,
                      u'text/plain': plain_text.text.get_unicode(),
             }, {})            
         else:

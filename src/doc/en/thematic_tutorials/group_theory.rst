@@ -960,7 +960,7 @@ of a subgroup of permutations on 4 symbols with order 16::
 
     sage: G = SymmetricGroup(7)
     sage: subgroups = G.conjugacy_classes_subgroups()
-    sage: map(order, subgroups)
+    sage: list(map(order, subgroups))
     [1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 8, 9, 10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 14, 16, 18, 18, 18, 20, 20, 20, 21, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 36, 36, 36, 36, 40, 42, 48, 48, 48, 60, 60, 72, 72, 72, 72, 120, 120, 120, 120, 144, 168, 240, 360, 720, 2520, 5040]
 
 The ``map(order, subgroups)`` command will apply the ``order()``

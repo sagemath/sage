@@ -28,6 +28,7 @@ Representations of the Symmetric Group
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.symbolic.ring import SR
 from sage.functions.all import sqrt
@@ -378,8 +379,8 @@ class SymmetricGroupRepresentation_generic_class(SageObject):
         """
         n = self._partition.size()
         transpositions = []
-        for i in range(1,n):
-            si = Permutation(range(1,i) + [i+1,i] + range(i+2,n+1))
+        for i in range(1, n):
+            si = Permutation(list(range(1,i)) + [i+1,i] + list(range(i+2,n+1)))
             transpositions.append(si)
         repn_matrices = [self.representation_matrix(_) for _ in transpositions]
         for (i,si) in enumerate(repn_matrices):

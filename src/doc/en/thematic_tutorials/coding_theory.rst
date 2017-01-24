@@ -87,7 +87,7 @@ By just typing the name of our code, we get a sentence which briefly
 describes it and gives its parameters::
 
     sage: C
-    Linear code of length 7, dimension 3 over Finite Field of size 3
+    [7, 3] linear code over GF(3)
 
 As the aim of this tutorial is not to give a comprehensive view of the methods,
 we won't describe any other methods.
@@ -189,7 +189,7 @@ All these parameters are summarized inside the string representation
 of our code::
 
     sage: C
-    [12, 6, 7] Generalized Reed-Solomon Code over Finite Field of size 13
+    [12, 6, 7] Generalized Reed-Solomon Code over GF(13)
 
 .. NOTE::
 
@@ -313,14 +313,14 @@ we can now ask for specific encoder and decoder::
 
     sage: Evect = C.encoder("EvaluationVector")
     sage: Evect
-    Evaluation vector-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over Finite Field of size 59
+    Evaluation vector-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
     sage: type(Evect)
     <class 'sage.coding.grs.GRSEvaluationVectorEncoder'>
     sage: msg = random_vector(GF(59), C.dimension()) #random
     sage: c = Evect.encode(msg)
     sage: NN = C.decoder("NearestNeighbor")
     sage: NN
-    Nearest neighbor decoder for [40, 12, 29] Generalized Reed-Solomon Code over Finite Field of size 59
+    Nearest neighbor decoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
 
 Calling::
 
@@ -359,7 +359,7 @@ let us investigate the one we left behind in the part just before::
 
     sage: Epoly = C.encoder("EvaluationPolynomial")
     sage: Epoly
-    Evaluation polynomial-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over Finite Field of size 59
+    Evaluation polynomial-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
     sage: Epoly.message_space()
     Univariate Polynomial Ring in x over Finite Field of size 59
     sage: msg_p = Epoly.message_space().random_element(degree=C.dimension()-1); msg_p #random

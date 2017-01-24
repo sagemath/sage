@@ -56,7 +56,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 import itertools
 
@@ -288,11 +288,11 @@ class Subwords_w(Parent):
 
             sage: S1 = Subwords([1,2,3,2,1,3])
             sage: S2 = Subwords([4,6,6,6,7,4,5,5])
-            sage: for i in xrange(100):
+            sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
             ....:       assert(w == [])
-            sage: for i in xrange(100):
+            sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
             ....:       assert(w == [])
@@ -413,7 +413,7 @@ class Subwords_wk(Subwords_w):
             sage: Subwords('123',0).first()
             ''
         """
-        return self._build(self._w[i] for i in xrange(self._k))
+        return self._build(self._w[i] for i in range(self._k))
 
     def last(self):
         r"""
@@ -438,7 +438,7 @@ class Subwords_wk(Subwords_w):
             ''
         """
         n = len(self._w)
-        return self._build(self._w[i] for i in xrange(n-self._k, n))
+        return self._build(self._w[i] for i in range(n-self._k, n))
 
     def random_element(self):
         r"""
@@ -448,11 +448,11 @@ class Subwords_wk(Subwords_w):
 
             sage: S1 = Subwords([1,2,3,2,1],3)
             sage: S2 = Subwords([4,4,5,5,4,5,4,4],3)
-            sage: for i in xrange(100):
+            sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
             ....:       assert(w == [])
-            sage: for i in xrange(100):
+            sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
             ....:       assert(w == [])
@@ -485,7 +485,7 @@ class Subwords_wk(Subwords_w):
         if self._element_constructor is tuple:
             return iterator
         else:
-            return itertools.imap(self._build, iterator)
+            return (self._build(x) for x in iterator)
 
 
 def smallest_positions(word, subword, pos=0):
@@ -533,8 +533,8 @@ def smallest_positions(word, subword, pos=0):
     """
     pos -= 1
     res = [None] * len(subword)
-    for i in xrange(len(subword)):
-        for j in xrange(pos + 1, len(word) + 1):
+    for i in range(len(subword)):
+        for j in range(pos + 1, len(word) + 1):
             if j == len(word):
                 return False
             if word[j] == subword[i]:

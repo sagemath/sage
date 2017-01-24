@@ -151,7 +151,7 @@ class HtmlFragment(str, SageObject):
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: h = sage.misc.html.HtmlFragment('<b>old</b>')
-            sage: h._rich_repr_(dm)    # the doctest backend does not suppot html
+            sage: h._rich_repr_(dm)    # the doctest backend does not support html
             OutputPlainText container
         """
         OutputHtml = display_manager.types.OutputHtml

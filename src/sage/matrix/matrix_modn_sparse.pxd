@@ -1,5 +1,3 @@
-# distutils: language = c 
-
 from .matrix_sparse cimport Matrix_sparse
 from sage.modules.vector_modn_sparse cimport *
 

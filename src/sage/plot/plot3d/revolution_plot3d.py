@@ -63,55 +63,123 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
     Let's revolve a simple function around different axes::
 
         sage: u = var('u')
-        sage: f=u^2
-        sage: revolution_plot3d(f,(u,0,2),show_curve=True,opacity=0.7).show(aspect_ratio=(1,1,1))
+        sage: f = u^2
+        sage: revolution_plot3d(f, (u,0,2), show_curve=True, opacity=0.7).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u = var('u')
+        f = u**2
+        P = revolution_plot3d(f, (u,0,2), show_curve=True, opacity=0.7).plot()
+        sphinx_plot(P)
 
     If we move slightly the axis, we get a goblet-like surface::
 
-        sage: revolution_plot3d(f,(u,0,2),axis=(1,0.2),show_curve=True,opacity=0.5).show(aspect_ratio=(1,1,1))
+        sage: revolution_plot3d(f, (u,0,2), axis=(1,0.2), show_curve=True, opacity=0.5).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u = var('u')
+        f = u**2
+        P = revolution_plot3d(f, (u,0,2), axis=(1,0.2), show_curve=True, opacity=0.5).plot()
+        sphinx_plot(P)
 
     A common problem in calculus books, find the volume within the following revolution solid::
 
-        sage: line=u
-        sage: parabola=u^2
-        sage: sur1=revolution_plot3d(line,(u,0,1),opacity=0.5,rgbcolor=(1,0.5,0),show_curve=True,parallel_axis='x')
-        sage: sur2=revolution_plot3d(parabola,(u,0,1),opacity=0.5,rgbcolor=(0,1,0),show_curve=True,parallel_axis='x')
+        sage: line = u
+        sage: parabola = u^2
+        sage: sur1 = revolution_plot3d(line, (u,0,1), opacity=0.5, rgbcolor=(1,0.5,0), show_curve=True, parallel_axis='x')
+        sage: sur2 = revolution_plot3d(parabola, (u,0,1), opacity=0.5, rgbcolor=(0,1,0), show_curve=True, parallel_axis='x')
         sage: (sur1+sur2).show()
 
+    .. PLOT::
 
-    Now let's revolve a parametrically defined circle. We can play with the topology of the surface by changing the axis, an axis in `(0,0)` (as the previous one) will produce a sphere-like surface::
+        u = var('u')
+        line = u
+        parabola = u**2
+        sur1 = revolution_plot3d(line, (u,0,1), opacity=0.5, rgbcolor=(1,0.5,0), show_curve=True, parallel_axis='x')
+        sur2 = revolution_plot3d(parabola, (u,0,1), opacity=0.5, rgbcolor=(0,1,0), show_curve=True, parallel_axis='x')
+        P = sur1 + sur2
+        sphinx_plot(P)
+
+    Now let's revolve a parametrically defined circle. We can play with the topology of the surface by changing the axis,
+    an axis in `(0,0)` (as the previous one) will produce a sphere-like surface::
 
         sage: u = var('u')
-        sage: circle=(cos(u),sin(u))
-        sage: revolution_plot3d(circle,(u,0,2*pi),axis=(0,0),show_curve=True,opacity=0.5).show(aspect_ratio=(1,1,1))
+        sage: circle = (cos(u), sin(u))
+        sage: revolution_plot3d(circle, (u,0,2*pi), axis=(0,0), show_curve=True, opacity=0.5).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u = var('u')
+        circle = (cos(u), sin(u))
+        P = revolution_plot3d(circle, (u,0,2*pi), axis=(0,0), show_curve=True, opacity=0.5)
+        sphinx_plot(P)
 
     An axis on `(0,y)` will produce a cylinder-like surface::
 
-        sage: revolution_plot3d(circle,(u,0,2*pi),axis=(0,2),show_curve=True,opacity=0.5).show(aspect_ratio=(1,1,1))
+        sage: revolution_plot3d(circle, (u,0,2*pi), axis=(0,2), show_curve=True, opacity=0.5).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u = var('u')
+        circle = (cos(u), sin(u))
+        P = revolution_plot3d(circle, (u,0,2*pi), axis=(0,2), show_curve=True, opacity=0.5)
+        sphinx_plot(P)
 
     And any other axis will produce a torus-like surface::
 
-        sage: revolution_plot3d(circle,(u,0,2*pi),axis=(2,0),show_curve=True,opacity=0.5).show(aspect_ratio=(1,1,1))
+        sage: revolution_plot3d(circle, (u,0,2*pi), axis=(2,0), show_curve=True, opacity=0.5).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u = var('u')
+        circle = (cos(u), sin(u))
+        P = revolution_plot3d(circle, (u,0,2*pi), axis=(2,0), show_curve=True, opacity=0.5)
+        sphinx_plot(P)
 
     Now, we can get another goblet-like surface by revolving a curve in 3d::
 
         sage: u = var('u')
-        sage: curve=(u,cos(4*u),u^2)
-        sage: revolution_plot3d(curve,(u,0,2),show_curve=True,parallel_axis='z',axis=(1,.2),opacity=0.5).show(aspect_ratio=(1,1,1))
+        sage: curve = (u, cos(4*u), u^2)
+        sage: P = revolution_plot3d(curve, (u,0,2), show_curve=True, parallel_axis='z',axis=(1,.2), opacity=0.5)
+        sage: P.show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u = var('u')
+        curve = (u, cos(4*u), u**2)
+        P = revolution_plot3d(curve, (u,0,2), show_curve=True, parallel_axis='z', axis=(1,.2), opacity=0.5)
+        sphinx_plot(P)
 
     A curvy curve with only a quarter turn::
 
         sage: u = var('u')
-        sage: curve=(sin(3*u),.8*cos(4*u),cos(u))
-        sage: revolution_plot3d(curve,(u,0,pi),(0,pi/2),show_curve=True,parallel_axis='z',opacity=0.5).show(aspect_ratio=(1,1,1),frame=False)
+        sage: curve = (sin(3*u), .8*cos(4*u), cos(u))
+        sage: revolution_plot3d(curve, (u,0,pi), (0,pi/2), show_curve=True, parallel_axis='z', opacity=0.5).show(aspect_ratio=(1,1,1),frame=False)
+
+    .. PLOT::
+
+        u = var('u')
+        curve = (sin(3*u), .8*cos(4*u), cos(u))
+        P = revolution_plot3d(curve, (u,0,pi), (0,pi/2), show_curve=True, parallel_axis='z', opacity=0.5)
+        sphinx_plot(P)
 
     One can also color the surface using a coloring function of two
     parameters and a colormap as follows::
 
         sage: u, phi = var('u,phi')
-        sage: def cf(u,phi): return sin(phi+u) ** 2
-        sage: curve = (1+u**2/4, 0, u)
-        sage: revolution_plot3d(curve,(u,-2,2),(0,2*pi),parallel_axis='z',color=(cf, colormaps.PiYG)).show(aspect_ratio=(1,1,1))
+        sage: def cf(u,phi): return sin(phi+u) ^ 2
+        sage: curve = (1+u^2/4, 0, u)
+        sage: revolution_plot3d(curve, (u,-2,2), (0,2*pi), parallel_axis='z', color=(cf, colormaps.PiYG)).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        u, phi = var('u,phi')
+        def cf(u, phi): return sin(phi+u) ** 2
+        curve = (1+u**2/4, 0, u)
+        P = revolution_plot3d(curve, (u,-2,2), (0,2*pi), parallel_axis='z', color=(cf, colormaps.PiYG))
+        sphinx_plot(P)
 
     The first parameter of the coloring function will be identified with the
     parameter of the curve, and the second with the angle parameter.

@@ -12,7 +12,7 @@ run_test() {
     cat input/$1 | $SAGE_LOCAL/bin/cdd_both_reps_gmp --all > $TEST_OUTPUT
     # Now, compare the two outputs and error out if there is a discrepancy:
     diff -n output/$1 $TEST_OUTPUT || ( \
-    	  echo "cdd_both_reps not working as expected"; \
+              echo "cdd_both_reps not working as expected"; \
           exit 1 )
 }
 

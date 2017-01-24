@@ -19,9 +19,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-
+from __future__ import print_function, absolute_import
 from sage.misc.all import prod
+
 
 def _len(L):
     """
@@ -64,7 +64,8 @@ def _is_finite(L, fallback=True):
         True
         sage: _is_finite([])
         True
-        sage: _is_finite(xrange(10^8))
+        sage: from six.moves import range
+        sage: _is_finite(range(10^8))
         True
         sage: from itertools import product
         sage: _is_finite(product([1],[1])) # does not provide is_finite() or __len__()
@@ -187,9 +188,10 @@ def mrange_iter(iter_list, typ=list):
 
     Examples that illustrate empty multi-ranges::
 
-        sage: mrange_iter([range(5),xrange(3),xrange(-2)])
-        []
         sage: mrange_iter([range(5),range(3),range(0)])
+        []
+        sage: from six.moves import range
+        sage: mrange_iter([range(5),range(3),range(-2)])
         []
 
     This example is not empty, and should not be. See :trac:`6561`.
@@ -234,13 +236,9 @@ class xmrange_iter:
     OUTPUT: a generator
 
     EXAMPLES: We create multi-range iterators, print them and also
-    iterate through a tuple version.
+    iterate through a tuple version. ::
 
-    ::
-
-        sage: z = xmrange_iter([xrange(3),xrange(2)]);z
-        xmrange_iter([xrange(3), xrange(2)])
-        sage: z = xmrange_iter([range(3),range(2)], tuple);z
+        sage: z = xmrange_iter([list(range(3)),list(range(2))], tuple);z
         xmrange_iter([[0, 1, 2], [0, 1]], <type 'tuple'>)
         sage: for a in z:
         ....:     print(a)
@@ -275,9 +273,9 @@ class xmrange_iter:
 
     ::
 
-        sage: list(xmrange_iter([xrange(5),xrange(3),xrange(-2)]))
+        sage: list(xmrange_iter([range(5),range(3),range(-2)]))
         []
-        sage: list(xmrange_iter([xrange(5),xrange(3),xrange(0)]))
+        sage: list(xmrange_iter([range(5),range(3),range(0)]))
         []
 
     This example is not empty, and should not be. See :trac:`6561`.
@@ -329,7 +327,7 @@ class xmrange_iter:
 
         EXAMPLES::
 
-            sage: C = cartesian_product_iterator([xrange(3), xrange(4)])
+            sage: C = cartesian_product_iterator([range(3),range(4)])
             sage: len(C)
             12
             sage: len(cartesian_product_iterator([]))
@@ -357,7 +355,7 @@ class xmrange_iter:
 
         EXAMPLES::
 
-            sage: C = cartesian_product_iterator([xrange(3), xrange(4)])
+            sage: C = cartesian_product_iterator([range(3),range(4)])
             sage: C.cardinality()
             12
             sage: C = cartesian_product_iterator([ZZ,QQ])

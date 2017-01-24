@@ -1,0 +1,13 @@
+diff --git a/utest/Makefile b/utest/Makefile
+index 3ccc0a0..ce809e3 100644
+--- a/utest/Makefile
++++ b/utest/Makefile
+@@ -18,7 +18,7 @@ endif
+ all : run_test
+ 
+ $(UTESTBIN): $(OBJS)
+-	$(CC) $(CFLAGS) -o $@ $^ ../$(LIBNAME) $(EXTRALIB) $(FEXTRALIB)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ ../$(LIBNAME) $(EXTRALIB) $(FEXTRALIB)
+ 
+ run_test: $(UTESTBIN)
+ ifndef CROSS

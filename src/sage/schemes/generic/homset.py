@@ -454,7 +454,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
     def _element_constructor_(self, *v, **kwds):
         """
-        The element contstructor.
+        The element constructor.
 
         INPUT:
 

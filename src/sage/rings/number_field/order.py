@@ -1109,9 +1109,9 @@ class AbsoluteOrder(Order):
         r"""
         Used in pickling.
 
-        We test that #6462 is fixed. This used to fail because pickling the
-        order also pickled the cached results of the ``basis`` call, which
-        were elements of the order.
+        We test that :trac:`6462` is fixed. This used to fail because
+        pickling the order also pickled the cached results of the
+        ``basis`` call, which were elements of the order.
 
         ::
 

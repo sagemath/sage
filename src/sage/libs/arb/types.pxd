@@ -37,3 +37,10 @@ cdef extern from "acb_mat.h":
     ctypedef struct acb_mat_struct:
         pass
     ctypedef acb_mat_struct[1] acb_mat_t
+
+cdef extern from "acb_poly.h":
+    ctypedef struct acb_poly_struct:
+        pass
+    ctypedef acb_poly_struct[1] acb_poly_t
+    ctypedef acb_poly_struct * acb_poly_ptr
+    ctypedef const acb_poly_struct * acb_poly_srcptr

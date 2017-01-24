@@ -768,7 +768,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
           Crimea, Ukraine, 22-27 sept. 2002, Springer-Verlag,
           http://perso.ens-lyon.fr/gilles.villard/BIBLIOGRAPHIE/POSTSCRIPT/rankjgd.ps
 
-        .. note::
+        .. NOTE::
 
            For very sparse matrices Gaussian elimination is faster
            because it barly has anything to do. If the fill in needs to
@@ -799,7 +799,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         `B` is a vector then `X` is a vector and if
         `B` is a matrix, then `X` is a matrix.
 
-        .. note::
+        .. NOTE::
 
            In Sage one can also write ``A  B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the

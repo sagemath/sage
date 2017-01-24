@@ -1029,7 +1029,7 @@ cdef class Torus(ParametricSurface):
 
     def get_grid(self, ds):
         """
-        Return the the range of variables to be evaluated on to render as a
+        Return the range of variables to be evaluated on to render as a
         parametric surface.
 
         EXAMPLES::

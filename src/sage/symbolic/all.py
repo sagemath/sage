@@ -1,6 +1,8 @@
 from __future__ import absolute_import
-from .pynac import I
+
+from sage.libs.pynac.pynac import I
 i = I
+
 from .ring import SR
 from .constants import (pi, e, NaN, golden_ratio, log2, euler_gamma, catalan,
                        khinchin, twinprime, mertens, glaisher)

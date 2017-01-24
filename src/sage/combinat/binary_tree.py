@@ -457,10 +457,15 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
 
     def graph(self, with_leaves=True):
         """
-        Convert ``self`` to a digraph. By default, this graph contains
-        both nodes and leaves, hence is never empty. To obtain a graph
-        which contains only the nodes, the ``with_leaves`` optional
-        keyword variable has to be set to ``False``.
+        Convert ``self`` to a digraph.
+
+        By default, this graph contains both nodes and leaves, hence
+        is never empty. To obtain a graph which contains only the
+        nodes, the ``with_leaves`` optional keyword variable has to be
+        set to ``False``.
+
+        The resulting digraph is endowed with a combinatorial embedding,
+        in order to be displayed correctly.
 
         INPUT:
 
@@ -511,21 +516,31 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             # Special treatment for the case when self is empty.
             # In this case, rec(self, 0) would give a false result.
             if not self:
-                return DiGraph({0: []})
+                res = DiGraph({0: []})
+                res.set_embedding({0: []})
+                return res
 
             res = DiGraph()
+            emb = {}
             # The edge set of res will be built up step by step using the
             # following function:
 
             def rec(tr, idx):
                 if not tr:  # tr is a leaf.
+                    emb[idx] = []
                     return
                 else:  # tr is a node.
                     nbl = 2 * tr[0].node_number() + 1
                     res.add_edges([[idx, idx + 1], [idx, idx + 1 + nbl]])
+                    emb[idx] = [idx + 1 + nbl, idx + 1]
                     rec(tr[0], idx + 1)
                     rec(tr[1], idx + nbl + 1)
+
             rec(self, 0)
+            for i in res:
+                if i != 0:
+                    emb[i].append(res.neighbors_in(i)[0])
+            res.set_embedding(emb)
             return res
 
         else:   # We want only the nodes.
@@ -535,9 +550,12 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             # falsely yield an empty graph (since it adds nodes only
             # implicitly by adding edges).
             if self.node_number() == 1:
-                return DiGraph({0: []})
+                res = DiGraph({0: []})
+                res.set_embedding({0: []})
+                return res
 
             res = DiGraph()
+            emb = {}
             # The edge set of res will be built up step by step using the
             # following function:
 
@@ -548,11 +566,20 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
                     nbl = tr[0].node_number()
                     if nbl > 0:
                         res.add_edge([idx, idx + 1])
+                        emb[idx] = [idx + 1]
                         rec(tr[0], idx + 1)
+                    else:
+                        emb[idx] = []
                     if tr[1].node_number() > 0:
                         res.add_edge([idx, idx + nbl + 1])
+                        emb[idx] = [idx + nbl + 1] + emb[idx]
                         rec(tr[1], idx + nbl + 1)
+
             rec(self, 0)
+            for i in res:
+                if i != 0:
+                    emb[i].append(res.neighbors_in(i)[0])
+            res.set_embedding(emb)
             return res
 
     def canonical_labelling(self, shift=1):
@@ -591,10 +618,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
 
         .. WARNING::
 
-            Left and right children might get interchanged in
-            the actual picture. Moreover, for a labelled binary
-            tree, the labels shown in the picture are not (in
-            general) the ones given by the labelling!
+            For a labelled binary tree, the labels shown in the
+            picture are not (in general) the ones given by the
+            labelling!
 
             Use :meth:`_latex_`, ``view``,
             :meth:`_ascii_art_` or ``pretty_print`` for more
@@ -1461,9 +1487,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             sage: bt.left_children_node_number('right')
             4
 
-            sage: all([5 == 1 + bt.left_children_node_number()
-            ....:             + bt.left_children_node_number('right')
-            ....:     for bt in BinaryTrees(5)])
+            sage: all(5 == 1 + bt.left_children_node_number()
+            ....:            + bt.left_children_node_number('right')
+            ....:     for bt in BinaryTrees(5))
             True
 
         TESTS::
@@ -3572,7 +3598,7 @@ class BinaryTrees_size(BinaryTrees):
 
         TESTS::
 
-            sage: all([BinaryTrees(10).random_element() in BinaryTrees(10) for i in range(20)])
+            sage: all(BinaryTrees(10).random_element() in BinaryTrees(10) for i in range(20))
             True
         """
         from sage.combinat.dyck_word import CompleteDyckWords_size

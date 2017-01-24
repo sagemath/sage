@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Disjoint-set data structure
 
@@ -6,9 +7,9 @@ type to return. For more on the data structure, see :func:`DisjointSet`.
 
 AUTHORS:
 
-- Sebastien Labbe (2008) - Initial version.
-- Sebastien Labbe (2009-11-24) - Pickling support
-- Sebastien Labbe (2010-01) - Inclusion into sage (:trac:`6775`).
+- Sébastien Labbé (2008) - Initial version.
+- Sébastien Labbé (2009-11-24) - Pickling support
+- Sébastien Labbé (2010-01) - Inclusion into sage (:trac:`6775`).
 
 EXAMPLES:
 
@@ -26,7 +27,7 @@ Disjoint set of integers from ``0`` to ``n - 1``::
     1
     sage: s.find(5)
     1
-    sage: map(s.find, range(6))
+    sage: list(map(s.find, range(6)))
     [0, 1, 2, 1, 2, 1]
 
 Disjoint set of hashables objects::
@@ -48,13 +49,13 @@ Disjoint set of hashables objects::
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import itervalues
 
 include '../groups/perm_gps/partn_ref/data_structures_pyx.pxi'
 
 import itertools
 from sage.rings.integer import Integer
 from sage.structure.sage_object cimport SageObject
+from cpython.object cimport PyObject_RichCompare
 
 def DisjointSet(arg):
     r"""
@@ -68,6 +69,7 @@ def DisjointSet(arg):
 
     - :meth:`~sage.sets.disjoint_set.DisjointSet_of_hashables.find` --
       Determine which set a particular element is in.
+
     - :meth:`~sage.sets.disjoint_set.DisjointSet_of_hashables.union` --
       Combine or merge two sets into a single set.
 
@@ -160,11 +162,11 @@ cdef class DisjointSet_class(SageObject):
             '{{0}, {1}, {2, 4}, {3}}'
         """
         res = []
-        for l in itervalues(self.root_to_elements_dict()):
+        for l in (<dict?>self.root_to_elements_dict()).itervalues():
             l.sort()
-            res.append('{%s}'% ', '.join(itertools.imap(repr, l)))
+            res.append('{%s}' % ', '.join(repr(u) for u in l))
         res.sort()
-        return '{%s}'% ', '.join(res)
+        return '{%s}' % ', '.join(res)
 
     def __iter__(self):
         """
@@ -181,9 +183,9 @@ cdef class DisjointSet_class(SageObject):
             sage: sorted(d)
             [['a'], ['b'], ['c']]
         """
-        return itervalues(self.root_to_elements_dict())
+        return (<dict?>self.root_to_elements_dict()).itervalues()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, int op):
         r"""
         Compare the disjoint sets ``self`` and ``other``.
 
@@ -230,8 +232,11 @@ cdef class DisjointSet_class(SageObject):
         """
         from sage.sets.all import Set
         s = Set(map(Set, self.root_to_elements_dict().values()))
-        t = Set(map(Set, other.root_to_elements_dict().values()))
-        return cmp(s,t)
+        try:
+            t = Set(map(Set, other.root_to_elements_dict().values()))
+        except AttributeError:
+            return NotImplemented
+        return PyObject_RichCompare(s, t, op)
 
     def cardinality(self):
         r"""

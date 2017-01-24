@@ -70,7 +70,7 @@ def _fast_possible_periods(self, return_points=False):
 
         .. TODO::
 
-        - more space efficient hash/pointtable
+        - more space efficient hash/pointable
     """
     cdef int i, k
     cdef list pointslist

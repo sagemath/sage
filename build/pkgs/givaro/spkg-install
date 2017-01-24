@@ -24,11 +24,8 @@ if [[ "$SAGE64" = yes ]]; then
     LDFLAGS="$LDFLAGS $CFLAG64"
 fi
 
-# It shouldn't be necessary to add Sage's include directory here,
-# since we configure with '--with-gmp=...'.
-# Also, '-I...' should normally be added to (just) CPPFLAGS.
-CFLAGS="$CFLAGS -fPIC -I\"$SAGE_LOCAL/include\""
-CXXFLAGS="$CXXFLAGS -fPIC -I\"$SAGE_LOCAL/include\""
+CFLAGS="$CFLAGS -fPIC"
+CXXFLAGS="$CXXFLAGS -fPIC"
 
 export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
 
@@ -37,8 +34,13 @@ cd src/
 # Use newer version of config.guess and config.sub (see Trac #19728)
 cp "$SAGE_ROOT"/config/config.* build-aux
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --with-gmp="$SAGE_LOCAL/" --enable-shared
+# When SAGE_FAT_BINARY is set, disable processor-specific optimizations
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    GIVARO_CONFIGURE="--disable-simd $GIVARO_CONFIGURE"
+fi
 
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --with-gmp="$SAGE_LOCAL" \
+        --enable-shared $GIVARO_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring givaro"
     exit 1

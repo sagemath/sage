@@ -176,7 +176,7 @@ for a in args[0]))
 
         EXAMPLES:
 
-        We verify the the decorated functions work correctly on
+        We verify that the decorated functions work correctly on
         methods, classmethods, and staticmethods, for both the
         parallel and non-parallel versions::
 

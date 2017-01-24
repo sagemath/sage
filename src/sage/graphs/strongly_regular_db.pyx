@@ -11,6 +11,7 @@ Using Andries Brouwer's `database of strongly regular graphs
 non-existence results. Note that some constructions are missing, and that some
 strongly regular graphs that exist in the database cannot be automatically built
 by Sage. Help us if you know any.
+An outline of the implementation can be found in [CP16]_.
 
 .. NOTE::
 
@@ -20,7 +21,7 @@ by Sage. Help us if you know any.
 
 REFERENCES:
 
-.. [BvL84] \A. Brouwer, J van Lint,
+.. [BvL84] \A. Brouwer, J. van Lint,
    Strongly regular graphs and partial geometries,
    Enumeration and design,
    (Waterloo, Ont., 1982) (1984): 85-122.
@@ -137,6 +138,45 @@ def is_mathon_PC_srg(int v,int k,int l,int mu):
                 return (MathonPseudocyclicStronglyRegularGraph,t)
 
 @cached_function
+def is_muzychuk_S6(int v, int k, int l, int mu):
+    r"""
+    Test whether some Muzychuk S6 graph is (v, k, l, mu)-strongly regular.
+
+    Tests whether a :func:`~sage.graphs.graph_generators.GraphGenerators.MuzychukS6Graph`
+    has parameters (v, k, l, mu).
+
+    INPUT:
+
+    - ``v, k, l, mu`` (integers)
+
+    OUTPUT:
+
+    A tuple ``t`` such that ``t[0](*t[1:])`` builds the required graph if it exists,
+    and ``None`` otherwise.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.strongly_regular_db import is_muzychuk_S6
+        sage: t = is_muzychuk_S6(378, 116, 34, 36)
+        sage: G = t[0](*t[1:]); G
+        Muzychuk S6 graph with parameters (3,3): Graph on 378 vertices
+        sage: G.is_strongly_regular(parameters=True)
+        (378, 116, 34, 36)
+        sage: t = is_muzychuk_S6(5, 5, 5, 5); t
+    """
+    cdef int n, d
+    from sage.rings.integer_ring import ZZ
+    n_list = [n for n in range(l-1) if ZZ(n).is_prime_power()]
+    for n in n_list:
+        d = 2
+        while n**d * ((n**d-1)/(n-1)+1) <= v:
+            if v == n**d * ((n**d-1)/(n-1)+1) and k == n**(d-1)*(n**d-1)/(n-1) - 1\
+            and l == mu - 2 and mu == n**(d-1) * (n**(d-1)-1) / (n-1):
+                from sage.graphs.generators.families import MuzychukS6Graph
+                return (MuzychukS6Graph, n, d)
+            d += 1
+
+@cached_function
 def is_orthogonal_array_block_graph(int v,int k,int l,int mu):
     r"""
     Test whether some (pseudo)Orthogonal Array graph is `(v,k,\lambda,\mu)`-strongly regular.
@@ -196,7 +236,7 @@ def is_orthogonal_array_block_graph(int v,int k,int l,int mu):
     from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
     try:
         m, n = latin_squares_graph_parameters(v,k,l,mu)
-    except:
+    except Exception:
         return
     if orthogonal_array(m,n,existence=True):
         from sage.graphs.generators.intersection import OrthogonalArrayBlockGraph
@@ -1511,9 +1551,9 @@ def is_taylor_twograph_srg(int v,int k,int l,int mu):
 
 def is_switch_skewhad(int v, int k, int l, int mu):
     r"""
-    Test whether some `switch skewhad^2+*` is `(v,k,\lambda,\mu)`-strongly regular.
+    Test whether some ``switch skewhad^2+*`` is `(v,k,\lambda,\mu)`-strongly regular.
 
-    The `switch skewhad^2+*` graphs appear on `Andries Brouwer's database
+    The ``switch skewhad^2+*`` graphs appear on `Andries Brouwer's database
     <http://www.win.tue.nl/~aeb/graphs/srg/srgtab.html>`__ and are built by
     adding an isolated vertex to the complement of
     :func:`~sage.graphs.graph_generators.GraphGenerators.SquaredSkewHadamardMatrixGraph`,
@@ -1610,9 +1650,10 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
         return None
 
     def switch_OA_srg(c,n):
-        from itertools import izip
+        from builtins import zip
         OA = map(tuple,orthogonal_array(c+1,n,resolvable=True))
-        g = Graph([OA,lambda x,y: any(xx==yy for xx,yy in izip(x,y))],loops=False)
+        g = Graph([OA, lambda x,y: any(xx==yy for xx,yy in zip(x,y))],
+                  loops=False)
         g.add_vertex(0)
         g.seidel_switching(OA[:c*n])
         return g
@@ -2417,7 +2458,7 @@ def strongly_regular_from_two_intersection_set(M):
       Ars Comb. 109 (2013): 309-319.
       https://biblio.ugent.be/publication/4241842/file/4241845.pdf
     """
-    from itertools import product, izip
+    from itertools import product
     K = M.base_ring()
     k = M.ncols()
     g = Graph()
@@ -2539,7 +2580,7 @@ def SRG_630_85_20_10():
     from sage.graphs.generators.intersection import IntersectionGraph
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     hs = HoffmanSingletonGraph()
-    P = range(5)+range(30,35)          # a Petersen in hs
+    P = list(range(5)) + list(range(30, 35))          # a Petersen in hs
     mc = [0, 1, 5, 6, 12, 13, 16, 17, 22, 23, 29, 33, 39, 42, 47]
     assert(hs.subgraph(mc).is_regular(k=0)) # a maximum coclique
     assert(hs.subgraph(P).is_regular(k=3))
@@ -2849,6 +2890,7 @@ def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint
                       is_haemers,
                       is_cossidente_penttila,
                       is_mathon_PC_srg,
+                      is_muzychuk_S6,
                       is_switch_skewhad]
 
     # Going through all test functions, for the set of parameters and its
@@ -3035,6 +3077,7 @@ def _build_small_srg_database():
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     from sage.graphs.generators.smallgraphs import SchlaefliGraph
     from sage.graphs.generators.smallgraphs import HigmanSimsGraph
+    from sage.graphs.generators.smallgraphs import IoninKharaghani765Graph
     from sage.graphs.generators.smallgraphs import JankoKharaghaniGraph
     from sage.graphs.generators.smallgraphs import LocalMcLaughlinGraph
     from sage.graphs.generators.smallgraphs import SuzukiGraph
@@ -3074,6 +3117,7 @@ def _build_small_srg_database():
         (416, 100,  36, 20): [SRG_416_100_36_20],
         (560, 208,  72, 80): [SRG_560_208_72_80],
         (630,  85,  20, 10): [SRG_630_85_20_10],
+        (765, 192,  48, 48): [IoninKharaghani765Graph],
         (784, 243,  82, 72): [MathonStronglyRegularGraph, 0],
         (784, 270, 98, 90):  [MathonStronglyRegularGraph, 1],
         (784, 297, 116, 110):[MathonStronglyRegularGraph, 2],
@@ -3134,12 +3178,12 @@ def _check_database():
 
         sage: from sage.graphs.strongly_regular_db import _check_database
         sage: _check_database() # long time
-        Sage cannot build a (196  60   14   20  ) that exists. Comment from Brouwer's database: pg(6,9,2)?
+        Sage cannot build a (196  60   14   20  ) that exists. Comment ...
         ...
         In Andries Brouwer's database:
-        - 452 impossible entries
-        - 2936 undecided entries
-        - 1150 realizable entries (Sage misses ... of them)
+        - 462 impossible entries
+        - 2916 undecided entries
+        - 1160 realizable entries (Sage misses ... of them)
 
     """
     global _brouwer_database

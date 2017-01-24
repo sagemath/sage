@@ -54,9 +54,7 @@ gsl_set_error_handler_off()
 
 import math, operator
 
-import sage.libs.pari.pari_instance
-from sage.libs.pari.pari_instance cimport PariInstance
-cdef PariInstance pari = sage.libs.pari.pari_instance.pari
+from sage.libs.cypari2.convert cimport new_gen_from_double
 
 import sage.rings.integer
 import sage.rings.rational
@@ -67,6 +65,7 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 from sage.misc.randstate cimport randstate, current_randstate
+from sage.structure.sage_object cimport rich_to_bool
 
 
 def is_RealDoubleField(x):
@@ -222,7 +221,7 @@ cdef class RealDoubleField_class(Field):
             return True
         return super(RealDoubleField_class, self)._repr_option(key)
 
-    def __cmp__(self, x):
+    def __richcmp__(self, x, op):
         """
         Compare ``self`` to ``x``.
 
@@ -234,8 +233,10 @@ cdef class RealDoubleField_class(Field):
             True
         """
         if isinstance(x, RealDoubleField_class):
-            return 0
-        return cmp(type(self), type(x))
+            return rich_to_bool(op, 0)
+        if op == Py_NE:
+            return True
+        return NotImplemented
 
     def construction(self):
         r"""
@@ -1581,7 +1582,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: RDF(1.5)._pari_()
             1.50000000000000
         """
-        return pari.double_to_gen_c(self._value)
+        return new_gen_from_double(self._value)
 
 
     ###########################################
@@ -1673,15 +1674,15 @@ cdef class RealDoubleElement(FieldElement):
         # correctly with NaNs.
         cdef double x = (<RealDoubleElement>left)._value
         cdef double y = (<RealDoubleElement>right)._value
-        if op == 0:
+        if op == Py_LT:
             return x < y
-        elif op == 1:
+        elif op == Py_LE:
             return x <= y
-        elif op == 2:
+        elif op == Py_EQ:
             return x == y
-        elif op == 3:
+        elif op == Py_NE:
             return x != y
-        elif op == 4:
+        elif op == Py_GT:
             return x > y
         else:
             return x >= y

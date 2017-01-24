@@ -368,12 +368,6 @@ cdef class Parent(parent.Parent):
             self._cache_an_element = self._an_element_c_impl()
         return self._cache_an_element
 
-    # This should eventually be inherited from the EnumeratedSets() category
-    # This is just a convenient spot to cover the relevant cython parents,
-    # without bothering the new parents
-    list = parent.Parent._list_from_iterator_cached
-
-
     ############################################################################
     # Coercion Compatibility Layer
     ############################################################################

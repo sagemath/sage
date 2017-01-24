@@ -1,0 +1,45 @@
+From 3f7f11c9a4692a3c651413c8cd45f6c9f01960d9 Mon Sep 17 00:00:00 2001
+From: Hans Schoenemann <hannes@mathematik.uni-kl.de>
+Date: Sat, 3 Dec 2016 16:17:38 +0100
+Subject: [PATCH] add: nrnCoeffName for rmodulon.cc
+
+---
+ libpolys/coeffs/rmodulon.cc | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/libpolys/coeffs/rmodulon.cc b/libpolys/coeffs/rmodulon.cc
+index e2b55bd..80258e8 100644
+--- a/libpolys/coeffs/rmodulon.cc
++++ b/libpolys/coeffs/rmodulon.cc
+@@ -86,6 +86,23 @@ void    nrnCoeffWrite  (const coeffs r, BOOLEAN /*details*/)
+   omFreeSize((ADDRESS)s, l);
+ }
+ 
++static char* nrnCoeffName_buff=NULL;
++static char* nrnCoeffName(const coeffs r)
++{
++  if(nrnCoeffName_buff==NULL) omFree(nrnCoeffName_buff);
++  size_t l = (size_t)mpz_sizeinbase(r->modBase, 10) + 2;
++  nrnCoeffName_buff=(char*)omAlloc(l+6);
++  char* s = (char*) omAlloc(l);
++  s= mpz_get_str (s, 10, r->modBase);
++  if (nCoeff_is_Ring_ModN(r))
++    snprintf(nrnCoeffName_buff,l+6,"ZZ/%s",s);
++  else if (nCoeff_is_Ring_PtoM(r))
++    snprintf(nrnCoeffName_buff,l+6,"ZZ/%s^lu",s,r->modExponent);
++  omFreeSize((ADDRESS)s, l);
++  return nrnCoeffName_buff;
++}
++
++
+ static BOOLEAN nrnCoeffsEqual(const coeffs r, n_coeffType n, void * parameter)
+ {
+   /* test, if r is an instance of nInitCoeffs(n,parameter) */
+@@ -213,6 +230,7 @@ BOOLEAN nrnInitChar (coeffs r, void* p)
+   r->cfExtGcd      = nrnExtGcd;
+   r->cfXExtGcd     = nrnXExtGcd;
+   r->cfQuotRem     = nrnQuotRem;
++  r->cfCoeffName   = nrnCoeffName;
+   r->cfCoeffWrite  = nrnCoeffWrite;
+   r->nCoeffIsEqual = nrnCoeffsEqual;
+   r->cfKillChar    = nrnKillChar;

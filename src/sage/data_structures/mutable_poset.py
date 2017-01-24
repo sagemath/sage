@@ -1112,7 +1112,7 @@ class MutablePosetShell(SageObject):
           ``True`` searches towards ``'null'``.
 
         - ``key`` -- (default: ``None``) a function used for sorting
-          the direct predeccessors of a shell (used in case of a
+          the direct predecessors of a shell (used in case of a
           tie). If this is ``None``, no sorting occurs.
 
         - ``condition`` -- (default: ``None``) a function mapping a
@@ -1134,18 +1134,9 @@ class MutablePosetShell(SageObject):
 
         ALGORITHM:
 
-        Here a simplified version of the algorithm found in [T1976]_
+        Here a simplified version of the algorithm found in [Tar1976]_
         and [CLRS2001]_ is used. See also
         :wikipedia:`Topological_sorting`.
-
-        .. [T1976] Robert E. Tarjan, *Edge-disjoint spanning trees and
-           depth-first search*, Acta Informatica 6 (2), 1976, 171-185,
-           :doi:`10.1007/BF00268499`.
-
-        .. [CLRS2001] Thomas H. Cormen, Charles E. Leiserson, Ronald
-           L. Rivest and Clifford Stein, *Section 22.4: Topological
-           sort*, Introduction to Algorithms (2nd ed.), MIT Press and
-           McGraw-Hill, 2001, 549-552, ISBN 0-262-03293-7.
 
         EXAMPLES::
 

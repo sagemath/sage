@@ -102,8 +102,8 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
 
         sage: from sage.misc.nested_class import *
         sage: class A(object):
-        ...       class B(object):
-        ...           pass
+        ....:     class B(object):
+        ....:         pass
         ...
         sage: module = sys.modules['__main__']
         sage: A.B.__name__
@@ -206,8 +206,8 @@ def nested_pickle(cls):
         sage: from sage.misc.nested_class import nested_pickle
         sage: module = sys.modules['__main__']
         sage: class A(object):
-        ...       class B:
-        ...           pass
+        ....:     class B:
+        ....:         pass
         sage: nested_pickle(A)
         <class '__main__.A'>
 
@@ -223,9 +223,9 @@ def nested_pickle(cls):
     should work as a decorator::
 
         sage: @nested_pickle    # todo: not implemented
-        ...   class A2(object):
-        ...       class B:
-        ...           pass
+        ....: class A2(object):
+        ....:     class B:
+        ....:         pass
         sage: A2.B.__name__    # todo: not implemented
         'A2.B'
         sage: getattr(module, 'A2.B', 'Not found')    # todo: not implemented
@@ -249,11 +249,11 @@ cdef class NestedClassMetaclass(type):
 
         sage: from sage.misc.nested_class import NestedClassMetaclass
         sage: class ASuperClass(object):
-        ...       __metaclass__ = NestedClassMetaclass
+        ....:     __metaclass__ = NestedClassMetaclass
         ...
         sage: class A3(ASuperClass):
-        ...       class B(object):
-        ...           pass
+        ....:     class B(object):
+        ....:         pass
         ...
         sage: A3.B.__name__
         'A3.B'
@@ -266,9 +266,9 @@ cdef class NestedClassMetaclass(type):
 
         sage: from sage.misc.nested_class import NestedClassMetaclass
         sage: class A(object):
-        ...       __metaclass__ = NestedClassMetaclass
-        ...       class B(object):
-        ...           pass
+        ....:     __metaclass__ = NestedClassMetaclass
+        ....:     class B(object):
+        ....:         pass
         ...
         sage: A.B
         <class '__main__.A.B'>

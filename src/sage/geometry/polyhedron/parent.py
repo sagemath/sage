@@ -33,11 +33,13 @@ def Polyhedra(base_ring, ambient_dim, backend=None):
 
     - ``ambient_dim`` -- integer. The ambient space dimension.
 
-    - ``backend`` -- string. The name of the backend for computations. Currently there are two backends implemented:
+    - ``backend`` -- string. The name of the backend for computations. Currently there are three backends implemented:
 
-         * ``backend=ppl`` uses the Parma Polyhedra Library
+         * ``backend="ppl"`` uses the Parma Polyhedra Library
 
-         * ``backend=cdd`` uses CDD
+         * ``backend="cdd"`` uses CDD
+
+         * ``backend="normaliz"`` uses normaliz
 
     OUTPUT:
 
@@ -78,6 +80,10 @@ def Polyhedra(base_ring, ambient_dim, backend=None):
         return Polyhedra_QQ_ppl(base_ring, ambient_dim)
     elif backend == 'ppl' and base_ring is ZZ:
         return Polyhedra_ZZ_ppl(base_ring, ambient_dim)
+    elif backend == 'normaliz' and base_ring is QQ:
+        return Polyhedra_QQ_normaliz(base_ring, ambient_dim)
+    elif backend == 'normaliz' and base_ring is ZZ:
+        return Polyhedra_ZZ_normaliz(base_ring, ambient_dim)
     elif backend == 'cdd' and base_ring in (ZZ, QQ):
         return Polyhedra_QQ_cdd(QQ, ambient_dim)
     elif backend == 'cdd' and base_ring is RDF:
@@ -792,13 +798,20 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
 from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd, Polyhedron_RDF_cdd
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_ZZ_ppl, Polyhedron_QQ_ppl
+from sage.geometry.polyhedron.backend_normaliz import Polyhedron_ZZ_normaliz, Polyhedron_QQ_normaliz
 from sage.geometry.polyhedron.backend_field import Polyhedron_field
 
 class Polyhedra_ZZ_ppl(Polyhedra_base):
     Element = Polyhedron_ZZ_ppl
 
+class Polyhedra_ZZ_normaliz(Polyhedra_base):
+    Element = Polyhedron_ZZ_normaliz
+
 class Polyhedra_QQ_ppl(Polyhedra_base):
     Element = Polyhedron_QQ_ppl
+
+class Polyhedra_QQ_normaliz(Polyhedra_base):
+    Element = Polyhedron_QQ_normaliz
 
 class Polyhedra_QQ_cdd(Polyhedra_base):
     Element = Polyhedron_QQ_cdd

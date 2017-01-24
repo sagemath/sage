@@ -17,7 +17,7 @@ http://www.grinvin.org/
 
 === benzene-20130630 Nico Van Cleemput (10th September 2014) ===
  * #16963: Update for the sage-git directory layout.
- 
+
 === benzene-20130630 Nico Van Cleemput (30th June 2013) ===
  * First release put into Sage.
 

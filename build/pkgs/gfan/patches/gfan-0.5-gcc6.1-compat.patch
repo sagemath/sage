@@ -1,0 +1,70 @@
+--- a/app_fiberpolytope.cpp
++++ b/app_fiberpolytope.cpp
+@@ -63,7 +63,7 @@
+ 
+ 	    /* If the vector configuration B does not have full rank then
+ 	       change coordinates. */
+-	    if(rank(B)!=B.getHeight())
++	    if(rank_(B)!=B.getHeight())
+ 	      {
+ 	        FieldMatrix M=integerMatrixToFieldMatrix(B,Q);
+ 	        M.reduce(false,true);//force integer operations - preserving volume
+@@ -83,7 +83,7 @@
+ 	    log1 debug<<"Done computing restricting cone\n";
+ 
+ 	    debug<<B.getRows();
+-	    debug<<int(rank(B));
++	    debug<<int(rank_(B));
+ 
+ 	    Triangulation2 t(B);
+ log1 debug<<"Computing initial triangulation\n";
+@@ -143,7 +143,7 @@
+ */
+     /* If the vector configuration A does not have full rank then
+        change coordinates. */
+-/*    if(rank(A)!=A.getHeight())
++/*    if(rank_(A)!=A.getHeight())
+       {
+ 	FieldMatrix M=integerMatrixToFieldMatrix(A,Q);
+ 	M.reduce(false,true);//force integer operations - preserving volume
+--- a/app_secondaryfan.cpp
++++ b/app_secondaryfan.cpp
+@@ -307,7 +307,7 @@
+ 
+     if(scaleOption.getValue())
+       {
+-	if(rank(A)!=A.getHeight())
++	if(rank_(A)!=A.getHeight())
+ 	  {
+ 	    cerr << "The vector configuration must have full rank in order to use the scale option.\n";
+ 	    assert(0);
+@@ -342,7 +342,7 @@
+ 
+     /* If the vector configuration A does not have full rank then
+        change coordinates. */
+-    if(rank(A)!=A.getHeight())
++    if(rank_(A)!=A.getHeight())
+       {
+ 	FieldMatrix M=integerMatrixToFieldMatrix(A,Q);
+ 	M.reduce(false,true);//force integer operations - preserving volume
+--- a/matrix.cpp
++++ b/matrix.cpp
+@@ -61,7 +61,7 @@
+ 
+ #include "linalg.h"
+ 
+-int rank(IntegerMatrix const &m)
++int rank_(IntegerMatrix const &m)
+ {
+   return integerMatrixToFieldMatrix(m,Q).rank();
+ }
+--- a/matrix.h
++++ b/matrix.h
+@@ -147,6 +147,6 @@
+ 
+ FloatMatrix integerToFloatMatrix(IntegerMatrix const &m);
+ IntegerVector flattenMatrix(IntegerMatrix const &m);
+-int rank(IntegerMatrix const &m);
++int rank_(IntegerMatrix const &m);
+ 
+ #endif

@@ -17,9 +17,7 @@ from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.homsets import HomsetsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
-import sage.categories.coercion_methods
 from sage.categories.sets_cat import Sets
-from sage.structure.element import have_same_parent
 
 class AdditiveMagmas(Category_singleton):
     """
@@ -201,7 +199,7 @@ class AdditiveMagmas(Category_singleton):
 
             .. TODO:: Add an example.
             """
-            return x._add_(y)
+            return x + y
 
         summation_from_element_class_add = summation
 
@@ -389,9 +387,6 @@ class AdditiveMagmas(Category_singleton):
                                   names=names, elements=elements)
 
     class ElementMethods:
-
-        __add__ = sage.categories.coercion_methods.__add__
-        __radd__ = sage.categories.coercion_methods.__radd__
 
         @abstract_method(optional = True)
         def _add_(self, right):
@@ -792,7 +787,7 @@ class AdditiveMagmas(Category_singleton):
 
             def _test_nonzero_equal(self, **options):
                 r"""
-                Test that ``.__nonzero__()`` behave consistently
+                Test that ``.__bool__()`` behave consistently
                 with `` == 0``.
 
                 TESTS::
@@ -804,27 +799,6 @@ class AdditiveMagmas(Category_singleton):
                 tester = self._tester(**options)
                 tester.assertEqual(bool(self), self != self.parent().zero())
                 tester.assertEqual(not self, self == self.parent().zero())
-
-            def __sub__(left, right):
-                """
-                Return the difference between ``left`` and ``right``, if it exists.
-
-                This top-level implementation delegates the work to
-                the ``_sub_`` method or to coercion. See the extensive
-                documentation at the top of :ref:`sage.structure.element`.
-
-                EXAMPLES::
-
-                    sage: F = CombinatorialFreeModule(QQ, ['a','b'])
-                    sage: a,b = F.basis()
-                    sage: a - b
-                    B['a'] - B['b']
-                """
-                if have_same_parent(left, right):
-                    return left._sub_(right)
-                from sage.structure.element import get_coercion_model
-                import operator
-                return get_coercion_model().bin_op(left, right, operator.sub)
 
             def _sub_(left, right):
                 r"""
@@ -845,7 +819,7 @@ class AdditiveMagmas(Category_singleton):
                     sage: C.one() - C.one()
                     (0, 0)
                 """
-                return left._add_(-right)
+                return left + (-right)
 
             def __neg__(self):
                 """
@@ -865,10 +839,6 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS::
 
-                    sage: b.__neg__.__module__
-                    'sage.categories.additive_magmas'
-                    sage: b._neg_.__module__
-                    'sage.combinat.free_module'
                     sage: F = CombinatorialFreeModule(ZZ, ['a','b'])
                     sage: a,b = F.gens()
                     sage: FF = cartesian_product((F,F))
@@ -940,7 +910,7 @@ class AdditiveMagmas(Category_singleton):
                     return [AdditiveMagmas().AdditiveUnital().AdditiveInverse()]
 
                 class ElementMethods:
-                    def __neg__(self):
+                    def _neg_(self):
                         """
                         Return the negation of ``self``.
 

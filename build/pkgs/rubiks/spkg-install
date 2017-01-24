@@ -123,27 +123,11 @@ export CPPFLAGS
 # End of pretty general spkg-install file.
 # Now do the specific things needed for this package (rubiks)
 
-# Copy some sensible Makefiles, which don't have a load of hard-coded
-# junk in them. The original makefiles were a mess. I doubt they
-# would have created 64-bit binaries, but that would have been
-# the least of their problems. They had the compiler g++ hardcoded
-# which made building with Sun Studio impossible.
-
-cp patches/dietz-mcube-Makefile src/dietz/mcube/Makefile
-cp patches/dietz-solver-Makefile src/dietz/solver/Makefile
-cp patches/dietz-cu2-Makefile src/dietz/cu2/Makefile
-cp patches/reid-Makefile src/reid/Makefile
-
-if [ $UNAME = "CYGWIN" ]; then
-    cp patches/makefile.dik.cygwin src/dik/makefile
-fi
-
 if [ $UNAME = "SunOS" ]; then
     INSTALL=cp; export INSTALL
 else
-    INSTALL=`which install`; export INSTALL
+    INSTALL=install; export INSTALL
 fi
-
 
 
 # remove the old dik binary since the has a name collision

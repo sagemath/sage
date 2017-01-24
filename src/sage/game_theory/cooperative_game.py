@@ -251,26 +251,6 @@ class CooperativeGame(SageObject):
         True
         sage: letter_game.is_symmetric({'A': 0, 'C': 35, 'B': 3})
         True
-
-    REFERENCES:
-
-    .. [CEW2011] Georgios Chalkiadakis, Edith Elkind, and Michael Wooldridge.
-       *Computational Aspects of Cooperative Game Theory*.
-       Morgan & Claypool Publishers, (2011).
-       ISBN 9781608456529, :doi:`10.2200/S00355ED1V01Y201107AIM016`.
-
-    .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel.
-       *Game Theory*.
-       Cambridge: Cambridge University Press, (2013).
-       ISBN 9781107005488.
-
-    .. [XP1994] Deng Xiaotie, and Christos Papadimitriou.
-       *On the complexity of cooperative solution concepts.*
-       Mathematics of Operations Research 19.2 (1994): 257-266.
-
-    .. [SWJ2008] Fatima Shaheen, Michael Wooldridge, and Nicholas Jennings.
-       *A linear approximation method for the Shapley value.*
-       Artificial Intelligence 172.14 (2008): 1673-1699.
     """
     def __init__(self, characteristic_function):
         r"""

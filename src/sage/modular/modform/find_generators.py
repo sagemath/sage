@@ -19,7 +19,7 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from sage.rings.all import Integer, QQ, ZZ, PowerSeriesRing
 from sage.misc.all import prod, verbose
@@ -110,8 +110,8 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
             raise ValueError("stop_dim must be provided if use_random is True")
         shuffle(wts)
 
-        for c in xrange(N):
-            w = V(prod(shortforms[i]**wts[c][i] for i in xrange(n)).padded_list(prec))
+        for c in range(N):
+            w = V(prod(shortforms[i]**wts[c][i] for i in range(n)).padded_list(prec))
             if w in W: continue
             W = V.span(list(W.gens()) + [w])
             if stop_dim and W.rank() == stop_dim:
@@ -121,7 +121,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         verbose("Nothing worked", t)
         return W
     else:
-        G = [V(prod(forms[i][1]**c[i] for i in xrange(n)).padded_list(prec)) for c in wts]
+        G = [V(prod(forms[i][1]**c[i] for i in range(n)).padded_list(prec)) for c in wts]
         t = verbose('found %s candidates' % N, t)
         W = V.span(G)
         verbose('span has dimension %s' % W.rank(), t)
@@ -337,7 +337,7 @@ class ModularFormsRing(SageObject):
         a list of pairs (k, f), where f is the q-expansion to precision
         ``prec`` of a modular form of weight k.
 
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`gen_forms`, which does exactly the same thing, but returns
             Sage modular form objects rather than bare power series, and keeps
@@ -590,7 +590,7 @@ class ModularFormsRing(SageObject):
                     # work around a silly free module bug
                     qc = V.coordinates(q.lift())
                 qcZZ = [ZZ(_) for _ in qc] # lift to ZZ so we can define F
-                f = sum([B[i] * qcZZ[i] for i in xrange(len(B))])
+                f = sum([B[i] * qcZZ[i] for i in range(len(B))])
                 F = M(f)
                 G.append((k, f.change_ring(self.base_ring()), F))
 
@@ -733,7 +733,7 @@ class ModularFormsRing(SageObject):
                     # work around a silly free module bug
                     qc = V.coordinates(q.lift())
                 qcZZ = [ZZ(_) for _ in qc] # lift to ZZ so we can define F
-                f = sum([B[i] * qcZZ[i] for i in xrange(len(B))])
+                f = sum([B[i] * qcZZ[i] for i in range(len(B))])
                 F = S(f)
                 G.append((k, f.change_ring(self.base_ring()), F))
 

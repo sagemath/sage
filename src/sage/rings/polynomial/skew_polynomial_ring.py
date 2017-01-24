@@ -480,7 +480,7 @@ class SkewPolynomialRing_general(Algebra, UniqueRepresentation):
         """
         try:
             return self._map ** n
-        except TypeError, e:
+        except TypeError as e:
             if n < 0:
                 raise NotImplementedError("inversion of the twist map %s" % self._map)
             else:

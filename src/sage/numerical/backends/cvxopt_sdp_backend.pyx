@@ -63,7 +63,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
                       "abstol":1e-7,
                       "reltol":1e-6,
                       "feastol":1e-7,
-                      "refinement":0 }
+                      "refinement":1 }
         self.answer = {}
         if maximization:
             self.set_sense(+1)

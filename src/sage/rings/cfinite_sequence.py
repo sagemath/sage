@@ -92,7 +92,7 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from sage.categories.fields import Fields
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -622,7 +622,7 @@ class CFiniteSequence(FieldElement):
         """
         if isinstance(key, slice):
             m = max(key.start, key.stop)
-            return [self[ii] for ii in xrange(*key.indices(m + 1))]
+            return [self[ii] for ii in range(*key.indices(m + 1))]
         elif isinstance(key, (int, Integer)):
             from sage.matrix.constructor import Matrix
             d = self._deg

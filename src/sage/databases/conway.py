@@ -22,10 +22,10 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 from six import itervalues
 
 import collections, os
-from sage.env import SAGE_SHARE
 
-_CONWAYDATA = os.path.join(SAGE_SHARE, 'conway_polynomials',
-        'conway_polynomials.sobj')
+from sage.env import CONWAY_POLYNOMIALS_DATA_DIR
+
+_CONWAYDATA = os.path.join(CONWAY_POLYNOMIALS_DATA_DIR, 'conway_polynomials.sobj')
 _conwaydict = None
 
 class DictInMapping(collections.Mapping):

@@ -24,8 +24,8 @@ AUTHORS:
 include "sage/libs/linkages/padics/mpz.pxi"
 include "CR_template.pxi"
 
-from sage.libs.pari.pari_instance cimport PariInstance
-cdef PariInstance P = sage.libs.pari.pari_instance.pari
+from sage.libs.cypari2.pari_instance cimport pari_instance as pari
+from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.padics.pow_computer cimport PowComputer_class
 
@@ -223,12 +223,12 @@ cdef class pAdicCappedRelativeElement(CRElement):
                 I : [&=...] INT(lg=2):... (0,lgefint=2):... 
         """
         if exactzero(self.ordp):
-            return P.new_gen_from_int(0)
+            return pari.zero()
         else:
-            return P.new_gen_from_padic(self.ordp, self.relprec,
-                                        self.prime_pow.prime.value,
-                                        self.prime_pow.pow_mpz_t_tmp(self.relprec),
-                                        self.unit)
+            return new_gen_from_padic(self.ordp, self.relprec,
+                                      self.prime_pow.prime.value,
+                                      self.prime_pow.pow_mpz_t_tmp(self.relprec),
+                                      self.unit)
     def _integer_(self, Z=None):
         """
         Returns an integer congruent to this element modulo
@@ -262,15 +262,29 @@ cdef class pAdicCappedRelativeElement(CRElement):
             sage: a = R(8)
             sage: a.residue(1)
             1
-            sage: a.residue(2)
+
+        This is different from applying ``% p^n`` which returns an element in
+        the same ring::
+
+            sage: b = a.residue(2); b
             8
+            sage: b.parent()
+            Ring of integers modulo 49
+            sage: c = a % 7^2; c
+            1 + 7 + O(7^4)
+            sage: c.parent()
+            7-adic Ring with capped relative precision 4
+
+        For elements in a field, application of ``% p^n`` always returns
+        zero, the remainder of the division by ``p^n``::
 
             sage: K = Qp(7,4)
             sage: a = K(8)
-            sage: a.residue(1)
-            1
             sage: a.residue(2)
             8
+            sage: a % 7^2
+            0
+
             sage: b = K(1/7)
             sage: b.residue()
             Traceback (most recent call last):
@@ -291,6 +305,10 @@ cdef class pAdicCappedRelativeElement(CRElement):
             Traceback (most recent call last):
             ...
             PrecisionError: not enough precision known in order to compute residue.
+
+        .. SEEALSO::
+
+            :meth:`_mod_`
 
         """
         cdef Integer selfvalue, modulus

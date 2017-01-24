@@ -89,4 +89,3 @@ class FiniteSets(CategoryWithAxiom):
             """
             from sage.categories.modules_with_basis import ModulesWithBasis
             return [ModulesWithBasis(self.base_ring()).FiniteDimensional()]
-

@@ -52,7 +52,7 @@ class SubfieldSubcode(AbstractLinearCode):
         sage: codes.SubfieldSubcode(C, GF(4, 'a'))
         doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
         See http://trac.sagemath.org/20284 for details.
-        Subfield subcode over Finite Field in a of size 2^2 coming from Linear code of length 7, dimension 3 over Finite Field in aa of size 2^4
+        Subfield subcode of [7, 3] linear code over GF(16) down to GF(4)
     """
     _registered_encoders = {}
     _registered_decoders = {}
@@ -124,10 +124,10 @@ class SubfieldSubcode(AbstractLinearCode):
             sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs
-            Subfield subcode over Finite Field in a of size 2^2 coming from Linear code of length 7, dimension 3 over Finite Field in aa of size 2^4
+            Subfield subcode of [7, 3] linear code over GF(16) down to GF(4)
         """
-        return "Subfield subcode over %s coming from %s"\
-                % (self.base_field(), self.original_code())
+        return "Subfield subcode of %s down to GF(%s)"\
+                % (self.original_code(), self.base_field().cardinality())
 
     def _latex_(self):
         r"""
@@ -138,10 +138,10 @@ class SubfieldSubcode(AbstractLinearCode):
             sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: latex(Cs)
-            \textnormal{Subfield subcode over \Bold{F}_{2^{2}} coming from }[7, 3]\textnormal{ Linear code over }\Bold{F}_{2^{4}}
+            \textnormal{Subfield subcode of }[7, 3]\textnormal{ Linear code over }\Bold{F}_{2^{4}}\textnormal{ down to }\Bold{F}_{2^{2}}
         """
-        return "\\textnormal{Subfield subcode over %s coming from }%s"\
-                % (self.base_field()._latex_(), self.original_code()._latex_())
+        return "\\textnormal{Subfield subcode of }%s\\textnormal{ down to }%s"\
+                % (self.original_code()._latex_(), self.base_field()._latex_())
 
     def dimension(self):
         r"""
@@ -189,7 +189,7 @@ class SubfieldSubcode(AbstractLinearCode):
             sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs.original_code()
-            Linear code of length 7, dimension 3 over Finite Field in aa of size 2^4
+            [7, 3] linear code over GF(16)
         """
         return self._original_code
 
@@ -281,7 +281,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:13], 5)
         sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
         sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
-        Decoder of Subfield subcode over Finite Field in a of size 2^2 coming from [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4 through Gao decoder for [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4
+        Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4) through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
     """
 
     def __init__(self, code, original_decoder = None, **kwargs):
@@ -323,7 +323,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: D = codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
             sage: D
-            Decoder of Subfield subcode over Finite Field in a of size 2^2 coming from [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4 through Gao decoder for [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4
+            Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4) through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
 
@@ -337,7 +337,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: D = codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
             sage: latex(D)
-            \textnormal{Decoder of Subfield subcode over Finite Field in a of size 2^2 coming from [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4 through } Gao decoder for [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4
+            \textnormal{Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4) through } Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
         """
         return "\\textnormal{Decoder of %s through } %s" % (self.code(), self.original_decoder())
 
@@ -352,7 +352,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: D = codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
             sage: D.original_decoder()
-            Gao decoder for [13, 5, 9] Generalized Reed-Solomon Code over Finite Field in aa of size 2^4
+            Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
         """
         return self._original_decoder
 

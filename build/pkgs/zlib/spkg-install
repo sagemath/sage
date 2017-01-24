@@ -8,16 +8,6 @@ fi
 
 cd src/
 
-# Apply all patches
-for patch in ../patches/*.patch; do
-    [ -f "$patch" ] || continue
-    basename "$patch"
-    if ! patch -p1 <"$patch"; then
-        echo >&2 "Error: patch '$patch' failed to apply."
-        exit 1
-    fi
-done
-
 
 if [ "$UNAME" = CYGWIN ]; then
     export BINARY_PATH="$SAGE_LOCAL/bin"

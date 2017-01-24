@@ -12,6 +12,8 @@ Affine Permutations
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.constant_function import ConstantFunction
@@ -101,7 +103,7 @@ class AffinePermutation(ClonableArray):
             sage: p.__rmul__(q)
             Type A affine permutation with window [1, -1, 0, 6, 5, 4, 10, 11]
         """
-        l=[self.value(q.value(i)) for i in xrange(1,len(self._lst)+1)]
+        l=[self.value(q.value(i)) for i in range(1,len(self._lst)+1)]
         return self.parent()(l, check=False)
 
     def __lmul__(self, q):
@@ -123,7 +125,7 @@ class AffinePermutation(ClonableArray):
         #if self.parent().right_to_left:
         #    self,q=q,self
         #... product rule
-        l=[q.value(self.value(i)) for i in xrange(1,len(self._lst)+1)]
+        l=[q.value(self.value(i)) for i in range(1,len(self._lst)+1)]
         return self.parent()(l, check=False)
 
     def __mul__(self, q):
@@ -157,7 +159,7 @@ class AffinePermutation(ClonableArray):
             sage: p.inverse()
             Type A affine permutation with window [0, -1, 1, 6, 5, 4, 10, 11]
         """
-        inv=[self.position(i) for i in xrange(1,len(self._lst)+1)]
+        inv=[self.position(i) for i in range(1,len(self._lst)+1)]
         return self.parent()(inv, check=False)
 
     __invert__=inverse
@@ -342,7 +344,7 @@ class AffinePermutation(ClonableArray):
         Return Grassmannian quotient.
 
         Factors ``self`` into a unique product of a Grassmannian and a finite-type
-        element.  Returns a tuple containing the Grassmannain and finite
+        element.  Returns a tuple containing the Grassmannian and finite
         elements, in order according to side.
 
         INPUT:
@@ -426,7 +428,7 @@ class AffinePermutationTypeA(AffinePermutation):
         if not len(self)==k+1: raise ValueError("Length of list must be k+1="+str(k+1)+".")
         if not (binomial(k+2,2) == sum(self)): raise ValueError("Window does not sum to "+str(binomial((k+2),2))+".")
         l=sorted([i%(k+1) for i in self])
-        if not l == range(k+1): raise ValueError("Entries must have distinct residues.")
+        if not l == list(range(k+1)): raise ValueError("Entries must have distinct residues.")
 
 
     def value(self, i, base_window=False):
@@ -465,7 +467,7 @@ class AffinePermutationTypeA(AffinePermutation):
             sage: p.position(11)
             9
         """
-        for r in xrange(self.k+1):
+        for r in range(self.k+1):
             if (self[r]%(self.k+1))==i%(self.k+1):
                 #i sits in position i, but some number of windows away.
                 diff=(i-self[r])//(self.k+1)
@@ -529,7 +531,7 @@ class AffinePermutationTypeA(AffinePermutation):
         #with self.clone(check=False) as l:
         l=[]
         if i!=self.k:
-            for m in xrange(self.k+1):
+            for m in range(self.k+1):
                 res=self[m]%(self.k+1)
                 if res==i  :
                     l.append(self[m]+1)
@@ -538,7 +540,7 @@ class AffinePermutationTypeA(AffinePermutation):
                 else:
                     l.append(self[m])
         if i==self.k:
-            for m in xrange(self.k+1):
+            for m in range(self.k+1):
                 res=self[m]%(self.k+1)
                 if res==i  :
                     l.append(self[m]+1)
@@ -637,7 +639,7 @@ class AffinePermutationTypeA(AffinePermutation):
         """
         l=[]
         l.append(self._lst[-1]-self.k)
-        for i in xrange(1,self.k+1):
+        for i in range(1,self.k+1):
             l.append(self._lst[i-1]+1)
         return self.parent()(l)
 
@@ -681,7 +683,7 @@ class AffinePermutationTypeA(AffinePermutation):
             y=self.clone().apply_simple_reflection(i,side)
             T=[i]
             j=i
-            for count in xrange(1,self.k):
+            for count in range(1,self.k):
                 if (typ[0],side[0])==('d','r'):  j=(j+1)%(k+1)
                 if (typ[0],side[0])==('i','r'):  j=(j-1)%(k+1)
                 if (typ[0],side[0])==('d','l'):  j=(j-1)%(k+1)
@@ -799,22 +801,22 @@ class AffinePermutationTypeA(AffinePermutation):
             True
             True
         """
-        code=[0 for i in xrange(0,self.k+1)]
+        code=[0 for i in range(0,self.k+1)]
         if typ[0]=='i' and side[0]=='r':
             #Find number of positions to the right of position i with smaller
             #value than the number in position i.
-            for i in xrange(0,self.k+1):
+            for i in range(0,self.k+1):
                 a=self(i)
-                for j in xrange(i+1, i+self.k+1):
+                for j in range(i+1, i+self.k+1):
                     b=self(j)
                     if b<a: code[i]+=((a-b)//(self.k+1)+1)
         if typ[0]=='d' and side[0]=='r':
             #Find number of positions to the left of position i with larger
             #value than the number in position i.  Then cyclically shift
             #the resulting vector.
-            for i in xrange(0,self.k+1):
+            for i in range(0,self.k+1):
                 a=self(i)
-                for j in xrange(i-self.k, i):
+                for j in range(i-self.k, i):
                     b=self(j)
                     #A small rotation is necessary for the reduced word from
                     #the lehmer code to match the element.
@@ -822,18 +824,18 @@ class AffinePermutationTypeA(AffinePermutation):
         if typ[0]=='i' and side[0]=='l':
             #Find number of positions to the right of i smaller than i, then
             #cyclically shift the resulting vector.
-            for i in xrange(0,self.k+1):
+            for i in range(0,self.k+1):
                 pos=self.position(i)
-                for j in xrange(pos+1, pos+self.k+1):
+                for j in range(pos+1, pos+self.k+1):
                     b=self(j)
                     #A small rotation is necessary for the reduced word from
                     #the lehmer code to match the element.
                     if b<i: code[i-1]+=((i-b)//(self.k+1)+1)
         if typ[0]=='d' and side[0]=='l':
             #Find number of positions to the left of i larger than i.
-            for i in xrange(0,self.k+1):
+            for i in range(0,self.k+1):
                 pos=self.position(i)
-                for j in xrange(pos-self.k, pos):
+                for j in range(pos-self.k, pos):
                     b=self(j)
                     if b>i: code[i]+=((b-i)//(self.k+1)+1)
         return Composition(code)
@@ -994,21 +996,21 @@ class AffinePermutationTypeA(AffinePermutation):
             alpha=Composition(alpha)
         #TODO: We should probably check that w is of type alpha! probably a different function.
         #Now we actually build the recording tableau.
-        tab=[ [] for i in xrange(self.k+1) ]
+        tab=[ [] for i in range(self.k+1) ]
         label=1
         al_index=0
         j=0
         x=self.parent().one()
         cx=x.to_lehmer_code(typ, side)
         n=len(w)-1
-        for i in xrange(len(w)):
+        for i in range(len(w)):
             if side[0]=='r':
                 #y=g[w[n-i]]*x
                 y=x.apply_simple_reflection_left(w[n-i])
             else:
                 y=x.apply_simple_reflection_right(w[i])
             cy=y.to_lehmer_code(typ, side)
-            for r in xrange(self.k+1):
+            for r in range(self.k+1):
                 if cy[r]>cx[r]:
                     tab[r].append(label)
                     j+=1
@@ -1057,7 +1059,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
             sage: C=AffinePermutationGroup(['C',4,1])
             sage: x=C.one()
-            sage: [x.value(i) for i in range(-10,10)]==range(-10,10)
+            sage: [x.value(i) for i in range(-10,10)] == list(range(-10,10))
             True
         """
         N=(2*self.k+1)
@@ -1075,15 +1077,15 @@ class AffinePermutationTypeC(AffinePermutation):
 
         EXAMPLES::
 
-            sage: C=AffinePermutationGroup(['C',4,1])
-            sage: x=C.one()
-            sage: [x.position(i) for i in range(-10,10)]==range(-10,10)
+            sage: C = AffinePermutationGroup(['C',4,1])
+            sage: x = C.one()
+            sage: [x.position(i) for i in range(-10,10)] == list(range(-10,10))
             True
         """
         N=(2*self.k+1)
         index=i%N
         if index==0: return i
-        for r in xrange(len(self)):
+        for r in range(len(self)):
             if (self[r]%N)==index:
                 #i sits in position i, but some number of windows away.
                 diff=(i-self[r])//N
@@ -1142,7 +1144,7 @@ class AffinePermutationTypeC(AffinePermutation):
         j=self.N-i
         l=[]
         if i!=self.k and i!=0:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==i  :
                     l.append(self[m]+1)
@@ -1155,7 +1157,7 @@ class AffinePermutationTypeC(AffinePermutation):
                 else:
                     l.append(self[m])
         elif i==0:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==1:
                     l.append(self[m]-2)
@@ -1164,7 +1166,7 @@ class AffinePermutationTypeC(AffinePermutation):
                 else:
                     l.append(self[m])
         elif i==self.k:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==i:
                     l.append(self[m]+1)
@@ -1315,7 +1317,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
         j=self.N-i
         l=[]
         if i!=self.k and i!=0:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==i  :
                     l.append(self[m]+1)
@@ -1328,7 +1330,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
                 else:
                     l.append(self[m])
         elif i==0:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==1:
                     l.append(self[m]-3)
@@ -1341,7 +1343,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
                 else:
                     l.append(self[m])
         elif i==self.k:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==i:
                     l.append(self[m]+1)
@@ -1474,7 +1476,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
         j=self.N-i
         l=[]
         if i!=self.k and i!=0:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==i  :
                     l.append(self[m]+1)
@@ -1487,7 +1489,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
                 else:
                     l.append(self[m])
         elif i==0:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==1:
                     l.append(self[m]-3)
@@ -1500,7 +1502,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
                 else:
                     l.append(self[m])
         elif i==self.k:
-            for m in xrange(self.k):
+            for m in range(self.k):
                 res=self[m]%self.N
                 if res==self.k:
                     l.append(self[m]+2)
@@ -1613,7 +1615,7 @@ class AffinePermutationTypeG(AffinePermutation):
             [1, 2, 3, 4, 5, 6]
         """
         N=6
-        for r in xrange(N):
+        for r in range(N):
             if self[r]%N==i%N:
                 #i sits in position i, but some number of windows away.
                 diff=(i-self[r])//N
@@ -1676,7 +1678,7 @@ class AffinePermutationTypeG(AffinePermutation):
         if not i in self.parent().index_set(): raise ValueError('Index not in index set.')
         l=[]
         if i==1:
-            for m in xrange(6):
+            for m in range(6):
                 res=self[m]%6
                 if res==1 or res==3 or res==5:
                     l.append(self[m]+1)
@@ -1685,7 +1687,7 @@ class AffinePermutationTypeG(AffinePermutation):
                 else:
                     l.append(self[m])
         elif i==2:
-            for m in xrange(6):
+            for m in range(6):
                 res=self[m]%6
                 if res==2 or res==4:
                     l.append(self[m]+1)
@@ -1694,7 +1696,7 @@ class AffinePermutationTypeG(AffinePermutation):
                 else:
                     l.append(self[m])
         elif i==0:
-            for m in xrange(6):
+            for m in range(6):
                 res=self[m]%6
                 if res==1 or res==2:
                     l.append(self[m]-2)
@@ -1768,7 +1770,7 @@ def AffinePermutationGroup(cartan_type):
     """
     Wrapper function for specific affine permutation groups.
 
-    These are combinatorial implmentations of the affine Weyl groups of
+    These are combinatorial implementations of the affine Weyl groups of
     types `A`, `B`, `C`, `D`, and `G` as permutations of the set of all integers.
     the basic algorithms are derived from [BjBr]_ and [Erik]_.
 
@@ -2183,7 +2185,7 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
             True
             sage: TestSuite(A).run()
         """
-        return self([i for i in xrange(1,self.k+2)])
+        return self([i for i in range(1,self.k+2)])
 
     #------------------------
     #Type-unique methods.
@@ -2223,7 +2225,7 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
         if not 0 in C: raise ValueError( "Composition must contain a zero entry." )
         k=self.k
         #Find a zero entry in C.
-        for r in xrange(self.k+1):
+        for r in range(self.k+1):
             if C[r]==0: break
         D=list(C)
         #The s0 and t0 are +-1, dependent on typ and side.
@@ -2236,12 +2238,12 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
         #We create a list of cyclically in/decreasing words appearing in
         #the decomposition corresponding to the composition C,
         #and then build the element.
-        listy=[]
-        while sum(D)>0:
-            l=['x' for i in xrange(self.k+1)]
-            ll=[]
+        listy = []
+        while sum(D) > 0:
+            l = ['x'] * (self.k + 1)
+            ll = []
             #read off a row of C.
-            for j in xrange(self.k+1):
+            for j in range(self.k+1):
                 pos=(r + s0*t0*j)%(k+1)
                 residue=( r + s0*t0*(row + j) )%(k+1)
                 if D[pos]!=0:
@@ -2286,7 +2288,7 @@ class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
             True
             sage: TestSuite(C).run()
         """
-        return self([i for i in xrange(1,self.k+1)])
+        return self(list(range(1, self.k + 1)))
 
     Element = AffinePermutationTypeC
 

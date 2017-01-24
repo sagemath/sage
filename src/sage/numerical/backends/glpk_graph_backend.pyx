@@ -1,4 +1,3 @@
-# distutils: language = c++
 """
 GLPK Backend for access to GLPK graph functions
 
@@ -162,12 +161,12 @@ cdef class GLPKGraphBackend(object):
         sage: a = gbe.add_edge('0', '1')
         sage: gbe.write_graph(SAGE_TMP+"/graph.txt")
         Writing graph to ...
-        2 lines were written
+        4 lines were written
         0
         sage: gbe1 = GLPKGraphBackend(SAGE_TMP+"/graph.txt", "plain")
         Reading graph from ...
-        Graph has 2 vertices and 1 arc
-        2 lines were read
+        Graph has 2 vertices and 1 edge
+        3 lines were read
 
     The following example imports a Sage ``Graph`` and then uses it to solve a
     maxflow problem::
@@ -369,7 +368,7 @@ cdef class GLPKGraphBackend(object):
 
         # We do not want to have [None,None,None,1] as input as a vertex named
         # "1" would be created twice (a first time when adding a 'None' vertex,
-        # and and a second time when reading the last item of the list).
+        # and a second time when reading the last item of the list).
         nonecount = 0
         for v in vertices:
             if v is None:
@@ -1060,7 +1059,7 @@ cdef class GLPKGraphBackend(object):
             sage: a = gbe.add_edge("0", "1")
             sage: gbe.write_graph(SAGE_TMP+"/graph.txt")
             Writing graph to ...
-            2 lines were written
+            4 lines were written
             0
         """
 

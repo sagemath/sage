@@ -3,7 +3,9 @@ Various functions to deal with conversion mpz <-> Python int/long
 """
 
 cdef extern from "longintrepr.h":
-    cdef _PyLong_New(Py_ssize_t s)
+    # Add explicit cast to avoid compiler warning
+    cdef _PyLong_New "(PyObject*)_PyLong_New"(Py_ssize_t s)
+
     cdef long PyLong_SHIFT
     ctypedef unsigned int digit
     ctypedef struct PyLongObject:

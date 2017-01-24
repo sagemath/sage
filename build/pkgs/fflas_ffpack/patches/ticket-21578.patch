@@ -1,0 +1,417 @@
+commit 346498a71b2759f5913ba8c4c2fe025bbf8b3faa
+Author: Clement Pernet <clement.pernet@imag.fr>
+Date:   Mon Sep 26 15:35:36 2016 +0200
+
+    renaming variable to fix issue #57 (B0 already defined by a macro in termios.h)
+
+diff --git a/fflas-ffpack/fflas/fflas_igemm/igemm_kernels.inl b/fflas-ffpack/fflas/fflas_igemm/igemm_kernels.inl
+index 80b2bb9..b4fe723 100644
+--- a/fflas-ffpack/fflas/fflas_igemm/igemm_kernels.inl
++++ b/fflas-ffpack/fflas/fflas_igemm/igemm_kernels.inl
+@@ -83,91 +83,91 @@ namespace FFLAS { namespace details { /*  kernels */
+ 		prefetch(r3+simd::vect_size);
+ 		// process the loop by (_mrx4) by (4x4) matrix mul
+ 		for (k=0;k<pdepth;k+=4){
+-			vect_t A0,A1;
+-			vect_t B0,B1,B2,B3;
+-			A0 = simd::load( blA+0*StepA);
+-			A1 = simd::load( blA+1*StepA);
+-			B0 = simd::load( blB+0*StepB);
+-			B1 = simd::load( blB+1*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			B2 = simd::load( blB+2*StepB);
+-			simd::fmaddxin(C4,A1,B0); // B0
+-			B3 = simd::load( blB+3*StepB);
+-			B0 = simd::load( blB+4*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C5,A1,B1); // B1
+-			B1 = simd::load( blB+5*StepB);
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C6,A1,B2); // B2
+-			B2 = simd::load( blB+6*StepB);
+-			simd::fmaddxin(C3,A0,B3);
+-			A0 = simd::load( blA+2*StepA);
+-			simd::fmaddxin(C7,A1,B3); // B3
+-			A1 = simd::load( blA+3*StepA);
+-			B3 = simd::load( blB+7*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			simd::fmaddxin(C4,A1,B0); // B0
+-			B0 = simd::load( blB+8*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C5,A1,B1); // B1
+-			B1 = simd::load( blB+9*StepB);
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C6,A1,B2); // B2
+-			B2 = simd::load( blB+10*StepB);
+-			simd::fmaddxin(C3,A0,B3);
+-			A0 = simd::load( blA+4*StepA);
+-			simd::fmaddxin(C7,A1,B3); // B3
+-			A1 = simd::load( blA+5*StepA);
+-			B3 = simd::load( blB+11*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			simd::fmaddxin(C4,A1,B0); // B0
+-			B0 = simd::load( blB+12*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C5,A1,B1); // B1
+-			B1 = simd::load( blB+13*StepB);
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C6,A1,B2); // B2
+-			B2 = simd::load( blB+14*StepB);
+-			simd::fmaddxin(C3,A0,B3);
+-			A0 = simd::load( blA+6*StepA);
+-			simd::fmaddxin(C7,A1,B3); // B3
+-			A1 = simd::load( blA+7*StepA);
+-			B3 = simd::load( blB+15*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			simd::fmaddxin(C4,A1,B0); // B0
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C5,A1,B1); // B1
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C6,A1,B2); // B2
+-			simd::fmaddxin(C3,A0,B3);
+-			simd::fmaddxin(C7,A1,B3); // B3
++			vect_t A_0,A_1;
++			vect_t B_0,B_1,B_2,B_3;
++			A_0 = simd::load( blA+0*StepA);
++			A_1 = simd::load( blA+1*StepA);
++			B_0 = simd::load( blB+0*StepB);
++			B_1 = simd::load( blB+1*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			B_2 = simd::load( blB+2*StepB);
++			simd::fmaddxin(C4,A_1,B_0); // B_0
++			B_3 = simd::load( blB+3*StepB);
++			B_0 = simd::load( blB+4*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C5,A_1,B_1); // B_1
++			B_1 = simd::load( blB+5*StepB);
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C6,A_1,B_2); // B_2
++			B_2 = simd::load( blB+6*StepB);
++			simd::fmaddxin(C3,A_0,B_3);
++			A_0 = simd::load( blA+2*StepA);
++			simd::fmaddxin(C7,A_1,B_3); // B_3
++			A_1 = simd::load( blA+3*StepA);
++			B_3 = simd::load( blB+7*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			simd::fmaddxin(C4,A_1,B_0); // B_0
++			B_0 = simd::load( blB+8*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C5,A_1,B_1); // B_1
++			B_1 = simd::load( blB+9*StepB);
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C6,A_1,B_2); // B_2
++			B_2 = simd::load( blB+10*StepB);
++			simd::fmaddxin(C3,A_0,B_3);
++			A_0 = simd::load( blA+4*StepA);
++			simd::fmaddxin(C7,A_1,B_3); // B_3
++			A_1 = simd::load( blA+5*StepA);
++			B_3 = simd::load( blB+11*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			simd::fmaddxin(C4,A_1,B_0); // B_0
++			B_0 = simd::load( blB+12*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C5,A_1,B_1); // B_1
++			B_1 = simd::load( blB+13*StepB);
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C6,A_1,B_2); // B_2
++			B_2 = simd::load( blB+14*StepB);
++			simd::fmaddxin(C3,A_0,B_3);
++			A_0 = simd::load( blA+6*StepA);
++			simd::fmaddxin(C7,A_1,B_3); // B_3
++			A_1 = simd::load( blA+7*StepA);
++			B_3 = simd::load( blB+15*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			simd::fmaddxin(C4,A_1,B_0); // B_0
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C5,A_1,B_1); // B_1
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C6,A_1,B_2); // B_2
++			simd::fmaddxin(C3,A_0,B_3);
++			simd::fmaddxin(C7,A_1,B_3); // B_3
+ 			blA+= 8*StepA;
+ 			blB+=16*StepB;
+ 		}
+ 		// process (depth mod 4) remaining entries by  (_mrx1) by (1x4) matrix mul
+ 		for(;k<depth;k++){
+-			vect_t A0,A1;
+-			vect_t B0,B1,B2,B3;
+-			A0 = simd::load( blA+0*StepA);
+-			A1 = simd::load( blA+1*StepA);
+-			B0 = simd::load( blB+0*StepB);
+-			B1 = simd::load( blB+1*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			B2 = simd::load( blB+2*StepB);
+-			simd::fmaddxin(C4,A1,B0); // B0
+-			B3 = simd::load( blB+3*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C5,A1,B1);  // B1
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C6,A1,B2); // B2
+-			simd::fmaddxin(C3,A0,B3);
+-			simd::fmaddxin(C7,A1,B3); // B3
++			vect_t A_0,A_1;
++			vect_t B_0,B_1,B_2,B_3;
++			A_0 = simd::load( blA+0*StepA);
++			A_1 = simd::load( blA+1*StepA);
++			B_0 = simd::load( blB+0*StepB);
++			B_1 = simd::load( blB+1*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			B_2 = simd::load( blB+2*StepB);
++			simd::fmaddxin(C4,A_1,B_0); // B_0
++			B_3 = simd::load( blB+3*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C5,A_1,B_1);  // B_1
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C6,A_1,B_2); // B_2
++			simd::fmaddxin(C3,A_0,B_3);
++			simd::fmaddxin(C7,A_1,B_3); // B_3
+ 			blA+=2*StepA;
+ 			blB+=4*StepB;
+ 		}
+ 		vect_t R0, R1, R2, R3, R4, R5, R6;
+-		vect_t A0 ;
+-		A0 = simd::set1(alpha);
++		vect_t A_0 ;
++		A_0 = simd::set1(alpha);
+ 		R0 = simd::loadu( r0);
+ 		R1 = simd::loadu( r1);
+ 		R2 = simd::loadu( r2);
+@@ -182,7 +182,7 @@ namespace FFLAS { namespace details { /*  kernels */
+ 			simd::subin(R0,C0);
+ 		}
+ 		if (K == number_kind::other) {
+-			simd::fmaddxin(R0,A0,C0);
++			simd::fmaddxin(R0,A_0,C0);
+ 		}
+ 		simd::storeu(r0,R0);
+ 		R0 = simd::loadu( r3+simd::vect_size);
+@@ -205,13 +205,13 @@ namespace FFLAS { namespace details { /*  kernels */
+ 			simd::subin(R0,C7);
+ 		}
+ 		if (K == number_kind::other) {
+-			simd::fmaddxin(R1,A0,C1);
+-			simd::fmaddxin(R2,A0,C2);
+-			simd::fmaddxin(R3,A0,C3);
+-			simd::fmaddxin(R4,A0,C4);
+-			simd::fmaddxin(R5,A0,C5);
+-			simd::fmaddxin(R6,A0,C6);
+-			simd::fmaddxin(R0,A0,C7);
++			simd::fmaddxin(R1,A_0,C1);
++			simd::fmaddxin(R2,A_0,C2);
++			simd::fmaddxin(R3,A_0,C3);
++			simd::fmaddxin(R4,A_0,C4);
++			simd::fmaddxin(R5,A_0,C5);
++			simd::fmaddxin(R6,A_0,C6);
++			simd::fmaddxin(R0,A_0,C7);
+ 		}
+ 		simd::storeu(r1,R1);
+ 		simd::storeu(r2,R2);
+@@ -247,66 +247,66 @@ namespace FFLAS { namespace details { /*  kernels */
+ 		int64_t *r3 = r2+ldc;
+ 		// process the loop by (1/2_mrx4) by (4x4) matrix mul
+ 		for (k=0;k<pdepth;k+=4){
+-			vect_t A0;
+-			vect_t B0,B1,B2,B3;
+-			A0 = simd::load( blA+0*StepA);
+-			B0 = simd::load( blB+0*StepB);
+-			B1 = simd::load( blB+1*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			B2 = simd::load( blB+2*StepB);
+-			B3 = simd::load( blB+3*StepB);
+-			B0 = simd::load( blB+4*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			B1 = simd::load( blB+5*StepB);
+-			simd::fmaddxin(C2,A0,B2);
+-			B2 = simd::load( blB+6*StepB);
+-			simd::fmaddxin(C3,A0,B3);
+-			A0 = simd::load( blA+1*StepA);
+-			B3 = simd::load( blB+7*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			B0 = simd::load( blB+8*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			B1 = simd::load( blB+9*StepB);
+-			simd::fmaddxin(C2,A0,B2);
+-			B2 = simd::load( blB+10*StepB);
+-			simd::fmaddxin(C3,A0,B3);
+-			A0 = simd::load( blA+2*StepA);
+-			B3 = simd::load( blB+11*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			B0 = simd::load( blB+12*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			B1 = simd::load( blB+13*StepB);
+-			simd::fmaddxin(C2,A0,B2);
+-			B2 = simd::load( blB+14*StepB);
+-			simd::fmaddxin(C3,A0,B3);
+-			A0 = simd::load( blA+3*StepA);
+-			B3 = simd::load( blB+15*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C3,A0,B3);
++			vect_t A_0;
++			vect_t B_0,B_1,B_2,B_3;
++			A_0 = simd::load( blA+0*StepA);
++			B_0 = simd::load( blB+0*StepB);
++			B_1 = simd::load( blB+1*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			B_2 = simd::load( blB+2*StepB);
++			B_3 = simd::load( blB+3*StepB);
++			B_0 = simd::load( blB+4*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			B_1 = simd::load( blB+5*StepB);
++			simd::fmaddxin(C2,A_0,B_2);
++			B_2 = simd::load( blB+6*StepB);
++			simd::fmaddxin(C3,A_0,B_3);
++			A_0 = simd::load( blA+1*StepA);
++			B_3 = simd::load( blB+7*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			B_0 = simd::load( blB+8*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			B_1 = simd::load( blB+9*StepB);
++			simd::fmaddxin(C2,A_0,B_2);
++			B_2 = simd::load( blB+10*StepB);
++			simd::fmaddxin(C3,A_0,B_3);
++			A_0 = simd::load( blA+2*StepA);
++			B_3 = simd::load( blB+11*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			B_0 = simd::load( blB+12*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			B_1 = simd::load( blB+13*StepB);
++			simd::fmaddxin(C2,A_0,B_2);
++			B_2 = simd::load( blB+14*StepB);
++			simd::fmaddxin(C3,A_0,B_3);
++			A_0 = simd::load( blA+3*StepA);
++			B_3 = simd::load( blB+15*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C3,A_0,B_3);
+ 			blA+= 4*StepA;
+ 			blB+=16*StepB;
+ 		}
+ 		// process (depth mod 4) remaining entries by  (1/2_mrx1) by (1x4) matrix mul
+ 		for(;k<depth;k++){
+-			vect_t A0;
+-			vect_t B0,B1,B2,B3;
+-			A0 = simd::load( blA+0*StepA);
+-			B0 = simd::load( blB+0*StepB);
+-			B1 = simd::load( blB+1*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			B2 = simd::load( blB+2*StepB);
+-			B3 = simd::load( blB+3*StepB);
+-			simd::fmaddxin(C1,A0,B1);
+-			simd::fmaddxin(C2,A0,B2);
+-			simd::fmaddxin(C3,A0,B3);
++			vect_t A_0;
++			vect_t B_0,B_1,B_2,B_3;
++			A_0 = simd::load( blA+0*StepA);
++			B_0 = simd::load( blB+0*StepB);
++			B_1 = simd::load( blB+1*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			B_2 = simd::load( blB+2*StepB);
++			B_3 = simd::load( blB+3*StepB);
++			simd::fmaddxin(C1,A_0,B_1);
++			simd::fmaddxin(C2,A_0,B_2);
++			simd::fmaddxin(C3,A_0,B_3);
+ 			blA+=StepA;
+ 			blB+=4*StepB;
+ 		}
+ 		vect_t R0, R1, R2, R3;
+-		vect_t A0 ;
+-		A0 = simd::set1(alpha);
++		vect_t A_0 ;
++		A_0 = simd::set1(alpha);
+ 		R0 = simd::loadu( r0);
+ 		R1 = simd::loadu( r1);
+ 		R2 = simd::loadu( r2);
+@@ -324,10 +324,10 @@ namespace FFLAS { namespace details { /*  kernels */
+ 			simd::subin(R3,C3);
+ 		}
+ 		if ( K == number_kind::other) {
+-			simd::fmaddxin(R0,A0,C0);
+-			simd::fmaddxin(R1,A0,C1);
+-			simd::fmaddxin(R2,A0,C2);
+-			simd::fmaddxin(R3,A0,C3);
++			simd::fmaddxin(R0,A_0,C0);
++			simd::fmaddxin(R1,A_0,C1);
++			simd::fmaddxin(R2,A_0,C2);
++			simd::fmaddxin(R3,A_0,C3);
+ 		}
+ 		simd::storeu(r0,R0);
+ 		simd::storeu(r1,R1);
+@@ -398,21 +398,21 @@ namespace FFLAS { namespace details { /*  kernels */
+ 
+ 		// process the loop by (_mrx1) by (1x1) matrix mul
+ 		for (k=0;k<depth;k++){
+-			vect_t A0,A1;
+-			vect_t B0;
+-			A0 = simd::load( blA+0*StepA);
+-			A1 = simd::load( blA+1*StepA);
+-			B0 = simd::load( blB+0*StepB);
+-			simd::fmaddxin(C0,A0,B0);
+-			simd::fmaddxin(C4,A1,B0); //! bug ,B0 dans VEC_MADD_32 ?
++			vect_t A_0,A_1;
++			vect_t B_0;
++			A_0 = simd::load( blA+0*StepA);
++			A_1 = simd::load( blA+1*StepA);
++			B_0 = simd::load( blB+0*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
++			simd::fmaddxin(C4,A_1,B_0); //! bug ,B_0 dans VEC_MADD_32 ?
+ 			blA+= 2*StepA;
+ 			blB+= 1*StepB;
+ 		}
+ 		vect_t R0, R4;
+ 		R0 = simd::loadu( r0);
+ 		R4 = simd::loadu( r4);
+-		vect_t A0 ;
+-		A0 = simd::set1(alpha);
++		vect_t A_0 ;
++		A_0 = simd::set1(alpha);
+ 		if (K == number_kind::one) {
+ 			simd::addin(R0,C0);
+ 			simd::addin(R4,C4);
+@@ -422,8 +422,8 @@ namespace FFLAS { namespace details { /*  kernels */
+ 			simd::subin(R4,C4);
+ 		}
+ 		if (K == number_kind::other) {
+-			simd::fmaddxin(R0,A0,C0);
+-			simd::fmaddxin(R4,A0,C4);
++			simd::fmaddxin(R0,A_0,C0);
++			simd::fmaddxin(R4,A_0,C4);
+ 		}
+ 		simd::storeu(r0,R0);
+ 		simd::storeu(r4,R4);
+@@ -447,17 +447,17 @@ namespace FFLAS { namespace details { /*  kernels */
+ 
+ 		// process the loop by (1/2_mrx1) by (1x1) matrix mul
+ 		for (k=0;k<depth;k++){
+-			vect_t A0;
+-			vect_t B0;
+-			A0 = simd::load( blA+0*StepA);
+-			B0 = simd::load( blB+0*StepB);
+-			simd::fmaddxin(C0,A0,B0);
++			vect_t A_0;
++			vect_t B_0;
++			A_0 = simd::load( blA+0*StepA);
++			B_0 = simd::load( blB+0*StepB);
++			simd::fmaddxin(C0,A_0,B_0);
+ 			blA+= 1*StepA;
+ 			blB+= 1*StepB;
+ 		}
+ 		vect_t R0;
+-		vect_t A0 ;
+-		A0 = simd::set1(alpha);
++		vect_t A_0 ;
++		A_0 = simd::set1(alpha);
+ 
+ 		R0 = simd::loadu( r0);
+ 		if ( K == number_kind::one)
+@@ -465,7 +465,7 @@ namespace FFLAS { namespace details { /*  kernels */
+ 		if ( K == number_kind::mone)
+ 			simd::subin(R0,C0);
+ 		if ( K == number_kind::other)
+-			simd::fmaddxin(R0,A0,C0);
++			simd::fmaddxin(R0,A_0,C0);
+ 		simd::storeu(r0,R0);
+ 	}
+ 

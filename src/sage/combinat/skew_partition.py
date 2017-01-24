@@ -148,6 +148,8 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
+
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1013,7 +1015,7 @@ class SkewPartition(CombinatorialElement):
             sage: s.to_list()
             [[4, 3, 1], [2]]
             sage: type(s.to_list())
-            <type 'list'>
+            <... 'list'>
         """
         return [list(_) for _ in list(self)]
 
@@ -1055,7 +1057,7 @@ class SkewPartition(CombinatorialElement):
 
         G = DiGraph()
         for i, outer_i in enumerate(outer):
-            for j in xrange(inner[i], outer_i):
+            for j in range(inner[i], outer_i):
                 if format == "string":
                     string = "%d,%d" % (i, j)
                 else:

@@ -119,6 +119,7 @@ from sage.misc.derivative import multi_derivative
 Polynomial = sage.rings.polynomial.polynomial_element.Polynomial_generic_dense
 
 from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
+from sage.structure.sage_object cimport richcmp
 
 
 def is_PowerSeries(x):
@@ -313,7 +314,7 @@ cdef class PowerSeries(AlgebraElement):
         S = self._parent.change_ring(R)
         return S(self)
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         r"""
         Comparison of self and ``right``.
 
@@ -374,10 +375,6 @@ cdef class PowerSeries(AlgebraElement):
             sage: f == f.truncate()
             True
         """
-        # A very common case throughout code
-        if isinstance(right, int):
-            return self.is_zero()
-
         prec = self.common_prec(right)
         x = self.list()
         y = right.list()
@@ -386,7 +383,7 @@ cdef class PowerSeries(AlgebraElement):
             x = x[:prec] # truncate x to common prec
             y += [0]*(prec - len(y))
             y = y[:prec]
-        return cmp(x,y)
+        return richcmp(x, y, op)
 
     def __call__(self, x):
         """
@@ -969,7 +966,7 @@ cdef class PowerSeries(AlgebraElement):
         `a_0` nonzero. Then this function returns
         `a_0 + a_1 q + \cdots` .
 
-        .. note::
+        .. NOTE::
 
            This valuation zero part need not be a unit if, e.g.,
            `a_0` is not invertible in the base ring.
@@ -1084,7 +1081,7 @@ cdef class PowerSeries(AlgebraElement):
         `n` is negative, terms below `t^n` will be
         discarded. Does not change this power series.
 
-        .. note::
+        .. NOTE::
 
            Despite the fact that higher order terms are printed to the
            right in a power series, right shifting decreases the
@@ -1211,7 +1208,7 @@ cdef class PowerSeries(AlgebraElement):
 
         ALGORITHM: Newton's method
 
-        .. math::
+        .. MATH::
 
            x_{i+1} = \frac{1}{2}( x_i + \mathrm{self}/x_i )
 
@@ -1611,7 +1608,7 @@ cdef class PowerSeries(AlgebraElement):
         Obtain a power series solution to an inhomogeneous linear
         differential equation of the form:
 
-        .. math::
+        .. MATH::
 
               f'(t) = a(t) f(t) + b(t).
 
@@ -1641,7 +1638,7 @@ cdef class PowerSeries(AlgebraElement):
         over something like `\QQ`, running time analysis can be a
         little complicated because the coefficients tend to explode.)
 
-        .. note::
+        .. NOTE::
 
            - If the coefficient ring is a field of characteristic
              zero, then the solution will exist and is unique.
@@ -1731,7 +1728,7 @@ cdef class PowerSeries(AlgebraElement):
 
         ALGORITHM: See :meth:`.solve_linear_de`.
 
-        .. note::
+        .. NOTE::
 
            - Screwy things can happen if the coefficient ring is not a
              field of characteristic zero. See :meth:`.solve_linear_de`.
@@ -1975,7 +1972,7 @@ cdef class PowerSeries(AlgebraElement):
         documentation for the global derivative() function for more
         details.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`_derivative`
 
@@ -2127,7 +2124,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
     `L`), where `f` is a solution to the linear
     inhomogeneous differential equation:
 
-    .. math::
+    .. MATH::
 
          (t^N f)'  =  a t^N f  +  t^{N-1} b  +  O(t^{N+L-1}).
 
@@ -2157,7 +2154,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
     ceiling of `(L/2)`. First recursively find `g`
     modulo `t^{L'}` such that
 
-    .. math::
+    .. MATH::
 
          (t^N g)'  =  a t^N g  +  t^{N-1} b  +  O(t^{N+L'-1}).
 
@@ -2168,14 +2165,14 @@ def _solve_linear_de(R, N, L, a, b, f0):
     equation. We can find a suitable `h` by recursively solving
     another differential equation of the same form, namely
 
-    .. math::
+    .. MATH::
 
          (t^{N+L'} h)'  =  a t^{N+L'} h  +  c t^{N+L'-1} + O(t^{N+L'-1}),
 
 
     where `c` is determined by
 
-    .. math::
+    .. MATH::
 
          (t^N g)' - a t^N g - t^{N-1} b  =  -c t^{N+L'-1} + O(t^{N+L-1}).
 

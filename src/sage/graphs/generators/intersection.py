@@ -15,7 +15,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                         http://www.gnu.org/licenses/
 ###########################################################################
 from __future__ import print_function
-
+from six.moves import range
 from six import itervalues
 
 # import from Sage library
@@ -92,16 +92,16 @@ def IntervalGraph(intervals, points_ordered = False):
     g = Graph(n)
 
     if points_ordered:
-        for i in xrange(n-1):
+        for i in range(n-1):
             li,ri = intervals[i]
-            for j in xrange(i+1,n):
+            for j in range(i+1,n):
                 lj,rj = intervals[j]
                 if ri < lj or rj < li: continue
                 g.add_edge(i,j)
     else:
-        for i in xrange(n-1):
+        for i in range(n-1):
             I = intervals[i]
-            for j in xrange(i+1,n):
+            for j in range(i+1,n):
                 J = intervals[j]
                 if max(I) < min(J) or max(J) < min(I): continue
                 g.add_edge(i,j)
@@ -342,15 +342,15 @@ def ToleranceGraph(tolrep):
     """
     n = len(tolrep)
 
-    for i in xrange(n):
+    for i in range(n):
         if tolrep[i][2] <= 0:
             raise ValueError("Invalid tolerance representation at position "+str(i)+"; third value must be positive!")
 
     g = Graph(n)
 
-    for i in xrange(n-1):
+    for i in range(n-1):
         li,ri,ti = tolrep[i]
-        for j in xrange(i+1,n):
+        for j in range(i+1,n):
             lj,rj,tj = tolrep[j]
             if min(ri,rj) - max(li,lj) >= min(ti,tj):
                 g.add_edge(i,j)

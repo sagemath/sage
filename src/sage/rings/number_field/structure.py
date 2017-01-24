@@ -55,7 +55,7 @@ from __future__ import absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
 
-class NumberFieldStructure(object):
+class NumberFieldStructure(UniqueRepresentation):
     r"""
     Abstract base class encapsulating information about a number fields
     relation to other number fields.
@@ -63,10 +63,44 @@ class NumberFieldStructure(object):
     TESTS::
 
         sage: from sage.rings.number_field.structure import NumberFieldStructure
-        sage: NumberFieldStructure()
+        sage: NumberFieldStructure(QQ)
         <sage.rings.number_field.structure.NumberFieldStructure object at 0x...>
 
+    Instances are cached through
+    :class:`sage.structure.unique_representation.UniqueRepresentation`::
+
+        sage: NumberFieldStructure(QQ) is NumberFieldStructure(QQ)
+        True
+
+        sage: R.<x> = QQ[]
+        sage: K.<i> = NumberField(x^2+1)
+        sage: L = K.change_names('j').change_names('i')
+        sage: K is L  # K and L differ in "structure", one is the "name-change" of the other
+        False
+        sage: NumberFieldStructure(L) is NumberFieldStructure(L)
+        True
+        sage: NumberFieldStructure(K) is NumberFieldStructure(L)
+        False
+        sage: from sage.rings.number_field.structure import NameChange
+        sage: KK.<j> = NumberField(x^2+1, structure=NameChange(K))
+        sage: LL.<j> = NumberField(x^2+1, structure=NameChange(L))
+        sage: KK is LL
+        False
+
     """
+    def __init__(self, other):
+        """
+        Initialization.
+
+        TESTS::
+
+            sage: from sage.rings.number_field.structure import NumberFieldStructure
+            sage: type(NumberFieldStructure(QQ))
+            <class 'sage.rings.number_field.structure.NumberFieldStructure'>
+
+        """
+        self.other = other
+
     def create_structure(self, field):
         r"""
         Return a tuple encoding structural information about ``field``.
@@ -81,7 +115,7 @@ class NumberFieldStructure(object):
         TESTS::
 
             sage: from sage.rings.number_field.structure import NumberFieldStructure
-            sage: NumberFieldStructure().create_structure(QQ)
+            sage: NumberFieldStructure(QQ).create_structure(QQ)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -103,86 +137,7 @@ class NumberFieldStructure(object):
         """
         raise NotImplementedError
 
-class NumberFieldStructureFromUniqueField(UniqueRepresentation, NumberFieldStructure):
-    r"""
-    Abstract base class encapsulating information about a number fields
-    relation to another number field.
-
-    INPUT:
-
-    - ``other`` -- a number field
-
-    TESTS:
-
-        sage: from sage.rings.number_field.structure import NumberFieldStructureFromUniqueField
-        sage: NumberFieldStructureFromUniqueField(QQ)
-        <sage.rings.number_field.structure.NumberFieldStructureFromUniqueField object at 0x...>
-
-    Instances are cached through
-    :class:`sage.structure.unique_representation.UniqueRepresentation`::
-
-        sage: NumberFieldStructureFromUniqueField(QQ) is NumberFieldStructureFromUniqueField(QQ)
-        True
-
-    However, the caching (and the `==` operator of the objects) is on identity
-    and not on equality::
-
-        sage: R.<x> = QQ[]
-        sage: K.<i> = NumberField(x^2+1)
-        sage: L = K.change_names('j').change_names('i')
-        sage: K == L
-        True
-        sage: K is L # K and L differ in "structure", one is the "name-change" of the other
-        False
-
-        sage: NumberFieldStructureFromUniqueField(L) is NumberFieldStructureFromUniqueField(L)
-        True
-        sage: NumberFieldStructureFromUniqueField(K) is NumberFieldStructureFromUniqueField(L)
-        False
-
-    This important because otherwise caching of number fields would be broken::
-
-        sage: R.<x> = QQ[]
-        sage: from sage.rings.number_field.structure import NameChange
-        sage: KK.<j> = NumberField(x^2+1, structure=NameChange(K))
-        sage: LL.<j> = NumberField(x^2+1, structure=NameChange(L))
-        sage: KK is LL
-        False
-
-    """
-    @staticmethod
-    def __classcall__(cls, other, *args, **kwargs):
-        r"""
-        To make sure that caching only depends on the id of ``other`` and not
-        on its implementation of ``==``, we add ``id(other)`` to the cache key.
-
-        TESTS:
-
-        If ``other`` is a tuple, its second entry is ignored, it is always overwritten by the preprocessing::
-
-            sage: from sage.rings.number_field.structure import NumberFieldStructureFromUniqueField
-            sage: NumberFieldStructureFromUniqueField((QQ, 1)) is NumberFieldStructureFromUniqueField((QQ, 2)) is NumberFieldStructureFromUniqueField(QQ)
-            True
-
-        """
-        if isinstance(other, tuple):
-            other = other[0]
-        return super(NumberFieldStructureFromUniqueField,cls).__classcall__(cls, (other, id(other)), *args, **kwargs)
-
-    def __init__(self, other):
-        r"""
-        Initialization.
-
-        TESTS::
-
-            sage: from sage.rings.number_field.structure import NumberFieldStructureFromUniqueField
-            sage: type(NumberFieldStructureFromUniqueField(QQ))
-            <class 'sage.rings.number_field.structure.NumberFieldStructureFromUniqueField'>
-
-        """
-        self.other = other[0]
-
-class NameChange(NumberFieldStructureFromUniqueField):
+class NameChange(NumberFieldStructure):
     r"""
     Structure for a number field created by a change in variable name.
 
@@ -217,7 +172,7 @@ class NameChange(NumberFieldStructureFromUniqueField):
         from . import maps
         return maps.NameChangeMap(field, self.other), maps.NameChangeMap(self.other, field)
 
-class AbsoluteFromRelative(NumberFieldStructureFromUniqueField):
+class AbsoluteFromRelative(NumberFieldStructure):
     r"""
     Structure for an absolute number field created from a relative number
     field.
@@ -258,7 +213,7 @@ class AbsoluteFromRelative(NumberFieldStructureFromUniqueField):
         from . import maps
         return maps.MapAbsoluteToRelativeNumberField(field, self.other), maps.MapRelativeToAbsoluteNumberField(self.other, field)
 
-class RelativeFromAbsolute(NumberFieldStructureFromUniqueField):
+class RelativeFromAbsolute(NumberFieldStructure):
     r"""
     Structure for a relative number field created from an absolute number
     field.
@@ -288,7 +243,7 @@ class RelativeFromAbsolute(NumberFieldStructureFromUniqueField):
             <class 'sage.rings.number_field.structure.RelativeFromAbsolute'>
 
         """
-        NumberFieldStructureFromUniqueField.__init__(self, other)
+        NumberFieldStructure.__init__(self, other)
         self.gen = gen
 
     def create_structure(self, field):
@@ -335,7 +290,7 @@ class RelativeFromAbsolute(NumberFieldStructureFromUniqueField):
 
         return field_to_other, other_to_field
 
-class RelativeFromRelative(NumberFieldStructureFromUniqueField):
+class RelativeFromRelative(NumberFieldStructure):
     r"""
     Structure for a relative number field created from another relative number
     field.
@@ -388,31 +343,32 @@ class RelativeFromRelative(NumberFieldStructureFromUniqueField):
 
         """
         # other and field_ are relative number fields which are isomorphic via
-        # an absolute number field abs:
+        # an absolute number field abs.
+        # field and field_ are identical except that field_.structure() returns
+        # the isomorphism with abs and field returns an isomorphism with other
+        # (which we construct in this method).
         #
-        #       f      g
-        # other -> abs -> field_ = field
+        #       f      g         h
+        # other -> abs -> field_ -> field
         field_ = self.other
         g_, g = field_.structure()
         abs = g.domain()
         f_, f = abs.structure()
         other = f.domain()
+        h = lambda x: field._element_constructor_(x.list())
+        h_ = lambda x: field_._element_constructor_(x.list())
 
-        # field and field_ are identical except that field_.structure() returns
-        # the isomorphism with abs and field returns an isomorphism with other
-        # (which we construct in this method).
-        #
         # First, we construct the isomorphism from other to field by embedding
         # other.base_field() into field.
         gf = g*f
         base = other.base_field()
-        base_to_field = base.Hom(field)([gf(base.gen())])
-        other_to_field = other.Hom(field)([gf(other.gen())], base_hom=base_to_field)
+        base_to_field = base.Hom(field)([h(gf(other.gen(1)))])
+        other_to_field = other.Hom(field)([h(gf(other.gen()))], base_hom=base_to_field)
 
         # And its inverse, essentially the same construction:
         f_g_ = f_*g_
         base = field.base_field()
-        base_to_other = base.Hom(other)([f_g_(base.gen())])
-        field_to_other = field.Hom(other)([f_g_(field.gen())], base_hom=base_to_other)
+        base_to_other = base.Hom(other)([f_g_(h_(field.gen(1)))])
+        field_to_other = field.Hom(other)([f_g_(h_(field.gen()))], base_hom=base_to_other)
 
         return field_to_other, other_to_field

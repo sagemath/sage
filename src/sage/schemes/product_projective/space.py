@@ -458,9 +458,10 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
     def ngens(self):
         r"""
-        Returns the number of generators of this space.
+        Return the number of generators of this space.
 
-        This is the number of variables in the coordinate ring of the projectice space.
+        This is the number of variables in the coordinate ring of the
+        projective space.
 
         OUTPUT: An integer.
 

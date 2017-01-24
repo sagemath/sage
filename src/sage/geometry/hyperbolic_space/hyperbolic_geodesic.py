@@ -83,7 +83,7 @@ the same::
 #***********************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.symbolic.pynac import I
+from sage.symbolic.all import I
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.infinity import infinity
 from sage.rings.all import CC, RR

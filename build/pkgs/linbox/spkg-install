@@ -8,19 +8,6 @@ fi
 
 cd src/
 
-###############################################################################
-# Apply patches (if any):
-###############################################################################
-
-ls ../patches/*.patch &>/dev/null && \
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'."
-        exit 1
-    fi
-done
-
 # Use newer version of config.guess and config.sub (see Trac #19761)
 cp "$SAGE_ROOT"/config/config.* build-aux
 
@@ -65,10 +52,15 @@ if [ "$SAGE_FAT_BINARY" = yes ]; then
     LINBOX_CONFIGURE="--without-ocl $LINBOX_CONFIGURE"
 fi
 
+# Disable fplll as version 5.x is not supported by linbox <= 1.4.2.
+# This is harmless as no functionality using fplll is exposed in Sage.
+# See trac ticket #21221.
+LINBOX_CONFIGURE="--without-fplll $LINBOX_CONFIGURE"
+
 # We disable openmp because of build failures, see
 # http://trac.sagemath.org/ticket/17635#comment:67
 ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-            --with-all="$SAGE_LOCAL" \
+            --with-default="$SAGE_LOCAL" \
             --enable-sage --disable-static --disable-openmp \
             $LINBOX_CONFIGURE
 if [ $? -ne 0 ]; then

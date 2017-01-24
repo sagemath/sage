@@ -5,7 +5,7 @@ A labelled (generalized) permutation is better suited to study the
 dynamic of a translation surface than a reduced one (see the module
 :mod:`sage.dynamics.interval_exchanges.reduced`). The latter is more
 adapted to the study of strata. This kind of permutation was
-introduced by Yoccoz [Yoc05]_ (see also [MMY03]_).
+introduced by Yoccoz [Yoc2005]_ (see also [MMY2003]_).
 
 In fact, there is a geometric counterpart of labelled
 permutations. They correspond to translation surfaces with marked
@@ -81,14 +81,6 @@ TESTS::
     WordMorphism: a->abcd, b->bab, c->cdc, d->dcbababcd
     sage: s1.incidence_matrix() == s2.incidence_matrix().transpose()
     True
-
-REFERENCES:
-
-.. [Yoc05] Jean-Christophe Yoccoz "Echange d'Intervalles", Cours au college de
-   France
-
-.. [MMY03] Jean-Christophe Yoccoz, Stefano Marmi and Pierre Moussa "On the
-   cohomological equation for interval exchange maps", :arxiv:`math/0304469v1`
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -1813,7 +1805,7 @@ class FlippedLabelledPermutationIET(
             sage: p.append(iet.Permutation('a b','b a',flips='a'))
             sage: p.append(iet.Permutation('a b','b a',flips='b'))
             sage: p.append(iet.Permutation('a b','b a',flips='ab'))
-            sage: h = map(hash, p)
+            sage: h = list(map(hash, p))
             sage: for i in range(len(h)-1):
             ....:     if h[i] == h[i+1]:
             ....:         print("You choose a bad hash!")

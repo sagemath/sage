@@ -1685,10 +1685,10 @@ cdef class SkewPolynomial(AlgebraElement):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = x + 1
-            sage: a.__nonzero__()
+            sage: bool(a)
             True
             sage: b = S.zero()
-            sage: b.__nonzero__()
+            sage: bool(b)
             False
         """
         return not self.is_zero()
@@ -2343,7 +2343,7 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
         method returns a new list::
 
             sage: type(l)
-            <type 'list'>
+            <... 'list'>
             sage: l[0] = 5
             sage: a.list()
             [t^2 + 1, 0, t + 1, 0, 1]
@@ -2795,7 +2795,7 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
                 c = parent.twist_map(-db)(inv*a[i+db])
                 for j from 0 <= j < db:
                     a[i+j] -= b[j] * parent.twist_map(j)(c)
-            except:
+            except Exception:
                 raise NotImplementedError("inversion of the twist map %s" % parent.twist_map())
             q.append(c)
         q.reverse()
